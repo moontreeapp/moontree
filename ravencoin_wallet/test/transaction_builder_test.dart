@@ -33,7 +33,7 @@ constructSign(f, TransactionBuilder txb) {
   return txb;
 }
 
-TransactionBuilder construct(f, [bool dontSign]) {
+TransactionBuilder construct(f, [bool? dontSign]) {
   final network = NETWORKS[f['network']];
   final txb = new TransactionBuilder(network: network);
   if (f['version'] != null) txb.setVersion(f['version']);
@@ -73,7 +73,8 @@ main() {
           .readAsStringSync(encoding: utf8));
   group('TransactionBuilder', () {
     final keyPair = ECPair.fromPrivateKey(HEX.decode(
-        '0000000000000000000000000000000000000000000000000000000000000001'));
+            '0000000000000000000000000000000000000000000000000000000000000001')
+        as Uint8List);
     final scripts = [
       '1BgGZ9tcN4rm9KBzDn7KprQz87SZ26SAMH',
       '1cMh228HTCiwS8ZsaakH8A8wze1JR5ZsP'
@@ -83,7 +84,7 @@ main() {
     group('fromTransaction', () {
       (fixtures['valid']['build'] as List<dynamic>).forEach((f) {
         test('returns TransactionBuilder, with ${f['description']}', () {
-          final network = NETWORKS[f['network'] ?? 'bitcoin'];
+          final network = NETWORKS[f['network'] ?? 'bitcoin']!;
           final tx = Transaction.fromHex(f['txHex']);
           final txb = TransactionBuilder.fromTransaction(tx, network);
           final txAfter =
@@ -111,11 +112,11 @@ main() {
           final txAfter = f['incomplete'] ? txb.buildIncomplete() : txb.build();
 
           for (var i = 0; i < txAfter.ins.length; i++) {
-            test(bscript.toASM(txAfter.ins[i].script),
+            test(bscript.toASM(txAfter.ins[i].script as List<int>),
                 f['inputs'][i]['scriptSigAfter']);
           }
           for (var i = 0; i < txAfter.outs.length; i++) {
-            test(bscript.toASM(txAfter.outs[i].script),
+            test(bscript.toASM(txAfter.outs[i].script as List<int>),
                 f['outputs'][i]['script']);
           }
         });
@@ -133,27 +134,27 @@ main() {
         });
     });
     group('addInput', () {
-      TransactionBuilder txb;
+      late TransactionBuilder txb;
       setUp(() {
         txb = new TransactionBuilder();
       });
       test('accepts a txHash, index [and sequence number]', () {
         final vin = txb.addInput(txHash, 1, 54);
         expect(vin, 0);
-        final txIn = txb.tx.ins[0];
+        final txIn = txb.tx!.ins[0];
         expect(txIn.hash, txHash);
         expect(txIn.index, 1);
         expect(txIn.sequence, 54);
-        expect(txb.inputs[0].prevOutScript, null);
+        expect(txb.inputs![0].prevOutScript, null);
       });
       test('accepts a txHash, index [, sequence number and scriptPubKey]', () {
         final vin = txb.addInput(txHash, 1, 54, scripts.elementAt(1));
         expect(vin, 0);
-        final txIn = txb.tx.ins[0];
+        final txIn = txb.tx!.ins[0];
         expect(txIn.hash, txHash);
         expect(txIn.index, 1);
         expect(txIn.sequence, 54);
-        expect(txb.inputs[0].prevOutScript, scripts.elementAt(1));
+        expect(txb.inputs![0].prevOutScript, scripts.elementAt(1));
       });
       test('accepts a prevTx, index [and sequence number]', () {
         final prevTx = new Transaction();
@@ -163,11 +164,11 @@ main() {
         final vin = txb.addInput(prevTx, 1, 54);
         expect(vin, 0);
 
-        final txIn = txb.tx.ins[0];
+        final txIn = txb.tx!.ins[0];
         expect(txIn.hash, prevTx.getHash());
         expect(txIn.index, 1);
         expect(txIn.sequence, 54);
-        expect(txb.inputs[0].prevOutScript, scripts.elementAt(1));
+        expect(txb.inputs![0].prevOutScript, scripts.elementAt(1));
       });
       test('returns the input index', () {
         expect(txb.addInput(txHash, 0), 0);
@@ -188,7 +189,7 @@ main() {
       });
     });
     group('addOutput', () {
-      TransactionBuilder txb;
+      late TransactionBuilder txb;
       setUp(() {
         txb = new TransactionBuilder();
       });
@@ -199,14 +200,14 @@ main() {
                 .address;
         final vout = txb.addOutput(address, 1000);
         expect(vout, 0);
-        final txout = txb.tx.outs[0];
+        final txout = txb.tx!.outs[0];
         expect(txout.script, scripts.elementAt(0));
         expect(txout.value, 1000);
       });
       test('accepts a ScriptPubKey and value', () {
         final vout = txb.addOutput(scripts.elementAt(0), 1000);
         expect(vout, 0);
-        final txout = txb.tx.outs[0];
+        final txout = txb.tx!.outs[0];
         expect(txout.script, scripts.elementAt(0));
         expect(txout.value, 1000);
       });

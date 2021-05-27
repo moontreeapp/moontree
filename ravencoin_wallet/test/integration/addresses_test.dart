@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:test/test.dart';
 import 'package:pointycastle/digests/sha256.dart';
@@ -33,7 +34,7 @@ main() {
     });
     test('can generate an address from a SHA256 hash', () {
       final hash = new SHA256Digest()
-          .process(utf8.encode('correct horse battery staple'));
+          .process(utf8.encode('correct horse battery staple') as Uint8List);
       final keyPair = ECPair.fromPrivateKey(hash);
       final address = new P2PKH(
               data: new PaymentData(pubkey: keyPair.publicKey),

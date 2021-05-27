@@ -1,13 +1,15 @@
 import 'dart:typed_data';
-import 'models/networks.dart';
+
 import 'package:bs58check/bs58check.dart' as bs58check;
 import 'package:bech32/bech32.dart';
+
+import 'models/networks.dart';
 import 'payments/index.dart' show PaymentData;
 import 'payments/p2pkh.dart';
 import 'payments/p2wpkh.dart';
 
 class Address {
-  static bool validateAddress(String address, [NetworkType nw]) {
+  static bool validateAddress(String address, [NetworkType? nw]) {
     try {
       addressToOutputScript(address, nw);
       return true;
@@ -16,7 +18,7 @@ class Address {
     }
   }
 
-  static Uint8List addressToOutputScript(String address, [NetworkType nw]) {
+  static Uint8List? addressToOutputScript(String address, [NetworkType? nw]) {
     NetworkType network = nw ?? ravencoin;
     var decodeBase58;
     var decodeBech32;

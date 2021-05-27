@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:test/test.dart';
 import 'package:hex/hex.dart';
 import 'package:bip39/bip39.dart' as bip39;
@@ -44,7 +46,8 @@ void main() {
     test('can create a BIP32, bitcoin, account 0, external address', () {
       const path = "m/0'/0/0";
       final root = bip32.BIP32.fromSeed(HEX.decode(
-          'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd'));
+              'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd')
+          as Uint8List);
       final child1 = root.derivePath(path);
       // option 2, manually
       final child1b = root.deriveHardened(0).derive(0).derive(0);
@@ -54,7 +57,8 @@ void main() {
     });
     test('can create a BIP44, bitcoin, account 0, external address', () {
       final root = bip32.BIP32.fromSeed(HEX.decode(
-          'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd'));
+              'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd')
+          as Uint8List);
       final child1 = root.derivePath("m/44'/0'/0'/0/0");
       // option 2, manually
       final child1b = root
@@ -90,7 +94,7 @@ void main() {
   });
 }
 
-String getAddress(node, [network]) {
+String? getAddress(node, [network]) {
   return P2PKH(data: new PaymentData(pubkey: node.publicKey), network: network)
       .data
       .address;
