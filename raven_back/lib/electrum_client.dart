@@ -154,6 +154,16 @@ class ElectrumClient {
         return <String, Object>{};
       });
 
+  Future<Map<String, Object>> getTransactions(String scriptHash) =>
+      call(method: 'blockchain.scripthash.get_history', params: [scriptHash])
+          .then((dynamic result) {
+        if (result is Map<String, Object>) {
+          return result;
+        }
+
+        return <String, Object>{};
+      });
+
   Future<dynamic> call(
       {required String method, List<Object> params = const []}) async {
     final completer = Completer<dynamic>();
