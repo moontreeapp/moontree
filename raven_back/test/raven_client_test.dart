@@ -5,6 +5,7 @@ import 'package:json_rpc_2/json_rpc_2.dart';
 import 'package:raven/raven_client.dart';
 import 'package:raven/raven_networks.dart';
 import 'package:raven/raven_network.dart';
+import 'package:raven/wallet_exposure.dart';
 import 'package:stream_channel/stream_channel.dart';
 import 'package:raven/electrum_client.dart';
 import 'package:test/test.dart';
@@ -27,9 +28,12 @@ void main() {
   //   var channel = StreamChannel(socket.cast<List<int>>(), socket);
   //   var client = RavenClient(
   //       channel.transform(StreamChannelTransformer.fromCodec(utf8)));
+  //   client.listen();
+
   //   // var client = RavenClient(channel);
   //   print('request server.version');
-  //   var version = await client.serverVersion('bluewallet', '1.8');
+  //   var version = await client.serverVersion();
+  //   print(version);
   //   print('request blockchain.relayfee');
   //   var balance = await client.relayFee();
   //   inspect(balance);
@@ -38,10 +42,13 @@ void main() {
   // test('electrum client', () async {
   //   var client = ElectrumClient();
   //   print('connecting...');
-  //   await client.connect(host: 'testnet.rvn.rocks', port: 50002);
+  //   // await client.connect(host: 'testnet.rvn.rocks', port: 50002);
+  //   await client.connect(host: '143.198.142.78', port: 50002);
   //   print('connected, getting version...');
-  //   var version = await client.version();
+  //   var version = await client.version('MTWallet', '1.8');
   //   print(version);
+  //   var features = await client.features();
+  //   print(features);
   // });
 
   test('getBalance', () async {
@@ -52,12 +59,13 @@ void main() {
 
     var client = ElectrumClient();
     await client.connect(host: 'testnet.rvn.rocks', port: 50002);
-    // var version = await client.version();
-    // print(version);
+    var version = await client.version('MTWallet', '1.8');
+    print(version);
 
     var wallet = network.getRavenWallet(seed);
-    var address = wallet.getHDWallet(0).address;
-    var balance = await client.getBalance(address);
+    var scriptHash =
+        wallet.scriptHashFromAddress(4, exposure: WalletExposure.Internal);
+    var balance = await client.getBalance(scriptHash);
     print(balance);
   });
 }

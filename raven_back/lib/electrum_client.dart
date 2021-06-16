@@ -61,8 +61,10 @@ class ElectrumClient {
 
     socket?.listen((Uint8List event) {
       try {
-        final response =
-            json.decode(utf8.decode(event.toList())) as Map<String, Object>;
+        print('listened to event');
+        final string = utf8.decode(event.toList());
+        final response = json.decode(string) as Map<String, Object>;
+        print('got response $string');
         _handleResponse(response);
       } on FormatException catch (e) {
         final msg = e.message.toLowerCase();
@@ -122,14 +124,25 @@ class ElectrumClient {
     }
   }
 
-  Future<List<String>> version() =>
-      call(method: 'server.version').then((dynamic result) {
-        if (result is List) {
-          return result.map((dynamic val) => val.toString()).toList();
-        }
+  Future<List<String>> version(clientName, protocolVersion) async {
+    var result = await call(
+        method: 'server.version', params: [clientName, protocolVersion]);
+    if (result is List) {
+      return result.map((dynamic val) => val.toString()).toList();
+    }
 
-        return [];
-      });
+    return [];
+  }
+
+  Future<Map<String, Object>> features() async {
+    var result = await call(method: 'server.features');
+    if (result is Map<String, Object>) {
+      return result;
+      // return result.map((dynamic val) => val.toString()).toList();
+    }
+
+    return {};
+  }
 
   Future<Map<String, Object>> getBalance(String scriptHash) =>
       call(method: 'blockchain.scripthash.get_balance', params: [scriptHash])
@@ -147,7 +160,9 @@ class ElectrumClient {
     _id += 1;
     final id = _id;
     _registryTask(id, completer);
-    socket?.write(jsonrpc(method: method, id: id, params: params));
+    var string = jsonrpc(method: method, id: id, params: params);
+    print('sending $string');
+    socket?.write(string);
 
     return completer.future;
   }

@@ -30,13 +30,15 @@ class RavenWallet {
         .derivePath(_params.derivationPath(index, exposure: exposure));
   }
 
-  Uint8List toOutputScript(int index) {
-    var hdwallet = getHDWallet(index);
+  Uint8List toOutputScript(int index, {exposure = WalletExposure.External}) {
+    var hdwallet = getHDWallet(index, exposure: exposure);
+    print('address: ${hdwallet.address}');
     return Address.addressToOutputScript(hdwallet.address, _params.network);
   }
 
-  String scriptHashFromAddress(int index) {
-    var script = toOutputScript(index);
+  String scriptHashFromAddress(int index,
+      {exposure = WalletExposure.External}) {
+    var script = toOutputScript(index, exposure: exposure);
     Digest digest = sha256.convert(script);
     var hash = reverse(digest.bytes);
     return hex.encode(hash);
