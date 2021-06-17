@@ -1,4 +1,4 @@
-import 'package:raven/raven_network.dart';
+import 'package:raven/raven_networks.dart';
 import 'package:test/test.dart';
 
 void main() {

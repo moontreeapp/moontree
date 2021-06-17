@@ -1,14 +1,15 @@
-import 'package:raven/raven_network.dart';
+import 'package:raven/account.dart';
+import 'package:raven/raven_networks.dart';
 import 'package:bip39/bip39.dart' as bip39;
 
 void main() {
   var seed = bip39.mnemonicToSeed(
       'smile build brain topple moon scrap area aim budget enjoy polar erosion');
 
-  var network = RavenNetwork(ravencoinTestnet);
-  var hdWallet = network.getRavenWallet(seed).getHDWallet(0);
+  var account = Account(ravencoinTestnet, seed: seed);
+  var node = account.node(0);
 
-  print('address: ${hdWallet.address}');
-  print('pubKey: ${hdWallet.pubKey}');
-  print('wif: ${hdWallet.wif}');
+  print('address: ${node.wallet.address}');
+  print('pubKey: ${node.wallet.pubKey}');
+  print('wif: ${node.wallet.wif}');
 }

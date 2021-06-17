@@ -1,21 +1,9 @@
 // dart --no-sound-null-safety test test/raven_tx_test.dart
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
-import 'package:json_rpc_2/json_rpc_2.dart';
-import 'package:raven/raven_client.dart';
 import 'package:raven/raven_networks.dart';
-import 'package:raven/raven_network.dart';
-import 'package:raven/wallet_exposure.dart';
-import 'package:stream_channel/stream_channel.dart';
+import 'package:raven/account.dart';
 import 'package:raven/electrum_client.dart';
 import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
-import 'package:bitcoin_flutter/bitcoin_flutter.dart' as bitcoin;
-
-bool skipUnverified(X509Certificate certificate) {
-  return true;
-}
 
 const connectionTimeout = Duration(seconds: 5);
 const aliveTimerDuration = Duration(seconds: 2);
@@ -50,15 +38,14 @@ void main() {
   test('getTransactions', () async {
     var seed = bip39.mnemonicToSeed(
         'smile build brain topple moon scrap area aim budget enjoy polar erosion');
-    var network = RavenNetwork(ravencoinTestnet);
+    var account = Account(ravencoinTestnet, seed: seed);
     var client = ElectrumClient();
     await client.connect(host: 'testnet.rvn.rocks', port: 50002);
     var version = await client.version('MTWallet', '1.8');
     print(version);
 
-    var wallet = network.getRavenWallet(seed);
     var scriptHash =
-        wallet.scriptHashFromAddress(4, exposure: WalletExposure.Internal);
+        account.node(4, exposure: NodeExposure.Internal).scriptHash;
     var history = await client.getTransactions(scriptHash);
     print(history);
   });

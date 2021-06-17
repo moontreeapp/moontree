@@ -3,50 +3,28 @@ import 'dart:typed_data';
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
 import 'package:bitcoin_flutter/bitcoin_flutter.dart';
-import 'package:raven/wallet_exposure.dart';
-import 'raven_network_params.dart';
+import 'package:raven/network_params.dart';
+import 'network_params.dart';
 
-List<int> reverse(List<int> hex) {
-  var buffer = Uint8List(hex.length);
+export 'raven_networks.dart';
 
-  for (var i = 0, j = hex.length - 1; i <= j; ++i, --j) {
-    buffer[i] = hex[j];
-    buffer[j] = hex[i];
-  }
-
-  return buffer;
-}
-
-class RavenWallet {
-  final RavenNetworkParams _params;
+class Account {
+  final NetworkParams params;
   final HDWallet _wallet;
+  final Uint8List seed;
   //final gapLimit _gap_limit;
 
-  RavenWallet(params, wallet)
-      : _params = params,
-        _wallet = wallet;
+  Account(this.params, {required this.seed})
+      : _wallet = HDWallet.fromSeed(seed, network: params.network);
   //_gap_limit = 20;
 
-  HDWallet getHDWallet(int index, {exposure = WalletExposure.External}) {
-    return _wallet
-        .derivePath(_params.derivationPath(index, exposure: exposure));
+  _HDNode node(int index, {exposure = NodeExposure.External}) {
+    var wallet =
+        _wallet.derivePath(params.derivationPath(index, exposure: exposure));
+    return _HDNode(params, wallet, index, exposure);
   }
 
-  Uint8List toOutputScript(int index, {exposure = WalletExposure.External}) {
-    var hdwallet = getHDWallet(index, exposure: exposure);
-    print('address: ${hdwallet.address}');
-    return Address.addressToOutputScript(hdwallet.address, _params.network);
-  }
-
-  String scriptHashFromAddress(int index,
-      {exposure = WalletExposure.External}) {
-    var script = toOutputScript(index, exposure: exposure);
-    Digest digest = sha256.convert(script);
-    var hash = reverse(digest.bytes);
-    return hex.encode(hash);
-  }
-
-  //Map getTransactions(int index, {exposure = WalletExposure.External}) {
+  //Map getTransactions(int index, {exposure = NodeExposure.External}) {
   //  String scriptHash = scriptHashFromAddress(index, exposure: exposure);
   //  var balance = await client.getBalance(scriptHash);
   //  this wallet doesn't have the ability to it's own balance because it doesn't have a client... could use a client though...
@@ -94,7 +72,7 @@ class RavenWallet {
     }
   */
   //Uint8List getChangeAddress() {
-  //  var exposure = WalletExposure.Internal;
+  //  var exposure = NodeExposure.Internal;
   //  String freeAddress = '';
   //  for (var c = 0; c < gap_limit + 1; c++) {
   //    var hdwallet = getHDWallet(index, exposure: exposure);
@@ -119,4 +97,45 @@ class RavenWallet {
   //  return Address.addressToOutputScript(hdwallet.address, _params.network);
   //}
 
+}
+
+List<int> reverse(List<int> hex) {
+  var buffer = Uint8List(hex.length);
+
+  for (var i = 0, j = hex.length - 1; i <= j; ++i, --j) {
+    buffer[i] = hex[j];
+    buffer[j] = hex[i];
+  }
+
+  return buffer;
+}
+
+class _HDNode {
+  NetworkParams params;
+  HDWallet wallet;
+  int index;
+  NodeExposure exposure;
+
+  _HDNode(this.params, this.wallet, this.index, this.exposure);
+
+  Uint8List get outputScript {
+    return Address.addressToOutputScript(wallet.address, params.network);
+  }
+
+  String get scriptHash {
+    Digest digest = sha256.convert(outputScript);
+    var hash = reverse(digest.bytes);
+    return hex.encode(hash);
+  }
+}
+
+enum NodeExposure { Internal, External }
+
+String exposureToDerivationPathPart(NodeExposure exposure) {
+  switch (exposure) {
+    case NodeExposure.External:
+      return '0';
+    case NodeExposure.Internal:
+      return '1';
+  }
 }

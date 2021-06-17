@@ -1,7 +1,7 @@
-import 'package:raven/raven_network_params.dart';
+import 'package:raven/network_params.dart';
 import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 
-final ravencoinMainnet = RavenNetworkParams(
+final ravencoinMainnet = NetworkParams(
     name: 'Ravencoin Mainnet',
     testnet: false,
     network: NetworkType(
@@ -13,7 +13,7 @@ final ravencoinMainnet = RavenNetworkParams(
         wif: 0x80),
     derivationBase: "m/44'/175'/0'");
 
-final ravencoinTestnet = RavenNetworkParams(
+final ravencoinTestnet = NetworkParams(
     name: 'Ravencoin Testnet',
     testnet: true,
     network: NetworkType(
