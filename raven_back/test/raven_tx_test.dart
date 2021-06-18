@@ -40,13 +40,14 @@ void main() {
         'smile build brain topple moon scrap area aim budget enjoy polar erosion');
     var account = Account(ravencoinTestnet, seed: seed);
     var client = ElectrumClient();
-    await client.connect(host: 'testnet.rvn.rocks', port: 50002);
-    var version = await client.version('MTWallet', '1.8');
+    await client.connect(host: 'testnet.rvn.rocks');
+    // var version = await client.serverVersion('MTWallet', '1.8');
+    var version = await client.serverVersion();
     print(version);
 
     var scriptHash =
         account.node(4, exposure: NodeExposure.Internal).scriptHash;
-    var history = await client.getTransactions(scriptHash);
-    print(history);
+    // var history = await client.getTransactions(scriptHash);
+    // print(history);
   });
 }
