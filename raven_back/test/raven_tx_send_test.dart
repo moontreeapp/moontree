@@ -1,13 +1,7 @@
-//import 'package:test/test.dart';
-//import 'package:hex/hex.dart';
-import 'dart:convert';
-import 'dart:typed_data';
 import 'package:test/test.dart';
 import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 import 'package:raven/account.dart';
 import 'package:bip39/bip39.dart' as bip39;
-
-import "package:bs58check/bs58check.dart" as bs58check;
 
 main() {
   test('bitcoinjs-lib (transactions) can create a 1-to-1 Transaction', () {
@@ -15,41 +9,17 @@ main() {
         'smile build brain topple moon scrap area aim budget enjoy polar erosion');
     var account = Account(ravencoinTestnet, seed: seed);
     var node = account.node(4, exposure: NodeExposure.Internal);
-    final alice =
-        ECPair.fromWIF('L1uyy5qTuGrVXrmrsvHWHgVzW9kKdrp27wBC7Vs6nZDTF2BRUVwy');
-    //print(bs58check
-    //    .decode('L1uyy5qTuGrVXrmrsvHWHgVzW9kKdrp27wBC7Vs6nZDTF2BRUVwy'));
-    //print(node.wallet.base58Priv)
-    print(node.wallet.wif);
     final pair = ECPair.fromWIF(node.wallet.wif, network: node.params.network);
-    print(alice.privateKey);
-    print(Uint8List.fromList(node.wallet.privKey.codeUnits));
-    print(node.wallet.privKey);
-    print(node.wallet.privKey.codeUnits);
-    //print(node.wallet.privateKey);
-
-    print(node.wallet.address);
-    print(node.wallet.base58);
-    print(node.wallet.base58Priv);
-    //tprv8kAJGTKFKXWn4EjqZUtE4YkZZPPBLFz8Tc3puvpMx9aSChVqHqfwEtZeCGY3zmYwusfiYrVWbzQV26xAV5ypeirUooT1qpRFeFYJ3iet5rU
-    //m/44'/175'/1'/1/4
-    //http://bip32.org/ why is it that this website gives a different address and keys for this?...
-    //https://en.bitcoin.it/wiki/List_of_address_prefixes
-    //ok, so obviously I don't understand the difference between privKey and base58Priv or how either of those can
-    //be translated to the same wif format as alice. butthat's what we need to know.
-    //final pair = ECPair(Uint8List.fromList(node.wallet.privKey.codeUnits),
-    //    Uint8List.fromList(node.wallet.pubKey.codeUnits),
-    //    network: node.params.network, compressed: true);
     final txb = TransactionBuilder(network: node.params.network);
     txb.setVersion(1);
     txb.addInput(
         '56fcc747b8067133a3dc8907565fa1b31e452c98b3f200687cb836f98c3c46ae',
-        1); // Alice's previous transaction output, has 5000000 satoshis
+        1); // previous transaction output, has 5000000 satoshis
     txb.addOutput('mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7', 4000000);
     // (in)5000000 - (out)4000000 = (fee)1000000, this is the miner fee
     txb.sign(vin: 0, keyPair: pair);
-    //// prepare for broadcast to the Bitcoin network, see 'can broadcast a Transaction' below
-    //expect(txb.build().toHex(),
-    //    '01000000019d344070eac3fe6e394a16d06d7704a7d5c0a10eb2a2c16bc98842b7cc20d561000000006b48304502210088828c0bdfcdca68d8ae0caeb6ec62cd3fd5f9b2191848edae33feb533df35d302202e0beadd35e17e7f83a733f5277028a9b453d525553e3f5d2d7a7aa8010a81d60121029f50f51d63b345039a290c94bffd3180c99ed659ff6ea6b1242bca47eb93b59fffffffff01e02e0000000000001976a91406afd46bcdfd22ef94ac122aa11f241244a37ecc88ac00000000');
+    // prepare for broadcast to the network
+    expect(txb.build().toHex(),
+        '0100000001ae463c8cf936b87c6800f2b3982c451eb3a15f560789dca3337106b847c7fc56010000006b4830450221008e6950c7f410e2fe2c0dc3c233a5e2107dd3a0bf0879c1467c834cdcbcd526b002203bb0a6b54e3715f44f2a25c4eea75c904fe721aa4ffbc816cc8836c51c8e9dba01210216c4cab85b35c9e6fa4a0d88f027e0dbb926db885d3af0325e1ca36c91c0a3d1ffffffff0100093d00000000001976a9145dbe75f408e8154364e2457a3ab413128e090e3588ac00000000');
   });
 }
