@@ -17,14 +17,24 @@ void main() {
     var account = Account(ravencoinTestnet, seed: seed);
     var client = ElectrumClient();
     await client.connect(host: 'testnet.rvn.rocks');
-    // var version = await client.serverVersion('MTWallet', '1.8');
     var version = await client.serverVersion();
     print(version.protocol);
-
     var scriptHash =
         account.node(4, exposure: NodeExposure.Internal).scriptHash;
     var history = await client.getHistory(scriptHash: scriptHash);
     print(history);
+    expect(history, [
+      {
+        'tx_hash':
+            '56fcc747b8067133a3dc8907565fa1b31e452c98b3f200687cb836f98c3c46ae',
+        'height': 747308
+      },
+      {
+        'tx_hash':
+            '2dada22848277e6a23b49c1e63d47b661f94819b2001e2789a5fd947b51907d5',
+        'height': 769767
+      }
+    ]); // could fail if people send to this address...
   });
 
   test('create, sign, /* and broadcast */ a 1-to-1 transaction', () async {
@@ -63,15 +73,17 @@ void main() {
         'smile build brain topple moon scrap area aim budget enjoy polar erosion');
     var account = Account(ravencoinTestnet, seed: seed);
     var node = account.node(4, exposure: NodeExposure.Internal);
-    final pair = ECPair.fromWIF(node.wallet.wif, network: node.params.network);
     final txb = TransactionBuilder(network: node.params.network);
     txb.setVersion(1);
     txb.addInput(
-        '56fcc747b8067133a3dc8907565fa1b31e452c98b3f200687cb836f98c3c46ae',
-        1); // previous transaction output, has 5000000 satoshis
-    txb.addOutput('mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7',
-        4000000); // (in)5000000 - (out)4000000 = (fee)1000000, this is the miner fee
+        '56fcc747b8067133a3dc8907565fa1b31e452c98b3f200687cb836f98c3c46ae', 1);
+    txb.addOutput('mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7', 4000000);
     var fee = totalFeeByBytes(txb);
     expect(fee, txb.tx.virtualSize());
+    fee = totalFeeByBytes(txb, 'cheap');
+    expect(fee, (txb.tx.virtualSize() * 0.9).ceil());
+    fee = totalFeeByBytes(txb, 'fast');
+    expect(fee, (txb.tx.virtualSize() * 1.1).ceil());
+    expect(fee > 0, true);
   });
 }
