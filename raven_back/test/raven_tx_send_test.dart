@@ -20,10 +20,14 @@ main() {
     //print(bs58check
     //    .decode('L1uyy5qTuGrVXrmrsvHWHgVzW9kKdrp27wBC7Vs6nZDTF2BRUVwy'));
     //print(node.wallet.base58Priv)
+    print(node.wallet.wif);
+    final pair = ECPair.fromWIF(node.wallet.wif, network: node.params.network);
     print(alice.privateKey);
     print(Uint8List.fromList(node.wallet.privKey.codeUnits));
     print(node.wallet.privKey);
     print(node.wallet.privKey.codeUnits);
+    //print(node.wallet.privateKey);
+
     print(node.wallet.address);
     print(node.wallet.base58);
     print(node.wallet.base58Priv);
@@ -33,9 +37,9 @@ main() {
     //https://en.bitcoin.it/wiki/List_of_address_prefixes
     //ok, so obviously I don't understand the difference between privKey and base58Priv or how either of those can
     //be translated to the same wif format as alice. butthat's what we need to know.
-    final pair = ECPair(Uint8List.fromList(node.wallet.privKey.codeUnits),
-        Uint8List.fromList(node.wallet.pubKey.codeUnits),
-        network: node.params.network, compressed: true);
+    //final pair = ECPair(Uint8List.fromList(node.wallet.privKey.codeUnits),
+    //    Uint8List.fromList(node.wallet.pubKey.codeUnits),
+    //    network: node.params.network, compressed: true);
     final txb = TransactionBuilder(network: node.params.network);
     txb.setVersion(1);
     txb.addInput(
