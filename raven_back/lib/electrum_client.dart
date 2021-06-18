@@ -66,4 +66,10 @@ class ElectrumClient {
         ?.sendRequest('blockchain.scripthash.get_balance', [scriptHash]);
     return response.map((key, value) => MapEntry(key, value));
   }
+
+  Future<List<dynamic>> getHistory({scriptHash}) async {
+    List<dynamic> response = await _client
+        ?.sendRequest('blockchain.scripthash.get_history', [scriptHash]);
+    return response; //List<Map<String, dynamic>> List(...map((key, value) => MapEntry(key, value)));
+  }
 }
