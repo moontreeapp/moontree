@@ -15,10 +15,16 @@ double cheapRate() {
   return standardRate() * 0.9;
 }
 
+double customRate() {
+  // retrieve user defined rate
+  return 1.0;
+}
+
 var rateSelection = <String, Function>{
   'cheap': cheapRate,
   'fast': fastRate,
   'standard': standardRate,
+  'custom': customRate,
 };
 
 int totalFeeByBytes(txb, [selection]) {

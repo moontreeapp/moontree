@@ -5,6 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 import 'package:raven/network_params.dart';
 import 'network_params.dart';
+import 'package:raven/electrum_client.dart';
 
 export 'raven_networks.dart';
 
@@ -20,6 +21,34 @@ class Account {
     var wallet =
         _wallet.derivePath(params.derivationPath(index, exposure: exposure));
     return _HDNode(params, wallet, index, exposure);
+  }
+
+  Future<double> getBalance(ElectrumClient client) async {
+    var total = 0.0;
+    var gap = 20;
+    var c = 0;
+    var count = 0;
+    var result = {};
+    var balance = 0;
+    var exposures = [NodeExposure.Internal, NodeExposure.External];
+    var leaf;
+    while (count < gap) {
+      for (var i = 0; i < exposures.length; i++) {
+        leaf = node(c, exposure: exposures[i]);
+        result = await client.getBalance(scriptHash: leaf.scriptHash);
+        balance = result['confirmed'] + result['unconfirmed'];
+        if (balance == 0) {
+          count = count + 1;
+        } else {
+          total = total + balance;
+          count = 0;
+          // this address has a balance, we should save it to our utxo set and subscribe to it's status changes...
+          //await client.subscribeTo(scriptHash: leaf.scriptHash);
+        }
+      }
+      c = c + 1;
+    }
+    return total;
   }
 }
 

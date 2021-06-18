@@ -68,7 +68,7 @@ void main() {
     */
   });
 
-  test('calculateFee', () async {
+  test('totalFeeByBytes', () async {
     var seed = bip39.mnemonicToSeed(
         'smile build brain topple moon scrap area aim budget enjoy polar erosion');
     var account = Account(ravencoinTestnet, seed: seed);
