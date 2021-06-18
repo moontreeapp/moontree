@@ -44,6 +44,11 @@ class ElectrumClient {
     return _client?.close();
   }
 
+  Future<String> request(String method, [parameters]) async {
+    var response = await _client?.sendRequest(method, [parameters]);
+    return response.toString();
+  }
+
   Future<ServerVersion> serverVersion(
       {clientName = 'MTWallet', protocolVersion = '1.8'}) async {
     var response = await _client
