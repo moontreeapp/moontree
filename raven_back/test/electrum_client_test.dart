@@ -1,9 +1,10 @@
 import 'dart:io';
+import 'package:test/test.dart';
+import 'package:bip39/bip39.dart' as bip39;
+import 'package:raven/env.dart' as env;
 import 'package:raven/account.dart';
 import 'package:raven/raven_networks.dart';
 import 'package:raven/electrum_client.dart';
-import 'package:test/test.dart';
-import 'package:bip39/bip39.dart' as bip39;
 
 bool skipUnverified(X509Certificate certificate) {
   return true;
@@ -11,10 +12,12 @@ bool skipUnverified(X509Certificate certificate) {
 
 const connectionTimeout = Duration(seconds: 5);
 const aliveTimerDuration = Duration(seconds: 2);
+
 void main() {
   test('electrum client', () async {
     var client = ElectrumClient();
-    await client.connect(host: 'testnet.rvn.rocks', port: 50002);
+    await client.connect(
+        host: 'testnet.rvn.rocks', port: 50002, protocolVersion: null);
     var version = await client.serverVersion(protocolVersion: '1.8');
     expect(version.name, 'ElectrumX Ravencoin 1.8.1');
     expect(version.protocol, '1.8');
@@ -25,19 +28,49 @@ void main() {
   });
 
   test('getBalance', () async {
-    var seed = bip39.mnemonicToSeed(
-        'smile build brain topple moon scrap area aim budget enjoy polar erosion');
-
+    var phrase = await env.getMnemonic();
+    var seed = bip39.mnemonicToSeed(phrase);
     var account = Account(ravencoinTestnet, seed: seed);
-
     var client = ElectrumClient();
     await client.connect(host: 'testnet.rvn.rocks', port: 50002);
-    await client.serverVersion(protocolVersion: '1.8');
-
-    var node = account.node(4, exposure: NodeExposure.Internal);
-
+    var node = account.node(3, exposure: NodeExposure.Internal);
     var balance = await client.getBalance(scriptHash: node.scriptHash);
-    expect(balance['confirmed'], 5000000);
-    expect(balance['unconfirmed'], 0);
+    if (phrase.startsWith('smile')) {
+      expect(balance['confirmed'], 0);
+      expect(balance['unconfirmed'], 0);
+    } else {
+      expect((balance['confirmed']! > 0), true);
+      expect(balance['unconfirmed'], 0);
+    }
   });
+
+  test('getUTXOs', () async {
+    var phrase = await env.getMnemonic();
+    var seed = bip39.mnemonicToSeed(phrase);
+    var account = Account(ravencoinTestnet, seed: seed);
+    var client = ElectrumClient();
+    await client.connect(host: 'testnet.rvn.rocks', port: 50002);
+    var node = account.node(3, exposure: NodeExposure.Internal);
+    var utxos = await client.getUTXOs(scriptHash: node.scriptHash);
+    expect(utxos, [
+      {
+        'tx_hash':
+            '84ab4db04a5d32fc81025db3944e6534c4c201fcc93749da6d1e5ecf98355533',
+        'tx_pos': 1,
+        'height': 765913,
+        'value': 5000087912000
+      }
+    ]);
+  });
+
+  //test('Subscribe', () async {
+  //  var phrase = await env.getMnemonic();
+  //  var seed = bip39.mnemonicToSeed(phrase);
+  //  var account = Account(ravencoinTestnet, seed: seed);
+  //  var client = ElectrumClient();
+  //  await client.connect(host: 'testnet.rvn.rocks', port: 50002);
+  //  var node = account.node(3, exposure: NodeExposure.Internal);
+  //  //var subscription = await client.subscribeTo(scriptHash: node.scriptHash);
+  //  //print(subscription);  // null - shouldn't this setup a stream or something?
+  //});
 }

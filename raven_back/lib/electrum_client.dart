@@ -1,3 +1,7 @@
+/* 
+https://electrumx-ravencoin.readthedocs.io/en/latest/protocol-methods.html
+*/
+
 import 'dart:io';
 import 'dart:convert' as convert;
 
@@ -26,7 +30,7 @@ class ElectrumClient {
 
   ElectrumClient();
 
-  Future connect({host, port = 50002}) async {
+  Future connect({host, port = 50002, protocolVersion = '1.8'}) async {
     var socket = await SecureSocket.connect(host, port,
         timeout: connectionTimeout, onBadCertificate: acceptUnverified);
     var channel = StreamChannel(socket.cast<List<int>>(), socket);
@@ -35,9 +39,11 @@ class ElectrumClient {
     var channelJson = jsonNewlineDocument
         .bind(channelUtf8)
         .transformStream(utils.ignoreFormatExceptions);
-
     _client = rpc.Client.withoutJson(channelJson);
     unawaited(_client!.listen());
+    if (protocolVersion != null) {
+      await serverVersion(protocolVersion: protocolVersion);
+    }
   }
 
   Future<dynamic>? close() {
@@ -73,7 +79,18 @@ class ElectrumClient {
     return response; //List<Map<String, dynamic>> List(...map((key, value) => MapEntry(key, value)));
   }
 
+  //Future<List<Map<String, dynamic>>> getUTXOs({scriptHash}) async {  // fix with Duane
+  Future<List<dynamic>> getUTXOs({scriptHash}) async {
+    /* return example: [{ "tx_pos": 0, "value": 45318048, "tx_hash": "9...f", "height": 437146},] */
+    var response = await _client
+        ?.sendRequest('blockchain.scripthash.listunspent', [scriptHash]);
+    return response;
+  }
+
   Future<dynamic> subscribeTo({scriptHash}) async {
+    /* I'm not sure I understand how subscriptions work -
+    do they require a wss connection to be effective?
+    they're pushing data to us, are they not? */
     var response = await _client
         ?.sendRequest('blockchain.scripthash.subscribe', [scriptHash]);
     return response;
