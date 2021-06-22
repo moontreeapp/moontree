@@ -1,0 +1,24 @@
+I want to send x raven:
+I need to choose the output
+I need to choose the fee rate
+I need to choose the inputs (higher fee rate can require more inputs...)
+I need to calculate the change and include it as an output
+
+2 output (how many bytes)
+1 input (how many bytes)
+
+https://bitcoin.stackexchange.com/questions/92587/calculate-transaction-fee-for-external-addresses-which-doesnt-belong-to-my-loca/92600#92600
+
+INPUT (592 WU)
+Outpoint   (144 WU): [32-byte txhash] [4-byte txindex]
+ScriptLength (4 WU): 0x6b
+ScriptSig  (428 WU): OP_PUSHBYTES_72 [71-byte signature] SIGHASH_TYPE OP_PUSHBYTES_33 [33-byte pubkey]
+Sequence    (16 WU): [4-byte value]
+
+OUTPUT (136 WU)
+Value         (32 WU): [8-byte value]
+ScriptLength   (4 WU): 0x19
+ScriptPubKey (100 WU): OP_DUP OP_HASH160 OP_PUSHBYTES_20 [20-byte pubkey] OP_EQUALVERIFY OP_CHECKSIG
+
+32+4+1+71+33+4
+8+1+20+4

@@ -5,10 +5,21 @@ import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 import 'package:raven/raven_networks.dart';
 import 'package:raven/account.dart';
 import 'package:raven/electrum_client.dart';
-import 'package:raven/fee.dart';
+import 'package:raven/transaction.dart' as tx;
+import 'package:raven/env.dart' as env;
 
 const connectionTimeout = Duration(seconds: 5);
 const aliveTimerDuration = Duration(seconds: 2);
+
+Future<List> generate() async {
+  var phrase = await env.getMnemonic();
+  var account = Account(ravencoinTestnet, seed: bip39.mnemonicToSeed(phrase));
+  var client = ElectrumClient();
+  await client.connect(host: 'testnet.rvn.rocks', port: 50002);
+  print('deriving Nodes');
+  await account.deriveNodes(client);
+  return [phrase, account, client];
+}
 
 void main() {
   test('getHistory', () async {
@@ -64,22 +75,15 @@ void main() {
     */
   });
 
-  test('totalFeeByBytes', () async {
-    var seed = bip39.mnemonicToSeed(
-        'smile build brain topple moon scrap area aim budget enjoy polar erosion');
-    var account = Account(ravencoinTestnet, seed: seed);
-    var node = account.node(4, exposure: NodeExposure.Internal);
-    final txb = TransactionBuilder(network: node.params.network);
+  test('choose enough inputs for fee', () async {
+    /* notice this does not calculate an efficient fee or use a utxo set */
+    var gen = await generate();
+    var account = gen[1];
+    var txb = TransactionBuilder(network: account.params.network);
+    var amount = 4000000;
     txb.setVersion(1);
-    txb.addInput(
-        '56fcc747b8067133a3dc8907565fa1b31e452c98b3f200687cb836f98c3c46ae', 1);
-    txb.addOutput('mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7', 4000000);
-    var fee = totalFeeByBytes(txb);
-    expect(fee, txb.tx.virtualSize());
-    fee = totalFeeByBytes(txb, 'cheap');
-    expect(fee, (txb.tx.virtualSize() * 0.9).ceil());
-    fee = totalFeeByBytes(txb, 'fast');
-    expect(fee, (txb.tx.virtualSize() * 1.1).ceil());
-    expect(fee > 0, true);
+    txb.addOutput('mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7', amount);
+    txb = tx.addInputs(account, txb, amount);
+    // make amount nearly an entire utxo check to see if by addInputs we include more utxos to cover the fees
   });
 }

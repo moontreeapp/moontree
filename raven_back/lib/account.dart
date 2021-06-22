@@ -104,7 +104,7 @@ class Account {
     return total;
   }
 
-  List collectUTXOs(int amount) {
+  List collectUTXOs(int amount, [List? except]) {
     /*
     returns a list of utxo maps that sum to at least amount - 
     could use a code clean up, would be cleaner to sort the list by size
@@ -113,15 +113,18 @@ class Account {
     if (_internals.isEmpty || _externals.isEmpty) {
       print('error! please deriveNodes first.');
     }
+    except = except ?? [];
     var ideal = {}; // smallest value larger than amount
     for (var i = 0; i < _internals.length; i++) {
       for (var j = 0; j < _internals[i].utxos.length; j++) {
         if (_internals[i].utxos[j]['value'] > amount &&
             (ideal.isEmpty ||
                 _internals[i].utxos[j]['value'] < ideal['value'])) {
-          ideal = _internals[i].utxos[j];
-          ideal['exposure'] = NodeExposure.Internal;
-          ideal['node index'] = i;
+          if (!except.contains(_internals[i].utxos[j])) {
+            ideal = _internals[i].utxos[j];
+            ideal['exposure'] = NodeExposure.Internal;
+            ideal['node index'] = i;
+          }
         }
       }
     }
@@ -130,9 +133,11 @@ class Account {
         if (_externals[i].utxos[j]['value'] > amount &&
             (ideal.isEmpty ||
                 _externals[i].utxos[j]['value'] < ideal['value'])) {
-          ideal = _externals[i].utxos[j];
-          ideal['exposure'] = NodeExposure.External;
-          ideal['node index'] = i;
+          if (!except.contains(_externals[i].utxos[j])) {
+            ideal = _externals[i].utxos[j];
+            ideal['exposure'] = NodeExposure.External;
+            ideal['node index'] = i;
+          }
         }
       }
     }
@@ -153,13 +158,15 @@ class Account {
       }
       for (var j = 0; j < _internals[i].utxos.length; j++) {
         if (_internals[i].utxos[j]['value'] > 0) {
-          total = total + _internals[i].utxos[j]['value'];
-          ideal = _internals[i].utxos[j];
-          ideal['exposure'] = NodeExposure.Internal;
-          ideal['node index'] = i;
-          utxos.add(ideal);
-          if (total > amount) {
-            break;
+          if (!except.contains(_internals[i].utxos[j])) {
+            total = total + _internals[i].utxos[j]['value'];
+            ideal = _internals[i].utxos[j];
+            ideal['exposure'] = NodeExposure.Internal;
+            ideal['node index'] = i;
+            utxos.add(ideal);
+            if (total > amount) {
+              break;
+            }
           }
         }
       }
@@ -170,13 +177,15 @@ class Account {
       }
       for (var j = 0; j < _externals[i].utxos.length; j++) {
         if (_externals[i].utxos[j]['value'] > 0) {
-          total = total + _externals[i].utxos[j]['value'];
-          ideal = _externals[i].utxos[j];
-          ideal['exposure'] = NodeExposure.External;
-          ideal['node index'] = i;
-          utxos.add(ideal);
-          if (total > amount) {
-            break;
+          if (!except.contains(_externals[i].utxos[j])) {
+            total = total + _externals[i].utxos[j]['value'];
+            ideal = _externals[i].utxos[j];
+            ideal['exposure'] = NodeExposure.External;
+            ideal['node index'] = i;
+            utxos.add(ideal);
+            if (total > amount) {
+              break;
+            }
           }
         }
       }

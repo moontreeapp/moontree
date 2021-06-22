@@ -17,24 +17,24 @@ Future<List> generate() async {
 }
 
 void main() async {
-//  test('deriveNodes then getBalance', () async {
-//    var phrase = await env.getMnemonic();
-//    var seed = bip39.mnemonicToSeed(phrase);
-//    var account = Account(ravencoinTestnet, seed: seed);
-//    var client = ElectrumClient();
-//    await client.connect(host: 'testnet.rvn.rocks', port: 50002);
-//    print('deriving Nodes');
-//    var success = await account.deriveNodes(client);
-//    expect(success, true);
-//    expect((account.getInternals().isEmpty), false);
-//    print('getting Balance');
-//    var balance = account.getBalance();
-//    if (phrase.startsWith('smile')) {
-//      expect(balance, 0.0);
-//    } else {
-//      expect((balance > 0), true);
-//    }
-//  });
+  test('deriveNodes then getBalance', () async {
+    var phrase = await env.getMnemonic();
+    var seed = bip39.mnemonicToSeed(phrase);
+    var account = Account(ravencoinTestnet, seed: seed);
+    var client = ElectrumClient();
+    await client.connect(host: 'testnet.rvn.rocks', port: 50002);
+    print('deriving Nodes');
+    var success = await account.deriveNodes(client);
+    expect(success, true);
+    expect((account.getInternals().isEmpty), false);
+    print('getting Balance');
+    var balance = account.getBalance();
+    if (phrase.startsWith('smile')) {
+      expect(balance, 0.0);
+    } else {
+      expect((balance > 0), true);
+    }
+  });
 
   var gen = await generate();
   test('collectUTXOs small', () async {
