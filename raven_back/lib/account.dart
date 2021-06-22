@@ -57,12 +57,19 @@ class Account {
       for (var i = 0; i < exposures.length; i++) {
         leaf = node(c, exposure: exposures[i]);
         leaf.balance = await client.getBalance(scriptHash: leaf.scriptHash);
+        leaf.history = await client.getHistory(scriptHash: leaf.scriptHash);
         print(leaf.balance);
         if (leaf.balance['confirmed'] + leaf.balance['unconfirmed'] == 0) {
-          count = count + 1;
+          // would be better to modify code where this is used to accept empty list:
           leaf.utxos = [
             {'tx_hash': '', 'tx_pos': -1, 'height': -1, 'value': 0}
           ];
+          // we need to make sure it has no history... we might have no balance but have a history
+          if (leaf.history.isEmpty) {
+            count = count + 1;
+          } else {
+            count = 0;
+          }
         } else {
           count = 0;
           // this address has a balance, we should save it to our utxo set and subscribe to it's status changes...
@@ -102,6 +109,21 @@ class Account {
           _externals[i].balance['unconfirmed'];
     }
     return total;
+  }
+
+  _HDNode getNextChangeNode() {
+    /* returns the next internal address without a history */
+    if (_internals.isEmpty || _externals.isEmpty) {
+      print('error! please deriveNodes first.');
+    }
+    var c = 0;
+    for (var i = 0; i < _internals.length; i++) {
+      if (_internals[i].history.isEmpty) {
+        return _internals[i];
+      }
+      c = c + 1;
+    }
+    return node(c, exposure: NodeExposure.Internal);
   }
 
   List collectUTXOs(int amount, [List? except]) {
@@ -213,6 +235,7 @@ class _HDNode {
   int index;
   NodeExposure exposure;
   var balance;
+  var history;
   var utxos;
 
   _HDNode(this.params, this.wallet, this.index, this.exposure);

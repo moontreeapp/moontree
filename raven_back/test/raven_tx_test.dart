@@ -82,8 +82,14 @@ void main() {
     var txb = TransactionBuilder(network: account.params.network);
     var amount = 4000000;
     txb.setVersion(1);
-    txb.addOutput('mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7', amount);
-    txb = tx.addInputs(account, txb, amount);
+    print(txb.tx.virtualSize());
+    txb.addOutput(
+        'mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7', amount); // 34 bytes? 34 WU?
+    print(txb.tx.virtualSize());
+    amount = amount + 34; // anticipating a change output after...
+    var results = tx.addInputs(txb, account, amount);
+    txb =
+        tx.addChangeOutput(results.txb, account, results.total - results.fees);
     // make amount nearly an entire utxo check to see if by addInputs we include more utxos to cover the fees
   });
 }
