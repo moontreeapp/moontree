@@ -170,8 +170,10 @@ class Account {
     return allutxos;
   }
 
-  List collectUTXOs(int amount, List except) {
+  List collectUTXOs(int amount, [List? except]) {
     /*
+    tests reveal this isn't quite right - still investigating
+
     return a sublist of utxos containing at least 0, 1 or more elements:
     [] - insufficient funds
     [...] - the smallest number of inputs to satisfy the amount
@@ -180,7 +182,11 @@ class Account {
     var utxos = generateSortedUTXO(except);
     var ret = [];
     // Insufficient funds?
-    var total = utxos.reduce((a, b) => a + b);
+    //var total = utxos.reduce((a, b) => (a['value'] + b['value']).toInt());  //why no work?
+    var total = 0;
+    utxos.forEach((item) {
+      total = (total + item['value']).toInt();
+    });
     if (total >= amount) {
       return ret;
     }
@@ -196,7 +202,7 @@ class Account {
     // and lets see how many times we can do that
     var rest = amount;
     var subtotal = 0;
-    for (var i = utxos.length; i >= 0; i--) {
+    for (var i = utxos.length - 1; i >= 0; i--) {
       if (rest < utxos[i]['value']) {
         break;
       }
