@@ -79,17 +79,26 @@ void main() {
     /* notice this does not calculate an efficient fee or use a utxo set */
     var gen = await generate();
     var account = gen[1];
+    // moved ino the class
     var txb = TransactionBuilder(network: account.params.network);
     var amount = 4000000;
     txb.setVersion(1);
-    print(txb.tx.virtualSize());
     txb.addOutput(
         'mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7', amount); // 34 bytes? 34 WU?
-    print(txb.tx.virtualSize());
     amount = amount + 34; // anticipating a change output after...
     var results = tx.addInputs(txb, account, amount);
     txb =
         tx.addChangeOutput(results.txb, account, results.total - results.fees);
-    // make amount nearly an entire utxo check to see if by addInputs we include more utxos to cover the fees
+    txb = tx.signEachInput(txb, account, results.vins, results.utxos);
+    var hex = txb.build().toHex();
+    print(hex);
+    //// make amount nearly an entire utxo check to see if by addInputs we include more utxos to cover the fees
+    ///
+    var txhelper = tx.TransactionBuilderHelper(
+        account, 4000000, 'mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7');
+    //gets inputs, calculates fee, returns change, converts tx to hex
+    var newhex = txhelper.transactionHex();
+    print(newhex);
+    expect(hex, newhex);
   });
 }
