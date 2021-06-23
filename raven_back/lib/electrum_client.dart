@@ -55,15 +55,17 @@ class ScriptHashHistory with EquatableMixin {
   }
 }
 
-class ScriptHashUnspent extends ScriptHashHistory {
+class ScriptHashUnspent with EquatableMixin {
+  int height;
+  String txHash;
   int txPos;
   int value;
+
   ScriptHashUnspent(
-      {required height,
-      required txHash,
+      {required this.height,
+      required this.txHash,
       required this.txPos,
-      required this.value})
-      : super(height: height, txHash: txHash);
+      required this.value});
 
   @override
   List<Object> get props => [txHash, txPos, value, height];
