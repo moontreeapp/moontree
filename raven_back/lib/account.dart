@@ -191,91 +191,31 @@ class Account {
       }
     }
     // what combinations of utxo's must we return?
-    for (var i = 0; i < utxos.length; i++) {
-      //??
-    }
-
-    var ideal = {}; // smallest value larger than amount
-    for (var i = 0; i < _internals.length; i++) {
-      for (var j = 0; j < _internals[i].utxos.length; j++) {
-        if (_internals[i].utxos[j]['value'] > amount &&
-            (ideal.isEmpty ||
-                _internals[i].utxos[j]['value'] < ideal['value'])) {
-          if (!except.contains(_internals[i].utxos[j])) {
-            ideal = _internals[i].utxos[j];
-            ideal['exposure'] = NodeExposure.Internal;
-            ideal['node index'] = i;
-          }
-        }
-      }
-    }
-    for (var i = 0; i < _externals.length; i++) {
-      for (var j = 0; j < _externals[i].utxos.length; j++) {
-        if (_externals[i].utxos[j]['value'] > amount &&
-            (ideal.isEmpty ||
-                _externals[i].utxos[j]['value'] < ideal['value'])) {
-          if (!except.contains(_externals[i].utxos[j])) {
-            ideal = _externals[i].utxos[j];
-            ideal['exposure'] = NodeExposure.External;
-            ideal['node index'] = i;
-          }
-        }
-      }
-    }
-    if (ideal.isNotEmpty) {
-      return [ideal];
-    }
-    // we looked for the best singular utxo and didn't find it... returning a list of them.
-    // consume largest first? or oldest first? or in order? in order for now.
-    //var largestInternals = _internals.map((item) {
-    //  return item.utxos;
-    //}).toList();
-    //largestInternals.sort(...)
-    var utxos = [];
-    var total = 0.0;
-    for (var i = 0; i < _internals.length; i++) {
-      if (total > amount) {
+    // lets start by grabbing the largest one
+    // because we know we can consume it all without producing change...
+    // and lets see how many times we can do that
+    var rest = amount;
+    var subtotal = 0;
+    for (var i = utxos.length; i >= 0; i--) {
+      if (rest < utxos[i]['value']) {
         break;
       }
-      for (var j = 0; j < _internals[i].utxos.length; j++) {
-        if (_internals[i].utxos[j]['value'] > 0) {
-          if (!except.contains(_internals[i].utxos[j])) {
-            total = total + _internals[i].utxos[j]['value'];
-            ideal = _internals[i].utxos[j];
-            ideal['exposure'] = NodeExposure.Internal;
-            ideal['node index'] = i;
-            utxos.add(ideal);
-            if (total > amount) {
-              break;
+      subtotal = (subtotal + utxos[i]['value']).toInt();
+      ret.add(utxos[i]);
+      rest = (rest - utxos[i]['value']).toInt();
+    }
+    while (rest > 0) {
+      if (rest < total) {
+        for (var i = 0; i < utxos.length; i++) {
+          if (!ret.contains(utxos[i])) {
+            if (utxos[i]['value'] >= rest) {
+              ret.add(utxos[i]);
             }
           }
         }
       }
     }
-    for (var i = 0; i < _externals.length; i++) {
-      if (total > amount) {
-        break;
-      }
-      for (var j = 0; j < _externals[i].utxos.length; j++) {
-        if (_externals[i].utxos[j]['value'] > 0) {
-          if (!except.contains(_externals[i].utxos[j])) {
-            total = total + _externals[i].utxos[j]['value'];
-            ideal = _externals[i].utxos[j];
-            ideal['exposure'] = NodeExposure.External;
-            ideal['node index'] = i;
-            utxos.add(ideal);
-            if (total > amount) {
-              break;
-            }
-          }
-        }
-      }
-    }
-    if (total >= amount) {
-      return utxos;
-    }
-    // error? insufficient funds?
-    return [];
+    return ret;
   }
 }
 
