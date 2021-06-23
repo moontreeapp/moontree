@@ -76,10 +76,9 @@ class ElectrumClient {
   Future<List<dynamic>> getHistory({scriptHash}) async {
     List<dynamic> response = await _client
         ?.sendRequest('blockchain.scripthash.get_history', [scriptHash]);
-    return response; //List<Map<String, dynamic>> List(...map((key, value) => MapEntry(key, value)));
+    return response;
   }
 
-  //Future<List<Map<String, dynamic>>> getUTXOs({scriptHash}) async {  // fix with Duane
   Future<List<dynamic>> getUTXOs({scriptHash}) async {
     /* return example: [{ "tx_pos": 0, "value": 45318048, "tx_hash": "9...f", "height": 437146},] */
     var response = await _client

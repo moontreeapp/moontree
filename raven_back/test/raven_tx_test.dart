@@ -57,8 +57,10 @@ void main() {
     txb.addInput(
         '56fcc747b8067133a3dc8907565fa1b31e452c98b3f200687cb836f98c3c46ae',
         1); // previous transaction output, has 5000000 satoshis
+    print(txb.tx.virtualSize());
     txb.addOutput('mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7',
         4000000); // (in)5000000 - (out)4000000 = (fee)1000000, this is the miner fee
+    print(txb.tx.virtualSize());
     txb.sign(vin: 0, keyPair: node.keyPair);
     var transaction = txb.build().toHex();
     expect(transaction,
@@ -81,7 +83,6 @@ void main() {
     var account = gen[1];
     var txhelper = tx.TransactionBuilderHelper(
         account, 4000000, 'mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7');
-    //gets inputs, calculates fee, returns change
     var txb = txhelper.buildTransaction();
     // make amount nearly an entire utxo check to see if by addInputs we include more utxos to cover the fees
   });

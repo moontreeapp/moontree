@@ -11,7 +11,6 @@ Future<List> generate() async {
   var account = Account(ravencoinTestnet, seed: bip39.mnemonicToSeed(phrase));
   var client = ElectrumClient();
   await client.connect(host: 'testnet.rvn.rocks', port: 50002);
-  print('deriving Nodes');
   await account.deriveNodes(client);
   return [phrase, account, client];
 }
@@ -23,11 +22,9 @@ void main() async {
     var account = Account(ravencoinTestnet, seed: seed);
     var client = ElectrumClient();
     await client.connect(host: 'testnet.rvn.rocks', port: 50002);
-    print('deriving Nodes');
     var success = await account.deriveNodes(client);
     expect(success, true);
     expect((account.getInternals().isEmpty), false);
-    print('getting Balance');
     var balance = account.getBalance();
     if (phrase.startsWith('smile')) {
       expect(balance, 0.0);

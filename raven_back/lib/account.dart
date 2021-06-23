@@ -9,6 +9,11 @@ import 'package:raven/electrum_client.dart';
 
 export 'raven_networks.dart';
 
+class CacheEmpty implements Exception {
+  String cause;
+  CacheEmpty([this.cause = 'error! please deriveNodes first.']);
+}
+
 class Account {
   final NetworkParams params;
   final HDWallet _wallet;
@@ -58,13 +63,11 @@ class Account {
         leaf = node(c, exposure: exposures[i]);
         leaf.balance = await client.getBalance(scriptHash: leaf.scriptHash);
         leaf.history = await client.getHistory(scriptHash: leaf.scriptHash);
-        print(leaf.balance);
         if (leaf.balance['confirmed'] + leaf.balance['unconfirmed'] == 0) {
           // would be better to modify code where this is used to accept empty list:
           leaf.utxos = [
             {'tx_hash': '', 'tx_pos': -1, 'height': -1, 'value': 0}
           ];
-          // we need to make sure it has no history... we might have no balance but have a history
           if (leaf.history.isEmpty) {
             count = count + 1;
           } else {
@@ -75,10 +78,6 @@ class Account {
           // this address has a balance, we should save it to our utxo set and subscribe to it's status changes...
           // var this.subscription_channel.append... = await client.subscribeTo(scriptHash: leaf.scriptHash);
           leaf.utxos = await client.getUTXOs(scriptHash: leaf.scriptHash);
-          print(leaf.utxos);
-          // btw we're going to have to call getUTXOs again when creating transactions - so why save it here?
-          // I think because we're going to want to query UTXOs quickly to get like all the small ones or stuff...
-          // this is all to save on bandwidth to the electrum client because that will be the biggest problem for user experience...
         }
         if (exposures[i] == NodeExposure.Internal) {
           _internals.add(leaf);
@@ -91,12 +90,14 @@ class Account {
     return true;
   }
 
-  //Future<double> getBalance(ElectrumClient client) async {
-  double getBalance() {
+  void checkCacheEmpty() {
     if (_internals.isEmpty || _externals.isEmpty) {
-      print('error! please deriveNodes first.');
-      //await deriveNodes(client);
+      throw CacheEmpty();
     }
+  }
+
+  double getBalance() {
+    checkCacheEmpty();
     var total = 0.0;
     for (var i = 0; i < _internals.length; i++) {
       total = total +
@@ -112,10 +113,8 @@ class Account {
   }
 
   _HDNode getNextChangeNode() {
-    /* returns the next internal address without a history */
-    if (_internals.isEmpty || _externals.isEmpty) {
-      print('error! please deriveNodes first.');
-    }
+    /* returns the next internal node without a history */
+    checkCacheEmpty();
     var c = 0;
     for (var i = 0; i < _internals.length; i++) {
       if (_internals[i].history.isEmpty) {
@@ -132,9 +131,7 @@ class Account {
     could use a code clean up, would be cleaner to sort the list by size
     then send back a portion of the list...
     */
-    if (_internals.isEmpty || _externals.isEmpty) {
-      print('error! please deriveNodes first.');
-    }
+    checkCacheEmpty();
     except = except ?? [];
     var ideal = {}; // smallest value larger than amount
     for (var i = 0; i < _internals.length; i++) {
@@ -234,11 +231,12 @@ class _HDNode {
   HDWallet wallet;
   int index;
   NodeExposure exposure;
-  var balance;
-  var history;
-  var utxos;
+  Map? balance;
+  List? history;
+  List? utxos;
 
-  _HDNode(this.params, this.wallet, this.index, this.exposure);
+  _HDNode(this.params, this.wallet, this.index, this.exposure,
+      [this.balance, this.history, this.utxos]);
 
   Uint8List get outputScript {
     return Address.addressToOutputScript(wallet.address, params.network);
