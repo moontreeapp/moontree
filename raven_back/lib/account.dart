@@ -28,8 +28,8 @@ class Account {
   List<_HDNode> _intnerals = [];
   List<_HDNode> _externals = [];
   */
-  final _internals = [];
-  final _externals = [];
+  final List<_HDNode> _internals = [];
+  final List<_HDNode> _externals = [];
 
   Account(this.params, {required this.seed})
       : _wallet = HDWallet.fromSeed(seed, network: params.network);
@@ -57,18 +57,18 @@ class Account {
     var c = 0;
     var count = 0;
     var exposures = [NodeExposure.Internal, NodeExposure.External];
-    var leaf;
+    _HDNode leaf;
     while (count < gap) {
       for (var i = 0; i < exposures.length; i++) {
         leaf = node(c, exposure: exposures[i]);
         leaf.balance = await client.getBalance(scriptHash: leaf.scriptHash);
         leaf.history = await client.getHistory(scriptHash: leaf.scriptHash);
-        if (leaf.balance['confirmed'] + leaf.balance['unconfirmed'] == 0) {
+        if (leaf.balance!.value == 0) {
           // would be better to modify code where this is used to accept empty list:
           leaf.utxos = [
             {'tx_hash': '', 'tx_pos': -1, 'height': -1, 'value': 0}
           ];
-          if (leaf.history.isEmpty) {
+          if (leaf.history!.isEmpty) {
             count = count + 1;
           } else {
             count = 0;
@@ -100,14 +100,10 @@ class Account {
     checkCacheEmpty();
     var total = 0.0;
     for (var i = 0; i < _internals.length; i++) {
-      total = total +
-          _internals[i].balance['confirmed'] +
-          _internals[i].balance['unconfirmed'];
+      total = total + _internals[i].balance!.value;
     }
     for (var i = 0; i < _externals.length; i++) {
-      total = total +
-          _externals[i].balance['confirmed'] +
-          _externals[i].balance['unconfirmed'];
+      total = total + _externals[i].balance!.value;
     }
     return total;
   }
@@ -117,7 +113,7 @@ class Account {
     checkCacheEmpty();
     var c = 0;
     for (var i = 0; i < _internals.length; i++) {
-      if (_internals[i].history.isEmpty) {
+      if (_internals[i].history!.isEmpty) {
         return _internals[i];
       }
       c = c + 1;
@@ -147,9 +143,9 @@ class Account {
     var c = 0;
     var allutxos = [];
     for (var i = 0; i < _internals.length; i++) {
-      for (var j = 0; j < _internals[i].utxos.length; j++) {
-        if (!except.contains(_externals[i].utxos[j])) {
-          allutxos.add(_internals[i].utxos[j]);
+      for (var j = 0; j < _internals[i].utxos!.length; j++) {
+        if (!except.contains(_externals[i].utxos![j])) {
+          allutxos.add(_internals[i].utxos![j]);
           allutxos[c]['node'] = i;
           allutxos[c]['exposure'] = NodeExposure.Internal;
           c = c + 1;
@@ -157,9 +153,9 @@ class Account {
       }
     }
     for (var i = 0; i < _externals.length; i++) {
-      for (var j = 0; j < _externals[i].utxos.length; j++) {
-        if (!except.contains(_externals[i].utxos[j])) {
-          allutxos.add(_externals[i].utxos[j]);
+      for (var j = 0; j < _externals[i].utxos!.length; j++) {
+        if (!except.contains(_externals[i].utxos![j])) {
+          allutxos.add(_externals[i].utxos![j]);
           allutxos[c]['node'] = i;
           allutxos[c]['exposure'] = NodeExposure.External;
           c = c + 1;
@@ -239,7 +235,7 @@ class _HDNode {
   HDWallet wallet;
   int index;
   NodeExposure exposure;
-  Map? balance;
+  ScriptHashBalance? balance;
   List? history;
   List? utxos;
 
