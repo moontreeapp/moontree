@@ -170,7 +170,7 @@ class Account {
     return allutxos;
   }
 
-  List collectUTXOs(int amount, [List? except]) {
+  List collectUTXOs(int amount, List except) {
     /*
     return a sublist of utxos containing at least 0, 1 or more elements:
     [] - insufficient funds
@@ -231,21 +231,21 @@ class Account {
     //  return item.utxos;
     //}).toList();
     //largestInternals.sort(...)
-    var utxos = [];
-    var total = 0.0;
+    var utxos2 = [];
+    var total2 = 0.0;
     for (var i = 0; i < _internals.length; i++) {
-      if (total > amount) {
+      if (total2 > amount) {
         break;
       }
-      for (var j = 0; j < _internals[i].utxos.length; j++) {
-        if (_internals[i].utxos[j]['value'] > 0) {
-          if (!except.contains(_internals[i].utxos[j])) {
-            total = total + _internals[i].utxos[j]['value'];
-            ideal = _internals[i].utxos[j];
+      for (var j = 0; j < _internals[i].utxos2.length; j++) {
+        if (_internals[i].utxos2[j]['value'] > 0) {
+          if (!except.contains(_internals[i].utxos2[j])) {
+            total2 = total2 + _internals[i].utxos2[j]['value'];
+            ideal = _internals[i].utxos2[j];
             ideal['exposure'] = NodeExposure.Internal;
             ideal['node index'] = i;
-            utxos.add(ideal);
-            if (total > amount) {
+            utxos2.add(ideal);
+            if (total2 > amount) {
               break;
             }
           }
@@ -253,26 +253,26 @@ class Account {
       }
     }
     for (var i = 0; i < _externals.length; i++) {
-      if (total > amount) {
+      if (total2 > amount) {
         break;
       }
-      for (var j = 0; j < _externals[i].utxos.length; j++) {
-        if (_externals[i].utxos[j]['value'] > 0) {
-          if (!except.contains(_externals[i].utxos[j])) {
-            total = total + _externals[i].utxos[j]['value'];
-            ideal = _externals[i].utxos[j];
+      for (var j = 0; j < _externals[i].utxos2.length; j++) {
+        if (_externals[i].utxos2[j]['value'] > 0) {
+          if (!except.contains(_externals[i].utxos2[j])) {
+            total2 = total2 + _externals[i].utxos2[j]['value'];
+            ideal = _externals[i].utxos2[j];
             ideal['exposure'] = NodeExposure.External;
             ideal['node index'] = i;
-            utxos.add(ideal);
-            if (total > amount) {
+            utxos2.add(ideal);
+            if (total2 > amount) {
               break;
             }
           }
         }
       }
     }
-    if (total >= amount) {
-      return utxos;
+    if (total2 >= amount) {
+      return utxos2;
     }
     // error? insufficient funds?
     return [];
