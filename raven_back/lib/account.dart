@@ -125,14 +125,76 @@ class Account {
     return node(c, exposure: NodeExposure.Internal);
   }
 
+  List generateSortedUTXO([List? except]) {
+    /*
+    _internal and _external contain nodes
+    each node has a utxo list, for example:    
+    node3.utxo = [{tx_hash: 8...3, tx_pos: 1, height: 765913, value: 5000087912000}]
+    
+    this function: 
+    1. extracts all those lists and combines them,
+    2. appends more data to them about node index and exposure,
+    3. and sorts them smallest to largest:
+    -->
+    [
+      {tx_hash: , tx_pos: -1, height: -1, value: 0, node: 0, exposure: NodeExposure.Internal},
+      {tx_hash: 2...5, tx_pos: 0, height: 769767, value: 4000000, node: 0, exposure: NodeExposure.External},
+      {tx_hash: 8...3, tx_pos: 1, height: 765913, value: 5000087912000, node: 3, exposure: NodeExposure.Internal},
+      ...
+    ]
+    */
+    except = except ?? [];
+    var c = 0;
+    var allutxos = [];
+    for (var i = 0; i < _internals.length; i++) {
+      for (var j = 0; j < _internals[i].utxos.length; j++) {
+        if (!except.contains(_externals[i].utxos[j])) {
+          allutxos.add(_internals[i].utxos[j]);
+          allutxos[c]['node'] = i;
+          allutxos[c]['exposure'] = NodeExposure.Internal;
+          c = c + 1;
+        }
+      }
+    }
+    for (var i = 0; i < _externals.length; i++) {
+      for (var j = 0; j < _externals[i].utxos.length; j++) {
+        if (!except.contains(_externals[i].utxos[j])) {
+          allutxos.add(_externals[i].utxos[j]);
+          allutxos[c]['node'] = i;
+          allutxos[c]['exposure'] = NodeExposure.External;
+          c = c + 1;
+        }
+      }
+    }
+    allutxos.sort((a, b) => a['value'].compareTo(b['value']));
+    return allutxos;
+  }
+
   List collectUTXOs(int amount, [List? except]) {
     /*
-    returns a list of utxo maps that sum to at least amount - 
-    could use a code clean up, would be cleaner to sort the list by size
-    then send back a portion of the list...
+    return a sublist of utxos containing at least 0, 1 or more elements:
+    [] - insufficient funds
+    [...] - the smallest number of inputs to satisfy the amount
     */
     checkCacheEmpty();
-    except = except ?? [];
+    var utxos = generateSortedUTXO(except);
+    var ret = [];
+    // Insufficient funds?
+    var total = utxos.reduce((a, b) => a + b);
+    if (total >= amount) {
+      return ret;
+    }
+    // can we find an ideal singular utxo?
+    for (var i = 0; i < utxos.length; i++) {
+      if (utxos[i]['value'] >= amount) {
+        return [utxos[i]];
+      }
+    }
+    // what combinations of utxo's must we return?
+    for (var i = 0; i < utxos.length; i++) {
+      //??
+    }
+
     var ideal = {}; // smallest value larger than amount
     for (var i = 0; i < _internals.length; i++) {
       for (var j = 0; j < _internals[i].utxos.length; j++) {
