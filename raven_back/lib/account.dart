@@ -170,7 +170,7 @@ class Account {
     return allutxos;
   }
 
-  List collectUTXOs(int amount, [List? except]) {
+  List collectUTXOs(int amount, List except) {
     /*
     return a sublist of utxos containing at least 0, 1 or more elements:
     [] - insufficient funds
