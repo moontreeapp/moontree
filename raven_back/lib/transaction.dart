@@ -1,11 +1,12 @@
 import 'package:bitcoin_flutter/bitcoin_flutter.dart';
+import 'package:raven/account.dart';
 import 'package:raven/fee.dart' as fee;
 
 class FormatResult {
   TransactionBuilder txb;
   int total;
   int fees;
-  List utxos;
+  List<UTXO> utxos;
   FormatResult(this.txb, this.total, this.fees, this.utxos);
 }
 
@@ -48,12 +49,12 @@ class TransactionBuilderHelper {
       which is one utxo (10), so your cost is now really 3+1 and your input is 10. your done.
     */
     var total = 0;
-    var retutxos = [];
+    var retutxos = <UTXO>[];
     var pastInputs = [];
     var knownFees = fee.totalFeeByBytes(txb);
     var anticipatedInputFeeRate = 51;
     var anticipatedInputFees = 0;
-    var utxos = [];
+    var utxos = <UTXO>[];
     // find optimal utxo set by anticipating fees depending on chosen inputs and get inputs to cover total
     while (!pastInputs.contains(utxos)) {
       anticipatedInputFees =
@@ -69,8 +70,8 @@ class TransactionBuilderHelper {
     }
     // add it to the transaction
     for (var utxo in utxos) {
-      txb.addInput(utxo['tx_hash'], utxo['tx_pos']);
-      total = (total + utxo['value']).toInt();
+      txb.addInput(utxo.unspent.txHash, utxo.unspent.txPos);
+      total = (total + utxo.unspent.value).toInt();
       retutxos.add(utxo);
     }
     // doublecheck we have enough value to cover the amount + anticipated OutputFee + knownFees
@@ -82,8 +83,8 @@ class TransactionBuilderHelper {
           amount: knownCost - total,
           except: retutxos); // avoid adding inputs you've already added
       for (var utxo in utxosForExtra) {
-        txb.addInput(utxo['tx_hash'], utxo['tx_pos']);
-        total = (total + utxo['value']).toInt();
+        txb.addInput(utxo.unspent.txHash, utxo.unspent.txPos);
+        total = (total + utxo.unspent.value).toInt();
         retutxos.add(utxo); // used later, we have to sign after change output
       }
       knownFees = fee.totalFeeByBytes(txb);
@@ -102,7 +103,7 @@ class TransactionBuilderHelper {
       txb.sign(
           vin: i,
           keyPair: fromAccount
-              .node(utxos[i]['node'], exposure: utxos[i]['exposure'])
+              .node(utxos[i].nodeIndex, exposure: utxos[i].exposure)
               .keyPair);
     }
     return txb;
