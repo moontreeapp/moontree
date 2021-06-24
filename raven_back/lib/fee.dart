@@ -1,22 +1,22 @@
 /* calculates fees for transactions of various types */
 
+/// standard fee is 1000 sat per 1kb so .9765625 sat per virtual byte
 double standardRate() {
-  // query electrum server or something? get the current fee rate per byte
-  return 1.0;
+  return 0.9765625;
 }
 
+/// not necessary yet
 double fastRate() {
-  // query electrum server or something? get the current fee rate per byte
   return standardRate() * 1.1;
 }
 
+/// not necessary yet
 double cheapRate() {
-  // query electrum server or something? get the current fee rate per byte
   return standardRate() * 0.9;
 }
 
+/// not necessary yet
 double customRate() {
-  // retrieve user defined rate
   return 1.0;
 }
 

@@ -41,7 +41,7 @@ class TransactionBuilderHelper {
       you wish to send 2 to someone.
       no problem, select your 3 utxo, your send + fees is 2 + 1 = 3 you're done.
       instead imagine you wish to send 3 to someone.
-      you select your 3 utxo and realize that will cover the spend,
+      you select your 3 utxo and that will cover the spend,
       but you must also cover the fee for that input (1),
       so select 1, but now you must cover the fee for that input as well. 
       your cost is 3+1+1 = 5, but you have selected a total of 4.
