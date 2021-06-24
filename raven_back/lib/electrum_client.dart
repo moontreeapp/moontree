@@ -17,6 +17,25 @@ bool acceptUnverified(X509Certificate certificate) {
   return true;
 }
 
+class Subscribable {
+  String method;
+  Subscribable(this.method);
+
+  String get sub => method + '.subscribe';
+  String get unsub => method + '.unsubscribe';
+}
+
+final subscribableList = [
+  Subscribable('blockchain.headers'),
+  Subscribable('blockchain.scripthash'),
+  Subscribable('blockchain.asset'),
+  Subscribable('server.peers'),
+  Subscribable('masternode')
+];
+
+final subscribables =
+    Map.fromIterable(subscribableList, key: (el) => el.method);
+
 const connectionTimeout = Duration(seconds: 5);
 const aliveTimerDuration = Duration(seconds: 2);
 
@@ -77,7 +96,22 @@ class ScriptHashUnspent with EquatableMixin {
 }
 
 class ElectrumClient {
-  rpc.Client? _client;
+  /// We use a Peer here (which implements both Server and Client sides of a
+  /// Remote Procedure Call (RPC) interface) to communicate with an ElectrumX
+  /// Ravencoin server. We need:
+  ///
+  /// - the Client side for the basic ability to call a 'procedure' (e.g.
+  ///   'blockchain.scripthash.get_balance') on the remote server;
+  ///
+  /// - the Server side so that when we subscribe to an ongoing stream of
+  ///   updates. The remote server can notify us of an update by calling our
+  ///   registered 'procedures'.
+  ///
+  /// Note that notifications from the server use procedure names that match
+  /// the initiating subscribe call--for example, we can start a subscription
+  /// by calling 'blockchain.scripthash.subscribe', and the server will
+  /// subsequently make calls to our 'blockchain.scripthash.subscribe' proc.
+  rpc.Peer? _peer;
 
   ElectrumClient();
 
@@ -90,19 +124,30 @@ class ElectrumClient {
     var channelJson = jsonNewlineDocument
         .bind(channelUtf8)
         .transformStream(utils.ignoreFormatExceptions);
-    _client = rpc.Client.withoutJson(channelJson);
-    unawaited(_client!.listen());
+    _peer = rpc.Peer.withoutJson(channelJson);
+    registerSubscribableProcedures();
+    unawaited(_peer!.listen());
     if (protocolVersion != null) {
       await serverVersion(protocolVersion: protocolVersion);
     }
   }
 
-  Future<dynamic>? close() {
-    return _client?.close();
+  void registerSubscribableProcedures() {
+    rpc.Server server = _peer!;
+
+    subscribableList.forEach((element) {
+      server.registerMethod(element.sub, (rpc.Parameters params) {
+        print('${element.sub}: $params');
+      });
+    });
+  }
+
+  Future<void> close() async {
+    return _peer?.close();
   }
 
   Future request(String method, [parameters]) async {
-    return await _client?.sendRequest(method, parameters);
+    return await _peer?.sendRequest(method, parameters);
   }
 
   Future<ServerVersion> serverVersion(
@@ -140,12 +185,23 @@ class ElectrumClient {
         value: res['value']))).toList();
   }
 
-  Future<dynamic> subscribeTo({scriptHash}) async {
-    /* I'm not sure I understand how subscriptions work -
-    do they require a wss connection to be effective?
-    they're pushing data to us, are they not? */
-    var response = await _client
-        ?.sendRequest('blockchain.scripthash.subscribe', [scriptHash]);
-    return response;
+  Future<String?> subscribeStatus({scriptHash, subscribe = true}) async {
+    var proc = 'blockchain.scripthash.${subscribe ? '' : 'un'}subscribe';
+    return await request(proc, [scriptHash]);
+  }
+
+  Future<String?> subscribeAsset({assetName, subscribe = true}) async {
+    var proc = 'blockchain.asset.${subscribe ? '' : 'un'}subscribe';
+    return await request(proc, [assetName]);
+  }
+
+  Future<String?> subscribeHeaders({subscribe = true}) async {
+    var proc = 'blockchain.headers.${subscribe ? '' : 'un'}subscribe';
+    return await request(proc);
+  }
+
+  Future<String?> subscribeHeaders({subscribe = true}) async {
+    var proc = 'blockchain.asset.${subscribe ? '' : 'un'}subscribe';
+    return await request(proc);
   }
 }
