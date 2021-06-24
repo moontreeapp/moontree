@@ -130,7 +130,7 @@ class Account {
     /*
     _internal and _external contain nodes
     each node has a utxo list, for example:    
-    node3.utxo = [{tx_hash: 8...3, tx_pos: 1, height: 765913, value: 5000087912000}]
+    _internal[3].utxos = [{tx_hash: 8...3, tx_pos: 1, height: 765913, value: 5000087912000}]
     
     this function: 
     1. extracts all those lists and combines them,
