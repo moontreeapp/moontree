@@ -16,14 +16,11 @@ Future<List> generate() async {
 }
 
 void main() async {
-  test('deriveNodes then getBalance', () async {
-    var phrase = await env.getMnemonic();
-    var seed = bip39.mnemonicToSeed(phrase);
-    var account = Account(ravencoinTestnet, seed: seed);
-    var client = ElectrumClient();
-    await client.connect(host: 'testnet.rvn.rocks', port: 50002);
-    var success = await account.deriveNodes(client);
-    expect(success, true);
+  var gen = await generate();
+
+  test('getBalance', () async {
+    var phrase = gen[0];
+    var account = gen[1];
     expect((account.getInternals().isEmpty), false);
     var balance = account.getBalance();
     if (phrase.startsWith('smile')) {
@@ -33,34 +30,34 @@ void main() async {
     }
   });
 
-  var gen = await generate();
-  test('collectUTXOs small', () async {
+  test('collectUTXOs for amount smaller than smallest UTXO', () {
     var account = gen[1];
-    print('collecting UTXOs');
     var utxos = account.collectUTXOs(100);
     expect(utxos.length, 1);
     expect(utxos[0]['value'], 4000000);
   });
 
-  test('collectUTXOs medium', () async {
+  test('collectUTXOs for amount just smaller than largest UTXO', () {
     var account = gen[1];
-    print('collecting UTXOs');
     var utxos = account.collectUTXOs(5000087912000 - 1);
     expect(utxos.length, 1);
     expect(utxos[0]['value'], 5000087912000);
   });
 
-  test('collectUTXOs big', () async {
+  test('collectUTXOs for amount larger than largest UTXO', () {
     var account = gen[1];
-    print('collecting UTXOs');
     var utxos = account.collectUTXOs(5000087912000 + 1);
     expect(utxos.length, 2);
     expect(utxos[0]['value'] + utxos[1]['value'], 5000087912000 + 4000000);
   });
-  test('collectUTXOs jumbo', () async {
+
+  test('collectUTXOs for amount more than we have', () {
     var account = gen[1];
-    print('collecting UTXOs');
-    var utxos = account.collectUTXOs(5000087912000 * 2);
-    expect(utxos, []);
+    try {
+      var utxos = account.collectUTXOs(5000087912000 * 2);
+      expect(utxos, []);
+    } on InsufficientFunds {
+      print('Insufficient funds error caught');
+    }
   });
 }

@@ -11,7 +11,12 @@ export 'raven_networks.dart';
 
 class CacheEmpty implements Exception {
   String cause;
-  CacheEmpty([this.cause = 'error! please deriveNodes first.']);
+  CacheEmpty([this.cause = 'Error! Please deriveNodes first.']);
+}
+
+class InsufficientFunds implements Exception {
+  String cause;
+  InsufficientFunds([this.cause = 'Error! Insufficient funds.']);
 }
 
 class Account {
@@ -187,8 +192,9 @@ class Account {
     utxos.forEach((item) {
       total = (total + item['value']).toInt();
     });
-    if (total >= amount) {
-      return ret;
+    if (total < amount) {
+      throw InsufficientFunds();
+      //return ret;
     }
     // can we find an ideal singular utxo?
     for (var i = 0; i < utxos.length; i++) {
@@ -201,21 +207,21 @@ class Account {
     // because we know we can consume it all without producing change...
     // and lets see how many times we can do that
     var rest = amount;
-    var subtotal = 0;
     for (var i = utxos.length - 1; i >= 0; i--) {
       if (rest < utxos[i]['value']) {
         break;
       }
-      subtotal = (subtotal + utxos[i]['value']).toInt();
       ret.add(utxos[i]);
       rest = (rest - utxos[i]['value']).toInt();
     }
+    //infinite loop?
     while (rest > 0) {
       if (rest < total) {
         for (var i = 0; i < utxos.length; i++) {
           if (!ret.contains(utxos[i])) {
             if (utxos[i]['value'] >= rest) {
               ret.add(utxos[i]);
+              rest = (rest - utxos[i]['value']).toInt();
             }
           }
         }
