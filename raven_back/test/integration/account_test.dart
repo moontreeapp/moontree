@@ -56,8 +56,8 @@ void main() async {
     try {
       var utxos = account.collectUTXOs(5000087912000 * 2);
       expect(utxos, []);
-    } on InsufficientFunds {
-      print('Insufficient funds error caught');
+    } on InsufficientFunds catch (e) {
+      print(e);
     }
   });
 }
