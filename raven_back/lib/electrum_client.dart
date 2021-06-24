@@ -203,9 +203,4 @@ class ElectrumClient {
     var proc = 'blockchain.headers.${subscribe ? '' : 'un'}subscribe';
     return await request(proc);
   }
-
-  Future<String?> subscribeHeaders({subscribe = true}) async {
-    var proc = 'blockchain.asset.${subscribe ? '' : 'un'}subscribe';
-    return await request(proc);
-  }
 }
