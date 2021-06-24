@@ -86,6 +86,10 @@ class ScriptHashUnspent with EquatableMixin {
       required this.txPos,
       required this.value});
 
+  factory ScriptHashUnspent.empty() {
+    return ScriptHashUnspent(height: -1, txHash: '', txPos: -1, value: 0);
+  }
+
   @override
   List<Object> get props => [txHash, txPos, value, height];
 
