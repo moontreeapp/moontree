@@ -1,29 +1,10 @@
 // dart --no-sound-null-safety test test/account_test.dart
 import 'package:test/test.dart';
-import 'package:bip39/bip39.dart' as bip39;
-import 'package:raven/env.dart' as env;
 import 'package:raven/account.dart';
-import 'package:raven/raven_networks.dart';
-import 'package:raven/electrum_client.dart';
-
-class Generated {
-  String phrase;
-  Account account;
-  ElectrumClient client;
-  Generated(this.phrase, this.account, this.client);
-}
-
-Future<Generated> generate() async {
-  var phrase = await env.getMnemonic();
-  var account = Account(ravencoinTestnet, seed: bip39.mnemonicToSeed(phrase));
-  var client = ElectrumClient();
-  await client.connect(host: 'testnet.rvn.rocks', port: 50002);
-  await account.deriveNodes(client);
-  return Generated(phrase, account, client);
-}
+import 'package:raven/test_artifacts.dart' as tests;
 
 void main() async {
-  var gen = await generate();
+  var gen = await tests.generate();
 
   test('getBalance', () async {
     expect((gen.account.internals.isEmpty), false);
@@ -59,7 +40,7 @@ void main() async {
       var utxos = gen.account.collectUTXOs(5000087912000 * 2);
       expect(utxos, []);
     } on InsufficientFunds catch (e) {
-      print(e);
+      //print(e);
     }
   });
 }

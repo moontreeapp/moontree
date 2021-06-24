@@ -14,13 +14,13 @@ class TransactionBuilderHelper {
   final fromAccount;
   int sendAmount;
   String toAddress;
-  int anticipatedOutputFee; // anticipating a change output after...
+  int anticipatedOutputFee;
 
   TransactionBuilderHelper(this.fromAccount, this.sendAmount, this.toAddress,
       [this.anticipatedOutputFee = 34]);
 
+  /// gets inputs, calculates fee, returns change
   TransactionBuilder buildTransaction() {
-    /* gets inputs, calculates fee, returns change */
     var txb = TransactionBuilder(network: fromAccount.params.network);
     txb.setVersion(1);
     txb.addOutput(toAddress, sendAmount);
@@ -28,26 +28,24 @@ class TransactionBuilderHelper {
     txb = addChangeOutput(results.txb,
         results.total - (sendAmount + anticipatedOutputFee) - results.fees);
     txb = signEachInput(txb, results.utxos);
-    return txb; //.build().toHex();
+    return txb;
   }
 
-  FormatResult addInputs(txb) {
-    /*
-    inputs and fees suffer from a recursive relationship:
-    this non-recursive function solves it nearly ideally and nearly efficiently.
-    example problem: 
-      you have 3 utxos valuing: [1, 3, 10]
-      imagine each inputs costs 1 (and imagine outputs are free)
-      you wish to send 2 to someone.
-      no problem, select your 3 utxo, your send + fees is 2 + 1 = 3 you're done.
-      instead imagine you wish to send 3 to someone.
-      you select your 3 utxo and that will cover the spend,
-      but you must also cover the fee for that input (1),
-      so select 1, but now you must cover the fee for that input as well. 
-      your cost is 3+1+1 = 5, but you have selected a total of 4.
-      To solve this we simply try to get the best utxo set for 5 instead:
-      which is one utxo (10), so your cost is now really 3+1 and your input is 10. your done.
-    */
+  /// inputs and fees suffer from a recursive relationship:
+  /// this non-recursive function solves it nearly ideally and nearly efficiently.
+  /// example problem:
+  ///   you have 3 utxos valuing: [1, 3, 10]
+  ///   imagine each inputs costs 1 (and imagine outputs are free)
+  ///   you wish to send 2 to someone.
+  ///   no problem, select your 3 utxo, your send + fees is 2 + 1 = 3 you're done.
+  ///   instead imagine you wish to send 3 to someone.
+  ///   you select your 3 utxo and that will cover the spend,
+  ///   but you must also cover the fee for that input (1),
+  ///   so select 1, but now you must cover the fee for that input as well.
+  ///   your cost is 3+1+1 = 5, but you have selected a total of 4.
+  ///   To solve this we simply try to get the best utxo set for 5 instead:
+  ///   which is one utxo (10), so your cost is now really 3+1 and your input is 10. your done.
+  FormatResult addInputs(TransactionBuilder txb) {
     var total = 0;
     var retutxos = <UTXO>[];
     var pastInputs = [];
@@ -93,12 +91,12 @@ class TransactionBuilderHelper {
     return FormatResult(txb, total, knownFees, retutxos);
   }
 
-  TransactionBuilder addChangeOutput(txb, change) {
+  TransactionBuilder addChangeOutput(TransactionBuilder txb, int change) {
     txb.addOutput(fromAccount.getNextChangeNode().wallet.address, change);
     return txb;
   }
 
-  TransactionBuilder signEachInput(txb, utxos) {
+  TransactionBuilder signEachInput(TransactionBuilder txb, List<UTXO> utxos) {
     for (var i = 0; i < utxos.length; i++) {
       txb.sign(
           vin: i,

@@ -41,22 +41,7 @@ class Account {
   final HDWallet _wallet;
   final Uint8List seed;
   final int gap;
-  /* must discuss with Duane:
-  why not generate all the nodes (addresses of the wallet) at once at the beginning? 
-  And when we do we can attach things to the node objects like utxos and confirmed balance etc.
-  we're already generating them when we call getBalance but then we throw them away.
-  we'll need to cal getBalance on the entire account first thing when people access the wallet in the UI...
-  So why not keep them as individual objects with attributes we care about rather than producing an indexed list of
-  attributes that corresponds to them?... this is optimization, but is it premature?
-  List<_HDNode> _intnerals = [];
-  List<_HDNode> _externals = [];
-  */
-
-  // final Map<NodeExposure, List<UTXO>> cache = {};
   final List<CachedNode> cache = [];
-
-  // final List<_HDNode> _internals = [];
-  // final List<_HDNode> _externals = [];
 
   Account(this.params, {required this.seed, this.gap = 20})
       : _wallet = HDWallet.fromSeed(seed, network: params.network);
@@ -81,11 +66,8 @@ class Account {
     return externals;
   }
 
+  /// fills cache from electrum server, to be called before anything else
   Future<bool> deriveNodes(ElectrumClient client) async {
-    /*
-    fills _internals and _externals lists with _HDNode objects and 
-    queries the client for information about each one, saves to node.
-    */
     _HDNode leaf;
     for (var exposure in NodeExposure.values) {
       var count = 0;
@@ -158,49 +140,42 @@ class Account {
     return utxos;
   }
 
+  /// returns the smallest number of inputs to satisfy the amount
   List<UTXO> collectUTXOs(int amount, [List<UTXO>? except]) {
-    /*
-    tests reveal this isn't quite right - still investigating
-
-    return a sublist of utxos containing at least 0, 1 or more elements:
-    [] - insufficient funds
-    [...] - the smallest number of inputs to satisfy the amount
-    */
     checkCacheEmpty();
     var utxos = generateSortedUTXO(except ?? []);
     var ret = <UTXO>[];
+
     // Insufficient funds?
-    //var total = utxos.reduce((a, b) => (a['value'] + b['value']).toInt());  //why no work?
     var availableFunds = 0;
     utxos.forEach((item) {
       availableFunds = (availableFunds + item.unspent.value).toInt();
     });
     if (availableFunds < amount) {
       throw InsufficientFunds();
-      //return ret;
     }
+
     // can we find an ideal singular utxo?
     for (var i = 0; i < utxos.length; i++) {
       if (utxos[i].unspent.value >= amount) {
         return [utxos[i]];
       }
     }
+
     // what combinations of utxo's must we return?
     // lets start by grabbing the largest one
     // because we know we can consume it all without producing change...
     // and lets see how many times we can do that
-    var remaining = amount;
+    var remainder = amount;
     for (var i = utxos.length - 1; i >= 0; i--) {
-      if (remaining < utxos[i].unspent.value) {
+      if (remainder < utxos[i].unspent.value) {
         break;
       }
       ret.add(utxos[i]);
-      remaining = (remaining - utxos[i].unspent.value).toInt();
+      remainder = (remainder - utxos[i].unspent.value).toInt();
     }
-
     // Find one last UTXO, starting from smallest, that satisfies the remainder
-    ret.add(utxos.firstWhere((utxo) => utxo.unspent.value >= remaining));
-
+    ret.add(utxos.firstWhere((utxo) => utxo.unspent.value >= remainder));
     return ret;
   }
 }

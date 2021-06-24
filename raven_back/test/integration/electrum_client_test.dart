@@ -49,7 +49,6 @@ void main() {
     await client.connect(host: 'testnet.rvn.rocks', port: 50002);
     var node = account.node(3, exposure: NodeExposure.Internal);
     var utxos = await client.getUTXOs(scriptHash: node.scriptHash);
-    // expect(utxos.length, 1);
     expect(utxos, [
       ScriptHashUnspent(
           txHash:
