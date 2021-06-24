@@ -33,16 +33,14 @@ void main() {
     var history = await client.getHistory(scriptHash: scriptHash);
     print(history);
     expect(history, [
-      {
-        'tx_hash':
-            '56fcc747b8067133a3dc8907565fa1b31e452c98b3f200687cb836f98c3c46ae',
-        'height': 747308
-      },
-      {
-        'tx_hash':
-            '2dada22848277e6a23b49c1e63d47b661f94819b2001e2789a5fd947b51907d5',
-        'height': 769767
-      }
+      ScriptHashHistory(
+          txHash:
+              '56fcc747b8067133a3dc8907565fa1b31e452c98b3f200687cb836f98c3c46ae',
+          height: 747308),
+      ScriptHashHistory(
+          txHash:
+              '2dada22848277e6a23b49c1e63d47b661f94819b2001e2789a5fd947b51907d5',
+          height: 769767)
     ]); // could fail if people send to this address...
   });
 

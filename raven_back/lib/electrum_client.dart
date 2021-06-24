@@ -5,6 +5,7 @@ https://electrumx-ravencoin.readthedocs.io/en/latest/protocol-methods.html
 import 'dart:io';
 import 'dart:convert' as convert;
 
+import 'package:equatable/equatable.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:json_rpc_2/json_rpc_2.dart' as rpc;
 import 'package:json_rpc_2/src/utils.dart' as utils;
@@ -23,6 +24,56 @@ class ServerVersion {
   String name;
   String protocol;
   ServerVersion(this.name, this.protocol);
+}
+
+class ScriptHashBalance {
+  int confirmed;
+  int unconfirmed;
+  ScriptHashBalance(this.confirmed, this.unconfirmed);
+
+  int get value {
+    return confirmed + unconfirmed;
+  }
+
+  @override
+  String toString() {
+    return 'ScriptHashBalance(confirmed: $confirmed, unconfirmed: $unconfirmed)';
+  }
+}
+
+class ScriptHashHistory with EquatableMixin {
+  int height;
+  String txHash;
+  ScriptHashHistory({required this.height, required this.txHash});
+
+  @override
+  List<Object> get props => [height, txHash];
+
+  @override
+  String toString() {
+    return 'ScriptHashHistory(txHash: $txHash, height: $height)';
+  }
+}
+
+class ScriptHashUnspent with EquatableMixin {
+  int height;
+  String txHash;
+  int txPos;
+  int value;
+
+  ScriptHashUnspent(
+      {required this.height,
+      required this.txHash,
+      required this.txPos,
+      required this.value});
+
+  @override
+  List<Object> get props => [txHash, txPos, value, height];
+
+  @override
+  String toString() {
+    return 'ScriptHashUnspent(txHash: $txHash, txPos: $txPos, value: $value, height: $height)';
+  }
 }
 
 class ElectrumClient {
@@ -50,40 +101,43 @@ class ElectrumClient {
     return _client?.close();
   }
 
-  Future<String> request(String method, [parameters]) async {
-    var response = await _client?.sendRequest(method, [parameters]);
-    return response.toString();
+  Future request(String method, [parameters]) async {
+    return await _client?.sendRequest(method, parameters);
   }
 
   Future<ServerVersion> serverVersion(
       {clientName = 'MTWallet', protocolVersion = '1.8'}) async {
-    var response = await _client
-        ?.sendRequest('server.version', [clientName, protocolVersion]);
+    var proc = 'server.version';
+    var response = await request(proc, [clientName, protocolVersion]);
     return ServerVersion(response[0], response[1]);
   }
 
   Future<Map<String, dynamic>> features() async {
-    var response = await _client?.sendRequest('server.features');
-    return response;
+    var proc = 'server.features';
+    return await request(proc);
   }
 
-  Future<Map<String, int>> getBalance({scriptHash}) async {
-    Map<String, dynamic> response = await _client
-        ?.sendRequest('blockchain.scripthash.get_balance', [scriptHash]);
-    return response.map((key, value) => MapEntry(key, value));
+  Future<ScriptHashBalance> getBalance({scriptHash}) async {
+    var proc = 'blockchain.scripthash.get_balance';
+    dynamic balance = await request(proc, [scriptHash]);
+    return ScriptHashBalance(balance['confirmed'], balance['unconfirmed']);
   }
 
-  Future<List<dynamic>> getHistory({scriptHash}) async {
-    List<dynamic> response = await _client
-        ?.sendRequest('blockchain.scripthash.get_history', [scriptHash]);
-    return response;
+  Future<List<ScriptHashHistory>> getHistory({scriptHash}) async {
+    var proc = 'blockchain.scripthash.get_history';
+    List<dynamic> history = await request(proc, [scriptHash]);
+    return (history.map((response) => ScriptHashHistory(
+        height: response['height'], txHash: response['tx_hash']))).toList();
   }
 
-  Future<List<dynamic>> getUTXOs({scriptHash}) async {
-    /* return example: [{ "tx_pos": 0, "value": 45318048, "tx_hash": "9...f", "height": 437146},] */
-    var response = await _client
-        ?.sendRequest('blockchain.scripthash.listunspent', [scriptHash]);
-    return response;
+  Future<List<ScriptHashUnspent>> getUTXOs({scriptHash}) async {
+    var proc = 'blockchain.scripthash.listunspent';
+    List<dynamic> unspent = await request(proc, [scriptHash]);
+    return (unspent.map((res) => ScriptHashUnspent(
+        height: res['height'],
+        txHash: res['tx_hash'],
+        txPos: res['tx_pos'],
+        value: res['value']))).toList();
   }
 
   Future<dynamic> subscribeTo({scriptHash}) async {

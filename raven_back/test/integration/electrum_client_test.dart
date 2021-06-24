@@ -18,9 +18,6 @@ void main() {
     var client = ElectrumClient();
     await client.connect(
         host: 'testnet.rvn.rocks', port: 50002, protocolVersion: null);
-    var version = await client.serverVersion(protocolVersion: '1.8');
-    expect(version.name, 'ElectrumX Ravencoin 1.8.1');
-    expect(version.protocol, '1.8');
     var features = await client.features();
     expect(features['genesis_hash'],
         '000000ecfc5e6324a079542221d00e10362bdc894d56500c414060eea8a3ad5a');
@@ -36,11 +33,11 @@ void main() {
     var node = account.node(3, exposure: NodeExposure.Internal);
     var balance = await client.getBalance(scriptHash: node.scriptHash);
     if (phrase.startsWith('smile')) {
-      expect(balance['confirmed'], 0);
-      expect(balance['unconfirmed'], 0);
+      expect(balance.confirmed, 0);
+      expect(balance.unconfirmed, 0);
     } else {
-      expect((balance['confirmed']! > 0), true);
-      expect(balance['unconfirmed'], 0);
+      expect((balance.confirmed > 0), true);
+      expect(balance.unconfirmed, 0);
     }
   });
 
@@ -52,14 +49,14 @@ void main() {
     await client.connect(host: 'testnet.rvn.rocks', port: 50002);
     var node = account.node(3, exposure: NodeExposure.Internal);
     var utxos = await client.getUTXOs(scriptHash: node.scriptHash);
+    // expect(utxos.length, 1);
     expect(utxos, [
-      {
-        'tx_hash':
-            '84ab4db04a5d32fc81025db3944e6534c4c201fcc93749da6d1e5ecf98355533',
-        'tx_pos': 1,
-        'height': 765913,
-        'value': 5000087912000
-      }
+      ScriptHashUnspent(
+          txHash:
+              '84ab4db04a5d32fc81025db3944e6534c4c201fcc93749da6d1e5ecf98355533',
+          txPos: 1,
+          height: 765913,
+          value: 5000087912000)
     ]);
   });
 
