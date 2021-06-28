@@ -1,10 +1,11 @@
 import 'dart:io';
+import 'package:raven/electrum_client/connect.dart';
 import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:raven/env.dart' as env;
 import 'package:raven/account.dart';
 import 'package:raven/raven_networks.dart';
-import 'package:raven/electrum_client.dart';
+import 'package:raven/electrum_client/electrum_client.dart';
 
 bool skipUnverified(X509Certificate certificate) {
   return true;
@@ -15,9 +16,8 @@ const aliveTimerDuration = Duration(seconds: 2);
 
 void main() {
   test('electrum client', () async {
-    var client = ElectrumClient();
-    await client.connect(
-        host: 'testnet.rvn.rocks', port: 50002, protocolVersion: null);
+    var client = ElectrumClient(await connect('testnet.rvn.rocks'));
+    await client.serverVersion(protocolVersion: '1.8');
     var features = await client.features();
     expect(features['genesis_hash'],
         '000000ecfc5e6324a079542221d00e10362bdc894d56500c414060eea8a3ad5a');
@@ -28,8 +28,8 @@ void main() {
     var phrase = await env.getMnemonic();
     var seed = bip39.mnemonicToSeed(phrase);
     var account = Account(ravencoinTestnet, seed: seed);
-    var client = ElectrumClient();
-    await client.connect(host: 'testnet.rvn.rocks', port: 50002);
+    var client = ElectrumClient(await connect('testnet.rvn.rocks'));
+    await client.serverVersion(protocolVersion: '1.8');
     var node = account.node(3, exposure: NodeExposure.Internal);
     var balance = await client.getBalance(scriptHash: node.scriptHash);
     if (phrase.startsWith('smile')) {
@@ -45,8 +45,8 @@ void main() {
     var phrase = await env.getMnemonic();
     var seed = bip39.mnemonicToSeed(phrase);
     var account = Account(ravencoinTestnet, seed: seed);
-    var client = ElectrumClient();
-    await client.connect(host: 'testnet.rvn.rocks', port: 50002);
+    var client = ElectrumClient(await connect('testnet.rvn.rocks'));
+    await client.serverVersion(protocolVersion: '1.8');
     var node = account.node(3, exposure: NodeExposure.Internal);
     var utxos = await client.getUTXOs(scriptHash: node.scriptHash);
     expect(utxos, [

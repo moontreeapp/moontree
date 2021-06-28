@@ -5,7 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 import 'package:raven/network_params.dart';
 import 'network_params.dart';
-import 'package:raven/electrum_client.dart';
+import 'package:raven/electrum_client/electrum_client.dart';
 
 export 'raven_networks.dart';
 

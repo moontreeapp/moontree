@@ -3,10 +3,10 @@
 import 'dart:typed_data';
 
 import 'package:bip39/bip39.dart' as bip39;
-import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 import 'package:raven/raven_networks.dart';
 import 'package:raven/account.dart';
-import 'package:raven/electrum_client.dart';
+import 'package:raven/electrum_client/electrum_client.dart';
+import 'package:raven/electrum_client/connect.dart';
 import 'package:raven/env.dart' as env;
 
 class Generated {
@@ -19,8 +19,7 @@ class Generated {
 Future<Generated> generate() async {
   var phrase = await env.getMnemonic();
   var account = Account(ravencoinTestnet, seed: bip39.mnemonicToSeed(phrase));
-  var client = ElectrumClient();
-  await client.connect(host: 'testnet.rvn.rocks', port: 50002);
+  var client = ElectrumClient(await connect('testnet.rvn.rocks'));
   await account.deriveNodes(client);
   return Generated(phrase, account, client);
 }

@@ -4,23 +4,35 @@ import 'dart:typed_data';
 
 import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
-import 'package:bitcoin_flutter/bitcoin_flutter.dart';
+
+import 'package:raven/env.dart' as env;
 import 'package:raven/raven_networks.dart';
 import 'package:raven/account.dart';
-import 'package:raven/electrum_client.dart';
+import 'package:raven/electrum_client/electrum_client.dart';
+import 'package:raven/electrum_client/connect.dart';
 import 'package:raven/transaction.dart' as tx;
 import 'package:raven/test_artifacts.dart' as tests;
 
 const connectionTimeout = Duration(seconds: 5);
 const aliveTimerDuration = Duration(seconds: 2);
 
+Future<List> generate() async {
+  var phrase = await env.getMnemonic();
+  var account = Account(ravencoinTestnet, seed: bip39.mnemonicToSeed(phrase));
+  var client = ElectrumClient(await connect('testnet.rvn.rocks'));
+  await client.serverVersion(protocolVersion: '1.8');
+  print('deriving Nodes');
+  await account.deriveNodes(client);
+  return [phrase, account, client];
+}
+
 void main() {
   test('getHistory', () async {
     var seed = bip39.mnemonicToSeed(
         'smile build brain topple moon scrap area aim budget enjoy polar erosion');
     var account = Account(ravencoinTestnet, seed: seed);
-    var client = ElectrumClient();
-    await client.connect(host: 'testnet.rvn.rocks');
+    var client = ElectrumClient(await connect('testnet.rvn.rocks'));
+    await client.serverVersion(protocolVersion: '1.8');
     var scriptHash =
         account.node(4, exposure: NodeExposure.Internal).scriptHash;
     var history = await client.getHistory(scriptHash: scriptHash);

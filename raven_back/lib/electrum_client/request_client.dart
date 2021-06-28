@@ -2,6 +2,7 @@
 https://electrumx-ravencoin.readthedocs.io/en/latest/protocol-methods.html
 */
 
+import 'dart:async';
 import 'dart:io';
 import 'dart:convert' as convert;
 
@@ -17,25 +18,6 @@ bool acceptUnverified(X509Certificate certificate) {
   return true;
 }
 
-class Subscribable {
-  String method;
-  Subscribable(this.method);
-
-  String get sub => method + '.subscribe';
-  String get unsub => method + '.unsubscribe';
-}
-
-final subscribableList = [
-  Subscribable('blockchain.headers'),
-  Subscribable('blockchain.scripthash'),
-  Subscribable('blockchain.asset'),
-  Subscribable('server.peers'),
-  Subscribable('masternode')
-];
-
-final subscribables =
-    Map.fromIterable(subscribableList, key: (el) => el.method);
-
 const connectionTimeout = Duration(seconds: 5);
 const aliveTimerDuration = Duration(seconds: 2);
 
@@ -43,6 +25,12 @@ class ServerVersion {
   String name;
   String protocol;
   ServerVersion(this.name, this.protocol);
+}
+
+class Header {
+  String hex;
+  int height;
+  Header(this.hex, this.height);
 }
 
 class ScriptHashBalance {
@@ -99,6 +87,41 @@ class ScriptHashUnspent with EquatableMixin {
   }
 }
 
+class ElectrumSubscription extends Stream {
+  final StreamController _controller = StreamController();
+  final String method;
+  final String paramsHash;
+  // final JsonRpc2Client client;
+
+  ElectrumSubscription(this.method, [this.paramsHash = '']);
+  // ElectrumSubscription(this.eventName, this.id, this.client);
+
+  String get requestId => '$method.$paramsHash';
+
+  void close() {
+    if (!_controller.isClosed) _controller.close();
+  }
+
+  @override
+  StreamSubscription listen(void Function(dynamic)? onData,
+      {Function? onError, void Function()? onDone, bool? cancelOnError}) {
+    return _controller.stream.listen(onData,
+        onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+  }
+
+  // Future unsubscribe() {
+  //   var c = Completer<Map>();
+  //   var requestId = client._uuid.v4();
+  //   client._requests[requestId] = c;
+  //   client._peer.sendNotification(
+  //       'unsubscribe', {'request_id': requestId, 'client_id': client.clientId, 'subscription_id': id});
+
+  //   return c.future.then((_) {
+  //     _close();
+  //   });
+  // }
+}
+
 class ElectrumClient {
   /// We use a Peer here (which implements both Server and Client sides of a
   /// Remote Procedure Call (RPC) interface) to communicate with an ElectrumX
@@ -117,6 +140,14 @@ class ElectrumClient {
   /// subsequently make calls to our 'blockchain.scripthash.subscribe' proc.
   rpc.Peer? _peer;
 
+  final Map<String, List<ElectrumSubscription>> _subscriptions = {};
+
+  Map<String, Function> get subscribables => {
+        'blockchain.headers': _subscribeHeaders,
+        'blockchain.scripthash': _subscribeScripthash,
+        'blockchain.asset': _subscribeAsset,
+      };
+
   ElectrumClient();
 
   Future connect({host, port = 50002, protocolVersion = '1.8'}) async {
@@ -129,20 +160,23 @@ class ElectrumClient {
         .bind(channelUtf8)
         .transformStream(utils.ignoreFormatExceptions);
     _peer = rpc.Peer.withoutJson(channelJson);
-    registerSubscribableProcedures();
+    registerSubscribables();
     unawaited(_peer!.listen());
     if (protocolVersion != null) {
       await serverVersion(protocolVersion: protocolVersion);
     }
   }
 
-  void registerSubscribableProcedures() {
+  /// Registers each of the callbacks used when subscribing to a method
+  void registerSubscribables() {
     rpc.Server server = _peer!;
 
-    subscribableList.forEach((element) {
-      server.registerMethod(element.sub, (rpc.Parameters params) {
-        print('${element.sub}: $params');
-      });
+    // This "fallback" handles all notifications from the ElectrumX server
+    server.registerFallback((rpc.Parameters params) {
+      var streams = _subscriptions[params.method] ?? [];
+      // for (var stream in streams) {
+      //   stream.
+      // }
     });
   }
 
@@ -152,6 +186,11 @@ class ElectrumClient {
 
   Future request(String method, [parameters]) async {
     return await _peer?.sendRequest(method, parameters);
+  }
+
+  Future subscribe(String method, bool done, [parameters]) async {
+    var proc = method + '.' + (done ? 'unsubscribe' : 'subscribe');
+    return await request(proc, parameters);
   }
 
   Future<ServerVersion> serverVersion(
@@ -189,18 +228,46 @@ class ElectrumClient {
         value: res['value']))).toList();
   }
 
-  Future<String?> subscribeStatus({scriptHash, subscribe = true}) async {
-    var proc = 'blockchain.scripthash.${subscribe ? '' : 'un'}subscribe';
-    return await request(proc, [scriptHash]);
+  // Subscribe 'blockchain.headers'
+
+  void addSubscription(ElectrumSubscription subscription) {
+    if (!_subscriptions.containsKey(subscription.requestId)) {
+      _subscriptions[subscription.requestId] = [];
+    }
+    _subscriptions[subscription.requestId]!.add(subscription);
   }
 
-  Future<String?> subscribeAsset({assetName, subscribe = true}) async {
-    var proc = 'blockchain.asset.${subscribe ? '' : 'un'}subscribe';
-    return await request(proc, [assetName]);
+  Future<ElectrumSubscription> subscribeHeaders({done = false}) async {
+    // var completer = Completer<>()
+    var subscription = ElectrumSubscription('blockchain.headers.subscribe');
+    addSubscription(subscription);
+    Map<String, dynamic> header = await subscribe('blockchain.headers', done);
+    var first = Header(header['hex'], header['height']);
+
+    return subscription;
   }
 
-  Future<String?> subscribeHeaders({subscribe = true}) async {
-    var proc = 'blockchain.headers.${subscribe ? '' : 'un'}subscribe';
-    return await request(proc);
+  void _subscribeHeaders(rpc.Parameters params) {
+    print('${params.method}: ${params.value}');
+  }
+
+  // Subscribe scripthash status
+
+  Future<String?> subscribeScripthash({scriptHash, done = false}) async {
+    return await subscribe('blockchain.scripthash', done, [scriptHash]);
+  }
+
+  void _subscribeScripthash(rpc.Parameters params) {
+    print('${params.method}: ${params.value}');
+  }
+
+  // Subscribe ravencoin asset
+
+  Future<String?> subscribeAsset({assetName, done = false}) async {
+    return await subscribe('blockchain.asset', done, [assetName]);
+  }
+
+  void _subscribeAsset(rpc.Parameters params) {
+    print('${params.method}: ${params.value}');
   }
 }
