@@ -1,5 +1,5 @@
 import 'package:raven/account.dart';
-import 'package:raven/electrum_client/electrum_client.dart';
+import 'package:raven/electrum_client.dart';
 import 'package:raven/electrum_client/connect.dart';
 import 'package:raven/raven_networks.dart';
 import 'package:bip39/bip39.dart' as bip39;

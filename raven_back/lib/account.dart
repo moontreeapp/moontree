@@ -5,7 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 import 'package:raven/network_params.dart';
 import 'network_params.dart';
-import 'package:raven/electrum_client/electrum_client.dart';
+import 'package:raven/electrum_client.dart';
 
 export 'raven_networks.dart';
 
@@ -87,7 +87,7 @@ class Account {
           count = 0;
           // this address has a balance, we should save it to our utxo set and subscribe to it's status changes...
           // var this.subscription_channel.append... = await client.subscribeTo(scriptHash: leaf.scriptHash);
-          unspent = await client.getUTXOs(scriptHash: leaf.scriptHash);
+          unspent = await client.getUnspent(scriptHash: leaf.scriptHash);
         }
         var cachedNode = CachedNode(leaf,
             balance: balance, history: history, unspent: unspent);

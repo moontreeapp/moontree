@@ -8,7 +8,7 @@ import 'package:bip39/bip39.dart' as bip39;
 import 'package:raven/env.dart' as env;
 import 'package:raven/raven_networks.dart';
 import 'package:raven/account.dart';
-import 'package:raven/electrum_client/electrum_client.dart';
+import 'package:raven/electrum_client.dart';
 import 'package:raven/electrum_client/connect.dart';
 import 'package:raven/transaction.dart' as tx;
 import 'package:raven/test_artifacts.dart' as tests;

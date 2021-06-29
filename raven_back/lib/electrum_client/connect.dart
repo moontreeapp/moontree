@@ -4,7 +4,7 @@ import 'dart:convert' as convert;
 import 'package:stream_channel/stream_channel.dart';
 import 'package:json_rpc_2/src/utils.dart' as utils;
 
-import 'json_newline_transformer.dart';
+import 'client/json_newline_transformer.dart';
 
 const connectionTimeout = Duration(seconds: 5);
 const aliveTimerDuration = Duration(seconds: 2);

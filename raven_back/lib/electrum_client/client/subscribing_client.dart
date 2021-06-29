@@ -5,7 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_rpc_2/json_rpc_2.dart' as rpc;
 
-import 'package:raven/electrum_client/base_client.dart';
+import 'package:raven/electrum_client/client/base_client.dart';
 
 typedef KeyRetriever = String Function(rpc.Parameters params);
 

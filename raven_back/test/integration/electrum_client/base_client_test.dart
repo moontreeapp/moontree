@@ -1,12 +1,12 @@
 import 'package:raven/electrum_client/connect.dart';
 import 'package:test/test.dart';
-import 'package:raven/electrum_client/base_client.dart';
+import 'package:raven/electrum_client/client/base_client.dart';
 
 void main() {
   group('BaseClient', () {
     test('connects', () async {
-      // var channel = await connect('testnet.rvn.rocks');
-      var channel = await connect('143.198.142.78');
+      var channel = await connect('testnet.rvn.rocks');
+      // var channel = await connect('143.198.142.78');
       var client = BaseClient(channel);
       var response = await client.request('server.features');
       expect(response['genesis_hash'],

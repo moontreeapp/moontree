@@ -1,11 +1,10 @@
 import 'dart:io';
-import 'package:raven/electrum_client/connect.dart';
 import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:raven/env.dart' as env;
 import 'package:raven/account.dart';
 import 'package:raven/raven_networks.dart';
-import 'package:raven/electrum_client/electrum_client.dart';
+import 'package:raven/electrum_client.dart';
 
 bool skipUnverified(X509Certificate certificate) {
   return true;
@@ -48,7 +47,7 @@ void main() {
     var client = ElectrumClient(await connect('testnet.rvn.rocks'));
     await client.serverVersion(protocolVersion: '1.8');
     var node = account.node(3, exposure: NodeExposure.Internal);
-    var utxos = await client.getUTXOs(scriptHash: node.scriptHash);
+    var utxos = await client.getUnspent(scriptHash: node.scriptHash);
     expect(utxos, [
       ScriptHashUnspent(
           txHash:

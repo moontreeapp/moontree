@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:raven/electrum_client/base_client.dart';
+import 'package:raven/electrum_client/client/base_client.dart';
 
 import './mock_electrum_server.dart';
 
