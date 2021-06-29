@@ -68,33 +68,43 @@ class Account {
 
   /// fills cache from electrum server, to be called before anything else
   Future<bool> deriveNodes(ElectrumClient client) async {
+    // ignore: todo
+    // if possible separate batching our batches concern from get data
     _HDNode leaf;
+    var batchSize = 10;
     for (var exposure in NodeExposure.values) {
-      var count = 0;
       var nodeIndex = 0;
-      while (count < gap) {
-        leaf = node(nodeIndex, exposure: exposure);
-        var balance = await client.getBalance(scriptHash: leaf.scriptHash);
-        var history = await client.getHistory(scriptHash: leaf.scriptHash);
-        var unspent = [ScriptHashUnspent.empty()];
-        if (balance.value == 0) {
-          if (history.isEmpty) {
-            count = count + 1;
-          } else {
-            count = 0;
-          }
-        } else {
-          count = 0;
-          // this address has a balance, we should save it to our utxo set and subscribe to it's status changes...
-          // var this.subscription_channel.append... = await client.subscribeTo(scriptHash: leaf.scriptHash);
-          unspent = await client.getUnspent(scriptHash: leaf.scriptHash);
+      var entireBatchEmpty = false;
+      while (!entireBatchEmpty) {
+        // ignore: omit_local_variable_types
+        List<String> batch = [];
+        var leaves = [];
+        for (var i = 0; i < batchSize; i++) {
+          leaf = node(nodeIndex, exposure: exposure);
+          nodeIndex = nodeIndex + 1;
+          batch.add(leaf.scriptHash);
+          leaves.add(leaf);
         }
-        var cachedNode = CachedNode(leaf,
-            balance: balance, history: history, unspent: unspent);
-        cache.add(cachedNode);
-        nodeIndex = nodeIndex + 1;
+        var balances = await client.getBalances(scriptHashes: batch);
+        var histories = await client.getHistories(scriptHashes: batch);
+        var unspents = await client.getUnspents(scriptHashes: batch);
+        // ignore: todo
+        // subscribe this this scripthash
+        entireBatchEmpty = true;
+        for (var i = 0; i < batch.length; i++) {
+          if (histories[i].isNotEmpty) entireBatchEmpty = false;
+          leaf = leaves[i];
+          var cachedNode = CachedNode(leaf,
+              balance: balances[i],
+              history: histories[i],
+              unspent: (unspents[i].isEmpty)
+                  ? [ScriptHashUnspent.empty()]
+                  : unspents[i]);
+          cache.add(cachedNode);
+        }
       }
     }
+    print(cache.length);
     return true;
   }
 

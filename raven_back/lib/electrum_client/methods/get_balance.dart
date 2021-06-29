@@ -21,4 +21,17 @@ extension GetBalanceMethod on ElectrumClient {
     dynamic balance = await request(proc, [scriptHash]);
     return ScriptHashBalance(balance['confirmed'], balance['unconfirmed']);
   }
+
+  /// returns balances in the same order as scripthashes passed in
+  Future<List<T>> getBalances<T>({required List<String> scriptHashes}) async {
+    var futures = <Future>[];
+    var results;
+    peer.withBatch(() {
+      for (var scriptHash in scriptHashes) {
+        futures.add(getBalance(scriptHash: scriptHash));
+      }
+    });
+    results = await Future.wait(futures);
+    return results;
+  }
 }

@@ -23,4 +23,17 @@ extension GetHistoryMethod on ElectrumClient {
     return (history.map((response) => ScriptHashHistory(
         height: response['height'], txHash: response['tx_hash']))).toList();
   }
+
+  /// returns histories in the same order as scripthashes passed in
+  Future<List<T>> getHistories<T>({required List<String> scriptHashes}) async {
+    var futures = <Future>[];
+    var results;
+    peer.withBatch(() {
+      for (var scriptHash in scriptHashes) {
+        futures.add(getHistory(scriptHash: scriptHash));
+      }
+    });
+    results = await Future.wait(futures);
+    return results;
+  }
 }

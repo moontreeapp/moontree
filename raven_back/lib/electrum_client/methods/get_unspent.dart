@@ -37,4 +37,17 @@ extension GetUnspentMethod on ElectrumClient {
         txPos: res['tx_pos'],
         value: res['value']))).toList();
   }
+
+  /// returns unspents in the same order as scripthashes passed in
+  Future<List<T>> getUnspents<T>({required List<String> scriptHashes}) async {
+    var futures = <Future>[];
+    var results;
+    peer.withBatch(() {
+      for (var scriptHash in scriptHashes) {
+        futures.add(getUnspent(scriptHash: scriptHash));
+      }
+    });
+    results = await Future.wait(futures);
+    return results;
+  }
 }
