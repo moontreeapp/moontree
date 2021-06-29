@@ -20,8 +20,7 @@ class Generated {
 Future<Generated> generate() async {
   var phrase = await env.getMnemonic();
   var account = Account(ravencoinTestnet, seed: bip39.mnemonicToSeed(phrase));
-  var client = ElectrumClient(await connect('testnet.rvn.rocks'));
-  await client.serverVersion(protocolVersion: '1.8');
+  var client = await ElectrumClient.connect('testnet.rvn.rocks');
   await account.deriveNodes(client);
   return Generated(phrase, account, client);
 }

@@ -19,8 +19,7 @@ const aliveTimerDuration = Duration(seconds: 2);
 Future<List> generate() async {
   var phrase = await env.getMnemonic();
   var account = Account(ravencoinTestnet, seed: bip39.mnemonicToSeed(phrase));
-  var client = ElectrumClient(await connect('testnet.rvn.rocks'));
-  await client.serverVersion(protocolVersion: '1.8');
+  var client = await ElectrumClient.connect('testnet.rvn.rocks');
   print('deriving Nodes');
   await account.deriveNodes(client);
   return [phrase, account, client];

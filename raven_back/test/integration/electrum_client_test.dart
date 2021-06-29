@@ -15,8 +15,7 @@ const aliveTimerDuration = Duration(seconds: 2);
 
 void main() {
   test('electrum client', () async {
-    var client = ElectrumClient(await connect('testnet.rvn.rocks'));
-    await client.serverVersion(protocolVersion: '1.8');
+    var client = await ElectrumClient.connect('testnet.rvn.rocks');
     var features = await client.features();
     expect(features['genesis_hash'],
         '000000ecfc5e6324a079542221d00e10362bdc894d56500c414060eea8a3ad5a');
@@ -27,8 +26,7 @@ void main() {
     var phrase = await env.getMnemonic();
     var seed = bip39.mnemonicToSeed(phrase);
     var account = Account(ravencoinTestnet, seed: seed);
-    var client = ElectrumClient(await connect('testnet.rvn.rocks'));
-    await client.serverVersion(protocolVersion: '1.8');
+    var client = await ElectrumClient.connect('testnet.rvn.rocks');
     var node = account.node(3, exposure: NodeExposure.Internal);
     var balance = await client.getBalance(scriptHash: node.scriptHash);
     if (phrase.startsWith('smile')) {
@@ -44,8 +42,7 @@ void main() {
     var phrase = await env.getMnemonic();
     var seed = bip39.mnemonicToSeed(phrase);
     var account = Account(ravencoinTestnet, seed: seed);
-    var client = ElectrumClient(await connect('testnet.rvn.rocks'));
-    await client.serverVersion(protocolVersion: '1.8');
+    var client = await ElectrumClient.connect('testnet.rvn.rocks');
     var node = account.node(3, exposure: NodeExposure.Internal);
     var utxos = await client.getUnspent(scriptHash: node.scriptHash);
     expect(utxos, [

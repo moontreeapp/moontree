@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'electrum_client/client/subscribing_client.dart';
+import 'electrum_client/connect.dart';
+import 'electrum_client/methods/server_version.dart';
+
 export 'electrum_client/methods/get_balance.dart';
 export 'electrum_client/methods/get_history.dart';
 export 'electrum_client/methods/get_unspent.dart';
@@ -28,5 +31,22 @@ class ElectrumClient extends SubscribingClient {
   Future<Map<String, dynamic>> features() async {
     var proc = 'server.features';
     return await request(proc);
+  }
+
+  static Future<ElectrumClient> connect(dynamic host,
+      {port = 50002,
+      connectionTimeout = connectionTimeout,
+      aliveTimerDuration = aliveTimerDuration,
+      acceptUnverified = true,
+      clientName = 'MTWallet',
+      protocolVersion = '1.8'}) async {
+    var client = ElectrumClient(await connect(host,
+        port: port,
+        connectionTimeout: connectionTimeout,
+        aliveTimerDuration: aliveTimerDuration,
+        acceptUnverified: acceptUnverified));
+    await client.serverVersion(
+        clientName: clientName, protocolVersion: protocolVersion);
+    return client;
   }
 }
