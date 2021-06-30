@@ -1,4 +1,4 @@
-// dart --no-sound-null-safety test test/account_test.dart
+// dart --no-sound-null-safety test test/integration/account_test.dart
 import 'package:test/test.dart';
 
 import 'package:bip39/bip39.dart' as bip39;
@@ -50,4 +50,6 @@ void main() async {
       //print(e);
     }
   });
+
+  await gen.account.truth.close();
 }

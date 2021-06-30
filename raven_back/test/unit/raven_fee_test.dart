@@ -1,4 +1,4 @@
-// dart --no-sound-null-safety test test/raven_tx_test.dart
+// dart --no-sound-null-safety test test/unit/raven_tx_test.dart
 import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:bitcoin_flutter/bitcoin_flutter.dart';
@@ -12,7 +12,6 @@ void main() {
         'smile build brain topple moon scrap area aim budget enjoy polar erosion');
     var account = Account(ravencoinTestnet, seed: seed);
     var node = account.node(4, exposure: NodeExposure.Internal);
-    // Duane why not reference the one on the account? should be the same right?
     final txb = TransactionBuilder(network: node.params.network);
     txb.setVersion(1);
     txb.addInput(

@@ -8,6 +8,7 @@ void main() {
   setUp(() => server = MockElectrumServer());
 
   group('SubscribingClient', () {
+    // ignore: unused_local_variable
     late SubscribingClient client;
     setUp(() => client = SubscribingClient(server.channel));
 

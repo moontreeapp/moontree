@@ -1,11 +1,11 @@
-// dart --no-sound-null-safety test test/raven_tx_test.dart
+// dart --no-sound-null-safety test test/integration/raven_tx_test.dart
 
-import 'dart:typed_data';
+// until we fix the hive database problem we have to run this separately.
+// FileSystemException: lock failed, path = 'database\settings.lock' (OS Error: The process cannot access the file because another process has locked a portion of the file., errno = 33)
 
 import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
 
-import 'package:raven/env.dart' as env;
 import 'package:raven/raven_networks.dart';
 import 'package:raven/account.dart';
 import 'package:raven/electrum_client.dart';
@@ -72,5 +72,6 @@ void main() {
     //print(utf8.decode(Uint8List.fromList(utf8.encode(txb.tx.ins[0].hash))));
     //print(String.fromCharCodes(txb.tx.ins[0].hash));
     //print(Uint8List.fromList(String.fromCharCodes(txb.tx.ins[0].hash).codeUnits));
+    await gen.account.truth.close();
   });
 }

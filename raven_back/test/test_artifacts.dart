@@ -6,7 +6,6 @@ import 'package:bip39/bip39.dart' as bip39;
 import 'package:raven/raven_networks.dart';
 import 'package:raven/account.dart';
 import 'package:raven/electrum_client.dart';
-import 'package:raven/electrum_client/connect.dart';
 import 'package:raven/env.dart' as env;
 
 class Generated {
