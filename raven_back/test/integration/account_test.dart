@@ -5,25 +5,10 @@ import 'package:bip39/bip39.dart' as bip39;
 
 import 'package:raven/env.dart' as env;
 import 'package:raven/account.dart';
-import 'package:raven/test_artifacts.dart' as tests;
+import '../test_artifacts.dart' as tests;
 import 'package:raven/raven_networks.dart';
 import 'package:raven/electrum_client.dart';
 import 'package:raven/electrum_client/connect.dart';
-
-class Generated {
-  String phrase;
-  Account account;
-  ElectrumClient client;
-  Generated(this.phrase, this.account, this.client);
-}
-
-Future<Generated> generate() async {
-  var phrase = await env.getMnemonic();
-  var account = Account(ravencoinTestnet, seed: bip39.mnemonicToSeed(phrase));
-  var client = await ElectrumClient.connect('testnet.rvn.rocks');
-  await account.deriveNodes(client);
-  return Generated(phrase, account, client);
-}
 
 void main() async {
   var gen = await tests.generate();

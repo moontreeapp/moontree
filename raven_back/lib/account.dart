@@ -104,7 +104,6 @@ class Account {
         }
       }
     }
-    print(cache.length);
     return true;
   }
 

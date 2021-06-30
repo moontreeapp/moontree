@@ -11,19 +11,10 @@ import 'package:raven/account.dart';
 import 'package:raven/electrum_client.dart';
 import 'package:raven/electrum_client/connect.dart';
 import 'package:raven/transaction.dart' as tx;
-import 'package:raven/test_artifacts.dart' as tests;
+import '../test_artifacts.dart' as tests;
 
 const connectionTimeout = Duration(seconds: 5);
 const aliveTimerDuration = Duration(seconds: 2);
-
-Future<List> generate() async {
-  var phrase = await env.getMnemonic();
-  var account = Account(ravencoinTestnet, seed: bip39.mnemonicToSeed(phrase));
-  var client = await ElectrumClient.connect('testnet.rvn.rocks');
-  print('deriving Nodes');
-  await account.deriveNodes(client);
-  return [phrase, account, client];
-}
 
 void main() {
   test('getHistory', () async {
