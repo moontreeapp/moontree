@@ -8,3 +8,4 @@ build/
 pubspec.lock
 
 .env
+database/
