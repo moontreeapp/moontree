@@ -1,14 +1,26 @@
 import 'package:hive/hive.dart';
 
+import 'box_adapters.dart';
+
 /// Truth should be instantiated only once... is there a different solution for this situation?
 /// FileSystemException: lock failed, path = 'database\settings.lock'
 /// (OS Error: The process cannot access the file because another process has locked a portion of the file., errno = 33)
 /// therefore you have to close it before anything else opens it. so having one long-running instanteation is best.
+
 class Truth {
   Map<String, Box> boxes = {};
 
   Truth() {
     Hive.init('database');
+    //Hive.registerAdapter(CachedNodeAdapter());
+    //Hive.registerAdapter(HDNodeAdapter());
+    Hive.registerAdapter(NetworkParamsAdapter());
+    Hive.registerAdapter(NetworkTypeAdapter());
+    Hive.registerAdapter(Bip32TypeAdapter());
+    ////Hive.registerAdapter(HDWalletAdapter());
+    ////Hive.registerAdapter(BIP32Adapter());
+    //Hive.registerAdapter(P2PKHAdapter());
+    //Hive.registerAdapter(PaymentDataAdapter());
   }
 
   Future clear([String boxName = '']) async {
@@ -34,6 +46,7 @@ class Truth {
     boxes['settings'] = await Hive.openBox('settings');
     boxes['accounts'] = await Hive.openBox('accounts');
     boxes['nodes'] = await Hive.openBox('nodes');
+    //boxes['nodes'] = await Hive.openBox<CachedNode>('nodes');
 
     if (boxes['settings']!.isEmpty) {
       // first time running the app - initialize it with settings

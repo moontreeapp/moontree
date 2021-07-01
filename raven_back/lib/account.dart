@@ -5,10 +5,8 @@ import 'package:crypto/crypto.dart';
 import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 import 'package:raven/boxes.dart';
 import 'network_params.dart';
-import 'package:raven/network_params.dart'; // duplicate?
 import 'package:raven/electrum_client.dart';
 import 'package:raven/boxes.dart' as memory;
-
 export 'raven_networks.dart';
 
 class CacheEmpty implements Exception {
@@ -21,11 +19,20 @@ class InsufficientFunds implements Exception {
   InsufficientFunds([this.cause = 'Error! Insufficient funds.']);
 }
 
+//@HiveType(typeId: 0)
 class CachedNode {
-  _HDNode node;
+  //@HiveField(0)
+  HDNode node;
+
+  //@HiveField(1)
   ScriptHashBalance balance;
+
+  //@HiveField(2)
   List<ScriptHashUnspent> unspent;
+
+  //@HiveField(3)
   List<ScriptHashHistory> history;
+
   CachedNode(this.node,
       {required this.balance, required this.unspent, required this.history});
 }
@@ -44,16 +51,17 @@ class Account {
   final Uint8List seed;
   final String name;
   final List<CachedNode> cache = [];
+  final String uid;
   late Truth truth;
-  late String uid;
 
   Account(this.params, {required this.seed, this.name = 'First Wallet'})
-      : _wallet = HDWallet.fromSeed(seed, network: params.network);
+      : _wallet = HDWallet.fromSeed(seed, network: params.network),
+        uid = sha256.convert(seed).toString();
 
-  _HDNode node(int index, {exposure = NodeExposure.External}) {
+  HDNode node(int index, {exposure = NodeExposure.External}) {
     var wallet =
         _wallet.derivePath(params.derivationPath(index, exposure: exposure));
-    return _HDNode(params, wallet, index, exposure);
+    return HDNode(params, wallet, index, exposure);
   }
 
   List<CachedNode> get internals {
@@ -72,22 +80,17 @@ class Account {
 
   /// fills cache from electrum server, to be called before anything else
   Future<bool> deriveNodes(ElectrumClient client) async {
-    // move to constructor
-    uid = sha256.convert(seed).toString();
-
     // ignore: todo
     // could we put this in the constructor? it has to await the puts...
     // this also assumes we only want to save the metadata of the account in accounts.
     truth = memory.Truth();
     await truth.load();
-    await truth.boxes['accounts']!.put(uid, {
-      //params: params,  // needs a type adapter - https://docs.hivedb.dev/#/custom-objects/type_adapters?id=register-adapter
-      seed: seed, name: name
-    });
+    await truth.boxes['accounts']!
+        .put(uid, {params: params, seed: seed, name: name});
 
     // ignore: todo
     // if possible separate batching our batches concern from get data
-    _HDNode leaf;
+    HDNode leaf;
     var batchSize = 10;
     for (var exposure in NodeExposure.values) {
       var nodeIndex = 0;
@@ -127,8 +130,8 @@ class Account {
               uid +
                   exposure.toString() +
                   ((nodeIndex - batchSize) + i).toString(),
-              // cachedNode // https://docs.hivedb.dev/#/custom-objects/type_adapters?id=register-adapter
-              'cachedNode');
+              'cachedNode' // https://docs.hivedb.dev/#/custom-objects/type_adapters?id=register-adapter
+              );
         }
       }
     }
@@ -158,7 +161,7 @@ class Account {
   }
 
   /// returns the next internal node without a history
-  _HDNode getNextChangeNode() {
+  HDNode getNextChangeNode() {
     checkCacheEmpty();
     var i = 0;
     for (i = 0; i < internals.length; i++) {
@@ -236,23 +239,20 @@ List<int> reverse(List<int> hex) {
   return buffer;
 }
 
-class _HDNode {
+class HDNode {
   NetworkParams params;
   HDWallet wallet;
   int index;
   NodeExposure exposure;
-  ScriptHashBalance? balance;
-  List? history;
-  List? utxos;
 
-  _HDNode(this.params, this.wallet, this.index, this.exposure,
-      [this.balance, this.history, this.utxos]);
+  HDNode(this.params, this.wallet, this.index, this.exposure);
 
   Uint8List get outputScript {
     return Address.addressToOutputScript(wallet.address, params.network);
   }
 
   String get scriptHash {
+    // ignore: omit_local_variable_types
     Digest digest = sha256.convert(outputScript);
     var hash = reverse(digest.bytes);
     return hex.encode(hash);
