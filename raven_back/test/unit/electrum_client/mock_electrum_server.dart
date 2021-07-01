@@ -38,7 +38,7 @@ class MockElectrumServer {
 
   /// for tests: send a notification to the client (i.e. a single message, which
   /// can be used to simulate a subscription)
-  void notifyClient(method, [params]) {
+  void willNotifyWith(method, [params]) {
     incoming.add(prepareNotification(method, params));
   }
 

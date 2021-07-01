@@ -1,24 +1,11 @@
 import 'dart:async';
-import 'dart:convert' as convert;
 
-import 'package:crypto/crypto.dart';
-import 'package:equatable/equatable.dart';
-import 'package:json_rpc_2/json_rpc_2.dart' as rpc;
+import 'package:json_rpc_2/json_rpc_2.dart';
 
-import 'package:raven/electrum_client/client/base_client.dart';
+import './base_client.dart';
+import './subscribable.dart';
 
-typedef KeyRetriever = String Function(rpc.Parameters params);
-
-class Subscribable {
-  final String methodPrefix;
-  late final KeyRetriever _getKeyFromParams;
-
-  Subscribable(this.methodPrefix, [getKeyFromParams]) {
-    _getKeyFromParams = getKeyFromParams ?? (_) => '';
-  }
-
-  String key(params) => '$methodPrefix:${_getKeyFromParams(params)}';
-}
+export './subscribable.dart';
 
 class SubscribingClient extends BaseClient {
   final Map<String, Subscribable> _subscribables = {};
@@ -26,46 +13,51 @@ class SubscribingClient extends BaseClient {
 
   SubscribingClient(channel) : super(channel) {
     // This "fallback" handles all valid notifications from the server
-    peer.registerFallback((rpc.Parameters params) async {
-      print('fallback: ${params.method}, ${params.value}');
-
-      var subscribable = _subscribables[params.method];
+    peer.registerFallback((Parameters params) async {
+      var methodPrefix = Subscribable.getMethodPrefix(params.method);
+      var subscribable = _subscribables[methodPrefix];
       if (subscribable == null) {
-        throw rpc.RpcException.methodNotFound(params.method);
+        throw RpcException.methodNotFound(methodPrefix);
       }
+
       var key = subscribable.key(params);
       var controllers = _subscriptions[key] ?? [];
 
+      var result = subscribable.notificationResult(params);
       for (var controller in controllers) {
-        controller.sink.add(params);
+        // NOTE: So far, only the first parameter of the notification
+        controller.sink.add(result);
       }
     });
   }
 
   void registerSubscribable(Subscribable subscribable) {
-    var method = '${subscribable.methodPrefix}.subscribe';
-    _subscribables[method] = subscribable;
+    _subscribables[subscribable.methodPrefix] = subscribable;
   }
 
-  void addSubscription(String method, StreamController controller) {
-    var controllers = _subscriptions[method];
+  StreamController makeSubscription(
+      Subscribable subscribable, Parameters? params) {
+    var key = subscribable.key(params);
+    var controllers = _subscriptions[key];
+    var newController = StreamController();
     if (controllers != null) {
-      controllers.add(controller);
+      controllers.add(newController);
     } else {
-      _subscriptions[method] = [controller];
+      _subscriptions[key] = [newController];
     }
+
+    return newController;
   }
 
-  Stream subscribe(String methodPrefix, [parameters]) {
-    var method = '$methodPrefix.subscribe';
-    if (!_subscribables.containsKey(method)) {
-      throw rpc.RpcException.methodNotFound(method);
+  Stream subscribe(String methodPrefix, [Parameters? params]) {
+    var subscribable = _subscribables[methodPrefix];
+    if (subscribable == null) {
+      throw RpcException.methodNotFound(methodPrefix);
     }
 
-    var controller = StreamController();
-    addSubscription(method, controller);
-    request(method, parameters).then((json) {
-      controller.sink.add(json);
+    var controller = makeSubscription(subscribable, params);
+    request(subscribable.methodSubscribe, params).then((result) {
+      controller.sink.add(result);
     });
 
     return controller.stream;
