@@ -1,6 +1,39 @@
+import 'dart:async';
+
 import 'package:hive/hive.dart';
 
 import 'box_adapters.dart';
+
+import 'dart:async';
+//import 'package:path/path.dart';
+//import 'package:path_provider/path_provider.dart';
+//import 'package:sembast/sembast.dart';
+//import 'package:sembast/sembast_io.dart';
+
+//class AppDatabase {
+//  // singleton instance
+//  static final AppDatabase _singleton = AppDatabase._();
+//  // singleton accessor
+//  static AppDatabase get instance => _singleton;
+//  // turns async code into sync code
+//  Completer<Database> _dbOpenCompleter;
+//  AppDatabase._();
+//
+//  Future<Database> get database async {
+//    if (_dbOpenCompleter == null) {
+//      _dbOpenCompleter = Completer();
+//      _openDatabase();
+//    }
+//  }
+//
+//  Future _openDatabase() async {
+//    //final appDocumentDir = await getApplicationDocumentDirectory();
+//    final appDocumentDir = await getApplicationDocumentDirectory();
+//    final dbPath = join(appDocumentDir.path, 'demo.db');
+//    final database = await databaseFactoryIo.openDatabase(dbPath);
+//    _dbOpenCompleter.complete(database);
+//  }
+//}
 
 /// Truth should be instantiated only once... is there a different solution for this situation?
 /// FileSystemException: lock failed, path = 'database\settings.lock'
@@ -10,7 +43,21 @@ import 'box_adapters.dart';
 class Truth {
   Map<String, Box> boxes = {};
 
-  Truth() {
+  // make truth a singleton
+  static final Truth _singleton = Truth._internal();
+
+  // singleton accessor
+  static Truth get instance => _singleton;
+
+  //factory Truth() {
+  //  init();
+  //  return _singleton;
+  //}
+
+  Truth._internal();
+
+  Future init() async {
+    //final appDocumentDir = await getApplicationDocumentDirectory();
     Hive.init('database');
     //Hive.registerAdapter(CachedNodeAdapter());
     //Hive.registerAdapter(HDNodeAdapter());
@@ -21,6 +68,7 @@ class Truth {
     ////Hive.registerAdapter(BIP32Adapter());
     //Hive.registerAdapter(P2PKHAdapter());
     //Hive.registerAdapter(PaymentDataAdapter());
+    await load();
   }
 
   Future clear([String boxName = '']) async {

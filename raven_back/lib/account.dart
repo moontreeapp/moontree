@@ -52,7 +52,7 @@ class Account {
   final String name;
   final List<CachedNode> cache = [];
   final String uid;
-  late Truth truth;
+  final Truth truth = memory.Truth.instance;
 
   Account(this.params, {required this.seed, this.name = 'First Wallet'})
       : _wallet = HDWallet.fromSeed(seed, network: params.network),
@@ -83,8 +83,7 @@ class Account {
     // ignore: todo
     // could we put this in the constructor? it has to await the puts...
     // this also assumes we only want to save the metadata of the account in accounts.
-    truth = memory.Truth();
-    await truth.load();
+    await truth.init();
     await truth.boxes['accounts']!
         .put(uid, {params: params, seed: seed, name: name});
 

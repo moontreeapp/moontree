@@ -5,15 +5,17 @@ import 'package:raven/boxes.dart' as memory;
 
 void main() {
   test('load', () async {
-    var Truth = memory.Truth();
-    await Truth.load();
-    await Truth.clear();
-    expect(Truth.boxes['settings']!.length, 0);
-    await Truth.load();
+    var truth = memory.Truth.instance;
+    await truth.init();
+    expect(truth.boxes['settings']!.length, 1);
+    await truth.clear();
+    expect(truth.boxes['settings']!.length, 0);
+    await truth.load();
+    expect(truth.boxes['settings']!.length, 1);
     expect(
-        Truth.boxes['settings']!.get('Electrum Server'), 'testnet.rvn.rocks');
-    await Truth.boxes['settings']!.put('Electrum Server', 'testnet2.rvn.rocks');
+        truth.boxes['settings']!.get('Electrum Server'), 'testnet.rvn.rocks');
+    await truth.boxes['settings']!.put('Electrum Server', 'testnet2.rvn.rocks');
     expect(
-        Truth.boxes['settings']!.get('Electrum Server'), 'testnet2.rvn.rocks');
+        truth.boxes['settings']!.get('Electrum Server'), 'testnet2.rvn.rocks');
   });
 }
