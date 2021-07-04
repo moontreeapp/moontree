@@ -171,7 +171,6 @@ class Bip32TypeAdapter extends TypeAdapter<Bip32Type> {
   }
 }
 
-/* hidden attributes?
 class HDWalletAdapter extends TypeAdapter<HDWallet> {
   @override
   final typeId = 5;
@@ -182,71 +181,19 @@ class HDWalletAdapter extends TypeAdapter<HDWallet> {
     var fields = <int, dynamic>{
       for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return HDWallet(
-      bip32: fields[0] as bip32.BIP32,
-      p2pkh: fields[1] as P2PKH,
-      seed: fields[2] as String,
-      network: fields[3] as NetworkType,
-    );
+    return HDWallet.fromSeed(fields[0], network: fields[1]);
   }
 
   @override
   void write(BinaryWriter writer, HDWallet obj) {
     writer
-      ..writeByte(4)
-      ..writeByte(0)
-      ..write(obj._bip32)
-      ..writeByte(1)
-      ..write(obj._p2pkh)
       ..writeByte(2)
+      ..writeByte(0)
       ..write(obj.seed)
-      ..writeByte(3)
+      ..writeByte(1)
       ..write(obj.network);
   }
 }
-
-class BIP32Adapter extends TypeAdapter<bip32.BIP32> {
-  @override
-  final typeId = 6;
-
-  @override
-  bip32.BIP32 read(BinaryReader reader) {
-    var numOfFields = reader.readByte();
-    var fields = <int, dynamic>{
-      for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
-    };
-    return bip32.BIP32(
-      fields [0] as Uint8List,
-      fields [1] as Uint8List,
-      fields [2] as Uint8List,
-      fields [3] as int,
-      index: fields [4] as int,
-      network: fields [5] as NetworkType,
-      parentFingerprint = 0x00000000: fields [6] as int,
-    );
-  }
-
-  @override
-  void write(BinaryWriter writer, bip32.BIP32 obj) {
-    writer
-      ..writeByte(7)
-      ..writeByte(0)
-      ..write(obj._d)
-      ..writeByte(1)
-      ..write(obj._Q)
-      ..writeByte(2)
-      ..write(obj.chainCode)
-      ..writeByte(3)
-      ..write(obj.depth)
-      ..writeByte(4)
-      ..write(obj.index)
-      ..writeByte(5)
-      ..write(obj.network)
-      ..writeByte(6)
-      ..write(obj.parentFingerprint);
-  }
-}
-*/
 
 class P2PKHAdapter extends TypeAdapter<P2PKH> {
   @override
@@ -314,5 +261,115 @@ class PaymentDataAdapter extends TypeAdapter<PaymentData> {
       ..write(obj.input)
       ..writeByte(6)
       ..write(obj.witness);
+  }
+}
+
+//enum NodeExposure { Internal, External }
+class NodeExposureAdapter extends TypeAdapter<NodeExposure> {
+  @override
+  final typeId = 9;
+
+  @override
+  NodeExposure read(BinaryReader reader) {
+    var numOfFields = reader.readByte();
+    var fields = <int, dynamic>{
+      for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return fields[0];
+  }
+
+  @override
+  void write(BinaryWriter writer, NodeExposure obj) {
+    writer
+      ..writeByte(1)
+      ..writeByte(0)
+      ..write(obj);
+  }
+}
+
+class ScriptHashUnspentAdapter extends TypeAdapter<ScriptHashUnspent> {
+  @override
+  final typeId = 10;
+
+  @override
+  ScriptHashUnspent read(BinaryReader reader) {
+    var numOfFields = reader.readByte();
+    var fields = <int, dynamic>{
+      for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return ScriptHashUnspent(
+      height: fields[0] as int,
+      txHash: fields[1] as String,
+      txPos: fields[2] as int,
+      value: fields[3] as int,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, ScriptHashUnspent obj) {
+    writer
+      ..writeByte(4)
+      ..writeByte(0)
+      ..write(obj.height)
+      ..writeByte(1)
+      ..write(obj.txHash)
+      ..writeByte(2)
+      ..write(obj.txPos)
+      ..writeByte(3)
+      ..write(obj.value);
+  }
+}
+
+class ScriptHashHistoryAdapter extends TypeAdapter<ScriptHashHistory> {
+  @override
+  final typeId = 11;
+
+  @override
+  ScriptHashHistory read(BinaryReader reader) {
+    var numOfFields = reader.readByte();
+    var fields = <int, dynamic>{
+      for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return ScriptHashHistory(
+      height: fields[0] as int,
+      txHash: fields[1] as String,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, ScriptHashHistory obj) {
+    writer
+      ..writeByte(2)
+      ..writeByte(0)
+      ..write(obj.height)
+      ..writeByte(1)
+      ..write(obj.txHash);
+  }
+}
+
+class ScriptHashBalanceAdapter extends TypeAdapter<ScriptHashBalance> {
+  @override
+  final typeId = 12;
+
+  @override
+  ScriptHashBalance read(BinaryReader reader) {
+    var numOfFields = reader.readByte();
+    var fields = <int, dynamic>{
+      for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return ScriptHashBalance(
+      fields[0] as int,
+      fields[1] as int,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, ScriptHashBalance obj) {
+    writer
+      ..writeByte(4)
+      ..writeByte(0)
+      ..write(obj.confirmed)
+      ..writeByte(1)
+      ..write(obj.unconfirmed);
   }
 }
