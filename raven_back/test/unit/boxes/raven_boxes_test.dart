@@ -10,14 +10,17 @@ void main() {
   });
 
   test('load', () async {
-    await truth.load();
-    expect(truth.boxes['settings']!.length, 1);
-    //print(truth.boxes['accounts']!.getAt(0));
-    //print(truth.boxes['balances']!.getAt(0));
+    await truth.open();
+    expect(truth.settings.length, 1);
+    expect(truth.accounts.length > 0, true);
+    expect(truth.balances.length > 0, true);
+    //print(truth.accounts.getAt(0));
+    //print(truth.balances.getAt(0));
     await truth.close();
   });
 
   test('get', () async {
+    // this is how we can populate the accounts and balances upon app open
     var accounts = await truth.getAccounts();
     for (var account in accounts) {
       print(account.uid);
@@ -28,14 +31,14 @@ void main() {
   /*
   test('clear', () async {
     await truth.clear();
-    expect(truth.boxes['settings']!.length, 0);
-    await truth.load();
-    expect(truth.boxes['settings']!.length, 1);
+    expect(truth.settings.length, 0);
+    await truth.open();
+    expect(truth.settings.length, 1);
     expect(
-        truth.boxes['settings']!.get('Electrum Server'), 'testnet.rvn.rocks');
-    await truth.boxes['settings']!.put('Electrum Server', 'testnet2.rvn.rocks');
+        truth.settings.get('Electrum Server'), 'testnet.rvn.rocks');
+    await truth.settings.put('Electrum Server', 'testnet2.rvn.rocks');
     expect(
-        truth.boxes['settings']!.get('Electrum Server'), 'testnet2.rvn.rocks');
+        truth.settings.get('Electrum Server'), 'testnet2.rvn.rocks');
   });
 */
 }

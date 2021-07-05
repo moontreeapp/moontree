@@ -6,7 +6,10 @@ import 'box_adapters.dart';
 /// database wrapper singleton
 class Truth {
   bool uninitialized = true;
-  Map<String, Box> boxes = {};
+  late Box settings;
+  late Box accounts;
+  late Box balances;
+  //Map<String, Box> boxes = {};
 
   // make truth a singleton
   static final Truth _singleton = Truth._internal();
@@ -39,67 +42,64 @@ class Truth {
     uninitialized = false;
   }
 
-  Future clear([String boxName = '']) async {
-    for (var name in boxes.keys) {
-      if (boxName == '' || boxName == name) {
-        await boxes[name]!.clear();
-      }
-    }
-  }
-
-  Future close([String boxName = '']) async {
-    for (var name in boxes.keys) {
-      if (boxName == '' || boxName == name) {
-        await boxes[name]!.close();
-      }
-    }
-  }
-
   /// get data from long term storage boxes
-  Future load() async {
-    boxes['settings'] = await Hive.openBox('settings');
-    boxes['accounts'] = await Hive.openBox('accounts');
-    boxes['balances'] = await Hive.openBox('balances');
-    //boxes['nodes'] = await Hive.openBox<CachedNode>('nodes');
-    if (boxes['settings']!.isEmpty) {
-      await boxes['settings']!.put('Electrum Server', 'testnet.rvn.rocks');
+  Future open([String boxName = '']) async {
+    if (uninitialized) init();
+    if (boxName == '') {
+      settings = await Hive.openBox('settings');
+      accounts = await Hive.openBox('accounts');
+      balances = await Hive.openBox('balances');
+      //nodes = await Hive.openBox<CachedNode>('nodes');
+      if (settings.isEmpty) {
+        await settings.put('Electrum Server', 'testnet.rvn.rocks');
+      }
+    } else {
+      return await Hive.openBox(boxName);
+    }
+  }
+
+  Future close() async {
+    for (var box in [settings, accounts, balances]) {
+      await box.close();
+    }
+  }
+
+  Future clear() async {
+    for (var box in [settings, accounts, balances]) {
+      await box.clear();
     }
   }
 
   Future saveAccount(Account account) async {
-    if (uninitialized) init();
-    await load();
-    await boxes['accounts']!.put(account.uid,
+    accounts = await open('accounts');
+    await accounts.put(account.uid,
         {'params': account.params, 'seed': account.seed, 'name': account.name});
-    await close();
+    await accounts.close();
   }
 
   Future saveAccountBalance(Account account) async {
-    if (uninitialized) init();
-    await load();
-    await boxes['balances']!.put(account.uid, account.getBalance());
-    await close();
+    balances = await open('balances');
+    await balances.put(account.uid, account.getBalance());
+    await balances.close();
   }
 
   Future getAccounts() async {
-    if (uninitialized) init();
-    await load();
-    var accounts = [];
+    accounts = await open('accounts');
+    var savedAccounts = [];
     var account;
-    for (var i = 0; i < boxes['accounts']!.length; i++) {
-      account = await boxes['accounts']!.getAt(i);
-      accounts.add(Account(account['params'],
+    for (var i = 0; i < accounts.length; i++) {
+      account = await accounts.getAt(i);
+      savedAccounts.add(Account(account['params'],
           seed: account['seed'], name: account['name']));
     }
-    await close();
-    return accounts;
+    await accounts.close();
+    return savedAccounts;
   }
 
   Future getAccountBalance(Account account) async {
-    if (uninitialized) init();
-    await load();
-    var balance = boxes['balances']!.get(account.uid, defaultValue: 0);
-    await close();
+    balances = await open('balances');
+    var balance = balances.get(account.uid, defaultValue: 0);
+    await balances.close();
     return balance;
   }
 }
