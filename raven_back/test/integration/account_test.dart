@@ -1,14 +1,7 @@
 // dart --no-sound-null-safety test test/integration/account_test.dart
 import 'package:test/test.dart';
-
-import 'package:bip39/bip39.dart' as bip39;
-
-import 'package:raven/env.dart' as env;
 import 'package:raven/account.dart';
 import '../test_artifacts.dart' as tests;
-import 'package:raven/raven_networks.dart';
-import 'package:raven/electrum_client.dart';
-import 'package:raven/electrum_client/connect.dart';
 
 void main() async {
   var gen = await tests.generate();
@@ -50,6 +43,4 @@ void main() async {
       //print(e);
     }
   });
-
-  await gen.account.truth.close();
 }

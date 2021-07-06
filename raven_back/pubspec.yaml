@@ -17,6 +17,16 @@ dependencies:
   hive: ^2.0.4
   hive_crdt: ^2.0.2
 
+  #sembast: ^1.15.1
+  #path_provider: ^0.5.0+1
+  #flutter_bloc: ^0.9.1
+  #equatable: ^0.2.3
+  #cupertino_icons: ^0.1.2
+
 dev_dependencies:
+  #hive_generator: ^1.1.0
+  #Because hive_generator >=1.0.1 depends on analyzer ^1.0.0 which depends on convert ^3.0.0, hive_generator >=1.0.1 requires convert ^3.0.0.
+  #And because every version of bitcoin_flutter from git depends on bech32 0.1.2 which depends on convert ^2.0.2, hive_generator >=1.0.1 is incompatible with bitcoin_flutter from git.
+  #So, because raven depends on both bitcoin_flutter from git and hive_generator ^1.1.0, version solving failed.
   pedantic: ^1.10.0
   test: ^1.16.0

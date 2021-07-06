@@ -1,11 +1,9 @@
 // dart --no-sound-null-safety run bin/raven.dart
 import 'package:bip39/bip39.dart' as bip39;
-//import 'package:hive/hive.dart';
 import 'package:raven/account.dart';
 import 'package:raven/electrum_client.dart';
 import 'package:raven/electrum_client/connect.dart';
 import 'package:raven/raven_networks.dart';
-//import 'package:raven/boxes.dart' as boxes;
 
 void main() async {
   var seed = bip39.mnemonicToSeed(
@@ -19,11 +17,4 @@ void main() async {
   print('pubKey: ${node.wallet.pubKey}');
   print('wif: ${node.wallet.wif}');
   await client.close();
-  //boxes.onLoad();
-  ////await Hive.initFlutter();
-  //Hive.init('database'); // for non-Flutter apps.
-  //var box = await Hive.openBox('WalletBox');
-  //await box.put('name', 'Duane');
-  //print('Name: ${box.get('name')}');
-  //await box.close();
 }
