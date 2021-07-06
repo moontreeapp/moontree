@@ -8,12 +8,10 @@ environment:
 dependencies:
   bitcoin_flutter: # ^2.0.2
     git: https://github.com/moontreeapp/bitcoin_flutter.git
+  raven_electrum_client:
+    git: https://github.com/moontreeapp/raven_electrum_client.git
   bs58check: ^1.0.2
-  json_rpc_2: ^3.0.1
-  stream_channel: ^2.1.0
   crypto: ^3.0.0 # ^2.0.3
-  equatable: ^2.0.3
-  timing: ^1.0.0
   hive: ^2.0.4
   hive_crdt: ^2.0.2
 

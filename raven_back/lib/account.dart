@@ -4,7 +4,7 @@ import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
 import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 import 'network_params.dart';
-import 'package:raven/electrum_client.dart';
+import 'package:raven_electrum_client/raven_electrum_client.dart';
 export 'raven_networks.dart';
 
 class CacheEmpty implements Exception {
@@ -76,7 +76,7 @@ class Account {
   }
 
   /// fills cache from electrum server, to be called before anything else
-  Future<bool> deriveNodes(ElectrumClient client) async {
+  Future<bool> deriveNodes(RavenElectrumClient client) async {
     // ignore: todo
     // if possible separate batching our batches concern from get data
     HDNode leaf;

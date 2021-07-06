@@ -5,8 +5,7 @@ import 'package:bip39/bip39.dart' as bip39;
 
 import 'package:raven/raven_networks.dart';
 import 'package:raven/account.dart';
-import 'package:raven/electrum_client.dart';
-import 'package:raven/electrum_client/connect.dart';
+import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:raven/transaction.dart' as tx;
 import '../test_artifacts.dart' as tests;
 
@@ -18,7 +17,7 @@ void main() {
     var seed = bip39.mnemonicToSeed(
         'smile build brain topple moon scrap area aim budget enjoy polar erosion');
     var account = Account(ravencoinTestnet, seed: seed);
-    var client = ElectrumClient(await connect('testnet.rvn.rocks'));
+    var client = RavenElectrumClient(await connect('testnet.rvn.rocks'));
     await client.serverVersion(protocolVersion: '1.8');
     var scriptHash =
         account.node(4, exposure: NodeExposure.Internal).scriptHash;

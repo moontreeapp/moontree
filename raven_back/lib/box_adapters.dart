@@ -1,9 +1,8 @@
 import 'dart:typed_data';
-import 'package:bip32/bip32.dart' as bip32;
 import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:raven/account.dart';
-import 'package:raven/electrum_client.dart';
+import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:raven/network_params.dart';
 
 class CachedNodeAdapter extends TypeAdapter<CachedNode> {
