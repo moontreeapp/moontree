@@ -9,18 +9,12 @@ class Truth {
   late Box settings;
   late Box accounts;
   late Box balances;
-  //Map<String, Box> boxes = {};
 
   // make truth a singleton
   static final Truth _singleton = Truth._internal();
 
   // singleton accessor
   static Truth get instance => _singleton;
-
-  //factory Truth() {
-  //  init();
-  //  return _singleton;
-  //}
 
   Truth._internal();
 
@@ -49,7 +43,6 @@ class Truth {
       settings = await Hive.openBox('settings');
       accounts = await Hive.openBox('accounts');
       balances = await Hive.openBox('balances');
-      //nodes = await Hive.openBox<CachedNode>('nodes');
       if (settings.isEmpty) {
         await settings.put('Electrum Server', 'testnet.rvn.rocks');
       }
