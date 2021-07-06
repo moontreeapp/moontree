@@ -22,6 +22,13 @@ void main() {
     expect(features['hash_function'], 'sha256');
   });
 
+  /// not implemented yet
+  //test('electrum stats', () async {
+  //  var client = await ElectrumClient.connect('testnet.rvn.rocks');
+  //  dynamic stats = await client.request('server.our_stats');
+  //  print(stats);
+  //});
+
   test('getBalance', () async {
     var phrase = await env.getMnemonic();
     var seed = bip39.mnemonicToSeed(phrase);

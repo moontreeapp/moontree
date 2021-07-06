@@ -6,6 +6,11 @@ import 'package:raven/electrum_client/connect.dart';
 import 'package:raven/raven_networks.dart';
 
 void main() async {
+  // grab info from database
+  // update accounts box
+  // when database is updated -> update UI
+  //  // watch -> UI
+
   var seed = bip39.mnemonicToSeed(
       'smile build brain topple moon scrap area aim budget enjoy polar erosion');
   var account = Account(ravencoinTestnet, seed: seed);

@@ -5,7 +5,6 @@ import 'box_adapters.dart';
 
 /// database wrapper singleton
 class Truth {
-  bool uninitialized = true;
   late Box settings;
   late Box accounts;
   late Box balances;
@@ -16,10 +15,11 @@ class Truth {
   // singleton accessor
   static Truth get instance => _singleton;
 
-  Truth._internal();
+  Truth._internal() {
+    init();
+  }
 
   void init() {
-    //final appDocumentDir = await getApplicationDocumentDirectory();
     Hive.init('database');
     Hive.registerAdapter(CachedNodeAdapter());
     Hive.registerAdapter(HDNodeAdapter());
@@ -33,12 +33,10 @@ class Truth {
     Hive.registerAdapter(ScriptHashUnspentAdapter());
     Hive.registerAdapter(ScriptHashHistoryAdapter());
     Hive.registerAdapter(ScriptHashBalanceAdapter());
-    uninitialized = false;
   }
 
   /// get data from long term storage boxes
   Future open([String boxName = '']) async {
-    if (uninitialized) init();
     if (boxName == '') {
       settings = await Hive.openBox('settings');
       accounts = await Hive.openBox('accounts');
