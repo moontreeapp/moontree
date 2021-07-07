@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:hive/hive.dart';
+import 'package:raven_electrum_client/methods/get_balance.dart';
 import 'account.dart';
 import 'box_adapters.dart';
 
@@ -8,6 +10,7 @@ class Truth {
   late Box settings;
   late Box accounts;
   late Box balances;
+  late Box test;
 
   // make truth a singleton
   static final Truth _singleton = Truth._internal();
@@ -36,27 +39,38 @@ class Truth {
   }
 
   /// get data from long term storage boxes
-  Future open([String boxName = '']) async {
+  Future<Box> open([String boxName = '']) async {
     if (boxName == '') {
-      settings = await Hive.openBox('settings');
-      accounts = await Hive.openBox('accounts');
-      balances = await Hive.openBox('balances');
+      for (var name in boxes().keys) {
+        boxes()[name] = await Hive.openBox(name);
+      }
       if (settings.isEmpty) {
         await settings.put('Electrum Server', 'testnet.rvn.rocks');
       }
+      return settings;
     } else {
       return await Hive.openBox(boxName);
     }
   }
 
+  /// returns all our boxes
+  Map<String, Box> boxes() {
+    return {
+      'settings': settings,
+      'accounts': accounts,
+      'balances': balances,
+      'test': test,
+    };
+  }
+
   Future close() async {
-    for (var box in [settings, accounts, balances]) {
+    for (var box in boxes().values) {
       await box.close();
     }
   }
 
   Future clear() async {
-    for (var box in [settings, accounts, balances]) {
+    for (var box in boxes().values) {
       await box.clear();
     }
   }
@@ -66,12 +80,6 @@ class Truth {
     await accounts.put(account.uid,
         {'params': account.params, 'seed': account.seed, 'name': account.name});
     await accounts.close();
-  }
-
-  Future saveAccountBalance(Account account) async {
-    balances = await open('balances');
-    await balances.put(account.uid, account.getBalance());
-    await balances.close();
   }
 
   Future getAccounts() async {
@@ -87,9 +95,37 @@ class Truth {
     return savedAccounts;
   }
 
-  Future getAccountBalance(Account account) async {
+  /// saves the balance for each node in the account
+  Future saveAccountBalance(Account account) async {
     balances = await open('balances');
-    var balance = balances.get(account.uid, defaultValue: 0);
+    for (var exposure in ['External', 'Internal']) {
+      var x = 0;
+      for (var node in account.cache) {
+        if (node.node.exposure.toString() == exposure) {
+          await balances.put(
+              account.uid + exposure + (x).toString(), node.balance);
+          x = x + 1;
+        }
+      }
+    }
+    await balances.close();
+  }
+
+  /// gets the balance for each node in the account and returns sum
+  Future<int> getAccountBalance(Account account) async {
+    balances = await open('balances');
+    var nodeBalances = [];
+    for (var exposure in ['External', 'Internal']) {
+      var x = 0;
+      var gap = 0;
+      while (gap < 11) {
+        nodeBalances.add(await balances
+            .get(account.uid + exposure + (x).toString(), defaultValue: 0));
+        if (nodeBalances[x] > 0) gap = gap + 1;
+        x = x + 1;
+      }
+    }
+    var balance = nodeBalances.reduce((a, b) => a.value + b.value);
     await balances.close();
     return balance;
   }
@@ -103,11 +139,23 @@ settings = {
   'Electrum Server': 'testnet.rvn.rocks'
 }
 accounts = {
-  unique id (seed hash): {params: params, seed: seed, name: name}  // just metadata
+  unique id (seed hash): {params: params, seed: seed, name: name}  
 }
+
+nodes = {
+  uid: [{exposure: exposure, index: index, scripthash: scripthash}]
+}
+
 balances = {
-  unique id (seed hash): balance (int)
+  scripthash: ScriptHashBalance balance
 }
+unspents = {
+  scripthash: List utxos
+}
+utxos = {
+  scripthash: List sorted list of utxos
+}
+
 
 
 /// this one caused too many problems since it was full of nested structure

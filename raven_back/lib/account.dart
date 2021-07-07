@@ -1,3 +1,4 @@
+import 'dart:cli';
 import 'dart:typed_data';
 
 import 'package:convert/convert.dart';
@@ -6,6 +7,7 @@ import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 import 'network_params.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 export 'raven_networks.dart';
+import 'boxes.dart' as boxes;
 
 class CacheEmpty implements Exception {
   String cause;
@@ -75,8 +77,27 @@ class Account {
     return externals;
   }
 
+  /// triggered by watching accounts box and script hashes we care about?
+  Future driveBatch(List existingNodes, NodeExposure exposure,
+      [int batchSize = 10]) async {
+    var nodes = await boxes.Truth.instance.open('nodes');
+    var index = existingNodes.length;
+    //var exposure = existingNodes.isNotEmpty ? existingNodes[existingNodes.length - 1] : NodeExposure.Internal;
+    for (var i = 0; i < batchSize; i++) {
+      existingNodes.add({
+        'exposure': exposure,
+        'index': index,
+        'scriptHash': node(index, exposure: exposure).scriptHash
+      });
+      index = index + 1;
+    }
+    await nodes.put(uid, existingNodes);
+    await nodes.close();
+  }
+
   /// fills cache from electrum server, to be called before anything else
   Future<bool> deriveNodes(RavenElectrumClient client) async {
+    var nodeBalances = await boxes.Truth.instance.open('balances');
     // ignore: todo
     // if possible separate batching our batches concern from get data
     HDNode leaf;
@@ -110,9 +131,15 @@ class Account {
                   ? [ScriptHashUnspent.empty()]
                   : unspents[i]);
           cache.add(cachedNode);
+          await nodeBalances.put(
+              uid +
+                  exposure.toString() +
+                  ((nodeIndex - batchSize) + i).toString(),
+              balances[i]);
         }
       }
     }
+    await nodeBalances.close();
     return true;
   }
 
@@ -126,6 +153,10 @@ class Account {
         0,
         (int previousValue, CachedNode element) =>
             previousValue + element.balance.value);
+  }
+
+  Future<int> getBalanceFromDatabase() async {
+    return await boxes.Truth.instance.getAccountBalance(this);
   }
 
   /// returns the next internal node without a history

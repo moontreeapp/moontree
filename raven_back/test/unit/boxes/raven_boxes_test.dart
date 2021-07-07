@@ -6,6 +6,17 @@ import 'package:raven/boxes.dart' as memory;
 void main() {
   var truth = memory.Truth.instance;
 
+  test('put and get', () async {
+    // this is how we can populate the accounts and balances upon app open
+    var box = await truth.open('test');
+    await box.put('abc', 'hi');
+    await box.putAt(0, {'abc': 'hi'});
+    print(box.length);
+    print(await box.get('abc'));
+    print(await box.getAt(0));
+  });
+
+  /*
   test('load', () async {
     await truth.open();
     expect(truth.settings.length > 0, true);
@@ -35,8 +46,9 @@ void main() {
         print(text);
       });
     }
-    await settingsBox.put('whatever', 'somethingf1');
-    await settingsBox.put('Electrum Server', 'testnet13.rvn.rocfks');
+    await settingsBox.put('whatever', await settingsBox.get('whatever') + '1');
+    await settingsBox.put(
+        'Electrum Server', await settingsBox.get('Electrum Server') + '1');
     for (var item in changes) {
       print('changes');
       print(item);
@@ -46,6 +58,7 @@ void main() {
     print('last');
     print(changes); // empty
   });
+  */
 
   /*
   test('clear', () async {

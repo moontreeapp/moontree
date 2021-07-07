@@ -22,7 +22,8 @@ Future<Generated> generate() async {
   var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
   await truth.saveAccount(account);
   await account.deriveNodes(client);
-  await truth.saveAccountBalance(account);
+  // not necessary
+  //await truth.saveAccountBalance(account);
   return Generated(phrase, account, client);
 }
 

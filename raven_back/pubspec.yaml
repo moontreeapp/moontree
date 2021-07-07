@@ -14,7 +14,9 @@ dependencies:
   crypto: ^3.0.0 # ^2.0.3
   hive: ^2.0.4
   hive_crdt: ^2.0.2
-
+  quiver: ^3.0.1
+  sorted_list: ^1.0.0
+  
   #sembast: ^1.15.1
   #path_provider: ^0.5.0+1
   #flutter_bloc: ^0.9.1
