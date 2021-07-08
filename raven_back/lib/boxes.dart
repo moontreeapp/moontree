@@ -7,10 +7,14 @@ import 'box_adapters.dart';
 
 /// database wrapper singleton
 class Truth {
-  late Box settings;
-  late Box accounts;
-  late Box balances;
-  late Box test;
+  late Box settings; // 'Electrum Server': 'testnet.rvn.rocks'
+  late Box accounts; // uid: {params: params, seed: seed, name: name}
+  late Box
+      nodes; //         uid: [{exposure: exposure, index: index, scripthash: scripthash}]
+  late Box hashes; //   scripthash: uid
+  late Box balances; // scripthash: ScriptHashBalance balance
+  late Box unspents; // scripthash: List utxos
+  late Box utxos; //    scripthash: List sorted list of utxos
 
   // make truth a singleton
   static final Truth _singleton = Truth._internal();
@@ -58,8 +62,11 @@ class Truth {
     return {
       'settings': settings,
       'accounts': accounts,
+      'hashes': hashes,
+      'nodes': nodes,
       'balances': balances,
-      'test': test,
+      'unspents': unspents,
+      'utxos': utxos,
     };
   }
 
@@ -130,43 +137,3 @@ class Truth {
     return balance;
   }
 }
-
-
-/*
-Schema: `box = {key: value}`
-
-settings = {
-  'Electrum Server': 'testnet.rvn.rocks'
-}
-accounts = {
-  unique id (seed hash): {params: params, seed: seed, name: name}  
-}
-
-nodes = {
-  uid: [{exposure: exposure, index: index, scripthash: scripthash}]
-}
-
-balances = {
-  scripthash: ScriptHashBalance balance
-}
-unspents = {
-  scripthash: List utxos
-}
-utxos = {
-  scripthash: List sorted list of utxos
-}
-
-
-
-/// this one caused too many problems since it was full of nested structure
-nodes = {
-  composite key (account seed hash + exposure + nodeIndex): cachedNode (node, Map balance, List histories, List utxos)
-}
-
-electrum subscriptions replace cachedNode objects at the composite key upon events 
-user changes to "wallet" or account name/params replace account at uinque id (hash of seed?) without changing nodes
-
-replace cachedNode objects at the composite key upon events 
-
-
-*/

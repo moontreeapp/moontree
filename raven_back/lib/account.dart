@@ -81,17 +81,18 @@ class Account {
   Future driveBatch(List existingNodes, NodeExposure exposure,
       [int batchSize = 10]) async {
     var nodes = await boxes.Truth.instance.open('nodes');
+    var hashes = await boxes.Truth.instance.open('hashes');
     var index = existingNodes.length;
     //var exposure = existingNodes.isNotEmpty ? existingNodes[existingNodes.length - 1] : NodeExposure.Internal;
     for (var i = 0; i < batchSize; i++) {
-      existingNodes.add({
-        'exposure': exposure,
-        'index': index,
-        'scriptHash': node(index, exposure: exposure).scriptHash
-      });
+      var hash = node(index, exposure: exposure).scriptHash;
+      existingNodes
+          .add({'exposure': exposure, 'index': index, 'scriptHash': hash});
       index = index + 1;
+      await hashes.put(hash, uid);
     }
     await nodes.put(uid, existingNodes);
+    await hashes.close();
     await nodes.close();
   }
 

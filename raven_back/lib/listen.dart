@@ -21,6 +21,7 @@ Future toNodes() async {
   nodesBox.watch().listen((BoxEvent event) {
     // event.value is the batch, must buffer content here or use rxdart to buffer... https://pub.dev/packages/rxdart
     requestBalance(event.value);
+    requestUnspents(event.value);
   });
   await nodesBox.close();
 }
@@ -28,9 +29,9 @@ Future toNodes() async {
 /// run on app init
 Future toUnspents() async {
   var unspentsBox = await boxes.Truth.instance.open('unspents');
+  var hashesBox = await boxes.Truth.instance.open('hashes');
   unspentsBox.watch().listen((BoxEvent event) {
-    // event.value is the batch, must buffer content here or use rxdart to buffer... https://pub.dev/packages/rxdart
-    requestBalance(event.value);
+    sortUnspents(hashesBox.get(event.key), event.key, event.value);
   });
   await unspentsBox.close();
 }
