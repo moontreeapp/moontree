@@ -19,15 +19,15 @@ void main() {
     var account = Account(ravencoinTestnet, seed: seed);
     var client = RavenElectrumClient(await connect('testnet.rvn.rocks'));
     await client.serverVersion(protocolVersion: '1.8');
-    var scriptHash =
-        account.node(4, exposure: NodeExposure.Internal).scriptHash;
-    var history = await client.getHistory(scriptHash: scriptHash);
+    var scripthash =
+        account.node(4, exposure: NodeExposure.Internal).scripthash;
+    var history = await client.getHistory(scripthash: scripthash);
     expect(history, [
-      ScriptHashHistory(
+      ScripthashHistory(
           txHash:
               '56fcc747b8067133a3dc8907565fa1b31e452c98b3f200687cb836f98c3c46ae',
           height: 747308),
-      ScriptHashHistory(
+      ScripthashHistory(
           txHash:
               '2dada22848277e6a23b49c1e63d47b661f94819b2001e2789a5fd947b51907d5',
           height: 769767)

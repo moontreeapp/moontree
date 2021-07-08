@@ -1,28 +1,53 @@
 import 'dart:async';
-import 'dart:math';
+import 'package:quiver/iterables.dart';
 import 'package:hive/hive.dart';
-import 'package:raven_electrum_client/methods/get_balance.dart';
+import 'package:raven_electrum_client/raven_electrum_client.dart';
+import 'package:sorted_list/sorted_list.dart';
 import 'account.dart';
 import 'box_adapters.dart';
 
+extension GetAll on Box {
+  Iterable<MapEntry> getAll() {
+    return zip([keys, values]).map((e) => MapEntry(e[0], e[1]));
+  }
+
+  Iterable<MapEntry> filterByValueString(String value) {
+    var all = getAll();
+    return all.where((element) => element.value == value);
+  }
+
+  int countByValueString(String value) {
+    return filterByValueString(value).length;
+  }
+}
+
 /// database wrapper singleton
 class Truth {
-  late Box settings; // 'Electrum Server': 'testnet.rvn.rocks'
-  late Box accounts; // uid: {params: params, seed: seed, name: name}
-  late Box
-      nodes; //         uid: [{exposure: exposure, index: index, scripthash: scripthash}]
-  late Box hashes; //   scripthash: uid
-  late Box balances; // scripthash: ScriptHashBalance balance
-  late Box unspents; // scripthash: List utxos
-  late Box utxos; //    scripthash: List sorted list of utxos
+  late Box settings; //     'Electrum Server': 'testnet.rvn.rocks'
+  // option 1: include max internal/external to accounts - keep cache
+  late Box<AccountStored> accounts; // list
+  // option 2: lose cache
+  //late Box<List<String>> accountInternals;
+  //late Box<List<String>> accountExternals;
+
+  // option 3: every account has it's own box - more complicated than it needs to be
+  //late Map<String, Box> accountBoxes = {};
+
+  // option 4: two of these: and run a filter to get index...
+  late Box<String> scripthashAccountIdInternal;
+  late Box<String> scripthashAccountIdExternal;
+  late Box<ScripthashBalance> balances;
+  late Box<ScripthashHistory> histories;
+  late Box<List<ScripthashUnspent>> unspents;
+  late Box<SortedList<ScripthashUnspent>> accountUnspents;
 
   // make truth a singleton
-  static final Truth _singleton = Truth._internal();
+  static final Truth _singleton = Truth._();
 
   // singleton accessor
   static Truth get instance => _singleton;
 
-  Truth._internal() {
+  Truth._() {
     init();
   }
 
@@ -37,9 +62,9 @@ class Truth {
     Hive.registerAdapter(P2PKHAdapter());
     Hive.registerAdapter(PaymentDataAdapter());
     Hive.registerAdapter(NodeExposureAdapter());
-    Hive.registerAdapter(ScriptHashUnspentAdapter());
-    Hive.registerAdapter(ScriptHashHistoryAdapter());
-    Hive.registerAdapter(ScriptHashBalanceAdapter());
+    Hive.registerAdapter(ScripthashUnspentAdapter());
+    Hive.registerAdapter(ScripthashHistoryAdapter());
+    Hive.registerAdapter(ScripthashBalanceAdapter());
   }
 
   /// get data from long term storage boxes
@@ -57,16 +82,16 @@ class Truth {
     }
   }
 
-  /// returns all our boxes
   Map<String, Box> boxes() {
     return {
       'settings': settings,
       'accounts': accounts,
-      'hashes': hashes,
-      'nodes': nodes,
+      'scripthashAccountIdInternals': scripthashAccountIdInternal,
+      'scripthashAccountIdExternals': scripthashAccountIdExternal,
       'balances': balances,
+      'histories': histories,
       'unspents': unspents,
-      'utxos': utxos,
+      'accountUnspents': accountUnspents,
     };
   }
 
@@ -82,15 +107,31 @@ class Truth {
     }
   }
 
+  Future removeScripthashesOf(String accountId) async {
+    var internals = Map.fromIterable(
+            scripthashAccountIdInternal.filterByValueString(accountId))
+        .keys;
+    var externals = Map.fromIterable(
+            scripthashAccountIdExternal.filterByValueString(accountId))
+        .keys;
+    await scripthashAccountIdInternal.deleteAll(internals);
+    await scripthashAccountIdExternal.deleteAll(externals);
+    await balances.deleteAll(internals);
+    await histories.deleteAll(internals);
+    await unspents.deleteAll(internals);
+    await accountUnspents.deleteAll(internals);
+    await balances.deleteAll(externals);
+    await histories.deleteAll(externals);
+    await unspents.deleteAll(externals);
+    await accountUnspents.deleteAll(externals);
+  }
+
   Future saveAccount(Account account) async {
-    accounts = await open('accounts');
-    await accounts.put(account.uid,
+    await accounts.put(account.accountId,
         {'params': account.params, 'seed': account.seed, 'name': account.name});
-    await accounts.close();
   }
 
   Future getAccounts() async {
-    accounts = await open('accounts');
     var savedAccounts = [];
     var account;
     for (var i = 0; i < accounts.length; i++) {
@@ -98,42 +139,38 @@ class Truth {
       savedAccounts.add(Account(account['params'],
           seed: account['seed'], name: account['name']));
     }
-    await accounts.close();
     return savedAccounts;
   }
 
   /// saves the balance for each node in the account
   Future saveAccountBalance(Account account) async {
-    balances = await open('balances');
     for (var exposure in ['External', 'Internal']) {
       var x = 0;
       for (var node in account.cache) {
         if (node.node.exposure.toString() == exposure) {
           await balances.put(
-              account.uid + exposure + (x).toString(), node.balance);
+              account.accountId + exposure + (x).toString(), node.balance);
           x = x + 1;
         }
       }
     }
-    await balances.close();
   }
 
   /// gets the balance for each node in the account and returns sum
   Future<int> getAccountBalance(Account account) async {
-    balances = await open('balances');
     var nodeBalances = [];
     for (var exposure in ['External', 'Internal']) {
       var x = 0;
       var gap = 0;
       while (gap < 11) {
-        nodeBalances.add(await balances
-            .get(account.uid + exposure + (x).toString(), defaultValue: 0));
+        nodeBalances.add(await balances.get(
+            account.accountId + exposure + (x).toString(),
+            defaultValue: 0));
         if (nodeBalances[x] > 0) gap = gap + 1;
         x = x + 1;
       }
     }
     var balance = nodeBalances.reduce((a, b) => a.value + b.value);
-    await balances.close();
     return balance;
   }
 }

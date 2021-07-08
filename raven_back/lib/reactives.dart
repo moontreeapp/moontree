@@ -1,39 +1,78 @@
+import 'package:hive/hive.dart';
 import 'package:quiver/iterables.dart';
 import 'package:sorted_list/sorted_list.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
+import 'account.dart';
+import 'accounts.dart';
 import 'boxes.dart' as boxes;
 
 /// triggered by watching nodes
-Future requestBalance(List<String> batch) async {
+//Future requestBatch(List<String> batch, String from) async {
+//  var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
+//  // ignore: omit_local_variable_types
+//  Map<String, Function> functionMap = {
+//    'balances': client.getBalances,
+//    'histories': client.getHistories,
+//    'unspents': client.getUnspents,
+//  };
+//  // ignore: omit_local_variable_types
+//  Map<String, Box> boxMap = {
+//    'balances': boxes.Truth.instance.balances,
+//    'histories': boxes.Truth.instance.histories,
+//    'unspents': boxes.Truth.instance.unspents,
+//  };
+//  var results = await functionMap[from]!(scripthashes: batch);
+//  for (var hashItem in zip([batch, results]).toList()) {
+//    await boxMap[from]!.put(hashItem[0], hashItem[1]);
+//  }
+//}
+
+/// triggered by watching nodes
+Future requestBalances(List<String> batch) async {
   var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
-  var nodesBalance = await boxes.Truth.instance.open('balances');
-  var balances = await client.getBalances(scriptHashes: batch);
+  var balances = await client.getBalances(scripthashes: batch);
   for (var hashBalance in zip([batch, balances]).toList()) {
-    await nodesBalance.put(hashBalance[0], hashBalance[1]);
+    await boxes.Truth.instance.balances.put(hashBalance[0], hashBalance[1]);
   }
-  await nodesBalance.close();
+}
+
+/// triggered by watching nodes
+Future requestHistories(List<String> batch, String accountId,
+    {exposure = NodeExposure.Internal}) async {
+  var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
+  var histories = await client.getHistories(scripthashes: batch);
+  var entireBatchEmpty = true;
+  for (var hashHistory in zip([batch, histories]).toList()) {
+    if (hashHistory[1].isNotEmpty) entireBatchEmpty = false;
+    await boxes.Truth.instance.histories.put(hashHistory[0], hashHistory[1]);
+  }
+  if (!entireBatchEmpty) {
+    await Accounts.instance.accounts[accountId]!.deriveBatch(exposure);
+  } else if (exposure == NodeExposure.Internal) {
+    await Accounts.instance.accounts[accountId]!
+        .deriveBatch(NodeExposure.External);
+  }
 }
 
 /// triggered by watching nodes
 Future requestUnspents(List<String> batch) async {
   var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
-  var nodesUnspents = await boxes.Truth.instance.open('unspents');
-  var unspents = await client.getUnspents(scriptHashes: batch);
+  var unspents = await client.getUnspents(scripthashes: batch);
   for (var hashUnspents in zip([batch, unspents]).toList()) {
-    await nodesUnspents.put(hashUnspents[0], hashUnspents[1]);
+    await boxes.Truth.instance.unspents.put(hashUnspents[0], hashUnspents[1]);
   }
-  await nodesUnspents.close();
 }
 
 /// triggered by unspents
 /// sorts a flattened list of all unspents on an account
-Future sortUnspents(
-    String uid, String scriptHash, List<ScriptHashUnspent> utxos) async {
-  // this isn't coded right it sorts it for just one node...
-  var sortedList = SortedList<ScriptHashUnspent>(
-      (ScriptHashUnspent a, ScriptHashUnspent b) => a.value.compareTo(b.value));
+Future sortUnspents(String accountId, List<ScripthashUnspent> utxos) async {
+  // implemented as incremental load
+  // alternatively could grab all utxo's for accountId each time...
+  var accountUnspentsBox = boxes.Truth.instance.accountUnspents;
+  var sortedList = accountUnspentsBox.get(accountId) ??
+      SortedList<ScripthashUnspent>(
+          (ScripthashUnspent a, ScripthashUnspent b) =>
+              a.value.compareTo(b.value));
   sortedList.addAll(utxos);
-  var nodesUTXOs = await boxes.Truth.instance.open('utxos');
-  await nodesUTXOs.put(scriptHash, sortedList);
-  await nodesUTXOs.close();
+  await accountUnspentsBox.put(accountId, sortedList);
 }

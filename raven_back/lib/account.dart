@@ -1,13 +1,16 @@
 import 'dart:cli';
 import 'dart:typed_data';
-
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
 import 'package:bitcoin_flutter/bitcoin_flutter.dart';
+import 'package:hive/hive.dart';
+import 'package:raven/raven_networks.dart';
 import 'network_params.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
-export 'raven_networks.dart';
 import 'boxes.dart' as boxes;
+import 'package:encrypt/encrypt.dart';
+
+export 'raven_networks.dart';
 
 class CacheEmpty implements Exception {
   String cause;
@@ -25,37 +28,84 @@ class CachedNode {
   HDNode node;
 
   //@HiveField(1)
-  ScriptHashBalance balance;
+  ScripthashBalance balance;
 
   //@HiveField(2)
-  List<ScriptHashUnspent> unspent;
+  List<ScripthashUnspent> unspent;
 
   //@HiveField(3)
-  List<ScriptHashHistory> history;
+  List<ScripthashHistory> history;
 
   CachedNode(this.node,
       {required this.balance, required this.unspent, required this.history});
 }
 
 class UTXO {
-  ScriptHashUnspent unspent;
+  ScripthashUnspent unspent;
   NodeExposure exposure;
   int nodeIndex;
 
   UTXO(this.unspent, this.exposure, this.nodeIndex);
 }
 
+Uint8List decrypt(encryptedSeed) {
+  return encryptedSeed;
+}
+
+class AccountStored {
+  Uint8List symmetricallyEncryptedSeed;
+  NetworkParams? params;
+  String name;
+  String accountId;
+
+  Uint8List get seed => decrypt(symmetricallyEncryptedSeed);
+
+  AccountStored(this.symmetricallyEncryptedSeed,
+      {networkParams, this.name = 'First Wallet'})
+      : params = networkParams ?? ravencoinTestnet,
+        accountId =
+            sha256.convert(decrypt(symmetricallyEncryptedSeed)).toString();
+
+/*
+  Uint8List decrypt(encryptedSeed) {
+    final plainText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
+    final key = Key.fromUtf8('my 32 length key................');
+    final iv = IV.fromLength(16);
+
+    final encrypter = Encrypter(AES(key));
+
+    final encrypted = encrypter.encrypt(plainText, iv: iv);
+    final decrypted = encrypter.decrypt(encrypted, iv: iv);
+
+    print(decrypted); // Lorem ipsum dolor sit amet, consectetur adipiscing elit
+    print(encrypted
+        .base64); // R4PxiU3h8YoIRqVowBXm36ZcCeNeZ4s1OvVBTfFlZRdmohQqOpPQqD1YecJeZMAop/hZ4OxqgC1WtwvX/hP9mw==
+  }
+  */
+}
+
 class Account {
   final NetworkParams params;
-  final Uint8List seed;
+  final Uint8List symmetricallyEncryptedSeed;
   final String name;
   final HDWallet _wallet;
   final List<CachedNode> cache = [];
-  final String uid;
+  final String accountId;
 
-  Account(this.params, {required this.seed, this.name = 'First Wallet'})
-      : _wallet = HDWallet.fromSeed(seed, network: params.network),
-        uid = sha256.convert(seed).toString();
+  // todo on new account:
+  //boxes.Truth.instance.accountInternals[accountId] = await Hive.openBox(accountId);
+  Account(this.params, this.symmetricallyEncryptedSeed,
+      {this.name = 'First Wallet'})
+      : _wallet = HDWallet.fromSeed(decrypt(symmetricallyEncryptedSeed),
+            network: params.network),
+        accountId =
+            sha256.convert(decrypt(symmetricallyEncryptedSeed)).toString();
+
+  factory Account.fromAccountStored(AccountStored accountStored) {
+    return Account(accountStored.params ?? ravencoinTestnet,
+        accountStored.symmetricallyEncryptedSeed,
+        name: accountStored.name);
+  }
 
   HDNode node(int index, {exposure = NodeExposure.External}) {
     var wallet =
@@ -77,28 +127,42 @@ class Account {
     return externals;
   }
 
-  /// triggered by watching accounts box and script hashes we care about?
-  Future driveBatch(List existingNodes, NodeExposure exposure,
-      [int batchSize = 10]) async {
-    var nodes = await boxes.Truth.instance.open('nodes');
-    var hashes = await boxes.Truth.instance.open('hashes');
-    var index = existingNodes.length;
-    //var exposure = existingNodes.isNotEmpty ? existingNodes[existingNodes.length - 1] : NodeExposure.Internal;
-    for (var i = 0; i < batchSize; i++) {
-      var hash = node(index, exposure: exposure).scriptHash;
-      existingNodes
-          .add({'exposure': exposure, 'index': index, 'scriptHash': hash});
-      index = index + 1;
-      await hashes.put(hash, uid);
+/*
+  Encrypted encrypt() {
+    final plainText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
+    final key = Key.fromUtf8('my 32 length key................');
+    final iv = IV.fromLength(16);
+
+    final encrypter = Encrypter(AES(key));
+
+    final encrypted = encrypter.encrypt(plainText, iv: iv);
+    final decrypted = encrypter.decrypt(encrypted, iv: iv);
+
+    print(decrypted); // Lorem ipsum dolor sit amet, consectetur adipiscing elit
+    print(encrypted
+        .base64); // R4PxiU3h8YoIRqVowBXm36ZcCeNeZ4s1OvVBTfFlZRdmohQqOpPQqD1YecJeZMAop/hZ4OxqgC1WtwvX/hP9mw==
+  }
+*/
+
+  /// triggered by watching accounts and others...
+  Future deriveBatch(NodeExposure exposure, [int batchSize = 10]) async {
+    Box box;
+    if (exposure == NodeExposure.Internal) {
+      box = boxes.Truth.instance.scripthashAccountIdInternal;
+    } else {
+      box = boxes.Truth.instance.scripthashAccountIdExternal;
     }
-    await nodes.put(uid, existingNodes);
-    await hashes.close();
-    await nodes.close();
+    var index = box.countByValueString(accountId);
+    for (var i = 0; i < batchSize; i++) {
+      var hash = node(index, exposure: exposure).scripthash;
+      await box.put(hash, accountId);
+      index = index + 1;
+    }
   }
 
   /// fills cache from electrum server, to be called before anything else
   Future<bool> deriveNodes(RavenElectrumClient client) async {
-    var nodeBalances = await boxes.Truth.instance.open('balances');
+    var nodeBalances = boxes.Truth.instance.balances;
     // ignore: todo
     // if possible separate batching our batches concern from get data
     HDNode leaf;
@@ -113,12 +177,12 @@ class Account {
         for (var i = 0; i < batchSize; i++) {
           leaf = node(nodeIndex, exposure: exposure);
           nodeIndex = nodeIndex + 1;
-          batch.add(leaf.scriptHash);
+          batch.add(leaf.scripthash);
           leaves.add(leaf);
         }
-        var balances = await client.getBalances(scriptHashes: batch);
-        var histories = await client.getHistories(scriptHashes: batch);
-        var unspents = await client.getUnspents(scriptHashes: batch);
+        var balances = await client.getBalances(scripthashes: batch);
+        var histories = await client.getHistories(scripthashes: batch);
+        var unspents = await client.getUnspents(scripthashes: batch);
         // ignore: todo
         // subscribe this this scripthash
         entireBatchEmpty = true;
@@ -129,18 +193,17 @@ class Account {
               balance: balances[i],
               history: histories[i],
               unspent: (unspents[i].isEmpty)
-                  ? [ScriptHashUnspent.empty()]
+                  ? [ScripthashUnspent.empty()]
                   : unspents[i]);
           cache.add(cachedNode);
           await nodeBalances.put(
-              uid +
+              accountId +
                   exposure.toString() +
                   ((nodeIndex - batchSize) + i).toString(),
               balances[i]);
         }
       }
     }
-    await nodeBalances.close();
     return true;
   }
 
@@ -251,7 +314,7 @@ class HDNode {
     return Address.addressToOutputScript(wallet.address, params.network);
   }
 
-  String get scriptHash {
+  String get scripthash {
     // ignore: omit_local_variable_types
     Digest digest = sha256.convert(outputScript);
     var hash = reverse(digest.bytes);

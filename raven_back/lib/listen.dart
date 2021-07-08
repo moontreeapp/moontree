@@ -1,37 +1,54 @@
 import 'package:hive/hive.dart';
+import 'package:raven/account.dart';
 import 'package:raven/reactives.dart';
 import 'boxes.dart' as boxes;
+import 'accounts.dart';
 
+// for (var i = 0; i < accountsBox.length; i++) {
+//   key: accountsBox.keyAt(i) }
 /// run on app init
-Future toAccounts() async {
-  var accountsBox = await boxes.Truth.instance.open('accounts');
-  for (var i = 0; i < accountsBox.length; i++) {
-    accountsBox.watch(key: accountsBox.keyAt(i)).listen((BoxEvent event) {
-      // where be in-memory account objects?
-      //accounts[event.key].driveBatch(
-      //  event.value, /* how is exposure determined? */
-      //);
-    });
-  }
+void toAccounts() {
+  boxes.Truth.instance.accounts.watch().listen((BoxEvent event) {
+    //event.key is an int, not a accountId...
+    if (event.deleted) {
+      // remove from accounts if it exists
+      Accounts.instance.accounts.remove(event.value.accountId);
+      // remove from database if it exists
+      boxes.Truth.instance.removeScripthashesOf(event.value.accountId);
+      boxes.Truth.instance.accountUnspents.delete(event.value.accountId);
+    } else {
+      Accounts.instance.accounts[event.key]!.deriveBatch(NodeExposure.Internal);
+    }
+  });
 }
 
 /// run on app init
-Future toNodes() async {
-  var nodesBox = await boxes.Truth.instance.open('nodes');
-  nodesBox.watch().listen((BoxEvent event) {
+void toNodes() {
+  var internal = boxes.Truth.instance.scripthashAccountIdInternal;
+  var external = boxes.Truth.instance.scripthashAccountIdExternal;
+  internal.watch().listen((BoxEvent event) {
     // event.value is the batch, must buffer content here or use rxdart to buffer... https://pub.dev/packages/rxdart
-    requestBalance(event.value);
-    requestUnspents(event.value);
+    requestBalances(event.key);
+    requestUnspents(event.key);
+    requestHistories(event.key, event.value);
   });
-  await nodesBox.close();
+  external.watch().listen((BoxEvent event) {
+    // event.value is the batch, must buffer content here or use rxdart to buffer... https://pub.dev/packages/rxdart
+    requestBalances(event.value);
+    requestUnspents(event.value);
+    requestHistories(event.value, event.value, exposure: NodeExposure.External);
+  });
 }
 
 /// run on app init
-Future toUnspents() async {
-  var unspentsBox = await boxes.Truth.instance.open('unspents');
-  var hashesBox = await boxes.Truth.instance.open('hashes');
+void toUnspents() {
+  var unspentsBox = boxes.Truth.instance.unspents;
+  var internal = boxes.Truth.instance.scripthashAccountIdInternal;
+  var external = boxes.Truth.instance.scripthashAccountIdExternal;
   unspentsBox.watch().listen((BoxEvent event) {
-    sortUnspents(hashesBox.get(event.key), event.key, event.value);
+    var accountId = internal.get(event.key) ?? external.get(event.key) ?? '';
+    if (accountId != '') {
+      sortUnspents(accountId, event.key, event.value);
+    }
   });
-  await unspentsBox.close();
 }

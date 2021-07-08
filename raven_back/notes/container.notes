@@ -6,7 +6,7 @@ Container
 -> generate the HD wallet
 -> ask the wallet to give me a node
 
-container.wallet.node(0).scriptHash
+container.wallet.node(0).scripthash
 container.node(0)
 
 account.wallet?

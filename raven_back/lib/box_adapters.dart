@@ -17,9 +17,9 @@ class CachedNodeAdapter extends TypeAdapter<CachedNode> {
     };
     return CachedNode(
       fields[0] as HDNode,
-      balance: fields[1] as ScriptHashBalance,
-      unspent: fields[2] as List<ScriptHashUnspent>,
-      history: fields[3] as List<ScriptHashHistory>,
+      balance: fields[1] as ScripthashBalance,
+      unspent: fields[2] as List<ScripthashUnspent>,
+      history: fields[3] as List<ScripthashHistory>,
     );
   }
 
@@ -119,7 +119,7 @@ class NetworkTypeAdapter extends TypeAdapter<NetworkType> {
       bech32: fields[1] as String,
       bip32: fields[2] as Bip32Type,
       pubKeyHash: fields[3] as int,
-      scriptHash: fields[4] as int,
+      scripthash: fields[4] as int,
       wif: fields[5] as int,
     );
   }
@@ -137,7 +137,7 @@ class NetworkTypeAdapter extends TypeAdapter<NetworkType> {
       ..writeByte(3)
       ..write(obj.pubKeyHash)
       ..writeByte(4)
-      ..write(obj.scriptHash)
+      ..write(obj.scripthash)
       ..writeByte(5)
       ..write(obj.wif);
   }
@@ -286,17 +286,17 @@ class NodeExposureAdapter extends TypeAdapter<NodeExposure> {
   }
 }
 
-class ScriptHashUnspentAdapter extends TypeAdapter<ScriptHashUnspent> {
+class ScripthashUnspentAdapter extends TypeAdapter<ScripthashUnspent> {
   @override
   final typeId = 10;
 
   @override
-  ScriptHashUnspent read(BinaryReader reader) {
+  ScripthashUnspent read(BinaryReader reader) {
     var numOfFields = reader.readByte();
     var fields = <int, dynamic>{
       for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return ScriptHashUnspent(
+    return ScripthashUnspent(
       height: fields[0] as int,
       txHash: fields[1] as String,
       txPos: fields[2] as int,
@@ -305,7 +305,7 @@ class ScriptHashUnspentAdapter extends TypeAdapter<ScriptHashUnspent> {
   }
 
   @override
-  void write(BinaryWriter writer, ScriptHashUnspent obj) {
+  void write(BinaryWriter writer, ScripthashUnspent obj) {
     writer
       ..writeByte(4)
       ..writeByte(0)
@@ -319,24 +319,24 @@ class ScriptHashUnspentAdapter extends TypeAdapter<ScriptHashUnspent> {
   }
 }
 
-class ScriptHashHistoryAdapter extends TypeAdapter<ScriptHashHistory> {
+class ScripthashHistoryAdapter extends TypeAdapter<ScripthashHistory> {
   @override
   final typeId = 11;
 
   @override
-  ScriptHashHistory read(BinaryReader reader) {
+  ScripthashHistory read(BinaryReader reader) {
     var numOfFields = reader.readByte();
     var fields = <int, dynamic>{
       for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return ScriptHashHistory(
+    return ScripthashHistory(
       height: fields[0] as int,
       txHash: fields[1] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, ScriptHashHistory obj) {
+  void write(BinaryWriter writer, ScripthashHistory obj) {
     writer
       ..writeByte(2)
       ..writeByte(0)
@@ -346,24 +346,24 @@ class ScriptHashHistoryAdapter extends TypeAdapter<ScriptHashHistory> {
   }
 }
 
-class ScriptHashBalanceAdapter extends TypeAdapter<ScriptHashBalance> {
+class ScripthashBalanceAdapter extends TypeAdapter<ScripthashBalance> {
   @override
   final typeId = 12;
 
   @override
-  ScriptHashBalance read(BinaryReader reader) {
+  ScripthashBalance read(BinaryReader reader) {
     var numOfFields = reader.readByte();
     var fields = <int, dynamic>{
       for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return ScriptHashBalance(
+    return ScripthashBalance(
       fields[0] as int,
       fields[1] as int,
     );
   }
 
   @override
-  void write(BinaryWriter writer, ScriptHashBalance obj) {
+  void write(BinaryWriter writer, ScripthashBalance obj) {
     writer
       ..writeByte(4)
       ..writeByte(0)

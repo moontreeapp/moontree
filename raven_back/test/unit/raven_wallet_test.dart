@@ -13,8 +13,8 @@ void main() {
     expect(reverse(sample), [4, 3, 2, 1]);
   });
 
-  test('scriptHash', () {
-    expect(account.node(0).scriptHash,
+  test('scripthash', () {
+    expect(account.node(0).scripthash,
         '45520ecd53be9412d82e904a12a8fe7aeb0251eea1eaf1be02cab9fb98d1fad7');
   });
 }

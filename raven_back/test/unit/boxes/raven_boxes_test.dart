@@ -6,39 +6,26 @@ import 'package:raven/boxes.dart' as memory;
 void main() {
   var truth = memory.Truth.instance;
 
-  test('put and get', () async {
-    // this is how we can populate the accounts and balances upon app open
-    var box = await truth.open('test');
-    await box.put('abc', 'hi');
-    await box.putAt(0, {'abc': 'hi'});
-    print(box.length);
-    print(await box.get('abc'));
-    print(await box.getAt(0));
-  });
-
-  /*
-  test('load', () async {
-    await truth.open();
+  test('loaded', () async {
     expect(truth.settings.length > 0, true);
     expect(truth.accounts.length > 0, true);
     expect(truth.balances.length > 0, true);
     //print(truth.accounts.getAt(0));
     //print(truth.balances.getAt(0));
-    await truth.close();
   });
 
   test('get', () async {
     // this is how we can populate the accounts and balances upon app open
     var accounts = await truth.getAccounts();
     for (var account in accounts) {
-      print(account.uid);
+      print(account.accountId);
       print(await truth.getAccountBalance(account));
     }
   });
 
   test('listen', () async {
     var changes = [];
-    var settingsBox = await truth.open('settings');
+    var settingsBox = truth.settings;
     for (var i = 0; i < settingsBox.length; i++) {
       settingsBox.watch(key: settingsBox.keyAt(i)).listen((BoxEvent event) {
         var text = '${event.key}: ${event.value}, ${event.deleted}';
@@ -58,13 +45,11 @@ void main() {
     print('last');
     print(changes); // empty
   });
-  */
 
   /*
   test('clear', () async {
     await truth.clear();
     expect(truth.settings.length, 0);
-    await truth.open();
     expect(truth.settings.length, 1);
     expect(
         truth.settings.get('Electrum Server'), 'testnet.rvn.rocks');
