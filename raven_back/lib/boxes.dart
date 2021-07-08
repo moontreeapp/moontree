@@ -127,17 +127,15 @@ class Truth {
   }
 
   Future saveAccount(Account account) async {
-    await accounts.put(account.accountId,
-        {'params': account.params, 'seed': account.seed, 'name': account.name});
+    await accounts.add(AccountStored(account.symmetricallyEncryptedSeed,
+        networkParams: account.params, name: account.name));
   }
 
   Future getAccounts() async {
     var savedAccounts = [];
-    var account;
     for (var i = 0; i < accounts.length; i++) {
-      account = await accounts.getAt(i);
-      savedAccounts.add(Account(account['params'],
-          seed: account['seed'], name: account['name']));
+      var accountStored = accounts.getAt(i);
+      savedAccounts.add(Account.fromAccountStored(accountStored!));
     }
     return savedAccounts;
   }
