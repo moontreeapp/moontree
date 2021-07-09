@@ -33,7 +33,8 @@ class MockElectrumServer {
 
   /// for tests: indicate how the server should respond to the next request
   void willRespondWith(method, result, [id]) {
-    incoming.add(prepareResponse(method, result, id));
+    var response = prepareResponse(method, result, id);
+    incoming.add(response);
   }
 
   /// for tests: send a notification to the client (i.e. a single message, which

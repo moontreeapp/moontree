@@ -13,12 +13,12 @@ void main() {
     });
 
     test('subscribes (without params)', () async {
-      client.registerSubscribable(Subscribable('blockchain.headers', 0));
       var method = 'blockchain.headers.subscribe';
       server.willRespondWith(method, {'hex': '01', 'height': 788191});
       server.willNotifyWith(method, [
         {'hex': '02', 'height': 788192}
       ]);
+      registerSubscribable('blockchain.headers', 0);
       var results =
           await client.subscribe('blockchain.headers').take(2).toList();
       expect(results.length, 2);

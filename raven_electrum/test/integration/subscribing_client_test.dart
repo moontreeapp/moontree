@@ -9,13 +9,13 @@ void main() {
     late SubscribingClient client;
     setUp(() async {
       // Our testnet server:
-      // var channel = await connect('143.198.142.78', port: 50012);
+      var channel = await connect('143.198.142.78', port: 50012);
 
       // Raven Foundation testnet server:
       // var channel = await connect('168.119.100.140', port: 50012);
 
       // HyperPeek's testnet server:
-      var channel = await connect('testnet.rvn.rocks', port: 50002);
+      // var channel = await connect('testnet.rvn.rocks', port: 50002);
 
       client = SubscribingClient(channel);
     });
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('subscribes to headers', () async {
-      client.registerSubscribable(Subscribable('blockchain.headers', 0));
+      registerSubscribable('blockchain.headers', 0);
       var results =
           await client.subscribe('blockchain.headers').take(2).toList();
       expect(results.length, 2);

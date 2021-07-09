@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:json_rpc_2/json_rpc_2.dart';
-
 class Subscribable {
   /// The `methodPrefix` is the electrum RPC method, minus '.subscribe' suffix.
   final String methodPrefix;
@@ -25,18 +23,14 @@ class Subscribable {
 
   /// Returns a matching key, that can be used to match the original request to
   /// subsequent notifications.
-  String key(Parameters? params) {
-    if (params == null) {
-      return '$methodPrefix[]';
-    } else {
-      var slice = params.asList.sublist(0, paramsCount);
-      var json = jsonEncode(slice);
-      return '$methodPrefix$json';
-    }
+  String key(List params) {
+    var slice = params.sublist(0, paramsCount);
+    var json = jsonEncode(slice);
+    return '$methodPrefix$json';
   }
 
-  Map notificationResult(Parameters params) {
-    return params[paramsCount].valueOr({});
+  dynamic notificationResult(List params) {
+    return params[paramsCount] ?? {};
   }
 
   static String getMethodPrefix(String method) {

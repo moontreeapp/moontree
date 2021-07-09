@@ -7,8 +7,16 @@ import 'subscribable.dart';
 
 export 'subscribable.dart';
 
+// Maintain a list of registered Subscribables, one per RPC method prefix
+final Map<String, Subscribable> _subscribables = {};
+void registerSubscribable(String methodPrefix, int paramsCount) {
+  if (!_subscribables.containsKey(methodPrefix)) {
+    var subscribable = Subscribable(methodPrefix, paramsCount);
+    _subscribables[methodPrefix] = subscribable;
+  }
+}
+
 class SubscribingClient extends BaseClient {
-  final Map<String, Subscribable> _subscribables = {};
   final Map<String, List<StreamController>> _subscriptions = {};
 
   SubscribingClient(channel) : super(channel) {
@@ -20,7 +28,7 @@ class SubscribingClient extends BaseClient {
         throw RpcException.methodNotFound(methodPrefix);
       }
 
-      var key = subscribable.key(params);
+      var key = subscribable.key(params.asList);
       var controllers = _subscriptions[key] ?? [];
       try {
         var result = subscribable.notificationResult(params.asList);
@@ -35,12 +43,7 @@ class SubscribingClient extends BaseClient {
     });
   }
 
-  void registerSubscribable(Subscribable subscribable) {
-    _subscribables[subscribable.methodPrefix] = subscribable;
-  }
-
-  StreamController makeSubscription(
-      Subscribable subscribable, Parameters? params) {
+  StreamController makeSubscription(Subscribable subscribable, List params) {
     var key = subscribable.key(params);
     var controllers = _subscriptions[key];
     var newController = StreamController();
@@ -53,7 +56,7 @@ class SubscribingClient extends BaseClient {
     return newController;
   }
 
-  Stream subscribe(String methodPrefix, [Parameters? params]) {
+  Stream subscribe(String methodPrefix, [List params = const []]) {
     var subscribable = _subscribables[methodPrefix];
     if (subscribable == null) {
       throw RpcException.methodNotFound(methodPrefix);

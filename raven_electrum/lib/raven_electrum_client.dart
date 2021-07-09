@@ -5,8 +5,8 @@ library raven_electrum_client;
 
 import 'dart:async';
 
-import 'client/subscribing_client.dart';
 import 'connect.dart' as conn;
+import 'client/subscribing_client.dart';
 import 'methods/server_version.dart';
 
 export 'methods/features.dart';
@@ -14,6 +14,10 @@ export 'methods/get_balance.dart';
 export 'methods/get_history.dart';
 export 'methods/get_unspent.dart';
 export 'methods/server_version.dart';
+
+export 'subscriptions/subscribe_headers.dart';
+export 'subscriptions/subscribe_asset.dart';
+export 'subscriptions/subscribe_scripthash.dart';
 
 export 'connect.dart';
 
@@ -26,13 +30,7 @@ class Header {
 /// Methods on RavenElectrumClient are defined in the `methods` directory.
 /// See https://electrumx-ravencoin.readthedocs.io/en/latest/protocol-methods.html
 class RavenElectrumClient extends SubscribingClient {
-  RavenElectrumClient(channel) : super(channel) {
-    // registerSubscribable(Subscribable('blockchain.headers'));
-    // registerSubscribable(
-    //     Subscribable('blockchain.scripthash', (params) => params.asList.first));
-    // registerSubscribable(
-    //     Subscribable('blockchain.asset', (params) => params.asList.first));
-  }
+  RavenElectrumClient(channel) : super(channel);
 
   static Future<RavenElectrumClient> connect(dynamic host,
       {port = 50002,
