@@ -5,39 +5,6 @@ import 'package:raven/account.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:raven/network_params.dart';
 
-class CachedNodeAdapter extends TypeAdapter<CachedNode> {
-  @override
-  final typeId = 0;
-
-  @override
-  CachedNode read(BinaryReader reader) {
-    var numOfFields = reader.readByte();
-    var fields = <int, dynamic>{
-      for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
-    };
-    return CachedNode(
-      fields[0] as HDNode,
-      balance: fields[1] as ScripthashBalance,
-      unspent: fields[2] as List<ScripthashUnspent>,
-      history: fields[3] as List<ScripthashHistory>,
-    );
-  }
-
-  @override
-  void write(BinaryWriter writer, CachedNode obj) {
-    writer
-      ..writeByte(4)
-      ..writeByte(0)
-      ..write(obj.node)
-      ..writeByte(1)
-      ..write(obj.balance)
-      ..writeByte(2)
-      ..write(obj.unspent)
-      ..writeByte(3)
-      ..write(obj.history);
-  }
-}
-
 class HDNodeAdapter extends TypeAdapter<HDNode> {
   @override
   final typeId = 1;
@@ -119,7 +86,7 @@ class NetworkTypeAdapter extends TypeAdapter<NetworkType> {
       bech32: fields[1] as String,
       bip32: fields[2] as Bip32Type,
       pubKeyHash: fields[3] as int,
-      scripthash: fields[4] as int,
+      scriptHash: fields[4] as int,
       wif: fields[5] as int,
     );
   }
@@ -137,7 +104,7 @@ class NetworkTypeAdapter extends TypeAdapter<NetworkType> {
       ..writeByte(3)
       ..write(obj.pubKeyHash)
       ..writeByte(4)
-      ..write(obj.scripthash)
+      ..write(obj.scriptHash)
       ..writeByte(5)
       ..write(obj.wif);
   }

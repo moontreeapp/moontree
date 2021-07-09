@@ -1,4 +1,5 @@
 import 'dart:cli';
+import 'dart:html';
 import 'dart:typed_data';
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
@@ -22,6 +23,7 @@ class InsufficientFunds implements Exception {
   InsufficientFunds([this.cause = 'Error! Insufficient funds.']);
 }
 
+/* delete
 //@HiveType(typeId: 0)
 class CachedNode {
   //@HiveField(0)
@@ -47,9 +49,18 @@ class UTXO {
 
   UTXO(this.unspent, this.exposure, this.nodeIndex);
 }
-
+*/
 Uint8List decrypt(encryptedSeed) {
   return encryptedSeed;
+}
+
+class nodeLocation {
+  int index;
+  NodeExposure exposure;
+
+  nodeLocation(int locationIndex, NodeExposure locationExposure)
+      : index = locationIndex,
+        exposure = locationExposure;
 }
 
 class AccountStored {
@@ -89,7 +100,7 @@ class Account {
   final Uint8List symmetricallyEncryptedSeed;
   final String name;
   final HDWallet _wallet;
-  final List<CachedNode> cache = [];
+  //final List<CachedNode> cache = [];
   final String accountId;
 
   // todo on new account:
@@ -113,18 +124,21 @@ class Account {
     return HDNode(params, wallet, index, exposure);
   }
 
-  List<CachedNode> get internals {
-    var internals = List<CachedNode>.from(cache);
-    internals
-        .retainWhere((utxo) => utxo.node.exposure == NodeExposure.Internal);
-    return internals;
+  Iterable get accountInternals {
+    return boxes.Truth.instance.scripthashAccountIdInternal
+        .filterKeysByValueString(accountId);
   }
 
-  List<CachedNode> get externals {
-    var externals = List<CachedNode>.from(cache);
-    externals
-        .retainWhere((utxo) => utxo.node.exposure == NodeExposure.External);
-    return externals;
+  Iterable get accountExternals {
+    return boxes.Truth.instance.scripthashAccountIdExternal
+        .filterKeysByValueString(accountId);
+  }
+
+  List get accountScripthashes {
+    var scripthashes = [];
+    scripthashes.addAll(accountInternals.toList());
+    scripthashes.addAll(accountExternals.toList());
+    return scripthashes;
   }
 
 /*
@@ -160,117 +174,53 @@ class Account {
     }
   }
 
-  /// fills cache from electrum server, to be called before anything else
-  Future<bool> deriveNodes(RavenElectrumClient client) async {
-    var nodeBalances = boxes.Truth.instance.balances;
-    // ignore: todo
-    // if possible separate batching our batches concern from get data
-    HDNode leaf;
-    var batchSize = 10;
-    for (var exposure in NodeExposure.values) {
-      var nodeIndex = 0;
-      var entireBatchEmpty = false;
-      while (!entireBatchEmpty) {
-        // ignore: omit_local_variable_types
-        List<String> batch = [];
-        var leaves = [];
-        for (var i = 0; i < batchSize; i++) {
-          leaf = node(nodeIndex, exposure: exposure);
-          nodeIndex = nodeIndex + 1;
-          batch.add(leaf.scripthash);
-          leaves.add(leaf);
-        }
-        var balances = await client.getBalances(scripthashes: batch);
-        var histories = await client.getHistories(scripthashes: batch);
-        var unspents = await client.getUnspents(scripthashes: batch);
-        // ignore: todo
-        // subscribe this this scripthash
-        entireBatchEmpty = true;
-        for (var i = 0; i < batch.length; i++) {
-          if (histories[i].isNotEmpty) entireBatchEmpty = false;
-          leaf = leaves[i];
-          var cachedNode = CachedNode(leaf,
-              balance: balances[i],
-              history: histories[i],
-              unspent: (unspents[i].isEmpty)
-                  ? [ScripthashUnspent.empty()]
-                  : unspents[i]);
-          cache.add(cachedNode);
-          await nodeBalances.put(
-              accountId +
-                  exposure.toString() +
-                  ((nodeIndex - batchSize) + i).toString(),
-              balances[i]);
-        }
-      }
-    }
-    return true;
-  }
-
-  void checkCacheEmpty() {
-    if (cache.isEmpty) throw CacheEmpty();
-  }
-
   int getBalance() {
-    checkCacheEmpty();
-    return cache.fold(
-        0,
-        (int previousValue, CachedNode element) =>
-            previousValue + element.balance.value);
-  }
-
-  Future<int> getBalanceFromDatabase() async {
-    return await boxes.Truth.instance.getAccountBalance(this);
+    return boxes.Truth.instance.getAccountBalance(this);
   }
 
   /// returns the next internal node without a history
   HDNode getNextChangeNode() {
-    checkCacheEmpty();
+    // here we assume .where returns it in order...
+    /* not sure this approach guarantees correct order
+    var internalScripthashes = boxes.Truth.instance.scripthashAccountIdInternal
+        .filterKeysByValueString(accountId);
+    var internalHistoriesMap = boxes.Truth.instance.histories
+        .filterByKeys(internalScripthashes.toList());
     var i = 0;
-    for (i = 0; i < internals.length; i++) {
-      if (internals[i].history.isEmpty) {
-        return internals[i].node;
+    for (var scripthashHistory in internalHistoriesMap) {
+      if (scripthashHistory.values[0].isEmpty) {
+        return scripthashHistory.keys[0];
       }
+      i = i + 1;
     }
+    */
+    var i = 0;
+    for (var scripthash in accountInternals) {
+      if (boxes.Truth.instance.histories.get(scripthash)!.isEmpty) {
+        return node(i, exposure: NodeExposure.Internal);
+      }
+      i = i + 1;
+    }
+    // this shouldn't happen - if so we should trigger a new batch??
     return node(i + 1, exposure: NodeExposure.Internal);
   }
 
-  /// Returns a sorted, flattened list of UTXOs derived from cache
-  List<UTXO> generateSortedUTXO(List<UTXO> except) {
-    var cachedNodes = List<CachedNode>.from(cache);
-    var unflattenedUtxos = cachedNodes.map((CachedNode n) => n.unspent
-        .map((unspent) => UTXO(unspent, n.node.exposure, n.node.index)));
-
-    // Flatten the list of lists
-    var utxos = unflattenedUtxos.expand((element) => element).toList();
-
-    // Sort by smallest to largest UTXO value
-    utxos.sort((UTXO a, UTXO b) => a.unspent.value.compareTo(b.unspent.value));
-
-    // We don't want to include UTXOs that have already been included to be spent
-    utxos.removeWhere((utxo) => except.contains(utxo));
-
-    return utxos;
-  }
-
   /// returns the smallest number of inputs to satisfy the amount
-  List<UTXO> collectUTXOs(int amount, [List<UTXO>? except]) {
-    checkCacheEmpty();
-    var utxos = generateSortedUTXO(except ?? []);
-    var ret = <UTXO>[];
+  List<ScripthashUnspent> collectUTXOs(int amount,
+      [List<ScripthashUnspent>? except]) {
+    var ret = <ScripthashUnspent>[];
 
     // Insufficient funds?
-    var availableFunds = 0;
-    utxos.forEach((item) {
-      availableFunds = (availableFunds + item.unspent.value).toInt();
-    });
-    if (availableFunds < amount) {
+    if (getBalance() < amount) {
       throw InsufficientFunds();
     }
 
+    var utxos = boxes.Truth.instance.accountUnspents.get(accountId);
+    utxos!.removeWhere((utxo) => except!.contains(utxo));
+
     // can we find an ideal singular utxo?
     for (var i = 0; i < utxos.length; i++) {
-      if (utxos[i].unspent.value >= amount) {
+      if (utxos[i].value >= amount) {
         return [utxos[i]];
       }
     }
@@ -281,15 +231,32 @@ class Account {
     // and lets see how many times we can do that
     var remainder = amount;
     for (var i = utxos.length - 1; i >= 0; i--) {
-      if (remainder < utxos[i].unspent.value) {
+      if (remainder < utxos[i].value) {
         break;
       }
       ret.add(utxos[i]);
-      remainder = (remainder - utxos[i].unspent.value).toInt();
+      remainder = (remainder - utxos[i].value).toInt();
     }
     // Find one last UTXO, starting from smallest, that satisfies the remainder
-    ret.add(utxos.firstWhere((utxo) => utxo.unspent.value >= remainder));
+    ret.add(utxos.firstWhere((utxo) => utxo.value >= remainder));
     return ret;
+  }
+
+  nodeLocation? getNodeLocationOf(scripthash) {
+    var i = 0;
+    for (var internalScripthash in accountInternals) {
+      if (internalScripthash == scripthash) {
+        return nodeLocation(i, NodeExposure.Internal);
+      }
+      i = i + 1;
+    }
+    i = 0;
+    for (var internalScripthash in accountExternals) {
+      if (internalScripthash == scripthash) {
+        return nodeLocation(i, NodeExposure.External);
+      }
+      i = i + 1;
+    }
   }
 }
 

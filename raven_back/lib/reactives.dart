@@ -7,27 +7,6 @@ import 'accounts.dart';
 import 'boxes.dart' as boxes;
 
 /// triggered by watching nodes
-//Future requestBatch(List<String> batch, String from) async {
-//  var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
-//  // ignore: omit_local_variable_types
-//  Map<String, Function> functionMap = {
-//    'balances': client.getBalances,
-//    'histories': client.getHistories,
-//    'unspents': client.getUnspents,
-//  };
-//  // ignore: omit_local_variable_types
-//  Map<String, Box> boxMap = {
-//    'balances': boxes.Truth.instance.balances,
-//    'histories': boxes.Truth.instance.histories,
-//    'unspents': boxes.Truth.instance.unspents,
-//  };
-//  var results = await functionMap[from]!(scripthashes: batch);
-//  for (var hashItem in zip([batch, results]).toList()) {
-//    await boxMap[from]!.put(hashItem[0], hashItem[1]);
-//  }
-//}
-
-/// triggered by watching nodes
 Future requestBalances(List<String> batch) async {
   var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
   var balances = await client.getBalances(scripthashes: batch);
@@ -48,9 +27,6 @@ Future requestHistories(List<String> batch, String accountId,
   }
   if (!entireBatchEmpty) {
     await Accounts.instance.accounts[accountId]!.deriveBatch(exposure);
-  } else if (exposure == NodeExposure.Internal) {
-    await Accounts.instance.accounts[accountId]!
-        .deriveBatch(NodeExposure.External);
   }
 }
 

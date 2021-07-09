@@ -1,12 +1,13 @@
 import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 import 'package:raven/account.dart';
 import 'package:raven/fee.dart' as fee;
+import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 class FormatResult {
   TransactionBuilder txb;
   int total;
   int fees;
-  List<UTXO> utxos;
+  List<ScripthashUnspent> utxos;
   FormatResult(this.txb, this.total, this.fees, this.utxos);
 }
 
@@ -47,12 +48,12 @@ class TransactionBuilderHelper {
   ///   which is one utxo (10), so your cost is now really 3+1 and your input is 10. your done.
   FormatResult addInputs(TransactionBuilder txb) {
     var total = 0;
-    var retutxos = <UTXO>[];
+    var retutxos = <ScripthashUnspent>[];
     var pastInputs = [];
     var knownFees = fee.totalFeeByBytes(txb);
     var anticipatedInputFeeRate = 51;
     var anticipatedInputFees = 0;
-    var utxos = <UTXO>[];
+    var utxos = <ScripthashUnspent>[];
     // find optimal utxo set by anticipating fees depending on chosen inputs and get inputs to cover total
     while (!pastInputs.contains(utxos)) {
       anticipatedInputFees =
@@ -68,8 +69,8 @@ class TransactionBuilderHelper {
     }
     // add it to the transaction
     for (var utxo in utxos) {
-      txb.addInput(utxo.unspent.txHash, utxo.unspent.txPos);
-      total = (total + utxo.unspent.value).toInt();
+      txb.addInput(utxo.txHash, utxo.txPos);
+      total = (total + utxo.value).toInt();
       retutxos.add(utxo);
     }
     // doublecheck we have enough value to cover the amount + anticipated OutputFee + knownFees
@@ -96,12 +97,14 @@ class TransactionBuilderHelper {
     return txb;
   }
 
-  TransactionBuilder signEachInput(TransactionBuilder txb, List<UTXO> utxos) {
+  TransactionBuilder signEachInput(
+      TransactionBuilder txb, List<ScripthashUnspent> utxos) {
     for (var i = 0; i < utxos.length; i++) {
+      var location = fromAccount.getNodeLocationOf(utxos[i].scripthash);
       txb.sign(
           vin: i,
           keyPair: fromAccount
-              .node(utxos[i].nodeIndex, exposure: utxos[i].exposure)
+              .node(location.index, exposure: location.exposure)
               .keyPair);
     }
     return txb;

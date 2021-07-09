@@ -18,6 +18,7 @@ void toAccounts() {
       boxes.Truth.instance.accountUnspents.delete(event.value.accountId);
     } else {
       Accounts.instance.accounts[event.key]!.deriveBatch(NodeExposure.Internal);
+      Accounts.instance.accounts[event.key]!.deriveBatch(NodeExposure.External);
     }
   });
 }
@@ -48,7 +49,7 @@ void toUnspents() {
   unspentsBox.watch().listen((BoxEvent event) {
     var accountId = internal.get(event.key) ?? external.get(event.key) ?? '';
     if (accountId != '') {
-      sortUnspents(accountId, event.key, event.value);
+      sortUnspents(accountId, event.value);
     }
   });
 }

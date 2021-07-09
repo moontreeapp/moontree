@@ -10,36 +10,63 @@ extension GetAll on Box {
   Iterable<MapEntry> getAll() {
     return zip([keys, values]).map((e) => MapEntry(e[0], e[1]));
   }
+}
 
+extension FilterByValue on Box {
   Iterable<MapEntry> filterByValueString(String value) {
-    var all = getAll();
-    return all.where((element) => element.value == value);
+    return getAll().where((element) => element.value == value);
   }
 
+  Iterable filterKeysByValueString(String value) {
+    return Map.fromIterable(getAll().where((element) => element.value == value))
+        .keys;
+  }
+}
+
+extension FilterByKeys on Box {
+  Iterable filterByKeys(List keys) {
+    return getAll().where((element) => keys.contains(element.key));
+  }
+
+  Iterable filterValuesByKeys(List keys) {
+    return Map.fromIterable(
+        getAll().where((element) => keys.contains(element.key))).values;
+  }
+}
+
+extension CountByValue on Box {
   int countByValueString(String value) {
     return filterByValueString(value).length;
   }
 }
 
+extension GetOf on Box {
+  Iterable<dynamic> elementOf(String accountId) {
+    return values.where((element) => element.accountId == accountId);
+  }
+
+  int indexOf(String accountId) {
+    var i = 0;
+    for (var value in values) {
+      if (value.accountId == accountId) {
+        return i;
+      }
+      i = i + 1;
+    }
+    return -1;
+  }
+}
+
 /// database wrapper singleton
 class Truth {
-  late Box settings; //     'Electrum Server': 'testnet.rvn.rocks'
-  // option 1: include max internal/external to accounts - keep cache
+  late Box settings; // 'Electrum Server': 'testnet.rvn.rocks'
   late Box<AccountStored> accounts; // list
-  // option 2: lose cache
-  //late Box<List<String>> accountInternals;
-  //late Box<List<String>> accountExternals;
-
-  // option 3: every account has it's own box - more complicated than it needs to be
-  //late Map<String, Box> accountBoxes = {};
-
-  // option 4: two of these: and run a filter to get index...
-  late Box<String> scripthashAccountIdInternal;
-  late Box<String> scripthashAccountIdExternal;
-  late Box<ScripthashBalance> balances;
-  late Box<ScripthashHistory> histories;
-  late Box<List<ScripthashUnspent>> unspents;
-  late Box<SortedList<ScripthashUnspent>> accountUnspents;
+  late Box<String> scripthashAccountIdInternal; // scripthash: accountId
+  late Box<String> scripthashAccountIdExternal; // scripthash: accountId
+  late Box<ScripthashBalance> balances; // scripthash: obj
+  late Box<List<ScripthashHistory>> histories; // scripthash: obj
+  late Box<List<ScripthashUnspent>> unspents; // scripthash: obj
+  late Box<SortedList<ScripthashUnspent>> accountUnspents; // accountId: list
 
   // make truth a singleton
   static final Truth _singleton = Truth._();
@@ -53,7 +80,6 @@ class Truth {
 
   void init() {
     Hive.init('database');
-    Hive.registerAdapter(CachedNodeAdapter());
     Hive.registerAdapter(HDNodeAdapter());
     Hive.registerAdapter(NetworkParamsAdapter());
     Hive.registerAdapter(NetworkTypeAdapter());
@@ -107,6 +133,16 @@ class Truth {
     }
   }
 
+  Future removeAccountId(String accountId) async {
+    await removeScripthashesOf(accountId);
+    await accountUnspents.delete(accountId);
+    var index = accounts.indexOf(accountId);
+    while (index > -1) {
+      await accounts.delete(index);
+      index = accounts.indexOf(accountId);
+    }
+  }
+
   Future removeScripthashesOf(String accountId) async {
     var internals = Map.fromIterable(
             scripthashAccountIdInternal.filterByValueString(accountId))
@@ -119,11 +155,9 @@ class Truth {
     await balances.deleteAll(internals);
     await histories.deleteAll(internals);
     await unspents.deleteAll(internals);
-    await accountUnspents.deleteAll(internals);
     await balances.deleteAll(externals);
     await histories.deleteAll(externals);
     await unspents.deleteAll(externals);
-    await accountUnspents.deleteAll(externals);
   }
 
   Future saveAccount(Account account) async {
@@ -140,35 +174,10 @@ class Truth {
     return savedAccounts;
   }
 
-  /// saves the balance for each node in the account
-  Future saveAccountBalance(Account account) async {
-    for (var exposure in ['External', 'Internal']) {
-      var x = 0;
-      for (var node in account.cache) {
-        if (node.node.exposure.toString() == exposure) {
-          await balances.put(
-              account.accountId + exposure + (x).toString(), node.balance);
-          x = x + 1;
-        }
-      }
-    }
-  }
-
   /// gets the balance for each node in the account and returns sum
-  Future<int> getAccountBalance(Account account) async {
-    var nodeBalances = [];
-    for (var exposure in ['External', 'Internal']) {
-      var x = 0;
-      var gap = 0;
-      while (gap < 11) {
-        nodeBalances.add(await balances.get(
-            account.accountId + exposure + (x).toString(),
-            defaultValue: 0));
-        if (nodeBalances[x] > 0) gap = gap + 1;
-        x = x + 1;
-      }
-    }
-    var balance = nodeBalances.reduce((a, b) => a.value + b.value);
-    return balance;
+  int getAccountBalance(Account account) {
+    return balances
+        .filterByKeys(account.accountScripthashes)
+        .reduce((a, b) => a.value + b.value);
   }
 }
