@@ -1,4 +1,4 @@
-import '../../raven_electrum_client.dart';
+import '../raven_electrum_client.dart';
 
 class ScriptHashBalance {
   int confirmed;

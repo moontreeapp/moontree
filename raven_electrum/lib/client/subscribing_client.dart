@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:json_rpc_2/json_rpc_2.dart';
 
-import './base_client.dart';
-import './subscribable.dart';
+import 'base_client.dart';
+import 'subscribable.dart';
 
-export './subscribable.dart';
+export 'subscribable.dart';
 
 class SubscribingClient extends BaseClient {
   final Map<String, Subscribable> _subscribables = {};

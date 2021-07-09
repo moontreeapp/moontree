@@ -1,4 +1,4 @@
-import '../../raven_electrum_client.dart';
+import '../raven_electrum_client.dart';
 
 extension FeaturesMethod on RavenElectrumClient {
   Future<Map<String, dynamic>> features() async {
