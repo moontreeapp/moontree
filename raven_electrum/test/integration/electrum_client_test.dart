@@ -11,6 +11,7 @@ void main() {
       var utxos = await client.getUnspent(scripthash: scripthash);
       expect(utxos, [
         ScripthashUnspent(
+            scripthash: scripthash,
             txHash:
                 '84ab4db04a5d32fc81025db3944e6534c4c201fcc93749da6d1e5ecf98355533',
             txPos: 1,
