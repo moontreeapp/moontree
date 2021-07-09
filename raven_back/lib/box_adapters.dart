@@ -264,10 +264,11 @@ class ScripthashUnspentAdapter extends TypeAdapter<ScripthashUnspent> {
       for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return ScripthashUnspent(
-      height: fields[0] as int,
-      txHash: fields[1] as String,
-      txPos: fields[2] as int,
-      value: fields[3] as int,
+      scripthash: fields[0] as String,
+      height: fields[1] as int,
+      txHash: fields[2] as String,
+      txPos: fields[3] as int,
+      value: fields[4] as int,
     );
   }
 
@@ -276,12 +277,14 @@ class ScripthashUnspentAdapter extends TypeAdapter<ScripthashUnspent> {
     writer
       ..writeByte(4)
       ..writeByte(0)
-      ..write(obj.height)
+      ..write(obj.scripthash)
       ..writeByte(1)
-      ..write(obj.txHash)
+      ..write(obj.height)
       ..writeByte(2)
-      ..write(obj.txPos)
+      ..write(obj.txHash)
       ..writeByte(3)
+      ..write(obj.txPos)
+      ..writeByte(4)
       ..write(obj.value);
   }
 }
