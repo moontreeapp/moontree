@@ -22,11 +22,15 @@ class SubscribingClient extends BaseClient {
 
       var key = subscribable.key(params);
       var controllers = _subscriptions[key] ?? [];
-
-      var result = subscribable.notificationResult(params);
-      for (var controller in controllers) {
-        // NOTE: So far, only the first parameter of the notification
-        controller.sink.add(result);
+      try {
+        var result = subscribable.notificationResult(params.asList);
+        for (var controller in controllers) {
+          controller.sink.add(result);
+        }
+      } catch (err) {
+        for (var controller in controllers) {
+          controller.sink.addError(err);
+        }
       }
     });
   }
