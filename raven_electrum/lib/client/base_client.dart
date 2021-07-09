@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:pedantic/pedantic.dart';
 import 'package:json_rpc_2/json_rpc_2.dart' as rpc;
 import 'package:stream_channel/stream_channel.dart';
+import 'package:stack_trace/stack_trace.dart';
 
 /// The BaseClient class must be given an open channel to the server, which it
 /// will use to make requests (or close the channel). We intentionally keep the
@@ -39,7 +40,7 @@ class BaseClient {
 
   BaseClient(StreamChannel channel, {rpc.ErrorCallback? onUnhandledError}) {
     peer = rpc.Peer.withoutJson(channel,
-        onUnhandledError: onUnhandledError ?? _handleError);
+        onUnhandledError: onUnhandledError ?? handleError);
     unawaited(peer.listen());
   }
 
@@ -51,8 +52,9 @@ class BaseClient {
     return await peer.sendRequest(method, parameters);
   }
 
-  void _handleError(error, trace) {
-    print('error!');
+  void handleError(error, trace) {
     print(error);
+    var simpleTrace = Trace.from(trace);
+    print(simpleTrace.terse);
   }
 }

@@ -2,13 +2,21 @@ import 'dart:async';
 
 import 'package:json_rpc_2/json_rpc_2.dart';
 
-import './base_client.dart';
-import './subscribable.dart';
+import 'base_client.dart';
+import 'subscribable.dart';
 
-export './subscribable.dart';
+export 'subscribable.dart';
+
+// Maintain a list of registered Subscribables, one per RPC method prefix
+final Map<String, Subscribable> _subscribables = {};
+void registerSubscribable(String methodPrefix, int paramsCount) {
+  if (!_subscribables.containsKey(methodPrefix)) {
+    var subscribable = Subscribable(methodPrefix, paramsCount);
+    _subscribables[methodPrefix] = subscribable;
+  }
+}
 
 class SubscribingClient extends BaseClient {
-  final Map<String, Subscribable> _subscribables = {};
   final Map<String, List<StreamController>> _subscriptions = {};
 
   SubscribingClient(channel) : super(channel) {
@@ -20,23 +28,22 @@ class SubscribingClient extends BaseClient {
         throw RpcException.methodNotFound(methodPrefix);
       }
 
-      var key = subscribable.key(params);
+      var key = subscribable.key(params.asList);
       var controllers = _subscriptions[key] ?? [];
-
-      var result = subscribable.notificationResult(params);
-      for (var controller in controllers) {
-        // NOTE: So far, only the first parameter of the notification
-        controller.sink.add(result);
+      try {
+        var result = subscribable.notificationResult(params.asList);
+        for (var controller in controllers) {
+          controller.sink.add(result);
+        }
+      } catch (err) {
+        for (var controller in controllers) {
+          controller.sink.addError(err);
+        }
       }
     });
   }
 
-  void registerSubscribable(Subscribable subscribable) {
-    _subscribables[subscribable.methodPrefix] = subscribable;
-  }
-
-  StreamController makeSubscription(
-      Subscribable subscribable, Parameters? params) {
+  StreamController makeSubscription(Subscribable subscribable, List params) {
     var key = subscribable.key(params);
     var controllers = _subscriptions[key];
     var newController = StreamController();
@@ -49,7 +56,7 @@ class SubscribingClient extends BaseClient {
     return newController;
   }
 
-  Stream subscribe(String methodPrefix, [Parameters? params]) {
+  Stream subscribe(String methodPrefix, [List params = const []]) {
     var subscribable = _subscribables[methodPrefix];
     if (subscribable == null) {
       throw RpcException.methodNotFound(methodPrefix);
