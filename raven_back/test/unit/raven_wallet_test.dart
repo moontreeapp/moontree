@@ -5,7 +5,7 @@ import 'package:bip39/bip39.dart' as bip39;
 final seed = bip39.mnemonicToSeed(
     'smile build brain topple moon scrap area aim budget enjoy polar erosion');
 
-final account = Account(ravencoinTestnet, seed: seed);
+final account = Account.bySeed(ravencoinTestnet, seed: seed);
 
 void main() {
   test('reverse', () {

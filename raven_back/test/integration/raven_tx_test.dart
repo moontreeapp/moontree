@@ -16,7 +16,7 @@ void main() {
   test('getHistory', () async {
     var seed = bip39.mnemonicToSeed(
         'smile build brain topple moon scrap area aim budget enjoy polar erosion');
-    var account = Account(ravencoinTestnet, seed: seed);
+    var account = Account.bySeed(ravencoinTestnet, seed: seed);
     var client = RavenElectrumClient(await connect('testnet.rvn.rocks'));
     await client.serverVersion(protocolVersion: '1.8');
     var scripthash =

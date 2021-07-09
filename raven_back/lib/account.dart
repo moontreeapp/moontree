@@ -1,5 +1,3 @@
-import 'dart:cli';
-import 'dart:html';
 import 'dart:typed_data';
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
@@ -9,9 +7,11 @@ import 'package:raven/raven_networks.dart';
 import 'network_params.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'boxes.dart' as boxes;
-import 'package:encrypt/encrypt.dart';
+import 'cipher.dart';
 
 export 'raven_networks.dart';
+
+Cipher cipher = Cipher(defaultInitializationVector);
 
 class CacheEmpty implements Exception {
   String cause;
@@ -21,37 +21,6 @@ class CacheEmpty implements Exception {
 class InsufficientFunds implements Exception {
   String cause;
   InsufficientFunds([this.cause = 'Error! Insufficient funds.']);
-}
-
-/* delete
-//@HiveType(typeId: 0)
-class CachedNode {
-  //@HiveField(0)
-  HDNode node;
-
-  //@HiveField(1)
-  ScripthashBalance balance;
-
-  //@HiveField(2)
-  List<ScripthashUnspent> unspent;
-
-  //@HiveField(3)
-  List<ScripthashHistory> history;
-
-  CachedNode(this.node,
-      {required this.balance, required this.unspent, required this.history});
-}
-
-class UTXO {
-  ScripthashUnspent unspent;
-  NodeExposure exposure;
-  int nodeIndex;
-
-  UTXO(this.unspent, this.exposure, this.nodeIndex);
-}
-*/
-Uint8List decrypt(encryptedSeed) {
-  return encryptedSeed;
 }
 
 class nodeLocation {
@@ -69,30 +38,14 @@ class AccountStored {
   String name;
   String accountId;
 
-  Uint8List get seed => decrypt(symmetricallyEncryptedSeed);
+  Uint8List get seed => cipher.decrypt(symmetricallyEncryptedSeed);
 
   AccountStored(this.symmetricallyEncryptedSeed,
       {networkParams, this.name = 'First Wallet'})
       : params = networkParams ?? ravencoinTestnet,
-        accountId =
-            sha256.convert(decrypt(symmetricallyEncryptedSeed)).toString();
-
-/*
-  Uint8List decrypt(encryptedSeed) {
-    final plainText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
-    final key = Key.fromUtf8('my 32 length key................');
-    final iv = IV.fromLength(16);
-
-    final encrypter = Encrypter(AES(key));
-
-    final encrypted = encrypter.encrypt(plainText, iv: iv);
-    final decrypted = encrypter.decrypt(encrypted, iv: iv);
-
-    print(decrypted); // Lorem ipsum dolor sit amet, consectetur adipiscing elit
-    print(encrypted
-        .base64); // R4PxiU3h8YoIRqVowBXm36ZcCeNeZ4s1OvVBTfFlZRdmohQqOpPQqD1YecJeZMAop/hZ4OxqgC1WtwvX/hP9mw==
-  }
-  */
+        accountId = sha256
+            .convert(cipher.decrypt(symmetricallyEncryptedSeed))
+            .toString();
 }
 
 class Account {
@@ -100,17 +53,23 @@ class Account {
   final Uint8List symmetricallyEncryptedSeed;
   final String name;
   final HDWallet _wallet;
-  //final List<CachedNode> cache = [];
   final String accountId;
 
   // todo on new account:
   //boxes.Truth.instance.accountInternals[accountId] = await Hive.openBox(accountId);
+
   Account(this.params, this.symmetricallyEncryptedSeed,
       {this.name = 'First Wallet'})
-      : _wallet = HDWallet.fromSeed(decrypt(symmetricallyEncryptedSeed),
+      : _wallet = HDWallet.fromSeed(cipher.decrypt(symmetricallyEncryptedSeed),
             network: params.network),
-        accountId =
-            sha256.convert(decrypt(symmetricallyEncryptedSeed)).toString();
+        accountId = sha256
+            .convert(cipher.decrypt(symmetricallyEncryptedSeed))
+            .toString();
+
+  Account.bySeed(this.params, {required seed, this.name = 'First Wallet'})
+      : _wallet = HDWallet.fromSeed(seed, network: params.network),
+        accountId = sha256.convert(seed).toString(),
+        symmetricallyEncryptedSeed = cipher.encrypt(seed);
 
   factory Account.fromAccountStored(AccountStored accountStored) {
     return Account(accountStored.params ?? ravencoinTestnet,
@@ -141,23 +100,6 @@ class Account {
     return scripthashes;
   }
 
-/*
-  Encrypted encrypt() {
-    final plainText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
-    final key = Key.fromUtf8('my 32 length key................');
-    final iv = IV.fromLength(16);
-
-    final encrypter = Encrypter(AES(key));
-
-    final encrypted = encrypter.encrypt(plainText, iv: iv);
-    final decrypted = encrypter.decrypt(encrypted, iv: iv);
-
-    print(decrypted); // Lorem ipsum dolor sit amet, consectetur adipiscing elit
-    print(encrypted
-        .base64); // R4PxiU3h8YoIRqVowBXm36ZcCeNeZ4s1OvVBTfFlZRdmohQqOpPQqD1YecJeZMAop/hZ4OxqgC1WtwvX/hP9mw==
-  }
-*/
-
   /// triggered by watching accounts and others...
   Future deriveBatch(NodeExposure exposure, [int batchSize = 10]) async {
     Box box;
@@ -180,20 +122,6 @@ class Account {
 
   /// returns the next internal node without a history
   HDNode getNextChangeNode() {
-    // here we assume .where returns it in order...
-    /* not sure this approach guarantees correct order
-    var internalScripthashes = boxes.Truth.instance.scripthashAccountIdInternal
-        .filterKeysByValueString(accountId);
-    var internalHistoriesMap = boxes.Truth.instance.histories
-        .filterByKeys(internalScripthashes.toList());
-    var i = 0;
-    for (var scripthashHistory in internalHistoriesMap) {
-      if (scripthashHistory.values[0].isEmpty) {
-        return scripthashHistory.keys[0];
-      }
-      i = i + 1;
-    }
-    */
     var i = 0;
     for (var scripthash in accountInternals) {
       if (boxes.Truth.instance.histories.get(scripthash)!.isEmpty) {
@@ -210,7 +138,6 @@ class Account {
       [List<ScripthashUnspent>? except]) {
     var ret = <ScripthashUnspent>[];
 
-    // Insufficient funds?
     if (getBalance() < amount) {
       throw InsufficientFunds();
     }
@@ -218,17 +145,17 @@ class Account {
     var utxos = boxes.Truth.instance.accountUnspents.get(accountId);
     utxos!.removeWhere((utxo) => except!.contains(utxo));
 
-    // can we find an ideal singular utxo?
+    /* can we find an ideal singular utxo? */
     for (var i = 0; i < utxos.length; i++) {
       if (utxos[i].value >= amount) {
         return [utxos[i]];
       }
     }
 
-    // what combinations of utxo's must we return?
-    // lets start by grabbing the largest one
-    // because we know we can consume it all without producing change...
-    // and lets see how many times we can do that
+    /* what combinations of utxo's must we return?
+    lets start by grabbing the largest one
+    because we know we can consume it all without producing change...
+    and lets see how many times we can do that */
     var remainder = amount;
     for (var i = utxos.length - 1; i >= 0; i--) {
       if (remainder < utxos[i].value) {

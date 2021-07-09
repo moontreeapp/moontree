@@ -18,10 +18,10 @@ class Generated {
 Future<Generated> generate() async {
   var truth = memory.Truth.instance;
   var phrase = await env.getMnemonic();
-  var account = Account(ravencoinTestnet, seed: bip39.mnemonicToSeed(phrase));
+  var account =
+      Account.bySeed(ravencoinTestnet, seed: bip39.mnemonicToSeed(phrase));
   var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
   await truth.saveAccount(account);
-  await account.deriveNodes(client);
   return Generated(phrase, account, client);
 }
 
