@@ -1,9 +1,9 @@
 import '../../raven_electrum_client.dart';
 
-class ScripthashBalance {
+class ScripthashStats {
   int confirmed;
   int unconfirmed;
-  ScripthashBalance(this.confirmed, this.unconfirmed);
+  ScripthashStats(this.confirmed, this.unconfirmed);
 
   int get value {
     return confirmed + unconfirmed;
@@ -11,15 +11,15 @@ class ScripthashBalance {
 
   @override
   String toString() {
-    return 'ScripthashBalance(confirmed: $confirmed, unconfirmed: $unconfirmed)';
+    return 'ScripthashStats(confirmed: $confirmed, unconfirmed: $unconfirmed)';
   }
 }
 
 extension GetBalanceMethod on RavenElectrumClient {
-  Future<ScripthashBalance> getBalance({scripthash}) async {
+  Future<ScripthashStats> getBalance({scripthash}) async {
     var proc = 'blockchain.scripthash.get_balance';
     dynamic balance = await request(proc, [scripthash]);
-    return ScripthashBalance(balance['confirmed'], balance['unconfirmed']);
+    return ScripthashStats(balance['confirmed'], balance['unconfirmed']);
   }
 
   /// returns balances in the same order as scripthashes passed in

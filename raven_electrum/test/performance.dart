@@ -8,7 +8,7 @@ void main() {
     test('batched requests is fast', () async {
       var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
 
-      var scriptHash =
+      var scripthash =
           '93bfc0b3df3f7e2a033ca8d70582d5cf4adf6cc0587e10ef224a78955b636923';
 
       var tracker = AsyncTimeTracker();
@@ -17,7 +17,7 @@ void main() {
       await tracker.track(() async {
         client.peer.withBatch(() {
           for (var i = 0; i < 25; i++) {
-            futures.add(client.getHistory(scriptHash: scriptHash));
+            futures.add(client.getHistory(scripthash: scripthash));
           }
         });
         results = await Future.wait(futures);

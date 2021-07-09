@@ -10,10 +10,10 @@ class Subscribable {
   /// be matched to notification signature. For example,
   /// blockchain.scripthash.subscribe has a request signature that looks like
   /// this:
-  ///   [scriptHash]
+  ///   [scripthash]
   ///
   /// Meanwhile, the notification signature looks like this:
-  ///   [scriptHash, status]
+  ///   [scripthash, status]
   ///
   /// The `paramsCount` should be set to `1` to slice just the first param.
   final int paramsCount;
