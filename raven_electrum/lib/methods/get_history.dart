@@ -25,7 +25,7 @@ extension GetHistoryMethod on RavenElectrumClient {
   }
 
   /// returns histories in the same order as scripthashes passed in
-  Future<List<T>> getHistories<T>({required List<String> scripthashes}) async {
+  Future<List<T>> getHistories<T>(List<String> scripthashes) async {
     var futures = <Future>[];
     var results;
     peer.withBatch(() {

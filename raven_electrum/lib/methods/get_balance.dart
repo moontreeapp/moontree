@@ -1,6 +1,8 @@
+import 'package:equatable/equatable.dart';
+
 import '../raven_electrum_client.dart';
 
-class ScripthashBalance {
+class ScripthashBalance with EquatableMixin {
   int confirmed;
   int unconfirmed;
   ScripthashBalance(this.confirmed, this.unconfirmed);
@@ -8,6 +10,9 @@ class ScripthashBalance {
   int get value {
     return confirmed + unconfirmed;
   }
+
+  @override
+  List<Object> get props => [confirmed, unconfirmed];
 
   @override
   String toString() {
@@ -23,7 +28,7 @@ extension GetBalanceMethod on RavenElectrumClient {
   }
 
   /// returns balances in the same order as scripthashes passed in
-  Future<List<T>> getBalances<T>({required List<String> scripthashes}) async {
+  Future<List<T>> getBalances<T>(List<String> scripthashes) async {
     var futures = <Future>[];
     var results;
     peer.withBatch(() {
