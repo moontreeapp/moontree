@@ -25,15 +25,15 @@ Future setup() async {
   await accounts.Accounts.instance.load();
 }
 
-void listenTo() {
+Future listenTo() async {
   listen.toAccounts();
-  listen.toNodes();
+  await listen.toNodes();
   listen.toUnspents();
 }
 
 Future<Generated> generate() async {
   await setup();
-  listenTo();
+  await listenTo();
   var truth = memory.Truth.instance;
   var phrase = await env.getMnemonic();
   var account = Account.bySeed(ravencoinTestnet, bip39.mnemonicToSeed(phrase));

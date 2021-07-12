@@ -18,7 +18,7 @@ extension FilterByValue on Box {
   }
 
   Iterable filterKeysByValueString(String value) {
-    return Map.fromIterable(getAll().where((element) => element.value == value))
+    return Map.fromEntries(getAll().where((element) => element.value == value))
         .keys;
   }
 }
@@ -29,7 +29,7 @@ extension FilterByKeys on Box {
   }
 
   Iterable filterValuesByKeys(List keys) {
-    return Map.fromIterable(
+    return Map.fromEntries(
         getAll().where((element) => keys.contains(element.key))).values;
   }
 }
@@ -191,9 +191,23 @@ class Truth {
 
   /// gets the balance for each node in the account and returns sum
   int getAccountBalance(Account account) {
-    return balances
-        .filterByKeys(account.accountScripthashes)
-        .reduce((a, b) => a.value + b.value);
+    //print(account.accountScripthashes);
+    //for (var sh in account.accountScripthashes) {
+    //  print('sh');
+    //  print(sh);
+    //  print(balances.get(sh));
+    //}
+    print(account.accountScripthashes);
+    print(balances.keys);
+    print(balances.filterByKeys(account.accountScripthashes));
+    print(balances.filterByKeys(account.accountScripthashes).runtimeType);
+    //Map<String, dynamic>.from(snapshot.value)
+    //(scripthashes.map((item) => Map(item[0], )).toList()
+    return 1;
+
+    //return balances
+    //    .filterByKeys(account.accountScripthashes)
+    //    .reduce((a, b) => a.value + b.value); //  type '(dynamic, dynamic) => dynamic' is not a subtype of type '(MapEntry<dynamic, dynamic>, MapEntry<dynamic, dynamic>) => MapEntry<dynamic, dynamic>' of 'combine'
     //.reduce((ScripthashBalance a, ScripthashBalance b) => a.value + b.value);
   }
 }

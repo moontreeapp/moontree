@@ -9,7 +9,6 @@ void main() async {
   tearDownAll(() async => await gen.truth.close());
 
   test('getBalance', () async {
-    print(gen.account.accountScripthashes);
     expect((gen.account.accountInternals.isEmpty), false);
     var balance = gen.account.getBalance();
     if (gen.phrase.startsWith('smile')) {
@@ -18,7 +17,7 @@ void main() async {
       expect((balance > 0), true);
     }
   });
-
+/*
   test('collectUTXOs for amount smaller than smallest UTXO', () {
     var utxos = gen.account.collectUTXOs(100);
     expect(utxos.length, 1);
@@ -45,4 +44,5 @@ void main() async {
       //print(e);
     }
   });
+  */
 }

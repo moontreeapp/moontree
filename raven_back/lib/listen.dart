@@ -54,22 +54,25 @@ void toNodesBatch() {
 }
 
 // delete once batch is working
-void toNodes() {
+Future toNodes() async {
   boxes.Truth.instance.scripthashAccountIdInternal
       .watch()
-      .listen((BoxEvent event) {
+      .listen((BoxEvent event) async {
     // event.value is the batch, must buffer content here or use rxdart to buffer... https://pub.dev/packages/rxdart
-    requestBalance(event.key);
-    requestUnspent(event.key);
-    requestHistory(event.key, event.value);
+    print('event triggered');
+    print(event.key);
+    await requestBalance(event.key);
+    await requestUnspent(event.key);
+    await requestHistory(event.key, event.value);
   });
   boxes.Truth.instance.scripthashAccountIdExternal
       .watch()
-      .listen((BoxEvent event) {
+      .listen((BoxEvent event) async {
     // event.value is the batch, must buffer content here or use rxdart to buffer... https://pub.dev/packages/rxdart
-    requestBalance(event.value);
-    requestUnspent(event.value);
-    requestHistory(event.value, event.value, exposure: NodeExposure.External);
+    await requestBalance(event.key);
+    await requestUnspent(event.key);
+    await requestHistory(event.key, event.value,
+        exposure: NodeExposure.External);
   });
 }
 

@@ -10,6 +10,9 @@ import 'boxes.dart' as boxes;
 Future requestBalance(String scripthash) async {
   var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
   var balance = await client.getBalance(scripthash);
+  print('getting balance');
+  print(scripthash);
+  print(balance);
   await boxes.Truth.instance.balances.put(scripthash, balance);
 }
 
