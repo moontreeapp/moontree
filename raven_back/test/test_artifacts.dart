@@ -12,17 +12,19 @@ class Generated {
   String phrase;
   Account account;
   RavenElectrumClient client;
-  Generated(this.phrase, this.account, this.client);
+  memory.Truth truth;
+  Generated(this.phrase, this.account, this.client, this.truth);
 }
 
 Future<Generated> generate() async {
   var truth = memory.Truth.instance;
+  await truth.open();
   var phrase = await env.getMnemonic();
   var account =
       Account.bySeed(ravencoinTestnet, seed: bip39.mnemonicToSeed(phrase));
   var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
   await truth.saveAccount(account);
-  return Generated(phrase, account, client);
+  return Generated(phrase, account, client, truth);
 }
 
 

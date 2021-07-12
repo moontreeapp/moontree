@@ -59,6 +59,7 @@ extension GetOf on Box {
 
 /// database wrapper singleton
 class Truth {
+  bool isOpen = false;
   late Box settings; // 'Electrum Server': 'testnet.rvn.rocks'
   late Box<AccountStored> accounts; // list
   late Box<String> scripthashAccountIdInternal; // scripthash: accountId
@@ -91,21 +92,31 @@ class Truth {
     Hive.registerAdapter(ScripthashUnspentAdapter());
     Hive.registerAdapter(ScripthashHistoryAdapter());
     Hive.registerAdapter(ScripthashBalanceAdapter());
+    Hive.registerAdapter(AccountStoredAdapter());
   }
 
   /// get data from long term storage boxes
-  Future<Box> open([String boxName = '']) async {
-    if (boxName == '') {
-      for (var name in boxes().keys) {
-        boxes()[name] = await Hive.openBox(name);
-      }
-      if (settings.isEmpty) {
-        await settings.put('Electrum Server', 'testnet.rvn.rocks');
-      }
-      return settings;
-    } else {
-      return await Hive.openBox(boxName);
+  Future open() async {
+    if (isOpen) {
+      return;
     }
+    settings = await Hive.openBox('settings');
+    accounts = await Hive.openBox('accounts');
+    scripthashAccountIdInternal =
+        await Hive.openBox('scripthashAccountIdInternal');
+    scripthashAccountIdExternal =
+        await Hive.openBox('scripthashAccountIdExternal');
+    balances = await Hive.openBox('balances');
+    histories = await Hive.openBox('histories');
+    unspents = await Hive.openBox('unspents');
+    accountUnspents = await Hive.openBox('accountUnspents');
+    //for (var name in boxes().keys) {
+    //  boxes()[name] = await Hive.openBox(name);
+    //}
+    if (settings.isEmpty) {
+      await settings.put('Electrum Server', 'testnet.rvn.rocks');
+    }
+    isOpen = true;
   }
 
   Map<String, Box> boxes() {

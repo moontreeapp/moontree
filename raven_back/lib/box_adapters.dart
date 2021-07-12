@@ -275,7 +275,7 @@ class ScripthashUnspentAdapter extends TypeAdapter<ScripthashUnspent> {
   @override
   void write(BinaryWriter writer, ScripthashUnspent obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.scripthash)
       ..writeByte(1)
@@ -335,10 +335,40 @@ class ScripthashBalanceAdapter extends TypeAdapter<ScripthashBalance> {
   @override
   void write(BinaryWriter writer, ScripthashBalance obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(2)
       ..writeByte(0)
       ..write(obj.confirmed)
       ..writeByte(1)
       ..write(obj.unconfirmed);
+  }
+}
+
+class AccountStoredAdapter extends TypeAdapter<AccountStored> {
+  @override
+  final typeId = 13;
+
+  @override
+  AccountStored read(BinaryReader reader) {
+    var numOfFields = reader.readByte();
+    var fields = <int, dynamic>{
+      for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return AccountStored(
+      fields[0] as Uint8List,
+      networkParams: fields[1] as NetworkParams,
+      name: fields[1] as String,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, AccountStored obj) {
+    writer
+      ..writeByte(3)
+      ..writeByte(0)
+      ..write(obj.symmetricallyEncryptedSeed)
+      ..writeByte(1)
+      ..write(obj.params)
+      ..writeByte(2)
+      ..write(obj.name);
   }
 }

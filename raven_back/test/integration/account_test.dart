@@ -4,7 +4,9 @@ import 'package:raven/account.dart';
 import '../test_artifacts.dart' as tests;
 
 void main() async {
-  var gen = await tests.generate();
+  var gen;
+  setUpAll(() async => gen = await tests.generate());
+  tearDownAll(() async => await gen.truth.close());
 
   test('getBalance', () async {
     expect((gen.account.accountInternals.isEmpty), false);

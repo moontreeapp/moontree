@@ -2,33 +2,14 @@
 import 'package:hive/hive.dart';
 import 'package:test/test.dart';
 import 'package:raven/boxes.dart' as memory;
-import 'package:hive/hive.dart';
 
 void main() async {
-  var truth = memory.Truth.instance;
-  var friends = await truth.open('friends');
-  await friends.clear();
-
-  await friends.add('0Lisa'); // index 0, key 0
-  await friends.add('1Dave'); // index 1, key 1
-  await friends.put(123, '2Marco'); // index 2, key 123
-  await friends.add('3Paul'); // index 3, key 124
-
-  for (var i = 0; i < friends.length; i++) {
-    print(i);
-    print(friends.getAt(i));
-  }
-
-  await friends.deleteAt(1);
-
-  for (var i = 0; i < friends.length; i++) {
-    print(i);
-    print(friends.getAt(i));
-  }
-
-/*
-void main() {
-  var truth = memory.Truth.instance;
+  late memory.Truth truth;
+  setUp(() async {
+    truth = memory.Truth.instance;
+    await truth.open();
+  });
+  tearDown(() async => await truth.close());
 
   test('loaded', () async {
     expect(truth.settings.length > 0, true);
@@ -43,7 +24,7 @@ void main() {
     var accounts = await truth.getAccounts();
     for (var account in accounts) {
       print(account.accountId);
-      print(await truth.getAccountBalance(account));
+      print(truth.getAccountBalance(account));
     }
   });
 
@@ -69,7 +50,6 @@ void main() {
     print('last');
     print(changes); // empty
   });
-  */
   /*
   test('clear', () async {
     await truth.clear();
