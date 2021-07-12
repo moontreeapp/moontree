@@ -66,7 +66,7 @@ class Account {
             .convert(cipher.decrypt(symmetricallyEncryptedSeed))
             .toString();
 
-  Account.bySeed(this.params, {required seed, this.name = 'First Wallet'})
+  Account.bySeed(this.params, seed, {this.name = 'First Wallet'})
       : _wallet = HDWallet.fromSeed(seed, network: params.network),
         accountId = sha256.convert(seed).toString(),
         symmetricallyEncryptedSeed = cipher.encrypt(seed);

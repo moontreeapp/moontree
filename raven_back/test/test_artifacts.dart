@@ -7,6 +7,8 @@ import 'package:raven/raven_networks.dart';
 import 'package:raven/account.dart';
 import 'package:raven/env.dart' as env;
 import 'package:raven/boxes.dart' as memory;
+import 'package:raven/listen.dart' as listen;
+import 'package:raven/accounts.dart' as accounts;
 
 class Generated {
   String phrase;
@@ -16,12 +18,25 @@ class Generated {
   Generated(this.phrase, this.account, this.client, this.truth);
 }
 
+Future setup() async {
+  await memory.Truth.instance.open();
+  //await memory.Truth.instance.clear();
+  await memory.Truth.instance.loadDefaults();
+  await accounts.Accounts.instance.load();
+}
+
+void listenTo() {
+  listen.toAccounts();
+  listen.toNodes();
+  listen.toUnspents();
+}
+
 Future<Generated> generate() async {
+  await setup();
+  listenTo();
   var truth = memory.Truth.instance;
-  await truth.open();
   var phrase = await env.getMnemonic();
-  var account =
-      Account.bySeed(ravencoinTestnet, seed: bip39.mnemonicToSeed(phrase));
+  var account = Account.bySeed(ravencoinTestnet, bip39.mnemonicToSeed(phrase));
   var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
   await truth.saveAccount(account);
   return Generated(phrase, account, client, truth);

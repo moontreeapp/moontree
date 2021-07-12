@@ -113,10 +113,14 @@ class Truth {
     //for (var name in boxes().keys) {
     //  boxes()[name] = await Hive.openBox(name);
     //}
+    await loadDefaults();
+    isOpen = true;
+  }
+
+  Future loadDefaults() async {
     if (settings.isEmpty) {
       await settings.put('Electrum Server', 'testnet.rvn.rocks');
     }
-    isOpen = true;
   }
 
   Map<String, Box> boxes() {
@@ -190,5 +194,6 @@ class Truth {
     return balances
         .filterByKeys(account.accountScripthashes)
         .reduce((a, b) => a.value + b.value);
+    //.reduce((ScripthashBalance a, ScripthashBalance b) => a.value + b.value);
   }
 }

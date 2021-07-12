@@ -6,18 +6,20 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
+  analyzer: 1.7.2
   bitcoin_flutter: # ^2.0.2
     git: https://github.com/moontreeapp/bitcoin_flutter.git
   raven_electrum_client:
     git: https://github.com/moontreeapp/raven_electrum_client.git
   bs58check: ^1.0.2
-  crypto: ^3.0.0 # ^2.0.3
+  crypto: '3.0.0' # ^2.0.3
   hive: ^2.0.4
   hive_crdt: ^2.0.2
   quiver: ^3.0.1
   sorted_list: ^1.0.0
   encrypt: ^5.0.0
-  
+  test: 1.16.5
+
   #sembast: ^1.15.1
   #path_provider: ^0.5.0+1
   #flutter_bloc: ^0.9.1

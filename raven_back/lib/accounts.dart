@@ -2,7 +2,7 @@ import 'package:raven/account.dart';
 import 'package:raven/boxes.dart' as boxes;
 
 class Accounts {
-  late Map<String, Account> accounts;
+  Map<String, Account> accounts = {};
 
   static final Accounts _singleton = Accounts._();
   static Accounts get instance => _singleton;
@@ -11,6 +11,7 @@ class Accounts {
   /// can we replace with purely reactive listeners?
   Future load() async {
     var accountsBox = boxes.Truth.instance.accounts;
+    print(accountsBox.length);
     for (var accountStored in accountsBox.values) {
       addAccountStored(accountStored);
     }

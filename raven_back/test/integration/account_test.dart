@@ -1,4 +1,4 @@
-// dart --no-sound-null-safety test test/integration/account_test.dart
+// dart --no-sound-null-safety test test/integration/account_test.dart --concurrency=1
 import 'package:test/test.dart';
 import 'package:raven/account.dart';
 import '../test_artifacts.dart' as tests;
@@ -9,6 +9,7 @@ void main() async {
   tearDownAll(() async => await gen.truth.close());
 
   test('getBalance', () async {
+    print(gen.account.accountScripthashes);
     expect((gen.account.accountInternals.isEmpty), false);
     var balance = gen.account.getBalance();
     if (gen.phrase.startsWith('smile')) {
