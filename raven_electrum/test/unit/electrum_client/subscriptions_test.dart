@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
-import 'mock_electrum_server.dart';
+import '../mock_electrum_server.dart';
 
 void main() {
   group('subscriptions', () {
