@@ -8,7 +8,7 @@ void main() {
       var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
       var scripthash =
           'b3bbdf50410b85299f914d2c573a7cadc2133d8e6cc088dc400dd174937f86e1';
-      var utxos = await client.getUnspent(scripthash: scripthash);
+      var utxos = await client.getUnspent(scripthash);
       expect(utxos, [
         ScripthashUnspent(
             scripthash: scripthash,
@@ -28,7 +28,7 @@ void main() {
 
       var futures = <Future>[];
       client.peer.withBatch(() {
-        futures.add(client.getHistory(scripthash: scripthash));
+        futures.add(client.getHistory(scripthash));
         futures.add(client.features());
       });
       var results = await Future.wait(futures);

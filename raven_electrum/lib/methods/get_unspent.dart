@@ -31,7 +31,7 @@ class ScripthashUnspent with EquatableMixin {
 }
 
 extension GetUnspentMethod on RavenElectrumClient {
-  Future<List<ScripthashUnspent>> getUnspent({scripthash}) async {
+  Future<List<ScripthashUnspent>> getUnspent(scripthash) async {
     var proc = 'blockchain.scripthash.listunspent';
     List<dynamic> unspent = await request(proc, [scripthash]);
     return (unspent.map((res) => ScripthashUnspent(
@@ -43,12 +43,12 @@ extension GetUnspentMethod on RavenElectrumClient {
   }
 
   /// returns unspents in the same order as scripthashes passed in
-  Future<List<T>> getUnspents<T>({required List<String> scripthashes}) async {
+  Future<List<T>> getUnspents<T>(List<String> scripthashes) async {
     var futures = <Future>[];
     var results;
     peer.withBatch(() {
       for (var scripthash in scripthashes) {
-        futures.add(getUnspent(scripthash: scripthash));
+        futures.add(getUnspent(scripthash));
       }
     });
     results = await Future.wait(futures);

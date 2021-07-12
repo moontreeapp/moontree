@@ -16,7 +16,7 @@ class ScripthashBalance {
 }
 
 extension GetBalanceMethod on RavenElectrumClient {
-  Future<ScripthashBalance> getBalance({scripthash}) async {
+  Future<ScripthashBalance> getBalance(scripthash) async {
     var proc = 'blockchain.scripthash.get_balance';
     dynamic balance = await request(proc, [scripthash]);
     return ScripthashBalance(balance['confirmed'], balance['unconfirmed']);
@@ -28,7 +28,7 @@ extension GetBalanceMethod on RavenElectrumClient {
     var results;
     peer.withBatch(() {
       for (var scripthash in scripthashes) {
-        futures.add(getBalance(scripthash: scripthash));
+        futures.add(getBalance(scripthash));
       }
     });
     results = await Future.wait(futures);

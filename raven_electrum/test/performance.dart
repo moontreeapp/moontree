@@ -17,7 +17,7 @@ void main() {
       await tracker.track(() async {
         client.peer.withBatch(() {
           for (var i = 0; i < 25; i++) {
-            futures.add(client.getHistory(scripthash: scripthash));
+            futures.add(client.getHistory(scripthash));
           }
         });
         results = await Future.wait(futures);
