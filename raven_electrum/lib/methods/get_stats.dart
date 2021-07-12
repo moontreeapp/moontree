@@ -17,7 +17,8 @@ class ScripthashStats {
 
 extension GetBalanceMethod on RavenElectrumClient {
   Future<ScripthashStats> getBalance({scripthash}) async {
-    var proc = 'blockchain.scripthash.get_balance';
+    var proc = 'server.our_stats';
+    //todo finish this after implementation
     dynamic balance = await request(proc, [scripthash]);
     return ScripthashStats(balance['confirmed'], balance['unconfirmed']);
   }
