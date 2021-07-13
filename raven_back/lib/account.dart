@@ -5,9 +5,10 @@ import 'package:crypto/crypto.dart';
 import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:raven/raven_networks.dart';
+import 'package:sorted_list/sorted_list.dart';
 import 'network_params.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
-import 'boxes.dart' as boxes;
+import 'boxes.dart';
 import 'cipher.dart';
 
 export 'raven_networks.dart';
@@ -82,26 +83,26 @@ class Account {
   }
 
   List get accountInternals {
-    var ounordered = boxes.Truth.instance.scripthashAccountIdInternal
+    var ounordered = Truth.instance.scripthashAccountIdInternal
         .filterKeysByValueString(accountId)
         .toList();
-    var orders = boxes.Truth.instance.scripthashOrderInternal
-        .filterAllByKeys(ounordered);
+    var orders =
+        Truth.instance.scripthashOrderInternal.filterAllByKeys(ounordered);
     return orders.keys.toList(growable: false)
       ..sort((k1, k2) => orders[k1]!.compareTo(orders[k2]!));
   }
 
   /// why should we care if externals are ordered? we'll be consistent
   List get accountExternals {
-    var ounordered = boxes.Truth.instance.scripthashAccountIdExternal
+    var ounordered = Truth.instance.scripthashAccountIdExternal
         .filterKeysByValueString(accountId)
         .toList();
-    var orders = boxes.Truth.instance.scripthashOrderExternal
-        .filterAllByKeys(ounordered);
+    var orders =
+        Truth.instance.scripthashOrderExternal.filterAllByKeys(ounordered);
     return orders.keys.toList(growable: false)
       ..sort((k1, k2) => orders[k1]!.compareTo(orders[k2]!));
     // unordered
-    //return boxes.Truth.instance.scripthashAccountIdExternal
+    //return Truth.instance.scripthashAccountIdExternal
     //    .filterKeysByValueString(accountId);
   }
 
@@ -114,25 +115,16 @@ class Account {
     Box box;
     Box boxOrder;
     if (exposure == NodeExposure.Internal) {
-      box = boxes.Truth.instance.scripthashAccountIdInternal;
-      boxOrder = boxes.Truth.instance.scripthashOrderInternal;
+      box = Truth.instance.scripthashAccountIdInternal;
+      boxOrder = Truth.instance.scripthashOrderInternal;
     } else {
-      box = boxes.Truth.instance.scripthashAccountIdExternal;
-      boxOrder = boxes.Truth.instance.scripthashOrderExternal;
+      box = Truth.instance.scripthashAccountIdExternal;
+      boxOrder = Truth.instance.scripthashOrderExternal;
     }
-
-    // here we deal with figuring out where we left off... can't look at boxes
-    // because they might not be filled yet, and besides this isn't right.
-    // so instead we remember it on the object itself. which means we lose
-    // one source of truth... not ideal. can't regenerate them all everytime
-    // unless the listeners (to new nodes) check to make sure it is a new node
-    // by seeing if it has a balance entry... maybe you could get it from the
-    // database since your counting up only this box... but it didn't seem to
-    // work right... the problems: this is batch listeners are not.
     var index = box.countByValueString(accountId);
     for (var i = 0; i < batchSize; i++) {
       var hash = node(index, exposure: exposure).scripthash;
-      //print(index.toString() + ' ' + exposure.toString() + ' ' + hash);
+      print(index.toString() + ' ' + exposure.toString() + ' ' + hash);
       await box.put(hash, accountId);
       await boxOrder.put(hash, index);
       index = index + 1;
@@ -145,20 +137,31 @@ class Account {
   }
 
   int getBalance() {
-    return boxes.Truth.instance.getAccountBalance(this);
+    return Truth.instance.getAccountBalance(this);
   }
 
   /// returns the next internal node without a history
   HDNode getNextChangeNode() {
     var i = 0;
     for (var scripthash in accountInternals) {
-      if ((boxes.Truth.instance.histories.get(scripthash) ?? []).isEmpty) {
+      if (Truth.instance.histories
+          .getAsList<ScripthashHistory>(scripthash)
+          .isEmpty) {
         return node(i, exposure: NodeExposure.Internal);
       }
       i = i + 1;
     }
     // this shouldn't happen - if so we should trigger a new batch??
     return node(i + 1, exposure: NodeExposure.Internal);
+  }
+
+  SortedList<ScripthashUnspent> sortedUTXOs() {
+    var sortedList = SortedList<ScripthashUnspent>(
+        (ScripthashUnspent a, ScripthashUnspent b) =>
+            a.value.compareTo(b.value));
+    sortedList.addAll(
+        Truth.instance.accountUnspents.getAsList<ScripthashUnspent>(accountId));
+    return sortedList;
   }
 
   /// returns the smallest number of inputs to satisfy the amount
@@ -169,8 +172,8 @@ class Account {
     if (getBalance() < amount) {
       throw InsufficientFunds();
     }
-    var utxos = boxes.Truth.instance.accountUnspents.get(accountId);
-    utxos!.removeWhere((utxo) => (except ?? []).contains(utxo));
+    var utxos = sortedUTXOs();
+    utxos.removeWhere((utxo) => (except ?? []).contains(utxo));
 
     /* can we find an ideal singular utxo? */
     for (var i = 0; i < utxos.length; i++) {

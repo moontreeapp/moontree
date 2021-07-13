@@ -64,15 +64,29 @@ Future requestUnspents(List<String> batch) async {
   }
 }
 
+/* not using because hive can't save or open the box as this type
+** instead we make a list of them by account and sort it at runtime
 /// triggered by unspents
 /// sorts a flattened list of all unspents on an account
 Future sortUnspents(String accountId, List<ScripthashUnspent> utxos) async {
   // implemented as incremental load
   // alternatively could grab all utxo's for accountId each time...
-  var sortedList = boxes.Truth.instance.accountUnspents.get(accountId) ??
+  var sortedList = boxes.Truth.instance.accountUnspents
+          .getAsList<ScripthashUnspent>(accountId) ??
       SortedList<ScripthashUnspent>(
           (ScripthashUnspent a, ScripthashUnspent b) =>
               a.value.compareTo(b.value));
   sortedList.addAll(utxos);
   await boxes.Truth.instance.accountUnspents.put(accountId, sortedList);
+}
+*/
+
+/// triggered by unspents
+/// flattens list of all unspents on an account
+/// implemented as incremental load
+Future flattenUnspents(String accountId, List<ScripthashUnspent> utxos) async {
+  var flat = boxes.Truth.instance.accountUnspents
+      .getAsList<ScripthashUnspent>(accountId);
+  flat.addAll(utxos);
+  await boxes.Truth.instance.accountUnspents.put(accountId, flat);
 }

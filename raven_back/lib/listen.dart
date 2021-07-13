@@ -77,7 +77,7 @@ void toUnspents() {
   unspentsBox.watch().listen((BoxEvent event) {
     var accountId = internal.get(event.key) ?? external.get(event.key) ?? '';
     if (accountId != '') {
-      sortUnspents(accountId, event.value);
+      flattenUnspents(accountId, event.value);
     }
   });
 }

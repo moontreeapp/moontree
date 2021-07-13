@@ -42,6 +42,4 @@ void main() async {
       //print(e);
     }
   });
-/*
-  */
 }

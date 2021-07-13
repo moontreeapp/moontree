@@ -7,24 +7,22 @@ import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:raven/raven_networks.dart';
 import 'package:raven/account.dart';
 import 'package:raven/env.dart' as env;
-import 'package:raven/boxes.dart' as boxes;
+import 'package:raven/boxes.dart';
 import 'package:raven/listen.dart' as listen;
-import 'package:raven/accounts.dart' as accounts;
+import 'package:raven/accounts.dart';
 
 class Generated {
   String phrase;
   Account account;
   RavenElectrumClient client;
-  boxes.Truth truth;
+  Truth truth;
   Generated(this.phrase, this.account, this.client, this.truth);
 }
 
 Future setup() async {
   await Directory('database').delete(recursive: true);
-  await boxes.Truth.instance.open();
-  //await boxes.Truth.instance.clear();
-  await boxes.Truth.instance.loadDefaults();
-  await accounts.Accounts.instance.load();
+  await Truth.instance.open();
+  await Accounts.instance.load();
 }
 
 void listenTo(RavenElectrumClient client) {
@@ -37,11 +35,11 @@ Future<Generated> generate() async {
   await setup();
   var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
   listenTo(client);
-  var truth = boxes.Truth.instance;
+  var truth = Truth.instance;
   var phrase = await env.getMnemonic();
   var account = Account.bySeed(ravencoinTestnet, bip39.mnemonicToSeed(phrase));
   await truth.saveAccount(account);
-  await boxes.Truth.instance.unspents
+  await Truth.instance.unspents
       .watch()
       .skipWhile((element) =>
           element.key !=

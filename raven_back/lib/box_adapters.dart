@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:raven/account.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:raven/network_params.dart';
+import 'package:sorted_list/sorted_list.dart';
 
 class HDNodeAdapter extends TypeAdapter<HDNode> {
   @override
@@ -356,7 +357,7 @@ class AccountStoredAdapter extends TypeAdapter<AccountStored> {
     return AccountStored(
       fields[0] as Uint8List,
       networkParams: fields[1] as NetworkParams,
-      name: fields[1] as String,
+      name: fields[2] as String,
     );
   }
 
@@ -370,5 +371,31 @@ class AccountStoredAdapter extends TypeAdapter<AccountStored> {
       ..write(obj.params)
       ..writeByte(2)
       ..write(obj.name);
+  }
+}
+
+class SortedListAdapter extends TypeAdapter<SortedList> {
+  @override
+  final typeId = 14;
+
+  @override
+  SortedList read(BinaryReader reader) {
+    var numOfFields = reader.readByte();
+    var fields = <int, dynamic>{
+      for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    var sortedList = SortedList<ScripthashUnspent>(
+        (ScripthashUnspent a, ScripthashUnspent b) =>
+            a.value.compareTo(b.value));
+    sortedList.addAll(fields[0] as Iterable<ScripthashUnspent>);
+    return sortedList;
+  }
+
+  @override
+  void write(BinaryWriter writer, SortedList obj) {
+    writer
+      ..writeByte(1)
+      ..writeByte(0)
+      ..write(obj);
   }
 }

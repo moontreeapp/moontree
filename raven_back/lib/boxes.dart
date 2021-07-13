@@ -6,6 +6,16 @@ import 'package:sorted_list/sorted_list.dart';
 import 'account.dart';
 import 'box_adapters.dart';
 
+extension GetAs on Box {
+  List<T> getAsList<T>(dynamic key, {dynamic defaultValue}) {
+    return List<T>.from(get(key, defaultValue: defaultValue) ?? []);
+  }
+
+  List<T> getAtAsList<T>(int index) {
+    return List<T>.from(getAt(index) ?? []);
+  }
+}
+
 extension GetAll on Box {
   /// they are not in temporal order, but are they in the same order?
   Iterable<MapEntry> getAll() {
@@ -71,9 +81,9 @@ class Truth {
   late Box<int> scripthashOrderInternal; // scripthash: int
   late Box<int> scripthashOrderExternal; // scripthash: int
   late Box<ScripthashBalance> balances; // scripthash: obj
-  late Box<List<ScripthashHistory>> histories; // scripthash: obj
-  late Box<List<ScripthashUnspent>> unspents; // scripthash: obj
-  late Box<SortedList<ScripthashUnspent>> accountUnspents; // accountId: list
+  late Box<List<dynamic>> histories; // scripthash: list
+  late Box<List<dynamic>> unspents; // scripthash: list
+  late Box<List<dynamic>> accountUnspents; // accountId: list
 
   // make truth a singleton
   static final Truth _singleton = Truth._();
@@ -104,8 +114,10 @@ class Truth {
   /// get data from long term storage boxes
   Future open() async {
     if (isOpen) {
+      ///... Hive.isBoxOpen
       return;
     }
+
     settings = await Hive.openBox('settings');
     accounts = await Hive.openBox('accounts');
     scripthashAccountIdInternal =
@@ -118,11 +130,22 @@ class Truth {
     histories = await Hive.openBox('histories');
     unspents = await Hive.openBox('unspents');
     accountUnspents = await Hive.openBox('accountUnspents');
+
+    /// we can't sort as we go  because of this error
+    /// type 'List<dynamic>' is not a subtype of type 'SortedList<ScripthashUnspent>?' in type cast
+    //accountUnspents =
+    //    await Hive.openBox<SortedList<ScripthashUnspent>>('accountUnspents');
+
     //for (var name in boxes().keys) {
     //  boxes()[name] = await Hive.openBox(name);
     //}
     await loadDefaults();
     isOpen = true;
+  }
+
+  /// get data from long term storage boxes
+  Future<Box> openABox(String boxName) async {
+    return await Hive.openBox(boxName);
   }
 
   Future loadDefaults() async {
