@@ -23,10 +23,10 @@ void main() async {
   test('get', () async {
     // this is how we can populate the accounts and balances upon app open
     var accounts = await truth.getAccounts();
-    for (var account in accounts) {
-      print(account.accountId);
-      print(truth.getAccountBalance(account));
-    }
+    // for (var account in accounts) {
+    //   print(account.accountId);
+    //   print(truth.getAccountBalance(account));
+    // }
   });
 
   test('listen', () async {
@@ -36,21 +36,21 @@ void main() async {
       settingsBox.watch(key: settingsBox.keyAt(i)).listen((BoxEvent event) {
         var text = '${event.key}: ${event.value}, ${event.deleted}';
         changes.add(text);
-        print(text);
+        // print(text);
       });
     }
     await settingsBox.put(
         'whatever', await settingsBox.get('whatever', defaultValue: '') + '1');
     await settingsBox.put(
         'Electrum Server', await settingsBox.get('Electrum Server') + '1');
-    for (var item in changes) {
-      print('changes');
-      print(item);
-    }
+    // for (var item in changes) {
+    //   print('changes');
+    //   print(item);
+    // }
     await settingsBox.close();
     //await Future.delayed(Duration(seconds: 1));
-    print('last');
-    print(changes); // empty
+    // print('last');
+    // print(changes); // empty
   });
   /*
   test('clear', () async {

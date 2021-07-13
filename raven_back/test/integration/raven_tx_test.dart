@@ -1,12 +1,10 @@
 // dart --no-sound-null-safety test test/integration/raven_tx_test.dart
 
 import 'package:test/test.dart';
-import 'package:bip39/bip39.dart' as bip39;
 
-import 'package:raven/raven_networks.dart';
-import 'package:raven/account.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:raven/transaction.dart' as tx;
+
 import '../test_artifacts.dart' as tests;
 
 const connectionTimeout = Duration(seconds: 5);
@@ -14,13 +12,10 @@ const aliveTimerDuration = Duration(seconds: 2);
 
 void main() {
   test('getHistory', () async {
-    var seed = bip39.mnemonicToSeed(
-        'smile build brain topple moon scrap area aim budget enjoy polar erosion');
-    var account = Account.bySeed(ravencoinTestnet, seed);
     var client = RavenElectrumClient(await connect('testnet.rvn.rocks'));
     await client.serverVersion(protocolVersion: '1.8');
     var scripthash =
-        account.node(4, exposure: NodeExposure.Internal).scripthash;
+        '93bfc0b3df3f7e2a033ca8d70582d5cf4adf6cc0587e10ef224a78955b636923';
     var history = await client.getHistory(scripthash);
     expect(history, [
       ScripthashHistory(
