@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:raven/account.dart';
 import 'package:raven/reactives.dart';
+import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'boxes.dart' as boxes;
 import 'accounts.dart';
 
@@ -17,13 +18,7 @@ void toAccounts() {
       boxes.Truth.instance.removeScripthashesOf(event.value.accountId);
       boxes.Truth.instance.accountUnspents.delete(event.value.accountId);
     } else {
-      print(Accounts.instance.accounts.keys); // ()
-      print(event.key); // 0
-      print(event.value); // Instance of 'AccountStored'
-      print(boxes.Truth.instance.accounts.length);
       var key = boxes.Truth.instance.accounts.getAt(event.key)!.accountId;
-      print(
-          key); // 626df3330112f0878a5c9793084ecfcadf03db80c72586e60aad679239faee16
       if (!Accounts.instance.accounts.keys.contains(key)) {
         Accounts.instance.addAccountStored(event.value);
       }
@@ -54,24 +49,22 @@ void toNodesBatch() {
 }
 
 // delete once batch is working
-Future toNodes() async {
+void toNodes(RavenElectrumClient client) {
   boxes.Truth.instance.scripthashAccountIdInternal
       .watch()
       .listen((BoxEvent event) async {
     // event.value is the batch, must buffer content here or use rxdart to buffer... https://pub.dev/packages/rxdart
-    print('event triggered');
-    print(event.key);
-    await requestBalance(event.key);
-    await requestUnspent(event.key);
-    await requestHistory(event.key, event.value);
+    await requestBalance(event.key, client);
+    await requestUnspent(event.key, client);
+    await requestHistory(event.key, event.value, client);
   });
   boxes.Truth.instance.scripthashAccountIdExternal
       .watch()
       .listen((BoxEvent event) async {
     // event.value is the batch, must buffer content here or use rxdart to buffer... https://pub.dev/packages/rxdart
-    await requestBalance(event.key);
-    await requestUnspent(event.key);
-    await requestHistory(event.key, event.value,
+    await requestBalance(event.key, client);
+    await requestUnspent(event.key, client);
+    await requestHistory(event.key, event.value, client,
         exposure: NodeExposure.External);
   });
 }

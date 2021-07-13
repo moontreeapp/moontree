@@ -7,12 +7,8 @@ import 'accounts.dart';
 import 'boxes.dart' as boxes;
 
 /// triggered by watching nodes
-Future requestBalance(String scripthash) async {
-  var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
+Future requestBalance(String scripthash, RavenElectrumClient client) async {
   var balance = await client.getBalance(scripthash);
-  print('getting balance');
-  print(scripthash);
-  print(balance);
   await boxes.Truth.instance.balances.put(scripthash, balance);
 }
 
@@ -26,15 +22,16 @@ Future requestBalances(List<String> batch) async {
 }
 
 /// triggered by watching nodes
-Future requestHistory(String scripthash, String accountId,
+Future requestHistory(
+    String scripthash, String accountId, RavenElectrumClient client,
     {exposure = NodeExposure.Internal}) async {
-  var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
   var histories = await client.getHistory(scripthash);
   var entireBatchEmpty = true;
   if (histories.isNotEmpty) entireBatchEmpty = false;
   await boxes.Truth.instance.histories.put(scripthash, histories);
+  print('$scripthash ${histories.isNotEmpty}');
   if (!entireBatchEmpty) {
-    await Accounts.instance.accounts[accountId]!.deriveBatch(exposure);
+    await Accounts.instance.accounts[accountId]!.deriveNode(exposure);
   }
 }
 
@@ -54,8 +51,7 @@ Future requestHistories(List<String> batch, String accountId,
 }
 
 /// triggered by watching nodes
-Future requestUnspent(String scripthash) async {
-  var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
+Future requestUnspent(String scripthash, RavenElectrumClient client) async {
   var unspents = await client.getUnspent(scripthash);
   await boxes.Truth.instance.unspents.put(scripthash, unspents);
 }

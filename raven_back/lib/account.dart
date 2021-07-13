@@ -54,6 +54,8 @@ class Account {
   final String name;
   final HDWallet _wallet;
   final String accountId;
+  late int internalIndex = 0;
+  late int externalIndex = 0;
 
   // todo on new account:
   //boxes.Truth.instance.accountInternals[accountId] = await Hive.openBox(accountId);
@@ -108,12 +110,46 @@ class Account {
     } else {
       box = boxes.Truth.instance.scripthashAccountIdExternal;
     }
+
+    /// here we deal with figuring out where we left off... can't look at boxes
+    /// because they might not be filled yet, and besides this isn't right.
+    /// so instead we remember it on the object itself. which means we lose
+    /// one source of truth... not ideal. can't regenerate them all everytime
+    /// unless the listeners (to new nodes) check to make sure it is a new node
+    /// by seeing if it has a balance entry... maybe you could get it from the
+    /// database since your counting up only this box... but it didn't seem to
+    /// work right... the problems: this is batch listeners are not.
     var index = box.countByValueString(accountId);
     for (var i = 0; i < batchSize; i++) {
       var hash = node(index, exposure: exposure).scripthash;
-      print('saving to box');
-      print(hash);
-      print(accountId);
+      print('saving to box: ' +
+          index.toString() +
+          ' ' +
+          exposure.toString() +
+          ' ' +
+          hash);
+      await box.put(hash, accountId);
+      index = index + 1;
+    }
+  }
+
+  /// triggered by watching accounts and others...
+  Future deriveNode(NodeExposure exposure, [int batchSize = 1]) async {
+    Box box;
+    if (exposure == NodeExposure.Internal) {
+      box = boxes.Truth.instance.scripthashAccountIdInternal;
+    } else {
+      box = boxes.Truth.instance.scripthashAccountIdExternal;
+    }
+    var index = box.countByValueString(accountId);
+    for (var i = 0; i < batchSize; i++) {
+      var hash = node(index, exposure: exposure).scripthash;
+      print('saving to box: ' +
+          index.toString() +
+          ' ' +
+          exposure.toString() +
+          ' ' +
+          hash);
       await box.put(hash, accountId);
       index = index + 1;
     }
