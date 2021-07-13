@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:typed_data';
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
@@ -54,11 +55,6 @@ class Account {
   final String name;
   final HDWallet _wallet;
   final String accountId;
-  late int internalIndex = 0;
-  late int externalIndex = 0;
-
-  // todo on new account:
-  //boxes.Truth.instance.accountInternals[accountId] = await Hive.openBox(accountId);
 
   Account(this.params, this.symmetricallyEncryptedSeed,
       {this.name = 'First Wallet'})
@@ -85,74 +81,67 @@ class Account {
     return HDNode(params, wallet, index, exposure);
   }
 
-  Iterable get accountInternals {
-    return boxes.Truth.instance.scripthashAccountIdInternal
-        .filterKeysByValueString(accountId);
+  List get accountInternals {
+    var ounordered = boxes.Truth.instance.scripthashAccountIdInternal
+        .filterKeysByValueString(accountId)
+        .toList();
+    var orders = boxes.Truth.instance.scripthashOrderInternal
+        .filterAllByKeys(ounordered);
+    return orders.keys.toList(growable: false)
+      ..sort((k1, k2) => orders[k1]!.compareTo(orders[k2]!));
   }
 
-  Iterable get accountExternals {
-    return boxes.Truth.instance.scripthashAccountIdExternal
-        .filterKeysByValueString(accountId);
+  /// why should we care if externals are ordered? we'll be consistent
+  List get accountExternals {
+    var ounordered = boxes.Truth.instance.scripthashAccountIdExternal
+        .filterKeysByValueString(accountId)
+        .toList();
+    var orders = boxes.Truth.instance.scripthashOrderExternal
+        .filterAllByKeys(ounordered);
+    return orders.keys.toList(growable: false)
+      ..sort((k1, k2) => orders[k1]!.compareTo(orders[k2]!));
+    // unordered
+    //return boxes.Truth.instance.scripthashAccountIdExternal
+    //    .filterKeysByValueString(accountId);
   }
 
   List get accountScripthashes {
-    var scripthashes = [];
-    scripthashes.addAll(accountInternals.toList());
-    scripthashes.addAll(accountExternals.toList());
-    return scripthashes;
+    return [...accountInternals, ...accountExternals];
   }
 
   /// triggered by watching accounts and others...
   Future deriveBatch(NodeExposure exposure, [int batchSize = 10]) async {
     Box box;
+    Box boxOrder;
     if (exposure == NodeExposure.Internal) {
       box = boxes.Truth.instance.scripthashAccountIdInternal;
+      boxOrder = boxes.Truth.instance.scripthashOrderInternal;
     } else {
       box = boxes.Truth.instance.scripthashAccountIdExternal;
+      boxOrder = boxes.Truth.instance.scripthashOrderExternal;
     }
 
-    /// here we deal with figuring out where we left off... can't look at boxes
-    /// because they might not be filled yet, and besides this isn't right.
-    /// so instead we remember it on the object itself. which means we lose
-    /// one source of truth... not ideal. can't regenerate them all everytime
-    /// unless the listeners (to new nodes) check to make sure it is a new node
-    /// by seeing if it has a balance entry... maybe you could get it from the
-    /// database since your counting up only this box... but it didn't seem to
-    /// work right... the problems: this is batch listeners are not.
+    // here we deal with figuring out where we left off... can't look at boxes
+    // because they might not be filled yet, and besides this isn't right.
+    // so instead we remember it on the object itself. which means we lose
+    // one source of truth... not ideal. can't regenerate them all everytime
+    // unless the listeners (to new nodes) check to make sure it is a new node
+    // by seeing if it has a balance entry... maybe you could get it from the
+    // database since your counting up only this box... but it didn't seem to
+    // work right... the problems: this is batch listeners are not.
     var index = box.countByValueString(accountId);
     for (var i = 0; i < batchSize; i++) {
       var hash = node(index, exposure: exposure).scripthash;
-      print('saving to box: ' +
-          index.toString() +
-          ' ' +
-          exposure.toString() +
-          ' ' +
-          hash);
+      //print(index.toString() + ' ' + exposure.toString() + ' ' + hash);
       await box.put(hash, accountId);
+      await boxOrder.put(hash, index);
       index = index + 1;
     }
   }
 
   /// triggered by watching accounts and others...
-  Future deriveNode(NodeExposure exposure, [int batchSize = 1]) async {
-    Box box;
-    if (exposure == NodeExposure.Internal) {
-      box = boxes.Truth.instance.scripthashAccountIdInternal;
-    } else {
-      box = boxes.Truth.instance.scripthashAccountIdExternal;
-    }
-    var index = box.countByValueString(accountId);
-    for (var i = 0; i < batchSize; i++) {
-      var hash = node(index, exposure: exposure).scripthash;
-      print('saving to box: ' +
-          index.toString() +
-          ' ' +
-          exposure.toString() +
-          ' ' +
-          hash);
-      await box.put(hash, accountId);
-      index = index + 1;
-    }
+  Future deriveNode(NodeExposure exposure) async {
+    await deriveBatch(exposure, 1);
   }
 
   int getBalance() {
@@ -163,7 +152,7 @@ class Account {
   HDNode getNextChangeNode() {
     var i = 0;
     for (var scripthash in accountInternals) {
-      if (boxes.Truth.instance.histories.get(scripthash)!.isEmpty) {
+      if ((boxes.Truth.instance.histories.get(scripthash) ?? []).isEmpty) {
         return node(i, exposure: NodeExposure.Internal);
       }
       i = i + 1;
@@ -180,9 +169,8 @@ class Account {
     if (getBalance() < amount) {
       throw InsufficientFunds();
     }
-
     var utxos = boxes.Truth.instance.accountUnspents.get(accountId);
-    utxos!.removeWhere((utxo) => except!.contains(utxo));
+    utxos!.removeWhere((utxo) => (except ?? []).contains(utxo));
 
     /* can we find an ideal singular utxo? */
     for (var i = 0; i < utxos.length; i++) {

@@ -11,19 +11,11 @@ void main() async {
 
   test('getBalance', () async {
     expect((gen.account.accountInternals.isEmpty), false);
-    var l = await boxes.Truth.instance.balances
-        .watch()
-        .skipWhile((element) =>
-            element.key !=
-            '0d78acdf5fe186432cbc073921f83bb146d72c4a81c6bde21c3003f48c15eb38')
-        .take(1)
-        .toList();
-    print(l);
     var balance = gen.account.getBalance();
-    print('has balance $balance');
+    print('balance = $balance');
     expect((balance > 0), true);
   });
-/*
+
   test('collectUTXOs for amount smaller than smallest UTXO', () {
     var utxos = gen.account.collectUTXOs(100);
     expect(utxos.length, 1);
@@ -50,5 +42,6 @@ void main() async {
       //print(e);
     }
   });
+/*
   */
 }

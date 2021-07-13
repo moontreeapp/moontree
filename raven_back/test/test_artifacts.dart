@@ -20,7 +20,6 @@ class Generated {
 }
 
 Future setup() async {
-  // Deletes the directory "remove" with all folders and files under it.
   await Directory('database').delete(recursive: true);
   await boxes.Truth.instance.open();
   //await boxes.Truth.instance.clear();
@@ -42,6 +41,13 @@ Future<Generated> generate() async {
   var phrase = await env.getMnemonic();
   var account = Account.bySeed(ravencoinTestnet, bip39.mnemonicToSeed(phrase));
   await truth.saveAccount(account);
+  await boxes.Truth.instance.unspents
+      .watch()
+      .skipWhile((element) =>
+          element.key !=
+          '0d78acdf5fe186432cbc073921f83bb146d72c4a81c6bde21c3003f48c15eb38')
+      .take(1)
+      .toList();
   return Generated(phrase, account, client, truth);
 }
 

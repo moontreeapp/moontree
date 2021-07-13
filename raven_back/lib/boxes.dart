@@ -7,6 +7,7 @@ import 'account.dart';
 import 'box_adapters.dart';
 
 extension GetAll on Box {
+  /// they are not in temporal order, but are they in the same order?
   Iterable<MapEntry> getAll() {
     return zip([keys, values]).map((e) => MapEntry(e[0], e[1]));
   }
@@ -17,20 +18,23 @@ extension FilterByValue on Box {
     return getAll().where((element) => element.value == value);
   }
 
+  /// I think this unorders it...
   Iterable filterKeysByValueString(String value) {
-    return Map.fromEntries(getAll().where((element) => element.value == value))
-        .keys;
+    return Map.fromEntries(filterByValueString(value)).keys;
   }
 }
 
 extension FilterByKeys on Box {
-  Iterable filterByKeys(List keys) {
+  Iterable<MapEntry<dynamic, dynamic>> filterByKeys(List keys) {
     return getAll().where((element) => keys.contains(element.key));
   }
 
+  Map<dynamic, dynamic> filterAllByKeys(List keys) {
+    return Map.fromEntries(filterByKeys(keys));
+  }
+
   Iterable filterValuesByKeys(List keys) {
-    return Map.fromEntries(
-        getAll().where((element) => keys.contains(element.key))).values;
+    return filterAllByKeys(keys).values;
   }
 }
 
@@ -64,6 +68,8 @@ class Truth {
   late Box<AccountStored> accounts; // list
   late Box<String> scripthashAccountIdInternal; // scripthash: accountId
   late Box<String> scripthashAccountIdExternal; // scripthash: accountId
+  late Box<int> scripthashOrderInternal; // scripthash: int
+  late Box<int> scripthashOrderExternal; // scripthash: int
   late Box<ScripthashBalance> balances; // scripthash: obj
   late Box<List<ScripthashHistory>> histories; // scripthash: obj
   late Box<List<ScripthashUnspent>> unspents; // scripthash: obj
@@ -106,6 +112,8 @@ class Truth {
         await Hive.openBox('scripthashAccountIdInternal');
     scripthashAccountIdExternal =
         await Hive.openBox('scripthashAccountIdExternal');
+    scripthashOrderInternal = await Hive.openBox('scripthashOrderInternal');
+    scripthashOrderExternal = await Hive.openBox('scripthashOrderExternal');
     balances = await Hive.openBox('balances');
     histories = await Hive.openBox('histories');
     unspents = await Hive.openBox('unspents');
@@ -129,6 +137,8 @@ class Truth {
       'accounts': accounts,
       'scripthashAccountIdInternals': scripthashAccountIdInternal,
       'scripthashAccountIdExternals': scripthashAccountIdExternal,
+      'scripthashOrderInternal': scripthashOrderInternal,
+      'scripthashOrderExternal': scripthashOrderExternal,
       'balances': balances,
       'histories': histories,
       'unspents': unspents,
@@ -167,6 +177,8 @@ class Truth {
         .keys;
     await scripthashAccountIdInternal.deleteAll(internals);
     await scripthashAccountIdExternal.deleteAll(externals);
+    await scripthashOrderInternal.deleteAll(internals);
+    await scripthashOrderExternal.deleteAll(externals);
     await balances.deleteAll(internals);
     await histories.deleteAll(internals);
     await unspents.deleteAll(internals);

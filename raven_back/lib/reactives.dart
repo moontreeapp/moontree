@@ -29,7 +29,6 @@ Future requestHistory(
   var entireBatchEmpty = true;
   if (histories.isNotEmpty) entireBatchEmpty = false;
   await boxes.Truth.instance.histories.put(scripthash, histories);
-  print('$scripthash ${histories.isNotEmpty}');
   if (!entireBatchEmpty) {
     await Accounts.instance.accounts[accountId]!.deriveNode(exposure);
   }
@@ -70,11 +69,10 @@ Future requestUnspents(List<String> batch) async {
 Future sortUnspents(String accountId, List<ScripthashUnspent> utxos) async {
   // implemented as incremental load
   // alternatively could grab all utxo's for accountId each time...
-  var accountUnspentsBox = boxes.Truth.instance.accountUnspents;
-  var sortedList = accountUnspentsBox.get(accountId) ??
+  var sortedList = boxes.Truth.instance.accountUnspents.get(accountId) ??
       SortedList<ScripthashUnspent>(
           (ScripthashUnspent a, ScripthashUnspent b) =>
               a.value.compareTo(b.value));
   sortedList.addAll(utxos);
-  await accountUnspentsBox.put(accountId, sortedList);
+  await boxes.Truth.instance.accountUnspents.put(accountId, sortedList);
 }

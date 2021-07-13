@@ -1,13 +1,19 @@
 // dart --no-sound-null-safety test test/unit/boxes/raven_boxes_test.dart
+import 'dart:io';
+
 import 'package:hive/hive.dart';
 import 'package:test/test.dart';
-import 'package:raven/boxes.dart' as memory;
+import 'package:raven/boxes.dart' as boxes;
+import 'package:raven/accounts.dart' as accounts;
 
 void main() async {
-  late memory.Truth truth;
+  await Directory('database').delete(recursive: true);
+  late boxes.Truth truth;
   setUpAll(() async {
-    truth = memory.Truth.instance;
+    truth = boxes.Truth.instance;
     await truth.open();
+    await truth.loadDefaults();
+    await accounts.Accounts.instance.load();
   });
   tearDownAll(() async => await truth.close());
 
