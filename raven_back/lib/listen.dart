@@ -17,13 +17,13 @@ void toAccounts() {
       boxes.Truth.instance.removeScripthashesOf(event.value.accountId);
       boxes.Truth.instance.accountUnspents.delete(event.value.accountId);
     } else {
-      print(Accounts.instance.accounts.keys); // ()
-      print(event.key); // 0
-      print(event.value); // Instance of 'AccountStored'
-      print(boxes.Truth.instance.accounts.length);
+      // print(Accounts.instance.accounts.keys); // ()
+      // print(event.key); // 0
+      // print(event.value); // Instance of 'AccountStored'
+      // print(boxes.Truth.instance.accounts.length);
       var key = boxes.Truth.instance.accounts.getAt(event.key)!.accountId;
-      print(
-          key); // 626df3330112f0878a5c9793084ecfcadf03db80c72586e60aad679239faee16
+      // 626df3330112f0878a5c9793084ecfcadf03db80c72586e60aad679239faee16
+      // print(key);
       if (!Accounts.instance.accounts.keys.contains(key)) {
         Accounts.instance.addAccountStored(event.value);
       }

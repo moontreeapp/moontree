@@ -1,6 +1,5 @@
 // dart --no-sound-null-safety test test/unit/raven_fee_test.dart
 import 'package:test/test.dart';
-import 'package:bip39/bip39.dart' as bip39;
 import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 import 'package:raven/raven_networks.dart';
 import 'package:raven/account.dart';
@@ -8,11 +7,7 @@ import 'package:raven/fee.dart';
 
 void main() {
   test('totalFeeByBytes', () async {
-    var seed = bip39.mnemonicToSeed(
-        'smile build brain topple moon scrap area aim budget enjoy polar erosion');
-    var account = Account.bySeed(ravencoinTestnet, seed);
-    var node = account.node(4, exposure: NodeExposure.Internal);
-    final txb = TransactionBuilder(network: node.params.network);
+    final txb = TransactionBuilder(network: ravencoinTestnet.network);
     txb.setVersion(1);
     txb.addInput(
         '56fcc747b8067133a3dc8907565fa1b31e452c98b3f200687cb836f98c3c46ae', 1);
