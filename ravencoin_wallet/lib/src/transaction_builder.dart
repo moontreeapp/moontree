@@ -1,8 +1,6 @@
 import 'dart:typed_data';
 import 'package:meta/meta.dart';
 import 'package:hex/hex.dart';
-import 'package:bs58check/bs58check.dart' as bs58check;
-import 'package:bech32/bech32.dart';
 import 'utils/script.dart' as bscript;
 import 'ecpair.dart';
 import 'models/networks.dart';

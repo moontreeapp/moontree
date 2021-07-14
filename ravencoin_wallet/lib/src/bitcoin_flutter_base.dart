@@ -8,7 +8,6 @@ import 'payments/index.dart' show PaymentData;
 import 'payments/p2pkh.dart';
 import 'ecpair.dart';
 import 'package:meta/meta.dart';
-import 'dart:convert';
 
 /// Checks if you are awesome. Spoiler: you are.
 class HDWallet {

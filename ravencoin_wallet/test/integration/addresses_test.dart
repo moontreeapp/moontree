@@ -1,7 +1,7 @@
 import '../../lib/src/models/networks.dart' as NETWORKS;
 import '../../lib/src/ecpair.dart' show ECPair;
 import '../../lib/src/payments/index.dart' show PaymentData;
-import '../../lib/src/payments/p2pkh.dart' show P2PKH, P2PKHData;
+import '../../lib/src/payments/p2pkh.dart' show P2PKH;
 import '../../lib/src/payments/p2wpkh.dart' show P2WPKH;
 import 'package:pointycastle/digests/sha256.dart';
 import 'dart:convert';

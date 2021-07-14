@@ -19,7 +19,7 @@ const SIGHASH_ANYONECANPAY = 0x80;
 const ADVANCED_TRANSACTION_MARKER = 0x00;
 const ADVANCED_TRANSACTION_FLAG = 0x01;
 final EMPTY_SCRIPT = Uint8List.fromList([]);
-final EMPTY_WITNESS = new List<Uint8List>();
+final EMPTY_WITNESS = <Uint8List>[];
 final ZERO = HEX
     .decode('0000000000000000000000000000000000000000000000000000000000000000');
 final ONE = HEX
@@ -81,18 +81,8 @@ class Transaction {
       toffset += slice.length;
     }
 
-    writeUInt8(i) {
-      bytes.setUint8(toffset, i);
-      toffset++;
-    }
-
     writeUInt32(i) {
       bytes.setUint32(toffset, i, Endian.little);
-      toffset += 4;
-    }
-
-    writeInt32(i) {
-      bytes.setInt32(toffset, i, Endian.little);
       toffset += 4;
     }
 
@@ -109,13 +99,6 @@ class Transaction {
     writeVarSlice(slice) {
       writeVarInt(slice.length);
       writeSlice(slice);
-    }
-
-    writeVector(vector) {
-      writeVarInt(vector.length);
-      vector.forEach((buf) {
-        writeVarSlice(buf);
-      });
     }
 
     if ((hashType & SIGHASH_ANYONECANPAY) == 0) {
@@ -524,12 +507,9 @@ class Transaction {
 
   @override
   String toString() {
-    this.ins.forEach((txInput) {
-      print(txInput.toString());
-    });
-    this.outs.forEach((txOutput) {
-      print(txOutput.toString());
-    });
+    List<String> ins = this.ins.map((txInput) => txInput.toString());
+    List<String> outs = this.outs.map((txOutput) => txOutput.toString());
+    return 'Inputs: ${ins.join(", ")}; Outputs: ${outs.join(", ")}';
   }
 }
 
@@ -598,6 +578,8 @@ class Input {
           prevOutType: SCRIPT_TYPES['P2PK'],
           pubkeys: [],
           signatures: [p2pk.data.signature]);
+    } else {
+      throw ArgumentError('Unknown script type: ${type}');
     }
   }
 
@@ -660,6 +642,8 @@ class Output {
       Uint8List pkh2 = bcrypto.hash160(ourPubKey);
       if (pkh1 != pkh2) throw ArgumentError('Hash mismatch!');
       return new Output(pubkeys: [ourPubKey], signatures: [null]);
+    } else {
+      throw ArgumentError('Unknown script type: ${type}');
     }
   }
 
@@ -695,7 +679,7 @@ bool isCoinbaseHash(Uint8List buffer) {
   return true;
 }
 
-bool _isP2PKHInput(script) {
+bool isP2PKHInput(script) {
   final chunks = bscript.decompile(script);
   return chunks != null &&
       chunks.length == 2 &&
@@ -703,7 +687,7 @@ bool _isP2PKHInput(script) {
       bscript.isCanonicalPubKey(chunks[1]);
 }
 
-bool _isP2PKHOutput(script) {
+bool isP2PKHOutput(script) {
   final buffer = bscript.compile(script);
   return buffer.length == 25 &&
       buffer[0] == OPS['OP_DUP'] &&
