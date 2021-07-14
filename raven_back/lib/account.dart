@@ -82,31 +82,37 @@ class Account {
     return HDNode(params, wallet, index, exposure);
   }
 
-  List get accountInternals {
+  List<String> get accountInternals {
     var ounordered = Truth.instance.scripthashAccountIdInternal
         .filterKeysByValueString(accountId)
         .toList();
     var orders =
         Truth.instance.scripthashOrderInternal.filterAllByKeys(ounordered);
-    return orders.keys.toList(growable: false)
+    var keys = orders.keys.toList(growable: false)
       ..sort((k1, k2) => orders[k1]!.compareTo(orders[k2]!));
+    return keys
+        .map((element) => element as String)
+        .toList(); // List<dynamic> -> List<String>
   }
 
   /// why should we care if externals are ordered? we'll be consistent
-  List get accountExternals {
+  List<String> get accountExternals {
     var ounordered = Truth.instance.scripthashAccountIdExternal
         .filterKeysByValueString(accountId)
         .toList();
     var orders =
         Truth.instance.scripthashOrderExternal.filterAllByKeys(ounordered);
-    return orders.keys.toList(growable: false)
+    var keys = orders.keys.toList(growable: false)
       ..sort((k1, k2) => orders[k1]!.compareTo(orders[k2]!));
+    return keys
+        .map((element) => element as String)
+        .toList(); // List<dynamic> -> List<String>
     // unordered
     //return Truth.instance.scripthashAccountIdExternal
     //    .filterKeysByValueString(accountId);
   }
 
-  List get accountScripthashes {
+  List<String> get accountScripthashes {
     return [...accountInternals, ...accountExternals];
   }
 

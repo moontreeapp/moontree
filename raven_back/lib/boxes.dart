@@ -131,6 +131,12 @@ class Truth {
     unspents = await Hive.openBox('unspents');
     accountUnspents = await Hive.openBox('accountUnspents');
 
+    /*
+    when reissuing assets we need: 
+      VOUT of previous issue/reissue transaction
+      query txid from electrum server - verify that we own the address
+    */
+
     /// we can't sort as we go  because of this error
     /// type 'List<dynamic>' is not a subtype of type 'SortedList<ScripthashUnspent>?' in type cast
     //accountUnspents =
