@@ -6,7 +6,8 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  analyzer: 1.7.2
+  analyzer: 1.5.0 # 1.7.2
+  meta: 1.3.0
   bitcoin_flutter: # ^2.0.2
     git: https://github.com/moontreeapp/bitcoin_flutter.git
   raven_electrum_client:
