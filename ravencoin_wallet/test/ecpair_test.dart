@@ -98,7 +98,7 @@ main() {
       test('retains the same defaults as ECPair constructor', () {
         final keyPair = ECPair.makeRandom();
         expect(keyPair.compressed, true);
-        expect(keyPair.network, NETWORKS.bitcoin);
+        expect(keyPair.network, NETWORKS.ravencoin);
       });
       test('supports the options parameter', () {
         final keyPair =
@@ -133,8 +133,8 @@ main() {
 NETWORKS.NetworkType _getNetwork(f) {
   var network;
   if (f['network'] != null) {
-    if (f['network'] == 'bitcoin') {
-      network = NETWORKS.bitcoin;
+    if (f['network'] == 'ravencoin') {
+      network = NETWORKS.ravencoin;
     } else if (f['network'] == 'testnet') {
       network = NETWORKS.testnet;
     }

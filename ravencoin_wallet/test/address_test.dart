@@ -16,7 +16,7 @@ main() {
       test('base58 addresses and invalid network', () {
         expect(
             Address.validateAddress(
-                'mhv6wtF2xzEqMNd3TbXx9TjLLo6mp2MUuT', NETWORKS.bitcoin),
+                'mhv6wtF2xzEqMNd3TbXx9TjLLo6mp2MUuT', NETWORKS.ravencoin),
             false);
         expect(
             Address.validateAddress(

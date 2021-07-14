@@ -17,7 +17,7 @@ class Address {
   }
 
   static Uint8List addressToOutputScript(String address, [NetworkType nw]) {
-    NetworkType network = nw ?? bitcoin;
+    NetworkType network = nw ?? ravencoin;
     var decodeBase58;
     var decodeBech32;
     try {

@@ -15,7 +15,7 @@ class P2WPKH {
   PaymentData data;
   NetworkType network;
   P2WPKH({@required data, network}) {
-    this.network = network ?? bitcoin;
+    this.network = network ?? ravencoin;
     this.data = data;
     _init();
   }

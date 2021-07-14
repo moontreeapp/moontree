@@ -12,7 +12,7 @@ import '../lib/src/utils/script.dart' as bscript;
 import '../lib/src/payments/index.dart' show PaymentData;
 import '../lib/src/payments/p2pkh.dart';
 
-final NETWORKS = {'bitcoin': bitcoin, 'testnet': testnet};
+final NETWORKS = {'ravencoin': ravencoin, 'testnet': testnet};
 
 constructSign(f, TransactionBuilder txb) {
   final network = NETWORKS[f['network']];

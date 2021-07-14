@@ -69,7 +69,7 @@ class HDWallet {
   }
 
   factory HDWallet.fromSeed(Uint8List seed, {NetworkType network}) {
-    network = network ?? bitcoin;
+    network = network ?? ravencoin;
     final seedHex = HEX.encode(seed);
     final wallet = bip32.BIP32.fromSeed(
         seed,
@@ -84,7 +84,7 @@ class HDWallet {
   }
 
   factory HDWallet.fromBase58(String xpub, {NetworkType network}) {
-    network = network ?? bitcoin;
+    network = network ?? ravencoin;
     final wallet = bip32.BIP32.fromBase58(
         xpub,
         bip32.NetworkType(
@@ -132,7 +132,7 @@ class Wallet {
   }
 
   factory Wallet.fromWIF(String wif, [NetworkType network]) {
-    network = network ?? bitcoin;
+    network = network ?? ravencoin;
     final _keyPair = ECPair.fromWIF(wif, network: network);
     final _p2pkh = new P2PKH(
         data: new PaymentData(pubkey: _keyPair.publicKey), network: network);

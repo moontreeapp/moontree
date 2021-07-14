@@ -12,7 +12,7 @@ class ECPair {
   ECPair(Uint8List _d, Uint8List _Q, {network, compressed}) {
     this._d = _d;
     this._Q = _Q;
-    this.network = network ?? bitcoin;
+    this.network = network ?? ravencoin;
     this.compressed = compressed ?? true;
   }
   Uint8List get publicKey {
@@ -46,8 +46,8 @@ class ECPair {
       nw = network;
       if (nw.wif != version) throw new ArgumentError('Invalid network version');
     } else {
-      if (version == bitcoin.wif) {
-        nw = bitcoin;
+      if (version == ravencoin.wif) {
+        nw = ravencoin;
       } else if (version == testnet.wif) {
         nw = testnet;
       } else {

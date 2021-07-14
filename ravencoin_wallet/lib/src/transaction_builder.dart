@@ -19,7 +19,7 @@ class TransactionBuilder {
   Map _prevTxSet = {};
 
   TransactionBuilder({NetworkType network, int maximumFeeRate}) {
-    this.network = network ?? bitcoin;
+    this.network = network ?? ravencoin;
     this.maximumFeeRate = maximumFeeRate ?? 2500;
     this._inputs = [];
     this._tx = new Transaction();
@@ -368,7 +368,7 @@ class TransactionBuilder {
 }
 
 Uint8List pubkeyToOutputScript(Uint8List pubkey, [NetworkType nw]) {
-  NetworkType network = nw ?? bitcoin;
+  NetworkType network = nw ?? ravencoin;
   P2PKH p2pkh =
       new P2PKH(data: new PaymentData(pubkey: pubkey), network: network);
   return p2pkh.data.output;
