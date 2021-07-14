@@ -1,6 +1,6 @@
 import '../../raven_electrum_client.dart';
 
-class ScripthashStats {
+class ServerStats {
   late double ourCost;
   late int hardLimit;
   late int softLimit;
@@ -12,7 +12,7 @@ class ScripthashStats {
   late int sendCount;
   late int receiveSize;
   late int receiveCount;
-  ScripthashStats(
+  ServerStats(
       this.ourCost,
       this.hardLimit,
       this.softLimit,
@@ -42,7 +42,7 @@ class ScripthashStats {
 
   @override
   String toString() {
-    return '''ScripthashBalance( 
+    return '''ServerStats( 
     ourCost: $ourCost, 
     hardLimit: $hardLimit, 
     softLimit: $softLimit, 
@@ -61,7 +61,7 @@ extension GetOurStatsMethod on RavenElectrumClient {
   Future<dynamic> getOurStats() async {
     var proc = 'server.our_stats';
     dynamic stats = await request(proc);
-    return ScripthashStats(
+    return ServerStats(
       stats['our_cost'],
       stats['hard_limit'],
       stats['soft_limit'],
