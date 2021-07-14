@@ -6,7 +6,7 @@ main() {
       'praise you muffin lion enable neck grocery crumble super myself license ghost');
   var hdWallet = new HDWallet.fromSeed(seed);
   print(hdWallet.address);
-  // => 12eUJoaWBENQ3tNZE52ZQaHqr3v4tTX4os
+  // => RAvfPKTnn4Ay7tjkhF1gW6d3cKNfcQgne8
   print(hdWallet.pubKey);
   // => 0360729fb3c4733e43bf91e5208b0d240f8d8de239cff3f2ebd616b94faa0007f4
   print(hdWallet.privKey);
@@ -17,7 +17,7 @@ main() {
   var wallet =
       Wallet.fromWIF('Kxr9tQED9H44gCmp6HAdmemAzU3n84H3dGkuWTKvE23JgHMW8gct');
   print(wallet.address);
-  // => 19AAjaTUbRjQCMuVczepkoPswiZRhjtg31
+  // => RHSMp6LmCFXyGNGh6AdwrKj5hz22KCGP8a
   print(wallet.pubKey);
   // => 03aea0dfd576151cb399347aa6732f8fdf027b9ea3ea2e65fb754803f776e0a509
   print(wallet.privKey);
