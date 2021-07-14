@@ -1,14 +1,15 @@
-import 'package:bitcoin_flutter/src/payments/index.dart' show PaymentData;
-import 'package:bitcoin_flutter/src/payments/p2pkh.dart';
+import 'package:ravencoin/src/payments/index.dart' show PaymentData;
+import 'package:ravencoin/src/payments/p2pkh.dart';
 import 'package:test/test.dart';
-import 'package:bitcoin_flutter/src/utils/script.dart' as bscript;
+import 'package:ravencoin/src/utils/script.dart' as bscript;
 import 'dart:io';
 import 'dart:convert';
 import 'package:hex/hex.dart';
 import 'dart:typed_data';
 
 main() {
-  final fixtures = json.decode(new File("./test/fixtures/p2pkh.json").readAsStringSync(encoding: utf8));
+  final fixtures = json.decode(
+      new File("./test/fixtures/p2pkh.json").readAsStringSync(encoding: utf8));
   group('(valid case)', () {
     (fixtures["valid"] as List<dynamic>).forEach((f) {
       test(f['description'] + ' as expected', () {
@@ -37,14 +38,17 @@ main() {
   });
   group('(invalid case)', () {
     (fixtures["invalid"] as List<dynamic>).forEach((f) {
-      test('throws ' + f['exception'] + (f['description'] != null ? ('for ' + f['description']) : ''), () {
+      test(
+          'throws ' +
+              f['exception'] +
+              (f['description'] != null ? ('for ' + f['description']) : ''),
+          () {
         final arguments = _preformPaymentData(f['arguments']);
         try {
           expect(new P2PKH(data: arguments), isArgumentError);
-        } catch(err) {
+        } catch (err) {
           expect((err as ArgumentError).message, f['exception']);
         }
-
       });
     });
   });
@@ -54,10 +58,20 @@ PaymentData _preformPaymentData(dynamic x) {
   final address = x['address'];
   final hash = x['hash'] != null ? HEX.decode(x['hash']) : null;
   final input = x['input'] != null ? bscript.fromASM(x['input']) : null;
-  final output = x['output'] != null ? bscript.fromASM(x['output']) : x['outputHex'] != null ? HEX.decode(x['outputHex']) : null;
+  final output = x['output'] != null
+      ? bscript.fromASM(x['output'])
+      : x['outputHex'] != null
+          ? HEX.decode(x['outputHex'])
+          : null;
   final pubkey = x['pubkey'] != null ? HEX.decode(x['pubkey']) : null;
   final signature = x['signature'] != null ? HEX.decode(x['signature']) : null;
-  return new PaymentData(address: address, hash: hash, input: input, output: output, pubkey: pubkey, signature: signature);
+  return new PaymentData(
+      address: address,
+      hash: hash,
+      input: input,
+      output: output,
+      pubkey: pubkey,
+      signature: signature);
 }
 
 String _toString(dynamic x) {

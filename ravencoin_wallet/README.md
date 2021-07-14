@@ -1,23 +1,15 @@
-<a href="https://pub.dartlang.org/packages/bitcoin_flutter"><img alt="pub version" src="https://img.shields.io/pub/v/bitcoin_flutter.svg?style=flat-square"></a>
+<a href="https://pub.dartlang.org/packages/ravencoin"><img alt="pub version" src="https://img.shields.io/pub/v/ravencoin.svg?style=flat-square"></a>
 
-# bitcoin_flutter
+# ravencoin
 
-A dart Bitcoin library for Flutter.
+A dart Ravencoin library, based on [bitcoin_flutter](https://github.com/dart-bitcoin/bitcoin_flutter) and inspired by [bitcoinjs](https://github.com/bitcoinjs/bitcoinjs-lib).
 
 Released under the terms of the [MIT LICENSE](LICENSE).
-
-Inspired by [bitcoinjs](https://github.com/bitcoinjs/bitcoinjs-lib)
-
-Otherwise, pull requests are appreciated.
-
-## Installing
-
-[Flutter Packages](https://pub.dartlang.org/packages/bitcoin_flutter#-installing-tab-)
 
 ## Examples
 
 ```dart
-import 'package:bitcoin_flutter/bitcoin_flutter.dart';
+import 'package:ravencoin/ravencoin.dart';
 import 'package:bip39/bip39.dart' as bip39;
 
 main() {
@@ -45,30 +37,26 @@ main() {
 ```
 
 The below examples are implemented as integration tests:
-- [Generate a random address](https://github.com/anicdh/bitcoin-dart/blob/master/test/integration/addresses_test.dart#L21)
-- [Validating address](https://github.com/anicdh/bitcoin-dart/blob/master/test/address_test.dart)
-- [Generate an address from a SHA256 hash](https://github.com/anicdh/bitcoin-dart/blob/master/test/integration/addresses_test.dart#L26)
-- [Import an address via WIF](https://github.com/anicdh/bitcoin-dart/blob/master/test/integration/addresses_test.dart#L32)
-- [Generate a Testnet address](https://github.com/anicdh/bitcoin-dart/blob/master/test/integration/addresses_test.dart#L37)
-- [Generate a Litecoin address](https://github.com/anicdh/bitcoin-dart/blob/master/test/integration/addresses_test.dart#L45)
-- [Generate a native Segwit address](https://github.com/anicdh/bitcoin-dart/blob/master/test/integration/addresses_test.dart#L53)
-- [Create a 1-to-1 Transaction](https://github.com/anicdh/bitcoin-dart/blob/master/test/integration/transactions_test.dart#L7)
-- [Create a 2-to-2 Transaction](https://github.com/anicdh/bitcoin-dart/blob/master/test/integration/transactions_test.dart#L21)
-- [Create a Transaction with a SegWit P2WPKH input](https://github.com/anicdh/bitcoin-dart/blob/master/test/integration/transactions_test.dart#L45)
-- [Import a BIP32 testnet xpriv and export to WIF](https://github.com/anicdh/bitcoin-dart/blob/master/test/integration/bip32_test.dart#L9)
-- [Export a BIP32 xpriv, then import it](https://github.com/anicdh/bitcoin-dart/blob/master/test/integration/bip32_test.dart#L14)
-- [Export a BIP32 xpub](https://github.com/anicdh/bitcoin-dart/blob/master/test/integration/bip32_test.dart#L23)
-- [Create a BIP32, bitcoin, account 0, external address](https://github.com/anicdh/bitcoin-dart/blob/master/test/integration/bip32_test.dart#L30)
-- [Create a BIP44, bitcoin, account 0, external address](https://github.com/anicdh/bitcoin-dart/blob/master/test/integration/bip32_test.dart#L41)
-- [Use BIP39 to generate BIP32 addresses](https://github.com/anicdh/bitcoin-dart/blob/master/test/integration/bip32_test.dart#L56)
+- [Generate a random address](https://github.com/moontreeapp/ravencoin/blob/master/test/integration/addresses_test.dart#L21)
+- [Validating address](https://github.com/moontreeapp/ravencoin/blob/master/test/address_test.dart)
+- [Generate an address from a SHA256 hash](https://github.com/moontreeapp/ravencoin/blob/master/test/integration/addresses_test.dart#L26)
+- [Import an address via WIF](https://github.com/moontreeapp/ravencoin/blob/master/test/integration/addresses_test.dart#L32)
+- [Generate a Testnet address](https://github.com/moontreeapp/ravencoin/blob/master/test/integration/addresses_test.dart#L37)
+- [Generate a Litecoin address](https://github.com/moontreeapp/ravencoin/blob/master/test/integration/addresses_test.dart#L45)
+- [Generate a native Segwit address](https://github.com/moontreeapp/ravencoin/blob/master/test/integration/addresses_test.dart#L53)
+- [Create a 1-to-1 Transaction](https://github.com/moontreeapp/ravencoin/blob/master/test/integration/transactions_test.dart#L7)
+- [Create a 2-to-2 Transaction](https://github.com/moontreeapp/ravencoin/blob/master/test/integration/transactions_test.dart#L21)
+- [Create a Transaction with a SegWit P2WPKH input](https://github.com/moontreeapp/ravencoin/blob/master/test/integration/transactions_test.dart#L45)
+- [Import a BIP32 testnet xpriv and export to WIF](https://github.com/moontreeapp/ravencoin/blob/master/test/integration/bip32_test.dart#L9)
+- [Export a BIP32 xpriv, then import it](https://github.com/moontreeapp/ravencoin/blob/master/test/integration/bip32_test.dart#L14)
+- [Export a BIP32 xpub](https://github.com/moontreeapp/ravencoin/blob/master/test/integration/bip32_test.dart#L23)
+- [Create a BIP32, bitcoin, account 0, external address](https://github.com/moontreeapp/ravencoin/blob/master/test/integration/bip32_test.dart#L30)
+- [Create a BIP44, bitcoin, account 0, external address](https://github.com/moontreeapp/ravencoin/blob/master/test/integration/bip32_test.dart#L41)
+- [Use BIP39 to generate BIP32 addresses](https://github.com/moontreeapp/ravencoin/blob/master/test/integration/bip32_test.dart#L56)
 
 
 ### TODO
-- Generate a SegWit P2SH address
-- Generate a SegWit multisig address
-- Create a Transaction with a P2SH(multisig) input
-- Build a Transaction w/ psbt format
-- Add Tapscript / Taproot feature
+- Add asset creation, transactions
 
 ### Running the test suite
 
@@ -77,8 +65,8 @@ pub run test
 ```
 
 ## Complementing Libraries
-- [BIP39](https://github.com/anicdh/bip39) - Mnemonic generation for deterministic keys
-- [BIP32](https://github.com/anicdh/bip32) - BIP32
-- [Base58 Check](https://github.com/anicdh/bs58check-dart) - Base58 check encoding/decoding
+- [BIP39](https://github.com/dart-bitcoin/bip39) - Mnemonic generation for deterministic keys
+- [BIP32](https://github.com/dart-bitcoin/bip32) - BIP32
+- [Base58 Check](https://github.com/dart-bitcoin/bs58check-dart) - Base58 check encoding/decoding
 
 ## LICENSE [MIT](LICENSE)
