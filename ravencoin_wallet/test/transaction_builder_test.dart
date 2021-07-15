@@ -1,8 +1,10 @@
-import 'package:test/test.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
+
+import 'package:test/test.dart';
 import 'package:hex/hex.dart';
+
 import '../lib/src/models/networks.dart';
 import '../lib/src/ecpair.dart';
 import '../lib/src/transaction.dart';
@@ -12,7 +14,7 @@ import '../lib/src/utils/script.dart' as bscript;
 import '../lib/src/payments/index.dart' show PaymentData;
 import '../lib/src/payments/p2pkh.dart';
 
-final NETWORKS = {'ravencoin': ravencoin, 'testnet': testnet};
+final NETWORKS = {'testnet': bitcoinTestnet, 'bitcoin': bitcoin};
 
 constructSign(f, TransactionBuilder txb) {
   final network = NETWORKS[f['network']];
@@ -75,7 +77,7 @@ main() {
     final scripts = [
       '1BgGZ9tcN4rm9KBzDn7KprQz87SZ26SAMH',
       '1cMh228HTCiwS8ZsaakH8A8wze1JR5ZsP'
-    ].map((x) => Address.addressToOutputScript(x));
+    ].map((x) => Address.addressToOutputScript(x, bitcoin));
     final txHash = HEX.decode(
         '0e7cea811c0be9f73c0aca591034396e7264473fc25c1ca45195d7417b36cbe2');
     group('fromTransaction', () {
@@ -330,7 +332,7 @@ main() {
                 TransactionBuilder txb;
                 if (f['txHex'] != null) {
                   txb = TransactionBuilder.fromTransaction(
-                      Transaction.fromHex(f['txHex']));
+                      Transaction.fromHex(f['txHex']), bitcoin);
                 } else {
                   txb = construct(f);
                 }

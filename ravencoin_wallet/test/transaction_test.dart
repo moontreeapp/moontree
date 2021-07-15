@@ -1,8 +1,10 @@
-import 'package:test/test.dart';
 import 'dart:io';
 import 'dart:convert';
-import 'package:hex/hex.dart';
 import 'dart:typed_data';
+
+import 'package:test/test.dart';
+import 'package:hex/hex.dart';
+
 import '../lib/src/utils/script.dart' as bscript;
 import '../lib/src/transaction.dart';
 

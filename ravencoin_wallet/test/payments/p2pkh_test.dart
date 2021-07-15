@@ -1,11 +1,14 @@
-import 'package:ravencoin/src/payments/index.dart' show PaymentData;
-import 'package:ravencoin/src/payments/p2pkh.dart';
-import 'package:test/test.dart';
-import 'package:ravencoin/src/utils/script.dart' as bscript;
 import 'dart:io';
 import 'dart:convert';
-import 'package:hex/hex.dart';
 import 'dart:typed_data';
+
+import 'package:test/test.dart';
+import 'package:hex/hex.dart';
+
+import 'package:ravencoin/src/payments/index.dart' show PaymentData;
+import 'package:ravencoin/src/payments/p2pkh.dart';
+import 'package:ravencoin/src/utils/script.dart' as bscript;
+import 'package:ravencoin/src/models/networks.dart';
 
 main() {
   final fixtures = json.decode(
@@ -14,7 +17,7 @@ main() {
     (fixtures["valid"] as List<dynamic>).forEach((f) {
       test(f['description'] + ' as expected', () {
         final arguments = _preformPaymentData(f['arguments']);
-        final p2pkh = new P2PKH(data: arguments);
+        final p2pkh = new P2PKH(data: arguments, network: bitcoin);
         if (arguments.address == null) {
           expect(p2pkh.data.address, f['expected']['address']);
         }
@@ -45,7 +48,7 @@ main() {
           () {
         final arguments = _preformPaymentData(f['arguments']);
         try {
-          expect(new P2PKH(data: arguments), isArgumentError);
+          expect(new P2PKH(data: arguments, network: bitcoin), isArgumentError);
         } catch (err) {
           expect((err as ArgumentError).message, f['exception']);
         }

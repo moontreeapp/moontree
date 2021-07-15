@@ -1,8 +1,10 @@
-import 'package:test/test.dart';
-import 'package:hex/hex.dart';
-import 'dart:typed_data';
 import 'dart:io';
 import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:test/test.dart';
+import 'package:hex/hex.dart';
+
 import '../lib/src/ecpair.dart' show ECPair;
 import '../lib/src/models/networks.dart' as NETWORKS;
 
@@ -15,11 +17,12 @@ main() {
   group('ECPair', () {
     group('fromPrivateKey', () {
       test('defaults to compressed', () {
-        final keyPair = ECPair.fromPrivateKey(ONE);
+        final keyPair = ECPair.fromPrivateKey(ONE, network: NETWORKS.bitcoin);
         expect(keyPair.compressed, true);
       });
       test('supports the uncompressed option', () {
-        final keyPair = ECPair.fromPrivateKey(ONE, compressed: false);
+        final keyPair = ECPair.fromPrivateKey(ONE,
+            compressed: false, network: NETWORKS.bitcoin);
         expect(keyPair.compressed, false);
       });
       test('supports the network option', () {
@@ -30,7 +33,8 @@ main() {
       (fixtures['valid'] as List).forEach((f) {
         test('derives public key for ${f['WIF']}', () {
           final d = HEX.decode(f['d']);
-          final keyPair = ECPair.fromPrivateKey(d, compressed: f['compressed']);
+          final keyPair = ECPair.fromPrivateKey(d,
+              compressed: f['compressed'], network: NETWORKS.bitcoin);
           expect(HEX.encode(keyPair.publicKey), f['Q']);
         });
       });
@@ -60,8 +64,8 @@ main() {
     group('fromWIF', () {
       (fixtures['valid'] as List).forEach((f) {
         test('imports ${f['WIF']}', () {
-          final keyPair = ECPair.fromWIF(f['WIF']);
           var network = _getNetwork(f);
+          final keyPair = ECPair.fromWIF(f['WIF'], network: network);
           expect(HEX.encode(keyPair.privateKey), f['d']);
           expect(keyPair.compressed, f['compressed']);
           expect(keyPair.network, network);
@@ -81,7 +85,8 @@ main() {
     group('toWIF', () {
       (fixtures['valid'] as List).forEach((f) {
         test('export ${f['WIF']}', () {
-          final keyPair = ECPair.fromWIF(f['WIF']);
+          var network = _getNetwork(f);
+          final keyPair = ECPair.fromWIF(f['WIF'], network: network);
           expect(keyPair.toWIF(), f['WIF']);
         });
       });
@@ -90,9 +95,11 @@ main() {
       final d = Uint8List.fromList(List.generate(32, (i) => 4));
       final exWIF = 'KwMWvwRJeFqxYyhZgNwYuYjbQENDAPAudQx5VEmKJrUZcq6aL2pv';
       test('allows a custom RNG to be used', () {
-        final keyPair = ECPair.makeRandom(rng: (size) {
-          return d.sublist(0, size);
-        });
+        final keyPair = ECPair.makeRandom(
+            rng: (size) {
+              return d.sublist(0, size);
+            },
+            network: NETWORKS.bitcoin);
         expect(keyPair.toWIF(), exWIF);
       });
       test('retains the same defaults as ECPair constructor', () {
@@ -122,7 +129,7 @@ main() {
       (fixtures['valid'] as List).forEach((f) {
         test('return ${f['network']} for ${f['WIF']}', () {
           NETWORKS.NetworkType network = _getNetwork(f);
-          final keyPair = ECPair.fromWIF(f['WIF']);
+          final keyPair = ECPair.fromWIF(f['WIF'], network: network);
           expect(keyPair.network, network);
         });
       });
@@ -133,10 +140,10 @@ main() {
 NETWORKS.NetworkType _getNetwork(f) {
   var network;
   if (f['network'] != null) {
-    if (f['network'] == 'ravencoin') {
-      network = NETWORKS.ravencoin;
+    if (f['network'] == 'bitcoin') {
+      network = NETWORKS.bitcoin;
     } else if (f['network'] == 'testnet') {
-      network = NETWORKS.testnet;
+      network = NETWORKS.bitcoinTestnet;
     }
   }
   return network;

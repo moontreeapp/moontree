@@ -515,9 +515,11 @@
       },
       {
         "exception": "Transaction has absurd fees",
+        "network": "bitcoin",
         "inputs": [
           {
             "txRaw": {
+              "network": "bitcoin",
               "inputs": [],
               "outputs": [
                 {

@@ -1,10 +1,11 @@
-import 'package:ravencoin/src/models/networks.dart';
-import 'package:ravencoin/src/payments/index.dart' show PaymentData;
-import 'package:ravencoin/src/payments/p2pkh.dart';
 import 'package:test/test.dart';
 import 'package:hex/hex.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:bip32/bip32.dart' as bip32;
+
+import 'package:ravencoin/src/models/networks.dart';
+import 'package:ravencoin/src/payments/index.dart' show PaymentData;
+import 'package:ravencoin/src/payments/p2pkh.dart';
 
 void main() {
   group('bitcoin-dart (BIP32)', () {
@@ -47,8 +48,9 @@ void main() {
       final child1 = root.derivePath(path);
       // option 2, manually
       final child1b = root.deriveHardened(0).derive(0).derive(0);
-      expect(getAddress(child1), '1JHyB1oPXufr4FXkfitsjgNB5yRY9jAaa7');
-      expect(getAddress(child1b), '1JHyB1oPXufr4FXkfitsjgNB5yRY9jAaa7');
+      expect(getAddress(child1, bitcoin), '1JHyB1oPXufr4FXkfitsjgNB5yRY9jAaa7');
+      expect(
+          getAddress(child1b, bitcoin), '1JHyB1oPXufr4FXkfitsjgNB5yRY9jAaa7');
     });
     test('can create a BIP44, bitcoin, account 0, external address', () {
       final root = bip32.BIP32.fromSeed(HEX.decode(
@@ -61,8 +63,9 @@ void main() {
           .deriveHardened(0)
           .derive(0)
           .derive(0);
-      expect(getAddress(child1), '12Tyvr1U8A3ped6zwMEU5M8cx3G38sP5Au');
-      expect(getAddress(child1b), '12Tyvr1U8A3ped6zwMEU5M8cx3G38sP5Au');
+      expect(getAddress(child1, bitcoin), '12Tyvr1U8A3ped6zwMEU5M8cx3G38sP5Au');
+      expect(
+          getAddress(child1b, bitcoin), '12Tyvr1U8A3ped6zwMEU5M8cx3G38sP5Au');
     });
     /* TODO Support BIP49
     test('can create a BIP49, bitcoin testnet, account 0, external address', () {
@@ -74,14 +77,14 @@ void main() {
       final seed = bip39.mnemonicToSeed(mnemonic);
       final root = bip32.BIP32.fromSeed(seed);
       // receive addresses
-      expect(getAddress(root.derivePath("m/0'/0/0")),
+      expect(getAddress(root.derivePath("m/0'/0/0"), bitcoin),
           '1AVQHbGuES57wD68AJi7Gcobc3RZrfYWTC');
-      expect(getAddress(root.derivePath("m/0'/0/1")),
+      expect(getAddress(root.derivePath("m/0'/0/1"), bitcoin),
           '1Ad6nsmqDzbQo5a822C9bkvAfrYv9mc1JL');
       // change addresses
-      expect(getAddress(root.derivePath("m/0'/1/0")),
+      expect(getAddress(root.derivePath("m/0'/1/0"), bitcoin),
           '1349KVc5NgedaK7DvuD4xDFxL86QN1Hvdn');
-      expect(getAddress(root.derivePath("m/0'/1/1")),
+      expect(getAddress(root.derivePath("m/0'/1/1"), bitcoin),
           '1EAvj4edpsWcSer3duybAd4KiR4bCJW5J6');
     });
   });
