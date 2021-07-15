@@ -1,6 +1,6 @@
 name: ravencoin
 description: A dart Ravencoin library, similar to ravencoin.
-version: 1.0.0
+version: 1.1.0
 homepage: https://github.com/moontreeapp/ravencoin
 
 environment:

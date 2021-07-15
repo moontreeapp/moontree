@@ -258,7 +258,7 @@ class Transaction {
   }
 
   int virtualSize() {
-    return (weight()! / 4).ceil();
+    return (weight() / 4).ceil();
   }
 
   int get txSize {
