@@ -10,8 +10,7 @@ class Accounts {
 
   /// can we replace with purely reactive listeners?
   Future load() async {
-    var accountsBox = Truth.instance.accounts;
-    for (var accountStored in accountsBox.values) {
+    for (var accountStored in Truth.instance.accounts.values) {
       addAccountStored(accountStored);
     }
   }
