@@ -8,8 +8,7 @@ environment:
 dependencies:
   analyzer: 1.5.0 # 1.7.2
   meta: 1.3.0
-  bitcoin_flutter: # ^2.0.2
-    git: https://github.com/moontreeapp/bitcoin_flutter.git
+  ravencoin: ^1.0.0
   raven_electrum_client:
     git: https://github.com/moontreeapp/raven_electrum_client.git
   bs58check: ^1.0.2

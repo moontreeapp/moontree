@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:pointycastle/export.dart';
 
 Uint8List getBytes(String key) => Uint8List.fromList(key.codeUnits);

@@ -1,4 +1,4 @@
-import 'package:bitcoin_flutter/bitcoin_flutter.dart';
+import 'package:ravencoin/ravencoin.dart';
 import 'account.dart';
 
 class NetworkParams {

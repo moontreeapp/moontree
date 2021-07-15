@@ -1,7 +1,6 @@
-import 'package:bitcoin_flutter/bitcoin_flutter.dart';
-import 'package:raven/account.dart';
-import 'package:raven/fee.dart' as fee;
+import 'package:ravencoin/ravencoin.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
+import 'fee.dart';
 
 class FormatResult {
   TransactionBuilder txb;
@@ -50,7 +49,7 @@ class TransactionBuilderHelper {
     var total = 0;
     var retutxos = <ScripthashUnspent>[];
     var pastInputs = [];
-    var knownFees = fee.totalFeeByBytes(txb);
+    var knownFees = totalFeeByBytes(txb);
     var anticipatedInputFeeRate = 51;
     var anticipatedInputFees = 0;
     var utxos = <ScripthashUnspent>[];
@@ -74,7 +73,7 @@ class TransactionBuilderHelper {
       retutxos.add(utxo);
     }
     // doublecheck we have enough value to cover the amount + anticipated OutputFee + knownFees
-    knownFees = fee.totalFeeByBytes(txb);
+    knownFees = totalFeeByBytes(txb);
     var knownCost = sendAmount + anticipatedOutputFee + knownFees;
     while (total < knownCost) {
       // if its not big enough, we simply add one more input to cover the difference
@@ -86,7 +85,7 @@ class TransactionBuilderHelper {
         total = (total + utxo.unspent.value).toInt();
         retutxos.add(utxo); // used later, we have to sign after change output
       }
-      knownFees = fee.totalFeeByBytes(txb);
+      knownFees = totalFeeByBytes(txb);
       knownCost = sendAmount + anticipatedOutputFee + knownFees;
     }
     return FormatResult(txb, total, knownFees, retutxos);

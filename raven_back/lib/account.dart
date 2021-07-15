@@ -1,13 +1,12 @@
-import 'dart:collection';
 import 'dart:typed_data';
-import 'package:convert/convert.dart';
-import 'package:crypto/crypto.dart';
-import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 import 'package:hive/hive.dart';
-import 'package:raven/raven_networks.dart';
+import 'package:crypto/crypto.dart';
+import 'package:convert/convert.dart';
 import 'package:sorted_list/sorted_list.dart';
-import 'network_params.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
+import 'package:ravencoin/ravencoin.dart';
+import 'network_params.dart';
+import 'raven_networks.dart';
 import 'boxes.dart';
 import 'cipher.dart';
 

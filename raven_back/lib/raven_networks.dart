@@ -1,5 +1,5 @@
-import 'package:raven/network_params.dart';
-import 'package:bitcoin_flutter/bitcoin_flutter.dart';
+import 'package:ravencoin/ravencoin.dart';
+import 'network_params.dart';
 
 final ravencoinMainnet = NetworkParams(
     name: 'Ravencoin Mainnet',

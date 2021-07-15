@@ -1,5 +1,5 @@
 /* calculates fees for transactions of various types */
-import 'package:bitcoin_flutter/bitcoin_flutter.dart';
+import 'package:ravencoin/ravencoin.dart';
 
 /// standard fee is 1000 sat per 1kb so .9765625 sat per virtual byte
 double standardRate() {

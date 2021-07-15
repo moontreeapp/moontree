@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:quiver/iterables.dart';
 import 'package:hive/hive.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
-import 'package:sorted_list/sorted_list.dart';
 import 'account.dart';
 import 'box_adapters.dart';
 

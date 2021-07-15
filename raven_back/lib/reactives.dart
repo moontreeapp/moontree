@@ -1,15 +1,13 @@
-import 'package:hive/hive.dart';
 import 'package:quiver/iterables.dart';
-import 'package:sorted_list/sorted_list.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'account.dart';
 import 'accounts.dart';
-import 'boxes.dart' as boxes;
+import 'boxes.dart';
 
 /// triggered by watching nodes
 Future requestBalance(String scripthash, RavenElectrumClient client) async {
   var balance = await client.getBalance(scripthash);
-  await boxes.Truth.instance.balances.put(scripthash, balance);
+  await Truth.instance.balances.put(scripthash, balance);
 }
 
 /// triggered by watching nodes
@@ -17,7 +15,7 @@ Future requestBalances(List<String> batch) async {
   var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
   var balances = await client.getBalances(batch);
   for (var hashBalance in zip([batch, balances]).toList()) {
-    await boxes.Truth.instance.balances.put(hashBalance[0], hashBalance[1]);
+    await Truth.instance.balances.put(hashBalance[0], hashBalance[1]);
   }
 }
 
@@ -28,7 +26,7 @@ Future requestHistory(
   var histories = await client.getHistory(scripthash);
   var entireBatchEmpty = true;
   if (histories.isNotEmpty) entireBatchEmpty = false;
-  await boxes.Truth.instance.histories.put(scripthash, histories);
+  await Truth.instance.histories.put(scripthash, histories);
   if (!entireBatchEmpty) {
     await Accounts.instance.accounts[accountId]!.deriveNode(exposure);
   }
@@ -42,7 +40,7 @@ Future requestHistories(List<String> batch, String accountId,
   var entireBatchEmpty = true;
   for (var hashHistory in zip([batch, histories]).toList()) {
     if (hashHistory[1].isNotEmpty) entireBatchEmpty = false;
-    await boxes.Truth.instance.histories.put(hashHistory[0], hashHistory[1]);
+    await Truth.instance.histories.put(hashHistory[0], hashHistory[1]);
   }
   if (!entireBatchEmpty) {
     await Accounts.instance.accounts[accountId]!.deriveBatch(exposure);
@@ -52,7 +50,7 @@ Future requestHistories(List<String> batch, String accountId,
 /// triggered by watching nodes
 Future requestUnspent(String scripthash, RavenElectrumClient client) async {
   var unspents = await client.getUnspent(scripthash);
-  await boxes.Truth.instance.unspents.put(scripthash, unspents);
+  await Truth.instance.unspents.put(scripthash, unspents);
 }
 
 /// triggered by watching nodes
@@ -60,7 +58,7 @@ Future requestUnspents(List<String> batch) async {
   var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
   var unspents = await client.getUnspents(batch);
   for (var hashUnspents in zip([batch, unspents]).toList()) {
-    await boxes.Truth.instance.unspents.put(hashUnspents[0], hashUnspents[1]);
+    await Truth.instance.unspents.put(hashUnspents[0], hashUnspents[1]);
   }
 }
 
@@ -71,13 +69,13 @@ Future requestUnspents(List<String> batch) async {
 Future sortUnspents(String accountId, List<ScripthashUnspent> utxos) async {
   // implemented as incremental load
   // alternatively could grab all utxo's for accountId each time...
-  var sortedList = boxes.Truth.instance.accountUnspents
+  var sortedList = Truth.instance.accountUnspents
           .getAsList<ScripthashUnspent>(accountId) ??
       SortedList<ScripthashUnspent>(
           (ScripthashUnspent a, ScripthashUnspent b) =>
               a.value.compareTo(b.value));
   sortedList.addAll(utxos);
-  await boxes.Truth.instance.accountUnspents.put(accountId, sortedList);
+  await Truth.instance.accountUnspents.put(accountId, sortedList);
 }
 */
 
@@ -85,8 +83,8 @@ Future sortUnspents(String accountId, List<ScripthashUnspent> utxos) async {
 /// flattens list of all unspents on an account
 /// implemented as incremental load
 Future flattenUnspents(String accountId, List<ScripthashUnspent> utxos) async {
-  var flat = boxes.Truth.instance.accountUnspents
-      .getAsList<ScripthashUnspent>(accountId);
+  var flat =
+      Truth.instance.accountUnspents.getAsList<ScripthashUnspent>(accountId);
   flat.addAll(utxos);
-  await boxes.Truth.instance.accountUnspents.put(accountId, flat);
+  await Truth.instance.accountUnspents.put(accountId, flat);
 }
