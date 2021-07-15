@@ -22,8 +22,8 @@ void toAccounts() {
       if (!Accounts.instance.accounts.keys.contains(key)) {
         Accounts.instance.addAccountStored(event.value);
       }
-      Accounts.instance.accounts[key]!.deriveBatch(NodeExposure.Internal, 50);
-      Accounts.instance.accounts[key]!.deriveBatch(NodeExposure.External, 50);
+      Accounts.instance.accounts[key]!.deriveBatch(NodeExposure.Internal);
+      Accounts.instance.accounts[key]!.deriveBatch(NodeExposure.External);
     }
   });
 }
