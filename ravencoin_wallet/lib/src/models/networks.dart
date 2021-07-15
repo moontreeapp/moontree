@@ -1,12 +1,12 @@
 class NetworkType {
-  String messagePrefix;
-  String? bech32;
-  Bip32Type bip32;
-  int pubKeyHash;
-  int scriptHash;
-  int wif;
+  final String messagePrefix;
+  final String? bech32;
+  final Bip32Type bip32;
+  final int pubKeyHash;
+  final int scriptHash;
+  final int wif;
 
-  NetworkType(
+  const NetworkType(
       {required this.messagePrefix,
       this.bech32,
       required this.bip32,
@@ -21,10 +21,10 @@ class NetworkType {
 }
 
 class Bip32Type {
-  int public;
-  int private;
+  final int public;
+  final int private;
 
-  Bip32Type({required this.public, required this.private});
+  const Bip32Type({required this.public, required this.private});
 
   @override
   String toString() {
@@ -33,7 +33,7 @@ class Bip32Type {
 }
 
 // Ravencoin Mainnet
-final ravencoin = NetworkType(
+const ravencoin = NetworkType(
     messagePrefix: '\x16Raven Signed Message:\n',
     bech32: 'rc',
     bip32: Bip32Type(public: 0x0488b21e, private: 0x0488ade4),
@@ -42,7 +42,7 @@ final ravencoin = NetworkType(
     wif: 0x80);
 
 // Ravencoin Testnet
-final testnet = NetworkType(
+const testnet = NetworkType(
     messagePrefix: '\x16Raven Signed Message:\n',
     bech32: 'tr',
     bip32: Bip32Type(public: 0x043587cf, private: 0x04358394),
@@ -50,19 +50,23 @@ final testnet = NetworkType(
     scriptHash: 0xc4,
     wif: 0xef);
 
+const ravencoinNetworks = {0x80: ravencoin, 0xef: testnet};
+
 // Used for some legacy tests
-final bitcoin = new NetworkType(
+const bitcoin = NetworkType(
     messagePrefix: '\x18Bitcoin Signed Message:\n',
     bech32: 'bc',
-    bip32: new Bip32Type(public: 0x0488b21e, private: 0x0488ade4),
+    bip32: Bip32Type(public: 0x0488b21e, private: 0x0488ade4),
     pubKeyHash: 0x00,
     scriptHash: 0x05,
     wif: 0x80);
 
-final bitcoinTestnet = new NetworkType(
+const bitcoinTestnet = NetworkType(
     messagePrefix: '\x18Bitcoin Signed Message:\n',
     bech32: 'tb',
-    bip32: new Bip32Type(public: 0x043587cf, private: 0x04358394),
+    bip32: Bip32Type(public: 0x043587cf, private: 0x04358394),
     pubKeyHash: 0x6f,
     scriptHash: 0xc4,
     wif: 0xef);
+
+const bitcoinNetworks = {0x80: bitcoin, 0xef: bitcoinTestnet};

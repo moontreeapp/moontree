@@ -22,7 +22,8 @@ constructSign(f, TransactionBuilder txb) {
   for (var i = 0; i < inputs.length; i++) {
     if (inputs[i]['signs'] == null) continue;
     (inputs[i]['signs'] as List<dynamic>).forEach((sign) {
-      ECPair keyPair = ECPair.fromWIF(sign['keyPair'], network: network);
+      ECPair keyPair =
+          ECPair.fromWIF(sign['keyPair'], networks: bitcoinNetworks);
       txb.sign(
           vin: i,
           keyPair: keyPair,
@@ -34,7 +35,7 @@ constructSign(f, TransactionBuilder txb) {
 }
 
 TransactionBuilder construct(f, [bool? dontSign]) {
-  final network = NETWORKS[f['network']];
+  final network = NETWORKS[f['network']] ?? bitcoin;
   final txb = new TransactionBuilder(network: network);
   if (f['version'] != null) txb.setVersion(f['version']);
   (f['inputs'] as List<dynamic>).forEach((input) {
@@ -288,10 +289,8 @@ main() {
             for (var i = 0; i < inputs.length; i++) {
               inputs[i]['signs'] as List<dynamic>
                 ..forEach((sign) {
-                  final keyPairNetwork =
-                      NETWORKS[sign['network'] ?? f['network']];
-                  final keyPair2 =
-                      ECPair.fromWIF(sign['keyPair'], network: keyPairNetwork);
+                  final keyPair2 = ECPair.fromWIF(sign['keyPair'],
+                      networks: bitcoinNetworks);
                   if (sign['throws'] != null && sign['throws']) {
                     try {
                       expect(

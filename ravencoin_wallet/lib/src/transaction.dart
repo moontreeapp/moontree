@@ -1,6 +1,8 @@
 import 'dart:typed_data';
-import 'package:collection/collection.dart' show IterableExtension;
+
 import 'package:hex/hex.dart';
+import 'package:collection/collection.dart' show IterableExtension;
+
 import 'payments/index.dart' show PaymentData;
 import 'payments/p2pkh.dart' show P2PKH;
 import 'payments/p2pk.dart' show P2PK;

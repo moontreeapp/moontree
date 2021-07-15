@@ -119,23 +119,24 @@ class Wallet {
 
   String? get address => _p2pkh.data.address;
 
-  NetworkType? network;
+  NetworkType network;
 
   Wallet(this._keyPair, this._p2pkh, this.network);
 
-  factory Wallet.random([NetworkType? network]) {
+  factory Wallet.random([NetworkType network = ravencoin]) {
     final _keyPair = ECPair.makeRandom(network: network);
     final _p2pkh = new P2PKH(
         data: new PaymentData(pubkey: _keyPair.publicKey), network: network);
     return Wallet(_keyPair, _p2pkh, network);
   }
 
-  factory Wallet.fromWIF(String wif, [NetworkType? network]) {
-    network = network ?? ravencoin;
-    final _keyPair = ECPair.fromWIF(wif, network: network);
+  factory Wallet.fromWIF(String wif,
+      {Map<int, NetworkType> networks = ravencoinNetworks}) {
+    final _keyPair = ECPair.fromWIF(wif, networks: networks);
     final _p2pkh = new P2PKH(
-        data: new PaymentData(pubkey: _keyPair.publicKey), network: network);
-    return Wallet(_keyPair, _p2pkh, network);
+        data: new PaymentData(pubkey: _keyPair.publicKey),
+        network: _keyPair.network);
+    return Wallet(_keyPair, _p2pkh, _keyPair.network);
   }
 
   Uint8List sign(String message) {

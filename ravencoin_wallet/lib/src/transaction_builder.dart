@@ -13,14 +13,14 @@ import 'payments/p2wpkh.dart';
 import 'classify.dart';
 
 class TransactionBuilder {
-  NetworkType? network;
+  NetworkType network;
   late int maximumFeeRate;
   List<Input>? _inputs;
   Transaction? _tx;
   Map _prevTxSet = {};
 
-  TransactionBuilder({NetworkType? network, int? maximumFeeRate}) {
-    this.network = network ?? ravencoin;
+  TransactionBuilder(
+      {NetworkType this.network = ravencoin, int? maximumFeeRate}) {
     this.maximumFeeRate = maximumFeeRate ?? 2500;
     this._inputs = [];
     this._tx = new Transaction();
@@ -30,7 +30,7 @@ class TransactionBuilder {
   List<Input>? get inputs => _inputs;
 
   factory TransactionBuilder.fromTransaction(Transaction transaction,
-      [NetworkType? network]) {
+      [NetworkType network = ravencoin]) {
     final txb = new TransactionBuilder(network: network);
     // Copy transaction fields
     txb.setVersion(transaction.version);
@@ -84,7 +84,7 @@ class TransactionBuilder {
   int addOutput(dynamic data, int? value) {
     var scriptPubKey;
     if (data is String) {
-      scriptPubKey = Address.addressToOutputScript(data, this.network);
+      scriptPubKey = Address.addressToOutputScript(data, network);
     } else if (data is Uint8List) {
       scriptPubKey = data;
     } else {
@@ -129,8 +129,7 @@ class TransactionBuilder {
       int? witnessValue,
       Uint8List? witnessScript,
       int? hashType}) {
-    if (keyPair.network != null &&
-        keyPair.network.toString().compareTo(network.toString()) != 0)
+    if (keyPair.network.toString().compareTo(network.toString()) != 0)
       throw new ArgumentError('Inconsistent network');
     if (vin >= _inputs!.length)
       throw new ArgumentError('No input at index: $vin');

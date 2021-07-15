@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 
 import '../../lib/src/ecpair.dart';
 import '../../lib/src/transaction_builder.dart';
-import '../../lib/src/models/networks.dart' as NETWORKS;
+import '../../lib/src/models/networks.dart';
 import '../../lib/src/payments/p2wpkh.dart' show P2WPKH;
 import '../../lib/src/payments/index.dart' show PaymentData;
 
@@ -11,8 +11,8 @@ main() {
     test('can create a 1-to-1 Transaction', () {
       final alice = ECPair.fromWIF(
           'L1uyy5qTuGrVXrmrsvHWHgVzW9kKdrp27wBC7Vs6nZDTF2BRUVwy',
-          network: NETWORKS.bitcoin);
-      final txb = new TransactionBuilder(network: NETWORKS.bitcoin);
+          networks: bitcoinNetworks);
+      final txb = new TransactionBuilder(network: bitcoin);
 
       txb.setVersion(1);
       txb.addInput(
@@ -31,12 +31,12 @@ main() {
     test('can create a 2-to-2 Transaction', () {
       final alice = ECPair.fromWIF(
           'L1Knwj9W3qK3qMKdTvmg3VfzUs3ij2LETTFhxza9LfD5dngnoLG1',
-          network: NETWORKS.bitcoin);
+          networks: bitcoinNetworks);
       final bob = ECPair.fromWIF(
           'KwcN2pT3wnRAurhy7qMczzbkpY5nXMW2ubh696UBc1bcwctTx26z',
-          network: NETWORKS.bitcoin);
+          networks: bitcoinNetworks);
 
-      final txb = new TransactionBuilder(network: NETWORKS.bitcoin);
+      final txb = new TransactionBuilder(network: bitcoin);
       txb.setVersion(1);
       txb.addInput(
           'b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c',
@@ -66,12 +66,12 @@ main() {
         () {
       final alice = ECPair.fromWIF(
           'cUNfunNKXNNJDvUvsjxz5tznMR6ob1g5K6oa4WGbegoQD3eqf4am',
-          network: NETWORKS.bitcoinTestnet);
+          networks: bitcoinNetworks);
       final p2wpkh = new P2WPKH(
               data: new PaymentData(pubkey: alice.publicKey),
-              network: NETWORKS.bitcoinTestnet)
+              network: bitcoinTestnet)
           .data;
-      final txb = new TransactionBuilder(network: NETWORKS.bitcoinTestnet);
+      final txb = new TransactionBuilder(network: bitcoinTestnet);
       txb.setVersion(1);
       txb.addInput(
           '53676626f5042d42e15313492ab7e708b87559dc0a8c74b7140057af51a2ed5b',
