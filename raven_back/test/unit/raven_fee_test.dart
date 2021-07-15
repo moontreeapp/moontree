@@ -1,6 +1,6 @@
 // dart --no-sound-null-safety test test/unit/raven_fee_test.dart
 import 'package:test/test.dart';
-import 'package:bitcoin_flutter/bitcoin_flutter.dart';
+import 'package:ravencoin/ravencoin.dart';
 import 'package:raven/raven_networks.dart';
 import 'package:raven/account.dart';
 import 'package:raven/fee.dart';
