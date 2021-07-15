@@ -240,7 +240,7 @@ class HDNode {
   HDNode(this.params, this.wallet, this.index, this.exposure);
 
   Uint8List get outputScript {
-    return Address.addressToOutputScript(wallet.address, params.network);
+    return Address.addressToOutputScript(wallet.address!, params.network)!;
   }
 
   String get scripthash {
@@ -251,7 +251,7 @@ class HDNode {
   }
 
   ECPair get keyPair {
-    return ECPair.fromWIF(wallet.wif, network: params.network);
+    return ECPair.fromWIF(wallet.wif!, networks: ravencoinNetworks);
   }
 }
 

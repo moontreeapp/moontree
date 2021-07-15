@@ -6,9 +6,9 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  analyzer: 1.5.0 # 1.7.2
-  meta: 1.3.0
-  ravencoin: ^1.0.0
+  analyzer: ^1.7.0 # 1.7.2
+  meta: ^1.4.0
+  ravencoin: ^1.1.0
   raven_electrum_client:
     git: https://github.com/moontreeapp/raven_electrum_client.git
   bs58check: ^1.0.2

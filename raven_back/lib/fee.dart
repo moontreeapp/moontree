@@ -31,8 +31,8 @@ var rateSelection = <String, Function>{
 };
 
 int totalFeeByBytes(TransactionBuilder txb, [String? selection]) {
-  int bytes = txb.tx.virtualSize();
-  var fee = ((rateSelection[selection] ?? standardRate)() * bytes).ceil();
+  var byteCount = txb.tx!.virtualSize();
+  var fee = ((rateSelection[selection] ?? standardRate)() * byteCount).ceil();
   return fee;
 }
 
