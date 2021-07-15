@@ -6,7 +6,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Map data = {};
+  dynamic data = {};
 
   @override
   void initState() {
@@ -15,11 +15,11 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    data = ModalRoute.of(context).settings.arguments;
+    data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
 
     // set background image
-    String bgImage = data['isDaytime'] ? 'day.png' : 'night.png';
-    Color bgColor = data['isDaytime'] ? Colors.blue : Colors.indigo[700];
+    String bgImage = 'ravenbg.png';
+    Color? bgColor = Colors.grey[400];
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -34,16 +34,20 @@ class _HomeState extends State<Home> {
             padding: const EdgeInsets.fromLTRB(0, 120.0, 0, 0),
             child: Column(
               children: <Widget>[
-                FlatButton.icon(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/location');
+                TextButton.icon(
+                  onPressed: () async {
+                    dynamic result =
+                        await Navigator.pushNamed(context, '/account');
+                    setState(() {
+                      data = {'account': result};
+                    });
                   },
                   icon: Icon(
                     Icons.edit_location,
                     color: Colors.grey[300],
                   ),
                   label: Text(
-                    'Edit Location',
+                    'Change Account',
                     style: TextStyle(
                       color: Colors.grey[300],
                     ),
@@ -54,7 +58,7 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      data['location'],
+                      data['account'] ?? 'unknown',
                       style: TextStyle(
                         fontSize: 28.0,
                         letterSpacing: 2.0,
@@ -64,7 +68,7 @@ class _HomeState extends State<Home> {
                   ],
                 ),
                 SizedBox(height: 20.0),
-                Text(data['time'],
+                Text(data['account'] ?? 'unknown',
                     style: TextStyle(fontSize: 66.0, color: Colors.white)),
               ],
             ),

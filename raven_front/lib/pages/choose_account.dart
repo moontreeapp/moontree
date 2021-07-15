@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:world_time_app/services/world_time.dart';
+import '../services/account_mock.dart';
 
-class ChooseLocation extends StatefulWidget {
+class ChooseAccount extends StatefulWidget {
   @override
-  _ChooseLocationState createState() => _ChooseLocationState();
+  _ChooseAccountState createState() => _ChooseAccountState();
 }
 
-class _ChooseLocationState extends State<ChooseLocation> {
-  List<WorldTime> locations = [
-    WorldTime(url: 'Europe/London', location: 'London', flag: 'uk.png'),
-    WorldTime(url: 'Europe/Berlin', location: 'Athens', flag: 'greece.png'),
-    WorldTime(url: 'Africa/Cairo', location: 'Cairo', flag: 'egypt.png'),
-    WorldTime(url: 'Africa/Nairobi', location: 'Nairobi', flag: 'kenya.png'),
-    WorldTime(url: 'America/Chicago', location: 'Chicago', flag: 'usa.png'),
-    WorldTime(url: 'America/New_York', location: 'New York', flag: 'usa.png'),
-    WorldTime(url: 'Asia/Seoul', location: 'Seoul', flag: 'south_korea.png'),
-    WorldTime(url: 'Asia/Jakarta', location: 'Jakarta', flag: 'indonesia.png'),
-  ];
+class _ChooseAccountState extends State<ChooseAccount> {
+  Map<String, String> accounts = Accounts.instance.accounts;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<void> updateChosen(String key) async {
+    Future.delayed(Duration(seconds: 1));
+    Navigator.pop(context, accounts[key]);
   }
 
   @override
@@ -29,23 +25,25 @@ class _ChooseLocationState extends State<ChooseLocation> {
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: Colors.blue[900],
-        title: Text('Choose a Location'),
+        title: Text('Choose an Account'),
         centerTitle: true,
         elevation: 0,
       ),
       body: ListView.builder(
-          itemCount: locations.length,
+          itemCount: accounts.length,
           itemBuilder: (context, index) {
             return Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 1.0, horizontal: 4.0),
               child: Card(
                 child: ListTile(
-                  onTap: () {},
-                  title: Text(locations[index].location),
+                  onTap: () {
+                    updateChosen('accountId$index');
+                  },
+                  title: Text(
+                      '${index.toString()} - ${accounts["accountId${index.toString()}"]}'),
                   leading: CircleAvatar(
-                    backgroundImage:
-                        AssetImage('assets/${locations[index].flag}'),
+                    backgroundImage: AssetImage('assets/ravenhead.png'),
                   ),
                 ),
               ),
