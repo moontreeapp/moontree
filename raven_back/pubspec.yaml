@@ -6,36 +6,21 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  analyzer: ^1.7.0 # 1.7.2
-  meta: ^1.4.0
+  analyzer: ^1.7.0
+  bs58check: ^1.0.2
+  crypto: ^3.0.0
+  encrypt: ^5.0.0
+  equatable: ^2.0.3
+  hive: ^2.0.4
+  hive_crdt: ^2.0.2
+  quiver: ^3.0.1
   ravencoin: ^1.1.0
   raven_electrum_client:
     git: https://github.com/moontreeapp/raven_electrum_client.git
-  bs58check: ^1.0.2
-  crypto: '3.0.0' # ^2.0.3
-  hive: ^2.0.4
-  hive_crdt: ^2.0.2
-  
-  # Because every version of hive_flutter depends on flutter
-  # any from sdk which is forbidden, hive_flutter is forbidden.
-  # seems to indicate we need to include all raven in raven_mobile...
-  #hive_flutter: ^1.1.0
-
-  quiver: ^3.0.1
   sorted_list: ^1.0.0
-  encrypt: ^5.0.0
-  #test: 1.16.5
-
-  #sembast: ^1.15.1
-  #path_provider: ^0.5.0+1
-  #flutter_bloc: ^0.9.1
-  #equatable: ^0.2.3
-  #cupertino_icons: ^0.1.2
 
 dev_dependencies:
-  #hive_generator: ^1.1.0
-  #Because hive_generator >=1.0.1 depends on analyzer ^1.0.0 which depends on convert ^3.0.0, hive_generator >=1.0.1 requires convert ^3.0.0.
-  #And because every version of bitcoin_flutter from git depends on bech32 0.1.2 which depends on convert ^2.0.2, hive_generator >=1.0.1 is incompatible with bitcoin_flutter from git.
-  #So, because raven depends on both bitcoin_flutter from git and hive_generator ^1.1.0, version solving failed.
+  build_runner: ^2.0.0
+  hive_generator: ^1.1.0
   pedantic: ^1.10.0
-  #test: ^1.16.0
+  test: ^1.16.0
