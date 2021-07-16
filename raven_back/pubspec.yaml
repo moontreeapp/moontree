@@ -15,10 +15,16 @@ dependencies:
   crypto: '3.0.0' # ^2.0.3
   hive: ^2.0.4
   hive_crdt: ^2.0.2
+  
+  # Because every version of hive_flutter depends on flutter
+  # any from sdk which is forbidden, hive_flutter is forbidden.
+  # seems to indicate we need to include all raven in raven_mobile...
+  #hive_flutter: ^1.1.0
+
   quiver: ^3.0.1
   sorted_list: ^1.0.0
   encrypt: ^5.0.0
-  test: 1.16.5
+  # test: 1.16.5
 
   #sembast: ^1.15.1
   #path_provider: ^0.5.0+1
