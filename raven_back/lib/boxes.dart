@@ -95,7 +95,7 @@ class Truth {
   }
 
   void init() {
-    Hive.init('database');
+    //Hive.init('database'); initialized with flutter in raven_mobile...
     Hive.registerAdapter(HDNodeAdapter());
     Hive.registerAdapter(NetworkParamsAdapter());
     Hive.registerAdapter(NetworkTypeAdapter());
