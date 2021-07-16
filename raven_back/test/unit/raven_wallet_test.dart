@@ -4,11 +4,12 @@ import 'package:bip39/bip39.dart' as bip39;
 import 'package:ravencoin/ravencoin.dart';
 
 import 'package:raven/account.dart';
+import 'package:raven/cipher.dart';
 
 final seed = bip39.mnemonicToSeed(
     'smile build brain topple moon scrap area aim budget enjoy polar erosion');
 
-final account = Account.bySeed(testnet, seed);
+final account = Account.bySeed(testnet, seed, CIPHER);
 
 void main() {
   test('reverse', () {

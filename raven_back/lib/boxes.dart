@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:quiver/iterables.dart';
 import 'package:hive/hive.dart';
-import 'package:raven/accounts.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'account.dart';
+import 'cipher.dart';
 import 'models/adapters.dart';
 
 extension GetAs on Box {
@@ -223,8 +223,7 @@ class Truth {
     var savedAccounts = [];
     for (var i = 0; i < accounts.length; i++) {
       var accountStored = accounts.getAt(i);
-      savedAccounts.add(
-          Account.fromAccountStored(accountStored!, Accounts.instance.cipher));
+      savedAccounts.add(Account.fromAccountStored(accountStored!, CIPHER));
     }
     return savedAccounts;
   }

@@ -8,6 +8,7 @@ import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:raven/account.dart';
 import 'package:raven/env.dart' as env;
 import 'package:raven/boxes.dart';
+import 'package:raven/cipher.dart';
 import 'package:raven/listen.dart' as listen;
 import 'package:raven/accounts.dart';
 
@@ -37,7 +38,7 @@ Future<Generated> generate() async {
   listenTo(client);
   var truth = Truth.instance;
   var phrase = await env.getMnemonic();
-  var account = Account.bySeed(testnet, bip39.mnemonicToSeed(phrase));
+  var account = Account.bySeed(testnet, bip39.mnemonicToSeed(phrase), CIPHER);
   await truth.saveAccount(account);
   await Truth.instance.unspents
       .watch()

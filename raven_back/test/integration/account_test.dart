@@ -1,13 +1,13 @@
-// dart --no-sound-null-safety test test/integration/account_test.dart --concurrency=1
+// dart --sound-null-safety test test/integration/account_test.dart --concurrency=1 --chain-stack-traces
 import 'package:test/test.dart';
 import 'package:raven/account.dart';
 import '../test_artifacts.dart' as tests;
-import 'package:raven/boxes.dart' as boxes;
+import 'package:raven/boxes.dart';
 
 void main() async {
   var gen;
   setUpAll(() async => gen = await tests.generate());
-  tearDownAll(() async => await gen.truth.close());
+  tearDownAll(() async => await Truth.instance.close());
 
   test('getBalance', () async {
     expect((gen.account.accountInternals.isEmpty), false);

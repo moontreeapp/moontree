@@ -60,6 +60,20 @@ class Account {
   HDNode node(int index, {exposure = NodeExposure.External}) {
     var wallet = _wallet.derivePath(
         getDerivationPath(index, exposure: exposure, wif: network.wif));
+    print(_wallet.seed);
+    print(wallet.seed);
+    print(wallet.seedHex);
+    // running into an issue where wallet.seed is null.
+    // wallet is an HDWallet which at one point needed to have a String seed,
+    // but now it has a Uint8List? seed. ... if it doesn't have a seed we can't
+    // build a model of the HDNode... so we need to fix what's happening in
+    // derivePath so that it returns a wallet with a seed... how are the seeds
+    // computed?
+    // as far as I can tell it was either provided with .fromSeed or it was
+    // not provided during derivePath here:
+    // https://github.com/moontreeapp/ravencoin/blob/fa48f0c73c844a78074342f1ecc92d507d042a1b/lib/src/ravencoin_base.dart
+    // so it seems inexplicable how it was determined in that case...
+    // alternatively can we alter HDNode such that it doesn't need the seed?
     return HDNode(index, wallet.seed!,
         exposure: exposure, networkWif: network.wif);
   }

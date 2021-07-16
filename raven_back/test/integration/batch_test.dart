@@ -6,6 +6,7 @@ import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 import 'package:raven/boxes.dart';
 import 'package:raven/env.dart';
+import 'package:raven/cipher.dart';
 import 'package:raven/account.dart';
 import 'package:raven/models/node_exposure.dart';
 import '../test_artifacts.dart' as tests;
@@ -17,8 +18,8 @@ void main() async {
   setUpAll(() async {
     await tests.setup();
     //tests.listenTo(client);
-    account =
-        Account.bySeed(testnet, bip39.mnemonicToSeed(await getMnemonic()));
+    account = Account.bySeed(
+        testnet, bip39.mnemonicToSeed(await getMnemonic()), CIPHER);
   });
 
   tearDownAll(() async => await Truth.instance.close());
