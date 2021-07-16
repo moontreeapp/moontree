@@ -10,7 +10,7 @@ void main() async {
   var seed = bip39.mnemonicToSeed(
       'smile build brain topple moon scrap area aim budget enjoy polar erosion');
   // encrypt seed
-  var account = Account.bySeed(ravencoin, seed);
+  var account = Account.bySeed(testnet, seed);
   var node = account.node(0);
   var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
   var version = await client.serverVersion(protocolVersion: '1.8');

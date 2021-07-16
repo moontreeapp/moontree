@@ -8,7 +8,7 @@ import 'package:raven/account.dart';
 final seed = bip39.mnemonicToSeed(
     'smile build brain topple moon scrap area aim budget enjoy polar erosion');
 
-final account = Account.bySeed(ravencoin, seed);
+final account = Account.bySeed(testnet, seed);
 
 void main() {
   test('reverse', () {

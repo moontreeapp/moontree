@@ -18,7 +18,7 @@ void main() async {
     await tests.setup();
     //tests.listenTo(client);
     account =
-        Account.bySeed(ravencoin, bip39.mnemonicToSeed(await getMnemonic()));
+        Account.bySeed(testnet, bip39.mnemonicToSeed(await getMnemonic()));
   });
 
   tearDownAll(() async => await Truth.instance.close());
