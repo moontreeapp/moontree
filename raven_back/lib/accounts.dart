@@ -1,5 +1,6 @@
-import 'package:raven/account.dart';
 import 'boxes.dart';
+import 'account.dart';
+import 'models/account_stored.dart';
 
 class Accounts {
   Map<String, Account> accounts = {};
