@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import '../services/account_mock.dart';
+import '../services/account_mock.dart' as mock;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:raven/accounts.dart';
+import 'package:raven/boxes.dart';
 
 class Loading extends StatefulWidget {
   @override
@@ -8,10 +11,19 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
-  void setupAccounts() async {
+  Future setup() async {
+    //await Directory('database').delete(recursive: true);
+    await Truth.instance.open(); // causes uninitialized error
     await Accounts.instance.load();
+  }
+
+  void setupAccounts() async {
+    setup();
+    await mock.Accounts.instance.load();
     Navigator.pushReplacementNamed(context, '/home', arguments: {
-      'account': Accounts.instance.accounts['accountId1'],
+      //'account': Accounts
+      //    .instance.accounts[Accounts.instance.accounts.keys.toList()[0]],
+      'account': mock.Accounts.instance.accounts['accountId1'],
     });
   }
 

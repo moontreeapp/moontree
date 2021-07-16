@@ -18,20 +18,21 @@ class _HomeState extends State<Home> {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
 
     // set background image
-    String bgImage = 'ravenbg.png';
-    Color? bgColor = Colors.grey[400];
+    //String bgImage = 'ravenbg.png';
+    Color? bgColor = Colors.black;
 
     return Scaffold(
       backgroundColor: bgColor,
       body: SafeArea(
         child: Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-            image: AssetImage('assets/$bgImage'),
-            fit: BoxFit.cover,
-          )),
+          //decoration: BoxDecoration(
+          //  image: DecorationImage(
+          //    image: AssetImage('assets/$bgImage'),
+          //    fit: BoxFit.cover,
+          //  ),
+          //),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 120.0, 0, 0),
+            padding: const EdgeInsets.fromLTRB(0, 20.0, 0, 0),
             child: Column(
               children: <Widget>[
                 TextButton.icon(
@@ -39,21 +40,25 @@ class _HomeState extends State<Home> {
                     dynamic result =
                         await Navigator.pushNamed(context, '/account');
                     setState(() {
-                      data = {'account': result};
+                      if (result == null) {
+                        data = data;
+                      } else {
+                        data = {'account': result};
+                      }
                     });
                   },
                   icon: Icon(
-                    Icons.edit_location,
+                    Icons.change_circle,
                     color: Colors.grey[300],
                   ),
                   label: Text(
-                    'Change Account',
+                    'Change Wallet',
                     style: TextStyle(
                       color: Colors.grey[300],
                     ),
                   ),
                 ),
-                SizedBox(height: 20.0),
+                SizedBox(height: 120.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
