@@ -73,6 +73,7 @@ extension GetOf on Box {
 
 /// database wrapper singleton
 class Truth {
+  bool isInitialized = false;
   bool isOpen = false;
   late Box settings; // 'Electrum Server': 'testnet.rvn.rocks'
   late Box<AccountStored> accounts; // list
@@ -91,12 +92,9 @@ class Truth {
   // singleton accessor
   static Truth get instance => _singleton;
 
-  Truth._() {
-    //init();
-  }
+  Truth._();
 
   void init() {
-    //Hive.init('database'); initialized with flutter in raven_mobile...
     Hive.registerAdapter(HDNodeAdapter());
     Hive.registerAdapter(NetworkParamsAdapter());
     Hive.registerAdapter(NetworkTypeAdapter());
@@ -109,15 +107,21 @@ class Truth {
     Hive.registerAdapter(ScripthashHistoryAdapter());
     Hive.registerAdapter(ScripthashBalanceAdapter());
     Hive.registerAdapter(AccountStoredAdapter());
+    isInitialized = true;
   }
 
   /// get data from long term storage boxes
   Future open() async {
+    if (!isInitialized) {
+      // not being used in flutter project - init Hive (for testing purposes)
+      Hive.init('database');
+      init();
+    }
     if (isOpen) {
       ///... Hive.isBoxOpen
       return;
     }
-
+    print('opening...');
     settings = await Hive.openBox('settings');
     accounts = await Hive.openBox('accounts');
     scripthashAccountIdInternal =
