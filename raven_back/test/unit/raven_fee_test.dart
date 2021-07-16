@@ -5,7 +5,7 @@ import 'package:raven/fee.dart';
 
 void main() {
   test('totalFeeByBytes', () async {
-    final txb = TransactionBuilder(network: ravencoin);
+    final txb = TransactionBuilder(network: testnet);
     txb.setVersion(1);
     txb.addInput(
         '56fcc747b8067133a3dc8907565fa1b31e452c98b3f200687cb836f98c3c46ae', 1);

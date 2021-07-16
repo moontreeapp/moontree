@@ -10,7 +10,7 @@ void main() {
     /* notice this does not calculate an efficient fee or use a utxo set */
     var seed = bip39.mnemonicToSeed(
         'smile build brain topple moon scrap area aim budget enjoy polar erosion');
-    var account = Account.bySeed(ravencoin, seed);
+    var account = Account.bySeed(testnet, seed);
     var node = account.node(4, exposure: NodeExposure.Internal);
     final txb = TransactionBuilder(network: node.network);
     txb.setVersion(1);
