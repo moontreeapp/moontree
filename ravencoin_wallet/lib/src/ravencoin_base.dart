@@ -13,7 +13,7 @@ import 'ecpair.dart';
 class HDWallet {
   bip32.BIP32? _bip32;
   P2PKH? _p2pkh;
-  String? seed;
+  Uint8List? seed;
   NetworkType network;
 
   String? get privKey {
@@ -49,6 +49,8 @@ class HDWallet {
 
   String? get address => _p2pkh != null ? _p2pkh!.data.address : null;
 
+  String? get seedHex => seed != null ? HEX.encode(seed!) : null;
+
   HDWallet({required bip32, required p2pkh, required this.network, this.seed}) {
     this._bip32 = bip32;
     this._p2pkh = p2pkh;
@@ -70,7 +72,6 @@ class HDWallet {
 
   factory HDWallet.fromSeed(Uint8List seed, {NetworkType? network}) {
     network = network ?? ravencoin;
-    final seedHex = HEX.encode(seed);
     final wallet = bip32.BIP32.fromSeed(
         seed,
         bip32.NetworkType(
@@ -79,8 +80,7 @@ class HDWallet {
             wif: network.wif));
     final p2pkh = new P2PKH(
         data: new PaymentData(pubkey: wallet.publicKey), network: network);
-    return HDWallet(
-        bip32: wallet, p2pkh: p2pkh, network: network, seed: seedHex);
+    return HDWallet(bip32: wallet, p2pkh: p2pkh, network: network, seed: seed);
   }
 
   factory HDWallet.fromBase58(String xpub, {NetworkType? network}) {
