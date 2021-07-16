@@ -116,7 +116,7 @@ class Account {
     var index = box.countByValueString(accountId);
     for (var i = 0; i < batchSize; i++) {
       var hash = node(index, exposure: exposure).scripthash;
-      print(index.toString() + ' ' + exposure.toString() + ' ' + hash);
+      //print(index.toString() + ' ' + exposure.toString() + ' ' + hash);
       await box.put(hash, accountId);
       await boxOrder.put(hash, index);
       index = index + 1;

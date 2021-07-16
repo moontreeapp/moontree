@@ -121,7 +121,6 @@ class Truth {
       ///... Hive.isBoxOpen
       return;
     }
-    print('opening...');
     settings = await Hive.openBox('settings');
     accounts = await Hive.openBox('accounts');
     scripthashAccountIdInternal =
