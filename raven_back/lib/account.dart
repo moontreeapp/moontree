@@ -1,14 +1,17 @@
 import 'dart:typed_data';
+
 import 'package:hive/hive.dart';
 import 'package:crypto/crypto.dart';
 import 'package:convert/convert.dart';
 import 'package:sorted_list/sorted_list.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:ravencoin/ravencoin.dart';
+
 import 'network_params.dart';
 import 'raven_networks.dart';
 import 'boxes.dart';
 import 'cipher.dart';
+import 'models/account_stored.dart';
 
 export 'raven_networks.dart';
 
@@ -31,22 +34,6 @@ class nodeLocation {
   nodeLocation(int locationIndex, NodeExposure locationExposure)
       : index = locationIndex,
         exposure = locationExposure;
-}
-
-class AccountStored {
-  Uint8List symmetricallyEncryptedSeed;
-  NetworkParams? params;
-  String name;
-  String accountId;
-
-  Uint8List get seed => cipher.decrypt(symmetricallyEncryptedSeed);
-
-  AccountStored(this.symmetricallyEncryptedSeed,
-      {networkParams, this.name = 'First Wallet'})
-      : params = networkParams ?? ravencoinTestnet,
-        accountId = sha256
-            .convert(cipher.decrypt(symmetricallyEncryptedSeed))
-            .toString();
 }
 
 class Account {

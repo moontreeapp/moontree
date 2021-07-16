@@ -344,36 +344,6 @@ class ScripthashBalanceAdapter extends TypeAdapter<ScripthashBalance> {
   }
 }
 
-class AccountStoredAdapter extends TypeAdapter<AccountStored> {
-  @override
-  final typeId = 13;
-
-  @override
-  AccountStored read(BinaryReader reader) {
-    var numOfFields = reader.readByte();
-    var fields = <int, dynamic>{
-      for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
-    };
-    return AccountStored(
-      fields[0] as Uint8List,
-      networkParams: fields[1] as NetworkParams,
-      name: fields[2] as String,
-    );
-  }
-
-  @override
-  void write(BinaryWriter writer, AccountStored obj) {
-    writer
-      ..writeByte(3)
-      ..writeByte(0)
-      ..write(obj.symmetricallyEncryptedSeed)
-      ..writeByte(1)
-      ..write(obj.params)
-      ..writeByte(2)
-      ..write(obj.name);
-  }
-}
-
 class SortedListAdapter extends TypeAdapter<SortedList> {
   @override
   final typeId = 14;

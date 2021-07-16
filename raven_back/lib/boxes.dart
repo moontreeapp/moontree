@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'account.dart';
 import 'box_adapters.dart';
+import 'models/account_stored.dart';
 
 extension GetAs on Box {
   List<T> getAsList<T>(dynamic key, {dynamic defaultValue}) {
