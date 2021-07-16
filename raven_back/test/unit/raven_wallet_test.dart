@@ -1,16 +1,19 @@
 import 'package:test/test.dart';
-import 'package:raven/account.dart';
+
 import 'package:bip39/bip39.dart' as bip39;
+import 'package:ravencoin/ravencoin.dart';
+
+import 'package:raven/account.dart';
 
 final seed = bip39.mnemonicToSeed(
     'smile build brain topple moon scrap area aim budget enjoy polar erosion');
 
-final account = Account.bySeed(ravencoinTestnet, seed);
+final account = Account.bySeed(ravencoin, seed);
 
 void main() {
   test('reverse', () {
     var sample = [1, 2, 3, 4];
-    expect(reverse(sample), [4, 3, 2, 1]);
+    expect(sample.reversed.toList(), [4, 3, 2, 1]);
   });
 
   test('scripthash', () {

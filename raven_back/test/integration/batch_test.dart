@@ -1,10 +1,13 @@
-// dart --no-sound-null-safety test test/integration/batch_test.dart --concurrency=1
+import 'package:test/test.dart';
+
 import 'package:bip39/bip39.dart' as bip39;
+import 'package:ravencoin/ravencoin.dart';
+import 'package:raven_electrum_client/raven_electrum_client.dart';
+
 import 'package:raven/boxes.dart';
 import 'package:raven/env.dart';
-import 'package:raven_electrum_client/raven_electrum_client.dart';
-import 'package:test/test.dart';
 import 'package:raven/account.dart';
+import 'package:raven/models/node_exposure.dart';
 import '../test_artifacts.dart' as tests;
 
 void main() async {
@@ -14,8 +17,8 @@ void main() async {
   setUpAll(() async {
     await tests.setup();
     //tests.listenTo(client);
-    account = Account.bySeed(
-        ravencoinTestnet, bip39.mnemonicToSeed(await getMnemonic()));
+    account =
+        Account.bySeed(ravencoin, bip39.mnemonicToSeed(await getMnemonic()));
   });
 
   tearDownAll(() async => await Truth.instance.close());

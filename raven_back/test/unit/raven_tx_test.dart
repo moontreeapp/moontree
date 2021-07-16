@@ -2,17 +2,17 @@
 import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:ravencoin/ravencoin.dart';
-import 'package:raven/raven_networks.dart';
 import 'package:raven/account.dart';
+import 'package:raven/models/node_exposure.dart';
 
 void main() {
   test('create, sign, /* and broadcast */ a 1-to-1 transaction', () async {
     /* notice this does not calculate an efficient fee or use a utxo set */
     var seed = bip39.mnemonicToSeed(
         'smile build brain topple moon scrap area aim budget enjoy polar erosion');
-    var account = Account.bySeed(ravencoinTestnet, seed);
+    var account = Account.bySeed(ravencoin, seed);
     var node = account.node(4, exposure: NodeExposure.Internal);
-    final txb = TransactionBuilder(network: node.params.network);
+    final txb = TransactionBuilder(network: node.network);
     txb.setVersion(1);
     txb.addInput(
         '56fcc747b8067133a3dc8907565fa1b31e452c98b3f200687cb836f98c3c46ae',

@@ -3,8 +3,7 @@ import 'package:quiver/iterables.dart';
 import 'package:hive/hive.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'account.dart';
-import 'box_adapters.dart';
-import 'models/account_stored.dart';
+import 'models/adapters.dart';
 
 extension GetAs on Box {
   List<T> getAsList<T>(dynamic key, {dynamic defaultValue}) {
@@ -95,19 +94,13 @@ class Truth {
   Truth._();
 
   void init() {
+    //Hive.init('database'); initialized with flutter in raven_mobile...
+    Hive.registerAdapter(AccountStoredAdapter());
     Hive.registerAdapter(HDNodeAdapter());
-    Hive.registerAdapter(NetworkParamsAdapter());
-    Hive.registerAdapter(NetworkTypeAdapter());
-    Hive.registerAdapter(Bip32TypeAdapter());
-    Hive.registerAdapter(HDWalletAdapter());
-    Hive.registerAdapter(P2PKHAdapter());
-    Hive.registerAdapter(PaymentDataAdapter());
     Hive.registerAdapter(NodeExposureAdapter());
     Hive.registerAdapter(ScripthashUnspentAdapter());
     Hive.registerAdapter(ScripthashHistoryAdapter());
     Hive.registerAdapter(ScripthashBalanceAdapter());
-    Hive.registerAdapter(AccountStoredAdapter());
-    isInitialized = true;
   }
 
   /// get data from long term storage boxes
@@ -222,7 +215,7 @@ class Truth {
 
   Future saveAccount(Account account) async {
     await accounts.add(AccountStored(account.symmetricallyEncryptedSeed,
-        networkParams: account.params, name: account.name));
+        networkWif: account.network.wif, name: account.name));
   }
 
   Future getAccounts() async {
