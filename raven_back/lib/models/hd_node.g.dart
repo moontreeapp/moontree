@@ -1,38 +1,41 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'account_stored.dart';
+part of 'hd_node.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class AccountStoredAdapter extends TypeAdapter<AccountStored> {
+class HDNodeAdapter extends TypeAdapter<HDNode> {
   @override
-  final int typeId = 13;
+  final int typeId = 6;
 
   @override
-  AccountStored read(BinaryReader reader) {
+  HDNode read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return AccountStored(
-      fields[0] as Uint8List,
-      networkWif: fields[1] as int,
-      name: fields[2] as String,
+    return HDNode(
+      fields[0] as int,
+      fields[1] as Uint8List,
+      networkWif: fields[2] as int,
+      exposure: fields[3] as NodeExposure,
     );
   }
 
   @override
-  void write(BinaryWriter writer, AccountStored obj) {
+  void write(BinaryWriter writer, HDNode obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
-      ..write(obj.symmetricallyEncryptedSeed)
+      ..write(obj.index)
       ..writeByte(1)
-      ..write(obj.networkWif)
+      ..write(obj.seed)
       ..writeByte(2)
-      ..write(obj.name);
+      ..write(obj.networkWif)
+      ..writeByte(3)
+      ..write(obj.exposure);
   }
 
   @override
@@ -41,7 +44,7 @@ class AccountStoredAdapter extends TypeAdapter<AccountStored> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AccountStoredAdapter &&
+      other is HDNodeAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

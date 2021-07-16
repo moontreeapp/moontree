@@ -1,15 +1,9 @@
 import 'dart:typed_data';
 
-import 'package:crypto/crypto.dart' show sha256;
 import 'package:hive/hive.dart';
-
-import '../network_params.dart';
-import '../raven_networks.dart';
-import '../cipher.dart';
+import 'package:ravencoin/ravencoin.dart';
 
 part 'account_stored.g.dart';
-
-Cipher cipher = Cipher(defaultInitializationVector);
 
 @HiveType(typeId: 13)
 class AccountStored {
@@ -17,20 +11,13 @@ class AccountStored {
   Uint8List symmetricallyEncryptedSeed;
 
   @HiveField(1)
-  NetworkParams? params;
+  int networkWif;
 
   @HiveField(2)
   String name;
 
-  @HiveField(3)
-  String accountId;
-
-  Uint8List get seed => cipher.decrypt(symmetricallyEncryptedSeed);
-
   AccountStored(this.symmetricallyEncryptedSeed,
-      {networkParams, this.name = 'First Wallet'})
-      : params = networkParams ?? ravencoinTestnet,
-        accountId = sha256
-            .convert(cipher.decrypt(symmetricallyEncryptedSeed))
-            .toString();
+      {this.networkWif = /* testnet */ 0xef, this.name = 'Wallet'});
+
+  NetworkType get network => ravencoinNetworks[networkWif]!;
 }

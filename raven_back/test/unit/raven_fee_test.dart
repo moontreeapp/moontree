@@ -1,13 +1,11 @@
 // dart --no-sound-null-safety test test/unit/raven_fee_test.dart
 import 'package:test/test.dart';
 import 'package:ravencoin/ravencoin.dart';
-import 'package:raven/raven_networks.dart';
-import 'package:raven/account.dart';
 import 'package:raven/fee.dart';
 
 void main() {
   test('totalFeeByBytes', () async {
-    final txb = TransactionBuilder(network: ravencoinTestnet.network);
+    final txb = TransactionBuilder(network: ravencoin);
     txb.setVersion(1);
     txb.addInput(
         '56fcc747b8067133a3dc8907565fa1b31e452c98b3f200687cb836f98c3c46ae', 1);
