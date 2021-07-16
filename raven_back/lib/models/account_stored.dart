@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 
+import 'package:crypto/crypto.dart';
 import 'package:hive/hive.dart';
 import 'package:ravencoin/ravencoin.dart';
+import '../cipher.dart';
 
 part 'account_stored.g.dart';
 
@@ -20,4 +22,9 @@ class AccountStored {
       {this.networkWif = /* testnet */ 0xef, this.name = 'Wallet'});
 
   NetworkType get network => ravencoinNetworks[networkWif]!;
+
+  String get accountId => sha256
+      .convert(Cipher(defaultInitializationVector)
+          .decrypt(symmetricallyEncryptedSeed))
+      .toString();
 }
