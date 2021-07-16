@@ -8,7 +8,7 @@ import 'network_params.dart';
 
 class HDNodeAdapter extends TypeAdapter<HDNode> {
   @override
-  final typeId = 1;
+  final typeId = 6;
 
   @override
   HDNode read(BinaryReader reader) {
