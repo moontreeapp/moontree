@@ -8,12 +8,9 @@ import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:ravencoin/ravencoin.dart';
 
 import 'boxes.dart';
-import 'cipher.dart';
 import 'models/hd_node.dart';
 import 'models/node_exposure.dart';
 import 'models/account_stored.dart';
-
-Cipher cipher = Cipher(defaultInitializationVector);
 
 class CacheEmpty implements Exception {
   String cause;
@@ -41,21 +38,22 @@ class Account {
   final HDWallet _wallet;
   final String accountId;
 
-  Account(this.network, this.symmetricallyEncryptedSeed, {this.name = 'Wallet'})
+  Account(this.network, this.symmetricallyEncryptedSeed, cipher,
+      {this.name = 'Wallet'})
       : _wallet = HDWallet.fromSeed(cipher.decrypt(symmetricallyEncryptedSeed),
             network: network),
         accountId = sha256
             .convert(cipher.decrypt(symmetricallyEncryptedSeed))
             .toString();
 
-  Account.bySeed(this.network, seed, {this.name = 'First Wallet'})
+  Account.bySeed(this.network, seed, cipher, {this.name = 'First Wallet'})
       : _wallet = HDWallet.fromSeed(seed, network: network),
         accountId = sha256.convert(seed).toString(),
         symmetricallyEncryptedSeed = cipher.encrypt(seed);
 
-  factory Account.fromAccountStored(AccountStored accountStored) {
+  factory Account.fromAccountStored(AccountStored accountStored, cipher) {
     return Account(
-        accountStored.network, accountStored.symmetricallyEncryptedSeed,
+        accountStored.network, accountStored.symmetricallyEncryptedSeed, cipher,
         name: accountStored.name);
   }
 

@@ -3,14 +3,14 @@ import 'package:bip39/bip39.dart' as bip39;
 import 'package:raven/account.dart';
 import 'package:ravencoin/ravencoin.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
-import 'package:raven/boxes.dart' as boxes;
-import 'package:raven/accounts.dart' as accounts;
+import 'package:raven/boxes.dart';
+import 'package:raven/accounts.dart';
 
 void main() async {
   var seed = bip39.mnemonicToSeed(
       'smile build brain topple moon scrap area aim budget enjoy polar erosion');
   // encrypt seed
-  var account = Account.bySeed(testnet, seed);
+  var account = Account.bySeed(testnet, seed, Accounts.instance.cipher);
   var node = account.node(0);
   var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
   var version = await client.serverVersion(protocolVersion: '1.8');
@@ -19,6 +19,6 @@ void main() async {
   print('pubKey: ${node.wallet.pubKey}');
   print('wif: ${node.wallet.wif}');
   await client.close();
-  await boxes.Truth.instance.open();
-  await accounts.Accounts.instance.load();
+  await Truth.instance.open();
+  await Accounts.instance.load();
 }

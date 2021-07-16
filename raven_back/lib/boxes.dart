@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:quiver/iterables.dart';
 import 'package:hive/hive.dart';
+import 'package:raven/accounts.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'account.dart';
 import 'models/adapters.dart';
@@ -101,6 +102,7 @@ class Truth {
     Hive.registerAdapter(ScripthashUnspentAdapter());
     Hive.registerAdapter(ScripthashHistoryAdapter());
     Hive.registerAdapter(ScripthashBalanceAdapter());
+    isInitialized = true;
   }
 
   /// get data from long term storage boxes
@@ -221,7 +223,8 @@ class Truth {
     var savedAccounts = [];
     for (var i = 0; i < accounts.length; i++) {
       var accountStored = accounts.getAt(i);
-      savedAccounts.add(Account.fromAccountStored(accountStored!));
+      savedAccounts.add(
+          Account.fromAccountStored(accountStored!, Accounts.instance.cipher));
     }
     return savedAccounts;
   }
