@@ -1,3 +1,7 @@
+## 1.2.0
+
+- Change Wallet.seed to be Uint8List; add Wallet.seedHex to get `String?` variant
+
 ## 1.1.0
 
 - Null safety
