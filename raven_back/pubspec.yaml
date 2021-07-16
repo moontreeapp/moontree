@@ -12,9 +12,8 @@ dependencies:
   encrypt: ^5.0.0
   equatable: ^2.0.3
   hive: ^2.0.4
-  hive_crdt: ^2.0.2
   quiver: ^3.0.1
-  ravencoin: ^1.1.0
+  ravencoin: ^1.2.0
   raven_electrum_client:
     git: https://github.com/moontreeapp/raven_electrum_client.git
   sorted_list: ^1.0.0

@@ -3,6 +3,7 @@ import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'account.dart';
 import 'accounts.dart';
 import 'boxes.dart';
+import 'models/node_exposure.dart';
 
 /// triggered by watching nodes
 Future requestBalance(String scripthash, RavenElectrumClient client) async {

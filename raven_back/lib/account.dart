@@ -2,18 +2,16 @@ import 'dart:typed_data';
 
 import 'package:hive/hive.dart';
 import 'package:crypto/crypto.dart';
-import 'package:convert/convert.dart';
+import 'package:raven/derivation_path.dart';
 import 'package:sorted_list/sorted_list.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:ravencoin/ravencoin.dart';
 
-import 'network_params.dart';
-import 'raven_networks.dart';
 import 'boxes.dart';
 import 'cipher.dart';
+import 'models/hd_node.dart';
+import 'models/node_exposure.dart';
 import 'models/account_stored.dart';
-
-export 'raven_networks.dart';
 
 Cipher cipher = Cipher(defaultInitializationVector);
 
@@ -37,35 +35,35 @@ class nodeLocation {
 }
 
 class Account {
-  final NetworkParams params;
+  final NetworkType network;
   final Uint8List symmetricallyEncryptedSeed;
   final String name;
   final HDWallet _wallet;
   final String accountId;
 
-  Account(this.params, this.symmetricallyEncryptedSeed,
-      {this.name = 'First Wallet'})
+  Account(this.network, this.symmetricallyEncryptedSeed, {this.name = 'Wallet'})
       : _wallet = HDWallet.fromSeed(cipher.decrypt(symmetricallyEncryptedSeed),
-            network: params.network),
+            network: network),
         accountId = sha256
             .convert(cipher.decrypt(symmetricallyEncryptedSeed))
             .toString();
 
-  Account.bySeed(this.params, seed, {this.name = 'First Wallet'})
-      : _wallet = HDWallet.fromSeed(seed, network: params.network),
+  Account.bySeed(this.network, seed, {this.name = 'First Wallet'})
+      : _wallet = HDWallet.fromSeed(seed, network: network),
         accountId = sha256.convert(seed).toString(),
         symmetricallyEncryptedSeed = cipher.encrypt(seed);
 
   factory Account.fromAccountStored(AccountStored accountStored) {
-    return Account(accountStored.params ?? ravencoinTestnet,
-        accountStored.symmetricallyEncryptedSeed,
+    return Account(
+        accountStored.network, accountStored.symmetricallyEncryptedSeed,
         name: accountStored.name);
   }
 
   HDNode node(int index, {exposure = NodeExposure.External}) {
-    var wallet =
-        _wallet.derivePath(params.derivationPath(index, exposure: exposure));
-    return HDNode(params, wallet, index, exposure);
+    var wallet = _wallet.derivePath(
+        getDerivationPath(index, exposure: exposure, wif: network.wif));
+    return HDNode(index, wallet.seed!,
+        exposure: exposure, networkWif: network.wif);
   }
 
   List<String> get accountInternals {
@@ -206,49 +204,5 @@ class Account {
       }
       i = i + 1;
     }
-  }
-}
-
-List<int> reverse(List<int> hex) {
-  var buffer = Uint8List(hex.length);
-  for (var i = 0, j = hex.length - 1; i <= j; ++i, --j) {
-    buffer[i] = hex[j];
-    buffer[j] = hex[i];
-  }
-  return buffer;
-}
-
-class HDNode {
-  NetworkParams params;
-  HDWallet wallet;
-  int index;
-  NodeExposure exposure;
-
-  HDNode(this.params, this.wallet, this.index, this.exposure);
-
-  Uint8List get outputScript {
-    return Address.addressToOutputScript(wallet.address!, params.network)!;
-  }
-
-  String get scripthash {
-    // ignore: omit_local_variable_types
-    Digest digest = sha256.convert(outputScript);
-    var hash = reverse(digest.bytes);
-    return hex.encode(hash);
-  }
-
-  ECPair get keyPair {
-    return ECPair.fromWIF(wallet.wif!, networks: ravencoinNetworks);
-  }
-}
-
-enum NodeExposure { Internal, External }
-
-String exposureToDerivationPathPart(NodeExposure exposure) {
-  switch (exposure) {
-    case NodeExposure.External:
-      return '0';
-    case NodeExposure.Internal:
-      return '1';
   }
 }

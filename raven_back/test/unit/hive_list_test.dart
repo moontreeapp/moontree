@@ -2,7 +2,7 @@
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:test/test.dart';
 import 'package:hive/hive.dart';
-import 'package:raven/box_adapters.dart';
+import 'package:raven/models/adapters.dart';
 
 extension GetAs on Box {
   /// they are not in temporal order, but are they in the same order?
