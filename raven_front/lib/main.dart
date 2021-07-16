@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:raven/initialize.dart' as raven;
@@ -9,7 +10,11 @@ import 'package:raven/account.dart';
 Future<void> main() async {
   await Hive.initFlutter();
   Truth.instance.init();
-  var client = await raven.init();
+  await dotenv.load(
+    fileName: "assets/.env",
+  );
+  var client =
+      await raven.init([dotenv.env['ACCOUNT0']!, dotenv.env['ACCOUNT1']!]);
 
   // should happen on home screen...
   runApp(MaterialApp(home: RavenApp()));
@@ -107,6 +112,7 @@ class _RavenAppState extends State<RavenApp> {
                   (e) => ListTile(
                     title: Text(e),
                     onTap: () {
+                      Navigator.pop(context);
                       setState(() {
                         chosen = e;
                       });

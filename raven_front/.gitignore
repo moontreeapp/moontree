@@ -46,6 +46,6 @@ app.*.map.json
 /android/app/release
 
 # custom
-.env
+*.env
 database/
 testdb/
