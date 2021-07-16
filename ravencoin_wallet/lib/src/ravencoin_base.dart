@@ -9,7 +9,6 @@ import 'payments/index.dart' show PaymentData;
 import 'payments/p2pkh.dart';
 import 'ecpair.dart';
 
-/// Checks if you are awesome. Spoiler: you are.
 class HDWallet {
   bip32.BIP32? _bip32;
   P2PKH? _p2pkh;
