@@ -1,9 +1,9 @@
 import 'package:hive/hive.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
-import 'account.dart';
 import 'reactives.dart';
 import 'boxes.dart';
 import 'accounts.dart';
+import 'models/node_exposure.dart';
 
 // for (var i = 0; i < accountsBox.length; i++) {
 //   key: accountsBox.keyAt(i) }
