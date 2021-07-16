@@ -91,7 +91,7 @@ class Truth {
   static Truth get instance => _singleton;
 
   Truth._() {
-    init();
+    //init();
   }
 
   void init() {
