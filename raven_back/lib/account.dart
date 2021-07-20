@@ -142,7 +142,7 @@ class Account {
     return Truth.instance.getAccountBalance(this);
   }
 
-  /// returns the next internal node without a history
+  /// returns the next internal or external node without a history
   HDNode getNextEmptyNode([NodeExposure exposure = NodeExposure.Internal]) {
     // ensure valid exposure
     exposure = exposure == NodeExposure.Internal
