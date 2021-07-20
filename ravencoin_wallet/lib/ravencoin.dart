@@ -1,9 +1,9 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
+/// The Ravencoin library is similar to the Bitcoin library (bitcoin_flutter) and
+/// follows most of the same patterns.
 library ravencoin;
 
-export 'src/ravencoin_base.dart';
+export 'src/wallet.dart';
+export 'src/hd_wallet.dart';
 export 'src/models/networks.dart';
 export 'src/transaction.dart';
 export 'src/address.dart';
@@ -12,4 +12,3 @@ export 'src/ecpair.dart';
 export 'src/payments/p2pkh.dart';
 export 'src/payments/p2wpkh.dart';
 export 'src/payments/index.dart';
-// TODO: Export any libraries intended for clients of this package.
