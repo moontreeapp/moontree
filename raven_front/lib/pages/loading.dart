@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../services/account_mock.dart' as mock;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:raven/accounts.dart';
-import 'package:raven/boxes.dart';
+//import 'package:raven/accounts.dart';
+//import 'package:raven/boxes.dart';
 
 class Loading extends StatefulWidget {
   @override
@@ -13,8 +13,8 @@ class Loading extends StatefulWidget {
 class _LoadingState extends State<Loading> {
   Future setup() async {
     //await Directory('database').delete(recursive: true);
-    await Truth.instance.open(); // causes uninitialized error
-    await Accounts.instance.load();
+    //await Truth.instance.open(); // causes uninitialized error
+    //await Accounts.instance.load();
   }
 
   void setupAccounts() async {
