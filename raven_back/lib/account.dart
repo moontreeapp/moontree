@@ -143,18 +143,24 @@ class Account {
   }
 
   /// returns the next internal node without a history
-  HDNode getNextChangeNode() {
+  HDNode getNextEmptyNode([NodeExposure exposure = NodeExposure.Internal]) {
+    // ensure valid exposure
+    exposure = exposure == NodeExposure.Internal
+        ? NodeExposure.Internal
+        : NodeExposure.External;
     var i = 0;
-    for (var scripthash in accountInternals) {
+    for (var scripthash in exposure == NodeExposure.Internal
+        ? accountInternals
+        : accountExternals) {
       if (Truth.instance.histories
           .getAsList<ScripthashHistory>(scripthash)
           .isEmpty) {
-        return node(i, exposure: NodeExposure.Internal);
+        return node(i, exposure: exposure);
       }
       i = i + 1;
     }
     // this shouldn't happen - if so we should trigger a new batch??
-    return node(i + 1, exposure: NodeExposure.Internal);
+    return node(i + 1, exposure: exposure);
   }
 
   SortedList<ScripthashUnspent> sortedUTXOs() {
