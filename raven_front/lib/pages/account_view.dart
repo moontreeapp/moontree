@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class AccountView extends StatefulWidget {
   final dynamic data;
@@ -18,273 +19,200 @@ class _AccountViewState extends State<AccountView> {
   }
 
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        // change account button
-        TextButton.icon(
-          onPressed: () async {
-            dynamic result = await Navigator.pushNamed(context, '/account');
-            setState(() {
-              if (result == null) {
-                data = data;
-              } else {
-                data = {'account': result};
-              }
-            });
-          },
-          icon: Icon(
-            Icons.change_circle,
-            color: Colors.grey[300],
-          ),
-          label: Text(
-            'Change Wallet',
-            style: TextStyle(
-              color: Colors.grey[300],
-            ),
-          ),
-        ),
-        SizedBox(height: 20.0),
-        // name stuff
-        Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+    return ListView(
+        shrinkWrap: true,
+        padding: EdgeInsets.all(10.0),
+        children: <Widget>[
+          SizedBox(height: 15.0),
+          // Balance
           Text(
-            'name: ' + (data['account'] ?? 'unknown'),
+            (data['account'] ?? '(unknown)'),
+            textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 28.0,
+              fontSize: 32.0,
               letterSpacing: 2.0,
-              color: Colors.white,
             ),
           ),
-        ]),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            ButtonBar(
-              children: [
+          Text(
+            // rvn is default but if balance is 0 then take the largest asset balance and also display name here.
+            'RVN',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14.0,
+              letterSpacing: 1.6,
+              color: Colors.grey[800],
+            ),
+          ),
+          SizedBox(height: 30.0),
+          Center(
+              child: QrImage(
+            data: "mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7",
+            version: QrVersions.auto,
+            size: 200.0,
+          )),
+          Center(
+              child: SelectableText(
+            'mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7',
+            cursorColor: Colors.grey[850],
+            showCursor: true,
+            toolbarOptions: ToolbarOptions(
+                copy: true, selectAll: true, cut: false, paste: false),
+            style: TextStyle(
+              color: Colors.grey[850],
+            ),
+          )),
+          SizedBox(height: 40.0),
+          ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.all(15.0),
+              children: <Widget>[
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      TextButton.icon(
+                        onPressed: () async {
+                          // administer
+                        },
+                        icon: Icon(
+                          Icons.shield, // administer
+                          color: Colors.grey[850],
+                        ),
+                        label: Text(
+                          'Asset 0',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: Colors.grey[850],
+                          ),
+                        ),
+                      ),
+                      TextButton.icon(
+                        onPressed: () async {
+                          // see history
+                        },
+                        icon: Icon(
+                          Icons.history,
+                          color: Colors.grey[850],
+                        ),
+                        label: Text(
+                          'Balance',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: Colors.grey[850],
+                          ),
+                        ),
+                      ),
+                    ]),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      TextButton.icon(
+                        onPressed: () async {
+                          // administer
+                        },
+                        icon: Icon(
+                          Icons
+                              .settings, // manage (administer with less options)
+                          color: Colors.grey[850],
+                        ),
+                        label: Text(
+                          'Asset 1',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: Colors.grey[850],
+                          ),
+                        ),
+                      ),
+                      TextButton.icon(
+                        onPressed: () async {
+                          // see history
+                        },
+                        icon: Icon(
+                          Icons.history,
+                          color: Colors.grey[850],
+                        ),
+                        label: Text(
+                          'Balance',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: Colors.grey[850],
+                          ),
+                        ),
+                      ),
+                    ]),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      TextButton.icon(
+                        onPressed: () async {
+                          // administer
+                        },
+                        icon: Icon(
+                          Icons.remove_red_eye, // view only
+                          color: Colors.grey[850],
+                        ),
+                        label: Text(
+                          'Asset 2',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: Colors.grey[850],
+                          ),
+                        ),
+                      ),
+                      TextButton.icon(
+                        onPressed: () async {
+                          // see history
+                        },
+                        icon: Icon(
+                          Icons.history,
+                          color: Colors.grey[850],
+                        ),
+                        label: Text(
+                          'Balance',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: Colors.grey[850],
+                          ),
+                        ),
+                      ),
+                    ]),
                 TextButton.icon(
                   onPressed: () async {
                     //this should happen just by touching the name...
                   },
                   icon: Icon(
-                    Icons.edit,
-                    color: Colors.grey[300],
+                    Icons.add,
+                    color: Colors.grey[850],
                   ),
                   label: Text(
-                    'Change Wallet Name',
+                    'Create',
                     style: TextStyle(
-                      color: Colors.grey[300],
+                      color: Colors.grey[850],
                     ),
                   ),
                 ),
-                TextButton.icon(
-                  onPressed: () async {
-                    // delete this account...
-                  },
-                  icon: Icon(
-                    Icons.delete,
-                    color: Colors.grey[300],
-                  ),
-                  label: Text(
-                    'Delete Wallet',
-                    style: TextStyle(
-                      color: Colors.grey[300],
-                    ),
-                  ),
-                ),
-              ],
-            )
-          ],
-        ),
-        SizedBox(height: 20.0),
-        // Balance
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-          Text(
-            'balance: ' + (data['account'] ?? 'unknown'),
-            style: TextStyle(
-              fontSize: 28.0,
-              letterSpacing: 2.0,
-              color: Colors.white,
-            ),
-          ),
-        ]),
-        SizedBox(height: 20.0),
-        // Sync
-        Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-          Text(
-            'last synced: now',
-            style: TextStyle(
-              fontSize: 28.0,
-              letterSpacing: 2.0,
-              color: Colors.white,
-            ),
-          ),
+              ]),
+          // seems as though we have to pull this send button out of the listView in order to have it stay there at the bottom...
+          ///Align(
+          ///    alignment: Alignment.bottomCenter,
+          ///    child: IconButton(
+          ///      icon: Icon(Icons.favorite),
+          ///      onPressed: () async {},
+          ///    )),
+          SizedBox(height: 20.0),
+          // fix want it always at bottom of screen
           TextButton.icon(
-            onPressed: () async {
-              //this should happen just by touching the name...
-            },
-            icon: Icon(
-              Icons.refresh,
-              color: Colors.grey[300],
-            ),
-            label: Text(
-              'Refresh',
-              style: TextStyle(
-                color: Colors.grey[300],
-              ),
-            ),
-          ),
-        ]),
-        SizedBox(height: 20.0),
-        // Security
-        Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-          TextButton.icon(
-            onPressed: () async {
-              //this should happen just by touching the name...
-            },
-            icon: Icon(
-              Icons.security,
-              color: Colors.grey[300],
-            ),
-            label: Text(
-              'see account pass phrase',
-              style: TextStyle(
-                color: Colors.grey[300],
-              ),
-            ),
-          ),
-        ]),
-        SizedBox(height: 20.0),
-        // Transactions
-        Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-          TextButton.icon(
-            onPressed: () async {
-              //this should happen just by touching the name...
-            },
-            icon: Icon(
-              Icons.list,
-              color: Colors.grey[300],
-            ),
-            label: Text(
-              'see transactions',
-              style: TextStyle(
-                color: Colors.grey[300],
-              ),
-            ),
-          ),
-          TextButton.icon(
-            onPressed: () async {
-              //this should happen just by touching the name...
-            },
-            icon: Icon(
-              Icons.save,
-              color: Colors.grey[300],
-            ),
-            label: Text(
-              'export transaction history',
-              style: TextStyle(
-                color: Colors.grey[300],
-              ),
-            ),
-          ),
-        ]),
-        Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-          TextButton.icon(
-            onPressed: () async {
-              //this should happen just by touching the name...
-            },
+            onPressed: () async {},
             icon: Icon(
               Icons.send,
-              color: Colors.grey[300],
+              color: Colors.grey[850],
             ),
             label: Text(
-              'send',
+              'Send', // rvn or assets
               style: TextStyle(
-                color: Colors.grey[300],
+                color: Colors.grey[850],
               ),
             ),
           ),
-          TextButton.icon(
-            onPressed: () async {
-              //this should happen just by touching the name...
-            },
-            icon: Icon(
-              Icons.get_app,
-              color: Colors.grey[300],
-            ),
-            label: Text(
-              'receive',
-              style: TextStyle(
-                color: Colors.grey[300],
-              ),
-            ),
-          ),
-        ]),
-        SizedBox(height: 20.0),
-        // Assets
-        Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-          TextButton.icon(
-            onPressed: () async {
-              //this should happen just by touching the name...
-            },
-            icon: Icon(
-              Icons.list,
-              color: Colors.grey[300],
-            ),
-            label: Text(
-              'see assets',
-              style: TextStyle(
-                color: Colors.grey[300],
-              ),
-            ),
-          ),
-          TextButton.icon(
-            onPressed: () async {
-              //this should happen just by touching the name...
-            },
-            icon: Icon(
-              Icons.create,
-              color: Colors.grey[300],
-            ),
-            label: Text(
-              'Create Asset',
-              style: TextStyle(
-                color: Colors.grey[300],
-              ),
-            ),
-          ),
-        ]),
-        Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-          TextButton.icon(
-            onPressed: () async {
-              //this should happen just by touching the name...
-            },
-            icon: Icon(
-              Icons.swap_calls,
-              color: Colors.grey[300],
-            ),
-            label: Text(
-              'Trade Assets',
-              style: TextStyle(
-                color: Colors.grey[300],
-              ),
-            ),
-          ),
-          TextButton.icon(
-            onPressed: () async {
-              //this should happen just by touching the name...
-            },
-            icon: Icon(
-              Icons.get_app,
-              color: Colors.grey[300],
-            ),
-            label: Text(
-              'receive',
-              style: TextStyle(
-                color: Colors.grey[300],
-              ),
-            ),
-          ),
-        ]),
-      ],
-    );
+        ]);
   }
 }
