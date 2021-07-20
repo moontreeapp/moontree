@@ -16,6 +16,7 @@ dependencies:
   ravencoin: ^1.2.0
   raven_electrum_client:
     git: https://github.com/moontreeapp/raven_electrum_client.git
+  rxdart: ^0.27.1
   sorted_list: ^1.0.0
 
 dev_dependencies:
