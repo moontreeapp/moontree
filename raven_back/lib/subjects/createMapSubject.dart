@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:rxdart/rxdart.dart';
 
-BehaviorSubject<Map> createMapStore(String hiveBoxName) {
+BehaviorSubject<Map> createMapSubject(String hiveBoxName) {
   var box = Hive.box<dynamic>(hiveBoxName);
 
   // Get all existing map values

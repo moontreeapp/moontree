@@ -7,10 +7,8 @@ import 'package:sorted_list/sorted_list.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:ravencoin/ravencoin.dart';
 
-import 'boxes.dart';
-import 'models/hd_node.dart';
-import 'models/node_exposure.dart';
-import 'models/account_stored.dart';
+import '../boxes.dart';
+import '../records.dart' as records;
 
 class CacheEmpty implements Exception {
   String cause;
@@ -24,9 +22,9 @@ class InsufficientFunds implements Exception {
 
 class nodeLocation {
   int index;
-  NodeExposure exposure;
+  records.NodeExposure exposure;
 
-  nodeLocation(int locationIndex, NodeExposure locationExposure)
+  nodeLocation(int locationIndex, records.NodeExposure locationExposure)
       : index = locationIndex,
         exposure = locationExposure;
 }
@@ -51,16 +49,16 @@ class Account {
         accountId = sha256.convert(seed).toString(),
         symmetricallyEncryptedSeed = cipher.encrypt(seed);
 
-  factory Account.fromAccountStored(AccountStored accountStored, cipher) {
+  factory Account.fromAccountStored(records.Account accountStored, cipher) {
     return Account(
         accountStored.network, accountStored.symmetricallyEncryptedSeed, cipher,
         name: accountStored.name);
   }
 
-  HDNode node(int index, {exposure = NodeExposure.External}) {
+  records.HDNode node(int index, {exposure = records.NodeExposure.External}) {
     var wallet = _wallet.derivePath(
         getDerivationPath(index, exposure: exposure, wif: network.wif));
-    return HDNode(index, _wallet.seed!,
+    return records.HDNode(index, _wallet.seed!,
         exposure: exposure, networkWif: network.wif);
   }
 
@@ -99,10 +97,11 @@ class Account {
   }
 
   /// triggered by watching accounts and others...
-  Future deriveBatch(NodeExposure exposure, [int batchSize = 10]) async {
+  Future deriveBatch(records.NodeExposure exposure,
+      [int batchSize = 10]) async {
     Box box;
     Box boxOrder;
-    if (exposure == NodeExposure.Internal) {
+    if (exposure == records.NodeExposure.Internal) {
       box = Truth.instance.scripthashAccountIdInternal;
       boxOrder = Truth.instance.scripthashOrderInternal;
     } else {
@@ -120,7 +119,7 @@ class Account {
   }
 
   /// triggered by watching accounts and others...
-  Future deriveNode(NodeExposure exposure) async {
+  Future deriveNode(records.NodeExposure exposure) async {
     await deriveBatch(exposure, 1);
   }
 
@@ -129,13 +128,14 @@ class Account {
   }
 
   /// returns the next internal or external node without a history
-  HDNode getNextEmptyNode([NodeExposure exposure = NodeExposure.Internal]) {
+  records.HDNode getNextEmptyNode(
+      [records.NodeExposure exposure = records.NodeExposure.Internal]) {
     // ensure valid exposure
-    exposure = exposure == NodeExposure.Internal
-        ? NodeExposure.Internal
-        : NodeExposure.External;
+    exposure = exposure == records.NodeExposure.Internal
+        ? records.NodeExposure.Internal
+        : records.NodeExposure.External;
     var i = 0;
-    for (var scripthash in exposure == NodeExposure.Internal
+    for (var scripthash in exposure == records.NodeExposure.Internal
         ? accountInternals
         : accountExternals) {
       if (Truth.instance.histories
@@ -197,14 +197,14 @@ class Account {
     var i = 0;
     for (var internalScripthash in accountInternals) {
       if (internalScripthash == scripthash) {
-        return nodeLocation(i, NodeExposure.Internal);
+        return nodeLocation(i, records.NodeExposure.Internal);
       }
       i = i + 1;
     }
     i = 0;
     for (var internalScripthash in accountExternals) {
       if (internalScripthash == scripthash) {
-        return nodeLocation(i, NodeExposure.External);
+        return nodeLocation(i, records.NodeExposure.External);
       }
       i = i + 1;
     }

@@ -2,9 +2,9 @@
 import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:ravencoin/ravencoin.dart';
-import 'package:raven/account.dart';
+import 'package:raven/models/account.dart';
 import 'package:raven/cipher.dart';
-import 'package:raven/models/node_exposure.dart';
+import 'package:raven/records/node_exposure.dart';
 
 void main() {
   test('create, sign, /* and broadcast */ a 1-to-1 transaction', () async {

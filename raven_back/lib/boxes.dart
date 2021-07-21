@@ -4,7 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'account.dart';
 import 'cipher.dart';
-import 'models/adapters.dart';
+import 'records.dart' as records;
 
 extension GetAs on Box {
   List<T> getAsList<T>(dynamic key, {dynamic defaultValue}) {
@@ -76,7 +76,7 @@ class Truth {
   bool isInitialized = false;
   bool isOpen = false;
   late Box settings; // 'Electrum Server': 'testnet.rvn.rocks'
-  late Box<AccountStored> accounts; // list
+  late Box<records.Account> accounts; // list
   late Box<String> scripthashAccountIdInternal; // scripthash: accountId
   late Box<String> scripthashAccountIdExternal; // scripthash: accountId
   late Box<int> scripthashOrderInternal; // scripthash: int
@@ -96,12 +96,12 @@ class Truth {
 
   void init() {
     //Hive.init('database'); initialized with flutter in raven_mobile...
-    Hive.registerAdapter(AccountStoredAdapter());
-    Hive.registerAdapter(HDNodeAdapter());
-    Hive.registerAdapter(NodeExposureAdapter());
-    Hive.registerAdapter(ScripthashUnspentAdapter());
-    Hive.registerAdapter(ScripthashHistoryAdapter());
-    Hive.registerAdapter(ScripthashBalanceAdapter());
+    Hive.registerAdapter(records.AccountAdapter());
+    Hive.registerAdapter(records.HDNodeAdapter());
+    Hive.registerAdapter(records.NodeExposureAdapter());
+    Hive.registerAdapter(records.ScripthashUnspentAdapter());
+    Hive.registerAdapter(records.ScripthashHistoryAdapter());
+    Hive.registerAdapter(records.ScripthashBalanceAdapter());
     isInitialized = true;
   }
 
@@ -215,7 +215,7 @@ class Truth {
   }
 
   Future saveAccount(Account account) async {
-    await accounts.add(AccountStored(account.symmetricallyEncryptedSeed,
+    await accounts.add(records.Account(account.symmetricallyEncryptedSeed,
         networkWif: account.network.wif, name: account.name));
   }
 

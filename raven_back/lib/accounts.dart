@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'boxes.dart';
-import 'account.dart';
-import 'models/account_stored.dart';
+import 'models/account.dart';
+import 'records.dart' as records;
 import 'cipher.dart';
 
 class Accounts {
@@ -21,7 +21,7 @@ class Accounts {
     }
   }
 
-  void addAccountStored(AccountStored accountStored) {
+  void addAccountStored(records.Account accountStored) {
     var account = Account.fromAccountStored(accountStored, cipher);
     addAccount(account);
   }

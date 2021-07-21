@@ -1,22 +1,22 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'account_stored.dart';
+part of 'account.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class AccountStoredAdapter extends TypeAdapter<AccountStored> {
+class AccountAdapter extends TypeAdapter<Account> {
   @override
   final int typeId = 13;
 
   @override
-  AccountStored read(BinaryReader reader) {
+  Account read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return AccountStored(
+    return Account(
       fields[0] as Uint8List,
       networkWif: fields[1] as int,
       name: fields[2] as String,
@@ -24,7 +24,7 @@ class AccountStoredAdapter extends TypeAdapter<AccountStored> {
   }
 
   @override
-  void write(BinaryWriter writer, AccountStored obj) {
+  void write(BinaryWriter writer, Account obj) {
     writer
       ..writeByte(3)
       ..writeByte(0)
@@ -41,7 +41,7 @@ class AccountStoredAdapter extends TypeAdapter<AccountStored> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AccountStoredAdapter &&
+      other is AccountAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

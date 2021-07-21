@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'models/adapters.dart';
+import 'records.dart';
 
 class HiveHelper {
   static Future init() async {
@@ -13,7 +13,7 @@ class HiveHelper {
   }
 
   static void registerAdapters() {
-    Hive.registerAdapter(AccountStoredAdapter());
+    Hive.registerAdapter(AccountAdapter());
     Hive.registerAdapter(HDNodeAdapter());
     Hive.registerAdapter(NodeExposureAdapter());
     Hive.registerAdapter(ScripthashUnspentAdapter());

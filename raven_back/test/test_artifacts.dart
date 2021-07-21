@@ -5,7 +5,7 @@ import 'package:bip39/bip39.dart' as bip39;
 import 'package:ravencoin/ravencoin.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
-import 'package:raven/account.dart';
+import 'package:raven/models/account.dart';
 import 'package:raven/env.dart' as env;
 import 'package:raven/boxes.dart';
 import 'package:raven/cipher.dart';

@@ -1,3 +1,3 @@
-import 'createMapStore.dart';
+import 'createMapSubject.dart';
 
-var settings = createMapStore('settings');
+var settings = createMapSubject('settings');

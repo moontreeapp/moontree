@@ -6,10 +6,10 @@ import 'package:hive/hive.dart';
 import 'package:ravencoin/ravencoin.dart';
 import '../accounts.dart';
 
-part 'account_stored.g.dart';
+part 'account.g.dart';
 
 @HiveType(typeId: 13)
-class AccountStored {
+class Account {
   @HiveField(0)
   Uint8List symmetricallyEncryptedSeed;
 
@@ -19,7 +19,7 @@ class AccountStored {
   @HiveField(2)
   String name;
 
-  AccountStored(this.symmetricallyEncryptedSeed,
+  Account(this.symmetricallyEncryptedSeed,
       {this.networkWif = /* testnet */ 0xef, this.name = 'Wallet'});
 
   NetworkType get network => ravencoinNetworks[networkWif]!;
