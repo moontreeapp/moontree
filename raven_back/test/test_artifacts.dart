@@ -38,7 +38,8 @@ Future<Generated> generate() async {
   listenTo(client);
   var truth = Truth.instance;
   var phrase = await env.getMnemonic();
-  var account = Account.bySeed(testnet, bip39.mnemonicToSeed(phrase), CIPHER);
+  var account =
+      Account(bip39.mnemonicToSeed(phrase), cipher: CIPHER, network: testnet);
   await truth.saveAccount(account);
   await Truth.instance.unspents
       .watch()

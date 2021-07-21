@@ -11,7 +11,7 @@ final Uint8List key192 = getBytes('192bit-securekeymorebits');
 void main() {
   group('Cipher', () {
     test('encrypt with 128bit key', () {
-      var crypto = Cipher(key128);
+      var crypto = AESCipher(key128);
       expect(
           crypto.encrypt(getBytes('message')),
           jsonDecode(
@@ -19,7 +19,7 @@ void main() {
     });
 
     test('encrypt with 192bit key', () {
-      var crypto = Cipher(key192);
+      var crypto = AESCipher(key192);
       expect(
           crypto.encrypt(getBytes('message')),
           jsonDecode(
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('is two-way', () {
-      var crypto = Cipher(key128);
+      var crypto = AESCipher(key128);
       var message = getBytes('message');
       var encrypted = crypto.encrypt(message);
       var decrypted = crypto.decrypt(encrypted);
@@ -36,7 +36,7 @@ void main() {
     });
 
     test('works with long messages', () {
-      var crypto = Cipher(key192);
+      var crypto = AESCipher(key192);
       var message = getBytes('A really long message. ' * 1024);
       var encrypted = crypto.encrypt(message);
       var decrypted = crypto.decrypt(encrypted);

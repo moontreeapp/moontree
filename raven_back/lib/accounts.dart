@@ -7,8 +7,7 @@ import 'cipher.dart';
 
 class Accounts {
   Map<String, Account> accounts = {};
-  final Cipher cipher = Cipher(Uint8List.fromList(
-      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]));
+  final Cipher cipher = NoCipher();
 
   static final Accounts _singleton = Accounts._();
   static Accounts get instance => _singleton;
@@ -21,8 +20,8 @@ class Accounts {
     }
   }
 
-  void addAccountStored(records.Account accountStored) {
-    var account = Account.fromAccountStored(accountStored, cipher);
+  void addAccountStored(records.Account record) {
+    var account = Account.fromRecord(record, cipher: cipher);
     addAccount(account);
   }
 

@@ -18,7 +18,7 @@ class HDNodeAdapter extends TypeAdapter<HDNode> {
     };
     return HDNode(
       fields[0] as int,
-      fields[1] as Uint8List,
+      fields[1] as String,
       networkWif: fields[2] as int,
       exposure: fields[3] as NodeExposure,
     );
@@ -31,7 +31,7 @@ class HDNodeAdapter extends TypeAdapter<HDNode> {
       ..writeByte(0)
       ..write(obj.index)
       ..writeByte(1)
-      ..write(obj.seed)
+      ..write(obj.base58)
       ..writeByte(2)
       ..write(obj.networkWif)
       ..writeByte(3)

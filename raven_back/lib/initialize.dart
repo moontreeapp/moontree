@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:ravencoin/ravencoin.dart';
-import 'account.dart';
+import 'models/account.dart';
 import 'env.dart' as env;
 import 'boxes.dart';
 import 'listen.dart' as listen;
@@ -27,8 +27,8 @@ Future<RavenElectrumClient> init([List<String>? phrases]) async {
   listenTo(client);
   phrases = phrases ?? [await env.getMnemonic()];
   for (var phrase in phrases) {
-    var account = Account.bySeed(
-        testnet, bip39.mnemonicToSeed(phrase), Accounts.instance.cipher);
+    var account = Account(bip39.mnemonicToSeed(phrase),
+        cipher: Accounts.instance.cipher, network: testnet);
     await Truth.instance.saveAccount(account);
     await Truth.instance.unspents
         .watch()

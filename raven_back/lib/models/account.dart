@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:hive/hive.dart';
 import 'package:crypto/crypto.dart';
+import 'package:raven/cipher.dart';
 import 'package:raven/derivation_path.dart';
 import 'package:sorted_list/sorted_list.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
@@ -29,36 +30,48 @@ class nodeLocation {
         exposure = locationExposure;
 }
 
+const DEFAULT_CIPHER = NoCipher();
+
 class Account {
   final NetworkType network;
-  final Uint8List symmetricallyEncryptedSeed;
+  final Uint8List encryptedSeed;
   final String name;
-  final HDWallet _wallet;
-  final String accountId;
+  final records.Account? record;
+  late final String accountId;
+  late final HDWallet wallet;
+  late final Cipher cipher;
 
-  Account(this.network, this.symmetricallyEncryptedSeed, cipher,
-      {this.name = 'Wallet'})
-      : _wallet = HDWallet.fromSeed(cipher.decrypt(symmetricallyEncryptedSeed),
-            network: network),
-        accountId = sha256
-            .convert(cipher.decrypt(symmetricallyEncryptedSeed))
-            .toString();
-
-  Account.bySeed(this.network, seed, cipher, {this.name = 'First Wallet'})
-      : _wallet = HDWallet.fromSeed(seed, network: network),
+  Account(seed,
+      {this.name = 'Wallet',
+      this.network = ravencoin,
+      this.record,
+      this.cipher = const NoCipher()})
+      : wallet = HDWallet.fromSeed(seed, network: network),
         accountId = sha256.convert(seed).toString(),
-        symmetricallyEncryptedSeed = cipher.encrypt(seed);
+        encryptedSeed = cipher.encrypt(seed);
 
-  factory Account.fromAccountStored(records.Account accountStored, cipher) {
-    return Account(
-        accountStored.network, accountStored.symmetricallyEncryptedSeed, cipher,
-        name: accountStored.name);
+  factory Account.fromEncryptedSeed(encryptedSeed,
+      {name = 'Wallet',
+      network = ravencoin,
+      record,
+      cipher = const NoCipher()}) {
+    return Account(cipher.decrypt(encryptedSeed),
+        name: name, network: network, record: record, cipher: cipher);
+  }
+
+  factory Account.fromRecord(records.Account record,
+      {cipher = const NoCipher()}) {
+    return Account(cipher.decrypt(record.encryptedSeed),
+        name: record.name,
+        network: record.network,
+        record: record,
+        cipher: cipher);
   }
 
   records.HDNode node(int index, {exposure = records.NodeExposure.External}) {
-    var wallet = _wallet.derivePath(
+    var wallet = this.wallet.derivePath(
         getDerivationPath(index, exposure: exposure, wif: network.wif));
-    return records.HDNode(index, _wallet.seed!,
+    return records.HDNode(index, wallet.base58Priv!,
         exposure: exposure, networkWif: network.wif);
   }
 

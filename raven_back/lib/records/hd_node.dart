@@ -15,7 +15,7 @@ class HDNode {
   int index;
 
   @HiveField(1)
-  Uint8List seed;
+  String base58;
 
   @HiveField(2)
   int networkWif;
@@ -23,13 +23,13 @@ class HDNode {
   @HiveField(3)
   NodeExposure exposure;
 
-  HDNode(this.index, this.seed,
+  HDNode(this.index, this.base58,
       {this.networkWif = /* testnet */ 0xef,
       this.exposure = NodeExposure.External});
 
   NetworkType get network => ravencoinNetworks[networkWif]!;
 
-  HDWallet get wallet => HDWallet.fromSeed(seed, network: network);
+  HDWallet get wallet => HDWallet.fromBase58(base58, network: network);
 
   Uint8List get outputScript {
     return Address.addressToOutputScript(wallet.address!, network)!;

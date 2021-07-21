@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:quiver/iterables.dart';
 import 'package:hive/hive.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
-import 'account.dart';
+import 'models/account.dart';
 import 'cipher.dart';
 import 'records.dart' as records;
 
@@ -215,15 +215,15 @@ class Truth {
   }
 
   Future saveAccount(Account account) async {
-    await accounts.add(records.Account(account.symmetricallyEncryptedSeed,
+    await accounts.add(records.Account(account.encryptedSeed,
         networkWif: account.network.wif, name: account.name));
   }
 
   Future getAccounts() async {
     var savedAccounts = [];
     for (var i = 0; i < accounts.length; i++) {
-      var accountStored = accounts.getAt(i);
-      savedAccounts.add(Account.fromAccountStored(accountStored!, CIPHER));
+      var record = accounts.getAt(i);
+      savedAccounts.add(Account.fromRecord(record!));
     }
     return savedAccounts;
   }

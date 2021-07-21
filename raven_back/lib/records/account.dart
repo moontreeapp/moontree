@@ -9,9 +9,9 @@ import '../accounts.dart';
 part 'account.g.dart';
 
 @HiveType(typeId: 13)
-class Account {
+class Account with HiveObjectMixin {
   @HiveField(0)
-  Uint8List symmetricallyEncryptedSeed;
+  Uint8List encryptedSeed;
 
   @HiveField(1)
   int networkWif;
@@ -19,12 +19,12 @@ class Account {
   @HiveField(2)
   String name;
 
-  Account(this.symmetricallyEncryptedSeed,
+  Account(this.encryptedSeed,
       {this.networkWif = /* testnet */ 0xef, this.name = 'Wallet'});
 
   NetworkType get network => ravencoinNetworks[networkWif]!;
 
   String get accountId => sha256
-      .convert(Accounts.instance.cipher.decrypt(symmetricallyEncryptedSeed))
+      .convert(Accounts.instance.cipher.decrypt(encryptedSeed))
       .toString();
 }

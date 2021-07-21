@@ -28,7 +28,7 @@ class AccountAdapter extends TypeAdapter<Account> {
     writer
       ..writeByte(3)
       ..writeByte(0)
-      ..write(obj.symmetricallyEncryptedSeed)
+      ..write(obj.encryptedSeed)
       ..writeByte(1)
       ..write(obj.networkWif)
       ..writeByte(2)

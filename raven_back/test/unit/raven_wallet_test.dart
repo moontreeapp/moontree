@@ -9,7 +9,7 @@ import 'package:raven/cipher.dart';
 final seed = bip39.mnemonicToSeed(
     'smile build brain topple moon scrap area aim budget enjoy polar erosion');
 
-final account = Account.bySeed(testnet, seed, CIPHER);
+final account = Account(seed, cipher: CIPHER, network: testnet);
 
 void main() {
   test('reverse', () {
