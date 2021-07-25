@@ -23,7 +23,7 @@ class HiveHelper {
 
   static Future open() async {
     await Hive.openBox('settings');
-    await Hive.openBox('accounts');
+    await Hive.openBox<Account>('accounts');
     await Hive.openBox('scripthashAccountIdInternal');
     await Hive.openBox('scripthashAccountIdExternal');
     await Hive.openBox('scripthashOrderInternal');
