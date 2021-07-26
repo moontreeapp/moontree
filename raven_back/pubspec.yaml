@@ -12,6 +12,7 @@ dependencies:
   encrypt: ^5.0.0
   equatable: ^2.0.3
   hive: ^2.0.4
+  ordered_set: ^3.1.0
   quiver: ^3.0.1
   ravencoin: ^1.2.0
   raven_electrum_client:

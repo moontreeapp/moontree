@@ -68,6 +68,11 @@ class Account {
         cipher: cipher);
   }
 
+  @override
+  String toString() {
+    return 'Account($name, $accountId)';
+  }
+
   records.HDNode node(int index, {exposure = records.NodeExposure.External}) {
     var wallet = this.wallet.derivePath(
         getDerivationPath(index, exposure: exposure, wif: network.wif));
