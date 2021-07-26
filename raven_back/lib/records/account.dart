@@ -6,31 +6,27 @@ import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:ravencoin/ravencoin.dart';
 import '../accounts.dart';
+import 'net.dart';
 
 part 'account.g.dart';
 
-@HiveType(typeId: 13)
+@HiveType(typeId: 0)
 class Account with HiveObjectMixin, EquatableMixin {
   @HiveField(0)
   Uint8List encryptedSeed;
 
   @HiveField(1)
-  int networkWif;
+  Net net;
 
   @HiveField(2)
   String name;
 
-  Account(this.encryptedSeed,
-      {this.networkWif = /* testnet */ 0xef, this.name = 'Wallet'});
-
-  NetworkType get network => ravencoinNetworks[networkWif]!;
-
-  String get accountId =>
-      sha1.convert(Accounts.instance.cipher.decrypt(encryptedSeed)).toString();
+  Account(this.encryptedSeed, {this.net = Net.Test, this.name = 'Wallet'});
 
   @override
-  List<Object> get props => [accountId, networkWif];
+  List<Object> get props => [encryptedSeed];
 
   @override
-  bool get stringify => true;
+  String toString() =>
+      'Account($name, $net, ${encryptedSeed.take(6).toList()})';
 }

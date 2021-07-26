@@ -1,38 +1,44 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'account.dart';
+part of 'address.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class AccountAdapter extends TypeAdapter<Account> {
+class AddressAdapter extends TypeAdapter<Address> {
   @override
-  final int typeId = 0;
+  final int typeId = 1;
 
   @override
-  Account read(BinaryReader reader) {
+  Address read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Account(
-      fields[0] as Uint8List,
-      net: fields[1] as Net,
-      name: fields[2] as String,
+    return Address(
+      fields[0] as String,
+      fields[1] as String,
+      fields[2] as int,
+      net: fields[4] as Net,
+      exposure: fields[3] as NodeExposure,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Account obj) {
+  void write(BinaryWriter writer, Address obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(5)
       ..writeByte(0)
-      ..write(obj.encryptedSeed)
+      ..write(obj.scripthash)
       ..writeByte(1)
-      ..write(obj.net)
+      ..write(obj.accountId)
       ..writeByte(2)
-      ..write(obj.name);
+      ..write(obj.hdIndex)
+      ..writeByte(3)
+      ..write(obj.exposure)
+      ..writeByte(4)
+      ..write(obj.net);
   }
 
   @override
@@ -41,7 +47,7 @@ class AccountAdapter extends TypeAdapter<Account> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AccountAdapter &&
+      other is AddressAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

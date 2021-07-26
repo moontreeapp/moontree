@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 import 'package:pedantic/pedantic.dart';
 
 import 'package:raven/subjects/change.dart';
-import 'package:raven/subjects/rx_map.dart';
+import 'rx_map.dart';
 
 void main() {
   group('RxMap', () {

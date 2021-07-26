@@ -215,8 +215,10 @@ class Truth {
   }
 
   Future saveAccount(Account account) async {
-    await accounts.add(records.Account(account.encryptedSeed,
-        networkWif: account.network.wif, name: account.name));
+    await accounts
+        .add(records.Account(account.encryptedSeed, name: account.name));
+    // await accounts.add(records.Account(account.encryptedSeed,
+    //     networkWif: account.network.wif, name: account.name));
   }
 
   Future getAccounts() async {

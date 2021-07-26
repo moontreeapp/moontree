@@ -10,6 +10,7 @@ import 'package:ravencoin/ravencoin.dart';
 
 import '../boxes.dart';
 import '../records.dart' as records;
+import '../records/net.dart';
 
 class CacheEmpty implements Exception {
   String cause;
@@ -33,9 +34,11 @@ class nodeLocation {
 const DEFAULT_CIPHER = NoCipher();
 
 class Account {
-  final NetworkType network;
+  // Taken from records.Account
   final Uint8List encryptedSeed;
+  final records.Net net;
   final String name;
+
   final records.Account? record;
   late final String accountId;
   late final HDWallet wallet;
@@ -43,35 +46,36 @@ class Account {
 
   Account(seed,
       {this.name = 'Wallet',
-      this.network = ravencoin,
+      this.net = Net.Test,
       this.record,
       this.cipher = const NoCipher()})
-      : wallet = HDWallet.fromSeed(seed, network: network),
-        accountId = sha256.convert(seed).toString(),
-        encryptedSeed = cipher.encrypt(seed);
+      : accountId = sha256.convert(seed).toString(),
+        encryptedSeed = cipher.encrypt(seed) {
+    wallet = HDWallet.fromSeed(seed, network: network);
+  }
 
   factory Account.fromEncryptedSeed(encryptedSeed,
-      {name = 'Wallet',
-      network = ravencoin,
-      record,
-      cipher = const NoCipher()}) {
+      {name = 'Wallet', net = Net.Test, record, cipher = const NoCipher()}) {
     return Account(cipher.decrypt(encryptedSeed),
-        name: name, network: network, record: record, cipher: cipher);
+        name: name, net: net, record: record, cipher: cipher);
   }
 
   factory Account.fromRecord(records.Account record,
       {cipher = const NoCipher()}) {
     return Account(cipher.decrypt(record.encryptedSeed),
-        name: record.name,
-        network: record.network,
-        record: record,
-        cipher: cipher);
+        name: record.name, net: record.net, record: record, cipher: cipher);
+  }
+
+  records.Account toRecord() {
+    return records.Account(encryptedSeed, net: net, name: name);
   }
 
   @override
   String toString() {
     return 'Account($name, $accountId)';
   }
+
+  NetworkType get network => networks[net]!;
 
   records.HDNode node(int index, {exposure = records.NodeExposure.External}) {
     var wallet = this.wallet.derivePath(
