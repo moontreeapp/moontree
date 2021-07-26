@@ -13,8 +13,8 @@ class RxMapSource<Record, Model> extends Source<Record, Model> {
   @override
   Stream<Change> watch(Reservoir reservoir) {
     return map.stream.map((Change event) => event.when(
-        added: (added) => reservoir.addRecord(added.id, added.row),
-        updated: (updated) => reservoir.updateRecord(updated.id, updated.row),
+        added: (added) => reservoir.addRecord(added.id, added.data),
+        updated: (updated) => reservoir.updateRecord(updated.id, updated.data),
         removed: (removed) => reservoir.removeRecord(removed.id)));
   }
 }

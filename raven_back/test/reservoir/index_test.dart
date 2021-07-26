@@ -46,7 +46,7 @@ void main() {
     test('get', () {
       var index =
           Index((row) => row.name, rows, (r1, r2) => r1.id.compareTo(r2.id));
-      expect(index.get('apple')?.toList(), [rows[0], rows[1]]);
+      expect(index.getAll('apple')?.toList(), [rows[0], rows[1]]);
     });
   });
 }

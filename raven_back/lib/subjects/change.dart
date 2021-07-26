@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 /// The Change class is an ADT, meaning we're using the Dart type system
 /// at compile time to help us check that we're considering all possible
-/// kinds of change: Added, Updated, Removed, Unchanged
+/// kinds of change: Added, Updated, Removed
 abstract class Change with EquatableMixin {
   Object id;
 
@@ -23,19 +23,19 @@ abstract class Change with EquatableMixin {
 }
 
 class Added extends Change {
-  dynamic row;
-  Added(id, this.row) : super(id);
+  dynamic data;
+  Added(id, this.data) : super(id);
 
   @override
-  String toString() => 'Added($id: $row)';
+  String toString() => 'Added($id: $data)';
 }
 
 class Updated extends Change {
-  dynamic row;
-  Updated(id, this.row) : super(id);
+  dynamic data;
+  Updated(id, this.data) : super(id);
 
   @override
-  String toString() => 'Updated($id: $row)';
+  String toString() => 'Updated($id: $data)';
 }
 
 class Removed extends Change {
