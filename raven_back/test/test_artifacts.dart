@@ -2,15 +2,14 @@
 import 'dart:io';
 import 'package:bip39/bip39.dart' as bip39;
 
-import 'package:ravencoin/ravencoin.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
-import 'package:raven/models/account.dart';
-import 'package:raven/env.dart' as env;
-import 'package:raven/boxes.dart';
-import 'package:raven/cipher.dart';
-import 'package:raven/listen.dart' as listen;
 import 'package:raven/accounts.dart';
+import 'package:raven/boxes.dart';
+import 'package:raven/env.dart' as env;
+import 'package:raven/listen.dart' as listen;
+import 'package:raven/models/account.dart';
+import 'package:raven/records/net.dart';
 
 class Generated {
   String phrase;
@@ -38,8 +37,7 @@ Future<Generated> generate() async {
   listenTo(client);
   var truth = Truth.instance;
   var phrase = await env.getMnemonic();
-  var account =
-      Account(bip39.mnemonicToSeed(phrase), cipher: CIPHER, network: testnet);
+  var account = Account(bip39.mnemonicToSeed(phrase), net: Net.Test);
   await truth.saveAccount(account);
   await Truth.instance.unspents
       .watch()

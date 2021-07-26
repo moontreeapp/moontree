@@ -11,8 +11,7 @@ Future requestBalance(String scripthash, RavenElectrumClient client) async {
 }
 
 /// triggered by watching nodes
-Future requestBalances(List<String> batch) async {
-  var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
+Future requestBalances(List<String> batch, RavenElectrumClient client) async {
   var balances = await client.getBalances(batch);
   for (var hashBalance in zip([batch, balances]).toList()) {
     await Truth.instance.balances.put(hashBalance[0], hashBalance[1]);
@@ -33,9 +32,9 @@ Future requestHistory(
 }
 
 /// triggered by watching nodes
-Future requestHistories(List<String> batch, String accountId,
+Future requestHistories(
+    List<String> batch, String accountId, RavenElectrumClient client,
     {exposure = NodeExposure.Internal}) async {
-  var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
   var histories = await client.getHistories(batch);
   var entireBatchEmpty = true;
   for (var hashHistory in zip([batch, histories]).toList()) {
@@ -54,8 +53,7 @@ Future requestUnspent(String scripthash, RavenElectrumClient client) async {
 }
 
 /// triggered by watching nodes
-Future requestUnspents(List<String> batch) async {
-  var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
+Future requestUnspents(List<String> batch, RavenElectrumClient client) async {
   var unspents = await client.getUnspents(batch);
   for (var hashUnspents in zip([batch, unspents]).toList()) {
     await Truth.instance.unspents.put(hashUnspents[0], hashUnspents[1]);

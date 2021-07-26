@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:ravencoin/ravencoin.dart';
 import 'package:raven/models/account.dart';
-import 'package:raven/cipher.dart';
+import 'package:raven/records/net.dart';
 import 'package:raven/records/node_exposure.dart';
 
 void main() {
@@ -11,7 +11,7 @@ void main() {
     /* notice this does not calculate an efficient fee or use a utxo set */
     var seed = bip39.mnemonicToSeed(
         'smile build brain topple moon scrap area aim budget enjoy polar erosion');
-    var account = Account(seed, cipher: CIPHER, network: testnet);
+    var account = Account(seed, net: Net.Test);
     var node = account.node(4, exposure: NodeExposure.Internal);
     final txb = TransactionBuilder(network: node.network);
     txb.setVersion(1);
