@@ -4,7 +4,7 @@ import 'models/account.dart';
 import 'package:raven/records/net.dart';
 import 'env.dart' as env;
 import 'boxes.dart';
-import 'listen.dart' as listen;
+import 'listener.dart';
 import 'accounts.dart';
 
 Future setup() async {
@@ -14,8 +14,9 @@ Future setup() async {
 }
 
 void listenTo(RavenElectrumClient client) {
+  var listen = ElectrumListener(client);
   listen.toAccounts();
-  listen.toNodes(client);
+  listen.toNodes();
   listen.toUnspents();
 }
 
