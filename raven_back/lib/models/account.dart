@@ -1,16 +1,15 @@
 import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
-import 'package:hive/hive.dart';
 import 'package:crypto/crypto.dart';
 import 'package:convert/convert.dart' show hex;
 import 'package:sorted_list/sorted_list.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:ravencoin/ravencoin.dart';
 
+import '../boxes.dart';
 import '../cipher.dart';
 import '../derivation_path.dart';
-import '../boxes.dart';
 import '../records.dart' as records;
 import '../records/net.dart';
 import '../models.dart' as models;
@@ -24,6 +23,10 @@ extension on HDWallet {
     var digest = sha256.convert(outputScript);
     var hash = digest.bytes.reversed.toList();
     return hex.encode(hash);
+  }
+
+  ECPair get keyPair {
+    return ECPair.fromWIF(wif!, networks: ravencoinNetworks);
   }
 }
 

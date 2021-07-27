@@ -1,11 +1,8 @@
 // dart run build_runner build
 import 'dart:typed_data';
 
-import 'package:crypto/crypto.dart' show sha1;
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import 'package:ravencoin/ravencoin.dart';
-import '../accounts.dart';
 import 'net.dart';
 
 part 'account.g.dart';

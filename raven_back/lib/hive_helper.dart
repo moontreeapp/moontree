@@ -26,6 +26,7 @@ class HiveHelper {
     await Hive.openBox('settings');
     await Hive.openBox<Account>('accounts');
     await Hive.openBox<Address>('addresses');
+    await Hive.openBox<Report>('reports');
 
     /* replaced by addresses ... */
     await Hive.openBox('scripthashAccountIdInternal');
@@ -34,10 +35,12 @@ class HiveHelper {
     await Hive.openBox('scripthashOrderExternal');
     /* ... */
 
+    /* replaced by reports ... */
     await Hive.openBox('balances');
     await Hive.openBox('histories');
     await Hive.openBox('unspents');
-    await Hive.openBox('accountUnspents');
+    await Hive.openBox('accountUnspents'); // replaced by indexing
+    /* ... */
   }
 
   static Future close() async {

@@ -1,10 +1,12 @@
+/// should this be generated?
+
 import 'package:hive/hive.dart';
 import 'package:sorted_list/sorted_list.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 class SortedListAdapter extends TypeAdapter<SortedList> {
   @override
-  final typeId = 14;
+  final typeId = 8;
 
   @override
   SortedList read(BinaryReader reader) {

@@ -1,9 +1,11 @@
+/// should this be generated?
+
 import 'package:hive/hive.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 class ScripthashHistoryAdapter extends TypeAdapter<ScripthashHistory> {
   @override
-  final typeId = 11;
+  final typeId = 6;
 
   @override
   ScripthashHistory read(BinaryReader reader) {

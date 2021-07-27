@@ -1,8 +1,18 @@
 import 'package:quiver/iterables.dart';
+import 'package:raven/models.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'accounts.dart';
 import 'boxes.dart';
 import 'records/node_exposure.dart';
+
+Future<List> getReport(String scripthash, RavenElectrumClient client,
+    NodeExposure exposure) async {
+  var history = await client.getHistory(scripthash);
+  var report = Report(scripthash, await client.getBalance(scripthash), history,
+      await client.getUnspent(scripthash));
+  // trigger new wallet derivation if not empty
+  return [report, history.isNotEmpty];
+}
 
 /// triggered by watching nodes
 Future requestBalance(String scripthash, RavenElectrumClient client) async {
@@ -27,7 +37,8 @@ Future requestHistory(
   if (histories.isNotEmpty) entireBatchEmpty = false;
   await Truth.instance.histories.put(scripthash, histories);
   if (!entireBatchEmpty) {
-    await Accounts.instance.accounts[accountId]!.deriveNode(exposure);
+    await Accounts.instance.accounts[accountId]!
+        .deriveAddress(0, exposure); // broken
   }
 }
 
@@ -42,7 +53,8 @@ Future requestHistories(
     await Truth.instance.histories.put(hashHistory[0], hashHistory[1]);
   }
   if (!entireBatchEmpty) {
-    await Accounts.instance.accounts[accountId]!.deriveBatch(exposure);
+    await Accounts.instance.accounts[accountId]!
+        .deriveAddress(0, exposure); // broken
   }
 }
 

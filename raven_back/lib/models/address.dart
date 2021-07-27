@@ -11,18 +11,6 @@ import '../records/node_exposure.dart';
 import '../records/net.dart';
 import '../records.dart' as records;
 
-// someone creates a wallet -> 20 addresses are generated -> electrum -> scripthash balances, histories, unspents
-// someone deletes the wallet -> we delete the Account -> ??
-//   - remove Account record from a Account box
-//     - unsubscribe from addresses (scripthash)
-//     - delete in-memory addresses
-//     - delete in-memory balances, histories, unspents
-//     - UI updates
-
-// class AccountWithAddresses {
-//   AccountWithAddresses(this.account, this.addresses)
-// }
-
 class Address {
   records.Address record;
 
@@ -52,31 +40,4 @@ class Address {
   records.Address toRecord() {
     return record;
   }
-
-  // HDWallet getWallet(Account account) {
-  // }
-
-  // address.getWallet().send(destAddress, 500000rvn);
-  // account.getWallet(address).send(destAddress, 400000rvn);
-
-  // HDWallet get wallet {
-  //   // var accounts = Hive.box('accounts');
-  //   // Account account = accounts.get(accountId);
-  //   // account.
-  //   var accounts = HDWallet.fromBase58(base58, network: network);
-  // }
-
-  // Uint8List get outputScript {
-  //   return Address.addressToOutputScript(wallet.address!, network)!;
-  // }
-
-  // String get scripthash {
-  //   var digest = sha256.convert(outputScript);
-  //   var hash = digest.bytes.reversed.toList();
-  //   return hex.encode(hash);
-  // }
-
-  // ECPair get keyPair {
-  //   return ECPair.fromWIF(wallet.wif!, networks: ravencoinNetworks);
-  // }
 }
