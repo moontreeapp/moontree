@@ -44,7 +44,9 @@ class Address {
   NetworkType get network => networks[record.net]!;
 
   factory Address.fromRecord(records.Address record) {
-    return Address(record);
+    return Address(
+        record.scripthash, record.address, record.accountId, record.hdIndex,
+        exposure: record.exposure, net: record.net);
   }
 
   records.Address toRecord() {

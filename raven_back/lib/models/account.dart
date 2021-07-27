@@ -93,7 +93,13 @@ class Account extends Equatable {
     return 'Account($name, $accountId)';
   }
 
+  //// getters /////////////////////////////////////////////////////////////////
+
   NetworkType get network => networks[net]!;
+
+  int get balance => Truth.instance.getAccountBalance(this);
+
+  //// Account Scripthashes ////////////////////////////////////////////////////
 
   List<String> get accountInternals {
     var ounordered = Truth.instance.scripthashAccountIdInternal
@@ -129,53 +135,8 @@ class Account extends Equatable {
     return [...accountInternals, ...accountExternals];
   }
 
-  /// triggered by watching accounts and others...
-  Future deriveBatch(records.NodeExposure exposure,
-      [int batchSize = 10]) async {
-    Box box;
-    Box boxOrder;
-    if (exposure == records.NodeExposure.Internal) {
-      box = Truth.instance.scripthashAccountIdInternal;
-      boxOrder = Truth.instance.scripthashOrderInternal;
-    } else {
-      box = Truth.instance.scripthashAccountIdExternal;
-      boxOrder = Truth.instance.scripthashOrderExternal;
-    }
-    var index = box.countByValueString(accountId);
-    for (var i = 0; i < batchSize; i++) {
-      var hash = node(index, exposure: exposure).scripthash;
-      //print(index.toString() + ' ' + exposure.toString() + ' ' + hash);
-      await box.put(hash, accountId);
-      await boxOrder.put(hash, index);
-      index = index + 1;
-    }
-  }
-
-  /// triggered by watching accounts and others...
-  Future deriveNode(records.NodeExposure exposure) async {
-    await deriveBatch(exposure, 1);
-  }
-
-  HDWallet deriveWallet(int hdIndex,
-      [exposure = records.NodeExposure.External]) {
-    return seededWallet.derivePath(
-        getDerivationPath(hdIndex, exposure: exposure, wif: network.wif));
-  }
-
-  models.Address deriveAddress(int hdIndex, records.NodeExposure exposure) {
-    var wallet = deriveWallet(hdIndex, exposure);
-
-    return models.Address(
-        wallet.scripthash, wallet.address!, accountId, hdIndex,
-        exposure: exposure, net: net);
-  }
-
-  int getBalance() {
-    return Truth.instance.getAccountBalance(this);
-  }
-
   /// returns the next internal or external node without a history
-  records.HDNode getNextEmptyNode(
+  HDWallet getNextEmptyWallet(
       [records.NodeExposure exposure = records.NodeExposure.Internal]) {
     // ensure valid exposure
     exposure = exposure == records.NodeExposure.Internal
@@ -188,13 +149,41 @@ class Account extends Equatable {
       if (Truth.instance.histories
           .getAsList<ScripthashHistory>(scripthash)
           .isEmpty) {
-        return node(i, exposure: exposure);
+        return deriveWallet(i, exposure);
       }
       i = i + 1;
     }
     // this shouldn't happen - if so we should trigger a new batch??
-    return node(i + 1, exposure: exposure);
+    return deriveWallet(i, exposure);
   }
+
+  //// Derive Wallet ///////////////////////////////////////////////////////////
+
+  HDWallet deriveWallet(int hdIndex,
+      [exposure = records.NodeExposure.External]) {
+    return seededWallet.derivePath(
+        getDerivationPath(hdIndex, exposure: exposure, wif: network.wif));
+  }
+
+  models.Address deriveAddress(int hdIndex, records.NodeExposure exposure) {
+    var wallet = deriveWallet(hdIndex, exposure);
+    return models.Address(
+        wallet.scripthash, wallet.address!, accountId, hdIndex,
+        exposure: exposure, net: net);
+  }
+
+  /// probably not necessary...
+  Future deriveBatch(int hdIndex, records.NodeExposure exposure,
+      [int batchSize = 10]) async {
+    var addresses = [];
+    for (var i = 0; i < batchSize; i++) {
+      addresses.add(deriveAddress(hdIndex, exposure));
+      hdIndex = hdIndex + 1;
+    }
+    return addresses;
+  }
+
+  //// Sending Functionality ///////////////////////////////////////////////////
 
   SortedList<ScripthashUnspent> sortedUTXOs() {
     var sortedList = SortedList<ScripthashUnspent>(
@@ -210,7 +199,7 @@ class Account extends Equatable {
       [List<ScripthashUnspent>? except]) {
     var ret = <ScripthashUnspent>[];
 
-    if (getBalance() < amount) {
+    if (balance < amount) {
       throw InsufficientFunds();
     }
     var utxos = sortedUTXOs();

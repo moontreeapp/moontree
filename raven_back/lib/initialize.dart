@@ -9,6 +9,7 @@ import 'env.dart' as env;
 import 'boxes.dart';
 import 'listener.dart';
 import 'accounts.dart';
+import 'records/node_exposure.dart';
 
 late Reservoir accounts;
 late Reservoir addresses;

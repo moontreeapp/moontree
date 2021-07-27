@@ -16,7 +16,6 @@ class HiveHelper {
     Hive.registerAdapter(AccountAdapter());
     Hive.registerAdapter(AddressAdapter());
 
-    Hive.registerAdapter(HDNodeAdapter());
     Hive.registerAdapter(NodeExposureAdapter());
     Hive.registerAdapter(ScripthashUnspentAdapter());
     Hive.registerAdapter(ScripthashHistoryAdapter());

@@ -19,25 +19,28 @@ class AddressAdapter extends TypeAdapter<Address> {
     return Address(
       fields[0] as String,
       fields[1] as String,
-      fields[2] as int,
-      net: fields[4] as Net,
-      exposure: fields[3] as NodeExposure,
+      fields[2] as String,
+      fields[3] as int,
+      net: fields[5] as Net,
+      exposure: fields[4] as NodeExposure,
     );
   }
 
   @override
   void write(BinaryWriter writer, Address obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.scripthash)
       ..writeByte(1)
-      ..write(obj.accountId)
+      ..write(obj.address)
       ..writeByte(2)
-      ..write(obj.hdIndex)
+      ..write(obj.accountId)
       ..writeByte(3)
-      ..write(obj.exposure)
+      ..write(obj.hdIndex)
       ..writeByte(4)
+      ..write(obj.exposure)
+      ..writeByte(5)
       ..write(obj.net);
   }
 

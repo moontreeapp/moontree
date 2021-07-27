@@ -97,7 +97,6 @@ class Truth {
   void init() {
     //Hive.init('database'); initialized with flutter in raven_mobile...
     Hive.registerAdapter(records.AccountAdapter());
-    Hive.registerAdapter(records.HDNodeAdapter());
     Hive.registerAdapter(records.NodeExposureAdapter());
     Hive.registerAdapter(records.ScripthashUnspentAdapter());
     Hive.registerAdapter(records.ScripthashHistoryAdapter());
