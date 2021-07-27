@@ -26,6 +26,9 @@ class Index<Key, Model> {
   /// Retrieve all values associated with the key, in order.
   OrderedSet<Model>? getAll(Key key) => values[key];
 
+  /// Return the size (length of the set) of a named index
+  int size(Key key) => values[key]!.length;
+
   /// Add a row to the indexed values; if the row has already been added, this
   /// is a no-op.
   void add(Model row) {

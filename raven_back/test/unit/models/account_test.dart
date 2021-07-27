@@ -19,21 +19,10 @@ void main() {
     });
 
     test('save an Account model', () async {
-      // var seed = Uint8List(16);
-      // var account = models.Account(seed, name: 'in-memory wallet');
-      // we have an account
-      // -> convert models.Account -> records.Account so we can call reservoir.addRecord
-      // but reservoir.addRecord's purpose is to convert to the record to a model & index it in the reservoir
-
-      // res.addRecord(account.accountId, account.toRecord());
-      // res.data[account.accountId] = account;
-      // await asyncChange(res, () => source.map[] = 'xyz');
-
-      var encSeed = Uint8List(16);
-      var account =
-          records.Account(encSeed, name: 'in-memory record of a wallet');
-
-      // res.addRecord(??accountId??, account);
+      var seed = Uint8List(16);
+      var account = models.Account(seed, name: 'in-memory wallet');
+      await asyncChange(res, () => res.add(account.accountId, account));
+      expect(res.data[account.accountId], account);
     });
   });
 

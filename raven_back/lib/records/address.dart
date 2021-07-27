@@ -13,19 +13,23 @@ class Address {
   String scripthash;
 
   @HiveField(1)
-  String accountId;
+  String address;
 
   @HiveField(2)
-  int hdIndex;
+  String accountId;
 
   @HiveField(3)
-  NodeExposure exposure;
+  int hdIndex;
 
   @HiveField(4)
+  NodeExposure exposure;
+
+  @HiveField(5)
   Net net;
 
   Address(
     this.scripthash,
+    this.address,
     this.accountId,
     this.hdIndex, {
     this.net = Net.Test,

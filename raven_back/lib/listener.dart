@@ -4,10 +4,10 @@ import 'package:raven/records/node_exposure.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 /// setup listeners on init
-class ElectrumListener {
+class BoxListener {
   RavenElectrumClient client;
 
-  ElectrumListener(this.client);
+  BoxListener(this.client);
 
   void toAccounts() {
     Hive.box('accounts').watch().listen((BoxEvent event) {

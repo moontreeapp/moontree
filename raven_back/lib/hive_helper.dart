@@ -14,6 +14,8 @@ class HiveHelper {
 
   static void registerAdapters() {
     Hive.registerAdapter(AccountAdapter());
+    Hive.registerAdapter(AddressAdapter());
+
     Hive.registerAdapter(HDNodeAdapter());
     Hive.registerAdapter(NodeExposureAdapter());
     Hive.registerAdapter(ScripthashUnspentAdapter());
@@ -24,10 +26,15 @@ class HiveHelper {
   static Future open() async {
     await Hive.openBox('settings');
     await Hive.openBox<Account>('accounts');
+    await Hive.openBox<Address>('addresses');
+
+    /* replaced by addresses ... */
     await Hive.openBox('scripthashAccountIdInternal');
     await Hive.openBox('scripthashAccountIdExternal');
     await Hive.openBox('scripthashOrderInternal');
     await Hive.openBox('scripthashOrderExternal');
+    /* ... */
+
     await Hive.openBox('balances');
     await Hive.openBox('histories');
     await Hive.openBox('unspents');

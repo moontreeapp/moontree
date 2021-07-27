@@ -1,16 +1,31 @@
 import 'dart:typed_data';
 
+import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:crypto/crypto.dart';
-import 'package:raven/cipher.dart';
-import 'package:raven/derivation_path.dart';
+import 'package:convert/convert.dart' show hex;
 import 'package:sorted_list/sorted_list.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:ravencoin/ravencoin.dart';
 
+import '../cipher.dart';
+import '../derivation_path.dart';
 import '../boxes.dart';
 import '../records.dart' as records;
 import '../records/net.dart';
+import '../models.dart' as models;
+
+extension on HDWallet {
+  Uint8List get outputScript {
+    return Address.addressToOutputScript(address!, network)!;
+  }
+
+  String get scripthash {
+    var digest = sha256.convert(outputScript);
+    var hash = digest.bytes.reversed.toList();
+    return hex.encode(hash);
+  }
+}
 
 class CacheEmpty implements Exception {
   String cause;
@@ -33,7 +48,7 @@ class nodeLocation {
 
 const DEFAULT_CIPHER = NoCipher();
 
-class Account {
+class Account extends Equatable {
   // Taken from records.Account
   final Uint8List encryptedSeed;
   final records.Net net;
@@ -41,8 +56,11 @@ class Account {
 
   final records.Account? record;
   late final String accountId;
-  late final HDWallet wallet;
+  late final HDWallet seededWallet;
   late final Cipher cipher;
+
+  @override
+  List<Object?> get props => encryptedSeed;
 
   Account(seed,
       {this.name = 'Wallet',
@@ -51,7 +69,7 @@ class Account {
       this.cipher = const NoCipher()})
       : accountId = sha256.convert(seed).toString(),
         encryptedSeed = cipher.encrypt(seed) {
-    wallet = HDWallet.fromSeed(seed, network: network);
+    seededWallet = HDWallet.fromSeed(seed, network: network);
   }
 
   factory Account.fromEncryptedSeed(encryptedSeed,
@@ -76,13 +94,6 @@ class Account {
   }
 
   NetworkType get network => networks[net]!;
-
-  records.HDNode node(int index, {exposure = records.NodeExposure.External}) {
-    var wallet = this.wallet.derivePath(
-        getDerivationPath(index, exposure: exposure, wif: network.wif));
-    return records.HDNode(index, wallet.base58Priv!,
-        exposure: exposure, networkWif: network.wif);
-  }
 
   List<String> get accountInternals {
     var ounordered = Truth.instance.scripthashAccountIdInternal
@@ -143,6 +154,20 @@ class Account {
   /// triggered by watching accounts and others...
   Future deriveNode(records.NodeExposure exposure) async {
     await deriveBatch(exposure, 1);
+  }
+
+  HDWallet deriveWallet(int hdIndex,
+      [exposure = records.NodeExposure.External]) {
+    return seededWallet.derivePath(
+        getDerivationPath(hdIndex, exposure: exposure, wif: network.wif));
+  }
+
+  models.Address deriveAddress(int hdIndex, records.NodeExposure exposure) {
+    var wallet = deriveWallet(hdIndex, exposure);
+
+    return models.Address(
+        wallet.scripthash, wallet.address!, accountId, hdIndex,
+        exposure: exposure, net: net);
   }
 
   int getBalance() {

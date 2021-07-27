@@ -12,10 +12,21 @@ class Reservoir<Record, Model> {
   final Mapper<Model, Record> mapToRecord;
   final Map<String, Index> indices = {};
   final Map<dynamic, Model> data = {};
+  final GetKey<Model> getPrimaryKey;
   late Stream<Change> changes;
 
-  Reservoir(this.source, this.mapToModel, this.mapToRecord) {
+  Reservoir(
+      this.source, this.getPrimaryKey, this.mapToModel, this.mapToRecord) {
     changes = source.watch(this);
+  }
+
+  void add(Model model) {
+    var key = getPrimaryKey(model);
+    if (!data.containsKey(key)) {
+      source.save(key, mapToRecord(model));
+    } else {
+      throw ArgumentError('record already exists for $key');
+    }
   }
 
   void save(key) {

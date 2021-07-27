@@ -1,11 +1,45 @@
 import 'package:bip39/bip39.dart' as bip39;
+
 import 'package:raven_electrum_client/raven_electrum_client.dart';
-import 'models/account.dart';
 import 'package:raven/records/net.dart';
+import 'package:raven/subjects/reservoir.dart';
+
+import 'models.dart';
 import 'env.dart' as env;
 import 'boxes.dart';
 import 'listener.dart';
 import 'accounts.dart';
+
+late Reservoir accounts;
+late Reservoir addresses;
+
+void setup2() {
+  accounts = Reservoir(
+      HiveBoxSource('accounts'),
+      (account) => account.accountId,
+      (account) => Account.fromRecord(account),
+      (account) => account.toRecord());
+
+  addresses = Reservoir(
+      HiveBoxSource('addresses'),
+      (address) => address.scripthash,
+      (address) => Address.fromRecord(address),
+      (address) => address.toRecord())
+    ..addIndex('account', (address) => address.accountId)
+    ..addIndex('account-exposure',
+        (address) => '${address.accountId}:${address.exposure}');
+
+  accounts.changes.listen((change) {
+    change.when(
+        added: (added) {
+          Account account = added.data;
+          var addr1 = account.deriveAddress(0, NodeExposure.Internal);
+          var addr2 = account.deriveAddress(0, NodeExposure.External);
+        },
+        updated: (updated) {},
+        removed: (removed) {});
+  });
+}
 
 Future setup() async {
   await Truth.instance.open();
@@ -14,7 +48,7 @@ Future setup() async {
 }
 
 void listenTo(RavenElectrumClient client) {
-  var listen = ElectrumListener(client);
+  var listen = BoxListener(client);
   listen.toAccounts();
   listen.toNodes();
   listen.toUnspents();
