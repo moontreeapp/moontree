@@ -1,13 +1,74 @@
+import 'dart:async';
+
+import 'package:quiver/iterables.dart';
 import 'package:hive/hive.dart';
-import 'package:raven/reactives.dart';
-import 'package:raven/records/node_exposure.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
+
+import 'reactives.dart';
+import 'records/node_exposure.dart';
+
+import 'buffer_count_window.dart';
+import 'models.dart';
+import 'subjects/reservoir.dart';
+import 'subjects/change.dart';
+
+class AddressSubscriptionService {
+  Reservoir accounts;
+  Reservoir addresses;
+  RavenElectrumClient client;
+
+  StreamController<Address> addressesNeedingUpdate = StreamController();
+
+  AddressSubscriptionService(this.accounts, this.addresses, this.client);
+
+  void init() {
+    addressesNeedingUpdate.stream
+        .bufferCountTimeout(10, Duration(milliseconds: 50))
+        .listen((addresses) async {
+      var scripthashes =
+          addresses.map((address) => address.scripthash).toList();
+
+      List<ScripthashBalance> balances = await client.getBalances(scripthashes);
+      List<List<ScripthashHistory>> histories =
+          await client.getHistories(scripthashes);
+      List<List<ScripthashUnspent>> unspents =
+          await client.getUnspents(scripthashes);
+
+      zip([addresses, balances, histories, unspents]).forEach((element) {
+        // print('zipped up 4 things: $element');
+        var accountId = (element[0] as Address).accountId;
+        var unspents = element[3] as List<ScripthashUnspent>;
+        Account account = accounts.data[accountId];
+        account.addUnspents(unspents);
+      });
+    });
+
+    addresses.changes
+        // .bufferCountTimeout(10, Duration(milliseconds: 50))
+        .listen((changes) {
+      for (var change in changes) {
+        if (change is Added) {
+          Address address = change.data;
+
+          var stream = client.subscribeScripthash(address.scripthash);
+          // => notifies us when a scripthash 'changes' (doesn't tell us the values that changed)
+
+          stream.listen((status) {
+            //address.scripthash // <--- we know this is the scripthash that we're getting the status on
+
+            //push to queue?
+          });
+
+          addressesNeedingUpdate.sink.add(address);
+        }
+      }
+    });
+  }
+}
 
 /// setup listeners on init
 class BoxListener {
-  RavenElectrumClient client;
-
-  BoxListener(this.client);
+  BoxListener();
 
   void toAccounts() {
     Hive.box('accounts').watch().listen((BoxEvent event) {

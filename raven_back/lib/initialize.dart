@@ -4,6 +4,7 @@ import 'package:raven/subjects/change.dart';
 import 'package:raven/subjects/reservoir.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:rxdart/rxdart.dart';
+
 import 'models.dart';
 import 'records/node_exposure.dart';
 
@@ -66,19 +67,7 @@ void setup() {
     });
   });
 
-  /// try Rx.switchLatest as well...
-  //Rx.race([
-  //  addresses.changes.bufferCount(10),
-  //  // does this reset the buffer count? must test
-  //  addresses.changes.bufferTime(Duration(milliseconds: 50)),
-  //]).listen((changes) {
-  //  for (var change in changes) {
-  //    if (change is Added) {
-  //      Address address = (change as Added).data;
-  //      // get data from electrum // report
-  //    }
-  //  }
-  //});
+  // TODO: add AddressSubscriptionService here
 
   addresses.changes.listen((change) {
     change.when(added: (added) {
