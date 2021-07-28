@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 import 'node_exposure.dart';
 import 'net.dart';
@@ -25,12 +26,16 @@ class Address {
   @HiveField(5)
   Net net;
 
+  @HiveField(6)
+  ScripthashBalance? balance;
+
   Address(
     this.scripthash,
     this.address,
     this.accountId,
     this.hdIndex, {
-    this.net = Net.Test,
     this.exposure = NodeExposure.External,
+    this.net = Net.Test,
+    this.balance,
   });
 }

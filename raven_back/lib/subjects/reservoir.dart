@@ -8,15 +8,17 @@ typedef Mapper<Record, Model> = Model Function(Record);
 
 class Reservoir<Record, Model> {
   final Source<Record, Model> source;
-  final Mapper<Record, Model> mapToModel;
-  final Mapper<Model, Record> mapToRecord;
+  late Mapper<Record, Model> mapToModel;
+  late Mapper<Model, Record> mapToRecord;
   final Map<String, Index> indices = {};
   final Map<dynamic, Model> data = {};
   final GetKey<Model> getPrimaryKey;
   late Stream<Change> changes;
 
-  Reservoir(
-      this.source, this.getPrimaryKey, this.mapToModel, this.mapToRecord) {
+  Reservoir(this.source, this.getPrimaryKey, [mapToModel, mapToRecord]) {
+    this.mapToModel =
+        mapToModel ?? (record) => (Model as dynamic).fromRecord(record);
+    this.mapToRecord = mapToRecord ?? (model) => (model as dynamic).toRecord();
     changes = source.watch(this);
   }
 

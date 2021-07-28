@@ -9,13 +9,17 @@ class Report {
   String scripthash;
 
   @HiveField(1)
-  ScripthashBalance balance;
+  String accountId;
 
   @HiveField(2)
-  ScripthashHistory history;
+  ScripthashBalance balance;
 
   @HiveField(3)
+  ScripthashHistory history;
+
+  @HiveField(4)
   ScripthashUnspent unspent;
 
-  Report(this.scripthash, this.balance, this.history, this.unspent);
+  Report(this.scripthash, this.accountId, this.balance, this.history,
+      this.unspent);
 }

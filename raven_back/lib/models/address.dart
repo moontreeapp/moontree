@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:hive/hive.dart';
+import 'package:raven_electrum_client/methods/get_balance.dart';
 import 'package:ravencoin/ravencoin.dart';
 import 'package:crypto/crypto.dart' show sha256;
 import 'package:convert/convert.dart' show hex;
@@ -15,9 +16,11 @@ class Address {
   records.Address record;
 
   Address(scripthash, address, accountId, hdIndex,
-      {NodeExposure exposure = NodeExposure.External, Net net = Net.Test})
+      {NodeExposure exposure = NodeExposure.External,
+      Net net = Net.Test,
+      balance})
       : record = records.Address(scripthash, address, accountId, hdIndex,
-            exposure: exposure, net: net);
+            exposure: exposure, net: net, balance: balance);
 
   String get scripthash => record.scripthash;
 
@@ -31,10 +34,12 @@ class Address {
 
   NetworkType get network => networks[record.net]!;
 
+  ScripthashBalance? get balance => record.balance;
+
   factory Address.fromRecord(records.Address record) {
     return Address(
         record.scripthash, record.address, record.accountId, record.hdIndex,
-        exposure: record.exposure, net: record.net);
+        exposure: record.exposure, net: record.net, balance: record.balance);
   }
 
   records.Address toRecord() {

@@ -5,10 +5,13 @@ import '../records.dart' as records;
 class Report {
   records.Report record;
 
-  Report(scripthash, balance, history, unspent)
-      : record = records.Report(scripthash, balance, history, unspent);
+  Report(scripthash, accountId, balance, history, unspent)
+      : record =
+            records.Report(scripthash, accountId, balance, history, unspent);
 
   String get scripthash => record.scripthash;
+
+  String get accountId => record.accountId;
 
   ScripthashBalance get balance => record.balance;
 
@@ -17,8 +20,8 @@ class Report {
   ScripthashUnspent get unspent => record.unspent;
 
   factory Report.fromRecord(records.Report record) {
-    return Report(
-        record.scripthash, record.balance, record.history, record.unspent);
+    return Report(record.scripthash, record.accountId, record.balance,
+        record.history, record.unspent);
   }
 
   records.Report toRecord() {

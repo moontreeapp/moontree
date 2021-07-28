@@ -1,6 +1,9 @@
 import 'package:raven/reactives.dart';
+import 'package:raven/reservoir_helper.dart';
+import 'package:raven/subjects/change.dart';
 import 'package:raven/subjects/reservoir.dart';
-
+import 'package:raven_electrum_client/raven_electrum_client.dart';
+import 'package:rxdart/rxdart.dart';
 import 'models.dart';
 import 'records/node_exposure.dart';
 
@@ -9,33 +12,26 @@ late Reservoir addresses;
 late Reservoir subscriptions;
 late Reservoir reports;
 
-void setup2() {
-  accounts = Reservoir(
-      HiveBoxSource('accounts'),
-      (account) => account.accountId,
-      (account) => Account.fromRecord(account),
-      (account) => account.toRecord());
+void setup() {
+  accounts =
+      Reservoir(HiveBoxSource('accounts'), (account) => account.accountId);
 
-  addresses = Reservoir(
-      HiveBoxSource('addresses'),
-      (address) => address.scripthash,
-      (address) => Address.fromRecord(address),
-      (address) => address.toRecord())
-    ..addIndex('account', (address) => address.accountId)
-    ..addIndex('account-exposure',
-        (address) => '${address.accountId}:${address.exposure}');
+  addresses =
+      Reservoir(HiveBoxSource('addresses'), (address) => address.scripthash)
+        ..addIndex('account', (address) => address.accountId)
+        ..addIndex('account-exposure',
+            (address) => '${address.accountId}:${address.exposure}');
+
+  var resHelper = ReservoirHelper(accounts, addresses);
 
   // ? subscriptions = Reservoir(
   // ?     HiveBoxSource('subscriptions'),
-  // ?     (address) => address.scripthash,
-  // ?     (address) => Address.fromRecord(address),
-  // ?     (address) => address.toRecord())
+  // ?     (address) => address.scripthash)
   // ?   ..addIndex('account', (address) => address.accountId)
   // ?   ..addIndex('account-exposure',
   // ?       (address) => '${address.accountId}:${address.exposure}');
 
-  reports = Reservoir(HiveBoxSource('reports'), (report) => report.scripthash,
-      (report) => Report.fromRecord(report), (report) => report.toRecord())
+  reports = Reservoir(HiveBoxSource('reports'), (report) => report.scripthash)
     ..addIndex('scripthash', (report) => report.scripthash);
   // can we index it by accountId?
 
@@ -70,13 +66,30 @@ void setup2() {
     });
   });
 
+  /// try Rx.switchLatest as well...
+  //Rx.race([
+  //  addresses.changes.bufferCount(10),
+  //  // does this reset the buffer count? must test
+  //  addresses.changes.bufferTime(Duration(milliseconds: 50)),
+  //]).listen((changes) {
+  //  for (var change in changes) {
+  //    if (change is Added) {
+  //      Address address = (change as Added).data;
+  //      // get data from electrum // report
+  //    }
+  //  }
+  //});
+
   addresses.changes.listen((change) {
     change.when(added: (added) {
       Address address = added.data;
       // set up a subscription
       // subscriptions.save(addr1); ?
+      //reportBool = getReport(address.scripthash, client, exposure??);
     }, updated: (updated) {
-      // nothing changes
+      Address address = updated.data;
+      resHelper.setBalance(
+          address.accountId, resHelper.calculateBalance(address.accountId));
     }, removed: (removed) {
       // if this happens its because the account has been removed...
       // so do the removal steps that make sense here.
