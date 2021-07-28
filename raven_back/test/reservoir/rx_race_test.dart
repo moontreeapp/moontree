@@ -3,34 +3,31 @@
 import 'package:test/test.dart';
 import 'package:rxdart/rxdart.dart';
 
+import 'package:raven/buffer_count_window.dart';
+
 void main() {
   group('RxRace', () {
-    Stream<int> timedCounter(Duration interval, [int? maxCount]) async* {
-      var i = 0;
-      var otherDuration = Duration(milliseconds: 1);
-      while (true) {
-        if (i < 6 || i > 20) {
-          await Future.delayed(interval);
-        } else {
-          await Future.delayed(otherDuration);
-        }
-        yield i++;
-        if (i == maxCount) break;
-      }
-    }
-
     test('never prints more than bufferCount', () async {
-      print('starting...');
-      var counterStream =
-          timedCounter(const Duration(seconds: 1), 30).asBroadcastStream();
-      Rx.merge([
-        counterStream.bufferCount(5),
-        counterStream.bufferTime(Duration(seconds: 2))
-      ]).listen((changes) {
-        print(changes);
-      });
-      await Future.delayed(Duration(seconds: 30));
-      expect('abc', 'abc');
+      var counterStream = Rx.concat([
+        Stream.periodic(Duration(milliseconds: 100), (i) => i).take(5),
+        Stream.periodic(Duration(milliseconds: 10), (i) => i + 5).take(15),
+        Stream.periodic(Duration(milliseconds: 100), (i) => i + 25).take(5),
+      ]).asBroadcastStream();
+
+      var results = await counterStream
+          .bufferCountTimeout(5, Duration(milliseconds: 200))
+          .take(8)
+          .toList();
+      expect(results, [
+        [0, 1, 2],
+        [3, 4],
+        [5, 6, 7, 8, 9],
+        [10, 11, 12, 13, 14],
+        [15, 16, 17, 18, 19],
+        [25, 26],
+        [27, 28],
+        [29]
+      ]);
     });
   });
 }
