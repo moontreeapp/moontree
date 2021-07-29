@@ -1,5 +1,5 @@
 import 'package:ravencoin/ravencoin.dart';
-import 'records/node_exposure.dart';
+import '../records/node_exposure.dart';
 
 final Map derivationPath = {
   ravencoin.wif: "m/44'/175'/0'",

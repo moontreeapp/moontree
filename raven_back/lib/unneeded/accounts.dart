@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 
 import 'boxes.dart';
-import 'models/account.dart';
-import 'records.dart' as records;
-import 'cipher.dart';
+import '../models/account.dart';
+import '../records.dart' as records;
+import '../cipher.dart';
 
 class Accounts {
   Map<String, Account> accounts = {};

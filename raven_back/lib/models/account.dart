@@ -7,9 +7,9 @@ import 'package:sorted_list/sorted_list.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:ravencoin/ravencoin.dart';
 
-import '../boxes.dart';
+import '../unneeded/boxes.dart';
 import '../cipher.dart';
-import '../derivation_path.dart';
+import '../utils/derivation_path.dart';
 import '../records.dart' as records;
 import '../records/net.dart';
 import '../models.dart' as models;

@@ -1,6 +1,6 @@
-import 'package:raven/subjects/change.dart';
-import 'package:raven/subjects/reservoir.dart';
-import 'package:raven/subjects/source.dart';
+import 'package:raven/reservoir/change.dart';
+import 'package:raven/reservoir/reservoir.dart';
+import 'package:raven/reservoir/source.dart';
 
 import 'rx_map.dart';
 

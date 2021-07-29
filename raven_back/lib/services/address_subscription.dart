@@ -4,9 +4,9 @@ import 'package:quiver/iterables.dart';
 import 'package:raven/records/node_exposure.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
-import 'buffer_count_window.dart';
-import 'models.dart';
-import 'subjects/reservoir.dart';
+import '../buffer_count_window.dart';
+import '../models.dart';
+import '../reservoir/reservoir.dart';
 
 class ScripthashRow {
   final Address address;

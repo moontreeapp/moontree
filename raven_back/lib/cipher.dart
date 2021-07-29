@@ -50,7 +50,3 @@ class AESCipher implements Cipher {
     return cipher(false).process(cipherText);
   }
 }
-
-// contained in accounts - making here so no relative imports issue in boxes.
-Cipher CIPHER = AESCipher(Uint8List.fromList(
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]));

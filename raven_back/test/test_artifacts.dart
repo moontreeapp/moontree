@@ -4,10 +4,10 @@ import 'package:bip39/bip39.dart' as bip39;
 
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
-import 'package:raven/accounts.dart';
-import 'package:raven/boxes.dart';
-import 'package:raven/env.dart' as env;
-import 'package:raven/listener.dart';
+import 'package:raven/unneeded/accounts.dart';
+import 'package:raven/unneeded/boxes.dart';
+import 'package:raven/utils/env.dart' as env;
+import 'package:raven/services/address_subscription.dart';
 import 'package:raven/models/account.dart';
 import 'package:raven/records/net.dart';
 

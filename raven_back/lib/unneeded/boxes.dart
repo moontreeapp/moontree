@@ -2,9 +2,9 @@ import 'dart:async';
 import 'package:quiver/iterables.dart';
 import 'package:hive/hive.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
-import 'models/account.dart';
-import 'cipher.dart';
-import 'records.dart' as records;
+import '../models/account.dart';
+import '../cipher.dart';
+import '../records.dart' as records;
 
 extension GetAs on Box {
   List<T> getAsList<T>(dynamic key, {dynamic defaultValue}) {

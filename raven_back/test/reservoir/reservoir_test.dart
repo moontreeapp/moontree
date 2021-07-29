@@ -1,7 +1,7 @@
 import 'package:test/test.dart';
 
-import 'package:raven/subjects/reservoir.dart';
-import 'package:raven/subjects/change.dart';
+import 'package:raven/reservoir/reservoir.dart';
+import 'package:raven/reservoir/change.dart';
 
 import 'helper.dart';
 

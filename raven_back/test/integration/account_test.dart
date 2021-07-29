@@ -2,7 +2,7 @@
 import 'package:test/test.dart';
 import 'package:raven/models/account.dart';
 import '../test_artifacts.dart' as tests;
-import 'package:raven/boxes.dart';
+import 'package:raven/unneeded/boxes.dart';
 
 void main() async {
   var gen;

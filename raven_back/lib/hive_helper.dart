@@ -26,7 +26,6 @@ class HiveHelper {
     await Hive.openBox('settings');
     await Hive.openBox<Account>('accounts');
     await Hive.openBox<Address>('addresses');
-    await Hive.openBox<Report>('reports');
 
     /* replaced by addresses ... */
     await Hive.openBox('scripthashAccountIdInternal');

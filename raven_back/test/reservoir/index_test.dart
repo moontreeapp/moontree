@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:test/test.dart';
 
-import 'package:raven/subjects/index.dart';
+import 'package:raven/reservoir/index.dart';
 
 class TestRow with EquatableMixin {
   final int id;

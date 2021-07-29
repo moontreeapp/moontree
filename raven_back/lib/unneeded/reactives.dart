@@ -3,7 +3,7 @@ import 'package:raven/models.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'accounts.dart';
 import 'boxes.dart';
-import 'records/node_exposure.dart';
+import '../records/node_exposure.dart';
 
 Future<List> getReport(String scripthash, RavenElectrumClient client,
     NodeExposure exposure) async {

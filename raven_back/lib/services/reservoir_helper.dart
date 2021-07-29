@@ -1,4 +1,4 @@
-import 'package:raven/subjects/reservoir.dart';
+import 'package:raven/reservoir/reservoir.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 class ReservoirHelper {

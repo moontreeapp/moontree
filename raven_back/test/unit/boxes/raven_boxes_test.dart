@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:hive/hive.dart';
 import 'package:test/test.dart';
-import 'package:raven/boxes.dart' as boxes;
-import 'package:raven/accounts.dart' as accounts;
+import 'package:raven/unneeded/boxes.dart' as boxes;
+import 'package:raven/unneeded/accounts.dart' as accounts;
 
 void main() async {
   await Directory('database').delete(recursive: true);

@@ -1,6 +1,6 @@
 import 'package:ravencoin/ravencoin.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
-import 'fee.dart';
+import 'utils/fee.dart';
 
 class FormatResult {
   TransactionBuilder txb;

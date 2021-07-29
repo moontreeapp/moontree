@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:quiver/collection.dart';
-import 'package:raven/subjects/change.dart';
+import 'package:raven/reservoir/change.dart';
 
 class RxMap<K, V> extends DelegatingMap<K, V> {
   final StreamController<Change> _subject = StreamController.broadcast();
