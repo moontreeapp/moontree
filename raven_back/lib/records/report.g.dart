@@ -18,23 +18,26 @@ class ReportAdapter extends TypeAdapter<Report> {
     };
     return Report(
       fields[0] as String,
-      fields[1] as ScripthashBalance,
-      fields[2] as ScripthashHistory,
-      fields[3] as ScripthashUnspent,
+      fields[1] as String,
+      fields[2] as ScripthashBalance,
+      fields[3] as ScripthashHistory,
+      fields[4] as ScripthashUnspent,
     );
   }
 
   @override
   void write(BinaryWriter writer, Report obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.scripthash)
       ..writeByte(1)
-      ..write(obj.balance)
+      ..write(obj.accountId)
       ..writeByte(2)
-      ..write(obj.history)
+      ..write(obj.balance)
       ..writeByte(3)
+      ..write(obj.history)
+      ..writeByte(4)
       ..write(obj.unspent);
   }
 

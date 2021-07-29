@@ -57,6 +57,10 @@ class Account extends Equatable {
   final records.Net net;
   final String name;
 
+  // in memory only (not in box)
+  late List<ScripthashUnspent> unspents;
+  late Map<String, List<ScripthashHistory>> histories;
+
   final records.Account? record;
   late final String accountId;
   late final HDWallet seededWallet;
@@ -94,6 +98,16 @@ class Account extends Equatable {
   @override
   String toString() {
     return 'Account($name, $accountId)';
+  }
+
+  //// setters /////////////////////////////////////////////////////////////////
+
+  void addHistory(String scripthash, List<ScripthashHistory> historyItems) {
+    histories[scripthash] = historyItems;
+  }
+
+  void addUnspents(List<ScripthashUnspent> unspentItems) {
+    unspents = [...unspents, ...unspentItems];
   }
 
   //// getters /////////////////////////////////////////////////////////////////

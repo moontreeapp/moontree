@@ -45,4 +45,8 @@ class Address {
   records.Address toRecord() {
     return record;
   }
+
+  void setBalance(ScripthashBalance balance) {
+    record.balance = balance;
+  }
 }

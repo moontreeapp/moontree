@@ -71,10 +71,7 @@ void setup() {
 
   addresses.changes.listen((change) {
     change.when(added: (added) {
-      Address address = added.data;
-      // set up a subscription
-      // subscriptions.save(addr1); ?
-      //reportBool = getReport(address.scripthash, client, exposure??);
+      // pass - see AddressSubscriptionService
     }, updated: (updated) {
       Address address = updated.data;
       resHelper.setBalance(
