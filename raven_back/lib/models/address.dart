@@ -36,6 +36,8 @@ class Address {
 
   ScripthashBalance? get balance => record.balance;
 
+  set balance(ScripthashBalance? bal) => record.balance = bal;
+
   factory Address.fromRecord(records.Address record) {
     return Address(
         record.scripthash, record.address, record.accountId, record.hdIndex,
@@ -44,9 +46,5 @@ class Address {
 
   records.Address toRecord() {
     return record;
-  }
-
-  void setBalance(ScripthashBalance balance) {
-    record.balance = balance;
   }
 }

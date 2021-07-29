@@ -191,14 +191,15 @@ class Account extends Equatable {
 
   /// this function is used to determin if we need to derive new addresses
   /// based upon the idea that we want to retain a gap of empty histories
-  List<models.Address> deriveMore(int hdIndex, records.NodeExposure exposure) {
+  models.Address? maybeDeriveNextAddress(
+      int hdIndex, records.NodeExposure exposure) {
     var gap = 0;
     // include exposure
     histories.forEach((k, v) => gap = gap + (v.isEmpty ? 1 : 0));
     if (gap < 10) {
-      return deriveBatch(hdIndex, exposure, 10 - gap);
+      return deriveAddress(hdIndex, exposure);
+      //  return deriveBatch(hdIndex, exposure, 10 - gap);
     }
-    return [];
   }
 
   /// probably not necessary...

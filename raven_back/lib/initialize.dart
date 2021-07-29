@@ -1,6 +1,8 @@
 import 'package:raven/reservoir_helper.dart';
 import 'package:raven/subjects/reservoir.dart';
+//import 'package:raven/subjects/settings.dart';
 
+//import 'listener.dart';
 import 'models.dart';
 import 'records/node_exposure.dart';
 
@@ -8,6 +10,13 @@ late Reservoir accounts;
 late Reservoir addresses;
 
 void setup() {
+  //settings
+  //    .map((s) => [s['electrum.url'], s['electrum.port']])
+  //    .distinct()
+  //    .listen((element) {
+  //  print('port: ${element}');
+  //});
+
   accounts =
       Reservoir(HiveBoxSource('accounts'), (account) => account.accountId);
 
@@ -22,8 +31,8 @@ void setup() {
   accounts.changes.listen((change) {
     change.when(added: (added) {
       Account account = added.data;
-      addresses.save(account.deriveAddress(0, NodeExposure.Internal));
-      addresses.save(account.deriveAddress(0, NodeExposure.External));
+      addresses.add(account.deriveAddress(0, NodeExposure.Internal));
+      addresses.add(account.deriveAddress(0, NodeExposure.External));
     }, updated: (updated) {
       // what's going to change on the account? only the name?
     }, removed: (removed) {
@@ -36,9 +45,7 @@ void setup() {
       //   - Truth.instance.accountUnspents.delete(event.value.accountId);
     });
   });
-
-  // TODO: add AddressSubscriptionService here
-
+  //AddressSubscriptionService(accounts, addresses, client);
   addresses.changes.listen((change) {
     change.when(added: (added) {
       // pass - see AddressSubscriptionService
@@ -52,3 +59,12 @@ void setup() {
     });
   });
 }
+
+//RavenElectrumClient generateClient() async {
+//  return await RavenElectrumClient.connect('testnet.rvn.rocks');
+//}
+//
+//String getConfig() {
+//  return 'testnet.rvn.rocks';
+//}
+//

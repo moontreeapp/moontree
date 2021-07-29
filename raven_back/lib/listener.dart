@@ -8,6 +8,31 @@ import 'buffer_count_window.dart';
 import 'models.dart';
 import 'subjects/reservoir.dart';
 
+class ScripthashRow {
+  final Address address;
+  final ScripthashBalance balance;
+  final List<ScripthashHistory> history;
+  final List<ScripthashUnspent> unspent;
+
+  ScripthashRow(this.address, this.balance, this.history, this.unspent);
+}
+
+class ScripthashData {
+  final List<Address> addresses;
+  final List<ScripthashBalance> balances;
+  final List<List<ScripthashHistory>> histories;
+  final List<List<ScripthashUnspent>> unspents;
+
+  ScripthashData(this.addresses, this.balances, this.histories, this.unspents);
+
+  Iterable<ScripthashRow> get zipped =>
+      zip([addresses, balances, histories, unspents]).map((e) => ScripthashRow(
+          e[0] as Address,
+          e[1] as ScripthashBalance,
+          e[2] as List<ScripthashHistory>,
+          e[3] as List<ScripthashUnspent>));
+}
+
 class AddressSubscriptionService {
   Reservoir accounts;
   Reservoir addresses;
@@ -21,56 +46,74 @@ class AddressSubscriptionService {
     addressesNeedingUpdate.stream
         .bufferCountTimeout(10, Duration(milliseconds: 50))
         .listen((changedAddresses) async {
-      var scripthashes =
-          changedAddresses.map((address) => address.scripthash).toList();
-      // ignore: omit_local_variable_types
-      List<ScripthashBalance> balances = await client.getBalances(scripthashes);
-      // ignore: omit_local_variable_types
-      List<List<ScripthashHistory>> histories =
-          await client.getHistories(scripthashes);
-      // ignore: omit_local_variable_types
-      List<List<ScripthashUnspent>> unspents =
-          await client.getUnspents(scripthashes);
-      zip([changedAddresses, balances, histories, unspents]).forEach((element) {
-        var address = element[0] as Address;
-        Account account = accounts.data[address.accountId];
-        address.setBalance(element[1] as ScripthashBalance);
-        account.addHistory(
-            address.scripthash, element[2] as List<ScripthashHistory>);
-        account.addUnspents(element[3] as List<ScripthashUnspent>);
-      });
-      // see if we need to derive more addresses for each account
-      for (var address in changedAddresses) {
-        Account account = accounts.data[address.accountId];
-        var internalHDIndex = addresses.indices['account-exposure']!
-            .size('${account.accountId}:${NodeExposure.Internal}');
-        var externalHDIndex = addresses.indices['account-exposure']!
-            .size('${account.accountId}:${NodeExposure.External}');
-        for (var newAddress
-            in account.deriveMore(internalHDIndex, NodeExposure.Internal)) {
-          addresses.save(newAddress);
-        }
-        for (var newAddress
-            in account.deriveMore(externalHDIndex, NodeExposure.External)) {
-          addresses.save(newAddress);
-        }
-      }
+      saveScripthashData(await getScripthashData(changedAddresses));
+      maybeDeriveNewAddresses(changedAddresses);
     });
 
     addresses.changes.listen((change) {
       change.when(added: (added) {
         Address address = added.data;
-        var stream = client.subscribeScripthash(address.scripthash);
-        // => notifies us when a scripthash 'changes' (doesn't tell us the values that changed)
-        addressesNeedingUpdate.sink.add(address);
-        stream.listen((status) {
-          addressesNeedingUpdate.sink.add(address);
-        });
+        addressNeedsUpdating(address);
+        setupAddressSubscription(address);
       }, updated: (updated) {
         // pass - see initialize.dart
       }, removed: (removed) {
         // pass - see initialize.dart
       });
     });
+  }
+
+  void addressNeedsUpdating(Address address) {
+    addressesNeedingUpdate.sink.add(address);
+  }
+
+  void setupAddressSubscription(Address address) {
+    var stream = client.subscribeScripthash(address.scripthash);
+    stream.listen((status) {
+      addressNeedsUpdating(address);
+    });
+  }
+
+  Future<ScripthashData> getScripthashData(
+      List<Address> changedAddresses) async {
+    var scripthashes =
+        changedAddresses.map((address) => address.scripthash).toList();
+    // ignore: omit_local_variable_types
+    List<ScripthashBalance> balances = await client.getBalances(scripthashes);
+    // ignore: omit_local_variable_types
+    List<List<ScripthashHistory>> histories =
+        await client.getHistories(scripthashes);
+    // ignore: omit_local_variable_types
+    List<List<ScripthashUnspent>> unspents =
+        await client.getUnspents(scripthashes);
+    return ScripthashData(changedAddresses, balances, histories, unspents);
+  }
+
+  void saveScripthashData(ScripthashData data) async {
+    data.zipped.forEach((row) {
+      var address = row.address;
+      Account account = accounts.data[address.accountId];
+      address.balance = row.balance;
+      addresses.save(address.scripthash);
+      account.addHistory(address.scripthash, row.history);
+      account.addUnspents(row.unspent);
+    });
+  }
+
+  void maybeDeriveNewAddresses(List<Address> changedAddresses) async {
+    for (var address in changedAddresses) {
+      Account account = accounts.data[address.accountId];
+      maybeDeriveNextAddress(account, NodeExposure.Internal);
+      maybeDeriveNextAddress(account, NodeExposure.External);
+    }
+  }
+
+  void maybeDeriveNextAddress(Account account, NodeExposure exposure) {
+    var hdIndex = addresses.indices['account-exposure']!
+        .size('${account.accountId}:$exposure');
+    var newAddress = account.maybeDeriveNextAddress(hdIndex, exposure);
+    if (newAddress != null) {
+      addresses.add(newAddress);
+    }
   }
 }
