@@ -8,6 +8,8 @@ import 'records/node_exposure.dart';
 
 late Reservoir accounts;
 late Reservoir addresses;
+late Reservoir histories;
+late Reservoir unspents;
 
 void setup() {
   //settings
@@ -19,6 +21,15 @@ void setup() {
 
   accounts =
       Reservoir(HiveBoxSource('accounts'), (account) => account.accountId);
+
+  histories = Reservoir(
+      HiveBoxSource('histories'),
+      (histories) =>
+          '${histories.accountId}:${histories.scripthash}:${histories.txHash}');
+  unspents = Reservoir(
+      HiveBoxSource('unspents'),
+      (unspents) =>
+          '${unspents.accountId}:${unspents.scripthash}:${unspents.txHash}');
 
   addresses =
       Reservoir(HiveBoxSource('addresses'), (address) => address.scripthash)

@@ -1,50 +1,47 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'address.dart';
+part of 'history.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class AddressAdapter extends TypeAdapter<Address> {
+class HistoryAdapter extends TypeAdapter<History> {
   @override
-  final int typeId = 1;
+  final int typeId = 3;
 
   @override
-  Address read(BinaryReader reader) {
+  History read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Address(
+    return History(
       fields[0] as String,
       fields[1] as String,
-      fields[2] as String,
-      fields[3] as int,
-      exposure: fields[4] as NodeExposure,
-      net: fields[5] as Net,
-      balance: fields[6] as Balance?,
+      fields[2] as int,
+      fields[3] as String,
+      txPos: fields[4] as int?,
+      value: fields[5] as int?,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Address obj) {
+  void write(BinaryWriter writer, History obj) {
     writer
-      ..writeByte(7)
-      ..writeByte(0)
-      ..write(obj.scripthash)
-      ..writeByte(1)
-      ..write(obj.address)
-      ..writeByte(2)
-      ..write(obj.accountId)
-      ..writeByte(3)
-      ..write(obj.hdIndex)
-      ..writeByte(4)
-      ..write(obj.exposure)
-      ..writeByte(5)
-      ..write(obj.net)
       ..writeByte(6)
-      ..write(obj.balance);
+      ..writeByte(0)
+      ..write(obj.accountId)
+      ..writeByte(1)
+      ..write(obj.scripthash)
+      ..writeByte(2)
+      ..write(obj.height)
+      ..writeByte(3)
+      ..write(obj.txHash)
+      ..writeByte(4)
+      ..write(obj.txPos)
+      ..writeByte(5)
+      ..write(obj.value);
   }
 
   @override
@@ -53,7 +50,7 @@ class AddressAdapter extends TypeAdapter<Address> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AddressAdapter &&
+      other is HistoryAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

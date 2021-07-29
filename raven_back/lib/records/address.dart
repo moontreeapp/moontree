@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:raven/models/balance.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 import 'node_exposure.dart';
@@ -27,7 +28,7 @@ class Address {
   Net net;
 
   @HiveField(6)
-  ScripthashBalance? balance;
+  Balance? balance;
 
   Address(
     this.scripthash,

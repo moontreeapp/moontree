@@ -1,42 +1,21 @@
-import 'dart:typed_data';
-
-import 'package:hive/hive.dart';
-import 'package:raven_electrum_client/methods/get_balance.dart';
-import 'package:ravencoin/ravencoin.dart';
-import 'package:crypto/crypto.dart' show sha256;
-import 'package:convert/convert.dart' show hex;
-
-import 'account.dart';
-
 import '../records/node_exposure.dart';
 import '../records/net.dart';
 import '../records.dart' as records;
+import 'balance.dart';
 
 class Address {
-  records.Address record;
+  final String scripthash;
+  final String address;
+  final String accountId;
+  final int hdIndex;
+  late NodeExposure exposure;
+  late Net net;
+  late Balance? balance;
 
-  Address(scripthash, address, accountId, hdIndex,
-      {NodeExposure exposure = NodeExposure.External,
-      Net net = Net.Test,
-      balance})
-      : record = records.Address(scripthash, address, accountId, hdIndex,
-            exposure: exposure, net: net, balance: balance);
-
-  String get scripthash => record.scripthash;
-
-  String get address => record.address;
-
-  String get accountId => record.accountId;
-
-  int get hdIndex => record.hdIndex;
-
-  NodeExposure get exposure => record.exposure;
-
-  NetworkType get network => networks[record.net]!;
-
-  ScripthashBalance? get balance => record.balance;
-
-  set balance(ScripthashBalance? bal) => record.balance = bal;
+  Address(this.scripthash, this.address, this.accountId, this.hdIndex,
+      {this.exposure = NodeExposure.External,
+      this.net = Net.Test,
+      this.balance});
 
   factory Address.fromRecord(records.Address record) {
     return Address(
@@ -45,6 +24,7 @@ class Address {
   }
 
   records.Address toRecord() {
-    return record;
+    return records.Address(scripthash, address, accountId, hdIndex,
+        exposure: exposure, net: net, balance: balance);
   }
 }

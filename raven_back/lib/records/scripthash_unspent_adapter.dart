@@ -5,7 +5,7 @@ import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 class ScripthashUnspentAdapter extends TypeAdapter<ScripthashUnspent> {
   @override
-  final typeId = 7;
+  final typeId = 17;
 
   @override
   ScripthashUnspent read(BinaryReader reader) {

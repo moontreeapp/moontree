@@ -6,7 +6,7 @@ import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 class SortedListAdapter extends TypeAdapter<SortedList> {
   @override
-  final typeId = 8;
+  final typeId = 18;
 
   @override
   SortedList read(BinaryReader reader) {

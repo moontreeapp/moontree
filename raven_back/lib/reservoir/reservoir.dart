@@ -31,6 +31,12 @@ class Reservoir<Record, Model> {
     }
   }
 
+  void addAll(List<Model> models) {
+    for (var model in models) {
+      add(model);
+    }
+  }
+
   void save(key) {
     if (data.containsKey(key)) {
       source.save(key, mapToRecord(data[key]!));

@@ -5,7 +5,7 @@ import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 class ScripthashHistoryAdapter extends TypeAdapter<ScripthashHistory> {
   @override
-  final typeId = 6;
+  final typeId = 16;
 
   @override
   ScripthashHistory read(BinaryReader reader) {

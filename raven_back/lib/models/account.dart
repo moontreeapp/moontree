@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:equatable/equatable.dart';
 import 'package:crypto/crypto.dart';
 import 'package:convert/convert.dart' show hex;
+import 'package:raven/reservoir/reservoir.dart';
 import 'package:sorted_list/sorted_list.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:ravencoin/ravencoin.dart';
@@ -58,8 +59,8 @@ class Account extends Equatable {
   final String name;
 
   // in memory only (not in box)
-  late List<ScripthashUnspent> unspents;
-  late Map<String, List<ScripthashHistory>> histories;
+  //late List<ScripthashUnspent> unspents;
+  //late Map<String, List<ScripthashHistory>> histories;
 
   final records.Account? record;
   late final String accountId;
@@ -98,16 +99,6 @@ class Account extends Equatable {
   @override
   String toString() {
     return 'Account($name, $accountId)';
-  }
-
-  //// setters /////////////////////////////////////////////////////////////////
-
-  void addHistory(String scripthash, List<ScripthashHistory> historyItems) {
-    histories[scripthash] = historyItems;
-  }
-
-  void addUnspents(List<ScripthashUnspent> unspentItems) {
-    unspents = [...unspents, ...unspentItems];
   }
 
   //// getters /////////////////////////////////////////////////////////////////
@@ -192,10 +183,13 @@ class Account extends Equatable {
   /// this function is used to determin if we need to derive new addresses
   /// based upon the idea that we want to retain a gap of empty histories
   models.Address? maybeDeriveNextAddress(
-      int hdIndex, records.NodeExposure exposure) {
+      Reservoir histories, int hdIndex, records.NodeExposure exposure) {
     var gap = 0;
-    // include exposure
-    histories.forEach((k, v) => gap = gap + (v.isEmpty ? 1 : 0));
+    // TODO - fix this!
+    // must include exposure...
+    // must access all of history by indicies or something...
+    histories.forEach((k, v) => gap = gap +
+        ((v.isEmpty && k.scripthash.lookup.exposure == exposure) ? 1 : 0));
     if (gap < 10) {
       return deriveAddress(hdIndex, exposure);
       //  return deriveBatch(hdIndex, exposure, 10 - gap);

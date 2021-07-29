@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:quiver/iterables.dart';
+import 'package:raven/models/balance.dart';
 import 'package:raven/records/node_exposure.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
@@ -36,11 +37,13 @@ class ScripthashData {
 class AddressSubscriptionService {
   Reservoir accounts;
   Reservoir addresses;
+  Reservoir histories;
   RavenElectrumClient client;
 
   StreamController<Address> addressesNeedingUpdate = StreamController();
 
-  AddressSubscriptionService(this.accounts, this.addresses, this.client);
+  AddressSubscriptionService(
+      this.accounts, this.addresses, this.histories, this.client);
 
   void init() {
     addressesNeedingUpdate.stream
@@ -92,12 +95,21 @@ class AddressSubscriptionService {
   void saveScripthashData(ScripthashData data) async {
     data.zipped.forEach((row) {
       var address = row.address;
-      Account account = accounts.data[address.accountId];
-      address.balance = row.balance;
+      address.balance = Balance.fromScripthashBalance(row.balance);
       addresses.save(address.scripthash);
-      account.addHistory(address.scripthash, row.history);
-      account.addUnspents(row.unspent);
+      // TODO:
+      // does this overwrite what has already been added automatically?
+      // also, we need to combine histories and unspents before adding
+      histories.addAll(combineHistoryAndUnspents(row));
     });
+  }
+
+  List combineHistoryAndUnspents(ScripthashRow row) {
+    var newHistories = [];
+    for (var i = 0; i < row.history.length; i++) {
+      newHistories.add(History.fromRowAndIndex(row, i));
+    }
+    return newHistories;
   }
 
   void maybeDeriveNewAddresses(List<Address> changedAddresses) async {
@@ -111,7 +123,8 @@ class AddressSubscriptionService {
   void maybeDeriveNextAddress(Account account, NodeExposure exposure) {
     var hdIndex = addresses.indices['account-exposure']!
         .size('${account.accountId}:$exposure');
-    var newAddress = account.maybeDeriveNextAddress(hdIndex, exposure);
+    var newAddress =
+        account.maybeDeriveNextAddress(histories, hdIndex, exposure);
     if (newAddress != null) {
       addresses.add(newAddress);
     }
