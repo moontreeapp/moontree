@@ -1,16 +1,12 @@
 import 'dart:async';
 
 import 'package:quiver/iterables.dart';
-import 'package:hive/hive.dart';
+import 'package:raven/records/node_exposure.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
-
-import 'reactives.dart';
-import 'records/node_exposure.dart';
 
 import 'buffer_count_window.dart';
 import 'models.dart';
 import 'subjects/reservoir.dart';
-import 'subjects/change.dart';
 
 class AddressSubscriptionService {
   Reservoir accounts;
@@ -24,9 +20,9 @@ class AddressSubscriptionService {
   void init() {
     addressesNeedingUpdate.stream
         .bufferCountTimeout(10, Duration(milliseconds: 50))
-        .listen((addresses) async {
+        .listen((changedAddresses) async {
       var scripthashes =
-          addresses.map((address) => address.scripthash).toList();
+          changedAddresses.map((address) => address.scripthash).toList();
       // ignore: omit_local_variable_types
       List<ScripthashBalance> balances = await client.getBalances(scripthashes);
       // ignore: omit_local_variable_types
@@ -35,7 +31,7 @@ class AddressSubscriptionService {
       // ignore: omit_local_variable_types
       List<List<ScripthashUnspent>> unspents =
           await client.getUnspents(scripthashes);
-      zip([addresses, balances, histories, unspents]).forEach((element) {
+      zip([changedAddresses, balances, histories, unspents]).forEach((element) {
         var address = element[0] as Address;
         Account account = accounts.data[address.accountId];
         address.setBalance(element[1] as ScripthashBalance);
@@ -43,6 +39,22 @@ class AddressSubscriptionService {
             address.scripthash, element[2] as List<ScripthashHistory>);
         account.addUnspents(element[3] as List<ScripthashUnspent>);
       });
+      // see if we need to derive more addresses for each account
+      for (var address in changedAddresses) {
+        Account account = accounts.data[address.accountId];
+        var internalHDIndex = addresses.indices['account-exposure']!
+            .size('${account.accountId}:${NodeExposure.Internal}');
+        var externalHDIndex = addresses.indices['account-exposure']!
+            .size('${account.accountId}:${NodeExposure.External}');
+        for (var newAddress in await account.deriveMore(
+            internalHDIndex, NodeExposure.Internal)) {
+          addresses.save(newAddress);
+        }
+        for (var newAddress in await account.deriveMore(
+            externalHDIndex, NodeExposure.External)) {
+          addresses.save(newAddress);
+        }
+      }
     });
 
     addresses.changes.listen((change) {
