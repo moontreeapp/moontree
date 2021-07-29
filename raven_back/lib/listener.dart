@@ -46,12 +46,12 @@ class AddressSubscriptionService {
             .size('${account.accountId}:${NodeExposure.Internal}');
         var externalHDIndex = addresses.indices['account-exposure']!
             .size('${account.accountId}:${NodeExposure.External}');
-        for (var newAddress in await account.deriveMore(
-            internalHDIndex, NodeExposure.Internal)) {
+        for (var newAddress
+            in account.deriveMore(internalHDIndex, NodeExposure.Internal)) {
           addresses.save(newAddress);
         }
-        for (var newAddress in await account.deriveMore(
-            externalHDIndex, NodeExposure.External)) {
+        for (var newAddress
+            in account.deriveMore(externalHDIndex, NodeExposure.External)) {
           addresses.save(newAddress);
         }
       }

@@ -191,22 +191,20 @@ class Account extends Equatable {
 
   /// this function is used to determin if we need to derive new addresses
   /// based upon the idea that we want to retain a gap of empty histories
-  Future<List<models.Address>> deriveMore(
-      int hdIndex, records.NodeExposure exposure) async {
+  List<models.Address> deriveMore(int hdIndex, records.NodeExposure exposure) {
     var gap = 0;
     // include exposure
     histories.forEach((k, v) => gap = gap + (v.isEmpty ? 1 : 0));
-    var addresses = [];
     if (gap < 10) {
-      return await deriveBatch(hdIndex, exposure);
+      return deriveBatch(hdIndex, exposure, 10 - gap);
     }
     return [];
   }
 
   /// probably not necessary...
-  Future deriveBatch(int hdIndex, records.NodeExposure exposure,
-      [int batchSize = 10]) async {
-    var addresses = [];
+  List<models.Address> deriveBatch(int hdIndex, records.NodeExposure exposure,
+      [int batchSize = 10]) {
+    var addresses = <models.Address>[];
     for (var i = 0; i < batchSize; i++) {
       addresses.add(deriveAddress(hdIndex, exposure));
       hdIndex = hdIndex + 1;
