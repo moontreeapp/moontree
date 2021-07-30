@@ -19,8 +19,12 @@ class AddressesService {
         resHelper.setBalance(
             address.accountId, resHelper.calculateBalance(address.accountId));
       }, removed: (removed) {
-        // if this happens its because the account has been removed...
-        // so do the removal steps that make sense here.
+        // always happens because account was removed...
+        // delete in-memory balances, histories, unspents
+        // TODO
+
+        // UI updates
+        // TODO
       });
     });
   }
