@@ -1,4 +1,4 @@
-import 'package:raven/services/address_subscription.dart';
+import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 import '../records.dart' as records;
 
@@ -13,19 +13,20 @@ class History {
   History(this.accountId, this.scripthash, this.height, this.txHash,
       {this.txPos, this.value});
 
-  factory History.fromRowAndIndex(ScripthashRow row, int index) {
-    var newTxPos;
-    var newValue;
-    for (var unspent in row.unspent) {
-      if (row.history[index].height == unspent.height &&
-          row.history[index].txHash == unspent.txHash) {
-        newTxPos = unspent.txPos;
-        newValue = unspent.value;
-      }
-    }
-    return History(row.address.accountId, row.address.scripthash,
-        row.history[index].height, row.history[index].txHash,
-        txPos: newTxPos, value: newValue);
+  factory History.fromScripthashHistory(
+      String accountId, String scripthash, ScripthashHistory history) {
+    return History(
+      accountId,
+      scripthash,
+      history.height,
+      history.txHash,
+    );
+  }
+
+  factory History.fromScripthashUnspent(
+      String accountId, String scripthash, ScripthashUnspent unspent) {
+    return History(accountId, scripthash, unspent.height, unspent.txHash,
+        txPos: unspent.txPos, value: unspent.value);
   }
 
   factory History.fromRecord(records.History record) {

@@ -109,18 +109,7 @@ class Account extends Equatable {
 
   //// Account Scripthashes ////////////////////////////////////////////////////
 
-  List<String> get accountInternals {
-    var ounordered = Truth.instance.scripthashAccountIdInternal
-        .filterKeysByValueString(accountId)
-        .toList();
-    var orders =
-        Truth.instance.scripthashOrderInternal.filterAllByKeys(ounordered);
-    var keys = orders.keys.toList(growable: false)
-      ..sort((k1, k2) => orders[k1]!.compareTo(orders[k2]!));
-    return keys
-        .map((element) => element as String)
-        .toList(); // List<dynamic> -> List<String>
-  }
+  List<String> get accountInternals {}
 
   /// why should we care if externals are ordered? we'll be consistent
   List<String> get accountExternals {
@@ -178,22 +167,6 @@ class Account extends Equatable {
     return models.Address(
         wallet.scripthash, wallet.address!, accountId, hdIndex,
         exposure: exposure, net: net);
-  }
-
-  /// this function is used to determin if we need to derive new addresses
-  /// based upon the idea that we want to retain a gap of empty histories
-  models.Address? maybeDeriveNextAddress(
-      Reservoir histories, int hdIndex, records.NodeExposure exposure) {
-    var gap = 0;
-    // TODO - fix this!
-    // must include exposure...
-    // must access all of history by indicies or something...
-    histories.forEach((k, v) => gap = gap +
-        ((v.isEmpty && k.scripthash.lookup.exposure == exposure) ? 1 : 0));
-    if (gap < 10) {
-      return deriveAddress(hdIndex, exposure);
-      //  return deriveBatch(hdIndex, exposure, 10 - gap);
-    }
   }
 
   /// probably not necessary...

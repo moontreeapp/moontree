@@ -96,18 +96,20 @@ class AddressSubscriptionService {
     data.zipped.forEach((row) {
       var address = row.address;
       address.balance = Balance.fromScripthashBalance(row.balance);
-      addresses.save(address.scripthash);
-      // TODO:
-      // does this overwrite what has already been added automatically?
-      // also, we need to combine histories and unspents before adding
-      histories.addAll(combineHistoryAndUnspents(row));
+      addresses.save(address);
+      histories.saveAll(combineHistoryAndUnspents(row));
     });
   }
 
   List combineHistoryAndUnspents(ScripthashRow row) {
     var newHistories = [];
-    for (var i = 0; i < row.history.length; i++) {
-      newHistories.add(History.fromRowAndIndex(row, i));
+    for (var history in row.history) {
+      newHistories.add(History.fromScripthashHistory(
+          row.address.accountId, row.address.scripthash, history));
+    }
+    for (var unspent in row.unspent) {
+      newHistories.add(History.fromScripthashUnspent(
+          row.address.accountId, row.address.scripthash, unspent));
     }
     return newHistories;
   }
@@ -126,7 +128,7 @@ class AddressSubscriptionService {
     var newAddress =
         account.maybeDeriveNextAddress(histories, hdIndex, exposure);
     if (newAddress != null) {
-      addresses.add(newAddress);
+      addresses.save(newAddress);
     }
   }
 }

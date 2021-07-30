@@ -1,13 +1,11 @@
-import 'package:raven/models/address.dart';
+import 'package:raven/models.dart';
 import 'package:raven/reservoir/reservoir.dart';
 
-import 'reservoir_helper.dart';
-
 class AddressesService {
+  Reservoir accounts;
   Reservoir addresses;
-  ReservoirHelper resHelper;
 
-  AddressesService(this.addresses, this.resHelper);
+  AddressesService(this.accounts, this.addresses);
 
   void init() {
     //AddressSubscriptionService(accounts, addresses, client);
@@ -16,8 +14,7 @@ class AddressesService {
         // pass - see AddressSubscriptionService
       }, updated: (updated) {
         Address address = updated.data;
-        resHelper.setBalance(
-            address.accountId, resHelper.calculateBalance(address.accountId));
+        setBalance(address.accountId, calculateBalance(address.accountId));
       }, removed: (removed) {
         // always happens because account was removed...
         // delete in-memory balances, histories, unspents
@@ -27,5 +24,20 @@ class AddressesService {
         // TODO
       });
     });
+  }
+
+  Balance calculateBalance(String accountId) {
+    return addresses.indices['account']!.getAll(accountId)!.fold(
+        Balance(0, 0),
+        (previousValue, element) => Balance(
+            previousValue.confirmed + (element as Balance).confirmed,
+            previousValue.unconfirmed + element.unconfirmed));
+  }
+
+  // set the balance for an account
+  void setBalance(String accountId, Balance balance) {
+    // setBalance(accountId, calculateBalance(accountId));
+    accounts.data[accountId].balance = balance;
+    accounts.save(accountId);
   }
 }

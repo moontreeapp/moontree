@@ -8,4 +8,5 @@ abstract class Source<Record, Model> {
   Stream<Change> watch(Reservoir<Record, Model> reservoir);
 
   void save(key, Record record);
+  void remove(key);
 }

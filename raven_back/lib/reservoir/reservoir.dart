@@ -22,24 +22,25 @@ class Reservoir<Record, Model> {
     changes = source.watch(this);
   }
 
-  void add(Model model) {
-    var key = getPrimaryKey(model);
-    if (!data.containsKey(key)) {
-      source.save(key, mapToRecord(model));
-    } else {
-      throw ArgumentError('record already exists for $key');
-    }
+  Model? get(key) {
+    return data[key];
   }
 
-  void addAll(List<Model> models) {
+  void saveAll(List<Model> models) {
     for (var model in models) {
-      add(model);
+      save(model);
     }
   }
 
-  void save(key) {
+  void save(Model model) {
+    var key = getPrimaryKey(model);
+    source.save(key, mapToRecord(data[key]!));
+  }
+
+  void remove(Model model) {
+    var key = getPrimaryKey(model);
     if (data.containsKey(key)) {
-      source.save(key, mapToRecord(data[key]!));
+      source.remove(key);
     } else {
       throw ArgumentError('record not found for $key');
     }

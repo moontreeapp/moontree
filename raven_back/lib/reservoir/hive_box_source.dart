@@ -34,4 +34,9 @@ class HiveBoxSource<Record, Model> extends Source<Record, Model> {
   void save(key, Record record) {
     box.put(key, record);
   }
+
+  @override
+  void remove(key) {
+    box.delete(key);
+  }
 }

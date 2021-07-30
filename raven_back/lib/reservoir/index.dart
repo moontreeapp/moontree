@@ -24,7 +24,7 @@ class Index<Key, Model> {
   Model? get(Key key) => values[key]?.first;
 
   /// Retrieve all values associated with the key, in order.
-  OrderedSet<Model>? getAll(Key key) => values[key];
+  OrderedSet<Model> getAll(Key key) => values[key] ?? OrderedSet<Model>();
 
   /// Return the size (length of the set) of a named index
   int size(Key key) => values[key]!.length;
