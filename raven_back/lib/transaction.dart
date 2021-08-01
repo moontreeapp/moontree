@@ -1,3 +1,4 @@
+import 'package:raven/services/accounts.dart';
 import 'package:ravencoin/ravencoin.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'utils/fee.dart';
@@ -15,8 +16,10 @@ class TransactionBuilderHelper {
   int sendAmount;
   String toAddress;
   int anticipatedOutputFee;
+  AccountsService accountsService; // it'd be cool if account had access to this
 
-  TransactionBuilderHelper(this.fromAccount, this.sendAmount, this.toAddress,
+  TransactionBuilderHelper(
+      this.fromAccount, this.sendAmount, this.toAddress, this.accountsService,
       [this.anticipatedOutputFee = 34]);
 
   /// gets inputs, calculates fee, returns change
@@ -99,11 +102,12 @@ class TransactionBuilderHelper {
   TransactionBuilder signEachInput(
       TransactionBuilder txb, List<ScripthashUnspent> utxos) {
     for (var i = 0; i < utxos.length; i++) {
-      var location = fromAccount.getNodeLocationOf(utxos[i].scripthash);
+      var location = accountsService.getNodeLocationOf(
+          utxos[i].scripthash, fromAccount.accountId);
       txb.sign(
           vin: i,
           keyPair: fromAccount
-              .node(location.index, exposure: location.exposure)
+              .node(location!.index, exposure: location.exposure)
               .keyPair);
     }
     return txb;

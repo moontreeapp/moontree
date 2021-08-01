@@ -41,15 +41,6 @@ class InsufficientFunds implements Exception {
   InsufficientFunds([this.cause = 'Error! Insufficient funds.']);
 }
 
-class nodeLocation {
-  int index;
-  records.NodeExposure exposure;
-
-  nodeLocation(int locationIndex, records.NodeExposure locationExposure)
-      : index = locationIndex,
-        exposure = locationExposure;
-}
-
 const DEFAULT_CIPHER = NoCipher();
 
 class Account extends Equatable {
@@ -107,53 +98,6 @@ class Account extends Equatable {
 
   int get balance => Truth.instance.getAccountBalance(this);
 
-  //// Account Scripthashes ////////////////////////////////////////////////////
-
-  List<String> get accountInternals {}
-
-  /// why should we care if externals are ordered? we'll be consistent
-  List<String> get accountExternals {
-    var ounordered = Truth.instance.scripthashAccountIdExternal
-        .filterKeysByValueString(accountId)
-        .toList();
-    var orders =
-        Truth.instance.scripthashOrderExternal.filterAllByKeys(ounordered);
-    var keys = orders.keys.toList(growable: false)
-      ..sort((k1, k2) => orders[k1]!.compareTo(orders[k2]!));
-    return keys
-        .map((element) => element as String)
-        .toList(); // List<dynamic> -> List<String>
-    // unordered
-    //return Truth.instance.scripthashAccountIdExternal
-    //    .filterKeysByValueString(accountId);
-  }
-
-  List<String> get accountScripthashes {
-    return [...accountInternals, ...accountExternals];
-  }
-
-  /// returns the next internal or external node without a history
-  HDWallet getNextEmptyWallet(
-      [records.NodeExposure exposure = records.NodeExposure.Internal]) {
-    // ensure valid exposure
-    exposure = exposure == records.NodeExposure.Internal
-        ? records.NodeExposure.Internal
-        : records.NodeExposure.External;
-    var i = 0;
-    for (var scripthash in exposure == records.NodeExposure.Internal
-        ? accountInternals
-        : accountExternals) {
-      if (Truth.instance.histories
-          .getAsList<ScripthashHistory>(scripthash)
-          .isEmpty) {
-        return deriveWallet(i, exposure);
-      }
-      i = i + 1;
-    }
-    // this shouldn't happen - if so we should trigger a new batch??
-    return deriveWallet(i, exposure);
-  }
-
   //// Derive Wallet ///////////////////////////////////////////////////////////
 
   HDWallet deriveWallet(int hdIndex,
@@ -167,17 +111,6 @@ class Account extends Equatable {
     return models.Address(
         wallet.scripthash, wallet.address!, accountId, hdIndex,
         exposure: exposure, net: net);
-  }
-
-  /// probably not necessary...
-  List<models.Address> deriveBatch(int hdIndex, records.NodeExposure exposure,
-      [int batchSize = 10]) {
-    var addresses = <models.Address>[];
-    for (var i = 0; i < batchSize; i++) {
-      addresses.add(deriveAddress(hdIndex, exposure));
-      hdIndex = hdIndex + 1;
-    }
-    return addresses;
   }
 
   //// Sending Functionality ///////////////////////////////////////////////////
@@ -224,22 +157,5 @@ class Account extends Equatable {
     // Find one last UTXO, starting from smallest, that satisfies the remainder
     ret.add(utxos.firstWhere((utxo) => utxo.value >= remainder));
     return ret;
-  }
-
-  nodeLocation? getNodeLocationOf(scripthash) {
-    var i = 0;
-    for (var internalScripthash in accountInternals) {
-      if (internalScripthash == scripthash) {
-        return nodeLocation(i, records.NodeExposure.Internal);
-      }
-      i = i + 1;
-    }
-    i = 0;
-    for (var internalScripthash in accountExternals) {
-      if (internalScripthash == scripthash) {
-        return nodeLocation(i, records.NodeExposure.External);
-      }
-      i = i + 1;
-    }
   }
 }

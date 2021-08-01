@@ -5,7 +5,9 @@ import 'package:raven/services/addresses.dart';
 
 void init() {
   makeReservoirs();
-  AccountsService(accounts, addresses).init();
+  var accountService = AccountsService(accounts, addresses, histories);
+  accountService.init();
   AddressesService(accounts, addresses).init();
-  AddressSubscriptionService(accounts, addresses, client);
+  AddressSubscriptionService(
+      accounts, addresses, histories, client, accountService);
 }

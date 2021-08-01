@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:quiver/iterables.dart';
 import 'package:raven/models/balance.dart';
 import 'package:raven/records/node_exposure.dart';
+import 'package:raven/services/accounts.dart' show AccountsService;
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 import '../buffer_count_window.dart';
@@ -39,11 +40,12 @@ class AddressSubscriptionService {
   Reservoir addresses;
   Reservoir histories;
   RavenElectrumClient client;
+  AccountsService accountsService;
 
   StreamController<Address> addressesNeedingUpdate = StreamController();
 
-  AddressSubscriptionService(
-      this.accounts, this.addresses, this.histories, this.client);
+  AddressSubscriptionService(this.accounts, this.addresses, this.histories,
+      this.client, this.accountsService);
 
   void init() {
     addressesNeedingUpdate.stream
@@ -117,16 +119,14 @@ class AddressSubscriptionService {
   void maybeDeriveNewAddresses(List<Address> changedAddresses) async {
     for (var address in changedAddresses) {
       Account account = accounts.data[address.accountId];
-      maybeDeriveNextAddress(account, NodeExposure.Internal);
-      maybeDeriveNextAddress(account, NodeExposure.External);
+      maybeSaveNewAddress(account, NodeExposure.Internal);
+      maybeSaveNewAddress(account, NodeExposure.External);
     }
   }
 
-  void maybeDeriveNextAddress(Account account, NodeExposure exposure) {
-    var hdIndex = addresses.indices['account-exposure']!
-        .size('${account.accountId}:$exposure');
+  void maybeSaveNewAddress(Account account, NodeExposure exposure) {
     var newAddress =
-        account.maybeDeriveNextAddress(histories, hdIndex, exposure);
+        accountsService.maybeDeriveNextAddress(account.accountId, exposure);
     if (newAddress != null) {
       addresses.save(newAddress);
     }
