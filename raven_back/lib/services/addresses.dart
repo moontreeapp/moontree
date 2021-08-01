@@ -1,5 +1,6 @@
 import 'package:raven/models.dart';
 import 'package:raven/reservoir/reservoir.dart';
+import 'package:raven/reservoirs.dart';
 
 class AddressesService {
   Reservoir accounts;
@@ -16,12 +17,8 @@ class AddressesService {
         Address address = updated.data;
         setBalance(address.accountId, calculateBalance(address.accountId));
       }, removed: (removed) {
-        // always happens because account was removed...
-        // delete in-memory balances, histories, unspents
-        // TODO
-
-        // UI updates
-        // TODO
+        // always triggered by account removal
+        removeHistories(removed.id as String);
       });
     });
   }
@@ -39,5 +36,11 @@ class AddressesService {
     // setBalance(accountId, calculateBalance(accountId));
     accounts.data[accountId].balance = balance;
     accounts.save(accountId);
+  }
+
+  void removeHistories(String scripthash) {
+    return histories.indices['scripthash']!
+        .getAll(scripthash)
+        .forEach((history) => histories.remove(history));
   }
 }
