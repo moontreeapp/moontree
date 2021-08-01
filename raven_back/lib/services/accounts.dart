@@ -3,14 +3,13 @@ import 'package:raven/models/address.dart';
 import 'package:raven/models/account.dart';
 import 'package:raven/records/node_exposure.dart';
 import 'package:raven/reservoir/reservoir.dart';
-import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:ravencoin/ravencoin.dart' show HDWallet;
 
-class nodeLocation {
+class AddressLocation {
   int index;
   NodeExposure exposure;
 
-  nodeLocation(int locationIndex, NodeExposure locationExposure)
+  AddressLocation(int locationIndex, NodeExposure locationExposure)
       : index = locationIndex,
         exposure = locationExposure;
 }
@@ -104,12 +103,12 @@ class AccountsService {
     return account.deriveWallet(i, exposure);
   }
 
-  nodeLocation? getNodeLocationOf(String scripthash, String accountId) {
+  AddressLocation? getAddressLocationOf(String scripthash, String accountId) {
     var i = 0;
     for (var address
         in getAccountAddresses(accountId, NodeExposure.Internal)!) {
       if (address.scripthash == scripthash) {
-        return nodeLocation(i, NodeExposure.Internal);
+        return AddressLocation(i, NodeExposure.Internal);
       }
       i = i + 1;
     }
@@ -117,7 +116,7 @@ class AccountsService {
     for (var address
         in getAccountAddresses(accountId, NodeExposure.External)!) {
       if (address.scripthash == scripthash) {
-        return nodeLocation(i, NodeExposure.External);
+        return AddressLocation(i, NodeExposure.External);
       }
       i = i + 1;
     }

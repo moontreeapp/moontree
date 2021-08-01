@@ -102,7 +102,7 @@ class TransactionBuilderHelper {
   TransactionBuilder signEachInput(
       TransactionBuilder txb, List<ScripthashUnspent> utxos) {
     for (var i = 0; i < utxos.length; i++) {
-      var location = accountsService.getNodeLocationOf(
+      var location = accountsService.getAddressLocationOf(
           utxos[i].scripthash, fromAccount.accountId);
       txb.sign(
           vin: i,

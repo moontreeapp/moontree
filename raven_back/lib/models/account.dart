@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:equatable/equatable.dart';
 import 'package:crypto/crypto.dart';
 import 'package:convert/convert.dart' show hex;
-import 'package:raven/reservoir/reservoir.dart';
 import 'package:sorted_list/sorted_list.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:ravencoin/ravencoin.dart';
