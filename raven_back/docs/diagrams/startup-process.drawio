@@ -1,11 +1,11 @@
 <mxfile host="65bd71144e">
     <diagram id="B2Imsyf_CLR86bu_pUIC" name="Page-1">
-        <mxGraphModel dx="843" dy="790" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="402" dy="790" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
                 <mxCell id="119" value="how do we manage&lt;br&gt;subscriptions if we don't&lt;br&gt;remember them? &lt;br&gt;Should they be a Reservoir?" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="350" y="840" width="200" height="120" as="geometry"/>
+                    <mxGeometry x="550" y="820" width="200" height="120" as="geometry"/>
                 </mxCell>
                 <mxCell id="101" value="no UI update b/c&lt;br&gt;address remove&lt;br&gt;always after account&lt;br&gt;removal" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="440" y="760" width="200" height="110" as="geometry"/>
@@ -190,6 +190,9 @@
                 <mxCell id="95" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="96" target="98" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
+                <mxCell id="121" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="96" target="120">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
                 <mxCell id="96" value="upon remove" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="1" vertex="1">
                     <mxGeometry x="280" y="800" width="80" height="60" as="geometry"/>
                 </mxCell>
@@ -244,6 +247,9 @@
                 </mxCell>
                 <mxCell id="118" value="listened to" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;strokeColor=#66FF66;" parent="117" vertex="1">
                     <mxGeometry x="20" y="200" width="80" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="120" value="remove related histories" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;strokeColor=#F0F0F0;" vertex="1" parent="1">
+                    <mxGeometry x="400" y="880" width="80" height="60" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

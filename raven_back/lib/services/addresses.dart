@@ -19,6 +19,7 @@ class AddressesService {
       }, removed: (removed) {
         // always triggered by account removal
         removeHistories(removed.id as String);
+        unsubscribe(removed.id as String);
       });
     });
   }
@@ -42,5 +43,9 @@ class AddressesService {
     return histories.indices['scripthash']!
         .getAll(scripthash)
         .forEach((history) => histories.remove(history));
+  }
+
+  void unsubscribe(String scripthash) {
+    // TODO - where are subscriptions tracked?
   }
 }
