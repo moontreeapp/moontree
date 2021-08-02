@@ -27,14 +27,22 @@ class Generated {
 }
 
 Future hiveSetup() async {
-  await Directory('database').delete(recursive: true);
+  await deleteDatabase();
   Hive.init('database');
   await HiveHelper.init();
 }
 
 Future closeHive() async {
   await HiveHelper.close();
-  await Directory('database').delete(recursive: true);
+  await deleteDatabase();
+}
+
+Future deleteDatabase() async {
+  try {
+    await Directory('database').delete(recursive: true);
+  } catch (e) {
+    print('database folder not found');
+  }
 }
 
 //Future waitForSave() async {

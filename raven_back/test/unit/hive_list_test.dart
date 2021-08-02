@@ -13,7 +13,7 @@ extension GetAs on Box {
 
 void main() {
   test('list save', () async {
-    Hive.registerAdapter(ScripthashBalanceAdapter());
+    Hive.registerAdapter(BalanceAdapter());
     Hive.init('testdb');
     var myBox = await Hive.openBox('mylist');
     print(myBox.runtimeType);

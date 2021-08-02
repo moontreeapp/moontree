@@ -21,7 +21,7 @@ void main() {
     test('save an Account model', () async {
       var seed = Uint8List(16);
       var account = models.Account(seed, name: 'in-memory wallet');
-      await asyncChange(res, () => res.save(account));
+      await asyncChange(res, () => res.save(account)); // fails?
       expect(res.data[account.accountId], account);
     });
   });

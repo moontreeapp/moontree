@@ -1,6 +1,5 @@
 import 'package:hive/hive.dart';
 import 'package:raven/models/balance.dart';
-import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 import 'node_exposure.dart';
 import 'net.dart';

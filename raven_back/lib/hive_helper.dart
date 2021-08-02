@@ -15,11 +15,10 @@ class HiveHelper {
   static void registerAdapters() {
     Hive.registerAdapter(AccountAdapter());
     Hive.registerAdapter(AddressAdapter());
-
+    Hive.registerAdapter(BalanceAdapter());
+    Hive.registerAdapter(HistoryAdapter());
+    Hive.registerAdapter(NetAdapter());
     Hive.registerAdapter(NodeExposureAdapter());
-    Hive.registerAdapter(ScripthashUnspentAdapter());
-    Hive.registerAdapter(ScripthashHistoryAdapter());
-    Hive.registerAdapter(ScripthashBalanceAdapter());
   }
 
   static Future open() async {

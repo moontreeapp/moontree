@@ -14,7 +14,7 @@ void main() {
 
     setUp(() {
       source = RxMapSource();
-      res = Reservoir(source, toModel, toRecord);
+      res = Reservoir(source, (item) => item, toModel, toRecord);
     });
 
     test('maps Record to Model', () async {
@@ -39,9 +39,30 @@ void main() {
 
     test('saves changes', () async {
       await asyncChange(res, () => source.map[0] = 'xyz');
-      res.data[0] = 'model:abc';
-      res.save(0);
-      expect(source.map[0], 'abc');
+      expect(source.map[0], 'xyz');
+
+      /// ?
+      //res.data[0] = 'model:abc';
+      //res.save('model:abc');
+      //expect(source.map[0], 'abc');
+      //expect(source.map[1], 'abc');
+
+      res.save('model:abc');
+      expect(res.get(0), 'model:xyz');
+
+      for (var item in res) {
+        print(item);
+        //model:abc
+        //model:xyz
+      }
+      for (var key in res.data.keys) {
+        print(key);
+        print(res.data[key]);
+        //0
+        //model:xyz
+      }
+      // primary key thing broken here...
+      expect(res.get(1), 'model:abc');
     });
   });
 }
