@@ -19,4 +19,9 @@ class RxMapSource<Record, Model> extends Source<Record, Model> {
   void save(key, Record record) {
     map[key] = record;
   }
+
+  @override
+  void remove(key) {
+    map.remove(key);
+  }
 }

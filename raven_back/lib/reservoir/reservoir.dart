@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'change.dart';
 import 'index.dart';
 import 'source.dart';
@@ -6,7 +8,7 @@ export 'hive_box_source.dart';
 
 typedef Mapper<Record, Model> = Model Function(Record);
 
-class Reservoir<Record, Model> {
+class Reservoir<Record, Model> with IterableMixin<Model> {
   final Source<Record, Model> source;
   late Mapper<Record, Model> mapToModel;
   late Mapper<Model, Record> mapToRecord;
@@ -25,6 +27,9 @@ class Reservoir<Record, Model> {
   Model? get(key) {
     return data[key];
   }
+
+  @override
+  Iterator<Model> get iterator => data.values.iterator;
 
   void saveAll(List<Model> models) {
     for (var model in models) {

@@ -1,6 +1,3 @@
-import 'dart:html';
-
-import 'package:quiver/iterables.dart';
 import 'package:raven/reservoirs.dart';
 import 'package:raven/services/address_derivation.dart';
 import 'package:raven/services/address_subscription.dart';
@@ -14,11 +11,14 @@ AddressesService? addressesService;
 
 void init() {
   makeReservoirs();
-  settings
+  electrumSettingsStream(settings).listen(handleListening);
+}
+
+Stream electrumSettingsStream(settings) {
+  return settings
       .map((s) =>
           [s['electrum.url'], s['electrum.port']]) // testnet.rvn.rocks:50002
-      .distinct()
-      .listen(handleListening);
+      .distinct();
 }
 
 Future handleListening(element) async {
@@ -39,5 +39,5 @@ void initServices(RavenElectrumClient client) {
   addressSubscriptionService = AddressSubscriptionService(
       accounts, addresses, histories, client, addressDerivationService!)
     ..init();
-  addressesService = AddressesService(accounts, addresses)..init();
+  addressesService = AddressesService(accounts, addresses, histories)..init();
 }

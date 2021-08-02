@@ -2,15 +2,17 @@ import 'dart:async';
 
 import 'package:raven/models.dart';
 import 'package:raven/reservoir/change.dart';
-import 'package:raven/reservoir/reservoir.dart';
-import 'package:raven/reservoirs.dart';
+import 'package:raven/reservoirs/account.dart';
+import 'package:raven/reservoirs/address.dart';
+import 'package:raven/reservoirs/history.dart';
 
 class AddressesService {
-  Reservoir accounts;
-  Reservoir addresses;
+  AccountReservoir accounts;
+  AddressReservoir addresses;
+  HistoryReservoir histories;
   late StreamSubscription<Change> listener;
 
-  AddressesService(this.accounts, this.addresses);
+  AddressesService(this.accounts, this.addresses, this.histories);
 
   void init() {
     //AddressSubscriptionService(accounts, addresses, client);
@@ -19,10 +21,11 @@ class AddressesService {
         // pass - see AddressSubscriptionService
       }, updated: (updated) {
         Address address = updated.data;
-        setBalance(address.accountId, calculateBalance(address.accountId));
+        accounts.setBalance(
+            address.accountId, calculateBalance(address.accountId));
       }, removed: (removed) {
         // always triggered by account removal
-        removeHistories(removed.id as String);
+        histories.removeHistories(removed.id as String);
       });
     });
   }
@@ -37,18 +40,5 @@ class AddressesService {
         (previousValue, element) => Balance(
             previousValue.confirmed + (element as Balance).confirmed,
             previousValue.unconfirmed + element.unconfirmed));
-  }
-
-  // set the balance for an account
-  void setBalance(String accountId, Balance balance) {
-    // setBalance(accountId, calculateBalance(accountId));
-    accounts.data[accountId].balance = balance;
-    accounts.save(accountId);
-  }
-
-  void removeHistories(String scripthash) {
-    return histories.indices['scripthash']!
-        .getAll(scripthash)
-        .forEach((history) => histories.remove(history));
   }
 }

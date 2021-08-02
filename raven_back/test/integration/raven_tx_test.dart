@@ -2,7 +2,6 @@
 
 import 'package:test/test.dart';
 
-import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:raven/transaction.dart' as tx;
 
 import '../test_artifacts.dart' as tests;

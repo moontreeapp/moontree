@@ -1,4 +1,4 @@
-import 'package:raven/reservoirs/addresses.dart';
+import 'package:raven/reservoirs/address.dart';
 import 'package:ravencoin/ravencoin.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'utils/fee.dart';

@@ -6,7 +6,7 @@ import 'package:raven/models/account.dart';
 import 'package:raven/records/node_exposure.dart';
 import 'package:raven/reservoir/change.dart';
 import 'package:raven/reservoir/reservoir.dart';
-import 'package:raven/reservoirs/addresses.dart';
+import 'package:raven/reservoirs/address.dart';
 import 'package:ravencoin/ravencoin.dart' show HDWallet;
 
 class AddressDerivationService {

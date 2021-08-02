@@ -1,4 +1,4 @@
-// dart --no-sound-null-safety test test/unit/raven_tx_test.dart
+// dart test test/unit/raven_tx_test.dart
 import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:ravencoin/ravencoin.dart';
@@ -12,7 +12,7 @@ void main() {
     var seed = bip39.mnemonicToSeed(
         'smile build brain topple moon scrap area aim budget enjoy polar erosion');
     var account = Account(seed, net: Net.Test);
-    var node = account.node(4, exposure: NodeExposure.Internal);
+    var node = account.deriveWallet(4, NodeExposure.Internal);
     final txb = TransactionBuilder(network: node.network);
     txb.setVersion(1);
     txb.addInput(
