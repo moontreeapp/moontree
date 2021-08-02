@@ -2,12 +2,11 @@
 import 'package:test/test.dart';
 import 'package:raven/models/account.dart';
 import '../test_artifacts.dart' as tests;
-import 'package:raven/unneeded/boxes.dart';
 
 void main() async {
   var gen;
   setUpAll(() async => gen = await tests.generate());
-  tearDownAll(() async => await Truth.instance.close());
+  tearDownAll(() async => await tests.closeHive());
 
   test('getBalance', () async {
     expect((gen.account.accountInternals.isEmpty), false);

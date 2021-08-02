@@ -4,7 +4,6 @@ import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
-import 'package:raven/unneeded/boxes.dart';
 import 'package:raven/utils/env.dart';
 import 'package:raven/models/account.dart';
 import 'package:raven/records/node_exposure.dart';
@@ -20,7 +19,7 @@ void main() async {
     account = Account(bip39.mnemonicToSeed(await getMnemonic()), net: Net.Test);
   });
 
-  tearDownAll(() async => await Truth.instance.close());
+  tearDownAll(() async => await tests.closeHive());
 
   test('run batch', () async {
     var stats = await client.getOurStats();
@@ -29,13 +28,14 @@ void main() async {
     account.deriveBatch(NodeExposure.External, 100);
     // 200 'cd13adba86dbe94e244ce031e3e80197e44566cd86f113e7f30a3ea05fed0486'
     // 300 'c8053a6a61b0d6b77f13986ac4183c396d4e1735a2dc35729d9eec158d6b9f34'
-    await Truth.instance.scripthashAccountIdExternal
-        .watch()
-        .skipWhile((element) =>
-            element.key !=
-            'dee2e493767ef0dbf1efe998c6cce6f877fd20ef8375498beaec1159178061b1')
-        .take(1)
-        .toList();
+    /// must go through reservoir or service instead...
+    //await Truth.instance.scripthashAccountIdExternal
+    //    .watch()
+    //    .skipWhile((element) =>
+    //        element.key !=
+    //        'dee2e493767ef0dbf1efe998c6cce6f877fd20ef8375498beaec1159178061b1')
+    //    .take(1)
+    //    .toList();
     var hashes = account.accountScripthashes;
     print('hashes: ${hashes.length}');
     var balances = await client.getBalances(hashes);

@@ -38,7 +38,7 @@ class AddressesService extends Service {
   }
 
   Balance calculateBalance(String accountId) {
-    return addresses.indices['account']!.getAll(accountId)!.fold(
+    return addresses.indices['account']!.getAll(accountId).fold(
         Balance(0, 0),
         (previousValue, element) => Balance(
             previousValue.confirmed + (element as Balance).confirmed,
