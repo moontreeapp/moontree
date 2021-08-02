@@ -15,7 +15,7 @@ void main() async {
   var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
 
   setUpAll(() async {
-    await tests.setup();
+    await tests.hiveSetup();
     //tests.listenTo(client);
     account = Account(bip39.mnemonicToSeed(await getMnemonic()), net: Net.Test);
   });

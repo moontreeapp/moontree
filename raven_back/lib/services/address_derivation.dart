@@ -7,16 +7,19 @@ import 'package:raven/records/node_exposure.dart';
 import 'package:raven/reservoir/change.dart';
 import 'package:raven/reservoir/reservoir.dart';
 import 'package:raven/reservoirs/address.dart';
+import 'package:raven/services/service.dart';
 import 'package:ravencoin/ravencoin.dart' show HDWallet;
 
-class AddressDerivationService {
+class AddressDerivationService extends Service {
   Reservoir accounts;
   AddressReservoir addresses;
   Reservoir histories;
   late StreamSubscription<Change> listener;
 
-  AddressDerivationService(this.accounts, this.addresses, this.histories);
+  AddressDerivationService(this.accounts, this.addresses, this.histories)
+      : super();
 
+  @override
   void init() {
     listener = accounts.changes.listen((change) {
       change.when(added: (added) {
@@ -31,6 +34,7 @@ class AddressDerivationService {
     });
   }
 
+  @override
   void deinit() {
     listener.cancel();
   }

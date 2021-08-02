@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:quiver/iterables.dart';
 import 'package:raven/models/balance.dart';
 import 'package:raven/records/node_exposure.dart';
-import 'package:raven/reservoir/change.dart';
 import 'package:raven/reservoirs/address.dart';
 import 'package:raven/services/address_derivation.dart'
-    show AccountsService, AddressDerivationService;
+    show AddressDerivationService;
+import 'package:raven/services/service.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 import '../buffer_count_window.dart';
@@ -38,7 +38,7 @@ class ScripthashData {
           e[3] as List<ScripthashUnspent>));
 }
 
-class AddressSubscriptionService {
+class AddressSubscriptionService extends Service {
   Reservoir accounts;
   AddressReservoir addresses;
   Reservoir histories;
@@ -50,8 +50,10 @@ class AddressSubscriptionService {
   StreamController<Address> addressesNeedingUpdate = StreamController();
 
   AddressSubscriptionService(this.accounts, this.addresses, this.histories,
-      this.client, this.addressDerivationService);
+      this.client, this.addressDerivationService)
+      : super();
 
+  @override
   void init() {
     subscribeToExistingAddresses();
 
@@ -75,6 +77,7 @@ class AddressSubscriptionService {
     }));
   }
 
+  @override
   void deinit() {
     for (var listener in listeners) {
       listener.cancel();
