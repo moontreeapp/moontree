@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:quiver/iterables.dart';
 import 'package:raven/models/balance.dart';
 import 'package:raven/records/node_exposure.dart';
-import 'package:raven/services/accounts.dart' show AccountsService;
+import 'package:raven/reservoir/change.dart';
+import 'package:raven/services/address_derivation.dart'
+    show AccountsService, AddressDerivationService;
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 import '../buffer_count_window.dart';
@@ -40,43 +42,55 @@ class AddressSubscriptionService {
   Reservoir addresses;
   Reservoir histories;
   RavenElectrumClient client;
-  AccountsService accountsService;
+  AddressDerivationService addressDerivationService;
+  Map<String, StreamSubscription> subscriptionHandles = {};
+  List<StreamSubscription> listeners = [];
 
   StreamController<Address> addressesNeedingUpdate = StreamController();
 
   AddressSubscriptionService(this.accounts, this.addresses, this.histories,
-      this.client, this.accountsService);
+      this.client, this.addressDerivationService);
 
   void init() {
-    addressesNeedingUpdate.stream
+    listeners.add(addressesNeedingUpdate.stream
         .bufferCountTimeout(10, Duration(milliseconds: 50))
         .listen((changedAddresses) async {
       saveScripthashData(await getScripthashData(changedAddresses));
       maybeDeriveNewAddresses(changedAddresses);
-    });
+    }));
 
-    addresses.changes.listen((change) {
+    listeners.add(addresses.changes.listen((change) {
       change.when(added: (added) {
         Address address = added.data;
         addressNeedsUpdating(address);
-        setupAddressSubscription(address);
+        subscribe(address);
       }, updated: (updated) {
         // pass - see initialize.dart
       }, removed: (removed) {
-        // pass - see initialize.dart
+        unsubscribe(removed.id as String);
       });
-    });
+    }));
+  }
+
+  void deinit() {
+    for (var listener in listeners) {
+      listener.cancel();
+    }
   }
 
   void addressNeedsUpdating(Address address) {
     addressesNeedingUpdate.sink.add(address);
   }
 
-  void setupAddressSubscription(Address address) {
+  void subscribe(Address address) {
     var stream = client.subscribeScripthash(address.scripthash);
-    stream.listen((status) {
+    subscriptionHandles[address.scripthash] = stream.listen((status) {
       addressNeedsUpdating(address);
     });
+  }
+
+  void unsubscribe(String scripthash) {
+    subscriptionHandles[scripthash]!.cancel();
   }
 
   Future<ScripthashData> getScripthashData(
@@ -125,8 +139,8 @@ class AddressSubscriptionService {
   }
 
   void maybeSaveNewAddress(Account account, NodeExposure exposure) {
-    var newAddress =
-        accountsService.maybeDeriveNextAddress(account.accountId, exposure);
+    var newAddress = addressDerivationService.maybeDeriveNextAddress(
+        account.accountId, exposure);
     if (newAddress != null) {
       addresses.save(newAddress);
     }

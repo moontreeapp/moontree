@@ -1,16 +1,20 @@
+import 'dart:async';
+
 import 'package:raven/models.dart';
+import 'package:raven/reservoir/change.dart';
 import 'package:raven/reservoir/reservoir.dart';
 import 'package:raven/reservoirs.dart';
 
 class AddressesService {
   Reservoir accounts;
   Reservoir addresses;
+  late StreamSubscription<Change> listener;
 
   AddressesService(this.accounts, this.addresses);
 
   void init() {
     //AddressSubscriptionService(accounts, addresses, client);
-    addresses.changes.listen((change) {
+    listener = addresses.changes.listen((change) {
       change.when(added: (added) {
         // pass - see AddressSubscriptionService
       }, updated: (updated) {
@@ -19,9 +23,12 @@ class AddressesService {
       }, removed: (removed) {
         // always triggered by account removal
         removeHistories(removed.id as String);
-        unsubscribe(removed.id as String);
       });
     });
+  }
+
+  void deinit() {
+    listener.cancel();
   }
 
   Balance calculateBalance(String accountId) {
@@ -43,9 +50,5 @@ class AddressesService {
     return histories.indices['scripthash']!
         .getAll(scripthash)
         .forEach((history) => histories.remove(history));
-  }
-
-  void unsubscribe(String scripthash) {
-    // TODO - where are subscriptions tracked?
   }
 }

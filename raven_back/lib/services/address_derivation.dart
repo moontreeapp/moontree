@@ -1,60 +1,45 @@
+import 'dart:async';
+
 import 'package:ordered_set/ordered_set.dart';
 import 'package:raven/models/address.dart';
 import 'package:raven/models/account.dart';
 import 'package:raven/records/node_exposure.dart';
+import 'package:raven/reservoir/change.dart';
 import 'package:raven/reservoir/reservoir.dart';
+import 'package:raven/reservoirs/addresses.dart';
 import 'package:ravencoin/ravencoin.dart' show HDWallet;
 
-class AddressLocation {
-  int index;
-  NodeExposure exposure;
-
-  AddressLocation(int locationIndex, NodeExposure locationExposure)
-      : index = locationIndex,
-        exposure = locationExposure;
-}
-
-class AccountsService {
+class AddressDerivationService {
   Reservoir accounts;
-  Reservoir addresses;
+  AddressReservoir addresses;
   Reservoir histories;
+  late StreamSubscription<Change> listener;
 
-  AccountsService(this.accounts, this.addresses, this.histories);
+  AddressDerivationService(this.accounts, this.addresses, this.histories);
 
   void init() {
-    accounts.changes.listen((change) {
+    listener = accounts.changes.listen((change) {
       change.when(added: (added) {
         Account account = added.data;
         addresses.save(account.deriveAddress(0, NodeExposure.Internal));
         addresses.save(account.deriveAddress(0, NodeExposure.External));
       }, updated: (updated) {
         /* Name or settings have changed */
-        // UI updates
-        // TODO
       }, removed: (removed) {
-        // remove electrum subscriptions (unsubscribe)
-        // how do we manage subscriptions if we don't remember them?
-        // Should they be a Reservoir? Or indexed on the client? Or other?
-        // TODO
-
-        removeAddresses(removed.id as String);
-
-        // UI updates
-        // TODO
+        addresses.removeAddresses(removed.id as String);
       });
     });
   }
 
-  void removeAddresses(String accountId) {
-    getAccountAddresses(accountId)!
-        .forEach((address) => addresses.remove(address));
+  void deinit() {
+    listener.cancel();
   }
 
   /// this function is used to determin if we need to derive new addresses
   /// based upon the idea that we want to retain a gap of empty histories
   Address? maybeDeriveNextAddress(String accountId, NodeExposure exposure) {
     var gap = 0;
-    var exposureAddresses = getAccountAddresses(accountId, exposure);
+    var exposureAddresses = addresses.byAccountAndExposure(accountId, exposure);
     exposureAddresses =
         (exposureAddresses == null) ? OrderedSet<Address>() : exposureAddresses;
     for (var exposureAddress in exposureAddresses) {
@@ -73,17 +58,6 @@ class AccountsService {
     }
   }
 
-  //// Account Scripthashes ////////////////////////////////////////////////////
-
-  /// returns account addresses in order
-  OrderedSet<Address>? getAccountAddresses(String accountId,
-      [NodeExposure? exposure]) {
-    return addresses
-            .indices[(exposure == null) ? 'account' : 'account-exposure']!
-            .getAll((exposure == null) ? accountId : '$accountId:$exposure')
-        as OrderedSet<Address>;
-  }
-
   /// returns the next internal or external node missing a history
   HDWallet getNextEmptyWallet(String accountId,
       [NodeExposure exposure = NodeExposure.Internal]) {
@@ -93,7 +67,7 @@ class AccountsService {
         : NodeExposure.External;
     var account = accounts.get(accountId)!;
     var i = 0;
-    for (var address in getAccountAddresses(accountId, exposure)!) {
+    for (var address in addresses.byAccountAndExposure(accountId, exposure)!) {
       if (histories.indices['scripthash']!.getAll(address.scripthash).isEmpty) {
         return account.deriveWallet(i, exposure);
       }
@@ -101,24 +75,5 @@ class AccountsService {
     }
     // this shouldn't happen - if so we should trigger a new batch??
     return account.deriveWallet(i, exposure);
-  }
-
-  AddressLocation? getAddressLocationOf(String scripthash, String accountId) {
-    var i = 0;
-    for (var address
-        in getAccountAddresses(accountId, NodeExposure.Internal)!) {
-      if (address.scripthash == scripthash) {
-        return AddressLocation(i, NodeExposure.Internal);
-      }
-      i = i + 1;
-    }
-    i = 0;
-    for (var address
-        in getAccountAddresses(accountId, NodeExposure.External)!) {
-      if (address.scripthash == scripthash) {
-        return AddressLocation(i, NodeExposure.External);
-      }
-      i = i + 1;
-    }
   }
 }

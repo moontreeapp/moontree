@@ -4,7 +4,7 @@ typedef GetKey<B> = B Function(dynamic);
 typedef Compare<B> = int Function(B, B);
 
 int defaultCompare<B>(B b1, B b2) {
-  return b1.hashCode.compareTo(b2.hashCode);
+  return b1.toString().compareTo(b2.toString());
 }
 
 class Index<Key, Model> {
