@@ -4,11 +4,11 @@ import 'change.dart';
 import 'reservoir.dart';
 import 'source.dart';
 
-class HiveBoxSource<Record, Model> extends Source<Record, Model> {
+class HiveSource<Record, Model> extends Source<Record, Model> {
   final String name;
   late final Box<Record> box;
 
-  HiveBoxSource(this.name);
+  HiveSource(this.name);
 
   @override
   Stream<Change> watch(Reservoir<Record, Model> reservoir) {
