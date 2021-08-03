@@ -186,6 +186,9 @@
                 <mxCell id="209" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;flipH=1;rotation=-90;" vertex="1" parent="1">
                     <mxGeometry x="105" y="231.25" width="47.5" height="207.5" as="geometry"/>
                 </mxCell>
+                <mxCell id="212" value="Addresses - do we want a different type for&amp;nbsp;" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="910" width="770" height="160" as="geometry"/>
+                </mxCell>
             </root>
         </mxGraphModel>
     </diagram>
