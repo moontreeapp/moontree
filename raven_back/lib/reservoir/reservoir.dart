@@ -4,7 +4,7 @@ import 'change.dart';
 import 'index.dart';
 import 'source.dart';
 
-export 'hive_box_source.dart';
+export 'hive_source.dart';
 
 typedef Mapper<Record, Model> = Model Function(Record);
 
