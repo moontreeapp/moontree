@@ -29,8 +29,7 @@ extension BufferCountWindowExtensions<T> on Stream<T> {
   /// a) the number of elements reaches `count`, OR
   /// b) a periodic `timeout` occurs
   Stream<List<T>> bufferCountTimeout(int count, Duration timeout,
-      {ignoreEmptyWindows = true}) {
-    transform(BufferCountWindowStreamTransformer(
-        count, (_) => Stream.periodic(timeout), 0, ignoreEmptyWindows));
-  }
+          {ignoreEmptyWindows = true}) =>
+      transform(BufferCountWindowStreamTransformer(
+          count, (_) => Stream.periodic(timeout), 0, ignoreEmptyWindows));
 }
