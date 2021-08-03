@@ -1,38 +1,35 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'account.dart';
+part of 'leader_wallet.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class AccountAdapter extends TypeAdapter<Account> {
+class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
   @override
-  final int typeId = 0;
+  final int typeId = 6;
 
   @override
-  Account read(BinaryReader reader) {
+  LeaderWallet read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Account(
-      fields[0] as String,
-      (fields[1] as List).cast<String>(),
-      (fields[2] as List).cast<String>(),
+    return LeaderWallet(
+      fields[0] as Uint8List,
+      net: fields[1] as Net,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Account obj) {
+  void write(BinaryWriter writer, LeaderWallet obj) {
     writer
-      ..writeByte(3)
-      ..writeByte(0)
-      ..write(obj.name)
-      ..writeByte(1)
-      ..write(obj.leaderWalletIds)
       ..writeByte(2)
-      ..write(obj.privateKeyWalletIds);
+      ..writeByte(0)
+      ..write(obj.encryptedSeed)
+      ..writeByte(1)
+      ..write(obj.net);
   }
 
   @override
@@ -41,7 +38,7 @@ class AccountAdapter extends TypeAdapter<Account> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AccountAdapter &&
+      other is LeaderWalletAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

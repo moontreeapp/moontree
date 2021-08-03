@@ -4,3 +4,4 @@ export 'records/balance.dart';
 export 'records/history.dart';
 export 'records/net.dart';
 export 'records/node_exposure.dart';
+export 'records/leader_wallet.dart';

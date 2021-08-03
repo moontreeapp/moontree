@@ -8,7 +8,7 @@ import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:raven/hive_helper.dart';
 import 'package:raven/services/service.dart';
 import 'package:raven/utils/env.dart' as env;
-import 'package:raven/models/account.dart';
+import 'package:raven/models/leader_wallet.dart';
 import 'package:raven/records/net.dart';
 import 'package:raven/raven.dart';
 import 'package:raven/reservoirs.dart';
@@ -57,9 +57,19 @@ Future deleteDatabase() async {
 
 Future<Generated> generate() async {
   await hiveSetup();
-  var reservoirs = makeReservoirs();
+  makeReservoirs();
+  var reservoirs = {
+    'accounts': accounts,
+    'addresses': addresses,
+    'histories': histories
+  };
   var client = await generateClient('testnet.rvn.rocks', 50002);
-  var services = initServices(client);
+  initServices(client);
+  var services = {
+    'addressDerivationService': addressDerivationService as Service,
+    'addressSubscriptionService': addressSubscriptionService as Service,
+    'addressesService': addressesService as Service,
+  };
   var phrase = await env.getMnemonic();
   var account = Account(bip39.mnemonicToSeed(phrase), net: Net.Test);
   reservoirs['accounts']!.save(account);

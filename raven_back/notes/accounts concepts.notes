@@ -1,0 +1,36 @@
+Old:
+
+Account(s) (seed, name)
+  - list of internal wallets
+  - list of external wallets
+
+New:
+
+imported wallets technically out here - UI shown in specified accounts...
+
+- Account(s) (child, list) (seed, name) (could be other imports like wif (sweep), disconected from Master seed)
+
+HDWallet Hierarchy:
+  Master (primary seed) (hidden from user)
+  - (accounts layer here, virtual)
+    Imported wallets (virtually assigned to account) (hidden from user)
+    Leader Wallet (child seed) (hidden from user)
+      list of internal tx wallets
+      list of external tx wallets
+
+UI:
+  Account(s) (list) (name)
+    Leader Wallets (hd)
+    Imported WIF Wallets
+    Imported Leader Wallets (hd)
+
+
+
+derivation path:
+
+HDWALLET seed -> intrenal wallet key pair 
+Primary seed
+ "/'0/1/0" -> Account
+                "/'0/1/0" -> Leader Wallet 1
+ "/'0/1/1"      -> Leader Wallet 1
+ "/'0/1/2"      -> Leader Wallet 2

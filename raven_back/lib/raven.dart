@@ -2,7 +2,6 @@ import 'package:raven/reservoirs.dart';
 import 'package:raven/services/address_derivation.dart';
 import 'package:raven/services/address_subscription.dart';
 import 'package:raven/services/addresses.dart';
-import 'package:raven/services/service.dart';
 import 'package:raven/subjects/settings.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
@@ -38,16 +37,11 @@ void deinitServices() {
   addressesService?.deinit();
 }
 
-Map<String, Service> initServices(RavenElectrumClient client) {
+void initServices(RavenElectrumClient client) {
   addressDerivationService =
       AddressDerivationService(accounts, addresses, histories)..init();
   addressSubscriptionService = AddressSubscriptionService(
       accounts, addresses, histories, client, addressDerivationService!)
     ..init();
   addressesService = AddressesService(accounts, addresses, histories)..init();
-  return {
-    'addressDerivationService': addressDerivationService as Service,
-    'addressSubscriptionService': addressSubscriptionService as Service,
-    'addressesService': addressesService as Service,
-  };
 }
