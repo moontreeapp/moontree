@@ -2,9 +2,11 @@ Account 0
 Address 1
 Balance 2
 History 3
-LeaderWallet 6
 Net 4
 NodeExposure 5
+LeaderWallet 6
+ImportedDerivedWallet 7
+ImportedPrivateKeyWallet 8
 ScripthashBalance 15
 ScripthashHistory 16 
 ScripthashUnspent 17

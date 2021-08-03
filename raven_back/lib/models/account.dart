@@ -29,6 +29,6 @@ class Account extends Equatable {
   @override
   List<Object?> get props => [name];
 
-  //int get balance => for each wallet in both lists, sum balance;
+  //int get balance => for each wallet in every list, sum balance;
 
 }

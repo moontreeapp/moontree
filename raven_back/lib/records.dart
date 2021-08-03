@@ -5,3 +5,5 @@ export 'records/history.dart';
 export 'records/net.dart';
 export 'records/node_exposure.dart';
 export 'records/leader_wallet.dart';
+export 'records/imported_hd_wallet.dart';
+export 'records/imported_key_wallet.dart';
