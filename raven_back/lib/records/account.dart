@@ -13,13 +13,18 @@ class Account with HiveObjectMixin, EquatableMixin {
   List<String> leaderWalletIds;
 
   @HiveField(2)
+  List<String> derivedWalletIds;
+
+  @HiveField(3)
   List<String> privateKeyWalletIds;
 
-  Account(this.name, this.leaderWalletIds, this.privateKeyWalletIds);
+  Account(this.name, this.leaderWalletIds, this.derivedWalletIds,
+      this.privateKeyWalletIds);
 
   @override
   List<Object> get props => [name];
 
   @override
-  String toString() => 'Account($name, $leaderWalletIds, $privateKeyWalletIds)';
+  String toString() =>
+      'Account($name, $leaderWalletIds, $derivedWalletIds, $privateKeyWalletIds)';
 }

@@ -20,18 +20,21 @@ class AccountAdapter extends TypeAdapter<Account> {
       fields[0] as String,
       (fields[1] as List).cast<String>(),
       (fields[2] as List).cast<String>(),
+      (fields[3] as List).cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Account obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
       ..write(obj.leaderWalletIds)
       ..writeByte(2)
+      ..write(obj.derivedWalletIds)
+      ..writeByte(3)
       ..write(obj.privateKeyWalletIds);
   }
 
