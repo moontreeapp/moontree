@@ -13,8 +13,9 @@ class AddressLocation {
 }
 
 class AddressReservoir<Record, Model> extends Reservoir {
-  AddressReservoir(source, getPrimaryKey, [mapToModel, mapToRecord])
-      : super(source, getPrimaryKey, [mapToModel, mapToRecord]) {
+  AddressReservoir([source, mapToModel, mapToRecord])
+      : super(source ?? HiveBoxSource('addresses'),
+            (address) => address.scripthash, [mapToModel, mapToRecord]) {
     addIndex('account', (address) => address.accountId);
     addIndex('account-exposure',
         (address) => '${address.accountId}:${address.exposure}');

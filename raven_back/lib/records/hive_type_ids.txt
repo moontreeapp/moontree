@@ -1,3 +1,4 @@
+Master 0
 Account 0
 Address 1
 Balance 2
@@ -7,7 +8,3 @@ NodeExposure 5
 LeaderWallet 6
 ImportedDerivedWallet 7
 ImportedPrivateKeyWallet 8
-ScripthashBalance 15
-ScripthashHistory 16 
-ScripthashUnspent 17
-SortedListAdapter 18

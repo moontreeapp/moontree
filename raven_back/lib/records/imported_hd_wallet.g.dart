@@ -8,7 +8,7 @@ part of 'imported_hd_wallet.dart';
 
 class ImportedDerivedWalletAdapter extends TypeAdapter<ImportedDerivedWallet> {
   @override
-  final int typeId = 7;
+  final int typeId = 4;
 
   @override
   ImportedDerivedWallet read(BinaryReader reader) {

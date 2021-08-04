@@ -8,7 +8,7 @@ part of 'leader_wallet.dart';
 
 class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
   @override
-  final int typeId = 6;
+  final int typeId = 2;
 
   @override
   LeaderWallet read(BinaryReader reader) {

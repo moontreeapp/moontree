@@ -7,7 +7,7 @@ import 'net.dart';
 
 part 'imported_key_wallet.g.dart';
 
-@HiveType(typeId: 8)
+@HiveType(typeId: 5)
 class ImportedPrivateKeyWallet with HiveObjectMixin, EquatableMixin {
   @HiveField(0)
   Uint8List encryptedPrivateKey;

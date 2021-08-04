@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 
 part 'balance.g.dart';
 
-@HiveType(typeId: 2)
+@HiveType(typeId: 6)
 class Balance {
   @HiveField(0)
   int confirmed;

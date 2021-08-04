@@ -8,7 +8,7 @@ part of 'net.dart';
 
 class NetAdapter extends TypeAdapter<Net> {
   @override
-  final int typeId = 4;
+  final int typeId = 8;
 
   @override
   Net read(BinaryReader reader) {

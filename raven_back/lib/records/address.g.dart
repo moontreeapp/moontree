@@ -8,7 +8,7 @@ part of 'address.dart';
 
 class AddressAdapter extends TypeAdapter<Address> {
   @override
-  final int typeId = 1;
+  final int typeId = 3;
 
   @override
   Address read(BinaryReader reader) {
@@ -36,7 +36,7 @@ class AddressAdapter extends TypeAdapter<Address> {
       ..writeByte(1)
       ..write(obj.address)
       ..writeByte(2)
-      ..write(obj.accountId)
+      ..write(obj.walletId)
       ..writeByte(3)
       ..write(obj.hdIndex)
       ..writeByte(4)

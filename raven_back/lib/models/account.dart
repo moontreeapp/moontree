@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:equatable/equatable.dart';
 import 'package:raven/records.dart' as records;
 
@@ -29,6 +31,20 @@ class Account extends Equatable {
   @override
   List<Object?> get props => [name];
 
-  //int get balance => for each wallet in every list, sum balance;
+  // in usd ( could have multiple assets )
+  double get balanceUSD {
+    //for each wallet in every list, sum each asset balance (including raven)
+    //for each asset, convert to USD, sum
+    return 0.0;
+  }
 
+  double get balanceRVN {
+    //for each wallet in every list, sum balance of RVN
+    return 0.0;
+  }
+
+  double getBalanceOf(String ticker) {
+    //for each wallet in every list, sum balance of that asset
+    return 0.0;
+  }
 }

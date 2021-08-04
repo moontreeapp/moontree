@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 
 part 'history.g.dart';
 
-@HiveType(typeId: 3)
+@HiveType(typeId: 7)
 class History with EquatableMixin {
   @HiveField(0)
   String accountId;

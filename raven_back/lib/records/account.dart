@@ -4,7 +4,7 @@ import 'package:hive/hive.dart';
 
 part 'account.g.dart';
 
-@HiveType(typeId: 0)
+@HiveType(typeId: 1)
 class Account with HiveObjectMixin, EquatableMixin {
   @HiveField(0)
   String name;

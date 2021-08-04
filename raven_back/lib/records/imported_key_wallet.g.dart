@@ -9,7 +9,7 @@ part of 'imported_key_wallet.dart';
 class ImportedPrivateKeyWalletAdapter
     extends TypeAdapter<ImportedPrivateKeyWallet> {
   @override
-  final int typeId = 8;
+  final int typeId = 5;
 
   @override
   ImportedPrivateKeyWallet read(BinaryReader reader) {

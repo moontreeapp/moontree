@@ -1,3 +1,4 @@
+export 'records/master_wallet.dart';
 export 'records/account.dart';
 export 'records/address.dart';
 export 'records/balance.dart';

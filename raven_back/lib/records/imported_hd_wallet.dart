@@ -7,7 +7,7 @@ import 'net.dart';
 
 part 'imported_hd_wallet.g.dart';
 
-@HiveType(typeId: 7)
+@HiveType(typeId: 4)
 class ImportedDerivedWallet with HiveObjectMixin, EquatableMixin {
   @HiveField(0)
   Uint8List encryptedSeed;
