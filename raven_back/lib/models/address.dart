@@ -12,19 +12,34 @@ class Address {
   late Net net;
   late Balance? balance;
 
-  Address(this.scripthash, this.address, this.walletId, this.hdIndex,
-      {this.exposure = NodeExposure.External,
+  Address(
+      {required this.scripthash,
+      required this.address,
+      required this.walletId,
+      required this.hdIndex,
+      this.exposure = NodeExposure.External,
       this.net = Net.Test,
       this.balance});
 
   factory Address.fromRecord(records.Address record) {
     return Address(
-        record.scripthash, record.address, record.walletId, record.hdIndex,
-        exposure: record.exposure, net: record.net, balance: record.balance);
+        scripthash: record.scripthash,
+        address: record.address,
+        walletId: record.walletId,
+        hdIndex: record.hdIndex,
+        exposure: record.exposure,
+        net: record.net,
+        balance: record.balance);
   }
 
   records.Address toRecord() {
-    return records.Address(scripthash, address, walletId, hdIndex,
-        exposure: exposure, net: net, balance: balance);
+    return records.Address(
+        scripthash: scripthash,
+        address: address,
+        walletId: walletId,
+        hdIndex: hdIndex,
+        exposure: exposure,
+        net: net,
+        balance: balance);
   }
 }

@@ -9,22 +9,19 @@ class Account with HiveObjectMixin, EquatableMixin {
   @HiveField(0)
   String name;
 
-  @HiveField(1)
-  List<String> leaderWalletIds;
+  /// presumed
+  //@HiveField(1)
+  //Map<String, dynamic> settings;
 
-  @HiveField(2)
-  List<String> derivedWalletIds;
+  /// presumed
+  //@HiveField(2)
+  //Map<String, dynamic> metadata;
 
-  @HiveField(3)
-  List<String> privateKeyWalletIds;
-
-  Account(this.name, this.leaderWalletIds, this.derivedWalletIds,
-      this.privateKeyWalletIds);
+  Account({required this.name});
 
   @override
   List<Object> get props => [name];
 
   @override
-  String toString() =>
-      'Account($name, $leaderWalletIds, $derivedWalletIds, $privateKeyWalletIds)';
+  String toString() => 'Account($name)';
 }

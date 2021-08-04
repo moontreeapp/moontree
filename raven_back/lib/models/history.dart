@@ -3,40 +3,59 @@ import 'package:raven_electrum_client/raven_electrum_client.dart';
 import '../records.dart' as records;
 
 class History {
-  final String accountId;
+  final String walletId;
   final String scripthash;
   final int height;
   final String txHash;
   late int? txPos;
   late int? value;
 
-  History(this.accountId, this.scripthash, this.height, this.txHash,
-      {this.txPos, this.value});
+  History(
+      {required this.walletId,
+      required this.scripthash,
+      required this.height,
+      required this.txHash,
+      this.txPos,
+      this.value});
 
   factory History.fromScripthashHistory(
-      String accountId, String scripthash, ScripthashHistory history) {
+      String walletId, String scripthash, ScripthashHistory history) {
     return History(
-      accountId,
-      scripthash,
-      history.height,
-      history.txHash,
+      walletId: walletId,
+      scripthash: scripthash,
+      height: history.height,
+      txHash: history.txHash,
     );
   }
 
   factory History.fromScripthashUnspent(
-      String accountId, String scripthash, ScripthashUnspent unspent) {
-    return History(accountId, scripthash, unspent.height, unspent.txHash,
-        txPos: unspent.txPos, value: unspent.value);
+      String walletId, String scripthash, ScripthashUnspent unspent) {
+    return History(
+        walletId: walletId,
+        scripthash: scripthash,
+        height: unspent.height,
+        txHash: unspent.txHash,
+        txPos: unspent.txPos,
+        value: unspent.value);
   }
 
   factory History.fromRecord(records.History record) {
     return History(
-        record.accountId, record.scripthash, record.height, record.txHash,
-        txPos: record.txPos, value: record.value);
+        walletId: record.walletId,
+        scripthash: record.scripthash,
+        height: record.height,
+        txHash: record.txHash,
+        txPos: record.txPos,
+        value: record.value);
   }
 
   records.History toRecord() {
-    return records.History(accountId, scripthash, height, txHash,
-        txPos: txPos, value: value);
+    return records.History(
+        walletId: walletId,
+        scripthash: scripthash,
+        height: height,
+        txHash: txHash,
+        txPos: txPos,
+        value: value);
   }
 }

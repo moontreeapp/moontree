@@ -133,26 +133,26 @@ class AddressSubscriptionService extends Service {
     var newHistories = [];
     for (var history in row.history) {
       newHistories.add(History.fromScripthashHistory(
-          row.address.accountId, row.address.scripthash, history));
+          row.address.walletId, row.address.scripthash, history));
     }
     for (var unspent in row.unspent) {
       newHistories.add(History.fromScripthashUnspent(
-          row.address.accountId, row.address.scripthash, unspent));
+          row.address.walletId, row.address.scripthash, unspent));
     }
     return newHistories;
   }
 
   void maybeDeriveNewAddresses(List<Address> changedAddresses) async {
     for (var address in changedAddresses) {
-      Account account = accounts.data[address.accountId];
-      maybeSaveNewAddress(account, NodeExposure.Internal);
-      maybeSaveNewAddress(account, NodeExposure.External);
+      LeaderWallet leaderWallet = accounts.data[address.walletId];
+      maybeSaveNewAddress(leaderWallet, NodeExposure.Internal);
+      maybeSaveNewAddress(leaderWallet, NodeExposure.External);
     }
   }
 
-  void maybeSaveNewAddress(Account account, NodeExposure exposure) {
+  void maybeSaveNewAddress(LeaderWallet leaderWallet, NodeExposure exposure) {
     var newAddress = addressDerivationService.maybeDeriveNextAddress(
-        account.accountId, exposure);
+        leaderWallet.id, exposure);
     if (newAddress != null) {
       addresses.save(newAddress);
     }

@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:convert/convert.dart' show hex;
 import 'package:raven/records/node_exposure.dart';
-import 'package:raven/utils/derivation_path.dart';
 import 'package:raven/models/wallet.dart' show Wallet;
 import 'package:ravencoin/ravencoin.dart' as ravencoin;
 
@@ -12,7 +11,7 @@ import '../records.dart' as records;
 import '../records/net.dart';
 import '../models.dart' as models;
 
-extension Scripthash on ravencoin.HDWallet {
+extension ScripthashOnWallet on ravencoin.Wallet {
   Uint8List get outputScript {
     return ravencoin.Address.addressToOutputScript(address!, network)!;
   }
@@ -29,60 +28,54 @@ extension Scripthash on ravencoin.HDWallet {
   }
 }
 
-class CacheEmpty implements Exception {
-  String cause;
-  CacheEmpty([this.cause = 'Error! Please deriveNodes first.']);
-}
-
-class InsufficientFunds implements Exception {
-  String cause;
-  InsufficientFunds([this.cause = 'Error! Insufficient funds.']);
-}
-
-const DEFAULT_CIPHER = NoCipher();
-
-class LeaderWallet extends Wallet {
-  final Uint8List encryptedSeed;
-  late final ravencoin.HDWallet seededWallet;
+class SingleWallet extends Wallet {
+  final Uint8List encryptedPrivateKey;
+  late final ravencoin.Wallet seededWallet;
   late final bool isDerived;
   late final String id; //address
 
-  LeaderWallet(
-      {required seed,
+  SingleWallet(
+      {required Uint8List privateKey,
       net = Net.Test,
-      cipher = const NoCipher(),
-      isDerived = false})
-      : encryptedSeed = cipher.encrypt(seed),
+      cipher = const NoCipher()})
+      : encryptedPrivateKey = cipher.encrypt(privateKey),
         super(net: net, cipher: cipher) {
-    seededWallet = ravencoin.HDWallet.fromSeed(seed, network: network);
+    isDerived = false;
+    seededWallet = ravencoin.Wallet(
+        ravencoin.ECPair.fromPrivateKey(privateKey,
+            network: network, compressed: true),
+        ravencoin.P2PKH(data: ravencoin.PaymentData(), network: network),
+        network);
     id = seededWallet.address!;
   }
 
   @override
   List<Object?> get props => [id];
 
-  factory LeaderWallet.fromEncryptedSeed(encryptedSeed,
+  factory SingleWallet.fromEncryptedPrivateKey(encryptedPrivateKey,
       {net = Net.Test, cipher = const NoCipher()}) {
-    return LeaderWallet(
-        seed: cipher.decrypt(encryptedSeed), net: net, cipher: cipher);
+    return SingleWallet(
+        privateKey: cipher.decrypt(encryptedPrivateKey),
+        net: net,
+        cipher: cipher);
   }
 
-  factory LeaderWallet.fromRecord(records.Wallet record,
+  factory SingleWallet.fromRecord(records.Wallet record,
       {cipher = const NoCipher()}) {
-    return LeaderWallet(
-        seed: cipher.decrypt(record.encrypted),
+    return SingleWallet(
+        privateKey: cipher.decrypt(record.encrypted),
         net: record.net,
         cipher: cipher);
   }
 
   records.Wallet toRecord() {
-    return records.Wallet(isHD: true, encrypted: encryptedSeed, net: net);
+    return records.Wallet(isHD: true, encrypted: encryptedPrivateKey, net: net);
   }
 
   //// getters /////////////////////////////////////////////////////////////////
 
-  Uint8List get seed {
-    return cipher.decrypt(encryptedSeed);
+  Uint8List get privateKey {
+    return cipher.decrypt(encryptedPrivateKey);
   }
 
   //String get mnemonic {
@@ -94,10 +87,9 @@ class LeaderWallet extends Wallet {
 
   //// Derive Wallet ///////////////////////////////////////////////////////////
 
-  ravencoin.HDWallet deriveWallet(int hdIndex,
+  ravencoin.Wallet deriveWallet(int hdIndex,
       [exposure = NodeExposure.External]) {
-    return seededWallet.derivePath(
-        getDerivationPath(hdIndex, exposure: exposure, wif: network.wif));
+    return seededWallet;
   }
 
   models.Address deriveAddress(int hdIndex, records.NodeExposure exposure) {
@@ -111,8 +103,5 @@ class LeaderWallet extends Wallet {
         net: net);
   }
 
-  models.LeaderWallet deriveLeader(int hdIndex, records.NodeExposure exposure) {
-    var wallet = deriveWallet(hdIndex, exposure);
-    return models.LeaderWallet(seed: wallet.seed, net: net, cipher: cipher);
-  }
+  //// Sending Functionality ///////////////////////////////////////////////////
 }

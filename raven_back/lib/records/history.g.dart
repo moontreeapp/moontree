@@ -8,7 +8,7 @@ part of 'history.dart';
 
 class HistoryAdapter extends TypeAdapter<History> {
   @override
-  final int typeId = 7;
+  final int typeId = 4;
 
   @override
   History read(BinaryReader reader) {
@@ -17,10 +17,10 @@ class HistoryAdapter extends TypeAdapter<History> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return History(
-      fields[0] as String,
-      fields[1] as String,
-      fields[2] as int,
-      fields[3] as String,
+      walletId: fields[0] as String,
+      scripthash: fields[1] as String,
+      height: fields[2] as int,
+      txHash: fields[3] as String,
       txPos: fields[4] as int?,
       value: fields[5] as int?,
     );
@@ -31,7 +31,7 @@ class HistoryAdapter extends TypeAdapter<History> {
     writer
       ..writeByte(6)
       ..writeByte(0)
-      ..write(obj.accountId)
+      ..write(obj.walletId)
       ..writeByte(1)
       ..write(obj.scripthash)
       ..writeByte(2)

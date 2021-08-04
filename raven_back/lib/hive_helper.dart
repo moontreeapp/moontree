@@ -13,6 +13,10 @@ class HiveHelper {
   }
 
   static void registerAdapters() {
+    // finish...
+    Hive.registerAdapter(AccountAdapter());
+    Hive.registerAdapter(AccountAdapter());
+    Hive.registerAdapter(AccountAdapter());
     Hive.registerAdapter(AccountAdapter());
     Hive.registerAdapter(AddressAdapter());
     Hive.registerAdapter(BalanceAdapter());
@@ -26,18 +30,10 @@ class HiveHelper {
     await Hive.openBox<Account>('accounts');
     await Hive.openBox<Address>('addresses');
 
-    /* replaced by addresses ... */
-    await Hive.openBox('scripthashAccountIdInternal');
-    await Hive.openBox('scripthashAccountIdExternal');
-    await Hive.openBox('scripthashOrderInternal');
-    await Hive.openBox('scripthashOrderExternal');
-    /* ... */
-
     /* replaced by reports ... */
     await Hive.openBox('balances');
     await Hive.openBox('histories');
     await Hive.openBox('unspents');
-    await Hive.openBox('accountUnspents'); // replaced by indexing
     /* ... */
   }
 

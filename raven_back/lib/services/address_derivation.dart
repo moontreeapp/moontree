@@ -23,9 +23,9 @@ class AddressDerivationService extends Service {
   void init() {
     listener = accounts.changes.listen((change) {
       change.when(added: (added) {
-        Account account = added.data;
-        addresses.save(account.deriveAddress(0, NodeExposure.Internal));
-        addresses.save(account.deriveAddress(0, NodeExposure.External));
+        LeaderWallet leaderWallet = added.data;
+        addresses.save(leaderWallet.deriveAddress(0, NodeExposure.Internal));
+        addresses.save(leaderWallet.deriveAddress(0, NodeExposure.External));
       }, updated: (updated) {
         /* Name or settings have changed */
       }, removed: (removed) {
@@ -41,9 +41,9 @@ class AddressDerivationService extends Service {
 
   /// this function is used to determin if we need to derive new addresses
   /// based upon the idea that we want to retain a gap of empty histories
-  Address? maybeDeriveNextAddress(String accountId, NodeExposure exposure) {
+  Address? maybeDeriveNextAddress(String walletId, NodeExposure exposure) {
     var gap = 0;
-    var exposureAddresses = addresses.byAccountAndExposure(accountId, exposure);
+    var exposureAddresses = addresses.byAccountAndExposure(walletId, exposure);
     exposureAddresses =
         (exposureAddresses == null) ? OrderedSet<Address>() : exposureAddresses;
     for (var exposureAddress in exposureAddresses) {
@@ -57,21 +57,21 @@ class AddressDerivationService extends Service {
     // TODO fix get null thing
     if (gap < 10) {
       return accounts
-          .get(accountId)
+          .get(walletId)
           .deriveAddress(exposureAddresses.length, exposure);
     }
   }
 
   /// returns the next internal or external node missing a history
-  HDWallet getNextEmptyWallet(String accountId,
+  HDWallet getNextEmptyWallet(String walletId,
       [NodeExposure exposure = NodeExposure.Internal]) {
     // ensure valid exposure
     exposure = exposure == NodeExposure.Internal
         ? NodeExposure.Internal
         : NodeExposure.External;
-    var account = accounts.get(accountId)!;
+    var account = accounts.get(walletId)!;
     var i = 0;
-    for (var address in addresses.byAccountAndExposure(accountId, exposure)!) {
+    for (var address in addresses.byAccountAndExposure(walletId, exposure)!) {
       if (histories.indices['scripthash']!.getAll(address.scripthash).isEmpty) {
         return account.deriveWallet(i, exposure);
       }

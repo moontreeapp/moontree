@@ -24,7 +24,7 @@ class AddressesService extends Service {
       }, updated: (updated) {
         Address address = updated.data;
         accounts.setBalance(
-            address.accountId, calculateBalance(address.accountId));
+            address.walletId, calculateBalance(address.walletId));
       }, removed: (removed) {
         // always triggered by account removal
         histories.removeHistories(removed.id as String);
@@ -37,11 +37,11 @@ class AddressesService extends Service {
     listener.cancel();
   }
 
-  Balance calculateBalance(String accountId) {
-    return addresses.indices['account']!.getAll(accountId).fold(
-        Balance(0, 0),
+  Balance calculateBalance(String walletId) {
+    return addresses.indices['account']!.getAll(walletId).fold(
+        Balance(confirmed: 0, unconfirmed: 0),
         (previousValue, element) => Balance(
-            previousValue.confirmed + (element as Balance).confirmed,
-            previousValue.unconfirmed + element.unconfirmed));
+            confirmed: previousValue.confirmed + (element as Balance).confirmed,
+            unconfirmed: previousValue.unconfirmed + element.unconfirmed));
   }
 }

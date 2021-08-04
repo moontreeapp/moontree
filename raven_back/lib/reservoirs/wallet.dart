@@ -1,6 +1,12 @@
+import 'package:raven/models.dart';
 import 'package:raven/reservoir/reservoir.dart';
 
-class WalletReservoir<Record, Model> extends Reservoir {
-  WalletReservoir(source, [mapToModel, mapToRecord])
-      : super(source, (wallet) => wallet.id, [mapToModel, mapToRecord]);
+class WalletReservoir extends Reservoir {
+  WalletReservoir([source])
+      : super(source ?? HiveBoxSource('wallets'), (wallet) => wallet.id) {
+    mapToModel = (record) => (record.isHD
+        ? LeaderWallet.fromRecord(record)
+        : SingleWallet.fromRecord(record));
+    mapToRecord = (model) => (model as dynamic).toRecord();
+  }
 }

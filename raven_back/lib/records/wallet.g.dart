@@ -1,34 +1,37 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'master_wallet.dart';
+part of 'wallet.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class MasterWalletAdapter extends TypeAdapter<MasterWallet> {
+class WalletAdapter extends TypeAdapter<Wallet> {
   @override
-  final int typeId = 1;
+  final int typeId = 0;
 
   @override
-  MasterWallet read(BinaryReader reader) {
+  Wallet read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return MasterWallet(
-      fields[0] as Uint8List,
-      net: fields[1] as Net,
+    return Wallet(
+      isHD: fields[0] as bool,
+      encrypted: fields[1] as Uint8List,
+      net: fields[2] as Net,
     );
   }
 
   @override
-  void write(BinaryWriter writer, MasterWallet obj) {
+  void write(BinaryWriter writer, Wallet obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
-      ..write(obj.encryptedSeed)
+      ..write(obj.isHD)
       ..writeByte(1)
+      ..write(obj.encrypted)
+      ..writeByte(2)
       ..write(obj.net);
   }
 
@@ -38,7 +41,7 @@ class MasterWalletAdapter extends TypeAdapter<MasterWallet> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is MasterWalletAdapter &&
+      other is WalletAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

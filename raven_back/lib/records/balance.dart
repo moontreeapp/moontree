@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 
 part 'balance.g.dart';
 
-@HiveType(typeId: 6)
+@HiveType(typeId: 3)
 class Balance {
   @HiveField(0)
   int confirmed;
@@ -10,8 +10,8 @@ class Balance {
   @HiveField(1)
   int unconfirmed;
 
-  Balance(
-    this.confirmed,
-    this.unconfirmed,
-  );
+  Balance({
+    required this.confirmed,
+    required this.unconfirmed,
+  });
 }

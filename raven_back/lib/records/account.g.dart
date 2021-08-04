@@ -17,25 +17,16 @@ class AccountAdapter extends TypeAdapter<Account> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Account(
-      fields[0] as String,
-      (fields[1] as List).cast<String>(),
-      (fields[2] as List).cast<String>(),
-      (fields[3] as List).cast<String>(),
+      name: fields[0] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Account obj) {
     writer
-      ..writeByte(4)
-      ..writeByte(0)
-      ..write(obj.name)
       ..writeByte(1)
-      ..write(obj.leaderWalletIds)
-      ..writeByte(2)
-      ..write(obj.derivedWalletIds)
-      ..writeByte(3)
-      ..write(obj.privateKeyWalletIds);
+      ..writeByte(0)
+      ..write(obj.name);
   }
 
   @override

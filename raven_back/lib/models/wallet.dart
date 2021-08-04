@@ -1,13 +1,13 @@
 import 'package:equatable/equatable.dart';
+import 'package:raven/cipher.dart';
 import 'package:raven/records.dart';
 import 'package:ravencoin/ravencoin.dart' show NetworkType;
 
-class Wallet extends Equatable {
+abstract class Wallet extends Equatable {
   final Net net;
-  // does a wallet have a seed always?
-  // or does it sometimes just have a private key?
+  late final Cipher cipher;
 
-  Wallet({this.net = Net.Test}) : super();
+  Wallet({this.net = Net.Test, this.cipher = const NoCipher()}) : super();
 
   NetworkType get network => networks[net]!;
 

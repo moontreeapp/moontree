@@ -3,10 +3,10 @@ import 'package:hive/hive.dart';
 
 part 'history.g.dart';
 
-@HiveType(typeId: 7)
+@HiveType(typeId: 4)
 class History with EquatableMixin {
   @HiveField(0)
-  String accountId;
+  String walletId;
 
   @HiveField(1)
   String scripthash;
@@ -23,14 +23,19 @@ class History with EquatableMixin {
   @HiveField(5)
   int? value;
 
-  History(this.accountId, this.scripthash, this.height, this.txHash,
-      {this.txPos, this.value});
+  History(
+      {required this.walletId,
+      required this.scripthash,
+      required this.height,
+      required this.txHash,
+      this.txPos,
+      this.value});
 
   @override
-  List<Object> get props => [accountId, scripthash, height, txHash];
+  List<Object> get props => [walletId, scripthash, height, txHash];
 
   @override
   String toString() {
-    return 'History(accountId: $accountId, scripthash: $scripthash, txHash: $txHash, height: $height, txPos: $txPos, value: $value)';
+    return 'History(walletId: $walletId, scripthash: $scripthash, txHash: $txHash, height: $height, txPos: $txPos, value: $value)';
   }
 }

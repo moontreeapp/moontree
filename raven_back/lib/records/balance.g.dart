@@ -8,7 +8,7 @@ part of 'balance.dart';
 
 class BalanceAdapter extends TypeAdapter<Balance> {
   @override
-  final int typeId = 6;
+  final int typeId = 3;
 
   @override
   Balance read(BinaryReader reader) {
@@ -17,8 +17,8 @@ class BalanceAdapter extends TypeAdapter<Balance> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Balance(
-      fields[0] as int,
-      fields[1] as int,
+      confirmed: fields[0] as int,
+      unconfirmed: fields[1] as int,
     );
   }
 

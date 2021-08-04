@@ -1,31 +1,21 @@
-import 'dart:ffi';
-
 import 'package:equatable/equatable.dart';
 import 'package:raven/records.dart' as records;
 
 class Account extends Equatable {
   final String name;
-  final List<String> leaderWalletIds; // children
-  final List<String> derivedWalletIds; // imported
-  final List<String> privateKeyWalletIds; // imported
 
-  Account(this.name,
-      [List<String>? leaderWalletList,
-      List<String>? derivedWalletList,
-      List<String>? privateKeyWalletList])
-      : leaderWalletIds = leaderWalletList ?? [],
-        derivedWalletIds = derivedWalletList ?? [],
-        privateKeyWalletIds = privateKeyWalletList ?? [],
-        super();
+  /// presumed
+  //final Map<String, dynamic> settings;
+  //final Map<String, dynamic> metadata;
+
+  Account({required this.name}) : super();
 
   factory Account.fromRecord(records.Account record) {
-    return Account(record.name, record.leaderWalletIds, record.derivedWalletIds,
-        record.privateKeyWalletIds);
+    return Account(name: record.name);
   }
 
   records.Account toRecord() {
-    return records.Account(
-        name, leaderWalletIds, derivedWalletIds, privateKeyWalletIds);
+    return records.Account(name: name);
   }
 
   @override
@@ -47,4 +37,47 @@ class Account extends Equatable {
     //for each wallet in every list, sum balance of that asset
     return 0.0;
   }
+
+  //// Sending Functionality ///////////////////////////////////////////////////
+
+  //SortedList<ScripthashUnspent> sortedUTXOs() {
+  //  var sortedList = SortedList<ScripthashUnspent>(
+  //      (ScripthashUnspent a, ScripthashUnspent b) =>
+  //          a.value.compareTo(b.value));
+  //  sortedList.addAll(
+  //      Truth.instance.accountUnspents.getAsList<ScripthashUnspent>(accountId));
+  //  return sortedList;
+  //}
+
+  ///// returns the smallest number of inputs to satisfy the amount
+  //List<ScripthashUnspent> collectUTXOs(int amount,
+  //    [List<ScripthashUnspent>? except]) {
+  //  var ret = <ScripthashUnspent>[];
+  //  if (balance < amount) {
+  //    throw InsufficientFunds();
+  //  }
+  //  var utxos = sortedUTXOs();
+  //  utxos.removeWhere((utxo) => (except ?? []).contains(utxo));
+  //  /* can we find an ideal singular utxo? */
+  //  for (var i = 0; i < utxos.length; i++) {
+  //    if (utxos[i].value >= amount) {
+  //      return [utxos[i]];
+  //    }
+  //  }
+  //  /* what combinations of utxo's must we return?
+  //  lets start by grabbing the largest one
+  //  because we know we can consume it all without producing change...
+  //  and lets see how many times we can do that */
+  //  var remainder = amount;
+  //  for (var i = utxos.length - 1; i >= 0; i--) {
+  //    if (remainder < utxos[i].value) {
+  //      break;
+  //    }
+  //    ret.add(utxos[i]);
+  //    remainder = (remainder - utxos[i].value).toInt();
+  //  }
+  //  // Find one last UTXO, starting from smallest, that satisfies the remainder
+  //  ret.add(utxos.firstWhere((utxo) => utxo.value >= remainder));
+  //  return ret;
+  //}
 }

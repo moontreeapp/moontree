@@ -20,7 +20,6 @@ class Reservoir<Record, Model> with IterableMixin<Model> {
   Reservoir(this.source, this.getPrimaryKey, [mapToModel, mapToRecord]) {
     this.mapToModel =
         mapToModel ?? (record) => (Model as dynamic).fromRecord(record);
-    print(mapToRecord);
     this.mapToRecord = mapToRecord ?? (model) => (model as dynamic).toRecord();
     changes = source.watch(this);
   }

@@ -6,7 +6,7 @@ import 'net.dart';
 
 part 'address.g.dart';
 
-@HiveType(typeId: 3)
+@HiveType(typeId: 2)
 class Address {
   @HiveField(0)
   String scripthash;
@@ -29,11 +29,11 @@ class Address {
   @HiveField(6)
   Balance? balance;
 
-  Address(
-    this.scripthash,
-    this.address,
-    this.walletId,
-    this.hdIndex, {
+  Address({
+    required this.scripthash,
+    required this.address,
+    required this.walletId,
+    required this.hdIndex,
     this.exposure = NodeExposure.External,
     this.net = Net.Test,
     this.balance,
