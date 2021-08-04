@@ -40,13 +40,16 @@ class Reservoir<Record, Model> with IterableMixin<Model> {
 
   void save(Model model) {
     var key = getPrimaryKey(model);
-    print(key);
+    // Save key to source, which will (reactively) notify this reservoir of the
+    // new key and construct a new model, also updating any associated indices.
     source.save(key, mapToRecord(model));
   }
 
   void remove(Model model) {
     var key = getPrimaryKey(model);
     if (data.containsKey(key)) {
+      // Remove key from source, which will (reactively) notify this reservoir
+      // and then remove the key and any associated keys in indices.
       source.remove(key);
     } else {
       throw ArgumentError('record not found for $key');
