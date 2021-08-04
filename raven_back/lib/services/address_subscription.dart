@@ -132,11 +132,11 @@ class AddressSubscriptionService extends Service {
   List combineHistoryAndUnspents(ScripthashRow row) {
     var newHistories = [];
     for (var history in row.history) {
-      newHistories.add(History.fromScripthashHistory(
+      newHistories.add(History.fromScripthashHistory(row.address.accountId,
           row.address.walletId, row.address.scripthash, history));
     }
     for (var unspent in row.unspent) {
-      newHistories.add(History.fromScripthashUnspent(
+      newHistories.add(History.fromScripthashUnspent(row.address.accountId,
           row.address.walletId, row.address.scripthash, unspent));
     }
     return newHistories;

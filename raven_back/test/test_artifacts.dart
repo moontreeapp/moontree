@@ -5,19 +5,20 @@ import 'package:hive/hive.dart';
 
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
-import 'package:raven/hive_helper.dart';
+import 'package:raven/init/hive_helper.dart';
 import 'package:raven/services/service.dart';
 import 'package:raven/utils/env.dart' as env;
 import 'package:raven/models/leader_wallet.dart';
 import 'package:raven/records/net.dart';
-import 'package:raven/raven.dart';
-import 'package:raven/reservoirs.dart';
+import 'package:raven/init/raven.dart';
+import 'package:raven/init/reservoirs.dart';
+import 'package:raven/init/services.dart';
 
 import 'reservoir/helper.dart';
 
 class Generated {
   late String phrase;
-  late Account account;
+  late LeaderWallet account;
   late RavenElectrumClient client;
   late Map<String, Reservoir> reservoirs;
   late Map<String, Service> services;
@@ -71,7 +72,7 @@ Future<Generated> generate() async {
     'addressesService': addressesService as Service,
   };
   var phrase = await env.getMnemonic();
-  var account = Account(bip39.mnemonicToSeed(phrase), net: Net.Test);
+  var account = LeaderWallet(seed: bip39.mnemonicToSeed(phrase), net: Net.Test);
   reservoirs['accounts']!.save(account);
   //waitForSave();
   return Generated(phrase, account, client, reservoirs, services);

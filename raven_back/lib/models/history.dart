@@ -3,24 +3,27 @@ import 'package:raven_electrum_client/raven_electrum_client.dart';
 import '../records.dart' as records;
 
 class History {
+  final String accountId;
   final String walletId;
   final String scripthash;
   final int height;
   final String txHash;
   late int? txPos;
-  late int? value;
+  late int? value; //double?
 
   History(
-      {required this.walletId,
+      {required this.accountId,
+      required this.walletId,
       required this.scripthash,
       required this.height,
       required this.txHash,
       this.txPos,
       this.value});
 
-  factory History.fromScripthashHistory(
-      String walletId, String scripthash, ScripthashHistory history) {
+  factory History.fromScripthashHistory(String accountId, String walletId,
+      String scripthash, ScripthashHistory history) {
     return History(
+      accountId: accountId,
       walletId: walletId,
       scripthash: scripthash,
       height: history.height,
@@ -28,9 +31,10 @@ class History {
     );
   }
 
-  factory History.fromScripthashUnspent(
-      String walletId, String scripthash, ScripthashUnspent unspent) {
+  factory History.fromScripthashUnspent(String accountId, String walletId,
+      String scripthash, ScripthashUnspent unspent) {
     return History(
+        accountId: accountId,
         walletId: walletId,
         scripthash: scripthash,
         height: unspent.height,
@@ -41,6 +45,7 @@ class History {
 
   factory History.fromRecord(records.History record) {
     return History(
+        accountId: record.accountId,
         walletId: record.walletId,
         scripthash: record.scripthash,
         height: record.height,
@@ -51,6 +56,7 @@ class History {
 
   records.History toRecord() {
     return records.History(
+        accountId: accountId,
         walletId: walletId,
         scripthash: scripthash,
         height: height,

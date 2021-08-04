@@ -21,6 +21,8 @@ class Account extends Equatable {
   @override
   List<Object?> get props => [name];
 
+  String get id => name;
+
   // in usd ( could have multiple assets )
   double get balanceUSD {
     //for each wallet in every list, sum each asset balance (including raven)
@@ -39,6 +41,13 @@ class Account extends Equatable {
   }
 
   //// Sending Functionality ///////////////////////////////////////////////////
+
+  /*
+  get sorted list of unspents for all addresses belonging to all wallets with 
+  account name.
+
+  var unspents = histories.unspentsByAccount(accountId: name);....
+  */
 
   //SortedList<ScripthashUnspent> sortedUTXOs() {
   //  var sortedList = SortedList<ScripthashUnspent>(

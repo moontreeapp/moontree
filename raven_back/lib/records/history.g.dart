@@ -17,30 +17,33 @@ class HistoryAdapter extends TypeAdapter<History> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return History(
-      walletId: fields[0] as String,
-      scripthash: fields[1] as String,
-      height: fields[2] as int,
-      txHash: fields[3] as String,
-      txPos: fields[4] as int?,
-      value: fields[5] as int?,
+      accountId: fields[0] as String,
+      walletId: fields[1] as String,
+      scripthash: fields[2] as String,
+      height: fields[3] as int,
+      txHash: fields[4] as String,
+      txPos: fields[5] as int?,
+      value: fields[6] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, History obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
-      ..write(obj.walletId)
+      ..write(obj.accountId)
       ..writeByte(1)
-      ..write(obj.scripthash)
+      ..write(obj.walletId)
       ..writeByte(2)
-      ..write(obj.height)
+      ..write(obj.scripthash)
       ..writeByte(3)
-      ..write(obj.txHash)
+      ..write(obj.height)
       ..writeByte(4)
-      ..write(obj.txPos)
+      ..write(obj.txHash)
       ..writeByte(5)
+      ..write(obj.txPos)
+      ..writeByte(6)
       ..write(obj.value);
   }
 

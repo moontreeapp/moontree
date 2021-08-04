@@ -25,7 +25,7 @@
                 <mxCell id="149" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="126" target="141" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="126" value="Leader Wallet&lt;br&gt;bool m true" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="1" vertex="1">
+                <mxCell id="126" value="Leader Wallet&lt;br&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="1" vertex="1">
                     <mxGeometry x="150" y="367.5" width="80" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="150" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="128" target="146" edge="1">
@@ -37,7 +37,7 @@
                 <mxCell id="152" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="128" target="144" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="128" value="Leader Wallet&lt;br&gt;bool m true" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="1" vertex="1">
+                <mxCell id="128" value="Leader Wallet" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="1" vertex="1">
                     <mxGeometry x="30" y="367.5" width="80" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="141" value="Address" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="1" vertex="1">
@@ -62,7 +62,7 @@
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="163" value="Imported wif Wallet&lt;br&gt;Private key&lt;br&gt;Public key" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="570" y="367.5" width="80" height="90" as="geometry"/>
+                    <mxGeometry x="530" y="367.5" width="80" height="90" as="geometry"/>
                 </mxCell>
                 <mxCell id="169" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="172" target="175" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -89,40 +89,26 @@
                     <mxGeometry x="247.19" y="200" width="195" height="120" as="geometry"/>
                 </mxCell>
                 <mxCell id="187" value="Equatible" style="rounded=0;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="50" y="847.5" width="760" height="30" as="geometry"/>
+                    <mxGeometry x="50" y="847.5" width="590" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="188" value="Wallet" style="rounded=0;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="50" y="807.5" width="760" height="30" as="geometry"/>
-                </mxCell>
-                <mxCell id="189" value="DerivedWallet" style="rounded=0;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="50" y="767.5" width="360" height="30" as="geometry"/>
-                </mxCell>
-                <mxCell id="190" value="PrivateKeyWallet" style="rounded=0;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="450" y="767.5" width="360" height="30" as="geometry"/>
+                    <mxGeometry x="50.01" y="807.5" width="589.99" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="191" value="ImportedPrivateKeyWallet" style="rounded=0;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="450" y="727.5" width="360" height="30" as="geometry"/>
-                </mxCell>
-                <mxCell id="195" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="192" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <mxPoint x="330" y="637.5" as="targetPoint"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="192" value="ImportedLeaderWallet" style="rounded=0;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="250" y="727.5" width="160" height="30" as="geometry"/>
+                    <mxGeometry x="370.01" y="762.5" width="269.99" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="197" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="193" edge="1">
                     <mxGeometry relative="1" as="geometry">
-                        <mxPoint x="130" y="637.5" as="targetPoint"/>
+                        <mxPoint x="180" y="620" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="193" value="LeaderWallet" style="rounded=0;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="50" y="727.5" width="160" height="30" as="geometry"/>
+                    <mxGeometry x="50.01" y="762.5" width="269.99" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="194" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="191" edge="1">
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
-                        <mxPoint x="730" y="717.5" as="sourcePoint"/>
-                        <mxPoint x="630" y="637.5" as="targetPoint"/>
+                        <mxPoint x="730.01" y="710" as="sourcePoint"/>
+                        <mxPoint x="520" y="630" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="198" value="Master Seed&lt;br&gt;as a setting&lt;br&gt;" style="shape=card;whiteSpace=wrap;html=1;size=0;" parent="1" vertex="1">
@@ -132,7 +118,7 @@
                     <mxGeometry x="106.25" y="185" width="47.5" height="75" as="geometry"/>
                 </mxCell>
                 <mxCell id="201" value="Key" style="swimlane;" parent="1" vertex="1">
-                    <mxGeometry x="410" y="10" width="200" height="168.75" as="geometry"/>
+                    <mxGeometry x="350" y="16.25" width="200" height="168.75" as="geometry"/>
                 </mxCell>
                 <mxCell id="202" value="Reservoir" style="shape=card;whiteSpace=wrap;html=1;size=20;" parent="201" vertex="1">
                     <mxGeometry x="10" y="38.75" width="80" height="60" as="geometry"/>
@@ -144,23 +130,15 @@
                     <mxGeometry x="20" y="118.75" width="160" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="216" value="Address" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="630" y="480" width="60" height="40" as="geometry"/>
+                    <mxGeometry x="590" y="480" width="60" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="222" value="Wallets&lt;br&gt;&lt;br&gt;contains wallet models?&lt;br&gt;seems there is a 1-1-1-1 for&lt;br&gt;box - record - model - reservoir:&lt;br&gt;we need a reservoir per wallet type" style="shape=card;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="222" value="Wallets&lt;br&gt;&lt;br&gt;- holds 2 types of models&lt;br&gt;" style="shape=card;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="455" y="200" width="205" height="118.75" as="geometry"/>
                 </mxCell>
-                <mxCell id="223" value="can we convert all wallets to a leader wallet? (HD wallet, with or without seed, true or false on from master)" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="670" y="317.5" width="170" height="190" as="geometry"/>
-                </mxCell>
-                <mxCell id="224" value="" style="shape=flexArrow;endArrow=classic;html=1;width=21;endSize=4.67;" edge="1" parent="1">
-                    <mxGeometry width="50" height="50" relative="1" as="geometry">
-                        <mxPoint x="550" y="390" as="sourcePoint"/>
-                        <mxPoint x="470" y="390" as="targetPoint"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="225" value="convert" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="224">
-                    <mxGeometry x="0.2958" y="-1" relative="1" as="geometry">
-                        <mxPoint as="offset"/>
+                <mxCell id="225" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="193">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="270" y="620" as="targetPoint"/>
+                        <mxPoint x="199.59734693877556" y="772.5" as="sourcePoint"/>
                     </mxGeometry>
                 </mxCell>
             </root>

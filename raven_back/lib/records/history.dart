@@ -6,25 +6,29 @@ part 'history.g.dart';
 @HiveType(typeId: 4)
 class History with EquatableMixin {
   @HiveField(0)
-  String walletId;
+  String accountId;
 
   @HiveField(1)
-  String scripthash;
+  String walletId;
 
   @HiveField(2)
-  int height;
+  String scripthash;
 
   @HiveField(3)
-  String txHash;
+  int height;
 
   @HiveField(4)
-  int? txPos;
+  String txHash;
 
   @HiveField(5)
+  int? txPos;
+
+  @HiveField(6)
   int? value;
 
   History(
-      {required this.walletId,
+      {required this.accountId,
+      required this.walletId,
       required this.scripthash,
       required this.height,
       required this.txHash,
@@ -32,10 +36,10 @@ class History with EquatableMixin {
       this.value});
 
   @override
-  List<Object> get props => [walletId, scripthash, height, txHash];
+  List<Object> get props => [accountId, walletId, scripthash, height, txHash];
 
   @override
   String toString() {
-    return 'History(walletId: $walletId, scripthash: $scripthash, txHash: $txHash, height: $height, txPos: $txPos, value: $value)';
+    return 'History(walletId: $walletId, accountId: $accountId, scripthash: $scripthash, txHash: $txHash, height: $height, txPos: $txPos, value: $value)';
   }
 }

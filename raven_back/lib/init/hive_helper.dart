@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'records.dart';
+import '../records.dart';
 
 class HiveHelper {
   static Future init() async {
@@ -13,11 +13,8 @@ class HiveHelper {
   }
 
   static void registerAdapters() {
-    // finish...
     Hive.registerAdapter(AccountAdapter());
-    Hive.registerAdapter(AccountAdapter());
-    Hive.registerAdapter(AccountAdapter());
-    Hive.registerAdapter(AccountAdapter());
+    Hive.registerAdapter(WalletAdapter());
     Hive.registerAdapter(AddressAdapter());
     Hive.registerAdapter(BalanceAdapter());
     Hive.registerAdapter(HistoryAdapter());
@@ -29,12 +26,9 @@ class HiveHelper {
     await Hive.openBox('settings');
     await Hive.openBox<Account>('accounts');
     await Hive.openBox<Address>('addresses');
-
-    /* replaced by reports ... */
-    await Hive.openBox('balances');
-    await Hive.openBox('histories');
-    await Hive.openBox('unspents');
-    /* ... */
+    await Hive.openBox<Wallet>('wallets');
+    await Hive.openBox<Balance>('balances');
+    await Hive.openBox<History>('histories');
   }
 
   static Future close() async {

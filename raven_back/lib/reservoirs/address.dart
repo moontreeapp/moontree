@@ -17,20 +17,26 @@ class AddressReservoir<Record, Model> extends Reservoir {
       : super(source ?? HiveBoxSource('addresses'),
             (address) => address.scripthash, [mapToModel, mapToRecord]) {
     addIndex('account', (address) => address.accountId);
-    addIndex('account-exposure',
-        (address) => '${address.accountId}:${address.exposure}');
+    addIndex('wallet-exposure',
+        (address) => '${address.walletId}:${address.exposure}');
+    addIndex('wallet', (address) => address.walletId);
   }
 
   /// returns account addresses in order
   OrderedSet<Address>? byAccountAndExposure(
-      String accountId, NodeExposure exposure) {
-    return indices['account-exposure']!.getAll('$accountId:$exposure')
+      String walletId, NodeExposure exposure) {
+    return indices['wallet-exposure']!.getAll('$walletId:$exposure')
         as OrderedSet<Address>;
   }
 
   /// returns account addresses in order
   OrderedSet<Address>? byAccount(String accountId) {
     return indices['account']!.getAll(accountId) as OrderedSet<Address>;
+  }
+
+  /// returns account addresses in order
+  OrderedSet<Address>? byWallet(String walletId) {
+    return indices['wallet']!.getAll(walletId) as OrderedSet<Address>;
   }
 
   AddressLocation? getAddressLocationOf(String scripthash, String accountId) {

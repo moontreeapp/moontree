@@ -31,16 +31,16 @@ extension ScripthashOnWallet on ravencoin.Wallet {
 class SingleWallet extends Wallet {
   final Uint8List encryptedPrivateKey;
   late final ravencoin.Wallet seededWallet;
-  late final bool isDerived;
   late final String id; //address
+  late final String accountId;
 
   SingleWallet(
       {required Uint8List privateKey,
+      accountId = 'primary',
       net = Net.Test,
       cipher = const NoCipher()})
       : encryptedPrivateKey = cipher.encrypt(privateKey),
         super(net: net, cipher: cipher) {
-    isDerived = false;
     seededWallet = ravencoin.Wallet(
         ravencoin.ECPair.fromPrivateKey(privateKey,
             network: network, compressed: true),
@@ -53,7 +53,7 @@ class SingleWallet extends Wallet {
   List<Object?> get props => [id];
 
   factory SingleWallet.fromEncryptedPrivateKey(encryptedPrivateKey,
-      {net = Net.Test, cipher = const NoCipher()}) {
+      {accountId = 'primary', net = Net.Test, cipher = const NoCipher()}) {
     return SingleWallet(
         privateKey: cipher.decrypt(encryptedPrivateKey),
         net: net,
@@ -64,12 +64,17 @@ class SingleWallet extends Wallet {
       {cipher = const NoCipher()}) {
     return SingleWallet(
         privateKey: cipher.decrypt(record.encrypted),
+        accountId: record.accountId,
         net: record.net,
         cipher: cipher);
   }
 
   records.Wallet toRecord() {
-    return records.Wallet(isHD: true, encrypted: encryptedPrivateKey, net: net);
+    return records.Wallet(
+        accountId: accountId,
+        isHD: true,
+        encrypted: encryptedPrivateKey,
+        net: net);
   }
 
   //// getters /////////////////////////////////////////////////////////////////
@@ -98,6 +103,7 @@ class SingleWallet extends Wallet {
         scripthash: wallet.scripthash,
         address: wallet.address!,
         walletId: id,
+        accountId: accountId,
         hdIndex: hdIndex,
         exposure: exposure,
         net: net);

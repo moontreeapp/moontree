@@ -5,14 +5,14 @@ import 'package:raven/records.dart' as records;
 import 'package:raven/reservoirs/history.dart';
 import 'package:raven/reservoirs/wallet.dart';
 
-late WalletReservoir wallets;
 late AccountReservoir<records.Account, models.Account> accounts;
 late AddressReservoir<records.Address, models.Address> addresses;
 late HistoryReservoir<records.History, models.History> histories;
+late WalletReservoir wallets;
 
 void makeReservoirs() {
-  wallets = WalletReservoir();
   accounts = AccountReservoir();
   addresses = AddressReservoir();
   histories = HistoryReservoir();
+  wallets = WalletReservoir();
 }

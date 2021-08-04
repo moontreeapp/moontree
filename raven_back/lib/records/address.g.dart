@@ -20,17 +20,18 @@ class AddressAdapter extends TypeAdapter<Address> {
       scripthash: fields[0] as String,
       address: fields[1] as String,
       walletId: fields[2] as String,
-      hdIndex: fields[3] as int,
-      exposure: fields[4] as NodeExposure,
-      net: fields[5] as Net,
-      balance: fields[6] as Balance?,
+      accountId: fields[3] as String,
+      hdIndex: fields[4] as int,
+      exposure: fields[5] as NodeExposure,
+      net: fields[6] as Net,
+      balance: fields[7] as Balance?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Address obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.scripthash)
       ..writeByte(1)
@@ -38,12 +39,14 @@ class AddressAdapter extends TypeAdapter<Address> {
       ..writeByte(2)
       ..write(obj.walletId)
       ..writeByte(3)
-      ..write(obj.hdIndex)
+      ..write(obj.accountId)
       ..writeByte(4)
-      ..write(obj.exposure)
+      ..write(obj.hdIndex)
       ..writeByte(5)
-      ..write(obj.net)
+      ..write(obj.exposure)
       ..writeByte(6)
+      ..write(obj.net)
+      ..writeByte(7)
       ..write(obj.balance);
   }
 

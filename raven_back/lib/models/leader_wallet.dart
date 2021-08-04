@@ -45,10 +45,12 @@ class LeaderWallet extends Wallet {
   final Uint8List encryptedSeed;
   late final ravencoin.HDWallet seededWallet;
   late final bool isDerived;
-  late final String id; //address
+  late final String id;
+  late final String accountId;
 
   LeaderWallet(
       {required seed,
+      accountId = 'primary',
       net = Net.Test,
       cipher = const NoCipher(),
       isDerived = false})
@@ -62,7 +64,7 @@ class LeaderWallet extends Wallet {
   List<Object?> get props => [id];
 
   factory LeaderWallet.fromEncryptedSeed(encryptedSeed,
-      {net = Net.Test, cipher = const NoCipher()}) {
+      {accountId = 'primary', net = Net.Test, cipher = const NoCipher()}) {
     return LeaderWallet(
         seed: cipher.decrypt(encryptedSeed), net: net, cipher: cipher);
   }
@@ -71,12 +73,14 @@ class LeaderWallet extends Wallet {
       {cipher = const NoCipher()}) {
     return LeaderWallet(
         seed: cipher.decrypt(record.encrypted),
+        accountId: record.accountId,
         net: record.net,
         cipher: cipher);
   }
 
   records.Wallet toRecord() {
-    return records.Wallet(isHD: true, encrypted: encryptedSeed, net: net);
+    return records.Wallet(
+        accountId: accountId, isHD: true, encrypted: encryptedSeed, net: net);
   }
 
   //// getters /////////////////////////////////////////////////////////////////
@@ -106,6 +110,7 @@ class LeaderWallet extends Wallet {
         scripthash: wallet.scripthash,
         address: wallet.address!,
         walletId: id,
+        accountId: accountId,
         hdIndex: hdIndex,
         exposure: exposure,
         net: net);

@@ -18,21 +18,25 @@ class Address {
   String walletId;
 
   @HiveField(3)
-  int hdIndex;
+  String accountId;
 
   @HiveField(4)
-  NodeExposure exposure;
+  int hdIndex;
 
   @HiveField(5)
-  Net net;
+  NodeExposure exposure;
 
   @HiveField(6)
+  Net net;
+
+  @HiveField(7)
   Balance? balance;
 
   Address({
     required this.scripthash,
     required this.address,
     required this.walletId,
+    required this.accountId,
     required this.hdIndex,
     this.exposure = NodeExposure.External,
     this.net = Net.Test,

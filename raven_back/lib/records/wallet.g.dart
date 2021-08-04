@@ -17,21 +17,24 @@ class WalletAdapter extends TypeAdapter<Wallet> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Wallet(
-      isHD: fields[0] as bool,
-      encrypted: fields[1] as Uint8List,
-      net: fields[2] as Net,
+      accountId: fields[0] as String,
+      isHD: fields[1] as bool,
+      encrypted: fields[2] as Uint8List,
+      net: fields[3] as Net,
     );
   }
 
   @override
   void write(BinaryWriter writer, Wallet obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
-      ..write(obj.isHD)
+      ..write(obj.accountId)
       ..writeByte(1)
-      ..write(obj.encrypted)
+      ..write(obj.isHD)
       ..writeByte(2)
+      ..write(obj.encrypted)
+      ..writeByte(3)
       ..write(obj.net);
   }
 
