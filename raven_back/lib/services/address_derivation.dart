@@ -5,15 +5,16 @@ import 'package:raven/models/address.dart';
 import 'package:raven/models/account.dart';
 import 'package:raven/records/node_exposure.dart';
 import 'package:raven/reservoir/change.dart';
-import 'package:raven/reservoir/reservoir.dart';
+import 'package:raven/reservoirs/account.dart';
 import 'package:raven/reservoirs/address.dart';
+import 'package:raven/reservoirs/history.dart';
 import 'package:raven/services/service.dart';
 import 'package:ravencoin/ravencoin.dart' show HDWallet;
 
 class AddressDerivationService extends Service {
-  Reservoir accounts;
+  AccountReservoir accounts;
   AddressReservoir addresses;
-  Reservoir histories;
+  HistoryReservoir histories;
   late StreamSubscription<Change> listener;
 
   AddressDerivationService(this.accounts, this.addresses, this.histories)
@@ -48,9 +49,7 @@ class AddressDerivationService extends Service {
         (exposureAddresses == null) ? OrderedSet<Address>() : exposureAddresses;
     for (var exposureAddress in exposureAddresses) {
       gap = gap +
-          (histories.indices['scripthash']!
-                  .getAll(exposureAddress.scripthash)
-                  .isEmpty
+          (histories.byScripthash.getAll(exposureAddress.scripthash).isEmpty
               ? 1
               : 0);
     }
@@ -72,7 +71,7 @@ class AddressDerivationService extends Service {
     var account = accounts.get(accountId)!;
     var i = 0;
     for (var address in addresses.byAccountAndExposure(accountId, exposure)!) {
-      if (histories.indices['scripthash']!.getAll(address.scripthash).isEmpty) {
+      if (histories.byScripthash.getAll(address.scripthash).isEmpty) {
         return account.deriveWallet(i, exposure);
       }
       i = i + 1;

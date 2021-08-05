@@ -144,7 +144,7 @@ class AddressSubscriptionService extends Service {
 
   void maybeDeriveNewAddresses(List<Address> changedAddresses) async {
     for (var address in changedAddresses) {
-      Account account = accounts.data[address.accountId];
+      Account account = accounts.get(address.accountId);
       maybeSaveNewAddress(account, NodeExposure.Internal);
       maybeSaveNewAddress(account, NodeExposure.External);
     }

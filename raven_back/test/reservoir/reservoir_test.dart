@@ -14,7 +14,8 @@ void main() {
 
     setUp(() {
       source = RxMapSource();
-      res = Reservoir(source, (item) => item, toModel, toRecord);
+      res = Reservoir(source, toModel, toRecord);
+      res.addPrimaryIndex((item) => item);
     });
 
     test('maps Record to Model', () async {
@@ -55,7 +56,7 @@ void main() {
         //model:abc
         //model:xyz
       }
-      for (var key in res.data.keys) {
+      for (var key in res.primaryIndex.keys) {
         print(key);
         print(res.data[key]);
         //0

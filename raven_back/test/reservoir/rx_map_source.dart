@@ -4,7 +4,7 @@ import 'package:raven/reservoir/source.dart';
 
 import 'rx_map.dart';
 
-class RxMapSource<Record, Model> extends Source<Record, Model> {
+class RxMapSource<Key, Record, Model> extends Source<Key, Record, Model> {
   final RxMap map = RxMap();
 
   @override
@@ -16,12 +16,12 @@ class RxMapSource<Record, Model> extends Source<Record, Model> {
   }
 
   @override
-  void save(key, Record record) {
+  void save(Key key, Record record) {
     map[key] = record;
   }
 
   @override
-  void remove(key) {
+  void remove(Key key) {
     map.remove(key);
   }
 }

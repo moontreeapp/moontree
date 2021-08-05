@@ -16,13 +16,14 @@ void main() {
       source = RxMapSource();
       res = Reservoir(source, (record) => models.Account.fromRecord(record),
           (model) => model.toRecord());
+      res.addPrimaryIndex((item) => item.accountId);
     });
 
     test('save an Account model', () async {
       var seed = Uint8List(16);
       var account = models.Account(seed, name: 'in-memory wallet');
       await asyncChange(res, () => res.save(account)); // fails?
-      expect(res.data[account.accountId], account);
+      expect(res.get(account.accountId), account);
     });
   });
 

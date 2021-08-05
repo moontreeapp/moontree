@@ -10,11 +10,8 @@ late AddressReservoir<records.Address, models.Address> addresses;
 late HistoryReservoir<records.History, models.History> histories;
 
 Map<String, Reservoir> makeReservoirs() {
-  accounts =
-      AccountReservoir(HiveSource('accounts'), (account) => account.accountId);
-  addresses = AddressReservoir(
-      HiveSource('addresses'), (address) => address.scripthash);
-  histories = HistoryReservoir(
-      HiveSource('histories'), (histories) => histories.txHash);
+  accounts = AccountReservoir();
+  addresses = AddressReservoir();
+  histories = HistoryReservoir();
   return {'accounts': accounts, 'addresses': addresses, 'histories': histories};
 }

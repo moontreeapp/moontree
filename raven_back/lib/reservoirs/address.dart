@@ -1,6 +1,7 @@
 import 'package:ordered_set/ordered_set.dart';
 import 'package:raven/models/address.dart';
 import 'package:raven/records/node_exposure.dart';
+import 'package:raven/reservoir/index.dart';
 import 'package:raven/reservoir/reservoir.dart';
 
 class AddressLocation {
@@ -13,23 +14,21 @@ class AddressLocation {
 }
 
 class AddressReservoir<Record, Model> extends Reservoir {
-  AddressReservoir(source, getPrimaryKey, [mapToModel, mapToRecord])
-      : super(source, getPrimaryKey, [mapToModel, mapToRecord]) {
-    addIndex('account', (address) => address.accountId);
-    addIndex('account-exposure',
+  late MultipleIndex byAccount;
+  late MultipleIndex byAccountExposure;
+
+  AddressReservoir() : super(HiveSource('addresses')) {
+    addPrimaryIndex((address) => address.scripthash);
+    byAccount = addMultipleIndex('account', (address) => address.accountId);
+    byAccountExposure = addMultipleIndex('account-exposure',
         (address) => '${address.accountId}:${address.exposure}');
   }
 
   /// returns account addresses in order
   OrderedSet<Address>? byAccountAndExposure(
       String accountId, NodeExposure exposure) {
-    return indices['account-exposure']!.getAll('$accountId:$exposure')
+    return byAccountExposure.getAll('$accountId:$exposure')
         as OrderedSet<Address>;
-  }
-
-  /// returns account addresses in order
-  OrderedSet<Address>? byAccount(String accountId) {
-    return indices['account']!.getAll(accountId) as OrderedSet<Address>;
   }
 
   AddressLocation? getAddressLocationOf(String scripthash, String accountId) {
@@ -52,6 +51,6 @@ class AddressReservoir<Record, Model> extends Reservoir {
   }
 
   void removeAddresses(String accountId) {
-    byAccount(accountId)!.forEach((address) => remove(address));
+    byAccount.getAll(accountId).forEach((address) => remove(address));
   }
 }

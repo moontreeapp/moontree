@@ -17,8 +17,8 @@ abstract class Index<Key, Model> {
 
   void add(Model model);
   void addAll(Iterable<Model> models) => models.forEach((model) => add(model));
-  Model? get(Key key);
-  bool has(Key key) => get(key) != null;
+  Model? getOne(Key key);
+  bool has(Key key) => getOne(key) != null;
   bool remove(Model model);
 }
 
@@ -37,7 +37,7 @@ class UniqueIndex<Key, Model> extends Index<Key, Model> {
   void add(Model model) => _data[getKey(model)] = model;
 
   @override
-  Model? get(Key key) => _data[key];
+  Model? getOne(Key key) => _data[key];
 
   @override
   bool remove(Model model) {
@@ -75,7 +75,7 @@ class MultipleIndex<Key, Model> extends Index<Key, Model> {
   }
 
   @override
-  Model? get(Key key) => getAll(key).first;
+  Model? getOne(Key key) => getAll(key).first;
 
   /// Retrieve all values associated with the key, in order.
   OrderedSet<Model> getAll(Key key) => _data[key] ?? OrderedSet<Model>();

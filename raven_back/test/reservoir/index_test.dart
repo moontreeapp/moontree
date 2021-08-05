@@ -13,39 +13,43 @@ class TestRow with EquatableMixin {
 }
 
 void main() {
-  group('Index', () {
+  group('MultipleIndex', () {
     var rows = [TestRow(1, 'apple'), TestRow(2, 'apple'), TestRow(3, 'orange')];
     test('default sort order', () {
-      var index = Index((row) => row.name, rows);
-      expect(index.values['apple']?.toList(), [rows[0], rows[1]]);
-      expect(index.values['orange']?.toList(), [rows[2]]);
+      var index = MultipleIndex((row) => row.name);
+      index.addAll(rows);
+      expect(index.getAll('apple').toList(), [rows[0], rows[1]]);
+      expect(index.getAll('orange').toList(), [rows[2]]);
     });
 
     test('explicit sort order', () {
       var index =
-          Index((row) => row.name, rows, (r1, r2) => r2.id.compareTo(r1.id));
-      expect(index.values['apple']?.toList(), [rows[1], rows[0]]);
-      expect(index.values['orange']?.toList(), [rows[2]]);
+          MultipleIndex((row) => row.name, (r1, r2) => r2.id.compareTo(r1.id));
+      index.addAll(rows);
+      expect(index.getAll('apple').toList(), [rows[1], rows[0]]);
+      expect(index.getAll('orange').toList(), [rows[2]]);
     });
 
     test('remove', () {
       var index =
-          Index((row) => row.name, rows, (r1, r2) => r1.id.compareTo(r2.id));
-      expect(index.values['apple']?.toList(), [rows[0], rows[1]]);
-      expect(index.values['orange']?.toList(), [rows[2]]);
+          MultipleIndex((row) => row.name, (r1, r2) => r1.id.compareTo(r2.id));
+      index.addAll(rows);
+      expect(index.getAll('apple').toList(), [rows[0], rows[1]]);
+      expect(index.getAll('orange').toList(), [rows[2]]);
 
       index.remove(rows[0]);
-      expect(index.values['apple']?.toList(), [rows[1]]);
-      expect(index.values['orange']?.toList(), [rows[2]]);
+      expect(index.getAll('apple').toList(), [rows[1]]);
+      expect(index.getAll('orange').toList(), [rows[2]]);
 
       index.remove(rows[1]);
-      expect(index.values['apple'], null);
-      expect(index.values['orange']?.toList(), [rows[2]]);
+      expect(index.getAll('apple').toList(), []);
+      expect(index.getAll('orange').toList(), [rows[2]]);
     });
 
     test('get', () {
       var index =
-          Index((row) => row.name, rows, (r1, r2) => r1.id.compareTo(r2.id));
+          MultipleIndex((row) => row.name, (r1, r2) => r1.id.compareTo(r2.id));
+      index.addAll(rows);
       expect(index.getAll('apple').toList(), [rows[0], rows[1]]);
     });
   });

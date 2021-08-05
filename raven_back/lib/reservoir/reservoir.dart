@@ -14,7 +14,6 @@ class Reservoir<Key, Record, Model> with IterableMixin<Model> {
   late Mapper<Model, Record> toRecord;
   late UniqueIndex<Key, Model> primaryIndex;
   final Map<String, Index<Key, Model>> indices = {};
-  final List<Model> data = [];
   late Stream<Change> changes;
 
   Reservoir(this.source, [toModel, toRecord]) {
@@ -23,8 +22,10 @@ class Reservoir<Key, Record, Model> with IterableMixin<Model> {
     changes = source.watch(this);
   }
 
+  Iterable<Model> get data => primaryIndex.values;
+
   UniqueIndex addPrimaryIndex(GetKey<Key, Model> getKey) {
-    primaryIndex = UniqueIndex(getKey)..addAll(data);
+    primaryIndex = UniqueIndex(getKey);
     return primaryIndex;
   }
 
@@ -49,6 +50,8 @@ class Reservoir<Key, Record, Model> with IterableMixin<Model> {
     return indices.remove(name);
   }
 
+  Model? get(Key key) => primaryIndex.getOne(key);
+
   @override
   Iterator<Model> get iterator => data.iterator;
 
@@ -59,7 +62,7 @@ class Reservoir<Key, Record, Model> with IterableMixin<Model> {
   }
 
   void save(Model model) {
-    var key = indices['_primary']!.getKey(model);
+    var key = primaryIndex.getKey(model);
     // Save key to source, which will (reactively) notify this reservoir of the
     // new key and construct a new model, also updating any associated indices.
     source.save(key, toRecord(model));
@@ -77,13 +80,13 @@ class Reservoir<Key, Record, Model> with IterableMixin<Model> {
   }
 
   Change addRecord(key, Record record) {
-    var value = toModel(record);
-    _addToIndices(key, value);
-    data[key] = value;
-    return Added(key, value);
+    var model = toModel(record);
+    _addToIndices(model);
+    primaryIndex.add(model);
+    return Added(key, model);
   }
 
-  void _addToIndices(key, Model value) {
+  void _addToIndices(Model value) {
     for (var index in indices.values) {
       index.add(value);
     }
@@ -92,7 +95,7 @@ class Reservoir<Key, Record, Model> with IterableMixin<Model> {
   Change updateRecord(key, Record record) {
     var model = toModel(record);
     _updateIndices(key, model);
-    data[key] = model;
+    primaryIndex.add(model);
     return Updated(key, model);
   }
 
@@ -103,8 +106,8 @@ class Reservoir<Key, Record, Model> with IterableMixin<Model> {
   }
 
   Change removeRecord(key) {
-    _removeFromIndices(data[key]!);
-    data.remove(key);
+    _removeFromIndices(primaryIndex.getOne(key)!);
+    primaryIndex.remove(key);
     return Removed(key);
   }
 

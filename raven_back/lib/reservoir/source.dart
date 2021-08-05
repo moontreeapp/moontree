@@ -9,11 +9,11 @@ abstract class Source<Key, Record, Model> {
   /// 2. returning a stream of changes that match the action taken.
   Stream<Change> watch(Reservoir<Key, Record, Model> reservoir);
 
-  /// Adds or updates the `value` at a given `key` in the Source.
-  /// It's reasonable for `key` to be a column on `value` (e.g. ann ID),
+  /// Adds or updates the `model` at a given `key` in the Source.
+  /// It's reasonable for `key` to be a column on `model` (e.g. account ID),
   /// but not required.
-  void save(key, Record value);
+  void save(Key key, Record model);
 
   /// Removes a given `key` from the Source.
-  void remove(key);
+  void remove(Key key);
 }
