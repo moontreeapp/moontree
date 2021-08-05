@@ -24,7 +24,7 @@ class AddressAdapter extends TypeAdapter<Address> {
       hdIndex: fields[4] as int,
       exposure: fields[5] as NodeExposure,
       net: fields[6] as Net,
-      balances: fields[7] as Balance?,
+      balances: (fields[7] as Map?)?.cast<String, Balance>(),
     );
   }
 

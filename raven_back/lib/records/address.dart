@@ -30,7 +30,7 @@ class Address {
   Net net;
 
   @HiveField(7)
-  Balance? balances;
+  Map<String, Balance>? balances;
 
   Address({
     required this.scripthash,

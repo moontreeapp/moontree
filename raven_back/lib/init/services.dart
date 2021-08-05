@@ -14,7 +14,8 @@ void initServices(RavenElectrumClient client) {
   addressSubscriptionService = AddressSubscriptionService(
       wallets, addresses, histories, client, addressDerivationService!)
     ..init();
-  addressesService = AddressesService(wallets, addresses, histories)..init();
+  addressesService = AddressesService(accounts, wallets, addresses, histories)
+    ..init();
 }
 
 void deinitServices() {

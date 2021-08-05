@@ -21,7 +21,7 @@
  * 
  * vs
  * 
- * address.balances: {ticker: {confirmed: int, unconfirmed: int}}
+ * address.balances: [{ticker: String, confirmed: int, unconfirmed: int}]
  * 
  */
 
@@ -69,13 +69,11 @@ class ScripthashHistoriesData {
 
 /// balance isn't necessary -
 /// histries with height of 0 are in mempool and "unconfirmed"
-
 class ScripthashBalanceRow {
   final Address address;
-  final ScripthashBalance balance;
-  final ScripthashAssetBalances assetBalance;
+  final Map<String, Balance> balances;
 
-  ScripthashBalanceRow(this.address, this.balance, this.assetBalance);
+  ScripthashBalanceRow(this.address, this.balances);
 }
 
 class ScripthashBalancesData {
@@ -86,10 +84,38 @@ class ScripthashBalancesData {
   ScripthashBalancesData(this.addresses, this.balances, this.assetBalances);
 
   Iterable<ScripthashBalanceRow> get zipped =>
-      zip([addresses, balances, assetBalances]).map((e) => ScripthashBalanceRow(
-          e[0] as Address,
-          e[1] as ScripthashBalance,
-          e[2] as ScripthashAssetBalances));
+      zip([addresses, balances, conformedAssetBalances()])
+          .map((e) => ScripthashBalanceRow(e[0] as Address, {
+                ...e[2] as Map<String, Balance>,
+                ...{'R': e[1] as Balance}
+              }));
+
+  List<Map<String, Balance>> conformedAssetBalances() {
+    var assetBalancesConformed;
+    for (var assetsBalance in assetBalances) {
+      assetBalancesConformed.add(toAssetMap(assetsBalance));
+    }
+    return assetBalancesConformed;
+  }
+
+  Map<String, Balance> toAssetMap(ScripthashAssetBalances balances) {
+    var tickers = [
+      ...balances.confirmed.keys.toList(),
+      ...balances.unconfirmed.keys.toList()
+    ];
+    //var ret;
+    //for (var ticker in tickers) {
+    //  ret[ticker] = Balance(
+    //      confirmed: balances.confirmed[ticker] ?? 0,
+    //      unconfirmed: balances.unconfirmed[ticker] ?? 0);
+    //}
+    return {
+      for (var ticker in tickers)
+        ticker: Balance(
+            confirmed: balances.confirmed[ticker] ?? 0,
+            unconfirmed: balances.unconfirmed[ticker] ?? 0)
+    };
+  }
 }
 
 class AddressSubscriptionService extends Service {
@@ -114,7 +140,10 @@ class AddressSubscriptionService extends Service {
     listeners.add(addressesNeedingUpdate.stream
         .bufferCountTimeout(10, Duration(milliseconds: 50))
         .listen((changedAddresses) async {
-      saveScripthashData(await getScripthashData(changedAddresses));
+      saveScripthashHistoryData(
+          await getScripthashHistoriesData(changedAddresses));
+      saveScripthashBalanceData(
+          await getScripthashBalancesData(changedAddresses));
       addressDerivationService.maybeDeriveNewAddresses(changedAddresses);
     }));
 
@@ -188,6 +217,14 @@ class AddressSubscriptionService extends Service {
     return ScripthashBalancesData(changedAddresses, balances, assetBalances);
   }
 
+  void saveScripthashBalanceData(ScripthashBalancesData data) async {
+    data.zipped.forEach((row) {
+      var address = row.address;
+      address.balances = row.balances;
+      addresses.save(address);
+    });
+  }
+
   void saveScripthashHistoryData(ScripthashHistoriesData data) async {
     data.zipped.forEach((row) {
       var address = row.address;
@@ -196,16 +233,7 @@ class AddressSubscriptionService extends Service {
     });
   }
 
-  void saveScripthashBalanceData(ScripthashBalancesData data) async {
-    data.zipped.forEach((row) {
-      var address = row.address;
-      address.balance = Balance.fromScripthashBalance(row.balance);
-      address.balances = Balance.fromScripthashBalance(row.balance);
-      addresses.save(address);
-    });
-  }
-
-  List combineHistoryAndUnspents(ScripthashRow row) {
+  List combineHistoryAndUnspents(ScripthashHistoryRow row) {
     var newHistories = [];
     for (var history in row.history) {
       newHistories.add(History.fromScripthashHistory(row.address.accountId,

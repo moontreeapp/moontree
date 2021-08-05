@@ -11,7 +11,7 @@ class Address {
   final int hdIndex;
   late NodeExposure exposure;
   late Net net;
-  late List<Balance>? balances;
+  late Map<String, Balance>? balances;
 
   Address(
       {required this.scripthash,
