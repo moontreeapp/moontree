@@ -2,30 +2,30 @@ import 'dart:async';
 
 import 'package:ordered_set/ordered_set.dart';
 import 'package:raven/models/address.dart';
-import 'package:raven/models/leader_wallet.dart';
 import 'package:raven/records/node_exposure.dart';
 import 'package:raven/reservoir/change.dart';
-import 'package:raven/reservoir/reservoir.dart';
 import 'package:raven/reservoirs/address.dart';
+import 'package:raven/reservoirs/history.dart';
+import 'package:raven/reservoirs/wallet.dart';
 import 'package:raven/services/service.dart';
 import 'package:ravencoin/ravencoin.dart' show HDWallet;
 
 class AddressDerivationService extends Service {
-  Reservoir accounts;
+  WalletReservoir wallets;
   AddressReservoir addresses;
-  Reservoir histories;
+  HistoryReservoir histories;
   late StreamSubscription<Change> listener;
 
-  AddressDerivationService(this.accounts, this.addresses, this.histories)
+  AddressDerivationService(this.wallets, this.addresses, this.histories)
       : super();
 
   @override
   void init() {
-    listener = accounts.changes.listen((change) {
+    listener = wallets.changes.listen((change) {
       change.when(added: (added) {
-        LeaderWallet leaderWallet = added.data;
-        addresses.save(leaderWallet.deriveAddress(0, NodeExposure.Internal));
-        addresses.save(leaderWallet.deriveAddress(0, NodeExposure.External));
+        var wallet = added.data;
+        addresses.save(wallet.deriveAddress(0, NodeExposure.Internal));
+        addresses.save(wallet.deriveAddress(0, NodeExposure.External));
       }, updated: (updated) {
         /* Name or settings have changed */
       }, removed: (removed) {
@@ -56,7 +56,7 @@ class AddressDerivationService extends Service {
     }
     // TODO fix get null thing
     if (gap < 10) {
-      return accounts
+      return wallets
           .get(walletId)
           .deriveAddress(exposureAddresses.length, exposure);
     }
@@ -69,7 +69,7 @@ class AddressDerivationService extends Service {
     exposure = exposure == NodeExposure.Internal
         ? NodeExposure.Internal
         : NodeExposure.External;
-    var account = accounts.get(walletId)!;
+    var account = wallets.get(walletId)!;
     var i = 0;
     for (var address in addresses.byAccountAndExposure(walletId, exposure)!) {
       if (histories.indices['scripthash']!.getAll(address.scripthash).isEmpty) {

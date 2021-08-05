@@ -4,6 +4,8 @@ import 'package:quiver/iterables.dart';
 import 'package:raven/models/balance.dart';
 import 'package:raven/records/node_exposure.dart';
 import 'package:raven/reservoirs/address.dart';
+import 'package:raven/reservoirs/history.dart';
+import 'package:raven/reservoirs/wallet.dart';
 import 'package:raven/services/address_derivation.dart'
     show AddressDerivationService;
 import 'package:raven/services/service.dart';
@@ -39,9 +41,9 @@ class ScripthashData {
 }
 
 class AddressSubscriptionService extends Service {
-  Reservoir accounts;
+  WalletReservoir wallets;
   AddressReservoir addresses;
-  Reservoir histories;
+  HistoryReservoir histories;
   RavenElectrumClient client;
   AddressDerivationService addressDerivationService;
   Map<String, StreamSubscription> subscriptionHandles = {};
@@ -49,7 +51,7 @@ class AddressSubscriptionService extends Service {
 
   StreamController<Address> addressesNeedingUpdate = StreamController();
 
-  AddressSubscriptionService(this.accounts, this.addresses, this.histories,
+  AddressSubscriptionService(this.wallets, this.addresses, this.histories,
       this.client, this.addressDerivationService)
       : super();
 
@@ -144,9 +146,11 @@ class AddressSubscriptionService extends Service {
 
   void maybeDeriveNewAddresses(List<Address> changedAddresses) async {
     for (var address in changedAddresses) {
-      LeaderWallet leaderWallet = accounts.data[address.walletId];
-      maybeSaveNewAddress(leaderWallet, NodeExposure.Internal);
-      maybeSaveNewAddress(leaderWallet, NodeExposure.External);
+      if (wallets.data[address.walletId] is LeaderWallet) {
+        LeaderWallet leaderWallet = wallets.data[address.walletId];
+        maybeSaveNewAddress(leaderWallet, NodeExposure.Internal);
+        maybeSaveNewAddress(leaderWallet, NodeExposure.External);
+      }
     }
   }
 

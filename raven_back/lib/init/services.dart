@@ -10,11 +10,11 @@ AddressesService? addressesService;
 
 void initServices(RavenElectrumClient client) {
   addressDerivationService =
-      AddressDerivationService(accounts, addresses, histories)..init();
+      AddressDerivationService(wallets, addresses, histories)..init();
   addressSubscriptionService = AddressSubscriptionService(
-      accounts, addresses, histories, client, addressDerivationService!)
+      wallets, addresses, histories, client, addressDerivationService!)
     ..init();
-  addressesService = AddressesService(accounts, addresses, histories)..init();
+  addressesService = AddressesService(wallets, addresses, histories)..init();
 }
 
 void deinitServices() {
