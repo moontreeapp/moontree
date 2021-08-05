@@ -1,3 +1,5 @@
+import 'package:raven/models/balances.dart';
+
 import '../records/node_exposure.dart';
 import '../records/net.dart';
 import '../records.dart' as records;
@@ -11,7 +13,7 @@ class Address {
   final int hdIndex;
   late NodeExposure exposure;
   late Net net;
-  late Map<String, Balance>? balances;
+  late Balances? balances;
 
   Address(
       {required this.scripthash,
@@ -32,7 +34,7 @@ class Address {
         hdIndex: record.hdIndex,
         exposure: record.exposure,
         net: record.net,
-        balances: record.balances);
+        balances: Balances.fromRecord(record as records.Balances));
   }
 
   records.Address toRecord() {
@@ -44,6 +46,6 @@ class Address {
         hdIndex: hdIndex,
         exposure: exposure,
         net: net,
-        balances: balances);
+        balances: balances as records.Balances);
   }
 }

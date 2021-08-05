@@ -71,7 +71,7 @@ class ScripthashHistoriesData {
 /// histries with height of 0 are in mempool and "unconfirmed"
 class ScripthashBalanceRow {
   final Address address;
-  final Map<String, Balance> balances;
+  final Balances balances;
 
   ScripthashBalanceRow(this.address, this.balances);
 }
@@ -85,12 +85,14 @@ class ScripthashBalancesData {
 
   Iterable<ScripthashBalanceRow> get zipped =>
       zip([addresses, balances, conformedAssetBalances()])
-          .map((e) => ScripthashBalanceRow(e[0] as Address, {
+          .map((e) => ScripthashBalanceRow(
+              e[0] as Address,
+              Balances(balances: {
                 ...e[2] as Map<String, Balance>,
                 ...{'R': e[1] as Balance}
-              }));
+              })));
 
-  List<Map<String, Balance>> conformedAssetBalances() {
+  List<Balances> conformedAssetBalances() {
     var assetBalancesConformed;
     for (var assetsBalance in assetBalances) {
       assetBalancesConformed.add(toAssetMap(assetsBalance));
@@ -98,23 +100,23 @@ class ScripthashBalancesData {
     return assetBalancesConformed;
   }
 
-  Map<String, Balance> toAssetMap(ScripthashAssetBalances balances) {
-    var tickers = [
+  Balances toAssetMap(ScripthashAssetBalances balances) {
+    var tickers = {
       ...balances.confirmed.keys.toList(),
       ...balances.unconfirmed.keys.toList()
-    ];
+    };
     //var ret;
     //for (var ticker in tickers) {
     //  ret[ticker] = Balance(
     //      confirmed: balances.confirmed[ticker] ?? 0,
     //      unconfirmed: balances.unconfirmed[ticker] ?? 0);
     //}
-    return {
+    return Balances(balances: {
       for (var ticker in tickers)
         ticker: Balance(
             confirmed: balances.confirmed[ticker] ?? 0,
             unconfirmed: balances.unconfirmed[ticker] ?? 0)
-    };
+    });
   }
 }
 

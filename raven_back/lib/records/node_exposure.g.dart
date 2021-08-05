@@ -8,7 +8,7 @@ part of 'node_exposure.dart';
 
 class NodeExposureAdapter extends TypeAdapter<NodeExposure> {
   @override
-  final int typeId = 6;
+  final int typeId = 7;
 
   @override
   NodeExposure read(BinaryReader reader) {

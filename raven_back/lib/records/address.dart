@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:raven/models/balance.dart';
+import 'package:raven/records/balances.dart';
 
 import 'node_exposure.dart';
 import 'net.dart';
@@ -30,7 +30,7 @@ class Address {
   Net net;
 
   @HiveField(7)
-  Map<String, Balance>? balances;
+  Balances? balances; // 'R' represents RVN(t) itself, else: asset
 
   Address({
     required this.scripthash,

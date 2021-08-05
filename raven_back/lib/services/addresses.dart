@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:svg';
 
 import 'package:raven/models.dart';
 import 'package:raven/reservoir/change.dart';
@@ -27,8 +28,8 @@ class AddressesService extends Service {
       }, updated: (updated) {
         Address address = updated.data;
         //update account balance, not wallet balance.
-        accounts.setBalance(
-            address.accountId, collectBalanceOf(address.accountId));
+        accounts.setBalances(
+            address.accountId, collectBalancesOf(address.accountId));
       }, removed: (removed) {
         // always triggered by account removal
         histories.removeHistories(removed.id as String);
@@ -41,31 +42,40 @@ class AddressesService extends Service {
     listener.cancel();
   }
 
-  //Iterable<Balance> collectBalancesOf(String accountId,
-  //    {String? ticker, String index = 'account'}) {
-  //
-  //  return addresses.indices[index]!
-  //      .getAll(accountId)
-  //      .where((address) => ticker != null ? (address.balances.ticker == ticker) : true).map((e) => e.);
-//
-//
-  //  //return histories.indices['account']!
-  //  //    .getAll(accountId)
-  //  //    .where((history) => (history as History).value != null)
-  //  //    .fold(
-  //  //      Balance(ticker: ticker, confirmed: 0, unconfirmed: 0),
-  //  //      (previousValue, history) => history.value + previousValue);
-//
-  //  //addresses.indices[index]!
-  //  //    .getAll(accountId)
-  //  //    .where((address) => ticker != null ? (address.balance.ticker == ticker) : true).map((e) => e.);
-//
-  //  //.fold(
-  //  //    Balance(ticker: ticker, confirmed: 0, unconfirmed: 0),
-  //  //    (previousValue, element) => Balance(
-  //  //        ticker: ticker,
-  //  //        confirmed:
-  //  //            previousValue.confirmed + (element as Balance).confirmed,
-  //  //        unconfirmed: previousValue.unconfirmed + element.unconfirmed));
-  //}
+  /// combine all asset and raven balances for all addresses of wallets of account
+  Balances collectBalancesOf(String accountId,
+      {String? ticker, String index = 'account'}) {
+    return addresses.indices[index]!
+        .getAll(accountId)
+        .map((address) => address.balances)
+        .fold(
+            Balances(balances: {}),
+            (previousValue, balances) =>
+                Balances.fromTwo(previousValue, balances));
+
+    ///.fold(Map(), (previousValue, balances) => {...previousValue, ...balances});
+
+    //map1 ++ map2.map{ case (k,v) => k -> (v + map1.getOrElse(k,0)) }
+
+    //.where((address) => ticker != null ? (address.balances.ticker == ticker) : true).map((e) => e.);
+
+    //return histories.indices['account']!
+    //    .getAll(accountId)
+    //    .where((history) => (history as History).value != null)
+    //    .fold(
+    //      Balance(ticker: ticker, confirmed: 0, unconfirmed: 0),
+    //      (previousValue, history) => history.value + previousValue);
+
+    //addresses.indices[index]!
+    //    .getAll(accountId)
+    //    .where((address) => ticker != null ? (address.balance.ticker == ticker) : true).map((e) => e.);
+
+    //.fold(
+    //    Balance(ticker: ticker, confirmed: 0, unconfirmed: 0),
+    //    (previousValue, element) => Balance(
+    //        ticker: ticker,
+    //        confirmed:
+    //            previousValue.confirmed + (element as Balance).confirmed,
+    //        unconfirmed: previousValue.unconfirmed + element.unconfirmed));
+  }
 }

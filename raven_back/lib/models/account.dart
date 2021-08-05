@@ -1,12 +1,12 @@
 import 'package:equatable/equatable.dart';
-import 'package:raven/models/balance.dart';
+import 'package:raven/models/balances.dart';
 import 'package:raven/records.dart' as records;
 
 // ignore: must_be_immutable
 class Account extends Equatable {
   final String name;
   // we have to keep track of balance per asset so we can sum their USD values
-  late List<Balance> balances;
+  late Balances balances;
 
   /// presumed
   //final Map<String, dynamic> settings;
