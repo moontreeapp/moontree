@@ -24,13 +24,14 @@ class HistoryAdapter extends TypeAdapter<History> {
       txHash: fields[4] as String,
       txPos: fields[5] as int?,
       value: fields[6] as int?,
+      ticker: fields[7] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, History obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.accountId)
       ..writeByte(1)
@@ -44,7 +45,9 @@ class HistoryAdapter extends TypeAdapter<History> {
       ..writeByte(5)
       ..write(obj.txPos)
       ..writeByte(6)
-      ..write(obj.value);
+      ..write(obj.value)
+      ..writeByte(7)
+      ..write(obj.ticker);
   }
 
   @override

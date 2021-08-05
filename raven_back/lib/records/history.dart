@@ -26,6 +26,9 @@ class History with EquatableMixin {
   @HiveField(6)
   int? value;
 
+  @HiveField(7)
+  String? ticker;
+
   History(
       {required this.accountId,
       required this.walletId,
@@ -33,13 +36,14 @@ class History with EquatableMixin {
       required this.height,
       required this.txHash,
       this.txPos,
-      this.value});
+      this.value,
+      this.ticker});
 
   @override
   List<Object> get props => [accountId, walletId, scripthash, height, txHash];
 
   @override
   String toString() {
-    return 'History(walletId: $walletId, accountId: $accountId, scripthash: $scripthash, txHash: $txHash, height: $height, txPos: $txPos, value: $value)';
+    return 'History(walletId: $walletId, accountId: $accountId, scripthash: $scripthash, txHash: $txHash, height: $height, txPos: $txPos, value: $value, ticker: $ticker)';
   }
 }

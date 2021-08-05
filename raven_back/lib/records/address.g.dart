@@ -24,7 +24,7 @@ class AddressAdapter extends TypeAdapter<Address> {
       hdIndex: fields[4] as int,
       exposure: fields[5] as NodeExposure,
       net: fields[6] as Net,
-      balance: fields[7] as Balance?,
+      balances: fields[7] as Balance?,
     );
   }
 
@@ -47,7 +47,7 @@ class AddressAdapter extends TypeAdapter<Address> {
       ..writeByte(6)
       ..write(obj.net)
       ..writeByte(7)
-      ..write(obj.balance);
+      ..write(obj.balances);
   }
 
   @override

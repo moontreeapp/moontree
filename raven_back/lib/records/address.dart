@@ -30,7 +30,7 @@ class Address {
   Net net;
 
   @HiveField(7)
-  Balance? balance;
+  Balance? balances;
 
   Address({
     required this.scripthash,
@@ -40,6 +40,6 @@ class Address {
     required this.hdIndex,
     this.exposure = NodeExposure.External,
     this.net = Net.Test,
-    this.balance,
+    this.balances,
   });
 }

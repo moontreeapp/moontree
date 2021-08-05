@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ordered_set/ordered_set.dart';
 import 'package:raven/models/address.dart';
+import 'package:raven/models/leader_wallet.dart';
 import 'package:raven/records/node_exposure.dart';
 import 'package:raven/reservoir/change.dart';
 import 'package:raven/reservoirs/address.dart';
@@ -37,6 +38,23 @@ class AddressDerivationService extends Service {
   @override
   void deinit() {
     listener.cancel();
+  }
+
+  void maybeDeriveNewAddresses(List<Address> changedAddresses) async {
+    for (var address in changedAddresses) {
+      if (wallets.data[address.walletId] is LeaderWallet) {
+        LeaderWallet leaderWallet = wallets.data[address.walletId];
+        maybeSaveNewAddress(leaderWallet, NodeExposure.Internal);
+        maybeSaveNewAddress(leaderWallet, NodeExposure.External);
+      }
+    }
+  }
+
+  void maybeSaveNewAddress(LeaderWallet leaderWallet, NodeExposure exposure) {
+    var newAddress = maybeDeriveNextAddress(leaderWallet.id, exposure);
+    if (newAddress != null) {
+      addresses.save(newAddress);
+    }
   }
 
   /// this function is used to determin if we need to derive new addresses

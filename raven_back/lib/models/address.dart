@@ -11,7 +11,7 @@ class Address {
   final int hdIndex;
   late NodeExposure exposure;
   late Net net;
-  late Balance? balance;
+  late List<Balance>? balances;
 
   Address(
       {required this.scripthash,
@@ -21,7 +21,7 @@ class Address {
       required this.hdIndex,
       this.exposure = NodeExposure.External,
       this.net = Net.Test,
-      this.balance});
+      this.balances});
 
   factory Address.fromRecord(records.Address record) {
     return Address(
@@ -32,7 +32,7 @@ class Address {
         hdIndex: record.hdIndex,
         exposure: record.exposure,
         net: record.net,
-        balance: record.balance);
+        balances: record.balances);
   }
 
   records.Address toRecord() {
@@ -44,6 +44,6 @@ class Address {
         hdIndex: hdIndex,
         exposure: exposure,
         net: net,
-        balance: balance);
+        balances: balances);
   }
 }
