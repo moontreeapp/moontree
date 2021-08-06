@@ -29,9 +29,6 @@ class Address {
   @HiveField(6)
   Net net;
 
-  @HiveField(7)
-  Balances? balances; // 'R' represents RVN(t) itself, else: asset
-
   Address({
     required this.scripthash,
     required this.address,
@@ -40,6 +37,5 @@ class Address {
     required this.hdIndex,
     this.exposure = NodeExposure.External,
     this.net = Net.Test,
-    this.balances,
   });
 }

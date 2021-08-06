@@ -42,6 +42,7 @@ class InsufficientFunds implements Exception {
 const DEFAULT_CIPHER = NoCipher();
 
 class LeaderWallet extends Wallet {
+  // final int leaderWalletIndex;
   final Uint8List encryptedSeed;
   late final ravencoin.HDWallet seededWallet;
   late final bool isDerived;
@@ -100,8 +101,10 @@ class LeaderWallet extends Wallet {
 
   ravencoin.HDWallet deriveWallet(int hdIndex,
       [exposure = NodeExposure.External]) {
-    return seededWallet.derivePath(
-        getDerivationPath(hdIndex, exposure: exposure, wif: network.wif));
+    return seededWallet.derivePath(getDerivationPath(hdIndex,
+        exposure: exposure,
+        leaderWalletIndex: 0 // needs to pass it's own index.
+        ));
   }
 
   models.Address deriveAddress(int hdIndex, records.NodeExposure exposure) {

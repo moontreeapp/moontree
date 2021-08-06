@@ -6,7 +6,7 @@ import 'package:raven/records.dart' as records;
 class Account extends Equatable {
   final String name;
   // we have to keep track of balance per asset so we can sum their USD values
-  late Balances balances;
+  //late Balances balances;
 
   /// presumed
   //final Map<String, dynamic> settings;
