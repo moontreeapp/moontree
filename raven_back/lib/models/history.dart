@@ -9,7 +9,7 @@ class History {
   final int height;
   final String txHash;
   late int? txPos;
-  late int? value;
+  late int value;
   late String? ticker;
 
   History(
@@ -19,7 +19,7 @@ class History {
       required this.height,
       required this.txHash,
       this.txPos,
-      this.value,
+      this.value = 0,
       this.ticker});
 
   factory History.fromScripthashHistory(String accountId, String walletId,

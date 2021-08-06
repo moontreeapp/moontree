@@ -23,7 +23,7 @@ class HistoryAdapter extends TypeAdapter<History> {
       height: fields[3] as int,
       txHash: fields[4] as String,
       txPos: fields[5] as int?,
-      value: fields[6] as int?,
+      value: fields[6] as int,
       ticker: fields[7] as String?,
     );
   }

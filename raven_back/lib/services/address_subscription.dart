@@ -202,14 +202,14 @@ class AddressSubscriptionService extends Service {
 
   void saveScripthashHistoryData(ScripthashHistoriesData data) async {
     data.zipped.forEach((row) {
-      var address = row.address;
-      addresses.save(address);
+      // var address = row.address;
+      // addresses.save(address);
       histories.saveAll(combineHistoryAndUnspents(row));
     });
   }
 
-  List combineHistoryAndUnspents(ScripthashHistoryRow row) {
-    var newHistories = [];
+  List<History> combineHistoryAndUnspents(ScripthashHistoryRow row) {
+    var newHistories = <History>[];
     for (var history in row.history) {
       newHistories.add(History.fromScripthashHistory(row.address.accountId,
           row.address.walletId, row.address.scripthash, history));

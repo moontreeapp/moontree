@@ -24,7 +24,7 @@ class History with EquatableMixin {
   int? txPos;
 
   @HiveField(6)
-  int? value;
+  int value;
 
   @HiveField(7)
   String? ticker;
@@ -36,7 +36,7 @@ class History with EquatableMixin {
       required this.height,
       required this.txHash,
       this.txPos,
-      this.value,
+      this.value = 0,
       this.ticker});
 
   @override

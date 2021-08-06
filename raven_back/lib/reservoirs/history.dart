@@ -1,12 +1,14 @@
-import 'package:raven/reservoir/index.dart';
 import 'package:ordered_set/ordered_set.dart';
-import 'package:raven/models/history.dart';
-import 'package:raven/reservoir/reservoir.dart';
 
-class HistoryReservoir<Record, Model> extends Reservoir {
-  late MultipleIndex byAccount;
-  late MultipleIndex byWallet;
-  late MultipleIndex byScripthash;
+import 'package:raven/reservoir/index.dart';
+import 'package:raven/reservoir/reservoir.dart';
+import 'package:raven/models/history.dart';
+import 'package:raven/records.dart' as records;
+
+class HistoryReservoir extends Reservoir<String, records.History, History> {
+  late MultipleIndex<String, History> byAccount;
+  late MultipleIndex<String, History> byWallet;
+  late MultipleIndex<String, History> byScripthash;
 
   HistoryReservoir() : super(HiveSource('histories')) {
     addPrimaryIndex((histories) => histories.txHash);
@@ -18,11 +20,10 @@ class HistoryReservoir<Record, Model> extends Reservoir {
   }
 
   /// returns account addresses in order
-  OrderedSet<History>? unspentsByAccount(String accountId) {
+  Iterable<History>? unspentsByAccount(String accountId) {
     return byAccount
-            .getAll(accountId)
-            .where((element) => (element as History).value != null)
-        as OrderedSet<History>;
+        .getAll(accountId)
+        .where((element) => element.txPos != null);
   }
 
   void removeHistories(String scripthash) {

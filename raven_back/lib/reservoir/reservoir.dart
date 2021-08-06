@@ -24,12 +24,13 @@ class Reservoir<Key, Record, Model> with IterableMixin<Model> {
 
   Iterable<Model> get data => primaryIndex.values;
 
-  UniqueIndex addPrimaryIndex(GetKey<Key, Model> getKey) {
+  UniqueIndex<Key, Model> addPrimaryIndex(GetKey<Key, Model> getKey) {
     primaryIndex = UniqueIndex(getKey);
     return primaryIndex;
   }
 
-  UniqueIndex addUniqueIndex(String name, GetKey<Key, Model> getKey) {
+  UniqueIndex<Key, Model> addUniqueIndex(
+      String name, GetKey<Key, Model> getKey) {
     if (!indices.containsKey(name)) {
       return indices[name] = UniqueIndex(getKey)..addAll(data);
     } else {
@@ -37,7 +38,8 @@ class Reservoir<Key, Record, Model> with IterableMixin<Model> {
     }
   }
 
-  MultipleIndex addMultipleIndex(String name, GetKey<Key, Model> getKey,
+  MultipleIndex<Key, Model> addMultipleIndex(
+      String name, GetKey<Key, Model> getKey,
       [Compare? compare]) {
     if (!indices.containsKey(name)) {
       return indices[name] = MultipleIndex(getKey, compare)..addAll(data);
@@ -46,7 +48,7 @@ class Reservoir<Key, Record, Model> with IterableMixin<Model> {
     }
   }
 
-  Index? removeIndex(String name) {
+  Index<Key, Model>? removeIndex(String name) {
     return indices.remove(name);
   }
 
