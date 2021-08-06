@@ -1,5 +1,5 @@
 // dart test test/sandbox/balances_test.dart
-import 'package:raven/models/balance.dart';
+import 'package:raven/models/indexed_balance.dart';
 import 'package:raven/models/balances.dart';
 import 'package:test/test.dart';
 

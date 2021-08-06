@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:raven/models/balances.dart';
+import 'package:raven/models/balance.dart';
 import 'package:raven/records.dart' as records;
 
 // ignore: must_be_immutable
@@ -9,12 +9,15 @@ class Account extends Equatable {
   final String name;
   // we have to keep track of balance per asset so we can sum their USD values
   //late Balances balances;
+  late Map<String, Balance> balances;
 
   /// presumed
   //final Map<String, dynamic> settings;
   //final Map<String, dynamic> metadata;
 
-  Account({required this.accountId, required this.name}) : super();
+  Account({required this.accountId, required this.name, balances})
+      : balances = balances ?? {},
+        super();
 
   factory Account.fromRecord(records.Account record) {
     return Account(accountId: record.accountId, name: record.name);

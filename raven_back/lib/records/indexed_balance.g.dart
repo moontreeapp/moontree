@@ -1,53 +1,41 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'history.dart';
+part of 'indexed_balance.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class HistoryAdapter extends TypeAdapter<History> {
+class BalanceAdapter extends TypeAdapter<Balance> {
   @override
-  final int typeId = 5;
+  final int typeId = 3;
 
   @override
-  History read(BinaryReader reader) {
+  Balance read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return History(
+    return Balance(
       accountId: fields[0] as String,
-      walletId: fields[1] as String,
-      scripthash: fields[2] as String,
-      height: fields[3] as int,
-      txHash: fields[4] as String,
-      txPos: fields[5] as int,
-      value: fields[6] as int,
-      ticker: fields[7] as String,
+      ticker: fields[1] as String?,
+      confirmed: fields[2] as int,
+      unconfirmed: fields[3] as int,
     );
   }
 
   @override
-  void write(BinaryWriter writer, History obj) {
+  void write(BinaryWriter writer, Balance obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.accountId)
       ..writeByte(1)
-      ..write(obj.walletId)
+      ..write(obj.ticker)
       ..writeByte(2)
-      ..write(obj.scripthash)
+      ..write(obj.confirmed)
       ..writeByte(3)
-      ..write(obj.height)
-      ..writeByte(4)
-      ..write(obj.txHash)
-      ..writeByte(5)
-      ..write(obj.txPos)
-      ..writeByte(6)
-      ..write(obj.value)
-      ..writeByte(7)
-      ..write(obj.ticker);
+      ..write(obj.unconfirmed);
   }
 
   @override
@@ -56,7 +44,7 @@ class HistoryAdapter extends TypeAdapter<History> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is HistoryAdapter &&
+      other is BalanceAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

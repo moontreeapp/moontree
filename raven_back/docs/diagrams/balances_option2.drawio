@@ -1,0 +1,37 @@
+<mxfile host="65bd71144e">
+    <diagram id="B2Imsyf_CLR86bu_pUIC" name="Page-1">
+        <mxGraphModel dx="828" dy="617" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="247" value="The question I have with these two options for caching balance is &lt;br&gt;&lt;br&gt;how is the UI keyed into displaying the data?&lt;br&gt;&lt;br&gt;Why not key it in directly off the historyies reservoir by some cut of the data (index)?&lt;br&gt;what does balances reservoir give us that we can't already get with Histories?&lt;br&gt;" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="63" y="245" width="725" height="260" as="geometry"/>
+                </mxCell>
+                <mxCell id="201" value="Key" style="swimlane;" parent="1" vertex="1">
+                    <mxGeometry x="690" y="40" width="110" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="202" value="Reservoir" style="shape=card;whiteSpace=wrap;html=1;size=20;" parent="201" vertex="1">
+                    <mxGeometry x="10" y="38.75" width="80" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="228" value="(indexed)&lt;br&gt;Balance&lt;br&gt;&lt;br&gt;- accountId&lt;br&gt;- ticker&lt;br&gt;- confirmed&lt;br&gt;- unconfirmed" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="40" width="90" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="244" value="On change feed UI" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="229" target="238">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="229" value="balances&lt;br&gt;&lt;br&gt;- by accountId&lt;br&gt;- by ticker&lt;br&gt;- by both" style="shape=card;whiteSpace=wrap;html=1;size=20;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="310" width="150" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="243" value="On change, save data to balances" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="236" target="229" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="236" value="histories&lt;br&gt;&lt;br&gt;- by accountId&lt;br&gt;- by ticker ('')&lt;br&gt;- by value (0)&lt;br&gt;- by txPos (-1)" style="shape=card;whiteSpace=wrap;html=1;size=20;" parent="1" vertex="1">
+                    <mxGeometry x="65" y="560" width="720" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="238" value="UI" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="70" width="170" height="90" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

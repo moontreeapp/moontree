@@ -17,24 +17,19 @@ class BalanceAdapter extends TypeAdapter<Balance> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Balance(
-      accountId: fields[0] as String,
-      ticker: fields[1] as String?,
-      confirmed: fields[2] as int,
-      unconfirmed: fields[3] as int,
+      confirmed: fields[0] as int,
+      unconfirmed: fields[1] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, Balance obj) {
     writer
-      ..writeByte(4)
-      ..writeByte(0)
-      ..write(obj.accountId)
-      ..writeByte(1)
-      ..write(obj.ticker)
       ..writeByte(2)
+      ..writeByte(0)
+      ..writeByte(0)
       ..write(obj.confirmed)
-      ..writeByte(3)
+      ..writeByte(1)
       ..write(obj.unconfirmed);
   }
 

@@ -7,7 +7,7 @@ import 'package:raven/reservoirs/wallet.dart';
 
 late AccountReservoir<records.Account, models.Account> accounts;
 late AddressReservoir<records.Address, models.Address> addresses;
-late HistoryReservoir<records.History, models.History> histories;
+late HistoryReservoir histories;
 late WalletReservoir wallets;
 
 void makeReservoirs() {

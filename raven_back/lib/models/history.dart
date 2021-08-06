@@ -8,9 +8,9 @@ class History {
   final String scripthash;
   final int height;
   final String txHash;
-  late int? txPos;
+  late int txPos;
   late int value;
-  late String? ticker;
+  late String ticker;
 
   History(
       {required this.accountId,
@@ -18,9 +18,9 @@ class History {
       required this.scripthash,
       required this.height,
       required this.txHash,
-      this.txPos,
+      this.txPos = -1,
       this.value = 0,
-      this.ticker});
+      this.ticker = ''});
 
   factory History.fromScripthashHistory(String accountId, String walletId,
       String scripthash, ScripthashHistory history) {
@@ -43,7 +43,7 @@ class History {
         txHash: unspent.txHash,
         txPos: unspent.txPos,
         value: unspent.value,
-        ticker: unspent.ticker);
+        ticker: unspent.ticker ?? '');
   }
 
   factory History.fromRecord(records.History record) {

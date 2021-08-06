@@ -1,5 +1,4 @@
 import 'package:raven/models.dart';
-import 'package:raven/models/balances.dart';
 import 'package:raven/reservoir/reservoir.dart';
 
 class AccountReservoir<Record, Model> extends Reservoir {

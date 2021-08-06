@@ -1,5 +1,3 @@
-import 'package:ordered_set/ordered_set.dart';
-
 import 'package:raven/reservoir/index.dart';
 import 'package:raven/reservoir/reservoir.dart';
 import 'package:raven/models/history.dart';
@@ -9,6 +7,7 @@ class HistoryReservoir extends Reservoir<String, records.History, History> {
   late MultipleIndex<String, History> byAccount;
   late MultipleIndex<String, History> byWallet;
   late MultipleIndex<String, History> byScripthash;
+  late MultipleIndex<String, History> byTicker;
 
   HistoryReservoir() : super(HiveSource('histories')) {
     addPrimaryIndex((histories) => histories.txHash);
@@ -17,13 +16,24 @@ class HistoryReservoir extends Reservoir<String, records.History, History> {
     byWallet = addMultipleIndex('wallet', (history) => history.walletId);
     byScripthash =
         addMultipleIndex('scripthash', (history) => history.scripthash);
+    byTicker = addMultipleIndex('ticker', (history) => history.ticker);
   }
 
-  /// returns account addresses in order
-  Iterable<History>? unspentsByAccount(String accountId) {
-    return byAccount
-        .getAll(accountId)
-        .where((element) => element.txPos != null);
+  /// could this be turned into an index?
+  /// returns a series of spendable transactions for an account and asset
+  Iterable<History>? unspentsByAccount(String accountId, {String ticker = ''}) {
+    return byAccount.getAll(accountId).where((element) =>
+        element.value > 0 && // unspent
+        element.txPos > -1 && // not in mempool
+        element.ticker == ticker); // rvn default
+  }
+
+  Iterable<History>? unconfirmedByAccount(String accountId,
+      {String ticker = ''}) {
+    return byAccount.getAll(accountId).where((element) =>
+        element.value > 0 && // unspent
+        element.txPos == -1 && // not in mempool
+        element.ticker == ticker); // rvn default
   }
 
   void removeHistories(String scripthash) {

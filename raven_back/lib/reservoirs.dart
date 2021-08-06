@@ -7,7 +7,7 @@ import 'package:raven/reservoirs/history.dart';
 
 late AccountReservoir<records.Account, models.Account> accounts;
 late AddressReservoir<records.Address, models.Address> addresses;
-late HistoryReservoir<records.History, models.History> histories;
+late HistoryReservoir histories;
 
 Map<String, Reservoir> makeReservoirs() {
   accounts = AccountReservoir();

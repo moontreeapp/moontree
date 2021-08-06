@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-import 'package:raven/records/balances.dart';
 
 import 'node_exposure.dart';
 import 'net.dart';

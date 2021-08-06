@@ -21,13 +21,13 @@ class History with EquatableMixin {
   String txHash;
 
   @HiveField(5)
-  int? txPos;
+  int txPos; // -1 for mempool (unconfirmed)
 
   @HiveField(6)
   int value;
 
   @HiveField(7)
-  String? ticker;
+  String ticker; // '' for RVN
 
   History(
       {required this.accountId,
@@ -35,9 +35,9 @@ class History with EquatableMixin {
       required this.scripthash,
       required this.height,
       required this.txHash,
-      this.txPos,
+      this.txPos = -1,
       this.value = 0,
-      this.ticker});
+      this.ticker = ''});
 
   @override
   List<Object> get props => [accountId, walletId, scripthash, height, txHash];

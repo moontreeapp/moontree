@@ -1,9 +1,6 @@
-import 'package:raven/models/balances.dart';
-
 import '../records/node_exposure.dart';
 import '../records/net.dart';
 import '../records.dart' as records;
-import 'balance.dart';
 
 class Address {
   final String scripthash;
