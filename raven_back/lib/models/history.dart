@@ -42,7 +42,8 @@ class History {
         height: unspent.height,
         txHash: unspent.txHash,
         txPos: unspent.txPos,
-        value: unspent.value);
+        value: unspent.value,
+        ticker: unspent.ticker);
   }
 
   factory History.fromRecord(records.History record) {
