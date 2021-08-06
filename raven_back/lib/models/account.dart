@@ -1,115 +1,59 @@
-import 'dart:typed_data';
-
 import 'package:equatable/equatable.dart';
-import 'package:crypto/crypto.dart';
-import 'package:convert/convert.dart' show hex;
-import 'package:ravencoin/ravencoin.dart';
+import 'package:raven/models/balances.dart';
+import 'package:raven/records.dart' as records;
 
-import '../cipher.dart';
-import '../utils/derivation_path.dart';
-import '../records.dart' as records;
-import '../records/net.dart';
-import '../models.dart' as models;
-
-extension Scripthash on HDWallet {
-  Uint8List get outputScript {
-    return Address.addressToOutputScript(address!, network)!;
-  }
-
-  String get scripthash {
-    var digest = sha256.convert(outputScript);
-    var hash = digest.bytes.reversed.toList();
-    return hex.encode(hash);
-  }
-
-  ECPair get keyPair {
-    return ECPair.fromWIF(wif!, networks: ravencoinNetworks);
-  }
-}
-
-class CacheEmpty implements Exception {
-  String cause;
-  CacheEmpty([this.cause = 'Error! Please deriveNodes first.']);
-}
-
-class InsufficientFunds implements Exception {
-  String cause;
-  InsufficientFunds([this.cause = 'Error! Insufficient funds.']);
-}
-
-const DEFAULT_CIPHER = NoCipher();
-
+// ignore: must_be_immutable
 class Account extends Equatable {
-  // Taken from records.Account
-  final Uint8List encryptedSeed;
-  final records.Net net;
   final String name;
+  // we have to keep track of balance per asset so we can sum their USD values
+  //late Balances balances;
 
-  // in memory only (not in box)
-  //late List<ScripthashUnspent> unspents;
-  //late Map<String, List<ScripthashHistory>> histories;
+  /// presumed
+  //final Map<String, dynamic> settings;
+  //final Map<String, dynamic> metadata;
 
-  final records.Account? record;
-  late final String accountId;
-  late final HDWallet seededWallet;
-  late final Cipher cipher;
+  Account({required this.name}) : super();
 
-  @override
-  List<Object?> get props => encryptedSeed;
-
-  Account(seed,
-      {this.name = 'Wallet',
-      this.net = Net.Test,
-      this.record,
-      this.cipher = const NoCipher()})
-      : accountId = sha256.convert(seed).toString(),
-        encryptedSeed = cipher.encrypt(seed) {
-    seededWallet = HDWallet.fromSeed(seed, network: network);
-  }
-
-  factory Account.fromEncryptedSeed(encryptedSeed,
-      {name = 'Wallet', net = Net.Test, record, cipher = const NoCipher()}) {
-    return Account(cipher.decrypt(encryptedSeed),
-        name: name, net: net, record: record, cipher: cipher);
-  }
-
-  factory Account.fromRecord(records.Account record,
-      {cipher = const NoCipher()}) {
-    return Account(cipher.decrypt(record.encryptedSeed),
-        name: record.name, net: record.net, record: record, cipher: cipher);
+  factory Account.fromRecord(records.Account record) {
+    return Account(name: record.name);
   }
 
   records.Account toRecord() {
-    return records.Account(encryptedSeed, net: net, name: name);
+    return records.Account(name: name);
   }
 
   @override
-  String toString() {
-    return 'Account($name, $accountId)';
+  List<Object?> get props => [name];
+
+  String get id => name;
+
+  // in usd ( could have multiple assets )
+  double get balanceUSD {
+    //for each wallet in every list, sum each asset balance (including raven)
+    //for each asset, convert to USD, sum
+
+    // the above list should be found in balances if we want to do it that way
+    return 0.0;
   }
 
-  //// getters /////////////////////////////////////////////////////////////////
-
-  NetworkType get network => networks[net]!;
-
-  //int get balance => Truth.instance.getAccountBalance(this);
-
-  //// Derive Wallet ///////////////////////////////////////////////////////////
-
-  HDWallet deriveWallet(int hdIndex,
-      [exposure = records.NodeExposure.External]) {
-    return seededWallet.derivePath(
-        getDerivationPath(hdIndex, exposure: exposure, wif: network.wif));
+  double get balanceRVN {
+    //for each wallet in every list, sum balance of RVN
+    return 0.0;
   }
 
-  models.Address deriveAddress(int hdIndex, records.NodeExposure exposure) {
-    var wallet = deriveWallet(hdIndex, exposure);
-    return models.Address(
-        wallet.scripthash, wallet.address!, accountId, hdIndex,
-        exposure: exposure, net: net);
+  double getBalanceOf(String ticker) {
+    //for each wallet in every list, sum balance of that asset
+    return 0.0;
   }
 
   //// Sending Functionality ///////////////////////////////////////////////////
+
+  /*
+  get sorted list of unspents for all addresses belonging to all wallets with 
+  account name.
+
+  var unspents = histories.unspentsByAccount(accountId: name);....
+  */
 
   //SortedList<ScripthashUnspent> sortedUTXOs() {
   //  var sortedList = SortedList<ScripthashUnspent>(
@@ -119,25 +63,22 @@ class Account extends Equatable {
   //      Truth.instance.accountUnspents.getAsList<ScripthashUnspent>(accountId));
   //  return sortedList;
   //}
-//
+
   ///// returns the smallest number of inputs to satisfy the amount
   //List<ScripthashUnspent> collectUTXOs(int amount,
   //    [List<ScripthashUnspent>? except]) {
   //  var ret = <ScripthashUnspent>[];
-//
   //  if (balance < amount) {
   //    throw InsufficientFunds();
   //  }
   //  var utxos = sortedUTXOs();
   //  utxos.removeWhere((utxo) => (except ?? []).contains(utxo));
-//
   //  /* can we find an ideal singular utxo? */
   //  for (var i = 0; i < utxos.length; i++) {
   //    if (utxos[i].value >= amount) {
   //      return [utxos[i]];
   //    }
   //  }
-//
   //  /* what combinations of utxo's must we return?
   //  lets start by grabbing the largest one
   //  because we know we can consume it all without producing change...

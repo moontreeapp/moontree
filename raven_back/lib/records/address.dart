@@ -1,12 +1,12 @@
 import 'package:hive/hive.dart';
-import 'package:raven/models/balance.dart';
+import 'package:raven/records/balances.dart';
 
 import 'node_exposure.dart';
 import 'net.dart';
 
 part 'address.g.dart';
 
-@HiveType(typeId: 1)
+@HiveType(typeId: 2)
 class Address {
   @HiveField(0)
   String scripthash;
@@ -15,27 +15,27 @@ class Address {
   String address;
 
   @HiveField(2)
-  String accountId;
+  String walletId;
 
   @HiveField(3)
-  int hdIndex;
+  String accountId;
 
   @HiveField(4)
-  NodeExposure exposure;
+  int hdIndex;
 
   @HiveField(5)
-  Net net;
+  NodeExposure exposure;
 
   @HiveField(6)
-  Balance? balance;
+  Net net;
 
-  Address(
-    this.scripthash,
-    this.address,
-    this.accountId,
-    this.hdIndex, {
+  Address({
+    required this.scripthash,
+    required this.address,
+    required this.walletId,
+    required this.accountId,
+    required this.hdIndex,
     this.exposure = NodeExposure.External,
     this.net = Net.Test,
-    this.balance,
   });
 }

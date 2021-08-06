@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'records.dart';
+import '../records.dart';
 
 class HiveHelper {
   static Future init() async {
@@ -14,8 +14,10 @@ class HiveHelper {
 
   static void registerAdapters() {
     Hive.registerAdapter(AccountAdapter());
+    Hive.registerAdapter(WalletAdapter());
     Hive.registerAdapter(AddressAdapter());
     Hive.registerAdapter(BalanceAdapter());
+    Hive.registerAdapter(BalancesAdapter());
     Hive.registerAdapter(HistoryAdapter());
     Hive.registerAdapter(NetAdapter());
     Hive.registerAdapter(NodeExposureAdapter());
@@ -25,20 +27,9 @@ class HiveHelper {
     await Hive.openBox('settings');
     await Hive.openBox<Account>('accounts');
     await Hive.openBox<Address>('addresses');
-
-    /* replaced by addresses ... */
-    await Hive.openBox('scripthashAccountIdInternal');
-    await Hive.openBox('scripthashAccountIdExternal');
-    await Hive.openBox('scripthashOrderInternal');
-    await Hive.openBox('scripthashOrderExternal');
-    /* ... */
-
-    /* replaced by reports ... */
-    await Hive.openBox('balances');
-    await Hive.openBox('histories');
-    await Hive.openBox('unspents');
-    await Hive.openBox('accountUnspents'); // replaced by indexing
-    /* ... */
+    await Hive.openBox<Wallet>('wallets');
+    await Hive.openBox<History>('histories');
+    //await Hive.openBox<Balance>('balances'); // do we have a box of balances? if so should we just index balances? balances are saved on the addresses
   }
 
   static Future close() async {

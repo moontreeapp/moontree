@@ -51,17 +51,6 @@ void main() {
       res.save('model:abc');
       expect(res.get(0), 'model:xyz');
 
-      for (var item in res) {
-        print(item);
-        //model:abc
-        //model:xyz
-      }
-      for (var key in res.primaryIndex.keys) {
-        print(key);
-        print(res.data[key]);
-        //0
-        //model:xyz
-      }
       // primary key thing broken here...
       expect(res.get(1), 'model:abc');
     });

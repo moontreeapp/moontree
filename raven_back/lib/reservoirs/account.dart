@@ -1,4 +1,5 @@
-import 'package:raven/models/balance.dart';
+import 'package:raven/models.dart';
+import 'package:raven/models/balances.dart';
 import 'package:raven/reservoir/reservoir.dart';
 
 class AccountReservoir<Record, Model> extends Reservoir {
@@ -7,8 +8,8 @@ class AccountReservoir<Record, Model> extends Reservoir {
   }
 
   // set the balance for an account
-  void setBalance(String accountId, Balance balance) {
-    primaryIndex.getOne(accountId).balance = balance;
-    save(accountId);
-  }
+  // void setBalance(String accountId, Balance balance) {
+  //   primaryIndex.getOne(accountId).balance = balance;
+  //   save(accountId);
+  // }
 }

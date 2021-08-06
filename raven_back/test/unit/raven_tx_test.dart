@@ -2,7 +2,7 @@
 import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:ravencoin/ravencoin.dart';
-import 'package:raven/models/account.dart';
+import 'package:raven/models/leader_wallet.dart';
 import 'package:raven/records/net.dart';
 import 'package:raven/records/node_exposure.dart';
 

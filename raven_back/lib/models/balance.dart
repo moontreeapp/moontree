@@ -6,17 +6,19 @@ class Balance {
   final int confirmed;
   final int unconfirmed;
 
-  Balance(this.confirmed, this.unconfirmed);
+  Balance({required this.confirmed, required this.unconfirmed});
 
   factory Balance.fromScripthashBalance(ScripthashBalance balance) {
-    return Balance(balance.confirmed, balance.unconfirmed);
+    return Balance(
+        confirmed: balance.confirmed, unconfirmed: balance.unconfirmed);
   }
 
   factory Balance.fromRecord(records.Balance record) {
-    return Balance(record.confirmed, record.unconfirmed);
+    return Balance(
+        confirmed: record.confirmed, unconfirmed: record.unconfirmed);
   }
 
   records.Balance toRecord() {
-    return records.Balance(confirmed, unconfirmed);
+    return records.Balance(confirmed: confirmed, unconfirmed: unconfirmed);
   }
 }

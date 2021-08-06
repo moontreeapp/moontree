@@ -1,9 +1,8 @@
 // dart test test/unit/raven_test.dart
-import 'dart:cli';
 
 import 'package:rxdart/rxdart.dart';
 import 'package:test/test.dart';
-import 'package:raven/raven.dart';
+import 'package:raven/init/raven.dart';
 
 void main() async {
   test('settings listener', () async {

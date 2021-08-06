@@ -5,7 +5,7 @@ part 'net.g.dart';
 
 var networks = {Net.Test: testnet, Net.Main: ravencoin};
 
-@HiveType(typeId: 4)
+@HiveType(typeId: 6)
 enum Net {
   @HiveField(0)
   Main,

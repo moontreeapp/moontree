@@ -8,7 +8,7 @@ part of 'address.dart';
 
 class AddressAdapter extends TypeAdapter<Address> {
   @override
-  final int typeId = 1;
+  final int typeId = 2;
 
   @override
   Address read(BinaryReader reader) {
@@ -17,13 +17,13 @@ class AddressAdapter extends TypeAdapter<Address> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Address(
-      fields[0] as String,
-      fields[1] as String,
-      fields[2] as String,
-      fields[3] as int,
-      exposure: fields[4] as NodeExposure,
-      net: fields[5] as Net,
-      balance: fields[6] as Balance?,
+      scripthash: fields[0] as String,
+      address: fields[1] as String,
+      walletId: fields[2] as String,
+      accountId: fields[3] as String,
+      hdIndex: fields[4] as int,
+      exposure: fields[5] as NodeExposure,
+      net: fields[6] as Net,
     );
   }
 
@@ -36,15 +36,15 @@ class AddressAdapter extends TypeAdapter<Address> {
       ..writeByte(1)
       ..write(obj.address)
       ..writeByte(2)
-      ..write(obj.accountId)
+      ..write(obj.walletId)
       ..writeByte(3)
-      ..write(obj.hdIndex)
+      ..write(obj.accountId)
       ..writeByte(4)
-      ..write(obj.exposure)
+      ..write(obj.hdIndex)
       ..writeByte(5)
-      ..write(obj.net)
+      ..write(obj.exposure)
       ..writeByte(6)
-      ..write(obj.balance);
+      ..write(obj.net);
   }
 
   @override

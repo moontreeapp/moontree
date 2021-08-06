@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
 
 import 'package:raven/records/net.dart';
-import 'package:raven/models/account.dart';
+import 'package:raven/models/leader_wallet.dart';
 
 final seed = bip39.mnemonicToSeed(
     'smile build brain topple moon scrap area aim budget enjoy polar erosion');

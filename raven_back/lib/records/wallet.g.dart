@@ -1,53 +1,41 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'history.dart';
+part of 'wallet.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class HistoryAdapter extends TypeAdapter<History> {
+class WalletAdapter extends TypeAdapter<Wallet> {
   @override
-  final int typeId = 5;
+  final int typeId = 0;
 
   @override
-  History read(BinaryReader reader) {
+  Wallet read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return History(
+    return Wallet(
       accountId: fields[0] as String,
-      walletId: fields[1] as String,
-      scripthash: fields[2] as String,
-      height: fields[3] as int,
-      txHash: fields[4] as String,
-      txPos: fields[5] as int?,
-      value: fields[6] as int?,
-      ticker: fields[7] as String?,
+      isHD: fields[1] as bool,
+      encrypted: fields[2] as Uint8List,
+      net: fields[3] as Net,
     );
   }
 
   @override
-  void write(BinaryWriter writer, History obj) {
+  void write(BinaryWriter writer, Wallet obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.accountId)
       ..writeByte(1)
-      ..write(obj.walletId)
+      ..write(obj.isHD)
       ..writeByte(2)
-      ..write(obj.scripthash)
+      ..write(obj.encrypted)
       ..writeByte(3)
-      ..write(obj.height)
-      ..writeByte(4)
-      ..write(obj.txHash)
-      ..writeByte(5)
-      ..write(obj.txPos)
-      ..writeByte(6)
-      ..write(obj.value)
-      ..writeByte(7)
-      ..write(obj.ticker);
+      ..write(obj.net);
   }
 
   @override
@@ -56,7 +44,7 @@ class HistoryAdapter extends TypeAdapter<History> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is HistoryAdapter &&
+      other is WalletAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

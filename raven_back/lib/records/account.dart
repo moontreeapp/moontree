@@ -1,29 +1,27 @@
 // dart run build_runner build
-import 'dart:typed_data';
-
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import 'net.dart';
 
 part 'account.g.dart';
 
-@HiveType(typeId: 0)
+@HiveType(typeId: 1)
 class Account with HiveObjectMixin, EquatableMixin {
   @HiveField(0)
-  Uint8List encryptedSeed;
-
-  @HiveField(1)
-  Net net;
-
-  @HiveField(2)
   String name;
 
-  Account(this.encryptedSeed, {this.net = Net.Test, this.name = 'Wallet'});
+  /// presumed
+  //@HiveField(1)
+  //Map<String, dynamic> settings;
+
+  /// presumed
+  //@HiveField(2)
+  //Map<String, dynamic> metadata;
+
+  Account({required this.name});
 
   @override
-  List<Object> get props => [encryptedSeed];
+  List<Object> get props => [name];
 
   @override
-  String toString() =>
-      'Account($name, $net, ${encryptedSeed.take(6).toList()})';
+  String toString() => 'Account($name)';
 }

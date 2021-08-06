@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:raven/hive_helper.dart';
+import 'package:raven/init/hive_helper.dart';
 
 import 'package:raven/subjects/settings.dart';
 

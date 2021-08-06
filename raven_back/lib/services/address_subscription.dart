@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:quiver/iterables.dart';
-import 'package:raven/models/balance.dart';
-import 'package:raven/records/node_exposure.dart';
+//import 'package:raven/models/balance.dart';
 import 'package:raven/reservoirs/address.dart';
+import 'package:raven/reservoirs/history.dart';
+import 'package:raven/reservoirs/wallet.dart';
 import 'package:raven/services/address_derivation.dart'
     show AddressDerivationService;
 import 'package:raven/services/service.dart';
@@ -11,37 +12,91 @@ import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 import '../buffer_count_window.dart';
 import '../models.dart';
-import '../reservoir/reservoir.dart';
 
-class ScripthashRow {
+class ScripthashHistoryRow {
   final Address address;
-  final ScripthashBalance balance;
   final List<ScripthashHistory> history;
   final List<ScripthashUnspent> unspent;
+  final List<ScripthashUnspent> assetUnspent;
 
-  ScripthashRow(this.address, this.balance, this.history, this.unspent);
+  ScripthashHistoryRow(
+      this.address, this.history, this.unspent, this.assetUnspent);
 }
 
-class ScripthashData {
+class ScripthashHistoriesData {
   final List<Address> addresses;
-  final List<ScripthashBalance> balances;
   final List<List<ScripthashHistory>> histories;
   final List<List<ScripthashUnspent>> unspents;
+  final List<List<ScripthashUnspent>> assetUnspents;
 
-  ScripthashData(this.addresses, this.balances, this.histories, this.unspents);
+  ScripthashHistoriesData(
+      this.addresses, this.histories, this.unspents, this.assetUnspents);
 
-  Iterable<ScripthashRow> get zipped =>
-      zip([addresses, balances, histories, unspents]).map((e) => ScripthashRow(
+  Iterable<ScripthashHistoryRow> get zipped =>
+      zip([addresses, histories, unspents]).map((e) => ScripthashHistoryRow(
           e[0] as Address,
-          e[1] as ScripthashBalance,
-          e[2] as List<ScripthashHistory>,
+          e[1] as List<ScripthashHistory>,
+          e[2] as List<ScripthashUnspent>,
           e[3] as List<ScripthashUnspent>));
 }
 
+/// balance isn't necessary -
+/// histries with height of 0 are in mempool and "unconfirmed"
+//class ScripthashBalanceRow {
+//  final Address address;
+//  final Balances balances;
+//
+//  ScripthashBalanceRow(this.address, this.balances);
+//}
+//
+//class ScripthashBalancesData {
+//  final List<Address> addresses;
+//  final List<ScripthashBalance> balances;
+//  final List<ScripthashAssetBalances> assetBalances;
+//
+//  ScripthashBalancesData(this.addresses, this.balances, this.assetBalances);
+//
+//  Iterable<ScripthashBalanceRow> get zipped =>
+//      zip([addresses, balances, conformedAssetBalances()])
+//          .map((e) => ScripthashBalanceRow(
+//              e[0] as Address,
+//              Balances(balances: {
+//                ...e[2] as Map<String, Balance>,
+//                ...{'R': e[1] as Balance}
+//              })));
+//
+//  List<Balances> conformedAssetBalances() {
+//    var assetBalancesConformed;
+//    for (var assetsBalance in assetBalances) {
+//      assetBalancesConformed.add(toAssetMap(assetsBalance));
+//    }
+//    return assetBalancesConformed;
+//  }
+//
+//  Balances toAssetMap(ScripthashAssetBalances balances) {
+//    var tickers = {
+//      ...balances.confirmed.keys.toList(),
+//      ...balances.unconfirmed.keys.toList()
+//    };
+//    //var ret;
+//    //for (var ticker in tickers) {
+//    //  ret[ticker] = Balance(
+//    //      confirmed: balances.confirmed[ticker] ?? 0,
+//    //      unconfirmed: balances.unconfirmed[ticker] ?? 0);
+//    //}
+//    return Balances(balances: {
+//      for (var ticker in tickers)
+//        ticker: Balance(
+//            confirmed: balances.confirmed[ticker] ?? 0,
+//            unconfirmed: balances.unconfirmed[ticker] ?? 0)
+//    });
+//  }
+//}
+
 class AddressSubscriptionService extends Service {
-  Reservoir accounts;
+  WalletReservoir wallets;
   AddressReservoir addresses;
-  Reservoir histories;
+  HistoryReservoir histories;
   RavenElectrumClient client;
   AddressDerivationService addressDerivationService;
   Map<String, StreamSubscription> subscriptionHandles = {};
@@ -49,7 +104,7 @@ class AddressSubscriptionService extends Service {
 
   StreamController<Address> addressesNeedingUpdate = StreamController();
 
-  AddressSubscriptionService(this.accounts, this.addresses, this.histories,
+  AddressSubscriptionService(this.wallets, this.addresses, this.histories,
       this.client, this.addressDerivationService)
       : super();
 
@@ -60,8 +115,11 @@ class AddressSubscriptionService extends Service {
     listeners.add(addressesNeedingUpdate.stream
         .bufferCountTimeout(10, Duration(milliseconds: 50))
         .listen((changedAddresses) async {
-      saveScripthashData(await getScripthashData(changedAddresses));
-      maybeDeriveNewAddresses(changedAddresses);
+      saveScripthashHistoryData(
+          await getScripthashHistoriesData(changedAddresses));
+      //saveScripthashBalanceData(
+      //    await getScripthashBalancesData(changedAddresses));
+      addressDerivationService.maybeDeriveNewAddresses(changedAddresses);
     }));
 
     listeners.add(addresses.changes.listen((change) {
@@ -105,56 +163,65 @@ class AddressSubscriptionService extends Service {
     }
   }
 
-  Future<ScripthashData> getScripthashData(
+  Future<ScripthashHistoriesData> getScripthashHistoriesData(
       List<Address> changedAddresses) async {
     var scripthashes =
         changedAddresses.map((address) => address.scripthash).toList();
-    // ignore: omit_local_variable_types
-    List<ScripthashBalance> balances = await client.getBalances(scripthashes);
     // ignore: omit_local_variable_types
     List<List<ScripthashHistory>> histories =
         await client.getHistories(scripthashes);
     // ignore: omit_local_variable_types
     List<List<ScripthashUnspent>> unspents =
         await client.getUnspents(scripthashes);
-    return ScripthashData(changedAddresses, balances, histories, unspents);
+    // ignore: omit_local_variable_types
+    List<List<ScripthashUnspent>> assetUnspents =
+        await client.getAssetUnspents(scripthashes);
+    return ScripthashHistoriesData(
+        changedAddresses, histories, unspents, assetUnspents);
   }
 
-  void saveScripthashData(ScripthashData data) async {
+  //Future<ScripthashBalancesData> getScripthashBalancesData(
+  //    List<Address> changedAddresses) async {
+  //  var scripthashes =
+  //      changedAddresses.map((address) => address.scripthash).toList();
+  //  // ignore: omit_local_variable_types
+  //  List<ScripthashBalance> balances = await client.getBalances(scripthashes);
+  //  // ignore: omit_local_variable_types
+  //  List<ScripthashAssetBalances> assetBalances =
+  //      await client.getAssetBalances(scripthashes);
+  //  return ScripthashBalancesData(changedAddresses, balances, assetBalances);
+  //}
+
+  //void saveScripthashBalanceData(ScripthashBalancesData data) async {
+  //  data.zipped.forEach((row) {
+  //    var address = row.address;
+  //    address.balances = row.balances;
+  //    addresses.save(address);
+  //  });
+  //}
+
+  void saveScripthashHistoryData(ScripthashHistoriesData data) async {
     data.zipped.forEach((row) {
       var address = row.address;
-      address.balance = Balance.fromScripthashBalance(row.balance);
       addresses.save(address);
       histories.saveAll(combineHistoryAndUnspents(row));
     });
   }
 
-  List combineHistoryAndUnspents(ScripthashRow row) {
+  List combineHistoryAndUnspents(ScripthashHistoryRow row) {
     var newHistories = [];
     for (var history in row.history) {
-      newHistories.add(History.fromScripthashHistory(
-          row.address.accountId, row.address.scripthash, history));
+      newHistories.add(History.fromScripthashHistory(row.address.accountId,
+          row.address.walletId, row.address.scripthash, history));
     }
     for (var unspent in row.unspent) {
-      newHistories.add(History.fromScripthashUnspent(
-          row.address.accountId, row.address.scripthash, unspent));
+      newHistories.add(History.fromScripthashUnspent(row.address.accountId,
+          row.address.walletId, row.address.scripthash, unspent));
+    }
+    for (var unspent in row.assetUnspent) {
+      newHistories.add(History.fromScripthashUnspent(row.address.accountId,
+          row.address.walletId, row.address.scripthash, unspent));
     }
     return newHistories;
-  }
-
-  void maybeDeriveNewAddresses(List<Address> changedAddresses) async {
-    for (var address in changedAddresses) {
-      Account account = accounts.get(address.accountId);
-      maybeSaveNewAddress(account, NodeExposure.Internal);
-      maybeSaveNewAddress(account, NodeExposure.External);
-    }
-  }
-
-  void maybeSaveNewAddress(Account account, NodeExposure exposure) {
-    var newAddress = addressDerivationService.maybeDeriveNextAddress(
-        account.accountId, exposure);
-    if (newAddress != null) {
-      addresses.save(newAddress);
-    }
   }
 }

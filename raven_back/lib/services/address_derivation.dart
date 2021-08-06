@@ -2,31 +2,32 @@ import 'dart:async';
 
 import 'package:ordered_set/ordered_set.dart';
 import 'package:raven/models/address.dart';
-import 'package:raven/models/account.dart';
+import 'package:raven/models/leader_wallet.dart';
 import 'package:raven/records/node_exposure.dart';
 import 'package:raven/reservoir/change.dart';
 import 'package:raven/reservoirs/account.dart';
 import 'package:raven/reservoirs/address.dart';
 import 'package:raven/reservoirs/history.dart';
+import 'package:raven/reservoirs/wallet.dart';
 import 'package:raven/services/service.dart';
 import 'package:ravencoin/ravencoin.dart' show HDWallet;
 
 class AddressDerivationService extends Service {
-  AccountReservoir accounts;
+  WalletReservoir wallets;
   AddressReservoir addresses;
   HistoryReservoir histories;
   late StreamSubscription<Change> listener;
 
-  AddressDerivationService(this.accounts, this.addresses, this.histories)
+  AddressDerivationService(this.wallets, this.addresses, this.histories)
       : super();
 
   @override
   void init() {
-    listener = accounts.changes.listen((change) {
+    listener = wallets.changes.listen((change) {
       change.when(added: (added) {
-        Account account = added.data;
-        addresses.save(account.deriveAddress(0, NodeExposure.Internal));
-        addresses.save(account.deriveAddress(0, NodeExposure.External));
+        var wallet = added.data;
+        addresses.save(wallet.deriveAddress(0, NodeExposure.Internal));
+        addresses.save(wallet.deriveAddress(0, NodeExposure.External));
       }, updated: (updated) {
         /* Name or settings have changed */
       }, removed: (removed) {
@@ -40,13 +41,30 @@ class AddressDerivationService extends Service {
     listener.cancel();
   }
 
+  void maybeDeriveNewAddresses(List<Address> changedAddresses) async {
+    for (var address in changedAddresses) {
+      if (wallets.primaryIndex.getOne(address.walletId) is LeaderWallet) {
+        LeaderWallet leaderWallet =
+            wallets.primaryIndex.getOne(address.walletId);
+        maybeSaveNewAddress(leaderWallet, NodeExposure.Internal);
+        maybeSaveNewAddress(leaderWallet, NodeExposure.External);
+      }
+    }
+  }
+
+  void maybeSaveNewAddress(LeaderWallet leaderWallet, NodeExposure exposure) {
+    var newAddress = maybeDeriveNextAddress(leaderWallet.id, exposure);
+    if (newAddress != null) {
+      addresses.save(newAddress);
+    }
+  }
+
   /// this function is used to determin if we need to derive new addresses
   /// based upon the idea that we want to retain a gap of empty histories
-  Address? maybeDeriveNextAddress(String accountId, NodeExposure exposure) {
+  Address? maybeDeriveNextAddress(String walletId, NodeExposure exposure) {
     var gap = 0;
-    var exposureAddresses = addresses.byAccountAndExposure(accountId, exposure);
-    exposureAddresses =
-        (exposureAddresses == null) ? OrderedSet<Address>() : exposureAddresses;
+    var exposureAddresses =
+        addresses.byWalletExposure.getAll('$walletId:$exposure');
     for (var exposureAddress in exposureAddresses) {
       gap = gap +
           (histories.byScripthash.getAll(exposureAddress.scripthash).isEmpty
@@ -55,22 +73,23 @@ class AddressDerivationService extends Service {
     }
     // TODO fix get null thing
     if (gap < 10) {
-      return accounts
-          .get(accountId)
+      return wallets
+          .get(walletId)
           .deriveAddress(exposureAddresses.length, exposure);
     }
   }
 
   /// returns the next internal or external node missing a history
-  HDWallet getNextEmptyWallet(String accountId,
+  HDWallet getNextEmptyWallet(String walletId,
       [NodeExposure exposure = NodeExposure.Internal]) {
     // ensure valid exposure
     exposure = exposure == NodeExposure.Internal
         ? NodeExposure.Internal
         : NodeExposure.External;
-    var account = accounts.get(accountId)!;
+    var account = wallets.get(walletId)!;
     var i = 0;
-    for (var address in addresses.byAccountAndExposure(accountId, exposure)!) {
+    for (var address
+        in addresses.byWalletExposure.getAll('$walletId:$exposure')) {
       if (histories.byScripthash.getAll(address.scripthash).isEmpty) {
         return account.deriveWallet(i, exposure);
       }

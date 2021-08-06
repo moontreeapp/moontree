@@ -1,35 +1,32 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'balance.dart';
+part of 'balances.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class BalanceAdapter extends TypeAdapter<Balance> {
+class BalancesAdapter extends TypeAdapter<Balances> {
   @override
-  final int typeId = 3;
+  final int typeId = 4;
 
   @override
-  Balance read(BinaryReader reader) {
+  Balances read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Balance(
-      confirmed: fields[0] as int,
-      unconfirmed: fields[1] as int,
+    return Balances(
+      balances: (fields[0] as Map).cast<String, Balance>(),
     );
   }
 
   @override
-  void write(BinaryWriter writer, Balance obj) {
+  void write(BinaryWriter writer, Balances obj) {
     writer
-      ..writeByte(2)
-      ..writeByte(0)
-      ..write(obj.confirmed)
       ..writeByte(1)
-      ..write(obj.unconfirmed);
+      ..writeByte(0)
+      ..write(obj.balances);
   }
 
   @override
@@ -38,7 +35,7 @@ class BalanceAdapter extends TypeAdapter<Balance> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is BalanceAdapter &&
+      other is BalancesAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
