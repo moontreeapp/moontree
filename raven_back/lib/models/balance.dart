@@ -18,6 +18,12 @@ class Balance {
         confirmed: record.confirmed, unconfirmed: record.unconfirmed);
   }
 
+  Balance operator +(Balance balance) {
+    return Balance(
+        confirmed: confirmed + balance.confirmed,
+        unconfirmed: unconfirmed + balance.unconfirmed);
+  }
+
   records.Balance toRecord() {
     return records.Balance(confirmed: confirmed, unconfirmed: unconfirmed);
   }

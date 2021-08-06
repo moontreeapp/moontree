@@ -49,11 +49,11 @@ class AccountBalanceService extends Service {
       account.balances[ticker] = Balance(
           confirmed: histories
                   .unspentsByAccount(accountId, ticker: ticker)
-                  ?.fold(0, (sum, history) => sum ?? 0 + history.value) ??
+                  .fold(0, (sum, history) => sum ?? 0 + history.value) ??
               0,
           unconfirmed: histories
                   .unconfirmedByAccount(accountId, ticker: ticker)
-                  ?.fold(0, (sum, history) => sum ?? 0 + history.value) ??
+                  .fold(0, (sum, history) => sum ?? 0 + history.value) ??
               0);
     }
   }

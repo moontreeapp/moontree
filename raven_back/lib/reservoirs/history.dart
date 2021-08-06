@@ -1,3 +1,4 @@
+import 'package:raven/models/balance.dart';
 import 'package:raven/reservoir/index.dart';
 import 'package:raven/reservoir/reservoir.dart';
 import 'package:raven/models/history.dart';
@@ -19,22 +20,42 @@ class HistoryReservoir extends Reservoir<String, records.History, History> {
     byTicker = addMultipleIndex('ticker', (history) => history.ticker);
   }
 
-  /// could this be turned into an index?
-  /// returns a series of spendable transactions for an account and asset
-  Iterable<History>? unspentsByAccount(String accountId, {String ticker = ''}) {
-    return byAccount.getAll(accountId).where((element) =>
-        element.value > 0 && // unspent
-        element.txPos > -1 && // not in mempool
-        element.ticker == ticker); // rvn default
+  /// Master overview /////////////////////////////////////////////////////////
+
+  Iterable<History> unspentsByTicker({String ticker = ''}) {
+    return byTicker.getAll(ticker).where((history) => history.value > 0);
   }
 
-  Iterable<History>? unconfirmedByAccount(String accountId,
-      {String ticker = ''}) {
-    return byAccount.getAll(accountId).where((element) =>
-        element.value > 0 && // unspent
-        element.txPos == -1 && // not in mempool
-        element.ticker == ticker); // rvn default
+  Balance balanceByTicker({String ticker = ''}) {
+    return unspentsByTicker(ticker: ticker).fold(
+        Balance(confirmed: 0, unconfirmed: 0),
+        (sum, history) =>
+            sum +
+            Balance(
+                confirmed: (history.txPos > -1 ? history.value : 0),
+                unconfirmed: history.value));
   }
+
+  /// Account overview ////////////////////////////////////////////////////////
+
+  /// could this be turned into an index?
+  /// returns a series of spendable transactions for an account and asset
+  Iterable<History> unspentsByAccount(String accountId, {String ticker = ''}) {
+    return byAccount.getAll(accountId).where((history) =>
+        history.value > 0 && // unspent
+        history.txPos > -1 && // not in mempool
+        history.ticker == ticker); // rvn default
+  }
+
+  Iterable<History> unconfirmedByAccount(String accountId,
+      {String ticker = ''}) {
+    return byAccount.getAll(accountId).where((history) =>
+        history.value > 0 && // unspent
+        history.txPos == -1 && // not in mempool
+        history.ticker == ticker); // rvn default
+  }
+
+  /// remove logic ////////////////////////////////////////////////////////////
 
   void removeHistories(String scripthash) {
     return byScripthash
