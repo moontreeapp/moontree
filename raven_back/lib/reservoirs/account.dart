@@ -1,4 +1,4 @@
-import 'package:raven/models.dart';
+import 'package:raven/models/balance.dart';
 import 'package:raven/reservoir/reservoir.dart';
 
 class AccountReservoir<Record, Model> extends Reservoir {
@@ -6,9 +6,10 @@ class AccountReservoir<Record, Model> extends Reservoir {
     addPrimaryIndex((account) => account.accountId);
   }
 
-  // set the balance for an account
-  // void setBalance(String accountId, Balance balance) {
-  //   primaryIndex.getOne(accountId).balance = balance;
-  //   save(accountId);
-  // }
+  void setBalance(String accountId, String ticker, Balance balance) {
+    var account = primaryIndex.getOne(accountId).balances[ticker] = balance;
+    // Question: save takes an account not an account Id, does it replace the existing acccount?
+    //save(accountId);
+    save(account);
+  }
 }

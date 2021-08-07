@@ -11,13 +11,6 @@ import 'package:raven/reservoirs/history.dart';
 import 'package:raven/services/service.dart';
 import 'package:raven/buffer_count_window.dart';
 
-class Bal {
-  final int confirmed;
-  final int unconfirmed;
-
-  Bal(this.confirmed, this.unconfirmed);
-}
-
 class AccountBalanceService extends Service {
   AccountReservoir accounts;
   BalanceReservoir balances;
@@ -45,16 +38,18 @@ class AccountBalanceService extends Service {
     for (var accountIdTicker in combos) {
       var accountId = accountIdTicker[0];
       var ticker = accountIdTicker[1];
-      var account = accounts.get(accountId);
-      account.balances[ticker] = Balance(
-          confirmed: histories
-                  .unspentsByAccount(accountId, ticker: ticker)
-                  .fold(0, (sum, history) => sum ?? 0 + history.value) ??
-              0,
-          unconfirmed: histories
-                  .unconfirmedByAccount(accountId, ticker: ticker)
-                  .fold(0, (sum, history) => sum ?? 0 + history.value) ??
-              0);
+      accounts.setBalance(
+          accountId,
+          ticker,
+          Balance(
+              confirmed: histories
+                      .unspentsByAccount(accountId, ticker: ticker)
+                      .fold(0, (sum, history) => sum ?? 0 + history.value) ??
+                  0,
+              unconfirmed: histories
+                      .unconfirmedByAccount(accountId, ticker: ticker)
+                      .fold(0, (sum, history) => sum ?? 0 + history.value) ??
+                  0));
     }
   }
 

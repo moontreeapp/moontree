@@ -6,3 +6,4 @@ Balance 4
 History 5
 Net 6
 NodeExposure 7
+Rate 8

@@ -1,35 +1,41 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'balance.dart';
+part of 'rate.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class BalanceAdapter extends TypeAdapter<Balance> {
+class RateAdapter extends TypeAdapter<Rate> {
   @override
-  final int typeId = 3;
+  final int typeId = 8;
 
   @override
-  Balance read(BinaryReader reader) {
+  Rate read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Balance(
-      confirmed: fields[0] as int,
-      unconfirmed: fields[1] as int,
+    return Rate(
+      from: fields[0] as String,
+      to: fields[1] as String,
+      rate: fields[2] as double,
+      fiat: fields[3] as bool,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Balance obj) {
+  void write(BinaryWriter writer, Rate obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(4)
       ..writeByte(0)
-      ..write(obj.confirmed)
+      ..write(obj.from)
       ..writeByte(1)
-      ..write(obj.unconfirmed);
+      ..write(obj.to)
+      ..writeByte(2)
+      ..write(obj.rate)
+      ..writeByte(3)
+      ..write(obj.fiat);
   }
 
   @override
@@ -38,7 +44,7 @@ class BalanceAdapter extends TypeAdapter<Balance> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is BalanceAdapter &&
+      other is RateAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

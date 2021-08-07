@@ -6,3 +6,4 @@ export 'records/balance.dart';
 export 'records/balances.dart';
 export 'records/net.dart';
 export 'records/node_exposure.dart';
+export 'records/rate.dart';

@@ -32,12 +32,15 @@ class Account extends Equatable {
 
   String get id => accountId;
 
-  Future<BalanceUSD> get balanceUSD async {
+  BalanceUSD get balanceUSD {
     var rvn = getTotalRVN();
     var usd;
     if (rvn.value > 0) {
       /// we should alrady know this... and then only updated it if we need it
-      var rate = await conversionRate('usd');
+      //var rate = await conversionRate('usd');
+      /// could get it from the conversion rate reservoir - should access through service?
+      //import 'package:raven/reservoirs.dart';
+      var rate = rates.getRvnToUsd();
       usd = BalanceUSD(
           confirmed: rvn.confirmed * rate, unconfirmed: rvn.confirmed * rate);
     }
