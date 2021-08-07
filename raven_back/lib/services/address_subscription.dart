@@ -10,7 +10,7 @@ import 'package:raven/services/address_derivation.dart'
 import 'package:raven/services/service.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
-import '../buffer_count_window.dart';
+import '../utils/buffer_count_window.dart';
 import '../models.dart';
 
 class ScripthashHistoryRow {

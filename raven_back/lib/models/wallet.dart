@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:raven/cipher.dart';
+import 'package:raven/utils/cipher.dart';
 import 'package:raven/records.dart';
 import 'package:ravencoin/ravencoin.dart' show NetworkType;
 

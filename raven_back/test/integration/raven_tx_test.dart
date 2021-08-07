@@ -3,7 +3,7 @@
 import 'package:raven/reservoirs/address.dart';
 import 'package:test/test.dart';
 
-import 'package:raven/transaction.dart' as tx;
+import 'package:raven/transaction/transaction.dart' as tx;
 
 import '../test_artifacts.dart' as tests;
 

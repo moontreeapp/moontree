@@ -6,7 +6,7 @@ import 'package:raven/records/node_exposure.dart';
 import 'package:raven/models/wallet.dart' show Wallet;
 import 'package:ravencoin/ravencoin.dart' as ravencoin;
 
-import '../cipher.dart';
+import '../utils/cipher.dart';
 import '../records.dart' as records;
 import '../records/net.dart';
 import '../models.dart' as models;

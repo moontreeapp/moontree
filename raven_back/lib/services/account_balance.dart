@@ -9,7 +9,7 @@ import 'package:raven/reservoirs/account.dart';
 import 'package:raven/reservoirs/balance.dart';
 import 'package:raven/reservoirs/history.dart';
 import 'package:raven/services/service.dart';
-import 'package:raven/buffer_count_window.dart';
+import 'package:raven/utils/buffer_count_window.dart';
 
 class AccountBalanceService extends Service {
   AccountReservoir accounts;
