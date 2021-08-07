@@ -21,6 +21,7 @@ class HiveHelper {
     Hive.registerAdapter(HistoryAdapter());
     Hive.registerAdapter(NetAdapter());
     Hive.registerAdapter(NodeExposureAdapter());
+    Hive.registerAdapter(RateAdapter());
   }
 
   static Future open() async {
@@ -29,7 +30,12 @@ class HiveHelper {
     await Hive.openBox<Address>('addresses');
     await Hive.openBox<Wallet>('wallets');
     await Hive.openBox<History>('histories');
-    //await Hive.openBox<Balance>('balances'); // do we have a box of balances? if so should we just index balances? balances are saved on the addresses
+    await Hive.openBox<Rate>('rates');
+
+    /// do we have a box of balances?
+    /// if so should we just index balances?
+    /// balances are saved on the addresses
+    //await Hive.openBox<Balance>('balances');
   }
 
   static Future close() async {

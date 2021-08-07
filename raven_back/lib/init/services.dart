@@ -1,12 +1,12 @@
 import 'package:raven/init/reservoirs.dart';
-import 'package:raven/services/address_derivation.dart';
-import 'package:raven/services/address_subscription.dart';
-import 'package:raven/services/addresses.dart';
+import 'package:raven/services.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 AddressDerivationService? addressDerivationService;
 AddressSubscriptionService? addressSubscriptionService;
 AddressesService? addressesService;
+AccountBalanceService? accountBalanceService;
+ConversionRateService? conversionRateService;
 
 void initServices(RavenElectrumClient client) {
   addressDerivationService =
@@ -16,6 +16,9 @@ void initServices(RavenElectrumClient client) {
     ..init();
   addressesService = AddressesService(accounts, wallets, addresses, histories)
     ..init();
+  accountBalanceService = AccountBalanceService(accounts, balances, histories)
+    ..init();
+  conversionRateService = ConversionRateService(rates)..init();
 }
 
 void deinitServices() {

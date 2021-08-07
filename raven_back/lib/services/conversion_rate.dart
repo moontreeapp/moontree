@@ -1,16 +1,16 @@
 import 'dart:async';
 
 import 'package:raven/reservoir/change.dart';
-import 'package:raven/reservoirs/conversion.dart';
+import 'package:raven/reservoirs/rate.dart';
 import 'package:raven/services/service.dart';
 import 'package:raven/utils/rate.dart';
 
 class ConversionRateService extends Service {
-  ConversionRateReservoir conversions;
+  ConversionRateReservoir rates;
 
   late StreamSubscription<List<Change>> listener;
 
-  ConversionRateService(this.conversions) : super();
+  ConversionRateService(this.rates) : super();
 
   @override
   Future init() async {
@@ -23,7 +23,7 @@ class ConversionRateService extends Service {
 
   // runs it for affected account-ticker combinations
   Future saveRate() async {
-    conversions.save(await conversionRate('usd'));
+    rates.save(await conversionRate('usd'));
   }
 
   @override
