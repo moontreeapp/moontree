@@ -17,7 +17,7 @@ class TransactionBuilderHelper {
   String toAddress;
   int anticipatedOutputFee;
   AddressReservoir
-      addressReservoir; // it'd be cool if account had access to this
+      addressReservoir; // it'd be cool if account had access to this - should it be accessed through service?
 
   TransactionBuilderHelper(
       this.fromAccount, this.sendAmount, this.toAddress, this.addressReservoir,
