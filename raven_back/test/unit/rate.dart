@@ -4,14 +4,21 @@ import 'package:test/test.dart';
 
 void main() {
   group('rate', () {
+    var conversionRate = ConversionRateFiat();
+
     test('get gecko', () async {
-      expect(await getRateFromCoinGecko() > 0.0, true);
+      conversionRate.serviceName = 'CoinGecko';
+      expect(await conversionRate.getRate() > 0.0, true);
     });
+
     test('get bittrex', () async {
-      expect(await getRateFromBittrex() > 0.0, true);
+      conversionRate.serviceName = 'Bittrex';
+      expect(await conversionRate.getRate() > 0.0, true);
     });
+
     test('get nomi', () async {
-      expect(await getRateFromNomi() > 0.0, true);
+      conversionRate.serviceName = 'Nomi';
+      expect(await conversionRate.getRate() > 0.0, true);
     });
   });
 

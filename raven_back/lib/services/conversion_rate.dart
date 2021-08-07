@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:raven/models/rate.dart';
 import 'package:raven/reservoir/change.dart';
 import 'package:raven/reservoirs/rate.dart';
 import 'package:raven/services/service.dart';
@@ -21,9 +22,12 @@ class ConversionRateService extends Service {
     await saveRate();
   }
 
-  // runs it for affected account-ticker combinations
   Future saveRate() async {
-    rates.save(await conversionRate('usd'));
+    rates.save(Rate(
+        from: '',
+        to: 'usd',
+        rate: await ConversionRateFiat().get(),
+        fiat: true));
   }
 
   @override
