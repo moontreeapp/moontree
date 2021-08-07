@@ -25,4 +25,6 @@ void deinitServices() {
   addressDerivationService?.deinit();
   addressSubscriptionService?.deinit();
   addressesService?.deinit();
+  accountBalanceService?.deinit();
+  conversionRateService?.deinit();
 }
