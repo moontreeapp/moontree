@@ -40,7 +40,8 @@ class History with EquatableMixin {
       this.ticker = ''});
 
   @override
-  List<Object> get props => [accountId, walletId, scripthash, height, txHash];
+  List<Object> get props =>
+      [accountId, walletId, scripthash, height, txHash, txPos, value, ticker];
 
   @override
   String toString() {

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:raven/models/balance.dart';
 import 'package:raven/records.dart' as records;
+import 'package:raven/utils/rate.dart';
 
 // ignore: must_be_immutable
 class Account extends Equatable {
@@ -8,7 +9,6 @@ class Account extends Equatable {
 
   final String name;
   // we have to keep track of balance per asset so we can sum their USD values
-  //late Balances balances;
   late Map<String, Balance> balances;
 
   /// presumed
@@ -32,23 +32,29 @@ class Account extends Equatable {
 
   String get id => accountId;
 
-  // in usd ( could have multiple assets )
-  double get balanceUSD {
-    //for each wallet in every list, sum each asset balance (including raven)
-    //for each asset, convert to USD, sum
-
-    // the above list should be found in balances if we want to do it that way
-    return 0.0;
+  Future<BalanceUSD> get balanceUSD async {
+    var rvn = getTotalRVN();
+    var usd;
+    if (rvn.value > 0) {
+      /// we should alrady know this... and then only updated it if we need it
+      var rate = await conversionRate('usd');
+      usd = BalanceUSD(
+          confirmed: rvn.confirmed * rate, unconfirmed: rvn.confirmed * rate);
+    }
+    return usd;
   }
 
-  double get balanceRVN {
-    //for each wallet in every list, sum balance of RVN
-    return 0.0;
-  }
-
-  double getBalanceOf(String ticker) {
-    //for each wallet in every list, sum balance of that asset
-    return 0.0;
+  /// get rvn values of assets from own trading platform
+  Balance getTotalRVN() {
+    var rvn = Balance(confirmed: 0, unconfirmed: 0);
+    balances.forEach((asset, balance) {
+      if (asset == '') {
+        rvn = rvn + balance;
+      } else {
+        //rvn = rvn + fromAssetToRVN(asset, balance);
+      }
+    });
+    return rvn;
   }
 
   //// Sending Functionality ///////////////////////////////////////////////////

@@ -2,6 +2,20 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+Future<double> conversionRate([String fiat = 'usd']) async {
+  try {
+    return await getRateFromCoinGecko(fiat);
+  } catch (e) {
+    try {
+      return await getRateFromBittrex(fiat);
+    } catch (e) {
+      return await getRateFromNomi(fiat);
+    }
+  }
+}
+
+//TODO: add errors if we don't get what we expect.
+
 Future<double> getRateFromCoinGecko([String fiat = 'usd']) async {
   // https://api.coingecko.com/api/v3/simple/supported_vs_currencies
   fiat = fiat.toLowerCase();

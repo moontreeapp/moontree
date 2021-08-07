@@ -54,7 +54,8 @@ class History {
         height: record.height,
         txHash: record.txHash,
         txPos: record.txPos,
-        value: record.value);
+        value: record.value,
+        ticker: record.ticker);
   }
 
   records.History toRecord() {
@@ -65,6 +66,7 @@ class History {
         height: height,
         txHash: txHash,
         txPos: txPos,
-        value: value);
+        value: value,
+        ticker: ticker);
   }
 }

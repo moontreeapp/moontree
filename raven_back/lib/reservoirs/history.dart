@@ -37,9 +37,16 @@ class HistoryReservoir extends Reservoir<String, records.History, History> {
   }
 
   /// Account overview ////////////////////////////////////////////////////////
-
-  /// could this be turned into an index?
+  /// could these be turned into an index?
   /// returns a series of spendable transactions for an account and asset
+
+  Iterable<History> transactionsByAccount(String accountId,
+      {String ticker = ''}) {
+    return byAccount.getAll(accountId).where((history) =>
+        history.txPos > -1 && // not in mempool
+        history.ticker == ticker); // rvn default
+  }
+
   Iterable<History> unspentsByAccount(String accountId, {String ticker = ''}) {
     return byAccount.getAll(accountId).where((history) =>
         history.value > 0 && // unspent
@@ -51,7 +58,30 @@ class HistoryReservoir extends Reservoir<String, records.History, History> {
       {String ticker = ''}) {
     return byAccount.getAll(accountId).where((history) =>
         history.value > 0 && // unspent
-        history.txPos == -1 && // not in mempool
+        history.txPos == -1 && // in mempool
+        history.ticker == ticker); // rvn default
+  }
+
+  /// Wallet overview /////////////////////////////////////////////////////////
+
+  Iterable<History> transactionsByWallet(String walletId,
+      {String ticker = ''}) {
+    return byWallet.getAll(walletId).where((history) =>
+        history.txPos > -1 && // not in mempool
+        history.ticker == ticker); // rvn default
+  }
+
+  Iterable<History> unspentsByWallet(String walletId, {String ticker = ''}) {
+    return byWallet.getAll(walletId).where((history) =>
+        history.value > 0 && // unspent
+        history.txPos > -1 && // not in mempool
+        history.ticker == ticker); // rvn default
+  }
+
+  Iterable<History> unconfirmedByWallet(String walletId, {String ticker = ''}) {
+    return byWallet.getAll(walletId).where((history) =>
+        history.value > 0 && // unspent
+        history.txPos == -1 && // in mempool
         history.ticker == ticker); // rvn default
   }
 

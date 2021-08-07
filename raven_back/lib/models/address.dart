@@ -10,7 +10,6 @@ class Address {
   final int hdIndex;
   late NodeExposure exposure;
   late Net net;
-  //late Balances? balances;
 
   Address(
       {required this.scripthash,

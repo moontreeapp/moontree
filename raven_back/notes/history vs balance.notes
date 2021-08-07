@@ -1,0 +1,26 @@
+If balance reservoir is at the individual grain why make it?
+If balance is at an aggreagated level, at what level should it be?
+
+
+history:
+every transaction for every address in every wallet in every account, RVN and assets, confirmed and unconfirmed
+
+balance:
+... perhaps ...
+aggregated balances (confirmed, unconfirmed) by account for RVN
+aggregated balances (confirmed, unconfirmed) by account for every asset
+aggregated balances (confirmed, unconfirmed) by wallet for RVN
+aggregated balances (confirmed, unconfirmed) by wallet for every asset
+aggregated balances (confirmed, unconfirmed) by master for RVN
+aggregated balances (confirmed, unconfirmed) by master for every asset
+aggregated balances (confirmed, unconfirmed) by address? for RVN
+aggregated balances (confirmed, unconfirmed) by address? for every asset
+
+the only way I see that works is if the the (indexed) balance object knows an ID
+and knows what kind of Id it is: walletId or an accountId or even an addressId.
+If we do want to keep all that handy, we could just put it on the account or wallet or address objects,
+either way. But I really don't see why we can't just derive it as needed - because we want it to be
+aggregated before we click into the account so we don't have to wait I suppose. 
+It would be rare that we look into the wallet or address balances or transactions so they can be derived on demand.
+So that turns the balances reservoir into an account-balances reservoir only. which seems to me like it might
+as well be something you put on an account object in that case.

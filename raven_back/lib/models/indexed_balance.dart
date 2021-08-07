@@ -3,6 +3,8 @@ import 'package:raven/records/indexed_balance.dart' as records;
 
 class Balance {
   final String accountId;
+  //final String walletId; //?
+  //final String addressId; //?
   final String? ticker;
   final int confirmed;
   final int unconfirmed;
