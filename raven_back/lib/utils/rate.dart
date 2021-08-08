@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:raven/utils/exceptions.dart';
 
-class ConversionRateFiat {
+class RVNtoFiat {
   final String fiat;
   late String fiatConformed;
   late String serviceName;
 
-  ConversionRateFiat([this.fiat = 'usd'])
+  RVNtoFiat([this.fiat = 'usd'])
       : fiatConformed = fiat,
         serviceName = 'CoinGecko';
 

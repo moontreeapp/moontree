@@ -29,16 +29,6 @@ extension Scripthash on ravencoin.HDWallet {
   }
 }
 
-class CacheEmpty implements Exception {
-  String cause;
-  CacheEmpty([this.cause = 'Error! Please deriveNodes first.']);
-}
-
-class InsufficientFunds implements Exception {
-  String cause;
-  InsufficientFunds([this.cause = 'Error! Insufficient funds.']);
-}
-
 const DEFAULT_CIPHER = NoCipher();
 
 class LeaderWallet extends Wallet {

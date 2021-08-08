@@ -13,10 +13,10 @@ class HiveHelper {
   }
 
   static void registerAdapters() {
+    Hive.registerAdapter(BalanceAdapter());
     Hive.registerAdapter(AccountAdapter());
     Hive.registerAdapter(WalletAdapter());
     Hive.registerAdapter(AddressAdapter());
-    Hive.registerAdapter(BalanceAdapter());
     Hive.registerAdapter(BalancesAdapter());
     Hive.registerAdapter(HistoryAdapter());
     Hive.registerAdapter(NetAdapter());

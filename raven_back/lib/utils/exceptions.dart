@@ -31,3 +31,13 @@ class UnauthorisedException extends CustomException {
 class InvalidInputException extends CustomException {
   InvalidInputException([String? message]) : super('Invalid Input: ', message);
 }
+
+class InsufficientFunds implements Exception {
+  String cause;
+  InsufficientFunds([this.cause = 'Error! Insufficient funds.']);
+}
+
+class CacheEmpty implements Exception {
+  String cause;
+  CacheEmpty([this.cause = 'Error! Please deriveNodes first.']);
+}

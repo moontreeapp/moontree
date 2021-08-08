@@ -5,25 +5,30 @@ import 'package:raven/records.dart' as records;
 // ignore: must_be_immutable
 class Account extends Equatable {
   final String accountId;
-
   final String name;
-  // we have to keep track of balance per asset so we can sum their USD values
+  // could move into balances reservoir if we want
   late Map<String, Balance> balances;
-
-  /// presumed
-  //final Map<String, dynamic> settings;
-  //final Map<String, dynamic> metadata;
 
   Account({required this.accountId, required this.name, balances})
       : balances = balances ?? {},
         super();
 
   factory Account.fromRecord(records.Account record) {
-    return Account(accountId: record.accountId, name: record.name);
+    var newBalances = {} as Map<String, Balance>;
+    record.balances.forEach((key, balance) {
+      newBalances[key] = Balance.fromRecord(balance);
+    });
+    return Account(
+        accountId: record.accountId, name: record.name, balances: newBalances);
   }
 
   records.Account toRecord() {
-    return records.Account(accountId: accountId, name: name);
+    var newBalances = {} as Map<String, records.Balance>;
+    balances.forEach((key, balance) {
+      newBalances[key] = balance.toRecord();
+    });
+    return records.Account(
+        accountId: accountId, name: name, balances: newBalances);
   }
 
   @override
@@ -31,21 +36,9 @@ class Account extends Equatable {
 
   String get id => accountId;
 
-  BalanceUSD get balanceUSD {
-    var rvn = getTotalRVN();
-    var usd;
-    if (rvn.value > 0) {
-      /// could get it from the conversion rate reservoir - should access through service?
-      //import 'package:raven/reservoirs.dart';
-      var rate = rates.getRvnToUsd();
-      usd = BalanceUSD(
-          confirmed: (rvn.confirmed * rate).toDouble(),
-          unconfirmed: (rvn.confirmed * rate).toDouble());
-    }
-    return usd;
-  }
+  Balance get balance => getRVN();
 
-  /// get rvn values of assets from own trading platform
+  /// get rvn confirmed and unconfirmed of assets from own trading platform
   Balance getTotalRVN() {
     var rvn = Balance(confirmed: 0, unconfirmed: 0);
     balances.forEach((asset, balance) {
@@ -58,53 +51,7 @@ class Account extends Equatable {
     return rvn;
   }
 
-  //// Sending Functionality ///////////////////////////////////////////////////
-
-  /*
-  get sorted list of unspents for all addresses belonging to all wallets with 
-  account name.
-
-  var unspents = histories.unspentsByAccount(accountId: name);....
-  */
-
-  //SortedList<ScripthashUnspent> sortedUTXOs() {
-  //  var sortedList = SortedList<ScripthashUnspent>(
-  //      (ScripthashUnspent a, ScripthashUnspent b) =>
-  //          a.value.compareTo(b.value));
-  //  sortedList.addAll(
-  //      Truth.instance.accountUnspents.getAsList<ScripthashUnspent>(accountId));
-  //  return sortedList;
-  //}
-
-  ///// returns the smallest number of inputs to satisfy the amount
-  //List<ScripthashUnspent> collectUTXOs(int amount,
-  //    [List<ScripthashUnspent>? except]) {
-  //  var ret = <ScripthashUnspent>[];
-  //  if (balance < amount) {
-  //    throw InsufficientFunds();
-  //  }
-  //  var utxos = sortedUTXOs();
-  //  utxos.removeWhere((utxo) => (except ?? []).contains(utxo));
-  //  /* can we find an ideal singular utxo? */
-  //  for (var i = 0; i < utxos.length; i++) {
-  //    if (utxos[i].value >= amount) {
-  //      return [utxos[i]];
-  //    }
-  //  }
-  //  /* what combinations of utxo's must we return?
-  //  lets start by grabbing the largest one
-  //  because we know we can consume it all without producing change...
-  //  and lets see how many times we can do that */
-  //  var remainder = amount;
-  //  for (var i = utxos.length - 1; i >= 0; i--) {
-  //    if (remainder < utxos[i].value) {
-  //      break;
-  //    }
-  //    ret.add(utxos[i]);
-  //    remainder = (remainder - utxos[i].value).toInt();
-  //  }
-  //  // Find one last UTXO, starting from smallest, that satisfies the remainder
-  //  ret.add(utxos.firstWhere((utxo) => utxo.value >= remainder));
-  //  return ret;
-  //}
+  Balance getRVN() {
+    return balances[''] ?? Balance(confirmed: 0, unconfirmed: 0);
+  }
 }

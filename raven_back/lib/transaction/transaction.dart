@@ -1,13 +1,13 @@
+import 'package:raven/models/history.dart';
 import 'package:raven/reservoirs/address.dart';
 import 'package:ravencoin/ravencoin.dart';
-import 'package:raven_electrum_client/raven_electrum_client.dart';
 import '../utils/fee.dart';
 
 class FormatResult {
   TransactionBuilder txb;
   int total;
   int fees;
-  List<ScripthashUnspent> utxos;
+  List<History> utxos;
   FormatResult(this.txb, this.total, this.fees, this.utxos);
 }
 
@@ -51,12 +51,12 @@ class TransactionBuilderHelper {
   ///   which is one utxo (10), so your cost is now really 3+1 and your input is 10. your done.
   FormatResult addInputs(TransactionBuilder txb) {
     var total = 0;
-    var retutxos = <ScripthashUnspent>[];
+    var retutxos = <History>[];
     var pastInputs = [];
     var knownFees = totalFeeByBytes(txb);
     var anticipatedInputFeeRate = 51;
     var anticipatedInputFees = 0;
-    var utxos = <ScripthashUnspent>[];
+    var utxos = <History>[];
     // find optimal utxo set by anticipating fees depending on chosen inputs and get inputs to cover total
     while (!pastInputs.contains(utxos)) {
       anticipatedInputFees =
@@ -101,7 +101,7 @@ class TransactionBuilderHelper {
   }
 
   TransactionBuilder signEachInput(
-      TransactionBuilder txb, List<ScripthashUnspent> utxos) {
+      TransactionBuilder txb, List<History> utxos) {
     for (var i = 0; i < utxos.length; i++) {
       var location = addressReservoir.getAddressLocationOf(
           utxos[i].scripthash, fromAccount.accountId);
