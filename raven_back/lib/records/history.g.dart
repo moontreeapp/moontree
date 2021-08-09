@@ -24,7 +24,7 @@ class HistoryAdapter extends TypeAdapter<History> {
       txHash: fields[4] as String,
       txPos: fields[5] as int,
       value: fields[6] as int,
-      ticker: fields[7] as String,
+      security: fields[7] as Security,
     );
   }
 
@@ -47,7 +47,7 @@ class HistoryAdapter extends TypeAdapter<History> {
       ..writeByte(6)
       ..write(obj.value)
       ..writeByte(7)
-      ..write(obj.ticker);
+      ..write(obj.security);
   }
 
   @override

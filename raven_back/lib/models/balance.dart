@@ -1,26 +1,27 @@
+import 'package:raven/records.dart';
 import 'package:raven/utils/exceptions.dart';
 import 'package:raven_electrum_client/methods/get_balance.dart';
 import 'package:raven/records/balance.dart' as records;
 
 class Balance {
   final String accountId;
-  final String ticker;
+  final Security security;
   final int confirmed;
   final int unconfirmed;
 
   Balance(
       {required this.accountId,
-      required this.ticker,
+      required this.security,
       required this.confirmed,
       required this.unconfirmed});
 
   factory Balance.fromScripthashBalance(
       {required String accountId,
-      required String ticker,
+      required Security security,
       required ScripthashBalance balance}) {
     return Balance(
         accountId: accountId,
-        ticker: ticker,
+        security: security,
         confirmed: balance.confirmed,
         unconfirmed: balance.unconfirmed);
   }
@@ -28,7 +29,7 @@ class Balance {
   factory Balance.fromRecord(records.Balance record) {
     return Balance(
         accountId: record.accountId,
-        ticker: record.ticker,
+        security: record.security,
         confirmed: record.confirmed,
         unconfirmed: record.unconfirmed);
   }
@@ -36,7 +37,7 @@ class Balance {
   records.Balance toRecord() {
     return records.Balance(
         accountId: accountId,
-        ticker: ticker,
+        security: security,
         confirmed: confirmed,
         unconfirmed: unconfirmed);
   }
@@ -46,15 +47,15 @@ class Balance {
   }
 
   Balance operator +(Balance balance) {
-    if (accountId != balance.accountId && balance.accountId != '_') {
+    if (accountId != balance.accountId) {
       throw BalanceMismatch("Balance accountId don't match - can't combine");
     }
-    if (ticker != balance.ticker && balance.ticker != '_') {
-      throw BalanceMismatch("Balance tickers don't match - can't combine");
+    if (security != balance.security) {
+      throw BalanceMismatch("Balance securities don't match - can't combine");
     }
     return Balance(
-        accountId: balance.accountId,
-        ticker: balance.ticker,
+        accountId: accountId,
+        security: security,
         confirmed: confirmed + balance.confirmed,
         unconfirmed: unconfirmed + balance.unconfirmed);
   }
@@ -74,6 +75,12 @@ class BalanceUSD {
     return BalanceUSD(
         confirmed: confirmed + balanceUSD.confirmed,
         unconfirmed: unconfirmed + balanceUSD.unconfirmed);
+  }
+
+  BalanceUSD operator *(Balance balance) {
+    return BalanceUSD(
+        confirmed: confirmed * balance.confirmed,
+        unconfirmed: unconfirmed * balance.unconfirmed);
   }
 }
 

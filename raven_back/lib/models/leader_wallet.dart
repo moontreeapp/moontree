@@ -72,6 +72,7 @@ class LeaderWallet extends Wallet {
 
   //// Derive Wallet ///////////////////////////////////////////////////////////
 
+  /// TODO: shouldn't this return a WalletBase now?
   ravencoin.HDWallet deriveWallet(int hdIndex,
       [exposure = NodeExposure.External]) {
     return seededWallet.derivePath(getDerivationPath(hdIndex,

@@ -1,25 +1,22 @@
 import 'package:hive/hive.dart';
+import 'package:raven/records/security.dart';
 
 part 'rate.g.dart';
 
 @HiveType(typeId: 4)
 class Rate {
   @HiveField(0)
-  String from;
+  Security base;
 
   @HiveField(1)
-  String to;
+  Security quote;
 
   @HiveField(2)
   double rate;
 
-  @HiveField(3)
-  bool fiat;
-
   Rate({
-    required this.from,
-    required this.to,
+    required this.base,
+    required this.quote,
     required this.rate,
-    required this.fiat,
   });
 }

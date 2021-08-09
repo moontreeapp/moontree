@@ -33,32 +33,32 @@ class AccountBalanceService extends Service {
     listener.cancel();
   }
 
-  // runs it for affected account-ticker combinations
+  // runs it for affected account-security combinations
   void calculateBalance(changes) {
     var combos = [];
     changes.forEach((History history) {
-      if (!combos.contains([history.accountId, history.ticker])) {
-        combos.add([history.accountId, history.ticker]);
+      if (!combos.contains([history.accountId, history.security])) {
+        combos.add([history.accountId, history.security]);
       }
     });
-    for (var accountIdTicker in combos) {
-      var accountId = accountIdTicker[0];
-      var ticker = accountIdTicker[1];
+    for (var accountIdSecurity in combos) {
+      var accountId = accountIdSecurity[0];
+      var security = accountIdSecurity[1];
       balances.save(Balance(
           accountId: accountId,
-          ticker: ticker,
+          security: security,
           confirmed: histories
-                  .unspentsByAccount(accountId, ticker: ticker)
+                  .unspentsByAccount(accountId, security: security)
                   .fold(0, (sum, history) => sum ?? 0 + history.value) ??
               0,
           unconfirmed: histories
-                  .unconfirmedByAccount(accountId, ticker: ticker)
+                  .unconfirmedByAccount(accountId, security: security)
                   .fold(0, (sum, history) => sum ?? 0 + history.value) ??
               0));
     }
   }
 
-  // runs it for all accounts and all tickers
+  // runs it for all accounts and all security
   void recalculateBalance(_changes) {
     if (_changes.length == 0) {
       return;
@@ -66,8 +66,8 @@ class AccountBalanceService extends Service {
     for (var accountId in histories.byAccount.keys) {
       var hists = histories.byAccount.getAll(accountId);
 
-      var balanceByTicker = hists
-          .groupFoldBy((History history) => history.ticker,
+      var balanceBySecurity = hists
+          .groupFoldBy((History history) => history.security,
               (BalanceRaw? previous, History history) {
         var balance = previous ?? BalanceRaw(confirmed: 0, unconfirmed: 0);
         return BalanceRaw(
@@ -77,10 +77,10 @@ class AccountBalanceService extends Service {
                 (history.txPos == -1 ? history.value : 0));
       });
 
-      balanceByTicker.forEach((ticker, bal) {
+      balanceBySecurity.forEach((security, bal) {
         var balance = Balance(
             accountId: accountId,
-            ticker: ticker,
+            security: security,
             confirmed: bal.confirmed,
             unconfirmed: bal.unconfirmed);
         balances.save(balance);

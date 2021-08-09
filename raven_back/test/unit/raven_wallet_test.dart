@@ -1,14 +1,14 @@
 // dart test test/unit/raven_wallet_test.dart
+import 'package:raven/models/leader_wallet.dart';
 import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
 
 import 'package:raven/records/net.dart';
-import 'package:raven/models/leader_wallet.dart';
 
 final seed = bip39.mnemonicToSeed(
     'smile build brain topple moon scrap area aim budget enjoy polar erosion');
 
-final account = Account(seed, net: Net.Test);
+final wallet = LeaderWallet(seed: seed, net: Net.Test);
 
 void main() {
   test('reverse', () {
@@ -17,7 +17,7 @@ void main() {
   });
 
   test('scripthash', () {
-    expect(account.deriveWallet(0).scripthash,
+    expect(wallet.deriveWallet(0).scripthash,
         '45520ecd53be9412d82e904a12a8fe7aeb0251eea1eaf1be02cab9fb98d1fad7');
   });
 }

@@ -1,23 +1,19 @@
+import 'package:raven/records/security.dart';
+
 import '../records.dart' as records;
 
 class Rate {
-  final String from;
-  final String to;
+  final Security base; // from RVN ->
+  final Security quote; // to USD
   final double rate;
-  final bool fiat;
 
-  Rate(
-      {required this.from,
-      required this.to,
-      required this.rate,
-      required this.fiat});
+  Rate({required this.base, required this.quote, required this.rate});
 
   factory Rate.fromRecord(records.Rate record) {
-    return Rate(
-        from: record.from, to: record.to, rate: record.rate, fiat: record.fiat);
+    return Rate(base: record.base, quote: record.quote, rate: record.rate);
   }
 
   records.Rate toRecord() {
-    return records.Rate(from: from, to: to, rate: rate, fiat: fiat);
+    return records.Rate(base: base, quote: quote, rate: rate);
   }
 }

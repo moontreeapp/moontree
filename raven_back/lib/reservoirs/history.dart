@@ -1,14 +1,15 @@
 import 'package:raven/records.dart' as records;
 import 'package:raven/models/balance.dart';
 import 'package:raven/models/history.dart';
+import 'package:raven/records/security.dart';
 import 'package:raven/reservoir/index.dart';
 import 'package:raven/reservoir/reservoir.dart';
 
-class HistoryReservoir extends Reservoir<String, records.History, History> {
-  late MultipleIndex<String, History> byAccount;
-  late MultipleIndex<String, History> byWallet;
-  late MultipleIndex<String, History> byScripthash;
-  late MultipleIndex<String, History> byTicker;
+class HistoryReservoir extends Reservoir<dynamic, records.History, History> {
+  late MultipleIndex<dynamic, History> byAccount;
+  late MultipleIndex<dynamic, History> byWallet;
+  late MultipleIndex<dynamic, History> byScripthash;
+  late MultipleIndex<dynamic, History> bySecurity;
 
   HistoryReservoir() : super(HiveSource('histories')) {
     addPrimaryIndex((histories) => histories.txHash);
@@ -17,17 +18,17 @@ class HistoryReservoir extends Reservoir<String, records.History, History> {
     byWallet = addMultipleIndex('wallet', (history) => history.walletId);
     byScripthash =
         addMultipleIndex('scripthash', (history) => history.scripthash);
-    byTicker = addMultipleIndex('ticker', (history) => history.ticker);
+    bySecurity = addMultipleIndex('security', (history) => history.security);
   }
 
   /// Master overview /////////////////////////////////////////////////////////
 
-  Iterable<History> unspentsByTicker({String ticker = ''}) {
-    return byTicker.getAll(ticker).where((history) => history.value > 0);
+  Iterable<History> unspentsByTicker({Security security = records.RVN}) {
+    return bySecurity.getAll(security).where((history) => history.value > 0);
   }
 
-  BalanceRaw balanceByTicker({String ticker = ''}) {
-    return unspentsByTicker(ticker: ticker).fold(
+  BalanceRaw balanceByTicker({Security security = records.RVN}) {
+    return unspentsByTicker(security: security).fold(
         BalanceRaw(confirmed: 0, unconfirmed: 0),
         (sum, history) =>
             sum +
@@ -41,48 +42,51 @@ class HistoryReservoir extends Reservoir<String, records.History, History> {
   /// returns a series of spendable transactions for an account and asset
 
   Iterable<History> transactionsByAccount(String accountId,
-      {String ticker = ''}) {
+      {Security security = records.RVN}) {
     return byAccount.getAll(accountId).where((history) =>
         history.txPos > -1 && // not in mempool
-        history.ticker == ticker); // rvn default
+        history.security == security);
   }
 
-  Iterable<History> unspentsByAccount(String accountId, {String ticker = ''}) {
+  Iterable<History> unspentsByAccount(String accountId,
+      {Security security = records.RVN}) {
     return byAccount.getAll(accountId).where((history) =>
         history.value > 0 && // unspent
         history.txPos > -1 && // not in mempool
-        history.ticker == ticker); // rvn default
+        history.security == security);
   }
 
   Iterable<History> unconfirmedByAccount(String accountId,
-      {String ticker = ''}) {
+      {Security security = records.RVN}) {
     return byAccount.getAll(accountId).where((history) =>
         history.value > 0 && // unspent
         history.txPos == -1 && // in mempool
-        history.ticker == ticker); // rvn default
+        history.security == security);
   }
 
   /// Wallet overview /////////////////////////////////////////////////////////
 
   Iterable<History> transactionsByWallet(String walletId,
-      {String ticker = ''}) {
+      {Security security = records.RVN}) {
     return byWallet.getAll(walletId).where((history) =>
         history.txPos > -1 && // not in mempool
-        history.ticker == ticker); // rvn default
+        history.security == security);
   }
 
-  Iterable<History> unspentsByWallet(String walletId, {String ticker = ''}) {
+  Iterable<History> unspentsByWallet(String walletId,
+      {Security security = records.RVN}) {
     return byWallet.getAll(walletId).where((history) =>
         history.value > 0 && // unspent
         history.txPos > -1 && // not in mempool
-        history.ticker == ticker); // rvn default
+        history.security == security);
   }
 
-  Iterable<History> unconfirmedByWallet(String walletId, {String ticker = ''}) {
+  Iterable<History> unconfirmedByWallet(String walletId,
+      {Security security = records.RVN}) {
     return byWallet.getAll(walletId).where((history) =>
         history.value > 0 && // unspent
         history.txPos == -1 && // in mempool
-        history.ticker == ticker); // rvn default
+        history.security == security);
   }
 
   /// remove logic ////////////////////////////////////////////////////////////

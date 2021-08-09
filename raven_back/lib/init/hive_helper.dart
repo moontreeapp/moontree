@@ -21,6 +21,8 @@ class HiveHelper {
     Hive.registerAdapter(NetAdapter());
     Hive.registerAdapter(NodeExposureAdapter());
     Hive.registerAdapter(RateAdapter());
+    Hive.registerAdapter(SecurityAdapter());
+    Hive.registerAdapter(SecurityTypeAdapter());
   }
 
   static Future open() async {

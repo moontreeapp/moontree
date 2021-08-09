@@ -23,7 +23,7 @@ void main() async {
         gen.account,
         3000000,
         'mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7',
-        gen.reservoirs['addresses'] as AddressReservoir<dynamic, dynamic>);
+        gen.reservoirs['addresses'] as AddressReservoir);
     var txb = txhelper.buildTransaction();
     expect(txb.tx!.ins.length, 1); // 4000000
     expect(txb.tx!.ins[0].hash.toString(),
@@ -33,7 +33,7 @@ void main() async {
         gen.account,
         4000000,
         'mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7',
-        gen.reservoirs['addresses'] as AddressReservoir<dynamic, dynamic>);
+        gen.reservoirs['addresses'] as AddressReservoir);
     txb = txhelper.buildTransaction();
     expect(txb.tx!.ins.length, 1); // 5000087912000
     expect(txb.tx!.ins[0].hash.toString(),
@@ -43,7 +43,7 @@ void main() async {
         gen.account,
         5000087912000,
         'mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7',
-        gen.reservoirs['addresses'] as AddressReservoir<dynamic, dynamic>);
+        gen.reservoirs['addresses'] as AddressReservoir);
     txb = txhelper.buildTransaction();
     expect(txb.tx!.ins.length, 2); // 5000087912000 and 4000000
     expect(txb.tx!.ins[0].hash.toString(),

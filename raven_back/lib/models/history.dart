@@ -1,3 +1,5 @@
+import 'package:raven/records/security.dart';
+import 'package:raven/records/security_type.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 import '../records.dart' as records;
@@ -10,7 +12,7 @@ class History {
   final String txHash;
   late int txPos;
   late int value;
-  late String ticker;
+  late Security security;
 
   History(
       {required this.accountId,
@@ -20,7 +22,7 @@ class History {
       required this.txHash,
       this.txPos = -1,
       this.value = 0,
-      this.ticker = ''});
+      this.security = RVN});
 
   factory History.fromScripthashHistory(String accountId, String walletId,
       String scripthash, ScripthashHistory history) {
@@ -43,7 +45,11 @@ class History {
         txHash: unspent.txHash,
         txPos: unspent.txPos,
         value: unspent.value,
-        ticker: unspent.ticker ?? '');
+        security: (unspent.ticker == null
+            ? RVN
+            : Security(
+                symbol: unspent.ticker!,
+                securityType: SecurityType.RavenAsset)));
   }
 
   factory History.fromRecord(records.History record) {
@@ -55,7 +61,7 @@ class History {
         txHash: record.txHash,
         txPos: record.txPos,
         value: record.value,
-        ticker: record.ticker);
+        security: record.security);
   }
 
   records.History toRecord() {
@@ -67,6 +73,6 @@ class History {
         txHash: txHash,
         txPos: txPos,
         value: value,
-        ticker: ticker);
+        security: security);
   }
 }

@@ -6,7 +6,7 @@ AddressDerivationService? addressDerivationService;
 AddressSubscriptionService? addressSubscriptionService;
 AddressesService? addressesService;
 AccountBalanceService? accountBalanceService;
-ConversionRateService? conversionRateService;
+ExchangeRateService? conversionRateService;
 
 void initServices(RavenElectrumClient client) {
   addressDerivationService =
@@ -18,7 +18,7 @@ void initServices(RavenElectrumClient client) {
     ..init();
   accountBalanceService = AccountBalanceService(accounts, balances, histories)
     ..init();
-  conversionRateService = ConversionRateService(balances, rates)..init();
+  conversionRateService = ExchangeRateService(balances, rates)..init();
 }
 
 void deinitServices() {

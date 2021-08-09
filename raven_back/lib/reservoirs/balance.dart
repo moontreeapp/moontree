@@ -1,32 +1,25 @@
 import 'package:raven/records.dart' as records;
 import 'package:raven/models/balance.dart';
+import 'package:raven/records/security.dart';
 import 'package:raven/reservoir/index.dart';
 import 'package:raven/reservoir/reservoir.dart';
 
-class BalanceReservoir extends Reservoir<String, records.Balance, Balance> {
-  late MultipleIndex byAccount;
+class BalanceReservoir extends Reservoir<List, records.Balance, Balance> {
+  late MultipleIndex<dynamic, Balance> byAccount;
 
   BalanceReservoir() : super(HiveSource('addresses')) {
-    var paramsToKey = (accountId, ticker) => '$accountId:${ticker ?? ""}';
+    var paramsToKey =
+        (String accountId, Security security) => [accountId, security];
     addPrimaryIndex(
-        (balance) => paramsToKey(balance.accountId, balance.ticker));
+        (balance) => paramsToKey(balance.accountId, balance.security));
 
-    byAccount = addMultipleIndex('account', (balance) => balance.accountId);
-  }
-
-  /// get rvn confirmed and unconfirmed of assets from own trading platform
-  Balance getTotalRVN(String accountId) {
-    var balances = byAccount.getAll(accountId);
-    var rvn = Balance(
-        accountId: accountId, ticker: '_', confirmed: 0, unconfirmed: 0);
-    return balances.fold(
-        rvn, (summing, balance) => balance.ticker == '' ? rvn + balance : rvn);
-    // : rvn + fromAssetToRVN(balance.ticker, balance);
+    byAccount = addMultipleIndex('account', (balance) => [balance.accountId]);
   }
 
   Balance getRVN(String accountId) {
-    var balance = get('$accountId:');
+    var balance = get([accountId, RVN]);
     return balance ??
-        Balance(accountId: accountId, ticker: '', confirmed: 0, unconfirmed: 0);
+        Balance(
+            accountId: accountId, security: RVN, confirmed: 0, unconfirmed: 0);
   }
 }

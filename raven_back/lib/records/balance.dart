@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:raven/records/security.dart';
 
 part 'balance.g.dart';
 
@@ -8,7 +9,7 @@ class Balance {
   String accountId;
 
   @HiveField(1)
-  String ticker;
+  Security security;
 
   @HiveField(2)
   int confirmed;
@@ -18,7 +19,7 @@ class Balance {
 
   Balance({
     required this.accountId,
-    required this.ticker,
+    required this.security,
     required this.confirmed,
     required this.unconfirmed,
   });

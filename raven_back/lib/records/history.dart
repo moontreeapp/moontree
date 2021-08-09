@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:raven/records/security.dart';
 
 part 'history.g.dart';
 
@@ -27,7 +28,7 @@ class History with EquatableMixin {
   int value;
 
   @HiveField(7)
-  String ticker; // '' for RVN
+  Security security;
 
   History(
       {required this.accountId,
@@ -37,14 +38,22 @@ class History with EquatableMixin {
       required this.txHash,
       this.txPos = -1,
       this.value = 0,
-      this.ticker = ''});
+      this.security = RVN});
 
   @override
-  List<Object> get props =>
-      [accountId, walletId, scripthash, height, txHash, txPos, value, ticker];
+  List<Object> get props => [
+        accountId,
+        walletId,
+        scripthash,
+        height,
+        txHash,
+        txPos,
+        value,
+        security.symbol
+      ];
 
   @override
   String toString() {
-    return 'History(walletId: $walletId, accountId: $accountId, scripthash: $scripthash, txHash: $txHash, height: $height, txPos: $txPos, value: $value, ticker: $ticker)';
+    return 'History(walletId: $walletId, accountId: $accountId, scripthash: $scripthash, txHash: $txHash, height: $height, txPos: $txPos, value: $value, security: $security)';
   }
 }

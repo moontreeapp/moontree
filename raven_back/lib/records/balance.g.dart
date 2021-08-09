@@ -18,7 +18,7 @@ class BalanceAdapter extends TypeAdapter<Balance> {
     };
     return Balance(
       accountId: fields[0] as String,
-      ticker: fields[1] as String,
+      security: fields[1] as Security,
       confirmed: fields[2] as int,
       unconfirmed: fields[3] as int,
     );
@@ -31,7 +31,7 @@ class BalanceAdapter extends TypeAdapter<Balance> {
       ..writeByte(0)
       ..write(obj.accountId)
       ..writeByte(1)
-      ..write(obj.ticker)
+      ..write(obj.security)
       ..writeByte(2)
       ..write(obj.confirmed)
       ..writeByte(3)

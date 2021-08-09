@@ -1,4 +1,4 @@
-import 'package:raven/models/account.dart';
+import 'package:raven/models/leader_wallet.dart';
 import 'package:raven/records/net.dart';
 import 'package:test/test.dart';
 
@@ -10,13 +10,14 @@ import 'package:raven/records/node_exposure.dart';
 import '../test_artifacts.dart' as tests;
 
 void main() async {
-  var account;
+  var wallet;
   var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
 
   setUpAll(() async {
     await tests.hiveSetup();
     //tests.listenTo(client);
-    account = Account(bip39.mnemonicToSeed(await getMnemonic()), net: Net.Test);
+    wallet =
+        LeaderWallet(bip39.mnemonicToSeed(await getMnemonic()), net: Net.Test);
   });
 
   tearDownAll(() async => await tests.closeHive());
@@ -24,25 +25,25 @@ void main() async {
   test('run batch', () async {
     var stats = await client.getOurStats();
     print('before ${stats.toString()}');
-    account.deriveBatch(NodeExposure.Internal, 1);
-    account.deriveBatch(NodeExposure.External, 100);
+    wallet.deriveBatch(NodeExposure.Internal, 1);
+    wallet.deriveBatch(NodeExposure.External, 100);
     // 200 'cd13adba86dbe94e244ce031e3e80197e44566cd86f113e7f30a3ea05fed0486'
     // 300 'c8053a6a61b0d6b77f13986ac4183c396d4e1735a2dc35729d9eec158d6b9f34'
     /// must go through reservoir or service instead...
-    //await Truth.instance.scripthashAccountIdExternal
+    //await Truth.instance.scripthashWalletIdExternal
     //    .watch()
     //    .skipWhile((element) =>
     //        element.key !=
     //        'dee2e493767ef0dbf1efe998c6cce6f877fd20ef8375498beaec1159178061b1')
     //    .take(1)
     //    .toList();
-    var hashes = account.accountScripthashes;
+    var hashes = wallet.walletScripthashes;
     print('hashes: ${hashes.length}');
     var balances = await client.getBalances(hashes);
     print('balances: ${balances.length}');
     stats = await client.getOurStats();
     print('after ${stats.toString()}');
-    expect(account.accountId,
+    expect(wallet.walletId,
         '7b2c0df50ca21115199b1a0d5d254bb280b49be83552cac8a5b5e6471f376267');
   });
 

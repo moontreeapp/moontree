@@ -30,41 +30,30 @@ class RVNtoFiat {
   }
 
   Future<double> getRate() async {
-    if (serviceName == 'CoinGecko') {
-      // https://api.coingecko.com/api/v3/simple/supported_vs_currencies
-      fiatConformed = fiat.toLowerCase();
-    } else if (serviceName == 'Bittrex') {
-      // https://api.bittrex.com/v3/markets/tickers
-      fiatConformed = fiat.toUpperCase(); // USD, USDT
-    } else if (serviceName == 'Nomi') {
-      // https://nomics.com/docs/#operation/getCurrenciesTicker
-      fiatConformed = fiat.toUpperCase(); // USD, EUR, etc
-    }
-    return interpret(await call());
+    conformFiat();
+    return verifySensible(interpret(await call()));
+  }
+
+  void conformFiat() {
+    fiatConformed = {
+      'CoinGecko': fiat.toLowerCase(),
+      'Bittrex': fiat.toUpperCase(),
+      'Nomi': fiat.toUpperCase(),
+    }[serviceName]!;
   }
 
   Future<http.Response> call() async {
-    if (serviceName == 'CoinGecko') {
-      return await http.get(
-          Uri.parse('https://api.coingecko.com/api/v3/simple/price?'
-              'ids=ravencoin&vs_currencies=$fiatConformed'),
-          headers: {'accept': 'application/json'});
-    }
-    if (serviceName == 'Bittrex') {
-      return await http.get(
-          Uri.parse(
-              'https://api.bittrex.com/v3/markets/RVN-$fiatConformed/ticker'),
-          headers: {'accept': 'application/json'});
-    }
-    if (serviceName == 'Nomi') {
-      return await http.get(
-          // replace with real key
-          Uri.parse('https://api.nomics.com/v1/currencies/ticker?'
+    return await http.get(
+        Uri.parse({
+          'CoinGecko': 'https://api.coingecko.com/api/v3/simple/price?'
+              'ids=ravencoin&vs_currencies=$fiatConformed',
+          'Bittrex':
+              'https://api.bittrex.com/v3/markets/RVN-$fiatConformed/ticker',
+          'Nomi': 'https://api.nomics.com/v1/currencies/ticker?'
               'key=1a475af107cf428e9536da16c07b78cef68dfc1d&ids=RVN&'
-              'interval=1d&convert=$fiatConformed&per-page=100&page=1'),
-          headers: {'accept': 'application/json'});
-    }
-    return http.Response('', 412);
+              'interval=1d&convert=$fiatConformed&per-page=100&page=1',
+        }[serviceName]!),
+        headers: {'accept': 'application/json'});
   }
 
   double interpret(http.Response response) {
@@ -123,6 +112,17 @@ class RVNtoFiat {
         throw BadResponseException('unable cast to double in interpretNomi');
       }
     }
-    return 0.0;
+    throw FetchDataException('invalid service name');
+  }
+
+  // placeholder for better verification - avg 2 out of 3 or something...
+  double verifySensible(double rvnPrice) {
+    if (rvnPrice == 0.0) {
+      throw BadResponseException('price is zero');
+    }
+    if (rvnPrice < 0.0) {
+      throw BadResponseException('impossible price');
+    }
+    return rvnPrice;
   }
 }

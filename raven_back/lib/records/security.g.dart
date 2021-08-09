@@ -1,38 +1,35 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'rate.dart';
+part of 'security.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class RateAdapter extends TypeAdapter<Rate> {
+class SecurityAdapter extends TypeAdapter<Security> {
   @override
-  final int typeId = 4;
+  final int typeId = 8;
 
   @override
-  Rate read(BinaryReader reader) {
+  Security read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Rate(
-      base: fields[0] as Security,
-      quote: fields[1] as Security,
-      rate: fields[2] as double,
+    return Security(
+      symbol: fields[0] as String,
+      securityType: fields[1] as SecurityType,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Rate obj) {
+  void write(BinaryWriter writer, Security obj) {
     writer
-      ..writeByte(3)
-      ..writeByte(0)
-      ..write(obj.base)
-      ..writeByte(1)
-      ..write(obj.quote)
       ..writeByte(2)
-      ..write(obj.rate);
+      ..writeByte(0)
+      ..write(obj.symbol)
+      ..writeByte(1)
+      ..write(obj.securityType);
   }
 
   @override
@@ -41,7 +38,7 @@ class RateAdapter extends TypeAdapter<Rate> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is RateAdapter &&
+      other is SecurityAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

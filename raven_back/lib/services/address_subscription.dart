@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:quiver/iterables.dart';
-//import 'package:raven/models/balance.dart';
 import 'package:raven/reservoirs/address.dart';
 import 'package:raven/reservoirs/history.dart';
 import 'package:raven/reservoirs/wallet.dart';
@@ -40,59 +39,6 @@ class ScripthashHistoriesData {
           e[3] as List<ScripthashUnspent>));
 }
 
-/// balance isn't necessary -
-/// histries with height of 0 are in mempool and "unconfirmed"
-//class ScripthashBalanceRow {
-//  final Address address;
-//  final Balances balances;
-//
-//  ScripthashBalanceRow(this.address, this.balances);
-//}
-//
-//class ScripthashBalancesData {
-//  final List<Address> addresses;
-//  final List<ScripthashBalance> balances;
-//  final List<ScripthashAssetBalances> assetBalances;
-//
-//  ScripthashBalancesData(this.addresses, this.balances, this.assetBalances);
-//
-//  Iterable<ScripthashBalanceRow> get zipped =>
-//      zip([addresses, balances, conformedAssetBalances()])
-//          .map((e) => ScripthashBalanceRow(
-//              e[0] as Address,
-//              Balances(balances: {
-//                ...e[2] as Map<String, Balance>,
-//                ...{'R': e[1] as Balance}
-//              })));
-//
-//  List<Balances> conformedAssetBalances() {
-//    var assetBalancesConformed;
-//    for (var assetsBalance in assetBalances) {
-//      assetBalancesConformed.add(toAssetMap(assetsBalance));
-//    }
-//    return assetBalancesConformed;
-//  }
-//
-//  Balances toAssetMap(ScripthashAssetBalances balances) {
-//    var tickers = {
-//      ...balances.confirmed.keys.toList(),
-//      ...balances.unconfirmed.keys.toList()
-//    };
-//    //var ret;
-//    //for (var ticker in tickers) {
-//    //  ret[ticker] = Balance(
-//    //      confirmed: balances.confirmed[ticker] ?? 0,
-//    //      unconfirmed: balances.unconfirmed[ticker] ?? 0);
-//    //}
-//    return Balances(balances: {
-//      for (var ticker in tickers)
-//        ticker: Balance(
-//            confirmed: balances.confirmed[ticker] ?? 0,
-//            unconfirmed: balances.unconfirmed[ticker] ?? 0)
-//    });
-//  }
-//}
-
 class AddressSubscriptionService extends Service {
   WalletReservoir wallets;
   AddressReservoir addresses;
@@ -117,21 +63,21 @@ class AddressSubscriptionService extends Service {
         .listen((changedAddresses) async {
       saveScripthashHistoryData(
           await getScripthashHistoriesData(changedAddresses));
-      //saveScripthashBalanceData(
-      //    await getScripthashBalancesData(changedAddresses));
+
       addressDerivationService.maybeDeriveNewAddresses(changedAddresses);
     }));
 
     listeners.add(addresses.changes.listen((change) {
-      change.when(added: (added) {
-        Address address = added.data;
-        addressNeedsUpdating(address);
-        subscribe(address);
-      }, updated: (updated) {
-        // pass - see initialize.dart
-      }, removed: (removed) {
-        unsubscribe(removed.id as String);
-      });
+      change.when(
+          added: (added) {
+            Address address = added.data;
+            addressNeedsUpdating(address);
+            subscribe(address);
+          },
+          updated: (updated) {},
+          removed: (removed) {
+            unsubscribe(removed.id as String);
+          });
     }));
   }
 
@@ -180,30 +126,8 @@ class AddressSubscriptionService extends Service {
         changedAddresses, histories, unspents, assetUnspents);
   }
 
-  //Future<ScripthashBalancesData> getScripthashBalancesData(
-  //    List<Address> changedAddresses) async {
-  //  var scripthashes =
-  //      changedAddresses.map((address) => address.scripthash).toList();
-  //  // ignore: omit_local_variable_types
-  //  List<ScripthashBalance> balances = await client.getBalances(scripthashes);
-  //  // ignore: omit_local_variable_types
-  //  List<ScripthashAssetBalances> assetBalances =
-  //      await client.getAssetBalances(scripthashes);
-  //  return ScripthashBalancesData(changedAddresses, balances, assetBalances);
-  //}
-
-  //void saveScripthashBalanceData(ScripthashBalancesData data) async {
-  //  data.zipped.forEach((row) {
-  //    var address = row.address;
-  //    address.balances = row.balances;
-  //    addresses.save(address);
-  //  });
-  //}
-
   void saveScripthashHistoryData(ScripthashHistoriesData data) async {
     data.zipped.forEach((row) {
-      // var address = row.address;
-      // addresses.save(address);
       histories.saveAll(combineHistoryAndUnspents(row));
     });
   }
