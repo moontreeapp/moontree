@@ -21,13 +21,14 @@ class WalletAdapter extends TypeAdapter<Wallet> {
       isHD: fields[1] as bool,
       encrypted: fields[2] as Uint8List,
       net: fields[3] as Net,
+      leaderWalletIndex: fields[4] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, Wallet obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.accountId)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class WalletAdapter extends TypeAdapter<Wallet> {
       ..writeByte(2)
       ..write(obj.encrypted)
       ..writeByte(3)
-      ..write(obj.net);
+      ..write(obj.net)
+      ..writeByte(4)
+      ..write(obj.leaderWalletIndex);
   }
 
   @override

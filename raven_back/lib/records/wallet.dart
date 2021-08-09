@@ -21,16 +21,20 @@ class Wallet with HiveObjectMixin, EquatableMixin {
   @HiveField(3)
   Net net;
 
+  @HiveField(4)
+  int leaderWalletIndex;
+
   Wallet(
       {required this.accountId,
       required this.isHD,
       required this.encrypted,
-      this.net = Net.Test});
+      this.net = Net.Test,
+      this.leaderWalletIndex = -1});
 
   @override
   List<Object> get props => [encrypted];
 
   @override
   String toString() =>
-      'Wallet($net, $accountId $isHD, ${encrypted.take(6).toList()})';
+      'Wallet($net, $accountId $isHD, ${encrypted.take(6).toList()}, $leaderWalletIndex)';
 }

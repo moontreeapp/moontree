@@ -18,12 +18,12 @@ import 'reservoir/helper.dart';
 
 class Generated {
   late String phrase;
-  late LeaderWallet account;
+  late LeaderWallet wallet;
   late RavenElectrumClient client;
   late Map<String, Reservoir> reservoirs;
   late Map<String, Service> services;
   Generated(
-      this.phrase, this.account, this.client, this.reservoirs, this.services);
+      this.phrase, this.wallet, this.client, this.reservoirs, this.services);
   Generated.asEmpty(); // workaround to: tests complain it's uninitialized...?
 }
 
@@ -61,6 +61,7 @@ Future<Generated> generate() async {
   makeReservoirs();
   var reservoirs = {
     'accounts': accounts,
+    'wallets': wallets,
     'addresses': addresses,
     'histories': histories
   } as Map<String, Reservoir>;
@@ -72,10 +73,11 @@ Future<Generated> generate() async {
     'addressesService': addressesService as Service,
   };
   var phrase = await env.getMnemonic();
-  var account = LeaderWallet(seed: bip39.mnemonicToSeed(phrase), net: Net.Test);
-  reservoirs['accounts']!.save(account);
+  var wallet = LeaderWallet(
+      seed: bip39.mnemonicToSeed(phrase), leaderWalletIndex: 0, net: Net.Test);
+  reservoirs['wallets']!.save(wallet);
   //waitForSave();
-  return Generated(phrase, account, client, reservoirs, services);
+  return Generated(phrase, wallet, client, reservoirs, services);
 }
 
 //Future<Generated> generateFromMemory() async {

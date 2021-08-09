@@ -1,22 +1,19 @@
 import 'dart:typed_data';
 
-import 'package:crypto/crypto.dart';
-import 'package:convert/convert.dart' show hex;
-import 'package:raven/records/node_exposure.dart';
-import 'package:raven/utils/derivation_path.dart';
-import 'package:raven/models/wallet.dart';
 import 'package:ravencoin/ravencoin.dart' as ravencoin;
-
-import '../utils/cipher.dart';
-import '../records.dart' as records;
-import '../records/net.dart';
-import '../models.dart' as models;
+import 'package:raven/utils/cipher.dart';
+import 'package:raven/utils/derivation_path.dart';
+import 'package:raven/models.dart' as models;
+import 'package:raven/models/wallet.dart';
+import 'package:raven/records.dart' as records;
+import 'package:raven/records/net.dart';
+import 'package:raven/records/node_exposure.dart';
 
 const DEFAULT_CIPHER = NoCipher();
 
 class LeaderWallet extends Wallet {
-  // final int leaderWalletIndex;
   final Uint8List encryptedSeed;
+  final int leaderWalletIndex;
   late final ravencoin.HDWallet seededWallet;
   late final bool isDerived;
   late final String id;
@@ -24,6 +21,7 @@ class LeaderWallet extends Wallet {
 
   LeaderWallet(
       {required seed,
+      required this.leaderWalletIndex,
       accountId = 'primary',
       net = Net.Test,
       cipher = const NoCipher(),
@@ -37,16 +35,20 @@ class LeaderWallet extends Wallet {
   @override
   List<Object?> get props => [id];
 
-  factory LeaderWallet.fromEncryptedSeed(encryptedSeed,
+  factory LeaderWallet.fromEncryptedSeed(encryptedSeed, leaderWalletIndex,
       {accountId = 'primary', net = Net.Test, cipher = const NoCipher()}) {
     return LeaderWallet(
-        seed: cipher.decrypt(encryptedSeed), net: net, cipher: cipher);
+        seed: cipher.decrypt(encryptedSeed),
+        leaderWalletIndex: leaderWalletIndex,
+        net: net,
+        cipher: cipher);
   }
 
   factory LeaderWallet.fromRecord(records.Wallet record,
       {cipher = const NoCipher()}) {
     return LeaderWallet(
         seed: cipher.decrypt(record.encrypted),
+        leaderWalletIndex: record.leaderWalletIndex,
         accountId: record.accountId,
         net: record.net,
         cipher: cipher);
@@ -54,7 +56,11 @@ class LeaderWallet extends Wallet {
 
   records.Wallet toRecord() {
     return records.Wallet(
-        accountId: accountId, isHD: true, encrypted: encryptedSeed, net: net);
+        accountId: accountId,
+        isHD: true,
+        encrypted: encryptedSeed,
+        net: net,
+        leaderWalletIndex: leaderWalletIndex);
   }
 
   //// getters /////////////////////////////////////////////////////////////////
@@ -76,9 +82,7 @@ class LeaderWallet extends Wallet {
   ravencoin.HDWallet deriveWallet(int hdIndex,
       [exposure = NodeExposure.External]) {
     return seededWallet.derivePath(getDerivationPath(hdIndex,
-        exposure: exposure,
-        leaderWalletIndex: 0 // needs to pass it's own index.
-        ));
+        exposure: exposure, leaderWalletIndex: leaderWalletIndex));
   }
 
   models.Address deriveAddress(int hdIndex, records.NodeExposure exposure) {
@@ -95,6 +99,10 @@ class LeaderWallet extends Wallet {
 
   models.LeaderWallet deriveLeader(int hdIndex, records.NodeExposure exposure) {
     var wallet = deriveWallet(hdIndex, exposure);
-    return models.LeaderWallet(seed: wallet.seed, net: net, cipher: cipher);
+    return models.LeaderWallet(
+        seed: wallet.seed,
+        leaderWalletIndex: 0, // get wallets.leaderwallets.size
+        net: net,
+        cipher: cipher);
   }
 }

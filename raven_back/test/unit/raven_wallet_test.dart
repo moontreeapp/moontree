@@ -8,7 +8,7 @@ import 'package:raven/records/net.dart';
 final seed = bip39.mnemonicToSeed(
     'smile build brain topple moon scrap area aim budget enjoy polar erosion');
 
-final wallet = LeaderWallet(seed: seed, net: Net.Test);
+final wallet = LeaderWallet(seed: seed, leaderWalletIndex: 0, net: Net.Test);
 
 void main() {
   test('reverse', () {

@@ -23,28 +23,26 @@ void main() {
 
     test('save an Wallet model', () async {
       var seed = Uint8List(16);
-      var wallet = models.LeaderWallet(seed: seed);
+      var wallet = models.LeaderWallet(seed: seed, leaderWalletIndex: 0);
       await asyncChange(res, () => res.save(wallet)); // fails?
-      expect(res.get(wallet.walletId), wallet);
+      expect(res.get(wallet.id), wallet);
     });
   });
 
   group('Wallet', () {
     test('convert from record', () {
       var encSeed = Uint8List(16);
-      var record = records.LeaderWallet(encSeed, name: '1st Wallet');
+      var record = records.Wallet(
+          accountId: '', isHD: false, encrypted: encSeed, leaderWalletIndex: 0);
       var model = models.LeaderWallet.fromRecord(record);
       expect(model.encryptedSeed, encSeed);
-      expect(model.name, '1st Wallet');
     });
 
     test('convert to record', () {
       var seed = Uint8List(16);
-      var model = models.LeaderWallet(seed, name: '1st Wallet');
+      var model = models.LeaderWallet(seed: seed, leaderWalletIndex: 0);
       var record = model.toRecord();
-      expect(
-          record.encryptedSeed, seed); // NoCipher means seed == encryptedSeed
-      expect(record.name, '1st Wallet');
+      expect(record.encrypted, seed); // NoCipher means seed == encryptedSeed
     });
   });
 }

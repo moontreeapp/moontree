@@ -11,7 +11,7 @@ void main() {
     /* notice this does not calculate an efficient fee or use a utxo set */
     var seed = bip39.mnemonicToSeed(
         'smile build brain topple moon scrap area aim budget enjoy polar erosion');
-    var wallet = LeaderWallet(seed: seed, net: Net.Test);
+    var wallet = LeaderWallet(seed: seed, leaderWalletIndex: 0, net: Net.Test);
     var node = wallet.deriveWallet(4, NodeExposure.Internal);
     final txb = TransactionBuilder(network: node.network);
     txb.setVersion(1);
