@@ -1,8 +1,8 @@
+import 'package:raven/records.dart' as records;
 import 'package:raven/models/balance.dart';
+import 'package:raven/models/history.dart';
 import 'package:raven/reservoir/index.dart';
 import 'package:raven/reservoir/reservoir.dart';
-import 'package:raven/models/history.dart';
-import 'package:raven/records.dart' as records;
 
 class HistoryReservoir extends Reservoir<String, records.History, History> {
   late MultipleIndex<String, History> byAccount;

@@ -1,17 +1,18 @@
-import 'package:raven/records/node_exposure.dart';
+import 'package:raven/records.dart' as records;
+import 'package:raven/models/address.dart';
 import 'package:raven/reservoir/index.dart';
 import 'package:raven/reservoir/reservoir.dart';
 
 class AddressLocation {
   int index;
-  NodeExposure exposure;
+  records.NodeExposure exposure;
 
-  AddressLocation(int locationIndex, NodeExposure locationExposure)
+  AddressLocation(int locationIndex, records.NodeExposure locationExposure)
       : index = locationIndex,
         exposure = locationExposure;
 }
 
-class AddressReservoir<Record, Model> extends Reservoir {
+class AddressReservoir extends Reservoir<String, records.Address, Address> {
   late MultipleIndex byAccount;
   late MultipleIndex byWallet;
   late MultipleIndex byWalletExposure;
@@ -27,18 +28,18 @@ class AddressReservoir<Record, Model> extends Reservoir {
   /// returns account addresses in order
   AddressLocation? getAddressLocationOf(String scripthash, String accountId) {
     var i = 0;
-    for (var address
-        in byWalletExposure.getAll('$accountId:${NodeExposure.Internal}')) {
+    for (var address in byWalletExposure
+        .getAll('$accountId:${records.NodeExposure.Internal}')) {
       if (address.scripthash == scripthash) {
-        return AddressLocation(i, NodeExposure.Internal);
+        return AddressLocation(i, records.NodeExposure.Internal);
       }
       i = i + 1;
     }
     i = 0;
-    for (var address
-        in byWalletExposure.getAll('$accountId:${NodeExposure.External}')) {
+    for (var address in byWalletExposure
+        .getAll('$accountId:${records.NodeExposure.External}')) {
       if (address.scripthash == scripthash) {
-        return AddressLocation(i, NodeExposure.External);
+        return AddressLocation(i, records.NodeExposure.External);
       }
       i = i + 1;
     }

@@ -1,7 +1,8 @@
+import 'package:raven/records.dart' as records;
 import 'package:raven/models.dart';
 import 'package:raven/reservoir/reservoir.dart';
 
-class WalletReservoir extends Reservoir {
+class WalletReservoir extends Reservoir<String, records.Wallet, dynamic> {
   // indices?
 
   WalletReservoir([source]) : super(source ?? HiveSource('wallets')) {

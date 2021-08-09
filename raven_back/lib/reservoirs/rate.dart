@@ -1,9 +1,11 @@
+import 'package:raven/records.dart' as records;
+import 'package:raven/models/rate.dart';
 import 'package:raven/reservoir/index.dart';
 import 'package:raven/reservoir/reservoir.dart';
 
 // I think this will eventually hold lots of exchange rates,
 // not just RVN to USD or other Fiat but assets to RVN and well.
-class ConversionRateReservoir<Record, Model> extends Reservoir {
+class ConversionRateReservoir extends Reservoir<String, records.Rate, Rate> {
   late MultipleIndex byFrom;
   late MultipleIndex byTo;
   late MultipleIndex byRate;
