@@ -1,3 +1,12 @@
+## 2.0.0
+- Network name changes:
+  - ravencoinNetworks => networks
+  - ravencoin => mainnet
+  - bitcoin => bitcoinMainnet
+- Wallet is now KPWallet
+- Both KPWallet and HDWallet derive from common WalletBase
+- HDWallet bip32 and p2pkh are non-nullable
+
 ## 1.2.0
 
 - Change Wallet.seed to be Uint8List; add Wallet.seedHex to get `String?` variant
