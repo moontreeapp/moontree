@@ -15,7 +15,7 @@ main() {
   // => KwG2BU1ERd3ndbFUrdpR7ymLZbsd7xZpPKxsgJzUf76A4q9CkBpY
 
   var wallet =
-      Wallet.fromWIF('Kxr9tQED9H44gCmp6HAdmemAzU3n84H3dGkuWTKvE23JgHMW8gct');
+      KPWallet.fromWIF('Kxr9tQED9H44gCmp6HAdmemAzU3n84H3dGkuWTKvE23JgHMW8gct');
   print(wallet.address);
   // => RHSMp6LmCFXyGNGh6AdwrKj5hz22KCGP8a
   print(wallet.pubKey);

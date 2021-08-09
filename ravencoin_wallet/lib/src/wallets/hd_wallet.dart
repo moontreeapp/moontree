@@ -4,16 +4,17 @@ import 'package:ravencoin/src/utils/magic_hash.dart';
 import 'package:hex/hex.dart';
 import 'package:bip32/bip32.dart' as bip32;
 
-import 'models/networks.dart';
-import 'payments/index.dart' show PaymentData;
-import 'payments/p2pkh.dart';
+import '../models/networks.dart';
+import '../payments/index.dart' show PaymentData;
+import '../payments/p2pkh.dart';
 
-class HDWallet {
+import 'wallet_base.dart';
+
+class HDWallet extends WalletBase {
   bip32.BIP32 _bip32;
-  P2PKH _p2pkh;
   Uint8List? seed;
-  NetworkType network;
 
+  @override
   String? get privKey {
     try {
       return HEX.encode(_bip32.privateKey!);
@@ -22,6 +23,7 @@ class HDWallet {
     }
   }
 
+  @override
   String get pubKey => HEX.encode(_bip32.publicKey);
 
   String? get base58Priv {
@@ -34,6 +36,7 @@ class HDWallet {
 
   String? get base58 => _bip32.neutered().toBase58();
 
+  @override
   String? get wif {
     try {
       return _bip32.toWIF();
@@ -42,13 +45,11 @@ class HDWallet {
     }
   }
 
-  String? get address => _p2pkh.data.address;
-
   String? get seedHex => seed != null ? HEX.encode(seed!) : null;
 
-  HDWallet({required bip32, required p2pkh, required this.network, this.seed})
+  HDWallet({required bip32, required p2pkh, required network, this.seed})
       : this._bip32 = bip32,
-        this._p2pkh = p2pkh;
+        super(p2pkh, network);
 
   HDWallet derivePath(String path) {
     final bip32 = _bip32.derivePath(path);
@@ -90,11 +91,13 @@ class HDWallet {
     return HDWallet(bip32: wallet, p2pkh: p2pkh, network: network, seed: null);
   }
 
+  @override
   Uint8List sign(String message) {
     Uint8List messageHash = magicHash(message, network);
     return _bip32.sign(messageHash);
   }
 
+  @override
   bool verify({required String message, required Uint8List signature}) {
     Uint8List messageHash = magicHash(message);
     return _bip32.verify(messageHash, signature);
