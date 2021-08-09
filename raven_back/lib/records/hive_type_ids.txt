@@ -2,8 +2,7 @@ Wallet 0
 Account 1
 Address 2
 Balance 3
-Balance 4
+Rate 4
 History 5
 Net 6
 NodeExposure 7
-Rate 8

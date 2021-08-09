@@ -17,7 +17,6 @@ class HiveHelper {
     Hive.registerAdapter(AccountAdapter());
     Hive.registerAdapter(WalletAdapter());
     Hive.registerAdapter(AddressAdapter());
-    Hive.registerAdapter(BalancesAdapter());
     Hive.registerAdapter(HistoryAdapter());
     Hive.registerAdapter(NetAdapter());
     Hive.registerAdapter(NodeExposureAdapter());
@@ -31,6 +30,7 @@ class HiveHelper {
     await Hive.openBox<Wallet>('wallets');
     await Hive.openBox<History>('histories');
     await Hive.openBox<Rate>('rates');
+    await Hive.openBox<Balance>('balances');
 
     /// do we have a box of balances?
     /// if so should we just index balances?

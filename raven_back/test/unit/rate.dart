@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('rate', () {
-    var conversionRate = ConversionRateFiat();
+    var conversionRate = RVNtoFiat();
 
     test('get gecko', () async {
       conversionRate.serviceName = 'CoinGecko';

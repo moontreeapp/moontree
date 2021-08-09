@@ -63,7 +63,7 @@ Future<Generated> generate() async {
     'accounts': accounts,
     'addresses': addresses,
     'histories': histories
-  };
+  } as Map<String, Reservoir>;
   var client = await generateClient('testnet.rvn.rocks', 50002);
   initServices(client);
   var services = {

@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 
 part 'rate.g.dart';
 
-@HiveType(typeId: 8)
+@HiveType(typeId: 4)
 class Rate {
   @HiveField(0)
   String from;

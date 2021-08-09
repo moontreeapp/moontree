@@ -41,3 +41,8 @@ class CacheEmpty implements Exception {
   String cause;
   CacheEmpty([this.cause = 'Error! Please deriveNodes first.']);
 }
+
+class BalanceMismatch implements Exception {
+  String cause;
+  BalanceMismatch([this.cause = "Balance elements don't match"]);
+}

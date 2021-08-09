@@ -14,23 +14,11 @@ class Account with HiveObjectMixin, EquatableMixin {
   @HiveField(1)
   String name;
 
-  @HiveField(2)
-  Map<String, Balance> balances;
-
-  /// presumed
-  //@HiveField(1)
-  //Map<String, dynamic> settings;
-
-  /// presumed
-  //@HiveField(2)
-  //Map<String, dynamic> metadata;
-
-  Account(
-      {required this.accountId, required this.name, required this.balances});
+  Account({required this.accountId, required this.name});
 
   @override
   List<Object> get props => [accountId];
 
   @override
-  String toString() => 'Account($accountId, $name, $balances)';
+  String toString() => 'Account($accountId, $name)';
 }

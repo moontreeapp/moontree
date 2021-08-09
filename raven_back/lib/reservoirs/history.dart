@@ -26,12 +26,12 @@ class HistoryReservoir extends Reservoir<String, records.History, History> {
     return byTicker.getAll(ticker).where((history) => history.value > 0);
   }
 
-  Balance balanceByTicker({String ticker = ''}) {
+  BalanceRaw balanceByTicker({String ticker = ''}) {
     return unspentsByTicker(ticker: ticker).fold(
-        Balance(confirmed: 0, unconfirmed: 0),
+        BalanceRaw(confirmed: 0, unconfirmed: 0),
         (sum, history) =>
             sum +
-            Balance(
+            BalanceRaw(
                 confirmed: (history.txPos > -1 ? history.value : 0),
                 unconfirmed: history.value));
   }

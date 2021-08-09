@@ -8,7 +8,7 @@ part of 'rate.dart';
 
 class RateAdapter extends TypeAdapter<Rate> {
   @override
-  final int typeId = 8;
+  final int typeId = 4;
 
   @override
   Rate read(BinaryReader reader) {

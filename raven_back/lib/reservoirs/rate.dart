@@ -18,8 +18,8 @@ class ConversionRateReservoir extends Reservoir<String, records.Rate, Rate> {
 
     byFrom = addMultipleIndex('from', (rate) => rate.from);
     byTo = addMultipleIndex('to', (rate) => rate.to);
-    byRate = addMultipleIndex('rate', (rate) => rate.rate);
-    byFiat = addMultipleIndex('fiat', (rate) => rate.fiat);
+    byRate = addMultipleIndex('rate', (rate) => rate.rate.toString());
+    byFiat = addMultipleIndex('fiat', (rate) => rate.fiat.toString());
   }
 
   double get rvnToUSD => byTo

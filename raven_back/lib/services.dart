@@ -1,4 +1,3 @@
-export 'services/account.dart';
 export 'services/account_balance.dart';
 export 'services/address_derivation.dart';
 export 'services/address_subscription.dart';

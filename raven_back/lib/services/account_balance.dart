@@ -3,13 +3,14 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 
 import 'package:raven/models.dart';
-import 'package:raven/models/indexed_balance.dart' as indexed;
 import 'package:raven/reservoir/change.dart';
 import 'package:raven/reservoirs/account.dart';
 import 'package:raven/reservoirs/balance.dart';
 import 'package:raven/reservoirs/history.dart';
 import 'package:raven/services/service.dart';
 import 'package:raven/utils/buffer_count_window.dart';
+import 'package:raven/utils/exceptions.dart';
+import 'package:sorted_list/sorted_list.dart';
 
 class AccountBalanceService extends Service {
   AccountReservoir accounts;
@@ -27,6 +28,11 @@ class AccountBalanceService extends Service {
         .listen(calculateBalance);
   }
 
+  @override
+  void deinit() {
+    listener.cancel();
+  }
+
   // runs it for affected account-ticker combinations
   void calculateBalance(changes) {
     var combos = [];
@@ -38,18 +44,17 @@ class AccountBalanceService extends Service {
     for (var accountIdTicker in combos) {
       var accountId = accountIdTicker[0];
       var ticker = accountIdTicker[1];
-      accounts.setBalance(
-          accountId,
-          ticker,
-          Balance(
-              confirmed: histories
-                      .unspentsByAccount(accountId, ticker: ticker)
-                      .fold(0, (sum, history) => sum ?? 0 + history.value) ??
-                  0,
-              unconfirmed: histories
-                      .unconfirmedByAccount(accountId, ticker: ticker)
-                      .fold(0, (sum, history) => sum ?? 0 + history.value) ??
-                  0));
+      balances.save(Balance(
+          accountId: accountId,
+          ticker: ticker,
+          confirmed: histories
+                  .unspentsByAccount(accountId, ticker: ticker)
+                  .fold(0, (sum, history) => sum ?? 0 + history.value) ??
+              0,
+          unconfirmed: histories
+                  .unconfirmedByAccount(accountId, ticker: ticker)
+                  .fold(0, (sum, history) => sum ?? 0 + history.value) ??
+              0));
     }
   }
 
@@ -63,9 +68,9 @@ class AccountBalanceService extends Service {
 
       var balanceByTicker = hists
           .groupFoldBy((History history) => history.ticker,
-              (Balance? previous, History history) {
-        var balance = previous ?? Balance(confirmed: 0, unconfirmed: 0);
-        return Balance(
+              (BalanceRaw? previous, History history) {
+        var balance = previous ?? BalanceRaw(confirmed: 0, unconfirmed: 0);
+        return BalanceRaw(
             confirmed:
                 balance.confirmed + (history.txPos > -1 ? history.value : 0),
             unconfirmed: balance.unconfirmed +
@@ -73,7 +78,7 @@ class AccountBalanceService extends Service {
       });
 
       balanceByTicker.forEach((ticker, bal) {
-        var balance = indexed.Balance(
+        var balance = Balance(
             accountId: accountId,
             ticker: ticker,
             confirmed: bal.confirmed,
@@ -83,8 +88,43 @@ class AccountBalanceService extends Service {
     }
   }
 
-  @override
-  void deinit() {
-    listener.cancel();
+  SortedList<History> sortedUTXOs(String accountId) {
+    var sortedList = SortedList<History>(
+        (History a, History b) => a.value.compareTo(b.value));
+    sortedList.addAll(histories.unspentsByAccount(accountId));
+    return sortedList;
+  }
+
+  /// returns the smallest number of inputs to satisfy the amount
+  List<History> collectUTXOs(String accountId, int amount,
+      [List<History>? except]) {
+    var ret = <History>[];
+    var balance = balances.getRVN(accountId);
+    if (balance.confirmed < amount) {
+      throw InsufficientFunds();
+    }
+    var utxos = sortedUTXOs(accountId);
+    utxos.removeWhere((utxo) => (except ?? []).contains(utxo));
+    /* can we find an ideal singular utxo? */
+    for (var i = 0; i < utxos.length; i++) {
+      if (utxos[i].value >= amount) {
+        return [utxos[i]];
+      }
+    }
+    /* what combinations of utxo's must we return?
+    lets start by grabbing the largest one
+    because we know we can consume it all without producing change...
+    and lets see how many times we can do that */
+    var remainder = amount;
+    for (var i = utxos.length - 1; i >= 0; i--) {
+      if (remainder < utxos[i].value) {
+        break;
+      }
+      ret.add(utxos[i]);
+      remainder = (remainder - utxos[i].value).toInt();
+    }
+    // Find one last UTXO, starting from smallest, that satisfies the remainder
+    ret.add(utxos.firstWhere((utxo) => utxo.value >= remainder));
+    return ret;
   }
 }
