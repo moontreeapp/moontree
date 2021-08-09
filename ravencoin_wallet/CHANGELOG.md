@@ -1,3 +1,6 @@
+## 2.0.1
+- Export WalletBase
+
 ## 2.0.0
 - Network name changes:
   - ravencoinNetworks => networks
