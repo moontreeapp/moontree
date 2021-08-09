@@ -13,7 +13,7 @@ import '../models.dart' as models;
 class SingleWallet extends Wallet {
   final Uint8List encryptedPrivateKey;
   late final KPWallet seededWallet;
-  late final String id; //address
+  late final String id;
   late final String accountId;
 
   SingleWallet(

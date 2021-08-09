@@ -23,7 +23,7 @@ void main() {
 
     test('save an Wallet model', () async {
       var seed = Uint8List(16);
-      var wallet = models.LeaderWallet(seed, name: 'in-memory wallet');
+      var wallet = models.LeaderWallet(seed: seed);
       await asyncChange(res, () => res.save(wallet)); // fails?
       expect(res.get(wallet.walletId), wallet);
     });
