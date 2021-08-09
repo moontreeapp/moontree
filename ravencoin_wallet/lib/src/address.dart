@@ -9,8 +9,7 @@ import 'payments/p2pkh.dart';
 import 'payments/p2wpkh.dart';
 
 class Address {
-  static bool validateAddress(String address,
-      [NetworkType network = ravencoin]) {
+  static bool validateAddress(String address, [NetworkType network = mainnet]) {
     try {
       addressToOutputScript(address, network);
       return true;
@@ -20,7 +19,7 @@ class Address {
   }
 
   static Uint8List? addressToOutputScript(String address,
-      [NetworkType network = ravencoin]) {
+      [NetworkType network = mainnet]) {
     var decodeBase58;
     var decodeBech32;
     try {

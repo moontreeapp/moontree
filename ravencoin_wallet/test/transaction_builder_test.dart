@@ -14,10 +14,9 @@ import '../lib/src/utils/script.dart' as bscript;
 import '../lib/src/payments/index.dart' show PaymentData;
 import '../lib/src/payments/p2pkh.dart';
 
-final NETWORKS = {'testnet': bitcoinTestnet, 'bitcoin': bitcoin};
+final NETWORKS = {'testnet': bitcoinTestnet, 'bitcoin': bitcoinMainnet};
 
 constructSign(f, TransactionBuilder txb) {
-  final network = NETWORKS[f['network']];
   final inputs = f['inputs'] as List<dynamic>;
   for (var i = 0; i < inputs.length; i++) {
     if (inputs[i]['signs'] == null) continue;
@@ -35,7 +34,7 @@ constructSign(f, TransactionBuilder txb) {
 }
 
 TransactionBuilder construct(f, [bool? dontSign]) {
-  final network = NETWORKS[f['network']] ?? bitcoin;
+  final network = NETWORKS[f['network']] ?? bitcoinMainnet;
   final txb = new TransactionBuilder(network: network);
   if (f['version'] != null) txb.setVersion(f['version']);
   (f['inputs'] as List<dynamic>).forEach((input) {
@@ -79,7 +78,7 @@ main() {
     final scripts = [
       '1BgGZ9tcN4rm9KBzDn7KprQz87SZ26SAMH',
       '1cMh228HTCiwS8ZsaakH8A8wze1JR5ZsP'
-    ].map((x) => Address.addressToOutputScript(x, bitcoin));
+    ].map((x) => Address.addressToOutputScript(x, bitcoinMainnet));
     final txHash = HEX.decode(
         '0e7cea811c0be9f73c0aca591034396e7264473fc25c1ca45195d7417b36cbe2');
     group('fromTransaction', () {
@@ -332,7 +331,7 @@ main() {
                 TransactionBuilder txb;
                 if (f['txHex'] != null) {
                   txb = TransactionBuilder.fromTransaction(
-                      Transaction.fromHex(f['txHex']), bitcoin);
+                      Transaction.fromHex(f['txHex']), bitcoinMainnet);
                 } else {
                   txb = construct(f);
                 }

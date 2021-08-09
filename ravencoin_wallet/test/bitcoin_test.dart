@@ -8,7 +8,7 @@ void main() {
   group('bitcoin-dart (HDWallet)', () {
     var seed = bip39.mnemonicToSeed(
         'praise you muffin lion enable neck grocery crumble super myself license ghost');
-    HDWallet hdWallet = new HDWallet.fromSeed(seed, network: bitcoin);
+    HDWallet hdWallet = new HDWallet.fromSeed(seed, network: bitcoinMainnet);
     test('valid seed', () {
       expect(hdWallet.seedHex,
           'f4f0cda65a9068e308fad4c96e8fe22213dd535fe7a7e91ca70c162a38a49aaacfe0dde5fafbbdf63cf783c2619db7174bc25cbfff574fb7037b1b9cec3d09b6');

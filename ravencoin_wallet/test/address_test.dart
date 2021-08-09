@@ -13,13 +13,13 @@ main() {
             true);
         expect(
             Address.validateAddress(
-                '1K6kARGhcX9nJpJeirgcYdGAgUsXD59nHZ', NETWORKS.bitcoin),
+                '1K6kARGhcX9nJpJeirgcYdGAgUsXD59nHZ', NETWORKS.bitcoinMainnet),
             true);
       });
       test('base58 addresses and invalid network', () {
         expect(
             Address.validateAddress(
-                'mhv6wtF2xzEqMNd3TbXx9TjLLo6mp2MUuT', NETWORKS.ravencoin),
+                'mhv6wtF2xzEqMNd3TbXx9TjLLo6mp2MUuT', NETWORKS.mainnet),
             false);
         expect(
             Address.validateAddress(
@@ -34,7 +34,8 @@ main() {
             true);
         expect(
             Address.validateAddress(
-                'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4', NETWORKS.bitcoin),
+                'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4',
+                NETWORKS.bitcoinMainnet),
             true);
         // expect(Address.validateAddress('tb1qqqqqp399et2xygdj5xreqhjjvcmzhxw4aywxecjdzew6hylgvsesrxh6hy'), true); TODO
       });

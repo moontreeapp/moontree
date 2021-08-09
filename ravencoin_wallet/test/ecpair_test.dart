@@ -19,12 +19,12 @@ main() {
     group('fromPrivateKey', () {
       test('defaults to compressed', () {
         final keyPair =
-            ECPair.fromPrivateKey(ONE as Uint8List, network: bitcoin);
+            ECPair.fromPrivateKey(ONE as Uint8List, network: bitcoinMainnet);
         expect(keyPair.compressed, true);
       });
       test('supports the uncompressed option', () {
         final keyPair = ECPair.fromPrivateKey(ONE as Uint8List,
-            compressed: false, network: bitcoin);
+            compressed: false, network: bitcoinMainnet);
         expect(keyPair.compressed, false);
       });
       test('supports the network option', () {
@@ -36,7 +36,7 @@ main() {
         test('derives public key for ${f['WIF']}', () {
           final d = HEX.decode(f['d']);
           final keyPair = ECPair.fromPrivateKey(d as Uint8List,
-              compressed: f['compressed'], network: bitcoin);
+              compressed: f['compressed'], network: bitcoinMainnet);
           expect(HEX.encode(keyPair.publicKey as List<int>), f['Q']);
         });
       });
@@ -102,13 +102,13 @@ main() {
             rng: (size) {
               return d.sublist(0, size);
             },
-            network: bitcoin);
+            network: bitcoinMainnet);
         expect(keyPair.toWIF(), exWIF);
       });
       test('retains the same defaults as ECPair constructor', () {
         final keyPair = ECPair.makeRandom();
         expect(keyPair.compressed, true);
-        expect(keyPair.network, ravencoin);
+        expect(keyPair.network, mainnet);
       });
       test('supports the options parameter', () {
         final keyPair = ECPair.makeRandom(compressed: false, network: testnet);
@@ -143,7 +143,7 @@ NetworkType? _getNetwork(f) {
   var network;
   if (f['network'] != null) {
     if (f['network'] == 'bitcoin') {
-      network = bitcoin;
+      network = bitcoinMainnet;
     } else if (f['network'] == 'testnet') {
       network = bitcoinTestnet;
     }

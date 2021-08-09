@@ -8,8 +8,7 @@ import '../utils/constants/op.dart';
 class P2PK {
   late PaymentData data;
   NetworkType? network;
-  P2PK({required data, network}) {
-    this.network = network ?? ravencoin;
+  P2PK({required data, this.network = mainnet}) {
     this.data = data;
     _init();
   }

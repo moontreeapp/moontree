@@ -65,8 +65,7 @@ class HDWallet extends WalletBase {
     return HDWallet(bip32: bip32, p2pkh: p2pkh, network: network);
   }
 
-  factory HDWallet.fromSeed(Uint8List seed, {NetworkType? network}) {
-    network = network ?? ravencoin;
+  factory HDWallet.fromSeed(Uint8List seed, {NetworkType network = mainnet}) {
     final wallet = bip32.BIP32.fromSeed(
         seed,
         bip32.NetworkType(
@@ -78,8 +77,7 @@ class HDWallet extends WalletBase {
     return HDWallet(bip32: wallet, p2pkh: p2pkh, network: network, seed: seed);
   }
 
-  factory HDWallet.fromBase58(String xpub, {NetworkType? network}) {
-    network = network ?? ravencoin;
+  factory HDWallet.fromBase58(String xpub, {NetworkType network = mainnet}) {
     final wallet = bip32.BIP32.fromBase58(
         xpub,
         bip32.NetworkType(

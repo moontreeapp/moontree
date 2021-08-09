@@ -12,7 +12,7 @@ main() {
       final alice = ECPair.fromWIF(
           'L1uyy5qTuGrVXrmrsvHWHgVzW9kKdrp27wBC7Vs6nZDTF2BRUVwy',
           networks: bitcoinNetworks);
-      final txb = new TransactionBuilder(network: bitcoin);
+      final txb = new TransactionBuilder(network: bitcoinMainnet);
 
       txb.setVersion(1);
       txb.addInput(
@@ -36,7 +36,7 @@ main() {
           'KwcN2pT3wnRAurhy7qMczzbkpY5nXMW2ubh696UBc1bcwctTx26z',
           networks: bitcoinNetworks);
 
-      final txb = new TransactionBuilder(network: bitcoin);
+      final txb = new TransactionBuilder(network: bitcoinMainnet);
       txb.setVersion(1);
       txb.addInput(
           'b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c',

@@ -24,7 +24,7 @@ class KPWallet extends WalletBase {
 
   KPWallet(this._keyPair, p2pkh, network) : super(p2pkh, network);
 
-  factory KPWallet.random([NetworkType network = ravencoin]) {
+  factory KPWallet.random([NetworkType network = mainnet]) {
     final _keyPair = ECPair.makeRandom(network: network);
     final _p2pkh = new P2PKH(
         data: new PaymentData(pubkey: _keyPair.publicKey), network: network);
@@ -32,7 +32,7 @@ class KPWallet extends WalletBase {
   }
 
   factory KPWallet.fromWIF(String wif,
-      {Map<int, NetworkType> networks = ravencoinNetworks}) {
+      {Map<int, NetworkType> networks = networks}) {
     final _keyPair = ECPair.fromWIF(wif, networks: networks);
     final _p2pkh = new P2PKH(
         data: new PaymentData(pubkey: _keyPair.publicKey),

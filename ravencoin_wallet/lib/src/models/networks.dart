@@ -33,7 +33,7 @@ class Bip32Type {
 }
 
 // Ravencoin Mainnet
-const ravencoin = NetworkType(
+const mainnet = NetworkType(
     messagePrefix: '\x16Raven Signed Message:\n',
     bech32: 'rc',
     bip32: Bip32Type(public: 0x0488b21e, private: 0x0488ade4),
@@ -50,10 +50,10 @@ const testnet = NetworkType(
     scriptHash: 0xc4,
     wif: 0xef);
 
-const ravencoinNetworks = {0x80: ravencoin, 0xef: testnet};
+const networks = {0x80: mainnet, 0xef: testnet};
 
 // Used for some legacy tests
-const bitcoin = NetworkType(
+const bitcoinMainnet = NetworkType(
     messagePrefix: '\x18Bitcoin Signed Message:\n',
     bech32: 'bc',
     bip32: Bip32Type(public: 0x0488b21e, private: 0x0488ade4),
@@ -69,4 +69,4 @@ const bitcoinTestnet = NetworkType(
     scriptHash: 0xc4,
     wif: 0xef);
 
-const bitcoinNetworks = {0x80: bitcoin, 0xef: bitcoinTestnet};
+const bitcoinNetworks = {0x80: bitcoinMainnet, 0xef: bitcoinTestnet};

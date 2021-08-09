@@ -13,8 +13,7 @@ class P2WPKH {
 
   late PaymentData data;
   late NetworkType network;
-  P2WPKH({required data, network}) {
-    this.network = network ?? ravencoin;
+  P2WPKH({required data, this.network = mainnet}) {
     this.data = data;
     _init();
   }

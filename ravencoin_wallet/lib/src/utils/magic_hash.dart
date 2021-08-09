@@ -5,8 +5,7 @@ import 'varuint.dart';
 import '../../src/crypto.dart';
 import '../../src/models/networks.dart';
 
-Uint8List magicHash(String message, [NetworkType? network]) {
-  network = network ?? ravencoin;
+Uint8List magicHash(String message, [NetworkType network = mainnet]) {
   Uint8List messagePrefix = utf8.encode(network.messagePrefix) as Uint8List;
   int messageVISize = encodingLength(message.length);
   int length = messagePrefix.length + messageVISize + message.length;

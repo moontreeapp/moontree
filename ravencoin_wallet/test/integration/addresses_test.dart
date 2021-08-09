@@ -27,7 +27,7 @@ main() {
       final keyPair = ECPair.makeRandom(rng: rng);
       final address = new P2PKH(
               data: new PaymentData(pubkey: keyPair.publicKey),
-              network: NETWORKS.bitcoin)
+              network: NETWORKS.bitcoinMainnet)
           .data
           .address;
       expect(address, '1F5VhMHukdnUES9kfXqzPzMeF1GPHKiF64');
@@ -38,7 +38,7 @@ main() {
       final keyPair = ECPair.fromPrivateKey(hash);
       final address = new P2PKH(
               data: new PaymentData(pubkey: keyPair.publicKey),
-              network: NETWORKS.bitcoin)
+              network: NETWORKS.bitcoinMainnet)
           .data
           .address;
       expect(address, '1C7zdTfnkzmr13HfA2vNm5SJYRK6nEKyq8');
@@ -48,7 +48,7 @@ main() {
           'Kxr9tQED9H44gCmp6HAdmemAzU3n84H3dGkuWTKvE23JgHMW8gct');
       final address = new P2PKH(
               data: new PaymentData(pubkey: keyPair.publicKey),
-              network: NETWORKS.bitcoin)
+              network: NETWORKS.bitcoinMainnet)
           .data
           .address;
       expect(address, '19AAjaTUbRjQCMuVczepkoPswiZRhjtg31');
@@ -81,7 +81,7 @@ main() {
           'KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU73sVHnoWn');
       final address = new P2WPKH(
               data: new PaymentData(pubkey: keyPair.publicKey),
-              network: NETWORKS.bitcoin)
+              network: NETWORKS.bitcoinMainnet)
           .data
           .address;
       expect(address, 'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4');

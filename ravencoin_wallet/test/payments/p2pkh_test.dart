@@ -17,7 +17,7 @@ main() {
     (fixtures["valid"] as List<dynamic>).forEach((f) {
       test(f['description'] + ' as expected', () {
         final arguments = _preformPaymentData(f['arguments']);
-        final p2pkh = new P2PKH(data: arguments, network: bitcoin);
+        final p2pkh = new P2PKH(data: arguments, network: bitcoinMainnet);
         if (arguments.address == null) {
           expect(p2pkh.data.address, f['expected']['address']);
         }
@@ -48,7 +48,8 @@ main() {
           () {
         final arguments = _preformPaymentData(f['arguments']);
         try {
-          expect(new P2PKH(data: arguments, network: bitcoin), isArgumentError);
+          expect(new P2PKH(data: arguments, network: bitcoinMainnet),
+              isArgumentError);
         } catch (err) {
           expect((err as ArgumentError).message, f['exception']);
         }

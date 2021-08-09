@@ -12,8 +12,7 @@ import '../utils/constants/op.dart';
 class P2PKH {
   late PaymentData data;
   late NetworkType network;
-  P2PKH({required data, network}) {
-    this.network = network ?? ravencoin;
+  P2PKH({required data, this.network = mainnet}) {
     this.data = data;
     _init();
   }

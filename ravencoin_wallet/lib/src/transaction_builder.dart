@@ -20,7 +20,7 @@ class TransactionBuilder {
   Map _prevTxSet = {};
 
   TransactionBuilder(
-      {NetworkType this.network = ravencoin, int? maximumFeeRate}) {
+      {NetworkType this.network = mainnet, int? maximumFeeRate}) {
     this.maximumFeeRate = maximumFeeRate ?? 2500;
     this._inputs = [];
     this._tx = new Transaction();
@@ -30,7 +30,7 @@ class TransactionBuilder {
   List<Input>? get inputs => _inputs;
 
   factory TransactionBuilder.fromTransaction(Transaction transaction,
-      [NetworkType network = ravencoin]) {
+      [NetworkType network = mainnet]) {
     final txb = new TransactionBuilder(network: network);
     // Copy transaction fields
     txb.setVersion(transaction.version);
@@ -367,8 +367,8 @@ class TransactionBuilder {
   Map get prevTxSet => _prevTxSet;
 }
 
-Uint8List? pubkeyToOutputScript(Uint8List? pubkey, [NetworkType? nw]) {
-  NetworkType network = nw ?? ravencoin;
+Uint8List? pubkeyToOutputScript(Uint8List? pubkey,
+    [NetworkType network = mainnet]) {
   P2PKH p2pkh =
       new P2PKH(data: new PaymentData(pubkey: pubkey), network: network);
   return p2pkh.data.output;

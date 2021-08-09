@@ -10,7 +10,7 @@ class ECPair {
   NetworkType network;
   bool compressed;
   ECPair(Uint8List? this._d, Uint8List? this._Q,
-      {this.network = ravencoin, this.compressed = true});
+      {this.network = mainnet, this.compressed = true});
   Uint8List? get publicKey {
     if (_Q == null) _Q = ecc.pointFromScalar(_d!, compressed);
     return _Q;
@@ -34,7 +34,7 @@ class ECPair {
   }
 
   factory ECPair.fromWIF(String w,
-      {Map<int, NetworkType> networks = ravencoinNetworks}) {
+      {Map<int, NetworkType> networks = networks}) {
     wif.WIF decoded = wif.decode(w);
     if (networks.containsKey(decoded.version)) {
       NetworkType network = networks[decoded.version]!;
@@ -45,7 +45,7 @@ class ECPair {
     }
   }
   factory ECPair.fromPublicKey(Uint8List publicKey,
-      {NetworkType network = ravencoin, bool compressed = true}) {
+      {NetworkType network = mainnet, bool compressed = true}) {
     if (!ecc.isPoint(publicKey)) {
       throw new ArgumentError('Point is not on the curve');
     }
@@ -53,7 +53,7 @@ class ECPair {
         network: network, compressed: compressed);
   }
   factory ECPair.fromPrivateKey(Uint8List privateKey,
-      {NetworkType network = ravencoin, bool compressed = true}) {
+      {NetworkType network = mainnet, bool compressed = true}) {
     if (privateKey.length != 32)
       throw new ArgumentError(
           'Expected property privateKey of type Buffer(Length: 32)');
@@ -63,9 +63,7 @@ class ECPair {
         network: network, compressed: compressed);
   }
   factory ECPair.makeRandom(
-      {NetworkType network = ravencoin,
-      bool compressed = true,
-      Function? rng}) {
+      {NetworkType network = mainnet, bool compressed = true, Function? rng}) {
     final rfunc = rng ?? _randomBytes;
     Uint8List? d;
     do {
