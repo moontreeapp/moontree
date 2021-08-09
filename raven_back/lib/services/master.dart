@@ -20,25 +20,27 @@ class MasterWalletService extends Service {
   Future init() async {
     // set up listener on new account generation -
     listener = accounts.changes.listen((change) {
-      change.when(
-          added: (added) {
-            var account = added.data;
-            // verify empty
-            if (wallets.byAccount.getAll(account.accountId).isEmpty) {
-              // populate with new LeaderWallet created from the master wallet
-              makeNewLeaderWallet(account.accountId);
-            }
-          },
-          updated: (updated) {
-            /* Name or settings have changed */
-          },
-          removed: (removed) {});
+      change.when(added: (added) {
+        var account = added.data;
+        // verify empty
+        if (wallets.byAccount.getAll(account.accountId).isEmpty) {
+          // populate with new LeaderWallet created from the master wallet
+          makeNewLeaderWallet(account.accountId);
+        }
+      }, updated: (updated) {
+        /* Name or settings have changed */
+      }, removed: (removed) {
+        /*
+        shouldn't be able to destroy account if wallets have not been reassigned
+        or they get reassinged to 'primary' automatically, which would happen here.
+        */
+      });
     });
   }
 
   @override
   void deinit() {
-    // listener.cancel();
+    listener.cancel();
   }
 
   void makeNewLeaderWallet(String accountId) {
