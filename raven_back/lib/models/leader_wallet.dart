@@ -4,30 +4,13 @@ import 'package:crypto/crypto.dart';
 import 'package:convert/convert.dart' show hex;
 import 'package:raven/records/node_exposure.dart';
 import 'package:raven/utils/derivation_path.dart';
-import 'package:raven/models/wallet.dart' show Wallet;
+import 'package:raven/models/wallet.dart';
 import 'package:ravencoin/ravencoin.dart' as ravencoin;
 
 import '../utils/cipher.dart';
 import '../records.dart' as records;
 import '../records/net.dart';
 import '../models.dart' as models;
-
-extension Scripthash on ravencoin.HDWallet {
-  Uint8List get outputScript {
-    return ravencoin.Address.addressToOutputScript(address!, network)!;
-  }
-
-  String get scripthash {
-    var digest = sha256.convert(outputScript);
-    var hash = digest.bytes.reversed.toList();
-    return hex.encode(hash);
-  }
-
-  ravencoin.ECPair get keyPair {
-    return ravencoin.ECPair.fromWIF(wif!,
-        networks: ravencoin.ravencoinNetworks);
-  }
-}
 
 const DEFAULT_CIPHER = NoCipher();
 

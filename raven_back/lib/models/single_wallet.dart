@@ -1,36 +1,18 @@
 import 'dart:typed_data';
 
-import 'package:crypto/crypto.dart';
-import 'package:convert/convert.dart' show hex;
+import 'package:ravencoin/ravencoin.dart';
+
 import 'package:raven/records/node_exposure.dart';
-import 'package:raven/models/wallet.dart' show Wallet;
-import 'package:ravencoin/ravencoin.dart' as ravencoin;
+import 'package:raven/models/wallet.dart';
 
 import '../utils/cipher.dart';
 import '../records.dart' as records;
 import '../records/net.dart';
 import '../models.dart' as models;
 
-extension ScripthashOnWallet on ravencoin.Wallet {
-  Uint8List get outputScript {
-    return ravencoin.Address.addressToOutputScript(address!, network)!;
-  }
-
-  String get scripthash {
-    var digest = sha256.convert(outputScript);
-    var hash = digest.bytes.reversed.toList();
-    return hex.encode(hash);
-  }
-
-  ravencoin.ECPair get keyPair {
-    return ravencoin.ECPair.fromWIF(wif!,
-        networks: ravencoin.ravencoinNetworks);
-  }
-}
-
 class SingleWallet extends Wallet {
   final Uint8List encryptedPrivateKey;
-  late final ravencoin.Wallet seededWallet;
+  late final KPWallet seededWallet;
   late final String id; //address
   late final String accountId;
 
@@ -41,10 +23,9 @@ class SingleWallet extends Wallet {
       cipher = const NoCipher()})
       : encryptedPrivateKey = cipher.encrypt(privateKey),
         super(net: net, cipher: cipher) {
-    seededWallet = ravencoin.Wallet(
-        ravencoin.ECPair.fromPrivateKey(privateKey,
-            network: network, compressed: true),
-        ravencoin.P2PKH(data: ravencoin.PaymentData(), network: network),
+    seededWallet = KPWallet(
+        ECPair.fromPrivateKey(privateKey, network: network, compressed: true),
+        P2PKH(data: PaymentData(), network: network),
         network);
     id = seededWallet.address!;
   }
@@ -92,8 +73,7 @@ class SingleWallet extends Wallet {
 
   //// Derive Wallet ///////////////////////////////////////////////////////////
 
-  ravencoin.Wallet deriveWallet(int hdIndex,
-      [exposure = NodeExposure.External]) {
+  KPWallet deriveWallet(int hdIndex, [exposure = NodeExposure.External]) {
     return seededWallet;
   }
 

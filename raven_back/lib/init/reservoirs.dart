@@ -1,9 +1,7 @@
-import 'package:raven/models.dart' as models;
-import 'package:raven/records.dart' as records;
 import 'package:raven/reservoirs.dart';
 
-late AccountReservoir<records.Account, models.Account> accounts;
-late AddressReservoir<records.Address, models.Address> addresses;
+late AccountReservoir accounts;
+late AddressReservoir addresses;
 late HistoryReservoir histories;
 late WalletReservoir wallets;
 late BalanceReservoir balances;
