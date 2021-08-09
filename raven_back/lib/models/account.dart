@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:raven/records.dart' as records;
 
+// should an account have an accountId or an id? wallets have id,address has id
 class Account extends Equatable {
   final String accountId;
   final String name;

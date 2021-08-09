@@ -65,12 +65,15 @@ Future<Generated> generate() async {
     'addresses': addresses,
     'histories': histories
   } as Map<String, Reservoir>;
-  var client = await generateClient('testnet.rvn.rocks', 50002);
+  var client =
+      await RavenElectrumClient.connect('testnet.rvn.rocks', port: 50002);
   initServices(client);
   var services = {
     'addressDerivationService': addressDerivationService as Service,
     'addressSubscriptionService': addressSubscriptionService as Service,
     'addressesService': addressesService as Service,
+    'accountBalanceService': accountBalanceService as Service,
+    'exchangeRateService': exchangeRateService as Service,
   };
   var phrase = await env.getMnemonic();
   var wallet = LeaderWallet(

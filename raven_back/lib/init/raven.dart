@@ -1,26 +1,33 @@
+/// init process:
+/// -make master wallet- (actually this can be done on demand as new leaders wallets are created)
+/// make reservoirs
+///   load all records into reservoirs
+/// set up listener on electrum settings
+///   stop services
+///   start services (contains listeners on all reservoirs)
 import 'package:raven/init/reservoirs.dart';
 import 'package:raven/init/services.dart';
 import 'package:raven/subjects/settings.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 void init() {
+  //makeMasterWallet();
   makeReservoirs();
   electrumSettingsStream(settings).listen(handleListening);
 }
 
 Stream electrumSettingsStream(settings) {
   return settings
-      .map((s) =>
-          [s['electrum.url'], s['electrum.port']]) // testnet.rvn.rocks:50002
+      .map((s) => {
+            'url': s['electrum.url'],
+            'port': s['electrum.port'],
+          })
       .distinct();
 }
 
-Future handleListening(element) async {
-  var client = await generateClient(element[0], element[1]);
+Future handleListening(electrumSetting) async {
   deinitServices();
-  initServices(client);
-}
-
-Future generateClient(String url, [int port = 50002]) async {
-  return await RavenElectrumClient.connect(url, port: port);
+  initServices(await RavenElectrumClient.connect(
+      electrumSetting['url'] ?? 'testnet.rvn.rocks',
+      port: electrumSetting['port'] ?? 50002));
 }

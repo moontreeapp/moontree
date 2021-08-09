@@ -35,8 +35,12 @@ class LeaderWallet extends Wallet {
   @override
   List<Object?> get props => [id];
 
-  factory LeaderWallet.fromEncryptedSeed(encryptedSeed, leaderWalletIndex,
-      {accountId = 'primary', net = Net.Test, cipher = const NoCipher()}) {
+  factory LeaderWallet.fromEncryptedSeed(
+      {required encryptedSeed,
+      required leaderWalletIndex,
+      accountId = 'primary',
+      net = Net.Test,
+      cipher = const NoCipher()}) {
     return LeaderWallet(
         seed: cipher.decrypt(encryptedSeed),
         leaderWalletIndex: leaderWalletIndex,
@@ -97,11 +101,12 @@ class LeaderWallet extends Wallet {
         net: net);
   }
 
-  models.LeaderWallet deriveLeader(int hdIndex, records.NodeExposure exposure) {
-    var wallet = deriveWallet(hdIndex, exposure);
+  models.LeaderWallet deriveNextLeader(String accountId) {
+    var index = 0; // get wallets.leaderwallets.size
     return models.LeaderWallet(
-        seed: wallet.seed,
-        leaderWalletIndex: 0, // get wallets.leaderwallets.size
+        seed: seededWallet.derivePath(getDerivationPathForLeader(index)),
+        leaderWalletIndex: index,
+        accountId: accountId,
         net: net,
         cipher: cipher);
   }
