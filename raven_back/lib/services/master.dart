@@ -23,9 +23,9 @@ class MasterWalletService extends Service {
       change.when(added: (added) {
         var account = added.data;
         // verify empty
-        if (wallets.byAccount.getAll(account.accountId).isEmpty) {
+        if (wallets.byAccount.getAll(account.id).isEmpty) {
           // populate with new LeaderWallet created from the master wallet
-          makeNewLeaderWallet(account.accountId);
+          makeNewLeaderWallet(account.id);
         }
       }, updated: (updated) {
         /* Name or settings have changed */

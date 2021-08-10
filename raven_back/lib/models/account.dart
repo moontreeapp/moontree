@@ -1,23 +1,20 @@
 import 'package:equatable/equatable.dart';
 import 'package:raven/records.dart' as records;
 
-// should an account have an accountId or an id? wallets have id,address has id
 class Account extends Equatable {
-  final String accountId;
+  final String id;
   final String name;
 
-  Account({required this.accountId, required this.name}) : super();
+  Account({required this.id, required this.name}) : super();
 
   factory Account.fromRecord(records.Account record) {
-    return Account(accountId: record.accountId, name: record.name);
+    return Account(id: record.id, name: record.name);
   }
 
   records.Account toRecord() {
-    return records.Account(accountId: accountId, name: name);
+    return records.Account(id: id, name: name);
   }
 
   @override
-  List<Object?> get props => [accountId];
-
-  String get id => accountId;
+  List<Object?> get props => [id];
 }

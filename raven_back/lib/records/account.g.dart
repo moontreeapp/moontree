@@ -17,7 +17,7 @@ class AccountAdapter extends TypeAdapter<Account> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Account(
-      accountId: fields[0] as String,
+      id: fields[0] as String,
       name: fields[1] as String,
     );
   }
@@ -27,7 +27,7 @@ class AccountAdapter extends TypeAdapter<Account> {
     writer
       ..writeByte(2)
       ..writeByte(0)
-      ..write(obj.accountId)
+      ..write(obj.id)
       ..writeByte(1)
       ..write(obj.name);
   }

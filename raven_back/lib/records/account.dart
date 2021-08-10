@@ -9,16 +9,16 @@ part 'account.g.dart';
 @HiveType(typeId: 1)
 class Account with HiveObjectMixin, EquatableMixin {
   @HiveField(0)
-  String accountId;
+  String id;
 
   @HiveField(1)
   String name;
 
-  Account({required this.accountId, required this.name});
+  Account({required this.id, required this.name});
 
   @override
-  List<Object> get props => [accountId];
+  List<Object> get props => [id];
 
   @override
-  String toString() => 'Account($accountId, $name)';
+  String toString() => 'Account($id, $name)';
 }

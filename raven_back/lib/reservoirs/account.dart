@@ -4,6 +4,6 @@ import 'package:raven/records.dart' as records;
 
 class AccountReservoir extends Reservoir<String, records.Account, Account> {
   AccountReservoir() : super(HiveSource('accounts')) {
-    addPrimaryIndex((account) => account.accountId);
+    addPrimaryIndex((account) => account.id);
   }
 }
