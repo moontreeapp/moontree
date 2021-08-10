@@ -8,8 +8,8 @@ class Accounts {
   /// can we replace with purely reactive listeners?
   Future<void> load() async {
     Future.delayed(Duration(seconds: 3));
-    accounts['accountId0'] = '0';
-    accounts['accountId1'] = '1';
-    accounts['accountId2'] = '2';
+    accounts['accountId1'] = 'Primary';
+    accounts['accountId2'] = 'Savings';
+    accounts['accountId3'] = 'Other';
   }
 }
