@@ -19,19 +19,17 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
-
     Color? bgColor = Colors.blueAccent[50];
-
     return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        backgroundColor: bgColor,
-        appBar: stateful.balanceHeader(context, data),
-        body: stateful.holdingsTransactionsView(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: stateless.sendReceiveButtons(),
-        bottomNavigationBar: stateless.walletTradingButtons(),
-      ),
-    );
+        length: 2,
+        child: Scaffold(
+            backgroundColor: bgColor,
+            appBar: stateful.balanceHeader(context, data),
+            drawer: stateful.accountsView(data),
+            body: stateful.holdingsTransactionsView(),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: stateless.sendReceiveButtons(),
+            bottomNavigationBar: stateless.walletTradingButtons()));
   }
 }

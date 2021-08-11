@@ -16,6 +16,6 @@ Future<void> main() async {
   runApp(MaterialApp(initialRoute: '/', routes: {
     '/': (context) => Loading(),
     '/home': (context) => Home(),
-    '/account': (context) => ChooseAccount(),
+    '/account': (context) => ChooseAccount()
   }));
 }

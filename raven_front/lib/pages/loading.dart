@@ -23,6 +23,7 @@ class _LoadingState extends State<Loading> {
       //'account': Accounts
       //    .instance.accounts[Accounts.instance.accounts.keys.toList()[0]],
       'account': mock.Accounts.instance.accounts['accountId1'],
+      'accounts': mock.Accounts.instance.accounts,
     });
   }
 
@@ -36,10 +37,7 @@ class _LoadingState extends State<Loading> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.blue[900],
-        body: Center(
-            child: SpinKitThreeBounce(
-          color: Colors.white,
-          size: 50.0,
-        )));
+        body:
+            Center(child: SpinKitThreeBounce(color: Colors.white, size: 50.0)));
   }
 }
