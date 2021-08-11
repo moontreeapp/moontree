@@ -9,6 +9,8 @@ import 'package:raven/records.dart' as records;
 import 'package:raven/records/net.dart';
 import 'package:raven/records/node_exposure.dart';
 
+export './wallet.dart';
+
 const DEFAULT_CIPHER = NoCipher();
 
 class LeaderWallet extends Wallet {
@@ -82,11 +84,10 @@ class LeaderWallet extends Wallet {
 
   //// Derive Wallet ///////////////////////////////////////////////////////////
 
-  /// TODO: shouldn't this return a WalletBase now?
   ravencoin.HDWallet deriveWallet(int hdIndex,
       [exposure = NodeExposure.External]) {
-    return seededWallet.derivePath(getDerivationPath(hdIndex,
-        exposure: exposure, leaderWalletIndex: leaderWalletIndex));
+    return seededWallet
+        .derivePath(getDerivationPath(hdIndex, exposure: exposure));
   }
 
   models.Address deriveAddress(int hdIndex, records.NodeExposure exposure) {
