@@ -20,10 +20,10 @@ class _LoadingState extends State<Loading> {
     setup();
     await mock.Accounts.instance.load();
     Navigator.pushReplacementNamed(context, '/home', arguments: {
-      //'account': Accounts
-      //    .instance.accounts[Accounts.instance.accounts.keys.toList()[0]],
-      'account': mock.Accounts.instance.accounts['accountId1'],
+      'account': 'accountId1',
       'accounts': mock.Accounts.instance.accounts,
+      'transactions': mock.Accounts.instance.transactions,
+      'holdings': mock.Accounts.instance.holdings,
     });
   }
 

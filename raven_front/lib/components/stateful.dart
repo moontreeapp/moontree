@@ -14,7 +14,8 @@ PreferredSize balanceHeader(context, data) {
           ],
           elevation: 2,
           centerTitle: false,
-          title: Text((data['account'] ?? 'Unknown') + ' Wallet',
+          title: Text(
+              (data['accounts'][data['account']] ?? 'Unknown') + ' Wallet',
               style: TextStyle(fontSize: 18.0, letterSpacing: 2.0)),
           flexibleSpace: Container(
               color: Colors.blue[900],
@@ -32,11 +33,12 @@ PreferredSize balanceHeader(context, data) {
                   tabs: [Tab(text: 'Holdings'), Tab(text: 'Transactions')]))));
 }
 
-TabBarView holdingsTransactionsView() {
-  // if full return list of holdings and transactions with RVN being special...
-  // if empty return empty message:
-  return TabBarView(children: [
-    Container(
+/// returns a list of holdings and transactions or empty messages
+TabBarView holdingsTransactionsView(data) {
+  var holdings;
+  var transactions;
+  if (data['holdings'][data['account']].isEmpty) {
+    holdings = Container(
         color: Colors.grey,
         alignment: Alignment.center,
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -44,8 +46,20 @@ TabBarView holdingsTransactionsView() {
           Text('\nYour holdings will appear here.',
               style: TextStyle(
                   fontSize: 18.0, letterSpacing: 2.0, color: Colors.white))
-        ])),
-    Container(
+        ]));
+  } else {
+    holdings = ListView(children: <Widget>[
+      for (var holding in data['holdings'][data['account']])
+        ListTile(
+            onTap: () {},
+            title:
+                Text(holding['asset'] + ' -- ' + holding['amount'].toString()),
+            leading: CircleAvatar(
+                backgroundImage: AssetImage('assets/ravenhead.png')))
+    ]);
+  }
+  if (data['transactions'][data['account']].isEmpty) {
+    transactions = Container(
         color: Colors.grey,
         alignment: Alignment.center,
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -53,8 +67,23 @@ TabBarView holdingsTransactionsView() {
           Text('\nYour transactions will appear here.',
               style: TextStyle(
                   fontSize: 18.0, letterSpacing: 2.0, color: Colors.white))
-        ]))
-  ]);
+        ]));
+  } else {
+    transactions = ListView(children: <Widget>[
+      for (var transaction in data['transactions'][data['account']])
+        ListTile(
+            onTap: () {},
+            title: Text(transaction['asset'] +
+                ' -- ' +
+                transaction['direction'] +
+                ' -- ' +
+                transaction['amount'].toString()),
+            leading: CircleAvatar(
+                backgroundImage: AssetImage('assets/ravenhead.png')))
+    ]);
+  }
+  // if empty return empty message:
+  return TabBarView(children: [holdings, transactions]);
 }
 
 Drawer accountsView(data) {
@@ -78,17 +107,17 @@ Drawer accountsView(data) {
                           Icon(Icons.add, size: 26.0, color: Colors.grey[200])))
             ])),
     Column(children: <Widget>[
-      for (var name in data['accounts'].values) ...[
+      for (var keyName in data['accounts'].entries) ...[
         ListTile(
-            onTap: () {},
-            title: Text(name),
+            onTap: () => data['account'] = keyName.key,
+            title: Text(keyName.value),
             leading: CircleAvatar(
                 backgroundImage: AssetImage('assets/ravenhead.png'))),
         Divider(
             height: 20,
             thickness: 2,
-            indent: 4,
-            endIndent: 4,
+            indent: 5,
+            endIndent: 5,
             color: Colors.grey[300])
       ]
     ])

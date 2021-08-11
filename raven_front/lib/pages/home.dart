@@ -26,7 +26,7 @@ class _HomeState extends State<Home> {
             backgroundColor: bgColor,
             appBar: stateful.balanceHeader(context, data),
             drawer: stateful.accountsView(data),
-            body: stateful.holdingsTransactionsView(),
+            body: stateful.holdingsTransactionsView(data),
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
             floatingActionButton: stateless.sendReceiveButtons(),
