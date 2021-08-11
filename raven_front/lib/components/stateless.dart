@@ -8,7 +8,8 @@ BottomAppBar walletTradingButtons() {
           children: <Widget>[
             IconButton(
                 onPressed: () {/*to wallet*/},
-                icon: Icon(Icons.account_balance_wallet_rounded)),
+                icon: Icon(Icons.account_balance_wallet_rounded,
+                    color: Colors.green[700])),
             IconButton(
                 onPressed: () {/*to trading*/}, icon: Icon(Icons.swap_horiz))
           ]));
