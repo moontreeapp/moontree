@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:raven_mobile/pages/receive.dart';
+import 'package:raven_mobile/pages/send.dart';
 
 PreferredSize balanceHeader(context, data) {
   return PreferredSize(
@@ -96,7 +98,7 @@ TabBarView holdingsTransactionsView(data) {
   return TabBarView(children: [holdings, transactions]);
 }
 
-Drawer accountsView(data) {
+Drawer accountsView(context, data) {
   return Drawer(
       child: ListView(padding: EdgeInsets.zero, children: <Widget>[
     DrawerHeader(
@@ -119,7 +121,10 @@ Drawer accountsView(data) {
     Column(children: <Widget>[
       for (var keyName in data['accounts'].entries) ...[
         ListTile(
-            onTap: () => data['account'] = keyName.key,
+            onTap: () {
+              data['account'] = keyName.key;
+              Navigator.pop(context);
+            },
             title: Text(keyName.value),
             leading: CircleAvatar(
                 backgroundImage: AssetImage('assets/ravenhead.png'))),
@@ -132,4 +137,37 @@ Drawer accountsView(data) {
       ]
     ])
   ]));
+}
+
+Row sendReceiveButtons(context) {
+  return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+    ElevatedButton.icon(
+        icon: Icon(Icons.south_east),
+        label: Text('Receive'),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Receive()),
+          );
+        },
+        style: ButtonStyle(
+            shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30.0),
+                    bottomLeft: Radius.circular(30.0)))))),
+    ElevatedButton.icon(
+        icon: Icon(Icons.north_east),
+        label: Text('Send'),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Send()),
+          );
+        },
+        style: ButtonStyle(
+            shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(30.0),
+                    bottomRight: Radius.circular(30.0))))))
+  ]);
 }

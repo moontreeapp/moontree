@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:raven_mobile/components/stateful.dart' as stateful;
-import 'package:raven_mobile/components/stateless.dart' as stateless;
+import 'package:raven_mobile/components/home.dart' as home;
+import 'package:raven_mobile/components/all.dart' as all;
 
 class Home extends StatefulWidget {
   @override
@@ -24,12 +24,12 @@ class _HomeState extends State<Home> {
         length: 2,
         child: Scaffold(
             backgroundColor: bgColor,
-            appBar: stateful.balanceHeader(context, data),
-            drawer: stateful.accountsView(data),
-            body: stateful.holdingsTransactionsView(data),
+            appBar: home.balanceHeader(context, data),
+            drawer: home.accountsView(context, data),
+            body: home.holdingsTransactionsView(data),
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: stateless.sendReceiveButtons(),
-            bottomNavigationBar: stateless.walletTradingButtons()));
+            floatingActionButton: home.sendReceiveButtons(context),
+            bottomNavigationBar: all.walletTradingButtons()));
   }
 }
