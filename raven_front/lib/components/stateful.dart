@@ -43,9 +43,14 @@ TabBarView holdingsTransactionsView(data) {
         alignment: Alignment.center,
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Icon(Icons.savings, size: 50.0, color: Colors.grey[100]),
-          Text('\nYour holdings will appear here.',
+          Text('\nYour holdings will appear here.\n',
               style: TextStyle(
-                  fontSize: 18.0, letterSpacing: 2.0, color: Colors.white))
+                  fontSize: 18.0, letterSpacing: 2.0, color: Colors.white)),
+          ElevatedButton(
+              onPressed: () {},
+              child: Text('get RVN',
+                  style: TextStyle(
+                      fontSize: 18.0, letterSpacing: 2.0, color: Colors.white)))
         ]));
   } else {
     holdings = ListView(children: <Widget>[
@@ -64,9 +69,14 @@ TabBarView holdingsTransactionsView(data) {
         alignment: Alignment.center,
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Icon(Icons.public, size: 50.0, color: Colors.grey[100]),
-          Text('\nYour transactions will appear here.',
+          Text('\nYour transactions will appear here.\n',
               style: TextStyle(
-                  fontSize: 18.0, letterSpacing: 2.0, color: Colors.white))
+                  fontSize: 18.0, letterSpacing: 2.0, color: Colors.white)),
+          ElevatedButton(
+              onPressed: () {},
+              child: Text('get RVN',
+                  style: TextStyle(
+                      fontSize: 18.0, letterSpacing: 2.0, color: Colors.white)))
         ]));
   } else {
     transactions = ListView(children: <Widget>[
