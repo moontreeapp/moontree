@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 
 import 'node_exposure.dart';
@@ -6,7 +7,7 @@ import 'net.dart';
 part 'address.g.dart';
 
 @HiveType(typeId: 2)
-class Address {
+class Address with EquatableMixin {
   @HiveField(0)
   String scripthash;
 
@@ -37,4 +38,11 @@ class Address {
     this.exposure = NodeExposure.External,
     this.net = Net.Test,
   });
+
+  @override
+  List<Object> get props => [scripthash];
+
+  @override
+  String toString() =>
+      'Account($scripthash, $address, $walletId, $accountId, $hdIndex, $exposure, $net)';
 }

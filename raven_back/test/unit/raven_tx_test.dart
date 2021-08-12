@@ -1,9 +1,8 @@
 // dart test test/unit/raven_tx_test.dart
-import 'package:raven/models/leader_wallet.dart';
+import 'package:raven/records/wallets/leader.dart';
 import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:ravencoin/ravencoin.dart';
-import 'package:raven/records/net.dart';
 import 'package:raven/records/node_exposure.dart';
 
 void main() {
@@ -11,7 +10,7 @@ void main() {
     /* notice this does not calculate an efficient fee or use a utxo set */
     var seed = bip39.mnemonicToSeed(
         'smile build brain topple moon scrap area aim budget enjoy polar erosion');
-    var wallet = LeaderWallet(seed: seed, leaderWalletIndex: 0, net: Net.Test);
+    var wallet = LeaderWallet(seed: seed);
     var node = wallet.deriveWallet(4, NodeExposure.Internal);
     final txb = TransactionBuilder(network: node.network);
     txb.setVersion(1);

@@ -7,4 +7,5 @@ export 'records/node_exposure.dart';
 export 'records/rate.dart';
 export 'records/security.dart';
 export 'records/security_type.dart';
-export 'records/wallet.dart';
+export 'records/wallets/leader.dart';
+export 'records/wallets/single.dart';

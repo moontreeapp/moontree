@@ -10,11 +10,11 @@ ExchangeRateService? exchangeRateService;
 
 void initServices(RavenElectrumClient client) {
   addressDerivationService =
-      AddressDerivationService(wallets, addresses, histories)..init();
+      AddressDerivationService(leaders, addresses, histories)..init();
   addressSubscriptionService = AddressSubscriptionService(
-      wallets, addresses, histories, client, addressDerivationService!)
+      leaders, addresses, histories, client, addressDerivationService!)
     ..init();
-  addressesService = AddressesService(accounts, wallets, addresses, histories)
+  addressesService = AddressesService(accounts, leaders, addresses, histories)
     ..init();
   accountBalanceService = AccountBalanceService(accounts, balances, histories)
     ..init();

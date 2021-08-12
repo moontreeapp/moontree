@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:quiver/iterables.dart';
 import 'package:raven/reservoirs/address.dart';
 import 'package:raven/reservoirs/history.dart';
-import 'package:raven/reservoirs/wallet.dart';
+import 'package:raven/reservoirs/wallets/leader.dart';
 import 'package:raven/services/address_derivation.dart'
     show AddressDerivationService;
 import 'package:raven/services/service.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
+import '../records.dart';
 import '../utils/buffer_count_window.dart';
-import '../models.dart';
 
 class ScripthashHistoryRow {
   final Address address;
@@ -40,7 +40,7 @@ class ScripthashHistoriesData {
 }
 
 class AddressSubscriptionService extends Service {
-  WalletReservoir wallets;
+  LeaderWalletReservoir leaders;
   AddressReservoir addresses;
   HistoryReservoir histories;
   RavenElectrumClient client;
@@ -50,7 +50,7 @@ class AddressSubscriptionService extends Service {
 
   StreamController<Address> addressesNeedingUpdate = StreamController();
 
-  AddressSubscriptionService(this.wallets, this.addresses, this.histories,
+  AddressSubscriptionService(this.leaders, this.addresses, this.histories,
       this.client, this.addressDerivationService)
       : super();
 

@@ -1,0 +1,66 @@
+<mxfile host="65bd71144e">
+    <diagram id="B2Imsyf_CLR86bu_pUIC" name="Page-1">
+        <mxGraphModel dx="828" dy="450" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="262" value="Accounts List UI" style="swimlane;" vertex="1" parent="1">
+                    <mxGeometry x="20" y="20" width="440" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="263" value="" style="fillColor=#36B37E;strokeColor=none;rounded=1;arcSize=50" vertex="1" parent="262">
+                    <mxGeometry x="310" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="264" value="" style="shape=ellipse;strokeColor=none;fillColor=#9AD9BE" vertex="1" parent="263">
+                    <mxGeometry x="1" y="0.5" width="16" height="16" relative="1" as="geometry">
+                        <mxPoint x="-18" y="-8" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="265" value="" style="html=1;shadow=0;dashed=0;shape=mxgraph.atlassian.check;strokeColor=#9AD9BE;strokeWidth=2" vertex="1" parent="263">
+                    <mxGeometry y="0.5" width="10" height="8" relative="1" as="geometry">
+                        <mxPoint x="6" y="-5" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="266" value="MainNet" style="rounded=1;arcSize=10;fillColor=#172B4D;strokeColor=none;html=1;fontSize=11;align=center;fontColor=#ffffff;fontStyle=0;fontSize=11" vertex="1" parent="262">
+                    <mxGeometry x="355" width="75" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="268" value="Account 1" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="262">
+                    <mxGeometry y="30" width="430" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="269" value="Account 2" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="20" y="80" width="430" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="270" value="Account 3" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="20" y="110" width="430" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="276" value="&lt;h1&gt;Accounts&amp;nbsp;&lt;/h1&gt;&lt;p&gt;accounts have the Net on them, so there accounts for mainnet and testnet. they are not meant to be the same or hold the same wallets.&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="130" y="180" width="440" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="286" value="Accounts List UI" style="swimlane;" vertex="1" parent="1">
+                    <mxGeometry x="480" y="20" width="440" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="291" value="Some other Account 1" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="286">
+                    <mxGeometry y="30" width="430" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="294" value="" style="fillColor=#F1F2F4;strokeColor=none;rounded=1;arcSize=50" vertex="1" parent="286">
+                    <mxGeometry x="330" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="295" value="" style="shape=ellipse;strokeColor=none;fillColor=#C2C7D0" vertex="1" parent="294">
+                    <mxGeometry y="0.5" width="16" height="16" relative="1" as="geometry">
+                        <mxPoint x="2" y="-8" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="296" value="" style="html=1;shadow=0;dashed=0;shape=mxgraph.atlassian.x;strokeColor=#C2C7D0;strokeWidth=2" vertex="1" parent="294">
+                    <mxGeometry x="1" y="0.5" width="6" height="6" relative="1" as="geometry">
+                        <mxPoint x="-12" y="-3" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="297" value="TestNet" style="rounded=1;arcSize=10;fillColor=#172B4D;strokeColor=none;html=1;fontSize=11;align=center;fontColor=#ffffff;fontStyle=0;fontSize=11" vertex="1" parent="286">
+                    <mxGeometry x="375" width="65" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="298" value="&lt;h1&gt;WIF format&amp;nbsp;&lt;/h1&gt;&lt;p&gt;{&lt;/p&gt;&lt;p&gt;some identifying info like private key public key pair maybe,&lt;/p&gt;&lt;p&gt;also contains network info like mainnet or testnet&lt;/p&gt;&lt;p&gt;}&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="130" y="290" width="440" height="180" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

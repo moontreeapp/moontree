@@ -1,44 +1,38 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'wallet.dart';
+part of 'leader.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class WalletAdapter extends TypeAdapter<Wallet> {
+class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
   @override
   final int typeId = 0;
 
   @override
-  Wallet read(BinaryReader reader) {
+  LeaderWallet read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Wallet(
-      accountId: fields[0] as String,
-      isHD: fields[1] as bool,
-      encrypted: fields[2] as Uint8List,
-      net: fields[3] as Net,
-      leaderWalletIndex: fields[4] as int,
+    return LeaderWallet(
+      id: fields[0] as String,
+      encryptedSeed: fields[1] as Uint8List,
+      accountId: fields[2] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Wallet obj) {
+  void write(BinaryWriter writer, LeaderWallet obj) {
     writer
-      ..writeByte(5)
-      ..writeByte(0)
-      ..write(obj.accountId)
-      ..writeByte(1)
-      ..write(obj.isHD)
-      ..writeByte(2)
-      ..write(obj.encrypted)
       ..writeByte(3)
-      ..write(obj.net)
-      ..writeByte(4)
-      ..write(obj.leaderWalletIndex);
+      ..writeByte(0)
+      ..write(obj.id)
+      ..writeByte(1)
+      ..write(obj.encryptedSeed)
+      ..writeByte(2)
+      ..write(obj.accountId);
   }
 
   @override
@@ -47,7 +41,7 @@ class WalletAdapter extends TypeAdapter<Wallet> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is WalletAdapter &&
+      other is LeaderWalletAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

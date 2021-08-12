@@ -1,13 +1,11 @@
-import 'package:raven/records.dart' as records;
-import 'package:raven/models/rate.dart';
+import 'package:raven/records.dart';
 import 'package:raven/records/security.dart';
 import 'package:raven/reservoir/reservoir.dart';
 
 /// asset -> RVN
 /// RVN -> USD (or major fiats)
 /// USD -> other fiat (for obscure fiats)
-class ExchangeRateReservoir
-    extends Reservoir<List<Security>, records.Rate, Rate> {
+class ExchangeRateReservoir extends Reservoir<List<Security>, Rate> {
   ExchangeRateReservoir() : super(HiveSource('conversion')) {
     var paramsToKey = (Security base, Security quote) => [base, quote];
     addPrimaryIndex((rate) => paramsToKey(rate.base, rate.quote));

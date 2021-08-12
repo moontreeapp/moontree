@@ -15,7 +15,8 @@ class HiveHelper {
   static void registerAdapters() {
     Hive.registerAdapter(BalanceAdapter());
     Hive.registerAdapter(AccountAdapter());
-    Hive.registerAdapter(WalletAdapter());
+    Hive.registerAdapter(LeaderWalletAdapter());
+    Hive.registerAdapter(SingleWalletAdapter());
     Hive.registerAdapter(AddressAdapter());
     Hive.registerAdapter(HistoryAdapter());
     Hive.registerAdapter(NetAdapter());
@@ -29,7 +30,8 @@ class HiveHelper {
     await Hive.openBox('settings');
     await Hive.openBox<Account>('accounts');
     await Hive.openBox<Address>('addresses');
-    await Hive.openBox<Wallet>('wallets');
+    await Hive.openBox<LeaderWallet>('leaders');
+    await Hive.openBox<SingleWallet>('singles');
     await Hive.openBox<History>('histories');
     await Hive.openBox<Rate>('rates');
     await Hive.openBox<Balance>('balances');

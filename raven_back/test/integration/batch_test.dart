@@ -1,4 +1,4 @@
-import 'package:raven/models/leader_wallet.dart';
+import 'package:raven/records/wallets/leader.dart';
 import 'package:raven/records/net.dart';
 import 'package:test/test.dart';
 
@@ -16,10 +16,7 @@ void main() async {
   setUpAll(() async {
     await tests.hiveSetup();
     //tests.listenTo(client);
-    wallet = LeaderWallet(
-        seed: bip39.mnemonicToSeed(await getMnemonic()),
-        leaderWalletIndex: 0,
-        net: Net.Test);
+    wallet = LeaderWallet(seed: bip39.mnemonicToSeed(await getMnemonic()));
   });
 
   tearDownAll(() async => await tests.closeHive());

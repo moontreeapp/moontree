@@ -1,5 +1,4 @@
 /// init process:
-/// -make master wallet- (actually this can be done on demand as new leaders wallets are created)
 /// make reservoirs
 ///   load all records into reservoirs
 /// set up listener on electrum settings
@@ -11,8 +10,8 @@ import 'package:raven/subjects/settings.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 void init() {
-  //makeMasterWallet();
   makeReservoirs();
+  // if reservoirs are empty -> startup first time process
   electrumSettingsStream(settings).listen(handleListening);
 }
 

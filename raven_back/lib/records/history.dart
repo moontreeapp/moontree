@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:raven/records/security.dart';
+import 'package:raven/records/security_type.dart';
+import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 part 'history.g.dart';
 
@@ -55,5 +57,33 @@ class History with EquatableMixin {
   @override
   String toString() {
     return 'History(walletId: $walletId, accountId: $accountId, scripthash: $scripthash, txHash: $txHash, height: $height, txPos: $txPos, value: $value, security: $security)';
+  }
+
+  factory History.fromScripthashHistory(String accountId, String walletId,
+      String scripthash, ScripthashHistory history) {
+    return History(
+      accountId: accountId,
+      walletId: walletId,
+      scripthash: scripthash,
+      height: history.height,
+      txHash: history.txHash,
+    );
+  }
+
+  factory History.fromScripthashUnspent(String accountId, String walletId,
+      String scripthash, ScripthashUnspent unspent) {
+    return History(
+        accountId: accountId,
+        walletId: walletId,
+        scripthash: scripthash,
+        height: unspent.height,
+        txHash: unspent.txHash,
+        txPos: unspent.txPos,
+        value: unspent.value,
+        security: (unspent.ticker == null
+            ? RVN
+            : Security(
+                symbol: unspent.ticker!,
+                securityType: SecurityType.RavenAsset)));
   }
 }

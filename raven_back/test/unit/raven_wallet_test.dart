@@ -1,14 +1,12 @@
 // dart test test/unit/raven_wallet_test.dart
-import 'package:raven/models/leader_wallet.dart';
+import 'package:raven/records/wallets/leader.dart';
 import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
-
-import 'package:raven/records/net.dart';
 
 final seed = bip39.mnemonicToSeed(
     'smile build brain topple moon scrap area aim budget enjoy polar erosion');
 
-final wallet = LeaderWallet(seed: seed, leaderWalletIndex: 0, net: Net.Test);
+final wallet = LeaderWallet(seed: seed);
 
 void main() {
   test('reverse', () {

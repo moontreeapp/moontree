@@ -1,10 +1,9 @@
-import 'package:raven/records.dart' as records;
-import 'package:raven/models/balance.dart';
+import 'package:raven/records.dart';
 import 'package:raven/records/security.dart';
 import 'package:raven/reservoir/index.dart';
 import 'package:raven/reservoir/reservoir.dart';
 
-class BalanceReservoir extends Reservoir<List, records.Balance, Balance> {
+class BalanceReservoir extends Reservoir<List, Balance> {
   late MultipleIndex<dynamic, Balance> byAccount;
 
   BalanceReservoir() : super(HiveSource('addresses')) {

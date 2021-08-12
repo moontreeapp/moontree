@@ -1,31 +1,33 @@
 import 'dart:async';
 
-import 'package:raven/models/address.dart';
-import 'package:raven/models/leader_wallet.dart';
 import 'package:raven/records/node_exposure.dart';
 import 'package:raven/reservoir/change.dart';
 import 'package:raven/reservoirs/address.dart';
 import 'package:raven/reservoirs/history.dart';
-import 'package:raven/reservoirs/wallet.dart';
+import 'package:raven/reservoirs/wallets/leader.dart';
 import 'package:raven/services/service.dart';
 import 'package:ravencoin/ravencoin.dart' show HDWallet;
 
 class AddressDerivationService extends Service {
-  WalletReservoir wallets;
+  LeaderWalletReservoir leader;
   AddressReservoir addresses;
   HistoryReservoir histories;
   late StreamSubscription<Change> listener;
 
-  AddressDerivationService(this.wallets, this.addresses, this.histories)
+  AddressDerivationService(this.leader, this.addresses, this.histories)
       : super();
 
   @override
   void init() {
-    listener = wallets.changes.listen((change) {
+    listener = leader.changes.listen((change) {
       change.when(added: (added) {
         var wallet = added.data;
-        addresses.save(wallet.deriveAddress(0, NodeExposure.Internal));
-        addresses.save(wallet.deriveAddress(0, NodeExposure.External));
+        if (wallet is SingleWallet) {
+          addresses.save(wallet.deriveAddress());
+        } else {
+          addresses.save(wallet.deriveAddress(0, NodeExposure.Internal));
+          addresses.save(wallet.deriveAddress(0, NodeExposure.External));
+        }
       }, updated: (updated) {
         /* Name or settings have changed */
       }, removed: (removed) {
@@ -41,9 +43,9 @@ class AddressDerivationService extends Service {
 
   void maybeDeriveNewAddresses(List<Address> changedAddresses) async {
     for (var address in changedAddresses) {
-      if (wallets.primaryIndex.getOne(address.walletId) is LeaderWallet) {
+      if (leader.primaryIndex.getOne(address.walletId) is LeaderWallet) {
         LeaderWallet leaderWallet =
-            wallets.primaryIndex.getOne(address.walletId);
+            leader.primaryIndex.getOne(address.walletId);
         maybeSaveNewAddress(leaderWallet, NodeExposure.Internal);
         maybeSaveNewAddress(leaderWallet, NodeExposure.External);
       }
@@ -71,7 +73,7 @@ class AddressDerivationService extends Service {
     }
     // TODO fix get null thing
     if (gap < 10) {
-      return wallets
+      return leader
           .get(walletId)
           .deriveAddress(exposureAddresses.length, exposure);
     }
@@ -84,7 +86,7 @@ class AddressDerivationService extends Service {
     exposure = exposure == NodeExposure.Internal
         ? NodeExposure.Internal
         : NodeExposure.External;
-    var account = wallets.get(walletId)!;
+    var account = leader.get(walletId)!;
     var i = 0;
     for (var address
         in addresses.byWalletExposure.getAll('$walletId:$exposure')) {

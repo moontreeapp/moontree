@@ -1,11 +1,9 @@
-import 'package:raven/records.dart' as records;
-import 'package:raven/models/balance.dart';
-import 'package:raven/models/history.dart';
+import 'package:raven/records.dart';
 import 'package:raven/records/security.dart';
 import 'package:raven/reservoir/index.dart';
 import 'package:raven/reservoir/reservoir.dart';
 
-class HistoryReservoir extends Reservoir<dynamic, records.History, History> {
+class HistoryReservoir extends Reservoir<dynamic, History> {
   late MultipleIndex<dynamic, History> byAccount;
   late MultipleIndex<dynamic, History> byWallet;
   late MultipleIndex<dynamic, History> byScripthash;
@@ -23,11 +21,11 @@ class HistoryReservoir extends Reservoir<dynamic, records.History, History> {
 
   /// Master overview /////////////////////////////////////////////////////////
 
-  Iterable<History> unspentsByTicker({Security security = records.RVN}) {
+  Iterable<History> unspentsByTicker({Security security = RVN}) {
     return bySecurity.getAll(security).where((history) => history.value > 0);
   }
 
-  BalanceRaw balanceByTicker({Security security = records.RVN}) {
+  BalanceRaw balanceByTicker({Security security = RVN}) {
     return unspentsByTicker(security: security).fold(
         BalanceRaw(confirmed: 0, unconfirmed: 0),
         (sum, history) =>
@@ -42,14 +40,14 @@ class HistoryReservoir extends Reservoir<dynamic, records.History, History> {
   /// returns a series of spendable transactions for an account and asset
 
   Iterable<History> transactionsByAccount(String accountId,
-      {Security security = records.RVN}) {
+      {Security security = RVN}) {
     return byAccount.getAll(accountId).where((history) =>
         history.txPos > -1 && // not in mempool
         history.security == security);
   }
 
   Iterable<History> unspentsByAccount(String accountId,
-      {Security security = records.RVN}) {
+      {Security security = RVN}) {
     return byAccount.getAll(accountId).where((history) =>
         history.value > 0 && // unspent
         history.txPos > -1 && // not in mempool
@@ -57,7 +55,7 @@ class HistoryReservoir extends Reservoir<dynamic, records.History, History> {
   }
 
   Iterable<History> unconfirmedByAccount(String accountId,
-      {Security security = records.RVN}) {
+      {Security security = RVN}) {
     return byAccount.getAll(accountId).where((history) =>
         history.value > 0 && // unspent
         history.txPos == -1 && // in mempool
@@ -67,14 +65,14 @@ class HistoryReservoir extends Reservoir<dynamic, records.History, History> {
   /// Wallet overview /////////////////////////////////////////////////////////
 
   Iterable<History> transactionsByWallet(String walletId,
-      {Security security = records.RVN}) {
+      {Security security = RVN}) {
     return byWallet.getAll(walletId).where((history) =>
         history.txPos > -1 && // not in mempool
         history.security == security);
   }
 
   Iterable<History> unspentsByWallet(String walletId,
-      {Security security = records.RVN}) {
+      {Security security = RVN}) {
     return byWallet.getAll(walletId).where((history) =>
         history.value > 0 && // unspent
         history.txPos > -1 && // not in mempool
@@ -82,7 +80,7 @@ class HistoryReservoir extends Reservoir<dynamic, records.History, History> {
   }
 
   Iterable<History> unconfirmedByWallet(String walletId,
-      {Security security = records.RVN}) {
+      {Security security = RVN}) {
     return byWallet.getAll(walletId).where((history) =>
         history.value > 0 && // unspent
         history.txPos == -1 && // in mempool

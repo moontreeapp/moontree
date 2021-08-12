@@ -1,4 +1,4 @@
-Wallet 0
+Leader 0
 Account 1
 Address 2
 Balance 3
@@ -8,3 +8,4 @@ Net 6
 NodeExposure 7
 Security 8
 SecurityType 9
+Single 10

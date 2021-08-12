@@ -1,8 +1,13 @@
 import 'package:hive/hive.dart';
 import 'package:rxdart/rxdart.dart';
 
-BehaviorSubject<Map> createMapSubject(String hiveBoxName) {
+BehaviorSubject<Map> createMapSubject(String hiveBoxName, {Map? defaults}) {
   var box = Hive.box<dynamic>(hiveBoxName);
+
+  //inject defaults
+  if (box.isEmpty && defaults != null) {
+    box.addAll(defaults.entries);
+  }
 
   // Get all existing map values
   var valuesMap = box.toMap();

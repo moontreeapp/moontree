@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 
-import 'package:raven/models.dart';
 import 'package:raven/reservoir/change.dart';
 import 'package:raven/reservoirs/account.dart';
 import 'package:raven/reservoirs/balance.dart';

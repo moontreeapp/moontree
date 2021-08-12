@@ -8,9 +8,8 @@ import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:raven/init/hive_helper.dart';
 import 'package:raven/services/service.dart';
 import 'package:raven/utils/env.dart' as env;
-import 'package:raven/models/leader_wallet.dart';
+import 'package:raven/records/wallets/leader.dart';
 import 'package:raven/records/net.dart';
-import 'package:raven/init/raven.dart';
 import 'package:raven/init/reservoirs.dart';
 import 'package:raven/init/services.dart';
 
@@ -76,8 +75,7 @@ Future<Generated> generate() async {
     'exchangeRateService': exchangeRateService as Service,
   };
   var phrase = await env.getMnemonic();
-  var wallet = LeaderWallet(
-      seed: bip39.mnemonicToSeed(phrase), leaderWalletIndex: 0, net: Net.Test);
+  var wallet = LeaderWallet(seed: bip39.mnemonicToSeed(phrase));
   reservoirs['wallets']!.save(wallet);
   //waitForSave();
   return Generated(phrase, wallet, client, reservoirs, services);
