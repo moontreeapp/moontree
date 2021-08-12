@@ -4,7 +4,7 @@ import 'package:raven/reservoir/source.dart';
 
 import 'rx_map.dart';
 
-class RxMapSource<Key, Record, Model> extends Source<Key, Record, Model> {
+class RxMapSource<Key, Record> extends Source<Key, Record> {
   final RxMap map = RxMap();
 
   @override

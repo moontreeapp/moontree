@@ -6,31 +6,25 @@ import 'source.dart';
 
 export 'hive_source.dart';
 
-typedef Mapper<Record, Model> = Model Function(Record);
-
-class Reservoir<Key, Record, Model> with IterableMixin<Model> {
-  final Source<Key, Record, Model> source;
-  late Mapper<Record, Model> toModel;
-  late Mapper<Model, Record> toRecord;
-  late UniqueIndex<Key, Model> primaryIndex;
-  final Map<String, Index<Key, Model>> indices = {};
+class Reservoir<Key, Record> with IterableMixin<Record> {
+  final Source<Key, Record> source;
+  late UniqueIndex<Key, Record> primaryIndex;
+  final Map<String, Index<Key, Record>> indices = {};
   late Stream<Change> changes;
 
-  Reservoir(this.source, [toModel, toRecord]) {
-    this.toModel = toModel ?? (record) => (Model as dynamic).fromRecord(record);
-    this.toRecord = toRecord ?? (model) => (model as dynamic).toRecord();
+  Reservoir(this.source) {
     changes = source.watch(this);
   }
 
-  Iterable<Model> get data => primaryIndex.values;
+  Iterable<Record> get data => primaryIndex.values;
 
-  UniqueIndex<Key, Model> addPrimaryIndex(GetKey<Key, Model> getKey) {
+  UniqueIndex<Key, Record> addPrimaryIndex(GetKey<Key, Record> getKey) {
     primaryIndex = UniqueIndex(getKey);
     return primaryIndex;
   }
 
-  UniqueIndex<Key, Model> addUniqueIndex(
-      String name, GetKey<Key, Model> getKey) {
+  UniqueIndex<Key, Record> addUniqueIndex(
+      String name, GetKey<Key, Record> getKey) {
     if (!indices.containsKey(name)) {
       return indices[name] = UniqueIndex(getKey)..addAll(data);
     } else {
@@ -38,8 +32,8 @@ class Reservoir<Key, Record, Model> with IterableMixin<Model> {
     }
   }
 
-  MultipleIndex<Key, Model> addMultipleIndex(
-      String name, GetKey<Key, Model> getKey,
+  MultipleIndex<Key, Record> addMultipleIndex(
+      String name, GetKey<Key, Record> getKey,
       [Compare? compare]) {
     if (!indices.containsKey(name)) {
       return indices[name] = MultipleIndex(getKey, compare)..addAll(data);
@@ -48,30 +42,30 @@ class Reservoir<Key, Record, Model> with IterableMixin<Model> {
     }
   }
 
-  Index<Key, Model>? removeIndex(String name) {
+  Index<Key, Record>? removeIndex(String name) {
     return indices.remove(name);
   }
 
-  Model? get(Key key) => primaryIndex.getOne(key);
+  Record? get(Key key) => primaryIndex.getOne(key);
 
   @override
-  Iterator<Model> get iterator => data.iterator;
+  Iterator<Record> get iterator => data.iterator;
 
-  void saveAll(List<Model> models) {
+  void saveAll(List<Record> models) {
     for (var model in models) {
       save(model);
     }
   }
 
-  void save(Model model) {
-    var key = primaryIndex.getKey(model);
+  void save(Record record) {
+    var key = primaryIndex.getKey(record);
     // Save key to source, which will (reactively) notify this reservoir of the
     // new key and construct a new model, also updating any associated indices.
-    source.save(key, toRecord(model));
+    source.save(key, record);
   }
 
-  void remove(Model model) {
-    var key = primaryIndex.getKey(model);
+  void remove(Record record) {
+    var key = primaryIndex.getKey(record);
     if (primaryIndex.has(key)) {
       // Remove key from source, which will (reactively) notify this reservoir
       // and then remove the key and any associated keys in indices.
@@ -82,28 +76,26 @@ class Reservoir<Key, Record, Model> with IterableMixin<Model> {
   }
 
   Change addRecord(key, Record record) {
-    var model = toModel(record);
-    _addToIndices(model);
-    primaryIndex.add(model);
-    return Added(key, model);
+    _addToIndices(record);
+    primaryIndex.add(record);
+    return Added(key, record);
   }
 
-  void _addToIndices(Model value) {
+  void _addToIndices(Record record) {
     for (var index in indices.values) {
-      index.add(value);
+      index.add(record);
     }
   }
 
   Change updateRecord(key, Record record) {
-    var model = toModel(record);
-    _updateIndices(key, model);
-    primaryIndex.add(model);
-    return Updated(key, model);
+    _updateIndices(key, record);
+    primaryIndex.add(record);
+    return Updated(key, record);
   }
 
-  void _updateIndices(key, Model value) {
+  void _updateIndices(key, Record record) {
     for (var index in indices.values) {
-      index.add(value);
+      index.add(record);
     }
   }
 
@@ -113,9 +105,9 @@ class Reservoir<Key, Record, Model> with IterableMixin<Model> {
     return Removed(key);
   }
 
-  void _removeFromIndices(Model model) {
+  void _removeFromIndices(Record record) {
     for (var index in indices.values) {
-      index.remove(model);
+      index.remove(record);
     }
   }
 
