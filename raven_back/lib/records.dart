@@ -9,3 +9,4 @@ export 'records/security.dart';
 export 'records/security_type.dart';
 export 'records/wallets/leader.dart';
 export 'records/wallets/single.dart';
+export 'records/wallets/wallet.dart';

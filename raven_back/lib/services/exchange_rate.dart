@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:raven/records/balance.dart';
+import 'package:raven/records/rate.dart';
 import 'package:raven/records/security.dart';
 import 'package:raven/reservoir/change.dart';
 import 'package:raven/reservoirs/balance.dart';

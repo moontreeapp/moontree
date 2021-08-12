@@ -8,12 +8,6 @@ import 'package:ravencoin/ravencoin.dart' show WalletBase, ECPair;
 import 'package:ravencoin/ravencoin.dart' as rc;
 import 'package:raven/utils/cipher.dart';
 
-abstract class Wallet with HiveObjectMixin, EquatableMixin {
-  Wallet() : super();
-
-  Cipher get cipher => const NoCipher();
-}
-
 extension Scripthash on WalletBase {
   Uint8List get outputScript {
     return rc.Address.addressToOutputScript(address!, network)!;
@@ -28,4 +22,10 @@ extension Scripthash on WalletBase {
   ECPair get keyPair {
     return ECPair.fromWIF(wif!, networks: rc.networks);
   }
+}
+
+abstract class Wallet with HiveObjectMixin, EquatableMixin {
+  Wallet() : super();
+
+  Cipher get cipher => const NoCipher();
 }
