@@ -35,10 +35,11 @@ class Balance with EquatableMixin {
   String toString() =>
       'Account($accountId, $security, $confirmed, $unconfirmed)';
 
-  factory Balance.fromScripthashBalance(
-      {required String accountId,
-      required Security security,
-      required ScripthashBalance balance}) {
+  factory Balance.fromScripthashBalance({
+    required String accountId,
+    required Security security,
+    required ScripthashBalance balance,
+  }) {
     return Balance(
         accountId: accountId,
         security: security,

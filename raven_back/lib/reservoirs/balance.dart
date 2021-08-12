@@ -19,6 +19,10 @@ class BalanceReservoir extends Reservoir<List, Balance> {
     var balance = get([accountId, RVN]);
     return balance ??
         Balance(
-            accountId: accountId, security: RVN, confirmed: 0, unconfirmed: 0);
+          accountId: accountId,
+          security: RVN,
+          confirmed: 0,
+          unconfirmed: 0,
+        );
   }
 }

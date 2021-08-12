@@ -17,10 +17,11 @@ class SingleWallet extends Wallet {
   @HiveField(2)
   final String accountId;
 
-  SingleWallet(
-      {required this.id,
-      required this.encryptedPrivateKey,
-      required this.accountId});
+  SingleWallet({
+    required this.id,
+    required this.encryptedPrivateKey,
+    required this.accountId,
+  });
 
   @override
   List<Object?> get props => [id];

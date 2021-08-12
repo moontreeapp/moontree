@@ -14,8 +14,12 @@ class AddressesService extends Service {
   HistoryReservoir histories;
   late StreamSubscription<Change> listener;
 
-  AddressesService(this.accounts, this.singles, this.addresses, this.histories)
-      : super();
+  AddressesService(
+    this.accounts,
+    this.singles,
+    this.addresses,
+    this.histories,
+  ) : super();
 
   @override
   void init() {

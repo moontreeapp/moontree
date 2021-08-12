@@ -49,9 +49,13 @@ class AddressSubscriptionService extends Service {
 
   StreamController<Address> addressesNeedingUpdate = StreamController();
 
-  AddressSubscriptionService(this.leaders, this.addresses, this.histories,
-      this.client, this.addressDerivationService)
-      : super();
+  AddressSubscriptionService(
+    this.leaders,
+    this.addresses,
+    this.histories,
+    this.client,
+    this.addressDerivationService,
+  ) : super();
 
   @override
   void init() {

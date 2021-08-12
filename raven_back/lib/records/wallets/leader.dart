@@ -17,8 +17,11 @@ class LeaderWallet extends Wallet {
   @HiveField(2)
   final String accountId;
 
-  LeaderWallet(
-      {required this.id, required this.encryptedSeed, required this.accountId});
+  LeaderWallet({
+    required this.id,
+    required this.encryptedSeed,
+    required this.accountId,
+  });
 
   @override
   List<Object?> get props => [id];

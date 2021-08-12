@@ -63,7 +63,11 @@ class ExchangeRateService extends Service {
                 .round()));
     return accountBalancesAsRVN.fold(
         Balance(
-            accountId: accountId, security: RVN, confirmed: 0, unconfirmed: 0),
+          accountId: accountId,
+          security: RVN,
+          confirmed: 0,
+          unconfirmed: 0,
+        ),
         (summing, balance) => summing + balance);
   }
 }

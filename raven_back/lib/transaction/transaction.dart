@@ -20,8 +20,12 @@ class TransactionBuilderHelper {
       addressReservoir; // it'd be cool if account had access to this - should it be accessed through service?
 
   TransactionBuilderHelper(
-      this.fromAccount, this.sendAmount, this.toAddress, this.addressReservoir,
-      [this.anticipatedOutputFee = 34]);
+    this.fromAccount,
+    this.sendAmount,
+    this.toAddress,
+    this.addressReservoir, [
+    this.anticipatedOutputFee = 34,
+  ]);
 
   /// gets inputs, calculates fee, returns change
   TransactionBuilder buildTransaction() {

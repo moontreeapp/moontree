@@ -16,7 +16,11 @@ class Account with EquatableMixin {
   @HiveField(2)
   Net net;
 
-  Account({required this.id, required this.name, this.net = Net.Test});
+  Account({
+    required this.id,
+    required this.name,
+    this.net = Net.Test,
+  });
 
   @override
   List<Object> get props => [id];
