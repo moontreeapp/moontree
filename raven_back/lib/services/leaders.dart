@@ -16,12 +16,15 @@ class LeadersService extends Service {
   @override
   void init() {
     var waiter = LeaderWalletDerivationWaiter();
-    // todo: change this into just listening to leader wallets
     listener = wallets.changes.listen((change) {
       change.when(added: (added) {
         var wallet = added.data;
-        addresses.save(waiter.deriveAddress(wallet, 0, NodeExposure.Internal));
-        addresses.save(waiter.deriveAddress(wallet, 0, NodeExposure.External));
+        if (wallet is LeaderWallet) {
+          addresses
+              .save(waiter.deriveAddress(wallet, 0, NodeExposure.Internal));
+          addresses
+              .save(waiter.deriveAddress(wallet, 0, NodeExposure.External));
+        }
       }, updated: (updated) {
         /* moved account */
       }, removed: (removed) {
