@@ -9,21 +9,21 @@ import 'package:raven/services/service.dart';
 
 class AddressDerivationService extends Service {
   AccountReservoir accounts;
-  LeaderWalletReservoir leaders;
+  WalletReservoir wallets;
   AddressReservoir addresses;
   HistoryReservoir histories;
   late StreamSubscription<Change> listener;
 
   AddressDerivationService(
     this.accounts,
-    this.leaders,
+    this.wallets,
     this.addresses,
     this.histories,
   ) : super();
 
   @override
   void init() {
-    listener = leaders.changes.listen((change) {
+    listener = wallets.changes.listen((change) {
       change.when(added: (added) {
         var wallet = added.data;
         addresses.save(deriveAddress(wallet, 0, NodeExposure.Internal));
@@ -43,7 +43,7 @@ class AddressDerivationService extends Service {
 
   void maybeDeriveNewAddresses(List<Address> changedAddresses) async {
     for (var address in changedAddresses) {
-      var leaderWallet = leaders.get(address.walletId)!;
+      var leaderWallet = wallets.get(address.walletId)!;
       maybeSaveNewAddress(leaderWallet, NodeExposure.Internal);
       maybeSaveNewAddress(leaderWallet, NodeExposure.External);
     }
