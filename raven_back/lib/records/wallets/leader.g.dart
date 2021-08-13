@@ -8,7 +8,7 @@ part of 'leader.dart';
 
 class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
   @override
-  final int typeId = 0;
+  final int typeId = 11;
 
   @override
   LeaderWallet read(BinaryReader reader) {
@@ -17,9 +17,9 @@ class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return LeaderWallet(
-      id: fields[0] as String,
-      encryptedSeed: fields[1] as Uint8List,
-      accountId: fields[2] as String,
+      id: fields[0] as dynamic,
+      accountId: fields[1] as dynamic,
+      encryptedSeed: fields[2] as Uint8List,
     );
   }
 
@@ -27,11 +27,11 @@ class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
   void write(BinaryWriter writer, LeaderWallet obj) {
     writer
       ..writeByte(3)
+      ..writeByte(2)
+      ..write(obj.encryptedSeed)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.encryptedSeed)
-      ..writeByte(2)
       ..write(obj.accountId);
   }
 

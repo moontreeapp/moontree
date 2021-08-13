@@ -8,7 +8,7 @@ part of 'security_type.dart';
 
 class SecurityTypeAdapter extends TypeAdapter<SecurityType> {
   @override
-  final int typeId = 9;
+  final int typeId = 102;
 
   @override
   SecurityType read(BinaryReader reader) {

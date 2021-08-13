@@ -8,7 +8,7 @@ part of 'account.dart';
 
 class AccountAdapter extends TypeAdapter<Account> {
   @override
-  final int typeId = 1;
+  final int typeId = 0;
 
   @override
   Account read(BinaryReader reader) {
