@@ -17,14 +17,9 @@ void main() {
     });
 
     test('remove an element', () async {
-      // FIXME
-
-      // await asyncChange(res, () => source.save(0, 'abc'));
-      // await asyncChange(res, () {
-      //   print('source: ${source.map.delegate.entries.toList()}');
-      //   source.remove(0);
-      // });
-      // expect(res.data, {});
+      await asyncChange(res, () => source.save('abc', 'abc'));
+      await asyncChange(res, () => source.remove('abc'));
+      expect(res.data.toList(), []);
     });
 
     test('changes made in sequence', () async {
@@ -37,20 +32,9 @@ void main() {
     });
 
     test('saves changes', () async {
-      await asyncChange(res, () => source.map[0] = 'xyz');
-      expect(source.map[0], 'xyz');
-
-      /// ?
-      //res.data[0] = 'model:abc';
-      //res.save('model:abc');
-      //expect(source.map[0], 'abc');
-      //expect(source.map[1], 'abc');
-
-      // res.save('abc');
-      // expect(res.get(0), 'model:xyz');
-
-      // primary key thing broken here...
-      // expect(res.get(1), 'model:abc');
+      await asyncChange(res, () => source.save('xyz', 'xyz'));
+      expect(source.map['xyz'], 'xyz');
+      expect(res.get('xyz'), 'xyz');
     });
   });
 }
