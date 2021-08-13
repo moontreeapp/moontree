@@ -1,9 +1,11 @@
 import 'package:hive/hive.dart';
 import 'package:raven/records/security.dart';
 
+import '_type_id.dart';
+
 part 'rate.g.dart';
 
-@HiveType(typeId: 4)
+@HiveType(typeId: TypeId.Rate)
 class Rate {
   @HiveField(0)
   Security base;

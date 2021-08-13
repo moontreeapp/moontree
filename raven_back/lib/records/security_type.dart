@@ -1,8 +1,10 @@
 import 'package:hive/hive.dart';
 
+import '_type_id.dart';
+
 part 'security_type.g.dart';
 
-@HiveType(typeId: 9)
+@HiveType(typeId: TypeId.SecurityType)
 enum SecurityType {
   @HiveField(0)
   Fiat,

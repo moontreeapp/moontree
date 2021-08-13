@@ -1,6 +1,8 @@
 import 'package:hive/hive.dart';
 import 'package:ravencoin/ravencoin.dart';
 
+import '_type_id.dart';
+
 part 'net.g.dart';
 
 var networks = {
@@ -8,7 +10,7 @@ var networks = {
   Net.Test: testnet,
 };
 
-@HiveType(typeId: 6)
+@HiveType(typeId: TypeId.Net)
 enum Net {
   @HiveField(0)
   Main,

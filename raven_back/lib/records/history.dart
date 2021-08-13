@@ -4,9 +4,11 @@ import 'package:raven/records/security.dart';
 import 'package:raven/records/security_type.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
+import '_type_id.dart';
+
 part 'history.g.dart';
 
-@HiveType(typeId: 5)
+@HiveType(typeId: TypeId.History)
 class History with EquatableMixin {
   @HiveField(0)
   String accountId;

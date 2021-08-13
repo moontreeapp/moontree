@@ -4,9 +4,11 @@ import 'package:raven/records/security.dart';
 import 'package:raven/utils/exceptions.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
+import '_type_id.dart';
+
 part 'balance.g.dart';
 
-@HiveType(typeId: 3)
+@HiveType(typeId: TypeId.Balance)
 class Balance with EquatableMixin {
   // do we need unique ID?
   @HiveField(0)

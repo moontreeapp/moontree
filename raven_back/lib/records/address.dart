@@ -1,12 +1,13 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 
+import '_type_id.dart';
 import 'node_exposure.dart';
 import 'net.dart';
 
 part 'address.g.dart';
 
-@HiveType(typeId: 2)
+@HiveType(typeId: TypeId.Address)
 class Address with EquatableMixin {
   @HiveField(0)
   String scripthash;

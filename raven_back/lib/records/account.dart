@@ -3,9 +3,11 @@ import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:raven/records/net.dart';
 
+import '_type_id.dart';
+
 part 'account.g.dart';
 
-@HiveType(typeId: 1)
+@HiveType(typeId: TypeId.Account)
 class Account with EquatableMixin {
   @HiveField(0)
   String id;

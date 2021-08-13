@@ -4,9 +4,11 @@ import 'dart:typed_data';
 import 'package:hive/hive.dart';
 import 'package:raven/records/wallets/wallet.dart';
 
+import '../_type_id.dart';
+
 part 'single.g.dart';
 
-@HiveType(typeId: 10)
+@HiveType(typeId: TypeId.SingleWallet)
 class SingleWallet extends Wallet {
   @HiveField(0)
   final String id;
