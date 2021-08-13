@@ -10,23 +10,14 @@ part 'leader.g.dart';
 
 @HiveType(typeId: TypeId.LeaderWallet)
 class LeaderWallet extends Wallet {
-  @HiveField(0)
-  final String id;
-
-  @HiveField(1)
+  @HiveField(2)
   final Uint8List encryptedSeed;
 
-  @HiveField(2)
-  final String accountId;
-
   LeaderWallet({
-    required this.id,
+    required id,
+    required accountId,
     required this.encryptedSeed,
-    required this.accountId,
-  });
-
-  @override
-  List<Object?> get props => [id];
+  }) : super(id: id, accountId: accountId);
 
   @override
   String toString() =>

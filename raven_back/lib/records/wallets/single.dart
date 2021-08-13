@@ -2,7 +2,7 @@
 import 'dart:typed_data';
 
 import 'package:hive/hive.dart';
-import 'package:raven/records/wallets/wallet.dart';
+import 'wallet.dart';
 
 import '../_type_id.dart';
 
@@ -10,23 +10,14 @@ part 'single.g.dart';
 
 @HiveType(typeId: TypeId.SingleWallet)
 class SingleWallet extends Wallet {
-  @HiveField(0)
-  final String id;
-
-  @HiveField(1)
+  @HiveField(2)
   final Uint8List encryptedPrivateKey;
 
-  @HiveField(2)
-  final String accountId;
-
   SingleWallet({
-    required this.id,
+    required id,
+    required accountId,
     required this.encryptedPrivateKey,
-    required this.accountId,
-  });
-
-  @override
-  List<Object?> get props => [id];
+  }) : super(id: id, accountId: accountId);
 
   @override
   String toString() =>
