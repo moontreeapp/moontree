@@ -1,33 +1,26 @@
 import 'dart:async';
 
-import 'package:ravencoin/ravencoin.dart'
-    show KPWallet, ECPair, P2PKH, PaymentData;
-import 'package:raven/records.dart';
+import 'package:raven/waiters.dart';
 import 'package:raven/reservoirs.dart';
 import 'package:raven/reservoir/change.dart';
 import 'package:raven/services/service.dart';
 
 class SinglesService extends Service {
-  AccountReservoir accounts;
-  SingleWalletReservoir singles;
+  WalletReservoir wallets;
   AddressReservoir addresses;
-  HistoryReservoir histories;
   late StreamSubscription<Change> listener;
 
-  SinglesService(
-    this.accounts,
-    this.singles,
-    this.addresses,
-    this.histories,
-  ) : super();
+  SinglesService(this.wallets, this.addresses) : super();
 
   @override
   void init() {
-    listener = singles.changes.listen((change) {
+    var waiter = SingleWalletWaiter();
+    // todo: change this into just listening to single wallets
+    listener = wallets.changes.listen((change) {
       change.when(added: (added) {
         var wallet = added.data;
-        addresses.save(deriveAddress(wallet, NodeExposure.External));
-        addresses.save(deriveAddress(wallet, NodeExposure.Internal));
+        addresses.save(waiter.toAddress(wallet));
+        addresses.save(waiter.toAddress(wallet));
       }, updated: (updated) {
         /* moved account */
       }, removed: (removed) {
@@ -39,25 +32,5 @@ class SinglesService extends Service {
   @override
   void deinit() {
     listener.cancel();
-  }
-
-  KPWallet getSingleWallet(SingleWallet wallet, Net net) {
-    return KPWallet(
-        ECPair.fromPrivateKey(wallet.privateKey,
-            network: networks[net]!, compressed: true),
-        P2PKH(data: PaymentData(), network: networks[net]!),
-        networks[net]!);
-  }
-
-  Address deriveAddress(wallet, NodeExposure exposure) {
-    var net = accounts.get(wallet.accountId)!.net;
-    var seededWallet = getSingleWallet(wallet, net);
-    return Address(
-        scripthash: seededWallet.scripthash,
-        address: seededWallet.address!,
-        walletId: wallet.id,
-        accountId: wallet.accountId,
-        hdIndex: 0,
-        net: net);
   }
 }

@@ -1,10 +1,10 @@
 import 'package:raven/reservoirs.dart';
 
+// are does this make this file act as a singleton if imported?
 late AccountReservoir accounts;
 late AddressReservoir addresses;
 late HistoryReservoir histories;
-late LeaderWalletReservoir leaders;
-late SingleWalletReservoir singles;
+late WalletReservoir wallets;
 late BalanceReservoir balances;
 late ExchangeRateReservoir rates;
 
@@ -12,7 +12,6 @@ void makeReservoirs() {
   accounts = AccountReservoir();
   addresses = AddressReservoir();
   histories = HistoryReservoir();
-  leaders = LeaderWalletReservoir();
-  singles = SingleWalletReservoir();
+  wallets = WalletReservoir();
   rates = ExchangeRateReservoir();
 }

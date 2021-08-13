@@ -2,42 +2,28 @@ import 'package:raven/init/reservoirs.dart';
 import 'package:raven/services.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
-AddressDerivationService? addressDerivationService;
+LeadersService? leadersService;
+SinglesService? singlesService;
 AddressSubscriptionService? addressSubscriptionService;
 AddressesService? addressesService;
 AccountBalanceService? accountBalanceService;
 ExchangeRateService? exchangeRateService;
 
 void initServices(RavenElectrumClient client) {
-  addressDerivationService = AddressDerivationService(
-    accounts,
-    leaders,
-    addresses,
-    histories,
-  )..init();
+  leadersService = LeadersService(wallets, addresses)..init();
+  singlesService = SinglesService(wallets, addresses)..init();
   addressSubscriptionService = AddressSubscriptionService(
-    leaders,
     addresses,
-    histories,
     client,
-    addressDerivationService!,
   )..init();
-  addressesService = AddressesService(
-    accounts,
-    singles,
-    addresses,
-    histories,
-  )..init();
-  accountBalanceService = AccountBalanceService(
-    accounts,
-    balances,
-    histories,
-  )..init();
-  exchangeRateService = ExchangeRateService(balances, rates)..init();
+  addressesService = AddressesService(addresses, histories)..init();
+  accountBalanceService = AccountBalanceService(histories)..init();
+  exchangeRateService = ExchangeRateService()..init();
 }
 
 void deinitServices() {
-  addressDerivationService?.deinit();
+  leadersService?.deinit();
+  singlesService?.deinit();
   addressSubscriptionService?.deinit();
   addressesService?.deinit();
   accountBalanceService?.deinit();
