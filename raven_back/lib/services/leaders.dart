@@ -9,21 +9,25 @@ import 'package:raven/waiters.dart';
 class LeadersService extends Service {
   WalletReservoir wallets;
   AddressReservoir addresses;
+  LeaderWalletDerivationWaiter leaderWalletDerivationWaiter;
   late StreamSubscription<Change> listener;
 
-  LeadersService(this.wallets, this.addresses) : super();
+  LeadersService(
+    this.wallets,
+    this.addresses,
+    this.leaderWalletDerivationWaiter,
+  ) : super();
 
   @override
   void init() {
-    var waiter = LeaderWalletDerivationWaiter();
     listener = wallets.changes.listen((change) {
       change.when(added: (added) {
         var wallet = added.data;
         if (wallet is LeaderWallet) {
-          addresses
-              .save(waiter.deriveAddress(wallet, 0, NodeExposure.Internal));
-          addresses
-              .save(waiter.deriveAddress(wallet, 0, NodeExposure.External));
+          addresses.save(leaderWalletDerivationWaiter.deriveAddress(
+              wallet, 0, NodeExposure.Internal));
+          addresses.save(leaderWalletDerivationWaiter.deriveAddress(
+              wallet, 0, NodeExposure.External));
         }
       }, updated: (updated) {
         /* moved account */

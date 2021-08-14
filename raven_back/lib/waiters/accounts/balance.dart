@@ -1,5 +1,4 @@
 import 'package:collection/collection.dart';
-import 'package:raven/steward/reservoirs.dart';
 import 'package:raven/waiters/waiter.dart';
 import 'package:raven/records.dart';
 import 'package:raven/reservoirs.dart';
@@ -10,10 +9,7 @@ class BalanceWaiter extends Waiter {
   late final BalanceReservoir balances;
   late final HistoryReservoir histories;
 
-  BalanceWaiter() : super() {
-    balances = ReservoirsSteward().balances;
-    histories = ReservoirsSteward().histories;
-  }
+  BalanceWaiter(this.balances, this.histories) : super();
 
   // runs it for affected account-security combinations
   void calculateBalance(changes) {

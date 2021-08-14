@@ -1,4 +1,3 @@
-import 'package:raven/stewards.dart';
 import 'package:ravencoin/ravencoin.dart'
     show ECPair, KPWallet, P2PKH, PaymentData;
 import 'package:raven/records.dart';
@@ -8,9 +7,7 @@ import 'package:raven/waiters/waiter.dart';
 class SingleWalletWaiter extends Waiter {
   late AccountReservoir accounts;
 
-  SingleWalletWaiter() : super() {
-    accounts = ReservoirsSteward().accounts;
-  }
+  SingleWalletWaiter(this.accounts) : super();
 
   KPWallet getSingleWallet(SingleWallet wallet, Net net) {
     return KPWallet(

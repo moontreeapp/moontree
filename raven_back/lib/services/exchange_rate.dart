@@ -5,15 +5,15 @@ import 'package:raven/services/service.dart';
 import 'package:raven/waiters.dart';
 
 class ExchangeRateService extends Service {
+  RatesWaiter ratesWaiter;
   late StreamSubscription<List<Change>> listener;
 
-  ExchangeRateService() : super();
+  ExchangeRateService(this.ratesWaiter) : super();
 
   @override
   Future init() async {
     // on open
-    var waiter = RatesWaiter();
-    await waiter.saveRate();
+    await ratesWaiter.saveRate();
 
     /// setup listener to get the conversion rate on manual refresh
   }

@@ -1,4 +1,3 @@
-import 'package:raven/steward/reservoirs.dart';
 import 'package:raven/utils/rate.dart';
 import 'package:raven/waiters/waiter.dart';
 import 'package:raven/records.dart';
@@ -8,10 +7,7 @@ class RatesWaiter extends Waiter {
   late final BalanceReservoir balances;
   late final ExchangeRateReservoir rates;
 
-  RatesWaiter() : super() {
-    balances = ReservoirsSteward().balances;
-    rates = ReservoirsSteward().rates;
-  }
+  RatesWaiter(this.balances, this.rates) : super();
 
   Future saveRate() async {
     rates.save(Rate(base: RVN, quote: USD, rate: await RVNtoFiat().get()));

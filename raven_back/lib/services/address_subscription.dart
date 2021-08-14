@@ -10,29 +10,34 @@ import 'package:raven_electrum_client/raven_electrum_client.dart';
 class AddressSubscriptionService extends Service {
   AddressReservoir addresses;
   RavenElectrumClient client;
+  AddressSubscriptionWaiter addressSubscriptionWaiter;
+  LeaderWalletDerivationWaiter leaderWalletDerivationWaiter;
   Map<String, StreamSubscription> subscriptionHandles = {};
   List<StreamSubscription> listeners = [];
 
   StreamController<Address> addressesNeedingUpdate = StreamController();
 
-  AddressSubscriptionService(this.addresses, this.client) : super();
+  AddressSubscriptionService(
+    this.addresses,
+    this.client,
+    this.addressSubscriptionWaiter,
+    this.leaderWalletDerivationWaiter,
+  ) : super();
 
   @override
   void init() {
-    var subscriptionWaiter = AddressSubscriptionWaiter();
-    var leaderWaiter = LeaderWalletDerivationWaiter();
     subscribeToExistingAddresses();
     listeners.add(addressesNeedingUpdate.stream
         .bufferCountTimeout(10, Duration(milliseconds: 50))
         .listen((changedAddresses) async {
-      subscriptionWaiter.saveScripthashHistoryData(
-        await subscriptionWaiter.getScripthashHistoriesData(
+      addressSubscriptionWaiter.saveScripthashHistoryData(
+        await addressSubscriptionWaiter.getScripthashHistoriesData(
           changedAddresses,
           client,
         ),
       );
 
-      leaderWaiter.maybeDeriveNewAddresses(changedAddresses);
+      leaderWalletDerivationWaiter.maybeDeriveNewAddresses(changedAddresses);
     }));
 
     listeners.add(addresses.changes.listen((change) {

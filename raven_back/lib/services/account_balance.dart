@@ -8,17 +8,17 @@ import 'package:raven/waiters/accounts/balance.dart';
 
 class AccountBalanceService extends Service {
   HistoryReservoir histories;
+  BalanceWaiter balanceWaiter;
 
   late StreamSubscription<List<Change>> listener;
 
-  AccountBalanceService(this.histories) : super();
+  AccountBalanceService(this.histories, this.balanceWaiter) : super();
 
   @override
   void init() {
-    var waiter = BalanceWaiter();
     listener = histories.changes
         .bufferCountTimeout(25, Duration(milliseconds: 50))
-        .listen(waiter.calculateBalance);
+        .listen(balanceWaiter.calculateBalance);
   }
 
   @override

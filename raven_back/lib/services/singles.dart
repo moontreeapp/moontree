@@ -9,19 +9,23 @@ import 'package:raven/services/service.dart';
 class SinglesService extends Service {
   WalletReservoir wallets;
   AddressReservoir addresses;
+  SingleWalletWaiter singleWalletWaiter;
   late StreamSubscription<Change> listener;
 
-  SinglesService(this.wallets, this.addresses) : super();
+  SinglesService(
+    this.wallets,
+    this.addresses,
+    this.singleWalletWaiter,
+  ) : super();
 
   @override
   void init() {
-    var waiter = SingleWalletWaiter();
     listener = wallets.changes.listen((change) {
       change.when(added: (added) {
         var wallet = added.data;
         if (wallet is SingleWallet) {
-          addresses.save(waiter.toAddress(wallet));
-          addresses.save(waiter.toAddress(wallet));
+          addresses.save(singleWalletWaiter.toAddress(wallet));
+          addresses.save(singleWalletWaiter.toAddress(wallet));
         }
       }, updated: (updated) {
         /* moved account */

@@ -1,4 +1,3 @@
-import 'package:raven/steward/reservoirs.dart';
 import 'package:ravencoin/ravencoin.dart' show HDWallet;
 import 'package:raven/records.dart';
 import 'package:raven/reservoirs.dart';
@@ -11,12 +10,12 @@ class LeaderWalletDerivationWaiter extends Waiter {
   late final AddressReservoir addresses;
   late final HistoryReservoir histories;
 
-  LeaderWalletDerivationWaiter() : super() {
-    accounts = ReservoirsSteward().accounts;
-    wallets = ReservoirsSteward().wallets;
-    addresses = ReservoirsSteward().addresses;
-    histories = ReservoirsSteward().histories;
-  }
+  LeaderWalletDerivationWaiter(
+    this.accounts,
+    this.wallets,
+    this.addresses,
+    this.histories,
+  ) : super();
 
   void maybeDeriveNewAddresses(List<Address> changedAddresses) async {
     for (var address in changedAddresses) {
