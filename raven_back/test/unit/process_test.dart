@@ -68,20 +68,23 @@ void main() {
       //expect(addresses.length, 20);
     });
 
-    test('2 addresses get created', () async {
-      // make addresses
-      await reservoirChanges(
-          addresses,
-          () => leaderWalletDerivationService.deriveFirstAddressAndSave(wallet),
-          2);
-      expect(accounts.length, 1);
-      expect(wallets.length, 1);
-      expect(addresses.length, 2);
-      //await asyncChange(
-      //  addresses,
-      //  () => leaderWalletDerivationService.deriveFirstAddressAndSave(wallet),
-      //);
-      //expect(addresses.length, 20);
-    });
+    //test('20 addresses get created', () async {
+    //  // make addresses
+    //  await reservoirChanges(
+    //      addresses,
+    //      () => leaderWalletDerivationService.deriveFirstAddressAndSave(wallet),
+    //      2);
+    //  //changedAddresses
+    //  await reservoirChanges(
+    //      addresses,
+    //      () => leaderWalletDerivationService.maybeDeriveNewAddresses(changedAddresses),
+    //      2);
+    //  expect(addresses.length, 2);
+    //  //await asyncChange(
+    //  //  addresses,
+    //  //  () => leaderWalletDerivationService.deriveFirstAddressAndSave(wallet),
+    //  //);
+    //  //expect(addresses.length, 20);
+    //});
   });
 }

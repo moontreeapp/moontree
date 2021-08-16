@@ -29,18 +29,16 @@ class AddressSubscriptionWaiter extends Waiter {
     subscribeToExistingAddresses();
     listeners.add(addressesNeedingUpdate.stream
         .bufferCountTimeout(10, Duration(milliseconds: 50))
-        .listen(
-      (changedAddresses) async {
-        addressSubscriptionService.saveScripthashHistoryData(
-          await addressSubscriptionService.getScripthashHistoriesData(
-            changedAddresses,
-            client,
-          ),
-        );
+        .listen((changedAddresses) async {
+      addressSubscriptionService.saveScripthashHistoryData(
+        await addressSubscriptionService.getScripthashHistoriesData(
+          changedAddresses,
+          client,
+        ),
+      );
 
-        leaderWalletDerivationService.maybeDeriveNewAddresses(changedAddresses);
-      },
-    ));
+      leaderWalletDerivationService.maybeDeriveNewAddresses(changedAddresses);
+    }));
 
     listeners.add(addresses.changes.listen((change) {
       change.when(
