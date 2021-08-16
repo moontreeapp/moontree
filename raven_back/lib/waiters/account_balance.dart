@@ -2,23 +2,23 @@ import 'dart:async';
 
 import 'package:raven/reservoir/change.dart';
 import 'package:raven/reservoirs.dart';
-import 'package:raven/services/service.dart';
+import 'package:raven/waiters/waiter.dart';
 import 'package:raven/utils/buffer_count_window.dart';
-import 'package:raven/waiters/accounts/balance.dart';
+import 'package:raven/services.dart';
 
-class AccountBalanceService extends Service {
+class AccountBalanceWaiter extends Waiter {
   HistoryReservoir histories;
-  BalanceWaiter balanceWaiter;
+  BalanceService balanceService;
 
   late StreamSubscription<List<Change>> listener;
 
-  AccountBalanceService(this.histories, this.balanceWaiter) : super();
+  AccountBalanceWaiter(this.histories, this.balanceService) : super();
 
   @override
   void init() {
     listener = histories.changes
         .bufferCountTimeout(25, Duration(milliseconds: 50))
-        .listen(balanceWaiter.calculateBalance);
+        .listen(balanceService.calculateBalance);
   }
 
   @override

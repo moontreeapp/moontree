@@ -3,19 +3,19 @@ import 'dart:async';
 import 'package:raven/records.dart';
 import 'package:raven/reservoirs.dart';
 import 'package:raven/reservoir/change.dart';
-import 'package:raven/services/service.dart';
-import 'package:raven/waiters.dart';
+import 'package:raven/waiters/waiter.dart';
+import 'package:raven/services.dart';
 
-class LeadersService extends Service {
+class LeadersWaiter extends Waiter {
   WalletReservoir wallets;
   AddressReservoir addresses;
-  LeaderWalletDerivationWaiter leaderWalletDerivationWaiter;
+  LeaderWalletDerivationService leaderWalletDerivationService;
   late StreamSubscription<Change> listener;
 
-  LeadersService(
+  LeadersWaiter(
     this.wallets,
     this.addresses,
-    this.leaderWalletDerivationWaiter,
+    this.leaderWalletDerivationService,
   ) : super();
 
   @override
@@ -24,9 +24,9 @@ class LeadersService extends Service {
       change.when(added: (added) {
         var wallet = added.data;
         if (wallet is LeaderWallet) {
-          addresses.save(leaderWalletDerivationWaiter.deriveAddress(
+          addresses.save(leaderWalletDerivationService.deriveAddress(
               wallet, 0, NodeExposure.Internal));
-          addresses.save(leaderWalletDerivationWaiter.deriveAddress(
+          addresses.save(leaderWalletDerivationService.deriveAddress(
               wallet, 0, NodeExposure.External));
         }
       }, updated: (updated) {

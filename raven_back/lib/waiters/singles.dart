@@ -1,21 +1,22 @@
 import 'dart:async';
 
 import 'package:raven/records.dart';
+import 'package:raven/services.dart';
 import 'package:raven/waiters.dart';
 import 'package:raven/reservoirs.dart';
 import 'package:raven/reservoir/change.dart';
-import 'package:raven/services/service.dart';
+import 'package:raven/waiters/waiter.dart';
 
-class SinglesService extends Service {
+class SinglesWaiter extends Waiter {
   WalletReservoir wallets;
   AddressReservoir addresses;
-  SingleWalletWaiter singleWalletWaiter;
+  SingleWalletService singleWalletService;
   late StreamSubscription<Change> listener;
 
-  SinglesService(
+  SinglesWaiter(
     this.wallets,
     this.addresses,
-    this.singleWalletWaiter,
+    this.singleWalletService,
   ) : super();
 
   @override
@@ -24,13 +25,13 @@ class SinglesService extends Service {
       change.when(added: (added) {
         var wallet = added.data;
         if (wallet is SingleWallet) {
-          addresses.save(singleWalletWaiter.toAddress(wallet));
-          addresses.save(singleWalletWaiter.toAddress(wallet));
+          addresses.save(singleWalletService.toAddress(wallet));
+          addresses.save(singleWalletService.toAddress(wallet));
         }
       }, updated: (updated) {
         /* moved account */
       }, removed: (removed) {
-        /* handled by LeadersService*/
+        /* handled by LeadersWaiter*/
       });
     });
   }

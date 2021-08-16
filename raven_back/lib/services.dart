@@ -1,6 +1,5 @@
-export 'services/account_balance.dart';
-export 'services/leaders.dart';
-export 'services/singles.dart';
-export 'services/address_subscription.dart';
-export 'services/addresses.dart';
-export 'services/exchange_rate.dart';
+export 'services/wallets/leader/derive.dart';
+export 'services/wallets/single/derive.dart';
+export 'services/accounts/balance.dart';
+export 'services/addresses/subscribe.dart';
+export 'services/rates/rates.dart';

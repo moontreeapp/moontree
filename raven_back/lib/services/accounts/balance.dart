@@ -1,15 +1,15 @@
 import 'package:collection/collection.dart';
-import 'package:raven/waiters/waiter.dart';
+import 'package:raven/services/service.dart';
 import 'package:raven/records.dart';
 import 'package:raven/reservoirs.dart';
 import 'package:raven/utils/exceptions.dart';
 import 'package:sorted_list/sorted_list.dart';
 
-class BalanceWaiter extends Waiter {
+class BalanceService extends Service {
   late final BalanceReservoir balances;
   late final HistoryReservoir histories;
 
-  BalanceWaiter(this.balances, this.histories) : super();
+  BalanceService(this.balances, this.histories) : super();
 
   // runs it for affected account-security combinations
   void calculateBalance(changes) {

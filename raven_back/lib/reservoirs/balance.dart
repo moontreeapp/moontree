@@ -6,7 +6,7 @@ import 'package:raven/reservoir/reservoir.dart';
 class BalanceReservoir extends Reservoir<List, Balance> {
   late MultipleIndex<dynamic, Balance> byAccount;
 
-  BalanceReservoir() : super(HiveSource('addresses')) {
+  BalanceReservoir([source]) : super(source ?? HiveSource('addresses')) {
     var paramsToKey =
         (String accountId, Security security) => [accountId, security];
     addPrimaryIndex(

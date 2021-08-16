@@ -6,7 +6,7 @@ import 'package:raven/reservoir/reservoir.dart';
 /// RVN -> USD (or major fiats)
 /// USD -> other fiat (for obscure fiats)
 class ExchangeRateReservoir extends Reservoir<List<Security>, Rate> {
-  ExchangeRateReservoir() : super(HiveSource('conversion')) {
+  ExchangeRateReservoir([source]) : super(source ?? HiveSource('conversion')) {
     var paramsToKey = (Security base, Security quote) => [base, quote];
     addPrimaryIndex((rate) => paramsToKey(rate.base, rate.quote));
   }

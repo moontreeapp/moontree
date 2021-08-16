@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:quiver/iterables.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
-import 'package:raven/waiters/waiter.dart';
+import 'package:raven/services/service.dart';
 import 'package:raven/records.dart';
 import 'package:raven/reservoirs.dart';
 
@@ -32,20 +32,11 @@ class ScripthashHistoriesData {
           e[3] as List<ScripthashUnspent>));
 }
 
-//class AddressSubscriptionWaiter extends Waiter {
-//  late final BalanceReservoir balances;
-//  late final HistoryReservoir histories;
-//
-//  AddressSubscriptionWaiter() : super() {
-//    balances = ReservoirsSteward().balances;
-//    histories = ReservoirsSteward().histories;
-//  }
-
-class AddressSubscriptionWaiter extends Waiter {
+class AddressSubscriptionService extends Service {
   late final BalanceReservoir balances;
   late final HistoryReservoir histories;
 
-  AddressSubscriptionWaiter(this.balances, this.histories) : super();
+  AddressSubscriptionService(this.balances, this.histories) : super();
 
   Future<ScripthashHistoriesData> getScripthashHistoriesData(
     List<Address> changedAddresses,

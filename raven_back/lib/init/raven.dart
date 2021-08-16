@@ -5,14 +5,14 @@
 ///   stop services
 ///   start services (contains listeners on all reservoirs)
 import 'package:raven/init/reservoirs.dart';
-import 'package:raven/init/services.dart';
 import 'package:raven/init/waiters.dart';
+import 'package:raven/init/services.dart';
 import 'package:raven/subjects/settings.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 void init() {
   makeReservoirs();
-  makeWaiters();
+  makeServices();
   // if reservoirs are empty -> startup first time process
   electrumSettingsStream(settings).listen(handleListening);
 }
@@ -27,8 +27,8 @@ Stream electrumSettingsStream(settings) {
 }
 
 Future handleListening(electrumSetting) async {
-  deinitServices();
-  initServices(await RavenElectrumClient.connect(
+  deinitWaiters();
+  initWaiters(await RavenElectrumClient.connect(
       electrumSetting['url'] ?? 'testnet.rvn.rocks',
       port: electrumSetting['port'] ?? 50002));
 }

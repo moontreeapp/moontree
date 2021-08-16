@@ -1,5 +1,6 @@
-export 'waiters/wallets/leader/derive.dart';
-export 'waiters/wallets/single/derive.dart';
-export 'waiters/accounts/balance.dart';
-export 'waiters/addresses/subscribe.dart';
-export 'waiters/rates/rates.dart';
+export 'waiters/account_balance.dart';
+export 'waiters/leaders.dart';
+export 'waiters/singles.dart';
+export 'waiters/address_subscription.dart';
+export 'waiters/addresses.dart';
+export 'waiters/exchange_rate.dart';

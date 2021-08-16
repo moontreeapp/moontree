@@ -2,14 +2,14 @@ import 'dart:async';
 
 import 'package:raven/reservoir/change.dart';
 import 'package:raven/reservoirs.dart';
-import 'package:raven/services/service.dart';
+import 'package:raven/waiters/waiter.dart';
 
-class AddressesService extends Service {
+class AddressesWaiter extends Waiter {
   AddressReservoir addresses;
   HistoryReservoir histories;
   late StreamSubscription<Change> listener;
 
-  AddressesService(this.addresses, this.histories) : super();
+  AddressesWaiter(this.addresses, this.histories) : super();
 
   @override
   void init() {

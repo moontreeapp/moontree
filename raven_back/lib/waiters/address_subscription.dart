@@ -2,26 +2,26 @@ import 'dart:async';
 
 import 'package:raven/reservoirs.dart';
 import 'package:raven/records.dart';
-import 'package:raven/services/service.dart';
+import 'package:raven/waiters/waiter.dart';
 import 'package:raven/utils/buffer_count_window.dart';
-import 'package:raven/waiters.dart';
+import 'package:raven/services.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
-class AddressSubscriptionService extends Service {
+class AddressSubscriptionWaiter extends Waiter {
   AddressReservoir addresses;
   RavenElectrumClient client;
-  AddressSubscriptionWaiter addressSubscriptionWaiter;
-  LeaderWalletDerivationWaiter leaderWalletDerivationWaiter;
+  AddressSubscriptionService addressSubscriptionService;
+  LeaderWalletDerivationService leaderWalletDerivationService;
   Map<String, StreamSubscription> subscriptionHandles = {};
   List<StreamSubscription> listeners = [];
 
   StreamController<Address> addressesNeedingUpdate = StreamController();
 
-  AddressSubscriptionService(
+  AddressSubscriptionWaiter(
     this.addresses,
     this.client,
-    this.addressSubscriptionWaiter,
-    this.leaderWalletDerivationWaiter,
+    this.addressSubscriptionService,
+    this.leaderWalletDerivationService,
   ) : super();
 
   @override
@@ -30,14 +30,14 @@ class AddressSubscriptionService extends Service {
     listeners.add(addressesNeedingUpdate.stream
         .bufferCountTimeout(10, Duration(milliseconds: 50))
         .listen((changedAddresses) async {
-      addressSubscriptionWaiter.saveScripthashHistoryData(
-        await addressSubscriptionWaiter.getScripthashHistoriesData(
+      addressSubscriptionService.saveScripthashHistoryData(
+        await addressSubscriptionService.getScripthashHistoriesData(
           changedAddresses,
           client,
         ),
       );
 
-      leaderWalletDerivationWaiter.maybeDeriveNewAddresses(changedAddresses);
+      leaderWalletDerivationService.maybeDeriveNewAddresses(changedAddresses);
     }));
 
     listeners.add(addresses.changes.listen((change) {

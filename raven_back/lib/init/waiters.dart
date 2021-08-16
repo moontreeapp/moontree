@@ -1,24 +1,45 @@
 import 'package:raven/init/reservoirs.dart';
+import 'package:raven/init/services.dart';
 import 'package:raven/waiters.dart';
+import 'package:raven_electrum_client/raven_electrum_client.dart';
 
-late BalanceWaiter balanceWaiter;
-late AddressSubscriptionWaiter addressSubscriptionWaiter;
-late RatesWaiter ratesWaiter;
-late LeaderWalletDerivationWaiter leaderWalletDerivationWaiter;
-late SingleWalletWaiter singleWalletWaiter;
+LeadersWaiter? leadersWaiter;
+SinglesWaiter? singlesWaiter;
+AddressSubscriptionWaiter? addressSubscriptionWaiter;
+AddressesWaiter? addressesWaiter;
+AccountBalanceWaiter? accountBalanceWaiter;
+ExchangeRateWaiter? exchangeRateWaiter;
 
-void makeWaiters(
-    //AccountReservoir accounts,
-    //AddressReservoir addresses,
-    //HistoryReservoir histories,
-    //WalletReservoir wallets,
-    //BalanceReservoir balances,
-    //ExchangeRateReservoir rates,
-    ) {
-  balanceWaiter = BalanceWaiter(balances, histories);
-  addressSubscriptionWaiter = AddressSubscriptionWaiter(balances, histories);
-  ratesWaiter = RatesWaiter(balances, rates);
-  leaderWalletDerivationWaiter =
-      LeaderWalletDerivationWaiter(accounts, wallets, addresses, histories);
-  singleWalletWaiter = SingleWalletWaiter(accounts);
+void initWaiters(RavenElectrumClient client) {
+  leadersWaiter = LeadersWaiter(
+    wallets,
+    addresses,
+    leaderWalletDerivationService,
+  )..init();
+  singlesWaiter = SinglesWaiter(
+    wallets,
+    addresses,
+    singleWalletService,
+  )..init();
+  addressSubscriptionWaiter = AddressSubscriptionWaiter(
+    addresses,
+    client,
+    addressSubscriptionService,
+    leaderWalletDerivationService,
+  )..init();
+  addressesWaiter = AddressesWaiter(addresses, histories)..init();
+  accountBalanceWaiter = AccountBalanceWaiter(
+    histories,
+    balanceService,
+  )..init();
+  exchangeRateWaiter = ExchangeRateWaiter(ratesService)..init();
+}
+
+void deinitWaiters() {
+  leadersWaiter?.deinit();
+  singlesWaiter?.deinit();
+  addressSubscriptionWaiter?.deinit();
+  addressesWaiter?.deinit();
+  accountBalanceWaiter?.deinit();
+  exchangeRateWaiter?.deinit();
 }

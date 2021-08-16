@@ -16,7 +16,7 @@ class AddressReservoir extends Reservoir<String, Address> {
   late MultipleIndex byWallet;
   late MultipleIndex byWalletExposure;
 
-  AddressReservoir() : super(HiveSource('addresses')) {
+  AddressReservoir([source]) : super(source ?? HiveSource('addresses')) {
     addPrimaryIndex((address) => address.scripthash);
     byAccount = addMultipleIndex('account', (address) => address.accountId);
     byWallet = addMultipleIndex('wallet', (address) => address.walletId);

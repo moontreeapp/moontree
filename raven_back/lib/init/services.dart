@@ -1,45 +1,24 @@
 import 'package:raven/init/reservoirs.dart';
-import 'package:raven/init/waiters.dart';
 import 'package:raven/services.dart';
-import 'package:raven_electrum_client/raven_electrum_client.dart';
 
-LeadersService? leadersService;
-SinglesService? singlesService;
-AddressSubscriptionService? addressSubscriptionService;
-AddressesService? addressesService;
-AccountBalanceService? accountBalanceService;
-ExchangeRateService? exchangeRateService;
+late BalanceService balanceService;
+late AddressSubscriptionService addressSubscriptionService;
+late RatesService ratesService;
+late LeaderWalletDerivationService leaderWalletDerivationService;
+late SingleWalletService singleWalletService;
 
-void initServices(RavenElectrumClient client) {
-  leadersService = LeadersService(
-    wallets,
-    addresses,
-    leaderWalletDerivationWaiter,
-  )..init();
-  singlesService = SinglesService(
-    wallets,
-    addresses,
-    singleWalletWaiter,
-  )..init();
-  addressSubscriptionService = AddressSubscriptionService(
-    addresses,
-    client,
-    addressSubscriptionWaiter,
-    leaderWalletDerivationWaiter,
-  )..init();
-  addressesService = AddressesService(addresses, histories)..init();
-  accountBalanceService = AccountBalanceService(
-    histories,
-    balanceWaiter,
-  )..init();
-  exchangeRateService = ExchangeRateService(ratesWaiter)..init();
-}
-
-void deinitServices() {
-  leadersService?.deinit();
-  singlesService?.deinit();
-  addressSubscriptionService?.deinit();
-  addressesService?.deinit();
-  accountBalanceService?.deinit();
-  exchangeRateService?.deinit();
+void makeServices(
+    //AccountReservoir accounts,
+    //AddressReservoir addresses,
+    //HistoryReservoir histories,
+    //WalletReservoir wallets,
+    //BalanceReservoir balances,
+    //ExchangeRateReservoir rates,
+    ) {
+  balanceService = BalanceService(balances, histories);
+  addressSubscriptionService = AddressSubscriptionService(balances, histories);
+  ratesService = RatesService(balances, rates);
+  leaderWalletDerivationService =
+      LeaderWalletDerivationService(accounts, wallets, addresses, histories);
+  singleWalletService = SingleWalletService(accounts);
 }

@@ -1,19 +1,19 @@
 import 'dart:async';
 
 import 'package:raven/reservoir/change.dart';
-import 'package:raven/services/service.dart';
-import 'package:raven/waiters.dart';
+import 'package:raven/waiters/waiter.dart';
+import 'package:raven/services.dart';
 
-class ExchangeRateService extends Service {
-  RatesWaiter ratesWaiter;
+class ExchangeRateWaiter extends Waiter {
+  RatesService ratesService;
   late StreamSubscription<List<Change>> listener;
 
-  ExchangeRateService(this.ratesWaiter) : super();
+  ExchangeRateWaiter(this.ratesService) : super();
 
   @override
   Future init() async {
     // on open
-    await ratesWaiter.saveRate();
+    await ratesService.saveRate();
 
     /// setup listener to get the conversion rate on manual refresh
   }

@@ -13,5 +13,6 @@ void makeReservoirs() {
   addresses = AddressReservoir();
   histories = HistoryReservoir();
   wallets = WalletReservoir();
+  balances = BalanceReservoir();
   rates = ExchangeRateReservoir();
 }

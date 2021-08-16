@@ -2,15 +2,15 @@ import 'package:ravencoin/ravencoin.dart' show HDWallet;
 import 'package:raven/records.dart';
 import 'package:raven/reservoirs.dart';
 import 'package:raven/utils/derivation_path.dart';
-import 'package:raven/waiters/waiter.dart';
+import 'package:raven/services/service.dart';
 
-class LeaderWalletDerivationWaiter extends Waiter {
+class LeaderWalletDerivationService extends Service {
   late final AccountReservoir accounts;
   late final WalletReservoir wallets;
   late final AddressReservoir addresses;
   late final HistoryReservoir histories;
 
-  LeaderWalletDerivationWaiter(
+  LeaderWalletDerivationService(
     this.accounts,
     this.wallets,
     this.addresses,
