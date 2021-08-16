@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven_mobile/pages/receive.dart';
 import 'package:raven_mobile/pages/send.dart';
+import 'package:raven_mobile/components/all.dart' as all;
 
 PreferredSize balanceHeader(context, data) {
   return PreferredSize(
@@ -11,8 +12,7 @@ PreferredSize balanceHeader(context, data) {
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: GestureDetector(
-                    onTap: () {}, child: Icon(Icons.more_horiz)))
+                child: all.settingsButton(context))
           ],
           elevation: 2,
           centerTitle: false,

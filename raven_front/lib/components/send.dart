@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raven_mobile/components/all.dart' as all;
 
 PreferredSize header(context) {
   return PreferredSize(
@@ -13,8 +14,7 @@ PreferredSize header(context) {
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: GestureDetector(
-                    onTap: () {}, child: Icon(Icons.more_horiz)))
+                child: all.settingsButton(context))
           ],
           title: Text('Wallet',
               style: TextStyle(fontSize: 18.0, letterSpacing: 2.0)),

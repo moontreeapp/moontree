@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raven_mobile/pages/settings/settings.dart';
 
 BottomAppBar walletTradingButtons() {
   return BottomAppBar(
@@ -13,4 +14,15 @@ BottomAppBar walletTradingButtons() {
             IconButton(
                 onPressed: () {/*to trading*/}, icon: Icon(Icons.swap_horiz))
           ]));
+}
+
+GestureDetector settingsButton(context) {
+  return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Settings()),
+        );
+      },
+      child: Icon(Icons.more_horiz));
 }
