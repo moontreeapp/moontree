@@ -12,8 +12,8 @@ abstract class Source<Key, Record> {
   /// Adds or updates the `model` at a given `key` in the Source.
   /// It's reasonable for `key` to be a column on `model` (e.g. account ID),
   /// but not required.
-  void save(Key key, Record model);
+  Future save(Key key, Record model);
 
   /// Removes a given `key` from the Source.
-  void remove(Key key);
+  Future remove(Key key);
 }

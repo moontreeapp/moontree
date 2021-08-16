@@ -12,7 +12,11 @@ void enqueueChange(void Function() change) {
   unawaited(Future.microtask(change));
 }
 
-Future asyncChange(Reservoir res, void Function() change) async {
+Future reservoirChanges(
+  Reservoir res,
+  void Function() change, [
+  int changeCount = 1,
+]) async {
   enqueueChange(change);
-  await res.changes.first;
+  await res.changes.take(changeCount).toList();
 }

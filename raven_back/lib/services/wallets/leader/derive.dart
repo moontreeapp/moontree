@@ -17,6 +17,7 @@ class LeaderWalletDerivationService extends Service {
     this.histories,
   ) : super();
 
+  /// [Address(walletid=0...),]
   void maybeDeriveNewAddresses(List<Address> changedAddresses) async {
     for (var address in changedAddresses) {
       var leaderWallet = wallets.get(address.walletId)! as LeaderWallet;
@@ -78,6 +79,11 @@ class LeaderWalletDerivationService extends Service {
     var seededWallet = HDWallet.fromSeed(wallet.seed, network: networks[net]!);
     return seededWallet
         .derivePath(getDerivationPath(hdIndex, exposure: exposure));
+  }
+
+  void deriveFirstAddressAndSave(LeaderWallet wallet) {
+    addresses.save(deriveAddress(wallet, 0, NodeExposure.Internal));
+    addresses.save(deriveAddress(wallet, 0, NodeExposure.External));
   }
 
   /// returns the next internal or external node missing a history

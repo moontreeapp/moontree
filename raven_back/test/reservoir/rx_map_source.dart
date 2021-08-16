@@ -16,12 +16,12 @@ class RxMapSource<Key, Record> extends Source<Key, Record> {
   }
 
   @override
-  void save(Key key, Record record) {
+  Future save(Key key, Record record) async {
     map[key] = record;
   }
 
   @override
-  void remove(Key key) {
+  Future remove(Key key) async {
     map.remove(key);
   }
 }

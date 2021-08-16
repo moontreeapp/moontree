@@ -31,12 +31,12 @@ class HiveSource<Key, Record> extends Source<Key, Record> {
   }
 
   @override
-  void save(key, Record record) {
-    box.put(key, record);
+  Future save(key, Record record) async {
+    await box.put(key, record);
   }
 
   @override
-  void remove(key) {
-    box.delete(key);
+  Future remove(key) async {
+    await box.delete(key);
   }
 }

@@ -6,6 +6,7 @@ class WalletReservoir extends Reservoir<String, Wallet> {
   late MultipleIndex byAccount;
 
   WalletReservoir([source]) : super(source ?? HiveSource('wallets')) {
+    addPrimaryIndex((wallet) => wallet.id);
     byAccount = addMultipleIndex('account', (wallet) => wallet.accountId);
   }
 }

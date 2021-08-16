@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'change.dart';
@@ -51,25 +52,25 @@ class Reservoir<Key, Record> with IterableMixin<Record> {
   @override
   Iterator<Record> get iterator => data.iterator;
 
-  void saveAll(List<Record> models) {
-    for (var model in models) {
-      save(model);
+  Future saveAll(List<Record> records) async {
+    for (var record in records) {
+      await save(record);
     }
   }
 
-  void save(Record record) {
+  Future save(Record record) async {
     var key = primaryIndex.getKey(record);
     // Save key to source, which will (reactively) notify this reservoir of the
     // new key and construct a new model, also updating any associated indices.
-    source.save(key, record);
+    await source.save(key, record);
   }
 
-  void remove(Record record) {
+  Future remove(Record record) async {
     var key = primaryIndex.getKey(record);
     if (primaryIndex.has(key)) {
       // Remove key from source, which will (reactively) notify this reservoir
       // and then remove the key and any associated keys in indices.
-      source.remove(key);
+      await source.remove(key);
     } else {
       throw ArgumentError('record not found for $key');
     }

@@ -24,10 +24,7 @@ class LeadersWaiter extends Waiter {
       change.when(added: (added) {
         var wallet = added.data;
         if (wallet is LeaderWallet) {
-          addresses.save(leaderWalletDerivationService.deriveAddress(
-              wallet, 0, NodeExposure.Internal));
-          addresses.save(leaderWalletDerivationService.deriveAddress(
-              wallet, 0, NodeExposure.External));
+          leaderWalletDerivationService.deriveFirstAddressAndSave(wallet);
         }
       }, updated: (updated) {
         /* moved account */
