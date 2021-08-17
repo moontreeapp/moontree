@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:raven_mobile/pages/settings/settings.dart';
+import 'package:raven_mobile/styles.dart';
 
-BottomAppBar walletTradingButtons() {
+BottomAppBar walletTradingButtons(context) {
   return BottomAppBar(
       color: Colors.grey[300],
       child: ButtonBar(
@@ -10,7 +11,7 @@ BottomAppBar walletTradingButtons() {
             IconButton(
                 onPressed: () {/*to wallet*/},
                 icon: Icon(Icons.account_balance_wallet_rounded,
-                    color: Colors.blue[900])),
+                    color: RavenColor().appBar)),
             IconButton(
                 onPressed: () {/*to trading*/}, icon: Icon(Icons.swap_horiz))
           ]));
@@ -25,4 +26,15 @@ GestureDetector settingsButton(context) {
         );
       },
       child: Icon(Icons.more_horiz));
+}
+
+IconButton backIconButton(context) => IconButton(
+    icon: RavenIcons().back, onPressed: () => Navigator.pop(context));
+
+class RavenButton {
+  RavenButton();
+
+  IconButton back(context) => backIconButton(context);
+  GestureDetector settings(context) => settingsButton(context);
+  BottomAppBar bottomNav(context) => walletTradingButtons(context);
 }

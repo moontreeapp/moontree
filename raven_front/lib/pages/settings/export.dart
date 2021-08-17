@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:raven_mobile/components/settings/export.dart' as exportWallet;
+import 'package:raven_mobile/components/pages/settings/export.dart'
+    as exportWallet;
+import 'package:raven_mobile/styles.dart';
 
 class Export extends StatefulWidget {
   final dynamic data;
@@ -21,9 +23,8 @@ class _ExportState extends State<Export> {
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
-    Color? bgColor = Colors.blueAccent[50];
     return Scaffold(
-        backgroundColor: bgColor,
+        backgroundColor: RavenColor().background,
         appBar: exportWallet.header(context),
         body: exportWallet.body());
   }

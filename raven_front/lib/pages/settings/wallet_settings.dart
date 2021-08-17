@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:raven_mobile/components/settings/wallet_settings.dart'
+import 'package:raven_mobile/components/pages/settings/wallet_settings.dart'
     as walletSettings;
+import 'package:raven_mobile/styles.dart';
 
 class WalletSettings extends StatefulWidget {
   final dynamic data;
@@ -22,9 +23,8 @@ class _WalletSettingsState extends State<WalletSettings> {
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
-    Color? bgColor = Colors.blueAccent[50];
     return Scaffold(
-        backgroundColor: bgColor,
+        backgroundColor: RavenColor().background,
         appBar: walletSettings.header(context),
         body: walletSettings.body(context));
   }

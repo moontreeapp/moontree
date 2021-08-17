@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:raven_mobile/components/all.dart' as all;
+import 'package:raven_mobile/components/buttons.dart';
+import 'package:raven_mobile/styles.dart';
 
 PreferredSize header(context) {
   return PreferredSize(
       preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
       child: AppBar(
-          backgroundColor: Colors.blue[900],
+          backgroundColor: RavenColor().appBar,
           elevation: 2,
           centerTitle: false,
           leading: IconButton(
@@ -14,21 +15,16 @@ PreferredSize header(context) {
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: all.settingsButton(context))
+                child: RavenButton().settings(context))
           ],
-          title: Text('Wallet',
-              style: TextStyle(fontSize: 18.0, letterSpacing: 2.0)),
+          title: Text('Wallet', style: RavenTextStyle().h2),
           flexibleSpace: Container(
-            color: Colors.blue[900],
+            color: RavenColor().appBar,
             alignment: Alignment.center,
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text('\n0 RVN',
-                    style: TextStyle(
-                        fontSize: 24.0,
-                        letterSpacing: 2.0,
-                        color: Colors.white)),
+                Text('\n0 RVN', style: RavenTextStyle().h1),
                 IconButton(
                     onPressed: () {
                       /*show available assets and balances for this account*/
@@ -39,9 +35,7 @@ PreferredSize header(context) {
                       color: Colors.white,
                     ))
               ]),
-              Text('\n\$ 0.00',
-                  style: TextStyle(
-                      fontSize: 16.0, letterSpacing: 2.0, color: Colors.white))
+              Text('\n\$ 0.00', style: RavenTextStyle().h3)
             ]),
           )));
 }
@@ -113,11 +107,5 @@ ElevatedButton sendTransactionButton(_formKey) {
           // Process data.
         }
       },
-      style: ButtonStyle(
-          shape: MaterialStateProperty.all(RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30.0),
-                  bottomLeft: Radius.circular(30.0),
-                  topRight: Radius.circular(30.0),
-                  bottomRight: Radius.circular(30.0))))));
+      style: RavenButtonStyle().curvedSides);
 }

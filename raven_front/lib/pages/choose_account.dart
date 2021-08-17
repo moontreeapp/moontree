@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/account_mock.dart';
+import 'package:raven_mobile/styles.dart';
 
 class ChooseAccount extends StatefulWidget {
   @override
@@ -24,7 +25,7 @@ class _ChooseAccountState extends State<ChooseAccount> {
     return Scaffold(
         backgroundColor: Colors.grey[200],
         appBar: AppBar(
-            backgroundColor: Colors.blue[900],
+            backgroundColor: RavenColor().appBar,
             title: Text('Choose an Account'),
             centerTitle: true,
             elevation: 0),

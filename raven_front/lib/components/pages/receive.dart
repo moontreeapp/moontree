@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:raven_mobile/components/buttons.dart';
+import 'package:raven_mobile/styles.dart';
 
 AppBar header(context) {
   return AppBar(
-    backgroundColor: Colors.blue[900],
-    leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: Colors.grey[100]),
-        onPressed: () => Navigator.pop(context)),
+    backgroundColor: RavenColor().appBar,
+    leading: RavenButton().back(context),
     elevation: 2,
     centerTitle: false,
     title: Text(
         //(data['accounts'][data['account']] ?? 'Unknown') + ' Wallet',
         'Wallet',
-        style: TextStyle(fontSize: 18.0, letterSpacing: 2.0)),
+        style: RavenTextStyle().h2),
   );
 }
 
@@ -49,11 +49,5 @@ ElevatedButton shareAddressButton() {
       icon: Icon(Icons.share),
       label: Text('Share'),
       onPressed: () {},
-      style: ButtonStyle(
-          shape: MaterialStateProperty.all(RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30.0),
-                  bottomLeft: Radius.circular(30.0),
-                  topRight: Radius.circular(30.0),
-                  bottomRight: Radius.circular(30.0))))));
+      style: RavenButtonStyle().curvedSides);
 }

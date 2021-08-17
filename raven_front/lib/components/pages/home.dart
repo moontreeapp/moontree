@@ -1,32 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:raven_mobile/pages/receive.dart';
 import 'package:raven_mobile/pages/send.dart';
-import 'package:raven_mobile/components/all.dart' as all;
+import 'package:raven_mobile/components/buttons.dart';
+import 'package:raven_mobile/styles.dart';
 
 PreferredSize balanceHeader(context, data) {
   return PreferredSize(
       preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
       child: AppBar(
-          backgroundColor: Colors.blue[900],
+          backgroundColor: RavenColor().appBar,
           automaticallyImplyLeading: true,
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: all.settingsButton(context))
+                child: RavenButton().settings(context))
           ],
           elevation: 2,
           centerTitle: false,
           title: Text(
               (data['accounts'][data['account']] ?? 'Unknown') + ' Wallet',
-              style: TextStyle(fontSize: 18.0, letterSpacing: 2.0)),
+              style: RavenTextStyle().h2),
           flexibleSpace: Container(
-              color: Colors.blue[900],
+              color: RavenColor().appBar,
               alignment: Alignment.center,
-              child: Text('\n\$ 0',
-                  style: TextStyle(
-                      fontSize: 24.0,
-                      letterSpacing: 2.0,
-                      color: Colors.white))),
+              child: Text('\n\$ 0', style: RavenTextStyle().h1)),
           bottom: PreferredSize(
               preferredSize: Size.fromHeight(50.0),
               child: TabBar(
@@ -46,13 +43,10 @@ TabBarView holdingsTransactionsView(data) {
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Icon(Icons.savings, size: 50.0, color: Colors.grey[100]),
           Text('\nYour holdings will appear here.\n',
-              style: TextStyle(
-                  fontSize: 18.0, letterSpacing: 2.0, color: Colors.white)),
+              style: RavenTextStyle().h2),
           ElevatedButton(
               onPressed: () {},
-              child: Text('get RVN',
-                  style: TextStyle(
-                      fontSize: 18.0, letterSpacing: 2.0, color: Colors.white)))
+              child: Text('get RVN', style: RavenTextStyle().h2))
         ]));
   } else {
     holdings = ListView(children: <Widget>[
@@ -72,13 +66,10 @@ TabBarView holdingsTransactionsView(data) {
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Icon(Icons.public, size: 50.0, color: Colors.grey[100]),
           Text('\nYour transactions will appear here.\n',
-              style: TextStyle(
-                  fontSize: 18.0, letterSpacing: 2.0, color: Colors.white)),
+              style: RavenTextStyle().h2),
           ElevatedButton(
               onPressed: () {},
-              child: Text('get RVN',
-                  style: TextStyle(
-                      fontSize: 18.0, letterSpacing: 2.0, color: Colors.white)))
+              child: Text('get RVN', style: RavenTextStyle().h2))
         ]));
   } else {
     transactions = ListView(children: <Widget>[
@@ -102,15 +93,12 @@ Drawer accountsView(context, data) {
   return Drawer(
       child: ListView(padding: EdgeInsets.zero, children: <Widget>[
     DrawerHeader(
-        decoration: BoxDecoration(color: Colors.blue[900]),
+        decoration: BoxDecoration(color: RavenColor().appBar),
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text('Wallets',
-                  style: TextStyle(
-                      fontSize: 18.0,
-                      letterSpacing: 2.0,
-                      color: Colors.grey[200])),
+                  style: RavenTextStyle().getH2(color: Colors.grey[200])),
               Padding(
                   padding: EdgeInsets.only(right: 20.0),
                   child: GestureDetector(
@@ -150,11 +138,7 @@ Row sendReceiveButtons(context) {
             MaterialPageRoute(builder: (context) => Receive()),
           );
         },
-        style: ButtonStyle(
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30.0),
-                    bottomLeft: Radius.circular(30.0)))))),
+        style: RavenButtonStyle().leftSideCurved),
     ElevatedButton.icon(
         icon: Icon(Icons.north_east),
         label: Text('Send'),
@@ -164,10 +148,6 @@ Row sendReceiveButtons(context) {
             MaterialPageRoute(builder: (context) => Send()),
           );
         },
-        style: ButtonStyle(
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(30.0),
-                    bottomRight: Radius.circular(30.0))))))
+        style: RavenButtonStyle().rightSideCurved)
   ]);
 }

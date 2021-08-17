@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/account_mock.dart' as mock;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:raven_mobile/styles.dart';
 //import 'package:raven/accounts.dart';
 //import 'package:raven/boxes.dart';
 
@@ -36,7 +37,7 @@ class _LoadingState extends State<Loading> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.blue[900],
+        backgroundColor: RavenColor().appBar,
         body:
             Center(child: SpinKitThreeBounce(color: Colors.white, size: 50.0)));
   }

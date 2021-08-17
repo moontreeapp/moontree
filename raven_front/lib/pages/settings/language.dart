@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:raven_mobile/components/settings/language.dart' as language;
+import 'package:raven_mobile/components/pages/settings/language.dart'
+    as language;
+import 'package:raven_mobile/styles.dart';
 
 class Language extends StatefulWidget {
   final dynamic data;
@@ -21,9 +23,8 @@ class _LanguageState extends State<Language> {
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
-    Color? bgColor = Colors.blueAccent[50];
     return Scaffold(
-        backgroundColor: bgColor,
+        backgroundColor: RavenColor().background,
         appBar: language.header(context),
         body: language.body(context));
   }

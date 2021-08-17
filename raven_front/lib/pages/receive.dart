@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:raven_mobile/components/receive.dart' as receive;
-import 'package:raven_mobile/components/all.dart' as all;
+import 'package:raven_mobile/components/pages/receive.dart' as receive;
+import 'package:raven_mobile/components/buttons.dart';
+import 'package:raven_mobile/styles.dart';
 
 class Receive extends StatefulWidget {
   final dynamic data;
@@ -22,13 +23,12 @@ class _ReceiveState extends State<Receive> {
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
-    Color? bgColor = Colors.blueAccent[50];
     return Scaffold(
-        backgroundColor: bgColor,
+        backgroundColor: RavenColor().background,
         appBar: receive.header(context),
         body: receive.body(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: receive.shareAddressButton(),
-        bottomNavigationBar: all.walletTradingButtons());
+        bottomNavigationBar: RavenButton().bottomNav(context));
   }
 }

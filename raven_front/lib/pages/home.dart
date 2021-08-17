@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:raven_mobile/components/home.dart' as home;
-import 'package:raven_mobile/components/all.dart' as all;
+import 'package:raven_mobile/components/pages/home.dart' as home;
+import 'package:raven_mobile/components/buttons.dart';
+import 'package:raven_mobile/styles.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -19,17 +20,16 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
-    Color? bgColor = Colors.blueAccent[50];
     return DefaultTabController(
         length: 2,
         child: Scaffold(
-            backgroundColor: bgColor,
+            backgroundColor: RavenColor().background,
             appBar: home.balanceHeader(context, data),
             drawer: home.accountsView(context, data),
             body: home.holdingsTransactionsView(data),
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
             floatingActionButton: home.sendReceiveButtons(context),
-            bottomNavigationBar: all.walletTradingButtons()));
+            bottomNavigationBar: RavenButton().bottomNav(context)));
   }
 }

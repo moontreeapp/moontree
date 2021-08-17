@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:raven_mobile/components/settings/settings.dart' as settings;
+import 'package:raven_mobile/components/pages/settings/settings.dart'
+    as settings;
+import 'package:raven_mobile/styles.dart';
 
 class Settings extends StatefulWidget {
   final dynamic data;
@@ -21,9 +23,8 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
-    Color? bgColor = Colors.blueAccent[50];
     return Scaffold(
-        backgroundColor: bgColor,
+        backgroundColor: RavenColor().background,
         appBar: settings.header(context),
         body: settings.body(context));
   }
