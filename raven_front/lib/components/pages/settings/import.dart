@@ -3,15 +3,12 @@ import 'package:raven_mobile/components/styles/buttons.dart';
 import 'package:raven_mobile/styles.dart';
 import 'package:raven_mobile/components/buttons.dart';
 
-AppBar header(context) {
-  return AppBar(
+AppBar header(context) => AppBar(
     backgroundColor: RavenColor().appBar,
     leading: RavenButton().back(context),
     elevation: 2,
     centerTitle: false,
-    title: Text('Import Wallet', style: RavenTextStyle().h2),
-  );
-}
+    title: RavenText('Import Wallet').h2);
 
 ListView body(_formKey) {
   var _controller = TextEditingController();
@@ -46,27 +43,26 @@ ListView body(_formKey) {
       ]);
 }
 
-Row importWaysButtons(context) {
-  return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-    ElevatedButton.icon(
-        icon: Icon(Icons.qr_code_scanner),
-        label: Text('Scan'),
-        onPressed: () {
-          //Navigator.push(
-          //  context,
-          //  MaterialPageRoute(builder: (context) => Receive()),
-          //);
-        },
-        style: RavenButtonStyle().leftSideCurved),
-    ElevatedButton.icon(
-        icon: Icon(Icons.upload_file),
-        label: Text('File'),
-        onPressed: () {
-          //Navigator.push(
-          //  context,
-          //  MaterialPageRoute(builder: (context) => Send()),
-          //);
-        },
-        style: RavenButtonStyle().rightSideCurved)
-  ]);
-}
+Row importWaysButtons(context) =>
+    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      ElevatedButton.icon(
+          icon: Icon(Icons.qr_code_scanner),
+          label: Text('Scan'),
+          onPressed: () {
+            //Navigator.push(
+            //  context,
+            //  MaterialPageRoute(builder: (context) => Receive()),
+            //);
+          },
+          style: RavenButtonStyle().leftSideCurved),
+      ElevatedButton.icon(
+          icon: Icon(Icons.upload_file),
+          label: Text('File'),
+          onPressed: () {
+            //Navigator.push(
+            //  context,
+            //  MaterialPageRoute(builder: (context) => Send()),
+            //);
+          },
+          style: RavenButtonStyle().rightSideCurved)
+    ]);

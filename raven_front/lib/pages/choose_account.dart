@@ -23,7 +23,7 @@ class _ChooseAccountState extends State<ChooseAccount> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey[200],
+        backgroundColor: RavenColor().offWhite,
         appBar: AppBar(
             backgroundColor: RavenColor().appBar,
             title: Text('Choose an Account'),

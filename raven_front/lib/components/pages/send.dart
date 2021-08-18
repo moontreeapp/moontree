@@ -2,43 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/styles.dart';
 
-PreferredSize header(context) {
-  return PreferredSize(
-      preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
-      child: AppBar(
-          backgroundColor: RavenColor().appBar,
-          elevation: 2,
-          centerTitle: false,
-          leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.grey[100]),
-              onPressed: () => Navigator.pop(context)),
-          actions: <Widget>[
-            Padding(
-                padding: EdgeInsets.only(right: 20.0),
-                child: RavenButton().settings(context))
-          ],
-          title: Text('Wallet', style: RavenTextStyle().h2),
-          flexibleSpace: Container(
-            color: RavenColor().appBar,
-            alignment: Alignment.center,
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text('\n0 RVN', style: RavenTextStyle().h1),
-                IconButton(
-                    onPressed: () {
-                      /*show available assets and balances for this account*/
-                    },
-                    padding: EdgeInsets.only(top: 24.0),
-                    icon: Icon(
-                      Icons.change_circle_outlined,
-                      color: Colors.white,
-                    ))
-              ]),
-              Text('\n\$ 0.00', style: RavenTextStyle().h3)
+PreferredSize header(context) => PreferredSize(
+    preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
+    child: AppBar(
+        backgroundColor: RavenColor().appBar,
+        elevation: 2,
+        centerTitle: false,
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.grey[100]),
+            onPressed: () => Navigator.pop(context)),
+        actions: <Widget>[
+          Padding(
+              padding: EdgeInsets.only(right: 20.0),
+              child: RavenButton().settings(context))
+        ],
+        title: RavenText('Wallet').h2,
+        flexibleSpace: Container(
+          color: RavenColor().appBar,
+          alignment: Alignment.center,
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              RavenText('\n0 RVN').h1,
+              IconButton(
+                  onPressed: () {
+                    /*show available assets and balances for this account*/
+                  },
+                  padding: EdgeInsets.only(top: 24.0),
+                  icon: Icon(
+                    Icons.change_circle_outlined,
+                    color: Colors.white,
+                  ))
             ]),
-          )));
-}
+            RavenText('\n\$ 0.00').h3
+          ]),
+        )));
 
 ListView body(_formKey) {
   var _controller = TextEditingController();
@@ -96,16 +93,14 @@ ListView body(_formKey) {
       ]);
 }
 
-ElevatedButton sendTransactionButton(_formKey) {
-  return ElevatedButton.icon(
-      icon: Icon(Icons.send),
-      label: Text('Send'),
-      onPressed: () {
-        // Validate will return true if the form is valid, or false if
-        // the form is invalid.
-        if (_formKey.currentState!.validate()) {
-          // Process data.
-        }
-      },
-      style: RavenButtonStyle().curvedSides);
-}
+ElevatedButton sendTransactionButton(_formKey) => ElevatedButton.icon(
+    icon: Icon(Icons.send),
+    label: Text('Send'),
+    onPressed: () {
+      // Validate will return true if the form is valid, or false if
+      // the form is invalid.
+      if (_formKey.currentState!.validate()) {
+        // Process data.
+      }
+    },
+    style: RavenButtonStyle().curvedSides);

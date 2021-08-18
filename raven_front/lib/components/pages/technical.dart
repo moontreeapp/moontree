@@ -5,15 +5,13 @@ import 'package:flutter_treeview/flutter_treeview.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/styles.dart';
 
-AppBar header(context) {
-  return AppBar(
-    backgroundColor: RavenColor().appBar,
-    leading: RavenButton().back(context),
-    elevation: 2,
-    centerTitle: false,
-    title: Text('Technical View', style: RavenTextStyle().h2),
-  );
-}
+AppBar header(context) => AppBar(
+      backgroundColor: RavenColor().appBar,
+      leading: RavenButton().back(context),
+      elevation: 2,
+      centerTitle: false,
+      title: RavenText('Technical View').h2,
+    );
 
 Container body() {
   const List<Map<String, dynamic>> accountsHierarchy = [
