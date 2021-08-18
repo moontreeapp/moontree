@@ -38,24 +38,18 @@ ListView _holdingsView(data) {
   if (data['holdings'][data['account']].isNotEmpty) {
     for (MapEntry holding in data['holdings'][data['account']].entries) {
       if (holding.key == 'rvn') {
+        rvnHolding.add(ListTile(
+            onTap: () {},
+            title: Text(holding.key),
+            trailing: Text(holding.value.toString()),
+            leading: CircleAvatar(
+                backgroundImage: RavenIcons().getAssetImage(holding.key))));
         if (holding.value < 600) {
-          rvnHolding.add(ListTile(
-              onTap: () {},
-              title: Text(holding.key),
-              trailing: Text(holding.value.toString()),
-              leading: CircleAvatar(
-                  backgroundImage: AssetImage('assets/ravenhead.png'))));
           rvnHolding.add(ListTile(
               onTap: () {},
               title: Text('+ Create Asset (not enough RVN)',
                   style: RavenTextStyle().disabled)));
         } else {
-          rvnHolding.add(ListTile(
-              onTap: () {},
-              title: Text(holding.key),
-              trailing: Text(holding.value.toString()),
-              leading: CircleAvatar(
-                  backgroundImage: AssetImage('assets/ravenhead.png'))));
           rvnHolding.add(ListTile(
               onTap: () {},
               title: TextButton.icon(
@@ -69,7 +63,7 @@ ListView _holdingsView(data) {
             title: Text(holding.key),
             trailing: Text(holding.value.toString()),
             leading: CircleAvatar(
-                backgroundImage: AssetImage('assets/ravenhead.png'))));
+                backgroundImage: RavenIcons().getAssetImage(holding.key))));
       }
     }
   }
@@ -79,7 +73,7 @@ ListView _holdingsView(data) {
         title: Text('rvn'),
         trailing: Text('0'),
         leading:
-            CircleAvatar(backgroundImage: AssetImage('assets/ravenhead.png'))));
+            CircleAvatar(backgroundImage: RavenIcons().getAssetImage('rvn'))));
     rvnHolding.add(ListTile(
         onTap: () {},
         title: Text('+ Create Asset (not enough RVN)',
@@ -132,7 +126,8 @@ TabBarView holdingsTransactionsView(data) {
                 : RavenIcons().out),
             trailing: Text(transaction['amount'].toString()),
             leading: CircleAvatar(
-                backgroundImage: AssetImage('assets/ravenhead.png')))
+                backgroundImage:
+                    RavenIcons().getAssetImage(transaction['asset'])))
     ]);
   }
   // if empty return empty message:
