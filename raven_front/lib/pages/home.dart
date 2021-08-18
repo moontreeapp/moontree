@@ -10,6 +10,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  late BuildContext currentContext;
   dynamic data = {};
 
   @override
@@ -20,13 +21,14 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
+    currentContext = context;
     return DefaultTabController(
         length: 2,
         child: Scaffold(
             backgroundColor: RavenColor().background,
             appBar: home.balanceHeader(context, data),
             drawer: home.accountsView(context, data),
-            body: home.holdingsTransactionsView(data),
+            body: home.holdingsTransactionsView(context, data),
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
             floatingActionButton: home.sendReceiveButtons(context),

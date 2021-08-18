@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_mobile/pages/receive.dart';
 import 'package:raven_mobile/pages/send.dart';
 import 'package:raven_mobile/components/buttons.dart';
+import 'package:raven_mobile/pages/transaction.dart';
 import 'package:raven_mobile/styles.dart';
 
 PreferredSize balanceHeader(context, data) => PreferredSize(
@@ -31,7 +32,7 @@ PreferredSize balanceHeader(context, data) => PreferredSize(
                 indicatorColor: Colors.grey[400],
                 tabs: [Tab(text: 'Holdings'), Tab(text: 'Transactions')]))));
 
-ListView _holdingsView(data) {
+ListView _holdingsView(context, data) {
   var rvnHolding = <Widget>[];
   var assetHoldings = <Widget>[];
   if (data['holdings'][data['account']].isNotEmpty) {
@@ -76,10 +77,15 @@ ListView _holdingsView(data) {
   return ListView(children: <Widget>[...rvnHolding, ...assetHoldings]);
 }
 
-ListView _transactionsView(data) => ListView(children: <Widget>[
+ListView _transactionsView(context, data) => ListView(children: <Widget>[
       for (var transaction in data['transactions'][data['account']])
         ListTile(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Transaction()),
+              );
+            },
             onLongPress: () {/* convert all values to USD and back */},
             title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -105,13 +111,13 @@ Container _emptyMessage({IconData? icon, String? name}) => Container(
     ]));
 
 /// returns a list of holdings and transactions or empty messages
-TabBarView holdingsTransactionsView(data) => TabBarView(children: [
+TabBarView holdingsTransactionsView(context, data) => TabBarView(children: [
       data['holdings'][data['account']].isEmpty
           ? _emptyMessage(icon: Icons.savings, name: 'holdings')
-          : _holdingsView(data),
+          : _holdingsView(context, data),
       data['transactions'][data['account']].isEmpty
           ? _emptyMessage(icon: Icons.public, name: 'transactions')
-          : _transactionsView(data),
+          : _transactionsView(context, data),
     ]);
 
 Drawer accountsView(context, data) => Drawer(

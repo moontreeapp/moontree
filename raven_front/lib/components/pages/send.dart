@@ -8,15 +8,13 @@ PreferredSize header(context) => PreferredSize(
         backgroundColor: RavenColor().appBar,
         elevation: 2,
         centerTitle: false,
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.grey[100]),
-            onPressed: () => Navigator.pop(context)),
+        leading: RavenButton().back(context),
         actions: <Widget>[
           Padding(
               padding: EdgeInsets.only(right: 20.0),
               child: RavenButton().settings(context))
         ],
-        title: RavenText('Wallet').h2,
+        title: RavenText('Send').h2,
         flexibleSpace: Container(
           color: RavenColor().appBar,
           alignment: Alignment.center,

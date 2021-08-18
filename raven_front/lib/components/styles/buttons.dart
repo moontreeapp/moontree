@@ -1,3 +1,4 @@
+/// Allows for importing two different ways, I prefer the later, See colors.dart
 import 'package:flutter/material.dart';
 import 'package:raven_mobile/components/styles/text.dart';
 
