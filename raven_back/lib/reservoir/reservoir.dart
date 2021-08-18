@@ -1,27 +1,34 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:equatable/equatable.dart';
+
 import 'change.dart';
 import 'index.dart';
 import 'source.dart';
 
 export 'hive_source.dart';
 
-class Reservoir<Key, Record> with IterableMixin<Record> {
-  final Source<Key, Record> source;
-  late UniqueIndex<Key, Record> primaryIndex;
-  final Map<String, Index<Key, Record>> indices = {};
-  late Stream<Change> changes;
+const PRIMARY_INDEX = '_primary';
 
-  Reservoir(this.source) {
-    changes = source.watch(this);
-  }
+class Reservoir<Key, Record extends Equatable> with IterableMixin<Record> {
+  final Source<Key, Record> source;
+  final Map<String, Index<Key, Record>> indices = {};
+  final StreamController<Change> _changes = StreamController();
+
+  Stream<Change> get changes => _changes.stream;
 
   Iterable<Record> get data => primaryIndex.values;
 
-  UniqueIndex<Key, Record> addPrimaryIndex(GetKey<Key, Record> getKey) {
-    primaryIndex = UniqueIndex(getKey);
-    return primaryIndex;
+  @override
+  Iterator<Record> get iterator => data.iterator;
+
+  UniqueIndex<Key, Record> get primaryIndex =>
+      indices[PRIMARY_INDEX]! as UniqueIndex<Key, Record>;
+
+  Reservoir(this.source, GetKey<Key, Record> getKey) {
+    indices[PRIMARY_INDEX] = UniqueIndex(getKey);
+    source.initialLoad(_addToIndices);
   }
 
   UniqueIndex<Key, Record> addUniqueIndex(
@@ -49,61 +56,39 @@ class Reservoir<Key, Record> with IterableMixin<Record> {
 
   Record? get(Key key) => primaryIndex.getOne(key);
 
-  @override
-  Iterator<Record> get iterator => data.iterator;
+  Future<Change?> save(Record record) async {
+    var key = primaryIndex.getKey(record);
+    var change = await source.save(key, record);
+    if (change != null) {
+      _addToIndices(record);
+      _changes.sink.add(change);
+    }
+    return change;
+  }
 
-  Future saveAll(List<Record> records) async {
+  Future<List<Change>> saveAll(List<Record> records) async {
+    var changes = <Change>[];
     for (var record in records) {
-      await save(record);
+      var change = await save(record);
+      if (change != null) {
+        changes.add(change);
+      }
     }
+    return changes;
   }
 
-  Future save(Record record) async {
+  Future<Change?> remove(Record record) async {
     var key = primaryIndex.getKey(record);
-    // Save key to source, which will (reactively) notify this reservoir of the
-    // new key and construct a new model, also updating any associated indices.
-    await source.save(key, record);
-  }
-
-  Future remove(Record record) async {
-    var key = primaryIndex.getKey(record);
-    if (primaryIndex.has(key)) {
-      // Remove key from source, which will (reactively) notify this reservoir
-      // and then remove the key and any associated keys in indices.
-      await source.remove(key);
-    } else {
-      throw ArgumentError('record not found for $key');
+    var change = await source.remove(key);
+    if (change != null) {
+      _removeFromIndices(record);
     }
-  }
-
-  Change addRecord(key, Record record) {
-    _addToIndices(record);
-    primaryIndex.add(record);
-    return Added(key, record);
   }
 
   void _addToIndices(Record record) {
     for (var index in indices.values) {
       index.add(record);
     }
-  }
-
-  Change updateRecord(key, Record record) {
-    _updateIndices(key, record);
-    primaryIndex.add(record);
-    return Updated(key, record);
-  }
-
-  void _updateIndices(key, Record record) {
-    for (var index in indices.values) {
-      index.add(record);
-    }
-  }
-
-  Change removeRecord(key) {
-    _removeFromIndices(primaryIndex.getOne(key)!);
-    primaryIndex.remove(key);
-    return Removed(key);
   }
 
   void _removeFromIndices(Record record) {

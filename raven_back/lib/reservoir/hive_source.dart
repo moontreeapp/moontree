@@ -1,42 +1,44 @@
+import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 
 import 'change.dart';
-import 'reservoir.dart';
 import 'source.dart';
 
-class HiveSource<Key, Record> extends Source<Key, Record> {
+class HiveSource<Key, Record extends Equatable> extends Source<Key, Record> {
   final String name;
   late final Box<Record> box;
 
   HiveSource(this.name);
 
   @override
-  Stream<Change> watch(Reservoir<Key, Record> reservoir) {
+  void initialLoad(AddRecord<Record> addRecord) {
     box = Hive.box<Record>(name);
 
     // Populate initial data from Hive box
     for (var entry in box.toMap().entries) {
-      reservoir.addRecord(entry.key, entry.value);
+      addRecord(entry.value);
     }
-
-    // Subscribe to future updates to data
-    return box.watch().map((BoxEvent e) {
-      var key = e.key;
-      Record value = e.value;
-      var exists = reservoir.primaryIndex.has(key);
-      if (e.deleted) return reservoir.removeRecord(key);
-      if (!exists) return reservoir.addRecord(key, value);
-      return reservoir.updateRecord(key, value);
-    });
   }
 
   @override
-  Future save(key, Record record) async {
-    await box.put(key, record);
+  Future<Change?> save(key, Record record) async {
+    var existing = box.get(key);
+    if (existing == null) {
+      await box.put(key, record);
+      return Added(key, record);
+    } else if (existing == record) {
+      return null;
+    } else {
+      await box.put(key, record);
+      return Updated(key, record);
+    }
   }
 
   @override
-  Future remove(key) async {
-    await box.delete(key);
+  Future<Change?> remove(key) async {
+    if (box.containsKey(key)) {
+      await box.delete(key);
+      return Removed(key);
+    }
   }
 }

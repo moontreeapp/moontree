@@ -1,29 +1,30 @@
 import 'package:ordered_set/ordered_set.dart';
 
-typedef GetKey<Key, Model> = Key Function(Model);
+typedef GetKey<Key, Record> = Key Function(Record);
 typedef Compare<A> = int Function(A, A);
 
 int defaultCompare<Item>(Item item1, Item item2) {
   return item1.toString().compareTo(item2.toString());
 }
 
-abstract class Index<Key, Model> {
-  final GetKey<Key, Model> getKey;
+abstract class Index<Key, Record> {
+  final GetKey<Key, Record> getKey;
 
   Index(this.getKey);
 
   Iterable<Key> get keys;
-  Iterable<Model> get values;
+  Iterable<Record> get values;
 
-  void add(Model model);
-  void addAll(Iterable<Model> models) => models.forEach((model) => add(model));
-  Model? getOne(Key key);
+  void add(Record record);
+  void addAll(Iterable<Record> records) =>
+      records.forEach((record) => add(record));
+  Record? getOne(Key key);
   bool has(Key key) => getOne(key) != null;
-  bool remove(Model model);
+  bool remove(Record record);
 }
 
-class UniqueIndex<Key, Model> extends Index<Key, Model> {
-  final Map<Key, Model> _data = {};
+class UniqueIndex<Key, Record> extends Index<Key, Record> {
+  final Map<Key, Record> _data = {};
 
   UniqueIndex(getKey) : super(getKey);
 
@@ -31,17 +32,17 @@ class UniqueIndex<Key, Model> extends Index<Key, Model> {
   Iterable<Key> get keys => _data.keys;
 
   @override
-  Iterable<Model> get values => _data.values;
+  Iterable<Record> get values => _data.values;
 
   @override
-  void add(Model model) => _data[getKey(model)] = model;
+  void add(Record record) => _data[getKey(record)] = record;
 
   @override
-  Model? getOne(Key key) => _data[key];
+  Record? getOne(Key key) => _data[key];
 
   @override
-  bool remove(Model model) {
-    var key = getKey(model);
+  bool remove(Record record) {
+    var key = getKey(record);
     if (_data.containsKey(key)) {
       _data.remove(key);
       return true;
@@ -51,9 +52,9 @@ class UniqueIndex<Key, Model> extends Index<Key, Model> {
   }
 }
 
-class MultipleIndex<Key, Model> extends Index<Key, Model> {
-  final Map<Key, OrderedSet<Model>> _data = {};
-  late final Compare<Model> compare;
+class MultipleIndex<Key, Record> extends Index<Key, Record> {
+  final Map<Key, OrderedSet<Record>> _data = {};
+  late final Compare<Record> compare;
 
   MultipleIndex(getKey, [Compare? compare])
       : compare = compare ?? defaultCompare,
@@ -63,10 +64,10 @@ class MultipleIndex<Key, Model> extends Index<Key, Model> {
   @override
   Iterable<Key> get keys => _data.keys;
 
-  /// Returns the total number of models in this index (may be more than
-  /// the size of `keys` because each key can store multiple models)
+  /// Returns the total number of records in this index (may be more than
+  /// the size of `keys` because each key can store multiple records)
   @override
-  Iterable<Model> get values sync* {
+  Iterable<Record> get values sync* {
     for (var list in _data.values) {
       for (var item in list) {
         yield item;
@@ -75,10 +76,10 @@ class MultipleIndex<Key, Model> extends Index<Key, Model> {
   }
 
   @override
-  Model? getOne(Key key) => getAll(key).first;
+  Record? getOne(Key key) => getAll(key).first;
 
   /// Retrieve all values associated with the key, in order.
-  OrderedSet<Model> getAll(Key key) => _data[key] ?? OrderedSet<Model>();
+  OrderedSet<Record> getAll(Key key) => _data[key] ?? OrderedSet<Record>();
 
   /// Return the size (length of the set) of a named index
   int size(Key key) => _data[key]!.length;
@@ -86,20 +87,20 @@ class MultipleIndex<Key, Model> extends Index<Key, Model> {
   /// Add a row to the indexed values; if the row has already been added, this
   /// is a no-op.
   @override
-  void add(Model row) {
+  void add(Record row) {
     var key = getKey(row);
-    OrderedSet<Model> set;
+    OrderedSet<Record> set;
     if (!_data.containsKey(key)) {
-      set = _data[key] = OrderedSet<Model>(compare);
+      set = _data[key] = OrderedSet<Record>(compare);
     } else {
       set = _data[key]!;
     }
     set.add(row);
   }
 
-  /// Remove a model from the index
+  /// Remove a record from the index
   @override
-  bool remove(Model row) {
+  bool remove(Record row) {
     var key = getKey(row);
     var removed = false;
     if (_data.containsKey(key)) {
