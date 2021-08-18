@@ -20,61 +20,46 @@ AppBar header(context) {
 SettingsList body(context) {
   return SettingsList(
     sections: [
-      SettingsSection(
-        tiles: [
-          SettingsTile(
+      SettingsSection(tiles: [
+        SettingsTile(
             title: 'Wallet',
             subtitle: '<Account Name>',
             leading: Icon(Icons.account_balance_wallet_rounded),
             onPressed: (BuildContext context) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => WalletSettings()),
-              );
-            },
-          ),
-          SettingsTile(
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => WalletSettings()));
+            }),
+        SettingsTile(
             title: 'P2P Exchange',
             enabled: false,
             leading: Icon(Icons.swap_horiz),
-            onPressed: (BuildContext context) {},
-          ),
-        ],
-      ),
+            onPressed: (BuildContext context) {})
+      ]),
       SettingsSection(
         title: 'App',
         tiles: [
           SettingsTile(
-            title: 'Currency',
-            leading: Icon(Icons.money),
-            onPressed: (BuildContext context) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Currency()),
-              );
-            },
-          ),
+              title: 'Currency',
+              leading: Icon(Icons.money),
+              onPressed: (BuildContext context) {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Currency()));
+              }),
           SettingsTile(
-            title: 'Language',
-            subtitle: 'English',
-            leading: Icon(Icons.language),
-            onPressed: (BuildContext context) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Language()),
-              );
-            },
-          ),
+              title: 'Language',
+              subtitle: 'English',
+              leading: Icon(Icons.language),
+              onPressed: (BuildContext context) {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Language()));
+              }),
           SettingsTile(
-            title: 'About',
-            leading: Icon(Icons.info),
-            onPressed: (BuildContext context) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => About()),
-              );
-            },
-          ),
+              title: 'About',
+              leading: Icon(Icons.info),
+              onPressed: (BuildContext context) {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => About()));
+              }),
           //SettingsTile.switchTile(
           //  title: 'Use fingerprint',
           //  leading: Icon(Icons.fingerprint),

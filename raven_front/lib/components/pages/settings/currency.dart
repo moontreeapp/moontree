@@ -14,59 +14,49 @@ AppBar header(context) {
 }
 
 SettingsList body(context) {
-  return SettingsList(
-    sections: [
-      SettingsSection(
-        tiles: [
-          SettingsTile(
-            title: 'USD',
-            leading: Icon(Icons.money),
-            onPressed: (BuildContext context) {
-              // toggle
-            },
-          ),
-          SettingsTile(
-            title: 'EUR',
-            leading: Icon(Icons.euro),
-            onPressed: (BuildContext context) {},
-          ),
-          SettingsTile(
-            title: 'CAD',
-            leading: Icon(Icons.money),
-            onPressed: (BuildContext context) {
-              // toggle
-            },
-          ),
-          SettingsTile(
-            title: 'GBP',
-            leading: Icon(Icons.money),
-            onPressed: (BuildContext context) {
-              // toggle
-            },
-          ),
-          SettingsTile(
-            title: 'JPY',
-            leading: Icon(Icons.money),
-            onPressed: (BuildContext context) {
-              // toggle
-            },
-          ),
-          SettingsTile(
-            title: 'NZD',
-            leading: Icon(Icons.money),
-            onPressed: (BuildContext context) {
-              // toggle
-            },
-          ),
-          SettingsTile(
-            title: 'RUB',
-            leading: Icon(Icons.money),
-            onPressed: (BuildContext context) {
-              // toggle
-            },
-          ),
-        ],
+  return SettingsList(sections: [
+    SettingsSection(tiles: [
+      SettingsTile(
+          title: 'USD',
+          leading: Icon(Icons.money),
+          onPressed: (BuildContext context) {
+            // toggle
+          }),
+      SettingsTile(
+        title: 'EUR',
+        leading: Icon(Icons.euro),
+        onPressed: (BuildContext context) {},
       ),
-    ],
-  );
+      SettingsTile(
+          title: 'CAD',
+          leading: Icon(Icons.money),
+          onPressed: (BuildContext context) {
+            // toggle
+          }),
+      SettingsTile(
+          title: 'GBP',
+          leading: Icon(Icons.money),
+          onPressed: (BuildContext context) {
+            // toggle
+          }),
+      SettingsTile(
+          title: 'JPY',
+          leading: Icon(Icons.money),
+          onPressed: (BuildContext context) {
+            // toggle
+          }),
+      SettingsTile(
+          title: 'NZD',
+          leading: Icon(Icons.money),
+          onPressed: (BuildContext context) {
+            // toggle
+          }),
+      SettingsTile(
+          title: 'RUB',
+          leading: Icon(Icons.money),
+          onPressed: (BuildContext context) {
+            // toggle
+          }),
+    ])
+  ]);
 }

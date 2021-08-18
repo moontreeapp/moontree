@@ -4,12 +4,11 @@ import 'package:raven_mobile/components/buttons.dart';
 
 AppBar header(context) {
   return AppBar(
-    backgroundColor: RavenColor().appBar,
-    leading: RavenButton().back(context),
-    elevation: 2,
-    centerTitle: false,
-    title: Text('About', style: RavenTextStyle().h2),
-  );
+      backgroundColor: RavenColor().appBar,
+      leading: RavenButton().back(context),
+      elevation: 2,
+      centerTitle: false,
+      title: Text('About', style: RavenTextStyle().h2));
 }
 
 Center body(context) {

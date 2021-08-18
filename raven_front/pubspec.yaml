@@ -40,6 +40,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   settings_ui: ^1.0.0
+  flutter_treeview: ^1.0.6+1
 
 
 
