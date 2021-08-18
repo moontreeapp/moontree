@@ -32,10 +32,7 @@ ListView body() {
                 showCursor: true,
                 toolbarOptions: ToolbarOptions(
                     copy: true, selectAll: true, cut: false, paste: false),
-                style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 22.0,
-                    fontWeight: FontWeight.bold))),
+                style: RavenTextStyle().warning)),
         SizedBox(height: 30.0),
         Center(
             child: SelectableText(

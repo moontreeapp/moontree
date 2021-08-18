@@ -7,7 +7,7 @@
 /// RavenTextStyle().h2;
 import 'package:flutter/material.dart';
 
-TextStyle h1Text({Color? color}) {
+TextStyle h1Style({Color? color}) {
   return TextStyle(
     fontSize: 24.0,
     letterSpacing: 2.0,
@@ -15,7 +15,7 @@ TextStyle h1Text({Color? color}) {
   );
 }
 
-TextStyle h2Text({Color? color}) {
+TextStyle h2Style({Color? color}) {
   return TextStyle(
     fontSize: 18.0,
     letterSpacing: 2.0,
@@ -23,7 +23,7 @@ TextStyle h2Text({Color? color}) {
   );
 }
 
-TextStyle h3Text({Color? color}) {
+TextStyle h3Style({Color? color}) {
   return TextStyle(
     fontSize: 16.0,
     letterSpacing: 2.0,
@@ -31,13 +31,20 @@ TextStyle h3Text({Color? color}) {
   );
 }
 
+TextStyle warningStyle() => TextStyle(
+      color: Colors.red,
+      fontSize: 22.0,
+      fontWeight: FontWeight.bold,
+    );
+
 class RavenTextStyle {
   RavenTextStyle();
 
-  TextStyle get h1 => h1Text();
-  TextStyle get h2 => h2Text();
-  TextStyle get h3 => h3Text();
-  TextStyle getH1({Color? color}) => h1Text(color: color);
-  TextStyle getH2({Color? color}) => h2Text(color: color);
-  TextStyle getH3({Color? color}) => h3Text(color: color);
+  TextStyle get h1 => h1Style();
+  TextStyle get h2 => h2Style();
+  TextStyle get h3 => h3Style();
+  TextStyle get warning => warningStyle();
+  TextStyle getH1({Color? color}) => h1Style(color: color);
+  TextStyle getH2({Color? color}) => h2Style(color: color);
+  TextStyle getH3({Color? color}) => h3Style(color: color);
 }
