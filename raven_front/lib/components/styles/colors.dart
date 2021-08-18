@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 Color seeThrough() => Colors.transparent;
 Color? appBarColor() => Colors.blue[900];
 Color? backArrowColor() => Colors.blue[900];
-Color? backgroundColor() => Colors.blueAccent[50];
+Color? backgroundColor() => Colors.blue[50];
 
 class RavenColor {
   RavenColor();

@@ -37,6 +37,10 @@ TextStyle warningStyle() => TextStyle(
       fontWeight: FontWeight.bold,
     );
 
+TextStyle disabledStyle() => TextStyle(
+      color: Colors.grey,
+    );
+
 class RavenTextStyle {
   RavenTextStyle();
 
@@ -44,6 +48,7 @@ class RavenTextStyle {
   TextStyle get h2 => h2Style();
   TextStyle get h3 => h3Style();
   TextStyle get warning => warningStyle();
+  TextStyle get disabled => disabledStyle();
   TextStyle getH1({Color? color}) => h1Style(color: color);
   TextStyle getH2({Color? color}) => h2Style(color: color);
   TextStyle getH3({Color? color}) => h3Style(color: color);

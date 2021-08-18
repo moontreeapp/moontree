@@ -32,6 +32,63 @@ PreferredSize balanceHeader(context, data) {
                   tabs: [Tab(text: 'Holdings'), Tab(text: 'Transactions')]))));
 }
 
+ListView _holdingsView(data) {
+  var rvnHolding = <Widget>[];
+  var assetHoldings = <Widget>[];
+  if (data['holdings'][data['account']].isNotEmpty) {
+    for (MapEntry holding in data['holdings'][data['account']].entries) {
+      if (holding.key == 'rvn') {
+        if (holding.value < 600) {
+          rvnHolding.add(ListTile(
+              onTap: () {},
+              title: Text(holding.key),
+              trailing: Text(holding.value.toString()),
+              leading: CircleAvatar(
+                  backgroundImage: AssetImage('assets/ravenhead.png'))));
+          rvnHolding.add(ListTile(
+              onTap: () {},
+              title: Text('+ Create Asset (not enough RVN)',
+                  style: RavenTextStyle().disabled)));
+        } else {
+          rvnHolding.add(ListTile(
+              onTap: () {},
+              title: Text(holding.key),
+              trailing: Text(holding.value.toString()),
+              leading: CircleAvatar(
+                  backgroundImage: AssetImage('assets/ravenhead.png'))));
+          rvnHolding.add(ListTile(
+              onTap: () {},
+              title: TextButton.icon(
+                  onPressed: () {/* create asset screen */},
+                  icon: Icon(Icons.add),
+                  label: Text('Create Asset'))));
+        }
+      } else {
+        assetHoldings.add(ListTile(
+            onTap: () {},
+            title: Text(holding.key),
+            trailing: Text(holding.value.toString()),
+            leading: CircleAvatar(
+                backgroundImage: AssetImage('assets/ravenhead.png'))));
+      }
+    }
+  }
+  if (rvnHolding.isEmpty) {
+    rvnHolding.add(ListTile(
+        onTap: () {},
+        title: Text('rvn'),
+        trailing: Text('0'),
+        leading:
+            CircleAvatar(backgroundImage: AssetImage('assets/ravenhead.png'))));
+    rvnHolding.add(ListTile(
+        onTap: () {},
+        title: Text('+ Create Asset (not enough RVN)',
+            style: RavenTextStyle().disabled)));
+  }
+
+  return ListView(children: <Widget>[...rvnHolding, ...assetHoldings]);
+}
+
 /// returns a list of holdings and transactions or empty messages
 TabBarView holdingsTransactionsView(data) {
   var holdings;
@@ -49,15 +106,7 @@ TabBarView holdingsTransactionsView(data) {
               child: Text('get RVN', style: RavenTextStyle().h2))
         ]));
   } else {
-    holdings = ListView(children: <Widget>[
-      for (var holding in data['holdings'][data['account']])
-        ListTile(
-            onTap: () {},
-            title:
-                Text(holding['asset'] + ' -- ' + holding['amount'].toString()),
-            leading: CircleAvatar(
-                backgroundImage: AssetImage('assets/ravenhead.png')))
-    ]);
+    holdings = _holdingsView(data);
   }
   if (data['transactions'][data['account']].isEmpty) {
     transactions = Container(
@@ -76,11 +125,12 @@ TabBarView holdingsTransactionsView(data) {
       for (var transaction in data['transactions'][data['account']])
         ListTile(
             onTap: () {},
-            title: Text(transaction['asset'] +
-                ' -- ' +
-                transaction['direction'] +
-                ' -- ' +
-                transaction['amount'].toString()),
+            isThreeLine: true,
+            title: Text(transaction['asset']),
+            subtitle: (transaction['direction'] == 'in'
+                ? RavenIcons().income
+                : RavenIcons().out),
+            trailing: Text(transaction['amount'].toString()),
             leading: CircleAvatar(
                 backgroundImage: AssetImage('assets/ravenhead.png')))
     ]);

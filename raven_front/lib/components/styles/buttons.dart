@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raven_mobile/components/styles/text.dart';
 
 ButtonStyle leftCurvedButton() => ButtonStyle(
     shape: MaterialStateProperty.all(RoundedRectangleBorder(
@@ -20,10 +21,18 @@ ButtonStyle curvedButton() => ButtonStyle(
             topRight: Radius.circular(30.0),
             bottomRight: Radius.circular(30.0)))));
 
+ButtonStyle disabledButton() => ButtonStyle(
+      backgroundColor:
+          MaterialStateProperty.all<Color>(Colors.grey[300] ?? Colors.white),
+      textStyle:
+          MaterialStateProperty.all<TextStyle>(RavenTextStyle().disabled),
+    );
+
 class RavenButtonStyle {
   RavenButtonStyle();
 
   ButtonStyle get leftSideCurved => leftCurvedButton();
   ButtonStyle get rightSideCurved => rightCurvedButton();
   ButtonStyle get curvedSides => curvedButton();
+  ButtonStyle get disabled => disabledButton();
 }
