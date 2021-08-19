@@ -2,12 +2,10 @@ import 'package:equatable/equatable.dart';
 
 import 'change.dart';
 
-typedef AddRecord<Record> = void Function(Record);
-
 /// A base class for the source of stored `Record` objects.
 /// For example, a HiveSource or other storage mechanism could be subclassed.
-abstract class Source<Key, Record extends Equatable> {
-  void initialLoad(AddRecord<Record> addRecord);
+abstract class Source<Key, Record extends EquatableMixin> {
+  Iterable<Record> initialLoad();
 
   /// Adds or updates the `model` at a given `key` in the Source.
   Future<Change?> save(Key key, Record model);

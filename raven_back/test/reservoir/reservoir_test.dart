@@ -6,7 +6,7 @@ import 'package:raven/reservoir/change.dart';
 
 import 'helper.dart';
 
-class SimpleRecord extends Equatable {
+class SimpleRecord with EquatableMixin {
   final String key;
   final String value;
   SimpleRecord(this.key, this.value);

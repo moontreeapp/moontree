@@ -5,8 +5,8 @@ import 'package:raven/reservoir/reservoir.dart';
 class WalletReservoir extends Reservoir<String, Wallet> {
   late MultipleIndex byAccount;
 
-  WalletReservoir([source]) : super(source ?? HiveSource('wallets')) {
-    addPrimaryIndex((wallet) => wallet.id);
+  WalletReservoir([source])
+      : super(source ?? HiveSource('wallets'), (wallet) => wallet.id) {
     byAccount = addMultipleIndex('account', (wallet) => wallet.accountId);
   }
 }

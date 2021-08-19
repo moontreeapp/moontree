@@ -4,30 +4,27 @@ import 'package:hive/hive.dart';
 import 'change.dart';
 import 'source.dart';
 
-class HiveSource<Key, Record extends Equatable> extends Source<Key, Record> {
+class HiveSource<Key, Record extends EquatableMixin>
+    extends Source<Key, Record> {
   final String name;
   late final Box<Record> box;
 
   HiveSource(this.name);
 
+  // Return initial Hive box records to be used to populate Reservoir
   @override
-  void initialLoad(AddRecord<Record> addRecord) {
-    box = Hive.box<Record>(name);
-
-    // Populate initial data from Hive box
-    for (var entry in box.toMap().entries) {
-      addRecord(entry.value);
-    }
+  Iterable<Record> initialLoad() {
+    return Hive.box<Record>(name).toMap().entries.map((entry) => entry.value);
   }
 
   @override
   Future<Change?> save(key, Record record) async {
     var existing = box.get(key);
-    if (existing == null) {
+    if (existing == record) {
+      return null;
+    } else if (existing == null) {
       await box.put(key, record);
       return Added(key, record);
-    } else if (existing == record) {
-      return null;
     } else {
       await box.put(key, record);
       return Updated(key, record);

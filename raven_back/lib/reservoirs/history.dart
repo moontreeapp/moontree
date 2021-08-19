@@ -9,9 +9,8 @@ class HistoryReservoir extends Reservoir<dynamic, History> {
   late MultipleIndex<dynamic, History> byScripthash;
   late MultipleIndex<dynamic, History> bySecurity;
 
-  HistoryReservoir([source]) : super(source ?? HiveSource('histories')) {
-    addPrimaryIndex((history) => history.txHash);
-
+  HistoryReservoir([source])
+      : super(source ?? HiveSource('histories'), (history) => history.txHash) {
     byAccount = addMultipleIndex('account', (history) => history.accountId);
     byWallet = addMultipleIndex('wallet', (history) => history.walletId);
     byScripthash =
