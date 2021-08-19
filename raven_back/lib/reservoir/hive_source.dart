@@ -18,7 +18,7 @@ class HiveSource<Key, Record extends EquatableMixin>
   }
 
   @override
-  Future<Change?> save(key, Record record) async {
+  Future<Change?> save(Key key, Record record) async {
     var existing = box.get(key);
     if (existing == record) {
       return null;
@@ -32,7 +32,7 @@ class HiveSource<Key, Record extends EquatableMixin>
   }
 
   @override
-  Future<Change?> remove(key) async {
+  Future<Change?> remove(Key key) async {
     if (box.containsKey(key)) {
       await box.delete(key);
       return Removed(key);

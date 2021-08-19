@@ -5,13 +5,18 @@ import 'package:equatable/equatable.dart';
 
 import 'change.dart';
 import 'index.dart';
+import 'index_unique.dart';
+import 'index_multiple.dart';
 import 'source.dart';
 
 export 'hive_source.dart';
+export 'index.dart';
+export 'index_unique.dart';
+export 'index_multiple.dart';
 
 const PRIMARY_INDEX = '_primary';
 
-class Reservoir<Key, Rec extends Equatable> with IterableMixin<Rec> {
+class Reservoir<Key, Rec extends EquatableMixin> with IterableMixin<Rec> {
   final Source<Key, Rec> source;
   final Map<String, Index<Key, Rec>> indices = {};
   final StreamController<List<Change>> _changes = StreamController();
@@ -28,8 +33,8 @@ class Reservoir<Key, Rec extends Equatable> with IterableMixin<Rec> {
   Iterator<Rec> get iterator => data.iterator;
 
   /// Return the `primaryIndex` from the set of indices
-  UniqueIndex<Key, Rec> get primaryIndex =>
-      indices[PRIMARY_INDEX]! as UniqueIndex<Key, Rec>;
+  IndexUnique<Key, Rec> get primaryIndex =>
+      indices[PRIMARY_INDEX]! as IndexUnique<Key, Rec>;
 
   /// Given a record, return its key as stored in the `primaryIndex`
   Key primaryKey(record) => primaryIndex.getKey(record);
@@ -41,21 +46,21 @@ class Reservoir<Key, Rec extends Equatable> with IterableMixin<Rec> {
   /// that maps a Record to a Key, so that the Reservoir can construct a
   /// `primaryIndex`.
   Reservoir(this.source, GetKey<Key, Rec> getKey) {
-    indices[PRIMARY_INDEX] = UniqueIndex(getKey);
+    indices[PRIMARY_INDEX] = IndexUnique(getKey);
     source.initialLoad().forEach(_addToIndices);
   }
 
   /// Create a unique index and add all current records to it
-  UniqueIndex<Key, Rec> addUniqueIndex(String name, GetKey<Key, Rec> getKey) {
+  IndexUnique<Key, Rec> addIndexUnique(String name, GetKey<Key, Rec> getKey) {
     _assertNewIndexName(name);
-    return indices[name] = UniqueIndex(getKey)..addAll(data);
+    return indices[name] = IndexUnique(getKey)..addAll(data);
   }
 
   /// Create a 'multiple' index and add all current records to it
-  MultipleIndex<Key, Rec> addMultipleIndex(String name, GetKey<Key, Rec> getKey,
+  IndexMultiple<Key, Rec> addIndexMultiple(String name, GetKey<Key, Rec> getKey,
       [Compare? compare]) {
     _assertNewIndexName(name);
-    return indices[name] = MultipleIndex(getKey, compare)..addAll(data);
+    return indices[name] = IndexMultiple(getKey, compare)..addAll(data);
   }
 
   /// Save a `record`, index it, and broadcast the change

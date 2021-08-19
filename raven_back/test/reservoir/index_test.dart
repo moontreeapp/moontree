@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:test/test.dart';
 
-import 'package:raven/reservoir/index.dart';
+import 'package:raven/reservoir/reservoir.dart';
 
 class TestRow with EquatableMixin {
   final int id;
@@ -13,10 +13,10 @@ class TestRow with EquatableMixin {
 }
 
 void main() {
-  group('MultipleIndex', () {
+  group('IndexMultiple', () {
     var rows = [TestRow(1, 'apple'), TestRow(2, 'apple'), TestRow(3, 'orange')];
     test('default sort order', () {
-      var index = MultipleIndex((row) => row.name);
+      var index = IndexMultiple((row) => row.name);
       index.addAll(rows);
       expect(index.getAll('apple').toList(), [rows[0], rows[1]]);
       expect(index.getAll('orange').toList(), [rows[2]]);
@@ -24,7 +24,7 @@ void main() {
 
     test('explicit sort order', () {
       var index =
-          MultipleIndex((row) => row.name, (r1, r2) => r2.id.compareTo(r1.id));
+          IndexMultiple((row) => row.name, (r1, r2) => r2.id.compareTo(r1.id));
       index.addAll(rows);
       expect(index.getAll('apple').toList(), [rows[1], rows[0]]);
       expect(index.getAll('orange').toList(), [rows[2]]);
@@ -32,7 +32,7 @@ void main() {
 
     test('remove', () {
       var index =
-          MultipleIndex((row) => row.name, (r1, r2) => r1.id.compareTo(r2.id));
+          IndexMultiple((row) => row.name, (r1, r2) => r1.id.compareTo(r2.id));
       index.addAll(rows);
       expect(index.getAll('apple').toList(), [rows[0], rows[1]]);
       expect(index.getAll('orange').toList(), [rows[2]]);
@@ -48,7 +48,7 @@ void main() {
 
     test('get', () {
       var index =
-          MultipleIndex((row) => row.name, (r1, r2) => r1.id.compareTo(r2.id));
+          IndexMultiple((row) => row.name, (r1, r2) => r1.id.compareTo(r2.id));
       index.addAll(rows);
       expect(index.getAll('apple').toList(), [rows[0], rows[1]]);
     });
