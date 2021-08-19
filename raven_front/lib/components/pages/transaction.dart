@@ -19,8 +19,8 @@ PreferredSize header(context) => PreferredSize(
           color: RavenColor().appBar,
           alignment: Alignment.center,
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            RavenIcon().getAssetAvatar('duanecoin'),
-            RavenText('duanecoin').h1,
+            RavenIcon().getAssetAvatar('Magic Musk'),
+            RavenText('Magic Musk').h1,
             RavenText('Received').h3,
           ]),
         )));

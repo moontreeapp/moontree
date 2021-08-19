@@ -7,7 +7,7 @@ Icon inIcon() => Icon(Icons.south_west, size: 12.0, color: RavenColor().good);
 Icon outIcon() => Icon(Icons.north_east, size: 12.0, color: RavenColor().bad);
 AssetImage assetIcon(String name) =>
     {
-      'rvn': AssetImage('assets/ravenhead.png'),
+      'RVN': AssetImage('assets/ravenhead.png'),
     }[name] ??
     AssetImage('assets/defaultasset.png');
 CircleAvatar assetAvatar(String name) => CircleAvatar(

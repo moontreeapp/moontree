@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:raven_mobile/pages/receive.dart';
-import 'package:raven_mobile/pages/send.dart';
+import 'package:raven_mobile/pages/asset.dart';
 import 'package:raven_mobile/components/buttons.dart';
+import 'package:raven_mobile/pages/raven.dart';
 import 'package:raven_mobile/pages/transaction.dart';
 import 'package:raven_mobile/styles.dart';
 
@@ -38,12 +38,18 @@ ListView _holdingsView(context, data) {
   if (data['holdings'][data['account']].isNotEmpty) {
     for (MapEntry holding in data['holdings'][data['account']].entries) {
       var thisHolding = ListTile(
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        holding.key == 'RVN' ? RavenTransactions() : Asset()));
+          },
           onLongPress: () {/* convert all values to USD and back */},
           title: RavenText(holding.key).name,
           trailing: RavenText(holding.value.toString()).good,
           leading: RavenIcon().getAssetAvatar(holding.key));
-      if (holding.key == 'rvn') {
+      if (holding.key == 'RVN') {
         rvnHolding.add(thisHolding);
         if (holding.value < 600) {
           rvnHolding.add(ListTile(
@@ -64,11 +70,14 @@ ListView _holdingsView(context, data) {
   }
   if (rvnHolding.isEmpty) {
     rvnHolding.add(ListTile(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => RavenTransactions()));
+        },
         onLongPress: () {/* convert all values to USD and back */},
-        title: RavenText('rvn').name,
+        title: RavenText('RVN').name,
         trailing: RavenText('0').fine,
-        leading: RavenIcon().getAssetAvatar('rvn')));
+        leading: RavenIcon().getAssetAvatar('RVN')));
     rvnHolding.add(ListTile(
         onTap: () {},
         title: RavenText('+ Create Asset (not enough RVN)').disabled));
@@ -81,10 +90,8 @@ ListView _transactionsView(context, data) => ListView(children: <Widget>[
       for (var transaction in data['transactions'][data['account']])
         ListTile(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Transaction()),
-              );
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Transaction()));
             },
             onLongPress: () {/* convert all values to USD and back */},
             title: Row(
@@ -143,7 +150,7 @@ Drawer accountsView(context, data) => Drawer(
                 Navigator.pop(context);
               },
               title: RavenText(keyName.value).name,
-              leading: RavenIcon().getAssetAvatar('rvn')),
+              leading: RavenIcon().getAssetAvatar('RVN')),
           Divider(
               height: 20,
               thickness: 2,
@@ -156,24 +163,6 @@ Drawer accountsView(context, data) => Drawer(
 
 Row sendReceiveButtons(context) =>
     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      ElevatedButton.icon(
-          icon: Icon(Icons.south_east),
-          label: Text('Receive'),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Receive()),
-            );
-          },
-          style: RavenButtonStyle().leftSideCurved),
-      ElevatedButton.icon(
-          icon: Icon(Icons.north_east),
-          label: Text('Send'),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Send()),
-            );
-          },
-          style: RavenButtonStyle().rightSideCurved)
+      RavenButton().receive(context),
+      RavenButton().send(context, asset: 'RVN'),
     ]);
