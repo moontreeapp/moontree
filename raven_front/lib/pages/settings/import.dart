@@ -25,7 +25,6 @@ class _ImportState extends State<Import> {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
     return Scaffold(
-      backgroundColor: RavenColor().background,
       appBar: importWallet.header(context),
       body: importWallet.body(formKey),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

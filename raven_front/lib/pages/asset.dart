@@ -35,7 +35,6 @@ class _AssetState extends State<Asset> {
     return DefaultTabController(
         length: 2,
         child: Scaffold(
-            backgroundColor: RavenColor().background,
             appBar: asset.header(context),
             body: asset.transactionsMetadataView(context, data),
             floatingActionButtonLocation:

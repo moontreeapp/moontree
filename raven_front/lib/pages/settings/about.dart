@@ -22,9 +22,6 @@ class _AboutState extends State<About> {
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
-    return Scaffold(
-        backgroundColor: RavenColor().background,
-        appBar: about.header(context),
-        body: about.body(context));
+    return Scaffold(appBar: about.header(context), body: about.body(context));
   }
 }

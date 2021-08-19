@@ -37,7 +37,6 @@ class _LoadingState extends State<Loading> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: RavenColor().appBar,
         body:
             Center(child: SpinKitThreeBounce(color: Colors.white, size: 50.0)));
   }

@@ -30,7 +30,6 @@ class _RavenTransactionsState extends State<RavenTransactions> {
       'holdings': mock.Accounts.instance.holdings,
     };
     return Scaffold(
-        backgroundColor: RavenColor().background,
         appBar: raven.header(context),
         body: raven.transactionsView(context, data),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

@@ -24,7 +24,6 @@ class _ReceiveState extends State<Receive> {
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
     return Scaffold(
-        backgroundColor: RavenColor().background,
         appBar: receive.header(context),
         body: receive.body(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

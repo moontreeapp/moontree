@@ -4,7 +4,6 @@ import 'package:raven_mobile/styles.dart';
 import 'package:raven_mobile/components/buttons.dart';
 
 AppBar header(context) => AppBar(
-      backgroundColor: RavenColor().appBar,
       leading: RavenButton().back(context),
       elevation: 2,
       centerTitle: false,

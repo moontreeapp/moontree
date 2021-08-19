@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_mobile/components/pages/home.dart' as home;
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/styles.dart';
+import 'package:raven_mobile/theme.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -16,6 +17,9 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    currentTheme.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
@@ -25,7 +29,6 @@ class _HomeState extends State<Home> {
     return DefaultTabController(
         length: 2,
         child: Scaffold(
-            backgroundColor: RavenColor().background,
             appBar: home.balanceHeader(context, data),
             drawer: home.accountsView(context, data),
             body: home.holdingsTransactionsView(context, data),

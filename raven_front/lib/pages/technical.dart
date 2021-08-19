@@ -22,9 +22,6 @@ class _TechnicalViewState extends State<TechnicalView> {
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
-    return Scaffold(
-        backgroundColor: RavenColor().background,
-        appBar: technical.header(context),
-        body: technical.body());
+    return Scaffold(appBar: technical.header(context), body: technical.body());
   }
 }

@@ -9,7 +9,6 @@ import 'package:raven_mobile/styles.dart';
 PreferredSize balanceHeader(context, data) => PreferredSize(
     preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
     child: AppBar(
-        backgroundColor: RavenColor().appBar,
         automaticallyImplyLeading: true,
         actions: <Widget>[
           Padding(
@@ -22,14 +21,10 @@ PreferredSize balanceHeader(context, data) => PreferredSize(
                 (data['accounts'][data['account']] ?? 'Unknown') + ' Wallet')
             .h2,
         flexibleSpace: Container(
-            color: RavenColor().appBar,
-            alignment: Alignment.center,
-            child: RavenText('\n\$ 0').h1),
+            alignment: Alignment.center, child: RavenText('\n\$ 0').h1),
         bottom: PreferredSize(
             preferredSize: Size.fromHeight(50.0),
             child: TabBar(
-                labelColor: RavenColor().offWhite,
-                indicatorColor: Colors.grey[400],
                 tabs: [Tab(text: 'Holdings'), Tab(text: 'Transactions')]))));
 
 ListView _holdingsView(context, data) {
@@ -130,17 +125,18 @@ TabBarView holdingsTransactionsView(context, data) => TabBarView(children: [
 Drawer accountsView(context, data) => Drawer(
         child: ListView(padding: EdgeInsets.zero, children: <Widget>[
       DrawerHeader(
-          decoration: BoxDecoration(color: RavenColor().appBar),
+          decoration: BoxDecoration(color: Theme.of(context).primaryColor),
           child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                RavenText('Wallets').getH2(color: RavenColor().offWhite),
+                RavenText('Wallets')
+                    .getH2(color: Theme.of(context).dividerColor),
                 Padding(
                     padding: EdgeInsets.only(right: 20.0),
                     child: GestureDetector(
                         onTap: () {},
                         child: Icon(Icons.add,
-                            size: 26.0, color: RavenColor().offWhite)))
+                            size: 26.0, color: Theme.of(context).dividerColor)))
               ])),
       Column(children: <Widget>[
         for (var keyName in data['accounts'].entries) ...[
@@ -151,12 +147,7 @@ Drawer accountsView(context, data) => Drawer(
               },
               title: RavenText(keyName.value).name,
               leading: RavenIcon().getAssetAvatar('RVN')),
-          Divider(
-              height: 20,
-              thickness: 2,
-              indent: 5,
-              endIndent: 5,
-              color: RavenColor().offWhite)
+          Divider(height: 20, thickness: 2, indent: 5, endIndent: 5)
         ]
       ])
     ]));

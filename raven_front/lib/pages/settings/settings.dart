@@ -24,8 +24,6 @@ class _SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
     return Scaffold(
-        backgroundColor: RavenColor().background,
-        appBar: settings.header(context),
-        body: settings.body(context));
+        appBar: settings.header(context), body: settings.body(context));
   }
 }

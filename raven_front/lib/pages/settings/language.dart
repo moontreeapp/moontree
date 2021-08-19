@@ -24,8 +24,6 @@ class _LanguageState extends State<Language> {
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
     return Scaffold(
-        backgroundColor: RavenColor().background,
-        appBar: language.header(context),
-        body: language.body(context));
+        appBar: language.header(context), body: language.body(context));
   }
 }

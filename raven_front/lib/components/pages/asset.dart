@@ -7,7 +7,6 @@ import 'package:raven_mobile/styles.dart';
 PreferredSize header(context) => PreferredSize(
     preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
     child: AppBar(
-        backgroundColor: RavenColor().appBar,
         elevation: 2,
         centerTitle: false,
         leading: RavenButton().back(context),
@@ -18,7 +17,6 @@ PreferredSize header(context) => PreferredSize(
         ],
         title: RavenText('Magic Musk').h2,
         flexibleSpace: Container(
-            color: RavenColor().appBar,
             alignment: Alignment.center,
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -29,8 +27,6 @@ PreferredSize header(context) => PreferredSize(
         bottom: PreferredSize(
             preferredSize: Size.fromHeight(50.0),
             child: TabBar(
-                labelColor: RavenColor().offWhite,
-                indicatorColor: Colors.grey[400],
                 tabs: [Tab(text: 'Transactions'), Tab(text: 'Metadata')]))));
 
 /// get metadata from chain or something, store it... need a new reservoir...

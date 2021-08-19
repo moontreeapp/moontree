@@ -24,7 +24,6 @@ class _WalletSettingsState extends State<WalletSettings> {
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
     return Scaffold(
-        backgroundColor: RavenColor().background,
         appBar: walletSettings.header(context),
         body: walletSettings.body(context));
   }

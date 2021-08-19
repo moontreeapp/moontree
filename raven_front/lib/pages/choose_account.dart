@@ -23,12 +23,8 @@ class _ChooseAccountState extends State<ChooseAccount> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: RavenColor().offWhite,
         appBar: AppBar(
-            backgroundColor: RavenColor().appBar,
-            title: Text('Choose an Account'),
-            centerTitle: true,
-            elevation: 0),
+            title: Text('Choose an Account'), centerTitle: true, elevation: 0),
         body: ListView.builder(
             itemCount: accounts.length,
             itemBuilder: (context, index) {

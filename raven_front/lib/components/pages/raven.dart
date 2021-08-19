@@ -7,7 +7,6 @@ import 'package:raven_mobile/styles.dart';
 PreferredSize header(context) => PreferredSize(
     preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
     child: AppBar(
-        backgroundColor: RavenColor().appBar,
         elevation: 2,
         centerTitle: false,
         leading: RavenButton().back(context),
@@ -18,7 +17,6 @@ PreferredSize header(context) => PreferredSize(
         ],
         title: RavenText('RVN').h2,
         flexibleSpace: Container(
-            color: RavenColor().appBar,
             alignment: Alignment.center,
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -52,14 +50,10 @@ Container _transactionsView(context, data) {
           leading: RavenIcon().getAssetAvatar(transaction['asset'])));
     }
   }
-  return Container(
-      color: RavenColor().background,
-      alignment: Alignment.center,
-      child: ListView(children: txs));
+  return Container(alignment: Alignment.center, child: ListView(children: txs));
 }
 
 Container _emptyMessage({IconData? icon, String? name}) => Container(
-    color: RavenColor().background,
     alignment: Alignment.center,
     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       Icon(icon ?? Icons.description, size: 50.0, color: Colors.grey[100]),

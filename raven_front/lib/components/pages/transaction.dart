@@ -5,7 +5,6 @@ import 'package:raven_mobile/styles.dart';
 PreferredSize header(context) => PreferredSize(
     preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
     child: AppBar(
-        backgroundColor: RavenColor().appBar,
         elevation: 2,
         centerTitle: false,
         leading: RavenButton().back(context),
@@ -16,7 +15,6 @@ PreferredSize header(context) => PreferredSize(
         ],
         title: RavenText('Transaction Details').h2,
         flexibleSpace: Container(
-          color: RavenColor().appBar,
           alignment: Alignment.center,
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             RavenIcon().getAssetAvatar('Magic Musk'),
@@ -25,6 +23,7 @@ PreferredSize header(context) => PreferredSize(
           ]),
         )));
 
+// perhaps this should be two tabs, one for tx details, one for metadata
 ListView body() =>
     ListView(shrinkWrap: true, padding: EdgeInsets.all(20.0), children: <
         Widget>[
@@ -69,5 +68,10 @@ ListView body() =>
         ),
         SizedBox(height: 15.0),
         RavenText('id: 1354s31e35s13f54se3851f3s51ef35s1ef35').whisper,
+        SizedBox(height: 15.0),
+        ElevatedButton.icon(
+            onPressed: () {},
+            icon: Icon(Icons.description),
+            label: RavenText('Metadata').h3)
       ])
     ]);

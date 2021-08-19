@@ -24,7 +24,6 @@ class _TransactionState extends State<Transaction> {
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
     return Scaffold(
-        backgroundColor: RavenColor().background,
         appBar: transaction.header(context),
         body: transaction.body(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

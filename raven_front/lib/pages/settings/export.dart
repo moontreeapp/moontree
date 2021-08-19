@@ -24,8 +24,6 @@ class _ExportState extends State<Export> {
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
     return Scaffold(
-        backgroundColor: RavenColor().background,
-        appBar: exportWallet.header(context),
-        body: exportWallet.body());
+        appBar: exportWallet.header(context), body: exportWallet.body());
   }
 }

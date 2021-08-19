@@ -24,8 +24,6 @@ class _CurrencyState extends State<Currency> {
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
     return Scaffold(
-        backgroundColor: RavenColor().background,
-        appBar: currency.header(context),
-        body: currency.body(context));
+        appBar: currency.header(context), body: currency.body(context));
   }
 }

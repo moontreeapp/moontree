@@ -5,7 +5,6 @@ import 'package:raven_mobile/styles.dart';
 PreferredSize header(context) => PreferredSize(
     preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
     child: AppBar(
-        backgroundColor: RavenColor().appBar,
         elevation: 2,
         centerTitle: false,
         leading: RavenButton().back(context),
@@ -16,7 +15,6 @@ PreferredSize header(context) => PreferredSize(
         ],
         title: RavenText('Send').h2,
         flexibleSpace: Container(
-          color: RavenColor().appBar,
           alignment: Alignment.center,
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
