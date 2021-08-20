@@ -1,6 +1,7 @@
 import 'index.dart';
 
-class IndexUnique<Key, Record> extends Index<Key, Record> {
+class IndexUnique<Key extends Object, Record extends Object>
+    extends Index<Key, Record> {
   final Map<Key, Record> _data = {};
 
   IndexUnique(getKey) : super(getKey);

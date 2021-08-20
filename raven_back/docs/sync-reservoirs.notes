@@ -1,0 +1,6 @@
+potentially:
+- reverse source of truth so that reservoir is it, and box is notified of changes (lazy store)
+- one-time load from boxes when app starts
+- ignore changes to boxes (no 'watch' / listener)
+- indices are constructed whenever reservoir changes
+- multiple listeners to reservoir?

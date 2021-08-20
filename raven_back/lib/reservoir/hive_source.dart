@@ -4,7 +4,7 @@ import 'package:hive/hive.dart';
 import 'change.dart';
 import 'source.dart';
 
-class HiveSource<Key, Record extends EquatableMixin>
+class HiveSource<Key extends Object, Record extends Object>
     extends Source<Key, Record> {
   final String name;
   late final Box<Record> box;

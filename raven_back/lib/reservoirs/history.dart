@@ -2,11 +2,11 @@ import 'package:raven/records.dart';
 import 'package:raven/records/security.dart';
 import 'package:raven/reservoir/reservoir.dart';
 
-class HistoryReservoir extends Reservoir<dynamic, History> {
-  late IndexMultiple<dynamic, History> byAccount;
-  late IndexMultiple<dynamic, History> byWallet;
-  late IndexMultiple<dynamic, History> byScripthash;
-  late IndexMultiple<dynamic, History> bySecurity;
+class HistoryReservoir extends Reservoir<Object, History> {
+  late IndexMultiple<Object, History> byAccount;
+  late IndexMultiple<Object, History> byWallet;
+  late IndexMultiple<Object, History> byScripthash;
+  late IndexMultiple<Object, History> bySecurity;
 
   HistoryReservoir([source])
       : super(source ?? HiveSource('histories'), (history) => history.txHash) {

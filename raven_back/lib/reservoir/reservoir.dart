@@ -16,7 +16,8 @@ export 'index_multiple.dart';
 
 const PRIMARY_INDEX = '_primary';
 
-class Reservoir<Key, Rec extends EquatableMixin> with IterableMixin<Rec> {
+class Reservoir<Key extends Object, Rec extends Object>
+    with IterableMixin<Rec> {
   final Source<Key, Rec> source;
   final Map<String, Index<Key, Rec>> indices = {};
   final StreamController<List<Change>> _changes = StreamController();

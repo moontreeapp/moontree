@@ -6,11 +6,12 @@ int defaultCompare<Item>(Item item1, Item item2) {
   return item1.toString().compareTo(item2.toString());
 }
 
-class IndexMultiple<Key, Record> extends Index<Key, Record> {
+class IndexMultiple<Key extends Object, Record extends Object>
+    extends Index<Key, Record> {
   final Map<Key, OrderedSet<Record>> _data = {};
   late final Compare<Record> compare;
 
-  IndexMultiple(getKey, [Compare? compare])
+  IndexMultiple(GetKey<Key, Record> getKey, [Compare? compare])
       : compare = compare ?? defaultCompare,
         super(getKey);
 
