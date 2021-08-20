@@ -13,8 +13,22 @@ import 'package:raven_electrum_client/raven_electrum_client.dart';
 void init() {
   makeReservoirs();
   makeServices();
-  // if reservoirs are empty -> startup first time process
   electrumSettingsStream(settings).listen(handleListening);
+  // if reservoirs are empty -> startup first time process
+
+  /** on startup
+   * start hive
+   * init this
+   * (flutter) if no accounts -> create account, set default account setting
+   * ...(raven listener) created account, empty -> create wallet...
+   * ...(listener) created wallet, empty -> create address...
+   */
+
+  /** long term triggers...
+   * if balance > x and seed phrase not saved-> give warning let them write seed
+   * if not used password recently -> use (ignore)
+   * if not changed password recently -> refresh
+   */
 }
 
 Stream electrumSettingsStream(settings) {

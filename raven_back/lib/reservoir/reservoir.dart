@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:equatable/equatable.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'change.dart';
 import 'index.dart';
@@ -20,7 +20,7 @@ class Reservoir<Key extends Object, Rec extends Object>
     with IterableMixin<Rec> {
   final Source<Key, Rec> source;
   final Map<String, Index<Key, Rec>> indices = {};
-  final StreamController<List<Change>> _changes = StreamController();
+  final PublishSubject<List<Change>> _changes = PublishSubject();
 
   /// Expose the stream of changes that can be subscribed to
   Stream<List<Change>> get changes => _changes.stream;
@@ -67,13 +67,13 @@ class Reservoir<Key extends Object, Rec extends Object>
   /// Save a `record`, index it, and broadcast the change
   Future<Change?> save(Rec record) async {
     return await _saveSilently(record)
-      ?..ifChanged((change) => _changes.sink.add([change]));
+      ?..ifChanged((change) => _changes.add([change]));
   }
 
   /// Remove a `record`, de-index it, and broadcast the change
   Future<Change?> remove(Rec record) async {
     return await _removeSilently(record)
-      ?..ifChanged((change) => _changes.sink.add([change]));
+      ?..ifChanged((change) => _changes.add([change]));
   }
 
   /// Save all `records`, index them, and broadcast the changes

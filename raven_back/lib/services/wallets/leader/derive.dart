@@ -4,6 +4,7 @@ import 'package:raven/reservoirs.dart';
 import 'package:raven/utils/derivation_path.dart';
 import 'package:raven/services/service.dart';
 
+// derives addresses for leaderwallets
 class LeaderWalletDerivationService extends Service {
   late final AccountReservoir accounts;
   late final WalletReservoir wallets;

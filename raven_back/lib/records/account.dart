@@ -1,10 +1,11 @@
 // dart run build_runner build
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:ravencoin/ravencoin.dart' show NetworkType;
+
 import 'package:raven/records/net.dart';
 
 import '_type_id.dart';
-
 part 'account.g.dart';
 
 @HiveType(typeId: TypeId.Account)
@@ -29,4 +30,6 @@ class Account with EquatableMixin {
 
   @override
   String toString() => 'Account($id, $name, $net)';
+
+  NetworkType get network => networks[net]!;
 }
