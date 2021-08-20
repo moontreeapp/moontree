@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:raven/reservoir/change.dart';
 import 'package:raven/services/service.dart';
 import 'package:raven/records.dart';
 import 'package:raven/reservoirs.dart';
@@ -12,9 +13,10 @@ class BalanceService extends Service {
   BalanceService(this.balances, this.histories) : super();
 
   // runs it for affected account-security combinations
-  void calculateBalance(changes) {
+  void calculateBalance(List<Change> changes) {
     var combos = [];
-    changes.forEach((History history) {
+    changes.forEach((Change change) {
+      History history = change.data;
       if (!combos.contains([history.accountId, history.security])) {
         combos.add([history.accountId, history.security]);
       }
@@ -42,7 +44,7 @@ class BalanceService extends Service {
       return;
     }
     for (var accountId in histories.byAccount.keys) {
-      var hists = histories.byAccount.getAll(accountId);
+      var hists = histories.byAccount.getAll([accountId]);
 
       var balanceBySecurity = hists
           .groupFoldBy((History history) => history.security,
@@ -57,7 +59,7 @@ class BalanceService extends Service {
 
       balanceBySecurity.forEach((security, bal) {
         var balance = Balance(
-            accountId: accountId,
+            accountId: accountId as String,
             security: security,
             confirmed: bal.confirmed,
             unconfirmed: bal.unconfirmed);

@@ -39,7 +39,7 @@ void main() {
       expect(res.data.toList(), [SimpleRecord('a', 'abc')]);
 
       var c2 = await source.remove('a');
-      expect(c2, Removed('a'));
+      expect(c2, Removed('a', 'abc'));
       var c3 = await source.remove('a');
       expect(c3, null);
     });

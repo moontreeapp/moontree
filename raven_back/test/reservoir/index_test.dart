@@ -16,23 +16,23 @@ void main() {
   group('IndexMultiple', () {
     var rows = [TestRow(1, 'apple'), TestRow(2, 'apple'), TestRow(3, 'orange')];
     test('default sort order', () {
-      var index = IndexMultiple((row) => row.name);
+      var index = IndexMultiple((TestRow row) => row.name);
       index.addAll(rows);
       expect(index.getAll('apple').toList(), [rows[0], rows[1]]);
       expect(index.getAll('orange').toList(), [rows[2]]);
     });
 
     test('explicit sort order', () {
-      var index =
-          IndexMultiple((row) => row.name, (r1, r2) => r2.id.compareTo(r1.id));
+      var index = IndexMultiple(
+          (TestRow row) => row.name, (r1, r2) => r2.id.compareTo(r1.id));
       index.addAll(rows);
       expect(index.getAll('apple').toList(), [rows[1], rows[0]]);
       expect(index.getAll('orange').toList(), [rows[2]]);
     });
 
     test('remove', () {
-      var index =
-          IndexMultiple((row) => row.name, (r1, r2) => r1.id.compareTo(r2.id));
+      var index = IndexMultiple(
+          (TestRow row) => row.name, (r1, r2) => r1.id.compareTo(r2.id));
       index.addAll(rows);
       expect(index.getAll('apple').toList(), [rows[0], rows[1]]);
       expect(index.getAll('orange').toList(), [rows[2]]);
@@ -47,8 +47,8 @@ void main() {
     });
 
     test('get', () {
-      var index =
-          IndexMultiple((row) => row.name, (r1, r2) => r1.id.compareTo(r2.id));
+      var index = IndexMultiple(
+          (TestRow row) => row.name, (r1, r2) => r1.id.compareTo(r2.id));
       index.addAll(rows);
       expect(index.getAll('apple').toList(), [rows[0], rows[1]]);
     });

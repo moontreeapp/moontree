@@ -11,7 +11,7 @@ class SinglesWaiter extends Waiter {
   WalletReservoir wallets;
   AddressReservoir addresses;
   SingleWalletService singleWalletService;
-  late StreamSubscription<Change> listener;
+  late StreamSubscription<List<Change>> listener;
 
   SinglesWaiter(
     this.wallets,
@@ -21,17 +21,19 @@ class SinglesWaiter extends Waiter {
 
   @override
   void init() {
-    listener = wallets.changes.listen((change) {
-      change.when(added: (added) {
-        var wallet = added.data;
-        if (wallet is SingleWallet) {
-          addresses.save(singleWalletService.toAddress(wallet));
-          addresses.save(singleWalletService.toAddress(wallet));
-        }
-      }, updated: (updated) {
-        /* moved account */
-      }, removed: (removed) {
-        /* handled by LeadersWaiter*/
+    listener = wallets.changes.listen((List<Change> changes) {
+      changes.forEach((change) {
+        change.when(added: (added) {
+          var wallet = added.data;
+          if (wallet is SingleWallet) {
+            addresses.save(singleWalletService.toAddress(wallet));
+            addresses.save(singleWalletService.toAddress(wallet));
+          }
+        }, updated: (updated) {
+          /* moved account */
+        }, removed: (removed) {
+          /* handled by LeadersWaiter*/
+        });
       });
     });
   }

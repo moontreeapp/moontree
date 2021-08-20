@@ -10,7 +10,7 @@ class LeadersWaiter extends Waiter {
   WalletReservoir wallets;
   AddressReservoir addresses;
   LeaderWalletDerivationService leaderWalletDerivationService;
-  late StreamSubscription<Change> listener;
+  late StreamSubscription<List<Change>> listener;
 
   LeadersWaiter(
     this.wallets,
@@ -20,16 +20,18 @@ class LeadersWaiter extends Waiter {
 
   @override
   void init() {
-    listener = wallets.changes.listen((change) {
-      change.when(added: (added) {
-        var wallet = added.data;
-        if (wallet is LeaderWallet) {
-          leaderWalletDerivationService.deriveFirstAddressAndSave(wallet);
-        }
-      }, updated: (updated) {
-        /* moved account */
-      }, removed: (removed) {
-        addresses.removeAddresses(removed.id as String);
+    listener = wallets.changes.listen((List<Change> changes) {
+      changes.forEach((change) {
+        change.when(added: (added) {
+          var wallet = added.data;
+          if (wallet is LeaderWallet) {
+            leaderWalletDerivationService.deriveFirstAddressAndSave(wallet);
+          }
+        }, updated: (updated) {
+          /* moved account */
+        }, removed: (removed) {
+          addresses.removeAddresses(removed.id as String);
+        });
       });
     });
   }

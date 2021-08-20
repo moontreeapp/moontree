@@ -33,9 +33,12 @@ class HiveSource<Key extends Object, Record extends Object>
 
   @override
   Future<Change?> remove(Key key) async {
-    if (box.containsKey(key)) {
+    var existing = box.get(key);
+    if (existing == null) {
+      return null;
+    } else {
       await box.delete(key);
-      return Removed(key);
+      return Removed(key, existing);
     }
   }
 }

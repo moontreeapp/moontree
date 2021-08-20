@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:raven/reservoir/change.dart';
 import 'package:raven/reservoir/source.dart';
 
-class MapSource<Key, Record extends EquatableMixin>
+class MapSource<Key extends Object, Record extends Object>
     extends Source<Key, Record> {
   final Map map = {};
 
@@ -29,9 +29,12 @@ class MapSource<Key, Record extends EquatableMixin>
 
   @override
   Future<Change?> remove(Key key) async {
-    if (map.containsKey(key)) {
+    var existing = map[key];
+    if (existing == null) {
+      return null;
+    } else {
       map.remove(key);
-      return Removed(key);
+      return Removed(key, existing);
     }
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:raven/reservoir/change.dart';
 import 'package:raven/reservoirs.dart';
 import 'package:raven/records.dart';
 import 'package:raven/waiters/waiter.dart';
@@ -40,17 +41,19 @@ class AddressSubscriptionWaiter extends Waiter {
       leaderWalletDerivationService.maybeDeriveNewAddresses(changedAddresses);
     }));
 
-    listeners.add(addresses.changes.listen((change) {
-      change.when(
-          added: (added) {
-            Address address = added.data;
-            addressNeedsUpdating(address);
-            subscribe(address);
-          },
-          updated: (updated) {},
-          removed: (removed) {
-            unsubscribe(removed.id as String);
-          });
+    listeners.add(addresses.changes.listen((List<Change> changes) {
+      changes.forEach((change) {
+        change.when(
+            added: (added) {
+              Address address = added.data;
+              addressNeedsUpdating(address);
+              subscribe(address);
+            },
+            updated: (updated) {},
+            removed: (removed) {
+              unsubscribe(removed.id as String);
+            });
+      });
     }));
   }
 
