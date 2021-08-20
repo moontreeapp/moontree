@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
-import 'package:raven_mobile/extensions.dart';
+import 'package:raven_mobile/theme/extensions.dart';
 
 class Transaction extends StatefulWidget {
   final dynamic data;

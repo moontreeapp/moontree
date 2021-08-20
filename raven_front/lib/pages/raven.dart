@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/services/account_mock.dart' as mock;
-import 'package:raven_mobile/extensions.dart';
+import 'package:raven_mobile/theme/extensions.dart';
 import 'package:raven_mobile/pages/transaction.dart';
 
 class RavenTransactions extends StatefulWidget {

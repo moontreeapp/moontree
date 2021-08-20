@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../services/account_mock.dart' as mock;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:raven/init/services.dart';
+import 'package:raven/init/reservoirs.dart' as res;
+import 'package:raven/subjects/settings.dart' as sett;
 
 class Loading extends StatefulWidget {
   @override
@@ -8,15 +13,19 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
-  Future setup() async {
-    //await Directory('database').delete(recursive: true);
-    //await Truth.instance.open(); // causes uninitialized error
-    //await Accounts.instance.load();
-  }
-
-  void setupAccounts() async {
-    setup();
-    await mock.Accounts.instance.load();
+  void setup() async {
+    // (flutter) if no accounts -> create account, set default account setting
+    //if (res.accounts.data.isEmpty) {
+    //  // create one
+    //  var account = accountGenerationService.makeAndSaveAccount('Primary');
+    //  // set its id as settings default account id
+    //  sett.settings.add({'default Account': account.id});
+    //}
+    //res.accounts.changes.listen((changes) {
+    //  build(context);
+    //}); // //sett
+    //await mock.Accounts.instance.load();
+    sleep(Duration(milliseconds: 1400));
     Navigator.pushReplacementNamed(context, '/home', arguments: {
       'account': 'accountId1',
       'accounts': mock.Accounts.instance.accounts,
@@ -28,7 +37,7 @@ class _LoadingState extends State<Loading> {
   @override
   void initState() {
     super.initState();
-    setupAccounts();
+    setup();
   }
 
   @override

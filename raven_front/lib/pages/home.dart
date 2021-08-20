@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
-import 'package:raven_mobile/extensions.dart';
-import 'package:raven_mobile/theme.dart';
+import 'package:raven_mobile/theme/extensions.dart';
+import 'package:raven_mobile/theme/theme.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:raven_mobile/pages/asset.dart';

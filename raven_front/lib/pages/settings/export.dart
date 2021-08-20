@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:raven_mobile/extensions.dart';
+import 'package:raven_mobile/theme/extensions.dart';
 import 'package:raven_mobile/components/buttons.dart';
 
 class Export extends StatefulWidget {
