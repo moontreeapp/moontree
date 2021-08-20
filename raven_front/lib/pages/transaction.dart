@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
-import 'package:raven_mobile/styles.dart';
+import 'package:raven_mobile/components/icons.dart';
+import 'package:raven_mobile/extensions.dart';
 
 class Transaction extends StatefulWidget {
   final dynamic data;
@@ -46,7 +47,7 @@ class _TransactionState extends State<Transaction> {
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               SizedBox(height: 15.0),
-              RavenIcon().getAssetAvatar('Magic Musk'),
+              RavenIcon(asset: 'Magic Musk').assetAvatar,
               SizedBox(height: 15.0),
               Text('Magic Musk', style: Theme.of(context).textTheme.headline4),
               SizedBox(height: 15.0),
@@ -59,8 +60,10 @@ class _TransactionState extends State<Transaction> {
       ListView(shrinkWrap: true, padding: EdgeInsets.all(20.0), children: <
           Widget>[
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          RavenText('Date: June 26 2021').whisper,
-          RavenText('Confirmaitons: 60+').whisper,
+          Text('Date: June 26 2021',
+              style: TextStyle(color: Theme.of(context).disabledColor)),
+          Text('Confirmaitons: 60+',
+              style: TextStyle(color: Theme.of(context).disabledColor)),
         ]),
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           SizedBox(height: 15.0),
@@ -83,8 +86,10 @@ class _TransactionState extends State<Transaction> {
                 hintText: 'Quantity'),
           ),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            RavenText('fee').whisper,
-            RavenText('0.01397191 RVN').whisper
+            Text('fee',
+                style: TextStyle(color: Theme.of(context).disabledColor)),
+            Text('0.01397191 RVN',
+                style: TextStyle(color: Theme.of(context).disabledColor)),
           ]),
           SizedBox(height: 15.0),
           TextField(
@@ -98,7 +103,8 @@ class _TransactionState extends State<Transaction> {
                 hintText: 'Note to Self'),
           ),
           SizedBox(height: 15.0),
-          RavenText('id: 1354s31e35s13f54se3851f3s51ef35s1ef35').whisper,
+          Text('id: 1354s31e35s13f54se3851f3s51ef35s1ef35',
+              style: TextStyle(color: Theme.of(context).disabledColor)),
           SizedBox(height: 15.0),
           ElevatedButton.icon(
               onPressed: () {},

@@ -75,14 +75,9 @@ class _TechnicalViewState extends State<TechnicalView> {
             //);
           },
           theme: TreeViewTheme(
-              labelStyle: TextStyle(color: Colors.black),
-              parentLabelStyle:
-                  TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
               colorScheme: Theme.of(context).brightness == Brightness.light
                   ? ColorScheme.light()
-                  : ColorScheme.dark())
-          //theme: _treeViewTheme,
-          ),
+                  : ColorScheme.dark())),
     );
   }
 }

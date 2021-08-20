@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:raven_mobile/pages/receive.dart';
 import 'package:raven_mobile/pages/send.dart';
 import 'package:raven_mobile/pages/settings/settings.dart';
-import 'package:raven_mobile/styles.dart';
+import 'package:raven_mobile/components/icons.dart';
+import 'package:raven_mobile/components/styles/buttons.dart';
 
 BottomAppBar walletTradingButtons(context) => BottomAppBar(
         child: ButtonBar(

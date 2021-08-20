@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:settings_ui/settings_ui.dart';
 
 import 'package:raven_mobile/pages/settings/export.dart';
 import 'package:raven_mobile/pages/settings/import.dart';
-import 'package:raven_mobile/pages/technical.dart';
-import 'package:settings_ui/settings_ui.dart';
+import 'package:raven_mobile/pages/settings/technical.dart';
 import 'package:raven_mobile/components/buttons.dart';
 
 class WalletSettings extends StatefulWidget {

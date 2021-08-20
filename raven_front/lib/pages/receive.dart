@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
-import 'package:raven_mobile/styles.dart';
-
-import 'package:qr_flutter/qr_flutter.dart';
+import 'package:raven_mobile/components/styles/buttons.dart';
 
 class Receive extends StatefulWidget {
   final dynamic data;
@@ -51,7 +50,7 @@ class _ReceiveState extends State<Receive> {
                 // rvn is default but if balance is 0 then take the largest asset balance and also display name here.
                 'RVN',
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headline5),
+                style: Theme.of(context).textTheme.bodyText1),
             SizedBox(height: 30.0),
             Center(
                 child: QrImage(

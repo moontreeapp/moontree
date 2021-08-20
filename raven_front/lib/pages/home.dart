@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
-import 'package:raven_mobile/styles.dart';
+import 'package:raven_mobile/components/icons.dart';
+import 'package:raven_mobile/extensions.dart';
 import 'package:raven_mobile/theme.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -83,13 +84,14 @@ class _HomeState extends State<Home> {
                     : Theme.of(context).textTheme.bodyText2),
             trailing: Text(holding.value.toString(),
                 style: TextStyle(color: Theme.of(context).good)),
-            leading: RavenIcon().getAssetAvatar(holding.key));
+            leading: RavenIcon(asset: holding.key).assetAvatar);
         if (holding.key == 'RVN') {
           rvnHolding.add(thisHolding);
           if (holding.value < 600) {
             rvnHolding.add(ListTile(
                 onTap: () {},
-                title: RavenText('+ Create Asset (not enough RVN)').disabled));
+                title: Text('+ Create Asset (not enough RVN)',
+                    style: TextStyle(color: Theme.of(context).disabledColor))));
           } else {
             rvnHolding.add(ListTile(
                 onTap: () {},
@@ -112,10 +114,11 @@ class _HomeState extends State<Home> {
           onLongPress: () {/* convert all values to USD and back */},
           title: Text('RVN', style: Theme.of(context).textTheme.bodyText1),
           trailing: Text('0', style: TextStyle(color: Theme.of(context).fine)),
-          leading: RavenIcon().getAssetAvatar('RVN')));
+          leading: RavenIcon(asset: 'RVN').assetAvatar));
       rvnHolding.add(ListTile(
           onTap: () {},
-          title: RavenText('+ Create Asset (not enough RVN)').disabled));
+          title: Text('+ Create Asset (not enough RVN)',
+              style: TextStyle(color: Theme.of(context).disabledColor))));
     }
 
     return ListView(children: <Widget>[...rvnHolding, ...assetHoldings]);
@@ -135,15 +138,15 @@ class _HomeState extends State<Home> {
                     Text(transaction['asset'],
                         style: Theme.of(context).textTheme.bodyText2),
                     (transaction['direction'] == 'in'
-                        ? RavenIcon().income
-                        : RavenIcon().out),
+                        ? RavenIcon(context: context).income
+                        : RavenIcon(context: context).out),
                   ]),
               trailing: (transaction['direction'] == 'in'
                   ? Text(transaction['amount'].toString(),
                       style: TextStyle(color: Theme.of(context).good))
                   : Text(transaction['amount'].toString(),
                       style: TextStyle(color: Theme.of(context).bad))),
-              leading: RavenIcon().getAssetAvatar(transaction['asset']))
+              leading: RavenIcon(asset: transaction['asset']).assetAvatar)
       ]);
 
   Container _emptyMessage({IconData? icon, String? name}) => Container(
@@ -190,7 +193,7 @@ class _HomeState extends State<Home> {
                 },
                 title: Text(keyName.value,
                     style: Theme.of(context).textTheme.bodyText1),
-                leading: RavenIcon().getAssetAvatar('RVN')),
+                leading: RavenIcon(asset: 'RVN').assetAvatar),
             Divider(height: 20, thickness: 2, indent: 5, endIndent: 5)
           ]
         ])

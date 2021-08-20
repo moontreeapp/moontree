@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
-import 'package:raven_mobile/styles.dart';
+import 'package:raven_mobile/components/styles/buttons.dart';
 
 class Send extends StatefulWidget {
   final dynamic data;

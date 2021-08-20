@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:raven_mobile/styles.dart';
+import 'package:raven_mobile/extensions.dart';
 import 'package:raven_mobile/components/buttons.dart';
 
 class Export extends StatefulWidget {
@@ -51,7 +51,7 @@ class _ExportState extends State<Export> {
                     showCursor: true,
                     toolbarOptions: ToolbarOptions(
                         copy: true, selectAll: true, cut: false, paste: false),
-                    style: RavenTextStyle().warning)),
+                    style: TextStyle(color: Theme.of(context).bad))),
             SizedBox(height: 30.0),
             Center(
                 child: SelectableText(

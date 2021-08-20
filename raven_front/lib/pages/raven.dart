@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
+import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/services/account_mock.dart' as mock;
-import 'package:raven_mobile/styles.dart';
+import 'package:raven_mobile/extensions.dart';
 import 'package:raven_mobile/pages/transaction.dart';
 
 class RavenTransactions extends StatefulWidget {
@@ -56,7 +57,7 @@ class _RavenTransactionsState extends State<RavenTransactions> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height: 15.0),
-                    RavenIcon().getAssetAvatar('RVN'),
+                    RavenIcon(asset: 'RVN').assetAvatar,
                     SizedBox(height: 15.0),
                     Text('50', style: Theme.of(context).textTheme.headline3),
                     SizedBox(height: 15.0),
@@ -82,15 +83,15 @@ class _RavenTransactionsState extends State<RavenTransactions> {
                   Text(transaction['asset'],
                       style: Theme.of(context).textTheme.bodyText2),
                   (transaction['direction'] == 'in'
-                      ? RavenIcon().income
-                      : RavenIcon().out),
+                      ? RavenIcon(context: context).income
+                      : RavenIcon(context: context).out),
                 ]),
             trailing: (transaction['direction'] == 'in'
                 ? Text(transaction['amount'].toString(),
                     style: TextStyle(color: Theme.of(context).good))
                 : Text(transaction['amount'].toString(),
                     style: TextStyle(color: Theme.of(context).bad))),
-            leading: RavenIcon().getAssetAvatar(transaction['asset'])));
+            leading: RavenIcon(asset: transaction['asset']).assetAvatar));
       }
     }
     return Container(
