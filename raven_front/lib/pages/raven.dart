@@ -58,10 +58,10 @@ class _RavenTransactionsState extends State<RavenTransactions> {
                     SizedBox(height: 15.0),
                     RavenIcon().getAssetAvatar('RVN'),
                     SizedBox(height: 15.0),
-                    Text('50', style: Theme.of(context).textTheme.headline1),
+                    Text('50', style: Theme.of(context).textTheme.headline3),
                     SizedBox(height: 15.0),
                     Text('\$654.02',
-                        style: Theme.of(context).textTheme.headline2),
+                        style: Theme.of(context).textTheme.headline5),
                   ]))));
 
   Container _transactionsView() {
@@ -86,8 +86,10 @@ class _RavenTransactionsState extends State<RavenTransactions> {
                       : RavenIcon().out),
                 ]),
             trailing: (transaction['direction'] == 'in'
-                ? RavenText(transaction['amount'].toString()).good
-                : RavenText(transaction['amount'].toString()).bad),
+                ? Text(transaction['amount'].toString(),
+                    style: TextStyle(color: Theme.of(context).good))
+                : Text(transaction['amount'].toString(),
+                    style: TextStyle(color: Theme.of(context).bad))),
             leading: RavenIcon().getAssetAvatar(transaction['asset'])));
       }
     }

@@ -55,7 +55,7 @@ class _HomeState extends State<Home> {
               (data['accounts'][data['account']] ?? 'Unknown') + ' Wallet'),
           flexibleSpace: Container(
             alignment: Alignment.center,
-            child: Text('\n\$ 0', style: Theme.of(context).textTheme.headline1),
+            child: Text('\n\$ 0', style: Theme.of(context).textTheme.headline3),
           ),
           bottom: PreferredSize(
               preferredSize: Size.fromHeight(50.0),
@@ -81,7 +81,8 @@ class _HomeState extends State<Home> {
                 style: holding.key == 'RVN'
                     ? Theme.of(context).textTheme.bodyText1
                     : Theme.of(context).textTheme.bodyText2),
-            trailing: RavenText(holding.value.toString()).good,
+            trailing: Text(holding.value.toString(),
+                style: TextStyle(color: Theme.of(context).good)),
             leading: RavenIcon().getAssetAvatar(holding.key));
         if (holding.key == 'RVN') {
           rvnHolding.add(thisHolding);
@@ -110,7 +111,7 @@ class _HomeState extends State<Home> {
           },
           onLongPress: () {/* convert all values to USD and back */},
           title: Text('RVN', style: Theme.of(context).textTheme.bodyText1),
-          trailing: RavenText('0').fine,
+          trailing: Text('0', style: TextStyle(color: Theme.of(context).fine)),
           leading: RavenIcon().getAssetAvatar('RVN')));
       rvnHolding.add(ListTile(
           onTap: () {},
@@ -138,8 +139,10 @@ class _HomeState extends State<Home> {
                         : RavenIcon().out),
                   ]),
               trailing: (transaction['direction'] == 'in'
-                  ? RavenText(transaction['amount'].toString()).good
-                  : RavenText(transaction['amount'].toString()).bad),
+                  ? Text(transaction['amount'].toString(),
+                      style: TextStyle(color: Theme.of(context).good))
+                  : Text(transaction['amount'].toString(),
+                      style: TextStyle(color: Theme.of(context).bad))),
               leading: RavenIcon().getAssetAvatar(transaction['asset']))
       ]);
 
@@ -149,7 +152,7 @@ class _HomeState extends State<Home> {
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Icon(icon ?? Icons.savings, size: 50.0, color: Colors.grey[100]),
         Text('\nYour $name will appear here.\n',
-            style: Theme.of(context).textTheme.headline4),
+            style: Theme.of(context).textTheme.headline5),
         RavenButton().getRVN(context),
       ]));
 
@@ -166,25 +169,17 @@ class _HomeState extends State<Home> {
   Drawer accountsView() => Drawer(
           child: ListView(padding: EdgeInsets.zero, children: <Widget>[
         DrawerHeader(
-            decoration: BoxDecoration(
-                //color: Theme.of(context).primaryColor
-                ),
+            decoration: BoxDecoration(color: Theme.of(context).primaryColor),
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text('Wallets', style: Theme.of(context).textTheme.headline1),
-                  //RavenText('Wallets').getH2(
-                  //    //color: Theme.of(context).dividerColor
-                  //    ),
+                  Text('Wallets', style: Theme.of(context).textTheme.headline5),
                   Padding(
                       padding: EdgeInsets.only(right: 20.0),
                       child: GestureDetector(
                           onTap: () {},
-                          child: Icon(
-                            Icons.add,
-                            size: 26.0,
-                            //color: Theme.of(context).dividerColor
-                          )))
+                          child: Icon(Icons.add,
+                              size: 26.0, color: Colors.grey.shade200)))
                 ])),
         Column(children: <Widget>[
           for (var keyName in data['accounts'].entries) ...[

@@ -48,9 +48,9 @@ class _TransactionState extends State<Transaction> {
               SizedBox(height: 15.0),
               RavenIcon().getAssetAvatar('Magic Musk'),
               SizedBox(height: 15.0),
-              Text('Magic Musk', style: Theme.of(context).textTheme.headline1),
+              Text('Magic Musk', style: Theme.of(context).textTheme.headline4),
               SizedBox(height: 15.0),
-              Text('Received', style: Theme.of(context).textTheme.headline2),
+              Text('Received', style: Theme.of(context).textTheme.headline5),
             ]),
           )));
 
@@ -103,8 +103,7 @@ class _TransactionState extends State<Transaction> {
           ElevatedButton.icon(
               onPressed: () {},
               icon: Icon(Icons.description),
-              label: Text('Metadata',
-                  style: Theme.of(context).textTheme.headline2))
+              label: Text('Metadata'))
         ])
       ]);
 }

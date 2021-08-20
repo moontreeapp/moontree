@@ -49,7 +49,7 @@ class _SendState extends State<Send> {
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text('\n0 RVN', style: Theme.of(context).textTheme.headline1),
+                Text('\n0 RVN', style: Theme.of(context).textTheme.headline3),
                 IconButton(
                     onPressed: () {
                       /*show available assets and balances for this account*/
@@ -60,7 +60,7 @@ class _SendState extends State<Send> {
                       color: Colors.white,
                     ))
               ]),
-              Text('\n\$ 0.00', style: Theme.of(context).textTheme.headline2),
+              Text('\n\$ 0.00', style: Theme.of(context).textTheme.headline5),
             ]),
           )));
 

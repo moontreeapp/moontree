@@ -51,21 +51,23 @@ class _ReceiveState extends State<Receive> {
                 // rvn is default but if balance is 0 then take the largest asset balance and also display name here.
                 'RVN',
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyText2),
+                style: Theme.of(context).textTheme.headline5),
             SizedBox(height: 30.0),
             Center(
                 child: QrImage(
+                    backgroundColor: Colors.white,
                     data: "mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7",
                     version: QrVersions.auto,
                     size: 200.0)),
             SizedBox(height: 60.0),
             Center(
-                child: SelectableText('mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7',
-                    cursorColor: Colors.grey[850],
-                    showCursor: true,
-                    toolbarOptions: ToolbarOptions(
-                        copy: true, selectAll: true, cut: false, paste: false),
-                    style: TextStyle(color: Colors.grey[850])))
+                child: SelectableText(
+              'mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7',
+              cursorColor: Colors.grey[850],
+              showCursor: true,
+              toolbarOptions: ToolbarOptions(
+                  copy: true, selectAll: true, cut: false, paste: false),
+            ))
           ]);
 
   ElevatedButton shareAddressButton() => ElevatedButton.icon(

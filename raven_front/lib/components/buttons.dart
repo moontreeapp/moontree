@@ -45,7 +45,7 @@ ElevatedButton sendButton(context, {String asset = 'RVN'}) =>
 
 ElevatedButton getRVNButton(context) => ElevatedButton(
     onPressed: () {/* link to coinbase */},
-    child: Text('get RVN', style: Theme.of(context).textTheme.headline4));
+    child: Text('get RVN', style: Theme.of(context).textTheme.headline5));
 
 class RavenButton {
   RavenButton();

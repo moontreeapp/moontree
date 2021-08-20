@@ -39,6 +39,7 @@ class _ExportState extends State<Export> {
             SizedBox(height: 30.0),
             Center(
                 child: QrImage(
+                    backgroundColor: Colors.white,
                     data:
                         "apple cost speed dip wallet toast jump water average need clip run",
                     version: QrVersions.auto,
@@ -54,11 +55,11 @@ class _ExportState extends State<Export> {
             SizedBox(height: 30.0),
             Center(
                 child: SelectableText(
-                    'apple cost speed dip wallet toast jump water average need clip run',
-                    cursorColor: Colors.grey[850],
-                    showCursor: true,
-                    toolbarOptions: ToolbarOptions(
-                        copy: true, selectAll: true, cut: false, paste: false),
-                    style: TextStyle(color: Colors.grey[850])))
+              'apple cost speed dip wallet toast jump water average need clip run',
+              cursorColor: Colors.grey[850],
+              showCursor: true,
+              toolbarOptions: ToolbarOptions(
+                  copy: true, selectAll: true, cut: false, paste: false),
+            ))
           ]);
 }

@@ -60,26 +60,29 @@ class _TechnicalViewState extends State<TechnicalView> {
     var _treeViewController =
         TreeViewController().loadJSON(json: jsonEncode(accountsHierarchy));
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        //borderRadius: BorderRadius.circular(10),
-      ),
       padding: EdgeInsets.all(10),
       child: TreeView(
-        controller: _treeViewController,
-        allowParentSelect: true,
-        supportParentDoubleTap: true,
-        //onExpansionChanged: (key, expanded) => _expandNode(key, expanded),
-        onNodeTap: (key) {
-          //setState(() {
-          //  _selectedNode = key;
-          //  _treeViewController =
-          //      _treeViewController.copyWith(selectedKey: key);
-          //}
-          //);
-        },
-        //theme: _treeViewTheme,
-      ),
+          controller: _treeViewController,
+          allowParentSelect: true,
+          supportParentDoubleTap: true,
+          //onExpansionChanged: (key, expanded) => _expandNode(key, expanded),
+          onNodeTap: (key) {
+            //setState(() {
+            //  _selectedNode = key;
+            //  _treeViewController =
+            //      _treeViewController.copyWith(selectedKey: key);
+            //}
+            //);
+          },
+          theme: TreeViewTheme(
+              labelStyle: TextStyle(color: Colors.black),
+              parentLabelStyle:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+              colorScheme: Theme.of(context).brightness == Brightness.light
+                  ? ColorScheme.light()
+                  : ColorScheme.dark())
+          //theme: _treeViewTheme,
+          ),
     );
   }
 }
