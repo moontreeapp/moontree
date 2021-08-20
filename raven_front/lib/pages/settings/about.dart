@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:raven_mobile/components/pages/settings/about.dart' as about;
-import 'package:raven_mobile/styles.dart';
+import 'package:raven_mobile/components/buttons.dart';
 
 class About extends StatefulWidget {
   final dynamic data;
@@ -22,6 +21,22 @@ class _AboutState extends State<About> {
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
-    return Scaffold(appBar: about.header(context), body: about.body(context));
+    return Scaffold(appBar: header(), body: body());
   }
+
+  AppBar header() => AppBar(
+      leading: RavenButton().back(context),
+      elevation: 2,
+      centerTitle: false,
+      title: Text('About'));
+
+  Center body() => Center(
+        child: Column(
+          children: <Widget>[
+            Image(image: AssetImage('assets/rvn.png')),
+            Text('Github.com/moontreeapp'),
+            Text('MoonTreeLLC 2021'),
+          ],
+        ),
+      );
 }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:raven_mobile/components/pages/receive.dart' as receive;
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/styles.dart';
+
+import 'package:qr_flutter/qr_flutter.dart';
 
 class Receive extends StatefulWidget {
   final dynamic data;
@@ -24,10 +25,52 @@ class _ReceiveState extends State<Receive> {
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
     return Scaffold(
-        appBar: receive.header(context),
-        body: receive.body(),
+        appBar: header(),
+        body: body(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: receive.shareAddressButton(),
+        floatingActionButton: shareAddressButton(),
         bottomNavigationBar: RavenButton().bottomNav(context));
   }
+
+  AppBar header() => AppBar(
+        leading: RavenButton().back(context),
+        elevation: 2,
+        centerTitle: false,
+        title: Text(
+          //(data['accounts'][data['account']] ?? 'Unknown') + ' Wallet',
+          'Address',
+        ),
+      );
+
+  ListView body() => ListView(
+          shrinkWrap: true,
+          padding: EdgeInsets.all(10.0),
+          children: <Widget>[
+            SizedBox(height: 15.0),
+            Text(
+                // rvn is default but if balance is 0 then take the largest asset balance and also display name here.
+                'RVN',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyText2),
+            SizedBox(height: 30.0),
+            Center(
+                child: QrImage(
+                    data: "mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7",
+                    version: QrVersions.auto,
+                    size: 200.0)),
+            SizedBox(height: 60.0),
+            Center(
+                child: SelectableText('mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7',
+                    cursorColor: Colors.grey[850],
+                    showCursor: true,
+                    toolbarOptions: ToolbarOptions(
+                        copy: true, selectAll: true, cut: false, paste: false),
+                    style: TextStyle(color: Colors.grey[850])))
+          ]);
+
+  ElevatedButton shareAddressButton() => ElevatedButton.icon(
+      icon: Icon(Icons.share),
+      label: Text('Share'),
+      onPressed: () {},
+      style: RavenButtonStyle().curvedSides);
 }

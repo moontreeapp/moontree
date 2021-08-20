@@ -43,6 +43,10 @@ ElevatedButton sendButton(context, {String asset = 'RVN'}) =>
             MaterialPageRoute(builder: (context) => Send(/* chosen asset*/))),
         style: RavenButtonStyle().rightSideCurved);
 
+ElevatedButton getRVNButton(context) => ElevatedButton(
+    onPressed: () {/* link to coinbase */},
+    child: Text('get RVN', style: Theme.of(context).textTheme.headline4));
+
 class RavenButton {
   RavenButton();
 
@@ -52,4 +56,5 @@ class RavenButton {
   ElevatedButton receive(context) => receiveButton(context);
   ElevatedButton send(context, {String asset = 'RVN'}) =>
       sendButton(context, asset: asset);
+  ElevatedButton getRVN(context) => getRVNButton(context);
 }

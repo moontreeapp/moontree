@@ -4,6 +4,8 @@ import 'color_gen.dart';
 
 class Palette {
   static const Color primary = Color(0xFF2F4D7D);
+  static const Color ravenBlue = Color(0xFF2E3E80);
+  static const Color ravenOrange = Color(0xFFF15B22);
 }
 
 CustomTheme currentTheme = CustomTheme();

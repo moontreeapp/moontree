@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:raven_mobile/components/pages/settings/wallet_settings.dart'
-    as walletSettings;
-import 'package:raven_mobile/styles.dart';
+import 'package:raven_mobile/pages/settings/export.dart';
+import 'package:raven_mobile/pages/settings/import.dart';
+import 'package:raven_mobile/pages/technical.dart';
+import 'package:settings_ui/settings_ui.dart';
+import 'package:raven_mobile/components/buttons.dart';
 
 class WalletSettings extends StatefulWidget {
   final dynamic data;
@@ -23,8 +25,48 @@ class _WalletSettingsState extends State<WalletSettings> {
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
-    return Scaffold(
-        appBar: walletSettings.header(context),
-        body: walletSettings.body(context));
+    return Scaffold(appBar: header(), body: body());
   }
+
+  AppBar header() => AppBar(
+      leading: RavenButton().back(context),
+      elevation: 2,
+      centerTitle: false,
+      title: Text('Wallet Settings'));
+
+  SettingsList body() => SettingsList(sections: [
+        SettingsSection(tiles: [
+          SettingsTile(
+              title: 'Import Wallet',
+              leading: Icon(Icons.account_balance_wallet_rounded),
+              onPressed: (BuildContext context) {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Import()));
+              }),
+          SettingsTile(
+              title: 'Export/Backup Wallet',
+              leading: Icon(Icons.swap_horiz),
+              onPressed: (BuildContext context) {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Export()));
+              }),
+          SettingsTile(
+              title: 'Technical View',
+              leading: Icon(Icons.swap_horiz),
+              onPressed: (BuildContext context) {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => TechnicalView()));
+              }),
+          SettingsTile(
+              title: 'Sign Message',
+              enabled: false,
+              leading: Icon(Icons.swap_horiz),
+              onPressed: (BuildContext context) {
+                //Navigator.push(
+                //  context,
+                //  MaterialPageRoute(builder: (context) => ...()),
+                //);
+              })
+        ])
+      ]);
 }

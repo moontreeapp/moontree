@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/account_mock.dart' as mock;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:raven_mobile/styles.dart';
-//import 'package:raven/accounts.dart';
-//import 'package:raven/boxes.dart';
 
 class Loading extends StatefulWidget {
   @override

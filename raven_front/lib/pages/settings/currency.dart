@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:raven_mobile/components/pages/settings/currency.dart'
-    as currency;
-import 'package:raven_mobile/styles.dart';
+import 'package:settings_ui/settings_ui.dart';
+import 'package:raven_mobile/components/buttons.dart';
 
 class Currency extends StatefulWidget {
   final dynamic data;
@@ -23,7 +22,59 @@ class _CurrencyState extends State<Currency> {
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
-    return Scaffold(
-        appBar: currency.header(context), body: currency.body(context));
+    return Scaffold(appBar: header(), body: body());
   }
+
+  AppBar header() => AppBar(
+        leading: RavenButton().back(context),
+        elevation: 2,
+        centerTitle: false,
+        title: Text('Currency Settings'),
+      );
+
+  SettingsList body() => SettingsList(sections: [
+        SettingsSection(tiles: [
+          SettingsTile(
+              title: 'USD',
+              leading: Icon(Icons.money),
+              onPressed: (BuildContext context) {
+                // toggle
+              }),
+          SettingsTile(
+            title: 'EUR',
+            leading: Icon(Icons.euro),
+            onPressed: (BuildContext context) {},
+          ),
+          SettingsTile(
+              title: 'CAD',
+              leading: Icon(Icons.money),
+              onPressed: (BuildContext context) {
+                // toggle
+              }),
+          SettingsTile(
+              title: 'GBP',
+              leading: Icon(Icons.money),
+              onPressed: (BuildContext context) {
+                // toggle
+              }),
+          SettingsTile(
+              title: 'JPY',
+              leading: Icon(Icons.money),
+              onPressed: (BuildContext context) {
+                // toggle
+              }),
+          SettingsTile(
+              title: 'NZD',
+              leading: Icon(Icons.money),
+              onPressed: (BuildContext context) {
+                // toggle
+              }),
+          SettingsTile(
+              title: 'RUB',
+              leading: Icon(Icons.money),
+              onPressed: (BuildContext context) {
+                // toggle
+              }),
+        ])
+      ]);
 }
