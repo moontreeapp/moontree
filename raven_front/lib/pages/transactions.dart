@@ -36,7 +36,7 @@ class _RavenTransactionsState extends State<RavenTransactions> {
         body: transactionsView(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: sendReceiveButtons(),
-        bottomNavigationBar: RavenButton().bottomNav(context));
+        bottomNavigationBar: RavenButton.bottomNav(context));
   }
 
   PreferredSize header() => PreferredSize(
@@ -44,11 +44,11 @@ class _RavenTransactionsState extends State<RavenTransactions> {
       child: AppBar(
           elevation: 2,
           centerTitle: false,
-          leading: RavenButton().back(context),
+          leading: RavenButton.back(context),
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: RavenButton().settings(context))
+                child: RavenButton.settings(context))
           ],
           title: Text('RVN'),
           flexibleSpace: Container(
@@ -57,7 +57,7 @@ class _RavenTransactionsState extends State<RavenTransactions> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height: 15.0),
-                    RavenIcon(asset: 'RVN').assetAvatar,
+                    RavenIcon.assetAvatar('RVN'),
                     SizedBox(height: 15.0),
                     Text('50', style: Theme.of(context).textTheme.headline3),
                     SizedBox(height: 15.0),
@@ -70,12 +70,7 @@ class _RavenTransactionsState extends State<RavenTransactions> {
     for (var transaction in data['transactions'][data['account']]) {
       if (transaction['asset'] == 'RVN') {
         txs.add(ListTile(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Transaction()),
-              );
-            },
+            onTap: () => Navigator.pushNamed(context, '/transaction'),
             onLongPress: () {/* convert all values to USD and back */},
             title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -83,15 +78,15 @@ class _RavenTransactionsState extends State<RavenTransactions> {
                   Text(transaction['asset'],
                       style: Theme.of(context).textTheme.bodyText2),
                   (transaction['direction'] == 'in'
-                      ? RavenIcon(context: context).income
-                      : RavenIcon(context: context).out),
+                      ? RavenIcon.income(context)
+                      : RavenIcon.out(context)),
                 ]),
             trailing: (transaction['direction'] == 'in'
                 ? Text(transaction['amount'].toString(),
                     style: TextStyle(color: Theme.of(context).good))
                 : Text(transaction['amount'].toString(),
                     style: TextStyle(color: Theme.of(context).bad))),
-            leading: RavenIcon(asset: transaction['asset']).assetAvatar));
+            leading: RavenIcon.assetAvatar(transaction['asset'])));
       }
     }
     return Container(
@@ -101,7 +96,8 @@ class _RavenTransactionsState extends State<RavenTransactions> {
   Container _emptyMessage({IconData? icon, String? name}) => Container(
       alignment: Alignment.center,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(icon ?? Icons.description, size: 50.0, color: Colors.grey[100]),
+        Icon(icon ?? Icons.description,
+            size: 50.0, color: Theme.of(context).secondaryHeaderColor),
         Text('\nMagic Musk $name empty.\n',
             style: Theme.of(context).textTheme.headline4),
       ]));
@@ -115,7 +111,7 @@ class _RavenTransactionsState extends State<RavenTransactions> {
   /// receive works the same
   Row sendReceiveButtons() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        RavenButton().receive(context),
-        RavenButton().send(context, asset: 'RVN'),
+        RavenButton.receive(context),
+        RavenButton.send(context, asset: 'RVN'),
       ]);
 }

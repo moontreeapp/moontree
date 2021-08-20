@@ -28,7 +28,7 @@ class _TechnicalViewState extends State<TechnicalView> {
   }
 
   AppBar header() => AppBar(
-        leading: RavenButton().back(context),
+        leading: RavenButton.back(context),
         elevation: 2,
         centerTitle: false,
         title: Text('Technical View'),

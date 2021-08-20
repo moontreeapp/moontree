@@ -27,7 +27,7 @@ class _TransactionState extends State<Transaction> {
         appBar: header(),
         body: body(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        bottomNavigationBar: RavenButton().bottomNav(context));
+        bottomNavigationBar: RavenButton.bottomNav(context));
   }
 
   PreferredSize header() => PreferredSize(
@@ -35,11 +35,11 @@ class _TransactionState extends State<Transaction> {
       child: AppBar(
           elevation: 2,
           centerTitle: false,
-          leading: RavenButton().back(context),
+          leading: RavenButton.back(context),
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: RavenButton().settings(context))
+                child: RavenButton.settings(context))
           ],
           title: Text('Transaction Details'),
           flexibleSpace: Container(
@@ -47,7 +47,7 @@ class _TransactionState extends State<Transaction> {
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               SizedBox(height: 15.0),
-              RavenIcon(asset: 'Magic Musk').assetAvatar,
+              RavenIcon.assetAvatar('Magic Musk'),
               SizedBox(height: 15.0),
               Text('Magic Musk', style: Theme.of(context).textTheme.headline4),
               SizedBox(height: 15.0),

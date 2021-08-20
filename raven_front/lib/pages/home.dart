@@ -7,7 +7,7 @@ import 'package:raven_mobile/theme/theme.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:raven_mobile/pages/asset.dart';
-import 'package:raven_mobile/pages/raven.dart';
+import 'package:raven_mobile/pages/transactions.dart';
 import 'package:raven_mobile/pages/transaction.dart';
 
 class Home extends StatefulWidget {
@@ -38,7 +38,7 @@ class _HomeState extends State<Home> {
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
             floatingActionButton: sendReceiveButtons(),
-            bottomNavigationBar: RavenButton().bottomNav(context)));
+            bottomNavigationBar: RavenButton.bottomNav(context)));
   }
 
   PreferredSize balanceHeader() => PreferredSize(
@@ -48,7 +48,7 @@ class _HomeState extends State<Home> {
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: RavenButton().settings(context))
+                child: RavenButton.settings(context))
           ],
           elevation: 2,
           centerTitle: false,
@@ -69,14 +69,8 @@ class _HomeState extends State<Home> {
     if (data['holdings'][data['account']].isNotEmpty) {
       for (MapEntry holding in data['holdings'][data['account']].entries) {
         var thisHolding = ListTile(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => holding.key == 'RVN'
-                          ? RavenTransactions()
-                          : Asset()));
-            },
+            onTap: () => Navigator.pushNamed(
+                context, holding.key == 'RVN' ? '/transactions' : '/asset'),
             onLongPress: () {/* convert all values to USD and back */},
             title: Text(holding.key,
                 style: holding.key == 'RVN'
@@ -84,7 +78,7 @@ class _HomeState extends State<Home> {
                     : Theme.of(context).textTheme.bodyText2),
             trailing: Text(holding.value.toString(),
                 style: TextStyle(color: Theme.of(context).good)),
-            leading: RavenIcon(asset: holding.key).assetAvatar);
+            leading: RavenIcon.assetAvatar(holding.key));
         if (holding.key == 'RVN') {
           rvnHolding.add(thisHolding);
           if (holding.value < 600) {
@@ -107,14 +101,11 @@ class _HomeState extends State<Home> {
     }
     if (rvnHolding.isEmpty) {
       rvnHolding.add(ListTile(
-          onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => RavenTransactions()));
-          },
+          onTap: () => Navigator.pushNamed(context, '/transactions'),
           onLongPress: () {/* convert all values to USD and back */},
           title: Text('RVN', style: Theme.of(context).textTheme.bodyText1),
           trailing: Text('0', style: TextStyle(color: Theme.of(context).fine)),
-          leading: RavenIcon(asset: 'RVN').assetAvatar));
+          leading: RavenIcon.assetAvatar('RVN')));
       rvnHolding.add(ListTile(
           onTap: () {},
           title: Text('+ Create Asset (not enough RVN)',
@@ -127,10 +118,7 @@ class _HomeState extends State<Home> {
   ListView _transactionsView() => ListView(children: <Widget>[
         for (var transaction in data['transactions'][data['account']])
           ListTile(
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Transaction()));
-              },
+              onTap: () => Navigator.pushNamed(context, '/transactions'),
               onLongPress: () {/* convert all values to USD and back */},
               title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -138,25 +126,25 @@ class _HomeState extends State<Home> {
                     Text(transaction['asset'],
                         style: Theme.of(context).textTheme.bodyText2),
                     (transaction['direction'] == 'in'
-                        ? RavenIcon(context: context).income
-                        : RavenIcon(context: context).out),
+                        ? RavenIcon.income(context)
+                        : RavenIcon.out(context)),
                   ]),
               trailing: (transaction['direction'] == 'in'
                   ? Text(transaction['amount'].toString(),
                       style: TextStyle(color: Theme.of(context).good))
                   : Text(transaction['amount'].toString(),
                       style: TextStyle(color: Theme.of(context).bad))),
-              leading: RavenIcon(asset: transaction['asset']).assetAvatar)
+              leading: RavenIcon.assetAvatar(transaction['asset']))
       ]);
 
   Container _emptyMessage({IconData? icon, String? name}) => Container(
-      color: Colors.grey,
       alignment: Alignment.center,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(icon ?? Icons.savings, size: 50.0, color: Colors.grey[100]),
+        Icon(icon ?? Icons.savings,
+            size: 50.0, color: Theme.of(context).secondaryHeaderColor),
         Text('\nYour $name will appear here.\n',
-            style: Theme.of(context).textTheme.headline5),
-        RavenButton().getRVN(context),
+            style: Theme.of(context).textTheme.bodyText1),
+        RavenButton.getRVN(context),
       ]));
 
   /// returns a list of holdings and transactions or empty messages
@@ -193,7 +181,7 @@ class _HomeState extends State<Home> {
                 },
                 title: Text(keyName.value,
                     style: Theme.of(context).textTheme.bodyText1),
-                leading: RavenIcon(asset: 'RVN').assetAvatar),
+                leading: RavenIcon.assetAvatar('RVN')),
             Divider(height: 20, thickness: 2, indent: 5, endIndent: 5)
           ]
         ])
@@ -201,7 +189,7 @@ class _HomeState extends State<Home> {
 
   Row sendReceiveButtons() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        RavenButton().receive(context),
-        RavenButton().send(context, asset: 'RVN'),
+        RavenButton.receive(context),
+        RavenButton.send(context, asset: 'RVN'),
       ]);
 }

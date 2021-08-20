@@ -23,7 +23,7 @@ ButtonStyle curvedButton() => ButtonStyle(
 class RavenButtonStyle {
   RavenButtonStyle();
 
-  ButtonStyle get leftSideCurved => leftCurvedButton();
-  ButtonStyle get rightSideCurved => rightCurvedButton();
-  ButtonStyle get curvedSides => curvedButton();
+  static ButtonStyle get leftSideCurved => leftCurvedButton();
+  static ButtonStyle get rightSideCurved => rightCurvedButton();
+  static ButtonStyle get curvedSides => curvedButton();
 }

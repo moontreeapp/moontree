@@ -32,7 +32,7 @@ class _ImportState extends State<Import> {
   }
 
   AppBar header() => AppBar(
-      leading: RavenButton().back(context),
+      leading: RavenButton.back(context),
       elevation: 2,
       centerTitle: false,
       title: Text('Import Wallet'));
@@ -79,7 +79,7 @@ class _ImportState extends State<Import> {
               //  MaterialPageRoute(builder: (context) => Receive()),
               //);
             },
-            style: RavenButtonStyle().leftSideCurved),
+            style: RavenButtonStyle.leftSideCurved),
         ElevatedButton.icon(
             icon: Icon(Icons.upload_file),
             label: Text('File'),
@@ -89,6 +89,6 @@ class _ImportState extends State<Import> {
               //  MaterialPageRoute(builder: (context) => Send()),
               //);
             },
-            style: RavenButtonStyle().rightSideCurved)
+            style: RavenButtonStyle.rightSideCurved)
       ]);
 }

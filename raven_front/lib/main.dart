@@ -5,10 +5,9 @@ import 'package:flutter/material.dart';
 
 import 'package:raven/init/raven.dart' as raven;
 
+import 'package:raven_mobile/pages.dart';
 import 'package:raven_mobile/theme/color_gen.dart';
 import 'package:raven_mobile/theme/theme.dart';
-import 'package:raven_mobile/pages/home.dart';
-import 'package:raven_mobile/pages/loading.dart';
 
 Future<void> main() async {
   //await Hive.initFlutter();
@@ -18,6 +17,19 @@ Future<void> main() async {
       routes: {
         '/': (context) => Loading(),
         '/home': (context) => Home(),
+        '/settings': (context) => Settings(),
+        '/settings/about': (context) => About(),
+        '/settings/import': (context) => Import(),
+        '/settings/export': (context) => Export(),
+        '/settings/currency': (context) => Currency(),
+        '/settings/language': (context) => Language(),
+        '/settings/technical': (context) => TechnicalView(),
+        '/settings/wallet': (context) => WalletSettings(),
+        '/asset': (context) => Asset(),
+        '/transactions': (context) => RavenTransactions(),
+        '/transaction': (context) => Transaction(),
+        '/send': (context) => Send(),
+        '/receive': (context) => Receive(),
       },
       themeMode: ThemeMode.system,
       theme: ThemeData(
@@ -46,6 +58,10 @@ Future<void> main() async {
           primarySwatch: generateMaterialColor(Palette.ravenBlue),
           textTheme: TextTheme(
             headline1: TextStyle(fontSize: 24.0, letterSpacing: 2.0),
+            headline2: TextStyle(
+                fontSize: 18.0,
+                letterSpacing: 2.0,
+                color: Colors.grey.shade200),
             headline3: TextStyle(color: Colors.grey.shade200),
             headline4: TextStyle(color: Colors.grey.shade200),
             bodyText1: TextStyle(fontSize: 18.0),

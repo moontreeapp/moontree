@@ -28,11 +28,11 @@ class _ReceiveState extends State<Receive> {
         body: body(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: shareAddressButton(),
-        bottomNavigationBar: RavenButton().bottomNav(context));
+        bottomNavigationBar: RavenButton.bottomNav(context));
   }
 
   AppBar header() => AppBar(
-        leading: RavenButton().back(context),
+        leading: RavenButton.back(context),
         elevation: 2,
         centerTitle: false,
         title: Text(
@@ -73,5 +73,5 @@ class _ReceiveState extends State<Receive> {
       icon: Icon(Icons.share),
       label: Text('Share'),
       onPressed: () {},
-      style: RavenButtonStyle().curvedSides);
+      style: RavenButtonStyle.curvedSides);
 }

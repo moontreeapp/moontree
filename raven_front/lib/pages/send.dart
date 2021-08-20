@@ -29,7 +29,7 @@ class _SendState extends State<Send> {
         body: body(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: sendTransactionButton(),
-        bottomNavigationBar: RavenButton().bottomNav(context));
+        bottomNavigationBar: RavenButton.bottomNav(context));
   }
 
   PreferredSize header() => PreferredSize(
@@ -37,11 +37,11 @@ class _SendState extends State<Send> {
       child: AppBar(
           elevation: 2,
           centerTitle: false,
-          leading: RavenButton().back(context),
+          leading: RavenButton.back(context),
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: RavenButton().settings(context))
+                child: RavenButton.settings(context))
           ],
           title: Text('Send'),
           flexibleSpace: Container(
@@ -130,5 +130,5 @@ class _SendState extends State<Send> {
           // Process data.
         }
       },
-      style: RavenButtonStyle().curvedSides);
+      style: RavenButtonStyle.curvedSides);
 }

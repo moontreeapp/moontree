@@ -9,17 +9,15 @@ Icon outIcon(context) =>
 AssetImage assetIcon(String asset) =>
     {'RVN': AssetImage('assets/rvnhead.png')}[asset] ??
     AssetImage('assets/defaultasset.png');
-CircleAvatar assetCircleAvatar(String asset) => CircleAvatar(
-      backgroundImage: assetIcon(asset),
-    );
+CircleAvatar assetCircleAvatar(String asset) =>
+    CircleAvatar(backgroundImage: assetIcon(asset));
 
 class RavenIcon {
-  BuildContext? context;
-  String? asset;
-  RavenIcon({this.context, this.asset});
-  Icon get back => backIcon();
-  Icon get income => inIcon(context);
-  Icon get out => outIcon(context);
-  AssetImage get assetImage => assetIcon(asset ?? 'RVN');
-  CircleAvatar get assetAvatar => assetCircleAvatar(asset ?? 'RVN');
+  RavenIcon();
+
+  static Icon get back => backIcon();
+  static Icon income(context) => inIcon(context);
+  static Icon out(context) => outIcon(context);
+  static AssetImage assetImage(asset) => assetIcon(asset ?? 'RVN');
+  static CircleAvatar assetAvatar(asset) => assetCircleAvatar(asset ?? 'RVN');
 }

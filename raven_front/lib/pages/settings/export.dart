@@ -27,7 +27,7 @@ class _ExportState extends State<Export> {
   }
 
   AppBar header() => AppBar(
-      leading: RavenButton().back(context),
+      leading: RavenButton.back(context),
       elevation: 2,
       centerTitle: false,
       title: Text('Export Wallet'));

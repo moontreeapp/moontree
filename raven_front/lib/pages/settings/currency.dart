@@ -26,7 +26,7 @@ class _CurrencyState extends State<Currency> {
   }
 
   AppBar header() => AppBar(
-        leading: RavenButton().back(context),
+        leading: RavenButton.back(context),
         elevation: 2,
         centerTitle: false,
         title: Text('Currency Settings'),

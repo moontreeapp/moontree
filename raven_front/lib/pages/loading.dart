@@ -24,8 +24,8 @@ class _LoadingState extends State<Loading> {
     //res.accounts.changes.listen((changes) {
     //  build(context);
     //}); // //sett
-    //await mock.Accounts.instance.load();
-    sleep(Duration(milliseconds: 1400));
+    await mock.Accounts.instance.load();
+    //sleep(Duration(milliseconds: 1400));
     Navigator.pushReplacementNamed(context, '/home', arguments: {
       'account': 'accountId1',
       'accounts': mock.Accounts.instance.accounts,

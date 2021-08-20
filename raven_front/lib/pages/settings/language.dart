@@ -26,7 +26,7 @@ class _LanguageState extends State<Language> {
   }
 
   AppBar header() => AppBar(
-      leading: RavenButton().back(context),
+      leading: RavenButton.back(context),
       elevation: 2,
       centerTitle: false,
       title: Text('Language Settings'));

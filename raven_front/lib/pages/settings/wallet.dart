@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
 
-import 'package:raven_mobile/pages/settings/export.dart';
-import 'package:raven_mobile/pages/settings/import.dart';
-import 'package:raven_mobile/pages/settings/technical.dart';
 import 'package:raven_mobile/components/buttons.dart';
 
 class WalletSettings extends StatefulWidget {
@@ -29,7 +26,7 @@ class _WalletSettingsState extends State<WalletSettings> {
   }
 
   AppBar header() => AppBar(
-      leading: RavenButton().back(context),
+      leading: RavenButton.back(context),
       elevation: 2,
       centerTitle: false,
       title: Text('Wallet Settings'));
@@ -39,24 +36,18 @@ class _WalletSettingsState extends State<WalletSettings> {
           SettingsTile(
               title: 'Import Wallet',
               leading: Icon(Icons.account_balance_wallet_rounded),
-              onPressed: (BuildContext context) {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Import()));
-              }),
+              onPressed: (BuildContext context) =>
+                  Navigator.pushNamed(context, '/settings/import')),
           SettingsTile(
               title: 'Export/Backup Wallet',
               leading: Icon(Icons.swap_horiz),
-              onPressed: (BuildContext context) {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Export()));
-              }),
+              onPressed: (BuildContext context) =>
+                  Navigator.pushNamed(context, '/settings/export')),
           SettingsTile(
               title: 'Technical View',
               leading: Icon(Icons.swap_horiz),
-              onPressed: (BuildContext context) {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => TechnicalView()));
-              }),
+              onPressed: (BuildContext context) =>
+                  Navigator.pushNamed(context, '/settings/technical')),
           SettingsTile(
               title: 'Sign Message',
               enabled: false,

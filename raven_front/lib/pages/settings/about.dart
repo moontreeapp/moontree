@@ -25,7 +25,7 @@ class _AboutState extends State<About> {
   }
 
   AppBar header() => AppBar(
-      leading: RavenButton().back(context),
+      leading: RavenButton.back(context),
       elevation: 2,
       centerTitle: false,
       title: Text('About'));

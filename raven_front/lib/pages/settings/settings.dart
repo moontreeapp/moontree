@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:raven_mobile/pages/settings/about.dart';
-import 'package:raven_mobile/pages/settings/currency.dart';
-import 'package:raven_mobile/pages/settings/language.dart';
-import 'package:raven_mobile/pages/settings/wallet_settings.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:raven_mobile/components/buttons.dart';
 
@@ -30,7 +26,7 @@ class _SettingsState extends State<Settings> {
   }
 
   AppBar header() => AppBar(
-      leading: RavenButton().back(context),
+      leading: RavenButton.back(context),
       elevation: 2,
       centerTitle: false,
       title: Text('Settings'));
@@ -42,12 +38,8 @@ class _SettingsState extends State<Settings> {
                 title: 'Wallet',
                 subtitle: '<Account Name>',
                 leading: Icon(Icons.account_balance_wallet_rounded),
-                onPressed: (BuildContext context) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => WalletSettings()));
-                }),
+                onPressed: (BuildContext context) =>
+                    Navigator.pushNamed(context, '/settings/wallet')),
             SettingsTile(
                 title: 'P2P Exchange',
                 enabled: false,
@@ -60,25 +52,19 @@ class _SettingsState extends State<Settings> {
               SettingsTile(
                   title: 'Currency',
                   leading: Icon(Icons.money),
-                  onPressed: (BuildContext context) {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Currency()));
-                  }),
+                  onPressed: (BuildContext context) =>
+                      Navigator.pushNamed(context, '/settings/currency')),
               SettingsTile(
                   title: 'Language',
                   subtitle: 'English',
                   leading: Icon(Icons.language),
-                  onPressed: (BuildContext context) {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Language()));
-                  }),
+                  onPressed: (BuildContext context) =>
+                      Navigator.pushNamed(context, '/settings/language')),
               SettingsTile(
                   title: 'About',
                   leading: Icon(Icons.info),
-                  onPressed: (BuildContext context) {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => About()));
-                  }),
+                  onPressed: (BuildContext context) =>
+                      Navigator.pushNamed(context, '/settings/about')),
               //SettingsTile.switchTile(
               //  title: 'Use fingerprint',
               //  leading: Icon(Icons.fingerprint),
