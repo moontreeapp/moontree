@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:raven/records/security.dart';
 
@@ -6,7 +7,7 @@ import '_type_id.dart';
 part 'rate.g.dart';
 
 @HiveType(typeId: TypeId.Rate)
-class Rate {
+class Rate with EquatableMixin {
   @HiveField(0)
   Security base;
 
@@ -21,4 +22,7 @@ class Rate {
     required this.quote,
     required this.rate,
   });
+
+  @override
+  List<Object?> get props => [base, quote, rate];
 }

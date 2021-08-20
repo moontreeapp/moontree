@@ -1,22 +1,20 @@
 import 'package:raven/records.dart';
 import 'package:raven/records/security.dart';
-import 'package:raven/reservoir/index.dart';
 import 'package:raven/reservoir/reservoir.dart';
 
-class HistoryReservoir extends Reservoir<dynamic, History> {
-  late MultipleIndex<dynamic, History> byAccount;
-  late MultipleIndex<dynamic, History> byWallet;
-  late MultipleIndex<dynamic, History> byScripthash;
-  late MultipleIndex<dynamic, History> bySecurity;
+class HistoryReservoir extends Reservoir<Object, History> {
+  late IndexMultiple<Object, History> byAccount;
+  late IndexMultiple<Object, History> byWallet;
+  late IndexMultiple<Object, History> byScripthash;
+  late IndexMultiple<Object, History> bySecurity;
 
-  HistoryReservoir([source]) : super(source ?? HiveSource('histories')) {
-    addPrimaryIndex((history) => history.txHash);
-
-    byAccount = addMultipleIndex('account', (history) => history.accountId);
-    byWallet = addMultipleIndex('wallet', (history) => history.walletId);
+  HistoryReservoir([source])
+      : super(source ?? HiveSource('histories'), (history) => history.txHash) {
+    byAccount = addIndexMultiple('account', (history) => history.accountId);
+    byWallet = addIndexMultiple('wallet', (history) => history.walletId);
     byScripthash =
-        addMultipleIndex('scripthash', (history) => history.scripthash);
-    bySecurity = addMultipleIndex('security', (history) => history.security);
+        addIndexMultiple('scripthash', (history) => history.scripthash);
+    bySecurity = addIndexMultiple('security', (history) => history.security);
   }
 
   /// Master overview /////////////////////////////////////////////////////////

@@ -1,114 +1,127 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:equatable/equatable.dart';
+
 import 'change.dart';
 import 'index.dart';
+import 'index_unique.dart';
+import 'index_multiple.dart';
 import 'source.dart';
 
 export 'hive_source.dart';
+export 'index.dart';
+export 'index_unique.dart';
+export 'index_multiple.dart';
 
-class Reservoir<Key, Record> with IterableMixin<Record> {
-  final Source<Key, Record> source;
-  late UniqueIndex<Key, Record> primaryIndex;
-  final Map<String, Index<Key, Record>> indices = {};
-  late Stream<Change> changes;
+const PRIMARY_INDEX = '_primary';
 
-  Reservoir(this.source) {
-    changes = source.watch(this);
-  }
+class Reservoir<Key extends Object, Rec extends Object>
+    with IterableMixin<Rec> {
+  final Source<Key, Rec> source;
+  final Map<String, Index<Key, Rec>> indices = {};
+  final StreamController<List<Change>> _changes = StreamController();
 
-  Iterable<Record> get data => primaryIndex.values;
+  /// Expose the stream of changes that can be subscribed to
+  Stream<List<Change>> get changes => _changes.stream;
 
-  UniqueIndex<Key, Record> addPrimaryIndex(GetKey<Key, Record> getKey) {
-    primaryIndex = UniqueIndex(getKey);
-    return primaryIndex;
-  }
+  /// Return all records in the Reservoir
+  Iterable<Rec> get data => primaryIndex.values;
 
-  UniqueIndex<Key, Record> addUniqueIndex(
-      String name, GetKey<Key, Record> getKey) {
-    if (!indices.containsKey(name)) {
-      return indices[name] = UniqueIndex(getKey)..addAll(data);
-    } else {
-      throw ArgumentError('index $name already exists');
-    }
-  }
-
-  MultipleIndex<Key, Record> addMultipleIndex(
-      String name, GetKey<Key, Record> getKey,
-      [Compare? compare]) {
-    if (!indices.containsKey(name)) {
-      return indices[name] = MultipleIndex(getKey, compare)..addAll(data);
-    } else {
-      throw ArgumentError('index $name already exists');
-    }
-  }
-
-  Index<Key, Record>? removeIndex(String name) {
-    return indices.remove(name);
-  }
-
-  Record? get(Key key) => primaryIndex.getOne(key);
-
+  /// Allow to iterate over all the records in the Reservoir
+  ///   e.g. `for (row in reservoir) { ... }`
   @override
-  Iterator<Record> get iterator => data.iterator;
+  Iterator<Rec> get iterator => data.iterator;
 
-  Future saveAll(List<Record> records) async {
+  /// Return the `primaryIndex` from the set of indices
+  IndexUnique<Key, Rec> get primaryIndex =>
+      indices[PRIMARY_INDEX]! as IndexUnique<Key, Rec>;
+
+  /// Given a record, return its key as stored in the `primaryIndex`
+  Key primaryKey(record) => primaryIndex.getKey(record);
+
+  /// Give a key, return the corresponding record in the `primaryIndex`
+  Rec? get(Key key) => primaryIndex.getOne(key);
+
+  /// Construct a Reservoir from a `source`. Requires `getKey` as a function
+  /// that maps a Record to a Key, so that the Reservoir can construct a
+  /// `primaryIndex`.
+  Reservoir(this.source, GetKey<Key, Rec> getKey) {
+    indices[PRIMARY_INDEX] = IndexUnique(getKey);
+    source.initialLoad().forEach(_addToIndices);
+  }
+
+  /// Create a unique index and add all current records to it
+  IndexUnique<Key, Rec> addIndexUnique(String name, GetKey<Key, Rec> getKey) {
+    _assertNewIndexName(name);
+    return indices[name] = IndexUnique(getKey)..addAll(data);
+  }
+
+  /// Create a 'multiple' index and add all current records to it
+  IndexMultiple<Key, Rec> addIndexMultiple(String name, GetKey<Key, Rec> getKey,
+      [Compare? compare]) {
+    _assertNewIndexName(name);
+    return indices[name] = IndexMultiple(getKey, compare)..addAll(data);
+  }
+
+  /// Save a `record`, index it, and broadcast the change
+  Future<Change?> save(Rec record) async {
+    return await _saveSilently(record)
+      ?..ifChanged((change) => _changes.sink.add([change]));
+  }
+
+  /// Remove a `record`, de-index it, and broadcast the change
+  Future<Change?> remove(Rec record) async {
+    return await _removeSilently(record)
+      ?..ifChanged((change) => _changes.sink.add([change]));
+  }
+
+  /// Save all `records`, index them, and broadcast the changes
+  Future<List<Change>> saveAll(List<Rec> records) async {
+    return _changeAll(records, _saveSilently);
+  }
+
+  /// Remove all `records`, de-index them, and broadcast the changes
+  Future<List<Change>> removeAll(List<Rec> records) async {
+    return _changeAll(records, _removeSilently);
+  }
+
+  // Index & save one record without broadcasting any changes
+  Future<Change?> _saveSilently(Rec record) async {
+    return await source.save(primaryKey(record), record)
+      ?..ifChanged((record) => _addToIndices(record));
+  }
+
+  // De-index & remove one record without broadcasting any changes
+  Future<Change?> _removeSilently(Rec record) async {
+    return await source.remove(primaryKey(record))
+      ?..ifChanged((record) => _removeFromIndices(record));
+  }
+
+  // Apply a change function to each of the `records`, returning the changes
+  Future<List<Change>> _changeAll(List<Rec> records, changeFn) async {
+    var changes = <Change>[];
     for (var record in records) {
-      await save(record);
+      var change = await changeFn(record);
+      if (change != null) changes.add(change);
     }
+    return changes;
   }
 
-  Future save(Record record) async {
-    var key = primaryIndex.getKey(record);
-    // Save key to source, which will (reactively) notify this reservoir of the
-    // new key and construct a new model, also updating any associated indices.
-    await source.save(key, record);
+  // Add record to all indices, including primary index
+  void _addToIndices(Rec record) {
+    indices.values.forEach((index) => index.add(record));
   }
 
-  Future remove(Record record) async {
-    var key = primaryIndex.getKey(record);
-    if (primaryIndex.has(key)) {
-      // Remove key from source, which will (reactively) notify this reservoir
-      // and then remove the key and any associated keys in indices.
-      await source.remove(key);
-    } else {
-      throw ArgumentError('record not found for $key');
-    }
+  // Remove record from all indices, including primary index
+  void _removeFromIndices(Rec record) {
+    indices.values.forEach((index) => index.remove(record));
   }
 
-  Change addRecord(key, Record record) {
-    _addToIndices(record);
-    primaryIndex.add(record);
-    return Added(key, record);
-  }
-
-  void _addToIndices(Record record) {
-    for (var index in indices.values) {
-      index.add(record);
-    }
-  }
-
-  Change updateRecord(key, Record record) {
-    _updateIndices(key, record);
-    primaryIndex.add(record);
-    return Updated(key, record);
-  }
-
-  void _updateIndices(key, Record record) {
-    for (var index in indices.values) {
-      index.add(record);
-    }
-  }
-
-  Change removeRecord(key) {
-    _removeFromIndices(primaryIndex.getOne(key)!);
-    primaryIndex.remove(key);
-    return Removed(key);
-  }
-
-  void _removeFromIndices(Record record) {
-    for (var index in indices.values) {
-      index.remove(record);
+  // Throw an exception if index with `name` already exists
+  void _assertNewIndexName(String name) {
+    if (indices.containsKey(name)) {
+      throw ArgumentError('index $name already exists');
     }
   }
 
@@ -116,4 +129,9 @@ class Reservoir<Key, Record> with IterableMixin<Record> {
   String toString() => 'Reservoir($source, '
       'size: ${data.length}, '
       'indices: ${indices.keys.toList().join(",")})';
+}
+
+extension on Change {
+  // Shortcut chain method so we can call `?..ifChanged`
+  void ifChanged(f) => f(this);
 }
