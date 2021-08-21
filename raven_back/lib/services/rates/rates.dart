@@ -17,7 +17,7 @@ class RatesService extends Service {
 
   BalanceUSD accountBalanceUSD(String accountId) {
     var totalRVNBalance = getTotalRVN(accountId);
-    var usd;
+    var usd = BalanceUSD(confirmed: 0.0, unconfirmed: 0.0);
     if (totalRVNBalance.value > 0) {
       var rate = rates.rvnToUSD;
       usd = BalanceUSD(
