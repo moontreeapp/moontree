@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 import 'package:raven_mobile/theme/theme.dart';
 
-import 'package:flutter/cupertino.dart';
-import 'package:raven_mobile/pages/asset.dart';
-import 'package:raven_mobile/pages/transactions.dart';
-import 'package:raven_mobile/pages/transaction.dart';
+import 'package:raven/init/reservoirs.dart' as res;
+import 'package:raven/init/services.dart' as services;
 
 class Home extends StatefulWidget {
   @override
@@ -17,6 +16,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   dynamic data = {};
+  double balance = 0.0;
 
   @override
   void initState() {
@@ -29,6 +29,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
+    //balance = services.ratesService.accountBalanceUSD('0').value;
     return DefaultTabController(
         length: 2,
         child: Scaffold(
@@ -56,7 +57,8 @@ class _HomeState extends State<Home> {
               (data['accounts'][data['account']] ?? 'Unknown') + ' Wallet'),
           flexibleSpace: Container(
             alignment: Alignment.center,
-            child: Text('\n\$ 0', style: Theme.of(context).textTheme.headline3),
+            child: Text('\n\$ $balance',
+                style: Theme.of(context).textTheme.headline3),
           ),
           bottom: PreferredSize(
               preferredSize: Size.fromHeight(50.0),

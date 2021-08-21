@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/material.dart';
 
 import 'package:raven/init/raven.dart' as raven;
+import 'package:raven/init/hive_helper.dart' as hiveHelper;
 
 import 'package:raven_mobile/pages.dart';
 import 'package:raven_mobile/theme/color_gen.dart';
@@ -11,6 +12,7 @@ import 'package:raven_mobile/theme/theme.dart';
 
 Future<void> main() async {
   //await Hive.initFlutter();
+  //await hiveHelper.HiveHelper.init();
   //raven.init();
   runApp(MaterialApp(
       initialRoute: '/',
