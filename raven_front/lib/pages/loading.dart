@@ -5,7 +5,6 @@ import '../services/account_mock.dart' as mock;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:raven/init/services.dart';
 import 'package:raven/init/reservoirs.dart' as res;
-import 'package:raven/subjects/settings.dart' as sett;
 
 class Loading extends StatefulWidget {
   @override
@@ -25,7 +24,6 @@ class _LoadingState extends State<Loading> {
     //  build(context);
     //}); // //sett
     await mock.Accounts.instance.load();
-    //sleep(Duration(milliseconds: 1400));
     Navigator.pushReplacementNamed(context, '/home', arguments: {
       'account': 'accountId1',
       'accounts': mock.Accounts.instance.accounts,
