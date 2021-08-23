@@ -7,8 +7,11 @@ class SettingReservoir extends Reservoir<SettingName, Setting> {
       : super(
             source ??
                 HiveSource('settings', defaults: {
-                  SettingName.Electrum_Url: 'testnet.rvn.rocks',
-                  SettingName.Electrum_Port: 50002
+                  SettingName.Electrum_Url: Setting(
+                      name: SettingName.Electrum_Url,
+                      value: 'testnet.rvn.rocks'),
+                  SettingName.Electrum_Port:
+                      Setting(name: SettingName.Electrum_Port, value: 50002)
                 }),
             (setting) => setting.name);
 }

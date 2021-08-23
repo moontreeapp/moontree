@@ -32,8 +32,10 @@ class SettingService extends Service {
   }
 
   Future<RavenElectrumClient> createClient() async {
+    print(settings.get(SettingName.Electrum_Url)!.value.runtimeType);
+    print(settings.get(SettingName.Electrum_Port)!.value.runtimeType);
     return await RavenElectrumClient.connect(
-        settings.get(SettingName.Electrum_Url)!,
-        port: settings.get(SettingName.Electrum_Port)!);
+        settings.get(SettingName.Electrum_Url)!.value,
+        port: settings.get(SettingName.Electrum_Port)!.value);
   }
 }

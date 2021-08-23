@@ -18,6 +18,8 @@ class HiveSource<Key extends Object, Record extends Object>
     var items = Hive.box<Record>(name).toMap();
     var merged = mergeMaps(items, defaults ?? {},
         value: (itemValue, defaultValue) => itemValue ?? defaultValue);
+    print(items);
+    print(merged);
     return merged.entries.map((entry) => entry.value);
   }
 

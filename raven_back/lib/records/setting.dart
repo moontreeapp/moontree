@@ -12,7 +12,7 @@ class Setting with EquatableMixin {
   SettingName name;
 
   @HiveField(1)
-  String value;
+  dynamic value;
 
   Setting({
     required this.name,

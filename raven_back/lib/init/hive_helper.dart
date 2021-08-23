@@ -29,14 +29,13 @@ class HiveHelper {
   }
 
   static Future open() async {
-    await Hive.openBox<Setting>('settings');
     await Hive.openBox<Account>('accounts');
     await Hive.openBox<Address>('addresses');
-    await Hive.openBox<LeaderWallet>('leaders');
-    await Hive.openBox<SingleWallet>('singles');
+    await Hive.openBox<Balance>('balances');
     await Hive.openBox<History>('histories');
     await Hive.openBox<Rate>('rates');
-    await Hive.openBox<Balance>('balances');
+    await Hive.openBox<Setting>('settings');
+    await Hive.openBox<Wallet>('wallets');
   }
 
   static Future close() async {

@@ -18,7 +18,7 @@ class SettingAdapter extends TypeAdapter<Setting> {
     };
     return Setting(
       name: fields[0] as SettingName,
-      value: fields[1] as String,
+      value: fields[1] as dynamic,
     );
   }
 

@@ -8,7 +8,7 @@ class BalanceReservoir extends Reservoir<List, Balance> {
   late IndexMultiple<List, Balance> byAccount;
 
   BalanceReservoir([source])
-      : super(source ?? HiveSource('addresses'),
+      : super(source ?? HiveSource('balances'),
             (balance) => _paramsToKey(balance.accountId, balance.security)) {
     byAccount = addIndexMultiple('account', (balance) => [balance.accountId]);
   }

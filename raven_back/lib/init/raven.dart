@@ -10,7 +10,7 @@ import 'package:raven/init/services.dart';
 void init() {
   makeReservoirs();
   makeServices();
-  settingsService.restartWaiters();
+  settingsService.startWaiters();
 
   // if reservoirs are empty -> startup first time process
 

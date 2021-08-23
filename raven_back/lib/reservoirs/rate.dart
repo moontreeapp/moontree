@@ -9,7 +9,7 @@ List<Security> _paramsToKey(Security base, Security quote) => [base, quote];
 /// USD -> other fiat (for obscure fiats)
 class ExchangeRateReservoir extends Reservoir<List<Security>, Rate> {
   ExchangeRateReservoir([source])
-      : super(source ?? HiveSource('conversion'),
+      : super(source ?? HiveSource('rates'),
             (rate) => _paramsToKey(rate.base, rate.quote));
 
   double assetToRVN(Security asset) {
