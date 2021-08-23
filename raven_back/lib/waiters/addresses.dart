@@ -7,13 +7,12 @@ import 'package:raven/waiters/waiter.dart';
 class AddressesWaiter extends Waiter {
   AddressReservoir addresses;
   HistoryReservoir histories;
-  late StreamSubscription<List<Change>> listener;
 
   AddressesWaiter(this.addresses, this.histories) : super();
 
   @override
   void init() {
-    listener = addresses.changes.listen((List<Change> changes) {
+    listeners.add(addresses.changes.listen((List<Change> changes) {
       changes.forEach((change) {
         change.when(
             added: (added) {},
@@ -23,11 +22,6 @@ class AddressesWaiter extends Waiter {
               histories.removeHistories(removed.id as String);
             });
       });
-    });
-  }
-
-  @override
-  void deinit() {
-    listener.cancel();
+    }));
   }
 }

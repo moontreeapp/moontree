@@ -1,5 +1,5 @@
-import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:raven/utils/maps.dart';
 
 import 'change.dart';
 import 'source.dart';
@@ -8,13 +8,17 @@ class HiveSource<Key extends Object, Record extends Object>
     extends Source<Key, Record> {
   final String name;
   late final Box<Record> box;
+  late final Map? defaults;
 
-  HiveSource(this.name);
+  HiveSource(this.name, {this.defaults});
 
   // Return initial Hive box records to be used to populate Reservoir
   @override
   Iterable<Record> initialLoad() {
-    return Hive.box<Record>(name).toMap().entries.map((entry) => entry.value);
+    var items = Hive.box<Record>(name).toMap();
+    var merged = mergeMaps(items, defaults ?? {},
+        value: (itemValue, defaultValue) => itemValue ?? defaultValue);
+    return merged.entries.map((entry) => entry.value);
   }
 
   @override

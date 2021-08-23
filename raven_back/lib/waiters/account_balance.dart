@@ -10,22 +10,15 @@ class AccountBalanceWaiter extends Waiter {
   HistoryReservoir histories;
   BalanceService balanceService;
 
-  late StreamSubscription<List<List<Change>>> listener;
-
   AccountBalanceWaiter(this.histories, this.balanceService) : super();
 
   @override
   void init() {
-    listener = histories.changes
+    listeners.add(histories.changes
         .bufferCountTimeout(25, Duration(milliseconds: 50))
         .listen((List<List<Change>> changes) {
       balanceService
-          .calculateBalance(changes.expand((element) => element).toList());
-    });
-  }
-
-  @override
-  void deinit() {
-    listener.cancel();
+          .calcuSaveBalance(changes.expand((element) => element).toList());
+    }));
   }
 }

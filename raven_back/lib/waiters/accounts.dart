@@ -11,8 +11,6 @@ class AccountsWaiter extends Waiter {
   WalletReservoir wallets;
   LeaderWalletGenerationService leaderWalletGenerationService;
 
-  late StreamSubscription<List<Change>> listener;
-
   AccountsWaiter(
       this.accounts, this.wallets, this.leaderWalletGenerationService)
       : super();
@@ -21,7 +19,7 @@ class AccountsWaiter extends Waiter {
   void init() {
     /// this listener implies we have to load everthing backwards if importing:
     /// first balances, histories, addresses, wallets and then accounts
-    listener = accounts.changes.listen((List<Change> changes) {
+    listeners.add(accounts.changes.listen((List<Change> changes) {
       changes.forEach((change) {
         change.when(
             added: (added) {
@@ -33,11 +31,6 @@ class AccountsWaiter extends Waiter {
             updated: (updated) {},
             removed: (removed) {});
       });
-    });
-  }
-
-  @override
-  void deinit() {
-    listener.cancel();
+    }));
   }
 }

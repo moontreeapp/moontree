@@ -5,15 +5,13 @@
 ///   stop services
 ///   start services (contains listeners on all reservoirs)
 import 'package:raven/init/reservoirs.dart';
-import 'package:raven/init/waiters.dart';
 import 'package:raven/init/services.dart';
-import 'package:raven/subjects/settings.dart';
-import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 void init() {
   makeReservoirs();
   makeServices();
-  electrumSettingsStream(settings).listen(handleListening);
+  settingsService.restartWaiters();
+
   // if reservoirs are empty -> startup first time process
 
   /** on startup
@@ -29,20 +27,4 @@ void init() {
    * if not used password recently -> use (ignore)
    * if not changed password recently -> refresh
    */
-}
-
-Stream electrumSettingsStream(settings) {
-  return settings
-      .map((s) => {
-            'url': s['electrum.url'],
-            'port': s['electrum.port'],
-          })
-      .distinct();
-}
-
-Future handleListening(electrumSetting) async {
-  deinitWaiters();
-  initWaiters(await RavenElectrumClient.connect(
-      electrumSetting['url'] ?? 'testnet.rvn.rocks',
-      port: electrumSetting['port'] ?? 50002));
 }

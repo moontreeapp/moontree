@@ -1,6 +1,7 @@
 // dart test test/sandbox/dart_test.dart
 import 'package:test/test.dart';
 
+enum SettingName { Electrum_Url, Electrum_Port }
 void main() {
   test('forEach is not isolated', () {
     var histories = {
@@ -28,5 +29,26 @@ void main() {
     //print(fiatConformed);
     expect(fiatConformed, 'ABC');
     expect(fiat, 'aBc');
+  });
+  test('what is an enum?', () {
+    //print(SettingName.Electrum_Url);
+    //print(SettingName.Electrum_Url.index);
+    //print(SettingName.Electrum_Url.hashCode);
+    //print(SettingName.Electrum_Url.runtimeType);
+    //print(SettingName.Electrum_Url.toString());
+    //print(SettingName.Electrum_Url == SettingName.Electrum_Url);
+    //print(SettingName.Electrum_Url is Object);
+    //print(SettingName is Object);
+  });
+  test('merge map?', () {
+    final firstMap = {'1': '2', '2': '3'};
+    final secondMap = {'2': '4', '3': '4'};
+
+    final thirdMap = {
+      ...firstMap,
+      ...secondMap,
+    };
+
+    print(thirdMap);
   });
 }

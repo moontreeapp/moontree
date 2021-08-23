@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import '../records.dart';
+import 'package:raven/records.dart';
 
 class HiveHelper {
   static Future init() async {
@@ -22,12 +22,14 @@ class HiveHelper {
     Hive.registerAdapter(NetAdapter());
     Hive.registerAdapter(NodeExposureAdapter());
     Hive.registerAdapter(RateAdapter());
+    Hive.registerAdapter(SettingAdapter());
+    Hive.registerAdapter(SettingNameAdapter());
     Hive.registerAdapter(SecurityAdapter());
     Hive.registerAdapter(SecurityTypeAdapter());
   }
 
   static Future open() async {
-    await Hive.openBox('settings');
+    await Hive.openBox<Setting>('settings');
     await Hive.openBox<Account>('accounts');
     await Hive.openBox<Address>('addresses');
     await Hive.openBox<LeaderWallet>('leaders');
@@ -35,11 +37,6 @@ class HiveHelper {
     await Hive.openBox<History>('histories');
     await Hive.openBox<Rate>('rates');
     await Hive.openBox<Balance>('balances');
-
-    /// do we have a box of balances?
-    /// if so should we just index balances?
-    /// balances are saved on the addresses
-    //await Hive.openBox<Balance>('balances');
   }
 
   static Future close() async {

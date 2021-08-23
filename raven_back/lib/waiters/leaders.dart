@@ -20,7 +20,7 @@ class LeadersWaiter extends Waiter {
 
   @override
   void init() {
-    listener = wallets.changes.listen((List<Change> changes) {
+    listeners.add(wallets.changes.listen((List<Change> changes) {
       changes.forEach((change) {
         change.when(added: (added) {
           var wallet = added.data;
@@ -33,11 +33,6 @@ class LeadersWaiter extends Waiter {
           addresses.removeAddresses(removed.id as String);
         });
       });
-    });
-  }
-
-  @override
-  void deinit() {
-    listener.cancel();
+    }));
   }
 }

@@ -10,8 +10,9 @@ AddressSubscriptionWaiter? addressSubscriptionWaiter;
 AddressesWaiter? addressesWaiter;
 AccountBalanceWaiter? accountBalanceWaiter;
 ExchangeRateWaiter? exchangeRateWaiter;
+SettingsWaiter? settingsWaiter;
 
-void initWaiters(RavenElectrumClient client) {
+void initNonElectrumWaiters() {
   accountsWaiter = AccountsWaiter(
     accounts,
     wallets,
@@ -27,25 +28,33 @@ void initWaiters(RavenElectrumClient client) {
     addresses,
     singleWalletService,
   )..init();
-  addressSubscriptionWaiter = AddressSubscriptionWaiter(
-    addresses,
-    client,
-    addressSubscriptionService,
-    leaderWalletDerivationService,
-  )..init();
   addressesWaiter = AddressesWaiter(addresses, histories)..init();
   accountBalanceWaiter = AccountBalanceWaiter(
     histories,
     balanceService,
   )..init();
   exchangeRateWaiter = ExchangeRateWaiter(ratesService)..init();
+  settingsWaiter = SettingsWaiter(settings, settingsService)..init();
 }
 
-void deinitWaiters() {
+void deinitElectrumWaiters() {
+  addressSubscriptionWaiter?.deinit();
+}
+
+void deinitNonElectrumWaiters() {
   leadersWaiter?.deinit();
   singlesWaiter?.deinit();
-  addressSubscriptionWaiter?.deinit();
   addressesWaiter?.deinit();
   accountBalanceWaiter?.deinit();
   exchangeRateWaiter?.deinit();
+  settingsWaiter?.deinit();
+}
+
+void initElectrumWaiters(RavenElectrumClient client) {
+  addressSubscriptionWaiter = AddressSubscriptionWaiter(
+    addresses,
+    client,
+    addressSubscriptionService,
+    leaderWalletDerivationService,
+  )..init();
 }

@@ -13,7 +13,7 @@ class BalanceService extends Service {
   BalanceService(this.balances, this.histories) : super();
 
   // runs it for affected account-security combinations
-  void calculateBalance(List<Change> changes) {
+  void calcuSaveBalance(List<Change> changes) {
     var combos = [];
     changes.forEach((Change change) {
       History history = change.data;

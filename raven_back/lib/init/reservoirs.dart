@@ -7,6 +7,7 @@ late HistoryReservoir histories;
 late WalletReservoir wallets;
 late BalanceReservoir balances;
 late ExchangeRateReservoir rates;
+late SettingReservoir settings;
 
 void makeReservoirs() {
   accounts = AccountReservoir();
@@ -15,4 +16,5 @@ void makeReservoirs() {
   wallets = WalletReservoir();
   balances = BalanceReservoir();
   rates = ExchangeRateReservoir();
+  settings = SettingReservoir();
 }

@@ -14,7 +14,6 @@ class AddressSubscriptionWaiter extends Waiter {
   AddressSubscriptionService addressSubscriptionService;
   LeaderWalletDerivationService leaderWalletDerivationService;
   Map<String, StreamSubscription> subscriptionHandles = {};
-  List<StreamSubscription> listeners = [];
 
   StreamController<Address> addressesNeedingUpdate = StreamController();
 
@@ -55,13 +54,6 @@ class AddressSubscriptionWaiter extends Waiter {
             });
       });
     }));
-  }
-
-  @override
-  void deinit() {
-    for (var listener in listeners) {
-      listener.cancel();
-    }
   }
 
   void addressNeedsUpdating(Address address) {
