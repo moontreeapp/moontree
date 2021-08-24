@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:raven/reservoir/change.dart';
+import 'package:reservoir/reservoir.dart';
+
 import 'package:raven/reservoirs.dart';
 import 'package:raven/records.dart';
 import 'package:raven/waiters/waiter.dart';

@@ -1,5 +1,5 @@
 import 'package:raven/records/setting_name.dart';
-import 'package:raven/reservoir/reservoir.dart';
+import 'package:reservoir/reservoir.dart';
 import 'package:raven/records.dart';
 
 class SettingReservoir extends Reservoir<SettingName, Setting> {

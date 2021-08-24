@@ -1,6 +1,6 @@
 import 'package:ordered_set/ordered_set.dart';
 import 'package:raven/records.dart';
-import 'package:raven/reservoir/reservoir.dart';
+import 'package:reservoir/reservoir.dart';
 
 class AddressLocation {
   int index;

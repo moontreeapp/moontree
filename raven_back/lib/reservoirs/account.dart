@@ -1,4 +1,4 @@
-import 'package:raven/reservoir/reservoir.dart';
+import 'package:reservoir/reservoir.dart';
 import 'package:raven/records.dart';
 
 class AccountReservoir extends Reservoir<String, Account> {
