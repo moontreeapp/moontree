@@ -10,16 +10,16 @@ class HiveSource<Key extends Object, Record extends Object>
   late final Box<Record> box;
   late final Map? defaults;
 
-  HiveSource(this.name, {this.defaults});
+  HiveSource(this.name, {this.defaults}) {
+    box = Hive.box<Record>(name);
+  }
 
   // Return initial Hive box records to be used to populate Reservoir
   @override
   Iterable<Record> initialLoad() {
-    var items = Hive.box<Record>(name).toMap();
+    var items = box.toMap();
     var merged = mergeMaps(items, defaults ?? {},
         value: (itemValue, defaultValue) => itemValue ?? defaultValue);
-    print(items);
-    print(merged);
     return merged.entries.map((entry) => entry.value);
   }
 

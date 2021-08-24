@@ -1,5 +1,3 @@
-import 'package:equatable/equatable.dart';
-
 import 'change.dart';
 
 /// A base class for the source of stored `Record` objects.

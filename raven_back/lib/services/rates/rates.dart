@@ -10,7 +10,9 @@ class RatesService extends Service {
   RatesService(this.balances, this.rates) : super();
 
   Future saveRate() async {
-    rates.save(Rate(base: RVN, quote: USD, rate: await RVNtoFiat().get()));
+    var price = await RVNtoFiat().get();
+    print(price);
+    await rates.save(Rate(base: RVN, quote: USD, rate: price));
   }
 
   double get rvnToUSD => rates.rvnToUSD;
