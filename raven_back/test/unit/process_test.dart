@@ -6,8 +6,9 @@ import 'package:raven/services.dart';
 import 'package:raven/reservoirs.dart';
 import 'package:test/test.dart';
 
-import '../reservoir/helper.dart';
-import '../reservoir/rx_map_source.dart';
+import 'package:reservoir/reservoir.dart';
+
+import '../helper/reservoir_changes.dart';
 
 void main() {
   group('addresses', () {
@@ -19,10 +20,10 @@ void main() {
     late Account account;
     late LeaderWallet wallet;
     setUp(() async {
-      accounts = AccountReservoir(RxMapSource<String, Account>());
-      wallets = WalletReservoir(RxMapSource<String, Wallet>());
-      addresses = AddressReservoir(RxMapSource<String, Address>());
-      histories = HistoryReservoir(RxMapSource<String, History>());
+      accounts = AccountReservoir(MapSource<String, Account>());
+      wallets = WalletReservoir(MapSource<String, Wallet>());
+      addresses = AddressReservoir(MapSource<String, Address>());
+      histories = HistoryReservoir(MapSource<String, History>());
       leaderWalletDerivationService = LeaderWalletDerivationService(
         accounts,
         wallets,
@@ -41,15 +42,11 @@ void main() {
         encryptedSeed: Uint8List.fromList(
             [1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4]),
       );
+
       // put wallet and account in reservoirs
-      await reservoirChanges(
-        accounts,
-        () => accounts.save(account),
-      );
-      await reservoirChanges(
-        wallets,
-        () => wallets.save(wallet),
-      );
+      await accounts.save(account);
+      await wallets.save(wallet);
+
       expect(accounts.length, 1);
       expect(wallets.length, 1);
     });
@@ -61,11 +58,6 @@ void main() {
           () => leaderWalletDerivationService.deriveFirstAddressAndSave(wallet),
           2);
       expect(addresses.length, 2);
-      //await asyncChange(
-      //  addresses,
-      //  () => leaderWalletDerivationService.deriveFirstAddressAndSave(wallet),
-      //);
-      //expect(addresses.length, 20);
     });
 
     //test('20 addresses get created', () async {

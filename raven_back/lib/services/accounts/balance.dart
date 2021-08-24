@@ -1,10 +1,11 @@
 import 'package:collection/collection.dart';
 import 'package:reservoir/change.dart';
+import 'package:sorted_list/sorted_list.dart';
+
 import 'package:raven/services/service.dart';
 import 'package:raven/records.dart';
 import 'package:raven/reservoirs.dart';
 import 'package:raven/utils/exceptions.dart';
-import 'package:sorted_list/sorted_list.dart';
 
 class BalanceService extends Service {
   late final BalanceReservoir balances;
