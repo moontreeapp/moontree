@@ -1,6 +1,6 @@
 import 'package:raven/records.dart';
 import 'package:raven/records/security.dart';
-import 'package:raven/reservoir/reservoir.dart';
+import 'package:reservoir/reservoir.dart';
 
 List<Security> _paramsToKey(Security base, Security quote) => [base, quote];
 

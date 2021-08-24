@@ -1,5 +1,5 @@
 import 'package:raven/records.dart';
-import 'package:raven/reservoir/reservoir.dart';
+import 'package:reservoir/reservoir.dart';
 
 class WalletReservoir extends Reservoir<String, Wallet> {
   late IndexMultiple byAccount;
