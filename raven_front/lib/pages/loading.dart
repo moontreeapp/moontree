@@ -13,16 +13,21 @@ class Loading extends StatefulWidget {
 
 class _LoadingState extends State<Loading> {
   void setup() async {
+    print('accounts: ${res.accounts.data}');
+    print('wallets: ${res.wallets.data}');
     // (flutter) if no accounts -> create account, set default account setting
-    //if (res.accounts.data.isEmpty) {
-    //  // create one
-    //  var account = accountGenerationService.makeAndSaveAccount('Primary');
-    //  // set its id as settings default account id
-    //  sett.settings.add({'default Account': account.id});
-    //}
+    if (res.accounts.data.isEmpty) {
+      // create one
+      var account = accountGenerationService.makeAndSaveAccount('Primary');
+      print(account);
+      // set its id as settings default account id
+      //sett.settings.add({'default Account': account.id});
+    }
     //res.accounts.changes.listen((changes) {
     //  build(context);
     //}); // //sett
+    print('accounts: ${res.accounts.data}');
+    print('wallets: ${res.wallets.data}');
     await mock.Accounts.instance.load();
     Navigator.pushReplacementNamed(context, '/home', arguments: {
       'account': 'accountId1',

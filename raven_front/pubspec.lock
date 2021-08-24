@@ -290,7 +290,7 @@ packages:
       name: ordered_set
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.0"
+    version: "3.2.0"
   package_config:
     dependency: transitive
     description:
@@ -431,6 +431,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  reservoir:
+    dependency: transitive
+    description:
+      name: reservoir
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.0"
   rxdart:
     dependency: transitive
     description:
