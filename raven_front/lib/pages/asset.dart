@@ -17,6 +17,13 @@ class Asset extends StatefulWidget {
 
 class _AssetState extends State<Asset> {
   dynamic data = {};
+  bool showUSD = false;
+
+  void _toggleUSD() {
+    setState(() {
+      showUSD = !showUSD;
+    });
+  }
 
   @override
   void initState() {
@@ -91,7 +98,7 @@ class _AssetState extends State<Asset> {
       if (transaction['asset'] == 'Magic Musk') {
         txs.add(ListTile(
             onTap: () => Navigator.pushNamed(context, '/transaction'),
-            onLongPress: () {/* convert all values to USD and back */},
+            onLongPress: () => _toggleUSD(),
             title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -102,9 +109,17 @@ class _AssetState extends State<Asset> {
                       : RavenIcon.out(context)),
                 ]),
             trailing: (transaction['direction'] == 'in'
-                ? Text(transaction['amount'].toString(),
+                ? Text(
+                    showUSD
+                        ? transaction['amount']
+                            .toString() //'\$' + RavenText.rvnUSD(RavenText.assetRVN(transaction['amount']))
+                        : transaction['amount'].toString(),
                     style: TextStyle(color: Theme.of(context).good))
-                : Text(transaction['amount'].toString(),
+                : Text(
+                    showUSD
+                        ? transaction['amount']
+                            .toString() //'\$' + RavenText.rvnUSD(RavenText.assetRVN(transaction['amount']))
+                        : transaction['amount'].toString(),
                     style: TextStyle(color: Theme.of(context).bad))),
             leading: RavenIcon.assetAvatar(transaction['asset'])));
       }

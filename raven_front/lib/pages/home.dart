@@ -18,6 +18,13 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   dynamic data = {};
   int balance = 0;
+  bool showUSD = false;
+
+  void _toggleUSD() {
+    setState(() {
+      showUSD = !showUSD;
+    });
+  }
 
   @override
   void initState() {
@@ -59,7 +66,8 @@ class _HomeState extends State<Home> {
               (data['accounts'][data['account']] ?? 'Unknown') + ' Wallet'),
           flexibleSpace: Container(
             alignment: Alignment.center,
-            child: RavenText.rvnUSD(context, balance),
+            child: Text('\n\$ ${RavenText.rvnUSD(balance)}',
+                style: Theme.of(context).textTheme.headline3),
           ),
           bottom: PreferredSize(
               preferredSize: Size.fromHeight(50.0),
@@ -74,13 +82,19 @@ class _HomeState extends State<Home> {
         var thisHolding = ListTile(
             onTap: () => Navigator.pushNamed(
                 context, holding.key == 'RVN' ? '/transactions' : '/asset'),
-            onLongPress: () {/* convert all values to USD and back */},
+            onLongPress: () => _toggleUSD(),
             title: Text(holding.key,
                 style: holding.key == 'RVN'
                     ? Theme.of(context).textTheme.bodyText1
                     : Theme.of(context).textTheme.bodyText2),
-            trailing: Text(holding.value.toString(),
-                style: TextStyle(color: Theme.of(context).good)),
+            trailing: (Text(
+                showUSD
+                    ? (holding.key == 'RVN'
+                        ? '\$' + RavenText.rvnUSD(holding.value)
+                        : holding.value
+                            .toString()) //'\$' + RavenText.rvnUSD(RavenText.assetRVN(transaction['amount']))
+                    : holding.value.toString(),
+                style: TextStyle(color: Theme.of(context).good))),
             leading: RavenIcon.assetAvatar(holding.key));
         if (holding.key == 'RVN') {
           rvnHolding.add(thisHolding);
@@ -105,9 +119,10 @@ class _HomeState extends State<Home> {
     if (rvnHolding.isEmpty) {
       rvnHolding.add(ListTile(
           onTap: () => Navigator.pushNamed(context, '/transactions'),
-          onLongPress: () {/* convert all values to USD and back */},
+          onLongPress: () => _toggleUSD(),
           title: Text('RVN', style: Theme.of(context).textTheme.bodyText1),
-          trailing: Text('0', style: TextStyle(color: Theme.of(context).fine)),
+          trailing: Text(showUSD ? '\$ 0' : '0',
+              style: TextStyle(color: Theme.of(context).fine)),
           leading: RavenIcon.assetAvatar('RVN')));
       rvnHolding.add(ListTile(
           onTap: () {},
@@ -122,7 +137,7 @@ class _HomeState extends State<Home> {
         for (var transaction in data['transactions'][data['account']])
           ListTile(
               onTap: () => Navigator.pushNamed(context, '/transactions'),
-              onLongPress: () {/* convert all values to USD and back */},
+              onLongPress: () => _toggleUSD(),
               title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -133,9 +148,19 @@ class _HomeState extends State<Home> {
                         : RavenIcon.out(context)),
                   ]),
               trailing: (transaction['direction'] == 'in'
-                  ? Text(transaction['amount'].toString(),
+                  ? Text(
+                      showUSD
+                          ? (transaction['asset'] == 'RVN'
+                              ? '\$' + RavenText.rvnUSD(transaction['amount'])
+                              : transaction['amount'].toString())
+                          : transaction['amount'].toString(),
                       style: TextStyle(color: Theme.of(context).good))
-                  : Text(transaction['amount'].toString(),
+                  : Text(
+                      showUSD
+                          ? (transaction['asset'] == 'RVN'
+                              ? '\$' + RavenText.rvnUSD(transaction['amount'])
+                              : transaction['amount'].toString())
+                          : transaction['amount'].toString(),
                       style: TextStyle(color: Theme.of(context).bad))),
               leading: RavenIcon.assetAvatar(transaction['asset']))
       ]);

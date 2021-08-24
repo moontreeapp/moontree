@@ -3,9 +3,9 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
+import 'package:raven_mobile/components/text.dart';
 import 'package:raven_mobile/services/account_mock.dart' as mock;
 import 'package:raven_mobile/theme/extensions.dart';
-import 'package:raven_mobile/pages/transaction.dart';
 
 class RavenTransactions extends StatefulWidget {
   @override
@@ -14,6 +14,14 @@ class RavenTransactions extends StatefulWidget {
 
 class _RavenTransactionsState extends State<RavenTransactions> {
   dynamic data = {};
+  int balance = 50;
+  bool showUSD = false;
+
+  void _toggleUSD() {
+    setState(() {
+      showUSD = !showUSD;
+    });
+  }
 
   @override
   void initState() {
@@ -59,9 +67,10 @@ class _RavenTransactionsState extends State<RavenTransactions> {
                     SizedBox(height: 15.0),
                     RavenIcon.assetAvatar('RVN'),
                     SizedBox(height: 15.0),
-                    Text('50', style: Theme.of(context).textTheme.headline3),
+                    Text('$balance',
+                        style: Theme.of(context).textTheme.headline3),
                     SizedBox(height: 15.0),
-                    Text('\$654.02',
+                    Text('\$ ${RavenText.rvnUSD(balance)}',
                         style: Theme.of(context).textTheme.headline5),
                   ]))));
 
@@ -71,7 +80,7 @@ class _RavenTransactionsState extends State<RavenTransactions> {
       if (transaction['asset'] == 'RVN') {
         txs.add(ListTile(
             onTap: () => Navigator.pushNamed(context, '/transaction'),
-            onLongPress: () {/* convert all values to USD and back */},
+            onLongPress: () => _toggleUSD(),
             title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -82,9 +91,15 @@ class _RavenTransactionsState extends State<RavenTransactions> {
                       : RavenIcon.out(context)),
                 ]),
             trailing: (transaction['direction'] == 'in'
-                ? Text(transaction['amount'].toString(),
+                ? Text(
+                    showUSD
+                        ? '\$' + RavenText.rvnUSD(transaction['amount'])
+                        : transaction['amount'].toString(),
                     style: TextStyle(color: Theme.of(context).good))
-                : Text(transaction['amount'].toString(),
+                : Text(
+                    showUSD
+                        ? '\$' + RavenText.rvnUSD(transaction['amount'])
+                        : transaction['amount'].toString(),
                     style: TextStyle(color: Theme.of(context).bad))),
             leading: RavenIcon.assetAvatar(transaction['asset'])));
       }
