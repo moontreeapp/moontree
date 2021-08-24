@@ -91,13 +91,13 @@ class Reservoir<Key extends Object, Rec extends Object>
   // Index & save one record without broadcasting any changes
   Future<Change?> _saveSilently(Rec record) async {
     return await source.save(primaryKey(record), record)
-      ?..ifChanged((record) => _addToIndices(record));
+      ?..ifChanged((Change change) => _addToIndices(change.data));
   }
 
   // De-index & remove one record without broadcasting any changes
   Future<Change?> _removeSilently(Rec record) async {
     return await source.remove(primaryKey(record))
-      ?..ifChanged((record) => _removeFromIndices(record));
+      ?..ifChanged((Change change) => _removeFromIndices(change.data));
   }
 
   // Apply a change function to each of the `records`, returning the changes
@@ -112,12 +112,12 @@ class Reservoir<Key extends Object, Rec extends Object>
 
   // Add record to all indices, including primary index
   void _addToIndices(Rec record) {
-    indices.values.forEach((index) => index.add(record));
+    for (var index in indices.values) index.add(record);
   }
 
   // Remove record from all indices, including primary index
   void _removeFromIndices(Rec record) {
-    indices.values.forEach((index) => index.remove(record));
+    for (var index in indices.values) index.remove(record);
   }
 
   // Throw an exception if index with `name` already exists
