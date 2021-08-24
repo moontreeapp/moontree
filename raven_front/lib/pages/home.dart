@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:raven/records/setting_name.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
@@ -39,10 +40,15 @@ class _HomeState extends State<Home> {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
     //balance = services.ratesService.accountBalanceUSD('0').value;
     balance = data['holdings'][data['account']]['RVN'] ?? 0;
+    print(res.accounts.get('0'));
+    var titleId = res.settings.get(SettingName.Current_Account)?.value ?? '0';
+    print(titleId);
+    var title = res.accounts.get(titleId)?.name ?? 'asdf';
+    print(title);
     return DefaultTabController(
         length: 2,
         child: Scaffold(
-            appBar: balanceHeader(),
+            appBar: balanceHeader(title),
             drawer: accountsView(),
             body: holdingsTransactionsView(),
             floatingActionButtonLocation:
@@ -51,7 +57,7 @@ class _HomeState extends State<Home> {
             bottomNavigationBar: RavenButton.bottomNav(context)));
   }
 
-  PreferredSize balanceHeader() => PreferredSize(
+  PreferredSize balanceHeader(title) => PreferredSize(
       preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
       child: AppBar(
           automaticallyImplyLeading: true,
@@ -62,8 +68,7 @@ class _HomeState extends State<Home> {
           ],
           elevation: 2,
           centerTitle: false,
-          title: Text(
-              (data['accounts'][data['account']] ?? 'Unknown') + ' Wallet'),
+          title: Text(title),
           flexibleSpace: Container(
             alignment: Alignment.center,
             child: Text('\n\$ ${RavenText.rvnUSD(balance)}',
@@ -192,7 +197,8 @@ class _HomeState extends State<Home> {
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text('Wallets', style: Theme.of(context).textTheme.headline5),
+                  Text('Accounts',
+                      style: Theme.of(context).textTheme.headline5),
                   Padding(
                       padding: EdgeInsets.only(right: 20.0),
                       child: GestureDetector(
@@ -201,22 +207,15 @@ class _HomeState extends State<Home> {
                               size: 26.0, color: Colors.grey.shade200)))
                 ])),
         Column(children: <Widget>[
-          for (var keyName in data['accounts'].entries) ...[
-            ListTile(
-                onTap: () {
-                  data['account'] = keyName.key;
-                  Navigator.pop(context);
-                },
-                title: Text(keyName.value,
-                    style: Theme.of(context).textTheme.bodyText1),
-                leading: RavenIcon.assetAvatar('RVN')),
-            Divider(height: 20, thickness: 2, indent: 5, endIndent: 5)
-          ],
           for (var account in res.accounts.data) ...[
             ListTile(
                 onTap: () {
+                  /// the reason it can't be contained to this page is that the
+                  /// current account is not contained to this page.
                   //data['account'] = keyName.key;
-                  //Navigator.pop(context);
+                  services.settingsService
+                      .saveSetting(SettingName.Current_Account, account.id);
+                  Navigator.pop(context);
                 },
                 title: Text(account.id + ' ' + account.name,
                     style: Theme.of(context).textTheme.bodyText1),
