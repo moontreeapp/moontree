@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:raven/reservoir/change.dart';
+import 'package:reservoir/change.dart';
 import 'package:raven/services/service.dart';
 import 'package:raven/records.dart';
 import 'package:raven/reservoirs.dart';
