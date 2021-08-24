@@ -10,7 +10,7 @@ class SettingService extends Service {
 
   SettingService(this.settings) : super();
 
-  void saveSetting(name, value) {
+  void saveSetting(SettingName name, value) {
     settings.save(Setting(name: name, value: value));
   }
 

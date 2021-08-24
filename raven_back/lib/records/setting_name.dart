@@ -12,5 +12,8 @@ enum SettingName {
   Electrum_Url,
 
   @HiveField(1)
-  Electrum_Port
+  Electrum_Port,
+
+  @HiveField(2)
+  Current_Account
 }

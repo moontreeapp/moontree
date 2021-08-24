@@ -11,7 +11,9 @@ class SettingReservoir extends Reservoir<SettingName, Setting> {
                       name: SettingName.Electrum_Url,
                       value: 'testnet.rvn.rocks'),
                   SettingName.Electrum_Port:
-                      Setting(name: SettingName.Electrum_Port, value: 50002)
+                      Setting(name: SettingName.Electrum_Port, value: 50002),
+                  SettingName.Current_Account: Setting(
+                      name: SettingName.Current_Account, value: 'Primary'),
                 }),
             (setting) => setting.name);
 }

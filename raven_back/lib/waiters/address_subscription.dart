@@ -62,10 +62,11 @@ class AddressSubscriptionWaiter extends Waiter {
   }
 
   void subscribe(Address address) {
-    var stream = client.subscribeScripthash(address.scripthash);
-    subscriptionHandles[address.scripthash] = stream.listen((status) {
-      addressNeedsUpdating(address);
-    });
+    /// not working - avoiding while testing other things.
+    ///var stream = client.subscribeScripthash(address.scripthash);
+    ///subscriptionHandles[address.scripthash] = stream.listen((status) {
+    ///  addressNeedsUpdating(address);
+    ///});
   }
 
   void unsubscribe(String scripthash) {
