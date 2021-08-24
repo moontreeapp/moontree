@@ -18,6 +18,7 @@ export 'index_unique.dart';
 export 'index_multiple.dart';
 
 export 'source.dart';
+export 'map_source.dart';
 export 'hive_source.dart';
 
 const PRIMARY_INDEX = '_primary';

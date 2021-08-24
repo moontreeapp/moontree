@@ -1,3 +1,8 @@
+## 1.3.0
+
+- Export MapSource class
+- Add example
+
 ## 1.2.0
 
 - Export Change and Source classes
