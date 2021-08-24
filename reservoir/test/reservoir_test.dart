@@ -1,19 +1,10 @@
-import 'package:equatable/equatable.dart';
 import 'package:test/test.dart';
 
 import 'package:reservoir/reservoir.dart';
 import 'package:reservoir/change.dart';
 
-import 'helper.dart';
-
-class SimpleRecord with EquatableMixin {
-  final String key;
-  final String value;
-  SimpleRecord(this.key, this.value);
-
-  @override
-  List<Object?> get props => [key];
-}
+import 'helpers/simple_record.dart';
+import 'helpers/rx_map_source.dart';
 
 void main() {
   group('Reservoir', () {
@@ -27,15 +18,15 @@ void main() {
     });
 
     test('add an element', () async {
-      var c1 = await source.save('a', SimpleRecord('a', 'abc'));
+      var c1 = await res.save(SimpleRecord('a', 'abc'));
       expect(c1, Added('a', SimpleRecord('a', 'abc')));
       // Adding again is a no-op
-      var c2 = await source.save('a', SimpleRecord('a', 'abc'));
+      var c2 = await res.save(SimpleRecord('a', 'abc'));
       expect(c2, null);
     });
 
     test('remove an element', () async {
-      await source.save('a', SimpleRecord('a', 'abc'));
+      await res.save(SimpleRecord('a', 'abc'));
       expect(res.data.toList(), [SimpleRecord('a', 'abc')]);
 
       var c2 = await source.remove('a');

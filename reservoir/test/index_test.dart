@@ -1,38 +1,33 @@
-import 'package:equatable/equatable.dart';
 import 'package:test/test.dart';
-
 import 'package:reservoir/reservoir.dart';
-
-class TestRow with EquatableMixin {
-  final int id;
-  final String name;
-  TestRow(this.id, this.name);
-
-  @override
-  List<Object> get props => [id];
-}
+import 'helpers/simple_record.dart';
 
 void main() {
   group('IndexMultiple', () {
-    var rows = [TestRow(1, 'apple'), TestRow(2, 'apple'), TestRow(3, 'orange')];
+    var rows = [
+      SimpleRecord('1', 'apple'),
+      SimpleRecord('2', 'apple'),
+      SimpleRecord('3', 'orange')
+    ];
+
     test('default sort order', () {
-      var index = IndexMultiple((TestRow row) => row.name);
+      var index = IndexMultiple((SimpleRecord row) => row.value);
       index.addAll(rows);
       expect(index.getAll('apple').toList(), [rows[0], rows[1]]);
       expect(index.getAll('orange').toList(), [rows[2]]);
     });
 
     test('explicit sort order', () {
-      var index = IndexMultiple(
-          (TestRow row) => row.name, (r1, r2) => r2.id.compareTo(r1.id));
+      var index = IndexMultiple((SimpleRecord row) => row.value,
+          (r1, r2) => r2.key.compareTo(r1.key));
       index.addAll(rows);
       expect(index.getAll('apple').toList(), [rows[1], rows[0]]);
       expect(index.getAll('orange').toList(), [rows[2]]);
     });
 
     test('remove', () {
-      var index = IndexMultiple(
-          (TestRow row) => row.name, (r1, r2) => r1.id.compareTo(r2.id));
+      var index = IndexMultiple((SimpleRecord row) => row.value,
+          (r1, r2) => r1.key.compareTo(r2.key));
       index.addAll(rows);
       expect(index.getAll('apple').toList(), [rows[0], rows[1]]);
       expect(index.getAll('orange').toList(), [rows[2]]);
@@ -47,8 +42,8 @@ void main() {
     });
 
     test('get', () {
-      var index = IndexMultiple(
-          (TestRow row) => row.name, (r1, r2) => r1.id.compareTo(r2.id));
+      var index = IndexMultiple((SimpleRecord row) => row.value,
+          (r1, r2) => r1.key.compareTo(r2.key));
       index.addAll(rows);
       expect(index.getAll('apple').toList(), [rows[0], rows[1]]);
     });
