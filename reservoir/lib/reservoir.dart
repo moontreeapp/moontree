@@ -11,10 +11,14 @@ import 'index_unique.dart';
 import 'index_multiple.dart';
 import 'source.dart';
 
-export 'hive_source.dart';
+export 'change.dart';
+
 export 'index.dart';
 export 'index_unique.dart';
 export 'index_multiple.dart';
+
+export 'source.dart';
+export 'hive_source.dart';
 
 const PRIMARY_INDEX = '_primary';
 
