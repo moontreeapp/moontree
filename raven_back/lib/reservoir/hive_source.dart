@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:raven/utils/maps.dart';
+import 'package:collection/collection.dart';
 
 import 'change.dart';
 import 'source.dart';

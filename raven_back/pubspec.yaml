@@ -8,6 +8,7 @@ environment:
 dependencies:
   analyzer: ^1.7.0
   bs58check: ^1.0.2
+  collection: ^1.15.0
   crypto: ^3.0.0
   encrypt: ^5.0.0
   equatable: ^2.0.3
