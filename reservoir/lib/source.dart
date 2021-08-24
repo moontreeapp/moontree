@@ -8,7 +8,7 @@ abstract class Source<Key extends Object, Record extends Object> {
   Iterable<Record> initialLoad();
 
   /// Adds or updates the `model` at a given `key` in the Source.
-  Future<Change?> save(Key key, Record model);
+  Future<Change?> save(Key key, Record record);
 
   /// Removes a given `key` from the Source.
   Future<Change?> remove(Key key);
