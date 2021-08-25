@@ -16,7 +16,7 @@ dependencies:
   ordered_set: ^3.1.0
   quiver: ^3.0.1
   ravencoin: ^2.0.1
-  raven_electrum_client: ^1.2.0
+  raven_electrum_client: ^1.2.1
   reservoir: ^1.3.0
   rxdart: ^0.27.1
   sorted_list: ^1.0.0
