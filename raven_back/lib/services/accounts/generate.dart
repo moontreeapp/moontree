@@ -16,4 +16,10 @@ class AccountGenerationService extends Service {
     accounts.save(account);
     return account;
   }
+  
+  Future<Account> makeAndAwaitSaveAccount(String name, {Net net = Net.Test}) async {
+    var account = newAccount(name, net: net);
+    await accounts.save(account);
+    return account;
+  }
 }
