@@ -1,5 +1,4 @@
 import 'package:raven/records/setting_name.dart';
-import 'package:raven/utils/enum.dart';
 import 'package:reservoir/reservoir.dart';
 import 'package:raven/records.dart';
 
@@ -17,9 +16,7 @@ class SettingReservoir extends Reservoir<String, Setting> {
                       Setting(name: SettingName.Current_Account, value: '0'),
                 }),
             (setting) => setting.name.endingToString());
-  //(setting) => describeEnum(setting.name));
 
   Setting? getOne(SettingName name) =>
       primaryIndex.getOne(name.endingToString());
-  //primaryIndex.getOne(describeEnum(name));
 }

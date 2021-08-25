@@ -9,6 +9,3 @@ String describeEnum(Object enumEntry) {
   );
   return description.substring(indexOfDot + 1);
 }
-// print(SettingName.Electrum_Url.toString().split('.')[1]);
-// //import 'package:flutter/foundation.dart';
-// //print(describeEnum(SettingName.Electrum_Url));

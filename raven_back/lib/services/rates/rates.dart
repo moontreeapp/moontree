@@ -32,7 +32,7 @@ class RatesService extends Service {
   }
 
   Balance getTotalRVN(String accountId) {
-    var accountBalances = balances.byAccount.getAll([accountId]);
+    var accountBalances = balances.byAccount.getAll(accountId);
     var accountBalancesAsRVN = accountBalances.map((balance) => Balance(
         accountId: accountId,
         security: RVN,
