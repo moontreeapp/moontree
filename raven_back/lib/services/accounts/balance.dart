@@ -23,20 +23,22 @@ class BalanceService extends Service {
       }
     });
     for (var accountIdSecurity in combos) {
-      var accountId = accountIdSecurity[0];
-      var security = accountIdSecurity[1];
-      balances.save(Balance(
-          accountId: accountId,
-          security: security,
-          confirmed: histories
-                  .unspentsByAccount(accountId, security: security)
-                  .fold(0, (sum, history) => sum ?? 0 + history.value) ??
-              0,
-          unconfirmed: histories
-                  .unconfirmedByAccount(accountId, security: security)
-                  .fold(0, (sum, history) => sum ?? 0 + history.value) ??
-              0));
+      saveBalance(accountIdSecurity[0], accountIdSecurity[1]);
     }
+  }
+
+  void saveBalance(String accountId, Security security) {
+    balances.save(Balance(
+        accountId: accountId,
+        security: security,
+        confirmed: histories
+                .unspentsByAccount(accountId, security: security)
+                .fold(0, (sum, history) => sum ?? 0 + history.value) ??
+            0,
+        unconfirmed: histories
+                .unconfirmedByAccount(accountId, security: security)
+                .fold(0, (sum, history) => sum ?? 0 + history.value) ??
+            0));
   }
 
   // runs it for all  and all security

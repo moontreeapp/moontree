@@ -33,9 +33,11 @@ void initNonElectrumWaiters() {
     histories,
     balanceService,
   )..init();
-  exchangeRateWaiter = ExchangeRateWaiter(ratesService)..init();
+  exchangeRateWaiter = ExchangeRateWaiter(ratesService);
   settingsWaiter = SettingsWaiter(settings, settingsService)..init();
 }
+
+Future fetchRate() async => await exchangeRateWaiter!.init();
 
 void deinitElectrumWaiters() {
   addressSubscriptionWaiter?.deinit();

@@ -4,7 +4,7 @@ import 'package:reservoir/reservoir.dart';
 
 String _paramsToKey(String accountId, [Security? base]) => base == null
     ? '$accountId::'
-    : '$accountId:${base!.symbol}:${base.securityType}';
+    : '$accountId:${base.symbol}:${base.securityType}';
 
 class BalanceReservoir extends Reservoir<String, Balance> {
   late IndexMultiple<String, Balance> byAccount;

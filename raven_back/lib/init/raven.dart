@@ -6,11 +6,13 @@
 ///   start services (contains listeners on all reservoirs)
 import 'package:raven/init/reservoirs.dart';
 import 'package:raven/init/services.dart';
+import 'package:raven/init/waiters.dart';
 
-void init() {
+Future init() async {
   makeReservoirs();
   makeServices();
-  settingsService.startWaiters();
+  await settingsService.startWaiters();
+  await fetchRate();
 
   // if reservoirs are empty -> startup first time process
 

@@ -26,7 +26,7 @@ class ExchangeRateReservoir extends Reservoir<String, Rate> {
     return getOne(asset, RVN)!.rate;
   }
 
-  double get rvnToUSD => getOne(RVN, USD)!.rate;
+  double get rvnToUSD => getOne(RVN, USD)?.rate ?? 0.0;
 
   double rvnToFiat(Security fiat) {
     return getOne(RVN, fiat)!.rate;
