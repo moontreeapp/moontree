@@ -11,6 +11,6 @@ extension SubscribeScripthashMethod on RavenElectrumClient {
     // If this is the first time, register
     registerSubscribable(methodPrefix, 1);
 
-    return subscribe(methodPrefix, [scripthash]).asyncMap((item) => item);
+    return subscribe(methodPrefix, [scripthash]);
   }
 }

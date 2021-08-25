@@ -43,10 +43,11 @@ class SubscribingClient extends BaseClient {
     });
   }
 
-  StreamController makeSubscription(Subscribable subscribable, List params) {
+  StreamController<T> makeSubscription<T>(
+      Subscribable subscribable, List params) {
     var key = subscribable.key(params);
     var controllers = _subscriptions[key];
-    var newController = StreamController();
+    var newController = StreamController<T>();
     if (controllers != null) {
       controllers.add(newController);
     } else {
@@ -56,13 +57,13 @@ class SubscribingClient extends BaseClient {
     return newController;
   }
 
-  Stream subscribe(String methodPrefix, [List params = const []]) {
+  Stream<T> subscribe<T>(String methodPrefix, [List params = const []]) {
     var subscribable = _subscribables[methodPrefix];
     if (subscribable == null) {
       throw RpcException.methodNotFound(methodPrefix);
     }
 
-    var controller = makeSubscription(subscribable, params);
+    var controller = makeSubscription<T>(subscribable, params);
     request(subscribable.methodSubscribe, params).then((result) {
       controller.sink.add(result);
     });
