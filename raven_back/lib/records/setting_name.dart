@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:raven/utils/enum.dart';
 
 import '_type_id.dart';
 
@@ -16,4 +17,10 @@ enum SettingName {
 
   @HiveField(2)
   Current_Account
+}
+
+extension EndingToString on SettingName {
+  String endingToString() {
+    return describeEnum(this);
+  }
 }

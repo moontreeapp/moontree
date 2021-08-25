@@ -31,14 +31,26 @@ void main() {
     expect(fiat, 'aBc');
   });
   test('what is an enum?', () {
-    //print(SettingName.Electrum_Url);
-    //print(SettingName.Electrum_Url.index);
-    //print(SettingName.Electrum_Url.hashCode);
-    //print(SettingName.Electrum_Url.runtimeType);
-    //print(SettingName.Electrum_Url.toString());
-    //print(SettingName.Electrum_Url == SettingName.Electrum_Url);
-    //print(SettingName.Electrum_Url is Object);
-    //print(SettingName is Object);
+    print(SettingName.Electrum_Url);
+    print(SettingName.Electrum_Url.index);
+    print(SettingName.Electrum_Url.hashCode);
+    print(SettingName.Electrum_Url.runtimeType);
+    print(SettingName.Electrum_Url.toString().split('.')[1]);
+    //print(describeEnum(SettingName.Electrum_Url));
+    print(SettingName.Electrum_Url.index);
+    print(SettingName.Electrum_Url == SettingName.Electrum_Url);
+    print(SettingName.Electrum_Url is Object);
+    print(SettingName is Object);
+    /*
+    SettingName.Electrum_Url
+    0
+    434216034
+    SettingName
+    SettingName.Electrum_Url
+    true
+    true
+    true
+    */
   });
   test('merge map?', () {
     final firstMap = {'1': '2', '2': '3'};
