@@ -5,6 +5,7 @@ import 'package:raven/records/setting_name.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/text.dart';
+import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 import 'package:raven_mobile/theme/theme.dart';
 
@@ -40,16 +41,12 @@ class _HomeState extends State<Home> {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
     //balance = services.ratesService.accountBalanceUSD('0').value;
     balance = data['holdings'][data['account']]['RVN'] ?? 0;
-    print('accounts.get 0: ${res.accounts.get('0')}');
-    var titleId =
-        res.settings.getOne(SettingName.Current_Account)?.value ?? '0';
-    print('titleId $titleId');
-    var title = res.accounts.get(titleId)?.name ?? 'asdf';
-    print('title $title');
+    var account = Current.account;
+    balance = Current.balance.value;
     return DefaultTabController(
         length: 2,
         child: Scaffold(
-            appBar: balanceHeader(title),
+            appBar: balanceHeader(account.name),
             drawer: accountsView(),
             body: holdingsTransactionsView(),
             floatingActionButtonLocation:
@@ -213,9 +210,6 @@ class _HomeState extends State<Home> {
           for (var account in res.accounts.data) ...[
             ListTile(
                 onTap: () {
-                  /// the reason it can't be contained to this page is that the
-                  /// current account is not contained to this page.
-                  //data['account'] = keyName.key;
                   services.settingsService
                       .saveSetting(SettingName.Current_Account, account.id);
                   Navigator.pop(context);
