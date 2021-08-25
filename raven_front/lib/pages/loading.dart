@@ -18,7 +18,8 @@ class _LoadingState extends State<Loading> {
     // (flutter) if no accounts -> create account, set default account setting
     if (res.accounts.data.isEmpty) {
       // create one
-      var account = accountGenerationService.makeAndSaveAccount('Primary');
+      var account =
+          await accountGenerationService.makeAndAwaitSaveAccount('Primary');
       print(account);
       // set its id as settings default account id
       //sett.settings.add({'default Account': account.id});

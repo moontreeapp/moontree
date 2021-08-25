@@ -418,12 +418,12 @@ packages:
     source: path
     version: "1.0.0"
   raven_electrum_client:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: raven_electrum_client
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.2.0"
+      path: "/moontree/repos/raven_electrum_client"
+      relative: false
+    source: path
+    version: "1.2.1"
   ravencoin:
     dependency: transitive
     description:

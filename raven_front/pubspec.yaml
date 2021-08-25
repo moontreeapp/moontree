@@ -43,6 +43,11 @@ dependencies:
   flutter_treeview: ^1.0.6+1
   flutter_launcher_icons: "^0.9.1"
 
+dependency_overrides:
+  raven_electrum_client:
+      path: /moontree/repos/raven_electrum_client
+      #git: https://github.com/moontreeapp/raven_electrum_client.git
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

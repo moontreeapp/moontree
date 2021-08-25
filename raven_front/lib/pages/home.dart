@@ -40,11 +40,12 @@ class _HomeState extends State<Home> {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
     //balance = services.ratesService.accountBalanceUSD('0').value;
     balance = data['holdings'][data['account']]['RVN'] ?? 0;
-    print(res.accounts.get('0'));
-    var titleId = res.settings.get(SettingName.Current_Account)?.value ?? '0';
-    print(titleId);
+    print('accounts.get 0: ${res.accounts.get('0')}');
+    var titleId =
+        res.settings.getOne(SettingName.Current_Account)?.value ?? '0';
+    print('titleId $titleId');
     var title = res.accounts.get(titleId)?.name ?? 'asdf';
-    print(title);
+    print('title $title');
     return DefaultTabController(
         length: 2,
         child: Scaffold(
@@ -71,6 +72,8 @@ class _HomeState extends State<Home> {
           title: Text(title),
           flexibleSpace: Container(
             alignment: Alignment.center,
+            // balance view should listen for valid usd
+            // show spinnter until valid usd rate appears, then rvnUSD
             child: Text('\n\$ ${RavenText.rvnUSD(balance)}',
                 style: Theme.of(context).textTheme.headline3),
           ),
