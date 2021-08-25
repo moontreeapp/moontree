@@ -10,8 +10,8 @@ Balance? currentBalance() => res.balances
 Balance emptyBalance() => Balance(
     accountId: res.settings.getOne(SettingName.Current_Account)!.value,
     security: RVN,
-    confirmed: 0,
-    unconfirmed: 0);
+    confirmed: 10,
+    unconfirmed: 10);
 
 class Current {
   static Account get account => currentAccount();

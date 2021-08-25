@@ -13,7 +13,7 @@ import 'package:raven_mobile/theme/theme.dart';
 Future<void> main() async {
   await Hive.initFlutter();
   await HiveHelper.init();
-  raven.init();
+  await raven.init();
   runApp(MaterialApp(
       initialRoute: '/',
       routes: {

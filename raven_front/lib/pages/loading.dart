@@ -1,10 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:raven/records/address.dart';
+import 'package:raven/services/addresses/subscribe.dart';
 import '../services/account_mock.dart' as mock;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:raven/init/services.dart';
 import 'package:raven/init/reservoirs.dart' as res;
+import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 class Loading extends StatefulWidget {
   @override
@@ -12,23 +15,61 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
+  Future setupAccounts() async {
+    await accountGenerationService.makeAndAwaitSaveAccount('Primary');
+    await accountGenerationService.makeAndAwaitSaveAccount('Savings');
+    addressSubscriptionService
+        .saveScripthashHistoryData(ScripthashHistoriesData(
+      [
+        Address(
+            accountId: '0',
+            walletId: '',
+            address: '',
+            hdIndex: -1,
+            scripthash: '')
+      ],
+      [
+        [ScripthashHistory(height: 0, txHash: 'abc')]
+      ],
+      [
+        [
+          ScripthashUnspent(
+              height: 0, txHash: 'abc', scripthash: '', txPos: 0, value: 10)
+        ]
+      ],
+      [
+        [
+          ScripthashUnspent(
+              height: 0,
+              txHash: 'abc',
+              scripthash: '',
+              txPos: 0,
+              value: 50,
+              ticker: 'Magic Musk')
+        ]
+      ],
+    ));
+  }
+
   void setup() async {
-    print('accounts: ${res.accounts.data}');
-    print('wallets: ${res.wallets.data}');
-    // (flutter) if no accounts -> create account, set default account setting
+    // (flutterAddressSubscriptionService) if no accounts -> create account, set default account setting
     if (res.accounts.data.isEmpty) {
       // create one
-      var account =
-          await accountGenerationService.makeAndAwaitSaveAccount('Primary');
-      print(account);
+      await setupAccounts();
       // set its id as settings default account id
       //sett.settings.add({'default Account': account.id});
     }
     //res.accounts.changes.listen((changes) {
     //  build(context);
     //}); // //sett
+
     print('accounts: ${res.accounts.data}');
     print('wallets: ${res.wallets.data}');
+    print('addresses: ${res.addresses.data}');
+    print('histories: ${res.histories.data}');
+    print('balances: ${res.balances.data}');
+    print('rates: ${res.rates.data}');
+    print('settings: ${res.settings.data}');
 
     /// TODO make sure you wait for all reservoir defaults to be applied here...
 
