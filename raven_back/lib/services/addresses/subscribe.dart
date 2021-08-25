@@ -25,11 +25,12 @@ class ScripthashHistoriesData {
       this.addresses, this.histories, this.unspents, this.assetUnspents);
 
   Iterable<ScripthashHistoryRow> get zipped =>
-      zip([addresses, histories, unspents]).map((e) => ScripthashHistoryRow(
-          e[0] as Address,
-          e[1] as List<ScripthashHistory>,
-          e[2] as List<ScripthashUnspent>,
-          e[3] as List<ScripthashUnspent>));
+      zip([addresses, histories, unspents, assetUnspents]).map((e) =>
+          ScripthashHistoryRow(
+              e[0] as Address,
+              e[1] as List<ScripthashHistory>,
+              e[2] as List<ScripthashUnspent>,
+              e[3] as List<ScripthashUnspent>));
 }
 
 class AddressSubscriptionService extends Service {
