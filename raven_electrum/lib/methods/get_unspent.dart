@@ -34,52 +34,58 @@ class ScripthashUnspent with EquatableMixin {
 }
 
 extension GetUnspentMethod on RavenElectrumClient {
-  Future<List<ScripthashUnspent>> getUnspent(scripthash) async {
-    var proc = 'blockchain.scripthash.listunspent';
-    List<dynamic> unspent = await request(proc, [scripthash]);
-    return (unspent.map((res) => ScripthashUnspent(
-        scripthash: scripthash,
-        height: res['height'],
-        txHash: res['tx_hash'],
-        txPos: res['tx_pos'],
-        value: res['value']))).toList();
-  }
+  Future<List<ScripthashUnspent>> getUnspent(scripthash) async =>
+      ((await request(
+        'blockchain.scripthash.listunspent',
+        [scripthash],
+      ) as List<dynamic>)
+          .map((res) => ScripthashUnspent(
+              scripthash: scripthash,
+              height: res['height'],
+              txHash: res['tx_hash'],
+              txPos: res['tx_pos'],
+              value: res['value']))).toList();
 
   /// returns unspents in the same order as scripthashes passed in
-  Future<List<T>> getUnspents<T>(List<String> scripthashes) async {
-    var futures = <Future>[];
-    var results;
+  Future<List<List<ScripthashUnspent>>> getUnspents(
+    List<String> scripthashes,
+  ) async {
+    var futures = <Future<List<ScripthashUnspent>>>[];
     peer.withBatch(() {
       for (var scripthash in scripthashes) {
         futures.add(getUnspent(scripthash));
       }
     });
-    results = await Future.wait(futures);
+    List<List<ScripthashUnspent>> results =
+        await Future.wait<List<ScripthashUnspent>>(futures);
     return results;
   }
 
-  Future<List<ScripthashUnspent>> getAssetUnspent(scripthash) async {
-    var proc = 'blockchain.scripthash.listassets';
-    List<dynamic> unspent = await request(proc, [scripthash]);
-    return (unspent.map((res) => ScripthashUnspent(
-        scripthash: scripthash,
-        height: res['height'],
-        txHash: res['tx_hash'],
-        txPos: res['tx_pos'],
-        value: res['value'],
-        ticker: res['name']))).toList();
-  }
+  Future<List<ScripthashUnspent>> getAssetUnspent(scripthash) async =>
+      ((await request(
+        'blockchain.scripthash.listassets',
+        [scripthash],
+      ) as List<dynamic>)
+          .map((res) => ScripthashUnspent(
+              scripthash: scripthash,
+              height: res['height'],
+              txHash: res['tx_hash'],
+              txPos: res['tx_pos'],
+              value: res['value'],
+              ticker: res['name']))).toList();
 
   /// returns unspents in the same order as scripthashes passed in
-  Future<List<T>> getAssetUnspents<T>(List<String> scripthashes) async {
-    var futures = <Future>[];
-    var results;
+  Future<List<List<ScripthashUnspent>>> getAssetUnspents(
+    List<String> scripthashes,
+  ) async {
+    var futures = <Future<List<ScripthashUnspent>>>[];
     peer.withBatch(() {
       for (var scripthash in scripthashes) {
         futures.add(getAssetUnspent(scripthash));
       }
     });
-    results = await Future.wait(futures);
+    List<List<ScripthashUnspent>> results =
+        await Future.wait<List<ScripthashUnspent>>(futures);
     return results;
   }
 }

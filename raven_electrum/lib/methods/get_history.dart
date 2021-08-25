@@ -17,23 +17,27 @@ class ScripthashHistory with EquatableMixin {
 }
 
 extension GetHistoryMethod on RavenElectrumClient {
-  Future<List<ScripthashHistory>> getHistory(scripthash) async {
-    var proc = 'blockchain.scripthash.get_history';
-    List<dynamic> history = await request(proc, [scripthash]);
-    return (history.map((response) => ScripthashHistory(
-        height: response['height'], txHash: response['tx_hash']))).toList();
-  }
+  Future<List<ScripthashHistory>> getHistory(scripthash) async =>
+      ((await request(
+        'blockchain.scripthash.get_history',
+        [scripthash],
+      ) as List<dynamic>)
+          .map((response) => ScripthashHistory(
+              height: response['height'],
+              txHash: response['tx_hash']))).toList();
 
   /// returns histories in the same order as scripthashes passed in
-  Future<List<T>> getHistories<T>(List<String> scripthashes) async {
-    var futures = <Future>[];
-    var results;
+  Future<List<List<ScripthashHistory>>> getHistories(
+    List<String> scripthashes,
+  ) async {
+    var futures = <Future<List<ScripthashHistory>>>[];
     peer.withBatch(() {
       for (var scripthash in scripthashes) {
         futures.add(getHistory(scripthash));
       }
     });
-    results = await Future.wait(futures);
+    List<List<ScripthashHistory>> results =
+        await Future.wait<List<ScripthashHistory>>(futures);
     return results;
   }
 }

@@ -47,41 +47,43 @@ class ScripthashAssetBalances with EquatableMixin {
 
 extension GetBalanceMethod on RavenElectrumClient {
   Future<ScripthashBalance> getBalance(scripthash) async {
-    var proc = 'blockchain.scripthash.get_balance';
-    dynamic balance = await request(proc, [scripthash]);
+    dynamic balance =
+        await request('blockchain.scripthash.get_balance', [scripthash]);
     return ScripthashBalance(balance['confirmed'], balance['unconfirmed']);
   }
 
   /// returns balances in the same order as scripthashes passed in
-  Future<List<T>> getBalances<T>(List<String> scripthashes) async {
-    var futures = <Future>[];
-    var results;
+  Future<List<ScripthashBalance>> getBalances(List<String> scripthashes) async {
+    var futures = <Future<ScripthashBalance>>[];
     peer.withBatch(() {
       for (var scripthash in scripthashes) {
         futures.add(getBalance(scripthash));
       }
     });
-    results = await Future.wait(futures);
+    List<ScripthashBalance> results =
+        await Future.wait<ScripthashBalance>(futures);
     return results;
   }
 
   Future<ScripthashAssetBalances> getAssetBalance(scripthash) async {
-    var proc = 'blockchain.scripthash.get_asset_balance';
-    dynamic balance = await request(proc, [scripthash]);
+    dynamic balance =
+        await request('blockchain.scripthash.get_asset_balance', [scripthash]);
     return ScripthashAssetBalances(
         balance['confirmed'], balance['unconfirmed']);
   }
 
   /// returns balances in the same order as scripthashes passed in
-  Future<List<T>> getAssetBalances<T>(List<String> scripthashes) async {
-    var futures = <Future>[];
-    var results;
+  Future<List<ScripthashAssetBalances>> getAssetBalances(
+    List<String> scripthashes,
+  ) async {
+    var futures = <Future<ScripthashAssetBalances>>[];
     peer.withBatch(() {
       for (var scripthash in scripthashes) {
         futures.add(getAssetBalance(scripthash));
       }
     });
-    results = await Future.wait(futures);
+    List<ScripthashAssetBalances> results =
+        await Future.wait<ScripthashAssetBalances>(futures);
     return results;
   }
 }
