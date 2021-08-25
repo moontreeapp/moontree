@@ -4,8 +4,21 @@ import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 void main() {
   group('electrum_client', () {
+    late RavenElectrumClient client;
+    setUp(() async {
+      // Our testnet server:
+      // var channel = await connect('143.198.142.78', port: 50012);
+
+      // Raven Foundation testnet server:
+      // var channel = await connect('168.119.100.140', port: 50012);
+
+      // HyperPeek's testnet server:
+      var channel = await connect('testnet.rvn.rocks', port: 50002);
+
+      client = RavenElectrumClient(channel);
+    });
+
     test('get unspent', () async {
-      var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
       var scripthash =
           'b3bbdf50410b85299f914d2c573a7cadc2133d8e6cc088dc400dd174937f86e1';
       var utxos = await client.getUnspent(scripthash);
@@ -21,8 +34,6 @@ void main() {
     });
 
     test('withBatch', () async {
-      var client = await RavenElectrumClient.connect('testnet.rvn.rocks');
-
       var scripthash =
           '93bfc0b3df3f7e2a033ca8d70582d5cf4adf6cc0587e10ef224a78955b636923';
 
@@ -48,6 +59,15 @@ void main() {
                 '2dada22848277e6a23b49c1e63d47b661f94819b2001e2789a5fd947b51907d5',
             height: 769767)
       ]);
+    });
+
+    test('subscribes to scripthash', () async {
+      var scripthash =
+          '93bfc0b3df3f7e2a033ca8d70582d5cf4adf6cc0587e10ef224a78955b636923';
+      var stream = client.subscribeScripthash(scripthash);
+      var result = await stream.first;
+      expect(result,
+          '615dd2dec158d531d2875cee60c37e9e72f264d221a267a9ab512e0741ba4eb4');
     });
   });
 }
