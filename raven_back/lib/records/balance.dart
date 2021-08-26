@@ -78,6 +78,10 @@ class BalanceUSD {
     return confirmed + unconfirmed;
   }
 
+  String get valueUSD {
+    return (confirmed + unconfirmed).toStringAsFixed(2);
+  }
+
   BalanceUSD operator +(BalanceUSD balanceUSD) {
     return BalanceUSD(
         confirmed: confirmed + balanceUSD.confirmed,
@@ -89,6 +93,9 @@ class BalanceUSD {
         confirmed: confirmed * balance.confirmed,
         unconfirmed: unconfirmed * balance.unconfirmed);
   }
+
+  @override
+  String toString() => 'BalanceUSD($confirmed, $unconfirmed)';
 }
 
 class BalanceRaw {

@@ -26,7 +26,7 @@ class RatesService extends Service {
       var rate = rates.rvnToUSD;
       usd = BalanceUSD(
           confirmed: (totalRVNBalance.confirmed * rate).toDouble(),
-          unconfirmed: (totalRVNBalance.confirmed * rate).toDouble());
+          unconfirmed: (totalRVNBalance.unconfirmed * rate).toDouble());
     }
     return usd;
   }

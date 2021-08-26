@@ -3,7 +3,7 @@ import 'package:raven/records/security.dart';
 import 'package:reservoir/reservoir.dart';
 
 String _paramsToKey(String accountId, [Security? base]) => base == null
-    ? '$accountId::'
+    ? '$accountId'
     : '$accountId:${base.symbol}:${base.securityType}';
 
 class BalanceReservoir extends Reservoir<String, Balance> {

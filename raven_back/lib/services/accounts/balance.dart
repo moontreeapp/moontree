@@ -22,8 +22,6 @@ class BalanceService extends Service {
         uniquePairs.add([history.accountId, history.security]);
       }
     });
-    print('uniquePairs'); // account 0 rvn, account 0 magicmusk
-    print(uniquePairs); // account 0 rvn, account 0 magicmusk
     for (var accountIdSecurity in uniquePairs) {
       saveBalance(accountIdSecurity[0], accountIdSecurity[1]);
     }
