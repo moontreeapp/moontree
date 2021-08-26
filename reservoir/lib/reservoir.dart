@@ -84,12 +84,12 @@ class Reservoir<Key extends Object, Rec extends Object>
 
   /// Save all `records`, index them, and broadcast the changes
   Future<List<Change>> saveAll(List<Rec> records) async {
-    return _changeAll(records, _saveSilently);
+    return await _changeAll(records, _saveSilently);
   }
 
   /// Remove all `records`, de-index them, and broadcast the changes
   Future<List<Change>> removeAll(List<Rec> records) async {
-    return _changeAll(records, _removeSilently);
+    return await _changeAll(records, _removeSilently);
   }
 
   // Index & save one record without broadcasting any changes
