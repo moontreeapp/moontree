@@ -1,3 +1,10 @@
+## 1.4.0
+
+- Fix saveAll / removeAll:
+  - await changes
+  - publish changes
+  - don't publish zero-length changes
+
 ## 1.3.0
 
 - Export MapSource class
