@@ -10,8 +10,8 @@ class SettingService extends Service {
 
   SettingService(this.settings) : super();
 
-  void saveSetting(SettingName name, value) {
-    settings.save(Setting(name: name, value: value));
+  Future saveSetting(SettingName name, value) async {
+    await settings.save(Setting(name: name, value: value));
   }
 
   // also used to start
