@@ -111,7 +111,9 @@ class Reservoir<Key extends Object, Rec extends Object>
       var change = await changeFn(record);
       if (change != null) changes.add(change);
     }
-    _changes.add(changes);
+    if (changes.isNotEmpty) {
+      _changes.add(changes);
+    }
     return changes;
   }
 
