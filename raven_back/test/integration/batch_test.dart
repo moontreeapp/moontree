@@ -16,7 +16,10 @@ void main() async {
   setUpAll(() async {
     await tests.hiveSetup();
     //tests.listenTo(client);
-    wallet = LeaderWallet(seed: bip39.mnemonicToSeed(await getMnemonic()));
+    wallet = LeaderWallet(
+        id: '0',
+        accountId: 'a1',
+        encryptedSeed: bip39.mnemonicToSeed(await getMnemonic()));
   });
 
   tearDownAll(() async => await tests.closeHive());
