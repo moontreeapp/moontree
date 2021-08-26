@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
-import 'package:raven_mobile/components/text.dart';
 import 'package:raven_mobile/services/account_mock.dart' as mock;
 import 'package:raven_mobile/theme/extensions.dart';
 
@@ -70,7 +69,7 @@ class _RavenTransactionsState extends State<RavenTransactions> {
                     Text('$balance',
                         style: Theme.of(context).textTheme.headline3),
                     SizedBox(height: 15.0),
-                    Text('\$ ${RavenText.rvnUSD(balance)}',
+                    Text('\$ RavenText.rvnUSD(balance)',
                         style: Theme.of(context).textTheme.headline5),
                   ]))));
 
@@ -93,12 +92,12 @@ class _RavenTransactionsState extends State<RavenTransactions> {
             trailing: (transaction['direction'] == 'in'
                 ? Text(
                     showUSD
-                        ? '\$' + RavenText.rvnUSD(transaction['amount'])
+                        ? '\$' + "RavenText.rvnUSD(transaction['amount'])"
                         : transaction['amount'].toString(),
                     style: TextStyle(color: Theme.of(context).good))
                 : Text(
                     showUSD
-                        ? '\$' + RavenText.rvnUSD(transaction['amount'])
+                        ? '\$' + "RavenText.rvnUSD(transaction['amount'])"
                         : transaction['amount'].toString(),
                     style: TextStyle(color: Theme.of(context).bad))),
             leading: RavenIcon.assetAvatar(transaction['asset'])));

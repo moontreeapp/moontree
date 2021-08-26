@@ -19,7 +19,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   dynamic data = {};
-  int balance = 0;
   bool showUSD = false;
 
   void _toggleUSD() {
@@ -39,14 +38,10 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
-    //balance = services.ratesService.accountBalanceUSD('0').value;
-    balance = data['holdings'][data['account']]['RVN'] ?? 0;
-    var account = Current.account;
-    balance = Current.balance.value;
     return DefaultTabController(
         length: 2,
         child: Scaffold(
-            appBar: balanceHeader(account.name),
+            appBar: balanceHeader(),
             drawer: accountsView(),
             body: holdingsTransactionsView(),
             floatingActionButtonLocation:
@@ -55,7 +50,7 @@ class _HomeState extends State<Home> {
             bottomNavigationBar: RavenButton.bottomNav(context)));
   }
 
-  PreferredSize balanceHeader(title) => PreferredSize(
+  PreferredSize balanceHeader() => PreferredSize(
       preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
       child: AppBar(
           automaticallyImplyLeading: true,
@@ -66,12 +61,12 @@ class _HomeState extends State<Home> {
           ],
           elevation: 2,
           centerTitle: false,
-          title: Text(title),
+          title: Text(Current.account.name),
           flexibleSpace: Container(
             alignment: Alignment.center,
             // balance view should listen for valid usd
             // show spinnter until valid usd rate appears, then rvnUSD
-            child: Text('\n\$ ${RavenText.rvnUSD(balance)}',
+            child: Text('\n\$ ${Current.balanceUSD.valueUSD}',
                 style: Theme.of(context).textTheme.headline3),
           ),
           bottom: PreferredSize(
@@ -82,43 +77,41 @@ class _HomeState extends State<Home> {
   ListView _holdingsView() {
     var rvnHolding = <Widget>[];
     var assetHoldings = <Widget>[];
-    if (data['holdings'][data['account']].isNotEmpty) {
-      for (MapEntry holding in data['holdings'][data['account']].entries) {
-        var thisHolding = ListTile(
-            onTap: () => Navigator.pushNamed(
-                context, holding.key == 'RVN' ? '/transactions' : '/asset'),
-            onLongPress: () => _toggleUSD(),
-            title: Text(holding.key,
-                style: holding.key == 'RVN'
-                    ? Theme.of(context).textTheme.bodyText1
-                    : Theme.of(context).textTheme.bodyText2),
-            trailing: (Text(
-                showUSD
-                    ? (holding.key == 'RVN'
-                        ? '\$' + RavenText.rvnUSD(holding.value)
-                        : holding.value
-                            .toString()) //'\$' + RavenText.rvnUSD(RavenText.assetRVN(transaction['amount']))
-                    : holding.value.toString(),
-                style: TextStyle(color: Theme.of(context).good))),
-            leading: RavenIcon.assetAvatar(holding.key));
-        if (holding.key == 'RVN') {
-          rvnHolding.add(thisHolding);
-          if (holding.value < 600) {
-            rvnHolding.add(ListTile(
-                onTap: () {},
-                title: Text('+ Create Asset (not enough RVN)',
-                    style: TextStyle(color: Theme.of(context).disabledColor))));
-          } else {
-            rvnHolding.add(ListTile(
-                onTap: () {},
-                title: TextButton.icon(
-                    onPressed: () {/* create asset screen */},
-                    icon: Icon(Icons.add),
-                    label: Text('Create Asset'))));
-          }
+    for (var holding in Current.holdings) {
+      var thisHolding = ListTile(
+          onTap: () => Navigator.pushNamed(context,
+              holding.security.symbol == 'RVN' ? '/transactions' : '/asset'),
+          onLongPress: () => _toggleUSD(),
+          title: Text(holding.security.symbol,
+              style: holding.security.symbol == 'RVN'
+                  ? Theme.of(context).textTheme.bodyText1
+                  : Theme.of(context).textTheme.bodyText2),
+          trailing: (Text(
+              showUSD
+                  ? (holding.security.symbol == 'RVN'
+                      ? '\$' + RavenText.rvnUSD(holding.value)
+                      : holding.value
+                          .toString()) //'\$' + RavenText.rvnUSD(RavenText.assetRVN(transaction.value))
+                  : holding.value.toString(),
+              style: TextStyle(color: Theme.of(context).good))),
+          leading: RavenIcon.assetAvatar(holding.security.symbol));
+      if (holding.security.symbol == 'RVN') {
+        rvnHolding.add(thisHolding);
+        if (holding.value < 600) {
+          rvnHolding.add(ListTile(
+              onTap: () {},
+              title: Text('+ Create Asset (not enough RVN)',
+                  style: TextStyle(color: Theme.of(context).disabledColor))));
         } else {
-          assetHoldings.add(thisHolding);
+          rvnHolding.add(ListTile(
+              onTap: () {},
+              title: TextButton.icon(
+                  onPressed: () {/* create asset screen */},
+                  icon: Icon(Icons.add),
+                  label: Text('Create Asset'))));
         }
+      } else {
+        assetHoldings.add(thisHolding);
       }
     }
     if (rvnHolding.isEmpty) {
@@ -139,35 +132,35 @@ class _HomeState extends State<Home> {
   }
 
   ListView _transactionsView() => ListView(children: <Widget>[
-        for (var transaction in data['transactions'][data['account']])
+        for (var transaction in Current.transactions)
           ListTile(
               onTap: () => Navigator.pushNamed(context, '/transactions'),
               onLongPress: () => _toggleUSD(),
               title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(transaction['asset'],
+                    Text(transaction.security.symbol,
                         style: Theme.of(context).textTheme.bodyText2),
-                    (transaction['direction'] == 'in'
+                    (transaction.value > 0 //  == 'in'
                         ? RavenIcon.income(context)
                         : RavenIcon.out(context)),
                   ]),
-              trailing: (transaction['direction'] == 'in'
+              trailing: (transaction.value > 0 // == 'in'
                   ? Text(
                       showUSD
-                          ? (transaction['asset'] == 'RVN'
-                              ? '\$' + RavenText.rvnUSD(transaction['amount'])
-                              : transaction['amount'].toString())
-                          : transaction['amount'].toString(),
+                          ? (transaction.security.symbol == 'RVN'
+                              ? '\$' + RavenText.rvnUSD(transaction.value)
+                              : transaction.value.toString())
+                          : transaction.value.toString(),
                       style: TextStyle(color: Theme.of(context).good))
                   : Text(
                       showUSD
-                          ? (transaction['asset'] == 'RVN'
-                              ? '\$' + RavenText.rvnUSD(transaction['amount'])
-                              : transaction['amount'].toString())
-                          : transaction['amount'].toString(),
+                          ? (transaction.security.symbol == 'RVN'
+                              ? '\$' + RavenText.rvnUSD(transaction.value)
+                              : transaction.value.toString())
+                          : transaction.value.toString(),
                       style: TextStyle(color: Theme.of(context).bad))),
-              leading: RavenIcon.assetAvatar(transaction['asset']))
+              leading: RavenIcon.assetAvatar(transaction.security.symbol))
       ]);
 
   Container _emptyMessage({IconData? icon, String? name}) => Container(
@@ -182,10 +175,10 @@ class _HomeState extends State<Home> {
 
   /// returns a list of holdings and transactions or empty messages
   TabBarView holdingsTransactionsView() => TabBarView(children: [
-        data['holdings'][data['account']].isEmpty
+        Current.holdings.isEmpty
             ? _emptyMessage(icon: Icons.savings, name: 'holdings')
             : _holdingsView(),
-        data['transactions'][data['account']].isEmpty
+        Current.transactions.isEmpty
             ? _emptyMessage(icon: Icons.public, name: 'transactions')
             : _transactionsView(),
       ]);

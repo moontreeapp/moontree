@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:raven/records/address.dart';
 import 'package:raven/services/addresses/subscribe.dart';
@@ -18,7 +16,7 @@ class _LoadingState extends State<Loading> {
   Future setupAccounts() async {
     await accountGenerationService.makeAndAwaitSaveAccount('Primary');
     await accountGenerationService.makeAndAwaitSaveAccount('Savings');
-    addressSubscriptionService
+    await addressSubscriptionService
         .saveScripthashHistoryData(ScripthashHistoriesData(
       [
         Address(
@@ -29,19 +27,19 @@ class _LoadingState extends State<Loading> {
             scripthash: '')
       ],
       [
-        [ScripthashHistory(height: 0, txHash: 'abc')]
+        [ScripthashHistory(height: 0, txHash: 'abc1')]
       ],
       [
         [
           ScripthashUnspent(
-              height: 0, txHash: 'abc', scripthash: '', txPos: 0, value: 10)
+              height: 0, txHash: 'abc2', scripthash: '', txPos: 0, value: 10)
         ]
       ],
       [
         [
           ScripthashUnspent(
               height: 0,
-              txHash: 'abc',
+              txHash: 'abc3',
               scripthash: '',
               txPos: 0,
               value: 50,
@@ -49,6 +47,7 @@ class _LoadingState extends State<Loading> {
         ]
       ],
     ));
+    print('HISTORY CREATED');
   }
 
   void setup() async {

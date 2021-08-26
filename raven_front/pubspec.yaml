@@ -47,6 +47,9 @@ dependency_overrides:
   raven_electrum_client:
       path: /moontree/repos/raven_electrum_client
       #git: https://github.com/moontreeapp/raven_electrum_client.git
+  reservoir:
+      path: /moontree/repos/reservoir
+      #git: https://github.com/moontreeapp/reservoir.git
 
 dev_dependencies:
   flutter_test:
