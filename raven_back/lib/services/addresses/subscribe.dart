@@ -58,10 +58,10 @@ class AddressSubscriptionService extends Service {
         changedAddresses, histories, unspents, assetUnspents);
   }
 
-  void saveScripthashHistoryData(ScripthashHistoriesData data) async {
-    data.zipped.forEach((row) {
-      histories.saveAll(combineHistoryAndUnspents(row));
-    });
+  Future saveScripthashHistoryData(ScripthashHistoriesData data) async {
+    for (var row in data.zipped) {
+      await histories.saveAll(combineHistoryAndUnspents(row));
+    }
   }
 
   List<History> combineHistoryAndUnspents(ScripthashHistoryRow row) {

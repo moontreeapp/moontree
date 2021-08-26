@@ -15,14 +15,16 @@ class BalanceService extends Service {
 
   // runs it for affected account-security combinations
   void calcuSaveBalance(List<Change> changes) {
-    var combos = [];
+    var uniquePairs = [];
     changes.forEach((Change change) {
       History history = change.data;
-      if (!combos.contains([history.accountId, history.security])) {
-        combos.add([history.accountId, history.security]);
+      if (!uniquePairs.contains([history.accountId, history.security])) {
+        uniquePairs.add([history.accountId, history.security]);
       }
     });
-    for (var accountIdSecurity in combos) {
+    print('uniquePairs'); // account 0 rvn, account 0 magicmusk
+    print(uniquePairs); // account 0 rvn, account 0 magicmusk
+    for (var accountIdSecurity in uniquePairs) {
       saveBalance(accountIdSecurity[0], accountIdSecurity[1]);
     }
   }
@@ -32,13 +34,11 @@ class BalanceService extends Service {
         accountId: accountId,
         security: security,
         confirmed: histories
-                .unspentsByAccount(accountId, security: security)
-                .fold(0, (sum, history) => sum ?? 0 + history.value) ??
-            0,
+            .unspentsByAccount(accountId, security: security)
+            .fold(0, (sum, history) => sum + history.value),
         unconfirmed: histories
-                .unconfirmedByAccount(accountId, security: security)
-                .fold(0, (sum, history) => sum ?? 0 + history.value) ??
-            0));
+            .unconfirmedByAccount(accountId, security: security)
+            .fold(0, (sum, history) => sum + history.value)));
   }
 
   // runs it for all  and all security

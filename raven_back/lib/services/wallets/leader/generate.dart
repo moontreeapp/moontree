@@ -23,6 +23,6 @@ class LeaderWalletGenerationService extends Service {
   }
 
   void makeAndSaveLeaderWallet(Account account, {Uint8List? seed}) {
-    wallets.save((newLeaderWallet(account, seed: seed)));
+    wallets.save(newLeaderWallet(account, seed: seed));
   }
 }

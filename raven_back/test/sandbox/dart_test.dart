@@ -31,16 +31,16 @@ void main() {
     expect(fiat, 'aBc');
   });
   test('what is an enum?', () {
-    print(SettingName.Electrum_Url);
-    print(SettingName.Electrum_Url.index);
-    print(SettingName.Electrum_Url.hashCode);
-    print(SettingName.Electrum_Url.runtimeType);
-    print(SettingName.Electrum_Url.toString().split('.')[1]);
-    //print(describeEnum(SettingName.Electrum_Url));
-    print(SettingName.Electrum_Url.index);
-    print(SettingName.Electrum_Url == SettingName.Electrum_Url);
-    print(SettingName.Electrum_Url is Object);
-    print(SettingName is Object);
+    //print(SettingName.Electrum_Url);
+    //print(SettingName.Electrum_Url.index);
+    //print(SettingName.Electrum_Url.hashCode);
+    //print(SettingName.Electrum_Url.runtimeType);
+    //print(SettingName.Electrum_Url.toString().split('.')[1]);
+    ////print(describeEnum(SettingName.Electrum_Url));
+    //print(SettingName.Electrum_Url.index);
+    //print(SettingName.Electrum_Url == SettingName.Electrum_Url);
+    //print(SettingName.Electrum_Url is Object);
+    //print(SettingName is Object);
     /*
     SettingName.Electrum_Url
     0
@@ -62,5 +62,24 @@ void main() {
     };
 
     print(thirdMap);
+  });
+  test('list of list to set', () {
+    var combos = [
+      ['a', 'b'],
+      ['a', 'b'],
+      ['a', 'c']
+    ];
+    print(combos.toSet());
+    print(combos.toSet().toList());
+    var combos2 = [
+      {'a', 'b'},
+      {'a', 'b'},
+      {'a', 'c'}
+    ];
+    print(combos2.toSet());
+    print(combos2.toSet().toList());
+    var combos3 = ['a', 'b', 'a', 'b', 'a', 'c'];
+    print(combos3.toSet());
+    print(combos3.toSet().toList());
   });
 }

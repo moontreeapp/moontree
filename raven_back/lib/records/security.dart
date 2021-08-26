@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:raven/records/security_type.dart';
 
@@ -9,7 +10,7 @@ const Security RVN = Security(symbol: 'RVN', securityType: SecurityType.Crypto);
 const Security USD = Security(symbol: 'USD', securityType: SecurityType.Fiat);
 
 @HiveType(typeId: TypeId.Security)
-class Security {
+class Security with EquatableMixin {
   @HiveField(0)
   final String symbol;
 
@@ -20,4 +21,10 @@ class Security {
     required this.symbol,
     required this.securityType,
   });
+
+  @override
+  List<Object> get props => [symbol, securityType];
+
+  @override
+  String toString() => 'Security($symbol, $securityType)';
 }

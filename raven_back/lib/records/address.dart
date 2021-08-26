@@ -45,5 +45,5 @@ class Address with EquatableMixin {
 
   @override
   String toString() =>
-      'Account($scripthash, $address, $walletId, $accountId, $hdIndex, $exposure, $net)';
+      'Address($scripthash, $address, $walletId, $accountId, $hdIndex, $exposure, $net)';
 }
