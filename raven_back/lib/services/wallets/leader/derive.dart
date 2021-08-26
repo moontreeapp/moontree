@@ -60,26 +60,7 @@ class LeaderWalletDerivationService extends Service {
     NodeExposure exposure,
   ) {
     var net = accounts.get(wallet.accountId)!.net;
-    var seededWallet = deriveWallet(wallet, net, hdIndex, exposure);
-    return Address(
-        scripthash: seededWallet.scripthash,
-        address: seededWallet.address!,
-        walletId: wallet.id,
-        accountId: wallet.accountId,
-        hdIndex: hdIndex,
-        exposure: exposure,
-        net: net);
-  }
-
-  HDWallet deriveWallet(
-    LeaderWallet wallet,
-    Net net,
-    int hdIndex, [
-    exposure = NodeExposure.External,
-  ]) {
-    var seededWallet = HDWallet.fromSeed(wallet.seed, network: networks[net]!);
-    return seededWallet
-        .derivePath(getDerivationPath(hdIndex, exposure: exposure));
+    return wallet.deriveAddress(net, hdIndex, exposure);
   }
 
   void deriveFirstAddressAndSave(LeaderWallet wallet) {
@@ -102,13 +83,13 @@ class LeaderWalletDerivationService extends Service {
         in addresses.byWalletExposure.getAll('$walletId:$exposure')) {
       if (histories.byScripthash.getAll(address.scripthash).isEmpty) {
         var net = accounts.get(leaderWallet.accountId)!.net;
-        return deriveWallet(leaderWallet, net, i, exposure);
+        return leaderWallet.deriveWallet(net, i, exposure);
         //return leaderWallet.deriveWallet(i, exposure); // service
       }
       i = i + 1;
     }
     // this shouldn't happen - if so we should trigger a new batch??
     var net = accounts.get(leaderWallet.accountId)!.net;
-    return deriveWallet(leaderWallet, net, i, exposure);
+    return leaderWallet.deriveWallet(net, i, exposure);
   }
 }
