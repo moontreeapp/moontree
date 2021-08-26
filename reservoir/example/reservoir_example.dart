@@ -1,14 +1,10 @@
-import 'package:equatable/equatable.dart';
 import 'package:reservoir/reservoir.dart';
 
-class User with EquatableMixin {
+class User {
   final String id;
   final String name;
   final String status;
   User(this.id, this.name, this.status);
-
-  @override
-  List<Object?> get props => [id];
 
   @override
   String toString() => 'User($id, $name, $status)';
