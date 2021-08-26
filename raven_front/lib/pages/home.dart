@@ -18,7 +18,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  dynamic data = {};
   bool showUSD = false;
 
   void _toggleUSD() {
@@ -37,7 +36,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
     return DefaultTabController(
         length: 2,
         child: Scaffold(
@@ -80,7 +78,8 @@ class _HomeState extends State<Home> {
     for (var holding in Current.holdings) {
       var thisHolding = ListTile(
           onTap: () => Navigator.pushNamed(context,
-              holding.security.symbol == 'RVN' ? '/transactions' : '/asset'),
+              holding.security.symbol == 'RVN' ? '/transactions' : '/asset',
+              arguments: {'holding': holding}),
           onLongPress: () => _toggleUSD(),
           title: Text(holding.security.symbol,
               style: holding.security.symbol == 'RVN'
@@ -134,7 +133,8 @@ class _HomeState extends State<Home> {
   ListView _transactionsView() => ListView(children: <Widget>[
         for (var transaction in Current.transactions)
           ListTile(
-              onTap: () => Navigator.pushNamed(context, '/transactions'),
+              onTap: () => Navigator.pushNamed(context, '/transaction',
+                  arguments: {'transaction': transaction}),
               onLongPress: () => _toggleUSD(),
               title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -202,9 +202,12 @@ class _HomeState extends State<Home> {
         Column(children: <Widget>[
           for (var account in res.accounts.data) ...[
             ListTile(
-                onTap: () {
-                  services.settingsService
+                onTap: () async {
+                  print(account.id);
+                  print(res.settings.data);
+                  await services.settingsService
                       .saveSetting(SettingName.Current_Account, account.id);
+                  print(res.settings.data);
                   Navigator.pop(context);
                 },
                 title: Text(account.id + ' ' + account.name,

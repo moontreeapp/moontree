@@ -47,7 +47,6 @@ class _LoadingState extends State<Loading> {
         ]
       ],
     ));
-    print('HISTORY CREATED');
   }
 
   void setup() async {
@@ -69,8 +68,6 @@ class _LoadingState extends State<Loading> {
     print('balances: ${res.balances.data}');
     print('rates: ${res.rates.data}');
     print('settings: ${res.settings.data}');
-
-    /// TODO make sure you wait for all reservoir defaults to be applied here...
 
     /// TODO running into this error on occasion...
     /// E/flutter (12132): [ERROR:flutter/lib/ui/ui_dart_state.cc(209)] Unhandled Exception: SocketException: Connection timed out, host: testnet.rvn.rocks, port: 50002

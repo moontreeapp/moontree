@@ -3,7 +3,8 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
-import 'package:raven_mobile/services/account_mock.dart' as mock;
+import 'package:raven_mobile/components/text.dart';
+import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 
 class RavenTransactions extends StatefulWidget {
@@ -12,8 +13,6 @@ class RavenTransactions extends StatefulWidget {
 }
 
 class _RavenTransactionsState extends State<RavenTransactions> {
-  dynamic data = {};
-  int balance = 50;
   bool showUSD = false;
 
   void _toggleUSD() {
@@ -29,15 +28,6 @@ class _RavenTransactionsState extends State<RavenTransactions> {
 
   @override
   Widget build(BuildContext context) {
-    //data = data.isNotEmpty ??
-    //    data ??
-    //    ModalRoute.of(context)!.settings.arguments ??
-    data = {
-      'account': 'accountId2',
-      'accounts': mock.Accounts.instance.accounts,
-      'transactions': mock.Accounts.instance.transactions,
-      'holdings': mock.Accounts.instance.holdings,
-    };
     return Scaffold(
         appBar: header(),
         body: transactionsView(),
@@ -66,46 +56,45 @@ class _RavenTransactionsState extends State<RavenTransactions> {
                     SizedBox(height: 15.0),
                     RavenIcon.assetAvatar('RVN'),
                     SizedBox(height: 15.0),
-                    Text('$balance',
+                    Text(Current.balanceRVN.value.toString(),
                         style: Theme.of(context).textTheme.headline3),
                     SizedBox(height: 15.0),
-                    Text('\$ RavenText.rvnUSD(balance)',
+                    Text('\$ ' + RavenText.rvnUSD(Current.balanceRVN.value),
                         style: Theme.of(context).textTheme.headline5),
                   ]))));
 
-  Container _transactionsView() {
-    var txs = <Widget>[];
-    for (var transaction in data['transactions'][data['account']]) {
-      if (transaction['asset'] == 'RVN') {
-        txs.add(ListTile(
-            onTap: () => Navigator.pushNamed(context, '/transaction'),
-            onLongPress: () => _toggleUSD(),
-            title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(transaction['asset'],
-                      style: Theme.of(context).textTheme.bodyText2),
-                  (transaction['direction'] == 'in'
-                      ? RavenIcon.income(context)
-                      : RavenIcon.out(context)),
-                ]),
-            trailing: (transaction['direction'] == 'in'
-                ? Text(
-                    showUSD
-                        ? '\$' + "RavenText.rvnUSD(transaction['amount'])"
-                        : transaction['amount'].toString(),
-                    style: TextStyle(color: Theme.of(context).good))
-                : Text(
-                    showUSD
-                        ? '\$' + "RavenText.rvnUSD(transaction['amount'])"
-                        : transaction['amount'].toString(),
-                    style: TextStyle(color: Theme.of(context).bad))),
-            leading: RavenIcon.assetAvatar(transaction['asset'])));
-      }
-    }
-    return Container(
-        alignment: Alignment.center, child: ListView(children: txs));
-  }
+  Container _transactionsView() => Container(
+      alignment: Alignment.center,
+      child: ListView(children: <Widget>[
+        for (var transaction in Current.transactions) ...[
+          if (transaction.security.symbol == 'RVN')
+            ListTile(
+                onTap: () => Navigator.pushNamed(context, '/transaction',
+                    arguments: {'transaction': transaction}),
+                onLongPress: () => _toggleUSD(),
+                title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(transaction.security.symbol,
+                          style: Theme.of(context).textTheme.bodyText2),
+                      (transaction.value > 0 // == 'in'
+                          ? RavenIcon.income(context)
+                          : RavenIcon.out(context)),
+                    ]),
+                trailing: (transaction.value > 0 // == 'in'
+                    ? Text(
+                        showUSD
+                            ? '\$' + RavenText.rvnUSD(transaction.value)
+                            : transaction.value.toString(),
+                        style: TextStyle(color: Theme.of(context).good))
+                    : Text(
+                        showUSD
+                            ? '\$' + RavenText.rvnUSD(transaction.value)
+                            : transaction.value.toString(),
+                        style: TextStyle(color: Theme.of(context).bad))),
+                leading: RavenIcon.assetAvatar(transaction.security.symbol))
+        ]
+      ]));
 
   Container _emptyMessage({IconData? icon, String? name}) => Container(
       alignment: Alignment.center,
@@ -117,7 +106,7 @@ class _RavenTransactionsState extends State<RavenTransactions> {
       ]));
 
   /// returns a list of holdings and transactions or empty messages
-  Container transactionsView() => data['transactions'][data['account']].isEmpty
+  Container transactionsView() => Current.transactions.isEmpty
       ? _emptyMessage(icon: Icons.public, name: 'transactions')
       : _transactionsView();
 

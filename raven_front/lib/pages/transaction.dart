@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
-import 'package:raven_mobile/theme/extensions.dart';
 
 class Transaction extends StatefulWidget {
   final dynamic data;
@@ -47,9 +46,10 @@ class _TransactionState extends State<Transaction> {
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               SizedBox(height: 15.0),
-              RavenIcon.assetAvatar('Magic Musk'),
+              RavenIcon.assetAvatar(data['transaction']!.security.symbol),
               SizedBox(height: 15.0),
-              Text('Magic Musk', style: Theme.of(context).textTheme.headline4),
+              Text(data['transaction']!.security.symbol,
+                  style: Theme.of(context).textTheme.headline4),
               SizedBox(height: 15.0),
               Text('Received', style: Theme.of(context).textTheme.headline5),
             ]),
@@ -60,9 +60,11 @@ class _TransactionState extends State<Transaction> {
       ListView(shrinkWrap: true, padding: EdgeInsets.all(20.0), children: <
           Widget>[
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text('Date: June 26 2021',
+          Text(
+              'Date: June 26 2021', // estimated date based on (current height - data['transaction']!.height)
               style: TextStyle(color: Theme.of(context).disabledColor)),
-          Text('Confirmaitons: 60+',
+          Text(
+              'Confirmaitons: 60+', // current height - data['transaction']!.height
               style: TextStyle(color: Theme.of(context).disabledColor)),
         ]),
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -70,7 +72,9 @@ class _TransactionState extends State<Transaction> {
           TextField(
             readOnly: true,
             controller: TextEditingController(
-                text: 'rtahoe5eu4e4ea451ea21e445euaeu454'),
+                text:
+                    'rtahoe5eu4e4ea451ea21e445euaeu454' //// data['transaction']!.scripthash - get address of...
+                ),
             decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'To',
@@ -79,7 +83,8 @@ class _TransactionState extends State<Transaction> {
           SizedBox(height: 15.0),
           TextField(
             readOnly: true,
-            controller: TextEditingController(text: '500'),
+            controller: TextEditingController(
+                text: data['transaction']!.value.toString()),
             decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Amount',
@@ -103,7 +108,8 @@ class _TransactionState extends State<Transaction> {
                 hintText: 'Note to Self'),
           ),
           SizedBox(height: 15.0),
-          Text('id: 1354s31e35s13f54se3851f3s51ef35s1ef35',
+          Text(
+              'id: 1354s31e35s13f54se3851f3s51ef35s1ef35', //data['transaction']!.scripthash
               style: TextStyle(color: Theme.of(context).disabledColor)),
           SizedBox(height: 15.0),
           ElevatedButton.icon(

@@ -3,9 +3,8 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
+import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/theme/extensions.dart';
-import 'package:raven_mobile/services/account_mock.dart' as mock;
-import 'package:raven_mobile/pages/transaction.dart';
 
 class Asset extends StatefulWidget {
   final dynamic data;
@@ -32,15 +31,7 @@ class _AssetState extends State<Asset> {
 
   @override
   Widget build(BuildContext context) {
-    //data = data.isNotEmpty ??
-    //    data ??
-    //    ModalRoute.of(context)!.settings.arguments ??
-    data = {
-      'account': 'accountId2',
-      'accounts': mock.Accounts.instance.accounts,
-      'transactions': mock.Accounts.instance.transactions,
-      'holdings': mock.Accounts.instance.holdings,
-    };
+    data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
     return DefaultTabController(
         length: 2,
         child: Scaffold(
@@ -63,16 +54,17 @@ class _AssetState extends State<Asset> {
                 padding: EdgeInsets.only(right: 20.0),
                 child: RavenButton.settings(context))
           ],
-          title: Text('Magic Musk'),
+          title: Text(data['holding']!.security.symbol),
           flexibleSpace: Container(
               alignment: Alignment.center,
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height: 15.0),
-                    RavenIcon.assetAvatar('Magic Musk'),
+                    RavenIcon.assetAvatar(data['holding']!.security.symbol),
                     SizedBox(height: 15.0),
-                    Text('50', style: Theme.of(context).textTheme.headline3),
+                    Text(data['holding']!.value.toString(),
+                        style: Theme.of(context).textTheme.headline3),
                     SizedBox(height: 15.0),
                     Text('\$654.02',
                         style: Theme.of(context).textTheme.headline5),
@@ -92,53 +84,51 @@ class _AssetState extends State<Asset> {
   }
 
   /// filter down to just the transactions for this asset
-  ListView _transactionsView() {
-    var txs = <Widget>[];
-    for (var transaction in data['transactions'][data['account']]) {
-      if (transaction['asset'] == 'Magic Musk') {
-        txs.add(ListTile(
-            onTap: () => Navigator.pushNamed(context, '/transaction'),
-            onLongPress: () => _toggleUSD(),
-            title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(transaction['asset'],
-                      style: Theme.of(context).textTheme.bodyText2),
-                  (transaction['direction'] == 'in'
-                      ? RavenIcon.income(context)
-                      : RavenIcon.out(context)),
-                ]),
-            trailing: (transaction['direction'] == 'in'
-                ? Text(
-                    showUSD
-                        ? transaction['amount']
-                            .toString() //'\$' + RavenText.rvnUSD(RavenText.assetRVN(transaction['amount']))
-                        : transaction['amount'].toString(),
-                    style: TextStyle(color: Theme.of(context).good))
-                : Text(
-                    showUSD
-                        ? transaction['amount']
-                            .toString() //'\$' + RavenText.rvnUSD(RavenText.assetRVN(transaction['amount']))
-                        : transaction['amount'].toString(),
-                    style: TextStyle(color: Theme.of(context).bad))),
-            leading: RavenIcon.assetAvatar(transaction['asset'])));
-      }
-    }
-    return ListView(children: txs);
-  }
+  ListView _transactionsView() => ListView(children: <Widget>[
+        for (var transaction in Current.transactions.where((tx) =>
+            tx.security.symbol == data['holding']!.security.symbol)) ...[
+          ListTile(
+              onTap: () => Navigator.pushNamed(context, '/transaction',
+                  arguments: {'transaction': transaction}),
+              onLongPress: () => _toggleUSD(),
+              title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(transaction.security.symbol,
+                        style: Theme.of(context).textTheme.bodyText2),
+                    (transaction.value > 0 // == 'in'
+                        ? RavenIcon.income(context)
+                        : RavenIcon.out(context)),
+                  ]),
+              trailing: (transaction.value > 0 // == 'in'
+                  ? Text(
+                      showUSD
+                          ? transaction.value
+                              .toString() //'\$' + RavenText.rvnUSD(RavenText.assetRVN(transaction['amount']))
+                          : transaction.value.toString(),
+                      style: TextStyle(color: Theme.of(context).good))
+                  : Text(
+                      showUSD
+                          ? transaction.value
+                              .toString() //'\$' + RavenText.rvnUSD(RavenText.assetRVN(transaction['amount']))
+                          : transaction.value.toString(),
+                      style: TextStyle(color: Theme.of(context).bad))),
+              leading: RavenIcon.assetAvatar(transaction.security.symbol))
+        ]
+      ]);
 
   Container _emptyMessage({IconData? icon, String? name}) => Container(
       alignment: Alignment.center,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Icon(icon ?? Icons.description,
             size: 50.0, color: Theme.of(context).secondaryHeaderColor),
-        Text('\nMagic Musk $name empty.\n',
+        Text("\n${data['holding']!.security.symbol} $name empty.\n",
             style: Theme.of(context).textTheme.headline4),
       ]));
 
   /// returns a list of holdings and transactions or empty messages
   TabBarView transactionsMetadataView() => TabBarView(children: [
-        data['transactions'][data['account']].isEmpty
+        Current.transactions.isEmpty
             ? _emptyMessage(icon: Icons.public, name: 'transactions')
             : _transactionsView(),
         _metadataView() ??
@@ -150,6 +140,6 @@ class _AssetState extends State<Asset> {
   Row sendReceiveButtons() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         RavenButton.receive(context),
-        RavenButton.send(context, asset: 'Magic Musk'),
+        RavenButton.send(context, asset: data['holding']!.security.symbol),
       ]);
 }
