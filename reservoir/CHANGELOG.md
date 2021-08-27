@@ -1,3 +1,7 @@
+## 2.0.0
+
+- Type safe Keys and Indexes
+
 ## 1.4.0
 
 - Fix saveAll / removeAll:
