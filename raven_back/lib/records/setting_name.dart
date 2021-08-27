@@ -18,9 +18,3 @@ enum SettingName {
   @HiveField(2)
   Current_Account
 }
-
-extension EndingToString on SettingName {
-  String endingToString() {
-    return describeEnum(this);
-  }
-}

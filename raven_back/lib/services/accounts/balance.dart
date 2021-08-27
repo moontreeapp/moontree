@@ -45,7 +45,7 @@ class BalanceService extends Service {
       return;
     }
     for (var accountId in histories.byAccount.keys) {
-      var hists = histories.byAccount.getAll([accountId]);
+      var hists = histories.byAccount.getAll(accountId);
 
       var balanceBySecurity = hists
           .groupFoldBy((History history) => history.security,

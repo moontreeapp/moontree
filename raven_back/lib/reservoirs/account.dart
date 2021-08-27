@@ -1,7 +1,9 @@
 import 'package:reservoir/reservoir.dart';
 import 'package:raven/records.dart';
 
-class AccountReservoir extends Reservoir<String, Account> {
+part 'account.keys.dart';
+
+class AccountReservoir extends Reservoir<_IdKey, Account> {
   AccountReservoir([source])
-      : super(source ?? HiveSource('accounts'), (account) => account.id);
+      : super(source ?? HiveSource('accounts'), _IdKey());
 }

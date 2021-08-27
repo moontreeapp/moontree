@@ -1,32 +1,29 @@
 import 'package:raven/records.dart';
 import 'package:raven/records/security.dart';
+import 'package:raven/utils/enum.dart';
 import 'package:reservoir/reservoir.dart';
 
-String _paramsToKey(String accountId, [Security? base]) => base == null
-    ? '$accountId'
-    : '$accountId:${base.symbol}:${base.securityType}';
+part 'balance.keys.dart';
 
-class BalanceReservoir extends Reservoir<String, Balance> {
-  late IndexMultiple<String, Balance> byAccount;
+class BalanceReservoir extends Reservoir<_AccountSecurityKey, Balance> {
+  late IndexMultiple<_AccountKey, Balance> byAccount;
 
   BalanceReservoir([source])
-      : super(source ?? HiveSource('balances'),
-            (balance) => _paramsToKey(balance.accountId, balance.security)) {
-    byAccount = addIndexMultiple(
-        'account', (balance) => _paramsToKey(balance.accountId));
+      : super(source ?? HiveSource('balances'), _AccountSecurityKey()) {
+    byAccount = addIndexMultiple('account', _AccountKey());
   }
 
-  Balance? getOne(String accountId, [Security? base]) =>
-      primaryIndex.getOne(_paramsToKey(accountId, base));
-
   Balance getRVN(String accountId) {
-    var balance = getOne(accountId, RVN);
-    return balance ??
-        Balance(
-          accountId: accountId,
-          security: RVN,
-          confirmed: 0,
-          unconfirmed: 0,
-        );
+    var balances = primaryIndex.getAll(accountId, RVN);
+    if (balances.isNotEmpty) {
+      return balances.first;
+    } else {
+      return Balance(
+        accountId: accountId,
+        security: RVN,
+        confirmed: 0,
+        unconfirmed: 0,
+      );
+    }
   }
 }

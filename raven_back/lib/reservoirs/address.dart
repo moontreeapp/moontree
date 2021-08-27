@@ -2,6 +2,8 @@ import 'package:ordered_set/ordered_set.dart';
 import 'package:raven/records.dart';
 import 'package:reservoir/reservoir.dart';
 
+part 'address.keys.dart';
+
 class AddressLocation {
   int index;
   NodeExposure exposure;
@@ -11,30 +13,24 @@ class AddressLocation {
         exposure = locationExposure;
 }
 
-class AddressReservoir extends Reservoir<String, Address> {
-  late IndexMultiple<String, Address> byAccount;
-  late IndexMultiple<String, Address> byWallet;
-  late IndexMultiple<String, Address> byWalletExposure;
+class AddressReservoir extends Reservoir<_ScripthashKey, Address> {
+  late IndexMultiple<_AccountKey, Address> byAccount;
+  late IndexMultiple<_WalletKey, Address> byWallet;
+  late IndexMultiple<_WalletExposureKey, Address> byWalletExposure;
 
   AddressReservoir([source])
-      : super(source ?? HiveSource('addresses'),
-            (address) => address.scripthash) {
-    byAccount = addIndexMultiple('account', (address) => address.accountId);
-    byWallet = addIndexMultiple('wallet', (address) => address.walletId);
-    byWalletExposure = addIndexMultiple('wallet-exposure',
-        (address) => '${address.walletId}:${address.exposure}');
-  }
-
-  OrderedSet<Address> getByWalletExposure(
-      String walletId, NodeExposure exposure) {
-    return byWalletExposure.getAll('$walletId:${exposure}');
+      : super(source ?? HiveSource('addresses'), _ScripthashKey()) {
+    byAccount = addIndexMultiple('account', _AccountKey());
+    byWallet = addIndexMultiple('wallet', _WalletKey());
+    byWalletExposure =
+        addIndexMultiple('wallet-exposure', _WalletExposureKey());
   }
 
   /// returns account addresses in order
   AddressLocation? getAddressLocationOf(String scripthash, String walletId) {
     var i = 0;
     for (var address
-        in byWalletExposure.getAll('$walletId:${NodeExposure.Internal}')) {
+        in byWalletExposure.getAll(walletId, NodeExposure.Internal)) {
       if (address.scripthash == scripthash) {
         return AddressLocation(i, NodeExposure.Internal);
       }
@@ -42,7 +38,7 @@ class AddressReservoir extends Reservoir<String, Address> {
     }
     i = 0;
     for (var address
-        in byWalletExposure.getAll('$walletId:${NodeExposure.External}')) {
+        in byWalletExposure.getAll(walletId, NodeExposure.External)) {
       if (address.scripthash == scripthash) {
         return AddressLocation(i, NodeExposure.External);
       }

@@ -21,7 +21,8 @@ class LeaderWalletDerivationService extends Service {
   /// [Address(walletid=0...),]
   void maybeDeriveNewAddresses(List<Address> changedAddresses) async {
     for (var address in changedAddresses) {
-      var leaderWallet = wallets.get(address.walletId)! as LeaderWallet;
+      var leaderWallet =
+          wallets.primaryIndex.getOne(address.walletId)! as LeaderWallet;
       maybeSaveNewAddress(leaderWallet, NodeExposure.Internal);
       maybeSaveNewAddress(leaderWallet, NodeExposure.External);
     }
@@ -42,7 +43,7 @@ class LeaderWalletDerivationService extends Service {
   ) {
     var gap = 0;
     var exposureAddresses =
-        addresses.byWalletExposure.getAll('${leaderWallet.id}:$exposure');
+        addresses.byWalletExposure.getAll(leaderWallet.id, exposure);
     for (var exposureAddress in exposureAddresses) {
       gap = gap +
           (histories.byScripthash.getAll(exposureAddress.scripthash).isEmpty
@@ -59,7 +60,7 @@ class LeaderWalletDerivationService extends Service {
     int hdIndex,
     NodeExposure exposure,
   ) {
-    var net = accounts.get(wallet.accountId)!.net;
+    var net = accounts.primaryIndex.getOne(wallet.accountId)!.net;
     return wallet.deriveAddress(net, hdIndex, exposure);
   }
 
@@ -77,19 +78,18 @@ class LeaderWalletDerivationService extends Service {
     exposure = exposure == NodeExposure.Internal
         ? NodeExposure.Internal
         : NodeExposure.External;
-    var leaderWallet = wallets.get(walletId)! as LeaderWallet;
+    var leaderWallet = wallets.primaryIndex.getOne(walletId)! as LeaderWallet;
     var i = 0;
-    for (var address
-        in addresses.byWalletExposure.getAll('$walletId:$exposure')) {
+    for (var address in addresses.byWalletExposure.getAll(walletId, exposure)) {
       if (histories.byScripthash.getAll(address.scripthash).isEmpty) {
-        var net = accounts.get(leaderWallet.accountId)!.net;
+        var net = accounts.primaryIndex.getOne(leaderWallet.accountId)!.net;
         return leaderWallet.deriveWallet(net, i, exposure);
         //return leaderWallet.deriveWallet(i, exposure); // service
       }
       i = i + 1;
     }
     // this shouldn't happen - if so we should trigger a new batch??
-    var net = accounts.get(leaderWallet.accountId)!.net;
+    var net = accounts.primaryIndex.getOne(leaderWallet.accountId)!.net;
     return leaderWallet.deriveWallet(net, i, exposure);
   }
 }

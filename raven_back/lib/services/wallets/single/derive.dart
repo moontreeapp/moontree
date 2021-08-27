@@ -18,7 +18,7 @@ class SingleWalletService extends Service {
   }
 
   Address toAddress(SingleWallet wallet) {
-    var net = accounts.get(wallet.accountId)!.net;
+    var net = accounts.primaryIndex.getOne(wallet.accountId)!.net;
     var seededWallet = getSingleWallet(wallet, net);
     return Address(
         scripthash: seededWallet.scripthash,

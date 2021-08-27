@@ -9,8 +9,8 @@ import 'package:reservoir/reservoir.dart';
 
 void main() {
   group('Wallet Reservoir', () {
-    late MapSource<String, Wallet> source;
-    late Reservoir res;
+    late MapSource<Wallet> source;
+    late WalletReservoir res;
 
     setUp(() {
       source = MapSource();
@@ -22,7 +22,7 @@ void main() {
       var wallet =
           LeaderWallet(id: '0', accountId: 'a1', encryptedSeed: encryptedSeed);
       await res.save(wallet);
-      expect(res.get(wallet.id), wallet);
+      expect(res.primaryIndex.getOne(wallet.id), wallet);
     });
   });
 }
