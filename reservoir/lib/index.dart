@@ -1,18 +1,28 @@
-typedef GetKey<Key, Record> = Key Function(Record);
+import 'key.dart';
+
+typedef GetKey<K, Record> = K Function(Record);
 typedef Compare<A> = int Function(A, A);
 
-abstract class Index<Key, Record> {
-  final GetKey<Key, Record> getKey;
+abstract class Index<K extends Key, Record> {
+  final K keyType;
 
-  Index(this.getKey);
+  Index(this.keyType);
 
-  Iterable<Key> get keys;
+  // subclasses must implement the following methods:
+  // - keys
+  // - values
+  // - add
+  // - remove
+  // - getByKeyStr
+
+  Iterable<String> get keys;
   Iterable<Record> get values;
-
   void add(Record record);
-  void addAll(Iterable<Record> records) =>
-      records.forEach((record) => add(record));
-  Record? getOne(Key key);
-  bool has(Key key) => getOne(key) != null;
   bool remove(Record record);
+  List<Record> getByKeyStr(String key);
+
+  // the following methods MAY be overridden, but need not be
+
+  void addAll(Iterable<Record> records) => records.forEach(add);
+  bool has(String key) => getByKeyStr(key).isNotEmpty;
 }

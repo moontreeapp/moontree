@@ -1,30 +1,47 @@
 import 'package:reservoir/reservoir.dart';
 
 class User {
-  final String id;
   final String name;
+  final bool active;
   final String status;
-  User(this.id, this.name, this.status);
+  User(this.name, this.active, this.status);
 
   @override
-  String toString() => 'User($id, $name, $status)';
+  String toString() => 'User($name, $active, $status)';
 }
 
-class UserReservoir extends Reservoir<String, User> {
-  late IndexMultiple byStatus;
+class NameKey extends Key<User> {
+  @override
+  String getKey(User user) => user.name;
+}
 
-  UserReservoir(Source<String, User> source, GetKey<String, User> getKey)
-      : super(source, getKey) {
-    byStatus = addIndexMultiple('status', (user) => user.status);
+String _activeStatusKeyStr(bool active, String status) => '$active:$status';
+
+class ActiveStatusKey extends Key<User> {
+  @override
+  String getKey(User user) => _activeStatusKeyStr(user.active, user.status);
+}
+
+extension ByActiveStatus on IndexMultiple<ActiveStatusKey, User> {
+  List<User> getAll(bool active, String status) =>
+      getByKeyStr(_activeStatusKeyStr(active, status));
+}
+
+class UserReservoir extends Reservoir<NameKey, User> {
+  late IndexMultiple<ActiveStatusKey, User> byActiveStatus;
+
+  UserReservoir(Source<User> source) : super(source, NameKey()) {
+    byActiveStatus = addIndexMultiple('active-status', ActiveStatusKey());
   }
 }
 
 void main() async {
-  var source = MapSource<String, User>();
-  var res = UserReservoir(source, (User user) => user.id);
-  await res.save(User('1', 'John', 'active'));
-  await res.save(User('2', 'Shawna', 'active'));
-  await res.save(User('3', 'Meili', 'inactive'));
-  print(res.byStatus.getAll('active'));
-  // => (User(1, John, active), User(2, Shawna, active))
+  var source = MapSource<User>();
+  var res = UserReservoir(source);
+  await res.save(User('John', true, 'pending'));
+  await res.save(User('Shawna', true, 'complete'));
+  await res.save(User('Meili', false, 'complete'));
+  await res.save(User('Yetir', true, 'pending'));
+  print(res.byActiveStatus.getAll(true, 'pending'));
+  // => (User(John, true, pending), User(Yetir, true, pending))
 }

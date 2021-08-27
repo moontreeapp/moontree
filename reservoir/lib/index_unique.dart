@@ -1,26 +1,32 @@
 import 'index.dart';
+import 'key.dart';
 
-class IndexUnique<Key extends Object, Record extends Object>
-    extends Index<Key, Record> {
-  final Map<Key, Record> _data = {};
+class IndexUnique<K extends Key<Record>, Record> extends Index<K, Record> {
+  final Map<String, Record> _data = {};
 
-  IndexUnique(getKey) : super(getKey);
+  IndexUnique(K keyType) : super(keyType);
 
   @override
-  Iterable<Key> get keys => _data.keys;
+  Iterable<String> get keys => _data.keys;
 
   @override
   Iterable<Record> get values => _data.values;
 
   @override
-  void add(Record record) => _data[getKey(record)] = record;
+  void add(Record record) => _data[keyType.getKey(record)] = record;
 
   @override
-  Record? getOne(Key key) => _data[key];
+  List<Record> getByKeyStr(String key) {
+    if (_data.containsKey(key)) {
+      return [_data[key]!];
+    } else {
+      return [];
+    }
+  }
 
   @override
   bool remove(Record record) {
-    var key = getKey(record);
+    var key = keyType.getKey(record);
     if (_data.containsKey(key)) {
       _data.remove(key);
       return true;

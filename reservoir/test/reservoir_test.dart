@@ -8,13 +8,13 @@ import 'helpers/simple_record.dart';
 
 void main() {
   group('Reservoir', () {
-    late MapSource<String, SimpleRecord> source;
-    late Reservoir res;
+    late MapSource<SimpleRecord> source;
+    late Reservoir<KeyKey, SimpleRecord> res;
 
     setUp(() {
       source = MapSource();
-      res = Reservoir<String, SimpleRecord>(
-          source, (SimpleRecord item) => item.key);
+      res = Reservoir(source, KeyKey());
+      print(res.runtimeType);
     });
 
     test('add an element', () async {
