@@ -6,7 +6,7 @@
 build/
 
 pubspec.lock
-pubspec.yaml
+#pubspec.yaml
 
 .env
 database/
