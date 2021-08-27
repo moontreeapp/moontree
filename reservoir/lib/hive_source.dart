@@ -4,8 +4,7 @@ import 'package:collection/collection.dart';
 import 'change.dart';
 import 'source.dart';
 
-class HiveSource<Key extends Object, Record extends Object>
-    extends Source<Key, Record> {
+class HiveSource<Record> extends Source<Record> {
   final String name;
   late final Box<Record> box;
   late final Map? defaults;
@@ -24,7 +23,7 @@ class HiveSource<Key extends Object, Record extends Object>
   }
 
   @override
-  Future<Change?> save(Key key, Record record) async {
+  Future<Change?> save(String key, Record record) async {
     var existing = box.get(key);
     if (existing == record) {
       return null;
@@ -38,7 +37,7 @@ class HiveSource<Key extends Object, Record extends Object>
   }
 
   @override
-  Future<Change?> remove(Key key) async {
+  Future<Change?> remove(String key) async {
     var existing = box.get(key);
     if (existing == null) {
       return null;

@@ -11,23 +11,23 @@ void main() {
     ];
 
     test('default sort order', () {
-      var index = IndexMultiple((SimpleRecord row) => row.value);
+      var index = IndexMultiple<ValueKey, SimpleRecord>(ValueKey());
       index.addAll(rows);
       expect(index.getAll('apple').toList(), [rows[0], rows[1]]);
       expect(index.getAll('orange').toList(), [rows[2]]);
     });
 
     test('explicit sort order', () {
-      var index = IndexMultiple((SimpleRecord row) => row.value,
-          (r1, r2) => r2.key.compareTo(r1.key));
+      var index = IndexMultiple<ValueKey, SimpleRecord>(
+          ValueKey(), (r1, r2) => r2.key.compareTo(r1.key));
       index.addAll(rows);
       expect(index.getAll('apple').toList(), [rows[1], rows[0]]);
       expect(index.getAll('orange').toList(), [rows[2]]);
     });
 
     test('remove', () {
-      var index = IndexMultiple((SimpleRecord row) => row.value,
-          (r1, r2) => r1.key.compareTo(r2.key));
+      var index = IndexMultiple<ValueKey, SimpleRecord>(
+          ValueKey(), (r1, r2) => r1.key.compareTo(r2.key));
       index.addAll(rows);
       expect(index.getAll('apple').toList(), [rows[0], rows[1]]);
       expect(index.getAll('orange').toList(), [rows[2]]);
@@ -42,8 +42,8 @@ void main() {
     });
 
     test('get', () {
-      var index = IndexMultiple((SimpleRecord row) => row.value,
-          (r1, r2) => r1.key.compareTo(r2.key));
+      var index = IndexMultiple<ValueKey, SimpleRecord>(
+          ValueKey(), (r1, r2) => r1.key.compareTo(r2.key));
       index.addAll(rows);
       expect(index.getAll('apple').toList(), [rows[0], rows[1]]);
     });

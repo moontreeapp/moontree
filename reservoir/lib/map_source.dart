@@ -1,8 +1,8 @@
-import 'package:reservoir/change.dart';
-import 'package:reservoir/source.dart';
+import 'change.dart';
+import 'key.dart';
+import 'source.dart';
 
-class MapSource<Key extends Object, Record extends Object>
-    extends Source<Key, Record> {
+class MapSource<Record> extends Source<Record> {
   final Map map = {};
 
   @override
@@ -12,7 +12,7 @@ class MapSource<Key extends Object, Record extends Object>
   }
 
   @override
-  Future<Change?> save(Key key, Record record) async {
+  Future<Change?> save(String key, Record record) async {
     var existing = map[key];
     if (existing == record) {
       return null;
@@ -26,7 +26,7 @@ class MapSource<Key extends Object, Record extends Object>
   }
 
   @override
-  Future<Change?> remove(Key key) async {
+  Future<Change?> remove(String key) async {
     var existing = map[key];
     if (existing == null) {
       return null;

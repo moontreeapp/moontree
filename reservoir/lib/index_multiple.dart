@@ -1,26 +1,21 @@
 import 'package:ordered_set/ordered_set.dart';
 
 import 'index.dart';
+import 'key.dart';
 
-int defaultCompare<Item>(Item item1, Item item2) {
-  return item1.toString().compareTo(item2.toString());
-}
-
-class IndexMultiple<Key extends Object, Record extends Object>
-    extends Index<Key, Record> {
-  final Map<Key, OrderedSet<Record>> _data = {};
+class IndexMultiple<K extends Key<Record>, Record> extends Index<K, Record> {
+  final Map<String, OrderedSet<Record>> _data = {};
   late final Compare<Record> compare;
 
-  IndexMultiple(GetKey<Key, Record> getKey, [Compare? compare])
+  IndexMultiple(K keyType, [Compare? compare])
       : compare = compare ?? defaultCompare,
-        super(getKey);
+        super(keyType);
 
-  // Returns the number of keys in this index.
   @override
-  Iterable<Key> get keys => _data.keys;
+  Iterable<String> get keys => _data.keys;
 
-  /// Returns the total number of records in this index (may be more than
-  /// the size of `keys` because each key can store multiple records)
+  /// Returns all records in this index (may be more than the size of `keys`
+  /// because each key can store multiple records)
   @override
   Iterable<Record> get values sync* {
     for (var list in _data.values) {
@@ -30,36 +25,32 @@ class IndexMultiple<Key extends Object, Record extends Object>
     }
   }
 
-  @override
-  Record? getOne(Key key) => getAll(key).first;
-
-  /// Retrieve all values associated with the key, in order.
-  OrderedSet<Record> getAll(Key key) => _data[key] ?? OrderedSet<Record>();
-
-  /// Return the size (length of the set) of a named index
-  int size(Key key) => _data[key]!.length;
-
   /// Add a row to the indexed values; if the row has already been added, this
   /// is a no-op.
   @override
-  void add(Record row) {
-    var key = getKey(row);
+  void add(Record record) {
+    var key = keyType.getKey(record);
     OrderedSet<Record> set;
     if (!_data.containsKey(key)) {
       set = _data[key] = OrderedSet<Record>(compare);
     } else {
       set = _data[key]!;
     }
-    set.add(row);
+    set.add(record);
+  }
+
+  @override
+  List<Record> getByKeyStr(String key) {
+    return _data[key]?.toList() ?? [];
   }
 
   /// Remove a record from the index
   @override
-  bool remove(Record row) {
-    var key = getKey(row);
+  bool remove(Record record) {
+    var key = keyType.getKey(record);
     var removed = false;
     if (_data.containsKey(key)) {
-      _data[key]!.remove(row);
+      _data[key]!.remove(record);
       removed = true;
     }
 
@@ -68,4 +59,11 @@ class IndexMultiple<Key extends Object, Record extends Object>
 
     return removed;
   }
+
+  /// Return the size (length of the set) of a named index
+  int? size(K key) => _data[key]?.length;
+}
+
+int defaultCompare<Item>(Item item1, Item item2) {
+  return item1.toString().compareTo(item2.toString());
 }
