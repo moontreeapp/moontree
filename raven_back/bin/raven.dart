@@ -1,21 +1,24 @@
 import 'package:hive/hive.dart';
-import 'package:raven/init/hive_helper.dart';
+import 'package:raven/init/hive_initializer.dart';
+import 'package:raven/records.dart';
+import 'package:raven/records/setting.dart';
+
+var hiveInit = HiveInitializer(destroyOnTeardown: true);
 
 void main() async {
-  // Initialize Hive
-  Hive.init('database');
-  await HiveHelper.init();
+  await hiveInit.setUp();
 
   try {
-    var box = Hive.box('settings');
-    await box.put('server', 'testnet.rvn.rocks');
-    await box.put('port', 50002);
-    await Future.delayed(Duration(milliseconds: 200));
-    await box.put('server', 'wrong.server');
-
-    await Future.delayed(Duration(milliseconds: 500));
-    await box.put('server', 'testnet.rvn.rocks');
+    var box = Hive.box<Setting>('settings');
+    await box.put(
+      'server',
+      Setting(name: SettingName.Electrum_Url, value: 'testnet.rvn.rocks'),
+    );
+    await box.put(
+      'port',
+      Setting(name: SettingName.Electrum_Port, value: 50002),
+    );
   } finally {
-    await HiveHelper.close();
+    await hiveInit.tearDown();
   }
 }

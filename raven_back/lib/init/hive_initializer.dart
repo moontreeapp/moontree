@@ -1,18 +1,36 @@
+import 'dart:io';
+
 import 'package:hive/hive.dart';
 import 'package:raven/records.dart';
+import 'package:ulid/ulid.dart';
 
-class HiveHelper {
-  static Future init() async {
+class HiveInitializer {
+  late final String id;
+  late Function init;
+  bool destroyOnTeardown;
+
+  String get dbDir => 'database-$id';
+
+  HiveInitializer(
+      {String? id, Function? init, this.destroyOnTeardown = false}) {
+    this.id = id ?? Ulid().toString();
+    this.init = init ?? (dbDir) => Hive.init(dbDir);
+  }
+
+  Future setUp() async {
     registerAdapters();
-    try {
-      await open();
-    } on HiveError {
-      throw StateError(
-          'Call Hive.init() or Hive.initFlutter() before HiveHelper.init()');
+    await init(dbDir);
+    await openAllBoxes();
+  }
+
+  Future tearDown() async {
+    await Hive.close();
+    if (destroyOnTeardown) {
+      await destroy();
     }
   }
 
-  static void registerAdapters() {
+  void registerAdapters() {
     Hive.registerAdapter(BalanceAdapter());
     Hive.registerAdapter(AccountAdapter());
     Hive.registerAdapter(LeaderWalletAdapter());
@@ -28,7 +46,7 @@ class HiveHelper {
     Hive.registerAdapter(SecurityTypeAdapter());
   }
 
-  static Future open() async {
+  Future openAllBoxes() async {
     await Hive.openBox<Account>('accounts');
     await Hive.openBox<Address>('addresses');
     await Hive.openBox<Balance>('balances');
@@ -38,7 +56,10 @@ class HiveHelper {
     await Hive.openBox<Wallet>('wallets');
   }
 
-  static Future close() async {
-    await Hive.close();
+  Future destroy() async {
+    var dir = Directory(dbDir);
+    if (await dir.exists()) {
+      await dir.delete(recursive: true);
+    }
   }
 }
