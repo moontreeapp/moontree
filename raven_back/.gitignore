@@ -7,7 +7,7 @@
 build/
 
 pubspec.lock
-pubspec.yaml
+
 .env
 database/
 testdb/
