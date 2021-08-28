@@ -418,7 +418,7 @@ packages:
     source: path
     version: "1.0.0"
   raven_electrum_client:
-    dependency: "direct overridden"
+    dependency: "direct main"
     description:
       path: "../raven_electrum_client"
       relative: true
@@ -432,7 +432,7 @@ packages:
     source: hosted
     version: "2.0.1"
   reservoir:
-    dependency: "direct overridden"
+    dependency: "direct main"
     description:
       path: "../reservoir"
       relative: true

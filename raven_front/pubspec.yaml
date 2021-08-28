@@ -29,19 +29,19 @@ dependencies:
   hive_flutter: ^1.1.0
   qr_flutter: ^4.0.0
   ulid: ^2.0.0
+  settings_ui: ^1.0.0
+  flutter_treeview: ^1.0.6+1
+  flutter_launcher_icons: "^0.9.1"
 
-  # flutter from sdk depends on meta 1.3.0
-  # ravencoin >=1.1.0 depends on meta ^1.4.0
-  # raven depends on meta ^1.4.0
+  # in house
   raven:
     git: https://github.com/moontreeapp/raven.git
+  raven_electrum_client: ^1.2.1
+  reservoir: ^2.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  settings_ui: ^1.0.0
-  flutter_treeview: ^1.0.6+1
-  flutter_launcher_icons: "^0.9.1"
 
 dependency_overrides:
   raven:

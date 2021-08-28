@@ -19,6 +19,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool showUSD = false;
+  final myController = TextEditingController();
 
   void _toggleUSD() {
     setState(() {
@@ -32,6 +33,13 @@ class _HomeState extends State<Home> {
     currentTheme.addListener(() {
       setState(() {});
     });
+  }
+  
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    myController.dispose();
+    super.dispose();
   }
 
   @override
@@ -195,8 +203,8 @@ class _HomeState extends State<Home> {
                   Padding(
                       padding: EdgeInsets.only(right: 20.0),
                       child: GestureDetector(
-                          onTap: () {},
-                          child: Icon(Icons.add,
+                          onTap: () {/* to technical view */},
+                          child: Icon(Icons.edit,
                               size: 26.0, color: Colors.grey.shade200)))
                 ])),
         Column(children: <Widget>[
@@ -211,6 +219,28 @@ class _HomeState extends State<Home> {
                 title: Text(account.id + ' ' + account.name,
                     style: Theme.of(context).textTheme.bodyText1),
                 leading: RavenIcon.assetAvatar('RVN')),
+            Divider(height: 20, thickness: 2, indent: 5, endIndent: 5)
+          ],
+          ...[
+            ListTile(
+                onTap: () async {
+                  var account = await services.accountGenerationService
+                      .makeAndAwaitSaveAccount(myController.text);
+                  await services.settingsService
+                      .saveSetting(SettingName.Current_Account, account.id);
+                  setState(() {}); // needed to update UI
+                  Navigator.pop(context);
+                },
+                title: TextField(
+                  readOnly: false,
+                  controller: myController,
+                  decoration: InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Create Account',
+                      hintText: 'Bills'),
+                ),
+                trailing:
+                    Icon(Icons.add, size: 26.0, color: Colors.grey.shade800)),
             Divider(height: 20, thickness: 2, indent: 5, endIndent: 5)
           ]
         ])
