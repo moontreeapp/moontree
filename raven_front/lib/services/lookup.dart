@@ -1,16 +1,18 @@
+import 'package:raven/reservoirs.dart';
 import 'package:raven/init/reservoirs.dart' as res;
 import 'package:raven/init/services.dart' as services;
 import 'package:raven/records.dart';
 
 String currentAccountId() =>
-    res.settings.getOne(SettingName.Current_Account)!.value;
+    res.settings.primaryIndex.getOne(SettingName.Current_Account)!.value;
 
-Account currentAccount() => res.accounts.get(currentAccountId())!;
+Account currentAccount() =>
+    res.accounts.primaryIndex.getOne(currentAccountId())!;
 
 BalanceUSD currentBalanceUSD() =>
     services.ratesService.accountBalanceUSD(currentAccountId());
 
-Balance? currentBalanceRVN() => res.balances.getRVN(currentAccountId());
+Balance currentBalanceRVN() => res.balances.getRVN(currentAccountId());
 
 /// our concept of history isn't the same as transactions - must fill out negative values for sent amounts
 List<History> currentTransactions() =>
@@ -31,18 +33,9 @@ List<Balance> currentHoldings() {
   return holdings.values.toList();
 }
 
-//List<History> currentHoldingsRVN() =>
-//    res.histories.unspentsByAccount(currentAccountId(), security: RVN).toList();
-
-Balance emptyBalance() => Balance(
-    accountId: currentAccountId(),
-    security: RVN,
-    confirmed: 10,
-    unconfirmed: 10);
-
 class Current {
   static Account get account => currentAccount();
-  static Balance get balanceRVN => currentBalanceRVN() ?? emptyBalance();
+  static Balance get balanceRVN => currentBalanceRVN();
   static BalanceUSD get balanceUSD => currentBalanceUSD();
   static List<History> get transactions => currentTransactions();
   static List<Balance> get holdings => currentHoldings();

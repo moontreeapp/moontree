@@ -203,11 +203,9 @@ class _HomeState extends State<Home> {
           for (var account in res.accounts.data) ...[
             ListTile(
                 onTap: () async {
-                  print(account.id);
-                  print(res.settings.data);
                   await services.settingsService
                       .saveSetting(SettingName.Current_Account, account.id);
-                  print(res.settings.data);
+                  setState(() {}); // needed to update UI
                   Navigator.pop(context);
                 },
                 title: Text(account.id + ' ' + account.name,
