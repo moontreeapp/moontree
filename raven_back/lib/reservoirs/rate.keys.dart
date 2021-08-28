@@ -12,5 +12,5 @@ class _RateKey extends Key<Rate> {
 
 extension ByRateMethodsForRate on Index<_RateKey, Rate> {
   Rate? getOne(Security base, Security quote) =>
-      getByKeyStr(_rateToKey(base, quote))[0];
+      getByKeyStr(_rateToKey(base, quote)).firstOrNull;
 }
