@@ -8,8 +8,8 @@ class HistoryService extends Service {
   HistoryService(this.histories) : super();
 
   // setter for note value on History record in reservoir
-  bool saveNote(String hash, String note, {History? history}) {
-    history = history ?? histories.primaryIndex.getOne(hash);
+  bool saveNote(String note, {History? history, String? hash}) {
+    history = history ?? histories.primaryIndex.getOne(hash ?? '');
     if (history != null) {
       histories.save(History(
           accountId: history.accountId,
