@@ -20,10 +20,10 @@ void main() {
     late Account account;
     late LeaderWallet wallet;
     setUp(() async {
-      accounts = AccountReservoir(MapSource<String, Account>());
-      wallets = WalletReservoir(MapSource<String, Wallet>());
-      addresses = AddressReservoir(MapSource<String, Address>());
-      histories = HistoryReservoir(MapSource<String, History>());
+      accounts = AccountReservoir(MapSource<Account>());
+      wallets = WalletReservoir(MapSource<Wallet>());
+      addresses = AddressReservoir(MapSource<Address>());
+      histories = HistoryReservoir(MapSource<History>());
       leaderWalletDerivationService = LeaderWalletDerivationService(
         accounts,
         wallets,

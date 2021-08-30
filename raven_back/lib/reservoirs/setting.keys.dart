@@ -10,8 +10,6 @@ class _SettingNameKey extends Key<Setting> {
 }
 
 extension BySettingNameMethodsForSetting on Index<_SettingNameKey, Setting> {
-  Setting? getOne(SettingName name) {
-    var settings = getByKeyStr(_settingNameToKey(name));
-    return settings.isEmpty ? null : settings.first;
-  }
+  Setting? getOne(SettingName name) =>
+      getByKeyStr(_settingNameToKey(name)).firstOrNull;
 }

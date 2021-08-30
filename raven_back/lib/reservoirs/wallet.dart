@@ -1,5 +1,7 @@
-import 'package:raven/records.dart';
+import 'package:collection/collection.dart';
 import 'package:reservoir/reservoir.dart';
+
+import 'package:raven/records.dart';
 
 part 'wallet.keys.dart';
 
