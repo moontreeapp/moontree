@@ -111,7 +111,8 @@ class _TransactionState extends State<Transaction> {
             SizedBox(height: 15.0),
             TextField(
               readOnly: true,
-              controller: TextEditingController(text: ':)'),
+              controller:
+                  TextEditingController(text: data['transaction']!.note),
               keyboardType: TextInputType.multiline,
               maxLines: null,
               decoration: InputDecoration(
@@ -120,8 +121,7 @@ class _TransactionState extends State<Transaction> {
                   hintText: 'Note to Self'),
             ),
             SizedBox(height: 15.0),
-            Text(
-                'id: 1354s31e35s13f54se3851f3s51ef35s1ef35', //data['transaction']!.scripthash
+            Text('id: ' + data['transaction']!.hash,
                 style: TextStyle(color: Theme.of(context).disabledColor)),
             SizedBox(height: 15.0),
             // replaced by tab, missing if metadata is missing...

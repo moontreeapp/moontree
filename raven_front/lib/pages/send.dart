@@ -154,6 +154,11 @@ class _SendState extends State<Send> {
         ]);
   }
 
+  /// after transaction sent (and subscription on scripthash saved...)
+  /// save the note with, no need to await:
+  /// services.historyService.saveNote(hash, note {or history object})
+  /// should notes be in a separate reservoir? makes this simpler, but its nice
+  /// to have it all in one place as in transaction.note....
   ElevatedButton sendTransactionButton() => ElevatedButton.icon(
       icon: Icon(Icons.send),
       label: Text('Send'),
