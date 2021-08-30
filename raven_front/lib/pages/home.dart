@@ -95,10 +95,8 @@ class _HomeState extends State<Home> {
                   : Theme.of(context).textTheme.bodyText2),
           trailing: (Text(
               showUSD
-                  ? (holding.security.symbol == 'RVN'
-                      ? RavenText.rvnUSD(RavenText.satsRVN(holding.value))
-                      : holding.value
-                          .toString()) //RavenText.rvnUSD(RavenText.assetRVN(transaction.value))
+                  ? RavenText.securityInUSD(holding.value,
+                      security: holding.security)
                   : holding.value.toString(),
               style: TextStyle(color: Theme.of(context).good))),
           leading: RavenIcon.assetAvatar(holding.security.symbol));
@@ -156,18 +154,14 @@ class _HomeState extends State<Home> {
               trailing: (transaction.value > 0 // == 'in'
                   ? Text(
                       showUSD
-                          ? (transaction.security.symbol == 'RVN'
-                              ? RavenText.rvnUSD(
-                                  RavenText.satsRVN(transaction.value))
-                              : transaction.value.toString())
+                          ? RavenText.securityInUSD(transaction.value,
+                              security: transaction.security)
                           : transaction.value.toString(),
                       style: TextStyle(color: Theme.of(context).good))
                   : Text(
                       showUSD
-                          ? (transaction.security.symbol == 'RVN'
-                              ? RavenText.rvnUSD(
-                                  RavenText.satsRVN(transaction.value))
-                              : transaction.value.toString())
+                          ? RavenText.securityInUSD(transaction.value,
+                              security: transaction.security)
                           : transaction.value.toString(),
                       style: TextStyle(color: Theme.of(context).bad))),
               leading: RavenIcon.assetAvatar(transaction.security.symbol))

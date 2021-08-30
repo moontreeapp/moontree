@@ -1,17 +1,47 @@
 import 'package:raven/init/reservoirs.dart' as res;
+import 'package:raven/records.dart';
+import 'package:raven/utils/exceptions.dart';
+import 'package:raven/records/security.dart';
 
-// in raven
-String rvnUSDBalance(double balance) => balance == 0
-    ? '\$ 0'
-    : '\$ ${(balance * res.rates.rvnToUSD).toStringAsFixed(2)}';
+String toUSDBalance(
+        {required double balance,
+        required double rate,
+        String prefix = '\$ ',
+        int percision = 2}) =>
+    balance == 0
+        ? prefix + '0'
+        : prefix + (balance * rate).toStringAsFixed(percision);
 
-int rvnAsSats(double amount) => (amount * 100000000).toInt();
-double satsToRVN(int amount) => (amount / 100000000);
+int amountAsSats(double amount, {int percision = 8}) =>
+    (amount * int.parse('1' + '0' * percision)).toInt();
+double satsAsAmount(int sats, {int percision = 8}) =>
+    (sats / int.parse('1' + '0' * percision));
+
+/// asset sats -> asset -> rvn -> usd
+/// rvn sats -> rvn -> usd
+String securityToUSD(int sats, {Security? security, String? symbol}) {
+  security ??
+      symbol ??
+      (() => throw OneOfMultipleMissing(
+          'security or symbol required to identify record.'))();
+  security = Security(
+      symbol: security?.symbol ?? symbol ?? '',
+      securityType: SecurityType.RavenAsset); // only used for assets
+  return security.symbol == 'RVN'
+      ? RavenText.rvnUSD(RavenText.satsRVN(sats))
+      : RavenText.rvnUSD(
+          RavenText.satsToAmount(sats) * res.rates.assetToRVN(security));
+}
 
 class RavenText {
   RavenText();
 
-  static String rvnUSD(double balance) => rvnUSDBalance(balance);
-  static int rvnSats(double amount) => rvnAsSats(amount);
-  static double satsRVN(int amount) => satsToRVN(amount);
+  static String rvnUSD(double balance) =>
+      toUSDBalance(balance: balance, rate: res.rates.rvnToUSD);
+  static int rvnSats(double amount) => amountAsSats(amount);
+  static double satsRVN(int amount) => satsAsAmount(amount);
+  static double satsToAmount(int sats) => satsAsAmount(sats);
+  static int amountSats(double amount) => amountAsSats(amount);
+  static String securityInUSD(int sats, {Security? security, String? symbol}) =>
+      securityToUSD(sats, security: security, symbol: symbol);
 }

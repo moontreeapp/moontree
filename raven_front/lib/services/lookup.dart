@@ -40,8 +40,3 @@ class Current {
   static List<History> get transactions => currentTransactions();
   static List<Balance> get holdings => currentHoldings();
 }
-
-
-// asset and rvn to USD value function (also use in send, assets, transactions, holdings and home page)...
-// asset sats -> asset -> rvn -> usd
-// rvn sats -> rvn -> usd

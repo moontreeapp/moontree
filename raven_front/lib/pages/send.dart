@@ -66,11 +66,17 @@ class _SendState extends State<Send> {
                   style: Theme.of(context).textTheme.headline3),
               SizedBox(height: 15.0),
               Text(
+                  RavenText.securityInUSD(
+                      RavenText.amountSats(double.parse(sendAmount.text)),
+                      symbol: data['symbol']),
+
                   // move into module that takes asset type and decerns the USD value
                   // (this currently assumes rvn)
-                  RavenText.rvnUSD(sendAmount.text == ''
-                      ? 0.0
-                      : double.parse(sendAmount.text)),
+                  // asset amount -> as sat -> securityInUSD
+                  // rvn amount -> as sat -> securityInUSD
+                  //RavenText.rvnUSD(sendAmount.text == ''
+                  //    ? 0.0
+                  //    : double.parse(sendAmount.text)),
                   style: Theme.of(context).textTheme.headline5),
               SizedBox(height: 15.0),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [

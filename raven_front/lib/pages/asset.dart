@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
+import 'package:raven_mobile/components/text.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 
@@ -103,14 +104,14 @@ class _AssetState extends State<Asset> {
               trailing: (transaction.value > 0 // == 'in'
                   ? Text(
                       showUSD
-                          ? transaction.value
-                              .toString() //RavenText.satsUSD(RavenText.assetRVN(transaction['amount']))
+                          ? RavenText.securityInUSD(transaction.value,
+                              security: transaction.security)
                           : transaction.value.toString(),
                       style: TextStyle(color: Theme.of(context).good))
                   : Text(
                       showUSD
-                          ? transaction.value
-                              .toString() //RavenText.satsUSD(RavenText.assetRVN(transaction['amount']))
+                          ? RavenText.securityInUSD(transaction.value,
+                              security: transaction.security)
                           : transaction.value.toString(),
                       style: TextStyle(color: Theme.of(context).bad))),
               leading: RavenIcon.assetAvatar(transaction.security.symbol))

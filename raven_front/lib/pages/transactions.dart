@@ -112,8 +112,6 @@ class _RavenTransactionsState extends State<RavenTransactions> {
       ? _emptyMessage(icon: Icons.public, name: 'transactions')
       : _transactionsView();
 
-  /// different from home.sendReceiveButtons because it prefills the chosen token
-  /// receive works the same
   Row sendReceiveButtons() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         RavenButton.receive(context),
