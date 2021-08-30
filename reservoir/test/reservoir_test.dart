@@ -14,7 +14,6 @@ void main() {
     setUp(() {
       source = MapSource();
       res = Reservoir(source, KeyKey());
-      print(res.runtimeType);
     });
 
     test('add an element', () async {
