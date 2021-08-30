@@ -53,14 +53,14 @@ class BalanceService extends Service {
         var balance = previous ?? BalanceRaw(confirmed: 0, unconfirmed: 0);
         return BalanceRaw(
             confirmed:
-                balance.confirmed + (history.txPos > -1 ? history.value : 0),
+                balance.confirmed + (history.position > -1 ? history.value : 0),
             unconfirmed: balance.unconfirmed +
-                (history.txPos == -1 ? history.value : 0));
+                (history.position == -1 ? history.value : 0));
       });
 
       balanceBySecurity.forEach((security, bal) {
         var balance = Balance(
-            accountId: accountId as String,
+            accountId: accountId,
             security: security,
             confirmed: bal.confirmed,
             unconfirmed: bal.unconfirmed);

@@ -9,6 +9,7 @@ late SingleWalletService singleWalletService;
 late LeaderWalletGenerationService leaderWalletGenerationService;
 late AccountGenerationService accountGenerationService;
 late SettingService settingsService;
+late HistoryService historyService;
 
 void makeServices() {
   balanceService = BalanceService(balances, histories);
@@ -20,4 +21,5 @@ void makeServices() {
   leaderWalletGenerationService = LeaderWalletGenerationService(wallets);
   accountGenerationService = AccountGenerationService(accounts);
   settingsService = SettingService(settings);
+  historyService = HistoryService(histories);
 }

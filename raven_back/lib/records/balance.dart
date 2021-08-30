@@ -53,6 +53,10 @@ class Balance with EquatableMixin {
     return confirmed + unconfirmed;
   }
 
+  double get rvn {
+    return (confirmed / 100000000) + (unconfirmed / 100000000);
+  }
+
   Balance operator +(Balance balance) {
     if (accountId != balance.accountId) {
       throw BalanceMismatch("Balance accountId don't match - can't combine");

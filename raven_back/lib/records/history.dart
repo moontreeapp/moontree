@@ -23,26 +23,34 @@ class History with EquatableMixin {
   int height;
 
   @HiveField(4)
-  String txHash;
+  String hash;
 
   @HiveField(5)
-  int txPos; // -1 for mempool (unconfirmed)
+  int position;
 
   @HiveField(6)
-  int value;
+  bool confirmed;
 
   @HiveField(7)
+  int value;
+
+  @HiveField(8)
   Security security;
+
+  @HiveField(9)
+  String note;
 
   History(
       {required this.accountId,
       required this.walletId,
       required this.scripthash,
       required this.height,
-      required this.txHash,
-      this.txPos = -1,
+      required this.hash,
+      this.position = -1,
       this.value = 0,
-      this.security = RVN});
+      this.security = RVN,
+      this.note = ''})
+      : confirmed = (position == -1 ? false : true);
 
   @override
   List<Object> get props => [
@@ -50,15 +58,16 @@ class History with EquatableMixin {
         walletId,
         scripthash,
         height,
-        txHash,
-        txPos,
+        hash,
+        position,
         value,
-        security.symbol
+        security.symbol,
+        note
       ];
 
   @override
   String toString() {
-    return 'History(walletId: $walletId, accountId: $accountId, scripthash: $scripthash, txHash: $txHash, height: $height, txPos: $txPos, value: $value, security: $security)';
+    return 'History(walletId: $walletId, accountId: $accountId, scripthash: $scripthash, txHash: $hash, height: $height, txPos: $position, value: $value, security: $security, note: $note)';
   }
 
   factory History.fromScripthashHistory(String accountId, String walletId,
@@ -68,7 +77,7 @@ class History with EquatableMixin {
       walletId: walletId,
       scripthash: scripthash,
       height: history.height,
-      txHash: history.txHash,
+      hash: history.txHash,
     );
   }
 
@@ -79,8 +88,8 @@ class History with EquatableMixin {
         walletId: walletId,
         scripthash: scripthash,
         height: unspent.height,
-        txHash: unspent.txHash,
-        txPos: unspent.txPos,
+        hash: unspent.txHash,
+        position: unspent.txPos,
         value: unspent.value,
         security: (unspent.ticker == null
             ? RVN

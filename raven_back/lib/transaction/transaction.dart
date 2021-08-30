@@ -76,7 +76,7 @@ class TransactionBuilderHelper {
     }
     // add it to the transaction
     for (var utxo in utxos) {
-      txb.addInput(utxo.txHash, utxo.txPos);
+      txb.addInput(utxo.hash, utxo.position);
       total = (total + utxo.value).toInt();
       retutxos.add(utxo);
     }
@@ -89,7 +89,7 @@ class TransactionBuilderHelper {
           amount: knownCost - total,
           except: retutxos); // avoid adding inputs you've already added
       for (var utxo in utxosForExtra) {
-        txb.addInput(utxo.unspent.txHash, utxo.unspent.txPos);
+        txb.addInput(utxo.unspent.hash, utxo.unspent.position);
         total = (total + utxo.unspent.value).toInt();
         retutxos.add(utxo); // used later, we have to sign after change output
       }

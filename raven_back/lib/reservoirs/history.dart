@@ -30,7 +30,7 @@ class HistoryReservoir extends Reservoir<_TxHashKey, History> {
         (sum, history) =>
             sum +
             BalanceRaw(
-                confirmed: (history.txPos > -1 ? history.value : 0),
+                confirmed: (history.position > -1 ? history.value : 0),
                 unconfirmed: history.value));
   }
 
@@ -41,7 +41,7 @@ class HistoryReservoir extends Reservoir<_TxHashKey, History> {
   Iterable<History> transactionsByAccount(String accountId,
       {Security security = RVN}) {
     return byAccount.getAll(accountId).where((history) =>
-        history.txPos > -1 && // not in mempool
+        history.position > -1 && // not in mempool
         history.security == security);
   }
 
@@ -49,7 +49,7 @@ class HistoryReservoir extends Reservoir<_TxHashKey, History> {
       {Security security = RVN}) {
     return byAccount.getAll(accountId).where((history) =>
         history.value > 0 && // unspent
-        history.txPos > -1 && // not in mempool
+        history.position > -1 && // not in mempool
         history.security == security);
   }
 
@@ -57,7 +57,7 @@ class HistoryReservoir extends Reservoir<_TxHashKey, History> {
       {Security security = RVN}) {
     return byAccount.getAll(accountId).where((history) =>
         history.value > 0 && // unspent
-        history.txPos == -1 && // in mempool
+        history.position == -1 && // in mempool
         history.security == security);
   }
 
@@ -66,7 +66,7 @@ class HistoryReservoir extends Reservoir<_TxHashKey, History> {
   Iterable<History> transactionsByWallet(String walletId,
       {Security security = RVN}) {
     return byWallet.getAll(walletId).where((history) =>
-        history.txPos > -1 && // not in mempool
+        history.position > -1 && // not in mempool
         history.security == security);
   }
 
@@ -74,7 +74,7 @@ class HistoryReservoir extends Reservoir<_TxHashKey, History> {
       {Security security = RVN}) {
     return byWallet.getAll(walletId).where((history) =>
         history.value > 0 && // unspent
-        history.txPos > -1 && // not in mempool
+        history.position > -1 && // not in mempool
         history.security == security);
   }
 
@@ -82,7 +82,7 @@ class HistoryReservoir extends Reservoir<_TxHashKey, History> {
       {Security security = RVN}) {
     return byWallet.getAll(walletId).where((history) =>
         history.value > 0 && // unspent
-        history.txPos == -1 && // in mempool
+        history.position == -1 && // in mempool
         history.security == security);
   }
 

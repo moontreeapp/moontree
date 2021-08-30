@@ -4,7 +4,14 @@ part of 'history.dart';
 
 class _TxHashKey extends Key<History> {
   @override
-  String getKey(History history) => history.txHash;
+  String getKey(History history) => history.hash;
+}
+
+extension ByIdMethodsForHistory on Index<_TxHashKey, History> {
+  History? getOne(String hash) {
+    var histories = getByKeyStr(hash);
+    return histories.isEmpty ? null : histories.first;
+  }
 }
 
 // byAccount
@@ -49,4 +56,15 @@ class _SecurityKey extends Key<History> {
 
 extension BySecurityMethodsForHistory on Index<_SecurityKey, History> {
   List<History> getAll(Security security) => getByKeyStr(security.toKey());
+}
+
+// byConfirmed
+
+class _ConfirmedKey extends Key<History> {
+  @override
+  String getKey(History history) => history.confirmed.toString();
+}
+
+extension ByConfrimedMethodsForHistory on Index<_ConfirmedKey, History> {
+  List<History> getAll(bool confirmed) => getByKeyStr(confirmed.toString());
 }
