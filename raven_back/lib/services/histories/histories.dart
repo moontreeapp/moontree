@@ -1,6 +1,8 @@
+import 'package:analyzer/dart/ast/ast.dart';
 import 'package:raven/services/service.dart';
 import 'package:raven/records.dart';
 import 'package:raven/reservoirs.dart';
+import 'package:raven/utils/exceptions.dart';
 
 class HistoryService extends Service {
   late final HistoryReservoir histories;
@@ -9,6 +11,10 @@ class HistoryService extends Service {
 
   // setter for note value on History record in reservoir
   bool saveNote(String note, {History? history, String? hash}) {
+    history ??
+        hash ??
+        (() => throw OneOfMultipleMissing(
+            'history or hash required to identify record.'))();
     history = history ?? histories.primaryIndex.getOne(hash ?? '');
     if (history != null) {
       histories.save(History(

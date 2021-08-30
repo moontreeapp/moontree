@@ -44,5 +44,12 @@ class CacheEmpty implements Exception {
 
 class BalanceMismatch implements Exception {
   String cause;
-  BalanceMismatch([this.cause = "Balance elements don't match"]);
+  BalanceMismatch([this.cause = "'Balance elements don't match'"]);
+}
+
+class OneOfMultipleMissing implements Exception {
+  String cause;
+  OneOfMultipleMissing(
+      [this.cause = ('this function requires at least one of multiple optional '
+          'or named arguments to be supplied.')]);
 }
