@@ -59,7 +59,7 @@ class _RavenTransactionsState extends State<RavenTransactions> {
                     Text(Current.balanceRVN.value.toString(),
                         style: Theme.of(context).textTheme.headline3),
                     SizedBox(height: 15.0),
-                    Text('\$ ' + RavenText.rvnUSD(Current.balanceRVN.value),
+                    Text(RavenText.rvnUSD(Current.balanceRVN.rvn),
                         style: Theme.of(context).textTheme.headline5),
                   ]))));
 
@@ -84,12 +84,14 @@ class _RavenTransactionsState extends State<RavenTransactions> {
                 trailing: (transaction.value > 0 // == 'in'
                     ? Text(
                         showUSD
-                            ? '\$' + RavenText.rvnUSD(transaction.value)
+                            ? RavenText.rvnUSD(
+                                RavenText.satsRVN(transaction.value))
                             : transaction.value.toString(),
                         style: TextStyle(color: Theme.of(context).good))
                     : Text(
                         showUSD
-                            ? '\$' + RavenText.rvnUSD(transaction.value)
+                            ? RavenText.rvnUSD(
+                                RavenText.satsRVN(transaction.value))
                             : transaction.value.toString(),
                         style: TextStyle(color: Theme.of(context).bad))),
                 leading: RavenIcon.assetAvatar(transaction.security.symbol))
@@ -115,6 +117,6 @@ class _RavenTransactionsState extends State<RavenTransactions> {
   Row sendReceiveButtons() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         RavenButton.receive(context),
-        RavenButton.send(context, asset: 'RVN'),
+        RavenButton.send(context, symbol: 'RVN'),
       ]);
 }

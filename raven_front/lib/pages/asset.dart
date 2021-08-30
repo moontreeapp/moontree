@@ -104,13 +104,13 @@ class _AssetState extends State<Asset> {
                   ? Text(
                       showUSD
                           ? transaction.value
-                              .toString() //'\$' + RavenText.rvnUSD(RavenText.assetRVN(transaction['amount']))
+                              .toString() //RavenText.satsUSD(RavenText.assetRVN(transaction['amount']))
                           : transaction.value.toString(),
                       style: TextStyle(color: Theme.of(context).good))
                   : Text(
                       showUSD
                           ? transaction.value
-                              .toString() //'\$' + RavenText.rvnUSD(RavenText.assetRVN(transaction['amount']))
+                              .toString() //RavenText.satsUSD(RavenText.assetRVN(transaction['amount']))
                           : transaction.value.toString(),
                       style: TextStyle(color: Theme.of(context).bad))),
               leading: RavenIcon.assetAvatar(transaction.security.symbol))
@@ -140,6 +140,6 @@ class _AssetState extends State<Asset> {
   Row sendReceiveButtons() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         RavenButton.receive(context),
-        RavenButton.send(context, asset: data['holding']!.security.symbol),
+        RavenButton.send(context, symbol: data['holding']!.security.symbol),
       ]);
 }

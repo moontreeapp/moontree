@@ -22,14 +22,19 @@ class _TransactionState extends State<Transaction> {
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
-    return Scaffold(
-        appBar: header(),
-        body: body(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        bottomNavigationBar: RavenButton.bottomNav(context));
+    // how do we detect metadata?
+    var metadata = false;
+    return DefaultTabController(
+        length: metadata ? 2 : 1,
+        child: Scaffold(
+            appBar: header(metadata),
+            body: body(metadata),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            bottomNavigationBar: RavenButton.bottomNav(context)));
   }
 
-  PreferredSize header() => PreferredSize(
+  PreferredSize header(bool metadata) => PreferredSize(
       preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
       child: AppBar(
           elevation: 2,
@@ -40,82 +45,92 @@ class _TransactionState extends State<Transaction> {
                 padding: EdgeInsets.only(right: 20.0),
                 child: RavenButton.settings(context))
           ],
-          title: Text('Transaction Details'),
+          title: Text('Transaction'),
           flexibleSpace: Container(
-            alignment: Alignment.center,
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              SizedBox(height: 15.0),
-              RavenIcon.assetAvatar(data['transaction']!.security.symbol),
-              SizedBox(height: 15.0),
-              Text(data['transaction']!.security.symbol,
-                  style: Theme.of(context).textTheme.headline4),
-              SizedBox(height: 15.0),
-              Text('Received', style: Theme.of(context).textTheme.headline5),
-            ]),
-          )));
+              alignment: Alignment.center,
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 15.0),
+                    RavenIcon.assetAvatar(data['transaction']!.security.symbol),
+                    SizedBox(height: 15.0),
+                    Text(data['transaction']!.security.symbol,
+                        style: Theme.of(context).textTheme.headline4),
+                    SizedBox(height: 15.0),
+                    Text('Received',
+                        style: Theme.of(context).textTheme.headline5),
+                  ])),
+          bottom: PreferredSize(
+              preferredSize: Size.fromHeight(50.0),
+              child: TabBar(tabs: [
+                Tab(text: 'Details'),
+                ...(metadata ? [Tab(text: 'Metadata')] : [])
+              ]))));
 
-// perhaps this should be two tabs, one for tx details, one for metadata
-  ListView body() =>
-      ListView(shrinkWrap: true, padding: EdgeInsets.all(20.0), children: <
-          Widget>[
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text(
-              'Date: June 26 2021', // estimated date based on (current height - data['transaction']!.height)
-              style: TextStyle(color: Theme.of(context).disabledColor)),
-          Text(
-              'Confirmaitons: 60+', // current height - data['transaction']!.height
-              style: TextStyle(color: Theme.of(context).disabledColor)),
-        ]),
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          SizedBox(height: 15.0),
-          TextField(
-            readOnly: true,
-            controller: TextEditingController(
-                text:
-                    'rtahoe5eu4e4ea451ea21e445euaeu454' //// data['transaction']!.scripthash - get address of...
-                ),
-            decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'To',
-                hintText: 'Address'),
-          ),
-          SizedBox(height: 15.0),
-          TextField(
-            readOnly: true,
-            controller: TextEditingController(
-                text: data['transaction']!.value.toString()),
-            decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Amount',
-                hintText: 'Quantity'),
-          ),
+  TabBarView body(bool metadata) => TabBarView(children: [
+        ListView(shrinkWrap: true, padding: EdgeInsets.all(20.0), children: <
+            Widget>[
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text('fee',
+            Text(
+                'Date: June 26 2021', // estimated date based on (current height - data['transaction']!.height)
                 style: TextStyle(color: Theme.of(context).disabledColor)),
-            Text('0.01397191 RVN',
+            Text(
+                'Confirmaitons: 60+', // current height - data['transaction']!.height
                 style: TextStyle(color: Theme.of(context).disabledColor)),
           ]),
-          SizedBox(height: 15.0),
-          TextField(
-            readOnly: true,
-            controller: TextEditingController(text: ':)'),
-            keyboardType: TextInputType.multiline,
-            maxLines: null,
-            decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Note',
-                hintText: 'Note to Self'),
-          ),
-          SizedBox(height: 15.0),
-          Text(
-              'id: 1354s31e35s13f54se3851f3s51ef35s1ef35', //data['transaction']!.scripthash
-              style: TextStyle(color: Theme.of(context).disabledColor)),
-          SizedBox(height: 15.0),
-          ElevatedButton.icon(
-              onPressed: () {},
-              icon: Icon(Icons.description),
-              label: Text('Metadata'))
-        ])
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+              Widget>[
+            SizedBox(height: 15.0),
+            TextField(
+              readOnly: true,
+              controller: TextEditingController(
+                  text:
+                      'rtahoe5eu4e4ea451ea21e445euaeu454' //// data['transaction']!.scripthash - get address of...
+                  ),
+              decoration: InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'To',
+                  hintText: 'Address'),
+            ),
+            SizedBox(height: 15.0),
+            TextField(
+              readOnly: true,
+              controller: TextEditingController(
+                  text: data['transaction']!.value.toString()),
+              decoration: InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'Amount',
+                  hintText: 'Quantity'),
+            ),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text('fee',
+                  style: TextStyle(color: Theme.of(context).disabledColor)),
+              Text('0.01397191 RVN',
+                  style: TextStyle(color: Theme.of(context).disabledColor)),
+            ]),
+            SizedBox(height: 15.0),
+            TextField(
+              readOnly: true,
+              controller: TextEditingController(text: ':)'),
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              decoration: InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'Note',
+                  hintText: 'Note to Self'),
+            ),
+            SizedBox(height: 15.0),
+            Text(
+                'id: 1354s31e35s13f54se3851f3s51ef35s1ef35', //data['transaction']!.scripthash
+                style: TextStyle(color: Theme.of(context).disabledColor)),
+            SizedBox(height: 15.0),
+            // replaced by tab, missing if metadata is missing...
+            //ElevatedButton.icon(
+            //    onPressed: () {},
+            //    icon: Icon(Icons.description),
+            //    label: Text('Metadata'))
+          ])
+        ]),
+        ...(metadata ? [Text('None')] : [])
       ]);
 }

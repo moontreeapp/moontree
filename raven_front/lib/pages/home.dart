@@ -19,7 +19,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool showUSD = false;
-  final myController = TextEditingController();
+  final accountName = TextEditingController();
 
   void _toggleUSD() {
     setState(() {
@@ -34,11 +34,11 @@ class _HomeState extends State<Home> {
       setState(() {});
     });
   }
-  
+
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    myController.dispose();
+    accountName.dispose();
     super.dispose();
   }
 
@@ -96,9 +96,9 @@ class _HomeState extends State<Home> {
           trailing: (Text(
               showUSD
                   ? (holding.security.symbol == 'RVN'
-                      ? '\$' + RavenText.rvnUSD(holding.value)
+                      ? RavenText.rvnUSD(RavenText.satsRVN(holding.value))
                       : holding.value
-                          .toString()) //'\$' + RavenText.rvnUSD(RavenText.assetRVN(transaction.value))
+                          .toString()) //RavenText.rvnUSD(RavenText.assetRVN(transaction.value))
                   : holding.value.toString(),
               style: TextStyle(color: Theme.of(context).good))),
           leading: RavenIcon.assetAvatar(holding.security.symbol));
@@ -157,14 +157,16 @@ class _HomeState extends State<Home> {
                   ? Text(
                       showUSD
                           ? (transaction.security.symbol == 'RVN'
-                              ? '\$' + RavenText.rvnUSD(transaction.value)
+                              ? RavenText.rvnUSD(
+                                  RavenText.satsRVN(transaction.value))
                               : transaction.value.toString())
                           : transaction.value.toString(),
                       style: TextStyle(color: Theme.of(context).good))
                   : Text(
                       showUSD
                           ? (transaction.security.symbol == 'RVN'
-                              ? '\$' + RavenText.rvnUSD(transaction.value)
+                              ? RavenText.rvnUSD(
+                                  RavenText.satsRVN(transaction.value))
                               : transaction.value.toString())
                           : transaction.value.toString(),
                       style: TextStyle(color: Theme.of(context).bad))),
@@ -225,7 +227,7 @@ class _HomeState extends State<Home> {
             ListTile(
                 onTap: () async {
                   var account = await services.accountGenerationService
-                      .makeAndAwaitSaveAccount(myController.text);
+                      .makeAndAwaitSaveAccount(accountName.text);
                   await services.settingsService
                       .saveSetting(SettingName.Current_Account, account.id);
                   setState(() {}); // needed to update UI
@@ -233,7 +235,7 @@ class _HomeState extends State<Home> {
                 },
                 title: TextField(
                   readOnly: false,
-                  controller: myController,
+                  controller: accountName,
                   decoration: InputDecoration(
                       border: UnderlineInputBorder(),
                       labelText: 'Create Account',
@@ -249,6 +251,6 @@ class _HomeState extends State<Home> {
   Row sendReceiveButtons() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         RavenButton.receive(context),
-        RavenButton.send(context, asset: 'RVN'),
+        RavenButton.send(context, symbol: 'RVN'),
       ]);
 }

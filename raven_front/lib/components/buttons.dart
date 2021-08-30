@@ -28,11 +28,12 @@ ElevatedButton receiveButton(context) => ElevatedButton.icon(
     onPressed: () => Navigator.pushNamed(context, '/receive'),
     style: RavenButtonStyle.leftSideCurved);
 
-ElevatedButton sendButton(context, {String asset = 'RVN'}) =>
+ElevatedButton sendButton(context, {String symbol = 'RVN'}) =>
     ElevatedButton.icon(
         icon: Icon(Icons.north_east),
         label: Text('Send'),
-        onPressed: () => Navigator.pushNamed(context, '/send'),
+        onPressed: () => Navigator.pushNamed(context, '/send',
+            arguments: {'symbol': symbol}),
         style: RavenButtonStyle.rightSideCurved);
 
 ElevatedButton getRVNButton(context) => ElevatedButton(
@@ -49,7 +50,7 @@ class RavenButton {
   static GestureDetector settings(context) => settingsButton(context);
   static BottomAppBar bottomNav(context) => walletTradingButtons(context);
   static ElevatedButton receive(context) => receiveButton(context);
-  static ElevatedButton send(context, {String asset = 'RVN'}) =>
-      sendButton(context, asset: asset);
+  static ElevatedButton send(context, {String symbol = 'RVN'}) =>
+      sendButton(context, symbol: symbol);
   static ElevatedButton getRVN(context) => getRVNButton(context);
 }

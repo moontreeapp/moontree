@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
+import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
+import 'package:raven_mobile/components/text.dart';
 
 class Send extends StatefulWidget {
   final dynamic data;
@@ -14,6 +16,8 @@ class Send extends StatefulWidget {
 class _SendState extends State<Send> {
   dynamic data = {};
   late GlobalKey<FormState> formKey;
+  final sendAddress = TextEditingController();
+  final sendAmount = TextEditingController(text: '10');
 
   @override
   void initState() {
@@ -21,7 +25,16 @@ class _SendState extends State<Send> {
   }
 
   @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    sendAddress.dispose();
+    sendAmount.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // could hold which asset to send...
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
     formKey = GlobalKey<FormState>();
     return Scaffold(
@@ -47,25 +60,39 @@ class _SendState extends State<Send> {
           flexibleSpace: Container(
             alignment: Alignment.center,
             child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+              SizedBox(height: 100.0),
+              Text(sendAmount.text == '' ? '0' : sendAmount.text,
+                  style: Theme.of(context).textTheme.headline3),
+              SizedBox(height: 15.0),
+              Text(
+                  // move into module that takes asset type and decerns the USD value
+                  // (this currently assumes rvn)
+                  RavenText.rvnUSD(sendAmount.text == ''
+                      ? 0.0
+                      : double.parse(sendAmount.text)),
+                  style: Theme.of(context).textTheme.headline5),
+              SizedBox(height: 15.0),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text('\n0 RVN', style: Theme.of(context).textTheme.headline3),
+                RavenIcon.assetAvatar(data['symbol']),
+                SizedBox(width: 15.0),
+                Text(data['symbol'],
+                    style: Theme.of(context).textTheme.headline5),
                 IconButton(
                     onPressed: () {
                       /*show available assets and balances for this account*/
                     },
-                    padding: EdgeInsets.only(top: 24.0),
+                    //padding: EdgeInsets.only(top: 24.0),
                     icon: Icon(
                       Icons.change_circle_outlined,
                       color: Colors.white,
-                    ))
+                    )),
               ]),
-              Text('\n\$ 0.00', style: Theme.of(context).textTheme.headline5),
             ]),
           )));
 
   ListView body() {
-    var _controller = TextEditingController();
+    //var _controller = TextEditingController();
     return ListView(
         shrinkWrap: true,
         padding: EdgeInsets.all(20.0),
@@ -76,7 +103,7 @@ class _SendState extends State<Send> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     TextFormField(
-                      controller: _controller,
+                      controller: sendAddress,
                       decoration: InputDecoration(
                           border: UnderlineInputBorder(),
                           labelText: 'To',
@@ -99,10 +126,17 @@ class _SendState extends State<Send> {
                         icon: Icon(Icons.qr_code_scanner),
                         label: Text('Scan QR code')),
                     TextFormField(
+                      controller: sendAmount,
                       decoration: InputDecoration(
                           border: UnderlineInputBorder(),
                           labelText: 'Amount',
                           hintText: 'Quantity'),
+                      //validator: (String? value) {  // validate as double/int
+                      //  //if (value == null || value.isEmpty) {
+                      //  //  return 'Please enter a valid send amount';
+                      //  //}
+                      //  //return null;
+                      //},
                     ),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
