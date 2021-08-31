@@ -15,9 +15,9 @@ class AccountBalanceWaiter extends Waiter {
   void init() {
     listeners.add(histories.changes
         .bufferCountTimeout(25, Duration(milliseconds: 50))
-        .listen((List<List<Change>> changes) {
-      balanceService
-          .calcuSaveBalance(changes.expand((element) => element).toList());
+        .listen((List<List<Change>> unflattenedChanges) {
+      var changes = unflattenedChanges.expand((change) => change);
+      balanceService.saveChangedBalances(changes.toList());
     }));
   }
 }

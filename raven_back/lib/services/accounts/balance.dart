@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:reservoir/change.dart';
 import 'package:sorted_list/sorted_list.dart';
 
+import 'package:raven/account_security_pair.dart';
 import 'package:raven/services/service.dart';
 import 'package:raven/records.dart';
 import 'package:raven/reservoirs.dart';
@@ -13,31 +14,25 @@ class BalanceService extends Service {
 
   BalanceService(this.balances, this.histories) : super();
 
-  // runs it for affected account-security combinations
-  void calcuSaveBalance(List<Change> changes) {
-    var uniquePairs = [];
-    changes.forEach((Change change) {
-      History history = change.data;
-      if (!uniquePairs.contains([history.accountId, history.security])) {
-        uniquePairs.add([history.accountId, history.security]);
-      }
-    });
-    for (var accountIdSecurity in uniquePairs) {
-      saveBalance(accountIdSecurity[0], accountIdSecurity[1]);
-    }
-  }
+  // Get (sum) the balance for an account-security pair
+  Balance sumBalance(String accountId, Security security) => Balance(
+      accountId: accountId,
+      security: security,
+      confirmed: histories
+          .unspentsByAccount(accountId, security: security)
+          .fold(0, (sum, history) => sum + history.value),
+      unconfirmed: histories
+          .unconfirmedByAccount(accountId, security: security)
+          .fold(0, (sum, history) => sum + history.value));
 
-  void saveBalance(String accountId, Security security) {
-    balances.save(Balance(
-        accountId: accountId,
-        security: security,
-        confirmed: histories
-            .unspentsByAccount(accountId, security: security)
-            .fold(0, (sum, history) => sum + history.value),
-        unconfirmed: histories
-            .unconfirmedByAccount(accountId, security: security)
-            .fold(0, (sum, history) => sum + history.value)));
-  }
+  // If there is a change in its history, recalculate a balance. Return a list
+  // of such balances.
+  Iterable<Balance> getChangedBalances(List<Change> changes) =>
+      uniquePairsFromHistoryChanges(changes)
+          .map((pair) => sumBalance(pair.accountId, pair.security));
+
+  void saveChangedBalances(List<Change> changes) =>
+      getChangedBalances(changes).forEach((balance) => balances.save(balance));
 
   // runs it for all  and all security
   void recalculateBalance(_changes) {

@@ -1,0 +1,32 @@
+// dart --sound-null-safety test test/integration/account_test.dart --concurrency=1 --chain-stack-traces
+import 'package:raven/records.dart';
+import 'package:raven/records/security.dart';
+import 'package:reservoir/change.dart';
+import 'package:test/test.dart';
+
+import 'package:raven/account_security_pair.dart';
+import '../fixtures/histories.dart';
+
+void main() async {
+  test('AccountSecurityPair is unique in Set', () {
+    var s = <AccountSecurityPair>{};
+    var pair = AccountSecurityPair(
+        'a', Security(symbol: 'RVN', securityType: SecurityType.Crypto));
+    s.add(pair);
+    s.add(pair);
+    expect(s.length, 1);
+  });
+
+  test('uniquePairsFromHistoryChanges', () {
+    var changes = [
+      Added(0, histories['0']),
+      Added(1, histories['1']),
+      Updated(0, histories['0'])
+    ];
+    var pairs = uniquePairsFromHistoryChanges(changes);
+    expect(pairs, {
+      AccountSecurityPair('a1', RVN),
+      AccountSecurityPair('a1', USD),
+    });
+  });
+}
