@@ -1,3 +1,7 @@
+## 2.1.0
+
+- Lazy-load boxes in HiveSource
+ 
 ## 2.0.0
 
 - Type safe Keys and Indexes

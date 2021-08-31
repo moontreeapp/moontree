@@ -6,12 +6,11 @@ import 'source.dart';
 
 class HiveSource<Record> extends Source<Record> {
   final String name;
-  late final Box<Record> box;
   late final Map? defaults;
 
-  HiveSource(this.name, {this.defaults}) {
-    box = Hive.box<Record>(name);
-  }
+  Box<Record> get box => Hive.box<Record>(name);
+
+  HiveSource(this.name, {this.defaults});
 
   // Return initial Hive box records to be used to populate Reservoir
   @override
