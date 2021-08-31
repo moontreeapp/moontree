@@ -4,8 +4,8 @@ import 'package:sorted_list/sorted_list.dart';
 
 import 'package:raven/account_security_pair.dart';
 import 'package:raven/services/service.dart';
-import 'package:raven/records.dart';
-import 'package:raven/reservoirs.dart';
+import 'package:raven/records/records.dart';
+import 'package:raven/reservoirs/reservoirs.dart';
 import 'package:raven/utils/exceptions.dart';
 
 class BalanceService extends Service {

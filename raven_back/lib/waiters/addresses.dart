@@ -1,6 +1,6 @@
 import 'package:reservoir/reservoir.dart';
 
-import 'package:raven/reservoirs.dart';
+import 'package:raven/reservoirs/reservoirs.dart';
 import 'package:raven/waiters/waiter.dart';
 
 class AddressesWaiter extends Waiter {

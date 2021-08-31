@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
-import 'package:raven/init/hive_initializer.dart';
+import 'package:raven/hive_initializer.dart';
 
 void main() {
   group('HiveInitializer', () {

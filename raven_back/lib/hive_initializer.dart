@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:hive/hive.dart';
-import 'package:raven/records.dart';
+import 'package:raven/records/records.dart';
 import 'package:ulid/ulid.dart';
 
 class HiveInitializer {

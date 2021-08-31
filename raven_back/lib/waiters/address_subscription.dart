@@ -2,36 +2,37 @@ import 'dart:async';
 
 import 'package:reservoir/reservoir.dart';
 
-import 'package:raven/reservoirs.dart';
-import 'package:raven/records.dart';
+import 'package:raven/reservoirs/reservoirs.dart';
+import 'package:raven/records/records.dart';
 import 'package:raven/waiters/waiter.dart';
 import 'package:raven/utils/buffer_count_window.dart';
-import 'package:raven/services.dart';
+import 'package:raven/services/services.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 class AddressSubscriptionWaiter extends Waiter {
-  AddressReservoir addresses;
-  RavenElectrumClient client;
-  AddressSubscriptionService addressSubscriptionService;
-  LeaderWalletDerivationService leaderWalletDerivationService;
-  Map<String, StreamSubscription> subscriptionHandles = {};
+  final AddressReservoir addresses;
+  final AddressSubscriptionService addressSubscriptionService;
+  final LeaderWalletDerivationService leaderWalletDerivationService;
+  final Map<String, StreamSubscription> subscriptionHandles = {};
 
-  StreamController<Address> addressesNeedingUpdate = StreamController();
+  final StreamController<Address> addressesNeedingUpdate = StreamController();
+
+  RavenElectrumClient? client;
 
   AddressSubscriptionWaiter(
     this.addresses,
-    this.client,
     this.addressSubscriptionService,
     this.leaderWalletDerivationService,
   ) : super();
 
-  @override
-  void init() {
+  void init(RavenElectrumClient client) {
+    this.client = client;
+
     subscribeToExistingAddresses();
     listeners.add(addressesNeedingUpdate.stream
         .bufferCountTimeout(10, Duration(milliseconds: 50))
         .listen((changedAddresses) async {
-      addressSubscriptionService.saveScripthashHistoryData(
+      await addressSubscriptionService.saveScripthashHistoryData(
         await addressSubscriptionService.getScripthashHistoriesData(
           changedAddresses,
           client,
@@ -62,7 +63,7 @@ class AddressSubscriptionWaiter extends Waiter {
   }
 
   void subscribe(Address address) {
-    var stream = client.subscribeScripthash(address.scripthash);
+    var stream = client!.subscribeScripthash(address.scripthash);
     subscriptionHandles[address.scripthash] = stream.listen((status) {
       addressNeedsUpdating(address);
     });

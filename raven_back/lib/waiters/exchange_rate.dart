@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:raven/waiters/waiter.dart';
-import 'package:raven/services.dart';
+import 'package:raven/services/services.dart';
 
 class ExchangeRateWaiter extends Waiter {
   RatesService ratesService;

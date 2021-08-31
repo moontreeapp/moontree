@@ -1,6 +1,6 @@
 import 'package:raven/services/service.dart';
-import 'package:raven/records.dart';
-import 'package:raven/reservoirs.dart';
+import 'package:raven/records/records.dart';
+import 'package:raven/reservoirs/reservoirs.dart';
 
 class AccountGenerationService extends Service {
   late final AccountReservoir accounts;
@@ -16,8 +16,9 @@ class AccountGenerationService extends Service {
     accounts.save(account);
     return account;
   }
-  
-  Future<Account> makeAndAwaitSaveAccount(String name, {Net net = Net.Test}) async {
+
+  Future<Account> makeAndAwaitSaveAccount(String name,
+      {Net net = Net.Test}) async {
     var account = newAccount(name, net: net);
     await accounts.save(account);
     return account;

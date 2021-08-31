@@ -1,8 +1,8 @@
-import 'package:raven/init/waiters.dart';
+import 'package:raven/init.dart';
 import 'package:raven/records/setting_name.dart';
 import 'package:raven/services/service.dart';
-import 'package:raven/records.dart';
-import 'package:raven/reservoirs.dart';
+import 'package:raven/records/records.dart';
+import 'package:raven/reservoirs/reservoirs.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 class SettingService extends Service {

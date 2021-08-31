@@ -1,5 +1,5 @@
 import 'package:ordered_set/ordered_set.dart';
-import 'package:raven/records.dart';
+import 'package:raven/records/records.dart';
 import 'package:reservoir/reservoir.dart';
 
 part 'address.keys.dart';

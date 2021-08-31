@@ -1,7 +1,7 @@
 import 'package:raven/utils/rate.dart';
 import 'package:raven/services/service.dart';
-import 'package:raven/records.dart';
-import 'package:raven/reservoirs.dart';
+import 'package:raven/records/records.dart';
+import 'package:raven/reservoirs/reservoirs.dart';
 
 class RatesService extends Service {
   late final BalanceReservoir balances;

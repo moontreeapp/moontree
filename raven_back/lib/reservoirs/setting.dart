@@ -3,7 +3,7 @@ import 'package:reservoir/reservoir.dart';
 
 import 'package:raven/records/setting_name.dart';
 import 'package:raven/utils/enum.dart';
-import 'package:raven/records.dart';
+import 'package:raven/records/records.dart';
 
 part 'setting.keys.dart';
 

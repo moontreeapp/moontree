@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:reservoir/change.dart';
 
-import 'package:raven/records.dart';
+import 'package:raven/records/records.dart';
 
 class AccountSecurityPair with EquatableMixin {
   final String accountId;

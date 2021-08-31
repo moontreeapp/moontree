@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
-import 'package:raven/init/hive_initializer.dart';
-import 'package:raven/records.dart';
+import 'package:raven/hive_initializer.dart';
+import 'package:raven/records/records.dart';
 import 'package:raven/records/setting.dart';
 
 var hiveInit = HiveInitializer(destroyOnTeardown: true);

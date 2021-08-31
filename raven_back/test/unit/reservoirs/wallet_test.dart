@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:test/test.dart';
 
-import 'package:raven/records.dart';
+import 'package:raven/records/records.dart';
 
 import 'package:raven/reservoirs/wallet.dart';
 import 'package:reservoir/reservoir.dart';
