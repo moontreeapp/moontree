@@ -22,8 +22,11 @@ class _TransactionState extends State<Transaction> {
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
-    // how do we detect metadata?
     var metadata = false;
+    // how do we detect metadata?
+    /*Tron — Yesterday at 6:51 PM
+      You can add messages to transactions by putting the IPFS hash of the message in the OP_RETURN.
+      They're called memos. They will be public.*/
     return DefaultTabController(
         length: metadata ? 2 : 1,
         child: Scaffold(
@@ -64,7 +67,7 @@ class _TransactionState extends State<Transaction> {
               preferredSize: Size.fromHeight(50.0),
               child: TabBar(tabs: [
                 Tab(text: 'Details'),
-                ...(metadata ? [Tab(text: 'Metadata')] : [])
+                ...(metadata ? [Tab(text: 'Memo')] : [])
               ]))));
 
   TabBarView body(bool metadata) => TabBarView(children: [

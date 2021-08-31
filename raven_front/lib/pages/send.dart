@@ -4,6 +4,7 @@ import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
 import 'package:raven_mobile/components/text.dart';
+import 'package:raven_mobile/services/lookup.dart';
 
 class Send extends StatefulWidget {
   final dynamic data;
@@ -69,14 +70,6 @@ class _SendState extends State<Send> {
                   RavenText.securityInUSD(
                       RavenText.amountSats(double.parse(sendAmount.text)),
                       symbol: data['symbol']),
-
-                  // move into module that takes asset type and decerns the USD value
-                  // (this currently assumes rvn)
-                  // asset amount -> as sat -> securityInUSD
-                  // rvn amount -> as sat -> securityInUSD
-                  //RavenText.rvnUSD(sendAmount.text == ''
-                  //    ? 0.0
-                  //    : double.parse(sendAmount.text)),
                   style: Theme.of(context).textTheme.headline5),
               SizedBox(height: 15.0),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -84,15 +77,19 @@ class _SendState extends State<Send> {
                 SizedBox(width: 15.0),
                 Text(data['symbol'],
                     style: Theme.of(context).textTheme.headline5),
-                IconButton(
-                    onPressed: () {
-                      /*show available assets and balances for this account*/
-                    },
-                    //padding: EdgeInsets.only(top: 24.0),
-                    icon: Icon(
-                      Icons.change_circle_outlined,
-                      color: Colors.white,
-                    )),
+
+                /// drop down works well
+                //IconButton(
+                //    onPressed: () {
+                //      /*show available assets and balances for this account*/
+                //      //security name switchout button should bring up a new page of all the assets available in this account.
+                //      /// start with a drop down
+                //    },
+                //    //padding: EdgeInsets.only(top: 24.0),
+                //    icon: Icon(
+                //      Icons.change_circle_outlined,
+                //      color: Colors.white,
+                //    )),
               ]),
             ]),
           )));
@@ -108,6 +105,18 @@ class _SendState extends State<Send> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    DropdownButton<String>(
+                        isExpanded: true,
+                        value: data['symbol'],
+                        items: <String>[
+                          for (var balance in Current.holdings)
+                            balance.security.symbol
+                        ]
+                            .map((String value) => DropdownMenuItem<String>(
+                                value: value, child: Text(value)))
+                            .toList(),
+                        onChanged: (String? newValue) =>
+                            setState(() => data['symbol'] = newValue!)),
                     TextFormField(
                       controller: sendAddress,
                       decoration: InputDecoration(
@@ -149,11 +158,19 @@ class _SendState extends State<Send> {
                         children: [Text('fee'), Text('0.01397191 RVN')]),
                     TextFormField(
                       keyboardType: TextInputType.multiline,
+                      maxLines: 1,
+                      decoration: InputDecoration(
+                          border: UnderlineInputBorder(),
+                          labelText: 'Memo (optional)',
+                          hintText: 'IPFS hash publicly posted on transaction'),
+                    ),
+                    TextFormField(
+                      keyboardType: TextInputType.multiline,
                       maxLines: null,
                       decoration: InputDecoration(
                           border: UnderlineInputBorder(),
                           labelText: 'Note',
-                          hintText: 'Note to Self'),
+                          hintText: 'Private note to self'),
                     ),
                     //Center(child: sendTransactionButton(_formKey))
                   ]))

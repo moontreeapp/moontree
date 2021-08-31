@@ -27,7 +27,7 @@ class _ImportState extends State<Import> {
       appBar: header(),
       body: body(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: importWaysButtons(),
+      floatingActionButton: importWaysButtons(context),
     );
   }
 
@@ -68,7 +68,7 @@ class _ImportState extends State<Import> {
     ]);
   }
 
-  Row importWaysButtons() =>
+  Row importWaysButtons(context) =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         ElevatedButton.icon(
             icon: Icon(Icons.qr_code_scanner),
@@ -89,6 +89,6 @@ class _ImportState extends State<Import> {
               //  MaterialPageRoute(builder: (context) => Send()),
               //);
             },
-            style: RavenButtonStyle.rightSideCurved)
+            style: RavenButtonStyle.rightSideCurved(context))
       ]);
 }

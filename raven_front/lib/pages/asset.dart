@@ -141,6 +141,10 @@ class _AssetState extends State<Asset> {
   Row sendReceiveButtons() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         RavenButton.receive(context),
-        RavenButton.send(context, symbol: data['holding']!.security.symbol),
+        Current.holdings.length > 0
+            ? RavenButton.send(context,
+                symbol: data['holding']!.security.symbol)
+            : RavenButton.send(context,
+                symbol: data['holding']!.security.symbol, disabled: true),
       ]);
 }

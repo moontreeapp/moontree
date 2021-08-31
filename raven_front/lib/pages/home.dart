@@ -245,6 +245,8 @@ class _HomeState extends State<Home> {
   Row sendReceiveButtons() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         RavenButton.receive(context),
-        RavenButton.send(context, symbol: 'RVN'),
+        Current.holdings.length > 0
+            ? RavenButton.send(context, symbol: 'RVN')
+            : RavenButton.send(context, symbol: 'RVN', disabled: true),
       ]);
 }
