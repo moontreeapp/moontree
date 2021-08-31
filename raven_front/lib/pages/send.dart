@@ -169,7 +169,7 @@ class _SendState extends State<Send> {
                       maxLines: null,
                       decoration: InputDecoration(
                           border: UnderlineInputBorder(),
-                          labelText: 'Note',
+                          labelText: 'Note (optional)',
                           hintText: 'Private note to self'),
                     ),
                     //Center(child: sendTransactionButton(_formKey))

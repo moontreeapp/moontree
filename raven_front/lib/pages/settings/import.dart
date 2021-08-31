@@ -22,7 +22,7 @@ class _ImportState extends State<Import> {
 
   @override
   Widget build(BuildContext context) {
-    data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
+    //data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
     return Scaffold(
       appBar: header(),
       body: body(),

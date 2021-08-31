@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:raven/records/setting_name.dart';
+import 'package:raven/raven.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
@@ -8,9 +8,6 @@ import 'package:raven_mobile/components/text.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 import 'package:raven_mobile/theme/theme.dart';
-
-import 'package:raven/init/reservoirs.dart' as res;
-import 'package:raven/init/services.dart' as services;
 
 class Home extends StatefulWidget {
   @override
@@ -31,6 +28,12 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     currentTheme.addListener(() {
+      setState(() {});
+    });
+    balances.changes.listen((changes) {
+      setState(() {});
+    });
+    settings.changes.listen((changes) {
       setState(() {});
     });
   }
@@ -204,12 +207,11 @@ class _HomeState extends State<Home> {
                               size: 26.0, color: Colors.grey.shade200)))
                 ])),
         Column(children: <Widget>[
-          for (var account in res.accounts.data) ...[
+          for (var account in accounts.data) ...[
             ListTile(
                 onTap: () async {
-                  await services.settingsService
-                      .saveSetting(SettingName.Current_Account, account.id);
-                  setState(() {}); // needed to update UI
+                  await settingsService.saveSetting(
+                      SettingName.Current_Account, account.id);
                   Navigator.pop(context);
                 },
                 title: Text(account.id + ' ' + account.name,
@@ -220,11 +222,10 @@ class _HomeState extends State<Home> {
           ...[
             ListTile(
                 onTap: () async {
-                  var account = await services.accountGenerationService
+                  var account = await accountGenerationService
                       .makeAndAwaitSaveAccount(accountName.text);
-                  await services.settingsService
-                      .saveSetting(SettingName.Current_Account, account.id);
-                  setState(() {}); // needed to update UI
+                  await settingsService.saveSetting(
+                      SettingName.Current_Account, account.id);
                   Navigator.pop(context);
                 },
                 title: TextField(

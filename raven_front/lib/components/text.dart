@@ -1,7 +1,4 @@
-import 'package:raven/init/reservoirs.dart' as res;
-import 'package:raven/records.dart';
-import 'package:raven/utils/exceptions.dart';
-import 'package:raven/records/security.dart';
+import 'package:raven/raven.dart';
 
 String toUSDBalance(
         {required double balance,
@@ -30,14 +27,14 @@ String securityToUSD(int sats, {Security? security, String? symbol}) {
   return security.symbol == 'RVN'
       ? RavenText.rvnUSD(RavenText.satsRVN(sats))
       : RavenText.rvnUSD(
-          RavenText.satsToAmount(sats) * res.rates.assetToRVN(security));
+          RavenText.satsToAmount(sats) * rates.assetToRVN(security));
 }
 
 class RavenText {
   RavenText();
 
   static String rvnUSD(double balance) =>
-      toUSDBalance(balance: balance, rate: res.rates.rvnToUSD);
+      toUSDBalance(balance: balance, rate: rates.rvnToUSD);
   static int rvnSats(double amount) => amountAsSats(amount);
   static double satsRVN(int amount) => satsAsAmount(amount);
   static double satsToAmount(int sats) => satsAsAmount(sats);

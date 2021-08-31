@@ -3,9 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/material.dart';
 
-import 'package:raven/init/raven.dart' as raven;
-import 'package:raven/init/hive_initializer.dart';
-
+import 'package:raven/raven.dart';
 import 'package:raven_mobile/pages.dart';
 import 'package:raven_mobile/theme/color_gen.dart';
 import 'package:raven_mobile/theme/theme.dart';
@@ -14,7 +12,7 @@ var hiveInit = HiveInitializer(init: (dbDir) => Hive.initFlutter());
 
 Future<void> main() async {
   await hiveInit.setUp();
-  await raven.init();
+  await init();
   runApp(MaterialApp(
       initialRoute: '/',
       routes: {

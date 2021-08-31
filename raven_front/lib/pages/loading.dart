@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:raven/records/address.dart';
-import 'package:raven/services/addresses/subscribe.dart';
-import '../services/account_mock.dart' as mock;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:raven/init/services.dart';
-import 'package:raven/init/reservoirs.dart' as res;
 import 'package:raven_electrum_client/raven_electrum_client.dart';
+import 'package:raven/raven.dart';
 
 class Loading extends StatefulWidget {
   @override
@@ -50,24 +46,23 @@ class _LoadingState extends State<Loading> {
   }
 
   void setup() async {
-    // (flutterAddressSubscriptionService) if no accounts -> create account, set default account setting
-    if (res.accounts.data.isEmpty) {
-      // create one
+    if (accounts.data.isEmpty) {
       await setupAccounts();
       // set its id as settings default account id
       //sett.settings.add({'default Account': account.id});
     }
-    //res.accounts.changes.listen((changes) {
+    //accounts.changes.listen((changes) {
     //  build(context);
     //}); // //sett
 
-    print('accounts: ${res.accounts.data}');
-    print('wallets: ${res.wallets.data}');
-    print('addresses: ${res.addresses.data}');
-    print('histories: ${res.histories.data}');
-    print('balances: ${res.balances.data}');
-    print('rates: ${res.rates.data}');
-    print('settings: ${res.settings.data}');
+    print('accounts: ${accounts.data}');
+    print('wallets: ${wallets.data}');
+    print('addresses: ${addresses.data}');
+    print('histories: ${histories.data}');
+    print('balances: ${balances.data}');
+    print('rates: ${rates.data}');
+    print('settings: ${settings.data}');
+    Navigator.pushReplacementNamed(context, '/home', arguments: {});
 
     /// TODO running into this error on occasion...
     /// E/flutter (12132): [ERROR:flutter/lib/ui/ui_dart_state.cc(209)] Unhandled Exception: SocketException: Connection timed out, host: testnet.rvn.rocks, port: 50002
@@ -87,13 +82,6 @@ class _LoadingState extends State<Loading> {
     /// E/flutter (12132): #13     _Timer._handleMessage (dart:isolate-patch/timer_impl.dart:426:5)
     /// E/flutter (12132): #14     _RawReceivePortImpl._handleMessage (dart:isolate-patch/isolate_patch.dart:184:12)
     /// E/flutter (12132):
-    await mock.Accounts.instance.load();
-    Navigator.pushReplacementNamed(context, '/home', arguments: {
-      'account': 'accountId1',
-      'accounts': mock.Accounts.instance.accounts,
-      'transactions': mock.Accounts.instance.transactions,
-      'holdings': mock.Accounts.instance.holdings,
-    });
   }
 
   @override

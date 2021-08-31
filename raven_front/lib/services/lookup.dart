@@ -1,26 +1,22 @@
-import 'package:raven/reservoirs.dart';
-import 'package:raven/init/reservoirs.dart' as res;
-import 'package:raven/init/services.dart' as services;
-import 'package:raven/records.dart';
+import 'package:raven/raven.dart';
 
 String currentAccountId() =>
-    res.settings.primaryIndex.getOne(SettingName.Current_Account)!.value;
+    settings.primaryIndex.getOne(SettingName.Current_Account)!.value;
 
-Account currentAccount() =>
-    res.accounts.primaryIndex.getOne(currentAccountId())!;
+Account currentAccount() => accounts.primaryIndex.getOne(currentAccountId())!;
 
 BalanceUSD currentBalanceUSD() =>
-    services.ratesService.accountBalanceUSD(currentAccountId());
+    ratesService.accountBalanceUSD(currentAccountId());
 
-Balance currentBalanceRVN() => res.balances.getRVN(currentAccountId());
+Balance currentBalanceRVN() => balances.getRVN(currentAccountId());
 
 /// our concept of history isn't the same as transactions - must fill out negative values for sent amounts
 List<History> currentTransactions() =>
-    res.histories.byAccount.getAll(currentAccountId()).toList();
+    histories.byAccount.getAll(currentAccountId()).toList();
 
 /// our concept of unspents isn't the same as holdings - the aggregate per asset is a holding...
 List<Balance> currentHoldings() {
-  var accountBalances = res.balances.byAccount.getAll(currentAccountId());
+  var accountBalances = balances.byAccount.getAll(currentAccountId());
   // ignore: omit_local_variable_types
   Map<Security, Balance> holdings = {};
   for (var balance in accountBalances) {
