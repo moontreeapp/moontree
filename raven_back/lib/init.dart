@@ -14,6 +14,7 @@ void initNonElectrumWaiters() {
 
 void deinitElectrumWaiters() {
   addressSubscriptionWaiter.deinit();
+  blockSubscriptionWaiter.deinit();
 }
 
 void deinitNonElectrumWaiters() {
@@ -27,6 +28,7 @@ void deinitNonElectrumWaiters() {
 
 void initElectrumWaiters(RavenElectrumClient client) {
   addressSubscriptionWaiter.init(client);
+  blockSubscriptionWaiter.init(client);
 }
 
 Future init() async {

@@ -5,6 +5,7 @@ class TypeId {
   static const Balance = 2;
   static const History = 3;
   static const Setting = 4;
+  static const Block = 5;
 
   // Wallets
   static const SingleWallet = 10;
