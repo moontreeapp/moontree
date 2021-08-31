@@ -1,8 +1,8 @@
-import 'package:raven_electrum_client/raven_electrum_client.dart';
-
 import 'reservoirs/reservoirs.dart';
 import 'services/services.dart';
 import 'waiters/waiters.dart';
+
+// RESERVOIRS
 
 final AccountReservoir accounts = AccountReservoir();
 final AddressReservoir addresses = AddressReservoir();
@@ -11,6 +11,8 @@ final WalletReservoir wallets = WalletReservoir();
 final BalanceReservoir balances = BalanceReservoir();
 final ExchangeRateReservoir rates = ExchangeRateReservoir();
 final SettingReservoir settings = SettingReservoir();
+
+// SERVICES
 
 final BalanceService balanceService = BalanceService(balances, histories);
 final AddressSubscriptionService addressSubscriptionService =
@@ -25,6 +27,8 @@ final AccountGenerationService accountGenerationService =
     AccountGenerationService(accounts);
 final SettingService settingsService = SettingService(settings);
 final HistoryService historyService = HistoryService(histories);
+
+// WAITERS
 
 final AccountsWaiter accountsWaiter = AccountsWaiter(
   accounts,
