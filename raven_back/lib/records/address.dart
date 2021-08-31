@@ -10,7 +10,7 @@ part 'address.g.dart';
 @HiveType(typeId: TypeId.Address)
 class Address with EquatableMixin {
   @HiveField(0)
-  String scripthash;
+  String scripthash; // change to addressId?
 
   @HiveField(1)
   String address;

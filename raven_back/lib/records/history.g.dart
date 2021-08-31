@@ -23,16 +23,16 @@ class HistoryAdapter extends TypeAdapter<History> {
       height: fields[3] as int,
       hash: fields[4] as String,
       position: fields[5] as int,
-      value: fields[7] as int,
-      security: fields[8] as Security,
-      note: fields[9] as String,
-    )..confirmed = fields[6] as bool;
+      value: fields[6] as int,
+      security: fields[7] as Security,
+      note: fields[8] as String,
+    );
   }
 
   @override
   void write(BinaryWriter writer, History obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.accountId)
       ..writeByte(1)
@@ -46,12 +46,10 @@ class HistoryAdapter extends TypeAdapter<History> {
       ..writeByte(5)
       ..write(obj.position)
       ..writeByte(6)
-      ..write(obj.confirmed)
-      ..writeByte(7)
       ..write(obj.value)
-      ..writeByte(8)
+      ..writeByte(7)
       ..write(obj.security)
-      ..writeByte(9)
+      ..writeByte(8)
       ..write(obj.note);
   }
 
