@@ -229,13 +229,12 @@ class _HomeState extends State<Home> {
                   Navigator.pop(context);
                 },
                 title: TextField(
-                  readOnly: false,
-                  controller: accountName,
-                  decoration: InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Create Account',
-                      hintText: 'Bills'),
-                ),
+                    readOnly: false,
+                    controller: accountName,
+                    decoration: InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Create Account',
+                        hintText: '')),
                 trailing:
                     Icon(Icons.add, size: 26.0, color: Colors.grey.shade800)),
             Divider(height: 20, thickness: 2, indent: 5, endIndent: 5)

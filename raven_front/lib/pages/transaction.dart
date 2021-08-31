@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raven/raven.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
@@ -77,8 +78,29 @@ class _TransactionState extends State<Transaction> {
             Text(
                 'Date: June 26 2021', // estimated date based on (current height - data['transaction']!.height)
                 style: TextStyle(color: Theme.of(context).disabledColor)),
+
+            // requires client to talk to electrum...
+            // no we should save this in a reservoir with a listener...
+            //
+            // should we get every header? or should getting the header trigger when we open this page.
+            // that would cost the user, but save on bandwidth to the electrumx server...
+            //
+            // how about we use a service for now.
+            // gets most header on demand... saves it into a reservoir,
+            // this page listens to res and updates when the data gets here.
+            //  in build call blockchainService.callForHeader();
+            //
+            // discuss cost of listening for headers with duane and kralverde
+            // we listen to scripthashes but its rare that transactions occur
+            // headers happen every 2 minutes guaranteed and the server might
+            // get overwhelmed with so many apps running...
+            //
             Text(
-                'Confirmaitons: 60+', // current height - data['transaction']!.height
+                'Confirmaitons: ' +
+                    ((blocks.latestBlock?.height ??
+                                data['transaction']!.height) -
+                            data['transaction']!.height)
+                        .toString(),
                 style: TextStyle(color: Theme.of(context).disabledColor)),
           ]),
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
@@ -111,19 +133,41 @@ class _TransactionState extends State<Transaction> {
               Text('0.01397191 RVN',
                   style: TextStyle(color: Theme.of(context).disabledColor)),
             ]),
-            SizedBox(height: 15.0),
-            TextField(
-              readOnly: true,
-              controller:
-                  TextEditingController(text: data['transaction']!.note),
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(),
-                  labelText: 'Note',
-                  hintText: 'Note to Self'),
-            ),
-            SizedBox(height: 15.0),
+
+            /// hide note if none was saved
+            ...(data['transaction']!.note != ''
+                ? [
+                    SizedBox(height: 15.0),
+                    TextField(
+                        readOnly: true,
+                        controller: TextEditingController(
+                            text: data['transaction']!.note),
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        decoration: InputDecoration(
+                            border: UnderlineInputBorder(),
+                            labelText: 'Note',
+                            hintText: 'Note to Self')),
+                    SizedBox(height: 15.0),
+                  ]
+                : []),
+
+            /// allow user to copy the ipfs hash here, see results on tab
+            ...(metadata
+                ? [
+                    TextField(
+                        readOnly: true,
+                        controller: TextEditingController(
+                            text: data['transaction']!.note), // memo
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        decoration: InputDecoration(
+                            border: UnderlineInputBorder(),
+                            labelText: 'Memo',
+                            hintText: 'IPFS hash')),
+                    SizedBox(height: 15.0)
+                  ]
+                : []),
             Text('id: ' + data['transaction']!.hash,
                 style: TextStyle(color: Theme.of(context).disabledColor)),
             SizedBox(height: 15.0),
