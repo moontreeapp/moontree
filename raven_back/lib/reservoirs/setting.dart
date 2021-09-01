@@ -12,12 +12,23 @@ final defaultSettings = {
       Setting(name: SettingName.Electrum_Url, value: 'testnet.rvn.rocks'),
   SettingName.Electrum_Port:
       Setting(name: SettingName.Electrum_Port, value: 50002),
-  SettingName.Current_Account:
-      Setting(name: SettingName.Current_Account, value: '0'),
+  SettingName.Account_Current:
+      Setting(name: SettingName.Account_Current, value: '0'),
+  SettingName.Account_Order:
+      Setting(name: SettingName.Account_Order, value: '0'),
 };
 
 class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
   SettingReservoir([source])
       : super(source ?? HiveSource('settings', defaults: defaultSettings),
             _SettingNameKey());
+
+  List<String> get accountOrder {
+    // requires account IDS to not have spaces in them...
+    return primaryIndex.getOne(SettingName.Account_Order)!.value.split(' ');
+  }
+
+  void saveAccountOrder(List<String> accountIds) {
+    save(Setting(name: SettingName.Account_Order, value: accountIds.join(' ')));
+  }
 }

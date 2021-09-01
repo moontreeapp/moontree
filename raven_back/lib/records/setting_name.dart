@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-import 'package:raven/utils/enum.dart';
 
 import '_type_id.dart';
 
@@ -16,5 +15,8 @@ enum SettingName {
   Electrum_Port,
 
   @HiveField(2)
-  Current_Account
+  Account_Current,
+
+  @HiveField(3)
+  Account_Order,
 }

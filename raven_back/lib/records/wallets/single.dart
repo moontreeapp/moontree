@@ -23,6 +23,9 @@ class SingleWallet extends Wallet {
   String toString() =>
       'SingleWallet($id, $accountId, ${encryptedPrivateKey.take(6).toList()})';
 
+  @override
+  String get kind => 'Private Key Wallet';
+
   Uint8List get privateKey {
     return cipher.decrypt(encryptedPrivateKey);
   }

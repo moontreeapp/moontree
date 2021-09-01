@@ -19,7 +19,6 @@ class LeadersWaiter extends Waiter {
     this.leaderWalletDerivationService,
   ) : super();
 
-  @override
   void init() {
     listeners.add(wallets.changes.listen((List<Change> changes) {
       changes.forEach((change) {

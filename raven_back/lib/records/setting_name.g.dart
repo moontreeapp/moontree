@@ -18,7 +18,9 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
       case 1:
         return SettingName.Electrum_Port;
       case 2:
-        return SettingName.Current_Account;
+        return SettingName.Account_Current;
+      case 3:
+        return SettingName.Account_Order;
       default:
         return SettingName.Electrum_Url;
     }
@@ -33,8 +35,11 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
       case SettingName.Electrum_Port:
         writer.writeByte(1);
         break;
-      case SettingName.Current_Account:
+      case SettingName.Account_Current:
         writer.writeByte(2);
+        break;
+      case SettingName.Account_Order:
+        writer.writeByte(3);
         break;
     }
   }

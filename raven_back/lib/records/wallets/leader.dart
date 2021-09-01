@@ -28,6 +28,9 @@ class LeaderWallet extends Wallet {
   String toString() =>
       'LeaderWallet($id, $accountId, ${encryptedSeed.take(6).toList()})';
 
+  @override
+  String get kind => 'HD Wallet';
+
   Uint8List get seed {
     return cipher.decrypt(encryptedSeed);
   }
@@ -57,6 +60,7 @@ class LeaderWallet extends Wallet {
         exposure: exposure,
         net: net);
   }
+
   //String get mnemonic {
   //  // fix
   //  return bip39.entropyToMnemonic(seed as String);

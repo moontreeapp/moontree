@@ -14,7 +14,6 @@ class AccountsWaiter extends Waiter {
       this.accounts, this.wallets, this.leaderWalletGenerationService)
       : super();
 
-  @override
   void init() {
     /// this listener implies we have to load everthing backwards if importing:
     /// first balances, histories, addresses, wallets and then accounts
