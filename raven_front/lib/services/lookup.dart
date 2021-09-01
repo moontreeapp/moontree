@@ -1,14 +1,14 @@
 import 'package:raven/raven.dart';
 
 String currentAccountId() =>
-    settings.primaryIndex.getOne(SettingName.Current_Account)!.value;
+    settings.primaryIndex.getOne(SettingName.Account_Current)!.value;
 
 Account currentAccount() => accounts.primaryIndex.getOne(currentAccountId())!;
 
 BalanceUSD currentBalanceUSD() =>
     ratesService.accountBalanceUSD(currentAccountId());
 
-Balance currentBalanceRVN() => balances.getRVN(currentAccountId());
+Balance currentBalanceRVN() => balances.getOrZero(currentAccountId());
 
 /// our concept of history isn't the same as transactions - must fill out negative values for sent amounts
 List<History> currentTransactions() =>

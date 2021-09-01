@@ -211,7 +211,7 @@ class _HomeState extends State<Home> {
             ListTile(
                 onTap: () async {
                   await settingsService.saveSetting(
-                      SettingName.Current_Account, account.id);
+                      SettingName.Account_Current, account.id);
                   Navigator.pop(context);
                 },
                 title: Text(account.id + ' ' + account.name,
@@ -225,7 +225,7 @@ class _HomeState extends State<Home> {
                   var account = await accountGenerationService
                       .makeAndAwaitSaveAccount(accountName.text);
                   await settingsService.saveSetting(
-                      SettingName.Current_Account, account.id);
+                      SettingName.Account_Current, account.id);
                   Navigator.pop(context);
                 },
                 title: TextField(
