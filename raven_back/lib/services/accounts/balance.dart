@@ -38,36 +38,6 @@ class BalanceService extends Service {
     return changed;
   }
 
-  // runs it for all  and all security
-  void recalculateBalance(_changes) {
-    if (_changes.length == 0) {
-      return;
-    }
-    for (var accountId in histories.byAccount.keys) {
-      var hists = histories.byAccount.getAll(accountId);
-
-      var balanceBySecurity = hists
-          .groupFoldBy((History history) => history.security,
-              (BalanceRaw? previous, History history) {
-        var balance = previous ?? BalanceRaw(confirmed: 0, unconfirmed: 0);
-        return BalanceRaw(
-            confirmed:
-                balance.confirmed + (history.position > -1 ? history.value : 0),
-            unconfirmed: balance.unconfirmed +
-                (history.position == -1 ? history.value : 0));
-      });
-
-      balanceBySecurity.forEach((security, bal) {
-        var balance = Balance(
-            accountId: accountId,
-            security: security,
-            confirmed: bal.confirmed,
-            unconfirmed: bal.unconfirmed);
-        balances.save(balance);
-      });
-    }
-  }
-
   SortedList<History> sortedUTXOs(String accountId) {
     var sortedList = SortedList<History>(
         (History a, History b) => a.value.compareTo(b.value));
