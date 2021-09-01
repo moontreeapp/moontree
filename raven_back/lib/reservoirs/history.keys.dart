@@ -74,6 +74,17 @@ extension BySecurityMethodsForHistory on Index<_SecurityKey, History> {
 
   Iterable<History> unspents({Security security = RVN}) =>
       whereUnspents(getAll(security), security);
+
+  BalanceRaw balance({Security security = RVN}) {
+    var zero = BalanceRaw(confirmed: 0, unconfirmed: 0);
+    return unspents(security: security).fold(
+        zero,
+        (sum, history) =>
+            sum +
+            BalanceRaw(
+                confirmed: (history.confirmed ? history.value : 0),
+                unconfirmed: (!history.confirmed ? history.value : 0)));
+  }
 }
 
 // byConfirmed

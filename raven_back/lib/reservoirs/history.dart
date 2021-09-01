@@ -19,22 +19,6 @@ class HistoryReservoir extends Reservoir<_TxHashKey, History> {
     bySecurity = addIndexMultiple('security', _SecurityKey());
   }
 
-  /// Master overview /////////////////////////////////////////////////////////
-
-  Iterable<History> unspentsByTicker({Security security = RVN}) {
-    return bySecurity.getAll(security).where((history) => history.value > 0);
-  }
-
-  BalanceRaw balanceByTicker({Security security = RVN}) {
-    return unspentsByTicker(security: security).fold(
-        BalanceRaw(confirmed: 0, unconfirmed: 0),
-        (sum, history) =>
-            sum +
-            BalanceRaw(
-                confirmed: (history.position > -1 ? history.value : 0),
-                unconfirmed: history.value));
-  }
-
   /// remove logic ////////////////////////////////////////////////////////////
 
   void removeHistories(String scripthash) {
