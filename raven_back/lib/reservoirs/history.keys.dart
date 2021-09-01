@@ -8,10 +8,7 @@ class _TxHashKey extends Key<History> {
 }
 
 extension ByIdMethodsForHistory on Index<_TxHashKey, History> {
-  History? getOne(String hash) {
-    var histories = getByKeyStr(hash);
-    return histories.isEmpty ? null : histories.first;
-  }
+  History? getOne(String hash) => getByKeyStr(hash).firstOrNull;
 }
 
 // byAccount

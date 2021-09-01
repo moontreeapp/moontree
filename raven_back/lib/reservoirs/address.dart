@@ -1,4 +1,4 @@
-import 'package:ordered_set/ordered_set.dart';
+import 'package:collection/collection.dart';
 import 'package:raven/records/records.dart';
 import 'package:reservoir/reservoir.dart';
 

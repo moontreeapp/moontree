@@ -1,5 +1,42 @@
 // dart test test/sandbox/dart_test.dart
 import 'package:test/test.dart';
+import 'package:date_format/date_format.dart';
+
+showFormats() {
+  print('0' + formatDate(DateTime(1989, 2, 21), [yyyy, '-', mm, '-', dd]));
+  print('1' + formatDate(DateTime(1989, 2, 21), [yy, '-', m, '-', dd]));
+  print('2' + formatDate(DateTime(1989, 2, 1), [yy, '-', m, '-', d]));
+  print('3' + formatDate(DateTime(1989, 2, 1), [yy, '-', MM, '-', d]));
+  print('4' + formatDate(DateTime(1989, 2, 21), [yy, '-', M, '-', d]));
+  print('5' + formatDate(DateTime(1989, 2, 1), [yy, '-', M, '-', d]));
+  print('6' + formatDate(DateTime(2018, 1, 14), [yy, '-', M, '-', DD]));
+  print('7' + formatDate(DateTime(2018, 1, 14), [yy, '-', M, '-', D]));
+  print('8' +
+      formatDate(DateTime(1989, 02, 1, 15, 40, 10), [HH, ':', nn, ':', ss]));
+  print('9' +
+      formatDate(
+          DateTime(1989, 02, 1, 15, 40, 10), [hh, ':', nn, ':', ss, ' ', am]));
+  print('10' +
+      formatDate(
+          DateTime(1989, 02, 1, 15, 40, 10), [hh, ':', nn, ':', ss, ' ', am]));
+  print('11' + formatDate(DateTime(1989, 02, 1, 15, 40, 10), [hh]));
+  print('12' + formatDate(DateTime(1989, 02, 1, 15, 40, 10), [h]));
+  print('13' + formatDate(DateTime(1989, 02, 1, 5), [am]));
+  print('14' + formatDate(DateTime(1989, 02, 1, 15), [am]));
+  print('15' +
+      formatDate(DateTime(1989, 02, 1, 15, 40, 10), [HH, ':', nn, ':', ss, z]));
+  print('16' +
+      formatDate(
+          DateTime(1989, 02, 1, 15, 40, 10), [HH, ':', nn, ':', ss, ' ', Z]));
+  print('17' + formatDate(DateTime(1989, 02, 21), [yy, ' ', w]));
+  print('18' + formatDate(DateTime(1989, 02, 21), [yy, ' ', W]));
+  print('19' + formatDate(DateTime(1989, 12, 31), [yy, '-W', W]));
+  print('20' + formatDate(DateTime(1989, 1, 1), [yy, '-', mm, '-w', W]));
+  print('21' +
+      formatDate(
+          DateTime(1989, 02, 1, 15, 40, 10), [HH, ':', nn, ':', ss, ' ', Z]));
+  print('22' + formatDate(DateTime(2020, 04, 18, 21, 14), [H, '\\h', n]));
+}
 
 enum SettingName { Electrum_Url, Electrum_Port }
 void main() {
@@ -81,5 +118,17 @@ void main() {
     var combos3 = ['a', 'b', 'a', 'b', 'a', 'c'];
     print(combos3.toSet());
     print(combos3.toSet().toList());
+  });
+
+  test('DateTime readable', () {
+    print(DateTime.now()
+        .subtract(Duration(
+          days: 3,
+          hours: 9,
+        ))
+        .toString());
+    showFormats();
+
+    print(formatDate(DateTime(1989, 2, 1), [MM, ' ', d, ', ', yyyy]));
   });
 }
