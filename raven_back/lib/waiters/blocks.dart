@@ -25,7 +25,7 @@ class BlockSubscriptionWaiter extends Waiter {
 
   void subscribe() {
     var stream = client!.subscribeHeaders();
-    listeners.add(stream.listen(
-        (blockHeader) => blocks.save(Block.fromBlockHeader(blockHeader))));
+    listeners.add(stream.listen((blockHeader) async =>
+        await blocks.save(Block.fromBlockHeader(blockHeader))));
   }
 }

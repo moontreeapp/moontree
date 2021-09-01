@@ -7,6 +7,7 @@ part 'balance.keys.dart';
 
 class BalanceReservoir extends Reservoir<_AccountSecurityKey, Balance> {
   late IndexMultiple<_AccountKey, Balance> byAccount;
+  // maybe by wallet too?
 
   BalanceReservoir([source])
       : super(source ?? HiveSource('balances'), _AccountSecurityKey()) {
