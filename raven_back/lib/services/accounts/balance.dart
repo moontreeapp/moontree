@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:quiver/iterables.dart';
 import 'package:reservoir/change.dart';
 import 'package:sorted_list/sorted_list.dart';
 
@@ -14,7 +15,7 @@ class BalanceService extends Service {
 
   BalanceService(this.balances, this.histories) : super();
 
-  // Get (sum) the balance for an account-security pair
+  /// Get (sum) the balance for an account-security pair
   Balance sumBalance(String accountId, Security security) => Balance(
       accountId: accountId,
       security: security,
@@ -25,56 +26,54 @@ class BalanceService extends Service {
           .unconfirmed(accountId, security: security)
           .fold(0, (sum, history) => sum + history.value));
 
-  // If there is a change in its history, recalculate a balance. Return a list
-  // of such balances.
+  /// If there is a change in its history, recalculate a balance. Return a list
+  /// of such balances.
   Iterable<Balance> getChangedBalances(List<Change> changes) =>
       uniquePairsFromHistoryChanges(changes)
           .map((pair) => sumBalance(pair.accountId, pair.security));
 
-  // Same as getChangedBalances, but saves them all as well.
+  /// Same as getChangedBalances, but saves them all as well.
   Future<Iterable<Balance>> saveChangedBalances(List<Change> changes) async {
     var changed = getChangedBalances(changes);
     await balances.saveAll(changed.toList());
     return changed;
   }
 
-  SortedList<History> sortedUTXOs(String accountId) {
-    var sortedList = SortedList<History>(
-        (History a, History b) => a.value.compareTo(b.value));
-    sortedList.addAll(histories.byAccount.unspents(accountId));
-    return sortedList;
-  }
+  /// Sort in descending order, from largest amount to smallest amount
+  List<History> sortedUnspents(String accountId) =>
+      histories.byAccount.unspents(accountId).toList()
+        ..sort((a, b) => b.value.compareTo(a.value));
 
-  /// returns the smallest number of inputs to satisfy the amount
-  List<History> collectUTXOs(String accountId, int amount,
-      [List<History>? except]) {
-    var ret = <History>[];
-    var balance = balances.getRVN(accountId);
-    if (balance.confirmed < amount) {
+  /// Asserts that the asset in the account is greater than `amount`
+  void assertSufficientFunds(int amount, String accountId,
+      {Security security = RVN}) {
+    if (balances.getOrZero(accountId, security: security).confirmed < amount) {
       throw InsufficientFunds();
     }
-    var utxos = sortedUTXOs(accountId);
-    utxos.removeWhere((utxo) => (except ?? []).contains(utxo));
-    /* can we find an ideal singular utxo? */
-    for (var i = 0; i < utxos.length; i++) {
-      if (utxos[i].value >= amount) {
-        return [utxos[i]];
-      }
+  }
+
+  /// Returns the smallest number of inputs to satisfy the amount
+  List<History> collectUTXOs(String accountId, int amount,
+      [List<History> except = const []]) {
+    assertSufficientFunds(amount, accountId);
+
+    var histories = sortedUnspents(accountId)
+      ..removeWhere((utxo) => except.contains(utxo));
+
+    // Can we find a single, ideal UTXO by searching from smallest to largest?
+    for (var history in histories.reversed) {
+      if (history.value >= amount) return [history];
     }
-    /* what combinations of utxo's must we return?
-    lets start by grabbing the largest one
-    because we know we can consume it all without producing change...
-    and lets see how many times we can do that */
-    var remainder = amount;
-    for (var i = utxos.length - 1; i >= 0; i--) {
-      if (remainder < utxos[i].value) {
-        break;
-      }
-      ret.add(utxos[i]);
-      remainder = (remainder - utxos[i].value).toInt();
+
+    // Otherwise, satisfy the amount by combining UTXOs from largest to smallest
+    var collection = <History>[];
+    var remaining = amount;
+    for (var history in histories) {
+      if (remaining > 0) collection.add(history);
+      if (remaining < history.value) break;
+      remaining -= history.value;
     }
-    // Find one last UTXO, starting from smallest, that satisfies the remainder
-    ret.add(utxos.firstWhere((utxo) => utxo.value >= remainder));
-    return ret;
+
+    return collection;
   }
 }
