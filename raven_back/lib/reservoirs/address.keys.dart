@@ -7,7 +7,7 @@ class _ScripthashKey extends Key<Address> {
   String getKey(Address address) => address.scripthash;
 }
 
-extension ByRawScripthashMethodsForAddress on Index<_AccountKey, Address> {
+extension ByRawScripthashMethodsForAddress on Index<_ScripthashKey, Address> {
   Address? getOne(String scripthash) => getByKeyStr(scripthash).firstOrNull;
 }
 
