@@ -61,5 +61,13 @@ void main() async {
       expect(balanceService.balances.primaryIndex.getOne('a0', RVN),
           updatedBalance);
     });
+
+    test('sortedUnspents', () {
+      expect(balanceService.sortedUnspents('a0'), [
+        fixtures.histories().map['3'],
+        fixtures.histories().map['0'],
+        fixtures.histories().map['1'],
+      ]);
+    });
   });
 }

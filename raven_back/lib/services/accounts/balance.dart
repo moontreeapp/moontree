@@ -14,7 +14,7 @@ class BalanceService extends Service {
 
   BalanceService(this.balances, this.histories) : super();
 
-  // Get (sum) the balance for an account-security pair
+  /// Get (sum) the balance for an account-security pair
   Balance sumBalance(String accountId, Security security) => Balance(
       accountId: accountId,
       security: security,
@@ -25,25 +25,23 @@ class BalanceService extends Service {
           .unconfirmed(accountId, security: security)
           .fold(0, (sum, history) => sum + history.value));
 
-  // If there is a change in its history, recalculate a balance. Return a list
-  // of such balances.
+  /// If there is a change in its history, recalculate a balance. Return a list
+  /// of such balances.
   Iterable<Balance> getChangedBalances(List<Change> changes) =>
       uniquePairsFromHistoryChanges(changes)
           .map((pair) => sumBalance(pair.accountId, pair.security));
 
-  // Same as getChangedBalances, but saves them all as well.
+  /// Same as getChangedBalances, but saves them all as well.
   Future<Iterable<Balance>> saveChangedBalances(List<Change> changes) async {
     var changed = getChangedBalances(changes);
     await balances.saveAll(changed.toList());
     return changed;
   }
 
-  SortedList<History> sortedUTXOs(String accountId) {
-    var sortedList = SortedList<History>(
-        (History a, History b) => a.value.compareTo(b.value));
-    sortedList.addAll(histories.byAccount.unspents(accountId));
-    return sortedList;
-  }
+  /// Sort in descending order, from largest amount to smallest amount
+  List<History> sortedUnspents(String accountId) =>
+      histories.byAccount.getAll(accountId)
+        ..sort((a, b) => b.value.compareTo(a.value));
 
   /// returns the smallest number of inputs to satisfy the amount
   List<History> collectUTXOs(String accountId, int amount,
@@ -53,7 +51,7 @@ class BalanceService extends Service {
     if (balance.confirmed < amount) {
       throw InsufficientFunds();
     }
-    var utxos = sortedUTXOs(accountId);
+    var utxos = sortedUnspents(accountId);
     utxos.removeWhere((utxo) => (except ?? []).contains(utxo));
     /* can we find an ideal singular utxo? */
     for (var i = 0; i < utxos.length; i++) {
