@@ -64,10 +64,17 @@ void main() async {
 
     test('sortedUnspents', () {
       expect(balanceService.sortedUnspents('a0'), [
-        fixtures.histories().map['3'],
-        fixtures.histories().map['0'],
-        fixtures.histories().map['1'],
+        fixtures.histories().map['3'], // 10 RVN
+        fixtures.histories().map['0'], // 5 RVN
       ]);
+    });
+
+    test('collectUTXOs', () {
+      expect(() => balanceService.collectUTXOs('a0', 16), throwsException);
+      expect(balanceService.collectUTXOs('a0', 15),
+          [fixtures.histories().map['3'], fixtures.histories().map['0']]);
+      expect(balanceService.collectUTXOs('a0', 14),
+          [fixtures.histories().map['3'], fixtures.histories().map['0']]);
     });
   });
 }

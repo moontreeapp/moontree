@@ -13,11 +13,11 @@ class BalanceReservoir extends Reservoir<_AccountSecurityKey, Balance> {
     byAccount = addIndexMultiple('account', _AccountKey());
   }
 
-  Balance getRVN(String accountId) =>
-      primaryIndex.getOne(accountId, RVN) ??
+  Balance getOrZero(String accountId, {Security security = RVN}) =>
+      primaryIndex.getOne(accountId, security) ??
       Balance(
         accountId: accountId,
-        security: RVN,
+        security: security,
         confirmed: 0,
         unconfirmed: 0,
       );
