@@ -14,7 +14,7 @@ class BalanceReservoir extends Reservoir<_AccountSecurityKey, Balance> {
   }
 
   Balance getRVN(String accountId) =>
-      primaryIndex.getAll(accountId, RVN).firstOrNull ??
+      primaryIndex.getOne(accountId, RVN) ??
       Balance(
         accountId: accountId,
         security: RVN,

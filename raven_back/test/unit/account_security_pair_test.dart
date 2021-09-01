@@ -19,14 +19,14 @@ void main() async {
 
   test('uniquePairsFromHistoryChanges', () {
     var changes = [
-      Added(0, histories.map['0']),
-      Added(1, histories.map['1']),
-      Updated(0, histories.map['0'])
+      Added(0, histories().map['0']),
+      Added(1, histories().map['1']),
+      Updated(0, histories().map['0'])
     ];
     var pairs = uniquePairsFromHistoryChanges(changes);
     expect(pairs, {
-      AccountSecurityPair('a1', RVN),
-      AccountSecurityPair('a1', USD),
+      AccountSecurityPair('a0', RVN),
+      AccountSecurityPair('a0', USD),
     });
   });
 }

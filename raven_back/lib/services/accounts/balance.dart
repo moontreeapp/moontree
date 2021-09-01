@@ -31,8 +31,12 @@ class BalanceService extends Service {
       uniquePairsFromHistoryChanges(changes)
           .map((pair) => sumBalance(pair.accountId, pair.security));
 
-  void saveChangedBalances(List<Change> changes) =>
-      getChangedBalances(changes).forEach((balance) => balances.save(balance));
+  // Same as getChangedBalances, but saves them all as well.
+  Future<Iterable<Balance>> saveChangedBalances(List<Change> changes) async {
+    var changed = getChangedBalances(changes);
+    await balances.saveAll(changed.toList());
+    return changed;
+  }
 
   // runs it for all  and all security
   void recalculateBalance(_changes) {

@@ -8,5 +8,5 @@ String _headerToKey() {
 
 class _HeaderKey extends Key<Block> {
   @override
-  String getKey(Block header) => _headerToKey();
+  String getKey(Block header) => _headerToKey(/* header.height for multiple */);
 }

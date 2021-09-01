@@ -14,8 +14,8 @@ class _AccountSecurityKey extends Key<Balance> {
 
 extension ByAccountSecurityMethodsForBalance
     on Index<_AccountSecurityKey, Balance> {
-  List<Balance> getAll(String accountId, Security security) =>
-      getByKeyStr(_accountSecurityToKey(accountId, security));
+  Balance? getOne(String accountId, Security security) =>
+      getByKeyStr(_accountSecurityToKey(accountId, security)).firstOrNull;
 }
 
 // byAccount
