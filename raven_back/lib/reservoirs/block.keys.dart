@@ -11,8 +11,7 @@ class _HeaderKey extends Key<Block> {
   String getKey(Block header) => _headerToKey(header.height);
 }
 
-// really want the most recent saved, the max height... 
+// really want the most recent saved, the max height...
 extension ByHeaderMethodsForBlock on Index<_HeaderKey, Block> {
-  List<Block> getOne(int height) =>
-      getByKeyStr(_headerToKey(height)).firstOrNull;
+  Block? getOne(int height) => getByKeyStr(_headerToKey(height)).firstOrNull;
 }
