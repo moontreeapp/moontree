@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:date_format/date_format.dart';
 import 'package:raven/raven.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
@@ -18,6 +19,9 @@ class _TransactionState extends State<Transaction> {
   @override
   void initState() {
     super.initState();
+    blocks.changes.listen((changes) {
+      setState(() {});
+    });
   }
 
   @override
@@ -28,6 +32,7 @@ class _TransactionState extends State<Transaction> {
     /*Tron — Yesterday at 6:51 PM
       You can add messages to transactions by putting the IPFS hash of the message in the OP_RETURN.
       They're called memos. They will be public.*/
+
     return DefaultTabController(
         length: metadata ? 2 : 1,
         child: Scaffold(
@@ -37,6 +42,32 @@ class _TransactionState extends State<Transaction> {
                 FloatingActionButtonLocation.centerFloat,
             bottomNavigationBar: RavenButton.bottomNav(context)));
   }
+
+  int? getBlocksBetweenHelper({History? transaction, Block? current}) {
+    transaction = transaction ?? data['transaction']!;
+    current = current ?? blocks.latest;
+    return current != null && transaction != null
+        ? current.height - transaction.height
+        : null;
+  }
+
+  String getDateBetweenHelper() =>
+      'Date: ' +
+      (getBlocksBetweenHelper() != null
+          ? formatDate(
+              DateTime.now().subtract(Duration(
+                days: (getBlocksBetweenHelper()! / 1440).floor(),
+                hours:
+                    (((getBlocksBetweenHelper()! / 1440) % 1440) / 60).floor(),
+              )),
+              [MM, ' ', d, ', ', yyyy])
+          : 'unknown');
+
+  String getConfirmationsBetweenHelper() =>
+      'Confirmaitons: ' +
+      (getBlocksBetweenHelper() != null
+          ? getBlocksBetweenHelper().toString()
+          : 'unknown');
 
   PreferredSize header(bool metadata) => PreferredSize(
       preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
@@ -75,32 +106,9 @@ class _TransactionState extends State<Transaction> {
         ListView(shrinkWrap: true, padding: EdgeInsets.all(20.0), children: <
             Widget>[
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text(
-                'Date: June 26 2021', // estimated date based on (current height - data['transaction']!.height)
+            Text(getDateBetweenHelper(),
                 style: TextStyle(color: Theme.of(context).disabledColor)),
-
-            // requires client to talk to electrum...
-            // no we should save this in a reservoir with a listener...
-            //
-            // should we get every header? or should getting the header trigger when we open this page.
-            // that would cost the user, but save on bandwidth to the electrumx server...
-            //
-            // how about we use a service for now.
-            // gets most header on demand... saves it into a reservoir,
-            // this page listens to res and updates when the data gets here.
-            //  in build call blockchainService.callForHeader();
-            //
-            // discuss cost of listening for headers with duane and kralverde
-            // we listen to scripthashes but its rare that transactions occur
-            // headers happen every 2 minutes guaranteed and the server might
-            // get overwhelmed with so many apps running...
-            //
-            Text(
-                'Confirmaitons: ' +
-                    ((blocks.latestBlock?.height ??
-                                data['transaction']!.height) -
-                            data['transaction']!.height)
-                        .toString(),
+            Text(getConfirmationsBetweenHelper(),
                 style: TextStyle(color: Theme.of(context).disabledColor)),
           ]),
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
@@ -108,24 +116,25 @@ class _TransactionState extends State<Transaction> {
             SizedBox(height: 15.0),
             TextField(
               readOnly: true,
-              controller: TextEditingController(
-                  text:
-                      'rtahoe5eu4e4ea451ea21e445euaeu454' //// data['transaction']!.scripthash - get address of...
-                  ),
               decoration: InputDecoration(
                   border: UnderlineInputBorder(),
                   labelText: 'To',
                   hintText: 'Address'),
+              controller: TextEditingController(
+                  text: addresses.primaryIndex
+                          .getOne(data['transaction']!.scripthash)
+                          ?.address ??
+                      'unkown'),
             ),
             SizedBox(height: 15.0),
             TextField(
               readOnly: true,
-              controller: TextEditingController(
-                  text: data['transaction']!.value.toString()),
               decoration: InputDecoration(
                   border: UnderlineInputBorder(),
                   labelText: 'Amount',
                   hintText: 'Quantity'),
+              controller: TextEditingController(
+                  text: data['transaction']!.value.toString()),
             ),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text('fee',
