@@ -18,11 +18,11 @@ class BalanceService extends Service {
   Balance sumBalance(String accountId, Security security) => Balance(
       accountId: accountId,
       security: security,
-      confirmed: histories
-          .unspentsByAccount(accountId, security: security)
+      confirmed: histories.byAccount
+          .unspents(accountId, security: security)
           .fold(0, (sum, history) => sum + history.value),
-      unconfirmed: histories
-          .unconfirmedByAccount(accountId, security: security)
+      unconfirmed: histories.byAccount
+          .unconfirmed(accountId, security: security)
           .fold(0, (sum, history) => sum + history.value));
 
   // If there is a change in its history, recalculate a balance. Return a list
@@ -41,7 +41,7 @@ class BalanceService extends Service {
   SortedList<History> sortedUTXOs(String accountId) {
     var sortedList = SortedList<History>(
         (History a, History b) => a.value.compareTo(b.value));
-    sortedList.addAll(histories.unspentsByAccount(accountId));
+    sortedList.addAll(histories.byAccount.unspents(accountId));
     return sortedList;
   }
 
