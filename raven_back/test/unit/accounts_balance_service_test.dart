@@ -23,5 +23,9 @@ void main() async {
     test('sumBalance (not in mempool)', () {
       expect(balanceService.sumBalance('a0', RVN).confirmed, 15);
     });
+
+    test('sumBalance (in mempool)', () {
+      expect(balanceService.sumBalance('a1', RVN).unconfirmed, 10);
+    });
   });
 }
