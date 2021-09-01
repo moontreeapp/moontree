@@ -17,18 +17,15 @@ class BlockAdapter extends TypeAdapter<Block> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Block(
-      hex: fields[0] as String,
-      height: fields[1] as int,
+      height: fields[0] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, Block obj) {
     writer
-      ..writeByte(2)
-      ..writeByte(0)
-      ..write(obj.hex)
       ..writeByte(1)
+      ..writeByte(0)
       ..write(obj.height);
   }
 

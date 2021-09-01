@@ -9,20 +9,21 @@ part 'block.g.dart';
 @HiveType(typeId: TypeId.Block)
 class Block with EquatableMixin {
   @HiveField(0)
-  final String hex;
-
-  @HiveField(1)
   final int height;
 
-  Block({required this.hex, required this.height});
+  // what information do we need about blockchain? just current height I think.
+  //@HiveField(1)
+  //final int hex or blocktime or... idk;
+
+  Block({required this.height});
 
   @override
-  List<Object> get props => [hex, height];
+  List<Object> get props => [height];
 
   @override
-  String toString() => 'Balance($hex, $height)';
+  String toString() => 'Balance($height)';
 
   factory Block.fromBlockHeader(BlockHeader blockHeader) {
-    return Block(hex: blockHeader.hex, height: blockHeader.height);
+    return Block(height: blockHeader.height);
   }
 }
