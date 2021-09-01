@@ -35,58 +35,6 @@ class HistoryReservoir extends Reservoir<_TxHashKey, History> {
                 unconfirmed: history.value));
   }
 
-  /// Account overview ////////////////////////////////////////////////////////
-  /// could these be turned into an index?
-  /// returns a series of spendable transactions for an account and asset
-
-  Iterable<History> transactionsByAccount(String accountId,
-      {Security security = RVN}) {
-    return byAccount.getAll(accountId).where((history) =>
-        history.confirmed && // not in mempool
-        history.security == security);
-  }
-
-  Iterable<History> unspentsByAccount(String accountId,
-      {Security security = RVN}) {
-    return byAccount.getAll(accountId).where((history) =>
-        history.value > 0 && // unspent
-        history.confirmed && // not in mempool
-        history.security == security);
-  }
-
-  Iterable<History> unconfirmedByAccount(String accountId,
-      {Security security = RVN}) {
-    return byAccount.getAll(accountId).where((history) =>
-        history.value > 0 && // unspent
-        !history.confirmed && // in mempool
-        history.security == security);
-  }
-
-  /// Wallet overview /////////////////////////////////////////////////////////
-
-  Iterable<History> transactionsByWallet(String walletId,
-      {Security security = RVN}) {
-    return byWallet.getAll(walletId).where((history) =>
-        history.confirmed && // not in mempool
-        history.security == security);
-  }
-
-  Iterable<History> unspentsByWallet(String walletId,
-      {Security security = RVN}) {
-    return byWallet.getAll(walletId).where((history) =>
-        history.value > 0 && // unspent
-        history.confirmed && // not in mempool
-        history.security == security);
-  }
-
-  Iterable<History> unconfirmedByWallet(String walletId,
-      {Security security = RVN}) {
-    return byWallet.getAll(walletId).where((history) =>
-        history.value > 0 && // unspent
-        !history.confirmed && // in mempool
-        history.security == security);
-  }
-
   /// remove logic ////////////////////////////////////////////////////////////
 
   void removeHistories(String scripthash) {
