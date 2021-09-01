@@ -58,8 +58,8 @@ void main() async {
           accountId: 'a0', security: RVN, confirmed: 40, unconfirmed: 0);
       expect(changedBalances.toList(), [updatedBalance]);
       // saveChangedBalances saves the result
-      expect(balanceService.balances.primaryIndex.getAll('a0', RVN),
-          [updatedBalance]);
+      expect(balanceService.balances.primaryIndex.getOne('a0', RVN),
+          updatedBalance);
     });
   });
 }
