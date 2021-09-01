@@ -25,8 +25,8 @@ void main() async {
     ];
     var pairs = uniquePairsFromHistoryChanges(changes);
     expect(pairs, {
-      AccountSecurityPair('a1', RVN),
-      AccountSecurityPair('a1', USD),
+      AccountSecurityPair('a0', RVN),
+      AccountSecurityPair('a0', USD),
     });
   });
 }
