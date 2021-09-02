@@ -67,8 +67,11 @@ class _SendState extends State<Send> {
                   style: Theme.of(context).textTheme.headline3),
               SizedBox(height: 15.0),
               Text(
-                  RavenText.securityInUSD(
-                      RavenText.amountSats(double.parse(sendAmount.text)),
+                  RavenText.securityAsReadable(
+                      RavenText.amountSats(
+                        double.parse(sendAmount.text),
+                        percision: 8, /* get asset percision...*/
+                      ),
                       symbol: data['symbol']),
                   style: Theme.of(context).textTheme.headline5),
               SizedBox(height: 15.0),

@@ -14,20 +14,39 @@ int amountAsSats(double amount, {int percision = 8}) =>
 double satsAsAmount(int sats, {int percision = 8}) =>
     (sats / int.parse('1' + '0' * percision));
 
-/// asset sats -> asset -> rvn -> usd
-/// rvn sats -> rvn -> usd
-String securityToUSD(int sats, {Security? security, String? symbol}) {
+/// returns a string representation of the sats (all value is stored as sats in the backend)
+String humanReadableSecurity(
+  int sats, {
+  Security? security,
+  String? symbol,
+  bool asUSD = false,
+}) {
   security ??
       symbol ??
       (() => throw OneOfMultipleMissing(
           'security or symbol required to identify record.'))();
-  security = Security(
-      symbol: security?.symbol ?? symbol ?? '',
-      securityType: SecurityType.RavenAsset); // only used for assets
-  return security.symbol == 'RVN'
-      ? RavenText.rvnUSD(RavenText.satsRVN(sats))
-      : RavenText.rvnUSD(
-          RavenText.satsToAmount(sats) * rates.assetToRVN(security));
+  symbol = security?.symbol ?? symbol ?? 'RVN';
+  if (symbol == 'RVN') {
+    /// rvn sats -> rvn -> usd
+    var asAmount = (symbol == 'RVN'
+        ? RavenText.satsRVN(sats)
+        : RavenText.satsToAmount(sats));
+    return asUSD
+        ? RavenText.rvnUSD(RavenText.satsRVN(sats))
+        : asAmount.toString();
+  }
+
+  /// asset sats -> asset -> rvn -> usd
+  security = security ??
+      Security(symbol: symbol, securityType: SecurityType.RavenAsset);
+  return asUSD
+      ? RavenText.rvnUSD(RavenText.satsToAmount(
+            sats, /* percision: symbol.percision... */
+          ) *
+          rates.assetToRVN(security))
+      : RavenText.satsToAmount(
+          sats, /* percision: symbol.percision... */
+        ).toString();
 }
 
 class RavenText {
@@ -35,10 +54,17 @@ class RavenText {
 
   static String rvnUSD(double balance) =>
       toUSDBalance(balance: balance, rate: rates.rvnToUSD);
+
   static int rvnSats(double amount) => amountAsSats(amount);
   static double satsRVN(int amount) => satsAsAmount(amount);
-  static double satsToAmount(int sats) => satsAsAmount(sats);
-  static int amountSats(double amount) => amountAsSats(amount);
-  static String securityInUSD(int sats, {Security? security, String? symbol}) =>
-      securityToUSD(sats, security: security, symbol: symbol);
+
+  static double satsToAmount(int sats, {int percision = 8}) =>
+      satsAsAmount(sats, percision: percision);
+  static int amountSats(double amount, {int percision = 8}) =>
+      amountAsSats(amount, percision: percision);
+
+  static String securityAsReadable(int sats,
+          {Security? security, String? symbol, bool asUSD = false}) =>
+      humanReadableSecurity(sats,
+          security: security, symbol: symbol, asUSD: asUSD);
 }

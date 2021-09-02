@@ -40,12 +40,12 @@ class _TechnicalViewState extends State<TechnicalView> {
     settings.changes.listen((changes) {
       setState(() {});
     });
-    wallets.changes.listen((changes) {
-      setState(() {});
-    });
-    accounts.changes.listen((changes) {
-      setState(() {});
-    });
+    //wallets.changes.listen((changes) {
+    //  setState(() {});
+    //});
+    //accounts.changes.listen((changes) {
+    //  setState(() {});
+    //});
   }
 
   @override
@@ -61,23 +61,122 @@ class _TechnicalViewState extends State<TechnicalView> {
         title: Text('Technical View'),
       );
 
-  Column body() {
-    return Column(children: <Widget>[
-      _heading(),
-      _accounts(),
-    ]);
+  ReorderableListView body() {
+    return ReorderableListView(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      header: _header(),
+      children: <Widget>[
+        for (var account in accounts.data) ...[
+          // just account
+          //ListTile(
+          //  key: Key(account.id),
+          //  //onTap: () {},
+          //  //onLongPress: () {/* rename? */},
+          //  //leading: RavenIcon.accountAvatar(), //alternative Icon(Icons.more_horiz) to show movable
+          //  title: Text(
+          //    account.name,
+          //    //style: Theme.of(context).textTheme.bodyText1
+          //  ),
+          //  //trailing:  (drag target) [ delete, import-> set that account as current and go to import page, export -> file ],
+          //)
+          DragTarget<Wallet>(
+              key: Key(account.id),
+              builder: (
+                BuildContext context,
+                List<dynamic> accepted,
+                List<dynamic> rejected,
+              ) =>
+                  ListTile(title: Text(account.name)),
+              onAcceptWithDetails: (details) {
+                /// change the accountId for this wallet and save
+                var wallet = details.data;
+                wallets.save(wallet is LeaderWallet
+                        ? LeaderWallet(
+                            id: wallet.id,
+                            accountId: account.id,
+                            encryptedSeed: wallet.encryptedSeed)
+                        : wallet is SingleWallet
+                            ? SingleWallet(
+                                id: wallet.id,
+                                accountId: account.id,
+                                encryptedPrivateKey: wallet.encryptedPrivateKey)
+                            : SingleWallet(
+                                id: wallet.id,
+                                accountId: account.id,
+                                encryptedPrivateKey: (wallet as SingleWallet)
+                                    .encryptedPrivateKey) // placeholder for other wallets
+                    );
+              }),
+
+          for (var wallet in wallets.byAccount.getAll(account.id)) ...[
+            /// for moving a wallet to a different account...
+            Draggable<Wallet>(
+                key: Key(wallet.id),
+                data: wallet,
+                child: ListTile(
+                  onTap: () {/*view details?*/},
+                  onLongPress: () {},
+                  leading: RavenIcon.walletAvatar(
+                      wallet), //alternative Icon(Icons.more_horiz) to show movable
+                  title: Text(
+                      wallet.kind + ' ' + wallet.id.substring(0, 5) + '...',
+                      style: Theme.of(context).textTheme.bodyText2),
+                  //trailing: [ delete, view details?, export -> show private key or seed phrase ],
+                ),
+                feedback: ListTile(
+                  onTap: () {/*view details?*/},
+                  onLongPress: () {},
+                  leading: RavenIcon.walletAvatar(
+                      wallet), //alternative Icon(Icons.more_horiz) to show movable
+                  title: Text(
+                      wallet.kind + ' ' + wallet.id.substring(0, 5) + '...',
+                      style: Theme.of(context).textTheme.bodyText2),
+                  //trailing: [ delete, view details?, export -> show private key or seed phrase ],
+                ),
+                childWhenDragging: ListTile(
+                  onTap: () {/*view details?*/},
+                  onLongPress: () {},
+                  leading: RavenIcon.walletAvatar(
+                      wallet), //alternative Icon(Icons.more_horiz) to show movable
+                  title: Text(
+                      wallet.kind + ' ' + wallet.id.substring(0, 5) + '...',
+                      style: Theme.of(context).textTheme.bodyText2),
+                  // without childWhenDragging ... if we place it in an illegal location what happens?
+                ))
+          ]
+        ]
+      ],
+      onReorder: (int oldIndex, int newIndex) {
+        var order = settings.accountOrder;
+        var movedId = order[oldIndex];
+        var pushId = order[newIndex];
+        order.remove(movedId);
+        order = [
+          for (var item in order) ...[
+            if (item == pushId) ...[movedId, item] else item
+          ]
+        ];
+        settings.saveAccountOrder(order);
+      },
+    );
+
+    //Column(children: <Widget>[
+    //  _heading(),
+    //  _accounts(),
+    //]);
   }
 
-  ListTile _heading() => ListTile(
+  ListTile _header() => ListTile(
         onTap: () {},
         onLongPress: () {},
         leading: RavenIcon.appAvatar(),
         title:
-            Text('All Accounts', style: Theme.of(context).textTheme.headline1),
+            Text('All Accounts', style: Theme.of(context).textTheme.bodyText1),
         //trailing: [ import -> import page, export all accounts -> file],
       );
 
-  ListView _accounts() => ListView(children: <Widget>[
+  //ListView _accounts() => ListView(shrinkWrap: true, children: <Widget>[
+  List<Widget> _accounts() => <Widget>[
         for (var account in accounts.data) ...[
           DragTarget<Account>(
               builder: (
@@ -116,16 +215,17 @@ class _TechnicalViewState extends State<TechnicalView> {
                         leading: RavenIcon
                             .accountAvatar(), //alternative Icon(Icons.more_horiz) to show movable
                         title: Text(account.name,
-                            style: Theme.of(context).textTheme.headline2),
+                            style: Theme.of(context).textTheme.bodyText1),
                         //trailing:  (drag target) [ delete, import-> set that account as current and go to import page, export -> file ],
                       ),
                       feedback: ListTile(
+                        key: Key(account.id),
                         onTap: () {},
                         onLongPress: () {/* rename? */},
                         leading: RavenIcon
                             .accountAvatar(), //alternative Icon(Icons.more_horiz) to show movable
                         title: Text(account.name,
-                            style: Theme.of(context).textTheme.headline2),
+                            style: Theme.of(context).textTheme.bodyText1),
                         //trailing:  (drag target) [ delete, import-> set that account as current and go to import page, export -> file ],
                       )),
               onAcceptWithDetails: (details) {
@@ -148,11 +248,12 @@ class _TechnicalViewState extends State<TechnicalView> {
                                     .encryptedPrivateKey) // placeholder for other wallets
                     );
               }),
-          _wallets(account),
+          //_wallets(account),
         ]
-      ]);
+      ];
+  //);
 
-  ListView _wallets(account) => ListView(children: <Widget>[
+  ListView _wallets(account) => ListView(shrinkWrap: true, children: <Widget>[
         for (var wallet in wallets.byAccount.getAll(account.id)) ...[
           /// for moving a wallet to a different account...
           Draggable<Wallet>(
@@ -164,7 +265,7 @@ class _TechnicalViewState extends State<TechnicalView> {
                     wallet), //alternative Icon(Icons.more_horiz) to show movable
                 title: Text(
                     wallet.kind + ' ' + wallet.id.substring(0, 5) + '...',
-                    style: Theme.of(context).textTheme.headline3),
+                    style: Theme.of(context).textTheme.bodyText2),
                 //trailing: [ delete, view details?, export -> show private key or seed phrase ],
               ),
               feedback: ListTile(
@@ -174,11 +275,19 @@ class _TechnicalViewState extends State<TechnicalView> {
                     wallet), //alternative Icon(Icons.more_horiz) to show movable
                 title: Text(
                     wallet.kind + ' ' + wallet.id.substring(0, 5) + '...',
-                    style: Theme.of(context).textTheme.headline3),
+                    style: Theme.of(context).textTheme.bodyText2),
                 //trailing: [ delete, view details?, export -> show private key or seed phrase ],
-              )
-              // without childwhiledragging ... if we place it in an illegal location what happens?
-              )
+              ),
+              childWhenDragging: ListTile(
+                onTap: () {/*view details?*/},
+                onLongPress: () {},
+                leading: RavenIcon.walletAvatar(
+                    wallet), //alternative Icon(Icons.more_horiz) to show movable
+                title: Text(
+                    wallet.kind + ' ' + wallet.id.substring(0, 5) + '...',
+                    style: Theme.of(context).textTheme.bodyText2),
+                // without childWhenDragging ... if we place it in an illegal location what happens?
+              ))
         ]
       ]);
 }

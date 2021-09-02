@@ -19,9 +19,9 @@ class _TransactionState extends State<Transaction> {
   @override
   void initState() {
     super.initState();
-    blocks.changes.listen((changes) {
-      setState(() {});
-    });
+    //blocks.changes.listen((changes) {
+    //  setState(() {});
+    //});
   }
 
   @override
@@ -45,7 +45,7 @@ class _TransactionState extends State<Transaction> {
 
   int? getBlocksBetweenHelper({History? transaction, Block? current}) {
     transaction = transaction ?? data['transaction']!;
-    current = current ?? blocks.latest;
+    current = current ?? Block(height: 0); //blocks.latest;
     return current != null && transaction != null
         ? current.height - transaction.height
         : null;

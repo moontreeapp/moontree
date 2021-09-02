@@ -96,12 +96,10 @@ class _HomeState extends State<Home> {
               style: holding.security.symbol == 'RVN'
                   ? Theme.of(context).textTheme.bodyText1
                   : Theme.of(context).textTheme.bodyText2),
-          trailing: (Text(
-              showUSD
-                  ? RavenText.securityInUSD(holding.value,
-                      security: holding.security)
-                  : holding.value.toString(),
-              style: TextStyle(color: Theme.of(context).good))),
+          trailing: Text(
+              RavenText.securityAsReadable(holding.value,
+                  security: holding.security, asUSD: showUSD),
+              style: TextStyle(color: Theme.of(context).good)),
           leading: RavenIcon.assetAvatar(holding.security.symbol));
       if (holding.security.symbol == 'RVN') {
         rvnHolding.add(thisHolding);
@@ -156,16 +154,12 @@ class _HomeState extends State<Home> {
                   ]),
               trailing: (transaction.value > 0 // == 'in'
                   ? Text(
-                      showUSD
-                          ? RavenText.securityInUSD(transaction.value,
-                              security: transaction.security)
-                          : transaction.value.toString(),
+                      RavenText.securityAsReadable(transaction.value,
+                          security: transaction.security, asUSD: showUSD),
                       style: TextStyle(color: Theme.of(context).good))
                   : Text(
-                      showUSD
-                          ? RavenText.securityInUSD(transaction.value,
-                              security: transaction.security)
-                          : transaction.value.toString(),
+                      RavenText.securityAsReadable(transaction.value,
+                          security: transaction.security, asUSD: showUSD),
                       style: TextStyle(color: Theme.of(context).bad))),
               leading: RavenIcon.assetAvatar(transaction.security.symbol))
       ]);
@@ -234,7 +228,7 @@ class _HomeState extends State<Home> {
                     decoration: InputDecoration(
                         border: UnderlineInputBorder(),
                         labelText: 'Create Account',
-                        hintText: '')),
+                        hintText: 'Billz')),
                 trailing:
                     Icon(Icons.add, size: 26.0, color: Colors.grey.shade800)),
             Divider(height: 20, thickness: 2, indent: 5, endIndent: 5)

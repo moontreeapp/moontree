@@ -41,6 +41,11 @@ class _SettingsState extends State<Settings> {
                 onPressed: (BuildContext context) =>
                     Navigator.pushNamed(context, '/settings/wallet')),
             SettingsTile(
+                title: 'Account Technical View',
+                leading: Icon(Icons.swap_horiz),
+                onPressed: (BuildContext context) =>
+                    Navigator.pushNamed(context, '/settings/technical')),
+            SettingsTile(
                 title: 'P2P Exchange',
                 enabled: false,
                 leading: Icon(Icons.swap_horiz),

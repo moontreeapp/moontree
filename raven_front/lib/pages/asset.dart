@@ -103,16 +103,12 @@ class _AssetState extends State<Asset> {
                   ]),
               trailing: (transaction.value > 0 // == 'in'
                   ? Text(
-                      showUSD
-                          ? RavenText.securityInUSD(transaction.value,
-                              security: transaction.security)
-                          : transaction.value.toString(),
+                      RavenText.securityAsReadable(transaction.value,
+                          security: transaction.security, asUSD: showUSD),
                       style: TextStyle(color: Theme.of(context).good))
                   : Text(
-                      showUSD
-                          ? RavenText.securityInUSD(transaction.value,
-                              security: transaction.security)
-                          : transaction.value.toString(),
+                      RavenText.securityAsReadable(transaction.value,
+                          security: transaction.security, asUSD: showUSD),
                       style: TextStyle(color: Theme.of(context).bad))),
               leading: RavenIcon.assetAvatar(transaction.security.symbol))
         ]

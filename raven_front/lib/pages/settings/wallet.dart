@@ -44,11 +44,6 @@ class _WalletSettingsState extends State<WalletSettings> {
               onPressed: (BuildContext context) =>
                   Navigator.pushNamed(context, '/settings/export')),
           SettingsTile(
-              title: 'Technical View',
-              leading: Icon(Icons.swap_horiz),
-              onPressed: (BuildContext context) =>
-                  Navigator.pushNamed(context, '/settings/technical')),
-          SettingsTile(
               title: 'Sign Message',
               enabled: false,
               leading: Icon(Icons.swap_horiz),
