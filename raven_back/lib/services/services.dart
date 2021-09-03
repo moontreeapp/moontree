@@ -1,3 +1,4 @@
+export 'accounts/accounts.dart';
 export 'accounts/generate.dart';
 export 'accounts/balance.dart';
 export 'addresses/subscribe.dart';

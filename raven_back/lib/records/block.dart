@@ -21,7 +21,7 @@ class Block with EquatableMixin {
   List<Object> get props => [height];
 
   @override
-  String toString() => 'Balance($height)';
+  String toString() => 'Block($height)';
 
   factory Block.fromBlockHeader(BlockHeader blockHeader) {
     return Block(height: blockHeader.height);

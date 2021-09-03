@@ -11,10 +11,11 @@ final WalletReservoir wallets = WalletReservoir();
 final BalanceReservoir balances = BalanceReservoir();
 final ExchangeRateReservoir rates = ExchangeRateReservoir();
 final SettingReservoir settings = SettingReservoir();
-//final BlockReservoir blocks = BlockReservoir();
+final BlockReservoir blocks = BlockReservoir();
 
 // SERVICES
 
+final AccountsService accountService = AccountsService(accounts, wallets);
 final BalanceService balanceService = BalanceService(balances, histories);
 final AddressSubscriptionService addressSubscriptionService =
     AddressSubscriptionService(balances, histories);
@@ -59,5 +60,5 @@ final AccountBalanceWaiter accountBalanceWaiter = AccountBalanceWaiter(
 );
 final ExchangeRateWaiter exchangeRateWaiter = ExchangeRateWaiter(ratesService);
 final SettingsWaiter settingsWaiter = SettingsWaiter(settings, settingsService);
-//final BlockSubscriptionWaiter blockSubscriptionWaiter =
-//    BlockSubscriptionWaiter(blocks);
+final BlockSubscriptionWaiter blockSubscriptionWaiter =
+    BlockSubscriptionWaiter(blocks);

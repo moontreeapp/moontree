@@ -12,7 +12,7 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
   final String accountId;
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [id, accountId];
 
   Wallet({required this.id, required this.accountId});
 

@@ -14,8 +14,8 @@ final defaultSettings = {
       Setting(name: SettingName.Electrum_Port, value: 50002),
   SettingName.Account_Current:
       Setting(name: SettingName.Account_Current, value: '0'),
-  SettingName.Account_Order:
-      Setting(name: SettingName.Account_Order, value: '0'),
+  SettingName.Account_Preferred:
+      Setting(name: SettingName.Account_Preferred, value: '0'),
 };
 
 class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
@@ -23,12 +23,16 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
       : super(source ?? HiveSource('settings', defaults: defaultSettings),
             _SettingNameKey());
 
-  List<String> get accountOrder {
-    // requires account IDS to not have spaces in them...
-    return primaryIndex.getOne(SettingName.Account_Order)!.value.split(' ');
-  }
+  String get preferredAccountId =>
+      primaryIndex.getOne(SettingName.Account_Preferred)!.value;
 
-  void saveAccountOrder(List<String> accountIds) {
-    save(Setting(name: SettingName.Account_Order, value: accountIds.join(' ')));
-  }
+  String get currentAccountId =>
+      primaryIndex.getOne(SettingName.Account_Current)!.value;
+
+  Future savePreferredAccountId(String accountId) async => await save(
+      Setting(name: SettingName.Account_Preferred, value: accountId));
+
+  Future setCurrentAccountId([String? accountId]) async => await save(Setting(
+      name: SettingName.Account_Current,
+      value: accountId ?? preferredAccountId));
 }

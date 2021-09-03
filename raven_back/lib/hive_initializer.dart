@@ -32,7 +32,7 @@ class HiveInitializer {
 
   void registerAdapters() {
     Hive.registerAdapter(BalanceAdapter());
-    //Hive.registerAdapter(BlockAdapter());
+    Hive.registerAdapter(BlockAdapter());
     Hive.registerAdapter(AccountAdapter());
     Hive.registerAdapter(LeaderWalletAdapter());
     Hive.registerAdapter(SingleWalletAdapter());
@@ -51,7 +51,7 @@ class HiveInitializer {
     await Hive.openBox<Account>('accounts');
     await Hive.openBox<Address>('addresses');
     await Hive.openBox<Balance>('balances');
-    //await Hive.openBox<Block>('blocks');
+    await Hive.openBox<Block>('blocks');
     await Hive.openBox<History>('histories');
     await Hive.openBox<Rate>('rates');
     await Hive.openBox<Setting>('settings');

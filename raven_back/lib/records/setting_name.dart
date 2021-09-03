@@ -18,5 +18,5 @@ enum SettingName {
   Account_Current,
 
   @HiveField(3)
-  Account_Order,
+  Account_Preferred,
 }
