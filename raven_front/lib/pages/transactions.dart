@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/text.dart';
@@ -85,16 +84,12 @@ class _RavenTransactionsState extends State<RavenTransactions> {
                     ]),
                 trailing: (transaction.value > 0 // == 'in'
                     ? Text(
-                        showUSD
-                            ? RavenText.rvnUSD(
-                                RavenText.satsRVN(transaction.value))
-                            : transaction.value.toString(),
+                        RavenText.securityAsReadable(transaction.value,
+                            symbol: 'RVN', asUSD: showUSD),
                         style: TextStyle(color: Theme.of(context).good))
                     : Text(
-                        showUSD
-                            ? RavenText.rvnUSD(
-                                RavenText.satsRVN(transaction.value))
-                            : transaction.value.toString(),
+                        RavenText.securityAsReadable(transaction.value,
+                            symbol: 'RVN', asUSD: showUSD),
                         style: TextStyle(color: Theme.of(context).bad))),
                 leading: RavenIcon.assetAvatar(transaction.security.symbol))
         ]
@@ -106,7 +101,7 @@ class _RavenTransactionsState extends State<RavenTransactions> {
         Icon(icon ?? Icons.description,
             size: 50.0, color: Theme.of(context).secondaryHeaderColor),
         Text('\nMagic Musk $name empty.\n',
-            style: Theme.of(context).textTheme.headline4),
+            style: Theme.of(context).textTheme.headline3),
       ]));
 
   /// returns a list of holdings and transactions or empty messages

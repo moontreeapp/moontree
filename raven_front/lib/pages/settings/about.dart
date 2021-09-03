@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
+import 'package:raven_mobile/utils/utils.dart';
 
 class About extends StatefulWidget {
   final dynamic data;
@@ -20,7 +21,7 @@ class _AboutState extends State<About> {
 
   @override
   Widget build(BuildContext context) {
-    data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
+    data = populateData(context, data);
     return Scaffold(appBar: header(), body: body());
   }
 

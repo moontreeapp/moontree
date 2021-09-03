@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:date_format/date_format.dart';
 import 'package:raven/raven.dart';
-
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/text.dart';
+import 'package:raven_mobile/utils/utils.dart';
 
 class Transaction extends StatefulWidget {
   final dynamic data;
@@ -16,18 +18,28 @@ class Transaction extends StatefulWidget {
 
 class _TransactionState extends State<Transaction> {
   dynamic data = {};
+  List<StreamSubscription> listeners = [];
 
   @override
   void initState() {
     super.initState();
-    //blocks.changes.listen((changes) {
-    //  setState(() {});
-    //});
+    listeners.add(blocks.changes.listen((changes) {
+      setState(() {});
+    }));
+  }
+
+  @override
+  void dispose() {
+    for (var listener in listeners) {
+      listener.cancel();
+    }
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
+    print(blocks.latest);
+    data = populateData(context, data);
     var metadata = false;
     // how do we detect metadata?
     /*Tron — Yesterday at 6:51 PM
@@ -46,7 +58,7 @@ class _TransactionState extends State<Transaction> {
 
   int? getBlocksBetweenHelper({History? transaction, Block? current}) {
     transaction = transaction ?? data['transaction']!;
-    current = current ?? Block(height: 0); //blocks.latest;
+    current = current ?? blocks.latest; //Block(height: 0);
     return current != null && transaction != null
         ? current.height - transaction.height
         : null;
@@ -91,7 +103,7 @@ class _TransactionState extends State<Transaction> {
                     RavenIcon.assetAvatar(data['transaction']!.security.symbol),
                     SizedBox(height: 15.0),
                     Text(data['transaction']!.security.symbol,
-                        style: Theme.of(context).textTheme.headline4),
+                        style: Theme.of(context).textTheme.headline3),
                     SizedBox(height: 15.0),
                     Text('Received',
                         style: Theme.of(context).textTheme.headline5),

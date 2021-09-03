@@ -1,14 +1,13 @@
 /// clicking the Accounts name should take you to the accounts technical view
-/// where you can move, rename, reorder (must be saved in new reservoir or on
-/// accounts objects), delete, move wallets and view details.
+/// where you can delete or rename accounts, move wallets and view their details.
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
+import 'package:raven_mobile/utils/utils.dart';
 
-//import 'package:flutter_treeview/flutter_treeview.dart';
 /// make our own 2-layer hierarchy view
 /// use draggable to move things between the levels:
 ///
@@ -40,17 +39,17 @@ class _TechnicalViewState extends State<TechnicalView> {
     settings.changes.listen((changes) {
       setState(() {});
     });
-    //wallets.changes.listen((changes) {
-    //  setState(() {});
-    //});
-    //accounts.changes.listen((changes) {
-    //  setState(() {});
-    //});
+    wallets.changes.listen((changes) {
+      setState(() {});
+    });
+    accounts.changes.listen((changes) {
+      setState(() {});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
+    data = populateData(context, data);
     return Scaffold(appBar: header(), body: body());
   }
 
@@ -147,16 +146,16 @@ class _TechnicalViewState extends State<TechnicalView> {
         ]
       ],
       onReorder: (int oldIndex, int newIndex) {
-        var order = settings.accountOrder;
-        var movedId = order[oldIndex];
-        var pushId = order[newIndex];
-        order.remove(movedId);
-        order = [
-          for (var item in order) ...[
-            if (item == pushId) ...[movedId, item] else item
-          ]
-        ];
-        settings.saveAccountOrder(order);
+        //  var order = settings.accountOrder;
+        //  var movedId = order[oldIndex];
+        //  var pushId = order[newIndex];
+        //  order.remove(movedId);
+        //  order = [
+        //    for (var item in order) ...[
+        //      if (item == pushId) ...[movedId, item] else item
+        //    ]
+        //  ];
+        //  settings.saveAccountOrder(order);
       },
     );
 
@@ -191,15 +190,15 @@ class _TechnicalViewState extends State<TechnicalView> {
                     title: Text('---'),
                   ),
               onAcceptWithDetails: (details) {
-                var order = settings.accountOrder;
-                var movedAccount = details.data;
-                order.remove(movedAccount.id);
-                order = [
-                  for (var item in order) ...[
-                    if (item == account.id) ...[movedAccount.id, item] else item
-                  ]
-                ];
-                settings.saveAccountOrder(order);
+                //  var order = settings.accountOrder;
+                //  var movedAccount = details.data;
+                //  order.remove(movedAccount.id);
+                //  order = [
+                //    for (var item in order) ...[
+                //      if (item == account.id) ...[movedAccount.id, item] else item
+                //    ]
+                //  ];
+                //  settings.saveAccountOrder(order);
               }),
           DragTarget<Wallet>(
               builder: (

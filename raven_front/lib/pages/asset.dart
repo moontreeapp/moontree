@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/text.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/theme/extensions.dart';
+import 'package:raven_mobile/utils/utils.dart';
 
 class Asset extends StatefulWidget {
   final dynamic data;
@@ -32,7 +32,7 @@ class _AssetState extends State<Asset> {
 
   @override
   Widget build(BuildContext context) {
-    data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
+    data = populateData(context, data);
     return DefaultTabController(
         length: 2,
         child: Scaffold(
@@ -122,7 +122,7 @@ class _AssetState extends State<Asset> {
         Icon(icon ?? Icons.description,
             size: 50.0, color: Theme.of(context).secondaryHeaderColor),
         Text("\n${data['holding']!.security.symbol} $name empty.\n",
-            style: Theme.of(context).textTheme.headline4),
+            style: Theme.of(context).textTheme.headline3),
       ]));
 
   /// returns a list of holdings and transactions or empty messages

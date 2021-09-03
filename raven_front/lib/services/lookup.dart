@@ -1,7 +1,6 @@
 import 'package:raven/raven.dart';
 
-String currentAccountId() =>
-    settings.primaryIndex.getOne(SettingName.Account_Current)!.value;
+String currentAccountId() => settings.currentAccountId;
 
 Account currentAccount() => accounts.primaryIndex.getOne(currentAccountId())!;
 

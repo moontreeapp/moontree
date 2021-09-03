@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
+import 'package:raven_mobile/utils/utils.dart';
 
 //import 'package:flutter_treeview/flutter_treeview.dart';
 /// make our own 2-layer hierarchy view
@@ -50,7 +51,7 @@ class _TechnicalViewState extends State<TechnicalView> {
 
   @override
   Widget build(BuildContext context) {
-    data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
+    data = populateData(context, data);
     return Scaffold(appBar: header(), body: body());
   }
 

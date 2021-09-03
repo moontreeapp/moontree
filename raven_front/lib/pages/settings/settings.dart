@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'package:settings_ui/settings_ui.dart';
 import 'package:raven_mobile/components/buttons.dart';
+import 'package:raven_mobile/utils/utils.dart';
 
 class Settings extends StatefulWidget {
   final dynamic data;
@@ -21,7 +21,7 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
-    data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
+    data = populateData(context, data);
     return Scaffold(appBar: header(), body: body());
   }
 
@@ -41,8 +41,8 @@ class _SettingsState extends State<Settings> {
                 onPressed: (BuildContext context) =>
                     Navigator.pushNamed(context, '/settings/wallet')),
             SettingsTile(
-                title: 'Account Technical View',
-                leading: Icon(Icons.swap_horiz),
+                title: 'Accounts Ovewview',
+                leading: Icon(Icons.lightbulb),
                 onPressed: (BuildContext context) =>
                     Navigator.pushNamed(context, '/settings/technical')),
             SettingsTile(
@@ -67,7 +67,7 @@ class _SettingsState extends State<Settings> {
                       Navigator.pushNamed(context, '/settings/language')),
               SettingsTile(
                   title: 'About',
-                  leading: Icon(Icons.info),
+                  leading: Icon(Icons.info_outline_rounded),
                   onPressed: (BuildContext context) =>
                       Navigator.pushNamed(context, '/settings/about')),
               //SettingsTile.switchTile(

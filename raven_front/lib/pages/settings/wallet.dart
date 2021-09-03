@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
-
 import 'package:raven_mobile/components/buttons.dart';
+import 'package:raven_mobile/utils/utils.dart';
 
 class WalletSettings extends StatefulWidget {
   final dynamic data;
@@ -21,7 +21,7 @@ class _WalletSettingsState extends State<WalletSettings> {
 
   @override
   Widget build(BuildContext context) {
-    data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
+    data = populateData(context, data);
     return Scaffold(appBar: header(), body: body());
   }
 
@@ -35,18 +35,18 @@ class _WalletSettingsState extends State<WalletSettings> {
         SettingsSection(tiles: [
           SettingsTile(
               title: 'Import Wallet',
-              leading: Icon(Icons.account_balance_wallet_rounded),
+              leading: Icon(Icons.add_box_outlined),
               onPressed: (BuildContext context) =>
                   Navigator.pushNamed(context, '/settings/import')),
           SettingsTile(
               title: 'Export/Backup Wallet',
-              leading: Icon(Icons.swap_horiz),
+              leading: Icon(Icons.save),
               onPressed: (BuildContext context) =>
                   Navigator.pushNamed(context, '/settings/export')),
           SettingsTile(
               title: 'Sign Message',
               enabled: false,
-              leading: Icon(Icons.swap_horiz),
+              leading: Icon(Icons.fact_check_sharp),
               onPressed: (BuildContext context) {
                 //Navigator.push(
                 //  context,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'package:settings_ui/settings_ui.dart';
 import 'package:raven_mobile/components/buttons.dart';
+import 'package:raven_mobile/utils/utils.dart';
 
 class Currency extends StatefulWidget {
   final dynamic data;
@@ -21,7 +21,7 @@ class _CurrencyState extends State<Currency> {
 
   @override
   Widget build(BuildContext context) {
-    data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
+    data = populateData(context, data);
     return Scaffold(appBar: header(), body: body());
   }
 

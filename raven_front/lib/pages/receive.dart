@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
+import 'package:raven_mobile/utils/utils.dart';
 
 class Receive extends StatefulWidget {
   final dynamic data;
@@ -22,7 +22,7 @@ class _ReceiveState extends State<Receive> {
 
   @override
   Widget build(BuildContext context) {
-    data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
+    data = populateData(context, data);
     return Scaffold(
         appBar: header(),
         body: body(),

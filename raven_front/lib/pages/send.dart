@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
 import 'package:raven_mobile/components/text.dart';
 import 'package:raven_mobile/services/lookup.dart';
+import 'package:raven_mobile/utils/utils.dart';
 
 class Send extends StatefulWidget {
   final dynamic data;
@@ -36,7 +36,7 @@ class _SendState extends State<Send> {
   @override
   Widget build(BuildContext context) {
     // could hold which asset to send...
-    data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
+    data = populateData(context, data);
     formKey = GlobalKey<FormState>();
     return Scaffold(
         appBar: header(),

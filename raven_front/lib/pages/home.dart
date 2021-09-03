@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:raven/raven.dart';
-
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/text.dart';
@@ -15,6 +16,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  List<StreamSubscription> listeners = [];
   bool showUSD = false;
   final accountName = TextEditingController();
 
@@ -27,29 +29,33 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    // gets cleaned up?
     currentTheme.addListener(() {
       setState(() {});
     });
-    balances.changes.listen((changes) {
+    listeners.add(balances.changes.listen((changes) {
       setState(() {});
-    });
-    settings.changes.listen((changes) {
+    }));
+    listeners.add(settings.changes.listen((changes) {
       setState(() {});
-    });
+    }));
   }
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
+    //This method must not be called after dispose has been called. ??
+    //currentTheme.removeListener(() {});
+    for (var listener in listeners) {
+      listener.cancel();
+    }
     accountName.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    print(Current.account);
-    print(Current.transactions);
-
+    print(settings.preferredAccountId);
+    print(settings.currentAccountId);
     return DefaultTabController(
         length: 2,
         child: Scaffold(
@@ -95,6 +101,7 @@ class _HomeState extends State<Home> {
               holding.security.symbol == 'RVN' ? '/transactions' : '/asset',
               arguments: {'holding': holding}),
           onLongPress: () => _toggleUSD(),
+          leading: RavenIcon.assetAvatar(holding.security.symbol),
           title: Text(holding.security.symbol,
               style: holding.security.symbol == 'RVN'
                   ? Theme.of(context).textTheme.bodyText1
@@ -102,8 +109,7 @@ class _HomeState extends State<Home> {
           trailing: Text(
               RavenText.securityAsReadable(holding.value,
                   security: holding.security, asUSD: showUSD),
-              style: TextStyle(color: Theme.of(context).good)),
-          leading: RavenIcon.assetAvatar(holding.security.symbol));
+              style: TextStyle(color: Theme.of(context).good)));
       if (holding.security.symbol == 'RVN') {
         rvnHolding.add(thisHolding);
         if (holding.value < 600) {
@@ -207,8 +213,7 @@ class _HomeState extends State<Home> {
           for (var account in accounts.data) ...[
             ListTile(
                 onTap: () async {
-                  await settingsService.saveSetting(
-                      SettingName.Account_Current, account.id);
+                  await settings.setCurrentAccountId(account.id);
                   Navigator.pop(context);
                 },
                 title: Text(account.id + ' ' + account.name,
