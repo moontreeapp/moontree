@@ -1,7 +1,7 @@
 import 'package:raven/records/history.dart';
 import 'package:raven/reservoirs/address.dart';
 import 'package:ravencoin/ravencoin.dart';
-import '../utils/fee.dart';
+import 'utils/fee.dart';
 
 class FormatResult {
   TransactionBuilder txb;

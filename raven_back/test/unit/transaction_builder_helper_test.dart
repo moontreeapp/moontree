@@ -3,21 +3,35 @@
 import 'package:raven/reservoirs/address.dart';
 import 'package:test/test.dart';
 
-import 'package:raven/transaction/transaction.dart' as tx;
+import 'package:raven/transaction_builder_helper.dart' as tx;
+import '../fixtures/fixtures.dart' as fixtures;
 
-import '../test_artifacts.dart' as tests;
+// import '../test_artifacts.dart' as tests;
 
 const connectionTimeout = Duration(seconds: 5);
 const aliveTimerDuration = Duration(seconds: 2);
 
 void main() async {
+  var wallet = fixtures.wallets().map['0'];
+
+  var addresses = AddressReservoir(fixtures.addresses());
+
+  test('choose enough inputs for fee', () async {
+    var txhelper = tx.TransactionBuilderHelper(
+        wallet, 3000000, 'mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7', addresses);
+    var txb = txhelper.buildTransaction();
+    expect(txb.tx!.ins.length, 1); // 4000000
+    expect(txb.tx!.ins[0].hash.toString(),
+        '[213, 7, 25, 181, 71, 217, 95, 154, 120, 226, 1, 32, 155, 129, 148, 31, 102, 123, 212, 99, 30, 156, 180, 35, 106, 126, 39, 72, 40, 162, 173, 45]'); // 4000000
+  });
   // ignore: omit_local_variable_types
-  tests.Generated gen = tests.Generated.asEmpty();
-  setUpAll(() async => gen = await tests.generate());
-  tearDownAll(() async => await tests.closeHive());
+  // tests.Generated gen = tests.Generated.asEmpty();
+  // setUpAll(() async => gen = await tests.generate());
+  // tearDownAll(() async => await tests.closeHive());
 
   /// make amount nearly an entire utxo check to see if by addInputs
   /// we include more utxos to cover the fees
+  /*
   test('choose enough inputs for fee', () async {
     var txhelper = tx.TransactionBuilderHelper(
         gen.wallet,
@@ -58,4 +72,5 @@ void main() async {
     //print(String.fromCharCodes(txb.tx.ins[0].hash));
     //print(Uint8List.fromList(String.fromCharCodes(txb.tx.ins[0].hash).codeUnits));
   });
+  */
 }
