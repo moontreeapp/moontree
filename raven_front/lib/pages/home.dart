@@ -47,6 +47,9 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    print(Current.account);
+    print(Current.transactions);
+
     return DefaultTabController(
         length: 2,
         child: Scaffold(

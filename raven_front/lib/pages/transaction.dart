@@ -4,6 +4,7 @@ import 'package:raven/raven.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
+import 'package:raven_mobile/components/text.dart';
 
 class Transaction extends StatefulWidget {
   final dynamic data;
@@ -134,7 +135,8 @@ class _TransactionState extends State<Transaction> {
                   labelText: 'Amount',
                   hintText: 'Quantity'),
               controller: TextEditingController(
-                  text: data['transaction']!.value.toString()),
+                  text: RavenText.securityAsReadable(data['transaction']!.value,
+                      symbol: data['transaction']!.security.symbol)),
             ),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text('fee',

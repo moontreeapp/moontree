@@ -56,7 +56,9 @@ class _RavenTransactionsState extends State<RavenTransactions> {
                     SizedBox(height: 15.0),
                     RavenIcon.assetAvatar('RVN'),
                     SizedBox(height: 15.0),
-                    Text(Current.balanceRVN.value.toString(),
+                    Text(
+                        RavenText.securityAsReadable(Current.balanceRVN.value,
+                            symbol: 'RVN'),
                         style: Theme.of(context).textTheme.headline3),
                     SizedBox(height: 15.0),
                     Text(RavenText.rvnUSD(Current.balanceRVN.rvn),

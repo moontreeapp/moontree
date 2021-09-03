@@ -64,7 +64,9 @@ class _AssetState extends State<Asset> {
                     SizedBox(height: 15.0),
                     RavenIcon.assetAvatar(data['holding']!.security.symbol),
                     SizedBox(height: 15.0),
-                    Text(data['holding']!.value.toString(),
+                    Text(
+                        RavenText.securityAsReadable(data['holding']!.value,
+                            symbol: data['holding']!.security.symbol),
                         style: Theme.of(context).textTheme.headline3),
                     SizedBox(height: 15.0),
                     Text('\$654.02',

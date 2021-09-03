@@ -37,20 +37,20 @@ class _TechnicalViewState extends State<TechnicalView> {
   @override
   void initState() {
     super.initState();
-    //settings.changes.listen((changes) {
+    settings.changes.listen((changes) {
+      setState(() {});
+    });
+    //wallets.changes.listen((changes) {
     //  setState(() {});
     //});
-    wallets.changes.listen((changes) {
-      setState(() {});
-    });
-    accounts.changes.listen((changes) {
-      setState(() {});
-    });
+    //accounts.changes.listen((changes) {
+    //  setState(() {});
+    //});
   }
 
   @override
   Widget build(BuildContext context) {
-    data = ModalRoute.of(context)!.settings.arguments;
+    data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments;
     return Scaffold(appBar: header(), body: body());
   }
 
@@ -61,85 +61,103 @@ class _TechnicalViewState extends State<TechnicalView> {
         title: Text('Technical View'),
       );
 
-  Column body() {
-    return Column(
-      children: [
-        _header(),
-        ListView(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          children: <Widget>[
-            for (var account in accounts.data) ...[
-              DragTarget<Wallet>(
-                  key: Key(account.id),
-                  builder: (
-                    BuildContext context,
-                    List<dynamic> accepted,
-                    List<dynamic> rejected,
-                  ) =>
-                      ListTile(title: Text(account.name)),
-                  onAcceptWithDetails: (details) async {
-                    print('dropped');
-                    print(details.data.runtimeType);
-                    print(details.data);
-                    print(account.id);
-                    print(wallets.data);
-                    wallets.remove(details.data);
-
-                    /// change the accountId for this wallet and save
-                    var wallet = details.data;
-                    await wallets.save(wallet is LeaderWallet
-                            ? LeaderWallet(
+  ReorderableListView body() {
+    return ReorderableListView(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      header: _header(),
+      children: <Widget>[
+        for (var account in accounts.data) ...[
+          // just account
+          //ListTile(
+          //  key: Key(account.id),
+          //  //onTap: () {},
+          //  //onLongPress: () {/* rename? */},
+          //  //leading: RavenIcon.accountAvatar(), //alternative Icon(Icons.more_horiz) to show movable
+          //  title: Text(
+          //    account.name,
+          //    //style: Theme.of(context).textTheme.bodyText1
+          //  ),
+          //  //trailing:  (drag target) [ delete, import-> set that account as current and go to import page, export -> file ],
+          //)
+          DragTarget<Wallet>(
+              key: Key(account.id),
+              builder: (
+                BuildContext context,
+                List<dynamic> accepted,
+                List<dynamic> rejected,
+              ) =>
+                  ListTile(title: Text(account.name)),
+              onAcceptWithDetails: (details) {
+                /// change the accountId for this wallet and save
+                var wallet = details.data;
+                wallets.save(wallet is LeaderWallet
+                        ? LeaderWallet(
+                            id: wallet.id,
+                            accountId: account.id,
+                            encryptedSeed: wallet.encryptedSeed)
+                        : wallet is SingleWallet
+                            ? SingleWallet(
                                 id: wallet.id,
                                 accountId: account.id,
-                                encryptedSeed: wallet.encryptedSeed)
-                            : wallet is SingleWallet
-                                ? SingleWallet(
-                                    id: wallet.id,
-                                    accountId: account.id,
-                                    encryptedPrivateKey:
-                                        wallet.encryptedPrivateKey)
-                                : SingleWallet(
-                                    id: wallet.id,
-                                    accountId: account.id,
-                                    encryptedPrivateKey: (wallet
-                                            as SingleWallet)
-                                        .encryptedPrivateKey) // placeholder for other wallets
-                        );
-                  }),
-              for (var wallet in wallets.byAccount.getAll(account.id)) ...[
-                /// for moving a wallet to a different account...
-                Draggable<Wallet>(
-                  key: Key(wallet.id),
-                  data: wallet,
-                  child: Text(
+                                encryptedPrivateKey: wallet.encryptedPrivateKey)
+                            : SingleWallet(
+                                id: wallet.id,
+                                accountId: account.id,
+                                encryptedPrivateKey: (wallet as SingleWallet)
+                                    .encryptedPrivateKey) // placeholder for other wallets
+                    );
+              }),
+
+          for (var wallet in wallets.byAccount.getAll(account.id)) ...[
+            /// for moving a wallet to a different account...
+            Draggable<Wallet>(
+                key: Key(wallet.id),
+                data: wallet,
+                child: ListTile(
+                  onTap: () {/*view details?*/},
+                  onLongPress: () {},
+                  leading: RavenIcon.walletAvatar(
+                      wallet), //alternative Icon(Icons.more_horiz) to show movable
+                  title: Text(
                       wallet.kind + ' ' + wallet.id.substring(0, 5) + '...',
                       style: Theme.of(context).textTheme.bodyText2),
-                  feedback: Text(
+                  //trailing: [ delete, view details?, export -> show private key or seed phrase ],
+                ),
+                feedback: ListTile(
+                  onTap: () {/*view details?*/},
+                  onLongPress: () {},
+                  leading: RavenIcon.walletAvatar(
+                      wallet), //alternative Icon(Icons.more_horiz) to show movable
+                  title: Text(
                       wallet.kind + ' ' + wallet.id.substring(0, 5) + '...',
                       style: Theme.of(context).textTheme.bodyText2),
-                  childWhenDragging: Text(
+                  //trailing: [ delete, view details?, export -> show private key or seed phrase ],
+                ),
+                childWhenDragging: ListTile(
+                  onTap: () {/*view details?*/},
+                  onLongPress: () {},
+                  leading: RavenIcon.walletAvatar(
+                      wallet), //alternative Icon(Icons.more_horiz) to show movable
+                  title: Text(
                       wallet.kind + ' ' + wallet.id.substring(0, 5) + '...',
                       style: Theme.of(context).textTheme.bodyText2),
-                )
-              ]
-            ]
-          ],
-          //onReorder: (int oldIndex, int newIndex) {
-          //  var order = settings.accountOrder;
-          //  var movedId = order[oldIndex];
-          //  var pushId = order[newIndex];
-          //  order.remove(movedId);
-          //  order = [
-          //    for (var item in order) ...[
-          //      if (item == pushId) ...[movedId, item] else item
-          //    ]
-          //  ];
-          //  settings.saveAccountOrder(order);
-          //},
-        )
+                  // without childWhenDragging ... if we place it in an illegal location what happens?
+                ))
+          ]
+        ]
       ],
+      onReorder: (int oldIndex, int newIndex) {
+        var order = settings.accountOrder;
+        var movedId = order[oldIndex];
+        var pushId = order[newIndex];
+        order.remove(movedId);
+        order = [
+          for (var item in order) ...[
+            if (item == pushId) ...[movedId, item] else item
+          ]
+        ];
+        settings.saveAccountOrder(order);
+      },
     );
 
     //Column(children: <Widget>[
@@ -149,12 +167,12 @@ class _TechnicalViewState extends State<TechnicalView> {
   }
 
   ListTile _header() => ListTile(
-      onTap: () {},
-      onLongPress: () {},
-      //leading: RavenIcon.appAvatar(),
-      title: Text('All Accounts', style: Theme.of(context).textTheme.bodyText1),
-      tileColor: Theme.of(context).disabledColor
-      //trailing: [ import -> import page, export all accounts -> file],
+        onTap: () {},
+        onLongPress: () {},
+        leading: RavenIcon.appAvatar(),
+        title:
+            Text('All Accounts', style: Theme.of(context).textTheme.bodyText1),
+        //trailing: [ import -> import page, export all accounts -> file],
       );
 
   //ListView _accounts() => ListView(shrinkWrap: true, children: <Widget>[
