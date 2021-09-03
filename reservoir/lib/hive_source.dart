@@ -16,7 +16,7 @@ class HiveSource<Record> extends Source<Record> {
   @override
   Iterable<Record> initialLoad() {
     var items = box.toMap();
-    var merged = mergeMaps(items, defaults ?? {},
+    var merged = mergeMaps(defaults ?? {}, items,
         value: (itemValue, defaultValue) => itemValue ?? defaultValue);
     return merged.entries.map((entry) => entry.value);
   }
