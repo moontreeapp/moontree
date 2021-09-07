@@ -81,6 +81,9 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
 
   /// Remove a `record`, de-index it, and broadcast the change
   Future<Change?> remove(Record record) async {
+    // must remove it from the in memory stuff too...
+    // maybe we should have the hive source follow changes to the in memory stuff?
+    //primaryIndex.remove(record);
     return await _removeSilently(record)
       ?..ifChanged((change) => _changes.add([change]));
   }
