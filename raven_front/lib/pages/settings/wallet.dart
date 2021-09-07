@@ -32,10 +32,6 @@ class _WalletViewState extends State<WalletView> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    data['address'] = 'n1BuaCRqhZSKwpKjofQBjdTR7e9JPq7tAp';
-    data['secret'] =
-        'apple cost speed dip wallet toast jump water average need clip run';
-    data['secretName'] = 'Private Key'; // ?? 'Passphrase';
     return Scaffold(appBar: header(), body: body());
   }
 

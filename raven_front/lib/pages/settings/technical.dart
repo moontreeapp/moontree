@@ -130,6 +130,7 @@ class _TechnicalViewState extends State<TechnicalView> {
       ? [
           IconButton(
               onPressed: () async {
+                // doesn't delete immediately - not working until indicies work right
                 await accountService.removeAccount(account.id);
               },
               icon: Icon(Icons.delete))
