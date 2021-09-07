@@ -15,7 +15,8 @@ final BlockReservoir blocks = BlockReservoir();
 
 // SERVICES
 
-final AccountsService accountService = AccountsService(accounts, wallets);
+final AccountsService accountService =
+    AccountsService(accounts, wallets, settings);
 final BalanceService balanceService = BalanceService(balances, histories);
 final AddressSubscriptionService addressSubscriptionService =
     AddressSubscriptionService(balances, histories);

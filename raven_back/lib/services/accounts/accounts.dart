@@ -16,11 +16,11 @@ class AccountsService extends Service {
     if (account != null &&
         accounts.data.length > 1 &&
         wallets.byAccount.getAll(accountId).isEmpty) {
-      await accounts.primaryIndex.remove(account);
+      await accounts.remove(account);
       if (account.id == settings.preferredAccountId) {
         var newPreferredAccount = accounts.primaryIndex.getAny()!;
-        settings.setCurrentAccountId(newPreferredAccount.id);
-        settings.savePreferredAccountId(newPreferredAccount.id);
+        await settings.setCurrentAccountId(newPreferredAccount.id);
+        await settings.savePreferredAccountId(newPreferredAccount.id);
       }
     }
   }
