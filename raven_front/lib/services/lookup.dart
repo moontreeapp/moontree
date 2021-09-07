@@ -2,7 +2,23 @@ import 'package:raven/raven.dart';
 
 String currentAccountId() => settings.currentAccountId;
 
-Account currentAccount() => accounts.primaryIndex.getOne(currentAccountId())!;
+// should never get called...
+Account makeAccount() {
+  accountGenerationService.makeAndAwaitSaveAccount('Primary');
+  var account;
+  while (accounts.primaryIndex.getAny() != null) {
+    // await alternative.
+    // (should never happen as user doesn't have ability to delete all accounts)
+  }
+  account = accounts.primaryIndex.getAny();
+  settings.savePreferredAccountId(account.id);
+  return account;
+}
+
+Account currentAccount() =>
+    accounts.primaryIndex.getOne(currentAccountId()) ??
+    accounts.primaryIndex.getAny() ??
+    makeAccount();
 
 BalanceUSD currentBalanceUSD() =>
     ratesService.accountBalanceUSD(currentAccountId());

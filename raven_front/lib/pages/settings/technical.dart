@@ -33,6 +33,7 @@ class TechnicalView extends StatefulWidget {
 class _TechnicalViewState extends State<TechnicalView> {
   dynamic data = {};
   List<StreamSubscription> listeners = [];
+  final accountName = TextEditingController();
 
   @override
   void initState() {
@@ -50,6 +51,7 @@ class _TechnicalViewState extends State<TechnicalView> {
 
   @override
   void dispose() {
+    accountName.dispose();
     for (var listener in listeners) {
       listener.cancel();
     }
@@ -155,18 +157,26 @@ class _TechnicalViewState extends State<TechnicalView> {
                           : ListTile(
                               title: Text(account.name,
                                   style: Theme.of(context).textTheme.bodyText1),
-                              trailing: Row(children: <Widget>[
-                                IconButton(
-                                    onPressed: () {
-                                      importTo(context, account);
-                                    },
-                                    icon: Icon(Icons.add_box_outlined)),
-                                IconButton(
-                                    onPressed: () {
-                                      accountService.removeAccount(account.id);
-                                    },
-                                    icon: Icon(Icons.delete))
-                              ])),
+                              trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    IconButton(
+                                        onPressed: () {
+                                          importTo(context, account);
+                                        },
+                                        icon: Icon(Icons.add_box_outlined)),
+                                    ...(accounts.data.length == 1
+                                        ? [
+                                            IconButton(
+                                                onPressed: () async {
+                                                  await accountService
+                                                      .removeAccount(
+                                                          account.id);
+                                                },
+                                                icon: Icon(Icons.delete))
+                                          ]
+                                        : [])
+                                  ])),
                   onAcceptWithDetails: (details) async =>
                       await moveWallet(details, account)),
               for (var wallet in wallets.byAccount.getAll(account.id)) ...[
@@ -176,10 +186,22 @@ class _TechnicalViewState extends State<TechnicalView> {
                   child: Card(
                       margin: const EdgeInsets.fromLTRB(40.0, 0.0, 10.0, 5),
                       child: Padding(
-                          padding: EdgeInsets.all(3.0),
-                          child: Text(
-                              '${wallet.id.substring(0, 5)}... (${wallet.kind})',
-                              style: Theme.of(context).textTheme.bodyText2))),
+                          padding: EdgeInsets.all(5.0),
+                          child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text(
+                                    '${wallet.id.substring(0, 5)}... (${wallet.kind})',
+                                    style:
+                                        Theme.of(context).textTheme.bodyText2),
+                                TextButton.icon(
+                                    icon: Icon(Icons.remove_red_eye),
+                                    label: Text('show ' +
+                                        (wallet is LeaderWallet
+                                            ? 'seed phrase'
+                                            : 'private key')),
+                                    onPressed: () {})
+                              ]))),
                   feedback: Card(
                       child: Padding(
                           padding: EdgeInsets.all(16.0),
@@ -189,6 +211,27 @@ class _TechnicalViewState extends State<TechnicalView> {
                   childWhenDragging: null,
                 )
               ]
+            ],
+
+            /// create new account:
+            ...[
+              ListTile(
+                  onTap: () async {
+                    var account = await accountGenerationService
+                        .makeAndAwaitSaveAccount(accountName.text);
+                    await settingsService.saveSetting(
+                        SettingName.Account_Current, account.id);
+                  },
+                  title: TextField(
+                      readOnly: false,
+                      controller: accountName,
+                      decoration: InputDecoration(
+                          border: UnderlineInputBorder(),
+                          labelText: 'Create Account',
+                          hintText: 'Billz')),
+                  trailing:
+                      Icon(Icons.add, size: 26.0, color: Colors.grey.shade800)),
+              Divider(height: 20, thickness: 2, indent: 5, endIndent: 5)
             ]
           ]);
 }
