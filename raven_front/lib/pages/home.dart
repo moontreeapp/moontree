@@ -28,7 +28,6 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    super.initState();
     // gets cleaned up?
     currentTheme.addListener(() {
       setState(() {});
@@ -39,6 +38,7 @@ class _HomeState extends State<Home> {
     listeners.add(settings.changes.listen((changes) {
       setState(() {});
     }));
+    super.initState();
   }
 
   @override
@@ -217,6 +217,7 @@ class _HomeState extends State<Home> {
                   await settings.setCurrentAccountId(account.id);
                   accountName.text = '';
                   Navigator.pop(context);
+                  setState(() {});
                 },
                 title: Text(account.id + ' ' + account.name,
                     style: Theme.of(context).textTheme.bodyText1),

@@ -163,7 +163,7 @@ class _TechnicalViewState extends State<TechnicalView> {
           padding: EdgeInsets.fromLTRB(10.0, 5.0, 5.0, 5.0),
           child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,10 +173,10 @@ class _TechnicalViewState extends State<TechnicalView> {
                           style: Theme.of(context).mono),
                       Text('${wallet.kind}', style: Theme.of(context).annotate),
                     ]),
-                TextButton.icon(
+                IconButton(
                     icon: Icon(Icons.remove_red_eye),
-                    label: Text(
-                        wallet is LeaderWallet ? 'seed phrase' : 'private key'),
+                    //label: Text(
+                    //    wallet is LeaderWallet ? 'seed phrase' : 'private key'),
                     onPressed: () => Navigator.pushNamed(
                             context, '/settings/wallet',
                             arguments: {
@@ -198,67 +198,71 @@ class _TechnicalViewState extends State<TechnicalView> {
           children: <Widget>[
             for (var account in accounts.data) ...[
               DragTarget<Wallet>(
-                  key: Key(account.id),
-                  builder: (
-                    BuildContext context,
-                    List<Wallet?> accepted,
-                    List<dynamic> rejected,
-                  ) =>
-                      //wallets.byAccount.getAll(account.id).length > 0
-                      _getWallets(account.id).isNotEmpty
-                          ? ListTile(
-                              title: Text(account.name,
-                                  style: Theme.of(context).textTheme.bodyText1),
-                              trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    settings.preferredAccountId == account.id
-                                        ? IconButton(
-                                            onPressed: () {},
-                                            icon: Icon(Icons.star))
-                                        : IconButton(
-                                            onPressed: () {
-                                              settings.savePreferredAccountId(
-                                                  account.id);
-                                            },
-                                            icon:
-                                                Icon(Icons.star_outline_sharp)),
-                                    IconButton(
+                key: Key(account.id),
+                builder: (
+                  BuildContext context,
+                  List<Wallet?> accepted,
+                  List<dynamic> rejected,
+                ) =>
+                    Column(children: <Widget>[
+                  //wallets.byAccount.getAll(account.id).length > 0
+                  _getWallets(account.id).isNotEmpty
+                      ? ListTile(
+                          title: Text(account.name,
+                              style: Theme.of(context).textTheme.bodyText1),
+                          trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                settings.preferredAccountId == account.id
+                                    ? IconButton(
+                                        onPressed: () {},
+                                        icon: Icon(Icons.star))
+                                    : IconButton(
                                         onPressed: () {
-                                          _importTo(context, account);
+                                          settings.savePreferredAccountId(
+                                              account.id);
                                         },
-                                        icon: Icon(Icons.add_box_outlined)),
-                                    IconButton(
-                                        onPressed: () {
-                                          _exportTo(context, account);
-                                        },
-                                        icon: Icon(Icons.save)),
-                                  ]))
-                          : ListTile(
-                              title: Text(account.name,
-                                  style: Theme.of(context).textTheme.bodyText1),
-                              trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    IconButton(
-                                        onPressed: () {
-                                          _importTo(context, account);
-                                        },
-                                        icon: Icon(Icons.add_box_outlined)),
-                                    ...(_deleteIfMany(account))
-                                  ])),
-                  onAcceptWithDetails: (details) =>
-                      _moveWallet(details, account)),
-              //for (var wallet in wallets.byAccount.getAll(account.id)) ...[
-              for (var wallet in _getWallets(account.id)) ...[
-                Draggable<Wallet>(
-                  key: Key(wallet.id),
-                  data: wallet,
-                  child: _wallet(context, wallet),
-                  feedback: _wallet(context, wallet),
-                  childWhenDragging: null,
-                )
-              ]
+                                        icon: Icon(Icons.star_outline_sharp)),
+                                IconButton(
+                                    onPressed: () {
+                                      _importTo(context, account);
+                                    },
+                                    icon: Icon(Icons.add_box_outlined)),
+                                IconButton(
+                                    onPressed: () {
+                                      _exportTo(context, account);
+                                    },
+                                    icon: Icon(Icons.save)),
+                              ]))
+                      : ListTile(
+                          title: Text(account.name,
+                              style: Theme.of(context).textTheme.bodyText1),
+                          trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                IconButton(
+                                    onPressed: () {
+                                      _importTo(context, account);
+                                    },
+                                    icon: Icon(Icons.add_box_outlined)),
+                                ...(_deleteIfMany(account))
+                              ])),
+                  //for (var wallet in wallets.byAccount.getAll(account.id)) ...[
+                  for (var wallet in _getWallets(account.id)) ...[
+                    Draggable<Wallet>(
+                      key: Key(wallet.id),
+                      data: wallet,
+                      child: _wallet(context, wallet),
+                      feedback: _wallet(context, wallet),
+                      childWhenDragging: null,
+                    )
+                  ]
+                ]),
+                onAcceptWithDetails: (details) => _moveWallet(details, account),
+                onMove: (details) {
+                  print(details.data);
+                },
+              ),
             ],
             ..._createNewAcount(),
           ]);
