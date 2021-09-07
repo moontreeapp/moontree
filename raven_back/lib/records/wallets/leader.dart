@@ -31,6 +31,9 @@ class LeaderWallet extends Wallet {
   @override
   String get kind => 'HD Wallet';
 
+  @override
+  String get secret => seed.toString();
+
   Uint8List get seed {
     return cipher.decrypt(encryptedSeed);
   }

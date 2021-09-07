@@ -19,4 +19,6 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
   Cipher get cipher => const NoCipher();
 
   String get kind => 'Wallet';
+
+  String get secret => '';
 }

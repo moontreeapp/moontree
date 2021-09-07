@@ -26,6 +26,9 @@ class SingleWallet extends Wallet {
   @override
   String get kind => 'Private Key Wallet';
 
+  @override
+  String get secret => privateKey.toString();
+
   Uint8List get privateKey {
     return cipher.decrypt(encryptedPrivateKey);
   }
