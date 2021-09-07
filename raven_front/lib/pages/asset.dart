@@ -53,7 +53,9 @@ class _AssetState extends State<Asset> {
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: RavenButton.settings(context))
+                child: RavenButton.settings(context, () {
+                  setState(() {});
+                }))
           ],
           title: Text(data['holding']!.security.symbol),
           flexibleSpace: Container(

@@ -54,8 +54,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    print(settings.preferredAccountId);
-    print(settings.currentAccountId);
     return DefaultTabController(
         length: 2,
         child: Scaffold(
@@ -75,7 +73,9 @@ class _HomeState extends State<Home> {
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: RavenButton.settings(context))
+                child: RavenButton.settings(context, () {
+                  setState(() {});
+                }))
           ],
           elevation: 2,
           centerTitle: false,
@@ -214,6 +214,7 @@ class _HomeState extends State<Home> {
             ListTile(
                 onTap: () async {
                   await settings.setCurrentAccountId(account.id);
+                  accountName.text = '';
                   Navigator.pop(context);
                 },
                 title: Text(account.id + ' ' + account.name,

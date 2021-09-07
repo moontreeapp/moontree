@@ -44,7 +44,9 @@ class _RavenTransactionsState extends State<RavenTransactions> {
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: RavenButton.settings(context))
+                child: RavenButton.settings(context, () {
+                  setState(() {});
+                }))
           ],
           title: Text('RVN'),
           flexibleSpace: Container(

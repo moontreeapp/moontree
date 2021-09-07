@@ -91,7 +91,9 @@ class _TransactionState extends State<Transaction> {
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: RavenButton.settings(context))
+                child: RavenButton.settings(context, () {
+                  setState(() {});
+                }))
           ],
           title: Text('Transaction'),
           flexibleSpace: Container(

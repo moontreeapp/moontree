@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/utils/utils.dart';
+import 'package:raven_mobile/theme/extensions.dart';
 
 //import 'package:flutter_treeview/flutter_treeview.dart';
 /// make our own 2-layer hierarchy view
@@ -114,6 +115,37 @@ class _TechnicalViewState extends State<TechnicalView> {
                     (wallet as SingleWallet).encryptedPrivateKey));
   }
 
+  List<Widget> _deleteIfMany(Account account) => accounts.data.length > 1
+      ? [
+          IconButton(
+              onPressed: () async {
+                await accountService.removeAccount(account.id);
+              },
+              icon: Icon(Icons.delete))
+        ]
+      : [];
+
+  List<Widget> _createNewAcount() => [
+        //Divider(height: 40, thickness: 2, indent: 5, endIndent: 5),
+        SizedBox(height: 15.0),
+        ListTile(
+            onTap: () async {
+              var account = await accountGenerationService
+                  .makeAndAwaitSaveAccount(accountName.text);
+              await settingsService.saveSetting(
+                  SettingName.Account_Current, account.id);
+              accountName.text = '';
+            },
+            title: TextField(
+                readOnly: false,
+                controller: accountName,
+                decoration: InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'Create Account',
+                    hintText: 'Billz')),
+            trailing: Icon(Icons.add, size: 26.0, color: Colors.grey.shade800)),
+      ];
+
   ListView body() => ListView(
           //padding: const EdgeInsets.symmetric(horizontal: 5),
           children: <Widget>[
@@ -165,17 +197,7 @@ class _TechnicalViewState extends State<TechnicalView> {
                                           importTo(context, account);
                                         },
                                         icon: Icon(Icons.add_box_outlined)),
-                                    ...(accounts.data.length == 1
-                                        ? [
-                                            IconButton(
-                                                onPressed: () async {
-                                                  await accountService
-                                                      .removeAccount(
-                                                          account.id);
-                                                },
-                                                icon: Icon(Icons.delete))
-                                          ]
-                                        : [])
+                                    ...(_deleteIfMany(account))
                                   ])),
                   onAcceptWithDetails: (details) async =>
                       await moveWallet(details, account)),
@@ -186,20 +208,26 @@ class _TechnicalViewState extends State<TechnicalView> {
                   child: Card(
                       margin: const EdgeInsets.fromLTRB(40.0, 0.0, 10.0, 5),
                       child: Padding(
-                          padding: EdgeInsets.all(5.0),
+                          padding: EdgeInsets.fromLTRB(10.0, 5.0, 5.0, 5.0),
                           child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
-                                Text(
-                                    '${wallet.id.substring(0, 5)}... (${wallet.kind})',
-                                    style:
-                                        Theme.of(context).textTheme.bodyText2),
+                                Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                          '${wallet.id.substring(0, 6)}...${wallet.id.substring(wallet.id.length - 6, wallet.id.length)}',
+                                          style: Theme.of(context).mono),
+                                      Text('${wallet.kind}',
+                                          style: Theme.of(context).annotate),
+                                    ]),
                                 TextButton.icon(
                                     icon: Icon(Icons.remove_red_eye),
-                                    label: Text('show ' +
-                                        (wallet is LeaderWallet
-                                            ? 'seed phrase'
-                                            : 'private key')),
+                                    label: Text(wallet is LeaderWallet
+                                        ? 'seed phrase'
+                                        : 'private key'),
                                     onPressed: () {})
                               ]))),
                   feedback: Card(
@@ -212,26 +240,6 @@ class _TechnicalViewState extends State<TechnicalView> {
                 )
               ]
             ],
-
-            /// create new account:
-            ...[
-              ListTile(
-                  onTap: () async {
-                    var account = await accountGenerationService
-                        .makeAndAwaitSaveAccount(accountName.text);
-                    await settingsService.saveSetting(
-                        SettingName.Account_Current, account.id);
-                  },
-                  title: TextField(
-                      readOnly: false,
-                      controller: accountName,
-                      decoration: InputDecoration(
-                          border: UnderlineInputBorder(),
-                          labelText: 'Create Account',
-                          hintText: 'Billz')),
-                  trailing:
-                      Icon(Icons.add, size: 26.0, color: Colors.grey.shade800)),
-              Divider(height: 20, thickness: 2, indent: 5, endIndent: 5)
-            ]
+            ..._createNewAcount(),
           ]);
 }
