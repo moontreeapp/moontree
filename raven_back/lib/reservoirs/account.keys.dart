@@ -7,4 +7,5 @@ class _IdKey extends Key<Account> {
 
 extension ByIdMethodsForAccount on Index<_IdKey, Account> {
   Account? getOne(String accountId) => getByKeyStr(accountId).firstOrNull;
+  Account? getAny() => values.firstOrNull;
 }
