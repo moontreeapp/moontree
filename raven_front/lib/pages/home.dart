@@ -205,7 +205,8 @@ class _HomeState extends State<Home> {
                   Padding(
                       padding: EdgeInsets.only(right: 20.0),
                       child: GestureDetector(
-                          onTap: () {/* to technical view */},
+                          onTap: () => Navigator.pushNamed(
+                              context, '/settings/technical'),
                           child: Icon(Icons.edit,
                               size: 26.0, color: Colors.grey.shade200)))
                 ])),

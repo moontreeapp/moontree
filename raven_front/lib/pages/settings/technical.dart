@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/buttons.dart';
-import 'package:raven_mobile/utils/utils.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 
 //import 'package:flutter_treeview/flutter_treeview.dart';
@@ -138,8 +137,7 @@ class _TechnicalViewState extends State<TechnicalView> {
       : [];
 
   List<Widget> _createNewAcount() => [
-        //Divider(height: 40, thickness: 2, indent: 5, endIndent: 5),
-        SizedBox(height: 15.0),
+        SizedBox(height: 30.0),
         ListTile(
             onTap: () async {
               var account = await accountGenerationService
@@ -178,8 +176,21 @@ class _TechnicalViewState extends State<TechnicalView> {
                     icon: Icon(Icons.remove_red_eye),
                     label: Text(
                         wallet is LeaderWallet ? 'seed phrase' : 'private key'),
-                    onPressed: () {})
+                    onPressed: () => Navigator.pushNamed(
+                            context, '/settings/wallet',
+                            arguments: {
+                              'address': wallet.id,
+                              'secret': wallet.secret,
+                              'secretName': wallet is LeaderWallet
+                                  ? 'Seed Phrase'
+                                  : 'Private Key',
+                            }))
               ])));
+
+  List _getWallets(accountId) => [
+        for (var wallet in wallets.data)
+          if (wallet.accountId == accountId) wallet
+      ];
 
   ListView body() => ListView(
           //padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -192,7 +203,8 @@ class _TechnicalViewState extends State<TechnicalView> {
                     List<Wallet?> accepted,
                     List<dynamic> rejected,
                   ) =>
-                      wallets.byAccount.getAll(account.id).length > 0
+                      //wallets.byAccount.getAll(account.id).length > 0
+                      _getWallets(account.id).isNotEmpty
                           ? ListTile(
                               title: Text(account.name,
                                   style: Theme.of(context).textTheme.bodyText1),
@@ -237,15 +249,14 @@ class _TechnicalViewState extends State<TechnicalView> {
                   onAcceptWithDetails: (details) =>
                       _moveWallet(details, account)),
               //for (var wallet in wallets.byAccount.getAll(account.id)) ...[
-              for (var wallet in wallets.data) ...[
-                if (wallet.accountId == account.id)
-                  Draggable<Wallet>(
-                    key: Key(wallet.id),
-                    data: wallet,
-                    child: _wallet(context, wallet),
-                    feedback: _wallet(context, wallet),
-                    childWhenDragging: null,
-                  )
+              for (var wallet in _getWallets(account.id)) ...[
+                Draggable<Wallet>(
+                  key: Key(wallet.id),
+                  data: wallet,
+                  child: _wallet(context, wallet),
+                  feedback: _wallet(context, wallet),
+                  childWhenDragging: null,
+                )
               ]
             ],
             ..._createNewAcount(),

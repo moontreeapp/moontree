@@ -14,15 +14,28 @@ class Export extends StatefulWidget {
 
 class _ExportState extends State<Export> {
   dynamic data = {};
+  bool showSecret = false;
+  ToolbarOptions toolbarOptions =
+      ToolbarOptions(copy: true, selectAll: true, cut: false, paste: false);
 
   @override
   void initState() {
     super.initState();
   }
 
+  void _toggleShow() {
+    setState(() {
+      showSecret = !showSecret;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
+    data['address'] = "n1BuaCRqhZSKwpKjofQBjdTR7e9JPq7tAp";
+    data['secret'] =
+        "apple cost speed dip wallet toast jump water average need clip run";
+    data['secretName'] = 'Private Key'; // ?? 'Passphrase';
     return Scaffold(appBar: header(), body: body());
   }
 
@@ -30,7 +43,7 @@ class _ExportState extends State<Export> {
       leading: RavenButton.back(context),
       elevation: 2,
       centerTitle: false,
-      title: Text('Export Wallet'));
+      title: Text('Export'));
 
   ListView body() => ListView(
           shrinkWrap: true,
@@ -38,28 +51,43 @@ class _ExportState extends State<Export> {
           children: <Widget>[
             SizedBox(height: 30.0),
             Center(
-                child: QrImage(
-                    backgroundColor: Colors.white,
-                    data:
-                        "apple cost speed dip wallet toast jump water average need clip run",
-                    version: QrVersions.auto,
-                    size: 200.0)),
+                child: Column(children: <Widget>[
+              QrImage(
+                  backgroundColor: Colors.white,
+                  data: data['address'],
+                  semanticsLabel: data['address'],
+                  version: QrVersions.auto,
+                  size: 200.0),
+              Text('(address)', style: Theme.of(context).annotate),
+            ])),
             SizedBox(height: 30.0),
+            Text('Address:'),
             Center(
-                child: SelectableText('Warning! Do Not Disclose!',
+                child: SelectableText(data['address'],
                     cursorColor: Colors.grey[850],
                     showCursor: true,
-                    toolbarOptions: ToolbarOptions(
-                        copy: true, selectAll: true, cut: false, paste: false),
-                    style: TextStyle(color: Theme.of(context).bad))),
+                    style: Theme.of(context).mono,
+                    toolbarOptions: toolbarOptions)),
             SizedBox(height: 30.0),
+            Text('Warning! Do Not Disclose!',
+                style: TextStyle(color: Theme.of(context).bad)),
+            SizedBox(height: 15.0),
+            Text(data['secretName'] + ':'),
             Center(
-                child: SelectableText(
-              'apple cost speed dip wallet toast jump water average need clip run',
-              cursorColor: Colors.grey[850],
-              showCursor: true,
-              toolbarOptions: ToolbarOptions(
-                  copy: true, selectAll: true, cut: false, paste: false),
-            ))
+                child: Visibility(
+                    visible: showSecret,
+                    child: SelectableText(
+                      data['secret'],
+                      cursorColor: Colors.grey[850],
+                      showCursor: true,
+                      style: Theme.of(context).mono,
+                      toolbarOptions: toolbarOptions,
+                    ))),
+            SizedBox(height: 30.0),
+            ElevatedButton(
+                onPressed: () => _toggleShow(),
+                child: Text(showSecret
+                    ? 'Hide ' + data['secretName']
+                    : 'Show ' + data['secretName']))
           ]);
 }

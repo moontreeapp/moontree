@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raven_mobile/services/lookup.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/utils/utils.dart';
@@ -35,11 +36,11 @@ class _SettingsState extends State<Settings> {
         sections: [
           SettingsSection(tiles: [
             SettingsTile(
-                title: 'Wallet',
-                subtitle: '<Account Name>',
+                title: 'Account',
+                subtitle: Current.account.name,
                 leading: Icon(Icons.account_balance_wallet_rounded),
                 onPressed: (BuildContext context) =>
-                    Navigator.pushNamed(context, '/settings/wallet')),
+                    Navigator.pushNamed(context, '/settings/account')),
             SettingsTile(
                 title: 'Accounts Ovewview',
                 leading: Icon(Icons.lightbulb),
