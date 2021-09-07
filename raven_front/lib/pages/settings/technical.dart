@@ -24,30 +24,28 @@ import 'package:raven_mobile/theme/extensions.dart';
 /// the wallet should just be clickable so you can do all the actions, except drag in there. import export delete
 
 class TechnicalView extends StatefulWidget {
-  final dynamic data;
-  const TechnicalView({this.data}) : super();
+  const TechnicalView() : super();
 
   @override
   _TechnicalViewState createState() => _TechnicalViewState();
 }
 
 class _TechnicalViewState extends State<TechnicalView> {
-  dynamic data = {};
   List<StreamSubscription> listeners = [];
   final accountName = TextEditingController();
 
   @override
   void initState() {
-    super.initState();
     listeners.add(settings.changes.listen((changes) {
-      setState(() {});
-    }));
-    listeners.add(wallets.changes.listen((changes) {
       setState(() {});
     }));
     listeners.add(accounts.changes.listen((changes) {
       setState(() {});
     }));
+    listeners.add(wallets.changes.listen((changes) {
+      setState(() {});
+    }));
+    super.initState();
   }
 
   @override
@@ -61,8 +59,31 @@ class _TechnicalViewState extends State<TechnicalView> {
 
   @override
   Widget build(BuildContext context) {
-    data = populateData(context, data);
+    // indicies not updated (removed) yet
+    //print(accounts.data);
+    //print(wallets.data);
+    //var hierarchy = [
+    //  for (var account in accounts.data) ...[
+    //    account.id,
+    //    for (var wallet in wallets.byAccount.getAll(account.id)) ...[
+    //      wallet.id,
+    //    ]
+    //  ]
+    //];
+    //print(hierarchy);
+
+    // work around
+    print(accounts.data);
     print(wallets.data);
+    var hierarchy = [
+      for (var account in accounts.data) ...[
+        account.id,
+        for (var wallet in wallets.data) ...[
+          if (wallet.accountId == account.id) wallet.id,
+        ]
+      ]
+    ];
+    print(hierarchy);
     return Scaffold(appBar: header(), body: body());
   }
 
@@ -72,32 +93,23 @@ class _TechnicalViewState extends State<TechnicalView> {
       centerTitle: false,
       title: Text('Accounts Ovewview'));
 
-  //ListTile innerheader() => ListTile(
-  //    onTap: () {},
-  //    onLongPress: () {},
-  //    //leading: RavenIcon.appAvatar(),
-  //    title: Text('All Accounts', style: Theme.of(context).textTheme.headline4),
-  //    tileColor: Theme.of(context).bannerTheme.backgroundColor
-  //    //trailing: [ import -> import page, export all accounts -> file],
-  //    );
-
   /// set that account as current and go to import page
-  Future importTo(context, account) async {
+  Future _importTo(context, account) async {
     await settings.setCurrentAccountId(account.id);
     Navigator.pushNamed(context, '/settings/import');
   }
 
   /// set that account as current and go to export page
-  Future exportTo(context, account) async {
+  Future _exportTo(context, account) async {
     await settings.setCurrentAccountId(account.id);
     Navigator.pushNamed(context, '/settings/export');
   }
 
   /// change the accountId for this wallet and save
-  Future moveWallet(details, account) async {
+  void _moveWallet(details, account) {
     // how do we get it to redraw correctly?
     var wallet = details.data;
-    await wallets.save(wallet is LeaderWallet
+    wallets.save(wallet is LeaderWallet
         ? LeaderWallet(
             id: wallet.id,
             accountId: account.id,
@@ -146,6 +158,29 @@ class _TechnicalViewState extends State<TechnicalView> {
             trailing: Icon(Icons.add, size: 26.0, color: Colors.grey.shade800)),
       ];
 
+  Card _wallet(BuildContext context, Wallet wallet) => Card(
+      margin: const EdgeInsets.fromLTRB(40.0, 0.0, 10.0, 5),
+      child: Padding(
+          padding: EdgeInsets.fromLTRB(10.0, 5.0, 5.0, 5.0),
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                          '${wallet.id.substring(0, 6)}...${wallet.id.substring(wallet.id.length - 6, wallet.id.length)}',
+                          style: Theme.of(context).mono),
+                      Text('${wallet.kind}', style: Theme.of(context).annotate),
+                    ]),
+                TextButton.icon(
+                    icon: Icon(Icons.remove_red_eye),
+                    label: Text(
+                        wallet is LeaderWallet ? 'seed phrase' : 'private key'),
+                    onPressed: () {})
+              ])));
+
   ListView body() => ListView(
           //padding: const EdgeInsets.symmetric(horizontal: 5),
           children: <Widget>[
@@ -154,7 +189,7 @@ class _TechnicalViewState extends State<TechnicalView> {
                   key: Key(account.id),
                   builder: (
                     BuildContext context,
-                    List<dynamic> accepted,
+                    List<Wallet?> accepted,
                     List<dynamic> rejected,
                   ) =>
                       wallets.byAccount.getAll(account.id).length > 0
@@ -177,12 +212,12 @@ class _TechnicalViewState extends State<TechnicalView> {
                                                 Icon(Icons.star_outline_sharp)),
                                     IconButton(
                                         onPressed: () {
-                                          importTo(context, account);
+                                          _importTo(context, account);
                                         },
                                         icon: Icon(Icons.add_box_outlined)),
                                     IconButton(
                                         onPressed: () {
-                                          exportTo(context, account);
+                                          _exportTo(context, account);
                                         },
                                         icon: Icon(Icons.save)),
                                   ]))
@@ -194,50 +229,23 @@ class _TechnicalViewState extends State<TechnicalView> {
                                   children: <Widget>[
                                     IconButton(
                                         onPressed: () {
-                                          importTo(context, account);
+                                          _importTo(context, account);
                                         },
                                         icon: Icon(Icons.add_box_outlined)),
                                     ...(_deleteIfMany(account))
                                   ])),
-                  onAcceptWithDetails: (details) async =>
-                      await moveWallet(details, account)),
-              for (var wallet in wallets.byAccount.getAll(account.id)) ...[
-                Draggable<Wallet>(
-                  key: Key(wallet.id),
-                  data: wallet,
-                  child: Card(
-                      margin: const EdgeInsets.fromLTRB(40.0, 0.0, 10.0, 5),
-                      child: Padding(
-                          padding: EdgeInsets.fromLTRB(10.0, 5.0, 5.0, 5.0),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                          '${wallet.id.substring(0, 6)}...${wallet.id.substring(wallet.id.length - 6, wallet.id.length)}',
-                                          style: Theme.of(context).mono),
-                                      Text('${wallet.kind}',
-                                          style: Theme.of(context).annotate),
-                                    ]),
-                                TextButton.icon(
-                                    icon: Icon(Icons.remove_red_eye),
-                                    label: Text(wallet is LeaderWallet
-                                        ? 'seed phrase'
-                                        : 'private key'),
-                                    onPressed: () {})
-                              ]))),
-                  feedback: Card(
-                      child: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Text(
-                              '${wallet.id.substring(0, 5)}... (${wallet.kind})',
-                              style: Theme.of(context).textTheme.bodyText2))),
-                  childWhenDragging: null,
-                )
+                  onAcceptWithDetails: (details) =>
+                      _moveWallet(details, account)),
+              //for (var wallet in wallets.byAccount.getAll(account.id)) ...[
+              for (var wallet in wallets.data) ...[
+                if (wallet.accountId == account.id)
+                  Draggable<Wallet>(
+                    key: Key(wallet.id),
+                    data: wallet,
+                    child: _wallet(context, wallet),
+                    feedback: _wallet(context, wallet),
+                    childWhenDragging: null,
+                  )
               ]
             ],
             ..._createNewAcount(),
