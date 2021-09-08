@@ -16,9 +16,11 @@ class Send extends StatefulWidget {
 
 class _SendState extends State<Send> {
   dynamic data = {};
-  late GlobalKey<FormState> formKey;
+  final formKey = GlobalKey<FormState>();
   final sendAddress = TextEditingController();
   final sendAmount = TextEditingController(text: '10');
+  final sendMemo = TextEditingController();
+  final sendNote = TextEditingController();
 
   @override
   void initState() {
@@ -37,7 +39,6 @@ class _SendState extends State<Send> {
   Widget build(BuildContext context) {
     // could hold which asset to send...
     data = populateData(context, data);
-    formKey = GlobalKey<FormState>();
     return Scaffold(
         appBar: header(),
         body: body(),
@@ -162,6 +163,7 @@ class _SendState extends State<Send> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [Text('fee'), Text('0.01397191 RVN')]),
                     TextFormField(
+                      controller: sendMemo,
                       keyboardType: TextInputType.multiline,
                       maxLines: 1,
                       decoration: InputDecoration(
@@ -170,6 +172,7 @@ class _SendState extends State<Send> {
                           hintText: 'IPFS hash publicly posted on transaction'),
                     ),
                     TextFormField(
+                      controller: sendNote,
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
                       decoration: InputDecoration(
