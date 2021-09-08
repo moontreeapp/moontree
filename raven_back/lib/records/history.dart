@@ -35,6 +35,9 @@ class History with EquatableMixin {
   Security security;
 
   @HiveField(8)
+  String memo;
+
+  @HiveField(9)
   String note;
 
   History(
@@ -46,6 +49,7 @@ class History with EquatableMixin {
       this.position = -1,
       this.value = 0,
       this.security = RVN,
+      this.memo = '',
       this.note = ''});
 
   bool get confirmed => position > -1;
@@ -60,14 +64,16 @@ class History with EquatableMixin {
         position,
         value,
         security,
+        memo,
         note
       ];
 
   @override
   String toString() {
-    return 'History(walletId: $walletId, accountId: $accountId, scripthash: $scripthash, txHash: $hash, height: $height, txPos: $position, value: $value, security: $security, note: $note)';
+    return 'History(walletId: $walletId, accountId: $accountId, scripthash: $scripthash, txHash: $hash, height: $height, txPos: $position, value: $value, security: $security, memo: $memo, note: $note)';
   }
 
+  // ScripthashHistories should provide a memo, but do they (form electrum? I don't think so)
   factory History.fromScripthashHistory(String accountId, String walletId,
       String scripthash, ScripthashHistory history) {
     return History(
@@ -79,6 +85,7 @@ class History with EquatableMixin {
     );
   }
 
+  // ScripthashHistories should provide a memo, but do they (form electrum? I don't think so)
   factory History.fromScripthashUnspent(String accountId, String walletId,
       String scripthash, ScripthashUnspent unspent) {
     return History(
