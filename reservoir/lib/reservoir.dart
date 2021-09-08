@@ -75,15 +75,13 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
 
   /// Save a `record`, index it, and broadcast the change
   Future<Change?> save(Record record) async {
-    return await _saveSilently(record)
-      ?..ifChanged((change) => _changes.add([change]));
+    var change = await _saveSilently(record);
+    if (change != null) _changes.add([change]);
+    return change;
   }
 
   /// Remove a `record`, de-index it, and broadcast the change
   Future<Change?> remove(Record record) async {
-    // must remove it from the in memory stuff too...
-    // maybe we should have the hive source follow changes to the in memory stuff?
-    //primaryIndex.remove(record);
     return await _removeSilently(record)
       ?..ifChanged((change) => _changes.add([change]));
   }
@@ -100,14 +98,25 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
 
   // Index & save one record without broadcasting any changes
   Future<Change?> _saveSilently(Record record) async {
-    return await source.save(primaryKey(record), record)
-      ?..ifChanged((Change change) => _addToIndices(change.data));
+    var change = await source.save(primaryKey(record), record);
+    change?.when(
+        added: (change) {
+          _addToIndices(change.data);
+        },
+        updated: (change) {
+          var oldRecord = primaryIndex.getByKeyStr(primaryKey(record))[0];
+          _removeFromIndices(oldRecord);
+          _addToIndices(change.data);
+        },
+        removed: (change) {});
+    return change;
   }
 
   // De-index & remove one record without broadcasting any changes
   Future<Change?> _removeSilently(Record record) async {
-    return await source.remove(primaryKey(record))
-      ?..ifChanged((Change change) => _removeFromIndices(change.data));
+    var change = await source.remove(primaryKey(record));
+    if (change != null) _removeFromIndices(change.data);
+    return change;
   }
 
   // Apply a change function to each of the `records`, returning the changes
