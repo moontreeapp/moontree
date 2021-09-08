@@ -11,7 +11,6 @@ class AccountBalanceWaiter extends Waiter {
 
   AccountBalanceWaiter(this.histories, this.balanceService) : super();
 
-  @override
   void init() {
     listeners.add(histories.changes
         .bufferCountTimeout(25, Duration(milliseconds: 50))
@@ -19,5 +18,20 @@ class AccountBalanceWaiter extends Waiter {
       var changes = unflattenedChanges.expand((change) => change);
       balanceService.saveChangedBalances(changes.toList());
     }));
+
+    /// wallet is moved to or from account
+    //listeners.add(wallets.changes
+    //    .bufferCountTimeout(25, Duration(milliseconds: 50))
+    //    .listen((List<List<Change>> unflattenedChanges) {
+    //  var changes = unflattenedChanges.expand((change) => change);
+    //  balanceService.saveChangedBalances(changes.toList());
+    //}));
+    /// account is deleted / created
+    //listeners.add(accounts.changes
+    //    .bufferCountTimeout(25, Duration(milliseconds: 50))
+    //    .listen((List<List<Change>> unflattenedChanges) {
+    //  var changes = unflattenedChanges.expand((change) => change);
+    //  balanceService.saveChangedBalances(changes.toList());
+    //}));
   }
 }
