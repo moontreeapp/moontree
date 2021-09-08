@@ -27,9 +27,9 @@ const PRIMARY_INDEX = '_primary';
 
 class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
     with IterableMixin<Record> {
-  final Source<Record> source;
   final Map<String, Index<Key<Record>, Record>> indices = {};
   final PublishSubject<List<Change>> _changes = PublishSubject();
+  late Source<Record> source;
 
   /// Expose the stream of changes that can be subscribed to
   Stream<List<Change>> get changes => _changes.stream;
@@ -52,8 +52,14 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
   /// Construct a Reservoir from a `source`. Requires `getKey` as a function
   /// that maps a Record to a Key, so that the Reservoir can construct a
   /// `primaryIndex`.
-  Reservoir(this.source, PrimaryKey keyType) {
+  Reservoir(Source<Record> source, PrimaryKey keyType) {
     indices[PRIMARY_INDEX] = IndexUnique<PrimaryKey, Record>(keyType);
+    setSource(source);
+  }
+
+  setSource(Source<Record> source) {
+    clear();
+    this.source = source;
     source.initialLoad().forEach(_addToIndices);
   }
 
@@ -73,6 +79,11 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
       ..addAll(data);
   }
 
+  /// Clear all data in reservoir, including all indices
+  Future<List<Change>> clear() async {
+    return await removeAll(data);
+  }
+
   /// Save a `record`, index it, and broadcast the change
   Future<Change?> save(Record record) async {
     var change = await _saveSilently(record);
@@ -87,12 +98,12 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
   }
 
   /// Save all `records`, index them, and broadcast the changes
-  Future<List<Change>> saveAll(List<Record> records) async {
+  Future<List<Change>> saveAll(Iterable<Record> records) async {
     return await _changeAll(records, _saveSilently);
   }
 
   /// Remove all `records`, de-index them, and broadcast the changes
-  Future<List<Change>> removeAll(List<Record> records) async {
+  Future<List<Change>> removeAll(Iterable<Record> records) async {
     return await _changeAll(records, _removeSilently);
   }
 
@@ -120,9 +131,10 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
   }
 
   // Apply a change function to each of the `records`, returning the changes
-  Future<List<Change>> _changeAll(List<Record> records, changeFn) async {
+  Future<List<Change>> _changeAll(Iterable<Record> records, changeFn) async {
     var changes = <Change>[];
-    for (var record in records) {
+    // must turn iterable into list so that records can be removed by changeFn
+    for (var record in records.toList()) {
       var change = await changeFn(record);
       if (change != null) changes.add(change);
     }

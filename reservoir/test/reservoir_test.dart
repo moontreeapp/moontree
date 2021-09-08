@@ -34,6 +34,13 @@ void main() {
       expect(c3, null);
     });
 
+    test('clear all data', () async {
+      await res.save(SimpleRecord('a', 'abc'));
+      await res.save(SimpleRecord('b', 'bcd'));
+      await res.clear();
+      expect(res.data.isEmpty, true);
+    });
+
     // test('changes made in sequence', () async {
     //   enqueueChange(() => source.map[0] = 'a');
     //   enqueueChange(() => source.map[1] = 'b');

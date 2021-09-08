@@ -1,14 +1,14 @@
 import 'change.dart';
-import 'key.dart';
 import 'source.dart';
 
 class MapSource<Record> extends Source<Record> {
-  final Map map = {};
+  late final Map<String, Record> map;
+
+  MapSource([Map<String, Record>? map]) : map = map ?? {};
 
   @override
   Iterable<Record> initialLoad() {
-    // Do nothing, since RxMap always starts without values
-    return [];
+    return map.values;
   }
 
   @override
