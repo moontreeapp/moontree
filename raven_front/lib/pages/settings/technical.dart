@@ -58,31 +58,6 @@ class _TechnicalViewState extends State<TechnicalView> {
 
   @override
   Widget build(BuildContext context) {
-    // indicies not updated (removed) yet
-    //print(accounts.data);
-    //print(wallets.data);
-    //var hierarchy = [
-    //  for (var account in accounts.data) ...[
-    //    account.id,
-    //    for (var wallet in wallets.byAccount.getAll(account.id)) ...[
-    //      wallet.id,
-    //    ]
-    //  ]
-    //];
-    //print(hierarchy);
-
-    // work around
-    print(accounts.data);
-    print(wallets.data);
-    var hierarchy = [
-      for (var account in accounts.data) ...[
-        account.id,
-        for (var wallet in wallets.data) ...[
-          if (wallet.accountId == account.id) wallet.id,
-        ]
-      ]
-    ];
-    print(hierarchy);
     return Scaffold(appBar: header(), body: body());
   }
 
@@ -117,6 +92,8 @@ class _TechnicalViewState extends State<TechnicalView> {
   void _moveWallet(details, account) {
     // how do we get it to redraw correctly?
     var wallet = details.data;
+    //wallet.accountId = account.id;
+    //wallets.save(wallet);
     wallets.save(wallet is LeaderWallet
         ? LeaderWallet(
             id: wallet.id,
@@ -192,15 +169,15 @@ class _TechnicalViewState extends State<TechnicalView> {
                               'address': wallet.id,
                               'secret': wallet.secret,
                               'secretName': wallet is LeaderWallet
-                                  ? 'Seed Phrase'
+                                  ? 'Mnemonic Seed'
                                   : 'Private Key',
                             }))
               ])));
 
-  List _getWallets(accountId) => [
-        for (var wallet in wallets.data)
-          if (wallet.accountId == accountId) wallet
-      ];
+  ///List _getWallets(accountId) => [
+  ///      for (var wallet in wallets.data)
+  ///        if (wallet.accountId == accountId) wallet
+  ///    ];
 
   ListView body() => ListView(
           //padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -214,8 +191,8 @@ class _TechnicalViewState extends State<TechnicalView> {
                   List<dynamic> rejected,
                 ) =>
                     Column(children: <Widget>[
-                  //wallets.byAccount.getAll(account.id).length > 0
-                  _getWallets(account.id).isNotEmpty
+                  wallets.byAccount.getAll(account.id).length > 0
+                      //_getWallets(account.id).isNotEmpty
                       ? ListTile(
                           title: Text(account.name,
                               style: Theme.of(context).textTheme.bodyText1),
@@ -256,8 +233,8 @@ class _TechnicalViewState extends State<TechnicalView> {
                                     icon: Icon(Icons.add_box_outlined)),
                                 ...(_deleteIfMany(account))
                               ])),
-                  //for (var wallet in wallets.byAccount.getAll(account.id)) ...[
-                  for (var wallet in _getWallets(account.id)) ...[
+                  for (var wallet in wallets.byAccount.getAll(account.id)) ...[
+                    //for (var wallet in _getWallets(account.id)) ...[
                     Draggable<Wallet>(
                       key: Key(wallet.id),
                       data: wallet,
@@ -268,9 +245,6 @@ class _TechnicalViewState extends State<TechnicalView> {
                   ]
                 ]),
                 onAcceptWithDetails: (details) => _moveWallet(details, account),
-                onMove: (details) {
-                  print(details.data);
-                },
               ),
             ],
             ..._createNewAcount(),

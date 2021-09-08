@@ -36,6 +36,9 @@ class _ImportState extends State<Import> {
       centerTitle: false,
       title: Text('Import Wallet'));
 
+  // returns string of account the wallet is already assigned to
+  //String? _walletFound(walletId) => wallet.primaryIndex.getOne(walletId)?.accountId;
+
   ListView body() {
     var _controller = TextEditingController();
     return ListView(shrinkWrap: true, padding: EdgeInsets.all(20.0), children: <

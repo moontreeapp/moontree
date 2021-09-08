@@ -5,6 +5,15 @@ Map populateData(BuildContext context, data) => data != null && data.isNotEmpty
     ? data
     : ModalRoute.of(context)!.settings.arguments ?? {};
 
+/// this is a preliminary format - proprietary...
+/// we should atleast save the wallets as WIF in the json file.
+/// Ideally we can find a common json format and use that,
+/// adding our account mapping as metadata.
+/// otherwise, what might be better is to package it up as a zip,  // fyi zip could include asset assets.
+/// that way we can make a folder hierarchy for accounts
+/// and wif files for wallets.
+/// at least that way its manually importable to something else, otherwise
+/// the user must export wallets one at a time and save their private keys etc.
 Map<String, Map> structureForExport(Account? account) => {
       'accounts': accountsForExport(account),
       'wallets': walletsForExport(account),
@@ -22,9 +31,10 @@ Map<String, Map<String, dynamic>> walletsForExport(Account? account) => {
           : wallets.data) ...{
         wallet.id: {
           'accountId': wallet.accountId,
-          'cipher': wallet.cipher.toString(),
-          'kind': wallet.kind,
-          'secret': wallet.secret
+          //'wif': wallet.wif
+          //'cipher': wallet.cipher.toString(),
+          //'kind': wallet.kind,
+          //'secret': wallet.secret
         } // each wallet should be WIF or something...
       }
     };

@@ -19,8 +19,8 @@ Future<File> _localFile(String filename) async => File(
 
 Future<File> writeToExport(
     {required String filename, required Map<String, dynamic> json}) async {
-  print(await _localFile(filename));
-  print(jsonEncode(json));
+  //print(await _localFile(filename));
+  //print(jsonEncode(json));
   return (await _localFile(filename)).writeAsString(jsonEncode(json));
 }
 
