@@ -38,6 +38,8 @@ class LeaderWallet extends Wallet {
     return cipher.decrypt(encryptedSeed);
   }
 
+  ///String get wif => ///;
+
   HDWallet deriveWallet(
     Net net,
     int hdIndex, [

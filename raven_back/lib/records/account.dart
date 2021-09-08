@@ -19,14 +19,6 @@ class Account with EquatableMixin {
   @HiveField(2)
   Net net;
 
-  /// linked-list to next account
-  ///   I only have to make sure the linked address is not itself
-  ///   and not the primary one, which is always where I start
-  //@HiveField(3)
-  //String uiNextAccount;
-  /// easier as a list in settings...
-  /// should this be a setting?... ''
-
   Account({
     required this.id,
     required this.name,
@@ -34,7 +26,7 @@ class Account with EquatableMixin {
   });
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [id, name, net];
 
   @override
   String toString() => 'Account($id, $name, $net)';

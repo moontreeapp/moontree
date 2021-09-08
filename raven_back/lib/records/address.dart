@@ -41,7 +41,15 @@ class Address with EquatableMixin {
   });
 
   @override
-  List<Object> get props => [scripthash];
+  List<Object> get props => [
+        scripthash,
+        address,
+        walletId,
+        accountId,
+        hdIndex,
+        exposure,
+        net,
+      ];
 
   @override
   String toString() =>
