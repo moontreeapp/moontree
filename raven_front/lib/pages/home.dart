@@ -28,6 +28,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    super.initState();
     // gets cleaned up?
     currentTheme.addListener(() {
       setState(() {});
@@ -38,7 +39,6 @@ class _HomeState extends State<Home> {
     listeners.add(settings.changes.listen((changes) {
       setState(() {});
     }));
-    super.initState();
   }
 
   @override

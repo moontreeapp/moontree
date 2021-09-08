@@ -41,8 +41,9 @@ class _AccountSettingsState extends State<AccountSettings> {
           SettingsTile(
               title: 'Export Account',
               leading: Icon(Icons.save),
-              onPressed: (BuildContext context) =>
-                  Navigator.pushNamed(context, '/settings/export')),
+              onPressed: (BuildContext context) => Navigator.pushNamed(
+                  context, '/settings/export',
+                  arguments: {'accountId': 'current'})),
           SettingsTile(
               title: 'Sign Message',
               enabled: false,

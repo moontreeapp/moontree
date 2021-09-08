@@ -35,6 +35,7 @@ class _TechnicalViewState extends State<TechnicalView> {
 
   @override
   void initState() {
+    super.initState();
     listeners.add(settings.changes.listen((changes) {
       setState(() {});
     }));
@@ -44,7 +45,6 @@ class _TechnicalViewState extends State<TechnicalView> {
     listeners.add(wallets.changes.listen((changes) {
       setState(() {});
     }));
-    super.initState();
   }
 
   @override
@@ -90,6 +90,9 @@ class _TechnicalViewState extends State<TechnicalView> {
       leading: RavenButton.back(context),
       elevation: 2,
       centerTitle: false,
+      actions: <Widget>[
+        IconButton(onPressed: () => _exportAll(context), icon: Icon(Icons.save))
+      ],
       title: Text('Accounts Ovewview'));
 
   /// set that account as current and go to import page
@@ -102,6 +105,12 @@ class _TechnicalViewState extends State<TechnicalView> {
   Future _exportTo(context, account) async {
     await settings.setCurrentAccountId(account.id);
     Navigator.pushNamed(context, '/settings/export');
+  }
+
+  /// export all acounts ability
+  Future _exportAll(context) async {
+    Navigator.pushNamed(context, '/settings/export',
+        arguments: {'accountId': 'all'});
   }
 
   /// change the accountId for this wallet and save

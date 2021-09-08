@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-import 'package:raven_mobile/theme/extensions.dart';
+import 'package:raven/raven.dart';
+import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/utils/utils.dart';
+import 'package:raven_mobile/utils/files.dart';
 
 class Export extends StatefulWidget {
   final dynamic data;
@@ -14,80 +17,55 @@ class Export extends StatefulWidget {
 
 class _ExportState extends State<Export> {
   dynamic data = {};
-  bool showSecret = false;
-  ToolbarOptions toolbarOptions =
-      ToolbarOptions(copy: true, selectAll: true, cut: false, paste: false);
+  Account? account;
 
   @override
   void initState() {
     super.initState();
   }
 
-  void _toggleShow() {
-    setState(() {
-      showSecret = !showSecret;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    data['address'] = "n1BuaCRqhZSKwpKjofQBjdTR7e9JPq7tAp";
-    data['secret'] =
-        "apple cost speed dip wallet toast jump water average need clip run";
-    data['secretName'] = 'Private Key'; // ?? 'Passphrase';
+    if (data['accountId'] == 'all') {
+    } else if (data['accountId'] == 'current') {
+      account = Current.account;
+    } else {
+      account =
+          accounts.primaryIndex.getOne(data['accountId']) ?? Current.account;
+    }
     return Scaffold(appBar: header(), body: body());
   }
+
+  String get _accountName =>
+      account != null ? 'Account: ' + account!.name : 'All Accounts';
+  String get _accountId => account != null ? account!.id : 'AllAccounts';
 
   AppBar header() => AppBar(
       leading: RavenButton.back(context),
       elevation: 2,
       centerTitle: false,
-      title: Text('Export'));
+      title: Text('Export ' + _accountName));
 
-  ListView body() => ListView(
-          shrinkWrap: true,
-          padding: EdgeInsets.all(10.0),
+  Future<File> _download() async =>
+      await writeToExport(filename: _accountId, json: {'test': 'what'});
+
+  Column body() => Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            SizedBox(height: 30.0),
             Center(
-                child: Column(children: <Widget>[
-              QrImage(
-                  backgroundColor: Colors.white,
-                  data: data['address'],
-                  semanticsLabel: data['address'],
-                  version: QrVersions.auto,
-                  size: 200.0),
-              Text('(address)', style: Theme.of(context).annotate),
-            ])),
-            SizedBox(height: 30.0),
-            Text('Address:'),
-            Center(
-                child: SelectableText(data['address'],
-                    cursorColor: Colors.grey[850],
-                    showCursor: true,
-                    style: Theme.of(context).mono,
-                    toolbarOptions: toolbarOptions)),
-            SizedBox(height: 30.0),
-            Text('Warning! Do Not Disclose!',
-                style: TextStyle(color: Theme.of(context).bad)),
-            SizedBox(height: 15.0),
-            Text(data['secretName'] + ':'),
+                child: TextButton.icon(
+                    icon: Icon(Icons.download),
+                    onPressed: () => _download(),
+                    label: Text('Export ' + _accountName))),
             Center(
                 child: Visibility(
-                    visible: showSecret,
-                    child: SelectableText(
-                      data['secret'],
-                      cursorColor: Colors.grey[850],
-                      showCursor: true,
-                      style: Theme.of(context).mono,
-                      toolbarOptions: toolbarOptions,
-                    ))),
-            SizedBox(height: 30.0),
-            ElevatedButton(
-                onPressed: () => _toggleShow(),
-                child: Text(showSecret
-                    ? 'Hide ' + data['secretName']
-                    : 'Show ' + data['secretName']))
+                    visible: true,
+                    child: Padding(
+                      padding: EdgeInsets.all(20.0),
+                      child: Text(
+                          'file saved to... (this should show up from listener when file is detected saved)...'),
+                    )))
           ]);
 }
