@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
 import 'package:raven_mobile/components/buttons.dart';
@@ -15,7 +18,9 @@ class Import extends StatefulWidget {
 class _ImportState extends State<Import> {
   dynamic data = {};
   var words = TextEditingController();
+  Uint8List? walletSecret;
   bool importEnabled = false;
+  bool singleWallet = false;
 
   @override
   void initState() {
@@ -48,6 +53,50 @@ class _ImportState extends State<Import> {
   // returns string of account the wallet is already assigned to
   //String? _walletFound(walletId) => wallet.primaryIndex.getOne(walletId)?.accountId;
 
+  Future alertSuccess() {
+    if (singleWallet) {
+      singleWalletGenerationService.makeAndSaveSingleWallet(
+          account: Current.account,
+          privateKey: walletSecret!,
+          compressed: true);
+    } else {
+      leaderWalletGenerationService.makeAndSaveLeaderWallet(Current.account,
+          seed: walletSecret);
+    }
+    // should we await save?
+    // how else to verify?
+    //if (wallets.byAccount.getAll(Current.account.id).map((e) => e.secret).contains(walletSecret)) {
+    if (true) {
+      return showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                title: Text('success!'),
+                content: Text('wallet imported into account'),
+                actions: [
+                  TextButton(
+                      child: Text('ok'),
+                      onPressed: () => Navigator.pushNamed(context, '/home'))
+                ],
+              ));
+    }
+  }
+
+  TextButton submitButton() {
+    var submitMessage = 'Import into ' + Current.account.name + ' account';
+    if (importEnabled) {
+      return TextButton.icon(
+          onPressed: () => alertSuccess(),
+          icon: RavenIcon.import,
+          label: Text(submitMessage,
+              style: TextStyle(color: Theme.of(context).primaryColor)));
+    }
+    return TextButton.icon(
+        onPressed: () {},
+        icon: RavenIcon.importDisabled(context),
+        label: Text(submitMessage,
+            style: TextStyle(color: Theme.of(context).disabledColor)));
+  }
+
   ListView body() {
     return ListView(
         shrinkWrap: true,
@@ -61,6 +110,7 @@ class _ImportState extends State<Import> {
                 controller: words,
                 keyboardType: TextInputType.multiline,
                 maxLines: 12,
+                textInputAction: TextInputAction.done,
                 decoration: InputDecoration(
                     border: UnderlineInputBorder(),
                     hintText: ("Please enter your seed words, WIF, or anything "
@@ -76,19 +126,13 @@ class _ImportState extends State<Import> {
                   var isPrivateKey = text.length == 64;
                   if (isWIF || isSeed || isMnemonic || isPrivateKey) {
                     importEnabled = true;
+                    walletSecret = Uint8List(16);
+                    singleWallet = true;
                   }
+                  setState(() => {});
                 },
               ),
-              TextButton.icon(
-                  onPressed: () {},
-                  icon: RavenIcon.import,
-                  label: Text(
-                    'Import into ' + Current.account.name + ' account',
-                    style: TextStyle(
-                        color: importEnabled
-                            ? Theme.of(context).primaryColor
-                            : Theme.of(context).disabledColor),
-                  ))
+              submitButton(),
             ],
           ),
         ]);

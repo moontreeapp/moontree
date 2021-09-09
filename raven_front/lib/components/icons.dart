@@ -7,6 +7,8 @@ Icon inIcon(BuildContext context) =>
     Icon(Icons.south_west, size: 12.0, color: Theme.of(context).good);
 Icon outIcon(BuildContext context) =>
     Icon(Icons.north_east, size: 12.0, color: Theme.of(context).bad);
+Icon importDisabledIcon(BuildContext context) =>
+    Icon(Icons.add_box_outlined, color: Theme.of(context).disabledColor);
 Icon importIcon() => Icon(Icons.add_box_outlined);
 Icon exportIcon() => Icon(Icons.save);
 
@@ -31,6 +33,8 @@ class RavenIcon {
   static Icon get back => backIcon();
   static Icon income(BuildContext context) => inIcon(context);
   static Icon out(BuildContext context) => outIcon(context);
+  static Icon importDisabled(BuildContext context) =>
+      importDisabledIcon(context);
   static Icon get import => importIcon();
   static Icon get export => exportIcon();
   static AssetImage assetImage(asset) => assetIcon(asset ?? 'RVN');
