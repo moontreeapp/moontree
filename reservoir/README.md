@@ -37,14 +37,14 @@ extension ByActiveStatus on IndexMultiple<ActiveStatusKey, User> {
 class UserReservoir extends Reservoir<NameKey, User> {
   late IndexMultiple<ActiveStatusKey, User> byActiveStatus;
 
-  UserReservoir(Source<User> source) : super(source, NameKey()) {
+  UserReservoir() : super(NameKey()) {
     byActiveStatus = addIndexMultiple('active-status', ActiveStatusKey());
   }
 }
 
 void main() async {
   var source = MapSource<User>();
-  var res = UserReservoir(source);
+  var res = UserReservoir()..setSource(source);
   await res.save(User('John', true, 'pending'));
   await res.save(User('Shawna', true, 'complete'));
   await res.save(User('Meili', false, 'complete'));
