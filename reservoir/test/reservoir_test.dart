@@ -34,6 +34,13 @@ void main() {
       expect(c3, null);
     });
 
+    test('setSource', () {
+      var source = MapSource({'a': SimpleRecord('a', 'abc')});
+      res.setSource(source);
+      res.setSource(source);
+      expect(res.data.length, 1);
+    });
+
     test('clear all data', () async {
       await res.save(SimpleRecord('a', 'abc'));
       await res.save(SimpleRecord('b', 'bcd'));

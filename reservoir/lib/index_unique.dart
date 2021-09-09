@@ -13,6 +13,9 @@ class IndexUnique<K extends Key<Record>, Record> extends Index<K, Record> {
   Iterable<Record> get values => _data.values;
 
   @override
+  void clear() => _data.clear();
+
+  @override
   void add(Record record) => _data[keyType.getKey(record)] = record;
 
   @override

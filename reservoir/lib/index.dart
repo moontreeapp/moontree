@@ -17,6 +17,7 @@ abstract class Index<K extends Key, Record> {
 
   Iterable<String> get keys;
   Iterable<Record> get values;
+  void clear();
   void add(Record record);
   bool remove(Record record);
   List<Record> getByKeyStr(String key);

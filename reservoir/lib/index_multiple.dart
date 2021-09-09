@@ -25,6 +25,11 @@ class IndexMultiple<K extends Key<Record>, Record> extends Index<K, Record> {
     }
   }
 
+  @override
+  void clear() {
+    _data.clear();
+  }
+
   /// Add a row to the indexed values; if the row has already been added, this
   /// is a no-op.
   @override

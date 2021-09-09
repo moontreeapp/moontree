@@ -57,7 +57,10 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
   }
 
   setSource(Source<Record> source) {
-    clear();
+    for (var index in indices.values) {
+      index.clear();
+    }
+
     this.source = source;
     source.initialLoad().forEach(_addToIndices);
   }
@@ -125,7 +128,8 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
 
   // De-index & remove one record without broadcasting any changes
   Future<Change?> _removeSilently(Record record) async {
-    var change = await source.remove(primaryKey(record));
+    var key = primaryKey(record);
+    var change = await source.remove(key);
     if (change != null) _removeFromIndices(change.data);
     return change;
   }

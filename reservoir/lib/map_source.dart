@@ -35,4 +35,9 @@ class MapSource<Record> extends Source<Record> {
       return Removed(key, existing);
     }
   }
+
+  @override
+  String toString() {
+    return 'MapSource($map)';
+  }
 }
