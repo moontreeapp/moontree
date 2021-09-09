@@ -1,3 +1,9 @@
+## 3.0.0
+
+- Remove source from Reservoir constructor
+- Call `setSource` to set the source at any time
+- Fix de-indexing when saving a record
+
 ## 2.1.0
 
 - Lazy-load boxes in HiveSource

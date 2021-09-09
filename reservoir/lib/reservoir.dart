@@ -92,8 +92,9 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
 
   /// Remove a `record`, de-index it, and broadcast the change
   Future<Change?> remove(Record record) async {
-    return await _removeSilently(record)
-      ?..ifChanged((change) => _changes.add([change]));
+    var change = await _removeSilently(record);
+    if (change != null) _changes.add([change]);
+    return change;
   }
 
   /// Save all `records`, index them, and broadcast the changes
@@ -164,9 +165,4 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
   String toString() => 'Reservoir($source, '
       'size: ${data.length}, '
       'indices: ${indices.keys.toList().join(",")})';
-}
-
-extension on Change {
-  // Shortcut chain method so we can call `?..ifChanged`
-  void ifChanged(f) => f(this);
 }
