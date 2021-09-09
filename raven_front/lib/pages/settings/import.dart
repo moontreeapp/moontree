@@ -14,11 +14,18 @@ class Import extends StatefulWidget {
 
 class _ImportState extends State<Import> {
   dynamic data = {};
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  var words = TextEditingController();
+  bool importEnabled = false;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    words.dispose();
+    super.dispose();
   }
 
   @override
@@ -42,38 +49,49 @@ class _ImportState extends State<Import> {
   //String? _walletFound(walletId) => wallet.primaryIndex.getOne(walletId)?.accountId;
 
   ListView body() {
-    var _controller = TextEditingController();
-    return ListView(shrinkWrap: true, padding: EdgeInsets.all(20.0), children: <
-        Widget>[
-      Form(
-        key: formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            TextFormField(
-              controller: _controller,
-              maxLength: null,
-              maxLines: null,
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(),
-                  hintText: ("Please enter your seed words, WIF, or anything "
-                      "you've got. We will do our best to import your "
-                      "wallet accordingly.")),
-              //validator: (String? value) {
-              //  //if (value == null || value.isEmpty) {
-              //  //  return 'Please enter a valid address';
-              //  //}
-              //  //return null;
-              //},
-            ),
-            TextButton.icon(
-                onPressed: () {},
-                icon: RavenIcon.import,
-                label: Text('Import into ' + Current.account.name + ' account'))
-          ],
-        ),
-      )
-    ]);
+    return ListView(
+        shrinkWrap: true,
+        padding: EdgeInsets.all(20.0),
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              TextField(
+                autocorrect: false,
+                controller: words,
+                keyboardType: TextInputType.multiline,
+                maxLines: 12,
+                decoration: InputDecoration(
+                    border: UnderlineInputBorder(),
+                    hintText: ("Please enter your seed words, WIF, or anything "
+                        "you've got. We will do our best to import your "
+                        "wallet accordingly.")),
+                onEditingComplete: () {
+                  var text = words.text;
+
+                  /// these are placeholders, they must be checked
+                  var isWIF = [51, 52].contains(text.split(' ').length);
+                  var isSeed = text.length == 128;
+                  var isMnemonic = [12, 24].contains(text.split(' ').length);
+                  var isPrivateKey = text.length == 64;
+                  if (isWIF || isSeed || isMnemonic || isPrivateKey) {
+                    importEnabled = true;
+                  }
+                },
+              ),
+              TextButton.icon(
+                  onPressed: () {},
+                  icon: RavenIcon.import,
+                  label: Text(
+                    'Import into ' + Current.account.name + ' account',
+                    style: TextStyle(
+                        color: importEnabled
+                            ? Theme.of(context).primaryColor
+                            : Theme.of(context).disabledColor),
+                  ))
+            ],
+          ),
+        ]);
   }
 
   Row importWaysButtons(context) =>
