@@ -13,7 +13,7 @@ void main() {
 
     setUp(() {
       source = MapSource();
-      res = Reservoir(source, KeyKey());
+      res = Reservoir(KeyKey())..setSource(source);
     });
 
     test('add an element', () async {

@@ -52,9 +52,8 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
   /// Construct a Reservoir from a `source`. Requires `getKey` as a function
   /// that maps a Record to a Key, so that the Reservoir can construct a
   /// `primaryIndex`.
-  Reservoir(Source<Record> source, PrimaryKey keyType) {
+  Reservoir(PrimaryKey keyType) {
     indices[PRIMARY_INDEX] = IndexUnique<PrimaryKey, Record>(keyType);
-    setSource(source);
   }
 
   setSource(Source<Record> source) {
