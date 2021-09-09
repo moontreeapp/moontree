@@ -50,10 +50,25 @@ class _ImportState extends State<Import> {
       centerTitle: false,
       title: Text('Import Wallet'));
 
-  // returns string of account the wallet is already assigned to
-  //String? _walletFound(walletId) => wallet.primaryIndex.getOne(walletId)?.accountId;
+  /// returns id of account the wallet is already assigned to
+  //String? _walletFound(walletId) =>
+  //    wallets.primaryIndex.getOne(walletId)?.accountId;
 
   Future alertSuccess() {
+    /// verify we don't already have this wallet... that means create the wallet to compare, but don't save it yet,
+    ///wallet = singleWalletGenerationService.newSingleWallet(
+    ///    account: Current.account, privateKey: walletSecret!, compressed: true);
+    ///wallet = leaderWalletGenerationService.newLeaderWallet(Current.account, seed: walletSecret);
+    /// if (_walletFound(wallet.walletId) != null) {
+    ///   // save
+    ///   singleWalletGenerationService.saveSingleWallet(wallet);
+    ///   leaderWalletGenerationService.saveLeaderWallet(wallet);
+    ///   // alert sucess
+    ///   return ...
+    /// } else {
+    ///   // alert existing
+    ///   return ... already exists in the _walletFound(wallet.walletId) account
+    /// }
     if (singleWallet) {
       singleWalletGenerationService.makeAndSaveSingleWallet(
           account: Current.account,
