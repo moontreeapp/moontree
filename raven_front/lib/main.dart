@@ -21,6 +21,7 @@ void main() => runApp(MaterialApp(
       '/transactions': (context) => RavenTransactions(),
       '/transaction': (context) => Transaction(),
       '/send': (context) => Send(),
+      '/create': (context) => CreateAsset(),
       '/receive': (context) => Receive(),
     },
     themeMode: ThemeMode.system,

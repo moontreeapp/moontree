@@ -1,9 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:raven/raven.dart';
 
-Map populateData(BuildContext context, data) => data != null && data.isNotEmpty
-    ? data
-    : ModalRoute.of(context)!.settings.arguments ?? {};
+Map<String, dynamic> populateData(BuildContext context, data) =>
+    data != null && data.isNotEmpty
+        ? data
+        : ModalRoute.of(context)!.settings.arguments ?? {};
 
 /// this is a preliminary format - proprietary...
 /// we should atleast save the wallets as WIF in the json file.

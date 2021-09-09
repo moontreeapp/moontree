@@ -121,7 +121,7 @@ class _HomeState extends State<Home> {
           rvnHolding.add(ListTile(
               onTap: () {},
               title: TextButton.icon(
-                  onPressed: () {/* create asset screen */},
+                  onPressed: () => Navigator.pushNamed(context, '/create'),
                   icon: Icon(Icons.add),
                   label: Text('Create Asset'))));
         }
