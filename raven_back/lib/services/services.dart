@@ -8,3 +8,4 @@ export 'settings/settings.dart';
 export 'wallets/leader/generate.dart';
 export 'wallets/leader/derive.dart';
 export 'wallets/single/derive.dart';
+export 'wallets/single/generate.dart';

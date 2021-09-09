@@ -18,13 +18,13 @@ class AccountsService extends Service {
         wallets.byAccount.getAll(accountId).isEmpty) {
       //accounts.primaryIndex.remove(account); //required?
       await accounts.remove(account);
-      if (account.id == settings.currentAccountId) {
+      if (account.accountId == settings.currentAccountId) {
         var newCurrentAccount = accounts.primaryIndex.getAny()!;
-        await settings.setCurrentAccountId(newCurrentAccount.id);
+        await settings.setCurrentAccountId(newCurrentAccount.accountId);
       }
-      if (account.id == settings.preferredAccountId) {
+      if (account.accountId == settings.preferredAccountId) {
         var newPreferredAccount = accounts.primaryIndex.getAny()!;
-        await settings.savePreferredAccountId(newPreferredAccount.id);
+        await settings.savePreferredAccountId(newPreferredAccount.accountId);
       }
     }
   }

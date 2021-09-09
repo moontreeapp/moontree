@@ -24,6 +24,8 @@ final RatesService ratesService = RatesService(balances, rates);
 final LeaderWalletDerivationService leaderWalletDerivationService =
     LeaderWalletDerivationService(accounts, wallets, addresses, histories);
 final SingleWalletService singleWalletService = SingleWalletService(accounts);
+final SingleWalletGenerationService singleWalletGenerationService =
+    SingleWalletGenerationService(wallets);
 final LeaderWalletGenerationService leaderWalletGenerationService =
     LeaderWalletGenerationService(wallets);
 final AccountGenerationService accountGenerationService =
