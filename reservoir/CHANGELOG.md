@@ -1,3 +1,7 @@
+## 3.1.0
+
+- Add 'clear' to indexes
+
 ## 3.0.0
 
 - Remove source from Reservoir constructor
