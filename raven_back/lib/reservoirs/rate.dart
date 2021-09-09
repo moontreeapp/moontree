@@ -15,8 +15,7 @@ part 'rate.keys.dart';
 /// RVN -> USD (or major fiats)
 /// USD -> other fiat (for obscure fiats)
 class ExchangeRateReservoir extends Reservoir<_RateKey, Rate> {
-  ExchangeRateReservoir([source])
-      : super(source ?? HiveSource('rates'), _RateKey());
+  ExchangeRateReservoir() : super(_RateKey());
 
   double assetToRVN(Security asset) =>
       primaryIndex.getOne(asset, RVN)?.rate ?? 0.0;

@@ -14,8 +14,8 @@ final encryptedSeed = seed;
 
 void main() {
   test('derive mainnet address', () {
-    var wallet =
-        LeaderWallet(id: '0', accountId: 'a1', encryptedSeed: encryptedSeed);
+    var wallet = LeaderWallet(
+        walletId: '0', accountId: 'a1', encryptedSeed: encryptedSeed);
     var derived = wallet.deriveWallet(Net.Main, 0, NodeExposure.Internal);
     var address = wallet.deriveAddress(Net.Main, 0, NodeExposure.Internal);
     expect(derived.pubKey,
@@ -26,8 +26,8 @@ void main() {
   });
 
   test('derive testnet address', () {
-    var wallet =
-        LeaderWallet(id: '0', accountId: 'a1', encryptedSeed: encryptedSeed);
+    var wallet = LeaderWallet(
+        walletId: '0', accountId: 'a1', encryptedSeed: encryptedSeed);
     var derived = wallet.deriveWallet(Net.Test, 0, NodeExposure.Internal);
     var address = wallet.deriveAddress(Net.Test, 0, NodeExposure.Internal);
     expect(derived.pubKey,

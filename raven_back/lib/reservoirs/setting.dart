@@ -19,9 +19,7 @@ final defaultSettings = {
 };
 
 class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
-  SettingReservoir([source])
-      : super(source ?? HiveSource('settings', defaults: defaultSettings),
-            _SettingNameKey());
+  SettingReservoir() : super(_SettingNameKey());
 
   String get preferredAccountId =>
       primaryIndex.getOne(SettingName.Account_Preferred)!.value;

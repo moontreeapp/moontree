@@ -1,9 +1,8 @@
 // dart --no-sound-null-safety test test/integration/raven_tx_test.dart
-
-import 'package:raven/reservoirs/address.dart';
 import 'package:test/test.dart';
 
 import 'package:raven/transaction_builder_helper.dart' as tx;
+import 'package:raven/globals.dart';
 import '../fixtures/fixtures.dart' as fixtures;
 
 // import '../test_artifacts.dart' as tests;
@@ -14,7 +13,7 @@ const aliveTimerDuration = Duration(seconds: 2);
 void main() async {
   var wallet = fixtures.wallets().map['0'];
 
-  var addresses = AddressReservoir(fixtures.addresses());
+  setUp(fixtures.useFixtureSources);
 
   test('choose enough inputs for fee', () async {
     var txhelper = tx.TransactionBuilderHelper(

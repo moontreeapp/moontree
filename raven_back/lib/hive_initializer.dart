@@ -1,8 +1,11 @@
 import 'dart:io';
 
 import 'package:hive/hive.dart';
-import 'package:raven/records/records.dart';
+import 'package:reservoir/reservoir.dart';
 import 'package:ulid/ulid.dart';
+
+import 'records/records.dart';
+import 'globals.dart';
 
 class HiveInitializer {
   late final String id;
@@ -21,6 +24,7 @@ class HiveInitializer {
     registerAdapters();
     await init(dbDir);
     await openAllBoxes();
+    setSources();
   }
 
   Future tearDown() async {
@@ -56,6 +60,16 @@ class HiveInitializer {
     await Hive.openBox<Rate>('rates');
     await Hive.openBox<Setting>('settings');
     await Hive.openBox<Wallet>('wallets');
+  }
+
+  void setSources() {
+    accounts.setSource(HiveSource('accounts'));
+    addresses.setSource(HiveSource('addresses'));
+    histories.setSource(HiveSource('histories'));
+    wallets.setSource(HiveSource('wallets'));
+    balances.setSource(HiveSource('balances'));
+    rates.setSource(HiveSource('rates'));
+    settings.setSource(HiveSource('settings'));
   }
 
   Future destroy() async {

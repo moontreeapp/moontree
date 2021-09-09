@@ -6,8 +6,7 @@ import 'package:reservoir/reservoir.dart';
 part 'block.keys.dart';
 
 class BlockReservoir extends Reservoir<_HeaderKey, Block> {
-  BlockReservoir([source])
-      : super(source ?? HiveSource('blocks'), _HeaderKey());
+  BlockReservoir() : super(_HeaderKey());
 
   // should be a list of one item since the key is hard coded, should replace it
   Block? get latest => primaryIndex.getByKeyStr(_headerToKey()).firstOrNull;

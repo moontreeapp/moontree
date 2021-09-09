@@ -9,6 +9,8 @@ MapSource<Wallet> wallets() {
   var phrase = dotenv.env['TEST_WALLET_01']!;
   return MapSource({
     '0': LeaderWallet(
-        id: '0', accountId: 'a0', encryptedSeed: bip39.mnemonicToSeed(phrase)),
+        walletId: '0',
+        accountId: 'a0',
+        encryptedSeed: bip39.mnemonicToSeed(phrase)),
   });
 }

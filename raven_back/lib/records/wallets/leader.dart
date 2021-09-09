@@ -19,14 +19,14 @@ class LeaderWallet extends Wallet {
   final Uint8List encryptedSeed;
 
   LeaderWallet({
-    required id,
+    required walletId,
     required accountId,
     required this.encryptedSeed,
-  }) : super(id: id, accountId: accountId);
+  }) : super(walletId: walletId, accountId: accountId);
 
   @override
   String toString() =>
-      'LeaderWallet($id, $accountId, ${encryptedSeed.take(6).toList()})';
+      'LeaderWallet($walletId, $accountId, ${encryptedSeed.take(6).toList()})';
 
   @override
   String get kind => 'HD Wallet';
@@ -59,7 +59,7 @@ class LeaderWallet extends Wallet {
     return Address(
         scripthash: seededWallet.scripthash,
         address: seededWallet.address!,
-        walletId: id,
+        walletId: walletId,
         accountId: accountId,
         hdIndex: hdIndex,
         exposure: exposure,

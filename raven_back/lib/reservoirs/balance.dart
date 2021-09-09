@@ -9,8 +9,7 @@ class BalanceReservoir extends Reservoir<_AccountSecurityKey, Balance> {
   late IndexMultiple<_AccountKey, Balance> byAccount;
   // maybe by wallet too?
 
-  BalanceReservoir([source])
-      : super(source ?? HiveSource('balances'), _AccountSecurityKey()) {
+  BalanceReservoir() : super(_AccountSecurityKey()) {
     byAccount = addIndexMultiple('account', _AccountKey());
   }
 

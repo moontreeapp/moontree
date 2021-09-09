@@ -14,15 +14,15 @@ void main() {
 
     setUp(() {
       source = MapSource();
-      res = WalletReservoir(source);
+      res = WalletReservoir()..setSource(source);
     });
 
     test('save a Wallet', () async {
       var encryptedSeed = Uint8List(16);
-      var wallet =
-          LeaderWallet(id: '0', accountId: 'a1', encryptedSeed: encryptedSeed);
+      var wallet = LeaderWallet(
+          walletId: '0', accountId: 'a1', encryptedSeed: encryptedSeed);
       await res.save(wallet);
-      expect(res.primaryIndex.getOne(wallet.id), wallet);
+      expect(res.primaryIndex.getOne(wallet.walletId), wallet);
     });
   });
 }

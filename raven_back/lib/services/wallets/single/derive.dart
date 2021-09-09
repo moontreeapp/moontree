@@ -23,7 +23,7 @@ class SingleWalletService extends Service {
     return Address(
         scripthash: seededWallet.scripthash,
         address: seededWallet.address!,
-        walletId: wallet.id,
+        walletId: wallet.walletId,
         accountId: wallet.accountId,
         hdIndex: 0,
         net: net);

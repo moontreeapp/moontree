@@ -70,7 +70,10 @@ class History with EquatableMixin {
 
   @override
   String toString() {
-    return 'History(walletId: $walletId, accountId: $accountId, scripthash: $scripthash, txHash: $hash, height: $height, txPos: $position, value: $value, security: $security, memo: $memo, note: $note)';
+    return 'History(walletId: $walletId, accountId: $accountId, '
+        'scripthash: $scripthash, hash: $hash, height: $height, '
+        'position: $position, value: $value, security: $security, '
+        'memo: $memo, note: $note)';
   }
 
   // ScripthashHistories should provide a memo, but do they (form electrum? I don't think so)

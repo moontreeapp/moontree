@@ -11,8 +11,7 @@ class HistoryReservoir extends Reservoir<_TxHashKey, History> {
   late IndexMultiple<_ScripthashKey, History> byScripthash;
   late IndexMultiple<_SecurityKey, History> bySecurity;
 
-  HistoryReservoir([source])
-      : super(source ?? HiveSource('histories'), _TxHashKey()) {
+  HistoryReservoir() : super(_TxHashKey()) {
     byAccount = addIndexMultiple('account', _AccountKey());
     byWallet = addIndexMultiple('wallet', _WalletKey());
     byScripthash = addIndexMultiple('scripthash', _ScripthashKey());

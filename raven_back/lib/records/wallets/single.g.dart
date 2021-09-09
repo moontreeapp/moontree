@@ -17,7 +17,7 @@ class SingleWalletAdapter extends TypeAdapter<SingleWallet> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return SingleWallet(
-      id: fields[0] as dynamic,
+      walletId: fields[0] as dynamic,
       accountId: fields[1] as dynamic,
       encryptedPrivateKey: fields[2] as Uint8List,
     );
@@ -30,7 +30,7 @@ class SingleWalletAdapter extends TypeAdapter<SingleWallet> {
       ..writeByte(2)
       ..write(obj.encryptedPrivateKey)
       ..writeByte(0)
-      ..write(obj.id)
+      ..write(obj.walletId)
       ..writeByte(1)
       ..write(obj.accountId);
   }

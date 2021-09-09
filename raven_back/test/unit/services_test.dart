@@ -8,8 +8,7 @@ import 'package:reservoir/map_source.dart';
 
 void main() {
   group('services', () {
-    var balanceService = BalanceService(BalanceReservoir(MapSource<Balance>()),
-        HistoryReservoir(MapSource<History>()));
+    var balanceService = BalanceService(BalanceReservoir(), HistoryReservoir());
     test('make service', () async {
       expect(balanceService is BalanceService, true);
     });

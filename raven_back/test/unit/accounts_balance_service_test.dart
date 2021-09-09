@@ -1,15 +1,15 @@
 // dart --sound-null-safety test test/integration/account_test.dart --concurrency=1 --chain-stack-traces
 import 'package:test/test.dart';
-import 'package:reservoir/change.dart';
 
 import 'package:raven/records/records.dart';
 import 'package:raven/services/services.dart';
 import 'package:raven/reservoirs/reservoirs.dart';
+import 'package:raven/globals.dart';
 import '../fixtures/fixtures.dart' as fixtures;
 
 var newHistory = History(
-    hash: '0',
-    scripthash: 'abc0',
+    hash: '100',
+    scripthash: 'abc100',
     accountId: 'a0',
     walletId: 'w0',
     height: 0,
@@ -19,15 +19,7 @@ var newHistory = History(
 
 void main() async {
   group('BalanceService', () {
-    late BalanceReservoir balances;
-    late HistoryReservoir histories;
-    late BalanceService balanceService;
-
-    setUp(() {
-      balances = BalanceReservoir(fixtures.balances());
-      histories = HistoryReservoir(fixtures.histories());
-      balanceService = BalanceService(balances, histories);
-    });
+    setUp(fixtures.useFixtureSources);
 
     test('make BalanceService', () {
       expect(balanceService is BalanceService, true);

@@ -18,8 +18,7 @@ class AddressReservoir extends Reservoir<_ScripthashKey, Address> {
   late IndexMultiple<_WalletKey, Address> byWallet;
   late IndexMultiple<_WalletExposureKey, Address> byWalletExposure;
 
-  AddressReservoir([source])
-      : super(source ?? HiveSource('addresses'), _ScripthashKey()) {
+  AddressReservoir() : super(_ScripthashKey()) {
     byAccount = addIndexMultiple('account', _AccountKey());
     byWallet = addIndexMultiple('wallet', _WalletKey());
     byWalletExposure =

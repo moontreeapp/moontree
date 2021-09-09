@@ -4,7 +4,7 @@ part of 'wallet.dart';
 
 class _IdKey extends Key<Wallet> {
   @override
-  String getKey(Wallet wallet) => wallet.id;
+  String getKey(Wallet wallet) => wallet.walletId;
 }
 
 extension ByIdMethodsForWallet on Index<_IdKey, Wallet> {

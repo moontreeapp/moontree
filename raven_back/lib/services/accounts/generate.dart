@@ -8,7 +8,8 @@ class AccountGenerationService extends Service {
   AccountGenerationService(this.accounts) : super();
 
   Account newAccount(String name, {Net net = Net.Test}) {
-    return Account(id: accounts.data.length.toString(), name: name, net: net);
+    return Account(
+        accountId: accounts.data.length.toString(), name: name, net: net);
   }
 
   Account makeAndSaveAccount(String name, {Net net = Net.Test}) {

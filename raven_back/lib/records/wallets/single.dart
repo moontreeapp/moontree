@@ -14,14 +14,14 @@ class SingleWallet extends Wallet {
   final Uint8List encryptedPrivateKey;
 
   SingleWallet({
-    required id,
+    required walletId,
     required accountId,
     required this.encryptedPrivateKey,
-  }) : super(id: id, accountId: accountId);
+  }) : super(walletId: walletId, accountId: accountId);
 
   @override
   String toString() =>
-      'SingleWallet($id, $accountId, ${encryptedPrivateKey.take(6).toList()})';
+      'SingleWallet($walletId, $accountId, ${encryptedPrivateKey.take(6).toList()})';
 
   @override
   String get kind => 'Private Key Wallet';

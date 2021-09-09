@@ -17,8 +17,8 @@ class LeaderWalletGenerationService extends Service {
     seed = seed ?? randomBytes(16);
     var seededWallet = HDWallet.fromSeed(seed, network: account.network);
     return LeaderWallet(
-        id: seededWallet.address!,
-        accountId: account.id,
+        walletId: seededWallet.address!,
+        accountId: account.accountId,
         encryptedSeed: NoCipher().encrypt(seed));
   }
 

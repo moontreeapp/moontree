@@ -1,26 +1,20 @@
 // dart test test/unit/process_test.dart
-import 'dart:typed_data';
+import 'package:reservoir/map_source.dart';
 import 'package:test/test.dart';
 
-import 'package:reservoir/reservoir.dart';
 import 'package:raven/raven.dart';
 
+import '../fixtures/fixtures.dart' as fixtures;
 import '../helper/reservoir_changes.dart';
 
 void main() {
   group('addresses', () {
-    late AccountReservoir accounts;
-    late WalletReservoir wallets;
-    late AddressReservoir addresses;
-    late HistoryReservoir histories;
     late LeaderWalletDerivationService leaderWalletDerivationService;
     late Account account;
     late LeaderWallet wallet;
     setUp(() async {
-      accounts = AccountReservoir(MapSource<Account>());
-      wallets = WalletReservoir(MapSource<Wallet>());
-      addresses = AddressReservoir(MapSource<Address>());
-      histories = HistoryReservoir(MapSource<History>());
+      fixtures.useFixtureSources();
+
       leaderWalletDerivationService = LeaderWalletDerivationService(
         accounts,
         wallets,
@@ -29,23 +23,15 @@ void main() {
       );
       // make account
       account = Account(
-        id: 'a-0',
+        accountId: 'a0',
         name: 'primary',
       );
-      // make wallet
-      wallet = LeaderWallet(
-        id: 'w-0',
-        accountId: 'a-0',
-        encryptedSeed: Uint8List.fromList(
-            [1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4]),
-      );
+      accounts.setSource(MapSource({'a0': account}));
+      wallet = fixtures.wallets().map['0'] as LeaderWallet;
 
-      // put wallet and account in reservoirs
+      // put account in reservoir
       await accounts.save(account);
-      await wallets.save(wallet);
-
       expect(accounts.length, 1);
-      expect(wallets.length, 1);
     });
 
     test('2 addresses get created', () async {

@@ -11,7 +11,7 @@ part 'account.g.dart';
 @HiveType(typeId: TypeId.Account)
 class Account with EquatableMixin {
   @HiveField(0)
-  String id;
+  String accountId;
 
   @HiveField(1)
   String name;
@@ -20,16 +20,16 @@ class Account with EquatableMixin {
   Net net;
 
   Account({
-    required this.id,
+    required this.accountId,
     required this.name,
     this.net = Net.Test,
   });
 
   @override
-  List<Object> get props => [id, name, net];
+  List<Object> get props => [accountId, name, net];
 
   @override
-  String toString() => 'Account($id, $name, $net)';
+  String toString() => 'Account($accountId, $name, $net)';
 
   NetworkType get network => networks[net]!;
 }

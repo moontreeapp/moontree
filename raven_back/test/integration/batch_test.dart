@@ -17,7 +17,7 @@ void main() async {
     await tests.hiveSetup();
     //tests.listenTo(client);
     wallet = LeaderWallet(
-        id: '0',
+        walletId: '0',
         accountId: 'a1',
         encryptedSeed: bip39.mnemonicToSeed(await getMnemonic()));
   });

@@ -43,7 +43,7 @@ class LeaderWalletDerivationService extends Service {
   ) {
     var gap = 0;
     var exposureAddresses =
-        addresses.byWalletExposure.getAll(leaderWallet.id, exposure);
+        addresses.byWalletExposure.getAll(leaderWallet.walletId, exposure);
     for (var exposureAddress in exposureAddresses) {
       gap = gap +
           (histories.byScripthash.getAll(exposureAddress.scripthash).isEmpty
@@ -65,8 +65,10 @@ class LeaderWalletDerivationService extends Service {
   }
 
   void deriveFirstAddressAndSave(LeaderWallet wallet) {
-    addresses.save(deriveAddress(wallet, 0, NodeExposure.Internal));
-    addresses.save(deriveAddress(wallet, 0, NodeExposure.External));
+    var addrInt = deriveAddress(wallet, 0, NodeExposure.Internal);
+    addresses.save(addrInt);
+    var addrExt = deriveAddress(wallet, 0, NodeExposure.External);
+    addresses.save(addrExt);
   }
 
   /// returns the next internal or external node missing a history
