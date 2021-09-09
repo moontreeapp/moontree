@@ -69,7 +69,7 @@ class _TechnicalViewState extends State<TechnicalView> {
       actions: <Widget>[
         IconButton(onPressed: () => _exportAll(context), icon: RavenIcon.export)
       ],
-      title: Text('Accounts Overview'));
+      title: Text('Accounts'));
 
   /// set that account as current and go to import page
   Future _importTo(context, account) async {

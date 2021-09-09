@@ -6,21 +6,20 @@ import 'package:raven_mobile/components/text.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
-class Send extends StatefulWidget {
+class CreateAsset extends StatefulWidget {
   final dynamic data;
-  const Send({this.data}) : super();
+  const CreateAsset({this.data}) : super();
 
   @override
-  _SendState createState() => _SendState();
+  _CreateAssetState createState() => _CreateAssetState();
 }
 
-class _SendState extends State<Send> {
+class _CreateAssetState extends State<CreateAsset> {
   dynamic data = {};
   final formKey = GlobalKey<FormState>();
-  final sendAddress = TextEditingController();
-  final sendAmount = TextEditingController(text: '10');
+  final sendName = TextEditingController();
+  final sendAmount = TextEditingController();
   final sendMemo = TextEditingController();
-  final sendNote = TextEditingController();
 
   @override
   void initState() {
@@ -30,8 +29,9 @@ class _SendState extends State<Send> {
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    sendAddress.dispose();
+    sendName.dispose();
     sendAmount.dispose();
+    sendMemo.dispose();
     super.dispose();
   }
 
@@ -60,7 +60,7 @@ class _SendState extends State<Send> {
                   setState(() {});
                 }))
           ],
-          title: Text('Send'),
+          title: Text('CreateAsset'),
           flexibleSpace: Container(
             alignment: Alignment.center,
             child:
@@ -123,19 +123,6 @@ class _SendState extends State<Send> {
                             .toList(),
                         onChanged: (String? newValue) =>
                             setState(() => data['symbol'] = newValue!)),
-                    TextFormField(
-                      controller: sendAddress,
-                      decoration: InputDecoration(
-                          border: UnderlineInputBorder(),
-                          labelText: 'To',
-                          hintText: 'Address'),
-                      //validator: (String? value) {
-                      //  //if (value == null || value.isEmpty) {
-                      //  //  return 'Please enter a valid address';
-                      //  //}
-                      //  //return null;
-                      //},
-                    ),
                     TextButton.icon(
                         onPressed: () {
                           /* qr code scanner get value put in textbox
@@ -171,15 +158,6 @@ class _SendState extends State<Send> {
                           labelText: 'Memo (optional)',
                           hintText: 'IPFS hash publicly posted on transaction'),
                     ),
-                    TextFormField(
-                      controller: sendNote,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      decoration: InputDecoration(
-                          border: UnderlineInputBorder(),
-                          labelText: 'Note (optional)',
-                          hintText: 'Private note to self'),
-                    ),
                     //Center(child: sendTransactionButton(_formKey))
                   ]))
         ]);
@@ -192,7 +170,7 @@ class _SendState extends State<Send> {
   /// to have it all in one place as in transaction.note....
   ElevatedButton sendTransactionButton() => ElevatedButton.icon(
       icon: Icon(Icons.send),
-      label: Text('Send'),
+      label: Text('CreateAsset'),
       onPressed: () {
         // Validate will return true if the form is valid, or false if
         // the form is invalid.

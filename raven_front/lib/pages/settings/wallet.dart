@@ -39,7 +39,7 @@ class _WalletViewState extends State<WalletView> {
       leading: RavenButton.back(context),
       elevation: 2,
       centerTitle: false,
-      title: Text('Wallet View'));
+      title: Text('Wallet'));
 
   ListView body() => ListView(
           shrinkWrap: true,
@@ -54,17 +54,14 @@ class _WalletViewState extends State<WalletView> {
                   semanticsLabel: data['address'],
                   version: QrVersions.auto,
                   size: 200.0),
+              SelectableText(data['address'],
+                  cursorColor: Colors.grey[850],
+                  showCursor: true,
+                  style: Theme.of(context).mono,
+                  toolbarOptions: toolbarOptions),
               Text('(address)', style: Theme.of(context).annotate),
             ])),
-            SizedBox(height: 30.0),
-            Text('Address:'),
-            Center(
-                child: SelectableText(data['address'],
-                    cursorColor: Colors.grey[850],
-                    showCursor: true,
-                    style: Theme.of(context).mono,
-                    toolbarOptions: toolbarOptions)),
-            SizedBox(height: 30.0),
+            SizedBox(height: 60.0),
             Text('Warning! Do Not Disclose!',
                 style: TextStyle(color: Theme.of(context).bad)),
             SizedBox(height: 15.0),

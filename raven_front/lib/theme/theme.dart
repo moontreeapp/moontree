@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'color_gen.dart';
 
 class Palette {
-  static const Color primary = Color(0xFF2F4D7D);
   static const Color ravenBlue = Color(0xFF2E3E80);
   static const Color ravenOrange = Color(0xFFF15B22);
+  static const Color primary = ravenBlue; //Color(0xFF2F4D7D);
 }
 
 CustomTheme currentTheme = CustomTheme();
@@ -23,7 +23,7 @@ class CustomTheme with ChangeNotifier {
     return ThemeData(
       brightness: Brightness.light,
       //primaryColor: Colors.blue.shade900,
-      primarySwatch: generateMaterialColor(Palette.primary),
+      primarySwatch: generateMaterialColor(Palette.ravenBlue),
       //backgroundColor: Colors.blue[50],
       //scaffoldBackgroundColor: Colors.blue[50],
       //bottomAppBarColor: Colors.grey[300],
@@ -43,16 +43,17 @@ class CustomTheme with ChangeNotifier {
   static ThemeData get darkTheme {
     return ThemeData(
       brightness: Brightness.dark,
-      primaryColor: Colors.black,
-      primarySwatch: Colors.red,
-      backgroundColor: Colors.grey,
-      scaffoldBackgroundColor: Colors.grey,
-      textTheme: TextTheme(
-        headline1: TextStyle(color: Colors.white),
-        headline2: TextStyle(color: Colors.white),
-        bodyText1: TextStyle(color: Colors.white),
-        bodyText2: TextStyle(color: Colors.white),
-      ),
+      primarySwatch: generateMaterialColor(Palette.ravenOrange),
+      //primaryColor: Colors.black,
+      //primarySwatch: Colors.red,
+      //backgroundColor: Colors.grey,
+      //scaffoldBackgroundColor: Colors.grey,
+      //textTheme: TextTheme(
+      //  headline1: TextStyle(color: Colors.white),
+      //  headline2: TextStyle(color: Colors.white),
+      //  bodyText1: TextStyle(color: Colors.white),
+      //  bodyText2: TextStyle(color: Colors.white),
+      //),
     );
   }
 }
