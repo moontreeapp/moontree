@@ -7,19 +7,19 @@ import 'package:raven/records/records.dart';
 
 part 'setting.keys.dart';
 
-final defaultSettings = {
-  SettingName.Electrum_Url:
-      Setting(name: SettingName.Electrum_Url, value: 'testnet.rvn.rocks'),
-  SettingName.Electrum_Port:
-      Setting(name: SettingName.Electrum_Port, value: 50002),
-  SettingName.Account_Current:
-      Setting(name: SettingName.Account_Current, value: '0'),
-  SettingName.Account_Preferred:
-      Setting(name: SettingName.Account_Preferred, value: '0'),
-};
-
 class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
   SettingReservoir() : super(_SettingNameKey());
+
+  static Map<SettingName, Setting> get defaultSettings => {
+        SettingName.Electrum_Url:
+            Setting(name: SettingName.Electrum_Url, value: 'testnet.rvn.rocks'),
+        SettingName.Electrum_Port:
+            Setting(name: SettingName.Electrum_Port, value: 50002),
+        SettingName.Account_Current:
+            Setting(name: SettingName.Account_Current, value: '0'),
+        SettingName.Account_Preferred:
+            Setting(name: SettingName.Account_Preferred, value: '0'),
+      };
 
   String get preferredAccountId =>
       primaryIndex.getOne(SettingName.Account_Preferred)!.value;

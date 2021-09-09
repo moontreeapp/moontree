@@ -33,7 +33,9 @@ class SettingService extends Service {
 
   Future<RavenElectrumClient> createClient() async {
     return await RavenElectrumClient.connect(
-        settings.primaryIndex.getOne(SettingName.Electrum_Url)!.value,
+        settings.primaryIndex
+            .getOne(SettingName.Electrum_Url)!
+            .value, //source loaded? Unhandled Exception: Null check operator used on a null value
         port: settings.primaryIndex.getOne(SettingName.Electrum_Port)!.value);
   }
 }

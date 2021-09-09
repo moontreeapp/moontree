@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:hive/hive.dart';
+import 'package:raven/reservoirs/setting.dart';
 import 'package:reservoir/reservoir.dart';
 import 'package:ulid/ulid.dart';
 
@@ -65,11 +66,13 @@ class HiveInitializer {
   void setSources() {
     accounts.setSource(HiveSource('accounts'));
     addresses.setSource(HiveSource('addresses'));
+    blocks.setSource(HiveSource('blocks'));
     histories.setSource(HiveSource('histories'));
     wallets.setSource(HiveSource('wallets'));
     balances.setSource(HiveSource('balances'));
     rates.setSource(HiveSource('rates'));
-    settings.setSource(HiveSource('settings'));
+    settings.setSource(
+        HiveSource('settings', defaults: SettingReservoir.defaultSettings));
   }
 
   Future destroy() async {
