@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
 import 'package:raven_mobile/components/buttons.dart';
+import 'package:raven_mobile/services/lookup.dart';
 
 class Import extends StatefulWidget {
   final dynamic data;
@@ -46,7 +48,7 @@ class _ImportState extends State<Import> {
       Form(
         key: formKey,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             TextFormField(
               controller: _controller,
@@ -63,7 +65,11 @@ class _ImportState extends State<Import> {
               //  //}
               //  //return null;
               //},
-            )
+            ),
+            TextButton.icon(
+                onPressed: () {},
+                icon: RavenIcon.import,
+                label: Text('Import into ' + Current.account.name + ' account'))
           ],
         ),
       )

@@ -42,7 +42,7 @@ class _SettingsState extends State<Settings> {
                 onPressed: (BuildContext context) =>
                     Navigator.pushNamed(context, '/settings/account')),
             SettingsTile(
-                title: 'Accounts Ovewview',
+                title: 'Accounts Overview',
                 leading: Icon(Icons.lightbulb),
                 onPressed: (BuildContext context) =>
                     Navigator.pushNamed(context, '/settings/technical')),

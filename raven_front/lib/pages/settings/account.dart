@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raven_mobile/components/icons.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/utils/utils.dart';
@@ -35,12 +36,12 @@ class _AccountSettingsState extends State<AccountSettings> {
         SettingsSection(tiles: [
           SettingsTile(
               title: 'Import Wallet',
-              leading: Icon(Icons.add_box_outlined),
+              leading: RavenIcon.import,
               onPressed: (BuildContext context) =>
                   Navigator.pushNamed(context, '/settings/import')),
           SettingsTile(
               title: 'Export Account',
-              leading: Icon(Icons.save),
+              leading: RavenIcon.export,
               onPressed: (BuildContext context) => Navigator.pushNamed(
                   context, '/settings/export',
                   arguments: {'accountId': 'current'})),

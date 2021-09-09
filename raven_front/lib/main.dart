@@ -41,7 +41,7 @@ void main() => runApp(MaterialApp(
         )),
     darkTheme: ThemeData(
         brightness: Brightness.dark,
-        primarySwatch: generateMaterialColor(Palette.ravenBlue),
+        primarySwatch: generateMaterialColor(Palette.ravenOrange),
         textTheme: TextTheme(
           headline1: TextStyle(fontSize: 24.0, letterSpacing: 2.0),
           headline2: TextStyle(

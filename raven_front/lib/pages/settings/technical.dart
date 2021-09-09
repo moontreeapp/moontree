@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/buttons.dart';
+import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 
 //import 'package:flutter_treeview/flutter_treeview.dart';
@@ -66,9 +67,9 @@ class _TechnicalViewState extends State<TechnicalView> {
       elevation: 2,
       centerTitle: false,
       actions: <Widget>[
-        IconButton(onPressed: () => _exportAll(context), icon: Icon(Icons.save))
+        IconButton(onPressed: () => _exportAll(context), icon: RavenIcon.export)
       ],
-      title: Text('Accounts Ovewview'));
+      title: Text('Accounts Overview'));
 
   /// set that account as current and go to import page
   Future _importTo(context, account) async {
@@ -160,7 +161,8 @@ class _TechnicalViewState extends State<TechnicalView> {
                       Text('${wallet.kind}', style: Theme.of(context).annotate),
                     ]),
                 IconButton(
-                    icon: Icon(Icons.remove_red_eye),
+                    icon: Icon(Icons.remove_red_eye,
+                        color: Theme.of(context).primaryColor),
                     //label: Text(
                     //    wallet is LeaderWallet ? 'seed phrase' : 'private key'),
                     onPressed: () => Navigator.pushNamed(
@@ -213,12 +215,12 @@ class _TechnicalViewState extends State<TechnicalView> {
                                     onPressed: () {
                                       _importTo(context, account);
                                     },
-                                    icon: Icon(Icons.add_box_outlined)),
+                                    icon: RavenIcon.import),
                                 IconButton(
                                     onPressed: () {
                                       _exportTo(context, account);
                                     },
-                                    icon: Icon(Icons.save)),
+                                    icon: RavenIcon.export),
                               ]))
                       : ListTile(
                           title: Text(account.name,
@@ -230,7 +232,7 @@ class _TechnicalViewState extends State<TechnicalView> {
                                     onPressed: () {
                                       _importTo(context, account);
                                     },
-                                    icon: Icon(Icons.add_box_outlined)),
+                                    icon: RavenIcon.import),
                                 ...(_deleteIfMany(account))
                               ])),
                   for (var wallet in wallets.byAccount.getAll(account.id)) ...[

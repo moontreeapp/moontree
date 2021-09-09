@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
+import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/utils/utils.dart';
@@ -56,7 +57,7 @@ class _ExportState extends State<Export> {
           children: <Widget>[
             Center(
                 child: TextButton.icon(
-                    icon: Icon(Icons.download),
+                    icon: RavenIcon.export,
                     onPressed: () => _download(),
                     label: Text('Export ' + _accountName))),
             Center(
