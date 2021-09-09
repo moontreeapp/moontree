@@ -73,13 +73,13 @@ class _TechnicalViewState extends State<TechnicalView> {
 
   /// set that account as current and go to import page
   Future _importTo(context, account) async {
-    await settings.setCurrentAccountId(account.id);
+    await settings.setCurrentAccountId(account.accountId);
     Navigator.pushNamed(context, '/settings/import');
   }
 
   /// set that account as current and go to export page
   Future _exportTo(context, account) async {
-    await settings.setCurrentAccountId(account.id);
+    await settings.setCurrentAccountId(account.accountId);
     Navigator.pushNamed(context, '/settings/export');
   }
 
@@ -93,22 +93,22 @@ class _TechnicalViewState extends State<TechnicalView> {
   void _moveWallet(details, account) {
     // how do we get it to redraw correctly?
     var wallet = details.data;
-    //wallet.accountId = account.id;
+    //wallet.accountId = account.accountId;
     //wallets.save(wallet);
     wallets.save(wallet is LeaderWallet
         ? LeaderWallet(
-            id: wallet.id,
-            accountId: account.id,
+            walletId: wallet.walletId,
+            accountId: account.accountId,
             encryptedSeed: wallet.encryptedSeed)
         : wallet is SingleWallet
             ? SingleWallet(
-                id: wallet.id,
-                accountId: account.id,
+                walletId: wallet.walletId,
+                accountId: account.accountId,
                 encryptedPrivateKey: wallet.encryptedPrivateKey)
             : SingleWallet(
                 // placeholder for other wallets
-                id: wallet.id,
-                accountId: account.id,
+                walletId: wallet.walletId,
+                accountId: account.accountId,
                 encryptedPrivateKey:
                     (wallet as SingleWallet).encryptedPrivateKey));
   }
@@ -118,7 +118,7 @@ class _TechnicalViewState extends State<TechnicalView> {
           IconButton(
               onPressed: () async {
                 // doesn't delete immediately - not working until indicies work right
-                await accountService.removeAccount(account.id);
+                await accountService.removeAccount(account.accountId);
               },
               icon: Icon(Icons.delete))
         ]
@@ -131,7 +131,7 @@ class _TechnicalViewState extends State<TechnicalView> {
               var account = await accountGenerationService
                   .makeAndAwaitSaveAccount(accountName.text);
               await settingsService.saveSetting(
-                  SettingName.Account_Current, account.id);
+                  SettingName.Account_Current, account.accountId);
               accountName.text = '';
             },
             title: TextField(
@@ -156,7 +156,7 @@ class _TechnicalViewState extends State<TechnicalView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                          '${wallet.id.substring(0, 6)}...${wallet.id.substring(wallet.id.length - 6, wallet.id.length)}',
+                          '${wallet.walletId.substring(0, 6)}...${wallet.walletId.substring(wallet.walletId.length - 6, wallet.walletId.length)}',
                           style: Theme.of(context).mono),
                       Text('${wallet.kind}', style: Theme.of(context).annotate),
                     ]),
@@ -168,7 +168,7 @@ class _TechnicalViewState extends State<TechnicalView> {
                     onPressed: () => Navigator.pushNamed(
                             context, '/settings/wallet',
                             arguments: {
-                              'address': wallet.id,
+                              'address': wallet.walletId,
                               'secret': wallet.secret,
                               'secretName': wallet is LeaderWallet
                                   ? 'Mnemonic Seed'
@@ -186,29 +186,29 @@ class _TechnicalViewState extends State<TechnicalView> {
           children: <Widget>[
             for (var account in accounts.data) ...[
               DragTarget<Wallet>(
-                key: Key(account.id),
+                key: Key(account.accountId),
                 builder: (
                   BuildContext context,
                   List<Wallet?> accepted,
                   List<dynamic> rejected,
                 ) =>
                     Column(children: <Widget>[
-                  wallets.byAccount.getAll(account.id).length > 0
-                      //_getWallets(account.id).isNotEmpty
+                  wallets.byAccount.getAll(account.accountId).length > 0
+                      //_getWallets(account.accountId).isNotEmpty
                       ? ListTile(
                           title: Text(account.name,
                               style: Theme.of(context).textTheme.bodyText1),
                           trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
-                                settings.preferredAccountId == account.id
+                                settings.preferredAccountId == account.accountId
                                     ? IconButton(
                                         onPressed: () {},
                                         icon: Icon(Icons.star))
                                     : IconButton(
                                         onPressed: () {
                                           settings.savePreferredAccountId(
-                                              account.id);
+                                              account.accountId);
                                         },
                                         icon: Icon(Icons.star_outline_sharp)),
                                 IconButton(
@@ -235,10 +235,11 @@ class _TechnicalViewState extends State<TechnicalView> {
                                     icon: RavenIcon.import),
                                 ...(_deleteIfMany(account))
                               ])),
-                  for (var wallet in wallets.byAccount.getAll(account.id)) ...[
-                    //for (var wallet in _getWallets(account.id)) ...[
+                  for (var wallet
+                      in wallets.byAccount.getAll(account.accountId)) ...[
+                    //for (var wallet in _getWallets(account.accountId)) ...[
                     Draggable<Wallet>(
-                      key: Key(wallet.id),
+                      key: Key(wallet.walletId),
                       data: wallet,
                       child: _wallet(context, wallet),
                       feedback: _wallet(context, wallet),

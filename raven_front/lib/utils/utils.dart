@@ -22,15 +22,15 @@ Map<String, Map> structureForExport(Account? account) => {
 
 Map<String, Map<String, dynamic>> accountsForExport(Account? account) => {
       for (var account in account != null ? [account] : accounts.data) ...{
-        account.id: {'name': account.name, 'net': account.net.toString()}
+        account.accountId: {'name': account.name, 'net': account.net.toString()}
       }
     };
 
 Map<String, Map<String, dynamic>> walletsForExport(Account? account) => {
       for (var wallet in account != null
-          ? wallets.byAccount.getAll(account.id)
+          ? wallets.byAccount.getAll(account.accountId)
           : wallets.data) ...{
-        wallet.id: {
+        wallet.walletId: {
           'accountId': wallet.accountId,
           //'wif': wallet.wif
           //'cipher': wallet.cipher.toString(),

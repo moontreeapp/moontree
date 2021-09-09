@@ -65,7 +65,7 @@ class _ImportState extends State<Import> {
     }
     // should we await save?
     // how else to verify?
-    //if (wallets.byAccount.getAll(Current.account.id).map((e) => e.secret).contains(walletSecret)) {
+    //if (wallets.byAccount.getAll(Current.account.accountId).map((e) => e.secret).contains(walletSecret)) {
     if (true) {
       return showDialog(
           context: context,

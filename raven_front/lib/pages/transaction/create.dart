@@ -46,7 +46,7 @@ class _CreateAssetState extends State<CreateAsset> {
     data['percision'] = data.containsKey('percision') ? data['percision'] : '0';
     data['wallet'] = data.containsKey('wallet')
         ? data['wallet']
-        : wallets.byAccount.getOne(Current.account.id)?.id ?? '';
+        : wallets.byAccount.getOne(Current.account.accountId)?.walletId ?? '';
     return Scaffold(
         appBar: header(),
         body: body(),
@@ -159,11 +159,11 @@ class _CreateAssetState extends State<CreateAsset> {
           isExpanded: true,
           value: data['wallet'],
           items: wallets.byAccount
-              .getAll(Current.account.id)
+              .getAll(Current.account.accountId)
               .map((Wallet wallet) => DropdownMenuItem<String>(
-                  value: wallet.id,
+                  value: wallet.walletId,
                   child: Text(
-                      '${wallet.id.substring(0, 6)}...${wallet.id.substring(wallet.id.length - 6, wallet.id.length)}',
+                      '${wallet.walletId.substring(0, 6)}...${wallet.walletId.substring(wallet.walletId.length - 6, wallet.walletId.length)}',
                       style: Theme.of(context).mono)))
               .toList(),
           onChanged: (String? newValue) => setState(() => {

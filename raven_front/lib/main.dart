@@ -17,8 +17,6 @@ void main() => runApp(MaterialApp(
       '/settings/language': (context) => Language(),
       '/settings/technical': (context) => TechnicalView(),
       '/settings/wallet': (context) => WalletView(),
-      //'/settings/importWallet': (context) =>
-      //    ImportWallet(), // alert success screen, ok -> home
       '/asset': (context) => Asset(),
       '/transactions': (context) => RavenTransactions(),
       '/transaction': (context) => Transaction(),

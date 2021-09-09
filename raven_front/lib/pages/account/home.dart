@@ -214,12 +214,12 @@ class _HomeState extends State<Home> {
           for (var account in accounts.data) ...[
             ListTile(
                 onTap: () async {
-                  await settings.setCurrentAccountId(account.id);
+                  await settings.setCurrentAccountId(account.accountId);
                   accountName.text = '';
                   Navigator.pop(context);
                   setState(() {});
                 },
-                title: Text(account.id + ' ' + account.name,
+                title: Text(account.accountId + ' ' + account.name,
                     style: Theme.of(context).textTheme.bodyText1),
                 leading: RavenIcon.assetAvatar('RVN')),
             Divider(height: 20, thickness: 2, indent: 5, endIndent: 5)
@@ -230,7 +230,7 @@ class _HomeState extends State<Home> {
                   var account = await accountGenerationService
                       .makeAndAwaitSaveAccount(accountName.text);
                   await settingsService.saveSetting(
-                      SettingName.Account_Current, account.id);
+                      SettingName.Account_Current, account.accountId);
                   Navigator.pop(context);
                 },
                 title: TextField(

@@ -40,7 +40,7 @@ class _ExportState extends State<Export> {
 
   String get _accountName =>
       account != null ? 'Account: ' + account!.name : 'All Accounts';
-  String get _accountId => account != null ? account!.id : 'AllAccounts';
+  String get _accountId => account != null ? account!.accountId : 'AllAccounts';
 
   AppBar header() => AppBar(
       leading: RavenButton.back(context),
