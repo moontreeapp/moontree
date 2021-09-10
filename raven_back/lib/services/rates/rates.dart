@@ -1,13 +1,13 @@
 import 'package:raven/utils/rate.dart';
 import 'package:raven/services/service.dart';
 import 'package:raven/records/records.dart';
+import 'package:raven/raven.dart';
 import 'package:raven/reservoirs/reservoirs.dart';
 
 class RatesService extends Service {
-  late final BalanceReservoir balances;
   late final ExchangeRateReservoir rates;
 
-  RatesService(this.balances, this.rates) : super();
+  RatesService(this.rates) : super();
 
   Future saveRate() async {
     await rates.save(Rate(
@@ -19,8 +19,8 @@ class RatesService extends Service {
 
   double get rvnToUSD => rates.rvnToUSD;
 
-  BalanceUSD accountBalanceUSD(String accountId) {
-    var totalRVNBalance = getTotalRVN(accountId);
+  BalanceUSD accountBalanceUSD(String accountId, {List<Balance>? holdings}) {
+    var totalRVNBalance = getTotalRVN(accountId, holdings: holdings);
     var usd = BalanceUSD(confirmed: 0.0, unconfirmed: 0.0);
     if (totalRVNBalance.value > 0) {
       var rate = rates.rvnToUSD;
@@ -35,8 +35,8 @@ class RatesService extends Service {
   }
 
   /// todo unit test
-  Balance getTotalRVN(String accountId) {
-    var accountBalances = balances.byAccount.getAll(accountId);
+  Balance getTotalRVN(String accountId, {List<Balance>? holdings}) {
+    var accountBalances = holdings ?? balanceService.sumBalances(accountId);
     var assetPercision = 100000000; /* get percision of asset...  */
     var accountBalancesAsRVN = accountBalances.map((balance) => Balance(
         accountId: accountId,

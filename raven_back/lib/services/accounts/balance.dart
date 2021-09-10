@@ -1,7 +1,4 @@
-import 'package:collection/collection.dart';
-import 'package:quiver/iterables.dart';
 import 'package:reservoir/change.dart';
-import 'package:sorted_list/sorted_list.dart';
 
 import 'package:raven/account_security_pair.dart';
 import 'package:raven/services/service.dart';
@@ -26,13 +23,29 @@ class BalanceService extends Service {
           .unconfirmed(accountId, security: security)
           .fold(0, (sum, history) => sum + history.value));
 
+  /// with these two functions we calculate account balances all or 1 in real time
+  /// and lose our reliance on a balance reservoir which is a pain to keep synced.
+
+  /// Get (sum) the balance for an account-security pair
+  Balance sumBalanceMakeshift(String accountId, Security security) => Balance(
+      accountId: accountId,
+      security: security,
+      confirmed: HistoryReservoir.whereUnspent(
+              given: histories.byAccountMakeshift(accountId),
+              security: security)
+          .fold(0, (sum, history) => sum + history.value),
+      unconfirmed: HistoryReservoir.whereUnconfirmed(
+              given: histories.byAccountMakeshift(accountId),
+              security: security)
+          .fold(0, (sum, history) => sum + history.value));
+
   List<Balance> sumBalances(String accountId) => [
-        for (var security in histories.byAccount
-            .getAll(accountId)
+        for (var security in histories
+            .byAccountMakeshift(accountId)
             .map((history) => history.security)
             .toList()
             .toSet())
-          sumBalance(accountId, security)
+          sumBalanceMakeshift(accountId, security)
       ];
 
   /// If there is a change in its history, recalculate a balance. Return a list
@@ -91,6 +104,11 @@ class BalanceService extends Service {
     // get all securities belonging to account
     // sum balance on each
     // save
+    print(histories.byAccount.getAll(accountId));
+    print('securities');
+    print(histories.byAccount
+        .getAll(accountId)
+        .map((history) => history.security));
     await balances.saveAll([
       for (var security in histories.byAccount
           .getAll(accountId)

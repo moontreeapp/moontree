@@ -22,13 +22,16 @@ extension ByAccountMethodsForHistory on Index<_AccountKey, History> {
   List<History> getAll(String accountId) => getByKeyStr(accountId);
 
   Iterable<History> transactions(String accountId, {Security security = RVN}) =>
-      whereTransactions(getAll(accountId), security);
+      HistoryReservoir.whereTransaction(
+          given: getAll(accountId), security: security);
 
   Iterable<History> unspents(String accountId, {Security security = RVN}) =>
-      whereUnspents(getAll(accountId), security);
+      HistoryReservoir.whereUnspent(
+          given: getAll(accountId), security: security);
 
   Iterable<History> unconfirmed(String accountId, {Security security = RVN}) =>
-      whereUnconfirmed(getAll(accountId), security);
+      HistoryReservoir.whereUnconfirmed(
+          given: getAll(accountId), security: security);
 }
 
 // byWallet
@@ -42,13 +45,16 @@ extension ByWalletMethodsForHistory on Index<_WalletKey, History> {
   List<History> getAll(String walletId) => getByKeyStr(walletId);
 
   Iterable<History> transactions(String walletId, {Security security = RVN}) =>
-      whereTransactions(getAll(walletId), security);
+      HistoryReservoir.whereTransaction(
+          given: getAll(walletId), security: security);
 
   Iterable<History> unspents(String walletId, {Security security = RVN}) =>
-      whereUnspents(getAll(walletId), security);
+      HistoryReservoir.whereUnspent(
+          given: getAll(walletId), security: security);
 
   Iterable<History> unconfirmed(String walletId, {Security security = RVN}) =>
-      whereUnconfirmed(getAll(walletId), security);
+      HistoryReservoir.whereUnconfirmed(
+          given: getAll(walletId), security: security);
 }
 
 // byScripthash
@@ -73,7 +79,8 @@ extension BySecurityMethodsForHistory on Index<_SecurityKey, History> {
   List<History> getAll(Security security) => getByKeyStr(security.toKey());
 
   Iterable<History> unspents({Security security = RVN}) =>
-      whereUnspents(getAll(security), security);
+      HistoryReservoir.whereUnspent(
+          given: getAll(security), security: security);
 
   BalanceRaw balance({Security security = RVN}) {
     var zero = BalanceRaw(confirmed: 0, unconfirmed: 0);
@@ -97,25 +104,3 @@ class _ConfirmedKey extends Key<History> {
 extension ByConfrimedMethodsForHistory on Index<_ConfirmedKey, History> {
   List<History> getAll(bool confirmed) => getByKeyStr(confirmed.toString());
 }
-
-// FILTERS
-
-Iterable<History> whereTransactions(
-        Iterable<History> histories, Security security) =>
-    histories.where((history) =>
-        history.confirmed && // not in mempool
-        history.security == security);
-
-Iterable<History> whereUnspents(
-        Iterable<History> histories, Security security) =>
-    histories.where((history) =>
-        history.value > 0 && // unspent
-        history.confirmed && // not in mempool
-        history.security == security);
-
-Iterable<History> whereUnconfirmed(
-        Iterable<History> histories, Security security) =>
-    histories.where((history) =>
-        history.value > 0 && // unspent
-        !history.confirmed && // in mempool
-        history.security == security);

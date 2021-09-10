@@ -1,5 +1,4 @@
 export 'accounts.dart';
-export 'account_balance.dart';
 export 'address_subscription.dart';
 export 'addresses.dart';
 export 'blocks.dart';

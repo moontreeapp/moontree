@@ -7,7 +7,6 @@ void initNonElectrumWaiters() {
   leadersWaiter.init();
   singlesWaiter.init();
   addressesWaiter.init();
-  accountBalanceWaiter.init();
   exchangeRateWaiter.init();
   settingsWaiter.init();
 }
@@ -21,7 +20,6 @@ void deinitNonElectrumWaiters() {
   leadersWaiter.deinit();
   singlesWaiter.deinit();
   addressesWaiter.deinit();
-  accountBalanceWaiter.deinit();
   exchangeRateWaiter.deinit();
   settingsWaiter.deinit();
 }

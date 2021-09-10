@@ -20,7 +20,8 @@ final AccountsService accountService =
 final BalanceService balanceService = BalanceService(balances, histories);
 final AddressSubscriptionService addressSubscriptionService =
     AddressSubscriptionService(balances, histories);
-final RatesService ratesService = RatesService(balances, rates);
+final RatesService ratesService = RatesService(
+    rates); // really convienent if services could refer to other services...
 final LeaderWalletDerivationService leaderWalletDerivationService =
     LeaderWalletDerivationService(accounts, wallets, addresses, histories);
 final SingleWalletService singleWalletService = SingleWalletService(accounts);
@@ -57,12 +58,7 @@ final AddressSubscriptionWaiter addressSubscriptionWaiter =
   leaderWalletDerivationService,
 );
 final AddressesWaiter addressesWaiter = AddressesWaiter(addresses, histories);
-final AccountBalanceWaiter accountBalanceWaiter = AccountBalanceWaiter(
-  accounts,
-  wallets,
-  histories,
-  balanceService,
-);
+
 final ExchangeRateWaiter exchangeRateWaiter = ExchangeRateWaiter(ratesService);
 final SettingsWaiter settingsWaiter = SettingsWaiter(settings, settingsService);
 final BlockSubscriptionWaiter blockSubscriptionWaiter =

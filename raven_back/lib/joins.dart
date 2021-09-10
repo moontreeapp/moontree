@@ -8,10 +8,6 @@ extension AccountHasManyWallets on Account {
   List<Wallet> get wallets => globals.wallets.byAccount.getAll(accountId);
 }
 
-extension AccountHasManyBalances on Account {
-  List<Balance> get balances => globals.balances.byAccount.getAll(accountId);
-}
-
 // Joins on Wallet
 
 extension WalletBelongsToAccount on Wallet {

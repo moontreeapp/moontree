@@ -69,7 +69,6 @@ class HiveInitializer {
     addresses.setSource(HiveSource('addresses'));
     blocks.setSource(HiveSource('blocks'));
     histories.setSource(HiveSource('histories'));
-    balances.setSource(HiveSource('balances'));
     rates.setSource(HiveSource('rates'));
     settings.setSource(
         HiveSource('settings', defaults: SettingReservoir.defaultSettings));
