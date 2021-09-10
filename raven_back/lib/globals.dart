@@ -58,6 +58,8 @@ final AddressSubscriptionWaiter addressSubscriptionWaiter =
 );
 final AddressesWaiter addressesWaiter = AddressesWaiter(addresses, histories);
 final AccountBalanceWaiter accountBalanceWaiter = AccountBalanceWaiter(
+  accounts,
+  wallets,
   histories,
   balanceService,
 );

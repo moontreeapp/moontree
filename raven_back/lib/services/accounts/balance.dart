@@ -76,4 +76,21 @@ class BalanceService extends Service {
 
     return collection;
   }
+
+  /// recalculate balances for all by accountId
+  Future calcuSaveBalancesByAccount(String accountId) async {
+    // get all securities belonging to account
+    // sum balance on each
+    // save
+    await balances.saveAll([
+      for (var security in histories.byAccount
+          .getAll(accountId)
+          .map((history) => history.security))
+        sumBalance(accountId, security)
+    ]);
+  }
+
+  void removeBalancesByAccount(String accountId) {
+    balances.removeAll(balances.byAccount.getAll(accountId));
+  }
 }
