@@ -24,21 +24,26 @@ class AccountBalanceWaiter extends Waiter {
       balanceService.saveChangedBalances(changes.toList());
     }));
 
-    /// wallet is moved to or from account
+    /// I'm not sure having a balance reservoir is even a good idea,
+    /// to keep it in sync we have to recalculate the every balance in the reservoir each time we move a wallet to an account...
+    /// wallet is moved to or from account - NEEDS TESTING
     listeners.add(wallets.changes.listen((List<Change> changes) {
       changes.forEach((change) {
         change.when(
-            added: (added) {
-              var wallet = added.data;
+            added: (added) {},
+            updated: (updated) {
+              var wallet = updated.data;
               // when wallet added to account recalculate all balances for account.
-              balanceService.calcuSaveBalancesByAccount(wallet.accountId);
+              // if wallet.accountId changed...
+              // can't tell what it changed from so we might as well recalculate for all accounts.
+              for (var account in accounts.data) {
+                balanceService.removeBalancesByAccount(account.accountId);
+              }
+              for (var account in accounts.data) {
+                balanceService.calcuSaveBalancesByAccount(account.accountId);
+              }
             },
-            updated: (updated) {},
-            removed: (removed) {
-              var wallet = removed.data;
-              // when wallet removed from account recalculate all balances for account.
-              balanceService.calcuSaveBalancesByAccount(wallet.accountId);
-            });
+            removed: (removed) {});
       });
     }));
 

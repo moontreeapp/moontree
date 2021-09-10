@@ -26,6 +26,15 @@ class BalanceService extends Service {
           .unconfirmed(accountId, security: security)
           .fold(0, (sum, history) => sum + history.value));
 
+  List<Balance> sumBalances(String accountId) => [
+        for (var security in histories.byAccount
+            .getAll(accountId)
+            .map((history) => history.security)
+            .toList()
+            .toSet())
+          sumBalance(accountId, security)
+      ];
+
   /// If there is a change in its history, recalculate a balance. Return a list
   /// of such balances.
   Iterable<Balance> getChangedBalances(List<Change> changes) =>
