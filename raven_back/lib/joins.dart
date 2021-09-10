@@ -41,3 +41,9 @@ extension AddressBelongsToAccount on Address {
 extension BalanceBelongsToAccount on Wallet {
   Account? get account => globals.accounts.primaryIndex.getOne(accountId);
 }
+
+// Joins on History
+
+extension HistoryBelongsToAddress on History {
+  Address? get address => globals.addresses.primaryIndex.getOne(scripthash);
+}

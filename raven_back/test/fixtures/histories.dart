@@ -9,8 +9,6 @@ MapSource<History> histories() => MapSource({
       '0': History(
           hash: '0',
           scripthash: 'abc0',
-          accountId: 'a0',
-          walletId: 'w0',
           height: 0,
           security: RVN,
           position: 0,
@@ -18,8 +16,6 @@ MapSource<History> histories() => MapSource({
       '1': History(
           hash: '1',
           scripthash: 'abc1',
-          accountId: 'a0',
-          walletId: 'w0',
           height: 1,
           security: USD,
           position: 0,
@@ -27,8 +23,6 @@ MapSource<History> histories() => MapSource({
       '2': History(
           hash: '2',
           scripthash: 'abc2',
-          accountId: 'a1',
-          walletId: 'w2',
           height: 2,
           security: RVN,
           position: -1,
@@ -36,8 +30,6 @@ MapSource<History> histories() => MapSource({
       '3': History(
           hash: '3',
           scripthash: 'abc3',
-          accountId: 'a0',
-          walletId: 'w2',
           height: 2,
           security: RVN,
           position: 1,

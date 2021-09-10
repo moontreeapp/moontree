@@ -60,7 +60,6 @@ class LeaderWallet extends Wallet {
         scripthash: seededWallet.scripthash,
         address: seededWallet.address!,
         walletId: walletId,
-        accountId: accountId,
         hdIndex: hdIndex,
         exposure: exposure,
         net: net);

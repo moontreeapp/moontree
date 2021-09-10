@@ -6,8 +6,11 @@ import 'package:test/test.dart';
 
 import 'package:raven/account_security_pair.dart';
 import '../fixtures/histories.dart';
+import '../fixtures/fixtures.dart' as fixtures;
 
 void main() async {
+  setUp(fixtures.useFixtureSources);
+
   test('AccountSecurityPair is unique in Set', () {
     var s = <AccountSecurityPair>{};
     var pair = AccountSecurityPair(

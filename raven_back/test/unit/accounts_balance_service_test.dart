@@ -10,8 +10,6 @@ import '../fixtures/fixtures.dart' as fixtures;
 var newHistory = History(
     hash: '100',
     scripthash: 'abc100',
-    accountId: 'a0',
-    walletId: 'w0',
     height: 0,
     security: RVN,
     position: 5,
@@ -30,14 +28,14 @@ void main() async {
     });
 
     test('sumBalance (in mempool)', () {
-      expect(balanceService.sumBalance('a1', RVN).unconfirmed, 10);
+      expect(balanceService.sumBalance('a0', RVN).unconfirmed, 10);
     });
 
     test('getChangedBalances', () async {
       var change = await histories.save(newHistory);
       var changedBalances = balanceService.getChangedBalances([change!]);
       expect(changedBalances.toList(), [
-        Balance(accountId: 'a0', security: RVN, confirmed: 40, unconfirmed: 0)
+        Balance(accountId: 'a0', security: RVN, confirmed: 40, unconfirmed: 10)
       ]);
       // getChangedBalances doesn't save the result
       expect(balanceService.balances.data, fixtures.balances().map.values);
@@ -47,7 +45,7 @@ void main() async {
       var change = await histories.save(newHistory);
       var changedBalances = await balanceService.saveChangedBalances([change!]);
       var updatedBalance = Balance(
-          accountId: 'a0', security: RVN, confirmed: 40, unconfirmed: 0);
+          accountId: 'a0', security: RVN, confirmed: 40, unconfirmed: 10);
       expect(changedBalances.toList(), [updatedBalance]);
       // saveChangedBalances saves the result
       expect(balanceService.balances.primaryIndex.getOne('a0', RVN),

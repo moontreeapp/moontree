@@ -17,42 +17,36 @@ class HistoryAdapter extends TypeAdapter<History> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return History(
-      accountId: fields[0] as String,
-      walletId: fields[1] as String,
-      scripthash: fields[2] as String,
-      height: fields[3] as int,
-      hash: fields[4] as String,
-      position: fields[5] as int,
-      value: fields[6] as int,
-      security: fields[7] as Security,
-      memo: fields[8] as String,
-      note: fields[9] as String,
+      scripthash: fields[0] as String,
+      height: fields[1] as int,
+      hash: fields[2] as String,
+      position: fields[3] as int,
+      value: fields[4] as int,
+      security: fields[5] as Security,
+      memo: fields[6] as String,
+      note: fields[7] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, History obj) {
     writer
-      ..writeByte(10)
-      ..writeByte(0)
-      ..write(obj.accountId)
-      ..writeByte(1)
-      ..write(obj.walletId)
-      ..writeByte(2)
-      ..write(obj.scripthash)
-      ..writeByte(3)
-      ..write(obj.height)
-      ..writeByte(4)
-      ..write(obj.hash)
-      ..writeByte(5)
-      ..write(obj.position)
-      ..writeByte(6)
-      ..write(obj.value)
-      ..writeByte(7)
-      ..write(obj.security)
       ..writeByte(8)
+      ..writeByte(0)
+      ..write(obj.scripthash)
+      ..writeByte(1)
+      ..write(obj.height)
+      ..writeByte(2)
+      ..write(obj.hash)
+      ..writeByte(3)
+      ..write(obj.position)
+      ..writeByte(4)
+      ..write(obj.value)
+      ..writeByte(5)
+      ..write(obj.security)
+      ..writeByte(6)
       ..write(obj.memo)
-      ..writeByte(9)
+      ..writeByte(7)
       ..write(obj.note);
   }
 

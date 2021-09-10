@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:reservoir/change.dart';
 
-import 'package:raven/records/records.dart';
+import 'package:raven/raven.dart';
 
 class AccountSecurityPair with EquatableMixin {
   final String accountId;
@@ -9,9 +9,11 @@ class AccountSecurityPair with EquatableMixin {
 
   AccountSecurityPair(this.accountId, this.security);
 
-  factory AccountSecurityPair.fromChange(Change change) =>
-      AccountSecurityPair(change.data.accountId, change.data.security);
-
+  factory AccountSecurityPair.fromChange(Change change) {
+    History history = change.data;
+    return AccountSecurityPair(
+        history.address!.wallet!.accountId, change.data.security);
+  }
   @override
   List<Object?> get props => [accountId, security];
 }

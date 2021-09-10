@@ -15,7 +15,7 @@ extension ByIdMethodsForHistory on Index<_TxHashKey, History> {
 
 class _AccountKey extends Key<History> {
   @override
-  String getKey(History history) => history.accountId;
+  String getKey(History history) => history.address!.wallet!.accountId;
 }
 
 extension ByAccountMethodsForHistory on Index<_AccountKey, History> {
@@ -35,7 +35,7 @@ extension ByAccountMethodsForHistory on Index<_AccountKey, History> {
 
 class _WalletKey extends Key<History> {
   @override
-  String getKey(History history) => history.walletId;
+  String getKey(History history) => history.address!.walletId;
 }
 
 extension ByWalletMethodsForHistory on Index<_WalletKey, History> {

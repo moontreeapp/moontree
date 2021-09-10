@@ -11,8 +11,8 @@ import 'wallets.dart';
 import 'package:raven/globals.dart' as globals;
 
 void useFixtureSources() {
-  globals.addresses.setSource(addresses());
-  globals.balances.setSource(balances());
-  globals.histories.setSource(histories());
   globals.wallets.setSource(wallets());
+  globals.addresses.setSource(addresses());
+  globals.histories.setSource(histories());
+  globals.balances.setSource(balances());
 }

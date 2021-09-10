@@ -17,8 +17,6 @@ class HistoryService extends Service {
     history = history ?? histories.primaryIndex.getOne(hash ?? '');
     if (history != null) {
       histories.save(History(
-          accountId: history.accountId,
-          walletId: history.walletId,
           scripthash: history.scripthash,
           height: history.height,
           hash: history.hash,

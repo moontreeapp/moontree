@@ -19,22 +19,18 @@ class Address with EquatableMixin {
   String walletId;
 
   @HiveField(3)
-  String accountId;
-
-  @HiveField(4)
   int hdIndex;
 
-  @HiveField(5)
+  @HiveField(4)
   NodeExposure exposure;
 
-  @HiveField(6)
+  @HiveField(5)
   Net net;
 
   Address({
     required this.scripthash,
     required this.address,
     required this.walletId,
-    required this.accountId,
     required this.hdIndex,
     this.exposure = NodeExposure.External,
     this.net = Net.Test,
@@ -45,7 +41,6 @@ class Address with EquatableMixin {
         scripthash,
         address,
         walletId,
-        accountId,
         hdIndex,
         exposure,
         net,
@@ -53,5 +48,5 @@ class Address with EquatableMixin {
 
   @override
   String toString() =>
-      'Address($scripthash, $address, $walletId, $accountId, $hdIndex, $exposure, $net)';
+      'Address($scripthash, $address, $walletId, $hdIndex, $exposure, $net)';
 }

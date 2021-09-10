@@ -2,8 +2,7 @@ import 'dart:async';
 import 'package:quiver/iterables.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:raven/services/service.dart';
-import 'package:raven/records/records.dart';
-import 'package:raven/reservoirs/reservoirs.dart';
+import 'package:raven/raven.dart';
 
 class ScripthashHistoryRow {
   final Address address;
@@ -67,16 +66,25 @@ class AddressSubscriptionService extends Service {
   List<History> combineHistoryAndUnspents(ScripthashHistoryRow row) {
     var newHistories = <History>[];
     for (var history in row.history) {
-      newHistories.add(History.fromScripthashHistory(row.address.accountId,
-          row.address.walletId, row.address.scripthash, history));
+      newHistories.add(History.fromScripthashHistory(
+          row.address.wallet!.accountId,
+          row.address.walletId,
+          row.address.scripthash,
+          history));
     }
     for (var unspent in row.unspent) {
-      newHistories.add(History.fromScripthashUnspent(row.address.accountId,
-          row.address.walletId, row.address.scripthash, unspent));
+      newHistories.add(History.fromScripthashUnspent(
+          row.address.wallet!.accountId,
+          row.address.walletId,
+          row.address.scripthash,
+          unspent));
     }
     for (var unspent in row.assetUnspent) {
-      newHistories.add(History.fromScripthashUnspent(row.address.accountId,
-          row.address.walletId, row.address.scripthash, unspent));
+      newHistories.add(History.fromScripthashUnspent(
+          row.address.wallet!.accountId,
+          row.address.walletId,
+          row.address.scripthash,
+          unspent));
     }
     return newHistories;
   }

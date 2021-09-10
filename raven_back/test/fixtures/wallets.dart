@@ -12,5 +12,14 @@ MapSource<Wallet> wallets() {
         walletId: '0',
         accountId: 'a0',
         encryptedSeed: bip39.mnemonicToSeed(phrase)),
+    // has no addresses
+    '1': LeaderWallet(
+        walletId: '1',
+        accountId: 'a1',
+        encryptedSeed: bip39.mnemonicToSeed(phrase)),
+    '2': LeaderWallet(
+        walletId: '2',
+        accountId: 'a2',
+        encryptedSeed: bip39.mnemonicToSeed(phrase)),
   });
 }

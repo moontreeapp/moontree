@@ -15,7 +15,7 @@ extension ByRawScripthashMethodsForAddress on Index<_ScripthashKey, Address> {
 
 class _AccountKey extends Key<Address> {
   @override
-  String getKey(Address address) => address.accountId;
+  String getKey(Address address) => address.wallet!.accountId;
 }
 
 extension ByAccountMethodsForAddress on Index<_AccountKey, Address> {

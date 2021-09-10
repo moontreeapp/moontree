@@ -11,39 +11,31 @@ part 'history.g.dart';
 @HiveType(typeId: TypeId.History)
 class History with EquatableMixin {
   @HiveField(0)
-  String accountId;
-
-  @HiveField(1)
-  String walletId;
-
-  @HiveField(2)
   String scripthash;
 
-  @HiveField(3)
+  @HiveField(1)
   int height;
 
-  @HiveField(4)
+  @HiveField(2)
   String hash;
 
-  @HiveField(5)
+  @HiveField(3)
   int position;
 
-  @HiveField(6)
+  @HiveField(4)
   int value;
 
-  @HiveField(7)
+  @HiveField(5)
   Security security;
 
-  @HiveField(8)
+  @HiveField(6)
   String memo;
 
-  @HiveField(9)
+  @HiveField(7)
   String note;
 
   History(
-      {required this.accountId,
-      required this.walletId,
-      required this.scripthash,
+      {required this.scripthash,
       required this.height,
       required this.hash,
       this.position = -1,
@@ -55,22 +47,12 @@ class History with EquatableMixin {
   bool get confirmed => position > -1;
 
   @override
-  List<Object> get props => [
-        accountId,
-        walletId,
-        scripthash,
-        height,
-        hash,
-        position,
-        value,
-        security,
-        memo,
-        note
-      ];
+  List<Object> get props =>
+      [scripthash, height, hash, position, value, security, memo, note];
 
   @override
   String toString() {
-    return 'History(walletId: $walletId, accountId: $accountId, '
+    return 'History('
         'scripthash: $scripthash, hash: $hash, height: $height, '
         'position: $position, value: $value, security: $security, '
         'memo: $memo, note: $note)';
@@ -80,8 +62,6 @@ class History with EquatableMixin {
   factory History.fromScripthashHistory(String accountId, String walletId,
       String scripthash, ScripthashHistory history) {
     return History(
-      accountId: accountId,
-      walletId: walletId,
       scripthash: scripthash,
       height: history.height,
       hash: history.txHash,
@@ -92,8 +72,6 @@ class History with EquatableMixin {
   factory History.fromScripthashUnspent(String accountId, String walletId,
       String scripthash, ScripthashUnspent unspent) {
     return History(
-        accountId: accountId,
-        walletId: walletId,
         scripthash: scripthash,
         height: unspent.height,
         hash: unspent.txHash,

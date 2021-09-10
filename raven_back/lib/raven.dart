@@ -1,6 +1,7 @@
 export 'globals.dart';
 export 'hive_initializer.dart';
 export 'init.dart';
+export 'joins.dart';
 
 export 'records/records.dart';
 export 'reservoirs/reservoirs.dart';

@@ -24,7 +24,6 @@ class SingleWalletService extends Service {
         scripthash: seededWallet.scripthash,
         address: seededWallet.address!,
         walletId: wallet.walletId,
-        accountId: wallet.accountId,
         hdIndex: 0,
         net: net);
   }
