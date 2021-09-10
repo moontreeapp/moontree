@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/buttons.dart';
-import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
-import 'package:raven_mobile/components/text.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 import 'package:raven_mobile/utils/utils.dart';
@@ -155,22 +153,33 @@ class _CreateAssetState extends State<CreateAsset> {
       ///     for each address sum histories  values of that address
       ///      if large enough add address to list
       /// this logic should go on the balance service
-      DropdownButton<String>(
-          isExpanded: true,
-          value: data['wallet'],
-          items: wallets.byAccount
-              .getAll(Current.account.accountId)
-              .map((Wallet wallet) => DropdownMenuItem<String>(
-                  value: wallet.walletId,
-                  child: Text(
-                      '${wallet.walletId.substring(0, 6)}...${wallet.walletId.substring(wallet.walletId.length - 6, wallet.walletId.length)}',
-                      style: Theme.of(context).mono)))
-              .toList(),
-          onChanged: (String? newValue) => setState(() => {
-                // enable create asset button if enough RVN in wallet
-                // disable create asset button if not enough RVN in wallet
-                data['wallet'] = newValue!
-              })),
+      ///
+      ///
+      /// NOT MVP:
+      /// will the user even care?
+      /// might have to allow them to choose wallet for normal transactions...
+      /// or avoid taking money from an asset holding wallet as long as we can...
+      /// or both: avoid and give them a choice that's hidden (defaulted).
+      ///
+      /// MVP: treat all wallets the same, assume if they have an asset wallet
+      /// they'll move it into another account if they care.
+      //DropdownButton<String>(
+      //    isExpanded: true,
+      //    value: data['wallet'],
+      //    items: wallets.byAccount
+      //        .getAll(Current.account.accountId)
+      //        .map((Wallet wallet) => DropdownMenuItem<String>(
+      //            value: wallet.walletId,
+      //            child: Text(
+      //                '${wallet.walletId.substring(0, 6)}...${wallet.walletId.substring(wallet.walletId.length - 6, wallet.walletId.length)}',
+      //                style: Theme.of(context).mono)))
+      //        .toList(),
+      //    onChanged: (String? newValue) => setState(() => {
+      //          // enable create asset button if enough RVN in wallet
+      //          // disable create asset button if not enough RVN in wallet
+      //          data['wallet'] = newValue!
+      //        })),
+
       Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [Text('fee'), Text('500+tx fee RVN')]),

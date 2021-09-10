@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:raven/raven.dart';
+import 'package:raven_mobile/services/history_mock.dart';
 
 class Loading extends StatefulWidget {
   @override
@@ -14,41 +14,6 @@ class _LoadingState extends State<Loading> {
   Future setupAccounts() async {
     await accountGenerationService.makeAndAwaitSaveAccount('Primary');
     await accountGenerationService.makeAndAwaitSaveAccount('Savings');
-    await addressSubscriptionService
-        .saveScripthashHistoryData(ScripthashHistoriesData(
-      [
-        Address(
-            accountId: '0',
-            walletId: '',
-            address: '',
-            hdIndex: -1,
-            scripthash: '')
-      ],
-      [
-        [ScripthashHistory(height: 0, txHash: 'abc1')]
-      ],
-      [
-        [
-          ScripthashUnspent(
-              height: 0,
-              txHash: 'abc2',
-              scripthash: '',
-              txPos: 0,
-              value: 1000000000)
-        ]
-      ],
-      [
-        [
-          ScripthashUnspent(
-              height: 0,
-              txHash: 'abc3',
-              scripthash: '',
-              txPos: 0,
-              value: 5000000000,
-              ticker: 'Magic Musk')
-        ]
-      ],
-    ));
   }
 
   Future setup() async {
@@ -56,6 +21,7 @@ class _LoadingState extends State<Loading> {
     await hiveInit.setUp();
     await init();
     if (accounts.data.isEmpty) {
+      MockHistories().init();
       await setupAccounts();
     }
     settings.setCurrentAccountId();

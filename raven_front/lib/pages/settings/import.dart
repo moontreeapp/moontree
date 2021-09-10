@@ -55,6 +55,7 @@ class _ImportState extends State<Import> {
   //    wallets.primaryIndex.getOne(walletId)?.accountId;
 
   Future alertSuccess() {
+    /// verify by looking up public key first - (import from private key vs wif)
     /// verify we don't already have this wallet... that means create the wallet to compare, but don't save it yet,
     ///wallet = singleWalletGenerationService.newSingleWallet(
     ///    account: Current.account, privateKey: walletSecret!, compressed: true);
