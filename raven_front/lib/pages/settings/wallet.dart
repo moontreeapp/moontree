@@ -36,6 +36,8 @@ class _WalletViewState extends State<WalletView> {
   }
 
   AppBar header() => AppBar(
+
+      /// show balance
       leading: RavenButton.back(context),
       elevation: 2,
       centerTitle: false,

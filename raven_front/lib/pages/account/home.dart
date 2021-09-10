@@ -33,7 +33,19 @@ class _HomeState extends State<Home> {
     currentTheme.addListener(() {
       setState(() {});
     });
-    listeners.add(balances.changes.listen((changes) {
+    //listeners.add(balances.changes.listen((changes) {
+    //  setState(() {});
+    //}));
+    listeners.add(histories.changes.listen((changes) {
+      if ([
+        for (var change in changes)
+          if ((change.data as History).address?.wallet?.accountId ==
+              Current.account.accountId)
+            1
+      ].contains(1)) setState(() {});
+    }));
+    // we can move a wallet from one account to another
+    listeners.add(wallets.changes.listen((changes) {
       setState(() {});
     }));
     listeners.add(settings.changes.listen((changes) {
@@ -95,6 +107,7 @@ class _HomeState extends State<Home> {
   ListView _holdingsView() {
     var rvnHolding = <Widget>[];
     var assetHoldings = <Widget>[];
+    print(Current.holdings);
     for (var holding in Current.holdings) {
       var thisHolding = ListTile(
           onTap: () => Navigator.pushNamed(context,
