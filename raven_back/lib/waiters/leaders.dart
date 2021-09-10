@@ -11,7 +11,6 @@ class LeadersWaiter extends Waiter {
   WalletReservoir wallets;
   AddressReservoir addresses;
   LeaderWalletDerivationService leaderWalletDerivationService;
-  late StreamSubscription<List<Change>> listener;
 
   LeadersWaiter(
     this.wallets,

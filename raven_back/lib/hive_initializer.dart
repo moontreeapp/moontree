@@ -65,10 +65,10 @@ class HiveInitializer {
 
   void setSources() {
     accounts.setSource(HiveSource('accounts'));
+    wallets.setSource(HiveSource('wallets'));
     addresses.setSource(HiveSource('addresses'));
     blocks.setSource(HiveSource('blocks'));
     histories.setSource(HiveSource('histories'));
-    wallets.setSource(HiveSource('wallets'));
     balances.setSource(HiveSource('balances'));
     rates.setSource(HiveSource('rates'));
     settings.setSource(

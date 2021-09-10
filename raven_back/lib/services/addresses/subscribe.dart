@@ -5,28 +5,28 @@ import 'package:raven/services/service.dart';
 import 'package:raven/raven.dart';
 
 class ScripthashHistoryRow {
-  final Address address;
+  final String scripthash;
   final List<ScripthashHistory> history;
   final List<ScripthashUnspent> unspent;
   final List<ScripthashUnspent> assetUnspent;
 
   ScripthashHistoryRow(
-      this.address, this.history, this.unspent, this.assetUnspent);
+      this.scripthash, this.history, this.unspent, this.assetUnspent);
 }
 
 class ScripthashHistoriesData {
-  final List<Address> addresses;
+  final List<String> scripthashes;
   final List<List<ScripthashHistory>> histories;
   final List<List<ScripthashUnspent>> unspents;
   final List<List<ScripthashUnspent>> assetUnspents;
 
   ScripthashHistoriesData(
-      this.addresses, this.histories, this.unspents, this.assetUnspents);
+      this.scripthashes, this.histories, this.unspents, this.assetUnspents);
 
   Iterable<ScripthashHistoryRow> get zipped =>
-      zip([addresses, histories, unspents, assetUnspents]).map((e) =>
+      zip([scripthashes, histories, unspents, assetUnspents]).map((e) =>
           ScripthashHistoryRow(
-              e[0] as Address,
+              e[0] as String,
               e[1] as List<ScripthashHistory>,
               e[2] as List<ScripthashUnspent>,
               e[3] as List<ScripthashUnspent>));
@@ -54,7 +54,7 @@ class AddressSubscriptionService extends Service {
     List<List<ScripthashUnspent>> assetUnspents =
         await client.getAssetUnspents(scripthashes);
     return ScripthashHistoriesData(
-        changedAddresses, histories, unspents, assetUnspents);
+        scripthashes, histories, unspents, assetUnspents);
   }
 
   Future saveScripthashHistoryData(ScripthashHistoriesData data) async {
@@ -66,25 +66,13 @@ class AddressSubscriptionService extends Service {
   List<History> combineHistoryAndUnspents(ScripthashHistoryRow row) {
     var newHistories = <History>[];
     for (var history in row.history) {
-      newHistories.add(History.fromScripthashHistory(
-          row.address.wallet!.accountId,
-          row.address.walletId,
-          row.address.scripthash,
-          history));
+      newHistories.add(History.fromScripthashHistory(row.scripthash, history));
     }
     for (var unspent in row.unspent) {
-      newHistories.add(History.fromScripthashUnspent(
-          row.address.wallet!.accountId,
-          row.address.walletId,
-          row.address.scripthash,
-          unspent));
+      newHistories.add(History.fromScripthashUnspent(row.scripthash, unspent));
     }
     for (var unspent in row.assetUnspent) {
-      newHistories.add(History.fromScripthashUnspent(
-          row.address.wallet!.accountId,
-          row.address.walletId,
-          row.address.scripthash,
-          unspent));
+      newHistories.add(History.fromScripthashUnspent(row.scripthash, unspent));
     }
     return newHistories;
   }

@@ -59,7 +59,7 @@ class History with EquatableMixin {
   }
 
   // ScripthashHistories should provide a memo, but do they (form electrum? I don't think so)
-  factory History.fromScripthashHistory(String accountId, String walletId,
+  factory History.fromScripthashHistory(
       String scripthash, ScripthashHistory history) {
     return History(
       scripthash: scripthash,
@@ -69,7 +69,7 @@ class History with EquatableMixin {
   }
 
   // ScripthashHistories should provide a memo, but do they (form electrum? I don't think so)
-  factory History.fromScripthashUnspent(String accountId, String walletId,
+  factory History.fromScripthashUnspent(
       String scripthash, ScripthashUnspent unspent) {
     return History(
         scripthash: scripthash,
