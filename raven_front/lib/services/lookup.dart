@@ -8,7 +8,7 @@ BalanceUSD currentBalanceUSD() => ratesService
     .accountBalanceUSD(currentAccountId(), holdings: currentHoldings());
 
 Balance currentBalanceRVN() =>
-    balanceService.sumBalance(currentAccountId(), RVN);
+    balanceService.accountBalance(currentAccount(), RVN);
 //balances.getOrZero(currentAccountId());
 
 /// our concept of history isn't the same as transactions - must fill out negative values for sent amounts
@@ -16,7 +16,7 @@ List<History> currentTransactions() =>
     histories.byAccount.getAll(currentAccountId()).toList();
 
 List<Balance> currentHoldings() =>
-    balanceService.sumBalances(currentAccountId());
+    balanceService.accountBalances(currentAccount());
 
 class Current {
   static Account get account => currentAccount();

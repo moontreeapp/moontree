@@ -33,9 +33,9 @@ class _HomeState extends State<Home> {
     currentTheme.addListener(() {
       setState(() {});
     });
-    //listeners.add(balances.changes.listen((changes) {
-    //  setState(() {});
-    //}));
+    listeners.add(balances.changes.listen((changes) {
+      setState(() {});
+    }));
     listeners.add(histories.changes.listen((changes) {
       if ([
         for (var change in changes)
@@ -107,7 +107,6 @@ class _HomeState extends State<Home> {
   ListView _holdingsView() {
     var rvnHolding = <Widget>[];
     var assetHoldings = <Widget>[];
-    print(Current.holdings);
     for (var holding in Current.holdings) {
       var thisHolding = ListTile(
           onTap: () => Navigator.pushNamed(context,

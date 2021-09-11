@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:raven_mobile/services/lookup.dart';
+import 'package:reservoir/reservoir.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/utils/utils.dart';
+import 'package:raven/utils/database.dart' as ravenDatabase;
+import 'package:raven/raven.dart';
 
 class Settings extends StatefulWidget {
   final dynamic data;
@@ -71,6 +74,12 @@ class _SettingsState extends State<Settings> {
                   leading: Icon(Icons.info_outline_rounded),
                   onPressed: (BuildContext context) =>
                       Navigator.pushNamed(context, '/settings/about')),
+              SettingsTile(
+                  title: 'Clear Database',
+                  leading: Icon(Icons.info_outline_rounded),
+                  onPressed: (BuildContext context) {
+                    ravenDatabase.deleteDatabase();
+                  }),
               //SettingsTile.switchTile(
               //  title: 'Use fingerprint',
               //  leading: Icon(Icons.fingerprint),
