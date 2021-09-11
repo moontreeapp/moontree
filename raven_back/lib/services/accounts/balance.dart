@@ -6,7 +6,6 @@ import 'package:raven/records/records.dart';
 import 'package:raven/joins.dart';
 import 'package:raven/reservoirs/reservoirs.dart';
 import 'package:raven/utils/exceptions.dart';
-import 'package:raven/raven.dart';
 
 class BalanceService extends Service {
   late final BalanceReservoir balances;
