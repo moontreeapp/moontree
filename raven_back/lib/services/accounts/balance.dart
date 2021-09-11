@@ -130,4 +130,29 @@ class BalanceService extends Service {
     }
     return retBalance;
   }
+
+  List<Balance> walletBalances(Wallet wallet) {
+    // ignore: omit_local_variable_types
+    Map<Security, Balance> balancesBySecurity = {};
+    for (var balance in wallet.balances) {
+      if (!balancesBySecurity.containsKey(balance.security)) {
+        balancesBySecurity[balance.security] = balance;
+      } else {
+        balancesBySecurity[balance.security] =
+            balancesBySecurity[balance.security]! + balance;
+      }
+    }
+    return balancesBySecurity.values.toList();
+  }
+
+  Balance walletBalance(Wallet wallet, Security security) {
+    var retBalance =
+        Balance(walletId: '', confirmed: 0, unconfirmed: 0, security: security);
+    for (var balance in wallet.balances) {
+      if (balance.security == security) {
+        retBalance = retBalance + balance;
+      }
+    }
+    return retBalance;
+  }
 }
