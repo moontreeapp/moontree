@@ -1,5 +1,4 @@
 import 'package:raven/records/wallets/leader.dart';
-import 'package:raven/records/net.dart';
 import 'package:test/test.dart';
 
 import 'package:bip39/bip39.dart' as bip39;
@@ -7,7 +6,6 @@ import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 import 'package:raven/utils/env.dart';
 import 'package:raven/records/node_exposure.dart';
-import '../test_artifacts.dart' as tests;
 
 void main() async {
   var wallet;

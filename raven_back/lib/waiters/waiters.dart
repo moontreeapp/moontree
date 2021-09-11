@@ -6,3 +6,4 @@ export 'exchange_rate.dart';
 export 'leaders.dart';
 export 'settings.dart';
 export 'singles.dart';
+export 'wallet_balance.dart';

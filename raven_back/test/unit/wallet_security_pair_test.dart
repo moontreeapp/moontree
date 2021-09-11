@@ -4,16 +4,16 @@ import 'package:raven/records/security.dart';
 import 'package:reservoir/change.dart';
 import 'package:test/test.dart';
 
-import 'package:raven/account_security_pair.dart';
+import 'package:raven/utils/account_security_pair.dart';
 import '../fixtures/histories.dart';
 import '../fixtures/fixtures.dart' as fixtures;
 
 void main() async {
   setUp(fixtures.useFixtureSources);
 
-  test('AccountSecurityPair is unique in Set', () {
-    var s = <AccountSecurityPair>{};
-    var pair = AccountSecurityPair(
+  test('WalletSecurityPair is unique in Set', () {
+    var s = <WalletSecurityPair>{};
+    var pair = WalletSecurityPair(
         'a', Security(symbol: 'RVN', securityType: SecurityType.Crypto));
     s.add(pair);
     s.add(pair);
@@ -28,8 +28,8 @@ void main() async {
     ];
     var pairs = uniquePairsFromHistoryChanges(changes);
     expect(pairs, {
-      AccountSecurityPair('a0', RVN),
-      AccountSecurityPair('a0', USD),
+      WalletSecurityPair('a0', RVN),
+      WalletSecurityPair('a0', USD),
     });
   });
 }

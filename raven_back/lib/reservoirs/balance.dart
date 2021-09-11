@@ -5,18 +5,19 @@ import 'package:reservoir/reservoir.dart';
 
 part 'balance.keys.dart';
 
-class BalanceReservoir extends Reservoir<_AccountSecurityKey, Balance> {
-  late IndexMultiple<_AccountKey, Balance> byAccount;
-  // maybe by wallet too?
+class BalanceReservoir extends Reservoir<_WalletSecurityKey, Balance> {
+  late IndexMultiple<_WalletKey, Balance> byWallet;
+  //late IndexMultiple<_AccountKey, Balance> byAccount;
 
-  BalanceReservoir() : super(_AccountSecurityKey()) {
-    byAccount = addIndexMultiple('account', _AccountKey());
+  BalanceReservoir() : super(_WalletSecurityKey()) {
+    byWallet = addIndexMultiple('account', _WalletKey());
+    //byAccount = addIndexMultiple('account', _AccountKey());
   }
 
-  Balance getOrZero(String accountId, {Security security = RVN}) =>
-      primaryIndex.getOne(accountId, security) ??
+  Balance getOrZero(String walletId, {Security security = RVN}) =>
+      primaryIndex.getOne(walletId, security) ??
       Balance(
-        accountId: accountId,
+        walletId: walletId,
         security: security,
         confirmed: 0,
         unconfirmed: 0,

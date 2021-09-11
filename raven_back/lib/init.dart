@@ -3,6 +3,7 @@ import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'globals.dart';
 
 void initNonElectrumWaiters() {
+  walletBalanceWaiter.init();
   accountsWaiter.init();
   leadersWaiter.init();
   singlesWaiter.init();
@@ -17,6 +18,7 @@ void deinitElectrumWaiters() {
 }
 
 void deinitNonElectrumWaiters() {
+  walletBalanceWaiter.deinit();
   leadersWaiter.deinit();
   singlesWaiter.deinit();
   addressesWaiter.deinit();

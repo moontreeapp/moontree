@@ -35,7 +35,7 @@ void main() async {
       var change = await histories.save(newHistory);
       var changedBalances = balanceService.getChangedBalances([change!]);
       expect(changedBalances.toList(), [
-        Balance(accountId: 'a0', security: RVN, confirmed: 40, unconfirmed: 10)
+        Balance(walletId: 'a0', security: RVN, confirmed: 40, unconfirmed: 10)
       ]);
       // getChangedBalances doesn't save the result
       expect(balanceService.balances.data, fixtures.balances().map.values);
@@ -45,7 +45,7 @@ void main() async {
       var change = await histories.save(newHistory);
       var changedBalances = await balanceService.saveChangedBalances([change!]);
       var updatedBalance = Balance(
-          accountId: 'a0', security: RVN, confirmed: 40, unconfirmed: 10);
+          walletId: 'a0', security: RVN, confirmed: 40, unconfirmed: 10);
       expect(changedBalances.toList(), [updatedBalance]);
       // saveChangedBalances saves the result
       expect(balanceService.balances.primaryIndex.getOne('a0', RVN),

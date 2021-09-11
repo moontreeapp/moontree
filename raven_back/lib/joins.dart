@@ -8,6 +8,14 @@ extension AccountHasManyWallets on Account {
   List<Wallet> get wallets => globals.wallets.byAccount.getAll(accountId);
 }
 
+extension AccountHasManyBalances on Account {
+  List<Balance> get balances => globals.wallets.byAccount
+      .getAll(accountId)
+      .map((Wallet wallet) => wallet.balances)
+      .expand((i) => i)
+      .toList();
+}
+
 // Joins on Wallet
 
 extension WalletBelongsToAccount on Wallet {
@@ -16,6 +24,10 @@ extension WalletBelongsToAccount on Wallet {
 
 extension WalletHasManyAddresses on Wallet {
   List<Address> get addresses => globals.addresses.byWallet.getAll(walletId);
+}
+
+extension WalletHasManyBalances on Wallet {
+  List<Balance> get balances => globals.balances.byWallet.getAll(walletId);
 }
 
 // Joins on Address
@@ -34,8 +46,13 @@ extension AddressBelongsToAccount on Address {
 
 // Joins on Balance
 
-extension BalanceBelongsToAccount on Wallet {
-  Account? get account => globals.accounts.primaryIndex.getOne(accountId);
+extension BalanceBelongsToWallet on Balance {
+  Wallet? get wallet => globals.wallets.primaryIndex.getOne(walletId);
+}
+
+extension BalanceBelongsToAccount on Balance {
+  Account? get account => globals.accounts.primaryIndex
+      .getOne(globals.wallets.primaryIndex.getOne(walletId)!.accountId);
 }
 
 // Joins on History

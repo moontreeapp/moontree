@@ -36,6 +36,11 @@ final HistoryService historyService = HistoryService(histories);
 
 // WAITERS
 
+final WalletBalanceWaiter walletBalanceWaiter = WalletBalanceWaiter(
+  wallets,
+  histories,
+  balanceService,
+);
 final AccountsWaiter accountsWaiter = AccountsWaiter(
   accounts,
   wallets,
@@ -58,7 +63,6 @@ final AddressSubscriptionWaiter addressSubscriptionWaiter =
   leaderWalletDerivationService,
 );
 final AddressesWaiter addressesWaiter = AddressesWaiter(addresses, histories);
-
 final ExchangeRateWaiter exchangeRateWaiter = ExchangeRateWaiter(ratesService);
 final SettingsWaiter settingsWaiter = SettingsWaiter(settings, settingsService);
 final BlockSubscriptionWaiter blockSubscriptionWaiter =

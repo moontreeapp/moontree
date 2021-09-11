@@ -12,7 +12,7 @@ part 'balance.g.dart';
 class Balance with EquatableMixin {
   // do we need unique ID?
   @HiveField(0)
-  String accountId;
+  String walletId;
 
   @HiveField(1)
   Security security;
@@ -24,26 +24,26 @@ class Balance with EquatableMixin {
   int unconfirmed;
 
   Balance({
-    required this.accountId,
+    required this.walletId,
     required this.security,
     required this.confirmed,
     required this.unconfirmed,
   });
 
   @override
-  List<Object> get props => [accountId, security, confirmed, unconfirmed];
+  List<Object> get props => [walletId, security, confirmed, unconfirmed];
 
   @override
   String toString() =>
-      'Balance($accountId, $security, $confirmed, $unconfirmed)';
+      'Balance($walletId, $security, $confirmed, $unconfirmed)';
 
   factory Balance.fromScripthashBalance({
-    required String accountId,
+    required String walletId,
     required Security security,
     required ScripthashBalance balance,
   }) {
     return Balance(
-        accountId: accountId,
+        walletId: walletId,
         security: security,
         confirmed: balance.confirmed,
         unconfirmed: balance.unconfirmed);
@@ -58,14 +58,15 @@ class Balance with EquatableMixin {
   }
 
   Balance operator +(Balance balance) {
-    if (accountId != balance.accountId) {
-      throw BalanceMismatch("Balance accountId don't match - can't combine");
-    }
+    /// we combine to get account balances - then we don't care about walletId
+    //if (walletId != balance.walletId) {
+    //  throw BalanceMismatch("Balance walletId don't match - can't combine");
+    //}
     if (security != balance.security) {
       throw BalanceMismatch("Balance securities don't match - can't combine");
     }
     return Balance(
-        accountId: accountId,
+        walletId: walletId,
         security: security,
         confirmed: confirmed + balance.confirmed,
         unconfirmed: unconfirmed + balance.unconfirmed);

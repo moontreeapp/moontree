@@ -38,8 +38,10 @@ class RatesService extends Service {
   Balance getTotalRVN(String accountId, {List<Balance>? holdings}) {
     var accountBalances = holdings ?? balanceService.sumBalances(accountId);
     var assetPercision = 100000000; /* get percision of asset...  */
+
+    /// per wallet...
     var accountBalancesAsRVN = accountBalances.map((balance) => Balance(
-        accountId: accountId,
+        walletId: accountId,
         security: RVN,
         confirmed: balance.security == RVN
             ? balance.confirmed
@@ -53,7 +55,7 @@ class RatesService extends Service {
                 .round()));
     return accountBalancesAsRVN.fold(
         Balance(
-          accountId: accountId,
+          walletId: accountId,
           security: RVN,
           confirmed: 0,
           unconfirmed: 0,

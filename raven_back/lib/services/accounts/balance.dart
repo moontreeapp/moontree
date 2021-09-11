@@ -1,10 +1,12 @@
 import 'package:reservoir/change.dart';
 
-import 'package:raven/account_security_pair.dart';
+import 'package:raven/utils/account_security_pair.dart';
 import 'package:raven/services/service.dart';
 import 'package:raven/records/records.dart';
+import 'package:raven/joins.dart';
 import 'package:raven/reservoirs/reservoirs.dart';
 import 'package:raven/utils/exceptions.dart';
+import 'package:raven/raven.dart';
 
 class BalanceService extends Service {
   late final BalanceReservoir balances;
@@ -12,47 +14,49 @@ class BalanceService extends Service {
 
   BalanceService(this.balances, this.histories) : super();
 
-  /// Get (sum) the balance for an account-security pair
-  Balance sumBalance(String accountId, Security security) => Balance(
-      accountId: accountId,
-      security: security,
-      confirmed: histories.byAccount
-          .unspents(accountId, security: security)
-          .fold(0, (sum, history) => sum + history.value),
-      unconfirmed: histories.byAccount
-          .unconfirmed(accountId, security: security)
-          .fold(0, (sum, history) => sum + history.value));
+  /// Realtime Filtering //////////////////////////////////////////////////////
 
   /// with these two functions we calculate account balances all or 1 in real time
   /// and lose our reliance on a balance reservoir which is a pain to keep synced.
 
   /// Get (sum) the balance for an account-security pair
-  Balance sumBalanceMakeshift(String accountId, Security security) => Balance(
-      accountId: accountId,
+  Balance sumBalanceMakeshift(String walletId, Security security) => Balance(
+      walletId: walletId,
       security: security,
       confirmed: HistoryReservoir.whereUnspent(
-              given: histories.byAccountMakeshift(accountId),
-              security: security)
+              given: histories.byAccountMakeshift(walletId), security: security)
           .fold(0, (sum, history) => sum + history.value),
       unconfirmed: HistoryReservoir.whereUnconfirmed(
-              given: histories.byAccountMakeshift(accountId),
-              security: security)
+              given: histories.byAccountMakeshift(walletId), security: security)
           .fold(0, (sum, history) => sum + history.value));
 
-  List<Balance> sumBalances(String accountId) => [
+  List<Balance> sumBalances(String walletId) => [
         for (var security in histories
-            .byAccountMakeshift(accountId)
+            .byAccountMakeshift(walletId)
             .map((history) => history.security)
             .toList()
             .toSet())
-          sumBalanceMakeshift(accountId, security)
+          sumBalanceMakeshift(walletId, security)
       ];
+
+  /// Listener Logic //////////////////////////////////////////////////////////
+
+  /// Get (sum) the balance for an account-security pair
+  Balance sumBalance(String walletId, Security security) => Balance(
+      walletId: walletId,
+      security: security,
+      confirmed: histories.byWallet
+          .unspents(walletId, security: security)
+          .fold(0, (sum, history) => sum + history.value),
+      unconfirmed: histories.byWallet
+          .unconfirmed(walletId, security: security)
+          .fold(0, (sum, history) => sum + history.value));
 
   /// If there is a change in its history, recalculate a balance. Return a list
   /// of such balances.
   Iterable<Balance> getChangedBalances(List<Change> changes) =>
       uniquePairsFromHistoryChanges(changes)
-          .map((pair) => sumBalance(pair.accountId, pair.security));
+          .map((pair) => sumBalance(pair.walletId, pair.security));
 
   /// Same as getChangedBalances, but saves them all as well.
   Future<Iterable<Balance>> saveChangedBalances(List<Change> changes) async {
@@ -60,6 +64,8 @@ class BalanceService extends Service {
     await balances.saveAll(changed.toList());
     return changed;
   }
+
+  /// Transaction Logic ///////////////////////////////////////////////////////
 
   /// Sort in descending order, from largest amount to smallest amount
   List<History> sortedUnspents(String accountId) =>
@@ -99,25 +105,30 @@ class BalanceService extends Service {
     return collection;
   }
 
-  /// recalculate balances for all by accountId
-  Future calcuSaveBalancesByAccount(String accountId) async {
-    // get all securities belonging to account
-    // sum balance on each
-    // save
-    print(histories.byAccount.getAll(accountId));
-    print('securities');
-    print(histories.byAccount
-        .getAll(accountId)
-        .map((history) => history.security));
-    await balances.saveAll([
-      for (var security in histories.byAccount
-          .getAll(accountId)
-          .map((history) => history.security))
-        sumBalance(accountId, security)
-    ]);
+  /// Wallet Aggregation Logic ////////////////////////////////////////////////
+
+  List<Balance> accountBalances(Account account) {
+    // ignore: omit_local_variable_types
+    Map<Security, Balance> balancesBySecurity = {};
+    for (var balance in account.balances) {
+      if (!balancesBySecurity.containsKey(balance.security)) {
+        balancesBySecurity[balance.security] = balance;
+      } else {
+        balancesBySecurity[balance.security] =
+            balancesBySecurity[balance.security]! + balance;
+      }
+    }
+    return balancesBySecurity.values.toList();
   }
 
-  void removeBalancesByAccount(String accountId) {
-    balances.removeAll(balances.byAccount.getAll(accountId));
+  Balance accountBalance(Account account, Security security) {
+    var retBalance =
+        Balance(walletId: '', confirmed: 0, unconfirmed: 0, security: security);
+    for (var balance in account.balances) {
+      if (balance.security == security) {
+        retBalance = retBalance + balance;
+      }
+    }
+    return retBalance;
   }
 }

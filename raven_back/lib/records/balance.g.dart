@@ -17,7 +17,7 @@ class BalanceAdapter extends TypeAdapter<Balance> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Balance(
-      accountId: fields[0] as String,
+      walletId: fields[0] as String,
       security: fields[1] as Security,
       confirmed: fields[2] as int,
       unconfirmed: fields[3] as int,
@@ -29,7 +29,7 @@ class BalanceAdapter extends TypeAdapter<Balance> {
     writer
       ..writeByte(4)
       ..writeByte(0)
-      ..write(obj.accountId)
+      ..write(obj.walletId)
       ..writeByte(1)
       ..write(obj.security)
       ..writeByte(2)
