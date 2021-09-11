@@ -18,10 +18,20 @@ List<History> currentTransactions() =>
 List<Balance> currentHoldings() =>
     balanceService.accountBalances(currentAccount());
 
+List<Balance> currentWalletHoldings(String walletId) =>
+    balanceService.walletBalances(wallets.primaryIndex.getOne(walletId)!);
+
+BalanceUSD currentWalletBalanceUSD(String walletId) => ratesService
+    .accountBalanceUSD(walletId, holdings: currentWalletHoldings(walletId));
+
 class Current {
   static Account get account => currentAccount();
   static Balance get balanceRVN => currentBalanceRVN();
   static BalanceUSD get balanceUSD => currentBalanceUSD();
   static List<History> get transactions => currentTransactions();
   static List<Balance> get holdings => currentHoldings();
+  static BalanceUSD walletBalanceUSD(String walletId) =>
+      currentWalletBalanceUSD(walletId);
+  static List<Balance> walletHoldings(String walletId) =>
+      currentWalletHoldings(walletId);
 }
