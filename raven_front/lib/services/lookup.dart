@@ -24,6 +24,9 @@ List<Balance> currentWalletHoldings(String walletId) =>
 BalanceUSD currentWalletBalanceUSD(String walletId) => ratesService
     .accountBalanceUSD(walletId, holdings: currentWalletHoldings(walletId));
 
+List<History> currentWalletTransactions(String walletId) =>
+    histories.byWallet.getAll(walletId).toList();
+
 class Current {
   static Account get account => currentAccount();
   static Balance get balanceRVN => currentBalanceRVN();
@@ -34,4 +37,6 @@ class Current {
       currentWalletBalanceUSD(walletId);
   static List<Balance> walletHoldings(String walletId) =>
       currentWalletHoldings(walletId);
+  static List<History> walletTransactions(String walletId) =>
+      currentWalletTransactions(walletId);
 }
