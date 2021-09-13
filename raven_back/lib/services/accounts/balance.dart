@@ -13,31 +13,6 @@ class BalanceService extends Service {
 
   BalanceService(this.balances, this.histories) : super();
 
-  /// Realtime Filtering //////////////////////////////////////////////////////
-
-  /// with these two functions we calculate account balances all or 1 in real time
-  /// and lose our reliance on a balance reservoir which is a pain to keep synced.
-
-  /// Get (sum) the balance for an account-security pair
-  Balance sumBalanceMakeshift(String walletId, Security security) => Balance(
-      walletId: walletId,
-      security: security,
-      confirmed: HistoryReservoir.whereUnspent(
-              given: histories.byAccountMakeshift(walletId), security: security)
-          .fold(0, (sum, history) => sum + history.value),
-      unconfirmed: HistoryReservoir.whereUnconfirmed(
-              given: histories.byAccountMakeshift(walletId), security: security)
-          .fold(0, (sum, history) => sum + history.value));
-
-  List<Balance> sumBalances(String walletId) => [
-        for (var security in histories
-            .byAccountMakeshift(walletId)
-            .map((history) => history.security)
-            .toList()
-            .toSet())
-          sumBalanceMakeshift(walletId, security)
-      ];
-
   /// Listener Logic //////////////////////////////////////////////////////////
 
   /// Get (sum) the balance for an account-security pair

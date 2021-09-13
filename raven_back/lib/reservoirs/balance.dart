@@ -7,6 +7,8 @@ part 'balance.keys.dart';
 
 class BalanceReservoir extends Reservoir<_WalletSecurityKey, Balance> {
   late IndexMultiple<_WalletKey, Balance> byWallet;
+
+  /// Should we do this here? if so how?
   //late IndexMultiple<_AccountKey, Balance> byAccount;
 
   BalanceReservoir() : super(_WalletSecurityKey()) {

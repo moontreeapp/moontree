@@ -34,9 +34,10 @@ class RatesService extends Service {
     return usd;
   }
 
-  /// todo unit test
   Balance getTotalRVN(String accountId, {List<Balance>? holdings}) {
-    var accountBalances = holdings ?? balanceService.sumBalances(accountId);
+    var accountBalances = holdings ??
+        balanceService
+            .accountBalances(accounts.primaryIndex.getOne(accountId)!);
     var assetPercision = 100000000; /* get percision of asset...  */
 
     /// per wallet...
