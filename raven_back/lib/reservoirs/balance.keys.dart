@@ -28,14 +28,3 @@ class _WalletKey extends Key<Balance> {
 extension ByWalletMethodsForBalance on Index<_WalletKey, Balance> {
   List<Balance> getAll(String walletId) => getByKeyStr(walletId);
 }
-
-// byAccount
-
-//class _AccountKey extends Key<Balance> {
-//  @override
-//  String getKey(Balance balance) => balance.wallet!.accountId;
-//}
-//
-//extension ByAccountMethodsForBalance on Index<_AccountKey, Balance> {
-//  List<Balance> getAll(String accountId) => getByKeyStr(accountId);
-//}

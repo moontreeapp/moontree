@@ -3,7 +3,7 @@
 import 'package:test/test.dart';
 
 import 'package:raven_electrum_client/raven_electrum_client.dart';
-import 'package:raven/transaction_builder_helper.dart' as tx;
+import 'package:raven/utils/transaction_builder_helper.dart' as tx;
 
 const connectionTimeout = Duration(seconds: 5);
 const aliveTimerDuration = Duration(seconds: 2);

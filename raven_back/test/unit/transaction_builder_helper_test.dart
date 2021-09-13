@@ -1,7 +1,7 @@
 // dart --no-sound-null-safety test test/integration/raven_tx_test.dart
 import 'package:test/test.dart';
 
-import 'package:raven/transaction_builder_helper.dart' as tx;
+import 'package:raven/utils/transaction_builder_helper.dart' as tx;
 import 'package:raven/globals.dart';
 import '../fixtures/fixtures.dart' as fixtures;
 

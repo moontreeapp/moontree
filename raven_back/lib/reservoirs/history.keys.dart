@@ -11,52 +11,6 @@ extension ByIdMethodsForHistory on Index<_TxHashKey, History> {
   History? getOne(String hash) => getByKeyStr(hash).firstOrNull;
 }
 
-// byAccount
-
-class _AccountKey extends Key<History> {
-  @override
-  String getKey(History history) => history.address!.wallet!.accountId;
-}
-
-extension ByAccountMethodsForHistory on Index<_AccountKey, History> {
-  List<History> getAll(String accountId) => getByKeyStr(accountId);
-
-  Iterable<History> transactions(String accountId, {Security security = RVN}) =>
-      HistoryReservoir.whereTransaction(
-          given: getAll(accountId), security: security);
-
-  Iterable<History> unspents(String accountId, {Security security = RVN}) =>
-      HistoryReservoir.whereUnspent(
-          given: getAll(accountId), security: security);
-
-  Iterable<History> unconfirmed(String accountId, {Security security = RVN}) =>
-      HistoryReservoir.whereUnconfirmed(
-          given: getAll(accountId), security: security);
-}
-
-// byWallet
-
-class _WalletKey extends Key<History> {
-  @override
-  String getKey(History history) => history.address!.walletId;
-}
-
-extension ByWalletMethodsForHistory on Index<_WalletKey, History> {
-  List<History> getAll(String walletId) => getByKeyStr(walletId);
-
-  Iterable<History> transactions(String walletId, {Security security = RVN}) =>
-      HistoryReservoir.whereTransaction(
-          given: getAll(walletId), security: security);
-
-  Iterable<History> unspents(String walletId, {Security security = RVN}) =>
-      HistoryReservoir.whereUnspent(
-          given: getAll(walletId), security: security);
-
-  Iterable<History> unconfirmed(String walletId, {Security security = RVN}) =>
-      HistoryReservoir.whereUnconfirmed(
-          given: getAll(walletId), security: security);
-}
-
 // byScripthash
 
 class _ScripthashKey extends Key<History> {

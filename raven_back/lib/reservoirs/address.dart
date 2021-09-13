@@ -14,12 +14,10 @@ class AddressLocation {
 }
 
 class AddressReservoir extends Reservoir<_ScripthashKey, Address> {
-  late IndexMultiple<_AccountKey, Address> byAccount;
   late IndexMultiple<_WalletKey, Address> byWallet;
   late IndexMultiple<_WalletExposureKey, Address> byWalletExposure;
 
   AddressReservoir() : super(_ScripthashKey()) {
-    byAccount = addIndexMultiple('account', _AccountKey());
     byWallet = addIndexMultiple('wallet', _WalletKey());
     byWalletExposure =
         addIndexMultiple('wallet-exposure', _WalletExposureKey());
