@@ -43,13 +43,12 @@ class BalanceService extends Service {
 
   /// Sort in descending order, from largest amount to smallest amount
   List<History> sortedUnspents(Account account) =>
-      HistoryReservoir.whereUnspent(given: account.histories).toList()
-        ..sort((a, b) => b.value.compareTo(a.value));
+      account.unspents.toList()..sort((a, b) => b.value.compareTo(a.value));
 
   /// Asserts that the asset in the account is greater than `amount`
-  void assertSufficientFunds(int amount, String accountId,
+  void assertSufficientFunds(int amount, Account account,
       {Security security = RVN}) {
-    if (balances.getOrZero(accountId, security: security).confirmed < amount) {
+    if (accountBalance(account, security).confirmed < amount) {
       throw InsufficientFunds();
     }
   }
@@ -57,23 +56,25 @@ class BalanceService extends Service {
   /// Returns the smallest number of inputs to satisfy the amount
   List<History> collectUTXOs(Account account,
       {required int amount, List<History> except = const []}) {
-    assertSufficientFunds(amount, account.accountId);
+    assertSufficientFunds(amount, account);
 
-    var histories = sortedUnspents(account)
+    var unspents = sortedUnspents(account)
       ..removeWhere((utxo) => except.contains(utxo));
 
-    // Can we find a single, ideal UTXO by searching from smallest to largest?
-    for (var history in histories.reversed) {
-      if (history.value >= amount) return [history];
+    /// Can we find a single, ideal UTXO by searching from smallest to largest?
+    for (var unspent in unspents.reversed) {
+      if (unspent.value >= amount) return [unspent];
     }
 
-    // Otherwise, satisfy the amount by combining UTXOs from largest to smallest
+    /// Otherwise, satisfy the amount by combining UTXOs from largest to smallest
+    /// perhaps we could make the utxo variable full of objects that contain
+    /// the signing information too, that way we don't have to get it later...?
     var collection = <History>[];
     var remaining = amount;
-    for (var history in histories) {
-      if (remaining > 0) collection.add(history);
-      if (remaining < history.value) break;
-      remaining -= history.value;
+    for (var unspent in unspents) {
+      if (remaining > 0) collection.add(unspent);
+      if (remaining < unspent.value) break;
+      remaining -= unspent.value;
     }
 
     return collection;

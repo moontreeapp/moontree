@@ -1,7 +1,7 @@
 /// needs review - things have changed.
+/// assumes leaderwallet
 
 import 'package:raven/raven.dart';
-import 'package:raven/reservoirs/address.dart';
 import 'package:ravencoin/ravencoin.dart';
 import 'fee.dart';
 
@@ -14,24 +14,22 @@ class FormatResult {
 }
 
 class TransactionBuilderHelper {
-  final Account fromAccount;
+  final Account account;
   int sendAmount;
   String toAddress;
   int anticipatedOutputFee;
-  AddressReservoir
-      addressReservoir; // it'd be cool if account had access to this - should it be accessed through service?
+// it'd be cool if account had access to this - should it be accessed through service?
 
   TransactionBuilderHelper(
-    this.fromAccount,
+    this.account,
     this.sendAmount,
-    this.toAddress,
-    this.addressReservoir, [
+    this.toAddress, [
     this.anticipatedOutputFee = 34,
   ]);
 
   /// gets inputs, calculates fee, returns change
   TransactionBuilder buildTransaction() {
-    var txb = TransactionBuilder(network: fromAccount.network);
+    var txb = TransactionBuilder(network: account.network);
     txb.setVersion(1);
     txb.addOutput(toAddress, sendAmount);
     var results = addInputs(txb);
@@ -67,7 +65,7 @@ class TransactionBuilderHelper {
     while (!pastInputs.contains(utxos)) {
       anticipatedInputFees =
           anticipatedInputFeeRate * (utxos.isEmpty ? 1 : utxos.length);
-      utxos = balanceService.collectUTXOs(fromAccount,
+      utxos = balanceService.collectUTXOs(account,
           amount: sendAmount +
               knownFees +
               anticipatedOutputFee +
@@ -91,7 +89,7 @@ class TransactionBuilderHelper {
     while (total < knownCost) {
       // if its not big enough, we simply add one more input to cover the difference
       var utxosForExtra = balanceService.collectUTXOs(
-        fromAccount,
+        account,
         amount: knownCost - total,
         except: retutxos, // avoid adding inputs you've already added
       );
@@ -109,7 +107,7 @@ class TransactionBuilderHelper {
   TransactionBuilder addChangeOutput(TransactionBuilder txb, int change) {
     txb.addOutput(
         leaderWalletDerivationService
-            .getNextEmptyWallet(fromAccount.wallets[0].walletId)
+            .getNextEmptyWallet(account.wallets[0].walletId)
             .address,
         change);
     return txb;
@@ -118,18 +116,16 @@ class TransactionBuilderHelper {
   TransactionBuilder signEachInput(
       TransactionBuilder txb, List<History> utxos) {
     for (var i = 0; i < utxos.length; i++) {
-      var location = addressReservoir.getAddressLocationOf(
-          utxos[i].scripthash, fromAccount.accountId);
       txb.sign(
           vin: i,
-          //keyPair: fromAccount
+          //keyPair: account
           //    .node(location!.index, exposure: location.exposure)
           //    .keyPair);
           keyPair: HDWallet.fromSeed(
                   (leaderWalletDerivationService.deriveAddress(
-                          fromAccount.wallets[0] as LeaderWallet,
-                          location!.index,
-                          location.exposure) as LeaderWallet)
+                          utxos[i].address!.wallet as LeaderWallet,
+                          utxos[i].address!.hdIndex,
+                          utxos[i].address!.exposure) as LeaderWallet)
                       .seed)
               .keyPair);
     }

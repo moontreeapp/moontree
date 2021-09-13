@@ -23,6 +23,11 @@ extension AccountHasManyBalances on Account {
       wallets.map((Wallet wallet) => wallet.balances).expand((i) => i).toList();
 }
 
+extension AccountHasManyUnspents on Account {
+  List<History> get unspents =>
+      HistoryReservoir.whereUnspent(given: histories, security: RVN).toList();
+}
+
 // Joins on Wallet
 
 extension WalletBelongsToAccount on Wallet {
@@ -40,6 +45,11 @@ extension WalletHasManyBalances on Wallet {
 extension WalletHasManyHistories on Wallet {
   List<History> get histories =>
       addresses.map((address) => address.histories).expand((i) => i).toList();
+}
+
+extension WalletHasManyUnspents on Wallet {
+  List<History> get unspents =>
+      HistoryReservoir.whereUnspent(given: histories, security: RVN).toList();
 }
 
 // Joins on Address
