@@ -16,21 +16,21 @@ class BalanceService extends Service {
   /// Listener Logic //////////////////////////////////////////////////////////
 
   /// Get (sum) the balance for an account-security pair
-  Balance sumBalance(String walletId, Security security) => Balance(
-      walletId: walletId,
+  Balance sumBalance(Wallet wallet, Security security) => Balance(
+      walletId: wallet.walletId,
       security: security,
-      confirmed: histories.byWallet
-          .unspents(walletId, security: security)
+      confirmed: HistoryReservoir.whereUnspent(
+              given: wallet.histories, security: security)
           .fold(0, (sum, history) => sum + history.value),
-      unconfirmed: histories.byWallet
-          .unconfirmed(walletId, security: security)
+      unconfirmed: HistoryReservoir.whereUnconfirmed(
+              given: wallet.histories, security: security)
           .fold(0, (sum, history) => sum + history.value));
 
   /// If there is a change in its history, recalculate a balance. Return a list
   /// of such balances.
   Iterable<Balance> getChangedBalances(List<Change> changes) =>
       uniquePairsFromHistoryChanges(changes)
-          .map((pair) => sumBalance(pair.walletId, pair.security));
+          .map((pair) => sumBalance(pair.wallet, pair.security));
 
   /// Same as getChangedBalances, but saves them all as well.
   Future<Iterable<Balance>> saveChangedBalances(List<Change> changes) async {
@@ -42,8 +42,8 @@ class BalanceService extends Service {
   /// Transaction Logic ///////////////////////////////////////////////////////
 
   /// Sort in descending order, from largest amount to smallest amount
-  List<History> sortedUnspents(String accountId) =>
-      histories.byAccount.unspents(accountId).toList()
+  List<History> sortedUnspents(Account account) =>
+      HistoryReservoir.whereUnspent(given: account.histories).toList()
         ..sort((a, b) => b.value.compareTo(a.value));
 
   /// Asserts that the asset in the account is greater than `amount`
@@ -55,11 +55,11 @@ class BalanceService extends Service {
   }
 
   /// Returns the smallest number of inputs to satisfy the amount
-  List<History> collectUTXOs(String accountId, int amount,
+  List<History> collectUTXOs(Account account, int amount,
       [List<History> except = const []]) {
-    assertSufficientFunds(amount, accountId);
+    assertSufficientFunds(amount, account.accountId);
 
-    var histories = sortedUnspents(accountId)
+    var histories = sortedUnspents(account)
       ..removeWhere((utxo) => except.contains(utxo));
 
     // Can we find a single, ideal UTXO by searching from smallest to largest?

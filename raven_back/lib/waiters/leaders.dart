@@ -29,7 +29,7 @@ class LeadersWaiter extends Waiter {
         }, updated: (updated) {
           /* moved account */
         }, removed: (removed) {
-          addresses.removeAddresses(removed.id as String);
+          addresses.removeAddresses(removed.data);
         });
       });
     }));

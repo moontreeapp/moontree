@@ -43,9 +43,8 @@ class AddressReservoir extends Reservoir<_ScripthashKey, Address> {
     }
   }
 
-  void removeAddresses(String accountId) {
-    byAccount
-        .getAll(accountId)
-        .forEach((address) => primaryIndex.remove(address));
+  void removeAddresses(Account account) {
+    account.addresses
+        .forEach((Address address) => primaryIndex.remove(address));
   }
 }
