@@ -55,8 +55,8 @@ class BalanceService extends Service {
   }
 
   /// Returns the smallest number of inputs to satisfy the amount
-  List<History> collectUTXOs(Account account, int amount,
-      [List<History> except = const []]) {
+  List<History> collectUTXOs(Account account,
+      {required int amount, List<History> except = const []}) {
     assertSufficientFunds(amount, account.accountId);
 
     var histories = sortedUnspents(account)

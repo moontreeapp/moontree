@@ -1,4 +1,6 @@
-import 'package:raven/records/history.dart';
+/// needs review - things have changed.
+
+import 'package:raven/raven.dart';
 import 'package:raven/reservoirs/address.dart';
 import 'package:ravencoin/ravencoin.dart';
 import 'fee.dart';
@@ -12,7 +14,7 @@ class FormatResult {
 }
 
 class TransactionBuilderHelper {
-  final fromAccount;
+  final Account fromAccount;
   int sendAmount;
   String toAddress;
   int anticipatedOutputFee;
@@ -29,7 +31,7 @@ class TransactionBuilderHelper {
 
   /// gets inputs, calculates fee, returns change
   TransactionBuilder buildTransaction() {
-    var txb = TransactionBuilder(network: fromAccount.params.network);
+    var txb = TransactionBuilder(network: fromAccount.network);
     txb.setVersion(1);
     txb.addOutput(toAddress, sendAmount);
     var results = addInputs(txb);
@@ -65,8 +67,11 @@ class TransactionBuilderHelper {
     while (!pastInputs.contains(utxos)) {
       anticipatedInputFees =
           anticipatedInputFeeRate * (utxos.isEmpty ? 1 : utxos.length);
-      utxos = fromAccount.collectUTXOs(
-          sendAmount + knownFees + anticipatedOutputFee + anticipatedInputFees);
+      utxos = balanceService.collectUTXOs(fromAccount,
+          amount: sendAmount +
+              knownFees +
+              anticipatedOutputFee +
+              anticipatedInputFees);
       pastInputs.add(utxos);
     }
     // we have an optimal utxo set, but which one? most recent or one prior? select the one with fewer inputs
@@ -85,12 +90,14 @@ class TransactionBuilderHelper {
     var knownCost = sendAmount + anticipatedOutputFee + knownFees;
     while (total < knownCost) {
       // if its not big enough, we simply add one more input to cover the difference
-      var utxosForExtra = fromAccount.collectUTXOs(
-          amount: knownCost - total,
-          except: retutxos); // avoid adding inputs you've already added
+      var utxosForExtra = balanceService.collectUTXOs(
+        fromAccount,
+        amount: knownCost - total,
+        except: retutxos, // avoid adding inputs you've already added
+      );
       for (var utxo in utxosForExtra) {
-        txb.addInput(utxo.unspent.hash, utxo.unspent.position);
-        total = (total + utxo.unspent.value).toInt();
+        txb.addInput(utxo.hash, utxo.position);
+        total = (total + utxo.value).toInt();
         retutxos.add(utxo); // used later, we have to sign after change output
       }
       knownFees = totalFeeByBytes(txb);
@@ -100,7 +107,11 @@ class TransactionBuilderHelper {
   }
 
   TransactionBuilder addChangeOutput(TransactionBuilder txb, int change) {
-    txb.addOutput(fromAccount.getNextChangeNode().wallet.address, change);
+    txb.addOutput(
+        leaderWalletDerivationService
+            .getNextEmptyWallet(fromAccount.wallets[0].walletId)
+            .address,
+        change);
     return txb;
   }
 
@@ -111,8 +122,15 @@ class TransactionBuilderHelper {
           utxos[i].scripthash, fromAccount.accountId);
       txb.sign(
           vin: i,
-          keyPair: fromAccount
-              .node(location!.index, exposure: location.exposure)
+          //keyPair: fromAccount
+          //    .node(location!.index, exposure: location.exposure)
+          //    .keyPair);
+          keyPair: HDWallet.fromSeed(
+                  (leaderWalletDerivationService.deriveAddress(
+                          fromAccount.wallets[0] as LeaderWallet,
+                          location!.index,
+                          location.exposure) as LeaderWallet)
+                      .seed)
               .keyPair);
     }
     return txb;
