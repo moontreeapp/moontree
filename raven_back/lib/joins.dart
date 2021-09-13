@@ -9,17 +9,18 @@ extension AccountHasManyWallets on Account {
 }
 
 extension AccountHasManyAddresses on Account {
-  List<Address> get addresses => wallets.map((wallet) => wallet.addresses).expand((i) => i).toList();
+  List<Address> get addresses =>
+      wallets.map((wallet) => wallet.addresses).expand((i) => i).toList();
 }
 
 extension AccountHasManyHistories on Account {
-  List<History> get histories => addresses.map((address) => address.histories).expand((i) => i).toList();
+  List<History> get histories =>
+      addresses.map((address) => address.histories).expand((i) => i).toList();
 }
 
 extension AccountHasManyBalances on Account {
-  List<Balance> get balances => wallets.map((Wallet wallet) => wallet.balances)
-      .expand((i) => i)
-      .toList();
+  List<Balance> get balances =>
+      wallets.map((Wallet wallet) => wallet.balances).expand((i) => i).toList();
 }
 
 // Joins on Wallet
@@ -36,6 +37,11 @@ extension WalletHasManyBalances on Wallet {
   List<Balance> get balances => globals.balances.byWallet.getAll(walletId);
 }
 
+extension WalletHasManyHistories on Wallet {
+  List<History> get histories =>
+      addresses.map((address) => address.histories).expand((i) => i).toList();
+}
+
 // Joins on Address
 
 extension AddressBelongsToWallet on Address {
@@ -47,9 +53,9 @@ extension AddressBelongsToAccount on Address {
 }
 
 extension AddressHasManyHistories on Address {
-  List<History> get histories => globals.histories.byScripthash.getAll(scripthash);
+  List<History> get histories =>
+      globals.histories.byScripthash.getAll(scripthash);
 }
-
 
 // Joins on Balance
 
