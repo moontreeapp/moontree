@@ -21,6 +21,7 @@ void main() => runApp(MaterialApp(
       '/transactions': (context) => RavenTransactions(),
       '/transaction': (context) => Transaction(),
       '/send': (context) => Send(),
+      '/send/scan_qr': (context) => SendScanQR(),
       '/create': (context) => CreateAsset(),
       '/receive': (context) => Receive(),
     },

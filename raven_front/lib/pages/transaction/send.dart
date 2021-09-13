@@ -132,13 +132,8 @@ class _SendState extends State<Send> {
                       //},
                     ),
                     TextButton.icon(
-                        onPressed: () {
-                          /* qr code scanner get value put in textbox
-                          # need a qr code scanner:
-                          # https://pub.dev/packages/qr_code_scanner
-                          # https://pub.dev/packages/qrscan
-                        */
-                        },
+                        onPressed: () =>
+                            Navigator.pushNamed(context, '/send/scan_qr'),
                         icon: Icon(Icons.qr_code_scanner),
                         label: Text('Scan QR code')),
                     TextFormField(

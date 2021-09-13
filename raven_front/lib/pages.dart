@@ -1,7 +1,9 @@
 export 'package:raven_mobile/pages/account/asset.dart';
+export 'package:raven_mobile/pages/transaction/create.dart';
 export 'package:raven_mobile/pages/transaction/receive.dart';
 export 'package:raven_mobile/pages/transaction/send.dart';
-export 'package:raven_mobile/pages/transaction/create.dart';
+export 'package:raven_mobile/pages/transaction/send_scan_qr.dart';
+export 'package:raven_mobile/pages/transaction/transaction.dart';
 export 'package:raven_mobile/pages/settings/about.dart';
 export 'package:raven_mobile/pages/settings/account.dart';
 export 'package:raven_mobile/pages/settings/currency.dart';
@@ -11,7 +13,6 @@ export 'package:raven_mobile/pages/settings/language.dart';
 export 'package:raven_mobile/pages/settings/settings.dart';
 export 'package:raven_mobile/pages/settings/technical.dart';
 export 'package:raven_mobile/pages/settings/wallet.dart';
-export 'package:raven_mobile/pages/transaction/transaction.dart';
 export 'package:raven_mobile/pages/account/transactions.dart';
 export 'package:raven_mobile/pages/account/home.dart';
 export 'package:raven_mobile/pages/loading.dart';
