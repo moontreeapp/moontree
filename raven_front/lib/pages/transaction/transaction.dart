@@ -18,6 +18,7 @@ class Transaction extends StatefulWidget {
 
 class _TransactionState extends State<Transaction> {
   dynamic data = {};
+  Address? address;
   List<StreamSubscription> listeners = [];
 
   @override
@@ -38,8 +39,8 @@ class _TransactionState extends State<Transaction> {
 
   @override
   Widget build(BuildContext context) {
-    print(blocks.latest);
     data = populateData(context, data);
+    address = addresses.primaryIndex.getOne(data['transaction']!.scripthash);
     var metadata = false;
     // how do we detect metadata?
     /*Tron — Yesterday at 6:51 PM
@@ -135,11 +136,8 @@ class _TransactionState extends State<Transaction> {
                   border: UnderlineInputBorder(),
                   labelText: 'To',
                   hintText: 'Address'),
-              controller: TextEditingController(
-                  text: addresses.primaryIndex
-                          .getOne(data['transaction']!.scripthash)
-                          ?.address ??
-                      'unkown'),
+              controller:
+                  TextEditingController(text: address?.address ?? 'unkown'),
             ),
             SizedBox(height: 15.0),
             TextField(
@@ -196,11 +194,13 @@ class _TransactionState extends State<Transaction> {
             Text('id: ' + data['transaction']!.hash,
                 style: TextStyle(color: Theme.of(context).disabledColor)),
             SizedBox(height: 15.0),
-            // replaced by tab, missing if metadata is missing...
-            //ElevatedButton.icon(
-            //    onPressed: () {},
-            //    icon: Icon(Icons.description),
-            //    label: Text('Metadata'))
+            Text(address != null ? 'wallet: ' + address!.walletId : '',
+                style: Theme.of(context).textTheme.caption),
+            Text(
+                address != null
+                    ? 'account: ' + address!.wallet!.account!.name
+                    : '',
+                style: Theme.of(context).textTheme.caption),
           ])
         ]),
         ...(metadata ? [Text('None')] : [])

@@ -15,7 +15,10 @@ ButtonStyle rightCurvedButton(context, {bool disabled = false}) => ButtonStyle(
             topRight: Radius.circular(30.0),
             bottomRight: Radius.circular(30.0)))));
 
-ButtonStyle curvedButton() => ButtonStyle(
+ButtonStyle curvedButton({BuildContext? context}) => ButtonStyle(
+    backgroundColor: context != null
+        ? MaterialStateProperty.all<Color>(Theme.of(context).disabledColor)
+        : null,
     shape: MaterialStateProperty.all(RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30.0),
@@ -30,4 +33,6 @@ class RavenButtonStyle {
   static ButtonStyle rightSideCurved(context, {bool disabled = false}) =>
       rightCurvedButton(context, disabled: disabled);
   static ButtonStyle get curvedSides => curvedButton();
+  static ButtonStyle disabledCurvedSides(context) =>
+      curvedButton(context: context);
 }

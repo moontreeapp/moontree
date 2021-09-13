@@ -31,14 +31,14 @@ ElevatedButton receiveButton(BuildContext context) => ElevatedButton.icon(
     style: RavenButtonStyle.leftSideCurved);
 
 ElevatedButton sendButton(BuildContext context,
-        {String symbol = 'RVN', bool disabled = false, String? walletId}) =>
+        {String symbol = 'RVN', bool disabled = false}) =>
     ElevatedButton.icon(
         icon: Icon(Icons.north_east),
         label: Text('Send'),
         onPressed: disabled
             ? () {}
             : () => Navigator.pushNamed(context, '/send',
-                arguments: {'symbol': symbol, 'walletId': walletId}),
+                arguments: {'symbol': symbol}),
         style: disabled
             ? RavenButtonStyle.rightSideCurved(context, disabled: true)
             : RavenButtonStyle.rightSideCurved(context));
@@ -61,7 +61,6 @@ class RavenButton {
   static ElevatedButton receive(BuildContext context) => receiveButton(context);
   static ElevatedButton send(BuildContext context,
           {String symbol = 'RVN', bool disabled = false, String? walletId}) =>
-      sendButton(context,
-          symbol: symbol, disabled: disabled, walletId: walletId);
+      sendButton(context, symbol: symbol, disabled: disabled);
   static ElevatedButton getRVN(BuildContext context) => getRVNButton(context);
 }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/text.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/theme/extensions.dart';
+import 'package:raven_mobile/utils/utils.dart';
 
 class RavenTransactions extends StatefulWidget {
   @override
@@ -12,7 +14,11 @@ class RavenTransactions extends StatefulWidget {
 }
 
 class _RavenTransactionsState extends State<RavenTransactions> {
+  Map<String, dynamic> data = {};
   bool showUSD = false;
+  late List<History> currentTxs;
+  late List<Balance> currentHolds;
+  late Balance currentBalRVN;
 
   void _toggleUSD() {
     setState(() {
@@ -27,6 +33,16 @@ class _RavenTransactionsState extends State<RavenTransactions> {
 
   @override
   Widget build(BuildContext context) {
+    data = populateData(context, data);
+    if (data.containsKey('walletId') && data['walletId'] != null) {
+      currentTxs = Current.walletTransactions(data['walletId']);
+      currentHolds = Current.walletHoldings(data['walletId']);
+      currentBalRVN = Current.walletBalanceRVN(data['walletId']);
+    } else {
+      currentTxs = Current.transactions;
+      currentHolds = Current.holdings;
+      currentBalRVN = Current.balanceRVN;
+    }
     return Scaffold(
         appBar: header(),
         body: transactionsView(),
@@ -58,18 +74,18 @@ class _RavenTransactionsState extends State<RavenTransactions> {
                     RavenIcon.assetAvatar('RVN'),
                     SizedBox(height: 15.0),
                     Text(
-                        RavenText.securityAsReadable(Current.balanceRVN.value,
+                        RavenText.securityAsReadable(currentBalRVN.value,
                             symbol: 'RVN'),
                         style: Theme.of(context).textTheme.headline3),
                     SizedBox(height: 15.0),
-                    Text(RavenText.rvnUSD(Current.balanceRVN.rvn),
+                    Text(RavenText.rvnUSD(currentBalRVN.rvn),
                         style: Theme.of(context).textTheme.headline5),
                   ]))));
 
   Container _transactionsView() => Container(
       alignment: Alignment.center,
       child: ListView(children: <Widget>[
-        for (var transaction in Current.transactions) ...[
+        for (var transaction in currentTxs) ...[
           if (transaction.security.symbol == 'RVN')
             ListTile(
                 onTap: () => Navigator.pushNamed(context, '/transaction',
@@ -99,22 +115,25 @@ class _RavenTransactionsState extends State<RavenTransactions> {
 
   Container _emptyMessage({IconData? icon, String? name}) => Container(
       alignment: Alignment.center,
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(icon ?? Icons.description,
-            size: 50.0, color: Theme.of(context).secondaryHeaderColor),
-        Text('\nMagic Musk $name empty.\n',
-            style: Theme.of(context).textTheme.headline3),
-      ]));
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(icon ?? Icons.description,
+                size: 50.0, color: Theme.of(context).secondaryHeaderColor),
+            Text('\nRVN $name empty.\n',
+                style: Theme.of(context).textTheme.headline3),
+          ]));
 
   /// returns a list of holdings and transactions or empty messages
-  Container transactionsView() => Current.transactions.isEmpty
+  Container transactionsView() => currentTxs.isEmpty
       ? _emptyMessage(icon: Icons.public, name: 'transactions')
       : _transactionsView();
 
   Row sendReceiveButtons() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         RavenButton.receive(context),
-        Current.holdings.length > 0
+        currentHolds.length > 0
             ? RavenButton.send(context, symbol: 'RVN')
             : RavenButton.send(context, symbol: 'RVN', disabled: true),
       ]);

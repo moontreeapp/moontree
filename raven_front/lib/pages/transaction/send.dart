@@ -93,13 +93,19 @@ class _SendState extends State<Send> {
     //var _controller = TextEditingController();
     return ListView(
         shrinkWrap: true,
-        padding: EdgeInsets.all(20.0),
+        padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
         children: <Widget>[
           Form(
               key: formKey,
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    Text(
+                        (data.containsKey('walletId') &&
+                                data['walletId'] != null)
+                            ? 'Use Wallet: ' + data['walletId']
+                            : '',
+                        style: Theme.of(context).textTheme.caption),
                     DropdownButton<String>(
                         isExpanded: true,
                         value: data['symbol'],
@@ -170,7 +176,7 @@ class _SendState extends State<Send> {
                           hintText: 'Private note to self'),
                     ),
                     //Center(child: sendTransactionButton(_formKey))
-                  ]))
+                  ])),
         ]);
   }
 

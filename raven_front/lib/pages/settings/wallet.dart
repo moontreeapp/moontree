@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:raven_mobile/components/icons.dart';
+import 'package:raven_mobile/components/styles/buttons.dart';
 import 'package:raven_mobile/components/text.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/theme/extensions.dart';
@@ -17,6 +18,7 @@ class WalletView extends StatefulWidget {
 
 class _WalletViewState extends State<WalletView> {
   dynamic data = {};
+  bool disabled = false;
   bool showSecret = false;
   ToolbarOptions toolbarOptions =
       ToolbarOptions(copy: true, selectAll: true, cut: false, paste: false);
@@ -42,23 +44,27 @@ class _WalletViewState extends State<WalletView> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
+    disabled = Current.walletHoldings(data['address']).length == 0;
     return DefaultTabController(
         length: 3,
         child: Scaffold(
             appBar: header(),
             body: body(),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: sendButton(),
             bottomNavigationBar: RavenButton.bottomNav(context)));
   }
 
   PreferredSize header() => PreferredSize(
-      preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.25),
+      preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.20),
       child: AppBar(
           leading: RavenButton.back(context),
           elevation: 2,
           centerTitle: false,
           title: Text('Wallet'),
           flexibleSpace: Container(
-            alignment: Alignment.center,
+            alignment: Alignment(0.0, -0.5),
             child: Text(
                 '\n\$ ${Current.walletBalanceUSD(data['address']).valueUSD}',
                 style: Theme.of(context).textTheme.headline3),
@@ -74,9 +80,8 @@ class _WalletViewState extends State<WalletView> {
   TabBarView body() => TabBarView(children: [
         ListView(
             shrinkWrap: true,
-            padding: EdgeInsets.all(10.0),
+            padding: EdgeInsets.all(20.0),
             children: <Widget>[
-              SizedBox(height: 30.0),
               Center(
                   child: Column(children: <Widget>[
                 QrImage(
@@ -92,7 +97,7 @@ class _WalletViewState extends State<WalletView> {
                     toolbarOptions: toolbarOptions),
                 Text('(address)', style: Theme.of(context).annotate),
               ])),
-              SizedBox(height: 40.0),
+              SizedBox(height: 30.0),
               Text('Warning! Do Not Disclose!',
                   style: TextStyle(color: Theme.of(context).bad)),
               SizedBox(height: 15.0),
@@ -127,7 +132,7 @@ class _WalletViewState extends State<WalletView> {
       var thisHolding = ListTile(
           onTap: () => Navigator.pushNamed(context,
               holding.security.symbol == 'RVN' ? '/transactions' : '/asset',
-              arguments: {'holding': holding}),
+              arguments: {'holding': holding, 'walletId': data['address']}),
           onLongPress: () => _toggleUSD(),
           leading: RavenIcon.assetAvatar(holding.security.symbol),
           title: Text(holding.security.symbol,
@@ -162,7 +167,7 @@ class _WalletViewState extends State<WalletView> {
     }
     if (rvnHolding.isEmpty) {
       rvnHolding.add(ListTile(
-          onTap: () => Navigator.pushNamed(context, '/transactions'),
+          onTap: () {},
           onLongPress: () => _toggleUSD(),
           title: Text('RVN', style: Theme.of(context).textTheme.bodyText1),
           trailing: Text(showUSD ? '\$ 0' : '0',
@@ -204,12 +209,14 @@ class _WalletViewState extends State<WalletView> {
               leading: RavenIcon.assetAvatar(transaction.security.symbol))
       ]);
 
-  Row sendButton() =>
-      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Current.holdings.length > 0
-            ? RavenButton.send(context,
-                symbol: 'RVN', walletId: data['address'])
-            : RavenButton.send(context,
-                symbol: 'RVN', walletId: data['address'], disabled: true),
-      ]);
+  ElevatedButton sendButton() => ElevatedButton.icon(
+      icon: Icon(Icons.north_east),
+      label: Text('Send'),
+      onPressed: disabled
+          ? () {}
+          : () => Navigator.pushNamed(context, '/send',
+              arguments: {'symbol': 'RVN', 'walletId': data['address']}),
+      style: disabled
+          ? RavenButtonStyle.disabledCurvedSides(context)
+          : RavenButtonStyle.curvedSides);
 }

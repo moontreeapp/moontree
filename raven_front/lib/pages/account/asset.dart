@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/text.dart';
@@ -16,7 +17,9 @@ class Asset extends StatefulWidget {
 }
 
 class _AssetState extends State<Asset> {
-  dynamic data = {};
+  Map<String, dynamic> data = {};
+  late List<History> currentTxs;
+  late List<Balance> currentHolds;
   bool showUSD = false;
 
   void _toggleUSD() {
@@ -33,6 +36,12 @@ class _AssetState extends State<Asset> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
+    currentTxs = data.containsKey('walletId') && data['walletId'] != null
+        ? Current.walletTransactions(data['walletId'])
+        : Current.transactions;
+    currentHolds = data.containsKey('walletId') && data['walletId'] != null
+        ? Current.walletHoldings(data['walletId'])
+        : Current.holdings;
     return DefaultTabController(
         length: 2,
         child: Scaffold(
@@ -90,7 +99,7 @@ class _AssetState extends State<Asset> {
 
   /// filter down to just the transactions for this asset
   ListView _transactionsView() => ListView(children: <Widget>[
-        for (var transaction in Current.transactions.where((tx) =>
+        for (var transaction in currentTxs.where((tx) =>
             tx.security.symbol == data['holding']!.security.symbol)) ...[
           ListTile(
               onTap: () => Navigator.pushNamed(context, '/transaction',
@@ -129,7 +138,7 @@ class _AssetState extends State<Asset> {
 
   /// returns a list of holdings and transactions or empty messages
   TabBarView transactionsMetadataView() => TabBarView(children: [
-        Current.transactions.isEmpty
+        currentTxs.isEmpty
             ? _emptyMessage(icon: Icons.public, name: 'transactions')
             : _transactionsView(),
         _metadataView() ??
@@ -141,7 +150,7 @@ class _AssetState extends State<Asset> {
   Row sendReceiveButtons() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         RavenButton.receive(context),
-        Current.holdings.length > 0
+        currentHolds.length > 0
             ? RavenButton.send(context,
                 symbol: data['holding']!.security.symbol)
             : RavenButton.send(context,
