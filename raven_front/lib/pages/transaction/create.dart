@@ -224,6 +224,12 @@ class _CreateAssetState extends State<CreateAsset> {
         ///
         /// ask them to review on additional screen / scroll down
         /// confirm
+        ///
+        if (data.containsKey('walletId') && data['walletId'] != null) {
+          // send tx using only this wallet
+        } else {
+          // send tx using any/every wallet in the account
+        }
       },
       style: RavenButtonStyle.curvedSides);
 }

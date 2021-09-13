@@ -148,12 +148,13 @@ class _WalletViewState extends State<WalletView> {
           //    title: Text('+ Create Asset (not enough RVN)',
           //        style: TextStyle(color: Theme.of(context).disabledColor))));
         } else {
-          //rvnHolding.add(ListTile(
-          //    onTap: () {},
-          //    title: TextButton.icon(
-          //        onPressed: () => Navigator.pushNamed(context, '/create'),
-          //        icon: Icon(Icons.add),
-          //        label: Text('Create Asset'))));
+          rvnHolding.add(ListTile(
+              onTap: () {},
+              title: TextButton.icon(
+                  onPressed: () => Navigator.pushNamed(context, '/create',
+                      arguments: {'walletId': data['address']}),
+                  icon: Icon(Icons.add),
+                  label: Text('Create Asset'))));
         }
       } else {
         assetHoldings.add(thisHolding);
@@ -201,5 +202,14 @@ class _WalletViewState extends State<WalletView> {
                           security: transaction.security, asUSD: showUSD),
                       style: TextStyle(color: Theme.of(context).bad))),
               leading: RavenIcon.assetAvatar(transaction.security.symbol))
+      ]);
+
+  Row sendButton() =>
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Current.holdings.length > 0
+            ? RavenButton.send(context,
+                symbol: 'RVN', walletId: data['address'])
+            : RavenButton.send(context,
+                symbol: 'RVN', walletId: data['address'], disabled: true),
       ]);
 }

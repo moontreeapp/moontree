@@ -15,7 +15,7 @@ class Send extends StatefulWidget {
 }
 
 class _SendState extends State<Send> {
-  dynamic data = {};
+  Map<String, dynamic> data = {};
   final formKey = GlobalKey<FormState>();
   final sendAddress = TextEditingController();
   final sendAmount = TextEditingController(text: '10');
@@ -85,19 +85,6 @@ class _SendState extends State<Send> {
                 SizedBox(width: 15.0),
                 Text(data['symbol'],
                     style: Theme.of(context).textTheme.headline5),
-
-                /// drop down works well
-                //IconButton(
-                //    onPressed: () {
-                //      /*show available assets and balances for this account*/
-                //      //security name switchout button should bring up a new page of all the assets available in this account.
-                //      /// start with a drop down
-                //    },
-                //    //padding: EdgeInsets.only(top: 24.0),
-                //    icon: Icon(
-                //      Icons.change_circle_outlined,
-                //      color: Colors.white,
-                //    )),
               ]),
             ]),
           )));
@@ -200,6 +187,11 @@ class _SendState extends State<Send> {
         // the form is invalid.
         if (formKey.currentState!.validate()) {
           // Process data.
+          if (data.containsKey('walletId') && data['walletId'] != null) {
+            // send using only this wallet
+          } else {
+            // send using any/every wallet in the account
+          }
         }
       },
       style: RavenButtonStyle.curvedSides);
