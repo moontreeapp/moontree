@@ -72,19 +72,21 @@ class _TechnicalViewState extends State<TechnicalView> {
       title: Text('Accounts'));
 
   /// set that account as current and go to import page
-  Future _importTo(context, account) async {
-    await settings.setCurrentAccountId(account.accountId);
-    Navigator.pushNamed(context, '/settings/import');
+  void _importTo(context, account) {
+    //await settings.setCurrentAccountId(account.accountId);
+    Navigator.pushNamed(context, '/settings/import',
+        arguments: {'accountId': account.accountId});
   }
 
   /// set that account as current and go to export page
-  Future _exportTo(context, account) async {
-    await settings.setCurrentAccountId(account.accountId);
-    Navigator.pushNamed(context, '/settings/export');
+  void _exportTo(context, account) {
+    //await settings.setCurrentAccountId(account.accountId);
+    Navigator.pushNamed(context, '/settings/export',
+        arguments: {'accountId': account.accountId});
   }
 
   /// export all acounts ability
-  Future _exportAll(context) async {
+  void _exportAll(context) {
     Navigator.pushNamed(context, '/settings/export',
         arguments: {'accountId': 'all'});
   }

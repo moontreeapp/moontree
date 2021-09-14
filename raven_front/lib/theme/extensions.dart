@@ -3,11 +3,11 @@ import 'package:raven_mobile/theme/theme.dart';
 
 extension ValueColorExtension on ThemeData {
   Color? get good => this.brightness == Brightness.light
-      ? Colors.green.shade800
-      : Colors.green.shade400;
+      ? Colors.green.shade800 // Color(0xFF008a0b) based off orange
+      : Colors.green.shade400; // Color(0xFFb6f122); based off orange
   Color? get bad => this.brightness == Brightness.light
-      ? Colors.red.shade900
-      : Colors.red.shade500;
+      ? Colors.red.shade900 // Color(0xFFb80a48) based off orange
+      : Colors.red.shade500; // Color(0xFFf1224f) based off orange
   Color? get fine => this.brightness == Brightness.light
       ? Colors.grey.shade900
       : Colors.grey.shade400;

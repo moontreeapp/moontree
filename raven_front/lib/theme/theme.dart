@@ -4,9 +4,13 @@ import 'color_gen.dart';
 
 class Palette {
   static const Color ravenBlue = Color(0xFF2E3E80);
+  //static const Color ravenBlue = Color(0xFF005898); // based off orange
   static const Color ravenOrange = Color(0xFFF15B22);
   static const Color primary = ravenBlue; //Color(0xFF2F4D7D);
 }
+
+// orange-green #b6f122
+//
 
 CustomTheme currentTheme = CustomTheme();
 
@@ -24,6 +28,7 @@ class CustomTheme with ChangeNotifier {
       brightness: Brightness.light,
       //primaryColor: Colors.blue.shade900,
       primarySwatch: generateMaterialColor(Palette.ravenBlue),
+      indicatorColor: Color(0xFFb6f122),
       //backgroundColor: Colors.blue[50],
       //scaffoldBackgroundColor: Colors.blue[50],
       //bottomAppBarColor: Colors.grey[300],
@@ -44,6 +49,7 @@ class CustomTheme with ChangeNotifier {
     return ThemeData(
       brightness: Brightness.dark,
       primarySwatch: generateMaterialColor(Palette.ravenOrange),
+      indicatorColor: Color(0xFFB6F122),
       //primaryColor: Colors.black,
       //primarySwatch: Colors.red,
       //backgroundColor: Colors.grey,

@@ -6,6 +6,7 @@ import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/services/lookup.dart';
+import 'package:raven_mobile/utils/utils.dart';
 
 class Import extends StatefulWidget {
   final dynamic data;
@@ -21,6 +22,7 @@ class _ImportState extends State<Import> {
   Uint8List? walletSecret;
   bool importEnabled = false;
   bool singleWallet = false;
+  late Account account;
 
   @override
   void initState() {
@@ -35,7 +37,13 @@ class _ImportState extends State<Import> {
 
   @override
   Widget build(BuildContext context) {
-    //data = populateData(context, data);
+    data = populateData(context, data);
+    if (data['accountId'] == 'current' || data['accountId'] == null) {
+      account = Current.account;
+    } else {
+      account =
+          accounts.primaryIndex.getOne(data['accountId']) ?? Current.account;
+    }
     return Scaffold(
       appBar: header(),
       body: body(),
@@ -58,8 +66,8 @@ class _ImportState extends State<Import> {
     /// verify by looking up public key first - (import from private key vs wif)
     /// verify we don't already have this wallet... that means create the wallet to compare, but don't save it yet,
     ///wallet = singleWalletGenerationService.newSingleWallet(
-    ///    account: Current.account, privateKey: walletSecret!, compressed: true);
-    ///wallet = leaderWalletGenerationService.newLeaderWallet(Current.account, seed: walletSecret);
+    ///    account: account, privateKey: walletSecret!, compressed: true);
+    ///wallet = leaderWalletGenerationService.newLeaderWallet(account, seed: walletSecret);
     /// if (_walletFound(wallet.walletId) != null) {
     ///   // save
     ///   singleWalletGenerationService.saveSingleWallet(wallet);
@@ -72,16 +80,14 @@ class _ImportState extends State<Import> {
     /// }
     if (singleWallet) {
       singleWalletGenerationService.makeAndSaveSingleWallet(
-          account: Current.account,
-          privateKey: walletSecret!,
-          compressed: true);
+          account: account, privateKey: walletSecret!, compressed: true);
     } else {
-      leaderWalletGenerationService.makeAndSaveLeaderWallet(Current.account,
+      leaderWalletGenerationService.makeAndSaveLeaderWallet(account,
           seed: walletSecret);
     }
     // should we await save?
     // how else to verify?
-    //if (wallets.byAccount.getAll(Current.account.accountId).map((e) => e.secret).contains(walletSecret)) {
+    //if (wallets.byAccount.getAll(account.accountId).map((e) => e.secret).contains(walletSecret)) {
     if (true) {
       return showDialog(
           context: context,
@@ -98,7 +104,7 @@ class _ImportState extends State<Import> {
   }
 
   TextButton submitButton() {
-    var submitMessage = 'Import into ' + Current.account.name + ' account';
+    var submitMessage = 'Import into ' + account.name + ' account';
     if (importEnabled) {
       return TextButton.icon(
           onPressed: () => alertSuccess(),

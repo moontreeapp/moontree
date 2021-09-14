@@ -29,7 +29,7 @@ class _ExportState extends State<Export> {
   Widget build(BuildContext context) {
     data = populateData(context, data);
     if (data['accountId'] == 'all') {
-    } else if (data['accountId'] == 'current') {
+    } else if (data['accountId'] == 'current' || data['accountId'] == null) {
       account = Current.account;
     } else {
       account =
