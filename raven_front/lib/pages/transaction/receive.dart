@@ -41,33 +41,36 @@ class _ReceiveState extends State<Receive> {
         ),
       );
 
-  ListView body() => ListView(
-          shrinkWrap: true,
-          padding: EdgeInsets.all(10.0),
-          children: <Widget>[
-            SizedBox(height: 15.0),
-            Text(
-                // rvn is default but if balance is 0 then take the largest asset balance and also display name here.
-                'RVN',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyText1),
-            SizedBox(height: 30.0),
-            Center(
-                child: QrImage(
-                    backgroundColor: Colors.white,
-                    data: "mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7",
-                    version: QrVersions.auto,
-                    size: 200.0)),
-            SizedBox(height: 60.0),
-            Center(
-                child: SelectableText(
-              'mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7',
-              cursorColor: Colors.grey[850],
-              showCursor: true,
-              toolbarOptions: ToolbarOptions(
-                  copy: true, selectAll: true, cut: false, paste: false),
-            ))
-          ]);
+  ListView body() {
+    var address = "mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7";
+    return ListView(
+        shrinkWrap: true,
+        padding: EdgeInsets.all(10.0),
+        children: <Widget>[
+          SizedBox(height: 15.0),
+          Text(
+              // rvn is default but if balance is 0 then take the largest asset balance and also display name here.
+              'RVN',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyText1),
+          SizedBox(height: 30.0),
+          Center(
+              child: QrImage(
+                  backgroundColor: Colors.white,
+                  data: address,
+                  version: QrVersions.auto,
+                  size: 200.0)),
+          SizedBox(height: 60.0),
+          Center(
+              child: SelectableText(
+            address,
+            cursorColor: Colors.grey[850],
+            showCursor: true,
+            toolbarOptions: ToolbarOptions(
+                copy: true, selectAll: true, cut: false, paste: false),
+          ))
+        ]);
+  }
 
   ElevatedButton shareAddressButton() => ElevatedButton.icon(
       icon: Icon(Icons.share),

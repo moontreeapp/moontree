@@ -10,7 +10,6 @@ class SendScanQR extends StatefulWidget {
 }
 
 class _SendScanQRState extends State<SendScanQR> {
-  Barcode? result;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
@@ -38,9 +37,7 @@ class _SendScanQRState extends State<SendScanQR> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Text(result == null
-                      ? "Scan Recipient's QR Code"
-                      : 'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}'),
+                  Text("Scan Recipient's QR Code"),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -88,10 +85,8 @@ class _SendScanQRState extends State<SendScanQR> {
     setState(() {
       this.controller = controller;
     });
-    controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        result = scanData;
-      });
+    controller.scannedDataStream.listen((Barcode scanData) {
+      Navigator.pop(context, scanData);
     });
   }
 

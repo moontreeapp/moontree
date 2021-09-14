@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
@@ -133,7 +134,9 @@ class _SendState extends State<Send> {
                     ),
                     TextButton.icon(
                         onPressed: () =>
-                            Navigator.pushNamed(context, '/send/scan_qr'),
+                            Navigator.pushNamed(context, '/send/scan_qr').then(
+                                (value) =>
+                                    sendAddress.text = (value as Barcode).code),
                         icon: Icon(Icons.qr_code_scanner),
                         label: Text('Scan QR code')),
                     TextFormField(
