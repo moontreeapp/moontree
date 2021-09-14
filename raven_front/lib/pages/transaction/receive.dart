@@ -1,3 +1,4 @@
+//import 'dart:uri';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:raven/raven.dart';
@@ -17,6 +18,35 @@ class Receive extends StatefulWidget {
 class _ReceiveState extends State<Receive> {
   Map<String, dynamic> data = {};
   late String address;
+  final requestAmount = TextEditingController();
+  final requestLabel = TextEditingController();
+  final requestMessage = TextEditingController();
+  bool rawAddress = true;
+  String uri = '';
+
+  void _toggleRaw(_) {
+    setState(() {
+      rawAddress = !rawAddress;
+    });
+  }
+
+  void _makeURI() {
+    var amount = requestAmount.text == ''
+        ? ''
+        : 'amount=${Uri.encodeComponent(requestAmount.text)}';
+    var label = requestLabel.text == ''
+        ? ''
+        : 'label=${Uri.encodeComponent(requestLabel.text)}';
+    var message = requestMessage.text == ''
+        ? ''
+        : 'message=${Uri.encodeComponent(requestMessage.text)}';
+    var tail = [amount, label, message].join('&').replaceAll('&&', '&');
+    tail =
+        '?' + (tail.endsWith('&') ? tail.substring(0, tail.length - 1) : tail);
+    tail = tail.length == 1 ? '' : tail;
+    uri = rawAddress ? address : 'raven:$address$tail';
+    setState(() => {});
+  }
 
   @override
   void initState() {
@@ -24,9 +54,19 @@ class _ReceiveState extends State<Receive> {
   }
 
   @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    requestAmount.dispose();
+    requestLabel.dispose();
+    requestMessage.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
     address = Current.account.wallets[0].addresses[0].address;
+    uri = uri == '' ? address : uri;
     return Scaffold(
         appBar: header(),
         body: body(),
@@ -55,22 +95,150 @@ class _ReceiveState extends State<Receive> {
                 'RVN',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyText1),
-            SizedBox(height: 30.0),
+            SizedBox(height: 20.0),
             Center(
                 child: QrImage(
                     backgroundColor: Colors.white,
-                    data: 'raven:$address',
+                    data: rawAddress ? address : uri,
                     version: QrVersions.auto,
                     size: 200.0)),
-            SizedBox(height: 60.0),
+            SizedBox(height: 10.0),
             Center(
-                child: SelectableText(
-              address,
-              cursorColor: Colors.grey[850],
-              showCursor: true,
-              toolbarOptions: ToolbarOptions(
-                  copy: true, selectAll: true, cut: false, paste: false),
-            ))
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                  /// does not belong on UI but I still want an indication that what is on QR code is not raw address...
+                  Visibility(
+                      visible: !rawAddress,
+                      child: Text(
+                        'raven:',
+                        style: Theme.of(context).textTheme.caption,
+                      )),
+                  SelectableText(
+                    address,
+                    cursorColor: Colors.grey[850],
+                    showCursor: true,
+                    toolbarOptions: ToolbarOptions(
+                        copy: true, selectAll: true, cut: false, paste: false),
+                  ),
+                  Visibility(
+                      visible: !rawAddress && requestAmount.text != '',
+                      child: Text(
+                        'amount: ${requestAmount.text}',
+                        style: Theme.of(context).textTheme.caption,
+                      )),
+                  Visibility(
+                      visible: !rawAddress && requestLabel.text != '',
+                      child: Text(
+                        'label: ${requestLabel.text}',
+                        style: Theme.of(context).textTheme.caption,
+                      )),
+                  Visibility(
+                      visible: !rawAddress && requestMessage.text != '',
+                      child: Text(
+                        'message: ${requestMessage.text}',
+                        style: Theme.of(context).textTheme.caption,
+                      )),
+                ])),
+            SizedBox(height: 20.0),
+            Row(children: <Widget>[
+              Checkbox(
+                value: rawAddress,
+                onChanged: (_) {
+                  _toggleRaw(_);
+                  _makeURI();
+                },
+              ),
+              Text('Just show address'),
+            ]),
+
+            /// if no options are selected it is a raw address?... yes
+            //?amount=5.12340000
+            //&label=This%20is%20a%20label  // could transalte to note
+            //&message=This%20is%20a%20message  // could transalte to asking for a specific asset
+            //DropdownButton<String>(
+            //    isExpanded: true,
+            //    value: data['uri'],
+            //    items: <String>[
+            //      for (var uriOption in ['Raw Address', '']) uriOption
+            //    ]
+            //        .map((String value) => DropdownMenuItem<String>(
+            //            value: value, child: Text(value)))
+            //        .toList(),
+            //    onChanged: (String? newValue) =>
+            //        setState(() => data['uri'] = newValue!)),
+            Visibility(
+                visible: !rawAddress,
+                child: TextField(
+                    autocorrect: false,
+                    controller: requestAmount,
+                    keyboardType: TextInputType.number,
+                    textInputAction: TextInputAction.done,
+                    decoration: InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Amount (Optional)',
+                        hintText: 'Quantity'),
+                    onEditingComplete: () {
+                      var text = requestAmount.text;
+                      var punctuation = ' +-*/|][}{=)(&^%#@!~`<>?\$\\_';
+                      for (var ix in List<int>.generate(
+                          punctuation.length, (i) => i + 1)) {
+                        text = text.replaceAll(
+                            punctuation.substring(ix - 1, ix), '');
+                      }
+                      RegExp regExp = RegExp(
+                        r"^([\d]+)?(\.)?([\d]+)?$",
+                        caseSensitive: false,
+                        multiLine: false,
+                      );
+                      if (text.length > 0) {
+                        if (text.contains('.')) {
+                          text = text.split('.')[0] +
+                              '.' +
+                              text.split('.').sublist(1).join('');
+                        } else if (text.contains(',')) {
+                          text = text.split(',')[0] +
+                              '.' +
+                              text.split(',').sublist(1).join('');
+                        }
+                        if (regExp.hasMatch(text)) {
+                          if (double.parse(text) > 21000000000) {
+                            text = '21000000000';
+                          }
+                        } else {
+                          // tried our best
+                          text = '';
+                        }
+                        requestAmount.text = text;
+                        _makeURI();
+                      }
+                    })),
+            Visibility(
+                visible: !rawAddress,
+                child: TextField(
+                  autocorrect: false,
+                  controller: requestLabel,
+                  decoration: InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Label (Optional)',
+                      hintText: 'Groceries'),
+                  onEditingComplete: () {
+                    _makeURI();
+                  },
+                )),
+            Visibility(
+                visible: !rawAddress,
+                child: TextField(
+                  autocorrect: false,
+                  controller: requestMessage,
+                  decoration: InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Message (Optional)',
+                      hintText: 'Requesting asset'),
+                  onEditingComplete: () {
+                    _makeURI();
+                  },
+                )),
           ]);
 
   ElevatedButton shareAddressButton() => ElevatedButton.icon(

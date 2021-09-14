@@ -89,12 +89,14 @@ class _CreateAssetState extends State<CreateAsset> {
                 text = text.replaceAll(punctuation.substring(ix - 1, ix), '');
               }
               var allowed = ['.', '_'];
-              while (allowed.contains(text.substring(0, 1))) {
-                text = text.substring(1, text.length);
-              }
-              while (allowed
-                  .contains(text.substring(text.length - 1, text.length))) {
-                text = text.substring(0, text.length - 1);
+              if (text != '') {
+                while (allowed.contains(text.substring(0, 1))) {
+                  text = text.substring(1, text.length);
+                }
+                while (allowed
+                    .contains(text.substring(text.length - 1, text.length))) {
+                  text = text.substring(0, text.length - 1);
+                }
               }
               assetName.text = text.toUpperCase();
             },
@@ -115,6 +117,9 @@ class _CreateAssetState extends State<CreateAsset> {
               for (var ix
                   in List<int>.generate(punctuation.length, (i) => i + 1)) {
                 text = text.replaceAll(punctuation.substring(ix - 1, ix), '');
+              }
+              if (text == '') {
+                text = '0';
               }
               if (int.parse(text) > 21000000000) {
                 text = '21000000000';
