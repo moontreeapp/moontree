@@ -13,14 +13,16 @@ void main() async {
 
   test('WalletSecurityPair is unique in Set', () {
     var s = <WalletSecurityPair>{};
+    var wallet = fixtures.wallets().map['0']!;
     var pair = WalletSecurityPair(
-        'a', Security(symbol: 'RVN', securityType: SecurityType.Crypto));
+        wallet, Security(symbol: 'RVN', securityType: SecurityType.Crypto));
     s.add(pair);
     s.add(pair);
     expect(s.length, 1);
   });
 
   test('uniquePairsFromHistoryChanges', () {
+    var wallet = fixtures.wallets().map['0']!;
     var changes = [
       Added(0, histories().map['0']),
       Added(1, histories().map['1']),
@@ -28,8 +30,8 @@ void main() async {
     ];
     var pairs = uniquePairsFromHistoryChanges(changes);
     expect(pairs, {
-      WalletSecurityPair('a0', RVN),
-      WalletSecurityPair('a0', USD),
+      WalletSecurityPair(wallet, RVN),
+      WalletSecurityPair(wallet, USD),
     });
   });
 }
