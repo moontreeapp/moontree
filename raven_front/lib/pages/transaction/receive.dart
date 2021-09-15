@@ -5,6 +5,7 @@ import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
 import 'package:raven_mobile/services/lookup.dart';
+import 'package:raven_mobile/utils/params.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
 class Receive extends StatefulWidget {
@@ -39,7 +40,8 @@ class _ReceiveState extends State<Receive> {
         : 'label=${Uri.encodeComponent(requestLabel.text)}';
     var message = requestMessage.text == ''
         ? ''
-        : 'message=${Uri.encodeComponent(requestMessage.text)}';
+        //: 'message=${Uri.encodeComponent(requestMessage.text)}';
+        : 'message=asset:${Uri.encodeComponent(requestMessage.text)}';
     var tail = [amount, label, message].join('&').replaceAll('&&', '&');
     tail =
         '?' + (tail.endsWith('&') ? tail.substring(0, tail.length - 1) : tail);
@@ -65,12 +67,14 @@ class _ReceiveState extends State<Receive> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
+    requestMessage.text =
+        requestMessage.text == '' ? 'RVN' : requestMessage.text;
     address = Current.account.wallets[0].addresses[0].address;
     uri = uri == '' ? address : uri;
     return Scaffold(
         appBar: header(),
         body: body(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
         floatingActionButton: shareAddressButton(),
         bottomNavigationBar: RavenButton.bottomNav(context));
   }
@@ -89,19 +93,20 @@ class _ReceiveState extends State<Receive> {
           shrinkWrap: true,
           padding: EdgeInsets.all(10.0),
           children: <Widget>[
-            SizedBox(height: 15.0),
-            Text(
-                // rvn is default but if balance is 0 then take the largest asset balance and also display name here.
-                'RVN',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyText1),
+            /// if this is a RVNt account we could show that here...
+            //SizedBox(height: 15.0),
+            //Text(
+            //    // rvn is default but if balance is 0 then take the largest asset balance and also display name here.
+            //    'RVN',
+            //    textAlign: TextAlign.center,
+            //    style: Theme.of(context).textTheme.bodyText1),
             SizedBox(height: 20.0),
             Center(
                 child: QrImage(
                     backgroundColor: Colors.white,
                     data: rawAddress ? address : uri,
                     version: QrVersions.auto,
-                    size: 200.0)),
+                    size: 300.0)),
             SizedBox(height: 10.0),
             Center(
                 child: Column(
@@ -179,39 +184,8 @@ class _ReceiveState extends State<Receive> {
                         labelText: 'Amount (Optional)',
                         hintText: 'Quantity'),
                     onEditingComplete: () {
-                      var text = requestAmount.text;
-                      var punctuation = ' +-*/|][}{=)(&^%#@!~`<>?\$\\_';
-                      for (var ix in List<int>.generate(
-                          punctuation.length, (i) => i + 1)) {
-                        text = text.replaceAll(
-                            punctuation.substring(ix - 1, ix), '');
-                      }
-                      RegExp regExp = RegExp(
-                        r"^([\d]+)?(\.)?([\d]+)?$",
-                        caseSensitive: false,
-                        multiLine: false,
-                      );
-                      if (text.length > 0) {
-                        if (text.contains('.')) {
-                          text = text.split('.')[0] +
-                              '.' +
-                              text.split('.').sublist(1).join('');
-                        } else if (text.contains(',')) {
-                          text = text.split(',')[0] +
-                              '.' +
-                              text.split(',').sublist(1).join('');
-                        }
-                        if (regExp.hasMatch(text)) {
-                          if (double.parse(text) > 21000000000) {
-                            text = '21000000000';
-                          }
-                        } else {
-                          // tried our best
-                          text = '';
-                        }
-                        requestAmount.text = text;
-                        _makeURI();
-                      }
+                      requestAmount.text = verifyDecAmount(requestAmount.text);
+                      _makeURI();
                     })),
             Visibility(
                 visible: !rawAddress,
@@ -226,19 +200,39 @@ class _ReceiveState extends State<Receive> {
                     _makeURI();
                   },
                 )),
+            //Visibility(
+            //  visible: !rawAddress,
+            //  child:
+            //      TextField(
+            //        autocorrect: false,
+            //        controller: requestMessage,
+            //        decoration: InputDecoration(
+            //            border: UnderlineInputBorder(),
+            //            labelText: 'Message (Optional)',
+            //            hintText: 'Requesting asset'),
+            //        onEditingComplete: () {
+            //          _makeURI();
+            //        })
+            //),
             Visibility(
                 visible: !rawAddress,
-                child: TextField(
-                  autocorrect: false,
-                  controller: requestMessage,
-                  decoration: InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Message (Optional)',
-                      hintText: 'Requesting asset'),
-                  onEditingComplete: () {
-                    _makeURI();
-                  },
-                )),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Text('Requested Asset:'),
+                      DropdownButton<String>(
+                          isExpanded: true,
+                          value: requestMessage.text,
+                          items: Current.holdingNames
+                              .map((String value) => DropdownMenuItem<String>(
+                                  value: value, child: Text(value)))
+                              .toList(),
+                          onChanged: (String? newValue) {
+                            requestMessage.text = newValue!;
+                            _makeURI();
+                          }),
+                    ])),
           ]);
 
   ElevatedButton shareAddressButton() => ElevatedButton.icon(

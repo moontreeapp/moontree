@@ -17,11 +17,19 @@ List<History> currentTransactions() => currentAccount().histories;
 List<Balance> currentHoldings() =>
     balanceService.accountBalances(currentAccount());
 
+List<String> currentHoldingNames() =>
+    [for (var balance in currentHoldings()) balance.security.symbol];
+
 Balance currentWalletBalanceRVN(walletId) =>
     balanceService.walletBalance(wallets.primaryIndex.getOne(walletId)!, RVN);
 
 List<Balance> currentWalletHoldings(String walletId) =>
     balanceService.walletBalances(wallets.primaryIndex.getOne(walletId)!);
+
+List<String> currentWalletHoldingNames(String walletId) => [
+      for (var balance in currentWalletHoldings(walletId))
+        balance.security.symbol
+    ];
 
 BalanceUSD currentWalletBalanceUSD(String walletId) => ratesService
     .accountBalanceUSD(walletId, holdings: currentWalletHoldings(walletId));
@@ -35,6 +43,7 @@ class Current {
   static BalanceUSD get balanceUSD => currentBalanceUSD();
   static List<History> get transactions => currentTransactions();
   static List<Balance> get holdings => currentHoldings();
+  static List<String> get holdingNames => currentHoldingNames();
 
   static Balance walletBalanceRVN(String walletId) =>
       currentWalletBalanceRVN(walletId);
@@ -44,4 +53,6 @@ class Current {
       currentWalletHoldings(walletId);
   static List<History> walletTransactions(String walletId) =>
       currentWalletTransactions(walletId);
+  static List<String> walletHoldingNames(String walletId) =>
+      currentWalletHoldingNames(walletId);
 }

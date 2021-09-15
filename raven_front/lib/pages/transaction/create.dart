@@ -4,6 +4,7 @@ import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/theme/extensions.dart';
+import 'package:raven_mobile/utils/params.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
 class CreateAsset extends StatefulWidget {
@@ -112,19 +113,7 @@ class _CreateAssetState extends State<CreateAsset> {
                 labelText: 'Amount',
                 hintText: 'Quantity'),
             onEditingComplete: () {
-              var text = assetAmount.text.split('.')[0];
-              var punctuation = ' +-*/|][}{=)(&^%#@!~`<>,?\$\\._';
-              for (var ix
-                  in List<int>.generate(punctuation.length, (i) => i + 1)) {
-                text = text.replaceAll(punctuation.substring(ix - 1, ix), '');
-              }
-              if (text == '') {
-                text = '0';
-              }
-              if (int.parse(text) > 21000000000) {
-                text = '21000000000';
-              }
-              assetAmount.text = text;
+              assetAmount.text = verifySatAmount(assetAmount.text);
             },
           ),
           SizedBox(height: 20),

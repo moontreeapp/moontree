@@ -5,6 +5,7 @@ import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
 import 'package:raven_mobile/components/text.dart';
 import 'package:raven_mobile/services/lookup.dart';
+import 'package:raven_mobile/utils/params.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
 class Send extends StatefulWidget {
@@ -90,6 +91,23 @@ class _SendState extends State<Send> {
             ]),
           )));
 
+  void populateFromQR(String code) {
+    if (code.startsWith('raven:')) {
+      sendAddress.text = code.substring(6).split('?')[0];
+      var params = parseReceiveParams(code);
+      if (params.containsKey('amount')) {
+        sendAmount.text = verifyDecAmount(params['amount']!);
+      }
+      if (params.containsKey('label')) {
+        sendNote.text = verifyLabel(params['label']!);
+      }
+      data['symbol'] = requestedAsset(params,
+          holdings: Current.holdingNames, current: data['symbol']);
+    } else {
+      sendAddress.text = code;
+    }
+  }
+
   ListView body() {
     //var _controller = TextEditingController();
     return ListView(
@@ -110,10 +128,7 @@ class _SendState extends State<Send> {
                     DropdownButton<String>(
                         isExpanded: true,
                         value: data['symbol'],
-                        items: <String>[
-                          for (var balance in Current.holdings)
-                            balance.security.symbol
-                        ]
+                        items: Current.holdingNames
                             .map((String value) => DropdownMenuItem<String>(
                                 value: value, child: Text(value)))
                             .toList(),
@@ -125,6 +140,9 @@ class _SendState extends State<Send> {
                           border: UnderlineInputBorder(),
                           labelText: 'To',
                           hintText: 'Address'),
+                      onEditingComplete: () {
+                        // make sure it's a valid address for the network
+                      },
                       //validator: (String? value) {
                       //  //if (value == null || value.isEmpty) {
                       //  //  return 'Please enter a valid address';
@@ -136,7 +154,7 @@ class _SendState extends State<Send> {
                         onPressed: () =>
                             Navigator.pushNamed(context, '/send/scan_qr').then(
                                 (value) =>
-                                    sendAddress.text = (value as Barcode).code),
+                                    populateFromQR((value as Barcode).code)),
                         icon: Icon(Icons.qr_code_scanner),
                         label: Text('Scan QR code')),
                     TextFormField(
@@ -145,6 +163,9 @@ class _SendState extends State<Send> {
                           border: UnderlineInputBorder(),
                           labelText: 'Amount',
                           hintText: 'Quantity'),
+                      onEditingComplete: () {
+                        sendAmount.text = verifyDecAmount(sendAmount.text);
+                      },
                       //validator: (String? value) {  // validate as double/int
                       //  //if (value == null || value.isEmpty) {
                       //  //  return 'Please enter a valid send amount';
