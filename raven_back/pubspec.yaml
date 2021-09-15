@@ -6,7 +6,6 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  analyzer: ^1.7.0
   bs58check: ^1.0.2
   collection: ^1.15.0
   crypto: ^3.0.0
@@ -14,6 +13,7 @@ dependencies:
   equatable: ^2.0.3
   hive: ^2.0.4
   ordered_set: ^3.1.0
+  pointycastle: ^3.3.4
   quiver: ^3.0.1
   ravencoin: ^2.0.1
   raven_electrum_client: ^1.2.1

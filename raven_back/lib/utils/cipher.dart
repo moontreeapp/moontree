@@ -1,10 +1,12 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:pointycastle/export.dart';
 
-Uint8List getBytes(String key) => Uint8List.fromList(key.codeUnits);
+const int DEFAULT_ITERATIONS = 2;
+const int DEFAULT_MEMORY = 16;
+final Uint8List DEFAULT_SALT = Uint8List.fromList([87, 244, 199]);
 
-// AES initialization vector; must be 16 bytes
-Uint8List defaultInitializationVector = getBytes('aeree5Zaeveexooj');
+Uint8List getBytes(String key) => Uint8List.fromList(key.codeUnits);
 
 abstract class Cipher {
   Cipher();
@@ -23,12 +25,30 @@ class NoCipher implements Cipher {
 }
 
 class AESCipher implements Cipher {
-  final Uint8List _key;
-  final Uint8List _iv;
+  late Uint8List _key; // 32 bytes
+  late Uint8List _iv; // 16 bytes
 
-  AESCipher(Uint8List key, {Uint8List? iv})
-      : _key = key,
-        _iv = iv ?? defaultInitializationVector;
+  AESCipher(Uint8List password, {Uint8List? salt}) {
+    var generator = keyGenerator(48, salt);
+    var result = generator.process(password);
+    assert(result.length == 48);
+    _key = result.sublist(0, 32);
+    _iv = result.sublist(32, 48);
+  }
+
+  /// While passwords can be any length, AES block ciphers require a specific
+  /// key length. Using the Argon2 algorithm, we produce a generator that can
+  /// convert a variable-length password into a byte array of specific length.
+  Argon2BytesGenerator keyGenerator(int length, [Uint8List? salt]) =>
+      Argon2BytesGenerator()
+        ..init(Argon2Parameters(
+          Argon2Parameters.ARGON2_id,
+          salt ?? DEFAULT_SALT,
+          desiredKeyLength: length,
+          version: Argon2Parameters.ARGON2_VERSION_13,
+          iterations: DEFAULT_ITERATIONS,
+          memoryPowerOf2: DEFAULT_MEMORY,
+        ));
 
   PaddedBlockCipherImpl cipher(encrypt) {
     var blockCipher = CBCBlockCipher(AESFastEngine());

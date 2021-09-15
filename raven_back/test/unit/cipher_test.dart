@@ -10,20 +10,28 @@ final Uint8List key192 = getBytes('192bit-securekeymorebits');
 
 void main() {
   group('Cipher', () {
-    test('encrypt with 128bit key', () {
+    test('encrypt with 3-byte password', () {
+      var crypto = AESCipher(getBytes('***'));
+      expect(
+          crypto.encrypt(getBytes('message')),
+          jsonDecode(
+              '[104,5,150,120,128,155,63,168,219,101,47,171,235,120,161,239]'));
+    });
+
+    test('encrypt with 16-byte password', () {
       var crypto = AESCipher(key128);
       expect(
           crypto.encrypt(getBytes('message')),
           jsonDecode(
-              '[74,119,11,56,38,77,218,106,50,101,161,80,183,210,35,42]'));
+              '[23,82,75,20,213,2,31,154,151,183,191,37,184,24,155,148]'));
     });
 
-    test('encrypt with 192bit key', () {
+    test('encrypt with 24-byte password', () {
       var crypto = AESCipher(key192);
       expect(
           crypto.encrypt(getBytes('message')),
           jsonDecode(
-              '[119,135,142,140,144,81,191,124,119,93,48,203,86,39,63,106]'));
+              '[192,113,128,236,177,195,161,66,58,114,188,9,16,216,193,185]'));
     });
 
     test('is two-way', () {
