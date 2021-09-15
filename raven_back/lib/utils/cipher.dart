@@ -1,10 +1,9 @@
-import 'dart:convert';
 import 'dart:typed_data';
 import 'package:pointycastle/export.dart';
 
 const int DEFAULT_ITERATIONS = 2;
 const int DEFAULT_MEMORY = 16;
-final Uint8List DEFAULT_SALT = Uint8List.fromList([87, 244, 199]);
+final Uint8List DEFAULT_SALT = getBytes('aeree5Zaeveexooj');
 
 Uint8List getBytes(String key) => Uint8List.fromList(key.codeUnits);
 
