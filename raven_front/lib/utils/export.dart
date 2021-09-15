@@ -27,9 +27,7 @@ List<Map<String, dynamic>> accountsForExport(Account? account) => [
     ];
 
 List<Map<String, dynamic>> walletsForExport(Account? account) => [
-      for (var wallet in account != null
-          ? wallets.byAccount.getAll(account.accountId)
-          : wallets.data)
+      for (var wallet in account != null ? account.wallets : wallets.data)
         {
           wallet.walletId: {
             'accountId': wallet.accountId,
