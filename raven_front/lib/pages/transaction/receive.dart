@@ -154,7 +154,7 @@ class _ReceiveState extends State<Receive> {
                   _makeURI();
                 },
               ),
-              Text('Just show address'),
+              Text('address only'),
             ]),
 
             /// if no options are selected it is a raw address?... yes
