@@ -1,37 +1,30 @@
 import 'package:raven/raven.dart';
 
+/// entire file is encrypted
 /// export format:
 /// {
-///   'accounts': [{object details}, {object details}, ...],
-///   'wallets': [{object details}, {object details}, ...],
+///   'accounts': {accounts.id: values},
+///   'wallets': {wallets.id: values}
 /// }
-/// structure is flat and contains no constraints
-/// because we want it to be generalized so it's adopted by others.
-/// this allows for duplicates: wallets can belong to multiple accounts,
-/// and multiple accounts or wallets can have the same name and id.
-/// allows for other keys to be appeneded too.
-Map<String, List<Map<String, dynamic>>> structureForExport(Account? account) =>
-    {
+/// simply a json map with accounts and wallets as keys.
+/// values in our system is another map with id as key,
+/// other systems could use list or whatever.
+Map<String, Map<String, dynamic>> structureForExport(Account? account) => {
       'accounts': accountsForExport(account),
       'wallets': walletsForExport(account),
     };
 
-List<Map<String, dynamic>> accountsForExport(Account? account) => [
-      for (var account in account != null ? [account] : accounts.data)
-        {
-          account.accountId: {
-            'name': account.name,
-            'net': account.net.toString()
-          }
-        }
-    ];
+Map<String, dynamic> accountsForExport(Account? account) => {
+      for (var account in account != null ? [account] : accounts.data) ...{
+        account.accountId: {'name': account.name, 'net': account.net.toString()}
+      }
+    };
 
-List<Map<String, dynamic>> walletsForExport(Account? account) => [
-      for (var wallet in account != null ? account.wallets : wallets.data)
-        {
-          wallet.walletId: {
-            'accountId': wallet.accountId,
-            'secret': wallet.secret // private key or seed phrase encrypted
-          }
+Map<String, dynamic> walletsForExport(Account? account) => {
+      for (var wallet in account != null ? account.wallets : wallets.data) ...{
+        wallet.walletId: {
+          'accountId': wallet.accountId,
+          'secret': wallet.secret // private key or seed phrase
         }
-    ];
+      }
+    };

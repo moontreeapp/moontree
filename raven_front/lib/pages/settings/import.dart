@@ -6,6 +6,7 @@ import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/services/lookup.dart';
+import 'package:raven_mobile/utils/import.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
 class Import extends StatefulWidget {
@@ -19,9 +20,7 @@ class Import extends StatefulWidget {
 class _ImportState extends State<Import> {
   dynamic data = {};
   var words = TextEditingController();
-  Uint8List? walletSecret;
   bool importEnabled = false;
-  bool singleWallet = false;
   late Account account;
 
   @override
@@ -78,13 +77,6 @@ class _ImportState extends State<Import> {
     ///   // alert existing
     ///   return ... already exists in the _walletFound(wallet.walletId) account
     /// }
-    if (singleWallet) {
-      singleWalletGenerationService.makeAndSaveSingleWallet(
-          account: account, privateKey: walletSecret!, compressed: true);
-    } else {
-      leaderWalletGenerationService.makeAndSaveLeaderWallet(account,
-          seed: walletSecret);
-    }
     // should we await save?
     // how else to verify?
     //if (wallets.byAccount.getAll(account.accountId).map((e) => e.secret).contains(walletSecret)) {
@@ -135,22 +127,18 @@ class _ImportState extends State<Import> {
                 textInputAction: TextInputAction.done,
                 decoration: InputDecoration(
                     border: UnderlineInputBorder(),
-                    hintText: ("Please enter your seed words, WIF, or anything "
-                        "you've got. We will do our best to import your "
-                        "wallet accordingly.")),
-                onEditingComplete: () {
-                  var text = words.text;
-
-                  /// these are placeholders, they must be checked
-                  var isWIF = [51, 52].contains(text.split(' ').length);
-                  var isSeed = text.length == 128;
-                  var isMnemonic = [12, 24].contains(text.split(' ').length);
-                  var isPrivateKey = text.length == 64;
-                  if (isWIF || isSeed || isMnemonic || isPrivateKey) {
-                    importEnabled = true;
-                    walletSecret = Uint8List(16);
-                    singleWallet = true;
+                    hintText:
+                        ("Please enter your seed words, WIF, or private key.")),
+                onEditingComplete: () async {
+                  words.text = words.text.trim();
+                  var formatSeed =
+                      await handleImport(words.text, Current.account.accountId);
+                  //if (isWIF || isSeed || isMnemonic || isPrivateKey) {
+                  if (['WIF', 'seed', 'mnumonic', 'privateKey']
+                      .contains(formatSeed.format)) {
+                    importEnabled = true; // import already happened
                   }
+                  // create the wallet with formatSeed.seed in the correct account
                   setState(() => {});
                 },
               ),

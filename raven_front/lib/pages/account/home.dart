@@ -240,7 +240,7 @@ class _HomeState extends State<Home> {
             ListTile(
                 onTap: () async {
                   var account = await accountGenerationService
-                      .makeAndAwaitSaveAccount(accountName.text);
+                      .makeSaveAccount(accountName.text);
                   await settingsService.saveSetting(
                       SettingName.Account_Current, account.accountId);
                   Navigator.pop(context);

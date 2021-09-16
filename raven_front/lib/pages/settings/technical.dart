@@ -99,20 +99,15 @@ class _TechnicalViewState extends State<TechnicalView> {
     //wallets.save(wallet);
     wallets.save(wallet is LeaderWallet
         ? LeaderWallet(
-            walletId: wallet.walletId,
             accountId: account.accountId,
-            encryptedSeed: wallet.encryptedSeed)
+            encryptedEntropy: wallet.encryptedEntropy)
         : wallet is SingleWallet
             ? SingleWallet(
-                walletId: wallet.walletId,
-                accountId: account.accountId,
-                encryptedPrivateKey: wallet.encryptedPrivateKey)
+                accountId: account.accountId, encryptedWIF: wallet.encryptedWIF)
             : SingleWallet(
                 // placeholder for other wallets
-                walletId: wallet.walletId,
                 accountId: account.accountId,
-                encryptedPrivateKey:
-                    (wallet as SingleWallet).encryptedPrivateKey));
+                encryptedWIF: (wallet as SingleWallet).encryptedWIF));
   }
 
   List<Widget> _deleteIfMany(Account account) => accounts.data.length > 1
@@ -131,7 +126,7 @@ class _TechnicalViewState extends State<TechnicalView> {
         ListTile(
             onTap: () async {
               var account = await accountGenerationService
-                  .makeAndAwaitSaveAccount(accountName.text);
+                  .makeSaveAccount(accountName.text);
               await settingsService.saveSetting(
                   SettingName.Account_Current, account.accountId);
               accountName.text = '';
