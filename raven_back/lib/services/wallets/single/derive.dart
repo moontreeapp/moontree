@@ -1,5 +1,4 @@
-import 'package:ravencoin/ravencoin.dart'
-    show ECPair, KPWallet, P2PKH, PaymentData;
+import 'package:ravencoin/ravencoin.dart' show KPWallet;
 import 'package:raven/records/records.dart';
 import 'package:raven/reservoirs/reservoirs.dart';
 import 'package:raven/services/service.dart';
@@ -9,17 +8,9 @@ class SingleWalletService extends Service {
 
   SingleWalletService(this.accounts) : super();
 
-  KPWallet getSingleWallet(SingleWallet wallet, Net net) {
-    return KPWallet(
-        ECPair.fromPrivateKey(wallet.privateKey,
-            network: networks[net]!, compressed: true),
-        P2PKH(data: PaymentData(), network: networks[net]!),
-        networks[net]!);
-  }
-
   Address toAddress(SingleWallet wallet) {
     var net = accounts.primaryIndex.getOne(wallet.accountId)!.net;
-    var seededWallet = getSingleWallet(wallet, net);
+    var seededWallet = KPWallet.fromWIF(wallet.wif);
     return Address(
         scripthash: seededWallet.scripthash,
         address: seededWallet.address!,

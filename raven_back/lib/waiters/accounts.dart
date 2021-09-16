@@ -23,7 +23,8 @@ class AccountsWaiter extends Waiter {
             added: (added) {
               var account = added.data;
               if (wallets.byAccount.getAll(account.accountId).isEmpty) {
-                leaderWalletGenerationService.makeSaveLeaderWallet(account);
+                leaderWalletGenerationService
+                    .makeSaveLeaderWallet(account.accountId);
               }
             },
             updated: (updated) {},

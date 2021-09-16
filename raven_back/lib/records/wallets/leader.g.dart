@@ -17,9 +17,9 @@ class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return LeaderWallet(
-      walletId: fields[0] as dynamic,
       accountId: fields[1] as dynamic,
-      encryptedSeed: fields[2] as Uint8List,
+      encryptedEntropy: fields[2] as String,
+      walletId: fields[0] as String?,
     );
   }
 
@@ -28,7 +28,7 @@ class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
     writer
       ..writeByte(3)
       ..writeByte(2)
-      ..write(obj.encryptedSeed)
+      ..write(obj.encryptedEntropy)
       ..writeByte(0)
       ..write(obj.walletId)
       ..writeByte(1)

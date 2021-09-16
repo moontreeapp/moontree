@@ -1,39 +1,127 @@
-// dart test test/unit/net_derivation_test.dart
-import 'package:raven/records/wallets/leader.dart';
+// dart test test/unit/wallet_derivation_test.dart
+import 'dart:typed_data';
+
+//import 'package:raven/records/wallets/leader.dart';
+import 'package:pointycastle/api.dart';
 import 'package:raven/records/node_exposure.dart';
+import 'package:raven/records/wallets/single.dart';
+import 'package:raven/utils/cipher.dart';
+import 'package:raven/utils/random.dart';
+import 'package:ravencoin/ravencoin.dart';
 import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
+import 'dart:convert';
 
-import 'package:raven/records/net.dart';
+import 'package:convert/convert.dart';
 
-final seed = bip39.mnemonicToSeed(
-    'smile build brain topple moon scrap area aim budget enjoy polar erosion');
+import 'package:raven/records/net.dart' as ravenNet;
+
+final mnemonic =
+    'smile build brain topple moon scrap area aim budget enjoy polar erosion';
+
+final seed = bip39.mnemonicToSeed(mnemonic);
+final entropy = bip39.mnemonicToEntropy(mnemonic);
 
 // TODO: when we switch from NoCipher to AESCipher, we need to encrypt/decrypt
 final encryptedSeed = seed;
 
+KPWallet newKPWallet({
+  required Uint8List privateKey,
+  bool compressed = true,
+}) {
+  return KPWallet(
+      ECPair.fromPrivateKey(
+        privateKey,
+        network: ravenNet.networks[ravenNet.Net.Test]!,
+        compressed: compressed,
+      ),
+      P2PKH(
+          data: PaymentData(), network: ravenNet.networks[ravenNet.Net.Test]!),
+      ravenNet.networks[ravenNet.Net.Test]!);
+}
+
 void main() {
-  test('derive mainnet address', () {
-    var wallet = LeaderWallet(
-        walletId: '0', accountId: 'a1', encryptedSeed: encryptedSeed);
-    var derived = wallet.deriveWallet(Net.Main, 0, NodeExposure.Internal);
-    var address = wallet.deriveAddress(Net.Main, 0, NodeExposure.Internal);
-    expect(derived.pubKey,
-        '03cd88842308a57abb3a3b6dce56e7e33a9ceefdb92d1a23d1c102f4af7a1ca617');
-    expect(derived.address, 'RBT3LwNAZN1fq5C3WQUkDX5wiE8qWgn7FR');
-    expect(address.scripthash,
-        'db281a3a6fb0a3ee5f2ccb41094b329e6d00a4207eeba496fa6ca888fccec9a0');
+  //test('derive mainnet address', () {
+  //  var wallet = LeaderWallet(
+  //      walletId: '0', accountId: 'a1', encryptedSeed: encryptedSeed);
+  //  var derived = wallet.deriveWallet(Net.Main, 0, NodeExposure.Internal);
+  //  var address = wallet.deriveAddress(Net.Main, 0, NodeExposure.Internal);
+  //  expect(derived.pubKey,
+  //      '03cd88842308a57abb3a3b6dce56e7e33a9ceefdb92d1a23d1c102f4af7a1ca617');
+  //  expect(derived.address, 'RBT3LwNAZN1fq5C3WQUkDX5wiE8qWgn7FR');
+  //  expect(address.scripthash,
+  //      'db281a3a6fb0a3ee5f2ccb41094b329e6d00a4207eeba496fa6ca888fccec9a0');
+  //});
+  //
+  //test('derive testnet address', () {
+  //  var wallet = LeaderWallet(
+  //      walletId: '0', accountId: 'a1', encryptedSeed: encryptedSeed);
+  //  var derived = wallet.deriveWallet(Net.Test, 0, NodeExposure.Internal);
+  //  var address = wallet.deriveAddress(Net.Test, 0, NodeExposure.Internal);
+  //  expect(derived.pubKey,
+  //      '03cd88842308a57abb3a3b6dce56e7e33a9ceefdb92d1a23d1c102f4af7a1ca617');
+  //  expect(derived.address, 'mhgoZUZrmZeMYBJTkoTzwuy4oxGwn96wVp');
+  //  expect(address.scripthash,
+  //      'db281a3a6fb0a3ee5f2ccb41094b329e6d00a4207eeba496fa6ca888fccec9a0');
+  //});
+
+  test('seed to mnemonic', () {
+    // https://ravencoin.org/bip44/
+    expect(hex.encode(seed),
+        '10aec63e639df18c6411c3e82cbad807d9fad19163e59cd4da98ff5e9b8579093fd45b927af2cf1f7b78768025ed678650ef2d9e46db9df85d697e4b03940e1c');
+    expect(
+        bip39.entropyToMnemonic(bip39.mnemonicToEntropy(mnemonic)), mnemonic);
   });
 
-  test('derive testnet address', () {
-    var wallet = LeaderWallet(
-        walletId: '0', accountId: 'a1', encryptedSeed: encryptedSeed);
-    var derived = wallet.deriveWallet(Net.Test, 0, NodeExposure.Internal);
-    var address = wallet.deriveAddress(Net.Test, 0, NodeExposure.Internal);
-    expect(derived.pubKey,
-        '03cd88842308a57abb3a3b6dce56e7e33a9ceefdb92d1a23d1c102f4af7a1ca617');
-    expect(derived.address, 'mhgoZUZrmZeMYBJTkoTzwuy4oxGwn96wVp');
-    expect(address.scripthash,
-        'db281a3a6fb0a3ee5f2ccb41094b329e6d00a4207eeba496fa6ca888fccec9a0');
+  test('string to uin8list to string', () {
+    var decoded = Uint8List.fromList(hex.decode(entropy));
+    expect(hex.encode(decoded), entropy);
+  });
+
+  test('hdwallet public key', () {
+    var testnet =
+        HDWallet.fromSeed(seed, network: ravenNet.networks[ravenNet.Net.Test]!);
+    var mainnet =
+        HDWallet.fromSeed(seed, network: ravenNet.networks[ravenNet.Net.Main]!);
+    expect(testnet.pubKey, mainnet.pubKey);
+    expect(testnet.address == mainnet.address, false);
+  });
+
+  test('SingleWallet Key', () {
+    var privateKey =
+        '3095cb26affefcaaa835ff968d60437c7c764da40cdd1a1b497406c7902a8ac9';
+    var wif = 'Kxr9tQED9H44gCmp6HAdmemAzU3n84H3dGkuWTKvE23JgHMW8gct';
+    //var wallet = SingleWallet(
+    //    accountId: 'a1',
+    //    encryptedPrivateKey:
+    //        NoCipher().encrypt(Uint8List.fromList(hex.decode(privateKey))));
+    //var wallet =
+    //    newKPWallet(privateKey: Uint8List.fromList(hex.decode(privateKey)));
+    //var wallet = SingleWallet.fromWIF(
+    //    accountId: 'a1',
+    //    encryptedPrivateKey:
+    //        NoCipher().encrypt(Uint8List.fromList(hex.decode(privateKey))),
+    //    wif: 'Kxr9tQED9H44gCmp6HAdmemAzU3n84H3dGkuWTKvE23JgHMW8gct');
+    var wallet = SingleWallet(
+        accountId: 'a1', encryptedWIF: SingleWallet.encryptWIF(wif));
+    print(wallet.secret);
+
+    ///print(wallet.privKey);
+    ///print(wallet.pubKey);
+    ///print(wallet.address);
+    ///print(wallet.wif);
+  });
+
+  test('generate random private key', () {
+    //https://developer.bitcoin.org/devguide/wallets.html
+    //var privateKey =
+    //    '3095cb26affefcaaa835ff968d60437c7c764da40cdd1a1b497406c7902a8ac9';
+    //
+    //var wif = 'Kxr9tQED9H44gCmp6HAdmemAzU3n84H3dGkuWTKvE23JgHMW8gct';
+    //0xFFFF FFFF FFFF FFFF FFFF FFFF FFFF FFFE
+    //  BAAE DCE6 AF48 A03B BFD2 5E8C D036 4140,
+    var rb = randomBytes(32);
+    print(rb);
+    print(hex.encode(rb));
   });
 }

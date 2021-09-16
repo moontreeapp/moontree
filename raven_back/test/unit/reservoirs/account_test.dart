@@ -27,11 +27,11 @@ void main() {
     });
 
     test('save a Wallet', () async {
-      var encryptedSeed = Uint8List(16);
+      var encryptedEntropy = '00000000000000000000000000000000';
       var wallet = LeaderWallet(
-          walletId: '0', accountId: 'a0', encryptedSeed: encryptedSeed);
+          walletId: '0', accountId: 'a0', encryptedEntropy: encryptedEntropy);
       var wallet2 = LeaderWallet(
-          walletId: '1', accountId: 'a1', encryptedSeed: encryptedSeed);
+          walletId: '1', accountId: 'a1', encryptedEntropy: encryptedEntropy);
       await wallets.save(wallet);
       await wallets.save(wallet2);
       expect(wallets.primaryIndex.getOne(wallet.walletId), wallet);
@@ -46,11 +46,11 @@ void main() {
       expect(accounts.primaryIndex.getOne(account2.accountId), account2);
     });
     test('move wallet', () async {
-      var encryptedSeed = Uint8List(16);
+      var encryptedEntropy = '00000000000000000000000000000000';
       var wallet = LeaderWallet(
-          walletId: '0', accountId: 'a0', encryptedSeed: encryptedSeed);
+          walletId: '0', accountId: 'a0', encryptedEntropy: encryptedEntropy);
       var wallet2 = LeaderWallet(
-          walletId: '1', accountId: 'a1', encryptedSeed: encryptedSeed);
+          walletId: '1', accountId: 'a1', encryptedEntropy: encryptedEntropy);
       await wallets.save(wallet);
       await wallets.save(wallet2);
       var account = Account(accountId: 'a0', name: 'account0', net: Net.Test);
@@ -62,7 +62,7 @@ void main() {
       var newWallet = LeaderWallet(
           walletId: wallet1.walletId,
           accountId: 'a1',
-          encryptedSeed: (wallet1 as LeaderWallet).encryptedSeed);
+          encryptedEntropy: (wallet1 as LeaderWallet).encryptedEntropy);
       await wallets.save(newWallet);
       expect(wallets.primaryIndex.getOne('0'), newWallet);
       expect([for (var wall in wallets.byAccount.getAll('a1')) wall.walletId],
