@@ -15,7 +15,7 @@ void main() {
       expect(
           crypto.encrypt(getBytes('message')),
           jsonDecode(
-              '[104,5,150,120,128,155,63,168,219,101,47,171,235,120,161,239]'));
+              '[151,29,164,109,35,142,34,11,167,80,44,124,16,217,151,119]'));
     });
 
     test('encrypt with 16-byte password', () {
@@ -23,7 +23,7 @@ void main() {
       expect(
           crypto.encrypt(getBytes('message')),
           jsonDecode(
-              '[23,82,75,20,213,2,31,154,151,183,191,37,184,24,155,148]'));
+              '[209,47,94,49,135,107,54,33,165,96,232,58,74,253,138,94]'));
     });
 
     test('encrypt with 24-byte password', () {
@@ -31,7 +31,7 @@ void main() {
       expect(
           crypto.encrypt(getBytes('message')),
           jsonDecode(
-              '[192,113,128,236,177,195,161,66,58,114,188,9,16,216,193,185]'));
+              '[39,107,118,223,235,15,124,40,10,1,6,87,214,237,214,175]'));
     });
 
     test('is two-way', () {
