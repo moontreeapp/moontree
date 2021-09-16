@@ -28,7 +28,7 @@ class SingleWalletGenerationService extends Service {
         encryptedPrivateKey: NoCipher().encrypt(privateKey));
   }
 
-  void makeAndSaveSingleWallet(
+  void makeSaveSingleWallet(
           {required Account account,
           required Uint8List privateKey,
           required bool compressed}) =>
