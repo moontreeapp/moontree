@@ -18,10 +18,11 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
   @override
   List<Object?> get props => [walletId, accountId];
 
-  Wallet(
-      {required this.walletId,
-      required this.accountId,
-      this.cipherType = CipherType.AESCipher});
+  Wallet({
+    required this.walletId,
+    required this.accountId,
+    this.cipherType = CipherType.AESCipher,
+  });
 
   // TODO: can this be part of a join?
   // String get secret => '';

@@ -1,19 +1,9 @@
 // dart run build_runner build
-import 'dart:typed_data';
 
 import 'package:hive/hive.dart';
-import 'package:raven/records/address.dart';
 import 'package:raven/records/wallets/wallet.dart';
-import 'package:raven/records/net.dart';
-import 'package:raven/records/node_exposure.dart';
-import 'package:raven/utils/cipher.dart';
-import 'package:raven/utils/derivation_path.dart';
-import 'package:raven/utils/hex.dart' as hex;
-import 'package:ravencoin/ravencoin.dart' show HDWallet;
-import 'package:bip39/bip39.dart' as bip39;
 
 import '../_type_id.dart';
-import '../cipher_type.dart';
 
 part 'leader.g.dart';
 
@@ -24,15 +14,12 @@ class LeaderWallet extends Wallet {
 
   LeaderWallet({
     required String walletId,
-    required accountId,
+    required String accountId,
     required this.encryptedEntropy,
   }) : super(walletId: walletId, accountId: accountId);
 
   @override
   String toString() => 'LeaderWallet($walletId, $accountId, $encryptedEntropy)';
-
-  @override
-  String get kind => 'HD Wallet';
 
   // @override
   // String get secret => mnemonic;
@@ -81,7 +68,7 @@ class LeaderWallet extends Wallet {
   //       exposure: exposure,
   //       net: net);
   // }
-
-  static String encryptEntropy(String entropy) =>
-      hex.encode(NoCipher().encrypt(hex.decode(entropy)));
+  //
+  //static String encryptEntropy(String entropy) =>
+  //    hex.encode(NoCipher().encrypt(hex.decode(entropy)));
 }
