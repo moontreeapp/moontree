@@ -15,7 +15,7 @@ part 'single.g.dart';
 
 @HiveType(typeId: TypeId.SingleWallet)
 class SingleWallet extends Wallet {
-  @HiveField(2)
+  @HiveField(3)
   final String encryptedWIF;
 
   SingleWallet({

@@ -18,7 +18,8 @@ class SingleWalletGenerationService extends Service {
 
   /// generate random entropy, transform into wallet, get wif.
   String generateRandomWIF() {
-    return 'TODO';
+    // TODO: this does not consider testnet possibility for wallet generation
+    return KPWallet.random().wif!;
     //https://en.bitcoinwiki.org/wiki/Wallet_import_format#Private_key_to_WIF
     //var entropy = bip39.mnemonicToEntropy(bip39.generateMnemonic());
     //HDWallet.fromSeed(hex.encode(randomBytes(16)),

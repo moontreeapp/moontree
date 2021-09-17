@@ -20,4 +20,5 @@ class TypeId {
   static const NodeExposure = 101;
   static const SecurityType = 102;
   static const SettingName = 103;
+  static const CipherType = 104;
 }

@@ -30,6 +30,11 @@ extension AccountHasManyUnspents on Account {
 
 // Joins on Wallet
 
+extension WalletBelongsToCipher on Wallet {
+  // TODO: Can we make a join on wallet through the `ciphers` registry here?
+  // Cipher? get cipher =>
+}
+
 extension WalletBelongsToAccount on Wallet {
   Account? get account => globals.accounts.primaryIndex.getOne(accountId);
 }

@@ -1,7 +1,9 @@
+import 'package:raven/utils/cipher.dart';
 import 'package:ravencoin/ravencoin.dart' show HDWallet;
-import 'package:raven/records/records.dart';
-import 'package:raven/reservoirs/reservoirs.dart';
-import 'package:raven/utils/derivation_path.dart';
+
+import 'package:raven/utils/encrypted_entropy.dart';
+import 'package:raven/utils/seed_wallet.dart';
+import 'package:raven/raven.dart';
 import 'package:raven/services/service.dart';
 
 // derives addresses for leaderwallets
@@ -51,23 +53,46 @@ class LeaderWalletDerivationService extends Service {
               : 0);
     }
     if (gap < 10) {
-      return deriveAddress(leaderWallet, exposureAddresses.length, exposure);
+      return deriveAddress(leaderWallet, exposureAddresses.length,
+          exposure: exposure);
     }
   }
 
+  // Address deriveAddress(
+  //   LeaderWallet wallet,
+  //   int hdIndex,
+  //   NodeExposure exposure,
+  // ) {
+  //   var net = accounts.primaryIndex.getOne(wallet.accountId)!.net;
+  //   return wallet.deriveAddress(net, hdIndex, exposure);
+  // }
   Address deriveAddress(
     LeaderWallet wallet,
-    int hdIndex,
-    NodeExposure exposure,
-  ) {
-    var net = accounts.primaryIndex.getOne(wallet.accountId)!.net;
-    return wallet.deriveAddress(net, hdIndex, exposure);
+    int hdIndex, {
+    exposure = NodeExposure.External,
+  }) {
+    // var encryptedEntropy = EncryptedEntropy(wallet.encryptedEntropy, cipher);
+    // var seedWallet = SeedWallet(encryptedEntropy.seed, wallet.account!.net);
+    var subwallet =
+        getSeedWallet(wallet, cipher).subwallet(hdIndex, exposure: exposure);
+    return Address(
+        scripthash: subwallet.scripthash,
+        address: subwallet.address!,
+        walletId: wallet.walletId,
+        hdIndex: hdIndex,
+        exposure: exposure,
+        net: wallet.account!.net);
+  }
+
+  SeedWallet getSeedWallet(LeaderWallet wallet, Cipher cipher) {
+    var encryptedEntropy = EncryptedEntropy(wallet.encryptedEntropy, cipher);
+    return SeedWallet(encryptedEntropy.seed, wallet.account!.net);
   }
 
   void deriveFirstAddressAndSave(LeaderWallet wallet) {
-    var addrInt = deriveAddress(wallet, 0, NodeExposure.Internal);
+    var addrInt = deriveAddress(wallet, 0, exposure: NodeExposure.Internal);
     addresses.save(addrInt);
-    var addrExt = deriveAddress(wallet, 0, NodeExposure.External);
+    var addrExt = deriveAddress(wallet, 0, exposure: NodeExposure.External);
     addresses.save(addrExt);
   }
 
@@ -81,17 +106,16 @@ class LeaderWalletDerivationService extends Service {
         ? NodeExposure.Internal
         : NodeExposure.External;
     var leaderWallet = wallets.primaryIndex.getOne(walletId)! as LeaderWallet;
+    var seedWallet = getSeedWallet(leaderWallet, cipher);
     var i = 0;
     for (var address in addresses.byWalletExposure.getAll(walletId, exposure)) {
       if (histories.byScripthash.getAll(address.scripthash).isEmpty) {
-        var net = accounts.primaryIndex.getOne(leaderWallet.accountId)!.net;
-        return leaderWallet.deriveWallet(net, i, exposure);
+        return seedWallet.subwallet(i, exposure: exposure);
         //return leaderWallet.deriveWallet(i, exposure); // service
       }
       i = i + 1;
     }
     // this shouldn't happen - if so we should trigger a new batch??
-    var net = accounts.primaryIndex.getOne(leaderWallet.accountId)!.net;
-    return leaderWallet.deriveWallet(net, i, exposure);
+    return seedWallet.subwallet(i, exposure: exposure);
   }
 }
