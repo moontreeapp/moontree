@@ -11,7 +11,6 @@ class SettingsWaiter extends Waiter {
 
   SettingsWaiter(this.settings, this.settingService) : super();
 
-  @override
   void init() {
     listeners.add(settings.changes.listen((List<Change> changes) {
       changes.forEach((change) {

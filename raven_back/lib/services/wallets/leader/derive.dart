@@ -21,17 +21,19 @@ class LeaderWalletDerivationService extends Service {
   ) : super();
 
   /// [Address(walletid=0...),]
-  void maybeDeriveNewAddresses(List<Address> changedAddresses) async {
+  void maybeDeriveNewAddresses(
+      List<Address> changedAddresses, Cipher cipher) async {
     for (var address in changedAddresses) {
       var leaderWallet =
           wallets.primaryIndex.getOne(address.walletId)! as LeaderWallet;
-      maybeSaveNewAddress(leaderWallet, NodeExposure.Internal);
-      maybeSaveNewAddress(leaderWallet, NodeExposure.External);
+      maybeSaveNewAddress(leaderWallet, cipher, NodeExposure.Internal);
+      maybeSaveNewAddress(leaderWallet, cipher, NodeExposure.External);
     }
   }
 
-  void maybeSaveNewAddress(LeaderWallet leaderWallet, NodeExposure exposure) {
-    var newAddress = maybeDeriveNextAddress(leaderWallet, exposure);
+  void maybeSaveNewAddress(
+      LeaderWallet leaderWallet, Cipher cipher, NodeExposure exposure) {
+    var newAddress = maybeDeriveNextAddress(leaderWallet, cipher, exposure);
     if (newAddress != null) {
       addresses.save(newAddress);
     }
@@ -41,6 +43,7 @@ class LeaderWalletDerivationService extends Service {
   /// based upon the idea that we want to retain a gap of empty histories
   Address? maybeDeriveNextAddress(
     LeaderWallet leaderWallet,
+    Cipher cipher,
     NodeExposure exposure,
   ) {
     var gap = 0;
@@ -53,7 +56,7 @@ class LeaderWalletDerivationService extends Service {
               : 0);
     }
     if (gap < 10) {
-      return deriveAddress(leaderWallet, exposureAddresses.length,
+      return deriveAddress(leaderWallet, cipher, exposureAddresses.length,
           exposure: exposure);
     }
   }
@@ -68,6 +71,7 @@ class LeaderWalletDerivationService extends Service {
   // }
   Address deriveAddress(
     LeaderWallet wallet,
+    Cipher cipher,
     int hdIndex, {
     exposure = NodeExposure.External,
   }) {
@@ -89,16 +93,22 @@ class LeaderWalletDerivationService extends Service {
     return SeedWallet(encryptedEntropy.seed, wallet.account!.net);
   }
 
-  void deriveFirstAddressAndSave(LeaderWallet wallet) {
-    var addrInt = deriveAddress(wallet, 0, exposure: NodeExposure.Internal);
+  void deriveFirstAddressAndSave(
+    LeaderWallet wallet,
+    Cipher cipher,
+  ) {
+    var addrInt =
+        deriveAddress(wallet, cipher, 0, exposure: NodeExposure.Internal);
     addresses.save(addrInt);
-    var addrExt = deriveAddress(wallet, 0, exposure: NodeExposure.External);
+    var addrExt =
+        deriveAddress(wallet, cipher, 0, exposure: NodeExposure.External);
     addresses.save(addrExt);
   }
 
   /// returns the next internal or external node missing a history
   HDWallet getNextEmptyWallet(
-    String walletId, [
+    String walletId,
+    Cipher cipher, [
     NodeExposure exposure = NodeExposure.Internal,
   ]) {
     // ensure valid exposure

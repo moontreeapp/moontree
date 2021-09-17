@@ -3,37 +3,41 @@ import 'dart:typed_data';
 import 'package:raven/records/records.dart';
 import 'package:raven/reservoirs/reservoirs.dart';
 import 'package:raven/services/service.dart';
-import 'package:raven/utils/cipher.dart' show NoCipher;
+import 'package:raven/utils/cipher.dart' show Cipher, NoCipher;
+import 'package:raven/utils/encrypted_entropy.dart';
 import 'package:raven/utils/random.dart';
 import 'package:ravencoin/ravencoin.dart'
-    show ECPair, HDWallet, KPWallet, P2PKH, PaymentData;
+    show ECPair, HDWallet, KPWallet, NetworkType, P2PKH, PaymentData;
 import 'package:convert/convert.dart';
 import 'package:bip39/bip39.dart' as bip39;
 
 // generates a single wallet
 class SingleWalletGenerationService extends Service {
   late final WalletReservoir wallets;
+  late final AccountReservoir accounts;
 
-  SingleWalletGenerationService(this.wallets) : super();
+  SingleWalletGenerationService(this.wallets, this.accounts) : super();
 
   /// generate random entropy, transform into wallet, get wif.
-  String generateRandomWIF() {
-    // TODO: this does not consider testnet possibility for wallet generation
-    return KPWallet.random().wif!;
-    //https://en.bitcoinwiki.org/wiki/Wallet_import_format#Private_key_to_WIF
-    //var entropy = bip39.mnemonicToEntropy(bip39.generateMnemonic());
-    //HDWallet.fromSeed(hex.encode(randomBytes(16)),
-    //network: networks[net]!);
+  String generateRandomWIF(NetworkType network) =>
+      KPWallet.random(network).wif!;
+
+  SingleWallet? makeSingleWallet(String accountId, Cipher cipher,
+      {String? wif}) {
+    wif = wif ??
+        generateRandomWIF(accounts.primaryIndex.getOne(accountId)!.network);
+    var encryptedWIF = EncryptedWIF.fromWIF(wif, cipher);
+    if (wallets.primaryIndex.getOne(encryptedWIF.walletId) == null) {
+      return SingleWallet(
+          walletId: encryptedWIF.walletId,
+          accountId: accountId,
+          encryptedWIF: encryptedWIF.encryptedWIF);
+    }
   }
 
-  SingleWallet makeSingleWallet(String accountId, {String? wif}) {
-    wif = wif ?? generateRandomWIF();
-    return SingleWallet(
-        accountId: accountId, encryptedWIF: SingleWallet.encryptWIF(wif));
-  }
-
-  Future<void> makeSaveSingleWallet(String accountId, {String? wif}) async {
-    var singleWallet = makeSingleWallet(accountId, wif: wif);
+  Future<void> makeSaveSingleWallet(String accountId, Cipher cipher,
+      {String? wif}) async {
+    var singleWallet = makeSingleWallet(accountId, cipher, wif: wif);
     if (singleWallet != null) {
       await wallets.save(singleWallet);
     }

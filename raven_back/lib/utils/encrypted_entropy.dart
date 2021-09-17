@@ -13,6 +13,9 @@ class EncryptedEntropy {
 
   EncryptedEntropy(this.encryptedEntropy, this.cipher);
 
+  EncryptedEntropy.fromEntropy(entropy, this.cipher)
+      : encryptedEntropy = encryptEntropy(entropy, cipher);
+
   String get secret => mnemonic;
 
   Uint8List get seed => bip39.mnemonicToSeed(mnemonic);
@@ -29,8 +32,11 @@ class EncryptedEntropy {
   /// is in an account associated with a different network (testnet vs mainnet)
   String get walletId => HDWallet.fromSeed(seed).pubKey;
 
-  String encryptEntropy(String givenEntropy) =>
-      hex.encode(cipher.encrypt(hex.decode(givenEntropy)));
+  //String encryptEntropy(String givenEntropy, {Cipher? givenCipher}) =>
+  //    hex.encode((givenCipher ?? cipher).encrypt(hex.decode(givenEntropy)));
+
+  static String encryptEntropy(String givenEntropy, Cipher givenCipher) =>
+      hex.encode(givenCipher.encrypt(hex.decode(givenEntropy)));
 }
 
 class EncryptedWIF {
@@ -39,13 +45,16 @@ class EncryptedWIF {
 
   EncryptedWIF(this.encryptedWIF, this.cipher);
 
+  EncryptedWIF.fromWIF(wif, this.cipher)
+      : encryptedWIF = encryptWIF(wif, cipher);
+
   String get secret => wif;
 
   String get wif => utf8
       .decode(cipher.decrypt(Uint8List.fromList(utf8.encode(encryptedWIF))));
 
-  String getWalletId() => KPWallet.fromWIF(wif).pubKey!;
+  String get walletId => KPWallet.fromWIF(wif).pubKey!;
 
-  String encryptWIF(String givenWif) =>
-      utf8.decode(cipher.encrypt(Uint8List.fromList(utf8.encode(givenWif))));
+  static String encryptWIF(String givenWif, Cipher givenCipher) => utf8
+      .decode(givenCipher.encrypt(Uint8List.fromList(utf8.encode(givenWif))));
 }

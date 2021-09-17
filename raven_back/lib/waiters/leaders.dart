@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:reservoir/reservoir.dart';
 
 import 'package:raven/records/records.dart';
@@ -24,7 +22,8 @@ class LeadersWaiter extends Waiter {
         change.when(added: (added) {
           var wallet = added.data;
           if (wallet is LeaderWallet) {
-            leaderWalletDerivationService.deriveFirstAddressAndSave(wallet);
+            leaderWalletDerivationService.deriveFirstAddressAndSave(
+                wallet, cipher);
           }
         }, updated: (updated) {
           /* moved account */
