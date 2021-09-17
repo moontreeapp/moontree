@@ -10,6 +10,7 @@ import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/theme/extensions.dart';
+import 'package:raven_mobile/utils/wallet_kind.dart';
 
 //import 'package:flutter_treeview/flutter_treeview.dart';
 /// make our own 2-layer hierarchy view
@@ -155,7 +156,8 @@ class _TechnicalViewState extends State<TechnicalView> {
                       Text(
                           '${wallet.walletId.substring(0, 6)}...${wallet.walletId.substring(wallet.walletId.length - 6, wallet.walletId.length)}',
                           style: Theme.of(context).mono),
-                      Text('${wallet.kind}', style: Theme.of(context).annotate),
+                      Text(walletKind(wallet),
+                          style: Theme.of(context).annotate),
                     ]),
                 IconButton(
                     icon: Icon(Icons.remove_red_eye,

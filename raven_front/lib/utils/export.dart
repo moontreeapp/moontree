@@ -1,4 +1,5 @@
 import 'package:raven/raven.dart';
+import 'package:raven_mobile/utils/wallet_kind.dart';
 
 /// entire file is encrypted
 /// export format:
@@ -24,7 +25,8 @@ Map<String, dynamic> walletsForExport(Account? account) => {
       for (var wallet in account != null ? account.wallets : wallets.data) ...{
         wallet.walletId: {
           'accountId': wallet.accountId,
-          'secret': wallet.secret // private key or seed phrase
+          'secret': wallet.secret, // private key or seed phrase
+          'kind': walletKind(wallet),
         }
       }
     };

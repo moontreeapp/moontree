@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:raven/raven.dart';
+import 'package:raven_mobile/utils/wallet_kind.dart';
 
 class FormatSeed {
   late String format;
@@ -34,6 +35,7 @@ Future<FormatSeed> handleImport(String text, String accountId) async {
     var decodedJSON = json.decode(text) as Map<String, Map<String, dynamic>>;
     if (decodedJSON.containsKey('accounts') &&
         decodedJSON.containsKey('wallets')) {
+      /// create accounts
       for (var entry in decodedJSON['accounts']!.entries) {
         Account account = await accountGenerationService.makeSaveAccount(
             entry.value['name'],
@@ -42,19 +44,13 @@ Future<FormatSeed> handleImport(String text, String accountId) async {
         await settingsService.saveSetting(
             SettingName.Account_Current, account.accountId);
       }
+
+      /// create wallets
       for (var entry in decodedJSON['wallets']!.entries) {
-        // import this wallet into the account it's listed in if it doesn't exist in any accounts already
-        if (entry.value['kind'] == 'HD Wallet') {
-          await leaderWalletGenerationService.makeSaveLeaderWallet(
-            entry.value['accountId'],
-            mnemonic: entry.value['secret'],
-          );
-        } else if (entry.value['kind'] == 'Private Key Wallet') {
-          await singleWalletGenerationService.makeSaveSingleWallet(
-            entry.value['accountId'],
-            wif: entry.value['secret'],
-          );
-        }
+        await walletCreation(entry.value['kind'])(
+          entry.value['accountId'],
+          secret: entry.value['secret'],
+        );
       }
     }
     return FormatSeed('json', 'success');

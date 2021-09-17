@@ -1,4 +1,4 @@
-import 'package:raven_mobile/utils/string.dart';
+import 'package:raven_mobile/utils/transform.dart';
 
 Map<String, String> parseReceiveParams(address) =>
     Uri.parse(address).queryParameters;
@@ -22,7 +22,7 @@ String requestedAsset(Map<String, String> params,
 String verifySatAmount(String amount) {
   var text = amount.split('.')[0];
   var punctuation = ' +-*/|][}{=)(&^%#@!~`<>,?\$\\._';
-  for (var ix in List<int>.generate(punctuation.length, (i) => i + 1)) {
+  for (var ix in enumerate(punctuation)) {
     text = text.replaceAll(punctuation.substring(ix - 1, ix), '');
   }
   if (text == '') {
@@ -36,7 +36,7 @@ String verifySatAmount(String amount) {
 
 String verifyDecAmount(String amount) {
   var punctuation = ' +-*/|][}{=)(&^%#@!~`<>?\$\\_';
-  for (var ix in List<int>.generate(punctuation.length, (i) => i + 1)) {
+  for (var ix in enumerate(punctuation)) {
     amount = amount.replaceAll(punctuation.substring(ix - 1, ix), '');
   }
   if (amount.length > 0) {
