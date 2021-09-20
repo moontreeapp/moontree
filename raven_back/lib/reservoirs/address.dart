@@ -14,10 +14,11 @@ class AddressLocation {
 }
 
 class AddressReservoir extends Reservoir<_ScripthashKey, Address> {
+  final CipherRegistry cipherRegistry;
   late IndexMultiple<_WalletKey, Address> byWallet;
   late IndexMultiple<_WalletExposureKey, Address> byWalletExposure;
 
-  AddressReservoir() : super(_ScripthashKey()) {
+  AddressReservoir(this.cipherRegistry) : super(_ScripthashKey()) {
     byWallet = addIndexMultiple('wallet', _WalletKey());
     byWalletExposure =
         addIndexMultiple('wallet-exposure', _WalletExposureKey());

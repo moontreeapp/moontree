@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:raven/security/cipher_registry.dart';
 import 'package:reservoir/reservoir.dart';
 
 import 'package:raven/reservoirs/reservoirs.dart';
@@ -10,16 +11,17 @@ import 'package:raven/services/services.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 class AddressSubscriptionWaiter extends Waiter {
+  final CipherRegistry cipherRegistry;
   final AddressReservoir addresses;
   final AddressSubscriptionService addressSubscriptionService;
   final LeaderWalletDerivationService leaderWalletDerivationService;
   final Map<String, StreamSubscription> subscriptionHandles = {};
-
   final StreamController<Address> addressesNeedingUpdate = StreamController();
 
   RavenElectrumClient? client;
 
   AddressSubscriptionWaiter(
+    this.cipherRegistry,
     this.addresses,
     this.addressSubscriptionService,
     this.leaderWalletDerivationService,
@@ -40,7 +42,9 @@ class AddressSubscriptionWaiter extends Waiter {
       );
 
       leaderWalletDerivationService.maybeDeriveNewAddresses(
-          changedAddresses, cipher);
+        changedAddresses,
+        cipherRegistry,
+      );
     }));
 
     listeners.add(addresses.changes.listen((List<Change> changes) {

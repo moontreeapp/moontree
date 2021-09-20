@@ -9,17 +9,20 @@ import 'package:raven/security/cipher_aes.dart';
 
 import 'cipher.dart';
 
-const latestCipherType = CipherType.AES;
-
-Map<CipherType, Function> cipherInitializers = {
-  CipherType.None: (Uint8List password) => CipherNone(),
-  CipherType.AES: (Uint8List password) => CipherAES(password),
-};
-
 class CipherRegistry {
   final Map<CipherUpdate, Cipher> ciphers = {};
+  static const latestCipherType = CipherType.AES;
+  final Map<CipherType, Function> cipherInitializers = {
+    CipherType.None: (Uint8List password) => CipherNone(),
+    CipherType.AES: (Uint8List password) => CipherAES(password),
+  };
 
   CipherRegistry();
+
+  Cipher get currentCipher => ciphers[currentCipherUpdate]!;
+
+  CipherUpdate get currentCipherUpdate =>
+      CipherUpdate(latestCipherType, maxPasswordVersion(latestCipherType));
 
   void initCiphers(
     Set<CipherUpdate> currentCipherUpdates,
@@ -50,8 +53,8 @@ class CipherRegistry {
     CipherUpdate cipherUpdate,
     Uint8List password,
   ) {
-    var registered = cipherInitializers[cipherUpdate.cipherType]!(password);
-    ciphers[cipherUpdate] = registered;
-    return registered;
+    ciphers[cipherUpdate] =
+        cipherInitializers[cipherUpdate.cipherType]!(password);
+    return ciphers[cipherUpdate]!;
   }
 }

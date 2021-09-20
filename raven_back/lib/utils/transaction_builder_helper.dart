@@ -2,7 +2,7 @@
 /// assumes leaderwallet
 
 import 'package:raven/raven.dart';
-import 'package:raven/utils/encrypted_entropy.dart';
+import 'package:raven/security/encrypted_entropy.dart';
 import 'package:ravencoin/ravencoin.dart';
 import 'fee.dart';
 
@@ -108,7 +108,8 @@ class TransactionBuilderHelper {
   TransactionBuilder addChangeOutput(TransactionBuilder txb, int change) {
     txb.addOutput(
         leaderWalletDerivationService
-            .getNextEmptyWallet(account.wallets[0].walletId, cipher)
+            .getNextEmptyWallet(account.wallets[0].walletId,
+                cipherRegistry.ciphers[account.wallets[0].cipherUpdate]!)
             .address,
         change);
     return txb;
@@ -117,6 +118,7 @@ class TransactionBuilderHelper {
   TransactionBuilder signEachInput(
       TransactionBuilder txb, List<History> utxos) {
     for (var i = 0; i < utxos.length; i++) {
+      var wallet = utxos[i].address!.wallet as LeaderWallet;
       txb.sign(
           vin: i,
           //keyPair: account
@@ -124,13 +126,13 @@ class TransactionBuilderHelper {
           //    .keyPair);
           keyPair: HDWallet.fromSeed(EncryptedEntropy(
                       (leaderWalletDerivationService.deriveAddress(
-                                  utxos[i].address!.wallet as LeaderWallet,
-                                  cipher,
+                                  wallet,
+                                  cipherRegistry.ciphers[wallet.cipherUpdate]!,
                                   utxos[i].address!.hdIndex,
                                   exposure: utxos[i].address!.exposure)
                               as LeaderWallet)
                           .encryptedEntropy,
-                      cipher)
+                      cipherRegistry.ciphers[wallet.cipherUpdate]!)
                   .seed)
               .keyPair);
     }

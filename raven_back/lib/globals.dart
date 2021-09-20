@@ -1,21 +1,18 @@
-import 'package:raven/records/records.dart';
-import 'package:raven/security/security.dart';
-
 import 'reservoirs/reservoirs.dart';
 import 'services/services.dart';
+import 'security/security.dart';
 import 'waiters/waiters.dart';
 
 // CIPHERS
 
-Map<CipherUpdate, Cipher> ciphers = {};
-//initCiphersWithPassword(ciphers, )
+final CipherRegistry cipherRegistry = CipherRegistry();
 
 // RESERVOIRS
 
 final AccountReservoir accounts = AccountReservoir();
-final AddressReservoir addresses = AddressReservoir();
+final AddressReservoir addresses = AddressReservoir(cipherRegistry);
 final HistoryReservoir histories = HistoryReservoir();
-final WalletReservoir wallets = WalletReservoir();
+final WalletReservoir wallets = WalletReservoir(cipherRegistry);
 final BalanceReservoir balances = BalanceReservoir();
 final ExchangeRateReservoir rates = ExchangeRateReservoir();
 final SettingReservoir settings = SettingReservoir();
@@ -28,8 +25,7 @@ final AccountsService accountService =
 final BalanceService balanceService = BalanceService(balances, histories);
 final AddressSubscriptionService addressSubscriptionService =
     AddressSubscriptionService(balances, histories);
-final RatesService ratesService = RatesService(
-    rates); // really convienent if services could refer to other services...
+final RatesService ratesService = RatesService(rates);
 final LeaderWalletDerivationService leaderWalletDerivationService =
     LeaderWalletDerivationService(accounts, wallets, addresses, histories);
 final SingleWalletService singleWalletService = SingleWalletService(accounts);
@@ -50,22 +46,26 @@ final WalletBalanceWaiter walletBalanceWaiter = WalletBalanceWaiter(
   balanceService,
 );
 final AccountsWaiter accountsWaiter = AccountsWaiter(
+  cipherRegistry,
   accounts,
   wallets,
   leaderWalletGenerationService,
 );
 final LeadersWaiter leadersWaiter = LeadersWaiter(
+  cipherRegistry,
   wallets,
   addresses,
   leaderWalletDerivationService,
 );
 final SinglesWaiter singlesWaiter = SinglesWaiter(
+  cipherRegistry,
   wallets,
   addresses,
   singleWalletService,
 );
 final AddressSubscriptionWaiter addressSubscriptionWaiter =
     AddressSubscriptionWaiter(
+  cipherRegistry,
   addresses,
   addressSubscriptionService,
   leaderWalletDerivationService,

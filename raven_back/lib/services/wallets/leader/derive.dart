@@ -22,12 +22,18 @@ class LeaderWalletDerivationService extends Service {
 
   /// [Address(walletid=0...),]
   void maybeDeriveNewAddresses(
-      List<Address> changedAddresses, Cipher cipher) async {
+      List<Address> changedAddresses, CipherRegistry cipherRegistry) async {
     for (var address in changedAddresses) {
       var leaderWallet =
           wallets.primaryIndex.getOne(address.walletId)! as LeaderWallet;
-      maybeSaveNewAddress(leaderWallet, cipher, NodeExposure.Internal);
-      maybeSaveNewAddress(leaderWallet, cipher, NodeExposure.External);
+      maybeSaveNewAddress(
+          leaderWallet,
+          cipherRegistry.ciphers[leaderWallet.cipherUpdate]!,
+          NodeExposure.Internal);
+      maybeSaveNewAddress(
+          leaderWallet,
+          cipherRegistry.ciphers[leaderWallet.cipherUpdate]!,
+          NodeExposure.External);
     }
   }
 
