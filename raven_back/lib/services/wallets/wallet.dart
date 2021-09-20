@@ -13,13 +13,13 @@ class WalletService extends Service {
       wallets.data.map((wallet) => wallet.cipherUpdate).toSet();
 
   Future<void> createSave({
-    required String humanType,
+    required LingoKey humanTypeKey,
     required String accountId,
     required CipherUpdate cipherUpdate,
     required String secret,
   }) async =>
       WalletCreator(
-        humanType: humanType,
+        humanTypeKey: humanTypeKey,
         accountId: accountId,
         cipherUpdate: cipherUpdate,
         secret: secret,
@@ -27,22 +27,25 @@ class WalletService extends Service {
 }
 
 class WalletCreator {
-  final String humanType;
+  final LingoKey humanTypeKey;
   final String accountId;
   final CipherUpdate cipherUpdate;
   final String secret;
 
   WalletCreator({
-    required this.humanType,
+    required this.humanTypeKey,
     required this.accountId,
     required this.cipherUpdate,
     required this.secret,
   });
 
-  Map walletMap() =>
-      {LeaderWallet: 'HD Wallet', SingleWallet: 'Private Key Wallet'};
+  Map walletMap() => {
+        LeaderWallet: LingoKey.leaderWalletType,
+        SingleWallet: LingoKey.singleWalletType
+      };
 
-  Type walletType(String wallet) => reverseMap(walletMap())[wallet] ?? Wallet;
+  Type walletType(LingoKey humanTypeKey) =>
+      reverseMap(walletMap())[humanTypeKey] ?? Wallet;
 
   Future<void> createSave() async => {
         LeaderWallet: () async =>
@@ -53,5 +56,5 @@ class WalletCreator {
             await singleWalletGenerationService.makeSaveSingleWallet(
                 accountId, cipherRegistry.ciphers[cipherUpdate]!,
                 cipherUpdate: cipherUpdate, wif: secret)
-      }[walletType(humanType)]!();
+      }[walletType(humanTypeKey)]!();
 }

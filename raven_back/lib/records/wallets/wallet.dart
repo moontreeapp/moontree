@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:raven/lingo/lingo.dart';
 import 'package:raven/records/cipher_update.dart';
 import 'package:raven/records/net.dart';
 import 'package:raven/security/security.dart';
@@ -35,4 +36,8 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
   String get humanType => 'Wallet';
 
   String get humanSecretType => 'Secret';
+
+  LingoKey get humanTypeKey => LingoKey.walletType;
+
+  LingoKey get humanSecretTypeKey => LingoKey.walletSecretType;
 }

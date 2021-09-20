@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:raven/raven.dart';
 import 'package:raven/records/cipher_update.dart';
 import 'package:raven/records/wallets/wallet.dart';
 import 'package:raven/security/cipher.dart';
@@ -43,8 +44,14 @@ class LeaderWallet extends Wallet {
       ).wallet;
 
   @override
-  String get humanType => 'HD Wallet';
+  String get humanType => Lingo.english[humanTypeKey]!;
 
   @override
-  String get humanSecretType => 'Mnemonic';
+  String get humanSecretType => Lingo.english[humanSecretTypeKey]!;
+
+  @override
+  LingoKey get humanTypeKey => LingoKey.leaderWalletType;
+
+  @override
+  LingoKey get humanSecretTypeKey => LingoKey.leaderWalletSecretType;
 }

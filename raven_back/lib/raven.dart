@@ -10,3 +10,4 @@ export 'services/services.dart';
 export 'waiters/waiters.dart';
 
 export 'utils/exceptions.dart';
+export 'lingo/lingo.dart';

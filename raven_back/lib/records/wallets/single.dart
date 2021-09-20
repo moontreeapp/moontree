@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:raven/raven.dart';
 import 'package:raven/records/cipher_update.dart';
 import 'package:raven/security/cipher.dart';
 import 'package:raven/security/encrypted_wif.dart';
@@ -41,8 +42,14 @@ class SingleWallet extends Wallet {
       SingleSelfWallet(secret(cipher)).wallet;
 
   @override
-  String get humanType => 'Private Key Wallet';
+  String get humanType => Lingo.english[humanTypeKey]!;
 
   @override
-  String get humanSecretType => 'WIF';
+  String get humanSecretType => Lingo.english[humanSecretTypeKey]!;
+
+  @override
+  LingoKey get humanTypeKey => LingoKey.singleWalletType;
+
+  @override
+  LingoKey get humanSecretTypeKey => LingoKey.singleWalletSecretType;
 }
