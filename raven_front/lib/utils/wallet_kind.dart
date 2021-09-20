@@ -13,10 +13,10 @@ String walletKind(Wallet wallet) => reverseMap(walletMap())[wallet] ?? 'Wallet';
 Function walletCreation(String wallet) =>
     {
       'HD Wallet': (String accountId, {required String secret}) =>
-          leaderWalletGenerationService.makeSaveLeaderWallet(accountId,
+          leaderWalletGenerationService.makeSaveLeaderWallet(accountId, cipher,
               mnemonic: secret),
       'Private Key Wallet': (String accountId, {required String secret}) =>
-          singleWalletGenerationService.makeSaveSingleWallet(accountId,
+          singleWalletGenerationService.makeSaveSingleWallet(accountId, cipher,
               wif: secret)
     }[wallet] ??
     (String accountId, {required String secret}) =>

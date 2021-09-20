@@ -61,6 +61,7 @@ Future<FormatSeed> handleImport(String text, String accountId) async {
   if (bip39.validateMnemonic(text)) {
     await leaderWalletGenerationService.makeSaveLeaderWallet(
       accountId,
+      cipher,
       mnemonic: text,
     );
     return FormatSeed('mnemonic', 'success');

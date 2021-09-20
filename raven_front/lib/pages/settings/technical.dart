@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:raven/raven.dart';
+import 'package:raven/utils/encrypted_entropy.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/theme/extensions.dart';
@@ -100,13 +101,17 @@ class _TechnicalViewState extends State<TechnicalView> {
     //wallets.save(wallet);
     wallets.save(wallet is LeaderWallet
         ? LeaderWallet(
+            walletId: wallet.walletId,
             accountId: account.accountId,
             encryptedEntropy: wallet.encryptedEntropy)
         : wallet is SingleWallet
             ? SingleWallet(
-                accountId: account.accountId, encryptedWIF: wallet.encryptedWIF)
+                walletId: wallet.walletId,
+                accountId: account.accountId,
+                encryptedWIF: wallet.encryptedWIF)
             : SingleWallet(
                 // placeholder for other wallets
+                walletId: wallet.walletId,
                 accountId: account.accountId,
                 encryptedWIF: (wallet as SingleWallet).encryptedWIF));
   }
@@ -168,7 +173,9 @@ class _TechnicalViewState extends State<TechnicalView> {
                             context, '/settings/wallet',
                             arguments: {
                               'address': wallet.walletId,
-                              'secret': wallet.secret,
+                              'secret':
+                                  EncryptedEntropy(wallet.encrypted, cipher)
+                                      .secret,
                               'secretName': wallet is LeaderWallet
                                   ? 'Mnemonic Seed'
                                   : 'Private Key',
