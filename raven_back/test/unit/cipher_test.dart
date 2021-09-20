@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:test/test.dart';
 
-import 'package:raven/utils/cipher.dart';
+import 'package:raven/security/security.dart';
 
 final Uint8List key128 = getBytes('128bit-securekey');
 final Uint8List key192 = getBytes('192bit-securekeymorebits');
@@ -11,7 +11,7 @@ final Uint8List key192 = getBytes('192bit-securekeymorebits');
 void main() {
   group('Cipher', () {
     test('encrypt with 3-byte password', () {
-      var crypto = AESCipher(getBytes('***'));
+      var crypto = CipherAES(getBytes('***'));
       expect(
           crypto.encrypt(getBytes('message')),
           jsonDecode(
@@ -19,7 +19,7 @@ void main() {
     });
 
     test('encrypt with 16-byte password', () {
-      var crypto = AESCipher(key128);
+      var crypto = CipherAES(key128);
       expect(
           crypto.encrypt(getBytes('message')),
           jsonDecode(
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('encrypt with 24-byte password', () {
-      var crypto = AESCipher(key192);
+      var crypto = CipherAES(key192);
       expect(
           crypto.encrypt(getBytes('message')),
           jsonDecode(
@@ -35,7 +35,7 @@ void main() {
     });
 
     test('is two-way', () {
-      var crypto = AESCipher(key128);
+      var crypto = CipherAES(key128);
       var message = getBytes('message');
       var encrypted = crypto.encrypt(message);
       var decrypted = crypto.decrypt(encrypted);
@@ -44,7 +44,7 @@ void main() {
     });
 
     test('works with long messages', () {
-      var crypto = AESCipher(key192);
+      var crypto = CipherAES(key192);
       var message = getBytes('A really long message. ' * 1024);
       var encrypted = crypto.encrypt(message);
       var decrypted = crypto.decrypt(encrypted);

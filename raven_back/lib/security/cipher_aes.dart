@@ -1,34 +1,14 @@
 import 'dart:typed_data';
+
 import 'package:pointycastle/export.dart';
 
-const int DEFAULT_ITERATIONS = 2;
-const int DEFAULT_MEMORY = 16;
-final Uint8List DEFAULT_SALT = getBytes('aeree5Zaeveexooj');
+import 'cipher.dart';
 
-Uint8List getBytes(String key) => Uint8List.fromList(key.codeUnits);
-
-abstract class Cipher {
-  Cipher();
-
-  Uint8List encrypt(Uint8List plainText);
-  Uint8List decrypt(Uint8List cipherText);
-}
-
-class NoCipher implements Cipher {
-  const NoCipher();
-
-  @override
-  Uint8List encrypt(Uint8List plainText) => plainText;
-
-  @override
-  Uint8List decrypt(Uint8List cipherText) => cipherText;
-}
-
-class AESCipher implements Cipher {
+class CipherAES implements Cipher {
   late Uint8List _key; // 32 bytes
   late Uint8List _iv; // 16 bytes
 
-  AESCipher(Uint8List password, {Uint8List? salt}) {
+  CipherAES(Uint8List password, {Uint8List? salt}) {
     var generator = makeKeyGenerator(48, salt);
     var result = generator.process(password);
     assert(result.length == 48);

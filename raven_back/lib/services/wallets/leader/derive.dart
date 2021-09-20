@@ -1,7 +1,7 @@
-import 'package:raven/utils/cipher.dart';
+import 'package:raven/security/cipher.dart';
 import 'package:ravencoin/ravencoin.dart' show HDWallet;
 
-import 'package:raven/utils/encrypted_entropy.dart';
+import 'package:raven/security/encrypted_entropy.dart';
 import 'package:raven/utils/seed_wallet.dart';
 import 'package:raven/raven.dart';
 import 'package:raven/services/service.dart';

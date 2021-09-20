@@ -3,8 +3,8 @@ import 'dart:typed_data';
 import 'package:raven/records/records.dart';
 import 'package:raven/reservoirs/reservoirs.dart';
 import 'package:raven/services/service.dart';
-import 'package:raven/utils/cipher.dart' show Cipher, NoCipher;
-import 'package:raven/utils/encrypted_entropy.dart';
+import 'package:raven/security/cipher.dart' show Cipher, CipherNone;
+import 'package:raven/security/encrypted_wif.dart';
 import 'package:raven/utils/random.dart';
 import 'package:ravencoin/ravencoin.dart'
     show ECPair, HDWallet, KPWallet, NetworkType, P2PKH, PaymentData;
@@ -31,7 +31,7 @@ class SingleWalletGenerationService extends Service {
       return SingleWallet(
           walletId: encryptedWIF.walletId,
           accountId: accountId,
-          encryptedWIF: encryptedWIF.encryptedWIF);
+          encryptedWIF: encryptedWIF.encryptedSecret);
     }
   }
 

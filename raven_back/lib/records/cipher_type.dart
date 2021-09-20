@@ -7,8 +7,8 @@ part 'cipher_type.g.dart';
 @HiveType(typeId: TypeId.CipherType)
 enum CipherType {
   @HiveField(0)
-  NoCipher,
+  CipherNone,
 
   @HiveField(1)
-  AESCipher,
+  CipherAES,
 }

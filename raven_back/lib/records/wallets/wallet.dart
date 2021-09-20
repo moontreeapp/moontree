@@ -20,7 +20,7 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
   Wallet({
     required this.walletId,
     required this.accountId,
-    this.cipherType = CipherType.AESCipher,
+    this.cipherType = CipherType.CipherAES,
   });
 
   String get encrypted;

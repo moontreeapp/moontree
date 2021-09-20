@@ -1,5 +1,5 @@
-import 'package:raven/utils/cipher.dart';
-import 'package:raven/utils/encrypted_entropy.dart';
+import 'package:raven/security/cipher.dart';
+import 'package:raven/security/encrypted_wif.dart';
 import 'package:ravencoin/ravencoin.dart' show KPWallet;
 import 'package:raven/records/records.dart';
 import 'package:raven/reservoirs/reservoirs.dart';

@@ -3,10 +3,10 @@ import 'dart:typed_data';
 import 'package:raven/records/records.dart';
 import 'package:raven/reservoirs/reservoirs.dart';
 import 'package:raven/services/service.dart';
-import 'package:raven/utils/cipher.dart' show AESCipher, Cipher, NoCipher;
+import 'package:raven/security/cipher.dart' show CipherAES, Cipher, CipherNone;
 import 'package:convert/convert.dart';
 import 'package:bip39/bip39.dart' as bip39;
-import 'package:raven/utils/encrypted_entropy.dart';
+import 'package:raven/security/encrypted_entropy.dart';
 
 class LeaderWalletGenerationService extends Service {
   late final WalletReservoir wallets;
@@ -21,7 +21,7 @@ class LeaderWalletGenerationService extends Service {
       return LeaderWallet(
           walletId: encryptedEntropy.walletId,
           accountId: accountId,
-          encryptedEntropy: encryptedEntropy.encryptedEntropy);
+          encryptedEntropy: encryptedEntropy.encryptedSecret);
     }
   }
 

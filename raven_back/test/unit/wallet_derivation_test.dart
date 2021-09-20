@@ -5,7 +5,8 @@ import 'dart:typed_data';
 import 'package:pointycastle/api.dart';
 import 'package:raven/records/node_exposure.dart';
 import 'package:raven/records/wallets/single.dart';
-import 'package:raven/utils/cipher.dart';
+import 'package:raven/security/cipher_none.dart';
+import 'package:raven/security/encrypted_wif.dart';
 import 'package:raven/utils/random.dart';
 import 'package:ravencoin/ravencoin.dart';
 import 'package:test/test.dart';
@@ -22,7 +23,7 @@ final mnemonic =
 final seed = bip39.mnemonicToSeed(mnemonic);
 final entropy = bip39.mnemonicToEntropy(mnemonic);
 
-// TODO: when we switch from NoCipher to AESCipher, we need to encrypt/decrypt
+// TODO: when we switch from CipherNone to CipherAES, we need to encrypt/decrypt
 final encryptedSeed = seed;
 
 KPWallet newKPWallet({
@@ -94,17 +95,20 @@ void main() {
     //var wallet = SingleWallet(
     //    accountId: 'a1',
     //    encryptedPrivateKey:
-    //        NoCipher().encrypt(Uint8List.fromList(hex.decode(privateKey))));
+    //        CipherNone().encrypt(Uint8List.fromList(hex.decode(privateKey))));
     //var wallet =
     //    newKPWallet(privateKey: Uint8List.fromList(hex.decode(privateKey)));
     //var wallet = SingleWallet.fromWIF(
     //    accountId: 'a1',
     //    encryptedPrivateKey:
-    //        NoCipher().encrypt(Uint8List.fromList(hex.decode(privateKey))),
+    //        CipherNone().encrypt(Uint8List.fromList(hex.decode(privateKey))),
     //    wif: 'Kxr9tQED9H44gCmp6HAdmemAzU3n84H3dGkuWTKvE23JgHMW8gct');
+    var ewif = EncryptedWIF(wif, CipherNone());
     var wallet = SingleWallet(
-        accountId: 'a1', encryptedWIF: SingleWallet.encryptWIF(wif));
-    print(wallet.secret);
+        walletId: ewif.walletId,
+        accountId: 'a1',
+        encryptedWIF: ewif.encryptedSecret);
+    print(wallet);
 
     ///print(wallet.privKey);
     ///print(wallet.pubKey);
