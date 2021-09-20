@@ -4,6 +4,7 @@ import 'package:raven/security/cipher.dart' show getBytes;
 import 'package:raven/security/cipher_aes.dart';
 import 'package:raven/security/encrypted_wif.dart';
 
+// WIF derived from 'daring field mesh message behave tenant immense shrimp asthma gadget that mammal'
 var wif = 'L3H4yjsqop3NY4kncJ6WLsyrhjiCRrvn3xw4pztQgP5EiCeLZ23c';
 var cipher = CipherAES(getBytes('password'));
 

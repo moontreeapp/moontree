@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:ravencoin/ravencoin.dart' show KPWallet;
+import 'package:bs58check/bs58check.dart' as bs58;
 
 import 'package:raven/security/cipher.dart';
+import 'package:raven/utils/hex.dart' as hex;
 
 import 'encrypted_wallet_secret.dart';
 
@@ -19,9 +21,8 @@ class EncryptedWIF extends EncryptedWalletSecret {
   @override
   String get walletId => KPWallet.fromWIF(wif).pubKey!;
 
-  String get wif => utf8
-      .decode(cipher.decrypt(Uint8List.fromList(utf8.encode(encryptedSecret))));
+  String get wif => bs58.encode(cipher.decrypt(hex.decode(encryptedSecret)));
 
   static String encryptWIF(String wif, Cipher cipher) =>
-      utf8.decode(cipher.encrypt(Uint8List.fromList(utf8.encode(wif))));
+      hex.encode(cipher.encrypt(Uint8List.fromList(bs58.decode(wif))));
 }
