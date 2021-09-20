@@ -27,14 +27,24 @@ class LeaderWallet extends Wallet {
             cipherUpdate: cipherUpdate);
 
   @override
-  String toString() => 'LeaderWallet($walletId, $accountId, $encryptedEntropy)';
+  String toString() =>
+      'LeaderWallet($walletId, $accountId, $encryptedEntropy, $cipherUpdate)';
 
   @override
   String get encrypted => encryptedEntropy;
+
+  @override
+  String secret(Cipher cipher) => EncryptedEntropy(encrypted, cipher).secret;
 
   @override
   HDWallet seedWallet(Cipher cipher, {Net net = Net.Main}) => SeedWallet(
         EncryptedEntropy(encrypted, cipher).seed,
         net,
       ).wallet;
+
+  @override
+  String get humanType => 'HD Wallet';
+
+  @override
+  String get humanSecretType => 'Mnemonic';
 }

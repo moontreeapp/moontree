@@ -28,5 +28,11 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
 
   String get encrypted;
 
+  String secret(Cipher cipher);
+
   WalletBase seedWallet(Cipher cipher, {Net net = Net.Main});
+
+  String get humanType => 'Wallet';
+
+  String get humanSecretType => 'Secret';
 }

@@ -37,6 +37,7 @@ final AccountGenerationService accountGenerationService =
     AccountGenerationService(accounts);
 final SettingService settingsService = SettingService(settings);
 final HistoryService historyService = HistoryService(histories);
+final WalletService walletService = WalletService(wallets);
 
 // WAITERS
 

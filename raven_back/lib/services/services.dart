@@ -5,6 +5,7 @@ export 'addresses/subscribe.dart';
 export 'histories/histories.dart';
 export 'rates/rates.dart';
 export 'settings/settings.dart';
+export 'wallets/wallet.dart';
 export 'wallets/leader/generate.dart';
 export 'wallets/leader/derive.dart';
 export 'wallets/single/derive.dart';
