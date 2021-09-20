@@ -1,6 +1,4 @@
-Map reverseMap(Map map) => {for (var e in map.entries) e.value: e.key};
-
-//returns a map who's values are altered according to a new map.
+// returns a map who's values are altered according to a new map.
 Map mapMap(Map map, Map mapmap, {bool onKey = false}) => {
       for (var e in map.entries)
         e.key: mapmap[onKey ? e.key : e.value] ?? e.value

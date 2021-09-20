@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:raven/raven.dart';
-import 'package:raven_mobile/utils/wallet_kind.dart';
 
 class FormatSeed {
   late String format;
@@ -47,8 +45,10 @@ Future<FormatSeed> handleImport(String text, String accountId) async {
 
       /// create wallets
       for (var entry in decodedJSON['wallets']!.entries) {
-        await walletCreation(entry.value['kind'])(
-          entry.value['accountId'],
+        await walletService.createSave(
+          humanType: entry.value['humanType'],
+          accountId: entry.value['accountId'],
+          cipherUpdate: CipherUpdate.fromMap(entry.value['cipherUpdate']),
           secret: entry.value['secret'],
         );
       }
@@ -61,7 +61,8 @@ Future<FormatSeed> handleImport(String text, String accountId) async {
   if (bip39.validateMnemonic(text)) {
     await leaderWalletGenerationService.makeSaveLeaderWallet(
       accountId,
-      cipher,
+      cipherRegistry.currentCipher,
+      cipherUpdate: cipherRegistry.currentCipherUpdate,
       mnemonic: text,
     );
     return FormatSeed('mnemonic', 'success');

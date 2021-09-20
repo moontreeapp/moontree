@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:raven/raven.dart';
-import 'package:raven/utils/seed_wallet.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
 import 'package:raven_mobile/components/text.dart';
@@ -26,6 +25,7 @@ class _WalletViewState extends State<WalletView> {
       ToolbarOptions(copy: true, selectAll: true, cut: false, paste: false);
   bool showUSD = false;
   late Wallet wallet;
+  late String address;
 
   void _toggleUSD() {
     setState(() {
@@ -47,16 +47,13 @@ class _WalletViewState extends State<WalletView> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    var wallet = data['secretName'] == 'Mneumonic'
+    wallet = data['secretName'] == 'Mnemonic'
         ? data['wallet'] as LeaderWallet
         : data['wallet'] as SingleWallet;
-    data['address'] = wallet is LeaderWallet
-        ? SeedWallet(EncryptedEntropy(wallet.encrypted, cipher).seed, Net.Main)
-            .wallet
-            .address
-        : SingleSelfWallet(EncryptedWIF(wallet.encrypted, cipher).wif)
-            .wallet
-            .address;
+    address = wallet
+        .seedWallet(cipherRegistry.ciphers[wallet.cipherUpdate]!,
+            net: wallet.account!.net)
+        .address!;
     disabled = Current.walletHoldings(wallet.walletId).length == 0;
     return DefaultTabController(
         length: 3,
@@ -99,11 +96,11 @@ class _WalletViewState extends State<WalletView> {
                   child: Column(children: <Widget>[
                 QrImage(
                     backgroundColor: Colors.white,
-                    data: data['address'],
-                    semanticsLabel: data['address'],
+                    data: address,
+                    semanticsLabel: address,
                     version: QrVersions.auto,
                     size: 200.0),
-                SelectableText(data['address'],
+                SelectableText(address,
                     cursorColor: Colors.grey[850],
                     showCursor: true,
                     style: Theme.of(context).mono,

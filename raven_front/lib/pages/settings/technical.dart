@@ -7,11 +7,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:raven/raven.dart';
-import 'package:raven/utils/encrypted_entropy.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/theme/extensions.dart';
-import 'package:raven_mobile/utils/wallet_kind.dart';
 
 //import 'package:flutter_treeview/flutter_treeview.dart';
 /// make our own 2-layer hierarchy view
@@ -103,17 +101,20 @@ class _TechnicalViewState extends State<TechnicalView> {
         ? LeaderWallet(
             walletId: wallet.walletId,
             accountId: account.accountId,
-            encryptedEntropy: wallet.encryptedEntropy)
+            encryptedEntropy: wallet.encryptedEntropy,
+            cipherUpdate: wallet.cipherUpdate)
         : wallet is SingleWallet
             ? SingleWallet(
                 walletId: wallet.walletId,
                 accountId: account.accountId,
-                encryptedWIF: wallet.encryptedWIF)
+                encryptedWIF: wallet.encryptedWIF,
+                cipherUpdate: wallet.cipherUpdate)
             : SingleWallet(
                 // placeholder for other wallets
                 walletId: wallet.walletId,
                 accountId: account.accountId,
-                encryptedWIF: (wallet as SingleWallet).encryptedWIF));
+                encryptedWIF: (wallet as SingleWallet).encryptedWIF,
+                cipherUpdate: wallet.cipherUpdate));
   }
 
   List<Widget> _deleteIfMany(Account account) => accounts.data.length > 1
@@ -161,8 +162,7 @@ class _TechnicalViewState extends State<TechnicalView> {
                       Text(
                           '${wallet.walletId.substring(0, 6)}...${wallet.walletId.substring(wallet.walletId.length - 6, wallet.walletId.length)}',
                           style: Theme.of(context).mono),
-                      Text(walletKind(wallet),
-                          style: Theme.of(context).annotate),
+                      Text(wallet.humanType, style: Theme.of(context).annotate),
                     ]),
                 IconButton(
                     icon: Icon(Icons.remove_red_eye,
@@ -171,8 +171,9 @@ class _TechnicalViewState extends State<TechnicalView> {
                             context, '/settings/wallet',
                             arguments: {
                               'wallet': wallet,
-                              'secret': walletSecret(wallet),
-                              'secretName': walletSecretName(wallet),
+                              'secret': wallet.secret(
+                                  cipherRegistry.ciphers[wallet.cipherUpdate]!),
+                              'secretName': wallet.humanSecretType,
                             }))
               ])));
 
