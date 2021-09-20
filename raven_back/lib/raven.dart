@@ -5,8 +5,8 @@ export 'joins.dart';
 
 export 'records/records.dart';
 export 'reservoirs/reservoirs.dart';
+export 'security/security.dart';
 export 'services/services.dart';
 export 'waiters/waiters.dart';
 
 export 'utils/exceptions.dart';
-export 'utils/encrypted_entropy.dart';
