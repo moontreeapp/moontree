@@ -2,6 +2,7 @@
 /// assumes leaderwallet
 
 import 'package:raven/raven.dart';
+import 'package:raven/utils/encrypted_entropy.dart';
 import 'package:ravencoin/ravencoin.dart';
 import 'fee.dart';
 
@@ -107,7 +108,7 @@ class TransactionBuilderHelper {
   TransactionBuilder addChangeOutput(TransactionBuilder txb, int change) {
     txb.addOutput(
         leaderWalletDerivationService
-            .getNextEmptyWallet(account.wallets[0].walletId)
+            .getNextEmptyWallet(account.wallets[0].walletId, cipher)
             .address,
         change);
     return txb;
@@ -121,12 +122,16 @@ class TransactionBuilderHelper {
           //keyPair: account
           //    .node(location!.index, exposure: location.exposure)
           //    .keyPair);
-          keyPair: HDWallet.fromSeed(
-                  (leaderWalletDerivationService.deriveAddress(
-                          utxos[i].address!.wallet as LeaderWallet,
-                          utxos[i].address!.hdIndex,
-                          utxos[i].address!.exposure) as LeaderWallet)
-                      .seed)
+          keyPair: HDWallet.fromSeed(EncryptedEntropy(
+                      (leaderWalletDerivationService.deriveAddress(
+                                  utxos[i].address!.wallet as LeaderWallet,
+                                  cipher,
+                                  utxos[i].address!.hdIndex,
+                                  exposure: utxos[i].address!.exposure)
+                              as LeaderWallet)
+                          .encryptedEntropy,
+                      cipher)
+                  .seed)
               .keyPair);
     }
     return txb;
