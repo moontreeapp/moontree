@@ -1,4 +1,10 @@
 import 'package:hive/hive.dart';
+import 'package:raven/security/cipher.dart';
+import 'package:raven/security/encrypted_entropy.dart';
+import 'package:raven/security/encrypted_wif.dart';
+import 'package:raven/utils/seed_wallet.dart';
+import 'package:ravencoin/ravencoin.dart';
+import '../net.dart';
 import 'wallet.dart';
 
 import '../_type_id.dart';
@@ -21,4 +27,7 @@ class SingleWallet extends Wallet {
 
   @override
   String get encrypted => encryptedWIF;
+
+  KPWallet seedWallet(Cipher cipher) =>
+      SingleSelfWallet(EncryptedWIF(encrypted, cipher).wif).wallet;
 }
