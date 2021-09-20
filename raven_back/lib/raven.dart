@@ -9,3 +9,4 @@ export 'services/services.dart';
 export 'waiters/waiters.dart';
 
 export 'utils/exceptions.dart';
+export 'utils/encrypted_entropy.dart';
