@@ -46,7 +46,7 @@ Future<FormatSeed> handleImport(String text, String accountId) async {
       /// create wallets
       for (var entry in decodedJSON['wallets']!.entries) {
         await walletService.createSave(
-          humanType: entry.value['humanType'],
+          humanTypeKey: entry.value['type'],
           accountId: entry.value['accountId'],
           cipherUpdate: CipherUpdate.fromMap(entry.value['cipherUpdate']),
           secret: entry.value['secret'],
