@@ -44,7 +44,8 @@ class _WalletViewState extends State<WalletView> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    disabled = Current.walletHoldings(data['address']).length == 0;
+    data['address'] = data['publicKey']; //derive address from pubkey
+    disabled = Current.walletHoldings(data['publicKey']).length == 0;
     return DefaultTabController(
         length: 3,
         child: Scaffold(
@@ -66,7 +67,7 @@ class _WalletViewState extends State<WalletView> {
           flexibleSpace: Container(
             alignment: Alignment(0.0, -0.5),
             child: Text(
-                '\n\$ ${Current.walletBalanceUSD(data['address']).valueUSD}',
+                '\n\$ ${Current.walletBalanceUSD(data['publicKey']).valueUSD}',
                 style: Theme.of(context).textTheme.headline3),
           ),
           bottom: PreferredSize(
@@ -119,7 +120,7 @@ class _WalletViewState extends State<WalletView> {
                       ? 'Hide ' + data['secretName']
                       : 'Show ' + data['secretName']))
             ]),
-        // holdings, Current.walletHoldings(data['address'])
+        // holdings, Current.walletHoldings(data['publicKey'])
         holdingsView(),
         // transactions histories.byWallet...
         transactionsView()
@@ -128,11 +129,11 @@ class _WalletViewState extends State<WalletView> {
   ListView holdingsView() {
     var rvnHolding = <Widget>[];
     var assetHoldings = <Widget>[];
-    for (var holding in Current.walletHoldings(data['address'])) {
+    for (var holding in Current.walletHoldings(data['publicKey'])) {
       var thisHolding = ListTile(
           onTap: () => Navigator.pushNamed(context,
               holding.security.symbol == 'RVN' ? '/transactions' : '/asset',
-              arguments: {'holding': holding, 'walletId': data['address']}),
+              arguments: {'holding': holding, 'walletId': data['publicKey']}),
           onLongPress: () => _toggleUSD(),
           leading: RavenIcon.assetAvatar(holding.security.symbol),
           title: Text(holding.security.symbol,
@@ -157,7 +158,7 @@ class _WalletViewState extends State<WalletView> {
               onTap: () {},
               title: TextButton.icon(
                   onPressed: () => Navigator.pushNamed(context, '/create',
-                      arguments: {'walletId': data['address']}),
+                      arguments: {'walletId': data['publicKey']}),
                   icon: Icon(Icons.add),
                   label: Text('Create Asset'))));
         }
@@ -183,7 +184,7 @@ class _WalletViewState extends State<WalletView> {
   }
 
   ListView transactionsView() => ListView(children: <Widget>[
-        for (var transaction in Current.walletTransactions(data['address']))
+        for (var transaction in Current.walletTransactions(data['publicKey']))
           ListTile(
               onTap: () => Navigator.pushNamed(context, '/transaction',
                   arguments: {'transaction': transaction}),
@@ -215,7 +216,7 @@ class _WalletViewState extends State<WalletView> {
       onPressed: disabled
           ? () {}
           : () => Navigator.pushNamed(context, '/send',
-              arguments: {'symbol': 'RVN', 'walletId': data['address']}),
+              arguments: {'symbol': 'RVN', 'walletId': data['publicKey']}),
       style: disabled
           ? RavenButtonStyle.disabledCurvedSides(context)
           : RavenButtonStyle.curvedSides);

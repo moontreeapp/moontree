@@ -172,10 +172,8 @@ class _TechnicalViewState extends State<TechnicalView> {
                     onPressed: () => Navigator.pushNamed(
                             context, '/settings/wallet',
                             arguments: {
-                              'address': wallet.walletId,
-                              'secret':
-                                  EncryptedEntropy(wallet.encrypted, cipher)
-                                      .secret,
+                              'publicKey': wallet.walletId,
+                              'secret': walletSecret(wallet),
                               'secretName': wallet is LeaderWallet
                                   ? 'Mnemonic Seed'
                                   : 'Private Key',

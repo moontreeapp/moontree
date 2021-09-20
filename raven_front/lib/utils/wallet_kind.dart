@@ -8,7 +8,8 @@ Map walletMap() =>
 
 Type walletType(String wallet) => walletMap()[wallet] ?? Wallet;
 
-String walletKind(Wallet wallet) => reverseMap(walletMap())[wallet] ?? 'Wallet';
+String walletKind(Wallet wallet) =>
+    reverseMap(walletMap())[wallet.runtimeType] ?? 'Wallet';
 
 Function walletCreation(String wallet) =>
     {
@@ -21,3 +22,10 @@ Function walletCreation(String wallet) =>
     }[wallet] ??
     (String accountId, {required String secret}) =>
         throw Exception('what kind of wallet is this? $wallet');
+
+String walletSecret(Wallet wallet) =>
+    {
+      LeaderWallet: EncryptedEntropy(wallet.encrypted, cipher).secret,
+      SingleWallet: EncryptedWIF(wallet.encrypted, cipher).secret
+    }[wallet.runtimeType] ??
+    '';

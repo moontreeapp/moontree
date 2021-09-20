@@ -26,7 +26,7 @@ Map<String, dynamic> walletsForExport(Account? account) => {
       for (var wallet in account != null ? account.wallets : wallets.data) ...{
         wallet.walletId: {
           'accountId': wallet.accountId,
-          'secret': EncryptedEntropy(wallet.encrypted, cipher).secret,
+          'secret': walletSecret(wallet),
           'kind': walletKind(wallet),
         }
       }
