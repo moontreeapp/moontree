@@ -18,4 +18,7 @@ class LeaderWallet extends Wallet {
 
   @override
   String toString() => 'LeaderWallet($walletId, $accountId, $encryptedEntropy)';
+
+  @override
+  String get encrypted => encryptedEntropy;
 }

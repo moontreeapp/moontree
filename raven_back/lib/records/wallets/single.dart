@@ -18,4 +18,7 @@ class SingleWallet extends Wallet {
 
   @override
   String toString() => 'SingleWallet($walletId, $accountId, $encryptedWIF)';
+
+  @override
+  String get encrypted => encryptedWIF;
 }
