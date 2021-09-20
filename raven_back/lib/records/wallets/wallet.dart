@@ -1,6 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import 'package:raven/records/cipher_type.dart';
+import 'package:raven/records/cipher_update.dart';
+import 'package:raven/records/net.dart';
+import 'package:raven/security/security.dart';
+import 'package:ravencoin/ravencoin.dart';
 
 export 'extended_wallet_base.dart';
 
@@ -12,7 +15,7 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
   final String accountId;
 
   @HiveField(2)
-  final CipherType cipherType;
+  final CipherUpdate cipherUpdate;
 
   @override
   List<Object?> get props => [walletId, accountId];
@@ -20,8 +23,10 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
   Wallet({
     required this.walletId,
     required this.accountId,
-    this.cipherType = CipherType.CipherAES,
+    required this.cipherUpdate,
   });
 
   String get encrypted;
+
+  WalletBase seedWallet(Cipher cipher, {Net net = Net.Main});
 }

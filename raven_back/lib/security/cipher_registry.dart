@@ -1,32 +1,57 @@
 import 'dart:typed_data';
 
-import 'package:equatable/equatable.dart';
+import 'package:quiver/iterables.dart';
 import 'package:raven/records/cipher_type.dart';
+import 'package:raven/records/cipher_update.dart';
 import 'package:raven/security/cipher.dart';
 import 'package:raven/security/cipher_none.dart';
 import 'package:raven/security/cipher_aes.dart';
 
 import 'cipher.dart';
 
-Map<CipherVersion, Cipher> ciphers = {};
-
-class CipherVersion with EquatableMixin {
-  CipherType cipherType;
-  int passwordVersion;
-
-  CipherVersion(this.cipherType, this.passwordVersion);
-
-  @override
-  List<Object?> get props => [cipherType, passwordVersion];
-}
+const latestCipherType = CipherType.AES;
 
 Map<CipherType, Function> cipherInitializers = {
-  CipherType.CipherNone: (Uint8List password) => CipherNone(),
-  CipherType.CipherAES: (Uint8List password) => CipherAES(password),
+  CipherType.None: (Uint8List password) => CipherNone(),
+  CipherType.AES: (Uint8List password) => CipherAES(password),
 };
 
-void initCiphersWithPassword(List<CipherVersion> versions, Uint8List password) {
-  for (var version in versions) {
-    ciphers[version] = cipherInitializers[version.cipherType]!(password);
+class CipherRegistry {
+  final Map<CipherUpdate, Cipher> ciphers = {};
+
+  CipherRegistry();
+
+  void initCiphers(
+    Set<CipherUpdate> currentCipherUpdates,
+    Uint8List password,
+  ) {
+    for (var currentCipherUpdate in currentCipherUpdates) {
+      registerCipher(currentCipherUpdate, password);
+    }
+  }
+
+  int maxPasswordVersion(CipherType latest) =>
+      max([
+        for (var cu in ciphers.keys
+            .where((cipherUpdate) => cipherUpdate.cipherType == latest)
+            .toList())
+          cu.passwordVersion
+      ]) ??
+      0;
+
+  CipherUpdate updatePassword(Uint8List password,
+      {CipherType latest = latestCipherType}) {
+    var update = CipherUpdate(latest, maxPasswordVersion(latest) + 1);
+    registerCipher(update, password);
+    return update;
+  }
+
+  Cipher registerCipher(
+    CipherUpdate cipherUpdate,
+    Uint8List password,
+  ) {
+    var registered = cipherInitializers[cipherUpdate.cipherType]!(password);
+    ciphers[cipherUpdate] = registered;
+    return registered;
   }
 }

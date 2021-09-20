@@ -1,3 +1,5 @@
+import 'package:raven/raven.dart';
+
 class TypeId {
   // Core
   static const Account = 0;
@@ -14,6 +16,7 @@ class TypeId {
   // Misc
   static const Rate = 20;
   static const Security = 21;
+  static const CipherUpdate = 22;
 
   // enums
   static const Net = 100;

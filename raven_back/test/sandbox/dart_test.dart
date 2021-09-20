@@ -1,4 +1,5 @@
 // dart test test/sandbox/dart_test.dart
+import 'package:quiver/iterables.dart';
 import 'package:test/test.dart';
 import 'package:date_format/date_format.dart';
 
@@ -130,5 +131,11 @@ void main() {
     showFormats();
 
     print(formatDate(DateTime(1989, 2, 1), [MM, ' ', d, ', ', yyyy]));
+  });
+
+  test('max on empty', () {
+    print(max([1, 3, 2]));
+    print(max([]));
+    //print([].length == 0 ? null : [].reduce(max));
   });
 }

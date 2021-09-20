@@ -17,20 +17,13 @@ class SeedWallet {
       wallet.derivePath(getDerivationPath(hdIndex, exposure: exposure));
 }
 
+/// on import - verify it's being added to an account matching it's Net
 class SingleSelfWallet {
   String wif;
-  // Net net; // unnecessary
 
   SingleSelfWallet(this.wif);
 
   KPWallet get wallet {
-    var x = 0;
-    var nets = <int, NetworkType>{};
-    for (MapEntry kv in networks.entries) {
-      nets[x] = kv.value;
-      x = x + 1;
-    }
-    // why does this take a map of networks instead of a specific network?
-    return KPWallet.fromWIF(wif, networks: nets);
+    return KPWallet.fromWIF(wif);
   }
 }

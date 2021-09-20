@@ -1,4 +1,5 @@
 /// * (raven listener) created account, empty -> create wallet
+import 'package:raven/security/cipher.dart';
 import 'package:reservoir/reservoir.dart';
 
 import 'package:raven/reservoirs/reservoirs.dart';
@@ -14,7 +15,7 @@ class AccountsWaiter extends Waiter {
       this.accounts, this.wallets, this.leaderWalletGenerationService)
       : super();
 
-  void init() {
+  void init(Cipher cipher) {
     /// this listener implies we have to load everthing backwards if importing:
     /// first balances, histories, addresses, wallets and then accounts
     listeners.add(accounts.changes.listen((List<Change> changes) {

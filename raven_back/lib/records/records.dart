@@ -3,6 +3,7 @@ export 'address.dart';
 export 'balance.dart';
 export 'block.dart';
 export 'cipher_type.dart';
+export 'cipher_update.dart';
 export 'history.dart';
 export 'net.dart';
 export 'node_exposure.dart';

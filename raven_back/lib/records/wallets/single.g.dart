@@ -34,7 +34,7 @@ class SingleWalletAdapter extends TypeAdapter<SingleWallet> {
       ..writeByte(1)
       ..write(obj.accountId)
       ..writeByte(2)
-      ..write(obj.cipherType);
+      ..write(obj.cipherUpdate);
   }
 
   @override

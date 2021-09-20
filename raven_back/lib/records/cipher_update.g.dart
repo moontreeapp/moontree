@@ -1,40 +1,35 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'leader.dart';
+part of 'cipher_update.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
+class CipherUpdateAdapter extends TypeAdapter<CipherUpdate> {
   @override
-  final int typeId = 11;
+  final int typeId = 22;
 
   @override
-  LeaderWallet read(BinaryReader reader) {
+  CipherUpdate read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return LeaderWallet(
-      walletId: fields[0] as String,
-      accountId: fields[1] as String,
-      encryptedEntropy: fields[3] as String,
+    return CipherUpdate(
+      fields[0] as CipherType,
+      fields[1] as int,
     );
   }
 
   @override
-  void write(BinaryWriter writer, LeaderWallet obj) {
+  void write(BinaryWriter writer, CipherUpdate obj) {
     writer
-      ..writeByte(4)
-      ..writeByte(3)
-      ..write(obj.encryptedEntropy)
-      ..writeByte(0)
-      ..write(obj.walletId)
-      ..writeByte(1)
-      ..write(obj.accountId)
       ..writeByte(2)
-      ..write(obj.cipherUpdate);
+      ..writeByte(0)
+      ..write(obj.cipherType)
+      ..writeByte(1)
+      ..write(obj.passwordVersion);
   }
 
   @override
@@ -43,7 +38,7 @@ class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is LeaderWalletAdapter &&
+      other is CipherUpdateAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
