@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:raven/raven.dart';
+import 'package:raven/utils/seed_wallet.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
 import 'package:raven_mobile/components/text.dart';
@@ -23,6 +25,7 @@ class _WalletViewState extends State<WalletView> {
   ToolbarOptions toolbarOptions =
       ToolbarOptions(copy: true, selectAll: true, cut: false, paste: false);
   bool showUSD = false;
+  late Wallet wallet;
 
   void _toggleUSD() {
     setState(() {
@@ -44,8 +47,17 @@ class _WalletViewState extends State<WalletView> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    data['address'] = data['publicKey']; //derive address from pubkey
-    disabled = Current.walletHoldings(data['publicKey']).length == 0;
+    var wallet = data['secretName'] == 'Mneumonic'
+        ? data['wallet'] as LeaderWallet
+        : data['wallet'] as SingleWallet;
+    data['address'] = wallet is LeaderWallet
+        ? SeedWallet(EncryptedEntropy(wallet.encrypted, cipher).seed, Net.Main)
+            .wallet
+            .address
+        : SingleSelfWallet(EncryptedWIF(wallet.encrypted, cipher).wif)
+            .wallet
+            .address;
+    disabled = Current.walletHoldings(wallet.walletId).length == 0;
     return DefaultTabController(
         length: 3,
         child: Scaffold(
@@ -67,7 +79,7 @@ class _WalletViewState extends State<WalletView> {
           flexibleSpace: Container(
             alignment: Alignment(0.0, -0.5),
             child: Text(
-                '\n\$ ${Current.walletBalanceUSD(data['publicKey']).valueUSD}',
+                '\n\$ ${Current.walletBalanceUSD(wallet.walletId).valueUSD}',
                 style: Theme.of(context).textTheme.headline3),
           ),
           bottom: PreferredSize(
@@ -120,7 +132,7 @@ class _WalletViewState extends State<WalletView> {
                       ? 'Hide ' + data['secretName']
                       : 'Show ' + data['secretName']))
             ]),
-        // holdings, Current.walletHoldings(data['publicKey'])
+        // holdings, Current.walletHoldings(wallet.walletId)
         holdingsView(),
         // transactions histories.byWallet...
         transactionsView()
@@ -129,11 +141,11 @@ class _WalletViewState extends State<WalletView> {
   ListView holdingsView() {
     var rvnHolding = <Widget>[];
     var assetHoldings = <Widget>[];
-    for (var holding in Current.walletHoldings(data['publicKey'])) {
+    for (var holding in Current.walletHoldings(wallet.walletId)) {
       var thisHolding = ListTile(
           onTap: () => Navigator.pushNamed(context,
               holding.security.symbol == 'RVN' ? '/transactions' : '/asset',
-              arguments: {'holding': holding, 'walletId': data['publicKey']}),
+              arguments: {'holding': holding, 'walletId': wallet.walletId}),
           onLongPress: () => _toggleUSD(),
           leading: RavenIcon.assetAvatar(holding.security.symbol),
           title: Text(holding.security.symbol,
@@ -158,7 +170,7 @@ class _WalletViewState extends State<WalletView> {
               onTap: () {},
               title: TextButton.icon(
                   onPressed: () => Navigator.pushNamed(context, '/create',
-                      arguments: {'walletId': data['publicKey']}),
+                      arguments: {'walletId': wallet.walletId}),
                   icon: Icon(Icons.add),
                   label: Text('Create Asset'))));
         }
@@ -184,7 +196,7 @@ class _WalletViewState extends State<WalletView> {
   }
 
   ListView transactionsView() => ListView(children: <Widget>[
-        for (var transaction in Current.walletTransactions(data['publicKey']))
+        for (var transaction in Current.walletTransactions(wallet.walletId))
           ListTile(
               onTap: () => Navigator.pushNamed(context, '/transaction',
                   arguments: {'transaction': transaction}),
@@ -216,7 +228,7 @@ class _WalletViewState extends State<WalletView> {
       onPressed: disabled
           ? () {}
           : () => Navigator.pushNamed(context, '/send',
-              arguments: {'symbol': 'RVN', 'walletId': data['publicKey']}),
+              arguments: {'symbol': 'RVN', 'walletId': wallet.walletId}),
       style: disabled
           ? RavenButtonStyle.disabledCurvedSides(context)
           : RavenButtonStyle.curvedSides);

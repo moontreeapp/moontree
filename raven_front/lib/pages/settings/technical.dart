@@ -167,16 +167,12 @@ class _TechnicalViewState extends State<TechnicalView> {
                 IconButton(
                     icon: Icon(Icons.remove_red_eye,
                         color: Theme.of(context).primaryColor),
-                    //label: Text(
-                    //    wallet is LeaderWallet ? 'seed phrase' : 'private key'),
                     onPressed: () => Navigator.pushNamed(
                             context, '/settings/wallet',
                             arguments: {
-                              'publicKey': wallet.walletId,
+                              'wallet': wallet,
                               'secret': walletSecret(wallet),
-                              'secretName': wallet is LeaderWallet
-                                  ? 'Mnemonic Seed'
-                                  : 'Private Key',
+                              'secretName': walletSecretName(wallet),
                             }))
               ])));
 

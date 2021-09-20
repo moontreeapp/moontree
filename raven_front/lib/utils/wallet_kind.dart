@@ -11,6 +11,13 @@ Type walletType(String wallet) => walletMap()[wallet] ?? Wallet;
 String walletKind(Wallet wallet) =>
     reverseMap(walletMap())[wallet.runtimeType] ?? 'Wallet';
 
+String walletSecretName(Wallet wallet) =>
+    mapMap(reverseMap(walletMap()), {
+      'HD Wallet': 'Mnemonic',
+      'Private Key Wallet': 'WIF'
+    })[wallet.runtimeType] ??
+    'Secret';
+
 Function walletCreation(String wallet) =>
     {
       'HD Wallet': (String accountId, {required String secret}) =>
