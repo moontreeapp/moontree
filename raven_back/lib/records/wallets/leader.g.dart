@@ -20,6 +20,7 @@ class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
       walletId: fields[0] as String,
       accountId: fields[1] as String,
       encryptedEntropy: fields[3] as String,
+      cipherUpdate: fields[2] as CipherUpdate,
     );
   }
 

@@ -20,6 +20,7 @@ class SingleWalletAdapter extends TypeAdapter<SingleWallet> {
       walletId: fields[0] as String,
       accountId: fields[1] as String,
       encryptedWIF: fields[3] as String,
+      cipherUpdate: fields[2] as CipherUpdate,
     );
   }
 

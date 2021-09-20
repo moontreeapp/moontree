@@ -1,15 +1,9 @@
-import 'dart:typed_data';
-
 import 'package:raven/records/records.dart';
 import 'package:raven/reservoirs/reservoirs.dart';
 import 'package:raven/services/service.dart';
-import 'package:raven/security/cipher.dart' show Cipher, CipherNone;
+import 'package:raven/security/cipher.dart' show Cipher;
 import 'package:raven/security/encrypted_wif.dart';
-import 'package:raven/utils/random.dart';
-import 'package:ravencoin/ravencoin.dart'
-    show ECPair, HDWallet, KPWallet, NetworkType, P2PKH, PaymentData;
-import 'package:convert/convert.dart';
-import 'package:bip39/bip39.dart' as bip39;
+import 'package:ravencoin/ravencoin.dart' show KPWallet, NetworkType;
 
 // generates a single wallet
 class SingleWalletGenerationService extends Service {
@@ -23,7 +17,7 @@ class SingleWalletGenerationService extends Service {
       KPWallet.random(network).wif!;
 
   SingleWallet? makeSingleWallet(String accountId, Cipher cipher,
-      {String? wif}) {
+      {required CipherUpdate cipherUpdate, String? wif}) {
     wif = wif ??
         generateRandomWIF(accounts.primaryIndex.getOne(accountId)!.network);
     var encryptedWIF = EncryptedWIF.fromWIF(wif, cipher);
@@ -31,13 +25,15 @@ class SingleWalletGenerationService extends Service {
       return SingleWallet(
           walletId: encryptedWIF.walletId,
           accountId: accountId,
-          encryptedWIF: encryptedWIF.encryptedSecret);
+          encryptedWIF: encryptedWIF.encryptedSecret,
+          cipherUpdate: cipherUpdate);
     }
   }
 
   Future<void> makeSaveSingleWallet(String accountId, Cipher cipher,
-      {String? wif}) async {
-    var singleWallet = makeSingleWallet(accountId, cipher, wif: wif);
+      {required CipherUpdate cipherUpdate, String? wif}) async {
+    var singleWallet = makeSingleWallet(accountId, cipher,
+        cipherUpdate: cipherUpdate, wif: wif);
     if (singleWallet != null) {
       await wallets.save(singleWallet);
     }
