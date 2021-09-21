@@ -12,19 +12,13 @@
 /// now so that all the UI points to the balances, not the history filters...
 
 import 'package:reservoir/reservoir.dart';
-import 'package:raven/reservoirs/reservoirs.dart';
-import 'package:raven/waiters/waiter.dart';
+
 import 'package:raven/utils/buffer_count_window.dart';
-import 'package:raven/services/services.dart';
+import 'package:raven/raven.dart';
 
-class WalletBalanceWaiter extends Waiter {
-  HistoryReservoir histories;
-  WalletReservoir wallets;
-  BalanceService balanceService;
+import 'waiter.dart';
 
-  WalletBalanceWaiter(this.wallets, this.histories, this.balanceService)
-      : super();
-
+class BalanceWaiter extends Waiter {
   void init() {
     /// new transaction is made / detected:
     /// recalculate affected balance (by security) for that wallet
@@ -32,7 +26,7 @@ class WalletBalanceWaiter extends Waiter {
         .bufferCountTimeout(25, Duration(milliseconds: 50))
         .listen((List<List<Change>> unflattenedChanges) {
       var changes = unflattenedChanges.expand((change) => change);
-      balanceService.saveChangedBalances(changes.toList());
+      services.balances.saveChangedBalances(changes.toList());
     }));
 
     // unlike account balances, no other triggers need to be considered.

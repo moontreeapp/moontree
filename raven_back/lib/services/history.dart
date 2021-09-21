@@ -1,13 +1,7 @@
-import 'package:raven/services/service.dart';
-import 'package:raven/records/records.dart';
-import 'package:raven/reservoirs/reservoirs.dart';
 import 'package:raven/utils/exceptions.dart';
+import 'package:raven/raven.dart';
 
-class HistoryService extends Service {
-  late final HistoryReservoir histories;
-
-  HistoryService(this.histories) : super();
-
+class HistoryService {
   // setter for note value on History record in reservoir
   bool saveNote(String note, {History? history, String? hash}) {
     history ??

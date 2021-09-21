@@ -5,18 +5,15 @@
 
 import 'dart:async';
 
-import 'package:raven/records/records.dart';
-import 'package:raven/reservoirs/reservoirs.dart';
-import 'package:raven/waiters/waiter.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
-class BlockSubscriptionWaiter extends Waiter {
-  final BlockReservoir blocks;
+import 'package:raven/raven.dart';
+import 'waiter.dart';
+
+class BlockWaiter extends Waiter {
   final Map<String, StreamSubscription> subscriptionHandles = {};
 
   RavenElectrumClient? client;
-
-  BlockSubscriptionWaiter(this.blocks) : super();
 
   void init(RavenElectrumClient client) {
     this.client = client;

@@ -1,15 +1,10 @@
 import 'package:reservoir/reservoir.dart';
 
-import 'package:raven/reservoirs/reservoirs.dart';
-import 'package:raven/waiters/waiter.dart';
+import 'package:raven/raven.dart';
 
-class AddressesWaiter extends Waiter {
-  AddressReservoir addresses;
-  HistoryReservoir histories;
+import 'waiter.dart';
 
-  AddressesWaiter(this.addresses, this.histories) : super();
-
-  @override
+class AddressWaiter extends Waiter {
   void init() {
     listeners.add(addresses.changes.listen((List<Change> changes) {
       changes.forEach((change) {

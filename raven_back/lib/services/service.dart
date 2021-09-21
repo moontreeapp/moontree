@@ -1,3 +1,0 @@
-abstract class Service {
-  Service();
-}

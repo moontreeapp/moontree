@@ -1,3 +1,5 @@
+import 'package:raven/security/cipher.dart';
+
 import 'reservoirs/reservoirs.dart';
 import 'records/records.dart';
 import 'globals.dart' as globals;
@@ -31,8 +33,7 @@ extension AccountHasManyUnspents on Account {
 // Joins on Wallet
 
 extension WalletBelongsToCipher on Wallet {
-  // TODO: Can we make a join on wallet through the `ciphers` registry here?
-  // Cipher? get cipher =>
+  Cipher get cipher => globals.cipherRegistry.ciphers[cipherUpdate]!;
 }
 
 extension WalletBelongsToAccount on Wallet {

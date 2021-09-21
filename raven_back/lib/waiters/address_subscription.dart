@@ -1,31 +1,18 @@
 import 'dart:async';
 
-import 'package:raven/security/cipher_registry.dart';
 import 'package:reservoir/reservoir.dart';
 
-import 'package:raven/reservoirs/reservoirs.dart';
-import 'package:raven/records/records.dart';
-import 'package:raven/waiters/waiter.dart';
+import 'package:raven/raven.dart';
 import 'package:raven/utils/buffer_count_window.dart';
-import 'package:raven/services/services.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
+import 'waiter.dart';
+
 class AddressSubscriptionWaiter extends Waiter {
-  final CipherRegistry cipherRegistry;
-  final AddressReservoir addresses;
-  final AddressSubscriptionService addressSubscriptionService;
-  final LeaderWalletDerivationService leaderWalletDerivationService;
   final Map<String, StreamSubscription> subscriptionHandles = {};
   final StreamController<Address> addressesNeedingUpdate = StreamController();
 
   RavenElectrumClient? client;
-
-  AddressSubscriptionWaiter(
-    this.cipherRegistry,
-    this.addresses,
-    this.addressSubscriptionService,
-    this.leaderWalletDerivationService,
-  ) : super();
 
   void init(RavenElectrumClient client) {
     this.client = client;
@@ -34,14 +21,14 @@ class AddressSubscriptionWaiter extends Waiter {
     listeners.add(addressesNeedingUpdate.stream
         .bufferCountTimeout(10, Duration(milliseconds: 50))
         .listen((changedAddresses) async {
-      await addressSubscriptionService.saveScripthashHistoryData(
-        await addressSubscriptionService.getScripthashHistoriesData(
+      await services.addresses.saveScripthashHistoryData(
+        await services.addresses.getScripthashHistoriesData(
           changedAddresses,
           client,
         ),
       );
 
-      leaderWalletDerivationService.maybeDeriveNewAddresses(
+      services.wallets.leaders.maybeDeriveNewAddresses(
         changedAddresses,
         cipherRegistry,
       );

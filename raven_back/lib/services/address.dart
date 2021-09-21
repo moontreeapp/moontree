@@ -1,7 +1,8 @@
 import 'dart:async';
+
 import 'package:quiver/iterables.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
-import 'package:raven/services/service.dart';
+
 import 'package:raven/raven.dart';
 
 class ScripthashHistoryRow {
@@ -32,12 +33,7 @@ class ScripthashHistoriesData {
               e[3] as List<ScripthashUnspent>));
 }
 
-class AddressSubscriptionService extends Service {
-  late final BalanceReservoir balances;
-  late final HistoryReservoir histories;
-
-  AddressSubscriptionService(this.balances, this.histories) : super();
-
+class AddressService {
   Future<ScripthashHistoriesData> getScripthashHistoriesData(
     List<Address> changedAddresses,
     RavenElectrumClient client,

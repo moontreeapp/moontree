@@ -1,12 +1,17 @@
-export 'accounts/accounts.dart';
-export 'accounts/generate.dart';
-export 'accounts/balance.dart';
-export 'addresses/subscribe.dart';
-export 'histories/histories.dart';
-export 'rates/rates.dart';
-export 'settings/settings.dart';
-export 'wallets/wallet.dart';
-export 'wallets/leader/generate.dart';
-export 'wallets/leader/derive.dart';
-export 'wallets/single/derive.dart';
-export 'wallets/single/generate.dart';
+import 'account.dart';
+import 'address.dart';
+import 'balance.dart';
+import 'history.dart';
+import 'rate.dart';
+import 'settings.dart';
+import 'wallet.dart';
+
+class services {
+  static AccountService accounts = AccountService();
+  static AddressService addresses = AddressService();
+  static BalanceService balances = BalanceService();
+  static HistoryService histories = HistoryService();
+  static RateService rates = RateService();
+  static SettingService settings = SettingService();
+  static WalletService wallets = WalletService();
+}

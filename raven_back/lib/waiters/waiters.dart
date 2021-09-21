@@ -1,9 +1,9 @@
-export 'accounts.dart';
+export 'account.dart';
 export 'address_subscription.dart';
-export 'addresses.dart';
-export 'blocks.dart';
-export 'exchange_rate.dart';
-export 'leaders.dart';
-export 'settings.dart';
-export 'singles.dart';
-export 'wallet_balance.dart';
+export 'address.dart';
+export 'block.dart';
+export 'rate.dart';
+export 'leader.dart';
+export 'setting.dart';
+export 'single.dart';
+export 'balance.dart';

@@ -1,24 +1,10 @@
 /// * (raven listener) created account, empty -> create wallet
-import 'package:reservoir/reservoir.dart';
+import 'package:reservoir/reservoir.dart' show Change;
 
-import 'package:raven/reservoirs/reservoirs.dart';
 import 'package:raven/waiters/waiter.dart';
-import 'package:raven/services/services.dart';
-import 'package:raven/security/security.dart';
+import 'package:raven/raven.dart';
 
-class AccountsWaiter extends Waiter {
-  final CipherRegistry cipherRegistry;
-  final AccountReservoir accounts;
-  final WalletReservoir wallets;
-  final LeaderWalletGenerationService leaderWalletGenerationService;
-
-  AccountsWaiter(
-    this.cipherRegistry,
-    this.accounts,
-    this.wallets,
-    this.leaderWalletGenerationService,
-  ) : super();
-
+class AccountWaiter extends Waiter {
   void init() {
     /// this listener implies we have to load everthing backwards if importing:
     /// first balances, histories, addresses, wallets and then accounts
@@ -28,7 +14,7 @@ class AccountsWaiter extends Waiter {
             added: (added) {
               var account = added.data;
               if (wallets.byAccount.getAll(account.accountId).isEmpty) {
-                leaderWalletGenerationService.makeSaveLeaderWallet(
+                services.wallets.leaders.makeSaveLeaderWallet(
                     account.accountId, cipherRegistry.currentCipher,
                     cipherUpdate: cipherRegistry.currentCipherUpdate);
               }

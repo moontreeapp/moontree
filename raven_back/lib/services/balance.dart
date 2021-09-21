@@ -1,18 +1,10 @@
 import 'package:reservoir/change.dart';
 
 import 'package:raven/utils/account_security_pair.dart';
-import 'package:raven/services/service.dart';
-import 'package:raven/records/records.dart';
-import 'package:raven/joins.dart';
-import 'package:raven/reservoirs/reservoirs.dart';
 import 'package:raven/utils/exceptions.dart';
+import 'package:raven/raven.dart';
 
-class BalanceService extends Service {
-  late final BalanceReservoir balances;
-  late final HistoryReservoir histories;
-
-  BalanceService(this.balances, this.histories) : super();
-
+class BalanceService {
   /// Listener Logic //////////////////////////////////////////////////////////
 
   /// Get (sum) the balance for an account-security pair

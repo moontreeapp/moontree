@@ -1,16 +1,21 @@
-import 'package:raven/records/records.dart';
-import 'package:raven/reservoirs/reservoirs.dart';
-import 'package:raven/services/service.dart';
-import 'package:raven/security/cipher.dart' show Cipher;
-import 'package:raven/security/encrypted_wif.dart';
 import 'package:ravencoin/ravencoin.dart' show KPWallet, NetworkType;
 
-// generates a single wallet
-class SingleWalletGenerationService extends Service {
-  late final WalletReservoir wallets;
-  late final AccountReservoir accounts;
+import 'package:raven/security/cipher.dart';
+import 'package:raven/security/encrypted_wif.dart';
+import 'package:raven/raven.dart';
 
-  SingleWalletGenerationService(this.wallets, this.accounts) : super();
+class SingleWalletService {
+  Address toAddress(SingleWallet wallet, Cipher cipher) {
+    var net = accounts.primaryIndex.getOne(wallet.accountId)!.net;
+    var seedWallet =
+        KPWallet.fromWIF(EncryptedWIF(wallet.encryptedWIF, cipher).wif);
+    return Address(
+        scripthash: seedWallet.scripthash,
+        address: seedWallet.address!,
+        walletId: wallet.walletId,
+        hdIndex: 0,
+        net: net);
+  }
 
   /// generate random entropy, transform into wallet, get wif.
   String generateRandomWIF(NetworkType network) =>
