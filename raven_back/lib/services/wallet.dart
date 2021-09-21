@@ -8,8 +8,21 @@ class WalletService {
   final LeaderWalletService leaders = LeaderWalletService();
   final SingleWalletService singles = SingleWalletService();
 
-  Set<CipherUpdate> get getCurrentCipherUpdates =>
-      wallets.data.map((wallet) => wallet.cipherUpdate).toSet();
+  // should return cipherUpdates that must be used with current password...
+  Set<CipherUpdate> get getCurrentCipherUpdates => wallets.data
+      .map((wallet) => wallet.cipherUpdate)
+      .where((cipherUpdate) =>
+          cipherUpdate.passwordVersion ==
+          cipherRegistry.maxGlobalPasswordVersion())
+      .toSet();
+
+  // should return cipherUpdates that must be used with previous password...
+  Set<CipherUpdate> get getPreviousCipherUpdates => wallets.data
+      .map((wallet) => wallet.cipherUpdate)
+      .where((cipherUpdate) =>
+          cipherUpdate.passwordVersion <
+          cipherRegistry.maxGlobalPasswordVersion())
+      .toSet();
 
   Future createSave({
     required LingoKey humanTypeKey,
