@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
 import 'package:raven/utils/validate.dart';
 
-class Login extends StatefulWidget {
+class ChangeResume extends StatefulWidget {
   @override
-  _LoginState createState() => _LoginState();
+  _ChangeResumeState createState() => _ChangeResumeState();
 }
 
-class _LoginState extends State<Login> {
+class _ChangeResumeState extends State<ChangeResume> {
   var password = TextEditingController();
 
   @override
@@ -31,14 +31,16 @@ class _LoginState extends State<Login> {
     );
   }
 
-  AppBar header() =>
-      AppBar(elevation: 2, centerTitle: false, title: Text('Login'));
+  AppBar header() => AppBar(
+      elevation: 2,
+      centerTitle: false,
+      title: Text('Change Password Process Recovery'));
 
   TextButton submitButton() {
     return TextButton.icon(
         onPressed: () => submit(),
         icon: Icon(Icons.login),
-        label: Text('Login',
+        label: Text('Submit',
             style: TextStyle(color: Theme.of(context).primaryColor)));
   }
 
@@ -55,22 +57,20 @@ class _LoginState extends State<Login> {
                 obscureText: true,
                 textInputAction: TextInputAction.done,
                 decoration: InputDecoration(
-                    border: UnderlineInputBorder(), hintText: ('password')),
+                    border: UnderlineInputBorder(),
+                    hintText: ('previous password')),
                 onEditingComplete: () => submit())),
       ],
     );
   }
 
   void submit() {
-    if (verifyPassword(password.text)) {
-      // use password to generate current ciphers
-      cipherRegistry.initCiphers(services.wallets.getCurrentCipherUpdates,
+    if (verifyPreviousPassword(password.text)) {
+      // use password to generate old ciphers
+      cipherRegistry.initCiphers(services.wallets.getPreviousCipherUpdates,
           altPassword: password.text);
-      cipherRegistry.updateWallets();
-      cipherRegistry.cleanupCiphers();
-      Navigator.pushReplacementNamed(context, '/home', arguments: {});
+      successMessage();
     } else {
-      // password didn't match message
       failureMessage();
     }
     setState(() => {});
@@ -80,14 +80,30 @@ class _LoginState extends State<Login> {
     return showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-                title: Text('Login failure'),
-                content: Text('password did not match'),
+                title: Text('Change Password Recovery failure'),
+                content: Text('previous password did not match'),
                 actions: [
                   TextButton(
                       child: Text('ok'),
                       onPressed: () => Navigator.pop(context))
                 ]));
   }
-}
 
-//asdf = fd80cb8b18e1f2b044c8341e9bf79bcb6b66d9490a72bc1d16a65b043700456f
+  Future successMessage() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+                title: Text('Success!'),
+                content:
+                    Text('Previous password matched. Change password recovery '
+                        'process will continue, please enter your current '
+                        'password.'),
+                actions: [
+                  TextButton(
+                      child: Text('ok'),
+                      onPressed: () => Navigator.pushReplacementNamed(
+                          context, '/login',
+                          arguments: {}))
+                ]));
+  }
+}

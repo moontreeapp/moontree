@@ -8,6 +8,7 @@ void main() => runApp(MaterialApp(
     routes: {
       '/': (context) => Loading(),
       '/login': (context) => Login(),
+      '/password/resume': (context) => ChangeResume(),
       '/home': (context) => Home(),
       '/settings': (context) => Settings(),
       '/settings/about': (context) => About(),

@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:raven/raven.dart';
+import 'package:raven/utils/validate.dart';
 
 import 'package:raven_mobile/services/history_mock.dart';
 
@@ -37,8 +38,25 @@ class _LoadingState extends State<Loading> {
 
     // if they have set a password require login,
     if (settings.primaryIndex.getOne(SettingName.Password_SaltedHash) != null) {
-      Future.microtask(() =>
-          Navigator.pushReplacementNamed(context, '/login', arguments: {}));
+      if (interruptedPasswordChange()) {
+        // alert about password change in progress detected...
+        Future.microtask(() => showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                    title: Text('Issue detected'),
+                    content: Text(
+                        'Password-change in progress, please submit your previous password...'),
+                    actions: [
+                      TextButton(
+                          child: Text('ok'),
+                          onPressed: () => Navigator.pushReplacementNamed(
+                              context, '/password/resume',
+                              arguments: {}))
+                    ])));
+      } else {
+        Future.microtask(() =>
+            Navigator.pushReplacementNamed(context, '/login', arguments: {}));
+      }
     } else {
       Future.microtask(() =>
           Navigator.pushReplacementNamed(context, '/home', arguments: {}));
