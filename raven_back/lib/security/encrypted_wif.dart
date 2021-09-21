@@ -12,7 +12,7 @@ import 'encrypted_wallet_secret.dart';
 class EncryptedWIF extends EncryptedWalletSecret {
   EncryptedWIF(encryptedWIF, cipher) : super(encryptedWIF, cipher);
 
-  factory EncryptedWIF.fromWIF(wif, cipher) =>
+  factory EncryptedWIF.fromWIF(String wif, Cipher cipher) =>
       EncryptedWIF(encryptWIF(wif, cipher), cipher);
 
   @override

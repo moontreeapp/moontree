@@ -8,6 +8,10 @@ class WalletService {
   final LeaderWalletService leaders = LeaderWalletService();
   final SingleWalletService singles = SingleWalletService();
 
+  // should return all cipherUpdates
+  Set<CipherUpdate> get getAllCipherUpdates =>
+      wallets.data.map((wallet) => wallet.cipherUpdate).toSet();
+
   // should return cipherUpdates that must be used with current password...
   Set<CipherUpdate> get getCurrentCipherUpdates => wallets.data
       .map((wallet) => wallet.cipherUpdate)

@@ -29,25 +29,7 @@ String hashThis(String saltedPassword) {
 /// there are wallets on an old password version
 bool interruptedPasswordChange() =>
     {
-      for (var cipherUpdate in services.wallets.getCurrentCipherUpdates)
+      for (var cipherUpdate in services.wallets.getAllCipherUpdates)
         cipherUpdate.passwordVersion
     }.length >
     1;
-
-/// there are wallets on a previous CipherType:
-bool interruptedCipherChange() => {
-      for (var cipherUpdate in services.wallets.getCurrentCipherUpdates)
-        if (cipherUpdate.cipherType != CipherRegistry.latestCipherType)
-          cipherUpdate.cipherType
-    }.isNotEmpty;
-
-void handleInterruption() {
-  if (interruptedPasswordChange()) {
-    /// ask for old password, create those ciphers, continue conversion process
-
-  } else if (interruptedCipherChange()) {
-    /// use current password to generate previous ciphertype ciphers  (happens naturally?)
-    /// and convert old wallets to new ciphertype
-
-  }
-}

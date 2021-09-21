@@ -37,6 +37,9 @@ class CipherRegistry {
     password = password ?? Uint8List.fromList(altPassword!.codeUnits);
     for (var currentCipherUpdate in currentCipherUpdates) {
       registerCipher(currentCipherUpdate, password);
+      // how do we know we used the right password?
+      // because the walletId matches?
+      // should we check?
 
       /// do this kind of logic after all ciphers are created:
       //if (currentCipherUpdate.cipherType == latestCipherType) {
@@ -84,31 +87,45 @@ class CipherRegistry {
   }
 
   /// make sure all wallets are on the latest ciphertype and password
-  /// (should be called by whatever called initCiphers)
-  void updateWallets() {
+  Future updateWallets() async {
     for (var wallet in wallets.data) {
       if (wallet.cipherUpdate != currentCipherUpdate) {
         if (wallet is LeaderWallet) {
           var reencrypt = EncryptedEntropy.fromEntropy(
             EncryptedEntropy(wallet.encrypted, wallet.cipher).entropy,
-            ciphers[currentCipherUpdate],
+            ciphers[currentCipherUpdate]!,
           );
           assert(wallet.walletId == reencrypt.walletId);
-          wallets.save(LeaderWallet(
+          await wallets.save(LeaderWallet(
             walletId: reencrypt.walletId,
             accountId: wallet.accountId,
-            encryptedEntropy: reencrypt.encryptedEntropy,
+            encryptedEntropy: reencrypt.encryptedSecret,
+            cipherUpdate: currentCipherUpdate,
+          ));
+        } else if (wallet is SingleWallet) {
+          var reencrypt = EncryptedWIF.fromWIF(
+            EncryptedWIF(wallet.encrypted, wallet.cipher).wif,
+            ciphers[currentCipherUpdate]!,
+          );
+          assert(wallet.walletId == reencrypt.walletId);
+          await wallets.save(SingleWallet(
+            walletId: reencrypt.walletId,
+            accountId: wallet.accountId,
+            encryptedWIF: reencrypt.encryptedSecret,
             cipherUpdate: currentCipherUpdate,
           ));
         }
       }
     }
+
+    /// completed successfully
+    //assert(services.wallets.getPreviousCipherUpdates.isEmpty);
   }
 
   /// after wallets are updated or verified to be up to date
   /// remove all ciphers that no wallet uses
   void cleanupCiphers() {
-    var walletCipherUpdates = services.wallets.getCurrentCipherUpdates;
+    var walletCipherUpdates = services.wallets.getAllCipherUpdates;
     ciphers.removeWhere((key, value) => !walletCipherUpdates.contains(key));
     if (ciphers.length > 1) {
       // in theory a wallet is not updated ... error?
