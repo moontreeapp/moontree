@@ -1,36 +1,38 @@
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
-import 'globals.dart';
+//import 'globals.dart';
+import 'package:raven/raven.dart';
 
-void initNonElectrumWaiters() {
-  walletBalanceWaiter.init();
-  accountsWaiter.init();
-  leadersWaiter.init();
-  singlesWaiter.init();
-  addressesWaiter.init();
-  exchangeRateWaiter.init();
-  settingsWaiter.init();
+Future<RavenElectrumClient> initNonElectrumWaiters() async {
+  balanceWaiter.init();
+  accountWaiter.init();
+  leaderWaiter.init();
+  singleWaiter.init();
+  addressWaiter.init();
+  await rateWaiter.init();
+  await settingWaiter.init();
+  return settingWaiter.client!;
 }
 
 void deinitElectrumWaiters() {
   addressSubscriptionWaiter.deinit();
-  blockSubscriptionWaiter.deinit();
+  blockWaiter.deinit();
 }
 
 void deinitNonElectrumWaiters() {
-  walletBalanceWaiter.deinit();
-  leadersWaiter.deinit();
-  singlesWaiter.deinit();
-  addressesWaiter.deinit();
-  exchangeRateWaiter.deinit();
-  settingsWaiter.deinit();
+  balanceWaiter.deinit();
+  leaderWaiter.deinit();
+  singleWaiter.deinit();
+  addressWaiter.deinit();
+  rateWaiter.deinit();
+  settingWaiter.deinit();
 }
 
 void initElectrumWaiters(RavenElectrumClient client) {
   addressSubscriptionWaiter.init(client);
-  blockSubscriptionWaiter.init(client);
+  blockWaiter.init(client);
 }
 
-Future init() async {
-  await settingsService.startWaiters();
+Future initWaiters() async {
+  await services.settings.startWaiters();
 }

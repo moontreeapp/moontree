@@ -4,20 +4,20 @@ import 'package:raven/raven.dart';
 
 class SettingService {
 // also used to start
-  void restartWaiters(RavenElectrumClient client) {
+  Future restartWaiters() async {
     deinitElectrumWaiters();
     deinitNonElectrumWaiters();
-    initNonElectrumWaiters();
+    var client = await initNonElectrumWaiters();
     initElectrumWaiters(client);
   }
 
-  void startWaiters(RavenElectrumClient client) {
-    restartWaiters(client);
+  Future startWaiters() async {
+    await restartWaiters();
   }
 
-  void restartElectrumWaiters(RavenElectrumClient client) {
+  void restartElectrumWaiters() {
     deinitElectrumWaiters();
-    initElectrumWaiters(client);
+    initElectrumWaiters(settingWaiter.client!);
   }
 
   Future<RavenElectrumClient> createClient() async {

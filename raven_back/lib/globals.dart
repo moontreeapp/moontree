@@ -1,6 +1,13 @@
+import 'package:raven_electrum_client/raven_electrum_client.dart';
+
 import 'reservoirs/reservoirs.dart';
 import 'security/security.dart';
 import 'waiters/waiters.dart';
+import 'services/services.dart';
+
+// Client
+
+//final RavenElectrumClient ravenClient = await services.settings.createClient();
 
 // CIPHERS
 

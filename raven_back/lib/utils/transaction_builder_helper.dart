@@ -66,7 +66,7 @@ class TransactionBuilderHelper {
     while (!pastInputs.contains(utxos)) {
       anticipatedInputFees =
           anticipatedInputFeeRate * (utxos.isEmpty ? 1 : utxos.length);
-      utxos = balanceService.collectUTXOs(account,
+      utxos = services.balances.collectUTXOs(account,
           amount: sendAmount +
               knownFees +
               anticipatedOutputFee +
@@ -89,7 +89,7 @@ class TransactionBuilderHelper {
     var knownCost = sendAmount + anticipatedOutputFee + knownFees;
     while (total < knownCost) {
       // if its not big enough, we simply add one more input to cover the difference
-      var utxosForExtra = balanceService.collectUTXOs(
+      var utxosForExtra = services.balances.collectUTXOs(
         account,
         amount: knownCost - total,
         except: retutxos, // avoid adding inputs you've already added
@@ -107,7 +107,7 @@ class TransactionBuilderHelper {
 
   TransactionBuilder addChangeOutput(TransactionBuilder txb, int change) {
     txb.addOutput(
-        leaderWalletDerivationService
+        services.wallets.leaders
             .getNextEmptyWallet(account.wallets[0].walletId,
                 cipherRegistry.ciphers[account.wallets[0].cipherUpdate]!)
             .address,
@@ -125,7 +125,7 @@ class TransactionBuilderHelper {
           //    .node(location!.index, exposure: location.exposure)
           //    .keyPair);
           keyPair: HDWallet.fromSeed(EncryptedEntropy(
-                      (leaderWalletDerivationService.deriveAddress(
+                      (services.wallets.leaders.deriveAddress(
                                   wallet,
                                   cipherRegistry.ciphers[wallet.cipherUpdate]!,
                                   utxos[i].address!.hdIndex,

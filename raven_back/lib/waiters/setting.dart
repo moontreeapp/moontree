@@ -23,8 +23,8 @@ class SettingWaiter extends Waiter {
               if ([SettingName.Electrum_Url, SettingName.Electrum_Port]
                   .contains(setting.name)) {
                 await client?.close();
-                services.settings.restartElectrumWaiters(
-                    client = await services.settings.createClient());
+                client = await services.settings.createClient();
+                services.settings.restartElectrumWaiters();
               }
 
               // When password changes, replace the cipher registry objects
