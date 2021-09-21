@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
 import 'package:raven/raven.dart';
+
 import 'package:raven_mobile/services/history_mock.dart';
 
 class Loading extends StatefulWidget {
@@ -19,7 +21,7 @@ class _LoadingState extends State<Loading> {
   Future setup() async {
     var hiveInit = HiveInitializer(init: (dbDir) => Hive.initFlutter());
     await hiveInit.setUp();
-    await init();
+    await initWaiters();
     if (accounts.data.isEmpty) {
       MockHistories().init();
       await setupAccounts();
