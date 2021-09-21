@@ -122,7 +122,7 @@ class _TechnicalViewState extends State<TechnicalView> {
           IconButton(
               onPressed: () async {
                 // doesn't delete immediately - not working until indicies work right
-                await accountService.removeAccount(account.accountId);
+                await services.accounts.removeAccount(account.accountId);
               },
               icon: Icon(Icons.delete))
         ]
@@ -132,10 +132,10 @@ class _TechnicalViewState extends State<TechnicalView> {
         SizedBox(height: 30.0),
         ListTile(
             onTap: () async {
-              var account = await accountGenerationService
-                  .makeSaveAccount(accountName.text);
-              await settingsService.saveSetting(
-                  SettingName.Account_Current, account.accountId);
+              var account =
+                  await services.accounts.makeSaveAccount(accountName.text);
+              await settings.save(Setting(
+                  name: SettingName.Account_Current, value: account.accountId));
               accountName.text = '';
             },
             title: TextField(

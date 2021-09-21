@@ -35,17 +35,17 @@ Future<FormatSeed> handleImport(String text, String accountId) async {
         decodedJSON.containsKey('wallets')) {
       /// create accounts
       for (var entry in decodedJSON['accounts']!.entries) {
-        Account account = await accountGenerationService.makeSaveAccount(
+        Account account = await services.accounts.makeSaveAccount(
             entry.value['name'],
             net: entry.value['net'],
             accountId: entry.key);
-        await settingsService.saveSetting(
-            SettingName.Account_Current, account.accountId);
+        await settings.save(Setting(
+            name: SettingName.Account_Current, value: account.accountId));
       }
 
       /// create wallets
       for (var entry in decodedJSON['wallets']!.entries) {
-        await walletService.createSave(
+        await services.wallets.createSave(
           humanTypeKey: entry.value['type'],
           accountId: entry.value['accountId'],
           cipherUpdate: CipherUpdate.fromMap(entry.value['cipherUpdate']),
@@ -59,7 +59,7 @@ Future<FormatSeed> handleImport(String text, String accountId) async {
   /// is valid mnemonic?
   //var isMnemonic = [12, 18, 24].contains(text.split(' ').length);
   if (bip39.validateMnemonic(text)) {
-    await leaderWalletGenerationService.makeSaveLeaderWallet(
+    await services.wallets.leaders.makeSaveLeaderWallet(
       accountId,
       cipherRegistry.currentCipher,
       cipherUpdate: cipherRegistry.currentCipherUpdate,

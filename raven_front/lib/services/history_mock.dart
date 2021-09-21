@@ -1,3 +1,4 @@
+import 'package:raven/services/address.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:reservoir/reservoir.dart';
 import 'package:raven/raven.dart';
@@ -23,8 +24,7 @@ class MockHistories {
   }
 
   void makeFakeHistories(Address address) async {
-    await addressSubscriptionService
-        .saveScripthashHistoryData(ScripthashHistoriesData(
+    await services.addresses.saveScripthashHistoryData(ScripthashHistoriesData(
       [address.scripthash],
       [
         [ScripthashHistory(height: 0, txHash: 'abc1')]

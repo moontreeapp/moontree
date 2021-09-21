@@ -12,8 +12,8 @@ class Loading extends StatefulWidget {
 
 class _LoadingState extends State<Loading> {
   Future setupAccounts() async {
-    await accountGenerationService.makeSaveAccount('Primary');
-    await accountGenerationService.makeSaveAccount('Savings');
+    await services.accounts.makeSaveAccount('Primary');
+    await services.accounts.makeSaveAccount('Savings');
   }
 
   Future setup() async {

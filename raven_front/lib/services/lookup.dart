@@ -4,35 +4,35 @@ String currentAccountId() => settings.currentAccountId;
 
 Account currentAccount() => accounts.primaryIndex.getOne(currentAccountId())!;
 
-BalanceUSD currentBalanceUSD() => ratesService
-    .accountBalanceUSD(currentAccountId(), holdings: currentHoldings());
+BalanceUSD currentBalanceUSD() =>
+    services.rates.accountBalanceUSD(currentAccountId(), currentHoldings());
 
 Balance currentBalanceRVN() =>
-    balanceService.accountBalance(currentAccount(), RVN);
+    services.balances.accountBalance(currentAccount(), RVN);
 //balances.getOrZero(currentAccountId());
 
 /// our concept of history isn't the same as transactions - must fill out negative values for sent amounts
 List<History> currentTransactions() => currentAccount().histories;
 
 List<Balance> currentHoldings() =>
-    balanceService.accountBalances(currentAccount());
+    services.balances.accountBalances(currentAccount());
 
 List<String> currentHoldingNames() =>
     [for (var balance in currentHoldings()) balance.security.symbol];
 
-Balance currentWalletBalanceRVN(walletId) =>
-    balanceService.walletBalance(wallets.primaryIndex.getOne(walletId)!, RVN);
+Balance currentWalletBalanceRVN(walletId) => services.balances
+    .walletBalance(wallets.primaryIndex.getOne(walletId)!, RVN);
 
 List<Balance> currentWalletHoldings(String walletId) =>
-    balanceService.walletBalances(wallets.primaryIndex.getOne(walletId)!);
+    services.balances.walletBalances(wallets.primaryIndex.getOne(walletId)!);
 
 List<String> currentWalletHoldingNames(String walletId) => [
       for (var balance in currentWalletHoldings(walletId))
         balance.security.symbol
     ];
 
-BalanceUSD currentWalletBalanceUSD(String walletId) => ratesService
-    .accountBalanceUSD(walletId, holdings: currentWalletHoldings(walletId));
+BalanceUSD currentWalletBalanceUSD(String walletId) =>
+    services.rates.accountBalanceUSD(walletId, currentWalletHoldings(walletId));
 
 List<History> currentWalletTransactions(String walletId) =>
     wallets.primaryIndex.getOne(walletId)!.histories;
