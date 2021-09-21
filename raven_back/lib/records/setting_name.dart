@@ -19,4 +19,7 @@ enum SettingName {
 
   @HiveField(3)
   Account_Preferred,
+
+  @HiveField(4)
+  Password_SaltedHash,
 }

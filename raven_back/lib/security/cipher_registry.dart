@@ -6,6 +6,7 @@ import 'package:raven/records/cipher_update.dart';
 import 'package:raven/security/cipher.dart';
 import 'package:raven/security/cipher_none.dart';
 import 'package:raven/security/cipher_aes.dart';
+import 'package:raven/utils/exceptions.dart';
 
 import 'cipher.dart';
 
@@ -25,9 +26,15 @@ class CipherRegistry {
       CipherUpdate(latestCipherType, maxPasswordVersion(latestCipherType));
 
   void initCiphers(
-    Set<CipherUpdate> currentCipherUpdates,
-    Uint8List password,
-  ) {
+    Set<CipherUpdate> currentCipherUpdates, {
+    Uint8List? password,
+    String? altPassword,
+  }) {
+    password ??
+        altPassword ??
+        (() => throw OneOfMultipleMissing(
+            'password or altPassword required to initialize ciphers.'))();
+    password = password ?? Uint8List.fromList(altPassword!.codeUnits);
     for (var currentCipherUpdate in currentCipherUpdates) {
       registerCipher(currentCipherUpdate, password);
     }
