@@ -34,8 +34,15 @@ class _LoadingState extends State<Loading> {
     print('balances: ${balances.data}');
     print('rates: ${rates.data}');
     print('settings: ${settings.data}');
-    Future.microtask(
-        () => Navigator.pushReplacementNamed(context, '/home', arguments: {}));
+
+    // if they have set a password require login,
+    if (settings.primaryIndex.getOne(SettingName.Password_SaltedHash) != null) {
+      Future.microtask(() =>
+          Navigator.pushReplacementNamed(context, '/login', arguments: {}));
+    } else {
+      Future.microtask(() =>
+          Navigator.pushReplacementNamed(context, '/home', arguments: {}));
+    }
 
     /// TODO running into this error on occasion...
     /// E/flutter (12132): [ERROR:flutter/lib/ui/ui_dart_state.cc(209)] Unhandled Exception: SocketException: Connection timed out, host: testnet.rvn.rocks, port: 50002
