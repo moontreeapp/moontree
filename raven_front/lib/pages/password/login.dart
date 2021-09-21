@@ -36,7 +36,7 @@ class _LoginState extends State<Login> {
 
   TextButton submitButton() {
     return TextButton.icon(
-        onPressed: () => submit(),
+        onPressed: () async => await submit(),
         icon: Icon(Icons.login),
         label: Text('Login',
             style: TextStyle(color: Theme.of(context).primaryColor)));
@@ -56,17 +56,17 @@ class _LoginState extends State<Login> {
                 textInputAction: TextInputAction.done,
                 decoration: InputDecoration(
                     border: UnderlineInputBorder(), hintText: ('password')),
-                onEditingComplete: () => submit())),
+                onEditingComplete: () async => await submit())),
       ],
     );
   }
 
-  void submit() {
+  Future submit() async {
     if (verifyPassword(password.text)) {
       // use password to generate current ciphers
       cipherRegistry.initCiphers(services.wallets.getCurrentCipherUpdates,
           altPassword: password.text);
-      cipherRegistry.updateWallets();
+      await cipherRegistry.updateWallets();
       cipherRegistry.cleanupCiphers();
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
     } else {

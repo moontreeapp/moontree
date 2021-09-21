@@ -36,23 +36,24 @@ class _LoadingState extends State<Loading> {
     print('rates: ${rates.data}');
     print('settings: ${settings.data}');
 
+    Future.microtask(() {});
     // if they have set a password require login,
     if (settings.primaryIndex.getOne(SettingName.Password_SaltedHash) != null) {
       if (interruptedPasswordChange()) {
         // alert about password change in progress detected...
-        Future.microtask(() => showDialog(
+        showDialog(
             context: context,
             builder: (BuildContext context) => AlertDialog(
                     title: Text('Issue detected'),
                     content: Text(
-                        'Password-change in progress, please submit your previous password...'),
+                        'Change Password process in progress, please submit your previous password...'),
                     actions: [
                       TextButton(
                           child: Text('ok'),
                           onPressed: () => Navigator.pushReplacementNamed(
                               context, '/password/resume',
                               arguments: {}))
-                    ])));
+                    ]));
       } else {
         Future.microtask(() =>
             Navigator.pushReplacementNamed(context, '/login', arguments: {}));
