@@ -171,8 +171,7 @@ class _TechnicalViewState extends State<TechnicalView> {
                             context, '/settings/wallet',
                             arguments: {
                               'wallet': wallet,
-                              'secret': wallet.secret(
-                                  cipherRegistry.ciphers[wallet.cipherUpdate]!),
+                              'secret': wallet.secret(wallet.cipher),
                               'secretName': wallet.humanSecretType,
                             }))
               ])));

@@ -50,10 +50,8 @@ class _WalletViewState extends State<WalletView> {
     wallet = data['secretName'] == 'Mnemonic'
         ? data['wallet'] as LeaderWallet
         : data['wallet'] as SingleWallet;
-    address = wallet
-        .seedWallet(cipherRegistry.ciphers[wallet.cipherUpdate]!,
-            net: wallet.account!.net)
-        .address!;
+    address =
+        wallet.seedWallet(wallet.cipher, net: wallet.account!.net).address!;
     disabled = Current.walletHoldings(wallet.walletId).length == 0;
     return DefaultTabController(
         length: 3,
