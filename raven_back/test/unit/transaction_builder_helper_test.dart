@@ -5,8 +5,6 @@ import 'package:raven/utils/transaction_builder_helper.dart' as tx;
 import 'package:raven/globals.dart';
 import '../fixtures/fixtures.dart' as fixtures;
 
-// import '../test_artifacts.dart' as tests;
-
 const connectionTimeout = Duration(seconds: 5);
 const aliveTimerDuration = Duration(seconds: 2);
 
