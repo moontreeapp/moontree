@@ -16,13 +16,9 @@ void main() async {
   group('BalanceService', () {
     setUp(fixtures.useFixtureSources);
 
-    test('make BalanceService', () {
-      expect(balanceService is BalanceService, true);
-    });
-
     test('sumBalance (not in mempool)', () {
       expect(
-          balanceService
+          services.balances
               .sumBalance(fixtures.wallets().map['0']!, RVN)
               .confirmed,
           15);
@@ -30,35 +26,35 @@ void main() async {
 
     test('sumBalance (in mempool)', () {
       expect(
-          balanceService
+          services.balances
               .sumBalance(fixtures.wallets().map['0']!, RVN)
               .unconfirmed,
           10);
     });
 
     test('getChangedBalances', () async {
-      var change = await histories.save(newHistory);
-      var changedBalances = balanceService.getChangedBalances([change!]);
+      var change = (await histories.save(newHistory))!;
+      var changedBalances = services.balances.getChangedBalances([change]);
       expect(changedBalances.toList(), [
         Balance(walletId: '0', security: RVN, confirmed: 40, unconfirmed: 10)
       ]);
       // getChangedBalances doesn't save the result
-      expect(balanceService.balances.data, fixtures.balances().map.values);
+      expect(balances.data, fixtures.balances().map.values);
     });
 
     test('saveChangedBalances', () async {
       var change = await histories.save(newHistory);
-      var changedBalances = await balanceService.saveChangedBalances([change!]);
+      var changedBalances =
+          await services.balances.saveChangedBalances([change!]);
       var updatedBalance =
           Balance(walletId: '0', security: RVN, confirmed: 40, unconfirmed: 10);
       expect(changedBalances.toList(), [updatedBalance]);
       // saveChangedBalances saves the result
-      expect(balanceService.balances.primaryIndex.getOne('0', RVN),
-          updatedBalance);
+      expect(balances.primaryIndex.getOne('0', RVN), updatedBalance);
     });
 
     test('sortedUnspents', () {
-      expect(balanceService.sortedUnspents(fixtures.accounts().map['a0']!), [
+      expect(services.balances.sortedUnspents(fixtures.accounts().map['a0']!), [
         fixtures.histories().map['3'], // 10 RVN
         fixtures.histories().map['0'], // 5 RVN
       ]);
@@ -66,11 +62,11 @@ void main() async {
 
     test('collectUTXOs', () {
       var account = fixtures.accounts().map['a0']!;
-      expect(() => balanceService.collectUTXOs(account, amount: 16),
+      expect(() => services.balances.collectUTXOs(account, amount: 16),
           throwsException);
-      expect(balanceService.collectUTXOs(account, amount: 15),
+      expect(services.balances.collectUTXOs(account, amount: 15),
           [fixtures.histories().map['3'], fixtures.histories().map['0']]);
-      expect(balanceService.collectUTXOs(account, amount: 14),
+      expect(services.balances.collectUTXOs(account, amount: 14),
           [fixtures.histories().map['3'], fixtures.histories().map['0']]);
     });
   });

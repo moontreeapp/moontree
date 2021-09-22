@@ -1,6 +1,6 @@
 import 'package:reservoir/change.dart';
 
-import 'package:raven/utils/account_security_pair.dart';
+import 'package:raven/services/wallet_security_pair.dart';
 import 'package:raven/utils/exceptions.dart';
 import 'package:raven/raven.dart';
 
@@ -21,7 +21,7 @@ class BalanceService {
   /// If there is a change in its history, recalculate a balance. Return a list
   /// of such balances.
   Iterable<Balance> getChangedBalances(List<Change> changes) =>
-      uniquePairsFromHistoryChanges(changes)
+      securityPairsFromHistoryChanges(changes)
           .map((pair) => sumBalance(pair.wallet, pair.security));
 
   /// Same as getChangedBalances, but saves them all as well.
