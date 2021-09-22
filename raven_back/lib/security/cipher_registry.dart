@@ -23,7 +23,7 @@ class CipherRegistry {
   Cipher get currentCipher => ciphers[currentCipherUpdate]!;
 
   CipherUpdate get currentCipherUpdate =>
-      CipherUpdate(latestCipherType, maxPasswordVersion());
+      CipherUpdate(latestCipherType, maxGlobalPasswordVersion());
 
   void initCiphers(
     Set<CipherUpdate> currentCipherUpdates, {
@@ -37,42 +37,25 @@ class CipherRegistry {
     password = password ?? Uint8List.fromList(altPassword!.codeUnits);
     for (var currentCipherUpdate in currentCipherUpdates) {
       registerCipher(currentCipherUpdate, password);
-      // how do we know we used the right password?
-      // because the walletId matches?
-      // should we check?
-
-      /// do this kind of logic after all ciphers are created:
-      //if (currentCipherUpdate.cipherType == latestCipherType) {
-      //  // this wallet isn't up to date on the latest CipherType
-      //  // we must create the cipher of the old type and decrypt the wallet
-      //  // then encrypt the wallet using the latest CipherType
-      //  // (passwordVersion should be global (not per CipherType)
-      //  // how else can you compare across ciphertypes?)
-      //  // so if the passwordVersion is the same as max then use the given
-      //  // password to create the cipher for the old ciphertype.
-      //  // however, if the passwordVersion is less, as for the previous
-      //  // password, to create the old cipher, create it, decrypt, encrypt with
-      //  // latest, save on record.
-      //  // currentCipherUpdate.passwordVersion == maxPasswordVersion();
-      //}
     }
   }
 
   int maxGlobalPasswordVersion() =>
       max([for (var cu in ciphers.keys) cu.passwordVersion]) ?? 0;
 
-  int maxPasswordVersion({CipherType latest = latestCipherType}) =>
-      max([
-        for (var cu in ciphers.keys
-            .where((cipherUpdate) => cipherUpdate.cipherType == latest)
-            .toList())
-          cu.passwordVersion
-      ]) ??
-      0;
+  //int maxPasswordVersion({CipherType latest = latestCipherType}) =>
+  //    max([
+  //      for (var cu in ciphers.keys
+  //          .where((cipherUpdate) => cipherUpdate.cipherType == latest)
+  //          .toList())
+  //        cu.passwordVersion
+  //    ]) ??
+  //    0;
 
   CipherUpdate updatePassword(Uint8List password,
       {CipherType latest = latestCipherType}) {
-    var update = CipherUpdate(latest, maxPasswordVersion(latest: latest) + 1);
+    var update =
+        CipherUpdate(latest, maxGlobalPasswordVersion(/*latest: latest*/) + 1);
     registerCipher(update, password);
     return update;
   }

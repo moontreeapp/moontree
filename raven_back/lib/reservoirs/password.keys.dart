@@ -1,22 +1,20 @@
 part of 'password.dart';
 
-int maxPasswordID(Iterable<Password> passwordHashes) =>
-    max([for (var passwordHash in passwordHashes) passwordHash.passwordId]) ??
-    0;
+int maxPasswordID(Iterable<Password> passwords) =>
+    max([for (var password in passwords) password.passwordId]) ?? 0;
 
 class _IdKey extends Key<Password> {
   @override
-  String getKey(Password passwordHash) => passwordHash.passwordId.toString();
+  String getKey(Password password) => password.passwordId.toString();
 }
 
 extension ByIdMethodsForPassword on Index<_IdKey, Password> {
   Password? getOne(int passwordId) =>
       getByKeyStr(passwordId.toString()).firstOrNull;
   Password? getMostRecent() => values
-      .where((passwordHash) => passwordHash.passwordId == maxPasswordID(values))
+      .where((password) => password.passwordId == maxPasswordID(values))
       .firstOrNull;
   Password? getPrevious() => values
-      .where((passwordHash) =>
-          passwordHash.passwordId == maxPasswordID(values) - 1)
+      .where((password) => password.passwordId == maxPasswordID(values) - 1)
       .firstOrNull;
 }

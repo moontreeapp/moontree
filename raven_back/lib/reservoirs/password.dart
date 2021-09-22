@@ -9,5 +9,5 @@ class PasswordReservoir extends Reservoir<_IdKey, Password> {
   PasswordReservoir() : super(_IdKey());
 
   int get maxPasswordID =>
-      max([for (var passwordHash in data) passwordHash.passwordId]) ?? -1;
+      max([for (var password in data) password.passwordId]) ?? -1;
 }
