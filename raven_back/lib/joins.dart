@@ -33,7 +33,7 @@ extension AccountHasManyUnspents on Account {
 // Joins on Wallet
 
 extension WalletBelongsToCipher on Wallet {
-  Cipher get cipher => globals.cipherRegistry.ciphers[cipherUpdate]!;
+  Cipher? get cipher => globals.cipherRegistry.ciphers[cipherUpdate];
 }
 
 extension WalletBelongsToAccount on Wallet {

@@ -124,15 +124,16 @@ class TransactionBuilderHelper {
           //keyPair: account
           //    .node(location!.index, exposure: location.exposure)
           //    .keyPair);
+          // if wallet.cipher != null
+          // ...should we only get the inputs of wallets we can sign for
+          // in the first place...? probably
           keyPair: HDWallet.fromSeed(EncryptedEntropy(
                       (services.wallets.leaders.deriveAddress(
-                                  wallet,
-                                  cipherRegistry.ciphers[wallet.cipherUpdate]!,
-                                  utxos[i].address!.hdIndex,
-                                  exposure: utxos[i].address!.exposure)
-                              as LeaderWallet)
+                              wallet, wallet.cipher, utxos[i].address!.hdIndex,
+                              exposure:
+                                  utxos[i].address!.exposure) as LeaderWallet)
                           .encryptedEntropy,
-                      cipherRegistry.ciphers[wallet.cipherUpdate]!)
+                      wallet.cipher)
                   .seed)
               .keyPair);
     }

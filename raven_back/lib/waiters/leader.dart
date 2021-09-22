@@ -10,9 +10,9 @@ class LeaderWaiter extends Waiter {
       changes.forEach((change) {
         change.when(added: (added) {
           var wallet = added.data;
-          if (wallet is LeaderWallet) {
-            services.wallets.leaders.deriveFirstAddressAndSave(
-                wallet, cipherRegistry.ciphers[wallet.cipherUpdate]!);
+          if (wallet is LeaderWallet && wallet.cipher != null) {
+            services.wallets.leaders
+                .deriveFirstAddressAndSave(wallet, wallet.cipher!);
           }
         }, updated: (updated) {
           /* moved account */

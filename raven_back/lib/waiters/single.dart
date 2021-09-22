@@ -10,11 +10,11 @@ class SingleWaiter extends Waiter {
       changes.forEach((change) {
         change.when(added: (added) {
           var wallet = added.data;
-          if (wallet is SingleWallet) {
-            addresses.save(services.wallets.singles.toAddress(
-                wallet, cipherRegistry.ciphers[wallet.cipherUpdate]!));
-            addresses.save(services.wallets.singles.toAddress(
-                wallet, cipherRegistry.ciphers[wallet.cipherUpdate]!));
+          if (wallet is SingleWallet && wallet.cipher != null) {
+            addresses.save(
+                services.wallets.singles.toAddress(wallet, wallet.cipher!));
+            addresses.save(
+                services.wallets.singles.toAddress(wallet, wallet.cipher!));
           }
         }, updated: (updated) {
           /* moved account */
