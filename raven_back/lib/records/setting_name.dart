@@ -18,8 +18,5 @@ enum SettingName {
   Account_Current,
 
   @HiveField(3)
-  Account_Preferred,
-
-  @HiveField(4)
-  Password_SaltedHash,
+  Account_Preferred
 }

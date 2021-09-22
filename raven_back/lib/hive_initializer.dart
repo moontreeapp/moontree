@@ -45,6 +45,7 @@ class HiveInitializer {
     Hive.registerAdapter(HistoryAdapter());
     Hive.registerAdapter(NetAdapter());
     Hive.registerAdapter(NodeExposureAdapter());
+    Hive.registerAdapter(PasswordHashAdapter());
     Hive.registerAdapter(RateAdapter());
     Hive.registerAdapter(SettingAdapter());
     Hive.registerAdapter(SettingNameAdapter());
@@ -61,6 +62,7 @@ class HiveInitializer {
     await Hive.openBox<Rate>('rates');
     await Hive.openBox<Setting>('settings');
     await Hive.openBox<Wallet>('wallets');
+    await Hive.openBox<PasswordHash>('passwords');
   }
 
   void setSources() {
@@ -71,6 +73,7 @@ class HiveInitializer {
     histories.setSource(HiveSource('histories'));
     rates.setSource(HiveSource('rates'));
     balances.setSource(HiveSource('balances'));
+    balances.setSource(HiveSource('passwords'));
     settings.setSource(
         HiveSource('settings', defaults: SettingReservoir.defaultSettings));
   }

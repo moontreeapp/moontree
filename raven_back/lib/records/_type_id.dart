@@ -1,4 +1,5 @@
 import 'package:raven/raven.dart';
+import 'package:raven/records/password_hash.dart';
 
 class TypeId {
   // Core
@@ -17,6 +18,7 @@ class TypeId {
   static const Rate = 20;
   static const Security = 21;
   static const CipherUpdate = 22;
+  static const PasswordHash = 23;
 
   // enums
   static const Net = 100;

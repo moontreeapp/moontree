@@ -21,8 +21,6 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
         return SettingName.Account_Current;
       case 3:
         return SettingName.Account_Preferred;
-      case 4:
-        return SettingName.Password_SaltedHash;
       default:
         return SettingName.Electrum_Url;
     }
@@ -42,9 +40,6 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
         break;
       case SettingName.Account_Preferred:
         writer.writeByte(3);
-        break;
-      case SettingName.Password_SaltedHash:
-        writer.writeByte(4);
         break;
     }
   }

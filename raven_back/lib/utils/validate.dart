@@ -2,17 +2,33 @@ import 'package:crypto/crypto.dart';
 import 'dart:convert';
 import '../raven.dart';
 
-/// we need to be able to validate the previous password too
-bool verifyPreviousPassword(password) => true;
-//    hashThis(saltPassword(password)) == settings.previousHashedSaltedPassword;
+bool verifyPassword(String password) =>
+    hashThis(saltPassword(password)) ==
+    passwordHashes.primaryIndex.getMostRecent()!.saltedHash;
 
-/// to validate a password
-/// salted hash saved in settings?
-/// compare salted hashed password to it.
-bool verifyPassword(password) =>
-    hashThis(saltPassword(password)) == settings.hashedSaltedPassword;
+bool verifyPreviousPassword(String password) =>
+    hashThis(saltPassword(password)) ==
+    passwordHashes.primaryIndex.getPrevious()!.saltedHash;
 
-/// how is the salt chosen? TODO
+/// returns the number corresponding to how many passwords ago this was used
+/// -1 = not found
+/// 0 = current
+/// 1 = previous
+/// "password was used x passwords ago"
+int verifyUsed(String password) {
+  var x = 0;
+  var hashed = hashThis(saltPassword(password));
+  for (var i = passwordHashes.maxPasswordID(); i >= 0; i--) {
+    if (hashed == passwordHashes.primaryIndex.getOne(i)!.saltedHash) {
+      return x;
+    }
+    x = x + 1;
+  }
+  return -1;
+}
+
+/// how is the salt chosen? TODO:
+/// the problem is salts should be secret, but we have no server... get from OS?
 String getSalt() => 'salt';
 
 String saltPassword(String password) => '${getSalt()}$password';
@@ -25,7 +41,6 @@ String hashThis(String saltedPassword) {
   return digest.toString();
 }
 
-//*on startup detect half changed state and ask for old pass saying, "middle of import detected" *
 /// there are wallets on an old password version
 bool interruptedPasswordChange() =>
     {
