@@ -63,25 +63,26 @@ class _LoginState extends State<Login> {
 
   Future submit() async {
     if (verifyPassword(password.text)) {
-      // use password to generate current ciphers
       cipherRegistry.initCiphers(services.wallets.getCurrentCipherUpdates,
           altPassword: password.text);
       await cipherRegistry.updateWallets();
       cipherRegistry.cleanupCiphers();
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
     } else {
-      // password didn't match message
-      failureMessage();
+      var used = verifyUsed(password.text);
+      failureMessage(used == -1
+          ? 'This password was not recognized to match any previously used passwords.'
+          : 'It seems the provided password was used $used passwords ago.');
     }
     setState(() => {});
   }
 
-  Future failureMessage() {
+  Future failureMessage(String msg) {
     return showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
                 title: Text('Login failure'),
-                content: Text('password did not match'),
+                content: Text('password did not match. $msg'),
                 actions: [
                   TextButton(
                       child: Text('ok'),

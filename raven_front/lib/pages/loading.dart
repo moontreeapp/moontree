@@ -36,11 +36,8 @@ class _LoadingState extends State<Loading> {
     print('rates: ${rates.data}');
     print('settings: ${settings.data}');
 
-    Future.microtask(() {});
-    // if they have set a password require login,
     if (passwordHashes.primaryIndex.getMostRecent() != null) {
       if (interruptedPasswordChange()) {
-        // alert about password change in progress detected...
         showDialog(
             context: context,
             builder: (BuildContext context) => AlertDialog(
