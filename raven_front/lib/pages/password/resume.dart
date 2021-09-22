@@ -1,6 +1,5 @@
 /// allow them to abort this process DONE
 /// - and handle only being able to decrypt some wallets
-/// also create password creation and recreatiuon process - warn them if the password has been used before.
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';

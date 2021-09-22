@@ -59,6 +59,11 @@ class _SettingsState extends State<Settings> {
             title: 'App',
             tiles: [
               SettingsTile(
+                  title: 'Password',
+                  leading: Icon(Icons.password),
+                  onPressed: (BuildContext context) =>
+                      Navigator.pushNamed(context, '/password/change')),
+              SettingsTile(
                   title: 'Currency',
                   leading: Icon(Icons.money),
                   onPressed: (BuildContext context) =>

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:raven_mobile/pages.dart';
+import 'package:raven_mobile/pages/password/change.dart';
 import 'package:raven_mobile/theme/color_gen.dart';
 import 'package:raven_mobile/theme/theme.dart';
 
@@ -7,6 +8,7 @@ void main() => runApp(MaterialApp(
     initialRoute: '/',
     routes: {
       '/': (context) => Loading(),
+      '/password/change': (context) => ChangePassword(),
       '/password/resume': (context) => ChangeResume(),
       '/login': (context) => Login(),
       '/home': (context) => Home(),
