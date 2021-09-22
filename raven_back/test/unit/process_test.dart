@@ -10,18 +10,11 @@ import '../helper/reservoir_changes.dart';
 
 void main() {
   group('addresses', () {
-    late LeaderWalletDerivationService leaderWalletDerivationService;
     late Account account;
     late LeaderWallet wallet;
     setUp(() async {
       fixtures.useFixtureSources();
 
-      leaderWalletDerivationService = LeaderWalletDerivationService(
-        accounts,
-        wallets,
-        addresses,
-        histories,
-      );
       // make account
       account = Account(
         accountId: 'a0',
@@ -40,8 +33,8 @@ void main() {
       expect(addresses.length, 5);
       await reservoirChanges(
           addresses,
-          () => leaderWalletDerivationService.deriveFirstAddressAndSave(
-              wallet, CipherNone()),
+          () => services.wallets.leaders
+              .deriveFirstAddressAndSave(wallet, CipherNone()),
           2);
       expect(addresses.length, 7);
     });

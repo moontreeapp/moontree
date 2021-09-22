@@ -4,6 +4,7 @@ import 'dart:typed_data';
 //import 'package:raven/records/wallets/leader.dart';
 import 'package:pointycastle/api.dart';
 import 'package:raven/records/node_exposure.dart';
+import 'package:raven/records/records.dart';
 import 'package:raven/records/wallets/single.dart';
 import 'package:raven/security/cipher_none.dart';
 import 'package:raven/security/encrypted_wif.dart';
@@ -103,17 +104,14 @@ void main() {
     //    encryptedPrivateKey:
     //        CipherNone().encrypt(Uint8List.fromList(hex.decode(privateKey))),
     //    wif: 'Kxr9tQED9H44gCmp6HAdmemAzU3n84H3dGkuWTKvE23JgHMW8gct');
-    var ewif = EncryptedWIF(wif, CipherNone());
+    var ewif = EncryptedWIF.fromWIF(wif, CipherNone());
     var wallet = SingleWallet(
         walletId: ewif.walletId,
         accountId: 'a1',
+        cipherUpdate: CipherUpdate(CipherType.None, 0),
         encryptedWIF: ewif.encryptedSecret);
-    print(wallet);
-
-    ///print(wallet.privKey);
-    ///print(wallet.pubKey);
-    ///print(wallet.address);
-    ///print(wallet.wif);
+    expect(wallet.encryptedWIF,
+        '803095cb26affefcaaa835ff968d60437c7c764da40cdd1a1b497406c7902a8ac901');
   });
 
   test('generate random private key', () {
@@ -124,8 +122,8 @@ void main() {
     //var wif = 'Kxr9tQED9H44gCmp6HAdmemAzU3n84H3dGkuWTKvE23JgHMW8gct';
     //0xFFFF FFFF FFFF FFFF FFFF FFFF FFFF FFFE
     //  BAAE DCE6 AF48 A03B BFD2 5E8C D036 4140,
-    var rb = randomBytes(32);
-    print(rb);
-    print(hex.encode(rb));
+    var bytes = randomBytes(32);
+    expect(bytes.length, 32);
+    expect(hex.encode(bytes).length, 64);
   });
 }
