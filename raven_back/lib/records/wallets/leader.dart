@@ -21,7 +21,7 @@ class LeaderWallet extends Wallet {
     required String walletId,
     required String accountId,
     required this.encryptedEntropy,
-    required CipherUpdate cipherUpdate,
+    CipherUpdate cipherUpdate = defaultCipherUpdate,
   }) : super(
             walletId: walletId,
             accountId: accountId,

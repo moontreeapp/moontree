@@ -21,7 +21,7 @@ class SingleWallet extends Wallet {
     required String walletId,
     required String accountId,
     required this.encryptedWIF,
-    required CipherUpdate cipherUpdate,
+    CipherUpdate cipherUpdate = defaultCipherUpdate,
   }) : super(
             walletId: walletId,
             accountId: accountId,

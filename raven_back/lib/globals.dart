@@ -13,9 +13,9 @@ final CipherRegistry cipherRegistry = CipherRegistry();
 // RESERVOIRS
 
 final AccountReservoir accounts = AccountReservoir();
-final AddressReservoir addresses = AddressReservoir(cipherRegistry);
+final AddressReservoir addresses = AddressReservoir();
 final HistoryReservoir histories = HistoryReservoir();
-final WalletReservoir wallets = WalletReservoir(cipherRegistry);
+final WalletReservoir wallets = WalletReservoir();
 final BalanceReservoir balances = BalanceReservoir();
 final ExchangeRateReservoir rates = ExchangeRateReservoir();
 final SettingReservoir settings = SettingReservoir();
