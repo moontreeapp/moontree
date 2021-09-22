@@ -2,6 +2,7 @@ import 'account.dart';
 import 'address.dart';
 import 'balance.dart';
 import 'history.dart';
+import 'password_hash.dart';
 import 'rate.dart';
 import 'setting.dart';
 import 'wallet.dart';
@@ -14,4 +15,5 @@ class services {
   static RateService rates = RateService();
   static SettingService settings = SettingService();
   static WalletService wallets = WalletService();
+  static PasswordHashService passwords = PasswordHashService();
 }
