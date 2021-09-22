@@ -8,7 +8,6 @@ class PasswordService {
 
   bool get usingPassword => passwordHashes.primaryIndex.getMostRecent() != null;
 
-  /// there are wallets on an old password version
   bool interruptedPasswordChange() =>
       {
         for (var cipherUpdate in services.wallets.getAllCipherUpdates)
@@ -21,11 +20,11 @@ class PasswordValidationService {
   String getHash(String password, String salt) => services.passwords.create
       .hashThis(services.passwords.create.saltPassword(password, salt));
 
-  bool verifyPassword(String password) =>
+  bool password(String password) =>
       getHash(password, passwordHashes.primaryIndex.getMostRecent()!.salt) ==
       passwordHashes.primaryIndex.getMostRecent()!.saltedHash;
 
-  bool verifyPreviousPassword(String password) =>
+  bool previousPassword(String password) =>
       getHash(password, passwordHashes.primaryIndex.getPrevious()!.salt) ==
       passwordHashes.primaryIndex.getPrevious()!.saltedHash;
 
@@ -34,7 +33,7 @@ class PasswordValidationService {
   /// 0 = current
   /// 1 = previous
   /// "password was used x passwords ago"
-  int verifyUsed(String password) {
+  int previouslyUsed(String password) {
     var m = passwordHashes.maxPasswordID;
     for (var passwordHash in passwordHashes.data) {
       if (getHash(password, passwordHash.salt) == passwordHash.saltedHash) {
