@@ -71,17 +71,20 @@ class _ChangeResumeState extends State<ChangeResume> {
           altPassword: password.text);
       successMessage();
     } else {
-      failureMessage();
+      var used = verifyUsed(password.text);
+      failureMessage(used == -1
+          ? 'This password was not recognized to match any previously used passwords.'
+          : 'It seems the provided password was used $used passwords ago.');
     }
     setState(() => {});
   }
 
-  Future failureMessage() {
+  Future failureMessage(String msg) {
     return showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
                 title: Text('Change Password Recovery failure'),
-                content: Text('previous password did not match'),
+                content: Text('Previous password did not match. $msg'),
                 actions: [
                   TextButton(
                       child: Text('ok'),

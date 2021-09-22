@@ -38,7 +38,7 @@ class _LoadingState extends State<Loading> {
 
     Future.microtask(() {});
     // if they have set a password require login,
-    if (settings.primaryIndex.getOne(SettingName.Password_SaltedHash) != null) {
+    if (passwordHashes.primaryIndex.getMostRecent() != null) {
       if (interruptedPasswordChange()) {
         // alert about password change in progress detected...
         showDialog(
