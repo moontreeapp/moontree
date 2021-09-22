@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
-import 'package:raven/utils/validate.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -62,14 +61,14 @@ class _LoginState extends State<Login> {
   }
 
   Future submit() async {
-    if (verifyPassword(password.text)) {
+    if (services.passwords.verifyPassword(password.text)) {
       cipherRegistry.initCiphers(services.wallets.getCurrentCipherUpdates,
           altPassword: password.text);
       await cipherRegistry.updateWallets();
       cipherRegistry.cleanupCiphers();
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
     } else {
-      var used = verifyUsed(password.text);
+      var used = services.passwords.verifyUsed(password.text);
       failureMessage(used == -1
           ? 'This password was not recognized to match any previously used passwords.'
           : 'It seems the provided password was used $used passwords ago.');

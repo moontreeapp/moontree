@@ -4,8 +4,6 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:raven/raven.dart';
-import 'package:raven/utils/validate.dart';
-
 import 'package:raven_mobile/services/history_mock.dart';
 
 class Loading extends StatefulWidget {
@@ -36,8 +34,8 @@ class _LoadingState extends State<Loading> {
     print('rates: ${rates.data}');
     print('settings: ${settings.data}');
 
-    if (passwordHashes.primaryIndex.getMostRecent() != null) {
-      if (interruptedPasswordChange()) {
+    if (services.passwords.usingPassword) {
+      if (services.passwords.interruptedPasswordChange()) {
         showDialog(
             context: context,
             builder: (BuildContext context) => AlertDialog(

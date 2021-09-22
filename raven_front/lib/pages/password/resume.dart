@@ -2,7 +2,6 @@
 /// also create password creation and recreatiuon process - warn them if the password has been used before.
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
-import 'package:raven/utils/validate.dart';
 
 class ChangeResume extends StatefulWidget {
   @override
@@ -67,13 +66,12 @@ class _ChangeResumeState extends State<ChangeResume> {
   }
 
   void submit() {
-    if (verifyPreviousPassword(password.text)) {
-      // use password to generate old ciphers
+    if (services.passwords.verifyPreviousPassword(password.text)) {
       cipherRegistry.initCiphers(services.wallets.getPreviousCipherUpdates,
           altPassword: password.text);
       successMessage();
     } else {
-      var used = verifyUsed(password.text);
+      var used = services.passwords.verifyUsed(password.text);
       failureMessage(used == -1
           ? 'This password was not recognized to match any previously used passwords.'
           : 'It seems the provided password was used $used passwords ago.');
