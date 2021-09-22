@@ -1,7 +1,9 @@
-/// allow them to abort this process - and handle only being able to decrypt some wallets
+/// allow them to abort this process DONE
+/// - and handle only being able to decrypt some wallets
 /// also create password creation and recreatiuon process - warn them if the password has been used before.
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
+import 'package:raven_mobile/components/styles/buttons.dart';
 
 class ChangeResume extends StatefulWidget {
   @override
@@ -37,13 +39,22 @@ class _ChangeResumeState extends State<ChangeResume> {
       centerTitle: false,
       title: Text('Change Password Process Recovery'));
 
-  TextButton submitButton() {
-    return TextButton.icon(
-        onPressed: () => submit(),
-        icon: Icon(Icons.login),
-        label: Text('Submit',
-            style: TextStyle(color: Theme.of(context).primaryColor)));
-  }
+  Row submitButton() =>
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        TextButton.icon(
+            onPressed: () => Navigator.pushReplacementNamed(context, '/login',
+                arguments: {}),
+            icon: Icon(Icons.login),
+            style: RavenButtonStyle.leftSideCurved,
+            label: Text('Abort Password Change Process',
+                style: TextStyle(color: Theme.of(context).primaryColor))),
+        TextButton.icon(
+            onPressed: () => submit(),
+            icon: Icon(Icons.login),
+            style: RavenButtonStyle.rightSideCurved(context),
+            label: Text('Login',
+                style: TextStyle(color: Theme.of(context).primaryColor))),
+      ]);
 
   Column body() {
     return Column(
