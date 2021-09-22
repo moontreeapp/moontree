@@ -25,7 +25,7 @@ class _WalletViewState extends State<WalletView> {
       ToolbarOptions(copy: true, selectAll: true, cut: false, paste: false);
   bool showUSD = false;
   late Wallet wallet;
-  late String address;
+  late String? address;
 
   void _toggleUSD() {
     setState(() {
@@ -50,8 +50,12 @@ class _WalletViewState extends State<WalletView> {
     wallet = data['secretName'] == 'Mnemonic'
         ? data['wallet'] as LeaderWallet
         : data['wallet'] as SingleWallet;
-    address =
-        wallet.seedWallet(wallet.cipher, net: wallet.account!.net).address!;
+    if (wallet.cipher != null) {
+      address =
+          wallet.seedWallet(wallet.cipher!, net: wallet.account!.net).address!;
+    } else {
+      address = null;
+    }
     disabled = Current.walletHoldings(wallet.walletId).length == 0;
     return DefaultTabController(
         length: 3,
@@ -92,17 +96,22 @@ class _WalletViewState extends State<WalletView> {
             children: <Widget>[
               Center(
                   child: Column(children: <Widget>[
-                QrImage(
-                    backgroundColor: Colors.white,
-                    data: address,
-                    semanticsLabel: address,
-                    version: QrVersions.auto,
-                    size: 200.0),
-                SelectableText(address,
-                    cursorColor: Colors.grey[850],
-                    showCursor: true,
-                    style: Theme.of(context).mono,
-                    toolbarOptions: toolbarOptions),
+                address != null
+                    ? QrImage(
+                        backgroundColor: Colors.white,
+                        data: address!,
+                        semanticsLabel: address!,
+                        version: QrVersions.auto,
+                        size: 200.0)
+                    : Text(
+                        'QR code unrenderable since wallet cannto be decrypted.'),
+                address != null
+                    ? SelectableText(address!,
+                        cursorColor: Colors.grey[850],
+                        showCursor: true,
+                        style: Theme.of(context).mono,
+                        toolbarOptions: toolbarOptions)
+                    : Text('address unknown since wallet cannto be decrypted.'),
                 Text('(address)', style: Theme.of(context).annotate),
               ])),
               SizedBox(height: 30.0),

@@ -1,5 +1,6 @@
 /// allow them to abort this process DONE
-/// - and handle only being able to decrypt some wallets
+/// - and handle only being able to decrypt some wallets:
+///   only matters when trying to backup wallets right?
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';

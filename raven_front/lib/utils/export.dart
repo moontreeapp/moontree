@@ -22,11 +22,12 @@ Map<String, dynamic> accountsForExport(Account? account) => {
 
 Map<String, dynamic> walletsForExport(Account? account) => {
       for (var wallet in account != null ? account.wallets : wallets.data) ...{
-        wallet.walletId: {
-          'accountId': wallet.accountId,
-          'secret': wallet.secret(wallet.cipher),
-          'type': wallet.humanTypeKey,
-          'cipherUpdate': wallet.cipherUpdate.toMap,
-        }
+        if (wallet.cipher != null)
+          wallet.walletId: {
+            'accountId': wallet.accountId,
+            'secret': wallet.secret(wallet.cipher!), // if
+            'type': wallet.humanTypeKey,
+            'cipherUpdate': wallet.cipherUpdate.toMap,
+          }
       }
     };
