@@ -1,12 +1,12 @@
 import 'dart:typed_data';
 
 import 'package:test/test.dart';
-
-import 'package:raven/records/records.dart';
-
-import 'package:raven/reservoirs/wallet.dart';
 import 'package:reservoir/reservoir.dart';
 import 'package:bip39/bip39.dart' as bip39;
+
+import 'package:raven/records/records.dart';
+import 'package:raven/reservoirs/wallet.dart';
+import '../../fixtures/mnemonic.dart';
 
 void main() {
   group('Wallet Reservoir', () {
@@ -23,8 +23,7 @@ void main() {
       var wallet = LeaderWallet(
           walletId: '0',
           accountId: 'a1',
-          encryptedEntropy:
-              bip39.mnemonicToEntropy('00000000000000000000000000000000'));
+          encryptedEntropy: bip39.mnemonicToEntropy(mnemonic));
       await res.save(wallet);
       expect(res.primaryIndex.getOne(wallet.walletId), wallet);
     });

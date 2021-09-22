@@ -10,12 +10,12 @@ part 'cipher_update.g.dart';
 @HiveType(typeId: TypeId.CipherUpdate)
 class CipherUpdate with EquatableMixin {
   @HiveField(0)
-  CipherType cipherType;
+  final CipherType cipherType;
 
   @HiveField(1)
-  int passwordVersion;
+  final int passwordVersion;
 
-  CipherUpdate(this.cipherType, this.passwordVersion);
+  const CipherUpdate(this.cipherType, this.passwordVersion);
   CipherUpdate.fromMap(map)
       : cipherType = stringToCipherTypeMap[map['CipherType']]!,
         passwordVersion = int.parse(map['passwordVersion']);
@@ -35,3 +35,5 @@ class CipherUpdate with EquatableMixin {
         'PasswordVersion': passwordVersion.toString()
       };
 }
+
+const CipherUpdate defaultCipherUpdate = CipherUpdate(CipherType.None, 0);

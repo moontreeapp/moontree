@@ -1,17 +1,12 @@
 import 'dart:convert';
 
 import 'package:test/test.dart';
-import 'package:bip39/bip39.dart' as bip39;
 
 import 'package:raven/security/cipher.dart' show getBytes;
 import 'package:raven/security/cipher_aes.dart';
 import 'package:raven/security/encrypted_entropy.dart';
+import '../../fixtures/mnemonic.dart';
 
-var mnemonic = // random mnemonic for tests
-    'daring field mesh message '
-    'behave tenant immense shrimp '
-    'asthma gadget that mammal';
-var entropy = bip39.mnemonicToEntropy(mnemonic);
 var cipher = CipherAES(getBytes('password'));
 
 void main() {
