@@ -6,24 +6,24 @@ part of 'password_hash.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
-class PasswordHashAdapter extends TypeAdapter<PasswordHash> {
+class PasswordAdapter extends TypeAdapter<Password> {
   @override
   final int typeId = 23;
 
   @override
-  PasswordHash read(BinaryReader reader) {
+  Password read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return PasswordHash(
+    return Password(
       passwordId: fields[0] as int,
       saltedHash: fields[1] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, PasswordHash obj) {
+  void write(BinaryWriter writer, Password obj) {
     writer
       ..writeByte(2)
       ..writeByte(0)
@@ -38,7 +38,7 @@ class PasswordHashAdapter extends TypeAdapter<PasswordHash> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PasswordHashAdapter &&
+      other is PasswordAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

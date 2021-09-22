@@ -20,7 +20,7 @@ final BalanceReservoir balances = BalanceReservoir();
 final ExchangeRateReservoir rates = ExchangeRateReservoir();
 final SettingReservoir settings = SettingReservoir();
 final BlockReservoir blocks = BlockReservoir();
-final PasswordHashReservoir passwordHashes = PasswordHashReservoir();
+final PasswordReservoir passwordHashes = PasswordReservoir();
 
 // WAITERS
 

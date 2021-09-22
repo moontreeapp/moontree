@@ -2,17 +2,31 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:raven/raven.dart';
 
-class PasswordHashService {
+class PasswordService {
+  final PasswordValidationService validate = PasswordValidationService();
+  final PasswordCreationService create = PasswordCreationService();
+
   bool get usingPassword => passwordHashes.primaryIndex.getMostRecent() != null;
 
+  /// there are wallets on an old password version
+  bool interruptedPasswordChange() =>
+      {
+        for (var cipherUpdate in services.wallets.getAllCipherUpdates)
+          cipherUpdate.passwordVersion
+      }.length >
+      1;
+}
+
+class PasswordValidationService {
+  String getHash(String password, String salt) => services.passwords.create
+      .hashThis(services.passwords.create.saltPassword(password, salt));
+
   bool verifyPassword(String password) =>
-      hashThis(saltPassword(
-          password, passwordHashes.primaryIndex.getMostRecent()!.salt)) ==
+      getHash(password, passwordHashes.primaryIndex.getMostRecent()!.salt) ==
       passwordHashes.primaryIndex.getMostRecent()!.saltedHash;
 
   bool verifyPreviousPassword(String password) =>
-      hashThis(saltPassword(
-          password, passwordHashes.primaryIndex.getPrevious()!.salt)) ==
+      getHash(password, passwordHashes.primaryIndex.getPrevious()!.salt) ==
       passwordHashes.primaryIndex.getPrevious()!.saltedHash;
 
   /// returns the number corresponding to how many passwords ago this was used
@@ -23,14 +37,15 @@ class PasswordHashService {
   int verifyUsed(String password) {
     var m = passwordHashes.maxPasswordID;
     for (var passwordHash in passwordHashes.data) {
-      if (hashThis(saltPassword(password, passwordHash.salt)) ==
-          passwordHash.saltedHash) {
+      if (getHash(password, passwordHash.salt) == passwordHash.saltedHash) {
         return m - passwordHash.passwordId;
       }
     }
     return -1;
   }
+}
 
+class PasswordCreationService {
   String saltPassword(String password, String salt) => '$salt$password';
 
   String hashThis(String saltedPassword) {
@@ -41,11 +56,8 @@ class PasswordHashService {
     return digest.toString();
   }
 
-  /// there are wallets on an old password version
-  bool interruptedPasswordChange() =>
-      {
-        for (var cipherUpdate in services.wallets.getAllCipherUpdates)
-          cipherUpdate.passwordVersion
-      }.length >
-      1;
+  Future makeSave(String password) async => await passwordHashes.save(Password(
+      passwordId: passwordHashes.maxPasswordID + 1,
+      saltedHash: hashThis(saltPassword(
+          password, Password.getSalt(passwordHashes.maxPasswordID + 1)))));
 }

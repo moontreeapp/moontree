@@ -3,7 +3,7 @@ export 'address.dart';
 export 'balance.dart';
 export 'block.dart';
 export 'history.dart';
-export 'password_hash.dart';
+export 'password.dart';
 export 'rate.dart';
 export 'setting.dart';
 export 'wallet.dart';
