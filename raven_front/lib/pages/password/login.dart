@@ -61,14 +61,14 @@ class _LoginState extends State<Login> {
   }
 
   Future submit() async {
-    if (services.passwords.verifyPassword(password.text)) {
+    if (services.passwords.validate.password(password.text)) {
       cipherRegistry.initCiphers(services.wallets.getCurrentCipherUpdates,
           altPassword: password.text);
       await cipherRegistry.updateWallets();
       cipherRegistry.cleanupCiphers();
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
     } else {
-      var used = services.passwords.verifyUsed(password.text);
+      var used = services.passwords.validate.previouslyUsed(password.text);
       failureMessage(used == -1
           ? 'This password was not recognized to match any previously used passwords.'
           : 'It seems the provided password was used $used passwords ago.');
