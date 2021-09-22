@@ -12,7 +12,7 @@ void main() async {
       '0': Setting(name: SettingName.Electrum_Url, value: 'testnet.rvn.rocks'),
       '1': Setting(name: SettingName.Electrum_Port, value: 50002),
     }));
-    await settingsService.startWaiters();
+    await services.settings.startWaiters();
   });
 
   tearDown(() async {
@@ -22,14 +22,13 @@ void main() async {
   test('waiters listening', () async {
     for (var waiter in [
       addressSubscriptionWaiter,
-      blockSubscriptionWaiter,
-      walletBalanceWaiter,
-      accountsWaiter,
-      leadersWaiter,
-      singlesWaiter,
-      addressesWaiter,
+      blockWaiter,
+      accountWaiter,
+      leaderWaiter,
+      singleWaiter,
+      addressWaiter,
       // exchangeRateWaiter,
-      settingsWaiter
+      settingWaiter
     ]) {
       expect(waiter.listeners.isNotEmpty, true,
           reason: '${waiter.runtimeType} has no listeners');
