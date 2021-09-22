@@ -4,7 +4,7 @@
 import 'package:raven/raven.dart';
 import 'package:raven/security/encrypted_entropy.dart';
 import 'package:ravencoin/ravencoin.dart';
-import 'fee.dart';
+import '../utils/fee.dart';
 
 class FormatResult {
   TransactionBuilder txb;

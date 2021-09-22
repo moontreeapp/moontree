@@ -1,9 +1,9 @@
 // dart --no-sound-null-safety test test/integration/raven_tx_test.dart
 import 'package:test/test.dart';
 
-import 'package:raven/utils/transaction_builder_helper.dart' as tx;
+import 'package:raven/services/transaction.dart' as tx;
 import 'package:raven/globals.dart';
-import '../fixtures/fixtures.dart' as fixtures;
+import '../../fixtures/fixtures.dart' as fixtures;
 
 const connectionTimeout = Duration(seconds: 5);
 const aliveTimerDuration = Duration(seconds: 2);
