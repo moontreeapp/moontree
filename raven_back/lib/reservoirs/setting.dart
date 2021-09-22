@@ -27,10 +27,6 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
   String get currentAccountId =>
       primaryIndex.getOne(SettingName.Account_Current)!.value;
 
-  /// from reservoir now
-  //String get hashedSaltedPassword =>
-  //    primaryIndex.getOne(SettingName.Password_SaltedHash)!.value;
-
   Future savePreferredAccountId(String accountId) async => await save(
       Setting(name: SettingName.Account_Preferred, value: accountId));
 

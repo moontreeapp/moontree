@@ -3,11 +3,13 @@ import 'dart:convert';
 import '../raven.dart';
 
 bool verifyPassword(String password) =>
-    hashThis(saltPassword(password)) ==
+    hashThis(saltPassword(
+        password, passwordHashes.primaryIndex.getMostRecent()!.salt)) ==
     passwordHashes.primaryIndex.getMostRecent()!.saltedHash;
 
 bool verifyPreviousPassword(String password) =>
-    hashThis(saltPassword(password)) ==
+    hashThis(saltPassword(
+        password, passwordHashes.primaryIndex.getPrevious()!.salt)) ==
     passwordHashes.primaryIndex.getPrevious()!.saltedHash;
 
 /// returns the number corresponding to how many passwords ago this was used
@@ -16,28 +18,23 @@ bool verifyPreviousPassword(String password) =>
 /// 1 = previous
 /// "password was used x passwords ago"
 int verifyUsed(String password) {
-  var x = 0;
-  var hashed = hashThis(saltPassword(password));
-  for (var i = passwordHashes.maxPasswordID(); i >= 0; i--) {
-    if (hashed == passwordHashes.primaryIndex.getOne(i)!.saltedHash) {
-      return x;
+  var m = passwordHashes.maxPasswordID;
+  for (var passwordHash in passwordHashes.data) {
+    if (hashThis(saltPassword(password, passwordHash.salt)) ==
+        passwordHash.saltedHash) {
+      return m - passwordHash.passwordId;
     }
-    x = x + 1;
   }
   return -1;
 }
 
-/// how is the salt chosen? TODO:
-/// the problem is salts should be secret, but we have no server... get from OS?
-String getSalt() => 'salt';
-
-String saltPassword(String password) => '${getSalt()}$password';
+String saltPassword(String password, String salt) => '$salt$password';
 
 String hashThis(String saltedPassword) {
   var bytes = utf8.encode(saltedPassword);
   var digest = sha256.convert(bytes);
-  print('Digest as bytes: ${digest.bytes}');
-  print('Digest as hex string: $digest');
+  //print('Digest as bytes: ${digest.bytes}');
+  //print('Digest as hex string: $digest');
   return digest.toString();
 }
 

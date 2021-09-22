@@ -8,8 +8,8 @@ part 'password_hash.keys.dart';
 class PasswordHashReservoir extends Reservoir<_IdKey, PasswordHash> {
   PasswordHashReservoir() : super(_IdKey());
 
-  int maxPasswordID() =>
-      max([for (var passwordHash in data) passwordHash.passwordId]) ?? 0;
+  int get maxPasswordID =>
+      max([for (var passwordHash in data) passwordHash.passwordId]) ?? -1;
 
   //String salt() => passwordHashes...?
 

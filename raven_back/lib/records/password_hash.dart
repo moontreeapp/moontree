@@ -21,5 +21,7 @@ class PasswordHash with EquatableMixin {
   List<Object> get props => [passwordId, saltedHash];
 
   @override
-  String toString() => 'PasswordHash(${passwordId.toString()}, $saltedHash)';
+  String toString() => 'PasswordHash($passwordId, $saltedHash)';
+
+  String get salt => 'salt$passwordId';
 }
