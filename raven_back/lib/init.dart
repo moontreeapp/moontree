@@ -1,6 +1,5 @@
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
-//import 'globals.dart';
 import 'package:raven/raven.dart';
 
 Future<RavenElectrumClient> initNonElectrumWaiters() async {

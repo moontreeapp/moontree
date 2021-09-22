@@ -1,9 +1,6 @@
-import 'package:raven_electrum_client/raven_electrum_client.dart';
-
 import 'reservoirs/reservoirs.dart';
 import 'security/security.dart';
 import 'waiters/waiters.dart';
-import 'services/services.dart';
 
 // Client
 
@@ -32,7 +29,8 @@ final AddressSubscriptionWaiter addressSubscriptionWaiter =
     AddressSubscriptionWaiter();
 final BalanceWaiter balanceWaiter = BalanceWaiter();
 final BlockWaiter blockWaiter = BlockWaiter();
-final LeaderWaiter leaderWaiter = LeaderWaiter();
 final RateWaiter rateWaiter = RateWaiter();
 final SettingWaiter settingWaiter = SettingWaiter();
+// Wallets
+final LeaderWaiter leaderWaiter = LeaderWaiter();
 final SingleWaiter singleWaiter = SingleWaiter();
