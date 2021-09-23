@@ -129,11 +129,11 @@ class TransactionBuilderHelper {
           // in the first place...? probably
           keyPair: HDWallet.fromSeed(EncryptedEntropy(
                       (services.wallets.leaders.deriveAddress(
-                              wallet, wallet.cipher, utxos[i].address!.hdIndex,
+                              wallet, wallet.cipher!, utxos[i].address!.hdIndex,
                               exposure:
                                   utxos[i].address!.exposure) as LeaderWallet)
                           .encryptedEntropy,
-                      wallet.cipher)
+                      wallet.cipher!)
                   .seed)
               .keyPair);
     }

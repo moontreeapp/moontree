@@ -6,6 +6,7 @@ import 'package:raven/records/cipher_update.dart';
 import 'package:raven/security/cipher.dart';
 import 'package:raven/security/cipher_none.dart';
 import 'package:raven/security/cipher_aes.dart';
+import 'package:raven/utils/enum.dart';
 import 'package:raven/utils/exceptions.dart';
 import 'package:raven/raven.dart';
 import 'cipher.dart';
@@ -19,6 +20,10 @@ class CipherRegistry {
   };
 
   CipherRegistry();
+
+  @override
+  String toString() =>
+      'ciphers: ${ciphers.toString()}, latestCipherType: ${describeEnum(latestCipherType)}';
 
   Cipher get currentCipher => ciphers[currentCipherUpdate]!;
 
@@ -75,7 +80,7 @@ class CipherRegistry {
       if (wallet.cipherUpdate != currentCipherUpdate) {
         if (wallet is LeaderWallet) {
           var reencrypt = EncryptedEntropy.fromEntropy(
-            EncryptedEntropy(wallet.encrypted, wallet.cipher).entropy,
+            EncryptedEntropy(wallet.encrypted, wallet.cipher!).entropy,
             ciphers[currentCipherUpdate]!,
           );
           assert(wallet.walletId == reencrypt.walletId);
@@ -87,7 +92,7 @@ class CipherRegistry {
           ));
         } else if (wallet is SingleWallet) {
           var reencrypt = EncryptedWIF.fromWIF(
-            EncryptedWIF(wallet.encrypted, wallet.cipher).wif,
+            EncryptedWIF(wallet.encrypted, wallet.cipher!).wif,
             ciphers[currentCipherUpdate]!,
           );
           assert(wallet.walletId == reencrypt.walletId);

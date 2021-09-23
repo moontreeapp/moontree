@@ -23,8 +23,8 @@ class CipherUpdate with EquatableMixin {
   @override
   List<Object?> get props => [cipherType, passwordVersion];
 
-  static Map<String, CipherType> get stringToCipherTypeMap =>
-      {for (var value in CipherType.values) describeEnum(value): value};
+  @override
+  String toString() => toMap.toString();
 
   //@override
   //String get toString =>
@@ -34,6 +34,9 @@ class CipherUpdate with EquatableMixin {
         'CipherType': describeEnum(cipherType),
         'PasswordVersion': passwordVersion.toString()
       };
+
+  static Map<String, CipherType> get stringToCipherTypeMap =>
+      {for (var value in CipherType.values) describeEnum(value): value};
 }
 
 const CipherUpdate defaultCipherUpdate = CipherUpdate(CipherType.None, 0);

@@ -9,7 +9,8 @@ import 'package:raven/utils/hex.dart' as hex;
 import 'encrypted_wallet_secret.dart';
 
 class EncryptedEntropy extends EncryptedWalletSecret {
-  EncryptedEntropy(encryptedEntropy, cipher) : super(encryptedEntropy, cipher);
+  EncryptedEntropy(String encryptedEntropy, Cipher cipher)
+      : super(encryptedEntropy, cipher);
 
   factory EncryptedEntropy.fromEntropy(String entropy, Cipher cipher) =>
       EncryptedEntropy(hex.encrypt(entropy, cipher), cipher);

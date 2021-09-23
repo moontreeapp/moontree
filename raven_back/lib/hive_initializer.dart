@@ -47,6 +47,8 @@ class HiveInitializer {
     Hive.registerAdapter(NodeExposureAdapter());
     Hive.registerAdapter(PasswordAdapter());
     Hive.registerAdapter(RateAdapter());
+    Hive.registerAdapter(CipherUpdateAdapter());
+    Hive.registerAdapter(CipherTypeAdapter());
     Hive.registerAdapter(SettingAdapter());
     Hive.registerAdapter(SettingNameAdapter());
     Hive.registerAdapter(SecurityAdapter());
@@ -73,7 +75,7 @@ class HiveInitializer {
     histories.setSource(HiveSource('histories'));
     rates.setSource(HiveSource('rates'));
     balances.setSource(HiveSource('balances'));
-    balances.setSource(HiveSource('passwords'));
+    passwords.setSource(HiveSource('passwords'));
     settings.setSource(
         HiveSource('settings', defaults: SettingReservoir.defaultSettings));
   }

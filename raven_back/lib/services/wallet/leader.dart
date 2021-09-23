@@ -9,8 +9,7 @@ import 'package:raven/raven.dart';
 // derives addresses for leaderwallets
 class LeaderWalletService {
   /// [Address(walletid=0...),]
-  void maybeDeriveNewAddresses(
-      List<Address> changedAddresses, CipherRegistry cipherRegistry) async {
+  void maybeDeriveNewAddresses(List<Address> changedAddresses) async {
     for (var address in changedAddresses) {
       var leaderWallet =
           wallets.primaryIndex.getOne(address.walletId)! as LeaderWallet;

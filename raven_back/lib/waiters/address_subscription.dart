@@ -28,10 +28,7 @@ class AddressSubscriptionWaiter extends Waiter {
         ),
       );
 
-      services.wallets.leaders.maybeDeriveNewAddresses(
-        changedAddresses,
-        cipherRegistry,
-      );
+      services.wallets.leaders.maybeDeriveNewAddresses(changedAddresses);
     }));
 
     listeners.add(addresses.changes.listen((List<Change> changes) {
