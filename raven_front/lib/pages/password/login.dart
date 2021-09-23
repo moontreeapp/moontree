@@ -8,9 +8,11 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   var password = TextEditingController();
+  var passwordVisible = false;
 
   @override
   void initState() {
+    passwordVisible = false;
     super.initState();
   }
 
@@ -46,10 +48,22 @@ class _LoginState extends State<Login> {
               child: TextField(
                   autocorrect: false,
                   controller: password,
-                  obscureText: true,
+                  obscureText: !passwordVisible,
                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
-                      border: UnderlineInputBorder(), hintText: 'password'),
+                    border: UnderlineInputBorder(),
+                    hintText: 'password',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                          passwordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Theme.of(context).primaryColorDark),
+                      onPressed: () => setState(() {
+                        passwordVisible = !passwordVisible;
+                      }),
+                    ),
+                  ),
                   onEditingComplete: () async => await submit())),
         ],
       );
@@ -58,7 +72,13 @@ class _LoginState extends State<Login> {
     if (services.passwords.validate.password(password.text)) {
       cipherRegistry.initCiphers(services.wallets.getCurrentCipherUpdates,
           altPassword: password.text);
+      print('--------------Start-----------------');
+      print('cipherRegistry: $cipherRegistry');
+      print('wallets: ${wallets.data}');
       await cipherRegistry.updateWallets();
+      print('wallets: ${wallets.data}');
+      print('cipherRegistry: $cipherRegistry');
+      print('---------------End----------------');
       cipherRegistry.cleanupCiphers();
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
     } else {

@@ -13,6 +13,9 @@ class Loading extends StatefulWidget {
 
 class _LoadingState extends State<Loading> {
   Future setupAccounts() async {
+    await services.passwords.create.save('asdf');
+    cipherRegistry
+        .initCiphers({CipherUpdate(CipherType.AES, 1)}, altPassword: 'asdf');
     await services.accounts.makeSaveAccount('Primary');
     await services.accounts.makeSaveAccount('Savings');
   }
@@ -33,6 +36,7 @@ class _LoadingState extends State<Loading> {
     print('balances: ${balances.data}');
     print('rates: ${rates.data}');
     print('settings: ${settings.data}');
+    print('cipherRegistry: $cipherRegistry');
 
     if (services.passwords.usingPassword) {
       if (services.passwords.interruptedPasswordChange()) {

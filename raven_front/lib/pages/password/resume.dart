@@ -12,9 +12,11 @@ class ChangeResume extends StatefulWidget {
 
 class _ChangeResumeState extends State<ChangeResume> {
   var password = TextEditingController();
+  var passwordVisible = false;
 
   @override
   void initState() {
+    passwordVisible = false;
     super.initState();
   }
 
@@ -63,11 +65,22 @@ class _ChangeResumeState extends State<ChangeResume> {
               child: TextField(
                   autocorrect: false,
                   controller: password,
-                  obscureText: true,
+                  obscureText: !passwordVisible,
                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
-                      border: UnderlineInputBorder(),
-                      hintText: 'previous password'),
+                    border: UnderlineInputBorder(),
+                    hintText: 'previous password',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                          passwordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Theme.of(context).primaryColorDark),
+                      onPressed: () => setState(() {
+                        passwordVisible = !passwordVisible;
+                      }),
+                    ),
+                  ),
                   onEditingComplete: () => submit())),
         ],
       );
