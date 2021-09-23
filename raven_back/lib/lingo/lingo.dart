@@ -24,6 +24,10 @@ class Lingo {
         LingoKey.singleWalletType: 'Billetera de Clave Privada',
         LingoKey.singleWalletSecretType: 'Formato de Importación de Billetera',
       };
+
+  // ideal
+  //static String getLanguage(LingoKey key) => english[key]!;
+
   static String getEnglish(LingoKey key) => english[key]!;
   static String getSpanish(LingoKey key) => spanish[key]!;
 }

@@ -12,19 +12,25 @@ class AddressSubscriptionWaiter extends Waiter {
   final Map<String, StreamSubscription> subscriptionHandles = {};
   final StreamController<Address> addressesNeedingUpdate = StreamController();
 
-  RavenElectrumClient? client;
+  void init() {
+    ravenClientSubject.stream.listen((ravenClient) {
+      if (ravenClient == null) {
+        deinit();
+      } else {
+        setupListeners(ravenClient);
+      }
+    });
+  }
 
-  void init(RavenElectrumClient client) {
-    this.client = client;
-
-    subscribeToExistingAddresses();
+  void setupListeners(RavenElectrumClient ravenClient) {
+    subscribeToExistingAddresses(ravenClient);
     listeners.add(addressesNeedingUpdate.stream
         .bufferCountTimeout(10, Duration(milliseconds: 50))
         .listen((changedAddresses) async {
       await services.addresses.saveScripthashHistoryData(
         await services.addresses.getScripthashHistoriesData(
           changedAddresses,
-          client,
+          ravenClient,
         ),
       );
 
@@ -37,7 +43,7 @@ class AddressSubscriptionWaiter extends Waiter {
             added: (added) {
               Address address = added.data;
               addressNeedsUpdating(address);
-              subscribe(address);
+              subscribe(ravenClient, address);
             },
             updated: (updated) {},
             removed: (removed) {
@@ -51,8 +57,8 @@ class AddressSubscriptionWaiter extends Waiter {
     addressesNeedingUpdate.sink.add(address);
   }
 
-  void subscribe(Address address) {
-    var stream = client!.subscribeScripthash(address.scripthash);
+  void subscribe(RavenElectrumClient ravenClient, Address address) {
+    var stream = ravenClient.subscribeScripthash(address.scripthash);
     subscriptionHandles[address.scripthash] = stream.listen((status) {
       addressNeedsUpdating(address);
     });
@@ -62,9 +68,9 @@ class AddressSubscriptionWaiter extends Waiter {
     subscriptionHandles[scripthash]!.cancel();
   }
 
-  void subscribeToExistingAddresses() {
+  void subscribeToExistingAddresses(RavenElectrumClient ravenClient) {
     for (var address in addresses) {
-      subscribe(address);
+      subscribe(ravenClient, address);
     }
   }
 }

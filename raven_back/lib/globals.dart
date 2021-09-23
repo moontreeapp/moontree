@@ -1,10 +1,13 @@
+import 'package:raven_electrum_client/raven_electrum_client.dart';
+import 'package:rxdart/rxdart.dart';
+
 import 'reservoirs/reservoirs.dart';
 import 'security/security.dart';
 import 'waiters/waiters.dart';
 
 // Client
 
-//final RavenElectrumClient ravenClient = await services.settings.createClient();
+final ravenClientSubject = BehaviorSubject<RavenElectrumClient?>();
 
 // CIPHERS
 
@@ -31,6 +34,7 @@ final AddressSubscriptionWaiter addressSubscriptionWaiter =
 final BalanceWaiter balanceWaiter = BalanceWaiter();
 final BlockWaiter blockWaiter = BlockWaiter();
 final RateWaiter rateWaiter = RateWaiter();
+final RavenClientWaiter ravenClientWaiter = RavenClientWaiter();
 final SettingWaiter settingWaiter = SettingWaiter();
 // Wallets
 final LeaderWaiter leaderWaiter = LeaderWaiter();

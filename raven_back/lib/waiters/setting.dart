@@ -1,4 +1,3 @@
-import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:reservoir/reservoir.dart';
 
 import 'package:raven/raven.dart';
@@ -6,25 +5,18 @@ import 'package:raven/raven.dart';
 import 'waiter.dart';
 
 class SettingWaiter extends Waiter {
-  RavenElectrumClient? client;
-
-  Future init() async {
-    // One-time initialization of Electrum Client at app start
-    client = await services.settings.createClient();
-
+  void init() {
     listeners.add(settings.changes.listen((List<Change> changes) {
       changes.forEach((change) {
         change.when(
             added: (added) {
               // will be initialized with settings set of settings
             },
-            updated: (updated) async {
+            updated: (updated) {
               var setting = updated.data;
-              if ([SettingName.Electrum_Url, SettingName.Electrum_Port]
+              if ([services.client.chosenDomain, services.client.chosenPort]
                   .contains(setting.name)) {
-                await client?.close();
-                client = await services.settings.createClient();
-                services.settings.restartElectrumWaiters();
+                ravenClientSubject.sink.add(null);
               }
 
               // When password changes, replace the cipher registry objects

@@ -9,14 +9,26 @@ part 'setting_name.g.dart';
 @HiveType(typeId: TypeId.SettingName)
 enum SettingName {
   @HiveField(0)
-  Electrum_Url,
+  Electrum_Domain1,
 
   @HiveField(1)
-  Electrum_Port,
+  Electrum_Port1,
 
   @HiveField(2)
-  Account_Current,
+  Electrum_Domain2,
 
   @HiveField(3)
-  Account_Preferred
+  Electrum_Port2,
+
+  @HiveField(4)
+  Electrum_Domain3,
+
+  @HiveField(5)
+  Electrum_Port3,
+
+  @HiveField(6)
+  Account_Current,
+
+  @HiveField(7)
+  Account_Preferred,
 }

@@ -11,10 +11,18 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
   SettingReservoir() : super(_SettingNameKey());
 
   static Map<SettingName, Setting> get defaultSettings => {
-        SettingName.Electrum_Url:
-            Setting(name: SettingName.Electrum_Url, value: 'testnet.rvn.rocks'),
-        SettingName.Electrum_Port:
-            Setting(name: SettingName.Electrum_Port, value: 50002),
+        SettingName.Electrum_Domain1: Setting(
+            name: SettingName.Electrum_Domain1, value: 'testnet.rvn.rocks'),
+        SettingName.Electrum_Port1:
+            Setting(name: SettingName.Electrum_Port1, value: 50002),
+        SettingName.Electrum_Domain2: Setting(
+            name: SettingName.Electrum_Domain2, value: 'testnet.rvn.rocks'),
+        SettingName.Electrum_Port2:
+            Setting(name: SettingName.Electrum_Port2, value: 50002),
+        SettingName.Electrum_Domain3: Setting(
+            name: SettingName.Electrum_Domain3, value: 'testnet.rvn.rocks'),
+        SettingName.Electrum_Port3:
+            Setting(name: SettingName.Electrum_Port3, value: 50002),
         SettingName.Account_Current:
             Setting(name: SettingName.Account_Current, value: '0'),
         SettingName.Account_Preferred:

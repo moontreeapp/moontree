@@ -9,5 +9,6 @@ abstract class Waiter {
     for (var listener in listeners) {
       listener.cancel();
     }
+    listeners.clear();
   }
 }

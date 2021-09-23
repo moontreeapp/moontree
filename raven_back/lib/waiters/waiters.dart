@@ -2,6 +2,7 @@ export 'account.dart';
 export 'address_subscription.dart';
 export 'address.dart';
 export 'block.dart';
+export 'client.dart';
 export 'rate.dart';
 export 'leader.dart';
 export 'setting.dart';
