@@ -9,12 +9,11 @@ class PasswordService {
 
   bool get usingPassword => passwords.primaryIndex.getMostRecent() != null;
 
-  bool interruptedPasswordChange() =>
-      {
+  bool interruptedPasswordChange() => {
         for (var cipherUpdate in services.wallets.getAllCipherUpdates)
-          cipherUpdate.passwordId
-      }.length >
-      1;
+          if (cipherUpdate.passwordId != passwords.maxPasswordID)
+            cipherUpdate.passwordId
+      }.isNotEmpty;
 }
 
 class PasswordValidationService {

@@ -47,11 +47,8 @@ class CipherRegistry {
     String? altPassword,
   }) {
     password = getPassword(password: password, altPassword: altPassword);
-    print('using password: $password');
-    print(currentCipherUpdates);
     for (var currentCipherUpdate in currentCipherUpdates) {
-      var registered = registerCipher(currentCipherUpdate, password);
-      print('registered $registered');
+      registerCipher(currentCipherUpdate, password);
     }
   }
 
@@ -75,7 +72,6 @@ class CipherRegistry {
     CipherUpdate cipherUpdate,
     Uint8List password,
   ) {
-    print('registering $cipherUpdate');
     ciphers[cipherUpdate] =
         cipherInitializers[cipherUpdate.cipherType]!(password);
     return ciphers[cipherUpdate]!;
@@ -83,16 +79,9 @@ class CipherRegistry {
 
   /// make sure all wallets are on the latest ciphertype and password
   Future updateWallets() async {
-    print('somehow wallets are not being saved with the new passwordId...');
-    print(currentCipherUpdate);
     var records = <Wallet>[];
     for (var wallet in wallets.data) {
       if (wallet.cipherUpdate != currentCipherUpdate) {
-        print('wallet not updated:');
-        print(wallet);
-        print(currentCipherUpdate);
-        print(wallet.cipherUpdate);
-        print(currentCipherUpdate != wallet.cipherUpdate);
         if (wallet is LeaderWallet) {
           /// what if wallet has never been encrypted?
           /// that will be the case on brand new wallets first time you open the app.
@@ -102,8 +91,6 @@ class CipherRegistry {
           );
           assert(wallet.walletId == reencrypt.walletId);
           // these should be different...
-          print(reencrypt);
-          print(EncryptedEntropy(wallet.encrypted, wallet.cipher!));
           records.add(LeaderWallet(
             walletId: reencrypt.walletId,
             accountId: wallet.accountId,
@@ -126,12 +113,6 @@ class CipherRegistry {
       }
     }
     await wallets.saveAll(records);
-
-    /// somehow the wallets.save isn't saving correctly, it's getting passed the right stuff..
-    /// are we mutating a local copy?
-    print('WALLETS.DATA: ${wallets.data}');
-
-    /// it was due to props on wallets - not distinguishing the change when saving new encryptedEntropty
 
     /// completed successfully
     //assert(services.wallets.getPreviousCipherUpdates.isEmpty);

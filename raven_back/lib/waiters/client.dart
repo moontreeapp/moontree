@@ -9,7 +9,7 @@ class RavenClientWaiter extends Waiter {
   static const Duration connectionTimeout = Duration(seconds: 5);
   static const int retries = 3;
 
-  RavenElectrumClient? lastRavenClient;
+  RavenElectrumClient? mostRecentRavenClient;
   StreamSubscription? periodicTimer;
   int retriesLeft = retries;
 
@@ -18,12 +18,12 @@ class RavenClientWaiter extends Waiter {
       if (ravenClient != null) {
         print('client connected!!!');
         periodicTimer?.cancel();
-        lastRavenClient = ravenClient;
+        mostRecentRavenClient = ravenClient;
         ravenClient.peer.done
             .then((value) => ravenClientSubject.sink.add(null));
       } else {
         print('not connected $retriesLeft, ${services.client.chosenDomain}');
-        lastRavenClient?.close();
+        mostRecentRavenClient?.close();
         periodicTimer =
             Stream.periodic(connectionTimeout + Duration(seconds: 1))
                 .listen((_) async {
