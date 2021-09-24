@@ -64,6 +64,11 @@ class _SettingsState extends State<Settings> {
                   onPressed: (BuildContext context) =>
                       Navigator.pushNamed(context, '/password/change')),
               SettingsTile(
+                  title: 'Network',
+                  leading: Icon(Icons.network_check),
+                  onPressed: (BuildContext context) =>
+                      Navigator.pushNamed(context, '/settings/network')),
+              SettingsTile(
                   title: 'Currency',
                   leading: Icon(Icons.money),
                   onPressed: (BuildContext context) =>

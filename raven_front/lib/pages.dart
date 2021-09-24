@@ -10,6 +10,7 @@ export 'package:raven_mobile/pages/settings/currency.dart';
 export 'package:raven_mobile/pages/settings/export.dart';
 export 'package:raven_mobile/pages/settings/import.dart';
 export 'package:raven_mobile/pages/settings/language.dart';
+export 'package:raven_mobile/pages/settings/network.dart';
 export 'package:raven_mobile/pages/settings/settings.dart';
 export 'package:raven_mobile/pages/settings/technical.dart';
 export 'package:raven_mobile/pages/settings/wallet.dart';

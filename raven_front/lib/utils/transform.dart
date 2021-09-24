@@ -11,3 +11,12 @@ List enumerate(String text) {
 List characters(String text) {
   return text.split('');
 }
+
+bool stringIsInt(String text) {
+  try {
+    int.parse(text);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}

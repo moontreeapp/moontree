@@ -22,6 +22,7 @@ void main() => runApp(MaterialApp(
       '/settings': (context) => Settings(),
       '/settings/about': (context) => About(),
       '/settings/account': (context) => AccountSettings(),
+      '/settings/network': (context) => ElectrumNetwork(),
       '/settings/import': (context) => Import(),
       '/settings/export': (context) => Export(),
       '/settings/currency': (context) => Currency(),
