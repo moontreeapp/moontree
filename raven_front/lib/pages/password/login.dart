@@ -70,8 +70,15 @@ class _LoginState extends State<Login> {
 
   Future submit() async {
     if (services.passwords.validate.password(password.text)) {
+      // create ciphers for wallets we have
       cipherRegistry.initCiphers(services.wallets.getCurrentCipherUpdates,
           altPassword: password.text);
+/*  cipherRegistry should have passwordID 1 entry... 
+I/flutter ( 6773): using password: [97, 115, 100, 102, 97, 115, 100, 102, 97, 115, 100, 102, 97, 115, 100, 102, 49]
+I/flutter ( 6773): --------------Start-----------------
+I/flutter ( 6773): cipherRegistry: ciphers: {{CipherType: None, PasswordId: -1}: Instance of 'CipherNone'}, latestCipherType: AES
+*/
+
       print('--------------Start-----------------');
       print('cipherRegistry: $cipherRegistry');
       print('wallets: ${wallets.data}');
