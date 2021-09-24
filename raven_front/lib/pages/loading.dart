@@ -14,8 +14,6 @@ class Loading extends StatefulWidget {
 class _LoadingState extends State<Loading> {
   Future setupAccounts() async {
     await services.passwords.create.save('asdf');
-    cipherRegistry
-        .initCiphers({CipherUpdate(CipherType.AES, 1)}, altPassword: 'asdf');
     await services.accounts.makeSaveAccount('Primary');
     await services.accounts.makeSaveAccount('Savings');
   }
@@ -23,7 +21,12 @@ class _LoadingState extends State<Loading> {
   Future setup() async {
     var hiveInit = HiveInitializer(init: (dbDir) => Hive.initFlutter());
     await hiveInit.setUp();
+    print('before ${services.client.chosenDomain}');
     await initWaiters();
+    print('after ${services.client.chosenDomain}');
+    // seems to trigger stream listener to work
+    //print(await ravenClientSubject.stream.last);
+
     if (accounts.data.isEmpty) {
       MockHistories().init();
       await setupAccounts();
@@ -36,6 +39,7 @@ class _LoadingState extends State<Loading> {
     print('balances: ${balances.data}');
     print('rates: ${rates.data}');
     print('settings: ${settings.data}');
+    print('passwords: ${passwords.data}');
     print('cipherRegistry: $cipherRegistry');
 
     if (services.passwords.usingPassword) {

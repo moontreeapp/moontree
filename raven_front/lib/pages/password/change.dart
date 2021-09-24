@@ -65,7 +65,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       autocorrect: false,
       controller: existingPassword,
       obscureText: !existingPasswordVisible,
-      textInputAction: TextInputAction.next,
+      //textInputAction: TextInputAction.next,
       decoration: InputDecoration(
         border: UnderlineInputBorder(),
         hintText: 'existing password',
@@ -84,11 +84,14 @@ class _ChangePasswordState extends State<ChangePassword> {
       },
       onEditingComplete: () {
         validatedExisting = validateExisting();
+        // todo: fix
+        //FocusScope.of(context).requestFocus(newPasswordFocusNode);
         setState(() => {});
       },
-      onSubmitted: (String value) {
-        FocusScope.of(context).requestFocus(newPasswordFocusNode);
-      },
+      //onSubmitted: (String value) {
+      //  setState(
+      //      () => {});
+      //},
     );
     var newPasswordField = TextField(
         focusNode: newPasswordFocusNode,
@@ -110,7 +113,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         ),
         onChanged: (String value) {
           validatedComplexity = validateComplexity(password: value);
-          setState(() => {});
+          //setState(() => {});
         },
         onEditingComplete: () async {
           await submit();
@@ -168,8 +171,7 @@ class _ChangePasswordState extends State<ChangePassword> {
     if (validateComplexity() && validateExisting()) {
       var password = newPassword.text;
       await services.passwords.create.save(password);
-      cipherRegistry.initCiphers(services.wallets.getCurrentCipherUpdates,
-          altPassword: password);
+      cipherRegistry.updatePassword(altPassword: password);
       await cipherRegistry.updateWallets();
       cipherRegistry.cleanupCiphers();
       successMessage();
