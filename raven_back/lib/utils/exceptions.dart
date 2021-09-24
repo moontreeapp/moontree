@@ -44,7 +44,12 @@ class CacheEmpty implements Exception {
 
 class BalanceMismatch implements Exception {
   String cause;
-  BalanceMismatch([this.cause = "'Balance elements don't match'"]);
+  BalanceMismatch([this.cause = "Balance elements don't match"]);
+}
+
+class WalletMissing implements Exception {
+  String cause;
+  WalletMissing([this.cause = 'Wallet missing']);
 }
 
 class OneOfMultipleMissing implements Exception {

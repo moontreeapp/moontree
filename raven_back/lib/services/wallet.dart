@@ -1,5 +1,8 @@
+import 'package:ravencoin/ravencoin.dart' show ECPair;
+
 import 'package:raven/utils/transform.dart';
 import 'package:raven/raven.dart';
+
 import 'wallet/leader.dart';
 import 'wallet/single.dart';
 
@@ -47,4 +50,20 @@ class WalletService {
 
   Type walletType(LingoKey humanTypeKey) =>
       reverseMap(walletMap())[humanTypeKey] ?? Wallet;
+
+  ECPair getAddressKeypair(Address address) {
+    var wallet = address.wallet!;
+
+    if (wallet is LeaderWallet) {
+      var seedWallet = services.wallets.leaders.getSeedWallet(wallet);
+      var hdWallet =
+          seedWallet.subwallet(address.hdIndex, exposure: address.exposure);
+      return hdWallet.keyPair;
+    } else if (wallet is SingleWallet) {
+      var kpWallet = services.wallets.singles.getKPWallet(wallet);
+      return kpWallet.keyPair;
+    } else {
+      throw ArgumentError('wallet type unknown');
+    }
+  }
 }
