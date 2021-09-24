@@ -1,10 +1,8 @@
-/// needs review - things have changed.
-/// assumes leaderwallet
-
 import 'package:raven/raven.dart';
-import 'package:raven/security/encrypted_entropy.dart';
 import 'package:ravencoin/ravencoin.dart';
-import 'fee.dart';
+
+import 'transaction/fee.dart';
+import 'transaction/sign.dart';
 
 class FormatResult {
   TransactionBuilder txb;
@@ -14,29 +12,29 @@ class FormatResult {
   FormatResult(this.txb, this.total, this.fees, this.utxos);
 }
 
-class TransactionBuilderHelper {
-  final Account account;
-  int sendAmount;
-  String toAddress;
-  int anticipatedOutputFee;
-// it'd be cool if account had access to this - should it be accessed through service?
+class TransactionService {
+//   final Account account;
+//   int sendAmount;
+//   String toAddress;
+//   int anticipatedOutputFee;
+// // it'd be cool if account had access to this - should it be accessed through service?
 
-  TransactionBuilderHelper(
-    this.account,
-    this.sendAmount,
-    this.toAddress, [
-    this.anticipatedOutputFee = 34,
-  ]);
+//   TransactionService(
+//     this.account,
+//     this.sendAmount,
+//     this.toAddress, [
+//     this.anticipatedOutputFee = 34,
+//   ]);
 
   /// gets inputs, calculates fee, returns change
-  TransactionBuilder buildTransaction() {
+  TransactionBuilder buildTransaction(Account account, int sendAmount) {
     var txb = TransactionBuilder(network: account.network);
     txb.setVersion(1);
     txb.addOutput(toAddress, sendAmount);
     var results = addInputs(txb);
     txb = addChangeOutput(results.txb,
         results.total - (sendAmount + anticipatedOutputFee) - results.fees);
-    txb = signEachInput(txb, results.utxos);
+    txb.signEachInput(results.utxos);
     return txb;
   }
 
@@ -85,7 +83,7 @@ class TransactionBuilderHelper {
       retutxos.add(utxo);
     }
     // doublecheck we have enough value to cover the amount + anticipated OutputFee + knownFees
-    knownFees = totalFeeByBytes(txb);
+    knownFees = txb.tx!.fee;
     var knownCost = sendAmount + anticipatedOutputFee + knownFees;
     while (total < knownCost) {
       // if its not big enough, we simply add one more input to cover the difference
@@ -99,7 +97,7 @@ class TransactionBuilderHelper {
         total = (total + utxo.value).toInt();
         retutxos.add(utxo); // used later, we have to sign after change output
       }
-      knownFees = totalFeeByBytes(txb);
+      knownFees = txb.tx!.fee;
       knownCost = sendAmount + anticipatedOutputFee + knownFees;
     }
     return FormatResult(txb, total, knownFees, retutxos);
@@ -112,31 +110,6 @@ class TransactionBuilderHelper {
                 cipherRegistry.ciphers[account.wallets[0].cipherUpdate]!)
             .address,
         change);
-    return txb;
-  }
-
-  TransactionBuilder signEachInput(
-      TransactionBuilder txb, List<History> utxos) {
-    for (var i = 0; i < utxos.length; i++) {
-      var wallet = utxos[i].address!.wallet as LeaderWallet;
-      txb.sign(
-          vin: i,
-          //keyPair: account
-          //    .node(location!.index, exposure: location.exposure)
-          //    .keyPair);
-          // if wallet.cipher != null
-          // ...should we only get the inputs of wallets we can sign for
-          // in the first place...? probably
-          keyPair: HDWallet.fromSeed(EncryptedEntropy(
-                      (services.wallets.leaders.deriveAddress(
-                              wallet, wallet.cipher!, utxos[i].address!.hdIndex,
-                              exposure:
-                                  utxos[i].address!.exposure) as LeaderWallet)
-                          .encryptedEntropy,
-                      wallet.cipher!)
-                  .seed)
-              .keyPair);
-    }
     return txb;
   }
 }

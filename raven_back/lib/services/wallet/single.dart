@@ -7,15 +7,17 @@ import 'package:raven/raven.dart';
 class SingleWalletService {
   Address toAddress(SingleWallet wallet, Cipher cipher) {
     var net = accounts.primaryIndex.getOne(wallet.accountId)!.net;
-    var seedWallet =
-        KPWallet.fromWIF(EncryptedWIF(wallet.encryptedWIF, cipher).wif);
+    var kpWallet = getKPWallet(wallet);
     return Address(
-        scripthash: seedWallet.scripthash,
-        address: seedWallet.address!,
+        scripthash: kpWallet.scripthash,
+        address: kpWallet.address!,
         walletId: wallet.walletId,
         hdIndex: 0,
         net: net);
   }
+
+  KPWallet getKPWallet(SingleWallet wallet) =>
+      KPWallet.fromWIF(EncryptedWIF(wallet.encryptedWIF, wallet.cipher!).wif);
 
   /// generate random entropy, transform into wallet, get wif.
   String generateRandomWIF(NetworkType network) =>

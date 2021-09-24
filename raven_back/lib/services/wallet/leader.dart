@@ -49,7 +49,7 @@ class LeaderWalletService {
               : 0);
     }
     if (gap < 10) {
-      return deriveAddress(leaderWallet, cipher, exposureAddresses.length,
+      return deriveAddress(leaderWallet, exposureAddresses.length,
           exposure: exposure);
     }
   }
@@ -64,14 +64,11 @@ class LeaderWalletService {
   // }
   Address deriveAddress(
     LeaderWallet wallet,
-    Cipher cipher,
     int hdIndex, {
     exposure = NodeExposure.External,
   }) {
-    // var encryptedEntropy = EncryptedEntropy(wallet.encryptedEntropy, cipher);
-    // var seedWallet = SeedWallet(encryptedEntropy.seed, wallet.account!.net);
     var subwallet =
-        getSeedWallet(wallet, cipher).subwallet(hdIndex, exposure: exposure);
+        getSeedWallet(wallet).subwallet(hdIndex, exposure: exposure);
     return Address(
         scripthash: subwallet.scripthash,
         address: subwallet.address!,
@@ -81,45 +78,31 @@ class LeaderWalletService {
         net: wallet.account!.net);
   }
 
-  SeedWallet getSeedWallet(LeaderWallet wallet, Cipher cipher) {
-    var encryptedEntropy = EncryptedEntropy(wallet.encryptedEntropy, cipher);
+  SeedWallet getSeedWallet(LeaderWallet wallet) {
+    var encryptedEntropy =
+        EncryptedEntropy(wallet.encryptedEntropy, wallet.cipher!);
     return SeedWallet(encryptedEntropy.seed, wallet.account!.net);
   }
 
-  void deriveFirstAddressAndSave(
-    LeaderWallet wallet,
-    Cipher cipher,
-  ) {
-    var addrInt =
-        deriveAddress(wallet, cipher, 0, exposure: NodeExposure.Internal);
+  void deriveFirstAddressAndSave(LeaderWallet wallet) {
+    var addrInt = deriveAddress(wallet, 0, exposure: NodeExposure.Internal);
     addresses.save(addrInt);
-    var addrExt =
-        deriveAddress(wallet, cipher, 0, exposure: NodeExposure.External);
+    var addrExt = deriveAddress(wallet, 0, exposure: NodeExposure.External);
     addresses.save(addrExt);
   }
 
   /// returns the next internal or external node missing a history
-  HDWallet getNextEmptyWallet(
-    String walletId,
-    Cipher cipher, [
-    NodeExposure exposure = NodeExposure.Internal,
-  ]) {
-    // ensure valid exposure
-    exposure = exposure == NodeExposure.Internal
-        ? NodeExposure.Internal
-        : NodeExposure.External;
-    var leaderWallet = wallets.primaryIndex.getOne(walletId)! as LeaderWallet;
-    var seedWallet = getSeedWallet(leaderWallet, cipher);
+  HDWallet getNextEmptyWallet(LeaderWallet leaderWallet,
+      {NodeExposure exposure = NodeExposure.Internal}) {
+    var seedWallet = getSeedWallet(leaderWallet);
     var i = 0;
-    for (var address in addresses.byWalletExposure.getAll(walletId, exposure)) {
-      if (histories.byScripthash.getAll(address.scripthash).isEmpty) {
-        return seedWallet.subwallet(i, exposure: exposure);
-        //return leaderWallet.deriveWallet(i, exposure); // service
+    while (true) {
+      var hdWallet = seedWallet.subwallet(i, exposure: exposure);
+      if (histories.byScripthash.getAll(hdWallet.scripthash).isEmpty) {
+        return hdWallet;
       }
-      i = i + 1;
+      i++;
     }
-    // this shouldn't happen - if so we should trigger a new batch??
-    return seedWallet.subwallet(i, exposure: exposure);
   }
 
   LeaderWallet? makeLeaderWallet(String accountId, Cipher cipher,

@@ -1,3 +1,5 @@
+import 'package:ravencoin/ravencoin.dart';
+
 import 'package:raven/raven.dart';
 
 class AccountService {
@@ -38,5 +40,21 @@ class AccountService {
     var account = newAccount(name, net: net);
     await accounts.save(account);
     return account;
+  }
+
+  /// Return a WalletBase suitable for sending assets back to self during a
+  /// `send` transaction.
+  ///
+  /// Try getting a LeaderWallet change wallet first, then a SingleWallet if
+  /// not available. LeaderWallets are better, because they can provide a shade
+  /// of anonymity.
+  WalletBase getChangeWallet(Account account) {
+    for (var wallet in account.leaderWallets) {
+      return services.wallets.leaders.getNextEmptyWallet(wallet);
+    }
+    for (var wallet in account.singleWallets) {
+      return services.wallets.singles.getKPWallet(wallet);
+    }
+    throw WalletMissing("Account '${account.accountId}' has no change wallets");
   }
 }

@@ -8,6 +8,10 @@ import 'globals.dart' as globals;
 
 extension AccountHasManyWallets on Account {
   List<Wallet> get wallets => globals.wallets.byAccount.getAll(accountId);
+  List<LeaderWallet> get leaderWallets =>
+      wallets.whereType<LeaderWallet>().toList();
+  List<SingleWallet> get singleWallets =>
+      wallets.whereType<SingleWallet>().toList();
 }
 
 extension AccountHasManyAddresses on Account {
