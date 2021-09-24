@@ -18,57 +18,59 @@ class CipherRegistry {
     CipherType.None: (Uint8List password) => CipherNone(),
     CipherType.AES: (Uint8List password) => CipherAES(password),
   };
+  static const defaultCipherUpdate = CipherUpdate(CipherType.None, -1);
 
-  CipherRegistry();
+  CipherRegistry() {
+    registerCipher(defaultCipherUpdate, Uint8List(0));
+  }
 
   @override
   String toString() =>
       'ciphers: ${ciphers.toString()}, latestCipherType: ${describeEnum(latestCipherType)}';
 
-  Cipher get currentCipher => ciphers[currentCipherUpdate]!;
+  CipherType get getLatestCipherType => CipherRegistry.latestCipherType;
 
   CipherUpdate get currentCipherUpdate =>
-      CipherUpdate(latestCipherType, maxGlobalPasswordVersion());
+      CipherUpdate(latestCipherType, passwords.maxPasswordID);
+
+  Cipher get currentCipher => passwords.maxPasswordID > -1
+      ? ciphers[currentCipherUpdate]!
+      : ciphers[defaultCipherUpdate]!;
 
   void initCiphers(
     Set<CipherUpdate> currentCipherUpdates, {
     Uint8List? password,
     String? altPassword,
   }) {
+    password = getPassword(password: password, altPassword: altPassword);
+    print('using password: $password');
+    for (var currentCipherUpdate in currentCipherUpdates) {
+      var registered = registerCipher(currentCipherUpdate, password);
+      print('registered $registered');
+    }
+  }
+
+  Uint8List getPassword({Uint8List? password, String? altPassword}) {
     password ??
         altPassword ??
         (() => throw OneOfMultipleMissing(
             'password or altPassword required to initialize ciphers.'))();
-    password = password ?? Uint8List.fromList(altPassword!.codeUnits);
-    for (var currentCipherUpdate in currentCipherUpdates) {
-      registerCipher(currentCipherUpdate, password);
-    }
+    return password ?? Uint8List.fromList(altPassword!.codeUnits);
   }
 
-  int maxGlobalPasswordVersion() =>
-      max([for (var cu in ciphers.keys) cu.passwordVersion]) ?? 0;
-
-  //int maxPasswordVersion({CipherType latest = latestCipherType}) =>
-  //    max([
-  //      for (var cu in ciphers.keys
-  //          .where((cipherUpdate) => cipherUpdate.cipherType == latest)
-  //          .toList())
-  //        cu.passwordVersion
-  //    ]) ??
-  //    0;
-
-  CipherUpdate updatePassword(Uint8List password,
-      {CipherType latest = latestCipherType}) {
-    var update =
-        CipherUpdate(latest, maxGlobalPasswordVersion(/*latest: latest*/) + 1);
-    registerCipher(update, password);
-    return update;
+  void updatePassword(
+      {Uint8List? password,
+      String? altPassword,
+      CipherType latest = latestCipherType}) {
+    password = getPassword(password: password, altPassword: altPassword);
+    registerCipher(CipherUpdate(latest, passwords.maxPasswordID), password);
   }
 
   Cipher registerCipher(
     CipherUpdate cipherUpdate,
     Uint8List password,
   ) {
+    print('registering $cipherUpdate');
     ciphers[cipherUpdate] =
         cipherInitializers[cipherUpdate.cipherType]!(password);
     return ciphers[cipherUpdate]!;

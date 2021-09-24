@@ -15,17 +15,22 @@ class ClientService {
 
   int electrumSettingsChoice = 0;
 
-  SettingName get chosenDomain =>
+  SettingName get chosenDomainSetting =>
       electrumConnectionOptions[electrumSettingsChoice]!.item1;
 
-  SettingName get chosenPort =>
+  SettingName get chosenPortSetting =>
       electrumConnectionOptions[electrumSettingsChoice]!.item2;
+
+  String get chosenDomain =>
+      settings.primaryIndex.getOne(chosenDomainSetting)!.value;
+
+  int get chosenPort => settings.primaryIndex.getOne(chosenPortSetting)!.value;
 
   Future<RavenElectrumClient?> createClient() async {
     try {
       await RavenElectrumClient.connect(
-        settings.primaryIndex.getOne(chosenDomain)!.value,
-        port: settings.primaryIndex.getOne(chosenPort)!.value,
+        chosenDomain,
+        port: chosenPort,
         connectionTimeout: connectionTimeout,
       );
     } on SocketException catch (_) {

@@ -12,7 +12,7 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
 
   static Map<SettingName, Setting> get defaultSettings => {
         SettingName.Electrum_Domain1: Setting(
-            name: SettingName.Electrum_Domain1, value: 'testnet.rvn.rocks'),
+            name: SettingName.Electrum_Domain1, value: '1testnet.rvn.rocks'),
         SettingName.Electrum_Port1:
             Setting(name: SettingName.Electrum_Port1, value: 50002),
         SettingName.Electrum_Domain2: Setting(

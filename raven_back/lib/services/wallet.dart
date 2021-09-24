@@ -1,8 +1,7 @@
-import 'wallet/leader.dart';
-import 'wallet/single.dart';
-
 import 'package:raven/utils/transform.dart';
 import 'package:raven/raven.dart';
+import 'wallet/leader.dart';
+import 'wallet/single.dart';
 
 class WalletService {
   final LeaderWalletService leaders = LeaderWalletService();
@@ -15,17 +14,15 @@ class WalletService {
   // should return cipherUpdates that must be used with current password...
   Set<CipherUpdate> get getCurrentCipherUpdates => wallets.data
       .map((wallet) => wallet.cipherUpdate)
-      .where((cipherUpdate) =>
-          cipherUpdate.passwordVersion ==
-          cipherRegistry.maxGlobalPasswordVersion())
+      .where(
+          (cipherUpdate) => cipherUpdate.passwordId == passwords.maxPasswordID)
       .toSet();
 
   // should return cipherUpdates that must be used with previous password...
   Set<CipherUpdate> get getPreviousCipherUpdates => wallets.data
       .map((wallet) => wallet.cipherUpdate)
-      .where((cipherUpdate) =>
-          cipherUpdate.passwordVersion <
-          cipherRegistry.maxGlobalPasswordVersion())
+      .where(
+          (cipherUpdate) => cipherUpdate.passwordId < passwords.maxPasswordID)
       .toSet();
 
   Future createSave({

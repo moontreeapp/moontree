@@ -13,26 +13,22 @@ class CipherUpdate with EquatableMixin {
   final CipherType cipherType;
 
   @HiveField(1)
-  final int passwordVersion;
+  final int passwordId;
 
-  const CipherUpdate(this.cipherType, this.passwordVersion);
+  const CipherUpdate(this.cipherType, this.passwordId);
   CipherUpdate.fromMap(map)
       : cipherType = stringToCipherTypeMap[map['CipherType']]!,
-        passwordVersion = int.parse(map['passwordVersion']);
+        passwordId = int.parse(map['passwordId']);
 
   @override
-  List<Object?> get props => [cipherType, passwordVersion];
+  List<Object?> get props => [cipherType, passwordId];
 
   @override
   String toString() => toMap.toString();
 
-  //@override
-  //String get toString =>
-  //    '${describeEnum(cipherType)}, ${passwordVersion.toString()}';
-
   Map<String, dynamic> get toMap => {
         'CipherType': describeEnum(cipherType),
-        'PasswordVersion': passwordVersion.toString()
+        'PasswordId': passwordId.toString()
       };
 
   static Map<String, CipherType> get stringToCipherTypeMap =>

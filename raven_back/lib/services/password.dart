@@ -12,7 +12,7 @@ class PasswordService {
   bool interruptedPasswordChange() =>
       {
         for (var cipherUpdate in services.wallets.getAllCipherUpdates)
-          cipherUpdate.passwordVersion
+          cipherUpdate.passwordId
       }.length >
       1;
 }
@@ -63,8 +63,13 @@ class PasswordCreationService {
     return digest.toString();
   }
 
-  Future save(String password) async => await passwords.save(Password(
-      passwordId: passwords.maxPasswordID + 1,
-      saltedHash: hashThis(saltPassword(
-          password, Password.getSalt(passwords.maxPasswordID + 1)))));
+  /// save password in reservoir
+  /// use password to generate new cipher on latest cypter type
+  Future save(String password) async {
+    await passwords.save(Password(
+        passwordId: passwords.maxPasswordID + 1,
+        saltedHash: hashThis(saltPassword(
+            password, Password.getSalt(passwords.maxPasswordID + 1)))));
+    cipherRegistry.updatePassword(altPassword: password);
+  }
 }

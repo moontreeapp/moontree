@@ -1,6 +1,6 @@
 import 'package:raven/raven.dart';
 
-Future initNonElectrumWaiters() async {
+Future initWaiters() async {
   balanceWaiter.init();
   accountWaiter.init();
   leaderWaiter.init();

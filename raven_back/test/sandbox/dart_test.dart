@@ -1,5 +1,10 @@
 // dart test test/sandbox/dart_test.dart
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:crypto/crypto.dart';
 import 'package:quiver/iterables.dart';
+import 'package:raven/security/cipher_aes.dart';
 import 'package:test/test.dart';
 import 'package:date_format/date_format.dart';
 
@@ -137,5 +142,16 @@ void main() {
     print(max([1, 3, 2]));
     print(max([]));
     //print([].length == 0 ? null : [].reduce(max));
+  });
+
+  test('hashing with empty string', () {
+    var password = '';
+    var bytes = utf8.encode(password);
+    var digest = sha256.convert(bytes);
+    print('Digest as bytes: ${digest.bytes}');
+    print('Digest as hex string: $digest');
+    var cipher = CipherAES(Uint8List.fromList(password.codeUnits));
+    print(Uint8List.fromList('plainText'.codeUnits));
+    print(cipher.encrypt(Uint8List.fromList('plainText'.codeUnits)));
   });
 }

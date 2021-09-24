@@ -16,13 +16,17 @@ class RavenClientWaiter extends Waiter {
   void init() {
     listeners.add(ravenClientSubject.stream.listen((ravenClient) {
       if (ravenClient != null) {
+        print('client connected!!!');
         periodicTimer?.cancel();
         lastRavenClient = ravenClient;
         ravenClient.peer.done
             .then((value) => ravenClientSubject.sink.add(null));
       } else {
+        print('not connected $retriesLeft, ${services.client.chosenDomain}');
         lastRavenClient?.close();
-        periodicTimer = Stream.periodic(connectionTimeout).listen((_) async {
+        periodicTimer =
+            Stream.periodic(connectionTimeout + Duration(seconds: 1))
+                .listen((_) async {
           ravenClient = await services.client.createClient();
           if (ravenClient != null) {
             ravenClientSubject.sink.add(ravenClient);
@@ -37,5 +41,6 @@ class RavenClientWaiter extends Waiter {
         });
       }
     }));
+    //ravenClientSubject.sink.add(null); // seems to have no effect
   }
 }

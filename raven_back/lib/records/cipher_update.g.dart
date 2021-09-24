@@ -29,7 +29,7 @@ class CipherUpdateAdapter extends TypeAdapter<CipherUpdate> {
       ..writeByte(0)
       ..write(obj.cipherType)
       ..writeByte(1)
-      ..write(obj.passwordVersion);
+      ..write(obj.passwordId);
   }
 
   @override
