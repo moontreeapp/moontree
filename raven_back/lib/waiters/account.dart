@@ -8,10 +8,6 @@ class AccountWaiter extends Waiter {
   void init() {
     /// this listener implies we have to load everthing backwards if importing:
     /// first balances, histories, addresses, wallets and then accounts
-    print(cipherRegistry.getLatestCipherType);
-    print(passwords.maxPasswordID);
-    print(cipherRegistry.currentCipher);
-    print('---------0-------');
     listeners.add(accounts.changes.listen((List<Change> changes) {
       changes.forEach((change) {
         change.when(

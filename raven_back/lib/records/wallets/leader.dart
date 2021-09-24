@@ -28,6 +28,10 @@ class LeaderWallet extends Wallet {
             cipherUpdate: cipherUpdate);
 
   @override
+  List<Object?> get props =>
+      [walletId, accountId, cipherUpdate, encryptedEntropy];
+
+  @override
   String toString() =>
       'LeaderWallet($walletId, $accountId, $encryptedEntropy, $cipherUpdate)';
 

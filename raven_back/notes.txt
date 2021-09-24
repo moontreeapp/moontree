@@ -1,0 +1,5 @@
+issue 0
+if wallets exist pointing to old passwords its supposed to resume password change process...
+
+issue 2
+... testnet.rvn.com connection issue... it seems to be connecting but not reporting that it connected correctly..

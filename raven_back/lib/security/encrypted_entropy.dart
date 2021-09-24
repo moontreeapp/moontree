@@ -16,6 +16,10 @@ class EncryptedEntropy extends EncryptedWalletSecret {
       EncryptedEntropy(hex.encrypt(entropy, cipher), cipher);
 
   @override
+  String toString() =>
+      'encryptedEntropy: $encryptedSecret, cipher: $cipher, secret: $secret';
+
+  @override
   String get secret => mnemonic;
 
   /// this requires that we either do not allow testnet for users or

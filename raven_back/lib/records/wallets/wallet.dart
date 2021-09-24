@@ -19,7 +19,7 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
   final CipherUpdate cipherUpdate;
 
   @override
-  List<Object?> get props => [walletId, accountId];
+  List<Object?> get props => [walletId, accountId, cipherUpdate];
 
   Wallet({
     required this.walletId,

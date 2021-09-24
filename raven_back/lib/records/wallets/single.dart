@@ -28,6 +28,9 @@ class SingleWallet extends Wallet {
             cipherUpdate: cipherUpdate);
 
   @override
+  List<Object?> get props => [walletId, accountId, cipherUpdate, encryptedWIF];
+
+  @override
   String toString() =>
       'SingleWallet($walletId, $accountId, $encryptedWIF, $cipherUpdate)';
 

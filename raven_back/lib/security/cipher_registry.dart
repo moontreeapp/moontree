@@ -26,16 +26,20 @@ class CipherRegistry {
 
   @override
   String toString() =>
-      'ciphers: ${ciphers.toString()}, latestCipherType: ${describeEnum(latestCipherType)}';
+      'ciphers: $ciphers, latestCipherType: ${describeEnum(latestCipherType)}';
 
   CipherType get getLatestCipherType => CipherRegistry.latestCipherType;
 
   CipherUpdate get currentCipherUpdate =>
       CipherUpdate(latestCipherType, passwords.maxPasswordID);
 
-  Cipher get currentCipher => passwords.maxPasswordID > -1
-      ? ciphers[currentCipherUpdate]!
-      : ciphers[defaultCipherUpdate]!;
+  Cipher get currentCipher => ciphers[currentCipherUpdate]!;
+  // this is it. we need to produce the cipher before login on mock data. (because accounts waiter uses it.)
+  //ciphers[currentCipherUpdate] ?? ciphers[defaultCipherUpdate]!;
+  // passworded ciphers might not be instaneated yet
+  //passwords.maxPasswordID > -1
+  //    ? ciphers[currentCipherUpdate]!
+  //    : ciphers[defaultCipherUpdate]!;
 
   void initCiphers(
     Set<CipherUpdate> currentCipherUpdates, {
@@ -44,6 +48,7 @@ class CipherRegistry {
   }) {
     password = getPassword(password: password, altPassword: altPassword);
     print('using password: $password');
+    print(currentCipherUpdates);
     for (var currentCipherUpdate in currentCipherUpdates) {
       var registered = registerCipher(currentCipherUpdate, password);
       print('registered $registered');
@@ -78,15 +83,28 @@ class CipherRegistry {
 
   /// make sure all wallets are on the latest ciphertype and password
   Future updateWallets() async {
+    print('somehow wallets are not being saved with the new passwordId...');
+    print(currentCipherUpdate);
+    var records = <Wallet>[];
     for (var wallet in wallets.data) {
       if (wallet.cipherUpdate != currentCipherUpdate) {
+        print('wallet not updated:');
+        print(wallet);
+        print(currentCipherUpdate);
+        print(wallet.cipherUpdate);
+        print(currentCipherUpdate != wallet.cipherUpdate);
         if (wallet is LeaderWallet) {
+          /// what if wallet has never been encrypted?
+          /// that will be the case on brand new wallets first time you open the app.
           var reencrypt = EncryptedEntropy.fromEntropy(
             EncryptedEntropy(wallet.encrypted, wallet.cipher!).entropy,
             ciphers[currentCipherUpdate]!,
           );
           assert(wallet.walletId == reencrypt.walletId);
-          await wallets.save(LeaderWallet(
+          // these should be different...
+          print(reencrypt);
+          print(EncryptedEntropy(wallet.encrypted, wallet.cipher!));
+          records.add(LeaderWallet(
             walletId: reencrypt.walletId,
             accountId: wallet.accountId,
             encryptedEntropy: reencrypt.encryptedSecret,
@@ -98,7 +116,7 @@ class CipherRegistry {
             ciphers[currentCipherUpdate]!,
           );
           assert(wallet.walletId == reencrypt.walletId);
-          await wallets.save(SingleWallet(
+          records.add(SingleWallet(
             walletId: reencrypt.walletId,
             accountId: wallet.accountId,
             encryptedWIF: reencrypt.encryptedSecret,
@@ -107,6 +125,13 @@ class CipherRegistry {
         }
       }
     }
+    await wallets.saveAll(records);
+
+    /// somehow the wallets.save isn't saving correctly, it's getting passed the right stuff..
+    /// are we mutating a local copy?
+    print('WALLETS.DATA: ${wallets.data}');
+
+    /// it was due to props on wallets - not distinguishing the change when saving new encryptedEntropty
 
     /// completed successfully
     //assert(services.wallets.getPreviousCipherUpdates.isEmpty);
