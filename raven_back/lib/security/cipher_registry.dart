@@ -18,10 +18,10 @@ class CipherRegistry {
     CipherType.None: (Uint8List password) => CipherNone(),
     CipherType.AES: (Uint8List password) => CipherAES(password),
   };
-  static const defaultCipherUpdate = CipherUpdate(CipherType.None, -1);
+  //static const defaultCipherUpdate = CipherUpdate(CipherType.None, -1);
 
   CipherRegistry() {
-    registerCipher(defaultCipherUpdate, Uint8List(0));
+    //  registerCipher(defaultCipherUpdate, Uint8List(0));
   }
 
   @override
@@ -34,12 +34,6 @@ class CipherRegistry {
       CipherUpdate(latestCipherType, passwords.maxPasswordID);
 
   Cipher get currentCipher => ciphers[currentCipherUpdate]!;
-  // this is it. we need to produce the cipher before login on mock data. (because accounts waiter uses it.)
-  //ciphers[currentCipherUpdate] ?? ciphers[defaultCipherUpdate]!;
-  // passworded ciphers might not be instaneated yet
-  //passwords.maxPasswordID > -1
-  //    ? ciphers[currentCipherUpdate]!
-  //    : ciphers[defaultCipherUpdate]!;
 
   void initCiphers(
     Set<CipherUpdate> currentCipherUpdates, {

@@ -43,18 +43,18 @@ class ClientService {
 
   Future<RavenElectrumClient?> createClient() async {
     try {
-      await RavenElectrumClient.connect(
+      return await RavenElectrumClient.connect(
         chosenDomain,
         port: chosenPort,
         connectionTimeout: connectionTimeout,
       );
     } on SocketException catch (_) {
       print(_);
-      return null;
     }
   }
 
   void cycleNextElectrumConnectionOption() {
+    print('cycleNextElectrumConnectionOption - $electrumSettingsChoice');
     electrumSettingsChoice =
         (electrumSettingsChoice + 1) % electrumConnectionOptions.length;
   }
