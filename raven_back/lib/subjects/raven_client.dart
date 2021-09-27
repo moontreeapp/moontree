@@ -1,0 +1,4 @@
+import 'package:raven_electrum_client/raven_electrum_client.dart';
+import 'package:rxdart/rxdart.dart';
+
+final ravenClientSubject = BehaviorSubject<RavenElectrumClient?>();

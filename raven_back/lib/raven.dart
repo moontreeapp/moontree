@@ -8,6 +8,7 @@ export 'reservoirs/reservoirs.dart';
 export 'security/security.dart';
 export 'services/services.dart';
 export 'waiters/waiters.dart';
+export 'subjects/subjects.dart';
 
 export 'utils/exceptions.dart';
 export 'lingo/lingo.dart';

@@ -10,7 +10,7 @@ import 'waiter.dart';
 
 class BlockWaiter extends Waiter {
   void init() {
-    ravenClientSubject.stream.listen((ravenClient) {
+    subjects.client.stream.listen((ravenClient) {
       if (ravenClient == null) {
         deinit();
       } else {

@@ -16,7 +16,7 @@ class SettingWaiter extends Waiter {
               var setting = updated.data;
               if ([services.client.chosenDomain, services.client.chosenPort]
                   .contains(setting.name)) {
-                ravenClientSubject.sink.add(null);
+                subjects.client.sink.add(null);
               }
 
               // When password changes, replace the cipher registry objects

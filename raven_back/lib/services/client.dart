@@ -26,20 +26,26 @@ class ClientService {
 
   int get chosenPort => settings.primaryIndex.getOne(chosenPortSetting)!.value;
 
-  String get chosenDomainFirstBackup =>
+  String get preferredElectrumDomain =>
+      settings.primaryIndex.getOne(SettingName.Electrum_Domain0)!.value;
+
+  int get preferredElectrumPort =>
+      settings.primaryIndex.getOne(SettingName.Electrum_Port0)!.value;
+
+  String get firstBackupElectrumDomain =>
       settings.primaryIndex.getOne(SettingName.Electrum_Domain1)!.value;
 
-  int get chosenPortFirstBackup =>
+  int get firstBackupElectrumPort =>
       settings.primaryIndex.getOne(SettingName.Electrum_Port1)!.value;
 
-  String get chosenDomainSecondBackup =>
+  String get secondBackupElectrumDomain =>
       settings.primaryIndex.getOne(SettingName.Electrum_Domain2)!.value;
 
-  int get chosenPortSecondBackup =>
+  int get secondBackupElectrumPort =>
       settings.primaryIndex.getOne(SettingName.Electrum_Port2)!.value;
 
   bool get connectionStatus =>
-      ravenClientSubject.stream.valueOrNull != null ? true : false;
+      subjects.client.stream.valueOrNull != null ? true : false;
 
   Future<RavenElectrumClient?> createClient() async {
     try {

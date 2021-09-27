@@ -14,11 +14,10 @@ class RavenClientWaiter extends Waiter {
   int retriesLeft = retries;
 
   void init() {
-    listeners.add(ravenClientSubject.stream.listen((ravenClient) {
+    listeners.add(subjects.client.stream.listen((ravenClient) {
       if (ravenClient != null) {
         mostRecentRavenClient = ravenClient;
-        ravenClient.peer.done
-            .then((value) => ravenClientSubject.sink.add(null));
+        ravenClient.peer.done.then((value) => subjects.client.sink.add(null));
       } else {
         mostRecentRavenClient?.close();
         periodicTimer =
@@ -26,7 +25,7 @@ class RavenClientWaiter extends Waiter {
                 .listen((_) async {
           ravenClient = await services.client.createClient();
           if (ravenClient != null) {
-            ravenClientSubject.sink.add(ravenClient);
+            subjects.client.sink.add(ravenClient);
             await periodicTimer?.cancel();
           } else {
             retriesLeft =
@@ -36,6 +35,6 @@ class RavenClientWaiter extends Waiter {
         });
       }
     }));
-    ravenClientSubject.sink.add(null);
+    subjects.client.sink.add(null);
   }
 }

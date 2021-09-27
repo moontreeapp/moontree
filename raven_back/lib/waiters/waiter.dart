@@ -5,7 +5,7 @@ abstract class Waiter {
 
   Waiter();
 
-  void deinit() {
+  void deinit([dynamic _]) {
     for (var listener in listeners) {
       listener.cancel();
     }
