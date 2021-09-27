@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 import 'package:raven_mobile/utils/transform.dart';
-import 'package:raven_mobile/utils/utils.dart';
 import 'package:raven/raven.dart';
 
 class ElectrumNetwork extends StatefulWidget {
@@ -27,11 +26,11 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
   void initState() {
     passwordVerified = false;
     electrumAddress.text =
-        '${services.client.chosenDomain}:${services.client.chosenPort}';
+        '${services.client.preferredElectrumDomain}:${services.client.preferredElectrumPort}';
     electrumAddressFirstBackup.text =
-        '${services.client.chosenDomainFirstBackup}:${services.client.chosenPortFirstBackup}';
+        '${services.client.firstBackupElectrumDomain}:${services.client.firstBackupElectrumPort}';
     electrumAddressSecondBackup.text =
-        '${services.client.chosenDomainSecondBackup}:${services.client.chosenPortSecondBackup}';
+        '${services.client.secondBackupElectrumDomain}:${services.client.secondBackupElectrumPort}';
     super.initState();
   }
 
@@ -76,7 +75,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
                 TextButton.icon(
                     onPressed: () {
                       // flush out current connection and allow waiter to reestablish one
-                      ravenClientSubject.sink.add(null);
+                      subjects.client.sink.add(null);
                       // show that waits for valid connection or times out...
                       // todo
                       setState(() {});
@@ -91,7 +90,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
             textInputAction: TextInputAction.done,
             decoration: InputDecoration(
               border: UnderlineInputBorder(),
-              labelText: 'Default Electrum Domain:Port',
+              labelText: 'Preferred Electrum Domain:Port',
               hintText: 'testnet.rvn.com:5000',
             ),
             onEditingComplete: () => attemptSave(),
