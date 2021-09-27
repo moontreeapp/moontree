@@ -54,7 +54,6 @@ class ClientService {
   }
 
   void cycleNextElectrumConnectionOption() {
-    print('cycleNextElectrumConnectionOption - $electrumSettingsChoice');
     electrumSettingsChoice =
         (electrumSettingsChoice + 1) % electrumConnectionOptions.length;
   }
