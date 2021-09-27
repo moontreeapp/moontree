@@ -7,13 +7,16 @@ class PasswordService {
   final PasswordValidationService validate = PasswordValidationService();
   final PasswordCreationService create = PasswordCreationService();
 
-  bool get usingPassword => passwords.primaryIndex.getMostRecent() != null;
+  bool get passwordRequired => passwords.maxPasswordID != -1;
 
   bool interruptedPasswordChange() => {
         for (var cipherUpdate in services.wallets.getAllCipherUpdates)
           if (cipherUpdate.passwordId != passwords.maxPasswordID)
             cipherUpdate.passwordId
       }.isNotEmpty;
+
+  void get broadcastLogin => subjects.login.sink.add(true);
+  void get broadcastLogout => subjects.login.sink.add(false);
 }
 
 class PasswordValidationService {

@@ -14,27 +14,30 @@ class RavenClientWaiter extends Waiter {
   int retriesLeft = retries;
 
   void init() {
-    listeners.add(subjects.client.stream.listen((ravenClient) {
-      if (ravenClient != null) {
-        mostRecentRavenClient = ravenClient;
-        ravenClient.peer.done.then((value) => subjects.client.sink.add(null));
-      } else {
-        mostRecentRavenClient?.close();
-        periodicTimer =
-            Stream.periodic(connectionTimeout + Duration(seconds: 1))
-                .listen((_) async {
-          ravenClient = await services.client.createClient();
-          if (ravenClient != null) {
-            subjects.client.sink.add(ravenClient);
-            await periodicTimer?.cancel();
-          } else {
-            retriesLeft =
-                retriesLeft <= 0 ? retries : retriesLeft = retriesLeft - 1;
-            services.client.cycleNextElectrumConnectionOption();
-          }
-        });
-      }
-    }));
-    subjects.client.sink.add(null);
+    if (!listeners.keys.contains('subjects.client')) {
+      listeners['subjects.client'] =
+          subjects.client.stream.listen((ravenClient) {
+        if (ravenClient != null) {
+          mostRecentRavenClient = ravenClient;
+          ravenClient.peer.done.then((value) => subjects.client.sink.add(null));
+        } else {
+          mostRecentRavenClient?.close();
+          periodicTimer =
+              Stream.periodic(connectionTimeout + Duration(seconds: 1))
+                  .listen((_) async {
+            ravenClient = await services.client.createClient();
+            if (ravenClient != null) {
+              subjects.client.sink.add(ravenClient);
+              await periodicTimer?.cancel();
+            } else {
+              retriesLeft =
+                  retriesLeft <= 0 ? retries : retriesLeft = retriesLeft - 1;
+              services.client.cycleNextElectrumConnectionOption();
+            }
+          });
+        }
+      });
+      subjects.client.sink.add(null);
+    }
   }
 }

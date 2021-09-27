@@ -11,23 +11,6 @@ class ClientAndLogin extends AppState {
   final bool? login;
 
   ClientAndLogin(this.client, this.login);
-
-  @override
-  String toString() => (client == null
-      ? 'client: null, '
-      : 'client: client, ' +
-          (login == null
-              ? 'login: null'
-              : (login! ? 'login: true' : 'login: false')));
-
-  Map<String, int> get matrix => {
-        'client: null, login: null': 0,
-        'client: null, login: false': 1,
-        'client: null, login: true': 2,
-        'client: client, login: null': 3,
-        'client: client, login: false': 4,
-        'client: client, login: true': 5,
-      };
 }
 
 // stream

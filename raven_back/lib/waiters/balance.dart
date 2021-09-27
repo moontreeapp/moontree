@@ -22,12 +22,14 @@ class BalanceWaiter extends Waiter {
   void init() {
     /// new transaction is made / detected:
     /// recalculate affected balance (by security) for that wallet
-    listeners.add(histories.changes
-        .bufferCountTimeout(25, Duration(milliseconds: 50))
-        .listen((List<List<Change>> unflattenedChanges) {
-      var changes = unflattenedChanges.expand((change) => change);
-      services.balances.saveChangedBalances(changes.toList());
-    }));
+    if (!listeners.keys.contains('histories.changes')) {
+      listeners['histories.changes'] = histories.changes
+          .bufferCountTimeout(25, Duration(milliseconds: 50))
+          .listen((List<List<Change>> unflattenedChanges) {
+        var changes = unflattenedChanges.expand((change) => change);
+        services.balances.saveChangedBalances(changes.toList());
+      });
+    }
 
     // unlike account balances, no other triggers need to be considered.
   }

@@ -20,8 +20,11 @@ class BlockWaiter extends Waiter {
   }
 
   void subscribe(RavenElectrumClient ravenClient) {
-    var stream = ravenClient.subscribeHeaders();
-    listeners.add(stream.listen((blockHeader) async =>
-        await blocks.save(Block.fromBlockHeader(blockHeader))));
+    if (!listeners.keys.contains('ravenClient.subscribeHeaders')) {
+      listeners['ravenClient.subscribeHeaders'] = ravenClient
+          .subscribeHeaders()
+          .listen((blockHeader) async =>
+              await blocks.save(Block.fromBlockHeader(blockHeader)));
+    }
   }
 }

@@ -1,13 +1,14 @@
 import 'dart:async';
 
 abstract class Waiter {
-  final List<StreamSubscription> listeners = [];
+  final Map<String, StreamSubscription> listeners = {};
 
   Waiter();
 
-  void deinit([dynamic _]) {
-    for (var listener in listeners) {
-      listener.cancel();
+  Future deinit() async {
+    print('deinit called!');
+    for (var listener in listeners.values) {
+      await listener.cancel();
     }
     listeners.clear();
   }
