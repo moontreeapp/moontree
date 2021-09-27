@@ -20,10 +20,12 @@ class TransactionBuilder {
   Map _prevTxSet = {};
 
   TransactionBuilder(
-      {NetworkType this.network = mainnet, int maximumFeeRate = 2500}) {
+      {NetworkType this.network = mainnet,
+      int maximumFeeRate = 2500,
+      int version = 1}) {
     this._inputs = [];
     this._tx = Transaction();
-    this._tx!.version = 2;
+    this._tx!.version = version;
   }
 
   List<Input> get inputs => _inputs;
