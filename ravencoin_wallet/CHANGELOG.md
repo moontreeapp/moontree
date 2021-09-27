@@ -1,3 +1,8 @@
+## 2.1.0
+
+- Change default transaction version to 1 when using TransactionBuilder
+- Follow modern Dart suggested syntax for TransactionBuilder
+
 ## 2.0.1
 - Export WalletBase
 
