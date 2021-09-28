@@ -1,5 +1,3 @@
-/// * (raven listener) created account, empty -> create wallet
-import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:reservoir/reservoir.dart' show Change;
 
 import 'package:raven/waiters/waiter.dart';
@@ -7,18 +5,20 @@ import 'package:raven/raven.dart';
 
 class AccountWaiter extends Waiter {
   void init() {
-    subjects.clientAndLogin.stream.listen((clientAndLogin) async {
-      if (clientAndLogin.client == null ||
-          (services.passwords.passwordRequired &&
-              clientAndLogin.login == false)) {
+    subjects.login.stream.listen((login) async {
+      if (services.passwords.passwordRequired && login == false) {
         await deinit();
       } else {
-        setupListeners(clientAndLogin.client!);
+        setupListeners();
       }
     });
   }
 
-  void setupListeners(RavenElectrumClient ravenClient) {
+  // if no login
+  // add stuff to backlog
+  // once login do backlog and erase
+
+  void setupListeners() {
     /// this listener implies we have to load everthing backwards if importing:
     /// first balances, histories, addresses, wallets and then accounts
     if (!listeners.keys.contains('accounts.changes')) {
