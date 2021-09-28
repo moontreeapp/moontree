@@ -7,23 +7,15 @@ import 'package:raven/raven.dart';
 
 class AccountWaiter extends Waiter {
   void init() {
-    if (services.passwords.passwordRequired) {
-      subjects.clientAndLogin.stream.listen((clientAndLogin) async {
-        if (clientAndLogin.client == null || clientAndLogin.login == false) {
-          await deinit();
-        } else {
-          setupListeners(clientAndLogin.client!);
-        }
-      });
-    } else {
-      subjects.client.stream.listen((ravenClient) async {
-        if (ravenClient == null) {
-          await deinit();
-        } else {
-          setupListeners(ravenClient);
-        }
-      });
-    }
+    subjects.clientAndLogin.stream.listen((clientAndLogin) async {
+      if (clientAndLogin.client == null ||
+          (services.passwords.passwordRequired &&
+              clientAndLogin.login == false)) {
+        await deinit();
+      } else {
+        setupListeners(clientAndLogin.client!);
+      }
+    });
   }
 
   void setupListeners(RavenElectrumClient ravenClient) {
