@@ -70,12 +70,12 @@ class _LoginState extends State<Login> {
 
   Future submit() async {
     if (services.passwords.validate.password(password.text)) {
-      services.passwords.broadcastLogin;
       // create ciphers for wallets we have
       cipherRegistry.initCiphers(services.wallets.getCurrentCipherUpdates,
           altPassword: password.text);
       await cipherRegistry.updateWallets();
       cipherRegistry.cleanupCiphers();
+      services.passwords.broadcastLogin;
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
     } else {
       var used = services.passwords.validate.previouslyUsed(password.text);

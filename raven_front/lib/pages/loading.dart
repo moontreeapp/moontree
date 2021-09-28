@@ -25,7 +25,7 @@ class _LoadingState extends State<Loading> {
     if (accounts.data.isEmpty) {
       // for testing
       MockHistories().init();
-      mockPassword();
+      //mockPassword();
 
       await setupAccounts();
     }

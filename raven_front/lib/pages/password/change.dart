@@ -170,8 +170,8 @@ class _ChangePasswordState extends State<ChangePassword> {
   Future submit() async {
     if (validateComplexity() && validateExisting()) {
       var password = newPassword.text;
-      await services.passwords.create.save(password); // good
-      cipherRegistry.updatePassword(altPassword: password); // good
+      await services.passwords.create.save(password);
+      cipherRegistry.updatePassword(altPassword: password);
       await cipherRegistry.updateWallets();
       cipherRegistry.cleanupCiphers();
       successMessage();
