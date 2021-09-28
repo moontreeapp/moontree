@@ -1,7 +1,9 @@
 // dart --no-sound-null-safety test test/integration/raven_tx_test.dart
+import 'package:ravencoin/ravencoin.dart';
 import 'package:test/test.dart';
 
-import 'package:raven/services/transaction.dart' as tx;
+import 'package:raven/services/transaction.dart';
+import 'package:raven/services/transaction/fee.dart';
 import 'package:raven/globals.dart';
 import '../../fixtures/fixtures.dart' as fixtures;
 
@@ -13,14 +15,31 @@ void main() async {
 
   setUp(fixtures.useFixtureSources);
 
-  test('choose enough inputs for fee', () async {
-    var txhelper = tx.TransactionBuilderHelper(
-        wallet, 3000000, 'mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7', addresses);
-    var txb = txhelper.buildTransaction();
-    expect(txb.tx!.ins.length, 1); // 4000000
-    expect(txb.tx!.ins[0].hash.toString(),
-        '[213, 7, 25, 181, 71, 217, 95, 154, 120, 226, 1, 32, 155, 129, 148, 31, 102, 123, 212, 99, 30, 156, 180, 35, 106, 126, 39, 72, 40, 162, 173, 45]'); // 4000000
+  group('TransactionBuilder', () {
+    test('default transaction version is 1', () {
+      var txb = TransactionBuilder(network: mainnet);
+      expect(txb.tx!.version, 1);
+    });
+
+    test('fee can be calculated', () {
+      var txb = TransactionBuilder(network: mainnet);
+      expect(txb.tx!.virtualSize(), 10);
+      expect(txb.tx!.fee(), 10);
+    });
   });
+
+  group('TransactionService', () {
+    test('', () {});
+  });
+
+  // test('choose enough inputs for fee', () async {
+  //   var txhelper = tx.TransactionBuilderHelper(
+  //       wallet, 3000000, 'mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7', addresses);
+  //   var txb = txhelper.buildTransaction();
+  //   expect(txb.tx!.ins.length, 1); // 4000000
+  //   expect(txb.tx!.ins[0].hash.toString(),
+  //       '[213, 7, 25, 181, 71, 217, 95, 154, 120, 226, 1, 32, 155, 129, 148, 31, 102, 123, 212, 99, 30, 156, 180, 35, 106, 126, 39, 72, 40, 162, 173, 45]'); // 4000000
+  // });
   // ignore: omit_local_variable_types
   // tests.Generated gen = tests.Generated.asEmpty();
   // setUpAll(() async => gen = await tests.generate());
