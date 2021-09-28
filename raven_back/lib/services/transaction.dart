@@ -13,28 +13,28 @@ class FormatResult {
 }
 
 class TransactionService {
-//   final Account account;
-//   int sendAmount;
-//   String toAddress;
-//   int anticipatedOutputFee;
-// // it'd be cool if account had access to this - should it be accessed through service?
-
-//   TransactionService(
-//     this.account,
-//     this.sendAmount,
-//     this.toAddress, [
-//     this.anticipatedOutputFee = 34,
-//   ]);
-
   /// gets inputs, calculates fee, returns change
-  TransactionBuilder buildTransaction(Account account, int sendAmount) {
+  TransactionBuilder buildTransaction(
+      Account account, String toAddress, int sendAmount,
+      [int anticipatedFee = 34 /* why 34? */]) {
     var txb = TransactionBuilder(network: account.network);
-    txb.setVersion(1);
+
+    // Direct the transaction to send value to the desired address
     txb.addOutput(toAddress, sendAmount);
-    var results = addInputs(txb);
-    txb = addChangeOutput(results.txb,
-        results.total - (sendAmount + anticipatedOutputFee) - results.fees);
+
+    // From the available wallets and UTXOs within our account,
+    // find sufficient value to send to the address above
+    var results = addInputs(txb, account, sendAmount, anticipatedFee);
+
+    // Calculate change due, and return it to a wallet we control
+    var returnAddress = services.accounts.getChangeWallet(account).address;
+    var changeDue =
+        results.total - (sendAmount + anticipatedFee) - results.fees;
+    txb.addOutput(returnAddress, changeDue);
+
+    // Authorize the release of value by signing the transaction UTXOs
     txb.signEachInput(results.utxos);
+
     return txb;
   }
 
@@ -52,14 +52,20 @@ class TransactionService {
   ///   your cost is 3+1+1 = 5, but you have selected a total of 4.
   ///   To solve this we simply try to get the best utxo set for 5 instead:
   ///   which is one utxo (10), so your cost is now really 3+1 and your input is 10. your done.
-  FormatResult addInputs(TransactionBuilder txb) {
+  FormatResult addInputs(
+    TransactionBuilder txb,
+    Account account,
+    int sendAmount,
+    int anticipatedOutputFee,
+  ) {
     var total = 0;
     var retutxos = <History>[];
     var pastInputs = [];
-    var knownFees = totalFeeByBytes(txb);
-    var anticipatedInputFeeRate = 51;
+    var knownFees = txb.tx!.fee();
+    var anticipatedInputFeeRate = 51 /* why 51? */;
     var anticipatedInputFees = 0;
     var utxos = <History>[];
+
     // find optimal utxo set by anticipating fees depending on chosen inputs and get inputs to cover total
     while (!pastInputs.contains(utxos)) {
       anticipatedInputFees =
@@ -83,7 +89,7 @@ class TransactionService {
       retutxos.add(utxo);
     }
     // doublecheck we have enough value to cover the amount + anticipated OutputFee + knownFees
-    knownFees = txb.tx!.fee;
+    knownFees = txb.tx!.fee();
     var knownCost = sendAmount + anticipatedOutputFee + knownFees;
     while (total < knownCost) {
       // if its not big enough, we simply add one more input to cover the difference
@@ -97,19 +103,9 @@ class TransactionService {
         total = (total + utxo.value).toInt();
         retutxos.add(utxo); // used later, we have to sign after change output
       }
-      knownFees = txb.tx!.fee;
+      knownFees = txb.tx!.fee();
       knownCost = sendAmount + anticipatedOutputFee + knownFees;
     }
     return FormatResult(txb, total, knownFees, retutxos);
-  }
-
-  TransactionBuilder addChangeOutput(TransactionBuilder txb, int change) {
-    txb.addOutput(
-        services.wallets.leaders
-            .getNextEmptyWallet(account.wallets[0].walletId,
-                cipherRegistry.ciphers[account.wallets[0].cipherUpdate]!)
-            .address,
-        change);
-    return txb;
   }
 }

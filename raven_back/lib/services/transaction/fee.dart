@@ -16,8 +16,3 @@ const TxGoal cheap = TxGoal(STANDARD_RATE * 0.9);
 extension TransactionFee on Transaction {
   int fee([TxGoal goal = standard]) => (goal.rate * virtualSize()).ceil();
 }
-
-// Is this used?
-int forCreateAsset(String hex) {
-  return 50000000000;
-}
