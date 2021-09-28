@@ -1,6 +1,5 @@
-import 'raven_client.dart';
-import 'logged_in.dart';
-import 'multiple.dart';
+import 'behavior_subjects.dart';
+import 'client_and_login.dart';
 
 class subjects {
   static final client = ravenClientSubject;
