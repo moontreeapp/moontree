@@ -32,6 +32,7 @@ class Header {
 /// See https://electrumx-ravencoin.readthedocs.io/en/latest/protocol-methods.html
 class RavenElectrumClient extends SubscribingClient {
   RavenElectrumClient(channel) : super(channel);
+  String clientName = 'MTWallet';
 
   static Future<RavenElectrumClient> connect(dynamic host,
       {port = 50002,
@@ -45,6 +46,7 @@ class RavenElectrumClient extends SubscribingClient {
         connectionTimeout: connectionTimeout,
         aliveTimerDuration: aliveTimerDuration,
         acceptUnverified: acceptUnverified));
+    client.clientName = clientName;
     await client.serverVersion(
         clientName: clientName, protocolVersion: protocolVersion);
     return client;
