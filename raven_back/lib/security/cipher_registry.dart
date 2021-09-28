@@ -33,7 +33,7 @@ class CipherRegistry {
   CipherUpdate get currentCipherUpdate =>
       CipherUpdate(latestCipherType, passwords.maxPasswordID);
 
-  Cipher get currentCipher => ciphers[currentCipherUpdate]!;
+  Cipher? get currentCipher => ciphers[currentCipherUpdate];
 
   void initCiphers(
     Set<CipherUpdate> currentCipherUpdates, {
