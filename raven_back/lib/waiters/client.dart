@@ -10,24 +10,33 @@ class RavenClientWaiter extends Waiter {
   static const int retries = 3;
 
   RavenElectrumClient? mostRecentRavenClient;
+  RavenElectrumClient? mostValue;
   StreamSubscription? periodicTimer;
   int retriesLeft = retries;
 
   void init() {
     if (!listeners.keys.contains('subjects.client')) {
       listeners['subjects.client'] =
-          subjects.client.stream.listen((ravenClient) {
+          subjects.client.stream.listen((ravenClient) async {
+        mostValue = ravenClient;
         if (ravenClient != null) {
+          await periodicTimer?.cancel();
           mostRecentRavenClient = ravenClient;
-          ravenClient.peer.done.then((value) => subjects.client.sink.add(null));
+          // ignore: unawaited_futures
+          ravenClient.peer.done.then((value) {
+            if (mostValue != null) {
+              subjects.client.sink.add(null);
+            }
+          });
         } else {
-          mostRecentRavenClient?.close();
+          await mostRecentRavenClient?.close();
+          await periodicTimer?.cancel();
           periodicTimer =
               Stream.periodic(connectionTimeout + Duration(seconds: 1))
                   .listen((_) async {
-            ravenClient = await services.client.createClient();
-            if (ravenClient != null) {
-              subjects.client.sink.add(ravenClient);
+            var newRavenClient = await services.client.createClient();
+            if (newRavenClient != null) {
+              subjects.client.sink.add(newRavenClient);
               await periodicTimer?.cancel();
             } else {
               retriesLeft =

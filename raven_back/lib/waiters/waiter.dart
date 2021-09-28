@@ -6,7 +6,6 @@ abstract class Waiter {
   Waiter();
 
   Future deinit() async {
-    print('deinit called!');
     for (var listener in listeners.values) {
       await listener.cancel();
     }

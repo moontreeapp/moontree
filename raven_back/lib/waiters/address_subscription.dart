@@ -5,39 +5,29 @@ import 'package:reservoir/reservoir.dart';
 import 'package:raven/raven.dart';
 import 'package:raven/utils/buffer_count_window.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'waiter.dart';
 
 class AddressSubscriptionWaiter extends Waiter {
   final Map<String, StreamSubscription> subscriptionHandles = {};
-  final StreamController<Address> addressesNeedingUpdate = StreamController();
+  final PublishSubject<Address> addressesNeedingUpdate = PublishSubject();
   final loggedInFlag = false;
 
   void init() {
-    if (services.passwords.passwordRequired) {
-      subjects.clientAndLogin.stream.listen((clientAndLogin) async {
-        if (clientAndLogin.client == null || clientAndLogin.login == false) {
-          await deinit();
-        } else {
-          setupListeners(clientAndLogin.client!);
-        }
-      });
-    } else {
-      subjects.client.stream.listen((ravenClient) async {
-        if (ravenClient == null) {
-          await deinit();
-        } else {
-          setupListeners(ravenClient);
-        }
-      });
-    }
+    subjects.clientAndLogin.stream.listen((clientAndLogin) async {
+      if (clientAndLogin.client == null ||
+          (services.passwords.passwordRequired &&
+              clientAndLogin.login == false)) {
+        await deinit();
+      } else {
+        setupListeners(clientAndLogin.client!);
+      }
+    });
   }
 
   void setupListeners(RavenElectrumClient ravenClient) {
     subscribeToExistingAddresses(ravenClient);
-    // if ( stream has not already been listened to)..
-    print('addressesNeedingUpdate.stream');
-    print(listeners.keys.contains('addressesNeedingUpdate.stream'));
     if (!listeners.keys.contains('addressesNeedingUpdate.stream')) {
       listeners['addressesNeedingUpdate.stream'] = addressesNeedingUpdate.stream
           .bufferCountTimeout(10, Duration(milliseconds: 50))
@@ -48,7 +38,6 @@ class AddressSubscriptionWaiter extends Waiter {
             ravenClient,
           ),
         );
-
         services.wallets.leaders.maybeDeriveNewAddresses(changedAddresses);
       });
     }

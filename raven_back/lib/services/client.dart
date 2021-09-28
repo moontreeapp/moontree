@@ -47,11 +47,13 @@ class ClientService {
   bool get connectionStatus =>
       subjects.client.stream.valueOrNull != null ? true : false;
 
-  Future<RavenElectrumClient?> createClient() async {
+  Future<RavenElectrumClient?> createClient(
+      {String clientName = 'MTWallet'}) async {
     try {
       return await RavenElectrumClient.connect(
         chosenDomain,
         port: chosenPort,
+        clientName: clientName,
         connectionTimeout: connectionTimeout,
       );
     } on SocketException catch (_) {
