@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/services/history_mock.dart';
+import 'package:raven_mobile/services/password_mock.dart';
 
 class Loading extends StatefulWidget {
   @override
@@ -13,8 +14,6 @@ class Loading extends StatefulWidget {
 
 class _LoadingState extends State<Loading> {
   Future setupAccounts() async {
-    await services.passwords.create.save('asdf');
-    cipherRegistry.updatePassword(altPassword: 'asdf');
     await services.accounts.makeSaveAccount('Primary');
     await services.accounts.makeSaveAccount('Savings');
   }
@@ -23,14 +22,16 @@ class _LoadingState extends State<Loading> {
     var hiveInit = HiveInitializer(init: (dbDir) => Hive.initFlutter());
     await hiveInit.setUp();
     await initWaiters();
-    // seems to trigger stream listener to work
-    //print(await ravenClientSubject.stream.last);
-
     if (accounts.data.isEmpty) {
+      // for testing
       MockHistories().init();
+      mockPassword();
+
       await setupAccounts();
     }
     settings.setCurrentAccountId();
+
+    // for testing
     print('accounts: ${accounts.data}');
     print('wallets: ${wallets.data}');
     print('passwords: ${passwords.data}');
