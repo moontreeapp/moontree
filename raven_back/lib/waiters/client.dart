@@ -10,7 +10,6 @@ class RavenClientWaiter extends Waiter {
   static const int retries = 3;
 
   RavenElectrumClient? mostRecentRavenClient;
-  RavenElectrumClient? mostValue;
   StreamSubscription? periodicTimer;
   int retriesLeft = retries;
 
@@ -18,13 +17,13 @@ class RavenClientWaiter extends Waiter {
     if (!listeners.keys.contains('subjects.client')) {
       listeners['subjects.client'] =
           subjects.client.stream.listen((ravenClient) async {
-        mostValue = ravenClient;
         if (ravenClient != null) {
           await periodicTimer?.cancel();
           mostRecentRavenClient = ravenClient;
           // ignore: unawaited_futures
-          ravenClient.peer.done.then((value) {
-            if (mostValue != null) {
+          ravenClient.peer.done.then((value) async {
+            var mostRecent = await subjects.client.stream.last;
+            if (mostRecent != null) {
               subjects.client.sink.add(null);
             }
           });
