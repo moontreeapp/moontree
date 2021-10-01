@@ -9,11 +9,9 @@ class AccountWaiter extends Waiter {
   void init() {
     subjects.cipher.stream.listen((cipher) async {
       if (cipher == cipherRegistry.currentCipher) {
-        if (backlog.isNotEmpty) {
-          backlog.forEach((account) {
-            makeFirstWallet(account);
-          });
-        }
+        backlog.forEach((account) {
+          makeFirstWallet(account);
+        });
       }
     });
 

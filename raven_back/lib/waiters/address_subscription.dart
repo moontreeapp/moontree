@@ -20,24 +20,27 @@ class AddressSubscriptionWaiter extends Waiter {
   Set<Address> backlogRetrievals = {};
   Set<Address> backlogAddressCipher = {};
 
-  void clientListener() {
+  Future deinitSubscriptionHandles() async {
+    for (var listener in subscriptionHandles.values) {
+      await listener.cancel();
+    }
+    subscriptionHandles.clear();
+  }
+
+  void setupClientListener() {
     if (!listeners.keys.contains('subjects.client.stream')) {
       listeners['subjects.client.stream'] =
           subjects.client.stream.listen((client) async {
         if (client == null) {
-          //deinit (cancel and remove) all subscriptions
-          await deinit();
+          await deinitSubscriptionHandles();
         } else {
-          //if not inited, init
-          if (listeners.keys.isEmpty) {
-            clientListener(); //?
-            cipherListener(); //?
-            subscribeToExistingAddresses();
-          }
           if (backlogSubscriptions.isNotEmpty) {
             backlogSubscriptions.forEach((address) {
               subscribe(client, address);
             });
+          }
+          if (subscriptionHandles.isEmpty) {
+            subscribeToExistingAddresses();
           }
           if (backlogRetrievals.isNotEmpty) {
             retrieve(client, backlogRetrievals.toList());
@@ -47,95 +50,55 @@ class AddressSubscriptionWaiter extends Waiter {
     }
   }
 
-  void cipherListener() {
+  void setupCipherListener() {
     if (!listeners.keys.contains('subjects.cipher.stream')) {
       listeners['subjects.cipher.stream'] =
           subjects.cipher.stream.listen((cipher) async {
         if (backlogAddressCipher.isNotEmpty) {
-          // assume full???
-          services.wallets.leaders
-              .maybeDeriveNewAddresses(cipher, backlogAddressCipher);
-        }
-        if (backlogRetrievals.isNotEmpty) {
-          retrieve(cipher, backlogRetrievals.toList());
+          backlogAddressCipher = (await services.wallets.leaders
+                  .maybeDeriveNewAddresses(backlogAddressCipher.toList()))
+              .toSet();
         }
       });
     }
   }
 
-/*
-
-  when we see a new address get created we start subscribing to it on the blockchain.
-    easy - need 2 listeners, client and addresses, make a backlog 
-
-  when we get a trigger from the blockchain about this address...
-    get the change from ravenClient
-      if it doesn't exist currently... first of all how did you get the notification? but maybe it just barely went down...
-        then make a backlog for that and check it as well on the client listener.
-      else
-        just get the data like normal. 
-
-*/
-
   void init() {
-    subscribeToExistingAddresses();
+    setupClientListener();
+    setupCipherListener();
+    //subscribeToExistingAddresses(); //handled in clientlistener now?
     setupSubscriptionsListener();
     setupNewAddressListener();
-    subjects.client.stream.listen((client) async {
-      if (client == null) {
-        await deinit();
-      } else {
-        'pass';
-      }
-    });
   }
-
-  //void asdf() {
-  //  subjects.cipher.stream.listen((client) async {
-  //    if (client == null ) {
-  //      await deinit();
-  //    } else {
-  //      'pass';
-  //    }
-  //  }
-  //}
 
   void setupSubscriptionsListener() {
     if (!listeners.keys.contains('addressesNeedingUpdate.stream')) {
       listeners['addressesNeedingUpdate.stream'] = addressesNeedingUpdate.stream
           .bufferCountTimeout(10, Duration(milliseconds: 50))
           .listen((changedAddresses) async {
-        var ravenClient = await subjects.client.last;
-        if (ravenClient == null) {
+        var client = await services.client.clientOrNull;
+        if (client == null) {
           for (var address in changedAddresses) {
             backlogRetrievals.add(address);
           }
         } else {
-          retrieve(ravenClient, changedAddresses);
+          retrieve(client, changedAddresses);
         }
-
-        ///if ciphers ...
-        ///// requires ciphers...
-        //services.wallets.leaders.maybeDeriveNewAddresses(changedAddresses);
-        // else
-        // backlogAddressestosee if you have to create new addresses on wallet...add(...changedAddresses)
-        //backlogAddressCipher.addAll(changedAddresses);
       });
     }
   }
 
   void retrieve(
-      RavenElectrumClient ravenClient, List<Address> changedAddresses) async {
+      RavenElectrumClient client, List<Address> changedAddresses) async {
     await services.addresses.saveScripthashHistoryData(
       await services.addresses.getScripthashHistoriesData(
         changedAddresses,
-        ravenClient,
+        client,
       ),
     );
   }
 
   void setupNewAddressListener() {
-    // if ( stream has not already been listened to)..
     if (!listeners.keys.contains('addresses.changes')) {
       listeners['addresses.changes'] =
           addresses.changes.listen((List<Change> changes) {
@@ -143,12 +106,12 @@ class AddressSubscriptionWaiter extends Waiter {
           change.when(
               added: (added) async {
                 Address address = added.data;
-                var ravenClient = await subjects.client.last;
-                if (ravenClient == null) {
+                var client = await services.client.clientOrNull;
+                if (client == null) {
                   backlogSubscriptions.add(address);
                 } else {
-                  //addressNeedsUpdating(address); // happens in subscribe
-                  subscribe(ravenClient, address);
+                  addressNeedsUpdating(address);
+                  subscribe(client, address);
                 }
               },
               updated: (updated) {},
@@ -164,8 +127,8 @@ class AddressSubscriptionWaiter extends Waiter {
     addressesNeedingUpdate.sink.add(address);
   }
 
-  void subscribe(RavenElectrumClient ravenClient, Address address) async {
-    var stream = ravenClient.subscribeScripthash(address.scripthash);
+  void subscribe(RavenElectrumClient client, Address address) async {
+    var stream = client.subscribeScripthash(address.scripthash);
     subscriptionHandles[address.scripthash] = stream.listen((status) {
       addressNeedsUpdating(address);
     });
@@ -175,10 +138,14 @@ class AddressSubscriptionWaiter extends Waiter {
     subscriptionHandles[scripthash]!.cancel();
   }
 
-  void subscribeToExistingAddresses() {
+  void subscribeToExistingAddresses() async {
+    var client = await services.client.clientOrNull;
     for (var address in addresses) {
-      //subscribe(address);
-      backlogSubscriptions.add(address);
+      if (client == null) {
+        backlogSubscriptions.add(address);
+      } else {
+        subscribe(client, address);
+      }
     }
   }
 }

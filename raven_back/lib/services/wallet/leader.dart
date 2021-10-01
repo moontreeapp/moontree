@@ -7,21 +7,29 @@ import 'package:raven/utils/seed_wallet.dart';
 import 'package:raven/raven.dart';
 
 // derives addresses for leaderwallets
+// returns any that it can't find a cipher for
 class LeaderWalletService {
   /// [Address(walletid=0...),]
-  void maybeDeriveNewAddresses(List<Address> changedAddresses) async {
+  Future<List<Address>> maybeDeriveNewAddresses(
+      List<Address> changedAddresses) async {
+    var remaining = <Address>[];
     for (var address in changedAddresses) {
       var leaderWallet =
           wallets.primaryIndex.getOne(address.walletId)! as LeaderWallet;
-      maybeSaveNewAddress(
-          leaderWallet,
-          cipherRegistry.ciphers[leaderWallet.cipherUpdate]!,
-          NodeExposure.Internal);
-      maybeSaveNewAddress(
-          leaderWallet,
-          cipherRegistry.ciphers[leaderWallet.cipherUpdate]!,
-          NodeExposure.External);
+      if (cipherRegistry.ciphers.keys.contains(leaderWallet.cipherUpdate)) {
+        maybeSaveNewAddress(
+            leaderWallet,
+            cipherRegistry.ciphers[leaderWallet.cipherUpdate]!,
+            NodeExposure.Internal);
+        maybeSaveNewAddress(
+            leaderWallet,
+            cipherRegistry.ciphers[leaderWallet.cipherUpdate]!,
+            NodeExposure.External);
+      } else {
+        remaining.add(address);
+      }
     }
+    return remaining;
   }
 
   void maybeSaveNewAddress(

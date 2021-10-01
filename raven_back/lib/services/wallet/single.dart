@@ -5,7 +5,7 @@ import 'package:raven/security/encrypted_wif.dart';
 import 'package:raven/raven.dart';
 
 class SingleWalletService {
-  Address toAddress(SingleWallet wallet, Cipher cipher) {
+  Address toAddress(SingleWallet wallet) {
     var net = accounts.primaryIndex.getOne(wallet.accountId)!.net;
     var kpWallet = getKPWallet(wallet);
     return Address(

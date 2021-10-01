@@ -66,8 +66,10 @@ class CipherRegistry {
     CipherUpdate cipherUpdate,
     Uint8List password,
   ) {
-    ciphers[cipherUpdate] =
-        cipherInitializers[cipherUpdate.cipherType]!(password);
+    var cipher = cipherInitializers[cipherUpdate.cipherType]!(password);
+    ciphers[cipherUpdate] = cipher;
+    subjects.cipher.sink.add(cipher);
+    subjects.cipherUpdate.sink.add(cipherUpdate);
     return ciphers[cipherUpdate]!;
   }
 
