@@ -59,13 +59,16 @@ Future<FormatSeed> handleImport(String text, String accountId) async {
   /// is valid mnemonic?
   //var isMnemonic = [12, 18, 24].contains(text.split(' ').length);
   if (bip39.validateMnemonic(text)) {
-    await services.wallets.leaders.makeSaveLeaderWallet(
-      accountId,
-      cipherRegistry.currentCipher,
-      cipherUpdate: cipherRegistry.currentCipherUpdate,
-      mnemonic: text,
-    );
-    return FormatSeed('mnemonic', 'success');
+    if (cipherRegistry.currentCipher != null) {
+      await services.wallets.leaders.makeSaveLeaderWallet(
+        accountId,
+        cipherRegistry.currentCipher!,
+        cipherUpdate: cipherRegistry.currentCipherUpdate,
+        mnemonic: text,
+      );
+      return FormatSeed('mnemonic', 'success');
+    }
+    return FormatSeed('mnemonic', 'failure - no currentCipher available.');
   }
 
   /// check for bip38 encryption
