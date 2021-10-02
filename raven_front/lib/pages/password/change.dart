@@ -11,11 +11,11 @@ class ChangePassword extends StatefulWidget {
 class _ChangePasswordState extends State<ChangePassword> {
   var existingPassword = TextEditingController();
   var newPassword = TextEditingController();
+  FocusNode newPasswordFocusNode = new FocusNode();
   String existingNotification = '';
   String newNotification = '';
   bool existingPasswordVisible = false;
   bool newPasswordVisible = false;
-  bool submitEnabled = false;
   bool validatedExisting = false;
   bool validatedComplexity = false;
 
@@ -23,7 +23,6 @@ class _ChangePasswordState extends State<ChangePassword> {
   void initState() {
     existingPasswordVisible = false;
     newPasswordVisible = false;
-    submitEnabled = false;
     validatedExisting = false;
     validatedComplexity = false;
     super.initState();
@@ -51,48 +50,17 @@ class _ChangePasswordState extends State<ChangePassword> {
       title: Text('Change Password'));
 
   TextButton submitButton() => TextButton.icon(
-      onPressed: submitEnabled ? () async => await submit() : () {},
+      onPressed: validatedExisting && validatedComplexity
+          ? () async => await submit()
+          : () {},
       icon: Icon(Icons.login),
-      style: submitEnabled
+      style: validatedExisting && validatedComplexity
           ? RavenButtonStyle.curvedSides
           : RavenButtonStyle.disabledCurvedSides(context),
       label: Text('Submit',
           style: TextStyle(color: Theme.of(context).primaryColor)));
 
   Padding body() {
-    FocusNode newPasswordFocusNode = new FocusNode();
-    var existingPasswordField = TextField(
-      autocorrect: false,
-      controller: existingPassword,
-      obscureText: !existingPasswordVisible,
-      //textInputAction: TextInputAction.next,
-      decoration: InputDecoration(
-        border: UnderlineInputBorder(),
-        hintText: 'existing password',
-        suffixIcon: IconButton(
-          icon: Icon(
-              existingPasswordVisible ? Icons.visibility : Icons.visibility_off,
-              color: Theme.of(context).primaryColorDark),
-          onPressed: () => setState(() {
-            existingPasswordVisible = !existingPasswordVisible;
-          }),
-        ),
-      ),
-      onChanged: (String value) {
-        // validate its the current password as we go?
-        //existingNotification = value;
-      },
-      onEditingComplete: () {
-        validatedExisting = validateExisting();
-        // todo: fix
-        //FocusScope.of(context).requestFocus(newPasswordFocusNode);
-        setState(() => {});
-      },
-      //onSubmitted: (String value) {
-      //  setState(
-      //      () => {});
-      //},
-    );
     var newPasswordField = TextField(
         focusNode: newPasswordFocusNode,
         autocorrect: false,
@@ -112,12 +80,43 @@ class _ChangePasswordState extends State<ChangePassword> {
           ),
         ),
         onChanged: (String value) {
-          validatedComplexity = validateComplexity(password: value);
+          validateComplexity(password: value);
           //setState(() => {});
         },
         onEditingComplete: () async {
           await submit();
         });
+    var existingPasswordField = TextField(
+      autocorrect: false,
+      controller: existingPassword,
+      obscureText: !existingPasswordVisible,
+      textInputAction: TextInputAction.next,
+      decoration: InputDecoration(
+        border: UnderlineInputBorder(),
+        hintText: 'existing password',
+        suffixIcon: IconButton(
+          icon: Icon(
+              existingPasswordVisible ? Icons.visibility : Icons.visibility_off,
+              color: Theme.of(context).primaryColorDark),
+          onPressed: () => setState(() {
+            existingPasswordVisible = !existingPasswordVisible;
+          }),
+        ),
+      ),
+      onChanged: (String value) {
+        if (validateExisting()) {
+          // todo: fix
+          FocusScope.of(context).requestFocus(newPasswordFocusNode);
+        }
+      },
+      onEditingComplete: () {
+        validateExisting();
+      },
+      //onSubmitted: (String value) {
+      //  setState(
+      //      () => {});
+      //},
+    );
     return Padding(
         padding: EdgeInsets.all(20.0),
         child: Column(
@@ -140,11 +139,14 @@ class _ChangePasswordState extends State<ChangePassword> {
     if (services.passwords.validate
         .password(password ?? existingPassword.text)) {
       existingNotification = 'success!';
-      submitEnabled = validatedExisting;
+      validatedExisting = true;
+      setState(() => {});
       return true;
     }
-    existingNotification = 'unable to login...';
-    submitEnabled = false;
+    var old = validatedExisting;
+    existingNotification = 'password unrecognized...';
+    validatedExisting = false;
+    if (old) setState(() => {});
     return false;
   }
 
@@ -155,14 +157,17 @@ class _ChangePasswordState extends State<ChangePassword> {
       newNotification = used == -1
           ? 'This password has never been used and is a strong password.'
           : 'Warnning: this password was used $used passwords ago.';
-      submitEnabled = validatedExisting;
+      validatedComplexity = true;
+      setState(() => {});
       return true;
     }
+    var old = validatedComplexity;
     // TODO: turn into a list of items that get checked off
     newNotification = ('weak password: '
         'must contain a number '
         'and be at least 12 characters long.');
-    submitEnabled = false;
+    validatedComplexity = false;
+    if (old) setState(() => {});
     return false;
     //setState(() => {});
   }

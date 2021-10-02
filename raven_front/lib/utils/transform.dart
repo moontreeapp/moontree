@@ -1,4 +1,4 @@
-import 'package:raven_mobile/utils/lookup.dart';
+import 'package:raven_mobile/utils/strings.dart';
 
 List enumerate(String text) {
   return List<int>.generate(text.length, (i) => i + 1);

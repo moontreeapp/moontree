@@ -1,4 +1,4 @@
-import 'package:raven_mobile/utils/lookup.dart';
+import 'package:raven_mobile/utils/strings.dart';
 import 'package:raven_mobile/utils/transform.dart';
 
 Map<String, String> parseReceiveParams(address) =>
