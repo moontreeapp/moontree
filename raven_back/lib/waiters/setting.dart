@@ -20,12 +20,6 @@ class SettingWaiter extends Waiter {
                     .contains(setting.name)) {
                   subjects.client.sink.add(null);
                 }
-
-                // When password changes, replace the cipher registry objects
-                // TODO:
-                //  1. bump the global password version (in settings)
-                //  2. call initCiphersWithPassword
-                //  3. migrate old passwords to new passwords
               },
               removed: (removed) {});
         });

@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:quiver/iterables.dart';
 import 'package:raven/records/cipher_type.dart';
 import 'package:raven/records/cipher_update.dart';
 import 'package:raven/security/cipher.dart';
@@ -13,15 +12,16 @@ import 'cipher.dart';
 
 class CipherRegistry {
   final Map<CipherUpdate, Cipher> ciphers = {};
-  static const latestCipherType = CipherType.AES;
+  static CipherType latestCipherType =
+      services.passwords.passwordRequired ? CipherType.AES : CipherType.None;
   final Map<CipherType, Function> cipherInitializers = {
     CipherType.None: (Uint8List password) => CipherNone(),
     CipherType.AES: (Uint8List password) => CipherAES(password),
   };
-  //static const defaultCipherUpdate = CipherUpdate(CipherType.None, -1);
 
   CipherRegistry() {
-    //  registerCipher(defaultCipherUpdate, Uint8List(0));
+    // populate with a nocipher cipher for creation of wallets without password
+    registerCipher(CipherUpdate(CipherType.None, -1), Uint8List(0));
   }
 
   @override
@@ -35,13 +35,13 @@ class CipherRegistry {
 
   Cipher? get currentCipher => ciphers[currentCipherUpdate];
 
-  void initCiphers(
-    Set<CipherUpdate> currentCipherUpdates, {
+  void initCiphers({
     Uint8List? password,
     String? altPassword,
+    Set<CipherUpdate>? currentCipherUpdates,
   }) {
     password = getPassword(password: password, altPassword: altPassword);
-    for (var currentCipherUpdate in currentCipherUpdates) {
+    for (var currentCipherUpdate in currentCipherUpdates ?? cipherUpdates) {
       registerCipher(currentCipherUpdate, password);
     }
   }
@@ -54,10 +54,12 @@ class CipherRegistry {
     return password ?? Uint8List.fromList(altPassword!.codeUnits);
   }
 
-  void updatePassword(
-      {Uint8List? password,
-      String? altPassword,
-      CipherType latest = latestCipherType}) {
+  void updatePassword({
+    Uint8List? password,
+    String? altPassword,
+    CipherType? latest,
+  }) {
+    latest = latest ?? latestCipherType;
     password = getPassword(password: password, altPassword: altPassword);
     registerCipher(CipherUpdate(latest, passwords.maxPasswordID), password);
   }
@@ -115,12 +117,16 @@ class CipherRegistry {
   }
 
   /// after wallets are updated or verified to be up to date
-  /// remove all ciphers that no wallet uses
+  /// remove all ciphers that no wallet uses and that are not the current one
   void cleanupCiphers() {
-    var walletCipherUpdates = services.wallets.getAllCipherUpdates;
-    ciphers.removeWhere((key, value) => !walletCipherUpdates.contains(key));
+    ciphers.removeWhere((key, value) => !cipherUpdates.contains(key));
     if (ciphers.length > 1) {
       // in theory a wallet is not updated ... error?
+      print('no ciphers - that is weird');
     }
   }
+
+  Set<CipherUpdate> get cipherUpdates =>
+      (services.wallets.getAllCipherUpdates.toList() + [currentCipherUpdate])
+          .toSet();
 }
