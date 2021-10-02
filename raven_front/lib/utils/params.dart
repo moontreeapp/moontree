@@ -1,3 +1,4 @@
+import 'package:raven_mobile/utils/lookup.dart';
 import 'package:raven_mobile/utils/transform.dart';
 
 Map<String, String> parseReceiveParams(address) =>
@@ -21,10 +22,7 @@ String requestedAsset(Map<String, String> params,
 
 String verifySatAmount(String amount) {
   var text = amount.split('.')[0];
-  var punctuation = ' +-*/|][}{=)(&^%#@!~`<>,?\$\\._';
-  for (var ix in enumerate(punctuation)) {
-    text = text.replaceAll(punctuation.substring(ix - 1, ix), '');
-  }
+  text = removeChars(text, chars: Strings.punctuation + Strings.whiteSapce);
   if (text == '') {
     text = '0';
   }
@@ -35,10 +33,8 @@ String verifySatAmount(String amount) {
 }
 
 String verifyDecAmount(String amount) {
-  var punctuation = ' +-*/|][}{=)(&^%#@!~`<>?\$\\_';
-  for (var ix in enumerate(punctuation)) {
-    amount = amount.replaceAll(punctuation.substring(ix - 1, ix), '');
-  }
+  amount = removeChars(amount,
+      chars: Strings.whiteSapce + Strings.punctuationMinusCurrency);
   if (amount.length > 0) {
     if (amount.contains(',')) {
       amount = amount.replaceAll(',', '.');

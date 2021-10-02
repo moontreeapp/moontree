@@ -90,6 +90,12 @@ class _SettingsState extends State<Settings> {
                   onPressed: (BuildContext context) {
                     ravenDatabase.deleteDatabase();
                   }),
+              //SettingsTile(
+              //    title: 'cipher registry',
+              //    leading: Icon(Icons.info_outline_rounded),
+              //    onPressed: (BuildContext context) {
+              //      print(cipherRegistry.ciphers);
+              //    }),
               //SettingsTile.switchTile(
               //  title: 'Use fingerprint',
               //  leading: Icon(Icons.fingerprint),

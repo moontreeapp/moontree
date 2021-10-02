@@ -10,6 +10,7 @@ import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/theme/extensions.dart';
+import 'package:raven_mobile/utils/transform.dart';
 
 //import 'package:flutter_treeview/flutter_treeview.dart';
 /// make our own 2-layer hierarchy view
@@ -128,24 +129,48 @@ class _TechnicalViewState extends State<TechnicalView> {
         ]
       : [];
 
+  Future _validateAndCreateAccount() async {
+    var desiredAccountName = removeChars(accountName.text.trim());
+    accountName.text = desiredAccountName;
+    if (desiredAccountName == '') {
+      alertFailure(
+          headline: 'Unable to create account',
+          msg: 'Please enter new account name');
+      return;
+    }
+    if (accounts.data
+        .map((account) => account.name)
+        .toList()
+        .contains(desiredAccountName)) {
+      alertFailure(
+          headline: 'Unable to create account',
+          msg:
+              'Account name, "$desiredAccountName" is already taken. Please enter a uinque account name.');
+      return;
+    }
+    var account = await services.accounts.makeSaveAccount(desiredAccountName);
+    await settings.save(
+        Setting(name: SettingName.Account_Current, value: account.accountId));
+    desiredAccountName = '';
+  }
+
   List<Widget> _createNewAcount() => [
         SizedBox(height: 30.0),
         ListTile(
-            onTap: () async {
-              var account =
-                  await services.accounts.makeSaveAccount(accountName.text);
-              await settings.save(Setting(
-                  name: SettingName.Account_Current, value: account.accountId));
-              accountName.text = '';
-            },
-            title: TextField(
-                readOnly: false,
-                controller: accountName,
-                decoration: InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'Create Account',
-                    hintText: 'Billz')),
-            trailing: Icon(Icons.add, size: 26.0, color: Colors.grey.shade800)),
+          onTap: () {}, //async => _validateAndCreateAccount(),
+          title: TextField(
+            readOnly: false,
+            controller: accountName,
+            decoration: InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: 'Create Account',
+                hintText: 'Billz'),
+            onSubmitted: (_) async => _validateAndCreateAccount(),
+          ),
+          trailing: IconButton(
+              onPressed: () async => _validateAndCreateAccount(),
+              icon: Icon(Icons.add, size: 26.0, color: Colors.grey.shade800)),
+        )
       ];
 
   Card _wallet(BuildContext context, Wallet wallet) => Card(
@@ -254,4 +279,32 @@ class _TechnicalViewState extends State<TechnicalView> {
             ],
             ..._createNewAcount(),
           ]);
+
+  // unused
+  Future alertSuccess() => showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+            title: Text('Success!'),
+            content: Text('Generating Account...'),
+            actions: [
+              TextButton(
+                  child: Text('ok'),
+                  onPressed: () => Navigator.of(context).pop())
+            ],
+          ));
+
+  Future alertFailure(
+          {String headline = 'Unable to create account',
+          String msg = 'Please enter account name'}) =>
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                title: Text(headline),
+                content: Text(msg),
+                actions: [
+                  TextButton(
+                      child: Text('ok'),
+                      onPressed: () => Navigator.of(context).pop())
+                ],
+              ));
 }

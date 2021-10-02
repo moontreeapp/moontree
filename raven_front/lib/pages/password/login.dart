@@ -71,8 +71,7 @@ class _LoginState extends State<Login> {
   Future submit() async {
     if (services.passwords.validate.password(password.text)) {
       // create ciphers for wallets we have
-      cipherRegistry.initCiphers(services.wallets.getCurrentCipherUpdates,
-          altPassword: password.text);
+      cipherRegistry.initCiphers(altPassword: password.text);
       await cipherRegistry.updateWallets();
       cipherRegistry.cleanupCiphers();
       services.passwords.broadcastLogin;

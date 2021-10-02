@@ -87,8 +87,10 @@ class _ChangeResumeState extends State<ChangeResume> {
 
   void submit() {
     if (services.passwords.validate.previousPassword(password.text)) {
-      cipherRegistry.initCiphers(services.wallets.getPreviousCipherUpdates,
-          altPassword: password.text);
+      cipherRegistry.initCiphers(
+        altPassword: password.text,
+        currentCipherUpdates: services.wallets.getPreviousCipherUpdates,
+      );
       successMessage();
     } else {
       var used = services.passwords.validate.previouslyUsed(password.text);
