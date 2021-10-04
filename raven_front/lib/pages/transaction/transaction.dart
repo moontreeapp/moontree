@@ -41,11 +41,12 @@ class _TransactionState extends State<Transaction> {
   Widget build(BuildContext context) {
     data = populateData(context, data);
     address = addresses.primaryIndex.getOne(data['transaction']!.scripthash);
-    var metadata = false;
-    // how do we detect metadata?
-    /*Tron — Yesterday at 6:51 PM
-      You can add messages to transactions by putting the IPFS hash of the message in the OP_RETURN.
-      They're called memos. They will be public.*/
+
+    /// metadata (memos) will either be saved on the history object or
+    var metadata = true;
+    try {
+      print(data['transaction']!.memo);
+    } catch (e) {}
 
     return DefaultTabController(
         length: metadata ? 2 : 1,
@@ -181,7 +182,7 @@ class _TransactionState extends State<Transaction> {
                     TextField(
                         readOnly: true,
                         controller: TextEditingController(
-                            text: data['transaction']!.note), // memo
+                            text: data['transaction']!.memo),
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         decoration: InputDecoration(
