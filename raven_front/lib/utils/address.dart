@@ -1,18 +1,40 @@
+/// returns the name of the type of address it is,
+/// if the address is preliminarily recognized as conforming to a
+/// known format from which we could potentially derive a valid RVN address
+String validateAddress(String address) {
+  if (address.startsWith('R') && address.length == 34) {
+    return 'RVN';
+  } else if (address.toLowerCase().endsWith('.crypto') ||
+      address.toLowerCase().endsWith('.zil')) {
+    return 'UNS';
+  } else if ((address.length >= 3 && address.length <= 30) &&
+      (address.contains(RegExp(r'^[a-zA-Z0-9_.]*$')) &&
+          !address.contains('..') &&
+          !address.contains('.-') &&
+          !address.contains('--') &&
+          !address.contains('-.') &&
+          !address.startsWith('.') &&
+          !address.startsWith('_') &&
+          !address.endsWith('.') &&
+          !address.endsWith('_')) &&
+      !['RVN', 'RAVEN', 'RAVENCOIN'].contains(address)) {
+    return 'ASSET';
+  }
+  return '';
+}
+
 /// returns a valid RVN address from the data provided,
 /// or empty string if a valid address cannot be derived.
 /// potentially we could derivde a valid address from:
 ///   a valid address
 ///   asset name
 ///   unstoppabledomains domain
+/// one other thing to consider - asset names are valid unstoppable domains
+/// so if we're going to support multiple of these we have to ask the user
+/// which one they want. might be too much. maybe you an turn it on in an
+/// advanced setting or something.
 String verifyValidAddress(String address) {
   address = address.trim();
-
-  /// not supporint testnet accounts yet, so mainnet is assumed...
-  //if (currentAccount().net == Net.Test) {
-  //  //validate testnet addresses
-  //} else {//if (currentAccount().net == Net.Main) {
-  //  //validate mainnet addresses
-  //}
   if (address.startsWith('R') && address.length == 34) {
     // mainnet address such as RVNGuyEE9nBUt6aQbwVAhvEjcw7D3c6p2K
     return address;
@@ -89,6 +111,5 @@ String verifyValidAddress(String address) {
     //             "value": 0.1360904}]
     //  }
   }
-
   return '';
 }

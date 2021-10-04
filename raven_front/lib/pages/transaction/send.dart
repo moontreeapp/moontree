@@ -5,8 +5,10 @@ import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
 import 'package:raven_mobile/components/text.dart';
 import 'package:raven_mobile/services/lookup.dart';
+import 'package:raven_mobile/utils/address.dart';
 import 'package:raven_mobile/utils/params.dart';
 import 'package:raven_mobile/utils/utils.dart';
+import 'package:raven_mobile/theme/extensions.dart';
 
 class Send extends StatefulWidget {
   final dynamic data;
@@ -23,6 +25,11 @@ class _SendState extends State<Send> {
   final sendAmount = TextEditingController(text: '10');
   final sendMemo = TextEditingController();
   final sendNote = TextEditingController();
+  String visibleAmount = '';
+  String visibleFiatAmount = '';
+  String validatedAddress = 'unknown';
+  Color addressColor = Colors.grey.shade400;
+  Color amountColor = Colors.grey.shade400;
 
   @override
   void initState() {
@@ -43,6 +50,16 @@ class _SendState extends State<Send> {
   Widget build(BuildContext context) {
     // could hold which asset to send...
     data = populateData(context, data);
+    try {
+      visibleFiatAmount = RavenText.securityAsReadable(
+          RavenText.amountSats(
+            double.parse(visibleAmount),
+            percision: 8, /* get asset percision...*/
+          ),
+          symbol: data['symbol']);
+    } catch (e) {
+      visibleFiatAmount = '';
+    }
     return Scaffold(
         appBar: header(),
         body: body(),
@@ -70,16 +87,9 @@ class _SendState extends State<Send> {
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.start, children: [
               SizedBox(height: 100.0),
-              Text(sendAmount.text == '' ? '0' : sendAmount.text,
-                  style: Theme.of(context).textTheme.headline3),
+              Text(visibleAmount, style: Theme.of(context).textTheme.headline3),
               SizedBox(height: 15.0),
-              Text(
-                  RavenText.securityAsReadable(
-                      RavenText.amountSats(
-                        double.parse(sendAmount.text),
-                        percision: 8, /* get asset percision...*/
-                      ),
-                      symbol: data['symbol']),
+              Text(visibleFiatAmount,
                   style: Theme.of(context).textTheme.headline5),
               SizedBox(height: 15.0),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -106,6 +116,38 @@ class _SendState extends State<Send> {
     } else {
       sendAddress.text = code;
     }
+  }
+
+  bool _validateAddress(String address) {
+    var old = validatedAddress;
+    validatedAddress = validateAddress(address);
+    if (validatedAddress != '') {
+      if (validatedAddress == 'RVN') {
+        addressColor = Theme.of(context).good!;
+      } else if (validatedAddress == 'UNS') {
+        addressColor = Theme.of(context).primaryColor;
+      } else if (validatedAddress == 'ASSET') {
+        addressColor = Theme.of(context).primaryColor;
+      }
+      if (old != validatedAddress) setState(() => {});
+      return true;
+    }
+    addressColor = Theme.of(context).bad!;
+    if (old != '') setState(() => {});
+    return false;
+  }
+
+  void verifyVisibleAmount(String value) {
+    visibleAmount = verifyDecAmount(value);
+    if (visibleAmount == '0' || visibleAmount != value) {
+      amountColor = Theme.of(context).bad!;
+    } else {
+      // if amount is larger than total...
+      //amountColor = Theme.of(context).bad!;
+      // else
+      amountColor = Theme.of(context).good!;
+    }
+    setState(() => {});
   }
 
   ListView body() {
@@ -137,11 +179,24 @@ class _SendState extends State<Send> {
                     TextFormField(
                       controller: sendAddress,
                       decoration: InputDecoration(
-                          border: UnderlineInputBorder(),
+                          focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: addressColor)),
+                          enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: addressColor)),
+                          border: UnderlineInputBorder(
+                              borderSide: BorderSide(color: addressColor)),
                           labelText: 'To',
                           hintText: 'Address'),
+                      onChanged: (value) {
+                        _validateAddress(value);
+                      },
                       onEditingComplete: () {
-                        // make sure it's a valid address for the network
+                        /// should tell front end what it was so we can notify user we're substituting the asset name or uns domain for the actual address
+                        var verifiedAddress =
+                            verifyValidAddress(sendAddress.text);
+
+                        /// tell user then:
+                        sendAddress.text = verifiedAddress;
                       },
                       //validator: (String? value) {
                       //  //if (value == null || value.isEmpty) {
@@ -159,12 +214,22 @@ class _SendState extends State<Send> {
                         label: Text('Scan QR code')),
                     TextFormField(
                       controller: sendAmount,
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                          border: UnderlineInputBorder(),
+                          focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: amountColor)),
+                          enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: amountColor)),
+                          //border: UnderlineInputBorder(
+                          //    borderSide: BorderSide(color: amountColor)),
                           labelText: 'Amount',
                           hintText: 'Quantity'),
+                      onChanged: (value) {
+                        verifyVisibleAmount(value);
+                      },
                       onEditingComplete: () {
                         sendAmount.text = verifyDecAmount(sendAmount.text);
+                        verifyVisibleAmount(sendAmount.text);
                       },
                       //validator: (String? value) {  // validate as double/int
                       //  //if (value == null || value.isEmpty) {

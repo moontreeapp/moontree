@@ -1,5 +1,3 @@
-import 'package:raven/records/records.dart';
-import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/utils/strings.dart';
 import 'package:raven_mobile/utils/transform.dart';
 
@@ -52,16 +50,24 @@ String verifyDecAmount(String amount) {
       caseSensitive: false,
       multiLine: false,
     ).hasMatch(amount)) {
-      if (double.parse(amount) > 21000000000) {
-        amount = '21000000000';
+      try {
+        if (double.parse(amount) > 21000000000) {
+          amount = '21000000000';
+        }
+      } catch (e) {
+        amount = '0';
       }
     } else {
       // tried our best
-      amount = '';
+      amount = '0';
     }
   }
   // removes leading 0s
-  return double.parse(amount).toString();
+  try {
+    return double.parse(amount).toString();
+  } catch (e) {
+    return '0';
+  }
 }
 
 String verifyLabel(String label) {
