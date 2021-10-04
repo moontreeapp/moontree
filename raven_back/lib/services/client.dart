@@ -51,12 +51,12 @@ class ClientService {
       subjects.client.stream.valueOrNull != null ? true : false;
 
   Future<RavenElectrumClient?> createClient(
-      {String clientName = 'MTWallet'}) async {
+      {String projectName = 'MTWallet', String buildVersion = '0.1'}) async {
     try {
       return await RavenElectrumClient.connect(
         chosenDomain,
         port: chosenPort,
-        clientName: clientName,
+        clientName: '$projectName-$buildVersion',
         connectionTimeout: connectionTimeout,
       );
     } on SocketException catch (_) {
