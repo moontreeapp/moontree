@@ -29,7 +29,7 @@ class History with EquatableMixin {
   Security security;
 
   @HiveField(6)
-  String memo;
+  String? memo;
 
   @HiveField(7)
   String note;
@@ -41,14 +41,22 @@ class History with EquatableMixin {
       this.position = -1,
       this.value = 0,
       this.security = RVN,
-      this.memo = '',
+      this.memo,
       this.note = ''});
 
   bool get confirmed => position > -1;
 
   @override
-  List<Object> get props =>
-      [scripthash, height, hash, position, value, security, memo, note];
+  List<Object> get props => [
+        scripthash,
+        height,
+        hash,
+        position,
+        value,
+        security,
+        memo ?? 'null',
+        note,
+      ];
 
   @override
   String toString() {
