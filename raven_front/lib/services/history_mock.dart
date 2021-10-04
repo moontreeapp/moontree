@@ -50,10 +50,6 @@ class MockHistories {
               ticker: 'Magic Musk')
         ]
       ],
-      [
-        ['memo1', 'memo2'],
-        ['memo3']
-      ],
     ));
   }
 }

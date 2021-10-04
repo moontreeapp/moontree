@@ -20,11 +20,15 @@ class _TransactionState extends State<Transaction> {
   dynamic data = {};
   Address? address;
   List<StreamSubscription> listeners = [];
+  History? history;
 
   @override
   void initState() {
     super.initState();
     listeners.add(blocks.changes.listen((changes) {
+      setState(() {});
+    }));
+    listeners.add(histories.changes.listen((changes) {
       setState(() {});
     }));
   }
@@ -40,12 +44,14 @@ class _TransactionState extends State<Transaction> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    address = addresses.primaryIndex.getOne(data['transaction']!.scripthash);
+    history = histories.primaryIndex.getOne(data['transaction']!.hash);
+    address = addresses.primaryIndex.getOne(history!.scripthash);
 
-    /// metadata (memos) will either be saved on the history object or
-    var metadata = true;
+    var metadata = history!.memo != null;
+    if (!metadata) services.histories.getSaveMemo(hash: history!.hash);
+
     try {
-      print(data['transaction']!.memo);
+      print(history!.memo);
     } catch (e) {}
 
     return DefaultTabController(
@@ -59,7 +65,7 @@ class _TransactionState extends State<Transaction> {
   }
 
   int? getBlocksBetweenHelper({History? transaction, Block? current}) {
-    transaction = transaction ?? data['transaction']!;
+    transaction = transaction ?? history!;
     current = current ?? blocks.latest; //Block(height: 0);
     return current != null && transaction != null
         ? current.height - transaction.height
@@ -104,9 +110,9 @@ class _TransactionState extends State<Transaction> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height: 15.0),
-                    RavenIcon.assetAvatar(data['transaction']!.security.symbol),
+                    RavenIcon.assetAvatar(history!.security.symbol),
                     SizedBox(height: 15.0),
-                    Text(data['transaction']!.security.symbol,
+                    Text(history!.security.symbol,
                         style: Theme.of(context).textTheme.headline3),
                     SizedBox(height: 15.0),
                     Text('Received',
@@ -148,8 +154,8 @@ class _TransactionState extends State<Transaction> {
                   labelText: 'Amount',
                   hintText: 'Quantity'),
               controller: TextEditingController(
-                  text: RavenText.securityAsReadable(data['transaction']!.value,
-                      symbol: data['transaction']!.security.symbol)),
+                  text: RavenText.securityAsReadable(history!.value,
+                      symbol: history!.security.symbol)),
             ),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text('fee',
@@ -159,13 +165,12 @@ class _TransactionState extends State<Transaction> {
             ]),
 
             /// hide note if none was saved
-            ...(data['transaction']!.note != ''
+            ...(history!.note != ''
                 ? [
                     SizedBox(height: 15.0),
                     TextField(
                         readOnly: true,
-                        controller: TextEditingController(
-                            text: data['transaction']!.note),
+                        controller: TextEditingController(text: history!.note),
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         decoration: InputDecoration(
@@ -181,8 +186,7 @@ class _TransactionState extends State<Transaction> {
                 ? [
                     TextField(
                         readOnly: true,
-                        controller: TextEditingController(
-                            text: data['transaction']!.memo),
+                        controller: TextEditingController(text: history!.memo),
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         decoration: InputDecoration(
@@ -192,7 +196,7 @@ class _TransactionState extends State<Transaction> {
                     SizedBox(height: 15.0)
                   ]
                 : []),
-            Text('id: ' + data['transaction']!.hash,
+            Text('id: ' + history!.hash,
                 style: TextStyle(color: Theme.of(context).disabledColor)),
             SizedBox(height: 15.0),
             Text(address != null ? 'wallet: ' + address!.walletId : '',
