@@ -66,7 +66,6 @@ class AddressSubscriptionWaiter extends Waiter {
   void init() {
     setupClientListener();
     setupCipherListener();
-    //subscribeToExistingAddresses(); //handled in clientlistener now?
     setupSubscriptionsListener();
     setupNewAddressListener();
   }
