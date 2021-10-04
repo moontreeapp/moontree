@@ -59,7 +59,7 @@ class Transaction with EquatableMixin {
   }
 }
 
-extension GetHistoryMethod on RavenElectrumClient {
+extension GetTransactionMethod on RavenElectrumClient {
   Future<Transaction> getTransaction(String txHash) async => (await request(
         'blockchain.transaction.get',
         [txHash, true],
