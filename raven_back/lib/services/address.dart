@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:quiver/iterables.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
+//import 'package:raven_electrum_client/methods/get_transaction.dart';
 
 import 'package:raven/raven.dart';
 
@@ -49,8 +50,16 @@ class AddressService {
     // ignore: omit_local_variable_types
     List<List<ScripthashUnspent>> assetUnspents =
         await client.getAssetUnspents(scripthashes);
+
+    /// if we want to get memo for each here...
+    // ignore: omit_local_variable_types
+    //List<Transaction> memos = [
+    //  for (List<ScripthashHistory> scripthashHistories in histories)
+    //    utils.parse.praseTxForMemo(
+    //      await client.getTransactions([for (ScripthashHistory history in scripthashHistories) history.txHash]))
+    //];
     return ScripthashHistoriesData(
-        scripthashes, histories, unspents, assetUnspents);
+        scripthashes, histories, unspents, assetUnspents); //, memos);
   }
 
   Future saveScripthashHistoryData(ScripthashHistoriesData data) async {
