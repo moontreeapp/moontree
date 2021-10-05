@@ -2,24 +2,68 @@ import 'package:equatable/equatable.dart';
 
 import '../raven_electrum_client.dart';
 
-class TransactionVin with EquatableMixin {
-  final String coinbase;
+/// scriptSig: {
+///   asm: 30440220570e370c5d5f559bd37da3f6c463b09e4a61bb57237fead3aa5a3255f30fe09e022035038abb72ccd722700081088f3bf5aab4642fb66df4b79eab88c1d15d064f69[ALL] 03d957a7e1be52d731bcaa3fb0270dbadbe5a81fd7342f8710a70308435174febe,
+///   hex: 4730440220570e370c5d5f559bd37da3f6c463b09e4a61bb57237fead3aa5a3255f30fe09e022035038abb72ccd722700081088f3bf5aab4642fb66df4b79eab88c1d15d064f69012103d957a7e1be52d731bcaa3fb0270dbadbe5a81fd7342f8710a70308435174febe},
+///   sequence: 4294967294}
+class TxScriptSig with EquatableMixin {
+  final String asm;
+  final String hex;
   final int sequence;
 
-  TransactionVin({required this.coinbase, required this.sequence});
+  TxScriptSig({required this.asm, required this.sequence, required this.hex});
 
   @override
-  List<Object?> get props => [coinbase, sequence];
+  List<Object?> get props => [asm, hex, sequence];
 }
 
-class ScriptPubKey with EquatableMixin {
+/// vin: [{
+///   txid: cac2fb61ee5e6edfb9804f19cc4c22994f53931899c0feb423c843ebb93e08c8,
+///   vout: 0,
+///   scriptSig: {...}],
+/// vin: [{
+///   coinbase: 038f020e00,
+///   sequence: 4294967295}],
+class TxVin with EquatableMixin {
+  final String? coinbase;
+  final int? sequence;
+  final String? txid;
+  final int? vout;
+  final TxScriptSig? scriptSig;
+
+  TxVin({this.coinbase, this.sequence, this.txid, this.vout, this.scriptSig}) {
+    if (coinbase != null) {
+      assert(sequence != null);
+    } else {
+      assert(txid != null);
+      assert(vout != null);
+      assert(scriptSig != null);
+    }
+  }
+
+  @override
+  List<Object?> get props => [coinbase, sequence, txid, vout, scriptSig];
+}
+
+/// scriptPubKey: {
+///   asm: OP_DUP OP_HASH160 713c2fa8992630a215bc6668822b0acfbc90ead9 OP_EQUALVERIFY OP_CHECKSIG,
+///   hex: 76a914713c2fa8992630a215bc6668822b0acfbc90ead988ac,
+///   reqSigs: 1,
+///   type: pubkeyhash,
+///   addresses: [mqqgkYDUkLRLMPvHKhDSjyuwyeNqZhfzVc]}
+/// scriptPubKey: {
+///   asm: OP_RETURN aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9,
+///   hex: 6a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9,
+///   type: nulldata},
+
+class TxScriptPubKey with EquatableMixin {
   final String asm;
   final String hex;
   final String type;
   final int? reqSigs;
   final List? addresses;
 
-  ScriptPubKey({
+  TxScriptPubKey({
     required this.asm,
     required this.hex,
     required this.type,
@@ -28,16 +72,21 @@ class ScriptPubKey with EquatableMixin {
   });
 
   @override
-  List<Object?> get props => [asm, hex, reqSigs, type, addresses];
+  List<Object?> get props => [asm, hex, type, reqSigs, addresses];
 }
 
-class TransactionVout with EquatableMixin {
+/// vout: [{
+///   value: 5000.0,
+///   n: 0,
+///   scriptPubKey: {...},
+///   valueSat: 500000000000}]
+class TxVout with EquatableMixin {
   final double value;
   final int n;
   final int valueSat;
-  final ScriptPubKey scriptPubKey;
+  final TxScriptPubKey scriptPubKey;
 
-  TransactionVout({
+  TxVout({
     required this.value,
     required this.n,
     required this.valueSat,
@@ -49,6 +98,20 @@ class TransactionVout with EquatableMixin {
 }
 
 /// https://electrumx-ravencoin.readthedocs.io/en/latest/protocol-methods.html#blockchain-transaction-get
+/// { txid: e86f693b46f1ca33480d904acd526079ba7585896cff6d0ae5dcef322d9dc52a,
+///   hash: ccabf8580cc55890cba647960bf52760f37caf1923b2f184198e424fd356e3d2,
+///   version: 2,
+///   size: 173,
+///   vsize: 146,
+///   locktime: 0,
+///   vin: [...],
+///   vout: [...],
+///   hex: 020000000001010000000000000000000000000000000000000000000000000000000000000000ffffffff05038f020e00ffffffff020088526a740000001976a914713c2fa8992630a215bc6668822b0acfbc90ead988ac0000000000000000266a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf90120000000000000000000000000000000000000000000000000000000000000000000000000,
+///   blockhash: 00000000e2ba484f128e5fff2d767f2d55d035a3d5e797081673c6f8886e58d9,
+///   height: 918159,
+///   confirmations: 925,
+///   time: 1633390166,
+///   blocktime: 1633390166}
 class Transaction with EquatableMixin {
   final String txid;
   final String hash;
@@ -56,8 +119,8 @@ class Transaction with EquatableMixin {
   final int size;
   final int vsize;
   final int locktime;
-  final List<TransactionVin> vin;
-  final List<TransactionVout> vout;
+  final List<TxVin> vin;
+  final List<TxVout> vout;
   final String hex;
   final String blockhash;
   final int height;
@@ -115,22 +178,36 @@ extension GetTransactionMethod on RavenElectrumClient {
       'blockchain.transaction.get',
       [txHash, true],
     ));
-    var vin = [
-      for (var v in response['vin'])
-        TransactionVin(coinbase: v['coinbase'], sequence: v['sequence'])
+    var vins = [
+      for (Map vin in response['vin'])
+        if (vin.keys.contains('coinbase'))
+          TxVin(coinbase: vin['coinbase'], sequence: vin['sequence'])
+        else
+          TxVin(
+              txid: vin['txid'],
+              vout: vin['vout'],
+              scriptSig: TxScriptSig(
+                  asm: vin['scriptSig']['asm'],
+                  sequence: vin['scriptSig']['sequence'],
+                  hex: vin['scriptSig']['hex']))
     ];
-    var vout = [
-      for (var v in response['vout'])
-        TransactionVout(
-            value: v['value'],
-            n: v['n'],
-            valueSat: v['valueSat'],
-            scriptPubKey: ScriptPubKey(
-                asm: v['scriptPubKey']['asm'],
-                hex: v['scriptPubKey']['hex'],
-                reqSigs: v['scriptPubKey']['reqSigs'],
-                type: v['scriptPubKey']['type'],
-                addresses: v['scriptPubKey']['addresses']))
+    var vouts = [
+      for (var vout in response['vout'])
+        TxVout(
+            value: vout['value'],
+            n: vout['n'],
+            valueSat: vout['valueSat'],
+            scriptPubKey: (vout['scriptPubKey'] as Map).keys.contains('reqSigs')
+                ? TxScriptPubKey(
+                    asm: vout['scriptPubKey']['asm'],
+                    hex: vout['scriptPubKey']['hex'],
+                    type: vout['scriptPubKey']['type'],
+                    reqSigs: vout['scriptPubKey']['reqSigs'],
+                    addresses: vout['scriptPubKey']['addresses'])
+                : TxScriptPubKey(
+                    asm: vout['scriptPubKey']['asm'],
+                    hex: vout['scriptPubKey']['hex'],
+                    type: vout['scriptPubKey']['type']))
     ];
     return Transaction(
       txid: response['txid'],
@@ -139,8 +216,8 @@ extension GetTransactionMethod on RavenElectrumClient {
       size: response['size'],
       vsize: response['vsize'],
       locktime: response['locktime'],
-      vin: vin,
-      vout: vout,
+      vin: vins,
+      vout: vouts,
       hex: response['hex'],
       blockhash: response['blockhash'],
       height: response['height'],

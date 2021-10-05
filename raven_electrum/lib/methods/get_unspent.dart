@@ -9,6 +9,7 @@ class ScripthashUnspent with EquatableMixin {
   int txPos;
   int value;
   String? ticker; // ticker of asset null is rvn itself.
+  late String? memo; // memo grabbed after the fact
 
   ScripthashUnspent(
       {required this.scripthash,
@@ -16,7 +17,8 @@ class ScripthashUnspent with EquatableMixin {
       required this.txHash,
       required this.txPos,
       required this.value,
-      this.ticker});
+      this.ticker,
+      this.memo});
 
   factory ScripthashUnspent.empty() {
     return ScripthashUnspent(
@@ -25,11 +27,11 @@ class ScripthashUnspent with EquatableMixin {
 
   @override
   List<Object> get props =>
-      [scripthash, txHash, txPos, value, height, ticker ?? ''];
+      [scripthash, txHash, txPos, value, height, ticker ?? '', memo ?? ''];
 
   @override
   String toString() {
-    return 'ScripthashUnspent(scripthash: $scripthash, txHash: $txHash, txPos: $txPos, value: $value, height: $height, ticker: $ticker)';
+    return 'ScripthashUnspent(scripthash: $scripthash, txHash: $txHash, txPos: $txPos, value: $value, height: $height, ticker: $ticker, memo: $memo)';
   }
 }
 

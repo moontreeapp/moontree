@@ -75,10 +75,21 @@ void main() {
     });
 
     test('get transaction', () async {
+      //var ret = await client.request('blockchain.transaction.get', [
+      //  'a66d891a144bdb00610c31655d7c6046b70700a4dcc2964430cbd49348f05948',
+      //  true
+      //]);
+      //print(ret);
       var results = await client.getTransaction(
           'e86f693b46f1ca33480d904acd526079ba7585896cff6d0ae5dcef322d9dc52a');
       expect(results.toString(),
-          'Transaction(txid: e86f693b46f1ca33480d904acd526079ba7585896cff6d0ae5dcef322d9dc52a, hash: ccabf8580cc55890cba647960bf52760f37caf1923b2f184198e424fd356e3d2, blockhash: 00000000e2ba484f128e5fff2d767f2d55d035a3d5e797081673c6f8886e58d9, blocktime: 1633390166, confirmations: ${results.confirmations}, height: 918159, hex: 020000000001010000000000000000000000000000000000000000000000000000000000000000ffffffff05038f020e00ffffffff020088526a740000001976a914713c2fa8992630a215bc6668822b0acfbc90ead988ac0000000000000000266a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf90120000000000000000000000000000000000000000000000000000000000000000000000000, locktime: 0, size: 173, vsize: 146, time: 1633390166, txid: e86f693b46f1ca33480d904acd526079ba7585896cff6d0ae5dcef322d9dc52a, version: 2, vin: [TransactionVin(038f020e00, 4294967295)], vout: [TransactionVout(5000.0, 0, 500000000000, ScriptPubKey(OP_DUP OP_HASH160 713c2fa8992630a215bc6668822b0acfbc90ead9 OP_EQUALVERIFY OP_CHECKSIG, 76a914713c2fa8992630a215bc6668822b0acfbc90ead988ac, 1, pubkeyhash, [mqqgkYDUkLRLMPvHKhDSjyuwyeNqZhfzVc])), TransactionVout(0.0, 1, 0, ScriptPubKey(OP_RETURN aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9, 6a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9, null, nulldata, null))])');
+          'Transaction(txid: e86f693b46f1ca33480d904acd526079ba7585896cff6d0ae5dcef322d9dc52a, hash: ccabf8580cc55890cba647960bf52760f37caf1923b2f184198e424fd356e3d2, blockhash: 00000000e2ba484f128e5fff2d767f2d55d035a3d5e797081673c6f8886e58d9, blocktime: 1633390166, confirmations: ${results.confirmations}, height: 918159, hex: 020000000001010000000000000000000000000000000000000000000000000000000000000000ffffffff05038f020e00ffffffff020088526a740000001976a914713c2fa8992630a215bc6668822b0acfbc90ead988ac0000000000000000266a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf90120000000000000000000000000000000000000000000000000000000000000000000000000, locktime: 0, size: 173, vsize: 146, time: 1633390166, txid: e86f693b46f1ca33480d904acd526079ba7585896cff6d0ae5dcef322d9dc52a, version: 2, vin: [TxVin(038f020e00, 4294967295, null, null, null)], vout: [TxVout(5000.0, 0, 500000000000, TxScriptPubKey(OP_DUP OP_HASH160 713c2fa8992630a215bc6668822b0acfbc90ead9 OP_EQUALVERIFY OP_CHECKSIG, 76a914713c2fa8992630a215bc6668822b0acfbc90ead988ac, pubkeyhash, 1, [mqqgkYDUkLRLMPvHKhDSjyuwyeNqZhfzVc])), TxVout(0.0, 1, 0, TxScriptPubKey(OP_RETURN aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9, 6a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9, nulldata, null, null))])');
+    });
+    test('get memo', () async {
+      var results = await client.getMemo(
+          'e86f693b46f1ca33480d904acd526079ba7585896cff6d0ae5dcef322d9dc52a');
+      expect(results.toString(),
+          'aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9');
     });
   });
 }

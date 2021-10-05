@@ -13,6 +13,7 @@ export 'methods/features.dart';
 export 'methods/get_balance.dart';
 export 'methods/server_stats.dart';
 export 'methods/get_transaction.dart';
+export 'methods/get_memo.dart';
 export 'methods/get_history.dart';
 export 'methods/get_unspent.dart';
 export 'methods/server_version.dart';

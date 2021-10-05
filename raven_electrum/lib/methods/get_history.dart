@@ -5,14 +5,15 @@ import '../raven_electrum_client.dart';
 class ScripthashHistory with EquatableMixin {
   int height;
   String txHash;
-  ScripthashHistory({required this.height, required this.txHash});
+  late String? memo;
+  ScripthashHistory({required this.height, required this.txHash, this.memo});
 
   @override
-  List<Object> get props => [height, txHash];
+  List<Object> get props => [height, txHash, memo ?? ''];
 
   @override
   String toString() {
-    return 'ScripthashHistory(txHash: $txHash, height: $height)';
+    return 'ScripthashHistory(txHash: $txHash, height: $height, memo: $memo)';
   }
 }
 
