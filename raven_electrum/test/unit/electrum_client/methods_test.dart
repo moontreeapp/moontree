@@ -54,5 +54,36 @@ void main() {
         ],
       );
     });
+
+    test('getTransaction', () async {
+      var method = 'blockchain.transaction.get';
+      server.willRespondWith(
+        method,
+        [
+          {'height': 123, 'tx_hash': '00a1b2c3', 'tx_pos': 1, 'value': 5}
+        ],
+      );
+      print('getting');
+      var ret = await client.request('blockchain.transaction.get', [
+        'b0ce422f7f827b856935062b39e4fa3bdb5470f96ae852dfeef85a18d13ad2a8',
+        true
+      ]);
+      print(ret);
+
+      var results = await client.getTransaction(
+          'b0ce422f7f827b856935062b39e4fa3bdb5470f96ae852dfeef85a18d13ad2a8');
+      print(results);
+      expect(
+        results,
+        [
+          ScripthashUnspent(
+              scripthash: 'scripthash1',
+              height: 123,
+              txHash: '00a1b2c3',
+              txPos: 1,
+              value: 5)
+        ],
+      );
+    });
   });
 }
