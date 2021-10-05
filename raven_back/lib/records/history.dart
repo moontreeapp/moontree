@@ -68,20 +68,18 @@ class History with EquatableMixin {
 
   // ScripthashHistories should provide a memo, but do they (form electrum? I don't think so)
   factory History.fromScripthashHistory(
-      String scripthash, ScripthashHistory history,
-      {String memo = ''}) {
+      String scripthash, ScripthashHistory history) {
     return History(
       scripthash: scripthash,
       height: history.height,
       hash: history.txHash,
-      memo: memo,
+      memo: history.memo,
     );
   }
 
   // ScripthashHistories should provide a memo, but do they (form electrum? I don't think so)
   factory History.fromScripthashUnspent(
-      String scripthash, ScripthashUnspent unspent,
-      {String memo = ''}) {
+      String scripthash, ScripthashUnspent unspent) {
     return History(
         scripthash: scripthash,
         height: unspent.height,
@@ -93,6 +91,6 @@ class History with EquatableMixin {
             : Security(
                 symbol: unspent.ticker!,
                 securityType: SecurityType.RavenAsset)),
-        memo: memo);
+        memo: unspent.memo);
   }
 }

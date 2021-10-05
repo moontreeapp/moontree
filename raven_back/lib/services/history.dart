@@ -30,7 +30,7 @@ class HistoryService {
   }
 
   Future<String> getMemo(String txHash) async {
-    return praseTxForMemo(
+    return parseTxForMemo(
         await (await services.client.clientOrNull)!.getTransaction(txHash));
   }
 

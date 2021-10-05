@@ -50,7 +50,55 @@ class AddressService {
     List<List<ScripthashUnspent>> assetUnspents =
         await client.getAssetUnspents(scripthashes);
     return ScripthashHistoriesData(
-        scripthashes, histories, unspents, assetUnspents);
+        scripthashes,
+        await appendMemosHistory(client, histories),
+        await appendMemosUnspent(client, unspents),
+        await appendMemosUnspent(client, assetUnspents));
+  }
+
+  Future<List<List<ScripthashHistory>>> appendMemosHistory(
+    RavenElectrumClient client,
+    List<List<ScripthashHistory>> histories,
+  ) async {
+    //return histories
+    //    .map((historiesByScripthash) => historiesByScripthash
+    //        .map((history) async =>
+    //            history.memo = await client.getMemo(history.txHash))
+    //        .toList())
+    //    .toList();
+    //return [
+    //  for (var historiesByScripthash in histories)
+    //    [
+    //      for (var history in historiesByScripthash)
+    //        history.setMemo(await client.getMemo(history.txHash))
+    //    ]
+    //];
+    var outter = <List<ScripthashHistory>>[];
+    for (var historiesByScripthash in histories) {
+      var inner = <ScripthashHistory>[];
+      for (var history in historiesByScripthash) {
+        history.memo = await client.getMemo(history.txHash);
+        inner.add(history);
+      }
+      outter.add(inner);
+    }
+    return outter;
+  }
+
+  Future<List<List<ScripthashUnspent>>> appendMemosUnspent(
+    RavenElectrumClient client,
+    List<List<ScripthashUnspent>> unspents,
+  ) async {
+    var outter = <List<ScripthashUnspent>>[];
+    for (var unspentsByScripthash in unspents) {
+      var inner = <ScripthashUnspent>[];
+      for (var unspent in unspentsByScripthash) {
+        unspent.memo = await client.getMemo(unspent.txHash);
+        inner.add(unspent);
+      }
+      outter.add(inner);
+    }
+    return outter;
   }
 
   Future saveScripthashHistoryData(ScripthashHistoriesData data) async {
