@@ -1,5 +1,6 @@
 // dart --no-sound-null-safety test test/integration/raven_tx_test.dart
 
+import 'package:raven/utils/parse.dart';
 import 'package:test/test.dart';
 
 import 'package:raven_electrum_client/raven_electrum_client.dart';
@@ -11,7 +12,7 @@ const aliveTimerDuration = Duration(seconds: 2);
 void main() {
   test('getHistory', () async {
     var client = RavenElectrumClient(await connect('testnet.rvn.rocks'));
-    await client.serverVersion(protocolVersion: '1.8');
+    await client.serverVersion(protocolVersion: '1.9');
     var scripthash =
         '93bfc0b3df3f7e2a033ca8d70582d5cf4adf6cc0587e10ef224a78955b636923';
     var history = await client.getHistory(scripthash);
@@ -25,5 +26,13 @@ void main() {
               '2dada22848277e6a23b49c1e63d47b661f94819b2001e2789a5fd947b51907d5',
           height: 769767)
     ]); // could fail if people send to this address...
+  });
+  test('getTransaction and parse', () async {
+    var client = RavenElectrumClient(await connect('testnet.rvn.rocks'));
+    await client.serverVersion(protocolVersion: '1.9');
+    var tx = await client.getTransaction(
+        'e86f693b46f1ca33480d904acd526079ba7585896cff6d0ae5dcef322d9dc52a');
+    expect(praseTxForMemo(tx),
+        'aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9');
   });
 }
