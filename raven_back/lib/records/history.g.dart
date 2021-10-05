@@ -23,7 +23,7 @@ class HistoryAdapter extends TypeAdapter<History> {
       position: fields[3] as int,
       value: fields[4] as int,
       security: fields[5] as Security,
-      memo: fields[6] as String,
+      memo: fields[6] as String?,
       note: fields[7] as String,
     );
   }

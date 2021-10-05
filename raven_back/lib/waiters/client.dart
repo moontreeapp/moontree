@@ -9,7 +9,6 @@ class RavenClientWaiter extends Waiter {
   static const Duration connectionTimeout = Duration(seconds: 5);
   static const int retries = 3;
 
-  RavenElectrumClient? mostRecentRavenClient;
   StreamSubscription? periodicTimer;
   int retriesLeft = retries;
 
@@ -19,7 +18,7 @@ class RavenClientWaiter extends Waiter {
           subjects.client.stream.listen((ravenClient) async {
         if (ravenClient != null) {
           await periodicTimer?.cancel();
-          mostRecentRavenClient = ravenClient;
+          services.client.mostRecentRavenClient = ravenClient;
           // ignore: unawaited_futures
           ravenClient.peer.done.then((value) async {
             var mostRecent = await subjects.client.stream.last;
@@ -28,7 +27,7 @@ class RavenClientWaiter extends Waiter {
             }
           });
         } else {
-          await mostRecentRavenClient?.close();
+          await services.client.mostRecentRavenClient?.close();
           await periodicTimer?.cancel();
           periodicTimer =
               Stream.periodic(connectionTimeout + Duration(seconds: 1))

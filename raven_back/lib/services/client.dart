@@ -13,6 +13,8 @@ class ClientService {
     2: Tuple2(SettingName.Electrum_Domain2, SettingName.Electrum_Port2),
   };
 
+  RavenElectrumClient? mostRecentRavenClient;
+
   Future<RavenElectrumClient?> get clientOrNull async =>
       await subjects.client.last;
 

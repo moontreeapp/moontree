@@ -65,6 +65,10 @@ class AddressService {
       var inner = <ScripthashHistory>[];
       for (var history in historiesByScripthash) {
         history.memo = await client.getMemo(history.txHash);
+        //print('history.memo');
+        //print(history.memo);
+        //print('await client.getMemo(history.txHash);');
+        //print(await client.getMemo(history.txHash));
         inner.add(history);
       }
       outter.add(inner);
@@ -81,6 +85,8 @@ class AddressService {
       var inner = <ScripthashUnspent>[];
       for (var unspent in unspentsByScripthash) {
         unspent.memo = await client.getMemo(unspent.txHash);
+        //print('unspent.memo');
+        //print(unspent.memo);
         inner.add(unspent);
       }
       outter.add(inner);
