@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
@@ -28,6 +29,7 @@ class _SendState extends State<Send> {
   String visibleAmount = '';
   String visibleFiatAmount = '';
   String validatedAddress = 'unknown';
+  String validatedAmount = '-1';
   Color addressColor = Colors.grey.shade400;
   Color amountColor = Colors.grey.shade400;
 
@@ -273,8 +275,14 @@ class _SendState extends State<Send> {
       icon: Icon(Icons.send),
       label: Text('Send'),
       onPressed: () {
-        // Validate will return true if the form is valid, or false if
-        // the form is invalid.
+        // if valid form:
+        // if able to aquire inputs... (from single wallet or account...)
+        confirmMessage();
+
+        /// press send -> get a confirmation page -> press cancel -> return
+        /// press send -> get a confirmation page -> press confirm again -> sends
+        /// be sure to save the history record along with the note if successful
+
         if (formKey.currentState!.validate()) {
           // Process data.
           if (data.containsKey('walletId') && data['walletId'] != null) {
@@ -285,4 +293,125 @@ class _SendState extends State<Send> {
         }
       },
       style: RavenButtonStyle.curvedSides);
+
+  Future confirmMessage() => showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+              title: Text('Confirm?'),
+              content: DataTable(columns: [
+                DataColumn(label: Text('')),
+                DataColumn(label: Text(''))
+              ], rows: [
+                DataRow(cells: [
+                  DataCell(Text('Send Amount:')),
+                  DataCell(Text(sendAmount.text)),
+                ]),
+                DataRow(cells: [
+                  DataCell(Text('Send Asset:')),
+                  DataCell(Text(data['symbol'])),
+                ]),
+                DataRow(cells: [
+                  DataCell(Text('Receive Address:')),
+                  DataCell(Text(
+                      '${sendAddress.text.substring(0, 5)}...${sendAddress.text.substring(sendAddress.text.length - 5, sendAddress.text.length)}')),
+                ]),
+                ...[
+                  if (sendMemo.text != '')
+                    DataRow(cells: [
+                      DataCell(Text('Public Memo:')),
+                      DataCell(Text(sendMemo.text)),
+                    ])
+                ],
+              ]),
+
+              //Column(
+              //    crossAxisAlignment: CrossAxisAlignment.start,
+              //    mainAxisAlignment: MainAxisAlignment.center,
+              //    children: [
+              //      Text('Send ${sendAmount.text}'),
+              //      Text('of ${data['symbol']}'),
+              //      Text('to ${sendAddress.text}'),
+              //      Text('with the memo of "${sendMemo.text}".'),
+              //      Text('Correct?'),
+              //    ]),
+              actions: [
+                TextButton(
+                    child: Text('Cancel'),
+                    onPressed: () => Navigator.pop(context)),
+                TextButton(
+                    child: Text('Confirm'), onPressed: () => attemptSend()
+
+                    /// https://pub.dev/packages/modal_progress_hud
+                    //showDialog(
+                    //    context: context,
+                    //    builder: (BuildContext context) => AlertDialog(
+                    //            title: Text(''),
+                    //            content: Text('Sending...'),
+                    //            actions: [
+                    //              TextButton(
+                    //                  child: Text('Ok'),
+                    //                  onPressed: () =>
+                    //                      Navigator.pop(context))
+                    //            ]))
+
+                    /*sending...*/
+                    /*send to success or failure page*/
+                    )
+              ]));
+
+  void attemptSend() {
+    var client = services.client.mostRecentRavenClient;
+    print(client);
+    if (client == null) {
+      print(1);
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                  title: Text('Error'),
+                  content: Text(
+                      'Unable to send Transaction: no connection to the server available. Please try again later.'),
+                  actions: [
+                    TextButton(
+                        child: Text('Ok'),
+                        onPressed: () => Navigator.pop(context))
+                  ]));
+    } else {
+      print(2);
+      //var txid = client.send(transactionBuilder.aquire fees etc);
+      var txid = '';
+      if (txid != '') {
+        print(3);
+        showDialog(
+            context: context,
+            builder: (BuildContext context) =>
+                AlertDialog(
+                    title: Text('Sent'),
+                    content:
+                        Text('Success! See transaction here: link to $txid'),
+                    actions: [
+                      TextButton(
+                          child: Text('Ok'),
+                          onPressed: () => Navigator.pop(context))
+                    ]));
+
+        /// go back to where you came from
+        //Navigator.pop(context);
+      } else {
+        print(4);
+        showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                    title: Text('Unable to verify Transaction'),
+                    content: Text(
+                        'We were unable to verify the transaction succeeded, please try again later.'),
+                    actions: [
+                      TextButton(
+                          child: Text('Ok'),
+                          onPressed: () => Navigator.pop(context))
+                    ]));
+      }
+    }
+    print(5);
+    //Navigator.pop(context);
+  }
 }

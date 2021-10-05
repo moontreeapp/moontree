@@ -43,9 +43,7 @@ class _TransactionState extends State<Transaction> {
     data = populateData(context, data);
     history = histories.primaryIndex.getOne(data['transaction']!.hash);
     address = addresses.primaryIndex.getOne(history!.scripthash);
-
     var metadata = history!.memo != null;
-
     return DefaultTabController(
         length: metadata ? 2 : 1,
         child: Scaffold(

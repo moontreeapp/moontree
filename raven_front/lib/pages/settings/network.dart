@@ -71,7 +71,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
                           style: TextStyle(color: Theme.of(context).bad),
                         )
                 ],
-                Text(ravenClientWaiter.mostRecentRavenClient.toString()),
+                Text(services.client.mostRecentRavenClient.toString()),
                 TextButton.icon(
                     onPressed: () {
                       // flush out current connection and allow waiter to reestablish one
