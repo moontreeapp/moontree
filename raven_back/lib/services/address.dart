@@ -60,19 +60,6 @@ class AddressService {
     RavenElectrumClient client,
     List<List<ScripthashHistory>> histories,
   ) async {
-    //return histories
-    //    .map((historiesByScripthash) => historiesByScripthash
-    //        .map((history) async =>
-    //            history.memo = await client.getMemo(history.txHash))
-    //        .toList())
-    //    .toList();
-    //return [
-    //  for (var historiesByScripthash in histories)
-    //    [
-    //      for (var history in historiesByScripthash)
-    //        history.setMemo(await client.getMemo(history.txHash))
-    //    ]
-    //];
     var outter = <List<ScripthashHistory>>[];
     for (var historiesByScripthash in histories) {
       var inner = <ScripthashHistory>[];
