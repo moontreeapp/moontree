@@ -28,9 +28,6 @@ class _TransactionState extends State<Transaction> {
     listeners.add(blocks.changes.listen((changes) {
       setState(() {});
     }));
-    listeners.add(histories.changes.listen((changes) {
-      setState(() {});
-    }));
   }
 
   @override
@@ -48,11 +45,6 @@ class _TransactionState extends State<Transaction> {
     address = addresses.primaryIndex.getOne(history!.scripthash);
 
     var metadata = history!.memo != null;
-    if (!metadata) services.histories.getSaveMemo(hash: history!.hash);
-
-    try {
-      print(history!.memo);
-    } catch (e) {}
 
     return DefaultTabController(
         length: metadata ? 2 : 1,
