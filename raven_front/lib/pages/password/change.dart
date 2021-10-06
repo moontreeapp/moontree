@@ -17,14 +17,13 @@ class _ChangePasswordState extends State<ChangePassword> {
   bool existingPasswordVisible = false;
   bool newPasswordVisible = false;
   bool validatedExisting = false;
-  bool validatedComplexity = false;
+  bool? validatedComplexity;
 
   @override
   void initState() {
     existingPasswordVisible = false;
     newPasswordVisible = false;
     validatedExisting = false;
-    validatedComplexity = false;
     super.initState();
   }
 
@@ -50,15 +49,25 @@ class _ChangePasswordState extends State<ChangePassword> {
       title: Text('Change Password'));
 
   TextButton submitButton() => TextButton.icon(
-      onPressed: validatedExisting && validatedComplexity
+      onPressed: validateExistingCondition(validatedExisting) &&
+              validateComplexityCondition(validatedComplexity)
           ? () async => await submit()
           : () {},
       icon: Icon(Icons.login),
-      style: validatedExisting && validatedComplexity
+      style: validateExistingCondition(validatedExisting) &&
+              validateComplexityCondition(validatedComplexity)
           ? RavenButtonStyle.curvedSides
           : RavenButtonStyle.disabledCurvedSides(context),
       label: Text('Submit',
           style: TextStyle(color: Theme.of(context).primaryColor)));
+
+  bool validateExistingCondition([validatedExisting]) =>
+      services.passwords.required
+          ? validatedExisting ?? validateExisting()
+          : true;
+
+  bool validateComplexityCondition([givenValidatedComplexity]) =>
+      givenValidatedComplexity ?? false ?? validateComplexity();
 
   Padding body() {
     var newPasswordField = TextField(
@@ -88,6 +97,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         });
     var existingPasswordField = TextField(
       autocorrect: false,
+      enabled: services.passwords.required ? true : false,
       controller: existingPassword,
       obscureText: !existingPasswordVisible,
       textInputAction: TextInputAction.next,
@@ -121,32 +131,40 @@ class _ChangePasswordState extends State<ChangePassword> {
         padding: EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            existingPasswordField,
-            SizedBox(height: 5),
-            Text(existingNotification),
             SizedBox(height: 30),
-            newPasswordField,
-            SizedBox(height: 5),
-            Text(newNotification),
-            SizedBox(height: 30),
+            Column(children: [
+              existingPasswordField,
+              SizedBox(height: 5),
+              Text(existingNotification),
+            ]),
+            Column(children: [
+              newPasswordField,
+              SizedBox(height: 5),
+              Text(newNotification),
+            ]),
+            SizedBox(height: 150),
           ],
         ));
   }
 
   bool validateExisting({String? password}) {
-    if (services.passwords.validate
-        .password(password ?? existingPassword.text)) {
+    password = password ?? existingPassword.text;
+    if (services.passwords.validate.password(password)) {
       existingNotification = 'success!';
       validatedExisting = true;
       setState(() => {});
       return true;
     }
     var old = validatedExisting;
-    existingNotification = 'password unrecognized...';
+    var oldNotification = existingNotification;
+    var used = services.passwords.validate.previouslyUsed(password);
+    existingNotification = used == -1
+        ? 'password unrecognized...'
+        : 'this password was used $used passwords ago.';
     validatedExisting = false;
-    if (old) setState(() => {});
+    if (old || oldNotification != existingNotification) setState(() => {});
     return false;
   }
 
@@ -156,24 +174,26 @@ class _ChangePasswordState extends State<ChangePassword> {
       var used = services.passwords.validate.previouslyUsed(password);
       newNotification = used == -1
           ? 'This password has never been used and is a strong password.'
-          : 'Warnning: this password was used $used passwords ago.';
+          : used > 0
+              ? 'Warnning: this password was used $used passwords ago.'
+              : 'This is your current password.';
       validatedComplexity = true;
       setState(() => {});
       return true;
     }
     var old = validatedComplexity;
-    // TODO: turn into a list of items that get checked off
+    var oldNotification = newNotification;
     newNotification = ('weak password: '
-        'must contain a number '
-        'and be at least 12 characters long.');
+        '${services.passwords.validate.complexityExplained(password).join(' & ')}.');
     validatedComplexity = false;
-    if (old) setState(() => {});
+    if (old != validatedComplexity || oldNotification != newNotification)
+      setState(() => {});
     return false;
     //setState(() => {});
   }
 
   Future submit() async {
-    if (validateComplexity() && validateExisting()) {
+    if (validateComplexity() && validateExistingCondition()) {
       var password = newPassword.text;
       await services.passwords.create.save(password);
       cipherRegistry.updatePassword(altPassword: password);
@@ -187,9 +207,8 @@ class _ChangePasswordState extends State<ChangePassword> {
       context: context,
       builder: (BuildContext context) => AlertDialog(
               title: Text('Success!'),
-              content: Text(
-                  'Password Change Successful! Please back up your password! '
-                  'There is no recovery process available for lost passwords!'),
+              content: Text('Please back up your password!\n\n'
+                  'There is NO recovery process for lost passwords!'),
               actions: [
                 TextButton(
                     child: Text('ok'),

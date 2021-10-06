@@ -32,6 +32,9 @@ class _SendState extends State<Send> {
   String validatedAmount = '-1';
   Color addressColor = Colors.grey.shade400;
   Color amountColor = Colors.grey.shade400;
+  Color memoColor = Colors.grey.shade400;
+  bool useWallet = false;
+  double holding = 0.0;
 
   @override
   void initState() {
@@ -52,13 +55,26 @@ class _SendState extends State<Send> {
   Widget build(BuildContext context) {
     // could hold which asset to send...
     data = populateData(context, data);
+    useWallet = data.containsKey('walletId') && data['walletId'] != null;
+    var percision = 8; /* get asset percision...*/
+    var possibleHoldings = [
+      for (var balance in useWallet
+          ? Current.walletHoldings(data['walletId'])
+          : Current.holdings)
+        if (balance.security.symbol == data['symbol'])
+          RavenText.satsToAmount(balance.confirmed)
+    ];
+    if (possibleHoldings.length > 0) {
+      holding = possibleHoldings[0];
+    }
     try {
       visibleFiatAmount = RavenText.securityAsReadable(
           RavenText.amountSats(
             double.parse(visibleAmount),
-            percision: 8, /* get asset percision...*/
+            percision: percision,
           ),
-          symbol: data['symbol']);
+          symbol: data['symbol'],
+          asUSD: true);
     } catch (e) {
       visibleFiatAmount = '';
     }
@@ -114,7 +130,10 @@ class _SendState extends State<Send> {
         sendNote.text = verifyLabel(params['label']!);
       }
       data['symbol'] = requestedAsset(params,
-          holdings: Current.holdingNames, current: data['symbol']);
+          holdings: useWallet
+              ? Current.walletHoldingNames(data['walletId'])
+              : Current.holdingNames,
+          current: data['symbol']);
     } else {
       sendAddress.text = code;
     }
@@ -141,16 +160,25 @@ class _SendState extends State<Send> {
 
   void verifyVisibleAmount(String value) {
     visibleAmount = verifyDecAmount(value);
+    try {
+      value = double.parse(value).toString();
+    } catch (e) {
+      value = value;
+    }
     if (visibleAmount == '0' || visibleAmount != value) {
       amountColor = Theme.of(context).bad!;
     } else {
-      // if amount is larger than total...
-      //amountColor = Theme.of(context).bad!;
-      // else
-      amountColor = Theme.of(context).good!;
+      // todo: estimate fee
+      if (double.parse(visibleAmount) < holding) {
+        amountColor = Theme.of(context).good!;
+      } else {
+        amountColor = Theme.of(context).bad!;
+      }
     }
     setState(() => {});
   }
+
+  bool verifyMemo(String memo) => memo.length <= 80;
 
   ListView body() {
     //var _controller = TextEditingController();
@@ -163,16 +191,14 @@ class _SendState extends State<Send> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                        (data.containsKey('walletId') &&
-                                data['walletId'] != null)
-                            ? 'Use Wallet: ' + data['walletId']
-                            : '',
+                    Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
                         style: Theme.of(context).textTheme.caption),
                     DropdownButton<String>(
                         isExpanded: true,
                         value: data['symbol'],
-                        items: Current.holdingNames
+                        items: (useWallet
+                                ? Current.walletHoldingNames(data['walletId'])
+                                : Current.holdingNames)
                             .map((String value) => DropdownMenuItem<String>(
                                 value: value, child: Text(value)))
                             .toList(),
@@ -222,8 +248,6 @@ class _SendState extends State<Send> {
                               borderSide: BorderSide(color: amountColor)),
                           enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: amountColor)),
-                          //border: UnderlineInputBorder(
-                          //    borderSide: BorderSide(color: amountColor)),
                           labelText: 'Amount',
                           hintText: 'Quantity'),
                       onChanged: (value) {
@@ -244,14 +268,30 @@ class _SendState extends State<Send> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [Text('fee'), Text('0.01397191 RVN')]),
                     TextFormField(
-                      controller: sendMemo,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: 1,
-                      decoration: InputDecoration(
-                          border: UnderlineInputBorder(),
-                          labelText: 'Memo (optional)',
-                          hintText: 'IPFS hash publicly posted on transaction'),
-                    ),
+                        controller: sendMemo,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: 1,
+                        decoration: InputDecoration(
+                            focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: memoColor)),
+                            enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: memoColor)),
+                            border: UnderlineInputBorder(),
+                            labelText: 'Memo (optional)',
+                            hintText:
+                                'IPFS hash publicly posted on transaction'),
+                        onChanged: (value) {
+                          var oldMemoColor = memoColor;
+                          memoColor = verifyMemo(value)
+                              ? Theme.of(context).good!
+                              : Theme.of(context).bad!;
+                          if (value == '') {
+                            memoColor = Colors.grey.shade400;
+                          }
+                          if (oldMemoColor != memoColor) {
+                            setState(() {});
+                          }
+                        }),
                     TextFormField(
                       controller: sendNote,
                       keyboardType: TextInputType.multiline,
@@ -275,8 +315,13 @@ class _SendState extends State<Send> {
       icon: Icon(Icons.send),
       label: Text('Send'),
       onPressed: () {
-        // if valid form:
+        // if valid form: (
+        //    valid to address - is a R34char address, or compiles to one using assetname or UNS,
+        //    valid memo - no more than 80 chars long,
+        //    valid note - code safe for serialization to and from database)
         // if able to aquire inputs... (from single wallet or account...)
+        //    valid asset - this wallet or account has this asset,
+        //    valid amount - this wallet or account has this much of this asset (fees taken into account),
         confirmMessage();
 
         /// press send -> get a confirmation page -> press cancel -> return
@@ -285,7 +330,7 @@ class _SendState extends State<Send> {
 
         if (formKey.currentState!.validate()) {
           // Process data.
-          if (data.containsKey('walletId') && data['walletId'] != null) {
+          if (useWallet) {
             // send using only this wallet
           } else {
             // send using any/every wallet in the account
@@ -312,8 +357,9 @@ class _SendState extends State<Send> {
                 ]),
                 DataRow(cells: [
                   DataCell(Text('Receive Address:')),
-                  DataCell(Text(
-                      '${sendAddress.text.substring(0, 5)}...${sendAddress.text.substring(sendAddress.text.length - 5, sendAddress.text.length)}')),
+                  DataCell(Text(sendAddress.text.length < 10
+                      ? sendAddress.text
+                      : '${sendAddress.text.substring(0, 5)}...${sendAddress.text.substring(sendAddress.text.length - 5, sendAddress.text.length)}')),
                 ]),
                 ...[
                   if (sendMemo.text != '')

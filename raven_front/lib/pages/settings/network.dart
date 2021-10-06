@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:raven_mobile/components/buttons.dart';
@@ -21,6 +23,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
       TextEditingController(text: '');
   bool passwordVerified = false;
   final TextEditingController password = TextEditingController();
+  List<StreamSubscription> listeners = [];
 
   @override
   void initState() {
@@ -31,6 +34,9 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
         '${services.client.firstBackupElectrumDomain}:${services.client.firstBackupElectrumPort}';
     electrumAddressSecondBackup.text =
         '${services.client.secondBackupElectrumDomain}:${services.client.secondBackupElectrumPort}';
+    listeners.add(settings.changes.listen((changes) => setState(() {})));
+    listeners.add(
+        subjects.client.stream.listen((ravenClient) async => setState(() {})));
     super.initState();
   }
 
@@ -39,6 +45,9 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
     electrumAddress.dispose();
     electrumAddressFirstBackup.dispose();
     electrumAddressSecondBackup.dispose();
+    for (var listener in listeners) {
+      listener.cancel();
+    }
     super.dispose();
   }
 
@@ -50,7 +59,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
       leading: RavenButton.back(context),
       elevation: 2,
       centerTitle: false,
-      title: Text('Electrum Network'));
+      title: Text('Electrum Server'));
 
   ListView body() => ListView(
         padding: EdgeInsets.all(20),
@@ -58,20 +67,25 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
           Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Text(
-                    '${services.client.chosenDomain}:${services.client.chosenPort.toString()}'),
+                services.client.mostRecentRavenClient != null
+                    ? Text(
+                        '${services.client.mostRecentRavenClient!.host}:${services.client.mostRecentRavenClient!.port}')
+                    : Text(
+                        '${services.client.chosenDomain}:${services.client.chosenPort.toString()}'),
                 ...[
                   services.client.connectionStatus
                       ? Text(
                           'connected',
                           style: TextStyle(color: Theme.of(context).good),
                         )
-                      : Text(
-                          'disconnected',
-                          style: TextStyle(color: Theme.of(context).bad),
-                        )
+                      : Column(children: [
+                          Text(
+                            'disconnected',
+                            style: TextStyle(color: Theme.of(context).bad),
+                          ),
+                          Text('connecting...'),
+                        ])
                 ],
-                Text(services.client.mostRecentRavenClient.toString()),
                 TextButton.icon(
                     onPressed: () {
                       // flush out current connection and allow waiter to reestablish one
@@ -117,6 +131,11 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
             ),
             onEditingComplete: () => attemptSave(),
           ),
+          SizedBox(height: 50),
+          Text('What is the Electrum server?\n',
+              style: Theme.of(context).textTheme.caption),
+          Text(
+              'The Electrum server is what connects this lightweight RavenWallet to the Ravencoin blockchain.\n\nIt holds a record of the entire blockchain so your device doesn\'t have to. As such, you should only connect to trusted Electrum servers.\n\nMore advanced users may run their own Electrum server and connect directly to it by modifying the settings on this page.'),
         ],
       );
 
@@ -124,8 +143,11 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
     if (validateDomainPort(electrumAddress.text) &&
         validateDomainPort(electrumAddressFirstBackup.text) &&
         validateDomainPort(electrumAddressSecondBackup.text)) {
-      if (!passwordVerified) {
+      if (services.passwords.required && !passwordVerified) {
         requestPassword();
+      } else {
+        save();
+        alertSuccess();
       }
     } else {
       alertValidationFailure();
@@ -167,18 +189,22 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
     print(services.passwords.validate.password(password.text));
     if (services.passwords.validate.password(password.text)) {
       passwordVerified = true;
-      services.client.saveElectrumAddresses(domains: [
-        electrumAddress.text.split(':')[0],
-        electrumAddressFirstBackup.text.split(':')[0],
-        electrumAddressSecondBackup.text.split(':')[0],
-      ], ports: [
-        int.parse(electrumAddress.text.split(':')[1]),
-        int.parse(electrumAddressFirstBackup.text.split(':')[1]),
-        int.parse(electrumAddressSecondBackup.text.split(':')[1]),
-      ]);
+      save();
       return true;
     }
     return false;
+  }
+
+  void save() {
+    services.client.saveElectrumAddresses(domains: [
+      electrumAddress.text.split(':')[0],
+      electrumAddressFirstBackup.text.split(':')[0],
+      electrumAddressSecondBackup.text.split(':')[0],
+    ], ports: [
+      int.parse(electrumAddress.text.split(':')[1]),
+      int.parse(electrumAddressFirstBackup.text.split(':')[1]),
+      int.parse(electrumAddressSecondBackup.text.split(':')[1]),
+    ]);
   }
 
   Future alertSuccess() => showDialog(

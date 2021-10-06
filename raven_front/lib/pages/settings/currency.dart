@@ -37,44 +37,37 @@ class _CurrencyState extends State<Currency> {
           SettingsTile(
               title: 'USD',
               leading: Icon(Icons.money),
-              onPressed: (BuildContext context) {
-                // toggle
-              }),
+              onPressed: (BuildContext context) {}),
           SettingsTile(
-            title: 'EUR',
-            leading: Icon(Icons.euro),
-            onPressed: (BuildContext context) {},
-          ),
+              title: 'EUR',
+              enabled: false,
+              leading: Icon(Icons.euro),
+              onPressed: (BuildContext context) {}),
           SettingsTile(
               title: 'CAD',
+              enabled: false,
               leading: Icon(Icons.money),
-              onPressed: (BuildContext context) {
-                // toggle
-              }),
+              onPressed: (BuildContext context) {}),
           SettingsTile(
               title: 'GBP',
+              enabled: false,
               leading: Icon(Icons.money),
-              onPressed: (BuildContext context) {
-                // toggle
-              }),
+              onPressed: (BuildContext context) {}),
           SettingsTile(
               title: 'JPY',
+              enabled: false,
               leading: Icon(Icons.money),
-              onPressed: (BuildContext context) {
-                // toggle
-              }),
+              onPressed: (BuildContext context) {}),
           SettingsTile(
               title: 'NZD',
+              enabled: false,
               leading: Icon(Icons.money),
-              onPressed: (BuildContext context) {
-                // toggle
-              }),
+              onPressed: (BuildContext context) {}),
           SettingsTile(
               title: 'RUB',
+              enabled: false,
               leading: Icon(Icons.money),
-              onPressed: (BuildContext context) {
-                // toggle
-              }),
+              onPressed: (BuildContext context) {}),
         ])
       ]);
 }

@@ -23,9 +23,9 @@ class _LoadingState extends State<Loading> {
     await hiveInit.setUp();
     await initWaiters();
     if (accounts.data.isEmpty) {
-      // for testing
+      /// for testing
       MockHistories().init();
-      mockPassword();
+      //mockPassword();
 
       await setupAccounts();
     }
@@ -42,7 +42,7 @@ class _LoadingState extends State<Loading> {
     print('settings: ${settings.data}');
     print('cipherRegistry: $cipherRegistry');
 
-    if (services.passwords.passwordRequired) {
+    if (services.passwords.required) {
       if (services.passwords.interruptedPasswordChange()) {
         showDialog(
             context: context,

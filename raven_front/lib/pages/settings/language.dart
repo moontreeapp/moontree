@@ -36,45 +36,37 @@ class _LanguageState extends State<Language> {
           SettingsTile(
               title: 'English',
               leading: Icon(Icons.speaker),
-              onPressed: (BuildContext context) {
-                // toggle
-              }),
+              onPressed: (BuildContext context) {}),
           SettingsTile(
               title: 'Chinese',
+              enabled: false,
               leading: Icon(Icons.speaker),
-              onPressed: (BuildContext context) {
-                // toggle
-              }),
+              onPressed: (BuildContext context) {}),
           SettingsTile(
               title: 'Cesky',
+              enabled: false,
               leading: Icon(Icons.speaker),
-              onPressed: (BuildContext context) {
-                // toggle
-              }),
+              onPressed: (BuildContext context) {}),
           SettingsTile(
               title: 'Espanol',
+              enabled: false,
               leading: Icon(Icons.speaker),
-              onPressed: (BuildContext context) {
-                // toggle
-              }),
+              onPressed: (BuildContext context) {}),
           SettingsTile(
               title: 'Portugues',
+              enabled: false,
               leading: Icon(Icons.speaker),
-              onPressed: (BuildContext context) {
-                // toggle
-              }),
+              onPressed: (BuildContext context) {}),
           SettingsTile(
               title: 'Thai',
+              enabled: false,
               leading: Icon(Icons.speaker),
-              onPressed: (BuildContext context) {
-                // toggle
-              }),
+              onPressed: (BuildContext context) {}),
           SettingsTile(
               title: 'Turkce',
+              enabled: false,
               leading: Icon(Icons.speaker),
-              onPressed: (BuildContext context) {
-                // toggle
-              }),
+              onPressed: (BuildContext context) {}),
         ])
       ]);
 }
