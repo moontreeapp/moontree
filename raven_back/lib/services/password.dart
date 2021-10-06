@@ -7,7 +7,7 @@ class PasswordService {
   final PasswordValidationService validate = PasswordValidationService();
   final PasswordCreationService create = PasswordCreationService();
 
-  bool get passwordRequired => passwords.maxPasswordID != -1;
+  bool get required => passwords.maxPasswordID != -1;
 
   bool interruptedPasswordChange() => {
         for (var cipherUpdate in services.wallets.getAllCipherUpdates)
@@ -38,12 +38,13 @@ class PasswordValidationService {
   /// "password was used x passwords ago"
   int previouslyUsed(String password) {
     var m = passwords.maxPasswordID;
+    var ret = -1;
     for (var pass in passwords.data) {
       if (getHash(password, pass.salt) == pass.saltedHash) {
-        return m - pass.passwordId;
+        ret = m - pass.passwordId;
       }
     }
-    return -1;
+    return ret;
   }
 
   bool complexity(String password) =>
@@ -52,6 +53,24 @@ class PasswordValidationService {
         for (var i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
           password.contains(i.toString())
       ]);
+
+  List<String> complexityExplained1(String password) {
+    var ret = <String>[];
+    if (password.length < 12) ret.add('must be at least 12 characters long');
+    if (!any([
+      for (var i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+        password.contains(i.toString())
+    ])) ret.add('must contain at least one number');
+    return ret;
+  }
+
+  List<String> complexityExplained(String password) => [
+        if (password.length < 12) ...['must be at least 12 characters long'],
+        if (!any([
+          for (var i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+            password.contains(i.toString())
+        ])) ...['must contain at least one number']
+      ];
 }
 
 class PasswordCreationService {

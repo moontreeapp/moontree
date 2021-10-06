@@ -13,7 +13,7 @@ import 'cipher.dart';
 class CipherRegistry {
   final Map<CipherUpdate, Cipher> ciphers = {};
   static CipherType latestCipherType =
-      services.passwords.passwordRequired ? CipherType.AES : CipherType.None;
+      services.passwords.required ? CipherType.AES : CipherType.None;
   final Map<CipherType, Function> cipherInitializers = {
     CipherType.None: (Uint8List password) => CipherNone(),
     CipherType.AES: (Uint8List password) => CipherAES(password),

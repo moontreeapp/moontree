@@ -27,7 +27,7 @@ class AccountWaiter extends Waiter {
           change.when(
               added: (added) {
                 var account = added.data;
-                if (services.passwords.passwordRequired &&
+                if (services.passwords.required &&
                     cipherRegistry.currentCipher == null) {
                   backlog.add(account);
                 } else {

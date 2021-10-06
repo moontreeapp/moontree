@@ -58,7 +58,7 @@ class ClientService {
       return await RavenElectrumClient.connect(
         chosenDomain,
         port: chosenPort,
-        clientName: '$projectName-$buildVersion',
+        clientName: '$projectName/$buildVersion',
         connectionTimeout: connectionTimeout,
       );
     } on SocketException catch (_) {
