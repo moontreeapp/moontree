@@ -35,6 +35,9 @@ class Header {
 class RavenElectrumClient extends SubscribingClient {
   RavenElectrumClient(channel) : super(channel);
   String clientName = 'MTWallet';
+  String host = '';
+  String protocolVersion = '1.9';
+  int port = 50002;
 
   static Future<RavenElectrumClient> connect(dynamic host,
       {port = 50002,
@@ -49,8 +52,14 @@ class RavenElectrumClient extends SubscribingClient {
         aliveTimerDuration: aliveTimerDuration,
         acceptUnverified: acceptUnverified));
     client.clientName = clientName;
+    client.host = host;
+    client.protocolVersion = protocolVersion;
+    client.port = port;
     await client.serverVersion(
         clientName: clientName, protocolVersion: protocolVersion);
     return client;
   }
+
+  @override
+  String toString() => 'RavenElectrumClient connected to $host:$port';
 }
