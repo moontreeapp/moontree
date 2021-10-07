@@ -3,7 +3,7 @@
 /// use it to get the memo from a transaction, thus, I added this code to
 /// accomplish only that.
 
-import '../raven_electrum_client.dart';
+import '../../raven_electrum_client.dart';
 
 String parseAsmForMemo(String asm) {
   var x = asm.split(' ');
