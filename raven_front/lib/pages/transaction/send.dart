@@ -141,7 +141,7 @@ class _SendState extends State<Send> {
 
   bool _validateAddress(String address) {
     var old = validatedAddress;
-    validatedAddress = validateAddress(address);
+    validatedAddress = validateAddressType(address);
     if (validatedAddress != '') {
       if (validatedAddress == 'RVN') {
         addressColor = Theme.of(context).good!;
@@ -218,10 +218,10 @@ class _SendState extends State<Send> {
                       onChanged: (value) {
                         _validateAddress(value);
                       },
-                      onEditingComplete: () {
+                      onEditingComplete: () async {
                         /// should tell front end what it was so we can notify user we're substituting the asset name or uns domain for the actual address
                         var verifiedAddress =
-                            verifyValidAddress(sendAddress.text);
+                            await verifyValidAddress(sendAddress.text);
 
                         /// tell user then:
                         sendAddress.text = verifiedAddress;
