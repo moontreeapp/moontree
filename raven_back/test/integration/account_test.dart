@@ -4,8 +4,13 @@ import 'package:test/test.dart';
 
 void main() async {
   var gen;
-  setUpAll(() async => gen = await tests.generate());
-  tearDownAll(() async => await tests.closeHive());
+  setUpAll(() async {
+    // 1. mock account
+    // 2. mock wallet
+    // 3. mock address
+    // 2. mock histories
+  });
+  tearDownAll(() async {});
 
   test('getBalance', () async {
     expect((gen.account.accountInternals.isEmpty), false);

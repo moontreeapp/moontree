@@ -16,3 +16,12 @@ MapSource<Account> accounts() {
     ),
   });
 }
+
+
+/*
+todo:
+0. write a test that builds transacions (with fees) correctly (with mock data)
+1. write a test to which makes an account and a wallet using the .env, and an address for it.
+2. get some test $$ into that address
+3. make a transaction with transaction builder and test various fees
+*/

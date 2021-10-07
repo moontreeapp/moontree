@@ -82,4 +82,9 @@ class ClientService {
       Setting(name: SettingName.Electrum_Port2, value: ports[2]),
     ]);
   }
+
+  // todo: move
+  Future<String> getOwner(String symbol) async => (await mostRecentRavenClient!
+          .getAddresses(symbol.endsWith('!') ? symbol : symbol + '!'))!
+      .owner;
 }
