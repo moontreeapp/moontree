@@ -46,6 +46,11 @@ class BalanceService {
   }
 
   /// Returns the smallest number of inputs to satisfy the amount
+  ///
+  /// NOTE: buildTransaction depends on this function returning a UTXO list
+  /// size that either STAYS THE SAME or INCREASES IN SIZE since last calling
+  /// it if the 'amount' increases.
+  ///
   List<History> collectUTXOs(Account account,
       {required int amount, List<History> except = const []}) {
     assertSufficientFunds(amount, account);
