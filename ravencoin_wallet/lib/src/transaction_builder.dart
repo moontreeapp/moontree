@@ -21,7 +21,7 @@ class TransactionBuilder {
 
   TransactionBuilder(
       {NetworkType this.network = mainnet,
-      int maximumFeeRate = 2500,
+      int this.maximumFeeRate = 2500,
       int version = 1}) {
     this._inputs = [];
     this._tx = Transaction();
