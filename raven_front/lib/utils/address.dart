@@ -2,7 +2,9 @@ import 'package:raven/raven.dart';
 
 /// only mainnet
 bool rvnCondition(String address) =>
-    address.startsWith('R') && address.length == 34;
+    address.contains(RegExp(r'^R([a-km-zA-HJ-NP-Z1-9]{33})$'));
+//address.startsWith('R') && address.length == 34 && ;
+//removeCharsOtherThan(address, Strings.addressChars)
 
 /// not complete. todo
 bool unsCondition(String address) =>
@@ -29,11 +31,11 @@ bool assetCondition(String asset) => ( //asset == asset.toUpperCase() &&
 /// known format from which we could potentially derive a valid RVN address
 String validateAddressType(String address) => rvnCondition(address)
     ? 'RVN'
-    : unsCondition(address)
-        ? 'UNS'
-        : assetCondition(address)
-            ? 'ASSET'
-            : 'unknown';
+    //: unsCondition(address)
+    //    ? 'UNS'
+    //    : assetCondition(address)
+    //        ? 'ASSET'
+    : '';
 
 /// returns a valid RVN address from the data provided,
 /// or empty string if a valid address cannot be derived.
@@ -50,22 +52,22 @@ Future<String> verifyValidAddress(String address) async {
   if (rvnCondition(address)) {
     // mainnet address such as RVNGuyEE9nBUt6aQbwVAhvEjcw7D3c6p2K
     return address;
-  } else if (unsCondition(address)) {
-    /// TODO:
-    /// unstoppable domain address... use API
-    /// https://docs.unstoppabledomains.com/send-and-receive-crypto-payments/crypto-payments#api-endpoints
-    /// https://drive.google.com/file/d/107oHjLoOHti111FuLvcSl3HVsLJdJCwD/view
-    ///
-    /// emailed them for api key
-    /// we will be unable to save the api key in the opensource code,
-    /// so we'll either have to add that in manually during build
-    /// or stand up a server of our own (which I'm sure we'll do eventually anyway)
-    /// which will take incoming requests and relay them to UNS servers.
-    ///
-    return '';
-  } else if (assetCondition(address)) {
-    // is it a raven asset name. look up who minted the asset and send to them
-    return await services.client.getOwner(address.toUpperCase());
+    //} else if (unsCondition(address)) {
+    //  /// TODO:
+    //  /// unstoppable domain address... use API
+    //  /// https://docs.unstoppabledomains.com/send-and-receive-crypto-payments/crypto-payments#api-endpoints
+    //  /// https://drive.google.com/file/d/107oHjLoOHti111FuLvcSl3HVsLJdJCwD/view
+    //  ///
+    //  /// emailed them for api key
+    //  /// we will be unable to save the api key in the opensource code,
+    //  /// so we'll either have to add that in manually during build
+    //  /// or stand up a server of our own (which I'm sure we'll do eventually anyway)
+    //  /// which will take incoming requests and relay them to UNS servers.
+    //  ///
+    //  return '';
+    //} else if (assetCondition(address)) {
+    //  // is it a raven asset name. look up who minted the asset and send to them
+    //  return await services.client.getOwner(address.toUpperCase());
   }
   return '';
 }

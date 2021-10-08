@@ -6,4 +6,11 @@ class Strings {
       punctuationProblematic + punctuationNonProblematic + '[]{}()=+*&^%#@!';
   static String punctuationMinusCurrency =
       punctuation.replaceAll('.', '').replaceAll(',', '');
+  static String alphanumeric = 'abcdefghijklmnopqrstuvwxyz12345674890';
+  static String addressChars = alphanumeric
+      .replaceAll('0', '')
+      .replaceAll('o', '')
+      .replaceAll('l', '')
+      .replaceAll('i', '')
+      .toUpperCase();
 }

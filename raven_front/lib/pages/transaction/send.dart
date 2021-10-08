@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:raven/raven.dart';
+import 'package:raven/services/transaction.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
@@ -21,7 +22,6 @@ class Send extends StatefulWidget {
 
 class _SendState extends State<Send> {
   Map<String, dynamic> data = {};
-  final formKey = GlobalKey<FormState>();
   final sendAddress = TextEditingController();
   final sendAmount = TextEditingController(text: '10');
   final sendMemo = TextEditingController();
@@ -35,6 +35,10 @@ class _SendState extends State<Send> {
   Color memoColor = Colors.grey.shade400;
   bool useWallet = false;
   double holding = 0.0;
+  FocusNode sendAddressFocusNode = FocusNode();
+  FocusNode sendAmountFocusNode = FocusNode();
+  FocusNode sendMemoFocusNode = FocusNode();
+  FocusNode sendNoteFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -139,16 +143,19 @@ class _SendState extends State<Send> {
     }
   }
 
-  bool _validateAddress(String address) {
+  bool _validateAddress([String? address]) =>
+      rvnCondition(address ?? sendAddress.text);
+
+  bool _validateAddressColor([String? address]) {
     var old = validatedAddress;
-    validatedAddress = validateAddressType(address);
+    validatedAddress = validateAddressType(address ?? sendAddress.text);
     if (validatedAddress != '') {
       if (validatedAddress == 'RVN') {
         addressColor = Theme.of(context).good!;
-      } else if (validatedAddress == 'UNS') {
-        addressColor = Theme.of(context).primaryColor;
-      } else if (validatedAddress == 'ASSET') {
-        addressColor = Theme.of(context).primaryColor;
+        //} else if (validatedAddress == 'UNS') {
+        //  addressColor = Theme.of(context).primaryColor;
+        //} else if (validatedAddress == 'ASSET') {
+        //  addressColor = Theme.of(context).primaryColor;
       }
       if (old != validatedAddress) setState(() => {});
       return true;
@@ -178,7 +185,7 @@ class _SendState extends State<Send> {
     setState(() => {});
   }
 
-  bool verifyMemo(String memo) => memo.length <= 80;
+  bool verifyMemo([String? memo]) => (memo ?? sendMemo.text).length <= 80;
 
   ListView body() {
     //var _controller = TextEditingController();
@@ -186,124 +193,183 @@ class _SendState extends State<Send> {
         shrinkWrap: true,
         padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
         children: <Widget>[
-          Form(
-              key: formKey,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
-                        style: Theme.of(context).textTheme.caption),
-                    DropdownButton<String>(
-                        isExpanded: true,
-                        value: data['symbol'],
-                        items: (useWallet
-                                ? Current.walletHoldingNames(data['walletId'])
-                                : Current.holdingNames)
-                            .map((String value) => DropdownMenuItem<String>(
-                                value: value, child: Text(value)))
-                            .toList(),
-                        onChanged: (String? newValue) =>
-                            setState(() => data['symbol'] = newValue!)),
-                    TextFormField(
-                      controller: sendAddress,
-                      decoration: InputDecoration(
-                          focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: addressColor)),
-                          enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: addressColor)),
-                          border: UnderlineInputBorder(
-                              borderSide: BorderSide(color: addressColor)),
-                          labelText: 'To',
-                          hintText: 'Address'),
-                      onChanged: (value) {
-                        _validateAddress(value);
-                      },
-                      onEditingComplete: () async {
-                        /// should tell front end what it was so we can notify user we're substituting the asset name or uns domain for the actual address
-                        var verifiedAddress =
-                            await verifyValidAddress(sendAddress.text);
-
-                        /// tell user then:
-                        sendAddress.text = verifiedAddress;
-                      },
-                      //validator: (String? value) {
-                      //  //if (value == null || value.isEmpty) {
-                      //  //  return 'Please enter a valid address';
-                      //  //}
-                      //  //return null;
-                      //},
-                    ),
-                    TextButton.icon(
-                        onPressed: () =>
-                            Navigator.pushNamed(context, '/send/scan_qr').then(
-                                (value) =>
-                                    populateFromQR((value as Barcode).code)),
-                        icon: Icon(Icons.qr_code_scanner),
-                        label: Text('Scan QR code')),
-                    TextFormField(
-                      controller: sendAmount,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                          focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: amountColor)),
-                          enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: amountColor)),
-                          labelText: 'Amount',
-                          hintText: 'Quantity'),
-                      onChanged: (value) {
-                        verifyVisibleAmount(value);
-                      },
-                      onEditingComplete: () {
-                        sendAmount.text = verifyDecAmount(sendAmount.text);
-                        verifyVisibleAmount(sendAmount.text);
-                      },
-                      //validator: (String? value) {  // validate as double/int
-                      //  //if (value == null || value.isEmpty) {
-                      //  //  return 'Please enter a valid send amount';
-                      //  //}
-                      //  //return null;
-                      //},
-                    ),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [Text('fee'), Text('0.01397191 RVN')]),
-                    TextFormField(
-                        controller: sendMemo,
-                        keyboardType: TextInputType.multiline,
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: memoColor)),
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: memoColor)),
-                            border: UnderlineInputBorder(),
-                            labelText: 'Memo (optional)',
-                            hintText:
-                                'IPFS hash publicly posted on transaction'),
-                        onChanged: (value) {
-                          var oldMemoColor = memoColor;
-                          memoColor = verifyMemo(value)
-                              ? Theme.of(context).good!
-                              : Theme.of(context).bad!;
-                          if (value == '') {
-                            memoColor = Colors.grey.shade400;
-                          }
-                          if (oldMemoColor != memoColor) {
-                            setState(() {});
-                          }
-                        }),
-                    TextFormField(
-                      controller: sendNote,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      decoration: InputDecoration(
-                          border: UnderlineInputBorder(),
-                          labelText: 'Note (optional)',
-                          hintText: 'Private note to self'),
-                    ),
-                    //Center(child: sendTransactionButton(_formKey))
-                  ])),
+          Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
+                    style: Theme.of(context).textTheme.caption),
+                //DropdownButton<String>(
+                //    isExpanded: true,
+                //    value: data['symbol'],
+                //    items: (useWallet
+                //            ? Current.walletHoldingNames(data['walletId'])
+                //            : Current.holdingNames)
+                //        .map((String value) => DropdownMenuItem<String>(
+                //            value: value, child: Text(value)))
+                //        .toList(),
+                //    onChanged: (String? newValue) {
+                //      FocusScope.of(context)
+                //          .requestFocus(sendAddressFocusNode);
+                //      setState(() => data['symbol'] = newValue!);
+                //    }),
+                TextField(
+                  focusNode: sendAddressFocusNode,
+                  controller: sendAddress,
+                  decoration: InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: addressColor)),
+                      enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: addressColor)),
+                      border: UnderlineInputBorder(
+                          borderSide: BorderSide(color: addressColor)),
+                      labelText: 'To',
+                      hintText: 'Address'),
+                  onChanged: (value) {
+                    _validateAddressColor(value);
+                  },
+                  onEditingComplete: () async {
+                    /// should tell front end what it was so we can notify user we're substituting the asset name or uns domain for the actual address
+                    //var verifiedAddress =
+                    //    await verifyValidAddress(sendAddress.text);
+                    //sendAddress.text = verifiedAddress;
+                    FocusScope.of(context).requestFocus(sendAmountFocusNode);
+                    //setState(() {});
+                  },
+                ),
+                //Visibility(
+                //    visible: !_validateAddress(sendAddress.text),
+                //    child: Text(
+                //      'Unrecognized Address',
+                //      style: TextStyle(color: Theme.of(context).bad),
+                //    )),
+                TextButton.icon(
+                    onPressed: () =>
+                        Navigator.pushNamed(context, '/send/scan_qr').then(
+                            (value) => populateFromQR((value as Barcode).code)),
+                    icon: Icon(Icons.qr_code_scanner),
+                    label: Text('Scan QR code')),
+                TextField(
+                  focusNode: sendAmountFocusNode,
+                  controller: sendAmount,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: amountColor)),
+                      enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: amountColor)),
+                      labelText: 'Amount',
+                      hintText: 'Quantity'),
+                  onChanged: (value) {
+                    verifyVisibleAmount(value);
+                  },
+                  onEditingComplete: () {
+                    sendAmount.text = verifyDecAmount(sendAmount.text);
+                    verifyVisibleAmount(sendAmount.text);
+                    FocusScope.of(context).requestFocus(sendMemoFocusNode);
+                  },
+                  //validator: (String? value) {  // validate as double/int
+                  //  //if (value == null || value.isEmpty) {
+                  //  //  return 'Please enter a valid send amount';
+                  //  //}
+                  //  //return null;
+                  //},
+                ),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [Text('fee'), Text('0.01397191 RVN')]),
+                TextField(
+                    focusNode: sendMemoFocusNode,
+                    controller: sendMemo,
+                    decoration: InputDecoration(
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: memoColor)),
+                        enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: memoColor)),
+                        border: UnderlineInputBorder(),
+                        labelText: 'Memo (optional)',
+                        hintText: 'IPFS hash publicly posted on transaction'),
+                    onChanged: (value) {
+                      var oldMemoColor = memoColor;
+                      memoColor = verifyMemo(value)
+                          ? Theme.of(context).good!
+                          : Theme.of(context).bad!;
+                      if (value == '') {
+                        memoColor = Colors.grey.shade400;
+                      }
+                      if (oldMemoColor != memoColor) {
+                        setState(() {});
+                      }
+                    },
+                    onEditingComplete: () {
+                      FocusScope.of(context).requestFocus(sendNoteFocusNode);
+                      setState(() {});
+                    }),
+                TextField(
+                  focusNode: sendNoteFocusNode,
+                  controller: sendNote,
+                  decoration: InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Note (optional)',
+                      hintText: 'Private note to self'),
+                  onEditingComplete: () async => startSend(),
+                ),
+                //Center(child: sendTransactionButton(_formKey))
+              ]),
         ]);
+  }
+
+  Future startSend() async {
+    sendAmount.text = verifyDecAmount(sendAmount.text);
+    if (_validateAddress() && verifyMemo()) {
+      //sendAmount.text = verifyDecAmount(sendAmount.text);
+      //sendAddress.text = await verifyValidAddress(sendAddress.text);
+      // if valid form: (
+      //    valid to address - is a R34char address, or compiles to one using assetname or UNS,
+      //    valid memo - no more than 80 chars long,
+      //    valid note - code safe for serialization to and from database)
+      // NOT BETA
+      // if able to aquire inputs... (from single wallet or account...)
+      //    valid asset - this wallet or account has this asset,
+      //    valid amount - this wallet or account has this much of this asset (fees taken into account),
+
+      /// press send -> get a confirmation page -> press cancel -> return
+      /// press send -> get a confirmation page -> press confirm again -> sends
+      /// be sure to save the history record along with the note if successful
+
+      /// NOT BETA
+      //if (useWallet) {
+      //  // send using only this wallet
+      //
+      //} else {
+      // send using any/every wallet in the account
+      var sendAmountAsSats = RavenText.amountSats(
+        double.parse(sendAmount.text),
+        percision: 8, /* get asset percision */
+      );
+      if (Current.balanceRVN.confirmed > sendAmountAsSats) {
+        confirmMessage();
+        try {
+          services.transaction.buildTransaction(
+            Current.account,
+            sendAddress.text,
+            SendEstimate(sendAmountAsSats),
+          );
+        } on InsufficientFunds catch (e) {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                      title: Text('Error: $e.'),
+                      content: Text(
+                          'Unable to acquire inputs for transaction, this may be due to too many wallets holding too small amounts, a problem known as "dust." Try sending from another account.'),
+                      actions: [
+                        TextButton(
+                            child: Text('Ok'),
+                            onPressed: () => Navigator.pop(context))
+                      ]));
+        }
+      }
+      //}
+    }
   }
 
   /// after transaction sent (and subscription on scripthash saved...)
@@ -314,29 +380,7 @@ class _SendState extends State<Send> {
   ElevatedButton sendTransactionButton() => ElevatedButton.icon(
       icon: Icon(Icons.send),
       label: Text('Send'),
-      onPressed: () {
-        // if valid form: (
-        //    valid to address - is a R34char address, or compiles to one using assetname or UNS,
-        //    valid memo - no more than 80 chars long,
-        //    valid note - code safe for serialization to and from database)
-        // if able to aquire inputs... (from single wallet or account...)
-        //    valid asset - this wallet or account has this asset,
-        //    valid amount - this wallet or account has this much of this asset (fees taken into account),
-        confirmMessage();
-
-        /// press send -> get a confirmation page -> press cancel -> return
-        /// press send -> get a confirmation page -> press confirm again -> sends
-        /// be sure to save the history record along with the note if successful
-
-        if (formKey.currentState!.validate()) {
-          // Process data.
-          if (useWallet) {
-            // send using only this wallet
-          } else {
-            // send using any/every wallet in the account
-          }
-        }
-      },
+      onPressed: () async => await startSend(),
       style: RavenButtonStyle.curvedSides);
 
   Future confirmMessage() => showDialog(

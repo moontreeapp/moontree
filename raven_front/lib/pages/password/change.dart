@@ -115,7 +115,6 @@ class _ChangePasswordState extends State<ChangePassword> {
       ),
       onChanged: (String value) {
         if (validateExisting()) {
-          // todo: fix
           FocusScope.of(context).requestFocus(newPasswordFocusNode);
         }
       },

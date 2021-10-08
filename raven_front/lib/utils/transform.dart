@@ -30,3 +30,17 @@ String removeChars(
   }
   return text;
 }
+
+String removeCharsOtherThan(
+  String text, {
+  String? chars,
+}) {
+  chars = chars ?? Strings.alphanumeric;
+  var ret = '';
+  for (var char in characters(text)) {
+    if (chars.contains(char)) {
+      ret = '$ret$char';
+    }
+  }
+  return ret;
+}
