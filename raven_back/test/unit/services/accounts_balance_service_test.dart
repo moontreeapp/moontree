@@ -2,7 +2,7 @@
 import 'package:test/test.dart';
 
 import 'package:raven/raven.dart';
-import '../fixtures/fixtures.dart' as fixtures;
+import '../../fixtures/fixtures.dart' as fixtures;
 
 var newHistory = History(
     hash: '100',
@@ -55,8 +55,8 @@ void main() async {
 
     test('sortedUnspents', () {
       expect(services.balances.sortedUnspents(fixtures.accounts().map['a0']!), [
-        fixtures.histories().map['3'], // 10 RVN
-        fixtures.histories().map['0'], // 5 RVN
+        fixtures.histories().map['3'], // 1000 RVN
+        fixtures.histories().map['0'], // 500 RVN
       ]);
     });
 

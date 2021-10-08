@@ -7,11 +7,17 @@ class PasswordService {
   final PasswordValidationService validate = PasswordValidationService();
   final PasswordCreationService create = PasswordCreationService();
 
-  bool get required => passwords.maxPasswordID != -1;
+  /// are any wallets encrypted with something other than no cipher
+  bool get required {
+    for (var cipherUpdate in services.wallets.getAllCipherUpdates) {
+      if (cipherUpdate.cipherType != CipherType.None) return true;
+    }
+    return false;
+  }
 
   bool interruptedPasswordChange() => {
         for (var cipherUpdate in services.wallets.getAllCipherUpdates)
-          if (cipherUpdate.passwordId != passwords.maxPasswordID)
+          if (cipherUpdate.passwordId != passwords.maxPasswordId)
             cipherUpdate.passwordId
       }.isNotEmpty;
 
@@ -32,13 +38,16 @@ class PasswordValidationService {
       passwords.primaryIndex.getPrevious()!.saltedHash;
 
   /// returns the number corresponding to how many passwords ago this was used
-  /// -1 = not found
+  /// null = not found
   /// 0 = current
   /// 1 = previous
   /// "password was used x passwords ago"
-  int previouslyUsed(String password) {
-    var m = passwords.maxPasswordID;
-    var ret = -1;
+  int? previouslyUsed(String password) {
+    var m = passwords.maxPasswordId;
+    if (m == null) {
+      return null;
+    }
+    var ret;
     for (var pass in passwords.data) {
       if (getHash(password, pass.salt) == pass.saltedHash) {
         ret = m - pass.passwordId;
@@ -87,8 +96,8 @@ class PasswordCreationService {
   /// save password in reservoir
   Future save(String password) async {
     await passwords.save(Password(
-        passwordId: passwords.maxPasswordID + 1,
+        passwordId: (passwords.maxPasswordId ?? -1) + 1,
         saltedHash: hashThis(saltPassword(
-            password, Password.getSalt(passwords.maxPasswordID + 1)))));
+            password, Password.getSalt((passwords.maxPasswordId ?? -1) + 1)))));
   }
 }

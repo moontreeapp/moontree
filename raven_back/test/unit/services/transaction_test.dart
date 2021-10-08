@@ -1,7 +1,8 @@
-// dart --no-sound-null-safety test test/integration/raven_tx_test.dart
+// dart test .\test\unit\services\transaction_test.dart
 import 'package:ravencoin/ravencoin.dart';
 import 'package:test/test.dart';
 
+import 'package:raven/services/balance.dart' as balanceService;
 import 'package:raven/services/transaction.dart';
 import 'package:raven/services/transaction/fee.dart';
 import 'package:raven/globals.dart';
@@ -28,8 +29,49 @@ void main() async {
     });
   });
 
+  group('CollectUTXOs', () {
+    setUp(fixtures.useFixtureSources);
+
+    test('fixture utxo set matches exptected', () {
+      var utxos = balanceService.BalanceService()
+          .sortedUnspents(accounts.primaryIndex.getByKeyStr('a0')[0]);
+      expect(utxos.map((utxo) => utxo.value).toList(), [1000, 500]);
+    });
+
+    test('pick smallest UTXO of sufficient size', () {
+      var utxos = balanceService.BalanceService().collectUTXOs(
+          accounts.primaryIndex.getByKeyStr('a0')[0],
+          amount: 500);
+      expect(utxos.map((utxo) => utxo.value).toList(), [500]);
+    });
+    test('take multiple from the top', () {
+      var utxos = balanceService.BalanceService().collectUTXOs(
+          accounts.primaryIndex.getByKeyStr('a0')[0],
+          amount: 1200);
+      expect(utxos.map((utxo) => utxo.value).toList(), [1000, 500]);
+    });
+  });
   group('TransactionService', () {
-    test('', () {});
+    setUp(fixtures.useFixtureSources);
+
+    test('', () {
+      var t = TransactionService().buildTransaction(
+        accounts.primaryIndex.getByKeyStr('a0')[0],
+        //'RM2fJN6HCLKp2DnmKMA5SBYvdKBCvmyaju',
+        'mtraysi8CBwHSSmyoEHPKBWZxc4vh6Phpn',
+        SendEstimate(4),
+      );
+      var txb = t.item1;
+      var estimate = t.item2;
+      expect(txb.tx!.fee(), 117);
+      expect(txb.tx!.fee(), estimate.fees);
+      expect(txb.tx!.ins.length, 1);
+      expect(txb.tx!.outs.length, 2);
+      expect(txb.tx!.outs[0].value, 4);
+      expect(txb.tx!.outs[1].value, 379);
+      expect(
+          txb.tx!.outs[1].value! + txb.tx!.outs[0].value! + txb.tx!.fee(), 500);
+    });
   });
 
   // test('choose enough inputs for fee', () async {

@@ -8,6 +8,9 @@ part 'password.keys.dart';
 class PasswordReservoir extends Reservoir<_IdKey, Password> {
   PasswordReservoir() : super(_IdKey());
 
-  int get maxPasswordID =>
-      max([for (var password in data) password.passwordId]) ?? -1;
+  int? get maxPasswordId =>
+      max([for (var password in data) password.passwordId]);
+
+  /// todo: allow removal of password, does not require deletion of passwords
+  ///       since services.passwords.required is not keyed off maxPasswordId.
 }

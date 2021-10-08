@@ -13,9 +13,9 @@ class CipherUpdate with EquatableMixin {
   final CipherType cipherType;
 
   @HiveField(1)
-  final int passwordId;
+  final int? passwordId;
 
-  const CipherUpdate(this.cipherType, this.passwordId);
+  const CipherUpdate(this.cipherType, {this.passwordId});
   CipherUpdate.fromMap(map)
       : cipherType = stringToCipherTypeMap[map['CipherType']]!,
         passwordId = int.parse(map['passwordId']);
@@ -35,4 +35,4 @@ class CipherUpdate with EquatableMixin {
       {for (var value in CipherType.values) describeEnum(value): value};
 }
 
-const CipherUpdate defaultCipherUpdate = CipherUpdate(CipherType.None, 0);
+const CipherUpdate defaultCipherUpdate = CipherUpdate(CipherType.None);

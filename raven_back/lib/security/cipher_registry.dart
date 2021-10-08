@@ -21,7 +21,7 @@ class CipherRegistry {
 
   CipherRegistry() {
     // populate with a nocipher cipher for creation of wallets without password
-    registerCipher(CipherUpdate(CipherType.None, -1), Uint8List(0));
+    registerCipher(defaultCipherUpdate, Uint8List(0));
   }
 
   @override
@@ -31,7 +31,7 @@ class CipherRegistry {
   CipherType get getLatestCipherType => CipherRegistry.latestCipherType;
 
   CipherUpdate get currentCipherUpdate =>
-      CipherUpdate(latestCipherType, passwords.maxPasswordID);
+      CipherUpdate(latestCipherType, passwordId: passwords.maxPasswordId);
 
   Cipher? get currentCipher => ciphers[currentCipherUpdate];
 
@@ -61,7 +61,8 @@ class CipherRegistry {
   }) {
     latest = latest ?? latestCipherType;
     password = getPassword(password: password, altPassword: altPassword);
-    registerCipher(CipherUpdate(latest, passwords.maxPasswordID), password);
+    registerCipher(
+        CipherUpdate(latest, passwordId: passwords.maxPasswordId), password);
   }
 
   Cipher registerCipher(

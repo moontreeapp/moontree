@@ -18,7 +18,7 @@ class CipherUpdateAdapter extends TypeAdapter<CipherUpdate> {
     };
     return CipherUpdate(
       fields[0] as CipherType,
-      fields[1] as int,
+      passwordId: fields[1] as int?,
     );
   }
 

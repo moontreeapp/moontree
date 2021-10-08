@@ -18,15 +18,19 @@ class WalletService {
   Set<CipherUpdate> get getCurrentCipherUpdates => wallets.data
       .map((wallet) => wallet.cipherUpdate)
       .where(
-          (cipherUpdate) => cipherUpdate.passwordId == passwords.maxPasswordID)
+          (cipherUpdate) => cipherUpdate.passwordId == passwords.maxPasswordId)
       .toSet();
 
   // should return cipherUpdates that must be used with previous password...
-  Set<CipherUpdate> get getPreviousCipherUpdates => wallets.data
-      .map((wallet) => wallet.cipherUpdate)
-      .where(
-          (cipherUpdate) => cipherUpdate.passwordId < passwords.maxPasswordID)
-      .toSet();
+  Set<CipherUpdate> get getPreviousCipherUpdates =>
+      passwords.maxPasswordId == null
+          ? {}
+          : wallets.data
+              .map((wallet) => wallet.cipherUpdate)
+              .where((cipherUpdate) =>
+                  cipherUpdate.cipherType != CipherType.None &&
+                  cipherUpdate.passwordId! < passwords.maxPasswordId!)
+              .toSet();
 
   Future createSave({
     required LingoKey humanTypeKey,

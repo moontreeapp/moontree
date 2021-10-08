@@ -1,5 +1,6 @@
 import 'package:raven/raven.dart';
 import 'package:ravencoin/ravencoin.dart';
+import 'package:tuple/tuple.dart';
 
 import 'transaction/fee.dart';
 import 'transaction/sign.dart';
@@ -63,7 +64,7 @@ class TransactionService {
   // setFees(35) <-- fee is the same because have the same number of inputs & outputs as previous iteration
   // updatedChangeDue: 110 - (45 + 35) = 30 : sufficient! and changeDue is RIGHT
   //   -> DONE with result
-  TransactionBuilder buildTransaction(
+  Tuple2<TransactionBuilder, SendEstimate> buildTransaction(
     Account account,
     String toAddress,
     SendEstimate estimate,
@@ -80,6 +81,10 @@ class TransactionService {
     // send
     var utxos = services.balances.collectUTXOs(account, amount: estimate.total);
 
+    for (var utxo in utxos) {
+      txb.addInput(utxo.hash, utxo.position);
+    }
+
     var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
 
     // Calculate change due, and return it to a wallet we control
@@ -95,7 +100,7 @@ class TransactionService {
     if (updatedEstimate.changeDue >= 0 &&
         updatedEstimate.changeDue == preliminaryChangeDue) {
       // success!
-      return txb;
+      return Tuple2(txb, updatedEstimate);
     } else {
       // try again
       return buildTransaction(account, toAddress, updatedEstimate);

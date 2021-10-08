@@ -3,7 +3,6 @@ import 'package:reservoir/map_source.dart';
 import 'package:test/test.dart';
 
 import 'package:raven/raven.dart';
-import 'package:raven/security/cipher_none.dart';
 
 import '../fixtures/fixtures.dart' as fixtures;
 import '../helper/reservoir_changes.dart';
@@ -31,11 +30,8 @@ void main() {
     test('2 addresses get created', () async {
       // make addresses
       expect(addresses.length, 5);
-      await reservoirChanges(
-          addresses,
-          () => services.wallets.leaders
-              .deriveFirstAddressAndSave(wallet, CipherNone()),
-          2);
+      await reservoirChanges(addresses,
+          () => services.wallets.leaders.deriveFirstAddressAndSave(wallet), 2);
       expect(addresses.length, 7);
     });
 
