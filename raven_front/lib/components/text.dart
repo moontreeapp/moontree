@@ -4,15 +4,15 @@ String toUSDBalance(
         {required double balance,
         required double rate,
         String prefix = '\$ ',
-        int percision = 2}) =>
+        int precision = 2}) =>
     balance == 0
         ? prefix + '0'
-        : prefix + (balance * rate).toStringAsFixed(percision);
+        : prefix + (balance * rate).toStringAsFixed(precision);
 
-int amountAsSats(double amount, {int percision = 8}) =>
-    (amount * int.parse('1' + '0' * percision)).toInt();
-double satsAsAmount(int sats, {int percision = 8}) =>
-    (sats / int.parse('1' + '0' * percision));
+int amountAsSats(double amount, {int precision = 8}) =>
+    (amount * int.parse('1' + '0' * precision)).toInt();
+double satsAsAmount(int sats, {int precision = 8}) =>
+    (sats / int.parse('1' + '0' * precision));
 
 /// returns a string representation of the sats (all value is stored as sats in the backend)
 String humanReadableSecurity(
@@ -41,11 +41,11 @@ String humanReadableSecurity(
       Security(symbol: symbol, securityType: SecurityType.RavenAsset);
   return asUSD
       ? RavenText.rvnUSD(RavenText.satsToAmount(
-            sats, /* percision: symbol.percision... */
+            sats, /* precision: symbol.precision... */
           ) *
           rates.assetToRVN(security))
       : RavenText.satsToAmount(
-          sats, /* percision: symbol.percision... */
+          sats, /* precision: symbol.precision... */
         ).toString();
 }
 
@@ -58,10 +58,10 @@ class RavenText {
   static int rvnSats(double amount) => amountAsSats(amount);
   static double satsRVN(int amount) => satsAsAmount(amount);
 
-  static double satsToAmount(int sats, {int percision = 8}) =>
-      satsAsAmount(sats, percision: percision);
-  static int amountSats(double amount, {int percision = 8}) =>
-      amountAsSats(amount, percision: percision);
+  static double satsToAmount(int sats, {int precision = 8}) =>
+      satsAsAmount(sats, precision: precision);
+  static int amountSats(double amount, {int precision = 8}) =>
+      amountAsSats(amount, precision: precision);
 
   static String securityAsReadable(int sats,
           {Security? security, String? symbol, bool asUSD = false}) =>

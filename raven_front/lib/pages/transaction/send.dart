@@ -60,7 +60,7 @@ class _SendState extends State<Send> {
     // could hold which asset to send...
     data = populateData(context, data);
     useWallet = data.containsKey('walletId') && data['walletId'] != null;
-    var percision = 8; /* get asset percision...*/
+    var precision = 8; /* get asset precision...*/
     var possibleHoldings = [
       for (var balance in useWallet
           ? Current.walletHoldings(data['walletId'])
@@ -75,7 +75,7 @@ class _SendState extends State<Send> {
       visibleFiatAmount = RavenText.securityAsReadable(
           RavenText.amountSats(
             double.parse(visibleAmount),
-            percision: percision,
+            precision: precision,
           ),
           symbol: data['symbol'],
           asUSD: true);
@@ -344,10 +344,11 @@ class _SendState extends State<Send> {
       // send using any/every wallet in the account
       var sendAmountAsSats = RavenText.amountSats(
         double.parse(sendAmount.text),
-        percision: 8, /* get asset percision */
+        precision: 8, /* get asset precision */
       );
       if (Current.balanceRVN.confirmed > sendAmountAsSats) {
         confirmMessage();
+        //move to confirm
         try {
           services.transaction.buildTransaction(
             Current.account,
