@@ -35,14 +35,7 @@ class SendEstimate {
 
 class TransactionService {
   /// gets inputs, calculates fee, returns change
-  /// NOTE: throws InsufficientFunds, which must be handled by caller, e.g.
-  ///   try {
-  ///     buildTransaction(...)
-  ///   } InsufficientFunds on catch (e) {
-  ///     // handle no money
-  ///   }
-  ///
-  ///
+  //
   // EXAMPLE of recursive function
   //
   // Let's say we start with the following UTXOs available:
