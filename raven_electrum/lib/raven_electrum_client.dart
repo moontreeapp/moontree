@@ -7,12 +7,13 @@ import 'dart:async';
 
 import 'connect.dart' as conn;
 import 'client/subscribing_client.dart';
+import 'methods/server/version.dart';
 
 export 'methods/asset/meta.dart';
 export 'methods/asset/addresses.dart';
 export 'methods/server/features.dart';
 export 'methods/server/stats.dart';
-import 'methods/server/version.dart';
+export 'methods/server/version.dart';
 export 'methods/scripthash/balance.dart';
 export 'methods/scripthash/history.dart';
 export 'methods/scripthash/unspent.dart';
