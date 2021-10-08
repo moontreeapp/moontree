@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:ravencoin/ravencoin.dart';
 import 'package:raven/raven.dart';
 import 'package:raven/services/transaction.dart';
 import 'package:raven_mobile/components/buttons.dart';
@@ -320,7 +321,10 @@ class _SendState extends State<Send> {
 
   Future startSend() async {
     sendAmount.text = verifyDecAmount(sendAmount.text);
-    if (_validateAddress() && verifyMemo()) {
+    var vAddress = _validateAddress();
+    var vMemo = verifyMemo();
+    //if (_validateAddress() && verifyMemo()) {
+    if (true) {
       //sendAmount.text = verifyDecAmount(sendAmount.text);
       //sendAddress.text = await verifyValidAddress(sendAddress.text);
       // if valid form: (
@@ -346,30 +350,70 @@ class _SendState extends State<Send> {
         double.parse(sendAmount.text),
         precision: 8, /* get asset precision */
       );
-      if (Current.balanceRVN.confirmed > sendAmountAsSats) {
-        confirmMessage();
-        //move to confirm
+      if (holding > double.parse(sendAmount.text)) {
+        // todo: catch other errors?
         try {
-          services.transaction.buildTransaction(
+          var tuple = services.transaction.buildTransaction(
             Current.account,
             sendAddress.text,
             SendEstimate(sendAmountAsSats),
           );
+          confirmMessage(txb: tuple.item1, estimate: tuple.item2);
         } on InsufficientFunds catch (e) {
           showDialog(
               context: context,
               builder: (BuildContext context) => AlertDialog(
-                      title: Text('Error: $e.'),
+                      title: Text('Error: Insufficient Funds'),
                       content: Text(
-                          'Unable to acquire inputs for transaction, this may be due to too many wallets holding too small amounts, a problem known as "dust." Try sending from another account.'),
+                          '${e.cause} Unable to acquire inputs for transaction, this may be due to too many wallets holding too small amounts, a problem known as "dust." Try sending from another account.'),
+                      actions: [
+                        TextButton(
+                            child: Text('Ok'),
+                            onPressed: () => Navigator.pop(context))
+                      ]));
+        } catch (e) {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                      title: Text('Error'),
+                      content: Text('Unable to create transaction: $e'),
                       actions: [
                         TextButton(
                             child: Text('Ok'),
                             onPressed: () => Navigator.pop(context))
                       ]));
         }
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) =>
+                AlertDialog(
+                    title: Text('Unable to Create Transaction'),
+                    content:
+                        Text('Send Amount is larger than account holding.'),
+                    actions: [
+                      TextButton(
+                          child: Text('Ok'),
+                          onPressed: () => Navigator.pop(context))
+                    ]));
       }
       //}
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                  title: Text('Unable to Create Transaction'),
+                  content: Text((!vAddress
+                          ? 'Invalid Address: please double check.\n'
+                          : '') +
+                      (!vMemo
+                          ? 'Invalid Memo: Must not exceed 80 characters.'
+                          : '')),
+                  actions: [
+                    TextButton(
+                        child: Text('Ok'),
+                        onPressed: () => Navigator.pop(context))
+                  ]));
     }
   }
 
@@ -384,77 +428,79 @@ class _SendState extends State<Send> {
       onPressed: () async => await startSend(),
       style: RavenButtonStyle.curvedSides);
 
-  Future confirmMessage() => showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-              title: Text('Confirm?'),
-              content: DataTable(columns: [
-                DataColumn(label: Text('')),
-                DataColumn(label: Text(''))
-              ], rows: [
-                DataRow(cells: [
-                  DataCell(Text('Send Amount:')),
-                  DataCell(Text(sendAmount.text)),
-                ]),
-                DataRow(cells: [
-                  DataCell(Text('Send Asset:')),
-                  DataCell(Text(data['symbol'])),
-                ]),
-                DataRow(cells: [
-                  DataCell(Text('Receive Address:')),
-                  DataCell(Text(sendAddress.text.length < 10
-                      ? sendAddress.text
-                      : '${sendAddress.text.substring(0, 5)}...${sendAddress.text.substring(sendAddress.text.length - 5, sendAddress.text.length)}')),
-                ]),
-                ...[
-                  if (sendMemo.text != '')
+  Future confirmMessage({
+    required TransactionBuilder txb,
+    required SendEstimate estimate,
+  }) =>
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                  title: Text('Confirm?'),
+                  content: DataTable(columns: [
+                    DataColumn(label: Text('')),
+                    DataColumn(label: Text(''))
+                  ], rows: [
                     DataRow(cells: [
-                      DataCell(Text('Public Memo:')),
-                      DataCell(Text(sendMemo.text)),
-                    ])
-                ],
-              ]),
+                      DataCell(Text('Send Amount:')),
+                      DataCell(Text(sendAmount.text)),
+                    ]),
+                    DataRow(cells: [
+                      DataCell(Text('Fee Amount:')),
+                      DataCell(Text('${estimate.fees}')),
+                    ]),
+                    DataRow(cells: [
+                      DataCell(Text('Total:')),
+                      DataCell(Text('${estimate.total}')),
+                    ]),
+                    DataRow(cells: [
+                      DataCell(Text('Send Asset:')),
+                      DataCell(Text(data['symbol'])),
+                    ]),
+                    DataRow(cells: [
+                      DataCell(Text('Receive Address:')),
+                      DataCell(Text(sendAddress.text.length < 10
+                          ? sendAddress.text
+                          : '${sendAddress.text.substring(0, 5)}...${sendAddress.text.substring(sendAddress.text.length - 5, sendAddress.text.length)}')),
+                    ]),
+                    ...[
+                      if (sendMemo.text != '')
+                        DataRow(cells: [
+                          DataCell(Text('Public Memo:')),
+                          DataCell(Text(sendMemo.text)),
+                        ])
+                    ],
+                  ]),
+                  actions: [
+                    TextButton(
+                        child: Text('Cancel'),
+                        onPressed: () => Navigator.pop(context)),
+                    TextButton(
+                        child: Text('Confirm'), onPressed: () => attemptSend()
 
-              //Column(
-              //    crossAxisAlignment: CrossAxisAlignment.start,
-              //    mainAxisAlignment: MainAxisAlignment.center,
-              //    children: [
-              //      Text('Send ${sendAmount.text}'),
-              //      Text('of ${data['symbol']}'),
-              //      Text('to ${sendAddress.text}'),
-              //      Text('with the memo of "${sendMemo.text}".'),
-              //      Text('Correct?'),
-              //    ]),
-              actions: [
-                TextButton(
-                    child: Text('Cancel'),
-                    onPressed: () => Navigator.pop(context)),
-                TextButton(
-                    child: Text('Confirm'), onPressed: () => attemptSend()
+                        /// https://pub.dev/packages/modal_progress_hud
+                        //showDialog(
+                        //    context: context,
+                        //    builder: (BuildContext context) => AlertDialog(
+                        //            title: Text(''),
+                        //            content: Text('Sending...'),
+                        //            actions: [
+                        //              TextButton(
+                        //                  child: Text('Ok'),
+                        //                  onPressed: () =>
+                        //                      Navigator.pop(context))
+                        //            ]))
 
-                    /// https://pub.dev/packages/modal_progress_hud
-                    //showDialog(
-                    //    context: context,
-                    //    builder: (BuildContext context) => AlertDialog(
-                    //            title: Text(''),
-                    //            content: Text('Sending...'),
-                    //            actions: [
-                    //              TextButton(
-                    //                  child: Text('Ok'),
-                    //                  onPressed: () =>
-                    //                      Navigator.pop(context))
-                    //            ]))
-
-                    /*sending...*/
-                    /*send to success or failure page*/
-                    )
-              ]));
+                        /*sending...*/
+                        /*send to success or failure page*/
+                        )
+                  ]));
 
   void attemptSend() {
     var client = services.client.mostRecentRavenClient;
     print(client);
     if (client == null) {
       print(1);
+      // replace with snackbar or something
       showDialog(
           context: context,
           builder: (BuildContext context) => AlertDialog(
@@ -468,7 +514,7 @@ class _SendState extends State<Send> {
                   ]));
     } else {
       print(2);
-      //var txid = client.send(transactionBuilder.aquire fees etc);
+      //var txid = services.client.sendTransaction();
       var txid = '';
       if (txid != '') {
         print(3);

@@ -94,7 +94,7 @@ class _ChangeResumeState extends State<ChangeResume> {
       successMessage();
     } else {
       var used = services.passwords.validate.previouslyUsed(password.text);
-      failureMessage(used == -1
+      failureMessage(used == null
           ? 'This password was not recognized to match any previously used passwords.'
           : 'The provided password was used $used passwords ago.');
     }

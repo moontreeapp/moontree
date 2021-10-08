@@ -159,7 +159,7 @@ class _ChangePasswordState extends State<ChangePassword> {
     var old = validatedExisting;
     var oldNotification = existingNotification;
     var used = services.passwords.validate.previouslyUsed(password);
-    existingNotification = used == -1
+    existingNotification = used == null
         ? 'password unrecognized...'
         : 'this password was used $used passwords ago.';
     validatedExisting = false;
@@ -171,7 +171,7 @@ class _ChangePasswordState extends State<ChangePassword> {
     password = password ?? newPassword.text;
     if (services.passwords.validate.complexity(password)) {
       var used = services.passwords.validate.previouslyUsed(password);
-      newNotification = used == -1
+      newNotification = used == null
           ? 'This password has never been used and is a strong password.'
           : used > 0
               ? 'Warnning: this password was used $used passwords ago.'
