@@ -17,8 +17,9 @@ export 'methods/server/version.dart';
 export 'methods/scripthash/balance.dart';
 export 'methods/scripthash/history.dart';
 export 'methods/scripthash/unspent.dart';
+export 'methods/transaction/broadcast.dart';
 export 'methods/transaction/memo.dart';
-export 'methods/transaction/transaction.dart';
+export 'methods/transaction/get.dart';
 
 export 'subscriptions/subscribe_headers.dart';
 export 'subscriptions/subscribe_asset.dart';
