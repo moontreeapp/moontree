@@ -145,7 +145,7 @@ class _SendState extends State<Send> {
   }
 
   bool _validateAddress([String? address]) =>
-      rvnCondition(address ?? sendAddress.text);
+      rvnCondition(address ?? sendAddress.text, net: Current.account.net);
 
   bool _validateAddressColor([String? address]) {
     var old = validatedAddress;
@@ -323,8 +323,7 @@ class _SendState extends State<Send> {
     sendAmount.text = verifyDecAmount(sendAmount.text);
     var vAddress = _validateAddress();
     var vMemo = verifyMemo();
-    //if (_validateAddress() && verifyMemo()) {
-    if (true) {
+    if (_validateAddress() && verifyMemo()) {
       //sendAmount.text = verifyDecAmount(sendAmount.text);
       //sendAddress.text = await verifyValidAddress(sendAddress.text);
       // if valid form: (
@@ -475,7 +474,8 @@ class _SendState extends State<Send> {
                         child: Text('Cancel'),
                         onPressed: () => Navigator.pop(context)),
                     TextButton(
-                        child: Text('Confirm'), onPressed: () => attemptSend()
+                        child: Text('Confirm'),
+                        onPressed: () => attemptSend(txb)
 
                         /// https://pub.dev/packages/modal_progress_hud
                         //showDialog(
@@ -495,7 +495,7 @@ class _SendState extends State<Send> {
                         )
                   ]));
 
-  void attemptSend() {
+  void attemptSend(TransactionBuilder txb) {
     var client = services.client.mostRecentRavenClient;
     print(client);
     if (client == null) {
@@ -514,7 +514,8 @@ class _SendState extends State<Send> {
                   ]));
     } else {
       print(2);
-      //var txid = services.client.sendTransaction();
+      // needs testing on testnet
+      //var txid = services.client.sendTransaction(txb.tx!.toHex());
       var txid = '';
       if (txid != '') {
         print(3);
