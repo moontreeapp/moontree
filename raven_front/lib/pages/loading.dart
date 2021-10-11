@@ -20,19 +20,8 @@ class _LoadingState extends State<Loading> {
   }
 
   Future setupRealWallet() async {
-    //dotenv.load('../../.env');
-    //var mnemonic = dotenv.env['TEST_WALLET_01']!;
-    //var mnemonic =
-    //    'animal twin echo jaguar sibling man common answer dolphin sign nice evolve';
-    var mnemonic =
-        'board leisure impose bleak race egg abuse series seat achieve fan column';
-
-    // recieve address mvP3CarfuewpjBDMPZvabFqY7LxHtpdjZT ???
-    // https://rvnt.cryptoscope.io/tx/?txid=84ab4db04a5d32fc81025db3944e6534c4c201fcc93749da6d1e5ecf98355533
-    // I thought it was supposed to be musihnwMWXSwnARhYLVdmibY1GaJkEqhim
-    // are we deriving the address differently now? maybe...
-    // real: mjtDhzjgoQfp63ocbp1jZxZeFosQ3KnH5S
-    print(mnemonic);
+    dotenv.load('../../.env');
+    var mnemonic = dotenv.env['TEST_WALLET_01']!;
     await services.wallets.createSave(
         humanTypeKey: LingoKey.leaderWalletType,
         accountId: '0',
@@ -64,10 +53,6 @@ class _LoadingState extends State<Loading> {
     print('rates: ${rates.data}');
     print('settings: ${settings.data}');
     print('cipherRegistry: $cipherRegistry');
-    for (var add in wallets.byAccount.getAll('0')[1].addresses) {
-      print(add.address);
-      print(add.exposure);
-    }
 
     if (services.passwords.required) {
       if (services.passwords.interruptedPasswordChange()) {

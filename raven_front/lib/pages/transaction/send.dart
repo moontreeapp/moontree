@@ -497,9 +497,7 @@ class _SendState extends State<Send> {
 
   Future attemptSend(Transaction tx) async {
     var client = services.client.mostRecentRavenClient;
-    print(client);
     if (client == null) {
-      print(1);
       // replace with snackbar or something
       showDialog(
           context: context,
@@ -513,12 +511,10 @@ class _SendState extends State<Send> {
                         onPressed: () => Navigator.pop(context))
                   ]));
     } else {
-      print(2);
       // needs testing on testnet
       var txid = await services.client.sendTransaction(tx.toHex());
       //var txid = '';
       if (txid != '') {
-        print(3);
         showDialog(
             context: context,
             builder: (BuildContext context) => AlertDialog(
@@ -534,7 +530,6 @@ class _SendState extends State<Send> {
         /// go back to where you came from
         //Navigator.pop(context);
       } else {
-        print(4);
         showDialog(
             context: context,
             builder: (BuildContext context) => AlertDialog(
@@ -548,7 +543,6 @@ class _SendState extends State<Send> {
                     ]));
       }
     }
-    print(5);
     //Navigator.pop(context);
   }
 }
