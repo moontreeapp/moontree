@@ -56,9 +56,6 @@ class _WalletViewState extends State<WalletView> {
         ? data['wallet'] as LeaderWallet
         : data['wallet'] as SingleWallet;
     if (wallet.cipher != null) {
-      //address =
-      //    wallet.seedWallet(wallet.cipher!, net: wallet.account!.net).address!;
-      // should be the first empty receive address not the seed address...
       address = address ??
           (wallet.humanTypeKey == LingoKey.leaderWalletType
               ? services.wallets.leaders

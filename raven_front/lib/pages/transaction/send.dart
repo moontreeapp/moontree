@@ -275,36 +275,40 @@ class _SendState extends State<Send> {
                   //  //return null;
                   //},
                 ),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [Text('fee'), Text('0.01397191 RVN')]),
-                TextField(
-                    focusNode: sendMemoFocusNode,
-                    controller: sendMemo,
-                    decoration: InputDecoration(
-                        focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: memoColor)),
-                        enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: memoColor)),
-                        border: UnderlineInputBorder(),
-                        labelText: 'Memo (optional)',
-                        hintText: 'IPFS hash publicly posted on transaction'),
-                    onChanged: (value) {
-                      var oldMemoColor = memoColor;
-                      memoColor = verifyMemo(value)
-                          ? Theme.of(context).good!
-                          : Theme.of(context).bad!;
-                      if (value == '') {
-                        memoColor = Colors.grey.shade400;
-                      }
-                      if (oldMemoColor != memoColor) {
-                        setState(() {});
-                      }
-                    },
-                    onEditingComplete: () {
-                      FocusScope.of(context).requestFocus(sendNoteFocusNode);
-                      setState(() {});
-                    }),
+
+                // todo replace fee estimate with fast, slow or regular
+                //Row(
+                //    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //    children: [Text('fee'), Text('0.01397191 RVN')]),
+
+                /// HIDE MEMO for beta - not supported by ravencoin anyway
+                //TextField(
+                //    focusNode: sendMemoFocusNode,
+                //    controller: sendMemo,
+                //    decoration: InputDecoration(
+                //        focusedBorder: UnderlineInputBorder(
+                //            borderSide: BorderSide(color: memoColor)),
+                //        enabledBorder: UnderlineInputBorder(
+                //            borderSide: BorderSide(color: memoColor)),
+                //        border: UnderlineInputBorder(),
+                //        labelText: 'Memo (optional)',
+                //        hintText: 'IPFS hash publicly posted on transaction'),
+                //    onChanged: (value) {
+                //      var oldMemoColor = memoColor;
+                //      memoColor = verifyMemo(value)
+                //          ? Theme.of(context).good!
+                //          : Theme.of(context).bad!;
+                //      if (value == '') {
+                //        memoColor = Colors.grey.shade400;
+                //      }
+                //      if (oldMemoColor != memoColor) {
+                //        setState(() {});
+                //      }
+                //    },
+                //    onEditingComplete: () {
+                //      FocusScope.of(context).requestFocus(sendNoteFocusNode);
+                //      setState(() {});
+                //    }),
                 TextField(
                   focusNode: sendNoteFocusNode,
                   controller: sendNote,
