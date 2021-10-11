@@ -14,7 +14,7 @@ import 'classify.dart';
 
 class TransactionBuilder {
   NetworkType network;
-  late int maximumFeeRate;
+  int maximumFeeRate;
   List<Input> _inputs = [];
   Transaction? _tx;
   Map _prevTxSet = {};
@@ -135,6 +135,8 @@ class TransactionBuilder {
       throw ArgumentError('Transaction needs outputs');
     final input = _inputs[vin];
     final ourPubKey = keyPair.publicKey;
+    print('IN SIGN:-----------------------------------');
+    print(!_canSign(input));
     if (!_canSign(input)) {
       if (witnessValue != null) {
         input.value = witnessValue;
@@ -187,13 +189,21 @@ class TransactionBuilder {
 
     // enforce in order signing of public keys
     var signed = false;
+    print('loop ${input.pubkeys!.length}');
+    print('loop ${input.pubkeys}');
     for (var i = 0; i < input.pubkeys!.length; i++) {
-      if (HEX.encode(ourPubKey!).compareTo(HEX.encode(input.pubkeys![i]!)) != 0)
+      if (HEX.encode(ourPubKey!).compareTo(HEX.encode(input.pubkeys![i]!)) !=
+          0) {
+        print('about to continue $i, ${input.pubkeys!.length}');
         continue;
+      }
       if (input.signatures![i] != null)
         throw ArgumentError('Signature already exists');
       final signature = keyPair.sign(signatureHash);
       input.signatures![i] = bscript.encodeSignature(signature, hashType);
+      print('signature');
+      print(signature);
+      print(input.signatures![i]);
       signed = true;
     }
     if (!signed) throw ArgumentError('Key pair cannot sign for this input');
