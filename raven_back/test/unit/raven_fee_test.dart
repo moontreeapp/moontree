@@ -4,7 +4,7 @@ import 'package:ravencoin/ravencoin.dart';
 import 'package:raven/services/transaction/fee.dart';
 
 void main() {
-  test('totalFeeByBytes', () async {
+  test('totalFeeByBytes', () {
     final txb = TransactionBuilder(network: testnet);
     txb.setVersion(1);
     txb.addInput(
@@ -12,11 +12,20 @@ void main() {
     txb.addOutput('mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7', 4000000);
     var tx = txb.tx!;
     var fee = tx.fee();
-    expect(fee, (tx.virtualSize() * .9765625).ceil());
+    expect(fee, 93500);
     fee = tx.fee(cheap);
-    expect(fee, (tx.virtualSize() * .9765625 * 0.9).ceil());
+    expect(fee, 85000);
     fee = tx.fee(fast);
-    expect(fee, (tx.virtualSize() * .9765625 * 1.1).ceil());
-    expect(fee > 0, true);
+    expect(fee, 127500);
+  });
+
+  test('min fee is 0.01 RVN per 1000 bytes', () {
+    expect(calculateFee(1, standard), 1100);
+    expect(calculateFee(1, cheap), 1000);
+    expect(calculateFee(1, fast), 1500);
+  });
+
+  test('standard fee is 1000 sats per vsize', () {
+    expect(calculateFee(2000, standard), 2200000);
   });
 }
