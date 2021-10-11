@@ -39,7 +39,6 @@ class AddressSubscriptionWaiter extends Waiter {
           await deinitSubscriptionHandles();
         } else {
           backlogSubscriptions.forEach((address) {
-            print('In foreach');
             subscribe(client, address);
           });
           backlogSubscriptions.clear();
@@ -94,8 +93,6 @@ class AddressSubscriptionWaiter extends Waiter {
 
   void retrieve(
       RavenElectrumClient client, List<Address> changedAddresses) async {
-    print(
-        'retrieving for ${changedAddresses.map((e) => e.address).toList().join(' ')}');
     await services.addresses.saveScripthashHistoryData(
       await services.addresses.getScripthashHistoriesData(
         changedAddresses,
@@ -112,14 +109,10 @@ class AddressSubscriptionWaiter extends Waiter {
           change.when(
               added: (added) {
                 Address address = added.data;
-                print('FOUND NEW ADDRESS');
-                print(address.address);
                 var client = services.client.mostRecentRavenClient;
                 if (client == null) {
-                  print('client missing');
                   backlogSubscriptions.add(address);
                 } else {
-                  print('client found');
                   subscribe(client, address);
                 }
               },
@@ -133,7 +126,6 @@ class AddressSubscriptionWaiter extends Waiter {
   }
 
   void subscribe(RavenElectrumClient client, Address address) {
-    print('subscribing to ${address.address}');
     addressesNeedingUpdate.sink.add(address);
     var stream = client.subscribeScripthash(address.scripthash);
     subscriptionHandles[address.scripthash] = stream.listen((status) {

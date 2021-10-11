@@ -63,8 +63,6 @@ void main() async {
       );
       var tx = t.item1;
       var estimate = t.item2;
-      print('TRANSACTION:');
-      print(tx);
       expect(tx.fee(), 247500);
       expect(tx.fee(), estimate.fees);
       expect(tx.ins.length, 1);

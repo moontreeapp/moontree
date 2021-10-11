@@ -10,12 +10,7 @@ extension SignEachInput on TransactionBuilder {
   void signEachInput(List<History> utxos) {
     utxos.asMap().forEach((i, utxo) {
       var keyPair = services.wallets.getAddressKeypair(utxo.address!);
-      var before = tx.toString();
-      var after = tx.toString();
-      print('BEFORE $before');
       sign(vin: i, keyPair: keyPair);
-      print('AFTER  $after');
-      print(before == after);
     });
   }
 }
