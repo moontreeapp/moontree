@@ -1,7 +1,7 @@
 import 'package:raven/utils/exceptions.dart';
 import 'package:raven/raven.dart';
 import 'package:raven/utils/parse.dart';
-import 'package:raven_electrum_client/methods/transaction/transaction.dart';
+import 'package:raven_electrum_client/methods/transaction/get.dart';
 
 class HistoryService {
   History? getHistoryFrom({History? history, String? hash}) {

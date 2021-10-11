@@ -25,7 +25,7 @@ void main() async {
     test('fee can be calculated', () {
       var txb = TransactionBuilder(network: mainnet);
       expect(txb.tx!.virtualSize(), 10);
-      expect(txb.tx!.fee(), 10);
+      expect(txb.tx!.fee(), 11000);
     });
   });
 
@@ -35,42 +35,43 @@ void main() async {
     test('fixture utxo set matches exptected', () {
       var utxos = balanceService.BalanceService()
           .sortedUnspents(accounts.primaryIndex.getByKeyStr('a0')[0]);
-      expect(utxos.map((utxo) => utxo.value).toList(), [1000, 500]);
+      expect(utxos.map((utxo) => utxo.value).toList(), [10000000, 5000000]);
     });
 
     test('pick smallest UTXO of sufficient size', () {
       var utxos = balanceService.BalanceService().collectUTXOs(
           accounts.primaryIndex.getByKeyStr('a0')[0],
           amount: 500);
-      expect(utxos.map((utxo) => utxo.value).toList(), [500]);
+      expect(utxos.map((utxo) => utxo.value).toList(), [5000000]);
     });
     test('take multiple from the top', () {
       var utxos = balanceService.BalanceService().collectUTXOs(
           accounts.primaryIndex.getByKeyStr('a0')[0],
-          amount: 1200);
-      expect(utxos.map((utxo) => utxo.value).toList(), [1000, 500]);
+          amount: 12000000);
+      expect(utxos.map((utxo) => utxo.value).toList(), [10000000, 5000000]);
     });
   });
   group('TransactionService', () {
     setUp(fixtures.useFixtureSources);
 
-    test('', () {
+    test('test BuildTransaction', () {
       var t = TransactionService().buildTransaction(
         accounts.primaryIndex.getByKeyStr('a0')[0],
         //'RM2fJN6HCLKp2DnmKMA5SBYvdKBCvmyaju',
         'mtraysi8CBwHSSmyoEHPKBWZxc4vh6Phpn',
         SendEstimate(4),
       );
-      var txb = t.item1;
+      var tx = t.item1;
       var estimate = t.item2;
-      expect(txb.tx!.fee(), 117);
-      expect(txb.tx!.fee(), estimate.fees);
-      expect(txb.tx!.ins.length, 1);
-      expect(txb.tx!.outs.length, 2);
-      expect(txb.tx!.outs[0].value, 4);
-      expect(txb.tx!.outs[1].value, 379);
-      expect(
-          txb.tx!.outs[1].value! + txb.tx!.outs[0].value! + txb.tx!.fee(), 500);
+      print('TRANSACTION:');
+      print(tx);
+      expect(tx.fee(), 247500);
+      expect(tx.fee(), estimate.fees);
+      expect(tx.ins.length, 1);
+      expect(tx.outs.length, 2);
+      expect(tx.outs[0].value, 4);
+      expect(tx.outs[1].value, 4752496);
+      expect(tx.outs[1].value! + tx.outs[0].value! + tx.fee(), 5000000);
     });
   });
 

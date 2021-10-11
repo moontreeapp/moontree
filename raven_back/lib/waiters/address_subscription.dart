@@ -11,6 +11,10 @@ import 'package:rxdart/rxdart.dart';
 
 import 'waiter.dart';
 
+/// new address -> put in subscriptionHandles -> setup up subscription
+/// new subscriptionHandle -> setup up subscription to blockchain
+/// subscription -> retrieve data from blockchain
+
 class AddressSubscriptionWaiter extends Waiter {
   final Map<String, StreamSubscription> subscriptionHandles = {};
   final PublishSubject<Address> addressesNeedingUpdate = PublishSubject();
@@ -34,16 +38,17 @@ class AddressSubscriptionWaiter extends Waiter {
         if (client == null) {
           await deinitSubscriptionHandles();
         } else {
-          if (backlogSubscriptions.isNotEmpty) {
-            backlogSubscriptions.forEach((address) {
-              subscribe(client, address);
-            });
-          }
+          backlogSubscriptions.forEach((address) {
+            print('In foreach');
+            subscribe(client, address);
+          });
+          backlogSubscriptions.clear();
           if (subscriptionHandles.isEmpty) {
             subscribeToExistingAddresses();
           }
           if (backlogRetrievals.isNotEmpty) {
             retrieve(client, backlogRetrievals.toList());
+            backlogRetrievals.clear();
           }
         }
       });
@@ -64,9 +69,9 @@ class AddressSubscriptionWaiter extends Waiter {
   }
 
   void init() {
+    setupSubscriptionsListener();
     setupClientListener();
     setupCipherListener();
-    setupSubscriptionsListener();
     setupNewAddressListener();
   }
 
@@ -74,8 +79,8 @@ class AddressSubscriptionWaiter extends Waiter {
     if (!listeners.keys.contains('addressesNeedingUpdate.stream')) {
       listeners['addressesNeedingUpdate.stream'] = addressesNeedingUpdate.stream
           .bufferCountTimeout(10, Duration(milliseconds: 50))
-          .listen((changedAddresses) async {
-        var client = await services.client.clientOrNull;
+          .listen((changedAddresses) {
+        var client = services.client.mostRecentRavenClient;
         if (client == null) {
           for (var address in changedAddresses) {
             backlogRetrievals.add(address);
@@ -89,6 +94,8 @@ class AddressSubscriptionWaiter extends Waiter {
 
   void retrieve(
       RavenElectrumClient client, List<Address> changedAddresses) async {
+    print(
+        'retrieving for ${changedAddresses.map((e) => e.address).toList().join(' ')}');
     await services.addresses.saveScripthashHistoryData(
       await services.addresses.getScripthashHistoriesData(
         changedAddresses,
@@ -103,13 +110,16 @@ class AddressSubscriptionWaiter extends Waiter {
           addresses.changes.listen((List<Change> changes) {
         changes.forEach((change) {
           change.when(
-              added: (added) async {
+              added: (added) {
                 Address address = added.data;
-                var client = await services.client.clientOrNull;
+                print('FOUND NEW ADDRESS');
+                print(address.address);
+                var client = services.client.mostRecentRavenClient;
                 if (client == null) {
+                  print('client missing');
                   backlogSubscriptions.add(address);
                 } else {
-                  addressNeedsUpdating(address);
+                  print('client found');
                   subscribe(client, address);
                 }
               },
@@ -122,14 +132,12 @@ class AddressSubscriptionWaiter extends Waiter {
     }
   }
 
-  void addressNeedsUpdating(Address address) {
+  void subscribe(RavenElectrumClient client, Address address) {
+    print('subscribing to ${address.address}');
     addressesNeedingUpdate.sink.add(address);
-  }
-
-  void subscribe(RavenElectrumClient client, Address address) async {
     var stream = client.subscribeScripthash(address.scripthash);
     subscriptionHandles[address.scripthash] = stream.listen((status) {
-      addressNeedsUpdating(address);
+      addressesNeedingUpdate.sink.add(address);
     });
   }
 
@@ -137,8 +145,8 @@ class AddressSubscriptionWaiter extends Waiter {
     subscriptionHandles[scripthash]!.cancel();
   }
 
-  void subscribeToExistingAddresses() async {
-    var client = await services.client.clientOrNull;
+  void subscribeToExistingAddresses() {
+    var client = services.client.mostRecentRavenClient;
     for (var address in addresses) {
       if (client == null) {
         backlogSubscriptions.add(address);

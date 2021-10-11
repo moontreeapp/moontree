@@ -5,6 +5,7 @@ String getDerivationPath(int index, {exposure = NodeExposure.External}) {
       '${exposureToDerivationPathPart(exposure)}/$index';
 }
 
+// mjtDhzjgoQfp63ocbp1jZxZeFosQ3KnH5S
 String exposureToDerivationPathPart(NodeExposure exposure) {
   switch (exposure) {
     case NodeExposure.External:

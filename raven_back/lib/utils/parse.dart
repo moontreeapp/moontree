@@ -1,4 +1,4 @@
-import 'package:raven_electrum_client/methods/transaction/transaction.dart';
+import 'package:raven_electrum_client/methods/transaction/get.dart';
 
 /// https://github.com/moontreeapp/raven_mobile/issues/5
 /// we assume one transaction can only have one OP_RETURN

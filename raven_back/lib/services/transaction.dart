@@ -64,7 +64,7 @@ class TransactionService {
   // setFees(35) <-- fee is the same because have the same number of inputs & outputs as previous iteration
   // updatedChangeDue: 110 - (45 + 35) = 30 : sufficient! and changeDue is RIGHT
   //   -> DONE with result
-  Tuple2<TransactionBuilder, SendEstimate> buildTransaction(
+  Tuple2<Transaction, SendEstimate> buildTransaction(
     Account account,
     String toAddress,
     SendEstimate estimate,
@@ -95,12 +95,14 @@ class TransactionService {
     // Authorize the release of value by signing the transaction UTXOs
     txb.signEachInput(utxos);
 
-    updatedEstimate.setFees(txb.tx!.fee());
+    var tx = txb.build();
+
+    updatedEstimate.setFees(tx.fee());
 
     if (updatedEstimate.changeDue >= 0 &&
         updatedEstimate.changeDue == preliminaryChangeDue) {
       // success!
-      return Tuple2(txb, updatedEstimate);
+      return Tuple2(tx, updatedEstimate);
     } else {
       // try again
       return buildTransaction(account, toAddress, updatedEstimate);

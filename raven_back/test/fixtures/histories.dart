@@ -13,7 +13,7 @@ MapSource<History> histories() => MapSource({
           height: 0,
           security: RVN,
           position: 0,
-          value: 500),
+          value: 5000000),
       '1': History(
           hash: '1',
           scripthash: 'abc1',
@@ -27,7 +27,7 @@ MapSource<History> histories() => MapSource({
           height: 2,
           security: RVN,
           position: -1,
-          value: 1000),
+          value: 10000000),
       '3': History(
           hash:
               'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
@@ -35,5 +35,5 @@ MapSource<History> histories() => MapSource({
           height: 2,
           security: RVN,
           position: 1,
-          value: 1000),
+          value: 10000000),
     });

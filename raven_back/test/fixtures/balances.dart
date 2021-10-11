@@ -4,7 +4,10 @@ import 'package:raven/records/records.dart';
 
 MapSource<Balance> balances() => MapSource({
       '0': Balance(
-          walletId: '0', security: RVN, confirmed: 1500, unconfirmed: 1000),
+          walletId: '0',
+          security: RVN,
+          confirmed: 15000000,
+          unconfirmed: 10000000),
       '1':
           Balance(walletId: '0', security: USD, confirmed: 100, unconfirmed: 0),
     });

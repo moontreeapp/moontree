@@ -89,6 +89,7 @@ class LeaderWalletService {
   SeedWallet getSeedWallet(LeaderWallet wallet) {
     var encryptedEntropy =
         EncryptedEntropy(wallet.encryptedEntropy, wallet.cipher!);
+    print(wallet.account);
     return SeedWallet(encryptedEntropy.seed, wallet.account!.net);
   }
 
@@ -133,6 +134,8 @@ class LeaderWalletService {
         cipherUpdate: cipherUpdate,
         entropy: mnemonic != null ? bip39.mnemonicToEntropy(mnemonic) : null);
     if (leaderWallet != null) {
+      print(leaderWallet);
+      print(leaderWallet.accountId);
       await wallets.save(leaderWallet);
     }
   }

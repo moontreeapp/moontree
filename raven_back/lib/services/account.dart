@@ -6,7 +6,7 @@ class AccountService {
   /// removes account if...
   /// no wallets assigned to it, and it's not the only account.
   /// if it's the current or preferred account, reassign
-  Future<void> removeAccount(String accountId) async {
+  Future<void> remove(String accountId) async {
     var account = accounts.primaryIndex.getOne(accountId);
     if (account != null &&
         accounts.data.length > 1 &&
@@ -35,7 +35,7 @@ class AccountService {
         accountId: accounts.data.length.toString(), name: name, net: net);
   }
 
-  Future<Account> makeSaveAccount(String name,
+  Future<Account> createSave(String name,
       {Net net = Net.Test, String? accountId}) async {
     var account = newAccount(name, net: net);
     await accounts.save(account);
