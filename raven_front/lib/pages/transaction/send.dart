@@ -351,13 +351,13 @@ class _SendState extends State<Send> {
       );
       if (holding > double.parse(sendAmount.text)) {
         // todo: catch other errors?
+        var tuple = services.transaction.buildTransaction(
+          Current.account,
+          sendAddress.text,
+          SendEstimate(sendAmountAsSats),
+        );
         try {
-          var tuple = services.transaction.buildTransaction(
-            Current.account,
-            sendAddress.text,
-            SendEstimate(sendAmountAsSats),
-          );
-          confirmMessage(txb: tuple.item1, estimate: tuple.item2);
+          confirmMessage(tx: tuple.item1, estimate: tuple.item2);
         } on InsufficientFunds catch (e) {
           showDialog(
               context: context,
@@ -428,7 +428,7 @@ class _SendState extends State<Send> {
       style: RavenButtonStyle.curvedSides);
 
   Future confirmMessage({
-    required TransactionBuilder txb,
+    required Transaction tx,
     required SendEstimate estimate,
   }) =>
       showDialog(
@@ -475,7 +475,7 @@ class _SendState extends State<Send> {
                         onPressed: () => Navigator.pop(context)),
                     TextButton(
                         child: Text('Confirm'),
-                        onPressed: () => attemptSend(txb)
+                        onPressed: () async => await attemptSend(tx)
 
                         /// https://pub.dev/packages/modal_progress_hud
                         //showDialog(
@@ -495,7 +495,7 @@ class _SendState extends State<Send> {
                         )
                   ]));
 
-  void attemptSend(TransactionBuilder txb) {
+  Future attemptSend(Transaction tx) async {
     var client = services.client.mostRecentRavenClient;
     print(client);
     if (client == null) {
@@ -515,17 +515,16 @@ class _SendState extends State<Send> {
     } else {
       print(2);
       // needs testing on testnet
-      //var txid = services.client.sendTransaction(txb.tx!.toHex());
-      var txid = '';
+      var txid = await services.client.sendTransaction(tx.toHex());
+      //var txid = '';
       if (txid != '') {
         print(3);
         showDialog(
             context: context,
-            builder: (BuildContext context) =>
-                AlertDialog(
+            builder: (BuildContext context) => AlertDialog(
                     title: Text('Sent'),
-                    content:
-                        Text('Success! See transaction here: link to $txid'),
+                    content: Text(
+                        'Success! See transaction here: https://rvnt.cryptoscope.io/tx/?txid=$txid'),
                     actions: [
                       TextButton(
                           child: Text('Ok'),

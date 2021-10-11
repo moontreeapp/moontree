@@ -13,7 +13,7 @@ export 'package:raven_mobile/pages/settings/language.dart';
 export 'package:raven_mobile/pages/settings/network.dart';
 export 'package:raven_mobile/pages/settings/settings.dart';
 export 'package:raven_mobile/pages/settings/technical.dart';
-export 'package:raven_mobile/pages/settings/wallet.dart';
+export 'package:raven_mobile/pages/wallet/wallet.dart';
 export 'package:raven_mobile/pages/account/transactions.dart';
 export 'package:raven_mobile/pages/account/home.dart';
 export 'package:raven_mobile/pages/loading.dart';

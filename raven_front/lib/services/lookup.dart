@@ -20,11 +20,13 @@ List<Balance> currentHoldings() =>
 List<String> currentHoldingNames() =>
     [for (var balance in currentHoldings()) balance.security.symbol];
 
-Balance currentWalletBalanceRVN(walletId) => services.balances
-    .walletBalance(wallets.primaryIndex.getOne(walletId)!, RVN);
+Wallet? currentWallet(walletId) => wallets.primaryIndex.getOne(walletId);
+
+Balance currentWalletBalanceRVN(walletId) =>
+    services.balances.walletBalance(currentWallet(walletId)!, RVN);
 
 List<Balance> currentWalletHoldings(String walletId) =>
-    services.balances.walletBalances(wallets.primaryIndex.getOne(walletId)!);
+    services.balances.walletBalances(currentWallet(walletId)!);
 
 List<String> currentWalletHoldingNames(String walletId) => [
       for (var balance in currentWalletHoldings(walletId))
@@ -35,7 +37,7 @@ BalanceUSD currentWalletBalanceUSD(String walletId) =>
     services.rates.accountBalanceUSD(walletId, currentWalletHoldings(walletId));
 
 List<History> currentWalletTransactions(String walletId) =>
-    wallets.primaryIndex.getOne(walletId)!.histories;
+    currentWallet(walletId)!.histories;
 
 class Current {
   static Account get account => currentAccount();
@@ -45,6 +47,7 @@ class Current {
   static List<Balance> get holdings => currentHoldings();
   static List<String> get holdingNames => currentHoldingNames();
 
+  static Wallet wallet(String walletId) => currentWallet(walletId)!;
   static Balance walletBalanceRVN(String walletId) =>
       currentWalletBalanceRVN(walletId);
   static BalanceUSD walletBalanceUSD(String walletId) =>

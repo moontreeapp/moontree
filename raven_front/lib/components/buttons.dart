@@ -19,7 +19,7 @@ GestureDetector settingsButton(BuildContext context, Function setStateFn) =>
     GestureDetector(
         onTap: () =>
             Navigator.pushNamed(context, '/settings').then((_) => setStateFn()),
-        child: Icon(Icons.more_horiz));
+        child: Icon(Icons.more_vert));
 
 IconButton backIconButton(BuildContext context) =>
     IconButton(icon: RavenIcon.back, onPressed: () => Navigator.pop(context));

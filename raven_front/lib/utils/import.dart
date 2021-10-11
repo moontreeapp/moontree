@@ -35,7 +35,7 @@ Future<FormatSeed> handleImport(String text, String accountId) async {
         decodedJSON.containsKey('wallets')) {
       /// create accounts
       for (var entry in decodedJSON['accounts']!.entries) {
-        Account account = await services.accounts.makeSaveAccount(
+        Account account = await services.accounts.createSave(
             entry.value['name'],
             net: entry.value['net'],
             accountId: entry.key);

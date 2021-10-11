@@ -123,7 +123,7 @@ class _TechnicalViewState extends State<TechnicalView> {
           IconButton(
               onPressed: () async {
                 // doesn't delete immediately - not working until indicies work right
-                await services.accounts.removeAccount(account.accountId);
+                await services.accounts.remove(account.accountId);
               },
               icon: Icon(Icons.delete))
         ]
@@ -148,7 +148,7 @@ class _TechnicalViewState extends State<TechnicalView> {
               'Account name, "$desiredAccountName" is already taken. Please enter a uinque account name.');
       return;
     }
-    var account = await services.accounts.makeSaveAccount(desiredAccountName);
+    var account = await services.accounts.createSave(desiredAccountName);
     await settings.save(
         Setting(name: SettingName.Account_Current, value: account.accountId));
     desiredAccountName = '';
