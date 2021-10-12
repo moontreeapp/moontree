@@ -115,7 +115,7 @@ class _WalletViewState extends State<WalletView> {
   ListView detailsView() =>
       ListView(shrinkWrap: true, padding: EdgeInsets.all(20.0), children: <
           Widget>[
-        Text('WARNING!\nDo NOT disclose the Mnemoic Secret to anyone!',
+        Text('WARNING!\nDo NOT disclose the Mnemonic Secret to anyone!',
             style: TextStyle(color: Theme.of(context).bad)),
         SizedBox(height: 15.0),
         Text(data['secretName'] + ' Secret:'),

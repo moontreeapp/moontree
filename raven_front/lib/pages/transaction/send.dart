@@ -436,6 +436,7 @@ class _SendState extends State<Send> {
         try {
           await buildTransactionWithMessageAndConfirm(sendAmountAsSats);
         } on InsufficientFunds catch (e) {
+          Navigator.pop(context);
           showDialog(
               context: context,
               builder: (BuildContext context) => AlertDialog(
