@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:date_format/date_format.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
@@ -43,7 +44,7 @@ class _TransactionState extends State<Transaction> {
     data = populateData(context, data);
     history = histories.primaryIndex.getOne(data['transaction']!.hash);
     address = addresses.primaryIndex.getOne(history!.scripthash);
-    var metadata = history!.memo != null;
+    var metadata = history!.memo != null && history!.memo != '';
     return DefaultTabController(
         length: metadata ? 2 : 1,
         child: Scaffold(
@@ -57,9 +58,7 @@ class _TransactionState extends State<Transaction> {
   int? getBlocksBetweenHelper({History? transaction, Block? current}) {
     transaction = transaction ?? history!;
     current = current ?? blocks.latest; //Block(height: 0);
-    return current != null && transaction != null
-        ? current.height - transaction.height
-        : null;
+    return current != null ? current.height - transaction.height : null;
   }
 
   String getDateBetweenHelper() =>
@@ -147,12 +146,14 @@ class _TransactionState extends State<Transaction> {
                   text: RavenText.securityAsReadable(history!.value,
                       symbol: history!.security.symbol)),
             ),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text('fee',
-                  style: TextStyle(color: Theme.of(context).disabledColor)),
-              Text('0.01397191 RVN',
-                  style: TextStyle(color: Theme.of(context).disabledColor)),
-            ]),
+
+            /// see fee and other details on cryptoscope
+            //Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            //  Text('fee',
+            //      style: TextStyle(color: Theme.of(context).disabledColor)),
+            //  Text('0.01397191 RVN',
+            //      style: TextStyle(color: Theme.of(context).disabledColor)),
+            //]),
 
             /// hide note if none was saved
             ...(history!.note != ''
@@ -167,13 +168,13 @@ class _TransactionState extends State<Transaction> {
                             border: UnderlineInputBorder(),
                             labelText: 'Note',
                             hintText: 'Note to Self')),
-                    SizedBox(height: 15.0),
                   ]
                 : []),
 
             /// allow user to copy the ipfs hash here, see results on tab
             ...(metadata
                 ? [
+                    SizedBox(height: 15.0),
                     TextField(
                         readOnly: true,
                         controller: TextEditingController(text: history!.memo),
@@ -183,11 +184,14 @@ class _TransactionState extends State<Transaction> {
                             border: UnderlineInputBorder(),
                             labelText: 'Memo',
                             hintText: 'IPFS hash')),
-                    SizedBox(height: 15.0)
                   ]
                 : []),
-            Text('id: ' + history!.hash,
-                style: TextStyle(color: Theme.of(context).disabledColor)),
+            SizedBox(height: 15.0),
+            InkWell(
+                child: Text('id: ${history!.hash}',
+                    style: TextStyle(color: Theme.of(context).primaryColor)),
+                onTap: () => launch(
+                    'https://rvnt.cryptoscope.io/tx/?txid=${history!.hash}')),
             SizedBox(height: 15.0),
             Text(address != null ? 'wallet: ' + address!.walletId : '',
                 style: Theme.of(context).textTheme.caption),

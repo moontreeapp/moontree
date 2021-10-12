@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:raven/services/transaction/fee.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin/ravencoin.dart';
 import 'package:raven/raven.dart';
@@ -39,8 +40,10 @@ class _SendState extends State<Send> {
   double holding = 0.0;
   FocusNode sendAddressFocusNode = FocusNode();
   FocusNode sendAmountFocusNode = FocusNode();
+  FocusNode sendFeeFocusNode = FocusNode();
   FocusNode sendMemoFocusNode = FocusNode();
   FocusNode sendNoteFocusNode = FocusNode();
+  TxGoal feeGoal = standard;
 
   @override
   void initState() {
@@ -214,6 +217,7 @@ class _SendState extends State<Send> {
             //          .requestFocus(sendAddressFocusNode);
             //      setState(() => data['symbol'] = newValue!);
             //    }),
+
             TextField(
               focusNode: sendAddressFocusNode,
               controller: sendAddress,
@@ -267,7 +271,7 @@ class _SendState extends State<Send> {
               onEditingComplete: () {
                 sendAmount.text = verifyDecAmount(sendAmount.text);
                 verifyVisibleAmount(sendAmount.text);
-                FocusScope.of(context).requestFocus(sendMemoFocusNode);
+                FocusScope.of(context).requestFocus(sendFeeFocusNode);
               },
               //validator: (String? value) {  // validate as double/int
               //  //if (value == null || value.isEmpty) {
@@ -286,6 +290,28 @@ class _SendState extends State<Send> {
               Text('~ ${holding - double.parse(visibleAmount)}',
                   style: Theme.of(context).annotate)
             ]),
+
+            SizedBox(height: 15.0),
+            Text('Transaction Fee', style: Theme.of(context).textTheme.caption),
+            DropdownButton<String>(
+                focusNode: sendFeeFocusNode,
+                isExpanded: true,
+                value: feeGoal.name,
+                items: [
+                  DropdownMenuItem(value: 'Cheap', child: Text('Cheap')),
+                  DropdownMenuItem(value: 'Standard', child: Text('Standard')),
+                  DropdownMenuItem(value: 'Fast', child: Text('Fast'))
+                ],
+                onChanged: (String? newValue) {
+                  feeGoal = {
+                        'Cheap': cheap,
+                        'Standard': standard,
+                        'Fast': fast,
+                      }[newValue] ??
+                      standard; // <--- replace by custom dialogue
+                  FocusScope.of(context).requestFocus(sendNoteFocusNode);
+                  setState(() {});
+                }),
 
             /// HIDE MEMO for beta - not supported by ravencoin anyway
             //TextField(
@@ -330,6 +356,26 @@ class _SendState extends State<Send> {
         ]);
   }
 
+  /// todo: fix the please wait, this is kinda sad:
+  Future buildTransactionWithMessageAndConfirm(int sendAmountAsSats) async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) =>
+            //Center(child: CircularProgressIndicator()));
+            AlertDialog(title: Text('Generating Transaction...')));
+    // this is used to get the please wait message to show up
+    // it needs enough time to display the message
+    await Future.delayed(const Duration(milliseconds: 150));
+    var tuple = services.transaction.buildTransaction(
+      Current.account,
+      sendAddress.text,
+      SendEstimate(sendAmountAsSats),
+      feeGoal,
+    );
+    Navigator.pop(context);
+    confirmMessage(tx: tuple.item1, estimate: tuple.item2);
+  }
+
   Future startSend() async {
     sendAmount.text = verifyDecAmount(sendAmount.text);
     var vAddress = _validateAddress();
@@ -365,12 +411,7 @@ class _SendState extends State<Send> {
         // fix error: got this error when left sitting for a while - are we reconnecting correctly
         // Unhandled Exception: Bad state: The client is closed.
         try {
-          var tuple = services.transaction.buildTransaction(
-            Current.account,
-            sendAddress.text,
-            SendEstimate(sendAmountAsSats),
-          );
-          confirmMessage(tx: tuple.item1, estimate: tuple.item2);
+          await buildTransactionWithMessageAndConfirm(sendAmountAsSats);
         } on InsufficientFunds catch (e) {
           showDialog(
               context: context,
@@ -409,7 +450,6 @@ class _SendState extends State<Send> {
                           onPressed: () => Navigator.pop(context))
                     ]));
       }
-      //}
     } else {
       showDialog(
           context: context,
