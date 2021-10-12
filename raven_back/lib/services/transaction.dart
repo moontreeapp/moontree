@@ -32,6 +32,7 @@ class SendEstimate {
 
   void setFees(int fees_) => fees = fees_;
   void setUTXOs(List<History> utxos_) => utxos = utxos_;
+  void setAmount(int amount_) => amount = amount_;
 }
 
 class TransactionService {
@@ -67,9 +68,9 @@ class TransactionService {
   Tuple2<Transaction, SendEstimate> buildTransaction(
     Account account,
     String toAddress,
-    SendEstimate estimate, [
+    SendEstimate estimate, {
     TxGoal? goal,
-  ]) {
+  }) {
     var txb = TransactionBuilder(network: account.network);
 
     // Direct the transaction to send value to the desired address
@@ -106,7 +107,49 @@ class TransactionService {
       return Tuple2(tx, updatedEstimate);
     } else {
       // try again
-      return buildTransaction(account, toAddress, updatedEstimate, goal);
+      return buildTransaction(
+        account,
+        toAddress,
+        updatedEstimate,
+        goal: goal,
+      );
+    }
+  }
+
+  Tuple2<Transaction, SendEstimate> buildTransactionSendAll(
+    Account account,
+    String toAddress,
+    SendEstimate estimate, {
+    TxGoal? goal,
+  }) {
+    var txb = TransactionBuilder(network: account.network);
+    var utxos = services.balances.sortedUnspents(account);
+    var total = 0;
+    for (var utxo in utxos) {
+      txb.addInput(utxo.hash, utxo.position);
+      total = total + utxo.value;
+    }
+    var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
+    txb.addOutput(toAddress, estimate.amount);
+    txb.signEachInput(utxos);
+    var tx = txb.build();
+    var fees = tx.fee(goal);
+    updatedEstimate.setFees(tx.fee(goal));
+    print(total - fees);
+    print(updatedEstimate.amount);
+    updatedEstimate.setAmount(total - fees);
+    print(updatedEstimate.amount);
+    print('done');
+    if (updatedEstimate.fees == estimate.fees &&
+        updatedEstimate.amount == estimate.amount) {
+      return Tuple2(tx, updatedEstimate);
+    } else {
+      return buildTransactionSendAll(
+        account,
+        toAddress,
+        updatedEstimate,
+        goal: goal,
+      );
     }
   }
 }

@@ -1,3 +1,6 @@
+/// balances are by wallet, and aggregated to the account level.
+/// if you want the balance of a subwallet (address) then get it from Histories.
+
 import 'package:reservoir/change.dart';
 
 import 'package:raven/services/wallet_security_pair.dart';
