@@ -1,6 +1,5 @@
 import 'package:raven/raven.dart';
 
-/// only mainnet
 bool rvnCondition(String address, {Net? net}) => address.contains(RegExp(
     r'^' + (net == Net.Test ? 'm' : 'R') + r'([a-km-zA-HJ-NP-Z1-9]{33})$'));
 //address.startsWith('R') && address.length == 34 && ;
@@ -31,11 +30,13 @@ bool assetCondition(String asset) => ( //asset == asset.toUpperCase() &&
 /// known format from which we could potentially derive a valid RVN address
 String validateAddressType(String address) => rvnCondition(address)
     ? 'RVN'
-    //: unsCondition(address)
-    //    ? 'UNS'
-    //    : assetCondition(address)
-    //        ? 'ASSET'
-    : '';
+    : rvnCondition(address, net: Net.Test)
+        ? 'RVNt'
+        //: unsCondition(address)
+        //    ? 'UNS'
+        //    : assetCondition(address)
+        //        ? 'ASSET'
+        : '';
 
 /// returns a valid RVN address from the data provided,
 /// or empty string if a valid address cannot be derived.

@@ -20,8 +20,11 @@ class _LoadingState extends State<Loading> {
   }
 
   Future setupRealWallet() async {
-    dotenv.load('../../.env');
-    var mnemonic = dotenv.env['TEST_WALLET_01']!;
+    //dotenv.load('../../.env');
+    //var mnemonic = dotenv.env['TEST_WALLET_01']!;
+    var mnemonic =
+        'board leisure impose bleak race egg abuse series seat achieve fan column';
+
     await services.wallets.createSave(
         humanTypeKey: LingoKey.leaderWalletType,
         accountId: '0',

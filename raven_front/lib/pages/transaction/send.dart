@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin/ravencoin.dart';
 import 'package:raven/raven.dart';
 import 'package:raven/services/transaction.dart';
@@ -24,10 +25,10 @@ class Send extends StatefulWidget {
 class _SendState extends State<Send> {
   Map<String, dynamic> data = {};
   final sendAddress = TextEditingController();
-  final sendAmount = TextEditingController(text: '10');
+  final sendAmount = TextEditingController();
   final sendMemo = TextEditingController();
   final sendNote = TextEditingController();
-  String visibleAmount = '';
+  String visibleAmount = '0';
   String visibleFiatAmount = '';
   String validatedAddress = 'unknown';
   String validatedAmount = '-1';
@@ -92,7 +93,7 @@ class _SendState extends State<Send> {
   }
 
   PreferredSize header() => PreferredSize(
-      preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
+      preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.28),
       child: AppBar(
           elevation: 2,
           centerTitle: false,
@@ -109,7 +110,7 @@ class _SendState extends State<Send> {
             alignment: Alignment.center,
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-              SizedBox(height: 100.0),
+              SizedBox(height: 50.0),
               Text(visibleAmount, style: Theme.of(context).textTheme.headline3),
               SizedBox(height: 15.0),
               Text(visibleFiatAmount,
@@ -151,7 +152,8 @@ class _SendState extends State<Send> {
     var old = validatedAddress;
     validatedAddress = validateAddressType(address ?? sendAddress.text);
     if (validatedAddress != '') {
-      if (validatedAddress == 'RVN') {
+      if ((validatedAddress == 'RVN' && Current.account.net == Net.Main) ||
+          (validatedAddress == 'RVNt' && Current.account.net == Net.Test)) {
         addressColor = Theme.of(context).good!;
         //} else if (validatedAddress == 'UNS') {
         //  addressColor = Theme.of(context).primaryColor;
@@ -194,132 +196,137 @@ class _SendState extends State<Send> {
         shrinkWrap: true,
         padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
         children: <Widget>[
-          Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
-                    style: Theme.of(context).textTheme.caption),
-                //DropdownButton<String>(
-                //    isExpanded: true,
-                //    value: data['symbol'],
-                //    items: (useWallet
-                //            ? Current.walletHoldingNames(data['walletId'])
-                //            : Current.holdingNames)
-                //        .map((String value) => DropdownMenuItem<String>(
-                //            value: value, child: Text(value)))
-                //        .toList(),
-                //    onChanged: (String? newValue) {
-                //      FocusScope.of(context)
-                //          .requestFocus(sendAddressFocusNode);
-                //      setState(() => data['symbol'] = newValue!);
-                //    }),
-                TextField(
-                  focusNode: sendAddressFocusNode,
-                  controller: sendAddress,
-                  decoration: InputDecoration(
-                      focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: addressColor)),
-                      enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: addressColor)),
-                      border: UnderlineInputBorder(
-                          borderSide: BorderSide(color: addressColor)),
-                      labelText: 'To',
-                      hintText: 'Address'),
-                  onChanged: (value) {
-                    _validateAddressColor(value);
-                  },
-                  onEditingComplete: () async {
-                    /// should tell front end what it was so we can notify user we're substituting the asset name or uns domain for the actual address
-                    //var verifiedAddress =
-                    //    await verifyValidAddress(sendAddress.text);
-                    //sendAddress.text = verifiedAddress;
-                    FocusScope.of(context).requestFocus(sendAmountFocusNode);
-                    //setState(() {});
-                  },
-                ),
-                //Visibility(
-                //    visible: !_validateAddress(sendAddress.text),
-                //    child: Text(
-                //      'Unrecognized Address',
-                //      style: TextStyle(color: Theme.of(context).bad),
-                //    )),
-                TextButton.icon(
-                    onPressed: () =>
-                        Navigator.pushNamed(context, '/send/scan_qr').then(
-                            (value) => populateFromQR((value as Barcode).code)),
-                    icon: Icon(Icons.qr_code_scanner),
-                    label: Text('Scan QR code')),
-                TextField(
-                  focusNode: sendAmountFocusNode,
-                  controller: sendAmount,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                      focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: amountColor)),
-                      enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: amountColor)),
-                      labelText: 'Amount',
-                      hintText: 'Quantity'),
-                  onChanged: (value) {
-                    verifyVisibleAmount(value);
-                  },
-                  onEditingComplete: () {
-                    sendAmount.text = verifyDecAmount(sendAmount.text);
-                    verifyVisibleAmount(sendAmount.text);
-                    FocusScope.of(context).requestFocus(sendMemoFocusNode);
-                  },
-                  //validator: (String? value) {  // validate as double/int
-                  //  //if (value == null || value.isEmpty) {
-                  //  //  return 'Please enter a valid send amount';
-                  //  //}
-                  //  //return null;
-                  //},
-                ),
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+              Widget>[
+            Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
+                style: Theme.of(context).textTheme.caption),
+            //DropdownButton<String>(
+            //    isExpanded: true,
+            //    value: data['symbol'],
+            //    items: (useWallet
+            //            ? Current.walletHoldingNames(data['walletId'])
+            //            : Current.holdingNames)
+            //        .map((String value) => DropdownMenuItem<String>(
+            //            value: value, child: Text(value)))
+            //        .toList(),
+            //    onChanged: (String? newValue) {
+            //      FocusScope.of(context)
+            //          .requestFocus(sendAddressFocusNode);
+            //      setState(() => data['symbol'] = newValue!);
+            //    }),
+            TextField(
+              focusNode: sendAddressFocusNode,
+              controller: sendAddress,
+              decoration: InputDecoration(
+                  focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: addressColor)),
+                  enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: addressColor)),
+                  border: UnderlineInputBorder(
+                      borderSide: BorderSide(color: addressColor)),
+                  labelText: 'To',
+                  hintText: 'Address'),
+              onChanged: (value) {
+                _validateAddressColor(value);
+              },
+              onEditingComplete: () async {
+                /// should tell front end what it was so we can notify user we're substituting the asset name or uns domain for the actual address
+                //var verifiedAddress =
+                //    await verifyValidAddress(sendAddress.text);
+                //sendAddress.text = verifiedAddress;
+                FocusScope.of(context).requestFocus(sendAmountFocusNode);
+                //setState(() {});
+              },
+            ),
+            //Visibility(
+            //    visible: !_validateAddress(sendAddress.text),
+            //    child: Text(
+            //      'Unrecognized Address',
+            //      style: TextStyle(color: Theme.of(context).bad),
+            //    )),
+            TextButton.icon(
+                onPressed: () => Navigator.pushNamed(context, '/send/scan_qr')
+                    .then((value) => populateFromQR((value as Barcode).code)),
+                icon: Icon(Icons.qr_code_scanner),
+                label: Text('Scan QR code')),
+            SizedBox(height: 15.0),
+            TextField(
+              focusNode: sendAmountFocusNode,
+              controller: sendAmount,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                  focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: amountColor)),
+                  enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: amountColor)),
+                  labelText: 'Amount',
+                  hintText: 'Quantity'),
+              onChanged: (value) {
+                verifyVisibleAmount(value);
+              },
+              onEditingComplete: () {
+                sendAmount.text = verifyDecAmount(sendAmount.text);
+                verifyVisibleAmount(sendAmount.text);
+                FocusScope.of(context).requestFocus(sendMemoFocusNode);
+              },
+              //validator: (String? value) {  // validate as double/int
+              //  //if (value == null || value.isEmpty) {
+              //  //  return 'Please enter a valid send amount';
+              //  //}
+              //  //return null;
+              //},
+            ),
 
-                // todo replace fee estimate with fast, slow or regular
-                //Row(
-                //    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //    children: [Text('fee'), Text('0.01397191 RVN')]),
+            // todo replace fee estimate with fast, slow or regular
+            //Row(
+            //    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //    children: [Text('fee'), Text('0.01397191 RVN')]),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text('remaining', style: Theme.of(context).annotate),
+              Text('~ ${holding - double.parse(visibleAmount)}',
+                  style: Theme.of(context).annotate)
+            ]),
 
-                /// HIDE MEMO for beta - not supported by ravencoin anyway
-                //TextField(
-                //    focusNode: sendMemoFocusNode,
-                //    controller: sendMemo,
-                //    decoration: InputDecoration(
-                //        focusedBorder: UnderlineInputBorder(
-                //            borderSide: BorderSide(color: memoColor)),
-                //        enabledBorder: UnderlineInputBorder(
-                //            borderSide: BorderSide(color: memoColor)),
-                //        border: UnderlineInputBorder(),
-                //        labelText: 'Memo (optional)',
-                //        hintText: 'IPFS hash publicly posted on transaction'),
-                //    onChanged: (value) {
-                //      var oldMemoColor = memoColor;
-                //      memoColor = verifyMemo(value)
-                //          ? Theme.of(context).good!
-                //          : Theme.of(context).bad!;
-                //      if (value == '') {
-                //        memoColor = Colors.grey.shade400;
-                //      }
-                //      if (oldMemoColor != memoColor) {
-                //        setState(() {});
-                //      }
-                //    },
-                //    onEditingComplete: () {
-                //      FocusScope.of(context).requestFocus(sendNoteFocusNode);
-                //      setState(() {});
-                //    }),
-                TextField(
-                  focusNode: sendNoteFocusNode,
-                  controller: sendNote,
-                  decoration: InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Note (optional)',
-                      hintText: 'Private note to self'),
-                  onEditingComplete: () async => startSend(),
-                ),
-                //Center(child: sendTransactionButton(_formKey))
-              ]),
+            /// HIDE MEMO for beta - not supported by ravencoin anyway
+            //TextField(
+            //    focusNode: sendMemoFocusNode,
+            //    controller: sendMemo,
+            //    decoration: InputDecoration(
+            //        focusedBorder: UnderlineInputBorder(
+            //            borderSide: BorderSide(color: memoColor)),
+            //        enabledBorder: UnderlineInputBorder(
+            //            borderSide: BorderSide(color: memoColor)),
+            //        border: UnderlineInputBorder(),
+            //        labelText: 'Memo (optional)',
+            //        hintText: 'IPFS hash publicly posted on transaction'),
+            //    onChanged: (value) {
+            //      var oldMemoColor = memoColor;
+            //      memoColor = verifyMemo(value)
+            //          ? Theme.of(context).good!
+            //          : Theme.of(context).bad!;
+            //      if (value == '') {
+            //        memoColor = Colors.grey.shade400;
+            //      }
+            //      if (oldMemoColor != memoColor) {
+            //        setState(() {});
+            //      }
+            //    },
+            //    onEditingComplete: () {
+            //      FocusScope.of(context).requestFocus(sendNoteFocusNode);
+            //      setState(() {});
+            //    }),
+            SizedBox(height: 15.0),
+            TextField(
+              focusNode: sendNoteFocusNode,
+              controller: sendNote,
+              decoration: InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'Note (optional)',
+                  hintText: 'Private note to self'),
+              onEditingComplete: () async => startSend(),
+            ),
+            //Center(child: sendTransactionButton(_formKey))
+          ]),
         ]);
   }
 
@@ -355,12 +362,14 @@ class _SendState extends State<Send> {
       );
       if (holding > double.parse(sendAmount.text)) {
         // todo: catch other errors?
-        var tuple = services.transaction.buildTransaction(
-          Current.account,
-          sendAddress.text,
-          SendEstimate(sendAmountAsSats),
-        );
+        // fix error: got this error when left sitting for a while - are we reconnecting correctly
+        // Unhandled Exception: Bad state: The client is closed.
         try {
+          var tuple = services.transaction.buildTransaction(
+            Current.account,
+            sendAddress.text,
+            SendEstimate(sendAmountAsSats),
+          );
           confirmMessage(tx: tuple.item1, estimate: tuple.item2);
         } on InsufficientFunds catch (e) {
           showDialog(
@@ -449,11 +458,13 @@ class _SendState extends State<Send> {
                     ]),
                     DataRow(cells: [
                       DataCell(Text('Fee Amount:')),
-                      DataCell(Text('${estimate.fees}')),
+                      DataCell(
+                          Text('${RavenText.satsToAmount(estimate.fees)}')),
                     ]),
                     DataRow(cells: [
                       DataCell(Text('Total:')),
-                      DataCell(Text('${estimate.total}')),
+                      DataCell(
+                          Text('${RavenText.satsToAmount(estimate.total)}')),
                     ]),
                     DataRow(cells: [
                       DataCell(Text('Send Asset:')),
@@ -523,16 +534,21 @@ class _SendState extends State<Send> {
             context: context,
             builder: (BuildContext context) => AlertDialog(
                     title: Text('Sent'),
-                    content: Text(
-                        'Success! See transaction here: https://rvnt.cryptoscope.io/tx/?txid=$txid'),
+                    content: InkWell(
+                        child:
+                            Text('Success! See Transaction in browser: $txid'),
+                        onTap: () => launch(
+                            'https://rvnt.cryptoscope.io/tx/?txid=$txid')),
                     actions: [
                       TextButton(
                           child: Text('Ok'),
-                          onPressed: () => Navigator.pop(context))
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                            //Navigator.popUntil(context, ModalRoute.withName('/login')) // might not have come here from homepage...
+                          })
                     ]));
-
-        /// go back to where you came from
-        //Navigator.pop(context);
       } else {
         showDialog(
             context: context,

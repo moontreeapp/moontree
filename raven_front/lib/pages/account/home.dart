@@ -124,19 +124,21 @@ class _HomeState extends State<Home> {
               style: TextStyle(color: Theme.of(context).good)));
       if (holding.security.symbol == 'RVN') {
         rvnHolding.add(thisHolding);
-        if (holding.value < 600) {
-          rvnHolding.add(ListTile(
-              onTap: () {},
-              title: Text('+ Create Asset (not enough RVN)',
-                  style: TextStyle(color: Theme.of(context).disabledColor))));
-        } else {
-          rvnHolding.add(ListTile(
-              onTap: () {},
-              title: TextButton.icon(
-                  onPressed: () => Navigator.pushNamed(context, '/create'),
-                  icon: Icon(Icons.add),
-                  label: Text('Create Asset'))));
-        }
+
+        // hide create asset button - not beta
+        //if (holding.value < 600) {
+        //  rvnHolding.add(ListTile(
+        //      onTap: () {},
+        //      title: Text('+ Create Asset (not enough RVN)',
+        //          style: TextStyle(color: Theme.of(context).disabledColor))));
+        //} else {
+        //  rvnHolding.add(ListTile(
+        //      onTap: () {},
+        //      title: TextButton.icon(
+        //          onPressed: () => Navigator.pushNamed(context, '/create'),
+        //          icon: Icon(Icons.add),
+        //          label: Text('Create Asset'))));
+        //}
       } else {
         assetHoldings.add(thisHolding);
       }
