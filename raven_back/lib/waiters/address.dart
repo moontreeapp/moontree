@@ -6,19 +6,16 @@ import 'waiter.dart';
 
 class AddressWaiter extends Waiter {
   void init() {
-    if (!listeners.keys.contains('addresses.changes')) {
-      listeners['addresses.changes'] =
-          addresses.changes.listen((List<Change> changes) {
-        changes.forEach((change) {
-          change.when(
-              added: (added) {},
-              updated: (updated) {},
-              removed: (removed) {
-                // always triggered by account removal
-                histories.removeHistories(removed.id as String);
-              });
-        });
+    listen('addresses.changes', addresses.changes, (List<Change> changes) {
+      changes.forEach((change) {
+        change.when(
+            added: (added) {},
+            updated: (updated) {},
+            removed: (removed) {
+              // always triggered by account removal
+              histories.removeHistories(removed.id as String);
+            });
       });
-    }
+    });
   }
 }

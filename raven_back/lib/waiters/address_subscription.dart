@@ -32,39 +32,33 @@ class AddressSubscriptionWaiter extends Waiter {
   }
 
   void setupClientListener() {
-    if (!listeners.keys.contains('subjects.client.stream')) {
-      listeners['subjects.client.stream'] =
-          subjects.client.stream.listen((client) async {
-        if (client == null) {
-          await deinitSubscriptionHandles();
-        } else {
-          backlogSubscriptions.forEach((address) {
-            subscribe(client, address);
-          });
-          backlogSubscriptions.clear();
-          if (subscriptionHandles.isEmpty) {
-            subscribeToExistingAddresses();
-          }
-          if (backlogRetrievals.isNotEmpty) {
-            retrieve(client, backlogRetrievals.toList());
-            backlogRetrievals.clear();
-          }
+    listen('subjects.client.stream', subjects.client.stream, (client) async {
+      if (client == null) {
+        await deinitSubscriptionHandles();
+      } else {
+        backlogSubscriptions.forEach((address) {
+          subscribe(client as RavenElectrumClient, address);
+        });
+        backlogSubscriptions.clear();
+        if (subscriptionHandles.isEmpty) {
+          subscribeToExistingAddresses();
         }
-      });
-    }
+        if (backlogRetrievals.isNotEmpty) {
+          retrieve(client as RavenElectrumClient, backlogRetrievals.toList());
+          backlogRetrievals.clear();
+        }
+      }
+    });
   }
 
   void setupCipherListener() {
-    if (!listeners.keys.contains('subjects.cipher.stream')) {
-      listeners['subjects.cipher.stream'] =
-          subjects.cipher.stream.listen((cipher) async {
-        if (backlogAddressCipher.isNotEmpty) {
-          backlogAddressCipher = (await services.wallets.leaders
-                  .maybeDeriveNewAddresses(backlogAddressCipher.toList()))
-              .toSet();
-        }
-      });
-    }
+    listen('subjects.cipher.stream', subjects.cipher.stream, (cipher) async {
+      if (backlogAddressCipher.isNotEmpty) {
+        backlogAddressCipher = (await services.wallets.leaders
+                .maybeDeriveNewAddresses(backlogAddressCipher.toList()))
+            .toSet();
+      }
+    });
   }
 
   void init() {
@@ -75,20 +69,19 @@ class AddressSubscriptionWaiter extends Waiter {
   }
 
   void setupSubscriptionsListener() {
-    if (!listeners.keys.contains('addressesNeedingUpdate.stream')) {
-      listeners['addressesNeedingUpdate.stream'] = addressesNeedingUpdate.stream
-          .bufferCountTimeout(10, Duration(milliseconds: 50))
-          .listen((changedAddresses) {
-        var client = services.client.mostRecentRavenClient;
-        if (client == null) {
-          for (var address in changedAddresses) {
-            backlogRetrievals.add(address);
-          }
-        } else {
-          retrieve(client, changedAddresses);
+    listen(
+        'addressesNeedingUpdate',
+        addressesNeedingUpdate.stream.bufferCountTimeout(
+            10, Duration(milliseconds: 50)), (changedAddresses) {
+      var client = services.client.mostRecentRavenClient;
+      if (client == null) {
+        for (var address in changedAddresses as List<Address>) {
+          backlogRetrievals.add(address);
         }
-      });
-    }
+      } else {
+        retrieve(client, changedAddresses as List<Address>);
+      }
+    });
   }
 
   void retrieve(
@@ -102,27 +95,24 @@ class AddressSubscriptionWaiter extends Waiter {
   }
 
   void setupNewAddressListener() {
-    if (!listeners.keys.contains('addresses.changes')) {
-      listeners['addresses.changes'] =
-          addresses.changes.listen((List<Change> changes) {
-        changes.forEach((change) {
-          change.when(
-              added: (added) {
-                Address address = added.data;
-                var client = services.client.mostRecentRavenClient;
-                if (client == null) {
-                  backlogSubscriptions.add(address);
-                } else {
-                  subscribe(client, address);
-                }
-              },
-              updated: (updated) {},
-              removed: (removed) {
-                unsubscribe(removed.id as String);
-              });
-        });
+    listen('addresses.changes', addresses.changes, (List<Change> changes) {
+      changes.forEach((change) {
+        change.when(
+            added: (added) {
+              Address address = added.data;
+              var client = services.client.mostRecentRavenClient;
+              if (client == null) {
+                backlogSubscriptions.add(address);
+              } else {
+                subscribe(client, address);
+              }
+            },
+            updated: (updated) {},
+            removed: (removed) {
+              unsubscribe(removed.id as String);
+            });
       });
-    }
+    });
   }
 
   void subscribe(RavenElectrumClient client, Address address) {

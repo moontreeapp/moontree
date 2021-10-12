@@ -52,6 +52,11 @@ class WalletMissing implements Exception {
   WalletMissing([this.cause = 'Wallet missing']);
 }
 
+class AlreadyListening implements Exception {
+  String cause;
+  AlreadyListening([this.cause = 'already listening']);
+}
+
 class OneOfMultipleMissing implements Exception {
   String cause;
   OneOfMultipleMissing(

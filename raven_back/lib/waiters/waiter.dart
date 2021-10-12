@@ -1,11 +1,22 @@
 import 'dart:async';
 
-import 'package:raven/utils/combine.dart';
+import 'package:raven/utils/combine.dart' show append;
+import 'package:raven/utils/exceptions.dart' show AlreadyListening;
+
+typedef Listener<T> = void Function(T event);
 
 abstract class Waiter {
   final Map<String, StreamSubscription> listeners = {};
 
   Waiter();
+
+  void listen<T>(String key, Stream<T> stream, Listener<T> listener) {
+    if (!listeners.keys.contains(key)) {
+      listeners[key] = stream.listen(listener);
+    } else {
+      throw AlreadyListening('$key already listening');
+    }
+  }
 
   Future deinit([String? key, List<String>? keys]) async {
     if (key != null) {
