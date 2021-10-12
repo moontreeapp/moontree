@@ -1,4 +1,4 @@
-import 'package:ravencoin/ravencoin.dart' show ECPair;
+import 'package:ravencoin/ravencoin.dart' show ECPair, WalletBase;
 
 import 'package:raven/utils/transform.dart';
 import 'package:raven/raven.dart';
@@ -69,5 +69,15 @@ class WalletService {
     } else {
       throw ArgumentError('wallet type unknown');
     }
+  }
+
+  WalletBase getChangeWallet(Wallet wallet) {
+    if (wallet.humanTypeKey == LingoKey.leaderWalletType) {
+      return leaders.getNextEmptyWallet(wallet as LeaderWallet);
+    }
+    if (wallet.humanTypeKey == LingoKey.singleWalletType) {
+      return singles.getKPWallet(wallet as SingleWallet);
+    }
+    throw WalletMissing("Wallet '${wallet.walletId}' has no change wallets");
   }
 }

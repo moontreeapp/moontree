@@ -66,12 +66,16 @@ class TransactionService {
   // updatedChangeDue: 110 - (45 + 35) = 30 : sufficient! and changeDue is RIGHT
   //   -> DONE with result
   Tuple2<Transaction, SendEstimate> buildTransaction(
-    Account account,
     String toAddress,
     SendEstimate estimate, {
+    Account? account,
+    Wallet? wallet,
     TxGoal? goal,
   }) {
-    var txb = TransactionBuilder(network: account.network);
+    var useWallet = shouldUseWallet(account: account, wallet: wallet);
+
+    var txb = TransactionBuilder(
+        network: useWallet ? wallet!.account!.network : account!.network);
 
     // Direct the transaction to send value to the desired address
     // measure fee?
@@ -81,7 +85,9 @@ class TransactionService {
     // find sufficient value to send to the address above
     // result = addInputs(txb, account, SendEstimate(sendAmount));
     // send
-    var utxos = services.balances.collectUTXOs(account, amount: estimate.total);
+    var utxos = useWallet
+        ? services.balances.collectUTXOsWallet(wallet!, amount: estimate.total)
+        : services.balances.collectUTXOs(account!, amount: estimate.total);
 
     for (var utxo in utxos) {
       txb.addInput(utxo.hash, utxo.position);
@@ -90,7 +96,9 @@ class TransactionService {
     var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
 
     // Calculate change due, and return it to a wallet we control
-    var returnAddress = services.accounts.getChangeWallet(account).address;
+    var returnAddress = useWallet
+        ? services.wallets.getChangeWallet(wallet!).address
+        : services.accounts.getChangeWallet(account!).address;
     var preliminaryChangeDue = updatedEstimate.changeDue;
     txb.addOutput(returnAddress, preliminaryChangeDue);
 
@@ -108,22 +116,28 @@ class TransactionService {
     } else {
       // try again
       return buildTransaction(
-        account,
         toAddress,
         updatedEstimate,
         goal: goal,
+        account: account,
+        wallet: wallet,
       );
     }
   }
 
   Tuple2<Transaction, SendEstimate> buildTransactionSendAll(
-    Account account,
     String toAddress,
     SendEstimate estimate, {
+    Account? account,
+    Wallet? wallet,
     TxGoal? goal,
   }) {
-    var txb = TransactionBuilder(network: account.network);
-    var utxos = services.balances.sortedUnspents(account);
+    var useWallet = shouldUseWallet(account: account, wallet: wallet);
+    var txb = TransactionBuilder(
+        network: useWallet ? wallet!.account!.network : account!.network);
+    var utxos = useWallet
+        ? services.balances.sortedUnspentsWallets(wallet!)
+        : services.balances.sortedUnspents(account!);
     var total = 0;
     for (var utxo in utxos) {
       txb.addInput(utxo.hash, utxo.position);
@@ -141,101 +155,22 @@ class TransactionService {
       return Tuple2(tx, updatedEstimate);
     } else {
       return buildTransactionSendAll(
-        account,
         toAddress,
         updatedEstimate,
         goal: goal,
+        account: account,
+        wallet: wallet,
       );
     }
   }
 
-  /// WALLETS //////////////////////////////////////////////////////////////////
-
-  Tuple2<Transaction, SendEstimate> buildTransactionWallet(
-    Wallet wallet,
-    String toAddress,
-    SendEstimate estimate, {
-    TxGoal? goal,
-  }) {
-    var account = wallet.account!;
-    var txb = TransactionBuilder(network: account.network);
-
-    // Direct the transaction to send value to the desired address
-    // measure fee?
-    txb.addOutput(toAddress, estimate.amount);
-
-    // From the available wallets and UTXOs within our account,
-    // find sufficient value to send to the address above
-    // result = addInputs(txb, account, SendEstimate(sendAmount));
-    // send
-    var utxos =
-        services.balances.collectUTXOsWallet(wallet, amount: estimate.total);
-
-    for (var utxo in utxos) {
-      txb.addInput(utxo.hash, utxo.position);
-    }
-
-    var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
-
-    /// todo fix
-    // Calculate change due, and return it to a wallet we control
-    var returnAddress = services.accounts.getChangeWallet(account).address;
-    var preliminaryChangeDue = updatedEstimate.changeDue;
-    txb.addOutput(returnAddress, preliminaryChangeDue);
-
-    // Authorize the release of value by signing the transaction UTXOs
-    txb.signEachInput(utxos);
-
-    var tx = txb.build();
-
-    updatedEstimate.setFees(tx.fee(goal));
-
-    if (updatedEstimate.changeDue >= 0 &&
-        updatedEstimate.changeDue == preliminaryChangeDue) {
-      // success!
-      return Tuple2(tx, updatedEstimate);
+  bool shouldUseWallet({Account? account, Wallet? wallet}) {
+    if (wallet != null) {
+      return true;
+    } else if (account != null) {
+      return false;
     } else {
-      // try again
-      return buildTransaction(
-        account,
-        toAddress,
-        updatedEstimate,
-        goal: goal,
-      );
-    }
-  }
-
-  Tuple2<Transaction, SendEstimate> buildTransactionSendAllWallet(
-    Wallet wallet,
-    String toAddress,
-    SendEstimate estimate, {
-    TxGoal? goal,
-  }) {
-    var account = wallet.account!;
-    var txb = TransactionBuilder(network: account.network);
-    var utxos = services.balances.sortedUnspentsWallets(wallet);
-    var total = 0;
-    for (var utxo in utxos) {
-      txb.addInput(utxo.hash, utxo.position);
-      total = total + utxo.value;
-    }
-    var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
-    txb.addOutput(toAddress, estimate.amount);
-    txb.signEachInput(utxos);
-    var tx = txb.build();
-    var fees = tx.fee(goal);
-    updatedEstimate.setFees(tx.fee(goal));
-    updatedEstimate.setAmount(total - fees);
-    if (updatedEstimate.fees == estimate.fees &&
-        updatedEstimate.amount == estimate.amount) {
-      return Tuple2(tx, updatedEstimate);
-    } else {
-      return buildTransactionSendAll(
-        account,
-        toAddress,
-        updatedEstimate,
-        goal: goal,
-      );
+      throw OneOfMultipleMissing('account or wallet required');
     }
   }
 }

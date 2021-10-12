@@ -49,4 +49,11 @@ class Address with EquatableMixin {
   @override
   String toString() =>
       'Address($scripthash, $address, $walletId, $hdIndex, $exposure, $net)';
+
+  int compareTo(Address other) {
+    if (exposure != other.exposure) {
+      return exposure == NodeExposure.Internal ? -1 : 1;
+    }
+    return hdIndex < other.hdIndex ? -1 : 1;
+  }
 }

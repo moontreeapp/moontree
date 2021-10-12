@@ -45,4 +45,6 @@ class SingleWalletService {
       await wallets.save(singleWallet);
     }
   }
+
+  KPWallet getChangeWallet(SingleWallet wallet) => getKPWallet(wallet);
 }

@@ -23,6 +23,7 @@ class AddressSubscriptionWaiter extends Waiter {
   Set<Address> backlogSubscriptions = {};
   Set<Address> backlogRetrievals = {};
   Set<Address> backlogAddressCipher = {};
+  Set<Address> backlogWalletsToUpdate = {};
 
   Future deinitSubscriptionHandles() async {
     for (var listener in subscriptionHandles.values) {
@@ -44,7 +45,8 @@ class AddressSubscriptionWaiter extends Waiter {
           subscribeToExistingAddresses();
         }
         if (backlogRetrievals.isNotEmpty) {
-          retrieve(client as RavenElectrumClient, backlogRetrievals.toList());
+          unawaited(retrieveAndMakeNewAddress(
+              client as RavenElectrumClient, backlogRetrievals.toList()));
           backlogRetrievals.clear();
         }
       }
@@ -54,9 +56,19 @@ class AddressSubscriptionWaiter extends Waiter {
   void setupCipherListener() {
     listen('subjects.cipher.stream', subjects.cipher.stream, (cipher) async {
       if (backlogAddressCipher.isNotEmpty) {
-        backlogAddressCipher = (await services.wallets.leaders
-                .maybeDeriveNewAddresses(backlogAddressCipher.toList()))
-            .toSet();
+        var temp = <Address>{};
+        for (var changedAddress in backlogAddressCipher) {
+          var wallet = changedAddress.wallet!;
+          if (cipherRegistry.ciphers.keys.contains(wallet.cipherUpdate)) {
+            services.wallets.leaders.maybeSaveNewAddress(
+                wallet as LeaderWallet,
+                cipherRegistry.ciphers[wallet.cipherUpdate]!,
+                changedAddress.exposure);
+          } else {
+            temp.add(changedAddress);
+          }
+        }
+        backlogAddressCipher = temp;
       }
     });
   }
@@ -79,12 +91,30 @@ class AddressSubscriptionWaiter extends Waiter {
           backlogRetrievals.add(address);
         }
       } else {
-        retrieve(client, changedAddresses as List<Address>);
+        retrieveAndMakeNewAddress(client, changedAddresses as List<Address>);
       }
     });
   }
 
-  void retrieve(
+  Future retrieveAndMakeNewAddress(
+      RavenElectrumClient client, List<Address> changedAddresses) async {
+    await retrieve(client, changedAddresses);
+    for (var changedAddress in changedAddresses) {
+      var wallet = changedAddress.wallet!;
+      if (wallet.humanTypeKey == LingoKey.leaderWalletType) {
+        if (cipherRegistry.ciphers.keys.contains(wallet.cipherUpdate)) {
+          services.wallets.leaders.maybeSaveNewAddress(
+              wallet as LeaderWallet,
+              cipherRegistry.ciphers[wallet.cipherUpdate]!,
+              changedAddress.exposure);
+        } else {
+          backlogAddressCipher.add(changedAddress);
+        }
+      }
+    }
+  }
+
+  Future retrieve(
       RavenElectrumClient client, List<Address> changedAddresses) async {
     await services.addresses.saveScripthashHistoryData(
       await services.addresses.getScripthashHistoriesData(

@@ -21,7 +21,15 @@ class LeaderWaiter extends Waiter {
           if (wallet is LeaderWallet) {
             if (cipherRegistry.ciphers.keys.contains(wallet.cipherUpdate)) {
               // if cipher is available for wallet, use it
-              services.wallets.leaders.deriveFirstAddressAndSave(wallet);
+              //services.wallets.leaders.deriveFirstAddressAndSave(wallet);
+              services.wallets.leaders.maybeSaveNewAddresses(
+                  wallet,
+                  cipherRegistry.ciphers[wallet.cipherUpdate]!,
+                  NodeExposure.External);
+              services.wallets.leaders.maybeSaveNewAddresses(
+                  wallet,
+                  cipherRegistry.ciphers[wallet.cipherUpdate]!,
+                  NodeExposure.Internal);
             } else {
               // else add it to backlog
               backlogLeaderWallets.add(wallet);
@@ -41,7 +49,15 @@ class LeaderWaiter extends Waiter {
     var ret = <LeaderWallet>{};
     for (var wallet in backlogLeaderWallets) {
       if (wallet.cipherUpdate == cipherUpdate) {
-        services.wallets.leaders.deriveFirstAddressAndSave(wallet);
+        //services.wallets.leaders.deriveFirstAddressAndSave(wallet);
+        services.wallets.leaders.maybeSaveNewAddresses(
+            wallet,
+            cipherRegistry.ciphers[wallet.cipherUpdate]!,
+            NodeExposure.External);
+        services.wallets.leaders.maybeSaveNewAddresses(
+            wallet,
+            cipherRegistry.ciphers[wallet.cipherUpdate]!,
+            NodeExposure.Internal);
       } else {
         ret.add(wallet);
       }

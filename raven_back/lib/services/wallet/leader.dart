@@ -136,4 +136,40 @@ class LeaderWalletService {
       await wallets.save(leaderWallet);
     }
   }
+
+  void maybeSaveNewAddresses(
+      LeaderWallet leaderWallet, CipherBase cipher, NodeExposure exposure) {
+    for (var newAddress
+        in maybeDeriveNextAddresses(leaderWallet, cipher, exposure)) {
+      addresses.save(newAddress);
+    }
+  }
+
+  /// this function is used to determin if we need to derive new addresses
+  /// based upon the idea that we want to retain a gap of empty histories
+  List<Address> maybeDeriveNextAddresses(
+    LeaderWallet leaderWallet,
+    CipherBase cipher,
+    NodeExposure exposure,
+  ) {
+    var gap = 0;
+    var exposureAddresses =
+        addresses.byWalletExposure.getAll(leaderWallet.walletId, exposure);
+    for (var exposureAddress in exposureAddresses) {
+      gap = gap +
+          (histories.byScripthash.getAll(exposureAddress.scripthash).isEmpty
+              ? 1
+              : 0);
+    }
+    if (gap < 10) {
+      return [
+        for (var i = 0; i < 10 - gap; i++)
+          deriveAddress(leaderWallet, exposureAddresses.length + i,
+              exposure: exposure)
+      ];
+    }
+    return [];
+  }
+
+  HDWallet getChangeWallet(LeaderWallet wallet) => getNextEmptyWallet(wallet);
 }
