@@ -75,9 +75,11 @@ class _WalletViewState extends State<WalletView> {
         child: Scaffold(
             appBar: header(),
             body: body(),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: sendButton(),
+
+            /// hidden for beta
+            //floatingActionButtonLocation:
+            //    FloatingActionButtonLocation.centerFloat,
+            //floatingActionButton: sendButton(),
             bottomNavigationBar: RavenButton.bottomNav(context)));
   }
 
