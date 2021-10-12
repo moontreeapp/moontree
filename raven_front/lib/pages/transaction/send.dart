@@ -397,7 +397,6 @@ class _SendState extends State<Send> {
           );
     Navigator.pop(context);
     confirmMessage(tx: tuple.item1, estimate: tuple.item2);
-    print(tuple.item2.amount);
   }
 
   Future startSend() async {
@@ -434,9 +433,8 @@ class _SendState extends State<Send> {
         // todo: catch other errors?
         // fix error: got this error when left sitting for a while - are we reconnecting correctly
         // Unhandled Exception: Bad state: The client is closed.
-        await buildTransactionWithMessageAndConfirm(sendAmountAsSats);
         try {
-          0 / 0;
+          await buildTransactionWithMessageAndConfirm(sendAmountAsSats);
         } on InsufficientFunds catch (e) {
           showDialog(
               context: context,
