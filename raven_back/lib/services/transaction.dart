@@ -135,11 +135,7 @@ class TransactionService {
     var tx = txb.build();
     var fees = tx.fee(goal);
     updatedEstimate.setFees(tx.fee(goal));
-    print(total - fees);
-    print(updatedEstimate.amount);
     updatedEstimate.setAmount(total - fees);
-    print(updatedEstimate.amount);
-    print('done');
     if (updatedEstimate.fees == estimate.fees &&
         updatedEstimate.amount == estimate.amount) {
       return Tuple2(tx, updatedEstimate);
