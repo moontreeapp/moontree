@@ -148,4 +148,94 @@ class TransactionService {
       );
     }
   }
+
+  /// WALLETS //////////////////////////////////////////////////////////////////
+
+  Tuple2<Transaction, SendEstimate> buildTransactionWallet(
+    Wallet wallet,
+    String toAddress,
+    SendEstimate estimate, {
+    TxGoal? goal,
+  }) {
+    var account = wallet.account!;
+    var txb = TransactionBuilder(network: account.network);
+
+    // Direct the transaction to send value to the desired address
+    // measure fee?
+    txb.addOutput(toAddress, estimate.amount);
+
+    // From the available wallets and UTXOs within our account,
+    // find sufficient value to send to the address above
+    // result = addInputs(txb, account, SendEstimate(sendAmount));
+    // send
+    var utxos =
+        services.balances.collectUTXOsWallet(wallet, amount: estimate.total);
+
+    for (var utxo in utxos) {
+      txb.addInput(utxo.hash, utxo.position);
+    }
+
+    var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
+
+    /// todo fix
+    // Calculate change due, and return it to a wallet we control
+    var returnAddress = services.accounts.getChangeWallet(account).address;
+    var preliminaryChangeDue = updatedEstimate.changeDue;
+    txb.addOutput(returnAddress, preliminaryChangeDue);
+
+    // Authorize the release of value by signing the transaction UTXOs
+    txb.signEachInput(utxos);
+
+    var tx = txb.build();
+
+    updatedEstimate.setFees(tx.fee(goal));
+
+    if (updatedEstimate.changeDue >= 0 &&
+        updatedEstimate.changeDue == preliminaryChangeDue) {
+      // success!
+      return Tuple2(tx, updatedEstimate);
+    } else {
+      // try again
+      return buildTransaction(
+        account,
+        toAddress,
+        updatedEstimate,
+        goal: goal,
+      );
+    }
+  }
+
+  Tuple2<Transaction, SendEstimate> buildTransactionSendAllWallet(
+    Wallet wallet,
+    String toAddress,
+    SendEstimate estimate, {
+    TxGoal? goal,
+  }) {
+    var account = wallet.account!;
+    var txb = TransactionBuilder(network: account.network);
+    var utxos = services.balances.sortedUnspentsWallets(wallet);
+    var total = 0;
+    for (var utxo in utxos) {
+      txb.addInput(utxo.hash, utxo.position);
+      total = total + utxo.value;
+    }
+    var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
+    txb.addOutput(toAddress, estimate.amount);
+    txb.signEachInput(utxos);
+    var tx = txb.build();
+    var fees = tx.fee(goal);
+    updatedEstimate.setFees(tx.fee(goal));
+    updatedEstimate.setAmount(total - fees);
+    if (updatedEstimate.fees == estimate.fees &&
+        updatedEstimate.amount == estimate.amount) {
+      return Tuple2(tx, updatedEstimate);
+    } else {
+      return buildTransactionSendAll(
+        account,
+        toAddress,
+        updatedEstimate,
+        goal: goal,
+      );
+    }
+  }
 }

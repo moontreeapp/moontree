@@ -40,10 +40,22 @@ class BalanceService {
   List<History> sortedUnspents(Account account) =>
       account.unspents.toList()..sort((a, b) => b.value.compareTo(a.value));
 
+  /// Sort in descending order, from largest amount to smallest amount
+  List<History> sortedUnspentsWallets(Wallet wallet) =>
+      wallet.unspents.toList()..sort((a, b) => b.value.compareTo(a.value));
+
   /// Asserts that the asset in the account is greater than `amount`
   void assertSufficientFunds(int amount, Account account,
       {Security security = RVN}) {
     if (accountBalance(account, security).confirmed < amount) {
+      throw InsufficientFunds();
+    }
+  }
+
+  /// Asserts that the asset in the account is greater than `amount`
+  void assertSufficientFundsWallets(int amount, Wallet wallet,
+      {Security security = RVN}) {
+    if (walletBalance(wallet, security).confirmed < amount) {
       throw InsufficientFunds();
     }
   }
@@ -59,6 +71,32 @@ class BalanceService {
     assertSufficientFunds(amount, account);
 
     var unspents = sortedUnspents(account)
+      ..removeWhere((utxo) => except.contains(utxo));
+
+    /// Can we find a single, ideal UTXO by searching from smallest to largest?
+    for (var unspent in unspents.reversed) {
+      if (unspent.value >= amount) return [unspent];
+    }
+
+    /// Otherwise, satisfy the amount by combining UTXOs from largest to smallest
+    /// perhaps we could make the utxo variable full of objects that contain
+    /// the signing information too, that way we don't have to get it later...?
+    var collection = <History>[];
+    var remaining = amount;
+    for (var unspent in unspents) {
+      if (remaining > 0) collection.add(unspent);
+      if (remaining < unspent.value) break;
+      remaining -= unspent.value;
+    }
+
+    return collection;
+  }
+
+  List<History> collectUTXOsWallet(Wallet wallet,
+      {required int amount, List<History> except = const []}) {
+    assertSufficientFundsWallets(amount, wallet);
+
+    var unspents = sortedUnspentsWallets(wallet)
       ..removeWhere((utxo) => except.contains(utxo));
 
     /// Can we find a single, ideal UTXO by searching from smallest to largest?
