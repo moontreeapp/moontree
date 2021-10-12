@@ -67,8 +67,9 @@ class TransactionService {
   Tuple2<Transaction, SendEstimate> buildTransaction(
     Account account,
     String toAddress,
-    SendEstimate estimate,
-  ) {
+    SendEstimate estimate, [
+    TxGoal? goal,
+  ]) {
     var txb = TransactionBuilder(network: account.network);
 
     // Direct the transaction to send value to the desired address
@@ -97,7 +98,7 @@ class TransactionService {
 
     var tx = txb.build();
 
-    updatedEstimate.setFees(tx.fee());
+    updatedEstimate.setFees(tx.fee(goal));
 
     if (updatedEstimate.changeDue >= 0 &&
         updatedEstimate.changeDue == preliminaryChangeDue) {
@@ -105,7 +106,7 @@ class TransactionService {
       return Tuple2(tx, updatedEstimate);
     } else {
       // try again
-      return buildTransaction(account, toAddress, updatedEstimate);
+      return buildTransaction(account, toAddress, updatedEstimate, goal);
     }
   }
 }
