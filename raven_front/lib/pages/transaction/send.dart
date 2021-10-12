@@ -44,6 +44,7 @@ class _SendState extends State<Send> {
   FocusNode sendMemoFocusNode = FocusNode();
   FocusNode sendNoteFocusNode = FocusNode();
   TxGoal feeGoal = standard;
+  bool sendAll = false;
 
   @override
   void initState() {
@@ -182,7 +183,7 @@ class _SendState extends State<Send> {
       amountColor = Theme.of(context).bad!;
     } else {
       // todo: estimate fee
-      if (double.parse(visibleAmount) < holding) {
+      if (double.parse(visibleAmount) <= holding) {
         amountColor = Theme.of(context).good!;
       } else {
         amountColor = Theme.of(context).bad!;
@@ -255,6 +256,7 @@ class _SendState extends State<Send> {
                 label: Text('Scan QR code')),
             SizedBox(height: 15.0),
             TextField(
+              readOnly: sendAll,
               focusNode: sendAmountFocusNode,
               controller: sendAmount,
               keyboardType: TextInputType.number,
@@ -288,9 +290,23 @@ class _SendState extends State<Send> {
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text('remaining', style: Theme.of(context).annotate),
               Text('~ ${holding - double.parse(visibleAmount)}',
-                  style: Theme.of(context).annotate)
+                  style: Theme.of(context).annotate),
+              TextButton.icon(
+                  onPressed: () {
+                    if (!sendAll) {
+                      sendAll = true;
+                      sendAmount.text = holding.toString();
+                    } else {
+                      sendAll = false;
+                      sendAmount.text = '';
+                    }
+                    verifyVisibleAmount(sendAmount.text);
+                  },
+                  icon: Icon(
+                      sendAll ? Icons.not_interested : Icons.all_inclusive),
+                  label: Text(sendAll ? "don't send all" : 'send all',
+                      style: Theme.of(context).textTheme.caption)),
             ]),
-
             SizedBox(height: 15.0),
             Text('Transaction Fee', style: Theme.of(context).textTheme.caption),
             DropdownButton<String>(
@@ -366,14 +382,22 @@ class _SendState extends State<Send> {
     // this is used to get the please wait message to show up
     // it needs enough time to display the message
     await Future.delayed(const Duration(milliseconds: 150));
-    var tuple = services.transaction.buildTransaction(
-      Current.account,
-      sendAddress.text,
-      SendEstimate(sendAmountAsSats),
-      feeGoal,
-    );
+    var tuple = (sendAll || double.parse(visibleAmount) == holding)
+        ? services.transaction.buildTransactionSendAll(
+            Current.account,
+            sendAddress.text,
+            SendEstimate(sendAmountAsSats),
+            goal: feeGoal,
+          )
+        : services.transaction.buildTransaction(
+            Current.account,
+            sendAddress.text,
+            SendEstimate(sendAmountAsSats),
+            goal: feeGoal,
+          );
     Navigator.pop(context);
     confirmMessage(tx: tuple.item1, estimate: tuple.item2);
+    print(tuple.item2.amount);
   }
 
   Future startSend() async {
@@ -406,12 +430,13 @@ class _SendState extends State<Send> {
         double.parse(sendAmount.text),
         precision: 8, /* get asset precision */
       );
-      if (holding > double.parse(sendAmount.text)) {
+      if (holding >= double.parse(sendAmount.text)) {
         // todo: catch other errors?
         // fix error: got this error when left sitting for a while - are we reconnecting correctly
         // Unhandled Exception: Bad state: The client is closed.
+        await buildTransactionWithMessageAndConfirm(sendAmountAsSats);
         try {
-          await buildTransactionWithMessageAndConfirm(sendAmountAsSats);
+          0 / 0;
         } on InsufficientFunds catch (e) {
           showDialog(
               context: context,
@@ -494,7 +519,8 @@ class _SendState extends State<Send> {
                   ], rows: [
                     DataRow(cells: [
                       DataCell(Text('Send Amount:')),
-                      DataCell(Text(sendAmount.text)),
+                      DataCell(Text(
+                          '${RavenText.satsToAmount(estimate.amount)}')), //sendAmount.text)),
                     ]),
                     DataRow(cells: [
                       DataCell(Text('Fee Amount:')),

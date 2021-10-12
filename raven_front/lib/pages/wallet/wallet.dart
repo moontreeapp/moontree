@@ -26,7 +26,8 @@ class _WalletViewState extends State<WalletView> {
   bool showUSD = false;
   late Wallet wallet;
   late String walletType;
-  String? address = null;
+  String? address;
+  //String addressBalance = '';
 
   void _toggleUSD() {
     setState(() {
@@ -154,6 +155,7 @@ class _WalletViewState extends State<WalletView> {
                       style: Theme.of(context).mono,
                       toolbarOptions: toolbarOptions)
                   : Text('address unknown since wallet cannto be decrypted.'),
+              //Text('$' + addressBalance), //that seemed to take just as long...
             ],
           ),
         ),
@@ -169,16 +171,30 @@ class _WalletViewState extends State<WalletView> {
                 ListTile(
                   onTap: () => setState(() {
                     address = walletAddress.address;
+                    //addressBalance = RavenText.satsToAmount(histories
+                    //        .byScripthash
+                    //        .getAll(walletAddress.scripthash)
+                    //        .map((History history) => history.value)
+                    //        .toList()
+                    //        .sumInt() as int)
+                    //    .toString();
                   }),
-                  title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(walletAddress.address,
-                            style: Theme.of(context).textTheme.caption),
-                        (walletAddress.exposure == NodeExposure.Internal
-                            ? RavenIcon.out(context)
-                            : RavenIcon.income(context)),
-                      ]),
+                  title: Wrap(alignment: WrapAlignment.spaceBetween, children: [
+                    (walletAddress.exposure == NodeExposure.Internal
+                        ? RavenIcon.out(context)
+                        : RavenIcon.income(context)),
+                    Text(walletAddress.address,
+                        style: Theme.of(context).textTheme.caption),
+                    Text(
+                        // I thoguht this is what slows down loading the page, but I now think it's the qr code... //takes a few seconds, lets just get them one at a time in onTap
+                        RavenText.satsToAmount(histories.byScripthash
+                                .getAll(walletAddress.scripthash)
+                                .map((History history) => history.value)
+                                .toList()
+                                .sumInt() as int)
+                            .toString(),
+                        style: Theme.of(context).textTheme.caption),
+                  ]),
                   //trailing: Text('address.value'),
                   //trailing: (address.value > 0
                   //    ? Text(
