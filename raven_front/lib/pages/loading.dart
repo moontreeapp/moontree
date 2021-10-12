@@ -6,7 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/services/history_mock.dart';
 import 'package:raven_mobile/services/password_mock.dart';
-import 'package:dotenv/dotenv.dart' as dotenv;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Loading extends StatefulWidget {
   @override
@@ -20,11 +20,8 @@ class _LoadingState extends State<Loading> {
   }
 
   Future setupRealWallet() async {
-    //dotenv.load('../../.env');
-    //var mnemonic = dotenv.env['TEST_WALLET_01']!;
-    var mnemonic =
-        'board leisure impose bleak race egg abuse series seat achieve fan column';
-
+    await dotenv.load(fileName: '.env');
+    var mnemonic = dotenv.env['TEST_WALLET_02']!;
     await services.wallets.createSave(
         humanTypeKey: LingoKey.leaderWalletType,
         accountId: '0',

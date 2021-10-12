@@ -148,13 +148,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.4"
-  dotenv:
-    dependency: "direct dev"
-    description:
-      name: dotenv
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.0"
   encrypt:
     dependency: transitive
     description:

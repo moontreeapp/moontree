@@ -28,6 +28,7 @@ class _WalletViewState extends State<WalletView> {
   late String walletType;
   String? address;
   //String addressBalance = '';
+  Row exposureAndIndex = Row();
 
   void _toggleUSD() {
     setState(() {
@@ -157,6 +158,8 @@ class _WalletViewState extends State<WalletView> {
                       style: Theme.of(context).mono,
                       toolbarOptions: toolbarOptions)
                   : Text('address unknown since wallet cannto be decrypted.'),
+              SizedBox(height: 5.0),
+              exposureAndIndex,
               //Text('$' + addressBalance), //that seemed to take just as long...
             ],
           ),
@@ -169,7 +172,8 @@ class _WalletViewState extends State<WalletView> {
   List<Widget> addressesView() =>
       wallet.humanTypeKey == LingoKey.leaderWalletType
           ? [
-              for (var walletAddress in wallet.addresses)
+              for (var walletAddress
+                  in wallet.addresses..sort((a, b) => a.compareTo(b)))
                 ListTile(
                   onTap: () => setState(() {
                     address = walletAddress.address;
@@ -180,8 +184,31 @@ class _WalletViewState extends State<WalletView> {
                     //        .toList()
                     //        .sumInt() as int)
                     //    .toString();
+                    exposureAndIndex = Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text('Index: ' + walletAddress.hdIndex.toString(),
+                            style: Theme.of(context).annotate),
+                        Text(
+                            (walletAddress.exposure == NodeExposure.Internal
+                                ? 'Internal (change)'
+                                : 'External (receive)'),
+                            style: Theme.of(context).annotate),
+                        Text(
+                            'Balance: ' +
+                                RavenText.satsToAmount(histories.byScripthash
+                                        .getAll(walletAddress.scripthash)
+                                        .map((History history) => history.value)
+                                        .toList()
+                                        .sumInt() as int)
+                                    .toString(),
+                            style: Theme.of(context).textTheme.caption),
+                      ],
+                    );
                   }),
                   title: Wrap(alignment: WrapAlignment.spaceBetween, children: [
+                    Text(walletAddress.hdIndex.toString(),
+                        style: Theme.of(context).annotate),
                     (walletAddress.exposure == NodeExposure.Internal
                         ? RavenIcon.out(context)
                         : RavenIcon.income(context)),

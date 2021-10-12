@@ -114,7 +114,7 @@ class _SendState extends State<Send> {
             alignment: Alignment.center,
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-              SizedBox(height: 50.0),
+              SizedBox(height: 70.0),
               Text(visibleAmount, style: Theme.of(context).textTheme.headline3),
               SizedBox(height: 15.0),
               Text(visibleFiatAmount,
@@ -382,19 +382,36 @@ class _SendState extends State<Send> {
     // this is used to get the please wait message to show up
     // it needs enough time to display the message
     await Future.delayed(const Duration(milliseconds: 150));
-    var tuple = (sendAll || double.parse(visibleAmount) == holding)
-        ? services.transaction.buildTransactionSendAll(
-            Current.account,
-            sendAddress.text,
-            SendEstimate(sendAmountAsSats),
-            goal: feeGoal,
-          )
-        : services.transaction.buildTransaction(
-            Current.account,
-            sendAddress.text,
-            SendEstimate(sendAmountAsSats),
-            goal: feeGoal,
-          );
+    var tuple;
+    if (useWallet) {
+      tuple = (sendAll || double.parse(visibleAmount) == holding)
+          ? services.transaction.buildTransactionSendAll(
+              sendAddress.text,
+              SendEstimate(sendAmountAsSats),
+              wallet: Current.wallet(data['walletId']),
+              goal: feeGoal,
+            )
+          : services.transaction.buildTransaction(
+              sendAddress.text,
+              SendEstimate(sendAmountAsSats),
+              wallet: Current.wallet(data['walletId']),
+              goal: feeGoal,
+            );
+    } else {
+      tuple = (sendAll || double.parse(visibleAmount) == holding)
+          ? services.transaction.buildTransactionSendAll(
+              sendAddress.text,
+              SendEstimate(sendAmountAsSats),
+              account: Current.account,
+              goal: feeGoal,
+            )
+          : services.transaction.buildTransaction(
+              sendAddress.text,
+              SendEstimate(sendAmountAsSats),
+              account: Current.account,
+              goal: feeGoal,
+            );
+    }
     Navigator.pop(context);
     confirmMessage(tx: tuple.item1, estimate: tuple.item2);
   }
