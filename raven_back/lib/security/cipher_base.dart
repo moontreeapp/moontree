@@ -6,9 +6,7 @@ final Uint8List DEFAULT_SALT = getBytes('aeree5Zaeveexooj');
 
 Uint8List getBytes(String key) => Uint8List.fromList(key.codeUnits);
 
-abstract class Cipher {
-  Cipher();
-
+abstract class CipherBase {
   Uint8List encrypt(Uint8List plainText);
   Uint8List decrypt(Uint8List cipherText);
 }

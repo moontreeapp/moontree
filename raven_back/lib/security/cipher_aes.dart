@@ -2,9 +2,9 @@ import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
 
-import 'cipher.dart';
+import 'cipher_base.dart';
 
-class CipherAES implements Cipher {
+class CipherAES implements CipherBase {
   late Uint8List _key; // 32 bytes
   late Uint8List _iv; // 16 bytes
 

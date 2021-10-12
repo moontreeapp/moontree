@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:raven/raven.dart';
 import 'package:raven/records/cipher_update.dart';
-import 'package:raven/security/cipher.dart';
+import 'package:raven/security/cipher_base.dart';
 import 'package:raven/security/encrypted_wif.dart';
 import 'package:raven/utils/seed_wallet.dart';
 import 'package:ravencoin/ravencoin.dart';
@@ -38,10 +38,10 @@ class SingleWallet extends Wallet {
   String get encrypted => encryptedWIF;
 
   @override
-  String secret(Cipher cipher) => EncryptedWIF(encrypted, cipher).secret;
+  String secret(CipherBase cipher) => EncryptedWIF(encrypted, cipher).secret;
 
   @override
-  KPWallet seedWallet(Cipher cipher, {Net net = Net.Main}) =>
+  KPWallet seedWallet(CipherBase cipher, {Net net = Net.Main}) =>
       SingleSelfWallet(secret(cipher)).wallet;
 
   @override

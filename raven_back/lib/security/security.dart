@@ -1,4 +1,4 @@
-export 'cipher.dart';
+export 'cipher_base.dart';
 export 'cipher_aes.dart';
 export 'cipher_none.dart';
 export 'cipher_registry.dart';

@@ -15,22 +15,19 @@ class WalletWaiter extends Waiter {
   Set<Address> backlogAddressCipher = {};
 
   void setupCipherListener() {
-    if (!listeners.keys.contains('subjects.cipher.stream')) {
-      listeners['subjects.cipher.stream'] =
-          subjects.cipher.stream.listen((cipher) async {
-        // listen to the wallets
-        // on new
-        //  if it doesn't have 20 (empty) addresses
-        //  make new ones
-        // put in address subscription:
-        // listen to subscriptions, when address is filled, derive a new one
-        //  if (backlogAddressCipher.isNotEmpty) {
-        //    backlogAddressCipher = (await services.wallets.leaders
-        //            .maybeDeriveNewAddresses(backlogAddressCipher.toList()))
-        //        .toSet();
-        //  }
-      });
-    }
+    listen('subjects.cipher.stream', subjects.cipher.stream, (cipher) async {
+      // listen to the wallets
+      // on new
+      //  if it doesn't have 20 (empty) addresses
+      //  make new ones
+      // put in address subscription:
+      // listen to subscriptions, when address is filled, derive a new one
+      //  if (backlogAddressCipher.isNotEmpty) {
+      //    backlogAddressCipher = (await services.wallets.leaders
+      //            .maybeDeriveNewAddresses(backlogAddressCipher.toList()))
+      //        .toSet();
+      //  }
+    });
   }
 
   void init() {

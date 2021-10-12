@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:raven/security/cipher.dart';
+import 'package:raven/security/cipher_base.dart';
 import 'package:ravencoin/ravencoin.dart' show HDWallet;
 
 import 'package:bip39/bip39.dart' as bip39;
@@ -9,10 +9,10 @@ import 'package:raven/utils/hex.dart' as hex;
 import 'encrypted_wallet_secret.dart';
 
 class EncryptedEntropy extends EncryptedWalletSecret {
-  EncryptedEntropy(String encryptedEntropy, Cipher cipher)
+  EncryptedEntropy(String encryptedEntropy, CipherBase cipher)
       : super(encryptedEntropy, cipher);
 
-  factory EncryptedEntropy.fromEntropy(String entropy, Cipher cipher) =>
+  factory EncryptedEntropy.fromEntropy(String entropy, CipherBase cipher) =>
       EncryptedEntropy(hex.encrypt(entropy, cipher), cipher);
 
   @override

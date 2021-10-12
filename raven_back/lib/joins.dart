@@ -1,4 +1,4 @@
-import 'package:raven/security/cipher.dart';
+import 'package:raven/security/cipher_base.dart';
 
 import 'reservoirs/reservoirs.dart';
 import 'records/records.dart';
@@ -37,7 +37,7 @@ extension AccountHasManyUnspents on Account {
 // Joins on Wallet
 
 extension WalletBelongsToCipher on Wallet {
-  Cipher? get cipher => globals.cipherRegistry.ciphers[cipherUpdate];
+  CipherBase? get cipher => globals.cipherRegistry.ciphers[cipherUpdate];
 }
 
 extension WalletBelongsToAccount on Wallet {

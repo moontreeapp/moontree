@@ -10,21 +10,20 @@ import 'waiter.dart';
 
 class BlockWaiter extends Waiter {
   void init() {
-    subjects.client.stream.listen((ravenClient) {
+    listen('subjects.client', subjects.client.stream, (ravenClient) {
       if (ravenClient == null) {
         deinit();
       } else {
-        subscribe(ravenClient);
+        subscribe(ravenClient as RavenElectrumClient);
       }
     });
   }
 
   void subscribe(RavenElectrumClient ravenClient) {
-    if (!listeners.keys.contains('ravenClient.subscribeHeaders')) {
-      listeners['ravenClient.subscribeHeaders'] = ravenClient
-          .subscribeHeaders()
-          .listen((blockHeader) async =>
-              await blocks.save(Block.fromBlockHeader(blockHeader)));
-    }
+    listen(
+        'ravenClient.subscribeHeaders',
+        ravenClient.subscribeHeaders(),
+        (blockHeader) async => await blocks
+            .save(Block.fromBlockHeader(blockHeader! as BlockHeader)));
   }
 }

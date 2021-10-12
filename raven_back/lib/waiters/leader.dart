@@ -14,29 +14,26 @@ class LeaderWaiter extends Waiter {
       backlogLeaderWallets = attemptLeaderWalletAddressDerive(cipherUpdate);
     });
 
-    if (!listeners.keys.contains('wallets.changes')) {
-      listeners['wallets.changes'] =
-          wallets.changes.listen((List<Change> changes) {
-        changes.forEach((change) {
-          change.when(added: (added) {
-            var wallet = added.data;
-            if (wallet is LeaderWallet) {
-              if (cipherRegistry.ciphers.keys.contains(wallet.cipherUpdate)) {
-                // if cipher is available for wallet, use it
-                services.wallets.leaders.deriveFirstAddressAndSave(wallet);
-              } else {
-                // else add it to backlog
-                backlogLeaderWallets.add(wallet);
-              }
+    listen('wallets.changes', wallets.changes, (List<Change> changes) {
+      changes.forEach((change) {
+        change.when(added: (added) {
+          var wallet = added.data;
+          if (wallet is LeaderWallet) {
+            if (cipherRegistry.ciphers.keys.contains(wallet.cipherUpdate)) {
+              // if cipher is available for wallet, use it
+              services.wallets.leaders.deriveFirstAddressAndSave(wallet);
+            } else {
+              // else add it to backlog
+              backlogLeaderWallets.add(wallet);
             }
-          }, updated: (updated) {
-            /* moved account */
-          }, removed: (removed) {
-            addresses.removeAddresses(removed.data);
-          });
+          }
+        }, updated: (updated) {
+          /* moved account */
+        }, removed: (removed) {
+          addresses.removeAddresses(removed.data);
         });
       });
-    }
+    });
   }
 
   Set<LeaderWallet> attemptLeaderWalletAddressDerive(
