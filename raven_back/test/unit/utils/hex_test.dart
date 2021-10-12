@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:test/test.dart';
 
-import 'package:raven/security/cipher.dart';
+import 'package:raven/security/cipher_base.dart';
 import 'package:raven/security/cipher_aes.dart';
 import 'package:raven/utils/hex.dart' as hex;
 

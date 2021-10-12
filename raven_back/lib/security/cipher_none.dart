@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
-import 'cipher.dart';
+import 'cipher_base.dart';
 
-class CipherNone implements Cipher {
+class CipherNone implements CipherBase {
   const CipherNone();
 
   @override

@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 import 'package:raven/raven.dart';
 import 'package:raven/records/cipher_update.dart';
 import 'package:raven/records/wallets/wallet.dart';
-import 'package:raven/security/cipher.dart';
+import 'package:raven/security/cipher_base.dart';
 import 'package:raven/security/encrypted_entropy.dart';
 import 'package:raven/utils/seed_wallet.dart';
 import 'package:ravencoin/ravencoin.dart';
@@ -39,10 +39,11 @@ class LeaderWallet extends Wallet {
   String get encrypted => encryptedEntropy;
 
   @override
-  String secret(Cipher cipher) => EncryptedEntropy(encrypted, cipher).secret;
+  String secret(CipherBase cipher) =>
+      EncryptedEntropy(encrypted, cipher).secret;
 
   @override
-  HDWallet seedWallet(Cipher cipher, {Net net = Net.Main}) => SeedWallet(
+  HDWallet seedWallet(CipherBase cipher, {Net net = Net.Main}) => SeedWallet(
         EncryptedEntropy(encrypted, cipher).seed,
         net,
       ).wallet;

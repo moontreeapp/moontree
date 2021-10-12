@@ -1,6 +1,6 @@
 part of 'setting.dart';
 
-// byAccount
+// bySettingName
 
 String _settingNameToKey(SettingName name) => describeEnum(name);
 

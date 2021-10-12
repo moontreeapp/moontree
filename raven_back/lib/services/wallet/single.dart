@@ -1,6 +1,6 @@
 import 'package:ravencoin/ravencoin.dart' show KPWallet, NetworkType;
 
-import 'package:raven/security/cipher.dart';
+import 'package:raven/security/cipher_base.dart';
 import 'package:raven/security/encrypted_wif.dart';
 import 'package:raven/raven.dart';
 
@@ -23,7 +23,7 @@ class SingleWalletService {
   String generateRandomWIF(NetworkType network) =>
       KPWallet.random(network).wif!;
 
-  SingleWallet? makeSingleWallet(String accountId, Cipher cipher,
+  SingleWallet? makeSingleWallet(String accountId, CipherBase cipher,
       {required CipherUpdate cipherUpdate, String? wif}) {
     wif = wif ??
         generateRandomWIF(accounts.primaryIndex.getOne(accountId)!.network);
@@ -37,7 +37,7 @@ class SingleWalletService {
     }
   }
 
-  Future<void> makeSaveSingleWallet(String accountId, Cipher cipher,
+  Future<void> makeSaveSingleWallet(String accountId, CipherBase cipher,
       {required CipherUpdate cipherUpdate, String? wif}) async {
     var singleWallet = makeSingleWallet(accountId, cipher,
         cipherUpdate: cipherUpdate, wif: wif);

@@ -1,8 +1,8 @@
-import 'cipher.dart';
+import 'cipher_base.dart';
 
 abstract class EncryptedWalletSecret {
   String encryptedSecret;
-  Cipher cipher;
+  CipherBase cipher;
 
   EncryptedWalletSecret(this.encryptedSecret, this.cipher);
 

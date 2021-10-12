@@ -1,7 +1,7 @@
 import 'package:ravencoin/ravencoin.dart' show HDWallet;
 import 'package:bip39/bip39.dart' as bip39;
 
-import 'package:raven/security/cipher.dart';
+import 'package:raven/security/cipher_base.dart';
 import 'package:raven/security/encrypted_entropy.dart';
 import 'package:raven/utils/seed_wallet.dart';
 import 'package:raven/raven.dart';
@@ -33,7 +33,7 @@ class LeaderWalletService {
   }
 
   void maybeSaveNewAddress(
-      LeaderWallet leaderWallet, Cipher cipher, NodeExposure exposure) {
+      LeaderWallet leaderWallet, CipherBase cipher, NodeExposure exposure) {
     var newAddress = maybeDeriveNextAddress(leaderWallet, cipher, exposure);
     if (newAddress != null) {
       addresses.save(newAddress);
@@ -44,7 +44,7 @@ class LeaderWalletService {
   /// based upon the idea that we want to retain a gap of empty histories
   Address? maybeDeriveNextAddress(
     LeaderWallet leaderWallet,
-    Cipher cipher,
+    CipherBase cipher,
     NodeExposure exposure,
   ) {
     var gap = 0;
@@ -113,7 +113,7 @@ class LeaderWalletService {
     }
   }
 
-  LeaderWallet? makeLeaderWallet(String accountId, Cipher cipher,
+  LeaderWallet? makeLeaderWallet(String accountId, CipherBase cipher,
       {required CipherUpdate cipherUpdate, String? entropy}) {
     entropy = entropy ?? bip39.mnemonicToEntropy(bip39.generateMnemonic());
     var encryptedEntropy = EncryptedEntropy.fromEntropy(entropy, cipher);
@@ -127,7 +127,7 @@ class LeaderWalletService {
     }
   }
 
-  Future<void> makeSaveLeaderWallet(String accountId, Cipher cipher,
+  Future<void> makeSaveLeaderWallet(String accountId, CipherBase cipher,
       {required CipherUpdate cipherUpdate, String? mnemonic}) async {
     var leaderWallet = makeLeaderWallet(accountId, cipher,
         cipherUpdate: cipherUpdate,

@@ -4,5 +4,5 @@ import 'package:rxdart/rxdart.dart';
 
 final ravenClientSubject = BehaviorSubject<RavenElectrumClient?>();
 final loginSubject = BehaviorSubject<bool>();
-final cipherSubject = BehaviorSubject<Cipher>();
+final cipherSubject = BehaviorSubject<CipherBase>();
 final cipherUpdateSubject = BehaviorSubject<CipherUpdate>();

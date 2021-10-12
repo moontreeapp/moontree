@@ -2,16 +2,16 @@ import 'dart:typed_data';
 
 import 'package:raven/records/cipher_type.dart';
 import 'package:raven/records/cipher_update.dart';
-import 'package:raven/security/cipher.dart';
+import 'package:raven/security/cipher_base.dart';
 import 'package:raven/security/cipher_none.dart';
 import 'package:raven/security/cipher_aes.dart';
 import 'package:raven/utils/enum.dart';
 import 'package:raven/utils/exceptions.dart';
 import 'package:raven/raven.dart';
-import 'cipher.dart';
+import 'cipher_base.dart';
 
 class CipherRegistry {
-  final Map<CipherUpdate, Cipher> ciphers = {};
+  final Map<CipherUpdate, CipherBase> ciphers = {};
   static CipherType latestCipherType =
       services.passwords.required ? CipherType.AES : CipherType.None;
   final Map<CipherType, Function> cipherInitializers = {
@@ -33,7 +33,7 @@ class CipherRegistry {
   CipherUpdate get currentCipherUpdate =>
       CipherUpdate(latestCipherType, passwordId: passwords.maxPasswordId);
 
-  Cipher? get currentCipher => ciphers[currentCipherUpdate];
+  CipherBase? get currentCipher => ciphers[currentCipherUpdate];
 
   void initCiphers({
     Uint8List? password,
@@ -65,7 +65,7 @@ class CipherRegistry {
         CipherUpdate(latest, passwordId: passwords.maxPasswordId), password);
   }
 
-  Cipher registerCipher(
+  CipherBase registerCipher(
     CipherUpdate cipherUpdate,
     Uint8List password,
   ) {
