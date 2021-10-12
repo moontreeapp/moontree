@@ -6,7 +6,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/services/history_mock.dart';
 import 'package:raven_mobile/services/password_mock.dart';
-import 'package:dotenv/dotenv.dart' as dotenv;
 
 class Loading extends StatefulWidget {
   @override
@@ -20,8 +19,6 @@ class _LoadingState extends State<Loading> {
   }
 
   Future setupRealWallet() async {
-    //dotenv.load('../../.env');
-    //var mnemonic = dotenv.env['TEST_WALLET_01']!;
     var mnemonic =
         'board leisure impose bleak race egg abuse series seat achieve fan column';
 
