@@ -1,4 +1,5 @@
 import 'package:ravencoin/ravencoin.dart' show ECPair, WalletBase;
+import 'package:bip39/bip39.dart' as bip39;
 
 import 'package:raven/utils/transform.dart';
 import 'package:raven/raven.dart';
@@ -45,6 +46,24 @@ class WalletService {
         SingleWallet: () async => await singles.makeSaveSingleWallet(
             accountId, cipherRegistry.ciphers[cipherUpdate]!,
             cipherUpdate: cipherUpdate, wif: secret)
+      }[walletType(humanTypeKey)]!();
+
+  Wallet? create({
+    required LingoKey humanTypeKey,
+    required String accountId,
+    required CipherUpdate cipherUpdate,
+    required String? secret,
+    bool alwaysReturn = false,
+  }) =>
+      {
+        LeaderWallet: () => leaders.makeLeaderWallet(
+            accountId, cipherRegistry.ciphers[cipherUpdate]!,
+            cipherUpdate: cipherUpdate,
+            entropy: secret != null ? bip39.mnemonicToEntropy(secret) : null,
+            alwaysReturn: alwaysReturn),
+        SingleWallet: () => singles.makeSingleWallet(
+            accountId, cipherRegistry.ciphers[cipherUpdate]!,
+            cipherUpdate: cipherUpdate, wif: secret, alwaysReturn: alwaysReturn)
       }[walletType(humanTypeKey)]!();
 
   Map walletMap() => {

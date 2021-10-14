@@ -37,7 +37,7 @@ class AccountService {
 
   Future<Account> createSave(String name,
       {Net net = Net.Test, String? accountId}) async {
-    var account = newAccount(name, net: net);
+    var account = newAccount(name, net: net, accountId: accountId);
     await accounts.save(account);
     return account;
   }

@@ -114,10 +114,13 @@ class LeaderWalletService {
   }
 
   LeaderWallet? makeLeaderWallet(String accountId, CipherBase cipher,
-      {required CipherUpdate cipherUpdate, String? entropy}) {
+      {required CipherUpdate cipherUpdate,
+      String? entropy,
+      bool alwaysReturn = false}) {
     entropy = entropy ?? bip39.mnemonicToEntropy(bip39.generateMnemonic());
     var encryptedEntropy = EncryptedEntropy.fromEntropy(entropy, cipher);
-    if (wallets.primaryIndex.getOne(encryptedEntropy.walletId) == null) {
+    var existingWallet = wallets.primaryIndex.getOne(encryptedEntropy.walletId);
+    if (existingWallet == null) {
       return LeaderWallet(
         walletId: encryptedEntropy.walletId,
         accountId: accountId,
@@ -125,6 +128,7 @@ class LeaderWalletService {
         cipherUpdate: cipherUpdate,
       );
     }
+    if (alwaysReturn) return existingWallet as LeaderWallet;
   }
 
   Future<void> makeSaveLeaderWallet(String accountId, CipherBase cipher,

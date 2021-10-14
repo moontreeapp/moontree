@@ -24,17 +24,21 @@ class SingleWalletService {
       KPWallet.random(network).wif!;
 
   SingleWallet? makeSingleWallet(String accountId, CipherBase cipher,
-      {required CipherUpdate cipherUpdate, String? wif}) {
+      {required CipherUpdate cipherUpdate,
+      String? wif,
+      bool alwaysReturn = false}) {
     wif = wif ??
         generateRandomWIF(accounts.primaryIndex.getOne(accountId)!.network);
     var encryptedWIF = EncryptedWIF.fromWIF(wif, cipher);
-    if (wallets.primaryIndex.getOne(encryptedWIF.walletId) == null) {
+    var existingWallet = wallets.primaryIndex.getOne(encryptedWIF.walletId);
+    if (existingWallet == null) {
       return SingleWallet(
           walletId: encryptedWIF.walletId,
           accountId: accountId,
           encryptedWIF: encryptedWIF.encryptedSecret,
           cipherUpdate: cipherUpdate);
     }
+    if (alwaysReturn) return existingWallet as SingleWallet;
   }
 
   Future<void> makeSaveSingleWallet(String accountId, CipherBase cipher,

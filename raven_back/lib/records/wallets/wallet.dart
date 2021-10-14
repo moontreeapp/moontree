@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:pointycastle/api.dart';
 import 'package:raven/lingo/lingo.dart';
 import 'package:raven/records/cipher_update.dart';
 import 'package:raven/records/net.dart';
@@ -32,6 +33,8 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
   String secret(CipherBase cipher);
 
   WalletBase seedWallet(CipherBase cipher, {Net net = Net.Main});
+
+  String get publicKey => walletId;
 
   String get humanType => 'Wallet';
 
