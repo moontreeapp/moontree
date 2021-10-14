@@ -221,7 +221,7 @@ class _HomeState extends State<Home> {
                       child: GestureDetector(
                           onTap: () => Navigator.pushNamed(
                               context, '/settings/technical'),
-                          child: Icon(Icons.edit,
+                          child: Icon(Icons.more_vert,
                               size: 26.0, color: Colors.grey.shade200)))
                 ])),
         Column(children: <Widget>[

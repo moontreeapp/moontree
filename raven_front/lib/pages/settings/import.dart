@@ -93,20 +93,54 @@ class _ImportState extends State<Import> {
     }
   }
 
+  Future alertImported(String title, String msg) => showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+            title: Text(title),
+            content: Text(msg),
+            actions: [
+              TextButton(
+                  child: Text('ok'), onPressed: () => Navigator.pop(context))
+            ],
+          ));
+
   TextButton submitButton() {
-    var submitMessage = 'Import into ' + account.name + ' account';
+    var label = 'Import into ' + account.name + ' account';
     if (importEnabled) {
       return TextButton.icon(
-          onPressed: () => alertSuccess(),
+          onPressed: () => attemptImport(),
           icon: RavenIcon.import,
-          label: Text(submitMessage,
+          label: Text(label,
               style: TextStyle(color: Theme.of(context).primaryColor)));
     }
     return TextButton.icon(
         onPressed: () {},
         icon: RavenIcon.importDisabled(context),
-        label: Text(submitMessage,
+        label: Text(label,
             style: TextStyle(color: Theme.of(context).disabledColor)));
+  }
+
+  void enableImport() {
+    importEnabled = ImportFrom.detectImportType(words.text.trim()) != null;
+    setState(() => {});
+  }
+
+  Future attemptImport() async {
+    var importFrom =
+        ImportFrom(words.text.trim(), accountId: account.accountId);
+    // todo replace with a legit spinner, and reduce amount of time it's waiting
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+            title: Text('Importing...'),
+            content:
+                Text('Please wait, importing can take several seconds...')));
+    // this is used to get the please wait message to show up
+    // it needs enough time to display the message
+    await Future.delayed(const Duration(milliseconds: 150));
+    var success = await importFrom.handleImport();
+    await alertImported(importFrom.importedTitle!, importFrom.importedMsg!);
+    if (success) Navigator.popUntil(context, ModalRoute.withName('/home'));
   }
 
   ListView body() {
@@ -126,19 +160,9 @@ class _ImportState extends State<Import> {
                 decoration: InputDecoration(
                     border: UnderlineInputBorder(),
                     hintText:
-                        ("Please enter your seed words, WIF, or private key.")),
-                onEditingComplete: () async {
-                  words.text = words.text.trim();
-                  var formatSeed =
-                      await handleImport(words.text, Current.account.accountId);
-                  //if (isWIF || isSeed || isMnemonic || isPrivateKey) {
-                  if (['WIF', 'seed', 'mnumonic', 'privateKey']
-                      .contains(formatSeed.format)) {
-                    importEnabled = true; // import already happened
-                  }
-                  // create the wallet with formatSeed.seed in the correct account
-                  setState(() => {});
-                },
+                        'Please enter your seed words, WIF, or private key.'),
+                onChanged: (value) => enableImport(),
+                onEditingComplete: () async => await attemptImport(),
               ),
               submitButton(),
             ],
