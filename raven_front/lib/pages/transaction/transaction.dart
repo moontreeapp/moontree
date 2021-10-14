@@ -188,10 +188,10 @@ class _TransactionState extends State<Transaction> {
                 : []),
             SizedBox(height: 15.0),
             InkWell(
-                child: Text('id: ${history!.hash}',
+                child: Text('id: ${history!.txId}',
                     style: TextStyle(color: Theme.of(context).primaryColor)),
                 onTap: () => launch(
-                    'https://rvnt.cryptoscope.io/tx/?txid=${history!.hash}')),
+                    'https://rvnt.cryptoscope.io/tx/?txid=${history!.txId}')),
             SizedBox(height: 15.0),
             Text(address != null ? 'wallet: ' + address!.walletId : '',
                 style: Theme.of(context).textTheme.caption),

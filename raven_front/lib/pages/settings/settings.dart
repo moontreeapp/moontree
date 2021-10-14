@@ -85,6 +85,12 @@ class _SettingsState extends State<Settings> {
                   onPressed: (BuildContext context) =>
                       Navigator.pushNamed(context, '/settings/about')),
               SettingsTile(
+                  title: 'Print Histories',
+                  leading: Icon(Icons.info_outline_rounded),
+                  onPressed: (BuildContext context) {
+                    print(histories);
+                  }),
+              SettingsTile(
                   title: 'Clear Database',
                   leading: Icon(Icons.info_outline_rounded),
                   onPressed: (BuildContext context) {
