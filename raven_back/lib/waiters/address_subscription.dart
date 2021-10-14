@@ -38,12 +38,12 @@ class AddressSubscriptionWaiter extends Waiter {
         await deinitSubscriptionHandles();
       } else {
         backlogSubscriptions.forEach((address) {
-          subscribe(client as RavenElectrumClient, address);
+          if (!subscriptionHandles.keys.contains(address.addressId)) {
+            subscribe(client as RavenElectrumClient, address);
+          }
         });
         backlogSubscriptions.clear();
-        if (subscriptionHandles.isEmpty) {
-          subscribeToExistingAddresses();
-        }
+        subscribeToExistingAddresses();
         if (backlogRetrievals.isNotEmpty) {
           unawaited(retrieveAndMakeNewAddress(
               client as RavenElectrumClient, backlogRetrievals.toList()));
@@ -101,10 +101,10 @@ class AddressSubscriptionWaiter extends Waiter {
     await retrieve(client, changedAddresses);
     for (var changedAddress in changedAddresses) {
       var wallet = changedAddress.wallet!;
-      if (wallet.humanTypeKey == LingoKey.leaderWalletType) {
+      if (wallet is LeaderWallet) {
         if (cipherRegistry.ciphers.keys.contains(wallet.cipherUpdate)) {
           services.wallets.leaders.maybeSaveNewAddress(
-              wallet as LeaderWallet,
+              wallet,
               cipherRegistry.ciphers[wallet.cipherUpdate]!,
               changedAddress.exposure);
         } else {
@@ -130,6 +130,7 @@ class AddressSubscriptionWaiter extends Waiter {
         change.when(
             added: (added) {
               Address address = added.data;
+              print('setupNewAddressListener:${address.addressId}');
               var client = services.client.mostRecentRavenClient;
               if (client == null) {
                 backlogSubscriptions.add(address);
@@ -147,23 +148,25 @@ class AddressSubscriptionWaiter extends Waiter {
 
   void subscribe(RavenElectrumClient client, Address address) {
     addressesNeedingUpdate.sink.add(address);
-    var stream = client.subscribeScripthash(address.scripthash);
-    subscriptionHandles[address.scripthash] = stream.listen((status) {
+    var stream = client.subscribeScripthash(address.addressId);
+    subscriptionHandles[address.addressId] = stream.listen((status) {
       addressesNeedingUpdate.sink.add(address);
     });
   }
 
-  void unsubscribe(String scripthash) {
-    subscriptionHandles[scripthash]!.cancel();
+  void unsubscribe(String addressId) {
+    subscriptionHandles[addressId]!.cancel();
   }
 
   void subscribeToExistingAddresses() {
     var client = services.client.mostRecentRavenClient;
     for (var address in addresses) {
-      if (client == null) {
-        backlogSubscriptions.add(address);
-      } else {
-        subscribe(client, address);
+      if (!subscriptionHandles.keys.contains(address.addressId)) {
+        if (client == null) {
+          backlogSubscriptions.add(address);
+        } else {
+          subscribe(client, address);
+        }
       }
     }
   }

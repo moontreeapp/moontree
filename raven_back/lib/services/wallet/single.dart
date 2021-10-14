@@ -9,7 +9,7 @@ class SingleWalletService {
     var net = accounts.primaryIndex.getOne(wallet.accountId)!.net;
     var kpWallet = getKPWallet(wallet);
     return Address(
-        scripthash: kpWallet.scripthash,
+        addressId: kpWallet.scripthash,
         address: kpWallet.address!,
         walletId: wallet.walletId,
         hdIndex: 0,

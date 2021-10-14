@@ -5,13 +5,16 @@ import 'package:tuple/tuple.dart';
 import 'transaction/fee.dart';
 import 'transaction/sign.dart';
 
-const ESTIMATED_OUTPUT_FEE = 34 /* why 34? */;
-const ESTIMATED_FEE_PER_INPUT = 51 /* why 51? */;
+const ESTIMATED_OUTPUT_FEE = 0 /* why 34? */;
+const ESTIMATED_FEE_PER_INPUT = 0 /* why 51? */;
 
 class SendEstimate {
   int amount;
   int fees;
   List<History> utxos;
+
+  @override
+  String toString() => 'amount: $amount, fees: $fees, utxos: $utxos';
 
   int get total => amount + fees;
   int get utxoTotal =>
@@ -90,7 +93,7 @@ class TransactionService {
         : services.balances.collectUTXOs(account!, amount: estimate.total);
 
     for (var utxo in utxos) {
-      txb.addInput(utxo.hash, utxo.position);
+      txb.addInput(utxo.txId, utxo.position);
     }
 
     var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
@@ -131,7 +134,9 @@ class TransactionService {
     Account? account,
     Wallet? wallet,
     TxGoal? goal,
+    Set<int>? previousFees,
   }) {
+    previousFees = previousFees ?? {};
     var useWallet = shouldUseWallet(account: account, wallet: wallet);
     var txb = TransactionBuilder(
         network: useWallet ? wallet!.account!.network : account!.network);
@@ -140,7 +145,7 @@ class TransactionService {
         : services.balances.sortedUnspents(account!);
     var total = 0;
     for (var utxo in utxos) {
-      txb.addInput(utxo.hash, utxo.position);
+      txb.addInput(utxo.txId, utxo.position);
       total = total + utxo.value;
     }
     var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
@@ -150,8 +155,7 @@ class TransactionService {
     var fees = tx.fee(goal);
     updatedEstimate.setFees(tx.fee(goal));
     updatedEstimate.setAmount(total - fees);
-    if (updatedEstimate.fees == estimate.fees &&
-        updatedEstimate.amount == estimate.amount) {
+    if (previousFees.contains(fees)) {
       return Tuple2(tx, updatedEstimate);
     } else {
       return buildTransactionSendAll(
@@ -160,6 +164,7 @@ class TransactionService {
         goal: goal,
         account: account,
         wallet: wallet,
+        previousFees: {...previousFees, fees},
       );
     }
   }

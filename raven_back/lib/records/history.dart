@@ -1,3 +1,13 @@
+/// Histories are like transactions, but hold only the information we really
+/// care about: Ids, security, value (in or out (negative)).
+/// to get the correct UTXOs we need to know if a 'history' has been spent...
+///   we either need to modify an existing history record when we see it spent
+///   or we have to add a new history record linking to the first one...
+///   we should probably make a new one...
+///     if we do that maybe we should adopt the transaction model which holds
+///     both Vins and Vouts? because a history item is basically a vin or vout
+///     with extra tx data on it...
+
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:raven/records/security.dart';
@@ -11,23 +21,25 @@ part 'history.g.dart';
 @HiveType(typeId: TypeId.History)
 class History with EquatableMixin {
   @HiveField(0)
-  String scripthash;
+  String addressId;
 
   @HiveField(1)
-  int height;
+  String txId;
 
   @HiveField(2)
-  String hash;
+  int height;
 
   @HiveField(3)
-  int position;
+  int position; // voutPosition
 
   @HiveField(4)
   int value;
 
+  // should be securityId to a reservoir of securities and their meta data.
   @HiveField(5)
   Security security;
 
+  // should be on a tx?
   @HiveField(6)
   String? memo;
 
@@ -35,9 +47,9 @@ class History with EquatableMixin {
   String note;
 
   History(
-      {required this.scripthash,
+      {required this.addressId,
       required this.height,
-      required this.hash,
+      required this.txId,
       this.position = -1,
       this.value = 0,
       this.security = RVN,
@@ -48,9 +60,9 @@ class History with EquatableMixin {
 
   @override
   List<Object> get props => [
-        scripthash,
+        addressId,
         height,
-        hash,
+        txId,
         position,
         value,
         security,
@@ -61,29 +73,29 @@ class History with EquatableMixin {
   @override
   String toString() {
     return 'History('
-        'scripthash: $scripthash, hash: $hash, height: $height, '
+        'addressId: $addressId, txId: $txId, height: $height, '
         'position: $position, value: $value, security: $security, '
         'memo: $memo, note: $note)';
   }
 
   // ScripthashHistories should provide a memo, but do they (form electrum? I don't think so)
   factory History.fromScripthashHistory(
-      String scripthash, ScripthashHistory history) {
+      String addressId, ScripthashHistory history) {
     return History(
-      scripthash: scripthash,
+      addressId: addressId,
       height: history.height,
-      hash: history.txHash,
+      txId: history.txHash,
       memo: history.memo,
     );
   }
 
   // ScripthashHistories should provide a memo, but do they (form electrum? I don't think so)
   factory History.fromScripthashUnspent(
-      String scripthash, ScripthashUnspent unspent) {
+      String addressId, ScripthashUnspent unspent) {
     return History(
-        scripthash: scripthash,
+        addressId: addressId,
         height: unspent.height,
-        hash: unspent.txHash,
+        txId: unspent.txHash,
         position: unspent.txPos,
         value: unspent.value,
         security: (unspent.ticker == null
@@ -93,4 +105,6 @@ class History with EquatableMixin {
                 securityType: SecurityType.RavenAsset)),
         memo: unspent.memo);
   }
+
+  String get scripthash => addressId;
 }

@@ -24,11 +24,11 @@ class AddressReservoir extends Reservoir<_ScripthashKey, Address> {
   }
 
   /// returns account addresses in order
-  AddressLocation? getAddressLocationOf(String scripthash, String walletId) {
+  AddressLocation? getAddressLocationOf(String addressId, String walletId) {
     var i = 0;
     for (var address
         in byWalletExposure.getAll(walletId, NodeExposure.Internal)) {
-      if (address.scripthash == scripthash) {
+      if (address.addressId == addressId) {
         return AddressLocation(i, NodeExposure.Internal);
       }
       i = i + 1;
@@ -36,7 +36,7 @@ class AddressReservoir extends Reservoir<_ScripthashKey, Address> {
     i = 0;
     for (var address
         in byWalletExposure.getAll(walletId, NodeExposure.External)) {
-      if (address.scripthash == scripthash) {
+      if (address.addressId == addressId) {
         return AddressLocation(i, NodeExposure.External);
       }
       i = i + 1;

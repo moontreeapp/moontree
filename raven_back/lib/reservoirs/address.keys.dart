@@ -4,11 +4,11 @@ part of 'address.dart';
 
 class _ScripthashKey extends Key<Address> {
   @override
-  String getKey(Address address) => address.scripthash;
+  String getKey(Address address) => address.addressId;
 }
 
 extension ByRawScripthashMethodsForAddress on Index<_ScripthashKey, Address> {
-  Address? getOne(String scripthash) => getByKeyStr(scripthash).firstOrNull;
+  Address? getOne(String addressId) => getByKeyStr(addressId).firstOrNull;
 }
 
 // byWallet

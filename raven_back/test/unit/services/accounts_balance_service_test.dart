@@ -5,8 +5,8 @@ import 'package:raven/raven.dart';
 import '../../fixtures/fixtures.dart' as fixtures;
 
 var newHistory = History(
-    hash: '100',
-    scripthash: 'abc100',
+    txId: '100',
+    addressId: 'abc100',
     height: 0,
     security: RVN,
     position: 5,

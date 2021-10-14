@@ -17,9 +17,9 @@ class HistoryAdapter extends TypeAdapter<History> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return History(
-      scripthash: fields[0] as String,
+      addressId: fields[0] as String,
       height: fields[1] as int,
-      hash: fields[2] as String,
+      txId: fields[2] as String,
       position: fields[3] as int,
       value: fields[4] as int,
       security: fields[5] as Security,
@@ -33,11 +33,11 @@ class HistoryAdapter extends TypeAdapter<History> {
     writer
       ..writeByte(8)
       ..writeByte(0)
-      ..write(obj.scripthash)
+      ..write(obj.addressId)
       ..writeByte(1)
       ..write(obj.height)
       ..writeByte(2)
-      ..write(obj.hash)
+      ..write(obj.txId)
       ..writeByte(3)
       ..write(obj.position)
       ..writeByte(4)

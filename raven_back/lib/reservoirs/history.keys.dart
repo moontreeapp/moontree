@@ -4,7 +4,7 @@ part of 'history.dart';
 
 class _TxHashKey extends Key<History> {
   @override
-  String getKey(History history) => history.hash;
+  String getKey(History history) => history.txId;
 }
 
 extension ByIdMethodsForHistory on Index<_TxHashKey, History> {
@@ -15,11 +15,11 @@ extension ByIdMethodsForHistory on Index<_TxHashKey, History> {
 
 class _ScripthashKey extends Key<History> {
   @override
-  String getKey(History history) => history.scripthash;
+  String getKey(History history) => history.addressId;
 }
 
 extension ByScripthashMethodsForHistory on Index<_ScripthashKey, History> {
-  List<History> getAll(String scripthash) => getByKeyStr(scripthash);
+  List<History> getAll(String addressId) => getByKeyStr(addressId);
 }
 
 // bySecurity

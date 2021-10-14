@@ -10,7 +10,7 @@ part 'address.g.dart';
 @HiveType(typeId: TypeId.Address)
 class Address with EquatableMixin {
   @HiveField(0)
-  String scripthash; // change to addressId?
+  String addressId; // change to addressId?
 
   @HiveField(1)
   String address;
@@ -28,7 +28,7 @@ class Address with EquatableMixin {
   Net net;
 
   Address({
-    required this.scripthash,
+    required this.addressId,
     required this.address,
     required this.walletId,
     required this.hdIndex,
@@ -38,7 +38,7 @@ class Address with EquatableMixin {
 
   @override
   List<Object> get props => [
-        scripthash,
+        addressId,
         address,
         walletId,
         hdIndex,
@@ -48,7 +48,7 @@ class Address with EquatableMixin {
 
   @override
   String toString() =>
-      'Address($scripthash, $address, $walletId, $hdIndex, $exposure, $net)';
+      'Address(addressId: $addressId, address: $address, walletId: $walletId, hdIndex: $hdIndex, exposure: $exposure, net: $net)';
 
   int compareTo(Address other) {
     if (exposure != other.exposure) {
@@ -56,4 +56,6 @@ class Address with EquatableMixin {
     }
     return hdIndex < other.hdIndex ? -1 : 1;
   }
+
+  String get scripthash => addressId;
 }

@@ -17,9 +17,9 @@ class HistoryService {
     history = getHistoryFrom(history: history, hash: hash);
     if (history != null) {
       await histories.save(History(
-          scripthash: history.scripthash,
+          addressId: history.addressId,
           height: history.height,
-          hash: history.hash,
+          txId: history.txId,
           position: history.position,
           value: history.value,
           security: history.security,
@@ -38,9 +38,9 @@ class HistoryService {
     history = getHistoryFrom(history: history, hash: hash);
     if (history != null) {
       await histories.save(History(
-          scripthash: history.scripthash,
+          addressId: history.addressId,
           height: history.height,
-          hash: history.hash,
+          txId: history.txId,
           position: history.position,
           value: history.value,
           security: history.security,
@@ -53,7 +53,7 @@ class HistoryService {
   Future<String> getSaveMemo({History? history, String? hash}) async {
     history = getHistoryFrom(history: history, hash: hash);
     if (history != null) {
-      return await saveMemo(await getMemo(history.hash), hash: history.hash);
+      return await saveMemo(await getMemo(history.txId), hash: history.txId);
     }
     return '';
   }

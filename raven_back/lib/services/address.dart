@@ -6,26 +6,26 @@ import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:raven/raven.dart';
 
 class ScripthashHistoryRow {
-  final String scripthash;
+  final String addressId;
   final List<ScripthashHistory> history;
   final List<ScripthashUnspent> unspent;
   final List<ScripthashUnspent> assetUnspent;
 
   ScripthashHistoryRow(
-      this.scripthash, this.history, this.unspent, this.assetUnspent);
+      this.addressId, this.history, this.unspent, this.assetUnspent);
 }
 
 class ScripthashHistoriesData {
-  final List<String> scripthashes;
+  final List<String> addressIds;
   final List<List<ScripthashHistory>> histories;
   final List<List<ScripthashUnspent>> unspents;
   final List<List<ScripthashUnspent>> assetUnspents;
 
   ScripthashHistoriesData(
-      this.scripthashes, this.histories, this.unspents, this.assetUnspents);
+      this.addressIds, this.histories, this.unspents, this.assetUnspents);
 
   Iterable<ScripthashHistoryRow> get zipped =>
-      zip([scripthashes, histories, unspents, assetUnspents]).map((e) =>
+      zip([addressIds, histories, unspents, assetUnspents]).map((e) =>
           ScripthashHistoryRow(
               e[0] as String,
               e[1] as List<ScripthashHistory>,
@@ -38,19 +38,19 @@ class AddressService {
     List<Address> changedAddresses,
     RavenElectrumClient client,
   ) async {
-    var scripthashes =
-        changedAddresses.map((address) => address.scripthash).toList();
+    var addressIds =
+        changedAddresses.map((address) => address.addressId).toList();
     // ignore: omit_local_variable_types
     List<List<ScripthashHistory>> histories =
-        await client.getHistories(scripthashes);
+        await client.getHistories(addressIds);
     // ignore: omit_local_variable_types
     List<List<ScripthashUnspent>> unspents =
-        await client.getUnspents(scripthashes);
+        await client.getUnspents(addressIds);
     // ignore: omit_local_variable_types
     List<List<ScripthashUnspent>> assetUnspents =
-        await client.getAssetUnspents(scripthashes);
+        await client.getAssetUnspents(addressIds);
     return ScripthashHistoriesData(
-        scripthashes,
+        addressIds,
         await appendMemosHistory(client, histories),
         await appendMemosUnspent(client, unspents),
         await appendMemosUnspent(client, assetUnspents));
@@ -103,13 +103,13 @@ class AddressService {
   List<History> combineHistoryAndUnspents(ScripthashHistoryRow row) {
     var newHistories = <History>[];
     for (var history in row.history) {
-      newHistories.add(History.fromScripthashHistory(row.scripthash, history));
+      newHistories.add(History.fromScripthashHistory(row.addressId, history));
     }
     for (var unspent in row.unspent) {
-      newHistories.add(History.fromScripthashUnspent(row.scripthash, unspent));
+      newHistories.add(History.fromScripthashUnspent(row.addressId, unspent));
     }
     for (var unspent in row.assetUnspent) {
-      newHistories.add(History.fromScripthashUnspent(row.scripthash, unspent));
+      newHistories.add(History.fromScripthashUnspent(row.addressId, unspent));
     }
     return newHistories;
   }
