@@ -34,6 +34,7 @@ class ScripthashHistoriesData {
 }
 
 class AddressService {
+  /// when an address status change: make our historic tx data match blockchain
   Future<ScripthashHistoriesData> getScripthashHistoriesData(
     List<Address> changedAddresses,
     RavenElectrumClient client,
@@ -43,9 +44,20 @@ class AddressService {
     // ignore: omit_local_variable_types
     List<List<ScripthashHistory>> histories =
         await client.getHistories(addressIds);
+
+    // get all transactions from transactionids in histories,
+
+    // calculate unspents and save vout composite id (tx and position) in another res.
+
     // ignore: omit_local_variable_types
     List<List<ScripthashUnspent>> unspents =
         await client.getUnspents(addressIds);
+    if ([for (var ca in changedAddresses) ca.address]
+        .contains('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm')) {
+      print('ADDRESSSERVICE:');
+      print(changedAddresses);
+      print(unspents);
+    }
     // ignore: omit_local_variable_types
     List<List<ScripthashUnspent>> assetUnspents =
         await client.getAssetUnspents(addressIds);
@@ -97,18 +109,34 @@ class AddressService {
   Future saveScripthashHistoryData(ScripthashHistoriesData data) async {
     for (var row in data.zipped) {
       await histories.saveAll(combineHistoryAndUnspents(row));
+      print('HISTORIES RIGHT AFTER SAVE:');
+      for (var item in histories.data) {
+        print(item);
+      }
     }
   }
 
   List<History> combineHistoryAndUnspents(ScripthashHistoryRow row) {
     var newHistories = <History>[];
     for (var history in row.history) {
+      if (row.addressId ==
+          '204d127aea0dfa26a53eeb9fa89220aee54440f5dcb4f015d3b57861d3d1d7ca') {
+        print('SAVING:history:$history');
+      }
       newHistories.add(History.fromScripthashHistory(row.addressId, history));
     }
     for (var unspent in row.unspent) {
+      if (row.addressId ==
+          '204d127aea0dfa26a53eeb9fa89220aee54440f5dcb4f015d3b57861d3d1d7ca') {
+        print('SAVING:unspent:$unspent');
+      }
       newHistories.add(History.fromScripthashUnspent(row.addressId, unspent));
     }
     for (var unspent in row.assetUnspent) {
+      if (row.addressId ==
+          '204d127aea0dfa26a53eeb9fa89220aee54440f5dcb4f015d3b57861d3d1d7ca') {
+        print('SAVING:unspent:$unspent');
+      }
       newHistories.add(History.fromScripthashUnspent(row.addressId, unspent));
     }
     return newHistories;

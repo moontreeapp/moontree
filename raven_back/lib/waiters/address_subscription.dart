@@ -43,10 +43,10 @@ class AddressSubscriptionWaiter extends Waiter {
           }
         });
         backlogSubscriptions.clear();
-        subscribeToExistingAddresses();
+        subscribeToExistingAddresses(client as RavenElectrumClient);
         if (backlogRetrievals.isNotEmpty) {
-          unawaited(retrieveAndMakeNewAddress(
-              client as RavenElectrumClient, backlogRetrievals.toList()));
+          unawaited(
+              retrieveAndMakeNewAddress(client, backlogRetrievals.toList()));
           backlogRetrievals.clear();
         }
       }
@@ -85,6 +85,9 @@ class AddressSubscriptionWaiter extends Waiter {
         'addressesNeedingUpdate',
         addressesNeedingUpdate.stream.bufferCountTimeout(
             10, Duration(milliseconds: 50)), (changedAddresses) {
+      print('listen(addressesNeedingUpdate): ${[
+        for (Address ca in changedAddresses as List<Address>) ca.address
+      ]}');
       var client = services.client.mostRecentRavenClient;
       if (client == null) {
         for (var address in changedAddresses as List<Address>) {
@@ -98,6 +101,9 @@ class AddressSubscriptionWaiter extends Waiter {
 
   Future retrieveAndMakeNewAddress(
       RavenElectrumClient client, List<Address> changedAddresses) async {
+    print('retrieving: ${[
+      for (Address ca in changedAddresses as List<Address>) ca.address
+    ]}');
     await retrieve(client, changedAddresses);
     for (var changedAddress in changedAddresses) {
       var wallet = changedAddress.wallet!;
@@ -130,7 +136,7 @@ class AddressSubscriptionWaiter extends Waiter {
         change.when(
             added: (added) {
               Address address = added.data;
-              print('setupNewAddressListener:${address.addressId}');
+              print('setupNewAddressListener:${address.address}');
               var client = services.client.mostRecentRavenClient;
               if (client == null) {
                 backlogSubscriptions.add(address);
@@ -147,9 +153,11 @@ class AddressSubscriptionWaiter extends Waiter {
   }
 
   void subscribe(RavenElectrumClient client, Address address) {
-    addressesNeedingUpdate.sink.add(address);
+    // we get a status back as soon as we subscribe... so we don't need to do it here.
+    //addressesNeedingUpdate.sink.add(address);
     var stream = client.subscribeScripthash(address.addressId);
     subscriptionHandles[address.addressId] = stream.listen((status) {
+      print('listen(subscribe): ${address.address}');
       addressesNeedingUpdate.sink.add(address);
     });
   }
@@ -158,15 +166,17 @@ class AddressSubscriptionWaiter extends Waiter {
     subscriptionHandles[addressId]!.cancel();
   }
 
-  void subscribeToExistingAddresses() {
-    var client = services.client.mostRecentRavenClient;
+  void subscribeToExistingAddresses(RavenElectrumClient client) {
     for (var address in addresses) {
       if (!subscriptionHandles.keys.contains(address.addressId)) {
-        if (client == null) {
-          backlogSubscriptions.add(address);
-        } else {
-          subscribe(client, address);
-        }
+        /// the only time this is called is when a client has been broadcast
+        //if (client == null) {
+        //  print('subscribeToExistingAddresses:BACKLOG:${address.addressId}');
+        //  backlogSubscriptions.add(address);
+        //} else {
+        print('subscribeToExistingAddresses:SUBSCIRBE:${address.address}');
+        subscribe(client, address);
+        //}
       }
     }
   }

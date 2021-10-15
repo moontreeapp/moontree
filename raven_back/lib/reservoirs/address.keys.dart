@@ -11,6 +11,17 @@ extension ByRawScripthashMethodsForAddress on Index<_ScripthashKey, Address> {
   Address? getOne(String addressId) => getByKeyStr(addressId).firstOrNull;
 }
 
+// byAddress
+
+class _AddressKey extends Key<Address> {
+  @override
+  String getKey(Address address) => address.address;
+}
+
+extension ByAddressMethodsForAddress on Index<_AddressKey, Address> {
+  Address? getOne(String address) => getByKeyStr(address).firstOrNull;
+}
+
 // byWallet
 
 class _WalletKey extends Key<Address> {

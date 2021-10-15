@@ -11,6 +11,17 @@ extension ByIdMethodsForHistory on Index<_TxHashKey, History> {
   History? getOne(String hash) => getByKeyStr(hash).firstOrNull;
 }
 
+// byAddress
+
+class _AddressKey extends Key<History> {
+  @override
+  String getKey(History history) => history.address?.address ?? '';
+}
+
+extension ByAddressMethodsForHistory on Index<_AddressKey, History> {
+  List<History> getAll(String address) => getByKeyStr(address);
+}
+
 // byScripthash
 
 class _ScripthashKey extends Key<History> {

@@ -7,8 +7,10 @@ part 'history.keys.dart';
 class HistoryReservoir extends Reservoir<_TxHashKey, History> {
   late IndexMultiple<_ScripthashKey, History> byScripthash;
   late IndexMultiple<_SecurityKey, History> bySecurity;
+  late IndexMultiple<_AddressKey, History> byAddress;
 
   HistoryReservoir() : super(_TxHashKey()) {
+    byAddress = addIndexMultiple('address', _AddressKey());
     byScripthash = addIndexMultiple('scripthash', _ScripthashKey());
     bySecurity = addIndexMultiple('security', _SecurityKey());
   }
