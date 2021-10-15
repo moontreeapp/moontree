@@ -207,8 +207,6 @@ class _WalletViewState extends State<WalletView> {
                     );
                   }),
                   title: Wrap(alignment: WrapAlignment.spaceBetween, children: [
-                    Text(walletAddress.hdIndex.toString(),
-                        style: Theme.of(context).annotate),
                     (walletAddress.exposure == NodeExposure.Internal
                         ? RavenIcon.out(context)
                         : RavenIcon.income(context)),

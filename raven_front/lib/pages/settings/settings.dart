@@ -88,13 +88,32 @@ class _SettingsState extends State<Settings> {
                   title: 'Print Histories',
                   leading: Icon(Icons.info_outline_rounded),
                   onPressed: (BuildContext context) {
-                    print(histories);
+                    for (var item in histories.data) {
+                      print(item);
+                    }
                   }),
               SettingsTile(
                   title: 'Clear Database',
                   leading: Icon(Icons.info_outline_rounded),
                   onPressed: (BuildContext context) {
                     ravenDatabase.deleteDatabase();
+                  }),
+              SettingsTile(
+                  title: 'show data',
+                  leading: Icon(Icons.info_outline_rounded),
+                  onPressed: (BuildContext context) {
+                    print(addresses.byAddress
+                        .getOne('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm'));
+                    print(addresses.byAddress
+                        .getOne('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm')!
+                        .addressId);
+                    print(histories.byScripthash.getAll(addresses.byAddress
+                        .getOne('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm')!
+                        .addressId));
+                    print(histories.byScripthash.getAll(
+                        '204d127aea0dfa26a53eeb9fa89220aee54440f5dcb4f015d3b57861d3d1d7ca'));
+                    print(histories.byAddress
+                        .getAll('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm'));
                   }),
               //SettingsTile(
               //    title: 'cipher registry',
