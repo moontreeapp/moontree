@@ -4,8 +4,7 @@ import '../../raven_electrum_client.dart';
 
 /// scriptSig: {
 ///   asm: 30440220570e370c5d5f559bd37da3f6c463b09e4a61bb57237fead3aa5a3255f30fe09e022035038abb72ccd722700081088f3bf5aab4642fb66df4b79eab88c1d15d064f69[ALL] 03d957a7e1be52d731bcaa3fb0270dbadbe5a81fd7342f8710a70308435174febe,
-///   hex: 4730440220570e370c5d5f559bd37da3f6c463b09e4a61bb57237fead3aa5a3255f30fe09e022035038abb72ccd722700081088f3bf5aab4642fb66df4b79eab88c1d15d064f69012103d957a7e1be52d731bcaa3fb0270dbadbe5a81fd7342f8710a70308435174febe},
-///   sequence: 4294967294}
+///   hex: 4730440220570e370c5d5f559bd37da3f6c463b09e4a61bb57237fead3aa5a3255f30fe09e022035038abb72ccd722700081088f3bf5aab4642fb66df4b79eab88c1d15d064f69012103d957a7e1be52d731bcaa3fb0270dbadbe5a81fd7342f8710a70308435174febe}}
 class TxScriptSig with EquatableMixin {
   final String asm;
   final String hex;
@@ -237,3 +236,31 @@ extension GetTransactionMethod on RavenElectrumClient {
     return results;
   }
 }
+
+
+/*
+{ txid: cac2fb61ee5e6edfb9804f19cc4c22994f53931899c0feb423c843ebb93e08c8,
+  ... merge with vin.txid, vout.txid
+}
+/// vout: {
+///   txid: cac2fb61ee5e6edfb9804f19cc4c22994f53931899c0feb423c843ebb93e08c8
+///   value: 5000.0,
+///   n: 0,
+///   scriptPubKey: {...},
+///   valueSat: 500000000000}
+
+
+{ txid: 1,
+  vin: [vin1],
+  vout: [...],
+}
+/// vin1: {
+///   txid: 1,
+///   vout_txid: cac2fb61ee5e6edfb9804f19cc4c22994f53931899c0feb423c843ebb93e08c8,
+///   vout: 0,
+///   scriptSig: {...},
+
+any vout that doesn't have a corresponding vin 
+(accroding to vin.vout == vout.n && vin.vout_txid = vout.txid) 
+is unspent.
+*/
