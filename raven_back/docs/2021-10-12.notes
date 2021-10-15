@@ -1,0 +1,4 @@
+
+notes:
+- waiter.deinit is now more complex & possibly confusing -- should it be two methods?
+- waiters/single.dart -> listening logic has dependency -- can it be simplified?
