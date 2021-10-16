@@ -12,8 +12,12 @@ class AddressWaiter extends Waiter {
             added: (added) {},
             updated: (updated) {},
             removed: (removed) {
-              // always triggered by account removal
-              histories.removeHistories(removed.id as String);
+              Address address = removed.data;
+              transactions
+                  .removeAll(address.transactions.map((tx) => tx).toList());
+              // could be moved to waiter on transactions...
+              vouts.removeAll(address.vouts.map((vout) => vout).toList());
+              vins.removeAll(address.vins.map((vin) => vin).toList());
             });
       });
     });

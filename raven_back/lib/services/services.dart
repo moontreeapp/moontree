@@ -2,7 +2,7 @@ import 'account.dart';
 import 'address.dart';
 import 'balance.dart';
 import 'client.dart';
-import 'history.dart';
+import 'vout.dart';
 import 'password.dart';
 import 'rate.dart';
 import 'transaction.dart';
@@ -13,7 +13,7 @@ class services {
   static AddressService addresses = AddressService();
   static BalanceService balances = BalanceService();
   static ClientService client = ClientService();
-  static HistoryService histories = HistoryService();
+  static VoutService histories = VoutService();
   static RateService rates = RateService();
   static WalletService wallets = WalletService();
   static PasswordService passwords = PasswordService();

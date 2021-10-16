@@ -3,7 +3,7 @@ part of 'rate.dart';
 // primary key
 
 String _rateToKey(Security base, Security quote) =>
-    '${base.toKey()}:${quote.toKey()}';
+    '${base.securityId}:${quote.securityId}';
 
 class _RateKey extends Key<Rate> {
   @override

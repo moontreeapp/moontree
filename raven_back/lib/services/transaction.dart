@@ -1,5 +1,5 @@
 import 'package:raven/raven.dart';
-import 'package:ravencoin/ravencoin.dart';
+import 'package:ravencoin/ravencoin.dart' as ravencoin;
 import 'package:tuple/tuple.dart';
 
 import 'transaction/fee.dart';
@@ -11,7 +11,7 @@ const ESTIMATED_FEE_PER_INPUT = 0 /* why 51? */;
 class SendEstimate {
   int amount;
   int fees;
-  List<History> utxos;
+  List<Vout> utxos;
 
   @override
   String toString() => 'amount: $amount, fees: $fees, utxos: $utxos';
@@ -25,7 +25,7 @@ class SendEstimate {
   SendEstimate(
     this.amount, {
     this.fees = ESTIMATED_OUTPUT_FEE + ESTIMATED_FEE_PER_INPUT,
-    List<History>? utxos,
+    List<Vout>? utxos,
   }) : utxos = utxos ?? [];
 
   factory SendEstimate.copy(SendEstimate detail) {
@@ -34,7 +34,7 @@ class SendEstimate {
   }
 
   void setFees(int fees_) => fees = fees_;
-  void setUTXOs(List<History> utxos_) => utxos = utxos_;
+  void setUTXOs(List<Vout> utxos_) => utxos = utxos_;
   void setAmount(int amount_) => amount = amount_;
 }
 
@@ -68,7 +68,7 @@ class TransactionService {
   // setFees(35) <-- fee is the same because have the same number of inputs & outputs as previous iteration
   // updatedChangeDue: 110 - (45 + 35) = 30 : sufficient! and changeDue is RIGHT
   //   -> DONE with result
-  Tuple2<Transaction, SendEstimate> buildTransaction(
+  Tuple2<ravencoin.Transaction, SendEstimate> buildTransaction(
     String toAddress,
     SendEstimate estimate, {
     Account? account,
@@ -77,7 +77,7 @@ class TransactionService {
   }) {
     var useWallet = shouldUseWallet(account: account, wallet: wallet);
 
-    var txb = TransactionBuilder(
+    var txb = ravencoin.TransactionBuilder(
         network: useWallet ? wallet!.account!.network : account!.network);
 
     // Direct the transaction to send value to the desired address
@@ -128,7 +128,7 @@ class TransactionService {
     }
   }
 
-  Tuple2<Transaction, SendEstimate> buildTransactionSendAll(
+  Tuple2<ravencoin.Transaction, SendEstimate> buildTransactionSendAll(
     String toAddress,
     SendEstimate estimate, {
     Account? account,
@@ -138,7 +138,7 @@ class TransactionService {
   }) {
     previousFees = previousFees ?? {};
     var useWallet = shouldUseWallet(account: account, wallet: wallet);
-    var txb = TransactionBuilder(
+    var txb = ravencoin.TransactionBuilder(
         network: useWallet ? wallet!.account!.network : account!.network);
     var utxos = useWallet
         ? services.balances.sortedUnspentsWallets(wallet!)

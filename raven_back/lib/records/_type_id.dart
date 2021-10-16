@@ -1,14 +1,17 @@
 import 'package:raven/raven.dart';
 import 'package:raven/records/password_hash.dart';
+import 'package:raven/records/transaction.dart';
 
 class TypeId {
   // Core
   static const Account = 0;
   static const Address = 1;
   static const Balance = 2;
-  static const History = 3;
+  static const Transaction = 3;
   static const Setting = 4;
   static const Block = 5;
+  static const Vin = 6;
+  static const Vout = 7;
 
   // Wallets
   static const SingleWallet = 10;

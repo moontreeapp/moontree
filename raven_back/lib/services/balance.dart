@@ -1,6 +1,7 @@
 /// balances are by wallet, and aggregated to the account level.
 /// if you want the balance of a subwallet (address) then get it from Histories.
 
+import 'package:raven/reservoirs/vout.dart';
 import 'package:reservoir/change.dart';
 
 import 'package:raven/services/wallet_security_pair.dart';
@@ -14,17 +15,17 @@ class BalanceService {
   Balance sumBalance(Wallet wallet, Security security) => Balance(
       walletId: wallet.walletId,
       security: security,
-      confirmed: HistoryReservoir.whereUnspent(
-              given: wallet.histories, security: security)
-          .fold(0, (sum, history) => sum + history.value),
-      unconfirmed: HistoryReservoir.whereUnconfirmed(
-              given: wallet.histories, security: security)
+      confirmed:
+          VoutReservoir.whereUnspent(given: wallet.vouts, security: security)
+              .fold(0, (sum, history) => sum + history.value),
+      unconfirmed: VoutReservoir.whereUnconfirmed(
+              given: wallet.vouts, security: security)
           .fold(0, (sum, history) => sum + history.value));
 
   /// If there is a change in its history, recalculate a balance. Return a list
   /// of such balances.
   Iterable<Balance> getChangedBalances(List<Change> changes) =>
-      securityPairsFromHistoryChanges(changes)
+      securityPairsFromVoutChanges(changes)
           .map((pair) => sumBalance(pair.wallet, pair.security));
 
   /// Same as getChangedBalances, but saves them all as well.
@@ -37,11 +38,11 @@ class BalanceService {
   /// Transaction Logic ///////////////////////////////////////////////////////
 
   /// Sort in descending order, from largest amount to smallest amount
-  List<History> sortedUnspents(Account account) =>
+  List<Vout> sortedUnspents(Account account) =>
       account.unspents.toList()..sort((a, b) => b.value.compareTo(a.value));
 
   /// Sort in descending order, from largest amount to smallest amount
-  List<History> sortedUnspentsWallets(Wallet wallet) =>
+  List<Vout> sortedUnspentsWallets(Wallet wallet) =>
       wallet.unspents.toList()..sort((a, b) => b.value.compareTo(a.value));
 
   /// Asserts that the asset in the account is greater than `amount`
@@ -66,8 +67,8 @@ class BalanceService {
   /// size that either STAYS THE SAME or INCREASES IN SIZE since last calling
   /// it if the 'amount' increases.
   ///
-  List<History> collectUTXOs(Account account,
-      {required int amount, List<History> except = const []}) {
+  List<Vout> collectUTXOs(Account account,
+      {required int amount, List<Vout> except = const []}) {
     assertSufficientFunds(amount, account);
 
     var unspents = sortedUnspents(account)
@@ -81,7 +82,7 @@ class BalanceService {
     /// Otherwise, satisfy the amount by combining UTXOs from largest to smallest
     /// perhaps we could make the utxo variable full of objects that contain
     /// the signing information too, that way we don't have to get it later...?
-    var collection = <History>[];
+    var collection = <Vout>[];
     var remaining = amount;
     for (var unspent in unspents) {
       if (remaining > 0) collection.add(unspent);
@@ -92,8 +93,8 @@ class BalanceService {
     return collection;
   }
 
-  List<History> collectUTXOsWallet(Wallet wallet,
-      {required int amount, List<History> except = const []}) {
+  List<Vout> collectUTXOsWallet(Wallet wallet,
+      {required int amount, List<Vout> except = const []}) {
     assertSufficientFundsWallets(amount, wallet);
 
     var unspents = sortedUnspentsWallets(wallet)
@@ -107,7 +108,7 @@ class BalanceService {
     /// Otherwise, satisfy the amount by combining UTXOs from largest to smallest
     /// perhaps we could make the utxo variable full of objects that contain
     /// the signing information too, that way we don't have to get it later...?
-    var collection = <History>[];
+    var collection = <Vout>[];
     var remaining = amount;
     for (var unspent in unspents) {
       if (remaining > 0) collection.add(unspent);

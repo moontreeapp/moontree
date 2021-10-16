@@ -27,7 +27,9 @@ class Security with EquatableMixin {
   List<Object> get props => [symbol, securityType];
 
   @override
-  String toString() => 'Security($symbol, $securityType)';
+  String toString() => 'Security(symbol: $symbol, securityType: $securityType)';
 
-  String toKey() => '$symbol:${describeEnum(securityType)}';
+  String get securityId => '$symbol:${describeEnum(securityType)}';
+
+  String get securityTypeName => describeEnum(securityType);
 }

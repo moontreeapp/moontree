@@ -42,7 +42,9 @@ class HiveInitializer {
     Hive.registerAdapter(LeaderWalletAdapter());
     Hive.registerAdapter(SingleWalletAdapter());
     Hive.registerAdapter(AddressAdapter());
-    Hive.registerAdapter(HistoryAdapter());
+    Hive.registerAdapter(TransactionAdapter());
+    Hive.registerAdapter(VinAdapter());
+    Hive.registerAdapter(VoutAdapter());
     Hive.registerAdapter(NetAdapter());
     Hive.registerAdapter(NodeExposureAdapter());
     Hive.registerAdapter(PasswordAdapter());
@@ -60,24 +62,30 @@ class HiveInitializer {
     await Hive.openBox<Address>('addresses');
     await Hive.openBox<Balance>('balances');
     await Hive.openBox<Block>('blocks');
-    await Hive.openBox<History>('histories');
-    await Hive.openBox<Rate>('rates');
-    await Hive.openBox<Setting>('settings');
-    await Hive.openBox<Wallet>('wallets');
     await Hive.openBox<Password>('passwords');
+    await Hive.openBox<Rate>('rates');
+    await Hive.openBox<Security>('securities');
+    await Hive.openBox<Setting>('settings');
+    await Hive.openBox<Transaction>('transactions');
+    await Hive.openBox<Wallet>('wallets');
+    await Hive.openBox<Vin>('vins');
+    await Hive.openBox<Vout>('vouts');
   }
 
   void setSources() {
     accounts.setSource(HiveSource('accounts'));
-    wallets.setSource(HiveSource('wallets'));
     addresses.setSource(HiveSource('addresses'));
-    blocks.setSource(HiveSource('blocks'));
-    histories.setSource(HiveSource('histories'));
-    rates.setSource(HiveSource('rates'));
     balances.setSource(HiveSource('balances'));
+    blocks.setSource(HiveSource('blocks'));
     passwords.setSource(HiveSource('passwords'));
+    rates.setSource(HiveSource('rates'));
+    securities.setSource(HiveSource('securities'));
     settings.setSource(
         HiveSource('settings', defaults: SettingReservoir.defaultSettings));
+    transactions.setSource(HiveSource('transactions'));
+    wallets.setSource(HiveSource('wallets'));
+    vins.setSource(HiveSource('vins'));
+    vouts.setSource(HiveSource('vouts'));
   }
 
   Future destroy() async {

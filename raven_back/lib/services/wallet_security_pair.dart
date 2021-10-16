@@ -13,9 +13,10 @@ class WalletSecurityPair with EquatableMixin {
   List<Object?> get props => [wallet, security];
 }
 
-Set<WalletSecurityPair> securityPairsFromHistoryChanges(List<Change> changes) {
+Set<WalletSecurityPair> securityPairsFromVoutChanges(List<Change> changes) {
   return changes.fold({}, (set, change) {
-    History history = change.data;
-    return set..add(WalletSecurityPair(history.wallet!, history.security));
+    Vout vout = change.data;
+    return set
+      ..add(WalletSecurityPair(vout.transaction!.wallet!, vout.security));
   });
 }

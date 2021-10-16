@@ -19,9 +19,21 @@ extension AccountHasManyAddresses on Account {
       wallets.map((wallet) => wallet.addresses).expand((i) => i).toList();
 }
 
-extension AccountHasManyHistories on Account {
-  List<History> get histories =>
-      addresses.map((address) => address.histories).expand((i) => i).toList();
+extension AccountHasManyTransactions on Account {
+  List<Transaction> get transactions => addresses
+      .map((address) => address.transactions)
+      .expand((i) => i)
+      .toList();
+}
+
+extension AccountHasManyVouts on Account {
+  List<Vout> get vouts =>
+      transactions.map((tx) => tx.vouts).expand((i) => i).toList();
+}
+
+extension AccountHasManyVins on Account {
+  List<Vin> get vins =>
+      transactions.map((tx) => tx.vins).expand((i) => i).toList();
 }
 
 extension AccountHasManyBalances on Account {
@@ -30,8 +42,8 @@ extension AccountHasManyBalances on Account {
 }
 
 extension AccountHasManyUnspents on Account {
-  List<History> get unspents =>
-      HistoryReservoir.whereUnspent(given: histories, security: RVN).toList();
+  List<Vout> get unspents =>
+      VoutReservoir.whereUnspent(given: vouts, security: RVN).toList();
 }
 
 // Joins on Wallet
@@ -52,14 +64,26 @@ extension WalletHasManyBalances on Wallet {
   List<Balance> get balances => globals.balances.byWallet.getAll(walletId);
 }
 
-extension WalletHasManyHistories on Wallet {
-  List<History> get histories =>
-      addresses.map((address) => address.histories).expand((i) => i).toList();
+extension WalletHasManyTransactions on Wallet {
+  List<Transaction> get transactions => addresses
+      .map((address) => address.transactions)
+      .expand((i) => i)
+      .toList();
+}
+
+extension WalletHasManyVouts on Wallet {
+  List<Vout> get vouts =>
+      transactions.map((tx) => tx.vouts).expand((i) => i).toList();
+}
+
+extension WalletHasManyVins on Wallet {
+  List<Vin> get vins =>
+      transactions.map((tx) => tx.vins).expand((i) => i).toList();
 }
 
 extension WalletHasManyUnspents on Wallet {
-  List<History> get unspents =>
-      HistoryReservoir.whereUnspent(given: histories, security: RVN).toList();
+  List<Vout> get unspents =>
+      VoutReservoir.whereUnspent(given: vouts, security: RVN).toList();
 }
 
 // Joins on Address
@@ -72,9 +96,19 @@ extension AddressBelongsToAccount on Address {
   Account? get account => wallet?.account;
 }
 
-extension AddressHasManyHistories on Address {
-  List<History> get histories =>
-      globals.histories.byScripthash.getAll(scripthash);
+extension AddressHasManyTransactions on Address {
+  List<Transaction> get transactions =>
+      globals.transactions.byScripthash.getAll(scripthash);
+}
+
+extension AddressHasManyVouts on Address {
+  List<Vout> get vouts =>
+      transactions.map((tx) => tx.vouts).expand((i) => i).toList();
+}
+
+extension AddressHasManyVins on Address {
+  List<Vin> get vins =>
+      transactions.map((tx) => tx.vins).expand((i) => i).toList();
 }
 
 // Joins on Balance
@@ -87,16 +121,48 @@ extension BalanceBelongsToAccount on Balance {
   Account? get account => wallet?.account;
 }
 
-// Joins on History
+// Joins on Transaction
 
-extension HistoryBelongsToAddress on History {
+extension TransactionBelongsToAddress on Transaction {
   Address? get address => globals.addresses.primaryIndex.getOne(scripthash);
 }
 
-extension HistoryBelongsToWallet on History {
+extension TransactionBelongsToWallet on Transaction {
   Wallet? get wallet => address?.wallet;
 }
 
-extension HistoryBelongsToAccount on History {
+extension TransactionBelongsToAccount on Transaction {
   Account? get account => wallet?.account;
+}
+
+extension TransactionHasManyVins on Transaction {
+  List<Vin> get vins => globals.vins.byTransaction.getAll(txId);
+}
+
+extension TransactionHasManyVouts on Transaction {
+  List<Vout> get vouts => globals.vouts.byTransaction.getAll(txId);
+}
+
+// Joins on Vin (input to new transcation, points to 1 pre-existing vout)
+
+extension VinBelongsToTransaction on Vin {
+  Transaction? get transaction =>
+      globals.transactions.primaryIndex.getOne(txId);
+}
+
+extension VinBelongsToVouts on Vin {
+  Vout? get vouts =>
+      globals.vouts.primaryIndex.getOne(Vout.getVoutId(voutTxId, voutPosition));
+}
+
+// Joins on Vout (adds to my value, consumed in whole)
+
+extension VoutBelongsToTransaction on Vout {
+  Transaction? get transaction =>
+      globals.transactions.primaryIndex.getOne(txId);
+}
+
+extension VoutBelongsToVin on Vout {
+  Vin? get vin =>
+      globals.vins.primaryIndex.getOne(Vout.getVoutId(txId, position));
 }
