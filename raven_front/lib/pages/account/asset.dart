@@ -18,7 +18,7 @@ class Asset extends StatefulWidget {
 
 class _AssetState extends State<Asset> {
   Map<String, dynamic> data = {};
-  late List<History> currentTxs;
+  late List<Transaction> currentTxs;
   late List<Balance> currentHolds;
   bool showUSD = false;
 

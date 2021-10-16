@@ -19,7 +19,7 @@ class RavenMobileApp extends StatelessWidget {
           '/home': (context) => Home(),
           '/asset': (context) => Asset(),
           '/transactions': (context) => RavenTransactions(),
-          '/transaction': (context) => Transaction(),
+          '/transaction': (context) => TransactionPage(),
           '/receive': (context) => Receive(),
           '/send': (context) => Send(),
           '/send/scan_qr': (context) => SendScanQR(),

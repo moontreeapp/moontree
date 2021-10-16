@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:raven/utils/transform.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
@@ -196,11 +197,11 @@ class _WalletViewState extends State<WalletView> {
                             style: Theme.of(context).annotate),
                         Text(
                             'Balance: ' +
-                                RavenText.satsToAmount(histories.byScripthash
+                                RavenText.satsToAmount(transactions.byScripthash
                                         .getAll(walletAddress.scripthash)
-                                        .map((History history) => history.value)
+                                        .map((Transaction tx) => tx.value)
                                         .toList()
-                                        .sumInt() as int)
+                                        .sumInt())
                                     .toString(),
                             style: Theme.of(context).textTheme.caption),
                       ],
@@ -214,9 +215,9 @@ class _WalletViewState extends State<WalletView> {
                         style: Theme.of(context).textTheme.caption),
                     Text(
                         // I thoguht this is what slows down loading the page, but I now think it's the qr code... //takes a few seconds, lets just get them one at a time in onTap
-                        RavenText.satsToAmount(histories.byScripthash
+                        RavenText.satsToAmount(transactions.byScripthash
                                 .getAll(walletAddress.scripthash)
-                                .map((History history) => history.value)
+                                .map((Transaction history) => history.value)
                                 .toList()
                                 .sumInt() as int)
                             .toString(),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:raven/services/transaction/fee.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:ravencoin/ravencoin.dart';
+import 'package:ravencoin/ravencoin.dart' as ravencoin;
 import 'package:raven/raven.dart';
 import 'package:raven/services/transaction.dart';
 import 'package:raven_mobile/components/buttons.dart';
@@ -385,13 +385,13 @@ class _SendState extends State<Send> {
     var tuple;
     if (useWallet) {
       tuple = (sendAll || double.parse(visibleAmount) == holding)
-          ? services.transaction.buildTransactionSendAll(
+          ? services.transact.buildTransactionSendAll(
               sendAddress.text,
               SendEstimate(sendAmountAsSats),
               wallet: Current.wallet(data['walletId']),
               goal: feeGoal,
             )
-          : services.transaction.buildTransaction(
+          : services.transact.buildTransaction(
               sendAddress.text,
               SendEstimate(sendAmountAsSats),
               wallet: Current.wallet(data['walletId']),
@@ -399,13 +399,13 @@ class _SendState extends State<Send> {
             );
     } else {
       tuple = (sendAll || double.parse(visibleAmount) == holding)
-          ? services.transaction.buildTransactionSendAll(
+          ? services.transact.buildTransactionSendAll(
               sendAddress.text,
               SendEstimate(sendAmountAsSats),
               account: Current.account,
               goal: feeGoal,
             )
-          : services.transaction.buildTransaction(
+          : services.transact.buildTransaction(
               sendAddress.text,
               SendEstimate(sendAmountAsSats),
               account: Current.account,
@@ -522,7 +522,7 @@ class _SendState extends State<Send> {
       style: RavenButtonStyle.curvedSides);
 
   Future confirmMessage({
-    required Transaction tx,
+    required ravencoin.Transaction tx,
     required SendEstimate estimate,
   }) =>
       showDialog(
@@ -592,7 +592,7 @@ class _SendState extends State<Send> {
                         )
                   ]));
 
-  Future attemptSend(Transaction tx) async {
+  Future attemptSend(ravencoin.Transaction tx) async {
     var client = services.client.mostRecentRavenClient;
     if (client == null) {
       // replace with snackbar or something

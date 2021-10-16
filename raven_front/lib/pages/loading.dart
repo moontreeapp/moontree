@@ -48,7 +48,10 @@ class _LoadingState extends State<Loading> {
     print('wallets: ${wallets.data}');
     print('passwords: ${passwords.data}');
     print('addresses: ${addresses.data}');
-    print('histories: ${histories.data}');
+    print('transactions: ${transactions.data}');
+    print('vins: ${vins.data}');
+    print('vouts: ${vouts.data}');
+    print('securities: ${securities.data}');
     print('balances: ${balances.data}');
     print('rates: ${rates.data}');
     print('settings: ${settings.data}');

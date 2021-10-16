@@ -9,19 +9,19 @@ import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/text.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
-class Transaction extends StatefulWidget {
+class TransactionPage extends StatefulWidget {
   final dynamic data;
-  const Transaction({this.data}) : super();
+  const TransactionPage({this.data}) : super();
 
   @override
-  _TransactionState createState() => _TransactionState();
+  _TransactionPageState createState() => _TransactionPageState();
 }
 
-class _TransactionState extends State<Transaction> {
+class _TransactionPageState extends State<TransactionPage> {
   dynamic data = {};
   Address? address;
   List<StreamSubscription> listeners = [];
-  History? history;
+  Transaction? transaction;
 
   @override
   void initState() {
@@ -42,9 +42,9 @@ class _TransactionState extends State<Transaction> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    history = histories.primaryIndex.getOne(data['transaction']!.hash);
-    address = addresses.primaryIndex.getOne(history!.scripthash);
-    var metadata = history!.memo != null && history!.memo != '';
+    transaction = transactions.primaryIndex.getOne(data['transaction']!.hash);
+    address = addresses.primaryIndex.getOne(transaction!.scripthash);
+    var metadata = transaction!.memo != null && transaction!.memo != '';
     return DefaultTabController(
         length: metadata ? 2 : 1,
         child: Scaffold(
@@ -55,10 +55,10 @@ class _TransactionState extends State<Transaction> {
             bottomNavigationBar: RavenButton.bottomNav(context)));
   }
 
-  int? getBlocksBetweenHelper({History? transaction, Block? current}) {
-    transaction = transaction ?? history!;
+  int? getBlocksBetweenHelper({Transaction? tx, Block? current}) {
+    tx = tx ?? transaction!;
     current = current ?? blocks.latest; //Block(height: 0);
-    return current != null ? current.height - transaction.height : null;
+    return current != null ? current.height - tx!.height : null;
   }
 
   String getDateBetweenHelper() =>
@@ -99,9 +99,10 @@ class _TransactionState extends State<Transaction> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height: 15.0),
-                    RavenIcon.assetAvatar(history!.security.symbol),
+                    // indicates transaction should be a vout...
+                    RavenIcon.assetAvatar(transaction!.security.symbol),
                     SizedBox(height: 15.0),
-                    Text(history!.security.symbol,
+                    Text(transaction!.security.symbol,
                         style: Theme.of(context).textTheme.headline3),
                     SizedBox(height: 15.0),
                     Text('Received',
@@ -123,84 +124,88 @@ class _TransactionState extends State<Transaction> {
             Text(getConfirmationsBetweenHelper(),
                 style: TextStyle(color: Theme.of(context).disabledColor)),
           ]),
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
-              Widget>[
-            SizedBox(height: 15.0),
-            TextField(
-              readOnly: true,
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(),
-                  labelText: 'To',
-                  hintText: 'Address'),
-              controller:
-                  TextEditingController(text: address?.address ?? 'unkown'),
-            ),
-            SizedBox(height: 15.0),
-            TextField(
-              readOnly: true,
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(),
-                  labelText: 'Amount',
-                  hintText: 'Quantity'),
-              controller: TextEditingController(
-                  text: RavenText.securityAsReadable(history!.value,
-                      symbol: history!.security.symbol)),
-            ),
+          Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(height: 15.0),
+                TextField(
+                  readOnly: true,
+                  decoration: InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'To',
+                      hintText: 'Address'),
+                  controller:
+                      TextEditingController(text: address?.address ?? 'unkown'),
+                ),
+                SizedBox(height: 15.0),
+                TextField(
+                  readOnly: true,
+                  decoration: InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Amount',
+                      hintText: 'Quantity'),
+                  controller: TextEditingController(
+                      text: RavenText.securityAsReadable(transaction!.value,
+                          symbol: transaction!.security.symbol)),
+                ),
 
-            /// see fee and other details on cryptoscope
-            //Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            //  Text('fee',
-            //      style: TextStyle(color: Theme.of(context).disabledColor)),
-            //  Text('0.01397191 RVN',
-            //      style: TextStyle(color: Theme.of(context).disabledColor)),
-            //]),
+                /// see fee and other details on cryptoscope
+                //Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                //  Text('fee',
+                //      style: TextStyle(color: Theme.of(context).disabledColor)),
+                //  Text('0.01397191 RVN',
+                //      style: TextStyle(color: Theme.of(context).disabledColor)),
+                //]),
 
-            /// hide note if none was saved
-            ...(history!.note != ''
-                ? [
-                    SizedBox(height: 15.0),
-                    TextField(
-                        readOnly: true,
-                        controller: TextEditingController(text: history!.note),
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        decoration: InputDecoration(
-                            border: UnderlineInputBorder(),
-                            labelText: 'Note',
-                            hintText: 'Note to Self')),
-                  ]
-                : []),
+                /// hide note if none was saved
+                ...(transaction!.note != ''
+                    ? [
+                        SizedBox(height: 15.0),
+                        TextField(
+                            readOnly: true,
+                            controller:
+                                TextEditingController(text: transaction!.note),
+                            keyboardType: TextInputType.multiline,
+                            maxLines: null,
+                            decoration: InputDecoration(
+                                border: UnderlineInputBorder(),
+                                labelText: 'Note',
+                                hintText: 'Note to Self')),
+                      ]
+                    : []),
 
-            /// allow user to copy the ipfs hash here, see results on tab
-            ...(metadata
-                ? [
-                    SizedBox(height: 15.0),
-                    TextField(
-                        readOnly: true,
-                        controller: TextEditingController(text: history!.memo),
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        decoration: InputDecoration(
-                            border: UnderlineInputBorder(),
-                            labelText: 'Memo',
-                            hintText: 'IPFS hash')),
-                  ]
-                : []),
-            SizedBox(height: 15.0),
-            InkWell(
-                child: Text('id: ${history!.txId}',
-                    style: TextStyle(color: Theme.of(context).primaryColor)),
-                onTap: () => launch(
-                    'https://rvnt.cryptoscope.io/tx/?txid=${history!.txId}')),
-            SizedBox(height: 15.0),
-            Text(address != null ? 'wallet: ' + address!.walletId : '',
-                style: Theme.of(context).textTheme.caption),
-            Text(
-                address != null
-                    ? 'account: ' + address!.wallet!.account!.name
-                    : '',
-                style: Theme.of(context).textTheme.caption),
-          ])
+                /// allow user to copy the ipfs hash here, see results on tab
+                ...(metadata
+                    ? [
+                        SizedBox(height: 15.0),
+                        TextField(
+                            readOnly: true,
+                            controller:
+                                TextEditingController(text: transaction!.memo),
+                            keyboardType: TextInputType.multiline,
+                            maxLines: null,
+                            decoration: InputDecoration(
+                                border: UnderlineInputBorder(),
+                                labelText: 'Memo',
+                                hintText: 'IPFS hash')),
+                      ]
+                    : []),
+                SizedBox(height: 15.0),
+                InkWell(
+                    child: Text('id: ${transaction!.txId}',
+                        style:
+                            TextStyle(color: Theme.of(context).primaryColor)),
+                    onTap: () => launch(
+                        'https://rvnt.cryptoscope.io/tx/?txid=${transaction!.txId}')),
+                SizedBox(height: 15.0),
+                Text(address != null ? 'wallet: ' + address!.walletId : '',
+                    style: Theme.of(context).textTheme.caption),
+                Text(
+                    address != null
+                        ? 'account: ' + address!.wallet!.account!.name
+                        : '',
+                    style: Theme.of(context).textTheme.caption),
+              ])
         ]),
         ...(metadata ? [Text('None')] : [])
       ]);

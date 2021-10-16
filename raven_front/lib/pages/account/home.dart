@@ -36,10 +36,10 @@ class _HomeState extends State<Home> {
     listeners.add(balances.changes.listen((changes) {
       setState(() {});
     }));
-    listeners.add(histories.changes.listen((changes) {
+    listeners.add(transactions.changes.listen((changes) {
       if ([
         for (var change in changes)
-          if ((change.data as History).address?.wallet?.accountId ==
+          if ((change.data as Transaction).address?.wallet?.accountId ==
               Current.account.accountId)
             1
       ].contains(1)) setState(() {});

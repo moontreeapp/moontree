@@ -16,7 +16,7 @@ class RavenTransactions extends StatefulWidget {
 class _RavenTransactionsState extends State<RavenTransactions> {
   Map<String, dynamic> data = {};
   bool showUSD = false;
-  late List<History> currentTxs;
+  late List<Transaction> currentTxs;
   late List<Balance> currentHolds;
   late Balance currentBalRVN;
 

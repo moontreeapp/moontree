@@ -88,7 +88,7 @@ class _SettingsState extends State<Settings> {
                   title: 'Print Histories',
                   leading: Icon(Icons.info_outline_rounded),
                   onPressed: (BuildContext context) {
-                    for (var item in histories.data) {
+                    for (var item in transactions.data) {
                       print(item);
                     }
                   }),
@@ -107,12 +107,12 @@ class _SettingsState extends State<Settings> {
                     print(addresses.byAddress
                         .getOne('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm')!
                         .addressId);
-                    print(histories.byScripthash.getAll(addresses.byAddress
+                    print(transactions.byScripthash.getAll(addresses.byAddress
                         .getOne('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm')!
                         .addressId));
-                    print(histories.byScripthash.getAll(
+                    print(transactions.byScripthash.getAll(
                         '204d127aea0dfa26a53eeb9fa89220aee54440f5dcb4f015d3b57861d3d1d7ca'));
-                    print(histories.byAddress
+                    print(transactions.byAddress
                         .getAll('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm'));
                   }),
               //SettingsTile(
