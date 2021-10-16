@@ -18,6 +18,18 @@ class Security with EquatableMixin {
   @HiveField(1)
   final SecurityType securityType;
 
+  //// perhaps metadata is a different reservoir -
+  //// some security types don't have meta data like crypto and fiat...
+  /// asset meta data
+  //late final int satsInCirculation;
+  //late final int divisions; // precision?
+  //late final int reissuable;
+  //late final int hasIpfs; // what is it? the memo in the source vout?
+  //late final TxSource source;
+  ////late final String txHash; // where it originated?
+  ////late final int txPos; // the vout it originated?
+  ////late final int height; // the block it originated?
+
   const Security({
     required this.symbol,
     required this.securityType,

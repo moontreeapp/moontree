@@ -38,7 +38,7 @@ class SendEstimate {
   void setAmount(int amount_) => amount = amount_;
 }
 
-class TransactionService {
+class MakeTransactionService {
   /// gets inputs, calculates fee, returns change
   //
   // EXAMPLE of recursive function

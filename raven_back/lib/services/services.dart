@@ -13,9 +13,9 @@ class services {
   static AddressService addresses = AddressService();
   static BalanceService balances = BalanceService();
   static ClientService client = ClientService();
-  static VoutService histories = VoutService();
+  static TransactionService transactions = TransactionService();
   static RateService rates = RateService();
   static WalletService wallets = WalletService();
   static PasswordService passwords = PasswordService();
-  static TransactionService transaction = TransactionService();
+  static MakeTransactionService transact = MakeTransactionService();
 }

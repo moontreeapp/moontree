@@ -1,4 +1,5 @@
 import 'package:raven/security/cipher_base.dart';
+import 'package:raven/utils/transform.dart';
 
 import 'reservoirs/reservoirs.dart';
 import 'records/records.dart';
@@ -141,6 +142,21 @@ extension TransactionHasManyVins on Transaction {
 
 extension TransactionHasManyVouts on Transaction {
   List<Vout> get vouts => globals.vouts.byTransaction.getAll(txId);
+}
+
+extension TransactionHasManyMemos on Transaction {
+  List<String> get memos => globals.vouts.byTransaction
+      .getAll(txId)
+      .map((vout) => vout.memo)
+      .toList();
+}
+
+extension TransactionHasOneValue on Transaction {
+  int get value => globals.vouts.byTransaction
+      .getAll(txId)
+      .map((vout) => vout.value)
+      .toList()
+      .sumInt();
 }
 
 // Joins on Vin (input to new transcation, points to 1 pre-existing vout)

@@ -25,11 +25,15 @@ class Vout with EquatableMixin {
   @HiveField(3)
   Security security;
 
+  @HiveField(4)
+  String memo;
+
   Vout({
     required this.txId,
     required this.value,
     required this.position,
     this.security = RVN,
+    this.memo = '',
   });
 
   bool get confirmed => position > -1;
@@ -40,7 +44,7 @@ class Vout with EquatableMixin {
   @override
   String toString() {
     return 'Vout('
-        'txId: $txId, value: $value, position: $position, security : $security)';
+        'txId: $txId, value: $value, position: $position, security: $security, memo: $memo)';
   }
 
   String get voutId => getVoutId(txId, position);

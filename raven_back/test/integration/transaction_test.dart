@@ -24,7 +24,7 @@ void main() async {
       print('settings: ${settings.data}');
       print('cipherRegistry: $cipherRegistry');
       /* errors */
-      var tuple = services.transaction.buildTransaction(
+      var tuple = services.transact.buildTransaction(
         accounts.primaryIndex.getByKeyStr('Primary').first,
         addresses.byWallet
             .getAll(wallets.byAccount
