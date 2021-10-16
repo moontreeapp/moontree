@@ -71,6 +71,16 @@ class TxScriptPubKey with EquatableMixin {
 
   @override
   List<Object?> get props => [asm, hex, type, reqSigs, addresses];
+
+  String get memo {
+    var x = asm.split(' ');
+    var i = 0;
+    for (var item in x) {
+      if (item == 'OP_RETURN') return x[i + 1];
+      i = i + 1;
+    }
+    return '';
+  }
 }
 
 /// vout: [{
@@ -93,6 +103,8 @@ class TxVout with EquatableMixin {
 
   @override
   List<Object?> get props => [value, n, valueSat, scriptPubKey];
+
+  String get memo => scriptPubKey.memo;
 }
 
 /// https://electrumx-ravencoin.readthedocs.io/en/latest/protocol-methods.html#blockchain-transaction-get
@@ -110,7 +122,7 @@ class TxVout with EquatableMixin {
 ///   confirmations: 925,
 ///   time: 1633390166,
 ///   blocktime: 1633390166}
-class Transaction with EquatableMixin {
+class Tx with EquatableMixin {
   final String txid;
   final String hash;
   final int version;
@@ -126,7 +138,7 @@ class Transaction with EquatableMixin {
   final int time;
   final int blocktime;
 
-  Transaction({
+  Tx({
     required this.txid,
     required this.hash,
     required this.version,
@@ -171,7 +183,7 @@ class Transaction with EquatableMixin {
 }
 
 extension GetTransactionMethod on RavenElectrumClient {
-  Future<Transaction> getTransaction(String txHash) async {
+  Future<Tx> getTransaction(String txHash) async {
     var response = Map<String, dynamic>.from(await request(
       'blockchain.transaction.get',
       [txHash, true],
@@ -206,7 +218,7 @@ extension GetTransactionMethod on RavenElectrumClient {
                     hex: vout['scriptPubKey']['hex'],
                     type: vout['scriptPubKey']['type']))
     ];
-    return Transaction(
+    return Tx(
       txid: response['txid'],
       hash: response['hash'],
       version: response['version'],
@@ -225,25 +237,25 @@ extension GetTransactionMethod on RavenElectrumClient {
   }
 
   /// returns histories in the same order as txHashes passed in
-  Future<List<Transaction>> getTransactions(List<String> txHashes) async {
-    var futures = <Future<Transaction>>[];
+  Future<List<Tx>> getTransactions(List<String> txHashes) async {
+    var futures = <Future<Tx>>[];
     peer.withBatch(() {
       for (var txHash in txHashes) {
         futures.add(getTransaction(txHash));
       }
     });
-    List<Transaction> results = await Future.wait<Transaction>(futures);
+    List<Tx> results = await Future.wait<Tx>(futures);
     return results;
   }
 }
 
 
 /*
-{ txid: cac2fb61ee5e6edfb9804f19cc4c22994f53931899c0feb423c843ebb93e08c8,
+{ txid: 0,
   ... merge with vin.txid, vout.txid
 }
 /// vout: {
-///   txid: cac2fb61ee5e6edfb9804f19cc4c22994f53931899c0feb423c843ebb93e08c8
+///   txid: 0
 ///   value: 5000.0,
 ///   n: 0,
 ///   scriptPubKey: {...},
@@ -256,7 +268,7 @@ extension GetTransactionMethod on RavenElectrumClient {
 }
 /// vin1: {
 ///   txid: 1,
-///   vout_txid: cac2fb61ee5e6edfb9804f19cc4c22994f53931899c0feb423c843ebb93e08c8,
+///   vout_txid: 0,
 ///   vout: 0,
 ///   scriptSig: {...},
 
