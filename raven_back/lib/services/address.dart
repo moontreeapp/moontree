@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:raven/raven.dart';
 
@@ -45,13 +47,33 @@ class AddressService {
           }
         }
         for (var vout in tx.vout) {
-          // todo we should capture securities here. and if it's one we've never
-          // seen, get it's metadata and save it in the securities reservoir
+          /// todo we should capture securities here. and if it's one we've never
+          /// seen, get it's metadata and save it in the securities reservoir
+          // var symbol = tx.vout.get symbol name ?? 'RVN';
+          // var security = securities.bySymbolSecurityType.getOne(symbol, SecurityType.RavenAsset);
+          // //if we have no record of it in securities...
+          // if (security == null) {
+          //   var meta = await client.getMeta(symbol);
+          //   if (meta != null) {
+          //     security = Security(
+          //       symbol: meta.symbol,
+          //       securityType: SecurityType.RavenAsset,
+          //       satsInCirculation: meta.satsInCirculation,
+          //       precision: meta.divisions,
+          //       reissuable: meta.reissuable == 1,
+          //       // must get the metadata (ipfs) from vout
+          //       metadata: (await client.getTransaction(meta.source.txHash)).vout[0].memo, // ??? thats probably not right. if it is a memo, you probably have to find which one, if not, you have to parse the transaction differently altogether.
+          //       txId: meta.source.txHash,
+          //       position: meta.source.txPos,
+          //     );
+          //     await securities.save(security);
+          //   }
+          // }
           newVouts.add(Vout(
               txId: tx.txid,
               value: vout.valueSat,
               position: vout.n,
-              //security:
+              //security: security,
               memo: vout.memo));
         }
         newTxs.add(Transaction(

@@ -34,3 +34,17 @@ extension BySecurityTypeMethodsForSecurity
   List<Security> getAll(SecurityType securityType) =>
       getByKeyStr(securityType.toString());
 }
+
+// bySymbolSecurityType
+// same as primary key but with two inputs
+
+class _SymbolSecurityTypeKey extends Key<Security> {
+  @override
+  String getKey(Security security) => security.securityId;
+}
+
+extension BySymbolSecurityTypeMethodsForSecurity
+    on Index<_SymbolSecurityTypeKey, Security> {
+  Security? getOne(String symbol, SecurityType securityType) =>
+      getByKeyStr(Security.securityIdKey(symbol, securityType)).firstOrNull;
+}
