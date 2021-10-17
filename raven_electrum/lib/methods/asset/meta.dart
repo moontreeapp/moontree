@@ -22,14 +22,16 @@ class TxSource with EquatableMixin {
 }
 
 class AssetMeta with EquatableMixin {
-  late final int satsInCirculation;
-  late final int divisions;
-  late final int reissuable;
-  late final int hasIpfs;
-  late final TxSource source;
+  final String symbol;
+  final int satsInCirculation;
+  final int divisions;
+  final int reissuable;
+  final int hasIpfs;
+  final TxSource source;
 
   AssetMeta(
-      {required this.satsInCirculation,
+      {required this.symbol,
+      required this.satsInCirculation,
       required this.divisions,
       required this.reissuable,
       required this.hasIpfs,
@@ -37,11 +39,12 @@ class AssetMeta with EquatableMixin {
 
   @override
   List<Object> get props =>
-      [satsInCirculation, divisions, reissuable, hasIpfs, source];
+      [symbol, satsInCirculation, divisions, reissuable, hasIpfs, source];
 
   @override
   String toString() {
     return '''AssetMeta( 
+        symbol: $symbol,
         satsInCirculation: $satsInCirculation,
         divisions: $divisions,
         reissuable: $reissuable,
@@ -64,6 +67,7 @@ extension GetAssetMetaMethod on RavenElectrumClient {
     response = response as Map;
     if (response.isNotEmpty) {
       return AssetMeta(
+        symbol: symbol,
         satsInCirculation: response['sats_in_circulation'],
         divisions: response['divisions'],
         reissuable: response['reissuable'],
@@ -74,5 +78,17 @@ extension GetAssetMetaMethod on RavenElectrumClient {
             height: response['source']['height']),
       );
     }
+  }
+
+  /// returns histories in the same order as txHashes passed in
+  Future<List<AssetMeta?>> getMetas(List<String> symbols) async {
+    var futures = <Future<AssetMeta?>>[];
+    peer.withBatch(() {
+      for (var symbol in symbols) {
+        futures.add(getMeta(symbol));
+      }
+    });
+    List<AssetMeta?> results = await Future.wait<AssetMeta?>(futures);
+    return results;
   }
 }
