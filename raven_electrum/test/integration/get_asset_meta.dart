@@ -12,5 +12,13 @@ void main() {
       var tx = await client.getTransaction(meta!.source.txHash);
       print(tx);
     });
+    test('get our asset meta and transaction (original owner) MAIN', () async {
+      var client = await RavenElectrumClient.connect('electrum1.rvn.rocks');
+      var meta = await client.getMeta('PORKYPUNX/AIRDROP2');
+      print(meta);
+      expect(meta != null, true);
+      var tx = await client.getTransaction(meta!.source.txHash); // ?? timesout
+      print(tx);
+    });
   });
 }

@@ -53,13 +53,38 @@ class TxVin with EquatableMixin {
 ///   asm: OP_RETURN aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9,
 ///   hex: 6a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9,
 ///   type: nulldata},
-
+/// scriptPubKey: {
+///   asm: OP_DUP OP_HASH160 663b0d46fde6e386f78f12d864a226c7b8050992 OP_EQUALVERIFY OP_CHECKSIG OP_RVN_ASSET 1f72766e7412504f524b5950554e582f41495244524f503200e1f5050000000075,
+///   hex: 76a914663b0d46fde6e386f78f12d864a226c7b805099288acc01f72766e7412504f524b5950554e582f41495244524f503200e1f5050000000075,
+///   reqSigs: 1,
+///   type: transfer_asset,
+///   asset: {
+///     name: PORKYPUNX\/AIRDROP2,
+///     amount: 1},
+///   addresses: [RJbjk5VTNxBER4iBq61upUWhHuEeYBHD1J]},
+/// scriptPubKey: {
+///   asm: OP_DUP OP_HASH160 f7addfa2061fb7752a81b7fbb1de409b62efcb63 OP_EQUALVERIFY OP_CHECKSIG OP_RVN_ASSET 4472766e7112504f524b5950554e582f41495244524f50320001b2c4000000000000011220c48f7efaf0a05d4145f17d95f02858aa7f5fc4e2100bbc6bb666ea07f6a50ce575,
+///   hex: 76a914f7addfa2061fb7752a81b7fbb1de409b62efcb6388acc04472766e7112504f524b5950554e582f41495244524f50320001b2c4000000000000011220c48f7efaf0a05d4145f17d95f02858aa7f5fc4e2100bbc6bb666ea07f6a50ce575,
+///   reqSigs: 1,
+///   type: new_asset,
+///   asset: {
+///     name: PORKYPUNX\/AIRDROP2,
+///     amount: 33,
+///     units: 0,
+///     reissuable: 0,
+///     ipfs_hash: QmbZwXWkqq2gPLX26EH5Gr7qeoZNjYFzYw8E6y5WXHBj2t},
+///   addresses: [RXroGqyy9yq7kEKztP4RZWgQrXzmUzMxAL]},
 class TxScriptPubKey with EquatableMixin {
   final String asm;
   final String hex;
   final String type;
   final int? reqSigs;
   final List? addresses;
+  final String? asset;
+  final int? amount;
+  final int? units;
+  final int? reissuable;
+  final String? ipfsHash;
 
   TxScriptPubKey({
     required this.asm,
@@ -67,10 +92,32 @@ class TxScriptPubKey with EquatableMixin {
     required this.type,
     this.reqSigs,
     this.addresses,
+    this.asset,
+    this.amount,
+    this.units,
+    this.reissuable,
+    this.ipfsHash,
   });
 
   @override
-  List<Object?> get props => [asm, hex, type, reqSigs, addresses];
+  List<Object?> get props => [
+        asm,
+        hex,
+        type,
+        reqSigs,
+        addresses,
+        asset,
+        amount,
+        units,
+        reissuable,
+        ipfsHash
+      ];
+
+  @override
+  String toString() => 'TxScriptPubKey('
+      'asm: $asm, hex: $hex, type: $type, reqSigs: $reqSigs, '
+      'addresses: $addresses, asset: $asset, amount: $amount, units: $units, '
+      'reissuable: $reissuable, ipfsHash: $ipfsHash)';
 
   String get memo {
     var x = asm.split(' ');
@@ -81,6 +128,15 @@ class TxScriptPubKey with EquatableMixin {
     }
     return '';
   }
+
+  Map<String, dynamic> get assetData => {
+        'type': type,
+        'asset': asset,
+        'amount': amount,
+        'units': units,
+        'reissuable': reissuable,
+        'ipfsHash': ipfsHash,
+      };
 }
 
 /// vout: [{
