@@ -1,7 +1,10 @@
+/// perhaps this page should show the details of a transaction not the details of Vout or TransactionRecord...
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:date_format/date_format.dart';
+import 'package:raven/services/transaction.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/buttons.dart';
@@ -22,6 +25,7 @@ class _TransactionPageState extends State<TransactionPage> {
   Address? address;
   List<StreamSubscription> listeners = [];
   Transaction? transaction;
+  TransactionRecord? transactionRecord;
 
   @override
   void initState() {
@@ -42,7 +46,9 @@ class _TransactionPageState extends State<TransactionPage> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    transaction = transactions.primaryIndex.getOne(data['transaction']!.hash);
+    //transaction =
+    //    transactions.primaryIndex.getOne(data['transactionRecord']!.txId);
+    transactionRecord = data['transactionRecord']!.txId;
     address = addresses.primaryIndex.getOne(transaction!.scripthash);
     var metadata = transaction!.memo != null && transaction!.memo != '';
     return DefaultTabController(
@@ -100,9 +106,9 @@ class _TransactionPageState extends State<TransactionPage> {
                   children: [
                     SizedBox(height: 15.0),
                     // indicates transaction should be a vout...
-                    RavenIcon.assetAvatar(transaction!.security.symbol),
+                    RavenIcon.assetAvatar(transactionRecord!.security.symbol),
                     SizedBox(height: 15.0),
-                    Text(transaction!.security.symbol,
+                    Text(transactionRecord!.security.symbol,
                         style: Theme.of(context).textTheme.headline3),
                     SizedBox(height: 15.0),
                     Text('Received',
@@ -146,7 +152,7 @@ class _TransactionPageState extends State<TransactionPage> {
                       hintText: 'Quantity'),
                   controller: TextEditingController(
                       text: RavenText.securityAsReadable(transaction!.value,
-                          symbol: transaction!.security.symbol)),
+                          symbol: transactionRecord!.security.symbol)),
                 ),
 
                 /// see fee and other details on cryptoscope

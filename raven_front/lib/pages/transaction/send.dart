@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:raven/services/transaction/fee.dart';
+import 'package:raven/services/transaction_maker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin/ravencoin.dart' as ravencoin;
 import 'package:raven/raven.dart';

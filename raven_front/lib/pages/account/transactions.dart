@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:raven/raven.dart';
+import 'package:raven/services/transaction.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/text.dart';
@@ -16,7 +17,7 @@ class RavenTransactions extends StatefulWidget {
 class _RavenTransactionsState extends State<RavenTransactions> {
   Map<String, dynamic> data = {};
   bool showUSD = false;
-  late List<Transaction> currentTxs;
+  late List<TransactionRecord> currentTxs;
   late List<Balance> currentHolds;
   late Balance currentBalRVN;
 
@@ -35,11 +36,11 @@ class _RavenTransactionsState extends State<RavenTransactions> {
   Widget build(BuildContext context) {
     data = populateData(context, data);
     if (data.containsKey('walletId') && data['walletId'] != null) {
-      currentTxs = Current.walletTransactions(data['walletId']);
+      currentTxs = Current.walletCompiledTransactions(data['walletId']);
       currentHolds = Current.walletHoldings(data['walletId']);
       currentBalRVN = Current.walletBalanceRVN(data['walletId']);
     } else {
-      currentTxs = Current.transactions;
+      currentTxs = Current.compiledTransactions;
       currentHolds = Current.holdings;
       currentBalRVN = Current.balanceRVN;
     }
@@ -85,31 +86,32 @@ class _RavenTransactionsState extends State<RavenTransactions> {
   Container _transactionsView() => Container(
       alignment: Alignment.center,
       child: ListView(children: <Widget>[
-        for (var transaction in currentTxs) ...[
-          if (transaction.security.symbol == 'RVN')
+        for (var transactionRecord in currentTxs) ...[
+          if (transactionRecord.security.symbol == 'RVN')
             ListTile(
                 onTap: () => Navigator.pushNamed(context, '/transaction',
-                    arguments: {'transaction': transaction}),
+                    arguments: {'transactionRecord': transactionRecord}),
                 onLongPress: () => _toggleUSD(),
                 title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(transaction.security.symbol,
+                      Text(transactionRecord.security.symbol,
                           style: Theme.of(context).textTheme.bodyText2),
-                      (transaction.value > 0 // == 'in'
+                      (transactionRecord.value > 0 // == 'in'
                           ? RavenIcon.income(context)
                           : RavenIcon.out(context)),
                     ]),
-                trailing: (transaction.value > 0 // == 'in'
+                trailing: (transactionRecord.value > 0 // == 'in'
                     ? Text(
-                        RavenText.securityAsReadable(transaction.value,
+                        RavenText.securityAsReadable(transactionRecord.value,
                             symbol: 'RVN', asUSD: showUSD),
                         style: TextStyle(color: Theme.of(context).good))
                     : Text(
-                        RavenText.securityAsReadable(transaction.value,
+                        RavenText.securityAsReadable(transactionRecord.value,
                             symbol: 'RVN', asUSD: showUSD),
                         style: TextStyle(color: Theme.of(context).bad))),
-                leading: RavenIcon.assetAvatar(transaction.security.symbol))
+                leading:
+                    RavenIcon.assetAvatar(transactionRecord.security.symbol))
         ]
       ]));
 

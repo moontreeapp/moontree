@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:raven/raven.dart';
+import 'package:raven/services/transaction.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/text.dart';
@@ -18,7 +19,7 @@ class Asset extends StatefulWidget {
 
 class _AssetState extends State<Asset> {
   Map<String, dynamic> data = {};
-  late List<Transaction> currentTxs;
+  late List<TransactionRecord> currentTxs;
   late List<Balance> currentHolds;
   bool showUSD = false;
 
@@ -37,8 +38,8 @@ class _AssetState extends State<Asset> {
   Widget build(BuildContext context) {
     data = populateData(context, data);
     currentTxs = data.containsKey('walletId') && data['walletId'] != null
-        ? Current.walletTransactions(data['walletId'])
-        : Current.transactions;
+        ? Current.walletCompiledTransactions(data['walletId'])
+        : Current.compiledTransactions;
     currentHolds = data.containsKey('walletId') && data['walletId'] != null
         ? Current.walletHoldings(data['walletId'])
         : Current.holdings;

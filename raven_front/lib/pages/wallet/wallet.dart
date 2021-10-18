@@ -308,7 +308,8 @@ class _WalletViewState extends State<WalletView> {
   }
 
   ListView transactionsView() => ListView(children: <Widget>[
-        for (var transaction in Current.walletTransactions(wallet.walletId))
+        for (var transaction
+            in Current.walletCompiledTransactions(wallet.walletId))
           ListTile(
               onTap: () => Navigator.pushNamed(context, '/transaction',
                   arguments: {'transaction': transaction}),
