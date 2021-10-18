@@ -20,19 +20,22 @@ class VinAdapter extends TypeAdapter<Vin> {
       txId: fields[0] as String,
       voutTxId: fields[1] as String,
       voutPosition: fields[2] as int,
+      isCoinbase: fields[3] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Vin obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.txId)
       ..writeByte(1)
       ..write(obj.voutTxId)
       ..writeByte(2)
-      ..write(obj.voutPosition);
+      ..write(obj.voutPosition)
+      ..writeByte(3)
+      ..write(obj.isCoinbase);
   }
 
   @override

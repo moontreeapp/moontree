@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:date_format/date_format.dart';
 
 import '_type_id.dart';
 
@@ -19,6 +20,9 @@ class Transaction with EquatableMixin {
   @HiveField(3)
   bool confirmed;
 
+  @HiveField(4)
+  int time;
+
   /// other possible tx elements from transaction.get
   //final String hash;
   //final int version;
@@ -36,10 +40,10 @@ class Transaction with EquatableMixin {
   //// 1 if another block has passed.
 
   // not from transaction.get
-  @HiveField(4)
+  @HiveField(5)
   String? memo;
 
-  @HiveField(5)
+  @HiveField(6)
   String note;
 
   Transaction(
@@ -47,6 +51,7 @@ class Transaction with EquatableMixin {
       required this.txId,
       required this.height,
       required this.confirmed,
+      required this.time,
       this.memo,
       this.note = ''});
 
@@ -55,6 +60,7 @@ class Transaction with EquatableMixin {
         addressId,
         height,
         confirmed,
+        time,
         txId,
         memo ?? 'null',
         note,
@@ -64,8 +70,13 @@ class Transaction with EquatableMixin {
   String toString() {
     return 'Transaction('
         'addressId: $addressId, txId: $txId, height: $height,'
-        'confirmed: $confirmed, memo: $memo, note: $note)';
+        'confirmed: $confirmed, time: $time, memo: $memo, note: $note)';
   }
 
   String get scripthash => addressId;
+
+  // could belong on frontend...
+  DateTime get datetime => DateTime.fromMillisecondsSinceEpoch(time * 1000);
+  String get formattedDatetime =>
+      formatDate(datetime, [MM, ' ', d, ', ', yyyy]);
 }

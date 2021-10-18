@@ -166,9 +166,17 @@ extension VinBelongsToTransaction on Vin {
       globals.transactions.primaryIndex.getOne(txId);
 }
 
-extension VinBelongsToVouts on Vin {
-  Vout? get vouts =>
+extension VinHasOneVout on Vin {
+  Vout? get vout =>
       globals.vouts.primaryIndex.getOne(Vout.getVoutId(voutTxId, voutPosition));
+}
+
+extension VinHasOneSecurity on Vin {
+  Security? get security => vout?.security;
+}
+
+extension VinHasOneValue on Vin {
+  int? get value => vout?.value;
 }
 
 // Joins on Vout (adds to my value, consumed in whole)
@@ -178,7 +186,11 @@ extension VoutBelongsToTransaction on Vout {
       globals.transactions.primaryIndex.getOne(txId);
 }
 
-extension VoutBelongsToVin on Vout {
+extension VoutMayHaveOneVin on Vout {
   Vin? get vin =>
       globals.vins.primaryIndex.getOne(Vout.getVoutId(txId, position));
+}
+
+extension VoutHasOneSecurity on Vout {
+  Security? get security => globals.securities.primaryIndex.getOne(securityId);
 }

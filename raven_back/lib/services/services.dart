@@ -2,10 +2,10 @@ import 'account.dart';
 import 'address.dart';
 import 'balance.dart';
 import 'client.dart';
-import 'vout.dart';
+import 'transaction.dart';
 import 'password.dart';
 import 'rate.dart';
-import 'transaction.dart';
+import 'transaction_maker.dart';
 import 'wallet.dart';
 
 class services {

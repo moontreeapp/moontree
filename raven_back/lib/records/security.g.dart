@@ -19,17 +19,35 @@ class SecurityAdapter extends TypeAdapter<Security> {
     return Security(
       symbol: fields[0] as String,
       securityType: fields[1] as SecurityType,
+      satsInCirculation: fields[2] as int?,
+      precision: fields[3] as int?,
+      reissuable: fields[4] as bool?,
+      metadata: fields[5] as String?,
+      txId: fields[6] as String?,
+      position: fields[7] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Security obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.symbol)
       ..writeByte(1)
-      ..write(obj.securityType);
+      ..write(obj.securityType)
+      ..writeByte(2)
+      ..write(obj.satsInCirculation)
+      ..writeByte(3)
+      ..write(obj.precision)
+      ..writeByte(4)
+      ..write(obj.reissuable)
+      ..writeByte(5)
+      ..write(obj.metadata)
+      ..writeByte(6)
+      ..write(obj.txId)
+      ..writeByte(7)
+      ..write(obj.position);
   }
 
   @override

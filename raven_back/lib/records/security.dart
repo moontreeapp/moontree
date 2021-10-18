@@ -27,8 +27,8 @@ class Security with EquatableMixin {
   @HiveField(4)
   final bool? reissuable;
 
-  @HiveField(5) // what is it? the memo in the source vout?
-  final String? metadata; // extracted from source vout // usually ipfs or json
+  @HiveField(5)
+  final String? metadata;
 
   @HiveField(6)
   final String? txId;

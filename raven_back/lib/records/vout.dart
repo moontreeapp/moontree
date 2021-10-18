@@ -12,41 +12,77 @@ class Vout with EquatableMixin {
   String txId;
 
   @HiveField(1)
-  int value;
+  int value; // always RVN
 
   @HiveField(2)
   int position;
 
-  /// other values include
-  // final double value;
-  // final TxScriptPubKey scriptPubKey;
-
-  // should be securityId to a reservoir of securities and their meta data.
   @HiveField(3)
-  Security security;
+  String securityId;
 
   @HiveField(4)
   String memo;
+
+  /// other values include
+  // final double value;
+  // final TxScriptPubKey scriptPubKey; // has pertinate information
+
+  // transaction type 'pubkeyhash' 'transfer_asset' 'new_asset' 'nulldata' etc
+  @HiveField(5)
+  String type;
+
+  @HiveField(6) // non-multisig transactions
+  String address;
+
+  @HiveField(7)
+  String? asset; // if sending an asset, what is the name?
+
+  @HiveField(8)
+  int? amount; // amount of asset to send
+
+  @HiveField(9) // multisig
+  List<String>? additionalAddresses;
 
   Vout({
     required this.txId,
     required this.value,
     required this.position,
-    this.security = RVN,
+    required this.securityId,
+    required this.type,
+    required this.address,
+    this.additionalAddresses,
     this.memo = '',
+    this.asset,
+    this.amount,
   });
 
   bool get confirmed => position > -1;
 
   @override
-  List<Object> get props => [txId, value, position, security];
+  List<Object> get props => [
+        txId,
+        value,
+        position,
+        securityId,
+        type,
+        address,
+        memo,
+        asset ?? '',
+        amount ?? -1,
+        additionalAddresses ?? [],
+      ];
 
   @override
   String toString() {
     return 'Vout('
-        'txId: $txId, value: $value, position: $position, security: $security, memo: $memo)';
+        'txId: $txId, value: $value, position: $position, '
+        'securityId: $securityId, memo: $memo, type: $type, '
+        'address: $address, memo: $memo, asset: $asset, amount: $amount, '
+        'additionalAddress: $additionalAddresses)';
   }
 
   String get voutId => getVoutId(txId, position);
   static String getVoutId(txId, position) => '$txId:$position';
+
+  List<String> get addresses => [address, ...additionalAddresses ?? []];
 }

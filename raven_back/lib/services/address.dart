@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:raven/raven.dart';
+import 'package:tuple/tuple.dart';
 
 class AddressService {
   /// when an address status change: make our historic tx data match blockchain
@@ -53,19 +54,31 @@ class AddressService {
           }
         }
         for (var vout in tx.vout) {
+          if (vout.scriptPubKey.type == 'nulldata') continue;
           var vs = await handleAssetData(client, tx, vout);
           newVouts.add(Vout(
-              txId: tx.txid,
-              value: vs['value'],
-              position: vout.n,
-              security: vs['security'],
-              memo: vout.memo));
+            txId: tx.txid,
+            value: vs.item1,
+            position: vout.n,
+            securityId: vs.item2.securityId,
+            memo: vout.memo,
+            type: vout.scriptPubKey.type,
+            address: vout.scriptPubKey.addresses![0],
+            asset: vout.scriptPubKey.asset,
+            amount: vout.scriptPubKey.amount,
+            // multisig - must detect if multisig...
+            additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
+                ? vout.scriptPubKey.addresses!
+                    .sublist(1, vout.scriptPubKey.addresses!.length)
+                : null,
+          ));
         }
         newTxs.add(Transaction(
           addressId: addressId,
           txId: tx.txid,
           height: tx.height,
           confirmed: tx.confirmations > 0,
+          time: tx.time,
         ));
       }
       // must await?
@@ -85,7 +98,7 @@ class AddressService {
   /// we capture securities here. if it's one we've never seen,
   /// get it's metadata and save it in the securities reservoir.
   /// return value and security to be saved in vout.
-  Future<Map> handleAssetData(
+  Future<Tuple2<int, Security>> handleAssetData(
       RavenElectrumClient client, Tx tx, TxVout vout) async {
     var symbol = 'RVN';
     var value = vout.valueSat;
@@ -130,7 +143,6 @@ class AddressService {
       );
       await securities.save(security);
     }
-
-    return {'value': value, 'security': security};
+    return Tuple2(value, security);
   }
 }

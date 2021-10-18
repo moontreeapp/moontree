@@ -17,6 +17,9 @@ class TransactionReservoir extends Reservoir<_TxHashKey, Transaction> {
     byConfirmed = addIndexMultiple('confirmed', _ConfirmedKey());
   }
 
+  List<Transaction> get chronological =>
+      transactions.data.toList()..sort((a, b) => a.height.compareTo(b.height));
+
   /// remove logic ////////////////////////////////////////////////////////////
 
   void removeHistories(String scripthash) {

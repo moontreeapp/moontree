@@ -14,6 +14,8 @@ class Vin with EquatableMixin {
   @HiveField(0)
   String txId;
 
+  /// all pertinent values are on vouts. so vins point to vouts.
+
   @HiveField(1)
   String voutTxId;
 

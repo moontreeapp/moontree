@@ -12,7 +12,6 @@ final AccountReservoir accounts = AccountReservoir();
 final AddressReservoir addresses = AddressReservoir();
 final BlockReservoir blocks = BlockReservoir();
 final BalanceReservoir balances = BalanceReservoir();
-//final HistoryReservoir histories = HistoryReservoir();
 final PasswordReservoir passwords = PasswordReservoir();
 final ExchangeRateReservoir rates = ExchangeRateReservoir();
 final SecurityReservoir securities = SecurityReservoir();
