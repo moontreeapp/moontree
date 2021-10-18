@@ -79,7 +79,7 @@ class TxScriptPubKey with EquatableMixin {
   final String hex;
   final String type;
   final int? reqSigs;
-  final List? addresses;
+  final List<String>? addresses;
   final String? asset;
   final int? amount;
   final int? units;
