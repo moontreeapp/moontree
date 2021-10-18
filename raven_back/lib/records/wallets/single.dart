@@ -1,14 +1,15 @@
 import 'package:hive/hive.dart';
+import 'package:ravencoin/ravencoin.dart';
+
 import 'package:raven/raven.dart';
 import 'package:raven/records/cipher_update.dart';
 import 'package:raven/security/cipher_base.dart';
 import 'package:raven/security/encrypted_wif.dart';
 import 'package:raven/utils/seed_wallet.dart';
-import 'package:ravencoin/ravencoin.dart';
-import '../net.dart';
-import 'wallet.dart';
 
+import '../net.dart';
 import '../_type_id.dart';
+import 'wallet.dart';
 
 part 'single.g.dart';
 

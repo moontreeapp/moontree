@@ -1,9 +1,9 @@
 import 'package:raven/utils/hex.dart';
 import 'package:ravencoin/ravencoin.dart' show KPWallet, NetworkType, ECPair;
 
+import 'package:raven/raven.dart';
 import 'package:raven/security/cipher_base.dart';
 import 'package:raven/security/encrypted_wif.dart';
-import 'package:raven/raven.dart';
 
 class SingleWalletService {
   Address toAddress(SingleWallet wallet) {
