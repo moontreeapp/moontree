@@ -20,20 +20,25 @@ class Vin with EquatableMixin {
   @HiveField(2)
   int voutPosition;
 
+  @HiveField(3)
+  bool isCoinbase;
+
   /// other possible elements
-  // final String? coinbase;
-  // final int? sequence;
   // final TxScriptSig? scriptSig;
 
-  Vin({required this.txId, required this.voutTxId, required this.voutPosition});
-
+  Vin(
+      {required this.txId,
+      required this.voutTxId,
+      required this.voutPosition,
+      this.isCoinbase = false});
   @override
-  List<Object> get props => [txId, voutTxId, voutPosition];
+  List<Object> get props => [txId, voutTxId, voutPosition, isCoinbase];
 
   @override
   String toString() {
     return 'Vin('
-        'txId: $txId, voutTxId: $voutTxId, voutPosition: $voutPosition)';
+        'txId: $txId, voutTxId: $voutTxId, voutPosition: $voutPosition, '
+        'isCoinbase: $isCoinbase)';
   }
 
   /// I think the vinId could be the same as voutId, but we'll just make another
@@ -41,4 +46,10 @@ class Vin with EquatableMixin {
       sha256.convert(utf8.encode('$txId$voutTxId$voutPosition')).toString();
 
   String get voutId => Vout.getVoutId(voutTxId, voutPosition);
+
+  /// having a vin that is a coinbase is an edge case for us,
+  /// so in order to preserve simplicity we override the typical values as
+  /// coinbase values when necessary.
+  String? get coinbase => isCoinbase ? voutTxId : null;
+  int? get sequence => isCoinbase ? voutPosition : null;
 }

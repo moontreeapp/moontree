@@ -38,42 +38,27 @@ class AddressService {
       for (var tx in txs) {
         for (var vin in tx.vin) {
           if (vin.txid != null && vin.vout != null) {
-            // ignore coinbase ins for now (edge case)
             newVins.add(Vin(
               txId: tx.txid,
               voutTxId: vin.txid!,
               voutPosition: vin.vout!,
             ));
+          } else if (vin.coinbase != null && vin.sequence != null) {
+            newVins.add(Vin(
+              txId: tx.txid,
+              voutTxId: vin.coinbase!,
+              voutPosition: vin.sequence!,
+              isCoinbase: true,
+            ));
           }
         }
         for (var vout in tx.vout) {
-          /// todo we should capture securities here. and if it's one we've never
-          /// seen, get it's metadata and save it in the securities reservoir
-          // var symbol = tx.vout.get symbol name ?? 'RVN';
-          // var security = securities.bySymbolSecurityType.getOne(symbol, SecurityType.RavenAsset);
-          // //if we have no record of it in securities...
-          // if (security == null) {
-          //   var meta = await client.getMeta(symbol);
-          //   if (meta != null) {
-          //     security = Security(
-          //       symbol: meta.symbol,
-          //       securityType: SecurityType.RavenAsset,
-          //       satsInCirculation: meta.satsInCirculation,
-          //       precision: meta.divisions,
-          //       reissuable: meta.reissuable == 1,
-          //       // must get the metadata (ipfs) from vout
-          //       metadata: (await client.getTransaction(meta.source.txHash)).vout[0].memo, // ??? thats probably not right. if it is a memo, you probably have to find which one, if not, you have to parse the transaction differently altogether.
-          //       txId: meta.source.txHash,
-          //       position: meta.source.txPos,
-          //     );
-          //     await securities.save(security);
-          //   }
-          // }
+          var vs = await handleAssetData(client, tx, vout);
           newVouts.add(Vout(
               txId: tx.txid,
-              value: vout.valueSat,
+              value: vs['value'],
               position: vout.n,
-              //security: security,
+              security: vs['security'],
               memo: vout.memo));
         }
         newTxs.add(Transaction(
@@ -95,5 +80,57 @@ class AddressService {
     //  print(changedAddresses);
     //  print('');
     //}
+  }
+
+  /// we capture securities here. if it's one we've never seen,
+  /// get it's metadata and save it in the securities reservoir.
+  /// return value and security to be saved in vout.
+  Future<Map> handleAssetData(
+      RavenElectrumClient client, Tx tx, TxVout vout) async {
+    var symbol = 'RVN';
+    var value = vout.valueSat;
+    var security;
+    if (vout.scriptPubKey.type == 'transfer_asset') {
+      symbol = vout.scriptPubKey.asset!;
+      value = vout.scriptPubKey.amount!;
+      security = securities.bySymbolSecurityType
+          .getOne(symbol, SecurityType.RavenAsset);
+      //if we have no record of it in securities...
+      if (security == null) {
+        var meta = await client.getMeta(symbol);
+        if (meta != null) {
+          security = Security(
+            symbol: meta.symbol,
+            securityType: SecurityType.RavenAsset,
+            satsInCirculation: meta.satsInCirculation,
+            precision: meta.divisions,
+            reissuable: meta.reissuable == 1,
+            metadata: (await client.getTransaction(meta.source.txHash))
+                .vout[meta.source.txPos]
+                .scriptPubKey
+                .ipfsHash,
+            txId: meta.source.txHash,
+            position: meta.source.txPos,
+          );
+          await securities.save(security);
+        }
+      }
+    } else if (vout.scriptPubKey.type == 'new_asset') {
+      symbol = vout.scriptPubKey.asset!;
+      value = vout.scriptPubKey.amount!;
+      security = Security(
+        symbol: symbol,
+        securityType: SecurityType.RavenAsset,
+        satsInCirculation: value, //?? as sats?
+        precision: vout.scriptPubKey.units,
+        reissuable: vout.scriptPubKey.reissuable == 1,
+        metadata: vout.scriptPubKey.ipfsHash,
+        txId: tx.txid,
+        position: vout.n,
+      );
+      await securities.save(security);
+    }
+
+    return {'value': value, 'security': security};
   }
 }
