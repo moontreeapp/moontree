@@ -44,7 +44,10 @@ class TransactionService {
   /// only additional logic.
   ///
   /// todo: aggregate by address...
-  List<TransactionRecord> getTransactions({Account? account, Wallet? wallet}) {
+  List<TransactionRecord> getTransactionRecords({
+    Account? account,
+    Wallet? wallet,
+  }) {
     var givenAddresses = account != null
         ? account.addresses.map((address) => address.address).toList()
         : wallet!.addresses.map((address) => address.address).toList();
@@ -61,6 +64,8 @@ class TransactionService {
             height: tx.height,
             datetime: tx.formattedDatetime,
             amount: vout.amount ?? 0,
+            voutId: vout.voutId,
+            txId: tx.txId,
           ));
         }
       }
@@ -94,6 +99,9 @@ class TransactionRecord {
   String datetime;
   int amount;
   Security security;
+  String txId;
+  String? voutId;
+  String? vinId;
 
   TransactionRecord({
     required this.out,
@@ -103,6 +111,9 @@ class TransactionRecord {
     required this.security,
     required this.height,
     required this.datetime,
+    required this.txId,
     this.amount = 0,
+    this.vinId,
+    this.voutId,
   });
 }

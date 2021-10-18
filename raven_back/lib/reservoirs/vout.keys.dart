@@ -26,7 +26,7 @@ extension ByTransactionMethodsForVout on Index<_TransactionKey, Vout> {
 
 class _SecurityKey extends Key<Vout> {
   @override
-  String getKey(Vout history) => history.security.securityId;
+  String getKey(Vout vout) => vout.securityId;
 }
 
 extension BySecurityMethodsForVout on Index<_SecurityKey, Vout> {
@@ -39,10 +39,10 @@ extension BySecurityMethodsForVout on Index<_SecurityKey, Vout> {
     var zero = BalanceRaw(confirmed: 0, unconfirmed: 0);
     return unspents(security: security).fold(
         zero,
-        (sum, history) =>
+        (sum, vout) =>
             sum +
             BalanceRaw(
-                confirmed: (history.confirmed ? history.value : 0),
-                unconfirmed: (!history.confirmed ? history.value : 0)));
+                confirmed: (vout.confirmed ? vout.value : 0),
+                unconfirmed: (!vout.confirmed ? vout.value : 0)));
   }
 }
