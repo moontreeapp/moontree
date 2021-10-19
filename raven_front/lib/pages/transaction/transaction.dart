@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:date_format/date_format.dart';
+import 'package:raven/joins.dart';
 import 'package:raven/services/transaction.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:raven/raven.dart';
@@ -25,7 +26,6 @@ class _TransactionPageState extends State<TransactionPage> {
   Address? address;
   List<StreamSubscription> listeners = [];
   Transaction? transaction;
-  TransactionRecord? transactionRecord;
 
   @override
   void initState() {
@@ -46,11 +46,13 @@ class _TransactionPageState extends State<TransactionPage> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    //transaction =
-    //    transactions.primaryIndex.getOne(data['transactionRecord']!.txId);
-    transactionRecord = data['transactionRecord']!.txId;
+    transaction =
+        transactions.primaryIndex.getOne(data['transactionRecord']!.txId);
     address = addresses.primaryIndex.getOne(transaction!.scripthash);
     var metadata = transaction!.memo != null && transaction!.memo != '';
+    print('transaction: $transaction');
+    print('vins: ${transaction!.vins}');
+    print('vouts: ${transaction!.vouts}');
     return DefaultTabController(
         length: metadata ? 2 : 1,
         child: Scaffold(
@@ -64,20 +66,22 @@ class _TransactionPageState extends State<TransactionPage> {
   int? getBlocksBetweenHelper({Transaction? tx, Block? current}) {
     tx = tx ?? transaction!;
     current = current ?? blocks.latest; //Block(height: 0);
+    print(current);
+    print(tx.height);
+    print(blocks.data);
     return current != null ? current.height - tx.height : null;
   }
 
-  String getDateBetweenHelper() =>
-      'Date: ' +
-      (getBlocksBetweenHelper() != null
-          ? formatDate(
-              DateTime.now().subtract(Duration(
-                days: (getBlocksBetweenHelper()! / 1440).floor(),
-                hours:
-                    (((getBlocksBetweenHelper()! / 1440) % 1440) / 60).floor(),
-              )),
-              [MM, ' ', d, ', ', yyyy])
-          : 'unknown');
+  String getDateBetweenHelper() => 'Date: ' + transaction!.formattedDatetime;
+  //(getBlocksBetweenHelper() != null
+  //    ? formatDate(
+  //        DateTime.now().subtract(Duration(
+  //          days: (getBlocksBetweenHelper()! / 1440).floor(),
+  //          hours:
+  //              (((getBlocksBetweenHelper()! / 1440) % 1440) / 60).floor(),
+  //        )),
+  //        [MM, ' ', d, ', ', yyyy])
+  //    : 'unknown');
 
   String getConfirmationsBetweenHelper() =>
       'Confirmaitons: ' +
@@ -105,12 +109,14 @@ class _TransactionPageState extends State<TransactionPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height: 15.0),
-                    // indicates transaction should be a vout...
-                    RavenIcon.assetAvatar(transactionRecord!.security.symbol),
-                    SizedBox(height: 15.0),
-                    Text(transactionRecord!.security.symbol,
-                        style: Theme.of(context).textTheme.headline3),
-                    SizedBox(height: 15.0),
+
+                    // should be in list of Vins and Vouts, not at transaction level
+                    //RavenIcon.assetAvatar(transaction!.security.symbol),
+                    //SizedBox(height: 15.0),
+                    //Text(transaction!.security.symbol,
+                    //    style: Theme.of(context).textTheme.headline3),
+                    //SizedBox(height: 15.0),
+
                     Text('Received',
                         style: Theme.of(context).textTheme.headline5),
                   ])),
@@ -130,18 +136,79 @@ class _TransactionPageState extends State<TransactionPage> {
             Text(getConfirmationsBetweenHelper(),
                 style: TextStyle(color: Theme.of(context).disabledColor)),
           ]),
-          Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+              Widget>[
+            /// tx ---------------------------------------------------------
+            /// see fee and other details on cryptoscope
+            //Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            //  Text('fee',
+            //      style: TextStyle(color: Theme.of(context).disabledColor)),
+            //  Text('0.01397191 RVN',
+            //      style: TextStyle(color: Theme.of(context).disabledColor)),
+            //]),
+
+            /// hide note if none was saved
+            ...(transaction!.note != ''
+                ? [
+                    SizedBox(height: 15.0),
+                    TextField(
+                        readOnly: true,
+                        controller:
+                            TextEditingController(text: transaction!.note),
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        decoration: InputDecoration(
+                            border: UnderlineInputBorder(),
+                            labelText: 'Note',
+                            hintText: 'Note to Self')),
+                  ]
+                : []),
+
+            /// allow user to copy the ipfs hash here, see results on tab
+            ...(metadata
+                ? [
+                    SizedBox(height: 15.0),
+                    TextField(
+                        readOnly: true,
+                        controller:
+                            TextEditingController(text: transaction!.memo),
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        decoration: InputDecoration(
+                            border: UnderlineInputBorder(),
+                            labelText: 'Memo',
+                            hintText: 'IPFS hash')),
+                  ]
+                : []),
+            SizedBox(height: 15.0),
+            InkWell(
+                child: Text('id: ${transaction!.txId}',
+                    style: TextStyle(color: Theme.of(context).primaryColor)),
+                onTap: () => launch(
+                    'https://rvnt.cryptoscope.io/tx/?txid=${transaction!.txId}')),
+            SizedBox(height: 15.0),
+            Text(address != null ? 'wallet: ' + address!.walletId : '',
+                style: Theme.of(context).textTheme.caption),
+            Text(
+                address != null
+                    ? 'account: ' + address!.wallet!.account!.name
+                    : '',
+                style: Theme.of(context).textTheme.caption),
+
+            /// vin --------------------------------------------------------
+            SizedBox(height: 15.0),
+            Text('Transaction Inputs:'),
+            for (Vin vin in transaction!.vins) ...[
+              if (vin.vout != null) ...[
                 SizedBox(height: 15.0),
                 TextField(
                   readOnly: true,
                   decoration: InputDecoration(
                       border: UnderlineInputBorder(),
-                      labelText: 'To',
+                      labelText: 'From',
                       hintText: 'Address'),
-                  controller:
-                      TextEditingController(text: address?.address ?? 'unkown'),
+                  controller: TextEditingController(
+                      text: vin.vout?.toAddress ?? 'unkown'),
                 ),
                 SizedBox(height: 15.0),
                 TextField(
@@ -151,68 +218,60 @@ class _TransactionPageState extends State<TransactionPage> {
                       labelText: 'Amount',
                       hintText: 'Quantity'),
                   controller: TextEditingController(
-                      text: RavenText.securityAsReadable(transaction!.value,
-                          symbol: transactionRecord!.security.symbol)),
+                      text: RavenText.securityAsReadable(vin.vout?.value ?? -1,
+                          symbol: vin.vout?.security?.symbol ?? 'RVN')),
                 ),
+              ],
+            ],
 
-                /// see fee and other details on cryptoscope
-                //Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                //  Text('fee',
-                //      style: TextStyle(color: Theme.of(context).disabledColor)),
-                //  Text('0.01397191 RVN',
-                //      style: TextStyle(color: Theme.of(context).disabledColor)),
-                //]),
-
-                /// hide note if none was saved
-                ...(transaction!.note != ''
-                    ? [
-                        SizedBox(height: 15.0),
-                        TextField(
-                            readOnly: true,
-                            controller:
-                                TextEditingController(text: transaction!.note),
-                            keyboardType: TextInputType.multiline,
-                            maxLines: null,
-                            decoration: InputDecoration(
-                                border: UnderlineInputBorder(),
-                                labelText: 'Note',
-                                hintText: 'Note to Self')),
-                      ]
-                    : []),
-
-                /// allow user to copy the ipfs hash here, see results on tab
-                ...(metadata
-                    ? [
-                        SizedBox(height: 15.0),
-                        TextField(
-                            readOnly: true,
-                            controller:
-                                TextEditingController(text: transaction!.memo),
-                            keyboardType: TextInputType.multiline,
-                            maxLines: null,
-                            decoration: InputDecoration(
-                                border: UnderlineInputBorder(),
-                                labelText: 'Memo',
-                                hintText: 'IPFS hash')),
-                      ]
-                    : []),
-                SizedBox(height: 15.0),
-                InkWell(
-                    child: Text('id: ${transaction!.txId}',
-                        style:
-                            TextStyle(color: Theme.of(context).primaryColor)),
-                    onTap: () => launch(
-                        'https://rvnt.cryptoscope.io/tx/?txid=${transaction!.txId}')),
-                SizedBox(height: 15.0),
-                Text(address != null ? 'wallet: ' + address!.walletId : '',
-                    style: Theme.of(context).textTheme.caption),
-                Text(
-                    address != null
-                        ? 'account: ' + address!.wallet!.account!.name
-                        : '',
-                    style: Theme.of(context).textTheme.caption),
+            /// vout -------------------------------------------------------
+            SizedBox(height: 15.0),
+            Text('Transaction Outputs:'),
+            for (Vout vout in transaction!.vouts) ...[
+              SizedBox(height: 15.0),
+              TextField(
+                readOnly: true,
+                decoration: InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'To',
+                    hintText: 'Address'),
+                controller: TextEditingController(text: vout.toAddress),
+              ),
+              SizedBox(height: 15.0),
+              //TextField(
+              //  readOnly: true,
+              //  decoration: InputDecoration(
+              //      border: UnderlineInputBorder(),
+              //      labelText: 'Amount RVN',
+              //      hintText: 'Quantity'),
+              //  controller: TextEditingController(
+              //      text: RavenText.securityAsReadable(vout.value,
+              //          symbol: vout.security!.symbol)),
+              //),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                RavenIcon.assetAvatar(vout.asset ?? vout.security!.symbol),
+                Text(vout.security!.symbol),
+                Text(RavenText.securityAsReadable(vout.amount ?? vout.value,
+                    symbol: vout.security!.symbol)),
               ])
+            ],
+          ])
         ]),
-        ...(metadata ? [Text('None')] : [])
       ]);
 }
+
+
+/*
+remaining issues:
+1. transactions should not be associated with addresses, Vins and Vouts should be
+2. we need to capture all the vouts for all vins that don't have a vout (don't need to capture entire transaction (don't need vins))
+3. make sure block reservoir is working
+
+
+I think we should have Vins associated with an address. 
+upon new address go get all the transactions for those but don't purge them by transaction, purge by vins and vouts...
+then have address.vins and address.vouts and vin.address and vout.address joins
+and have address.transactions (all transactions that contain the vins and outs)
+never purge transactions
+Also have a waiter watching for new transactions. 
+*/
