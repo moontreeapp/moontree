@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:date_format/date_format.dart';
+import 'package:raven/joins.dart';
 import 'package:raven/services/transaction.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:raven/raven.dart';
@@ -25,7 +26,6 @@ class _TransactionPageState extends State<TransactionPage> {
   Address? address;
   List<StreamSubscription> listeners = [];
   Transaction? transaction;
-  TransactionRecord? transactionRecord;
 
   @override
   void initState() {
@@ -46,9 +46,8 @@ class _TransactionPageState extends State<TransactionPage> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    //transaction =
-    //    transactions.primaryIndex.getOne(data['transactionRecord']!.txId);
-    transactionRecord = data['transactionRecord']!.txId;
+    transaction =
+        transactions.primaryIndex.getOne(data['transactionRecord']!.txId);
     address = addresses.primaryIndex.getOne(transaction!.scripthash);
     var metadata = transaction!.memo != null && transaction!.memo != '';
     return DefaultTabController(
@@ -105,12 +104,14 @@ class _TransactionPageState extends State<TransactionPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height: 15.0),
-                    // indicates transaction should be a vout...
-                    RavenIcon.assetAvatar(transactionRecord!.security.symbol),
-                    SizedBox(height: 15.0),
-                    Text(transactionRecord!.security.symbol,
-                        style: Theme.of(context).textTheme.headline3),
-                    SizedBox(height: 15.0),
+
+                    // should be in list of Vins and Vouts, not at transaction level
+                    //RavenIcon.assetAvatar(transaction!.security.symbol),
+                    //SizedBox(height: 15.0),
+                    //Text(transaction!.security.symbol,
+                    //    style: Theme.of(context).textTheme.headline3),
+                    //SizedBox(height: 15.0),
+
                     Text('Received',
                         style: Theme.of(context).textTheme.headline5),
                   ])),
@@ -133,28 +134,7 @@ class _TransactionPageState extends State<TransactionPage> {
           Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                SizedBox(height: 15.0),
-                TextField(
-                  readOnly: true,
-                  decoration: InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'To',
-                      hintText: 'Address'),
-                  controller:
-                      TextEditingController(text: address?.address ?? 'unkown'),
-                ),
-                SizedBox(height: 15.0),
-                TextField(
-                  readOnly: true,
-                  decoration: InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Amount',
-                      hintText: 'Quantity'),
-                  controller: TextEditingController(
-                      text: RavenText.securityAsReadable(transaction!.value,
-                          symbol: transactionRecord!.security.symbol)),
-                ),
-
+                /// tx ---------------------------------------------------------
                 /// see fee and other details on cryptoscope
                 //Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 //  Text('fee',
@@ -211,8 +191,56 @@ class _TransactionPageState extends State<TransactionPage> {
                         ? 'account: ' + address!.wallet!.account!.name
                         : '',
                     style: Theme.of(context).textTheme.caption),
+
+                /// vin --------------------------------------------------------
+                for (Vin vin in transaction!.vins) ...[
+                  SizedBox(height: 15.0),
+                  TextField(
+                    readOnly: true,
+                    decoration: InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'To',
+                        hintText: 'Address'),
+                    controller: TextEditingController(
+                        text: vin.vout?.address ?? 'unkown'),
+                  ),
+                  SizedBox(height: 15.0),
+                  TextField(
+                    readOnly: true,
+                    decoration: InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Amount',
+                        hintText: 'Quantity'),
+                    controller: TextEditingController(
+                        text: RavenText.securityAsReadable(vin.vout!.value,
+                            symbol: vin.vout!.security!.symbol)),
+                  ),
+                ],
+
+                /// vout -------------------------------------------------------
+                for (Vout vout in transaction!.vouts) ...[
+                  SizedBox(height: 15.0),
+                  TextField(
+                    readOnly: true,
+                    decoration: InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'To',
+                        hintText: 'Address'),
+                    controller: TextEditingController(text: vout.address),
+                  ),
+                  SizedBox(height: 15.0),
+                  TextField(
+                    readOnly: true,
+                    decoration: InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Amount',
+                        hintText: 'Quantity'),
+                    controller: TextEditingController(
+                        text: RavenText.securityAsReadable(vout.value,
+                            symbol: vout.security!.symbol)),
+                  ),
+                ],
               ])
         ]),
-        ...(metadata ? [Text('None')] : [])
       ]);
 }

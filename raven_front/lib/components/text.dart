@@ -43,7 +43,7 @@ String humanReadableSecurity(
       ? RavenText.rvnUSD(RavenText.satsToAmount(
             sats, /* precision: symbol.precision... */
           ) *
-          rates.assetToRVN(security))
+          services.rates.assetToRVN(security))
       : RavenText.satsToAmount(
           sats, /* precision: symbol.precision... */
         ).toString();
@@ -53,7 +53,7 @@ class RavenText {
   RavenText();
 
   static String rvnUSD(double balance) =>
-      toUSDBalance(balance: balance, rate: rates.rvnToUSD);
+      toUSDBalance(balance: balance, rate: services.rates.rvnToUSD);
 
   static int rvnSats(double amount) => amountAsSats(amount);
   static double satsRVN(int amount) => satsAsAmount(amount);

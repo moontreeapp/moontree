@@ -24,32 +24,32 @@ class MockHistories {
   }
 
   void makeFakeHistories(Address address) async {
-    await services.addresses.saveScripthashHistoryData(ScripthashHistoriesData(
-      [address.scripthash],
-      [
-        [ScripthashHistory(height: 0, txHash: 'abc1')]
-      ],
-      [
-        [
-          ScripthashUnspent(
-              height: 0,
-              txHash: 'abc2',
-              scripthash: address.scripthash,
-              txPos: 0,
-              value: 1000000000)
-        ]
-      ],
-      [
-        [
-          ScripthashUnspent(
-              height: 0,
-              txHash: 'abc3',
-              scripthash: address.scripthash,
-              txPos: 0,
-              value: 5000000000,
-              ticker: 'Magic Musk')
-        ]
-      ],
-    ));
+    //await services.addresses.saveScripthashHistoryData(ScripthashHistoriesData(
+    //  [address.scripthash],
+    //  [
+    //    [ScripthashHistory(height: 0, txHash: 'abc1')]
+    //  ],
+    //  [
+    //    [
+    //      ScripthashUnspent(
+    //          height: 0,
+    //          txHash: 'abc2',
+    //          scripthash: address.scripthash,
+    //          txPos: 0,
+    //          value: 1000000000)
+    //    ]
+    //  ],
+    //  [
+    //    [
+    //      ScripthashUnspent(
+    //          height: 0,
+    //          txHash: 'abc3',
+    //          scripthash: address.scripthash,
+    //          txPos: 0,
+    //          value: 5000000000,
+    //          ticker: 'Magic Musk')
+    //    ]
+    //  ],
+    //));
   }
 }

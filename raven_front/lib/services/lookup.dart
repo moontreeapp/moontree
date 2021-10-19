@@ -9,7 +9,7 @@ BalanceUSD currentBalanceUSD() =>
     services.rates.accountBalanceUSD(currentAccountId(), currentHoldings());
 
 Balance currentBalanceRVN() =>
-    services.balances.accountBalance(currentAccount(), RVN);
+    services.balances.accountBalance(currentAccount(), securities.RVN);
 //balances.getOrZero(currentAccountId());
 
 /// our concept of history isn't the same as transactions - must fill out negative values for sent amounts
@@ -27,7 +27,7 @@ List<String> currentHoldingNames() =>
 Wallet? currentWallet(walletId) => wallets.primaryIndex.getOne(walletId);
 
 Balance currentWalletBalanceRVN(walletId) =>
-    services.balances.walletBalance(currentWallet(walletId)!, RVN);
+    services.balances.walletBalance(currentWallet(walletId)!, securities.RVN);
 
 List<Balance> currentWalletHoldings(String walletId) =>
     services.balances.walletBalances(currentWallet(walletId)!);
@@ -70,5 +70,4 @@ class Current {
       currentWalletHoldingNames(walletId);
   static List<TransactionRecord> walletCompiledTransactions(String walletId) =>
       currentWalletCompiledTransactions(walletId);
-  
 }
