@@ -12,13 +12,13 @@ class Transaction with EquatableMixin {
   String txId;
 
   @HiveField(1)
-  int height;
-
-  @HiveField(2)
   bool confirmed;
 
+  @HiveField(2)
+  int? time;
+
   @HiveField(3)
-  int time;
+  int? height;
 
   /// other possible tx elements from transaction.get
   //final String hash;
@@ -45,19 +45,19 @@ class Transaction with EquatableMixin {
 
   Transaction(
       {required this.txId,
-      required this.height,
       required this.confirmed,
-      required this.time,
+      this.time,
+      this.height,
       this.memo,
       this.note = ''});
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         height,
         confirmed,
         time,
         txId,
-        memo ?? 'null',
+        memo,
         note,
       ];
 
@@ -69,7 +69,10 @@ class Transaction with EquatableMixin {
   }
 
   // could belong on frontend...
-  DateTime get datetime => DateTime.fromMillisecondsSinceEpoch(time * 1000);
-  String get formattedDatetime =>
-      formatDate(datetime, [MM, ' ', d, ', ', yyyy]);
+  DateTime get datetime =>
+      DateTime.fromMillisecondsSinceEpoch((time ?? 0) * 1000);
+
+  String get formattedDatetime => time != null
+      ? formatDate(datetime, [MM, ' ', d, ', ', yyyy])
+      : 'in mempool';
 }

@@ -16,8 +16,11 @@ class WalletSecurityPair with EquatableMixin {
 Set<WalletSecurityPair> securityPairsFromVoutChanges(List<Change> changes) {
   return changes.fold({}, (set, change) {
     Vout vout = change.data;
-    return set
-      ..add(WalletSecurityPair(
-          vout.wallet!, securities.primaryIndex.getOne(vout.securityId)!));
+    if (vout.wallet != null) {
+      return set
+        ..add(WalletSecurityPair(
+            vout.wallet!, securities.primaryIndex.getOne(vout.securityId)!));
+    }
+    return set;
   });
 }

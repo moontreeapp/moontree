@@ -18,9 +18,9 @@ class TransactionAdapter extends TypeAdapter<Transaction> {
     };
     return Transaction(
       txId: fields[0] as String,
-      height: fields[1] as int,
-      confirmed: fields[2] as bool,
-      time: fields[3] as int,
+      confirmed: fields[1] as bool,
+      time: fields[2] as int?,
+      height: fields[3] as int?,
       memo: fields[4] as String?,
       note: fields[5] as String,
     );
@@ -33,11 +33,11 @@ class TransactionAdapter extends TypeAdapter<Transaction> {
       ..writeByte(0)
       ..write(obj.txId)
       ..writeByte(1)
-      ..write(obj.height)
-      ..writeByte(2)
       ..write(obj.confirmed)
-      ..writeByte(3)
+      ..writeByte(2)
       ..write(obj.time)
+      ..writeByte(3)
+      ..write(obj.height)
       ..writeByte(4)
       ..write(obj.memo)
       ..writeByte(5)

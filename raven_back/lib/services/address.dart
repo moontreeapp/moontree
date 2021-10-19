@@ -81,7 +81,7 @@ class AddressService {
         newTxs.add(Transaction(
           txId: tx.txid,
           height: tx.height,
-          confirmed: tx.confirmations > 0,
+          confirmed: (tx.confirmations ?? 0) > 0,
           time: tx.time,
         ));
       }
@@ -126,7 +126,7 @@ class AddressService {
       finalTxs.add(Transaction(
         txId: tx.txid,
         height: tx.height,
-        confirmed: tx.confirmations > 0,
+        confirmed: (tx.confirmations ?? 0) > 0,
         time: tx.time,
       ));
     }
