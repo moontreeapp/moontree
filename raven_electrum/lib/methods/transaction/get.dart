@@ -188,11 +188,11 @@ class Tx with EquatableMixin {
   final List<TxVin> vin;
   final List<TxVout> vout;
   final String hex;
-  final String blockhash;
-  final int height;
-  final int confirmations;
-  final int time;
-  final int blocktime;
+  final String? blockhash;
+  final int? height;
+  final int? confirmations;
+  final int? time;
+  final int? blocktime;
 
   Tx({
     required this.txid,
@@ -212,7 +212,7 @@ class Tx with EquatableMixin {
   });
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         txid,
         hash,
         version,
