@@ -268,7 +268,10 @@ extension GetTransactionMethod on RavenElectrumClient {
                     hex: vout['scriptPubKey']['hex'],
                     type: vout['scriptPubKey']['type'],
                     reqSigs: vout['scriptPubKey']['reqSigs'],
-                    addresses: vout['scriptPubKey']['addresses'])
+                    addresses: <String>[
+                        for (String addr in vout['scriptPubKey']['addresses'])
+                          addr
+                      ])
                 : TxScriptPubKey(
                     asm: vout['scriptPubKey']['asm'],
                     hex: vout['scriptPubKey']['hex'],
