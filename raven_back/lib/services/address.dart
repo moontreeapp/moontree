@@ -143,6 +143,6 @@ class AddressService {
       );
       await securities.save(security);
     }
-    return Tuple2(value, security);
+    return Tuple2(value, security ?? securities.RVN);
   }
 }

@@ -2,21 +2,32 @@ import 'package:raven/utils/rate.dart';
 import 'package:raven/raven.dart';
 
 class RateService {
+  double assetToRVN(Security asset) =>
+      rates.primaryIndex.getOne(asset, securities.RVN)?.rate ?? 0.0;
+
+  double get rvnToUSD =>
+      rates.primaryIndex.getOne(securities.RVN, securities.USD)?.rate ?? 0.0;
+
+  double rvnToFiat(Security fiat) =>
+      rates.primaryIndex.getOne(securities.RVN, fiat)?.rate ?? 0.0;
+
+  double fiatToFiat(Security fiatQuote, {Security? fiatBase}) =>
+      rates.primaryIndex.getOne(fiatBase ?? securities.USD, fiatQuote)?.rate ??
+      0.0;
+
   Future saveRate() async {
     await rates.save(Rate(
-      base: RVN,
-      quote: USD,
+      base: securities.RVN,
+      quote: securities.USD,
       rate: await RVNtoFiat().get(),
     ));
   }
-
-  double get rvnToUSD => rates.rvnToUSD;
 
   BalanceUSD accountBalanceUSD(String accountId, List<Balance> holdings) {
     var totalRVNBalance = getTotalRVN(accountId, holdings);
     var usd = BalanceUSD(confirmed: 0.0, unconfirmed: 0.0);
     if (totalRVNBalance.value > 0) {
-      var rate = rates.rvnToUSD;
+      var rate = rvnToUSD;
       var percision = 100000000;
       usd = BalanceUSD(
           confirmed:
@@ -33,21 +44,21 @@ class RateService {
     /// per wallet...
     var accountBalancesAsRVN = holdings.map((balance) => Balance(
         walletId: accountId,
-        security: RVN,
-        confirmed: balance.security == RVN
+        security: securities.RVN,
+        confirmed: balance.security == securities.RVN
             ? balance.confirmed
             : ((balance.confirmed / assetPercision) *
-                    rates.assetToRVN(balance.security))
+                    assetToRVN(balance.security))
                 .round(),
-        unconfirmed: balance.security == RVN
+        unconfirmed: balance.security == securities.RVN
             ? balance.unconfirmed
             : ((balance.unconfirmed / assetPercision) *
-                    rates.assetToRVN(balance.security))
+                    assetToRVN(balance.security))
                 .round()));
     return accountBalancesAsRVN.fold(
         Balance(
           walletId: accountId,
-          security: RVN,
+          security: securities.RVN,
           confirmed: 0,
           unconfirmed: 0,
         ),

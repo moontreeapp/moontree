@@ -10,7 +10,7 @@ part 'setting.keys.dart';
 class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
   SettingReservoir() : super(_SettingNameKey());
 
-  static Map<SettingName, Setting> get defaultSettings => {
+  static Map<SettingName, Setting> get defaults => {
         SettingName.Electrum_Domain0: Setting(
             name: SettingName.Electrum_Domain0, value: '1testnet.rvn.rocks'),
         SettingName.Electrum_Port0:

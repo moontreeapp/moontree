@@ -32,10 +32,10 @@ class _SecurityKey extends Key<Vout> {
 extension BySecurityMethodsForVout on Index<_SecurityKey, Vout> {
   List<Vout> getAll(Security security) => getByKeyStr(security.securityId);
 
-  Iterable<Vout> unspents({Security security = RVN}) =>
+  Iterable<Vout> unspents({required Security security}) =>
       VoutReservoir.whereUnspent(given: getAll(security), security: security);
 
-  BalanceRaw balance({Security security = RVN}) {
+  BalanceRaw balance({required Security security}) {
     var zero = BalanceRaw(confirmed: 0, unconfirmed: 0);
     return unspents(security: security).fold(
         zero,

@@ -42,11 +42,6 @@ extension AccountHasManyBalances on Account {
       wallets.map((Wallet wallet) => wallet.balances).expand((i) => i).toList();
 }
 
-extension AccountHasManyUnspents on Account {
-  List<Vout> get unspents =>
-      VoutReservoir.whereUnspent(given: vouts, security: RVN).toList();
-}
-
 // Joins on Wallet
 
 extension WalletBelongsToCipher on Wallet {
@@ -80,11 +75,6 @@ extension WalletHasManyVouts on Wallet {
 extension WalletHasManyVins on Wallet {
   List<Vin> get vins =>
       transactions.map((tx) => tx.vins).expand((i) => i).toList();
-}
-
-extension WalletHasManyUnspents on Wallet {
-  List<Vout> get unspents =>
-      VoutReservoir.whereUnspent(given: vouts, security: RVN).toList();
 }
 
 // Joins on Address
@@ -167,6 +157,7 @@ extension VinBelongsToTransaction on Vin {
 }
 
 extension VinHasOneVout on Vin {
+  /// perhaps we need to download it if it doesn't exist?
   Vout? get vout =>
       globals.vouts.primaryIndex.getOne(Vout.getVoutId(voutTxId, voutPosition));
 }

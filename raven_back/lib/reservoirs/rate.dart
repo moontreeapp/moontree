@@ -17,14 +17,5 @@ part 'rate.keys.dart';
 class ExchangeRateReservoir extends Reservoir<_RateKey, Rate> {
   ExchangeRateReservoir() : super(_RateKey());
 
-  double assetToRVN(Security asset) =>
-      primaryIndex.getOne(asset, RVN)?.rate ?? 0.0;
-
-  double get rvnToUSD => primaryIndex.getOne(RVN, USD)?.rate ?? 0.0;
-
-  double rvnToFiat(Security fiat) =>
-      primaryIndex.getOne(RVN, fiat)?.rate ?? 0.0;
-
-  double fiatToFiat(Security fiatQuote, {Security fiatBase = USD}) =>
-      primaryIndex.getOne(fiatBase, fiatQuote)?.rate ?? 0.0;
+  /// logic moved to service...
 }

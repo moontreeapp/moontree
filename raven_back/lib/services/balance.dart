@@ -39,15 +39,18 @@ class BalanceService {
 
   /// Sort in descending order, from largest amount to smallest amount
   List<Vout> sortedUnspents(Account account) =>
-      account.unspents.toList()..sort((a, b) => b.value.compareTo(a.value));
+      services.transactions.accountUnspents(account).toList()
+        ..sort((a, b) => b.value.compareTo(a.value));
 
   /// Sort in descending order, from largest amount to smallest amount
   List<Vout> sortedUnspentsWallets(Wallet wallet) =>
-      wallet.unspents.toList()..sort((a, b) => b.value.compareTo(a.value));
+      services.transactions.walletUnspents(wallet).toList()
+        ..sort((a, b) => b.value.compareTo(a.value));
 
   /// Asserts that the asset in the account is greater than `amount`
   void assertSufficientFunds(int amount, Account account,
-      {Security security = RVN}) {
+      {Security? security}) {
+    security = security ?? securities.RVN;
     if (accountBalance(account, security).confirmed < amount) {
       throw InsufficientFunds();
     }
@@ -55,7 +58,8 @@ class BalanceService {
 
   /// Asserts that the asset in the account is greater than `amount`
   void assertSufficientFundsWallets(int amount, Wallet wallet,
-      {Security security = RVN}) {
+      {Security? security}) {
+    security = security ?? securities.RVN;
     if (walletBalance(wallet, security).confirmed < amount) {
       throw InsufficientFunds();
     }

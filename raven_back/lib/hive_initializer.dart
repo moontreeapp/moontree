@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:hive/hive.dart';
+import 'package:raven/reservoirs/security.dart';
 import 'package:raven/reservoirs/setting.dart';
 import 'package:reservoir/reservoir.dart';
 import 'package:ulid/ulid.dart';
@@ -79,9 +80,14 @@ class HiveInitializer {
     blocks.setSource(HiveSource('blocks'));
     passwords.setSource(HiveSource('passwords'));
     rates.setSource(HiveSource('rates'));
-    securities.setSource(HiveSource('securities'));
-    settings.setSource(
-        HiveSource('settings', defaults: SettingReservoir.defaultSettings));
+    securities.setSource(HiveSource(
+      'securities',
+      defaults: SecurityReservoir.defaults,
+    ));
+    settings.setSource(HiveSource(
+      'settings',
+      defaults: SettingReservoir.defaults,
+    ));
     transactions.setSource(HiveSource('transactions'));
     wallets.setSource(HiveSource('wallets'));
     vins.setSource(HiveSource('vins'));

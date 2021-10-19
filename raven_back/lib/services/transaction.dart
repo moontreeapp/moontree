@@ -2,6 +2,14 @@ import 'package:raven/utils/exceptions.dart';
 import 'package:raven/raven.dart';
 
 class TransactionService {
+  List<Vout> walletUnspents(Wallet wallet) =>
+      VoutReservoir.whereUnspent(given: wallet.vouts, security: securities.RVN)
+          .toList();
+
+  List<Vout> accountUnspents(Account account) =>
+      VoutReservoir.whereUnspent(given: account.vouts, security: securities.RVN)
+          .toList();
+
   Transaction? getTransactionFrom({Transaction? transaction, String? hash}) {
     transaction ??
         hash ??
@@ -57,10 +65,11 @@ class TransactionService {
         if (givenAddresses.contains(vout.address)) {
           transactionRecords.add(TransactionRecord(
             out: false,
-            fromAddress: tx.vins[0].vout!.address, // will this work?
+            fromAddress: '', // tx.vins[0].vout!.address, // will this work?
             toAddress: vout.address,
             value: vout.value,
-            security: securities.primaryIndex.getOne(vout.securityId) ?? RVN,
+            security: securities.primaryIndex.getOne(vout.securityId) ??
+                securities.RVN,
             height: tx.height,
             datetime: tx.formattedDatetime,
             amount: vout.amount ?? 0,
@@ -69,21 +78,24 @@ class TransactionService {
           ));
         }
       }
-      for (var vin in tx.vins) {
-        if (givenAddresses.contains(vin.vout!.address)) {
-          transactionRecords.add(TransactionRecord(
-            out: false,
-            fromAddress: '', // what am I supposed to do here?
-            toAddress: vin.vout!.address,
-            value: vin.vout!.value,
-            security:
-                securities.primaryIndex.getOne(vin.vout?.securityId ?? '') ??
-                    RVN,
-            height: tx.height,
-            datetime: tx.formattedDatetime,
-            amount: vin.vout!.amount ?? 0,
-          ));
-        }
+      for (Vin vin in tx.vins) {
+        /// vin.vout fails here... how to fix? todo
+        //if (givenAddresses.contains(vin.vout!.address)) {
+        //  transactionRecords.add(TransactionRecord(
+        //    out: false,
+        //    fromAddress: '', // what am I supposed to do here?
+        //    toAddress: vin.vout!.address,
+        //    value: vin.vout!.value,
+        //    security:
+        //        securities.primaryIndex.getOne(vin.vout?.securityId ?? '') ??
+        //            securities.RVN,
+        //    height: tx.height,
+        //    datetime: tx.formattedDatetime,
+        //    amount: vin.vout!.amount ?? 0,
+        //    vinId: vin.vinId,
+        //    txId: tx.txId,
+        //  ));
+        //}
       }
     }
     return transactionRecords;

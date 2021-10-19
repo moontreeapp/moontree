@@ -7,9 +7,6 @@ import '_type_id.dart';
 
 part 'security.g.dart';
 
-const Security RVN = Security(symbol: 'RVN', securityType: SecurityType.Crypto);
-const Security USD = Security(symbol: 'USD', securityType: SecurityType.Fiat);
-
 @HiveType(typeId: TypeId.Security)
 class Security with EquatableMixin {
   @HiveField(0)
