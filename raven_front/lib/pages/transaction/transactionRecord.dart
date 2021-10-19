@@ -49,7 +49,7 @@ class _TransactionPageState extends State<TransactionPage> {
     //transaction =
     //    transactions.primaryIndex.getOne(data['transactionRecord']!.txId);
     transactionRecord = data['transactionRecord']!.txId;
-    address = addresses.primaryIndex.getOne(transaction!.scripthash);
+    //address = addresses.primaryIndex.getOne(transaction!.scripthash);
     var metadata = transaction!.memo != null && transaction!.memo != '';
     return DefaultTabController(
         length: metadata ? 2 : 1,

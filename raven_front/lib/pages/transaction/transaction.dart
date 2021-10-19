@@ -48,7 +48,7 @@ class _TransactionPageState extends State<TransactionPage> {
     data = populateData(context, data);
     transaction =
         transactions.primaryIndex.getOne(data['transactionRecord']!.txId);
-    address = addresses.primaryIndex.getOne(transaction!.scripthash);
+    //address = addresses.primaryIndex.getOne(transaction!.addresses);
     var metadata = transaction!.memo != null && transaction!.memo != '';
     print('transaction: $transaction');
     print('vins: ${transaction!.vins}');
@@ -187,13 +187,15 @@ class _TransactionPageState extends State<TransactionPage> {
                 onTap: () => launch(
                     'https://rvnt.cryptoscope.io/tx/?txid=${transaction!.txId}')),
             SizedBox(height: 15.0),
-            Text(address != null ? 'wallet: ' + address!.walletId : '',
-                style: Theme.of(context).textTheme.caption),
-            Text(
-                address != null
-                    ? 'account: ' + address!.wallet!.account!.name
-                    : '',
-                style: Theme.of(context).textTheme.caption),
+
+            /// there are multiple addresses associated with this transaction
+            // Text(address != null ? 'wallet: ' + address!.walletId : '',
+            //     style: Theme.of(context).textTheme.caption),
+            // Text(
+            //     address != null
+            //         ? 'account: ' + address!.wallet!.account!.name
+            //         : '',
+            //     style: Theme.of(context).textTheme.caption),
 
             /// vin --------------------------------------------------------
             SizedBox(height: 15.0),

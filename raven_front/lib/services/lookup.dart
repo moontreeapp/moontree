@@ -13,7 +13,7 @@ Balance currentBalanceRVN() =>
 //balances.getOrZero(currentAccountId());
 
 /// our concept of history isn't the same as transactions - must fill out negative values for sent amounts
-List<Transaction> currentTransactions() => currentAccount().transactions;
+Set<Transaction> currentTransactions() => currentAccount().transactions;
 
 List<TransactionRecord> currentCompiledTransactions() =>
     services.transactions.getTransactionRecords(account: currentAccount());
@@ -40,7 +40,7 @@ List<String> currentWalletHoldingNames(String walletId) => [
 BalanceUSD currentWalletBalanceUSD(String walletId) =>
     services.rates.accountBalanceUSD(walletId, currentWalletHoldings(walletId));
 
-List<Transaction> currentWalletTransactions(String walletId) =>
+Set<Transaction> currentWalletTransactions(String walletId) =>
     currentWallet(walletId)!.transactions;
 
 List<TransactionRecord> currentWalletCompiledTransactions(String walletId) =>
@@ -51,7 +51,7 @@ class Current {
   static Account get account => currentAccount();
   static Balance get balanceRVN => currentBalanceRVN();
   static BalanceUSD get balanceUSD => currentBalanceUSD();
-  static List<Transaction> get transactions => currentTransactions();
+  static Set<Transaction> get transactions => currentTransactions();
   static List<TransactionRecord> get compiledTransactions =>
       currentCompiledTransactions();
   static List<Balance> get holdings => currentHoldings();
@@ -64,7 +64,7 @@ class Current {
       currentWalletBalanceUSD(walletId);
   static List<Balance> walletHoldings(String walletId) =>
       currentWalletHoldings(walletId);
-  static List<Transaction> walletTransactions(String walletId) =>
+  static Set<Transaction> walletTransactions(String walletId) =>
       currentWalletTransactions(walletId);
   static List<String> walletHoldingNames(String walletId) =>
       currentWalletHoldingNames(walletId);

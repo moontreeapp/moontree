@@ -170,85 +170,95 @@ class _WalletViewState extends State<WalletView> {
         SizedBox(height: 30.0),
       ]);
 
-  List<Widget> addressesView() =>
-      wallet.humanTypeKey == LingoKey.leaderWalletType
-          ? [
-              for (var walletAddress
-                  in wallet.addresses..sort((a, b) => a.compareTo(b)))
-                ListTile(
-                  onTap: () => setState(() {
-                    address = walletAddress.address;
-                    //addressBalance = RavenText.satsToAmount(histories
-                    //        .byScripthash
-                    //        .getAll(walletAddress.scripthash)
-                    //        .map((History history) => history.value)
-                    //        .toList()
-                    //        .sumInt() as int)
-                    //    .toString();
-                    exposureAndIndex = Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text('Index: ' + walletAddress.hdIndex.toString(),
-                            style: Theme.of(context).annotate),
-                        Text(
-                            (walletAddress.exposure == NodeExposure.Internal
-                                ? 'Internal (change)'
-                                : 'External (receive)'),
-                            style: Theme.of(context).annotate),
-                        Text(
-                            'Balance: ' +
-                                RavenText.satsToAmount(transactions.byScripthash
-                                        .getAll(walletAddress.scripthash)
-                                        .map((Transaction tx) => tx.value)
-                                        .toList()
-                                        .sumInt())
-                                    .toString(),
-                            style: Theme.of(context).textTheme.caption),
-                      ],
-                    );
-                  }),
-                  title: Wrap(alignment: WrapAlignment.spaceBetween, children: [
-                    (walletAddress.exposure == NodeExposure.Internal
-                        ? RavenIcon.out(context)
-                        : RavenIcon.income(context)),
-                    Text(walletAddress.address,
-                        style: Theme.of(context).textTheme.caption),
+  List<Widget> addressesView() => wallet.humanTypeKey ==
+          LingoKey.leaderWalletType
+      ? [
+          for (var walletAddress
+              in wallet.addresses..sort((a, b) => a.compareTo(b)))
+            ListTile(
+              onTap: () => setState(() {
+                address = walletAddress.address;
+                //addressBalance = RavenText.satsToAmount(histories
+                //        .byScripthash
+                //        .getAll(walletAddress.scripthash)
+                //        .map((History history) => history.value)
+                //        .toList()
+                //        .sumInt() as int)
+                //    .toString();
+                exposureAndIndex = Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text('Index: ' + walletAddress.hdIndex.toString(),
+                        style: Theme.of(context).annotate),
                     Text(
-                        // I thoguht this is what slows down loading the page, but I now think it's the qr code... //takes a few seconds, lets just get them one at a time in onTap
-                        RavenText.satsToAmount(transactions.byScripthash
-                                .getAll(walletAddress.scripthash)
-                                .map((Transaction history) => history.value)
-                                .toList()
-                                .sumInt() as int)
-                            .toString(),
+                        (walletAddress.exposure == NodeExposure.Internal
+                            ? 'Internal (change)'
+                            : 'External (receive)'),
+                        style: Theme.of(context).annotate),
+                    Text(
+                        'Balance: ' +
+                            RavenText.satsToAmount(services.transactions
+                                    .walletUnspents(wallet)
+                                    .where((vout) =>
+                                        vout.toAddress == walletAddress.address)
+                                    .map((vout) => vout.value)
+                                    .toList()
+                                    .sumInt())
+                                .toString(),
+                        //transactions.byScripthash
+                        //      .getAll(walletAddress.scripthash)
+                        //      .map((Transaction tx) => tx.value)
+                        //      .toList()
+                        //      .sumInt())
+                        //  .toString(),
                         style: Theme.of(context).textTheme.caption),
-                  ]),
-                  //trailing: Text('address.value'),
-                  //trailing: (address.value > 0
-                  //    ? Text(
-                  //        RavenText.securityAsReadable(transaction.value,
-                  //            security: transaction.security, asUSD: showUSD),
-                  //        style: TextStyle(color: Theme.of(context).good))
-                  //    : Text(
-                  //        RavenText.securityAsReadable(transaction.value,
-                  //            security: transaction.security, asUSD: showUSD),
-                  //        style: TextStyle(color: Theme.of(context).bad))),
-                  //leading: RavenIcon.assetAvatar(transaction.security.symbol)
-                )
-            ]
-          : [
-              ListTile(
-                  onTap: () {},
-                  onLongPress: () {},
-                  title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(address ?? '',
-                            style: Theme.of(context).textTheme.caption),
-                        RavenIcon.income(context),
-                        RavenIcon.out(context),
-                      ]))
-            ];
+                  ],
+                );
+              }),
+              title: Wrap(alignment: WrapAlignment.spaceBetween, children: [
+                (walletAddress.exposure == NodeExposure.Internal
+                    ? RavenIcon.out(context)
+                    : RavenIcon.income(context)),
+                Text(walletAddress.address,
+                    style: Theme.of(context).textTheme.caption),
+                Text(
+                    // I thoguht this is what slows down loading the page, but I now think it's the qr code... //takes a few seconds, lets just get them one at a time in onTap
+                    RavenText.satsToAmount(services.transactions
+                            .walletUnspents(wallet)
+                            .where((vout) =>
+                                vout.toAddress == walletAddress.address)
+                            .map((vout) => vout.value)
+                            .toList()
+                            .sumInt())
+                        .toString(),
+                    style: Theme.of(context).textTheme.caption),
+              ]),
+              //trailing: Text('address.value'),
+              //trailing: (address.value > 0
+              //    ? Text(
+              //        RavenText.securityAsReadable(transaction.value,
+              //            security: transaction.security, asUSD: showUSD),
+              //        style: TextStyle(color: Theme.of(context).good))
+              //    : Text(
+              //        RavenText.securityAsReadable(transaction.value,
+              //            security: transaction.security, asUSD: showUSD),
+              //        style: TextStyle(color: Theme.of(context).bad))),
+              //leading: RavenIcon.assetAvatar(transaction.security.symbol)
+            )
+        ]
+      : [
+          ListTile(
+              onTap: () {},
+              onLongPress: () {},
+              title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(address ?? '',
+                        style: Theme.of(context).textTheme.caption),
+                    RavenIcon.income(context),
+                    RavenIcon.out(context),
+                  ]))
+        ];
 
   ListView holdingsView() {
     var rvnHolding = <Widget>[];

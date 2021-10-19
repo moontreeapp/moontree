@@ -107,13 +107,11 @@ class _SettingsState extends State<Settings> {
                     print(addresses.byAddress
                         .getOne('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm')!
                         .addressId);
-                    print(transactions.byScripthash.getAll(addresses.byAddress
+                    print(vouts.byScripthash.getAll(addresses.byAddress
                         .getOne('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm')!
                         .addressId));
-                    print(transactions.byScripthash.getAll(
+                    print(vouts.byScripthash.getAll(
                         '204d127aea0dfa26a53eeb9fa89220aee54440f5dcb4f015d3b57861d3d1d7ca'));
-                    print(transactions.byAddress
-                        .getAll('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm'));
                   }),
               //SettingsTile(
               //    title: 'cipher registry',
