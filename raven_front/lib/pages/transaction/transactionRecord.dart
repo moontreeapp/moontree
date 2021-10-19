@@ -64,7 +64,9 @@ class _TransactionPageState extends State<TransactionPage> {
   int? getBlocksBetweenHelper({Transaction? tx, Block? current}) {
     tx = tx ?? transaction!;
     current = current ?? blocks.latest; //Block(height: 0);
-    return current != null ? current.height - tx.height : null;
+    return (current != null && tx.height != null)
+        ? current.height - tx.height!
+        : null;
   }
 
   String getDateBetweenHelper() =>

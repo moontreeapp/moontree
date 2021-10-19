@@ -69,7 +69,9 @@ class _TransactionPageState extends State<TransactionPage> {
     print(current);
     print(tx.height);
     print(blocks.data);
-    return current != null ? current.height - tx.height : null;
+    return (current != null && tx.height != null)
+        ? current.height - tx.height!
+        : null;
   }
 
   String getDateBetweenHelper() => 'Date: ' + transaction!.formattedDatetime;
@@ -84,7 +86,7 @@ class _TransactionPageState extends State<TransactionPage> {
   //    : 'unknown');
 
   String getConfirmationsBetweenHelper() =>
-      'Confirmaitons: ' +
+      'Confirmations: ' +
       (getBlocksBetweenHelper() != null
           ? getBlocksBetweenHelper().toString()
           : 'unknown');
