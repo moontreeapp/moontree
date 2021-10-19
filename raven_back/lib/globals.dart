@@ -10,13 +10,16 @@ final CipherRegistry cipherRegistry = CipherRegistry();
 
 final AccountReservoir accounts = AccountReservoir();
 final AddressReservoir addresses = AddressReservoir();
-final HistoryReservoir histories = HistoryReservoir();
-final WalletReservoir wallets = WalletReservoir();
-final BalanceReservoir balances = BalanceReservoir();
-final ExchangeRateReservoir rates = ExchangeRateReservoir();
-final SettingReservoir settings = SettingReservoir();
 final BlockReservoir blocks = BlockReservoir();
+final BalanceReservoir balances = BalanceReservoir();
 final PasswordReservoir passwords = PasswordReservoir();
+final ExchangeRateReservoir rates = ExchangeRateReservoir();
+final SecurityReservoir securities = SecurityReservoir();
+final SettingReservoir settings = SettingReservoir();
+final TransactionReservoir transactions = TransactionReservoir();
+final WalletReservoir wallets = WalletReservoir();
+final VinReservoir vins = VinReservoir();
+final VoutReservoir vouts = VoutReservoir();
 
 // WAITERS
 

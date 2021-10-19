@@ -12,7 +12,7 @@ class BlockWaiter extends Waiter {
   void init() {
     listen('subjects.client', subjects.client.stream, (ravenClient) {
       if (ravenClient == null) {
-        deinit();
+        deinitKey('ravenClient.subscribeHeaders');
       } else {
         subscribe(ravenClient as RavenElectrumClient);
       }

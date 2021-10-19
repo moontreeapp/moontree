@@ -122,11 +122,9 @@ class AddressSubscriptionWaiter extends Waiter {
 
   Future retrieve(
       RavenElectrumClient client, List<Address> changedAddresses) async {
-    await services.addresses.saveScripthashHistoryData(
-      await services.addresses.getScripthashHistoriesData(
-        changedAddresses,
-        client,
-      ),
+    await services.addresses.getAndSaveTransaction(
+      changedAddresses,
+      client,
     );
   }
 

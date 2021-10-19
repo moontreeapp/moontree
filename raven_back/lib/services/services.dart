@@ -2,10 +2,10 @@ import 'account.dart';
 import 'address.dart';
 import 'balance.dart';
 import 'client.dart';
-import 'history.dart';
+import 'transaction.dart';
 import 'password.dart';
 import 'rate.dart';
-import 'transaction.dart';
+import 'transaction_maker.dart';
 import 'wallet.dart';
 
 class services {
@@ -13,9 +13,9 @@ class services {
   static AddressService addresses = AddressService();
   static BalanceService balances = BalanceService();
   static ClientService client = ClientService();
-  static HistoryService histories = HistoryService();
+  static TransactionService transactions = TransactionService();
   static RateService rates = RateService();
   static WalletService wallets = WalletService();
   static PasswordService passwords = PasswordService();
-  static TransactionService transaction = TransactionService();
+  static MakeTransactionService transact = MakeTransactionService();
 }

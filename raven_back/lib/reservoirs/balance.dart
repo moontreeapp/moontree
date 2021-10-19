@@ -12,7 +12,7 @@ class BalanceReservoir extends Reservoir<_WalletSecurityKey, Balance> {
     byWallet = addIndexMultiple('account', _WalletKey());
   }
 
-  Balance getOrZero(String walletId, {Security security = RVN}) =>
+  Balance getOrZero(String walletId, {required Security security}) =>
       primaryIndex.getOne(walletId, security) ??
       Balance(
         walletId: walletId,

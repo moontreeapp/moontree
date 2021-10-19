@@ -52,9 +52,7 @@ class LeaderWalletService {
         addresses.byWalletExposure.getAll(leaderWallet.walletId, exposure);
     for (var exposureAddress in exposureAddresses) {
       gap = gap +
-          (histories.byScripthash.getAll(exposureAddress.addressId).isEmpty
-              ? 1
-              : 0);
+          (vins.byScripthash.getAll(exposureAddress.addressId).isEmpty ? 1 : 0);
     }
     if (gap < 10) {
       return deriveAddress(leaderWallet, exposureAddresses.length,
@@ -106,7 +104,7 @@ class LeaderWalletService {
     var i = 0;
     while (true) {
       var hdWallet = seedWallet.subwallet(i, exposure: exposure);
-      if (histories.byScripthash.getAll(hdWallet.scripthash).isEmpty) {
+      if (vins.byScripthash.getAll(hdWallet.scripthash).isEmpty) {
         return hdWallet;
       }
       i++;
@@ -161,9 +159,7 @@ class LeaderWalletService {
         addresses.byWalletExposure.getAll(leaderWallet.walletId, exposure);
     for (var exposureAddress in exposureAddresses) {
       gap = gap +
-          (histories.byScripthash.getAll(exposureAddress.addressId).isEmpty
-              ? 1
-              : 0);
+          (vins.byScripthash.getAll(exposureAddress.addressId).isEmpty ? 1 : 0);
     }
     if (gap < 10) {
       return [

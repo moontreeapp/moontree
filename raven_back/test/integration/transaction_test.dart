@@ -3,7 +3,7 @@ import 'package:raven/raven.dart';
 import 'package:test/test.dart';
 
 import 'package:raven/services/client.dart';
-import 'package:raven/services/transaction.dart';
+import 'package:raven/services/transaction_maker.dart';
 import 'package:raven/globals.dart';
 import '../fixtures/fixtures_live.dart' as fixtures;
 
@@ -24,7 +24,7 @@ void main() async {
       print('settings: ${settings.data}');
       print('cipherRegistry: $cipherRegistry');
       /* errors */
-      var tuple = services.transaction.buildTransaction(
+      var tuple = services.transact.buildTransaction(
         accounts.primaryIndex.getByKeyStr('Primary').first,
         addresses.byWallet
             .getAll(wallets.byAccount

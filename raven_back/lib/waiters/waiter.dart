@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:raven/utils/combine.dart' show append;
 import 'package:raven/utils/exceptions.dart' show AlreadyListening;
 
 typedef Listener<T> = void Function(T event);
@@ -18,18 +17,21 @@ abstract class Waiter {
     }
   }
 
-  Future deinit([String? key, List<String>? keys]) async {
-    if (key != null) {
-      keys = append(key, keys) as List<String>;
-      for (var listener in keys) {
-        await listeners[listener]?.cancel();
-        listeners.remove(listener);
-      }
-    } else {
-      for (var listener in listeners.values) {
-        await listener.cancel();
-      }
-      listeners.clear();
+  Future deinit() async {
+    for (var listener in listeners.values) {
+      await listener.cancel();
     }
+    listeners.clear();
+  }
+
+  Future deinitKeys(List<String> keys) async {
+    for (var listener in keys) {
+      await listeners[listener]?.cancel();
+      listeners.remove(listener);
+    }
+  }
+
+  Future deinitKey(String key) async {
+    await deinitKeys([key]);
   }
 }

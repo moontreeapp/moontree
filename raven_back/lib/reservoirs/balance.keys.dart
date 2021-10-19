@@ -3,7 +3,7 @@ part of 'balance.dart';
 // primary key
 
 String _walletSecurityToKey(String walletId, Security security) {
-  return '$walletId:${security.toKey()}';
+  return '$walletId:${security.securityId}';
 }
 
 class _WalletSecurityKey extends Key<Balance> {

@@ -1,181 +1,129 @@
+import 'package:raven/utils/exceptions.dart';
 import 'package:raven/raven.dart';
-import 'package:ravencoin/ravencoin.dart';
-import 'package:tuple/tuple.dart';
-
-import 'transaction/fee.dart';
-import 'transaction/sign.dart';
-
-const ESTIMATED_OUTPUT_FEE = 0 /* why 34? */;
-const ESTIMATED_FEE_PER_INPUT = 0 /* why 51? */;
-
-class SendEstimate {
-  int amount;
-  int fees;
-  List<History> utxos;
-
-  @override
-  String toString() => 'amount: $amount, fees: $fees, utxos: $utxos';
-
-  int get total => amount + fees;
-  int get utxoTotal =>
-      utxos.fold(0, (int total, history) => total + history.value);
-
-  int get changeDue => utxoTotal - total;
-
-  SendEstimate(
-    this.amount, {
-    this.fees = ESTIMATED_OUTPUT_FEE + ESTIMATED_FEE_PER_INPUT,
-    List<History>? utxos,
-  }) : utxos = utxos ?? [];
-
-  factory SendEstimate.copy(SendEstimate detail) {
-    return SendEstimate(detail.amount,
-        fees: detail.fees, utxos: detail.utxos.toList());
-  }
-
-  void setFees(int fees_) => fees = fees_;
-  void setUTXOs(List<History> utxos_) => utxos = utxos_;
-  void setAmount(int amount_) => amount = amount_;
-}
 
 class TransactionService {
-  /// gets inputs, calculates fee, returns change
-  //
-  // EXAMPLE of recursive function
-  //
-  // Let's say we start with the following UTXOs available:
-  // utxos 60
-  //       50
-  //       9
-  //
-  // amount: 45
-  // estimate fee: 4
-  //
-  // utxos: [50]
-  // changeDue: 50 - 49 = 1
-  // setFees(25) <-- due to signing each input, fees grow
-  // updatedChangeDue: 50 - 70 = -20 : insufficient! -> iterate again, with updatedEstimate
-  //   updatedEstimate: amount = 45, fees = 25 -> iterate again
-  //
-  // utxos: [60, 50]
-  // changeDue: 110 - 70 = 40
-  // setFees(35) <-- we have more inputs this time, so fees grow
-  // updatedChangeDue: 110 - (45 + 35) = 30 : sufficient! BUT changeDue is WRONG
-  //   updatedEstimate: amount = 45, fees = 35 -> iterate again
-  //
-  // utxos: [60, 50]
-  // changeDue: 110 - (45 + 35) = 30
-  // setFees(35) <-- fee is the same because have the same number of inputs & outputs as previous iteration
-  // updatedChangeDue: 110 - (45 + 35) = 30 : sufficient! and changeDue is RIGHT
-  //   -> DONE with result
-  Tuple2<Transaction, SendEstimate> buildTransaction(
-    String toAddress,
-    SendEstimate estimate, {
-    Account? account,
-    Wallet? wallet,
-    TxGoal? goal,
-  }) {
-    var useWallet = shouldUseWallet(account: account, wallet: wallet);
+  List<Vout> walletUnspents(Wallet wallet) =>
+      VoutReservoir.whereUnspent(given: wallet.vouts, security: securities.RVN)
+          .toList();
 
-    var txb = TransactionBuilder(
-        network: useWallet ? wallet!.account!.network : account!.network);
+  List<Vout> accountUnspents(Account account) =>
+      VoutReservoir.whereUnspent(given: account.vouts, security: securities.RVN)
+          .toList();
 
-    // Direct the transaction to send value to the desired address
-    // measure fee?
-    txb.addOutput(toAddress, estimate.amount);
-
-    // From the available wallets and UTXOs within our account,
-    // find sufficient value to send to the address above
-    // result = addInputs(txb, account, SendEstimate(sendAmount));
-    // send
-    var utxos = useWallet
-        ? services.balances.collectUTXOsWallet(wallet!, amount: estimate.total)
-        : services.balances.collectUTXOs(account!, amount: estimate.total);
-
-    for (var utxo in utxos) {
-      txb.addInput(utxo.txId, utxo.position);
-    }
-
-    var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
-
-    // Calculate change due, and return it to a wallet we control
-    var returnAddress = useWallet
-        ? services.wallets.getChangeWallet(wallet!).address
-        : services.accounts.getChangeWallet(account!).address;
-    var preliminaryChangeDue = updatedEstimate.changeDue;
-    txb.addOutput(returnAddress, preliminaryChangeDue);
-
-    // Authorize the release of value by signing the transaction UTXOs
-    txb.signEachInput(utxos);
-
-    var tx = txb.build();
-
-    updatedEstimate.setFees(tx.fee(goal));
-
-    if (updatedEstimate.changeDue >= 0 &&
-        updatedEstimate.changeDue == preliminaryChangeDue) {
-      // success!
-      return Tuple2(tx, updatedEstimate);
-    } else {
-      // try again
-      return buildTransaction(
-        toAddress,
-        updatedEstimate,
-        goal: goal,
-        account: account,
-        wallet: wallet,
-      );
-    }
+  Transaction? getTransactionFrom({Transaction? transaction, String? hash}) {
+    transaction ??
+        hash ??
+        (() => throw OneOfMultipleMissing(
+            'transaction or hash required to identify record.'))();
+    return transaction ?? transactions.primaryIndex.getOne(hash ?? '');
   }
 
-  Tuple2<Transaction, SendEstimate> buildTransactionSendAll(
-    String toAddress,
-    SendEstimate estimate, {
-    Account? account,
-    Wallet? wallet,
-    TxGoal? goal,
-    Set<int>? previousFees,
-  }) {
-    previousFees = previousFees ?? {};
-    var useWallet = shouldUseWallet(account: account, wallet: wallet);
-    var txb = TransactionBuilder(
-        network: useWallet ? wallet!.account!.network : account!.network);
-    var utxos = useWallet
-        ? services.balances.sortedUnspentsWallets(wallet!)
-        : services.balances.sortedUnspents(account!);
-    var total = 0;
-    for (var utxo in utxos) {
-      txb.addInput(utxo.txId, utxo.position);
-      total = total + utxo.value;
-    }
-    var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
-    txb.addOutput(toAddress, estimate.amount);
-    txb.signEachInput(utxos);
-    var tx = txb.build();
-    var fees = tx.fee(goal);
-    updatedEstimate.setFees(tx.fee(goal));
-    updatedEstimate.setAmount(total - fees);
-    if (previousFees.contains(fees)) {
-      return Tuple2(tx, updatedEstimate);
-    } else {
-      return buildTransactionSendAll(
-        toAddress,
-        updatedEstimate,
-        goal: goal,
-        account: account,
-        wallet: wallet,
-        previousFees: {...previousFees, fees},
-      );
-    }
-  }
-
-  bool shouldUseWallet({Account? account, Wallet? wallet}) {
-    if (wallet != null) {
+  // setter for note value on Transaction record in reservoir
+  Future<bool> saveNote(String note,
+      {Transaction? transaction, String? hash}) async {
+    transaction = getTransactionFrom(transaction: transaction, hash: hash);
+    if (transaction != null) {
+      await transactions.save(Transaction(
+          height: transaction.height,
+          txId: transaction.txId,
+          confirmed: transaction.confirmed,
+          note: transaction.note,
+          time: transaction.time));
       return true;
-    } else if (account != null) {
-      return false;
-    } else {
-      throw OneOfMultipleMissing('account or wallet required');
     }
+    return false;
   }
+
+  /// returns a list of vins and vouts in chronological order
+  /// Current.transactions
+  /// a list of vouts and vins in chronological order. any Vout that points to
+  /// an address we own is counted as an "In" we sum up the vouts per
+  /// transaction per address and that's an in, technically.
+  ///
+  /// Now, any Vin that is associated with a Vout whose address is one that we
+  /// own is counted as a "Out." Well, again, we sum up all vins per address per
+  /// transaction and that's an "out".
+  ///
+  /// So you can only have up to one "In" per address per transaction and up to
+  /// one "Out" per address per transaction.
+  ///
+  /// coinbase edge cases will not be shown yet, but could be accounted for with
+  /// only additional logic.
+  ///
+  /// todo: aggregate by address...
+  List<TransactionRecord> getTransactionRecords({
+    Account? account,
+    Wallet? wallet,
+  }) {
+    var givenAddresses = account != null
+        ? account.addresses.map((address) => address.address).toList()
+        : wallet!.addresses.map((address) => address.address).toList();
+    var transactionRecords = <TransactionRecord>[];
+    for (var tx in transactions.chronological) {
+      for (Vin vin in tx.vins) {
+        if (givenAddresses.contains(vin.vout?.toAddress)) {
+          transactionRecords.add(TransactionRecord(
+            out: true,
+            fromAddress: '', // what am I supposed to do here?
+            toAddress: vin.vout!.toAddress,
+            value: vin.vout!.value,
+            security:
+                securities.primaryIndex.getOne(vin.vout?.securityId ?? '') ??
+                    securities.RVN,
+            height: tx.height,
+            datetime: tx.formattedDatetime,
+            amount: vin.vout!.amount ?? 0,
+            vinId: vin.vinId,
+            txId: tx.txId,
+          ));
+        }
+      }
+      for (var vout in tx.vouts) {
+        if (givenAddresses.contains(vout.toAddress)) {
+          transactionRecords.add(TransactionRecord(
+            out: false,
+            fromAddress: '', // tx.vins[0].vout!.address, // will this work?
+            toAddress: vout.toAddress,
+            value: vout.value,
+            security: securities.primaryIndex.getOne(vout.securityId) ??
+                securities.RVN,
+            height: tx.height,
+            datetime: tx.formattedDatetime,
+            amount: vout.amount ?? 0,
+            voutId: vout.voutId,
+            txId: tx.txId,
+          ));
+        }
+      }
+    }
+    return transactionRecords;
+  }
+}
+
+class TransactionRecord {
+  bool out;
+  String fromAddress;
+  String toAddress;
+  int value;
+  int? height;
+  String datetime;
+  int amount;
+  Security security;
+  String txId;
+  String? voutId;
+  String? vinId;
+
+  TransactionRecord({
+    required this.out,
+    required this.fromAddress,
+    required this.toAddress,
+    required this.value,
+    required this.security,
+    required this.datetime,
+    required this.txId,
+    this.height,
+    this.amount = 0,
+    this.vinId,
+    this.voutId,
+  });
 }
