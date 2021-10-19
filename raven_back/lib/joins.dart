@@ -32,15 +32,15 @@ extension AccountHasManyBalances on Account {
 //      .toList();
 //}
 
-//extension AccountHasManyVouts on Account {
-//  List<Vout> get vouts =>
-//      transactions.map((tx) => tx.vouts).expand((i) => i).toList();
-//}
-//
-//extension AccountHasManyVins on Account {
-//  List<Vin> get vins =>
-//      transactions.map((tx) => tx.vins).expand((i) => i).toList();
-//}
+extension AccountHasManyVouts on Account {
+  Iterable<Vout> get vouts =>
+      globals.vouts.data.where((vout) => vout.account!.accountId == accountId);
+}
+
+extension AccountHasManyVins on Account {
+  Iterable<Vin> get vins =>
+      globals.vins.data.where((vin) => vin.account!.accountId == accountId);
+}
 
 // Joins on Wallet
 
@@ -67,15 +67,15 @@ extension WalletHasManyBalances on Wallet {
 //      .toList();
 //}
 //
-//extension WalletHasManyVouts on Wallet {
-//  List<Vout> get vouts =>
-//      transactions.map((tx) => tx.vouts).expand((i) => i).toList();
-//}
-//
-//extension WalletHasManyVins on Wallet {
-//  List<Vin> get vins =>
-//      transactions.map((tx) => tx.vins).expand((i) => i).toList();
-//}
+extension WalletHasManyVouts on Wallet {
+  Iterable<Vout> get vouts =>
+      globals.vouts.data.where((vout) => vout.wallet!.walletId == walletId);
+}
+
+extension WalletHasManyVins on Wallet {
+  Iterable<Vin> get vins =>
+      globals.vins.data.where((vin) => vin.wallet!.walletId == walletId);
+}
 
 // Joins on Address
 
@@ -160,7 +160,6 @@ extension VinBelongsToTransaction on Vin {
 }
 
 extension VinHasOneVout on Vin {
-  /// perhaps we need to download it if it doesn't exist?
   Vout? get vout =>
       globals.vouts.primaryIndex.getOne(Vout.getVoutId(voutTxId, voutPosition));
 }
@@ -177,13 +176,13 @@ extension VinBelongsToAddress on Vin {
   Address? get address => vout?.address!;
 }
 
-//extension VinBelongsToWallet on Vin {
-//  Wallet? get wallet => address?.wallet;
-//}
-//
-//extension VinBelongsToAccount on Vin {
-//  Account? get account => wallet?.account;
-//}
+extension VinBelongsToWallet on Vin {
+  Wallet? get wallet => address?.wallet;
+}
+
+extension VinBelongsToAccount on Vin {
+  Account? get account => wallet?.account;
+}
 
 // Joins on Vout (adds to my value, consumed in whole)
 
@@ -205,10 +204,10 @@ extension VoutBelongsToAddress on Vout {
   Address? get address => globals.addresses.byAddress.getOne(toAddress);
 }
 
-//extension VoutBelongsToWallet on Vout {
-//  Wallet? get wallet => address?.wallet;
-//}
-//
-//extension VoutBelongsToAccount on Vout {
-//  Account? get account => wallet?.account;
-//}
+extension VoutBelongsToWallet on Vout {
+  Wallet? get wallet => address?.wallet;
+}
+
+extension VoutBelongsToAccount on Vout {
+  Account? get account => wallet?.account;
+}

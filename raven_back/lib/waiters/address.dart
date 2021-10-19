@@ -13,8 +13,6 @@ class AddressWaiter extends Waiter {
             updated: (updated) {},
             removed: (removed) {
               Address address = removed.data;
-              transactions
-                  .removeAll(address.transactions.map((tx) => tx).toList());
               // could be moved to waiter on transactions...
               vouts.removeAll(address.vouts.map((vout) => vout).toList());
               vins.removeAll(address.vins.map((vin) => vin).toList());

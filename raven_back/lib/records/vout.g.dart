@@ -22,7 +22,7 @@ class VoutAdapter extends TypeAdapter<Vout> {
       position: fields[2] as int,
       securityId: fields[3] as String,
       type: fields[5] as String,
-      address: fields[6] as String,
+      toAddress: fields[6] as String,
       additionalAddresses: (fields[9] as List?)?.cast<String>(),
       memo: fields[4] as String,
       asset: fields[7] as String?,
@@ -47,7 +47,7 @@ class VoutAdapter extends TypeAdapter<Vout> {
       ..writeByte(5)
       ..write(obj.type)
       ..writeByte(6)
-      ..write(obj.address)
+      ..write(obj.toAddress)
       ..writeByte(7)
       ..write(obj.asset)
       ..writeByte(8)

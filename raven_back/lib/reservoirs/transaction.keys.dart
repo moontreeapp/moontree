@@ -11,17 +11,6 @@ extension ByIdMethodsForTransaction on Index<_TxHashKey, Transaction> {
   Transaction? getOne(String hash) => getByKeyStr(hash).firstOrNull;
 }
 
-// byAddress
-
-class _AddressKey extends Key<Transaction> {
-  @override
-  String getKey(Transaction transaction) => transaction.address?.address ?? '';
-}
-
-extension ByAddressMethodsForTransaction on Index<_AddressKey, Transaction> {
-  List<Transaction> getAll(String address) => getByKeyStr(address);
-}
-
 // byHeight
 
 class _HeightKey extends Key<Transaction> {
