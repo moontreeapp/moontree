@@ -27,19 +27,20 @@ extension AccountHasManyBalances on Account {
 
 extension AccountHasManyVouts on Account {
   Iterable<Vout> get vouts =>
-      globals.vouts.data.where((vout) => vout.account!.accountId == accountId);
+      globals.vouts.data.where((vout) => vout.account?.accountId == accountId);
 }
 
 extension AccountHasManyVins on Account {
   Iterable<Vin> get vins =>
-      globals.vins.data.where((vin) => vin.account!.accountId == accountId);
+      globals.vins.data.where((vin) => vin.account?.accountId == accountId);
 }
 
 extension AccountHasManyTransactions on Account {
   Set<Transaction> get transactions =>
       (this.vouts.map((vout) => vout.transaction!).toList() +
               this.vins.map((vin) => vin.transaction!).toList())
-          .toSet();
+          .toSet()
+        ..remove(null);
 }
 
 // Joins on Wallet
@@ -62,19 +63,20 @@ extension WalletHasManyBalances on Wallet {
 
 extension WalletHasManyVouts on Wallet {
   Iterable<Vout> get vouts =>
-      globals.vouts.data.where((vout) => vout.wallet!.walletId == walletId);
+      globals.vouts.data.where((vout) => vout.wallet?.walletId == walletId);
 }
 
 extension WalletHasManyVins on Wallet {
   Iterable<Vin> get vins =>
-      globals.vins.data.where((vin) => vin.wallet!.walletId == walletId);
+      globals.vins.data.where((vin) => vin.wallet?.walletId == walletId);
 }
 
 extension WalletHasManyTransactions on Wallet {
   Set<Transaction> get transactions =>
       (this.vouts.map((vout) => vout.transaction!).toList() +
               this.vins.map((vin) => vin.transaction!).toList())
-          .toSet();
+          .toSet()
+        ..remove(null);
 }
 
 // Joins on Address
@@ -99,7 +101,8 @@ extension AddressHasManyTransactions on Address {
   Set<Transaction> get transactions =>
       (this.vouts.map((vout) => vout.transaction!).toList() +
               this.vins.map((vin) => vin.transaction!).toList())
-          .toSet();
+          .toSet()
+        ..remove(null);
 }
 
 // Joins on Balance
@@ -115,23 +118,26 @@ extension BalanceBelongsToAccount on Balance {
 // Joins on Transaction
 
 extension TransactionBelongsToAddress on Transaction {
-  Set<Address>? get addresses =>
-      (this.vouts.map((vout) => vout.address!).toList() +
-              this.vins.map((vin) => vin.address!).toList())
-          .toSet();
+  Set<Address?>? get addresses =>
+      (this.vouts.map((vout) => vout.address).toList() +
+              this.vins.map((vin) => vin.address).toList())
+          .toSet()
+        ..remove(null);
 }
 
 extension TransactionBelongsToWallet on Transaction {
-  Set<Wallet>? get wallets => (this.vouts.map((vout) => vout.wallet!).toList() +
-          this.vins.map((vin) => vin.wallet!).toList())
-      .toSet();
+  Set<Wallet?>? get wallets => (this.vouts.map((vout) => vout.wallet).toList() +
+          this.vins.map((vin) => vin.wallet).toList())
+      .toSet()
+    ..remove(null);
 }
 
 extension TransactionBelongsToAccount on Transaction {
-  Set<Account>? get accounts =>
-      (this.vouts.map((vout) => vout.account!).toList() +
-              this.vins.map((vin) => vin.account!).toList())
-          .toSet();
+  Set<Account?>? get accounts =>
+      (this.vouts.map((vout) => vout.account).toList() +
+              this.vins.map((vin) => vin.account).toList())
+          .toSet()
+        ..remove(null);
 }
 
 extension TransactionHasManyVins on Transaction {
@@ -178,7 +184,7 @@ extension VinHasOneValue on Vin {
 }
 
 extension VinBelongsToAddress on Vin {
-  Address? get address => vout?.address!;
+  Address? get address => vout?.address;
 }
 
 extension VinBelongsToWallet on Vin {
@@ -196,9 +202,8 @@ extension VoutBelongsToTransaction on Vout {
       globals.transactions.primaryIndex.getOne(txId);
 }
 
-extension VoutMayHaveOneVin on Vout {
-  Vin? get vin =>
-      globals.vins.primaryIndex.getOne(Vout.getVoutId(txId, position));
+extension VoutBelongsToVin on Vout {
+  Vin? get vin => globals.vins.byVoutId.getOne(Vout.getVoutId(txId, position));
 }
 
 extension VoutHasOneSecurity on Vout {

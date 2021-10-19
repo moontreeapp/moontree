@@ -47,11 +47,11 @@ extension BySecurityMethodsForVout on Index<_SecurityKey, Vout> {
   }
 }
 
-// byTransaction
+// byScirpthash - not every vout has an address
 
 class _ScripthashKey extends Key<Vout> {
   @override
-  String getKey(Vout vout) => vout.address!.addressId;
+  String getKey(Vout vout) => vout.address?.addressId ?? '';
 }
 
 extension ByScripthashMethodsForVout on Index<_ScripthashKey, Vout> {

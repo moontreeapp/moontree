@@ -97,7 +97,7 @@ class AddressService {
     var finalTxs = <Transaction>[];
     // ignore: omit_local_variable_types
     List<Tx> txs = await client
-        .getTransactions(vins.danglingVins.map((vin) => vin.txId).toList());
+        .getTransactions(vins.danglingVins.map((vin) => vin.voutTxId).toList());
     for (var tx in txs) {
       for (var vout in tx.vout) {
         if (vout.scriptPubKey.type == 'nulldata') continue;

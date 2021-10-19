@@ -37,7 +37,7 @@ extension ByVoutIdMethodsForVin on Index<_VoutIdKey, Vin> {
 
 class _ScripthashKey extends Key<Vin> {
   @override
-  String getKey(Vin vin) => vin.address!.addressId;
+  String getKey(Vin vin) => vin.address?.addressId ?? '';
 }
 
 extension ByScripthashMethodsForVin on Index<_ScripthashKey, Vin> {

@@ -61,7 +61,7 @@ class TransactionService {
     var transactionRecords = <TransactionRecord>[];
     for (var tx in transactions.chronological) {
       for (var vout in tx.vouts) {
-        if (givenAddresses.contains(vout.address)) {
+        if (givenAddresses.contains(vout.toAddress)) {
           transactionRecords.add(TransactionRecord(
             out: false,
             fromAddress: '', // tx.vins[0].vout!.address, // will this work?
@@ -78,23 +78,22 @@ class TransactionService {
         }
       }
       for (Vin vin in tx.vins) {
-        /// vin.vout fails here... how to fix? todo
-        //if (givenAddresses.contains(vin.vout!.address)) {
-        //  transactionRecords.add(TransactionRecord(
-        //    out: false,
-        //    fromAddress: '', // what am I supposed to do here?
-        //    toAddress: vin.vout!.address,
-        //    value: vin.vout!.value,
-        //    security:
-        //        securities.primaryIndex.getOne(vin.vout?.securityId ?? '') ??
-        //            securities.RVN,
-        //    height: tx.height,
-        //    datetime: tx.formattedDatetime,
-        //    amount: vin.vout!.amount ?? 0,
-        //    vinId: vin.vinId,
-        //    txId: tx.txId,
-        //  ));
-        //}
+        if (givenAddresses.contains(vin.vout!.toAddress)) {
+          transactionRecords.add(TransactionRecord(
+            out: false,
+            fromAddress: '', // what am I supposed to do here?
+            toAddress: vin.vout!.toAddress,
+            value: vin.vout!.value,
+            security:
+                securities.primaryIndex.getOne(vin.vout?.securityId ?? '') ??
+                    securities.RVN,
+            height: tx.height,
+            datetime: tx.formattedDatetime,
+            amount: vin.vout!.amount ?? 0,
+            vinId: vin.vinId,
+            txId: tx.txId,
+          ));
+        }
       }
     }
     return transactionRecords;
