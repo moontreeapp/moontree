@@ -32,7 +32,7 @@ class Vout with EquatableMixin {
   String type;
 
   @HiveField(6) // non-multisig transactions
-  String address;
+  String toAddress;
 
   @HiveField(7)
   String? asset; // if sending an asset, what is the name?
@@ -49,7 +49,7 @@ class Vout with EquatableMixin {
     required this.position,
     required this.securityId,
     required this.type,
-    required this.address,
+    required this.toAddress,
     this.additionalAddresses,
     this.memo = '',
     this.asset,
@@ -65,7 +65,7 @@ class Vout with EquatableMixin {
         position,
         securityId,
         type,
-        address,
+        toAddress,
         memo,
         asset ?? '',
         amount ?? -1,
@@ -77,12 +77,12 @@ class Vout with EquatableMixin {
     return 'Vout('
         'txId: $txId, value: $value, position: $position, '
         'securityId: $securityId, memo: $memo, type: $type, '
-        'address: $address, memo: $memo, asset: $asset, amount: $amount, '
+        'toAddress: $toAddress, memo: $memo, asset: $asset, amount: $amount, '
         'additionalAddress: $additionalAddresses)';
   }
 
   String get voutId => getVoutId(txId, position);
   static String getVoutId(txId, position) => '$txId:$position';
 
-  List<String> get addresses => [address, ...additionalAddresses ?? []];
+  List<String> get toAddresses => [toAddress, ...additionalAddresses ?? []];
 }

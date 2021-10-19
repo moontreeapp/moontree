@@ -24,7 +24,6 @@ class TransactionService {
     transaction = getTransactionFrom(transaction: transaction, hash: hash);
     if (transaction != null) {
       await transactions.save(Transaction(
-          addressId: transaction.addressId,
           height: transaction.height,
           txId: transaction.txId,
           confirmed: transaction.confirmed,
@@ -66,7 +65,7 @@ class TransactionService {
           transactionRecords.add(TransactionRecord(
             out: false,
             fromAddress: '', // tx.vins[0].vout!.address, // will this work?
-            toAddress: vout.address,
+            toAddress: vout.toAddress,
             value: vout.value,
             security: securities.primaryIndex.getOne(vout.securityId) ??
                 securities.RVN,

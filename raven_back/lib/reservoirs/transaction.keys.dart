@@ -22,18 +22,6 @@ extension ByAddressMethodsForTransaction on Index<_AddressKey, Transaction> {
   List<Transaction> getAll(String address) => getByKeyStr(address);
 }
 
-// byScripthash
-
-class _ScripthashKey extends Key<Transaction> {
-  @override
-  String getKey(Transaction transaction) => transaction.addressId;
-}
-
-extension ByScripthashMethodsForTransaction
-    on Index<_ScripthashKey, Transaction> {
-  List<Transaction> getAll(String addressId) => getByKeyStr(addressId);
-}
-
 // byHeight
 
 class _HeightKey extends Key<Transaction> {

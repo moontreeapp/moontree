@@ -32,3 +32,14 @@ class _VoutIdKey extends Key<Vin> {
 extension ByVoutIdMethodsForVin on Index<_VoutIdKey, Vin> {
   Vin? getOne(String voutId) => getByKeyStr(voutId).firstOrNull;
 }
+
+// byTransaction
+
+class _ScripthashKey extends Key<Vin> {
+  @override
+  String getKey(Vin vin) => vin.address!.addressId;
+}
+
+extension ByScripthashMethodsForVin on Index<_ScripthashKey, Vin> {
+  List<Vin> getAll(String addressId) => getByKeyStr(addressId);
+}

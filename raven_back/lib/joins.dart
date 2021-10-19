@@ -20,27 +20,27 @@ extension AccountHasManyAddresses on Account {
       wallets.map((wallet) => wallet.addresses).expand((i) => i).toList();
 }
 
-extension AccountHasManyTransactions on Account {
-  List<Transaction> get transactions => addresses
-      .map((address) => address.transactions)
-      .expand((i) => i)
-      .toList();
-}
-
-extension AccountHasManyVouts on Account {
-  List<Vout> get vouts =>
-      transactions.map((tx) => tx.vouts).expand((i) => i).toList();
-}
-
-extension AccountHasManyVins on Account {
-  List<Vin> get vins =>
-      transactions.map((tx) => tx.vins).expand((i) => i).toList();
-}
-
 extension AccountHasManyBalances on Account {
   List<Balance> get balances =>
       wallets.map((Wallet wallet) => wallet.balances).expand((i) => i).toList();
 }
+
+//extension AccountHasManyTransactions on Account {
+//  List<Transaction> get transactions => addresses
+//      .map((address) => address.transactions)
+//      .expand((i) => i)
+//      .toList();
+//}
+
+//extension AccountHasManyVouts on Account {
+//  List<Vout> get vouts =>
+//      transactions.map((tx) => tx.vouts).expand((i) => i).toList();
+//}
+//
+//extension AccountHasManyVins on Account {
+//  List<Vin> get vins =>
+//      transactions.map((tx) => tx.vins).expand((i) => i).toList();
+//}
 
 // Joins on Wallet
 
@@ -60,22 +60,22 @@ extension WalletHasManyBalances on Wallet {
   List<Balance> get balances => globals.balances.byWallet.getAll(walletId);
 }
 
-extension WalletHasManyTransactions on Wallet {
-  List<Transaction> get transactions => addresses
-      .map((address) => address.transactions)
-      .expand((i) => i)
-      .toList();
-}
-
-extension WalletHasManyVouts on Wallet {
-  List<Vout> get vouts =>
-      transactions.map((tx) => tx.vouts).expand((i) => i).toList();
-}
-
-extension WalletHasManyVins on Wallet {
-  List<Vin> get vins =>
-      transactions.map((tx) => tx.vins).expand((i) => i).toList();
-}
+//extension WalletHasManyTransactions on Wallet {
+//  List<Transaction> get transactions => addresses
+//      .map((address) => address.transactions)
+//      .expand((i) => i)
+//      .toList();
+//}
+//
+//extension WalletHasManyVouts on Wallet {
+//  List<Vout> get vouts =>
+//      transactions.map((tx) => tx.vouts).expand((i) => i).toList();
+//}
+//
+//extension WalletHasManyVins on Wallet {
+//  List<Vin> get vins =>
+//      transactions.map((tx) => tx.vins).expand((i) => i).toList();
+//}
 
 // Joins on Address
 
@@ -87,20 +87,19 @@ extension AddressBelongsToAccount on Address {
   Account? get account => wallet?.account;
 }
 
-extension AddressHasManyTransactions on Address {
-  List<Transaction> get transactions =>
-      globals.transactions.byScripthash.getAll(scripthash);
-}
-
 extension AddressHasManyVouts on Address {
-  List<Vout> get vouts =>
-      transactions.map((tx) => tx.vouts).expand((i) => i).toList();
+  List<Vout> get vouts => globals.vouts.byScripthash.getAll(addressId);
 }
 
 extension AddressHasManyVins on Address {
-  List<Vin> get vins =>
-      transactions.map((tx) => tx.vins).expand((i) => i).toList();
+  List<Vin> get vins => globals.vins.byScripthash.getAll(addressId);
 }
+
+//extension AddressHasManyTransactions on Address {
+//  List<Transaction> get transactions =>
+//      vouts.map((vout) => vout.transaction).expand((i) => i).toList() +
+//      vins.map((vin) => vin.transaction).expand((i) => i).toList();
+//}
 
 // Joins on Balance
 
@@ -114,17 +113,17 @@ extension BalanceBelongsToAccount on Balance {
 
 // Joins on Transaction
 
-extension TransactionBelongsToAddress on Transaction {
-  Address? get address => globals.addresses.primaryIndex.getOne(scripthash);
-}
-
-extension TransactionBelongsToWallet on Transaction {
-  Wallet? get wallet => address?.wallet;
-}
-
-extension TransactionBelongsToAccount on Transaction {
-  Account? get account => wallet?.account;
-}
+//extension TransactionBelongsToAddress on Transaction {
+//  Address? get address => globals.addresses.primaryIndex.getOne(scripthash);
+//}
+//
+//extension TransactionBelongsToWallet on Transaction {
+//  Wallet? get wallet => address?.wallet;
+//}
+//
+//extension TransactionBelongsToAccount on Transaction {
+//  Account? get account => wallet?.account;
+//}
 
 extension TransactionHasManyVins on Transaction {
   List<Vin> get vins => globals.vins.byTransaction.getAll(txId);
@@ -133,6 +132,10 @@ extension TransactionHasManyVins on Transaction {
 extension TransactionHasManyVouts on Transaction {
   List<Vout> get vouts => globals.vouts.byTransaction.getAll(txId);
 }
+
+//extension TransactionBelongsToAddress on Transaction {
+//  List<Address>? get addresses => vins .address + vouts.address;
+//}
 
 extension TransactionHasManyMemos on Transaction {
   List<String> get memos => globals.vouts.byTransaction
@@ -170,6 +173,18 @@ extension VinHasOneValue on Vin {
   int? get value => vout?.value;
 }
 
+extension VinBelongsToAddress on Vin {
+  Address? get address => vout?.address!;
+}
+
+//extension VinBelongsToWallet on Vin {
+//  Wallet? get wallet => address?.wallet;
+//}
+//
+//extension VinBelongsToAccount on Vin {
+//  Account? get account => wallet?.account;
+//}
+
 // Joins on Vout (adds to my value, consumed in whole)
 
 extension VoutBelongsToTransaction on Vout {
@@ -185,3 +200,15 @@ extension VoutMayHaveOneVin on Vout {
 extension VoutHasOneSecurity on Vout {
   Security? get security => globals.securities.primaryIndex.getOne(securityId);
 }
+
+extension VoutBelongsToAddress on Vout {
+  Address? get address => globals.addresses.byAddress.getOne(toAddress);
+}
+
+//extension VoutBelongsToWallet on Vout {
+//  Wallet? get wallet => address?.wallet;
+//}
+//
+//extension VoutBelongsToAccount on Vout {
+//  Account? get account => wallet?.account;
+//}

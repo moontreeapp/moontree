@@ -14,12 +14,14 @@ class BlockWaiter extends Waiter {
       if (ravenClient == null) {
         deinit();
       } else {
+        print('NEW RAVENCLIENT');
         subscribe(ravenClient as RavenElectrumClient);
       }
     });
   }
 
   void subscribe(RavenElectrumClient ravenClient) {
+    print('SUBSCRIBING TO BLOCKS');
     listen(
         'ravenClient.subscribeHeaders',
         ravenClient.subscribeHeaders(),

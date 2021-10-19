@@ -9,18 +9,15 @@ part 'transaction.g.dart';
 @HiveType(typeId: TypeId.Transaction)
 class Transaction with EquatableMixin {
   @HiveField(0)
-  String addressId;
-
-  @HiveField(1)
   String txId;
 
-  @HiveField(2)
+  @HiveField(1)
   int height;
 
-  @HiveField(3)
+  @HiveField(2)
   bool confirmed;
 
-  @HiveField(4)
+  @HiveField(3)
   int time;
 
   /// other possible tx elements from transaction.get
@@ -40,15 +37,14 @@ class Transaction with EquatableMixin {
   //// 1 if another block has passed.
 
   // not from transaction.get
-  @HiveField(5)
+  @HiveField(4)
   String? memo;
 
-  @HiveField(6)
+  @HiveField(5)
   String note;
 
   Transaction(
-      {required this.addressId,
-      required this.txId,
+      {required this.txId,
       required this.height,
       required this.confirmed,
       required this.time,
@@ -57,7 +53,6 @@ class Transaction with EquatableMixin {
 
   @override
   List<Object> get props => [
-        addressId,
         height,
         confirmed,
         time,
@@ -69,11 +64,9 @@ class Transaction with EquatableMixin {
   @override
   String toString() {
     return 'Transaction('
-        'addressId: $addressId, txId: $txId, height: $height,'
-        'confirmed: $confirmed, time: $time, memo: $memo, note: $note)';
+        'txId: $txId, height: $height, confirmed: $confirmed, time: $time, '
+        'memo: $memo, note: $note)';
   }
-
-  String get scripthash => addressId;
 
   // could belong on frontend...
   DateTime get datetime => DateTime.fromMillisecondsSinceEpoch(time * 1000);

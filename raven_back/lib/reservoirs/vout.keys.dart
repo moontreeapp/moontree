@@ -46,3 +46,14 @@ extension BySecurityMethodsForVout on Index<_SecurityKey, Vout> {
                 unconfirmed: (!vout.confirmed ? vout.value : 0)));
   }
 }
+
+// byTransaction
+
+class _ScripthashKey extends Key<Vout> {
+  @override
+  String getKey(Vout vout) => vout.address!.addressId;
+}
+
+extension ByScripthashMethodsForVout on Index<_ScripthashKey, Vout> {
+  List<Vout> getAll(String addressId) => getByKeyStr(addressId);
+}

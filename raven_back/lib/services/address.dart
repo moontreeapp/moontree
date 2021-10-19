@@ -15,15 +15,16 @@ class AddressService {
 
     // for each scripthash
     for (var addressId in addressIds) {
-      // erase all tx and vins and vouts not pulled. (or just remove all first - the simple way).
-      var removeTransactions = transactions.byScripthash.getAll(addressId);
-      for (var transaction in removeTransactions) {
-        await vins.removeAll(transaction.vins);
-        await vouts.removeAll(transaction.vouts);
-      }
-      await transactions.removeAll(removeTransactions);
+      // erase all vins and vouts not pulled. (or just remove all first - the simple way).
+      await vins.removeAll(vins.byScripthash.getAll(addressId));
+      await vouts.removeAll(vouts.byScripthash.getAll(addressId));
 
-      // get a list of all history transactions
+      /// never purge tx (unless theres a reorg or something)
+      /// transactions are not associated with addresses directly
+      //var removeTransactions = transactions.byScripthash.getAll(addressId);
+      //await transactions.removeAll(removeTransactions);
+
+      // get a list of all historic transaction ids assicated with this address
       // ignore: omit_local_variable_types
       List<ScripthashHistory> histories = await client.getHistory(addressId);
 
@@ -63,7 +64,7 @@ class AddressService {
             securityId: vs.item2.securityId,
             memo: vout.memo,
             type: vout.scriptPubKey.type,
-            address: vout.scriptPubKey.addresses![0],
+            toAddress: vout.scriptPubKey.addresses![0],
             asset: vout.scriptPubKey.asset,
             amount: vout.scriptPubKey.amount,
             // multisig - must detect if multisig...
@@ -73,8 +74,11 @@ class AddressService {
                 : null,
           ));
         }
+
+        /// might as well just save them all  - maybe avoiding saving them all
+        /// can save some time, but then you have to also check confirmations
+        /// and see if anything else changed. meh, just save them all for now.
         newTxs.add(Transaction(
-          addressId: addressId,
           txId: tx.txid,
           height: tx.height,
           confirmed: tx.confirmations > 0,
@@ -86,6 +90,48 @@ class AddressService {
       await vouts.saveAll(newVouts);
       await transactions.saveAll(newTxs);
     }
+
+    /// one more step - get all vins that have no corresponding vout (in the db)
+    /// and get the vouts for them
+    var finalVouts = <Vout>[];
+    var finalTxs = <Transaction>[];
+    // ignore: omit_local_variable_types
+    List<Tx> txs = await client
+        .getTransactions(vins.danglingVins.map((vin) => vin.txId).toList());
+    for (var tx in txs) {
+      for (var vout in tx.vout) {
+        if (vout.scriptPubKey.type == 'nulldata') continue;
+        var vs = await handleAssetData(client, tx, vout);
+        finalVouts.add(Vout(
+          txId: tx.txid,
+          value: vs.item1,
+          position: vout.n,
+          securityId: vs.item2.securityId,
+          memo: vout.memo,
+          type: vout.scriptPubKey.type,
+          toAddress: vout.scriptPubKey.addresses![0],
+          asset: vout.scriptPubKey.asset,
+          amount: vout.scriptPubKey.amount,
+          // multisig - must detect if multisig...
+          additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
+              ? vout.scriptPubKey.addresses!
+                  .sublist(1, vout.scriptPubKey.addresses!.length)
+              : null,
+        ));
+      }
+
+      /// might as well just save them all  - maybe avoiding saving them all
+      /// can save some time, but then you have to also check confirmations
+      /// and see if anything else changed. meh, just save them all for now.
+      finalTxs.add(Transaction(
+        txId: tx.txid,
+        height: tx.height,
+        confirmed: tx.confirmations > 0,
+        time: tx.time,
+      ));
+    }
+    await vouts.saveAll(finalVouts);
+    await transactions.saveAll(finalTxs);
 
     //if ([for (var ca in changedAddresses) ca.address]
     //    .contains('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm')) {
