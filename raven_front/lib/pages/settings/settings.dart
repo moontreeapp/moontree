@@ -102,16 +102,32 @@ class _SettingsState extends State<Settings> {
                   title: 'show data',
                   leading: Icon(Icons.info_outline_rounded),
                   onPressed: (BuildContext context) {
-                    print(addresses.byAddress
-                        .getOne('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm'));
-                    print(addresses.byAddress
-                        .getOne('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm')!
-                        .addressId);
-                    print(vouts.byScripthash.getAll(addresses.byAddress
-                        .getOne('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm')!
-                        .addressId));
-                    print(vouts.byScripthash.getAll(
-                        '204d127aea0dfa26a53eeb9fa89220aee54440f5dcb4f015d3b57861d3d1d7ca'));
+                    //print(addresses.byAddress
+                    //    .getOne('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm'));
+                    //print(addresses.byAddress
+                    //    .getOne('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm')!
+                    //    .addressId);
+                    //print(vouts.byScripthash.getAll(addresses.byAddress
+                    //    .getOne('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm')!
+                    //    .addressId));
+                    //print(vouts.byScripthash.getAll(
+                    //    '204d127aea0dfa26a53eeb9fa89220aee54440f5dcb4f015d3b57861d3d1d7ca'));
+                    print('VOUTS ${vouts.data}');
+                    print('VINS ${vins.data}');
+                    for (var vin in vins.data) {
+                      print(vin.vout);
+                    }
+                    print('utxos');
+                    for (var utxo in services.transactions
+                        .accountUnspents(currentAccount())) {
+                      print(utxo);
+                    }
+                    print('addresses');
+                    print(currentAccount()
+                        .addresses
+                        .map((address) => address.address)
+                        .toList());
+                    print(transactions.chronological);
                   }),
               //SettingsTile(
               //    title: 'cipher registry',
