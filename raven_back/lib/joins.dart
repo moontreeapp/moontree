@@ -25,13 +25,6 @@ extension AccountHasManyBalances on Account {
       wallets.map((Wallet wallet) => wallet.balances).expand((i) => i).toList();
 }
 
-//extension AccountHasManyTransactions on Account {
-//  List<Transaction> get transactions => addresses
-//      .map((address) => address.transactions)
-//      .expand((i) => i)
-//      .toList();
-//}
-
 extension AccountHasManyVouts on Account {
   Iterable<Vout> get vouts =>
       globals.vouts.data.where((vout) => vout.account!.accountId == accountId);
@@ -40,6 +33,13 @@ extension AccountHasManyVouts on Account {
 extension AccountHasManyVins on Account {
   Iterable<Vin> get vins =>
       globals.vins.data.where((vin) => vin.account!.accountId == accountId);
+}
+
+extension AccountHasManyTransactions on Account {
+  Set<Transaction> get transactions =>
+      (this.vouts.map((vout) => vout.transaction!).toList() +
+              this.vins.map((vin) => vin.transaction!).toList())
+          .toSet();
 }
 
 // Joins on Wallet
@@ -60,13 +60,6 @@ extension WalletHasManyBalances on Wallet {
   List<Balance> get balances => globals.balances.byWallet.getAll(walletId);
 }
 
-//extension WalletHasManyTransactions on Wallet {
-//  List<Transaction> get transactions => addresses
-//      .map((address) => address.transactions)
-//      .expand((i) => i)
-//      .toList();
-//}
-//
 extension WalletHasManyVouts on Wallet {
   Iterable<Vout> get vouts =>
       globals.vouts.data.where((vout) => vout.wallet!.walletId == walletId);
@@ -75,6 +68,13 @@ extension WalletHasManyVouts on Wallet {
 extension WalletHasManyVins on Wallet {
   Iterable<Vin> get vins =>
       globals.vins.data.where((vin) => vin.wallet!.walletId == walletId);
+}
+
+extension WalletHasManyTransactions on Wallet {
+  Set<Transaction> get transactions =>
+      (this.vouts.map((vout) => vout.transaction!).toList() +
+              this.vins.map((vin) => vin.transaction!).toList())
+          .toSet();
 }
 
 // Joins on Address
@@ -95,11 +95,12 @@ extension AddressHasManyVins on Address {
   List<Vin> get vins => globals.vins.byScripthash.getAll(addressId);
 }
 
-//extension AddressHasManyTransactions on Address {
-//  List<Transaction> get transactions =>
-//      vouts.map((vout) => vout.transaction).expand((i) => i).toList() +
-//      vins.map((vin) => vin.transaction).expand((i) => i).toList();
-//}
+extension AddressHasManyTransactions on Address {
+  Set<Transaction> get transactions =>
+      (this.vouts.map((vout) => vout.transaction!).toList() +
+              this.vins.map((vin) => vin.transaction!).toList())
+          .toSet();
+}
 
 // Joins on Balance
 
@@ -113,17 +114,25 @@ extension BalanceBelongsToAccount on Balance {
 
 // Joins on Transaction
 
-//extension TransactionBelongsToAddress on Transaction {
-//  Address? get address => globals.addresses.primaryIndex.getOne(scripthash);
-//}
-//
-//extension TransactionBelongsToWallet on Transaction {
-//  Wallet? get wallet => address?.wallet;
-//}
-//
-//extension TransactionBelongsToAccount on Transaction {
-//  Account? get account => wallet?.account;
-//}
+extension TransactionBelongsToAddress on Transaction {
+  Set<Address>? get addresses =>
+      (this.vouts.map((vout) => vout.address!).toList() +
+              this.vins.map((vin) => vin.address!).toList())
+          .toSet();
+}
+
+extension TransactionBelongsToWallet on Transaction {
+  Set<Wallet>? get wallets => (this.vouts.map((vout) => vout.wallet!).toList() +
+          this.vins.map((vin) => vin.wallet!).toList())
+      .toSet();
+}
+
+extension TransactionBelongsToAccount on Transaction {
+  Set<Account>? get accounts =>
+      (this.vouts.map((vout) => vout.account!).toList() +
+              this.vins.map((vin) => vin.account!).toList())
+          .toSet();
+}
 
 extension TransactionHasManyVins on Transaction {
   List<Vin> get vins => globals.vins.byTransaction.getAll(txId);
@@ -132,10 +141,6 @@ extension TransactionHasManyVins on Transaction {
 extension TransactionHasManyVouts on Transaction {
   List<Vout> get vouts => globals.vouts.byTransaction.getAll(txId);
 }
-
-//extension TransactionBelongsToAddress on Transaction {
-//  List<Address>? get addresses => vins .address + vouts.address;
-//}
 
 extension TransactionHasManyMemos on Transaction {
   List<String> get memos => globals.vouts.byTransaction
