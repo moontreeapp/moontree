@@ -18,7 +18,7 @@ void main() async {
 
     test('sumBalance (not in mempool)', () {
       expect(
-          services.balances
+          services.balance
               .sumBalance(fixtures.wallets().map['0']!, RVN)
               .confirmed,
           15);
@@ -26,7 +26,7 @@ void main() async {
 
     test('sumBalance (in mempool)', () {
       expect(
-          services.balances
+          services.balance
               .sumBalance(fixtures.wallets().map['0']!, RVN)
               .unconfirmed,
           10);
@@ -34,7 +34,7 @@ void main() async {
 
     test('getChangedBalances', () async {
       var change = (await histories.save(newHistory))!;
-      var changedBalances = services.balances.getChangedBalances([change]);
+      var changedBalances = services.balance.getChangedBalances([change]);
       expect(changedBalances.toList(), [
         Balance(walletId: '0', security: RVN, confirmed: 40, unconfirmed: 10)
       ]);
@@ -45,7 +45,7 @@ void main() async {
     test('saveChangedBalances', () async {
       var change = await histories.save(newHistory);
       var changedBalances =
-          await services.balances.saveChangedBalances([change!]);
+          await services.balance.saveChangedBalances([change!]);
       var updatedBalance =
           Balance(walletId: '0', security: RVN, confirmed: 40, unconfirmed: 10);
       expect(changedBalances.toList(), [updatedBalance]);
@@ -54,7 +54,7 @@ void main() async {
     });
 
     test('sortedUnspents', () {
-      expect(services.balances.sortedUnspents(fixtures.accounts().map['a0']!), [
+      expect(services.balance.sortedUnspents(fixtures.accounts().map['a0']!), [
         fixtures.histories().map['3'], // 1000 RVN
         fixtures.histories().map['0'], // 500 RVN
       ]);
@@ -62,11 +62,11 @@ void main() async {
 
     test('collectUTXOs', () {
       var account = fixtures.accounts().map['a0']!;
-      expect(() => services.balances.collectUTXOs(account, amount: 16),
+      expect(() => services.balance.collectUTXOs(account, amount: 16),
           throwsException);
-      expect(services.balances.collectUTXOs(account, amount: 15),
+      expect(services.balance.collectUTXOs(account, amount: 15),
           [fixtures.histories().map['3'], fixtures.histories().map['0']]);
-      expect(services.balances.collectUTXOs(account, amount: 14),
+      expect(services.balance.collectUTXOs(account, amount: 14),
           [fixtures.histories().map['3'], fixtures.histories().map['0']]);
     });
   });

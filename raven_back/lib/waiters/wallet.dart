@@ -23,7 +23,7 @@ class WalletWaiter extends Waiter {
       // put in address subscription:
       // listen to subscriptions, when address is filled, derive a new one
       //  if (backlogAddressCipher.isNotEmpty) {
-      //    backlogAddressCipher = (await services.wallets.leaders
+      //    backlogAddressCipher = (await services.wallet.leader
       //            .maybeDeriveNewAddresses(backlogAddressCipher.toList()))
       //        .toSet();
       //  }

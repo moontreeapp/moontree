@@ -9,7 +9,7 @@ extension SignEachInput on ravencoin.TransactionBuilder {
   /// input order of the created transaction
   void signEachInput(List<Vout> utxos) {
     utxos.asMap().forEach((i, utxo) {
-      var keyPair = services.wallets.getAddressKeypair(utxo.address!);
+      var keyPair = services.wallet.getAddressKeypair(utxo.address!);
       sign(vin: i, keyPair: keyPair);
     });
   }

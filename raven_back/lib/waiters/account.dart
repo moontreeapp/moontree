@@ -8,7 +8,7 @@ class AccountWaiter extends Waiter {
 
   void init() {
     listen('subjects.cipher', subjects.cipher.stream, (cipher) async {
-      if (cipher == cipherRegistry.currentCipher) {
+      if (cipher == services.cipher.currentCipher) {
         backlog.forEach((account) {
           makeFirstWallet(account);
         });
@@ -22,8 +22,8 @@ class AccountWaiter extends Waiter {
         change.when(
             added: (added) {
               var account = added.data;
-              if (services.passwords.required &&
-                  cipherRegistry.currentCipher == null) {
+              if (services.password.required &&
+                  services.cipher.currentCipher == null) {
                 backlog.add(account);
               } else {
                 makeFirstWallet(account);
@@ -37,9 +37,9 @@ class AccountWaiter extends Waiter {
 
   void makeFirstWallet(Account account) {
     if (wallets.byAccount.getAll(account.accountId).isEmpty) {
-      services.wallets.leaders.makeSaveLeaderWallet(
-          account.accountId, cipherRegistry.currentCipher!,
-          cipherUpdate: cipherRegistry.currentCipherUpdate);
+      services.wallet.leader.makeSaveLeaderWallet(
+          account.accountId, services.cipher.currentCipher!,
+          cipherUpdate: services.cipher.currentCipherUpdate);
     }
   }
 }

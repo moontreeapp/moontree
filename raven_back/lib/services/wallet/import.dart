@@ -57,7 +57,7 @@ class ImportWalletService {
           decodedJSON.containsKey('wallets')) {
         /// create accounts
         for (var entry in decodedJSON['accounts']!.entries) {
-          var account = services.accounts.newAccount(
+          var account = services.account.newAccount(
             entry.value['name'],
             net: entry.value['net'],
             accountId: entry.key,
@@ -67,7 +67,7 @@ class ImportWalletService {
 
         /// create wallets
         for (var entry in decodedJSON['wallets']!.entries) {
-          var wallet = services.wallets.create(
+          var wallet = services.wallet.create(
             walletType: typeForImport(entry.value['type']),
             accountId: entry.value['accountId'],
             cipherUpdate: CipherUpdate.fromMap(entry.value['cipherUpdate']),
@@ -84,10 +84,10 @@ class ImportWalletService {
   }
 
   Future<HandleResult> handleMnemonics(String text, String accountId) async {
-    var wallet = services.wallets.create(
+    var wallet = services.wallet.create(
       walletType: WalletType.leader,
       accountId: accountId,
-      cipherUpdate: cipherRegistry.currentCipherUpdate,
+      cipherUpdate: services.cipher.currentCipherUpdate,
       secret: text,
       alwaysReturn: true,
     );
@@ -95,21 +95,21 @@ class ImportWalletService {
   }
 
   Future<HandleResult> handlePrivateKey(String text, String accountId) async {
-    var wallet = services.wallets.create(
+    var wallet = services.wallet.create(
       walletType: WalletType.single,
       accountId: accountId,
-      cipherUpdate: cipherRegistry.currentCipherUpdate,
-      secret: services.wallets.singles.privateKeyToWif(text),
+      cipherUpdate: services.cipher.currentCipherUpdate,
+      secret: services.wallet.single.privateKeyToWif(text),
       alwaysReturn: true,
     );
     return attemptWalletSave(wallet);
   }
 
   Future<HandleResult> handleWIF(String text, String accountId) async {
-    var wallet = services.wallets.create(
+    var wallet = services.wallet.create(
       walletType: WalletType.single,
       accountId: accountId,
-      cipherUpdate: cipherRegistry.currentCipherUpdate,
+      cipherUpdate: services.cipher.currentCipherUpdate,
       secret: text,
       alwaysReturn: true,
     );

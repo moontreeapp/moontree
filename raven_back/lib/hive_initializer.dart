@@ -78,6 +78,13 @@ class HiveInitializer {
     addresses.setSource(HiveSource('addresses'));
     balances.setSource(HiveSource('balances'));
     blocks.setSource(HiveSource('blocks'));
+
+    /// this needs to be inmemory:
+    // ciphers.setSource(HiveSource(
+    //   'ciphers',
+    //   defaults: CipherReservoir.defaults,
+    // ));
+
     passwords.setSource(HiveSource('passwords'));
     rates.setSource(HiveSource('rates'));
     securities.setSource(HiveSource(

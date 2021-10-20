@@ -31,7 +31,7 @@ void main() {
       // make addresses
       expect(addresses.length, 5);
       await reservoirChanges(addresses,
-          () => services.wallets.leaders.deriveFirstAddressAndSave(wallet), 2);
+          () => services.wallet.leader.deriveFirstAddressAndSave(wallet), 2);
       expect(addresses.length, 7);
     });
 

@@ -9,14 +9,14 @@ class PasswordService {
 
   /// are any wallets encrypted with something other than no cipher
   bool get required {
-    for (var cipherUpdate in services.wallets.getAllCipherUpdates) {
+    for (var cipherUpdate in services.wallet.getAllCipherUpdates) {
       if (cipherUpdate.cipherType != CipherType.None) return true;
     }
     return false;
   }
 
   bool interruptedPasswordChange() => {
-        for (var cipherUpdate in services.wallets.getAllCipherUpdates)
+        for (var cipherUpdate in services.wallet.getAllCipherUpdates)
           if (cipherUpdate.passwordId != passwords.maxPasswordId)
             cipherUpdate.passwordId
       }.isNotEmpty;
@@ -26,8 +26,8 @@ class PasswordService {
 }
 
 class PasswordValidationService {
-  String getHash(String password, String salt) => services.passwords.create
-      .hashThis(services.passwords.create.saltPassword(password, salt));
+  String getHash(String password, String salt) => services.password.create
+      .hashThis(services.password.create.saltPassword(password, salt));
 
   bool password(String password) =>
       getHash(password, passwords.primaryIndex.getMostRecent()!.salt) ==

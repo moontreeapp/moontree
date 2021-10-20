@@ -4,7 +4,7 @@ import 'waiters/waiters.dart';
 
 // CIPHERS
 
-final CipherRegistry cipherRegistry = CipherRegistry();
+//final CipherRegistry cipherRegistry = CipherRegistry();
 
 // RESERVOIRS
 
@@ -12,6 +12,7 @@ final AccountReservoir accounts = AccountReservoir();
 final AddressReservoir addresses = AddressReservoir();
 final BlockReservoir blocks = BlockReservoir();
 final BalanceReservoir balances = BalanceReservoir();
+final CipherReservoir ciphers = CipherReservoir();
 final PasswordReservoir passwords = PasswordReservoir();
 final ExchangeRateReservoir rates = ExchangeRateReservoir();
 final SecurityReservoir securities = SecurityReservoir();

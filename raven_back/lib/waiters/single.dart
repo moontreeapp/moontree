@@ -22,8 +22,8 @@ class SingleWaiter extends Waiter {
               var wallet = added.data;
               if (wallet is SingleWallet) {
                 if (wallet.cipher != null) {
-                  addresses.save(services.wallets.singles.toAddress(wallet));
-                  addresses.save(services.wallets.singles.toAddress(wallet));
+                  addresses.save(services.wallet.single.toAddress(wallet));
+                  addresses.save(services.wallet.single.toAddress(wallet));
                 } else {
                   backlog.add(wallet);
                 }
@@ -44,8 +44,8 @@ class SingleWaiter extends Waiter {
     var ret = <SingleWallet>{};
     for (var wallet in backlog) {
       if (wallet.cipherUpdate == cipherUpdate) {
-        addresses.save(services.wallets.singles.toAddress(wallet));
-        addresses.save(services.wallets.singles.toAddress(wallet));
+        addresses.save(services.wallet.single.toAddress(wallet));
+        addresses.save(services.wallet.single.toAddress(wallet));
       } else {
         ret.add(wallet);
       }

@@ -10,3 +10,4 @@ export 'transaction.dart';
 export 'wallet.dart';
 export 'vin.dart';
 export 'vout.dart';
+export 'cipher.dart';

@@ -46,7 +46,9 @@ extension AccountHasManyTransactions on Account {
 // Joins on Wallet
 
 extension WalletBelongsToCipher on Wallet {
-  CipherBase? get cipher => globals.cipherRegistry.ciphers[cipherUpdate];
+  //CipherBase? get cipher => globals.cipherRegistry.ciphers[cipherUpdate];
+  CipherBase get cipher =>
+      globals.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher;
 }
 
 extension WalletBelongsToAccount on Wallet {

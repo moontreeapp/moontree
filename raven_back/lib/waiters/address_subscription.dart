@@ -59,9 +59,11 @@ class AddressSubscriptionWaiter extends Waiter {
         var temp = <Address>{};
         for (var changedAddress in backlogAddressCipher) {
           var wallet = changedAddress.wallet!;
+          //if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
           if (cipherRegistry.ciphers.keys.contains(wallet.cipherUpdate)) {
-            services.wallets.leaders.maybeSaveNewAddress(
+            services.wallet.leader.maybeSaveNewAddress(
                 wallet as LeaderWallet,
+                //ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
                 cipherRegistry.ciphers[wallet.cipherUpdate]!,
                 changedAddress.exposure);
           } else {
@@ -104,7 +106,7 @@ class AddressSubscriptionWaiter extends Waiter {
       var wallet = changedAddress.wallet!;
       if (wallet is LeaderWallet) {
         if (cipherRegistry.ciphers.keys.contains(wallet.cipherUpdate)) {
-          services.wallets.leaders.maybeSaveNewAddress(
+          services.wallet.leader.maybeSaveNewAddress(
               wallet,
               cipherRegistry.ciphers[wallet.cipherUpdate]!,
               changedAddress.exposure);
@@ -117,7 +119,7 @@ class AddressSubscriptionWaiter extends Waiter {
 
   Future retrieve(
       RavenElectrumClient client, List<Address> changedAddresses) async {
-    await services.addresses.getAndSaveTransaction(
+    await services.address.getAndSaveTransaction(
       changedAddresses,
       client,
     );

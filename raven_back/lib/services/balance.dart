@@ -39,12 +39,12 @@ class BalanceService {
 
   /// Sort in descending order, from largest amount to smallest amount
   List<Vout> sortedUnspents(Account account) =>
-      services.transactions.accountUnspents(account).toList()
+      services.transaction.accountUnspents(account).toList()
         ..sort((a, b) => b.value.compareTo(a.value));
 
   /// Sort in descending order, from largest amount to smallest amount
   List<Vout> sortedUnspentsWallets(Wallet wallet) =>
-      services.transactions.walletUnspents(wallet).toList()
+      services.transaction.walletUnspents(wallet).toList()
         ..sort((a, b) => b.value.compareTo(a.value));
 
   /// Asserts that the asset in the account is greater than `amount`

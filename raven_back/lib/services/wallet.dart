@@ -7,15 +7,13 @@ import 'wallet/leader.dart';
 import 'wallet/single.dart';
 import 'wallet/export.dart';
 import 'wallet/import.dart';
-import 'wallet/cipher.dart';
 import 'wallet/constants.dart';
 
 class WalletService {
-  final LeaderWalletService leaders = LeaderWalletService();
-  final SingleWalletService singles = SingleWalletService();
+  final LeaderWalletService leader = LeaderWalletService();
+  final SingleWalletService single = SingleWalletService();
   final ExportWalletService export = ExportWalletService();
   final ImportWalletService import = ImportWalletService();
-  final CipherService cipher = CipherService();
 
   // should return all cipherUpdates
   Set<CipherUpdate> get getAllCipherUpdates =>
@@ -46,12 +44,20 @@ class WalletService {
     required String secret,
   }) async =>
       {
-        WalletType.leader: () async => await leaders.makeSaveLeaderWallet(
-            accountId, cipherRegistry.ciphers[cipherUpdate]!,
-            cipherUpdate: cipherUpdate, mnemonic: secret),
-        WalletType.single: () async => await singles.makeSaveSingleWallet(
-            accountId, cipherRegistry.ciphers[cipherUpdate]!,
-            cipherUpdate: cipherUpdate, wif: secret)
+        WalletType.leader: () async => await leader.makeSaveLeaderWallet(
+              accountId,
+              //ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+              cipherRegistry.ciphers[cipherUpdate]!,
+              cipherUpdate: cipherUpdate,
+              mnemonic: secret,
+            ),
+        WalletType.single: () async => await single.makeSaveSingleWallet(
+              accountId,
+              //ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+              cipherRegistry.ciphers[cipherUpdate]!,
+              cipherUpdate: cipherUpdate,
+              wif: secret,
+            )
       }[walletType]!();
 
   Wallet? create({
@@ -62,25 +68,33 @@ class WalletService {
     bool alwaysReturn = false,
   }) =>
       {
-        WalletType.leader: () => leaders.makeLeaderWallet(
-            accountId, cipherRegistry.ciphers[cipherUpdate]!,
-            cipherUpdate: cipherUpdate,
-            entropy: secret != null ? bip39.mnemonicToEntropy(secret) : null,
-            alwaysReturn: alwaysReturn),
-        WalletType.single: () => singles.makeSingleWallet(
-            accountId, cipherRegistry.ciphers[cipherUpdate]!,
-            cipherUpdate: cipherUpdate, wif: secret, alwaysReturn: alwaysReturn)
+        WalletType.leader: () => leader.makeLeaderWallet(
+              accountId,
+              //ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+              cipherRegistry.ciphers[cipherUpdate]!,
+              cipherUpdate: cipherUpdate,
+              entropy: secret != null ? bip39.mnemonicToEntropy(secret) : null,
+              alwaysReturn: alwaysReturn,
+            ),
+        WalletType.single: () => single.makeSingleWallet(
+              accountId,
+              //ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+              cipherRegistry.ciphers[cipherUpdate]!,
+              cipherUpdate: cipherUpdate,
+              wif: secret,
+              alwaysReturn: alwaysReturn,
+            )
       }[walletType]!();
 
   ECPair getAddressKeypair(Address address) {
     var wallet = address.wallet!;
     if (wallet is LeaderWallet) {
-      var seedWallet = services.wallets.leaders.getSeedWallet(wallet);
+      var seedWallet = services.wallet.leader.getSeedWallet(wallet);
       var hdWallet =
           seedWallet.subwallet(address.hdIndex, exposure: address.exposure);
       return hdWallet.keyPair;
     } else if (wallet is SingleWallet) {
-      var kpWallet = services.wallets.singles.getKPWallet(wallet);
+      var kpWallet = services.wallet.single.getKPWallet(wallet);
       return kpWallet.keyPair;
     } else {
       throw ArgumentError('wallet type unknown');
@@ -89,10 +103,10 @@ class WalletService {
 
   WalletBase getChangeWallet(Wallet wallet) {
     if (wallet is LeaderWallet) {
-      return leaders.getNextEmptyWallet(wallet);
+      return leader.getNextEmptyWallet(wallet);
     }
     if (wallet is SingleWallet) {
-      return singles.getKPWallet(wallet);
+      return single.getKPWallet(wallet);
     }
     throw WalletMissing("Wallet '${wallet.walletId}' has no change wallets");
   }

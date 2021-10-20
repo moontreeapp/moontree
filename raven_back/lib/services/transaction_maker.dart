@@ -89,8 +89,8 @@ class MakeTransactionService {
     // result = addInputs(txb, account, SendEstimate(sendAmount));
     // send
     var utxos = useWallet
-        ? services.balances.collectUTXOsWallet(wallet!, amount: estimate.total)
-        : services.balances.collectUTXOs(account!, amount: estimate.total);
+        ? services.balance.collectUTXOsWallet(wallet!, amount: estimate.total)
+        : services.balance.collectUTXOs(account!, amount: estimate.total);
 
     for (var utxo in utxos) {
       txb.addInput(utxo.txId, utxo.position);
@@ -100,8 +100,8 @@ class MakeTransactionService {
 
     // Calculate change due, and return it to a wallet we control
     var returnAddress = useWallet
-        ? services.wallets.getChangeWallet(wallet!).address
-        : services.accounts.getChangeWallet(account!).address;
+        ? services.wallet.getChangeWallet(wallet!).address
+        : services.account.getChangeWallet(account!).address;
     var preliminaryChangeDue = updatedEstimate.changeDue;
     txb.addOutput(returnAddress, preliminaryChangeDue);
 
@@ -141,8 +141,8 @@ class MakeTransactionService {
     var txb = ravencoin.TransactionBuilder(
         network: useWallet ? wallet!.account!.network : account!.network);
     var utxos = useWallet
-        ? services.balances.sortedUnspentsWallets(wallet!)
-        : services.balances.sortedUnspents(account!);
+        ? services.balance.sortedUnspentsWallets(wallet!)
+        : services.balance.sortedUnspents(account!);
     var total = 0;
     for (var utxo in utxos) {
       txb.addInput(utxo.txId, utxo.position);

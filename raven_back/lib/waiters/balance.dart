@@ -26,7 +26,7 @@ class BalanceWaiter extends Waiter {
         vouts.changes.bufferCountTimeout(25, Duration(milliseconds: 50)),
         (List<List<Change>> unflattenedChanges) {
       var changes = unflattenedChanges.expand((change) => change);
-      services.balances.saveChangedBalances(changes.toList());
+      services.balance.saveChangedBalances(changes.toList());
     });
 
     // unlike account balances, no other triggers need to be considered.

@@ -26,7 +26,7 @@ extension ByHeightMethodsForTransaction on Index<_HeightKey, Transaction> {
 
 class _ConfirmedKey extends Key<Transaction> {
   @override
-  String getKey(Transaction history) => history.confirmed.toString();
+  String getKey(Transaction transaction) => transaction.confirmed.toString();
 }
 
 extension ByConfrimedMethodsForTransaction

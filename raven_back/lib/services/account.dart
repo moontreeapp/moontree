@@ -50,10 +50,10 @@ class AccountService {
   /// of anonymity.
   WalletBase getChangeWallet(Account account) {
     for (var wallet in account.leaderWallets) {
-      return services.wallets.leaders.getNextEmptyWallet(wallet);
+      return services.wallet.leader.getNextEmptyWallet(wallet);
     }
     for (var wallet in account.singleWallets) {
-      return services.wallets.singles.getKPWallet(wallet);
+      return services.wallet.single.getKPWallet(wallet);
     }
     throw WalletMissing("Account '${account.accountId}' has no change wallets");
   }
