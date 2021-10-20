@@ -60,6 +60,23 @@ class TransactionService {
         : wallet!.addresses.map((address) => address.address).toList();
     var transactionRecords = <TransactionRecord>[];
     for (var tx in transactions.chronological) {
+      for (var vout in tx.vouts) {
+        if (givenAddresses.contains(vout.toAddress)) {
+          transactionRecords.add(TransactionRecord(
+            out: false,
+            fromAddress: '', // tx.vins[0].vout!.address, // will this work?
+            toAddress: vout.toAddress,
+            value: vout.value,
+            security: securities.primaryIndex.getOne(vout.securityId) ??
+                securities.RVN,
+            height: tx.height,
+            formattedDatetime: tx.formattedDatetime,
+            amount: vout.amount ?? 0,
+            voutId: vout.voutId,
+            txId: tx.txId,
+          ));
+        }
+      }
       for (Vin vin in tx.vins) {
         if (givenAddresses.contains(vin.vout?.toAddress)) {
           transactionRecords.add(TransactionRecord(
@@ -71,26 +88,9 @@ class TransactionService {
                 securities.primaryIndex.getOne(vin.vout?.securityId ?? '') ??
                     securities.RVN,
             height: tx.height,
-            datetime: tx.formattedDatetime,
+            formattedDatetime: tx.formattedDatetime,
             amount: vin.vout!.amount ?? 0,
             vinId: vin.vinId,
-            txId: tx.txId,
-          ));
-        }
-      }
-      for (var vout in tx.vouts) {
-        if (givenAddresses.contains(vout.toAddress)) {
-          transactionRecords.add(TransactionRecord(
-            out: false,
-            fromAddress: '', // tx.vins[0].vout!.address, // will this work?
-            toAddress: vout.toAddress,
-            value: vout.value,
-            security: securities.primaryIndex.getOne(vout.securityId) ??
-                securities.RVN,
-            height: tx.height,
-            datetime: tx.formattedDatetime,
-            amount: vout.amount ?? 0,
-            voutId: vout.voutId,
             txId: tx.txId,
           ));
         }
@@ -106,7 +106,7 @@ class TransactionRecord {
   String toAddress;
   int value;
   int? height;
-  String datetime;
+  String formattedDatetime;
   int amount;
   Security security;
   String txId;
@@ -119,7 +119,7 @@ class TransactionRecord {
     required this.toAddress,
     required this.value,
     required this.security,
-    required this.datetime,
+    required this.formattedDatetime,
     required this.txId,
     this.height,
     this.amount = 0,

@@ -15,5 +15,5 @@ class TransactionReservoir extends Reservoir<_TxHashKey, Transaction> {
   }
 
   List<Transaction> get chronological => transactions.data.toList()
-    ..sort((a, b) => (a.height ?? -1).compareTo(b.height ?? -1));
+    ..sort((a, b) => (b.height ?? -1).compareTo(a.height ?? -1));
 }
