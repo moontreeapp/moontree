@@ -16,14 +16,14 @@ class Loading extends StatefulWidget {
 
 class _LoadingState extends State<Loading> {
   Future setupAccounts() async {
-    await services.accounts.createSave('Primary');
-    await services.accounts.createSave('Savings');
+    await services.account.createSave('Primary');
+    await services.account.createSave('Savings');
   }
 
   Future setupRealWallet() async {
     await dotenv.load(fileName: '.env');
     var mnemonic = dotenv.env['TEST_WALLET_02']!;
-    await services.wallets.createSave(
+    await services.wallet.createSave(
         walletType: WalletType.leader,
         accountId: '0',
         cipherUpdate: defaultCipherUpdate,
@@ -59,8 +59,8 @@ class _LoadingState extends State<Loading> {
     print('blocks: ${blocks.data}');
     print('cipherRegistry: $cipherRegistry');
 
-    if (services.passwords.required) {
-      if (services.passwords.interruptedPasswordChange()) {
+    if (services.password.required) {
+      if (services.password.interruptedPasswordChange()) {
         showDialog(
             context: context,
             builder: (BuildContext context) => AlertDialog(

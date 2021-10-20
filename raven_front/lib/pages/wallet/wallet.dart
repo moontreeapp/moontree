@@ -52,20 +52,18 @@ class _WalletViewState extends State<WalletView> {
   Widget build(BuildContext context) {
     data = populateData(context, data);
     wallet = data['wallet'];
-    walletType = wallet is LeaderWallet
-        ? 'LeaderWallet'
-        : 'SingleWallet';
+    walletType = wallet is LeaderWallet ? 'LeaderWallet' : 'SingleWallet';
     wallet = wallet is LeaderWallet
         ? data['wallet'] as LeaderWallet
         : data['wallet'] as SingleWallet;
     if (wallet.cipher != null) {
       address = address ??
           (wallet is LeaderWallet
-              ? services.wallets.leaders
+              ? services.wallet.leader
                   .getNextEmptyWallet(wallet as LeaderWallet,
                       exposure: NodeExposure.External)
                   .address
-              : services.wallets.singles
+              : services.wallet.single
                   .getKPWallet(wallet as SingleWallet)
                   .address);
     } else {
@@ -190,7 +188,7 @@ class _WalletViewState extends State<WalletView> {
                         style: Theme.of(context).annotate),
                     Text(
                         'Balance: ' +
-                            RavenText.satsToAmount(services.transactions
+                            RavenText.satsToAmount(services.transaction
                                     .walletUnspents(wallet)
                                     .where((vout) =>
                                         vout.toAddress == walletAddress.address)
@@ -210,7 +208,7 @@ class _WalletViewState extends State<WalletView> {
                     style: Theme.of(context).textTheme.caption),
                 Text(
                     // I thoguht this is what slows down loading the page, but I now think it's the qr code... //takes a few seconds, lets just get them one at a time in onTap
-                    RavenText.satsToAmount(services.transactions
+                    RavenText.satsToAmount(services.transaction
                             .walletUnspents(wallet)
                             .where((vout) =>
                                 vout.toAddress == walletAddress.address)

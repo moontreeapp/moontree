@@ -62,7 +62,7 @@ class _ChangePasswordState extends State<ChangePassword> {
           style: TextStyle(color: Theme.of(context).primaryColor)));
 
   bool validateExistingCondition([validatedExisting]) =>
-      services.passwords.required
+      services.password.required
           ? validatedExisting ?? validateExisting()
           : true;
 
@@ -97,7 +97,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         });
     var existingPasswordField = TextField(
       autocorrect: false,
-      enabled: services.passwords.required ? true : false,
+      enabled: services.password.required ? true : false,
       controller: existingPassword,
       obscureText: !existingPasswordVisible,
       textInputAction: TextInputAction.next,
@@ -150,7 +150,7 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   bool validateExisting({String? password}) {
     password = password ?? existingPassword.text;
-    if (services.passwords.validate.password(password)) {
+    if (services.password.validate.password(password)) {
       existingNotification = 'success!';
       validatedExisting = true;
       setState(() => {});
@@ -158,7 +158,7 @@ class _ChangePasswordState extends State<ChangePassword> {
     }
     var old = validatedExisting;
     var oldNotification = existingNotification;
-    var used = services.passwords.validate.previouslyUsed(password);
+    var used = services.password.validate.previouslyUsed(password);
     existingNotification = used == null
         ? 'password unrecognized...'
         : 'this password was used $used passwords ago.';
@@ -169,8 +169,8 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   bool validateComplexity({String? password}) {
     password = password ?? newPassword.text;
-    if (services.passwords.validate.complexity(password)) {
-      var used = services.passwords.validate.previouslyUsed(password);
+    if (services.password.validate.complexity(password)) {
+      var used = services.password.validate.previouslyUsed(password);
       newNotification = used == null
           ? 'This password has never been used and is a strong password.'
           : used > 0
@@ -183,7 +183,7 @@ class _ChangePasswordState extends State<ChangePassword> {
     var old = validatedComplexity;
     var oldNotification = newNotification;
     newNotification = ('weak password: '
-        '${services.passwords.validate.complexityExplained(password).join(' & ')}.');
+        '${services.password.validate.complexityExplained(password).join(' & ')}.');
     validatedComplexity = false;
     if (old != validatedComplexity || oldNotification != newNotification)
       setState(() => {});
@@ -194,10 +194,10 @@ class _ChangePasswordState extends State<ChangePassword> {
   Future submit() async {
     if (validateComplexity() && validateExistingCondition()) {
       var password = newPassword.text;
-      await services.passwords.create.save(password);
-      cipherRegistry.updatePassword(altPassword: password);
-      await services.wallets.cipher.updateWallets();
-      cipherRegistry.cleanupCiphers();
+      await services.password.create.save(password);
+      services.cipher.updatePassword(altPassword: password);
+      await services.cipher.updateWallets();
+      services.cipher.cleanupCiphers();
       successMessage();
     }
   }

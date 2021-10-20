@@ -6,20 +6,20 @@ String currentAccountId() => settings.currentAccountId;
 Account currentAccount() => accounts.primaryIndex.getOne(currentAccountId())!;
 
 BalanceUSD currentBalanceUSD() =>
-    services.rates.accountBalanceUSD(currentAccountId(), currentHoldings());
+    services.rate.accountBalanceUSD(currentAccountId(), currentHoldings());
 
 Balance currentBalanceRVN() =>
-    services.balances.accountBalance(currentAccount(), securities.RVN);
+    services.balance.accountBalance(currentAccount(), securities.RVN);
 //balances.getOrZero(currentAccountId());
 
 /// our concept of history isn't the same as transactions - must fill out negative values for sent amounts
 Set<Transaction> currentTransactions() => currentAccount().transactions;
 
 List<TransactionRecord> currentCompiledTransactions() =>
-    services.transactions.getTransactionRecords(account: currentAccount());
+    services.transaction.getTransactionRecords(account: currentAccount());
 
 List<Balance> currentHoldings() =>
-    services.balances.accountBalances(currentAccount());
+    services.balance.accountBalances(currentAccount());
 
 List<String> currentHoldingNames() =>
     [for (var balance in currentHoldings()) balance.security.symbol];
@@ -27,10 +27,10 @@ List<String> currentHoldingNames() =>
 Wallet? currentWallet(walletId) => wallets.primaryIndex.getOne(walletId);
 
 Balance currentWalletBalanceRVN(walletId) =>
-    services.balances.walletBalance(currentWallet(walletId)!, securities.RVN);
+    services.balance.walletBalance(currentWallet(walletId)!, securities.RVN);
 
 List<Balance> currentWalletHoldings(String walletId) =>
-    services.balances.walletBalances(currentWallet(walletId)!);
+    services.balance.walletBalances(currentWallet(walletId)!);
 
 List<String> currentWalletHoldingNames(String walletId) => [
       for (var balance in currentWalletHoldings(walletId))
@@ -38,13 +38,13 @@ List<String> currentWalletHoldingNames(String walletId) => [
     ];
 
 BalanceUSD currentWalletBalanceUSD(String walletId) =>
-    services.rates.accountBalanceUSD(walletId, currentWalletHoldings(walletId));
+    services.rate.accountBalanceUSD(walletId, currentWalletHoldings(walletId));
 
 Set<Transaction> currentWalletTransactions(String walletId) =>
     currentWallet(walletId)!.transactions;
 
 List<TransactionRecord> currentWalletCompiledTransactions(String walletId) =>
-    services.transactions
+    services.transaction
         .getTransactionRecords(wallet: currentWallet(walletId)!);
 
 class Current {

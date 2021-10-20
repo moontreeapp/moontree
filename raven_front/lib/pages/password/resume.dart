@@ -86,14 +86,14 @@ class _ChangeResumeState extends State<ChangeResume> {
       );
 
   void submit() {
-    if (services.passwords.validate.previousPassword(password.text)) {
-      cipherRegistry.initCiphers(
+    if (services.password.validate.previousPassword(password.text)) {
+      services.cipher.initCiphers(
         altPassword: password.text,
-        currentCipherUpdates: services.wallets.getPreviousCipherUpdates,
+        currentCipherUpdates: services.wallet.getPreviousCipherUpdates,
       );
       successMessage();
     } else {
-      var used = services.passwords.validate.previouslyUsed(password.text);
+      var used = services.password.validate.previouslyUsed(password.text);
       failureMessage(used == null
           ? 'This password was not recognized to match any previously used passwords.'
           : 'The provided password was used $used passwords ago.');

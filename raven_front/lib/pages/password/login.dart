@@ -71,16 +71,16 @@ class _LoginState extends State<Login> {
       );
 
   Future submit({bool showFailureMessage = true}) async {
-    if (services.passwords.validate.password(password.text)) {
+    if (services.password.validate.password(password.text)) {
       // create ciphers for wallets we have
-      cipherRegistry.initCiphers(altPassword: password.text);
-      await services.wallets.cipher.updateWallets();
-      cipherRegistry.cleanupCiphers();
-      services.passwords.broadcastLogin;
+      services.cipher.initCiphers(altPassword: password.text);
+      await services.cipher.updateWallets();
+      services.cipher.cleanupCiphers();
+      services.password.broadcastLogin;
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
     } else {
       if (showFailureMessage) {
-        var used = services.passwords.validate.previouslyUsed(password.text);
+        var used = services.password.validate.previouslyUsed(password.text);
         failureMessage(used == null
             ? 'This password was not recognized to match any previously used passwords.'
             : 'The provided password was used $used passwords ago.');

@@ -24,7 +24,7 @@ class MockHistories {
   }
 
   void makeFakeHistories(Address address) async {
-    //await services.addresses.saveScripthashHistoryData(ScripthashHistoriesData(
+    //await services.address.saveScripthashHistoryData(ScripthashHistoriesData(
     //  [address.scripthash],
     //  [
     //    [ScripthashHistory(height: 0, txHash: 'abc1')]

@@ -11,11 +11,11 @@ class ImportFrom {
 
   ImportFrom(this.text, {importFormat, accountId})
       : this.importFormat =
-            importFormat ?? services.wallets.import.detectImportType(text),
+            importFormat ?? services.wallet.import.detectImportType(text),
         this.accountId = accountId ?? Current.account.accountId;
 
   Future<bool> handleImport() async {
-    var result = await services.wallets.import
+    var result = await services.wallet.import
         .handleImport(importFormat, text, accountId);
     if (result.success) {
       importedTitle = 'Success!';

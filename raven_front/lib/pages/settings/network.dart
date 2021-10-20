@@ -143,7 +143,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
     if (validateDomainPort(electrumAddress.text) &&
         validateDomainPort(electrumAddressFirstBackup.text) &&
         validateDomainPort(electrumAddressSecondBackup.text)) {
-      if (services.passwords.required && !passwordVerified) {
+      if (services.password.required && !passwordVerified) {
         requestPassword();
       } else {
         save();
@@ -186,8 +186,8 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
       });
 
   bool submit() {
-    print(services.passwords.validate.password(password.text));
-    if (services.passwords.validate.password(password.text)) {
+    print(services.password.validate.password(password.text));
+    if (services.password.validate.password(password.text)) {
       passwordVerified = true;
       save();
       return true;

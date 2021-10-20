@@ -50,7 +50,7 @@ class _ExportState extends State<Export> {
 
   Future<File> _download() async => await writeToExport(
       filename: _accountId + '-' + DateTime.now().toString(),
-      json: services.wallets.export.structureForExport(account));
+      json: services.wallet.export.structureForExport(account));
 
   Column body() => Column(
           mainAxisAlignment: MainAxisAlignment.center,

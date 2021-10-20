@@ -123,7 +123,7 @@ class _ImportState extends State<Import> {
 
   void enableImport() {
     var oldImportFormatDetected = importFormatDetected;
-    var detection = services.wallets.import.detectImportType(words.text.trim());
+    var detection = services.wallet.import.detectImportType(words.text.trim());
     importEnabled = detection != null;
     if (importEnabled) {
       importFormatDetected =
