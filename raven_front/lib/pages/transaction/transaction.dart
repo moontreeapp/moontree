@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:date_format/date_format.dart';
 import 'package:raven/joins.dart';
 import 'package:raven/services/transaction.dart';
+import 'package:raven_mobile/theme/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/buttons.dart';
@@ -65,10 +66,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
   int? getBlocksBetweenHelper({Transaction? tx, Block? current}) {
     tx = tx ?? transaction!;
-    current = current ?? blocks.latest; //Block(height: 0);
-    print(current);
-    print(tx.height);
-    print(blocks.data);
+    current = current ?? blocks.latest;
     return (current != null && tx.height != null)
         ? current.height - tx.height!
         : null;
@@ -184,7 +182,7 @@ class _TransactionPageState extends State<TransactionPage> {
                 : []),
             SizedBox(height: 15.0),
             InkWell(
-                child: Text('id: ${transaction!.txId}',
+                child: Text('Transaction ID: ${transaction!.txId}',
                     style: TextStyle(color: Theme.of(context).primaryColor)),
                 onTap: () => launch(
                     'https://rvnt.cryptoscope.io/tx/?txid=${transaction!.txId}')),
@@ -200,48 +198,80 @@ class _TransactionPageState extends State<TransactionPage> {
             //     style: Theme.of(context).textTheme.caption),
 
             /// vin --------------------------------------------------------
-            SizedBox(height: 15.0),
-            Text('Transaction Inputs:'),
+            //SizedBox(height: 15.0),
+            //Text('Transaction Inputs:'),
             for (Vin vin in transaction!.vins) ...[
               if (vin.vout != null) ...[
-                SizedBox(height: 15.0),
-                TextField(
-                  readOnly: true,
-                  decoration: InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'From',
-                      hintText: 'Address'),
-                  controller: TextEditingController(
-                      text: vin.vout?.toAddress ?? 'unkown'),
-                ),
-                SizedBox(height: 15.0),
-                TextField(
-                  readOnly: true,
-                  decoration: InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Amount',
-                      hintText: 'Quantity'),
-                  controller: TextEditingController(
-                      text: RavenText.securityAsReadable(vin.vout?.value ?? -1,
+                Column(
+                  children: [
+                    //SizedBox(height: 15.0),
+                    //TextField(
+                    //  readOnly: true,
+                    //  decoration: InputDecoration(
+                    //      border: UnderlineInputBorder(),
+                    //      labelText: 'From',
+                    //      hintText: 'Address'),
+                    //  controller: TextEditingController(
+                    //      text: vin.vout?.toAddress ?? 'unkown'),
+                    //),
+                    SizedBox(height: 5.0),
+                    //TextField(
+                    //  readOnly: true,
+                    //  decoration: InputDecoration(
+                    //      border: UnderlineInputBorder(),
+                    //      labelText: 'Amount',
+                    //      hintText: 'Quantity'),
+                    //  controller: TextEditingController(
+                    //      text: RavenText.securityAsReadable(vin.vout?.value ?? -1,
+                    //          symbol: vin.vout?.security?.symbol ?? 'RVN')),
+                    //),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('from: ',
+                              style: Theme.of(context).textTheme.caption),
+                          SelectableText(vin.vout?.toAddress ?? 'unkown',
+                              style: Theme.of(context).annotate),
+                        ]),
+                    ListTile(
+                      onTap: () {/* copy the amount to clipboard */},
+                      onLongPress: () {},
+                      contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
+                      leading: RavenIcon.assetAvatar(
+                          vin.vout!.asset ?? vin.vout!.security!.symbol),
+                      title:
+                          //Column(
+                          //    crossAxisAlignment: CrossAxisAlignment.start,
+                          //    children: [
+                          Text(vin.vout!.security!.symbol,
+                              style: Theme.of(context).textTheme.bodyText2),
+                      //      Text(vin.vout?.toAddress ?? 'unkown',
+                      //          style: Theme.of(context).annotate),
+                      //    ]),
+                      trailing: Text(RavenText.securityAsReadable(
+                          vin.vout?.value ?? -1,
                           symbol: vin.vout?.security?.symbol ?? 'RVN')),
-                ),
+                    )
+                  ],
+                )
               ],
             ],
+            Divider(thickness: 1.0, color: Colors.black),
 
             /// vout -------------------------------------------------------
             SizedBox(height: 15.0),
-            Text('Transaction Outputs:'),
+            //Text('Transaction Outputs:'),
             for (Vout vout in transaction!.vouts) ...[
-              SizedBox(height: 15.0),
-              TextField(
-                readOnly: true,
-                decoration: InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'To',
-                    hintText: 'Address'),
-                controller: TextEditingController(text: vout.toAddress),
-              ),
-              SizedBox(height: 15.0),
+              //SizedBox(height: 15.0),
+              //TextField(
+              //  readOnly: true,
+              //  decoration: InputDecoration(
+              //      border: UnderlineInputBorder(),
+              //      labelText: 'To',
+              //      hintText: 'Address'),
+              //  controller: TextEditingController(text: vout.toAddress),
+              //),
+              SizedBox(height: 5.0),
               //TextField(
               //  readOnly: true,
               //  decoration: InputDecoration(
@@ -253,17 +283,32 @@ class _TransactionPageState extends State<TransactionPage> {
               //          symbol: vout.security!.symbol)),
               //),
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                RavenIcon.assetAvatar(vout.asset ?? vout.security!.symbol),
-                Text(vout.security!.symbol),
-                Text(RavenText.securityAsReadable(vout.amount ?? vout.value,
+                Text('to: ', style: Theme.of(context).textTheme.caption),
+                SelectableText(vout.toAddress,
+                    style: Theme.of(context).annotate),
+              ]),
+              ListTile(
+                onTap: () {/* copy amount to clipboard */},
+                onLongPress: () {},
+                contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
+                leading:
+                    RavenIcon.assetAvatar(vout.asset ?? vout.security!.symbol),
+                title: Text(vout.security!.symbol),
+                trailing: Text(RavenText.securityAsReadable(
+                    vout.amount ?? vout.value,
                     symbol: vout.security!.symbol)),
-              ])
+              )
+              //Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              //  RavenIcon.assetAvatar(vout.asset ?? vout.security!.symbol),
+              //  Text(vout.security!.symbol),
+              //  Text(RavenText.securityAsReadable(vout.amount ?? vout.value,
+              //      symbol: vout.security!.symbol)),
+              //])
             ],
           ])
         ]),
       ]);
 }
-
 
 /*
 remaining issues:

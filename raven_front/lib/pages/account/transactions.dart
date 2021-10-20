@@ -89,29 +89,35 @@ class _RavenTransactionsState extends State<RavenTransactions> {
         for (var transactionRecord in currentTxs) ...[
           if (transactionRecord.security.symbol == 'RVN')
             ListTile(
-                onTap: () => Navigator.pushNamed(context, '/transaction',
-                    arguments: {'transactionRecord': transactionRecord}),
-                onLongPress: () => _toggleUSD(),
-                title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(transactionRecord.security.symbol,
-                          style: Theme.of(context).textTheme.bodyText2),
-                      (transactionRecord.value > 0 // == 'in'
-                          ? RavenIcon.income(context)
-                          : RavenIcon.out(context)),
-                    ]),
-                trailing: (transactionRecord.value > 0 // == 'in'
-                    ? Text(
-                        RavenText.securityAsReadable(transactionRecord.value,
-                            symbol: 'RVN', asUSD: showUSD),
-                        style: TextStyle(color: Theme.of(context).good))
-                    : Text(
-                        RavenText.securityAsReadable(transactionRecord.value,
-                            symbol: 'RVN', asUSD: showUSD),
-                        style: TextStyle(color: Theme.of(context).bad))),
-                leading:
-                    RavenIcon.assetAvatar(transactionRecord.security.symbol))
+              onTap: () => Navigator.pushNamed(context, '/transaction',
+                  arguments: {'transactionRecord': transactionRecord}),
+              onLongPress: () => _toggleUSD(),
+              leading: RavenIcon.assetAvatar(transactionRecord.security.symbol),
+              title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(transactionRecord.security.symbol,
+                              style: Theme.of(context).textTheme.bodyText2),
+                          Text(transactionRecord.formattedDatetime,
+                              style: Theme.of(context).annotate),
+                        ]),
+                    (transactionRecord.out
+                        ? RavenIcon.out(context)
+                        : RavenIcon.income(context)),
+                  ]),
+              trailing: (transactionRecord.out
+                  ? Text(
+                      RavenText.securityAsReadable(transactionRecord.value,
+                          security: transactionRecord.security, asUSD: showUSD),
+                      style: TextStyle(color: Theme.of(context).bad))
+                  : Text(
+                      RavenText.securityAsReadable(transactionRecord.value,
+                          security: transactionRecord.security, asUSD: showUSD),
+                      style: TextStyle(color: Theme.of(context).good))),
+            )
         ]
       ]));
 

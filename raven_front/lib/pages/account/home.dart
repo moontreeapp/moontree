@@ -163,33 +163,35 @@ class _HomeState extends State<Home> {
   ListView _transactionsView() => ListView(children: <Widget>[
         for (var transactionRecord in Current.compiledTransactions)
           ListTile(
-              onTap: () => Navigator.pushNamed(context, '/transaction',
-                  arguments: {'transactionRecord': transactionRecord}),
-              onLongPress: () => _toggleUSD(),
-              title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // should show all the vins for this transaction,
-                    // and all the vouts for this transaction.
-                    // no. actually Current.transactions should return a list
-                    // of vins and vouts and their transaction data in
-                    // chronological order. then we should just display those...
-                    Text(transactionRecord.security.symbol,
-                        style: Theme.of(context).textTheme.bodyText2),
-                    (transactionRecord.out
-                        ? RavenIcon.out(context)
-                        : RavenIcon.income(context))
-                  ]),
-              trailing: (transactionRecord.out
-                  ? Text(
-                      RavenText.securityAsReadable(transactionRecord.value,
-                          security: transactionRecord.security, asUSD: showUSD),
-                      style: TextStyle(color: Theme.of(context).bad))
-                  : Text(
-                      RavenText.securityAsReadable(transactionRecord.value,
-                          security: transactionRecord.security, asUSD: showUSD),
-                      style: TextStyle(color: Theme.of(context).good))),
-              leading: RavenIcon.assetAvatar(transactionRecord.security.symbol))
+            onTap: () => Navigator.pushNamed(context, '/transaction',
+                arguments: {'transactionRecord': transactionRecord}),
+            onLongPress: () => _toggleUSD(),
+            leading: RavenIcon.assetAvatar(transactionRecord.security.symbol),
+            title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(transactionRecord.security.symbol,
+                            style: Theme.of(context).textTheme.bodyText2),
+                        Text(transactionRecord.formattedDatetime,
+                            style: Theme.of(context).annotate),
+                      ]),
+                  (transactionRecord.out
+                      ? RavenIcon.out(context)
+                      : RavenIcon.income(context))
+                ]),
+            trailing: (transactionRecord.out
+                ? Text(
+                    RavenText.securityAsReadable(transactionRecord.value,
+                        security: transactionRecord.security, asUSD: showUSD),
+                    style: TextStyle(color: Theme.of(context).bad))
+                : Text(
+                    RavenText.securityAsReadable(transactionRecord.value,
+                        security: transactionRecord.security, asUSD: showUSD),
+                    style: TextStyle(color: Theme.of(context).good))),
+          )
       ]);
 
   Container _emptyMessage({IconData? icon, String? name}) => Container(
