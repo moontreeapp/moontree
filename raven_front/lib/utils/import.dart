@@ -9,7 +9,8 @@ enum ImportFormat {
   jsonWif,
   jsonMt,
   mnemonic12,
-  encryptedBip38,
+  mnemonic24, // valid for rvn?
+  encryptedBip38, // 58?
   WIF,
   seed,
   privateKey,
@@ -28,20 +29,26 @@ class ImportFrom {
 
   static ImportFormat? detectImportType(String text) {
     if (text.contains('[') || text.contains('{')) {
+      /// todo must also contain some correct keys
+      /// two types of json - ours and outside json formats
       return ImportFormat.json;
     }
     //var isMnemonic = [12, 18, 24].contains(text.split(' ').length);
     if (bip39.validateMnemonic(text)) {
       return ImportFormat.mnemonic12;
     }
-    if (text.startsWith('6P')) {
+    if (text.length == 64 && !text.contains(' ')) {
+      return ImportFormat.privateKey;
+    }
+    if ([51, 52].contains(text.length) && !text.contains(' ')) {
+      return ImportFormat.WIF;
+    }
+    if (text.startsWith('6P') && !text.contains(' ')) {
       return ImportFormat.encryptedBip38;
     }
 
     /// these are placeholders, they must be checked
-    var isWIF = [51, 52].contains(text.split('').length);
     var isSeed = text.length == 128;
-    var isPrivateKey = text.length == 64;
 
     //throw Exception('Could not recognize format');
   }
@@ -144,6 +151,28 @@ class ImportFrom {
     return attemptWalletSave(wallet);
   }
 
+  Future<bool> handlePrivateKey() async {
+    Wallet? wallet = services.wallets.create(
+      humanTypeKey: LingoKey.singleWalletType,
+      accountId: accountId,
+      cipherUpdate: cipherRegistry.currentCipherUpdate,
+      secret: services.wallets.singles.privateKeyToWif(text),
+      alwaysReturn: true,
+    );
+    return attemptWalletSave(wallet);
+  }
+
+  Future<bool> handleWIF() async {
+    Wallet? wallet = services.wallets.create(
+      humanTypeKey: LingoKey.singleWalletType,
+      accountId: accountId,
+      cipherUpdate: cipherRegistry.currentCipherUpdate,
+      secret: text,
+      alwaysReturn: true,
+    );
+    return attemptWalletSave(wallet);
+  }
+
   Future<bool> handleBip38() async {
     /// check for bip38 encryption
     // 6P valid for rvn?
@@ -159,5 +188,7 @@ class ImportFrom {
         ImportFormat.json: handleJson,
         ImportFormat.mnemonic12: handleMnemonics,
         ImportFormat.encryptedBip38: handleBip38,
+        ImportFormat.privateKey: handlePrivateKey,
+        ImportFormat.WIF: handleWIF,
       }[importFormat]!();
 }

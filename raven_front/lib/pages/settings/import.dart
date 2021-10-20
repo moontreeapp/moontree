@@ -20,6 +20,7 @@ class _ImportState extends State<Import> {
   var words = TextEditingController();
   bool importEnabled = false;
   late Account account;
+  String importFormatDetected = '';
 
   @override
   void initState() {
@@ -121,8 +122,18 @@ class _ImportState extends State<Import> {
   }
 
   void enableImport() {
-    importEnabled = ImportFrom.detectImportType(words.text.trim()) != null;
-    setState(() => {});
+    var oldImportFormatDetected = importFormatDetected;
+    var detection = ImportFrom.detectImportType(words.text.trim());
+    importEnabled = detection != null;
+    if (importEnabled) {
+      importFormatDetected =
+          'format recognized as ' + detection.toString().split('.')[1];
+    } else {
+      importFormatDetected = '';
+    }
+    if (oldImportFormatDetected != importFormatDetected) {
+      setState(() => {});
+    }
   }
 
   Future attemptImport() async {
@@ -133,14 +144,22 @@ class _ImportState extends State<Import> {
         context: context,
         builder: (BuildContext context) => AlertDialog(
             title: Text('Importing...'),
-            content:
-                Text('Please wait, importing can take several seconds...')));
+            content: Column(
+              children: [
+                Text('Import format detected: ${importFrom.importFormat}'),
+                Text('Please wait, importing can take several seconds...'),
+              ],
+            )));
     // this is used to get the please wait message to show up
     // it needs enough time to display the message
     await Future.delayed(const Duration(milliseconds: 150));
     var success = await importFrom.handleImport();
     await alertImported(importFrom.importedTitle!, importFrom.importedMsg!);
-    if (success) Navigator.popUntil(context, ModalRoute.withName('/home'));
+    if (success) {
+      Navigator.popUntil(context, ModalRoute.withName('/home'));
+    } else {
+      Navigator.of(context).pop();
+    }
   }
 
   ListView body() {
@@ -165,6 +184,7 @@ class _ImportState extends State<Import> {
                 onEditingComplete: () async => await attemptImport(),
               ),
               submitButton(),
+              Text(importFormatDetected),
             ],
           ),
         ]);
