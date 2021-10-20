@@ -74,7 +74,7 @@ class _LoginState extends State<Login> {
     if (services.passwords.validate.password(password.text)) {
       // create ciphers for wallets we have
       cipherRegistry.initCiphers(altPassword: password.text);
-      await cipherRegistry.updateWallets();
+      await services.wallets.cipher.updateWallets();
       cipherRegistry.cleanupCiphers();
       services.passwords.broadcastLogin;
       Navigator.pushReplacementNamed(context, '/home', arguments: {});

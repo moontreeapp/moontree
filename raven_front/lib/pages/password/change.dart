@@ -196,7 +196,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       var password = newPassword.text;
       await services.passwords.create.save(password);
       cipherRegistry.updatePassword(altPassword: password);
-      await cipherRegistry.updateWallets();
+      await services.wallets.cipher.updateWallets();
       cipherRegistry.cleanupCiphers();
       successMessage();
     }
