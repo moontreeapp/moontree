@@ -7,6 +7,7 @@ import 'wallet/leader.dart';
 import 'wallet/single.dart';
 import 'wallet/export.dart';
 import 'wallet/import.dart';
+import 'wallet/cipher.dart';
 import 'wallet/constants.dart';
 
 class WalletService {
@@ -14,6 +15,7 @@ class WalletService {
   final SingleWalletService singles = SingleWalletService();
   final ExportWalletService export = ExportWalletService();
   final ImportWalletService import = ImportWalletService();
+  final CipherService cipher = CipherService();
 
   // should return all cipherUpdates
   Set<CipherUpdate> get getAllCipherUpdates =>

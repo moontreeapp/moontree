@@ -76,47 +76,6 @@ class CipherRegistry {
     return ciphers[cipherUpdate]!;
   }
 
-  /// make sure all wallets are on the latest ciphertype and password
-  Future updateWallets() async {
-    var records = <Wallet>[];
-    for (var wallet in wallets.data) {
-      if (wallet.cipherUpdate != currentCipherUpdate) {
-        if (wallet is LeaderWallet) {
-          /// what if wallet has never been encrypted?
-          /// that will be the case on brand new wallets first time you open the app.
-          var reencrypt = EncryptedEntropy.fromEntropy(
-            EncryptedEntropy(wallet.encrypted, wallet.cipher!).entropy,
-            ciphers[currentCipherUpdate]!,
-          );
-          assert(wallet.walletId == reencrypt.walletId);
-          // these should be different...
-          records.add(LeaderWallet(
-            walletId: reencrypt.walletId,
-            accountId: wallet.accountId,
-            encryptedEntropy: reencrypt.encryptedSecret,
-            cipherUpdate: currentCipherUpdate,
-          ));
-        } else if (wallet is SingleWallet) {
-          var reencrypt = EncryptedWIF.fromWIF(
-            EncryptedWIF(wallet.encrypted, wallet.cipher!).wif,
-            ciphers[currentCipherUpdate]!,
-          );
-          assert(wallet.walletId == reencrypt.walletId);
-          records.add(SingleWallet(
-            walletId: reencrypt.walletId,
-            accountId: wallet.accountId,
-            encryptedWIF: reencrypt.encryptedSecret,
-            cipherUpdate: currentCipherUpdate,
-          ));
-        }
-      }
-    }
-    await wallets.saveAll(records);
-
-    /// completed successfully
-    //assert(services.wallets.getPreviousCipherUpdates.isEmpty);
-  }
-
   /// after wallets are updated or verified to be up to date
   /// remove all ciphers that no wallet uses and that are not the current one
   void cleanupCiphers() {
