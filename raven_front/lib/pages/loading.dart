@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:raven/raven.dart';
+import 'package:raven/services/wallet/constants.dart';
 import 'package:raven_mobile/services/history_mock.dart';
 import 'package:raven_mobile/services/password_mock.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -23,7 +24,7 @@ class _LoadingState extends State<Loading> {
     await dotenv.load(fileName: '.env');
     var mnemonic = dotenv.env['TEST_WALLET_02']!;
     await services.wallets.createSave(
-        humanTypeKey: LingoKey.leaderWalletType,
+        walletType: WalletType.leader,
         accountId: '0',
         cipherUpdate: defaultCipherUpdate,
         secret: mnemonic);

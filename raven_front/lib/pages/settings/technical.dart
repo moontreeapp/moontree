@@ -187,7 +187,12 @@ class _TechnicalViewState extends State<TechnicalView> {
                       Text(
                           '${wallet.walletId.substring(0, 6)}...${wallet.walletId.substring(wallet.walletId.length - 6, wallet.walletId.length)}',
                           style: Theme.of(context).mono),
-                      Text(wallet.humanType, style: Theme.of(context).annotate),
+                      Text(
+                          // todo use lingo keys depending on wallet type here...
+                          wallet is LeaderWallet
+                              ? 'HD Wallet'
+                              : 'Private Key Wallet',
+                          style: Theme.of(context).annotate),
                     ]),
                 IconButton(
                     icon: Icon(Icons.remove_red_eye,
@@ -199,7 +204,8 @@ class _TechnicalViewState extends State<TechnicalView> {
                               'secret': wallet.cipher != null
                                   ? wallet.secret(wallet.cipher!)
                                   : 'unknown',
-                              'secretName': wallet.humanSecretType,
+                              'secretName': wallet
+                                  .secretType, /* todo translate this to a string */
                             }))
               ])));
 

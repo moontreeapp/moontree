@@ -123,7 +123,7 @@ class _ImportState extends State<Import> {
 
   void enableImport() {
     var oldImportFormatDetected = importFormatDetected;
-    var detection = ImportFrom.detectImportType(words.text.trim());
+    var detection = services.wallets.import.detectImportType(words.text.trim());
     importEnabled = detection != null;
     if (importEnabled) {
       importFormatDetected =
@@ -144,12 +144,8 @@ class _ImportState extends State<Import> {
         context: context,
         builder: (BuildContext context) => AlertDialog(
             title: Text('Importing...'),
-            content: Column(
-              children: [
-                Text('Import format detected: ${importFrom.importFormat}'),
-                Text('Please wait, importing can take several seconds...'),
-              ],
-            )));
+            content:
+                Text('Please wait, importing can take several seconds...')));
     // this is used to get the please wait message to show up
     // it needs enough time to display the message
     await Future.delayed(const Duration(milliseconds: 150));

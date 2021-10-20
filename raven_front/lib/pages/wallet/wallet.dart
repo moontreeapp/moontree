@@ -52,15 +52,15 @@ class _WalletViewState extends State<WalletView> {
   Widget build(BuildContext context) {
     data = populateData(context, data);
     wallet = data['wallet'];
-    walletType = wallet.humanTypeKey == LingoKey.leaderWalletType
+    walletType = wallet is LeaderWallet
         ? 'LeaderWallet'
         : 'SingleWallet';
-    wallet = wallet.humanTypeKey == LingoKey.leaderWalletType
+    wallet = wallet is LeaderWallet
         ? data['wallet'] as LeaderWallet
         : data['wallet'] as SingleWallet;
     if (wallet.cipher != null) {
       address = address ??
-          (wallet.humanTypeKey == LingoKey.leaderWalletType
+          (wallet is LeaderWallet
               ? services.wallets.leaders
                   .getNextEmptyWallet(wallet as LeaderWallet,
                       exposure: NodeExposure.External)
@@ -171,8 +171,7 @@ class _WalletViewState extends State<WalletView> {
         SizedBox(height: 30.0),
       ]);
 
-  List<Widget> addressesView() => wallet.humanTypeKey ==
-          LingoKey.leaderWalletType
+  List<Widget> addressesView() => wallet is LeaderWallet
       ? [
           for (var walletAddress
               in wallet.addresses..sort((a, b) => a.compareTo(b)))

@@ -5,7 +5,6 @@ import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/components/buttons.dart';
-import 'package:raven_mobile/utils/export.dart';
 import 'package:raven_mobile/utils/utils.dart';
 import 'package:raven_mobile/utils/files.dart';
 
@@ -51,7 +50,7 @@ class _ExportState extends State<Export> {
 
   Future<File> _download() async => await writeToExport(
       filename: _accountId + '-' + DateTime.now().toString(),
-      json: structureForExport(account));
+      json: services.wallets.export.structureForExport(account));
 
   Column body() => Column(
           mainAxisAlignment: MainAxisAlignment.center,
