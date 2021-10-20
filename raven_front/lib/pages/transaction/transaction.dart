@@ -188,71 +188,29 @@ class _TransactionPageState extends State<TransactionPage> {
                     'https://rvnt.cryptoscope.io/tx/?txid=${transaction!.txId}')),
             SizedBox(height: 15.0),
 
-            /// there are multiple addresses associated with this transaction
-            // Text(address != null ? 'wallet: ' + address!.walletId : '',
-            //     style: Theme.of(context).textTheme.caption),
-            // Text(
-            //     address != null
-            //         ? 'account: ' + address!.wallet!.account!.name
-            //         : '',
-            //     style: Theme.of(context).textTheme.caption),
-
             /// vin --------------------------------------------------------
-            //SizedBox(height: 15.0),
-            //Text('Transaction Inputs:'),
             for (Vin vin in transaction!.vins) ...[
               if (vin.vout != null) ...[
-                Column(
-                  children: [
-                    //SizedBox(height: 15.0),
-                    //TextField(
-                    //  readOnly: true,
-                    //  decoration: InputDecoration(
-                    //      border: UnderlineInputBorder(),
-                    //      labelText: 'From',
-                    //      hintText: 'Address'),
-                    //  controller: TextEditingController(
-                    //      text: vin.vout?.toAddress ?? 'unkown'),
-                    //),
-                    SizedBox(height: 5.0),
-                    //TextField(
-                    //  readOnly: true,
-                    //  decoration: InputDecoration(
-                    //      border: UnderlineInputBorder(),
-                    //      labelText: 'Amount',
-                    //      hintText: 'Quantity'),
-                    //  controller: TextEditingController(
-                    //      text: RavenText.securityAsReadable(vin.vout?.value ?? -1,
-                    //          symbol: vin.vout?.security?.symbol ?? 'RVN')),
-                    //),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('from: ',
-                              style: Theme.of(context).textTheme.caption),
-                          SelectableText(vin.vout?.toAddress ?? 'unkown',
-                              style: Theme.of(context).annotate),
-                        ]),
-                    ListTile(
-                      onTap: () {/* copy the amount to clipboard */},
-                      onLongPress: () {},
-                      contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
-                      leading: RavenIcon.assetAvatar(
-                          vin.vout!.asset ?? vin.vout!.security!.symbol),
-                      title:
-                          //Column(
-                          //    crossAxisAlignment: CrossAxisAlignment.start,
-                          //    children: [
-                          Text(vin.vout!.security!.symbol,
-                              style: Theme.of(context).textTheme.bodyText2),
-                      //      Text(vin.vout?.toAddress ?? 'unkown',
-                      //          style: Theme.of(context).annotate),
-                      //    ]),
-                      trailing: Text(RavenText.securityAsReadable(
-                          vin.vout?.value ?? -1,
-                          symbol: vin.vout?.security?.symbol ?? 'RVN')),
-                    )
-                  ],
+                SizedBox(height: 5.0),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('from: ',
+                          style: Theme.of(context).textTheme.caption),
+                      SelectableText(vin.vout?.toAddress ?? 'unkown',
+                          style: Theme.of(context).annotate),
+                    ]),
+                ListTile(
+                  onTap: () {/* copy the amount to clipboard */},
+                  onLongPress: () {},
+                  contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
+                  leading: RavenIcon.assetAvatar(
+                      vin.vout!.asset ?? vin.vout!.security!.symbol),
+                  title: Text(vin.vout!.security!.symbol,
+                      style: Theme.of(context).textTheme.bodyText2),
+                  trailing: Text(RavenText.securityAsReadable(
+                      vin.vout?.value ?? -1,
+                      symbol: vin.vout?.security?.symbol ?? 'RVN')),
                 )
               ],
             ],
@@ -260,28 +218,8 @@ class _TransactionPageState extends State<TransactionPage> {
 
             /// vout -------------------------------------------------------
             SizedBox(height: 15.0),
-            //Text('Transaction Outputs:'),
             for (Vout vout in transaction!.vouts) ...[
-              //SizedBox(height: 15.0),
-              //TextField(
-              //  readOnly: true,
-              //  decoration: InputDecoration(
-              //      border: UnderlineInputBorder(),
-              //      labelText: 'To',
-              //      hintText: 'Address'),
-              //  controller: TextEditingController(text: vout.toAddress),
-              //),
               SizedBox(height: 5.0),
-              //TextField(
-              //  readOnly: true,
-              //  decoration: InputDecoration(
-              //      border: UnderlineInputBorder(),
-              //      labelText: 'Amount RVN',
-              //      hintText: 'Quantity'),
-              //  controller: TextEditingController(
-              //      text: RavenText.securityAsReadable(vout.value,
-              //          symbol: vout.security!.symbol)),
-              //),
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Text('to: ', style: Theme.of(context).textTheme.caption),
                 SelectableText(vout.toAddress,
@@ -298,12 +236,6 @@ class _TransactionPageState extends State<TransactionPage> {
                     vout.amount ?? vout.value,
                     symbol: vout.security!.symbol)),
               )
-              //Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              //  RavenIcon.assetAvatar(vout.asset ?? vout.security!.symbol),
-              //  Text(vout.security!.symbol),
-              //  Text(RavenText.securityAsReadable(vout.amount ?? vout.value,
-              //      symbol: vout.security!.symbol)),
-              //])
             ],
           ])
         ]),
