@@ -1,4 +1,5 @@
-import 'package:ravencoin/ravencoin.dart' show KPWallet, NetworkType;
+import 'package:raven/utils/hex.dart';
+import 'package:ravencoin/ravencoin.dart' show KPWallet, NetworkType, ECPair;
 
 import 'package:raven/security/cipher_base.dart';
 import 'package:raven/security/encrypted_wif.dart';
@@ -18,6 +19,11 @@ class SingleWalletService {
 
   KPWallet getKPWallet(SingleWallet wallet) =>
       KPWallet.fromWIF(EncryptedWIF(wallet.encryptedWIF, wallet.cipher!).wif);
+
+  KPWallet getKPWalletFromPrivKey(String privKey) =>
+      KPWallet.fromWIF(ECPair.fromPrivateKey(decode(privKey)).toWIF());
+  String privateKeyToWif(String privKey) =>
+      ECPair.fromPrivateKey(decode(privKey)).toWIF();
 
   /// generate random entropy, transform into wallet, get wif.
   String generateRandomWIF(NetworkType network) =>
