@@ -212,7 +212,8 @@ class _TransactionPageState extends State<TransactionPage> {
                 )
               ],
             ],
-            Divider(thickness: 1.0, color: Colors.black),
+            SizedBox(height: 15.0),
+            Divider(thickness: 1.0, color: Colors.grey.shade800),
 
             /// vout -------------------------------------------------------
             SizedBox(height: 15.0),
