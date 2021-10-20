@@ -2,6 +2,7 @@ import 'package:hive/hive.dart';
 import 'package:raven/hive_initializer.dart';
 import 'package:raven/raven.dart';
 import 'package:dotenv/dotenv.dart' as dotenv;
+import 'package:raven/services/wallet/constants.dart';
 import 'package:raven/utils/database.dart' as raven_database;
 
 Future useLiveSources() async {
@@ -10,7 +11,7 @@ Future useLiveSources() async {
   var hiveInit = HiveInitializer(init: (dbDir) => Hive.init('database'));
   await hiveInit.setUp();
   await services.wallets.createSave(
-      humanTypeKey: LingoKey.leaderWalletType,
+      walletType: WalletType.leader,
       accountId: 'Primary',
       cipherUpdate: defaultCipherUpdate,
       secret: mnemonic);

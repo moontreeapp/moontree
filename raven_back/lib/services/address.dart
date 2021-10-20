@@ -105,10 +105,10 @@ class AddressService {
     // ignore: omit_local_variable_types
     //List<Tx> txs = await client
     //    .getTransactions(vins.danglingVins.map((vin) => vin.voutTxId).toList());
+    var myVins = vins.danglingVins.map((vin) => vin.voutTxId);
     // ignore: omit_local_variable_types
     List<Tx> txs = [
-      for (var txHash in vins.danglingVins.map((vin) => vin.voutTxId))
-        await client.getTransaction(txHash)
+      for (var txHash in myVins) await client.getTransaction(txHash)
     ];
     for (var tx in txs) {
       for (var vout in tx.vout) {

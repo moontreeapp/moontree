@@ -91,7 +91,8 @@ class AddressSubscriptionWaiter extends Waiter {
           backlogRetrievals.add(address);
         }
       } else {
-        retrieveAndMakeNewAddress(client, changedAddresses as List<Address>);
+        unawaited(retrieveAndMakeNewAddress(
+            client, changedAddresses as List<Address>));
       }
     });
   }

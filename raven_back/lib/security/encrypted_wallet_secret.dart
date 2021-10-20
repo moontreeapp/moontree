@@ -1,5 +1,11 @@
 import 'cipher_base.dart';
 
+enum SecretType {
+  wif,
+  mnemonic,
+  none,
+}
+
 abstract class EncryptedWalletSecret {
   String encryptedSecret;
   CipherBase cipher;

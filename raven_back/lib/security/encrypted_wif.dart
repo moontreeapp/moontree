@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:ravencoin/ravencoin.dart' show KPWallet;
@@ -26,4 +25,6 @@ class EncryptedWIF extends EncryptedWalletSecret {
 
   static String encryptWIF(String wif, CipherBase cipher) =>
       hex.encode(cipher.encrypt(Uint8List.fromList(bs58.decode(wif))));
+
+  static SecretType get secretType => SecretType.wif;
 }

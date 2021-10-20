@@ -1,15 +1,19 @@
 import 'package:ravencoin/ravencoin.dart' show ECPair, WalletBase;
 import 'package:bip39/bip39.dart' as bip39;
 
-import 'package:raven/utils/transform.dart';
 import 'package:raven/raven.dart';
 
 import 'wallet/leader.dart';
 import 'wallet/single.dart';
+import 'wallet/export.dart';
+import 'wallet/import.dart';
+import 'wallet/constants.dart';
 
 class WalletService {
   final LeaderWalletService leaders = LeaderWalletService();
   final SingleWalletService singles = SingleWalletService();
+  final ExportWalletService export = ExportWalletService();
+  final ImportWalletService import = ImportWalletService();
 
   // should return all cipherUpdates
   Set<CipherUpdate> get getAllCipherUpdates =>
@@ -34,49 +38,40 @@ class WalletService {
               .toSet();
 
   Future createSave({
-    required LingoKey humanTypeKey,
+    required WalletType walletType,
     required String accountId,
     required CipherUpdate cipherUpdate,
     required String secret,
   }) async =>
       {
-        LeaderWallet: () async => await leaders.makeSaveLeaderWallet(
+        WalletType.leader: () async => await leaders.makeSaveLeaderWallet(
             accountId, cipherRegistry.ciphers[cipherUpdate]!,
             cipherUpdate: cipherUpdate, mnemonic: secret),
-        SingleWallet: () async => await singles.makeSaveSingleWallet(
+        WalletType.single: () async => await singles.makeSaveSingleWallet(
             accountId, cipherRegistry.ciphers[cipherUpdate]!,
             cipherUpdate: cipherUpdate, wif: secret)
-      }[walletType(humanTypeKey)]!();
+      }[walletType]!();
 
   Wallet? create({
-    required LingoKey humanTypeKey,
+    required WalletType walletType,
     required String accountId,
     required CipherUpdate cipherUpdate,
     required String? secret,
     bool alwaysReturn = false,
   }) =>
       {
-        LeaderWallet: () => leaders.makeLeaderWallet(
+        WalletType.leader: () => leaders.makeLeaderWallet(
             accountId, cipherRegistry.ciphers[cipherUpdate]!,
             cipherUpdate: cipherUpdate,
             entropy: secret != null ? bip39.mnemonicToEntropy(secret) : null,
             alwaysReturn: alwaysReturn),
-        SingleWallet: () => singles.makeSingleWallet(
+        WalletType.single: () => singles.makeSingleWallet(
             accountId, cipherRegistry.ciphers[cipherUpdate]!,
             cipherUpdate: cipherUpdate, wif: secret, alwaysReturn: alwaysReturn)
-      }[walletType(humanTypeKey)]!();
-
-  Map walletMap() => {
-        LeaderWallet: LingoKey.leaderWalletType,
-        SingleWallet: LingoKey.singleWalletType
-      };
-
-  Type walletType(LingoKey humanTypeKey) =>
-      reverseMap(walletMap())[humanTypeKey] ?? Wallet;
+      }[walletType]!();
 
   ECPair getAddressKeypair(Address address) {
     var wallet = address.wallet!;
-
     if (wallet is LeaderWallet) {
       var seedWallet = services.wallets.leaders.getSeedWallet(wallet);
       var hdWallet =
@@ -91,11 +86,11 @@ class WalletService {
   }
 
   WalletBase getChangeWallet(Wallet wallet) {
-    if (wallet.humanTypeKey == LingoKey.leaderWalletType) {
-      return leaders.getNextEmptyWallet(wallet as LeaderWallet);
+    if (wallet is LeaderWallet) {
+      return leaders.getNextEmptyWallet(wallet);
     }
-    if (wallet.humanTypeKey == LingoKey.singleWalletType) {
-      return singles.getKPWallet(wallet as SingleWallet);
+    if (wallet is SingleWallet) {
+      return singles.getKPWallet(wallet);
     }
     throw WalletMissing("Wallet '${wallet.walletId}' has no change wallets");
   }

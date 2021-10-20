@@ -33,4 +33,6 @@ class EncryptedEntropy extends EncryptedWalletSecret {
   String get mnemonic => bip39.entropyToMnemonic(entropy);
 
   String get entropy => hex.decrypt(encryptedSecret, cipher);
+
+  static SecretType get secretType => SecretType.mnemonic;
 }

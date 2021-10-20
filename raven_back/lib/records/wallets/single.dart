@@ -45,14 +45,5 @@ class SingleWallet extends Wallet {
       SingleSelfWallet(secret(cipher)).wallet;
 
   @override
-  String get humanType => Lingo.english[humanTypeKey]!;
-
-  @override
-  String get humanSecretType => Lingo.english[humanSecretTypeKey]!;
-
-  @override
-  LingoKey get humanTypeKey => LingoKey.singleWalletType;
-
-  @override
-  LingoKey get humanSecretTypeKey => LingoKey.singleWalletSecretType;
+  SecretType get secretType => EncryptedWIF.secretType;
 }
