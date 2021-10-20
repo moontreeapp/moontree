@@ -51,9 +51,6 @@ class _TransactionPageState extends State<TransactionPage> {
         transactions.primaryIndex.getOne(data['transactionRecord']!.txId);
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
     var metadata = transaction!.memo != null && transaction!.memo != '';
-    print('transaction: $transaction');
-    print('vins: ${transaction!.vins}');
-    print('vouts: ${transaction!.vouts}');
     return DefaultTabController(
         length: metadata ? 2 : 1,
         child: Scaffold(
@@ -90,7 +87,7 @@ class _TransactionPageState extends State<TransactionPage> {
           : 'unknown');
 
   PreferredSize header(bool metadata) => PreferredSize(
-      preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
+      preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.20),
       child: AppBar(
           elevation: 2,
           centerTitle: false,
@@ -108,17 +105,18 @@ class _TransactionPageState extends State<TransactionPage> {
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(height: 15.0),
-
-                    // should be in list of Vins and Vouts, not at transaction level
-                    //RavenIcon.assetAvatar(transaction!.security.symbol),
-                    //SizedBox(height: 15.0),
-                    //Text(transaction!.security.symbol,
-                    //    style: Theme.of(context).textTheme.headline3),
-                    //SizedBox(height: 15.0),
-
-                    Text('Received',
+                    SizedBox(height: 22),
+                    Text(data['transactionRecord']!.out ? 'Sent' : 'Received',
                         style: Theme.of(context).textTheme.headline5),
+                    Text(
+                        RavenText.securityAsReadable(
+                                data['transactionRecord']!.value,
+                                symbol: data['transactionRecord']!
+                                        .security
+                                        ?.symbol ??
+                                    'RVN')
+                            .toString(),
+                        style: Theme.of(context).textTheme.headline5)
                   ])),
           bottom: PreferredSize(
               preferredSize: Size.fromHeight(50.0),
