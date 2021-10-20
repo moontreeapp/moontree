@@ -159,6 +159,7 @@ class AddressSubscriptionWaiter extends Waiter {
   void subscribeToExistingAddresses(RavenElectrumClient client) {
     for (var address in addresses) {
       if (!subscriptionHandles.keys.contains(address.addressId)) {
+        print('existing address: ${address.address}');
         subscribe(client, address);
       }
     }

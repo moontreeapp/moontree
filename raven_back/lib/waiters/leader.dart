@@ -38,6 +38,8 @@ class LeaderWaiter extends Waiter {
         }, updated: (updated) {
           /* moved account */
         }, removed: (removed) {
+          // Unhandled Exception: type 'LeaderWallet' is not a subtype of type 'Account'
+          // first of all, when are we removing addresses!?
           addresses.removeAddresses(removed.data);
         });
       });

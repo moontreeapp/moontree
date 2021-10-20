@@ -13,7 +13,7 @@ class AddressService {
     var addressIds =
         changedAddresses.map((address) => address.addressId).toList();
 
-    // for each scripthash
+    /// for each scripthash
     for (var addressId in addressIds) {
       // erase all vins and vouts not pulled. (or just remove all first - the simple way).
       await vins.removeAll(vins.byScripthash.getAll(addressId));
@@ -28,12 +28,19 @@ class AddressService {
       // ignore: omit_local_variable_types
       List<ScripthashHistory> histories = await client.getHistory(addressId);
 
-      // get all transactions
+      /// get all transactions - batch silently fails on some txHashes such as
+      /// 9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f
+      /// (or one in it's batch)
       // ignore: omit_local_variable_types
-      List<Tx> txs = await client
-          .getTransactions(histories.map((history) => history.txHash).toList());
+      //List<Tx> txs = await client
+      //    .getTransactions(histories.map((history) => history.txHash).toList());
+      // ignore: omit_local_variable_types
+      List<Tx> txs = [
+        for (var txHash in histories.map((history) => history.txHash))
+          await client.getTransaction(txHash)
+      ];
 
-      // save all vins, vouts and transactions
+      /// save all vins, vouts and transactions
       var newVins = <Vin>[];
       var newVouts = <Vout>[];
       var newTxs = <Transaction>[];
@@ -86,9 +93,9 @@ class AddressService {
         ));
       }
       // must await?
+      await transactions.saveAll(newTxs);
       await vins.saveAll(newVins);
       await vouts.saveAll(newVouts);
-      await transactions.saveAll(newTxs);
     }
 
     /// one more step - get all vins that have no corresponding vout (in the db)
@@ -96,8 +103,13 @@ class AddressService {
     var finalVouts = <Vout>[];
     var finalTxs = <Transaction>[];
     // ignore: omit_local_variable_types
-    List<Tx> txs = await client
-        .getTransactions(vins.danglingVins.map((vin) => vin.voutTxId).toList());
+    //List<Tx> txs = await client
+    //    .getTransactions(vins.danglingVins.map((vin) => vin.voutTxId).toList());
+    // ignore: omit_local_variable_types
+    List<Tx> txs = [
+      for (var txHash in vins.danglingVins.map((vin) => vin.voutTxId))
+        await client.getTransaction(txHash)
+    ];
     for (var tx in txs) {
       for (var vout in tx.vout) {
         if (vout.scriptPubKey.type == 'nulldata') continue;
@@ -130,15 +142,8 @@ class AddressService {
         time: tx.time,
       ));
     }
-    await vouts.saveAll(finalVouts);
     await transactions.saveAll(finalTxs);
-
-    //if ([for (var ca in changedAddresses) ca.address]
-    //    .contains('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm')) {
-    //  print('ADDRESSSERVICE:');
-    //  print(changedAddresses);
-    //  print('');
-    //}
+    await vouts.saveAll(finalVouts);
   }
 
   /// we capture securities here. if it's one we've never seen,
