@@ -123,32 +123,15 @@ class _WalletViewState extends State<WalletView> {
         Text(data['secretName'] + ' Secret:'),
         Center(
             child: Visibility(
-                visible: showSecret,
-                child: Column(children: [
-                  SelectableText(
-                    data['secret'],
-                    cursorColor: Colors.grey[850],
-                    showCursor: true,
-                    style: Theme.of(context).mono,
-                    toolbarOptions: toolbarOptions,
-                  ),
-                  SelectableText(
-                    //wallet.encrypted, // private key?
-                    //services.wallets.leaders
-                    //    .getSeedWallet(wallet as LeaderWallet)
-                    //    .wallet
-                    //    .privKey!,
-                    'for testing',
-                    //49aaea49260cf92267f7c469b88700d0abd56ed9f934cfb711c84f1405a44061
-                    //b4d75ccf0f3c420ac77272858072d4870548a76f8fbaa27f3bc440a6b18b8bb4 025e5e
-                    //L3HF2ZP6Mab38xP8L6zJptTHcqCZ9sKdQeqHPHSVJcpGaJwUfiVJ 025e5e as private key seed (WIF)
-                    //5HueCGU8rMjxEXxiPuD5BDku4MkFqeZyd4dZ1jvhTVqvbTLvyTJ example WIF from BTC
-                    cursorColor: Colors.grey[850],
-                    showCursor: true,
-                    style: Theme.of(context).mono,
-                    toolbarOptions: toolbarOptions,
-                  ),
-                ]))),
+          visible: showSecret,
+          child: SelectableText(
+            data['secret'],
+            cursorColor: Colors.grey[850],
+            showCursor: true,
+            style: Theme.of(context).mono,
+            toolbarOptions: toolbarOptions,
+          ),
+        )),
         SizedBox(height: 30.0),
         ElevatedButton(
             onPressed: () => _toggleShow(),
