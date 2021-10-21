@@ -460,7 +460,7 @@ class _SendState extends State<Send> {
               builder: (BuildContext context) => AlertDialog(
                       title: Text('Error: Insufficient Funds'),
                       content: Text(
-                          '${e.cause} Unable to acquire inputs for transaction, this may be due to too many wallets holding too small amounts, a problem known as "dust." Try sending from another account.'),
+                          '$e: Unable to acquire inputs for transaction, this may be due to too many wallets holding too small amounts, a problem known as "dust." Try sending from another account.'),
                       actions: [
                         TextButton(
                             child: Text('Ok'),
