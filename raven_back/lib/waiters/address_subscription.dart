@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:raven/records/cipher.dart';
 import 'package:reservoir/reservoir.dart';
 
 import 'package:raven/raven.dart';
@@ -54,7 +55,8 @@ class AddressSubscriptionWaiter extends Waiter {
   }
 
   void setupCipherListener() {
-    listen('subjects.cipher.stream', subjects.cipher.stream, (cipher) async {
+    listen('ciphers.changes', ciphers.changes,
+        (List<Change<Cipher>> changes) async {
       if (backlogAddressCipher.isNotEmpty) {
         var temp = <Address>{};
         for (var changedAddress in backlogAddressCipher) {
