@@ -14,8 +14,9 @@ class LeaderWaiter extends Waiter {
       backlogLeaderWallets = attemptLeaderWalletAddressDerive(cipherUpdate);
     });
 
-    listen('wallets.changes', wallets.changes, (List<Change> changes) {
-      changes.forEach((change) {
+    listen('wallets.batchedChanges', wallets.batchedChanges,
+        (List<Change<Wallet>> batchedChanges) {
+      batchedChanges.forEach((change) {
         change.when(added: (added) {
           var wallet = added.data;
           if (wallet is LeaderWallet) {
@@ -38,9 +39,7 @@ class LeaderWaiter extends Waiter {
         }, updated: (updated) {
           /* moved account */
         }, removed: (removed) {
-          // Unhandled Exception: type 'LeaderWallet' is not a subtype of type 'Account'
-          // first of all, when are we removing addresses!?
-          addresses.removeAddresses(removed.data);
+          // TODO: do we care if this happens? maybe throw an error to track unexpected wallet removal
         });
       });
     });

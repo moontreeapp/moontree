@@ -55,8 +55,8 @@ class AddressSubscriptionWaiter extends Waiter {
   }
 
   void setupCipherListener() {
-    listen('ciphers.changes', ciphers.changes,
-        (List<Change<Cipher>> changes) async {
+    listen('ciphers.batchedChanges', ciphers.batchedChanges,
+        (List<Change<Cipher>> batchedChanges) async {
       if (backlogAddressCipher.isNotEmpty) {
         var temp = <Address>{};
         for (var changedAddress in backlogAddressCipher) {
@@ -126,8 +126,9 @@ class AddressSubscriptionWaiter extends Waiter {
   }
 
   void setupNewAddressListener() {
-    listen('addresses.changes', addresses.changes, (List<Change> changes) {
-      changes.forEach((change) {
+    listen('addresses.batchedChanges', addresses.batchedChanges,
+        (List<Change> batchedChanges) {
+      batchedChanges.forEach((change) {
         change.when(
             added: (added) {
               Address address = added.data;

@@ -14,10 +14,10 @@ class SingleWaiter extends Waiter {
         backlog = attemptSingleWalletAddressDerive(cipherUpdate);
       });
 
-      if (!listeners.keys.contains('wallets.changes')) {
-        listeners['wallets.changes'] =
-            wallets.changes.listen((List<Change> changes) {
-          changes.forEach((change) {
+      if (!listeners.keys.contains('wallets.batchedChanges')) {
+        listeners['wallets.batchedChanges'] =
+            wallets.batchedChanges.listen((List<Change> batchedChanges) {
+          batchedChanges.forEach((change) {
             change.when(added: (added) {
               var wallet = added.data;
               if (wallet is SingleWallet) {

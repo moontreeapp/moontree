@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
+import 'package:reservoir/index.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'partition_ext.dart';
@@ -17,11 +18,11 @@ class Join<A, B> with EquatableMixin {
 Stream<Join<A, B>> streamingLeftJoin<A, B>(
   Stream<A> leftStream,
   Stream<B> rightStream,
-  int Function(A a) getKeyA,
-  int Function(B b) getKeyAFromB,
+  GetKey<String, A> getKeyA,
+  GetKey<String, B> getKeyAFromB,
 ) {
-  var rightWaitingForLeft = <int, Set<B>>{};
-  var leftMap = <int, A>{};
+  var rightWaitingForLeft = <String, Set<B>>{};
+  var leftMap = <String, A>{};
 
   var streams =
       rightStream.partition((B b) => leftMap.containsKey(getKeyAFromB(b)));
