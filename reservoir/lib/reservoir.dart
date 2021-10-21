@@ -32,7 +32,10 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
   late Source<Record> source;
 
   /// Expose the stream of changes that can be subscribed to
-  Stream<List<Change<Record>>> get changes => _changes.stream;
+  Stream<List<Change<Record>>> get batchedChanges => _changes.stream;
+
+  /// Return each change individually as a stream
+  Stream<Change<Record>> get changes => batchedChanges.expand((i) => i);
 
   /// Return all records in the Reservoir
   Iterable<Record> get data => primaryIndex.values;
