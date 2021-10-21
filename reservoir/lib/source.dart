@@ -6,8 +6,8 @@ abstract class Source<Record> {
   Iterable<Record> initialLoad();
 
   /// Adds or updates the `model` at a given `key` in the Source.
-  Future<Change?> save(String key, Record record);
+  Future<Change<Record>?> save(String key, Record record);
 
   /// Removes a given `key` from the Source.
-  Future<Change?> remove(String key);
+  Future<Change<Record>?> remove(String key);
 }

@@ -28,11 +28,11 @@ const PRIMARY_INDEX = '_primary';
 class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
     with IterableMixin<Record> {
   final Map<String, Index<Key<Record>, Record>> indices = {};
-  final PublishSubject<List<Change>> _changes = PublishSubject();
+  final PublishSubject<List<Change<Record>>> _changes = PublishSubject();
   late Source<Record> source;
 
   /// Expose the stream of changes that can be subscribed to
-  Stream<List<Change>> get changes => _changes.stream;
+  Stream<List<Change<Record>>> get changes => _changes.stream;
 
   /// Return all records in the Reservoir
   Iterable<Record> get data => primaryIndex.values;
@@ -87,14 +87,14 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
   }
 
   /// Save a `record`, index it, and broadcast the change
-  Future<Change?> save(Record record) async {
+  Future<Change<Record>?> save(Record record) async {
     var change = await _saveSilently(record);
     if (change != null) _changes.add([change]);
     return change;
   }
 
   /// Remove a `record`, de-index it, and broadcast the change
-  Future<Change?> remove(Record record) async {
+  Future<Change<Record>?> remove(Record record) async {
     var change = await _removeSilently(record);
     if (change != null) _changes.add([change]);
     return change;
@@ -111,7 +111,7 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
   }
 
   // Index & save one record without broadcasting any changes
-  Future<Change?> _saveSilently(Record record) async {
+  Future<Change<Record>?> _saveSilently(Record record) async {
     var change = await source.save(primaryKey(record), record);
     change?.when(
         added: (change) {
@@ -127,7 +127,7 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
   }
 
   // De-index & remove one record without broadcasting any changes
-  Future<Change?> _removeSilently(Record record) async {
+  Future<Change<Record>?> _removeSilently(Record record) async {
     var key = primaryKey(record);
     var change = await source.remove(key);
     if (change != null) _removeFromIndices(change.data);
@@ -135,8 +135,9 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
   }
 
   // Apply a change function to each of the `records`, returning the changes
-  Future<List<Change>> _changeAll(Iterable<Record> records, changeFn) async {
-    var changes = <Change>[];
+  Future<List<Change<Record>>> _changeAll(
+      Iterable<Record> records, changeFn) async {
+    var changes = <Change<Record>>[];
     // must turn iterable into list so that records can be removed by changeFn
     for (var record in records.toList()) {
       var change = await changeFn(record);

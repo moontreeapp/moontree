@@ -12,7 +12,7 @@ class MapSource<Record> extends Source<Record> {
   }
 
   @override
-  Future<Change?> save(String key, Record record) async {
+  Future<Change<Record>?> save(String key, Record record) async {
     var existing = map[key];
     if (existing == record) {
       return null;
@@ -25,7 +25,7 @@ class MapSource<Record> extends Source<Record> {
   }
 
   @override
-  Future<Change?> remove(String key) async {
+  Future<Change<Record>?> remove(String key) async {
     var existing = map[key];
     if (existing == null) {
       return null;

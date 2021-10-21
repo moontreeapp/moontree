@@ -22,7 +22,7 @@ class HiveSource<Record> extends Source<Record> {
   }
 
   @override
-  Future<Change?> save(String key, Record record) async {
+  Future<Change<Record>?> save(String key, Record record) async {
     var existing = box.get(key);
     if (existing == record) {
       return null;
@@ -35,7 +35,7 @@ class HiveSource<Record> extends Source<Record> {
   }
 
   @override
-  Future<Change?> remove(String key) async {
+  Future<Change<Record>?> remove(String key) async {
     var existing = box.get(key);
     if (existing == null) {
       return null;

@@ -9,13 +9,14 @@ abstract class Change<Record> with EquatableMixin {
 
   Change(this.id, this.data);
 
-  T when<T>(
-      {required T Function(Added) added,
-      required T Function(Updated) updated,
-      required T Function(Removed) removed}) {
-    if (this is Added) return added(this as Added);
-    if (this is Updated) return updated(this as Updated);
-    if (this is Removed) return removed(this as Removed);
+  T when<T>({
+    required T Function(Added<Record>) added,
+    required T Function(Updated<Record>) updated,
+    required T Function(Removed<Record>) removed,
+  }) {
+    if (this is Added) return added(this as Added<Record>);
+    if (this is Updated) return updated(this as Updated<Record>);
+    if (this is Removed) return removed(this as Removed<Record>);
     throw Exception('Invalid Change');
   }
 
@@ -23,22 +24,22 @@ abstract class Change<Record> with EquatableMixin {
   List<Object> get props => [id];
 }
 
-class Added extends Change {
-  Added(id, data) : super(id, data);
+class Added<Record> extends Change<Record> {
+  Added(Object id, Record data) : super(id, data);
 
   @override
   String toString() => 'Added($id: $data)';
 }
 
-class Updated extends Change {
-  Updated(id, data) : super(id, data);
+class Updated<Record> extends Change<Record> {
+  Updated(Object id, Record data) : super(id, data);
 
   @override
   String toString() => 'Updated($id: $data)';
 }
 
-class Removed extends Change {
-  Removed(id, data) : super(id, data);
+class Removed<Record> extends Change<Record> {
+  Removed(Object id, Record data) : super(id, data);
 
   @override
   String toString() => 'Removed($id: $data)';
