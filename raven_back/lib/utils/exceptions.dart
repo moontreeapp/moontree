@@ -1,65 +1,58 @@
 class CustomException implements Exception {
-  final _prefix;
-  final _message;
+  final String? _prefix;
+  final String? _message;
 
   CustomException([this._prefix, this._message]);
 
   @override
-  String toString() {
-    return '$_prefix$_message';
-  }
+  String toString() => [_prefix, _message].whereType<String>().join(': ');
 }
 
 class FetchDataException extends CustomException {
   FetchDataException([String? message])
-      : super('Error During Communication: ', message);
+      : super('Error during communication', message);
 }
 
 class BadResponseException extends CustomException {
-  BadResponseException([String? message])
-      : super('Invalid Response: ', message);
+  BadResponseException([String? message]) : super('Invalid response', message);
 }
 
 class BadRequestException extends CustomException {
-  BadRequestException([String? message]) : super('Invalid Request: ', message);
+  BadRequestException([String? message]) : super('Invalid request', message);
 }
 
 class UnauthorisedException extends CustomException {
-  UnauthorisedException([String? message]) : super('Unauthorised: ', message);
+  UnauthorisedException([String? message]) : super('Unauthorised', message);
 }
 
 class InvalidInputException extends CustomException {
-  InvalidInputException([String? message]) : super('Invalid Input: ', message);
+  InvalidInputException([String? message]) : super('Invalid input', message);
 }
 
-class InsufficientFunds implements Exception {
-  String cause;
-  InsufficientFunds([this.cause = 'Error! Insufficient funds.']);
+class InsufficientFunds extends CustomException {
+  InsufficientFunds([String? message]) : super('Insufficient funds', message);
 }
 
-class CacheEmpty implements Exception {
-  String cause;
-  CacheEmpty([this.cause = 'Error! Please deriveNodes first.']);
+class CacheEmpty extends CustomException {
+  CacheEmpty([String? message]) : super('Cache empty', message);
 }
 
-class BalanceMismatch implements Exception {
-  String cause;
-  BalanceMismatch([this.cause = "Balance elements don't match"]);
+class BalanceMismatch extends CustomException {
+  BalanceMismatch([String? message]) : super('Balance mismatch', message);
 }
 
-class WalletMissing implements Exception {
-  String cause;
-  WalletMissing([this.cause = 'Wallet missing']);
+class WalletMissing extends CustomException {
+  WalletMissing([String? message]) : super('Wallet missing', message);
 }
 
-class AlreadyListening implements Exception {
-  String cause;
-  AlreadyListening([this.cause = 'already listening']);
+class AlreadyListening extends CustomException {
+  AlreadyListening([String? message]) : super('Already listening', message);
 }
 
-class OneOfMultipleMissing implements Exception {
-  String cause;
+class OneOfMultipleMissing extends CustomException {
   OneOfMultipleMissing(
-      [this.cause = ('this function requires at least one of multiple optional '
-          'or named arguments to be supplied.')]);
+      [String message =
+          'this function requires at least one of multiple optional '
+              'or named arguments to be supplied.'])
+      : super('One of multiple params missing', message);
 }
