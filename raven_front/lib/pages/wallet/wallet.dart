@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:raven/utils/transform.dart';
+import 'package:raven/utils/enum.dart';
+import 'package:raven/utils/extensions.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
@@ -112,13 +113,16 @@ class _WalletViewState extends State<WalletView> {
         transactionsView()
       ]);
 
+  String get secretName =>
+      describeEnum(data['secretName']).toString().toTitleCase(true);
+
   ListView detailsView() =>
       ListView(shrinkWrap: true, padding: EdgeInsets.all(20.0), children: <
           Widget>[
         Text('WARNING!\nDo NOT disclose the Mnemonic Secret to anyone!',
             style: TextStyle(color: Theme.of(context).bad)),
         SizedBox(height: 15.0),
-        Text(data['secretName'] + ' Secret:'),
+        Text(secretName + ' Secret:'),
         Center(
             child: Visibility(
           visible: showSecret,
@@ -134,8 +138,8 @@ class _WalletViewState extends State<WalletView> {
         ElevatedButton(
             onPressed: () => _toggleShow(),
             child: Text(showSecret
-                ? 'Hide ' + data['secretName'] + ' Secret'
-                : 'Show ' + data['secretName'] + ' Secret')),
+                ? 'Hide ' + secretName + ' Secret'
+                : 'Show ' + secretName + ' Secret')),
         SizedBox(height: 30.0),
         Text('Wallet Addresses', style: Theme.of(context).textTheme.headline4),
         SizedBox(height: 10.0),
