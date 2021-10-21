@@ -16,13 +16,12 @@ class MapSource<Record> extends Source<Record> {
     var existing = map[key];
     if (existing == record) {
       return null;
-    } else if (existing == null) {
-      map[key] = record;
-      return Added(key, record);
-    } else {
-      map[key] = record;
-      return Updated(key, record);
     }
+    map[key] = record;
+    if (existing == null) {
+      return Added(key, record);
+    }
+    return Updated(key, record);
   }
 
   @override
@@ -30,10 +29,9 @@ class MapSource<Record> extends Source<Record> {
     var existing = map[key];
     if (existing == null) {
       return null;
-    } else {
-      map.remove(key);
-      return Removed(key, existing);
     }
+    map.remove(key);
+    return Removed(key, existing);
   }
 
   @override

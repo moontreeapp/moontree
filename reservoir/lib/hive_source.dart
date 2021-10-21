@@ -26,13 +26,12 @@ class HiveSource<Record> extends Source<Record> {
     var existing = box.get(key);
     if (existing == record) {
       return null;
-    } else if (existing == null) {
-      await box.put(key, record);
-      return Added(key, record);
-    } else {
-      await box.put(key, record);
-      return Updated(key, record);
     }
+    await box.put(key, record);
+    if (existing == null) {
+      return Added(key, record);
+    }
+    return Updated(key, record);
   }
 
   @override
@@ -40,9 +39,8 @@ class HiveSource<Record> extends Source<Record> {
     var existing = box.get(key);
     if (existing == null) {
       return null;
-    } else {
-      await box.delete(key);
-      return Removed(key, existing);
     }
+    await box.delete(key);
+    return Removed(key, existing);
   }
 }
