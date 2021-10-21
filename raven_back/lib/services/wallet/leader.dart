@@ -40,7 +40,7 @@ class LeaderWalletService {
     }
   }
 
-  /// this function is used to determin if we need to derive new addresses
+  /// this function is used to determine if we need to derive new addresses
   /// based upon the idea that we want to retain a gap of empty histories
   Address? maybeDeriveNextAddress(
     LeaderWallet leaderWallet,
@@ -147,7 +147,7 @@ class LeaderWalletService {
     }
   }
 
-  /// this function is used to determin if we need to derive new addresses
+  /// this function is used to determine if we need to derive new addresses
   /// based upon the idea that we want to retain a gap of empty histories
   List<Address> maybeDeriveNextAddresses(
     LeaderWallet leaderWallet,
