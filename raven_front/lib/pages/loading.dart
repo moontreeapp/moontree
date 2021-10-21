@@ -57,7 +57,7 @@ class _LoadingState extends State<Loading> {
     print('rates: ${rates.data}');
     print('settings: ${settings.data}');
     print('blocks: ${blocks.data}');
-    print('cipherRegistry: $cipherRegistry');
+    print('ciphers: ${ciphers.data}');
 
     if (services.password.required) {
       if (services.password.interruptedPasswordChange()) {
