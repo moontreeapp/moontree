@@ -1,5 +1,5 @@
 import 'package:raven/security/cipher_base.dart';
-import 'package:raven/utils/transform.dart';
+import 'package:raven/utils/extensions.dart';
 
 import 'reservoirs/reservoirs.dart';
 import 'records/records.dart';
@@ -47,8 +47,8 @@ extension AccountHasManyTransactions on Account {
 
 extension WalletBelongsToCipher on Wallet {
   //CipherBase? get cipher => globals.cipherRegistry.ciphers[cipherUpdate];
-  CipherBase get cipher =>
-      globals.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher;
+  CipherBase? get cipher =>
+      globals.ciphers.primaryIndex.getOne(cipherUpdate)?.cipher;
 }
 
 extension WalletBelongsToAccount on Wallet {

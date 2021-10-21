@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:hive/hive.dart';
+import 'package:raven/raven.dart';
 import 'package:raven/reservoirs/security.dart';
 import 'package:raven/reservoirs/setting.dart';
 import 'package:reservoir/reservoir.dart';
@@ -84,6 +85,7 @@ class HiveInitializer {
     //   'ciphers',
     //   defaults: CipherReservoir.defaults,
     // ));
+    ciphers.setSource(MapSource(CipherReservoir.defaults));
 
     passwords.setSource(HiveSource('passwords'));
     rates.setSource(HiveSource('rates'));

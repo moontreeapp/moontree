@@ -30,10 +30,10 @@ class CipherReservoir extends Reservoir<_CipherUpdateKey, Cipher> {
   };
 
   // populate with a nocipher cipher for creation of wallets without password
-  static Map<CipherUpdate, Cipher> get defaults => {
-        //defaultCipherUpdate: cipherInitializers[defaultCipherUpdate.cipherType]!(Uint8List(0))
-        defaultCipherUpdate: Cipher(
-            cipher: cipherInitializers[defaultCipherUpdate.cipherType]!(),
+  static Map<String, Cipher> get defaults => {
+        defaultCipherUpdate.cipherUpdateId: Cipher(
+            cipher: cipherInitializers[defaultCipherUpdate.cipherType]!(
+                Uint8List(0)),
             cipherType: defaultCipherUpdate.cipherType,
             passwordId: defaultCipherUpdate.passwordId)
       };

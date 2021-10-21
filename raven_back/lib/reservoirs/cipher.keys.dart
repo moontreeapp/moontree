@@ -1,7 +1,7 @@
 part of 'cipher.dart';
 
 String _cipherTypePasswordIdToKey(CipherType cipherType, int? passwordId) =>
-    '${describeEnum(cipherType)}:$passwordId';
+    CipherUpdate.toKey(cipherType, passwordId);
 
 /// primary key - CipherUpdate
 
@@ -13,9 +13,7 @@ class _CipherUpdateKey extends Key<Cipher> {
 
 extension ByCipherUpdateMethodsForCipher on Index<_CipherUpdateKey, Cipher> {
   Cipher? getOne(CipherUpdate cipherUpdate) =>
-      getByKeyStr(_cipherTypePasswordIdToKey(
-              cipherUpdate.cipherType, cipherUpdate.passwordId))
-          .firstOrNull;
+      getByKeyStr(cipherUpdate.cipherUpdateId).firstOrNull;
 }
 
 /// byCipherTypePasswordId

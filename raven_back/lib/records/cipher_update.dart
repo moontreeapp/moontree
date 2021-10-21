@@ -26,6 +26,10 @@ class CipherUpdate with EquatableMixin {
   @override
   String toString() => toMap.toString();
 
+  String get cipherUpdateId => toKey(cipherType, passwordId);
+  static String toKey(CipherType cipherType, int? passwordId) =>
+      '${describeEnum(cipherType)}:$passwordId';
+
   Map<String, dynamic> get toMap => {
         'CipherType': describeEnum(cipherType),
         'PasswordId': passwordId.toString()
