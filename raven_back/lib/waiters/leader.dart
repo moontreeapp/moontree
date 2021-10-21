@@ -19,19 +19,16 @@ class LeaderWaiter extends Waiter {
         change.when(added: (added) {
           var wallet = added.data;
           if (wallet is LeaderWallet) {
-            //if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
-            if (cipherRegistry.ciphers.keys.contains(wallet.cipherUpdate)) {
+            if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
               // if cipher is available for wallet, use it
               //services.wallet.leader.deriveFirstAddressAndSave(wallet);
               services.wallet.leader.maybeSaveNewAddresses(
                   wallet,
-                  //ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
-                  cipherRegistry.ciphers[wallet.cipherUpdate]!,
+                  ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
                   NodeExposure.External);
               services.wallet.leader.maybeSaveNewAddresses(
                   wallet,
-                  //ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
-                  cipherRegistry.ciphers[wallet.cipherUpdate]!,
+                  ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
                   NodeExposure.Internal);
             } else {
               // else add it to backlog
@@ -57,11 +54,11 @@ class LeaderWaiter extends Waiter {
         //services.wallet.leader.deriveFirstAddressAndSave(wallet);
         services.wallet.leader.maybeSaveNewAddresses(
             wallet,
-            cipherRegistry.ciphers[wallet.cipherUpdate]!,
+            ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
             NodeExposure.External);
         services.wallet.leader.maybeSaveNewAddresses(
             wallet,
-            cipherRegistry.ciphers[wallet.cipherUpdate]!,
+            ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
             NodeExposure.Internal);
       } else {
         ret.add(wallet);

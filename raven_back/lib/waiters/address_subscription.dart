@@ -59,12 +59,10 @@ class AddressSubscriptionWaiter extends Waiter {
         var temp = <Address>{};
         for (var changedAddress in backlogAddressCipher) {
           var wallet = changedAddress.wallet!;
-          //if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
-          if (cipherRegistry.ciphers.keys.contains(wallet.cipherUpdate)) {
+          if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
             services.wallet.leader.maybeSaveNewAddress(
                 wallet as LeaderWallet,
-                //ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
-                cipherRegistry.ciphers[wallet.cipherUpdate]!,
+                ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
                 changedAddress.exposure);
           } else {
             temp.add(changedAddress);
@@ -105,10 +103,10 @@ class AddressSubscriptionWaiter extends Waiter {
     for (var changedAddress in changedAddresses) {
       var wallet = changedAddress.wallet!;
       if (wallet is LeaderWallet) {
-        if (cipherRegistry.ciphers.keys.contains(wallet.cipherUpdate)) {
+        if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
           services.wallet.leader.maybeSaveNewAddress(
               wallet,
-              cipherRegistry.ciphers[wallet.cipherUpdate]!,
+              ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
               changedAddress.exposure);
         } else {
           backlogAddressCipher.add(changedAddress);

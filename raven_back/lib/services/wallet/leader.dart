@@ -16,17 +16,14 @@ class LeaderWalletService {
     for (var address in changedAddresses) {
       var leaderWallet =
           wallets.primaryIndex.getOne(address.walletId)! as LeaderWallet;
-      //if (ciphers.primaryIndex.getOne(leaderWallet.cipherUpdate) != null) {
-      if (cipherRegistry.ciphers.keys.contains(leaderWallet.cipherUpdate)) {
+      if (ciphers.primaryIndex.getOne(leaderWallet.cipherUpdate) != null) {
         maybeSaveNewAddress(
             leaderWallet,
-            //ciphers.primaryIndex.getOne(leaderWallet.cipherUpdate)!.cipher,
-            cipherRegistry.ciphers[leaderWallet.cipherUpdate]!,
+            ciphers.primaryIndex.getOne(leaderWallet.cipherUpdate)!.cipher,
             NodeExposure.Internal);
         maybeSaveNewAddress(
             leaderWallet,
-            //ciphers.primaryIndex.getOne(leaderWallet.cipherUpdate)!.cipher,
-            cipherRegistry.ciphers[leaderWallet.cipherUpdate]!,
+            ciphers.primaryIndex.getOne(leaderWallet.cipherUpdate)!.cipher,
             NodeExposure.External);
       } else {
         remaining.add(address);

@@ -46,15 +46,13 @@ class WalletService {
       {
         WalletType.leader: () async => await leader.makeSaveLeaderWallet(
               accountId,
-              //ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
-              cipherRegistry.ciphers[cipherUpdate]!,
+              ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
               cipherUpdate: cipherUpdate,
               mnemonic: secret,
             ),
         WalletType.single: () async => await single.makeSaveSingleWallet(
               accountId,
-              //ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
-              cipherRegistry.ciphers[cipherUpdate]!,
+              ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
               cipherUpdate: cipherUpdate,
               wif: secret,
             )
@@ -70,16 +68,14 @@ class WalletService {
       {
         WalletType.leader: () => leader.makeLeaderWallet(
               accountId,
-              //ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
-              cipherRegistry.ciphers[cipherUpdate]!,
+              ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
               cipherUpdate: cipherUpdate,
               entropy: secret != null ? bip39.mnemonicToEntropy(secret) : null,
               alwaysReturn: alwaysReturn,
             ),
         WalletType.single: () => single.makeSingleWallet(
               accountId,
-              //ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
-              cipherRegistry.ciphers[cipherUpdate]!,
+              ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
               cipherUpdate: cipherUpdate,
               wif: secret,
               alwaysReturn: alwaysReturn,

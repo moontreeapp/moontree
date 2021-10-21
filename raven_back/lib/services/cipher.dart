@@ -7,16 +7,15 @@ class CipherService {
   static CipherType latestCipherType =
       services.password.required ? CipherType.AES : CipherType.None;
   @override
-  String toString() =>
-      'ciphers: $cipherRegistry.ciphers, latestCipherType: ${describeEnum(latestCipherType)}';
+  String toString() => 'latestCipherType: ${describeEnum(latestCipherType)}';
 
   CipherType get getLatestCipherType => latestCipherType;
 
   CipherUpdate get currentCipherUpdate =>
       CipherUpdate(latestCipherType, passwordId: passwords.maxPasswordId);
 
-  //CipherBase? get currentCipher => ciphers.primaryIndex.getOne(currentCipherUpdate)!.cipher;
-  CipherBase? get currentCipher => cipherRegistry.ciphers[currentCipherUpdate];
+  CipherBase? get currentCipher =>
+      ciphers.primaryIndex.getOne(currentCipherUpdate)!.cipher;
 
   /// make sure all wallets are on the latest ciphertype and password
   Future updateWallets() async {
@@ -71,8 +70,7 @@ class CipherService {
   }) {
     password = _getPassword(password: password, altPassword: altPassword);
     for (var currentCipherUpdate in currentCipherUpdates ?? _cipherUpdates) {
-      //ciphers.registerCipher(currentCipherUpdate, password);
-      cipherRegistry.registerCipher(currentCipherUpdate, password);
+      ciphers.registerCipher(currentCipherUpdate, password);
     }
   }
 
@@ -83,20 +81,16 @@ class CipherService {
   }) {
     latest = latest ?? latestCipherType;
     password = _getPassword(password: password, altPassword: altPassword);
-    //ciphers.registerCipher(
-    //    CipherUpdate(latest, passwordId: passwords.maxPasswordId), password);
-    cipherRegistry.registerCipher(
+    ciphers.registerCipher(
         CipherUpdate(latest, passwordId: passwords.maxPasswordId), password);
   }
 
   /// after wallets are updated or verified to be up to date
   /// remove all ciphers that no wallet uses and that are not the current one
   void cleanupCiphers() {
-    //ciphers.remove(by key?)
-    cipherRegistry.ciphers
-        .removeWhere((key, value) => !_cipherUpdates.contains(key));
-    //if (ciphers.data.length > 1) {
-    if (cipherRegistry.ciphers.length > 1) {
+    ciphers.removeAll(ciphers.data
+        .where((cipher) => !_cipherUpdates.contains(cipher.cipherUpdate)));
+    if (ciphers.data.length > 1) {
       // in theory a wallet is not updated ... error?
       print('no ciphers - that is weird');
     }

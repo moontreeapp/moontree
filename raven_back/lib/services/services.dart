@@ -11,7 +11,7 @@ import 'wallet.dart';
 
 class services {
   static AccountService account = AccountService();
-  static AddressService addresse = AddressService();
+  static AddressService address = AddressService();
   static BalanceService balance = BalanceService();
   static CipherService cipher = CipherService();
   static ClientService client = ClientService();
