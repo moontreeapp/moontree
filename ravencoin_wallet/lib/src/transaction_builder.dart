@@ -82,10 +82,17 @@ class TransactionBuilder {
     _tx!.locktime = locktime;
   }
 
-  int addOutput(dynamic data, int? value) {
+  int addOutput(dynamic data, int? value, {bool memo = false}) {
     var scriptPubKey;
-    if (data is String) {
+
+    if (data is String && !memo) {
       scriptPubKey = Address.addressToOutputScript(data, network);
+      // I think this means if you want to add a custom script,
+      // like adding something to op_return as a memo you gotta do it yourself
+    } else if (data is String) {
+      scriptPubKey = Address.memoToOutputScript(data, network);
+      // I think this means if you want to add a custom script,
+      // like adding something to op_return as a memo you gotta do it yourself
     } else if (data is Uint8List) {
       scriptPubKey = data;
     } else {

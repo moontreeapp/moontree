@@ -47,4 +47,34 @@ class Address {
     }
     throw new ArgumentError(address + ' has no matching Script');
   }
+
+  static Uint8List? memoToOutputScript(String memo,
+      [NetworkType network = mainnet]) {
+    //var decodeBase58;
+    //var decodeBech32;
+    //try {
+    //  decodeBase58 = bs58check.decode(memo);
+    //} catch (err) {}
+    //if (decodeBase58 != null) {
+    //  if (decodeBase58[0] != network.pubKeyHash)
+    //    throw new ArgumentError('Invalid version or Network mismatch');
+    P2PKH p2pkh =
+        new P2PKH(data: new PaymentData(memo: memo), network: network);
+    return p2pkh.data.output;
+    //} else {
+    //  try {
+    //    decodeBech32 = segwit.decode(memo);
+    //  } catch (err) {}
+    //  if (decodeBech32 != null) {
+    //    if (network.bech32 != decodeBech32.hrp)
+    //      throw new ArgumentError('Invalid prefix or Network mismatch');
+    //    if (decodeBech32.version != 0)
+    //      throw new ArgumentError('Invalid memo version');
+    //    P2WPKH p2wpkh =
+    //        new P2WPKH(data: new PaymentData(memo: memo), network: network);
+    //    return p2wpkh.data.output;
+    //  }
+    //}
+    //throw new ArgumentError(memo + ' has no matching Script');
+  }
 }
