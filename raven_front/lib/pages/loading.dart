@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -92,44 +89,11 @@ class _LoadingState extends State<Loading> {
     setup();
   }
 
-  /// Generates a positive random integer uniformly distributed on the range
-  /// from [min], inclusive, to [max], exclusive.
-  //int next(int min, int max) => min + _random.nextInt(max - min);
-
   @override
   Widget build(BuildContext context) {
-    final _random = new Random();
-    var randomSpinner = [
-      '2dTremble',
-      'clockwiseSpin',
-      '180Spin',
-      '360Spin',
-      //'blink',
-      //'blur',
-      'frontFlip',
-      'glitch',
-      'hueRotate',
-      //'pixelRain',
-      'squishy',
-    ];
-    var randomSplash = [
-      'liquid',
-      'rotate',
-      'rotateBlue',
-    ];
-
-    // todo: make a gif converting the old logo to the new?
+    // todo: make a gif converting the old logo to the
     return Scaffold(
         body: Center(
             child: Image(image: AssetImage("assets/splash/liquid.gif"))));
-    //Image(
-    //    image:
-    //    AssetImage(
-    //        "assets/splash/${randomSplash[_random.nextInt(randomSplash.length)]}.gif"))));
-    //Image(
-    //image: AssetImage(
-    //    'assets/spinners/${randomSpinner[_random.nextInt(randomSpinner.length)]}.gif'))));
-    //Image(image: AssetImage("assets/splash/rotate.gif"))));
-    //SpinKitThreeBounce(color: Colors.black, size: 50.0)));
   }
 }
