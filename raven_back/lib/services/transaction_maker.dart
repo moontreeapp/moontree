@@ -83,7 +83,6 @@ class MakeTransactionService {
     // Direct the transaction to send value to the desired address
     // measure fee?
     txb.addOutput(toAddress, estimate.amount);
-    txb.addOutput('testMemo', null, memo: true);
 
     // From the available wallets and UTXOs within our account,
     // find sufficient value to send to the address above
@@ -151,21 +150,6 @@ class MakeTransactionService {
     }
     var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
     txb.addOutput(toAddress, estimate.amount);
-    txb.addOutput('testMemo', null, memo: true);
-    /*
-    I/flutter ( 4711): final PaymentData{address: mqkt8ZNFySs4QtsxHp5PsAjLS85hJuDH6Y, memo: null, hash: [112, 83, 155, 9, 116, 145, 86, 183, 68, 213, 7, 7, 
-72, 26, 47, 34, 58, 29, 161, 154], output: [118, 169, 20, 112, 83, 155, 9, 116, 145, 86, 183, 68, 213, 7, 7, 72, 26, 47, 34, 58, 29, 161, 154, 136, 172], signature: null, pubkey: null, input: null, witness: null}
-E/flutter ( 4711): [ERROR:flutter/lib/ui/ui_dart_state.cc(209)] Unhandled Exception: Invalid argument(s): testMemo has no matching Script
-E/flutter ( 4711): #0      Address.memoToOutputScript (package:ravencoin/src/address.dart:78:5)
-E/flutter ( 4711): #1      TransactionBuilder.addOutput (package:ravencoin/src/transaction_builder.dart:93:30)
-E/flutter ( 4711): #2      MakeTransactionService.buildTransactionSendAll (package:raven/services/transaction_maker.dart:154:9)
-E/flutter ( 4711): #3      _SendState.buildTransactionWithMessageAndConfirm (package:raven_mobile/pages/transaction/send.dart:402:31)
-E/flutter ( 4711): <asynchronous suspension>
-E/flutter ( 4711): #4      _SendState.startSend (package:raven_mobile/pages/transaction/send.dart:454:9)
-E/flutter ( 4711): <asynchronous suspension>
-E/flutter ( 4711): #5      _SendState.sendTransactionButton.<anonymous closure> (package:raven_mobile/pages/transaction/send.dart:521:30)
-E/flutter ( 4711): <asynchronous suspension>
-    */
     txb.signEachInput(utxos);
     var tx = txb.build();
     var fees = tx.fee(goal);
