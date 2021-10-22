@@ -33,22 +33,23 @@ class _HomeState extends State<Home> {
     currentTheme.addListener(() {
       setState(() {});
     });
-    listeners.add(balances.changes.listen((changes) {
+    listeners.add(balances.batchedChanges.listen((batchedChanges) {
       setState(() {});
     }));
-    listeners.add(vouts.changes.listen((changes) {
+    listeners
+        .add(vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
       if ([
-        for (var change in changes)
-          if ((change.data as Vout).address?.wallet?.accountId ==
+        for (var change in batchedChanges)
+          if ((change.data).address?.wallet?.accountId ==
               Current.account.accountId)
             1
       ].contains(1)) setState(() {});
     }));
     // we can move a wallet from one account to another
-    listeners.add(wallets.changes.listen((changes) {
+    listeners.add(wallets.batchedChanges.listen((batchedChanges) {
       setState(() {});
     }));
-    listeners.add(settings.changes.listen((changes) {
+    listeners.add(settings.batchedChanges.listen((batchedChanges) {
       setState(() {});
     }));
   }
@@ -160,6 +161,7 @@ class _HomeState extends State<Home> {
     return ListView(children: <Widget>[...rvnHolding, ...assetHoldings]);
   }
 
+  // todo: abstract - happens in several places
   ListView _transactionsView() => ListView(children: <Widget>[
         for (var transactionRecord in Current.compiledTransactions)
           ListTile(

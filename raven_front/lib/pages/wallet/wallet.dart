@@ -307,31 +307,38 @@ class _WalletViewState extends State<WalletView> {
   }
 
   ListView transactionsView() => ListView(children: <Widget>[
-        for (var transaction
+        for (var transactionRecord
             in Current.walletCompiledTransactions(wallet.walletId))
           ListTile(
-              onTap: () => Navigator.pushNamed(context, '/transaction',
-                  arguments: {'transaction': transaction}),
-              onLongPress: () => _toggleUSD(),
-              title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(transaction.security.symbol,
-                        style: Theme.of(context).textTheme.bodyText2),
-                    (transaction.value > 0 //  == 'in'
-                        ? RavenIcon.income(context)
-                        : RavenIcon.out(context)),
-                  ]),
-              trailing: (transaction.value > 0 // == 'in'
-                  ? Text(
-                      RavenText.securityAsReadable(transaction.value,
-                          security: transaction.security, asUSD: showUSD),
-                      style: TextStyle(color: Theme.of(context).good))
-                  : Text(
-                      RavenText.securityAsReadable(transaction.value,
-                          security: transaction.security, asUSD: showUSD),
-                      style: TextStyle(color: Theme.of(context).bad))),
-              leading: RavenIcon.assetAvatar(transaction.security.symbol))
+            onTap: () => Navigator.pushNamed(context, '/transaction',
+                arguments: {'transactionRecord': transactionRecord}),
+            onLongPress: () => _toggleUSD(),
+            leading: RavenIcon.assetAvatar(transactionRecord.security.symbol),
+            title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(transactionRecord.security.symbol,
+                            style: Theme.of(context).textTheme.bodyText2),
+                        Text(transactionRecord.formattedDatetime,
+                            style: Theme.of(context).annotate),
+                      ]),
+                  (transactionRecord.out
+                      ? RavenIcon.out(context)
+                      : RavenIcon.income(context))
+                ]),
+            trailing: (transactionRecord.out
+                ? Text(
+                    RavenText.securityAsReadable(transactionRecord.value,
+                        security: transactionRecord.security, asUSD: showUSD),
+                    style: TextStyle(color: Theme.of(context).bad))
+                : Text(
+                    RavenText.securityAsReadable(transactionRecord.value,
+                        security: transactionRecord.security, asUSD: showUSD),
+                    style: TextStyle(color: Theme.of(context).good))),
+          )
       ]);
 
   ElevatedButton sendButton() => ElevatedButton.icon(

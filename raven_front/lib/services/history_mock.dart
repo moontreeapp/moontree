@@ -7,8 +7,8 @@ class MockHistories {
   bool handledFirstRecord = false;
 
   void init() {
-    addresses.changes.listen((List<Change> changes) {
-      changes.forEach((change) {
+    addresses.batchedChanges.listen((List<Change<Address>> batchedChanges) {
+      batchedChanges.forEach((change) {
         change.when(
             added: (added) {
               var address = added.data;
