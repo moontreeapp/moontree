@@ -5,7 +5,6 @@ import 'package:raven/services/transaction_maker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin/ravencoin.dart' as ravencoin;
 import 'package:raven/raven.dart';
-import 'package:raven/services/transaction.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';

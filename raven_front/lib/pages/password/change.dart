@@ -161,7 +161,7 @@ class _ChangePasswordState extends State<ChangePassword> {
     var used = services.password.validate.previouslyUsed(password);
     existingNotification = used == null
         ? 'password unrecognized...'
-        : 'this password was used $used passwords ago.';
+        : 'this password was used $used passwords ago';
     validatedExisting = false;
     if (old || oldNotification != existingNotification) setState(() => {});
     return false;
@@ -172,10 +172,10 @@ class _ChangePasswordState extends State<ChangePassword> {
     if (services.password.validate.complexity(password)) {
       var used = services.password.validate.previouslyUsed(password);
       newNotification = used == null
-          ? 'This password has never been used and is a strong password.'
+          ? 'This password has never been used and is a strong password'
           : used > 0
-              ? 'Warnning: this password was used $used passwords ago.'
-              : 'This is your current password.';
+              ? 'Warnning: this password was used $used passwords ago'
+              : 'This is your current password';
       validatedComplexity = true;
       setState(() => {});
       return true;
@@ -195,10 +195,23 @@ class _ChangePasswordState extends State<ChangePassword> {
     if (validateComplexity() && validateExistingCondition()) {
       var password = newPassword.text;
       await services.password.create.save(password);
-      // save new cipher
+
+      showDialog(
+          context: context,
+          builder: (BuildContext context) =>
+              //Center(child: CircularProgressIndicator()));
+              AlertDialog(
+                  title: Text('Re-encrypting Wallets...'),
+                  content: Text(
+                      'Re-encryption of each wallet takes about a second, please wait...')));
+      // this is used to get the please wait message to show up
+      // it needs enough time to display the message
+      await Future.delayed(const Duration(milliseconds: 150));
+
       var cipher = services.cipher.updatePassword(altPassword: password);
       await services.cipher.updateWallets(cipher: cipher);
       services.cipher.cleanupCiphers();
+      Navigator.of(context).pop();
       successMessage();
     }
   }
