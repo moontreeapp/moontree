@@ -15,8 +15,8 @@ class SingleWaiter extends Waiter {
       });
 
       if (!listeners.keys.contains('wallets.batchedChanges')) {
-        listeners['wallets.batchedChanges'] =
-            wallets.batchedChanges.listen((List<Change> batchedChanges) {
+        listeners['wallets.batchedChanges'] = wallets.batchedChanges
+            .listen((List<Change<Wallet>> batchedChanges) {
           batchedChanges.forEach((change) {
             change.when(added: (added) {
               var wallet = added.data;

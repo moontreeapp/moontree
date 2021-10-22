@@ -40,13 +40,13 @@ class CipherReservoir extends Reservoir<_CipherUpdateKey, Cipher> {
 
   CipherBase registerCipher(
     CipherUpdate cipherUpdate,
-    Uint8List password,
+    Uint8List password, // should be passwordId
   ) {
     var cipher = cipherInitializers[cipherUpdate.cipherType]!(password);
-    save(cipher);
-    // cipher stream now produces by reservoir by defualt
-    //subjects.cipher.sink.add(cipher);
-    //subjects.cipherUpdate.sink.add(cipherUpdate);
+    save(Cipher(
+        cipherType: cipherUpdate.cipherType,
+        passwordId: cipherUpdate.passwordId,
+        cipher: cipher));
     return cipher;
   }
 }

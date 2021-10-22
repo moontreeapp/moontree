@@ -24,7 +24,7 @@ class BalanceWaiter extends Waiter {
     /// recalculate affected balance (by security) for that wallet
     listen('vouts.batchedChanges',
         vouts.batchedChanges.bufferCountTimeout(25, Duration(milliseconds: 50)),
-        (List<List<Change>> unflattenedChanges) {
+        (List<List<Change<Vout>>> unflattenedChanges) {
       var changes = unflattenedChanges.expand((change) => change);
       services.balance.saveChangedBalances(changes.toList());
     });

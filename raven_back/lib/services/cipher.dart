@@ -15,12 +15,13 @@ class CipherService {
       CipherUpdate(latestCipherType, passwordId: passwords.maxPasswordId);
 
   CipherBase? get currentCipher =>
-      ciphers.primaryIndex.getOne(currentCipherUpdate)!.cipher;
+      ciphers.primaryIndex.getOne(currentCipherUpdate)?.cipher;
 
   /// make sure all wallets are on the latest ciphertype and password
   Future updateWallets() async {
     var records = <Wallet>[];
     for (var wallet in wallets.data) {
+      print('currentCipherUpdate $currentCipherUpdate');
       if (wallet.cipherUpdate != currentCipherUpdate) {
         if (wallet is LeaderWallet) {
           records.add(reencryptLeaderWallet(wallet));
