@@ -450,33 +450,33 @@ class _SendState extends State<Send> {
         // todo: catch other errors?
         // fix error: got this error when left sitting for a while - are we reconnecting correctly
         // Unhandled Exception: Bad state: The client is closed.
-        //try {
-        await buildTransactionWithMessageAndConfirm(sendAmountAsSats);
-        //} on InsufficientFunds catch (e) {
-        //  Navigator.pop(context);
-        //  showDialog(
-        //      context: context,
-        //      builder: (BuildContext context) => AlertDialog(
-        //              title: Text('Error: Insufficient Funds'),
-        //              content: Text(
-        //                  '$e: Unable to acquire inputs for transaction, this may be due to too many wallets holding too small amounts, a problem known as "dust." Try sending from another account.'),
-        //              actions: [
-        //                TextButton(
-        //                    child: Text('Ok'),
-        //                    onPressed: () => Navigator.pop(context))
-        //              ]));
-        //} catch (e) {
-        //  showDialog(
-        //      context: context,
-        //      builder: (BuildContext context) => AlertDialog(
-        //              title: Text('Error'),
-        //              content: Text('Unable to create transaction: $e'),
-        //              actions: [
-        //                TextButton(
-        //                    child: Text('Ok'),
-        //                    onPressed: () => Navigator.pop(context))
-        //              ]));
-        //}
+        try {
+          await buildTransactionWithMessageAndConfirm(sendAmountAsSats);
+        } on InsufficientFunds catch (e) {
+          Navigator.pop(context);
+          showDialog(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                      title: Text('Error: Insufficient Funds'),
+                      content: Text(
+                          '$e: Unable to acquire inputs for transaction, this may be due to too many wallets holding too small amounts, a problem known as "dust." Try sending from another account.'),
+                      actions: [
+                        TextButton(
+                            child: Text('Ok'),
+                            onPressed: () => Navigator.pop(context))
+                      ]));
+        } catch (e) {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                      title: Text('Error'),
+                      content: Text('Unable to create transaction: $e'),
+                      actions: [
+                        TextButton(
+                            child: Text('Ok'),
+                            onPressed: () => Navigator.pop(context))
+                      ]));
+        }
       } else {
         showDialog(
             context: context,
