@@ -7,6 +7,8 @@ class PasswordService {
   final PasswordValidationService validate = PasswordValidationService();
   final PasswordCreationService create = PasswordCreationService();
 
+  bool get exist => passwords.isEmpty ? false : true;
+
   /// are any wallets encrypted with something other than no cipher
   bool get required {
     for (var cipherUpdate in services.wallet.getAllCipherUpdates) {

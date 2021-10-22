@@ -110,6 +110,21 @@ class AddressService {
     List<Tx> txs = [
       for (var txHash in myVins) await client.getTransaction(txHash)
     ];
+
+    /*
+    E/flutter ( 6066): [ERROR:flutter/lib/ui/ui_dart_state.cc(209)] Unhandled Exception: Concurrent modification during iteration: _LinkedHashMap len:4.
+    E/flutter ( 6066): #0      _CompactIterator.moveNext (dart:collection-patch/compact_hash.dart:601:7)
+    E/flutter ( 6066): #1      WhereIterator.moveNext (dart:_internal/iterable.dart:438:22)
+    E/flutter ( 6066): #2      MappedIterator.moveNext (dart:_internal/iterable.dart:390:19)
+    E/flutter ( 6066): #3      AddressService.getAndSaveTransaction (package:raven/services/address.dart:111:26)
+    E/flutter ( 6066): <asynchronous suspension>
+    E/flutter ( 6066): #4      AddressSubscriptionWaiter.retrieve (package:raven/waiters/address_subscription.dart:122:5)
+    E/flutter ( 6066): <asynchronous suspension>
+    E/flutter ( 6066): #5      AddressSubscriptionWaiter.retrieveAndMakeNewAddress (package:raven/waiters/address_subscription.dart:104:5)
+    E/flutter ( 6066): <asynchronous suspension>
+    E/flutter ( 6066):
+    */
+
     for (var tx in txs) {
       for (var vout in tx.vout) {
         if (vout.scriptPubKey.type == 'nulldata') continue;

@@ -4,12 +4,12 @@ import 'package:raven/raven.dart';
 import 'package:raven/utils/enum.dart';
 
 class CipherService {
-  static CipherType latestCipherType =
-      services.password.required ? CipherType.AES : CipherType.None;
+  // services.password.required results in circular reasoning
+  CipherType get latestCipherType =>
+      services.password.exist ? CipherType.AES : CipherType.None;
+
   @override
   String toString() => 'latestCipherType: ${describeEnum(latestCipherType)}';
-
-  CipherType get getLatestCipherType => latestCipherType;
 
   CipherUpdate get currentCipherUpdate =>
       CipherUpdate(latestCipherType, passwordId: passwords.maxPasswordId);
@@ -18,15 +18,15 @@ class CipherService {
       ciphers.primaryIndex.getOne(currentCipherUpdate)?.cipher;
 
   /// make sure all wallets are on the latest ciphertype and password
-  Future updateWallets() async {
+  Future updateWallets({CipherBase? cipher}) async {
     var records = <Wallet>[];
     for (var wallet in wallets.data) {
       print('currentCipherUpdate $currentCipherUpdate');
       if (wallet.cipherUpdate != currentCipherUpdate) {
         if (wallet is LeaderWallet) {
-          records.add(reencryptLeaderWallet(wallet));
+          records.add(reencryptLeaderWallet(wallet, cipher));
         } else if (wallet is SingleWallet) {
-          records.add(reencryptSingleWallet(wallet));
+          records.add(reencryptSingleWallet(wallet, cipher));
         }
       }
     }
@@ -36,10 +36,11 @@ class CipherService {
     assert(services.wallet.getPreviousCipherUpdates.isEmpty);
   }
 
-  LeaderWallet reencryptLeaderWallet(LeaderWallet wallet) {
+  LeaderWallet reencryptLeaderWallet(LeaderWallet wallet,
+      [CipherBase? cipher]) {
     var reencrypt = EncryptedEntropy.fromEntropy(
       EncryptedEntropy(wallet.encrypted, wallet.cipher!).entropy,
-      currentCipher!,
+      cipher ?? currentCipher!,
     );
     assert(wallet.walletId == reencrypt.walletId);
     return LeaderWallet(
@@ -50,10 +51,11 @@ class CipherService {
     );
   }
 
-  SingleWallet reencryptSingleWallet(SingleWallet wallet) {
+  SingleWallet reencryptSingleWallet(SingleWallet wallet,
+      [CipherBase? cipher]) {
     var reencrypt = EncryptedWIF.fromWIF(
       EncryptedWIF(wallet.encrypted, wallet.cipher!).wif,
-      currentCipher!,
+      cipher ?? currentCipher!,
     );
     assert(wallet.walletId == reencrypt.walletId);
     return SingleWallet(
@@ -75,15 +77,18 @@ class CipherService {
     }
   }
 
-  void updatePassword({
+  CipherBase updatePassword({
     Uint8List? password,
     String? altPassword,
     CipherType? latest,
   }) {
     latest = latest ?? latestCipherType;
     password = _getPassword(password: password, altPassword: altPassword);
-    ciphers.registerCipher(
-        CipherUpdate(latest, passwordId: passwords.maxPasswordId), password);
+    return ciphers.registerCipher(
+      //CipherUpdate(latest, passwordId: passwords.maxPasswordId),
+      currentCipherUpdate,
+      password,
+    );
   }
 
   /// after wallets are updated or verified to be up to date
@@ -91,9 +96,10 @@ class CipherService {
   void cleanupCiphers() {
     ciphers.removeAll(ciphers.data
         .where((cipher) => !_cipherUpdates.contains(cipher.cipherUpdate)));
-    if (ciphers.data.length > 1) {
+
+    if (ciphers.data.length > 2) {
       // in theory a wallet is not updated ... error?
-      print('no ciphers - that is weird');
+      print('more ciphers than default and password - that is weird');
     }
   }
 
