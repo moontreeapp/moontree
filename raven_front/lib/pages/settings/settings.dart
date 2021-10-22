@@ -102,12 +102,9 @@ class _SettingsState extends State<Settings> {
                   title: 'show data',
                   leading: Icon(Icons.info_outline_rounded),
                   onPressed: (BuildContext context) {
-                    //print(addresses.byAddress
-                    //    .getOne('mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm'));
-                    print('addresses');
-                    for (var address in currentAccount().addresses) {
-                      print(address.address);
-                    }
+                    print(services.password.required);
+                    print(services.cipher.latestCipherType);
+                    print(services.cipher.currentCipherUpdate);
                   }),
               //SettingsTile(
               //    title: 'cipher registry',

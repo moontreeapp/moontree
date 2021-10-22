@@ -195,8 +195,9 @@ class _ChangePasswordState extends State<ChangePassword> {
     if (validateComplexity() && validateExistingCondition()) {
       var password = newPassword.text;
       await services.password.create.save(password);
-      services.cipher.updatePassword(altPassword: password);
-      await services.cipher.updateWallets();
+      // save new cipher
+      var cipher = services.cipher.updatePassword(altPassword: password);
+      await services.cipher.updateWallets(cipher: cipher);
       services.cipher.cleanupCiphers();
       successMessage();
     }
@@ -211,6 +212,9 @@ class _ChangePasswordState extends State<ChangePassword> {
               actions: [
                 TextButton(
                     child: Text('ok'),
-                    onPressed: () => Navigator.of(context).pop())
+                    onPressed: () {
+                      validateComplexity();
+                      Navigator.of(context).pop();
+                    })
               ]));
 }
