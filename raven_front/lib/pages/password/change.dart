@@ -191,19 +191,26 @@ class _ChangePasswordState extends State<ChangePassword> {
     //setState(() => {});
   }
 
+  String _printDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
+  }
+
   Future submit() async {
     if (validateComplexity() && validateExistingCondition()) {
       var password = newPassword.text;
       await services.password.create.save(password);
 
+      // todo: replace with responsive 'ecrypting wallet x, y, z... etc'
       showDialog(
           context: context,
-          builder: (BuildContext context) =>
-              //Center(child: CircularProgressIndicator()));
-              AlertDialog(
-                  title: Text('Re-encrypting Wallets...'),
-                  content: Text(
-                      'Re-encryption of each wallet takes about a second, please wait...')));
+          builder: (BuildContext context) => AlertDialog(
+              title: Text('Re-encrypting Wallets...'),
+              content: Text('Estimated wait time: ' +
+                  _printDuration(Duration(seconds: wallets.data.length * 1)) +
+                  ', please wait...')));
       // this is used to get the please wait message to show up
       // it needs enough time to display the message
       await Future.delayed(const Duration(milliseconds: 150));
@@ -211,7 +218,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       var cipher = services.cipher.updatePassword(altPassword: password);
       await services.cipher.updateWallets(cipher: cipher);
       services.cipher.cleanupCiphers();
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(); // for please wait
       successMessage();
     }
   }
