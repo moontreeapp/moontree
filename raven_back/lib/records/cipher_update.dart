@@ -18,7 +18,8 @@ class CipherUpdate with EquatableMixin {
   const CipherUpdate(this.cipherType, {this.passwordId});
   CipherUpdate.fromMap(map)
       : cipherType = stringToCipherTypeMap[map['CipherType']]!,
-        passwordId = int.parse(map['passwordId']);
+        passwordId =
+            map['PasswordId'] == 'null' ? null : int.parse(map['PasswordId']);
 
   @override
   List<Object?> get props => [cipherType, passwordId];

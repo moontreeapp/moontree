@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:raven/raven.dart';
@@ -44,46 +45,57 @@ class ImportWalletService {
               ? WalletType.single
               : throw ArgumentError('Wallet must be leader or single');
 
-  Future<HandleResult> handleJson(String text) async {
+  Future<List<HandleResult>> handleJson(String text, String accountId) async {
     /// json format of entire account or all accounts (merge)
-    try {
-      /// {
-      ///   'accounts': {accounts.id: values},
-      ///   'wallets': {wallets.id: values}
-      /// }
-      /// try decrypt file
-      var decodedJSON = json.decode(text) as Map<String, Map<String, dynamic>>;
-      if (decodedJSON.containsKey('accounts') &&
-          decodedJSON.containsKey('wallets')) {
-        /// create accounts
-        for (var entry in decodedJSON['accounts']!.entries) {
-          var account = services.account.newAccount(
-            entry.value['name'],
-            net: entry.value['net'],
+    print('IN JSON ---$text');
+    //try {
+    /// {
+    ///   'accounts': {accounts.id: values},
+    ///   'wallets': {wallets.id: values}
+    /// }
+    /// try decrypt file
+    var decodedJSON = json.decode(text) as Map<String, dynamic>;
+    print('JSON DECODE');
+    print(decodedJSON);
+    if (decodedJSON.containsKey('accounts') &&
+        decodedJSON.containsKey('wallets')) {
+      /// create accounts
+      // ignore: omit_local_variable_types
+      Map<String, String> accountIds = {};
+      for (var entry in decodedJSON['accounts']!.entries) {
+        var account = Account(
             accountId: entry.key,
-          );
-          return attemptAccountSave(account);
-        }
-
-        /// create wallets
-        for (var entry in decodedJSON['wallets']!.entries) {
-          var wallet = services.wallet.create(
-            walletType: typeForImport(entry.value['type']),
-            accountId: entry.value['accountId'],
-            cipherUpdate: CipherUpdate.fromMap(entry.value['cipherUpdate']),
-            secret: entry.value['secret'],
-            alwaysReturn: true,
-          );
-          return attemptWalletSave(wallet);
-        }
+            name: entry.value['name'],
+            net: entry.value['net'] == 'Net.Test' ? Net.Test : Net.Main);
+        accountIds.addAll(await attemptAccountSave(account));
       }
-    } catch (e) {}
+      print('accountIds $accountIds');
+
+      /// create wallets
+      var results = <HandleResult>[];
+      for (var entry in decodedJSON['wallets']!.entries) {
+        print('importing $entry');
+        var wallet = services.wallet.create(
+          walletType: typeForImport(entry.value['type']),
+          accountId: accountIds[entry.value['accountId']]!,
+          cipherUpdate: CipherUpdate.fromMap(entry.value['cipherUpdate']),
+          secret: entry.value['secret'],
+          alwaysReturn: true,
+        );
+        print('saving $wallet');
+        results.add(await attemptWalletSave(wallet));
+      }
+      return results;
+    }
+    //} catch (e) {}
     // fix later: validate the json before it gets here. then parse it here.
-    return HandleResult(
-        false, '', LingoKey.leaderWalletSecretType /* todo fix */);
+    return [
+      HandleResult(false, '', LingoKey.leaderWalletSecretType /* todo fix */)
+    ];
   }
 
   Future<HandleResult> handleMnemonics(String text, String accountId) async {
+    //HandleResult handleMnemonics(String text, String accountId) {
     var wallet = services.wallet.create(
       walletType: WalletType.leader,
       accountId: accountId,
@@ -128,39 +140,55 @@ class ImportWalletService {
         false, '', LingoKey.leaderWalletSecretType /* todo fix */);
   }
 
-  Future<HandleResult> handleImport(
-          ImportFormat importFormat, String text, String accountId) async =>
-      await {
-        ImportFormat.json: handleJson,
-        ImportFormat.mnemonic12: handleMnemonics,
-        ImportFormat.encryptedBip38: handleBip38,
-        ImportFormat.privateKey: handlePrivateKey,
-        ImportFormat.WIF: handleWIF,
-      }[importFormat]!(text, accountId);
+  //HandleResult handleImport(
+  //        ImportFormat importFormat, String text, String accountId) =>
+  //    {
+  Future<List<HandleResult>> handleImport(
+      ImportFormat importFormat, String text, String accountId) async {
+    var results = await {
+      ImportFormat.json: handleJson,
+      ImportFormat.mnemonic12: handleMnemonics,
+      ImportFormat.encryptedBip38: handleBip38,
+      ImportFormat.privateKey: handlePrivateKey,
+      ImportFormat.WIF: handleWIF,
+    }[importFormat]!(text, accountId);
+    if (results is List<HandleResult>) {
+      return results;
+    }
+    return [results as HandleResult];
+  }
 
   /// returns the accountId of existing account
   String? detectExistingAccount(Account account) =>
-      wallets.primaryIndex.getOne(account.accountId)?.accountId;
+      accounts.primaryIndex.getOne(account.accountId)?.accountId;
 
   /// returns the accountId of existing wallet
   String? detectExistingWallet(Wallet wallet) =>
       wallets.primaryIndex.getOne(wallet.walletId)?.accountId;
 
-  Future<HandleResult> attemptAccountSave(Account? account) async {
+  /// returns the accountId of existing account
+  List detectExistingAccountByName(Account account) =>
+      accounts.byName.getAll(account.name);
+
+  /// we even if an account by the same name exists we should import
+  /// (with date appended) remember the id's and use those for the wallets.
+  Future<Map<String, String>> attemptAccountSave(Account? account) async {
     if (account != null) {
       var existingAccountId = detectExistingAccount(account);
-      if (existingAccountId == null) {
-        var importedChange = await accounts.save(account);
-        await settings.save(Setting(
-            name: SettingName.Account_Current, value: account.accountId));
-        return HandleResult(
-            true,
-            accounts.primaryIndex.getOne(importedChange!.data.accountId)!.name,
-            LingoKey.accountImportedAs);
+      print('${account.accountId}---------existingAccountId');
+      print(existingAccountId);
+      var originalId = account.accountId;
+      if (existingAccountId != null) {
+        account.accountId = accounts.nextId;
+        print('ACCOUNTID: $originalId, ${account.accountId}');
       }
-      return HandleResult(false, '', LingoKey.accountAlreadyExists);
+      await accounts.save(account);
+      await settings.save(
+          Setting(name: SettingName.Account_Current, value: account.accountId));
+      return {originalId: account.accountId};
     }
-    return HandleResult(false, '', LingoKey.accountUnableToCreate);
+    // todo: handle?
+    return {'fail': 'fail'};
   }
 
   Future<HandleResult> attemptWalletSave(Wallet? wallet) async {
@@ -168,7 +196,6 @@ class ImportWalletService {
       var existingAccountId = detectExistingWallet(wallet);
       if (existingAccountId == null) {
         var importedChange = await wallets.save(wallet);
-        //todo change to tuple
         return HandleResult(
             true,
             accounts.primaryIndex.getOne(importedChange!.data.accountId)!.name,

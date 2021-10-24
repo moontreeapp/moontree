@@ -19,7 +19,7 @@ bool any(List<bool> items) {
   return false;
 }
 
-bool all(List<bool> items) {
+bool all(Iterable<bool> items) {
   for (var item in items) {
     if (!item) {
       return false;
