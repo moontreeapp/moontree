@@ -149,7 +149,8 @@ class _ImportState extends State<Import> {
     // this is used to get the please wait message to show up
     // it needs enough time to display the message
     await Future.delayed(const Duration(milliseconds: 150));
-    var success = await importFrom.handleImport();
+    //var success = await importFrom.handleImport();
+    var success = importFrom.handleImport();
     await alertImported(importFrom.importedTitle!, importFrom.importedMsg!);
     if (success) {
       Navigator.popUntil(context, ModalRoute.withName('/home'));

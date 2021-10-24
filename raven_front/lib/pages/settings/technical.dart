@@ -148,10 +148,23 @@ class _TechnicalViewState extends State<TechnicalView> {
               'Account name, "$desiredAccountName" is already taken. Please enter a uinque account name.');
       return;
     }
+    // todo replace with a legit spinner, and reduce amount of time it's waiting
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+            title: Text('Generating Account...'),
+            content:
+                Text('Please wait, generating a new account with a new default '
+                    'wallet can take several seconds...')));
+    // this is used to get the please wait message to show up
+    // it needs enough time to display the message
+    await Future.delayed(const Duration(milliseconds: 150));
     var account = await services.account.createSave(desiredAccountName);
     await settings.save(
         Setting(name: SettingName.Account_Current, value: account.accountId));
+    Navigator.of(context).pop();
     desiredAccountName = '';
+    accountName.text = '';
   }
 
   List<Widget> _createNewAcount() => [

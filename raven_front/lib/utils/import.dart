@@ -14,9 +14,10 @@ class ImportFrom {
             importFormat ?? services.wallet.import.detectImportType(text),
         this.accountId = accountId ?? Current.account.accountId;
 
-  Future<bool> handleImport() async {
-    var result = await services.wallet.import
-        .handleImport(importFormat, text, accountId);
+  //Future<bool> handleImport() async {
+  bool handleImport() {
+    var result =
+        services.wallet.import.handleImport(importFormat, text, accountId);
     if (result.success) {
       importedTitle = 'Success!';
     } else {
