@@ -4,6 +4,7 @@ import 'package:raven_mobile/components/icons.dart';
 import 'package:raven_mobile/components/styles/buttons.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/services/lookup.dart';
+import 'package:raven_mobile/utils/export.dart';
 import 'package:raven_mobile/utils/import.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
@@ -21,6 +22,7 @@ class _ImportState extends State<Import> {
   bool importEnabled = false;
   late Account account;
   String importFormatDetected = '';
+  final Storage storage = Storage();
 
   @override
   void initState() {
@@ -136,9 +138,10 @@ class _ImportState extends State<Import> {
     }
   }
 
-  Future attemptImport() async {
-    var importFrom =
-        ImportFrom(words.text.trim(), accountId: account.accountId);
+  Future attemptImport([String? importData]) async {
+    var importFrom = ImportFrom(importData ?? words.text.trim(),
+        accountId: account.accountId);
+    print(importFrom.importFormat);
     // todo replace with a legit spinner, and reduce amount of time it's waiting
     showDialog(
         context: context,
@@ -149,8 +152,10 @@ class _ImportState extends State<Import> {
     // this is used to get the please wait message to show up
     // it needs enough time to display the message
     await Future.delayed(const Duration(milliseconds: 150));
-    //var success = await importFrom.handleImport();
-    var success = importFrom.handleImport();
+
+    /// nothing awaited, yet it takes 15 seconds... its like the app freezes
+    /// while addresses are being created...
+    var success = await importFrom.handleImport();
     await alertImported(importFrom.importedTitle!, importFrom.importedMsg!);
     if (success) {
       Navigator.popUntil(context, ModalRoute.withName('/home'));
@@ -189,25 +194,26 @@ class _ImportState extends State<Import> {
 
   Row importWaysButtons(context) =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        ElevatedButton.icon(
-            icon: Icon(Icons.qr_code_scanner),
-            label: Text('Scan'),
-            onPressed: () {
-              //Navigator.push(
-              //  context,
-              //  MaterialPageRoute(builder: (context) => Receive()),
-              //);
-            },
-            style: RavenButtonStyle.leftSideCurved),
+        //ElevatedButton.icon(
+        //    icon: Icon(Icons.qr_code_scanner),
+        //    label: Text('Scan'),
+        //    onPressed: () {
+        //      //Navigator.push(
+        //      //  context,
+        //      //  MaterialPageRoute(builder: (context) => Receive()),
+        //      //);
+        //    },
+        //    style: RavenButtonStyle.leftSideCurved),
         ElevatedButton.icon(
             icon: Icon(Icons.upload_file),
             label: Text('File'),
-            onPressed: () {
-              //Navigator.push(
-              //  context,
-              //  MaterialPageRoute(builder: (context) => Send()),
-              //);
+            onPressed: () async {
+              var resp = await storage.readFromFilePickerRaw() ?? '';
+              print(resp);
+              //words.text = resp;
+              await attemptImport(resp);
             },
-            style: RavenButtonStyle.rightSideCurved(context))
+            //style: RavenButtonStyle.rightSideCurved(context))
+            style: RavenButtonStyle.curvedSides)
       ]);
 }

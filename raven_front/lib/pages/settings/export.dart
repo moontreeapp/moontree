@@ -23,6 +23,7 @@ class _ExportState extends State<Export> {
   dynamic data = {};
   Account? account;
   File? file;
+  List<Widget> getExisting = [];
 
   @override
   void initState() {
@@ -39,6 +40,14 @@ class _ExportState extends State<Export> {
       account =
           accounts.primaryIndex.getOne(data['accountId']) ?? Current.account;
     }
+    getExisting = [
+      TextButton(
+          onPressed: () async {
+            await existingFiles;
+            setState(() {});
+          },
+          child: Text('get'))
+    ];
     return Scaffold(appBar: header(), body: body());
   }
 
@@ -60,6 +69,18 @@ class _ExportState extends State<Export> {
       filename: _accountId + '-' + DateTime.now().toString(),
       export: services.wallet.export.structureForExport(account));
 
+  // todo: fix visual of exported backups, add behavior for each like share
+  Future get existingFiles async {
+    print(await storage.listDir());
+    print([
+      for (var f in (await storage.listDir()).whereType<File>())
+        if (f.path.endsWith('.jason')) f.path
+    ]);
+    getExisting = [
+      for (var f in (await storage.listDir()).whereType<File>()) Text(f.path)
+    ];
+  }
+
   Column body() => Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -69,6 +90,7 @@ class _ExportState extends State<Export> {
                     icon: RavenIcon.export,
                     onPressed: () async {
                       file = await _download();
+                      print(await storage.readExport(file: file));
                       setState(() {});
                     },
                     label: Text('Export ' + _accountName))),
@@ -87,6 +109,7 @@ class _ExportState extends State<Export> {
                                   onPressed: () => storage.share(file!.path),
                                   child: Text('Share'),
                                 ),
-                              ])))))
+                              ]))))),
+            //...(getExisting),
           ]);
 }

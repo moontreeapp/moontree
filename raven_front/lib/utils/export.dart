@@ -1,21 +1,21 @@
+/// http://www.refactord.com/guides/backup-restore-share-json-file-flutter
+
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
 
 class Storage {
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-    var path = directory.path;
-    return path;
-  }
+  Future<Directory> get _localDir async =>
+      await getApplicationDocumentsDirectory();
 
-  Future<File> _localFile(String filename) async {
-    final path = await _localPath;
-    return File('$path/$filename.json');
-  }
+  Future<String> get _localPath async => (await _localDir).path;
+
+  Future<File> _localFile(String filename, {String? path}) async =>
+      File('${path ?? await _localPath}/$filename.json');
 
   Future<File> writeExport(
       {required String filename, required Map<String, dynamic> export}) async {
@@ -29,8 +29,56 @@ class Storage {
     return file.writeAsString(jsonEncode(export));
   }
 
-  void share(String filepath) async {
-    Share.shareFiles([filepath], text: 'Ravencoin Backup');
+  void share(String filepath) async =>
+      Share.shareFiles([filepath], text: 'Ravencoin Backup');
+
+  Future<Map<String, dynamic>> readExport({
+    File? file,
+    String? filename,
+    String? path,
+  }) async {
+    file = file ?? await _localFile(filename!, path: path);
+    try {
+      return json.decode(await file.readAsString());
+    } catch (e) {
+      return {};
+    }
   }
+
+  Future<String> readExportRaw({
+    File? file,
+    String? filename,
+    String? path,
+  }) async {
+    file = file ?? await _localFile(filename!, path: path);
+    try {
+      return await file.readAsString();
+    } catch (e) {
+      return '';
+    }
+  }
+
+  Future<Map<String, dynamic>?> readFromFilePicker() async {
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowMultiple: false);
+    if (result == null) {
+      // file not found?
+      return null;
+    }
+    //return await readExport(
+    //    path: result.files[0].path, filename: result.files[0].name);
+    return await readExport(file: File(result.files.single.path!));
+  }
+
+  Future<String?> readFromFilePickerRaw() async {
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowMultiple: false);
+    if (result == null) {
+      return null;
+    }
+    return await readExportRaw(file: File(result.files.single.path!));
+  }
+
+  Future<List<FileSystemEntity>> listDir([String? path]) async =>
+      await (path != null ? Directory(path) : await _localDir).list().toList();
 }
-// http://www.refactord.com/guides/backup-restore-share-json-file-flutter
