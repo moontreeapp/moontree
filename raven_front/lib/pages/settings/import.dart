@@ -139,7 +139,7 @@ class _ImportState extends State<Import> {
     }
   }
 
-  Future requestPassword() => showDialog(
+  Future requestPassword() async => showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -155,8 +155,13 @@ class _ImportState extends State<Import> {
                     hintText: 'password',
                   ),
                   onEditingComplete: () {
-                    Navigator.pop(context);
+                    Navigator.of(context).pop();
                   }),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Submit'))
             ],
           ),
         );
@@ -179,6 +184,8 @@ class _ImportState extends State<Import> {
         // what if it's not the latest cipher type? just try all cipher types...
         for (var cipherType in services.cipher.allCipherTypes) {
           await requestPassword();
+          // cancelled
+          if (password.text == '') break;
           try {
             resp = ImportFrom.maybeDecrypt(
                 text: importData,
@@ -188,7 +195,12 @@ class _ImportState extends State<Import> {
           if (resp != null) break;
         }
         if (resp == null) {
-          // tell them that password was unrecognized. return.
+          showDialog(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                  title: Text('Password Not Recognized'),
+                  content: Text(
+                      'Password does not match the password used at the time of encryption.')));
           return;
         }
       }
