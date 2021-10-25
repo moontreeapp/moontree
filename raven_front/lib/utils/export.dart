@@ -17,8 +17,12 @@ class Storage {
   Future<File> _localFile(String filename, {String? path}) async =>
       File('${path ?? await _localPath}/$filename.json');
 
-  Future<File> writeExport(
-      {required String filename, required Map<String, dynamic> export}) async {
+  Future<File> writeExport({
+    required String filename,
+    Map<String, dynamic>? export,
+    String? rawExport,
+  }) async {
+    rawExport = rawExport ?? jsonEncode(export);
     if (!await Permission.storage.request().isGranted) {
       return Future.value(null);
     }
@@ -26,7 +30,7 @@ class Storage {
     if (!await file.exists()) {
       await file.create(recursive: true);
     }
-    return file.writeAsString(jsonEncode(export));
+    return file.writeAsString(rawExport);
   }
 
   void share(String filepath) async =>

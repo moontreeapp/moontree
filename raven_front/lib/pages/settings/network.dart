@@ -186,7 +186,6 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
       });
 
   bool submit() {
-    print(services.password.validate.password(password.text));
     if (services.password.validate.password(password.text)) {
       passwordVerified = true;
       save();

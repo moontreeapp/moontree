@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -7,7 +8,8 @@ import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/utils/export.dart';
 import 'package:raven_mobile/utils/utils.dart';
-import 'package:raven_mobile/utils/files.dart';
+import 'package:raven/utils/hex.dart' as hex;
+import 'package:convert/convert.dart' as convert;
 
 class Export extends StatefulWidget {
   //final Storage storage;
@@ -20,6 +22,7 @@ class Export extends StatefulWidget {
 
 class _ExportState extends State<Export> {
   final Storage storage = Storage();
+  final TextEditingController password = TextEditingController();
   dynamic data = {};
   Account? account;
   File? file;
@@ -67,7 +70,13 @@ class _ExportState extends State<Export> {
 
   Future<File> _download() async => await storage.writeExport(
       filename: _accountId + '-' + DateTime.now().toString(),
-      export: services.wallet.export.structureForExport(account));
+      rawExport: services.password.required
+          ? hex.encrypt(
+              convert.hex.encode(
+                  jsonEncode(services.wallet.export.structureForExport(account))
+                      .codeUnits),
+              services.cipher.currentCipher!)
+          : jsonEncode(services.wallet.export.structureForExport(account)));
 
   // todo: fix visual of exported backups, add behavior for each like share
   Future get existingFiles async {
@@ -85,6 +94,15 @@ class _ExportState extends State<Export> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
+            ...[
+              if (!services.password.required)
+                TextButton.icon(
+                    onPressed: () =>
+                        Navigator.pushNamed(context, '/password/change'),
+                    icon: Icon(Icons.warning),
+                    label: Text(
+                        'For added security, it is advised to set a password before exporting. To set a password, just click here.'))
+            ],
             Center(
                 child: TextButton.icon(
                     icon: RavenIcon.export,
@@ -112,4 +130,36 @@ class _ExportState extends State<Export> {
                               ]))))),
             //...(getExisting),
           ]);
+
+  Future requestPassword() => showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Column(
+            children: <Widget>[
+              TextField(
+                  autocorrect: false,
+                  controller: password,
+                  obscureText: true,
+                  textInputAction: TextInputAction.done,
+                  decoration: InputDecoration(
+                    border: UnderlineInputBorder(),
+                    hintText: 'password',
+                  ),
+                  onEditingComplete: () {
+                    if (submit()) {
+                      Navigator.pop(context);
+                    }
+                  }),
+            ],
+          ),
+        );
+      });
+
+  bool submit() {
+    if (services.password.validate.password(password.text)) {
+      return true;
+    }
+    return false;
+  }
 }
