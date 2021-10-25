@@ -21,7 +21,6 @@ class CipherService {
   Future updateWallets({CipherBase? cipher}) async {
     var records = <Wallet>[];
     for (var wallet in wallets.data) {
-      print('currentCipherUpdate $currentCipherUpdate');
       if (wallet.cipherUpdate != currentCipherUpdate) {
         if (wallet is LeaderWallet) {
           records.add(reencryptLeaderWallet(wallet, cipher));

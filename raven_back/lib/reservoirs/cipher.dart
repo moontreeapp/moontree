@@ -40,7 +40,7 @@ class CipherReservoir extends Reservoir<_CipherUpdateKey, Cipher> {
 
   CipherBase registerCipher(
     CipherUpdate cipherUpdate,
-    Uint8List password, // should be passwordId
+    Uint8List password,
   ) {
     var cipher = cipherInitializers[cipherUpdate.cipherType]!(password);
     save(Cipher(

@@ -75,10 +75,16 @@ class ImportWalletService {
       var results = <HandleResult>[];
       for (var entry in decodedJSON['wallets']!.entries) {
         print('importing $entry');
+        print('CIPHER UPDATE---${entry.value['cipherUpdate']}');
+        print(ciphers.data);
         var wallet = services.wallet.create(
           walletType: typeForImport(entry.value['type']),
           accountId: accountIds[entry.value['accountId']]!,
-          cipherUpdate: CipherUpdate.fromMap(entry.value['cipherUpdate']),
+
+          /// we should use the current cipher:
+          // cipherUpdate: CipherUpdate.fromMap(entry.value['cipherUpdate']),
+          cipherUpdate: services.cipher.currentCipherUpdate,
+
           secret: entry.value['secret'],
           alwaysReturn: true,
         );
