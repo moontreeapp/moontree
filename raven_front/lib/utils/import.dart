@@ -1,7 +1,7 @@
 import 'package:raven/raven.dart';
 import 'package:raven/services/wallet/constants.dart';
-import 'package:raven/utils/hex.dart' as hexx;
 import 'package:raven/utils/transform.dart';
+import 'package:raven/utils/hex.dart' as hexx;
 import 'package:raven_mobile/services/lookup.dart';
 
 class ImportFrom {
@@ -11,17 +11,12 @@ class ImportFrom {
   late String? importedTitle;
   late String? importedMsg;
 
-  ImportFrom(text, {importFormat, accountId}) {
-    this.text = maybeDecrypt(text);
-    this.importFormat =
-        importFormat ?? services.wallet.import.detectImportType(this.text);
-    this.accountId = accountId ?? Current.account.accountId;
-  }
+  ImportFrom(this.text, {importFormat, accountId})
+      : this.importFormat =
+            importFormat ?? services.wallet.import.detectImportType(text),
+        this.accountId = accountId ?? Current.account.accountId;
 
   Future<bool> handleImport() async {
-    //bool handleImport() {
-    print('--------importFormat');
-    print(importFormat);
     var results = await services.wallet.import
         .handleImport(importFormat, text, accountId);
     for (var result in results) {
@@ -37,9 +32,18 @@ class ImportFrom {
     return all(results.map((result) => result.success));
   }
 
-  // if you can't decrypt it ask for the password...
-  static String maybeDecrypt(String text) =>
-      services.password.required && text.contains(RegExp(r'^[a-fA-F0-9]+$'))
-          ? hexx.hexToAscii(hexx.decrypt(text, services.cipher.currentCipher!))
-          : text;
+  // returns null if unable to decrypt, otherwise, the decrypted String
+  static String? maybeDecrypt({
+    required String text,
+    required CipherBase cipher,
+  }) {
+    var decrypted =
+        services.password.required && text.contains(RegExp(r'^[a-fA-F0-9]+$'))
+            ? hexx.hexToAscii(hexx.decrypt(text, cipher))
+            : text;
+    if (services.wallet.import.detectImportType(decrypted) == null) {
+      return null;
+    }
+    return decrypted;
+  }
 }

@@ -23,6 +23,7 @@ class _ImportState extends State<Import> {
   late Account account;
   String importFormatDetected = '';
   final Storage storage = Storage();
+  final TextEditingController password = TextEditingController();
 
   @override
   void initState() {
@@ -138,10 +139,64 @@ class _ImportState extends State<Import> {
     }
   }
 
+  Future requestPassword() => showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Column(
+            children: <Widget>[
+              TextField(
+                  autocorrect: false,
+                  controller: password,
+                  obscureText: true,
+                  textInputAction: TextInputAction.done,
+                  decoration: InputDecoration(
+                    border: UnderlineInputBorder(),
+                    hintText: 'password',
+                  ),
+                  onEditingComplete: () {
+                    Navigator.pop(context);
+                  }),
+            ],
+          ),
+        );
+      });
+
   Future attemptImport([String? importData]) async {
-    var importFrom = ImportFrom(importData ?? words.text.trim(),
-        accountId: account.accountId);
-    print(importFrom.importFormat);
+    var text = importData ?? words.text.trim();
+
+    /// decrypt if you must...
+    if (importData != null) {
+      var resp;
+      try {
+        resp = ImportFrom.maybeDecrypt(
+          text: importData,
+          cipher: services.cipher.currentCipher!,
+        );
+      } catch (e) {}
+      if (resp == null) {
+        // ask for password, make cipher, pass that cipher in.
+        // what if it's not the latest cipher type? just try all cipher types...
+        for (var cipherType in services.cipher.allCipherTypes) {
+          await requestPassword();
+          try {
+            resp = ImportFrom.maybeDecrypt(
+                text: importData,
+                cipher: CipherReservoir.cipherInitializers[cipherType]!(
+                    services.cipher.getPassword(altPassword: password.text)));
+          } catch (e) {}
+          if (resp != null) break;
+        }
+        if (resp == null) {
+          // tell them that password was unrecognized. return.
+          return;
+        }
+      }
+      text = resp;
+    }
+
+    /// perform import...
+    var importFrom = ImportFrom(text, accountId: account.accountId);
     // todo replace with a legit spinner, and reduce amount of time it's waiting
     showDialog(
         context: context,
@@ -209,7 +264,6 @@ class _ImportState extends State<Import> {
             label: Text('File'),
             onPressed: () async {
               var resp = await storage.readFromFilePickerRaw() ?? '';
-              print(resp);
               //words.text = resp;
               await attemptImport(resp);
             },

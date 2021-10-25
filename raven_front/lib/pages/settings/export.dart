@@ -22,7 +22,6 @@ class Export extends StatefulWidget {
 
 class _ExportState extends State<Export> {
   final Storage storage = Storage();
-  final TextEditingController password = TextEditingController();
   dynamic data = {};
   Account? account;
   File? file;
@@ -130,36 +129,4 @@ class _ExportState extends State<Export> {
                               ]))))),
             //...(getExisting),
           ]);
-
-  Future requestPassword() => showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Column(
-            children: <Widget>[
-              TextField(
-                  autocorrect: false,
-                  controller: password,
-                  obscureText: true,
-                  textInputAction: TextInputAction.done,
-                  decoration: InputDecoration(
-                    border: UnderlineInputBorder(),
-                    hintText: 'password',
-                  ),
-                  onEditingComplete: () {
-                    if (submit()) {
-                      Navigator.pop(context);
-                    }
-                  }),
-            ],
-          ),
-        );
-      });
-
-  bool submit() {
-    if (services.password.validate.password(password.text)) {
-      return true;
-    }
-    return false;
-  }
 }
