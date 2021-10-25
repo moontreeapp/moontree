@@ -26,6 +26,7 @@ class _ExportState extends State<Export> {
   Account? account;
   File? file;
   List<Widget> getExisting = [];
+  bool encryptExport = true;
 
   @override
   void initState() {
@@ -69,7 +70,7 @@ class _ExportState extends State<Export> {
 
   Future<File> _download() async => await storage.writeExport(
       filename: _accountId + '-' + DateTime.now().toString(),
-      rawExport: services.password.required
+      rawExport: services.password.required && encryptExport
           ? hex.encrypt(
               convert.hex.encode(
                   jsonEncode(services.wallet.export.structureForExport(account))
@@ -100,14 +101,26 @@ class _ExportState extends State<Export> {
                         Navigator.pushNamed(context, '/password/change'),
                     icon: Icon(Icons.warning),
                     label: Text(
-                        'For added security, it is advised to set a password before exporting. To set a password, just click here.'))
+                        'For added security, it is advised to set a password '
+                        'before exporting. To set a password, just click here.'))
+            ],
+            ...[
+              if (services.password.required)
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Checkbox(
+                      value: encryptExport,
+                      onChanged: (_) => setState(() {
+                            encryptExport = !encryptExport;
+                          })),
+                  Text('Encrypt this backup')
+                ])
             ],
             Center(
                 child: TextButton.icon(
                     icon: RavenIcon.export,
                     onPressed: () async {
                       file = await _download();
-                      print(await storage.readExport(file: file));
+                      //print(await storage.readExport(file: file));
                       setState(() {});
                     },
                     label: Text('Export ' + _accountName))),
