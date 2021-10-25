@@ -14,7 +14,8 @@ class HandleResult {
 
 class ImportWalletService {
   ImportFormat? detectImportType(String text) {
-    if (text.contains('[') || text.contains('{')) {
+    if ((text.startsWith('[') && text.endsWith(']')) ||
+        (text.startsWith('{') && text.endsWith('}'))) {
       /// todo must also contain some correct keys
       /// two types of json - ours and outside json formats
       return ImportFormat.json;
