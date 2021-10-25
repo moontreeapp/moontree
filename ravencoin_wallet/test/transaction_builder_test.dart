@@ -145,7 +145,7 @@ main() {
         expect(txIn.hash, txHash);
         expect(txIn.index, 1);
         expect(txIn.sequence, 54);
-        expect(txb.inputs![0].prevOutScript, null);
+        expect(txb.inputs[0].prevOutScript, null);
       });
       test('accepts a txHash, index [, sequence number and scriptPubKey]', () {
         final vin = txb.addInput(txHash, 1, 54, scripts.elementAt(1));
@@ -154,7 +154,7 @@ main() {
         expect(txIn.hash, txHash);
         expect(txIn.index, 1);
         expect(txIn.sequence, 54);
-        expect(txb.inputs![0].prevOutScript, scripts.elementAt(1));
+        expect(txb.inputs[0].prevOutScript, scripts.elementAt(1));
       });
       test('accepts a prevTx, index [and sequence number]', () {
         final prevTx = new Transaction();
@@ -168,7 +168,7 @@ main() {
         expect(txIn.hash, prevTx.getHash());
         expect(txIn.index, 1);
         expect(txIn.sequence, 54);
-        expect(txb.inputs![0].prevOutScript, scripts.elementAt(1));
+        expect(txb.inputs[0].prevOutScript, scripts.elementAt(1));
       });
       test('returns the input index', () {
         expect(txb.addInput(txHash, 0), 0);
