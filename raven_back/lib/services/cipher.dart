@@ -4,7 +4,9 @@ import 'package:raven/raven.dart';
 import 'package:raven/utils/enum.dart';
 
 class CipherService {
-  // services.password.required results in circular reasoning
+  /// used in decrypting backups - we don't know what cipher it was encrypted with... we could save it...
+  List<CipherType> get allCipherTypes => [CipherType.AES, CipherType.None];
+
   CipherType get latestCipherType =>
       services.password.exist ? CipherType.AES : CipherType.None;
 
@@ -70,7 +72,7 @@ class CipherService {
     String? altPassword,
     Set<CipherUpdate>? currentCipherUpdates,
   }) {
-    password = _getPassword(password: password, altPassword: altPassword);
+    password = getPassword(password: password, altPassword: altPassword);
     for (var currentCipherUpdate in currentCipherUpdates ?? _cipherUpdates) {
       ciphers.registerCipher(currentCipherUpdate, password);
     }
@@ -82,7 +84,7 @@ class CipherService {
     CipherType? latest,
   }) {
     latest = latest ?? latestCipherType;
-    password = _getPassword(password: password, altPassword: altPassword);
+    password = getPassword(password: password, altPassword: altPassword);
     return ciphers.registerCipher(
       //CipherUpdate(latest, passwordId: passwords.maxPasswordId),
       currentCipherUpdate,
@@ -106,7 +108,7 @@ class CipherService {
       (services.wallet.getAllCipherUpdates.toList() + [currentCipherUpdate])
           .toSet();
 
-  Uint8List _getPassword({Uint8List? password, String? altPassword}) {
+  Uint8List getPassword({Uint8List? password, String? altPassword}) {
     password ??
         altPassword ??
         (() => throw OneOfMultipleMissing(

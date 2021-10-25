@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:raven/raven.dart';
@@ -47,7 +46,6 @@ class ImportWalletService {
 
   Future<List<HandleResult>> handleJson(String text, String accountId) async {
     /// json format of entire account or all accounts (merge)
-    print('IN JSON ---$text');
     //try {
     /// {
     ///   'accounts': {accounts.id: values},
@@ -55,8 +53,6 @@ class ImportWalletService {
     /// }
     /// try decrypt file
     var decodedJSON = json.decode(text) as Map<String, dynamic>;
-    print('JSON DECODE');
-    print(decodedJSON);
     if (decodedJSON.containsKey('accounts') &&
         decodedJSON.containsKey('wallets')) {
       /// create accounts
@@ -69,26 +65,17 @@ class ImportWalletService {
             net: entry.value['net'] == 'Net.Test' ? Net.Test : Net.Main);
         accountIds.addAll(await attemptAccountSave(account));
       }
-      print('accountIds $accountIds');
 
       /// create wallets
       var results = <HandleResult>[];
       for (var entry in decodedJSON['wallets']!.entries) {
-        print('importing $entry');
-        print('CIPHER UPDATE---${entry.value['cipherUpdate']}');
-        print(ciphers.data);
         var wallet = services.wallet.create(
           walletType: typeForImport(entry.value['type']),
           accountId: accountIds[entry.value['accountId']]!,
-
-          /// we should use the current cipher:
-          // cipherUpdate: CipherUpdate.fromMap(entry.value['cipherUpdate']),
           cipherUpdate: services.cipher.currentCipherUpdate,
-
           secret: entry.value['secret'],
           alwaysReturn: true,
         );
-        print('saving $wallet');
         results.add(await attemptWalletSave(wallet));
       }
       return results;
@@ -181,12 +168,9 @@ class ImportWalletService {
   Future<Map<String, String>> attemptAccountSave(Account? account) async {
     if (account != null) {
       var existingAccountId = detectExistingAccount(account);
-      print('${account.accountId}---------existingAccountId');
-      print(existingAccountId);
       var originalId = account.accountId;
       if (existingAccountId != null) {
         account.accountId = accounts.nextId;
-        print('ACCOUNTID: $originalId, ${account.accountId}');
       }
       await accounts.save(account);
       await settings.save(
