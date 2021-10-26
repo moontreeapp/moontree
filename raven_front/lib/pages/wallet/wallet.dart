@@ -197,7 +197,7 @@ class _WalletViewState extends State<WalletView> {
                                     .walletUnspents(wallet)
                                     .where((vout) =>
                                         vout.toAddress == walletAddress.address)
-                                    .map((vout) => vout.value)
+                                    .map((vout) => vout.rvnValue)
                                     .toList()
                                     .sumInt())
                                 .toString(),
@@ -217,7 +217,7 @@ class _WalletViewState extends State<WalletView> {
                             .walletUnspents(wallet)
                             .where((vout) =>
                                 vout.toAddress == walletAddress.address)
-                            .map((vout) => vout.value)
+                            .map((vout) => vout.rvnValue)
                             .toList()
                             .sumInt())
                         .toString(),

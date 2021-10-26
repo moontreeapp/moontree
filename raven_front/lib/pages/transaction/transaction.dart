@@ -3,9 +3,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:date_format/date_format.dart';
-import 'package:raven/joins.dart';
-import 'package:raven/services/transaction.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:raven/raven.dart';
@@ -203,12 +200,11 @@ class _TransactionPageState extends State<TransactionPage> {
                   onTap: () {/* copy the amount to clipboard */},
                   onLongPress: () {},
                   contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
-                  leading: RavenIcon.assetAvatar(
-                      vin.vout!.asset ?? vin.vout!.security!.symbol),
+                  leading: RavenIcon.assetAvatar(vin.vout!.security!.symbol),
                   title: Text(vin.vout!.security!.symbol,
                       style: Theme.of(context).textTheme.bodyText2),
                   trailing: Text(RavenText.securityAsReadable(
-                      vin.vout?.value ?? -1,
+                      vin.vout?.rvnValue ?? -1,
                       symbol: vin.vout?.security?.symbol ?? 'RVN')),
                 )
               ],
@@ -229,11 +225,10 @@ class _TransactionPageState extends State<TransactionPage> {
                 onTap: () {/* copy amount to clipboard */},
                 onLongPress: () {},
                 contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
-                leading:
-                    RavenIcon.assetAvatar(vout.asset ?? vout.security!.symbol),
+                leading: RavenIcon.assetAvatar(vout.security!.symbol),
                 title: Text(vout.security!.symbol),
                 trailing: Text(RavenText.securityAsReadable(
-                    vout.amount ?? vout.value,
+                    vout.assetValue ?? vout.rvnValue,
                     symbol: vout.security!.symbol)),
               )
             ],
