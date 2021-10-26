@@ -1,3 +1,9 @@
+## 4.0.0
+
+- Add 'Loaded' change type that is triggered on load
+- Change changes to `batchedChanges` and add `changes` stream
+- Preserve type information for change streams
+
 ## 3.1.0
 
 - Add 'clear' to indexes
