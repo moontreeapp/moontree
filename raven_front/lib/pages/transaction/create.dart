@@ -47,11 +47,12 @@ class _CreateAssetState extends State<CreateAsset> {
         ? data['wallet']
         : wallets.byAccount.getOne(Current.account.accountId)?.walletId ?? '';
     return Scaffold(
-        appBar: header(),
-        body: body(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: sendTransactionButton(),
-        bottomNavigationBar: RavenButton.bottomNav(context));
+      appBar: header(),
+      body: body(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: sendTransactionButton(),
+      //bottomNavigationBar: RavenButton.bottomNav(context), // alpha hide
+    );
   }
 
   AppBar header() => AppBar(

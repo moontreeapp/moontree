@@ -54,11 +54,12 @@ class _TransactionPageState extends State<TransactionPage> {
     return DefaultTabController(
         length: metadata ? 2 : 1,
         child: Scaffold(
-            appBar: header(metadata),
-            body: body(metadata),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            bottomNavigationBar: RavenButton.bottomNav(context)));
+          appBar: header(metadata),
+          body: body(metadata),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          //bottomNavigationBar: RavenButton.bottomNav(context), // alpha hide
+        ));
   }
 
   int? getBlocksBetweenHelper({Transaction? tx, Block? current}) {

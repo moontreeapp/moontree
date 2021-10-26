@@ -74,14 +74,15 @@ class _WalletViewState extends State<WalletView> {
     return DefaultTabController(
         length: 3,
         child: Scaffold(
-            appBar: header(),
-            body: body(),
+          appBar: header(),
+          body: body(),
 
-            /// hidden for beta
-            //floatingActionButtonLocation:
-            //    FloatingActionButtonLocation.centerFloat,
-            //floatingActionButton: sendButton(),
-            bottomNavigationBar: RavenButton.bottomNav(context)));
+          /// hidden for beta
+          //floatingActionButtonLocation:
+          //    FloatingActionButtonLocation.centerFloat,
+          //floatingActionButton: sendButton(),
+          //bottomNavigationBar: RavenButton.bottomNav(context), // alpha hide
+        ));
   }
 
   PreferredSize header() => PreferredSize(

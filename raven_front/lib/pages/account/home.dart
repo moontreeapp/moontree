@@ -70,13 +70,14 @@ class _HomeState extends State<Home> {
     return DefaultTabController(
         length: 2,
         child: Scaffold(
-            appBar: balanceHeader(),
-            drawer: accountsView(),
-            body: holdingsTransactionsView(),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: sendReceiveButtons(),
-            bottomNavigationBar: RavenButton.bottomNav(context)));
+          appBar: balanceHeader(),
+          //drawer: accountsView(), // alpha hide
+          body: holdingsTransactionsView(),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: sendReceiveButtons(),
+          //bottomNavigationBar: RavenButton.bottomNav(context), // alpha hide
+        ));
   }
 
   PreferredSize balanceHeader() => PreferredSize(
@@ -203,7 +204,7 @@ class _HomeState extends State<Home> {
             size: 50.0, color: Theme.of(context).secondaryHeaderColor),
         Text('\nYour $name will appear here.\n',
             style: Theme.of(context).textTheme.bodyText1),
-        RavenButton.getRVN(context),
+        //RavenButton.getRVN(context), // hidden for alpha
       ]));
 
   /// returns a list of holdings and transactions or empty messages

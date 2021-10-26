@@ -45,11 +45,12 @@ class _RavenTransactionsState extends State<RavenTransactions> {
       currentBalRVN = Current.balanceRVN;
     }
     return Scaffold(
-        appBar: header(),
-        body: transactionsView(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: sendReceiveButtons(),
-        bottomNavigationBar: RavenButton.bottomNav(context));
+      appBar: header(),
+      body: transactionsView(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: sendReceiveButtons(),
+      //bottomNavigationBar: RavenButton.bottomNav(context), // alpha hide
+    );
   }
 
   PreferredSize header() => PreferredSize(

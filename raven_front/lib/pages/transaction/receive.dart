@@ -72,11 +72,12 @@ class _ReceiveState extends State<Receive> {
     address = Current.account.wallets[0].addresses[0].address;
     uri = uri == '' ? address : uri;
     return Scaffold(
-        appBar: header(),
-        body: body(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-        floatingActionButton: shareAddressButton(),
-        bottomNavigationBar: RavenButton.bottomNav(context));
+      appBar: header(),
+      body: body(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButton: shareAddressButton(),
+      //bottomNavigationBar: RavenButton.bottomNav(context), // alpha hide
+    );
   }
 
   AppBar header() => AppBar(

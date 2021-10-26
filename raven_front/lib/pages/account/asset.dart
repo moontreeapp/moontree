@@ -46,12 +46,13 @@ class _AssetState extends State<Asset> {
     return DefaultTabController(
         length: 2,
         child: Scaffold(
-            appBar: header(),
-            body: transactionsMetadataView(),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: sendReceiveButtons(),
-            bottomNavigationBar: RavenButton.bottomNav(context)));
+          appBar: header(),
+          body: transactionsMetadataView(),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: sendReceiveButtons(),
+          //bottomNavigationBar: RavenButton.bottomNav(context), // alpha hide
+        ));
   }
 
   PreferredSize header() => PreferredSize(

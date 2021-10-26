@@ -89,11 +89,12 @@ class _SendState extends State<Send> {
       visibleFiatAmount = '';
     }
     return Scaffold(
-        appBar: header(),
-        body: body(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: sendTransactionButton(),
-        bottomNavigationBar: RavenButton.bottomNav(context));
+      appBar: header(),
+      body: body(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: sendTransactionButton(),
+      //bottomNavigationBar: RavenButton.bottomNav(context), // alpha hide
+    );
   }
 
   PreferredSize header() => PreferredSize(
