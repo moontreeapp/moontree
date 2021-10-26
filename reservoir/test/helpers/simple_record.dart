@@ -9,6 +9,9 @@ class SimpleRecord with EquatableMixin {
 
   @override
   List<Object?> get props => [key];
+
+  @override
+  bool? get stringify => true;
 }
 
 // by SimpleRecord.value

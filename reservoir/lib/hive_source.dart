@@ -6,7 +6,7 @@ import 'source.dart';
 
 class HiveSource<Record> extends Source<Record> {
   final String name;
-  late final Map? defaults;
+  late final Map<String, Record>? defaults;
 
   Box<Record> get box => Hive.box<Record>(name);
 
@@ -14,11 +14,11 @@ class HiveSource<Record> extends Source<Record> {
 
   // Return initial Hive box records to be used to populate Reservoir
   @override
-  Iterable<Record> initialLoad() {
-    var items = box.toMap();
-    var merged = mergeMaps(defaults ?? {}, items,
+  Map<String, Record> initialLoad() {
+    var items = box.toMap() as Map<String, Record>;
+    var merged = mergeMaps<String, Record>(defaults ?? {}, items,
         value: (itemValue, defaultValue) => itemValue ?? defaultValue);
-    return merged.entries.map((entry) => entry.value);
+    return merged;
   }
 
   @override

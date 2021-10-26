@@ -65,7 +65,13 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
     }
 
     this.source = source;
-    source.initialLoad().forEach(_addToIndices);
+    var records = source.initialLoad();
+    if (records.isNotEmpty) {
+      records.values.forEach(_addToIndices);
+      Iterable<Change<Record>> entries = records.entries
+          .map((entry) => Loaded<Record>(entry.key, entry.value));
+      _changes.add(entries.toList());
+    }
   }
 
   /// Create a unique index and add all current records to it
@@ -117,6 +123,7 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
   Future<Change<Record>?> _saveSilently(Record record) async {
     var change = await source.save(primaryKey(record), record);
     change?.when(
+        loaded: (change) {},
         added: (change) {
           _addToIndices(change.data);
         },

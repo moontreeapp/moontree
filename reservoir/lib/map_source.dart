@@ -7,8 +7,8 @@ class MapSource<Record> extends Source<Record> {
   MapSource([Map<String, Record>? map]) : map = map ?? {};
 
   @override
-  Iterable<Record> initialLoad() {
-    return map.values;
+  Map<String, Record> initialLoad() {
+    return map;
   }
 
   @override

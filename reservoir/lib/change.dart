@@ -10,10 +10,12 @@ abstract class Change<Record> with EquatableMixin {
   Change(this.id, this.data);
 
   T when<T>({
+    required T Function(Loaded<Record>) loaded,
     required T Function(Added<Record>) added,
     required T Function(Updated<Record>) updated,
     required T Function(Removed<Record>) removed,
   }) {
+    if (this is Loaded) return loaded(this as Loaded<Record>);
     if (this is Added) return added(this as Added<Record>);
     if (this is Updated) return updated(this as Updated<Record>);
     if (this is Removed) return removed(this as Removed<Record>);
@@ -22,6 +24,13 @@ abstract class Change<Record> with EquatableMixin {
 
   @override
   List<Object> get props => [id];
+}
+
+class Loaded<Record> extends Change<Record> {
+  Loaded(Object id, Record data) : super(id, data);
+
+  @override
+  String toString() => 'Added($id: $data)';
 }
 
 class Added<Record> extends Change<Record> {
