@@ -2,6 +2,7 @@ export 'account.dart';
 export 'address.dart';
 export 'balance.dart';
 export 'block.dart';
+export 'cipher.dart';
 export 'cipher_type.dart';
 export 'cipher_update.dart';
 export 'net.dart';

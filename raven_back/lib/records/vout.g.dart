@@ -18,40 +18,37 @@ class VoutAdapter extends TypeAdapter<Vout> {
     };
     return Vout(
       txId: fields[0] as String,
-      value: fields[1] as int,
+      rvnValue: fields[1] as int,
       position: fields[2] as int,
-      securityId: fields[3] as String,
-      type: fields[5] as String,
-      toAddress: fields[6] as String,
+      memo: fields[3] as String,
+      type: fields[4] as String,
+      toAddress: fields[5] as String,
+      assetSecurityId: fields[6] as String?,
+      assetValue: fields[8] as int?,
       additionalAddresses: (fields[9] as List?)?.cast<String>(),
-      memo: fields[4] as String,
-      asset: fields[7] as String?,
-      amount: fields[8] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Vout obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.txId)
       ..writeByte(1)
-      ..write(obj.value)
+      ..write(obj.rvnValue)
       ..writeByte(2)
       ..write(obj.position)
       ..writeByte(3)
-      ..write(obj.securityId)
-      ..writeByte(4)
       ..write(obj.memo)
-      ..writeByte(5)
+      ..writeByte(4)
       ..write(obj.type)
-      ..writeByte(6)
+      ..writeByte(5)
       ..write(obj.toAddress)
-      ..writeByte(7)
-      ..write(obj.asset)
+      ..writeByte(6)
+      ..write(obj.assetSecurityId)
       ..writeByte(8)
-      ..write(obj.amount)
+      ..write(obj.assetValue)
       ..writeByte(9)
       ..write(obj.additionalAddresses);
   }

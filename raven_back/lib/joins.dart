@@ -160,7 +160,7 @@ extension TransactionHasManyMemos on Transaction {
 extension TransactionHasOneValue on Transaction {
   int get value => globals.vouts.byTransaction
       .getAll(txId)
-      .map((vout) => vout.value)
+      .map((vout) => vout.rvnValue)
       .toList()
       .sumInt();
 }
@@ -182,7 +182,7 @@ extension VinHasOneSecurity on Vin {
 }
 
 extension VinHasOneValue on Vin {
-  int? get value => vout?.value;
+  int? get value => vout?.rvnValue;
 }
 
 extension VinBelongsToAddress on Vin {
@@ -210,7 +210,9 @@ extension VoutBelongsToVin on Vout {
 }
 
 extension VoutHasOneSecurity on Vout {
-  Security? get security => globals.securities.primaryIndex.getOne(securityId);
+  Security? get security => assetSecurityId == null
+      ? null
+      : globals.securities.primaryIndex.getOne(assetSecurityId!);
 }
 
 extension VoutBelongsToAddress on Vout {

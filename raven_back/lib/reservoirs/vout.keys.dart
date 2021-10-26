@@ -26,7 +26,7 @@ extension ByTransactionMethodsForVout on Index<_TransactionKey, Vout> {
 
 class _SecurityKey extends Key<Vout> {
   @override
-  String getKey(Vout vout) => vout.securityId;
+  String getKey(Vout vout) => vout.assetSecurityId!;
 }
 
 extension BySecurityMethodsForVout on Index<_SecurityKey, Vout> {
@@ -42,8 +42,8 @@ extension BySecurityMethodsForVout on Index<_SecurityKey, Vout> {
         (sum, vout) =>
             sum +
             BalanceRaw(
-                confirmed: (vout.confirmed ? vout.value : 0),
-                unconfirmed: (!vout.confirmed ? vout.value : 0)));
+                confirmed: (vout.confirmed ? vout.rvnValue : 0),
+                unconfirmed: (!vout.confirmed ? vout.rvnValue : 0)));
   }
 }
 

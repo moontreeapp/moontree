@@ -66,12 +66,12 @@ class TransactionService {
             out: false,
             fromAddress: '', // tx.vins[0].vout!.address, // will this work?
             toAddress: vout.toAddress,
-            value: vout.value,
-            security: securities.primaryIndex.getOne(vout.securityId) ??
-                securities.RVN,
+            value: vout.rvnValue,
+            security: securities.primaryIndex
+                .getOne(vout.assetSecurityId ?? securities.RVN.securityId)!,
             height: tx.height,
             formattedDatetime: tx.formattedDatetime,
-            amount: vout.amount ?? 0,
+            amount: vout.assetValue ?? 0,
             voutId: vout.voutId,
             txId: tx.txId,
           ));
@@ -83,13 +83,12 @@ class TransactionService {
             out: true,
             fromAddress: '', // what am I supposed to do here?
             toAddress: vin.vout!.toAddress,
-            value: vin.vout!.value,
-            security:
-                securities.primaryIndex.getOne(vin.vout?.securityId ?? '') ??
-                    securities.RVN,
+            value: vin.vout!.rvnValue,
+            security: securities.primaryIndex.getOne(
+                vin.vout?.assetSecurityId ?? securities.RVN.securityId)!,
             height: tx.height,
             formattedDatetime: tx.formattedDatetime,
-            amount: vin.vout!.amount ?? 0,
+            amount: vin.vout!.assetValue ?? 0,
             vinId: vin.vinId,
             txId: tx.txId,
           ));

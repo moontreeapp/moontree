@@ -18,7 +18,7 @@ class SendEstimate {
 
   int get total => amount + fees;
   int get utxoTotal =>
-      utxos.fold(0, (int total, history) => total + history.value);
+      utxos.fold(0, (int total, vout) => total + vout.rvnValue);
 
   int get changeDue => utxoTotal - total;
 
@@ -146,7 +146,7 @@ class MakeTransactionService {
     var total = 0;
     for (var utxo in utxos) {
       txb.addInput(utxo.txId, utxo.position);
-      total = total + utxo.value;
+      total = total + utxo.rvnValue;
     }
     var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
     txb.addOutput(toAddress, estimate.amount);
