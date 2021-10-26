@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
+import 'package:raven_mobile/components/lists.dart';
 import 'package:raven_mobile/components/text.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/theme/extensions.dart';
@@ -72,7 +72,20 @@ class _HomeState extends State<Home> {
         child: Scaffold(
           appBar: balanceHeader(),
           //drawer: accountsView(), // alpha hide
-          body: holdingsTransactionsView(),
+          body: TabBarView(children: [
+            RavenList.holdingsView(
+              context,
+              showUSD: showUSD,
+              holdings: Current.holdings,
+              onLongPress: _toggleUSD,
+            ),
+            RavenList.transactionsView(
+              context,
+              showUSD: showUSD,
+              transactions: Current.compiledTransactions,
+              onLongPress: _toggleUSD,
+            )
+          ]),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: sendReceiveButtons(),
@@ -105,117 +118,6 @@ class _HomeState extends State<Home> {
               preferredSize: Size.fromHeight(50.0),
               child: TabBar(
                   tabs: [Tab(text: 'Holdings'), Tab(text: 'Transactions')]))));
-
-  ListView _holdingsView() {
-    var rvnHolding = <Widget>[];
-    var assetHoldings = <Widget>[];
-    for (var holding in Current.holdings) {
-      var thisHolding = ListTile(
-          onTap: () => Navigator.pushNamed(context,
-              holding.security.symbol == 'RVN' ? '/transactions' : '/asset',
-              arguments: {'holding': holding}),
-          onLongPress: () => _toggleUSD(),
-          leading: RavenIcon.assetAvatar(holding.security.symbol),
-          title: Text(holding.security.symbol,
-              style: holding.security.symbol == 'RVN'
-                  ? Theme.of(context).textTheme.bodyText1
-                  : Theme.of(context).textTheme.bodyText2),
-          trailing: Text(
-              RavenText.securityAsReadable(holding.value,
-                  security: holding.security, asUSD: showUSD),
-              style: TextStyle(color: Theme.of(context).good)));
-      if (holding.security.symbol == 'RVN') {
-        rvnHolding.add(thisHolding);
-
-        // hide create asset button - not beta
-        //if (holding.value < 600) {
-        //  rvnHolding.add(ListTile(
-        //      onTap: () {},
-        //      title: Text('+ Create Asset (not enough RVN)',
-        //          style: TextStyle(color: Theme.of(context).disabledColor))));
-        //} else {
-        //  rvnHolding.add(ListTile(
-        //      onTap: () {},
-        //      title: TextButton.icon(
-        //          onPressed: () => Navigator.pushNamed(context, '/create'),
-        //          icon: Icon(Icons.add),
-        //          label: Text('Create Asset'))));
-        //}
-      } else {
-        assetHoldings.add(thisHolding);
-      }
-    }
-    if (rvnHolding.isEmpty) {
-      rvnHolding.add(ListTile(
-          onTap: () => Navigator.pushNamed(context, '/transactions'),
-          onLongPress: () => _toggleUSD(),
-          title: Text('RVN', style: Theme.of(context).textTheme.bodyText1),
-          trailing: Text(showUSD ? '\$ 0' : '0',
-              style: TextStyle(color: Theme.of(context).fine)),
-          leading: RavenIcon.assetAvatar('RVN')));
-      rvnHolding.add(ListTile(
-          onTap: () {},
-          title: Text('+ Create Asset (not enough RVN)',
-              style: TextStyle(color: Theme.of(context).disabledColor))));
-    }
-
-    return ListView(children: <Widget>[...rvnHolding, ...assetHoldings]);
-  }
-
-  // todo: abstract - happens in several places
-  ListView _transactionsView() => ListView(children: <Widget>[
-        for (var transactionRecord in Current.compiledTransactions)
-          ListTile(
-            onTap: () => Navigator.pushNamed(context, '/transaction',
-                arguments: {'transactionRecord': transactionRecord}),
-            onLongPress: () => _toggleUSD(),
-            leading: RavenIcon.assetAvatar(transactionRecord.security.symbol),
-            title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(transactionRecord.security.symbol,
-                            style: Theme.of(context).textTheme.bodyText2),
-                        Text(transactionRecord.formattedDatetime,
-                            style: Theme.of(context).annotate),
-                      ]),
-                  (transactionRecord.out
-                      ? RavenIcon.out(context)
-                      : RavenIcon.income(context))
-                ]),
-            trailing: (transactionRecord.out
-                ? Text(
-                    RavenText.securityAsReadable(transactionRecord.value,
-                        security: transactionRecord.security, asUSD: showUSD),
-                    style: TextStyle(color: Theme.of(context).bad))
-                : Text(
-                    RavenText.securityAsReadable(transactionRecord.value,
-                        security: transactionRecord.security, asUSD: showUSD),
-                    style: TextStyle(color: Theme.of(context).good))),
-          )
-      ]);
-
-  Container _emptyMessage({IconData? icon, String? name}) => Container(
-      alignment: Alignment.center,
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(icon ?? Icons.savings,
-            size: 50.0, color: Theme.of(context).secondaryHeaderColor),
-        Text('\nYour $name will appear here.\n',
-            style: Theme.of(context).textTheme.bodyText1),
-        //RavenButton.getRVN(context), // hidden for alpha
-      ]));
-
-  /// returns a list of holdings and transactions or empty messages
-  TabBarView holdingsTransactionsView() => TabBarView(children: [
-        Current.holdings.isEmpty
-            ? _emptyMessage(icon: Icons.savings, name: 'holdings')
-            : _holdingsView(),
-        Current.transactions.isEmpty
-            ? _emptyMessage(icon: Icons.public, name: 'transactions')
-            : _transactionsView(),
-      ]);
 
   Drawer accountsView() => Drawer(
           child: ListView(padding: EdgeInsets.zero, children: <Widget>[

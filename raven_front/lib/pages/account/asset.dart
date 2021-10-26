@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:raven/raven.dart';
 import 'package:raven/services/transaction.dart';
 import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/components/icons.dart';
+import 'package:raven_mobile/components/lists.dart';
 import 'package:raven_mobile/components/text.dart';
 import 'package:raven_mobile/services/lookup.dart';
-import 'package:raven_mobile/theme/extensions.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
 class Asset extends StatefulWidget {
@@ -47,7 +46,18 @@ class _AssetState extends State<Asset> {
         length: 2,
         child: Scaffold(
           appBar: header(),
-          body: transactionsMetadataView(),
+          body: TabBarView(children: [
+            RavenList.transactionsView(context,
+                showUSD: showUSD,
+                transactions: currentTxs.where((tx) =>
+                    tx.security.symbol == data['holding']!.security.symbol),
+                onLongPress: _toggleUSD,
+                msg:
+                    '\nNo ${data['holding']!.security.symbol} transactions.\n'),
+            _metadataView() ??
+                RavenList.emptyMessage(context,
+                    icon: Icons.description, msg: '\nNo metadata.\n'),
+          ]),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: sendReceiveButtons(),
@@ -98,54 +108,6 @@ class _AssetState extends State<Asset> {
         children: [Image(image: AssetImage('assets/magicmusk.png'))]);
     //return null;
   }
-
-  /// filter down to just the transactions for this asset
-  ListView _transactionsView() => ListView(children: <Widget>[
-        for (var transaction in currentTxs.where((tx) =>
-            tx.security.symbol == data['holding']!.security.symbol)) ...[
-          ListTile(
-              onTap: () => Navigator.pushNamed(context, '/transaction',
-                  arguments: {'transaction': transaction}),
-              onLongPress: () => _toggleUSD(),
-              title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(transaction.security.symbol,
-                        style: Theme.of(context).textTheme.bodyText2),
-                    (transaction.value > 0 // == 'in'
-                        ? RavenIcon.income(context)
-                        : RavenIcon.out(context)),
-                  ]),
-              trailing: (transaction.value > 0 // == 'in'
-                  ? Text(
-                      RavenText.securityAsReadable(transaction.value,
-                          security: transaction.security, asUSD: showUSD),
-                      style: TextStyle(color: Theme.of(context).good))
-                  : Text(
-                      RavenText.securityAsReadable(transaction.value,
-                          security: transaction.security, asUSD: showUSD),
-                      style: TextStyle(color: Theme.of(context).bad))),
-              leading: RavenIcon.assetAvatar(transaction.security.symbol))
-        ]
-      ]);
-
-  Container _emptyMessage({IconData? icon, String? name}) => Container(
-      alignment: Alignment.center,
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(icon ?? Icons.description,
-            size: 50.0, color: Theme.of(context).secondaryHeaderColor),
-        Text("\n${data['holding']!.security.symbol} $name empty.\n",
-            style: Theme.of(context).textTheme.headline3),
-      ]));
-
-  /// returns a list of holdings and transactions or empty messages
-  TabBarView transactionsMetadataView() => TabBarView(children: [
-        currentTxs.isEmpty
-            ? _emptyMessage(icon: Icons.public, name: 'transactions')
-            : _transactionsView(),
-        _metadataView() ??
-            _emptyMessage(icon: Icons.description, name: 'metadata'),
-      ]);
 
   /// different from home.sendReceiveButtons because it prefills the chosen token
   /// receive works the same

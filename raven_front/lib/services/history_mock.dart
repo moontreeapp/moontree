@@ -10,6 +10,7 @@ class MockHistories {
     addresses.batchedChanges.listen((List<Change<Address>> batchedChanges) {
       batchedChanges.forEach((change) {
         change.when(
+            loaded: (loaded) {},
             added: (added) {
               var address = added.data;
               if (!handledFirstRecord) {
