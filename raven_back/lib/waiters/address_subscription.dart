@@ -130,6 +130,7 @@ class AddressSubscriptionWaiter extends Waiter {
         (List<Change> batchedChanges) {
       batchedChanges.forEach((change) {
         change.when(
+            loaded: (loaded) {},
             added: (added) {
               Address address = added.data;
               var client = services.client.mostRecentRavenClient;

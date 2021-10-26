@@ -10,6 +10,7 @@ class SettingWaiter extends Waiter {
         (List<Change<Setting>> batchedChanges) {
       batchedChanges.forEach((change) {
         change.when(
+            loaded: (loaded) {},
             added: (added) {
               // will be initialized with settings set of settings
             },

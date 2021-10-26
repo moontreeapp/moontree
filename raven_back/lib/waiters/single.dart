@@ -18,21 +18,25 @@ class SingleWaiter extends Waiter {
         listeners['wallets.batchedChanges'] = wallets.batchedChanges
             .listen((List<Change<Wallet>> batchedChanges) {
           batchedChanges.forEach((change) {
-            change.when(added: (added) {
-              var wallet = added.data;
-              if (wallet is SingleWallet) {
-                if (wallet.cipher != null) {
-                  addresses.save(services.wallet.single.toAddress(wallet));
-                  addresses.save(services.wallet.single.toAddress(wallet));
-                } else {
-                  backlog.add(wallet);
-                }
-              }
-            }, updated: (updated) {
-              /* moved account */
-            }, removed: (removed) {
-              /* handled by LeadersWaiter*/
-            });
+            change.when(
+                loaded: (loaded) {},
+                added: (added) {
+                  var wallet = added.data;
+                  if (wallet is SingleWallet) {
+                    if (wallet.cipher != null) {
+                      addresses.save(services.wallet.single.toAddress(wallet));
+                      addresses.save(services.wallet.single.toAddress(wallet));
+                    } else {
+                      backlog.add(wallet);
+                    }
+                  }
+                },
+                updated: (updated) {
+                  /* moved account */
+                },
+                removed: (removed) {
+                  /* handled by LeadersWaiter*/
+                });
           });
         });
       }

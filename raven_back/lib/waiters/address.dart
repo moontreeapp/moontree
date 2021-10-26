@@ -10,6 +10,7 @@ class AddressWaiter extends Waiter {
         (List<Change<Address>> batchedChanges) {
       batchedChanges.forEach((change) {
         change.when(
+            loaded: (loaded) {},
             added: (added) {},
             updated: (updated) {},
             removed: (removed) {

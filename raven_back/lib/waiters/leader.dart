@@ -17,30 +17,34 @@ class LeaderWaiter extends Waiter {
     listen('wallets.batchedChanges', wallets.batchedChanges,
         (List<Change<Wallet>> batchedChanges) {
       batchedChanges.forEach((change) {
-        change.when(added: (added) {
-          var wallet = added.data;
-          if (wallet is LeaderWallet) {
-            if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
-              // if cipher is available for wallet, use it
-              //services.wallet.leader.deriveFirstAddressAndSave(wallet);
-              services.wallet.leader.maybeSaveNewAddresses(
-                  wallet,
-                  ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
-                  NodeExposure.External);
-              services.wallet.leader.maybeSaveNewAddresses(
-                  wallet,
-                  ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
-                  NodeExposure.Internal);
-            } else {
-              // else add it to backlog
-              backlogLeaderWallets.add(wallet);
-            }
-          }
-        }, updated: (updated) {
-          /* moved account */
-        }, removed: (removed) {
-          // TODO: do we care if this happens? maybe throw an error to track unexpected wallet removal
-        });
+        change.when(
+            loaded: (loaded) {},
+            added: (added) {
+              var wallet = added.data;
+              if (wallet is LeaderWallet) {
+                if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
+                  // if cipher is available for wallet, use it
+                  //services.wallet.leader.deriveFirstAddressAndSave(wallet);
+                  services.wallet.leader.maybeSaveNewAddresses(
+                      wallet,
+                      ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
+                      NodeExposure.External);
+                  services.wallet.leader.maybeSaveNewAddresses(
+                      wallet,
+                      ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
+                      NodeExposure.Internal);
+                } else {
+                  // else add it to backlog
+                  backlogLeaderWallets.add(wallet);
+                }
+              }
+            },
+            updated: (updated) {
+              /* moved account */
+            },
+            removed: (removed) {
+              // TODO: do we care if this happens? maybe throw an error to track unexpected wallet removal
+            });
       });
     });
   }

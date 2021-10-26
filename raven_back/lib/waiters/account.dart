@@ -29,6 +29,7 @@ class AccountWaiter extends Waiter {
     listen('ciphers.batchedChanges', ciphers.batchedChanges,
         (List<Change<Cipher>> batchedChanges) async {
       batchedChanges.forEach((change) => change.when(
+          loaded: (loaded) {},
           added: (added) {
             if (added.data.cipher == services.cipher.currentCipher) {
               backlog.forEach((account) {
@@ -46,6 +47,7 @@ class AccountWaiter extends Waiter {
         'accounts.batchedChanges', accounts.batchedChanges, (batchedChanges) {
       batchedChanges.forEach((change) {
         change.when(
+            loaded: (loaded) {},
             added: (added) {
               var account = added.data;
               if (services.cipher.currentCipher == null) {
