@@ -8,7 +8,7 @@ export 'waiters/waiters.dart';
 export 'globals.dart';
 export 'hive_initializer.dart';
 export 'init.dart';
-export 'joins.dart';
+export 'joins/joins.dart';
 
 export 'utils/exceptions.dart';
 export 'lingo/lingo.dart';
