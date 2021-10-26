@@ -88,6 +88,12 @@ class ClientService {
           .getAddresses(symbol.endsWith('!') ? symbol : symbol + '!'))!
       .owner;
 
-  Future<String> sendTransaction(String rawTx) async =>
-      await mostRecentRavenClient!.broadcastTransaction(rawTx);
+  Future<String> sendTransaction(String rawTx) async {
+    print(mostRecentRavenClient);
+    print(clientOrNull);
+    print(mostRecentRavenClient == clientOrNull);
+    return await mostRecentRavenClient!.broadcastTransaction(rawTx);
+    //return await (await clientOrNull)!.broadcastTransaction(rawTx);
+    //mqkt8ZNFySs4QtsxHp5PsAjLS85hJuDH6Y
+  }
 }

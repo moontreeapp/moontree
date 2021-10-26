@@ -23,6 +23,9 @@ class RavenClientWaiter extends Waiter {
         await periodicTimer?.cancel();
         services.client.mostRecentRavenClient =
             ravenClient as RavenElectrumClient;
+
+        // maybe we need another way to determine if it's closed.
+        //ravenClient.peer.listen(closed... )
         // ignore: unawaited_futures
         ravenClient.peer.done.then((value) async {
           var mostRecent = await subjects.client.stream.last;
