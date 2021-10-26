@@ -19,7 +19,9 @@ Set<WalletSecurityPair> securityPairsFromVoutChanges(List<Change> changes) {
     if (vout.wallet != null) {
       return set
         ..add(WalletSecurityPair(
-            vout.wallet!, securities.primaryIndex.getOne(vout.securityId)!));
+            vout.wallet!,
+            securities.primaryIndex
+                .getOne(vout.assetSecurityId ?? securities.RVN.securityId)!));
     }
     return set;
   });

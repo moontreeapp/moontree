@@ -17,10 +17,10 @@ class BalanceService {
       security: security,
       confirmed:
           VoutReservoir.whereUnspent(given: wallet.vouts, security: security)
-              .fold(0, (sum, history) => sum + history.value),
+              .fold(0, (sum, vout) => sum + vout.rvnValue),
       unconfirmed: VoutReservoir.whereUnconfirmed(
               given: wallet.vouts, security: security)
-          .fold(0, (sum, history) => sum + history.value));
+          .fold(0, (sum, vout) => sum + vout.rvnValue));
 
   /// If there is a change in its history, recalculate a balance. Return a list
   /// of such balances.
@@ -40,12 +40,12 @@ class BalanceService {
   /// Sort in descending order, from largest amount to smallest amount
   List<Vout> sortedUnspents(Account account) =>
       services.transaction.accountUnspents(account).toList()
-        ..sort((a, b) => b.value.compareTo(a.value));
+        ..sort((a, b) => b.rvnValue.compareTo(a.rvnValue));
 
   /// Sort in descending order, from largest amount to smallest amount
   List<Vout> sortedUnspentsWallets(Wallet wallet) =>
       services.transaction.walletUnspents(wallet).toList()
-        ..sort((a, b) => b.value.compareTo(a.value));
+        ..sort((a, b) => b.rvnValue.compareTo(a.rvnValue));
 
   /// Asserts that the asset in the account is greater than `amount`
   void assertSufficientFunds(int amount, Account account,
@@ -80,7 +80,7 @@ class BalanceService {
 
     /// Can we find a single, ideal UTXO by searching from smallest to largest?
     for (var unspent in unspents.reversed) {
-      if (unspent.value >= amount) return [unspent];
+      if (unspent.rvnValue >= amount) return [unspent];
     }
 
     /// Otherwise, satisfy the amount by combining UTXOs from largest to smallest
@@ -90,8 +90,8 @@ class BalanceService {
     var remaining = amount;
     for (var unspent in unspents) {
       if (remaining > 0) collection.add(unspent);
-      if (remaining < unspent.value) break;
-      remaining -= unspent.value;
+      if (remaining < unspent.rvnValue) break;
+      remaining -= unspent.rvnValue;
     }
 
     return collection;
@@ -106,7 +106,7 @@ class BalanceService {
 
     /// Can we find a single, ideal UTXO by searching from smallest to largest?
     for (var unspent in unspents.reversed) {
-      if (unspent.value >= amount) return [unspent];
+      if (unspent.rvnValue >= amount) return [unspent];
     }
 
     /// Otherwise, satisfy the amount by combining UTXOs from largest to smallest
@@ -116,8 +116,8 @@ class BalanceService {
     var remaining = amount;
     for (var unspent in unspents) {
       if (remaining > 0) collection.add(unspent);
-      if (remaining < unspent.value) break;
-      remaining -= unspent.value;
+      if (remaining < unspent.rvnValue) break;
+      remaining -= unspent.rvnValue;
     }
 
     return collection;

@@ -13,7 +13,9 @@ extension VoutBelongsToVin on Vout {
 }
 
 extension VoutHasOneSecurity on Vout {
-  Security? get security => globals.securities.primaryIndex.getOne(securityId);
+  Security? get security => assetSecurityId == null
+      ? null
+      : globals.securities.primaryIndex.getOne(assetSecurityId!);
 }
 
 extension VoutBelongsToAddress on Vout {

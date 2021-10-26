@@ -1,4 +1,5 @@
 part of 'joins.dart';
+
 // Joins on Vin (input to new transcation, points to 1 pre-existing vout)
 
 extension VinBelongsToTransaction on Vin {
@@ -16,7 +17,7 @@ extension VinHasOneSecurity on Vin {
 }
 
 extension VinHasOneValue on Vin {
-  int? get value => vout?.value;
+  int? get value => vout?.rvnValue;
 }
 
 extension VinBelongsToAddress on Vin {

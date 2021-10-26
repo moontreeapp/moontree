@@ -12,74 +12,63 @@ class Vout with EquatableMixin {
   String txId;
 
   @HiveField(1)
-  int value; // always RVN
+  int rvnValue; // always RVN
 
   @HiveField(2)
   int position;
 
   @HiveField(3)
-  String securityId;
-
-  @HiveField(4)
   String memo;
 
   /// other values include
   // final double value;
-  // final TxScriptPubKey scriptPubKey; // has pertinate information
+  // final TxScriptPubKey scriptPubKey; // has pertinent information
 
   // transaction type 'pubkeyhash' 'transfer_asset' 'new_asset' 'nulldata' etc
-  @HiveField(5)
+  @HiveField(4)
   String type;
 
-  @HiveField(6) // non-multisig transactions
+  @HiveField(5) // non-multisig transactions
   String toAddress;
 
-  @HiveField(7)
-  String? asset; // if sending an asset, what is the name?
+  @HiveField(6)
+  String? assetSecurityId;
 
   @HiveField(8)
-  int? amount; // amount of asset to send
+  int? assetValue; // amount of asset to send
 
   @HiveField(9) // multisig
   List<String>? additionalAddresses;
 
   Vout({
     required this.txId,
-    required this.value,
+    required this.rvnValue,
     required this.position,
-    required this.securityId,
+    this.memo = '',
     required this.type,
     required this.toAddress,
+    this.assetSecurityId,
+    this.assetValue,
     this.additionalAddresses,
-    this.memo = '',
-    this.asset,
-    this.amount,
   });
 
   bool get confirmed => position > -1;
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         txId,
-        value,
+        rvnValue,
         position,
-        securityId,
+        memo,
         type,
         toAddress,
-        memo,
-        asset ?? '',
-        amount ?? -1,
-        additionalAddresses ?? [],
+        assetSecurityId,
+        assetValue,
+        additionalAddresses,
       ];
 
   @override
-  String toString() {
-    return 'Vout('
-        'txId: $txId, value: $value, position: $position, '
-        'securityId: $securityId, memo: $memo, type: $type, '
-        'toAddress: $toAddress, memo: $memo, asset: $asset, amount: $amount, '
-        'additionalAddress: $additionalAddresses)';
-  }
+  bool? get stringify => true;
 
   String get voutId => getVoutId(txId, position);
   static String getVoutId(txId, position) => '$txId:$position';

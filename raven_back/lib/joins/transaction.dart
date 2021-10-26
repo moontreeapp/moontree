@@ -1,5 +1,7 @@
 part of 'joins.dart';
 
+// Joins on Transaction
+
 extension TransactionBelongsToAddress on Transaction {
   Set<Address?>? get addresses =>
       (this.vouts.map((vout) => vout.address).toList() +
@@ -41,7 +43,7 @@ extension TransactionHasManyMemos on Transaction {
 extension TransactionHasOneValue on Transaction {
   int get value => globals.vouts.byTransaction
       .getAll(txId)
-      .map((vout) => vout.value)
+      .map((vout) => vout.rvnValue)
       .toList()
       .sumInt();
 }

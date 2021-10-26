@@ -66,14 +66,13 @@ class AddressService {
           var vs = await handleAssetData(client, tx, vout);
           newVouts.add(Vout(
             txId: tx.txid,
-            value: vs.item1,
+            rvnValue: vs.item1,
             position: vout.n,
-            securityId: vs.item2.securityId,
             memo: vout.memo,
             type: vout.scriptPubKey.type,
             toAddress: vout.scriptPubKey.addresses![0],
-            asset: vout.scriptPubKey.asset,
-            amount: vout.scriptPubKey.amount,
+            assetSecurityId: vs.item2.securityId,
+            assetValue: vout.scriptPubKey.amount,
             // multisig - must detect if multisig...
             additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
                 ? vout.scriptPubKey.addresses!
@@ -131,14 +130,13 @@ class AddressService {
         var vs = await handleAssetData(client, tx, vout);
         finalVouts.add(Vout(
           txId: tx.txid,
-          value: vs.item1,
+          rvnValue: vs.item1,
           position: vout.n,
-          securityId: vs.item2.securityId,
           memo: vout.memo,
           type: vout.scriptPubKey.type,
           toAddress: vout.scriptPubKey.addresses![0],
-          asset: vout.scriptPubKey.asset,
-          amount: vout.scriptPubKey.amount,
+          assetSecurityId: vs.item2.securityId,
+          assetValue: vout.scriptPubKey.amount,
           // multisig - must detect if multisig...
           additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
               ? vout.scriptPubKey.addresses!
