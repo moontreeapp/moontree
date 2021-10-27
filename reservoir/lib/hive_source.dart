@@ -15,7 +15,8 @@ class HiveSource<Record> extends Source<Record> {
   // Return initial Hive box records to be used to populate Reservoir
   @override
   Map<String, Record> initialLoad() {
-    var items = box.toMap() as Map<String, Record>;
+    var items =
+        box.toMap().map((key, value) => MapEntry(key.toString(), value));
     var merged = mergeMaps<String, Record>(defaults ?? {}, items,
         value: (itemValue, defaultValue) => itemValue ?? defaultValue);
     return merged;
