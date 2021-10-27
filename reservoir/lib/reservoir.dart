@@ -66,12 +66,13 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
 
     this.source = source;
     var records = source.initialLoad();
-    if (records.isNotEmpty) {
-      records.values.forEach(_addToIndices);
-      Iterable<Change<Record>> entries = records.entries
-          .map((entry) => Loaded<Record>(entry.key, entry.value));
-      _changes.add(entries.toList());
-    }
+
+    records.values.forEach(_addToIndices);
+
+    Iterable<Change<Record>> entries =
+        records.entries.map((entry) => Loaded<Record>(entry.key, entry.value));
+
+    _changes.add(entries.toList());
   }
 
   /// Create a unique index and add all current records to it
