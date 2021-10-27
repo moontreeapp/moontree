@@ -89,9 +89,9 @@ class ClientService {
       .owner;
 
   Future<String> sendTransaction(String rawTx) async {
-    print(mostRecentRavenClient);
-    print(await clientOrNull);
-    print(mostRecentRavenClient == await clientOrNull);
+    //print(mostRecentRavenClient);
+    //print(await clientOrNull);
+    //print(mostRecentRavenClient == await clientOrNull);
     return await mostRecentRavenClient!.broadcastTransaction(rawTx);
     //return await (await clientOrNull)!.broadcastTransaction(rawTx);
     //mqkt8ZNFySs4QtsxHp5PsAjLS85hJuDH6Y
