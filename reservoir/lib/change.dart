@@ -30,7 +30,7 @@ class Loaded<Record> extends Change<Record> {
   Loaded(Object id, Record data) : super(id, data);
 
   @override
-  String toString() => 'Added($id: $data)';
+  String toString() => 'Loaded($id: $data)';
 }
 
 class Added<Record> extends Change<Record> {
