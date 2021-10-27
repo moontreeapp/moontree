@@ -28,8 +28,12 @@ class RavenClientWaiter extends Waiter {
         //ravenClient.peer.listen(closed... )
         // ignore: unawaited_futures
         ravenClient.peer.done.then((value) async {
+          print('DONE!!!');
+          print(value);
           var mostRecent = await subjects.client.stream.last;
           if (mostRecent != null) {
+            // shouldn't this just always happen? why do we check most recent?
+            print('ADDING NONE TO SINK');
             subjects.client.sink.add(null);
           }
         });

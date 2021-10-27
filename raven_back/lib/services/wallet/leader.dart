@@ -9,6 +9,8 @@ import 'package:raven/raven.dart';
 // derives addresses for leaderwallets
 // returns any that it can't find a cipher for
 class LeaderWalletService {
+  final requiredGap = 3;
+
   /// [Address(walletid=0...),]
   Future<List<Address>> maybeDeriveNewAddresses(
       List<Address> changedAddresses) async {
@@ -54,7 +56,7 @@ class LeaderWalletService {
       gap = gap +
           (vins.byScripthash.getAll(exposureAddress.addressId).isEmpty ? 1 : 0);
     }
-    if (gap < 10) {
+    if (gap < requiredGap) {
       return deriveAddress(leaderWallet, exposureAddresses.length,
           exposure: exposure);
     }
@@ -161,9 +163,9 @@ class LeaderWalletService {
       gap = gap +
           (vins.byScripthash.getAll(exposureAddress.addressId).isEmpty ? 1 : 0);
     }
-    if (gap < 10) {
+    if (gap < requiredGap) {
       return [
-        for (var i = 0; i < 10 - gap; i++)
+        for (var i = 0; i < requiredGap - gap; i++)
           deriveAddress(leaderWallet, exposureAddresses.length + i,
               exposure: exposure)
       ];
