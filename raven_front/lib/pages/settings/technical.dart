@@ -5,10 +5,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:raven/raven.dart';
-import 'package:raven_mobile/components/buttons.dart';
-import 'package:raven_mobile/components/icons.dart';
+import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 import 'package:raven_mobile/utils/transform.dart';
 
@@ -64,11 +62,12 @@ class _TechnicalViewState extends State<TechnicalView> {
   }
 
   AppBar header() => AppBar(
-      leading: RavenButton.back(context),
+      leading: components.buttons.back(context),
       elevation: 2,
       centerTitle: false,
       actions: <Widget>[
-        IconButton(onPressed: () => _exportAll(context), icon: RavenIcon.export)
+        IconButton(
+            onPressed: () => _exportAll(context), icon: components.icons.export)
       ],
       title: Text('Accounts'));
 
@@ -261,12 +260,12 @@ class _TechnicalViewState extends State<TechnicalView> {
                                     onPressed: () {
                                       _importTo(context, account);
                                     },
-                                    icon: RavenIcon.import),
+                                    icon: components.icons.import),
                                 IconButton(
                                     onPressed: () {
                                       _exportTo(context, account);
                                     },
-                                    icon: RavenIcon.export),
+                                    icon: components.icons.export),
                               ]))
                       : ListTile(
                           title: Text(account.name,
@@ -278,7 +277,7 @@ class _TechnicalViewState extends State<TechnicalView> {
                                     onPressed: () {
                                       _importTo(context, account);
                                     },
-                                    icon: RavenIcon.import),
+                                    icon: components.icons.import),
                                 ...(_deleteIfMany(account))
                               ])),
                   for (var wallet

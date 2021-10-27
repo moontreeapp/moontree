@@ -7,9 +7,7 @@ import 'package:date_format/date_format.dart';
 import 'package:raven/services/transaction.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:raven/raven.dart';
-import 'package:raven_mobile/components/buttons.dart';
-import 'package:raven_mobile/components/icons.dart';
-import 'package:raven_mobile/components/text.dart';
+import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
 class TransactionPage extends StatefulWidget {
@@ -58,7 +56,7 @@ class _TransactionPageState extends State<TransactionPage> {
           body: body(metadata),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
-          //bottomNavigationBar: RavenButton.bottomNav(context), // alpha hide
+          //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
         ));
   }
 
@@ -93,11 +91,11 @@ class _TransactionPageState extends State<TransactionPage> {
       child: AppBar(
           elevation: 2,
           centerTitle: false,
-          leading: RavenButton.back(context),
+          leading: components.buttons.back(context),
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: RavenButton.settings(context, () {
+                child: components.buttons.settings(context, () {
                   setState(() {});
                 }))
           ],
@@ -109,7 +107,8 @@ class _TransactionPageState extends State<TransactionPage> {
                   children: [
                     SizedBox(height: 15.0),
                     // indicates transaction should be a vout...
-                    RavenIcon.assetAvatar(transactionRecord!.security.symbol),
+                    components.icons
+                        .assetAvatar(transactionRecord!.security.symbol),
                     SizedBox(height: 15.0),
                     Text(transactionRecord!.security.symbol,
                         style: Theme.of(context).textTheme.headline3),
@@ -154,7 +153,8 @@ class _TransactionPageState extends State<TransactionPage> {
                       labelText: 'Amount',
                       hintText: 'Quantity'),
                   controller: TextEditingController(
-                      text: RavenText.securityAsReadable(transaction!.value,
+                      text: components.text.securityAsReadable(
+                          transaction!.value,
                           symbol: transactionRecord!.security.symbol)),
                 ),
 

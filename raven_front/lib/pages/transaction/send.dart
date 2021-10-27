@@ -5,10 +5,7 @@ import 'package:raven/services/transaction_maker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin/ravencoin.dart' as ravencoin;
 import 'package:raven/raven.dart';
-import 'package:raven_mobile/components/buttons.dart';
-import 'package:raven_mobile/components/icons.dart';
-import 'package:raven_mobile/components/styles/buttons.dart';
-import 'package:raven_mobile/components/text.dart';
+import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/utils/address.dart';
 import 'package:raven_mobile/utils/params.dart';
@@ -72,14 +69,14 @@ class _SendState extends State<Send> {
           ? Current.walletHoldings(data['walletId'])
           : Current.holdings)
         if (balance.security.symbol == data['symbol'])
-          RavenText.satsToAmount(balance.confirmed)
+          components.text.satsToAmount(balance.confirmed)
     ];
     if (possibleHoldings.length > 0) {
       holding = possibleHoldings[0];
     }
     try {
-      visibleFiatAmount = RavenText.securityAsReadable(
-          RavenText.amountSats(
+      visibleFiatAmount = components.text.securityAsReadable(
+          components.text.amountSats(
             double.parse(visibleAmount),
             precision: precision,
           ),
@@ -93,7 +90,7 @@ class _SendState extends State<Send> {
       body: body(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: sendTransactionButton(),
-      //bottomNavigationBar: RavenButton.bottomNav(context), // alpha hide
+      //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
     );
   }
 
@@ -102,11 +99,11 @@ class _SendState extends State<Send> {
       child: AppBar(
           elevation: 2,
           centerTitle: false,
-          leading: RavenButton.back(context),
+          leading: components.buttons.back(context),
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: RavenButton.settings(context, () {
+                child: components.buttons.settings(context, () {
                   setState(() {});
                 }))
           ],
@@ -122,7 +119,7 @@ class _SendState extends State<Send> {
                   style: Theme.of(context).textTheme.headline5),
               SizedBox(height: 15.0),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                RavenIcon.assetAvatar(data['symbol']),
+                components.icons.assetAvatar(data['symbol']),
                 SizedBox(width: 15.0),
                 Text(data['symbol'],
                     style: Theme.of(context).textTheme.headline5),
@@ -443,7 +440,7 @@ class _SendState extends State<Send> {
       //
       //} else {
       // send using any/every wallet in the account
-      var sendAmountAsSats = RavenText.amountSats(
+      var sendAmountAsSats = components.text.amountSats(
         double.parse(sendAmount.text),
         precision: 8, /* get asset precision */
       );
@@ -520,7 +517,7 @@ class _SendState extends State<Send> {
       icon: Icon(Icons.send),
       label: Text('Send'),
       onPressed: () async => await startSend(),
-      style: RavenButtonStyle.curvedSides);
+      style: components.buttonStyles.curvedSides);
 
   Future confirmMessage({
     required ravencoin.Transaction tx,
@@ -537,17 +534,17 @@ class _SendState extends State<Send> {
                     DataRow(cells: [
                       DataCell(Text('Send Amount:')),
                       DataCell(Text(
-                          '${RavenText.satsToAmount(estimate.amount)}')), //sendAmount.text)),
+                          '${components.text.satsToAmount(estimate.amount)}')), //sendAmount.text)),
                     ]),
                     DataRow(cells: [
                       DataCell(Text('Fee Amount:')),
-                      DataCell(
-                          Text('${RavenText.satsToAmount(estimate.fees)}')),
+                      DataCell(Text(
+                          '${components.text.satsToAmount(estimate.fees)}')),
                     ]),
                     DataRow(cells: [
                       DataCell(Text('Total:')),
-                      DataCell(
-                          Text('${RavenText.satsToAmount(estimate.total)}')),
+                      DataCell(Text(
+                          '${components.text.satsToAmount(estimate.total)}')),
                     ]),
                     DataRow(cells: [
                       DataCell(Text('Send Asset:')),

@@ -2,8 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:raven/raven.dart';
-import 'package:raven_mobile/components/buttons.dart';
-import 'package:raven_mobile/components/styles/buttons.dart';
+import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/utils/params.dart';
 import 'package:raven_mobile/utils/utils.dart';
@@ -76,12 +75,12 @@ class _ReceiveState extends State<Receive> {
       body: body(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: shareAddressButton(),
-      //bottomNavigationBar: RavenButton.bottomNav(context), // alpha hide
+      //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
     );
   }
 
   AppBar header() => AppBar(
-        leading: RavenButton.back(context),
+        leading: components.buttons.back(context),
         elevation: 2,
         centerTitle: false,
         title: Text(
@@ -240,5 +239,5 @@ class _ReceiveState extends State<Receive> {
       icon: Icon(Icons.share),
       label: Text('Share'),
       onPressed: () {},
-      style: RavenButtonStyle.curvedSides);
+      style: components.buttonStyles.curvedSides);
 }

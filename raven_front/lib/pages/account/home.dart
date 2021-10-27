@@ -2,12 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
-import 'package:raven_mobile/components/buttons.dart';
-import 'package:raven_mobile/components/icons.dart';
-import 'package:raven_mobile/components/lists.dart';
-import 'package:raven_mobile/components/text.dart';
+import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/services/lookup.dart';
-import 'package:raven_mobile/theme/extensions.dart';
 import 'package:raven_mobile/theme/theme.dart';
 
 class Home extends StatefulWidget {
@@ -73,13 +69,13 @@ class _HomeState extends State<Home> {
           appBar: balanceHeader(),
           //drawer: accountsView(), // alpha hide
           body: TabBarView(children: [
-            RavenList.holdingsView(
+            components.lists.holdingsView(
               context,
               showUSD: showUSD,
               holdings: Current.holdings,
               onLongPress: _toggleUSD,
             ),
-            RavenList.transactionsView(
+            components.lists.transactionsView(
               context,
               showUSD: showUSD,
               transactions: Current.compiledTransactions,
@@ -89,7 +85,7 @@ class _HomeState extends State<Home> {
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: sendReceiveButtons(),
-          //bottomNavigationBar: RavenButton.bottomNav(context), // alpha hide
+          //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
         ));
   }
 
@@ -100,7 +96,7 @@ class _HomeState extends State<Home> {
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: RavenButton.settings(context, () {
+                child: components.buttons.settings(context, () {
                   setState(() {});
                 }))
           ],
@@ -147,7 +143,7 @@ class _HomeState extends State<Home> {
                 },
                 title: Text(account.accountId + ' ' + account.name,
                     style: Theme.of(context).textTheme.bodyText1),
-                leading: RavenIcon.assetAvatar('RVN')),
+                leading: components.icons.assetAvatar('RVN')),
             Divider(height: 20, thickness: 2, indent: 5, endIndent: 5)
           ],
           ...[
@@ -176,9 +172,9 @@ class _HomeState extends State<Home> {
 
   Row sendReceiveButtons() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        RavenButton.receive(context),
+        components.buttons.receive(context),
         Current.holdings.length > 0
-            ? RavenButton.send(context, symbol: 'RVN')
-            : RavenButton.send(context, symbol: 'RVN', disabled: true),
+            ? components.buttons.send(context, symbol: 'RVN')
+            : components.buttons.send(context, symbol: 'RVN', disabled: true),
       ]);
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:raven_mobile/components/buttons.dart';
+import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
 class Currency extends StatefulWidget {
@@ -26,7 +26,7 @@ class _CurrencyState extends State<Currency> {
   }
 
   AppBar header() => AppBar(
-        leading: RavenButton.back(context),
+        leading: components.buttons.back(context),
         elevation: 2,
         centerTitle: false,
         title: Text('Currency Settings'),

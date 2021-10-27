@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:raven_mobile/components/buttons.dart';
+import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
 class About extends StatefulWidget {
@@ -26,7 +26,7 @@ class _AboutState extends State<About> {
   }
 
   AppBar header() => AppBar(
-      leading: RavenButton.back(context),
+      leading: components.buttons.back(context),
       elevation: 2,
       centerTitle: false,
       title: Text('About'));

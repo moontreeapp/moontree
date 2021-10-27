@@ -3,13 +3,9 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:raven/utils/enum.dart';
 import 'package:raven/utils/extensions.dart';
 import 'package:raven/raven.dart';
-import 'package:raven_mobile/components/icons.dart';
-import 'package:raven_mobile/components/lists.dart';
-import 'package:raven_mobile/components/styles/buttons.dart';
-import 'package:raven_mobile/components/text.dart';
+import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/theme/extensions.dart';
-import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
 class WalletView extends StatefulWidget {
@@ -82,14 +78,14 @@ class _WalletViewState extends State<WalletView> {
           //floatingActionButtonLocation:
           //    FloatingActionButtonLocation.centerFloat,
           //floatingActionButton: sendButton(),
-          //bottomNavigationBar: RavenButton.bottomNav(context), // alpha hide
+          //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
         ));
   }
 
   PreferredSize header() => PreferredSize(
       preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.20),
       child: AppBar(
-          leading: RavenButton.back(context),
+          leading: components.buttons.back(context),
           elevation: 2,
           centerTitle: false,
           title: Text('Wallet'),
@@ -110,14 +106,14 @@ class _WalletViewState extends State<WalletView> {
   TabBarView body() => TabBarView(children: [
         detailsView(),
         // holdings, Current.walletHoldings(wallet.walletId)
-        RavenList.holdingsView(
+        components.lists.holdingsView(
           context,
           showUSD: showUSD,
           holdings: Current.walletHoldings(wallet.walletId),
           onLongPress: _toggleUSD,
         ),
         // transactions histories.byWallet...
-        RavenList.transactionsView(
+        components.lists.transactionsView(
           context,
           showUSD: showUSD,
           transactions: Current.walletCompiledTransactions(wallet.walletId),
@@ -204,7 +200,8 @@ class _WalletViewState extends State<WalletView> {
                         style: Theme.of(context).annotate),
                     Text(
                         'Balance: ' +
-                            RavenText.satsToAmount(services.transaction
+                            components.text
+                                .satsToAmount(services.transaction
                                     .walletUnspents(wallet)
                                     .where((vout) =>
                                         vout.toAddress == walletAddress.address)
@@ -218,13 +215,14 @@ class _WalletViewState extends State<WalletView> {
               }),
               title: Wrap(alignment: WrapAlignment.spaceBetween, children: [
                 (walletAddress.exposure == NodeExposure.Internal
-                    ? RavenIcon.out(context)
-                    : RavenIcon.income(context)),
+                    ? components.icons.out(context)
+                    : components.icons.income(context)),
                 Text(walletAddress.address,
                     style: Theme.of(context).textTheme.caption),
                 Text(
                     // I thoguht this is what slows down loading the page, but I now think it's the qr code... //takes a few seconds, lets just get them one at a time in onTap
-                    RavenText.satsToAmount(services.transaction
+                    components.text
+                        .satsToAmount(services.transaction
                             .walletUnspents(wallet)
                             .where((vout) =>
                                 vout.toAddress == walletAddress.address)
@@ -237,14 +235,14 @@ class _WalletViewState extends State<WalletView> {
               //trailing: Text('address.value'),
               //trailing: (address.value > 0
               //    ? Text(
-              //        RavenText.securityAsReadable(transaction.value,
+              //        components.text.securityAsReadable(transaction.value,
               //            security: transaction.security, asUSD: showUSD),
               //        style: TextStyle(color: Theme.of(context).good))
               //    : Text(
-              //        RavenText.securityAsReadable(transaction.value,
+              //        components.text.securityAsReadable(transaction.value,
               //            security: transaction.security, asUSD: showUSD),
               //        style: TextStyle(color: Theme.of(context).bad))),
-              //leading: RavenIcon.assetAvatar(transaction.security.symbol)
+              //leading: components.icons.assetAvatar(transaction.security.symbol)
             )
         ]
       : [
@@ -256,8 +254,8 @@ class _WalletViewState extends State<WalletView> {
                   children: [
                     Text(address ?? '',
                         style: Theme.of(context).textTheme.caption),
-                    RavenIcon.income(context),
-                    RavenIcon.out(context),
+                    components.icons.income(context),
+                    components.icons.out(context),
                   ]))
         ];
 
@@ -269,6 +267,6 @@ class _WalletViewState extends State<WalletView> {
           : () => Navigator.pushNamed(context, '/send',
               arguments: {'symbol': 'RVN', 'walletId': wallet.walletId}),
       style: disabled
-          ? RavenButtonStyle.disabledCurvedSides(context)
-          : RavenButtonStyle.curvedSides);
+          ? components.buttonStyles.disabledCurvedSides(context)
+          : components.buttonStyles.curvedSides);
 }

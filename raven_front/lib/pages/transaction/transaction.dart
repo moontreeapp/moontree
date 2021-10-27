@@ -6,9 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:raven/raven.dart';
-import 'package:raven_mobile/components/buttons.dart';
-import 'package:raven_mobile/components/icons.dart';
-import 'package:raven_mobile/components/text.dart';
+import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
 class TransactionPage extends StatefulWidget {
@@ -55,7 +53,7 @@ class _TransactionPageState extends State<TransactionPage> {
           body: body(metadata),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
-          //bottomNavigationBar: RavenButton.bottomNav(context), // alpha hide
+          //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
         ));
   }
 
@@ -89,11 +87,11 @@ class _TransactionPageState extends State<TransactionPage> {
       child: AppBar(
           elevation: 2,
           centerTitle: false,
-          leading: RavenButton.back(context),
+          leading: components.buttons.back(context),
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: RavenButton.settings(context, () {
+                child: components.buttons.settings(context, () {
                   setState(() {});
                 }))
           ],
@@ -107,7 +105,8 @@ class _TransactionPageState extends State<TransactionPage> {
                     Text(data['transactionRecord']!.out ? 'Sent' : 'Received',
                         style: Theme.of(context).textTheme.headline5),
                     Text(
-                        RavenText.securityAsReadable(
+                        components.text
+                            .securityAsReadable(
                                 data['transactionRecord']!.value,
                                 symbol: data['transactionRecord']!
                                         .security
@@ -200,10 +199,11 @@ class _TransactionPageState extends State<TransactionPage> {
                   onTap: () {/* copy the amount to clipboard */},
                   onLongPress: () {},
                   contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
-                  leading: RavenIcon.assetAvatar(vin.vout!.security!.symbol),
+                  leading:
+                      components.icons.assetAvatar(vin.vout!.security!.symbol),
                   title: Text(vin.vout!.security!.symbol,
                       style: Theme.of(context).textTheme.bodyText2),
-                  trailing: Text(RavenText.securityAsReadable(
+                  trailing: Text(components.text.securityAsReadable(
                       vin.vout?.rvnValue ?? -1,
                       symbol: vin.vout?.security?.symbol ?? 'RVN')),
                 )
@@ -225,9 +225,9 @@ class _TransactionPageState extends State<TransactionPage> {
                 onTap: () {/* copy amount to clipboard */},
                 onLongPress: () {},
                 contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
-                leading: RavenIcon.assetAvatar(vout.security!.symbol),
+                leading: components.icons.assetAvatar(vout.security!.symbol),
                 title: Text(vout.security!.symbol),
-                trailing: Text(RavenText.securityAsReadable(
+                trailing: Text(components.text.securityAsReadable(
                     vout.assetValue ?? vout.rvnValue,
                     symbol: vout.security!.symbol)),
               )

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:raven_mobile/components/icons.dart';
+import 'package:raven_mobile/components/components.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
 class AccountSettings extends StatefulWidget {
@@ -27,7 +26,7 @@ class _AccountSettingsState extends State<AccountSettings> {
   }
 
   AppBar header() => AppBar(
-      leading: RavenButton.back(context),
+      leading: components.buttons.back(context),
       elevation: 2,
       centerTitle: false,
       title: Text('Account Settings'));
@@ -36,12 +35,12 @@ class _AccountSettingsState extends State<AccountSettings> {
         SettingsSection(tiles: [
           SettingsTile(
               title: 'Import Wallet',
-              leading: RavenIcon.import,
+              leading: components.icons.import,
               onPressed: (BuildContext context) =>
                   Navigator.pushNamed(context, '/settings/import')),
           SettingsTile(
               title: 'Export Account',
-              leading: RavenIcon.export,
+              leading: components.icons.export,
               onPressed: (BuildContext context) => Navigator.pushNamed(
                   context, '/settings/export',
                   arguments: {'accountId': 'current'})),

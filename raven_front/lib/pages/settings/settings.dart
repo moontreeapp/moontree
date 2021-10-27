@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven_mobile/services/lookup.dart';
-import 'package:reservoir/reservoir.dart';
+import 'package:raven_mobile/components/components.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:raven_mobile/components/buttons.dart';
 import 'package:raven_mobile/utils/utils.dart';
 import 'package:raven/utils/database.dart' as ravenDatabase;
 import 'package:raven/raven.dart';
@@ -30,7 +29,7 @@ class _SettingsState extends State<Settings> {
   }
 
   AppBar header() => AppBar(
-      leading: RavenButton.back(context),
+      leading: components.buttons.back(context),
       elevation: 2,
       centerTitle: false,
       title: Text('Settings'));

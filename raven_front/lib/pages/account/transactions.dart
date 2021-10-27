@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
 import 'package:raven/services/transaction.dart';
-import 'package:raven_mobile/components/buttons.dart';
-import 'package:raven_mobile/components/icons.dart';
-import 'package:raven_mobile/components/lists.dart';
-import 'package:raven_mobile/components/text.dart';
+import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
@@ -45,7 +42,7 @@ class _RavenTransactionsState extends State<RavenTransactions> {
     }
     return Scaffold(
       appBar: header(),
-      body: RavenList.transactionsView(
+      body: components.lists.transactionsView(
         context,
         showUSD: showUSD,
         transactions: currentTxs.where((tx) => tx.security == securities.RVN),
@@ -53,7 +50,7 @@ class _RavenTransactionsState extends State<RavenTransactions> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: sendReceiveButtons(),
-      //bottomNavigationBar: RavenButton.bottomNav(context), // alpha hide
+      //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
     );
   }
 
@@ -62,11 +59,11 @@ class _RavenTransactionsState extends State<RavenTransactions> {
       child: AppBar(
           elevation: 2,
           centerTitle: false,
-          leading: RavenButton.back(context),
+          leading: components.buttons.back(context),
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: RavenButton.settings(context, () {
+                child: components.buttons.settings(context, () {
                   setState(() {});
                 }))
           ],
@@ -77,14 +74,14 @@ class _RavenTransactionsState extends State<RavenTransactions> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height: 15.0),
-                    RavenIcon.assetAvatar('RVN'),
+                    components.icons.assetAvatar('RVN'),
                     SizedBox(height: 15.0),
                     Text(
-                        RavenText.securityAsReadable(currentBalRVN.value,
+                        components.text.securityAsReadable(currentBalRVN.value,
                             symbol: 'RVN'),
                         style: Theme.of(context).textTheme.headline3),
                     SizedBox(height: 15.0),
-                    Text(RavenText.rvnUSD(currentBalRVN.rvn),
+                    Text(components.text.rvnUSD(currentBalRVN.rvn),
                         style: Theme.of(context).textTheme.headline5),
                   ]))));
 
@@ -102,9 +99,9 @@ class _RavenTransactionsState extends State<RavenTransactions> {
 
   Row sendReceiveButtons() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        RavenButton.receive(context),
+        components.buttons.receive(context),
         currentHolds.length > 0
-            ? RavenButton.send(context, symbol: 'RVN')
-            : RavenButton.send(context, symbol: 'RVN', disabled: true),
+            ? components.buttons.send(context, symbol: 'RVN')
+            : components.buttons.send(context, symbol: 'RVN', disabled: true),
       ]);
 }

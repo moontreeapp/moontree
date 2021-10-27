@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
-import 'package:raven_mobile/components/buttons.dart';
-import 'package:raven_mobile/components/styles/buttons.dart';
+import 'package:raven_mobile/components/components.dart';
 
 class ChangePassword extends StatefulWidget {
   @override
@@ -43,7 +42,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       );
 
   AppBar header() => AppBar(
-      leading: RavenButton.back(context),
+      leading: components.buttons.back(context),
       elevation: 2,
       centerTitle: false,
       title: Text('Change Password'));
@@ -56,8 +55,8 @@ class _ChangePasswordState extends State<ChangePassword> {
       icon: Icon(Icons.login),
       style: validateExistingCondition(validatedExisting) &&
               validateComplexityCondition(validatedComplexity)
-          ? RavenButtonStyle.curvedSides
-          : RavenButtonStyle.disabledCurvedSides(context),
+          ? components.buttonStyles.curvedSides
+          : components.buttonStyles.disabledCurvedSides(context),
       label: Text('Submit',
           style: TextStyle(color: Theme.of(context).primaryColor)));
 

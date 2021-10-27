@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
-import 'package:raven_mobile/components/buttons.dart';
-import 'package:raven_mobile/components/styles/buttons.dart';
+import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/services/lookup.dart';
-import 'package:raven_mobile/theme/extensions.dart';
 import 'package:raven_mobile/utils/params.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
@@ -51,14 +49,14 @@ class _CreateAssetState extends State<CreateAsset> {
       body: body(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: sendTransactionButton(),
-      //bottomNavigationBar: RavenButton.bottomNav(context), // alpha hide
+      //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
     );
   }
 
   AppBar header() => AppBar(
         elevation: 2,
         centerTitle: false,
-        leading: RavenButton.back(context),
+        leading: components.buttons.back(context),
         title: Text('Create Asset'),
       );
 
@@ -194,7 +192,7 @@ class _CreateAssetState extends State<CreateAsset> {
           /// then we could have things like upload icon for this asset
           /// and display it correctly in the marketplace.
           //Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          //  RavenIcon.assetAvatar("data['symbol']"),
+          //  components.icons.assetAvatar("data['symbol']"),
           //  Text('upload icon?',
           //      style: Theme.of(context).textTheme.headline5),
           //]),
@@ -234,5 +232,5 @@ class _CreateAssetState extends State<CreateAsset> {
           // send tx using any/every wallet in the account
         }
       },
-      style: RavenButtonStyle.curvedSides);
+      style: components.buttonStyles.curvedSides);
 }

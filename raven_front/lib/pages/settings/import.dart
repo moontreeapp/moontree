@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
-import 'package:raven_mobile/components/icons.dart';
-import 'package:raven_mobile/components/styles/buttons.dart';
-import 'package:raven_mobile/components/buttons.dart';
+import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/utils/export.dart';
 import 'package:raven_mobile/utils/import.dart';
@@ -54,7 +52,7 @@ class _ImportState extends State<Import> {
   }
 
   AppBar header() => AppBar(
-      leading: RavenButton.back(context),
+      leading: components.buttons.back(context),
       elevation: 2,
       centerTitle: false,
       title: Text('Import Wallet'));
@@ -113,13 +111,13 @@ class _ImportState extends State<Import> {
     if (importEnabled) {
       return TextButton.icon(
           onPressed: () => attemptImport(),
-          icon: RavenIcon.import,
+          icon: components.icons.import,
           label: Text(label,
               style: TextStyle(color: Theme.of(context).primaryColor)));
     }
     return TextButton.icon(
         onPressed: () {},
-        icon: RavenIcon.importDisabled(context),
+        icon: components.icons.importDisabled(context),
         label: Text(label,
             style: TextStyle(color: Theme.of(context).disabledColor)));
   }
@@ -270,7 +268,7 @@ class _ImportState extends State<Import> {
         //      //  MaterialPageRoute(builder: (context) => Receive()),
         //      //);
         //    },
-        //    style: RavenButtonStyle.leftSideCurved),
+        //    style: components.buttonStyles.leftSideCurved),
         ElevatedButton.icon(
             icon: Icon(Icons.upload_file),
             label: Text('File'),
@@ -279,7 +277,7 @@ class _ImportState extends State<Import> {
               //words.text = resp;
               await attemptImport(resp);
             },
-            //style: RavenButtonStyle.rightSideCurved(context))
-            style: RavenButtonStyle.curvedSides)
+            //style: components.buttonStyles.rightSideCurved(context))
+            style: components.buttonStyles.curvedSides)
       ]);
 }

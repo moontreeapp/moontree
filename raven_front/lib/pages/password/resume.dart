@@ -3,7 +3,7 @@
 ///   only matters when trying to backup wallets right?
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
-import 'package:raven_mobile/components/styles/buttons.dart';
+import 'package:raven_mobile/components/components.dart';
 
 class ChangeResume extends StatefulWidget {
   @override
@@ -45,13 +45,13 @@ class _ChangeResumeState extends State<ChangeResume> {
             onPressed: () => Navigator.pushReplacementNamed(context, '/login',
                 arguments: {}),
             icon: Icon(Icons.login),
-            style: RavenButtonStyle.leftSideCurved,
+            style: components.buttonStyles.leftSideCurved,
             label: Text('Abort Password Change Process',
                 style: TextStyle(color: Theme.of(context).primaryColor))),
         TextButton.icon(
             onPressed: () => submit(),
             icon: Icon(Icons.login),
-            style: RavenButtonStyle.rightSideCurved(context),
+            style: components.buttonStyles.rightSideCurved(context),
             label: Text('Login',
                 style: TextStyle(color: Theme.of(context).primaryColor))),
       ]);
