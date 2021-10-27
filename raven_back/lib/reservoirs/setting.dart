@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:reservoir/reservoir.dart';
 
-import 'package:raven/records/setting_name.dart';
 import 'package:raven/utils/enum.dart' show describeEnum;
 import 'package:raven/records/records.dart';
 
@@ -12,7 +11,7 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
 
   static Map<String, Setting> get defaults => {
         SettingName.Electrum_Domain0: Setting(
-            name: SettingName.Electrum_Domain0, value: '1testnet.rvn.rocks'),
+            name: SettingName.Electrum_Domain0, value: 'testnet.rvn.rocks'),
         SettingName.Electrum_Port0:
             Setting(name: SettingName.Electrum_Port0, value: 50002),
         SettingName.Electrum_Domain1: Setting(

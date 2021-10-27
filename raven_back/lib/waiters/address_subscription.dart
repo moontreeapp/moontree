@@ -23,7 +23,7 @@ class AddressSubscriptionWaiter extends Waiter {
 
   Set<Address> backlogSubscriptions = {};
   Set<Address> backlogRetrievals = {};
-  Set<Address> backlogAddressCipher = {};
+  //Set<Address> backlogAddressCipher = {};
   Set<Address> backlogWalletsToUpdate = {};
 
   Future deinitSubscriptionHandles() async {
@@ -54,31 +54,31 @@ class AddressSubscriptionWaiter extends Waiter {
     });
   }
 
-  void setupCipherListener() {
-    listen('ciphers.batchedChanges', ciphers.batchedChanges,
-        (List<Change<Cipher>> batchedChanges) async {
-      if (backlogAddressCipher.isNotEmpty) {
-        var temp = <Address>{};
-        for (var changedAddress in backlogAddressCipher) {
-          var wallet = changedAddress.wallet!;
-          if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
-            services.wallet.leader.maybeSaveNewAddress(
-                wallet as LeaderWallet,
-                ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
-                changedAddress.exposure);
-          } else {
-            temp.add(changedAddress);
-          }
-        }
-        backlogAddressCipher = temp;
-      }
-    });
-  }
+  //void setupCipherListener() {
+  //  listen('ciphers.batchedChanges', ciphers.batchedChanges,
+  //      (List<Change<Cipher>> batchedChanges) async {
+  //    if (backlogAddressCipher.isNotEmpty) {
+  //      var temp = <Address>{};
+  //      for (var changedAddress in backlogAddressCipher) {
+  //        var wallet = changedAddress.wallet!;
+  //        if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
+  //          services.wallet.leader.maybeSaveNewAddress(
+  //              wallet as LeaderWallet,
+  //              ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
+  //              changedAddress.exposure);
+  //        } else {
+  //          temp.add(changedAddress);
+  //        }
+  //      }
+  //      backlogAddressCipher = temp;
+  //    }
+  //  });
+  //}
 
   void init() {
     setupSubscriptionsListener();
     setupClientListener();
-    setupCipherListener();
+    //setupCipherListener();
     setupNewAddressListener();
   }
 
@@ -102,19 +102,21 @@ class AddressSubscriptionWaiter extends Waiter {
   Future retrieveAndMakeNewAddress(
       RavenElectrumClient client, List<Address> changedAddresses) async {
     await retrieve(client, changedAddresses);
-    for (var changedAddress in changedAddresses) {
-      var wallet = changedAddress.wallet!;
-      if (wallet is LeaderWallet) {
-        if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
-          services.wallet.leader.maybeSaveNewAddress(
-              wallet,
-              ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
-              changedAddress.exposure);
-        } else {
-          backlogAddressCipher.add(changedAddress);
-        }
-      }
-    }
+
+    /// this should be handled by listening to vouts in the leader waiter now:
+    //for (var changedAddress in changedAddresses) {
+    //  var wallet = changedAddress.wallet!;
+    //  if (wallet is LeaderWallet) {
+    //    if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
+    //      services.wallet.leader.maybeSaveNewAddress(
+    //          wallet,
+    //          ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
+    //          changedAddress.exposure);
+    //    } else {
+    //      backlogAddressCipher.add(changedAddress);
+    //    }
+    //  }
+    //}
   }
 
   Future retrieve(

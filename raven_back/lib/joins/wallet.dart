@@ -14,6 +14,38 @@ extension WalletHasManyAddresses on Wallet {
   List<Address> get addresses => globals.addresses.byWallet.getAll(walletId);
 }
 
+// change addresses
+extension WalletHasManyInternalAddresses on Wallet {
+  Iterable<Address> get internalAddresses =>
+      addresses.where((address) => address.exposure == NodeExposure.Internal);
+}
+
+// receive addresses
+extension WalletHasManyExternalAddresses on Wallet {
+  Iterable<Address> get externalAddresses =>
+      addresses.where((address) => address.exposure == NodeExposure.External);
+}
+
+extension WalletHasManyEmptyInternalAddresses on Wallet {
+  Iterable<Address> get emptyInternalAddresses =>
+      internalAddresses.where((address) => address.vouts.isEmpty);
+}
+
+extension WalletHasManyEmptyExternalAddresses on Wallet {
+  Iterable<Address> get emptyExternalAddresses =>
+      externalAddresses.where((address) => address.vouts.isEmpty);
+}
+
+extension WalletHasManyUsedInternalAddresses on Wallet {
+  Iterable<Address> get usedInternalAddresses =>
+      internalAddresses.where((address) => address.vouts.isNotEmpty);
+}
+
+extension WalletHasManyUsedExternalAddresses on Wallet {
+  Iterable<Address> get usedExternalAddresses =>
+      externalAddresses.where((address) => address.vouts.isNotEmpty);
+}
+
 extension WalletHasManyBalances on Wallet {
   List<Balance> get balances => globals.balances.byWallet.getAll(walletId);
 }

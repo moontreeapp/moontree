@@ -1,15 +1,13 @@
 import 'package:ravencoin/ravencoin.dart' show HDWallet;
 import 'package:bip39/bip39.dart' as bip39;
 
-import 'package:raven/security/cipher_base.dart';
-import 'package:raven/security/encrypted_entropy.dart';
 import 'package:raven/utils/seed_wallet.dart';
 import 'package:raven/raven.dart';
 
 // derives addresses for leaderwallets
 // returns any that it can't find a cipher for
 class LeaderWalletService {
-  final requiredGap = 3;
+  final requiredGap = 2;
 
   /// [Address(walletid=0...),]
   Future<List<Address>> maybeDeriveNewAddresses(
@@ -49,16 +47,14 @@ class LeaderWalletService {
     CipherBase cipher,
     NodeExposure exposure,
   ) {
-    var gap = 0;
-    var exposureAddresses =
-        addresses.byWalletExposure.getAll(leaderWallet.walletId, exposure);
-    for (var exposureAddress in exposureAddresses) {
-      gap = gap +
-          (vins.byScripthash.getAll(exposureAddress.addressId).isEmpty ? 1 : 0);
-    }
-    if (gap < requiredGap) {
-      return deriveAddress(leaderWallet, exposureAddresses.length,
-          exposure: exposure);
+    var currentGap = exposure == NodeExposure.External
+        ? leaderWallet.emptyExternalAddresses.length
+        : leaderWallet.emptyInternalAddresses.length;
+    var usedCount = exposure == NodeExposure.External
+        ? leaderWallet.usedExternalAddresses.length
+        : leaderWallet.usedInternalAddresses.length;
+    if (currentGap < requiredGap) {
+      return deriveAddress(leaderWallet, usedCount, exposure: exposure);
     }
   }
 
@@ -141,36 +137,34 @@ class LeaderWalletService {
     }
   }
 
-  void maybeSaveNewAddresses(
-      LeaderWallet leaderWallet, CipherBase cipher, NodeExposure exposure) {
-    for (var newAddress
-        in maybeDeriveNextAddresses(leaderWallet, cipher, exposure)) {
-      addresses.save(newAddress);
-    }
-  }
-
   /// this function is used to determine if we need to derive new addresses
   /// based upon the idea that we want to retain a gap of empty histories
-  List<Address> maybeDeriveNextAddresses(
+  Set<Address> maybeDeriveNextAddresses(
     LeaderWallet leaderWallet,
     CipherBase cipher,
     NodeExposure exposure,
   ) {
-    var gap = 0;
-    var exposureAddresses =
-        addresses.byWalletExposure.getAll(leaderWallet.walletId, exposure);
-    for (var exposureAddress in exposureAddresses) {
-      gap = gap +
-          (vins.byScripthash.getAll(exposureAddress.addressId).isEmpty ? 1 : 0);
+    var currentGap = exposure == NodeExposure.External
+        ? leaderWallet.emptyExternalAddresses.length
+        : leaderWallet.emptyInternalAddresses.length;
+    var usedCount = exposure == NodeExposure.External
+        ? leaderWallet.usedExternalAddresses.length
+        : leaderWallet.usedInternalAddresses.length;
+    var newAddresses = {
+      for (var i = 0; i < requiredGap - currentGap; i++)
+        deriveAddress(leaderWallet, usedCount + i, exposure: exposure)
+    };
+    if (leaderWallet.walletId ==
+        '03d992f22d9e178a4de02e99ffffe885bd5135e65d183200da3b566502eca79342') {
+      print('exposure, $exposure');
+      print('usedCount $usedCount');
+      print('currentGap $currentGap');
+      print('newAddresses ${newAddresses.map((a) => a.address)}');
+      //if (exposure == NodeExposure.Internal) {
+      //  print(leaderWallet.emptyInternalAddresses);
+      //}
     }
-    if (gap < requiredGap) {
-      return [
-        for (var i = 0; i < requiredGap - gap; i++)
-          deriveAddress(leaderWallet, exposureAddresses.length + i,
-              exposure: exposure)
-      ];
-    }
-    return [];
+    return newAddresses;
   }
 
   HDWallet getChangeWallet(LeaderWallet wallet) => getNextEmptyWallet(wallet);
