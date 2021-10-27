@@ -84,14 +84,6 @@ class _SettingsState extends State<Settings> {
                   onPressed: (BuildContext context) =>
                       Navigator.pushNamed(context, '/settings/about')),
               SettingsTile(
-                  title: 'Print Histories',
-                  leading: Icon(Icons.info_outline_rounded),
-                  onPressed: (BuildContext context) {
-                    for (var item in transactions.data) {
-                      print(item);
-                    }
-                  }),
-              SettingsTile(
                   title: 'Clear Database',
                   leading: Icon(Icons.info_outline_rounded),
                   onPressed: (BuildContext context) {
@@ -105,12 +97,6 @@ class _SettingsState extends State<Settings> {
                     print(services.cipher.latestCipherType);
                     print(services.cipher.currentCipherUpdate);
                   }),
-              //SettingsTile(
-              //    title: 'cipher registry',
-              //    leading: Icon(Icons.info_outline_rounded),
-              //    onPressed: (BuildContext context) {
-              //      print(cipherRegistry.ciphers);
-              //    }),
               //SettingsTile.switchTile(
               //  title: 'Use fingerprint',
               //  leading: Icon(Icons.fingerprint),
