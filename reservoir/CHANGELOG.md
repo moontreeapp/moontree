@@ -1,3 +1,7 @@
+## 4.0.1
+
+- Make sure hive keys are deserialized as strings
+
 ## 4.0.0
 
 - Add 'Loaded' change type that is triggered on load
