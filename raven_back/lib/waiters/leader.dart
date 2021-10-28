@@ -48,25 +48,12 @@ class LeaderWaiter extends Waiter {
             loaded: (loaded) {},
             added: (added) {
               var vout = added.data;
-              print('VOUT GOT ${vout.toAddress}, ${vout.address?.address}');
-              print(
-                  'VOUT GOT ${vout.toAddress}, ${addresses.byAddress.getOne(vout.toAddress)?.address}');
-              //print('VOUT GOT2 $vout, ${vout.wallet}');
-              //print(
-              //    'VOUT GOT3 ${vout.toAddress}, ${addresses.byAddress.getOne(vout.toAddress)}');
-              //if (vout.toAddress == 'mvGqVjyz14NLhN6pmopZKCrm44guHRYZY3') {
-              //  for (var address in addresses.data) {
-              //    print(address);
-              //  }
-              //}
-              // if vout.address corresponds to an address we know has been empty - then make a new one.
               if (vout.wallet is LeaderWallet) {
                 var wallet = vout.wallet as LeaderWallet;
                 if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
                   deriveMoreAddresses(
                     wallet,
                     exposures: [vout.address!.exposure],
-                    vout: vout,
                   );
                 } else {
                   backlogLeaderWallets.add(wallet);
@@ -104,7 +91,6 @@ class LeaderWaiter extends Waiter {
   void deriveMoreAddresses(
     LeaderWallet wallet, {
     List<NodeExposure>? exposures,
-    Vout? vout,
   }) {
     exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];
     var newAddresses = <Address>{};
@@ -113,7 +99,6 @@ class LeaderWaiter extends Waiter {
         wallet,
         ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
         exposure,
-        //witnessedHDIndex: vout?.address?.hdIndex ?? 0,
       ));
     }
     addresses.saveAll(newAddresses);

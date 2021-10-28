@@ -109,9 +109,8 @@ class LeaderWalletService {
   Set<Address> maybeDeriveNextAddresses(
     LeaderWallet leaderWallet,
     CipherBase cipher,
-    NodeExposure exposure, {
-    int witnessedHDIndex = 0,
-  }) {
+    NodeExposure exposure,
+  ) {
     var currentGap = exposure == NodeExposure.External
         ? leaderWallet.emptyExternalAddresses.length
         : leaderWallet.emptyInternalAddresses.length;
@@ -126,24 +125,6 @@ class LeaderWalletService {
     if (currentGap < requiredGap) {
       return {deriveAddress(leaderWallet, hdIndex + 1, exposure: exposure)};
     }
-    //if (witnessedHDIndex + 1 >= usedCount) {
-    //  var newAddresses = {
-    //    for (var i = 0; i < requiredGap - currentGap; i++)
-    //      deriveAddress(leaderWallet, usedCount + i, exposure: exposure)
-    //  };
-    //  if (leaderWallet.walletId ==
-    //      '03d992f22d9e178a4de02e99ffffe885bd5135e65d183200da3b566502eca79342') {
-    //    print('witnessedHDIndex, $witnessedHDIndex');
-    //    print('exposure, $exposure');
-    //    print('usedCount $usedCount');
-    //    print('currentGap $currentGap');
-    //    print('newAddresses ${newAddresses.map((a) => a.address)}');
-    //    //if (exposure == NodeExposure.Internal) {
-    //    //  print(leaderWallet.emptyInternalAddresses);
-    //    //}
-    //  }
-    //  return newAddresses;
-    //}
     return {};
   }
 
