@@ -16,4 +16,5 @@ enum ImportFormat {
 enum WalletType {
   leader,
   single,
+  none,
 }

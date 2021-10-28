@@ -1,0 +1,17 @@
+somehow we are doubling up on calls or address derivation
+
+account created
+
+account waiter -> makes wallet
+wallet waiter -> makes address
+address waiter -> subscribe to it
+subscribe gets transactions, vins, and vouts
+vouts waiter -> if we need to make a new address do it.
+
+getting vouts might trigger getting security data
+something in this process is triggering the same address to be created or and 
+that triggers multiple instances of everything down the line.
+that is what I think is happening.
+
+
+

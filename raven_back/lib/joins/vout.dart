@@ -20,7 +20,7 @@ extension VoutHasOneSecurity on Vout {
 
 extension VoutBelongsToAddress on Vout {
   Address? get address => globals.addresses.byAddress.getOne(toAddress);
-  // no address - we don't own this vout
+  // no address - we don't own this vout (we sent it to someone else)
 }
 
 extension VoutBelongsToWallet on Vout {

@@ -1,5 +1,3 @@
-import 'package:reservoir/reservoir.dart';
-
 import 'package:raven/raven.dart';
 
 import 'waiter.dart';
@@ -17,7 +15,7 @@ class AddressWaiter extends Waiter {
               var address = removed.data;
               // could be moved to waiter on transactions...
               vouts.removeAll(address.vouts.map((vout) => vout).toList());
-              vins.removeAll(address.vins.map((vin) => vin).toList());
+              //vins.removeAll(address.vins.map((vin) => vin).toList()); // no way to join on it...
             });
       });
     });

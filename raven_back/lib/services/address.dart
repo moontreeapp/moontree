@@ -10,14 +10,10 @@ class AddressService {
     List<Address> changedAddresses,
     RavenElectrumClient client,
   ) async {
-    var addressIds =
-        changedAddresses.map((address) => address.addressId).toList();
-
-    /// for each scripthash
-    for (var addressId in addressIds) {
+    for (var changedAddress in changedAddresses) {
       // erase all vins and vouts not pulled. (or just remove all first - the simple way).
-      await vins.removeAll(vins.byScripthash.getAll(addressId));
-      await vouts.removeAll(vouts.byScripthash.getAll(addressId));
+      ///await vins.removeAll(vins.byAddress.getAll(addressId)); // broken join
+      ///await vouts.removeAll(vouts.byAddress.getAll(changedAddress.address));
 
       /// never purge tx (unless theres a reorg or something)
       /// transactions are not associated with addresses directly
@@ -26,14 +22,12 @@ class AddressService {
 
       // get a list of all historic transaction ids assicated with this address
       // ignore: omit_local_variable_types
-      List<ScripthashHistory> histories = await client.getHistory(addressId);
+      List<ScripthashHistory> histories =
+          await client.getHistory(changedAddress.addressId);
 
       /// get all transactions - batch silently fails on some txHashes such as
       /// 9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f
       /// (or one in it's batch)
-      // ignore: omit_local_variable_types
-      //List<Tx> txs = await client
-      //    .getTransactions(histories.map((history) => history.txHash).toList());
       // ignore: omit_local_variable_types
       List<Tx> txs = [
         for (var txHash in histories.map((history) => history.txHash))
@@ -41,9 +35,9 @@ class AddressService {
       ];
 
       /// save all vins, vouts and transactions
-      var newVins = <Vin>[];
-      var newVouts = <Vout>[];
-      var newTxs = <Transaction>[];
+      var newVins = <Vin>{};
+      var newVouts = <Vout>{};
+      var newTxs = <Transaction>{};
       for (var tx in txs) {
         for (var vin in tx.vin) {
           if (vin.txid != null && vin.vout != null) {
@@ -64,6 +58,7 @@ class AddressService {
         for (var vout in tx.vout) {
           if (vout.scriptPubKey.type == 'nulldata') continue;
           var vs = await handleAssetData(client, tx, vout);
+          print('to address ${vout.scriptPubKey.addresses![0]}');
           newVouts.add(Vout(
             txId: tx.txid,
             rvnValue: vs.item1,
@@ -91,6 +86,10 @@ class AddressService {
           time: tx.time,
         ));
       }
+
+      //await vins.removeAll(existingVins.difference(newVins));
+      //await vouts.removeAll(existingVouts.difference(newVouts));
+
       // must await?
       await transactions.saveAll(newTxs);
       await vins.saveAll(newVins);
@@ -102,27 +101,11 @@ class AddressService {
     var finalVouts = <Vout>[];
     var finalTxs = <Transaction>[];
     // ignore: omit_local_variable_types
-    //List<Tx> txs = await client
-    //    .getTransactions(vins.danglingVins.map((vin) => vin.voutTxId).toList());
     var myVins = vins.danglingVins.map((vin) => vin.voutTxId);
     // ignore: omit_local_variable_types
     List<Tx> txs = [
       for (var txHash in myVins) await client.getTransaction(txHash)
     ];
-
-    /*
-    E/flutter ( 6066): [ERROR:flutter/lib/ui/ui_dart_state.cc(209)] Unhandled Exception: Concurrent modification during iteration: _LinkedHashMap len:4.
-    E/flutter ( 6066): #0      _CompactIterator.moveNext (dart:collection-patch/compact_hash.dart:601:7)
-    E/flutter ( 6066): #1      WhereIterator.moveNext (dart:_internal/iterable.dart:438:22)
-    E/flutter ( 6066): #2      MappedIterator.moveNext (dart:_internal/iterable.dart:390:19)
-    E/flutter ( 6066): #3      AddressService.getAndSaveTransaction (package:raven/services/address.dart:111:26)
-    E/flutter ( 6066): <asynchronous suspension>
-    E/flutter ( 6066): #4      AddressSubscriptionWaiter.retrieve (package:raven/waiters/address_subscription.dart:122:5)
-    E/flutter ( 6066): <asynchronous suspension>
-    E/flutter ( 6066): #5      AddressSubscriptionWaiter.retrieveAndMakeNewAddress (package:raven/waiters/address_subscription.dart:104:5)
-    E/flutter ( 6066): <asynchronous suspension>
-    E/flutter ( 6066):
-    */
 
     for (var tx in txs) {
       for (var vout in tx.vout) {

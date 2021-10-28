@@ -11,8 +11,6 @@
 /// this is really needed for mvp but if we'll eventually have it, might as well
 /// now so that all the UI points to the balances, not the history filters...
 
-import 'package:reservoir/reservoir.dart';
-
 import 'package:raven/utils/buffer_count_window.dart';
 import 'package:raven/raven.dart';
 
@@ -28,7 +26,5 @@ class BalanceWaiter extends Waiter {
       var changes = unflattenedChanges.expand((change) => change);
       services.balance.saveChangedBalances(changes.toList());
     });
-
-    // unlike account balances, no other triggers need to be considered.
   }
 }

@@ -6,12 +6,12 @@ part 'vin.keys.dart';
 
 class VinReservoir extends Reservoir<_VinIdKey, Vin> {
   late IndexMultiple<_TransactionKey, Vin> byTransaction;
-  late IndexMultiple<_ScripthashKey, Vin> byScripthash;
+  late IndexMultiple<_IsCoinbaseKey, Vin> byIsCoinbase;
   late IndexMultiple<_VoutIdKey, Vin> byVoutId;
 
   VinReservoir() : super(_VinIdKey()) {
     byTransaction = addIndexMultiple('transaction', _TransactionKey());
-    byScripthash = addIndexMultiple('address', _ScripthashKey());
+    byIsCoinbase = addIndexMultiple('isCoinbase', _IsCoinbaseKey());
     byVoutId = addIndexMultiple('vout', _VoutIdKey());
   }
 

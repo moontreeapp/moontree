@@ -1,4 +1,6 @@
 import 'package:hive/hive.dart';
+import 'package:raven/services/wallet/constants.dart';
+import 'package:raven/utils/enum.dart';
 import 'package:ravencoin/ravencoin.dart';
 
 import 'package:raven/raven.dart';
@@ -47,4 +49,13 @@ class SingleWallet extends Wallet {
 
   @override
   SecretType get secretType => EncryptedWIF.secretType;
+
+  @override
+  WalletType get walletType => WalletType.single;
+
+  @override
+  String get secretTypeToString => describeEnum(secretType);
+
+  @override
+  String get walletTypeToString => describeEnum(walletType);
 }

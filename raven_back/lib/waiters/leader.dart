@@ -48,15 +48,37 @@ class LeaderWaiter extends Waiter {
             loaded: (loaded) {},
             added: (added) {
               var vout = added.data;
-              print('VOUT GOT $vout');
+              print('VOUT GOT ${vout.toAddress}, ${vout.address?.address}');
+              print(
+                  'VOUT GOT ${vout.toAddress}, ${addresses.byAddress.getOne(vout.toAddress)?.address}');
+              //print('VOUT GOT2 $vout, ${vout.wallet}');
+              //print(
+              //    'VOUT GOT3 ${vout.toAddress}, ${addresses.byAddress.getOne(vout.toAddress)}');
+              //if (vout.toAddress == 'mvGqVjyz14NLhN6pmopZKCrm44guHRYZY3') {
+              //  for (var address in addresses.data) {
+              //    print(address);
+              //  }
+              //}
+              // if vout.address corresponds to an address we know has been empty - then make a new one.
               if (vout.wallet is LeaderWallet) {
                 var wallet = vout.wallet as LeaderWallet;
                 if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
-                  print('in if');
-                  deriveMoreAddresses(wallet,
-                      exposures: [vout.address!.exposure]);
+                  deriveMoreAddresses(
+                    wallet,
+                    exposures: [vout.address!.exposure],
+                    vout: vout,
+                  );
                 } else {
                   backlogLeaderWallets.add(wallet);
+                }
+              } else {
+                for (var wallet in wallets.leaders) {
+                  if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) !=
+                      null) {
+                    deriveMoreAddresses(wallet);
+                  } else {
+                    backlogLeaderWallets.add(wallet);
+                  }
                 }
               }
             },
@@ -82,19 +104,18 @@ class LeaderWaiter extends Waiter {
   void deriveMoreAddresses(
     LeaderWallet wallet, {
     List<NodeExposure>? exposures,
+    Vout? vout,
   }) {
     exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];
+    var newAddresses = <Address>{};
     for (var exposure in exposures) {
-      var newAddresses = services.wallet.leader.maybeDeriveNextAddresses(
+      newAddresses.addAll(services.wallet.leader.maybeDeriveNextAddresses(
         wallet,
         ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
         exposure,
-      );
-      var actualNewAddresses = newAddresses.difference(addressCache);
-      print('actualNewAddresses $actualNewAddresses');
-      print('addressCache $addressCache');
-      addresses.saveAll(actualNewAddresses);
-      addressCache.addAll(actualNewAddresses);
+        //witnessedHDIndex: vout?.address?.hdIndex ?? 0,
+      ));
     }
+    addresses.saveAll(newAddresses);
   }
 }

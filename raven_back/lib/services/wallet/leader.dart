@@ -1,3 +1,4 @@
+import 'package:raven/utils/enum.dart';
 import 'package:ravencoin/ravencoin.dart' show HDWallet;
 import 'package:bip39/bip39.dart' as bip39;
 
@@ -7,30 +8,10 @@ import 'package:raven/raven.dart';
 // derives addresses for leaderwallets
 // returns any that it can't find a cipher for
 class LeaderWalletService {
-  final requiredGap = 2;
-
-  /// [Address(walletid=0...),]
-  Future<List<Address>> maybeDeriveNewAddresses(
-      List<Address> changedAddresses) async {
-    var remaining = <Address>[];
-    for (var address in changedAddresses) {
-      var leaderWallet =
-          wallets.primaryIndex.getOne(address.walletId)! as LeaderWallet;
-      if (ciphers.primaryIndex.getOne(leaderWallet.cipherUpdate) != null) {
-        maybeSaveNewAddress(
-            leaderWallet,
-            ciphers.primaryIndex.getOne(leaderWallet.cipherUpdate)!.cipher,
-            NodeExposure.Internal);
-        maybeSaveNewAddress(
-            leaderWallet,
-            ciphers.primaryIndex.getOne(leaderWallet.cipherUpdate)!.cipher,
-            NodeExposure.External);
-      } else {
-        remaining.add(address);
-      }
-    }
-    return remaining;
-  }
+  final Map<String, int> addressRegistry = {
+    /* walletId + exposure : highest hdIndex created*/
+  };
+  final int requiredGap = 1;
 
   void maybeSaveNewAddress(
       LeaderWallet leaderWallet, CipherBase cipher, NodeExposure exposure) {
@@ -58,19 +39,12 @@ class LeaderWalletService {
     }
   }
 
-  // Address deriveAddress(
-  //   LeaderWallet wallet,
-  //   int hdIndex,
-  //   NodeExposure exposure,
-  // ) {
-  //   var net = accounts.primaryIndex.getOne(wallet.accountId)!.net;
-  //   return wallet.deriveAddress(net, hdIndex, exposure);
-  // }
   Address deriveAddress(
     LeaderWallet wallet,
     int hdIndex, {
     exposure = NodeExposure.External,
   }) {
+    addressRegistry[addressRegistryKey(wallet, exposure)] = hdIndex;
     var subwallet =
         getSeedWallet(wallet).subwallet(hdIndex, exposure: exposure);
     return Address(
@@ -88,13 +62,6 @@ class LeaderWalletService {
     return SeedWallet(encryptedEntropy.seed, wallet.account!.net);
   }
 
-  void deriveFirstAddressAndSave(LeaderWallet wallet) {
-    var addrInt = deriveAddress(wallet, 0, exposure: NodeExposure.Internal);
-    addresses.save(addrInt);
-    var addrExt = deriveAddress(wallet, 0, exposure: NodeExposure.External);
-    addresses.save(addrExt);
-  }
-
   /// returns the next internal or external node missing a history
   HDWallet getNextEmptyWallet(LeaderWallet leaderWallet,
       {NodeExposure exposure = NodeExposure.Internal}) {
@@ -102,7 +69,7 @@ class LeaderWalletService {
     var i = 0;
     while (true) {
       var hdWallet = seedWallet.subwallet(i, exposure: exposure);
-      if (vins.byScripthash.getAll(hdWallet.scripthash).isEmpty) {
+      if (vouts.byAddress.getAll(hdWallet.address!).isEmpty) {
         return hdWallet;
       }
       i++;
@@ -142,30 +109,46 @@ class LeaderWalletService {
   Set<Address> maybeDeriveNextAddresses(
     LeaderWallet leaderWallet,
     CipherBase cipher,
-    NodeExposure exposure,
-  ) {
+    NodeExposure exposure, {
+    int witnessedHDIndex = 0,
+  }) {
     var currentGap = exposure == NodeExposure.External
         ? leaderWallet.emptyExternalAddresses.length
         : leaderWallet.emptyInternalAddresses.length;
     var usedCount = exposure == NodeExposure.External
         ? leaderWallet.usedExternalAddresses.length
         : leaderWallet.usedInternalAddresses.length;
-    var newAddresses = {
-      for (var i = 0; i < requiredGap - currentGap; i++)
-        deriveAddress(leaderWallet, usedCount + i, exposure: exposure)
-    };
-    if (leaderWallet.walletId ==
-        '03d992f22d9e178a4de02e99ffffe885bd5135e65d183200da3b566502eca79342') {
-      print('exposure, $exposure');
-      print('usedCount $usedCount');
-      print('currentGap $currentGap');
-      print('newAddresses ${newAddresses.map((a) => a.address)}');
-      //if (exposure == NodeExposure.Internal) {
-      //  print(leaderWallet.emptyInternalAddresses);
-      //}
+    var expectedhdIndex = (currentGap + usedCount - 1);
+    var hdIndexKey = addressRegistryKey(leaderWallet, exposure);
+    addressRegistry[hdIndexKey] =
+        addressRegistry[hdIndexKey] ?? expectedhdIndex;
+    var hdIndex = addressRegistry[hdIndexKey]!;
+    if (currentGap < requiredGap) {
+      return {deriveAddress(leaderWallet, hdIndex + 1, exposure: exposure)};
     }
-    return newAddresses;
+    //if (witnessedHDIndex + 1 >= usedCount) {
+    //  var newAddresses = {
+    //    for (var i = 0; i < requiredGap - currentGap; i++)
+    //      deriveAddress(leaderWallet, usedCount + i, exposure: exposure)
+    //  };
+    //  if (leaderWallet.walletId ==
+    //      '03d992f22d9e178a4de02e99ffffe885bd5135e65d183200da3b566502eca79342') {
+    //    print('witnessedHDIndex, $witnessedHDIndex');
+    //    print('exposure, $exposure');
+    //    print('usedCount $usedCount');
+    //    print('currentGap $currentGap');
+    //    print('newAddresses ${newAddresses.map((a) => a.address)}');
+    //    //if (exposure == NodeExposure.Internal) {
+    //    //  print(leaderWallet.emptyInternalAddresses);
+    //    //}
+    //  }
+    //  return newAddresses;
+    //}
+    return {};
   }
 
   HDWallet getChangeWallet(LeaderWallet wallet) => getNextEmptyWallet(wallet);
+
+  String addressRegistryKey(LeaderWallet wallet, NodeExposure exposure) =>
+      '${wallet.walletId}:${describeEnum(exposure)}';
 }

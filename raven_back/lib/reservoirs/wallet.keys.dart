@@ -22,3 +22,16 @@ extension ByAccountMethodsForWallet on Index<_AccountKey, Wallet> {
   List<Wallet> getAll(String accountId) => getByKeyStr(accountId);
   Wallet? getOne(String accountId) => getByKeyStr(accountId).firstOrNull;
 }
+
+/// byAccount
+
+class _WalletTypeKey extends Key<Wallet> {
+  @override
+  String getKey(Wallet wallet) => wallet.walletTypeToString;
+}
+
+extension ByWalletTypeMethodsForWallet on Index<_WalletTypeKey, Wallet> {
+  List<Wallet> getAllByString(String walletType) => getByKeyStr(walletType);
+  List<Wallet> getAll(WalletType walletType) =>
+      getByKeyStr(describeEnum(walletType));
+}

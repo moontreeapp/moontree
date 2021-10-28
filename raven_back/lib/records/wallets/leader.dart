@@ -1,15 +1,11 @@
 import 'package:hive/hive.dart';
 import 'package:raven/raven.dart';
-import 'package:raven/records/cipher_update.dart';
-import 'package:raven/records/wallets/wallet.dart';
-import 'package:raven/security/cipher_base.dart';
-import 'package:raven/security/encrypted_entropy.dart';
-import 'package:raven/security/security.dart';
+import 'package:raven/services/wallet/constants.dart';
+import 'package:raven/utils/enum.dart';
 import 'package:raven/utils/seed_wallet.dart';
 import 'package:ravencoin/ravencoin.dart';
 
 import '../_type_id.dart';
-import '../net.dart';
 
 part 'leader.g.dart';
 
@@ -51,4 +47,13 @@ class LeaderWallet extends Wallet {
 
   @override
   SecretType get secretType => EncryptedEntropy.secretType;
+
+  @override
+  WalletType get walletType => WalletType.leader;
+
+  @override
+  String get secretTypeToString => describeEnum(secretType);
+
+  @override
+  String get walletTypeToString => describeEnum(walletType);
 }

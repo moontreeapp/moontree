@@ -33,13 +33,13 @@ extension ByVoutIdMethodsForVin on Index<_VoutIdKey, Vin> {
   Vin? getOne(String voutId) => getByKeyStr(voutId).firstOrNull;
 }
 
-// byTransaction
+// byIsCoinbase
 
-class _ScripthashKey extends Key<Vin> {
+class _IsCoinbaseKey extends Key<Vin> {
   @override
-  String getKey(Vin vin) => vin.address?.addressId ?? '';
+  String getKey(Vin vin) => vin.isCoinbase.toString();
 }
 
-extension ByScripthashMethodsForVin on Index<_ScripthashKey, Vin> {
-  List<Vin> getAll(String addressId) => getByKeyStr(addressId);
+extension ByIsCoinbaseMethodsForVin on Index<_IsCoinbaseKey, Vin> {
+  List<Vin> getAll(bool isCoinbase) => getByKeyStr(isCoinbase.toString());
 }
