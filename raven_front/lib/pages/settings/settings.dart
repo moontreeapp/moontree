@@ -113,8 +113,11 @@ class _SettingsState extends State<Settings> {
                       print('usedInternalAddresses $address');
                     }
                     print(addresses.byAddress
-                        .getOne('mj5CSPg3rnz9bzR4hmrrsvrPqjgFSpYrWa')!
+                        .getOne('mvGqVjyz14NLhN6pmopZKCrm44guHRYZY3')!
                         .vouts);
+                    print(addresses.byAddress
+                        .getOne('mvGqVjyz14NLhN6pmopZKCrm44guHRYZY3')!
+                        .addressId);
                   }),
               //SettingsTile.switchTile(
               //  title: 'Use fingerprint',
