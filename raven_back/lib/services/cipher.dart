@@ -16,8 +16,11 @@ class CipherService {
   CipherUpdate get currentCipherUpdate =>
       CipherUpdate(latestCipherType, passwordId: passwords.maxPasswordId);
 
-  CipherBase? get currentCipher =>
-      ciphers.primaryIndex.getOne(currentCipherUpdate)?.cipher;
+  // TODO: change this to currentCipherBase
+  CipherBase? get currentCipher => currentCipher2?.cipher;
+
+  Cipher? get currentCipher2 =>
+      ciphers.primaryIndex.getOne(currentCipherUpdate);
 
   /// make sure all wallets are on the latest ciphertype and password
   Future updateWallets({CipherBase? cipher}) async {

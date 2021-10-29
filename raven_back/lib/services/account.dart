@@ -57,4 +57,14 @@ class AccountService {
     }
     throw WalletMissing("Account '${account.accountId}' has no change wallets");
   }
+
+  void makeFirstWallet(Account account, Cipher currentCipher) {
+    if (wallets.byAccount.getAll(account.accountId).isEmpty) {
+      services.wallet.leader.makeSaveLeaderWallet(
+        account.accountId,
+        currentCipher.cipher,
+        cipherUpdate: currentCipher.cipherUpdate,
+      );
+    }
+  }
 }
