@@ -1,10 +1,9 @@
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:rxdart/rxdart.dart';
 
-import 'app_state.dart';
 import 'behavior_subjects.dart';
 
-class ClientAndLogin extends AppState {
+class ClientAndLogin {
   final RavenElectrumClient? client;
   final bool login;
 
