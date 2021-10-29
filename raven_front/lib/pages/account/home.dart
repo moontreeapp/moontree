@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/components.dart';
+import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/theme/theme.dart';
 
@@ -94,6 +95,7 @@ class _HomeState extends State<Home> {
       child: AppBar(
           automaticallyImplyLeading: true,
           actions: <Widget>[
+            indicators.client,
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
                 child: components.buttons.settings(context, () {

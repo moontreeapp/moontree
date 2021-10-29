@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raven/services/busy.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/components/components.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -92,33 +93,7 @@ class _SettingsState extends State<Settings> {
               SettingsTile(
                   title: 'show data',
                   leading: Icon(Icons.info_outline_rounded),
-                  onPressed: (BuildContext context) {
-                    var wallet = wallets.primaryIndex.getOne(
-                        '03d992f22d9e178a4de02e99ffffe885bd5135e65d183200da3b566502eca79342');
-                    print(wallet);
-                    for (var address in wallet!.emptyExternalAddresses
-                        .map((a) => a.address)) {
-                      print('emptyExternalAddresses $address');
-                    }
-                    for (var address
-                        in wallet.usedExternalAddresses.map((a) => a.address)) {
-                      print('usedExternalAddresses $address');
-                    }
-                    for (var address in wallet.emptyInternalAddresses
-                        .map((a) => a.address)) {
-                      print('emptyInternalAddresses $address');
-                    }
-                    for (var address
-                        in wallet.usedInternalAddresses.map((a) => a.address)) {
-                      print('usedInternalAddresses $address');
-                    }
-                    print(addresses.byAddress
-                        .getOne('mvGqVjyz14NLhN6pmopZKCrm44guHRYZY3')!
-                        .vouts);
-                    print(addresses.byAddress
-                        .getOne('mvGqVjyz14NLhN6pmopZKCrm44guHRYZY3')!
-                        .addressId);
-                  }),
+                  onPressed: (BuildContext context) {}),
               //SettingsTile.switchTile(
               //  title: 'Use fingerprint',
               //  leading: Icon(Icons.fingerprint),
