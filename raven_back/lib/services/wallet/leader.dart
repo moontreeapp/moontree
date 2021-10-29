@@ -132,4 +132,20 @@ class LeaderWalletService {
 
   String addressRegistryKey(LeaderWallet wallet, NodeExposure exposure) =>
       '${wallet.walletId}:${describeEnum(exposure)}';
+
+  void deriveMoreAddresses(
+    LeaderWallet wallet, {
+    List<NodeExposure>? exposures,
+  }) {
+    exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];
+    var newAddresses = <Address>{};
+    for (var exposure in exposures) {
+      newAddresses.addAll(maybeDeriveNextAddresses(
+        wallet,
+        ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
+        exposure,
+      ));
+    }
+    addresses.saveAll(newAddresses);
+  }
 }

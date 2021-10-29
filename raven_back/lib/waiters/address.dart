@@ -9,7 +9,18 @@ class AddressWaiter extends Waiter {
       batchedChanges.forEach((change) {
         change.when(
             loaded: (loaded) {},
-            added: (added) {},
+            added: (added) {
+              var address = added.data;
+              if (address.wallet is LeaderWallet) {
+                var wallet = address.wallet as LeaderWallet;
+                if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
+                  services.wallet.leader.deriveMoreAddresses(
+                    wallet,
+                    exposures: [address.exposure],
+                  );
+                }
+              }
+            },
             updated: (updated) {},
             removed: (removed) {
               var address = removed.data;

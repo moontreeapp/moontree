@@ -134,6 +134,7 @@ class AddressSubscriptionWaiter extends Waiter {
         change.when(
             loaded: (loaded) {},
             added: (added) {
+              services.busy.busyMessages.add('client');
               Address address = added.data;
               var client = services.client.mostRecentRavenClient;
               if (client == null) {
@@ -141,6 +142,7 @@ class AddressSubscriptionWaiter extends Waiter {
               } else {
                 subscribe(client, address);
               }
+              services.busy.busyMessages.remove('client');
             },
             updated: (updated) {},
             removed: (removed) {
