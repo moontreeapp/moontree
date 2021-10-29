@@ -6,7 +6,7 @@ import 'package:tuple/tuple.dart';
 
 class AddressService {
   /// when an address status change: make our historic tx data match blockchain
-  Future getAndSaveTransaction(
+  Future getAndSaveTransactions(
     List<Address> changedAddresses,
     RavenElectrumClient client,
   ) async {
@@ -58,7 +58,6 @@ class AddressService {
         for (var vout in tx.vout) {
           if (vout.scriptPubKey.type == 'nulldata') continue;
           var vs = await handleAssetData(client, tx, vout);
-          print('to address ${vout.scriptPubKey.addresses![0]}');
           newVouts.add(Vout(
             txId: tx.txid,
             rvnValue: vs.item1,

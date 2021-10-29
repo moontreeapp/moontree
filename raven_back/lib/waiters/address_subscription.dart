@@ -20,6 +20,7 @@ class AddressSubscriptionWaiter extends Waiter {
   final Map<String, StreamSubscription> subscriptionHandles = {};
   final PublishSubject<Address> addressesNeedingUpdate = PublishSubject();
   final loggedInFlag = false;
+  late int id = 0;
 
   Set<Address> backlogSubscriptions = {};
   Set<Address> backlogRetrievals = {};
@@ -121,10 +122,14 @@ class AddressSubscriptionWaiter extends Waiter {
 
   Future retrieve(
       RavenElectrumClient client, List<Address> changedAddresses) async {
-    await services.address.getAndSaveTransaction(
+    var msg = 'Downloading transactions for ${changedAddresses.length} '
+        'address${changedAddresses.length == 1 ? '' : 'es'}...';
+    services.busy.clientOn(msg);
+    await services.address.getAndSaveTransactions(
       changedAddresses,
       client,
     );
+    services.busy.clientOff(msg);
   }
 
   void setupNewAddressListener() {
@@ -133,8 +138,7 @@ class AddressSubscriptionWaiter extends Waiter {
       batchedChanges.forEach((change) {
         change.when(
             loaded: (loaded) {},
-            added: (added) {
-              services.busy.busyMessages.add('client');
+            added: (added) async {
               Address address = added.data;
               var client = services.client.mostRecentRavenClient;
               if (client == null) {
@@ -142,7 +146,6 @@ class AddressSubscriptionWaiter extends Waiter {
               } else {
                 subscribe(client, address);
               }
-              services.busy.busyMessages.remove('client');
             },
             updated: (updated) {},
             removed: (removed) {
