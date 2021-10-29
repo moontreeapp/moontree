@@ -67,7 +67,7 @@ class _HomeState extends State<Home> {
         length: 2,
         child: Scaffold(
           appBar: balanceHeader(),
-          //drawer: accountsView(), // alpha hide
+          drawer: accounts.data.length > 1 ? accountsView() : null,
           body: TabBarView(children: [
             components.lists.holdingsView(
               context,
@@ -102,7 +102,8 @@ class _HomeState extends State<Home> {
           ],
           elevation: 2,
           centerTitle: false,
-          title: Text(Current.account.name),
+          title: Text(
+              accounts.data.length > 1 ? Current.account.name : 'My Wallet'),
           flexibleSpace: Container(
             alignment: Alignment.center,
             // balance view should listen for valid usd
