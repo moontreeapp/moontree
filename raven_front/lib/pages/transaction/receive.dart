@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/components.dart';
+import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/utils/params.dart';
 import 'package:raven_mobile/utils/utils.dart';
@@ -80,14 +81,17 @@ class _ReceiveState extends State<Receive> {
   }
 
   AppBar header() => AppBar(
-        leading: components.buttons.back(context),
-        elevation: 2,
-        centerTitle: false,
-        title: Text(
-          //(data['accounts'][data['account']] ?? 'Unknown') + ' Wallet',
-          'Address',
-        ),
-      );
+          leading: components.buttons.back(context),
+          elevation: 2,
+          centerTitle: false,
+          title: Text(
+            //(data['accounts'][data['account']] ?? 'Unknown') + ' Wallet',
+            'Address',
+          ),
+          actions: [
+            indicators.process,
+            indicators.client,
+          ]);
 
   ListView body() => ListView(
           shrinkWrap: true,

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/components.dart';
+import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/utils/export.dart';
 import 'package:raven_mobile/utils/utils.dart';
@@ -58,10 +59,15 @@ class _ExportState extends State<Export> {
   String get _accountId => account != null ? account!.accountId : 'AllAccounts';
 
   AppBar header() => AppBar(
-      leading: components.buttons.back(context),
-      elevation: 2,
-      centerTitle: false,
-      title: Text('Export ' + _accountName));
+        leading: components.buttons.back(context),
+        elevation: 2,
+        centerTitle: false,
+        title: Text('Export ' + _accountName),
+        actions: [
+          indicators.process,
+          indicators.client,
+        ],
+      );
 
   //Future<File> _download() async => await writeToExport(
   //    filename: _accountId + '-' + DateTime.now().toString(),

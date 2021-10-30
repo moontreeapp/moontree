@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
 import 'package:raven/services/transaction.dart';
 import 'package:raven_mobile/components/components.dart';
+import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
@@ -61,6 +62,8 @@ class _RavenTransactionsState extends State<RavenTransactions> {
           centerTitle: false,
           leading: components.buttons.back(context),
           actions: <Widget>[
+            indicators.process,
+            indicators.client,
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
                 child: components.buttons.settings(context, () {

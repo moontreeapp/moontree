@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/components.dart';
+import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 import 'package:raven_mobile/utils/transform.dart';
 
@@ -66,6 +67,8 @@ class _TechnicalViewState extends State<TechnicalView> {
       elevation: 2,
       centerTitle: false,
       actions: <Widget>[
+        indicators.process,
+        indicators.client,
         IconButton(
             onPressed: () => _exportAll(context), icon: components.icons.export)
       ],

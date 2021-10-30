@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:raven_mobile/components/components.dart';
+import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 import 'package:raven_mobile/utils/transform.dart';
 import 'package:raven/raven.dart';
@@ -56,10 +57,15 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
       Scaffold(appBar: header(), body: body());
 
   AppBar header() => AppBar(
-      leading: components.buttons.back(context),
-      elevation: 2,
-      centerTitle: false,
-      title: Text('Electrum Server'));
+        leading: components.buttons.back(context),
+        elevation: 2,
+        centerTitle: false,
+        title: Text('Electrum Server'),
+        actions: [
+          indicators.process,
+          indicators.client,
+        ],
+      );
 
   ListView body() => ListView(
         padding: EdgeInsets.all(20),

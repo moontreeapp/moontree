@@ -26,10 +26,14 @@ class _AccountSettingsState extends State<AccountSettings> {
   }
 
   AppBar header() => AppBar(
-      leading: components.buttons.back(context),
-      elevation: 2,
-      centerTitle: false,
-      title: Text('Account Settings'));
+          leading: components.buttons.back(context),
+          elevation: 2,
+          centerTitle: false,
+          title: Text('Account Settings'),
+          actions: [
+            indicators.process,
+            indicators.client,
+          ]);
 
   SettingsList body() => SettingsList(sections: [
         SettingsSection(tiles: [

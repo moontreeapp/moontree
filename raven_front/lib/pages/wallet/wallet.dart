@@ -4,6 +4,7 @@ import 'package:raven/utils/enum.dart';
 import 'package:raven/utils/extensions.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/components.dart';
+import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 import 'package:raven_mobile/utils/utils.dart';
@@ -89,6 +90,10 @@ class _WalletViewState extends State<WalletView> {
           elevation: 2,
           centerTitle: false,
           title: Text('Wallet'),
+          actions: [
+            indicators.process,
+            indicators.client,
+          ],
           flexibleSpace: Container(
             alignment: Alignment(0.0, -0.5),
             child: Text(

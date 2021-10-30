@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/components.dart';
+import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/utils/params.dart';
 import 'package:raven_mobile/utils/utils.dart';
@@ -58,6 +59,10 @@ class _CreateAssetState extends State<CreateAsset> {
         centerTitle: false,
         leading: components.buttons.back(context),
         title: Text('Create Asset'),
+        actions: [
+          indicators.process,
+          indicators.client,
+        ],
       );
 
   ListView body() {

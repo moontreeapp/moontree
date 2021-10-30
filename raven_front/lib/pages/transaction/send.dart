@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin/ravencoin.dart' as ravencoin;
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/components.dart';
+import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/utils/address.dart';
 import 'package:raven_mobile/utils/params.dart';
@@ -101,6 +102,8 @@ class _SendState extends State<Send> {
           centerTitle: false,
           leading: components.buttons.back(context),
           actions: <Widget>[
+            indicators.process,
+            indicators.client,
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
                 child: components.buttons.settings(context, () {

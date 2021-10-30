@@ -42,10 +42,14 @@ class _ChangePasswordState extends State<ChangePassword> {
       );
 
   AppBar header() => AppBar(
-      leading: components.buttons.back(context),
-      elevation: 2,
-      centerTitle: false,
-      title: Text('Change Password'));
+          leading: components.buttons.back(context),
+          elevation: 2,
+          centerTitle: false,
+          title: Text('Change Password'),
+          actions: [
+            indicators.process,
+            indicators.client,
+          ]);
 
   TextButton submitButton() => TextButton.icon(
       onPressed: validateExistingCondition(validatedExisting) &&

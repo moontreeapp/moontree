@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:raven_mobile/components/components.dart';
+import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
 class Currency extends StatefulWidget {
@@ -30,6 +31,10 @@ class _CurrencyState extends State<Currency> {
         elevation: 2,
         centerTitle: false,
         title: Text('Currency Settings'),
+        actions: [
+          indicators.process,
+          indicators.client,
+        ],
       );
 
   SettingsList body() => SettingsList(sections: [

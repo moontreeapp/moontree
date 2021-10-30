@@ -7,6 +7,7 @@ import 'package:raven_mobile/theme/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/components.dart';
+import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
 class TransactionPage extends StatefulWidget {
@@ -89,6 +90,8 @@ class _TransactionPageState extends State<TransactionPage> {
           centerTitle: false,
           leading: components.buttons.back(context),
           actions: <Widget>[
+            indicators.process,
+            indicators.client,
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
                 child: components.buttons.settings(context, () {
