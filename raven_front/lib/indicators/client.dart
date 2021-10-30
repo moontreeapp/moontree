@@ -47,7 +47,6 @@ class _ClientIndicatorState extends State<ClientIndicator> {
     var icon;
     var status;
     var message;
-    //if (services.busy.clientBusy) {
     if (active) {
       icon = Icon(Icons.swap_vert_rounded);
       status = 'Active';

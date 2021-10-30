@@ -75,7 +75,7 @@ class ListComponents {
           ListTile(
             onTap: () => Navigator.pushNamed(context, '/transaction',
                 arguments: {'transactionRecord': transactionRecord}),
-            onLongPress: onLongPress != null ? onLongPress() : () {},
+            onLongPress: onLongPress != null ? () => onLongPress() : () {},
             leading:
                 components.icons.assetAvatar(transactionRecord.security.symbol),
             title: Row(
@@ -123,7 +123,7 @@ class ListComponents {
                     'holding': holding,
                     'walletId': wallet?.walletId ?? null
                   }),
-          onLongPress: onLongPress != null ? onLongPress() : () {},
+          onLongPress: onLongPress != null ? () => onLongPress() : () {},
           leading: components.icons.assetAvatar(holding.security.symbol),
           title: Text(holding.security.symbol,
               style: holding.security.symbol == 'RVN'

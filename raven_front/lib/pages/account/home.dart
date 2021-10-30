@@ -95,6 +95,7 @@ class _HomeState extends State<Home> {
       child: AppBar(
           automaticallyImplyLeading: true,
           actions: <Widget>[
+            indicators.process,
             indicators.client,
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
@@ -104,8 +105,8 @@ class _HomeState extends State<Home> {
           ],
           elevation: 2,
           centerTitle: false,
-          title: Text(
-              accounts.data.length > 1 ? Current.account.name : 'My Wallet'),
+          title:
+              Text(accounts.data.length > 1 ? Current.account.name : 'Wallet'),
           flexibleSpace: Container(
             alignment: Alignment.center,
             // balance view should listen for valid usd

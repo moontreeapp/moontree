@@ -372,6 +372,7 @@ class _SendState extends State<Send> {
 
   /// todo: fix the please wait, this is kinda sad:
   Future buildTransactionWithMessageAndConfirm(int sendAmountAsSats) async {
+    services.busy.createTransactionOn();
     showDialog(
         context: context,
         builder: (BuildContext context) =>
@@ -410,6 +411,7 @@ class _SendState extends State<Send> {
               goal: feeGoal,
             );
     }
+    services.busy.createTransactionOff();
     Navigator.pop(context);
     confirmMessage(tx: tuple.item1, estimate: tuple.item2);
   }
