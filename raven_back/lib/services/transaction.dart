@@ -1,4 +1,3 @@
-import 'package:raven/utils/exceptions.dart';
 import 'package:raven/raven.dart';
 
 class TransactionService {

@@ -80,9 +80,11 @@ class LeaderWalletService {
       {required CipherUpdate cipherUpdate,
       String? entropy,
       bool alwaysReturn = false}) {
+    services.busy.createWalletOn();
     entropy = entropy ?? bip39.mnemonicToEntropy(bip39.generateMnemonic());
     var encryptedEntropy = EncryptedEntropy.fromEntropy(entropy, cipher);
     var existingWallet = wallets.primaryIndex.getOne(encryptedEntropy.walletId);
+    services.busy.createWalletOff();
     if (existingWallet == null) {
       return LeaderWallet(
         walletId: encryptedEntropy.walletId,
@@ -137,6 +139,7 @@ class LeaderWalletService {
     LeaderWallet wallet, {
     List<NodeExposure>? exposures,
   }) {
+    services.busy.addressDerivationOn();
     exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];
     var newAddresses = <Address>{};
     for (var exposure in exposures) {
@@ -147,5 +150,6 @@ class LeaderWalletService {
       ));
     }
     addresses.saveAll(newAddresses);
+    services.busy.addressDerivationOff();
   }
 }

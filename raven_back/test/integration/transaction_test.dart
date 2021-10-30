@@ -18,11 +18,9 @@ void main() async {
       print('wallets: ${wallets.data}');
       print('passwords: ${passwords.data}');
       print('addresses: ${addresses.data}');
-      print('histories: ${histories.data}');
       print('balances: ${balances.data}');
       print('rates: ${rates.data}');
       print('settings: ${settings.data}');
-      print('cipherRegistry: $cipherRegistry');
       /* errors */
       var tuple = services.transact.buildTransaction(
         accounts.primaryIndex.getByKeyStr('Primary').first,

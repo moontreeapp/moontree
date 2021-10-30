@@ -38,13 +38,6 @@ class BusyService {
         (Timer t) => clientMessages.remove(clientMessages.firstOrNull));
   }
 
-  //final BehaviorSubject _added = BehaviorSubject<BusyMessage>();
-  //final BehaviorSubject _removed = BehaviorSubject<BusyMessage>();
-
-  //Stream get addedStream => _added.stream;
-  //Stream get removedStream => _removed.stream;
-  //Stream get changedStream => _changed.stream;
-
   void clientAdd(String value) {
     clientMessages.add(value);
     client.add(value);
@@ -57,24 +50,17 @@ class BusyService {
 
   bool clientRemove(String value) {
     var result = clientMessages.remove(value);
-    //var result = clientMessages.removeLike(value);
-    //_removed.add(value);
     client.add(null);
     return result;
   }
 
   bool processRemove(String value) {
     var result = processMessages.remove(value);
-    //var result = processMessages.removeLike(value);
-    //_removed.add(value);
-    process.add(value);
-    print('remove $processMessages, $result');
+    process.add(null);
     return result;
   }
 
   void dispose() {
-    //_added.close();
-    //_removed.close();
     client.close();
     process.close();
     timer.cancel();
@@ -82,9 +68,22 @@ class BusyService {
 
   bool get clientBusy => clientMessages.isNotEmpty;
 
-  void clientOn([String msg = '']) => clientAdd(msg);
-  bool clientOff([String msg = '']) => clientRemove(msg);
+  void clientOn([String msg = 'Connecting to Electurm']) => clientAdd(msg);
+  bool clientOff([String msg = 'Connecting to Electurm']) => clientRemove(msg);
 
-  void addressDerivationOn([String msg = '']) => processAdd(msg);
-  bool addressDerivationOff([String msg = '']) => processRemove(msg);
+  void addressDerivationOn([String msg = 'Deriving New Address']) =>
+      processAdd(msg);
+  bool addressDerivationOff([String msg = 'Deriving New Address']) =>
+      processRemove(msg);
+
+  void encryptionOn([String msg = 'Encrypting Wallet']) => processAdd(msg);
+  bool encryptionOff([String msg = 'Encrypting Wallet']) => processRemove(msg);
+
+  void createWalletOn([String msg = 'Creating Wallet']) => processAdd(msg);
+  bool createWalletOff([String msg = 'Creating Wallet']) => processRemove(msg);
+
+  void createTransactionOn([String msg = 'Creating Transaction']) =>
+      processAdd(msg);
+  bool createTransactionOff([String msg = 'Creating Transaction']) =>
+      processRemove(msg);
 }
