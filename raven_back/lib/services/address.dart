@@ -31,7 +31,13 @@ class AddressService {
       // ignore: omit_local_variable_types
       List<Tx> txs = [
         for (var txHash in histories.map((history) => history.txHash))
-          await client.getTransaction(txHash)
+          if (transactions.primaryIndex.getOne(txHash) == null)
+
+            /// if we should pause for cost purposes we'd have to do it here.
+            /// use .our_stats to find out
+
+            /// get missing transaction
+            await client.getTransaction(txHash)
       ];
 
       /// save all vins, vouts and transactions
