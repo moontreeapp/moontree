@@ -81,10 +81,13 @@ class _AssetState extends State<Asset> {
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(height: 15.0),
-                    components.icons
-                        .assetAvatar(data['holding']!.security.symbol),
-                    SizedBox(height: 15.0),
+                    SizedBox(height: 45.0),
+                    Container(
+                        height: 90,
+                        width: 90,
+                        child: components.icons
+                            .assetAvatar(data['holding']!.security.symbol)),
+                    SizedBox(height: 10.0),
                     Text(
                         components.text.securityAsReadable(
                             data['holding']!.value,

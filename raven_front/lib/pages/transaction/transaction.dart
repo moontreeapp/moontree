@@ -177,8 +177,12 @@ class _TransactionPageState extends State<TransactionPage> {
                 : []),
             SizedBox(height: 15.0),
             InkWell(
-                child: Text('Transaction ID: ${transaction!.txId}',
-                    style: TextStyle(color: Theme.of(context).primaryColor)),
+                child: Wrap(children: [
+                  Text('Transaction ID: '),
+                  Text('${transaction!.txId}',
+                      style: TextStyle(
+                          color: Theme.of(context).primaryColorLight)),
+                ]),
                 onTap: () => launch(
                     'https://rvnt.cryptoscope.io/tx/?txid=${transaction!.txId}')),
             SizedBox(height: 15.0),
@@ -199,8 +203,11 @@ class _TransactionPageState extends State<TransactionPage> {
                   onTap: () {/* copy the amount to clipboard */},
                   onLongPress: () {},
                   contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
-                  leading:
-                      components.icons.assetAvatar(vin.vout!.security!.symbol),
+                  leading: Container(
+                      height: 50,
+                      width: 50,
+                      child: components.icons
+                          .assetAvatar(vin.vout!.security!.symbol)),
                   title: Text(vin.vout!.security!.symbol,
                       style: Theme.of(context).textTheme.bodyText2),
                   trailing: Text(components.text.securityAsReadable(
@@ -236,18 +243,3 @@ class _TransactionPageState extends State<TransactionPage> {
         ]),
       ]);
 }
-
-/*
-remaining issues:
-1. transactions should not be associated with addresses, Vins and Vouts should be
-2. we need to capture all the vouts for all vins that don't have a vout (don't need to capture entire transaction (don't need vins))
-3. make sure block reservoir is working
-
-
-I think we should have Vins associated with an address. 
-upon new address go get all the transactions for those but don't purge them by transaction, purge by vins and vouts...
-then have address.vins and address.vouts and vin.address and vout.address joins
-and have address.transactions (all transactions that contain the vins and outs)
-never purge transactions
-Also have a waiter watching for new transactions. 
-*/

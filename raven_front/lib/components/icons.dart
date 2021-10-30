@@ -20,12 +20,15 @@ class IconComponents {
 
   Icon get export => Icon(Icons.save);
 
-  AssetImage assetImage(asset) =>
-      {'RVN': AssetImage('assets/rvnhead.png')}[asset] ??
-      AssetImage('assets/defaultasset.png');
+  String assetImage(asset) =>
+      {'RVN': 'assets/rvn.png'}[asset] ?? 'assets/defaultasset.png';
 
-  CircleAvatar assetAvatar(asset) =>
-      CircleAvatar(backgroundImage: assetImage(asset));
+  //CircleAvatar assetAvatar(asset) =>
+  //    CircleAvatar(backgroundImage: AssetImage(assetImage(asset)));
+  //ClipRRect assetAvatar(asset) => ClipRRect(
+  //    // borderRadius: BorderRadius.circular(20.0), //or 15.0
+  //    child: Image.asset(assetImage(asset)));
+  Image assetAvatar(asset) => Image.asset(assetImage(asset));
 
   CircleAvatar appAvatar() =>
       CircleAvatar(backgroundImage: AssetImage('assets/rvn256.png'));

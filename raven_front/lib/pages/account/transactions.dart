@@ -73,14 +73,17 @@ class _RavenTransactionsState extends State<RavenTransactions> {
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(height: 15.0),
-                    components.icons.assetAvatar('RVN'),
-                    SizedBox(height: 15.0),
+                    SizedBox(height: 45.0),
+                    Container(
+                        height: 90,
+                        width: 90,
+                        child: components.icons.assetAvatar('RVN')),
+                    SizedBox(height: 5.0),
                     Text(
                         components.text.securityAsReadable(currentBalRVN.value,
                             symbol: 'RVN'),
                         style: Theme.of(context).textTheme.headline3),
-                    SizedBox(height: 15.0),
+                    SizedBox(height: 10.0),
                     Text(components.text.rvnUSD(currentBalRVN.rvn),
                         style: Theme.of(context).textTheme.headline5),
                   ]))));

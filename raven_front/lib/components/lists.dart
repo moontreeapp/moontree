@@ -76,8 +76,11 @@ class ListComponents {
             onTap: () => Navigator.pushNamed(context, '/transaction',
                 arguments: {'transactionRecord': transactionRecord}),
             onLongPress: onLongPress != null ? () => onLongPress() : () {},
-            leading:
-                components.icons.assetAvatar(transactionRecord.security.symbol),
+            leading: Container(
+                height: 50,
+                width: 50,
+                child: components.icons
+                    .assetAvatar(transactionRecord.security.symbol)),
             title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -118,13 +121,13 @@ class ListComponents {
     for (var holding in holdings) {
       var thisHolding = ListTile(
           onTap: () => Navigator.pushNamed(context,
-                  holding.security.symbol == 'RVN' ? '/transactions' : '/asset',
-                  arguments: {
-                    'holding': holding,
-                    'walletId': wallet?.walletId ?? null
-                  }),
+              holding.security.symbol == 'RVN' ? '/transactions' : '/asset',
+              arguments: {'holding': holding, 'walletId': wallet?.walletId ?? null}),
           onLongPress: onLongPress != null ? () => onLongPress() : () {},
-          leading: components.icons.assetAvatar(holding.security.symbol),
+          leading: Container(
+              height: 50,
+              width: 50,
+              child: components.icons.assetAvatar(holding.security.symbol)),
           title: Text(holding.security.symbol,
               style: holding.security.symbol == 'RVN'
                   ? Theme.of(context).textTheme.bodyText1
@@ -163,7 +166,10 @@ class ListComponents {
           title: Text('RVN', style: Theme.of(context).textTheme.bodyText1),
           trailing: Text(showUSD ? '\$ 0' : '0',
               style: TextStyle(color: Theme.of(context).fine)),
-          leading: components.icons.assetAvatar('RVN')));
+          leading: Container(
+              height: 50,
+              width: 50,
+              child: components.icons.assetAvatar('RVN'))));
       //rvnHolding.add(ListTile(
       //    onTap: () {},
       //    title: Text('+ Create Asset (not enough RVN)',
