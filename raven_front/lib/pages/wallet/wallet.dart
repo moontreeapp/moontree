@@ -112,19 +112,17 @@ class _WalletViewState extends State<WalletView> {
   TabBarView body() => TabBarView(children: [
         detailsView(),
         // holdings, Current.walletHoldings(wallet.walletId)
-        components.lists.holdingsView(
-          context,
-          showUSD: showUSD,
-          holdings: Current.walletHoldings(wallet.walletId),
-          onLongPress: _toggleUSD,
-        ),
+        components.lists.holdingsView(context,
+            showUSD: showUSD,
+            holdings: Current.walletHoldings(wallet.walletId),
+            onLongPress: _toggleUSD,
+            refresh: setState),
         // transactions histories.byWallet...
-        components.lists.transactionsView(
-          context,
-          showUSD: showUSD,
-          transactions: Current.walletCompiledTransactions(wallet.walletId),
-          onLongPress: _toggleUSD,
-        ),
+        components.lists.transactionsView(context,
+            showUSD: showUSD,
+            transactions: Current.walletCompiledTransactions(wallet.walletId),
+            onLongPress: _toggleUSD,
+            refresh: setState),
       ]);
 
   String get secretName =>

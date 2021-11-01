@@ -48,6 +48,7 @@ class _RavenTransactionsState extends State<RavenTransactions> {
         showUSD: showUSD,
         transactions: currentTxs.where((tx) => tx.security == securities.RVN),
         onLongPress: _toggleUSD,
+        refresh: setState,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: sendReceiveButtons(),

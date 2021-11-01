@@ -11,6 +11,7 @@ class ListComponents {
     BuildContext context, {
     required Iterable<TransactionRecord> transactions,
     required bool showUSD,
+    required Function refresh,
     Function? onLongPress,
     String? msg,
   }) =>
@@ -22,17 +23,33 @@ class ListComponents {
             )
           : Container(
               alignment: Alignment.center,
-              child: _transactionsView(
-                context,
-                transactions: transactions,
-                showUSD: showUSD,
-                onLongPress: onLongPress,
-              ));
+              child: RefreshIndicator(
+                  child: _transactionsView(
+                    context,
+                    transactions: transactions,
+                    showUSD: showUSD,
+                    onLongPress: onLongPress,
+                  ),
+                  onRefresh: () {
+                    return Future.delayed(Duration(seconds: 1), () {
+                      /// adding elements in list after [1 seconds] delay
+                      /// to mimic network call
+                      refresh(() {});
+
+                      // showing snackbar
+                      //_scaffoldKey.currentState.showSnackBar(
+                      //  SnackBar(
+                      //    content: const Text('Page Refreshed'),
+                      //  ),
+                      //);
+                    });
+                  }));
 
   Container holdingsView(
     BuildContext context, {
     required Iterable<Balance> holdings,
     required bool showUSD,
+    required Function refresh,
     Function? onLongPress,
     Wallet? wallet,
     String? msg,
@@ -45,13 +62,28 @@ class ListComponents {
             )
           : Container(
               alignment: Alignment.center,
-              child: _holdingsView(
-                context,
-                holdings: holdings,
-                showUSD: showUSD,
-                onLongPress: onLongPress,
-                wallet: wallet,
-              ));
+              child: RefreshIndicator(
+                  child: _holdingsView(
+                    context,
+                    holdings: holdings,
+                    showUSD: showUSD,
+                    onLongPress: onLongPress,
+                    wallet: wallet,
+                  ),
+                  onRefresh: () {
+                    return Future.delayed(Duration(seconds: 1), () {
+                      /// adding elements in list after [1 seconds] delay
+                      /// to mimic network call
+                      refresh(() {});
+
+                      // showing snackbar
+                      //_scaffoldKey.currentState.showSnackBar(
+                      //  SnackBar(
+                      //    content: const Text('Page Refreshed'),
+                      //  ),
+                      //);
+                    });
+                  }));
 
   Container emptyMessage(
     BuildContext context, {

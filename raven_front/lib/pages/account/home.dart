@@ -63,32 +63,27 @@ class _HomeState extends State<Home> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          appBar: balanceHeader(),
-          drawer: accounts.data.length > 1 ? accountsView() : null,
-          body: TabBarView(children: [
-            components.lists.holdingsView(
-              context,
+  Widget build(BuildContext context) => DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: balanceHeader(),
+        drawer: accounts.data.length > 1 ? accountsView() : null,
+        body: TabBarView(children: [
+          components.lists.holdingsView(context,
               showUSD: showUSD,
               holdings: Current.holdings,
               onLongPress: _toggleUSD,
-            ),
-            components.lists.transactionsView(
-              context,
+              refresh: setState),
+          components.lists.transactionsView(context,
               showUSD: showUSD,
               transactions: Current.compiledTransactions,
               onLongPress: _toggleUSD,
-            )
-          ]),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: sendReceiveButtons(),
-          //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
-        ));
-  }
+              refresh: setState)
+        ]),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: sendReceiveButtons(),
+        //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
+      ));
 
   PreferredSize balanceHeader() => PreferredSize(
       preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),

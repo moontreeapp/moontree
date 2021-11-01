@@ -48,13 +48,15 @@ class _AssetState extends State<Asset> {
         child: Scaffold(
           appBar: header(),
           body: TabBarView(children: [
-            components.lists.transactionsView(context,
-                showUSD: showUSD,
-                transactions: currentTxs.where((tx) =>
-                    tx.security.symbol == data['holding']!.security.symbol),
-                onLongPress: _toggleUSD,
-                msg:
-                    '\nNo ${data['holding']!.security.symbol} transactions.\n'),
+            components.lists.transactionsView(
+              context,
+              showUSD: showUSD,
+              transactions: currentTxs.where((tx) =>
+                  tx.security.symbol == data['holding']!.security.symbol),
+              onLongPress: _toggleUSD,
+              refresh: setState,
+              msg: '\nNo ${data['holding']!.security.symbol} transactions.\n',
+            ),
             _metadataView() ??
                 components.lists.emptyMessage(context,
                     icon: Icons.description, msg: '\nNo metadata.\n'),

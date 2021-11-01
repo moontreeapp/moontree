@@ -1,73 +1,45 @@
 import 'package:raven/raven.dart';
 import 'package:raven/services/transaction.dart';
 
-String currentAccountId() => settings.currentAccountId;
-
-Account currentAccount() => accounts.primaryIndex.getOne(currentAccountId())!;
-
-BalanceUSD currentBalanceUSD() =>
-    services.rate.accountBalanceUSD(currentAccountId(), currentHoldings());
-
-Balance currentBalanceRVN() =>
-    services.balance.accountBalance(currentAccount(), securities.RVN);
-//balances.getOrZero(currentAccountId());
-
-/// our concept of history isn't the same as transactions - must fill out negative values for sent amounts
-Set<Transaction> currentTransactions() => currentAccount().transactions;
-
-List<TransactionRecord> currentCompiledTransactions() =>
-    services.transaction.getTransactionRecords(account: currentAccount());
-
-List<Balance> currentHoldings() =>
-    services.balance.accountBalances(currentAccount());
-
-List<String> currentHoldingNames() =>
-    [for (var balance in currentHoldings()) balance.security.symbol];
-
-Wallet? currentWallet(walletId) => wallets.primaryIndex.getOne(walletId);
-
-Balance currentWalletBalanceRVN(walletId) =>
-    services.balance.walletBalance(currentWallet(walletId)!, securities.RVN);
-
-List<Balance> currentWalletHoldings(String walletId) =>
-    services.balance.walletBalances(currentWallet(walletId)!);
-
-List<String> currentWalletHoldingNames(String walletId) => [
-      for (var balance in currentWalletHoldings(walletId))
-        balance.security.symbol
-    ];
-
-BalanceUSD currentWalletBalanceUSD(String walletId) =>
-    services.rate.accountBalanceUSD(walletId, currentWalletHoldings(walletId));
-
-Set<Transaction> currentWalletTransactions(String walletId) =>
-    currentWallet(walletId)!.transactions;
-
-List<TransactionRecord> currentWalletCompiledTransactions(String walletId) =>
-    services.transaction
-        .getTransactionRecords(wallet: currentWallet(walletId)!);
-
 class Current {
-  static Account get account => currentAccount();
-  static Balance get balanceRVN => currentBalanceRVN();
-  static BalanceUSD get balanceUSD => currentBalanceUSD();
-  static Set<Transaction> get transactions => currentTransactions();
-  static List<TransactionRecord> get compiledTransactions =>
-      currentCompiledTransactions();
-  static List<Balance> get holdings => currentHoldings();
-  static List<String> get holdingNames => currentHoldingNames();
+  static String get accountId => settings.currentAccountId;
 
-  static Wallet wallet(String walletId) => currentWallet(walletId)!;
+  static Account get account => accounts.primaryIndex.getOne(accountId)!;
+
+  static Balance get balanceRVN =>
+      services.balance.accountBalance(account, securities.RVN);
+
+  static BalanceUSD get balanceUSD =>
+      services.rate.accountBalanceUSD(accountId, holdings);
+
+  static Set<Transaction> get transactions => account.transactions;
+
+  static List<TransactionRecord> get compiledTransactions =>
+      services.transaction.getTransactionRecords(account: account);
+
+  static List<Balance> get holdings =>
+      services.balance.accountBalances(account);
+  static List<String> get holdingNames =>
+      [for (var balance in holdings) balance.security.symbol];
+
+  static Wallet wallet(String walletId) =>
+      wallets.primaryIndex.getOne(walletId)!;
+
   static Balance walletBalanceRVN(String walletId) =>
-      currentWalletBalanceRVN(walletId);
+      services.balance.walletBalance(wallet(walletId), securities.RVN);
+
   static BalanceUSD walletBalanceUSD(String walletId) =>
-      currentWalletBalanceUSD(walletId);
+      services.rate.accountBalanceUSD(walletId, walletHoldings(walletId));
+
   static List<Balance> walletHoldings(String walletId) =>
-      currentWalletHoldings(walletId);
+      services.balance.walletBalances(wallet(walletId));
+
   static Set<Transaction> walletTransactions(String walletId) =>
-      currentWalletTransactions(walletId);
+      wallet(walletId).transactions;
+
   static List<String> walletHoldingNames(String walletId) =>
-      currentWalletHoldingNames(walletId);
+      [for (var balance in walletHoldings(walletId)) balance.security.symbol];
+
   static List<TransactionRecord> walletCompiledTransactions(String walletId) =>
-      currentWalletCompiledTransactions(walletId);
+      services.transaction.getTransactionRecords(wallet: wallet(walletId));
 }

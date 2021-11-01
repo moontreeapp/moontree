@@ -100,7 +100,13 @@ class _SettingsState extends State<Settings> {
               SettingsTile(
                   title: 'show data',
                   leading: Icon(Icons.info_outline_rounded),
-                  onPressed: (BuildContext context) {}),
+                  onPressed: (BuildContext context) {
+                    print(passwords.data);
+                    print(services.password.exist);
+                    print(services.password.required);
+                    print(services.cipher.currentCipherUpdate);
+                  }),
+
               //SettingsTile.switchTile(
               //  title: 'Use fingerprint',
               //  leading: Icon(Icons.fingerprint),

@@ -214,7 +214,7 @@ class _ChangePasswordState extends State<ChangePassword> {
           builder: (BuildContext context) => AlertDialog(
               title: Text('Re-encrypting Wallets...'),
               content: Text('Estimated wait time: ' +
-                  _printDuration(Duration(seconds: wallets.data.length * 1)) +
+                  _printDuration(Duration(seconds: wallets.data.length * 2)) +
                   ', please wait...')));
       // this is used to get the please wait message to show up
       // it needs enough time to display the message

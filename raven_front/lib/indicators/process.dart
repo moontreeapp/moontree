@@ -22,10 +22,12 @@ class _ProcessIndicatorState extends State<ProcessIndicator> {
     listeners.add(services.busy.process.stream.listen((value) async {
       if (value == null) {
         await Future.delayed(Duration(seconds: 2));
-        setState(() {
-          lastestValue = value;
-          active = false;
-        });
+        if (mounted) {
+          setState(() {
+            lastestValue = value;
+            active = false;
+          });
+        }
       } else {
         setState(() {
           lastestValue = value;
