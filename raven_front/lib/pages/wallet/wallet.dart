@@ -91,6 +91,7 @@ class _WalletViewState extends State<WalletView> {
           centerTitle: false,
           title: Text('Wallet'),
           actions: [
+            components.status,
             indicators.process,
             indicators.client,
           ],

@@ -67,6 +67,7 @@ class _TechnicalViewState extends State<TechnicalView> {
       elevation: 2,
       centerTitle: false,
       actions: <Widget>[
+        components.status,
         indicators.process,
         indicators.client,
         IconButton(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
+import 'package:raven_mobile/indicators/indicators.dart';
+import 'package:raven_mobile/components/components.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -31,7 +33,11 @@ class _LoginState extends State<Login> {
       );
 
   AppBar header() =>
-      AppBar(elevation: 2, centerTitle: false, title: Text('Login'));
+      AppBar(elevation: 2, centerTitle: false, title: Text('Login'), actions: [
+        components.status,
+        indicators.process,
+        indicators.client,
+      ]);
 
   TextButton submitButton() => TextButton.icon(
       onPressed: () async => await submit(),

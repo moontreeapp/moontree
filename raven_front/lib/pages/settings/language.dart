@@ -32,6 +32,7 @@ class _LanguageState extends State<Language> {
         centerTitle: false,
         title: Text('Language Settings'),
         actions: [
+          components.status,
           indicators.process,
           indicators.client,
         ],

@@ -102,6 +102,7 @@ class _SendState extends State<Send> {
           centerTitle: false,
           leading: components.buttons.back(context),
           actions: <Widget>[
+            components.status,
             indicators.process,
             indicators.client,
             Padding(
@@ -122,7 +123,10 @@ class _SendState extends State<Send> {
                   style: Theme.of(context).textTheme.headline5),
               SizedBox(height: 15.0),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                components.icons.assetAvatar(data['symbol']),
+                Container(
+                    height: 45,
+                    width: 45,
+                    child: components.icons.assetAvatar(data['symbol'])),
                 SizedBox(width: 15.0),
                 Text(data['symbol'],
                     style: Theme.of(context).textTheme.headline5),
@@ -612,7 +616,7 @@ class _SendState extends State<Send> {
                   ]));
     } else {
       // needs testing on testnet
-      var txid = await services.client.sendTransaction(tx.toHex());
+      var txid = await services.client.api.sendTransaction(tx.toHex());
       //var txid = '';
       if (txid != '') {
         showDialog(

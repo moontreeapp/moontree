@@ -48,6 +48,7 @@ class _ChangePasswordState extends State<ChangePassword> {
           centerTitle: false,
           title: Text('Change Password'),
           actions: [
+            components.status,
             indicators.process,
             indicators.client,
           ]);

@@ -64,6 +64,7 @@ class _ExportState extends State<Export> {
         centerTitle: false,
         title: Text('Export ' + _accountName),
         actions: [
+          components.status,
           indicators.process,
           indicators.client,
         ],

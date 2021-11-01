@@ -58,6 +58,7 @@ class _ImportState extends State<Import> {
         centerTitle: false,
         title: Text('Import Wallet'),
         actions: [
+          components.status,
           indicators.process,
           indicators.client,
         ],

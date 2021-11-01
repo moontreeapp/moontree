@@ -89,6 +89,7 @@ class _ReceiveState extends State<Receive> {
             'Address',
           ),
           actions: [
+            components.status,
             indicators.process,
             indicators.client,
           ]);

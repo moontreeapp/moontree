@@ -32,6 +32,7 @@ class _AccountSettingsState extends State<AccountSettings> {
           centerTitle: false,
           title: Text('Account Settings'),
           actions: [
+            components.status,
             indicators.process,
             indicators.client,
           ]);

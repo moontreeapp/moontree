@@ -28,7 +28,7 @@ class _AppLifecycleReactorState extends State<AppLifecycleReactor>
     super.dispose();
   }
 
-  late AppLifecycleState _notification;
+  late AppLifecycleState _notification = AppLifecycleState.resumed;
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -40,6 +40,6 @@ class _AppLifecycleReactorState extends State<AppLifecycleReactor>
 
   @override
   Widget build(BuildContext context) {
-    return Text('Last notification: $_notification');
+    return Visibility(visible: false, child: Text(describeEnum(_notification)));
   }
 }

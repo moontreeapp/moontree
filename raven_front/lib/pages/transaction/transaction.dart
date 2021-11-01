@@ -90,6 +90,7 @@ class _TransactionPageState extends State<TransactionPage> {
           centerTitle: false,
           leading: components.buttons.back(context),
           actions: <Widget>[
+            components.status,
             indicators.process,
             indicators.client,
             Padding(

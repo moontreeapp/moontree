@@ -32,6 +32,7 @@ class _AboutState extends State<About> {
         centerTitle: false,
         title: Text('About'),
         actions: [
+          components.status,
           indicators.process,
           indicators.client,
         ],

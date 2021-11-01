@@ -62,6 +62,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
         centerTitle: false,
         title: Text('Electrum Server'),
         actions: [
+          components.status,
           indicators.process,
           indicators.client,
         ],

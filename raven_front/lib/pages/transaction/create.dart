@@ -60,6 +60,7 @@ class _CreateAssetState extends State<CreateAsset> {
         leading: components.buttons.back(context),
         title: Text('Create Asset'),
         actions: [
+          components.status,
           indicators.process,
           indicators.client,
         ],

@@ -73,6 +73,7 @@ class _AssetState extends State<Asset> {
           centerTitle: false,
           leading: components.buttons.back(context),
           actions: <Widget>[
+            components.status,
             indicators.process,
             indicators.client,
             Padding(

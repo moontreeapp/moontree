@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/components.dart';
+import 'package:raven_mobile/indicators/indicators.dart';
 
 class ChangeResume extends StatefulWidget {
   @override
@@ -35,9 +36,15 @@ class _ChangeResumeState extends State<ChangeResume> {
       );
 
   AppBar header() => AppBar(
-      elevation: 2,
-      centerTitle: false,
-      title: Text('Change Password Process Recovery'));
+        elevation: 2,
+        centerTitle: false,
+        title: Text('Change Password Process Recovery'),
+        actions: [
+          components.status,
+          indicators.process,
+          indicators.client,
+        ],
+      );
 
   Row submitButton() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [

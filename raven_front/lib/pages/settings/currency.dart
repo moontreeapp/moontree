@@ -32,6 +32,7 @@ class _CurrencyState extends State<Currency> {
         centerTitle: false,
         title: Text('Currency Settings'),
         actions: [
+          components.status,
           indicators.process,
           indicators.client,
         ],

@@ -95,6 +95,7 @@ class _HomeState extends State<Home> {
       child: AppBar(
           automaticallyImplyLeading: true,
           actions: <Widget>[
+            components.status,
             indicators.process,
             indicators.client,
             Padding(
@@ -170,7 +171,7 @@ class _HomeState extends State<Home> {
                 trailing:
                     Icon(Icons.add, size: 26.0, color: Colors.grey.shade800)),
             Divider(height: 20, thickness: 2, indent: 5, endIndent: 5)
-          ]
+          ],
         ])
       ]));
 

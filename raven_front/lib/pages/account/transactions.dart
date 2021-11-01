@@ -62,6 +62,7 @@ class _RavenTransactionsState extends State<RavenTransactions> {
           centerTitle: false,
           leading: components.buttons.back(context),
           actions: <Widget>[
+            components.status,
             indicators.process,
             indicators.client,
             Padding(

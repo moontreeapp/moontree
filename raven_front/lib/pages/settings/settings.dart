@@ -36,6 +36,7 @@ class _SettingsState extends State<Settings> {
         centerTitle: false,
         title: Text('Settings'),
         actions: [
+          components.status,
           indicators.process,
           indicators.client,
         ],
