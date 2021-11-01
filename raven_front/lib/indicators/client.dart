@@ -48,17 +48,18 @@ class _ClientIndicatorState extends State<ClientIndicator> {
     var status;
     var message;
     if (active) {
-      icon = Icon(Icons.swap_vert_rounded);
+      icon = Icon(Icons.swap_vert_rounded, size: 15);
       status = 'Active';
       message = lastestValue;
     } else {
-      icon =
-          Icon(Icons.swap_vert_rounded, color: Theme.of(context).disabledColor);
+      icon = Icon(Icons.swap_vert_rounded,
+          size: 15, color: Theme.of(context).disabledColor);
       status = 'Idle';
       message =
           'This is a visual indication of your connection to the Ravencoin Electrum Server.';
     }
     return IconButton(
+        alignment: Alignment.centerLeft,
         onPressed: () => showDialog(
             context: context,
             builder: (BuildContext context) => AlertDialog(

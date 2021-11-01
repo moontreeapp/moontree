@@ -1,3 +1,6 @@
+/// this file could be removed with slight modifications to transactions.dart
+/// that should probably happen at some point - when we start using assets more.
+
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
 import 'package:raven/services/transaction.dart';
@@ -16,9 +19,9 @@ class Asset extends StatefulWidget {
 
 class _AssetState extends State<Asset> {
   Map<String, dynamic> data = {};
+  bool showUSD = false;
   late List<TransactionRecord> currentTxs;
   late List<Balance> currentHolds;
-  bool showUSD = false;
 
   void _toggleUSD() {
     setState(() {

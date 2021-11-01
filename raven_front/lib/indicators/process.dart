@@ -49,19 +49,19 @@ class _ProcessIndicatorState extends State<ProcessIndicator> {
     var status;
     var message;
     if (active) {
-      icon = Icon(Icons.circle, size: 10);
+      icon = Icon(Icons.circle_outlined, size: 10);
       status = 'Active';
       message = lastestValue;
     } else {
-      icon =
-          Icon(Icons.circle, size: 10, color: Theme.of(context).disabledColor);
+      icon = Icon(Icons.circle_outlined,
+          size: 10, color: Theme.of(context).disabledColor);
       status = 'Idle';
       message =
           'This is a visual indication of background activity such as encryption.';
     }
     return IconButton(
         alignment: Alignment.centerRight,
-        padding: EdgeInsets.all(0),
+        //padding: EdgeInsets.all(0),
         onPressed: () => showDialog(
             context: context,
             builder: (BuildContext context) => AlertDialog(

@@ -91,18 +91,6 @@ class _RavenTransactionsState extends State<RavenTransactions> {
                         style: Theme.of(context).textTheme.headline5),
                   ]))));
 
-  Container _emptyMessage({IconData? icon, String? name}) => Container(
-      alignment: Alignment.center,
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(icon ?? Icons.description,
-                size: 50.0, color: Theme.of(context).secondaryHeaderColor),
-            Text('\nRVN $name empty.\n',
-                style: Theme.of(context).textTheme.headline3),
-          ]));
-
   Row sendReceiveButtons() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         components.buttons.receive(context),
