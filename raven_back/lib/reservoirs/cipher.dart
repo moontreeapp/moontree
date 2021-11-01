@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
-import 'package:raven/records/cipher.dart';
 import 'package:raven/security/cipher_aes.dart';
 import 'package:raven/security/cipher_base.dart';
 import 'package:raven/security/cipher_none.dart';
@@ -25,7 +24,7 @@ class CipherReservoir extends Reservoir<_CipherUpdateKey, Cipher> {
   }
 
   static Map<CipherType, Function> cipherInitializers = {
-    CipherType.None: (Uint8List password) => CipherNone(),
+    CipherType.None: ([Uint8List? password]) => CipherNone(),
     CipherType.AES: (Uint8List password) => CipherAES(password),
   };
 
