@@ -31,7 +31,7 @@ class ListComponents {
                     onLongPress: onLongPress,
                   ),
                   onRefresh: () {
-                    return Future.delayed(Duration(seconds: 1), () {
+                    return Future.delayed(Duration(microseconds: 1), () {
                       /// adding elements in list after [1 seconds] delay
                       /// to mimic network call
                       refresh(() {});
