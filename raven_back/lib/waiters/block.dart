@@ -66,5 +66,10 @@ class BlockWaiter extends Waiter {
       E/flutter ( 8787): #27     _startMicrotaskLoop (dart:async/schedule_microtask.dart:49:5)
       */
     }
+
+    // update existing mempool transactions each block
+    listen<Change<Block>>('blocks.changes', blocks.changes, (change) {
+      services.address.getAndSaveMempoolTransactions();
+    });
   }
 }

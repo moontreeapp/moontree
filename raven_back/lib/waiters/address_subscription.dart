@@ -123,7 +123,7 @@ class AddressSubscriptionWaiter extends Waiter {
     var msg = 'Downloading transactions for ${changedAddresses.length} '
         'address${changedAddresses.length == 1 ? '' : 'es'}...';
     services.busy.clientOn(msg);
-    await services.address.getAndSaveTransactions(
+    await services.address.getAndSaveTransactionsByAddresses(
       changedAddresses,
       client,
     );

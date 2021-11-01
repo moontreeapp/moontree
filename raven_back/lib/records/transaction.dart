@@ -74,7 +74,7 @@ class Transaction with EquatableMixin {
 
   String get formattedDatetime => time != null
       ? formatDate(datetime, [MM, ' ', d, ', ', yyyy])
-      : formatDate(DateTime.now(), [MM, ' ', d, ', ', yyyy]);
-  //: 'in mempool'; // if it's in the mempool that should be known by some other metric - status or something
+      //: formatDate(DateTime.now(), [MM, ' ', d, ', ', yyyy]);
+      : 'in mempool'; // if it's in the mempool that should be known by some other metric - status or something
 
 }

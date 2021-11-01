@@ -6,7 +6,7 @@ import 'package:tuple/tuple.dart';
 
 class AddressService {
   /// when an address status change: make our historic tx data match blockchain
-  Future getAndSaveTransactions(
+  Future getAndSaveTransactionsByAddresses(
     List<Address> changedAddresses,
     RavenElectrumClient client,
   ) async {
@@ -40,67 +40,98 @@ class AddressService {
             await client.getTransaction(txHash)
       ];
 
-      /// save all vins, vouts and transactions
-      var newVins = <Vin>{};
-      var newVouts = <Vout>{};
-      var newTxs = <Transaction>{};
-      for (var tx in txs) {
-        for (var vin in tx.vin) {
-          if (vin.txid != null && vin.vout != null) {
-            newVins.add(Vin(
-              txId: tx.txid,
-              voutTxId: vin.txid!,
-              voutPosition: vin.vout!,
-            ));
-          } else if (vin.coinbase != null && vin.sequence != null) {
-            newVins.add(Vin(
-              txId: tx.txid,
-              voutTxId: vin.coinbase!,
-              voutPosition: vin.sequence!,
-              isCoinbase: true,
-            ));
-          }
-        }
-        for (var vout in tx.vout) {
-          if (vout.scriptPubKey.type == 'nulldata') continue;
-          var vs = await handleAssetData(client, tx, vout);
-          newVouts.add(Vout(
+      await saveTransactions(txs, client);
+    }
+
+    await saveDanglingTransactions(client);
+  }
+
+  Future getAndSaveMempoolTransactions([RavenElectrumClient? client]) async {
+    client = client ?? services.client.mostRecentRavenClient;
+    if (client == null) return;
+    await saveTransactions(
+      [
+        for (var txId in transactions.mempool.map((t) => t.txId))
+          // if we should pause for cost purposes we'd have to do it here.
+          // use .our_stats to find out
+
+          /// get missing transaction
+          await client.getTransaction(txId)
+      ],
+      client,
+    );
+  }
+
+  /// when an address status change: make our historic tx data match blockchain
+  Future saveTransactions(
+    List<Tx> txs,
+    RavenElectrumClient client,
+  ) async {
+    /// save all vins, vouts and transactions
+    var newVins = <Vin>{};
+    var newVouts = <Vout>{};
+    var newTxs = <Transaction>{};
+    for (var tx in txs) {
+      for (var vin in tx.vin) {
+        if (vin.txid != null && vin.vout != null) {
+          newVins.add(Vin(
             txId: tx.txid,
-            rvnValue: vs.item1,
-            position: vout.n,
-            memo: vout.memo,
-            type: vout.scriptPubKey.type,
-            toAddress: vout.scriptPubKey.addresses![0],
-            assetSecurityId: vs.item2.securityId,
-            assetValue: vout.scriptPubKey.amount,
-            // multisig - must detect if multisig...
-            additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
-                ? vout.scriptPubKey.addresses!
-                    .sublist(1, vout.scriptPubKey.addresses!.length)
-                : null,
+            voutTxId: vin.txid!,
+            voutPosition: vin.vout!,
+          ));
+        } else if (vin.coinbase != null && vin.sequence != null) {
+          newVins.add(Vin(
+            txId: tx.txid,
+            voutTxId: vin.coinbase!,
+            voutPosition: vin.sequence!,
+            isCoinbase: true,
           ));
         }
-
-        /// might as well just save them all  - maybe avoiding saving them all
-        /// can save some time, but then you have to also check confirmations
-        /// and see if anything else changed. meh, just save them all for now.
-        newTxs.add(Transaction(
+      }
+      for (var vout in tx.vout) {
+        if (vout.scriptPubKey.type == 'nulldata') continue;
+        var vs = await handleAssetData(client, tx, vout);
+        newVouts.add(Vout(
           txId: tx.txid,
-          height: tx.height,
-          confirmed: (tx.confirmations ?? 0) > 0,
-          time: tx.time,
+          rvnValue: vs.item1,
+          position: vout.n,
+          memo: vout.memo,
+          type: vout.scriptPubKey.type,
+          toAddress: vout.scriptPubKey.addresses![0],
+          assetSecurityId: vs.item2.securityId,
+          assetValue: vout.scriptPubKey.amount,
+          // multisig - must detect if multisig...
+          additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
+              ? vout.scriptPubKey.addresses!
+                  .sublist(1, vout.scriptPubKey.addresses!.length)
+              : null,
         ));
       }
 
-      //await vins.removeAll(existingVins.difference(newVins));
-      //await vouts.removeAll(existingVouts.difference(newVouts));
-
-      // must await?
-      await transactions.saveAll(newTxs);
-      await vins.saveAll(newVins);
-      await vouts.saveAll(newVouts);
+      /// might as well just save them all  - maybe avoiding saving them all
+      /// can save some time, but then you have to also check confirmations
+      /// and see if anything else changed. meh, just save them all for now.
+      newTxs.add(Transaction(
+        txId: tx.txid,
+        height: tx.height,
+        confirmed: (tx.confirmations ?? 0) > 0,
+        time: tx.time,
+      ));
     }
 
+    //await vins.removeAll(existingVins.difference(newVins));
+    //await vouts.removeAll(existingVouts.difference(newVouts));
+
+    // must await?
+    await transactions.saveAll(newTxs);
+    await vins.saveAll(newVins);
+    await vouts.saveAll(newVouts);
+  }
+
+  /// when an address status change: make our historic tx data match blockchain
+  Future saveDanglingTransactions(
+    RavenElectrumClient client,
+  ) async {
     /// one more step - get all vins that have no corresponding vout (in the db)
     /// and get the vouts for them
     var finalVouts = <Vout>[];
