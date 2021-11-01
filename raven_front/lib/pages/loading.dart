@@ -30,7 +30,11 @@ class _LoadingState extends State<Loading> {
   }
 
   Future setup() async {
-    var hiveInit = HiveInitializer(init: (dbDir) => Hive.initFlutter());
+    var hiveInit = HiveInitializer(
+        init: (dbDir) => Hive.initFlutter(),
+        beforeLoad: () {
+          accountWaiter.init();
+        });
     await hiveInit.setUp();
     await initWaiters();
     if (accounts.data.isEmpty) {
