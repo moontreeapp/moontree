@@ -13,21 +13,27 @@ import 'globals.dart';
 class HiveInitializer {
   late final String id;
   late Function init;
+  late Function beforeLoad;
   bool destroyOnTeardown;
 
   String get dbDir => 'database-$id';
 
   HiveInitializer(
-      {String? id, Function? init, this.destroyOnTeardown = false}) {
+      {String? id,
+      Function? init,
+      Function? beforeLoad,
+      this.destroyOnTeardown = false}) {
     this.id = id ?? Ulid().toString();
     this.init = init ?? (dbDir) => Hive.init(dbDir);
+    this.beforeLoad = beforeLoad ?? () {};
   }
 
   Future setUp() async {
     registerAdapters();
     await init(dbDir);
     await openAllBoxes();
-    setSources();
+    beforeLoad();
+    load();
   }
 
   Future tearDown() async {
@@ -74,7 +80,7 @@ class HiveInitializer {
     await Hive.openBox<Vout>('vouts');
   }
 
-  void setSources() {
+  void load() {
     accounts.setSource(HiveSource('accounts'));
     addresses.setSource(HiveSource('addresses'));
     balances.setSource(HiveSource('balances'));

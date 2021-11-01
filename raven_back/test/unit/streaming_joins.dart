@@ -46,8 +46,8 @@ void main() {
       var clickStream =
           Stream.periodic(d2, (i) => clicks[i]).take(clicks.length);
 
-      var stream = streamingLeftJoin(
-          userStream, clickStream, (User a) => a.userId, (Click b) => b.userId);
+      var stream = streamingLeftJoin(userStream, clickStream,
+          (User a) => a.userId.toString(), (Click b) => b.userId.toString());
 
       var result = await stream.take(5).toList();
       expect(result.length, 5);

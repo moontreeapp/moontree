@@ -1,8 +1,10 @@
 import 'package:raven/raven.dart';
 
 Future initWaiters() async {
+  // The following waiters must be inited before HiveInitializer.load()
+  // accountWaiter.init();
+
   balanceWaiter.init();
-  accountWaiter.init();
   leaderWaiter.init();
   singleWaiter.init();
   addressWaiter.init();
