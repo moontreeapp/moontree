@@ -21,12 +21,11 @@ class AccountWaiter extends Waiter {
         .map((added) => added.data));
 
   void init() {
-    CombineLatestStream.combine2(replayAccount$, latestCipher$,
-            (Account account, Cipher cipher) => Tuple2(account, cipher))
-        .listen((tuple) {
+    var combined = CombineLatestStream.combine2(replayAccount$, latestCipher$,
+        (Account account, Cipher cipher) => Tuple2(account, cipher));
+
+    listen('accounts/cipher', combined, (Tuple2<Account, Cipher> tuple) {
       services.account.makeFirstWallet(tuple.item1, tuple.item2);
     });
-
-    // TODO: we could use `latestCipher$.pairwise` to handle cipher migrations
   }
 }
