@@ -13,7 +13,7 @@ class AccountWaiter extends Waiter {
         if (change.data.cipher == services.cipher.currentCipher) {
           backlog.forEach((account) {
             services.account
-                .makeFirstWallet(account, services.cipher.currentCipher2!);
+                .makeFirstWallet(account, services.cipher.currentCipherBase!);
           });
         }
       }
@@ -28,7 +28,7 @@ class AccountWaiter extends Waiter {
           backlog.add(account);
         } else {
           services.account
-              .makeFirstWallet(account, services.cipher.currentCipher2!);
+              .makeFirstWallet(account, services.cipher.currentCipherBase!);
         }
       }
     });

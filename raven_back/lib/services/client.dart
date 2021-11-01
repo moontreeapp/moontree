@@ -1,11 +1,17 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
 import 'package:raven/raven.dart';
 
+/// client creation, logic, and settings.
 class ClientService {
+  final SubscribeService subscribe = SubscribeService();
+  final ApiService api = ApiService();
+
   static const Map<int, Tuple2<SettingName, SettingName>>
       electrumConnectionOptions = {
     0: Tuple2(SettingName.Electrum_Domain0, SettingName.Electrum_Port0),
@@ -84,18 +90,46 @@ class ClientService {
       Setting(name: SettingName.Electrum_Port2, value: ports[2]),
     ]);
   }
+}
 
-  // todo: move
-  Future<String> getOwner(String symbol) async => (await mostRecentRavenClient!
-          .getAddresses(symbol.endsWith('!') ? symbol : symbol + '!'))!
-      .owner;
+/// managing our address subscriptions
+class SubscribeService {
+  final Map<String, StreamSubscription> subscriptionHandles = {};
+  final PublishSubject<Address> addressesNeedingUpdate = PublishSubject();
+
+  void toExistingAddresses([RavenElectrumClient? client]) {
+    for (var address in addresses) {
+      if (!subscriptionHandles.keys.contains(address.addressId)) {
+        to(client ?? services.client.mostRecentRavenClient!, address);
+      }
+    }
+  }
+
+  void to(RavenElectrumClient client, Address address) {
+    // we get a status back as soon as we subscribe... so we don't need to do it here.
+    //addressesNeedingUpdate.sink.add(address);
+    var stream = client.subscribeScripthash(address.addressId);
+    subscriptionHandles[address.addressId] = stream.listen((status) {
+      addressesNeedingUpdate.sink.add(address);
+    });
+  }
+
+  void unsubscribe(String addressId) {
+    subscriptionHandles[addressId]!.cancel();
+    subscriptionHandles.remove(addressId);
+  }
+}
+
+/// calls to the electrum server
+class ApiService {
+  Future<String> getOwner(String symbol) async =>
+      (await services.client.mostRecentRavenClient!
+              .getAddresses(symbol.endsWith('!') ? symbol : symbol + '!'))!
+          .owner;
 
   Future<String> sendTransaction(String rawTx) async {
-    //print(mostRecentRavenClient);
-    //print(await clientOrNull);
-    //print(mostRecentRavenClient == await clientOrNull);
-    return await mostRecentRavenClient!.broadcastTransaction(rawTx);
-    //return await (await clientOrNull)!.broadcastTransaction(rawTx);
-    //mqkt8ZNFySs4QtsxHp5PsAjLS85hJuDH6Y
+    //services.client.subscribe.subscribeToExistingAddresses();
+    return await services.client.mostRecentRavenClient!
+        .broadcastTransaction(rawTx);
   }
 }

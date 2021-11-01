@@ -21,6 +21,7 @@ class LeaderWaiter extends Waiter {
               if (wallet is LeaderWallet) {
                 if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
                   services.wallet.leader.deriveMoreAddresses(wallet);
+                  services.client.subscribe.toExistingAddresses();
                 } else {
                   backlogLeaderWallets.add(wallet);
                 }
@@ -52,6 +53,7 @@ class LeaderWaiter extends Waiter {
                     wallet,
                     exposures: [vout.address!.exposure],
                   );
+                  services.client.subscribe.toExistingAddresses();
                 } else {
                   backlogLeaderWallets.add(wallet);
                 }
@@ -73,6 +75,7 @@ class LeaderWaiter extends Waiter {
         ret.add(wallet);
       }
     }
+    services.client.subscribe.toExistingAddresses();
     return ret;
   }
 }

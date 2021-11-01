@@ -24,6 +24,7 @@ class RavenClientWaiter extends Waiter {
     }
 
     listen('subjects.client', subjects.client, (ravenClient) async {
+      print('clientConnected $clientConnected, ravenClient $ravenClient');
       if (ravenClient != null) {
         await periodicTimer?.cancel();
         services.client.mostRecentRavenClient =
@@ -36,6 +37,8 @@ class RavenClientWaiter extends Waiter {
           /// need to set up all the subscriptions again on the new instance.
           /// client will be activated again by other app status listener.
           clientConnected = false;
+          print(
+              'peer.done clientConnected $clientConnected appActive $appActive');
           if (appActive) {
             subjects.client.sink.add(null);
           }
@@ -61,6 +64,7 @@ class RavenClientWaiter extends Waiter {
 
     /// save latest app status, .
     listen('subjects.app', subjects.app, (appStatus) {
+      print('appStatus $appStatus');
       if (appStatus == 'resumed') {
         appActive = true;
         if (services.client.mostRecentRavenClient == null || !clientConnected) {
