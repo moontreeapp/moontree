@@ -4,6 +4,7 @@ import 'client_and_login.dart';
 
 class subjects {
   static final client = ravenClientSubject;
+  static final app = appStatusSubject;
   static final login = loginSubject;
   static final cipherUpdate = cipherUpdateSubject;
   static final clientAndLogin = clientAndLoginSubject;

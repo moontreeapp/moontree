@@ -15,6 +15,8 @@ class ClientService {
 
   RavenElectrumClient? mostRecentRavenClient;
 
+  ClientService? mostRecentAppStatus;
+
   Future<RavenElectrumClient?> get clientOrNull async =>
       await subjects.client.last;
 

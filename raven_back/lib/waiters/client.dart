@@ -12,10 +12,15 @@ class RavenClientWaiter extends Waiter {
   StreamSubscription? periodicTimer;
   int retriesLeft = retries;
 
-  void init() {
-    // TODO: is this conditional necessary
+  bool clientConnected = false;
+  bool appActive = true;
+
+  void init({Object? reconnect}) {
     if (!listeners.keys.contains('subjects.client')) {
       subjects.client.sink.add(null);
+    }
+    if (!listeners.keys.contains('subjects.app')) {
+      subjects.app.sink.add(null);
     }
 
     listen('subjects.client', subjects.client, (ravenClient) async {
@@ -23,9 +28,17 @@ class RavenClientWaiter extends Waiter {
         await periodicTimer?.cancel();
         services.client.mostRecentRavenClient =
             ravenClient as RavenElectrumClient;
+        clientConnected = true;
         // ignore: unawaited_futures
         ravenClient.peer.done.then((value) async {
-          subjects.client.sink.add(null);
+          /// if the state of the app is not in the foreground (being used)
+          /// we shouldn't yet reconnect, that just wastes resources as we
+          /// need to set up all the subscriptions again on the new instance.
+          /// client will be activated again by other app status listener.
+          clientConnected = false;
+          if (appActive) {
+            subjects.client.sink.add(null);
+          }
         });
       } else {
         await services.client.mostRecentRavenClient?.close();
@@ -43,6 +56,18 @@ class RavenClientWaiter extends Waiter {
             services.client.cycleNextElectrumConnectionOption();
           }
         });
+      }
+    });
+
+    /// save latest app status, .
+    listen('subjects.app', subjects.app, (appStatus) {
+      if (appStatus == 'resumed') {
+        appActive = true;
+        if (services.client.mostRecentRavenClient == null || !clientConnected) {
+          subjects.client.sink.add(null);
+        }
+      } else {
+        appActive = false;
       }
     });
   }
