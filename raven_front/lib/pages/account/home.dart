@@ -62,6 +62,11 @@ class _HomeState extends State<Home> {
     super.dispose();
   }
 
+  void refresh([Function? f]) {
+    services.balance.recalculateAllBalances();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) => DefaultTabController(
       length: 2,

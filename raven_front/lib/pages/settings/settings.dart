@@ -100,11 +100,27 @@ class _SettingsState extends State<Settings> {
               SettingsTile(
                   title: 'show data',
                   leading: Icon(Icons.info_outline_rounded),
-                  onPressed: (BuildContext context) {
-                    print(passwords.data);
-                    print(services.password.exist);
-                    print(services.password.required);
-                    print(services.cipher.currentCipherUpdate);
+                  onPressed: (BuildContext context) async {
+                    //print(transactions.primaryIndex.getOne(
+                    //    '86f9493e07cb039a3735ca7ac074a869464488d961ad60844134820fa67d6a56'));
+                    //print(vouts.byTransaction.getAll(
+                    //    '86f9493e07cb039a3735ca7ac074a869464488d961ad60844134820fa67d6a56'));
+                    print(vins.byTransaction.getAll(
+                        '86f9493e07cb039a3735ca7ac074a869464488d961ad60844134820fa67d6a56'));
+                    //print(transactions.primaryIndex.getOne(
+                    //    '90bf9bb181cb83dd9804a0a03186e6ae81a66ea738f3afd6b472387feb16d155'));
+                    //print(vouts.byTransaction.getAll(
+                    //    '90bf9bb181cb83dd9804a0a03186e6ae81a66ea738f3afd6b472387feb16d155'));
+                    //print(vins.byTransaction.getAll(
+                    //    '90bf9bb181cb83dd9804a0a03186e6ae81a66ea738f3afd6b472387feb16d155'));
+                    //await services.address.saveTransactions(
+                    //  [
+                    //    await services.client.api.getTransaction(
+                    //        '86f9493e07cb039a3735ca7ac074a869464488d961ad60844134820fa67d6a56')
+                    //  ],
+                    //  services.client.mostRecentRavenClient!,
+                    //);
+                    //services.balance.recalculateAllBalances();
                   }),
 
               //SettingsTile.switchTile(
