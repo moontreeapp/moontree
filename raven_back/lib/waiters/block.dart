@@ -10,9 +10,9 @@ import 'waiter.dart';
 
 class BlockWaiter extends Waiter {
   void init() {
-    listen('subjects.client', subjects.client, (ravenClient) async {
+    listen('subjects.client', subjects.client, (ravenClient) {
       if (ravenClient == null) {
-        await deinitKey('ravenClient.subscribeHeaders');
+        deinitKey('ravenClient.subscribeHeaders');
       } else {
         subscribe(ravenClient as RavenElectrumClient);
       }
@@ -29,6 +29,6 @@ class BlockWaiter extends Waiter {
     // update existing mempool transactions each block
     listen<Change<Block>>('blocks.changes', blocks.changes, (change) {
       services.address.getAndSaveMempoolTransactions();
-    });
+    }, relax: true);
   }
 }

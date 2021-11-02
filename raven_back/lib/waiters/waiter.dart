@@ -9,11 +9,17 @@ abstract class Waiter {
 
   Waiter();
 
-  void listen<T>(String key, Stream<T> stream, Listener<T> listener) {
+  void listen<T>(
+    String key,
+    Stream<T> stream,
+    Listener<T> listener, {
+    // sometimes we want the following functionality to avoid throwing an error
+    bool relax = false,
+  }) {
     if (!listeners.keys.contains(key)) {
       listeners[key] = stream.listen(listener);
     } else {
-      throw AlreadyListening('$key already listening');
+      if (!relax) throw AlreadyListening('$key already listening');
     }
   }
 
