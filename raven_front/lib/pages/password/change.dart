@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/indicators/indicators.dart';
+import 'package:raven_mobile/theme/extensions.dart';
 
 class ChangePassword extends StatefulWidget {
   @override
@@ -95,13 +96,8 @@ class _ChangePasswordState extends State<ChangePassword> {
             }),
           ),
         ),
-        onChanged: (String value) {
-          validateComplexity(password: value);
-          //setState(() => {});
-        },
-        onEditingComplete: () async {
-          await submit();
-        });
+        onChanged: (String value) => validateComplexity(password: value),
+        onEditingComplete: () async => await submit());
     var existingPasswordField = TextField(
       autocorrect: false,
       enabled: services.password.required ? true : false,
@@ -125,13 +121,7 @@ class _ChangePasswordState extends State<ChangePassword> {
           FocusScope.of(context).requestFocus(newPasswordFocusNode);
         }
       },
-      onEditingComplete: () {
-        validateExisting();
-      },
-      //onSubmitted: (String value) {
-      //  setState(
-      //      () => {});
-      //},
+      onEditingComplete: () => validateExisting(),
     );
     return Padding(
         padding: EdgeInsets.all(20.0),
@@ -143,12 +133,21 @@ class _ChangePasswordState extends State<ChangePassword> {
             Column(children: [
               existingPasswordField,
               SizedBox(height: 5),
-              Text(existingNotification),
+              Text(existingNotification,
+                  style: TextStyle(
+                      color: validatedExisting
+                          ? Theme.of(context).good
+                          : Theme.of(context).bad)),
             ]),
             Column(children: [
               newPasswordField,
               SizedBox(height: 5),
-              Text(newNotification),
+              Text(newNotification,
+                  style: TextStyle(
+                      color:
+                          validatedComplexity == null || !validatedComplexity!
+                              ? Theme.of(context).bad
+                              : Theme.of(context).good))
             ]),
             SizedBox(height: 150),
           ],
@@ -176,26 +175,30 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   bool validateComplexity({String? password}) {
     password = password ?? newPassword.text;
+    var used;
+    var oldNotification = newNotification;
     if (services.password.validate.complexity(password)) {
-      var used = services.password.validate.previouslyUsed(password);
+      used = services.password.validate.previouslyUsed(password);
       newNotification = used == null
           ? 'This password has never been used and is a strong password'
           : used > 0
               ? 'Warnning: this password was used $used passwords ago'
               : 'This is your current password';
-      validatedComplexity = true;
-      setState(() => {});
-      return true;
+      if (used != 0) {
+        validatedComplexity = true;
+        setState(() => {});
+        return true;
+      }
     }
     var old = validatedComplexity;
-    var oldNotification = newNotification;
-    newNotification = ('weak password: '
-        '${services.password.validate.complexityExplained(password).join(' & ')}.');
+    if (used != 0) {
+      newNotification = ('weak password: '
+          '${services.password.validate.complexityExplained(password).join(' & ')}.');
+    }
     validatedComplexity = false;
     if (old != validatedComplexity || oldNotification != newNotification)
       setState(() => {});
     return false;
-    //setState(() => {});
   }
 
   String _printDuration(Duration duration) {

@@ -23,6 +23,7 @@ class ListComponents {
             )
           : Container(
               alignment: Alignment.center,
+              padding: EdgeInsets.only(top: 5.0),
               child: RefreshIndicator(
                   child: _transactionsView(
                     context,
@@ -62,6 +63,7 @@ class ListComponents {
             )
           : Container(
               alignment: Alignment.center,
+              padding: EdgeInsets.only(top: 5.0),
               child: RefreshIndicator(
                   child: _holdingsView(
                     context,
