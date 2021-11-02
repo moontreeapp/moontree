@@ -18,4 +18,7 @@ class TransactionReservoir extends Reservoir<_TxHashKey, Transaction> {
     ..sort((a, b) => (b.height ?? maxInt).compareTo(a.height ?? maxInt));
 
   List<Transaction> get mempool => transactions.byConfirmed.getAll(false);
+
+  //List<Transaction> get owned =>  transactions.data.where((transaction) => transaction.txId)
+
 }

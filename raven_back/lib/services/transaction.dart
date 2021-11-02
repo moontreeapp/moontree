@@ -76,7 +76,7 @@ class TransactionService {
           ));
         }
       }
-      for (Vin vin in tx.vins) {
+      for (var vin in tx.vins) {
         if (givenAddresses.contains(vin.vout?.toAddress)) {
           transactionRecords.add(TransactionRecord(
             out: true,

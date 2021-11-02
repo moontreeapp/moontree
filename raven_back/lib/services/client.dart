@@ -132,4 +132,7 @@ class ApiService {
     return await services.client.mostRecentRavenClient!
         .broadcastTransaction(rawTx);
   }
+
+  Future<Tx> getTransaction(String txId) async =>
+      await services.client.mostRecentRavenClient!.getTransaction(txId);
 }

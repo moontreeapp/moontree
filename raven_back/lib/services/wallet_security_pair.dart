@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:reservoir/change.dart';
 
 import 'package:raven/raven.dart';
 
@@ -25,4 +24,15 @@ Set<WalletSecurityPair> securityPairsFromVoutChanges(List<Change> changes) {
     }
     return set;
   });
+}
+
+Set<WalletSecurityPair> securityPairsFromVouts(List<Vout> vouts) {
+  return {
+    for (var vout in vouts)
+      if (vout.wallet != null)
+        WalletSecurityPair(
+            vout.wallet!,
+            securities.primaryIndex
+                .getOne(vout.assetSecurityId ?? securities.RVN.securityId)!)
+  };
 }

@@ -29,33 +29,29 @@ class AddressService {
       /// 9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f
       /// (or one in it's batch)
       // ignore: omit_local_variable_types
-      List<Tx> txs = [
-        for (var txHash in histories.map((history) => history.txHash))
-          if (transactions.primaryIndex.getOne(txHash) == null)
-
-            /// if we should pause for cost purposes we'd have to do it here.
-            /// use .our_stats to find out
-
-            /// get missing transaction
-            await client.getTransaction(txHash)
-      ];
-
-      await saveTransactions(txs, client);
+      await saveTransactions(
+        [
+          for (var txHash in histories.map((history) => history.txHash))
+            if (transactions.primaryIndex.getOne(txHash) == null ||
+                transactions.primaryIndex.getOne(txHash)!.vins.isEmpty)
+              await client.getTransaction(txHash)
+        ],
+        client,
+      );
     }
 
+    /// this should really happen after everything else...
+    /// but since the loop is distributed its living here right now.
     await saveDanglingTransactions(client);
   }
 
+  /// for updating mempool transactions
   Future getAndSaveMempoolTransactions([RavenElectrumClient? client]) async {
     client = client ?? services.client.mostRecentRavenClient;
     if (client == null) return;
     await saveTransactions(
       [
         for (var txId in transactions.mempool.map((t) => t.txId))
-          // if we should pause for cost purposes we'd have to do it here.
-          // use .our_stats to find out
-
-          /// get missing transaction
           await client.getTransaction(txId)
       ],
       client,
@@ -137,7 +133,7 @@ class AddressService {
     var finalVouts = <Vout>[];
     var finalTxs = <Transaction>[];
     // ignore: omit_local_variable_types
-    var myVins = vins.danglingVins.map((vin) => vin.voutTxId);
+    var myVins = List.from(vins.danglingVins.map((vin) => vin.voutTxId));
     // ignore: omit_local_variable_types
     List<Tx> txs = [
       for (var txHash in myVins) await client.getTransaction(txHash)

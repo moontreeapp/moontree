@@ -31,6 +31,10 @@ class BalanceService {
     return changed;
   }
 
+  Future recalculateAllBalances() async =>
+      await balances.saveAll(securityPairsFromVouts(vouts.data.toList())
+          .map((pair) => sumBalance(pair.wallet, pair.security)));
+
   /// Transaction Logic ///////////////////////////////////////////////////////
 
   /// Sort in descending order, from largest amount to smallest amount

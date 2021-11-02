@@ -1,0 +1,50 @@
+``` services/address.dart
+List<Tx> txs = [];
+      for (var txHash in histories.map((history) => history.txHash)) {
+        if (transactions.primaryIndex.getOne(txHash) == null) {
+          /// if we should pause for cost purposes we'd have to do it here.
+          /// use .our_stats to find out
+          //print('OUR STATS:');
+          //(await client.getOurStats()).ourCost > 150;
+          /// this shouldn't matter - see cost discussion.notes
+
+          /// get missing transaction
+          txs.add(await client.getTransaction(txHash));
+        }
+      }
+```
+
+
+
+
+meta stack — Today at 2:32 PM
+I printed out our server stats after making several calls and I got this structure: 
+ServerStats( 
+    ourCost: 152.41463999999982, 
+    hardLimit: 0,
+    softLimit: 0,
+    costDecayPerSec: 0.0,
+    bandwithCostPerByte: 0.001,
+    sleep: 2.5,
+    concurrentRequests: 10,
+    sendSize: 93287,
+    sendCount: 95,
+    receiveSize: 11683,
+    receiveCount: 96)
+
+
+it returns nothing for hard and soft limits so I'm not sure how clost to the limit we are with ourCost being above 150, can you shed some light on how close we are?
+kralverde 🇺🇸 {CULT OF JOE} — Today at 2:38 PM
+So limits reduce and cutoff connections respectively based on cost im assuming you both have them set as 0 in your server config so your clients will never be kicked off
+Cost is determined by the actual requests but also a portion of similar ips and time joined
+meta stack — Today at 2:40 PM
+thats cool, so what I'm hearing is that if they're 0's we essentially have unlimited cost.
+kralverde 🇺🇸 {CULT OF JOE} — Today at 2:42 PM
+It means no matter the cost, your rpc rates will not be limited or dropped 
+However servers may drop clients if the response they would give is too big
+For anti ddos measures
+This is dependant on server settings but defaults to 10Mb
+kralverde 🇺🇸 {CULT OF JOE} — Today at 2:50 PM
+It also may be dropped with a max receive which defaults to 5mb
+meta stack — Today at 2:57 PM
+cool thanks
