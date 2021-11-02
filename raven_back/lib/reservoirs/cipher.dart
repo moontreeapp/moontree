@@ -23,19 +23,18 @@ class CipherReservoir extends Reservoir<_CipherUpdateKey, Cipher> {
         addIndexMultiple('cipherTypePasswordId', _CipherTypePasswordIdKey());
   }
 
+  // populate with a nocipher cipher for creation of wallets without password
+  static Map<String, Cipher> get defaults => {
+        defaultCipherUpdate.cipherUpdateId: Cipher(
+            cipher: cipherInitializers[defaultCipherUpdate.cipherType]!(),
+            cipherType: defaultCipherUpdate.cipherType,
+            passwordId: defaultCipherUpdate.passwordId)
+      };
+
   static Map<CipherType, Function> cipherInitializers = {
     CipherType.None: ([Uint8List? password]) => CipherNone(),
     CipherType.AES: (Uint8List password) => CipherAES(password),
   };
-
-  // populate with a nocipher cipher for creation of wallets without password
-  static Map<String, Cipher> get defaults => {
-        defaultCipherUpdate.cipherUpdateId: Cipher(
-            cipher: cipherInitializers[defaultCipherUpdate.cipherType]!(
-                Uint8List(0)),
-            cipherType: defaultCipherUpdate.cipherType,
-            passwordId: defaultCipherUpdate.passwordId)
-      };
 
   CipherBase registerCipher(
     CipherUpdate cipherUpdate,
