@@ -13,13 +13,15 @@ abstract class Waiter {
     String key,
     Stream<T> stream,
     Listener<T> listener, {
-    // sometimes we want the following functionality to avoid throwing an error
-    bool relax = false,
+    bool autoDeinit = false,
   }) {
+    if (autoDeinit) {
+      deinitKey(key);
+    }
     if (!listeners.keys.contains(key)) {
       listeners[key] = stream.listen(listener);
     } else {
-      if (!relax) throw AlreadyListening('$key already listening');
+      throw AlreadyListening('$key already listening');
     }
   }
 
