@@ -68,12 +68,11 @@ class Transaction with EquatableMixin {
         'memo: $memo, note: $note)';
   }
 
-  // could belong on frontend...
+  // technically belongs on frontend...
   DateTime get datetime =>
       DateTime.fromMillisecondsSinceEpoch((time ?? 0) * 1000);
 
   String get formattedDatetime => time != null
       ? formatDate(datetime, [MM, ' ', d, ', ', yyyy])
-      : 'in mempool'; // if it's in the mempool that should be known by some other metric - status or something
-
+      : 'in mempool';
 }
