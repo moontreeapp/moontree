@@ -71,13 +71,15 @@ class _ReceiveState extends State<Receive> {
         requestMessage.text == '' ? 'RVN' : requestMessage.text;
     address = Current.account.wallets[0].addresses[0].address;
     uri = uri == '' ? address : uri;
-    return Scaffold(
-      appBar: header(),
-      body: body(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      floatingActionButton: shareAddressButton(),
-      //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
-    );
+    return GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          appBar: header(),
+          body: body(),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+          floatingActionButton: shareAddressButton(),
+          //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
+        ));
   }
 
   AppBar header() => AppBar(

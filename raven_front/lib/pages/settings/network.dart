@@ -53,8 +53,9 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      Scaffold(appBar: header(), body: body());
+  Widget build(BuildContext context) => GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(appBar: header(), body: body()));
 
   AppBar header() => AppBar(
         leading: components.buttons.back(context),

@@ -44,12 +44,15 @@ class _ImportState extends State<Import> {
       account =
           accounts.primaryIndex.getOne(data['accountId']) ?? Current.account;
     }
-    return Scaffold(
-      appBar: header(),
-      body: body(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: importWaysButtons(context),
-    );
+    return GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          appBar: header(),
+          body: body(),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: importWaysButtons(context),
+        ));
   }
 
   AppBar header() => AppBar(

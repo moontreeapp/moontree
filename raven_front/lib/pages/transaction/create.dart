@@ -45,13 +45,16 @@ class _CreateAssetState extends State<CreateAsset> {
     data['wallet'] = data.containsKey('wallet')
         ? data['wallet']
         : wallets.byAccount.getOne(Current.account.accountId)?.walletId ?? '';
-    return Scaffold(
-      appBar: header(),
-      body: body(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: sendTransactionButton(),
-      //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
-    );
+    return GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          appBar: header(),
+          body: body(),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: sendTransactionButton(),
+          //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
+        ));
   }
 
   AppBar header() => AppBar(

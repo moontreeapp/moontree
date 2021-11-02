@@ -86,13 +86,16 @@ class _SendState extends State<Send> {
     } catch (e) {
       visibleFiatAmount = '';
     }
-    return Scaffold(
-      appBar: header(),
-      body: body(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: sendTransactionButton(),
-      //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
-    );
+    return GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          appBar: header(),
+          body: body(),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: sendTransactionButton(),
+          //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
+        ));
   }
 
   PreferredSize header() => PreferredSize(

@@ -25,12 +25,14 @@ class _LoginState extends State<Login> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) => GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
         appBar: header(),
         body: body(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: submitButton(),
-      );
+      ));
 
   AppBar header() =>
       AppBar(elevation: 2, centerTitle: false, title: Text('Login'), actions: [

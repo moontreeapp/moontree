@@ -35,12 +35,14 @@ class _ChangePasswordState extends State<ChangePassword> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) => GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
         appBar: header(),
         body: body(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: submitButton(),
-      );
+      ));
 
   AppBar header() => AppBar(
           leading: components.buttons.back(context),

@@ -59,7 +59,9 @@ class _TechnicalViewState extends State<TechnicalView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: header(), body: body());
+    return GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(appBar: header(), body: body()));
   }
 
   AppBar header() => AppBar(
