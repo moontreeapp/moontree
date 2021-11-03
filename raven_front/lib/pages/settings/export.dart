@@ -62,7 +62,7 @@ class _ExportState extends State<Export> {
         leading: components.buttons.back(context),
         elevation: 2,
         centerTitle: false,
-        title: Text('Export ' + _accountName),
+        title: Text('Export (Backup)'),
         actions: [
           components.status,
           indicators.process,
@@ -121,6 +121,18 @@ class _ExportState extends State<Export> {
                   Text('Encrypt this backup')
                 ])
             ],
+            SizedBox(height: 25),
+            ...[
+              if (account != null && accounts.length > 1)
+                TextButton.icon(
+                    onPressed: () => setState(() {
+                          data['accountId'] = 'all';
+                          account = null;
+                        }),
+                    icon: Icon(Icons.help),
+                    label: Text('Export ALL accounts?'))
+            ],
+            SizedBox(height: 25),
             Center(
                 child: TextButton.icon(
                     icon: components.icons.export,
