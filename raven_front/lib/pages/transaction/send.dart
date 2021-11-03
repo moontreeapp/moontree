@@ -452,6 +452,7 @@ class _SendState extends State<Send> {
       //
       //} else {
       // send using any/every wallet in the account
+      FocusScope.of(context).unfocus();
       var sendAmountAsSats = components.text.amountSats(
         double.parse(sendAmount.text),
         precision: 8, /* get asset precision */

@@ -151,6 +151,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
     if (validateDomainPort(electrumAddress.text) &&
         validateDomainPort(electrumAddressFirstBackup.text) &&
         validateDomainPort(electrumAddressSecondBackup.text)) {
+      FocusScope.of(context).unfocus();
       if (services.password.required && !passwordVerified) {
         requestPassword();
       } else {

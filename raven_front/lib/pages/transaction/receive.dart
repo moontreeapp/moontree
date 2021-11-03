@@ -7,6 +7,7 @@ import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/utils/params.dart';
 import 'package:raven_mobile/utils/utils.dart';
+import 'package:share/share.dart';
 
 class Receive extends StatefulWidget {
   final dynamic data;
@@ -22,6 +23,9 @@ class _ReceiveState extends State<Receive> {
   final requestAmount = TextEditingController();
   final requestLabel = TextEditingController();
   final requestMessage = TextEditingController();
+  FocusNode requestAmountFocus = FocusNode();
+  FocusNode requestLabelFocus = FocusNode();
+  FocusNode requestMessageFocus = FocusNode();
   bool rawAddress = true;
   String uri = '';
 
@@ -72,12 +76,15 @@ class _ReceiveState extends State<Receive> {
     address = Current.account.wallets[0].addresses[0].address;
     uri = uri == '' ? address : uri;
     return GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
+        onTap: () {
+          FocusScope.of(context).unfocus();
+          _makeURI();
+        },
         child: Scaffold(
           appBar: header(),
           body: body(),
-          floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-          floatingActionButton: shareAddressButton(),
+          //floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+          //floatingActionButton: shareAddressButton(),
           //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
         ));
   }
@@ -153,35 +160,54 @@ class _ReceiveState extends State<Receive> {
                       )),
                 ])),
             SizedBox(height: 20.0),
-            Row(children: <Widget>[
-              Checkbox(
-                value: rawAddress,
-                onChanged: (_) {
-                  _toggleRaw(_);
-                  _makeURI();
-                },
-              ),
-              Text('address only'),
-            ]),
-
-            /// if no options are selected it is a raw address?... yes
-            //?amount=5.12340000
-            //&label=This%20is%20a%20label  // could transalte to note
-            //&message=This%20is%20a%20message  // could transalte to asking for a specific asset
-            //DropdownButton<String>(
-            //    isExpanded: true,
-            //    value: data['uri'],
-            //    items: <String>[
-            //      for (var uriOption in ['Raw Address', '']) uriOption
-            //    ]
-            //        .map((String value) => DropdownMenuItem<String>(
-            //            value: value, child: Text(value)))
-            //        .toList(),
-            //    onChanged: (String? newValue) =>
-            //        setState(() => data['uri'] = newValue!)),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Row(children: <Widget>[
+                    Checkbox(
+                      value: rawAddress,
+                      onChanged: (_) {
+                        _toggleRaw(_);
+                        _makeURI();
+                        FocusScope.of(context)
+                            .requestFocus(requestMessageFocus);
+                      },
+                    ),
+                    Text('address only'),
+                  ]),
+                  shareAddressButton(),
+                ]),
+            Visibility(
+                visible: !rawAddress,
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(height: 15),
+                      Text(
+                        'Requested Asset:',
+                        style: TextStyle(color: Theme.of(context).hintColor),
+                      ),
+                      DropdownButton<String>(
+                          focusNode: requestMessageFocus,
+                          isExpanded: true,
+                          value: requestMessage.text,
+                          items: Current.holdingNames
+                              .map((String value) => DropdownMenuItem<String>(
+                                  value: value, child: Text(value)))
+                              .toList(),
+                          onChanged: (String? newValue) {
+                            requestMessage.text = newValue!;
+                            _makeURI();
+                            FocusScope.of(context)
+                                .requestFocus(requestAmountFocus);
+                          }),
+                      SizedBox(height: 15.0),
+                    ])),
             Visibility(
                 visible: !rawAddress,
                 child: TextField(
+                    focusNode: requestAmountFocus,
                     autocorrect: false,
                     controller: requestAmount,
                     keyboardType: TextInputType.number,
@@ -192,11 +218,14 @@ class _ReceiveState extends State<Receive> {
                         hintText: 'Quantity'),
                     onEditingComplete: () {
                       requestAmount.text = verifyDecAmount(requestAmount.text);
+                      // send focus to next element
                       _makeURI();
+                      FocusScope.of(context).requestFocus(requestLabelFocus);
                     })),
             Visibility(
                 visible: !rawAddress,
                 child: TextField(
+                  focusNode: requestLabelFocus,
                   autocorrect: false,
                   controller: requestLabel,
                   decoration: InputDecoration(
@@ -205,46 +234,14 @@ class _ReceiveState extends State<Receive> {
                       hintText: 'Groceries'),
                   onEditingComplete: () {
                     _makeURI();
+                    FocusScope.of(context).unfocus();
                   },
                 )),
-            //Visibility(
-            //  visible: !rawAddress,
-            //  child:
-            //      TextField(
-            //        autocorrect: false,
-            //        controller: requestMessage,
-            //        decoration: InputDecoration(
-            //            border: UnderlineInputBorder(),
-            //            labelText: 'Message (Optional)',
-            //            hintText: 'Requesting asset'),
-            //        onEditingComplete: () {
-            //          _makeURI();
-            //        })
-            //),
-            Visibility(
-                visible: !rawAddress,
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Text('Requested Asset:'),
-                      DropdownButton<String>(
-                          isExpanded: true,
-                          value: requestMessage.text,
-                          items: Current.holdingNames
-                              .map((String value) => DropdownMenuItem<String>(
-                                  value: value, child: Text(value)))
-                              .toList(),
-                          onChanged: (String? newValue) {
-                            requestMessage.text = newValue!;
-                            _makeURI();
-                          }),
-                    ])),
           ]);
 
   ElevatedButton shareAddressButton() => ElevatedButton.icon(
       icon: Icon(Icons.share),
       label: Text('Share'),
-      onPressed: () {},
+      onPressed: () => Share.share(uri),
       style: components.buttonStyles.curvedSides);
 }

@@ -96,6 +96,7 @@ class _ChangeResumeState extends State<ChangeResume> {
 
   void submit() {
     if (services.password.validate.previousPassword(password.text)) {
+      FocusScope.of(context).unfocus();
       services.cipher.initCiphers(
         altPassword: password.text,
         currentCipherUpdates: services.wallet.getPreviousCipherUpdates,

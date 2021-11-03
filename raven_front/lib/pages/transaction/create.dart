@@ -235,6 +235,7 @@ class _CreateAssetState extends State<CreateAsset> {
         /// ask them to review on additional screen / scroll down
         /// confirm
         ///
+        ///FocusScope.of(context).unfocus();
         if (data.containsKey('walletId') && data['walletId'] != null) {
           // send tx using only this wallet
         } else {

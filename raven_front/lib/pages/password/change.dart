@@ -12,7 +12,7 @@ class ChangePassword extends StatefulWidget {
 class _ChangePasswordState extends State<ChangePassword> {
   var existingPassword = TextEditingController();
   var newPassword = TextEditingController();
-  FocusNode newPasswordFocusNode = new FocusNode();
+  FocusNode newPasswordFocusNode = FocusNode();
   String existingNotification = '';
   String newNotification = '';
   bool existingPasswordVisible = false;
@@ -210,6 +210,7 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   Future submit() async {
     if (validateComplexity() && validateExistingCondition()) {
+      FocusScope.of(context).unfocus();
       var password = newPassword.text;
       await services.password.create.save(password);
 

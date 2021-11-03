@@ -80,6 +80,7 @@ class _LoginState extends State<Login> {
 
   Future submit({bool showFailureMessage = true}) async {
     if (services.password.validate.password(password.text)) {
+      FocusScope.of(context).unfocus();
       // create ciphers for wallets we have
       services.cipher.initCiphers(altPassword: password.text);
       await services.cipher.updateWallets();
