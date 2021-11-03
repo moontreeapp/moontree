@@ -32,7 +32,7 @@ class AddressSubscriptionWaiter extends Waiter {
   }
 
   void setupClientListener() =>
-      listen('subjects.client.stream', subjects.client.stream, (client) async {
+      listen('streams.client', streams.client, (client) async {
         if (client == null) {
           await deinitSubscriptionHandles();
         } else {

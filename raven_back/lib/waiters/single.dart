@@ -8,39 +8,54 @@ class SingleWaiter extends Waiter {
   Set<SingleWallet> backlog = {};
 
   void init() {
-    if (!listeners.keys.contains('subjects.cipherUpdate')) {
-      listeners['subjects.cipherUpdate'] =
-          subjects.cipherUpdate.stream.listen((CipherUpdate cipherUpdate) {
-        backlog = attemptSingleWalletAddressDerive(cipherUpdate);
-      });
+    listen(
+      'ciphers.changes',
+      ciphers.changes,
+      (Change<Cipher> change) {
+        change.when(
+          // if this cipher update is in the list of wallets missing ciphers...
+          // initialize the wallet and remove it from the list of wallets missing ciphers
+          loaded: (loaded) {
+            backlog =
+                attemptSingleWalletAddressDerive(change.data.cipherUpdate);
+          },
+          added: (added) {
+            backlog =
+                attemptSingleWalletAddressDerive(change.data.cipherUpdate);
+          },
+          updated: (updated) {},
+          removed: (removed) {},
+        );
+      },
+      autoDeinit: true,
+    );
 
-      if (!listeners.keys.contains('wallets.batchedChanges')) {
-        listeners['wallets.batchedChanges'] = wallets.batchedChanges
-            .listen((List<Change<Wallet>> batchedChanges) {
-          batchedChanges.forEach((change) {
-            change.when(
-                loaded: (loaded) {},
-                added: (added) {
-                  var wallet = added.data;
-                  if (wallet is SingleWallet) {
-                    if (wallet.cipher != null) {
-                      addresses.save(services.wallet.single.toAddress(wallet));
-                      addresses.save(services.wallet.single.toAddress(wallet));
-                    } else {
-                      backlog.add(wallet);
-                    }
-                  }
-                },
-                updated: (updated) {
-                  /* moved account */
-                },
-                removed: (removed) {
-                  /* handled by LeadersWaiter*/
-                });
-          });
-        });
-      }
-    }
+    listen(
+      'wallets.changes',
+      wallets.changes,
+      (Change<Wallet> change) {
+        change.when(
+            loaded: (loaded) {},
+            added: (added) {
+              var wallet = added.data;
+              if (wallet is SingleWallet) {
+                if (wallet.cipher != null) {
+                  addresses.save(services.wallet.single.toAddress(wallet));
+                  addresses.save(services.wallet.single.toAddress(wallet));
+                } else {
+                  backlog.add(wallet);
+                }
+              }
+            },
+            updated: (updated) {
+              /* moved account */
+            },
+            removed: (removed) {
+              /* handled by LeadersWaiter*/
+            });
+      },
+      autoDeinit: true,
+    );
   }
 
   Set<SingleWallet> attemptSingleWalletAddressDerive(

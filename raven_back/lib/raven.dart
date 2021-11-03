@@ -2,7 +2,7 @@ export 'records/records.dart';
 export 'reservoirs/reservoirs.dart';
 export 'security/security.dart';
 export 'services/services.dart';
-export 'subjects/subjects.dart';
+export 'streams/streams.dart';
 export 'waiters/waiters.dart';
 
 export 'globals.dart';

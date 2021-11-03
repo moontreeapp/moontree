@@ -24,7 +24,7 @@ class ClientService {
   ClientService? mostRecentAppStatus;
 
   Future<RavenElectrumClient?> get clientOrNull async =>
-      await subjects.client.last;
+      await streams.client.last;
 
   int electrumSettingsChoice = 0;
 
@@ -58,7 +58,7 @@ class ClientService {
       settings.primaryIndex.getOne(SettingName.Electrum_Port2)!.value;
 
   bool get connectionStatus =>
-      subjects.client.stream.valueOrNull != null ? true : false;
+      streams.client.stream.valueOrNull != null ? true : false;
 
   Future<RavenElectrumClient?> createClient(
       {String projectName = 'MTWallet', String buildVersion = '0.1'}) async {

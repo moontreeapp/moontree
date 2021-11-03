@@ -10,7 +10,7 @@ import 'waiter.dart';
 
 class BlockWaiter extends Waiter {
   void init() {
-    listen('subjects.client', subjects.client, (ravenClient) async {
+    listen('streams.client', streams.client, (ravenClient) async {
       if (ravenClient != null) {
         subscribe(ravenClient as RavenElectrumClient);
       }

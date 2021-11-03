@@ -16,14 +16,14 @@ class RavenClientWaiter extends Waiter {
   bool appActive = true;
 
   void init({Object? reconnect}) {
-    if (!listeners.keys.contains('subjects.client')) {
-      subjects.client.sink.add(null);
+    if (!listeners.keys.contains('streams.client')) {
+      streams.client.sink.add(null);
     }
-    if (!listeners.keys.contains('subjects.app')) {
-      subjects.app.sink.add(null);
+    if (!listeners.keys.contains('streams.app')) {
+      streams.app.sink.add(null);
     }
 
-    listen('subjects.client', subjects.client, (ravenClient) async {
+    listen('streams.client', streams.client, (ravenClient) async {
       print('clientConnected $clientConnected, ravenClient $ravenClient');
       if (ravenClient != null) {
         await periodicTimer?.cancel();
@@ -40,7 +40,7 @@ class RavenClientWaiter extends Waiter {
           print(
               'peer.done clientConnected $clientConnected appActive $appActive');
           if (appActive) {
-            subjects.client.sink.add(null);
+            streams.client.sink.add(null);
           }
         });
       } else {
@@ -51,7 +51,7 @@ class RavenClientWaiter extends Waiter {
                 .listen((_) async {
           var newRavenClient = await services.client.createClient();
           if (newRavenClient != null) {
-            subjects.client.sink.add(newRavenClient);
+            streams.client.sink.add(newRavenClient);
             await periodicTimer?.cancel();
           } else {
             retriesLeft =
@@ -63,12 +63,12 @@ class RavenClientWaiter extends Waiter {
     });
 
     /// save latest app status, .
-    listen('subjects.app', subjects.app, (appStatus) {
+    listen('streams.app', streams.app, (appStatus) {
       print('appStatus $appStatus');
       if (appStatus == 'resumed') {
         appActive = true;
         if (services.client.mostRecentRavenClient == null || !clientConnected) {
-          subjects.client.sink.add(null);
+          streams.client.sink.add(null);
         }
       } else {
         appActive = false;

@@ -23,8 +23,8 @@ class PasswordService {
             cipherUpdate.passwordId
       }.isNotEmpty;
 
-  void get broadcastLogin => subjects.login.sink.add(true);
-  void get broadcastLogout => subjects.login.sink.add(false);
+  void get broadcastLogin => streams.login.sink.add(true);
+  void get broadcastLogout => streams.login.sink.add(false);
 }
 
 class PasswordValidationService {
