@@ -120,7 +120,7 @@ class _SettingsState extends State<Settings> {
                     //  ],
                     //  services.client.mostRecentRavenClient!,
                     //);
-                    //services.balance.recalculateAllBalances();
+                    services.balance.recalculateAllBalances();
                   }),
 
               //SettingsTile.switchTile(

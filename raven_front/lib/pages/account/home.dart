@@ -78,12 +78,12 @@ class _HomeState extends State<Home> {
               showUSD: showUSD,
               holdings: Current.holdings,
               onLongPress: _toggleUSD,
-              refresh: setState),
+              refresh: refresh),
           components.lists.transactionsView(context,
               showUSD: showUSD,
               transactions: Current.compiledTransactions,
               onLongPress: _toggleUSD,
-              refresh: setState)
+              refresh: refresh)
         ]),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: sendReceiveButtons(),
