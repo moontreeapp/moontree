@@ -20,6 +20,10 @@ class BalanceService {
 
   /// If there is a change in its history, recalculate a balance. Return a list
   /// of such balances.
+  /// it has been seen in an edge case that this can produce the wrong results:
+  /// when we have a weird situtation that we've sent stuff to ourselves
+  /// mutliple times on the same addresses. Thus, the waiter instead
+  /// recalculates the entire the balance every time.
   Iterable<Balance> getChangedBalances(List<Change> changes) =>
       securityPairsFromVoutChanges(changes)
           .map((pair) => sumBalance(pair.wallet, pair.security));

@@ -40,9 +40,11 @@ class AddressService {
       );
     }
 
-    /// this should really happen after everything else...
-    /// but since the loop is distributed its living here right now.
+    // this should really happen after everything else...
+    // but since the loop is distributed its living here right now.
     await saveDanglingTransactions(client);
+
+    await services.balance.recalculateAllBalances();
   }
 
   /// for updating mempool transactions
@@ -56,6 +58,7 @@ class AddressService {
       ],
       client,
     );
+    await services.balance.recalculateAllBalances();
   }
 
   /// when an address status change: make our historic tx data match blockchain

@@ -20,11 +20,19 @@ class BalanceWaiter extends Waiter {
   void init() {
     /// new transaction is made / detected:
     /// recalculate affected balance (by security) for that wallet
-    listen('vouts.batchedChanges',
-        vouts.batchedChanges.bufferCountTimeout(25, Duration(milliseconds: 50)),
-        (List<List<Change<Vout>>> unflattenedChanges) {
-      var changes = unflattenedChanges.expand((change) => change);
-      services.balance.saveChangedBalances(changes.toList());
-    });
+    //listen('vouts.batchedChanges',
+    //    vouts.batchedChanges.bufferCountTimeout(250, Duration(seconds: 10)),
+    //    (List<List<Change<Vout>>> unflattenedChanges) {
+    //  //var changes = unflattenedChanges.expand((change) => change);
+    //  //services.balance.saveChangedBalances(changes.toList());
+//
+    //  /// incremental updates (above) do not work perfectly on all edge cases
+    //  /// thus we simply recalculate all balances each time theres an update
+    //  //services.balance.recalculateAllBalances();
+//
+    //  // well I thought that was the issue but the problem persists so
+    //  // we're going to tack on this to the end of the data get process.
+    //  // see services.address
+    //});
   }
 }
