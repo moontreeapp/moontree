@@ -4,6 +4,7 @@ import 'package:raven/utils/enum.dart';
 import 'package:reservoir/reservoir.dart';
 
 import 'package:raven/records/records.dart';
+import 'package:raven/streams/streams.dart';
 
 part 'wallet.keys.dart';
 

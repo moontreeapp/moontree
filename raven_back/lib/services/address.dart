@@ -49,7 +49,7 @@ class AddressService {
 
   /// for updating mempool transactions
   Future getAndSaveMempoolTransactions([RavenElectrumClient? client]) async {
-    client = client ?? services.client.mostRecentRavenClient;
+    client = client ?? streams.client.client.value;
     if (client == null) return;
     await saveTransactions(
       [

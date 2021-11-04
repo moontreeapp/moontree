@@ -6,7 +6,7 @@ class LeaderWaiter extends Waiter {
 
   void init() {
     listen(
-      'ciphers.batchedChanges',
+      'ciphers.changes',
       ciphers.changes,
       (Change<Cipher> change) {
         change.when(
@@ -28,28 +28,23 @@ class LeaderWaiter extends Waiter {
     );
 
     listen(
-      'wallets.changes',
-      wallets.changes,
+      'streams.wallet.leaderChanges',
+      streams.wallet.leaderChanges,
       (Change<Wallet> change) {
         change.when(
             loaded: (loaded) {},
             added: (added) {
-              var wallet = added.data;
-              if (wallet is LeaderWallet) {
-                if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
-                  services.wallet.leader.deriveMoreAddresses(wallet);
-                  services.client.subscribe.toExistingAddresses();
-                } else {
-                  backlog.add(wallet);
-                }
+              var leader = added.data;
+              if (ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
+                services.wallet.leader
+                    .deriveMoreAddresses(leader as LeaderWallet);
+                services.client.subscribe.toExistingAddresses();
+              } else {
+                backlog.add(leader as LeaderWallet);
               }
             },
-            updated: (updated) {
-              /* moved account */
-            },
-            removed: (removed) {
-              // TODO: do we care if this happens? maybe throw an error to track unexpected wallet removal
-            });
+            updated: (updated) {},
+            removed: (removed) {});
       },
       autoDeinit: true,
     );

@@ -1,5 +1,3 @@
-import 'package:reservoir/reservoir.dart';
-
 import 'package:raven/raven.dart';
 
 import 'waiter.dart';
@@ -31,20 +29,19 @@ class SingleWaiter extends Waiter {
     );
 
     listen(
-      'wallets.changes',
-      wallets.changes,
+      'streams.wallet.singleChanges',
+      streams.wallet.singleChanges,
       (Change<Wallet> change) {
         change.when(
             loaded: (loaded) {},
             added: (added) {
               var wallet = added.data;
-              if (wallet is SingleWallet) {
-                if (wallet.cipher != null) {
-                  addresses.save(services.wallet.single.toAddress(wallet));
-                  addresses.save(services.wallet.single.toAddress(wallet));
-                } else {
-                  backlog.add(wallet);
-                }
+              if (wallet.cipher != null) {
+                addresses.save(
+                    services.wallet.single.toAddress(wallet as SingleWallet));
+                addresses.save(services.wallet.single.toAddress(wallet));
+              } else {
+                backlog.add(wallet as SingleWallet);
               }
             },
             updated: (updated) {

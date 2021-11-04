@@ -19,12 +19,12 @@ class ClientService {
     2: Tuple2(SettingName.Electrum_Domain2, SettingName.Electrum_Port2),
   };
 
-  RavenElectrumClient? mostRecentRavenClient;
+  RavenElectrumClient? get client => streams.client.client.value;
 
   ClientService? mostRecentAppStatus;
 
   Future<RavenElectrumClient?> get clientOrNull async =>
-      await streams.client.last;
+      await streams.client.client.last;
 
   int electrumSettingsChoice = 0;
 
@@ -58,7 +58,7 @@ class ClientService {
       settings.primaryIndex.getOne(SettingName.Electrum_Port2)!.value;
 
   bool get connectionStatus =>
-      streams.client.stream.valueOrNull != null ? true : false;
+      streams.client.client.stream.valueOrNull != null ? true : false;
 
   Future<RavenElectrumClient?> createClient(
       {String projectName = 'MTWallet', String buildVersion = '0.1'}) async {
@@ -100,7 +100,7 @@ class SubscribeService {
   void toExistingAddresses([RavenElectrumClient? client]) {
     for (var address in addresses) {
       if (!subscriptionHandles.keys.contains(address.addressId)) {
-        to(client ?? services.client.mostRecentRavenClient!, address);
+        to(client ?? streams.client.client.value!, address);
       }
     }
   }
@@ -123,16 +123,15 @@ class SubscribeService {
 /// calls to the electrum server
 class ApiService {
   Future<String> getOwner(String symbol) async =>
-      (await services.client.mostRecentRavenClient!
+      (await streams.client.client.value!
               .getAddresses(symbol.endsWith('!') ? symbol : symbol + '!'))!
           .owner;
 
   Future<String> sendTransaction(String rawTx) async {
     //services.client.subscribe.subscribeToExistingAddresses();
-    return await services.client.mostRecentRavenClient!
-        .broadcastTransaction(rawTx);
+    return await streams.client.client.value!.broadcastTransaction(rawTx);
   }
 
   Future<Tx> getTransaction(String txId) async =>
-      await services.client.mostRecentRavenClient!.getTransaction(txId);
+      await streams.client.client.value!.getTransaction(txId);
 }

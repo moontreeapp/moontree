@@ -32,7 +32,7 @@ class AddressSubscriptionWaiter extends Waiter {
   }
 
   void setupClientListener() =>
-      listen('streams.client', streams.client, (client) async {
+      listen('streams.client.client', streams.client.client, (client) async {
         if (client == null) {
           await deinitSubscriptionHandles();
         } else {
@@ -59,7 +59,7 @@ class AddressSubscriptionWaiter extends Waiter {
           services.client.subscribe.addressesNeedingUpdate.stream
               .bufferCountTimeout(10, Duration(milliseconds: 50)),
           (changedAddresses) {
-        var client = services.client.mostRecentRavenClient;
+        var client = streams.client.client.value;
         if (client == null) {
           for (var address in changedAddresses as List<Address>) {
             backlogRetrievals.add(address);
@@ -78,7 +78,7 @@ class AddressSubscriptionWaiter extends Waiter {
               loaded: (loaded) {},
               added: (added) async {
                 Address address = added.data;
-                var client = services.client.mostRecentRavenClient;
+                var client = streams.client.client.value;
                 if (client == null) {
                   backlogSubscriptions.add(address);
                 } else {
