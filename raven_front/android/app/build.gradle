@@ -36,7 +36,8 @@ android {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.example.raven_mobile"
         // Changed from 16 to 20 due to qr_code_scanner requirement
-        minSdkVersion 20
+        // Changed from 20 to 21 due to 'Cannot fit requested classes in a single dex file'
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

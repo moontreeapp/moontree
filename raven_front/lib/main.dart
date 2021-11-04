@@ -1,15 +1,37 @@
+import 'dart:async';
+
+import 'package:datadog_flutter/datadog_observer.dart';
 import 'package:flutter/material.dart';
+import 'package:datadog_flutter/datadog_rum.dart';
+
 import 'package:raven_mobile/pages.dart';
 import 'package:raven_mobile/pages/password/change.dart';
 import 'package:raven_mobile/theme/color_gen.dart';
 import 'package:raven_mobile/theme/theme.dart';
+import 'package:raven_mobile/utils/log.dart';
 
-void main() => runApp(RavenMobileApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Capture Flutter errors automatically:
+  FlutterError.onError = DatadogRum.instance.addFlutterError;
+
+  await Log.initialize();
+  log('App started...');
+
+  // Catch errors without crashing the app:
+  runZonedGuarded(() {
+    runApp(RavenMobileApp());
+  }, (error, stackTrace) {
+    DatadogRum.instance.addError(error, stackTrace);
+  });
+}
 
 class RavenMobileApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        navigatorObservers: [DatadogObserver()],
         initialRoute: '/',
         routes: {
           '/': (context) => Loading(),
