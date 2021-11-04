@@ -9,7 +9,7 @@ class Current {
   static Balance get balanceRVN =>
       services.balance.accountBalance(account, securities.RVN);
 
-  static BalanceUSD get balanceUSD =>
+  static BalanceUSD? get balanceUSD =>
       services.rate.accountBalanceUSD(accountId, holdings);
 
   static Set<Transaction> get transactions => account.transactions;
@@ -28,7 +28,7 @@ class Current {
   static Balance walletBalanceRVN(String walletId) =>
       services.balance.walletBalance(wallet(walletId), securities.RVN);
 
-  static BalanceUSD walletBalanceUSD(String walletId) =>
+  static BalanceUSD? walletBalanceUSD(String walletId) =>
       services.rate.accountBalanceUSD(walletId, walletHoldings(walletId));
 
   static List<Balance> walletHoldings(String walletId) =>

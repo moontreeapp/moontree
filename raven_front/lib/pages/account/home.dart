@@ -19,7 +19,11 @@ class _HomeState extends State<Home> {
 
   void _toggleUSD() {
     setState(() {
-      showUSD = !showUSD;
+      if (rates.primaryIndex.getOne(securities.RVN, securities.USD) == null) {
+        showUSD = false;
+      } else {
+        showUSD = !showUSD;
+      }
     });
   }
 
@@ -112,7 +116,8 @@ class _HomeState extends State<Home> {
             alignment: Alignment.center,
             // balance view should listen for valid usd
             // show spinnter until valid usd rate appears, then rvnUSD
-            child: Text('\n\$ ${Current.balanceUSD.valueUSD}',
+            child: Text(
+                '\n\$ ${Current.balanceUSD?.valueUSD ?? Current.balanceRVN.value}',
                 style: Theme.of(context).textTheme.headline3),
           ),
           bottom: PreferredSize(

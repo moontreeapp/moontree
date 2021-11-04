@@ -12,7 +12,7 @@ class TextComponents {
       balance == 0
           ? prefix + '0'
           : prefix +
-              (balance * (rate ?? services.rate.rvnToUSD))
+              (balance * (rate ?? services.rate.rvnToUSD ?? 0.0))
                   .toStringAsFixed(precision);
 
   int rvnSats(double amount) => _amountAsSats(amount);
@@ -47,7 +47,7 @@ class TextComponents {
         ? rvnUSD(satsToAmount(
               sats, /* precision: symbol.precision... */
             ) *
-            services.rate.assetToRVN(security))
+            (services.rate.assetToRVN(security) ?? 0.0))
         : satsToAmount(
             sats, /* precision: symbol.precision... */
           ).toString();
