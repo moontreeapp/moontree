@@ -12,7 +12,7 @@ class RVNtoFiat {
       : fiatConformed = fiat,
         serviceName = 'CoinGecko';
 
-  Future<double> get() async {
+  Future<double?> get() async {
     try {
       serviceName = 'CoinGecko';
       return await getRate();
@@ -22,9 +22,13 @@ class RVNtoFiat {
         serviceName = 'Bittrex';
         return await getRate();
       } catch (e) {
-        print(e);
-        serviceName = 'Nomi';
-        return await getRate();
+        try {
+          print(e);
+          serviceName = 'Nomi';
+          return await getRate();
+        } catch (e) {
+          return null;
+        }
       }
     }
   }

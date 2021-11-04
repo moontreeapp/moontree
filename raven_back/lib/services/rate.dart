@@ -2,32 +2,39 @@ import 'package:raven/utils/rate.dart';
 import 'package:raven/raven.dart';
 
 class RateService {
-  double assetToRVN(Security asset) =>
-      rates.primaryIndex.getOne(asset, securities.RVN)?.rate ?? 0.0;
+  double? assetToRVN(Security asset, {double? defaultRate}) =>
+      rates.primaryIndex.getOne(asset, securities.RVN)?.rate ?? defaultRate;
 
-  double get rvnToUSD =>
-      rates.primaryIndex.getOne(securities.RVN, securities.USD)?.rate ?? 0.0;
+  double? get rvnToUSD =>
+      rates.primaryIndex.getOne(securities.RVN, securities.USD)?.rate;
 
-  double rvnToFiat(Security fiat) =>
-      rates.primaryIndex.getOne(securities.RVN, fiat)?.rate ?? 0.0;
+  double? rvnToFiat(Security fiat, {double? defaultRate}) =>
+      rates.primaryIndex.getOne(securities.RVN, fiat)?.rate ?? defaultRate;
 
-  double fiatToFiat(Security fiatQuote, {Security? fiatBase}) =>
+  double? fiatToFiat(
+    Security fiatQuote, {
+    Security? fiatBase,
+    double? defaultRate,
+  }) =>
       rates.primaryIndex.getOne(fiatBase ?? securities.USD, fiatQuote)?.rate ??
-      0.0;
+      defaultRate;
 
   Future saveRate() async {
     await rates.save(Rate(
       base: securities.RVN,
       quote: securities.USD,
-      rate: await RVNtoFiat().get(),
+      rate: await RVNtoFiat().get() ??
+          rates.primaryIndex.getOne(securities.RVN, securities.USD)?.rate ??
+          0.1, // instead of hardcoding a default we might disable the feature to see anything in USD on the front end...
     ));
   }
 
-  BalanceUSD accountBalanceUSD(String accountId, List<Balance> holdings) {
+  BalanceUSD? accountBalanceUSD(String accountId, List<Balance> holdings) {
     var totalRVNBalance = getTotalRVN(accountId, holdings);
     var usd = BalanceUSD(confirmed: 0.0, unconfirmed: 0.0);
     if (totalRVNBalance.value > 0) {
       var rate = rvnToUSD;
+      if (rate == null) return null;
       var percision = 100000000;
       usd = BalanceUSD(
           confirmed:
@@ -48,12 +55,12 @@ class RateService {
         confirmed: balance.security == securities.RVN
             ? balance.confirmed
             : ((balance.confirmed / assetPercision) *
-                    assetToRVN(balance.security))
+                    assetToRVN(balance.security, defaultRate: 0.0)!)
                 .round(),
         unconfirmed: balance.security == securities.RVN
             ? balance.unconfirmed
             : ((balance.unconfirmed / assetPercision) *
-                    assetToRVN(balance.security))
+                    assetToRVN(balance.security, defaultRate: 0.0)!)
                 .round()));
     return accountBalancesAsRVN.fold(
         Balance(

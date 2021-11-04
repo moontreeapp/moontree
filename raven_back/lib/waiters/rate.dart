@@ -5,10 +5,15 @@ import 'package:raven/raven.dart';
 import 'waiter.dart';
 
 class RateWaiter extends Waiter {
-  Future init() async {
-    // on open
-    await services.rate.saveRate();
+  static const Duration rateWait = Duration(minutes: 10);
 
-    /// setup listener to get the conversion rate on manual refresh
+  Future init() async {
+    listen(
+      'periodic',
+      Stream.periodic(rateWait),
+      (_) {
+        services.rate.saveRate();
+      },
+    );
   }
 }

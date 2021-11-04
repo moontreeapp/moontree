@@ -37,15 +37,17 @@ class RavenClientWaiter extends Waiter {
           periodicTimer =
               Stream.periodic(connectionTimeout + Duration(seconds: 1))
                   .listen((_) async {
-            var newRavenClient = await services.client.createClient();
-            if (newRavenClient != null) {
-              streams.client.connected.sink.add(true);
-              streams.client.client.sink.add(newRavenClient);
-              await periodicTimer?.cancel();
-            } else {
-              retriesLeft =
-                  retriesLeft <= 0 ? retries : retriesLeft = retriesLeft - 1;
-              services.client.cycleNextElectrumConnectionOption();
+            if (streams.app.active.value) {
+              var newRavenClient = await services.client.createClient();
+              if (newRavenClient != null) {
+                streams.client.connected.sink.add(true);
+                streams.client.client.sink.add(newRavenClient);
+                await periodicTimer?.cancel();
+              } else {
+                retriesLeft =
+                    retriesLeft <= 0 ? retries : retriesLeft = retriesLeft - 1;
+                services.client.cycleNextElectrumConnectionOption();
+              }
             }
           });
         }
