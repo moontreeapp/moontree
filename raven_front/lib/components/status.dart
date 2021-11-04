@@ -32,7 +32,7 @@ class _AppLifecycleReactorState extends State<AppLifecycleReactor>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    streams.app.sink.add(describeEnum(state));
+    streams.app.status.sink.add(describeEnum(state));
     setState(() {
       _notification = state;
     });

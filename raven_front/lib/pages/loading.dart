@@ -102,7 +102,8 @@ class _LoadingState extends State<Loading> {
             child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image(image: AssetImage("assets/rvn.png")),
+        //Image(image: AssetImage("assets/rvn.png")),
+        Image(image: AssetImage("assets/splash/fast.gif")),
         Center(
           child: Text('Loading...'),
         )

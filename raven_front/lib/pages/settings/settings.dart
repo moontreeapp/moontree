@@ -118,7 +118,7 @@ class _SettingsState extends State<Settings> {
                     //    await services.client.api.getTransaction(
                     //        '86f9493e07cb039a3735ca7ac074a869464488d961ad60844134820fa67d6a56')
                     //  ],
-                    //  services.client.mostRecentRavenClient!,
+                    //  streams.client.client.value!,
                     //);
                     services.balance.recalculateAllBalances();
                   }),

@@ -604,7 +604,7 @@ class _SendState extends State<Send> {
                   ]));
 
   Future attemptSend(ravencoin.Transaction tx) async {
-    var client = services.client.mostRecentRavenClient;
+    var client = streams.client.client.value;
     if (client == null) {
       // replace with snackbar or something
       showDialog(

@@ -36,8 +36,8 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
     electrumAddressSecondBackup.text =
         '${services.client.secondBackupElectrumDomain}:${services.client.secondBackupElectrumPort}';
     listeners.add(settings.changes.listen((changes) => setState(() {})));
-    listeners.add(
-        streams.client.stream.listen((ravenClient) async => setState(() {})));
+    listeners.add(streams.client.client.stream
+        .listen((ravenClient) async => setState(() {})));
     super.initState();
   }
 
@@ -75,9 +75,9 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
           Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                services.client.mostRecentRavenClient != null
+                streams.client.client.value != null
                     ? Text(
-                        '${services.client.mostRecentRavenClient!.host}:${services.client.mostRecentRavenClient!.port}')
+                        '${streams.client.client.value!.host}:${streams.client.client.value!.port}')
                     : Text(
                         '${services.client.chosenDomain}:${services.client.chosenPort.toString()}'),
                 ...[
@@ -97,7 +97,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
                 TextButton.icon(
                     onPressed: () {
                       // flush out current connection and allow waiter to reestablish one
-                      streams.client.sink.add(null);
+                      streams.client.client.sink.add(null);
                       // show that waits for valid connection or times out...
                       // todo
                       setState(() {});
