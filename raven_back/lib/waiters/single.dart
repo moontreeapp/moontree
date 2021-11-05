@@ -14,12 +14,10 @@ class SingleWaiter extends Waiter {
           // if this cipher update is in the list of wallets missing ciphers...
           // initialize the wallet and remove it from the list of wallets missing ciphers
           loaded: (loaded) {
-            backlog =
-                attemptSingleWalletAddressDerive(change.data.cipherUpdate);
+            attemptSingleWalletAddressDerive(change.data.cipherUpdate);
           },
           added: (added) {
-            backlog =
-                attemptSingleWalletAddressDerive(change.data.cipherUpdate);
+            attemptSingleWalletAddressDerive(change.data.cipherUpdate);
           },
           updated: (updated) {},
           removed: (removed) {},
@@ -55,17 +53,20 @@ class SingleWaiter extends Waiter {
     );
   }
 
-  Set<SingleWallet> attemptSingleWalletAddressDerive(
-      CipherUpdate cipherUpdate) {
-    var ret = <SingleWallet>{};
+  void attemptSingleWalletAddressDerive(CipherUpdate cipherUpdate) {
+    var remove = <SingleWallet>{};
     for (var wallet in backlog) {
       if (wallet.cipherUpdate == cipherUpdate) {
+        // why is this happening twice?
         addresses.save(services.wallet.single.toAddress(wallet));
         addresses.save(services.wallet.single.toAddress(wallet));
-      } else {
-        ret.add(wallet);
+        remove.add(wallet);
       }
     }
-    return ret;
+    // subscribe to the addresses we just created
+    services.client.subscribe.toExistingAddresses();
+    for (var wallet in remove) {
+      backlog.remove(wallet);
+    }
   }
 }

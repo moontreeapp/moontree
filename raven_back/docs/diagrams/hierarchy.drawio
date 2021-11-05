@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="Tt2Mw6sH7wFppCwXUsXx" name="Page-1">
-        <mxGraphModel dx="703" dy="432" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="874" dy="616" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -37,34 +37,34 @@
                 <mxCell id="20" value="Settings" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="1040" y="10" width="220" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="21" value="Vins (signed by)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="21" value="Vins (signed by)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="160" y="130" width="100" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="22" value="Vouts" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="22" value="Vouts" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="40" y="280" width="100" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="23" value="Vins" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="23" value="Vins" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="160" y="280" width="100" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="24" value="Transaction (contains...)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="24" value="Transaction (contains...)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="40" y="240" width="220" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="28" value="always points to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="25" target="26">
+                <mxCell id="28" value="always points to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="25" target="26" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="25" value="Vins" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="25" value="Vins" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="260" y="360" width="100" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="26" value="Vouts" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="26" value="Vouts" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="40" y="360" width="100" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="33" value="Vins" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="33" value="Vins" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="260" y="400" width="100" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="35" value="may be used by" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="34" target="33">
+                <mxCell id="35" value="may be used by" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="34" target="33" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="36" value="may not be used by any Vins" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="34" target="39">
+                <mxCell id="36" value="may not be used by any Vins" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="34" target="39" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="290" y="460" as="targetPoint"/>
                         <Array as="points">
@@ -72,11 +72,14 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="34" value="Vouts" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="34" value="Vouts" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="40" y="400" width="100" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="39" value="unspent" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                <mxCell id="39" value="unspent" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="290" y="450" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="41" value="block" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#999999;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="200" width="220" height="30" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
