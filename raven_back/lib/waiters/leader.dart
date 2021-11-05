@@ -59,7 +59,10 @@ class LeaderWaiter extends Waiter {
             var vout = added.data;
             if (vout.wallet is LeaderWallet) {
               var wallet = vout.wallet as LeaderWallet;
+              print('vout');
+              print(vout.address?.address);
               if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
+                print('deriving');
                 services.wallet.leader.deriveMoreAddresses(
                   wallet,
                   exposures: [vout.address!.exposure],
@@ -76,7 +79,8 @@ class LeaderWaiter extends Waiter {
   }
 
   Set<LeaderWallet> attemptLeaderWalletAddressDerive(
-      CipherUpdate cipherUpdate) {
+    CipherUpdate cipherUpdate,
+  ) {
     var ret = <LeaderWallet>{};
     for (var wallet in backlog) {
       if (wallet.cipherUpdate == cipherUpdate) {

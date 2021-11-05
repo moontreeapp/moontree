@@ -32,9 +32,14 @@ class AddressService {
       await saveTransactions(
         [
           for (var txHash in histories.map((history) => history.txHash))
-            if (transactions.primaryIndex.getOne(txHash) == null ||
-                transactions.primaryIndex.getOne(txHash)!.vins.isEmpty)
-              await client.getTransaction(txHash)
+
+            /// this successfully reduced download redundancy but if things
+            /// downloaded in a particular order, it caused the error of not
+            /// downloading every transaction we needed, somehow. So this
+            /// condition has been removed.
+            //if (transactions.primaryIndex.getOne(txHash) == null ||
+            //    transactions.primaryIndex.getOne(txHash)!.vins.isEmpty)
+            await client.getTransaction(txHash)
         ],
         client,
       );

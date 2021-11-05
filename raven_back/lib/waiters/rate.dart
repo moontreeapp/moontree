@@ -8,6 +8,8 @@ class RateWaiter extends Waiter {
   static const Duration rateWait = Duration(minutes: 10);
 
   Future init() async {
+    unawaited(services.rate.saveRate());
+
     listen(
       'periodic',
       Stream.periodic(rateWait),
