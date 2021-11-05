@@ -50,6 +50,9 @@ class _HomeState extends State<Home> {
     listeners.add(wallets.batchedChanges.listen((batchedChanges) {
       setState(() {});
     }));
+    listeners.add(rates.batchedChanges.listen((batchedChanges) {
+      setState(() {});
+    }));
     listeners.add(settings.batchedChanges.listen((batchedChanges) {
       setState(() {});
     }));
@@ -67,6 +70,7 @@ class _HomeState extends State<Home> {
   }
 
   void refresh([Function? f]) {
+    services.rate.saveRate();
     services.balance.recalculateAllBalances();
     setState(() {});
   }
@@ -117,7 +121,8 @@ class _HomeState extends State<Home> {
             // balance view should listen for valid usd
             // show spinnter until valid usd rate appears, then rvnUSD
             child: Text(
-                '\n\$ ${Current.balanceUSD?.valueUSD ?? Current.balanceRVN.value}',
+                // this kinda thing should be abstracted:
+                '\n${Current.balanceUSD != null ? '\$' : 'RVN'} ${Current.balanceUSD?.valueUSD ?? Current.balanceRVN.rvn}',
                 style: Theme.of(context).textTheme.headline3),
           ),
           bottom: PreferredSize(
