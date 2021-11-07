@@ -35,9 +35,12 @@ class BalanceService {
     return changed;
   }
 
+  Iterable<Balance> recalculateSpecificBalances(List<Vout> givenVouts) =>
+      securityPairsFromVouts(givenVouts)
+          .map((pair) => sumBalance(pair.wallet, pair.security));
+
   Future recalculateAllBalances() async =>
-      await balances.saveAll(securityPairsFromVouts(vouts.data.toList())
-          .map((pair) => sumBalance(pair.wallet, pair.security)));
+      await balances.saveAll(recalculateSpecificBalances(vouts.data.toList()));
 
   /// Transaction Logic ///////////////////////////////////////////////////////
 
@@ -177,5 +180,21 @@ class BalanceService {
       }
     }
     return retBalance;
+  }
+
+  List<Balance> addressesBalances(List<Address> addresses) {
+    // ignore: omit_local_variable_types
+    Map<Security, Balance> balancesBySecurity = {};
+    var addressBalances = recalculateSpecificBalances(
+        addresses.map((a) => a.vouts).expand((i) => i).toList());
+    for (var balance in addressBalances) {
+      if (!balancesBySecurity.containsKey(balance.security)) {
+        balancesBySecurity[balance.security] = balance;
+      } else {
+        balancesBySecurity[balance.security] =
+            balancesBySecurity[balance.security]! + balance;
+      }
+    }
+    return balancesBySecurity.values.toList();
   }
 }

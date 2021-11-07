@@ -9,7 +9,7 @@ class AccountWaiter extends Waiter {
     listen(
       'accounts/cipher',
       CombineLatestStream.combine2(
-          streams.replay.account,
+          streams.account.replay,
           streams.cipher.latest,
           (Account account, Cipher cipher) => Tuple2(account, cipher)),
       (Tuple2<Account, Cipher> tuple) {

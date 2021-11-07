@@ -13,6 +13,11 @@ class LeaderWalletService {
   };
   final int requiredGap = 1;
 
+  int currentGap(LeaderWallet leaderWallet, NodeExposure exposure) =>
+      exposure == NodeExposure.External
+          ? leaderWallet.emptyExternalAddresses.length
+          : leaderWallet.emptyInternalAddresses.length;
+
   void maybeSaveNewAddress(
       LeaderWallet leaderWallet, CipherBase cipher, NodeExposure exposure) {
     var newAddress = maybeDeriveNextAddress(leaderWallet, cipher, exposure);
@@ -113,18 +118,16 @@ class LeaderWalletService {
     CipherBase cipher,
     NodeExposure exposure,
   ) {
-    var currentGap = exposure == NodeExposure.External
-        ? leaderWallet.emptyExternalAddresses.length
-        : leaderWallet.emptyInternalAddresses.length;
+    var existingGap = currentGap(leaderWallet, exposure);
     var usedCount = exposure == NodeExposure.External
         ? leaderWallet.usedExternalAddresses.length
         : leaderWallet.usedInternalAddresses.length;
-    var expectedhdIndex = (currentGap + usedCount - 1);
+    var expectedhdIndex = (existingGap + usedCount - 1);
     var hdIndexKey = addressRegistryKey(leaderWallet, exposure);
     addressRegistry[hdIndexKey] =
         addressRegistry[hdIndexKey] ?? expectedhdIndex;
     var hdIndex = addressRegistry[hdIndexKey]!;
-    if (currentGap < requiredGap) {
+    if (existingGap < requiredGap) {
       return {deriveAddress(leaderWallet, hdIndex + 1, exposure: exposure)};
     }
     return {};
@@ -135,7 +138,7 @@ class LeaderWalletService {
   String addressRegistryKey(LeaderWallet wallet, NodeExposure exposure) =>
       '${wallet.walletId}:${describeEnum(exposure)}';
 
-  void deriveMoreAddresses(
+  Set<Address> deriveMoreAddresses(
     LeaderWallet wallet, {
     List<NodeExposure>? exposures,
   }) {
@@ -151,5 +154,6 @@ class LeaderWalletService {
     }
     addresses.saveAll(newAddresses);
     services.busy.addressDerivationOff();
+    return newAddresses;
   }
 }

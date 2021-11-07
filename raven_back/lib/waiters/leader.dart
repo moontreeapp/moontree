@@ -3,6 +3,7 @@
 /// each time a new vout is saved that can be tied to a wallet we own.
 
 import 'package:raven/raven.dart';
+import 'package:raven/utils/transform.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
 import 'waiter.dart';
@@ -74,27 +75,25 @@ class LeaderWaiter extends Waiter {
         // if vout has no wallet and address has no vout don't derive.
         var vout = tuple.item1;
         var address = tuple.item2;
+        var wallet;
         if (vout.wallet is LeaderWallet) {
-          var wallet = vout.wallet as LeaderWallet;
-          if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
-            services.wallet.leader.deriveMoreAddresses(
-              wallet,
-              exposures: [vout.address!.exposure],
-            );
-            services.client.subscribe.toExistingAddresses();
-          } else {
-            backlog.add(wallet);
-          }
+          wallet = vout.wallet as LeaderWallet;
         } else if (address.wallet is LeaderWallet) {
-          var wallet = address.wallet as LeaderWallet;
-          if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
-            services.wallet.leader.deriveMoreAddresses(
-              wallet,
-              exposures: [address.exposure],
-            );
-          } else {
-            backlog.add(wallet);
+          wallet = address.wallet as LeaderWallet;
+        }
+        if (ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
+          var derived = services.wallet.leader.deriveMoreAddresses(
+            wallet,
+            exposures: [vout.address!.exposure],
+          );
+          services.client.subscribe.toExistingAddresses();
+          for (var addressId in derived.map((address) => address.addressId)) {
+            if (!services.address.retrieved.contains(addressId)) {
+              services.address.unretrieved.add(addressId);
+            }
           }
+        } else {
+          backlog.add(wallet);
         }
       },
     );

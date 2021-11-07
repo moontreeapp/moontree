@@ -1,10 +1,14 @@
 import 'dart:async';
 
+import 'package:raven/utils/transform.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:raven/raven.dart';
 import 'package:tuple/tuple.dart';
 
 class AddressService {
+  Set<String> unretrieved = {};
+  Set<String> retrieved = {};
+
   /// when an address status change: make our historic tx data match blockchain
   Future getAndSaveTransactionsByAddresses(
     List<Address> changedAddresses,
@@ -43,13 +47,27 @@ class AddressService {
         ],
         client,
       );
+      unretrieved.remove(changedAddress.addressId);
+      retrieved.add(changedAddress.addressId);
     }
 
-    // this should really happen after everything else...
-    // but since the loop is distributed its living here right now.
-    await saveDanglingTransactions(client);
-
-    await services.balance.recalculateAllBalances();
+    /// this condition marks the end of the external loop: after we have
+    /// generated and looked for all transactions for those addresses...
+    /// pull vouts for vins that don't have corresponding vouts and
+    /// calculate all balances.
+    if (services.address.unretrieved.isEmpty &&
+        all([
+          for (var leaderWallet in wallets.leaders)
+            services.wallet.leader
+                        .currentGap(leaderWallet, NodeExposure.Internal) >=
+                    services.wallet.leader.requiredGap &&
+                services.wallet.leader
+                        .currentGap(leaderWallet, NodeExposure.External) >=
+                    services.wallet.leader.requiredGap
+        ])) {
+      await saveDanglingTransactions(client);
+      await services.balance.recalculateAllBalances();
+    }
   }
 
   /// for updating mempool transactions

@@ -4,8 +4,8 @@ import 'package:rxdart/rxdart.dart';
 
 import 'package:raven/raven.dart';
 
-class ReplayStreams {
-  final account = replayAccount$;
+class AccountStreams {
+  final replay = replayAccount$;
 }
 
 final Stream<Account> replayAccount$ = ReplaySubject<Account>()

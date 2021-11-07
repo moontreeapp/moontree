@@ -55,5 +55,5 @@ class _AddressKey extends Key<Vout> {
 }
 
 extension ByAddressMethodsForVout on Index<_AddressKey, Vout> {
-  List<Vout> getAll(String addressId) => getByKeyStr(addressId);
+  List<Vout> getAll(String address) => getByKeyStr(address);
 }
