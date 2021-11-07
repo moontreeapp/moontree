@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:raven/services/transaction.dart';
 import 'package:raven/utils/enum.dart';
 import 'package:raven/utils/extensions.dart';
 import 'package:raven/raven.dart';
@@ -8,6 +9,7 @@ import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 import 'package:raven_mobile/utils/utils.dart';
+import 'package:raven_mobile/utils/extensions.dart';
 
 class WalletView extends StatefulWidget {
   final dynamic data;
@@ -29,6 +31,8 @@ class _WalletViewState extends State<WalletView> {
   String? address;
   //String addressBalance = '';
   Row exposureAndIndex = Row();
+  List<Balance>? holdings;
+  List<TransactionRecord>? transactions;
 
   void _toggleUSD() {
     setState(() {
@@ -114,13 +118,14 @@ class _WalletViewState extends State<WalletView> {
         // holdings, Current.walletHoldings(wallet.walletId)
         components.lists.holdingsView(context,
             showUSD: showUSD,
-            holdings: Current.walletHoldings(wallet.walletId),
+            holdings: holdings ?? Current.walletHoldings(wallet.walletId),
             onLongPress: _toggleUSD,
             refresh: setState),
         // transactions histories.byWallet...
         components.lists.transactionsView(context,
             showUSD: showUSD,
-            transactions: Current.walletCompiledTransactions(wallet.walletId),
+            transactions: transactions ??
+                Current.walletCompiledTransactions(wallet.walletId),
             onLongPress: _toggleUSD,
             refresh: setState),
       ]);
@@ -191,6 +196,15 @@ class _WalletViewState extends State<WalletView> {
               in wallet.addresses..sort((a, b) => a.compareTo(b)))
             ListTile(
               onTap: () => setState(() {
+                //holdings = services.balance.addressesBalances([walletAddress]);
+                transactions =
+                    Current.walletCompiledTransactions(wallet.walletId)
+                        .where((transactionRecord) =>
+                            transactionRecord.fromAddress ==
+                                walletAddress.address ||
+                            transactionRecord.toAddress ==
+                                walletAddress.address)
+                        .toList();
                 address = walletAddress.address;
                 exposureAndIndex = Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -222,7 +236,12 @@ class _WalletViewState extends State<WalletView> {
                     ? components.icons.out(context)
                     : components.icons.income(context)),
                 Text(walletAddress.address,
-                    style: Theme.of(context).textTheme.caption),
+                    style: vouts.byAddress
+                            .getAll(walletAddress.address)
+                            .isNotEmpty
+                        ? fromTextStyle(Theme.of(context).textTheme.caption!,
+                            fontWeight: FontWeight.bold)
+                        : Theme.of(context).textTheme.caption),
                 Text(
                     // I thoguht this is what slows down loading the page, but I now think it's the qr code... //takes a few seconds, lets just get them one at a time in onTap
                     components.text
