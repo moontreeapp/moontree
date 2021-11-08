@@ -6,10 +6,9 @@ class ButtonComponents {
   IconButton back(BuildContext context) => IconButton(
       icon: components.icons.back, onPressed: () => Navigator.pop(context));
 
-  GestureDetector settings(BuildContext context, Function setStateFn) =>
+  GestureDetector settings(BuildContext context /*, Function setStateFn*/) =>
       GestureDetector(
-          onTap: () => Navigator.pushNamed(context, '/settings')
-              .then((_) => setStateFn()),
+          onTap: () => Navigator.pushNamed(context, '/settings'),
           child: Icon(Icons.more_vert));
 
   BottomAppBar bottomNav(BuildContext context) => BottomAppBar(

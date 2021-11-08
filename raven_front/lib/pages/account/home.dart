@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
+import 'package:raven_mobile/widgets/widgets.dart';
 import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/services/lookup.dart';
@@ -13,48 +14,68 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<StreamSubscription> listeners = [];
-  bool showUSD = false;
+  List<StreamSubscription> listeners =
+      []; // most of these can move to header and body elements
+  late String currentAccountId = '0'; // should be moved to body?
+  late Account currentAccount; // should be moved to body?
+  Rate? rateUSD; // to header and body
+  Balance? accountBalance; // to header
+  bool showUSD = false; // list in body
   final accountName = TextEditingController();
-
-  void _toggleUSD() {
-    setState(() {
-      if (rates.primaryIndex.getOne(securities.RVN, securities.USD) == null) {
-        showUSD = false;
-      } else {
-        showUSD = !showUSD;
-      }
-    });
-  }
 
   @override
   void initState() {
     super.initState();
     // gets cleaned up?
     currentTheme.addListener(() {
+      // if user changes OS dark/light mode setting, refresh
       setState(() {});
     });
     listeners.add(balances.batchedChanges.listen((batchedChanges) {
-      setState(() {});
+      // if we update balance for the account we're looking at:
+      var changes = batchedChanges.where((change) =>
+          change.data.account?.accountId == Current.account.accountId);
+      if (changes.isNotEmpty)
+        setState(() {
+          accountBalance = changes.first.data;
+        });
     }));
-    listeners
-        .add(vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
-      if ([
-        for (var change in batchedChanges)
-          if ((change.data).address?.wallet?.accountId ==
-              Current.account.accountId)
-            1
-      ].contains(1)) setState(() {});
-    }));
+
+    /// this shouldn't be necessary if balances have updated.
+    //listeners
+    //    .add(vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
+    //  // if vouts in our account has changed...
+    //  if (batchedChanges
+    //      .where((change) =>
+    //          change.data.address?.wallet?.accountId ==
+    //          Current.account.accountId)
+    //      .isNotEmpty) {
+    //    setState(() {});
+    //  }
+    //}));
     // we can move a wallet from one account to another
-    listeners.add(wallets.batchedChanges.listen((batchedChanges) {
-      setState(() {});
-    }));
+    //listeners.add(wallets.batchedChanges.listen((batchedChanges) {
+    //  setState(() {});
+    //}));
     listeners.add(rates.batchedChanges.listen((batchedChanges) {
-      setState(() {});
+      // TODO: should probably include any assets that are in the holding of the main account too...
+      var changes = batchedChanges.where((change) =>
+          change.data.base == securities.RVN &&
+          change.data.quote == securities.USD);
+      if (changes.isNotEmpty)
+        setState(() {
+          rateUSD = changes.first.data;
+        });
     }));
     listeners.add(settings.batchedChanges.listen((batchedChanges) {
-      setState(() {});
+      // todo: set the current account on the widget
+      var changes = batchedChanges
+          .where((change) => change.data.name == SettingName.Account_Current);
+      if (changes.isNotEmpty)
+        setState(() {
+          currentAccountId = changes.first.data.value;
+          currentAccount = accounts.primaryIndex.getOne(currentAccountId)!;
+        });
     }));
   }
 
@@ -76,27 +97,23 @@ class _HomeState extends State<Home> {
   }
 
   @override
-  Widget build(BuildContext context) => DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: balanceHeader(),
-        drawer: accounts.data.length > 1 ? accountsView() : null,
-        body: TabBarView(children: [
-          components.lists.holdingsView(context,
-              showUSD: showUSD,
-              holdings: Current.holdings,
-              onLongPress: _toggleUSD,
-              refresh: refresh),
-          components.lists.transactionsView(context,
-              showUSD: showUSD,
-              transactions: Current.compiledTransactions,
-              onLongPress: _toggleUSD,
-              refresh: refresh)
-        ]),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: sendReceiveButtons(),
-        //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
-      ));
+  Widget build(BuildContext context) {
+    currentAccount = accounts.primaryIndex.getOne(currentAccountId)!;
+    return DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: balanceHeader(),
+          drawer: accounts.data.length > 1 ? accountsView() : null,
+          body: TabBarView(children: <Widget>[
+            HoldingList(currentAccountId: currentAccountId),
+            TransactionList(currentAccountId: currentAccountId)
+          ]),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: sendReceiveButtons(),
+          //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
+        ));
+  }
 
   PreferredSize balanceHeader() => PreferredSize(
       preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
@@ -108,14 +125,12 @@ class _HomeState extends State<Home> {
             indicators.client,
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: components.buttons.settings(context, () {
-                  setState(() {});
-                }))
+                child: components.buttons.settings(context))
           ],
           elevation: 2,
           centerTitle: false,
           title:
-              Text(accounts.data.length > 1 ? Current.account.name : 'Wallet'),
+              Text(accounts.data.length > 1 ? currentAccount.name : 'Wallet'),
           flexibleSpace: Container(
             alignment: Alignment.center,
             // balance view should listen for valid usd
@@ -154,7 +169,6 @@ class _HomeState extends State<Home> {
                   await settings.setCurrentAccountId(account.accountId);
                   accountName.text = '';
                   Navigator.pop(context);
-                  setState(() {});
                 },
                 title: Text(account.accountId + ' ' + account.name,
                     style: Theme.of(context).textTheme.bodyText1),

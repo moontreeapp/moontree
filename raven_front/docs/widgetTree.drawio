@@ -1,0 +1,188 @@
+<mxfile host="65bd71144e">
+    <diagram id="6BlEj-a6oLM-DQT_CYVm" name="Page-1">
+        <mxGraphModel dx="1730" dy="382" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" edge="1" parent="1" source="7" target="11">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="300" y="190" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="10" value="Page (stateful widget)" style="swimlane;" vertex="1" parent="1">
+                    <mxGeometry x="160" y="20" width="290" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="header" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="10">
+                    <mxGeometry x="15" y="120" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="body" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="10">
+                    <mxGeometry x="155" y="120" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="helper functions" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="10">
+                    <mxGeometry x="155" y="40" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="State, listeners, &lt;br&gt;build, etc" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="10">
+                    <mxGeometry x="15" y="40" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="Backend" style="swimlane;" vertex="1" parent="1">
+                    <mxGeometry x="30" y="420" width="160" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Current Account and related data&lt;br&gt;(like balance)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="15">
+                    <mxGeometry x="20" y="40" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="20" target="11">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="71" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="20" target="12">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="405" y="330"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="20" value="Components" style="swimlane;" vertex="1" parent="1">
+                    <mxGeometry x="460" y="260" width="290" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="Components pulling from backend&lt;br&gt;(lists of transactions)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="20">
+                    <mxGeometry x="85" y="120" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="components requiring context&lt;br&gt;(ie Buttons)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="20">
+                    <mxGeometry x="155" y="40" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="Static components&lt;br&gt;(ie Styles)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="20">
+                    <mxGeometry x="15" y="40" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" edge="1" parent="1" source="7" target="22">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" value="" style="endArrow=none;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="840" y="560" as="sourcePoint"/>
+                        <mxPoint x="840" y="40" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="31" value="&lt;h1&gt;Current Design&lt;/h1&gt;&lt;p&gt;The Stateful widgets such as pages shouldn't really work this way. They can, but to maintain separation of concerns its best that the stateful widget has all the information it needs upon load, and that it should reload when internal state changes.&lt;/p&gt;&lt;p&gt;So what is a better way? Pages should still have a top level stateful widget, but I think the body and header should have a hierarchy of widgets. that way we can refresh a portion of the screen without refreshing it all. None of them should merely load whatever is in the background, but should instead be loaded by the background upon refresh.&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="480" y="20" width="340" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" value="Page (stateful widget)" style="swimlane;" vertex="1" parent="1">
+                    <mxGeometry x="1020" y="20" width="290" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="header" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="32">
+                    <mxGeometry x="15" y="120" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="34" value="body" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="32">
+                    <mxGeometry x="155" y="120" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" value="helper functions" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="32">
+                    <mxGeometry x="155" y="40" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" value="State, listeners, &lt;br&gt;build, etc" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="32">
+                    <mxGeometry x="15" y="40" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="47" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="37" target="33">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1080" y="240"/>
+                            <mxPoint x="1095" y="240"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="37" value=" Header (stateful)" style="swimlane;" vertex="1" parent="1">
+                    <mxGeometry x="1005" y="250" width="150" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="41" value="State, listeners, &lt;br&gt;build, etc" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="37">
+                    <mxGeometry x="15" y="40" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="38" value="header" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="37">
+                    <mxGeometry x="15" y="120" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="51" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="48" target="34">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1255" y="240"/>
+                            <mxPoint x="1235" y="240"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="48" value=" Body (stateful)" style="swimlane;" vertex="1" parent="1">
+                    <mxGeometry x="1180" y="250" width="150" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="49" value="State, listeners, &lt;br&gt;build, etc" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="48">
+                    <mxGeometry x="15" y="40" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="50" value="Body" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="48">
+                    <mxGeometry x="15" y="120" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="63" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="52" target="50">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="52" value=" elements (stateful)" style="swimlane;" vertex="1" parent="1">
+                    <mxGeometry x="1180" y="520" width="150" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="53" value="State, listeners, &lt;br&gt;build, etc" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="52">
+                    <mxGeometry x="15" y="40" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="54" value="List" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="52">
+                    <mxGeometry x="15" y="120" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="64" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="55" target="38">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1415" y="500"/>
+                            <mxPoint x="1110" y="500"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="55" value=" elements (stateful)" style="swimlane;" vertex="1" parent="1">
+                    <mxGeometry x="1340" y="520" width="150" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="56" value="State, listeners, &lt;br&gt;build, etc" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="55">
+                    <mxGeometry x="15" y="40" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="57" value="button" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="55">
+                    <mxGeometry x="15" y="120" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="62" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="58" target="50">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1575" y="480"/>
+                            <mxPoint x="1285" y="480"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="58" value=" elements (stateful)" style="swimlane;" vertex="1" parent="1">
+                    <mxGeometry x="1500" y="520" width="150" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="59" value="State, listeners, &lt;br&gt;build, etc" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="58">
+                    <mxGeometry x="15" y="40" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="60" value="tx view, etc" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="58">
+                    <mxGeometry x="15" y="120" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="68" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="65" target="38">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1080" y="500"/>
+                            <mxPoint x="1080" y="500"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="65" value=" elements (stateful)" style="swimlane;" vertex="1" parent="1">
+                    <mxGeometry x="1020" y="520" width="150" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="66" value="State, listeners, &lt;br&gt;build, etc" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="65">
+                    <mxGeometry x="15" y="40" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="67" value="Balance" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="65">
+                    <mxGeometry x="15" y="120" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="69" value="&lt;h1&gt;Ideal Design&lt;/h1&gt;&lt;p&gt;Notice we've removed components, static components would remain or be converted to stateless widgets, while the other components become stateful widgets.&lt;/p&gt;&lt;p&gt;We may not need the interim body or header widgets, I think the main thing is converting stateful components to stateful widgets, and avoid populating directly from the backend I guess.&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="1350" y="20" width="340" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="70" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="7" target="12">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

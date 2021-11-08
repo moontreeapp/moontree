@@ -68,9 +68,7 @@ class _RavenTransactionsState extends State<RavenTransactions> {
             indicators.client,
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: components.buttons.settings(context, () {
-                  setState(() {});
-                }))
+                child: components.buttons.settings(context))
           ],
           title: Text('RVN'),
           flexibleSpace: Container(

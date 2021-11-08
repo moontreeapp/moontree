@@ -95,9 +95,7 @@ class _TransactionPageState extends State<TransactionPage> {
             indicators.client,
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: components.buttons.settings(context, () {
-                  setState(() {});
-                }))
+                child: components.buttons.settings(context))
           ],
           title: Text('Transaction'),
           flexibleSpace: Container(
