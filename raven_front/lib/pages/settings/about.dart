@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:raven_mobile/components/components.dart';
-import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
 class About extends StatefulWidget {
@@ -23,20 +22,11 @@ class _AboutState extends State<About> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    return Scaffold(appBar: header(), body: body());
+    return Scaffold(
+      appBar: components.headers.back(context, 'About'),
+      body: body(),
+    );
   }
-
-  AppBar header() => AppBar(
-        leading: components.buttons.back(context),
-        elevation: 2,
-        centerTitle: false,
-        title: Text('About'),
-        actions: [
-          components.status,
-          indicators.process,
-          indicators.client,
-        ],
-      );
 
   Center body() => Center(
         child: Column(

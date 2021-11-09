@@ -10,6 +10,7 @@ import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 import 'package:raven_mobile/utils/utils.dart';
 import 'package:raven_mobile/utils/extensions.dart';
+import 'package:raven_mobile/widgets/widgets.dart';
 
 class WalletView extends StatefulWidget {
   final dynamic data;
@@ -115,19 +116,11 @@ class _WalletViewState extends State<WalletView> {
 
   TabBarView body() => TabBarView(children: [
         detailsView(),
-        // holdings, Current.walletHoldings(wallet.walletId)
-        components.lists.holdingsView(context,
-            showUSD: showUSD,
-            holdings: holdings ?? Current.walletHoldings(wallet.walletId),
-            onLongPress: _toggleUSD,
-            refresh: setState),
-        // transactions histories.byWallet...
-        components.lists.transactionsView(context,
-            showUSD: showUSD,
+        HoldingList(
+            holdings: holdings ?? Current.walletHoldings(wallet.walletId)),
+        TransactionList(
             transactions: transactions ??
-                Current.walletCompiledTransactions(wallet.walletId),
-            onLongPress: _toggleUSD,
-            refresh: setState),
+                Current.walletCompiledTransactions(wallet.walletId)),
       ]);
 
   String get secretName =>

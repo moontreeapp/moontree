@@ -7,7 +7,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/components.dart';
-import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 import 'package:raven_mobile/utils/transform.dart';
 
@@ -61,21 +60,19 @@ class _TechnicalViewState extends State<TechnicalView> {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: Scaffold(appBar: header(), body: body()));
+        child: Scaffold(
+            appBar: components.headers.back(
+              context,
+              'Accounts',
+              extraActions: [exportAllButton()],
+            ),
+            body: body()));
   }
 
-  AppBar header() => AppBar(
-      leading: components.buttons.back(context),
-      elevation: 2,
-      centerTitle: false,
-      actions: <Widget>[
-        components.status,
-        indicators.process,
-        indicators.client,
-        IconButton(
-            onPressed: () => _exportAll(context), icon: components.icons.export)
-      ],
-      title: Text('Accounts'));
+  IconButton exportAllButton() => IconButton(
+        onPressed: () => _exportAll(context),
+        icon: components.icons.export,
+      );
 
   /// set that account as current and go to import page
   void _importTo(context, account) {
@@ -182,7 +179,7 @@ class _TechnicalViewState extends State<TechnicalView> {
             decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Create Account',
-                hintText: 'Billz'),
+                hintText: 'Hodl'),
             onSubmitted: (_) async => _validateAndCreateAccount(),
           ),
           trailing: IconButton(

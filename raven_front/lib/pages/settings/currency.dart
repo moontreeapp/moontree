@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:raven_mobile/components/components.dart';
-import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
 class Currency extends StatefulWidget {
@@ -23,20 +22,11 @@ class _CurrencyState extends State<Currency> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    return Scaffold(appBar: header(), body: body());
+    return Scaffold(
+      appBar: components.headers.back(context, 'Currency Settings'),
+      body: body(),
+    );
   }
-
-  AppBar header() => AppBar(
-        leading: components.buttons.back(context),
-        elevation: 2,
-        centerTitle: false,
-        title: Text('Currency Settings'),
-        actions: [
-          components.status,
-          indicators.process,
-          indicators.client,
-        ],
-      );
 
   SettingsList body() => SettingsList(sections: [
         SettingsSection(tiles: [

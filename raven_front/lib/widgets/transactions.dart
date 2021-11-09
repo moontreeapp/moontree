@@ -8,14 +8,9 @@ import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 
 class TransactionList extends StatefulWidget {
-  final String? currentAccountId;
-  final String? currentWalletId;
-  final String? currentWalletAddress;
-  const TransactionList(
-      {this.currentAccountId,
-      this.currentWalletId,
-      this.currentWalletAddress,
-      Key? key})
+  final Iterable<TransactionRecord>? transactions;
+  final String? msg;
+  const TransactionList({this.transactions, this.msg, Key? key})
       : super(key: key);
 
   @override
@@ -37,7 +32,7 @@ class _TransactionListState extends State<TransactionList> {
       // if vouts in our account has changed...
       if (batchedChanges
           .where((change) =>
-              change.data.address?.wallet?.accountId == widget.currentAccountId)
+              change.data.address?.wallet?.accountId == Current.accountId)
           .isNotEmpty) {
         setState(() {});
       }
@@ -88,16 +83,16 @@ class _TransactionListState extends State<TransactionList> {
 
   @override
   Widget build(BuildContext context) {
-    transactions = widget.currentAccountId != null
-        ? services.transaction.getTransactionRecords(
-            account: accounts.primaryIndex.getOne(widget.currentAccountId!))
-        : Current.walletCompiledTransactions(widget.currentWalletId!)
-            .where((transactionRecord) =>
-                transactionRecord.fromAddress == widget.currentWalletAddress ||
-                transactionRecord.toAddress == widget.currentWalletAddress)
-            .toList();
+    transactions = widget.transactions ?? Current.compiledTransactions;
+    //? services.transaction.getTransactionRecords(
+    //    account: accounts.primaryIndex.getOne(widget.currentAccountId!))
+    //: Current.walletCompiledTransactions(widget.currentWalletId!)
+    //    .where((transactionRecord) =>
+    //        transactionRecord.fromAddress == widget.currentWalletAddress ||
+    //        transactionRecord.toAddress == widget.currentWalletAddress)
+    //    .toList();
     return transactions.isEmpty
-        ? components.empty.transactions(context)
+        ? components.empty.transactions(context, msg: widget.msg)
         : Container(
             alignment: Alignment.center,
             padding: EdgeInsets.only(top: 5.0),

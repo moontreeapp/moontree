@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:raven_mobile/components/components.dart';
-import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 import 'package:raven_mobile/utils/transform.dart';
 import 'package:raven/raven.dart';
@@ -55,19 +54,10 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
   @override
   Widget build(BuildContext context) => GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(appBar: header(), body: body()));
-
-  AppBar header() => AppBar(
-        leading: components.buttons.back(context),
-        elevation: 2,
-        centerTitle: false,
-        title: Text('Electrum Server'),
-        actions: [
-          components.status,
-          indicators.process,
-          indicators.client,
-        ],
-      );
+      child: Scaffold(
+        appBar: components.headers.back(context, 'Electrum Server'),
+        body: body(),
+      ));
 
   ListView body() => ListView(
         padding: EdgeInsets.all(20),

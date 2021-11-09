@@ -8,6 +8,7 @@ import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/utils/utils.dart';
 import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/indicators/indicators.dart';
+import 'package:raven_mobile/widgets/widgets.dart';
 
 class Asset extends StatefulWidget {
   final dynamic data;
@@ -48,18 +49,17 @@ class _AssetState extends State<Asset> {
         child: Scaffold(
           appBar: header(),
           body: TabBarView(children: [
-            components.lists.transactionsView(
-              context,
-              showUSD: showUSD,
-              transactions: currentTxs.where((tx) =>
-                  tx.security.symbol == data['holding']!.security.symbol),
-              onLongPress: _toggleUSD,
-              refresh: setState,
-              msg: '\nNo ${data['holding']!.security.symbol} transactions.\n',
-            ),
+            TransactionList(
+                transactions: currentTxs.where((tx) =>
+                    tx.security.symbol == data['holding']!.security.symbol),
+                msg:
+                    '\nNo ${data['holding']!.security.symbol} transactions.\n'),
             _metadataView() ??
-                components.lists.emptyMessage(context,
-                    icon: Icons.description, msg: '\nNo metadata.\n'),
+                components.empty.message(
+                  context,
+                  icon: Icons.description,
+                  msg: '\nNo metadata.\n',
+                ),
           ]),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,

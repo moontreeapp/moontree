@@ -5,6 +5,7 @@ import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/utils/utils.dart';
+import 'package:raven_mobile/widgets/widgets.dart';
 
 class RavenTransactions extends StatefulWidget {
   @override
@@ -43,12 +44,8 @@ class _RavenTransactionsState extends State<RavenTransactions> {
     }
     return Scaffold(
       appBar: header(),
-      body: components.lists.transactionsView(
-        context,
-        showUSD: showUSD,
+      body: TransactionList(
         transactions: currentTxs.where((tx) => tx.security == securities.RVN),
-        onLongPress: _toggleUSD,
-        refresh: setState,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: sendReceiveButtons(),

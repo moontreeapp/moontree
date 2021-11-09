@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/components.dart';
-import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/utils/export.dart';
 import 'package:raven_mobile/utils/import.dart';
@@ -47,25 +46,13 @@ class _ImportState extends State<Import> {
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
-          appBar: header(),
+          appBar: components.headers.back(context, 'Import Wallet'),
           body: body(),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: importWaysButtons(context),
         ));
   }
-
-  AppBar header() => AppBar(
-        leading: components.buttons.back(context),
-        elevation: 2,
-        centerTitle: false,
-        title: Text('Import Wallet'),
-        actions: [
-          components.status,
-          indicators.process,
-          indicators.client,
-        ],
-      );
 
   /// returns id of account the wallet is already assigned to
   //String? _walletFound(walletId) =>

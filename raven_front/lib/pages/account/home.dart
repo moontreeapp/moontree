@@ -17,10 +17,6 @@ class _HomeState extends State<Home> {
   List<StreamSubscription> listeners =
       []; // most of these can move to header and body elements
   late String currentAccountId = '0'; // should be moved to body?
-  late Account currentAccount; // should be moved to body?
-  Rate? rateUSD; // to header and body
-  Balance? accountBalance; // to header
-  bool showUSD = false; // list in body
   final accountName = TextEditingController();
 
   @override
@@ -35,37 +31,7 @@ class _HomeState extends State<Home> {
       // if we update balance for the account we're looking at:
       var changes = batchedChanges.where((change) =>
           change.data.account?.accountId == Current.account.accountId);
-      if (changes.isNotEmpty)
-        setState(() {
-          accountBalance = changes.first.data;
-        });
-    }));
-
-    /// this shouldn't be necessary if balances have updated.
-    //listeners
-    //    .add(vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
-    //  // if vouts in our account has changed...
-    //  if (batchedChanges
-    //      .where((change) =>
-    //          change.data.address?.wallet?.accountId ==
-    //          Current.account.accountId)
-    //      .isNotEmpty) {
-    //    setState(() {});
-    //  }
-    //}));
-    // we can move a wallet from one account to another
-    //listeners.add(wallets.batchedChanges.listen((batchedChanges) {
-    //  setState(() {});
-    //}));
-    listeners.add(rates.batchedChanges.listen((batchedChanges) {
-      // TODO: should probably include any assets that are in the holding of the main account too...
-      var changes = batchedChanges.where((change) =>
-          change.data.base == securities.RVN &&
-          change.data.quote == securities.USD);
-      if (changes.isNotEmpty)
-        setState(() {
-          rateUSD = changes.first.data;
-        });
+      if (changes.isNotEmpty) setState(() {});
     }));
     listeners.add(settings.batchedChanges.listen((batchedChanges) {
       // todo: set the current account on the widget
@@ -74,7 +40,6 @@ class _HomeState extends State<Home> {
       if (changes.isNotEmpty)
         setState(() {
           currentAccountId = changes.first.data.value;
-          currentAccount = accounts.primaryIndex.getOne(currentAccountId)!;
         });
     }));
   }
@@ -98,16 +63,13 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    currentAccount = accounts.primaryIndex.getOne(currentAccountId)!;
     return DefaultTabController(
         length: 2,
         child: Scaffold(
           appBar: balanceHeader(),
           drawer: accounts.data.length > 1 ? accountsView() : null,
-          body: TabBarView(children: <Widget>[
-            HoldingList(currentAccountId: currentAccountId),
-            TransactionList(currentAccountId: currentAccountId)
-          ]),
+          body:
+              TabBarView(children: <Widget>[HoldingList(), TransactionList()]),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: sendReceiveButtons(),
@@ -130,7 +92,7 @@ class _HomeState extends State<Home> {
           elevation: 2,
           centerTitle: false,
           title:
-              Text(accounts.data.length > 1 ? currentAccount.name : 'Wallet'),
+              Text(accounts.data.length > 1 ? Current.account.name : 'Wallet'),
           flexibleSpace: Container(
             alignment: Alignment.center,
             // balance view should listen for valid usd
@@ -191,7 +153,7 @@ class _HomeState extends State<Home> {
                     decoration: InputDecoration(
                         border: UnderlineInputBorder(),
                         labelText: 'Create Account',
-                        hintText: 'Billz')),
+                        hintText: 'Hodl')),
                 trailing:
                     Icon(Icons.add, size: 26.0, color: Colors.grey.shade800)),
             Divider(height: 20, thickness: 2, indent: 5, endIndent: 5)

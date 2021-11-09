@@ -3,18 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/components.dart';
+import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 
 class HoldingList extends StatefulWidget {
-  final String? currentAccountId;
-  final String? currentWalletId;
-  final String? currentWalletAddress;
-  const HoldingList(
-      {this.currentAccountId,
-      this.currentWalletId,
-      this.currentWalletAddress,
-      Key? key})
-      : super(key: key);
+  final Iterable<Balance>? holdings;
+  const HoldingList({this.holdings, Key? key}) : super(key: key);
 
   @override
   State<HoldingList> createState() => _HoldingList();
@@ -35,7 +29,7 @@ class _HoldingList extends State<HoldingList> {
       // if vouts in our account has changed...
       if (batchedChanges
           .where((change) =>
-              change.data.address?.wallet?.accountId == widget.currentAccountId)
+              change.data.address?.wallet?.accountId == Current.accountId)
           .isNotEmpty) {
         setState(() {});
       }
@@ -86,11 +80,11 @@ class _HoldingList extends State<HoldingList> {
 
   @override
   Widget build(BuildContext context) {
-    holdings = widget.currentAccountId != null
-        ? services.balance.accountBalances(
-            accounts.primaryIndex.getOne(widget.currentAccountId!)!)
-        : services.balance.addressesBalances(
-            [addresses.byAddress.getOne(widget.currentWalletAddress!)!]);
+    holdings = widget.holdings ?? Current.holdings;
+    //services.balance.accountBalances(
+    //        accounts.primaryIndex.getOne(widget.currentAccountId!)!)
+    //    : services.balance.addressesBalances(
+    //        [addresses.byAddress.getOne(widget.currentWalletAddress!)!]);
     return holdings.isEmpty
         ? components.empty.holdings(context)
         : Container(
