@@ -6,18 +6,15 @@ class About extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: components.headers.back(context, 'About'),
-      body: body(),
-    );
+        appBar: components.headers.back(context, 'About'),
+        body: Center(
+          child: Column(
+            children: <Widget>[
+              Image(image: AssetImage('assets/rvn.png')),
+              Text('Github.com/moontreeapp'),
+              Text('MoonTreeLLC 2021'),
+            ],
+          ),
+        ));
   }
-
-  Center body() => Center(
-        child: Column(
-          children: <Widget>[
-            Image(image: AssetImage('assets/rvn.png')),
-            Text('Github.com/moontreeapp'),
-            Text('MoonTreeLLC 2021'),
-          ],
-        ),
-      );
 }
