@@ -43,7 +43,7 @@ class _LoadingState extends State<Loading> {
       //mockPassword();
 
       await setupAccounts();
-      await setupRealWallet();
+      //await setupRealWallet();
     }
     settings.setCurrentAccountId();
 
