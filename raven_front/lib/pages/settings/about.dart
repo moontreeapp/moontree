@@ -33,7 +33,7 @@ class _AboutState extends State<About> {
           children: <Widget>[
             Image(image: AssetImage('assets/rvn.png')),
             Text('Github.com/moontreeapp'),
-            Text('MoonTreeLLC 2021'),
+            Text('MoonTree LLC, 2021'),
           ],
         ),
       );
