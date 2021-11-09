@@ -55,18 +55,82 @@ class AddressService {
     /// generated and looked for all transactions for those addresses...
     /// pull vouts for vins that don't have corresponding vouts and
     /// calculate all balances.
-    if (services.address.unretrieved.isEmpty &&
-        all([
-          for (var leaderWallet in wallets.leaders)
-            services.wallet.leader
-                        .currentGap(leaderWallet, NodeExposure.Internal) >=
-                    services.wallet.leader.requiredGap &&
-                services.wallet.leader
-                        .currentGap(leaderWallet, NodeExposure.External) >=
-                    services.wallet.leader.requiredGap
-        ])) {
-      await saveDanglingTransactions(client);
-      await services.balance.recalculateAllBalances();
+    await triggerDeriveOrBalance(
+        client,
+        changedAddresses
+            .where((address) => address.wallet is LeaderWallet)
+            .map((address) => address.wallet as LeaderWallet)
+            .toSet());
+    //if (services.address.unretrieved.isEmpty &&
+    //    all([
+    //      for (var leaderWallet in wallets.leaders)
+    //        services.wallet.leader
+    //                    .currentGap(leaderWallet, NodeExposure.Internal) >=
+    //                services.wallet.leader.requiredGap &&
+    //            services.wallet.leader
+    //                    .currentGap(leaderWallet, NodeExposure.External) >=
+    //                services.wallet.leader.requiredGap
+    //    ])) {
+    //  await saveDanglingTransactions(client);
+    //  await services.balance.recalculateAllBalances();
+    //}
+  }
+
+  Future triggerDeriveOrBalance(
+      RavenElectrumClient client, Set<LeaderWallet> leaderWallets) async {
+    /// here we should probably just check the the wallets are are of the set
+    /// that are represented above as addresses. that way we check once for each
+    /// wallet and we don't double up on calls. Also, we should add to backlog
+    /// and let the leader waiter take care of those if the cipher isn't currently available
+    /// it should be since we obviously just used it to make an address, most likely,
+    /// but maybe there are edge cases, so we should do the check anyway.
+
+    if (services.address.unretrieved.isEmpty) {
+      var allDone = true;
+      for (var leaderWallet in leaderWallets) {
+        if (services.wallet.leader
+                .missingGap(leaderWallet, NodeExposure.Internal) >
+            0) {
+          if (ciphers.primaryIndex.getOne(leaderWallet.cipherUpdate) != null) {
+            allDone = false;
+            var derived = services.wallet.leader.deriveMoreAddresses(
+              leaderWallet,
+              exposures: [NodeExposure.Internal],
+            );
+            for (var addressId in derived.map((address) => address.addressId)) {
+              if (!services.address.retrieved.contains(addressId)) {
+                services.address.unretrieved.add(addressId);
+              }
+            }
+            services.client.subscribe.toExistingAddresses();
+          } else {
+            services.wallet.leader.backlog.add(leaderWallet);
+          }
+        }
+        if (services.wallet.leader
+                .missingGap(leaderWallet, NodeExposure.External) >
+            0) {
+          if (ciphers.primaryIndex.getOne(leaderWallet.cipherUpdate) != null) {
+            allDone = false;
+            var derived = services.wallet.leader.deriveMoreAddresses(
+              leaderWallet,
+              exposures: [NodeExposure.External],
+            );
+            for (var addressId in derived.map((address) => address.addressId)) {
+              if (!services.address.retrieved.contains(addressId)) {
+                services.address.unretrieved.add(addressId);
+              }
+            }
+            services.client.subscribe.toExistingAddresses();
+          } else {
+            services.wallet.leader.backlog.add(leaderWallet);
+          }
+        }
+      }
+      if (allDone) {
+        await saveDanglingTransactions(client);
+        await services.balance.recalculateAllBalances();
+      }
     }
   }
 

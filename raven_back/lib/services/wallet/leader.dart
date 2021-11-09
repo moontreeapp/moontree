@@ -11,12 +11,16 @@ class LeaderWalletService {
   final Map<String, int> addressRegistry = {
     /* walletId + exposure : highest hdIndex created*/
   };
-  final int requiredGap = 1;
+  Set<LeaderWallet> backlog = {};
+  final int requiredGap = 2;
 
   int currentGap(LeaderWallet leaderWallet, NodeExposure exposure) =>
       exposure == NodeExposure.External
           ? leaderWallet.emptyExternalAddresses.length
           : leaderWallet.emptyInternalAddresses.length;
+
+  int missingGap(LeaderWallet leaderWallet, NodeExposure exposure) =>
+      requiredGap - currentGap(leaderWallet, exposure);
 
   void maybeSaveNewAddress(
       LeaderWallet leaderWallet, CipherBase cipher, NodeExposure exposure) {
@@ -128,7 +132,10 @@ class LeaderWalletService {
         addressRegistry[hdIndexKey] ?? expectedhdIndex;
     var hdIndex = addressRegistry[hdIndexKey]!;
     if (existingGap < requiredGap) {
-      return {deriveAddress(leaderWallet, hdIndex + 1, exposure: exposure)};
+      return {
+        //for (var i = 0; i <= requiredGap - existingGap; i++)
+        deriveAddress(leaderWallet, hdIndex + 1, exposure: exposure)
+      };
     }
     return {};
   }
