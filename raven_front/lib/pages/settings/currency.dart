@@ -1,69 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:raven_mobile/components/components.dart';
-import 'package:raven_mobile/utils/utils.dart';
 
-class Currency extends StatefulWidget {
-  final dynamic data;
-  const Currency({this.data}) : super();
-
-  @override
-  _CurrencyState createState() => _CurrencyState();
-}
-
-class _CurrencyState extends State<Currency> {
-  dynamic data = {};
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
+class Currency extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    data = populateData(context, data);
     return Scaffold(
       appBar: components.headers.back(context, 'Currency Settings'),
-      body: body(),
+      body: SettingsList(sections: [
+        SettingsSection(tiles: [
+          CurrencyTile('USD', enabled: true),
+          CurrencyTile('EUR', icon: Icons.euro),
+          CurrencyTile('CAD'),
+          CurrencyTile('GBP'),
+          CurrencyTile('JPY'),
+          CurrencyTile('NZD'),
+          CurrencyTile('RUB'),
+        ])
+      ]),
     );
   }
+}
 
-  SettingsList body() => SettingsList(sections: [
-        SettingsSection(tiles: [
-          SettingsTile(
-              title: 'USD',
-              leading: Icon(Icons.money),
-              onPressed: (BuildContext context) {}),
-          SettingsTile(
-              title: 'EUR',
-              enabled: false,
-              leading: Icon(Icons.euro),
-              onPressed: (BuildContext context) {}),
-          SettingsTile(
-              title: 'CAD',
-              enabled: false,
-              leading: Icon(Icons.money),
-              onPressed: (BuildContext context) {}),
-          SettingsTile(
-              title: 'GBP',
-              enabled: false,
-              leading: Icon(Icons.money),
-              onPressed: (BuildContext context) {}),
-          SettingsTile(
-              title: 'JPY',
-              enabled: false,
-              leading: Icon(Icons.money),
-              onPressed: (BuildContext context) {}),
-          SettingsTile(
-              title: 'NZD',
-              enabled: false,
-              leading: Icon(Icons.money),
-              onPressed: (BuildContext context) {}),
-          SettingsTile(
-              title: 'RUB',
-              enabled: false,
-              leading: Icon(Icons.money),
-              onPressed: (BuildContext context) {}),
-        ])
-      ]);
+class CurrencyTile extends SettingsTile {
+  CurrencyTile(
+    currency, {
+    icon = Icons.money,
+    enabled = false,
+  }) : super(
+            title: currency,
+            enabled: enabled,
+            leading: Icon(icon),
+            onPressed: (BuildContext context) {});
 }
