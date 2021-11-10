@@ -2,36 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/components/components.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:raven_mobile/utils/utils.dart';
 import 'package:raven/utils/database.dart' as ravenDatabase;
-import 'package:raven/raven.dart';
 
-class Settings extends StatefulWidget {
-  final dynamic data;
-  const Settings({this.data}) : super();
-
-  @override
-  _SettingsState createState() => _SettingsState();
-}
-
-class _SettingsState extends State<Settings> {
-  dynamic data = {};
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
+class Settings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    data = populateData(context, data);
     return Scaffold(
       appBar: components.headers.back(context, 'Settings'),
-      body: body(),
-    );
-  }
-
-  SettingsList body() => SettingsList(
+      body: SettingsList(
         sections: [
           SettingsSection(tiles: [
             SettingsTile(
@@ -105,5 +83,7 @@ class _SettingsState extends State<Settings> {
             ],
           ),
         ],
-      );
+      ),
+    );
+  }
 }

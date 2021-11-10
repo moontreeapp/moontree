@@ -1,69 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:raven_mobile/components/components.dart';
-import 'package:raven_mobile/utils/utils.dart';
 
-class Language extends StatefulWidget {
-  final dynamic data;
-  const Language({this.data}) : super();
-
-  @override
-  _LanguageState createState() => _LanguageState();
-}
-
-class _LanguageState extends State<Language> {
-  dynamic data = {};
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
+class Language extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    data = populateData(context, data);
     return Scaffold(
       appBar: components.headers.back(context, 'Language Settings'),
-      body: body(),
+      body: SettingsList(sections: [
+        SettingsSection(tiles: [
+          LanguageTile('English', enabled: true),
+          LanguageTile('中文 (Chinese)'),
+          LanguageTile('Český'),
+          LanguageTile('Español'),
+          LanguageTile('Português'),
+          LanguageTile('ภาษาไทย (Thai)'),
+          LanguageTile('Türkçe')
+        ])
+      ]),
     );
   }
+}
 
-  SettingsList body() => SettingsList(sections: [
-        SettingsSection(tiles: [
-          SettingsTile(
-              title: 'English',
-              leading: Icon(Icons.speaker),
-              onPressed: (BuildContext context) {}),
-          SettingsTile(
-              title: 'Chinese',
-              enabled: false,
-              leading: Icon(Icons.speaker),
-              onPressed: (BuildContext context) {}),
-          SettingsTile(
-              title: 'Cesky',
-              enabled: false,
-              leading: Icon(Icons.speaker),
-              onPressed: (BuildContext context) {}),
-          SettingsTile(
-              title: 'Espanol',
-              enabled: false,
-              leading: Icon(Icons.speaker),
-              onPressed: (BuildContext context) {}),
-          SettingsTile(
-              title: 'Portugues',
-              enabled: false,
-              leading: Icon(Icons.speaker),
-              onPressed: (BuildContext context) {}),
-          SettingsTile(
-              title: 'Thai',
-              enabled: false,
-              leading: Icon(Icons.speaker),
-              onPressed: (BuildContext context) {}),
-          SettingsTile(
-              title: 'Turkce',
-              enabled: false,
-              leading: Icon(Icons.speaker),
-              onPressed: (BuildContext context) {}),
-        ])
-      ]);
+class LanguageTile extends SettingsTile {
+  LanguageTile(
+    language, {
+    icon = Icons.speaker,
+    enabled = false,
+  }) : super(
+            title: language,
+            enabled: enabled,
+            leading: Icon(icon),
+            onPressed: (BuildContext context) {});
 }
