@@ -54,8 +54,7 @@ class LeaderWalletService {
     exposure = NodeExposure.External,
   }) {
     addressRegistry[addressRegistryKey(wallet, exposure)] = hdIndex;
-    var subwallet =
-        getSeedWallet(wallet).subwallet(hdIndex, exposure: exposure);
+    var subwallet = getSubWallet(wallet, hdIndex, exposure);
     return Address(
         addressId: subwallet.scripthash,
         address: subwallet.address!,
@@ -70,6 +69,14 @@ class LeaderWalletService {
         EncryptedEntropy(wallet.encryptedEntropy, wallet.cipher!);
     return SeedWallet(encryptedEntropy.seed, wallet.account!.net);
   }
+
+  HDWallet getSubWallet(
+          LeaderWallet wallet, int hdIndex, NodeExposure exposure) =>
+      getSeedWallet(wallet).subwallet(hdIndex, exposure: exposure);
+
+  HDWallet getSubWalletFromAddress(Address address) =>
+      getSeedWallet(address.wallet! as LeaderWallet)
+          .subwallet(address.hdIndex, exposure: address.exposure);
 
   /// returns the next internal or external node missing a history
   HDWallet getNextEmptyWallet(LeaderWallet leaderWallet,
