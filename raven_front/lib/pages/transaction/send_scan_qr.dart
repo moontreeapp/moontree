@@ -37,7 +37,8 @@ class _SendScanQRState extends State<SendScanQR> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Text("Scan Recipient's QR Code"),
+                  Text(
+                      "Scan Recipient's QR Code" /*, style: TextStyle(fontSize: 18)*/),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,

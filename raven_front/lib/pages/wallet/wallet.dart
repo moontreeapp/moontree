@@ -30,8 +30,9 @@ class _WalletViewState extends State<WalletView> {
   late Wallet wallet;
   late String walletType;
   String? address;
+  String? privateKey;
   //String addressBalance = '';
-  Row exposureAndIndex = Row();
+  Widget exposureAndIndex = Row();
   List<Balance>? holdings;
   List<TransactionRecord>? transactions;
 
@@ -126,62 +127,65 @@ class _WalletViewState extends State<WalletView> {
   String get secretName =>
       describeEnum(data['secretName']).toString().toTitleCase(true);
 
-  ListView detailsView() =>
-      ListView(shrinkWrap: true, padding: EdgeInsets.all(20.0), children: <
-          Widget>[
-        Text('WARNING!\nDo NOT disclose the Mnemonic Secret to anyone!',
-            style: TextStyle(color: Theme.of(context).bad)),
-        SizedBox(height: 15.0),
-        Text(secretName + ' Secret:'),
-        Center(
-            child: Visibility(
-          visible: showSecret,
-          child: SelectableText(
-            data['secret'],
-            cursorColor: Colors.grey[850],
-            showCursor: true,
-            style: Theme.of(context).mono,
-            toolbarOptions: toolbarOptions,
-          ),
-        )),
-        SizedBox(height: 30.0),
-        ElevatedButton(
-            onPressed: () => _toggleShow(),
-            child: Text(showSecret
-                ? 'Hide ' + secretName + ' Secret'
-                : 'Show ' + secretName + ' Secret')),
-        SizedBox(height: 30.0),
-        Text('Wallet Addresses', style: Theme.of(context).textTheme.headline4),
-        SizedBox(height: 10.0),
-        Center(
-          child: Column(
-            children: <Widget>[
-              address != null
-                  ? QrImage(
-                      backgroundColor: Colors.white,
-                      data: address!,
-                      semanticsLabel: address!,
-                      version: QrVersions.auto,
-                      size: 200.0)
-                  : Text(
-                      'QR code unrenderable since wallet cannto be decrypted.'),
-              address != null
-                  ? SelectableText(address!,
-                      cursorColor: Colors.grey[850],
-                      showCursor: true,
-                      style: Theme.of(context).mono,
-                      toolbarOptions: toolbarOptions)
-                  : Text('address unknown since wallet cannto be decrypted.'),
-              SizedBox(height: 5.0),
-              exposureAndIndex,
-              //Text('$' + addressBalance), //that seemed to take just as long...
-            ],
-          ),
-        ),
-        SizedBox(height: 30.0),
-        ...addressesView(),
-        SizedBox(height: 30.0),
-      ]);
+  ListView detailsView() => ListView(
+          shrinkWrap: true,
+          padding: EdgeInsets.all(20.0),
+          children: <Widget>[
+            Text('WARNING!\nDo NOT disclose the Mnemonic Secret to anyone!',
+                style: TextStyle(color: Theme.of(context).bad)),
+            SizedBox(height: 15.0),
+            Text(secretName + ' Secret:'),
+            Center(
+                child: Visibility(
+              visible: showSecret,
+              child: SelectableText(
+                data['secret'],
+                cursorColor: Colors.grey[850],
+                showCursor: true,
+                style: Theme.of(context).mono,
+                toolbarOptions: toolbarOptions,
+              ),
+            )),
+            SizedBox(height: 30.0),
+            ElevatedButton(
+                onPressed: () => _toggleShow(),
+                child: Text(showSecret
+                    ? 'Hide ' + secretName + ' Secret'
+                    : 'Show ' + secretName + ' Secret')),
+            SizedBox(height: 30.0),
+            Text('Wallet Addresses',
+                style: Theme.of(context).textTheme.headline4),
+            SizedBox(height: 10.0),
+            Center(
+              child: Column(
+                children: <Widget>[
+                  address != null
+                      ? QrImage(
+                          backgroundColor: Colors.white,
+                          data: address!,
+                          semanticsLabel: address!,
+                          version: QrVersions.auto,
+                          size: 200.0)
+                      : Text(
+                          'QR code unrenderable since wallet cannot be decrypted. Please login again.'),
+                  address != null
+                      ? SelectableText(address!,
+                          cursorColor: Colors.grey[850],
+                          showCursor: true,
+                          style: Theme.of(context).mono,
+                          toolbarOptions: toolbarOptions)
+                      : Text(
+                          'address unknown since wallet cannot be decrypted. Please login again.'),
+                  SizedBox(height: 5.0),
+                  exposureAndIndex,
+                  //Text('$' + addressBalance), //that seemed to take just as long...
+                ],
+              ),
+            ),
+            SizedBox(height: 30.0),
+            ...addressesView(),
+            SizedBox(height: 30.0),
+          ]);
 
   List<Widget> addressesView() => wallet is LeaderWallet
       ? [
@@ -199,30 +203,38 @@ class _WalletViewState extends State<WalletView> {
                                 walletAddress.address)
                         .toList();
                 address = walletAddress.address;
-                exposureAndIndex = Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text('Index: ' + walletAddress.hdIndex.toString(),
-                        style: Theme.of(context).annotate),
-                    Text(
-                        (walletAddress.exposure == NodeExposure.Internal
-                            ? 'Internal (change)'
-                            : 'External (receive)'),
-                        style: Theme.of(context).annotate),
-                    Text(
-                        'Balance: ' +
-                            components.text
-                                .satsToAmount(services.transaction
-                                    .walletUnspents(wallet)
-                                    .where((vout) =>
-                                        vout.toAddress == walletAddress.address)
-                                    .map((vout) => vout.rvnValue)
-                                    .toList()
-                                    .sumInt())
-                                .toString(),
-                        style: Theme.of(context).textTheme.caption),
-                  ],
-                );
+                privateKey = services.wallet.leader
+                    .getSubWalletFromAddress(walletAddress)
+                    .privKey;
+                exposureAndIndex = Column(children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text('Index: ' + walletAddress.hdIndex.toString(),
+                          style: Theme.of(context).annotate),
+                      Text(
+                          (walletAddress.exposure == NodeExposure.Internal
+                              ? 'Internal (change)'
+                              : 'External (receive)'),
+                          style: Theme.of(context).annotate),
+                      Text(
+                          'Balance: ' +
+                              components.text
+                                  .satsToAmount(services.transaction
+                                      .walletUnspents(wallet)
+                                      .where((vout) =>
+                                          vout.toAddress ==
+                                          walletAddress.address)
+                                      .map((vout) => vout.rvnValue)
+                                      .toList()
+                                      .sumInt())
+                                  .toString(),
+                          style: Theme.of(context).textTheme.caption),
+                    ],
+                  ),
+                  Text('private key: ' + (privateKey ?? 'unknown'),
+                      style: Theme.of(context).annotate),
+                ]);
               }),
               title: Wrap(alignment: WrapAlignment.spaceBetween, children: [
                 (walletAddress.exposure == NodeExposure.Internal

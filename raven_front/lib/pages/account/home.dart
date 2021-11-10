@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/widgets/widgets.dart';
 import 'package:raven_mobile/components/components.dart';
@@ -18,6 +19,7 @@ class _HomeState extends State<Home> {
       []; // most of these can move to header and body elements
   late String currentAccountId = '0'; // should be moved to body?
   final accountName = TextEditingController();
+  bool isFabVisible = true;
 
   @override
   void initState() {
@@ -68,13 +70,30 @@ class _HomeState extends State<Home> {
         child: Scaffold(
           appBar: balanceHeader(),
           drawer: accounts.data.length > 1 ? accountsView() : null,
-          body:
-              TabBarView(children: <Widget>[HoldingList(), TransactionList()]),
+          body: TabBarView(children: <Widget>[
+            NotificationListener<UserScrollNotification>(
+              onNotification: visibilityOfSendReceive,
+              child: HoldingList(),
+            ),
+            NotificationListener<UserScrollNotification>(
+              onNotification: visibilityOfSendReceive,
+              child: TransactionList(),
+            ),
+          ]),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: sendReceiveButtons(),
+          floatingActionButton: isFabVisible ? sendReceiveButtons() : null,
           //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
         ));
+  }
+
+  bool visibilityOfSendReceive(notification) {
+    if (notification.direction == ScrollDirection.forward) {
+      if (!isFabVisible) setState(() => isFabVisible = true);
+    } else if (notification.direction == ScrollDirection.reverse) {
+      if (isFabVisible) setState(() => isFabVisible = false);
+    }
+    return true;
   }
 
   PreferredSize balanceHeader() => PreferredSize(
@@ -91,8 +110,19 @@ class _HomeState extends State<Home> {
           ],
           elevation: 2,
           centerTitle: false,
-          title:
-              Text(accounts.data.length > 1 ? Current.account.name : 'Wallet'),
+          title: SizedBox(
+            height: 32,
+            //child: Image.asset('assets/logo/moontree_logo.png'),
+            //child: Image.asset('assets/logo/moontree_eclipse_dark_transparent.png'),
+            child: accounts.data.length > 1
+                ? Row(children: [
+                    Text(Current.account.name),
+                    Image.asset('assets/rvn256.png')
+                  ])
+                : Image.asset('assets/rvn256.png'),
+            //child: Image.asset('assets/rvnonly.png'),
+          ),
+          ////Text(accounts.data.length > 1 ? Current.account.name : 'Wallet'),
           flexibleSpace: Container(
             alignment: Alignment.center,
             // balance view should listen for valid usd
@@ -104,8 +134,10 @@ class _HomeState extends State<Home> {
           ),
           bottom: PreferredSize(
               preferredSize: Size.fromHeight(50.0),
-              child: TabBar(
-                  tabs: [Tab(text: 'Holdings'), Tab(text: 'Transactions')]))));
+              child: TabBar(tabs: [
+                Tab(text: 'Holdings'),
+                Tab(text: 'All Transactions')
+              ]))));
 
   Drawer accountsView() => Drawer(
           child: ListView(padding: EdgeInsets.zero, children: <Widget>[
