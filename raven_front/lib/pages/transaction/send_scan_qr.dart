@@ -88,32 +88,9 @@ class _SendScanQRState extends State<SendScanQR> {
     });
     controller.scannedDataStream.listen((Barcode scanData) {
       print(scanData);
-      Navigator.pop(context, scanData);
-/*
-'package:flutter/src/widgets/navigator.dart': Failed assertion: line 4841 pos 12: '!_debugLocked': is not true.
-#0      _AssertionError._doThrowNew (dart:core-patch/errors_patch.dart:47:61)
-#1      _AssertionError._throwNew (dart:core-patch/errors_patch.dart:36:5)
-#2      NavigatorState.pop (package:flutter/src/widgets/navigator.dart:4841:12)
-#3      Navigator.pop (package:flutter/src/widgets/navigator.dart:2431:27)
-#4      _SendScanQRState._onQRViewCreated.<anonymous closure> (package:raven_mobile/pages/transaction/send_scan_qr.dart:89:17)
-#5      _rootRunUnary (dart:async/zone.dart:1436:47)
-#6      _CustomZone.runUnary (dart:async/zone.dart:1335:19)
-#7      _CustomZone.runUnaryGuarded (dart:async/zone.dart:1244:7)
-#8      _BufferingStreamSubscription._sendData (dart:async/stream_impl.dart:341:11)
-#9      _DelayedData.perform (dart:async/stream_impl.dart:591:14)
-#10     _StreamImplEvents.handleNext (dart:async/stream_impl.dart:706:11)
-#11     _PendingEvents.schedule.<anonymous closure> (dart:async/stream_impl.dart:663:7)
-#12     _rootRun (dart:async/zone.dart:1420:47)
-#13     _CustomZone.run (dart:async/zone.dart:1328:19)
-#14     _CustomZone.runGuarded (dart:async/zone.dart:1236:7)
-#15     _CustomZone.bindCallbackGuarded.<anonymous closure> (dart:async/zone.dart:1276:23)
-#16     _rootRun (dart:async/zone.dart:1428:13)
-#17     _CustomZone.run (dart:async/zone.dart:1328:19)
-#18     _CustomZone.runGuarded (dart:async/zone.dart:1236:7)
-#19     _CustomZone.bindCallbackGuarded.<anonymous closure> (dart:async/zone.dart:1276:23)
-#20     _microtaskLoop (dart:async/schedule_microtask.dart:40:21)
-#21     _startMicrotaskLoop (dart:async/schedule_microtask.dart:49:5)
-*/
+      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        Navigator.pop(context, scanData);
+      });
     });
   }
 
