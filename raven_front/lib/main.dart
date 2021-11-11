@@ -15,7 +15,7 @@ void main() async {
 
   FlutterError.onError = (FlutterErrorDetails details) {
     // Continue doing the usual thing we do with flutter errors:
-    FlutterError.reportError(details);
+    FlutterError.presentError(details);
 
     // ... and also send Flutter errors to Datadog:
     DatadogRum.instance.addFlutterError(details);
