@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raven/raven.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/components/components.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -64,15 +65,17 @@ class Settings extends StatelessWidget {
                   onPressed: (BuildContext context) {
                     ravenDatabase.deleteDatabase();
                   }),
-/*                      
               SettingsTile(
                   title: 'show data',
                   leading: Icon(Icons.info_outline_rounded),
                   onPressed: (BuildContext context) async {
-                    print(vins.byTransaction.getAll(
-                        '86f9493e07cb039a3735ca7ac074a869464488d961ad60844134820fa67d6a56'));
-                    services.balance.recalculateAllBalances();
+                    //print(balances.data);
+                    //print(securities.data);
+                    1 / 0;
+                    //print(vouts.byTransaction.getAll(
+                    //    '4e769a6d770b4e441ade1d5600926ad14f58fdb6ae4128ed03c811241ec72240'));
                   }),
+/*                      
 */
               //SettingsTile.switchTile(
               //  title: 'Use fingerprint',

@@ -42,15 +42,13 @@ class TextComponents {
     }
     // asset sats -> asset -> rvn -> usd
     security = security ??
+        securities.bySymbolSecurityType
+            .getOne(symbol, SecurityType.RavenAsset) ??
         Security(symbol: symbol, securityType: SecurityType.RavenAsset);
     return asUSD
-        ? rvnUSD(satsToAmount(
-              sats, /* precision: symbol.precision... */
-            ) *
+        ? rvnUSD(satsToAmount(sats, precision: security.precision ?? 8) *
             (services.rate.assetToRVN(security) ?? 0.0))
-        : satsToAmount(
-            sats, /* precision: symbol.precision... */
-          ).toString();
+        : satsToAmount(sats, precision: security.precision ?? 8).toString();
   }
 
   static int _amountAsSats(double amount, {int precision = 8}) =>

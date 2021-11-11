@@ -168,6 +168,7 @@ class _WalletViewState extends State<WalletView> {
                           size: 200.0)
                       : Text(
                           'QR code unrenderable since wallet cannot be decrypted. Please login again.'),
+                  SizedBox(height: 10.0),
                   address != null
                       ? SelectableText(address!,
                           cursorColor: Colors.grey[850],
@@ -176,7 +177,7 @@ class _WalletViewState extends State<WalletView> {
                           toolbarOptions: toolbarOptions)
                       : Text(
                           'address unknown since wallet cannot be decrypted. Please login again.'),
-                  SizedBox(height: 5.0),
+                  SizedBox(height: 10.0),
                   exposureAndIndex,
                   //Text('$' + addressBalance), //that seemed to take just as long...
                 ],
@@ -205,7 +206,9 @@ class _WalletViewState extends State<WalletView> {
                 address = walletAddress.address;
                 privateKey = services.wallet.leader
                     .getSubWalletFromAddress(walletAddress)
-                    .privKey;
+                    .wif; // .wif is the format that raven-Qt-testnet expects
+                //.base58Priv;
+                //.privKey;
                 exposureAndIndex = Column(children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -232,7 +235,8 @@ class _WalletViewState extends State<WalletView> {
                           style: Theme.of(context).textTheme.caption),
                     ],
                   ),
-                  Text('private key: ' + (privateKey ?? 'unknown'),
+                  SizedBox(height: 10),
+                  SelectableText('private key: ' + (privateKey ?? 'unknown'),
                       style: Theme.of(context).annotate),
                 ]);
               }),
