@@ -13,8 +13,13 @@ import 'package:raven_mobile/utils/log.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Capture Flutter errors automatically:
-  FlutterError.onError = DatadogRum.instance.addFlutterError;
+  FlutterError.onError = (FlutterErrorDetails details) {
+    // Continue doing the usual thing we do with flutter errors:
+    FlutterError.reportError(details);
+
+    // ... and also send Flutter errors to Datadog:
+    DatadogRum.instance.addFlutterError(details);
+  };
 
   await Log.initialize();
   log('App started...');
