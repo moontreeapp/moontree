@@ -113,6 +113,45 @@ class TxScriptPubKey with EquatableMixin {
         ipfsHash
       ];
 
+  factory TxScriptPubKey.fromScriptPubKey(Map scriptPubKey) =>
+      scriptPubKey.keys.contains('asset')
+          ? TxScriptPubKey.fromScriptPubKeyNewAsset(scriptPubKey)
+          : scriptPubKey.keys.contains('reqSigs')
+              ? TxScriptPubKey.fromScriptPubKeyTransaction(scriptPubKey)
+              : TxScriptPubKey.fromScriptPubKeyCoinbase(scriptPubKey);
+
+  factory TxScriptPubKey.fromScriptPubKeyCoinbase(Map scriptPubKey) =>
+      TxScriptPubKey(
+          asm: scriptPubKey['asm'],
+          hex: scriptPubKey['hex'],
+          type: scriptPubKey['type']);
+
+  factory TxScriptPubKey.fromScriptPubKeyTransaction(Map scriptPubKey) =>
+      TxScriptPubKey(
+          asm: scriptPubKey['asm'],
+          hex: scriptPubKey['hex'],
+          type: scriptPubKey['type'],
+          reqSigs: scriptPubKey['reqSigs'],
+          addresses: <String>[
+            for (String addr in scriptPubKey['addresses']) addr
+          ]);
+
+  factory TxScriptPubKey.fromScriptPubKeyNewAsset(Map scriptPubKey) =>
+      TxScriptPubKey(
+        asm: scriptPubKey['asm'],
+        hex: scriptPubKey['hex'],
+        type: scriptPubKey['type'],
+        reqSigs: scriptPubKey['reqSigs'],
+        addresses: <String>[
+          for (String addr in scriptPubKey['addresses']) addr
+        ],
+        asset: scriptPubKey['asset']['name'],
+        amount: (scriptPubKey['asset']['amount'] as double).toInt(),
+        units: scriptPubKey['asset']['units'] ?? 0,
+        reissuable: scriptPubKey['asset']['reissuable'] ?? 0,
+        ipfsHash: scriptPubKey['asset']['ipfs_hash'],
+      );
+
   @override
   String toString() => 'TxScriptPubKey('
       'asm: $asm, hex: $hex, type: $type, reqSigs: $reqSigs, '
@@ -262,20 +301,8 @@ extension GetTransactionMethod on RavenElectrumClient {
             value: vout['value'],
             n: vout['n'],
             valueSat: vout['valueSat'],
-            scriptPubKey: (vout['scriptPubKey'] as Map).keys.contains('reqSigs')
-                ? TxScriptPubKey(
-                    asm: vout['scriptPubKey']['asm'],
-                    hex: vout['scriptPubKey']['hex'],
-                    type: vout['scriptPubKey']['type'],
-                    reqSigs: vout['scriptPubKey']['reqSigs'],
-                    addresses: <String>[
-                        for (String addr in vout['scriptPubKey']['addresses'])
-                          addr
-                      ])
-                : TxScriptPubKey(
-                    asm: vout['scriptPubKey']['asm'],
-                    hex: vout['scriptPubKey']['hex'],
-                    type: vout['scriptPubKey']['type']))
+            scriptPubKey:
+                TxScriptPubKey.fromScriptPubKey(vout['scriptPubKey'] as Map))
     ];
     return Tx(
       txid: response['txid'],
