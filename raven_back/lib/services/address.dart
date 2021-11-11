@@ -33,20 +33,24 @@ class AddressService {
       /// 9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f
       /// (or one in it's batch)
       // ignore: omit_local_variable_types
-      await saveTransactions(
-        [
-          for (var txHash in histories.map((history) => history.txHash))
+      changedAddress.address == 'mxx5uTiYo5XZRWdpBaMDE2bHtxuf6MRAXt'
+          ? print(changedAddress.addressId)
+          : null;
+      await saveTransactions([
+        for (var txHash in histories.map((history) => history.txHash))
 
-            /// this successfully reduced download redundancy but if things
-            /// downloaded in a particular order, it caused the error of not
-            /// downloading every transaction we needed, somehow. So this
-            /// condition has been removed.
-            //if (transactions.primaryIndex.getOne(txHash) == null ||
-            //    transactions.primaryIndex.getOne(txHash)!.vins.isEmpty)
-            await client.getTransaction(txHash)
-        ],
-        client,
-      );
+          /// this successfully reduced download redundancy but if things
+          /// downloaded in a particular order, it caused the error of not
+          /// downloading every transaction we needed, somehow. So this
+          /// condition has been removed.
+          //if (transactions.primaryIndex.getOne(txHash) == null ||
+          //    transactions.primaryIndex.getOne(txHash)!.vins.isEmpty)
+          await client.getTransaction(txHash)
+      ], client,
+          verbose:
+              changedAddress.address == 'mxx5uTiYo5XZRWdpBaMDE2bHtxuf6MRAXt'
+                  ? true
+                  : false);
       unretrieved.remove(changedAddress.addressId);
       retrieved.add(changedAddress.addressId);
     }
@@ -151,21 +155,36 @@ class AddressService {
   /// when an address status change: make our historic tx data match blockchain
   Future saveTransactions(
     List<Tx> txs,
-    RavenElectrumClient client,
-  ) async {
+    RavenElectrumClient client, {
+    bool verbose = true,
+  }) async {
+    // why called twice?
+    verbose ? print('0') : null;
+
     /// save all vins, vouts and transactions
     var newVins = <Vin>{};
     var newVouts = <Vout>{};
     var newTxs = <Transaction>{};
     for (var tx in txs) {
+      verbose ? print('1') : null;
       for (var vin in tx.vin) {
+        verbose ? print('2') : null;
         if (vin.txid != null && vin.vout != null) {
+          verbose ? print('3.0') : null;
+          verbose
+              ? print(Vin(
+                  txId: tx.txid,
+                  voutTxId: vin.txid!,
+                  voutPosition: vin.vout!,
+                ))
+              : null;
           newVins.add(Vin(
             txId: tx.txid,
             voutTxId: vin.txid!,
             voutPosition: vin.vout!,
           ));
         } else if (vin.coinbase != null && vin.sequence != null) {
+          verbose ? print('3.1') : null;
           newVins.add(Vin(
             txId: tx.txid,
             voutTxId: vin.coinbase!,
@@ -175,8 +194,30 @@ class AddressService {
         }
       }
       for (var vout in tx.vout) {
+        verbose ? print('5') : null;
         if (vout.scriptPubKey.type == 'nulldata') continue;
+        verbose ? print('5.0') : null;
         var vs = await handleAssetData(client, tx, vout);
+        verbose ? print(vs) : null;
+        verbose ? print('5.1') : null;
+        verbose
+            ? print(Vout(
+                txId: tx.txid,
+                rvnValue: vs.item1,
+                position: vout.n,
+                memo: vout.memo,
+                type: vout.scriptPubKey.type,
+                toAddress: vout.scriptPubKey.addresses![0],
+                assetSecurityId: vs.item2.securityId,
+                assetValue: vout.scriptPubKey.amount,
+                // multisig - must detect if multisig...
+                additionalAddresses:
+                    (vout.scriptPubKey.addresses?.length ?? 0) > 1
+                        ? vout.scriptPubKey.addresses!
+                            .sublist(1, vout.scriptPubKey.addresses!.length)
+                        : null,
+              ))
+            : null;
         newVouts.add(Vout(
           txId: tx.txid,
           rvnValue: vs.item1,

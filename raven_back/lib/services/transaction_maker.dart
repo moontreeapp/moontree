@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:raven/raven.dart';
 import 'package:ravencoin/ravencoin.dart' as ravencoin;
 import 'package:tuple/tuple.dart';
@@ -110,14 +112,19 @@ class MakeTransactionService {
 
     var tx = txb.build();
 
-    updatedEstimate.setFees(tx.fee(goal));
-
+    updatedEstimate.setFees(max(tx.fee(goal), estimate.fees));
     if (updatedEstimate.changeDue >= 0 &&
         updatedEstimate.changeDue == preliminaryChangeDue) {
       // success!
       return Tuple2(tx, updatedEstimate);
     } else {
       // try again
+      print('try again------------------');
+      print('estimate: ${estimate}');
+      print('updatedEstimate: ${updatedEstimate}');
+      print('preliminaryChangeDue: $preliminaryChangeDue');
+      print('tx.fee(goal): ${tx.fee(goal)}');
+      print('updatedEstimate.changeDue: ${updatedEstimate.changeDue}');
       return buildTransaction(
         toAddress,
         updatedEstimate,
