@@ -119,12 +119,6 @@ class MakeTransactionService {
       return Tuple2(tx, updatedEstimate);
     } else {
       // try again
-      print('try again------------------');
-      print('estimate: ${estimate}');
-      print('updatedEstimate: ${updatedEstimate}');
-      print('preliminaryChangeDue: $preliminaryChangeDue');
-      print('tx.fee(goal): ${tx.fee(goal)}');
-      print('updatedEstimate.changeDue: ${updatedEstimate.changeDue}');
       return buildTransaction(
         toAddress,
         updatedEstimate,
@@ -141,9 +135,7 @@ class MakeTransactionService {
     Account? account,
     Wallet? wallet,
     TxGoal? goal,
-    Set<int>? previousFees,
   }) {
-    previousFees = previousFees ?? {};
     var useWallet = shouldUseWallet(account: account, wallet: wallet);
     var txb = ravencoin.TransactionBuilder(
         network: useWallet ? wallet!.account!.network : account!.network);
@@ -156,13 +148,15 @@ class MakeTransactionService {
       total = total + utxo.rvnValue;
     }
     var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
+    var preliminaryChangeDue = updatedEstimate.changeDue;
     txb.addOutput(toAddress, estimate.amount);
     txb.signEachInput(utxos);
     var tx = txb.build();
     var fees = tx.fee(goal);
-    updatedEstimate.setFees(tx.fee(goal));
+    updatedEstimate.setFees(max(fees, estimate.fees));
     updatedEstimate.setAmount(total - fees);
-    if (previousFees.contains(fees)) {
+    if (updatedEstimate.changeDue >= 0 &&
+        updatedEstimate.changeDue == preliminaryChangeDue) {
       return Tuple2(tx, updatedEstimate);
     } else {
       return buildTransactionSendAll(
@@ -171,7 +165,6 @@ class MakeTransactionService {
         goal: goal,
         account: account,
         wallet: wallet,
-        previousFees: {...previousFees, fees},
       );
     }
   }
