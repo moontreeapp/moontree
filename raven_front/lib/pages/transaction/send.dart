@@ -115,24 +115,27 @@ class _SendState extends State<Send> {
           title: Text('Send'),
           flexibleSpace: Container(
             alignment: Alignment.center,
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-              SizedBox(height: 70.0),
-              Text(visibleAmount, style: Theme.of(context).textTheme.headline3),
-              SizedBox(height: 15.0),
-              Text(visibleFiatAmount,
-                  style: Theme.of(context).textTheme.headline5),
-              SizedBox(height: 15.0),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Container(
-                    height: 45,
-                    width: 45,
-                    child: components.icons.assetAvatar(data['symbol'])),
-                SizedBox(width: 15.0),
-                Text(data['symbol'],
-                    style: Theme.of(context).textTheme.headline5),
-              ]),
-            ]),
+            child: SingleChildScrollView(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                  SizedBox(height: 70.0),
+                  Text(visibleAmount,
+                      style: Theme.of(context).textTheme.headline3),
+                  SizedBox(height: 15.0),
+                  Text(visibleFiatAmount,
+                      style: Theme.of(context).textTheme.headline5),
+                  SizedBox(height: 15.0),
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Container(
+                        height: 45,
+                        width: 45,
+                        child: components.icons.assetAvatar(data['symbol'])),
+                    SizedBox(width: 15.0),
+                    Text(data['symbol'],
+                        style: Theme.of(context).textTheme.headline5),
+                  ]),
+                ])),
           )));
 
   void populateFromQR(String code) {
@@ -256,8 +259,20 @@ class _SendState extends State<Send> {
             //      style: TextStyle(color: Theme.of(context).bad),
             //    )),
             TextButton.icon(
-                onPressed: () => Navigator.pushNamed(context, '/send/scan_qr')
-                    .then((value) => populateFromQR((value as Barcode).code)),
+                onPressed: () async {
+                  var value =
+                      await Navigator.pushNamed(context, '/send/scan_qr');
+                  if (value is Barcode) {
+                    var code = value.code;
+                    if (code != null) {
+                      populateFromQR(code);
+                    } else {
+                      print('QR code is null');
+                    }
+                  } else {
+                    print('failed to populate QR');
+                  }
+                },
                 icon: Icon(Icons.qr_code_scanner),
                 label: Text('Scan QR code')),
             SizedBox(height: 15.0),

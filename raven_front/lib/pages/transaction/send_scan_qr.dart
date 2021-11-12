@@ -1,15 +1,18 @@
+import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class SendScanQR extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _SendScanQRState();
+  State<StatefulWidget> createState() {
+    return _SendScanQRState();
+  }
 }
 
 class _SendScanQRState extends State<SendScanQR> {
+  StreamSubscription<Barcode>? listener;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
@@ -20,8 +23,9 @@ class _SendScanQRState extends State<SendScanQR> {
     super.reassemble();
     if (Platform.isAndroid) {
       controller!.pauseCamera();
+    } else if (Platform.isIOS) {
+      controller!.resumeCamera();
     }
-    controller!.resumeCamera();
   }
 
   @override
@@ -46,7 +50,9 @@ class _SendScanQRState extends State<SendScanQR> {
                       Container(
                         margin: EdgeInsets.all(8),
                         child: TextButton.icon(
-                            onPressed: () => Navigator.pop(context),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
                             icon: Icon(Icons.cancel),
                             label: Text('Cancel')),
                       ),
@@ -67,30 +73,30 @@ class _SendScanQRState extends State<SendScanQR> {
             MediaQuery.of(context).size.height < 400)
         ? 150.0
         : 300.0;
-    // To ensure the Scanner view is properly sizes after rotation
-    // we need to listen for Flutter SizeChanged notification and update controller
     return QRView(
       key: qrKey,
-      onQRViewCreated: _onQRViewCreated,
       overlay: QrScannerOverlayShape(
           borderColor: Colors.red,
           borderRadius: 10,
           borderLength: 30,
           borderWidth: 10,
           cutOutSize: scanArea),
+      onQRViewCreated: _onQRViewCreated,
       onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
     );
   }
 
   void _onQRViewCreated(QRViewController controller) {
-    setState(() {
-      this.controller = controller;
-    });
-    controller.scannedDataStream.listen((Barcode scanData) {
+    this.controller = controller;
+    listener = controller.scannedDataStream.listen((Barcode scanData) {
       print(scanData);
-      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      // SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
+      if (Navigator.canPop(context)) {
         Navigator.pop(context, scanData);
-      });
+      } else {
+        print("Can't Navigator.pop back from qr scanner");
+      }
+      // });
     });
   }
 
@@ -105,6 +111,7 @@ class _SendScanQRState extends State<SendScanQR> {
 
   @override
   void dispose() {
+    listener?.cancel();
     controller?.dispose();
     super.dispose();
   }
