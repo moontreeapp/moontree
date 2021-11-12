@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:raven/raven.dart';
 import 'package:raven/services/transaction.dart';
 import 'package:raven_mobile/components/components.dart';
@@ -18,16 +19,20 @@ class _RavenTransactionsState extends State<RavenTransactions> {
   late List<TransactionRecord> currentTxs;
   late List<Balance> currentHolds;
   late Balance currentBalRVN;
-
-  void _toggleUSD() {
-    setState(() {
-      showUSD = !showUSD;
-    });
-  }
+  bool isFabVisible = true;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  bool visibilityOfSendReceive(notification) {
+    if (notification.direction == ScrollDirection.forward) {
+      if (!isFabVisible) setState(() => isFabVisible = true);
+    } else if (notification.direction == ScrollDirection.reverse) {
+      if (isFabVisible) setState(() => isFabVisible = false);
+    }
+    return true;
   }
 
   @override
@@ -44,11 +49,14 @@ class _RavenTransactionsState extends State<RavenTransactions> {
     }
     return Scaffold(
       appBar: header(),
-      body: TransactionList(
-        transactions: currentTxs.where((tx) => tx.security == securities.RVN),
-      ),
+      body: NotificationListener<UserScrollNotification>(
+          onNotification: visibilityOfSendReceive,
+          child: TransactionList(
+            transactions:
+                currentTxs.where((tx) => tx.security == securities.RVN),
+          )),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: sendReceiveButtons(),
+      floatingActionButton: isFabVisible ? sendReceiveButtons() : null,
       //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
     );
   }

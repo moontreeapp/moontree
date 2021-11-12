@@ -2,6 +2,7 @@
 /// that should probably happen at some point - when we start using assets more.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:raven/raven.dart';
 import 'package:raven/services/transaction.dart';
 import 'package:raven_mobile/services/lookup.dart';
@@ -23,16 +24,20 @@ class _AssetState extends State<Asset> {
   bool showUSD = false;
   late List<TransactionRecord> currentTxs;
   late List<Balance> currentHolds;
-
-  void _toggleUSD() {
-    setState(() {
-      showUSD = !showUSD;
-    });
-  }
+  bool isFabVisible = true;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  bool visibilityOfSendReceive(notification) {
+    if (notification.direction == ScrollDirection.forward) {
+      if (!isFabVisible) setState(() => isFabVisible = true);
+    } else if (notification.direction == ScrollDirection.reverse) {
+      if (isFabVisible) setState(() => isFabVisible = false);
+    }
+    return true;
   }
 
   @override
@@ -48,12 +53,14 @@ class _AssetState extends State<Asset> {
         length: 2,
         child: Scaffold(
           appBar: header(),
-          body: TabBarView(children: [
-            TransactionList(
-                transactions: currentTxs.where((tx) =>
-                    tx.security.symbol == data['holding']!.security.symbol),
-                msg:
-                    '\nNo ${data['holding']!.security.symbol} transactions.\n'),
+          body: TabBarView(children: <Widget>[
+            NotificationListener<UserScrollNotification>(
+                onNotification: visibilityOfSendReceive,
+                child: TransactionList(
+                    transactions: currentTxs.where((tx) =>
+                        tx.security.symbol == data['holding']!.security.symbol),
+                    msg:
+                        '\nNo ${data['holding']!.security.symbol} transactions.\n')),
             _metadataView() ??
                 components.empty.message(
                   context,
@@ -63,7 +70,7 @@ class _AssetState extends State<Asset> {
           ]),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: sendReceiveButtons(),
+          floatingActionButton: isFabVisible ? sendReceiveButtons() : null,
           //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
         ));
   }
@@ -100,9 +107,6 @@ class _AssetState extends State<Asset> {
                             data['holding']!.value,
                             symbol: data['holding']!.security.symbol),
                         style: Theme.of(context).textTheme.headline3),
-                    SizedBox(height: 15.0),
-                    Text('\$654.02',
-                        style: Theme.of(context).textTheme.headline5),
                   ])),
           bottom: PreferredSize(
               preferredSize: Size.fromHeight(50.0),

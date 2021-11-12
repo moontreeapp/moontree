@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:raven/services/transaction.dart';
 import 'package:raven/utils/enum.dart';
@@ -35,12 +36,7 @@ class _WalletViewState extends State<WalletView> {
   Widget exposureAndIndex = Row();
   List<Balance>? holdings;
   List<TransactionRecord>? transactions;
-
-  void _toggleUSD() {
-    setState(() {
-      showUSD = !showUSD;
-    });
-  }
+  bool isFabVisible = true;
 
   @override
   void initState() {
@@ -51,6 +47,15 @@ class _WalletViewState extends State<WalletView> {
     setState(() {
       showSecret = !showSecret;
     });
+  }
+
+  bool visibilityOfSendReceive(notification) {
+    if (notification.direction == ScrollDirection.forward) {
+      if (!isFabVisible) setState(() => isFabVisible = true);
+    } else if (notification.direction == ScrollDirection.reverse) {
+      if (isFabVisible) setState(() => isFabVisible = false);
+    }
+    return true;
   }
 
   @override
@@ -80,11 +85,11 @@ class _WalletViewState extends State<WalletView> {
         child: Scaffold(
           appBar: header(),
           body: body(),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: isFabVisible ? sendButton() : null,
 
           /// hidden for beta
-          //floatingActionButtonLocation:
-          //    FloatingActionButtonLocation.centerFloat,
-          //floatingActionButton: sendButton(),
           //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
         ));
   }
@@ -104,7 +109,7 @@ class _WalletViewState extends State<WalletView> {
           flexibleSpace: Container(
             alignment: Alignment(0.0, -0.5),
             child: Text(
-                '\n\$ ${Current.walletBalanceUSD(wallet.walletId)?.valueUSD ?? Current.walletBalanceRVN(wallet.walletId).value}',
+                '\n ${Current.walletBalanceUSD(wallet.walletId)?.valueUSD ?? Current.walletBalanceRVN(wallet.walletId).value}',
                 style: Theme.of(context).textTheme.headline3),
           ),
           bottom: PreferredSize(
@@ -117,11 +122,15 @@ class _WalletViewState extends State<WalletView> {
 
   TabBarView body() => TabBarView(children: [
         detailsView(),
-        HoldingList(
-            holdings: holdings ?? Current.walletHoldings(wallet.walletId)),
-        TransactionList(
-            transactions: transactions ??
-                Current.walletCompiledTransactions(wallet.walletId)),
+        NotificationListener<UserScrollNotification>(
+            onNotification: visibilityOfSendReceive,
+            child: HoldingList(
+                holdings: holdings ?? Current.walletHoldings(wallet.walletId))),
+        NotificationListener<UserScrollNotification>(
+            onNotification: visibilityOfSendReceive,
+            child: TransactionList(
+                transactions: transactions ??
+                    Current.walletCompiledTransactions(wallet.walletId))),
       ]);
 
   String get secretName =>
