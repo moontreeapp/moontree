@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:raven/services/transaction/fee.dart';
-import 'package:raven/services/transaction_maker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin/ravencoin.dart' as ravencoin;
+import 'package:barcode_scan2/barcode_scan2.dart';
+
+import 'package:raven/services/transaction/fee.dart';
+import 'package:raven/services/transaction_maker.dart';
 import 'package:raven/raven.dart';
+
 import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/services/lookup.dart';
@@ -260,17 +262,19 @@ class _SendState extends State<Send> {
             //    )),
             TextButton.icon(
                 onPressed: () async {
-                  var value =
-                      await Navigator.pushNamed(context, '/send/scan_qr');
-                  if (value is Barcode) {
-                    var code = value.code;
-                    if (code != null) {
-                      populateFromQR(code);
-                    } else {
-                      print('QR code is null');
-                    }
-                  } else {
-                    print('failed to populate QR');
+                  ScanResult result = await BarcodeScanner.scan();
+                  switch (result.type) {
+                    case ResultType.Barcode:
+                      populateFromQR(result.rawContent);
+                      break;
+                    case ResultType.Error:
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(result.rawContent)),
+                      );
+                      break;
+                    case ResultType.Cancelled:
+                      // no problem, don't do anything
+                      break;
                   }
                 },
                 icon: Icon(Icons.qr_code_scanner),
