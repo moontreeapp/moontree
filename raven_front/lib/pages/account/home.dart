@@ -129,7 +129,7 @@ class _HomeState extends State<Home> {
             // show spinnter until valid usd rate appears, then rvnUSD
             child: Text(
                 // this kinda thing should be abstracted:
-                '\n${Current.balanceUSD != null ? '\$' : 'RVN'} ${Current.balanceUSD?.valueUSD ?? Current.balanceRVN.rvn}',
+                '\n${Current.balanceUSD != null ? '' : ''} ${Current.balanceUSD?.valueUSD ?? Current.balanceRVN.valueRVN}',
                 style: Theme.of(context).textTheme.headline3),
           ),
           bottom: PreferredSize(

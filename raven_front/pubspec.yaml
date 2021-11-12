@@ -42,7 +42,7 @@ dependencies:
   permission_handler: ^8.2.5 # to handle the permissions to read and write files
   share: ^2.0.4 # to share the file that we create
   file_picker: ^4.1.5 # to import the file that we saved
-
+  intl: ^0.17.0
 
   # MoonTree in-house dependencies
   raven:

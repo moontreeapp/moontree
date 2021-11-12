@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:raven/raven.dart';
 
 class TextComponents {
@@ -10,10 +11,11 @@ class TextComponents {
     int precision = 2,
   }) =>
       balance == 0
-          ? prefix + '0'
-          : prefix +
-              (balance * (rate ?? services.rate.rvnToUSD ?? 0.0))
-                  .toStringAsFixed(precision);
+          ? NumberFormat('$prefix#,##0.00', 'en_US').format(0)
+          : NumberFormat('$prefix#,##0.00', 'en_US').format((balance *
+              (rate ??
+                  services.rate.rvnToUSD ??
+                  0.0)) /*.toStringAsFixed(precision)*/);
 
   int rvnSats(double amount) => _amountAsSats(amount);
   double satsRVN(int amount) => _satsAsAmount(amount);
@@ -38,17 +40,23 @@ class TextComponents {
     if (symbol == 'RVN') {
       /// rvn sats -> rvn -> usd
       var asAmount = (symbol == 'RVN' ? satsRVN(sats) : satsToAmount(sats));
-      return asUSD ? rvnUSD(satsRVN(sats)) : asAmount.toString();
+      return asUSD
+          ? rvnUSD(satsRVN(sats))
+          : NumberFormat('#,##0.########', 'en_US').format(asAmount);
     }
     // asset sats -> asset -> rvn -> usd
     security = security ??
         securities.bySymbolSecurityType
             .getOne(symbol, SecurityType.RavenAsset) ??
         Security(symbol: symbol, securityType: SecurityType.RavenAsset);
+
     return asUSD
-        ? rvnUSD(satsToAmount(sats, precision: security.precision ?? 8) *
+        ? rvnUSD(satsToAmount(sats, precision: 2) *
             (services.rate.assetToRVN(security) ?? 0.0))
-        : satsToAmount(sats, precision: security.precision ?? 8).toString();
+        : NumberFormat(
+                '#,##0${(security.precision ?? 0) > 0 ? '.' + '0' * (security.precision ?? 0) : ''}',
+                'en_US')
+            .format(satsToAmount(sats, precision: security.precision ?? 8));
   }
 
   static int _amountAsSats(double amount, {int precision = 8}) =>
