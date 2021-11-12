@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:raven/services/transaction/fee.dart';
-import 'package:raven/services/transaction_maker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin/ravencoin.dart' as ravencoin;
+import 'package:barcode_scan2/barcode_scan2.dart';
+
+import 'package:raven/services/transaction/fee.dart';
+import 'package:raven/services/transaction_maker.dart';
 import 'package:raven/raven.dart';
+
 import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/services/lookup.dart';
@@ -115,24 +117,27 @@ class _SendState extends State<Send> {
           title: Text('Send'),
           flexibleSpace: Container(
             alignment: Alignment.center,
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-              SizedBox(height: 70.0),
-              Text(visibleAmount, style: Theme.of(context).textTheme.headline3),
-              SizedBox(height: 15.0),
-              Text(visibleFiatAmount,
-                  style: Theme.of(context).textTheme.headline5),
-              SizedBox(height: 15.0),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Container(
-                    height: 45,
-                    width: 45,
-                    child: components.icons.assetAvatar(data['symbol'])),
-                SizedBox(width: 15.0),
-                Text(data['symbol'],
-                    style: Theme.of(context).textTheme.headline5),
-              ]),
-            ]),
+            child: SingleChildScrollView(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                  SizedBox(height: 70.0),
+                  Text(visibleAmount,
+                      style: Theme.of(context).textTheme.headline3),
+                  SizedBox(height: 15.0),
+                  Text(visibleFiatAmount,
+                      style: Theme.of(context).textTheme.headline5),
+                  SizedBox(height: 15.0),
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Container(
+                        height: 45,
+                        width: 45,
+                        child: components.icons.assetAvatar(data['symbol'])),
+                    SizedBox(width: 15.0),
+                    Text(data['symbol'],
+                        style: Theme.of(context).textTheme.headline5),
+                  ]),
+                ])),
           )));
 
   void populateFromQR(String code) {
@@ -256,8 +261,22 @@ class _SendState extends State<Send> {
             //      style: TextStyle(color: Theme.of(context).bad),
             //    )),
             TextButton.icon(
-                onPressed: () => Navigator.pushNamed(context, '/send/scan_qr')
-                    .then((value) => populateFromQR((value as Barcode).code)),
+                onPressed: () async {
+                  ScanResult result = await BarcodeScanner.scan();
+                  switch (result.type) {
+                    case ResultType.Barcode:
+                      populateFromQR(result.rawContent);
+                      break;
+                    case ResultType.Error:
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(result.rawContent)),
+                      );
+                      break;
+                    case ResultType.Cancelled:
+                      // no problem, don't do anything
+                      break;
+                  }
+                },
                 icon: Icon(Icons.qr_code_scanner),
                 label: Text('Scan QR code')),
             SizedBox(height: 15.0),
