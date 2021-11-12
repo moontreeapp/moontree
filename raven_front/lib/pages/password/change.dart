@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/components.dart';
-import 'package:raven_mobile/indicators/indicators.dart';
 import 'package:raven_mobile/theme/extensions.dart';
 
 class ChangePassword extends StatefulWidget {
@@ -39,7 +38,8 @@ class _ChangePasswordState extends State<ChangePassword> {
   Widget build(BuildContext context) => GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        appBar: components.headers.back(context, 'Change Password'),
+        appBar: components.headers.back(context,
+            services.password.required ? 'Change Password' : 'Set Password'),
         body: body(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: submitButton(),
@@ -120,7 +120,16 @@ class _ChangePasswordState extends State<ChangePassword> {
           children: <Widget>[
             SizedBox(height: 30),
             Column(children: [
-              existingPasswordField,
+              services.password.required
+                  ? existingPasswordField
+                  : Text('Setting a password is highly recommended.\n\n'
+                      'If your device is compromized, wallets and backups are '
+                      'unencrypt and vulnerable until a password is set. '
+                      'Previously created backups should be removed after a '
+                      'password is set.\n\n'
+                      'WARNING: Since all data is local to your device there '
+                      'is no password recovery process available.\n\n'
+                      'YOU MUST BACKUP YOUR OWN PASSWORD.'),
               SizedBox(height: 5),
               Text(existingNotification,
                   style: TextStyle(

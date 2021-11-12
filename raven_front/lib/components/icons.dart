@@ -21,7 +21,7 @@ class IconComponents {
   Icon get export => Icon(Icons.save);
 
   String assetImage(asset) =>
-      {'RVN': 'assets/rvn.png'}[asset] ?? 'assets/defaultAsset.png';
+      {'RVN': 'assets/rvn.png'}[asset] ?? 'assets/defaultBag.png';
 
   //CircleAvatar assetAvatar(asset) =>
   //    CircleAvatar(backgroundImage: AssetImage(assetImage(asset)));

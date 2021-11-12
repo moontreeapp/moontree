@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:raven/raven.dart';
-import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/components/components.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:raven/utils/database.dart' as ravenDatabase;
@@ -11,24 +9,44 @@ class Settings extends StatelessWidget {
     return Scaffold(
       appBar: components.headers.back(context, 'Settings'),
       body: SettingsList(
+        contentPadding: EdgeInsets.only(top: 10),
         sections: [
-          SettingsSection(tiles: [
+          SettingsSection(title: 'Wallet', tiles: [
             SettingsTile(
-                title: 'Account',
-                subtitle: Current.account.name,
-                leading: Icon(Icons.account_balance_wallet_rounded),
+                title: 'Import',
+                leading: components.icons.import,
                 onPressed: (BuildContext context) =>
-                    Navigator.pushNamed(context, '/settings/account')),
+                    Navigator.pushNamed(context, '/settings/import')),
+            SettingsTile(
+                title: 'Export / Backup',
+                leading: components.icons.export,
+                onPressed: (BuildContext context) => Navigator.pushNamed(
+                    context, '/settings/export',
+                    arguments: {'accountId': 'current'})),
+            /*
+            SettingsTile(
+                title: 'Sign Message',
+                enabled: false,
+                leading: Icon(Icons.fact_check_sharp),
+                onPressed: (BuildContext context) {
+                  //Navigator.push(
+                  //  context,
+                  //  MaterialPageRoute(builder: (context) => ...()),
+                  //);
+                }),
+            */
             SettingsTile(
                 title: 'Accounts Overview',
                 leading: Icon(Icons.lightbulb),
                 onPressed: (BuildContext context) =>
                     Navigator.pushNamed(context, '/settings/technical')),
+            /* Coming soon!
             SettingsTile(
                 title: 'P2P Exchange',
                 enabled: false,
                 leading: Icon(Icons.swap_horiz),
                 onPressed: (BuildContext context) {})
+            */
           ]),
           SettingsSection(
             title: 'App',
@@ -43,6 +61,7 @@ class Settings extends StatelessWidget {
                   leading: Icon(Icons.network_check),
                   onPressed: (BuildContext context) =>
                       Navigator.pushNamed(context, '/settings/network')),
+              /*
               SettingsTile(
                   title: 'Currency',
                   leading: Icon(Icons.money),
@@ -54,6 +73,7 @@ class Settings extends StatelessWidget {
                   leading: Icon(Icons.language),
                   onPressed: (BuildContext context) =>
                       Navigator.pushNamed(context, '/settings/language')),
+              */
               SettingsTile(
                   title: 'About',
                   leading: Icon(Icons.info_outline_rounded),

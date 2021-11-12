@@ -58,7 +58,8 @@ class _ExportState extends State<Export> {
 
   String get _accountName =>
       account != null ? 'Account: ' + account!.name : 'All Accounts';
-  String get _accountId => account != null ? account!.accountId : 'AllAccounts';
+  String get _accountId =>
+      account != null ? account!.accountId : 'All Accounts';
 
   //Future<File> _download() async => await writeToExport(
   //    filename: _accountId + '-' + DateTime.now().toString(),
@@ -120,7 +121,7 @@ class _ExportState extends State<Export> {
                           account = null;
                         }),
                     icon: Icon(Icons.help),
-                    label: Text('Export ALL accounts?'))
+                    label: Text('Export ALL?'))
             ],
             SizedBox(height: 25),
             Center(
