@@ -32,9 +32,6 @@ class AddressService {
       /// 9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f
       /// (or one in it's batch)
       // ignore: omit_local_variable_types
-      changedAddress.address == 'mxx5uTiYo5XZRWdpBaMDE2bHtxuf6MRAXt'
-          ? print(changedAddress.addressId)
-          : null;
       await saveTransactions([
         for (var txHash in histories.map((history) => history.txHash))
 
