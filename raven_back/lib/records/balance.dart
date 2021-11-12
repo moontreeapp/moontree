@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 import 'package:raven/records/security.dart';
 import 'package:raven/utils/exceptions.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
@@ -57,6 +58,10 @@ class Balance with EquatableMixin {
     return (confirmed / 100000000) + (unconfirmed / 100000000);
   }
 
+  String get valueRVN {
+    return NumberFormat('RVN #,##0.00000000', 'en_US').format(rvn);
+  }
+
   Balance operator +(Balance balance) {
     /// we combine to get account balances - then we don't care about walletId
     //if (walletId != balance.walletId) {
@@ -84,7 +89,8 @@ class BalanceUSD {
   }
 
   String get valueUSD {
-    return (confirmed + unconfirmed).toStringAsFixed(2);
+    return NumberFormat('\$ #,##0.00', 'en_US')
+        .format((confirmed + unconfirmed) /*.toStringAsFixed(2)*/);
   }
 
   BalanceUSD operator +(BalanceUSD balanceUSD) {

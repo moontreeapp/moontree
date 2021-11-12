@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:raven/raven.dart';
 
 class TransactionService {
@@ -80,7 +81,7 @@ class TransactionService {
         if (givenAddresses.contains(vin.vout?.toAddress)) {
           transactionRecords.add(TransactionRecord(
             out: true,
-            fromAddress: '', // what am I supposed to do here?
+            fromAddress: '',
             toAddress: vin.vout!.toAddress,
             value: vin.vout!.rvnValue,
             security: securities.primaryIndex.getOne(
@@ -124,4 +125,15 @@ class TransactionRecord {
     this.vinId,
     this.voutId,
   });
+
+  String get valueRVN {
+    return NumberFormat('RVN #,##0.00000000', 'en_US').format(value);
+  }
+
+  String get valueAsset {
+    return NumberFormat(
+            '${security.symbol} #,##0.${'0' * (security.precision ?? 0)}',
+            'en_US')
+        .format(amount);
+  }
 }

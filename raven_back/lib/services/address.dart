@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:raven/utils/transform.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:raven/raven.dart';
 import 'package:tuple/tuple.dart';
@@ -46,11 +45,7 @@ class AddressService {
           //if (transactions.primaryIndex.getOne(txHash) == null ||
           //    transactions.primaryIndex.getOne(txHash)!.vins.isEmpty)
           await client.getTransaction(txHash)
-      ], client,
-          verbose:
-              changedAddress.address == 'mxx5uTiYo5XZRWdpBaMDE2bHtxuf6MRAXt'
-                  ? true
-                  : false);
+      ], client);
       unretrieved.remove(changedAddress.addressId);
       retrieved.add(changedAddress.addressId);
     }
@@ -153,38 +148,22 @@ class AddressService {
   }
 
   /// when an address status change: make our historic tx data match blockchain
-  Future saveTransactions(
-    List<Tx> txs,
-    RavenElectrumClient client, {
-    bool verbose = true,
-  }) async {
+  Future saveTransactions(List<Tx> txs, RavenElectrumClient client) async {
     // why called twice?
-    verbose ? print('0') : null;
 
     /// save all vins, vouts and transactions
     var newVins = <Vin>{};
     var newVouts = <Vout>{};
     var newTxs = <Transaction>{};
     for (var tx in txs) {
-      verbose ? print('1') : null;
       for (var vin in tx.vin) {
-        verbose ? print('2') : null;
         if (vin.txid != null && vin.vout != null) {
-          verbose ? print('3.0') : null;
-          verbose
-              ? print(Vin(
-                  txId: tx.txid,
-                  voutTxId: vin.txid!,
-                  voutPosition: vin.vout!,
-                ))
-              : null;
           newVins.add(Vin(
             txId: tx.txid,
             voutTxId: vin.txid!,
             voutPosition: vin.vout!,
           ));
         } else if (vin.coinbase != null && vin.sequence != null) {
-          verbose ? print('3.1') : null;
           newVins.add(Vin(
             txId: tx.txid,
             voutTxId: vin.coinbase!,
@@ -194,30 +173,8 @@ class AddressService {
         }
       }
       for (var vout in tx.vout) {
-        verbose ? print('5') : null;
         if (vout.scriptPubKey.type == 'nulldata') continue;
-        verbose ? print('5.0') : null;
         var vs = await handleAssetData(client, tx, vout);
-        verbose ? print(vs) : null;
-        verbose ? print('5.1') : null;
-        verbose
-            ? print(Vout(
-                txId: tx.txid,
-                rvnValue: vs.item1,
-                position: vout.n,
-                memo: vout.memo,
-                type: vout.scriptPubKey.type,
-                toAddress: vout.scriptPubKey.addresses![0],
-                assetSecurityId: vs.item2.securityId,
-                assetValue: vout.scriptPubKey.amount,
-                // multisig - must detect if multisig...
-                additionalAddresses:
-                    (vout.scriptPubKey.addresses?.length ?? 0) > 1
-                        ? vout.scriptPubKey.addresses!
-                            .sublist(1, vout.scriptPubKey.addresses!.length)
-                        : null,
-              ))
-            : null;
         newVouts.add(Vout(
           txId: tx.txid,
           rvnValue: vs.item1,
