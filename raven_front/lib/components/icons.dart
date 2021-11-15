@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:raven/records/records.dart';
+import 'package:fnv/fnv.dart';
+
 import 'package:raven_mobile/theme/extensions.dart';
+import 'package:raven_mobile/widgets/circle_gradient.dart';
 
 class IconComponents {
   IconComponents();
@@ -20,19 +23,25 @@ class IconComponents {
 
   Icon get export => Icon(Icons.save);
 
-  String assetImage(String asset) =>
-      {'RVN': 'assets/rvn.png'}[asset] ?? 'assets/defaultBag.png';
-
   String masterAssetImage(String asset) =>
       {'RVN': 'assets/rvn.png'}[asset] ?? 'assets/defaultMasterBag.png';
 
-  //CircleAvatar assetAvatar(asset) =>
-  //    CircleAvatar(backgroundImage: AssetImage(assetImage(asset)));
-  //ClipRRect assetAvatar(asset) => ClipRRect(
-  //    // borderRadius: BorderRadius.circular(20.0), //or 15.0
-  //    child: Image.asset(assetImage(asset)));
-  Image assetAvatar(String asset) => Image.asset(
-      asset.endsWith('!') ? masterAssetImage(asset) : assetImage(asset));
+  Widget assetAvatar(String asset) {
+    if (asset == 'RVN') {
+      return Image.asset('assets/rvn.png');
+    } else if (asset.endsWith('!')) {
+      return Image.asset(masterAssetImage(asset));
+    } else {
+      var i = fnv1a_64(asset.codeUnits);
+      var colorPair = gradients[i % gradients.length];
+      return Stack(children: [
+        PopCircle(
+          colorPair: colorPair,
+        ),
+        Image.asset('assets/assetbag_transparent.png')
+      ]);
+    }
+  }
 
   CircleAvatar appAvatar() =>
       CircleAvatar(backgroundImage: AssetImage('assets/rvn256.png'));
