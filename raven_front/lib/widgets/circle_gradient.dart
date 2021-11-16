@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class ColorPair {
-  int colorInt1, colorInt2;
-  ColorPair(this.colorInt1, this.colorInt2);
+  final int colorInt1, colorInt2;
+  const ColorPair(this.colorInt1, this.colorInt2);
   Color get color1 => Color(colorInt1);
   Color get color2 => Color(colorInt2);
 }
 
-var gradients = [
+const gradients = [
   ColorPair(0xFFC93538, 0xFF993436),
   ColorPair(0xFF99CBFB, 0xFF376898),
   ColorPair(0xFF656696, 0xFF343434),
@@ -61,14 +61,16 @@ class CircleGradient extends CustomPainter {
 }
 
 class PopCircle extends StatelessWidget {
+  static const ColorPair defaultColorPair = ColorPair(0xFFC93538, 0xFF993436);
+
   final ColorPair colorPair;
   final EdgeInsetsGeometry padding;
   final Size size;
 
-  PopCircle(
-    this.colorPair, {
-    this.padding = const EdgeInsets.all(5),
-    this.size = const Size(60, 60),
+  PopCircle({
+    this.colorPair = PopCircle.defaultColorPair,
+    this.padding = const EdgeInsets.all(0),
+    this.size = const Size(80, 80),
   });
 
   @override
