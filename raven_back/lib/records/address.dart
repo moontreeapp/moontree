@@ -48,7 +48,8 @@ class Address with EquatableMixin {
 
   @override
   String toString() =>
-      'Address(addressId: $addressId, address: $address, walletId: $walletId, hdIndex: $hdIndex, exposure: $exposure, net: $net)';
+      'Address(addressId: $addressId, address: $address, walletId: $walletId, '
+      'hdIndex: $hdIndex, exposure: $exposure, net: $net)';
 
   int compareTo(Address other) {
     if (exposure != other.exposure) {

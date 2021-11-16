@@ -33,6 +33,17 @@ class Security with EquatableMixin {
   @HiveField(7)
   final int? position;
 
+  /// metadata is often an ipfsHash of json which often includes an ipfsHash
+  /// for the logo. Instead of looking it up everytime, since there is no hard
+  /// format, we save the ipfsLogo hash on the object when we figure it out.
+  /// we do not derive the ipfsLogo upon record creation, instead we wait until
+  /// the ...
+  /// null means we have not looked, empty string means we've looked and found
+  /// no viable logo in the metadata, anything else should be a ipfs hash of the
+  /// logo, or any kind of hash (since the hash matches the filename).
+  @HiveField(8)
+  final String? ipfsLogo;
+
   //late final TxSource source;
   ////late final String txHash; // where it originated?
   ////late final int txPos; // the vout it originated?
@@ -48,13 +59,41 @@ class Security with EquatableMixin {
     this.metadata,
     this.txId,
     this.position,
+    this.ipfsLogo,
   });
+
+  factory Security.fromSecurity(
+    Security other, {
+    String? symbol,
+    SecurityType? securityType,
+    int? satsInCirculation,
+    int? precision,
+    bool? reissuable,
+    String? metadata,
+    String? txId,
+    int? position,
+    String? ipfsLogo,
+  }) =>
+      Security(
+        symbol: symbol ?? other.symbol,
+        securityType: securityType ?? other.securityType,
+        satsInCirculation: satsInCirculation ?? other.satsInCirculation,
+        precision: precision ?? other.precision,
+        reissuable: reissuable ?? other.reissuable,
+        metadata: metadata ?? other.metadata,
+        txId: txId ?? other.txId,
+        position: position ?? other.position,
+        ipfsLogo: ipfsLogo ?? other.ipfsLogo,
+      );
 
   @override
   List<Object> get props => [symbol, securityType];
 
   @override
-  String toString() => 'Security(symbol: $symbol, securityType: $securityType)';
+  String toString() => 'Security(symbol: $symbol, securityType: $securityType, '
+      'satsInCirculation: $satsInCirculation, precision: $precision, '
+      'reissuable: $reissuable, metadata: $metadata, txId: $txId, '
+      'position: $position, ipfsLogo: $ipfsLogo)';
 
   static String securityIdKey(String symbol, SecurityType securityType) =>
       '$symbol:${describeEnum(securityType)}';

@@ -288,6 +288,9 @@ class AddressService {
                 .ipfsHash,
             txId: meta.source.txHash,
             position: meta.source.txPos,
+            // ipfsLogo: derived from metadata in the event that it is an ipfsHash
+            // I think instead of pulling it here, we update the object later when the logo is needed.
+            // then it can be retrieved and saved and the record updated as to what the ipfsLogo is.
           );
           await securities.save(security);
         }
