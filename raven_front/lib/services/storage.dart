@@ -99,7 +99,7 @@ class AssetLogos extends Storage {
   @override
   Future<File> _localFile(String filename,
           {String extension = 'png', String? path}) async =>
-      File('${await _localPath}/images/$filename');
+      File('${path ?? await _localPath}/images/$filename');
 
   /// writes the logo by its ipfs hash as filename
   Future<File> writeLogo({
@@ -114,6 +114,8 @@ class AssetLogos extends Storage {
       ..writeAsBytesSync(bytes);
   }
 
+  /// usecase:
+  /// Image.memory(storage.readLogo(ipfsHash))
   Future<Uint8List?> readLogo({
     File? file,
     String? filename,
@@ -123,6 +125,19 @@ class AssetLogos extends Storage {
       return await file.readAsBytes();
     } catch (e) {
       return null;
+    }
+  }
+
+  /// usecase:
+  /// Image.file(storage.readLogoFile(ipfsHash))
+  Future<File?> readLogoFile(String filename,
+      {bool returnEmptyFile = false}) async {
+    var file = await _localFile(filename);
+    if (!await file.exists()) {
+      return file;
+    }
+    if (returnEmptyFile) {
+      return file;
     }
   }
 }

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/services/lookup.dart';
-import 'package:raven_mobile/utils/storage.dart';
-import 'package:raven_mobile/utils/import.dart';
+import 'package:raven_mobile/services/storage.dart';
+import 'package:raven_mobile/services/import.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
 class Import extends StatefulWidget {

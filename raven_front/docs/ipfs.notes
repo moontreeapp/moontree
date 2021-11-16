@@ -25,3 +25,20 @@ How to download the file:
 - - I think if we used a dart library we'd have to fix someones or roll our own.
 
 I prefer the simple request if it has no drawbacks or issues, however should we point to the regular gateway.ipfs.io or stand up our own gateway?
+
+when pulling data for an asset we need to:
+1. grab the ipfs for it and download the logo and save it to the images folder.
+2. save the ipfshash that we saved to the images folder to the symbol object.
+that way we can pull the correct logo for that item later simply by the name of the symbol
+
+this means we want the act of getting the ipfsLogo to be reactive:
+...see drawio
+
+isolate.spawn()
+https://stackoverflow.com/questions/69994375/can-you-force-separate-threads-in-dart?noredirect=1#comment123730894_69994375
+https://medium.com/dartlang/dart-asynchronous-programming-isolates-and-event-loops-bffc3e296a6a
+https://www.woolha.com/tutorials/dart-spawn-kill-send-message-to-isolate
+
+valueNotifier is more lightweight than composable streams:
+https://api.flutter.dev/flutter/foundation/ValueNotifier-class.html
+https://medium.com/dartlang/dart-asynchronous-programming-isolates-and-event-loops-bffc3e296a6a

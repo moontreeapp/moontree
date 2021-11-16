@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 import 'package:raven/utils/exceptions.dart';
-import 'package:raven_mobile/utils/storage.dart';
+import 'package:raven_mobile/services/storage.dart';
 
 class MetadataGrabber {
   late String? ipfsHash;
@@ -19,35 +19,35 @@ class MetadataGrabber {
   Future<bool> get([String? givenIpfsHash]) async {
     ipfsHash = givenIpfsHash ?? ipfsHash;
     try {
-      return await getMetadata();
+      return await _getMetadata();
     } catch (e) {
       print(e);
       return false;
     }
   }
 
-  Future<bool> getMetadata() async {
-    var response = await call();
+  Future<bool> _getMetadata() async {
+    var response = await _call();
     var jsonBody;
-    if (verify(response)) {
-      jsonBody = detectJson(response);
+    if (_verify(response)) {
+      jsonBody = _detectJson(response);
       if (jsonBody is Map<dynamic, dynamic>) {
-        return interpret(jsonBody);
+        return _interpret(jsonBody);
       } else {
-        return await interpretAsImage(response.bodyBytes);
+        return await _interpretAsImage(response.bodyBytes);
       }
     }
     return false;
   }
 
-  Future<http.Response> call() async =>
+  Future<http.Response> _call() async =>
       await http.get(Uri.parse('https://gateway.ipfs.io/ipfs/$ipfsHash'),
           headers: {'accept': 'application/json'});
 
-  bool verify(http.Response response) =>
+  bool _verify(http.Response response) =>
       response.statusCode == 200 ? true : false;
 
-  Map<dynamic, dynamic>? detectJson(http.Response response) {
+  Map<dynamic, dynamic>? _detectJson(http.Response response) {
     try {
       return jsonDecode(response.body);
     } catch (e) {
@@ -62,7 +62,7 @@ class MetadataGrabber {
    "image": "https://ipfs.io/ipfs/QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr"
   }
   */
-  bool interpret(Map jsonBody) {
+  bool _interpret(Map jsonBody) {
     var imgString;
     if (jsonBody['image'] is String) {
       if (jsonBody.keys.contains('image')) {
@@ -94,7 +94,7 @@ class MetadataGrabber {
   }
 
   /// save bytes return path
-  Future<bool> interpretAsImage(Uint8List bytes,
+  Future<bool> _interpretAsImage(Uint8List bytes,
       {String? givenIpfsHash}) async {
     AssetLogos storage = AssetLogos();
     //save this path :
