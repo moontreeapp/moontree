@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/services/lookup.dart';
-import 'package:raven_mobile/utils/export.dart';
+import 'package:raven_mobile/utils/storage.dart';
 import 'package:raven_mobile/utils/import.dart';
 import 'package:raven_mobile/utils/utils.dart';
 
@@ -20,7 +20,7 @@ class _ImportState extends State<Import> {
   bool importEnabled = false;
   late Account account;
   String importFormatDetected = '';
-  final Storage storage = Storage();
+  final Backup storage = Backup();
   final TextEditingController password = TextEditingController();
 
   @override
