@@ -14,4 +14,14 @@ extension StringCasingExtension on String {
           .split(' ')
           .map((str) => str.toCapitalized())
           .join(' ');
+  String trimPattern(String pattern) {
+    var tempString = this;
+    if (startsWith(pattern)) {
+      tempString = substring(pattern.length, tempString.length);
+    }
+    if (endsWith(pattern)) {
+      tempString = substring(0, tempString.length - pattern.length);
+    }
+    return tempString;
+  }
 }
