@@ -25,13 +25,14 @@ class SecurityAdapter extends TypeAdapter<Security> {
       metadata: fields[5] as String?,
       txId: fields[6] as String?,
       position: fields[7] as int?,
+      ipfsLogo: fields[8] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Security obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.symbol)
       ..writeByte(1)
@@ -47,7 +48,9 @@ class SecurityAdapter extends TypeAdapter<Security> {
       ..writeByte(6)
       ..write(obj.txId)
       ..writeByte(7)
-      ..write(obj.position);
+      ..write(obj.position)
+      ..writeByte(8)
+      ..write(obj.ipfsLogo);
   }
 
   @override

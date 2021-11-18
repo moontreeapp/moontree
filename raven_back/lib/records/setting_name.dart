@@ -31,4 +31,7 @@ enum SettingName {
 
   @HiveField(7)
   Account_Preferred,
+
+  @HiveField(8)
+  Local_Path,
 }

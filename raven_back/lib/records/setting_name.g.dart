@@ -29,6 +29,8 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
         return SettingName.Account_Current;
       case 7:
         return SettingName.Account_Preferred;
+      case 8:
+        return SettingName.Local_Path;
       default:
         return SettingName.Electrum_Domain0;
     }
@@ -60,6 +62,9 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
         break;
       case SettingName.Account_Preferred:
         writer.writeByte(7);
+        break;
+      case SettingName.Local_Path:
+        writer.writeByte(8);
         break;
     }
   }
