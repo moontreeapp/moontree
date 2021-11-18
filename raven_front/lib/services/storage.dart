@@ -13,11 +13,11 @@ class Storage {
   Future<Directory> get _localDir async =>
       await getApplicationDocumentsDirectory();
 
-  Future<String> get _localPath async => (await _localDir).path;
+  Future<String> get localPath async => (await _localDir).path;
 
   Future<File> _localFile(String filename,
           {String? path, String extension = 'json'}) async =>
-      File('${path ?? await _localPath}/$filename.$extension');
+      File('${path ?? await localPath}/$filename.$extension');
 
   Future<File> _verifyLocalFile(File file) async {
     if (!await file.exists()) {
@@ -99,7 +99,10 @@ class AssetLogos extends Storage {
   @override
   Future<File> _localFile(String filename,
           {String extension = 'png', String? path}) async =>
-      File('${path ?? await _localPath}/images/$filename');
+      File('${path ?? await localPath}/images/$filename');
+
+  File _localFileNow(String filename, String path) =>
+      File('$path/images/$filename');
 
   /// writes the logo by its ipfs hash as filename
   Future<File> writeLogo({
@@ -129,7 +132,7 @@ class AssetLogos extends Storage {
   }
 
   /// usecase:
-  /// Image.file(storage.readLogoFile(ipfsHash))
+  /// Image.file(await storage.readLogoFile(ipfsHash))
   Future<File?> readLogoFile(String filename,
       {bool returnEmptyFile = false}) async {
     var file = await _localFile(filename);
@@ -140,4 +143,9 @@ class AssetLogos extends Storage {
       return file;
     }
   }
+
+  /// usecase:
+  /// Image.file(storage.readLogoFile(ipfsHash))
+  File readLogoFileNow(String filename, String path) =>
+      _localFileNow(filename, path);
 }

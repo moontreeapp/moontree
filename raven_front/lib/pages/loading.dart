@@ -8,6 +8,7 @@ import 'package:raven_mobile/services/history_mock.dart';
 import 'package:raven_mobile/listeners/listeners.dart';
 import 'package:raven_mobile/services/password_mock.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:raven_mobile/services/storage.dart';
 
 class Loading extends StatefulWidget {
   @override
@@ -39,6 +40,8 @@ class _LoadingState extends State<Loading> {
     await hiveInit.setUp();
     await initWaiters();
     initListeners();
+    await settings.save(Setting(
+        name: SettingName.Local_Path, value: await Storage().localPath));
     if (accounts.data.isEmpty) {
       /// for testing
       //MockHistories().init();

@@ -39,12 +39,13 @@ class IconComponents {
         securities.bySymbolSecurityType.getOne(asset, SecurityType.RavenAsset);
     if (security != null && !([null, '']).contains(security.ipfsLogo)) {
       var storage = AssetLogos();
-      var file = /*await*/ storage.readLogoFile(security
-          .ipfsLogo!); // what do I do about this await? set the app directory on main or a global at start up or something?
+      var file = storage.readLogoFileNow(security.ipfsLogo!,
+          settings.primaryIndex.getOne(SettingName.Local_Path)!.value);
+      // what do I do about this await?
+      // set the app directory on main or a global at start up or something?
+      // (could use a setting for that.) <--- used solution. (must assume file is not null).
       // maybe the entire file path should be saved on the ipfsLogo?
-      if (file != null) {
-        //return Image.file(file);
-      }
+      return Image.file(file);
     }
 
     /// no logo? no problem, we'll make one...
