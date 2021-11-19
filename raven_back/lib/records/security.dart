@@ -105,7 +105,10 @@ class Security with EquatableMixin {
   /// todo identify a ipfs hash correctly...
   // https://ethereum.stackexchange.com/questions/17094/how-to-store-ipfs-hash-using-bytes32/17112#17112
   bool get hasIpfs =>
-      metadata != null && metadata != '' && metadata!.length == 32;
+      metadata != null &&
+      metadata != '' &&
+      metadata!.contains(RegExp(
+          r'Qm[1-9A-HJ-NP-Za-km-z]{44,}|b[A-Za-z2-7]{58,}|B[A-Z2-7]{58,}|z[1-9A-HJ-NP-Za-km-z]{48,}|F[0-9A-F]{50,}'));
 
   bool get hasMetadata => metadata != null && metadata != '';
 }
