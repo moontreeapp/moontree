@@ -3,17 +3,18 @@ import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 import 'package:raven/utils/exceptions.dart';
+import 'package:raven/utils/extensions.dart';
 import 'package:raven_mobile/services/storage.dart';
 
 class MetadataGrabber {
   late String? ipfsHash;
-  String icon = '';
+  String? logo;
   Map<dynamic, dynamic> json = {};
   bool ableToInterpret = false;
 
   MetadataGrabber([this.ipfsHash]);
 
-  /// given a hash get the icon and other metadata set it on object
+  /// given a hash get the logo and other metadata set it on object
   /// return true if able to interpret data
   /// return false if unable to interpret data
   Future<bool> get([String? givenIpfsHash]) async {
@@ -63,19 +64,20 @@ class MetadataGrabber {
   }
   */
   bool _interpret(Map jsonBody) {
-    var imgString;
-    if (jsonBody['image'] is String) {
-      if (jsonBody.keys.contains('image')) {
-        imgString = jsonBody['image'];
-      } else if (jsonBody.keys.contains('icon')) {
-        imgString = jsonBody['icon'];
-      } else if (jsonBody.keys.contains('logo')) {
-        imgString = jsonBody['logo'];
-      } else {
-        throw BadResponseException('unable to interpret json data');
-        //return false;
+    String? imgString;
+    var keyName = '';
+    for (var kn in ['logo', 'icon', 'image']) {
+      if (jsonBody.keys.contains(kn)) {
+        keyName = kn;
+        imgString = jsonBody[kn];
+        break;
       }
-    } else {
+    }
+    if (keyName == '' || imgString == null) {
+      throw BadResponseException('unable to interpret json data');
+      //return false;
+    }
+    if (!(jsonBody[keyName] is String)) {
       throw BadResponseException('unable to interpret json data');
       //return false;
     }
@@ -88,8 +90,9 @@ class MetadataGrabber {
     //} else if (raw binary image possibility) {
     //  imgString = interpretAsImage(jsonBody['logo'] ... as bytes)
     json = jsonBody;
-    icon = imgString;
+    logo = imgString;
     // go save icon to device
+    MetadataGrabber(logo).get();
     return true;
   }
 
@@ -97,11 +100,18 @@ class MetadataGrabber {
   Future<bool> _interpretAsImage(Uint8List bytes,
       {String? givenIpfsHash}) async {
     AssetLogos storage = AssetLogos();
-    //save this path :
-    (await storage.writeLogo(
-            filename: givenIpfsHash ?? ipfsHash!, bytes: bytes))
+    print('givenIpfsHash ?? logo ?? ipfsHash! $givenIpfsHash $logo $ipfsHash');
+    var path = (await storage.writeLogo(
+      filename: givenIpfsHash ?? logo ?? ipfsHash!,
+      bytes: bytes,
+    ))
         .absolute
         .path;
+    print('path:$path');
     return true;
   }
 }
+
+// FileSystemException: Cannot create file, 
+// path = '/data/user/0/com.example.raven_mobile/app_flutter/images/' 
+// (OS Error: Is a directory, errno = 21)

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:raven/raven.dart';
 import 'package:raven_mobile/components/components.dart';
+import 'package:raven_mobile/services/ipfs.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:raven/utils/database.dart' as ravenDatabase;
 
@@ -90,10 +92,17 @@ class Settings extends StatelessWidget {
                   leading: Icon(Icons.info_outline_rounded),
                   onPressed: (BuildContext context) async {
                     //print(balances.data);
+                    var ipfsLogo =
+                        'QmcVwukinT7BdC2u9PqyZRFG1dheebQGaBzgytJF6NZD9M';
+                    var meta = MetadataGrabber(ipfsLogo);
+                    print(await meta.get());
+                    print(meta.logo);
+                    var sec = securities.bySymbolSecurityType
+                        .getOne('MOONTREE0', SecurityType.RavenAsset)!;
+                    print(sec.hasIpfs);
+                    print(sec);
+                    print(Security.fromSecurity(sec, ipfsLogo: ipfsLogo));
                     //print(securities.data);
-                    1 / 0;
-                    //print(vouts.byTransaction.getAll(
-                    //    '4e769a6d770b4e441ade1d5600926ad14f58fdb6ae4128ed03c811241ec72240'));
                   }),
 /*                      
 */

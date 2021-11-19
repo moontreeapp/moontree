@@ -23,9 +23,13 @@ class LogoListener {
             //     as the name of the file
             //   made the ipfsLogo hash available to us so we can
             //     update the record.
-            ipfsLogo = meta.icon;
+            ipfsLogo = meta.logo!;
           } // if one is not found... save the fact that we looked so we don't again.
-          securities.save(Security.fromSecurity(security, ipfsLogo: ipfsLogo));
+          print(
+              'saving: ${Security.fromSecurity(security, ipfsLogo: ipfsLogo)}');
+          await securities.remove(security); // must we remove first??
+          await securities
+              .save(Security.fromSecurity(security, ipfsLogo: ipfsLogo));
         }
       }, updated: (updated) {
         // repull logo?

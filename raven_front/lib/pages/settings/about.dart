@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:raven/raven.dart';
 
 import 'package:raven_mobile/components/components.dart';
+import 'package:raven_mobile/services/storage.dart';
 
 class About extends StatefulWidget {
   @override
@@ -59,6 +61,11 @@ class _AboutState extends State<About> {
                   child:
                       Padding(padding: EdgeInsets.all(20), child: Text(about!)),
                 ),
+                Image.file(AssetLogos().readLogoFileNow(
+                    'QmXe1VJjmBi1Tjti8mUa2UyScvEPyUnhSGSZzwD19kCYUm',
+                    settings.primaryIndex
+                        .getOne(SettingName.Local_Path)!
+                        .value))
               ],
             ),
           ),
