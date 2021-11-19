@@ -14,6 +14,9 @@ extension StringCasingExtension on String {
           .split(' ')
           .map((str) => str.toCapitalized())
           .join(' ');
+}
+
+extension StringTrimExtension on String {
   String trimPattern(String pattern) {
     var tempString = this;
     if (startsWith(pattern)) {
