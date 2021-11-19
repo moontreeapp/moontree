@@ -37,6 +37,7 @@ class _WalletViewState extends State<WalletView> {
   List<Balance>? holdings;
   List<TransactionRecord>? transactions;
   bool isFabVisible = true;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -138,6 +139,7 @@ class _WalletViewState extends State<WalletView> {
 
   ListView detailsView() => ListView(
           shrinkWrap: true,
+          controller: _scrollController,
           padding: EdgeInsets.all(20.0),
           children: <Widget>[
             Text('WARNING!\nDo NOT disclose the Mnemonic Secret to anyone!',
@@ -203,6 +205,14 @@ class _WalletViewState extends State<WalletView> {
               in wallet.addresses..sort((a, b) => a.compareTo(b)))
             ListTile(
               onTap: () => setState(() {
+                // Delay to make sure the frames are rendered properly
+                //await Future.delayed(const Duration(milliseconds: 300));
+
+                _scrollController.animateTo(
+                    _scrollController.position.minScrollExtent,
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.fastOutSlowIn);
+
                 //holdings = services.balance.addressesBalances([walletAddress]);
                 transactions =
                     Current.walletCompiledTransactions(wallet.walletId)
