@@ -5,37 +5,51 @@ import 'package:raven/raven.dart';
 import 'package:raven_mobile/services/ipfs.dart';
 
 class LogoListener {
+  Map<String, String> logos = {};
+
   void init() {
     securities.changes.listen((Change<Security> change) {
       change.when(loaded: (loaded) {
         // verify logo present?
-      }, added: (added) async {
+      }, added: (added) {
         var security = added.data;
         // if the metadata is a valid ipfs hash and no logo pull attempt has been made:
         if (security.hasIpfs && security.ipfsLogo == null) {
-          // pull the ipfs data, try to interpret it to derive an ipfslogo from it
-          var meta = MetadataGrabber(security.metadata);
-          var ipfsLogo = '';
-          if (await meta.get()) {
-            // if one is found... return true so we know you...
-            //   download the file and
-            //     save it to disk with the ipfsHash (for the logo)
-            //     as the name of the file
-            //   made the ipfsLogo hash available to us so we can
-            //     update the record.
-            ipfsLogo = meta.logo!;
-          } // if one is not found... save the fact that we looked so we don't again.
-          print(
-              'saving: ${Security.fromSecurity(security, ipfsLogo: ipfsLogo)}');
-          await securities.remove(security); // must we remove first??
-          await securities
-              .save(Security.fromSecurity(security, ipfsLogo: ipfsLogo));
+          pullLogo(security);
         }
       }, updated: (updated) {
-        // repull logo?
+        var security = updated.data;
+        if (security.hasIpfs && security.ipfsLogo == null) {
+          if (logos.keys.contains(security.metadata)) {
+            print(
+                'saving2: ${Security.fromSecurity(security, ipfsLogo: logos[security.metadata!])}');
+            securities.save(Security.fromSecurity(security,
+                ipfsLogo: logos[security.metadata!]));
+          } else {
+            pullLogo(security);
+          }
+        }
       }, removed: (removed) {
         // clean up logo image?
       });
     });
+  }
+
+  Future<void> pullLogo(Security security) async {
+    // pull the ipfs data, try to interpret it to derive an ipfslogo from it
+    var meta = MetadataGrabber(security.metadata);
+    var ipfsLogo = '';
+    if (await meta.get()) {
+      // if one is found... return true so we know you...
+      //   download the file and
+      //     save it to disk with the ipfsHash (for the logo)
+      //     as the name of the file
+      //   made the ipfsLogo hash available to us so we can
+      //     update the record.
+      ipfsLogo = meta.logo!;
+      logos[security.metadata!] = meta.logo!;
+    } // if one is not found... save the fact that we looked so we don't again.
+    print('saving: ${Security.fromSecurity(security, ipfsLogo: ipfsLogo)}');
+    securities.save(Security.fromSecurity(security, ipfsLogo: ipfsLogo));
   }
 }
