@@ -39,9 +39,9 @@ class TextComponents {
     symbol = security?.symbol ?? symbol ?? 'RVN';
     if (symbol == 'RVN') {
       /// rvn sats -> rvn -> usd
-      var asAmount = (symbol == 'RVN' ? satsRVN(sats) : satsToAmount(sats));
+      var asAmount = satsRVN(sats);
       return asUSD
-          ? rvnUSD(satsRVN(sats))
+          ? rvnUSD(asAmount)
           : NumberFormat('#,##0.########', 'en_US').format(asAmount);
     }
     // asset sats -> asset -> rvn -> usd
@@ -49,14 +49,15 @@ class TextComponents {
         securities.bySymbolSecurityType
             .getOne(symbol, SecurityType.RavenAsset) ??
         Security(symbol: symbol, securityType: SecurityType.RavenAsset);
-
+    var asAmount = satsToAmount(sats, precision: 0);
+    var asAmount2 = satsToAmount(sats, precision: security.precision ?? 8);
+    print('$symbol, $asAmount, $asAmount2');
     return asUSD
-        ? rvnUSD(satsToAmount(sats, precision: 2) *
-            (services.rate.assetToRVN(security) ?? 0.0))
+        ? rvnUSD(asAmount * (services.rate.assetToRVN(security) ?? 0.0))
         : NumberFormat(
                 '#,##0${(security.precision ?? 0) > 0 ? '.' + '0' * (security.precision ?? 0) : ''}',
                 'en_US')
-            .format(satsToAmount(sats, precision: security.precision ?? 8));
+            .format(asAmount);
   }
 
   static int _amountAsSats(double amount, {int precision = 8}) =>

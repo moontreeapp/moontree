@@ -92,17 +92,43 @@ class Settings extends StatelessWidget {
                   leading: Icon(Icons.info_outline_rounded),
                   onPressed: (BuildContext context) async {
                     //print(balances.data);
-                    var ipfsLogo =
-                        'QmcVwukinT7BdC2u9PqyZRFG1dheebQGaBzgytJF6NZD9M';
-                    var meta = MetadataGrabber(ipfsLogo);
-                    print(await meta.get());
-                    print(meta.logo);
-                    var sec = securities.bySymbolSecurityType
+                    //print(transactions.primaryIndex.getOne(
+                    //    '6984d492be101d0e76838369112f65e74472357cbd5d9820571e124032eeedf2'));
+                    //var ipfsLogo =
+                    //    'QmcVwukinT7BdC2u9PqyZRFG1dheebQGaBzgytJF6NZD9M';
+                    ////var meta = MetadataGrabber(ipfsLogo);
+                    ////print(await meta.get());
+                    ////print(meta.logo);
+
+                    print('---------------0');
+                    var security = securities.bySymbolSecurityType
                         .getOne('MOONTREE0', SecurityType.RavenAsset)!;
-                    print(sec.hasIpfs);
-                    print(sec);
-                    print(Security.fromSecurity(sec, ipfsLogo: ipfsLogo));
+                    print(security);
+
+                    //print(sec.hasIpfs);
+                    //print(Security.fromSecurity(sec, ipfsLogo: ipfsLogo));
                     //print(securities.data);
+                    print('---------------1');
+                    //var meta = MetadataGrabber(security.metadata);
+                    //var ipfsLogo = '';
+                    //if (await meta.get()) {
+                    //  // if one is found... return true so we know you...
+                    //  //   download the file and
+                    //  //     save it to disk with the ipfsHash (for the logo)
+                    //  //     as the name of the file
+                    //  //   made the ipfsLogo hash available to us so we can
+                    //  //     update the record.
+                    //  ipfsLogo = meta.logo!;
+                    //} // if one is not found... save the fact that we looked so we don't again.
+                    //print(
+                    //    'saving: ${Security.fromSecurity(security, ipfsLogo: ipfsLogo)}');
+                    //await securities.remove(security); // must we remove first??
+                    //await securities.save(
+                    //    Security.fromSecurity(security, ipfsLogo: ipfsLogo));
+                    //print('---------------2');
+                    //security = securities.bySymbolSecurityType
+                    //    .getOne('MOONTREE0', SecurityType.RavenAsset)!;
+                    //print(security);
                   }),
 /*                      
 */
