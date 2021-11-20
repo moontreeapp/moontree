@@ -266,16 +266,16 @@ class AddressService {
       RavenElectrumClient client, Tx tx, TxVout vout) async {
     var symbol = 'RVN';
     var value = vout.valueSat;
-    var security;
-    if (vout.scriptPubKey.type == 'transfer_asset') {
-      symbol = vout.scriptPubKey.asset!;
-      value = vout.scriptPubKey.amount!;
-      security = securities.bySymbolSecurityType
-          .getOne(symbol, SecurityType.RavenAsset);
-      //if we have no record of it in securities...
-      if (security == null) {
+    var security =
+        securities.bySymbolSecurityType.getOne(symbol, SecurityType.RavenAsset);
+    if (security == null) {
+      if (vout.scriptPubKey.type == 'transfer_asset') {
+        symbol = vout.scriptPubKey.asset!;
+        value = vout.scriptPubKey.amount!;
+        //if we have no record of it in securities...
         var meta = await client.getMeta(symbol);
         if (meta != null) {
+          print('circu: ${meta.satsInCirculation} meta: ${meta.symbol}');
           security = Security(
             symbol: meta.symbol,
             securityType: SecurityType.RavenAsset,
@@ -288,27 +288,28 @@ class AddressService {
                 .ipfsHash,
             txId: meta.source.txHash,
             position: meta.source.txPos,
-            // ipfsLogo: derived from metadata in the event that it is an ipfsHash
+            // ipfsLogo: derived from metadata in the event that it is an ipfsHash;
             // I think instead of pulling it here, we update the object later when the logo is needed.
             // then it can be retrieved and saved and the record updated as to what the ipfsLogo is.
           );
           await securities.save(security);
         }
+      } else if (vout.scriptPubKey.type == 'new_asset') {
+        symbol = vout.scriptPubKey.asset!;
+        value = vout.scriptPubKey.amount! * (10000000);
+        print('VALUE: $value symbol: $symbol');
+        security = Security(
+          symbol: symbol,
+          securityType: SecurityType.RavenAsset,
+          satsInCirculation: value,
+          precision: vout.scriptPubKey.units,
+          reissuable: vout.scriptPubKey.reissuable == 1,
+          metadata: vout.scriptPubKey.ipfsHash,
+          txId: tx.txid,
+          position: vout.n,
+        );
+        await securities.save(security);
       }
-    } else if (vout.scriptPubKey.type == 'new_asset') {
-      symbol = vout.scriptPubKey.asset!;
-      value = vout.scriptPubKey.amount!;
-      security = Security(
-        symbol: symbol,
-        securityType: SecurityType.RavenAsset,
-        satsInCirculation: value, //?? as sats?
-        precision: vout.scriptPubKey.units,
-        reissuable: vout.scriptPubKey.reissuable == 1,
-        metadata: vout.scriptPubKey.ipfsHash,
-        txId: tx.txid,
-        position: vout.n,
-      );
-      await securities.save(security);
     }
     return Tuple2(value, security ?? securities.RVN);
   }

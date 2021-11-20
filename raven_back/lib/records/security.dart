@@ -87,7 +87,17 @@ class Security with EquatableMixin {
       );
 
   @override
-  List<Object> get props => [symbol, securityType];
+  List<Object> get props => [
+        symbol,
+        securityType,
+        satsInCirculation ?? -1,
+        precision ?? -1,
+        reissuable ?? '',
+        metadata ?? '',
+        txId ?? '',
+        position ?? -1,
+        ipfsLogo ?? '', // including this allows us to save over it.
+      ];
 
   @override
   String toString() => 'Security(symbol: $symbol, securityType: $securityType, '
