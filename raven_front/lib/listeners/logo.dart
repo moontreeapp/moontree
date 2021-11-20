@@ -21,8 +21,6 @@ class LogoListener {
         var security = updated.data;
         if (security.hasIpfs && security.ipfsLogo == null) {
           if (logos.keys.contains(security.metadata)) {
-            print(
-                'saving2: ${Security.fromSecurity(security, ipfsLogo: logos[security.metadata!])}');
             securities.save(Security.fromSecurity(security,
                 ipfsLogo: logos[security.metadata!]));
           } else {
@@ -49,7 +47,6 @@ class LogoListener {
       ipfsLogo = meta.logo!;
       logos[security.metadata!] = meta.logo!;
     } // if one is not found... save the fact that we looked so we don't again.
-    print('saving: ${Security.fromSecurity(security, ipfsLogo: ipfsLogo)}');
     securities.save(Security.fromSecurity(security, ipfsLogo: ipfsLogo));
   }
 }

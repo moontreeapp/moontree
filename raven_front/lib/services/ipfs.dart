@@ -100,18 +100,13 @@ class MetadataGrabber {
   Future<bool> _interpretAsImage(Uint8List bytes,
       {String? givenIpfsHash}) async {
     AssetLogos storage = AssetLogos();
-    print('givenIpfsHash ?? logo ?? ipfsHash! $givenIpfsHash $logo $ipfsHash');
     var path = (await storage.writeLogo(
       filename: givenIpfsHash ?? logo ?? ipfsHash!,
       bytes: bytes,
     ))
         .absolute
         .path;
-    print('path:$path');
     return true;
+    //return path;
   }
 }
-
-// FileSystemException: Cannot create file, 
-// path = '/data/user/0/com.example.raven_mobile/app_flutter/images/' 
-// (OS Error: Is a directory, errno = 21)

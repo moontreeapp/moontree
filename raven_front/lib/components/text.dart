@@ -50,8 +50,6 @@ class TextComponents {
             .getOne(symbol, SecurityType.RavenAsset) ??
         Security(symbol: symbol, securityType: SecurityType.RavenAsset);
     var asAmount = satsToAmount(sats, precision: 0);
-    var asAmount2 = satsToAmount(sats, precision: security.precision ?? 8);
-    print('$symbol, $asAmount, $asAmount2');
     return asUSD
         ? rvnUSD(asAmount * (services.rate.assetToRVN(security) ?? 0.0))
         : NumberFormat(
