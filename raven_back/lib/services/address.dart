@@ -275,7 +275,6 @@ class AddressService {
         //if we have no record of it in securities...
         var meta = await client.getMeta(symbol);
         if (meta != null) {
-          print('circu: ${meta.satsInCirculation} meta: ${meta.symbol}');
           security = Security(
             symbol: meta.symbol,
             securityType: SecurityType.RavenAsset,
@@ -297,7 +296,6 @@ class AddressService {
       } else if (vout.scriptPubKey.type == 'new_asset') {
         symbol = vout.scriptPubKey.asset!;
         value = vout.scriptPubKey.amount! * (10000000);
-        print('VALUE: $value symbol: $symbol');
         security = Security(
           symbol: symbol,
           securityType: SecurityType.RavenAsset,
