@@ -12,28 +12,57 @@ class LogoListener {
       change.when(loaded: (loaded) {
         // verify logo present?
       }, added: (added) {
-        var security = added.data;
-        // if the metadata is a valid ipfs hash and no logo pull attempt has been made:
-        if (security.hasIpfs && security.ipfsLogo == null) {
-          pullLogo(security);
-        }
+        manageSecurity(added.data);
       }, updated: (updated) {
-        var security = updated.data;
-        if (security.hasIpfs && security.ipfsLogo == null) {
-          if (logos.keys.contains(security.metadata)) {
-            securities.save(Security.fromSecurity(security,
-                ipfsLogo: logos[security.metadata!]));
-          } else {
-            pullLogo(security);
-          }
-        }
+        manageSecurity(updated.data);
       }, removed: (removed) {
         // clean up logo image?
       });
     });
   }
 
-  Future<void> pullLogo(Security security) async {
+  // handle master vs unique asset
+  Future<void> manageSecurity(Security security) async {
+    if (security.isMaster) {
+      // master assets should look at the ipfs on the actual unique assets.
+      if (logos.keys.contains(security.nonMasterSymbol)) {
+        securities.save(Security.fromSecurity(security,
+            ipfsLogo: logos[security.nonMasterSymbol]));
+      } else {
+        var uniqueAsset = securities.bySymbolSecurityType
+            .getOne(security.nonMasterSymbol, SecurityType.RavenAsset);
+        // in theory this should never get triggered because if we have this, then it already should be in the logos.keys... but...
+        // if we do find it, get the logo for it and set it to both
+        if (uniqueAsset != null) {
+          getAndSaveLogo(uniqueAsset, masterSecurity: security);
+        }
+      }
+    } else {
+      getAndSaveLogo(security);
+    }
+  }
+
+  Future<void> getAndSaveLogo(
+    Security security, {
+    Security? masterSecurity,
+  }) async {
+    var ipfsLogo = security.ipfsLogo;
+    if (security.hasIpfs && ipfsLogo == null) {
+      if (logos.keys.contains(security.symbol)) {
+        ipfsLogo = logos[security.symbol];
+      } else {
+        ipfsLogo = await pullLogo(security);
+        logos[security.symbol] = ipfsLogo;
+      }
+      securities.save(Security.fromSecurity(security, ipfsLogo: ipfsLogo));
+    }
+    if (masterSecurity != null) {
+      securities
+          .save(Security.fromSecurity(masterSecurity, ipfsLogo: ipfsLogo));
+    }
+  }
+
+  Future<String> pullLogo(Security security, {String? overrideSymbol}) async {
     // pull the ipfs data, try to interpret it to derive an ipfslogo from it
     var meta = MetadataGrabber(security.metadata);
     var ipfsLogo = '';
@@ -45,8 +74,7 @@ class LogoListener {
       //   made the ipfsLogo hash available to us so we can
       //     update the record.
       ipfsLogo = meta.logo!;
-      logos[security.metadata!] = meta.logo!;
     } // if one is not found... save the fact that we looked so we don't again.
-    securities.save(Security.fromSecurity(security, ipfsLogo: ipfsLogo));
+    return ipfsLogo;
   }
 }
