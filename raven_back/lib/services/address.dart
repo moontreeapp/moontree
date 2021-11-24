@@ -268,6 +268,7 @@ class AddressService {
     var value = vout.valueSat;
     var security =
         securities.bySymbolSecurityType.getOne(symbol, SecurityType.RavenAsset);
+    var asset = assets.bySymbol.getOne(symbol);
     if (security == null) {
       if (vout.scriptPubKey.type == 'transfer_asset') {
         symbol = vout.scriptPubKey.asset!;
@@ -278,20 +279,22 @@ class AddressService {
           security = Security(
             symbol: meta.symbol,
             securityType: SecurityType.RavenAsset,
+          );
+          asset = Asset(
+            symbol: meta.symbol,
+            metadata: (await client.getTransaction(meta.source.txHash))
+                    .vout[meta.source.txPos]
+                    .scriptPubKey
+                    .ipfsHash ??
+                '',
             satsInCirculation: meta.satsInCirculation,
             precision: meta.divisions,
             reissuable: meta.reissuable == 1,
-            metadata: (await client.getTransaction(meta.source.txHash))
-                .vout[meta.source.txPos]
-                .scriptPubKey
-                .ipfsHash,
             txId: meta.source.txHash,
             position: meta.source.txPos,
-            // ipfsLogo: derived from metadata in the event that it is an ipfsHash;
-            // I think instead of pulling it here, we update the object later when the logo is needed.
-            // then it can be retrieved and saved and the record updated as to what the ipfsLogo is.
           );
           await securities.save(security);
+          await assets.save(asset);
         }
       } else if (vout.scriptPubKey.type == 'new_asset') {
         symbol = vout.scriptPubKey.asset!;
@@ -299,14 +302,18 @@ class AddressService {
         security = Security(
           symbol: symbol,
           securityType: SecurityType.RavenAsset,
+        );
+        asset = Asset(
+          symbol: symbol,
+          metadata: vout.scriptPubKey.ipfsHash ?? '',
           satsInCirculation: value,
-          precision: vout.scriptPubKey.units,
+          precision: vout.scriptPubKey.units ?? 0,
           reissuable: vout.scriptPubKey.reissuable == 1,
-          metadata: vout.scriptPubKey.ipfsHash,
           txId: tx.txid,
           position: vout.n,
         );
         await securities.save(security);
+        await assets.save(asset);
       }
     }
     return Tuple2(value, security ?? securities.RVN);
