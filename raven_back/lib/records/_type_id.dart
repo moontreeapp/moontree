@@ -15,14 +15,17 @@ class TypeId {
 
   // Misc
   static const Rate = 20;
-  static const Security = 21;
-  static const CipherUpdate = 22;
-  static const Password = 23;
+  static const CipherUpdate = 21;
+  static const Password = 22;
+  static const Security = 23;
+  static const Asset = 24;
+  static const Metadata = 25;
 
   // enums
   static const Net = 100;
   static const NodeExposure = 101;
-  static const SecurityType = 102;
-  static const SettingName = 103;
-  static const CipherType = 104;
+  static const SettingName = 102;
+  static const CipherType = 103;
+  static const SecurityType = 104;
+  static const MetadataType = 105;
 }

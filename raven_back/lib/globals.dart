@@ -5,9 +5,11 @@ import 'waiters/waiters.dart';
 
 final AccountReservoir accounts = AccountReservoir();
 final AddressReservoir addresses = AddressReservoir();
+final AssetReservoir assets = AssetReservoir();
 final BlockReservoir blocks = BlockReservoir();
 final BalanceReservoir balances = BalanceReservoir();
 final CipherReservoir ciphers = CipherReservoir();
+final MetadataReservoir metadata = MetadataReservoir();
 final PasswordReservoir passwords = PasswordReservoir();
 final ExchangeRateReservoir rates = ExchangeRateReservoir();
 final SecurityReservoir securities = SecurityReservoir();

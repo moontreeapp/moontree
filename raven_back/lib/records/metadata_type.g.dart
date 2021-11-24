@@ -1,45 +1,40 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'security_type.dart';
+part of 'metadata_type.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class SecurityTypeAdapter extends TypeAdapter<SecurityType> {
+class MetadataTypeAdapter extends TypeAdapter<MetadataType> {
   @override
-  final int typeId = 104;
+  final int typeId = 105;
 
   @override
-  SecurityType read(BinaryReader reader) {
+  MetadataType read(BinaryReader reader) {
     switch (reader.readByte()) {
       case 0:
-        return SecurityType.Fiat;
+        return MetadataType.Unknown;
       case 1:
-        return SecurityType.Crypto;
+        return MetadataType.JsonString;
       case 2:
-        return SecurityType.RavenAsset;
-      case 3:
-        return SecurityType.RavenMaster;
+        return MetadataType.ImagePath;
       default:
-        return SecurityType.Fiat;
+        return MetadataType.Unknown;
     }
   }
 
   @override
-  void write(BinaryWriter writer, SecurityType obj) {
+  void write(BinaryWriter writer, MetadataType obj) {
     switch (obj) {
-      case SecurityType.Fiat:
+      case MetadataType.Unknown:
         writer.writeByte(0);
         break;
-      case SecurityType.Crypto:
+      case MetadataType.JsonString:
         writer.writeByte(1);
         break;
-      case SecurityType.RavenAsset:
+      case MetadataType.ImagePath:
         writer.writeByte(2);
-        break;
-      case SecurityType.RavenMaster:
-        writer.writeByte(3);
         break;
     }
   }
@@ -50,7 +45,7 @@ class SecurityTypeAdapter extends TypeAdapter<SecurityType> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is SecurityTypeAdapter &&
+      other is MetadataTypeAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

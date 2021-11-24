@@ -1,35 +1,50 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'security.dart';
+part of 'asset.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class SecurityAdapter extends TypeAdapter<Security> {
+class AssetAdapter extends TypeAdapter<Asset> {
   @override
-  final int typeId = 23;
+  final int typeId = 24;
 
   @override
-  Security read(BinaryReader reader) {
+  Asset read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Security(
+    return Asset(
       symbol: fields[0] as String,
-      securityType: fields[1] as SecurityType,
+      satsInCirculation: fields[1] as int,
+      precision: fields[2] as int,
+      reissuable: fields[3] as bool,
+      metadata: fields[4] as String,
+      txId: fields[5] as String,
+      position: fields[6] as int,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Security obj) {
+  void write(BinaryWriter writer, Asset obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.symbol)
       ..writeByte(1)
-      ..write(obj.securityType);
+      ..write(obj.satsInCirculation)
+      ..writeByte(2)
+      ..write(obj.precision)
+      ..writeByte(3)
+      ..write(obj.reissuable)
+      ..writeByte(4)
+      ..write(obj.metadata)
+      ..writeByte(5)
+      ..write(obj.txId)
+      ..writeByte(6)
+      ..write(obj.position);
   }
 
   @override
@@ -38,7 +53,7 @@ class SecurityAdapter extends TypeAdapter<Security> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is SecurityAdapter &&
+      other is AssetAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

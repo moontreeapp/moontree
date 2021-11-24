@@ -8,7 +8,7 @@ part of 'cipher_type.dart';
 
 class CipherTypeAdapter extends TypeAdapter<CipherType> {
   @override
-  final int typeId = 104;
+  final int typeId = 103;
 
   @override
   CipherType read(BinaryReader reader) {

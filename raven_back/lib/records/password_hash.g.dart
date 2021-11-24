@@ -8,7 +8,7 @@ part of 'password_hash.dart';
 
 class PasswordAdapter extends TypeAdapter<Password> {
   @override
-  final int typeId = 23;
+  final int typeId = 22;
 
   @override
   Password read(BinaryReader reader) {

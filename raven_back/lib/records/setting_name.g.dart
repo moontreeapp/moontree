@@ -8,7 +8,7 @@ part of 'setting_name.dart';
 
 class SettingNameAdapter extends TypeAdapter<SettingName> {
   @override
-  final int typeId = 103;
+  final int typeId = 102;
 
   @override
   SettingName read(BinaryReader reader) {

@@ -1,10 +1,13 @@
 export 'account.dart';
 export 'address.dart';
+export 'asset.dart';
 export 'balance.dart';
 export 'block.dart';
 export 'cipher.dart';
 export 'cipher_type.dart';
 export 'cipher_update.dart';
+export 'metadata.dart';
+export 'metadata_type.dart';
 export 'net.dart';
 export 'node_exposure.dart';
 export 'password_hash.dart';

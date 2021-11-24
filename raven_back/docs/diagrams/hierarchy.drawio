@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="Tt2Mw6sH7wFppCwXUsXx" name="Page-1">
-        <mxGraphModel dx="874" dy="616" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="726" dy="472" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -25,14 +25,14 @@
                 <mxCell id="12" value="Block" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="600" y="10" width="170" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="13" value="History" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="13" value="Transactions" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="600" y="50" width="170" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="18" value="Security" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="800" y="10" width="160" height="30" as="geometry"/>
+                    <mxGeometry x="800" y="50" width="70" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="19" value="Exchange Rate" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="800" y="50" width="160" height="30" as="geometry"/>
+                    <mxGeometry x="800" y="10" width="160" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="20" value="Settings" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="1040" y="10" width="220" height="30" as="geometry"/>
@@ -78,8 +78,29 @@
                 <mxCell id="39" value="unspent" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="290" y="450" width="40" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="41" value="block" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#999999;" vertex="1" parent="1">
+                <mxCell id="41" value="block" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#999999;" parent="1" vertex="1">
                     <mxGeometry x="40" y="200" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="46" value="Asset" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="480" y="240" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="48" value="Security" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="480" y="200" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="50" value="Security" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="890" y="50" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="51" value="Metadata" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="480" y="280" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="52" value="Metadata" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="480" y="320" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="53" value="Metadata" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="600" y="320" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="55" value="&lt;h1&gt;Security&lt;/h1&gt;&lt;p&gt;Securities can be of several types, if the type is raven asset, then theres some Asset data associated with the security.&amp;nbsp;&lt;/p&gt;&lt;p&gt;One part of that asset data may be an ipfsHash as metadata, if so a Metadata record can be associated with it.&amp;nbsp;&lt;/p&gt;&lt;p&gt;&lt;span&gt;Metadata could resolve to a json string containing one or more forms of data, like ipfs hashes, so a metadata record can have children metadata recrods&lt;/span&gt;&lt;br&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="720" y="200" width="240" height="240" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

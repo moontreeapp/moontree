@@ -1,9 +1,11 @@
 export 'account.dart';
 export 'address.dart';
+export 'asset.dart';
 export 'balance.dart';
 export 'block.dart';
 export 'cipher.dart';
 export 'password.dart';
+export 'metadata.dart';
 export 'rate.dart';
 export 'security.dart';
 export 'setting.dart';

@@ -1,35 +1,47 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'security.dart';
+part of 'metadata.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class SecurityAdapter extends TypeAdapter<Security> {
+class MetadataAdapter extends TypeAdapter<Metadata> {
   @override
-  final int typeId = 23;
+  final int typeId = 25;
 
   @override
-  Security read(BinaryReader reader) {
+  Metadata read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Security(
+    return Metadata(
       symbol: fields[0] as String,
-      securityType: fields[1] as SecurityType,
+      metadata: fields[1] as String,
+      data: fields[2] as String,
+      kind: fields[3] as MetadataType,
+      parent: fields[4] as String?,
+      logo: fields[5] as bool,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Security obj) {
+  void write(BinaryWriter writer, Metadata obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.symbol)
       ..writeByte(1)
-      ..write(obj.securityType);
+      ..write(obj.metadata)
+      ..writeByte(2)
+      ..write(obj.data)
+      ..writeByte(3)
+      ..write(obj.kind)
+      ..writeByte(4)
+      ..write(obj.parent)
+      ..writeByte(5)
+      ..write(obj.logo);
   }
 
   @override
@@ -38,7 +50,7 @@ class SecurityAdapter extends TypeAdapter<Security> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is SecurityAdapter &&
+      other is MetadataAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

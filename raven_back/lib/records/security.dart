@@ -15,95 +15,22 @@ class Security with EquatableMixin {
   @HiveField(1)
   final SecurityType securityType;
 
-  @HiveField(2)
-  final int? satsInCirculation;
-
-  @HiveField(3)
-  final int? precision;
-
-  @HiveField(4)
-  final bool? reissuable;
-
-  @HiveField(5)
-  final String? metadata;
-
-  @HiveField(6)
-  final String? txId;
-
-  @HiveField(7)
-  final int? position;
-
-  /// metadata is often an ipfsHash of json which often includes an ipfsHash
-  /// for the logo. Instead of looking it up everytime, since there is no hard
-  /// format, we save the ipfsLogo hash on the object when we figure it out.
-  /// we do not derive the ipfsLogo upon record creation, instead we wait until
-  /// the ...
-  /// null means we have not looked, empty string means we've looked and found
-  /// no viable logo in the metadata, anything else should be a ipfs hash of the
-  /// logo, or any kind of hash (since the hash matches the filename).
-  @HiveField(8)
-  final String? ipfsLogo;
-
-  //late final TxSource source;
-  ////late final String txHash; // where it originated?
-  ////late final int txPos; // the vout it originated?
-  ////late final int height; // the block it originated? // not necessary
-
-  const Security({
-    required this.symbol,
-    required this.securityType,
-    // rvn asset meta data
-    this.satsInCirculation,
-    this.precision,
-    this.reissuable,
-    this.metadata,
-    this.txId,
-    this.position,
-    this.ipfsLogo,
-  });
+  const Security({required this.symbol, required this.securityType});
 
   factory Security.fromSecurity(
     Security other, {
     String? symbol,
     SecurityType? securityType,
-    int? satsInCirculation,
-    int? precision,
-    bool? reissuable,
-    String? metadata,
-    String? txId,
-    int? position,
-    String? ipfsLogo,
   }) =>
       Security(
-        symbol: symbol ?? other.symbol,
-        securityType: securityType ?? other.securityType,
-        satsInCirculation: satsInCirculation ?? other.satsInCirculation,
-        precision: precision ?? other.precision,
-        reissuable: reissuable ?? other.reissuable,
-        metadata: metadata ?? other.metadata,
-        txId: txId ?? other.txId,
-        position: position ?? other.position,
-        ipfsLogo: ipfsLogo ?? other.ipfsLogo,
-      );
+          symbol: symbol ?? other.symbol,
+          securityType: securityType ?? other.securityType);
 
   @override
-  List<Object> get props => [
-        symbol,
-        securityType,
-        satsInCirculation ?? -1,
-        precision ?? -1,
-        reissuable ?? '',
-        metadata ?? '',
-        txId ?? '',
-        position ?? -1,
-        ipfsLogo ?? '', // including this allows us to save over it.
-      ];
+  List<Object> get props => [symbol, securityType];
 
   @override
-  String toString() => 'Security(symbol: $symbol, securityType: $securityType, '
-      'satsInCirculation: $satsInCirculation, precision: $precision, '
-      'reissuable: $reissuable, metadata: $metadata, txId: $txId, '
-      'position: $position, ipfsLogo: $ipfsLogo)';
+  String toString() => 'Security(symbol: $symbol, securityType: $securityType)';
 
   static String securityIdKey(String symbol, SecurityType securityType) =>
       '$symbol:${describeEnum(securityType)}';
@@ -114,13 +41,5 @@ class Security with EquatableMixin {
 
   /// todo identify a ipfs hash correctly...
   // https://ethereum.stackexchange.com/questions/17094/how-to-store-ipfs-hash-using-bytes32/17112#17112
-  bool get hasIpfs =>
-      metadata != null &&
-      metadata != '' &&
-      metadata!.contains(RegExp(
-          r'Qm[1-9A-HJ-NP-Za-km-z]{44,}|b[A-Za-z2-7]{58,}|B[A-Z2-7]{58,}|z[1-9A-HJ-NP-Za-km-z]{48,}|F[0-9A-F]{50,}'));
-
-  bool get hasMetadata => metadata != null && metadata != '';
-  bool get isMaster => symbol.endsWith('!');
-  String get nonMasterSymbol => symbol.replaceAll('!', '');
+  bool get isAsset => securityType == SecurityType.RavenAsset;
 }
