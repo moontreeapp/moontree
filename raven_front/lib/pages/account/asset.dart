@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:raven/raven.dart';
 import 'package:raven/services/transaction.dart';
 import 'package:raven_mobile/services/lookup.dart';
+import 'package:raven_mobile/services/storage.dart';
 import 'package:raven_mobile/utils/utils.dart';
 import 'package:raven_mobile/components/components.dart';
 import 'package:raven_mobile/indicators/indicators.dart';
@@ -25,6 +26,7 @@ class _AssetState extends State<Asset> {
   late List<TransactionRecord> currentTxs;
   late List<Balance> currentHolds;
   bool isFabVisible = true;
+  Security? security;
 
   @override
   void initState() {
@@ -49,6 +51,7 @@ class _AssetState extends State<Asset> {
     currentHolds = data.containsKey('walletId') && data['walletId'] != null
         ? Current.walletHoldings(data['walletId'])
         : Current.holdings;
+    security = data['holding']!.security;
     return DefaultTabController(
         length: 2,
         child: Scaffold(
@@ -117,8 +120,15 @@ class _AssetState extends State<Asset> {
   /// interpret it correctly if it is in a recognizable format,
   /// else present file download option
   ListView? _metadataView() {
-    return ListView(
-        children: [Image(image: AssetImage('assets/magicmusk.png'))]);
+    // TODO we're not allowed to use future calls in build so we can't check to see if a file exists.
+    // so to display an image we need to have an in memory global service that tells us what files are available
+    return security!.hasMetadata
+        //? await AssetLogos().readLogoFileNow(security!.metadata ?? '', settings.localPath!).exists()
+        ? ListView(children: [SelectableText(security!.metadata ?? '')])
+        //  : null
+        : null;
+    //return ListView(
+    //    children: [Image(image: AssetImage('assets/magicmusk.png'))]);
     //return null;
   }
 

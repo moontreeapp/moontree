@@ -92,8 +92,11 @@ class Settings extends StatelessWidget {
                   leading: Icon(Icons.info_outline_rounded),
                   onPressed: (BuildContext context) async {
                     var security = securities.bySymbolSecurityType
-                        .getOne('MOONTREE0!', SecurityType.RavenAsset)!;
+                        .getOne('MOONTREE0', SecurityType.RavenAsset)!;
                     print(security);
+                    //var meta = MetadataGrabber(security.metadata);
+                    //print(await meta.get());
+                    //print(meta.logo);
                   }),
 /*                      
 */

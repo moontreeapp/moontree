@@ -38,7 +38,7 @@ class IconComponents {
       /*══╡ EXCEPTION CAUGHT BY IMAGE RESOURCE SERVICE ╞════════════════════════════════════════════════════
         The following FileSystemException was thrown resolving an image codec:
         Cannot open file, path =
-        '/data/user/0/com.example.raven_mobile/app_flutter/images/QmXe1VJjmBi1Tjti8mUa2UyScvEPyUnhSGSZzwD19kCYUm'
+        '/data/user/0/com.rvnbag.ravenmobile/app_flutter/images/QmXe1VJjmBi1Tjti8mUa2UyScvEPyUnhSGSZzwD19kCYUm'
         (OS Error: No such file or directory, errno = 2)
 
         When the exception was thrown, this was the stack:
