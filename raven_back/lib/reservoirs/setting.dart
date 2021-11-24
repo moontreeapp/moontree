@@ -35,6 +35,8 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
   String get currentAccountId =>
       primaryIndex.getOne(SettingName.Account_Current)!.value;
 
+  String? get localPath => primaryIndex.getOne(SettingName.Local_Path)?.value;
+
   Future savePreferredAccountId(String accountId) async => await save(
       Setting(name: SettingName.Account_Preferred, value: accountId));
 
