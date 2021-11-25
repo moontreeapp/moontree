@@ -63,15 +63,18 @@ class IconComponents {
 
   /// if it's an asset lets see if it has a custom logo...
   /// Notice: this is untested as we don't yet have a logo in the metadata...
-  Widget? _assetAvatarSecurity(String asset) {
+  Widget? _assetAvatarSecurity(String symbol) {
     var security =
-        securities.bySymbolSecurityType.getOne(asset, SecurityType.RavenAsset);
-    if (security != null && !([null, '']).contains(security.ipfsLogo)) {
+        securities.bySymbolSecurityType.getOne(symbol, SecurityType.RavenAsset);
+    if (security != null &&
+        !([null, '']).contains(security.asset?.logo?.data)) {
       try {
-        return Image.file(AssetLogos().readLogoFileNow(security.ipfsLogo!,
+        return Image.file(AssetLogos().readLogoFileNow(
+            security.asset?.logo?.data ?? '',
             settings.primaryIndex.getOne(SettingName.Local_Path)!.value));
       } catch (e) {
-        print('unable to open image asset file for ${security.ipfsLogo}: $e');
+        print(
+            'unable to open image asset file for ${security.asset?.logo?.data}: $e');
       }
     }
   }

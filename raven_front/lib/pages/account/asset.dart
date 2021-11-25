@@ -1,10 +1,13 @@
 /// this file could be removed with slight modifications to transactions.dart
 /// that should probably happen at some point - when we start using assets more.
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:raven/raven.dart';
 import 'package:raven/services/transaction.dart';
+import 'package:raven_mobile/services/ipfs.dart';
 import 'package:raven_mobile/services/lookup.dart';
 import 'package:raven_mobile/services/storage.dart';
 import 'package:raven_mobile/utils/utils.dart';
@@ -122,14 +125,27 @@ class _AssetState extends State<Asset> {
   ListView? _metadataView() {
     // TODO we're not allowed to use future calls in build so we can't check to see if a file exists.
     // so to display an image we need to have an in memory global service that tells us what files are available
-    return security!.hasMetadata
+    //if (security!.asset!.hasMetadata) {
+    //  if (security!.asset!.hasIpfs) {
+    //    var explorer = IpfsMiniExplorer(security!.asset!.metadata);
+    //    var content = await explorer.get(); // Oops! this must be a waiter which pre-pulls the data and saves it in a reservoir!
+    //    if (explorer.responseType == ResponseType.imagePath) {
+    //      return ListView(children: [Image.file(File(content))]);
+    //    }
+    //    if (explorer.responseType == ResponseType.jsonString) {
+    //      return ListView(children: [SelectableText(security!.asset!.metadata ?? '')])
+    //    }
+    //  }
+    //  return ListView(children: [SelectableText(security!.asset!.metadata ?? '')]);
+    //}
+    return (security?.asset?.hasMetadata ?? false)
         //? await AssetLogos().readLogoFileNow(security!.metadata ?? '', settings.localPath!).exists()
-        ? ListView(children: [SelectableText(security!.metadata ?? '')])
+        ? ListView(children: [SelectableText(security?.asset?.metadata ?? '')])
         //  : null
         : null;
-    //return ListView(
-    //    children: [Image(image: AssetImage('assets/magicmusk.png'))]);
-    //return null;
+    ////return ListView(
+    ////    children: [Image(image: AssetImage('assets/magicmusk.png'))]);
+    ////return null;
   }
 
   /// different from home.sendReceiveButtons because it prefills the chosen token

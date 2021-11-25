@@ -53,7 +53,7 @@ class TextComponents {
     return asUSD
         ? rvnUSD(asAmount * (services.rate.assetToRVN(security) ?? 0.0))
         : NumberFormat(
-                '#,##0${(security.precision ?? 0) > 0 ? '.' + '0' * (security.precision ?? 0) : ''}',
+                '#,##0${(security.asset?.precision ?? 0) > 0 ? '.' + '0' * (security.asset?.precision ?? 0) : ''}',
                 'en_US')
             .format(asAmount);
   }

@@ -6,13 +6,13 @@ import 'package:raven/utils/exceptions.dart';
 import 'package:raven/utils/extensions.dart';
 import 'package:raven_mobile/services/storage.dart';
 
-class MetadataGrabber {
+class LogoGetter {
   late String? ipfsHash;
   String? logo;
   Map<dynamic, dynamic> json = {};
   bool ableToInterpret = false;
 
-  MetadataGrabber([this.ipfsHash]);
+  LogoGetter([this.ipfsHash]);
 
   /// given a hash get the logo and other metadata set it on object
   /// return true if able to interpret data
@@ -92,7 +92,7 @@ class MetadataGrabber {
     json = jsonBody;
     logo = imgString;
     // go save icon to device
-    MetadataGrabber(logo).get();
+    LogoGetter(logo).get();
     return true;
   }
 
@@ -108,5 +108,76 @@ class MetadataGrabber {
         .path;
     return true;
     //return path;
+  }
+}
+
+enum ResponseType {
+  unknown,
+  imagePath,
+  jsonString,
+}
+
+class IpfsMiniExplorer {
+  late String? ipfsHash;
+  ResponseType responseType = ResponseType.unknown;
+
+  IpfsMiniExplorer([this.ipfsHash]);
+
+  /// returns json string or path of image
+  Future<String?> get([String? givenIpfsHash]) async {
+    ipfsHash = givenIpfsHash ?? ipfsHash;
+    try {
+      return await _getMetadata();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<String?> _getMetadata() async {
+    var response = await _call();
+    var jsonBody;
+    if (_verify(response)) {
+      jsonBody = _detectJson(response);
+      if (jsonBody is Map<dynamic, dynamic>) {
+        responseType = ResponseType.jsonString;
+        return response.body; //jsonBody.toString();
+      } else {
+        responseType = ResponseType.imagePath;
+        return await _saveImage(response.bodyBytes);
+      }
+    }
+  }
+
+  Future<http.Response> _call() async =>
+      await http.get(Uri.parse('https://gateway.ipfs.io/ipfs/$ipfsHash'),
+          headers: {'accept': 'application/json'});
+
+  bool _verify(http.Response response) =>
+      response.statusCode == 200 ? true : false;
+
+  Map<dynamic, dynamic>? _detectJson(http.Response response) {
+    try {
+      return jsonDecode(response.body);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<String?> _saveImage(
+    Uint8List bytes, {
+    String? givenIpfsHash,
+  }) async {
+    try {
+      return (await AssetLogos().writeLogo(
+        filename: givenIpfsHash ?? ipfsHash!,
+        bytes: bytes,
+      ))
+          .absolute
+          .path;
+    } catch (e) {
+      responseType = ResponseType.unknown;
+      print(e);
+      // unable to save (perhaps bytes wasn't an image)
+    }
   }
 }
