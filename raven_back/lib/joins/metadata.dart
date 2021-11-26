@@ -6,11 +6,11 @@ extension MetadataBelongsToAsset on Metadata {
 
 extension MetadataHasOneParent on Metadata {
   Metadata? get parentMetadata => parent != null
-      ? globals.metadata.bySymbolMetadata.getOne(symbol, parent!)
+      ? globals.metadatas.bySymbolMetadata.getOne(symbol, parent!)
       : null;
 }
 
 extension MetadataHasManyChildren on Metadata {
   List<Metadata?> get childrenMetadata =>
-      globals.metadata.byParent.getAll(metadata);
+      globals.metadatas.byParent.getAll(metadata);
 }

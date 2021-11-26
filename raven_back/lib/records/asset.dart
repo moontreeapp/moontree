@@ -57,7 +57,7 @@ class Asset with EquatableMixin {
       ];
 
   @override
-  String toString() => 'Security(symbol: $symbol, '
+  String toString() => 'Asset(symbol: $symbol, '
       'satsInCirculation: $satsInCirculation, precision: $precision, '
       'reissuable: $reissuable, metadata: $metadata, txId: $txId, '
       'position: $position)';
@@ -79,4 +79,5 @@ class Asset with EquatableMixin {
   bool get hasMetadata => metadata != '';
   bool get isMaster => symbol.endsWith('!');
   String get nonMasterSymbol => symbol.replaceAll('!', '');
+  String get masterSymbol => nonMasterSymbol + '!';
 }

@@ -22,6 +22,9 @@ class LeaderWalletService {
   int missingGap(LeaderWallet leaderWallet, NodeExposure exposure) =>
       requiredGap - currentGap(leaderWallet, exposure);
 
+  bool gapSatisfied(LeaderWallet leaderWallet, NodeExposure exposure) =>
+      requiredGap - currentGap(leaderWallet, exposure) <= 0;
+
   void maybeSaveNewAddress(
       LeaderWallet leaderWallet, CipherBase cipher, NodeExposure exposure) {
     var newAddress = maybeDeriveNextAddress(leaderWallet, cipher, exposure);

@@ -5,4 +5,5 @@ class AddressStreams {
   final retrieved = addressRetrieved$;
 }
 
-final Stream<Address> addressRetrieved$ = ReplaySubject<Address>();
+//final Stream<Address> addressRetrieved$ = ReplaySubject<Address>().distinctUnique();
+final addressRetrieved$ = BehaviorSubject<Address>();

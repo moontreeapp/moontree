@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:raven/raven.dart';
 import 'package:raven/utils/buffer_count_window.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
+import 'package:rxdart/src/transformers/distinct_unique.dart';
 
 import 'waiter.dart';
 
@@ -47,8 +48,9 @@ class AddressSubscriptionWaiter extends Waiter {
           services.client.subscribe
               .toExistingAddresses(client as RavenElectrumClient);
           if (backlogRetrievals.isNotEmpty) {
-            unawaited(
-                retrieveAndMakeNewAddress(client, backlogRetrievals.toList()));
+            for (var address in backlogRetrievals) {
+              unawaited(retrieveAndMakeNewAddress(client, address));
+            }
             backlogRetrievals.clear();
           }
         }
@@ -56,17 +58,18 @@ class AddressSubscriptionWaiter extends Waiter {
 
   void setupSubscriptionsListener() => listen(
           'addressesNeedingUpdate',
-          services.client.subscribe.addressesNeedingUpdate.stream
-              .bufferCountTimeout(10, Duration(milliseconds: 50)),
-          (changedAddresses) {
+
+          /// we end up handling these one at a time so why buffer them?
+          // services.client.subscribe.addressesNeedingUpdate.stream
+          //     .bufferCountTimeout(10, Duration(milliseconds: 50)),
+          // (changedAddresses) {
+          services.client.subscribe.addressesNeedingUpdate.stream,
+          (Address address) {
         var client = streams.client.client.value;
         if (client == null) {
-          for (var address in changedAddresses as List<Address>) {
-            backlogRetrievals.add(address);
-          }
+          backlogRetrievals.add(address);
         } else {
-          unawaited(retrieveAndMakeNewAddress(
-              client, changedAddresses as List<Address>));
+          unawaited(retrieveAndMakeNewAddress(client, address));
         }
       });
 
@@ -94,15 +97,11 @@ class AddressSubscriptionWaiter extends Waiter {
 
   Future retrieveAndMakeNewAddress(
     RavenElectrumClient client,
-    List<Address> changedAddresses,
+    Address address,
   ) async {
-    var msg = 'Downloading transactions for ${changedAddresses.length} '
-        'address${changedAddresses.length == 1 ? '' : 'es'}...';
+    var msg = 'Downloading transactions for ${address.address}';
     services.busy.clientOn(msg);
-    await services.address.getAndSaveTransactionsByAddresses(
-      changedAddresses,
-      client,
-    );
+    await services.address.getAndSaveTransactionsByAddresses(address, client);
     services.busy.clientOff(msg);
   }
 }

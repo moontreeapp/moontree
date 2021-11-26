@@ -1,5 +1,4 @@
 import 'package:raven/raven.dart';
-
 import 'waiter.dart';
 
 class AddressWaiter extends Waiter {

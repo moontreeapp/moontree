@@ -7,7 +7,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:raven/records/metadata_type.dart';
-import 'package:raven/records/security_type.dart';
 import 'package:raven/utils/enum.dart';
 
 import '_type_id.dart';
@@ -23,7 +22,7 @@ class Metadata with EquatableMixin {
   final String metadata; // typically ipfs hash
 
   @HiveField(2)
-  final String data; // content of ipfs hash from the security
+  final String? data; // content of ipfs hash
 
   @HiveField(3)
   final MetadataType kind; // what is the data? image, video, json, html? etc?
@@ -56,7 +55,7 @@ class Metadata with EquatableMixin {
   List<Object> get props => [
         symbol,
         metadata,
-        data,
+        data ?? '',
         kind,
         parent ?? '',
         logo,

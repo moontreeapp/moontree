@@ -8,123 +8,85 @@ class AddressService {
   Set<String> unretrieved = {};
   Set<String> retrieved = {};
 
-  /// when an address status change: make our historic tx data match blockchain
+  /// when an address status change: pull txs match blockchain
   Future getAndSaveTransactionsByAddresses(
-    List<Address> changedAddresses,
+    Address address,
     RavenElectrumClient client,
   ) async {
-    for (var changedAddress in changedAddresses) {
-      // erase all vins and vouts not pulled. (or just remove all first - the simple way).
-      ///await vins.removeAll(vins.byAddress.getAll(addressId)); // broken join
-      ///await vouts.removeAll(vouts.byAddress.getAll(changedAddress.address));
+    // erase all vins and vouts not pulled. (or just remove all first - the simple way).
+    ///await vins.removeAll(vins.byAddress.getAll(addressId)); // broken join
+    ///await vouts.removeAll(vouts.byAddress.getAll(changedAddress.address));
 
-      /// never purge tx (unless theres a reorg or something)
-      /// transactions are not associated with addresses directly
-      //var removeTransactions = transactions.byScripthash.getAll(addressId);
-      //await transactions.removeAll(removeTransactions);
+    /// never purge tx (unless theres a reorg or something)
+    /// transactions are not associated with addresses directly
+    //var removeTransactions = transactions.byScripthash.getAll(addressId);
+    //await transactions.removeAll(removeTransactions);
 
-      // get a list of all historic transaction ids assicated with this address
-      // ignore: omit_local_variable_types
-      List<ScripthashHistory> histories =
-          await client.getHistory(changedAddress.addressId);
+    // get a list of all historic transaction ids assicated with this address
+    // ignore: omit_local_variable_types
+    List<ScripthashHistory> histories =
+        await client.getHistory(address.addressId);
 
-      /// get all transactions - batch silently fails on some txHashes such as
-      /// 9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f
-      /// (or one in it's batch)
-      // ignore: omit_local_variable_types
-      await saveTransactions([
-        for (var txHash in histories.map((history) => history.txHash))
+    /// get all transactions - batch silently fails on some txHashes such as
+    /// 9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f
+    /// (or one in it's batch)
+    // ignore: omit_local_variable_types
+    await saveTransactions([
+      for (var txHash in histories.map((history) => history.txHash))
 
-          /// this successfully reduced download redundancy but if things
-          /// downloaded in a particular order, it caused the error of not
-          /// downloading every transaction we needed, somehow. So this
-          /// condition has been removed.
-          //if (transactions.primaryIndex.getOne(txHash) == null ||
-          //    transactions.primaryIndex.getOne(txHash)!.vins.isEmpty)
-          await client.getTransaction(txHash)
-      ], client);
-      unretrieved.remove(changedAddress.addressId);
-      retrieved.add(changedAddress.addressId);
-    }
+        /// this successfully reduced download redundancy but if things
+        /// downloaded in a particular order, it caused the error of not
+        /// downloading every transaction we needed, somehow. So this
+        /// condition has been removed.
+        //if (transactions.primaryIndex.getOne(txHash) == null ||
+        //    transactions.primaryIndex.getOne(txHash)!.vins.isEmpty)
+        await client.getTransaction(txHash)
+    ], client);
+    unretrieved.remove(address.addressId);
+    retrieved.add(address.addressId);
 
     /// this condition marks the end of the external loop: after we have
     /// generated and looked for all transactions for those addresses...
     /// pull vouts for vins that don't have corresponding vouts and
     /// calculate all balances.
-    await triggerDeriveOrBalance(
-        client,
-        changedAddresses
-            .where((address) => address.wallet is LeaderWallet)
-            .map((address) => address.wallet as LeaderWallet)
-            .toSet());
-    //if (services.address.unretrieved.isEmpty &&
-    //    all([
-    //      for (var leaderWallet in wallets.leaders)
-    //        services.wallet.leader
-    //                    .currentGap(leaderWallet, NodeExposure.Internal) >=
-    //                services.wallet.leader.requiredGap &&
-    //            services.wallet.leader
-    //                    .currentGap(leaderWallet, NodeExposure.External) >=
-    //                services.wallet.leader.requiredGap
-    //    ])) {
-    //  await saveDanglingTransactions(client);
-    //  await services.balance.recalculateAllBalances();
-    //}
+    await triggerDeriveOrBalance(client);
   }
 
-  Future triggerDeriveOrBalance(
-      RavenElectrumClient client, Set<LeaderWallet> leaderWallets) async {
-    /// here we should probably just check the the wallets are are of the set
-    /// that are represented above as addresses. that way we check once for each
-    /// wallet and we don't double up on calls. Also, we should add to backlog
-    /// and let the leader waiter take care of those if the cipher isn't currently available
-    /// it should be since we obviously just used it to make an address, most likely,
-    /// but maybe there are edge cases, so we should do the check anyway.
-
-    if (services.address.unretrieved.isEmpty) {
+  // if all the leader wallets have their empty addresses gaps satisfied,
+  // you're done! trigger balance calculation, else trigger derive address.
+  Future triggerDeriveOrBalance([RavenElectrumClient? client]) async {
+    /// we should add to backlog and let the leader waiter take care of those
+    /// if the cipher isn't currently available it should be since we obviously
+    /// just used it to make an address, most likely, but maybe there are edge
+    /// cases, so we should do the check anyway.
+    client = client ?? streams.client.client.value;
+    if (unretrieved.isEmpty) {
       var allDone = true;
-      for (var leaderWallet in leaderWallets) {
-        if (services.wallet.leader
-                .missingGap(leaderWallet, NodeExposure.Internal) >
-            0) {
-          if (ciphers.primaryIndex.getOne(leaderWallet.cipherUpdate) != null) {
-            allDone = false;
-            var derived = services.wallet.leader.deriveMoreAddresses(
-              leaderWallet,
-              exposures: [NodeExposure.Internal],
-            );
-            for (var addressId in derived.map((address) => address.addressId)) {
-              if (!services.address.retrieved.contains(addressId)) {
-                services.address.unretrieved.add(addressId);
+      for (var leader in wallets.leaders) {
+        for (var exposure in [NodeExposure.Internal, NodeExposure.External]) {
+          if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
+            if (ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
+              allDone = false;
+              var derived = services.wallet.leader.deriveMoreAddresses(
+                leader,
+                exposures: [exposure],
+              );
+              for (var addressId
+                  in derived.map((address) => address.addressId)) {
+                if (!services.address.retrieved.contains(addressId)) {
+                  services.address.unretrieved.add(addressId);
+                }
               }
+              services.client.subscribe.toExistingAddresses();
+              //return; // break
+            } else {
+              services.wallet.leader.backlog.add(leader);
             }
-            services.client.subscribe.toExistingAddresses();
-          } else {
-            services.wallet.leader.backlog.add(leaderWallet);
-          }
-        }
-        if (services.wallet.leader
-                .missingGap(leaderWallet, NodeExposure.External) >
-            0) {
-          if (ciphers.primaryIndex.getOne(leaderWallet.cipherUpdate) != null) {
-            allDone = false;
-            var derived = services.wallet.leader.deriveMoreAddresses(
-              leaderWallet,
-              exposures: [NodeExposure.External],
-            );
-            for (var addressId in derived.map((address) => address.addressId)) {
-              if (!services.address.retrieved.contains(addressId)) {
-                services.address.unretrieved.add(addressId);
-              }
-            }
-            services.client.subscribe.toExistingAddresses();
-          } else {
-            services.wallet.leader.backlog.add(leaderWallet);
           }
         }
       }
       if (allDone) {
-        await saveDanglingTransactions(client);
+        await saveDanglingTransactions(client!);
         await services.balance.recalculateAllBalances();
       }
     }
@@ -263,12 +225,14 @@ class AddressService {
   /// get it's metadata and save it in the securities reservoir.
   /// return value and security to be saved in vout.
   Future<Tuple2<int, Security>> handleAssetData(
-      RavenElectrumClient client, Tx tx, TxVout vout) async {
+    RavenElectrumClient client,
+    Tx tx,
+    TxVout vout,
+  ) async {
     var symbol = 'RVN';
     var value = vout.valueSat;
     var security =
         securities.bySymbolSecurityType.getOne(symbol, SecurityType.RavenAsset);
-    var asset = assets.bySymbol.getOne(symbol);
     if (security == null) {
       if (vout.scriptPubKey.type == 'transfer_asset') {
         symbol = vout.scriptPubKey.asset!;
@@ -276,11 +240,7 @@ class AddressService {
         //if we have no record of it in securities...
         var meta = await client.getMeta(symbol);
         if (meta != null) {
-          security = Security(
-            symbol: meta.symbol,
-            securityType: SecurityType.RavenAsset,
-          );
-          asset = Asset(
+          streams.asset.added.add(Asset(
             symbol: meta.symbol,
             metadata: (await client.getTransaction(meta.source.txHash))
                     .vout[meta.source.txPos]
@@ -292,18 +252,16 @@ class AddressService {
             reissuable: meta.reissuable == 1,
             txId: meta.source.txHash,
             position: meta.source.txPos,
-          );
-          await securities.save(security);
-          await assets.save(asset);
+          ));
+          await securities.save(security = Security(
+            symbol: meta.symbol,
+            securityType: SecurityType.RavenAsset,
+          ));
         }
       } else if (vout.scriptPubKey.type == 'new_asset') {
         symbol = vout.scriptPubKey.asset!;
         value = vout.scriptPubKey.amount! * (10000000);
-        security = Security(
-          symbol: symbol,
-          securityType: SecurityType.RavenAsset,
-        );
-        asset = Asset(
+        streams.asset.added.add(Asset(
           symbol: symbol,
           metadata: vout.scriptPubKey.ipfsHash ?? '',
           satsInCirculation: value,
@@ -311,9 +269,11 @@ class AddressService {
           reissuable: vout.scriptPubKey.reissuable == 1,
           txId: tx.txid,
           position: vout.n,
-        );
-        await securities.save(security);
-        await assets.save(asset);
+        ));
+        await securities.save(Security(
+          symbol: symbol,
+          securityType: SecurityType.RavenAsset,
+        ));
       }
     }
     return Tuple2(value, security ?? securities.RVN);

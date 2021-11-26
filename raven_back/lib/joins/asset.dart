@@ -7,32 +7,28 @@ extension AssetHasOneSecurity on Asset {
 
 extension AssetHasOneMetadata on Asset {
   Metadata? get primaryMetadata => [
-        globals.metadata.bySymbolMetadata.getOne(symbol, metadata)
+        globals.metadatas.bySymbolMetadata.getOne(nonMasterSymbol, metadata)
       ].where((md) => md?.parent == null).firstOrNull;
 }
 
 extension AssetHasManyMetadata on Asset {
-  List<Metadata?> get metadatas => globals.metadata.bySymbol.getAll(symbol);
+  List<Metadata?> get metadatas => globals.metadatas.bySymbol.getAll(symbol);
 }
 
 extension AssetHasOneLogoMetadata on Asset {
   Metadata? get logo {
     var primaryMetadata = [
-      globals.metadata.bySymbolMetadata.getOne(symbol, metadata)
+      globals.metadatas.bySymbolMetadata.getOne(symbol, metadata)
     ].where((md) => md?.parent == null).firstOrNull;
-    var childrenMetadata = globals.metadata.bySymbol.getAll(symbol);
+    var childrenMetadata = globals.metadatas.bySymbol.getAll(symbol);
     Metadata? logoChild;
     for (var child in childrenMetadata) {
       if (child.logo) {
-        logoChild = child;
-        break;
+        return child;
       }
     }
-    if (logoChild != null) {
-      return logoChild;
-    }
     if (logoChild == null && primaryMetadata?.kind == MetadataType.ImagePath) {
-      return primaryMetadata;
+      return primaryMetadata; // assume parent is logo, could check dims ratio...
     }
   }
 }
