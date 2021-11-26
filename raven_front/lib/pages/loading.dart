@@ -54,19 +54,23 @@ class _LoadingState extends State<Loading> {
     settings.setCurrentAccountId();
 
     // for testing
+    print('-------------------------');
     print('accounts: ${accounts.data}');
-    print('wallets: ${wallets.data}');
-    print('passwords: ${passwords.data}');
     print('addresses: ${addresses.data}');
+    print('assets: ${assets.data}');
+    print('balances: ${balances.data}');
+    print('blocks: ${blocks.data}');
+    print('ciphers: ${ciphers.data}');
+    print('metadata: ${metadatas.data}');
+    print('passwords: ${passwords.data}');
+    print('rates: ${rates.data}');
+    print('securities: ${securities.data}');
+    print('settings: ${settings.data}');
     print('transactions: ${transactions.data}');
     print('vins: ${vins.data}');
     print('vouts: ${vouts.data}');
-    print('securities: ${securities.data}');
-    print('balances: ${balances.data}');
-    print('rates: ${rates.data}');
-    print('settings: ${settings.data}');
-    print('blocks: ${blocks.data}');
-    print('ciphers: ${ciphers.data}');
+    print('wallets: ${wallets.data}');
+    print('-------------------------');
 
     if (services.password.required) {
       if (services.password.interruptedPasswordChange()) {

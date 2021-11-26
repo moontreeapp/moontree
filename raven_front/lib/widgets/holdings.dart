@@ -67,6 +67,7 @@ class _HoldingList extends State<HoldingList> {
   }
 
   Future refresh() async {
+    await services.address.triggerDeriveOrBalance();
     await services.rate.saveRate();
     await services.balance.recalculateAllBalances();
     setState(() {});

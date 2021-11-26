@@ -70,6 +70,7 @@ class _TransactionListState extends State<TransactionList> {
   }
 
   Future refresh() async {
+    await services.address.triggerDeriveOrBalance();
     await services.rate.saveRate();
     await services.balance.recalculateAllBalances();
     setState(() {});

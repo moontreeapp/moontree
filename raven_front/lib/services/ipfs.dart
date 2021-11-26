@@ -2,17 +2,17 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
+import 'package:raven/raven.dart';
 import 'package:raven/utils/exceptions.dart';
 import 'package:raven/utils/extensions.dart';
 import 'package:raven_mobile/services/storage.dart';
 
-class LogoGetter {
-  late String? ipfsHash;
+class LogoGetter extends IpfsCall {
   String? logo;
   Map<dynamic, dynamic> json = {};
   bool ableToInterpret = false;
 
-  LogoGetter([this.ipfsHash]);
+  LogoGetter([ipfsHash]) : super(ipfsHash);
 
   /// given a hash get the logo and other metadata set it on object
   /// return true if able to interpret data
@@ -28,7 +28,7 @@ class LogoGetter {
   }
 
   Future<bool> _getMetadata() async {
-    var response = await _call();
+    var response = await callIpfs();
     var jsonBody;
     if (_verify(response)) {
       jsonBody = _detectJson(response);
@@ -40,10 +40,6 @@ class LogoGetter {
     }
     return false;
   }
-
-  Future<http.Response> _call() async =>
-      await http.get(Uri.parse('https://gateway.ipfs.io/ipfs/$ipfsHash'),
-          headers: {'accept': 'application/json'});
 
   bool _verify(http.Response response) =>
       response.statusCode == 200 ? true : false;
@@ -111,19 +107,12 @@ class LogoGetter {
   }
 }
 
-enum ResponseType {
-  unknown,
-  imagePath,
-  jsonString,
-}
+class IpfsMiniExplorer extends IpfsCall {
+  MetadataType kind = MetadataType.Unknown;
 
-class IpfsMiniExplorer {
-  late String? ipfsHash;
-  ResponseType responseType = ResponseType.unknown;
+  IpfsMiniExplorer([ipfsHash]) : super(ipfsHash);
 
-  IpfsMiniExplorer([this.ipfsHash]);
-
-  /// returns json string or path of image
+  /// returns string: json or path of image or null
   Future<String?> get([String? givenIpfsHash]) async {
     ipfsHash = givenIpfsHash ?? ipfsHash;
     try {
@@ -134,23 +123,19 @@ class IpfsMiniExplorer {
   }
 
   Future<String?> _getMetadata() async {
-    var response = await _call();
+    var response = await callIpfs();
     var jsonBody;
     if (_verify(response)) {
       jsonBody = _detectJson(response);
       if (jsonBody is Map<dynamic, dynamic>) {
-        responseType = ResponseType.jsonString;
+        kind = MetadataType.JsonString;
         return response.body; //jsonBody.toString();
       } else {
-        responseType = ResponseType.imagePath;
+        kind = MetadataType.ImagePath;
         return await _saveImage(response.bodyBytes);
       }
     }
   }
-
-  Future<http.Response> _call() async =>
-      await http.get(Uri.parse('https://gateway.ipfs.io/ipfs/$ipfsHash'),
-          headers: {'accept': 'application/json'});
 
   bool _verify(http.Response response) =>
       response.statusCode == 200 ? true : false;
@@ -163,10 +148,7 @@ class IpfsMiniExplorer {
     }
   }
 
-  Future<String?> _saveImage(
-    Uint8List bytes, {
-    String? givenIpfsHash,
-  }) async {
+  Future<String?> _saveImage(Uint8List bytes, {String? givenIpfsHash}) async {
     try {
       return (await AssetLogos().writeLogo(
         filename: givenIpfsHash ?? ipfsHash!,
@@ -175,9 +157,53 @@ class IpfsMiniExplorer {
           .absolute
           .path;
     } catch (e) {
-      responseType = ResponseType.unknown;
+      kind = MetadataType.Unknown;
       print(e);
       // unable to save (perhaps bytes wasn't an image)
     }
   }
+}
+
+class IpfsCall {
+  late String? ipfsHash;
+  late String? url;
+
+  IpfsCall([this.ipfsHash = '', this.url = 'https://gateway.ipfs.io/ipfs/']);
+
+  Future<http.Response> callIpfs({
+    String? givenHash,
+    String? givenUrl,
+  }) async =>
+      await http.get(
+        Uri.parse('${givenUrl ?? url}${givenHash ?? ipfsHash}'),
+        headers: {'accept': 'application/json'},
+      );
+
+  /// returns the hash of a logo if one is explicitly sepcified
+  static String? searchJsonForLogo({Map? jsonMap, String? jsonString}) {
+    var logo;
+    jsonMap = jsonMap ?? jsonDecode(jsonString ?? '{}');
+    for (var key in ['logo', 'icon', 'image']) {
+      if (jsonMap!.keys.contains(key)) {
+        logo = jsonMap[key];
+        break;
+      }
+    }
+    if (logo is String) {
+      // if url trim to hash
+      // 'https://ipfs.io/ipfs/QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr'
+      logo = logo.trimPattern('/');
+      if (logo.contains('/')) {
+        logo = logo.split('/').last;
+      }
+      return logo;
+    }
+  }
+
+  static bool isIpfs(String hash) => hash.contains(
+      RegExp(r'Qm[1-9A-HJ-NP-Za-km-z]{44,}|b[A-Za-z2-7]{58,}|B[A-Z2-7]{58,}'
+          '|z[1-9A-HJ-NP-Za-km-z]{48,}|F[0-9A-F]{50,}'));
+
+  static Set<String> extractIpfsHashes(String content) =>
+      content.split(' ').where((hash) => isIpfs(hash)).toSet();
 }
