@@ -48,22 +48,23 @@ dependencies:
 
   # MoonTree in-house dependencies
   raven:
-    git: https://github.com/moontreeapp/raven.git
+    git: https://github.com/moontreeapp/raven_back.git
   raven_electrum_client: ^1.2.1
   reservoir: ^2.0.0
 
 dependency_overrides:
   raven:
-    path: ../raven
-    #git: https://github.com/moontreeapp/raven.git
+    path: ../raven_back
+    #git: https://github.com/moontreeapp/raven_back.git
   raven_electrum_client:
-    path: ../raven_electrum_client
-    #git: https://github.com/moontreeapp/raven_electrum_client.git
+    path: ../raven_electrum
+    #git: https://github.com/moontreeapp/raven_electrum.git
   reservoir:
     path: ../reservoir
     #git: https://github.com/moontreeapp/reservoir.git
   ravencoin:
-    path: ../ravencoin
+    path: ../ravencoin_wallet
+    #git: https://github.com/moontreeapp/ravencoin_wallet.git
 
 dev_dependencies:
   flutter_test:
