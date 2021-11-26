@@ -37,6 +37,6 @@ dependency_overrides:
   reservoir:
     path: ../reservoir
   raven_electrum_client:
-    path: ../raven_electrum_client
+    path: ../raven_electrum
   ravencoin:
-    path: ../ravencoin
+    path: ../ravencoin_wallet
