@@ -12,15 +12,16 @@ extension AssetHasOneMetadata on Asset {
 }
 
 extension AssetHasManyMetadata on Asset {
-  List<Metadata?> get metadatas => globals.metadatas.bySymbol.getAll(symbol);
+  List<Metadata?> get metadatas =>
+      globals.metadatas.bySymbol.getAll(nonMasterSymbol);
 }
 
 extension AssetHasOneLogoMetadata on Asset {
   Metadata? get logo {
     var primaryMetadata = [
-      globals.metadatas.bySymbolMetadata.getOne(symbol, metadata)
+      globals.metadatas.bySymbolMetadata.getOne(nonMasterSymbol, metadata)
     ].where((md) => md?.parent == null).firstOrNull;
-    var childrenMetadata = globals.metadatas.bySymbol.getAll(symbol);
+    var childrenMetadata = globals.metadatas.bySymbol.getAll(nonMasterSymbol);
     Metadata? logoChild;
     for (var child in childrenMetadata) {
       if (child.logo) {
