@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:raven_mobile/components/components.dart';
-import 'package:raven_mobile/theme/extensions.dart';
+import 'package:raven_front/components/components.dart';
+import 'package:raven_front/theme/extensions.dart';
 
 class ButtonComponents {
   IconButton back(BuildContext context) => IconButton(

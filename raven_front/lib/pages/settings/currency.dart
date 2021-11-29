@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:raven_mobile/components/components.dart';
+import 'package:raven_front/components/components.dart';
 
 class Currency extends StatelessWidget {
   @override

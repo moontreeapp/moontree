@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:raven/raven.dart';
-import 'package:raven_mobile/components/components.dart';
-import 'package:raven_mobile/theme/extensions.dart';
+import 'package:raven_back/raven_back.dart';
+import 'package:raven_front/components/components.dart';
+import 'package:raven_front/theme/extensions.dart';
 
 class ChangePassword extends StatefulWidget {
   @override

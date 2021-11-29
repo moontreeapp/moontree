@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
-import 'package:raven/raven.dart';
-import 'package:raven/utils/exceptions.dart';
-import 'package:raven/utils/extensions.dart';
-import 'package:raven_mobile/services/storage.dart';
+import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/utils/exceptions.dart';
+import 'package:raven_back/utils/extensions.dart';
+import 'package:raven_front/services/storage.dart';
 
 class LogoGetter extends IpfsCall {
   String? logo;

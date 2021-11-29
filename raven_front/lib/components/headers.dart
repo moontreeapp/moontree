@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:raven_mobile/components/components.dart';
-import 'package:raven_mobile/indicators/indicators.dart';
+import 'package:raven_front/components/components.dart';
+import 'package:raven_front/indicators/indicators.dart';
 
 class HeaderComponents {
   AppBar simple(String title) => AppBar(
