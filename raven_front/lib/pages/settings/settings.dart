@@ -91,13 +91,20 @@ class Settings extends StatelessWidget {
                   title: 'show data',
                   leading: Icon(Icons.info_outline_rounded),
                   onPressed: (BuildContext context) async {
-                    var security = securities.bySymbolSecurityType
-                        .getOne('MOONTREE0', SecurityType.RavenAsset)!;
-                    print(security);
-                    print(security.asset);
-                    print(security.asset?.metadata);
-                    print(assets.data);
-                    print(metadatas.data);
+                    var moontree = assets.bySymbol.getOne('MOONTREE')!;
+                    var moontree0 = assets.bySymbol.getOne('MOONTREE0')!;
+                    var moontreeM = assets.bySymbol.getOne('MOONTREE!')!;
+                    var moontree0M = assets.bySymbol.getOne('MOONTREE0!')!;
+                    print(moontree.logo);
+                    print(moontree0.logo);
+                    print(moontreeM.logo);
+                    print(moontree0M.logo);
+                    print(moontreeM.primaryMetadata);
+                    print(moontree0M.primaryMetadata);
+                    var primaryMetadata = metadatas.bySymbol
+                        .getAll(moontreeM.nonMasterSymbol)
+                        .where((md) => md.parent == null);
+                    print(primaryMetadata);
 
                     //var meta = LogoGetter(security.metadata);
                     //print(await meta.get());
