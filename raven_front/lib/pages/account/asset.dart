@@ -123,29 +123,29 @@ class _AssetState extends State<Asset> {
   /// interpret it correctly if it is in a recognizable format,
   /// else present file download option
   ListView? _metadataView() {
-    // TODO we're not allowed to use future calls in build so we can't check to see if a file exists.
-    // so to display an image we need to have an in memory global service that tells us what files are available
-    //if (security!.asset!.hasMetadata) {
-    //  if (security!.asset!.hasIpfs) {
-    //    var explorer = IpfsMiniExplorer(security!.asset!.metadata);
-    //    var content = await explorer.get(); // Oops! this must be a waiter which pre-pulls the data and saves it in a reservoir!
-    //    if (explorer.responseType == ResponseType.imagePath) {
-    //      return ListView(children: [Image.file(File(content))]);
-    //    }
-    //    if (explorer.responseType == ResponseType.jsonString) {
-    //      return ListView(children: [SelectableText(security!.asset!.metadata ?? '')])
-    //    }
-    //  }
-    //  return ListView(children: [SelectableText(security!.asset!.metadata ?? '')]);
-    //}
-    return (security?.asset?.hasMetadata ?? false)
-        //? await AssetLogos().readLogoFileNow(security!.metadata ?? '', settings.localPath!).exists()
-        ? ListView(children: [SelectableText(security?.asset?.metadata ?? '')])
-        //  : null
-        : null;
-    ////return ListView(
-    ////    children: [Image(image: AssetImage('assets/magicmusk.png'))]);
-    ////return null;
+    if (security?.asset?.hasMetadata == null) {
+      return null;
+    }
+    if (security?.asset?.primaryMetadata == null) {
+      return ListView(
+          children: [SelectableText(security?.asset?.metadata ?? '')]);
+    }
+    if (security?.asset?.primaryMetadata!.kind == MetadataType.ImagePath) {
+      return ListView(children: [
+        Image.file(AssetLogos()
+            .readImageFileNow(security?.asset?.primaryMetadata!.data ?? ''))
+      ]);
+    }
+    if (security?.asset?.primaryMetadata!.kind == MetadataType.JsonString) {
+      return ListView(children: [
+        SelectableText(security?.asset?.primaryMetadata!.data ?? '')
+      ]);
+    }
+    //if (security?.asset?.primaryMetadata!.kind == MetadataType.Unknown) {
+    return ListView(children: [
+      SelectableText(security?.asset?.primaryMetadata!.metadata ?? ''),
+      SelectableText(security?.asset?.primaryMetadata!.data ?? '')
+    ]);
   }
 
   /// different from home.sendReceiveButtons because it prefills the chosen token

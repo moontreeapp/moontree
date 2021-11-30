@@ -32,29 +32,10 @@ class IconComponents {
     if (asset.toUpperCase() == 'RVN') {
       return _assetAvatarRVN();
     }
-    //try {
-    // this is in try because the firsrt time it download it may not have
-    // finished saving before it is called upon to be used:
-    /*══╡ EXCEPTION CAUGHT BY IMAGE RESOURCE SERVICE ╞════════════════════════════════════════════════════
-        The following FileSystemException was thrown resolving an image codec:
-        Cannot open file, path =
-        '/data/user/0/com.rvnbag.ravenmobile/app_flutter/images/QmXe1VJjmBi1Tjti8mUa2UyScvEPyUnhSGSZzwD19kCYUm'
-        (OS Error: No such file or directory, errno = 2)
-
-        When the exception was thrown, this was the stack:
-        #0      _File.open.<anonymous closure> (dart:io/file_impl.dart:356:9)
-        <asynchronous suspension>
-        #2      FileImage._loadAsync (package:flutter/src/painting/image_provider.dart:890:29)
-        <asynchronous suspension>
-        (elided one frame from dart:async)
-      */
     var ret = _assetAvatarSecurity(asset);
     if (ret != null) {
       return ret;
     }
-    //} catch (e) {
-    //  print(e);
-    //}
     return _assetAvatarGenerated(asset);
   }
 
@@ -70,7 +51,7 @@ class IconComponents {
         !([null, '']).contains(security.asset?.logo?.data)) {
       try {
         return Image.file(
-            AssetLogos().readLogoFileNow(security.asset?.logo?.data ?? ''));
+            AssetLogos().readImageFileNow(security.asset?.logo?.data ?? ''));
         //settings.primaryIndex.getOne(SettingName.Local_Path)!.value
       } catch (e) {
         print(
