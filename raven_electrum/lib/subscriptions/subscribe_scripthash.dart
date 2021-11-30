@@ -1,5 +1,5 @@
 import '../client/subscribing_client.dart';
-import '../raven_electrum_client.dart';
+import '../raven_electrum.dart';
 
 extension SubscribeScripthashMethod on RavenElectrumClient {
   Stream<String?> subscribeScripthash(String scripthash) {

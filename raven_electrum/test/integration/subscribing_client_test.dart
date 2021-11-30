@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
-import 'package:raven_electrum_client/connect.dart';
-import 'package:raven_electrum_client/client/subscribing_client.dart';
+import 'package:raven_electrum/connect.dart';
+import 'package:raven_electrum/client/subscribing_client.dart';
 
 const ravencoinBlockTime = Duration(seconds: 60);
 

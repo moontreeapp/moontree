@@ -1,7 +1,7 @@
 /// An Electrum client for RavenCoin.
 ///
 /// Connects with https://github.com/Electrum-RVN-SIG/electrumx-ravencoin
-library raven_electrum_client;
+library raven_electrum;
 
 import 'dart:async';
 

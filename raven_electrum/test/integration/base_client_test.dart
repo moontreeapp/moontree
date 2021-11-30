@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
-import 'package:raven_electrum_client/connect.dart';
-import 'package:raven_electrum_client/client/base_client.dart';
+import 'package:raven_electrum/connect.dart';
+import 'package:raven_electrum/client/base_client.dart';
 
 void main() {
   group('BaseClient', () {

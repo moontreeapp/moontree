@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../raven_electrum_client.dart';
+import '../../raven_electrum.dart';
 
 /// scriptSig: {
 ///   asm: 30440220570e370c5d5f559bd37da3f6c463b09e4a61bb57237fead3aa5a3255f30fe09e022035038abb72ccd722700081088f3bf5aab4642fb66df4b79eab88c1d15d064f69[ALL] 03d957a7e1be52d731bcaa3fb0270dbadbe5a81fd7342f8710a70308435174febe,

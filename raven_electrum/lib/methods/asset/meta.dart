@@ -1,6 +1,6 @@
 /// get meta data about an asset by name
 import 'package:equatable/equatable.dart';
-import '../../raven_electrum_client.dart';
+import '../../raven_electrum.dart';
 
 class TxSource with EquatableMixin {
   late final String txHash;

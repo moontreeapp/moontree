@@ -1,4 +1,4 @@
-import '../../raven_electrum_client.dart';
+import '../../raven_electrum.dart';
 
 extension BroadcastTransactionMethod on RavenElectrumClient {
   Future<String> broadcastTransaction(String rawTx) async => await request(

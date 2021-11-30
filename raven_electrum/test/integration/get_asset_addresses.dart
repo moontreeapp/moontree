@@ -1,6 +1,6 @@
 // dart --sound-null-safety test test/integration/get_stats_test.dart --concurrency=1
 import 'package:test/test.dart';
-import 'package:raven_electrum_client/raven_electrum_client.dart';
+import 'package:raven_electrum/raven_electrum.dart';
 
 void main() {
   group('electrum_client', () {

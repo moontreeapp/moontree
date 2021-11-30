@@ -1,5 +1,5 @@
 import '../client/subscribing_client.dart';
-import '../raven_electrum_client.dart';
+import '../raven_electrum.dart';
 
 extension SubscribeAssetMethod on RavenElectrumClient {
   Stream<String?> subscribeAsset(String assetName) {

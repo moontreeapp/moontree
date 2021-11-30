@@ -7,7 +7,7 @@ The Ravencoin ElectrumX server is quite similar to the Bitcion Electrum server, 
 ## Usage
 
 ```dart
-import 'package:raven_electrum_client/raven_electrum_client.dart';
+import 'package:raven_electrum/raven_electrum.dart';
 
 void main() async {
   var client =
@@ -22,4 +22,4 @@ void main() async {
 
 Please file feature requests and bugs at the [issue tracker][tracker].
 
-[tracker]: https://github.com/moontreeapp/raven_electrum_client/issues
+[tracker]: https://github.com/moontreeapp/raven_electrum/issues

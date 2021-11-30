@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../client/subscribing_client.dart';
-import '../raven_electrum_client.dart';
+import '../raven_electrum.dart';
 
 class BlockHeader extends Equatable {
   final String hex;
