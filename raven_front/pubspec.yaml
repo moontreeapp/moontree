@@ -39,7 +39,7 @@ dependencies:
   settings_ui: ^1.0.0
   ulid: ^2.0.0
   url_launcher: ^6.0.10
-  #ravencoin: ^2.1.0
+  ravencoin_wallet: ^3.0.0
   path_provider: ^2.0.5 # to get the correct path to store our file
   permission_handler: ^8.2.5 # to handle the permissions to read and write files
   share: ^2.0.4 # to share the file that we create
@@ -62,7 +62,7 @@ dependency_overrides:
   reservoir:
     path: ../reservoir
     #git: https://github.com/moontreeapp/reservoir.git
-  ravencoin:
+  ravencoin_wallet:
     path: ../ravencoin_wallet
     #git: https://github.com/moontreeapp/ravencoin_wallet.git
 

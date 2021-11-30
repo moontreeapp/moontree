@@ -7,7 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ravencoin/ravencoin.dart' as raven;
+import 'package:ravencoin_wallet/ravencoin_wallet.dart' as raven;
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
