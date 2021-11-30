@@ -18,18 +18,24 @@ extension AssetHasManyMetadata on Asset {
 
 extension AssetHasOneLogoMetadata on Asset {
   Metadata? get logo {
-    var primaryMetadata = [
-      globals.metadatas.bySymbolMetadata.getOne(nonMasterSymbol, metadata)
-    ].where((md) => md?.parent == null).firstOrNull;
     var childrenMetadata = globals.metadatas.bySymbol.getAll(nonMasterSymbol);
-    Metadata? logoChild;
     for (var child in childrenMetadata) {
       if (child.logo) {
         return child;
       }
     }
-    if (logoChild == null && primaryMetadata?.kind == MetadataType.ImagePath) {
-      return primaryMetadata; // assume parent is logo, could check dims ratio...
+    var primaryMetadata = [
+      globals.metadatas.bySymbolMetadata.getOne(nonMasterSymbol, metadata)
+    ].where((md) => md?.parent == null).firstOrNull;
+    if (primaryMetadata?.kind == MetadataType.ImagePath) {
+      return primaryMetadata;
+    }
+    var nonMasterPrimaryMetadata = globals.metadatas.bySymbol
+        .getAll(nonMasterSymbol)
+        .where((md) => md.parent == null)
+        .firstOrNull;
+    if (nonMasterPrimaryMetadata?.kind == MetadataType.ImagePath) {
+      return nonMasterPrimaryMetadata; // assume parent is logo, could check dims ratio...
     }
   }
 }
