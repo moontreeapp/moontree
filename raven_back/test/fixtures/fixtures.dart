@@ -10,7 +10,7 @@ import 'balances.dart';
 // import 'histories.dart';
 import 'wallets.dart';
 
-import 'package:raven/globals.dart' as globals;
+import 'package:raven_back/globals.dart' as globals;
 
 void useFixtureSources() {
   globals.accounts.setSource(accounts());

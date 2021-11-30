@@ -1,9 +1,9 @@
-import 'package:raven/utils/enum.dart';
+import 'package:raven_back/utils/enum.dart';
 import 'package:ravencoin/ravencoin.dart' show HDWallet;
 import 'package:bip39/bip39.dart' as bip39;
 
-import 'package:raven/utils/seed_wallet.dart';
-import 'package:raven/raven.dart';
+import 'package:raven_back/utils/seed_wallet.dart';
+import 'package:raven_back/raven_back.dart';
 
 // derives addresses for leaderwallets
 // returns any that it can't find a cipher for

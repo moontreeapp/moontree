@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:raven/utils/getBytes.dart';
+import 'package:raven_back/utils/getBytes.dart';
 
 const int DEFAULT_ITERATIONS = 2;
 const int DEFAULT_MEMORY = 16;

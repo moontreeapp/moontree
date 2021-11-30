@@ -5,7 +5,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
-import 'package:raven/raven.dart';
+import 'package:raven_back/raven_back.dart';
 
 /// client creation, logic, and settings.
 class ClientService {

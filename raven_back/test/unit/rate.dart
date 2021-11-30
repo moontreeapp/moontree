@@ -1,5 +1,5 @@
 // dart test test/unit/rate.dart --concurrency=1
-import 'package:raven/utils/rate.dart';
+import 'package:raven_back/utils/rate.dart';
 import 'package:test/test.dart';
 
 void main() {

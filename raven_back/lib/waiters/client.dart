@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
-import 'package:raven/raven.dart';
+import 'package:raven_back/raven_back.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
 import 'waiter.dart';

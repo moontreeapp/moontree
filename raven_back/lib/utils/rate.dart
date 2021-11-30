@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:raven/utils/exceptions.dart';
+import 'package:raven_back/utils/exceptions.dart';
 
 class RVNtoFiat {
   final String fiat;

@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import 'package:raven/raven.dart';
+import 'package:raven_back/raven_back.dart';
 
 class WalletSecurityPair with EquatableMixin {
   final Wallet wallet;

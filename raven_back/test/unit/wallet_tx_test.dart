@@ -3,8 +3,8 @@
 import 'package:test/test.dart';
 import 'package:ravencoin/ravencoin.dart' show HDWallet, TransactionBuilder;
 
-import 'package:raven/records/net.dart' show networks, Net;
-import 'package:raven/records/wallets/extended_wallet_base.dart';
+import 'package:raven_back/records/net.dart' show networks, Net;
+import 'package:raven_back/records/wallets/extended_wallet_base.dart';
 
 void main() {
   group('Wallet Transaction', () {

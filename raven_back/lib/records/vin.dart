@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import 'package:raven/raven.dart';
+import 'package:raven_back/raven_back.dart';
 
 import '_type_id.dart';
 

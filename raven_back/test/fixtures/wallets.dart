@@ -2,7 +2,7 @@ import 'package:dotenv/dotenv.dart' as dotenv;
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:reservoir/map_source.dart';
 
-import 'package:raven/records/records.dart';
+import 'package:raven_back/records/records.dart';
 
 MapSource<Wallet> wallets() {
   dotenv.load();

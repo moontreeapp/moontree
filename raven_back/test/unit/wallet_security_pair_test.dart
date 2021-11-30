@@ -1,10 +1,10 @@
 // dart --sound-null-safety test test/integration/account_test.dart --concurrency=1 --chain-stack-traces
-import 'package:raven/records/records.dart';
-import 'package:raven/records/security.dart';
+import 'package:raven_back/records/records.dart';
+import 'package:raven_back/records/security.dart';
 import 'package:reservoir/change.dart';
 import 'package:test/test.dart';
 
-import 'package:raven/services/wallet_security_pair.dart';
+import 'package:raven_back/services/wallet_security_pair.dart';
 import '../fixtures/histories.dart';
 import '../fixtures/fixtures.dart' as fixtures;
 

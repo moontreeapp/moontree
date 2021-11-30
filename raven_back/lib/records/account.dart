@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:ravencoin/ravencoin.dart' show NetworkType;
 
-import 'package:raven/records/net.dart';
+import 'package:raven_back/records/net.dart';
 
 import '_type_id.dart';
 part 'account.g.dart';
