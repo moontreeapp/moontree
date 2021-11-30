@@ -260,7 +260,7 @@ class AddressService {
         }
       } else if (vout.scriptPubKey.type == 'new_asset') {
         symbol = vout.scriptPubKey.asset!;
-        value = vout.scriptPubKey.amount! * (10000000);
+        value = vout.scriptPubKey.amount! * (100000000);
         streams.asset.added.add(Asset(
           symbol: symbol,
           metadata: vout.scriptPubKey.ipfsHash ?? '',

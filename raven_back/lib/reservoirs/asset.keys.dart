@@ -12,6 +12,8 @@ extension ByIdMethodsForAsset on Index<_AssetIdKey, Asset> {
 }
 
 // bySymbol
+// same as primary
+
 class _SymbolKey extends Key<Asset> {
   @override
   String getKey(Asset asset) => asset.symbol;

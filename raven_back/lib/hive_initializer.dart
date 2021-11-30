@@ -47,6 +47,7 @@ class HiveInitializer {
     Hive.registerAdapter(BalanceAdapter());
     Hive.registerAdapter(BlockAdapter());
     Hive.registerAdapter(AccountAdapter());
+    Hive.registerAdapter(AssetAdapter());
     Hive.registerAdapter(LeaderWalletAdapter());
     Hive.registerAdapter(SingleWalletAdapter());
     Hive.registerAdapter(AddressAdapter());
@@ -59,6 +60,8 @@ class HiveInitializer {
     Hive.registerAdapter(RateAdapter());
     Hive.registerAdapter(CipherUpdateAdapter());
     Hive.registerAdapter(CipherTypeAdapter());
+    Hive.registerAdapter(MetadataTypeAdapter());
+    Hive.registerAdapter(MetadataAdapter());
     Hive.registerAdapter(SettingAdapter());
     Hive.registerAdapter(SettingNameAdapter());
     Hive.registerAdapter(SecurityAdapter());
@@ -68,8 +71,10 @@ class HiveInitializer {
   Future openAllBoxes() async {
     await Hive.openBox<Account>('accounts');
     await Hive.openBox<Address>('addresses');
+    await Hive.openBox<Asset>('assets');
     await Hive.openBox<Balance>('balances');
     await Hive.openBox<Block>('blocks');
+    await Hive.openBox<Metadata>('metadatas');
     await Hive.openBox<Password>('passwords');
     await Hive.openBox<Rate>('rates');
     await Hive.openBox<Security>('securities');
@@ -85,6 +90,8 @@ class HiveInitializer {
     addresses.setSource(HiveSource('addresses'));
     balances.setSource(HiveSource('balances'));
     blocks.setSource(HiveSource('blocks'));
+    assets.setSource(HiveSource('assets'));
+    metadatas.setSource(HiveSource('metadatas'));
 
     /// this needs to be inmemory:
     // ciphers.setSource(HiveSource(
