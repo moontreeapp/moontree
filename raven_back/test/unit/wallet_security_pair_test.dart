@@ -13,7 +13,7 @@ void main() async {
 
   test('WalletSecurityPair is unique in Set', () {
     var s = <WalletSecurityPair>{};
-    var wallet = fixtures.wallets().map['0']!;
+    var wallet = fixtures.wallets['0']!;
     var pair = WalletSecurityPair(
         wallet, Security(symbol: 'RVN', securityType: SecurityType.Crypto));
     s.add(pair);
@@ -22,7 +22,7 @@ void main() async {
   });
 
   test('securityPairsFromVoutChanges', () {
-    var wallet = fixtures.wallets().map['0']!;
+    var wallet = fixtures.wallets['0']!;
     var changes = [
       Added(0, histories().map['0']),
       Added(1, histories().map['1']),

@@ -16,9 +16,9 @@ import 'package:reservoir/map_source.dart';
 import 'package:raven_back/globals.dart' as globals;
 
 void useFixtureSources() {
-  globals.accounts.setSource(MapSource(accounts()));
-  globals.wallets.setSource(wallets());
-  globals.addresses.setSource(addresses());
+  globals.accounts.setSource(MapSource(accounts));
+  globals.wallets.setSource(MapSource(wallets));
+  globals.addresses.setSource(MapSource(addresses));
   // globals.histories.setSource(histories());
-  globals.balances.setSource(balances());
+  globals.balances.setSource(MapSource(balances));
 }

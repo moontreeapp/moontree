@@ -1,10 +1,12 @@
 import 'package:reservoir/map_source.dart';
 
-import 'package:raven_back/records/history.dart';
-import 'package:raven_back/records/security.dart';
+import 'package:raven_back/records/vout.dart';
 
 import 'package:raven_back/records/records.dart';
 
+import 'securities.dart';
+
+// TODO: change this to vins and vouts?
 MapSource<History> histories() => MapSource({
       '0': History(
           txId:

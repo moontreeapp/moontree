@@ -20,7 +20,7 @@ void main() {
         name: 'primary',
       );
       accounts.setSource(MapSource({'a0': account}));
-      wallet = fixtures.wallets().map['0'] as LeaderWallet;
+      wallet = fixtures.wallets['0'] as LeaderWallet;
 
       // put account in reservoir
       await accounts.save(account);

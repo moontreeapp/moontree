@@ -4,7 +4,7 @@ import 'package:reservoir/map_source.dart';
 
 import 'package:raven_back/records/records.dart';
 
-Map<String, Account> accounts() {
+Map<String, Account> get accounts {
   return {
     'a0': Account(
       name: 'Account a0',

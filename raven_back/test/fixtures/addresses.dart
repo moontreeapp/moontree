@@ -2,7 +2,7 @@ import 'package:reservoir/map_source.dart';
 
 import 'package:raven_back/records/records.dart';
 
-MapSource<Address> addresses() => MapSource({
+Map<String, Address> get addresses => {
       'abc0': Address(
           addressId: 'abc0',
           address: 'abc0address',
@@ -38,4 +38,4 @@ MapSource<Address> addresses() => MapSource({
           hdIndex: 3,
           exposure: NodeExposure.External,
           net: Net.Test),
-    });
+    };

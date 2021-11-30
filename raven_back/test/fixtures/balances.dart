@@ -3,7 +3,7 @@ import 'package:reservoir/map_source.dart';
 
 import 'package:raven_back/records/records.dart';
 
-MapSource<Balance> balances() => MapSource({
+Map<String, Balance> get balances => {
       '0': Balance(
           walletId: '0',
           security: securities.RVN,
@@ -14,4 +14,4 @@ MapSource<Balance> balances() => MapSource({
           security: securities.USD,
           confirmed: 100,
           unconfirmed: 0),
-    });
+    };

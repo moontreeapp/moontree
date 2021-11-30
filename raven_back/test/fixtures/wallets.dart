@@ -4,10 +4,10 @@ import 'package:reservoir/map_source.dart';
 
 import 'package:raven_back/records/records.dart';
 
-MapSource<Wallet> wallets() {
+Map<String, Wallet> get wallets {
   dotenv.load();
   var phrase = dotenv.env['TEST_WALLET_01']!;
-  return MapSource({
+  return {
     '0': LeaderWallet(
         walletId: '0',
         accountId: 'a0',
@@ -24,5 +24,5 @@ MapSource<Wallet> wallets() {
         accountId: 'a2',
         cipherUpdate: CipherUpdate(CipherType.None),
         encryptedEntropy: bip39.mnemonicToEntropy(phrase)),
-  });
+  };
 }
