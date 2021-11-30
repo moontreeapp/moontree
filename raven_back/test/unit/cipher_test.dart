@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:test/test.dart';
 
 import 'package:raven_back/security/security.dart';
+import 'package:raven_back/utils/getBytes.dart';
 
 final Uint8List key128 = getBytes('128bit-securekey');
 final Uint8List key192 = getBytes('192bit-securekeymorebits');

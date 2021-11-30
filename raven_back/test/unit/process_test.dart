@@ -30,8 +30,8 @@ void main() {
     test('2 addresses get created', () async {
       // make addresses
       expect(addresses.length, 5);
-      await reservoirChanges(addresses,
-          () => services.wallet.leader.deriveFirstAddressAndSave(wallet), 2);
+      await reservoirChanges(
+          addresses, () => services.wallet.leader.deriveAddress(wallet, 0), 2);
       expect(addresses.length, 7);
     });
 
