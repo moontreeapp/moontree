@@ -47,7 +47,7 @@ dependencies:
   intl: ^0.17.0
 
   # MoonTree in-house dependencies
-  raven:
+  raven_back:
     git: https://github.com/moontreeapp/raven_back.git
   raven_electrum_client: ^1.2.1
   reservoir: ^2.0.0
