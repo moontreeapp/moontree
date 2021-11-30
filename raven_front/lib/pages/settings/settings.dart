@@ -81,6 +81,7 @@ class Settings extends StatelessWidget {
                   leading: Icon(Icons.info_outline_rounded),
                   onPressed: (BuildContext context) =>
                       Navigator.pushNamed(context, '/settings/about')),
+/*                      
               SettingsTile(
                   title: 'Clear Database',
                   leading: Icon(Icons.info_outline_rounded),
@@ -90,27 +91,7 @@ class Settings extends StatelessWidget {
               SettingsTile(
                   title: 'show data',
                   leading: Icon(Icons.info_outline_rounded),
-                  onPressed: (BuildContext context) async {
-                    var moontree = assets.bySymbol.getOne('MOONTREE')!;
-                    var moontree0 = assets.bySymbol.getOne('MOONTREE0')!;
-                    var moontreeM = assets.bySymbol.getOne('MOONTREE!')!;
-                    var moontree0M = assets.bySymbol.getOne('MOONTREE0!')!;
-                    print(moontree.logo);
-                    print(moontree0.logo);
-                    print(moontreeM.logo);
-                    print(moontree0M.logo);
-                    print(moontreeM.primaryMetadata);
-                    print(moontree0M.primaryMetadata);
-                    var primaryMetadata = metadatas.bySymbol
-                        .getAll(moontreeM.nonMasterSymbol)
-                        .where((md) => md.parent == null);
-                    print(primaryMetadata);
-
-                    //var meta = LogoGetter(security.metadata);
-                    //print(await meta.get());
-                    //print(meta.logo);
-                  }),
-/*                      
+                  onPressed: (BuildContext context) async {}),
 */
               //SettingsTile.switchTile(
               //  title: 'Use fingerprint',
