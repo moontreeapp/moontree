@@ -1,5 +1,5 @@
-import 'package:raven_mobile/utils/strings.dart';
-import 'package:raven_mobile/utils/transform.dart';
+import 'package:raven_front/utils/strings.dart';
+import 'package:raven_front/utils/transform.dart';
 
 Map<String, String> parseReceiveParams(address) =>
     Uri.parse(address).queryParameters;

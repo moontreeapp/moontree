@@ -1,8 +1,8 @@
-import 'package:raven/raven.dart';
-import 'package:raven/services/wallet/constants.dart';
-import 'package:raven/utils/transform.dart';
-import 'package:raven/utils/hex.dart' as hexx;
-import 'package:raven_mobile/services/lookup.dart';
+import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/services/wallet/constants.dart';
+import 'package:raven_back/utils/transform.dart';
+import 'package:raven_back/utils/hex.dart' as hexx;
+import 'package:raven_front/services/lookup.dart';
 
 class ImportFrom {
   late String text;

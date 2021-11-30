@@ -4,11 +4,11 @@ import 'package:datadog_flutter/datadog_observer.dart';
 import 'package:flutter/material.dart';
 import 'package:datadog_flutter/datadog_rum.dart';
 
-import 'package:raven_mobile/pages.dart';
-import 'package:raven_mobile/pages/password/change.dart';
-import 'package:raven_mobile/theme/color_gen.dart';
-import 'package:raven_mobile/theme/theme.dart';
-import 'package:raven_mobile/utils/log.dart';
+import 'package:raven_front/pages.dart';
+import 'package:raven_front/pages/password/change.dart';
+import 'package:raven_front/theme/color_gen.dart';
+import 'package:raven_front/theme/theme.dart';
+import 'package:raven_front/utils/log.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

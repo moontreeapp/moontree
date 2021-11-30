@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:raven_mobile/components/components.dart';
+import 'package:raven_front/components/components.dart';
 
 class About extends StatefulWidget {
   @override

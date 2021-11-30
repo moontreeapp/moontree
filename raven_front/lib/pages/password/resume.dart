@@ -2,9 +2,9 @@
 /// - and handle only being able to decrypt some wallets:
 ///   only matters when trying to backup wallets right?
 import 'package:flutter/material.dart';
-import 'package:raven/raven.dart';
-import 'package:raven_mobile/components/components.dart';
-import 'package:raven_mobile/indicators/indicators.dart';
+import 'package:raven_back/raven_back.dart';
+import 'package:raven_front/components/components.dart';
+import 'package:raven_front/indicators/indicators.dart';
 
 class ChangeResume extends StatefulWidget {
   @override

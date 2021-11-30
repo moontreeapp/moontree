@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:raven/raven.dart';
-import 'package:raven_mobile/components/components.dart';
-import 'package:raven_mobile/services/ipfs.dart';
+import 'package:raven_back/raven_back.dart';
+import 'package:raven_front/components/components.dart';
+import 'package:raven_front/services/ipfs.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:raven/utils/database.dart' as ravenDatabase;
+import 'package:raven_back/utils/database.dart' as ravenDatabase;
 
 class Settings extends StatelessWidget {
   @override

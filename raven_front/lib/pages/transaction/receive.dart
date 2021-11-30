@@ -1,11 +1,11 @@
 //import 'dart:uri';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:raven/raven.dart';
-import 'package:raven_mobile/components/components.dart';
-import 'package:raven_mobile/services/lookup.dart';
-import 'package:raven_mobile/utils/params.dart';
-import 'package:raven_mobile/utils/utils.dart';
+import 'package:raven_back/raven_back.dart';
+import 'package:raven_front/components/components.dart';
+import 'package:raven_front/services/lookup.dart';
+import 'package:raven_front/utils/params.dart';
+import 'package:raven_front/utils/utils.dart';
 import 'package:share/share.dart';
 
 class Receive extends StatefulWidget {

@@ -1,6 +1,6 @@
 export 'logo.dart';
 
-import 'package:raven_mobile/listeners/logo.dart';
+import 'package:raven_front/listeners/logo.dart';
 
 // globals
 final LogoListener logoListener = LogoListener();

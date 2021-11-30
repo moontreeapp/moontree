@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:tuple/tuple.dart';
-import 'package:raven_mobile/utils/strings.dart';
+import 'package:raven_front/utils/strings.dart';
 
 List enumerate(String text) {
   return List<int>.generate(text.length, (i) => i + 1);
