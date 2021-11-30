@@ -2,8 +2,8 @@ import 'dart:typed_data';
 
 import 'package:ravencoin/ravencoin.dart' show HDWallet, KPWallet, NetworkType;
 
-import 'package:raven/utils/derivation_path.dart';
-import 'package:raven/raven.dart';
+import 'package:raven_back/utils/derivation_path.dart';
+import 'package:raven_back/raven_back.dart';
 
 class SeedWallet {
   Uint8List seed;

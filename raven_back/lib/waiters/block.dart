@@ -5,7 +5,7 @@
 
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 
-import 'package:raven/raven.dart';
+import 'package:raven_back/raven_back.dart';
 import 'waiter.dart';
 
 class BlockWaiter extends Waiter {

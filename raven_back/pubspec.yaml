@@ -1,5 +1,5 @@
-name: raven
-description: Ravencoin Wallet Library
+name: raven_back
+description: Ravencoin wallet backend library
 version: 1.0.0
 
 environment:

@@ -1,6 +1,6 @@
 import 'package:rxdart/rxdart.dart';
 
-import 'package:raven/raven.dart';
+import 'package:raven_back/raven_back.dart';
 
 class MetadataStreams {
   final addedJson = addedJson$;

@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import 'package:raven/records/cipher_type.dart';
-import 'package:raven/utils/enum.dart';
+import 'package:raven_back/records/cipher_type.dart';
+import 'package:raven_back/utils/enum.dart';
 
 import '_type_id.dart';
 

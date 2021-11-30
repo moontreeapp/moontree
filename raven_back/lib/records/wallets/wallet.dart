@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import 'package:raven/records/cipher_update.dart';
-import 'package:raven/records/net.dart';
-import 'package:raven/security/security.dart';
-import 'package:raven/services/wallet/constants.dart';
-import 'package:raven/utils/enum.dart';
+import 'package:raven_back/records/cipher_update.dart';
+import 'package:raven_back/records/net.dart';
+import 'package:raven_back/security/security.dart';
+import 'package:raven_back/services/wallet/constants.dart';
+import 'package:raven_back/utils/enum.dart';
 import 'package:ravencoin/ravencoin.dart';
 
 export 'extended_wallet_base.dart';

@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:test/test.dart';
 import 'package:equatable/equatable.dart';
-import 'package:raven/utils/streaming_joins.dart';
+import 'package:raven_back/utils/streaming_joins.dart';
 
 class User with EquatableMixin {
   int userId;

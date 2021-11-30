@@ -1,7 +1,7 @@
 // dart run build_runner build
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import 'package:raven/records/setting_name.dart';
+import 'package:raven_back/records/setting_name.dart';
 
 import '_type_id.dart';
 part 'setting.g.dart';

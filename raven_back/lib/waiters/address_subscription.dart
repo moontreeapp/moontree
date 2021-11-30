@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:raven/raven.dart';
-import 'package:raven/utils/buffer_count_window.dart';
+import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/utils/buffer_count_window.dart';
 import 'package:raven_electrum_client/raven_electrum_client.dart';
 import 'package:rxdart/src/transformers/distinct_unique.dart';
 

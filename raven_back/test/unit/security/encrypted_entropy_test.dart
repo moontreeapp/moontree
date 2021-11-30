@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:test/test.dart';
 
-import 'package:raven/security/cipher_base.dart' show getBytes;
-import 'package:raven/security/cipher_aes.dart';
-import 'package:raven/security/encrypted_entropy.dart';
+import 'package:raven_back/security/cipher_base.dart' show getBytes;
+import 'package:raven_back/security/cipher_aes.dart';
+import 'package:raven_back/security/encrypted_entropy.dart';
 import '../../fixtures/mnemonic.dart';
 
 var cipher = CipherAES(getBytes('password'));

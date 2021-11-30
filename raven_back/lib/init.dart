@@ -1,4 +1,4 @@
-import 'package:raven/raven.dart';
+import 'package:raven_back/raven_back.dart';
 
 Future initWaiters() async {
   // The following waiters must be inited before HiveInitializer.load()

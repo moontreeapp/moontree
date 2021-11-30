@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
-import 'package:raven/raven.dart';
+import 'package:raven_back/raven_back.dart';
 
 class CipherStreams {
   /// not needed elsewhere yet:

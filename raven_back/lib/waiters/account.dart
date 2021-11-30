@@ -1,8 +1,8 @@
 import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
 
-import 'package:raven/waiters/waiter.dart';
-import 'package:raven/raven.dart';
+import 'package:raven_back/waiters/waiter.dart';
+import 'package:raven_back/raven_back.dart';
 
 class AccountWaiter extends Waiter {
   void init() {

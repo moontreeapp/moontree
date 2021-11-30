@@ -2,7 +2,7 @@
 import 'package:reservoir/map_source.dart';
 import 'package:test/test.dart';
 
-import 'package:raven/raven.dart';
+import 'package:raven_back/raven_back.dart';
 
 import '../fixtures/fixtures.dart' as fixtures;
 import '../helper/reservoir_changes.dart';
