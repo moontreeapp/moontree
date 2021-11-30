@@ -1,6 +1,6 @@
 /// The Ravencoin library is similar to the Bitcoin library (bitcoin_flutter) and
 /// follows most of the same patterns.
-library ravencoin;
+library ravencoin_wallet;
 
 export 'src/address.dart';
 export 'src/ecpair.dart';

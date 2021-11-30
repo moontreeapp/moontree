@@ -1,12 +1,12 @@
 import 'dart:typed_data';
 
-import 'package:ravencoin/src/utils/magic_hash.dart';
 import 'package:hex/hex.dart';
 
 import '../models/networks.dart';
 import '../payments/index.dart' show PaymentData;
 import '../payments/p2pkh.dart';
 import '../ecpair.dart';
+import '../utils/magic_hash.dart';
 
 import 'wallet_base.dart';
 

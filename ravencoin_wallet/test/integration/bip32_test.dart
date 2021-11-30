@@ -5,9 +5,9 @@ import 'package:hex/hex.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:bip32/bip32.dart' as bip32;
 
-import 'package:ravencoin/src/models/networks.dart';
-import 'package:ravencoin/src/payments/index.dart' show PaymentData;
-import 'package:ravencoin/src/payments/p2pkh.dart';
+import 'package:ravencoin_wallet/src/models/networks.dart';
+import 'package:ravencoin_wallet/src/payments/index.dart' show PaymentData;
+import 'package:ravencoin_wallet/src/payments/p2pkh.dart';
 
 void main() {
   group('bitcoin-dart (BIP32)', () {

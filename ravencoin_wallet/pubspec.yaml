@@ -1,6 +1,6 @@
-name: ravencoin
-description: A dart Ravencoin library, similar to ravencoin.
-version: 2.1.0
+name: ravencoin_wallet
+description: A dart ravencoin transaction signing library.
+version: 3.0.0
 homepage: https://github.com/moontreeapp/ravencoin_wallet
 
 environment:

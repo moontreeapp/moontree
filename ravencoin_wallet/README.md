@@ -9,7 +9,7 @@ Released under the terms of the [MIT LICENSE](LICENSE).
 ## Examples
 
 ```dart
-import 'package:ravencoin/ravencoin.dart';
+import 'package:ravencoin_wallet/ravencoin_wallet.dart';
 import 'package:bip39/bip39.dart' as bip39;
 
 main() {
