@@ -49,14 +49,14 @@ dependencies:
   # MoonTree in-house dependencies
   raven_back:
     git: https://github.com/moontreeapp/raven_back.git
-  raven_electrum_client: ^1.2.1
+  raven_electrum: ^1.2.1
   reservoir: ^2.0.0
 
 dependency_overrides:
   raven_back:
     path: ../raven_back
     #git: https://github.com/moontreeapp/raven_back.git
-  raven_electrum_client:
+  raven_electrum:
     path: ../raven_electrum
     #git: https://github.com/moontreeapp/raven_electrum.git
   reservoir:

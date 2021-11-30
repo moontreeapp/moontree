@@ -1,5 +1,4 @@
-import 'package:raven_back/services/address.dart';
-import 'package:raven_electrum_client/raven_electrum_client.dart';
+import 'package:raven_electrum/raven_electrum.dart';
 import 'package:reservoir/reservoir.dart';
 import 'package:raven_back/raven_back.dart';
 
