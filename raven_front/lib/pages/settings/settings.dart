@@ -94,6 +94,11 @@ class Settings extends StatelessWidget {
                     var security = securities.bySymbolSecurityType
                         .getOne('MOONTREE0', SecurityType.RavenAsset)!;
                     print(security);
+                    print(security.asset);
+                    print(security.asset?.metadata);
+                    print(assets.data);
+                    print(metadatas.data);
+
                     //var meta = LogoGetter(security.metadata);
                     //print(await meta.get());
                     //print(meta.logo);

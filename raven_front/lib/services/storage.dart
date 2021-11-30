@@ -146,6 +146,8 @@ class AssetLogos extends Storage {
 
   /// usecase:
   /// Image.file(storage.readLogoFile(ipfsHash))
-  File readLogoFileNow(String filename, String path) =>
-      _localFileNow(filename, path);
+  File readLogoFileNow(String path) =>
+      //_localFileNow(filename, path);
+      //_localFileNowPath(filePath);
+      File(path);
 }

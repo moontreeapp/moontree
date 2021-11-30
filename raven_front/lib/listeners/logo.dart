@@ -7,12 +7,12 @@ import 'package:raven_mobile/services/ipfs.dart';
 
 class AssetListener {
   void init() {
-    streams.asset.added.distinctUnique().listen((Asset asset) {
-      assets.save(asset);
+    streams.asset.added.distinctUnique().listen((Asset asset) async {
+      await assets.save(asset);
       if (asset.isMaster) {
-        grabMetadataForMaster(asset);
+        await grabMetadataForMaster(asset);
       } else {
-        grabMetadataFor(asset);
+        await grabMetadataFor(asset);
       }
     });
   }
@@ -47,7 +47,7 @@ class AssetListener {
         // pull the contents from ipfs and save a metadata record
         var ipfs = IpfsMiniExplorer(asset.metadata);
         var resp = await ipfs.get();
-        metadatas.save(Metadata(
+        await metadatas.save(Metadata(
             symbol: asset.symbol,
             metadata: asset.metadata,
             data: resp,
