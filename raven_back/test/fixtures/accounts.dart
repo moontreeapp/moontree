@@ -4,8 +4,8 @@ import 'package:reservoir/map_source.dart';
 
 import 'package:raven_back/records/records.dart';
 
-MapSource<Account> accounts() {
-  return MapSource({
+Map<String, Account> accounts() {
+  return {
     'a0': Account(
       name: 'Account a0',
       accountId: 'a0',
@@ -14,7 +14,7 @@ MapSource<Account> accounts() {
       name: 'Account a1',
       accountId: 'a1',
     ),
-  });
+  };
 }
 
 

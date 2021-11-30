@@ -8,9 +8,6 @@ import 'package:raven_back/services/wallet_security_pair.dart';
 import '../fixtures/histories.dart';
 import '../fixtures/fixtures.dart' as fixtures;
 
-var USD = Security(symbol: 'USD', securityType: SecurityType.Fiat);
-var RVN = Security(symbol: 'RVN', securityType: SecurityType.Crypto);
-
 void main() async {
   setUp(fixtures.useFixtureSources);
 
@@ -33,8 +30,8 @@ void main() async {
     ];
     var pairs = securityPairsFromVoutChanges(changes);
     expect(pairs, {
-      WalletSecurityPair(wallet, RVN),
-      WalletSecurityPair(wallet, USD),
+      WalletSecurityPair(wallet, fixtures.RVN),
+      WalletSecurityPair(wallet, fixtures.USD),
     });
   });
 }

@@ -1,4 +1,5 @@
 // dart test .\test\unit\services\transaction_test.dart
+import 'package:raven_back/services/transaction.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart';
 import 'package:test/test.dart';
 
@@ -35,20 +36,20 @@ void main() async {
     test('fixture utxo set matches exptected', () {
       var utxos = balanceService.BalanceService()
           .sortedUnspents(accounts.primaryIndex.getByKeyStr('a0')[0]);
-      expect(utxos.map((utxo) => utxo.value).toList(), [10000000, 5000000]);
+      expect(utxos.map((utxo) => utxo.rvnValue).toList(), [10000000, 5000000]);
     });
 
     test('pick smallest UTXO of sufficient size', () {
       var utxos = balanceService.BalanceService().collectUTXOs(
           accounts.primaryIndex.getByKeyStr('a0')[0],
           amount: 500);
-      expect(utxos.map((utxo) => utxo.value).toList(), [5000000]);
+      expect(utxos.map((utxo) => utxo.rvnValue).toList(), [5000000]);
     });
     test('take multiple from the top', () {
       var utxos = balanceService.BalanceService().collectUTXOs(
           accounts.primaryIndex.getByKeyStr('a0')[0],
           amount: 12000000);
-      expect(utxos.map((utxo) => utxo.value).toList(), [10000000, 5000000]);
+      expect(utxos.map((utxo) => utxo.rvnValue).toList(), [10000000, 5000000]);
     });
   });
   group('TransactionService', () {
