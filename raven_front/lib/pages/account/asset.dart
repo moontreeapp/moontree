@@ -119,33 +119,30 @@ class _AssetState extends State<Asset> {
               child: TabBar(
                   tabs: [Tab(text: 'Transactions'), Tab(text: 'Metadata')]))));
 
-  /// get metadata from chain or something, store it... need a new reservoir...
-  /// interpret it correctly if it is in a recognizable format,
-  /// else present file download option
   ListView? _metadataView() {
-    if (security?.asset?.hasMetadata == null) {
+    if (security?.asset?.hasMetadata == null ||
+        security?.asset?.hasMetadata == false) {
       return null;
     }
+    var chilren = <Widget>[];
     if (security?.asset?.primaryMetadata == null) {
-      return ListView(
-          children: [SelectableText(security?.asset?.metadata ?? '')]);
-    }
-    if (security?.asset?.primaryMetadata!.kind == MetadataType.ImagePath) {
-      return ListView(children: [
+      chilren = [SelectableText(security?.asset?.metadata ?? '')];
+    } else if (security?.asset?.primaryMetadata!.kind ==
+        MetadataType.ImagePath) {
+      chilren = [
         Image.file(AssetLogos()
             .readImageFileNow(security?.asset?.primaryMetadata!.data ?? ''))
-      ]);
-    }
-    if (security?.asset?.primaryMetadata!.kind == MetadataType.JsonString) {
-      return ListView(children: [
+      ];
+    } else if (security?.asset?.primaryMetadata!.kind ==
+        MetadataType.JsonString) {
+      chilren = [SelectableText(security?.asset?.primaryMetadata!.data ?? '')];
+    } else if (security?.asset?.primaryMetadata!.kind == MetadataType.Unknown) {
+      chilren = [
+        SelectableText(security?.asset?.primaryMetadata!.metadata ?? ''),
         SelectableText(security?.asset?.primaryMetadata!.data ?? '')
-      ]);
+      ];
     }
-    //if (security?.asset?.primaryMetadata!.kind == MetadataType.Unknown) {
-    return ListView(children: [
-      SelectableText(security?.asset?.primaryMetadata!.metadata ?? ''),
-      SelectableText(security?.asset?.primaryMetadata!.data ?? '')
-    ]);
+    return ListView(padding: EdgeInsets.all(10.0), children: chilren);
   }
 
   /// different from home.sendReceiveButtons because it prefills the chosen token
