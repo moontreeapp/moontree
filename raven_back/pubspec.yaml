@@ -15,8 +15,8 @@ dependencies:
   ordered_set: ^3.1.0
   pointycastle: ^3.3.4
   quiver: ^3.0.1
-  #ravencoin: ^2.1.0
-  #raven_electrum_client: ^1.2.1
+  ravencoin_wallet: ^3.0.0
+  raven_electrum: ^2.0.0
   reservoir: ^4.0.1
   rxdart: ^0.27.1
   sorted_list: ^1.0.0
@@ -36,7 +36,7 @@ dev_dependencies:
 dependency_overrides:
   reservoir:
     path: ../reservoir
-  raven_electrum_client:
+  raven_electrum:
     path: ../raven_electrum
-  ravencoin:
+  ravencoin_wallet:
     path: ../ravencoin_wallet

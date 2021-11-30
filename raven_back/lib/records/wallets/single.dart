@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:raven_back/services/wallet/constants.dart';
 import 'package:raven_back/utils/enum.dart';
-import 'package:ravencoin/ravencoin.dart';
+import 'package:ravencoin_wallet/ravencoin_wallet.dart';
 
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/records/cipher_update.dart';

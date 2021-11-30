@@ -1,6 +1,6 @@
 import 'package:rxdart/rxdart.dart';
 
-import 'package:raven_electrum_client/raven_electrum_client.dart';
+import 'package:raven_electrum/raven_electrum.dart';
 
 class ClientStreams {
   final client = ravenClientSubject$;

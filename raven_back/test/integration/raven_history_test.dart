@@ -3,7 +3,7 @@
 import 'package:raven_back/utils/parse.dart';
 import 'package:test/test.dart';
 
-import 'package:raven_electrum_client/raven_electrum_client.dart';
+import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/services/transaction_maker.dart' as tx;
 
 const connectionTimeout = Duration(seconds: 5);

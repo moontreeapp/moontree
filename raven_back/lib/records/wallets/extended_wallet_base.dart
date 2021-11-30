@@ -2,8 +2,8 @@ import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:convert/convert.dart' show hex;
-import 'package:ravencoin/ravencoin.dart' show WalletBase, ECPair;
-import 'package:ravencoin/ravencoin.dart' as rc;
+import 'package:ravencoin_wallet/ravencoin_wallet.dart' show WalletBase, ECPair;
+import 'package:ravencoin_wallet/ravencoin_wallet.dart' as rc;
 
 extension ExtendedWalletBase on WalletBase {
   Uint8List get outputScript {

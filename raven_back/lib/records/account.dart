@@ -1,7 +1,7 @@
 // dart run build_runner build
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import 'package:ravencoin/ravencoin.dart' show NetworkType;
+import 'package:ravencoin_wallet/ravencoin_wallet.dart' show NetworkType;
 
 import 'package:raven_back/records/net.dart';
 

@@ -5,7 +5,7 @@ import 'package:raven_back/records/net.dart';
 import 'package:raven_back/security/security.dart';
 import 'package:raven_back/services/wallet/constants.dart';
 import 'package:raven_back/utils/enum.dart';
-import 'package:ravencoin/ravencoin.dart';
+import 'package:ravencoin_wallet/ravencoin_wallet.dart';
 
 export 'extended_wallet_base.dart';
 

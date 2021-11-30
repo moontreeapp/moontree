@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:raven_back/security/cipher_base.dart';
-import 'package:ravencoin/ravencoin.dart' show HDWallet;
+import 'package:ravencoin_wallet/ravencoin_wallet.dart' show HDWallet;
 
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:raven_back/utils/hex.dart' as hex;

@@ -1,4 +1,4 @@
-import 'package:ravencoin/ravencoin.dart';
+import 'package:ravencoin_wallet/ravencoin_wallet.dart';
 
 import 'package:raven_back/raven_back.dart';
 

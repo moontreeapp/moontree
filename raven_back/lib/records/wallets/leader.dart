@@ -3,7 +3,7 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/wallet/constants.dart';
 import 'package:raven_back/utils/enum.dart';
 import 'package:raven_back/utils/seed_wallet.dart';
-import 'package:ravencoin/ravencoin.dart';
+import 'package:ravencoin_wallet/ravencoin_wallet.dart';
 
 import '../_type_id.dart';
 

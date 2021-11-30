@@ -1,5 +1,5 @@
 /* calculates fees for transactions of various types */
-import 'package:ravencoin/ravencoin.dart';
+import 'package:ravencoin_wallet/ravencoin_wallet.dart';
 
 // 100,000,000 sats per RVN
 const SATS_PER_RVN = 100000000;

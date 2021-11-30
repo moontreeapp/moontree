@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:raven_back/records/security.dart';
 import 'package:raven_back/utils/exceptions.dart';
-import 'package:raven_electrum_client/raven_electrum_client.dart';
+import 'package:raven_electrum/raven_electrum.dart';
 
 import '_type_id.dart';
 

@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:raven_back/raven_back.dart';
-import 'package:ravencoin/ravencoin.dart' as ravencoin;
+import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 import 'package:tuple/tuple.dart';
 
 import 'transaction/fee.dart';

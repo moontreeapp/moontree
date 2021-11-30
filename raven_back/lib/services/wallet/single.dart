@@ -1,5 +1,6 @@
 import 'package:raven_back/utils/hex.dart';
-import 'package:ravencoin/ravencoin.dart' show KPWallet, NetworkType, ECPair;
+import 'package:ravencoin_wallet/ravencoin_wallet.dart'
+    show KPWallet, NetworkType, ECPair;
 
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/security/cipher_base.dart';

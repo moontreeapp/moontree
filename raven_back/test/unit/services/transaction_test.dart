@@ -1,5 +1,5 @@
 // dart test .\test\unit\services\transaction_test.dart
-import 'package:ravencoin/ravencoin.dart';
+import 'package:ravencoin_wallet/ravencoin_wallet.dart';
 import 'package:test/test.dart';
 
 import 'package:raven_back/services/balance.dart' as balanceService;

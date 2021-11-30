@@ -1,7 +1,8 @@
 // dart test test/unit/raven_tx_test.dart
 
 import 'package:test/test.dart';
-import 'package:ravencoin/ravencoin.dart' show HDWallet, TransactionBuilder;
+import 'package:ravencoin_wallet/ravencoin_wallet.dart'
+    show HDWallet, TransactionBuilder;
 
 import 'package:raven_back/records/net.dart' show networks, Net;
 import 'package:raven_back/records/wallets/extended_wallet_base.dart';

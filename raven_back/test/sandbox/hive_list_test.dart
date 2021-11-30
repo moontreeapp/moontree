@@ -1,5 +1,5 @@
 // dart --no-sound-null-safety test test/unit/hive_list_test.dart --concurrency=1
-import 'package:raven_electrum_client/raven_electrum_client.dart';
+import 'package:raven_electrum/raven_electrum.dart';
 import 'package:test/test.dart';
 import 'package:hive/hive.dart';
 import 'package:raven_back/records/records.dart';

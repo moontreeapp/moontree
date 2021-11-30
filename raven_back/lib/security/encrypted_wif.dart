@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:ravencoin/ravencoin.dart' show KPWallet;
+import 'package:ravencoin_wallet/ravencoin_wallet.dart' show KPWallet;
 import 'package:bs58check/bs58check.dart' as bs58;
 
 import 'package:raven_back/security/cipher_base.dart';
