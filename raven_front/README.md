@@ -1,16 +1,39 @@
-# raven_mobile
+# raven_front
 
-A new Flutter project.
+Ravencoin mobile app for Android and iOS, using Flutter.
 
-## Getting Started
+Note that the "back end" is at https://github.com/moontreeapp/raven_back.
 
-This project is a starting point for a Flutter application.
+## Development
 
-A few resources to get you started if this is your first Flutter project:
+You will need the latest Flutter development kit.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
+For help getting started with Flutter, view our 
+[online documentation](https://flutter.dev/docs), which offers tutorials, 
 samples, guidance on mobile development, and a full API reference.
+
+Next, create an empty directory. It will hold the following projects:
+
+- raven_front
+- raven_back
+- raven_electrum
+- ravencoin_wallet
+- reservoir
+
+Then, clone each project inside the empty directory:
+
+```
+git clone git@github.com:moontreeapp/raven_front.git
+git clone git@github.com:moontreeapp/raven_back.git
+git clone git@github.com:moontreeapp/raven_electrum.git
+git clone git@github.com:moontreeapp/ravencoin_wallet.git
+git clone git@github.com:moontreeapp/reservoir.git
+```
+
+Finally, start your Android or IOS emulator, and run the app on your emulator:
+
+```
+cd raven_front
+flutter run
+```
+
