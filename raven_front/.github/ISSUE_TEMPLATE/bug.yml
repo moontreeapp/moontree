@@ -2,7 +2,6 @@ name: Bug
 description: File a bug report
 title: '[Bug]: '
 labels: ['Bug']
-projects: ['MoonTree']
 body:
   - type: markdown
     attributes:
