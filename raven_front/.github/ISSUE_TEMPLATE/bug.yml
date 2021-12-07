@@ -46,6 +46,5 @@ body:
       label: Screenshots
       description: Add screenshots to help explain the problem.
       placeholder: Drag-and-drop screenshots or screen recordings here!
-      value: 'Show us the problem'
     validations:
       required: false
