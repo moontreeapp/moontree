@@ -21,10 +21,7 @@ body:
       label: To Reproduce
       description: Steps to reproduce the behavior.
       placeholder: What steps did you take!
-      value:
-      "1. Go To '...'
-      2. Tap On '...'
-      3. See Error"
+      value: "1. Go To '...'\ 2. Tap On '...'\ 3. See Error"
     validations:
       required: true
   - type: textarea
