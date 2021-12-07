@@ -1,5 +1,6 @@
 name: Bug
 description: File a bug report
+placeholder: A short title for this bug
 labels: ['Bug']
 body:
   - type: markdown
