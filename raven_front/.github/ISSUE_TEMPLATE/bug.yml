@@ -1,0 +1,38 @@
+name: Bug
+description: File a bug report
+title: "[Bug]: "
+labels: ["bug"]
+assignees:
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: describe-the-bug
+    attributes:
+      label: Describe The Bug
+      description: A clear and concise description of the bug.
+      placeholder: Tell us what you see!
+      value: "A bug happened!"
+    validations:
+      required: true
+  - type: textarea
+  id: to-reproduce
+  attributes:
+    label: To Reproduce
+    description: Steps to reproduce the behavior.
+    placeholder: What steps did you take!
+    value: "1. Go To '...'  2. Tap On '...'  3. See Error"
+  validations:
+    required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: A clear and concise description of what you expected to happen.
+      placeholder: Tell us what you expected!
+      value: "I expected..."
+    validations:
+      required: true
+
