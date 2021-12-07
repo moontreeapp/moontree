@@ -108,7 +108,6 @@ class _HoldingList extends State<HoldingList> {
                     'holding': holding,
                     'walletId': wallet?.walletId ?? null
                   }), // wallet transactions are on wallet screen, so remove wallet id here.
-          onLongPress: _toggleUSD,
           leading: Container(
               height: 50,
               width: 50,
@@ -147,7 +146,6 @@ class _HoldingList extends State<HoldingList> {
     if (rvnHolding.isEmpty) {
       rvnHolding.add(ListTile(
           onTap: () {},
-          onLongPress: _toggleUSD,
           title: Text('RVN', style: Theme.of(context).textTheme.bodyText1),
           trailing: Text(showUSD ? '\$ 0' : '0',
               style: TextStyle(color: Theme.of(context).fine)),

@@ -20,7 +20,7 @@ class Settings extends StatelessWidget {
                 onPressed: (BuildContext context) =>
                     Navigator.pushNamed(context, '/settings/import')),
             SettingsTile(
-                title: 'Export / Backup',
+                title: 'Export (Backup)',
                 leading: components.icons.export,
                 onPressed: (BuildContext context) => Navigator.pushNamed(
                     context, '/settings/export',
