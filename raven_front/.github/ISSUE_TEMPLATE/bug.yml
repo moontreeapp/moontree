@@ -33,6 +33,12 @@ body:
     validations:
       required: true
   - type: textarea
+    id: log-output
+    attributes:
+      label: Log Output
+      description: If applicable, provide relevant log output. No need for backticks here.
+      render: shell
+  - type: textarea
     id: additional-context
     attributes:
       label: Additional Context
