@@ -65,26 +65,17 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          appBar: balanceHeader(),
-          drawer: accounts.data.length > 1 ? accountsView() : null,
-          body: TabBarView(children: <Widget>[
-            NotificationListener<UserScrollNotification>(
-              onNotification: visibilityOfSendReceive,
-              child: HoldingList(),
-            ),
-            NotificationListener<UserScrollNotification>(
-              onNotification: visibilityOfSendReceive,
-              child: TransactionList(),
-            ),
-          ]),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: isFabVisible ? sendReceiveButtons() : null,
-          //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
-        ));
+    return Scaffold(
+      appBar: balanceHeader(),
+      drawer: accounts.data.length > 1 ? accountsView() : null,
+      body: NotificationListener<UserScrollNotification>(
+        onNotification: visibilityOfSendReceive,
+        child: HoldingList(),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: isFabVisible ? sendReceiveButtons() : null,
+      //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
+    );
   }
 
   bool visibilityOfSendReceive(notification) {
@@ -99,45 +90,40 @@ class _HomeState extends State<Home> {
   PreferredSize balanceHeader() => PreferredSize(
       preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
       child: AppBar(
-          automaticallyImplyLeading: true,
-          actions: <Widget>[
-            components.status,
-            indicators.process,
-            indicators.client,
-            Padding(
-                padding: EdgeInsets.only(right: 20.0),
-                child: components.buttons.settings(context))
-          ],
-          elevation: 2,
-          centerTitle: false,
-          title: SizedBox(
-            height: 32,
-            //child: Image.asset('assets/logo/moontree_logo.png'),
-            //child: Image.asset('assets/logo/moontree_eclipse_dark_transparent.png'),
-            child: accounts.data.length > 1
-                ? Row(children: [
-                    Text(Current.account.name),
-                    Image.asset('assets/rvn256.png')
-                  ])
-                : Image.asset('assets/rvn256.png'),
-            //child: Image.asset('assets/rvnonly.png'),
-          ),
-          ////Text(accounts.data.length > 1 ? Current.account.name : 'Wallet'),
-          flexibleSpace: Container(
-            alignment: Alignment.center,
-            // balance view should listen for valid usd
-            // show spinnter until valid usd rate appears, then rvnUSD
-            child: Text(
-                // this kinda thing should be abstracted:
-                '\n${Current.balanceUSD != null ? '' : ''} ${Current.balanceUSD?.valueUSD ?? Current.balanceRVN.valueRVN}',
-                style: Theme.of(context).textTheme.headline3),
-          ),
-          bottom: PreferredSize(
-              preferredSize: Size.fromHeight(50.0),
-              child: TabBar(tabs: [
-                Tab(text: 'Holdings'),
-                Tab(text: 'All Transactions')
-              ]))));
+        automaticallyImplyLeading: true,
+        actions: <Widget>[
+          components.status,
+          indicators.process,
+          indicators.client,
+          Padding(
+              padding: EdgeInsets.only(right: 20.0),
+              child: components.buttons.settings(context))
+        ],
+        elevation: 2,
+        centerTitle: false,
+        title: SizedBox(
+          height: 32,
+          //child: Image.asset('assets/logo/moontree_logo.png'),
+          //child: Image.asset('assets/logo/moontree_eclipse_dark_transparent.png'),
+          child: accounts.data.length > 1
+              ? Row(children: [
+                  Text(Current.account.name),
+                  Image.asset('assets/rvn256.png')
+                ])
+              : Image.asset('assets/rvn256.png'),
+          //child: Image.asset('assets/rvnonly.png'),
+        ),
+        ////Text(accounts.data.length > 1 ? Current.account.name : 'Wallet'),
+        flexibleSpace: Container(
+          alignment: Alignment.center,
+          // balance view should listen for valid usd
+          // show spinnter until valid usd rate appears, then rvnUSD
+          child: Text(
+              // this kinda thing should be abstracted:
+              '\n${Current.balanceUSD != null ? '' : ''} ${Current.balanceUSD?.valueUSD ?? Current.balanceRVN.valueRVN}',
+              style: Theme.of(context).textTheme.headline3),
+        ),
+      ));
 
   Drawer accountsView() => Drawer(
           child: ListView(padding: EdgeInsets.zero, children: <Widget>[
