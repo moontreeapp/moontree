@@ -29,3 +29,12 @@ body:
       description: Add any other context about the story here.
     validations:
       required: false
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks For This Story
+      description: Add any tasks that are required for this story.
+      placeholder: Create a list of tasks!
+      value: 'https://github.com/moontreeapp/raven_front/issues/???'
+    validations:
+      required: false
