@@ -42,7 +42,7 @@ body:
     id: bugs
     attributes:
       label: Bugs For This Story
-      description: Add any bugs that are required for this story.
+      description: Add any bugs that are replaced/fixed by this story.
       placeholder: Create a list of bugs!
       value: ' - [ ] https://github.com/moontreeapp/raven_front/issues/???'
     validations:
