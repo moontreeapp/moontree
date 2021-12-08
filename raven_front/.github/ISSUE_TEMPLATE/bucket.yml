@@ -1,0 +1,40 @@
+name: Bucket
+description: Suggest a broad idea for this project
+labels: ['Bucket']
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to suggest a broad idea!
+  - type: textarea
+    id: broad-idea
+    attributes:
+      label: Describe The Broad Idea
+      description: A clear and concise description of what you want to happen.
+      placeholder: Tell us what you want to see!
+      value: 'As a... I want... So that...'
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives You've Considered
+      description: A clear and concise description of any alternative you've considered.
+      placeholder: Tell us some alternatives!
+    validations:
+      required: false
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the bucket here.
+    validations:
+      required: false
+  - type: textarea
+    id: story
+    attributes:
+      label: Stories For This Bucket
+      description: Add any stories that are required for this bucket.
+      placeholder: Create a list of stories!
+      value: ' - [ ] https://github.com/moontreeapp/raven_front/issues/???'
+    validations:
+      required: false
