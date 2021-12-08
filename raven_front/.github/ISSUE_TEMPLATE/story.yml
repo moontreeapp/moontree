@@ -38,3 +38,12 @@ body:
       value: ' - [ ] https://github.com/moontreeapp/raven_front/issues/???'
     validations:
       required: false
+  - type: textarea
+    id: bugs
+    attributes:
+      label: Bugs For This Story
+      description: Add any bugs that are required for this story.
+      placeholder: Create a list of bugs!
+      value: ' - [ ] https://github.com/moontreeapp/raven_front/issues/???'
+    validations:
+      required: false
