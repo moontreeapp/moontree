@@ -225,8 +225,9 @@ class _ReceiveState extends State<Receive> {
           ]);
 
   ElevatedButton shareAddressButton() => ElevatedButton.icon(
-      icon: Icon(Icons.share),
-      label: Text('Share'),
-      onPressed: () => Share.share(uri),
-      style: components.buttonStyles.curvedSides);
+        icon: Icon(Icons.share),
+        label: Text('Share'),
+        onPressed: () => Share.share(uri),
+        //style: components.buttonStyles.curvedSides
+      );
 }

@@ -50,7 +50,7 @@ class _ImportState extends State<Import> {
           body: body(),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: importWaysButtons(context),
+          floatingActionButton: submitButton(context),
         ));
   }
 
@@ -103,20 +103,21 @@ class _ImportState extends State<Import> {
             ],
           ));
 
-  TextButton submitButton() {
+  ElevatedButton submitButton(context) {
     var label = 'Import into ' + account.name + ' account';
     if (importEnabled) {
-      return TextButton.icon(
+      return ElevatedButton.icon(
           onPressed: () => attemptImport(),
           icon: components.icons.import,
-          label: Text(label,
-              style: TextStyle(color: Theme.of(context).primaryColor)));
+          label: Text(label));
     }
-    return TextButton.icon(
+    return ElevatedButton.icon(
         onPressed: () {},
         icon: components.icons.importDisabled(context),
-        label: Text(label,
-            style: TextStyle(color: Theme.of(context).disabledColor)));
+        label: Text(label),
+        style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(
+                Theme.of(context).disabledColor)));
   }
 
   void enableImport() {
@@ -247,7 +248,7 @@ class _ImportState extends State<Import> {
                 onChanged: (value) => enableImport(),
                 onEditingComplete: () async => await attemptImport(),
               ),
-              submitButton(),
+              importWaysButtons(context),
               Text(importFormatDetected),
             ],
           ),
@@ -267,14 +268,13 @@ class _ImportState extends State<Import> {
         //    },
         //    style: components.buttonStyles.leftSideCurved),
         ElevatedButton.icon(
-            icon: Icon(Icons.upload_file),
-            label: Text('File'),
-            onPressed: () async {
-              var resp = await storage.readFromFilePickerRaw() ?? '';
-              //words.text = resp;
-              await attemptImport(resp);
-            },
-            //style: components.buttonStyles.rightSideCurved(context))
-            style: components.buttonStyles.curvedSides)
+          icon: Icon(Icons.upload_file),
+          label: Text('File'),
+          onPressed: () async {
+            var resp = await storage.readFromFilePickerRaw() ?? '';
+            await attemptImport(resp);
+          },
+          //style: components.buttonStyles.curvedSides
+        )
       ]);
 }

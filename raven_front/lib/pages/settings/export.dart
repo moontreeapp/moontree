@@ -53,6 +53,8 @@ class _ExportState extends State<Export> {
     return Scaffold(
       appBar: components.headers.back(context, 'Export (Backup)'),
       body: body(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: exportButton,
     );
   }
 
@@ -60,10 +62,6 @@ class _ExportState extends State<Export> {
       account != null ? 'Account: ' + account!.name : 'All Accounts';
   String get _accountId =>
       account != null ? account!.accountId : 'All Accounts';
-
-  //Future<File> _download() async => await writeToExport(
-  //    filename: _accountId + '-' + DateTime.now().toString(),
-  //    json: services.wallet.export.structureForExport(account));
 
   Future<File> _download() async => await storage.writeExport(
       filename: _accountId + '-' + DateTime.now().toString(),
@@ -75,7 +73,15 @@ class _ExportState extends State<Export> {
               services.cipher.currentCipher!)
           : jsonEncode(services.wallet.export.structureForExport(account)));
 
-  // todo: fix visual of exported backups, add behavior for each like share
+  Widget get exportButton => ElevatedButton.icon(
+      icon: components.icons.export,
+      onPressed: () async {
+        file = await _download();
+        setState(() {});
+      },
+      label: Text('Export ' + _accountName));
+
+  // todo: fix visual of exported backups
   Future get existingFiles async {
     print(await storage.listDir());
     print([
@@ -101,17 +107,19 @@ class _ExportState extends State<Export> {
                         'For added security, it is advised to set a password '
                         'before exporting. To set a password, just click here.'))
             ],
-            ...[
-              if (services.password.required)
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Checkbox(
-                      value: encryptExport,
-                      onChanged: (_) => setState(() {
-                            encryptExport = !encryptExport;
-                          })),
-                  Text('Encrypt this backup')
-                ])
-            ],
+
+            /// we shouldn't give the option, because if users want to backup without encryption they can get the primary keys or seed phrases manually
+            //...[
+            //  if (services.password.required)
+            //    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            //      Checkbox(
+            //          value: encryptExport,
+            //          onChanged: (_) => setState(() {
+            //                encryptExport = !encryptExport;
+            //              })),
+            //      Text('Encrypt this backup')
+            //    ])
+            //],
             SizedBox(height: 25),
             ...[
               if (account != null && accounts.length > 1)
@@ -125,15 +133,6 @@ class _ExportState extends State<Export> {
             ],
             SizedBox(height: 25),
             Center(
-                child: TextButton.icon(
-                    icon: components.icons.export,
-                    onPressed: () async {
-                      file = await _download();
-                      //print(await storage.readExport(file: file));
-                      setState(() {});
-                    },
-                    label: Text('Export ' + _accountName))),
-            Center(
                 child: Visibility(
                     visible: true,
                     child: Padding(
@@ -144,9 +143,11 @@ class _ExportState extends State<Export> {
                                 child: Column(children: [
                                 Text('file saved to:'),
                                 Text('${file?.path}'),
-                                TextButton(
+                                SizedBox(height: 25),
+                                ElevatedButton.icon(
                                   onPressed: () => storage.share(file!.path),
-                                  child: Text('Share'),
+                                  icon: Icon(Icons.share),
+                                  label: Text('Share'),
                                 ),
                               ]))))),
             //...(getExisting),
