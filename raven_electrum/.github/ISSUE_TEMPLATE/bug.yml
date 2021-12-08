@@ -53,3 +53,12 @@ body:
       placeholder: Drag-and-drop screenshots or screen recordings here!
     validations:
       required: false
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks For This Bug
+      description: Add any tasks that are required for this bug.
+      placeholder: Create a list of tasks!
+      value: ' - [ ] https://github.com/moontreeapp/raven_front/issues/???'
+    validations:
+      required: false
