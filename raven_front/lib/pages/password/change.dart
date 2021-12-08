@@ -42,21 +42,27 @@ class _ChangePasswordState extends State<ChangePassword> {
             services.password.required ? 'Change Password' : 'Set Password'),
         body: body(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: submitButton(),
+        floatingActionButton: submitButton(context),
       ));
 
-  TextButton submitButton() => TextButton.icon(
+  ElevatedButton submitButton(context) => ElevatedButton.icon(
       onPressed: validateExistingCondition(validatedExisting) &&
               validateComplexityCondition(validatedComplexity)
           ? () async => await submit()
           : () {},
       icon: Icon(Icons.login),
+      label: Text('Submit'),
       style: validateExistingCondition(validatedExisting) &&
               validateComplexityCondition(validatedComplexity)
-          ? components.buttonStyles.curvedSides
-          : components.buttonStyles.disabledCurvedSides(context),
-      label: Text('Submit',
-          style: TextStyle(color: Theme.of(context).primaryColor)));
+          ? null
+          : ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+                  Theme.of(context).disabledColor))
+      //style: validateExistingCondition(validatedExisting) &&
+      //        validateComplexityCondition(validatedComplexity)
+      //    ? components.buttonStyles.curvedSides
+      //    : components.buttonStyles.disabledCurvedSides(context)
+      );
 
   bool validateExistingCondition([validatedExisting]) =>
       services.password.required
@@ -116,38 +122,28 @@ class _ChangePasswordState extends State<ChangePassword> {
         padding: EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            SizedBox(height: 30),
-            Column(children: [
-              services.password.required
-                  ? existingPasswordField
-                  : Text('Setting a password is highly recommended.\n\n'
-                      'If your device is compromized, wallets and backups are '
-                      'unencrypt and vulnerable until a password is set. '
-                      'Previously created backups should be removed after a '
-                      'password is set.\n\n'
-                      'WARNING: Since all data is local to your device there '
-                      'is no password recovery process available.\n\n'
-                      'YOU MUST BACKUP YOUR OWN PASSWORD.'),
-              SizedBox(height: 5),
-              Text(existingNotification,
-                  style: TextStyle(
-                      color: validatedExisting
-                          ? Theme.of(context).good
-                          : Theme.of(context).bad)),
-            ]),
-            Column(children: [
-              newPasswordField,
-              SizedBox(height: 5),
-              Text(newNotification,
-                  style: TextStyle(
-                      color:
-                          validatedComplexity == null || !validatedComplexity!
-                              ? Theme.of(context).bad
-                              : Theme.of(context).good))
-            ]),
-            SizedBox(height: 150),
+            SizedBox(height: 20),
+            services.password.required
+                ? existingPasswordField
+                : Text('Setting a password is highly recommended.\n\n'
+                    'WARNING: Since all data is local to your device there '
+                    'is no password recovery process available.\n\n'
+                    'YOU MUST BACKUP YOUR OWN PASSWORD.'),
+            SizedBox(height: 5),
+            Text(existingNotification,
+                style: TextStyle(
+                    color: validatedExisting
+                        ? Theme.of(context).good
+                        : Theme.of(context).bad)),
+            newPasswordField,
+            SizedBox(height: 5),
+            Text(newNotification,
+                style: TextStyle(
+                    color: validatedComplexity == null || !validatedComplexity!
+                        ? Theme.of(context).bad
+                        : Theme.of(context).good))
           ],
         ));
   }

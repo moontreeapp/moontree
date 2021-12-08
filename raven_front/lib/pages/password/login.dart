@@ -10,6 +10,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   var password = TextEditingController();
   var passwordVisible = false;
+  bool buttonEnabled = false;
 
   @override
   void initState() {
@@ -33,11 +34,15 @@ class _LoginState extends State<Login> {
         floatingActionButton: submitButton(),
       ));
 
-  TextButton submitButton() => TextButton.icon(
+  ElevatedButton submitButton() => ElevatedButton.icon(
       onPressed: () async => await submit(),
       icon: Icon(Icons.login),
-      label: Text('Login',
-          style: TextStyle(color: Theme.of(context).primaryColor)));
+      label: Text('Login'),
+      style: buttonEnabled
+          ? null
+          : ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+                  Theme.of(context).disabledColor)));
 
   Column body() => Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -72,6 +77,9 @@ class _LoginState extends State<Login> {
 
   Future submit({bool showFailureMessage = true}) async {
     if (services.password.validate.password(password.text)) {
+      setState(() {
+        buttonEnabled = true;
+      });
       FocusScope.of(context).unfocus();
       // create ciphers for wallets we have
       services.cipher.initCiphers(altPassword: password.text);
@@ -80,6 +88,7 @@ class _LoginState extends State<Login> {
       services.password.broadcastLogin;
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
     } else {
+      buttonEnabled = false;
       if (showFailureMessage) {
         var used = services.password.validate.previouslyUsed(password.text);
         failureMessage(used == null

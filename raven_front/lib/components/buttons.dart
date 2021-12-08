@@ -42,9 +42,8 @@ class ButtonComponents {
               ? () {}
               : () => Navigator.pushNamed(context, '/send',
                   arguments: {'symbol': symbol}),
-          style: disabled
-              ? components.buttonStyles.rightSideCurved(context, disabled: true)
-              : components.buttonStyles.rightSideCurved(context));
+          style: components.buttonStyles
+              .rightSideCurved(context, disabled: disabled));
 
   ElevatedButton getRVN(BuildContext context) => ElevatedButton(
         onPressed: () {/* link to coinbase */},
