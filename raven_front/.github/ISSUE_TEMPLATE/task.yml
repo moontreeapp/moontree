@@ -1,5 +1,5 @@
 name: Task
-description: Add a new task for a story
+description: Add a new task for this project
 labels: ['Task']
 body:
   - type: markdown
