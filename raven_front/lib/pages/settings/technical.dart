@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/services/account_creation.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/transform.dart';
 
@@ -131,63 +132,6 @@ class _TechnicalViewState extends State<TechnicalView> {
         ]
       : [];
 
-  Future _validateAndCreateAccount() async {
-    var desiredAccountName = removeChars(accountName.text.trim());
-    accountName.text = desiredAccountName;
-    if (desiredAccountName == '') {
-      alertFailure(
-          headline: 'Unable to create account',
-          msg: 'Please enter new account name');
-      return;
-    }
-    if (accounts.data
-        .map((account) => account.name)
-        .toList()
-        .contains(desiredAccountName)) {
-      alertFailure(
-          headline: 'Unable to create account',
-          msg:
-              'Account name, "$desiredAccountName" is already taken. Please enter a uinque account name.');
-      return;
-    }
-    // todo replace with a legit spinner, and reduce amount of time it's waiting
-    showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-            title: Text('Generating Account...'),
-            content:
-                Text('Please wait, generating a new account with a new default '
-                    'wallet can take several seconds...')));
-    // this is used to get the please wait message to show up
-    // it needs enough time to display the message
-    await Future.delayed(const Duration(milliseconds: 150));
-    var account = await services.account.createSave(desiredAccountName);
-    await settings.save(
-        Setting(name: SettingName.Account_Current, value: account.accountId));
-    Navigator.of(context).pop();
-    desiredAccountName = '';
-    accountName.text = '';
-  }
-
-  List<Widget> _createNewAcount() => [
-        SizedBox(height: 30.0),
-        ListTile(
-          onTap: () {}, //async => _validateAndCreateAccount(),
-          title: TextField(
-            readOnly: false,
-            controller: accountName,
-            decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Create Account',
-                hintText: 'Hodl'),
-            onSubmitted: (_) async => _validateAndCreateAccount(),
-          ),
-          trailing: IconButton(
-              onPressed: () async => _validateAndCreateAccount(),
-              icon: Icon(Icons.add, size: 26.0, color: Colors.grey.shade800)),
-        )
-      ];
-
   Card _wallet(BuildContext context, Wallet wallet) => Card(
       margin: const EdgeInsets.fromLTRB(40.0, 0.0, 10.0, 5),
       child: Padding(
@@ -298,7 +242,7 @@ class _TechnicalViewState extends State<TechnicalView> {
                 onAcceptWithDetails: (details) => _moveWallet(details, account),
               ),
             ],
-            ..._createNewAcount(),
+            ...createNewAcount(context, accountName),
           ]);
 
   // unused
@@ -313,19 +257,4 @@ class _TechnicalViewState extends State<TechnicalView> {
                   onPressed: () => Navigator.of(context).pop())
             ],
           ));
-
-  Future alertFailure(
-          {String headline = 'Unable to create account',
-          String msg = 'Please enter account name'}) =>
-      showDialog(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-                title: Text(headline),
-                content: Text(msg),
-                actions: [
-                  TextButton(
-                      child: Text('ok'),
-                      onPressed: () => Navigator.of(context).pop())
-                ],
-              ));
 }

@@ -51,7 +51,7 @@ class _ExportState extends State<Export> {
           child: Text('get'))
     ];
     return Scaffold(
-      appBar: components.headers.back(context, 'Export (Backup)'),
+      appBar: components.headers.back(context, 'Export'),
       body: body(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: exportButton,

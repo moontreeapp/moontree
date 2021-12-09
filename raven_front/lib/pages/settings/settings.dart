@@ -1,3 +1,6 @@
+/// this page is deprecated as we have moved settings back to the drawer.
+/// Here for reference, we'll remove when we're sure we like it this way.
+
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';

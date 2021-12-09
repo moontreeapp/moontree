@@ -110,9 +110,6 @@ class _SendState extends State<Send> {
             components.status,
             indicators.process,
             indicators.client,
-            Padding(
-                padding: EdgeInsets.only(right: 20.0),
-                child: components.buttons.settings(context))
           ],
           title: Text('Send'),
           flexibleSpace: Container(

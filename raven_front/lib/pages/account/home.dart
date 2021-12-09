@@ -8,6 +8,9 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/indicators/indicators.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/theme.dart';
+import 'package:raven_front/services/account_creation.dart';
+import 'package:settings_ui/settings_ui.dart';
+import 'package:raven_back/utils/database.dart' as ravenDatabase;
 
 class Home extends StatefulWidget {
   @override
@@ -95,89 +98,244 @@ class _HomeState extends State<Home> {
           components.status,
           indicators.process,
           indicators.client,
-          Padding(
-              padding: EdgeInsets.only(right: 20.0),
-              child: components.buttons.settings(context))
         ],
         elevation: 2,
         centerTitle: false,
         title: SizedBox(
           height: 32,
-          //child: Image.asset('assets/logo/moontree_logo.png'),
-          //child: Image.asset('assets/logo/moontree_eclipse_dark_transparent.png'),
-          child: accounts.data.length > 1
-              ? Row(children: [
-                  Text(Current.account.name),
-                  Image.asset('assets/rvn256.png')
-                ])
-              : Image.asset('assets/rvn256.png'),
-          //child: Image.asset('assets/rvnonly.png'),
+          child: Image.asset('assets/rvn256.png'),
         ),
-        ////Text(accounts.data.length > 1 ? Current.account.name : 'Wallet'),
         flexibleSpace: Container(
-          alignment: Alignment.center,
-          // balance view should listen for valid usd
-          // show spinnter until valid usd rate appears, then rvnUSD
-          child: Text(
-              // this kinda thing should be abstracted:
-              '\n${Current.balanceUSD != null ? '' : ''} ${Current.balanceUSD?.valueUSD ?? Current.balanceRVN.valueRVN}',
-              style: Theme.of(context).textTheme.headline3),
-        ),
+            alignment: Alignment.center,
+            // balance view should listen for valid usd
+            // show spinnter until valid usd rate appears, then rvnUSD
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(accounts.data.length > 1 ? Current.account.name : 'Wallet',
+                    style: Theme.of(context).textTheme.headline3),
+                Text(
+                    // this kinda thing should be abstracted:
+                    '\n${Current.balanceUSD != null ? '' : ''} ${Current.balanceUSD?.valueUSD ?? Current.balanceRVN.valueRVN}',
+                    style: Theme.of(context).textTheme.headline2),
+              ],
+            )),
       ));
 
   Drawer accountsView() => Drawer(
-          child: ListView(padding: EdgeInsets.zero, children: <Widget>[
-        DrawerHeader(
-            decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text('Accounts',
-                      style: Theme.of(context).textTheme.headline5),
-                  Padding(
-                      padding: EdgeInsets.only(right: 20.0),
-                      child: GestureDetector(
-                          onTap: () => Navigator.pushNamed(
-                              context, '/settings/technical'),
-                          child: Icon(Icons.more_vert,
-                              size: 26.0, color: Colors.grey.shade200)))
-                ])),
-        Column(children: <Widget>[
-          for (var account in accounts.data) ...[
-            ListTile(
-                onTap: () async {
-                  await settings.setCurrentAccountId(account.accountId);
-                  accountName.text = '';
-                  Navigator.pop(context);
-                },
-                title: Text(account.accountId + ' ' + account.name,
-                    style: Theme.of(context).textTheme.bodyText1),
-                leading: components.icons.assetAvatar('RVN')),
-            Divider(height: 20, thickness: 2, indent: 5, endIndent: 5)
+        child: ListView(
+          padding: EdgeInsets.zero,
+          shrinkWrap: true,
+          children: <Widget>[
+            DrawerHeader(
+                decoration:
+                    BoxDecoration(color: Theme.of(context).primaryColor),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(Current.account.name,
+                              style: Theme.of(context).textTheme.headline5),
+                          IconButton(
+                            icon: Icon(Icons.arrow_drop_down_sharp,
+                                size: 26.0, color: Colors.grey.shade200),
+                            onPressed: () {
+                              showModalBottomSheet<void>(
+                                  context: context,
+                                  enableDrag: true,
+                                  builder: (BuildContext context) =>
+                                      ListView(children: <Widget>[
+                                        ...[
+                                          ...createNewAcount(
+                                              context, accountName),
+                                          Divider(
+                                              height: 20,
+                                              thickness: 2,
+                                              indent: 5,
+                                              endIndent: 5)
+                                        ],
+                                        for (var account in accounts.data) ...[
+                                          ListTile(
+                                              onTap: () async {
+                                                await settings
+                                                    .setCurrentAccountId(
+                                                        account.accountId);
+                                                accountName.text = '';
+                                                Navigator.popUntil(
+                                                    context,
+                                                    ModalRoute.withName(
+                                                        '/home'));
+                                              },
+                                              title: Text(
+                                                  //account.accountId +
+                                                  //    ' ' +
+                                                  account.name,
+                                                  style: account.accountId ==
+                                                          currentAccountId
+                                                      ? Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText1
+                                                      : Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText2),
+                                              leading: components.icons
+                                                  .assetAvatar('RVN')),
+                                          Divider(
+                                              height: 20,
+                                              thickness: 2,
+                                              indent: 5,
+                                              endIndent: 5)
+                                        ],
+                                        ...[
+                                          TextButton.icon(
+                                              onPressed: () =>
+                                                  Navigator.pushNamed(context,
+                                                      '/settings/import'),
+                                              icon: components.icons.import,
+                                              label: Text('Import')),
+                                        ],
+                                      ])
+
+                                  //{
+                                  //  return Container(
+                                  //    height: 200,
+                                  //    color: Colors.amber,
+                                  //    child: Center(
+                                  //      child: Column(
+                                  //        mainAxisAlignment: MainAxisAlignment.center,
+                                  //        mainAxisSize: MainAxisSize.min,
+                                  //        children: <Widget>[
+                                  //          const Text('Modal BottomSheet'),
+                                  //          ElevatedButton(
+                                  //            child: const Text('Close BottomSheet'),
+                                  //            onPressed: () => Navigator.pop(context),
+                                  //          )
+                                  //        ],
+                                  //      ),
+                                  //    ),
+                                  //  );
+                                  //},
+                                  );
+                            },
+                          ),
+                        ]),
+                    //Row(
+                    //  mainAxisAlignment: MainAxisAlignment.center,
+                    //  children: [
+                    //    Text(Current.account.name,
+                    //        style: Theme.of(context).textTheme.headline2),
+                    //  ],
+                    //),
+                  ],
+                )),
+            SettingsSection(
+              titlePadding: EdgeInsets.only(left: 10, top: 10),
+              title: 'Settings',
+              tiles: [
+                SettingsTile(
+                    title: 'Import',
+                    titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                    leading: components.icons.import,
+                    onPressed: (BuildContext context) =>
+                        Navigator.pushNamed(context, '/settings/import')),
+                SettingsTile(
+                    title: 'Export',
+                    subtitle: '(Backup)',
+                    titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                    leading: components.icons.export,
+                    onPressed: (BuildContext context) => Navigator.pushNamed(
+                        context, '/settings/export',
+                        arguments: {'accountId': 'current'})),
+                /*
+            SettingsTile(
+                title: 'Sign Message',
+                titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                enabled: false,
+                leading: Icon(Icons.fact_check_sharp),
+                onPressed: (BuildContext context) {
+                  //Navigator.push(
+                  //  context,
+                  //  MaterialPageRoute(builder: (context) => ...()),
+                  //);
+                }),
+            */
+                SettingsTile(
+                    title: 'Accounts',
+                    subtitle: '(Detail)',
+                    titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                    leading: Icon(Icons.lightbulb),
+                    onPressed: (BuildContext context) =>
+                        Navigator.pushNamed(context, '/settings/technical')),
+                /* Coming soon!
+            SettingsTile(
+                title: 'P2P Exchange',
+                titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                enabled: false,
+                leading: Icon(Icons.swap_horiz),
+                onPressed: (BuildContext context) {})
+            */
+
+                SettingsTile(
+                    title: 'Password',
+                    titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                    leading: Icon(Icons.password),
+                    onPressed: (BuildContext context) =>
+                        Navigator.pushNamed(context, '/password/change')),
+                SettingsTile(
+                    title: 'Network',
+                    titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                    leading: Icon(Icons.network_check),
+                    onPressed: (BuildContext context) =>
+                        Navigator.pushNamed(context, '/settings/network')),
+                /*
+              SettingsTile(
+                  title: 'Currency',
+                  titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                  leading: Icon(Icons.money),
+                  onPressed: (BuildContext context) =>
+                      Navigator.pushNamed(context, '/settings/currency')),
+              SettingsTile(
+                  title: 'Language',
+                  titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                  subtitle: 'English',
+                  leading: Icon(Icons.language),
+                  onPressed: (BuildContext context) =>
+                      Navigator.pushNamed(context, '/settings/language')),
+              */
+                SettingsTile(
+                    title: 'About',
+                    titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                    leading: Icon(Icons.info_outline_rounded),
+                    onPressed: (BuildContext context) =>
+                        Navigator.pushNamed(context, '/settings/about')),
+/*                      
+              SettingsTile(
+                  title: 'Clear Database',
+                  titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                  leading: Icon(Icons.info_outline_rounded),
+                  onPressed: (BuildContext context) {
+                    ravenDatabase.deleteDatabase();
+                  }),
+              SettingsTile(
+                  title: 'show data',
+                  titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                  leading: Icon(Icons.info_outline_rounded),
+                  onPressed: (BuildContext context) async {}),
+*/
+                //SettingsTile.switchTile(
+                //  title: 'Use fingerprint',
+                //  titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                //  leading: Icon(Icons.fingerprint),
+                //  switchValue: true,
+                //  onToggle: (bool value) {},
+                //),
+              ],
+            ),
           ],
-          ...[
-            ListTile(
-                onTap: () async {
-                  var account =
-                      await services.account.createSave(accountName.text);
-                  await settings.save(Setting(
-                      name: SettingName.Account_Current,
-                      value: account.accountId));
-                  Navigator.pop(context);
-                },
-                title: TextField(
-                    readOnly: false,
-                    controller: accountName,
-                    decoration: InputDecoration(
-                        border: UnderlineInputBorder(),
-                        labelText: 'Create Account',
-                        hintText: 'Hodl')),
-                trailing:
-                    Icon(Icons.add, size: 26.0, color: Colors.grey.shade800)),
-            Divider(height: 20, thickness: 2, indent: 5, endIndent: 5)
-          ],
-        ])
-      ]));
+        ),
+      );
 
   Row sendReceiveButtons() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [

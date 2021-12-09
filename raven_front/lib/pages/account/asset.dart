@@ -91,9 +91,6 @@ class _AssetState extends State<Asset> {
             components.status,
             indicators.process,
             indicators.client,
-            Padding(
-                padding: EdgeInsets.only(right: 20.0),
-                child: components.buttons.settings(context))
           ],
           title: Text(data['holding']!.security.symbol),
           flexibleSpace: Container(

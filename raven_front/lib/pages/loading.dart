@@ -17,8 +17,8 @@ class Loading extends StatefulWidget {
 
 class _LoadingState extends State<Loading> {
   Future setupAccounts() async {
-    await services.account.createSave('Primary');
-    //await services.account.createSave('Savings');
+    await services.account.createSave('Account 1');
+    await services.account.createSave('Account 2');
   }
 
   Future setupRealWallet() async {
@@ -48,8 +48,7 @@ class _LoadingState extends State<Loading> {
       //mockPassword();
 
       await setupAccounts();
-      //
-      await setupRealWallet();
+      //await setupRealWallet();
     }
     settings.setCurrentAccountId();
 
