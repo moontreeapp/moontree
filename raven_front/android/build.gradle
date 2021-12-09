@@ -8,8 +8,10 @@ buildscript {
 
     dependencies {
         // Changed from 4.1.0 to 4.2.0 due to qr_code_scanner requirement
-        classpath 'com.android.tools.build:gradle:4.2.0'
+        classpath "com.android.tools.build:gradle:4.2.0"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.google.gms:google-services:4.3.10"
+        classpath "com.google.firebase:firebase-crashlytics-gradle:2.7.1"
     }
 }
 

@@ -25,6 +25,10 @@ dependencies:
   cupertino_icons: ^1.0.2
   datadog_flutter: ^1.4.0
   date_format: ^2.0.4
+  firebase_core: ^1.10.0
+  firebase_crashlytics: ^2.4.1
+    # - TODO: iOS https://firebase.flutter.dev/docs/crashlytics/overview/#b-ios
+  firebase_messaging: ^11.2.0
   flutter:
     sdk: flutter
   flutter_dotenv: ^5.0.0
