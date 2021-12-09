@@ -9,11 +9,13 @@ class AssetListener {
   void init() {
     streams.asset.added.distinctUnique().listen((Asset asset) async {
       await assets.save(asset);
-      if (asset.isMaster) {
-        await grabMetadataForMaster(asset);
-      } else {
-        await grabMetadataFor(asset);
-      }
+
+      /// don't pull logos or any ipfs data for mvp
+      //if (asset.isMaster) {
+      //  await grabMetadataForMaster(asset);
+      //} else {
+      //  await grabMetadataFor(asset);
+      //}
     });
   }
 

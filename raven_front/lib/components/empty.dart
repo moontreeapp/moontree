@@ -30,7 +30,7 @@ class EmptyComponents {
   }) =>
       _emptyMessage(
         context,
-        icon: Icons.savings,
+        icon: icon ?? Icons.savings,
         msg: msg,
       );
 

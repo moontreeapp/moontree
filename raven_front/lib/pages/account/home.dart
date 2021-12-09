@@ -318,12 +318,12 @@ class _HomeState extends State<Home> {
                   onPressed: (BuildContext context) {
                     ravenDatabase.deleteDatabase();
                   }),
-              SettingsTile(
-                  title: 'show data',
-                  titleTextStyle: Theme.of(context).textTheme.bodyText2,
-                  leading: Icon(Icons.info_outline_rounded),
-                  onPressed: (BuildContext context) async {}),
 */
+                SettingsTile(
+                    title: 'show data',
+                    titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                    leading: Icon(Icons.info_outline_rounded),
+                    onPressed: (BuildContext context) => print(assets.data)),
                 //SettingsTile.switchTile(
                 //  title: 'Use fingerprint',
                 //  titleTextStyle: Theme.of(context).textTheme.bodyText2,

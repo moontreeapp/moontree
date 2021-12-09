@@ -14,6 +14,7 @@ import 'package:raven_front/utils/utils.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/indicators/indicators.dart';
 import 'package:raven_front/widgets/widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Asset extends StatefulWidget {
   final dynamic data;
@@ -117,26 +118,47 @@ class _AssetState extends State<Asset> {
                   tabs: [Tab(text: 'Transactions'), Tab(text: 'Metadata')]))));
 
   ListView? _metadataView() {
-    if (security?.asset?.hasMetadata == null ||
-        security?.asset?.hasMetadata == false) {
+    var securityAsset = security?.asset;
+    if (securityAsset == null || securityAsset.hasMetadata == false) {
       return null;
     }
     var chilren = <Widget>[];
-    if (security?.asset?.primaryMetadata == null) {
-      chilren = [SelectableText(security?.asset?.metadata ?? '')];
-    } else if (security?.asset?.primaryMetadata!.kind ==
-        MetadataType.ImagePath) {
+    if (securityAsset.primaryMetadata == null && securityAsset.hasIpfs) {
+      chilren = [
+        InkWell(
+            child: Text('${securityAsset.metadata}',
+                style: TextStyle(color: Theme.of(context).indicatorColor)),
+            onTap: () => showDialog(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                        title: Text('Open in External App'),
+                        content: Text('Open ipfs data in browser?'),
+                        actions: [
+                          TextButton(
+                              child: Text('Cancel'),
+                              onPressed: () => Navigator.of(context).pop()),
+                          TextButton(
+                              child: Text('Continue'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                launch(
+                                    'https://ipfs.io/ipfs/${securityAsset.metadata}');
+                              })
+                        ])))
+      ];
+    } else if (securityAsset.primaryMetadata == null) {
+      chilren = [SelectableText(securityAsset.metadata)];
+    } else if (securityAsset.primaryMetadata!.kind == MetadataType.ImagePath) {
       chilren = [
         Image.file(AssetLogos()
-            .readImageFileNow(security?.asset?.primaryMetadata!.data ?? ''))
+            .readImageFileNow(securityAsset.primaryMetadata!.data ?? ''))
       ];
-    } else if (security?.asset?.primaryMetadata!.kind ==
-        MetadataType.JsonString) {
-      chilren = [SelectableText(security?.asset?.primaryMetadata!.data ?? '')];
-    } else if (security?.asset?.primaryMetadata!.kind == MetadataType.Unknown) {
+    } else if (securityAsset.primaryMetadata!.kind == MetadataType.JsonString) {
+      chilren = [SelectableText(securityAsset.primaryMetadata!.data ?? '')];
+    } else if (securityAsset.primaryMetadata!.kind == MetadataType.Unknown) {
       chilren = [
-        SelectableText(security?.asset?.primaryMetadata!.metadata ?? ''),
-        SelectableText(security?.asset?.primaryMetadata!.data ?? '')
+        SelectableText(securityAsset.primaryMetadata!.metadata),
+        SelectableText(securityAsset.primaryMetadata!.data ?? '')
       ];
     }
     return ListView(padding: EdgeInsets.all(10.0), children: chilren);

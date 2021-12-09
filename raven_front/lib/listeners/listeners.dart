@@ -7,6 +7,7 @@ final LogoListener logoListener = LogoListener();
 final AssetListener assetListener = AssetListener();
 
 void initListeners() {
-  logoListener.init();
+  /// don't pull logos or any ipfs data for mvp
+  //logoListener.init();
   assetListener.init();
 }
