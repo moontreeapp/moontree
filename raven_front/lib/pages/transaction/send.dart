@@ -45,6 +45,7 @@ class _SendState extends State<Send> {
   FocusNode sendNoteFocusNode = FocusNode();
   TxGoal feeGoal = standard;
   bool sendAll = false;
+  String addressName = '';
 
   @override
   void initState() {
@@ -147,6 +148,9 @@ class _SendState extends State<Send> {
       if (params.containsKey('label')) {
         sendNote.text = verifyLabel(params['label']!);
       }
+      if (params.containsKey('to')) {
+        addressName = verifyLabel(params['to']!);
+      }
       data['symbol'] = requestedAsset(params,
           holdings: useWallet
               ? Current.walletHoldingNames(data['walletId'])
@@ -201,7 +205,6 @@ class _SendState extends State<Send> {
   }
 
   bool verifyMemo([String? memo]) => (memo ?? sendMemo.text).length <= 80;
-
   ListView body() {
     //var _controller = TextEditingController();
     return ListView(
@@ -226,7 +229,8 @@ class _SendState extends State<Send> {
             //          .requestFocus(sendAddressFocusNode);
             //      setState(() => data['symbol'] = newValue!);
             //    }),
-
+            Visibility(
+                visible: addressName != '', child: Text('To: $addressName')),
             TextField(
               focusNode: sendAddressFocusNode,
               controller: sendAddress,
@@ -237,6 +241,7 @@ class _SendState extends State<Send> {
                       borderSide: BorderSide(color: addressColor)),
                   border: UnderlineInputBorder(
                       borderSide: BorderSide(color: addressColor)),
+                  //errorText: _validateAddressColor(sendAddress.text),
                   labelText: 'To',
                   hintText: 'Address'),
               onChanged: (value) {
@@ -553,11 +558,41 @@ class _SendState extends State<Send> {
       showDialog(
           context: context,
           builder: (BuildContext context) => AlertDialog(
-                  title: Text('Confirm?'),
+                  title: Text('Confirm'),
                   content: DataTable(columns: [
                     DataColumn(label: Text('')),
                     DataColumn(label: Text(''))
                   ], rows: [
+                    DataRow(cells: [
+                      DataCell(Text('To:')),
+                      DataCell(addressName == ''
+                          ? Text(sendAddress.text.length < 12
+                              ? sendAddress.text
+                              : '${sendAddress.text.substring(0, 5)}...${sendAddress.text.substring(sendAddress.text.length - 5, sendAddress.text.length)}')
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                addressNameText(),
+                                Text(
+                                    sendAddress.text.length < 12
+                                        ? sendAddress.text
+                                        : '${sendAddress.text.substring(0, 5)}...${sendAddress.text.substring(sendAddress.text.length - 5, sendAddress.text.length)}',
+                                    style: Theme.of(context).textTheme.caption),
+                              ],
+                            )),
+                    ]),
+                    DataRow(cells: [
+                      DataCell(Text('Total:')),
+                      DataCell(Text(
+                          '${components.text.satsToAmount(estimate.total)}')),
+                    ]),
+                    DataRow(cells: [
+                      DataCell(Text('Send:')),
+                      DataCell(Text(data['symbol'])),
+                    ]),
+                    /* 
+                    // Hide these, we may show some of them later, so comment out:
                     DataRow(cells: [
                       DataCell(Text('Send Amount:')),
                       DataCell(Text(
@@ -568,21 +603,6 @@ class _SendState extends State<Send> {
                       DataCell(Text(
                           '${components.text.satsToAmount(estimate.fees)}')),
                     ]),
-                    DataRow(cells: [
-                      DataCell(Text('Total:')),
-                      DataCell(Text(
-                          '${components.text.satsToAmount(estimate.total)}')),
-                    ]),
-                    DataRow(cells: [
-                      DataCell(Text('Send Asset:')),
-                      DataCell(Text(data['symbol'])),
-                    ]),
-                    DataRow(cells: [
-                      DataCell(Text('Receive Address:')),
-                      DataCell(Text(sendAddress.text.length < 10
-                          ? sendAddress.text
-                          : '${sendAddress.text.substring(0, 5)}...${sendAddress.text.substring(sendAddress.text.length - 5, sendAddress.text.length)}')),
-                    ]),
                     ...[
                       if (sendMemo.text != '')
                         DataRow(cells: [
@@ -590,6 +610,7 @@ class _SendState extends State<Send> {
                           DataCell(Text(sendMemo.text)),
                         ])
                     ],
+                    */
                   ]),
                   actions: [
                     TextButton(
@@ -616,6 +637,24 @@ class _SendState extends State<Send> {
                         /*send to success or failure page*/
                         )
                   ]));
+
+  Widget addressNameText() {
+    if (addressName == '') return Text(addressName);
+    if (addressName.length < 12) {
+      return Text(addressName);
+    }
+    var names = addressName.split(' ');
+    if (names.length > 1) {
+      if (names.first.length <= 9) {
+        return Text('${names.first} ${names.last.substring(0, 1)}.');
+      }
+      if (names.last.length <= 9) {
+        return Text('${names.first.substring(0, 1)}. ${names.last}');
+      }
+    }
+    return Text(
+        '${names.first.substring(0, 6)}... ${names.last.substring(0, 1)}.');
+  }
 
   Future attemptSend(ravencoin.Transaction tx) async {
     var client = streams.client.client.value;
