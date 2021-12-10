@@ -26,11 +26,21 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
       case 5:
         return SettingName.Electrum_Port2;
       case 6:
-        return SettingName.Account_Current;
+        return SettingName.Electrum_DomainTest;
       case 7:
-        return SettingName.Account_Preferred;
+        return SettingName.Electrum_PortTest;
       case 8:
+        return SettingName.Electrum_Net;
+      case 9:
+        return SettingName.Account_Current;
+      case 10:
+        return SettingName.Account_Preferred;
+      case 11:
         return SettingName.Local_Path;
+      case 12:
+        return SettingName.User_Name;
+      case 13:
+        return SettingName.Send_Immediate;
       default:
         return SettingName.Electrum_Domain0;
     }
@@ -57,14 +67,29 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
       case SettingName.Electrum_Port2:
         writer.writeByte(5);
         break;
-      case SettingName.Account_Current:
+      case SettingName.Electrum_DomainTest:
         writer.writeByte(6);
         break;
-      case SettingName.Account_Preferred:
+      case SettingName.Electrum_PortTest:
         writer.writeByte(7);
         break;
-      case SettingName.Local_Path:
+      case SettingName.Electrum_Net:
         writer.writeByte(8);
+        break;
+      case SettingName.Account_Current:
+        writer.writeByte(9);
+        break;
+      case SettingName.Account_Preferred:
+        writer.writeByte(10);
+        break;
+      case SettingName.Local_Path:
+        writer.writeByte(11);
+        break;
+      case SettingName.User_Name:
+        writer.writeByte(12);
+        break;
+      case SettingName.Send_Immediate:
+        writer.writeByte(13);
         break;
     }
   }

@@ -40,7 +40,11 @@ class BalanceService {
           .map((pair) => sumBalance(pair.wallet, pair.security));
 
   Future recalculateAllBalances() async =>
-      await balances.saveAll(recalculateSpecificBalances(vouts.data.toList()));
+      await balances.saveAll(recalculateSpecificBalances(vouts.data
+          //.where((Vout vout) =>
+          //    vout.account!.net ==
+          //    settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value)
+          .toList()));
 
   /// Transaction Logic ///////////////////////////////////////////////////////
 

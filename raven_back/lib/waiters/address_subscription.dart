@@ -81,11 +81,18 @@ class AddressSubscriptionWaiter extends Waiter {
               loaded: (loaded) {},
               added: (added) async {
                 Address address = added.data;
-                var client = streams.client.client.value;
-                if (client == null) {
-                  backlogSubscriptions.add(address);
-                } else {
-                  services.client.subscribe.to(client, address);
+                // todo - move this into the stream:
+                //if (address.account!.net ==
+                //    settings.primaryIndex
+                //        .getOne(SettingName.Electrum_Net)!
+                //        .value) {
+                if (true) {
+                  var client = streams.client.client.value;
+                  if (client == null) {
+                    backlogSubscriptions.add(address);
+                  } else {
+                    services.client.subscribe.to(client, address);
+                  }
                 }
               },
               updated: (updated) {},

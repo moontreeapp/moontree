@@ -95,10 +95,13 @@ class LeaderWalletService {
     }
   }
 
-  LeaderWallet? makeLeaderWallet(String accountId, CipherBase cipher,
-      {required CipherUpdate cipherUpdate,
-      String? entropy,
-      bool alwaysReturn = false}) {
+  LeaderWallet? makeLeaderWallet(
+    String accountId,
+    CipherBase cipher, {
+    required CipherUpdate cipherUpdate,
+    String? entropy,
+    bool alwaysReturn = false,
+  }) {
     services.busy.createWalletOn();
     entropy = entropy ?? bip39.mnemonicToEntropy(bip39.generateMnemonic());
     var encryptedEntropy = EncryptedEntropy.fromEntropy(entropy, cipher);

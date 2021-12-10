@@ -22,6 +22,16 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
             name: SettingName.Electrum_Domain2, value: 'testnet.rvn.rocks'),
         SettingName.Electrum_Port2:
             Setting(name: SettingName.Electrum_Port2, value: 50002),
+        SettingName.Electrum_DomainTest: Setting(
+            name: SettingName.Electrum_DomainTest, value: 'testnet.rvn.rocks'),
+        SettingName.Electrum_PortTest:
+            Setting(name: SettingName.Electrum_PortTest, value: 50002),
+        SettingName.Electrum_Net:
+            Setting(name: SettingName.Electrum_Net, value: Net.Test),
+        SettingName.User_Name:
+            Setting(name: SettingName.User_Name, value: null),
+        SettingName.Send_Immediate:
+            Setting(name: SettingName.Send_Immediate, value: false),
         SettingName.Account_Current:
             Setting(name: SettingName.Account_Current, value: '0'),
         SettingName.Account_Preferred:

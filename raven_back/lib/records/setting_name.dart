@@ -27,11 +27,26 @@ enum SettingName {
   Electrum_Port2,
 
   @HiveField(6)
-  Account_Current,
+  Electrum_DomainTest,
 
   @HiveField(7)
-  Account_Preferred,
+  Electrum_PortTest,
 
   @HiveField(8)
+  Electrum_Net,
+
+  @HiveField(9)
+  Account_Current,
+
+  @HiveField(10)
+  Account_Preferred,
+
+  @HiveField(11)
   Local_Path,
+
+  @HiveField(12)
+  User_Name,
+
+  @HiveField(13)
+  Send_Immediate, // no confirmation screen, no generating transaction screen, just does it in background
 }

@@ -1,6 +1,7 @@
 // dart run build_runner build
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:raven_back/utils/enum.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' show NetworkType;
 
 import 'package:raven_back/records/net.dart';
@@ -32,4 +33,5 @@ class Account with EquatableMixin {
   String toString() => 'Account($accountId, $name, $net)';
 
   NetworkType get network => networks[net]!;
+  String get netName => describeEnum(net);
 }

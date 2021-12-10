@@ -48,7 +48,32 @@ class LeaderWaiter extends Waiter {
                 services.wallet.leader.backlog.add(leader as LeaderWallet);
               }
             },
-            updated: (updated) {},
+            updated: (updated) async {
+              /// when wallet is moved from one account to another...
+              /// we need to derive all the addresses again because it might
+              /// have moved from a testnet account to a mainnet account.
+              // remove addresses of the wallet
+              var leader = updated.data;
+              await addresses.removeAll(leader.addresses);
+              // remove the index from the registry
+              for (var exposure in [
+                NodeExposure.External,
+                NodeExposure.Internal
+              ]) {
+                services.wallet.leader.addressRegistry.remove(
+                  services.wallet.leader
+                      .addressRegistryKey(leader as LeaderWallet, exposure),
+                );
+              }
+              // recreate the addresses of that wallet
+              if (ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
+                services.wallet.leader
+                    .deriveMoreAddresses(leader as LeaderWallet);
+                services.client.subscribe.toExistingAddresses();
+              } else {
+                services.wallet.leader.backlog.add(leader as LeaderWallet);
+              }
+            },
             removed: (removed) {});
       },
       autoDeinit: true,

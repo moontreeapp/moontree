@@ -44,9 +44,15 @@ class RavenClientWaiter extends Waiter {
                 streams.client.client.sink.add(newRavenClient);
                 await periodicTimer?.cancel();
               } else {
-                retriesLeft =
-                    retriesLeft <= 0 ? retries : retriesLeft = retriesLeft - 1;
-                services.client.cycleNextElectrumConnectionOption();
+                if (settings.primaryIndex
+                        .getOne(SettingName.Electrum_Net)!
+                        .value ==
+                    Net.Main) {
+                  retriesLeft = retriesLeft <= 0
+                      ? retries
+                      : retriesLeft = retriesLeft - 1;
+                  services.client.cycleNextElectrumConnectionOption();
+                }
               }
             }
           });
@@ -70,5 +76,21 @@ class RavenClientWaiter extends Waiter {
         }
       },
     );
+
+    /// when user switches to testnet or mainnet
+    listen(
+        'settings.changes',
+        settings.changes,
+        (Change<Setting> change) => change.when(
+            loaded: (_) {},
+            added: (_) {},
+            updated: (Change change) {
+              var setting = change.data;
+              // move this into stream?
+              if (setting.name == SettingName.Electrum_Net) {
+                streams.client.client.sink.add(null);
+              }
+            },
+            removed: (_) {}));
   }
 }

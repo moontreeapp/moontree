@@ -19,7 +19,7 @@ class MetadataAdapter extends TypeAdapter<Metadata> {
     return Metadata(
       symbol: fields[0] as String,
       metadata: fields[1] as String,
-      data: fields[2] as String,
+      data: fields[2] as String?,
       kind: fields[3] as MetadataType,
       parent: fields[4] as String?,
       logo: fields[5] as bool,

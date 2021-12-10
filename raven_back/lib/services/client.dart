@@ -57,15 +57,30 @@ class ClientService {
   int get secondBackupElectrumPort =>
       settings.primaryIndex.getOne(SettingName.Electrum_Port2)!.value;
 
+  String get testElectrumDomain =>
+      settings.primaryIndex.getOne(SettingName.Electrum_DomainTest)!.value;
+
+  int get testElectrumPort =>
+      settings.primaryIndex.getOne(SettingName.Electrum_PortTest)!.value;
+
   bool get connectionStatus =>
       streams.client.client.stream.valueOrNull != null ? true : false;
 
   Future<RavenElectrumClient?> createClient(
       {String projectName = 'MTWallet', String buildVersion = '0.1'}) async {
     try {
+      if (settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value ==
+          Net.Main) {
+        return await RavenElectrumClient.connect(
+          chosenDomain,
+          port: chosenPort,
+          clientName: '$projectName/$buildVersion',
+          connectionTimeout: connectionTimeout,
+        );
+      }
       return await RavenElectrumClient.connect(
-        chosenDomain,
-        port: chosenPort,
+        testElectrumDomain,
+        port: testElectrumPort,
         clientName: '$projectName/$buildVersion',
         connectionTimeout: connectionTimeout,
       );
@@ -88,6 +103,8 @@ class ClientService {
       Setting(name: SettingName.Electrum_Port1, value: ports[1]),
       Setting(name: SettingName.Electrum_Domain2, value: domains[2]),
       Setting(name: SettingName.Electrum_Port2, value: ports[2]),
+      Setting(name: SettingName.Electrum_DomainTest, value: domains[3]),
+      Setting(name: SettingName.Electrum_PortTest, value: ports[3]),
     ]);
   }
 }
@@ -99,8 +116,11 @@ class SubscribeService {
 
   void toExistingAddresses([RavenElectrumClient? client]) {
     for (var address in addresses) {
-      if (!subscriptionHandles.keys.contains(address.addressId)) {
-        to(client ?? streams.client.client.value!, address);
+      if (address.account!.net ==
+          settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value) {
+        if (!subscriptionHandles.keys.contains(address.addressId)) {
+          to(client ?? streams.client.client.value!, address);
+        }
       }
     }
   }
@@ -134,4 +154,10 @@ class ApiService {
 
   Future<Tx> getTransaction(String txId) async =>
       await streams.client.client.value!.getTransaction(txId);
+
+  /// we should instead just be able to send an empty string and make one call
+  Future<Iterable<dynamic>> getAllAssetNames() async => [
+        for (var char in 'abcdefghijklmnopqrstuvwxyz'.toUpperCase().split(''))
+          await streams.client.client.value!.getAssetsByPrefix(char)
+      ].expand((i) => i);
 }
