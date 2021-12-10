@@ -70,8 +70,11 @@ class _ReceiveState extends State<Receive> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    requestMessage.text =
-        requestMessage.text == '' ? 'RVN' : requestMessage.text;
+    requestMessage.text = requestMessage.text == ''
+        ? data['symbol'] == ''
+            ? 'RVN'
+            : data['symbol']
+        : requestMessage.text;
     address = Current.account.wallets[0].addresses[0].address;
     uri = uri == '' ? address : uri;
     return GestureDetector(
@@ -223,6 +226,7 @@ class _ReceiveState extends State<Receive> {
                   },
                 )),
           ]);
+                    initialValue: TextEditingValue(text: requestMessage.text),
 
   ElevatedButton shareAddressButton() => ElevatedButton.icon(
         icon: Icon(Icons.share),

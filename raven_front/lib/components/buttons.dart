@@ -23,11 +23,13 @@ class ButtonComponents {
                 onPressed: () {/*to trading*/}, icon: Icon(Icons.swap_horiz))
           ]));
 
-  ElevatedButton receive(BuildContext context) => ElevatedButton.icon(
-      icon: Icon(Icons.south_east),
-      label: Text('Receive'),
-      onPressed: () => Navigator.pushNamed(context, '/receive'),
-      style: components.buttonStyles.leftSideCurved);
+  ElevatedButton receive(BuildContext context, {String symbol = 'RVN'}) =>
+      ElevatedButton.icon(
+          icon: Icon(Icons.south_east),
+          label: Text('Receive'),
+          onPressed: () => Navigator.pushNamed(context, '/receive',
+              arguments: {'symbol': symbol}),
+          style: components.buttonStyles.leftSideCurved);
 
   ElevatedButton send(
     BuildContext context, {

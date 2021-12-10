@@ -168,7 +168,8 @@ class _AssetState extends State<Asset> {
   /// receive works the same
   Row sendReceiveButtons() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        components.buttons.receive(context),
+        components.buttons
+            .receive(context, symbol: data['holding']!.security.symbol),
         currentHolds.length > 0
             ? components.buttons
                 .send(context, symbol: data['holding']!.security.symbol)
