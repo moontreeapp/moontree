@@ -259,30 +259,33 @@ class _WalletViewState extends State<WalletView> {
                       style: Theme.of(context).annotate),
                 ]);
               }),
-              title: Wrap(alignment: WrapAlignment.spaceBetween, children: [
-                (walletAddress.exposure == NodeExposure.Internal
-                    ? components.icons.out(context)
-                    : components.icons.income(context)),
-                Text(walletAddress.address,
-                    style: vouts.byAddress
-                            .getAll(walletAddress.address)
-                            .isNotEmpty
-                        ? fromTextStyle(Theme.of(context).textTheme.caption!,
-                            fontWeight: FontWeight.bold)
-                        : Theme.of(context).textTheme.caption),
-                Text(
-                    // I thoguht this is what slows down loading the page, but I now think it's the qr code... //takes a few seconds, lets just get them one at a time in onTap
-                    components.text
-                        .satsToAmount(services.transaction
-                            .walletUnspents(wallet)
-                            .where((vout) =>
-                                vout.toAddress == walletAddress.address)
-                            .map((vout) => vout.rvnValue)
-                            .toList()
-                            .sumInt())
-                        .toString(),
-                    style: Theme.of(context).textTheme.caption),
-              ]),
+              title: Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                children: [
+                  (walletAddress.exposure == NodeExposure.Internal
+                      ? components.icons.out(context)
+                      : components.icons.income(context)),
+                  Text(walletAddress.address,
+                      style: vouts.byAddress
+                              .getAll(walletAddress.address)
+                              .isNotEmpty
+                          ? fromTextStyle(Theme.of(context).textTheme.caption!,
+                              fontWeight: FontWeight.bold)
+                          : Theme.of(context).textTheme.caption),
+                  Text(
+                      // I thoguht this is what slows down loading the page, but I now think it's the qr code... //takes a few seconds, lets just get them one at a time in onTap
+                      components.text
+                          .satsToAmount(services.transaction
+                              .walletUnspents(wallet)
+                              .where((vout) =>
+                                  vout.toAddress == walletAddress.address)
+                              .map((vout) => vout.rvnValue)
+                              .toList()
+                              .sumInt())
+                          .toString(),
+                      style: Theme.of(context).textTheme.caption),
+                ],
+              ),
               //trailing: Text('address.value'),
               //trailing: (address.value > 0
               //    ? Text(

@@ -97,10 +97,7 @@ class _TechnicalViewState extends State<TechnicalView> {
 
   /// change the accountId for this wallet and save
   void _moveWallet(details, account) {
-    // how do we get it to redraw correctly?
     var wallet = details.data;
-    //wallet.accountId = account.accountId;
-    //wallets.save(wallet);
     wallets.save(wallet is LeaderWallet
         ? LeaderWallet(
             walletId: wallet.walletId,
@@ -188,8 +185,15 @@ class _TechnicalViewState extends State<TechnicalView> {
                   wallets.byAccount.getAll(account.accountId).length > 0
                       //_getWallets(account.accountId).isNotEmpty
                       ? ListTile(
-                          title: Text(account.name,
-                              style: Theme.of(context).textTheme.bodyText1),
+                          title: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(account.name,
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1),
+                                Text('  ${account.netName}net',
+                                    style: Theme.of(context).textTheme.caption),
+                              ]),
                           trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[

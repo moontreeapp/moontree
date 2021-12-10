@@ -1,7 +1,10 @@
 import 'package:raven_back/raven_back.dart';
 
-bool rvnCondition(String address, {Net? net}) => address.contains(RegExp(
-    r'^' + (net == Net.Test ? 'm|n' : 'R') + r'([a-km-zA-HJ-NP-Z1-9]{33})$'));
+bool rvnCondition(String address, {Net? net}) =>
+    address.length == 34 &&
+    address.contains(RegExp(r'^' +
+        (net == Net.Test ? 'm|n' : 'R') +
+        r'([a-km-zA-HJ-NP-Z1-9]{33})$'));
 //address.startsWith('R') && address.length == 34 && ;
 //removeCharsOtherThan(address, Strings.addressChars)
 

@@ -1,0 +1,57 @@
+import 'package:flutter/material.dart';
+import 'package:raven_front/components/components.dart';
+import 'package:raven_back/raven_back.dart';
+
+class Preferences extends StatefulWidget {
+  @override
+  State createState() => new _PreferencesState();
+}
+
+//class Preferences extends StatelessWidget {
+class _PreferencesState extends State<Preferences> {
+  TextEditingController yourName = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    var name = settings.primaryIndex.getOne(SettingName.User_Name)?.value;
+    if (name != null) {
+      yourName.text = name;
+    }
+    return Scaffold(
+      appBar: components.headers.back(context, 'Preferences'),
+      body: ListView(
+        padding: EdgeInsets.all(20),
+        children: <Widget>[
+          SizedBox(height: 20),
+          TextField(
+            autocorrect: false,
+            controller: yourName,
+            textInputAction: TextInputAction.done,
+            decoration: InputDecoration(
+              border: UnderlineInputBorder(),
+              labelText: 'your name',
+              hintText: 'Satoshi Nakamoto',
+            ),
+            onEditingComplete: () async {
+              await settings.save(
+                  Setting(name: SettingName.User_Name, value: yourName.text));
+              alertSuccess();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future alertSuccess() => showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+            title: Text('Success'),
+            content: Text('Preferences Saved!'),
+            actions: [
+              TextButton(
+                  child: Text('ok'),
+                  onPressed: () => Navigator.of(context).pop())
+            ],
+          ));
+}

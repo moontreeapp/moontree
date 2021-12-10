@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/wallet/constants.dart';
-import 'package:raven_front/services/history_mock.dart';
 import 'package:raven_front/listeners/listeners.dart';
-import 'package:raven_front/services/password_mock.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:raven_front/services/storage.dart';
 
 class Loading extends StatefulWidget {
@@ -17,8 +14,8 @@ class Loading extends StatefulWidget {
 
 class _LoadingState extends State<Loading> {
   Future setupAccounts() async {
-    await services.account.createSave('Account 1');
-    await services.account.createSave('Account 2');
+    await services.account.createSave('Account 1', net: Net.Test);
+    await services.account.createSave('Account 2', net: Net.Main);
   }
 
   Future setupRealWallet() async {
@@ -43,12 +40,8 @@ class _LoadingState extends State<Loading> {
     await settings.save(Setting(
         name: SettingName.Local_Path, value: await Storage().localPath));
     if (accounts.data.isEmpty) {
-      /// for testing
-      //MockHistories().init();
-      //mockPassword();
-
       await setupAccounts();
-      //await setupRealWallet();
+      await setupRealWallet();
     }
     settings.setCurrentAccountId();
 

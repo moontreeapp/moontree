@@ -52,7 +52,7 @@ class RavenMobileApp extends StatelessWidget {
           '/create': (context) => CreateAsset(),
           //'/settings': (context) => Settings(), #depericated, see settings.dart
           '/settings/about': (context) => About(),
-          '/settings/account': (context) => AccountSettings(),
+          '/settings/preferences': (context) => Preferences(),
           '/settings/network': (context) => ElectrumNetwork(),
           '/settings/import': (context) => Import(),
           '/settings/export': (context) => Export(),

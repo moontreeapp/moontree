@@ -11,6 +11,7 @@ import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/services/account_creation.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:raven_back/utils/database.dart' as ravenDatabase;
+import 'package:raven_electrum/raven_electrum.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -70,7 +71,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: balanceHeader(),
-      drawer: accounts.data.length > 1 ? accountsView() : null,
+      drawer: accountsView(),
       body: NotificationListener<UserScrollNotification>(
         onNotification: visibilityOfSendReceive,
         child: HoldingList(),
@@ -156,7 +157,13 @@ class _HomeState extends State<Home> {
                                               indent: 5,
                                               endIndent: 5)
                                         ],
-                                        for (var account in accounts.data) ...[
+                                        for (var account in accounts.data.where(
+                                            (account) =>
+                                                account.net ==
+                                                settings.primaryIndex
+                                                    .getOne(SettingName
+                                                        .Electrum_Net)!
+                                                    .value)) ...[
                                           ListTile(
                                               onTap: () async {
                                                 await settings
@@ -235,6 +242,12 @@ class _HomeState extends State<Home> {
               title: 'Settings',
               tiles: [
                 SettingsTile(
+                    title: 'Preferences', // name, show conf screen, etc.
+                    titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                    leading: Icon(Icons.settings),
+                    onPressed: (BuildContext context) =>
+                        Navigator.pushNamed(context, '/settings/preferences')),
+                SettingsTile(
                     title: 'Import',
                     titleTextStyle: Theme.of(context).textTheme.bodyText2,
                     leading: components.icons.import,
@@ -311,19 +324,27 @@ class _HomeState extends State<Home> {
                     onPressed: (BuildContext context) =>
                         Navigator.pushNamed(context, '/settings/about')),
 /*                      
-              SettingsTile(
-                  title: 'Clear Database',
-                  titleTextStyle: Theme.of(context).textTheme.bodyText2,
-                  leading: Icon(Icons.info_outline_rounded),
-                  onPressed: (BuildContext context) {
-                    ravenDatabase.deleteDatabase();
-                  }),
-*/
+                SettingsTile(
+                    title: 'Clear Database',
+                    titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                    leading: Icon(Icons.info_outline_rounded),
+                    onPressed: (BuildContext context) {
+                      ravenDatabase.deleteDatabase();
+                    }),
                 SettingsTile(
                     title: 'show data',
                     titleTextStyle: Theme.of(context).textTheme.bodyText2,
                     leading: Icon(Icons.info_outline_rounded),
-                    onPressed: (BuildContext context) => print(assets.data)),
+                    onPressed: (BuildContext context) async {
+                      //print(services.client.client);
+                      print(settings.primaryIndex
+                          .getOne(SettingName.Electrum_Domain0));
+                      //print((await services.client.api.getAllAssetNames())
+                      //    .length);
+                      //print((await services.client.client!.request(
+                      //    'blockchain.asset.get_assets_with_prefix', [''])));
+                    }),
+*/
                 //SettingsTile.switchTile(
                 //  title: 'Use fingerprint',
                 //  titleTextStyle: Theme.of(context).textTheme.bodyText2,

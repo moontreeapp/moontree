@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/src/iterable_extensions.dart';
 import 'package:flutter/material.dart';
 
 import 'package:raven_front/components/components.dart';
@@ -21,9 +22,11 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
       TextEditingController(text: '');
   TextEditingController electrumAddressSecondBackup =
       TextEditingController(text: '');
+  TextEditingController electrumAddressTest = TextEditingController(text: '');
   bool passwordVerified = false;
   final TextEditingController password = TextEditingController();
   List<StreamSubscription> listeners = [];
+  List<bool>? isSelected;
 
   @override
   void initState() {
@@ -34,9 +37,14 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
         '${services.client.firstBackupElectrumDomain}:${services.client.firstBackupElectrumPort}';
     electrumAddressSecondBackup.text =
         '${services.client.secondBackupElectrumDomain}:${services.client.secondBackupElectrumPort}';
+    electrumAddressTest.text =
+        '${services.client.testElectrumDomain}:${services.client.testElectrumPort}';
     listeners.add(settings.changes.listen((changes) => setState(() {})));
     listeners.add(streams.client.client.stream
         .listen((ravenClient) async => setState(() {})));
+    var value = settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value;
+    isSelected = isSelected ?? [value == Net.Main, value == Net.Test];
+    print('isSelected $isSelected');
     super.initState();
   }
 
@@ -45,6 +53,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
     electrumAddress.dispose();
     electrumAddressFirstBackup.dispose();
     electrumAddressSecondBackup.dispose();
+    electrumAddressTest.dispose();
     for (var listener in listeners) {
       listener.cancel();
     }
@@ -52,12 +61,15 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
   }
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        appBar: components.headers.back(context, 'Electrum Server'),
-        body: body(),
-      ));
+  Widget build(BuildContext context) {
+    print(services.client.chosenDomain);
+    return GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          appBar: components.headers.back(context, 'Electrum Server'),
+          body: body(),
+        ));
+  }
 
   ListView body() => ListView(
         padding: EdgeInsets.all(20),
@@ -65,11 +77,14 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
           Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                streams.client.client.value != null
-                    ? Text(
-                        '${streams.client.client.value!.host}:${streams.client.client.value!.port}')
+                isSelected![0] == true
+                    ? streams.client.client.value != null
+                        ? Text(
+                            '${streams.client.client.value!.host}:${streams.client.client.value!.port}')
+                        : Text(
+                            '${services.client.chosenDomain}:${services.client.chosenPort.toString()}')
                     : Text(
-                        '${services.client.chosenDomain}:${services.client.chosenPort.toString()}'),
+                        '${services.client.testElectrumDomain}:${services.client.testElectrumPort.toString()}'),
                 ...[
                   services.client.connectionStatus
                       ? Text(
@@ -95,6 +110,33 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
                     icon: Icon(Icons.refresh),
                     label: Text('refresh connection')),
               ]),
+          SizedBox(height: 20),
+          ToggleButtons(
+              children: <Widget>[Text('MainNet'), Text('TestNet')],
+              isSelected: isSelected ?? [false, true],
+              onPressed: (int index) async {
+                print('$index, $isSelected');
+                if (index == 0 && isSelected![0] == false) {
+                  isSelected = [true, false];
+                  var changeAccount = accounts.getBestAccount(Net.Main);
+                  print(changeAccount);
+                  await settings.save(
+                      Setting(name: SettingName.Electrum_Net, value: Net.Main));
+                  if (changeAccount != null) {
+                    await settings.setCurrentAccountId(changeAccount.accountId);
+                  }
+                } else if (index == 1 && isSelected![0] == true) {
+                  isSelected = [false, true];
+                  await settings.save(
+                      Setting(name: SettingName.Electrum_Net, value: Net.Test));
+                  var changeAccount = accounts.getBestAccount(Net.Test);
+                  print(changeAccount);
+                  if (changeAccount != null) {
+                    await settings.setCurrentAccountId(changeAccount.accountId);
+                  }
+                }
+                setState(() {});
+              }),
           SizedBox(height: 20),
           TextField(
             autocorrect: false,
@@ -129,6 +171,17 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
             ),
             onEditingComplete: () => attemptSave(),
           ),
+          TextField(
+            autocorrect: false,
+            controller: electrumAddressTest,
+            textInputAction: TextInputAction.done,
+            decoration: InputDecoration(
+              border: UnderlineInputBorder(),
+              labelText: 'TestNet Electrum Domain:Port',
+              hintText: 'testnet.rvn.com:5000',
+            ),
+            onEditingComplete: () => attemptSave(),
+          ),
           SizedBox(height: 50),
           Text('What is the Electrum server?\n',
               style: Theme.of(context).textTheme.caption),
@@ -140,7 +193,8 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
   void attemptSave() {
     if (validateDomainPort(electrumAddress.text) &&
         validateDomainPort(electrumAddressFirstBackup.text) &&
-        validateDomainPort(electrumAddressSecondBackup.text)) {
+        validateDomainPort(electrumAddressSecondBackup.text) &&
+        validateDomainPort(electrumAddressTest.text)) {
       FocusScope.of(context).unfocus();
       if (services.password.required && !passwordVerified) {
         requestPassword();
@@ -198,10 +252,12 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
       electrumAddress.text.split(':')[0],
       electrumAddressFirstBackup.text.split(':')[0],
       electrumAddressSecondBackup.text.split(':')[0],
+      electrumAddressTest.text.split(':')[0],
     ], ports: [
       int.parse(electrumAddress.text.split(':')[1]),
       int.parse(electrumAddressFirstBackup.text.split(':')[1]),
       int.parse(electrumAddressSecondBackup.text.split(':')[1]),
+      int.parse(electrumAddressTest.text.split(':')[1]),
     ]);
   }
 
