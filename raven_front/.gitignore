@@ -29,6 +29,7 @@
 .packages
 .pub-cache/
 .pub/
+.fvm/flutter_sdk
 /build/
 
 # Web related
