@@ -56,7 +56,8 @@ Future validateAndCreateAccount(
   // this is used to get the please wait message to show up
   // it needs enough time to display the message
   await Future.delayed(const Duration(milliseconds: 150));
-  var account = await services.account.createSave(desiredAccountName);
+  var account = await services.account.createSave(desiredAccountName,
+      net: settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value);
   await settings.save(
       Setting(name: SettingName.Account_Current, value: account.accountId));
   Navigator.popUntil(context, ModalRoute.withName('/home'));
