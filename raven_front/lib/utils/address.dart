@@ -5,8 +5,13 @@ bool rvnCondition(String address, {Net? net}) =>
     address.contains(RegExp(r'^' +
         (net == Net.Test ? 'm|n' : 'R') +
         r'([a-km-zA-HJ-NP-Z1-9]{33})$'));
-//address.startsWith('R') && address.length == 34 && ;
-//removeCharsOtherThan(address, Strings.addressChars)
+// as far as I can tell this regex is base58check
+//                         123456789
+//                ABCDEFGH
+//                   JKLMN
+//                      PQRSTUVWXYZ
+//          abcdefghijk
+//          mnopqrstuvwxyz
 
 /// not complete. todo
 bool unsCondition(String address) =>
