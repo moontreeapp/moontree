@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "395466070715",
+    "project_id": "moontree-3eff4",
+    "storage_bucket": "moontree-3eff4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:395466070715:android:a4b3dc0ae5f9078d1fe79e",
+        "android_client_info": {
+          "package_name": "com.rvnbag.ravenmobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "395466070715-8nu8nbjr72r9a3bl3a6k9n54vebbek88.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzDnmKlzcpEElSj4e5aQegcJyO9CIFnBs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "395466070715-8nu8nbjr72r9a3bl3a6k9n54vebbek88.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

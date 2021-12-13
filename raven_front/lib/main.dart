@@ -1,42 +1,57 @@
 import 'dart:async';
 
-import 'package:datadog_flutter/datadog_observer.dart';
 import 'package:flutter/material.dart';
-import 'package:datadog_flutter/datadog_rum.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:raven_front/pages.dart';
 import 'package:raven_front/pages/password/change.dart';
 import 'package:raven_front/theme/color_gen.dart';
 import 'package:raven_front/theme/theme.dart';
-import 'package:raven_front/utils/log.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print('Handling a background message ${message.messageId}');
+}
 
-  FlutterError.onError = (FlutterErrorDetails details) {
-    // Continue doing the usual thing we do with flutter errors:
-    FlutterError.presentError(details);
-
-    // ... and also send Flutter errors to Datadog:
-    DatadogRum.instance.addFlutterError(details);
-  };
-
-  await Log.initialize();
-  log('App started...');
-
+Future<void> main() async {
   // Catch errors without crashing the app:
-  runZonedGuarded(() {
+  runZonedGuarded<Future<void>>(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    await Firebase.initializeApp();
+
+    // Let local development handle errors normally
+    await FirebaseCrashlytics.instance
+        .setCrashlyticsCollectionEnabled(!kDebugMode);
+    // NOTE: To test firebase crashlytics in debug mode, set the above to
+    // `true` and call `FirebaseCrashlytics.instance.crash()` at some point
+    //  later in the code.
+
+    // Errors that we don't catch should be sent to Crashlytics
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+
+    // Set the background messaging handler early on, as a named top-level function
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    // In-app error notification when foregrounded
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true, // Required to display a heads up notification
+      badge: true,
+      sound: false,
+    );
+
     runApp(RavenMobileApp());
-  }, (error, stackTrace) {
-    DatadogRum.instance.addError(error, stackTrace);
-  });
+  }, (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack));
 }
 
 class RavenMobileApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        navigatorObservers: [DatadogObserver()],
         initialRoute: '/',
         routes: {
           '/': (context) => Loading(),
