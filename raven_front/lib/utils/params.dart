@@ -32,7 +32,7 @@ String verifySatAmount(String amount) {
   return text;
 }
 
-String verifyDecAmount(String amount) {
+String verifyDecAmount(String amount, {bool zeroToBlank = false}) {
   amount = removeChars(amount,
       chars: Strings.whiteSapce + Strings.punctuationMinusCurrency);
   if (amount.length > 0) {
@@ -63,11 +63,16 @@ String verifyDecAmount(String amount) {
     }
   }
   // removes leading 0s
+  var ret = '0';
   try {
-    return double.parse(amount).toString();
+    ret = double.parse(amount).toString();
   } catch (e) {
-    return '0';
+    ret = '0';
   }
+  if (zeroToBlank && ['0', '0.0'].contains(ret)) {
+    return '';
+  }
+  return ret;
 }
 
 String verifyLabel(String label) {

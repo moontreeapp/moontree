@@ -446,7 +446,7 @@ class _SendState extends State<Send> {
   }
 
   Future startSend() async {
-    sendAmount.text = verifyDecAmount(sendAmount.text);
+    sendAmount.text = verifyDecAmount(sendAmount.text, zeroToBlank: true);
     var vAddress = _validateAddress();
     var vMemo = verifyMemo();
     if (_validateAddress() && verifyMemo()) {
