@@ -34,14 +34,7 @@ class _HomeState extends State<Home> {
       setState(() {});
     });
     listeners.add(balances.batchedChanges.listen((batchedChanges) {
-      // if we update balance for the account we're looking at:
-      var changes = batchedChanges;
-      // we can't filter here, we need to listen to all changes in balances
-      // because balances are recalculated when we move a wallet out of this
-      // account and that wallet wont trigger this  anymore
-      //.where((change) =>
-      //  change.data.account?.accountId == Current.account.accountId);
-      if (changes.isNotEmpty) setState(() {});
+      if (batchedChanges.isNotEmpty) setState(() {});
     }));
     listeners.add(settings.batchedChanges.listen((batchedChanges) {
       // todo: set the current account on the widget
