@@ -19,12 +19,17 @@ class HiveSource<Record> extends Source<Record> {
         box.toMap().map((key, value) => MapEntry(key.toString(), value));
     var merged = mergeMaps<String, Record>(defaults ?? {}, items,
         value: (itemValue, defaultValue) => itemValue ?? defaultValue);
+
     return merged;
   }
 
   @override
   Future<Change<Record>?> save(String key, Record record) async {
     var existing = box.get(key);
+    print('1.2.1: $key');
+    print('1.2.2: $record');
+    print(
+        '1.2.3: $existing'); // because it doesn't exist in the database it's not updated...
     if (existing == record) {
       return null;
     }
