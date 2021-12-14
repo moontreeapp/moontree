@@ -86,7 +86,6 @@ class RavenClientWaiter extends Waiter {
             added: (_) {},
             updated: (Change change) {
               var setting = change.data;
-              print('discovered setting: $setting');
               // move this into stream?
               if (setting.name == SettingName.Electrum_Net) {
                 streams.client.client.sink.add(null);

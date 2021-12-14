@@ -54,7 +54,6 @@ class LeaderWaiter extends Waiter {
               /// have moved from a testnet account to a mainnet account.
               // remove addresses of the wallet
               var leader = updated.data;
-              print('IN UPDATE: $leader');
               await addresses.removeAll(leader.addresses);
               await services.address.triggerDeriveOrBalance();
               // remove the index from the registry
