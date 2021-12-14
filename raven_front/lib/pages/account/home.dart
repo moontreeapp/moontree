@@ -334,16 +334,18 @@ class _HomeState extends State<Home> {
                     titleTextStyle: Theme.of(context).textTheme.bodyText2,
                     leading: Icon(Icons.info_outline_rounded),
                     onPressed: (BuildContext context) async {
-                      //print(services.client.client);
                       print(settings.primaryIndex
                           .getOne(SettingName.Electrum_Net));
-                      for (var item in balances.data) {
-                        print(item);
-                      }
-                      //print((await services.client.api.getAllAssetNames())
-                      //    .length);
-                      //print((await services.client.client!.request(
-                      //    'blockchain.asset.get_assets_with_prefix', [''])));
+                      print(
+                          settings.primaryIndex.getOne(SettingName.User_Name));
+                      print(settings.primaryIndex
+                          .getOne(SettingName.Account_Preferred));
+                      print(settings.primaryIndex
+                          .getOne(SettingName.Send_Immediate));
+                      await settings.save(Setting(
+                          name: SettingName.Send_Immediate, value: true));
+                      print(settings.primaryIndex
+                          .getOne(SettingName.Send_Immediate));
                     }),
                 //SettingsTile.switchTile(
                 //  title: 'Use fingerprint',
