@@ -67,8 +67,6 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
     this.source = source;
     var records = source.initialLoad();
 
-    saveAll(records.values);
-
     records.values.forEach(_addToIndices);
 
     Iterable<Change<Record>> entries =

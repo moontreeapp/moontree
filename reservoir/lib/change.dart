@@ -26,21 +26,24 @@ abstract class Change<Record> with EquatableMixin {
   List<Object> get props => [id];
 }
 
-class Loaded<Record> extends Change<Record> {
-  Loaded(Object id, Record data) : super(id, data);
+/// The Change class is an ADT, meaning we're using the Dart type system
+/// at compile time to help us check that we're considering all possible
+/// kinds of change: Added, Updated, Removed
+abstract class Modified<Record> extends Change<Record> {
+  Modified(Object id, Record data) : super(id, data);
 
   @override
-  String toString() => 'Loaded($id: $data)';
+  String toString() => 'Modified($id: $data)';
 }
 
-class Added<Record> extends Change<Record> {
+class Added<Record> extends Modified<Record> {
   Added(Object id, Record data) : super(id, data);
 
   @override
   String toString() => 'Added($id: $data)';
 }
 
-class Updated<Record> extends Change<Record> {
+class Updated<Record> extends Modified<Record> {
   Updated(Object id, Record data) : super(id, data);
 
   @override
@@ -52,4 +55,11 @@ class Removed<Record> extends Change<Record> {
 
   @override
   String toString() => 'Removed($id: $data)';
+}
+
+class Loaded<Record> extends Change<Record> {
+  Loaded(Object id, Record data) : super(id, data);
+
+  @override
+  String toString() => 'Loaded($id: $data)';
 }

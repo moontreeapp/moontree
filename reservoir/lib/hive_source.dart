@@ -19,7 +19,6 @@ class HiveSource<Record> extends Source<Record> {
         box.toMap().map((key, value) => MapEntry(key.toString(), value));
     var merged = mergeMaps<String, Record>(defaults ?? {}, items,
         value: (itemValue, defaultValue) => itemValue ?? defaultValue);
-
     return merged;
   }
 
