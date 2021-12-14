@@ -69,18 +69,18 @@ class ClientService {
   Future<RavenElectrumClient?> createClient(
       {String projectName = 'MTWallet', String buildVersion = '0.1'}) async {
     try {
-      if (settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value ==
-          Net.Main) {
+      if (settings.primaryIndex.getOne(SettingName.Electrum_Net)?.value ==
+          Net.Test) {
         return await RavenElectrumClient.connect(
-          chosenDomain,
-          port: chosenPort,
+          testElectrumDomain,
+          port: testElectrumPort,
           clientName: '$projectName/$buildVersion',
           connectionTimeout: connectionTimeout,
         );
       }
       return await RavenElectrumClient.connect(
-        testElectrumDomain,
-        port: testElectrumPort,
+        chosenDomain,
+        port: chosenPort,
         clientName: '$projectName/$buildVersion',
         connectionTimeout: connectionTimeout,
       );
@@ -135,8 +135,10 @@ class SubscribeService {
   }
 
   void unsubscribe(String addressId) {
-    subscriptionHandles[addressId]!.cancel();
-    subscriptionHandles.remove(addressId);
+    if (subscriptionHandles.keys.contains(addressId)) {
+      subscriptionHandles[addressId]!.cancel();
+      subscriptionHandles.remove(addressId);
+    }
   }
 }
 
