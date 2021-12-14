@@ -119,6 +119,9 @@ class SubscribeService {
       if (address.account!.net ==
           settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value) {
         if (!subscriptionHandles.keys.contains(address.addressId)) {
+          // getting a client error here during startup (before client instanteated)
+          // we shouldn't trigger thais until we have a client up.
+          // or we should backlog it.
           to(client ?? streams.client.client.value!, address);
         }
       }

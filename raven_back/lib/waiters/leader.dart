@@ -55,7 +55,9 @@ class LeaderWaiter extends Waiter {
               // remove addresses of the wallet
               var leader = updated.data;
               await addresses.removeAll(leader.addresses);
-              await services.address.triggerDeriveOrBalance();
+              await balances
+                  .removeAll(balances.byWallet.getAll(leader.walletId));
+
               // remove the index from the registry
               for (var exposure in [
                 NodeExposure.External,

@@ -20,7 +20,7 @@ class Setting with EquatableMixin {
   });
 
   @override
-  List<Object> get props => [name, value];
+  List<Object> get props => [name, value ?? ''];
 
   @override
   String toString() => 'Setting($name, $value)';
