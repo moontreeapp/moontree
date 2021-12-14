@@ -44,7 +44,6 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
         .listen((ravenClient) async => setState(() {})));
     var value = settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value;
     isSelected = isSelected ?? [value == Net.Main, value == Net.Test];
-    print('isSelected $isSelected');
     super.initState();
   }
 
@@ -62,7 +61,6 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
 
   @override
   Widget build(BuildContext context) {
-    print(services.client.chosenDomain);
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
@@ -115,25 +113,19 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
               children: <Widget>[Text('MainNet'), Text('TestNet')],
               isSelected: isSelected ?? [false, true],
               onPressed: (int index) async {
-                print('$index, $isSelected');
-                print(settings.primaryIndex.getOne(SettingName.Electrum_Net));
                 if (index == 0 && !isSelected!.first) {
-                  print('in main');
                   isSelected = [true, false];
                   await settings.save(
                       Setting(name: SettingName.Electrum_Net, value: Net.Main));
                   var changeAccount = accounts.getBestAccount(Net.Main);
-                  print(settings.primaryIndex.getOne(SettingName.Electrum_Net));
                   if (changeAccount != null) {
                     await settings.setCurrentAccountId(changeAccount.accountId);
                   }
                 } else if (index == 1 && !isSelected!.last) {
-                  print('in test');
                   isSelected = [false, true];
                   await settings.save(
                       Setting(name: SettingName.Electrum_Net, value: Net.Test));
                   var changeAccount = accounts.getBestAccount(Net.Test);
-                  print(settings.primaryIndex.getOne(SettingName.Electrum_Net));
                   if (changeAccount != null) {
                     await settings.setCurrentAccountId(changeAccount.accountId);
                   }
