@@ -26,10 +26,6 @@ class HiveSource<Record> extends Source<Record> {
   @override
   Future<Change<Record>?> save(String key, Record record) async {
     var existing = box.get(key);
-    print('1.2.1: $key');
-    print('1.2.2: $record');
-    print(
-        '1.2.3: $existing'); // because it doesn't exist in the database it's not updated...
     if (existing == record) {
       return null;
     }
