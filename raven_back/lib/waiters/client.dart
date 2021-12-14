@@ -77,20 +77,12 @@ class RavenClientWaiter extends Waiter {
       },
     );
 
-    /// when user switches to testnet or mainnet
     listen(
         'settings.changes',
-        settings.changes,
-        (Change<Setting> change) => change.when(
-            loaded: (_) {},
-            added: (_) {},
-            updated: (Change change) {
-              var setting = change.data;
-              // move this into stream?
-              if (setting.name == SettingName.Electrum_Net) {
-                streams.client.client.sink.add(null);
-              }
-            },
-            removed: (_) {}));
+        settings.changes.where((change) =>
+            change is Modified && change.data.name == SettingName.Electrum_Net),
+        (_) {
+      streams.client.client.sink.add(null);
+    });
   }
 }
