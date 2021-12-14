@@ -30,7 +30,8 @@ class HiveSource<Record> extends Source<Record> {
     }
     await box.put(key, record);
     if (existing == null) {
-      return Added(key, record);
+      return Added(key, record,
+          didOverrideDefault: defaults?.keys.contains(key) ?? false);
     }
     return Updated(key, record);
   }
