@@ -324,6 +324,7 @@ class _HomeState extends State<Home> {
                     onPressed: (BuildContext context) =>
                         Navigator.pushNamed(context, '/settings/about')),
 /*                      
+*/
                 SettingsTile(
                     title: 'Clear Database',
                     titleTextStyle: Theme.of(context).textTheme.bodyText2,
@@ -338,13 +339,13 @@ class _HomeState extends State<Home> {
                     onPressed: (BuildContext context) async {
                       //print(services.client.client);
                       print(settings.primaryIndex
-                          .getOne(SettingName.Electrum_Domain0));
+                          .getOne(SettingName.Electrum_Net));
+                      print(balances.data);
                       //print((await services.client.api.getAllAssetNames())
                       //    .length);
                       //print((await services.client.client!.request(
                       //    'blockchain.asset.get_assets_with_prefix', [''])));
                     }),
-*/
                 //SettingsTile.switchTile(
                 //  title: 'Use fingerprint',
                 //  titleTextStyle: Theme.of(context).textTheme.bodyText2,

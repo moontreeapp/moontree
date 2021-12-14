@@ -116,21 +116,24 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
               isSelected: isSelected ?? [false, true],
               onPressed: (int index) async {
                 print('$index, $isSelected');
-                if (index == 0 && isSelected![0] == false) {
+                print(settings.primaryIndex.getOne(SettingName.Electrum_Net));
+                if (index == 0 && !isSelected!.first) {
+                  print('in main');
                   isSelected = [true, false];
-                  var changeAccount = accounts.getBestAccount(Net.Main);
-                  print(changeAccount);
                   await settings.save(
                       Setting(name: SettingName.Electrum_Net, value: Net.Main));
+                  var changeAccount = accounts.getBestAccount(Net.Main);
+                  print(settings.primaryIndex.getOne(SettingName.Electrum_Net));
                   if (changeAccount != null) {
                     await settings.setCurrentAccountId(changeAccount.accountId);
                   }
-                } else if (index == 1 && isSelected![0] == true) {
+                } else if (index == 1 && !isSelected!.last) {
+                  print('in test');
                   isSelected = [false, true];
                   await settings.save(
                       Setting(name: SettingName.Electrum_Net, value: Net.Test));
                   var changeAccount = accounts.getBestAccount(Net.Test);
-                  print(changeAccount);
+                  print(settings.primaryIndex.getOne(SettingName.Electrum_Net));
                   if (changeAccount != null) {
                     await settings.setCurrentAccountId(changeAccount.accountId);
                   }
