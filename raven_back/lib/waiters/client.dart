@@ -80,7 +80,8 @@ class RavenClientWaiter extends Waiter {
     listen(
         'settings.changes',
         settings.changes.where((change) =>
-            change is Modified && change.data.name == SettingName.Electrum_Net),
+            change is Added ||
+            change is Updated && change.data.name == SettingName.Electrum_Net),
         (_) {
       streams.client.client.sink.add(null);
     });
