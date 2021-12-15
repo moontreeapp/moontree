@@ -95,7 +95,17 @@ class TransactionService {
         }
       }
     }
-    return transactionRecords;
+    var ret = <TransactionRecord>[];
+    var actual = <TransactionRecord>[];
+    for (var txRecord in transactionRecords) {
+      if (txRecord.formattedDatetime == 'in mempool') {
+        ret.add(txRecord);
+      } else {
+        actual.add(txRecord);
+      }
+    }
+    ret.addAll(actual);
+    return ret;
   }
 }
 
