@@ -11,3 +11,5 @@ pubspec.lock
 .env
 database/
 testdb/
+
+*.exe

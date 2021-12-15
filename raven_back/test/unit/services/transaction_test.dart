@@ -1,4 +1,5 @@
 // dart test .\test\unit\services\transaction_test.dart
+import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart';
 import 'package:test/test.dart';
@@ -17,6 +18,119 @@ void main() async {
 
   setUp(fixtures.useFixtureSources);
 
+  group('Collect Unspents', () {
+    test('rvn wallet unspents', () {
+      VoutReservoir.whereUnspent(given: wallet.vouts, security: securities.RVN)
+          .toList();
+      //expect(?, ?);
+    });
+
+    test('rvn account unspents', () {
+      VoutReservoir.whereUnspent(given: account.vouts).toList();
+      //expect(?, ?);
+    });
+
+    test('asset wallet unspents', () {
+      VoutReservoir.whereUnspent(
+              given: wallet.vouts,
+              security: securities.bySymbolSecurityType
+                  .getOne('MOONTREE', SecurityType.RavenAsset))
+          .toList();
+      //expect(?, ?);
+    });
+
+    test('asset account unspents', () {
+      VoutReservoir.whereUnspent(
+              given: account.vouts,
+              security: securities.bySymbolSecurityType
+                  .getOne('MOONTREE', SecurityType.RavenAsset))
+          .toList();
+      //expect(?, ?);
+    });
+
+    test('missing asset account unspents', () {
+      VoutReservoir.whereUnspent(
+              given: account.vouts,
+              security: securities.bySymbolSecurityType
+                  .getOne('lalala', SecurityType.RavenAsset))
+          .toList();
+      //expect(0);
+    });
+  });
+
+  group('Collect Sorted Unspents', () {
+    test('rvn wallet unspents', () {
+      services.balance.sortedUnspentsWallets(wallet, security: securities.RVN);
+      //expect(?, ?);
+    });
+
+    test('rvn account unspents', () {
+      services.balance.sortedUnspents(account);
+      //expect(?, ?);
+    });
+
+    test('asset wallet unspents', () {
+      services.balance.sortedUnspentsWallets(wallet,
+          security: securities.bySymbolSecurityType
+              .getOne('MOONTREE', SecurityType.RavenAsset));
+      //expect(?, ?);
+    });
+
+    test('asset account unspents', () {
+      services.balance.sortedUnspents(account,
+          security: securities.bySymbolSecurityType
+              .getOne('MOONTREE', SecurityType.RavenAsset));
+      //expect(?, ?);
+    });
+
+    test('missing asset account unspents', () {
+      services.balance
+          .sortedUnspents(account,
+              security: securities.bySymbolSecurityType
+                  .getOne('lalala', SecurityType.RavenAsset))
+          .toList();
+      //expect(0);
+    });
+  });
+
+  group('CollectUTXOs RVN', () {
+    setUp(fixtures.useFixtureSources);
+
+    test('pick smallest UTXO of sufficient size', () {
+      var utxos = services.balance.collectUTXOs(
+          accounts.primaryIndex.getByKeyStr('a0')[0],
+          amount: 500);
+      expect(utxos.map((utxo) => utxo.rvnValue).toList(), [5000000]);
+    });
+    test('take multiple from the top', () {
+      var utxos = services.balance.collectUTXOs(
+          accounts.primaryIndex.getByKeyStr('a0')[0],
+          amount: 12000000);
+      expect(utxos.map((utxo) => utxo.rvnValue).toList(), [10000000, 5000000]);
+    });
+  });
+
+  group('CollectUTXOs asset', () {
+    setUp(fixtures.useFixtureSources);
+
+    test('pick smallest UTXO of sufficient size', () {
+      var utxos = services.balance.collectUTXOs(
+          accounts.primaryIndex.getByKeyStr('a0')[0],
+          amount: 500,
+          security: securities.bySymbolSecurityType
+              .getOne('MOONTREE', SecurityType.RavenAsset));
+      expect(utxos.map((utxo) => utxo.rvnValue).toList(), [5000000]);
+    });
+    test('take multiple from the top', () {
+      var utxos = services.balance.collectUTXOs(
+          accounts.primaryIndex.getByKeyStr('a0')[0],
+          amount: 12000000,
+          security: securities.bySymbolSecurityType
+              .getOne('MOONTREE', SecurityType.RavenAsset));
+      expect(utxos.map((utxo) => utxo.rvnValue).toList(), [10000000, 5000000]);
+    });
+  });
+
   group('TransactionBuilder', () {
     test('default transaction version is 1', () {
       var txb = TransactionBuilder(network: mainnet);
@@ -27,29 +141,6 @@ void main() async {
       var txb = TransactionBuilder(network: mainnet);
       expect(txb.tx!.virtualSize(), 10);
       expect(txb.tx!.fee(), 11000);
-    });
-  });
-
-  group('CollectUTXOs', () {
-    setUp(fixtures.useFixtureSources);
-
-    test('fixture utxo set matches exptected', () {
-      var utxos = balanceService.BalanceService()
-          .sortedUnspents(accounts.primaryIndex.getByKeyStr('a0')[0]);
-      expect(utxos.map((utxo) => utxo.rvnValue).toList(), [10000000, 5000000]);
-    });
-
-    test('pick smallest UTXO of sufficient size', () {
-      var utxos = balanceService.BalanceService().collectUTXOs(
-          accounts.primaryIndex.getByKeyStr('a0')[0],
-          amount: 500);
-      expect(utxos.map((utxo) => utxo.rvnValue).toList(), [5000000]);
-    });
-    test('take multiple from the top', () {
-      var utxos = balanceService.BalanceService().collectUTXOs(
-          accounts.primaryIndex.getByKeyStr('a0')[0],
-          amount: 12000000);
-      expect(utxos.map((utxo) => utxo.rvnValue).toList(), [10000000, 5000000]);
     });
   });
   group('TransactionService', () {

@@ -1,13 +1,19 @@
 import 'package:intl/intl.dart';
 import 'package:raven_back/raven_back.dart';
 
+import 'transaction_maker.dart';
+
 class TransactionService {
-  List<Vout> walletUnspents(Wallet wallet) =>
-      VoutReservoir.whereUnspent(given: wallet.vouts, security: securities.RVN)
+  final TransactionMaker make = TransactionMaker();
+
+  List<Vout> accountUnspents(Account account, {Security? security}) =>
+      VoutReservoir.whereUnspent(
+              given: account.vouts, security: security ?? securities.RVN)
           .toList();
 
-  List<Vout> accountUnspents(Account account) =>
-      VoutReservoir.whereUnspent(given: account.vouts, security: securities.RVN)
+  List<Vout> walletUnspents(Wallet wallet, {Security? security}) =>
+      VoutReservoir.whereUnspent(
+              given: wallet.vouts, security: security ?? securities.RVN)
           .toList();
 
   Transaction? getTransactionFrom({Transaction? transaction, String? hash}) {
@@ -95,7 +101,17 @@ class TransactionService {
         }
       }
     }
-    return transactionRecords;
+    var ret = <TransactionRecord>[];
+    var actual = <TransactionRecord>[];
+    for (var txRecord in transactionRecords) {
+      if (txRecord.formattedDatetime == 'in mempool') {
+        ret.add(txRecord);
+      } else {
+        actual.add(txRecord);
+      }
+    }
+    ret.addAll(actual);
+    return ret;
   }
 }
 

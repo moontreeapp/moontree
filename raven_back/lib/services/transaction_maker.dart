@@ -10,17 +10,42 @@ import 'transaction/sign.dart';
 const ESTIMATED_OUTPUT_FEE = 0 /* why 34? */;
 const ESTIMATED_FEE_PER_INPUT = 0 /* why 51? */;
 
+class SendRequest {
+  late bool useWallet;
+  late bool sendAll;
+  late String sendAddress;
+  late double holding;
+  late String visibleAmount;
+  late int sendAmountAsSats;
+  late TxGoal feeGoal;
+  Wallet? wallet;
+  Account? account;
+
+  SendRequest({
+    required this.useWallet,
+    required this.sendAll,
+    required this.sendAddress,
+    required this.holding,
+    required this.visibleAmount,
+    required this.sendAmountAsSats,
+    required this.feeGoal,
+    this.wallet,
+    this.account,
+  });
+}
+
 class SendEstimate {
   int amount;
   int fees;
   List<Vout> utxos;
+  Security? security;
 
   @override
   String toString() => 'amount: $amount, fees: $fees, utxos: $utxos';
 
   int get total => amount + fees;
-  int get utxoTotal =>
-      utxos.fold(0, (int total, vout) => total + vout.rvnValue);
+  int get utxoTotal => utxos.fold(
+      0, (int total, vout) => total + vout.securityValue(security: security));
 
   int get changeDue => utxoTotal - total;
 
@@ -28,6 +53,7 @@ class SendEstimate {
     this.amount, {
     this.fees = ESTIMATED_OUTPUT_FEE + ESTIMATED_FEE_PER_INPUT,
     List<Vout>? utxos,
+    this.security,
   }) : utxos = utxos ?? [];
 
   factory SendEstimate.copy(SendEstimate detail) {
@@ -40,7 +66,45 @@ class SendEstimate {
   void setAmount(int amount_) => amount = amount_;
 }
 
-class MakeTransactionService {
+class TransactionMaker {
+  Tuple2<ravencoin.Transaction, SendEstimate> transactionBy(
+    SendRequest sendRequest,
+  ) {
+    var tuple;
+    if (sendRequest.useWallet) {
+      tuple = (sendRequest.sendAll ||
+              double.parse(sendRequest.visibleAmount) == sendRequest.holding)
+          ? transactionSendAll(
+              sendRequest.sendAddress,
+              SendEstimate(sendRequest.sendAmountAsSats),
+              wallet: sendRequest.wallet,
+              goal: sendRequest.feeGoal,
+            )
+          : transaction(
+              sendRequest.sendAddress,
+              SendEstimate(sendRequest.sendAmountAsSats),
+              wallet: sendRequest.wallet,
+              goal: sendRequest.feeGoal,
+            );
+    } else {
+      tuple = (sendRequest.sendAll ||
+              double.parse(sendRequest.visibleAmount) == sendRequest.holding)
+          ? transactionSendAll(
+              sendRequest.sendAddress,
+              SendEstimate(sendRequest.sendAmountAsSats),
+              account: sendRequest.account,
+              goal: sendRequest.feeGoal,
+            )
+          : transaction(
+              sendRequest.sendAddress,
+              SendEstimate(sendRequest.sendAmountAsSats),
+              account: sendRequest.account,
+              goal: sendRequest.feeGoal,
+            );
+    }
+    return tuple;
+  }
+
   /// gets inputs, calculates fee, returns change
   //
   // EXAMPLE of recursive function
@@ -70,12 +134,13 @@ class MakeTransactionService {
   // setFees(35) <-- fee is the same because have the same number of inputs & outputs as previous iteration
   // updatedChangeDue: 110 - (45 + 35) = 30 : sufficient! and changeDue is RIGHT
   //   -> DONE with result
-  Tuple2<ravencoin.Transaction, SendEstimate> buildTransaction(
+  Tuple2<ravencoin.Transaction, SendEstimate> transaction(
     String toAddress,
     SendEstimate estimate, {
     Account? account,
     Wallet? wallet,
     TxGoal? goal,
+    Security? security,
   }) {
     var useWallet = shouldUseWallet(account: account, wallet: wallet);
 
@@ -91,8 +156,10 @@ class MakeTransactionService {
     // result = addInputs(txb, account, SendEstimate(sendAmount));
     // send
     var utxos = useWallet
-        ? services.balance.collectUTXOsWallet(wallet!, amount: estimate.total)
-        : services.balance.collectUTXOs(account!, amount: estimate.total);
+        ? services.balance.collectUTXOsWallet(wallet!,
+            amount: estimate.total, security: security)
+        : services.balance
+            .collectUTXOs(account!, amount: estimate.total, security: security);
 
     for (var utxo in utxos) {
       txb.addInput(utxo.txId, utxo.position);
@@ -119,23 +186,25 @@ class MakeTransactionService {
       return Tuple2(tx, updatedEstimate);
     } else {
       // try again
-      return buildTransaction(
+      return transaction(
         toAddress,
         updatedEstimate,
         goal: goal,
         account: account,
         wallet: wallet,
+        security: security,
       );
     }
   }
 
-  Tuple2<ravencoin.Transaction, SendEstimate> buildTransactionSendAll(
+  Tuple2<ravencoin.Transaction, SendEstimate> transactionSendAll(
     String toAddress,
     SendEstimate estimate, {
     Account? account,
     Wallet? wallet,
     TxGoal? goal,
     Set<int>? previousFees,
+    Security? security,
   }) {
     previousFees = previousFees ?? {};
     var useWallet = shouldUseWallet(account: account, wallet: wallet);
@@ -147,7 +216,7 @@ class MakeTransactionService {
     var total = 0;
     for (var utxo in utxos) {
       txb.addInput(utxo.txId, utxo.position);
-      total = total + utxo.rvnValue;
+      total = total + utxo.securityValue(security: security);
     }
     var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
     txb.addOutput(toAddress, estimate.amount);
@@ -159,13 +228,14 @@ class MakeTransactionService {
     if (previousFees.contains(fees)) {
       return Tuple2(tx, updatedEstimate);
     } else {
-      return buildTransactionSendAll(
+      return transactionSendAll(
         toAddress,
         updatedEstimate,
         goal: goal,
         account: account,
         wallet: wallet,
         previousFees: {...previousFees, fees},
+        security: security,
       );
     }
   }

@@ -6,6 +6,7 @@ import 'cipher.dart';
 import 'client.dart';
 import 'metadata.dart';
 import 'password.dart';
+import 'run.dart';
 import 'wallet.dart';
 
 class streams {
@@ -13,6 +14,7 @@ class streams {
   static final address = AddressStreams();
   static final app = AppStreams();
   static final asset = AssetStreams();
+  static final run = RunStreams();
   static final cipher = CipherStreams();
   static final client = ClientStreams();
   static final metadata = MetadataStreams();
