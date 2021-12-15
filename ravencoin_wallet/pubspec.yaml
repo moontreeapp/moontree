@@ -1,0 +1,20 @@
+name: ravencoin_wallet
+description: A dart ravencoin transaction signing library.
+version: 3.0.0
+homepage: https://github.com/moontreeapp/ravencoin_wallet
+
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+
+dependencies:
+  bech32: ^0.2.1
+  bip32: ^2.0.0
+  bip39: ^1.0.6
+  bs58check: ^1.0.2
+  collection: ^1.15.0
+  hex: ^0.2.0
+  meta: ^1.4.0
+  pointycastle: ^3.0.1
+
+dev_dependencies:
+  test: ^1.17.5
