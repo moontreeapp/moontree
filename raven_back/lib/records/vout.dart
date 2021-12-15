@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/records/security.dart';
 
 import '_type_id.dart';
@@ -28,16 +29,20 @@ class Vout with EquatableMixin {
   @HiveField(4)
   String type;
 
-  @HiveField(5) // non-multisig transactions
+  // non-multisig transactions
+  @HiveField(5)
   String toAddress;
 
+  // this is the composite id
   @HiveField(6)
   String? assetSecurityId;
 
+  // amount of asset to send
   @HiveField(8)
-  int? assetValue; // amount of asset to send
+  int? assetValue;
 
-  @HiveField(9) // multisig
+  // multisig, in addition to toAddress
+  @HiveField(9)
   List<String>? additionalAddresses;
 
   Vout({
@@ -70,8 +75,25 @@ class Vout with EquatableMixin {
   @override
   bool? get stringify => true;
 
+  @override
+  String toString() {
+    return 'Vout('
+        'txId: $txId, rvnValue: $rvnValue, position: $position, '
+        'memo: $memo, type: $type, toAddress: $toAddress, '
+        'assetSecurityId: $assetSecurityId, assetValue: $assetValue, '
+        'additionalAddresses: $additionalAddresses)';
+  }
+
   String get voutId => getVoutId(txId, position);
   static String getVoutId(txId, position) => '$txId:$position';
 
   List<String> get toAddresses => [toAddress, ...additionalAddresses ?? []];
+
+  int securityValue({Security? security}) => (security == null ||
+          (security.symbol == 'RVN' &&
+              security.securityType == SecurityType.Crypto)
+      ? rvnValue
+      : (security.securityId == assetSecurityId)
+          ? assetValue ?? 0
+          : 0);
 }

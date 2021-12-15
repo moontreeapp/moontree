@@ -13,10 +13,16 @@ class BalanceService {
       security: security,
       confirmed:
           VoutReservoir.whereUnspent(given: wallet.vouts, security: security)
-              .fold(0, (sum, vout) => sum + vout.rvnValue),
+              .fold(
+                  0,
+                  (sum, vout) =>
+                      sum + vout.rvnValue), // should this be rvnValue always?
       unconfirmed: VoutReservoir.whereUnconfirmed(
               given: wallet.vouts, security: security)
-          .fold(0, (sum, vout) => sum + vout.rvnValue));
+          .fold(
+              0,
+              (sum, vout) =>
+                  sum + vout.rvnValue)); // should this be rvnValue always?
 
   /// If there is a change in its history, recalculate a balance. Return a list
   /// of such balances.
@@ -49,29 +55,38 @@ class BalanceService {
   /// Transaction Logic ///////////////////////////////////////////////////////
 
   /// Sort in descending order, from largest amount to smallest amount
-  List<Vout> sortedUnspents(Account account) =>
-      services.transaction.accountUnspents(account).toList()
-        ..sort((a, b) => b.rvnValue.compareTo(a.rvnValue));
+  List<Vout> sortedUnspents(Account account, {Security? security}) =>
+      services.transaction.accountUnspents(account, security: security).toList()
+        ..sort((a, b) => b
+            .securityValue(security: security)
+            .compareTo(a.securityValue(security: security)));
 
   /// Sort in descending order, from largest amount to smallest amount
-  List<Vout> sortedUnspentsWallets(Wallet wallet) =>
-      services.transaction.walletUnspents(wallet).toList()
-        ..sort((a, b) => b.rvnValue.compareTo(a.rvnValue));
+  List<Vout> sortedUnspentsWallets(Wallet wallet, {Security? security}) =>
+      services.transaction.walletUnspents(wallet, security: security).toList()
+        ..sort((a, b) => b
+            .securityValue(security: security)
+            .compareTo(a.securityValue(security: security)));
 
   /// Asserts that the asset in the account is greater than `amount`
-  void assertSufficientFunds(int amount, Account account,
-      {Security? security}) {
-    security = security ?? securities.RVN;
-    if (accountBalance(account, security).confirmed < amount) {
+  void assertSufficientFunds(
+    int amount,
+    Account account, {
+    Security? security,
+  }) {
+    if (accountBalance(account, security ?? securities.RVN).confirmed <
+        amount) {
       throw InsufficientFunds();
     }
   }
 
   /// Asserts that the asset in the account is greater than `amount`
-  void assertSufficientFundsWallets(int amount, Wallet wallet,
-      {Security? security}) {
-    security = security ?? securities.RVN;
-    if (walletBalance(wallet, security).confirmed < amount) {
+  void assertSufficientFundsWallets(
+    int amount,
+    Wallet wallet, {
+    Security? security,
+  }) {
+    if (walletBalance(wallet, security ?? securities.RVN).confirmed < amount) {
       throw InsufficientFunds();
     }
   }
@@ -82,16 +97,20 @@ class BalanceService {
   /// size that either STAYS THE SAME or INCREASES IN SIZE since last calling
   /// it if the 'amount' increases.
   ///
-  List<Vout> collectUTXOs(Account account,
-      {required int amount, List<Vout> except = const []}) {
+  List<Vout> collectUTXOs(
+    Account account, {
+    required int amount,
+    List<Vout> except = const [],
+    Security? security,
+  }) {
     assertSufficientFunds(amount, account);
 
-    var unspents = sortedUnspents(account)
+    var unspents = sortedUnspents(account, security: security)
       ..removeWhere((utxo) => except.contains(utxo));
 
     /// Can we find a single, ideal UTXO by searching from smallest to largest?
     for (var unspent in unspents.reversed) {
-      if (unspent.rvnValue >= amount) return [unspent];
+      if (unspent.securityValue(security: security) >= amount) return [unspent];
     }
 
     /// Otherwise, satisfy the amount by combining UTXOs from largest to smallest
@@ -101,23 +120,27 @@ class BalanceService {
     var remaining = amount;
     for (var unspent in unspents) {
       if (remaining > 0) collection.add(unspent);
-      if (remaining < unspent.rvnValue) break;
-      remaining -= unspent.rvnValue;
+      if (remaining < unspent.securityValue(security: security)) break;
+      remaining -= unspent.securityValue(security: security);
     }
 
     return collection;
   }
 
-  List<Vout> collectUTXOsWallet(Wallet wallet,
-      {required int amount, List<Vout> except = const []}) {
+  List<Vout> collectUTXOsWallet(
+    Wallet wallet, {
+    required int amount,
+    List<Vout> except = const [],
+    Security? security,
+  }) {
     assertSufficientFundsWallets(amount, wallet);
 
-    var unspents = sortedUnspentsWallets(wallet)
+    var unspents = sortedUnspentsWallets(wallet, security: security)
       ..removeWhere((utxo) => except.contains(utxo));
 
     /// Can we find a single, ideal UTXO by searching from smallest to largest?
     for (var unspent in unspents.reversed) {
-      if (unspent.rvnValue >= amount) return [unspent];
+      if (unspent.securityValue(security: security) >= amount) return [unspent];
     }
 
     /// Otherwise, satisfy the amount by combining UTXOs from largest to smallest
@@ -127,8 +150,8 @@ class BalanceService {
     var remaining = amount;
     for (var unspent in unspents) {
       if (remaining > 0) collection.add(unspent);
-      if (remaining < unspent.rvnValue) break;
-      remaining -= unspent.rvnValue;
+      if (remaining < unspent.securityValue(security: security)) break;
+      remaining -= unspent.securityValue(security: security);
     }
 
     return collection;

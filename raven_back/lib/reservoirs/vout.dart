@@ -22,8 +22,8 @@ class VoutReservoir extends Reservoir<_VoutKey, Vout> {
   static Iterable<Vout> whereUnspent(
           {Iterable<Vout>? given, Security? security}) =>
       (given ?? vouts).where((vout) => (vout.confirmed &&
-          vout.rvnValue > 0 &&
           vout.security == security &&
+          vout.securityValue(security: security) > 0 &&
           vins
               .where((vin) => (vin.voutTxId == vout.txId &&
                   vin.voutPosition == vout.position))
