@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raven_back/streams/run.dart' show SendRequest;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 import 'package:barcode_scan2/barcode_scan2.dart';
@@ -400,7 +401,7 @@ class _SendState extends State<Send> {
   }
 
   /// todo: fix the please wait, this is kinda sad:
-  Future buildTransactionWithMessageAndConfirm(int sendAmountAsSats) async {
+  Future buildTransactionWithMessageAndConfirm(SendRequest sendRequest) async {
     services.busy.createTransactionOn();
     showDialog(
         context: context,
@@ -410,36 +411,7 @@ class _SendState extends State<Send> {
     // this is used to get the please wait message to show up
     // it needs enough time to display the message
     await Future.delayed(const Duration(milliseconds: 150));
-    var tuple;
-    if (useWallet) {
-      tuple = (sendAll || double.parse(visibleAmount) == holding)
-          ? services.transact.buildTransactionSendAll(
-              sendAddress.text,
-              SendEstimate(sendAmountAsSats),
-              wallet: Current.wallet(data['walletId']),
-              goal: feeGoal,
-            )
-          : services.transact.buildTransaction(
-              sendAddress.text,
-              SendEstimate(sendAmountAsSats),
-              wallet: Current.wallet(data['walletId']),
-              goal: feeGoal,
-            );
-    } else {
-      tuple = (sendAll || double.parse(visibleAmount) == holding)
-          ? services.transact.buildTransactionSendAll(
-              sendAddress.text,
-              SendEstimate(sendAmountAsSats),
-              account: Current.account,
-              goal: feeGoal,
-            )
-          : services.transact.buildTransaction(
-              sendAddress.text,
-              SendEstimate(sendAmountAsSats),
-              account: Current.account,
-              goal: feeGoal,
-            );
-    }
+    var tuple = services.transaction.make.transactionBy(sendRequest);
     services.busy.createTransactionOff();
     Navigator.pop(context);
     confirmMessage(tx: tuple.item1, estimate: tuple.item2);
@@ -477,35 +449,53 @@ class _SendState extends State<Send> {
         precision: 8, /* get asset precision */
       );
       if (holding >= double.parse(sendAmount.text)) {
-        // todo: catch other errors?
-        // fix error: got this error when left sitting for a while - are we reconnecting correctly
-        // Unhandled Exception: Bad state: The client is closed.
-        try {
-          await buildTransactionWithMessageAndConfirm(sendAmountAsSats);
-        } on InsufficientFunds catch (e) {
-          Navigator.pop(context);
-          showDialog(
-              context: context,
-              builder: (BuildContext context) => AlertDialog(
-                      title: Text('Error: Insufficient Funds'),
-                      content: Text(
-                          '$e: Unable to acquire inputs for transaction, this may be due to too many wallets holding too small amounts, a problem known as "dust." Try sending from another account.'),
-                      actions: [
-                        TextButton(
-                            child: Text('Ok'),
-                            onPressed: () => Navigator.pop(context))
-                      ]));
-        } catch (e) {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) => AlertDialog(
-                      title: Text('Error'),
-                      content: Text('Unable to create transaction: $e'),
-                      actions: [
-                        TextButton(
-                            child: Text('Ok'),
-                            onPressed: () => Navigator.pop(context))
-                      ]));
+        var sendRequest = SendRequest(
+            useWallet: useWallet,
+            sendAll: sendAll,
+            wallet: data['walletId'] != null
+                ? Current.wallet(data['walletId'])
+                : null,
+            account: Current.account,
+            sendAddress: sendAddress.text,
+            holding: holding,
+            visibleAmount: visibleAmount,
+            sendAmountAsSats: sendAmountAsSats,
+            feeGoal: feeGoal);
+        if (settings.primaryIndex.getOne(SettingName.Send_Immediate)!.value) {
+          //mpkrK1GLPPdqpaC8qxPVDT5bn5fkAE1UUE
+          //23150
+          // https://rvnt.cryptoscope.io/address/?address=mpkrK1GLPPdqpaC8qxPVDT5bn5fkAE1UUE
+          streams.run.send.add(sendRequest);
+          //todo: snackbar notification "sending in background"
+          Navigator.pop(context); // leave page so they don't hit send again
+        } else {
+          try {
+            await buildTransactionWithMessageAndConfirm(sendRequest);
+          } on InsufficientFunds catch (e) {
+            Navigator.pop(context);
+            showDialog(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                        title: Text('Error: Insufficient Funds'),
+                        content: Text(
+                            '$e: Unable to acquire inputs for transaction, this may be due to too many wallets holding too small amounts, a problem known as "dust." Try sending from another account.'),
+                        actions: [
+                          TextButton(
+                              child: Text('Ok'),
+                              onPressed: () => Navigator.pop(context))
+                        ]));
+          } catch (e) {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                        title: Text('Error'),
+                        content: Text('Unable to create transaction: $e'),
+                        actions: [
+                          TextButton(
+                              child: Text('Ok'),
+                              onPressed: () => Navigator.pop(context))
+                        ]));
+          }
         }
       } else {
         showDialog(

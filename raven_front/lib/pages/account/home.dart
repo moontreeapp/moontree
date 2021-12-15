@@ -334,18 +334,18 @@ class _HomeState extends State<Home> {
                     titleTextStyle: Theme.of(context).textTheme.bodyText2,
                     leading: Icon(Icons.info_outline_rounded),
                     onPressed: (BuildContext context) async {
-                      print(settings.primaryIndex
-                          .getOne(SettingName.Electrum_Net));
-                      print(
-                          settings.primaryIndex.getOne(SettingName.User_Name));
-                      print(settings.primaryIndex
-                          .getOne(SettingName.Account_Preferred));
-                      print(settings.primaryIndex
-                          .getOne(SettingName.Send_Immediate));
-                      await settings.save(Setting(
-                          name: SettingName.Send_Immediate, value: true));
-                      print(settings.primaryIndex
-                          .getOne(SettingName.Send_Immediate));
+                      print(VoutReservoir.whereUnspent(
+                              given: Current.account.vouts,
+                              security: securities.RVN)
+                          .toList());
+                      print(VoutReservoir.whereUnspent(
+                              given: Current.account.vouts,
+                              security: securities.bySymbolSecurityType
+                                  .getOne('MOONTREE', SecurityType.RavenAsset))
+                          .toList());
+                      print(Current.account.vouts.first);
+                      print(Current.account.vouts.first
+                          .securityValue(security: securities.RVN));
                     }),
                 //SettingsTile.switchTile(
                 //  title: 'Use fingerprint',
