@@ -10,6 +10,7 @@ class Preferences extends StatefulWidget {
 //class Preferences extends StatelessWidget {
 class _PreferencesState extends State<Preferences> {
   TextEditingController yourName = TextEditingController();
+  bool termsAndConditions = false; // should be a setting along with others...
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +39,31 @@ class _PreferencesState extends State<Preferences> {
               alertSuccess();
             },
           ),
+          SizedBox(height: 20),
+          CheckboxListTile(
+              controlAffinity: ListTileControlAffinity.leading,
+              contentPadding: EdgeInsets.all(0),
+              title: Text('Send immediately (without confirmation)'),
+              value: settings.primaryIndex
+                  .getOne(SettingName.Send_Immediate)!
+                  .value,
+              onChanged: (bool? value) async {
+                await settings.save(Setting(
+                    name: SettingName.Send_Immediate,
+                    value: !settings.primaryIndex
+                        .getOne(SettingName.Send_Immediate)!
+                        .value));
+                setState(() {});
+              }),
+          CheckboxListTile(
+              controlAffinity: ListTileControlAffinity.leading,
+              contentPadding: EdgeInsets.all(0),
+              title: Text('I agree to the Terms and Conditions'),
+              value: termsAndConditions,
+              onChanged: (bool? value) => setState(() {
+                    termsAndConditions = value ?? false;
+                  })),
+          //Text('Send immediately (without confirmation)')
         ],
       ),
     );
