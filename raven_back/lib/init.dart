@@ -12,6 +12,7 @@ Future initWaiters() async {
   settingWaiter.init();
   addressSubscriptionWaiter.init();
   blockWaiter.init();
+  sendWaiter.init();
   // todo: don't kill app if this fails
   await rateWaiter.init();
 }

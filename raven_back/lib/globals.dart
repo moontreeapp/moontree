@@ -33,3 +33,4 @@ final SettingWaiter settingWaiter = SettingWaiter();
 // Wallets
 final LeaderWaiter leaderWaiter = LeaderWaiter();
 final SingleWaiter singleWaiter = SingleWaiter();
+final SendWaiter sendWaiter = SendWaiter();

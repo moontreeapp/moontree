@@ -7,7 +7,6 @@ import 'client.dart';
 import 'transaction.dart';
 import 'password.dart';
 import 'rate.dart';
-import 'transaction_maker.dart';
 import 'wallet.dart';
 
 class services {
@@ -21,5 +20,4 @@ class services {
   static RateService rate = RateService();
   static WalletService wallet = WalletService();
   static PasswordService password = PasswordService();
-  static MakeTransactionService transact = MakeTransactionService();
 }

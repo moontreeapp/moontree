@@ -1,9 +1,11 @@
 import 'package:intl/intl.dart';
 import 'package:raven_back/raven_back.dart';
 
+import 'transaction_maker.dart';
+
 class TransactionService {
-  List<Vout> walletUnspents(Wallet wallet) =>
-      VoutReservoir.whereUnspent(given: wallet.vouts, security: securities.RVN)
+  final TransactionMaker make = TransactionMaker();
+
   List<Vout> accountUnspents(Account account, {Security? security}) =>
       VoutReservoir.whereUnspent(
               given: account.vouts, security: security ?? securities.RVN)
