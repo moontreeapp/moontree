@@ -28,6 +28,7 @@ class _ReceiveState extends State<Receive> {
   bool rawAddress = true;
   String uri = '';
   String username = '';
+  List<Security> fetchedNames = <Security>[];
 
   void _toggleRaw(_) {
     setState(() {
@@ -58,6 +59,7 @@ class _ReceiveState extends State<Receive> {
   @override
   void initState() {
     super.initState();
+    requestMessage.addListener(_printLatestValue);
   }
 
   @override
@@ -67,6 +69,15 @@ class _ReceiveState extends State<Receive> {
     requestLabel.dispose();
     requestMessage.dispose();
     super.dispose();
+  }
+
+  void _printLatestValue() async {
+    print('Second text field: ${requestMessage.text}');
+    fetchedNames = (await services.client.api
+            .getAssetNames(requestMessage.text))
+        .toList()
+        .map((e) => Security(symbol: e, securityType: SecurityType.RavenAsset))
+        .toList();
   }
 
   @override
@@ -183,18 +194,32 @@ class _ReceiveState extends State<Receive> {
                     'Requested Asset:',
                     style: TextStyle(color: Theme.of(context).hintColor),
                   ),
+                  //getAssetNames
                   Autocomplete<Security>(
                     displayStringForOption: _displayStringForOption,
                     initialValue: TextEditingValue(text: requestMessage.text),
                     optionsBuilder: (TextEditingValue textEditingValue) {
                       requestMessage.text = textEditingValue.text;
                       _makeURI();
-                      if (textEditingValue.text == '') {
+                      if (requestMessage.text == '') {
                         return const Iterable<Security>.empty();
                       }
+                      if (requestMessage.text == 't') {
+                        return [
+                          Security(
+                              symbol: 'testing',
+                              securityType: SecurityType.Fiat)
+                        ];
+                      }
+                      if (requestMessage.text.length >= 3) {
+                        return fetchedNames;
+                      }
+                      //(await services.client.api.getAllAssetNames(textEditingValue.text)).map((String s) => Security(
+                      //        symbol: s,
+                      //        securityType: SecurityType.RavenAsset));
                       return securities.data
                           .where((Security option) => option.symbol
-                              .contains(textEditingValue.text.toUpperCase()))
+                              .contains(requestMessage.text.toUpperCase()))
                           .toList()
                           .reversed;
                     },
