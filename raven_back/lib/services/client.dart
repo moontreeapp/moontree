@@ -165,4 +165,9 @@ class ApiService {
         for (var char in 'abcdefghijklmnopqrstuvwxyz'.toUpperCase().split(''))
           await streams.client.client.value!.getAssetsByPrefix(char)
       ].expand((i) => i);
+
+  Future<Iterable<dynamic>> getAssetNames(String prefix) async =>
+      prefix.isNotEmpty
+          ? await streams.client.client.value!.getAssetsByPrefix(prefix)
+          : [];
 }
