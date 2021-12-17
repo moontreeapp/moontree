@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:raven_back/records/password_hash.dart';
+import 'package:raven_back/records/password.dart';
 import 'package:reservoir/reservoir.dart';
 import 'package:quiver/iterables.dart';
 

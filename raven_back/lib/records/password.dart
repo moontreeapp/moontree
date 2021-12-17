@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 
 import '_type_id.dart';
-part 'password_hash.g.dart';
+part 'password.g.dart';
 
 @HiveType(typeId: TypeId.Password)
 class Password with EquatableMixin {

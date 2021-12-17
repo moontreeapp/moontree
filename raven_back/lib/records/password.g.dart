@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'password_hash.dart';
+part of 'password.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator

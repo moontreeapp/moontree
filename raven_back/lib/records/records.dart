@@ -10,7 +10,7 @@ export 'metadata.dart';
 export 'metadata_type.dart';
 export 'net.dart';
 export 'node_exposure.dart';
-export 'password_hash.dart';
+export 'password.dart';
 export 'rate.dart';
 export 'security.dart';
 export 'security_type.dart';

@@ -72,7 +72,6 @@ class _ReceiveState extends State<Receive> {
   }
 
   void _printLatestValue() async {
-    print('Second text field: ${requestMessage.text}');
     fetchedNames = (await services.client.api
             .getAssetNames(requestMessage.text))
         .toList()
