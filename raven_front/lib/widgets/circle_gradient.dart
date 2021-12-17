@@ -65,21 +65,15 @@ class PopCircle extends StatelessWidget {
 
   final ColorPair colorPair;
   final EdgeInsetsGeometry padding;
-  final Size size;
 
   PopCircle({
     this.colorPair = PopCircle.defaultColorPair,
     this.padding = const EdgeInsets.all(0),
-    this.size = const Size(400, 400),
   });
 
   @override
-  Widget build(BuildContext context) => Container(
-        padding: padding,
-        child: SizedBox(
-          width: size.width,
-          height: size.height,
-          child: CustomPaint(painter: CircleGradient(colorPair)),
-        ),
+  Widget build(BuildContext context) => AspectRatio(
+        aspectRatio: 1,
+        child: CustomPaint(painter: CircleGradient(colorPair)),
       );
 }
