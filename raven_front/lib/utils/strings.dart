@@ -20,8 +20,7 @@ class Strings {
   static String base58Regex = '[a-km-zA-HJ-NP-Z1-9]';
   static String ravenBase58Regex(Net? net) =>
       r'^' + (net == Net.Test ? '(m|n)' : 'R') + r'(' + base58Regex + r'{33})$';
-  //static String assetBaseRegex = r'^[a-zA-Z0-9_.]*$';
-  static String assetBaseRegex = r'^[A-Z0-9]{1}[A-Z0-9_.]{0,29}[!]{0,1}$';
+  static String assetBaseRegex = r'^[A-Z0-9]{1}[A-Z0-9_.]{2,29}[!]{0,1}$';
   static String subAssetBaseRegex =
-      r'^[A-Z0-9]{1}[a-zA-Z0-9_./#]{0,29}[!]{0,1}$';
+      r'^[A-Z0-9]{1}[a-zA-Z0-9_.#]{2,29}[!]{0,1}$';
 }

@@ -4,14 +4,6 @@ import 'package:raven_front/utils/strings.dart';
 bool rvnCondition(String address, {Net? net}) =>
     address.contains(RegExp(Strings.ravenBase58Regex(net)));
 
-/// not complete. todo
-bool unsCondition(String address) =>
-    address.toLowerCase().endsWith('.crypto') ||
-    address.toLowerCase().endsWith('.zil');
-
-/// TODO:
-/// we really need 4 conditions asset, /subassets, #uinqueassets then all combined:
-/// allAssetCondition: split, send frist to asset, send others to subasset (which checks for uinque asset), return agg result.
 bool assetCondition(String asset) =>
     !asset.contains('..') &&
     !asset.contains('._') &&
@@ -19,33 +11,42 @@ bool assetCondition(String asset) =>
     !asset.contains('_.') &&
     !asset.endsWith('_') &&
     !asset.endsWith('.') &&
-    asset.length >= 3 &&
     !['RVN', 'RAVEN', 'RAVENCOIN'].contains(asset) &&
     asset.contains(RegExp(Strings.assetBaseRegex));
 
-// subassets can have lowercase...
+/// unused but meant to verify a whole asset string such as:
+/// 'FANFT/RAVENHEAD24#PaintedRVN5'
+bool wholeAssetCondition(String asset) =>
+    assetCondition(asset.split('/').first) &&
+    asset
+        .split('/')
+        .getRange(1, asset.split('/').length)
+        .every((element) => subAssetCondition(element));
+
+/// unused but meant to verify a sub asset string such as:
+/// 'RAVENHEAD24#PaintedRVN5'
+/// subassets can have lowercase, we need to verify the logic is sound once
+/// this kind of functionality is called for
 bool subAssetCondition(String asset) =>
     !asset.contains('..') &&
     !asset.contains('._') &&
     !asset.contains('__') &&
     !asset.contains('_.') &&
     !asset.contains('##') &&
-    !asset.contains('#/') &&
     !asset.contains('#.') &&
     !asset.contains('#_') &&
-    !asset.contains('/#') &&
     !asset.contains('.#') &&
     !asset.contains('_#') &&
-    !asset.contains('//') &&
-    !asset.contains('/.') &&
-    !asset.contains('/_') &&
-    !asset.contains('./') &&
-    !asset.contains('_/') &&
     !asset.endsWith('_') &&
     !asset.endsWith('.') &&
     asset.length >= 3 &&
     !['RVN', 'RAVEN', 'RAVENCOIN'].contains(asset) &&
     asset.contains(RegExp(Strings.subAssetBaseRegex));
+
+/// not complete. todo
+bool unsCondition(String address) =>
+    address.toLowerCase().endsWith('.crypto') ||
+    address.toLowerCase().endsWith('.zil');
 
 /// returns the name of the type of address it is,
 /// if the address is preliminarily recognized as conforming to a

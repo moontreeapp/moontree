@@ -17,9 +17,10 @@ General thoughts on survey
             cipher and password
             rate pull
             transaction building
+            UTXO rvn and asset pull 
     stuff we've covered
 
 
 *has had the most issues in the past
 
-
+we need to heavily cover transaction and cipher/password processes since those mistakes have large consequences

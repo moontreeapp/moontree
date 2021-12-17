@@ -1,3 +1,5 @@
+/// unused currently - we may need this soon
+
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';

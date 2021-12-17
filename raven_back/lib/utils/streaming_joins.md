@@ -1,3 +1,5 @@
+/// unused currently - we may need this soon
+
 # Streaming Joins
 
 A "streaming join" is similar to a regular SQL table join, but instead of having all of the data in the tables at once, the data is slowly "streaming" in and we need to join "on the fly."

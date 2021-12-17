@@ -23,8 +23,8 @@ void main() {
 
   // subassets can have lowercase...
   test('test verification of asset names', () {
-    expect(assetCondition('RVN'), false);
     expect(assetCondition('RV'), false);
+    expect(assetCondition('RVN'), false);
     expect(assetCondition('RAVEN'), false);
     expect(assetCondition('RAVENCOIN'), false);
     expect(assetCondition('RAVENCOIN5000'), true);
@@ -46,7 +46,7 @@ void main() {
     expect(assetCondition('.THIS_ONE_STARTS_WITH_PERIOD'), false);
     expect(assetCondition('_THIS_ONE_STARTS_WITH_US'), false);
     expect(assetCondition('THIS_CONTAIN_&_BAD_PUNC'), false);
-    // subasset expect(assetCondition('FANFT/RAVENHEAD24#PaintedRVN5'), true);
+    expect(assetCondition('FANFT/RAVENHEAD24#PaintedRVN5'), false);
     expect(assetCondition(''), false);
   });
 }

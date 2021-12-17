@@ -1,3 +1,5 @@
+/// unused currently - may want to use this to send logs to firebase
+
 import 'package:datadog_flutter/datadog_flutter.dart';
 import 'package:datadog_flutter/datadog_logger.dart';
 import 'package:datadog_flutter/datadog_rum.dart';
