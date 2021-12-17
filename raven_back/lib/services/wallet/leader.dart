@@ -1,4 +1,4 @@
-import 'package:raven_back/utils/enum.dart';
+import 'package:raven_back/extensions/object.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' show HDWallet;
 import 'package:bip39/bip39.dart' as bip39;
 
@@ -156,7 +156,7 @@ class LeaderWalletService {
   HDWallet getChangeWallet(LeaderWallet wallet) => getNextEmptyWallet(wallet);
 
   String addressRegistryKey(LeaderWallet wallet, NodeExposure exposure) =>
-      '${wallet.walletId}:${describeEnum(exposure)}';
+      '${wallet.walletId}:${exposure.enumString}';
 
   Set<Address> deriveMoreAddresses(
     LeaderWallet wallet, {

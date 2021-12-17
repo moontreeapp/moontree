@@ -3,7 +3,7 @@
 import 'package:test/test.dart';
 import 'package:rxdart/rxdart.dart';
 
-import 'package:raven_back/utils/buffer_count_window.dart';
+import 'package:raven_back/extensions/stream/buffer_count_window.dart';
 
 void main() {
   group('RxRace', () {

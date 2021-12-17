@@ -4,7 +4,7 @@ import 'package:raven_back/records/cipher_update.dart';
 import 'package:raven_back/records/net.dart';
 import 'package:raven_back/security/security.dart';
 import 'package:raven_back/services/wallet/constants.dart';
-import 'package:raven_back/utils/enum.dart';
+import 'package:raven_back/extensions/object.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart';
 
 export 'extended_wallet_base.dart';
@@ -40,6 +40,6 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
 
   String get publicKey => walletId;
 
-  String get secretTypeToString => describeEnum(secretType);
-  String get walletTypeToString => describeEnum(walletType);
+  String get secretTypeToString => secretType.enumString;
+  String get walletTypeToString => walletType.enumString;
 }

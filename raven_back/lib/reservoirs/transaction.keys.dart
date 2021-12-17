@@ -4,7 +4,7 @@ part of 'transaction.dart';
 
 class _TxHashKey extends Key<Transaction> {
   @override
-  String getKey(Transaction transaction) => transaction.txId;
+  String getKey(Transaction transaction) => transaction.transactionId;
 }
 
 extension ByIdMethodsForTransaction on Index<_TxHashKey, Transaction> {

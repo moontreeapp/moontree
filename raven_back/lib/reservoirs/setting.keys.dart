@@ -2,14 +2,12 @@ part of 'setting.dart';
 
 // bySettingName
 
-String _settingNameToKey(SettingName name) => describeEnum(name);
-
 class _SettingNameKey extends Key<Setting> {
   @override
-  String getKey(Setting setting) => _settingNameToKey(setting.name);
+  String getKey(Setting setting) => setting.settingId;
 }
 
 extension BySettingNameMethodsForSetting on Index<_SettingNameKey, Setting> {
   Setting? getOne(SettingName name) =>
-      getByKeyStr(_settingNameToKey(name)).firstOrNull;
+      getByKeyStr(Setting.settingKey(name)).firstOrNull;
 }

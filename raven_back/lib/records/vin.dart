@@ -12,12 +12,12 @@ part 'vin.g.dart';
 @HiveType(typeId: TypeId.Vin)
 class Vin with EquatableMixin {
   @HiveField(0)
-  String txId;
+  String transactionId;
 
   /// all pertinent values are on vouts. so vins point to vouts.
 
   @HiveField(1)
-  String voutTxId;
+  String voutTransactionId;
 
   @HiveField(2)
   int voutPosition;
@@ -29,29 +29,31 @@ class Vin with EquatableMixin {
   // final TxScriptSig? scriptSig;
 
   Vin(
-      {required this.txId,
-      required this.voutTxId,
+      {required this.transactionId,
+      required this.voutTransactionId,
       required this.voutPosition,
       this.isCoinbase = false});
   @override
-  List<Object> get props => [txId, voutTxId, voutPosition, isCoinbase];
+  List<Object> get props =>
+      [transactionId, voutTransactionId, voutPosition, isCoinbase];
 
   @override
   String toString() {
     return 'Vin('
-        'txId: $txId, voutTxId: $voutTxId, voutPosition: $voutPosition, '
+        'transactionId: $transactionId, voutTransactionId: $voutTransactionId, voutPosition: $voutPosition, '
         'isCoinbase: $isCoinbase)';
   }
 
   /// I think the vinId could be the same as voutId, but we'll just make another
-  String get vinId =>
-      sha256.convert(utf8.encode('$txId$voutTxId$voutPosition')).toString();
+  String get vinId => sha256
+      .convert(utf8.encode('$transactionId$voutTransactionId$voutPosition'))
+      .toString();
 
-  String get voutId => Vout.getVoutId(voutTxId, voutPosition);
+  String get voutId => Vout.getVoutId(voutTransactionId, voutPosition);
 
   /// having a vin that is a coinbase is an edge case for us,
   /// so in order to preserve simplicity we override the typical values as
   /// coinbase values when necessary.
-  String? get coinbase => isCoinbase ? voutTxId : null;
+  String? get coinbase => isCoinbase ? voutTransactionId : null;
   int? get sequence => isCoinbase ? voutPosition : null;
 }

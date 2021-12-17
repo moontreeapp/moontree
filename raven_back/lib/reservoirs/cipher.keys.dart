@@ -1,14 +1,10 @@
 part of 'cipher.dart';
 
-String _cipherTypePasswordIdToKey(CipherType cipherType, int? passwordId) =>
-    CipherUpdate.toKey(cipherType, passwordId);
-
 /// primary key - CipherUpdate
 
 class _CipherUpdateKey extends Key<Cipher> {
   @override
-  String getKey(Cipher cipher) =>
-      _cipherTypePasswordIdToKey(cipher.cipherType, cipher.passwordId);
+  String getKey(Cipher cipher) => cipher.cipherId;
 }
 
 extension ByCipherUpdateMethodsForCipher on Index<_CipherUpdateKey, Cipher> {
@@ -20,15 +16,13 @@ extension ByCipherUpdateMethodsForCipher on Index<_CipherUpdateKey, Cipher> {
 
 class _CipherTypePasswordIdKey extends Key<Cipher> {
   @override
-  String getKey(Cipher cipher) =>
-      _cipherTypePasswordIdToKey(cipher.cipherType, cipher.passwordId);
+  String getKey(Cipher cipher) => cipher.cipherId;
 }
 
 extension ByCipherTypePasswordIdMethodsForCipher
     on Index<_CipherTypePasswordIdKey, Cipher> {
   Cipher? getOne(CipherType cipherType, int? passwordId) =>
-      getByKeyStr(_cipherTypePasswordIdToKey(cipherType, passwordId))
-          .firstOrNull;
+      getByKeyStr(Cipher.cipherKey(cipherType, passwordId)).firstOrNull;
 }
 
 /// byPassword
@@ -51,5 +45,5 @@ class _CipherTypeKey extends Key<Cipher> {
 
 extension ByCipherTypeMethodsForCipher on Index<_CipherTypeKey, Cipher> {
   List<Cipher> getAll(CipherType cipherType) =>
-      getByKeyStr(describeEnum(cipherType));
+      getByKeyStr(cipherType.enumString);
 }

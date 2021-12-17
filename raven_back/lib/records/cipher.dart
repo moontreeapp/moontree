@@ -2,7 +2,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/records/cipher_type.dart';
-import 'package:raven_back/utils/enum.dart';
+import 'package:raven_back/extensions/object.dart';
 
 class Cipher with EquatableMixin {
   final CipherType cipherType;
@@ -18,15 +18,18 @@ class Cipher with EquatableMixin {
   String toString() => toMap.toString();
 
   Map<String, dynamic> get toMap => {
-        'CipherType': describeEnum(cipherType),
+        'CipherType': cipherType.enumString,
         'PasswordId': passwordId.toString(),
         'Cipher': cipher.toString(),
       };
 
-  String get cipherId => '${describeEnum(cipherType)}:$passwordId';
-
   CipherUpdate get cipherUpdate =>
       CipherUpdate(cipherType, passwordId: passwordId);
 
-  String get cipherTypeString => describeEnum(cipherType);
+  String get cipherTypeString => cipherType.enumString;
+
+  String get cipherId => Cipher.cipherKey(cipherType, passwordId);
+
+  static String cipherKey(CipherType cipherType, int? passwordId) =>
+      CipherUpdate.cipherUpdateKey(cipherType, passwordId);
 }

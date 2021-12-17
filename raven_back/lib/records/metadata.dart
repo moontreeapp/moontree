@@ -7,7 +7,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:raven_back/records/metadata_type.dart';
-import 'package:raven_back/utils/enum.dart';
+import 'package:raven_back/extensions/object.dart';
 
 import '_type_id.dart';
 
@@ -65,8 +65,8 @@ class Metadata with EquatableMixin {
   String toString() => 'Metadata(symbol: $symbol, metadata: $metadata, '
       'data: $data, kind: $kind, parent: $parent, logo: $logo)';
 
-  static String metadataIdKey(String symbol, String metadata) =>
+  static String metadataKey(String symbol, String metadata) =>
       '$symbol:$metadata';
   String get metadataId => '$symbol:$metadata';
-  String get metadataTypeName => describeEnum(kind);
+  String get metadataTypeName => kind.enumString;
 }

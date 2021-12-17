@@ -162,7 +162,7 @@ class TransactionMaker {
             .collectUTXOs(account!, amount: estimate.total, security: security);
 
     for (var utxo in utxos) {
-      txb.addInput(utxo.txId, utxo.position);
+      txb.addInput(utxo.transactionId, utxo.position);
     }
 
     var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
@@ -215,7 +215,7 @@ class TransactionMaker {
         : services.balance.sortedUnspents(account!);
     var total = 0;
     for (var utxo in utxos) {
-      txb.addInput(utxo.txId, utxo.position);
+      txb.addInput(utxo.transactionId, utxo.position);
       total = total + utxo.securityValue(security: security);
     }
     var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);

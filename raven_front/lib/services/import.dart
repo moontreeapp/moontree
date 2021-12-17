@@ -1,6 +1,5 @@
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/wallet/constants.dart';
-import 'package:raven_back/utils/transform.dart';
 import 'package:raven_back/utils/hex.dart' as hexx;
 import 'package:raven_front/services/lookup.dart';
 
@@ -29,7 +28,9 @@ class ImportFrom {
         break;
       }
     }
-    return all(results.map((result) => result.success));
+    return results
+        .map((result) => result.success)
+        .every((bool element) => element);
   }
 
   // returns null if unable to decrypt, otherwise, the decrypted String

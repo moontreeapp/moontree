@@ -2,11 +2,8 @@ part of 'block.dart';
 
 // primary key
 
-String _headerToKey() {
-  return 'height';
-}
-
+// only latest block saved in reservoir at this time
 class _HeaderKey extends Key<Block> {
   @override
-  String getKey(Block header) => _headerToKey(/* header.height for multiple */);
+  String getKey(Block header) => Block.blockKey();
 }

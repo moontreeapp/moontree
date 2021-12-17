@@ -5,7 +5,7 @@ import 'package:reservoir/change.dart';
 import 'package:test/test.dart';
 
 import 'package:raven_back/services/wallet_security_pair.dart';
-import '../fixtures/transactions.dart';
+
 import '../fixtures/fixtures.dart' as fixtures;
 
 void main() async {
@@ -30,8 +30,8 @@ void main() async {
     ];
     var pairs = securityPairsFromVoutChanges(changes);
     expect(pairs, {
-      WalletSecurityPair(wallet, fixtures.RVN),
-      WalletSecurityPair(wallet, fixtures.USD),
+      WalletSecurityPair(wallet, securities.RVN),
+      WalletSecurityPair(wallet, securities.USD),
     });
   });
 }

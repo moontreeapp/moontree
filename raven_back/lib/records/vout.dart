@@ -10,7 +10,7 @@ part 'vout.g.dart';
 @HiveType(typeId: TypeId.Vout)
 class Vout with EquatableMixin {
   @HiveField(0)
-  String txId;
+  String transactionId;
 
   @HiveField(1)
   int rvnValue; // always RVN
@@ -46,7 +46,7 @@ class Vout with EquatableMixin {
   List<String>? additionalAddresses;
 
   Vout({
-    required this.txId,
+    required this.transactionId,
     required this.rvnValue,
     required this.position,
     this.memo = '',
@@ -61,7 +61,7 @@ class Vout with EquatableMixin {
 
   @override
   List<Object?> get props => [
-        txId,
+        transactionId,
         rvnValue,
         position,
         memo,
@@ -78,14 +78,16 @@ class Vout with EquatableMixin {
   @override
   String toString() {
     return 'Vout('
-        'txId: $txId, rvnValue: $rvnValue, position: $position, '
+        'transactionId: $transactionId, rvnValue: $rvnValue, position: $position, '
         'memo: $memo, type: $type, toAddress: $toAddress, '
         'assetSecurityId: $assetSecurityId, assetValue: $assetValue, '
         'additionalAddresses: $additionalAddresses)';
   }
 
-  String get voutId => getVoutId(txId, position);
-  static String getVoutId(txId, position) => '$txId:$position';
+  String get voutId => getVoutId(transactionId, position);
+
+  static String getVoutId(transactionId, position) =>
+      '$transactionId:$position';
 
   List<String> get toAddresses => [toAddress, ...additionalAddresses ?? []];
 

@@ -4,11 +4,12 @@ part of 'joins.dart';
 
 extension VoutBelongsToTransaction on Vout {
   Transaction? get transaction =>
-      globals.transactions.primaryIndex.getOne(txId);
+      globals.transactions.primaryIndex.getOne(transactionId);
 }
 
 extension VoutBelongsToVin on Vout {
-  Vin? get vin => globals.vins.byVoutId.getOne(Vout.getVoutId(txId, position));
+  Vin? get vin =>
+      globals.vins.byVoutId.getOne(Vout.getVoutId(transactionId, position));
   // no vin - this is a unspent output
 }
 

@@ -26,23 +26,23 @@ extension TransactionBelongsToAccount on Transaction {
 }
 
 extension TransactionHasManyVins on Transaction {
-  List<Vin> get vins => globals.vins.byTransaction.getAll(txId);
+  List<Vin> get vins => globals.vins.byTransaction.getAll(transactionId);
 }
 
 extension TransactionHasManyVouts on Transaction {
-  List<Vout> get vouts => globals.vouts.byTransaction.getAll(txId);
+  List<Vout> get vouts => globals.vouts.byTransaction.getAll(transactionId);
 }
 
 extension TransactionHasManyMemos on Transaction {
   List<String> get memos => globals.vouts.byTransaction
-      .getAll(txId)
+      .getAll(transactionId)
       .map((vout) => vout.memo)
       .toList();
 }
 
 extension TransactionHasOneValue on Transaction {
   int get value => globals.vouts.byTransaction
-      .getAll(txId)
+      .getAll(transactionId)
       .map((vout) => vout.rvnValue)
       .toList()
       .sumInt();

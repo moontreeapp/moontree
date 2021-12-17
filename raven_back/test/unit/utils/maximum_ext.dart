@@ -1,9 +1,8 @@
 // dart test test/reservoir/rx_race_test.dart --chain-stack-traces
 
 import 'package:test/test.dart';
-import 'package:rxdart/rxdart.dart';
 
-import 'package:raven_back/utils/maximum_ext.dart';
+import 'package:raven_back/extensions/stream/maximum.dart';
 
 void main() {
   group('MaximumExtension', () {

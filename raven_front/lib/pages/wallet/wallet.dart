@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:raven_back/services/transaction.dart';
-import 'package:raven_back/utils/enum.dart';
-import 'package:raven_back/utils/extensions.dart';
+import 'package:raven_back/extensions/object.dart';
+import 'package:raven_back/extensions/string.dart';
+import 'package:raven_back/extensions/list.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/indicators/indicators.dart';
@@ -134,8 +135,7 @@ class _WalletViewState extends State<WalletView> {
                     Current.walletCompiledTransactions(wallet.walletId))),
       ]);
 
-  String get secretName =>
-      describeEnum(data['secretName']).toString().toTitleCase(true);
+  String get secretName => data['secretName'].enumString.toTitleCase(true);
 
   ListView detailsView() => ListView(
           shrinkWrap: true,
@@ -269,8 +269,10 @@ class _WalletViewState extends State<WalletView> {
                       style: vouts.byAddress
                               .getAll(walletAddress.address)
                               .isNotEmpty
-                          ? fromTextStyle(Theme.of(context).textTheme.caption!,
-                              fontWeight: FontWeight.bold)
+                          ? Theme.of(context)
+                              .textTheme
+                              .caption!
+                              .replace(fontWeight: FontWeight.bold)
                           : Theme.of(context).textTheme.caption),
                   Text(
                       // I thoguht this is what slows down loading the page, but I now think it's the qr code... //takes a few seconds, lets just get them one at a time in onTap

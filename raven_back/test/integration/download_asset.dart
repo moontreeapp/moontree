@@ -121,7 +121,7 @@ void main() {
     //  var vs = await services.address.handleAssetData(client, tx, vout);
     //  print(vs);
     //  Vout(
-    //    txId: tx.txid,
+    //    transactionId: tx.txid,
     //    rvnValue: vs.item1,
     //    position: vout.n,
     //    memo: vout.memo,

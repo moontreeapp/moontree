@@ -4,7 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:raven_back/security/cipher_aes.dart';
 import 'package:raven_back/security/cipher_base.dart';
 import 'package:raven_back/security/cipher_none.dart';
-import 'package:raven_back/utils/enum.dart';
+import 'package:raven_back/extensions/object.dart';
 import 'package:reservoir/reservoir.dart';
 
 import 'package:raven_back/records/records.dart';

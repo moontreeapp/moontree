@@ -25,9 +25,9 @@ extension ByNameMethodsForAccount on Index<_NameKey, Account> {
 
 class _NetKey extends Key<Account> {
   @override
-  String getKey(Account account) => describeEnum(account.net);
+  String getKey(Account account) => account.net.enumString;
 }
 
 extension ByNetMethodsForAccount on Index<_NetKey, Account> {
-  List<Account> getAll(Net accountNet) => getByKeyStr(describeEnum(accountNet));
+  List<Account> getAll(Net accountNet) => getByKeyStr(accountNet.enumString);
 }

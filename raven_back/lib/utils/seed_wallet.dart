@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:ravencoin_wallet/ravencoin_wallet.dart'
-    show HDWallet, KPWallet, NetworkType;
+import 'package:ravencoin_wallet/ravencoin_wallet.dart' show HDWallet, KPWallet;
 
 import 'package:raven_back/utils/derivation_path.dart';
 import 'package:raven_back/raven_back.dart';

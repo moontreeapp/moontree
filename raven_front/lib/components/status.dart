@@ -5,7 +5,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/utils/enum.dart';
+import 'package:raven_back/extensions/object.dart';
 
 class AppLifecycleReactor extends StatefulWidget {
   const AppLifecycleReactor({Key? key}) : super(key: key);
@@ -32,7 +32,7 @@ class _AppLifecycleReactorState extends State<AppLifecycleReactor>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    streams.app.status.sink.add(describeEnum(state));
+    streams.app.status.sink.add(state.enumString);
     setState(() {
       _notification = state;
     });
@@ -40,6 +40,6 @@ class _AppLifecycleReactorState extends State<AppLifecycleReactor>
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(visible: false, child: Text(describeEnum(_notification)));
+    return Visibility(visible: false, child: Text(_notification.enumString));
   }
 }

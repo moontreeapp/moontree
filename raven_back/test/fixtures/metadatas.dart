@@ -1,7 +1,7 @@
 import 'package:raven_back/records/records.dart';
 
 Map<String, Metadata> get metadatas => {
-      Metadata.metadataIdKey('MOONTREE', 'metadata'): Metadata(
+      Metadata.metadataKey('MOONTREE', 'metadata'): Metadata(
           symbol: 'MOONTREE',
           metadata: 'metadata',
           data: null,

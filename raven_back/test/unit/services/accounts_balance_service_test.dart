@@ -5,7 +5,7 @@ import 'package:raven_back/raven_back.dart';
 import '../../fixtures/fixtures.dart' as fixtures;
 
 var newHistory = History(
-    txId: '100',
+    transactionId: '100',
     addressId: 'abc100',
     height: 0,
     security: fixtures.RVN,

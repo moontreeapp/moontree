@@ -15,11 +15,11 @@ extension ByIdMethodsForVin on Index<_VinIdKey, Vin> {
 
 class _TransactionKey extends Key<Vin> {
   @override
-  String getKey(Vin vin) => vin.txId;
+  String getKey(Vin vin) => vin.transactionId;
 }
 
 extension ByTransactionMethodsForVin on Index<_TransactionKey, Vin> {
-  List<Vin> getAll(String txId) => getByKeyStr(txId);
+  List<Vin> getAll(String transactionId) => getByKeyStr(transactionId);
 }
 
 // byVout

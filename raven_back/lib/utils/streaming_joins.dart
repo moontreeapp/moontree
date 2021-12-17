@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:reservoir/index.dart';
 import 'package:rxdart/rxdart.dart';
 
-import 'partition_ext.dart';
+import '../extensions/stream/partition.dart';
 
 class Join<A, B> with EquatableMixin {
   A left;

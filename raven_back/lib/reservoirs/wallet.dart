@@ -1,10 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:raven_back/services/wallet/constants.dart';
-import 'package:raven_back/utils/enum.dart';
+import 'package:raven_back/extensions/object.dart';
 import 'package:reservoir/reservoir.dart';
 
 import 'package:raven_back/records/records.dart';
-import 'package:raven_back/streams/streams.dart';
 
 part 'wallet.keys.dart';
 

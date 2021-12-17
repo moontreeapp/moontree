@@ -18,14 +18,14 @@ class VoutReservoir extends Reservoir<_VoutKey, Vout> {
   /// makeshiftIndicies ///////////////////////////////////////////////////////
 
   /// unspent is any vout that doesn't have a corresponding vin
-  /// (accroding to vin.voutPosition == vout.position && vin.vouTxId = vout.txId).
+  /// (accroding to vin.voutPosition == vout.position && vin.vouTxId = vout.transactionId).
   static Iterable<Vout> whereUnspent(
           {Iterable<Vout>? given, Security? security}) =>
       (given ?? vouts).where((vout) => (vout.confirmed &&
           vout.security == security &&
           vout.securityValue(security: security) > 0 &&
           vins
-              .where((vin) => (vin.voutTxId == vout.txId &&
+              .where((vin) => (vin.voutTransactionId == vout.transactionId &&
                   vin.voutPosition == vout.position))
               .toList()
               .isEmpty));

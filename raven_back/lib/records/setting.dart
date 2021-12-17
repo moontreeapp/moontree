@@ -2,6 +2,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:raven_back/records/setting_name.dart';
+import 'package:raven_back/extensions/object.dart';
 
 import '_type_id.dart';
 part 'setting.g.dart';
@@ -24,4 +25,8 @@ class Setting with EquatableMixin {
 
   @override
   String toString() => 'Setting($name, $value)';
+
+  String get settingId => Setting.settingKey(name);
+
+  static String settingKey(SettingName name) => name.enumString;
 }

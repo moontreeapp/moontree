@@ -50,6 +50,11 @@ class Balance with EquatableMixin {
         unconfirmed: balance.unconfirmed);
   }
 
+  String get balanceId => Balance.balanceKey(walletId, security);
+
+  static String balanceKey(String walletId, Security security) =>
+      '$walletId:${security.securityId}';
+
   int get value {
     return confirmed + unconfirmed;
   }

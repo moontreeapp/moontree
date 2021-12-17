@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:raven_back/records/cipher_type.dart';
-import 'package:raven_back/utils/enum.dart';
+import 'package:raven_back/extensions/object.dart';
 
 import '_type_id.dart';
 
@@ -27,17 +27,18 @@ class CipherUpdate with EquatableMixin {
   @override
   String toString() => toMap.toString();
 
-  String get cipherUpdateId => toKey(cipherType, passwordId);
-  static String toKey(CipherType cipherType, int? passwordId) =>
-      '${describeEnum(cipherType)}:$passwordId';
+  String get cipherUpdateId => cipherUpdateKey(cipherType, passwordId);
+
+  static String cipherUpdateKey(CipherType cipherType, int? passwordId) =>
+      '${cipherType.enumString}:$passwordId';
 
   Map<String, dynamic> get toMap => {
-        'CipherType': describeEnum(cipherType),
+        'CipherType': cipherType.enumString,
         'PasswordId': passwordId.toString()
       };
 
   static Map<String, CipherType> get stringToCipherTypeMap =>
-      {for (var value in CipherType.values) describeEnum(value): value};
+      {for (var value in CipherType.values) value.enumString: value};
 }
 
 const CipherUpdate defaultCipherUpdate = CipherUpdate(CipherType.None);

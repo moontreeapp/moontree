@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:reservoir/reservoir.dart';
 
-import 'package:raven_back/utils/enum.dart' show describeEnum;
+import 'package:raven_back/extensions/object.dart';
 import 'package:raven_back/records/records.dart';
 
 part 'setting.keys.dart';
@@ -36,8 +36,8 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
             Setting(name: SettingName.Account_Current, value: '0'),
         SettingName.Account_Preferred:
             Setting(name: SettingName.Account_Preferred, value: '0'),
-      }.map((settingName, setting) =>
-          MapEntry(describeEnum(settingName), setting));
+      }.map(
+          (settingName, setting) => MapEntry(settingName.enumString, setting));
 
   String get preferredAccountId =>
       primaryIndex.getOne(SettingName.Account_Preferred)!.value;

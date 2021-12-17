@@ -1,0 +1,25 @@
+General thoughts on survey
+    stuff we need to cover
+        pure (transformation) function
+            utils
+            some parts of services
+        aggregation of data functions
+            joins
+            some parts of services
+        waiters and streams
+            waiters
+            streams
+        systems - dags of behavior
+            wallet creation
+            *address creation
+                *history gathering
+            balance creation
+            cipher and password
+            rate pull
+            transaction building
+    stuff we've covered
+
+
+*has had the most issues in the past
+
+

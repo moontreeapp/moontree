@@ -17,7 +17,7 @@ class VoutAdapter extends TypeAdapter<Vout> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Vout(
-      txId: fields[0] as String,
+      transactionId: fields[0] as String,
       rvnValue: fields[1] as int,
       position: fields[2] as int,
       memo: fields[3] as String,
@@ -34,7 +34,7 @@ class VoutAdapter extends TypeAdapter<Vout> {
     writer
       ..writeByte(9)
       ..writeByte(0)
-      ..write(obj.txId)
+      ..write(obj.transactionId)
       ..writeByte(1)
       ..write(obj.rvnValue)
       ..writeByte(2)

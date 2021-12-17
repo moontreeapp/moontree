@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/utils/transform.dart';
 
 class PasswordService {
   final PasswordValidationService validate = PasswordValidationService();
@@ -60,27 +59,27 @@ class PasswordValidationService {
 
   bool complexity(String password) =>
       password.length >= 12 &&
-      any([
-        for (var i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-          password.contains(i.toString())
-      ]);
+      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+          .any((int i) => password.contains(i.toString()));
 
   List<String> complexityExplained1(String password) {
     var ret = <String>[];
-    if (password.length < 12) ret.add('must be at least 12 characters long');
-    if (!any([
-      for (var i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-        password.contains(i.toString())
-    ])) ret.add('must contain at least one number');
+    if (password.length < 12) {
+      ret.add('must be at least 12 characters long');
+    }
+    if ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        .any((int i) => !password.contains(i.toString()))) {
+      ret.add('must contain at least one number');
+    }
     return ret;
   }
 
   List<String> complexityExplained(String password) => [
         if (password.length < 12) ...['must be at least 12 characters long'],
-        if (!any([
-          for (var i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-            password.contains(i.toString())
-        ])) ...['must contain at least one number']
+        if ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            .any((int i) => !password.contains(i.toString()))) ...[
+          'must contain at least one number'
+        ]
       ];
 }
 

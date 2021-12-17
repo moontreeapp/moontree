@@ -43,8 +43,8 @@ class _TransactionPageState extends State<TransactionPage> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    transaction =
-        transactions.primaryIndex.getOne(data['transactionRecord']!.txId);
+    transaction = transactions.primaryIndex
+        .getOne(data['transactionRecord']!.transactionId);
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
     var metadata = transaction!.memo != null && transaction!.memo != '';
     return DefaultTabController(
@@ -178,12 +178,12 @@ class _TransactionPageState extends State<TransactionPage> {
             InkWell(
                 child: Wrap(children: [
                   Text('Transaction ID: '),
-                  Text('${transaction!.txId}',
+                  Text('${transaction!.transactionId}',
                       style: TextStyle(
                           color: Theme.of(context).primaryColorLight)),
                 ]),
                 onTap: () => launch(
-                    'https://rvnt.cryptoscope.io/tx/?txid=${transaction!.txId}')),
+                    'https://rvnt.cryptoscope.io/tx/?txid=${transaction!.transactionId}')),
             SizedBox(height: 15.0),
 
             /// vin --------------------------------------------------------

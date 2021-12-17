@@ -15,11 +15,11 @@ extension ByIdMethodsForVout on Index<_VoutKey, Vout> {
 
 class _TransactionKey extends Key<Vout> {
   @override
-  String getKey(Vout vout) => vout.txId;
+  String getKey(Vout vout) => vout.transactionId;
 }
 
 extension ByTransactionMethodsForVout on Index<_TransactionKey, Vout> {
-  List<Vout> getAll(String txId) => getByKeyStr(txId);
+  List<Vout> getAll(String transactionId) => getByKeyStr(transactionId);
 }
 
 // bySecurity

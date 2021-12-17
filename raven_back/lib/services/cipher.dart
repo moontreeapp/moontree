@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/utils/enum.dart';
+import 'package:raven_back/extensions/object.dart';
 
 class CipherService {
   /// used in decrypting backups - we don't know what cipher it was encrypted with... we could save it...
@@ -11,7 +11,7 @@ class CipherService {
       services.password.exist ? CipherType.AES : CipherType.None;
 
   @override
-  String toString() => 'latestCipherType: ${describeEnum(latestCipherType)}';
+  String toString() => 'latestCipherType: ${latestCipherType.enumString}';
 
   CipherUpdate get currentCipherUpdate =>
       CipherUpdate(latestCipherType, passwordId: passwords.maxPasswordId);

@@ -157,8 +157,8 @@ class ApiService {
     return await streams.client.client.value!.broadcastTransaction(rawTx);
   }
 
-  Future<Tx> getTransaction(String txId) async =>
-      await streams.client.client.value!.getTransaction(txId);
+  Future<Tx> getTransaction(String transactionId) async =>
+      await streams.client.client.value!.getTransaction(transactionId);
 
   /// we should instead just be able to send an empty string and make one call
   Future<Iterable<dynamic>> getAllAssetNames() async => [

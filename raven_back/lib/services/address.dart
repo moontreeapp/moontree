@@ -97,8 +97,9 @@ class AddressService {
     if (client == null) return;
     await saveTransactions(
       [
-        for (var txId in transactions.mempool.map((t) => t.txId))
-          await client.getTransaction(txId)
+        for (var transactionId
+            in transactions.mempool.map((t) => t.transactionId))
+          await client.getTransaction(transactionId)
       ],
       client,
     );
@@ -117,14 +118,14 @@ class AddressService {
       for (var vin in tx.vin) {
         if (vin.txid != null && vin.vout != null) {
           newVins.add(Vin(
-            txId: tx.txid,
-            voutTxId: vin.txid!,
+            transactionId: tx.txid,
+            voutTransactionId: vin.txid!,
             voutPosition: vin.vout!,
           ));
         } else if (vin.coinbase != null && vin.sequence != null) {
           newVins.add(Vin(
-            txId: tx.txid,
-            voutTxId: vin.coinbase!,
+            transactionId: tx.txid,
+            voutTransactionId: vin.coinbase!,
             voutPosition: vin.sequence!,
             isCoinbase: true,
           ));
@@ -134,7 +135,7 @@ class AddressService {
         if (vout.scriptPubKey.type == 'nulldata') continue;
         var vs = await handleAssetData(client, tx, vout);
         newVouts.add(Vout(
-          txId: tx.txid,
+          transactionId: tx.txid,
           rvnValue: vs.item1,
           position: vout.n,
           memo: vout.memo,
@@ -154,7 +155,7 @@ class AddressService {
       /// can save some time, but then you have to also check confirmations
       /// and see if anything else changed. meh, just save them all for now.
       newTxs.add(Transaction(
-        txId: tx.txid,
+        transactionId: tx.txid,
         height: tx.height,
         confirmed: (tx.confirmations ?? 0) > 0,
         time: tx.time,
@@ -179,7 +180,8 @@ class AddressService {
     var finalVouts = <Vout>[];
     var finalTxs = <Transaction>[];
     // ignore: omit_local_variable_types
-    var myVins = List.from(vins.danglingVins.map((vin) => vin.voutTxId));
+    var myVins =
+        List.from(vins.danglingVins.map((vin) => vin.voutTransactionId));
     // ignore: omit_local_variable_types
     List<Tx> txs = [
       for (var txHash in myVins) await client.getTransaction(txHash)
@@ -190,7 +192,7 @@ class AddressService {
         if (vout.scriptPubKey.type == 'nulldata') continue;
         var vs = await handleAssetData(client, tx, vout);
         finalVouts.add(Vout(
-          txId: tx.txid,
+          transactionId: tx.txid,
           rvnValue: vs.item1,
           position: vout.n,
           memo: vout.memo,
@@ -210,7 +212,7 @@ class AddressService {
       /// can save some time, but then you have to also check confirmations
       /// and see if anything else changed. meh, just save them all for now.
       finalTxs.add(Transaction(
-        txId: tx.txid,
+        transactionId: tx.txid,
         height: tx.height,
         confirmed: (tx.confirmations ?? 0) > 0,
         time: tx.time,
@@ -249,7 +251,7 @@ class AddressService {
             satsInCirculation: meta.satsInCirculation,
             precision: meta.divisions,
             reissuable: meta.reissuable == 1,
-            txId: meta.source.txHash,
+            transactionId: meta.source.txHash,
             position: meta.source.txPos,
           ));
           await securities.save(security = Security(
@@ -266,7 +268,7 @@ class AddressService {
           satsInCirculation: value,
           precision: vout.scriptPubKey.units ?? 0,
           reissuable: vout.scriptPubKey.reissuable == 1,
-          txId: tx.txid,
+          transactionId: tx.txid,
           position: vout.n,
         ));
         await securities.save(Security(

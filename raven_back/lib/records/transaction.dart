@@ -9,7 +9,7 @@ part 'transaction.g.dart';
 @HiveType(typeId: TypeId.Transaction)
 class Transaction with EquatableMixin {
   @HiveField(0)
-  String txId;
+  String transactionId;
 
   @HiveField(1)
   bool confirmed;
@@ -44,7 +44,7 @@ class Transaction with EquatableMixin {
   String note;
 
   Transaction(
-      {required this.txId,
+      {required this.transactionId,
       required this.confirmed,
       this.time,
       this.height,
@@ -56,7 +56,7 @@ class Transaction with EquatableMixin {
         height,
         confirmed,
         time,
-        txId,
+        transactionId,
         memo,
         note,
       ];
@@ -64,7 +64,7 @@ class Transaction with EquatableMixin {
   @override
   String toString() {
     return 'Transaction('
-        'txId: $txId, height: $height, confirmed: $confirmed, time: $time, '
+        'transactionId: $transactionId, height: $height, confirmed: $confirmed, time: $time, '
         'memo: $memo, note: $note)';
   }
 

@@ -17,8 +17,8 @@ class VinAdapter extends TypeAdapter<Vin> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Vin(
-      txId: fields[0] as String,
-      voutTxId: fields[1] as String,
+      transactionId: fields[0] as String,
+      voutTransactionId: fields[1] as String,
       voutPosition: fields[2] as int,
       isCoinbase: fields[3] as bool,
     );
@@ -29,9 +29,9 @@ class VinAdapter extends TypeAdapter<Vin> {
     writer
       ..writeByte(4)
       ..writeByte(0)
-      ..write(obj.txId)
+      ..write(obj.transactionId)
       ..writeByte(1)
-      ..write(obj.voutTxId)
+      ..write(obj.voutTransactionId)
       ..writeByte(2)
       ..write(obj.voutPosition)
       ..writeByte(3)

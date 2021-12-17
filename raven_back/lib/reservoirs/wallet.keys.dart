@@ -33,5 +33,5 @@ class _WalletTypeKey extends Key<Wallet> {
 extension ByWalletTypeMethodsForWallet on Index<_WalletTypeKey, Wallet> {
   List<Wallet> getAllByString(String walletType) => getByKeyStr(walletType);
   List<Wallet> getAll(WalletType walletType) =>
-      getByKeyStr(describeEnum(walletType));
+      getByKeyStr(walletType.enumString);
 }

@@ -31,7 +31,7 @@ class TransactionService {
     if (transaction != null) {
       await transactions.save(Transaction(
           height: transaction.height,
-          txId: transaction.txId,
+          transactionId: transaction.transactionId,
           confirmed: transaction.confirmed,
           note: transaction.note,
           time: transaction.time));
@@ -79,7 +79,7 @@ class TransactionService {
             formattedDatetime: tx.formattedDatetime,
             amount: vout.assetValue ?? 0,
             voutId: vout.voutId,
-            txId: tx.txId,
+            transactionId: tx.transactionId,
           ));
         }
       }
@@ -96,7 +96,7 @@ class TransactionService {
             formattedDatetime: tx.formattedDatetime,
             amount: vin.vout!.assetValue ?? 0,
             vinId: vin.vinId,
-            txId: tx.txId,
+            transactionId: tx.transactionId,
           ));
         }
       }
@@ -124,7 +124,7 @@ class TransactionRecord {
   String formattedDatetime;
   int amount;
   Security security;
-  String txId;
+  String transactionId;
   String? voutId;
   String? vinId;
 
@@ -135,7 +135,7 @@ class TransactionRecord {
     required this.value,
     required this.security,
     required this.formattedDatetime,
-    required this.txId,
+    required this.transactionId,
     this.height,
     this.amount = 0,
     this.vinId,

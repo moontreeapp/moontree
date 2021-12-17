@@ -22,7 +22,7 @@ class AssetAdapter extends TypeAdapter<Asset> {
       precision: fields[2] as int,
       reissuable: fields[3] as bool,
       metadata: fields[4] as String,
-      txId: fields[5] as String,
+      transactionId: fields[5] as String,
       position: fields[6] as int,
     );
   }
@@ -42,7 +42,7 @@ class AssetAdapter extends TypeAdapter<Asset> {
       ..writeByte(4)
       ..write(obj.metadata)
       ..writeByte(5)
-      ..write(obj.txId)
+      ..write(obj.transactionId)
       ..writeByte(6)
       ..write(obj.position);
   }

@@ -1,37 +1,51 @@
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_front/utils/strings.dart';
 
 bool rvnCondition(String address, {Net? net}) =>
-    address.length == 34 &&
-    address.contains(RegExp(r'^' +
-        (net == Net.Test ? 'm|n' : 'R') +
-        r'([a-km-zA-HJ-NP-Z1-9]{33})$'));
-// as far as I can tell this regex is base58check
-//                         123456789
-//                ABCDEFGH
-//                   JKLMN
-//                      PQRSTUVWXYZ
-//          abcdefghijk
-//          mnopqrstuvwxyz
+    address.contains(RegExp(Strings.ravenBase58Regex(net)));
 
 /// not complete. todo
 bool unsCondition(String address) =>
     address.toLowerCase().endsWith('.crypto') ||
     address.toLowerCase().endsWith('.zil');
 
-bool assetCondition(String asset) => ( //asset == asset.toUpperCase() &&
-    (asset.length >= 3 &&
-            (asset.length <= 30 ||
-                (asset.length == 31 && asset.endsWith('!')))) &&
-        (asset.contains(RegExp(r'^[a-zA-Z0-9_.]*$')) &&
-            !asset.contains('..') &&
-            !asset.contains('.-') &&
-            !asset.contains('--') &&
-            !asset.contains('-.') &&
-            !asset.startsWith('.') &&
-            !asset.startsWith('_') &&
-            !asset.endsWith('.') &&
-            !asset.endsWith('_')) &&
-        !['RVN', 'RAVEN', 'RAVENCOIN'].contains(asset));
+/// TODO:
+/// we really need 4 conditions asset, /subassets, #uinqueassets then all combined:
+/// allAssetCondition: split, send frist to asset, send others to subasset (which checks for uinque asset), return agg result.
+bool assetCondition(String asset) =>
+    !asset.contains('..') &&
+    !asset.contains('._') &&
+    !asset.contains('__') &&
+    !asset.contains('_.') &&
+    !asset.endsWith('_') &&
+    !asset.endsWith('.') &&
+    asset.length >= 3 &&
+    !['RVN', 'RAVEN', 'RAVENCOIN'].contains(asset) &&
+    asset.contains(RegExp(Strings.assetBaseRegex));
+
+// subassets can have lowercase...
+bool subAssetCondition(String asset) =>
+    !asset.contains('..') &&
+    !asset.contains('._') &&
+    !asset.contains('__') &&
+    !asset.contains('_.') &&
+    !asset.contains('##') &&
+    !asset.contains('#/') &&
+    !asset.contains('#.') &&
+    !asset.contains('#_') &&
+    !asset.contains('/#') &&
+    !asset.contains('.#') &&
+    !asset.contains('_#') &&
+    !asset.contains('//') &&
+    !asset.contains('/.') &&
+    !asset.contains('/_') &&
+    !asset.contains('./') &&
+    !asset.contains('_/') &&
+    !asset.endsWith('_') &&
+    !asset.endsWith('.') &&
+    asset.length >= 3 &&
+    !['RVN', 'RAVEN', 'RAVENCOIN'].contains(asset) &&
+    asset.contains(RegExp(Strings.subAssetBaseRegex));
 
 /// returns the name of the type of address it is,
 /// if the address is preliminarily recognized as conforming to a

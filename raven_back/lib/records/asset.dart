@@ -23,7 +23,7 @@ class Asset with EquatableMixin {
   final String metadata;
 
   @HiveField(5)
-  final String txId;
+  final String transactionId;
 
   @HiveField(6)
   final int position;
@@ -39,7 +39,7 @@ class Asset with EquatableMixin {
     required this.precision,
     required this.reissuable,
     required this.metadata,
-    required this.txId,
+    required this.transactionId,
     required this.position,
   });
 
@@ -50,21 +50,17 @@ class Asset with EquatableMixin {
         precision,
         reissuable,
         metadata,
-        txId,
+        transactionId,
         position,
       ];
 
   @override
   String toString() => 'Asset(symbol: $symbol, '
       'satsInCirculation: $satsInCirculation, precision: $precision, '
-      'reissuable: $reissuable, metadata: $metadata, txId: $txId, '
+      'reissuable: $reissuable, metadata: $metadata, transactionId: $transactionId, '
       'position: $position)';
 
-  //static String securityIdKey(String symbol) => '$symbol:$securityTypeName';
-  //static String get securityTypeName => describeEnum(SecurityType.RavenAsset);
-  //String get securityId => '$symbol:$securityTypeName';
-
-  static String assetIdKey(String symbol) => symbol;
+  static String assetKey(String symbol) => symbol;
   String get assetId => symbol;
 
   /// todo identify a ipfs hash correctly...

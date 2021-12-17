@@ -9,5 +9,5 @@ class BlockReservoir extends Reservoir<_HeaderKey, Block> {
   BlockReservoir() : super(_HeaderKey());
 
   // should be a list of one item since the key is hard coded, should replace it
-  Block? get latest => primaryIndex.getByKeyStr(_headerToKey()).firstOrNull;
+  Block? get latest => primaryIndex.getByKeyStr(Block.blockKey()).firstOrNull;
 }

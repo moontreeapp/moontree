@@ -22,7 +22,7 @@ class _SymbolMetadataKey extends Key<Metadata> {
 extension BySymbolMetadataMethodsForMetadata
     on Index<_SymbolMetadataKey, Metadata> {
   Metadata? getOne(String symbol, String metadata) =>
-      getByKeyStr(Metadata.metadataIdKey(symbol, metadata)).firstOrNull;
+      getByKeyStr(Metadata.metadataKey(symbol, metadata)).firstOrNull;
 }
 
 // metadata key

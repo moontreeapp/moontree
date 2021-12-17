@@ -7,6 +7,6 @@ Map<String, Asset> get assets => {
           precision: 0,
           reissuable: true,
           metadata: 'metadata',
-          txId: '10',
+          transactionId: '10',
           position: 2)
     };

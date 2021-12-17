@@ -32,5 +32,7 @@ class Password with EquatableMixin {
 
   String get salt => 'salt$passwordId';
 
-  static String getSalt(int passId) => 'salt$passId';
+  static String getSalt(int passwordId) => 'salt$passwordId';
+
+  static String passwordKey(int passwordId) => passwordId.toString();
 }

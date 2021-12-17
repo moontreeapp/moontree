@@ -26,4 +26,8 @@ class Block with EquatableMixin {
   factory Block.fromBlockHeader(BlockHeader blockHeader) {
     return Block(height: blockHeader.height);
   }
+
+  String get blockId => Block.blockKey();
+
+  static String blockKey() => 'height';
 }

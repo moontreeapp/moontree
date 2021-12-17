@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/utils/exceptions.dart';
-import 'package:raven_back/utils/extensions.dart';
+import 'package:raven_back/extensions/string.dart';
 import 'package:raven_front/services/storage.dart';
 
 class LogoGetter extends IpfsCall {

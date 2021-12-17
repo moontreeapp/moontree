@@ -1,8 +1,4 @@
-extension SumAList on List {
-  num sum() => fold(0, (previousValue, element) => previousValue + element);
-  int sumInt() => sum().toInt();
-  double sumDouble() => sum().toDouble();
-}
+import 'dart:typed_data';
 
 extension StringCasingExtension on String {
   String toCapitalized() =>
@@ -27,4 +23,8 @@ extension StringTrimExtension on String {
     }
     return tempString;
   }
+}
+
+extension StringBytesExtension on String {
+  Uint8List get bytes => Uint8List.fromList(codeUnits);
 }

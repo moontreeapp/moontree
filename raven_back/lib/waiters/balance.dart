@@ -11,7 +11,7 @@
 /// this is really needed for mvp but if we'll eventually have it, might as well
 /// now so that all the UI points to the balances, not the history filters...
 
-import 'package:raven_back/utils/buffer_count_window.dart';
+import 'package:raven_back/extensions/stream/buffer_count_window.dart';
 import 'package:raven_back/raven_back.dart';
 
 import 'waiter.dart';

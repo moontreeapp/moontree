@@ -4,9 +4,9 @@ import 'package:test/test.dart';
 
 import 'package:raven_back/security/cipher_aes.dart';
 import 'package:raven_back/utils/hex.dart' as hex;
-import 'package:raven_back/utils/getBytes.dart';
+import 'package:raven_back/extensions/string.dart';
 
-var cipher = CipherAES(getBytes('password'));
+var cipher = CipherAES('password'.bytes);
 
 void main() {
   group('Hex Utils', () {
