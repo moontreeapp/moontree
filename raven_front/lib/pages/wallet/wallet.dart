@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:raven_back/services/transaction.dart';
-import 'package:raven_back/extensions/object.dart';
-import 'package:raven_back/extensions/string.dart';
 import 'package:raven_back/extensions/list.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';

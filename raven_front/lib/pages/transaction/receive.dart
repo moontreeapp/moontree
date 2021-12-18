@@ -243,10 +243,14 @@ class _ReceiveState extends State<Receive> {
                     border: UnderlineInputBorder(),
                     labelText: 'Amount (Optional)',
                     hintText: 'Quantity'),
-                onEditingComplete: () {
-                  requestAmount.text = verifyDecAmount(requestAmount.text);
-                  // send focus to next element
+                onChanged: (value) {
+                  requestAmount.text = cleanDecAmount(requestAmount.text);
                   _makeURI();
+                },
+                onEditingComplete: () {
+                  requestAmount.text = cleanDecAmount(requestAmount.text);
+                  _makeURI();
+                  // send focus to next element
                   FocusScope.of(context).requestFocus(requestLabelFocus);
                 })),
         Visibility(
@@ -259,7 +263,12 @@ class _ReceiveState extends State<Receive> {
                   border: UnderlineInputBorder(),
                   labelText: 'Label (Optional)',
                   hintText: 'Groceries'),
+              onChanged: (value) {
+                requestLabel.text = cleanLabel(requestLabel.text);
+                _makeURI();
+              },
               onEditingComplete: () {
+                requestLabel.text = cleanLabel(requestLabel.text);
                 _makeURI();
                 FocusScope.of(context).unfocus();
               },

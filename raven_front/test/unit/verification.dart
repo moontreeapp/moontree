@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:raven_back/records/net.dart';
 import 'package:raven_front/utils/address.dart';
+import 'package:raven_front/utils/params.dart';
 
 void main() {
   test('test verification of base58 addresses', () {
@@ -19,9 +20,9 @@ void main() {
     expect(rvnCondition('9' + nTestAddress, net: Net.Test), false);
     expect(rvnCondition(mTestAddress + 'a', net: Net.Test), false);
     expect(rvnCondition(nTestAddress + 'a', net: Net.Test), false);
+    expect(rvnCondition(mTestAddress.substring(0, 15), net: Net.Test), false);
   });
 
-  // subassets can have lowercase...
   test('test verification of asset names', () {
     expect(assetCondition('RV'), false);
     expect(assetCondition('RVN'), false);
@@ -48,5 +49,43 @@ void main() {
     expect(assetCondition('THIS_CONTAIN_&_BAD_PUNC'), false);
     expect(assetCondition('FANFT/RAVENHEAD24#PaintedRVN5'), false);
     expect(assetCondition(''), false);
+  });
+
+  test('test parseReceiveParams', () {
+    expect(
+        parseReceiveParams('raven:mncJWzkRmBaYvASCGaVL3da7s2ivkmmDHe?'
+            'amount=100.0&label=asdf&message=asset:EEEE!'),
+        {'amount': '100.0', 'label': 'asdf', 'message': 'asset:EEEE!'});
+  });
+
+  test('test requestedAsset', () {
+    var request = {
+      'amount': '100.0',
+      'label': 'asdf',
+      'message': 'asset:EEEE!'
+    };
+    expect(requestedAsset(request, holdings: ['MOONTREE', 'EEEE!']), 'EEEE!');
+    expect(requestedAsset(request, holdings: ['MOONTREE']), 'RVN');
+    expect(requestedAsset(request, current: 'MOONTREE'), 'MOONTREE');
+  });
+
+  test('test cleaning amounts Amount', () {
+    expect(cleanSatAmount('100'), '100');
+    expect(cleanSatAmount('21000000001'), '21000000000');
+    expect(cleanSatAmount('100.0'), '100');
+    expect(cleanSatAmount('0 .0'), '0');
+    expect(cleanSatAmount('.1'), '0');
+    expect(cleanSatAmount('-11'), '11');
+
+    expect(cleanDecAmount('00100'), '100.0');
+    expect(cleanDecAmount('21000000001'), '21000000000.0');
+    expect(cleanDecAmount('100.0'), '100.0');
+    expect(cleanDecAmount('0 .0'), '0.0');
+    expect(cleanDecAmount('.1'), '0.1');
+    expect(cleanDecAmount('-11'), '11.0');
+    expect(cleanDecAmount('0 .0', zeroToBlank: true), '');
+
+    var label = 'There is no logic yet around whats allowed in a label...';
+    expect(cleanLabel(label), label);
   });
 }

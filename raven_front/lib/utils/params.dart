@@ -1,7 +1,7 @@
 import 'package:raven_front/utils/strings.dart';
 import 'package:raven_front/utils/transform.dart';
 
-Map<String, String> parseReceiveParams(address) =>
+Map<String, String> parseReceiveParams(String address) =>
     Uri.parse(address).queryParameters;
 
 String requestedAsset(Map<String, String> params,
@@ -20,8 +20,8 @@ String requestedAsset(Map<String, String> params,
 /// what else could the receiver ask for other than a specific asset?
 // verify valid logic...
 
-String verifySatAmount(String amount) {
-  var text = amount.split('.')[0];
+String cleanSatAmount(String amount) {
+  var text = amount.split('.').first;
   text = removeChars(text, chars: Strings.punctuation + Strings.whiteSapce);
   if (text == '') {
     text = '0';
@@ -32,7 +32,7 @@ String verifySatAmount(String amount) {
   return text;
 }
 
-String verifyDecAmount(String amount, {bool zeroToBlank = false}) {
+String cleanDecAmount(String amount, {bool zeroToBlank = false}) {
   amount = removeChars(amount,
       chars: Strings.whiteSapce + Strings.punctuationMinusCurrency);
   if (amount.length > 0) {
@@ -75,6 +75,6 @@ String verifyDecAmount(String amount, {bool zeroToBlank = false}) {
   return ret;
 }
 
-String verifyLabel(String label) {
+String cleanLabel(String label) {
   return label;
 }

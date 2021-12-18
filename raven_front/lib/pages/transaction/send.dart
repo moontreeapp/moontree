@@ -144,13 +144,13 @@ class _SendState extends State<Send> {
       sendAddress.text = code.substring(6).split('?')[0];
       var params = parseReceiveParams(code);
       if (params.containsKey('amount')) {
-        sendAmount.text = verifyDecAmount(params['amount']!);
+        sendAmount.text = cleanDecAmount(params['amount']!);
       }
       if (params.containsKey('label')) {
-        sendNote.text = verifyLabel(params['label']!);
+        sendNote.text = cleanLabel(params['label']!);
       }
       if (params.containsKey('to')) {
-        addressName = verifyLabel(params['to']!);
+        addressName = cleanLabel(params['to']!);
       }
       data['symbol'] = requestedAsset(params,
           holdings: useWallet
@@ -186,7 +186,7 @@ class _SendState extends State<Send> {
   }
 
   void verifyVisibleAmount(String value) {
-    visibleAmount = verifyDecAmount(value);
+    visibleAmount = cleanDecAmount(value);
     try {
       value = double.parse(value).toString();
     } catch (e) {
@@ -299,7 +299,7 @@ class _SendState extends State<Send> {
                 verifyVisibleAmount(value);
               },
               onEditingComplete: () {
-                sendAmount.text = verifyDecAmount(sendAmount.text);
+                sendAmount.text = cleanDecAmount(sendAmount.text);
                 verifyVisibleAmount(sendAmount.text);
                 FocusScope.of(context).requestFocus(sendFeeFocusNode);
               },
@@ -418,11 +418,11 @@ class _SendState extends State<Send> {
   }
 
   Future startSend() async {
-    sendAmount.text = verifyDecAmount(sendAmount.text, zeroToBlank: true);
+    sendAmount.text = cleanDecAmount(sendAmount.text, zeroToBlank: true);
     var vAddress = _validateAddress();
     var vMemo = verifyMemo();
     if (_validateAddress() && verifyMemo()) {
-      //sendAmount.text = verifyDecAmount(sendAmount.text);
+      //sendAmount.text = cleanDecAmount(sendAmount.text);
       //sendAddress.text = await verifyValidAddress(sendAddress.text);
       // if valid form: (
       //    valid to address - is a R34char address, or compiles to one using assetname or UNS,

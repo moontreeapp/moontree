@@ -121,7 +121,7 @@ class _CreateAssetState extends State<CreateAsset> {
                 labelText: 'Amount',
                 hintText: 'Quantity'),
             onEditingComplete: () {
-              assetAmount.text = verifySatAmount(assetAmount.text);
+              assetAmount.text = cleanSatAmount(assetAmount.text);
             },
           ),
           SizedBox(height: 20),

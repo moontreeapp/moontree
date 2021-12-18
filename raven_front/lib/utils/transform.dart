@@ -24,9 +24,6 @@ String removeChars(
   String? chars,
 }) {
   chars = chars ?? Strings.punctuationProblematic;
-  //for (var ix in enumerate(chars)) {
-  //  text = text.replaceAll(chars.substring(ix - 1, ix), '');
-  //}
   for (var char in characters(chars)) {
     text = text.replaceAll(char, '');
   }

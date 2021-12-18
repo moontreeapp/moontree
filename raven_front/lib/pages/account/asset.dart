@@ -1,13 +1,10 @@
 /// this file could be removed with slight modifications to transactions.dart
 /// that should probably happen at some point - when we start using assets more.
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction.dart';
-import 'package:raven_front/services/ipfs.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/utils/utils.dart';

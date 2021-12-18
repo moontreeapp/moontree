@@ -147,7 +147,9 @@ class _HomeState extends State<Home> {
                                       ListView(children: <Widget>[
                                         ...[
                                           ...createNewAcount(
-                                              context, accountName),
+                                            context,
+                                            accountName,
+                                          ),
                                           Divider(
                                               height: 20,
                                               thickness: 2,
@@ -334,18 +336,26 @@ class _HomeState extends State<Home> {
                     titleTextStyle: Theme.of(context).textTheme.bodyText2,
                     leading: Icon(Icons.info_outline_rounded),
                     onPressed: (BuildContext context) async {
-                      print(VoutReservoir.whereUnspent(
-                              given: Current.account.vouts,
-                              security: securities.RVN)
-                          .toList());
-                      print(VoutReservoir.whereUnspent(
-                              given: Current.account.vouts,
-                              security: securities.bySymbolSecurityType
-                                  .getOne('MOONTREE', SecurityType.RavenAsset))
-                          .toList());
-                      print(Current.account.vouts.first);
-                      print(Current.account.vouts.first
-                          .securityValue(security: securities.RVN));
+                      print(balances.bySecurity.getAll(Security(
+                          symbol: 'RVN', securityType: SecurityType.Crypto)));
+                      print(balances.bySecurity.getAll(Security(
+                          symbol: 'MOONTREE0',
+                          securityType: SecurityType.RavenAsset)));
+                      print(vouts.bySecurity.getAll(Security(
+                          symbol: 'MOONTREE0',
+                          securityType: SecurityType.RavenAsset)));
+                      //print(VoutReservoir.whereUnspent(
+                      //        given: Current.account.vouts,
+                      //        security: securities.RVN)
+                      //    .toList());
+                      //print(VoutReservoir.whereUnspent(
+                      //        given: Current.account.vouts,
+                      //        security: securities.bySymbolSecurityType
+                      //            .getOne('MOONTREE', SecurityType.RavenAsset))
+                      //    .toList());
+                      //print(Current.account.vouts.first);
+                      //print(Current.account.vouts.first
+                      //    .securityValue(security: securities.RVN));
                     }),
                 //SettingsTile.switchTile(
                 //  title: 'Use fingerprint',

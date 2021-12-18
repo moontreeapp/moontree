@@ -21,6 +21,10 @@ class SecurityReservoir extends Reservoir<_SecurityIdKey, Security> {
         'RVN:Crypto': Security(symbol: 'RVN', securityType: SecurityType.Crypto)
       };
 
-  Security get RVN => primaryIndex.getOne('RVN:Crypto')!;
-  Security get USD => primaryIndex.getOne('USD:Fiat')!;
+  Security get RVN =>
+      primaryIndex.getOne('RVN:Crypto') ??
+      SecurityReservoir.defaults['RVN:Crypto']!;
+  Security get USD =>
+      primaryIndex.getOne('USD:Fiat') ??
+      SecurityReservoir.defaults['USD:Fiat']!;
 }

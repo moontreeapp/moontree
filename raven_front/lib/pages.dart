@@ -10,7 +10,6 @@ export 'package:raven_front/pages/settings/import.dart';
 export 'package:raven_front/pages/settings/language.dart';
 export 'package:raven_front/pages/settings/network.dart';
 export 'package:raven_front/pages/settings/preferences.dart';
-export 'package:raven_front/pages/settings/settings.dart';
 export 'package:raven_front/pages/settings/technical.dart';
 export 'package:raven_front/pages/wallet/wallet.dart';
 export 'package:raven_front/pages/account/transactions.dart';

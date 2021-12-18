@@ -3,7 +3,9 @@ import 'package:raven_front/utils/transform.dart';
 import 'package:raven_back/raven_back.dart';
 
 List<Widget> createNewAcount(
-        BuildContext context, TextEditingController accountName) =>
+  BuildContext context,
+  TextEditingController accountName,
+) =>
     [
       SizedBox(height: 5),
       ListTile(
@@ -26,7 +28,9 @@ List<Widget> createNewAcount(
     ];
 
 Future validateAndCreateAccount(
-    BuildContext context, TextEditingController accountName) async {
+  BuildContext context,
+  TextEditingController accountName,
+) async {
   var desiredAccountName = removeChars(accountName.text.trim());
   accountName.text = desiredAccountName;
   if (desiredAccountName == '') {
