@@ -35,18 +35,17 @@ class RateService {
     if (totalRVNBalance.value > 0) {
       var rate = rvnToUSD;
       if (rate == null) return null;
-      var percision = 100000000;
+      var divisor = 100000000;
       usd = BalanceUSD(
-          confirmed:
-              ((totalRVNBalance.confirmed / percision) * rate).toDouble(),
+          confirmed: ((totalRVNBalance.confirmed / divisor) * rate).toDouble(),
           unconfirmed:
-              ((totalRVNBalance.unconfirmed / percision) * rate).toDouble());
+              ((totalRVNBalance.unconfirmed / divisor) * rate).toDouble());
     }
     return usd;
   }
 
   Balance getTotalRVN(String accountId, List<Balance> holdings) {
-    var assetPercision = 100000000; /* get percision of asset...  */
+    var assetPercision = 100000000; /* get divisor of asset...  */
 
     /// per wallet...
     var accountBalancesAsRVN = holdings.map((balance) => Balance(

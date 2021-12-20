@@ -148,7 +148,7 @@ class TransactionRecord {
 
   String get valueAsset {
     return NumberFormat(
-            '${security.symbol} #,##0.${'0' * (security.asset?.precision ?? 0)}',
+            '${security.symbol} #,##0.${'0' * (security.asset?.divisibility ?? 0)}',
             'en_US')
         .format(amount);
   }

@@ -4,7 +4,7 @@ Map<String, Asset> get assets => {
       '0': Asset(
           symbol: 'MOONTREE',
           satsInCirculation: 1000,
-          precision: 0,
+          divisibility: 0,
           reissuable: true,
           metadata: 'metadata',
           transactionId: '10',

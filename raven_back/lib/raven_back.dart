@@ -11,6 +11,7 @@ export 'init.dart';
 export 'joins/joins.dart';
 
 export 'utils/exceptions.dart';
+export 'utils/transform.dart';
 export 'lingo/lingo.dart';
 
 export 'package:reservoir/change.dart';

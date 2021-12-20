@@ -239,8 +239,7 @@ class _WalletViewState extends State<WalletView> {
                           style: Theme.of(context).annotate),
                       Text(
                           'Balance: ' +
-                              components.text
-                                  .satsToAmount(services.transaction
+                              satToAmount(services.transaction
                                       .walletUnspents(wallet)
                                       .where((vout) =>
                                           vout.toAddress ==
@@ -273,9 +272,7 @@ class _WalletViewState extends State<WalletView> {
                               .replace(fontWeight: FontWeight.bold)
                           : Theme.of(context).textTheme.caption),
                   Text(
-                      // I thoguht this is what slows down loading the page, but I now think it's the qr code... //takes a few seconds, lets just get them one at a time in onTap
-                      components.text
-                          .satsToAmount(services.transaction
+                      satToAmount(services.transaction
                               .walletUnspents(wallet)
                               .where((vout) =>
                                   vout.toAddress == walletAddress.address)

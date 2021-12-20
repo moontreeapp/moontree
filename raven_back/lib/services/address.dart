@@ -142,7 +142,9 @@ class AddressService {
           type: vout.scriptPubKey.type,
           toAddress: vout.scriptPubKey.addresses![0],
           assetSecurityId: vs.item2.securityId,
-          assetValue: vout.scriptPubKey.amount,
+          assetValue: amountToSat(vout.scriptPubKey.amount,
+              divisibility:
+                  vout.scriptPubKey.units ?? vs.item3?.divisibility ?? 8),
           // multisig - must detect if multisig...
           additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
               ? vout.scriptPubKey.addresses!
@@ -199,7 +201,9 @@ class AddressService {
           type: vout.scriptPubKey.type,
           toAddress: vout.scriptPubKey.addresses![0],
           assetSecurityId: vs.item2.securityId,
-          assetValue: vout.scriptPubKey.amount,
+          assetValue: amountToSat(vout.scriptPubKey.amount,
+              divisibility:
+                  vout.scriptPubKey.units ?? vs.item3?.divisibility ?? 8),
           // multisig - must detect if multisig...
           additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
               ? vout.scriptPubKey.addresses!
@@ -225,7 +229,7 @@ class AddressService {
   /// we capture securities here. if it's one we've never seen,
   /// get it's metadata and save it in the securities reservoir.
   /// return value and security to be saved in vout.
-  Future<Tuple2<int, Security>> handleAssetData(
+  Future<Tuple3<int, Security, Asset?>> handleAssetData(
     RavenElectrumClient client,
     Tx tx,
     TxVout vout,
@@ -234,14 +238,15 @@ class AddressService {
     var value = vout.valueSat;
     var security =
         securities.bySymbolSecurityType.getOne(symbol, SecurityType.RavenAsset);
+    var asset = assets.bySymbol.getOne(symbol);
     if (security == null) {
       if (vout.scriptPubKey.type == 'transfer_asset') {
         symbol = vout.scriptPubKey.asset!;
-        value = vout.scriptPubKey.amount!;
+        value = amountToSat(vout.scriptPubKey.amount);
         //if we have no record of it in securities...
         var meta = await client.getMeta(symbol);
         if (meta != null) {
-          streams.asset.added.add(Asset(
+          asset = Asset(
             symbol: meta.symbol,
             metadata: (await client.getTransaction(meta.source.txHash))
                     .vout[meta.source.txPos]
@@ -249,34 +254,38 @@ class AddressService {
                     .ipfsHash ??
                 '',
             satsInCirculation: meta.satsInCirculation,
-            precision: meta.divisions,
+            divisibility: meta.divisions,
             reissuable: meta.reissuable == 1,
             transactionId: meta.source.txHash,
             position: meta.source.txPos,
-          ));
-          await securities.save(security = Security(
+          );
+          streams.asset.added.add(asset);
+          security = Security(
             symbol: meta.symbol,
             securityType: SecurityType.RavenAsset,
-          ));
+          );
+          await securities.save(security);
         }
       } else if (vout.scriptPubKey.type == 'new_asset') {
         symbol = vout.scriptPubKey.asset!;
-        value = vout.scriptPubKey.amount! * (100000000);
-        streams.asset.added.add(Asset(
+        value = amountToSat(vout.scriptPubKey.amount);
+        asset = Asset(
           symbol: symbol,
           metadata: vout.scriptPubKey.ipfsHash ?? '',
           satsInCirculation: value,
-          precision: vout.scriptPubKey.units ?? 0,
+          divisibility: vout.scriptPubKey.units ?? 0,
           reissuable: vout.scriptPubKey.reissuable == 1,
           transactionId: tx.txid,
           position: vout.n,
-        ));
-        await securities.save(Security(
+        );
+        streams.asset.added.add(asset);
+        security = Security(
           symbol: symbol,
           securityType: SecurityType.RavenAsset,
-        ));
+        );
+        await securities.save(security);
       }
     }
-    return Tuple2(value, security ?? securities.RVN);
+    return Tuple3(value, security ?? securities.RVN, asset);
   }
 }

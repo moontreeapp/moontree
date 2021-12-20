@@ -68,22 +68,22 @@ class _SendState extends State<Send> {
     // could hold which asset to send...
     data = populateData(context, data);
     useWallet = data.containsKey('walletId') && data['walletId'] != null;
-    var precision = 8; /* get asset precision...*/
+    var divisibility = 8; /* get asset divisibility...*/
     var possibleHoldings = [
       for (var balance in useWallet
           ? Current.walletHoldings(data['walletId'])
           : Current.holdings)
         if (balance.security.symbol == data['symbol'])
-          components.text.satsToAmount(balance.confirmed)
+          satToAmount(balance.confirmed)
     ];
     if (possibleHoldings.length > 0) {
       holding = possibleHoldings[0];
     }
     try {
       visibleFiatAmount = components.text.securityAsReadable(
-          components.text.amountSats(
+          amountToSat(
             double.parse(visibleAmount),
-            precision: precision,
+            divisibility: divisibility,
           ),
           symbol: data['symbol'],
           asUSD: true);
@@ -444,9 +444,9 @@ class _SendState extends State<Send> {
       //} else {
       // send using any/every wallet in the account
       FocusScope.of(context).unfocus();
-      var sendAmountAsSats = components.text.amountSats(
+      var sendAmountAsSats = amountToSat(
         double.parse(sendAmount.text),
-        precision: 8, /* get asset precision */
+        divisibility: 8, /* get asset divisibility */
       );
       if (holding >= double.parse(sendAmount.text)) {
         var sendRequest = SendRequest(
@@ -575,7 +575,7 @@ class _SendState extends State<Send> {
                     DataRow(cells: [
                       DataCell(Text('Total:')),
                       DataCell(Text(
-                          '${components.text.satsToAmount(estimate.total)}')),
+                          '${satToAmount(estimate.total, divisibility: 8 /* get divisibility */)}')),
                     ]),
                     DataRow(cells: [
                       DataCell(Text('Send:')),

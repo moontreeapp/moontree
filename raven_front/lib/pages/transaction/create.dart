@@ -41,7 +41,8 @@ class _CreateAssetState extends State<CreateAsset> {
 
     data['reissuable'] =
         data.containsKey('reissuable') ? data['reissuable'] : 'Reissuable';
-    data['percision'] = data.containsKey('percision') ? data['percision'] : '0';
+    data['divisibility'] =
+        data.containsKey('divisibility') ? data['divisibility'] : '0';
     data['wallet'] = data.containsKey('wallet')
         ? data['wallet']
         : wallets.byAccount.getOne(Current.account.accountId)?.walletId ?? '';
@@ -139,7 +140,7 @@ class _CreateAssetState extends State<CreateAsset> {
           Text('Percision:', style: TextStyle(fontWeight: FontWeight.bold)),
           DropdownButton<String>(
               isExpanded: true,
-              value: data['percision'],
+              value: data['divisibility'],
               items: <int>[0, 1, 2, 3, 4, 5, 6, 7, 8]
                   .map((int value) => DropdownMenuItem<String>(
                       value: value.toString(),
@@ -148,7 +149,7 @@ class _CreateAssetState extends State<CreateAsset> {
                           : '0 (1)')))
                   .toList(),
               onChanged: (String? newValue) =>
-                  setState(() => data['percision'] = newValue!)),
+                  setState(() => data['divisibility'] = newValue!)),
 
           /// how does this work with HD wallets?
           /// - don't we have to get an address below the top?
@@ -226,7 +227,7 @@ class _CreateAssetState extends State<CreateAsset> {
       onPressed: () {
         /// use:
         ///  data['reissuable']
-        ///  data['percision']
+        ///  data['divisibility']
         ///  data['wallet']
         ///  assetName.text
         ///  assetAmount.text

@@ -14,7 +14,7 @@ class Asset with EquatableMixin {
   final int satsInCirculation;
 
   @HiveField(2)
-  final int precision;
+  final int divisibility;
 
   @HiveField(3)
   final bool reissuable;
@@ -36,7 +36,7 @@ class Asset with EquatableMixin {
   const Asset({
     required this.symbol,
     required this.satsInCirculation,
-    required this.precision,
+    required this.divisibility,
     required this.reissuable,
     required this.metadata,
     required this.transactionId,
@@ -47,7 +47,7 @@ class Asset with EquatableMixin {
   List<Object> get props => [
         symbol,
         satsInCirculation,
-        precision,
+        divisibility,
         reissuable,
         metadata,
         transactionId,
@@ -56,7 +56,7 @@ class Asset with EquatableMixin {
 
   @override
   String toString() => 'Asset(symbol: $symbol, '
-      'satsInCirculation: $satsInCirculation, precision: $precision, '
+      'satsInCirculation: $satsInCirculation, divisibility: $divisibility, '
       'reissuable: $reissuable, metadata: $metadata, transactionId: $transactionId, '
       'position: $position)';
 

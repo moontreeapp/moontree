@@ -33,7 +33,7 @@ class AssetListener {
       //    symbol: asset.nonMasterSymbol,
       //    metadata: vout.scriptPubKey.ipfsHash ?? '',
       //    satsInCirculation: value,
-      //    precision: vout.scriptPubKey.units ?? 0,
+      //    divisibility: vout.scriptPubKey.units ?? 0,
       //    reissuable: vout.scriptPubKey.reissuable == 1,
       //    txId: tx.txid,
       //    position: vout.n,

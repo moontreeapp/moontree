@@ -19,7 +19,7 @@ class AssetAdapter extends TypeAdapter<Asset> {
     return Asset(
       symbol: fields[0] as String,
       satsInCirculation: fields[1] as int,
-      precision: fields[2] as int,
+      divisibility: fields[2] as int,
       reissuable: fields[3] as bool,
       metadata: fields[4] as String,
       transactionId: fields[5] as String,
@@ -36,7 +36,7 @@ class AssetAdapter extends TypeAdapter<Asset> {
       ..writeByte(1)
       ..write(obj.satsInCirculation)
       ..writeByte(2)
-      ..write(obj.precision)
+      ..write(obj.divisibility)
       ..writeByte(3)
       ..write(obj.reissuable)
       ..writeByte(4)

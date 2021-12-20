@@ -81,7 +81,7 @@ class TxScriptPubKey with EquatableMixin {
   final int? reqSigs;
   final List<String>? addresses;
   final String? asset;
-  final int? amount;
+  final double amount;
   final int? units;
   final int? reissuable;
   final String? ipfsHash;
@@ -93,7 +93,7 @@ class TxScriptPubKey with EquatableMixin {
     this.reqSigs,
     this.addresses,
     this.asset,
-    this.amount,
+    this.amount = 0.0,
     this.units,
     this.reissuable,
     this.ipfsHash,
@@ -146,7 +146,7 @@ class TxScriptPubKey with EquatableMixin {
           for (String addr in scriptPubKey['addresses']) addr
         ],
         asset: scriptPubKey['asset']['name'],
-        amount: (scriptPubKey['asset']['amount'] as double).toInt(),
+        amount: scriptPubKey['asset']['amount'] as double,
         units: scriptPubKey['asset']['units'] ?? 0,
         reissuable: scriptPubKey['asset']['reissuable'] ?? 0,
         ipfsHash: scriptPubKey['asset']['ipfs_hash'],
