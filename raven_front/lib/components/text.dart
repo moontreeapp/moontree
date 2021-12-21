@@ -21,6 +21,7 @@ class TextComponents {
     String? symbol,
     bool asUSD = false,
   }) {
+    print('sats: $sats, security: $security, symbol: $symbol');
     security ??
         symbol ??
         (() => throw OneOfMultipleMissing(
@@ -37,11 +38,13 @@ class TextComponents {
         securities.bySymbolSecurityType
             .getOne(symbol, SecurityType.RavenAsset) ??
         Security(symbol: symbol, securityType: SecurityType.RavenAsset);
+    var asset = assets.bySymbol.getOne(symbol);
+    var asAmount = satToAmount(sats, divisibility: asset?.divisibility ?? 0);
     return asUSD
-        ? rvnUSD(sats * (services.rate.assetToRVN(security) ?? 0.0))
+        ? rvnUSD(asAmount * (services.rate.assetToRVN(security) ?? 0.0))
         : NumberFormat(
-                '#,##0${(security.asset?.divisibility ?? 0) > 0 ? '.' + '0' * (security.asset?.divisibility ?? 0) : ''}',
+                '#,##0${(asset?.divisibility ?? 0) > 0 ? '.' + '0' * (asset?.divisibility ?? 0) : ''}',
                 'en_US')
-            .format(sats);
+            .format(asAmount);
   }
 }

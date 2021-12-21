@@ -134,6 +134,13 @@ class AddressService {
       for (var vout in tx.vout) {
         if (vout.scriptPubKey.type == 'nulldata') continue;
         var vs = await handleAssetData(client, tx, vout);
+        print('GETTING STUFF for NEW   $vs');
+        print(amountToSat(vout.scriptPubKey.amount,
+            divisibility:
+                vs.item3?.divisibility ?? vout.scriptPubKey.units ?? 8));
+        print(vout.scriptPubKey.amount);
+        print(vout.scriptPubKey.units);
+        print(vs.item3);
         newVouts.add(Vout(
           transactionId: tx.txid,
           rvnValue: vs.item1,
@@ -144,7 +151,7 @@ class AddressService {
           assetSecurityId: vs.item2.securityId,
           assetValue: amountToSat(vout.scriptPubKey.amount,
               divisibility:
-                  vout.scriptPubKey.units ?? vs.item3?.divisibility ?? 8),
+                  vs.item3?.divisibility ?? vout.scriptPubKey.units ?? 8),
           // multisig - must detect if multisig...
           additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
               ? vout.scriptPubKey.addresses!
@@ -193,6 +200,36 @@ class AddressService {
       for (var vout in tx.vout) {
         if (vout.scriptPubKey.type == 'nulldata') continue;
         var vs = await handleAssetData(client, tx, vout);
+        /*
+        [Vout(transactionId: 6984d492be101d0e76838369112f65e74472357cbd5d9820571e124032eeedf2,
+          rvnValue: 1000000000,
+          position: 3,
+          memo: ,
+          type: new_asset,
+          toAddress: n1jgWeBioupbvBhNhCoa15tK5Sng3i4DLx,
+          assetSecurityId: MOONTREE0:RavenAsset,
+          assetValue: 1000,
+          additionalAddresses: null),
+        Vout(transactionId: af288ad6f644f3123c5828f6cccc42e2e38c1acf88e3eb2f1e13732fea2f93ae,
+          rvnValue: 1000000000,
+          position: 1,
+          memo: ,
+          type: transfer_asset,
+          toAddress: mqTDFJsCiBaDY5UYupbZgoJbgDk3s9ApRt,
+          assetSecurityId: MOONTREE0:RavenAsset,
+          assetValue: 10,                                       ???????????????????
+          additionalAddresses: null)]
+        
+        notice new asset has it as correct satioshi, but existing doesn't... 
+        */
+        print('GETTING STUFF for final $vs');
+        print(amountToSat(vout.scriptPubKey.amount,
+            divisibility:
+                vout.scriptPubKey.units ?? vs.item3?.divisibility ?? 8));
+        print(vout.scriptPubKey.amount);
+        print(vout.scriptPubKey.units);
+        print(vs.item3);
+
         finalVouts.add(Vout(
           transactionId: tx.txid,
           rvnValue: vs.item1,
@@ -203,7 +240,7 @@ class AddressService {
           assetSecurityId: vs.item2.securityId,
           assetValue: amountToSat(vout.scriptPubKey.amount,
               divisibility:
-                  vout.scriptPubKey.units ?? vs.item3?.divisibility ?? 8),
+                  vs.item3?.divisibility ?? vout.scriptPubKey.units ?? 8),
           // multisig - must detect if multisig...
           additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
               ? vout.scriptPubKey.addresses!
@@ -242,10 +279,13 @@ class AddressService {
     if (security == null) {
       if (vout.scriptPubKey.type == 'transfer_asset') {
         symbol = vout.scriptPubKey.asset!;
-        value = amountToSat(vout.scriptPubKey.amount);
+        value = amountToSat(vout.scriptPubKey.amount,
+            divisibility: vout.scriptPubKey.units ?? 8);
         //if we have no record of it in securities...
         var meta = await client.getMeta(symbol);
         if (meta != null) {
+          value = amountToSat(vout.scriptPubKey.amount,
+              divisibility: vout.scriptPubKey.units ?? meta.divisions);
           asset = Asset(
             symbol: meta.symbol,
             metadata: (await client.getTransaction(meta.source.txHash))
@@ -268,7 +308,8 @@ class AddressService {
         }
       } else if (vout.scriptPubKey.type == 'new_asset') {
         symbol = vout.scriptPubKey.asset!;
-        value = amountToSat(vout.scriptPubKey.amount);
+        value = amountToSat(vout.scriptPubKey.amount,
+            divisibility: vout.scriptPubKey.units ?? 0);
         asset = Asset(
           symbol: symbol,
           metadata: vout.scriptPubKey.ipfsHash ?? '',

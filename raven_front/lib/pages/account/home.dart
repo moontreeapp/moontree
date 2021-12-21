@@ -11,7 +11,6 @@ import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/services/account_creation.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:raven_back/utils/database.dart' as ravenDatabase;
-import 'package:raven_electrum/raven_electrum.dart';
 
 class Home extends StatefulWidget {
   @override

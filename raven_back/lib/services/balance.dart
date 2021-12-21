@@ -7,22 +7,28 @@ import 'package:raven_back/raven_back.dart';
 class BalanceService {
   /// Listener Logic //////////////////////////////////////////////////////////
 
-  /// Get (sum) the balance for an account-security pair
+  /// Get (sum) the balance for a wallet-security pair
   Balance sumBalance(Wallet wallet, Security security) => Balance(
       walletId: wallet.walletId,
       security: security,
-      confirmed:
-          VoutReservoir.whereUnspent(given: wallet.vouts, security: security)
-              .fold(
-                  0,
-                  (sum, vout) =>
-                      sum + vout.rvnValue), // should this be rvnValue always?
+      confirmed: VoutReservoir.whereUnspent(
+              given: wallet.vouts, security: security)
+          .fold(
+              0,
+              (int sum, Vout vout) =>
+                  sum +
+                  vout.securityValue(
+                      security: securities.primaryIndex.getOne(
+                          vout.securityId))), // should this be rvnValue always?
       unconfirmed: VoutReservoir.whereUnconfirmed(
               given: wallet.vouts, security: security)
           .fold(
               0,
               (sum, vout) =>
-                  sum + vout.rvnValue)); // should this be rvnValue always?
+                  sum +
+                  vout.securityValue(
+                      security: securities.primaryIndex.getOne(
+                          vout.securityId)))); // should this be rvnValue always?
 
   /// If there is a change in its history, recalculate a balance. Return a list
   /// of such balances.
@@ -47,9 +53,9 @@ class BalanceService {
 
   Future recalculateAllBalances() async =>
       await balances.saveAll(recalculateSpecificBalances(vouts.data
-          //.where((Vout vout) =>
-          //    vout.account!.net ==
-          //    settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value)
+          .where((Vout vout) =>
+              vout.account?.net ==
+              settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value)
           .toList()));
 
   /// Transaction Logic ///////////////////////////////////////////////////////

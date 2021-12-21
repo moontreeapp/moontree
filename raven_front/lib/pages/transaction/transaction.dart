@@ -210,8 +210,13 @@ class _TransactionPageState extends State<TransactionPage> {
                   title: Text(vin.vout!.security!.symbol,
                       style: Theme.of(context).textTheme.bodyText2),
                   trailing: Text(components.text.securityAsReadable(
-                      vin.vout?.rvnValue ?? -1,
+                      vin.vout?.securityValue(
+                              security: securities.primaryIndex.getOne(
+                                  vin.vout?.securityId ?? 'RVN:Crypto')) ??
+                          -1,
                       symbol: vin.vout?.security?.symbol ?? 'RVN')),
+                  //vin.vout?.rvnValue ?? vin.vout?.assetValue ?? -1,
+                  //symbol: vin.vout?.security?.symbol ?? 'RVN')),
                 )
               ],
             ],
