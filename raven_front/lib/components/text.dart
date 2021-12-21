@@ -21,7 +21,6 @@ class TextComponents {
     String? symbol,
     bool asUSD = false,
   }) {
-    print('sats: $sats, security: $security, symbol: $symbol');
     security ??
         symbol ??
         (() => throw OneOfMultipleMissing(
