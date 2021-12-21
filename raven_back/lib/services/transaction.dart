@@ -72,7 +72,8 @@ class TransactionService {
             out: false,
             fromAddress: '', // tx.vins[0].vout!.address, // will this work?
             toAddress: vout.toAddress,
-            value: vout.rvnValue,
+            value: vout.securityValue(
+                security: securities.primaryIndex.getOne(vout.securityId)),
             security: securities.primaryIndex
                 .getOne(vout.assetSecurityId ?? securities.RVN.securityId)!,
             height: tx.height,
@@ -89,9 +90,11 @@ class TransactionService {
             out: true,
             fromAddress: '',
             toAddress: vin.vout!.toAddress,
-            value: vin.vout!.rvnValue,
-            security: securities.primaryIndex.getOne(
-                vin.vout?.assetSecurityId ?? securities.RVN.securityId)!,
+            value: vin.vout!.securityValue(
+                security: securities.primaryIndex.getOne(vin.vout!.securityId)),
+            security: securities.primaryIndex
+                    .getOne(vin.vout?.assetSecurityId ?? '') ??
+                securities.RVN,
             height: tx.height,
             formattedDatetime: tx.formattedDatetime,
             amount: vin.vout!.assetValue ?? 0,
@@ -152,4 +155,17 @@ class TransactionRecord {
             'en_US')
         .format(amount);
   }
+
+  @override
+  String toString() => 'out: $out '
+      'fromAddress: $fromAddress '
+      'toAddress: $toAddress '
+      'value: $value '
+      'height: $height '
+      'formattedDatetime: $formattedDatetime '
+      'amount: $amount '
+      'security: $security '
+      'transactionId: $transactionId '
+      'voutId: $voutId '
+      'vinId: $vinId ';
 }

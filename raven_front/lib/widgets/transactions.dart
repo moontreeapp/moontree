@@ -92,6 +92,9 @@ class _TransactionListState extends State<TransactionList> {
     //        transactionRecord.fromAddress == widget.currentWalletAddress ||
     //        transactionRecord.toAddress == widget.currentWalletAddress)
     //    .toList();
+    for (var transactionRecord in transactions) {
+      print('transactionRecord $transactionRecord');
+    }
     return transactions.isEmpty
         ? components.empty.transactions(context, msg: widget.msg)
         : Container(
