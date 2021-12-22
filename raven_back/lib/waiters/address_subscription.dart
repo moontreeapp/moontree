@@ -25,9 +25,9 @@ class AddressSubscriptionWaiter extends Waiter {
     setupNewAddressListener();
   }
 
-  Future deinitSubscriptionHandles() async {
+  void deinitSubscriptionHandles() {
     for (var listener in services.client.subscribe.subscriptionHandles.values) {
-      await listener.cancel();
+      listener.cancel();
     }
     services.client.subscribe.subscriptionHandles.clear();
   }
@@ -35,7 +35,7 @@ class AddressSubscriptionWaiter extends Waiter {
   void setupClientListener() =>
       listen('streams.client.client', streams.client.client, (client) async {
         if (client == null) {
-          await deinitSubscriptionHandles();
+          deinitSubscriptionHandles();
         } else {
           backlogSubscriptions.forEach((address) {
             if (!services.client.subscribe.subscriptionHandles.keys
