@@ -3,6 +3,8 @@ import 'package:flutter/rendering.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:raven_back/services/transaction.dart';
 import 'package:raven_back/extensions/list.dart';
+import 'package:raven_back/extensions/object.dart';
+import 'package:raven_back/extensions/string.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/indicators/indicators.dart';
@@ -27,6 +29,8 @@ class _WalletViewState extends State<WalletView> {
   ToolbarOptions toolbarOptions =
       ToolbarOptions(copy: true, selectAll: true, cut: false, paste: false);
   bool showUSD = false;
+  late String secret;
+  late String secretName;
   late Wallet wallet;
   late String walletType;
   String? address;
@@ -61,6 +65,9 @@ class _WalletViewState extends State<WalletView> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
+    secret = data['secret'];
+    secretName =
+        (data['secretName'] as SecretType).enumString.toTitleCase(true);
     wallet = data['wallet'];
     walletType = wallet is LeaderWallet ? 'LeaderWallet' : 'SingleWallet';
     wallet = wallet is LeaderWallet
@@ -133,8 +140,6 @@ class _WalletViewState extends State<WalletView> {
                     Current.walletCompiledTransactions(wallet.walletId))),
       ]);
 
-  String get secretName => data['secretName'].enumString.toTitleCase(true);
-
   ListView detailsView() => ListView(
           shrinkWrap: true,
           controller: _scrollController,
@@ -148,7 +153,7 @@ class _WalletViewState extends State<WalletView> {
                 child: Visibility(
               visible: showSecret,
               child: SelectableText(
-                data['secret'],
+                secret,
                 cursorColor: Colors.grey[850],
                 showCursor: true,
                 style: Theme.of(context).mono,
@@ -214,11 +219,11 @@ class _WalletViewState extends State<WalletView> {
                 //holdings = services.balance.addressesBalances([walletAddress]);
                 transactions =
                     Current.walletCompiledTransactions(wallet.walletId)
-                        .where((transactionRecord) =>
-                            transactionRecord.fromAddress ==
-                                walletAddress.address ||
-                            transactionRecord.toAddress ==
-                                walletAddress.address)
+                        //.where((transactionRecord) =>
+                        //    transactionRecord.fromAddress ==
+                        //        walletAddress.address ||
+                        //    transactionRecord.toAddress ==
+                        //        walletAddress.address)
                         .toList();
                 address = walletAddress.address;
                 privateKey = services.wallet.leader

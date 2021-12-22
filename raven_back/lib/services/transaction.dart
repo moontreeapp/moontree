@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:raven_back/extensions/list.dart';
 import 'package:raven_back/raven_back.dart';
 
 import 'transaction_maker.dart';
@@ -57,25 +58,26 @@ class TransactionService {
   /// only additional logic.
   ///
   /// todo: aggregate by address...
-  List<TransactionRecord> getTransactionRecords({
+  List<TransactionRecordOLD> getTransactionRecordsOLD({
     Account? account,
     Wallet? wallet,
   }) {
     var givenAddresses = account != null
         ? account.addresses.map((address) => address.address).toList()
         : wallet!.addresses.map((address) => address.address).toList();
-    var transactionRecords = <TransactionRecord>[];
+    var transactionRecords = <TransactionRecordOLD>[];
     for (var tx in transactions.chronological) {
       for (var vout in tx.vouts) {
         if (givenAddresses.contains(vout.toAddress)) {
-          transactionRecords.add(TransactionRecord(
+          transactionRecords.add(TransactionRecordOLD(
             out: false,
             fromAddress: '', // tx.vins[0].vout!.address, // will this work?
             toAddress: vout.toAddress,
             value: vout.securityValue(
                 security: securities.primaryIndex.getOne(vout.securityId)),
-            security: securities.primaryIndex
-                .getOne(vout.assetSecurityId ?? securities.RVN.securityId)!,
+            security:
+                securities.primaryIndex.getOne(vout.assetSecurityId ?? '') ??
+                    securities.RVN,
             height: tx.height,
             formattedDatetime: tx.formattedDatetime,
             amount: vout.assetValue ?? 0,
@@ -86,7 +88,7 @@ class TransactionService {
       }
       for (var vin in tx.vins) {
         if (givenAddresses.contains(vin.vout?.toAddress)) {
-          transactionRecords.add(TransactionRecord(
+          transactionRecords.add(TransactionRecordOLD(
             out: true,
             fromAddress: '',
             toAddress: vin.vout!.toAddress,
@@ -104,6 +106,69 @@ class TransactionService {
         }
       }
     }
+    var ret = <TransactionRecordOLD>[];
+    var actual = <TransactionRecordOLD>[];
+    for (var txRecord in transactionRecords) {
+      if (txRecord.formattedDatetime == 'in mempool') {
+        ret.add(txRecord);
+      } else {
+        actual.add(txRecord);
+      }
+    }
+    ret.addAll(actual);
+    return ret;
+  }
+
+  /// for each transaction
+  ///   get a list of all securities involved on vins.vouts and vouts
+  ///   for each security involed
+  ///     transaction record: sum vins - some vouts
+  /// return transaction records
+  List<TransactionRecord> getTransactionRecords({
+    Account? account,
+    Wallet? wallet,
+  }) {
+    var givenAddresses = account != null
+        ? account.addresses.map((address) => address.address).toList()
+        : wallet!.addresses.map((address) => address.address).toList();
+    var transactionRecords = <TransactionRecord>[];
+    for (var transaction in transactions.chronological) {
+      var securitiesInvolved = ((transaction.vins
+                  .where((vin) =>
+                      givenAddresses.contains(vin.vout?.toAddress) &&
+                      vin.vout?.security != null)
+                  .map((vin) => vin.vout?.security)
+                  .toList()) +
+              (transaction.vouts
+                  .where((vout) =>
+                      givenAddresses.contains(vout.toAddress) &&
+                      vout.security != null)
+                  .map((vout) => vout.security)
+                  .toList()))
+          .toSet();
+      for (var security in securitiesInvolved) {
+        transactionRecords.add(TransactionRecord(
+          transaction: transaction,
+          security: security!,
+          totalIn: transaction.vins
+              .where((vin) =>
+                  givenAddresses.contains(vin.vout?.toAddress) &&
+                  vin.vout?.security == security)
+              .map((vin) => vin.vout?.securityValue(security: security))
+              .toList()
+              .sumInt(),
+          totalOut: transaction.vouts
+              .where((vout) =>
+                  givenAddresses.contains(vout.toAddress) &&
+                  vout.security == security)
+              .map((vout) => vout.securityValue(security: security))
+              .toList()
+              .sumInt(),
+          height: transaction.height,
+          formattedDatetime: transaction.formattedDatetime,
+        ));
+      }
+    }
     var ret = <TransactionRecord>[];
     var actual = <TransactionRecord>[];
     for (var txRecord in transactionRecords) {
@@ -119,6 +184,42 @@ class TransactionService {
 }
 
 class TransactionRecord {
+  Transaction transaction;
+  Security security;
+  String formattedDatetime;
+  int totalIn;
+  int totalOut;
+  int? height;
+
+  TransactionRecord({
+    required this.transaction,
+    required this.security,
+    required this.formattedDatetime,
+    this.height,
+    this.totalIn = 0,
+    this.totalOut = 0,
+  });
+
+  int get value => (totalIn - totalOut).abs();
+  bool get out => (totalIn - totalOut) >= 0;
+  String get formattedValue => security.symbol == 'RVN'
+      ? NumberFormat('RVN #,##0.00000000', 'en_US').format(value)
+      : NumberFormat(
+              '${security.symbol} #,##0.${'0' * (security.asset?.divisibility ?? 0)}',
+              'en_US')
+          .format(value);
+
+  @override
+  String toString() => 'TransactionRecord('
+      'transaction: $transaction, '
+      'security: $security, '
+      'totalIn: $totalIn, '
+      'totalOut: $totalOut, '
+      'formattedDatetime: $formattedDatetime, '
+      'height: $height)';
+}
+
+class TransactionRecordOLD {
   bool out;
   String fromAddress;
   String toAddress;
@@ -131,7 +232,7 @@ class TransactionRecord {
   String? voutId;
   String? vinId;
 
-  TransactionRecord({
+  TransactionRecordOLD({
     required this.out,
     required this.fromAddress,
     required this.toAddress,
@@ -168,4 +269,19 @@ class TransactionRecord {
       'transactionId: $transactionId '
       'voutId: $voutId '
       'vinId: $vinId ';
+}
+
+class SecurityTotal {
+  final Security security;
+  final int value;
+
+  SecurityTotal({required this.security, required this.value});
+
+  SecurityTotal operator +(SecurityTotal other) => security == other.security
+      ? SecurityTotal(security: security, value: value + other.value)
+      : throw BalanceMismatch("Securities don't match - can't combine");
+
+  SecurityTotal operator -(SecurityTotal other) => security == other.security
+      ? SecurityTotal(security: security, value: value - other.value)
+      : throw BalanceMismatch("Securities don't match - can't combine");
 }

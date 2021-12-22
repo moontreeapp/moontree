@@ -32,6 +32,7 @@ import 'wallets.dart';
 
 import 'package:reservoir/map_source.dart';
 import 'package:raven_back/globals.dart' as globals;
+import 'package:raven_back/utils/database.dart' as raven_database;
 
 void useFixtureSources() {
   globals.accounts.setSource(MapSource(accounts));
@@ -50,3 +51,5 @@ void useFixtureSources() {
   globals.vouts.setSource(MapSource(vouts));
   globals.wallets.setSource(MapSource(wallets));
 }
+
+void deleteDatabase() => raven_database.deleteDatabase();

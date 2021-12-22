@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/extensions/list.dart';
 import 'package:raven_back/services/wallet/constants.dart';
 import 'package:raven_front/listeners/listeners.dart';
 import 'package:raven_front/services/password_mock.dart';
@@ -65,6 +66,21 @@ class _LoadingState extends State<Loading> {
     print('vins: ${vins.data}');
     print('vouts: ${vouts.data}');
     print('wallets: ${wallets.data}');
+    print('-------------------------');
+    //for (var transaction in transactions.data) {
+    //  print(transaction);
+    //}
+    //var tx = transactions.primaryIndex.getOne(
+    //    'b13feb18ae0b66f47e1606230b0a70de7d40ab52fbfc5626488136fbaa668b34')!;
+    //print(tx);
+    //print(tx.vins);
+    //print(tx.vouts);
+    //print(tx.vins.map((vin) => vin.vout?.rvnValue ?? 0).toList().sumInt());
+    //print(tx.vins.map((vin) => vin.vout?.assetValue ?? 0).toList().sumInt());
+    //print(tx.vouts.map((vout) => vout.rvnValue).toList().sumInt());
+    //print(tx.vouts.map((vout) => vout.assetValue).toList().sumInt());
+    //print(tx.vins.map((vin) => vin.vout?.rvnValue ?? 0).toList().sumInt() -
+    //    tx.vouts.map((vout) => vout.rvnValue).toList().sumInt());
     print('-------------------------');
 
     if (services.password.required) {

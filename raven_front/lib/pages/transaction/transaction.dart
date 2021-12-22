@@ -1,8 +1,6 @@
-/// perhaps this page should show the details of a transaction not the details of Vout or TransactionRecord...
-
 import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:raven_back/services/transaction.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:raven_back/raven_back.dart';
@@ -22,6 +20,7 @@ class _TransactionPageState extends State<TransactionPage> {
   dynamic data = {};
   Address? address;
   List<StreamSubscription> listeners = [];
+  TransactionRecord? transactionRecord;
   Transaction? transaction;
 
   @override
@@ -43,8 +42,9 @@ class _TransactionPageState extends State<TransactionPage> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    transaction = transactions.primaryIndex
-        .getOne(data['transactionRecord']!.transactionId);
+    print('DATA: $data');
+    transactionRecord = data['transactionRecord'];
+    transaction = transactionRecord!.transaction;
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
     var metadata = transaction!.memo != null && transaction!.memo != '';
     return DefaultTabController(
@@ -101,16 +101,12 @@ class _TransactionPageState extends State<TransactionPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height: 22),
-                    Text(data['transactionRecord']!.out ? 'Sent' : 'Received',
+                    Text(transactionRecord!.out ? 'Sent' : 'Received',
                         style: Theme.of(context).textTheme.headline5),
                     Text(
                         components.text
-                            .securityAsReadable(
-                                data['transactionRecord']!.value,
-                                symbol: data['transactionRecord']!
-                                        .security
-                                        ?.symbol ??
-                                    'RVN')
+                            .securityAsReadable(transactionRecord!.value,
+                                symbol: transactionRecord!.security.symbol)
                             .toString(),
                         style: Theme.of(context).textTheme.headline5)
                   ])),
@@ -187,62 +183,53 @@ class _TransactionPageState extends State<TransactionPage> {
             SizedBox(height: 15.0),
 
             /// vin --------------------------------------------------------
-            for (Vin vin in transaction!.vins) ...[
-              if (vin.vout != null) ...[
-                SizedBox(height: 5.0),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('from: ',
-                          style: Theme.of(context).textTheme.caption),
-                      SelectableText(vin.vout?.toAddress ?? 'unkown',
-                          style: Theme.of(context).annotate),
-                    ]),
-                ListTile(
-                  onTap: () {/* copy the amount to clipboard */},
-                  onLongPress: () {},
-                  contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
-                  leading: Container(
-                      height: 50,
-                      width: 50,
-                      child: components.icons
-                          .assetAvatar(vin.vout!.security!.symbol)),
-                  title: Text(vin.vout!.security!.symbol,
-                      style: Theme.of(context).textTheme.bodyText2),
-                  trailing: Text(components.text.securityAsReadable(
-                      vin.vout?.securityValue(
-                              security: securities.primaryIndex.getOne(
-                                  vin.vout?.securityId ?? 'RVN:Crypto')) ??
-                          -1,
-                      symbol: vin.vout?.security?.symbol ?? 'RVN')),
-                  //vin.vout?.rvnValue ?? vin.vout?.assetValue ?? -1,
-                  //symbol: vin.vout?.security?.symbol ?? 'RVN')),
-                )
-              ],
-            ],
-            SizedBox(height: 15.0),
-            Divider(thickness: 1.0, color: Colors.grey.shade800),
+            ...transactionRecord!.totalIn > 0
+                ? [
+                    SizedBox(height: 5.0),
+                    Text('Sent', style: Theme.of(context).textTheme.caption),
+                    ListTile(
+                      onTap: () {/* copy the amount to clipboard */},
+                      onLongPress: () {},
+                      contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
+                      leading: Container(
+                          height: 50,
+                          width: 50,
+                          child: components.icons
+                              .assetAvatar(transactionRecord!.security.symbol)),
+                      title: Text(transactionRecord!.security.symbol,
+                          style: Theme.of(context).textTheme.bodyText2),
+                      trailing: Text(components.text.securityAsReadable(
+                          transactionRecord!.totalIn,
+                          security: transactionRecord!.security)),
+                    ),
+                  ]
+                : [],
 
             /// vout -------------------------------------------------------
-            SizedBox(height: 15.0),
-            for (Vout vout in transaction!.vouts) ...[
-              SizedBox(height: 5.0),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text('to: ', style: Theme.of(context).textTheme.caption),
-                SelectableText(vout.toAddress,
-                    style: Theme.of(context).annotate),
-              ]),
-              ListTile(
-                onTap: () {/* copy amount to clipboard */},
-                onLongPress: () {},
-                contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
-                leading: components.icons.assetAvatar(vout.security!.symbol),
-                title: Text(vout.security!.symbol),
-                trailing: Text(components.text.securityAsReadable(
-                    vout.assetValue ?? vout.rvnValue,
-                    symbol: vout.security!.symbol)),
-              )
-            ],
+            ...transactionRecord!.totalOut > 0
+                ? [
+                    SizedBox(height: 15.0),
+                    Divider(thickness: 1.0, color: Colors.grey.shade800),
+                    SizedBox(height: 15.0),
+                    SizedBox(height: 5.0),
+                    Text('Received',
+                        style: Theme.of(context).textTheme.caption),
+                    ListTile(
+                      onTap: () {/* copy amount to clipboard */},
+                      onLongPress: () {},
+                      contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
+                      leading: Container(
+                          height: 50,
+                          width: 50,
+                          child: components.icons
+                              .assetAvatar(transactionRecord!.security.symbol)),
+                      title: Text(transactionRecord!.security.symbol),
+                      trailing: Text(components.text.securityAsReadable(
+                          transactionRecord!.totalOut,
+                          security: transactionRecord!.security)),
+                    ),
+                  ]
+                : [],
           ])
         ]),
       ]);
