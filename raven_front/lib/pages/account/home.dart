@@ -9,7 +9,7 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/indicators/indicators.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/theme.dart';
-import 'package:raven_front/services/account_creation.dart';
+import 'package:raven_front/services/account.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:raven_back/utils/database.dart' as ravenDatabase;
 
@@ -24,6 +24,7 @@ class _HomeState extends State<Home> {
   late String currentAccountId = '0'; // should be moved to body?
   final accountName = TextEditingController();
   bool isFabVisible = true;
+  final changeName = TextEditingController();
 
   @override
   void initState() {
@@ -66,17 +67,22 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: balanceHeader(),
-      drawer: accountsView(),
-      body: NotificationListener<UserScrollNotification>(
-        onNotification: visibilityOfSendReceive,
-        child: HoldingList(),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: isFabVisible ? sendReceiveButtons() : null,
-      //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
-    );
+    changeName.text =
+        accounts.data.length > 1 ? Current.account.name : 'Wallet';
+    return GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          appBar: balanceHeader(),
+          drawer: accountsView(),
+          body: NotificationListener<UserScrollNotification>(
+            onNotification: visibilityOfSendReceive,
+            child: HoldingList(),
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: isFabVisible ? sendReceiveButtons() : null,
+          //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
+        ));
   }
 
   bool visibilityOfSendReceive(notification) {
@@ -110,8 +116,28 @@ class _HomeState extends State<Home> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(accounts.data.length > 1 ? Current.account.name : 'Wallet',
-                    style: Theme.of(context).textTheme.headline3),
+                TextField(
+                  textInputAction: TextInputAction.done,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headline3,
+                  decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      disabledBorder: InputBorder.none),
+                  controller: changeName,
+                  onTap: () => changeName.text = '',
+                  onSubmitted: (value) async {
+                    if (!await updateAcount(Current.account, value)) {
+                      components.alerts.failure(context,
+                          headline: 'Unable rename account',
+                          msg: 'Account name, "$value" is already taken. '
+                              'Please enter a uinque account name.');
+                    }
+                    setState(() {});
+                  },
+                ),
                 Text(
                     // this kinda thing should be abstracted:
                     '\n${Current.balanceUSD != null ? '' : ''} ${Current.balanceUSD?.valueUSD ?? Current.balanceRVN.valueRVN}',

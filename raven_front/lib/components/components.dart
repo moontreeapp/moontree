@@ -1,3 +1,4 @@
+import 'alerts.dart';
 import 'buttons.dart';
 import 'headers.dart';
 import 'icons.dart';
@@ -7,6 +8,7 @@ import 'text.dart';
 import 'styles/buttons.dart';
 
 class components {
+  static AlertComponents alerts = AlertComponents();
   static ButtonComponents buttons = ButtonComponents();
   static ButtonStyleComponents buttonStyles = ButtonStyleComponents();
   static IconComponents icons = IconComponents();

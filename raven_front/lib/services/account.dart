@@ -1,6 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:raven_front/utils/transform.dart';
+import 'package:raven_front/components/components.dart';
 import 'package:raven_back/raven_back.dart';
+
+/// changes the name of existing account
+Future<bool> updateAcount(Account account, String name) async {
+  if (account.name == name) {
+    return true;
+  }
+  name = removeChars(name);
+  if (accounts.byName.getAll(name).length > 0 || name == '') {
+    return false;
+  }
+  await accounts.save(
+      Account(accountId: account.accountId, name: name, net: account.net));
+  return true;
+}
 
 List<Widget> createNewAcount(
   BuildContext context,
@@ -34,7 +49,7 @@ Future validateAndCreateAccount(
   var desiredAccountName = removeChars(accountName.text.trim());
   accountName.text = desiredAccountName;
   if (desiredAccountName == '') {
-    alertFailure(context,
+    components.alerts.failure(context,
         headline: 'Unable to create account',
         msg: 'Please enter new account name');
     return;
@@ -43,10 +58,10 @@ Future validateAndCreateAccount(
       .map((account) => account.name)
       .toList()
       .contains(desiredAccountName)) {
-    alertFailure(context,
+    components.alerts.failure(context,
         headline: 'Unable to create account',
-        msg:
-            'Account name, "$desiredAccountName" is already taken. Please enter a uinque account name.');
+        msg: 'Account name, "$desiredAccountName" is already taken. '
+            'Please enter a uinque account name.');
     return;
   }
   // todo replace with a legit spinner, and reduce amount of time it's waiting
@@ -68,20 +83,3 @@ Future validateAndCreateAccount(
   desiredAccountName = '';
   accountName.text = '';
 }
-
-Future alertFailure(
-  BuildContext context, {
-  String headline = 'Unable to create account',
-  String msg = 'Please enter account name',
-}) =>
-    showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-              title: Text(headline),
-              content: Text(msg),
-              actions: [
-                TextButton(
-                    child: Text('ok'),
-                    onPressed: () => Navigator.of(context).pop())
-              ],
-            ));
