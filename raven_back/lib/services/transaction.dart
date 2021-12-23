@@ -9,12 +9,16 @@ class TransactionService {
 
   List<Vout> accountUnspents(Account account, {Security? security}) =>
       VoutReservoir.whereUnspent(
-              given: account.vouts, security: security ?? securities.RVN)
+              given: account.vouts,
+              security: security ?? securities.RVN,
+              includeMempool: false)
           .toList();
 
   List<Vout> walletUnspents(Wallet wallet, {Security? security}) =>
       VoutReservoir.whereUnspent(
-              given: wallet.vouts, security: security ?? securities.RVN)
+              given: wallet.vouts,
+              security: security ?? securities.RVN,
+              includeMempool: false)
           .toList();
 
   Transaction? getTransactionFrom({Transaction? transaction, String? hash}) {

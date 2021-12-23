@@ -56,11 +56,11 @@ class Balance with EquatableMixin {
       '$walletId:${security.securityId}';
 
   int get value {
-    return confirmed + unconfirmed;
+    return confirmed; //+ unconfirmed;
   }
 
   double get rvn {
-    return (confirmed / 100000000) + (unconfirmed / 100000000);
+    return (confirmed / 100000000); //+ (unconfirmed / 100000000);
   }
 
   String get valueRVN {
@@ -90,12 +90,12 @@ class BalanceUSD {
   BalanceUSD({required this.confirmed, required this.unconfirmed});
 
   double get value {
-    return confirmed + unconfirmed;
+    return confirmed /*+ unconfirmed*/;
   }
 
   String get valueUSD {
     return NumberFormat('\$ #,##0.00', 'en_US')
-        .format((confirmed + unconfirmed) /*.toStringAsFixed(2)*/);
+        .format((confirmed /*+ unconfirmed*/) /*.toStringAsFixed(2)*/);
   }
 
   BalanceUSD operator +(BalanceUSD balanceUSD) {

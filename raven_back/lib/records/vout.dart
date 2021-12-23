@@ -57,7 +57,10 @@ class Vout with EquatableMixin {
     this.additionalAddresses,
   });
 
-  bool get confirmed => position > -1;
+  // this is wrong. confirmed may have had something to do with position back
+  // when we were dealing with histories but now confirmed is at the
+  // transaction level - was the transaction confirmed or not?
+  //bool get confirmed => position > -1;
 
   @override
   List<Object?> get props => [

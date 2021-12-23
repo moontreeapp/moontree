@@ -32,19 +32,26 @@ class _SecurityKey extends Key<Vout> {
 extension BySecurityMethodsForVout on Index<_SecurityKey, Vout> {
   List<Vout> getAll(Security security) => getByKeyStr(security.securityId);
 
-  Iterable<Vout> unspents({required Security security}) =>
-      VoutReservoir.whereUnspent(given: getAll(security), security: security);
-
-  BalanceRaw balance({required Security security}) {
-    var zero = BalanceRaw(confirmed: 0, unconfirmed: 0);
-    return unspents(security: security).fold(
-        zero,
-        (sum, vout) =>
-            sum +
-            BalanceRaw(
-                confirmed: (vout.confirmed ? vout.rvnValue : 0),
-                unconfirmed: (!vout.confirmed ? vout.rvnValue : 0)));
-  }
+  /// delete this
+  //Iterable<Vout> unspents({required Security security}) =>
+  //    VoutReservoir.whereUnspent(given: getAll(security), security: security);
+  //
+  ///// ! todo this is probably broken because I don't think we can use joins
+  ///// in here. Besides, I'm not even sure why this is here...
+  //BalanceRaw balance({
+  //  required Security security,
+  //}) =>
+  //    unspents(security: security).fold(
+  //        BalanceRaw(confirmed: 0, unconfirmed: 0),
+  //        (sum, vout) =>
+  //            sum +
+  //            BalanceRaw(
+  //                confirmed: ((vout.transaction?.confirmed ?? true)
+  //                    ? vout.rvnValue
+  //                    : 0),
+  //                unconfirmed: (!(vout.transaction?.confirmed ?? true)
+  //                    ? vout.rvnValue
+  //                    : 0)));
 }
 
 // byAddress - not every vout has an address

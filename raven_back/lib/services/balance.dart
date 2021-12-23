@@ -12,7 +12,7 @@ class BalanceService {
       walletId: wallet.walletId,
       security: security,
       confirmed: VoutReservoir.whereUnspent(
-              given: wallet.vouts, security: security)
+              given: wallet.vouts, security: security, includeMempool: false)
           .fold(
               0,
               (int sum, Vout vout) =>
@@ -20,9 +20,8 @@ class BalanceService {
                   vout.securityValue(
                       security: securities.primaryIndex.getOne(
                           vout.securityId))), // should this be rvnValue always?
-      unconfirmed: VoutReservoir.whereUnconfirmed(
-              given: wallet.vouts, security: security)
-          .fold(
+      unconfirmed:
+          VoutReservoir.whereUnconfirmed(given: wallet.vouts, security: security).fold(
               0,
               (sum, vout) =>
                   sum +
@@ -53,9 +52,13 @@ class BalanceService {
 
   Future recalculateAllBalances() async =>
       await balances.saveAll(recalculateSpecificBalances(vouts.data
+          //VoutReservoir.whereUnspent(includeMempool: false)
           .where((Vout vout) =>
               vout.account?.net ==
-              settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value)
+                  settings.primaryIndex
+                      .getOne(SettingName.Electrum_Net)!
+                      .value &&
+              (vout.transaction?.confirmed ?? false))
           .toList()));
 
   /// Transaction Logic ///////////////////////////////////////////////////////
