@@ -10,7 +10,7 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/indicators/indicators.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
-import 'package:raven_front/utils/utils.dart';
+import 'package:raven_front/utils/data.dart';
 import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
 

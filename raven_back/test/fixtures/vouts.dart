@@ -43,4 +43,14 @@ Map<String, Vout> get vouts => {
           assetSecurityId: 'RVN:Crypto',
           assetValue: null,
           additionalAddresses: null),
+      '4': Vout(
+          transactionId: '10',
+          rvnValue: 0,
+          position: 0,
+          type: 'transfer_asset',
+          toAddress: 'address 1 address',
+          memo: '',
+          assetSecurityId: 'MOONTREE0:RavenAsset',
+          assetValue: 100,
+          additionalAddresses: null),
     };

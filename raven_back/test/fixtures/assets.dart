@@ -8,5 +8,13 @@ Map<String, Asset> get assets => {
           reissuable: true,
           metadata: 'metadata',
           transactionId: '10',
-          position: 2)
+          position: 2),
+      '1': Asset(
+          symbol: 'MOONTREE1',
+          satsInCirculation: 1000,
+          divisibility: 2,
+          reissuable: true,
+          metadata: 'metadata',
+          transactionId: '10',
+          position: 0)
     };

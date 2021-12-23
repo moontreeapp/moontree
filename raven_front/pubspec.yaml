@@ -49,7 +49,8 @@ dependencies:
   share: ^2.0.4 # to share the file that we create
   file_picker: ^4.1.5 # to import the file that we saved
   intl: ^0.17.0
-
+  mockito: ^5.0.17 # just for testing 
+  
   # MoonTree in-house dependencies
   raven_back:
     git: https://github.com/moontreeapp/raven_back.git

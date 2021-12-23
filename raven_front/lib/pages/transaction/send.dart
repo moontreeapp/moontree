@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:raven_back/streams/run.dart' show SendRequest;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 import 'package:barcode_scan2/barcode_scan2.dart';
@@ -13,7 +12,7 @@ import 'package:raven_front/indicators/indicators.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/utils/address.dart';
 import 'package:raven_front/utils/params.dart';
-import 'package:raven_front/utils/utils.dart';
+import 'package:raven_front/utils/data.dart';
 import 'package:raven_front/theme/extensions.dart';
 
 class Send extends StatefulWidget {

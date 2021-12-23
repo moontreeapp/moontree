@@ -17,9 +17,6 @@ String requestedAsset(Map<String, String> params,
   return current ?? 'RVN';
 }
 
-/// what else could the receiver ask for other than a specific asset?
-// verify valid logic...
-
 String cleanSatAmount(String amount) {
   var text = amount.split('.').first;
   text = removeChars(text, chars: Strings.punctuation + Strings.whiteSapce);
@@ -58,11 +55,10 @@ String cleanDecAmount(String amount, {bool zeroToBlank = false}) {
         amount = '0';
       }
     } else {
-      // tried our best
       amount = '0';
     }
   }
-  // removes leading 0s
+  // remove leading 0(s)
   var ret = '0';
   try {
     ret = double.parse(amount).toString();

@@ -4,7 +4,7 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/services/import.dart';
-import 'package:raven_front/utils/utils.dart';
+import 'package:raven_front/utils/data.dart';
 
 class Import extends StatefulWidget {
   final dynamic data;

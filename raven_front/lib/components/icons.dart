@@ -39,11 +39,9 @@ class IconComponents {
     return _assetAvatarGenerated(asset);
   }
 
-  /// if it's RVN we know what to do...
   Widget _assetAvatarRVN() => Image.asset('assets/rvn.png');
 
-  /// if it's an asset lets see if it has a custom logo...
-  /// Notice: this is untested as we don't yet have a logo in the metadata...
+  /// return custom logo (presumably previously downloaded from ipfs) or null
   Widget? _assetAvatarSecurity(String symbol) {
     var security =
         securities.bySymbolSecurityType.getOne(symbol, SecurityType.RavenAsset);
