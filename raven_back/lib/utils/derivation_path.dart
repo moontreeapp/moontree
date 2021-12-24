@@ -1,13 +1,8 @@
 import 'package:raven_back/records/node_exposure.dart';
 
-String getDerivationPath(int index, {exposure = NodeExposure.External}) {
-  return "m/44'/175'/0'/"
-      '${exposureToDerivationPathPart(exposure)}/$index';
-}
-
-String exposureToDerivationPathPart(NodeExposure exposure) =>
-    {
+String getDerivationPath(int index, {exposure = NodeExposure.External}) =>
+    "m/44'/175'/0'/"
+    '${{
       NodeExposure.External: '0',
       NodeExposure.Internal: '1',
-    }[exposure] ??
-    '';
+    }[exposure]!}/$index';

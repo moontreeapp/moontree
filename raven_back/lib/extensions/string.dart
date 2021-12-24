@@ -3,7 +3,7 @@ import 'dart:typed_data';
 extension StringCasingExtension on String {
   String toCapitalized() =>
       length > 0 ? '${this[0].toUpperCase()}${substring(1)}' : '';
-  String toTitleCase([bool underscoreAsSpace = false]) =>
+  String toTitleCase({bool underscoreAsSpace = false}) =>
       replaceAll(RegExp(' +'), ' ')
           // for enums especially:
           .replaceAll(underscoreAsSpace ? RegExp('_+') : ' ', ' ')

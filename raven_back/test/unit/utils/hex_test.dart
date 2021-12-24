@@ -30,4 +30,14 @@ void main() {
       expect(hex.decrypt(data, cipher), '0005101fff');
     });
   });
+
+  group('Hex extras', () {
+    test('toHexString', () {
+      expect(hex.toHexString('7cc5c31585e0'), '376363356333313538356530');
+    });
+
+    test('hexToAscii', () {
+      expect(hex.hexToAscii('376363356333313538356530'), '7cc5c31585e0');
+    });
+  });
 }
