@@ -66,8 +66,9 @@ class _WalletViewState extends State<WalletView> {
   Widget build(BuildContext context) {
     data = populateData(context, data);
     secret = data['secret'];
-    secretName =
-        (data['secretName'] as SecretType).enumString.toTitleCase(true);
+    secretName = (data['secretName'] as SecretType)
+        .enumString
+        .toTitleCase(underscoreAsSpace: true);
     wallet = data['wallet'];
     walletType = wallet is LeaderWallet ? 'LeaderWallet' : 'SingleWallet';
     wallet = wallet is LeaderWallet
