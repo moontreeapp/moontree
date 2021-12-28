@@ -35,7 +35,7 @@ body:
       label: Tasks For This Story
       description: Add any tasks that are required for this story.
       placeholder: Create a list of tasks!
-      value: ' - [ ] https://github.com/moontreeapp/raven_front/issues/???'
+      value: ' - [ ] #'
     validations:
       required: false
   - type: textarea
@@ -44,6 +44,6 @@ body:
       label: Bugs For This Story
       description: Add any bugs that are replaced/fixed by this story.
       placeholder: Create a list of bugs!
-      value: ' - [ ] https://github.com/moontreeapp/raven_front/issues/???'
+      value: ' - [ ] #'
     validations:
       required: false

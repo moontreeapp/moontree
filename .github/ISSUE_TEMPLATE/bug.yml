@@ -56,6 +56,6 @@ body:
       label: Tasks For This Bug
       description: Add any tasks that are required for this bug.
       placeholder: Create a list of tasks!
-      value: ' - [ ] https://github.com/moontreeapp/raven_front/issues/???'
+      value: ' - [ ] #'
     validations:
       required: false

@@ -35,7 +35,7 @@ body:
       label: Stories For This Bucket
       description: Add any stories that are required for this bucket.
       placeholder: Create a list of stories!
-      value: ' - [ ] https://github.com/moontreeapp/raven_front/issues/???'
+      value: ' - [ ] #'
     validations:
       required: false
   - type: textarea
@@ -44,6 +44,6 @@ body:
       label: Bugs For This Bucket
       description: Add any stories that are replaced/fixed by this bucket.
       placeholder: Create a list of bugs!
-      value: ' - [ ] https://github.com/moontreeapp/raven_front/issues/???'
+      value: ' - [ ] #'
     validations:
       required: false
