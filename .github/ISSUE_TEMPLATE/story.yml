@@ -1,5 +1,5 @@
 name: Story
-description: Suggest an idea for this project
+description: Suggest an idea for a bucket of this project.
 labels: ['Story']
 body:
   - type: markdown
