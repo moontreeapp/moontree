@@ -14,7 +14,7 @@ var newHistory = History(
 
 void main() async {
   group('BalanceService', () {
-    setUp(fixtures.useFixtureSources);
+    setUp(fixtures.useFixtureSources1);
 
     test('sumBalance (not in mempool)', () {
       expect(

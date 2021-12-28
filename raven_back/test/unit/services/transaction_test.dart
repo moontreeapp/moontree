@@ -4,7 +4,6 @@ import 'package:raven_back/services/transaction.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart';
 import 'package:test/test.dart';
 
-import 'package:raven_back/services/balance.dart' as balanceService;
 import 'package:raven_back/services/transaction_maker.dart';
 import 'package:raven_back/services/transaction/fee.dart';
 import 'package:raven_back/globals.dart';
@@ -214,7 +213,6 @@ void main() async {
     expect(txb.tx!.ins[1].hash.toString(),
         '[213, 7, 25, 181, 71, 217, 95, 154, 120, 226, 1, 32, 155, 129, 148, 31, 102, 123, 212, 99, 30, 156, 180, 35, 106, 126, 39, 72, 40, 162, 173, 45]'); // 4000000
 
-    // TODO figure out how to turn the UInt8List hashes to regular strings
     //expect(String.fromCharCodes(txb.tx.ins[0].hash),
     //    '3U5Ï^\x1EmÚI7Éü\x01ÂÄ4eN³]\x02ü2]J°M«'); // 5000087912000
     //print(utf8.decode(Uint8List.fromList(utf8.encode(txb.tx.ins[0].hash))));
