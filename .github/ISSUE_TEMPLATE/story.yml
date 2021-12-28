@@ -1,14 +1,14 @@
-name: Bucket
-description: Suggest a broad idea for this project
-labels: ['Bucket']
+name: Story
+description: Suggest an idea for a bucket of this project.
+labels: ['Story']
 body:
   - type: markdown
     attributes:
-      value: Thanks for taking the time to suggest a broad idea!
+      value: Thanks for taking the time to suggest an idea!
   - type: textarea
-    id: broad-idea
+    id: user-story
     attributes:
-      label: Describe The Broad Idea
+      label: Describe The User Story
       description: A clear and concise description of what you want to happen.
       placeholder: Tell us what you want to see!
       value: 'As a... I want... So that...'
@@ -26,24 +26,24 @@ body:
     id: additional-context
     attributes:
       label: Additional Context
-      description: Add any other context about the bucket here.
+      description: Add any other context about the story here.
     validations:
       required: false
   - type: textarea
-    id: story
+    id: tasks
     attributes:
-      label: Stories For This Bucket
-      description: Add any stories that are required for this bucket.
-      placeholder: Create a list of stories!
-      value: ' - [ ] https://github.com/moontreeapp/raven_front/issues/???'
+      label: Tasks For This Story
+      description: Add any tasks that are required for this story.
+      placeholder: Create a list of tasks!
+      value: ' - [ ] #'
     validations:
       required: false
   - type: textarea
-    id: bug
+    id: bugs
     attributes:
-      label: Bugs For This Bucket
-      description: Add any stories that are replaced/fixed by this bucket.
+      label: Bugs For This Story
+      description: Add any bugs that are replaced/fixed by this story.
       placeholder: Create a list of bugs!
-      value: ' - [ ] https://github.com/moontreeapp/raven_front/issues/???'
+      value: ' - [ ] #'
     validations:
       required: false
