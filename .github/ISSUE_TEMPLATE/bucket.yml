@@ -1,15 +1,15 @@
 name: Bucket
-description: Suggest a broad idea for this project
+description: Suggest a new page view for this project!
 labels: ['Bucket']
 body:
   - type: markdown
     attributes:
-      value: Thanks for taking the time to suggest a broad idea!
+      value: Thanks for taking the time to suggest a page view!
   - type: textarea
-    id: broad-idea
+    id: page-view
     attributes:
-      label: Describe The Broad Idea
-      description: A clear and concise description of what you want to happen.
+      label: Describe The New Page
+      description: A clear and concise description of the page you want to see.
       placeholder: Tell us what you want to see!
       value: 'As a... I want... So that...'
     validations:
@@ -19,14 +19,14 @@ body:
     attributes:
       label: Alternatives You've Considered
       description: A clear and concise description of any alternative you've considered.
-      placeholder: Tell us some alternatives!
+      placeholder: Tell us some alternative!
     validations:
       required: false
   - type: textarea
     id: additional-context
     attributes:
       label: Additional Context
-      description: Add any other context about the bucket here.
+      description: Add any other context about the page here.
     validations:
       required: false
   - type: textarea
