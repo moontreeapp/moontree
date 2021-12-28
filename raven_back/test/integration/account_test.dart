@@ -42,7 +42,7 @@ void main() async {
       var utxos = gen.account.collectUTXOs(5000087912000 * 2);
       expect(utxos, []);
     } on InsufficientFunds catch (e) {
-      //print(e);
+      print(e);
     }
   });
 }

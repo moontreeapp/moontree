@@ -77,6 +77,7 @@ Future<String> verifyValidAddress(String address) async {
     // mainnet address such as RVNGuyEE9nBUt6aQbwVAhvEjcw7D3c6p2K
     return address;
     //} else if (unsCondition(address)) {
+    // ignore: todo
     //  /// TODO:
     //  /// unstoppable domain address... use API
     //  /// https://docs.unstoppabledomains.com/send-and-receive-crypto-payments/crypto-payments#api-endpoints

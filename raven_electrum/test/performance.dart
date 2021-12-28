@@ -13,7 +13,7 @@ void main() {
 
       var tracker = AsyncTimeTracker();
       var futures = <Future>[];
-      var results;
+      List? results;
       await tracker.track(() async {
         client.peer.withBatch(() {
           for (var i = 0; i < 25; i++) {
@@ -23,7 +23,7 @@ void main() {
         results = await Future.wait(futures);
       });
       expect(tracker.duration < Duration(seconds: 1), true);
-      expect(results.length, 25);
+      expect(results!.length, 25);
     });
   });
 }

@@ -23,7 +23,7 @@ export 'source.dart';
 export 'map_source.dart';
 export 'hive_source.dart';
 
-const PRIMARY_INDEX = '_primary';
+const constPrimaryIndex = '_primary';
 
 class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
     with IterableMixin<Record> {
@@ -47,7 +47,7 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
 
   /// Return the `primaryIndex` from the set of indices
   IndexUnique<PrimaryKey, Record> get primaryIndex =>
-      indices[PRIMARY_INDEX]! as IndexUnique<PrimaryKey, Record>;
+      indices[constPrimaryIndex]! as IndexUnique<PrimaryKey, Record>;
 
   /// Given a record, return its key as stored in the `primaryIndex`
   String primaryKey(record) => primaryIndex.keyType.getKey(record);
@@ -56,7 +56,7 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
   /// that maps a Record to a Key, so that the Reservoir can construct a
   /// `primaryIndex`.
   Reservoir(PrimaryKey keyType) {
-    indices[PRIMARY_INDEX] = IndexUnique<PrimaryKey, Record>(keyType);
+    indices[constPrimaryIndex] = IndexUnique<PrimaryKey, Record>(keyType);
   }
 
   setSource(Source<Record> source) {
@@ -162,12 +162,16 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
 
   // Add record to all indices, including primary index
   void _addToIndices(Record record) {
-    for (var index in indices.values) index.add(record);
+    for (var index in indices.values) {
+      index.add(record);
+    }
   }
 
   // Remove record from all indices, including primary index
   void _removeFromIndices(Record record) {
-    for (var index in indices.values) index.remove(record);
+    for (var index in indices.values) {
+      index.remove(record);
+    }
   }
 
   // Throw an exception if index with `name` already exists

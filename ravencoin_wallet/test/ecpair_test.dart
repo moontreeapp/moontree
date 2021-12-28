@@ -75,7 +75,8 @@ main() {
       });
       (fixtures['invalid']['fromWIF'] as List).forEach((f) {
         test('throws ' + f['exception'], () {
-          var network = _getNetwork(f);
+          //var network =
+          _getNetwork(f);
           try {
             expect(ECPair.fromWIF(f['WIF'], networks: bitcoinNetworks),
                 isArgumentError);
@@ -88,7 +89,8 @@ main() {
     group('toWIF', () {
       (fixtures['valid'] as List).forEach((f) {
         test('export ${f['WIF']}', () {
-          var network = _getNetwork(f);
+          //var network =
+          _getNetwork(f);
           final keyPair = ECPair.fromWIF(f['WIF'], networks: bitcoinNetworks);
           expect(keyPair.toWIF(), f['WIF']);
         });

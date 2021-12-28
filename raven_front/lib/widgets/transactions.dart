@@ -38,6 +38,7 @@ class _TransactionListState extends State<TransactionList> {
       }
     }));
     listeners.add(rates.batchedChanges.listen((batchedChanges) {
+      // ignore: todo
       // TODO: should probably include any assets that are in the holding of the main account too...
       var changes = batchedChanges.where((change) =>
           change.data.base == securities.RVN &&

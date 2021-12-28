@@ -140,12 +140,15 @@ class TransactionBuilder {
         input.value = witnessValue;
       }
       if (redeemScript != null && witnessScript != null) {
+        // ignore: todo
         // TODO p2wsh
       }
       if (redeemScript != null) {
+        // ignore: todo
         // TODO
       }
       if (witnessScript != null) {
+        // ignore: todo
         // TODO
       }
       if (input.prevOutScript != null && input.prevOutType != null) {

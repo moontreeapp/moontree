@@ -1,4 +1,3 @@
-import 'package:meta/meta.dart';
 import 'package:bip32/src/utils/ecurve.dart' show isPoint;
 
 import '../models/networks.dart';
@@ -21,6 +20,7 @@ class P2PK {
         throw new ArgumentError('Output pubkey is invalid');
     }
     if (data.input != null) {
+      // ignore: todo
       // TODO
     }
   }

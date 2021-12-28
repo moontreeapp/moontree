@@ -8,7 +8,7 @@ import 'package:raven_back/security/cipher_aes.dart';
 import 'package:test/test.dart';
 import 'package:date_format/date_format.dart';
 
-showFormats() {
+void showFormats() {
   print('0' + formatDate(DateTime(1989, 2, 21), [yyyy, '-', mm, '-', dd]));
   print('1' + formatDate(DateTime(1989, 2, 21), [yy, '-', m, '-', dd]));
   print('2' + formatDate(DateTime(1989, 2, 1), [yy, '-', m, '-', d]));

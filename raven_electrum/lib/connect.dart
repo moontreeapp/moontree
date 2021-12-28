@@ -2,6 +2,7 @@ import 'dart:io' as io;
 import 'dart:convert' as convert;
 
 import 'package:stream_channel/stream_channel.dart';
+// ignore: implementation_imports
 import 'package:json_rpc_2/src/utils.dart' as utils;
 
 import 'client/json_newline_transformer.dart';

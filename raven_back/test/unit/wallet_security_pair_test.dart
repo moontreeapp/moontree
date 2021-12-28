@@ -9,11 +9,11 @@ import 'package:raven_back/services/wallet_security_pair.dart';
 import '../fixtures/fixtures.dart' as fixtures;
 
 void main() async {
-  setUp(fixtures.useFixtureSources);
+  setUp(fixtures.useFixtureSources1);
 
   test('WalletSecurityPair is unique in Set', () {
     var s = <WalletSecurityPair>{};
-    var wallet = fixtures.wallets['0']!;
+    var wallet = fixtures.wallets['0']!; // from old map sources...
     var pair = WalletSecurityPair(
         wallet, Security(symbol: 'RVN', securityType: SecurityType.Crypto));
     s.add(pair);

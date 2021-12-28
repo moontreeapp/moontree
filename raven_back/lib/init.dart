@@ -4,7 +4,6 @@ Future initWaiters() async {
   // The following waiters must be inited before HiveInitializer.load()
   // accountWaiter.init();
 
-  balanceWaiter.init();
   leaderWaiter.init();
   singleWaiter.init();
   addressWaiter.init();

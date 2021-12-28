@@ -25,7 +25,6 @@ final AccountWaiter accountWaiter = AccountWaiter();
 final AddressWaiter addressWaiter = AddressWaiter();
 final AddressSubscriptionWaiter addressSubscriptionWaiter =
     AddressSubscriptionWaiter();
-final BalanceWaiter balanceWaiter = BalanceWaiter();
 final BlockWaiter blockWaiter = BlockWaiter();
 final RateWaiter rateWaiter = RateWaiter();
 final RavenClientWaiter ravenClientWaiter = RavenClientWaiter();

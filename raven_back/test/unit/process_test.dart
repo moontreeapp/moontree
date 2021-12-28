@@ -12,7 +12,7 @@ void main() {
     late Account account;
     late LeaderWallet wallet;
     setUp(() async {
-      fixtures.useFixtureSources();
+      fixtures.useFixtureSources1();
 
       // make account
       account = Account(
@@ -20,7 +20,7 @@ void main() {
         name: 'primary',
       );
       accounts.setSource(MapSource({'a0': account}));
-      wallet = fixtures.wallets['0'] as LeaderWallet;
+      wallet = wallets.data.first as LeaderWallet;
 
       // put account in reservoir
       await accounts.save(account);

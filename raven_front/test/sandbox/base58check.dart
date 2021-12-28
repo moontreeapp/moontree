@@ -1,11 +1,11 @@
-import 'dart:typed_data';
+//import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:bs58check/bs58check.dart' as bs58check;
 
 void main() {
   test('testing check ', () {
-    Uint8List decoded =
-        bs58check.decode('5Kd3NBUAdUnhyzenEwVLy9pBKxSwXvE9FMPyR4UKZvpe6E3AgLr');
+    //Uint8List decoded =
+    bs58check.decode('5Kd3NBUAdUnhyzenEwVLy9pBKxSwXvE9FMPyR4UKZvpe6E3AgLr');
     //print(decoded);
     // => [128, 237, 219, 220, 17, 104, 241, 218, 234, 219, 211, 228, 76, 30, 63, 143, 90, 40, 76, 32, 41, 247, 138, 210, 106, 249, 133, 131, 164, 153, 222, 91, 25]
 
