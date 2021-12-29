@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/extensions/list.dart';
+import 'package:raven_front/widgets/connection.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/indicators/indicators.dart';
@@ -99,7 +100,8 @@ class _HomeState extends State<Home> {
       child: AppBar(
         automaticallyImplyLeading: true,
         actions: <Widget>[
-          components.status,
+          //components.status,
+          ConnectionLight(name: 'test'),
           indicators.process,
           indicators.client,
         ],
