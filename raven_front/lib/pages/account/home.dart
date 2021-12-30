@@ -146,17 +146,24 @@ class _HomeState extends State<Home> {
                   offset: Offset(0, 2),
                   blurRadius: 4),
               BoxShadow(
-                  color: const Color(0xF1000000),
+                  color: const Color(0x1F000000),
                   offset: Offset(0, 1),
                   blurRadius: 10),
               BoxShadow(
                   color: const Color(0x24000000),
                   offset: Offset(0, 4),
-                  blurRadius: 5)
+                  blurRadius: 5),
             ])),
         AppBar(
           primary: true,
-          automaticallyImplyLeading: true,
+          //automaticallyImplyLeading: true,
+          leading: ElevatedButton(
+              onPressed: () => Scaffold.of(context).openDrawer(),
+              child: Image(image: AssetImage('assets/logo/moontreeDrawer.png')),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.white),
+                foregroundColor: MaterialStateProperty.all(Colors.white),
+              )),
           centerTitle: false,
           actions: <Widget>[
             components.status,
