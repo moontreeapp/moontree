@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 
 class ConnectionLight extends StatefulWidget {
-  final String name;
-
-  ConnectionLight({Key? key, required this.name}) : super(key: key);
+  ConnectionLight({Key? key}) : super(key: key);
 
   @override
   _ConnectionLightState createState() => _ConnectionLightState();
@@ -68,19 +66,31 @@ class _ConnectionLightState extends State<ConnectionLight>
 
   @override
   void dispose() {
+    super.dispose();
+    for (var listener in listeners) {
+      print('7');
+      listener.cancel();
+      print('8');
+    }
+    // _ConnectionLightState.dispose failed to call super.dispose.
+    print('0');
     // ignore: invalid_use_of_protected_member
     _animationControllerActive?.clearStatusListeners();
+    print('1');
     // ignore: invalid_use_of_protected_member
     _animationControllerUp?.clearStatusListeners();
+    print('2');
     // ignore: invalid_use_of_protected_member
     _animationControllerDown?.clearStatusListeners();
+    print('3');
     _animationControllerActive?.dispose();
+    print('4');
     _animationControllerUp?.dispose();
+    print('5');
     _animationControllerDown?.dispose();
-    for (var listener in listeners) {
-      listener.cancel();
-    }
-    super.dispose();
+    print('6');
+    print('9');
+    print('10');
   }
 
   @override
@@ -135,7 +145,6 @@ class _ConnectionLightState extends State<ConnectionLight>
         //      setState(() => activity = 'down');
         //    },
         //    child: Text('stop')),
-        ////Text('Loading...${widget.name}... $activity'),
         IconButton(
           onPressed: () => showDialog(
               context: context,

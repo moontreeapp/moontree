@@ -77,14 +77,9 @@ class _HomeState extends State<Home> {
     print(MediaQuery.of(context).size);
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child:
-            //SafeArea(
-            //    minimum: EdgeInsets.only(top: 0),
-            //child:
-            Scaffold(
+        child: Scaffold(
           key: _key,
-          //drawerScrimColor: Colors.black,
-          appBar: balanceHeader(),
+          appBar: header(),
           drawer: Container(
               // container size is 304 by default. reguardless of device size
               // I don't think this is a problem we're supposed to solve for.
@@ -131,32 +126,13 @@ class _HomeState extends State<Home> {
     return true;
   }
 
-  PreferredSize balanceHeader() => PreferredSize(
+  PreferredSize header() => PreferredSize(
       preferredSize: Size.fromHeight(56),
       child: SafeArea(
           child: Stack(children: [
-        Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(8.0),
-                    bottomLeft: Radius.circular(8.0)),
-                color: const Color(0xffffffff),
-                boxShadow: [
-              BoxShadow(
-                  color: const Color(0x33000000),
-                  offset: Offset(0, 2),
-                  blurRadius: 4),
-              BoxShadow(
-                  color: const Color(0x1F000000),
-                  offset: Offset(0, 1),
-                  blurRadius: 10),
-              BoxShadow(
-                  color: const Color(0x24000000),
-                  offset: Offset(0, 4),
-                  blurRadius: 5),
-            ])),
+        components.headers.shadows,
         AppBar(
-          primary: true,
+          //primary: true,
           //automaticallyImplyLeading: true,
           leading: ElevatedButton(
               onPressed: () => _key.currentState!.openDrawer(),
@@ -168,9 +144,9 @@ class _HomeState extends State<Home> {
           centerTitle: false,
           actions: <Widget>[
             components.status,
-            ConnectionLight(name: 'test'),
+            ConnectionLight(),
             SizedBox(width: 16),
-            Icon(Icons.qr_code_scanner, size: 24),
+            Icon(Icons.qr_code_scanner_rounded, size: 24),
             SizedBox(width: 16)
           ],
           title: accounts.length > 1
@@ -205,234 +181,155 @@ class _HomeState extends State<Home> {
         )
       ])));
 
-  /// move to assets later
-  PreferredSize balanceHeaderFORASSET() => PreferredSize(
-      preferredSize: Size.fromHeight(256),
-      child: SafeArea(
-          child: Stack(children: [
-        Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(8.0),
-                    bottomLeft: Radius.circular(8.0)),
-                color: const Color(0xffffffff),
-                boxShadow: [
-              BoxShadow(
-                  color: const Color(0x33000000),
-                  offset: Offset(0, 2),
-                  blurRadius: 4),
-              BoxShadow(
-                  color: const Color(0xF1000000),
-                  offset: Offset(0, 1),
-                  blurRadius: 10),
-              BoxShadow(
-                  color: const Color(0x24000000),
-                  offset: Offset(0, 4),
-                  blurRadius: 5)
-            ])),
-        AppBar(
-            primary: true,
-            automaticallyImplyLeading: true,
-            centerTitle: false,
-            actions: <Widget>[
-              components.status,
-              ConnectionLight(name: 'test'),
-              SizedBox(width: 16),
-              Icon(Icons.qr_code_scanner, size: 24),
-              SizedBox(width: 16)
-            ],
-            title: accounts.length > 1
-                ? TextField(
-                    textInputAction: TextInputAction.done,
-                    textAlign: TextAlign.left,
-                    style: Theme.of(context).pageName,
-                    decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none),
-                    controller: changeName,
-                    onTap: () {
-                      changeName.text = 'Wallets / ';
-                      changeName.selection = TextSelection.fromPosition(
-                          TextPosition(offset: changeName.text.length));
-                    },
-                    onSubmitted: (value) async {
-                      if (!await updateAcount(Current.account,
-                          value.replaceFirst('Wallets / ', ''))) {
-                        components.alerts.failure(context,
-                            headline: 'Unable rename account',
-                            msg: 'Account name, "$value" is already taken. '
-                                'Please enter a uinque account name.');
-                      }
-                      setState(() {});
-                    },
-                  )
-                : Text('Wallet', style: Theme.of(context).pageName),
-            flexibleSpace: Container(
-                alignment: Alignment.center,
-                // balance view should listen for valid usd
-                // show spinnter until valid usd rate appears, then rvnUSD
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                          // this kinda thing should be abstracted:
-                          '\n${Current.balanceUSD != null ? '' : ''} ${Current.balanceUSD?.valueUSD ?? Current.balanceRVN.valueRVN}',
-                          style: Theme.of(context).pageValue),
-                    ])))
-      ])));
-
   Drawer accountsView() => Drawer(
         elevation: 0,
         child: Column(
-          //padding: EdgeInsets.zero,
-          //shrinkWrap: true,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             PreferredSize(
               preferredSize: Size.fromHeight(144),
               child: DrawerHeader(
-                decoration: BoxDecoration(color: Colors.white),
-                padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
-                child: accounts.length <= 1
-                    ? // just show moontree logo and name, big in center
-                    Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                            Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  //SizedBox(width: 1),
-                                  Image(
-                                      image: AssetImage(
-                                          'assets/logo/moontree.png'),
-                                      height: 56,
-                                      width: 47.84),
-                                  SizedBox(width: 8),
-                                  Text('Moontree',
-                                      style: Theme.of(context).drawerTitle),
-                                ])
-                          ])
-                    :
-                    // show moontree logo and name smaller at the top,
-                    // account name center big
-                    Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    SizedBox(width: 4),
-                                    Image(
-                                        image: AssetImage(
-                                            'assets/logo/moontree.png'),
-                                        height: 56,
-                                        width: 47.84),
-                                    SizedBox(width: 6),
-                                    Text('Moontree',
-                                        style:
-                                            Theme.of(context).drawerTitleSmall)
-                                  ]),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(Current.account.name,
-                                      style: Theme.of(context).drawerTitle),
-                                  IconButton(
-                                    icon: Icon(Icons.arrow_drop_down_sharp,
-                                        size: 26.0,
-                                        color: Colors.grey.shade200),
-                                    onPressed: () {
-                                      showModalBottomSheet<void>(
-                                        context: context,
-                                        enableDrag: true,
-                                        builder: (BuildContext context) =>
-                                            ListView(
-                                          children: <Widget>[
-                                            ...[
-                                              ...createNewAcount(
-                                                context,
-                                                accountName,
-                                              ),
-                                              Divider(
-                                                height: 20,
-                                                thickness: 2,
-                                                indent: 5,
-                                                endIndent: 5,
-                                              ),
-                                            ],
-                                            for (var account in accounts.data
-                                                .where((account) =>
-                                                    account.net ==
-                                                    settings.primaryIndex
-                                                        .getOne(SettingName
-                                                            .Electrum_Net)!
-                                                        .value)) ...[
-                                              ListTile(
-                                                onTap: () async {
-                                                  await settings
-                                                      .setCurrentAccountId(
-                                                          account.accountId);
-                                                  accountName.text = '';
-                                                  Navigator.popUntil(
-                                                    context,
-                                                    ModalRoute.withName(
-                                                        '/home'),
-                                                  );
-                                                },
-                                                title: Text(
-                                                  //account.accountId +
-                                                  //    ' ' +
-                                                  account.name,
-                                                  style: account.accountId ==
-                                                          currentAccountId
-                                                      ? Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText1
-                                                      : Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText2,
-                                                ),
-                                                leading: components.icons
-                                                    .assetAvatar('RVN'),
-                                              ),
-                                              Divider(
-                                                height: 20,
-                                                thickness: 2,
-                                                indent: 5,
-                                                endIndent: 5,
-                                              ),
-                                            ],
-                                            ...[
-                                              TextButton.icon(
-                                                onPressed: () =>
-                                                    Navigator.pushNamed(context,
-                                                        '/settings/import'),
-                                                icon: components.icons.import,
-                                                label: Text('Import'),
-                                              ),
-                                            ],
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-              ),
+                  decoration: BoxDecoration(color: Colors.white),
+                  padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
+                  child:
+
+                      /// (future enhancement)
+                      //accounts.length <= 1
+                      //? // just show moontree logo and name, big in center
+                      Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              //SizedBox(width: 1),
+                              Image(
+                                  image: AssetImage('assets/logo/moontree.png'),
+                                  height: 56,
+                                  width: 47.84),
+                              SizedBox(width: 8),
+                              Text('Moontree',
+                                  style: Theme.of(context).drawerTitle),
+                            ])
+                      ])
+                  //:
+                  //// show moontree logo and name smaller at the top,
+                  //// account name center big
+                  //Column(
+                  //    mainAxisAlignment: MainAxisAlignment.start,
+                  //    crossAxisAlignment: CrossAxisAlignment.start,
+                  //    children: [
+                  //      Column(
+                  //        crossAxisAlignment: CrossAxisAlignment.start,
+                  //        children: [
+                  //          Row(
+                  //              mainAxisAlignment:
+                  //                  MainAxisAlignment.spaceBetween,
+                  //              children: <Widget>[
+                  //                SizedBox(width: 4),
+                  //                Image(
+                  //                    image: AssetImage(
+                  //                        'assets/logo/moontree.png'),
+                  //                    height: 56,
+                  //                    width: 47.84),
+                  //                SizedBox(width: 6),
+                  //                Text('Moontree',
+                  //                    style:
+                  //                        Theme.of(context).drawerTitleSmall)
+                  //              ]),
+                  //          Row(
+                  //            mainAxisAlignment:
+                  //                MainAxisAlignment.spaceBetween,
+                  //            children: [
+                  //              Text(Current.account.name,
+                  //                  style: Theme.of(context).drawerTitle),
+                  //              IconButton(
+                  //                icon: Icon(Icons.arrow_drop_down_sharp,
+                  //                    size: 26.0,
+                  //                    color: Colors.grey.shade200),
+                  //                onPressed: () {
+                  //                  showModalBottomSheet<void>(
+                  //                    context: context,
+                  //                    enableDrag: true,
+                  //                    builder: (BuildContext context) =>
+                  //                        ListView(
+                  //                      children: <Widget>[
+                  //                        ...[
+                  //                          ...createNewAcount(
+                  //                            context,
+                  //                            accountName,
+                  //                          ),
+                  //                          Divider(
+                  //                            height: 20,
+                  //                            thickness: 2,
+                  //                            indent: 5,
+                  //                            endIndent: 5,
+                  //                          ),
+                  //                        ],
+                  //                        for (var account in accounts.data
+                  //                            .where((account) =>
+                  //                                account.net ==
+                  //                                settings.primaryIndex
+                  //                                    .getOne(SettingName
+                  //                                        .Electrum_Net)!
+                  //                                    .value)) ...[
+                  //                          ListTile(
+                  //                            onTap: () async {
+                  //                              await settings
+                  //                                  .setCurrentAccountId(
+                  //                                      account.accountId);
+                  //                              accountName.text = '';
+                  //                              Navigator.popUntil(
+                  //                                context,
+                  //                                ModalRoute.withName(
+                  //                                    '/home'),
+                  //                              );
+                  //                            },
+                  //                            title: Text(
+                  //                              //account.accountId +
+                  //                              //    ' ' +
+                  //                              account.name,
+                  //                              style: account.accountId ==
+                  //                                      currentAccountId
+                  //                                  ? Theme.of(context)
+                  //                                      .textTheme
+                  //                                      .bodyText1
+                  //                                  : Theme.of(context)
+                  //                                      .textTheme
+                  //                                      .bodyText2,
+                  //                            ),
+                  //                            leading: components.icons
+                  //                                .assetAvatar('RVN'),
+                  //                          ),
+                  //                          Divider(
+                  //                            height: 20,
+                  //                            thickness: 2,
+                  //                            indent: 5,
+                  //                            endIndent: 5,
+                  //                          ),
+                  //                        ],
+                  //                        ...[
+                  //                          TextButton.icon(
+                  //                            onPressed: () =>
+                  //                                Navigator.pushNamed(context,
+                  //                                    '/settings/import'),
+                  //                            icon: components.icons.import,
+                  //                            label: Text('Import'),
+                  //                          ),
+                  //                        ],
+                  //                      ],
+                  //                    ),
+                  //                  );
+                  //                },
+                  //              ),
+                  //            ],
+                  //          ),
+                  //        ],
+                  //      ),
+                  //    ],
+                  //  ),
+                  ),
             ),
             Padding(
               padding: EdgeInsets.only(left: 8),

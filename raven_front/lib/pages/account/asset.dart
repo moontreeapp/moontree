@@ -56,7 +56,11 @@ class _AssetState extends State<Asset> {
     return DefaultTabController(
         length: 2,
         child: Scaffold(
-          appBar: header(),
+          appBar: components.headers.asset(
+              context, data['holding']!.security.symbol,
+              balance: components.text.securityAsReadable(
+                  data['holding']!.value,
+                  symbol: data['holding']!.security.symbol)),
           body: TabBarView(children: <Widget>[
             NotificationListener<UserScrollNotification>(
                 onNotification: visibilityOfSendReceive,
@@ -79,40 +83,41 @@ class _AssetState extends State<Asset> {
         ));
   }
 
-  PreferredSize header() => PreferredSize(
-      preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
-      child: AppBar(
-          elevation: 2,
-          centerTitle: false,
-          leading: components.buttons.back(context),
-          actions: <Widget>[
-            components.status,
-            indicators.process,
-            indicators.client,
-          ],
-          title: Text(data['holding']!.security.symbol),
-          flexibleSpace: Container(
-              alignment: Alignment.center,
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 45.0),
-                    Container(
-                        height: 90,
-                        width: 90,
-                        child: components.icons
-                            .assetAvatar(data['holding']!.security.symbol)),
-                    SizedBox(height: 10.0),
-                    Text(
-                        components.text.securityAsReadable(
-                            data['holding']!.value,
-                            symbol: data['holding']!.security.symbol),
-                        style: Theme.of(context).textTheme.headline3),
-                  ])),
-          bottom: PreferredSize(
-              preferredSize: Size.fromHeight(50.0),
-              child: TabBar(
-                  tabs: [Tab(text: 'Transactions'), Tab(text: 'Metadata')]))));
+  /// old
+  //PreferredSize header() => PreferredSize(
+  //    preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
+  //    child: AppBar(
+  //        elevation: 2,
+  //        centerTitle: false,
+  //        leading: components.buttons.back(context),
+  //        actions: <Widget>[
+  //          components.status,
+  //          indicators.process,
+  //          indicators.client,
+  //        ],
+  //        title: Text(data['holding']!.security.symbol),
+  //        flexibleSpace: Container(
+  //            alignment: Alignment.center,
+  //            child: Column(
+  //                mainAxisAlignment: MainAxisAlignment.center,
+  //                children: [
+  //                  SizedBox(height: 45.0),
+  //                  Container(
+  //                      height: 90,
+  //                      width: 90,
+  //                      child: components.icons
+  //                          .assetAvatar(data['holding']!.security.symbol)),
+  //                  SizedBox(height: 10.0),
+  //                  Text(
+  //                      components.text.securityAsReadable(
+  //                          data['holding']!.value,
+  //                          symbol: data['holding']!.security.symbol),
+  //                      style: Theme.of(context).textTheme.headline3),
+  //                ])),
+  //        bottom: PreferredSize(
+  //            preferredSize: Size.fromHeight(50.0),
+  //            child: TabBar(
+  //                tabs: [Tab(text: 'Transactions'), Tab(text: 'Metadata')]))));
 
   ListView? _metadataView() {
     var securityAsset = security?.asset;

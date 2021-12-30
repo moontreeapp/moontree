@@ -10,7 +10,7 @@ import 'package:raven_front/widgets/circle_gradient.dart';
 class IconComponents {
   IconComponents();
 
-  Icon get back => Icon(Icons.arrow_back, color: Colors.grey[100]);
+  Icon get back => Icon(Icons.chevron_left_rounded, color: Colors.black);
 
   Icon income(BuildContext context) =>
       Icon(Icons.south_west, size: 12.0, color: Theme.of(context).good);

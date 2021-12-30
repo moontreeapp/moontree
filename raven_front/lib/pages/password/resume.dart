@@ -30,7 +30,7 @@ class _ChangeResumeState extends State<ChangeResume> {
   Widget build(BuildContext context) => GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        appBar: components.headers.simple('Password Recovery'),
+        appBar: components.headers.simple(context, 'Password Recovery'),
         body: body(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: submitButton(),
