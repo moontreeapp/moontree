@@ -34,7 +34,7 @@ class CustomTheme with ChangeNotifier {
         backgroundColor: Colors.white,
         //foregroundColor: Colors.white,
         elevation: 0,
-        shadowColor: Colors.black.withOpacity(0.12),
+        //shadowColor: Colors.black.withOpacity(0.12),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(8),

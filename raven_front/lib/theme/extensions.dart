@@ -96,8 +96,43 @@ extension TextStyleExtension on ThemeData {
           fontWeight: FontWeight.normal,
           letterSpacing: 0.18,
           color: Colors.black.withOpacity(0.87));
-  //shadows on app bar: shadow blend mode multiply
-  //#00000024 x0dp y4dp blur5dp
-  //#0000001F  0    1       10
-  //#00000033  0    2       4
+  TextStyle? get drawerTitle => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 24.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeight.normal,
+          letterSpacing: 0.18,
+          color: Colors.black.withOpacity(0.87))
+      : TextStyle(
+          fontSize: 24.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeight.normal,
+          letterSpacing: 0.18,
+          color: Colors.black.withOpacity(0.87));
+  TextStyle? get drawerTitleSmall => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 18.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeight.normal,
+          letterSpacing: 0.15,
+          color: Colors.black.withOpacity(0.87))
+      : TextStyle(
+          fontSize: 18.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeight.normal,
+          letterSpacing: 0.15,
+          color: Colors.black.withOpacity(0.87));
+  TextStyle? get drawerDestination => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.1,
+          color: Colors.black.withOpacity(0.6))
+      : TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.1,
+          color: Colors.black.withOpacity(0.6));
 }

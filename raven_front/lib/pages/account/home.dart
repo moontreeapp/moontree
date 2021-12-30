@@ -79,12 +79,38 @@ class _HomeState extends State<Home> {
                 //    minimum: EdgeInsets.only(top: 0),
                 //child:
                 Scaffold(
+              //drawerScrimColor: Colors.black,
               appBar: balanceHeader(),
-              drawer: accountsView(),
-              body: NotificationListener<UserScrollNotification>(
-                onNotification: visibilityOfSendReceive,
-                child: HoldingList(),
+              drawer: Container(
+                width: 304,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(8.0),
+                        bottomRight: Radius.circular(8.0)),
+                    color: const Color(0xffffffff),
+                    boxShadow: [
+                      BoxShadow(
+                          color: const Color(0x33000000),
+                          //offset: Offset(2, 0),
+                          blurRadius: 4),
+                      BoxShadow(
+                          color: const Color(0xF1000000),
+                          //offset: Offset(1, 0),
+                          blurRadius: 10),
+                      BoxShadow(
+                          color: const Color(0x24000000),
+                          //offset: Offset(4, 0),
+                          blurRadius: 5),
+                    ]),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(8.0),
+                        bottomRight: Radius.circular(8.0)),
+                    child: accountsView()),
               ),
+              body: NotificationListener<UserScrollNotification>(
+                  onNotification: visibilityOfSendReceive,
+                  child: HoldingList()),
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerFloat,
               floatingActionButton: isFabVisible ? sendReceiveButtons() : null,
@@ -118,26 +144,10 @@ class _HomeState extends State<Home> {
                   color: const Color(0x33000000),
                   offset: Offset(0, 2),
                   blurRadius: 4),
-            ])),
-        Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(8.0),
-                    bottomLeft: Radius.circular(8.0)),
-                color: const Color(0xffffffff),
-                boxShadow: [
               BoxShadow(
                   color: const Color(0xF1000000),
                   offset: Offset(0, 1),
-                  blurRadius: 10)
-            ])),
-        Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(8.0),
-                    bottomLeft: Radius.circular(8.0)),
-                color: const Color(0xffffffff),
-                boxShadow: [
+                  blurRadius: 10),
               BoxShadow(
                   color: const Color(0x24000000),
                   offset: Offset(0, 4),
@@ -202,26 +212,10 @@ class _HomeState extends State<Home> {
                   color: const Color(0x33000000),
                   offset: Offset(0, 2),
                   blurRadius: 4),
-            ])),
-        Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(8.0),
-                    bottomLeft: Radius.circular(8.0)),
-                color: const Color(0xffffffff),
-                boxShadow: [
               BoxShadow(
                   color: const Color(0xF1000000),
                   offset: Offset(0, 1),
-                  blurRadius: 10)
-            ])),
-        Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(8.0),
-                    bottomLeft: Radius.circular(8.0)),
-                color: const Color(0xffffffff),
-                boxShadow: [
+                  blurRadius: 10),
               BoxShadow(
                   color: const Color(0x24000000),
                   offset: Offset(0, 4),
@@ -282,149 +276,276 @@ class _HomeState extends State<Home> {
       ])));
 
   Drawer accountsView() => Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          shrinkWrap: true,
+        elevation: 0,
+        child: Column(
+          //padding: EdgeInsets.zero,
+          //shrinkWrap: true,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             DrawerHeader(
-                decoration:
-                    BoxDecoration(color: Theme.of(context).primaryColor),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(Current.account.name,
-                              style: Theme.of(context).textTheme.headline5),
-                          IconButton(
-                            icon: Icon(Icons.arrow_drop_down_sharp,
-                                size: 26.0, color: Colors.grey.shade200),
-                            onPressed: () {
-                              showModalBottomSheet<void>(
-                                  context: context,
-                                  enableDrag: true,
-                                  builder: (BuildContext context) =>
-                                      ListView(children: <Widget>[
-                                        ...[
-                                          ...createNewAcount(
-                                            context,
-                                            accountName,
-                                          ),
-                                          Divider(
+              decoration: BoxDecoration(color: Colors.white),
+              child: accounts.length <= 1
+                  ? // just show moontree logo and name, big in center
+                  Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                SizedBox(width: 4),
+                                Image(
+                                    image:
+                                        AssetImage('assets/logo/moontree.png'),
+                                    height: 56,
+                                    width: 47.84),
+                                SizedBox(width: 6),
+                                Text('Moontree',
+                                    style: Theme.of(context).drawerTitle),
+                              ])
+                        ])
+                  :
+                  // show moontree logo and name smaller at the top,
+                  // account name center big
+                  Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  SizedBox(width: 4),
+                                  Image(
+                                      image: AssetImage(
+                                          'assets/logo/moontree.png'),
+                                      height: 56,
+                                      width: 47.84),
+                                  SizedBox(width: 6),
+                                  Text('Moontree',
+                                      style: Theme.of(context).drawerTitleSmall)
+                                ]),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(Current.account.name,
+                                    style: Theme.of(context).drawerTitle),
+                                IconButton(
+                                  icon: Icon(Icons.arrow_drop_down_sharp,
+                                      size: 26.0, color: Colors.grey.shade200),
+                                  onPressed: () {
+                                    showModalBottomSheet<void>(
+                                      context: context,
+                                      enableDrag: true,
+                                      builder: (BuildContext context) =>
+                                          ListView(
+                                        children: <Widget>[
+                                          ...[
+                                            ...createNewAcount(
+                                              context,
+                                              accountName,
+                                            ),
+                                            Divider(
                                               height: 20,
                                               thickness: 2,
                                               indent: 5,
-                                              endIndent: 5)
-                                        ],
-                                        for (var account in accounts.data.where(
-                                            (account) =>
-                                                account.net ==
-                                                settings.primaryIndex
-                                                    .getOne(SettingName
-                                                        .Electrum_Net)!
-                                                    .value)) ...[
-                                          ListTile(
+                                              endIndent: 5,
+                                            ),
+                                          ],
+                                          for (var account in accounts.data
+                                              .where((account) =>
+                                                  account.net ==
+                                                  settings.primaryIndex
+                                                      .getOne(SettingName
+                                                          .Electrum_Net)!
+                                                      .value)) ...[
+                                            ListTile(
                                               onTap: () async {
                                                 await settings
                                                     .setCurrentAccountId(
                                                         account.accountId);
                                                 accountName.text = '';
                                                 Navigator.popUntil(
-                                                    context,
-                                                    ModalRoute.withName(
-                                                        '/home'));
+                                                  context,
+                                                  ModalRoute.withName('/home'),
+                                                );
                                               },
                                               title: Text(
-                                                  //account.accountId +
-                                                  //    ' ' +
-                                                  account.name,
-                                                  style: account.accountId ==
-                                                          currentAccountId
-                                                      ? Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText1
-                                                      : Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText2),
+                                                //account.accountId +
+                                                //    ' ' +
+                                                account.name,
+                                                style: account.accountId ==
+                                                        currentAccountId
+                                                    ? Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText1
+                                                    : Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText2,
+                                              ),
                                               leading: components.icons
-                                                  .assetAvatar('RVN')),
-                                          Divider(
+                                                  .assetAvatar('RVN'),
+                                            ),
+                                            Divider(
                                               height: 20,
                                               thickness: 2,
                                               indent: 5,
-                                              endIndent: 5)
-                                        ],
-                                        ...[
-                                          TextButton.icon(
+                                              endIndent: 5,
+                                            ),
+                                          ],
+                                          ...[
+                                            TextButton.icon(
                                               onPressed: () =>
                                                   Navigator.pushNamed(context,
                                                       '/settings/import'),
                                               icon: components.icons.import,
-                                              label: Text('Import')),
+                                              label: Text('Import'),
+                                            ),
+                                          ],
                                         ],
-                                      ])
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextButton.icon(
+                    onPressed: () =>
+                        Navigator.pushNamed(context, '/settings/import'),
+                    icon: Icon(Icons.account_balance_wallet,
+                        color: Color(0xFF666666)), // plus?
+                    label: Row(children: [
+                      SizedBox(width: 20),
+                      Text('Import/Export',
+                          style: Theme.of(context).drawerDestination)
+                    ]),
+                  ),
+                  TextButton.icon(
+                      onPressed: () =>
+                          Navigator.pushNamed(context, '/settings/preferences'),
+                      icon: Icon(Icons.settings, color: Color(0xFF666666)),
+                      label: Row(children: [
+                        SizedBox(width: 20),
+                        Text('Settings',
+                            style: Theme.of(context).drawerDestination)
+                      ])),
+                  TextButton.icon(
+                      onPressed: () =>
+                          Navigator.pushNamed(context, '/settings/preferences'),
+                      icon: Icon(Icons.feedback, color: Color(0xFF666666)),
+                      label: Row(children: [
+                        SizedBox(width: 20),
+                        Text('Feedback',
+                            style: Theme.of(context).drawerDestination)
+                      ])),
+                  TextButton.icon(
+                      onPressed: () =>
+                          Navigator.pushNamed(context, '/settings/preferences'),
+                      icon: Icon(Icons.help, color: Color(0xFF666666)),
+                      label: Row(children: [
+                        SizedBox(width: 20),
+                        Text('Support',
+                            style: Theme.of(context).drawerDestination)
+                      ])),
+                  TextButton.icon(
+                      onPressed: () =>
+                          Navigator.pushNamed(context, '/settings/about'),
+                      icon: Icon(Icons.info_outline_rounded,
+                          color: Color(0xFF666666)),
+                      label: Row(children: [
+                        SizedBox(width: 20),
+                        Text('About',
+                            style: Theme.of(context).drawerDestination)
+                      ])),
 
-                                  //{
-                                  //  return Container(
-                                  //    height: 200,
-                                  //    color: Colors.amber,
-                                  //    child: Center(
-                                  //      child: Column(
-                                  //        mainAxisAlignment: MainAxisAlignment.center,
-                                  //        mainAxisSize: MainAxisSize.min,
-                                  //        children: <Widget>[
-                                  //          const Text('Modal BottomSheet'),
-                                  //          ElevatedButton(
-                                  //            child: const Text('Close BottomSheet'),
-                                  //            onPressed: () => Navigator.pop(context),
-                                  //          )
-                                  //        ],
-                                  //      ),
-                                  //    ),
-                                  //  );
-                                  //},
-                                  );
-                            },
-                          ),
-                        ]),
-                    //Row(
-                    //  mainAxisAlignment: MainAxisAlignment.center,
-                    //  children: [
-                    //    Text(Current.account.name,
-                    //        style: Theme.of(context).textTheme.headline2),
-                    //  ],
-                    //),
-                  ],
-                )),
-            SettingsSection(
-              titlePadding: EdgeInsets.only(left: 10, top: 10),
-              title: 'Settings',
-              tiles: [
-                SettingsTile(
-                    title: 'Preferences', // name, show conf screen, etc.
-                    titleTextStyle: Theme.of(context).textTheme.bodyText2,
-                    leading: Icon(Icons.settings),
-                    onPressed: (BuildContext context) =>
-                        Navigator.pushNamed(context, '/settings/preferences')),
-                SettingsTile(
-                    title: 'Import',
-                    titleTextStyle: Theme.of(context).textTheme.bodyText2,
-                    leading: components.icons.import,
-                    onPressed: (BuildContext context) =>
-                        Navigator.pushNamed(context, '/settings/import')),
-                SettingsTile(
-                    title: 'Export',
-                    subtitle: '(Backup)',
-                    titleTextStyle: Theme.of(context).textTheme.bodyText2,
-                    leading: components.icons.export,
-                    onPressed: (BuildContext context) => Navigator.pushNamed(
-                        context, '/settings/export',
-                        arguments: {'accountId': 'current'})),
-                /*
+                  ////SettingsTile(
+                  ////    title: 'Import/Export',
+                  ////    titleTextStyle: Theme.of(context).drawerDestination,
+                  ////    leading: Icon(Icons.account_balance_wallet,
+                  ////        color: Color(0xFF666666)), // plus?
+                  ////    onPressed: (BuildContext context) =>
+                  ////        Navigator.pushNamed(context, '/settings/import')),
+                  ////SettingsTile(
+                  ////    title: 'Settings',
+                  ////    titleTextStyle: Theme.of(context).drawerDestination,
+                  ////    leading: Icon(Icons.settings, color: Color(0xFF666666)),
+                  ////    onPressed: (BuildContext context) =>
+                  ////        Navigator.pushNamed(context, '/settings/preferences')),
+                  ////SettingsTile(
+                  ////    title: 'Feedback',
+                  ////    titleTextStyle: Theme.of(context).drawerDestination,
+                  ////    leading: Icon(Icons.feedback, color: Color(0xFF666666)),
+                  ////    onPressed: (BuildContext context) =>
+                  ////        Navigator.pushNamed(context, '/settings/preferences')),
+                  ////SettingsTile(
+                  ////    title: 'Support',
+                  ////    titleTextStyle: Theme.of(context).drawerDestination,
+                  ////    leading: Icon(Icons.help, color: Color(0xFF666666)),
+                  ////    onPressed: (BuildContext context) =>
+                  ////        Navigator.pushNamed(context, '/settings/preferences')),
+                  ////SettingsTile(
+                  ////    title: 'About',
+                  ////    titleTextStyle: Theme.of(context).drawerDestination,
+                  ////    leading: Icon(Icons.info_outline_rounded,
+                  ////        color: Color(0xFF666666)),
+                  ////    onPressed: (BuildContext context) =>
+                  ////        Navigator.pushNamed(context, '/settings/about')),
+
+                  ////// These belong in Settings
+                  //accounts.length > 1 ?
+                  //SettingsTile(
+                  //    title: 'Accounts',
+                  //    subtitle: '(Detail)',
+                  //    titleTextStyle: Theme.of(context).drawerDestination,
+                  //    leading: Icon(Icons.lightbulb),
+                  //    onPressed: (BuildContext context) =>
+                  //        Navigator.pushNamed(context, '/settings/technical'))
+                  //: Text('');
+                  //
+                  //SettingsTile(
+                  //    title: 'Preferences',
+                  //    titleTextStyle: Theme.of(context).drawerDestination,
+                  //    leading: Icon(Icons.settings),
+                  //    onPressed: (BuildContext context) =>
+                  //        Navigator.pushNamed(context, '/settings/preferences')),
+                  //SettingsTile(
+                  //    title: 'Password',
+                  //    titleTextStyle: Theme.of(context).drawerDestination,
+                  //    leading: Icon(Icons.password),
+                  //    onPressed: (BuildContext context) =>
+                  //        Navigator.pushNamed(context, '/password/change')),
+                  //SettingsTile(
+                  //    title: 'Network',
+                  //    titleTextStyle: Theme.of(context).drawerDestination,
+                  //    leading: Icon(Icons.network_check),
+                  //    onPressed: (BuildContext context) =>
+                  //        Navigator.pushNamed(context, '/settings/network')),
+
+                  //SettingsTile(
+                  //    title: 'Export',
+                  //    subtitle: '(Backup)',
+                  //    titleTextStyle: Theme.of(context).drawerDestination,
+                  //    leading: components.icons.export,
+                  //    onPressed: (BuildContext context) => Navigator.pushNamed(
+                  //        context, '/settings/export',
+                  //        arguments: {'accountId': 'current'})),
+                  /*
             SettingsTile(
                 title: 'Sign Message',
-                titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                titleTextStyle: Theme.of(context).drawerDestination,
                 enabled: false,
                 leading: Icon(Icons.fact_check_sharp),
                 onPressed: (BuildContext context) {
@@ -434,67 +555,43 @@ class _HomeState extends State<Home> {
                   //);
                 }),
             */
-                SettingsTile(
-                    title: 'Accounts',
-                    subtitle: '(Detail)',
-                    titleTextStyle: Theme.of(context).textTheme.bodyText2,
-                    leading: Icon(Icons.lightbulb),
-                    onPressed: (BuildContext context) =>
-                        Navigator.pushNamed(context, '/settings/technical')),
-                /* Coming soon!
+
+                  /* Coming soon!
             SettingsTile(
                 title: 'P2P Exchange',
-                titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                titleTextStyle: Theme.of(context).drawerDestination,
                 enabled: false,
                 leading: Icon(Icons.swap_horiz),
                 onPressed: (BuildContext context) {})
             */
 
-                SettingsTile(
-                    title: 'Password',
-                    titleTextStyle: Theme.of(context).textTheme.bodyText2,
-                    leading: Icon(Icons.password),
-                    onPressed: (BuildContext context) =>
-                        Navigator.pushNamed(context, '/password/change')),
-                SettingsTile(
-                    title: 'Network',
-                    titleTextStyle: Theme.of(context).textTheme.bodyText2,
-                    leading: Icon(Icons.network_check),
-                    onPressed: (BuildContext context) =>
-                        Navigator.pushNamed(context, '/settings/network')),
-                /*
+                  /*
               SettingsTile(
                   title: 'Currency',
-                  titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                  titleTextStyle: Theme.of(context).drawerDestination,
                   leading: Icon(Icons.money),
                   onPressed: (BuildContext context) =>
                       Navigator.pushNamed(context, '/settings/currency')),
               SettingsTile(
                   title: 'Language',
-                  titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                  titleTextStyle: Theme.of(context).drawerDestination,
                   subtitle: 'English',
                   leading: Icon(Icons.language),
                   onPressed: (BuildContext context) =>
                       Navigator.pushNamed(context, '/settings/language')),
               */
-                SettingsTile(
-                    title: 'About',
-                    titleTextStyle: Theme.of(context).textTheme.bodyText2,
-                    leading: Icon(Icons.info_outline_rounded),
-                    onPressed: (BuildContext context) =>
-                        Navigator.pushNamed(context, '/settings/about')),
+
 /*                      
-*/
                 SettingsTile(
                     title: 'Clear Database',
-                    titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                    titleTextStyle: Theme.of(context).drawerDestination,
                     leading: Icon(Icons.info_outline_rounded),
                     onPressed: (BuildContext context) {
                       ravenDatabase.deleteDatabase();
                     }),
                 SettingsTile(
                     title: 'show data',
-                    titleTextStyle: Theme.of(context).textTheme.bodyText2,
+                    titleTextStyle: Theme.of(context).drawerDestination,
                     leading: Icon(Icons.info_outline_rounded),
                     onPressed: (BuildContext context) async {
                       print(balances.bySecurity.getAll(Security(
@@ -560,14 +657,16 @@ class _HomeState extends State<Home> {
                       //print(Current.account.vouts.first
                       //    .securityValue(security: securities.RVN));
                     }),
-                //SettingsTile.switchTile(
-                //  title: 'Use fingerprint',
-                //  titleTextStyle: Theme.of(context).textTheme.bodyText2,
-                //  leading: Icon(Icons.fingerprint),
-                //  switchValue: true,
-                //  onToggle: (bool value) {},
-                //),
-              ],
+*/
+                  //SettingsTile.switchTile(
+                  //  title: 'Use fingerprint',
+                  //  titleTextStyle: Theme.of(context).drawerDestination,
+                  //  leading: Icon(Icons.fingerprint),
+                  //  switchValue: true,
+                  //  onToggle: (bool value) {},
+                  //),
+                ],
+              ),
             ),
           ],
         ),
