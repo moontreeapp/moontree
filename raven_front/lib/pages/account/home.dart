@@ -83,25 +83,25 @@ class _HomeState extends State<Home> {
               //drawerScrimColor: Colors.black,
               appBar: balanceHeader(),
               drawer: Container(
-                width: 304,
+                width: 338, //304,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
                         topRight: Radius.circular(8.0),
                         bottomRight: Radius.circular(8.0)),
                     color: const Color(0xffffffff),
                     boxShadow: [
-                      BoxShadow(
-                          color: const Color(0x33000000),
-                          //offset: Offset(2, 0),
-                          blurRadius: 4),
+                      //BoxShadow(
+                      //    color: const Color(0x33000000),
+                      //    //offset: Offset(2, 0),
+                      //    blurRadius: 4),
                       BoxShadow(
                           color: const Color(0xF1000000),
                           //offset: Offset(1, 0),
-                          blurRadius: 10),
-                      BoxShadow(
-                          color: const Color(0x24000000),
-                          //offset: Offset(4, 0),
-                          blurRadius: 5),
+                          blurRadius: 20),
+                      //BoxShadow(
+                      //    color: const Color(0x24000000),
+                      //    //offset: Offset(4, 0),
+                      //    blurRadius: 5),
                     ]),
                 child: ClipRRect(
                     borderRadius: BorderRadius.only(
