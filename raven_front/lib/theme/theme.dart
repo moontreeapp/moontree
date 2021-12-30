@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'color_gen.dart';
 
@@ -26,13 +27,56 @@ class CustomTheme with ChangeNotifier {
   static ThemeData get lightTheme {
     return ThemeData(
       brightness: Brightness.light,
-      //primaryColor: Colors.blue.shade900,
       primarySwatch: generateMaterialColor(Palette.ravenBlue),
+      fontFamily: 'Nunito',
+      appBarTheme: AppBarTheme(
+        //color: Color,
+        backgroundColor: Colors.white,
+        //foregroundColor: Colors.white,
+        elevation: 0,
+        shadowColor: Colors.black.withOpacity(0.12),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(8),
+          bottomRight: Radius.circular(8),
+          //topLeft: Radius.circular(0),
+          //topRight: Radius.circular(10),
+        )),
+        iconTheme: IconThemeData.fallback(),
+        //actionsIconTheme: IconThemeData,
+        //centerTitle: bool,
+        //titleSpacing: double,
+        //toolbarHeight: double,
+        //toolbarTextStyle: TextStyle,
+        //titleTextStyle: TextStyle,
+        //systemOverlayStyle: SystemUiOverlayStyle(
+        //  statusBarIconBrightness: Brightness.dark,
+        //  statusBarBrightness: Brightness.light,
+        //  statusBarColor:
+        //      Colors.white.withOpacity(.1), //Colors.transparent //Colors.white,
+        //  //systemNavigationBarDividerColor: Colors.black.withOpacity(0.12)
+        //),
+      ),
+      textTheme: TextTheme(
+        headline5: TextStyle(
+            fontSize: 24.0, letterSpacing: 2.0, color: Colors.grey.shade200),
+        headline2: TextStyle(
+            fontSize: 18.0, letterSpacing: 2.0, color: Colors.grey.shade200),
+        headline3: TextStyle(color: Colors.grey.shade200),
+        headline4: TextStyle(fontSize: 20, color: Colors.grey.shade900),
+        headline6: TextStyle(
+            fontSize: 18.0, letterSpacing: 1.5, color: Colors.grey.shade400),
+        bodyText1: TextStyle(fontSize: 20.0),
+        bodyText2: TextStyle(fontSize: 16.0),
+      ),
+      //primaryColor: Colors.blue.shade900,
       indicatorColor: Color(0xFFb6f122),
-      //backgroundColor: Colors.blue[50],
-      //scaffoldBackgroundColor: Colors.blue[50],
-      //bottomAppBarColor: Colors.grey[300],
-      //dividerColor: Colors.grey[200],
+      backgroundColor: Colors.white,
+      scaffoldBackgroundColor: Colors.white,
+      bottomAppBarColor: Colors.white,
+      //dividerColor: Colors.black.withOpacity(0.12),
+      dividerTheme: DividerThemeData(
+          color: Colors.black.withOpacity(0.12), thickness: 1, indent: 70),
       //disabledColor: Colors.grey,
       //hintColor: Colors.grey[600],
       //textTheme: Typography.blackCupertino,
@@ -49,6 +93,15 @@ class CustomTheme with ChangeNotifier {
     return ThemeData(
       brightness: Brightness.dark,
       primarySwatch: generateMaterialColor(Palette.ravenOrange),
+      textTheme: TextTheme(
+        headline1: TextStyle(fontSize: 24.0, letterSpacing: 2.0),
+        headline2: TextStyle(
+            fontSize: 18.0, letterSpacing: 2.0, color: Colors.grey.shade200),
+        headline3: TextStyle(color: Colors.grey.shade200),
+        headline4: TextStyle(color: Colors.grey.shade200),
+        bodyText1: TextStyle(fontSize: 20.0),
+        bodyText2: TextStyle(fontSize: 16.0),
+      ),
       indicatorColor: Color(0xFFB6F122),
       //primaryColor: Colors.black,
       //primarySwatch: Colors.red,

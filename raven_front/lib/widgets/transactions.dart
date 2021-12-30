@@ -52,8 +52,6 @@ class _TransactionListState extends State<TransactionList> {
 
   @override
   void dispose() {
-    //This method must not be called after dispose has been called. ??
-    //currentTheme.removeListener(() {});
     for (var listener in listeners) {
       listener.cancel();
     }
@@ -115,8 +113,8 @@ class _TransactionListState extends State<TransactionList> {
                 arguments: {'transactionRecord': transactionRecord}),
             onLongPress: _toggleUSD,
             leading: Container(
-                height: 50,
-                width: 50,
+                height: 40,
+                width: 40,
                 child: components.icons
                     .assetAvatar(transactionRecord.security.symbol)),
             title: Row(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/extensions/list.dart';
+import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/widgets/connection.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_front/components/components.dart';
@@ -31,10 +32,10 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     // gets cleaned up?
-    currentTheme.addListener(() {
-      // if user changes OS dark/light mode setting, refresh
-      setState(() {});
-    });
+    //currentTheme.addListener(() { // happens anyway.
+    //  // if user changes OS dark/light mode setting, refresh
+    //  setState(() {});
+    //});
     listeners.add(balances.batchedChanges.listen((batchedChanges) {
       if (batchedChanges.isNotEmpty) setState(() {});
     }));
@@ -68,22 +69,29 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    changeName.text =
-        accounts.data.length > 1 ? Current.account.name : 'Wallet';
+    changeName.text = accounts.data.length > 1
+        ? 'Wallets / ' + Current.account.name
+        : 'Wallet';
     return GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Scaffold(
-          appBar: balanceHeader(),
-          drawer: accountsView(),
-          body: NotificationListener<UserScrollNotification>(
-            onNotification: visibilityOfSendReceive,
-            child: HoldingList(),
-          ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: isFabVisible ? sendReceiveButtons() : null,
-          //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
-        ));
+            onTap: () => FocusScope.of(context).unfocus(),
+            child:
+                //SafeArea(
+                //    minimum: EdgeInsets.only(top: 0),
+                //child:
+                Scaffold(
+              appBar: balanceHeader(),
+              drawer: accountsView(),
+              body: NotificationListener<UserScrollNotification>(
+                onNotification: visibilityOfSendReceive,
+                child: HoldingList(),
+              ),
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerFloat,
+              floatingActionButton: isFabVisible ? sendReceiveButtons() : null,
+              //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
+            ))
+        //)
+        ;
   }
 
   bool visibilityOfSendReceive(notification) {
@@ -96,32 +104,61 @@ class _HomeState extends State<Home> {
   }
 
   PreferredSize balanceHeader() => PreferredSize(
-      preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
-      child: AppBar(
-        automaticallyImplyLeading: true,
-        actions: <Widget>[
-          //components.status,
-          ConnectionLight(name: 'test'),
-          indicators.process,
-          indicators.client,
-        ],
-        elevation: 2,
-        centerTitle: false,
-        title: SizedBox(
-          height: 32,
-          child: Image.asset('assets/rvn256.png'),
-        ),
-        flexibleSpace: Container(
-            alignment: Alignment.center,
-            // balance view should listen for valid usd
-            // show spinnter until valid usd rate appears, then rvnUSD
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextField(
+      preferredSize: Size.fromHeight(56),
+      child: SafeArea(
+          child: Stack(children: [
+        Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(8.0),
+                    bottomLeft: Radius.circular(8.0)),
+                color: const Color(0xffffffff),
+                boxShadow: [
+              BoxShadow(
+                  color: const Color(0x33000000),
+                  offset: Offset(0, 2),
+                  blurRadius: 4),
+            ])),
+        Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(8.0),
+                    bottomLeft: Radius.circular(8.0)),
+                color: const Color(0xffffffff),
+                boxShadow: [
+              BoxShadow(
+                  color: const Color(0xF1000000),
+                  offset: Offset(0, 1),
+                  blurRadius: 10)
+            ])),
+        Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(8.0),
+                    bottomLeft: Radius.circular(8.0)),
+                color: const Color(0xffffffff),
+                boxShadow: [
+              BoxShadow(
+                  color: const Color(0x24000000),
+                  offset: Offset(0, 4),
+                  blurRadius: 5)
+            ])),
+        AppBar(
+          primary: true,
+          automaticallyImplyLeading: true,
+          centerTitle: false,
+          actions: <Widget>[
+            components.status,
+            ConnectionLight(name: 'test'),
+            SizedBox(width: 16),
+            Icon(Icons.qr_code_scanner, size: 24),
+            SizedBox(width: 16)
+          ],
+          title: accounts.length > 1
+              ? TextField(
                   textInputAction: TextInputAction.done,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headline3,
+                  textAlign: TextAlign.left,
+                  style: Theme.of(context).pageName,
                   decoration: const InputDecoration(
                       border: InputBorder.none,
                       focusedBorder: InputBorder.none,
@@ -129,9 +166,14 @@ class _HomeState extends State<Home> {
                       errorBorder: InputBorder.none,
                       disabledBorder: InputBorder.none),
                   controller: changeName,
-                  onTap: () => changeName.text = '',
+                  onTap: () {
+                    changeName.text = 'Wallets / ';
+                    changeName.selection = TextSelection.fromPosition(
+                        TextPosition(offset: changeName.text.length));
+                  },
                   onSubmitted: (value) async {
-                    if (!await updateAcount(Current.account, value)) {
+                    if (!await updateAcount(Current.account,
+                        value.replaceFirst('Wallets / ', ''))) {
                       components.alerts.failure(context,
                           headline: 'Unable rename account',
                           msg: 'Account name, "$value" is already taken. '
@@ -139,14 +181,105 @@ class _HomeState extends State<Home> {
                     }
                     setState(() {});
                   },
-                ),
-                Text(
-                    // this kinda thing should be abstracted:
-                    '\n${Current.balanceUSD != null ? '' : ''} ${Current.balanceUSD?.valueUSD ?? Current.balanceRVN.valueRVN}',
-                    style: Theme.of(context).textTheme.headline2),
-              ],
-            )),
-      ));
+                )
+              : Text('Wallet', style: Theme.of(context).pageName),
+        )
+      ])));
+
+  /// move to assets later
+  PreferredSize balanceHeaderFORASSET() => PreferredSize(
+      preferredSize: Size.fromHeight(256),
+      child: SafeArea(
+          child: Stack(children: [
+        Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(8.0),
+                    bottomLeft: Radius.circular(8.0)),
+                color: const Color(0xffffffff),
+                boxShadow: [
+              BoxShadow(
+                  color: const Color(0x33000000),
+                  offset: Offset(0, 2),
+                  blurRadius: 4),
+            ])),
+        Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(8.0),
+                    bottomLeft: Radius.circular(8.0)),
+                color: const Color(0xffffffff),
+                boxShadow: [
+              BoxShadow(
+                  color: const Color(0xF1000000),
+                  offset: Offset(0, 1),
+                  blurRadius: 10)
+            ])),
+        Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(8.0),
+                    bottomLeft: Radius.circular(8.0)),
+                color: const Color(0xffffffff),
+                boxShadow: [
+              BoxShadow(
+                  color: const Color(0x24000000),
+                  offset: Offset(0, 4),
+                  blurRadius: 5)
+            ])),
+        AppBar(
+            primary: true,
+            automaticallyImplyLeading: true,
+            centerTitle: false,
+            actions: <Widget>[
+              components.status,
+              ConnectionLight(name: 'test'),
+              SizedBox(width: 16),
+              Icon(Icons.qr_code_scanner, size: 24),
+              SizedBox(width: 16)
+            ],
+            title: accounts.length > 1
+                ? TextField(
+                    textInputAction: TextInputAction.done,
+                    textAlign: TextAlign.left,
+                    style: Theme.of(context).pageName,
+                    decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none),
+                    controller: changeName,
+                    onTap: () {
+                      changeName.text = 'Wallets / ';
+                      changeName.selection = TextSelection.fromPosition(
+                          TextPosition(offset: changeName.text.length));
+                    },
+                    onSubmitted: (value) async {
+                      if (!await updateAcount(Current.account,
+                          value.replaceFirst('Wallets / ', ''))) {
+                        components.alerts.failure(context,
+                            headline: 'Unable rename account',
+                            msg: 'Account name, "$value" is already taken. '
+                                'Please enter a uinque account name.');
+                      }
+                      setState(() {});
+                    },
+                  )
+                : Text('Wallet', style: Theme.of(context).pageName),
+            flexibleSpace: Container(
+                alignment: Alignment.center,
+                // balance view should listen for valid usd
+                // show spinnter until valid usd rate appears, then rvnUSD
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                          // this kinda thing should be abstracted:
+                          '\n${Current.balanceUSD != null ? '' : ''} ${Current.balanceUSD?.valueUSD ?? Current.balanceRVN.valueRVN}',
+                          style: Theme.of(context).pageValue),
+                    ])))
+      ])));
 
   Drawer accountsView() => Drawer(
         child: ListView(
