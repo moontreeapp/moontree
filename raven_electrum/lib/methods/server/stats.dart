@@ -26,21 +26,6 @@ class ServerStats {
       this.receiveCount);
 
   @override
-  List<Object> get props => [
-        ourCost,
-        hardLimit,
-        softLimit,
-        costDecayPerSec,
-        bandwithCostPerByte,
-        sleep,
-        concurrentRequests,
-        sendSize,
-        sendCount,
-        receiveSize,
-        receiveCount
-      ];
-
-  @override
   String toString() {
     return '''ServerStats( 
     ourCost: $ourCost, 

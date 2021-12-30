@@ -38,6 +38,7 @@ class _TransactionListState extends State<TransactionList> {
       }
     }));
     listeners.add(rates.batchedChanges.listen((batchedChanges) {
+      // ignore: todo
       // TODO: should probably include any assets that are in the holding of the main account too...
       var changes = batchedChanges.where((change) =>
           change.data.base == securities.RVN &&
@@ -51,8 +52,6 @@ class _TransactionListState extends State<TransactionList> {
 
   @override
   void dispose() {
-    //This method must not be called after dispose has been called. ??
-    //currentTheme.removeListener(() {});
     for (var listener in listeners) {
       listener.cancel();
     }
@@ -114,8 +113,8 @@ class _TransactionListState extends State<TransactionList> {
                 arguments: {'transactionRecord': transactionRecord}),
             onLongPress: _toggleUSD,
             leading: Container(
-                height: 50,
-                width: 50,
+                height: 40,
+                width: 40,
                 child: components.icons
                     .assetAvatar(transactionRecord.security.symbol)),
             title: Row(

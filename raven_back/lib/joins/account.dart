@@ -32,8 +32,8 @@ extension AccountHasManyVins on Account {
 
 extension AccountHasManyTransactions on Account {
   Set<Transaction> get transactions =>
-      (this.vouts.map((vout) => vout.transaction!).toList() +
-              this.vins.map((vin) => vin.transaction!).toList())
+      (vouts.map((vout) => vout.transaction!).toList() +
+              vins.map((vin) => vin.transaction!).toList())
           .toSet()
         ..remove(null);
 }

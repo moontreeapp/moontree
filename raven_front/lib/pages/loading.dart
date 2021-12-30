@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/extensions/list.dart';
 import 'package:raven_back/services/wallet/constants.dart';
 import 'package:raven_front/listeners/listeners.dart';
-import 'package:raven_front/services/password_mock.dart';
 import 'package:raven_front/services/storage.dart';
 
 class Loading extends StatefulWidget {
@@ -16,10 +13,10 @@ class Loading extends StatefulWidget {
   _LoadingState createState() => _LoadingState();
 }
 
-class _LoadingState extends State<Loading> {
+class _LoadingState extends State<Loading> with TickerProviderStateMixin {
   Future setupAccounts() async {
-    await services.account.createSave('Account 1', net: Net.Test);
-    await services.account.createSave('Account 2', net: Net.Main);
+    await services.account.createSave('Primary', net: Net.Test);
+    //await services.account.createSave('Hodl', net: Net.Main);
   }
 
   Future setupRealWallet() async {
@@ -103,6 +100,7 @@ class _LoadingState extends State<Loading> {
             Navigator.pushReplacementNamed(context, '/login', arguments: {}));
       }
     } else {
+      //Future.delayed(Duration(seconds: 60));
       Future.microtask(() =>
           Navigator.pushReplacementNamed(context, '/home', arguments: {}));
     }
@@ -115,6 +113,11 @@ class _LoadingState extends State<Loading> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // todo: make a gif converting the old logo to the
     return Scaffold(
@@ -122,12 +125,11 @@ class _LoadingState extends State<Loading> {
             //child: Image(image: AssetImage("assets/splash/liquid.gif"))));
             child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         //Image(image: AssetImage("assets/rvn.png")),
         Image(image: AssetImage("assets/splash/fast.gif")),
-        Center(
-          child: Text('Loading...'),
-        )
+        Text('Loading...'),
       ],
     )));
   }

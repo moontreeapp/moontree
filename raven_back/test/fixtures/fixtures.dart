@@ -61,4 +61,6 @@ void useFixtureSources(int? version) {
   globals.wallets.setSource(MapSource(set.wallets));
 }
 
+void useFixtureSources1() => useFixtureSources(1);
+
 void deleteDatabase() => raven_database.deleteDatabase();

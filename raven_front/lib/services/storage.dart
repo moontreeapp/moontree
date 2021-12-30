@@ -38,6 +38,7 @@ class Backup extends Storage {
   }) async {
     rawExport = rawExport ?? jsonEncode(export);
     if (!await Permission.storage.request().isGranted) {
+      // ignore: null_argument_to_non_null_type
       return Future.value(null);
     }
     return (await _verifyLocalFile(await _localFile(filename)))
@@ -101,8 +102,8 @@ class AssetLogos extends Storage {
           {String extension = 'png', String? path}) async =>
       File('${path ?? await localPath}/images/$filename');
 
-  File _localFileNow(String filename, String path) =>
-      File('$path/images/$filename');
+  //File _localFileNow(String filename, String path) =>
+  //    File('$path/images/$filename');
 
   /// writes the logo by its ipfs hash as filename
   Future<File> writeLogo({
@@ -110,6 +111,7 @@ class AssetLogos extends Storage {
     required Uint8List bytes,
   }) async {
     if (!await Permission.storage.request().isGranted) {
+      // ignore: null_argument_to_non_null_type
       return Future.value(null);
     }
 

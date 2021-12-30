@@ -2,7 +2,6 @@
 import 'package:raven_back/raven_back.dart';
 import 'package:test/test.dart';
 
-import 'package:raven_back/services/client.dart';
 import 'package:raven_back/services/transaction_maker.dart';
 import 'package:raven_back/globals.dart';
 import '../fixtures/fixtures_live.dart' as fixtures;
@@ -22,8 +21,7 @@ void main() async {
       print('rates: ${rates.data}');
       print('settings: ${settings.data}');
       /* errors */
-      var tuple = services.transact.buildTransaction(
-        accounts.primaryIndex.getByKeyStr('Primary').first,
+      var tuple = services.transaction.make.transaction(
         addresses.byWallet
             .getAll(wallets.byAccount
                 .getOne(accounts.primaryIndex
@@ -32,8 +30,9 @@ void main() async {
                 .walletId)[0]
             .address,
         SendEstimate(1),
+        account: accounts.primaryIndex.getByKeyStr('Primary').first,
       );
-      var txb = tuple.item1;
+      //var txb = tuple.item1;
       var estimate = tuple.item2;
       print(estimate);
       //var txid = services.client.sendTransaction(txb.tx!.toHex());

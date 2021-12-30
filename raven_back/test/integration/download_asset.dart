@@ -1,14 +1,8 @@
 // dart test test/integration/download_asset.dart
 
-import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/records/security.dart';
-import 'package:raven_back/utils/parse.dart';
-import 'package:raven_back/services/services.dart';
 import 'package:test/test.dart';
 
 import 'package:raven_electrum/raven_electrum.dart';
-import 'package:raven_back/services/transaction_maker.dart' as tx;
-import 'package:tuple/tuple.dart';
 
 const connectionTimeout = Duration(seconds: 5);
 const aliveTimerDuration = Duration(seconds: 2);
@@ -20,14 +14,16 @@ void main() {
     await client.serverVersion(protocolVersion: '1.9');
     var scripthash =
         'f1f2e3ec85e3d56d4273e3f114cc7c53e24fdd3b93d966c8b29f4247dc542c0c';
-    var history = await client.getHistory(scripthash);
+    //var history =
+    await client.getHistory(scripthash);
     /*
     print(history);
     [
       ScripthashHistory(txHash: 9bc5463610b074a5aa4ea6045c983fbdd787548edccae732e000524b96833713, height: 967002, memo: null), 
       ScripthashHistory(txHash: 4e769a6d770b4e441ade1d5600926ad14f58fdb6ae4128ed03c811241ec72240, height: 969691, memo: null)]
     */
-    var tx = await client.getTransaction(
+    //var tx =
+    await client.getTransaction(
         '4e769a6d770b4e441ade1d5600926ad14f58fdb6ae4128ed03c811241ec72240');
     /*
     print(tx);

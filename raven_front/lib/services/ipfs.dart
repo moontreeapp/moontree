@@ -96,7 +96,8 @@ class LogoGetter extends IpfsCall {
   Future<bool> _interpretAsImage(Uint8List bytes,
       {String? givenIpfsHash}) async {
     AssetLogos storage = AssetLogos();
-    var path = (await storage.writeLogo(
+    //var path =
+    (await storage.writeLogo(
       filename: givenIpfsHash ?? logo ?? ipfsHash!,
       bytes: bytes,
     ))

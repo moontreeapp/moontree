@@ -35,6 +35,7 @@ class _HoldingList extends State<HoldingList> {
       }
     }));
     listeners.add(rates.batchedChanges.listen((batchedChanges) {
+      // ignore: todo
       // TODO: should probably include any assets that are in the holding of the main account too...
       var changes = batchedChanges.where((change) =>
           change.data.base == securities.RVN &&
@@ -48,14 +49,13 @@ class _HoldingList extends State<HoldingList> {
 
   @override
   void dispose() {
-    //This method must not be called after dispose has been called. ??
-    //currentTheme.removeListener(() {});
     for (var listener in listeners) {
       listener.cancel();
     }
     super.dispose();
   }
 
+  // ignore: unused_element
   void _toggleUSD() {
     setState(() {
       if (rates.primaryIndex.getOne(securities.RVN, securities.USD) == null) {
@@ -109,17 +109,15 @@ class _HoldingList extends State<HoldingList> {
                     'walletId': wallet?.walletId ?? null
                   }), // wallet transactions are on wallet screen, so remove wallet id here.
           leading: Container(
-              height: 50,
-              width: 50,
+              height: 40,
+              width: 40,
               child: components.icons.assetAvatar(holding.security.symbol)),
           title: Text(holding.security.symbol,
-              style: holding.security.symbol == 'RVN'
-                  ? Theme.of(context).textTheme.bodyText1
-                  : Theme.of(context).textTheme.bodyText2),
+              style: Theme.of(context).holdingName),
           trailing: Text(
               components.text.securityAsReadable(holding.value,
                   security: holding.security, asUSD: showUSD),
-              style: TextStyle(color: Theme.of(context).good)));
+              style: Theme.of(context).holdingValue));
       if (holding.security.symbol == 'RVN') {
         rvnHolding.add(thisHolding);
 
@@ -146,9 +144,9 @@ class _HoldingList extends State<HoldingList> {
     if (rvnHolding.isEmpty) {
       rvnHolding.add(ListTile(
           onTap: () {},
-          title: Text('RVN', style: Theme.of(context).textTheme.bodyText1),
+          title: Text('RVN', style: Theme.of(context).holdingName),
           trailing: Text(showUSD ? '\$ 0' : '0',
-              style: TextStyle(color: Theme.of(context).fine)),
+              style: Theme.of(context).holdingValue),
           leading: Container(
               height: 50,
               width: 50,

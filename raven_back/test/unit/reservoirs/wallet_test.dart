@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:test/test.dart';
 import 'package:reservoir/reservoir.dart';
 import 'package:bip39/bip39.dart' as bip39;

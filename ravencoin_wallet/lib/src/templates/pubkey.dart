@@ -7,6 +7,7 @@ bool inputCheck(List<dynamic> chunks) {
 }
 
 bool outputCheck(Uint8List script) {
+  // ignore: todo
   // TODO
   return false;
 }

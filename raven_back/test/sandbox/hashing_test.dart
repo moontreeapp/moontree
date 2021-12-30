@@ -11,6 +11,7 @@ void main() {
     var digest = sha1.convert(bytes);
     //print('Digest as bytes: ${digest.bytes}');
     //print('Digest as hex string: $digest');
+    expect(digest, bytes);
   });
   test('how to seed to string', () {
     var phrase =
@@ -24,5 +25,6 @@ void main() {
     digest = sha256.convert(bytes);
     //print('Digest as bytes: ${digest.bytes}');
     //print('Digest as hex string: $digest');
+    expect(digest, bytes);
   });
 }

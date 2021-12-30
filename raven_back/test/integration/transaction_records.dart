@@ -6,7 +6,7 @@ import 'package:raven_back/globals.dart';
 import '../fixtures/fixtures.dart' as fixtures;
 
 void main() async {
-  setUp(fixtures.useFixtureSources);
+  setUp(fixtures.useFixtureSources1);
   tearDown(fixtures.deleteDatabase);
 
   group('create TransactionRecords list', () {

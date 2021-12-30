@@ -73,6 +73,7 @@ void main() {
       expect(getAddress(child1b, bitcoinMainnet),
           '12Tyvr1U8A3ped6zwMEU5M8cx3G38sP5Au');
     });
+    // ignore: todo
     /* TODO Support BIP49
     test('can create a BIP49, bitcoin testnet, account 0, external address', () {
     }); */

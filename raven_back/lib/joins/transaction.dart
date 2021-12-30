@@ -3,26 +3,24 @@ part of 'joins.dart';
 // Joins on Transaction
 
 extension TransactionBelongsToAddress on Transaction {
-  Set<Address?>? get addresses =>
-      (this.vouts.map((vout) => vout.address).toList() +
-              this.vins.map((vin) => vin.address).toList())
-          .toSet()
-        ..remove(null);
+  Set<Address?>? get addresses => (vouts.map((vout) => vout.address).toList() +
+          vins.map((vin) => vin.address).toList())
+      .toSet()
+    ..remove(null);
 }
 
 extension TransactionBelongsToWallet on Transaction {
-  Set<Wallet?>? get wallets => (this.vouts.map((vout) => vout.wallet).toList() +
-          this.vins.map((vin) => vin.wallet).toList())
+  Set<Wallet?>? get wallets => (vouts.map((vout) => vout.wallet).toList() +
+          vins.map((vin) => vin.wallet).toList())
       .toSet()
     ..remove(null);
 }
 
 extension TransactionBelongsToAccount on Transaction {
-  Set<Account?>? get accounts =>
-      (this.vouts.map((vout) => vout.account).toList() +
-              this.vins.map((vin) => vin.account).toList())
-          .toSet()
-        ..remove(null);
+  Set<Account?>? get accounts => (vouts.map((vout) => vout.account).toList() +
+          vins.map((vin) => vin.account).toList())
+      .toSet()
+    ..remove(null);
 }
 
 extension TransactionHasManyVins on Transaction {

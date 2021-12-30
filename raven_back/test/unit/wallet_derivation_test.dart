@@ -2,8 +2,6 @@
 import 'dart:typed_data';
 
 //import 'package:raven_back/records/wallets/leader.dart';
-import 'package:pointycastle/api.dart';
-import 'package:raven_back/records/node_exposure.dart';
 import 'package:raven_back/records/records.dart';
 import 'package:raven_back/records/wallets/single.dart';
 import 'package:raven_back/security/cipher_none.dart';
@@ -12,11 +10,10 @@ import 'package:raven_back/utils/random.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart';
 import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
-import 'dart:convert';
 
 import 'package:convert/convert.dart';
 
-import 'package:raven_back/records/net.dart' as ravenNet;
+import 'package:raven_back/records/net.dart' as raven_net;
 
 final mnemonic =
     'smile build brain topple moon scrap area aim budget enjoy polar erosion';
@@ -24,6 +21,7 @@ final mnemonic =
 final seed = bip39.mnemonicToSeed(mnemonic);
 final entropy = bip39.mnemonicToEntropy(mnemonic);
 
+// ignore: todo
 // TODO: when we switch from CipherNone to CipherAES, we need to encrypt/decrypt
 final encryptedSeed = seed;
 
@@ -34,12 +32,13 @@ KPWallet newKPWallet({
   return KPWallet(
       ECPair.fromPrivateKey(
         privateKey,
-        network: ravenNet.networks[ravenNet.Net.Test]!,
+        network: raven_net.networks[raven_net.Net.Test]!,
         compressed: compressed,
       ),
       P2PKH(
-          data: PaymentData(), network: ravenNet.networks[ravenNet.Net.Test]!),
-      ravenNet.networks[ravenNet.Net.Test]!);
+          data: PaymentData(),
+          network: raven_net.networks[raven_net.Net.Test]!),
+      raven_net.networks[raven_net.Net.Test]!);
 }
 
 void main() {
@@ -81,17 +80,17 @@ void main() {
   });
 
   test('hdwallet public key', () {
-    var testnet =
-        HDWallet.fromSeed(seed, network: ravenNet.networks[ravenNet.Net.Test]!);
-    var mainnet =
-        HDWallet.fromSeed(seed, network: ravenNet.networks[ravenNet.Net.Main]!);
+    var testnet = HDWallet.fromSeed(seed,
+        network: raven_net.networks[raven_net.Net.Test]!);
+    var mainnet = HDWallet.fromSeed(seed,
+        network: raven_net.networks[raven_net.Net.Main]!);
     expect(testnet.pubKey, mainnet.pubKey);
     expect(testnet.address == mainnet.address, false);
   });
 
   test('SingleWallet Key', () {
-    var privateKey =
-        '3095cb26affefcaaa835ff968d60437c7c764da40cdd1a1b497406c7902a8ac9';
+    //var privateKey =
+    '3095cb26affefcaaa835ff968d60437c7c764da40cdd1a1b497406c7902a8ac9';
     var wif = 'Kxr9tQED9H44gCmp6HAdmemAzU3n84H3dGkuWTKvE23JgHMW8gct';
     //var wallet = SingleWallet(
     //    accountId: 'a1',

@@ -35,7 +35,7 @@ class ImportWalletService {
     }
 
     /// these are placeholders, they must be checked
-    var isSeed = text.length == 128;
+    //var isSeed = text.length == 128;
   }
 
   WalletType typeForImport(String walletType) =>
