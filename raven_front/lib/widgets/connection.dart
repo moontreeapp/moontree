@@ -149,7 +149,7 @@ class _ConnectionLightState extends State<ConnectionLight>
                   visible: activity == 'idle',
                   child: ColorFiltered(
                       colorFilter: ColorFilter.mode(
-                          connected ? Colors.green : Colors.red,
+                          connected ? Color(0xFF4CAF50) : Color(0xFFF44336),
                           BlendMode.srcATop),
                       child: Image(
                           image: AssetImage("assets/status/center.png")))),
@@ -158,7 +158,7 @@ class _ConnectionLightState extends State<ConnectionLight>
                   child: RotationTransition(
                       child: ColorFiltered(
                           colorFilter: ColorFilter.mode(
-                              connected ? Colors.green : Colors.red,
+                              connected ? Color(0xFF4CAF50) : Color(0xFFF44336),
                               BlendMode.srcATop),
                           child: Image(
                               image: AssetImage("assets/status/left.png"))),
@@ -170,7 +170,9 @@ class _ConnectionLightState extends State<ConnectionLight>
                       child: RotationTransition(
                           child: ColorFiltered(
                               colorFilter: ColorFilter.mode(
-                                  connected ? Colors.green : Colors.red,
+                                  connected
+                                      ? Color(0xFF4CAF50)
+                                      : Color(0xFFF44336),
                                   BlendMode.srcATop),
                               child: Image(
                                   image:
@@ -187,7 +189,9 @@ class _ConnectionLightState extends State<ConnectionLight>
                       child: RotationTransition(
                           child: ColorFiltered(
                               colorFilter: ColorFilter.mode(
-                                  connected ? Colors.green : Colors.red,
+                                  connected
+                                      ? Color(0xFF4CAF50)
+                                      : Color(0xFFF44336),
                                   BlendMode.srcATop),
                               child: Image(
                                   image:
