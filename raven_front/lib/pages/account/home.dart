@@ -576,8 +576,12 @@ class _HomeState extends State<Home> {
   Row sendReceiveButtons() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         components.buttons.receive(context),
-        Current.holdings.length > 0
-            ? components.buttons.send(context, symbol: 'RVN')
-            : components.buttons.send(context, symbol: 'RVN', disabled: true),
+
+        /// while testnet is down comment this out.
+        //Current.holdings.length > 0
+        //    ? components.buttons.send(context, symbol: 'RVN')
+        //    : components.buttons.send(context, symbol: 'RVN', disabled: true),
+
+        components.buttons.send(context, symbol: 'RVN'),
       ]);
 }
