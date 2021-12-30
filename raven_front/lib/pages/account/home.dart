@@ -21,6 +21,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final GlobalKey<ScaffoldState> _key = GlobalKey();
   List<StreamSubscription> listeners =
       []; // most of these can move to header and body elements
   late String currentAccountId = '0'; // should be moved to body?
@@ -73,52 +74,52 @@ class _HomeState extends State<Home> {
         ? 'Wallets / ' + Current.account.name
         : 'Wallet';
     print(MediaQuery.of(context).devicePixelRatio);
+    print(MediaQuery.of(context).size);
     return GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child:
-                //SafeArea(
-                //    minimum: EdgeInsets.only(top: 0),
-                //child:
-                Scaffold(
-              //drawerScrimColor: Colors.black,
-              appBar: balanceHeader(),
-              drawer: Container(
-                width: 338, //304,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(8.0),
-                        bottomRight: Radius.circular(8.0)),
-                    color: const Color(0xffffffff),
-                    boxShadow: [
-                      //BoxShadow(
-                      //    color: const Color(0x33000000),
-                      //    //offset: Offset(2, 0),
-                      //    blurRadius: 4),
-                      BoxShadow(
-                          color: const Color(0xF1000000),
-                          //offset: Offset(1, 0),
-                          blurRadius: 20),
-                      //BoxShadow(
-                      //    color: const Color(0x24000000),
-                      //    //offset: Offset(4, 0),
-                      //    blurRadius: 5),
-                    ]),
-                child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(8.0),
-                        bottomRight: Radius.circular(8.0)),
-                    child: accountsView()),
-              ),
-              body: NotificationListener<UserScrollNotification>(
-                  onNotification: visibilityOfSendReceive,
-                  child: HoldingList()),
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerFloat,
-              floatingActionButton: isFabVisible ? sendReceiveButtons() : null,
-              //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
-            ))
-        //)
-        ;
+        onTap: () => FocusScope.of(context).unfocus(),
+        child:
+            //SafeArea(
+            //    minimum: EdgeInsets.only(top: 0),
+            //child:
+            Scaffold(
+          key: _key,
+          //drawerScrimColor: Colors.black,
+          appBar: balanceHeader(),
+          drawer: Container(
+              // container size is 304 by default. reguardless of device size
+              // I don't think this is a problem we're supposed to solve for.
+              //width: MediaQuery.of(context).size.width - 56, //336.7,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(8.0),
+                      bottomRight: Radius.circular(8.0)),
+                  color: const Color(0xffffffff),
+                  boxShadow: [
+                    BoxShadow(
+                        color: const Color(0x33000000),
+                        offset: Offset(2, 0),
+                        blurRadius: 4),
+                    BoxShadow(
+                        color: const Color(0x1F000000),
+                        offset: Offset(1, 0),
+                        blurRadius: 20),
+                    BoxShadow(
+                        color: const Color(0x24000000),
+                        offset: Offset(4, 0),
+                        blurRadius: 5),
+                  ]),
+              child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(8.0),
+                      bottomRight: Radius.circular(8.0)),
+                  child: accountsView())),
+          body: NotificationListener<UserScrollNotification>(
+              onNotification: visibilityOfSendReceive, child: HoldingList()),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: isFabVisible ? sendReceiveButtons() : null,
+          //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
+        ));
   }
 
   bool visibilityOfSendReceive(notification) {
@@ -158,7 +159,7 @@ class _HomeState extends State<Home> {
           primary: true,
           //automaticallyImplyLeading: true,
           leading: ElevatedButton(
-              onPressed: () => Scaffold.of(context).openDrawer(),
+              onPressed: () => _key.currentState!.openDrawer(),
               child: Image(image: AssetImage('assets/logo/moontreeDrawer.png')),
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.white),
