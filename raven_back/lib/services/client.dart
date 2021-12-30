@@ -168,6 +168,6 @@ class ApiService {
 
   Future<Iterable<dynamic>> getAssetNames(String prefix) async =>
       prefix.isNotEmpty
-          ? await streams.client.client.value!.getAssetsByPrefix(prefix)
+          ? await streams.client.client.value?.getAssetsByPrefix(prefix) ?? []
           : [];
 }

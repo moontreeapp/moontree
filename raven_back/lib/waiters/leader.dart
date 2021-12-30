@@ -6,8 +6,6 @@ import 'package:raven_back/raven_back.dart';
 import 'waiter.dart';
 
 class LeaderWaiter extends Waiter {
-  Set<Change<Wallet>> backlog = {};
-
   void init() {
     listen(
       'ciphers.changes',
@@ -27,33 +25,10 @@ class LeaderWaiter extends Waiter {
       autoDeinit: true,
     );
 
-    /// these two listeners follow the 'backlog' pattern in the event that we're
-    /// ready to derive addresses on a newly created wallet, but we have no
-    /// electrum client connection available. we might be able to use a "combine
-    /// latest" plus full replay subjects to achieve the same thing directly in
-    /// streams themselves. account.dart waiter may be a good example of that.
-    /// Yet, a proliferation of streams comes with some small overhead and the
-    /// backlog pattern is simple, even though split accross multiple listeners:
-
-    listen('streams.client.connected', streams.client.connected,
-        (bool connected) {
-      if (connected) {
-        backlog.forEach((Change<Wallet> change) => produceLeader(change));
-        backlog.clear();
-      }
-    });
-
     listen(
       'streams.wallet.leaderChanges',
       streams.wallet.leaderChanges,
-      (Change<Wallet> change) {
-        if (streams.client.client.value == null ||
-            !streams.client.connected.value) {
-          backlog.add(change);
-        } else {
-          produceLeader(change);
-        }
-      },
+      (Change<Wallet> change) => produceLeader(change),
       autoDeinit: true,
     );
   }
@@ -65,7 +40,6 @@ class LeaderWaiter extends Waiter {
           var leader = added.data;
           if (ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
             services.wallet.leader.deriveMoreAddresses(leader as LeaderWallet);
-            services.client.subscribe.toExistingAddresses();
           } else {
             services.wallet.leader.backlog.add(leader as LeaderWallet);
           }
@@ -89,7 +63,6 @@ class LeaderWaiter extends Waiter {
           // recreate the addresses of that wallet
           if (ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
             services.wallet.leader.deriveMoreAddresses(leader as LeaderWallet);
-            services.client.subscribe.toExistingAddresses();
           } else {
             services.wallet.leader.backlog.add(leader as LeaderWallet);
           }
