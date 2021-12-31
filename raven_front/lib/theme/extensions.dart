@@ -70,7 +70,7 @@ extension TextStyleExtension on ThemeData {
           fontWeight: FontWeight.bold,
           letterSpacing: 0.25,
           color: Colors.black.withOpacity(0.6));
-  TextStyle? get pageName => this.brightness == Brightness.light
+  TextStyle? get pageTitle => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 20.0,
           fontFamily: 'Nunito',

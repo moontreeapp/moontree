@@ -9,7 +9,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:raven_front/pages.dart';
 import 'package:raven_front/pages/password/change.dart';
 import 'package:raven_front/theme/color_gen.dart';
+import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
+import 'package:raven_front/widgets/widgets.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -49,10 +51,15 @@ Future<void> main() async {
 }
 
 class RavenMobileApp extends StatelessWidget {
+  //static final GlobalKey<NavigatorState> navigatorKey = new GlobalKey();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       initialRoute: '/',
+      themeMode: ThemeMode.system,
+      theme: CustomTheme.lightTheme,
+      darkTheme: CustomTheme.darkTheme,
+      navigatorObservers: [components.navigator],
       routes: {
         '/': (context) => Loading(),
         '/password/change': (context) => ChangePassword(),
@@ -66,6 +73,7 @@ class RavenMobileApp extends StatelessWidget {
         '/send': (context) => Send(),
         //'/create': (context) => CreateAsset(),
         '/settings/about': (context) => About(),
+        '/settings/settings': (context) => Settings(),
         '/settings/preferences': (context) => Preferences(),
         '/settings/network': (context) => ElectrumNetwork(),
         '/settings/import': (context) => Import(),
@@ -75,9 +83,29 @@ class RavenMobileApp extends StatelessWidget {
         '/settings/technical': (context) => TechnicalView(),
         '/settings/wallet': (context) => WalletView(),
       },
-      themeMode: ThemeMode.system,
-      theme: CustomTheme.lightTheme,
-      darkTheme: CustomTheme.darkTheme,
+      builder: (context, child) {
+        return Scaffold(
+            appBar: PreferredSize(
+                preferredSize: Size.fromHeight(56),
+                child: SafeArea(
+                    child: Stack(children: [
+                  components.headers.shadows,
+                  AppBar(
+                      centerTitle: false,
+                      title: PageTitle(),
+                      actions: <Widget>[
+                        components.status,
+                        ConnectionLight(),
+                        SizedBox(width: 16),
+                        Image(image: AssetImage('assets/icons/scan_24px.png')),
+                        SizedBox(width: 16)
+                      ])
+                ]))),
+
+            //components.headers.simple(
+            //    context, ModalRoute.of(context)?.settings.name ?? 'unknown'),
+            body: child!);
+      },
     );
   }
 }

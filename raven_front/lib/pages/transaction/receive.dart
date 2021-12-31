@@ -16,7 +16,7 @@ class Receive extends StatefulWidget {
   _ReceiveState createState() => _ReceiveState();
 }
 
-class _ReceiveState extends State<Receive> {
+class _ReceiveState extends State<Receive> /*with RouteAware*/ {
   Map<String, dynamic> data = {};
   late String address;
   final requestAmount = TextEditingController();
@@ -29,6 +29,18 @@ class _ReceiveState extends State<Receive> {
   String uri = '';
   String username = '';
   List<Security> fetchedNames = <Security>[];
+
+  //@override
+  //void didPush() {
+  //  // Route was pushed onto navigator and is now topmost route.
+  //  streams.app.page.add('receive');
+  //}
+//
+  //@override
+  //void didPopNext() {
+  //  // Covering route was popped off the navigator.
+  //  streams.app.page.add('receive');
+  //}
 
   void _toggleRaw(_) {
     setState(() {
@@ -82,6 +94,7 @@ class _ReceiveState extends State<Receive> {
   @override
   Widget build(BuildContext context) {
     username = settings.primaryIndex.getOne(SettingName.User_Name)?.value ?? '';
+    print(data);
     data = populateData(context, data);
     requestMessage.text = requestMessage.text == ''
         ? data['symbol'] == ''

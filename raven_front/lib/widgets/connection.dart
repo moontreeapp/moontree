@@ -160,6 +160,7 @@ class _ConnectionLightState extends State<ConnectionLight>
                       colorFilter: ColorFilter.mode(
                           connected ? Color(0xFF4CAF50) : Color(0xFFF44336),
                           BlendMode.srcATop),
+                      //child: Image(image: AssetImage('assets/icons/status/status_green_24px.png')))),
                       child: Image(
                           image: AssetImage("assets/status/center.png")))),
               Visibility(

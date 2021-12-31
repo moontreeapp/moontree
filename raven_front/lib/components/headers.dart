@@ -12,7 +12,7 @@ class HeaderComponents {
         shadows,
         AppBar(
             centerTitle: false,
-            title: Text(title, style: Theme.of(context).pageName),
+            title: Text(title, style: Theme.of(context).pageTitle),
             actions: <Widget>[components.status])
       ])));
 
@@ -29,7 +29,7 @@ class HeaderComponents {
             AppBar(
               leading: components.buttons.back(context),
               centerTitle: false,
-              title: Text(title, style: Theme.of(context).pageName),
+              title: Text(title, style: Theme.of(context).pageTitle),
               actions: <Widget>[
                 ...[for (var action in extraActions ?? []) action],
                 components.status,
@@ -59,7 +59,7 @@ class HeaderComponents {
                   Icon(Icons.qr_code_scanner_rounded, size: 24),
                   SizedBox(width: 16)
                 ],
-                title: Text(title, style: Theme.of(context).pageName),
+                title: Text(title, style: Theme.of(context).pageTitle),
                 flexibleSpace: Container(
                     alignment: Alignment.center,
                     // balance view should listen for valid usd

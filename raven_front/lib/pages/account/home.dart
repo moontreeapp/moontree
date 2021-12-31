@@ -20,7 +20,7 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with RouteAware {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   List<StreamSubscription> listeners =
       []; // most of these can move to header and body elements
@@ -30,8 +30,21 @@ class _HomeState extends State<Home> {
   final changeName = TextEditingController();
 
   @override
+  void didPush() {
+    // Route was pushed onto navigator and is now topmost route.
+    streams.app.page.add('home');
+  }
+
+  @override
+  void didPopNext() {
+    // Covering route was popped off the navigator.
+    streams.app.page.add('home');
+  }
+
+  @override
   void initState() {
     super.initState();
+
     // gets cleaned up?
     //currentTheme.addListener(() { // happens anyway.
     //  // if user changes OS dark/light mode setting, refresh
@@ -75,6 +88,7 @@ class _HomeState extends State<Home> {
         : 'Wallet';
     print(MediaQuery.of(context).devicePixelRatio);
     print(MediaQuery.of(context).size);
+    print(Navigator.of(context).toString());
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
@@ -134,26 +148,42 @@ class _HomeState extends State<Home> {
         AppBar(
           //primary: true,
           //automaticallyImplyLeading: true,
-          leading: ElevatedButton(
-              onPressed: () => _key.currentState!.openDrawer(),
-              child: Image(image: AssetImage('assets/logo/moontreeDrawer.png')),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.white),
-                foregroundColor: MaterialStateProperty.all(Colors.white),
-              )),
+          //leading: ElevatedButton(
+          //    onPressed: () => _key.currentState!.openDrawer(),
+          //    child: SvgPicture.asset(
+          //        'assets/icons/menu_24px.svg'), //Image(image: AssetImage('assets/icons/menu_24px.svg')),
+          //    style: ButtonStyle(
+          //      backgroundColor: MaterialStateProperty.all(Colors.white),
+          //      foregroundColor: MaterialStateProperty.all(Colors.white),
+          //      elevation: MaterialStateProperty.all(1),
+          //      padding: MaterialStateProperty.all(EdgeInsets.zero),
+          //      fixedSize: MaterialStateProperty.all(Size(36, 24)),
+          //    )),
+          leading: IconButton(
+            onPressed: () => _key.currentState!.openDrawer(),
+            padding: EdgeInsets.only(left: 16),
+            icon: Image(image: AssetImage('assets/icons/menu_24px.png')),
+            //icon: SvgPicture.asset(
+            //  'assets/icons/menu_24px.svg',
+            //  width: 36,
+            //  height: 24,
+            //  fit: BoxFit.fitWidth,
+            //  allowDrawingOutsideViewBox: true,
+            //), //Image(image: AssetImage('assets/icons/menu_24px.svg')),
+          ),
           centerTitle: false,
           actions: <Widget>[
             components.status,
             ConnectionLight(),
             SizedBox(width: 16),
-            Icon(Icons.qr_code_scanner_rounded, size: 24),
+            Image(image: AssetImage('assets/icons/scan_24px.png')),
             SizedBox(width: 16)
           ],
           title: accounts.length > 1
               ? TextField(
                   textInputAction: TextInputAction.done,
                   textAlign: TextAlign.left,
-                  style: Theme.of(context).pageName,
+                  style: Theme.of(context).pageTitle,
                   decoration: const InputDecoration(
                       border: InputBorder.none,
                       focusedBorder: InputBorder.none,
@@ -177,7 +207,7 @@ class _HomeState extends State<Home> {
                     setState(() {});
                   },
                 )
-              : Text('Wallet', style: Theme.of(context).pageName),
+              : Text('Wallet', style: Theme.of(context).pageTitle),
         )
       ])));
 
@@ -495,82 +525,82 @@ class _HomeState extends State<Home> {
                       Navigator.pushNamed(context, '/settings/language')),
               */
 
+                  SettingsTile(
+                      title: 'Clear Database',
+                      titleTextStyle: Theme.of(context).drawerDestination,
+                      leading: Icon(Icons.info_outline_rounded),
+                      onPressed: (BuildContext context) {
+                        ravenDatabase.deleteDatabase();
+                      }),
+                  SettingsTile(
+                      title: 'show data',
+                      titleTextStyle: Theme.of(context).drawerDestination,
+                      leading: Icon(Icons.info_outline_rounded),
+                      onPressed: (BuildContext context) async {
+                        print(balances.bySecurity.getAll(Security(
+                            symbol: 'RVN', securityType: SecurityType.Crypto)));
+                        //print(transactions.mempool);
+                        //print(transactions.mempool.first.vouts);
+                        //print(transactions.mempool.first.vins);
+                        //for (var v in transactions.mempool.first.vouts) {
+                        //  print(v.transaction!.confirmed);
+                        //}
+                        //print(vouts.data.where((vout) => vout.position < 0));
+                        //print(VoutReservoir.whereUnconfirmed(
+                        //    security: securities.RVN));
+                        //print(VoutReservoir.whereUnspent(
+                        //        security: securities.RVN, includeMempool: false)
+                        //    .where((v) =>
+                        //        v.transactionId ==
+                        //        'b13feb18ae0b66f47e1606230b0a70de7d40ab52fbfc5626488136fbaa668b34'));
+                        for (var v in //vouts.data
+                            VoutReservoir.whereUnspent(
+                                security: securities.RVN,
+                                includeMempool: false)) {
+                          //.where((Vout vout) =>
+                          //    vout.account?.net ==
+                          //        settings.primaryIndex
+                          //            .getOne(SettingName.Electrum_Net)!
+                          //            .value &&
+                          //    (vout.transaction?.confirmed ?? false))) {
+                          print(v);
+                        }
+                        print(VoutReservoir.whereUnspent(
+                                security: securities.RVN, includeMempool: false)
+                            .map((e) => e.rvnValue)
+                            .toList()
+                            .sumInt());
+                        //.where((v) =>
+                        //    v.transactionId ==
+                        //    'b13feb18ae0b66f47e1606230b0a70de7d40ab52fbfc5626488136fbaa668b34'));
+                        print('${Current.balanceUSD != null ? '' : ''}');
+                        print(Current.balanceUSD?.valueUSD);
+                        print(Current.balanceRVN.valueRVN);
+                        //print(vouts.data.where((vout) =>
+                        //    ((vout.transaction?.confirmed ?? false) &&
+                        //        vout.security == securities.RVN &&
+                        //        vout.securityValue(security: securities.RVN) >
+                        //            0 &&
+                        //        vins
+                        //            .where((vin) => (vin.voutTransactionId ==
+                        //                    vout.transactionId &&
+                        //                vin.voutPosition == vout.position))
+                        //            .toList()
+                        //            .isEmpty)));
+                        //print(VoutReservoir.whereUnspent(
+                        //        given: Current.account.vouts,
+                        //        security: securities.RVN)
+                        //    .toList());
+                        //print(VoutReservoir.whereUnspent(
+                        //        given: Current.account.vouts,
+                        //        security: securities.bySymbolSecurityType
+                        //            .getOne('MOONTREE', SecurityType.RavenAsset))
+                        //    .toList());
+                        //print(Current.account.vouts.first);
+                        //print(Current.account.vouts.first
+                        //    .securityValue(security: securities.RVN));
+                      }),
 /*                      
-                SettingsTile(
-                    title: 'Clear Database',
-                    titleTextStyle: Theme.of(context).drawerDestination,
-                    leading: Icon(Icons.info_outline_rounded),
-                    onPressed: (BuildContext context) {
-                      ravenDatabase.deleteDatabase();
-                    }),
-                SettingsTile(
-                    title: 'show data',
-                    titleTextStyle: Theme.of(context).drawerDestination,
-                    leading: Icon(Icons.info_outline_rounded),
-                    onPressed: (BuildContext context) async {
-                      print(balances.bySecurity.getAll(Security(
-                          symbol: 'RVN', securityType: SecurityType.Crypto)));
-                      //print(transactions.mempool);
-                      //print(transactions.mempool.first.vouts);
-                      //print(transactions.mempool.first.vins);
-                      //for (var v in transactions.mempool.first.vouts) {
-                      //  print(v.transaction!.confirmed);
-                      //}
-                      //print(vouts.data.where((vout) => vout.position < 0));
-                      //print(VoutReservoir.whereUnconfirmed(
-                      //    security: securities.RVN));
-                      //print(VoutReservoir.whereUnspent(
-                      //        security: securities.RVN, includeMempool: false)
-                      //    .where((v) =>
-                      //        v.transactionId ==
-                      //        'b13feb18ae0b66f47e1606230b0a70de7d40ab52fbfc5626488136fbaa668b34'));
-                      for (var v in //vouts.data
-                          VoutReservoir.whereUnspent(
-                              security: securities.RVN,
-                              includeMempool: false)) {
-                        //.where((Vout vout) =>
-                        //    vout.account?.net ==
-                        //        settings.primaryIndex
-                        //            .getOne(SettingName.Electrum_Net)!
-                        //            .value &&
-                        //    (vout.transaction?.confirmed ?? false))) {
-                        print(v);
-                      }
-                      print(VoutReservoir.whereUnspent(
-                              security: securities.RVN, includeMempool: false)
-                          .map((e) => e.rvnValue)
-                          .toList()
-                          .sumInt());
-                      //.where((v) =>
-                      //    v.transactionId ==
-                      //    'b13feb18ae0b66f47e1606230b0a70de7d40ab52fbfc5626488136fbaa668b34'));
-                      print('${Current.balanceUSD != null ? '' : ''}');
-                      print(Current.balanceUSD?.valueUSD);
-                      print(Current.balanceRVN.valueRVN);
-                      //print(vouts.data.where((vout) =>
-                      //    ((vout.transaction?.confirmed ?? false) &&
-                      //        vout.security == securities.RVN &&
-                      //        vout.securityValue(security: securities.RVN) >
-                      //            0 &&
-                      //        vins
-                      //            .where((vin) => (vin.voutTransactionId ==
-                      //                    vout.transactionId &&
-                      //                vin.voutPosition == vout.position))
-                      //            .toList()
-                      //            .isEmpty)));
-                      //print(VoutReservoir.whereUnspent(
-                      //        given: Current.account.vouts,
-                      //        security: securities.RVN)
-                      //    .toList());
-                      //print(VoutReservoir.whereUnspent(
-                      //        given: Current.account.vouts,
-                      //        security: securities.bySymbolSecurityType
-                      //            .getOne('MOONTREE', SecurityType.RavenAsset))
-                      //    .toList());
-                      //print(Current.account.vouts.first);
-                      //print(Current.account.vouts.first
-                      //    .securityValue(security: securities.RVN));
-                    }),
 */
                   //SettingsTile.switchTile(
                   //  title: 'Use fingerprint',
