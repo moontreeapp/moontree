@@ -51,6 +51,7 @@ Future<void> main() async {
 
 class RavenMobileApp extends StatelessWidget {
   //static final GlobalKey<NavigatorState> navigatorKey = new GlobalKey();
+  static final GlobalKey<ScaffoldState> _key = GlobalKey();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -84,6 +85,9 @@ class RavenMobileApp extends StatelessWidget {
       },
       builder: (context, child) {
         return Scaffold(
+            key: _key,
+            drawer:
+                Drawer(child: Text('testing\n this will be quite different')),
             appBar: PreferredSize(
                 preferredSize: Size.fromHeight(56),
                 child: SafeArea(
@@ -91,6 +95,7 @@ class RavenMobileApp extends StatelessWidget {
                   components.headers.shadows,
                   AppBar(
                       centerTitle: false,
+                      leading: PageLead(scaffoldKey: _key),
                       title: PageTitle(),
                       actions: <Widget>[
                         components.status,

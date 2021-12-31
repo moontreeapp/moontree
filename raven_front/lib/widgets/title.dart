@@ -21,7 +21,6 @@ class _PageTitleState extends State<PageTitle> {
   @override
   void initState() {
     super.initState();
-    //listeners.add(ModalRoute.of(context)?.settings.name ??
     listeners.add(streams.app.page.stream.listen((value) {
       if (value != pageTitle) {
         setState(() {
