@@ -16,7 +16,7 @@ class Receive extends StatefulWidget {
   _ReceiveState createState() => _ReceiveState();
 }
 
-class _ReceiveState extends State<Receive> /*with RouteAware*/ {
+class _ReceiveState extends State<Receive> {
   Map<String, dynamic> data = {};
   late String address;
   final requestAmount = TextEditingController();
@@ -29,18 +29,6 @@ class _ReceiveState extends State<Receive> /*with RouteAware*/ {
   String uri = '';
   String username = '';
   List<Security> fetchedNames = <Security>[];
-
-  //@override
-  //void didPush() {
-  //  // Route was pushed onto navigator and is now topmost route.
-  //  streams.app.page.add('receive');
-  //}
-//
-  //@override
-  //void didPopNext() {
-  //  // Covering route was popped off the navigator.
-  //  streams.app.page.add('receive');
-  //}
 
   void _toggleRaw(_) {
     setState(() {

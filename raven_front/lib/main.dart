@@ -8,7 +8,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:raven_front/pages.dart';
 import 'package:raven_front/pages/password/change.dart';
-import 'package:raven_front/theme/color_gen.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/widgets.dart';
@@ -71,7 +70,7 @@ class RavenMobileApp extends StatelessWidget {
         '/transaction': (context) => TransactionPage(),
         '/receive': (context) => Receive(),
         '/send': (context) => Send(),
-        //'/create': (context) => CreateAsset(),
+        '/create': (context) => CreateAsset(),
         '/settings/about': (context) => About(),
         '/settings/settings': (context) => Settings(),
         '/settings/preferences': (context) => Preferences(),

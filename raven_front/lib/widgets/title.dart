@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/streams.dart';
+import 'package:raven_front/components/components.dart';
+import 'package:raven_front/services/lookup.dart';
+import 'package:raven_front/services/account.dart';
 import 'package:raven_front/theme/extensions.dart';
 
 class PageTitle extends StatefulWidget {
@@ -13,6 +16,7 @@ class PageTitle extends StatefulWidget {
 class _PageTitleState extends State<PageTitle> {
   String pageTitle = 'Wallet';
   List listeners = [];
+  final changeName = TextEditingController();
 
   @override
   void initState() {
@@ -37,6 +41,36 @@ class _PageTitleState extends State<PageTitle> {
 
   @override
   Widget build(BuildContext context) {
-    return Text(pageTitle, style: Theme.of(context).pageTitle);
+    if (pageTitle != 'Wallet' || accounts.data.length <= 1) {
+      return Text(pageTitle, style: Theme.of(context).pageTitle);
+    }
+    changeName.text = 'Wallets / ' + Current.account.name;
+    return TextField(
+      textInputAction: TextInputAction.done,
+      textAlign: TextAlign.left,
+      style: Theme.of(context).pageTitle,
+      decoration: const InputDecoration(
+          border: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          errorBorder: InputBorder.none,
+          disabledBorder: InputBorder.none),
+      controller: changeName,
+      onTap: () {
+        changeName.text = 'Wallets / ';
+        changeName.selection = TextSelection.fromPosition(
+            TextPosition(offset: changeName.text.length));
+      },
+      onSubmitted: (value) async {
+        if (!await updateAcount(
+            Current.account, value.replaceFirst('Wallets / ', ''))) {
+          components.alerts.failure(context,
+              headline: 'Unable rename account',
+              msg: 'Account name, "$value" is already taken. '
+                  'Please enter a uinque account name.');
+        }
+        setState(() {});
+      },
+    );
   }
 }

@@ -20,7 +20,7 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with RouteAware {
+class _HomeState extends State<Home> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   List<StreamSubscription> listeners =
       []; // most of these can move to header and body elements
@@ -28,18 +28,6 @@ class _HomeState extends State<Home> with RouteAware {
   final accountName = TextEditingController();
   bool isFabVisible = true;
   final changeName = TextEditingController();
-
-  @override
-  void didPush() {
-    // Route was pushed onto navigator and is now topmost route.
-    streams.app.page.add('home');
-  }
-
-  @override
-  void didPopNext() {
-    // Covering route was popped off the navigator.
-    streams.app.page.add('home');
-  }
 
   @override
   void initState() {
