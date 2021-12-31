@@ -81,35 +81,35 @@ class _HomeState extends State<Home> {
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
           key: _key,
-          appBar: header(),
-          drawer: Container(
-              // container size is 304 by default. reguardless of device size
-              // I don't think this is a problem we're supposed to solve for.
-              //width: MediaQuery.of(context).size.width - 56, //336.7,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(8.0),
-                      bottomRight: Radius.circular(8.0)),
-                  color: const Color(0xffffffff),
-                  boxShadow: [
-                    BoxShadow(
-                        color: const Color(0x33000000),
-                        offset: Offset(2, 0),
-                        blurRadius: 4),
-                    BoxShadow(
-                        color: const Color(0x1F000000),
-                        offset: Offset(1, 0),
-                        blurRadius: 20),
-                    BoxShadow(
-                        color: const Color(0x24000000),
-                        offset: Offset(4, 0),
-                        blurRadius: 5),
-                  ]),
-              child: ClipRRect(
-                  borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(8.0),
-                      bottomRight: Radius.circular(8.0)),
-                  child: accountsView())),
+          //appBar: header(),
+          //drawer: Container(
+          //    // container size is 304 by default. reguardless of device size
+          //    // I don't think this is a problem we're supposed to solve for.
+          //    //width: MediaQuery.of(context).size.width - 56, //336.7,
+          //    decoration: BoxDecoration(
+          //        borderRadius: BorderRadius.only(
+          //            topRight: Radius.circular(8.0),
+          //            bottomRight: Radius.circular(8.0)),
+          //        color: const Color(0xffffffff),
+          //        boxShadow: [
+          //          BoxShadow(
+          //              color: const Color(0x33000000),
+          //              offset: Offset(2, 0),
+          //              blurRadius: 4),
+          //          BoxShadow(
+          //              color: const Color(0x1F000000),
+          //              offset: Offset(1, 0),
+          //              blurRadius: 20),
+          //          BoxShadow(
+          //              color: const Color(0x24000000),
+          //              offset: Offset(4, 0),
+          //              blurRadius: 5),
+          //        ]),
+          //    child: ClipRRect(
+          //        borderRadius: BorderRadius.only(
+          //            topRight: Radius.circular(8.0),
+          //            bottomRight: Radius.circular(8.0)),
+          //        child: accountsView())),
           body: NotificationListener<UserScrollNotification>(
               onNotification: visibilityOfSendReceive, child: HoldingList()),
           floatingActionButtonLocation:
