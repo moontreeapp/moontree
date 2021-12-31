@@ -46,7 +46,7 @@ class _ImportState extends State<Import> {
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
-          appBar: components.headers.back(context, 'Import Wallet'),
+          //appBar: components.headers.back(context, 'Import Wallet'),
           body: body(),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,

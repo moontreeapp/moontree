@@ -6,7 +6,7 @@ class Language extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: components.headers.back(context, 'Language Settings'),
+      //appBar: components.headers.back(context, 'Language Settings'),
       body: SettingsList(sections: [
         SettingsSection(tiles: [
           LanguageTile('English', enabled: true),

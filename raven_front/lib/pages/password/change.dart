@@ -38,8 +38,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   Widget build(BuildContext context) => GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        appBar: components.headers.back(context,
-            services.password.required ? 'Change Password' : 'Set Password'),
+        //appBar: components.headers.back(context, services.password.required ? 'Change Password' : 'Set Password'),
         body: body(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: submitButton(context),

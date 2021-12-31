@@ -49,7 +49,7 @@ class _CreateAssetState extends State<CreateAsset> {
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
-          appBar: header(),
+          //appBar: header(),
           body: body(),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,

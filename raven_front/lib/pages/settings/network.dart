@@ -63,7 +63,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
-          appBar: components.headers.back(context, 'Electrum Server'),
+          //appBar: components.headers.back(context, 'Electrum Server'),
           body: body(),
         ));
   }

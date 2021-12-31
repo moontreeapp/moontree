@@ -97,7 +97,7 @@ class _ReceiveState extends State<Receive> {
           _makeURI();
         },
         child: Scaffold(
-          appBar: components.headers.back(context, 'Address'),
+          //appBar: components.headers.back(context, 'Address'),
           body: body(),
           //floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
           //floatingActionButton: shareAddressButton(),

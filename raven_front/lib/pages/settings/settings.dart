@@ -19,7 +19,7 @@ class _SettingsState extends State<Settings> {
       yourName.text = name;
     }
     return Scaffold(
-      appBar: components.headers.back(context, 'Settings'),
+      //appBar: components.headers.back(context, 'Settings'),
       body: ListView(
         padding: EdgeInsets.all(20),
         children: <Widget>[

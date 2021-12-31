@@ -56,11 +56,11 @@ class _AssetState extends State<Asset> {
     return DefaultTabController(
         length: 2,
         child: Scaffold(
-          appBar: components.headers.asset(
-              context, data['holding']!.security.symbol,
-              balance: components.text.securityAsReadable(
-                  data['holding']!.value,
-                  symbol: data['holding']!.security.symbol)),
+          //appBar: components.headers.asset(
+          //    context, data['holding']!.security.symbol,
+          //    balance: components.text.securityAsReadable(
+          //        data['holding']!.value,
+          //        symbol: data['holding']!.security.symbol)),
           body: TabBarView(children: <Widget>[
             NotificationListener<UserScrollNotification>(
                 onNotification: visibilityOfSendReceive,

@@ -19,7 +19,7 @@ class _PreferencesState extends State<Preferences> {
       yourName.text = name;
     }
     return Scaffold(
-      appBar: components.headers.back(context, 'Preferences'),
+      //appBar: components.headers.back(context, 'Preferences'),
       body: ListView(
         padding: EdgeInsets.all(20),
         children: <Widget>[

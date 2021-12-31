@@ -48,7 +48,7 @@ class _RavenTransactionsState extends State<RavenTransactions> {
       currentBalRVN = Current.balanceRVN;
     }
     return Scaffold(
-      appBar: header(),
+      //appBar: header(),
       body: NotificationListener<UserScrollNotification>(
           onNotification: visibilityOfSendReceive,
           child: TransactionList(

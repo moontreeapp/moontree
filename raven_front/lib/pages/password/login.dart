@@ -28,7 +28,7 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) => GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        appBar: components.headers.simple(context, 'Login'),
+        //appBar: components.headers.simple(context, 'Login'),
         body: body(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: submitButton(),

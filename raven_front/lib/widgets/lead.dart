@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/streams.dart';
 import 'package:raven_front/components/components.dart';
-import 'package:raven_front/services/lookup.dart';
-import 'package:raven_front/services/account.dart';
-import 'package:raven_front/theme/extensions.dart';
 
 class PageLead extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
+  final BuildContext mainContext;
 
-  PageLead({Key? key, required this.scaffoldKey}) : super(key: key);
+  PageLead({Key? key, required this.scaffoldKey, required this.mainContext})
+      : super(key: key);
 
   @override
   _PageLead createState() => _PageLead();
@@ -45,5 +44,5 @@ class _PageLead extends State<PageLead> {
           onPressed: () => widget.scaffoldKey.currentState!.openDrawer(),
           padding: EdgeInsets.only(left: 16),
           icon: Image(image: AssetImage('assets/icons/menu_24px.png')))
-      : components.buttons.back(context);
+      : components.buttons.back(components.navigator.routeContext!);
 }

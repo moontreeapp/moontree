@@ -92,7 +92,7 @@ class _SendState extends State<Send> {
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
-          appBar: header(),
+          //appBar: header(),
           body: body(),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,

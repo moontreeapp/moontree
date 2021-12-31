@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_front/components/components.dart';
 
 class ConnectionLight extends StatefulWidget {
   ConnectionLight({Key? key}) : super(key: key);
@@ -147,7 +148,8 @@ class _ConnectionLightState extends State<ConnectionLight>
         //    child: Text('stop')),
         IconButton(
           onPressed: () => showDialog(
-              context: context,
+              //context: context,
+              context: components.navigator.routeContext!,
               builder: (BuildContext context) => AlertDialog(
                   title: Text(status),
                   content: Text('Connection Status: $connectionMessage \n\n'

@@ -48,7 +48,7 @@ class _TransactionPageState extends State<TransactionPage> {
     return DefaultTabController(
         length: metadata ? 2 : 1,
         child: Scaffold(
-          appBar: header(metadata),
+          //appBar: header(metadata),
           body: body(metadata),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,

@@ -6,7 +6,7 @@ class Currency extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: components.headers.back(context, 'Currency Settings'),
+      //appBar: components.headers.back(context, 'Currency Settings'),
       body: SettingsList(sections: [
         SettingsSection(tiles: [
           CurrencyTile('USD', enabled: true),

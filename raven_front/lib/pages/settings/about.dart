@@ -29,38 +29,36 @@ class _AboutState extends State<About> {
   Widget build(BuildContext context) {
     about = about ?? explain;
     return Scaffold(
-        appBar: components.headers.back(context, 'About'),
+        //appBar: components.headers.back(context, 'About'),
         body: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () => setState(() => img =
-                      img == 'assets/splash/fast.gif'
-                          ? 'assets/rvnonly.png'
-                          : 'assets/splash/fast.gif'),
-                  child: Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Image.asset(img
-                          //'assets/splash/fast.gif',
-                          //'assets/rvn.png',
-                          //fit: BoxFit.cover, // this is the solution for border
-                          //width: 110.0,
-                          //height: 110.0,
-                          )),
-                ),
-                Text('Github.com/moontreeapp'),
-                Text('MoonTree LLC, 2021'),
-                SizedBox(height: 50),
-                GestureDetector(
-                  onTap: () => setState(
-                      () => about = about == explain ? verbose : explain),
-                  child:
-                      Padding(padding: EdgeInsets.all(20), child: Text(about!)),
-                ),
-              ],
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            GestureDetector(
+              onTap: () => setState(() => img = img == 'assets/splash/fast.gif'
+                  ? 'assets/rvnonly.png'
+                  : 'assets/splash/fast.gif'),
+              child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Image.asset(img
+                      //'assets/splash/fast.gif',
+                      //'assets/rvn.png',
+                      //fit: BoxFit.cover, // this is the solution for border
+                      //width: 110.0,
+                      //height: 110.0,
+                      )),
             ),
-          ),
-        ));
+            Text('Github.com/moontreeapp'),
+            Text('MoonTree LLC, 2021'),
+            SizedBox(height: 50),
+            GestureDetector(
+              onTap: () =>
+                  setState(() => about = about == explain ? verbose : explain),
+              child: Padding(padding: EdgeInsets.all(20), child: Text(about!)),
+            ),
+          ],
+        ),
+      ),
+    ));
   }
 }

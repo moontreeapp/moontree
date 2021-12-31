@@ -95,7 +95,8 @@ class RavenMobileApp extends StatelessWidget {
                   components.headers.shadows,
                   AppBar(
                       centerTitle: false,
-                      leading: PageLead(scaffoldKey: _key),
+                      leading:
+                          PageLead(scaffoldKey: _key, mainContext: context),
                       title: PageTitle(),
                       actions: <Widget>[
                         components.status,
