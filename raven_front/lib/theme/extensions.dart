@@ -135,4 +135,17 @@ extension TextStyleExtension on ThemeData {
           fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
           color: Colors.white);
+  TextStyle? get navBarButton => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeight.w600,
+          letterSpacing: 1.25,
+          color: Color(0xDE000000))
+      : TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeight.w600,
+          letterSpacing: 1.25,
+          color: Color(0xDE000000));
 }

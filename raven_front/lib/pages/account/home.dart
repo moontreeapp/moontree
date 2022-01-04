@@ -74,9 +74,9 @@ class _HomeState extends State<Home> {
     changeName.text = accounts.data.length > 1
         ? 'Wallets / ' + Current.account.name
         : 'Wallet';
-    print(MediaQuery.of(context).devicePixelRatio);
-    print(MediaQuery.of(context).size);
-    print(Navigator.of(context).toString());
+    //print(MediaQuery.of(context).devicePixelRatio);
+    //print(MediaQuery.of(context).size);
+    //print(Navigator.of(context).toString());
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: NotificationListener<UserScrollNotification>(

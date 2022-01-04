@@ -16,7 +16,7 @@ class Loading extends StatefulWidget {
 class _LoadingState extends State<Loading> with TickerProviderStateMixin {
   Future setupAccounts() async {
     await services.account.createSave('Primary', net: Net.Test);
-    await services.account.createSave('Hodl', net: Net.Main);
+    //await services.account.createSave('Hodl', net: Net.Main);
   }
 
   Future setupRealWallet() async {

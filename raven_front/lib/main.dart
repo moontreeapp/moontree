@@ -90,6 +90,7 @@ class RavenMobileApp extends StatelessWidget {
       builder: (context, child) {
         return BackdropScaffold(
           headerHeight: 430,
+          resizeToAvoidBottomInset: false,
           backgroundColor: Colors.white,
           backLayerBackgroundColor: Theme.of(context).backgroundColor,
           frontLayerElevation: 1,
@@ -100,7 +101,15 @@ class RavenMobileApp extends StatelessWidget {
             BoxShadow(
                 color: const Color(0x33000000),
                 offset: Offset(0, 1),
-                blurRadius: 5)
+                blurRadius: 5),
+            BoxShadow(
+                color: const Color(0x1F000000),
+                offset: Offset(0, 3),
+                blurRadius: 1),
+            BoxShadow(
+                color: const Color(0x24000000),
+                offset: Offset(0, 2),
+                blurRadius: 2),
           ],
           appBar: BackdropAppBar(
             backgroundColor: Theme.of(context).backgroundColor,
@@ -120,79 +129,9 @@ class RavenMobileApp extends StatelessWidget {
           ),
           backLayer: NavDrawer(),
           frontLayer: Container(color: Colors.white, child: child!),
-          //persistentFooterButtons: [
-          //  Container(
-          //    height: 118,
-          //    child: Text('hi'),
-          //    decoration: BoxDecoration(
-          //        color: Colors.white,
-          //        borderRadius: BorderRadius.only(
-          //            topLeft: Radius.circular(16),
-          //            topRight: Radius.circular(16)),
-          //        boxShadow: [
-          //          BoxShadow(
-          //              color: const Color(0x33000000),
-          //              offset: Offset(0, 5),
-          //              blurRadius: 5),
-          //          BoxShadow(
-          //              color: const Color(0x1F000000),
-          //              offset: Offset(0, 3),
-          //              blurRadius: 14),
-          //          BoxShadow(
-          //              color: const Color(0x3D000000),
-          //              offset: Offset(0, 8),
-          //              blurRadius: 10)
-          //        ]),
-          //  ),
-          //],
-          //bottomNavigationBar: Container(
-          //  height: 118,
-          //  child: Text('hi'),
-          //  decoration: BoxDecoration(
-          //      color: Colors.white,
-          //      borderRadius: BorderRadius.only(
-          //          topLeft: Radius.circular(16),
-          //          topRight: Radius.circular(16)),
-          //      boxShadow: [
-          //        BoxShadow(
-          //            color: const Color(0x33000000),
-          //            offset: Offset(0, 5),
-          //            blurRadius: 5),
-          //        BoxShadow(
-          //            color: const Color(0x1F000000),
-          //            offset: Offset(0, 3),
-          //            blurRadius: 14),
-          //        BoxShadow(
-          //            color: const Color(0x3D000000),
-          //            offset: Offset(0, 8),
-          //            blurRadius: 10)
-          //      ]),
+          floatingActionButton: NavBar(),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
-          floatingActionButton: Container(
-            height: 118,
-            width: MediaQuery.of(context).size.width,
-            child: Text('hi'),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16)),
-                boxShadow: [
-                  BoxShadow(
-                      color: const Color(0x33000000),
-                      offset: Offset(0, 5),
-                      blurRadius: 5),
-                  BoxShadow(
-                      color: const Color(0x1F000000),
-                      offset: Offset(0, 3),
-                      blurRadius: 14),
-                  BoxShadow(
-                      color: const Color(0x3D000000),
-                      offset: Offset(0, 8),
-                      blurRadius: 10)
-                ]),
-          ),
         );
       },
     );

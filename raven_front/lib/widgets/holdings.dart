@@ -88,7 +88,7 @@ class _HoldingList extends State<HoldingList> {
     //        [addresses.byAddress.getOne(widget.currentWalletAddress!)!]);
     return holdings.isEmpty // <-- on front tab...
         //? components.empty.holdings(context)
-        ? Container(color: Colors.transparent)
+        ? Container(color: Colors.transparent, child: Text('hi'))
         : Container(
             color: Colors.transparent,
             alignment: Alignment.center,

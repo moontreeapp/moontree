@@ -5,7 +5,7 @@ export 'title.dart';
 
 // body
 export 'nav_drawer.dart';
-export 'nav_drawer_body.dart';
+export 'nav_bar.dart';
 
 // lists
 export 'holdings.dart';

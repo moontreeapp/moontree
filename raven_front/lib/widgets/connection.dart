@@ -69,29 +69,18 @@ class _ConnectionLightState extends State<ConnectionLight>
   void dispose() {
     super.dispose();
     for (var listener in listeners) {
-      print('7');
       listener.cancel();
-      print('8');
     }
     // _ConnectionLightState.dispose failed to call super.dispose.
-    print('0');
     // ignore: invalid_use_of_protected_member
     _animationControllerActive?.clearStatusListeners();
-    print('1');
     // ignore: invalid_use_of_protected_member
     _animationControllerUp?.clearStatusListeners();
-    print('2');
     // ignore: invalid_use_of_protected_member
     _animationControllerDown?.clearStatusListeners();
-    print('3');
     _animationControllerActive?.dispose();
-    print('4');
     _animationControllerUp?.dispose();
-    print('5');
     _animationControllerDown?.dispose();
-    print('6');
-    print('9');
-    print('10');
   }
 
   @override
