@@ -10,6 +10,7 @@ import 'package:raven_front/pages.dart';
 import 'package:raven_front/pages/password/change.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
+import 'package:raven_front/widgets/nav_drawer.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -78,38 +79,79 @@ class RavenMobileApp extends StatelessWidget {
         '/settings/network': (context) => ElectrumNetwork(),
         '/settings/import': (context) => Import(),
         '/settings/export': (context) => Export(),
-        '/settings/currency': (context) => Currency(),
-        '/settings/language': (context) => Language(),
+        '/settings/currency': (context) => Language(),
         '/settings/technical': (context) => TechnicalView(),
         '/settings/wallet': (context) => WalletView(),
       },
       builder: (context, child) {
         return Scaffold(
+            backgroundColor: Theme.of(context).backgroundColor,
             key: _key,
+            //extendBodyBehindAppBar: true,
             drawer:
                 Drawer(child: Text('testing\n this will be quite different')),
             appBar: PreferredSize(
                 preferredSize: Size.fromHeight(56),
-                child: SafeArea(
-                    child: Stack(children: [
-                  components.headers.shadows,
-                  AppBar(
-                      centerTitle: false,
-                      leading:
-                          PageLead(scaffoldKey: _key, mainContext: context),
-                      title: PageTitle(),
-                      actions: <Widget>[
-                        components.status,
-                        ConnectionLight(),
-                        SizedBox(width: 16),
-                        Image(image: AssetImage('assets/icons/scan_24px.png')),
-                        SizedBox(width: 16)
-                      ])
-                ]))),
-
-            //components.headers.simple(
-            //    context, ModalRoute.of(context)?.settings.name ?? 'unknown'),
-            body: child!);
+                child: AppBar(
+                    leading: PageLead(scaffoldKey: _key, mainContext: context),
+                    title: PageTitle(),
+                    actions: <Widget>[
+                      components.status,
+                      ConnectionLight(),
+                      SizedBox(width: 16),
+                      Image(
+                        image: AssetImage('assets/icons/scan/scan.png'),
+                        height: 24,
+                        width: 24,
+                      ),
+                      SizedBox(width: 16)
+                    ])),
+            body: Stack(children: [
+              NavDrawer(),
+              Container(
+                //padding: EdgeInsets.only(top: 80), //23+56
+                //color: Theme.of(context).backgroundColor,
+                color: Colors.transparent,
+                child: Container(
+                    child: child,
+                    // if color below are not transparent, push it down
+                    //padding: EdgeInsets.only(top: 8),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(8.0),
+                            topLeft: Radius.circular(8.0)),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                              color: const Color(0x33000000),
+                              offset: Offset(1, 0),
+                              blurRadius: 5),
+                        ])),
+              )
+            ]));
+        //body: Scaffold(
+        //    extendBodyBehindAppBar: true,
+        //    appBar: PreferredSize(
+        //        preferredSize: Size.fromHeight(0), child: NavDrawer()),
+        //    body: Container(
+        //        padding: EdgeInsets.only(top: 80), //23+56
+        //        color: Theme.of(context).backgroundColor,
+        //        child: Container(
+        //            child: child,
+        //            // if color below are not transparent, push it down
+        //            //padding: EdgeInsets.only(top: 8),
+        //            decoration: BoxDecoration(
+        //                borderRadius: BorderRadius.only(
+        //                    topRight: Radius.circular(8.0),
+        //                    topLeft: Radius.circular(8.0)),
+        //                color: Colors.white,
+        //                boxShadow: [
+        //                  BoxShadow(
+        //                      color: const Color(0x33000000),
+        //                      offset: Offset(1, 0),
+        //                      blurRadius: 5),
+        //                ])))));
+        //body: NavDrawer(child: child!));
       },
     );
   }

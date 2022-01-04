@@ -86,9 +86,11 @@ class _HoldingList extends State<HoldingList> {
     //        accounts.primaryIndex.getOne(widget.currentAccountId!)!)
     //    : services.balance.addressesBalances(
     //        [addresses.byAddress.getOne(widget.currentWalletAddress!)!]);
-    return holdings.isEmpty
-        ? components.empty.holdings(context)
+    return holdings.isEmpty // <-- on front tab...
+        //? components.empty.holdings(context)
+        ? Container(color: Colors.transparent)
         : Container(
+            color: Colors.transparent,
             alignment: Alignment.center,
             padding: EdgeInsets.only(top: 5.0),
             child: RefreshIndicator(

@@ -76,13 +76,13 @@ extension TextStyleExtension on ThemeData {
           fontFamily: 'Nunito',
           fontWeight: FontWeight.w600, //semibold
           letterSpacing: 0.15,
-          color: Colors.black.withOpacity(0.87))
+          color: Colors.white)
       : TextStyle(
           fontSize: 20.0,
           fontFamily: 'Nunito',
           fontWeight: FontWeight.w600,
           letterSpacing: 0.15,
-          color: Colors.black.withOpacity(0.87));
+          color: Colors.white);
   TextStyle? get pageValue => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 24.0,

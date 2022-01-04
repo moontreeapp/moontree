@@ -27,24 +27,33 @@ class CustomTheme with ChangeNotifier {
   static ThemeData get lightTheme {
     return ThemeData(
       brightness: Brightness.light,
+      backgroundColor: Color(0xFF5C6BC0),
       primarySwatch: generateMaterialColor(Palette.ravenBlue),
       fontFamily: 'Nunito',
+      //primaryColor: Colors.blue.shade900,
+      indicatorColor: Color(0xffb6f122),
+      //backgroundColor: Colors.white,
+      //scaffoldBackgroundColor: Colors.white,
+      //bottomAppBarColor: Colors.white,
+      //dividerColor: Colors.black.withOpacity(0.12),
+      dividerTheme: DividerThemeData(
+          color: Colors.black.withOpacity(0.12), thickness: 1, indent: 70),
+      //disabledColor: Colors.grey,
+      //hintColor: Colors.grey[600],
+      //textTheme: Typography.blackCupertino,
+      //textTheme: TextTheme(
+      //  headline1: TextStyle(color: Colors.black),
+      //  headline2: TextStyle(color: Colors.black),
+      //  bodyText1: TextStyle(color: Colors.black),
+      //  bodyText2: TextStyle(color: Colors.black),
+      //),
       appBarTheme: AppBarTheme(
-        //color: Color,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         //foregroundColor: Colors.white,
         elevation: 0,
-        //shadowColor: Colors.black.withOpacity(0.12),
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(8),
-          bottomRight: Radius.circular(8),
-          //topLeft: Radius.circular(0),
-          //topRight: Radius.circular(10),
-        )),
         iconTheme: IconThemeData.fallback(),
+        centerTitle: false,
         //actionsIconTheme: IconThemeData,
-        //centerTitle: bool,
         //titleSpacing: double,
         //toolbarHeight: double,
         //toolbarTextStyle: TextStyle,
@@ -69,23 +78,6 @@ class CustomTheme with ChangeNotifier {
         bodyText1: TextStyle(fontSize: 20.0),
         bodyText2: TextStyle(fontSize: 16.0),
       ),
-      //primaryColor: Colors.blue.shade900,
-      indicatorColor: Color(0xFFb6f122),
-      backgroundColor: Colors.white,
-      scaffoldBackgroundColor: Colors.white,
-      bottomAppBarColor: Colors.white,
-      //dividerColor: Colors.black.withOpacity(0.12),
-      dividerTheme: DividerThemeData(
-          color: Colors.black.withOpacity(0.12), thickness: 1, indent: 70),
-      //disabledColor: Colors.grey,
-      //hintColor: Colors.grey[600],
-      //textTheme: Typography.blackCupertino,
-      //textTheme: TextTheme(
-      //  headline1: TextStyle(color: Colors.black),
-      //  headline2: TextStyle(color: Colors.black),
-      //  bodyText1: TextStyle(color: Colors.black),
-      //  bodyText2: TextStyle(color: Colors.black),
-      //),
     );
   }
 

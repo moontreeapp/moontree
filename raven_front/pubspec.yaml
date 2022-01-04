@@ -98,6 +98,17 @@ flutter:
     - assets/status/
     - assets/icons/
     - assets/icons/status/
+    - assets/icons/scan/
+    - assets/icons/receive/
+    - assets/icons/network/
+    - assets/icons/create/
+    - assets/icons/import_export/
+    - assets/icons/manage/
+    - assets/icons/menu/
+    - assets/icons/send/
+    - assets/icons/swap/
+    - assets/icons/user_level/
+    - assets/icons/wallet/
     - .env
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

@@ -43,6 +43,6 @@ class _PageLead extends State<PageLead> {
       ? IconButton(
           onPressed: () => widget.scaffoldKey.currentState!.openDrawer(),
           padding: EdgeInsets.only(left: 16),
-          icon: Image(image: AssetImage('assets/icons/menu_24px.png')))
-      : components.buttons.back(components.navigator.routeContext!);
+          icon: Image(image: AssetImage('assets/icons/menu/menu.png')))
+      : components.buttons.back(components.navigator.routeContext ?? context);
 }
