@@ -50,7 +50,8 @@ dependencies:
   share: ^2.0.4 # to share the file that we create
   file_picker: ^4.1.5 # to import the file that we saved
   intl: ^0.17.0
-  mockito: ^5.0.17 # just for testing 
+  mockito: ^5.0.17 # just for testing
+  backdrop: ^0.7.1
   
   # MoonTree in-house dependencies
   raven_back:

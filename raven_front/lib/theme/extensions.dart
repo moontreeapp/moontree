@@ -124,15 +124,15 @@ extension TextStyleExtension on ThemeData {
           color: Colors.black.withOpacity(0.87));
   TextStyle? get drawerDestination => this.brightness == Brightness.light
       ? TextStyle(
-          fontSize: 14.0,
+          fontSize: 16.0,
           fontFamily: 'Nunito',
           fontWeight: FontWeight.w600,
-          letterSpacing: 0.1,
-          color: Colors.black.withOpacity(0.6))
+          letterSpacing: 0.5,
+          color: Colors.white)
       : TextStyle(
-          fontSize: 14.0,
+          fontSize: 16.0,
           fontFamily: 'Nunito',
           fontWeight: FontWeight.w600,
-          letterSpacing: 0.1,
-          color: Colors.black.withOpacity(0.6));
+          letterSpacing: 0.5,
+          color: Colors.white);
 }

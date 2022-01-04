@@ -1,3 +1,4 @@
+import 'package:backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/streams.dart';
@@ -41,7 +42,7 @@ class _PageLead extends State<PageLead> {
   @override
   Widget build(BuildContext context) => pageTitle == 'Wallet'
       ? IconButton(
-          onPressed: () => widget.scaffoldKey.currentState!.openDrawer(),
+          onPressed: () => Backdrop.of(context).fling(),
           padding: EdgeInsets.only(left: 16),
           icon: Image(image: AssetImage('assets/icons/menu/menu.png')))
       : components.buttons.back(components.navigator.routeContext ?? context);

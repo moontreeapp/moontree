@@ -1,3 +1,4 @@
+import 'package:backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/streams.dart';
@@ -40,6 +41,23 @@ class _NavDrawerState extends State<NavDrawer> {
     super.dispose();
   }
 
+  Widget destination({
+    required IconData icon,
+    required String name,
+    required String link,
+  }) =>
+      TextButton.icon(
+        onPressed: () {
+          Backdrop.of(components.navigator.routeContext!).fling();
+          Navigator.of(components.navigator.routeContext!).pushNamed(link);
+        },
+        icon: Icon(icon, color: Colors.white),
+        label: Row(children: [
+          SizedBox(width: 25),
+          Text(name, style: Theme.of(context).drawerDestination)
+        ]),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -47,46 +65,31 @@ class _NavDrawerState extends State<NavDrawer> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextButton.icon(
-            onPressed: () => Navigator.pushNamed(context, '/settings/import'),
-            icon: Icon(Icons.account_balance_wallet,
-                color: Colors.white), // plus?
-            label: Row(children: [
-              SizedBox(width: 20),
-              Text('Import/Export', style: Theme.of(context).drawerDestination)
-            ]),
+          destination(
+            icon: Icons.account_balance_wallet, // plus?
+            name: 'Import / Export',
+            link: '/settings/import',
           ),
-          TextButton.icon(
-              onPressed: () =>
-                  Navigator.pushNamed(context, '/settings/preferences'),
-              icon: Icon(Icons.settings, color: Colors.white),
-              label: Row(children: [
-                SizedBox(width: 20),
-                Text('Settings', style: Theme.of(context).drawerDestination)
-              ])),
-          TextButton.icon(
-              onPressed: () =>
-                  Navigator.pushNamed(context, '/settings/preferences'),
-              icon: Icon(Icons.feedback, color: Colors.white),
-              label: Row(children: [
-                SizedBox(width: 20),
-                Text('Feedback', style: Theme.of(context).drawerDestination)
-              ])),
-          TextButton.icon(
-              onPressed: () =>
-                  Navigator.pushNamed(context, '/settings/preferences'),
-              icon: Icon(Icons.help, color: Colors.white),
-              label: Row(children: [
-                SizedBox(width: 20),
-                Text('Support', style: Theme.of(context).drawerDestination)
-              ])),
-          TextButton.icon(
-              onPressed: () => Navigator.pushNamed(context, '/settings/about'),
-              icon: Icon(Icons.info_outline_rounded, color: Colors.white),
-              label: Row(children: [
-                SizedBox(width: 20),
-                Text('About', style: Theme.of(context).drawerDestination)
-              ])),
+          destination(
+            icon: Icons.settings,
+            name: 'Settings',
+            link: '/settings/preferences',
+          ),
+          destination(
+            icon: Icons.feedback,
+            name: 'Feedback',
+            link: '/settings/preferences',
+          ),
+          destination(
+            icon: Icons.help,
+            name: 'Support',
+            link: '/settings/preferences',
+          ),
+          destination(
+            icon: Icons.info_outline_rounded,
+            name: 'About',
+            link: '/settings/about',
+          ),
 
           ////SettingsTile(
           ////    title: 'Import/Export',
@@ -197,7 +200,6 @@ class _NavDrawerState extends State<NavDrawer> {
                   onPressed: (BuildContext context) =>
                       Navigator.pushNamed(context, '/settings/language')),
               */
-
           SettingsTile(
               title: 'Clear Database',
               titleTextStyle: Theme.of(context).drawerDestination,
