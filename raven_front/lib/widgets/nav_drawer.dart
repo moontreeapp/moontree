@@ -1,4 +1,5 @@
-import 'package:backdrop/backdrop.dart';
+//import 'package:backdrop/backdrop.dart';
+import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/streams.dart';
@@ -86,7 +87,7 @@ class _NavDrawerState extends State<NavDrawer> {
             link: '/settings/preferences',
           ),
           destination(
-            icon: Icons.info_outline_rounded,
+            icon: Icons.info_rounded,
             name: 'About',
             link: '/settings/about',
           ),
