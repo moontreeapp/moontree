@@ -43,16 +43,17 @@ class _NavDrawerState extends State<NavDrawer> {
   }
 
   Widget destination({
-    required IconData icon,
     required String name,
     required String link,
+    IconData? icon,
+    Image? image,
   }) =>
       TextButton.icon(
         onPressed: () {
           Backdrop.of(components.navigator.routeContext!).fling();
           Navigator.of(components.navigator.routeContext!).pushNamed(link);
         },
-        icon: Icon(icon, color: Colors.white),
+        icon: icon != null ? Icon(icon, color: Colors.white) : image!,
         label: Row(children: [
           SizedBox(width: 25),
           Text(name, style: Theme.of(context).drawerDestination)
@@ -67,7 +68,11 @@ class _NavDrawerState extends State<NavDrawer> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           destination(
-            icon: Icons.account_balance_wallet, // plus?
+            image: Image(
+                image:
+                    AssetImage('assets/icons/import_export/import_export.png'),
+                height: 24,
+                width: 24),
             name: 'Import / Export',
             link: '/settings/import',
           ),
