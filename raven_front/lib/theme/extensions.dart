@@ -148,4 +148,17 @@ extension TextStyleExtension on ThemeData {
           fontWeight: FontWeight.w600,
           letterSpacing: 1.25,
           color: Color(0xDE000000));
+  TextStyle? get copyright => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 12.0,
+          fontFamily: 'Roboto',
+          fontWeight: FontWeight.normal,
+          letterSpacing: 0.4,
+          color: Color(0xDE000000))
+      : TextStyle(
+          fontSize: 12.0,
+          fontFamily: 'Roboto',
+          fontWeight: FontWeight.normal,
+          letterSpacing: 0.4,
+          color: Color(0xDE000000));
 }

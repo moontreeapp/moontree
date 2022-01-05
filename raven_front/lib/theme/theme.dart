@@ -17,6 +17,8 @@ CustomTheme currentTheme = CustomTheme();
 
 class CustomTheme with ChangeNotifier {
   static bool _isDarkTheme = true;
+  static Color primaryColor = Color(0xFF5C6BC0);
+  //static Color secondary = Color(0xFF5C6BC0);
   ThemeMode get currentTheme => _isDarkTheme ? ThemeMode.dark : ThemeMode.light;
 
   void toggleTheme() {
@@ -27,8 +29,8 @@ class CustomTheme with ChangeNotifier {
   static ThemeData get lightTheme {
     return ThemeData(
       brightness: Brightness.light,
-      backgroundColor: Color(0xFF5C6BC0),
-      primarySwatch: generateMaterialColor(Palette.ravenBlue),
+      backgroundColor: primaryColor,
+      //primarySwatch: generateMaterialColor(Palette.ravenBlue),
       fontFamily: 'Nunito',
       //primaryColor: Colors.blue.shade900,
       indicatorColor: Color(0xffb6f122),

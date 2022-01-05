@@ -14,8 +14,8 @@ class PageTitle extends StatefulWidget {
 }
 
 class _PageTitleState extends State<PageTitle> {
-  String pageTitle = 'Wallet';
-  List listeners = [];
+  late String pageTitle = 'Wallet';
+  late List listeners = [];
   final changeName = TextEditingController();
 
   @override

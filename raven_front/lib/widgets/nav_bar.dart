@@ -20,19 +20,20 @@ class NavBar extends StatefulWidget {
 }
 
 class _NavBarState extends State<NavBar> {
+  late String pageTitle = 'Wallet';
   late String selected = 'wallet';
-  List listeners = [];
+  late List listeners = [];
 
   @override
   void initState() {
     super.initState();
-    //listeners.add(streams.app.page.stream.listen((value) {
-    //  if (value != pageTitle) {
-    //    setState(() {
-    //      pageTitle = value;
-    //    });
-    //  }
-    //}));
+    listeners.add(streams.app.page.stream.listen((value) {
+      if (value != pageTitle) {
+        setState(() {
+          pageTitle = value;
+        });
+      }
+    }));
   }
 
   @override
@@ -44,48 +45,51 @@ class _NavBarState extends State<NavBar> {
   }
 
   @override
-  Widget build(BuildContext context) => Container(
-        height: 118,
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                actionButton(name: 'send'),
-                actionButton(name: 'receive'),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                sectorIcon(name: 'wallet'),
-                sectorIcon(name: 'create'),
-                sectorIcon(name: 'manage'),
-                sectorIcon(name: 'swap'),
-              ],
-            )
-          ],
+  Widget build(BuildContext context) => Visibility(
+        visible: pageTitle != 'About',
+        child: Container(
+          height: 118,
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  actionButton(name: 'send'),
+                  actionButton(name: 'receive'),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  sectorIcon(name: 'wallet'),
+                  sectorIcon(name: 'create'),
+                  sectorIcon(name: 'manage'),
+                  sectorIcon(name: 'swap'),
+                ],
+              )
+            ],
+          ),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+              boxShadow: [
+                BoxShadow(
+                    color: const Color(0x33000000),
+                    offset: Offset(0, 5),
+                    blurRadius: 5),
+                BoxShadow(
+                    color: const Color(0x1F000000),
+                    offset: Offset(0, 3),
+                    blurRadius: 14),
+                BoxShadow(
+                    color: const Color(0x3D000000),
+                    offset: Offset(0, 8),
+                    blurRadius: 10)
+              ]),
         ),
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16), topRight: Radius.circular(16)),
-            boxShadow: [
-              BoxShadow(
-                  color: const Color(0x33000000),
-                  offset: Offset(0, 5),
-                  blurRadius: 5),
-              BoxShadow(
-                  color: const Color(0x1F000000),
-                  offset: Offset(0, 3),
-                  blurRadius: 14),
-              BoxShadow(
-                  color: const Color(0x3D000000),
-                  offset: Offset(0, 8),
-                  blurRadius: 10)
-            ]),
       );
 
   Widget sectorIcon({required String name}) => IconButton(
