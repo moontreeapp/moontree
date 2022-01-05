@@ -89,7 +89,7 @@ class _NavDrawerState extends State<NavDrawer> {
           destination(
             icon: Icons.help,
             name: 'Support',
-            link: '/settings/preferences',
+            link: '/settings/support',
           ),
           destination(
             icon: Icons.info_rounded,

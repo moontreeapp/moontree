@@ -46,7 +46,13 @@ class _NavBarState extends State<NavBar> {
 
   @override
   Widget build(BuildContext context) => Visibility(
-        visible: pageTitle != 'About',
+        visible: ![
+          'About',
+          'Support',
+          'Feedback',
+          'Settings',
+          'Import / Export'
+        ].contains(pageTitle),
         child: Container(
           height: 118,
           width: MediaQuery.of(context).size.width,
