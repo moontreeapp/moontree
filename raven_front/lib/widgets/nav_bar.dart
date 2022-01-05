@@ -51,7 +51,9 @@ class _NavBarState extends State<NavBar> {
           'Support',
           'Feedback',
           'Settings',
-          'Import / Export'
+          'Import / Export',
+          'Send',
+          'Receive',
         ].contains(pageTitle),
         child: Container(
           height: 118,
@@ -62,8 +64,8 @@ class _NavBarState extends State<NavBar> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  actionButton(name: 'send'),
-                  actionButton(name: 'receive'),
+                  actionButton(name: 'send', link: '/send'),
+                  actionButton(name: 'receive', link: '/receive'),
                 ],
               ),
               Row(
@@ -98,22 +100,12 @@ class _NavBarState extends State<NavBar> {
         ),
       );
 
-  Widget sectorIcon({required String name}) => IconButton(
+  Widget actionButton({required String name, required String link}) =>
+      OutlinedButton(
         onPressed: () {
-          setState(() {
-            selected = name;
-          });
+          Backdrop.of(components.navigator.routeContext!).concealBackLayer();
+          Navigator.of(components.navigator.routeContext!).pushNamed(link);
         },
-        icon: Image(
-          image: AssetImage(
-              'assets/icons/$name/${name}_${selected == name ? '' : 'in'}active.png'),
-          height: selected == name ? 30 : 24,
-          width: selected == name ? 30 : 24,
-        ),
-      );
-
-  Widget actionButton({required String name}) => OutlinedButton(
-        onPressed: () {},
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Image(
               image: AssetImage('assets/icons/$name/${name}_black.png'),
@@ -130,6 +122,20 @@ class _NavBarState extends State<NavBar> {
               color: Color(0xFF5C6BC0), width: 2, style: BorderStyle.solid)),
           shape: MaterialStateProperty.all(RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20.0))),
+        ),
+      );
+
+  Widget sectorIcon({required String name}) => IconButton(
+        onPressed: () {
+          setState(() {
+            selected = name;
+          });
+        },
+        icon: Image(
+          image: AssetImage(
+              'assets/icons/$name/${name}_${selected == name ? '' : 'in'}active.png'),
+          height: selected == name ? 30 : 24,
+          width: selected == name ? 30 : 24,
         ),
       );
 }

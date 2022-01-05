@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 import 'package:barcode_scan2/barcode_scan2.dart';
@@ -65,9 +64,6 @@ class _SendState extends State<Send> {
 
   @override
   Widget build(BuildContext context) {
-    /// either we need to animate it moving down the normal way, with a different thing behind or
-    /// we need to move it down ourselves and place something there... idk...
-    //Backdrop.of(components.navigator.routeContext!).revealBackLayer();
     // could hold which asset to send...
     data = populateData(context, data);
     useWallet = data.containsKey('walletId') && data['walletId'] != null;
@@ -98,9 +94,9 @@ class _SendState extends State<Send> {
         child: Scaffold(
           //appBar: header(),
           body: body(),
-          //floatingActionButtonLocation:
-          //    FloatingActionButtonLocation.centerFloat,
-          //floatingActionButton: sendTransactionButton(),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: sendTransactionButton(),
           //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
         ));
   }
@@ -209,300 +205,199 @@ class _SendState extends State<Send> {
   }
 
   bool verifyMemo([String? memo]) => (memo ?? sendMemo.text).length <= 80;
-
-  ListView body() => ListView(
-        // solves scrolling while keyboard
+  ListView body() {
+    //var _controller = TextEditingController();
+    return ListView(
         shrinkWrap: true,
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
         children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              //Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
-              //    style: Theme.of(context).textTheme.caption),
-              DropdownButtonFormField<String>(
-                  isExpanded: true,
-                  decoration: InputDecoration(
-                    errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide:
-                            BorderSide(color: Color(0xFFAA2E25), width: 2)),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide:
-                            BorderSide(color: Color(0xFF5C6BC0), width: 2)),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(color: Color(0x1F000000))),
-                    //labelText: 'Asset'
-                  ),
-                  //value: data['symbol'] ??
-                  value: 'Ravencoin',
-                  items: (useWallet
-                          ? Current.walletHoldingNames(data['walletId'])
-                          : Current.holdingNames)
-                      .map((String value) => DropdownMenuItem<String>(
-                          value: value, child: Text(value)))
-                      .toList(),
-                  onChanged: (String? newValue) {
-                    FocusScope.of(context).requestFocus(sendAddressFocusNode);
-                    setState(() => data['symbol'] = newValue!);
-                  }),
-              Visibility(
-                  visible: addressName != '', child: Text('To: $addressName')),
-              SizedBox(height: 16.0),
-              TextField(
-                focusNode: sendAddressFocusNode,
-                controller: sendAddress,
-                decoration: InputDecoration(
-                  errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide:
-                          BorderSide(color: Color(0xFFAA2E25), width: 2)),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide:
-                          BorderSide(color: Color(0xFF5C6BC0), width: 2)),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide: BorderSide(color: Color(0x1F000000))),
-                  labelText: '*To',
-                  labelStyle: TextStyle(color: const Color(0xFF5C6BC0)),
-                  hintText: 'Address',
-                  suffixIcon: IconButton(
-                    icon: Image.asset('assets/icons/scan/scan_black.png',
-                        height: 24, width: 24),
-                    onPressed: () async {
-                      ScanResult result = await BarcodeScanner.scan();
-                      switch (result.type) {
-                        case ResultType.Barcode:
-                          populateFromQR(result.rawContent);
-                          break;
-                        case ResultType.Error:
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(result.rawContent)),
-                          );
-                          break;
-                        case ResultType.Cancelled:
-                          // no problem, don't do anything
-                          break;
-                      }
-                    },
-                  ),
-                ),
-                onChanged: (value) {
-                  _validateAddressColor(value);
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+              Widget>[
+            Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
+                style: Theme.of(context).textTheme.caption),
+            //DropdownButton<String>(
+            //    isExpanded: true,
+            //    value: data['symbol'],
+            //    items: (useWallet
+            //            ? Current.walletHoldingNames(data['walletId'])
+            //            : Current.holdingNames)
+            //        .map((String value) => DropdownMenuItem<String>(
+            //            value: value, child: Text(value)))
+            //        .toList(),
+            //    onChanged: (String? newValue) {
+            //      FocusScope.of(context)
+            //          .requestFocus(sendAddressFocusNode);
+            //      setState(() => data['symbol'] = newValue!);
+            //    }),
+            Visibility(
+                visible: addressName != '', child: Text('To: $addressName')),
+            TextField(
+              focusNode: sendAddressFocusNode,
+              controller: sendAddress,
+              decoration: InputDecoration(
+                  focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: addressColor)),
+                  enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: addressColor)),
+                  border: UnderlineInputBorder(
+                      borderSide: BorderSide(color: addressColor)),
+                  //errorText: _validateAddressColor(sendAddress.text),
+                  labelText: 'To',
+                  hintText: 'Address'),
+              onChanged: (value) {
+                _validateAddressColor(value);
+              },
+              onEditingComplete: () async {
+                /// should tell front end what it was so we can notify user we're substituting the asset name or uns domain for the actual address
+                //var verifiedAddress =
+                //    await verifyValidAddress(sendAddress.text);
+                //sendAddress.text = verifiedAddress;
+                FocusScope.of(context).requestFocus(sendAmountFocusNode);
+                //setState(() {});
+              },
+            ),
+            //Visibility(
+            //    visible: !_validateAddress(sendAddress.text),
+            //    child: Text(
+            //      'Unrecognized Address',
+            //      style: TextStyle(color: Theme.of(context).bad),
+            //    )),
+            TextButton.icon(
+                onPressed: () async {
+                  ScanResult result = await BarcodeScanner.scan();
+                  switch (result.type) {
+                    case ResultType.Barcode:
+                      populateFromQR(result.rawContent);
+                      break;
+                    case ResultType.Error:
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(result.rawContent)),
+                      );
+                      break;
+                    case ResultType.Cancelled:
+                      // no problem, don't do anything
+                      break;
+                  }
                 },
-                onEditingComplete: () async {
-                  /// should tell front end what it was so we can notify user we're substituting the asset name or uns domain for the actual address
-                  //var verifiedAddress =
-                  //    await verifyValidAddress(sendAddress.text);
-                  //sendAddress.text = verifiedAddress;
-                  FocusScope.of(context).requestFocus(sendAmountFocusNode);
-                  //setState(() {});
-                },
-              ),
-              //Visibility(
-              //    visible: !_validateAddress(sendAddress.text),
-              //    child: Text(
-              //      'Unrecognized Address',
-              //      style: TextStyle(color: Theme.of(context).bad),
-              //    )),
+                icon: Icon(Icons.qr_code_scanner),
+                label: Text('Scan QR code')),
+            SizedBox(height: 15.0),
+            TextField(
+              readOnly: sendAll,
+              focusNode: sendAmountFocusNode,
+              controller: sendAmount,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                  focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: amountColor)),
+                  enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: amountColor)),
+                  labelText: 'Amount',
+                  hintText: 'Quantity'),
+              onChanged: (value) {
+                verifyVisibleAmount(value);
+              },
+              onEditingComplete: () {
+                sendAmount.text = cleanDecAmount(sendAmount.text);
+                verifyVisibleAmount(sendAmount.text);
+                FocusScope.of(context).requestFocus(sendFeeFocusNode);
+              },
+              //validator: (String? value) {  // validate as double/int
+              //  //if (value == null || value.isEmpty) {
+              //  //  return 'Please enter a valid send amount';
+              //  //}
+              //  //return null;
+              //},
+            ),
 
-              SizedBox(height: 16.0),
-              TextField(
-                readOnly: sendAll,
-                focusNode: sendAmountFocusNode,
-                controller: sendAmount,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                    errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(
-                            color: const Color(0xFFAA2E25), width: 2)),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(
-                            color: const Color(0xFF5C6BC0), width: 2)),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        //notice this is completely ignored...!
-                        borderSide: BorderSide(
-                          style: BorderStyle.none,
-                          color: Colors.green,
-                        )),
-                    labelText: '*Amount',
-                    labelStyle: TextStyle(color: const Color(0xFF5C6BC0)),
-                    hintText: 'Quantity'),
-                onChanged: (value) {
-                  verifyVisibleAmount(value);
-                },
-                onEditingComplete: () {
-                  sendAmount.text = cleanDecAmount(sendAmount.text);
-                  verifyVisibleAmount(sendAmount.text);
-                  FocusScope.of(context).requestFocus(sendFeeFocusNode);
-                },
-                //validator: (String? value) {  // validate as double/int
-                //  //if (value == null || value.isEmpty) {
-                //  //  return 'Please enter a valid send amount';
-                //  //}
-                //  //return null;
-                //},
-              ),
+            // todo replace fee estimate with fast, slow or regular
+            //Row(
+            //    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //    children: [Text('fee'), Text('0.01397191 RVN')]),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text('remaining', style: Theme.of(context).annotate),
+              Text('~ ${holding - double.parse(visibleAmount)}',
+                  style: Theme.of(context).annotate),
+              TextButton.icon(
+                  onPressed: () {
+                    if (!sendAll) {
+                      sendAll = true;
+                      sendAmount.text = holding.toString();
+                    } else {
+                      sendAll = false;
+                      sendAmount.text = '';
+                    }
+                    verifyVisibleAmount(sendAmount.text);
+                  },
+                  icon: Icon(
+                      sendAll ? Icons.not_interested : Icons.all_inclusive),
+                  label: Text(sendAll ? "don't send all" : 'send all',
+                      style: Theme.of(context).textTheme.caption)),
+            ]),
+            SizedBox(height: 15.0),
+            Text('Transaction Fee', style: Theme.of(context).textTheme.caption),
+            DropdownButton<String>(
+                focusNode: sendFeeFocusNode,
+                isExpanded: true,
+                value: feeGoal.name,
+                items: [
+                  DropdownMenuItem(value: 'Cheap', child: Text('Cheap')),
+                  DropdownMenuItem(value: 'Standard', child: Text('Standard')),
+                  DropdownMenuItem(value: 'Fast', child: Text('Fast'))
+                ],
+                onChanged: (String? newValue) {
+                  feeGoal = {
+                        'Cheap': cheap,
+                        'Standard': standard,
+                        'Fast': fast,
+                      }[newValue] ??
+                      standard; // <--- replace by custom dialogue
+                  FocusScope.of(context).requestFocus(sendNoteFocusNode);
+                  setState(() {});
+                }),
 
-              // todo replace fee estimate with fast, slow or regular
-              //Row(
-              //    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //    children: [Text('fee'), Text('0.01397191 RVN')]),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text('remaining', style: Theme.of(context).annotate),
-                Text('~ ${holding - double.parse(visibleAmount)}',
-                    style: Theme.of(context).annotate),
-                TextButton.icon(
-                    onPressed: () {
-                      if (!sendAll) {
-                        sendAll = true;
-                        sendAmount.text = holding.toString();
-                      } else {
-                        sendAll = false;
-                        sendAmount.text = '';
-                      }
-                      verifyVisibleAmount(sendAmount.text);
-                    },
-                    icon: Icon(
-                        sendAll ? Icons.not_interested : Icons.all_inclusive),
-                    label: Text(sendAll ? "don't send all" : 'send all',
-                        style: Theme.of(context).textTheme.caption)),
-              ]),
-              SizedBox(height: 16.0),
-              //Text('Transaction Fee',
-              //    style: Theme.of(context).textTheme.caption),
-              /// https://stackoverflow.com/questions/66135853/how-to-create-a-rounded-corner-of-dropdownbuttonformfield-flutter/66136773
-              /// it seems we can either style the menu with rounded corners (using a DropdownButton)
-              /// or we can style the button with rounded corners (using a DropdownButtonFormField)
-              /// but not both... Jesus.
-              Container(
-                //padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                height: 56,
-                decoration: BoxDecoration(
-                  //focusedBorder: OutlineInputBorder(
-                  //    borderRadius: BorderRadius.circular(8.0),
-                  //    borderSide:
-                  //        BorderSide(color: Color(0xFF5C6BC0), width: 2)),
-                  borderRadius: BorderRadius.circular(8.0),
-                  border: Border.all(
-                    color: Color(0x1F000000), //Color(0xFF5C6BC0),
-                    width: 1,
-                  ),
-
-                  //labelText: 'Fee'
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    DropdownButton<String>(
-                        focusNode: sendFeeFocusNode,
-                        isExpanded: true,
-                        value: feeGoal.name,
-                        //decoration: InputDecoration(
-                        //    errorBorder: OutlineInputBorder(
-                        //        borderRadius: BorderRadius.circular(8.0),
-                        //        borderSide:
-                        //            BorderSide(color: Color(0xFFAA2E25), width: 2)),
-                        //    focusedBorder: OutlineInputBorder(
-                        //        borderRadius: BorderRadius.circular(8.0),
-                        //        borderSide:
-                        //            BorderSide(color: Color(0xFF5C6BC0), width: 2)),
-                        //    border: OutlineInputBorder(
-                        //        borderRadius: BorderRadius.circular(8.0),
-                        //        borderSide: BorderSide(color: Color(0x1F000000))),
-                        //    labelText: 'Fee'),
-                        ///only valid with DropdownButton
-                        borderRadius: BorderRadius.circular(8.0),
-                        underline: SizedBox.shrink(),
-                        icon: Padding(
-                            padding: EdgeInsets.only(right: 14),
-                            child: Icon(Icons.expand_more_rounded)),
-
-                        /// for both
-                        items: [
-                          DropdownMenuItem(
-                              value: 'Cheap', child: Text('   Cheap')),
-                          DropdownMenuItem(
-                              value: 'Standard', child: Text('   Standard')),
-                          DropdownMenuItem(
-                              value: 'Fast', child: Text('   Fast'))
-                        ],
-                        onChanged: (String? newValue) {
-                          feeGoal = {
-                                'Cheap': cheap,
-                                'Standard': standard,
-                                'Fast': fast,
-                              }[newValue] ??
-                              standard; // <--- replace by custom dialogue
-                          FocusScope.of(context)
-                              .requestFocus(sendNoteFocusNode);
-                          setState(() {});
-                        }),
-                  ],
-                ),
-              ),
-
-              /// HIDE MEMO for beta - not supported by ravencoin anyway
-              //TextField(
-              //    focusNode: sendMemoFocusNode,
-              //    controller: sendMemo,
-              //    decoration: InputDecoration(
-              //        focusedBorder: UnderlineInputBorder(
-              //            borderSide: BorderSide(color: memoColor)),
-              //        enabledBorder: UnderlineInputBorder(
-              //            borderSide: BorderSide(color: memoColor)),
-              //        border: UnderlineInputBorder(),
-              //        labelText: 'Memo (optional)',
-              //        hintText: 'IPFS hash publicly posted on transaction'),
-              //    onChanged: (value) {
-              //      var oldMemoColor = memoColor;
-              //      memoColor = verifyMemo(value)
-              //          ? Theme.of(context).good!
-              //          : Theme.of(context).bad!;
-              //      if (value == '') {
-              //        memoColor = Colors.grey.shade400;
-              //      }
-              //      if (oldMemoColor != memoColor) {
-              //        setState(() {});
-              //      }
-              //    },
-              //    onEditingComplete: () {
-              //      FocusScope.of(context).requestFocus(sendNoteFocusNode);
-              //      setState(() {});
-              //    }),
-              SizedBox(height: 16.0),
-              TextField(
-                focusNode: sendNoteFocusNode,
-                controller: sendNote,
-                decoration: InputDecoration(
-                    errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide:
-                            BorderSide(color: Color(0xFFAA2E25), width: 2)),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide:
-                            BorderSide(color: Color(0xFF5C6BC0), width: 2)),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(color: Color(0x1F000000))),
-                    labelText: 'Note (optional)',
-                    hintText: 'Private note to self'),
-                onEditingComplete: () async => startSend(),
-              ),
-              //Center(child: sendTransactionButton(_formKey))
-              Center(child: sendTransactionButton()),
-            ],
-          ),
-        ],
-      );
+            /// HIDE MEMO for beta - not supported by ravencoin anyway
+            //TextField(
+            //    focusNode: sendMemoFocusNode,
+            //    controller: sendMemo,
+            //    decoration: InputDecoration(
+            //        focusedBorder: UnderlineInputBorder(
+            //            borderSide: BorderSide(color: memoColor)),
+            //        enabledBorder: UnderlineInputBorder(
+            //            borderSide: BorderSide(color: memoColor)),
+            //        border: UnderlineInputBorder(),
+            //        labelText: 'Memo (optional)',
+            //        hintText: 'IPFS hash publicly posted on transaction'),
+            //    onChanged: (value) {
+            //      var oldMemoColor = memoColor;
+            //      memoColor = verifyMemo(value)
+            //          ? Theme.of(context).good!
+            //          : Theme.of(context).bad!;
+            //      if (value == '') {
+            //        memoColor = Colors.grey.shade400;
+            //      }
+            //      if (oldMemoColor != memoColor) {
+            //        setState(() {});
+            //      }
+            //    },
+            //    onEditingComplete: () {
+            //      FocusScope.of(context).requestFocus(sendNoteFocusNode);
+            //      setState(() {});
+            //    }),
+            SizedBox(height: 15.0),
+            TextField(
+              focusNode: sendNoteFocusNode,
+              controller: sendNote,
+              decoration: InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'Note (optional)',
+                  hintText: 'Private note to self'),
+              onEditingComplete: () async => startSend(),
+            ),
+            //Center(child: sendTransactionButton(_formKey))
+          ]),
+        ]);
+  }
 
   /// todo: fix the please wait, this is kinda sad:
   Future buildTransactionWithMessageAndConfirm(SendRequest sendRequest) async {

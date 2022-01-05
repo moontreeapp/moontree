@@ -9,6 +9,10 @@ part 'setting.keys.dart';
 class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
   SettingReservoir() : super(_SettingNameKey());
 
+  /// some other options for testing before we get our own electrum server up:
+  // mainnet electrum3.rvn.rocks
+  // testnet rvn4lyfe.com:50003
+
   static Map<String, Setting> get defaults => {
         SettingName.Electrum_Domain0: Setting(
             name: SettingName.Electrum_Domain0, value: 'testnet.rvn.rocks'),
