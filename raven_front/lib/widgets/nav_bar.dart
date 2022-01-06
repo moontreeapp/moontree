@@ -101,19 +101,16 @@ class _NavBarState extends State<NavBar> {
       );
 
   Widget actionButton({required String name, required String link}) =>
-      OutlinedButton(
+      OutlinedButton.icon(
         onPressed: () {
           Backdrop.of(components.navigator.routeContext!).concealBackLayer();
           Navigator.of(components.navigator.routeContext!).pushNamed(link);
         },
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Image(
-              image: AssetImage('assets/icons/$name/${name}_black.png'),
-              height: 24,
-              width: 24),
-          SizedBox(width: 8),
-          Text(name.toUpperCase())
-        ]),
+        icon: Image(
+            image: AssetImage('assets/icons/$name/${name}_black.png'),
+            height: 24,
+            width: 24),
+        label: Text(name.toUpperCase()),
         style: ButtonStyle(
           fixedSize: MaterialStateProperty.all(Size(156, 40)),
           textStyle: MaterialStateProperty.all(Theme.of(context).navBarButton),

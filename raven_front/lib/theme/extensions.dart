@@ -188,4 +188,17 @@ extension TextStyleExtension on ThemeData {
           fontWeight: FontWeightNames.semiBold,
           letterSpacing: 0.5,
           color: Color(0xFF000000));
+  TextStyle? get sendFeildText => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 16.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeightNames.semiBold,
+          letterSpacing: 0.15,
+          color: Color(0x99000000))
+      : TextStyle(
+          fontSize: 16.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeightNames.semiBold,
+          letterSpacing: 0.15,
+          color: Color(0x99000000));
 }

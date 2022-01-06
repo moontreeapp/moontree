@@ -94,15 +94,17 @@ class _SendState extends State<Send> {
       visibleFiatAmount = '';
     }
     return GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Scaffold(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: //Scaffold(
           //appBar: header(),
-          body: body(),
-          //floatingActionButtonLocation:
-          //    FloatingActionButtonLocation.centerFloat,
-          //floatingActionButton: sendTransactionButton(),
-          //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
-        ));
+          //body:
+          body(),
+      //floatingActionButtonLocation:
+      //    FloatingActionButtonLocation.centerFloat,
+      //floatingActionButton: sendTransactionButton(),
+      //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
+      //)
+    );
   }
 
   PreferredSize header() => PreferredSize(
@@ -210,7 +212,7 @@ class _SendState extends State<Send> {
 
   bool verifyMemo([String? memo]) => (memo ?? sendMemo.text).length <= 80;
 
-  ListView body() => ListView(
+  Widget body() => ListView(
         // solves scrolling while keyboard
         shrinkWrap: true,
         padding: EdgeInsets.all(16),
@@ -220,34 +222,44 @@ class _SendState extends State<Send> {
             children: <Widget>[
               //Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
               //    style: Theme.of(context).textTheme.caption),
-              DropdownButtonFormField<String>(
-                  isExpanded: true,
-                  decoration: InputDecoration(
-                    errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide:
-                            BorderSide(color: Color(0xFFAA2E25), width: 2)),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide:
-                            BorderSide(color: Color(0xFF5C6BC0), width: 2)),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(color: Color(0x1F000000))),
-                    //labelText: 'Asset'
-                  ),
-                  //value: data['symbol'] ??
-                  value: 'Ravencoin',
-                  items: (useWallet
-                          ? Current.walletHoldingNames(data['walletId'])
-                          : Current.holdingNames)
-                      .map((String value) => DropdownMenuItem<String>(
-                          value: value, child: Text(value)))
-                      .toList(),
-                  onChanged: (String? newValue) {
-                    FocusScope.of(context).requestFocus(sendAddressFocusNode);
-                    setState(() => data['symbol'] = newValue!);
-                  }),
+              Container(
+                  height: 56,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0),
+                      border: Border.all(color: Color(0x1F000000), width: 1)),
+                  child: Padding(
+                      padding: EdgeInsets.only(left: 14),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            DropdownButton<String>(
+                                isExpanded: true,
+                                borderRadius: BorderRadius.circular(8.0),
+                                underline: SizedBox.shrink(),
+                                icon: Padding(
+                                    padding: EdgeInsets.only(right: 14),
+                                    child: Icon(Icons.expand_more_rounded)),
+                                //value: data['symbol'] ??
+                                value: 'Ravencoin',
+                                items: (useWallet
+                                        ? Current.walletHoldingNames(
+                                            data['walletId'])
+                                        : Current.holdingNames)
+                                    .map((String value) =>
+                                        DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(
+                                                value,
+                                                style: Theme.of(context)
+                                                    .sendFeildText)))
+                                    .toList(),
+                                onChanged: (String? newValue) {
+                                  FocusScope.of(context)
+                                      .requestFocus(sendAddressFocusNode);
+                                  setState(() => data['symbol'] = newValue!);
+                                }),
+                          ]))),
               Visibility(
                   visible: addressName != '', child: Text('To: $addressName')),
               SizedBox(height: 16.0),
@@ -263,11 +275,14 @@ class _SendState extends State<Send> {
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
                           BorderSide(color: Color(0xFF5C6BC0), width: 2)),
-                  border: OutlineInputBorder(
+                  enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0x1F000000))),
                   labelText: '*To',
-                  labelStyle: TextStyle(color: const Color(0xFF5C6BC0)),
+                  labelStyle: Theme.of(context).sendFeildText,
+                  floatingLabelStyle: TextStyle(color: const Color(0xFF5C6BC0)),
+                  contentPadding:
+                      EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
                   hintText: 'Address',
                   suffixIcon: IconButton(
                     icon: Image.asset('assets/icons/scan/scan_black.png',
@@ -316,24 +331,40 @@ class _SendState extends State<Send> {
                 controller: sendAmount,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                    errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(
-                            color: const Color(0xFFAA2E25), width: 2)),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(
-                            color: const Color(0xFF5C6BC0), width: 2)),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        //notice this is completely ignored...!
-                        borderSide: BorderSide(
-                          style: BorderStyle.none,
-                          color: Colors.green,
-                        )),
-                    labelText: '*Amount',
-                    labelStyle: TextStyle(color: const Color(0xFF5C6BC0)),
-                    hintText: 'Quantity'),
+                  errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide:
+                          BorderSide(color: const Color(0xFFAA2E25), width: 2)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide:
+                          BorderSide(color: const Color(0xFF5C6BC0), width: 2)),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide(color: Color(0x1F000000))),
+                  labelText: '*Amount',
+                  labelStyle: Theme.of(context).sendFeildText,
+                  floatingLabelStyle: TextStyle(color: const Color(0xFF5C6BC0)),
+                  contentPadding:
+                      EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
+                  hintText: 'Quantity',
+                  suffixText: sendAll ? "don't send all" : 'send all',
+                  suffixStyle: Theme.of(context).textTheme.caption,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                        sendAll ? Icons.not_interested : Icons.all_inclusive),
+                    onPressed: () {
+                      if (!sendAll) {
+                        sendAll = true;
+                        sendAmount.text = holding.toString();
+                      } else {
+                        sendAll = false;
+                        sendAmount.text = '';
+                      }
+                      verifyVisibleAmount(sendAmount.text);
+                    },
+                  ),
+                ),
                 onChanged: (value) {
                   verifyVisibleAmount(value);
                 },
@@ -354,99 +385,76 @@ class _SendState extends State<Send> {
               //Row(
               //    mainAxisAlignment: MainAxisAlignment.spaceBetween,
               //    children: [Text('fee'), Text('0.01397191 RVN')]),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text('remaining', style: Theme.of(context).annotate),
-                Text('~ ${holding - double.parse(visibleAmount)}',
-                    style: Theme.of(context).annotate),
-                TextButton.icon(
-                    onPressed: () {
-                      if (!sendAll) {
-                        sendAll = true;
-                        sendAmount.text = holding.toString();
-                      } else {
-                        sendAll = false;
-                        sendAmount.text = '';
-                      }
-                      verifyVisibleAmount(sendAmount.text);
-                    },
-                    icon: Icon(
-                        sendAll ? Icons.not_interested : Icons.all_inclusive),
-                    label: Text(sendAll ? "don't send all" : 'send all',
-                        style: Theme.of(context).textTheme.caption)),
-              ]),
+              ////Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              ////  Text('remaining', style: Theme.of(context).annotate),
+              ////  Text('~ ${holding - double.parse(visibleAmount)}',
+              ////      style: Theme.of(context).annotate),
+              ////  TextButton.icon(
+              ////      onPressed: () {
+              ////        if (!sendAll) {
+              ////          sendAll = true;
+              ////          sendAmount.text = holding.toString();
+              ////        } else {
+              ////          sendAll = false;
+              ////          sendAmount.text = '';
+              ////        }
+              ////        verifyVisibleAmount(sendAmount.text);
+              ////      },
+              ////      icon: Icon(
+              ////          sendAll ? Icons.not_interested : Icons.all_inclusive),
+              ////      label: Text(sendAll ? "don't send all" : 'send all',
+              ////          style: Theme.of(context).textTheme.caption)),
+              ////]),
               SizedBox(height: 16.0),
               //Text('Transaction Fee',
               //    style: Theme.of(context).textTheme.caption),
-              /// https://stackoverflow.com/questions/66135853/how-to-create-a-rounded-corner-of-dropdownbuttonformfield-flutter/66136773
-              /// it seems we can either style the menu with rounded corners (using a DropdownButton)
-              /// or we can style the button with rounded corners (using a DropdownButtonFormField)
-              /// but not both... Jesus.
               Container(
-                //padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 height: 56,
                 decoration: BoxDecoration(
-                  //focusedBorder: OutlineInputBorder(
-                  //    borderRadius: BorderRadius.circular(8.0),
-                  //    borderSide:
-                  //        BorderSide(color: Color(0xFF5C6BC0), width: 2)),
-                  borderRadius: BorderRadius.circular(8.0),
-                  border: Border.all(
-                    color: Color(0x1F000000), //Color(0xFF5C6BC0),
-                    width: 1,
-                  ),
-
-                  //labelText: 'Fee'
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    DropdownButton<String>(
-                        focusNode: sendFeeFocusNode,
-                        isExpanded: true,
-                        value: feeGoal.name,
-                        //decoration: InputDecoration(
-                        //    errorBorder: OutlineInputBorder(
-                        //        borderRadius: BorderRadius.circular(8.0),
-                        //        borderSide:
-                        //            BorderSide(color: Color(0xFFAA2E25), width: 2)),
-                        //    focusedBorder: OutlineInputBorder(
-                        //        borderRadius: BorderRadius.circular(8.0),
-                        //        borderSide:
-                        //            BorderSide(color: Color(0xFF5C6BC0), width: 2)),
-                        //    border: OutlineInputBorder(
-                        //        borderRadius: BorderRadius.circular(8.0),
-                        //        borderSide: BorderSide(color: Color(0x1F000000))),
-                        //    labelText: 'Fee'),
-                        ///only valid with DropdownButton
-                        borderRadius: BorderRadius.circular(8.0),
-                        underline: SizedBox.shrink(),
-                        icon: Padding(
-                            padding: EdgeInsets.only(right: 14),
-                            child: Icon(Icons.expand_more_rounded)),
-
-                        /// for both
-                        items: [
-                          DropdownMenuItem(
-                              value: 'Cheap', child: Text('   Cheap')),
-                          DropdownMenuItem(
-                              value: 'Standard', child: Text('   Standard')),
-                          DropdownMenuItem(
-                              value: 'Fast', child: Text('   Fast'))
-                        ],
-                        onChanged: (String? newValue) {
-                          feeGoal = {
-                                'Cheap': cheap,
-                                'Standard': standard,
-                                'Fast': fast,
-                              }[newValue] ??
-                              standard; // <--- replace by custom dialogue
-                          FocusScope.of(context)
-                              .requestFocus(sendNoteFocusNode);
-                          setState(() {});
-                        }),
-                  ],
-                ),
+                    borderRadius: BorderRadius.circular(8.0),
+                    border: Border.all(color: Color(0x1F000000), width: 1)),
+                child: Padding(
+                    padding: EdgeInsets.only(left: 14),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        DropdownButton<String>(
+                            focusNode: sendFeeFocusNode,
+                            isExpanded: true,
+                            value: feeGoal.name,
+                            borderRadius: BorderRadius.circular(8.0),
+                            underline: SizedBox.shrink(),
+                            icon: Padding(
+                                padding: EdgeInsets.only(right: 14),
+                                child: Icon(Icons.expand_more_rounded)),
+                            items: [
+                              DropdownMenuItem(
+                                  value: 'Cheap',
+                                  child: Text('Cheap Fee',
+                                      style: Theme.of(context).sendFeildText)),
+                              DropdownMenuItem(
+                                  value: 'Standard',
+                                  child: Text('Standard Fee',
+                                      style: Theme.of(context).sendFeildText)),
+                              DropdownMenuItem(
+                                  value: 'Fast',
+                                  child: Text('Fast Fee',
+                                      style: Theme.of(context).sendFeildText))
+                            ],
+                            onChanged: (String? newValue) {
+                              feeGoal = {
+                                    'Cheap': cheap,
+                                    'Standard': standard,
+                                    'Fast': fast,
+                                  }[newValue] ??
+                                  standard; // <--- replace by custom dialogue
+                              FocusScope.of(context)
+                                  .requestFocus(sendNoteFocusNode);
+                              setState(() {});
+                            }),
+                      ],
+                    )),
               ),
 
               /// HIDE MEMO for beta - not supported by ravencoin anyway
@@ -482,22 +490,27 @@ class _SendState extends State<Send> {
                 focusNode: sendNoteFocusNode,
                 controller: sendNote,
                 decoration: InputDecoration(
-                    errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide:
-                            BorderSide(color: Color(0xFFAA2E25), width: 2)),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide:
-                            BorderSide(color: Color(0xFF5C6BC0), width: 2)),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(color: Color(0x1F000000))),
-                    labelText: 'Note (optional)',
-                    hintText: 'Private note to self'),
+                  errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide:
+                          BorderSide(color: Color(0xFFAA2E25), width: 2)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide:
+                          BorderSide(color: Color(0xFF5C6BC0), width: 2)),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide(color: Color(0x1F000000))),
+                  labelText: 'Note',
+                  labelStyle: Theme.of(context).sendFeildText,
+                  floatingLabelStyle: TextStyle(color: const Color(0xFF5C6BC0)),
+                  contentPadding:
+                      EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
+                  hintText: 'Private note to self',
+                ),
                 onEditingComplete: () async => startSend(),
               ),
-              //Center(child: sendTransactionButton(_formKey))
+              SizedBox(height: 44),
               Center(child: sendTransactionButton()),
             ],
           ),
@@ -639,11 +652,36 @@ class _SendState extends State<Send> {
   /// services.historyService.saveNote(hash, note {or history object})
   /// should notes be in a separate reservoir? makes this simpler, but its nice
   /// to have it all in one place as in transaction.note....
-  ElevatedButton sendTransactionButton() => ElevatedButton.icon(
+  ElevatedButton sendTransactionButton1() => ElevatedButton.icon(
       icon: Icon(Icons.send),
       label: Text('Send'),
       onPressed: () async => await startSend(),
       style: components.buttonStyles.curvedSides);
+
+  Widget sendTransactionButton() => Expanded(
+      child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: 40,
+          child: OutlinedButton.icon(
+            onPressed: () async => await startSend(),
+            icon: Image(
+                image: AssetImage('assets/icons/send/send_black.png'),
+                height: 24,
+                width: 24),
+            label: Text('SEND'.toUpperCase()),
+            style: ButtonStyle(
+              //fixedSize: MaterialStateProperty.all(Size(156, 40)),
+              textStyle:
+                  MaterialStateProperty.all(Theme.of(context).navBarButton),
+              foregroundColor: MaterialStateProperty.all(Color(0xDE000000)),
+              side: MaterialStateProperty.all(BorderSide(
+                  color: Color(0xFF5C6BC0),
+                  width: 2,
+                  style: BorderStyle.solid)),
+              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0))),
+            ),
+          )));
 
   Future confirmMessage({
     required ravencoin.Transaction tx,

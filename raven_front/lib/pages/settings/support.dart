@@ -44,6 +44,7 @@ class Support extends StatelessWidget {
                     name: 'RAVENCOIN',
                     color: 'green',
                   ),
+                  SizedBox(width: 16),
                   actionButton(
                     context,
                     name: 'MOONTREE',
@@ -61,41 +62,40 @@ class Support extends StatelessWidget {
     required String color,
     String? link,
   }) =>
-      OutlinedButton(
-        onPressed: () => showDialog(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-                    title: Text('Open in External App'),
-                    content: Text('Open discord app or browser?'),
-                    actions: [
-                      TextButton(
-                          child: Text('Cancel'),
-                          onPressed: () => Navigator.of(context).pop()),
-                      TextButton(
-                          child: Text('Continue'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            launch(
-                                'https://discord.gg/${link ?? name.toLowerCase()}');
-                          })
-                    ])),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Image.asset(
-            'assets/icons/discord/discord_$color.png',
-            height: 23,
-            width: 20,
-          ),
-          SizedBox(width: 8),
-          Text(name.toUpperCase())
-        ]),
-        style: ButtonStyle(
-          fixedSize: MaterialStateProperty.all(Size(156, 40)),
-          textStyle: MaterialStateProperty.all(Theme.of(context).navBarButton),
-          foregroundColor: MaterialStateProperty.all(Color(0xDE000000)),
-          side: MaterialStateProperty.all(BorderSide(
-              color: Color(0xFF5C6BC0), width: 2, style: BorderStyle.solid)),
-          shape: MaterialStateProperty.all(RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0))),
-        ),
-      );
+      Container(
+          width: (MediaQuery.of(context).size.width / 2) - 24,
+          height: 40,
+          child: OutlinedButton.icon(
+            onPressed: () => showDialog(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                        title: Text('Open in External App'),
+                        content: Text('Open discord app or browser?'),
+                        actions: [
+                          TextButton(
+                              child: Text('Cancel'),
+                              onPressed: () => Navigator.of(context).pop()),
+                          TextButton(
+                              child: Text('Continue'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                launch(
+                                    'https://discord.gg/${link ?? name.toLowerCase()}');
+                              })
+                        ])),
+            icon: Image.asset('assets/icons/discord/discord_$color.png',
+                height: 23, width: 20),
+            label: Text(name.toUpperCase()),
+            style: ButtonStyle(
+              textStyle:
+                  MaterialStateProperty.all(Theme.of(context).navBarButton),
+              foregroundColor: MaterialStateProperty.all(Color(0xDE000000)),
+              side: MaterialStateProperty.all(BorderSide(
+                  color: Color(0xFF5C6BC0),
+                  width: 2,
+                  style: BorderStyle.solid)),
+              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0))),
+            ),
+          ));
 }
