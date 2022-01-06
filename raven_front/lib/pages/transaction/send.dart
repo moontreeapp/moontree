@@ -512,6 +512,7 @@ class _SendState extends State<Send> {
               ),
               SizedBox(height: 44),
               Center(child: sendTransactionButton()),
+              SizedBox(height: 20),
             ],
           ),
         ],
