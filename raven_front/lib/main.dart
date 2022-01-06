@@ -90,7 +90,8 @@ class RavenMobileApp extends StatelessWidget {
       },
       builder: (context, child) {
         return BackdropScaffold(
-          headerHeight: 430,
+          //headerHeight: components.size.height, // use stickyFrontLayer instead
+          stickyFrontLayer: true,
           resizeToAvoidBottomInset: false,
           backgroundColor: Colors.white,
           backLayerBackgroundColor: Theme.of(context).backgroundColor,
@@ -128,7 +129,7 @@ class RavenMobileApp extends StatelessWidget {
               SizedBox(width: 16),
             ],
           ),
-          backLayer: NavDrawer(),
+          backLayer: BackLayer(),
           frontLayer: Container(color: Colors.white, child: child!),
           floatingActionButton: NavBar(),
           floatingActionButtonLocation:

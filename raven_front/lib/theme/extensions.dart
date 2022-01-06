@@ -201,4 +201,43 @@ extension TextStyleExtension on ThemeData {
           fontWeight: FontWeightNames.semiBold,
           letterSpacing: 0.15,
           color: Color(0x99000000));
+  TextStyle? get balanceAmount => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 24.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeightNames.regular,
+          letterSpacing: 0.18,
+          color: Colors.white)
+      : TextStyle(
+          fontSize: 24.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeightNames.regular,
+          letterSpacing: 0.18,
+          color: Colors.white);
+  TextStyle? get balanceDollar => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 16.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeightNames.regular,
+          letterSpacing: 0.5,
+          color: Colors.white)
+      : TextStyle(
+          fontSize: 16.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeightNames.regular,
+          letterSpacing: 0.5,
+          color: Colors.white);
+  TextStyle? get remaining => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeightNames.regular,
+          letterSpacing: 0.25,
+          color: Color(0xDEFFFFFF))
+      : TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeightNames.regular,
+          letterSpacing: 0.25,
+          color: Color(0xDEFFFFFF));
 }

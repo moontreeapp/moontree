@@ -3,8 +3,12 @@ export 'connection.dart';
 export 'lead.dart';
 export 'title.dart';
 
-// body
+// back layer
+export 'back_layer.dart';
 export 'nav_drawer.dart';
+export 'balance_header.dart';
+
+// floating action button
 export 'nav_bar.dart';
 
 // lists

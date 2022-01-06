@@ -659,30 +659,26 @@ class _SendState extends State<Send> {
       onPressed: () async => await startSend(),
       style: components.buttonStyles.curvedSides);
 
-  Widget sendTransactionButton() => Expanded(
-      child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: 40,
-          child: OutlinedButton.icon(
-            onPressed: () async => await startSend(),
-            icon: Image(
-                image: AssetImage('assets/icons/send/send_black.png'),
-                height: 24,
-                width: 24),
-            label: Text('SEND'.toUpperCase()),
-            style: ButtonStyle(
-              //fixedSize: MaterialStateProperty.all(Size(156, 40)),
-              textStyle:
-                  MaterialStateProperty.all(Theme.of(context).navBarButton),
-              foregroundColor: MaterialStateProperty.all(Color(0xDE000000)),
-              side: MaterialStateProperty.all(BorderSide(
-                  color: Color(0xFF5C6BC0),
-                  width: 2,
-                  style: BorderStyle.solid)),
-              shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0))),
-            ),
-          )));
+  Widget sendTransactionButton() => Container(
+      width: MediaQuery.of(context).size.width,
+      height: 40,
+      child: OutlinedButton.icon(
+        onPressed: () async => await startSend(),
+        icon: Image(
+            image: AssetImage('assets/icons/send/send_black.png'),
+            height: 24,
+            width: 24),
+        label: Text('SEND'.toUpperCase()),
+        style: ButtonStyle(
+          //fixedSize: MaterialStateProperty.all(Size(156, 40)),
+          textStyle: MaterialStateProperty.all(Theme.of(context).navBarButton),
+          foregroundColor: MaterialStateProperty.all(Color(0xDE000000)),
+          side: MaterialStateProperty.all(BorderSide(
+              color: Color(0xFF5C6BC0), width: 2, style: BorderStyle.solid)),
+          shape: MaterialStateProperty.all(RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0))),
+        ),
+      ));
 
   Future confirmMessage({
     required ravencoin.Transaction tx,

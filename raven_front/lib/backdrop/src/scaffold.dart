@@ -3,6 +3,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
+import 'package:raven_back/streams/streams.dart';
+
 /// [InheritedWidget] that exposes state of [BackdropScaffold].
 ///
 /// [Backdrop.of] can be used to access [BackdropScaffoldState] from anywhere
@@ -573,7 +575,7 @@ class BackdropScaffoldState extends State<BackdropScaffold>
                 Flexible(child: widget.frontLayer),
               ],
             ),
-            _buildInactiveLayer(context),
+            if (_hasFrontLayerScrim) _buildInactiveLayer(context),
           ],
         ),
       ),
@@ -656,6 +658,16 @@ class BackdropScaffoldState extends State<BackdropScaffold>
 
   bool get _hasBackLayerScrim =>
       isBackLayerConcealed && widget.frontLayerActiveFactor < 1;
+
+  /// this is not an ideal solution to
+  /// https://github.com/fluttercommunity/backdrop/issues/117
+  /// because I don't want the backdrop layer to have access to the streams
+  /// I'd rather the widget inform the backdrop layer how to behave
+  /// However, I tried making the `Offstage` in `_buildInactiveLayer` work
+  /// according to a widget variable which was modified in realtime by
+  /// `.revealBackLayer(activeFront: true);` but that failed to work, so
+  /// though this is not the pure top-down solution I was hoping for, it works:
+  bool get _hasFrontLayerScrim => streams.app.page.value == 'Wallet';
 
   @override
   Widget build(BuildContext context) {

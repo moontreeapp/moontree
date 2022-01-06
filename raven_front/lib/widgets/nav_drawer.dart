@@ -62,10 +62,17 @@ class _NavDrawerState extends State<NavDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
       padding: EdgeInsets.only(left: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+
+      /// using a listview makes it variable so you don't have to define height
+      //height: 300,
+      //child: Column(
+      //  crossAxisAlignment: CrossAxisAlignment.start,
+      ///
+
+      child: ListView(
+        shrinkWrap: true,
         children: [
           destination(
             image: Image(
