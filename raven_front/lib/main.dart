@@ -9,9 +9,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:raven_front/pages.dart';
 import 'package:raven_front/pages/password/change.dart';
 import 'package:raven_front/components/components.dart';
-import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/theme/theme.dart';
-import 'package:raven_front/widgets/nav_drawer.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 //import 'package:backdrop/backdrop.dart';
@@ -131,9 +129,6 @@ class RavenMobileApp extends StatelessWidget {
           ),
           backLayer: BackLayer(),
           frontLayer: Container(color: Colors.white, child: child!),
-          floatingActionButton: NavBar(),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
         );
       },
     );

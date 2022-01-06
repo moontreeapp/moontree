@@ -1,6 +1,8 @@
 /// this file could be removed with slight modifications to transactions.dart
 /// that should probably happen at some point - when we start using assets more.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:raven_back/raven_back.dart';
@@ -23,6 +25,7 @@ class Asset extends StatefulWidget {
 
 class _AssetState extends State<Asset> {
   Map<String, dynamic> data = {};
+  List<StreamSubscription> listeners = [];
   bool showUSD = false;
   late List<TransactionRecord> currentTxs;
   late List<Balance> currentHolds;
@@ -32,6 +35,17 @@ class _AssetState extends State<Asset> {
   @override
   void initState() {
     super.initState();
+    listeners.add(balances.batchedChanges.listen((batchedChanges) {
+      if (batchedChanges.isNotEmpty) setState(() {});
+    }));
+  }
+
+  @override
+  void dispose() {
+    for (var listener in listeners) {
+      listener.cancel();
+    }
+    super.dispose();
   }
 
   bool visibilityOfSendReceive(notification) {

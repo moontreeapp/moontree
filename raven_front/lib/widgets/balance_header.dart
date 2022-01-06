@@ -25,6 +25,7 @@ class _BalanceHeaderState extends State<BalanceHeader> {
       listener.cancel();
     }
     super.dispose();
+    Backdrop.of(components.navigator.routeContext!).concealBackLayer();
   }
 
   @override
@@ -37,11 +38,7 @@ class _BalanceHeaderState extends State<BalanceHeader> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset(
-                'assets/rvnonly.png',
-                height: 56,
-                width: 56,
-              ),
+              Image.asset('assets/rvnonly.png', height: 56, width: 56),
               SizedBox(height: 8),
               Text('amount', style: Theme.of(context).balanceAmount),
               SizedBox(height: 1),

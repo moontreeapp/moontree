@@ -26,6 +26,7 @@ class Send extends StatefulWidget {
 
 class _SendState extends State<Send> {
   Map<String, dynamic> data = {};
+  final sendAsset = TextEditingController();
   final sendAddress = TextEditingController();
   final sendAmount = TextEditingController();
   final sendMemo = TextEditingController();
@@ -56,6 +57,7 @@ class _SendState extends State<Send> {
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
+    sendAsset.dispose();
     sendAddress.dispose();
     sendAmount.dispose();
     sendMemo.dispose();
@@ -222,47 +224,51 @@ class _SendState extends State<Send> {
             children: <Widget>[
               //Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
               //    style: Theme.of(context).textTheme.caption),
-              Container(
-                  height: 56,
-                  decoration: BoxDecoration(
+              //;
+              TextField(
+                controller: sendAsset,
+                readOnly: true,
+                decoration: InputDecoration(
+                  errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
-                      border: Border.all(color: Color(0x1F000000), width: 1)),
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 14),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            DropdownButton<String>(
-                                isExpanded: true,
-                                borderRadius: BorderRadius.circular(8.0),
-                                underline: SizedBox.shrink(),
-                                icon: Padding(
-                                    padding: EdgeInsets.only(right: 14),
-                                    child: Icon(Icons.expand_more_rounded)),
-                                //value: data['symbol'] ??
-                                value: 'Ravencoin',
-                                items: (useWallet
-                                        ? Current.walletHoldingNames(
-                                            data['walletId'])
-                                        : Current.holdingNames)
-                                    .map((String value) =>
-                                        DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(
-                                                value,
-                                                style: Theme.of(context)
-                                                    .sendFeildText)))
-                                    .toList(),
-                                onChanged: (String? newValue) {
-                                  FocusScope.of(context)
-                                      .requestFocus(sendAddressFocusNode);
-                                  setState(() => data['symbol'] = newValue!);
-                                }),
-                          ]))),
+                      borderSide:
+                          BorderSide(color: Color(0xFFAA2E25), width: 2)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide:
+                          BorderSide(color: Color(0xFF5C6BC0), width: 2)),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide(color: Color(0x1F000000))),
+                  labelText: '*Asset',
+                  labelStyle: Theme.of(context).sendFeildText,
+                  floatingLabelStyle: TextStyle(color: const Color(0xFF5C6BC0)),
+                  contentPadding:
+                      EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
+                  hintText: 'Ravencoin',
+                  suffixIcon: IconButton(
+                    icon: Padding(
+                        padding: EdgeInsets.only(right: 14),
+                        child: Icon(Icons.expand_more_rounded)),
+                    onPressed: () => _produceAssetModal(),
+                  ),
+                ),
+                onTap: () {
+                  _produceAssetModal();
+                },
+                onEditingComplete: () async {
+                  /// should tell front end what it was so we can notify user we're substituting the asset name or uns domain for the actual address
+                  //var verifiedAddress =
+                  //    await verifyValidAddress(sendAddress.text);
+                  //sendAddress.text = verifiedAddress;
+                  FocusScope.of(context).requestFocus(sendAddressFocusNode);
+                  //setState(() {});
+                },
+              ),
+
+              SizedBox(height: 16.0),
               Visibility(
                   visible: addressName != '', child: Text('To: $addressName')),
-              SizedBox(height: 16.0),
               TextField(
                 focusNode: sendAddressFocusNode,
                 controller: sendAddress,
@@ -839,5 +845,16 @@ class _SendState extends State<Send> {
       }
     }
     //Navigator.pop(context);
+  }
+
+  void _produceAssetModal() {
+    showModalBottomSheet<int>(
+      backgroundColor: Colors.white,
+      context: context,
+      builder: (context) {
+        return Container(
+            height: 200, color: Colors.lightBlue, child: Text('data'));
+      },
+    );
   }
 }

@@ -52,7 +52,7 @@ class _NavBarState extends State<NavBar> {
           'Feedback',
           'Settings',
           'Import / Export',
-          'Send',
+          'Send', // todo: disable if Current.holdings.length > 0
           'Receive',
         ].contains(pageTitle),
         child: Container(
