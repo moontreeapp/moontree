@@ -13,8 +13,8 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
   // mainnet electrum3.rvn.rocks
   // testnet rvn4lyfe.com:50003
 
-  static final String defaultUrl = 'rvn4lyfe.com'; // 'testnet.rvn.rocks'
-  static final int defaultPort = 50003; // 50002
+  static final String defaultUrl = 'testnet.rvn.rocks'; // 'rvn4lyfe.com';
+  static final int defaultPort = 50002; // 50003;
 
   static Map<String, Setting> get defaults => {
         SettingName.Electrum_Domain0:

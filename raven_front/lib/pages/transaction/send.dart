@@ -249,7 +249,8 @@ class _SendState extends State<Send> {
                   suffixIcon: IconButton(
                     icon: Padding(
                         padding: EdgeInsets.only(right: 14),
-                        child: Icon(Icons.expand_more_rounded)),
+                        child: Icon(Icons.expand_more_rounded,
+                            color: Colors.black)),
                     onPressed: () => _produceAssetModal(),
                   ),
                 ),
@@ -358,7 +359,8 @@ class _SendState extends State<Send> {
                   suffixStyle: Theme.of(context).textTheme.caption,
                   suffixIcon: IconButton(
                     icon: Icon(
-                        sendAll ? Icons.not_interested : Icons.all_inclusive),
+                        sendAll ? Icons.not_interested : Icons.all_inclusive,
+                        color: Colors.black),
                     onPressed: () {
                       if (!sendAll) {
                         sendAll = true;
@@ -848,13 +850,67 @@ class _SendState extends State<Send> {
   }
 
   void _produceAssetModal() {
-    showModalBottomSheet<int>(
-      backgroundColor: Colors.white,
-      context: context,
-      builder: (context) {
-        return Container(
-            height: 200, color: Colors.lightBlue, child: Text('data'));
-      },
-    );
+    //IconButton(
+    //  icon: Icon(Icons.arrow_drop_down_sharp,
+    //      size: 26.0, color: Colors.grey.shade200),
+    //  onPressed: () {
+    showModalBottomSheet<void>(
+        // if we want the scrim to cover the header too...
+        // we probably need to move this out to the main scaffold...
+        context: context,
+        enableDrag: true,
+        elevation: 1,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
+        builder: (BuildContext context) => Container(
+            height: (MediaQuery.of(context).size.height + 280 + 80) / 2,
+            child:
+                //ListView(children: <Widget>[
+                Column(children: <Widget>[
+              ...[SizedBox(height: 8)],
+              for (var holding in (useWallet
+                      ? Current.walletHoldingNames(data['walletId'])
+                      : Current.holdingNames) +
+                  ['Ravencoin', 'Amazon']) ...[
+                ListTile(
+                  visualDensity: VisualDensity.compact,
+                  onTap: () async {
+                    // do something like this:
+                    //await settings.setCurrentAccountId(account.accountId);
+                    // to update the icon, amount, dollars and remaining...
+                    sendAsset.text = holding;
+                    Navigator.pop(context);
+                  },
+                  leading: components.icons
+                      .assetAvatar(holding, height: 24, width: 24),
+                  title: Text(holding, style: Theme.of(context).choices),
+                ),
+              ],
+            ])
+
+            //{
+            //  return Container(
+            //    height: 200,
+            //    color: Colors.amber,
+            //    child: Center(
+            //      child: Column(
+            //        mainAxisAlignment: MainAxisAlignment.center,
+            //        mainAxisSize: MainAxisSize.min,
+            //        children: <Widget>[
+            //          const Text('Modal BottomSheet'),
+            //          ElevatedButton(
+            //            child: const Text('Close BottomSheet'),
+            //            onPressed: () => Navigator.pop(context),
+            //          )
+            //        ],
+            //      ),
+            //    ),
+            //  );
+            //},
+            ));
+    //  },
+    //);
   }
 }

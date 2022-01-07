@@ -30,6 +30,7 @@ class CustomTheme with ChangeNotifier {
     return ThemeData(
       brightness: Brightness.light,
       backgroundColor: primaryColor,
+      primaryColor: primaryColor,
       //primarySwatch: generateMaterialColor(Palette.ravenBlue),
       fontFamily: 'Nunito',
       //primaryColor: Colors.blue.shade900,
