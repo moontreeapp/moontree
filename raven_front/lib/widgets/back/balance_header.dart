@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:tuple/tuple.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/components/components.dart';
@@ -17,6 +19,7 @@ class BalanceHeader extends StatefulWidget {
 class _BalanceHeaderState extends State<BalanceHeader> {
   List<StreamSubscription> listeners = [];
   String symbol = 'RVN';
+  double amount = 0.0;
   String visibleAmount = '0';
   String visibleFiatAmount = '';
   String validatedAddress = 'unknown';
@@ -26,10 +29,11 @@ class _BalanceHeaderState extends State<BalanceHeader> {
   void initState() {
     Backdrop.of(components.navigator.routeContext!).revealBackLayer();
     super.initState();
-    listeners.add(streams.app.holding.listen((value) {
-      if (value != symbol) {
+    listeners.add(streams.app.spending.listen((Tuple2<String, double> value) {
+      if (symbol != value.item1 || amount != value.item2) {
         setState(() {
-          symbol = value;
+          symbol = value.item1;
+          amount = value.item2;
         });
       }
     }));
@@ -58,6 +62,7 @@ class _BalanceHeaderState extends State<BalanceHeader> {
     } catch (e) {
       visibleFiatAmount = '';
     }
+    var balance = 0;
     return Container(
       padding: EdgeInsets.all(16),
       child: ListView(
@@ -70,21 +75,20 @@ class _BalanceHeaderState extends State<BalanceHeader> {
               ///symbol image placeholder
               Container(height: 56, width: 56, child: Text(symbol)),
               SizedBox(height: 8),
-              Text('amount',
-                  style:
-                      Theme.of(context).balanceAmount), // get this from balance
+              // get this from balance
+              Text('Balance', style: Theme.of(context).balanceAmount),
               SizedBox(height: 1),
-              Text(visibleFiatAmount,
-                  style: Theme.of(context)
-                      .balanceDollar), // USD amount of balance fix!
+              // USD amount of balance fix!
+              Text('\$ USD Balance', style: Theme.of(context).balanceDollar),
               SizedBox(height: 30),
               widget.pageTitle == 'Send'
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                          Text('Remaining:', // get from stream
+                          Text('Remaining:',
                               style: Theme.of(context).remaining),
-                          Text('amount', style: Theme.of(context).remaining)
+                          Text((balance - amount).toString(),
+                              style: Theme.of(context).remaining)
                         ])
                   : SizedBox(height: 14),
             ],

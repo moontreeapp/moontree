@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 import 'package:barcode_scan2/barcode_scan2.dart';
@@ -10,7 +11,6 @@ import 'package:raven_back/services/transaction_maker.dart';
 import 'package:raven_back/raven_back.dart';
 
 import 'package:raven_front/components/components.dart';
-import 'package:raven_front/indicators/indicators.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/utils/address.dart';
 import 'package:raven_front/utils/params.dart';
@@ -30,6 +30,7 @@ class _SendState extends State<Send> {
   final sendAsset = TextEditingController();
   final sendAddress = TextEditingController();
   final sendAmount = TextEditingController();
+  final sendFee = TextEditingController();
   final sendMemo = TextEditingController();
   final sendNote = TextEditingController();
   String visibleAmount = '0';
@@ -61,6 +62,7 @@ class _SendState extends State<Send> {
     sendAsset.dispose();
     sendAddress.dispose();
     sendAmount.dispose();
+    sendFee.dispose();
     sendMemo.dispose();
     sendNote.dispose();
     super.dispose();
@@ -207,7 +209,8 @@ class _SendState extends State<Send> {
                     icon: Padding(
                         padding: EdgeInsets.only(right: 14),
                         child: Icon(Icons.expand_more_rounded,
-                            color: Color(0xFF606060))),
+                            //color: Color(0xFF606060))),
+                            color: Color(0xDE000000))),
                     onPressed: () => _produceAssetModal(),
                   ),
                 ),
@@ -242,17 +245,16 @@ class _SendState extends State<Send> {
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0x1F000000))),
-                  labelText: '*To',
+                  labelText: 'To',
                   labelStyle: Theme.of(context).sendFeildText,
                   floatingLabelStyle: TextStyle(color: const Color(0xFF5C6BC0)),
                   contentPadding:
                       EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
                   hintText: 'Address',
                   suffixIcon: IconButton(
-                    icon:
-                        SvgPicture.asset('assets/icons/scan/scan_black_min.svg',
-                            //color: Colors.red,
-                            semanticsLabel: 'A red up arrow'),
+                    icon: SvgPicture.asset('assets/icons/scan/scan_black.svg',
+                        color: Color(0xDE000000),
+                        semanticsLabel: 'A red up arrow'),
                     //  icon: Image.asset('assets/icons/scan/scan_black.png',
                     //      height: 24, width: 24),
                     //icon: ColorFiltered(
@@ -315,7 +317,7 @@ class _SendState extends State<Send> {
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0x1F000000))),
-                  labelText: '*Amount', // Amount -> Amount*
+                  labelText: 'Amount', // Amount -> Amount*
                   labelStyle: Theme.of(context).sendFeildText,
                   floatingLabelStyle: TextStyle(color: const Color(0xFF5C6BC0)),
                   contentPadding:
@@ -341,6 +343,8 @@ class _SendState extends State<Send> {
                 ),
                 onChanged: (value) {
                   verifyVisibleAmount(value);
+                  streams.app.spending
+                      .add(Tuple2(sendAsset.text, double.parse(visibleAmount)));
                 },
                 onEditingComplete: () {
                   sendAmount.text = cleanDecAmount(sendAmount.text);
@@ -382,53 +386,53 @@ class _SendState extends State<Send> {
               SizedBox(height: 16.0),
               //Text('Transaction Fee',
               //    style: Theme.of(context).textTheme.caption),
-              Container(
-                height: 56,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.0),
-                    border: Border.all(color: Color(0x1F000000), width: 1)),
-                child: Padding(
-                    padding: EdgeInsets.only(left: 14),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        DropdownButton<String>(
-                            focusNode: sendFeeFocusNode,
-                            isExpanded: true,
-                            value: feeGoal.name,
-                            borderRadius: BorderRadius.circular(8.0),
-                            underline: SizedBox.shrink(),
-                            icon: Padding(
-                                padding: EdgeInsets.only(right: 14),
-                                child: Icon(Icons.expand_more_rounded)),
-                            items: [
-                              DropdownMenuItem(
-                                  value: 'Cheap',
-                                  child: Text('Cheap Fee',
-                                      style: Theme.of(context).sendFeildText)),
-                              DropdownMenuItem(
-                                  value: 'Standard',
-                                  child: Text('Standard Fee',
-                                      style: Theme.of(context).sendFeildText)),
-                              DropdownMenuItem(
-                                  value: 'Fast',
-                                  child: Text('Fast Fee',
-                                      style: Theme.of(context).sendFeildText))
-                            ],
-                            onChanged: (String? newValue) {
-                              feeGoal = {
-                                    'Cheap': cheap,
-                                    'Standard': standard,
-                                    'Fast': fast,
-                                  }[newValue] ??
-                                  standard; // <--- replace by custom dialogue
-                              FocusScope.of(context)
-                                  .requestFocus(sendNoteFocusNode);
-                              setState(() {});
-                            }),
-                      ],
-                    )),
+              TextField(
+                focusNode: sendFeeFocusNode,
+                controller: sendFee,
+                readOnly: true,
+                decoration: InputDecoration(
+                  errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide:
+                          BorderSide(color: Color(0xFFAA2E25), width: 2)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide:
+                          BorderSide(color: Color(0xFF5C6BC0), width: 2)),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide(color: Color(0x1F000000))),
+                  labelText: 'Fee',
+                  labelStyle: Theme.of(context).sendFeildText,
+                  floatingLabelStyle: TextStyle(color: const Color(0xFF5C6BC0)),
+                  contentPadding:
+                      EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
+                  hintText: 'Ravencoin',
+                  suffixIcon: IconButton(
+                    icon: Padding(
+                        padding: EdgeInsets.only(right: 14),
+                        child: Icon(Icons.expand_more_rounded,
+                            //color: Color(0xFF606060))),
+                            color: Color(0xDE000000))),
+                    onPressed: () => _produceFeeModal(),
+                  ),
+                ),
+                onTap: () {
+                  _produceFeeModal();
+                },
+                onChanged: (String? newValue) {
+                  feeGoal = {
+                        'Cheap': cheap,
+                        'Standard': standard,
+                        'Fast': fast,
+                      }[newValue] ??
+                      standard; // <--- replace by custom dialogue
+                  FocusScope.of(context).requestFocus(sendNoteFocusNode);
+                  setState(() {});
+                },
+                onEditingComplete: () async {
+                  //FocusScope.of(context).requestFocus(sendNoteFocusNode);
+                },
               ),
 
               /// HIDE MEMO for beta - not supported by ravencoin anyway
@@ -793,7 +797,8 @@ class _SendState extends State<Send> {
                   onTap: () {
                     // communicate with header:
                     // visibleAmount = cleanDecAmount(value); make this stream a tuple of holding and amount to send...
-                    streams.app.holding.add(holding);
+                    streams.app.spending.add(Tuple2(holding,
+                        double.parse(cleanDecAmount(sendAmount.text))));
                     sendAsset.text = holding;
                     Navigator.pop(context);
                   },
@@ -826,5 +831,35 @@ class _SendState extends State<Send> {
             ));
     //  },
     //);
+  }
+
+  void _produceFeeModal() {
+    showModalBottomSheet<void>(
+        // if we want the scrim to cover the header too...
+        // we probably need to move this out to the main scaffold...
+        context: context,
+        enableDrag: true,
+        elevation: 1,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
+        builder: (BuildContext context) => Container(
+            height: (MediaQuery.of(context).size.height + 394) / 2,
+            child:
+                //ListView(children: <Widget>[
+                Column(children: <Widget>[
+              ...[SizedBox(height: 8)],
+              for (var fee in ['Cheap', 'Standard', 'Fast']) ...[
+                ListTile(
+                  visualDensity: VisualDensity.compact,
+                  onTap: () {
+                    sendFee.text = fee;
+                    Navigator.pop(context);
+                  },
+                  title: Text(fee, style: Theme.of(context).choices),
+                ),
+              ],
+            ])));
   }
 }
