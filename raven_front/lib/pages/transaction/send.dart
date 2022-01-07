@@ -95,6 +95,7 @@ class _SendState extends State<Send> {
     } catch (e) {
       visibleFiatAmount = '';
     }
+    sendAsset.text = 'Ravencoin'; // should be pre-populated with something.
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: //Scaffold(
@@ -240,7 +241,7 @@ class _SendState extends State<Send> {
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0x1F000000))),
-                  labelText: '*Asset',
+                  labelText: 'Asset',
                   labelStyle: Theme.of(context).sendFeildText,
                   floatingLabelStyle: TextStyle(color: const Color(0xFF5C6BC0)),
                   contentPadding:
@@ -250,7 +251,7 @@ class _SendState extends State<Send> {
                     icon: Padding(
                         padding: EdgeInsets.only(right: 14),
                         child: Icon(Icons.expand_more_rounded,
-                            color: Colors.black)),
+                            color: Color(0xFF606060))),
                     onPressed: () => _produceAssetModal(),
                   ),
                 ),
@@ -292,8 +293,11 @@ class _SendState extends State<Send> {
                       EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
                   hintText: 'Address',
                   suffixIcon: IconButton(
-                    icon: Image.asset('assets/icons/scan/scan_black.png',
-                        height: 24, width: 24),
+                    icon: ColorFiltered(
+                        colorFilter: ColorFilter.mode(
+                            Color(0xFF444444), BlendMode.srcATop),
+                        child: Image.asset('assets/icons/scan/scan.png',
+                            height: 24, width: 24)),
                     onPressed: () async {
                       ScanResult result = await BarcodeScanner.scan();
                       switch (result.type) {
@@ -360,7 +364,7 @@ class _SendState extends State<Send> {
                   suffixIcon: IconButton(
                     icon: Icon(
                         sendAll ? Icons.not_interested : Icons.all_inclusive,
-                        color: Colors.black),
+                        color: Color(0xFF606060)),
                     onPressed: () {
                       if (!sendAll) {
                         sendAll = true;
