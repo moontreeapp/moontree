@@ -44,16 +44,7 @@ class _PageLead extends State<PageLead> {
       ? IconButton(
           onPressed: () => Backdrop.of(context).fling(),
           padding: EdgeInsets.only(left: 16),
-          //icon: Image(image: AssetImage('assets/icons/menu/menu.png')))
-
-          //icon: SvgPicture.asset('assets/icons/menu/menu_aligned.svg'))
-          //icon: SvgPicture.asset('assets/icons/menu/menu_unaligned.svg'))
-          //icon: SvgPicture.asset('assets/icons/menu/menu_ill_noshadow.svg'))
-          //icon: SvgPicture.asset('assets/icons/menu/menu_ill_shadow.svg'))
-          //icon: SvgPicture.asset('assets/icons/menu/menu_ill_flattened.svg'))
-          //icon: SvgPicture.asset('assets/icons/menu/menu_ill_inlinestyle.svg'))
-          icon: SvgPicture.asset(
-              'assets/icons/menu/menu_ill_inlinestyle_lessshadow.svg'))
+          icon: SvgPicture.asset('assets/icons/menu/menu.svg'))
       : pageTitle == 'Send'
           ? IconButton(
               icon: Icon(Icons.close, color: Colors.white),
