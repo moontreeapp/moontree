@@ -1,103 +1,173 @@
+/// this file could be removed with slight modifications to transactions.dart
+/// that should probably happen at some point - when we start using assets more.
+
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction.dart';
-import 'package:raven_front/components/components.dart';
-import 'package:raven_front/indicators/indicators.dart';
 import 'package:raven_front/services/lookup.dart';
+import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/utils/data.dart';
+import 'package:raven_front/components/components.dart';
 import 'package:raven_front/widgets/widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class RavenTransactions extends StatefulWidget {
+class Transactions extends StatefulWidget {
+  final dynamic data;
+  const Transactions({this.data}) : super();
+
   @override
-  _RavenTransactionsState createState() => _RavenTransactionsState();
+  _TransactionsState createState() => _TransactionsState();
 }
 
-class _RavenTransactionsState extends State<RavenTransactions> {
+class _TransactionsState extends State<Transactions>
+    with SingleTickerProviderStateMixin {
   Map<String, dynamic> data = {};
+  List<StreamSubscription> listeners = [];
   bool showUSD = false;
   late List<TransactionRecord> currentTxs;
   late List<Balance> currentHolds;
-  late Balance currentBalRVN;
-  bool isFabVisible = true;
+  late Security security;
 
   @override
   void initState() {
     super.initState();
+    listeners.add(balances.batchedChanges.listen((batchedChanges) {
+      if (batchedChanges.isNotEmpty) setState(() {});
+    }));
   }
 
-  bool visibilityOfSendReceive(notification) {
-    if (notification.direction == ScrollDirection.forward) {
-      if (!isFabVisible) setState(() => isFabVisible = true);
-    } else if (notification.direction == ScrollDirection.reverse) {
-      if (isFabVisible) setState(() => isFabVisible = false);
+  @override
+  void dispose() {
+    for (var listener in listeners) {
+      listener.cancel();
     }
-    return true;
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    if (data.containsKey('walletId') && data['walletId'] != null) {
-      currentTxs = Current.walletCompiledTransactions(data['walletId']);
-      currentHolds = Current.walletHoldings(data['walletId']);
-      currentBalRVN = Current.walletBalanceRVN(data['walletId']);
-    } else {
-      currentTxs = Current.compiledTransactions;
-      currentHolds = Current.holdings;
-      currentBalRVN = Current.balanceRVN;
-    }
-    return Scaffold(
-      //appBar: header(),
-      body: NotificationListener<UserScrollNotification>(
-          onNotification: visibilityOfSendReceive,
-          child: TransactionList(
+    currentTxs = data.containsKey('walletId') && data['walletId'] != null
+        ? Current.walletCompiledTransactions(data['walletId'])
+        : Current.compiledTransactions;
+    currentHolds = data.containsKey('walletId') && data['walletId'] != null
+        ? Current.walletHoldings(data['walletId'])
+        : Current.holdings;
+    security = data['holding']!.security;
+    return
+        //appBar: components.headers.asset(
+        //    context, security.symbol,
+        //    balance: components.text.securityAsReadable(
+        //        data['holding']!.value,
+        //        symbol: security.symbol)),
+        TransactionList(
             transactions:
-                currentTxs.where((tx) => tx.security == securities.RVN),
-          )),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: isFabVisible ? sendReceiveButtons() : null,
-      //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
-    );
+                currentTxs.where((tx) => tx.security.symbol == security.symbol),
+            msg: '\nNo ${security.symbol} transactions.\n');
+
+    /// no place to view metadata right now - this used to be tabs
+    //_metadataView() ??
+    //    components.empty.message(
+    //      context,
+    //      icon: Icons.description,
+    //      msg: '\nNo metadata.\n',
+    //    ),
   }
 
-  PreferredSize header() => PreferredSize(
-      preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
-      child: AppBar(
-          elevation: 2,
-          centerTitle: false,
-          leading: components.buttons.back(context),
-          actions: <Widget>[
-            components.status,
-            indicators.process,
-            indicators.client,
-          ],
-          title: Text('RVN'),
-          flexibleSpace: Container(
-              alignment: Alignment.center,
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 45.0),
-                    Container(
-                        height: 90,
-                        width: 90,
-                        child: components.icons.assetAvatar('RVN')),
-                    SizedBox(height: 5.0),
-                    Text(
-                        components.text.securityAsReadable(currentBalRVN.value,
-                            symbol: 'RVN'),
-                        style: Theme.of(context).textTheme.headline3),
-                    SizedBox(height: 10.0),
-                    Text(components.text.rvnUSD(currentBalRVN.rvn),
-                        style: Theme.of(context).textTheme.headline5),
-                  ]))));
+  /// old
+  //PreferredSize header() => PreferredSize(
+  //    preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
+  //    child: AppBar(
+  //        elevation: 2,
+  //        centerTitle: false,
+  //        leading: components.buttons.back(context),
+  //        actions: <Widget>[
+  //          components.status,
+  //          indicators.process,
+  //          indicators.client,
+  //        ],
+  //        title: Text(security.symbol),
+  //        flexibleSpace: Container(
+  //            alignment: Alignment.center,
+  //            child: Column(
+  //                mainAxisAlignment: MainAxisAlignment.center,
+  //                children: [
+  //                  SizedBox(height: 45.0),
+  //                  Container(
+  //                      height: 90,
+  //                      width: 90,
+  //                      child: components.icons
+  //                          .assetAvatar(security.symbol)),
+  //                  SizedBox(height: 10.0),
+  //                  Text(
+  //                      components.text.securityAsReadable(
+  //                          data['holding']!.value,
+  //                          symbol: security.symbol),
+  //                      style: Theme.of(context).textTheme.headline3),
+  //                ])),
+  //        bottom: PreferredSize(
+  //            preferredSize: Size.fromHeight(50.0),
+  //            child: TabBar(
+  //                tabs: [Tab(text: 'Transactions'), Tab(text: 'Metadata')]))));
 
+  ListView? _metadataView() {
+    var securityAsset = security.asset;
+    if (securityAsset == null || securityAsset.hasMetadata == false) {
+      return null;
+    }
+    var chilren = <Widget>[];
+    if (securityAsset.primaryMetadata == null && securityAsset.hasIpfs) {
+      chilren = [
+        InkWell(
+            child: Text('${securityAsset.metadata}',
+                style: TextStyle(color: Theme.of(context).indicatorColor)),
+            onTap: () => showDialog(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                        title: Text('Open in External App'),
+                        content: Text('Open ipfs data in browser?'),
+                        actions: [
+                          TextButton(
+                              child: Text('Cancel'),
+                              onPressed: () => Navigator.of(context).pop()),
+                          TextButton(
+                              child: Text('Continue'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                launch(
+                                    'https://ipfs.io/ipfs/${securityAsset.metadata}');
+                              })
+                        ])))
+      ];
+    } else if (securityAsset.primaryMetadata == null) {
+      chilren = [SelectableText(securityAsset.metadata)];
+    } else if (securityAsset.primaryMetadata!.kind == MetadataType.ImagePath) {
+      chilren = [
+        Image.file(AssetLogos()
+            .readImageFileNow(securityAsset.primaryMetadata!.data ?? ''))
+      ];
+    } else if (securityAsset.primaryMetadata!.kind == MetadataType.JsonString) {
+      chilren = [SelectableText(securityAsset.primaryMetadata!.data ?? '')];
+    } else if (securityAsset.primaryMetadata!.kind == MetadataType.Unknown) {
+      chilren = [
+        SelectableText(securityAsset.primaryMetadata!.metadata),
+        SelectableText(securityAsset.primaryMetadata!.data ?? '')
+      ];
+    }
+    return ListView(padding: EdgeInsets.all(10.0), children: chilren);
+  }
+
+  /// different from home.sendReceiveButtons because it prefills the chosen token
+  /// receive works the same
   Row sendReceiveButtons() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        components.buttons.receive(context),
+        components.buttons.receive(context, symbol: security.symbol),
         currentHolds.length > 0
-            ? components.buttons.send(context, symbol: 'RVN')
-            : components.buttons.send(context, symbol: 'RVN', disabled: true),
+            ? components.buttons.send(context, symbol: security.symbol)
+            : components.buttons
+                .send(context, symbol: security.symbol, disabled: true),
       ]);
 }

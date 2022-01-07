@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:raven_front/backdrop/backdrop.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 import 'package:barcode_scan2/barcode_scan2.dart';
+import 'package:raven_front/backdrop/backdrop.dart';
 
 import 'package:raven_back/services/transaction/fee.dart';
 import 'package:raven_back/services/transaction_maker.dart';
@@ -98,54 +99,9 @@ class _SendState extends State<Send> {
     sendAsset.text = 'Ravencoin'; // should be pre-populated with something.
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: //Scaffold(
-          //appBar: header(),
-          //body:
-          body(),
-      //floatingActionButtonLocation:
-      //    FloatingActionButtonLocation.centerFloat,
-      //floatingActionButton: sendTransactionButton(),
-      //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
-      //)
+      child: body(),
     );
   }
-
-  PreferredSize header() => PreferredSize(
-      preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.28),
-      child: AppBar(
-          elevation: 2,
-          centerTitle: false,
-          leading: components.buttons.back(context),
-          actions: <Widget>[
-            components.status,
-            indicators.process,
-            indicators.client,
-          ],
-          title: Text('Send'),
-          flexibleSpace: Container(
-            alignment: Alignment.center,
-            child: SingleChildScrollView(
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                  SizedBox(height: 70.0),
-                  Text(visibleAmount,
-                      style: Theme.of(context).textTheme.headline3),
-                  SizedBox(height: 15.0),
-                  Text(visibleFiatAmount,
-                      style: Theme.of(context).textTheme.headline5),
-                  SizedBox(height: 15.0),
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    Container(
-                        height: 45,
-                        width: 45,
-                        child: components.icons.assetAvatar(data['symbol'])),
-                    SizedBox(width: 15.0),
-                    Text(data['symbol'],
-                        style: Theme.of(context).textTheme.headline5),
-                  ]),
-                ])),
-          )));
 
   void populateFromQR(String code) {
     if (code.startsWith('raven:')) {
@@ -293,11 +249,17 @@ class _SendState extends State<Send> {
                       EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
                   hintText: 'Address',
                   suffixIcon: IconButton(
-                    icon: ColorFiltered(
-                        colorFilter: ColorFilter.mode(
-                            Color(0xFF444444), BlendMode.srcATop),
-                        child: Image.asset('assets/icons/scan/scan.png',
-                            height: 24, width: 24)),
+                    icon:
+                        SvgPicture.asset('assets/icons/scan/scan_black_min.svg',
+                            //color: Colors.red,
+                            semanticsLabel: 'A red up arrow'),
+                    //  icon: Image.asset('assets/icons/scan/scan_black.png',
+                    //      height: 24, width: 24),
+                    //icon: ColorFiltered(
+                    //    colorFilter: ColorFilter.mode(
+                    //        Color(0xFF444444), BlendMode.srcATop),
+                    //    child: Image.asset('assets/icons/scan/scan.png',
+                    //        height: 24, width: 24)),
                     onPressed: () async {
                       ScanResult result = await BarcodeScanner.scan();
                       switch (result.type) {
@@ -353,29 +315,29 @@ class _SendState extends State<Send> {
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0x1F000000))),
-                  labelText: '*Amount',
+                  labelText: '*Amount', // Amount -> Amount*
                   labelStyle: Theme.of(context).sendFeildText,
                   floatingLabelStyle: TextStyle(color: const Color(0xFF5C6BC0)),
                   contentPadding:
                       EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
                   hintText: 'Quantity',
-                  suffixText: sendAll ? "don't send all" : 'send all',
-                  suffixStyle: Theme.of(context).textTheme.caption,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                        sendAll ? Icons.not_interested : Icons.all_inclusive,
-                        color: Color(0xFF606060)),
-                    onPressed: () {
-                      if (!sendAll) {
-                        sendAll = true;
-                        sendAmount.text = holding.toString();
-                      } else {
-                        sendAll = false;
-                        sendAmount.text = '';
-                      }
-                      verifyVisibleAmount(sendAmount.text);
-                    },
-                  ),
+                  //suffixText: sendAll ? "don't send all" : 'send all',
+                  //suffixStyle: Theme.of(context).textTheme.caption,
+                  //suffixIcon: IconButton(
+                  //  icon: Icon(
+                  //      sendAll ? Icons.not_interested : Icons.all_inclusive,
+                  //      color: Color(0xFF606060)),
+                  //  onPressed: () {
+                  //    if (!sendAll) {
+                  //      sendAll = true;
+                  //      sendAmount.text = holding.toString();
+                  //    } else {
+                  //      sendAll = false;
+                  //      sendAmount.text = '';
+                  //    }
+                  //    verifyVisibleAmount(sendAmount.text);
+                  //  },
+                  //),
                 ),
                 onChanged: (value) {
                   verifyVisibleAmount(value);
@@ -700,59 +662,7 @@ class _SendState extends State<Send> {
           context: context,
           builder: (BuildContext context) => AlertDialog(
                   title: Text('Confirm'),
-                  content: DataTable(columns: [
-                    DataColumn(label: Text('')),
-                    DataColumn(label: Text(''))
-                  ], rows: [
-                    DataRow(cells: [
-                      DataCell(Text('To:')),
-                      DataCell(addressName == ''
-                          ? Text(sendAddress.text.length < 12
-                              ? sendAddress.text
-                              : '${sendAddress.text.substring(0, 5)}...${sendAddress.text.substring(sendAddress.text.length - 5, sendAddress.text.length)}')
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                addressNameText(),
-                                Text(
-                                    sendAddress.text.length < 12
-                                        ? sendAddress.text
-                                        : '${sendAddress.text.substring(0, 5)}...${sendAddress.text.substring(sendAddress.text.length - 5, sendAddress.text.length)}',
-                                    style: Theme.of(context).textTheme.caption),
-                              ],
-                            )),
-                    ]),
-                    DataRow(cells: [
-                      DataCell(Text('Total:')),
-                      DataCell(Text(
-                          '${satToAmount(estimate.total, divisibility: 8 /* get divisibility */)}')),
-                    ]),
-                    DataRow(cells: [
-                      DataCell(Text('Send:')),
-                      DataCell(Text(data['symbol'])),
-                    ]),
-                    /* 
-                    // Hide these, we may show some of them later, so comment out:
-                    DataRow(cells: [
-                      DataCell(Text('Send Amount:')),
-                      DataCell(Text(
-                          '${components.text.satsToAmount(estimate.amount)}')), //sendAmount.text)),
-                    ]),
-                    DataRow(cells: [
-                      DataCell(Text('Fee Amount:')),
-                      DataCell(Text(
-                          '${components.text.satsToAmount(estimate.fees)}')),
-                    ]),
-                    ...[
-                      if (sendMemo.text != '')
-                        DataRow(cells: [
-                          DataCell(Text('Public Memo:')),
-                          DataCell(Text(sendMemo.text)),
-                        ])
-                    ],
-                    */
-                  ]),
+                  content: Text('Send?'),
                   actions: [
                     TextButton(
                         child: Text('Cancel'),
@@ -880,10 +790,10 @@ class _SendState extends State<Send> {
                   ['Ravencoin', 'Amazon']) ...[
                 ListTile(
                   visualDensity: VisualDensity.compact,
-                  onTap: () async {
-                    // do something like this:
-                    //await settings.setCurrentAccountId(account.accountId);
-                    // to update the icon, amount, dollars and remaining...
+                  onTap: () {
+                    // communicate with header:
+                    // visibleAmount = cleanDecAmount(value); make this stream a tuple of holding and amount to send...
+                    streams.app.holding.add(holding);
                     sendAsset.text = holding;
                     Navigator.pop(context);
                   },

@@ -6,8 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-import 'package:raven_front/pages.dart';
-import 'package:raven_front/pages/password/change.dart';
+import 'package:raven_front/pages/pages.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/widgets.dart';
@@ -54,7 +53,7 @@ Future<void> main() async {
 
 class RavenMobileApp extends StatelessWidget {
   //static final GlobalKey<NavigatorState> navigatorKey = new GlobalKey();
-  static final GlobalKey<ScaffoldState> _key = GlobalKey();
+  //static final GlobalKey<ScaffoldState> _key = GlobalKey();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -63,29 +62,7 @@ class RavenMobileApp extends StatelessWidget {
       theme: CustomTheme.lightTheme,
       darkTheme: CustomTheme.darkTheme,
       navigatorObservers: [components.navigator],
-      routes: {
-        '/': (context) => Loading(),
-        '/password/change': (context) => ChangePassword(),
-        '/password/resume': (context) => ChangeResume(),
-        '/login': (context) => Login(),
-        '/home': (context) => Home(),
-        '/asset': (context) => Asset(),
-        '/transactions': (context) => RavenTransactions(),
-        '/transaction': (context) => TransactionPage(),
-        '/receive': (context) => Receive(),
-        '/send': (context) => Send(),
-        '/create': (context) => CreateAsset(),
-        '/settings/about': (context) => About(),
-        '/settings/currency': (context) => Language(),
-        '/settings/export': (context) => Export(),
-        '/settings/import': (context) => Import(),
-        '/settings/network': (context) => ElectrumNetwork(),
-        '/settings/preferences': (context) => Preferences(),
-        '/settings/settings': (context) => Settings(),
-        '/settings/support': (context) => Support(),
-        '/settings/technical': (context) => TechnicalView(),
-        '/settings/wallet': (context) => WalletView(),
-      },
+      routes: pages.routes(context),
       builder: (context, child) {
         return BackdropScaffold(
           //headerHeight: components.size.height, // use stickyFrontLayer instead

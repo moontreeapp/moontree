@@ -10,6 +10,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late AnimationController controller;
   late Animation<Offset> offset;
+
   @override
   void initState() {
     super.initState();
@@ -20,6 +21,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             parent: controller,
             curve: Curves.ease,
             reverseCurve: Curves.ease.flipped));
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override

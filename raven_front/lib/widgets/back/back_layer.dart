@@ -38,8 +38,8 @@ class _BackLayerState extends State<BackLayer> {
   Widget build(BuildContext context) {
     if (pageTitle.startsWith('Wallet')) {
       return NavDrawer();
-    } else if (pageTitle == 'Send') {
-      return BalanceHeader();
+    } else if (['Send', 'Transactions'].contains(pageTitle)) {
+      return BalanceHeader(pageTitle: pageTitle);
     }
     return Container(
       height: 0,
