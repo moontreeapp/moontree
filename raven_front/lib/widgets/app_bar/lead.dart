@@ -44,5 +44,13 @@ class _PageLead extends State<PageLead> {
           onPressed: () => Backdrop.of(context).fling(),
           padding: EdgeInsets.only(left: 16),
           icon: Image(image: AssetImage('assets/icons/menu/menu.png')))
-      : components.buttons.back(components.navigator.routeContext ?? context);
+      : pageTitle == 'Send'
+          ? IconButton(
+              icon: Icon(Icons.close, color: Colors.white),
+              onPressed: () =>
+                  Navigator.pop(components.navigator.routeContext ?? context))
+          : IconButton(
+              icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+              onPressed: () =>
+                  Navigator.pop(components.navigator.routeContext ?? context));
 }

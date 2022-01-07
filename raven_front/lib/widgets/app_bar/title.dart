@@ -40,6 +40,9 @@ class _PageTitleState extends State<PageTitle> {
 
   @override
   Widget build(BuildContext context) {
+    if (pageTitle == 'Send') {
+      return Text('', style: Theme.of(context).pageTitle);
+    }
     if (pageTitle != 'Wallet' || accounts.data.length <= 1) {
       return Text(pageTitle, style: Theme.of(context).pageTitle);
     }

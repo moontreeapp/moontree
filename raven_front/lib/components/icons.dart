@@ -11,6 +11,7 @@ class IconComponents {
   IconComponents();
 
   Icon get back => Icon(Icons.chevron_left_rounded, color: Colors.white);
+  Icon get close => Icon(Icons.close, color: Colors.white);
 
   Icon income(BuildContext context) =>
       Icon(Icons.south_west, size: 12.0, color: Theme.of(context).good);

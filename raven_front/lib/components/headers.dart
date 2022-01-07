@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
-import 'package:raven_front/widgets/connection.dart';
+import 'package:raven_front/widgets/app_bar/connection.dart';
 
 class HeaderComponents {
   PreferredSize simple(BuildContext context, String title) => PreferredSize(

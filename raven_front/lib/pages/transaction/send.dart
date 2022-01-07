@@ -869,7 +869,7 @@ class _SendState extends State<Send> {
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
         builder: (BuildContext context) => Container(
-            height: (MediaQuery.of(context).size.height + 280 + 80) / 2,
+            height: (MediaQuery.of(context).size.height + 394) / 2,
             child:
                 //ListView(children: <Widget>[
                 Column(children: <Widget>[

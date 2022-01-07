@@ -1,6 +1,7 @@
 //import 'dart:uri';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:collection/collection.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
@@ -83,12 +84,13 @@ class _ReceiveState extends State<Receive> {
   Widget build(BuildContext context) {
     username = settings.primaryIndex.getOne(SettingName.User_Name)?.value ?? '';
     data = populateData(context, data);
+    print(data['symbol']);
     requestMessage.text = requestMessage.text == ''
-        ? data['symbol'] == ''
+        ? data['symbol'] == null || data['symbol'] == ''
             ? 'RVN'
             : data['symbol']
         : requestMessage.text;
-    address = Current.account.wallets[0].addresses[0].address;
+    address = Current.account.wallets[0].addresses.firstOrNull?.address ?? '';
     uri = uri == '' ? address : uri;
     return GestureDetector(
         onTap: () {
