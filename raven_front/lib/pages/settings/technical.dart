@@ -151,16 +151,15 @@ class _TechnicalViewState extends State<TechnicalView> {
                 IconButton(
                     icon: Icon(Icons.remove_red_eye,
                         color: Theme.of(context).primaryColor),
-                    onPressed: () => Navigator.pushNamed(
-                            context, '/settings/wallet',
-                            arguments: {
-                              'wallet': wallet,
-                              'secret': wallet.cipher != null
-                                  ? wallet.secret(wallet.cipher!)
-                                  : 'unknown',
-                              'secretName': wallet
-                                  .secretType, /* todo translate this to a string */
-                            }))
+                    onPressed: () =>
+                        Navigator.pushNamed(context, '/wallet', arguments: {
+                          'wallet': wallet,
+                          'secret': wallet.cipher != null
+                              ? wallet.secret(wallet.cipher!)
+                              : 'unknown',
+                          'secretName': wallet
+                              .secretType, /* todo translate this to a string */
+                        }))
               ])));
 
   ///List _getWallets(accountId) => [

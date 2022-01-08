@@ -65,10 +65,9 @@ class RavenMobileApp extends StatelessWidget {
       routes: pages.routes(context),
       builder: (context, child) {
         return BackdropScaffold(
-          //headerHeight: components.size.height, // use stickyFrontLayer instead
           stickyFrontLayer: true,
           resizeToAvoidBottomInset: false,
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).backgroundColor,
           backLayerBackgroundColor: Theme.of(context).backgroundColor,
           frontLayerElevation: 1,
           frontLayerBackgroundColor: Colors.transparent,
@@ -105,7 +104,10 @@ class RavenMobileApp extends StatelessWidget {
             ],
           ),
           backLayer: BackLayer(),
-          frontLayer: Container(color: Colors.white, child: child!),
+          frontLayer: Container(
+            color: Colors.white,
+            child: child!,
+          ),
         );
       },
     );

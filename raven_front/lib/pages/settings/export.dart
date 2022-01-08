@@ -101,7 +101,7 @@ class _ExportState extends State<Export> {
               if (!services.password.required)
                 TextButton.icon(
                     onPressed: () =>
-                        Navigator.pushNamed(context, '/password/change'),
+                        Navigator.pushNamed(context, '/security/change'),
                     icon: Icon(Icons.warning),
                     label: Text(
                         'For added security, it is advised to set a password '

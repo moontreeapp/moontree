@@ -1,83 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:raven_front/components/components.dart';
-import 'package:raven_back/raven_back.dart';
+import 'package:raven_front/theme/extensions.dart';
 
-class Settings extends StatefulWidget {
-  @override
-  State createState() => new _SettingsState();
-}
-
-//class Settings extends StatelessWidget {
-class _SettingsState extends State<Settings> {
-  TextEditingController yourName = TextEditingController();
-  bool termsAndConditions = false; // should be a setting along with others...
-
+class Settings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var name = settings.primaryIndex.getOne(SettingName.User_Name)?.value;
-    if (name != null) {
-      yourName.text = name;
-    }
-    return Scaffold(
-      //appBar: components.headers.back(context, 'Settings'),
-      body: ListView(
-        padding: EdgeInsets.all(20),
-        children: <Widget>[
-          SizedBox(height: 20),
-          TextField(
-            autocorrect: false,
-            controller: yourName,
-            textInputAction: TextInputAction.done,
-            decoration: InputDecoration(
-              border: UnderlineInputBorder(),
-              labelText: 'your name',
-              hintText: 'Satoshi Nakamoto',
-            ),
-            onEditingComplete: () async {
-              await settings.save(
-                  Setting(name: SettingName.User_Name, value: yourName.text));
-              alertSuccess();
-            },
-          ),
-          SizedBox(height: 20),
-          CheckboxListTile(
-              controlAffinity: ListTileControlAffinity.leading,
-              contentPadding: EdgeInsets.all(0),
-              title: Text('Send immediately (without confirmation)'),
-              value: settings.primaryIndex
-                  .getOne(SettingName.Send_Immediate)!
-                  .value,
-              onChanged: (bool? value) async {
-                await settings.save(Setting(
-                    name: SettingName.Send_Immediate,
-                    value: !settings.primaryIndex
-                        .getOne(SettingName.Send_Immediate)!
-                        .value));
-                setState(() {});
-              }),
-          CheckboxListTile(
-              controlAffinity: ListTileControlAffinity.leading,
-              contentPadding: EdgeInsets.all(0),
-              title: Text('I agree to the Terms and Conditions'),
-              value: termsAndConditions,
-              onChanged: (bool? value) => setState(() {
-                    termsAndConditions = value ?? false;
-                  })),
-          //Text('Send immediately (without confirmation)')
-        ],
-      ),
+    return ListView(
+      shrinkWrap: true,
+      padding: EdgeInsets.only(left: 0, right: 0, top: 2),
+      children: <Widget>[
+        ListTile(
+          leading: Icon(Icons.lock_rounded, color: Color(0x99000000)),
+          title: Text('Security', style: Theme.of(context).settingDestination),
+          trailing: Icon(Icons.chevron_right_rounded),
+          onTap: () => Navigator.of(context).pushNamed('/settings/security'),
+        ),
+        Divider(height: 1),
+        ListTile(
+          leading: Image.asset('assets/icons/user_level/user_level.png'),
+          title:
+              Text('User Level', style: Theme.of(context).settingDestination),
+          trailing: Icon(Icons.chevron_right_rounded),
+          onTap: () => Navigator.of(context).pushNamed('/settings/level'),
+        ),
+        Divider(height: 1),
+        ListTile(
+          leading: Image.asset('assets/icons/network/network.png'),
+          title: Text('Network', style: Theme.of(context).settingDestination),
+          trailing: Icon(Icons.chevron_right_rounded),
+          onTap: () => Navigator.of(context).pushNamed('/settings/network'),
+        ),
+        Divider(height: 1),
+      ],
     );
   }
-
-  Future alertSuccess() => showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-            title: Text('Success'),
-            content: Text('Settings Saved!'),
-            actions: [
-              TextButton(
-                  child: Text('ok'),
-                  onPressed: () => Navigator.of(context).pop())
-            ],
-          ));
 }

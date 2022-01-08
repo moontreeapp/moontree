@@ -39,8 +39,8 @@ class _ChangeResumeState extends State<ChangeResume> {
   Row submitButton() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         TextButton.icon(
-            onPressed: () => Navigator.pushReplacementNamed(context, '/login',
-                arguments: {}),
+            onPressed: () => Navigator.pushReplacementNamed(
+                context, '/security/login', arguments: {}),
             icon: Icon(Icons.login),
             style: components.buttonStyles.leftSideCurved,
             label: Text('Abort Password Change Process',
@@ -121,7 +121,7 @@ class _ChangeResumeState extends State<ChangeResume> {
                 TextButton(
                     child: Text('ok'),
                     onPressed: () => Navigator.pushReplacementNamed(
-                        context, '/login',
+                        context, '/security/login',
                         arguments: {}))
               ]));
 }

@@ -92,12 +92,13 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
                       TextButton(
                           child: Text('ok'),
                           onPressed: () => Navigator.pushReplacementNamed(
-                              context, '/password/resume',
+                              context, '/security/resume',
                               arguments: {}))
                     ]));
       } else {
-        Future.microtask(() =>
-            Navigator.pushReplacementNamed(context, '/login', arguments: {}));
+        Future.microtask(() => Navigator.pushReplacementNamed(
+            context, '/security/login',
+            arguments: {}));
       }
     } else {
       //Future.delayed(Duration(seconds: 60));

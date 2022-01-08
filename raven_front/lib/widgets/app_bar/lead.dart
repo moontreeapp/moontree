@@ -47,7 +47,7 @@ class _PageLead extends State<PageLead> {
           icon: SvgPicture.asset('assets/icons/menu/menu.svg'))
       : pageTitle == 'Send'
           ? IconButton(
-              icon: Icon(Icons.close, color: Colors.white),
+              icon: Icon(Icons.close_rounded, color: Colors.white),
               onPressed: () =>
                   Navigator.pop(components.navigator.routeContext ?? context))
           : IconButton(

@@ -254,7 +254,7 @@ class _HoldingList extends State<HoldingList> {
         //  rvnHolding.add(ListTile(
         //      onTap: () {},
         //      title: TextButton.icon(
-        //          onPressed: () => Navigator.pushNamed(context, '/create',
+        //          onPressed: () => Navigator.pushNamed(context, '/transaction/create',
         //            arguments: {'walletId': wallet?.walletId ?? null}),
         //          icon: Icon(Icons.add),
         //          label: Text('Create Asset'))));

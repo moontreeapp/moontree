@@ -109,7 +109,8 @@ class _TransactionListState extends State<TransactionList> {
       ListView(children: <Widget>[
         for (var transactionRecord in transactions) ...[
           ListTile(
-            onTap: () => Navigator.pushNamed(context, '/transaction',
+            onTap: () => Navigator.pushNamed(
+                context, '/transaction/transaction',
                 arguments: {'transactionRecord': transactionRecord}),
             onLongPress: _toggleUSD,
             leading: Container(

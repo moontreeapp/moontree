@@ -86,7 +86,7 @@ class _NavDrawerState extends State<NavDrawer> {
           destination(
             icon: Icons.settings,
             name: 'Settings',
-            link: '/settings/preferences',
+            link: '/settings/settings',
           ),
           destination(
             icon: Icons.feedback,
@@ -159,7 +159,7 @@ class _NavDrawerState extends State<NavDrawer> {
           //    titleTextStyle: Theme.of(context).drawerDestination,
           //    leading: Icon(Icons.password),
           //    onPressed: (BuildContext context) =>
-          //        Navigator.pushNamed(context, '/password/change')),
+          //        Navigator.pushNamed(context, '/security/change')),
           //SettingsTile(
           //    title: 'Network',
           //    titleTextStyle: Theme.of(context).drawerDestination,

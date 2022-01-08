@@ -27,7 +27,7 @@ class ButtonComponents {
       ElevatedButton.icon(
           icon: Icon(Icons.south_east),
           label: Text('Receive'),
-          onPressed: () => Navigator.pushNamed(context, '/receive',
+          onPressed: () => Navigator.pushNamed(context, '/transaction/receive',
               arguments: {'symbol': symbol}),
           style: components.buttonStyles.leftSideCurved);
 
@@ -42,7 +42,7 @@ class ButtonComponents {
           label: Text('Send'),
           onPressed: disabled
               ? () {}
-              : () => Navigator.pushNamed(context, '/send',
+              : () => Navigator.pushNamed(context, '/transaction/send',
                   arguments: {'symbol': symbol}),
           style: components.buttonStyles
               .rightSideCurved(context, disabled: disabled));

@@ -64,8 +64,8 @@ class _NavBarState extends State<NavBar> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  actionButton(name: 'send', link: '/send'),
-                  actionButton(name: 'receive', link: '/receive'),
+                  actionButton(name: 'send', link: '/transaction/send'),
+                  actionButton(name: 'receive', link: '/transaction/receive'),
                 ],
               ),
               Row(
