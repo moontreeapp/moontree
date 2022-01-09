@@ -1,5 +1,5 @@
 name: raven_front
-description: A Ravencoin wallet for iOS and Android 
+description: A Ravencoin wallet for iOS and Android
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -26,7 +26,8 @@ dependencies:
   datadog_flutter: ^1.4.0
   date_format: ^2.0.4
   firebase_core: ^1.10.0
-  firebase_crashlytics: ^2.4.1
+  firebase_crashlytics:
+    ^2.4.1
     # - TODO: iOS https://firebase.flutter.dev/docs/crashlytics/overview/#b-ios
   firebase_messaging: ^11.2.0
   flutter:
@@ -36,6 +37,7 @@ dependencies:
   #flutter_treeview: ^1.0.6+1 # no need
   flutter_launcher_icons: '^0.9.1'
   flutter_svg: ^1.0.0
+  material_design_icons_flutter: ^5.0.6595
   fnv: ^1.0.1
   hive: ^2.0.4
   hive_flutter: ^1.1.0
@@ -52,7 +54,7 @@ dependencies:
   intl: ^0.17.0
   mockito: ^5.0.17 # just for testing
   backdrop: ^0.7.1
-  
+
   # MoonTree in-house dependencies
   raven_back:
     git: https://github.com/moontreeapp/raven_back.git

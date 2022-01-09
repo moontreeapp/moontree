@@ -14,6 +14,8 @@ import 'package:raven_front/widgets/widgets.dart';
 //import 'package:backdrop/backdrop.dart';
 import 'package:raven_front/backdrop/backdrop.dart';
 
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   print('Handling a background message ${message.messageId}');
@@ -96,10 +98,10 @@ class RavenMobileApp extends StatelessWidget {
               components.status,
               ConnectionLight(),
               SizedBox(width: 16),
-              Image(
-                  image: AssetImage('assets/icons/scan/scan.png'),
-                  height: 24,
-                  width: 24),
+              Icon(
+                MdiIcons.qrcodeScan,
+                color: Colors.white,
+              ),
               SizedBox(width: 16),
             ],
           ),
