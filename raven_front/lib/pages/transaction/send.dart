@@ -639,10 +639,7 @@ class _SendState extends State<Send> {
       height: 40,
       child: OutlinedButton.icon(
         onPressed: () async => await startSend(),
-        icon: Image(
-            image: AssetImage('assets/icons/send/send_black.png'),
-            height: 24,
-            width: 24),
+        icon: Icon(MdiIcons.arrowTopRightThick),
         label: Text('SEND'.toUpperCase()),
         style: ButtonStyle(
           //fixedSize: MaterialStateProperty.all(Size(156, 40)),
