@@ -1,3 +1,5 @@
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
 import 'package:flutter/material.dart';
 import 'package:raven_back/extensions/object.dart';
 import 'package:raven_back/extensions/string.dart';
@@ -23,12 +25,12 @@ class _SettingItemsState extends State<SettingItems> {
         UISettingName.Security:
             Icon(Icons.lock_rounded, color: Color(0x99000000)),
         UISettingName.User_Level:
-            Image.asset('assets/icons/user_level/user_level.png'),
-        UISettingName.Network: Image.asset('assets/icons/network/network.png'),
+            Icon(MdiIcons.accountCog, color: Color(0x99000000)),
+        UISettingName.Network: Icon(MdiIcons.network, color: Color(0x99000000)),
         UISettingName.Import:
-            Image.asset('assets/icons/import_export/import_file.png'),
+            Icon(MdiIcons.fileImport, color: Color(0x99000000)),
         UISettingName.Export:
-            Image.asset('assets/icons/import_export/export_file.png'),
+            Icon(MdiIcons.fileExport, color: Color(0x99000000)),
       }[name] ??
       Icon(Icons.home_rounded, color: Color(0x99000000));
 
