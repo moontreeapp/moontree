@@ -1,4 +1,6 @@
 //import 'package:backdrop/backdrop.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
 import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
@@ -128,11 +130,13 @@ class _NavBarState extends State<NavBar> {
             selected = name;
           });
         },
-        icon: Image(
-          image: AssetImage(
-              'assets/icons/$name/${name}_${selected == name ? '' : 'in'}active.png'),
-          height: selected == name ? 30 : 24,
-          width: selected == name ? 30 : 24,
-        ),
+        icon: Icon({
+          'wallet': MdiIcons.wallet,
+          'create': MdiIcons.plusCircle,
+          'manage': MdiIcons.crown,
+          'swap': MdiIcons.swapHorizontalBold,
+        }[name]!),
+        iconSize: selected == name ? 30 : 24,
+        color: selected == name ? Color(0xFF5C6BC0) : Color(0x995C6BC0),
       );
 }
