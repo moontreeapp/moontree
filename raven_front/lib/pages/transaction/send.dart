@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
@@ -252,11 +253,7 @@ class _SendState extends State<Send> {
                       EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
                   hintText: 'Address',
                   suffixIcon: IconButton(
-                    icon: SvgPicture.asset('assets/icons/scan/scan_black.svg',
-                        color: Color(0xDE000000),
-                        semanticsLabel: 'A red up arrow'),
-                    //  icon: Image.asset('assets/icons/scan/scan_black.png',
-                    //      height: 24, width: 24),
+                    icon: Icon(MdiIcons.qrcodeScan, color: Color(0xDE000000)),
                     //icon: ColorFiltered(
                     //    colorFilter: ColorFilter.mode(
                     //        Color(0xFF444444), BlendMode.srcATop),
