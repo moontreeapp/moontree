@@ -29,11 +29,17 @@ class _BalanceHeaderState extends State<BalanceHeader> {
   void initState() {
     Backdrop.of(components.navigator.routeContext!).revealBackLayer();
     super.initState();
-    listeners.add(streams.app.spending.listen((Tuple2<String, double> value) {
-      if (symbol != value.item1 || amount != value.item2) {
+    listeners.add(streams.app.spending.symbol.listen((String value) {
+      if (symbol != value) {
         setState(() {
-          symbol = value.item1;
-          amount = value.item2;
+          symbol = value;
+        });
+      }
+    }));
+    listeners.add(streams.app.spending.amount.listen((double value) {
+      if (amount != value) {
+        setState(() {
+          amount = value;
         });
       }
     }));
