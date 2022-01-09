@@ -108,10 +108,10 @@ class _NavBarState extends State<NavBar> {
           Backdrop.of(components.navigator.routeContext!).concealBackLayer();
           Navigator.of(components.navigator.routeContext!).pushNamed(link);
         },
-        icon: Image(
-            image: AssetImage('assets/icons/$name/${name}_black.png'),
-            height: 24,
-            width: 24),
+        icon: Icon({
+          'send': MdiIcons.arrowTopRightThick,
+          'receive': MdiIcons.arrowBottomLeftThick,
+        }[name]!),
         label: Text(name.toUpperCase()),
         style: ButtonStyle(
           fixedSize: MaterialStateProperty.all(Size(156, 40)),
