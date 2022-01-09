@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
 import 'package:raven_front/theme/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -42,13 +45,13 @@ class Support extends StatelessWidget {
                   actionButton(
                     context,
                     name: 'RAVENCOIN',
-                    color: 'green',
+                    color: '0xFF4CAF50',
                   ),
                   SizedBox(width: 16),
                   actionButton(
                     context,
                     name: 'MOONTREE',
-                    color: 'orange',
+                    color: '0xFFFFB84D',
                     link: 'Jh9aqeuB3Q',
                   ),
                 ]),
@@ -83,8 +86,7 @@ class Support extends StatelessWidget {
                                     'https://discord.gg/${link ?? name.toLowerCase()}');
                               })
                         ])),
-            icon: Image.asset('assets/icons/discord/discord_$color.png',
-                height: 23, width: 20),
+            icon: Icon(MdiIcons.discord, color: Color(int.parse(color))),
             label: Text(name.toUpperCase()),
             style: ButtonStyle(
               textStyle:
