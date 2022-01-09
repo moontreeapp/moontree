@@ -8,6 +8,9 @@ export 'back/back_layer.dart';
 export 'back/nav_drawer.dart';
 export 'back/balance_header.dart';
 
+// back layer
+export 'front/setting_items.dart';
+
 // floating action button
 export 'bottom/nav_bar.dart';
 

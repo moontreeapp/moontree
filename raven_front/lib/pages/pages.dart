@@ -9,6 +9,7 @@ import 'package:raven_front/pages/settings/about.dart';
 import 'package:raven_front/pages/settings/currency.dart';
 import 'package:raven_front/pages/settings/export.dart';
 import 'package:raven_front/pages/settings/import.dart';
+import 'package:raven_front/pages/settings/import_export.dart';
 import 'package:raven_front/pages/settings/language.dart';
 import 'package:raven_front/pages/settings/network.dart';
 import 'package:raven_front/pages/settings/preferences.dart';
@@ -38,6 +39,7 @@ class pages {
   static Language language = Language();
   static Export export = Export();
   static Import import = Import();
+  static ImportExport importExport = ImportExport();
   static ElectrumNetwork electrumNetwork = ElectrumNetwork();
   static Preferences preferences = Preferences();
   static Settings settings = Settings();
@@ -66,6 +68,7 @@ class pages {
         '/settings/currency': (context) => language,
         '/settings/export': (context) => export,
         '/settings/import': (context) => import,
+        '/settings/import_export': (context) => importExport,
         '/settings/network': (context) => electrumNetwork,
         '/settings/preferences': (context) => preferences,
         '/settings/settings': (context) => settings,

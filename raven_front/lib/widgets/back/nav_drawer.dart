@@ -81,7 +81,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 height: 24,
                 width: 24),
             name: 'Import / Export',
-            link: '/settings/import',
+            link: '/settings/import_export',
           ),
           destination(
             icon: Icons.settings,
