@@ -1,3 +1,5 @@
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
 //import 'package:backdrop/backdrop.dart';
 import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
@@ -75,11 +77,7 @@ class _NavDrawerState extends State<NavDrawer> {
         shrinkWrap: true,
         children: [
           destination(
-            image: Image(
-                image:
-                    AssetImage('assets/icons/import_export/import_export.png'),
-                height: 24,
-                width: 24),
+            icon: MdiIcons.shieldKey,
             name: 'Import / Export',
             link: '/settings/import_export',
           ),
@@ -287,7 +285,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 //print(Current.account.vouts.first
                 //    .securityValue(security: securities.RVN));
               }),
-/*                      
+/*
 */
           //SettingsTile.switchTile(
           //  title: 'Use fingerprint',
