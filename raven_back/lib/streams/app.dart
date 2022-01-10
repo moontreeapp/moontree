@@ -1,12 +1,11 @@
 import 'package:rxdart/rxdart.dart';
-import 'package:tuple/tuple.dart';
 
 class AppStreams {
   final status = appStatus$;
   final active = appActive$;
   final login = login$;
   final page = page$;
-  final spending = spending$;
+  final spending = Spending();
 }
 
 /// resumed inactive paused detached
@@ -17,5 +16,12 @@ final login$ = BehaviorSubject<bool>();
 final page$ = BehaviorSubject<String>.seeded('main');
 
 // used in pages.send and BalanceHeader of raven_front
-final spending$ =
-    BehaviorSubject<Tuple2<String, double>>.seeded(Tuple2('Ravencoin', 0));
+class Spending {
+  final symbol = symbol$;
+  final amount = amount$;
+  final fee = fee$;
+}
+
+final symbol$ = BehaviorSubject<String>.seeded('Ravencoin');
+final amount$ = BehaviorSubject<double>.seeded(0.0);
+final fee$ = BehaviorSubject<String>.seeded('Standard');

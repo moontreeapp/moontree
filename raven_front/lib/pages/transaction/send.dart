@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:raven_front/widgets/bottom/selection_items.dart';
 import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
@@ -27,6 +31,7 @@ class Send extends StatefulWidget {
 
 class _SendState extends State<Send> {
   Map<String, dynamic> data = {};
+  List<StreamSubscription> listeners = [];
   final sendAsset = TextEditingController();
   final sendAddress = TextEditingController();
   final sendAmount = TextEditingController();
@@ -54,6 +59,20 @@ class _SendState extends State<Send> {
   @override
   void initState() {
     super.initState();
+    listeners.add(streams.app.spending.symbol.listen((value) {
+      if (sendAsset.text != value) {
+        setState(() {
+          sendAsset.text = value;
+        });
+      }
+    }));
+    listeners.add(streams.app.spending.fee.listen((value) {
+      if (sendFee.text != value) {
+        setState(() {
+          sendFee.text = value;
+        });
+      }
+    }));
   }
 
   @override
@@ -65,6 +84,9 @@ class _SendState extends State<Send> {
     sendFee.dispose();
     sendMemo.dispose();
     sendNote.dispose();
+    for (var listener in listeners) {
+      listener.cancel();
+    }
     super.dispose();
   }
 
@@ -98,7 +120,6 @@ class _SendState extends State<Send> {
     } catch (e) {
       visibleFiatAmount = '';
     }
-    sendAsset.text = 'Ravencoin'; // should be pre-populated with something.
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: body(),
@@ -339,12 +360,12 @@ class _SendState extends State<Send> {
                 ),
                 onChanged: (value) {
                   verifyVisibleAmount(value);
-                  streams.app.spending
-                      .add(Tuple2(sendAsset.text, double.parse(visibleAmount)));
+                  streams.app.spending.amount.add(double.parse(visibleAmount));
                 },
                 onEditingComplete: () {
                   sendAmount.text = cleanDecAmount(sendAmount.text);
                   verifyVisibleAmount(sendAmount.text);
+                  streams.app.spending.amount.add(double.parse(visibleAmount));
                   FocusScope.of(context).requestFocus(sendFeeFocusNode);
                 },
                 //validator: (String? value) {  // validate as double/int
@@ -403,7 +424,7 @@ class _SendState extends State<Send> {
                   floatingLabelStyle: TextStyle(color: const Color(0xFF5C6BC0)),
                   contentPadding:
                       EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
-                  hintText: 'Ravencoin',
+                  hintText: 'Standard',
                   suffixIcon: IconButton(
                     icon: Padding(
                         padding: EdgeInsets.only(right: 14),
@@ -761,98 +782,105 @@ class _SendState extends State<Send> {
   }
 
   void _produceAssetModal() {
-    //IconButton(
-    //  icon: Icon(Icons.arrow_drop_down_sharp,
-    //      size: 26.0, color: Colors.grey.shade200),
-    //  onPressed: () {
-    showModalBottomSheet<void>(
-        // if we want the scrim to cover the header too...
-        // we probably need to move this out to the main scaffold...
-        context: context,
-        enableDrag: true,
-        elevation: 1,
-        isScrollControlled: true,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
-        builder: (BuildContext context) => Container(
-            height: (MediaQuery.of(context).size.height + 394) / 2,
-            child:
-                //ListView(children: <Widget>[
-                Column(children: <Widget>[
-              ...[SizedBox(height: 8)],
-              for (var holding in (useWallet
-                      ? Current.walletHoldingNames(data['walletId'])
-                      : Current.holdingNames) +
-                  ['Ravencoin', 'Amazon']) ...[
-                ListTile(
-                  visualDensity: VisualDensity.compact,
-                  onTap: () {
-                    // communicate with header:
-                    // visibleAmount = cleanDecAmount(value); make this stream a tuple of holding and amount to send...
-                    streams.app.spending.add(Tuple2(holding,
-                        double.parse(cleanDecAmount(sendAmount.text))));
-                    sendAsset.text = holding;
-                    Navigator.pop(context);
-                  },
-                  leading: components.icons
-                      .assetAvatar(holding, height: 24, width: 24),
-                  title: Text(holding, style: Theme.of(context).choices),
-                ),
-              ],
-            ])
-
-            //{
-            //  return Container(
-            //    height: 200,
-            //    color: Colors.amber,
-            //    child: Center(
-            //      child: Column(
-            //        mainAxisAlignment: MainAxisAlignment.center,
-            //        mainAxisSize: MainAxisSize.min,
-            //        children: <Widget>[
-            //          const Text('Modal BottomSheet'),
-            //          ElevatedButton(
-            //            child: const Text('Close BottomSheet'),
-            //            onPressed: () => Navigator.pop(context),
-            //          )
-            //        ],
-            //      ),
-            //    ),
-            //  );
-            //},
-            ));
-    //  },
-    //);
+    SelectionItems(context, names: [SelectionOptions.Holdings]).build(
+        holdingNames: (useWallet
+                ? Current.walletHoldingNames(data['walletId'])
+                : Current.holdingNames) +
+            ['Ravencoin', 'Amazon']);
+    ////IconButton(
+    ////  icon: Icon(Icons.arrow_drop_down_sharp,
+    ////      size: 26.0, color: Colors.grey.shade200),
+    ////  onPressed: () {
+    //showModalBottomSheet<void>(
+    //    // if we want the scrim to cover the header too...
+    //    // we probably need to move this out to the main scaffold...
+    //    context: context,
+    //    enableDrag: true,
+    //    elevation: 1,
+    //    isScrollControlled: true,
+    //    shape: RoundedRectangleBorder(
+    //        borderRadius: BorderRadius.only(
+    //            topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
+    //    builder: (BuildContext context) => Container(
+    //        height: (MediaQuery.of(context).size.height + 394) / 2,
+    //        child:
+    //            //ListView(children: <Widget>[
+    //            Column(children: <Widget>[
+    //          ...[SizedBox(height: 8)],
+    //          for (var holding in (useWallet
+    //                  ? Current.walletHoldingNames(data['walletId'])
+    //                  : Current.holdingNames) +
+    //              ['Ravencoin', 'Amazon']) ...[
+    //            ListTile(
+    //              visualDensity: VisualDensity.compact,
+    //              onTap: () {
+    //                // communicate with header:
+    //                // visibleAmount = cleanDecAmount(value); make this stream a tuple of holding and amount to send...
+    //                streams.app.spending.add(Tuple2(holding,
+    //                    double.parse(cleanDecAmount(sendAmount.text))));
+    //                sendAsset.text = holding;
+    //                Navigator.pop(context);
+    //              },
+    //              leading: components.icons
+    //                  .assetAvatar(holding, height: 24, width: 24),
+    //              title: Text(holding, style: Theme.of(context).choices),
+    //            ),
+    //          ],
+    //        ])
+    //
+    //        //{
+    //        //  return Container(
+    //        //    height: 200,
+    //        //    color: Colors.amber,
+    //        //    child: Center(
+    //        //      child: Column(
+    //        //        mainAxisAlignment: MainAxisAlignment.center,
+    //        //        mainAxisSize: MainAxisSize.min,
+    //        //        children: <Widget>[
+    //        //          const Text('Modal BottomSheet'),
+    //        //          ElevatedButton(
+    //        //            child: const Text('Close BottomSheet'),
+    //        //            onPressed: () => Navigator.pop(context),
+    //        //          )
+    //        //        ],
+    //        //      ),
+    //        //    ),
+    //        //  );
+    //        //},
+    //        ));
+    ////  },
+    ////);
   }
 
   void _produceFeeModal() {
-    showModalBottomSheet<void>(
-        // if we want the scrim to cover the header too...
-        // we probably need to move this out to the main scaffold...
-        context: context,
-        enableDrag: true,
-        elevation: 1,
-        isScrollControlled: true,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
-        builder: (BuildContext context) => Container(
-            height: (MediaQuery.of(context).size.height + 394) / 2,
-            child:
-                //ListView(children: <Widget>[
-                Column(children: <Widget>[
-              ...[SizedBox(height: 8)],
-              for (var fee in ['Cheap', 'Standard', 'Fast']) ...[
-                ListTile(
-                  visualDensity: VisualDensity.compact,
-                  onTap: () {
-                    sendFee.text = fee;
-                    Navigator.pop(context);
-                  },
-                  title: Text(fee, style: Theme.of(context).choices),
-                ),
-              ],
-            ])));
+    SelectionItems(context, names: [
+      SelectionOptions.Fast,
+      SelectionOptions.Standard,
+      SelectionOptions.Slow
+    ]).build();
+    //showModalBottomSheet<void>(
+    //    // if we want the scrim to cover the header too...
+    //    // we probably need to move this out to the main scaffold...
+    //    context: context,
+    //    enableDrag: true,
+    //    elevation: 1,
+    //    isScrollControlled: true,
+    //    shape: RoundedRectangleBorder(
+    //        borderRadius: BorderRadius.only(
+    //            topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
+    //    builder: (BuildContext context) => ListView(children: <Widget>[
+    //          //Column(children: <Widget>[
+    //          ...[SizedBox(height: 8)],
+    //          for (var fee in ['Cheap', 'Standard', 'Fast']) ...[
+    //            ListTile(
+    //              visualDensity: VisualDensity.compact,
+    //              onTap: () {
+    //                sendFee.text = fee;
+    //                Navigator.pop(context);
+    //              },
+    //              title: Text(fee, style: Theme.of(context).choices),
+    //            ),
+    //          ],
+    //        ]));
   }
 }
