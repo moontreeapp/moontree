@@ -4,11 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import 'package:raven_front/widgets/bottom/selection_items.dart';
-import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 import 'package:barcode_scan2/barcode_scan2.dart';
-import 'package:raven_front/backdrop/backdrop.dart';
 
 import 'package:raven_back/services/transaction/fee.dart';
 import 'package:raven_back/services/transaction_maker.dart';
@@ -648,12 +646,6 @@ class _SendState extends State<Send> {
   /// services.historyService.saveNote(hash, note {or history object})
   /// should notes be in a separate reservoir? makes this simpler, but its nice
   /// to have it all in one place as in transaction.note....
-  ElevatedButton sendTransactionButton1() => ElevatedButton.icon(
-      icon: Icon(Icons.send),
-      label: Text('Send'),
-      onPressed: () async => await startSend(),
-      style: components.buttonStyles.curvedSides);
-
   Widget sendTransactionButton() => Container(
       width: MediaQuery.of(context).size.width,
       height: 40,
@@ -787,69 +779,6 @@ class _SendState extends State<Send> {
                 ? Current.walletHoldingNames(data['walletId'])
                 : Current.holdingNames) +
             ['Ravencoin', 'Amazon']);
-    ////IconButton(
-    ////  icon: Icon(Icons.arrow_drop_down_sharp,
-    ////      size: 26.0, color: Colors.grey.shade200),
-    ////  onPressed: () {
-    //showModalBottomSheet<void>(
-    //    // if we want the scrim to cover the header too...
-    //    // we probably need to move this out to the main scaffold...
-    //    context: context,
-    //    enableDrag: true,
-    //    elevation: 1,
-    //    isScrollControlled: true,
-    //    shape: RoundedRectangleBorder(
-    //        borderRadius: BorderRadius.only(
-    //            topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
-    //    builder: (BuildContext context) => Container(
-    //        height: (MediaQuery.of(context).size.height + 394) / 2,
-    //        child:
-    //            //ListView(children: <Widget>[
-    //            Column(children: <Widget>[
-    //          ...[SizedBox(height: 8)],
-    //          for (var holding in (useWallet
-    //                  ? Current.walletHoldingNames(data['walletId'])
-    //                  : Current.holdingNames) +
-    //              ['Ravencoin', 'Amazon']) ...[
-    //            ListTile(
-    //              visualDensity: VisualDensity.compact,
-    //              onTap: () {
-    //                // communicate with header:
-    //                // visibleAmount = cleanDecAmount(value); make this stream a tuple of holding and amount to send...
-    //                streams.app.spending.add(Tuple2(holding,
-    //                    double.parse(cleanDecAmount(sendAmount.text))));
-    //                sendAsset.text = holding;
-    //                Navigator.pop(context);
-    //              },
-    //              leading: components.icons
-    //                  .assetAvatar(holding, height: 24, width: 24),
-    //              title: Text(holding, style: Theme.of(context).choices),
-    //            ),
-    //          ],
-    //        ])
-    //
-    //        //{
-    //        //  return Container(
-    //        //    height: 200,
-    //        //    color: Colors.amber,
-    //        //    child: Center(
-    //        //      child: Column(
-    //        //        mainAxisAlignment: MainAxisAlignment.center,
-    //        //        mainAxisSize: MainAxisSize.min,
-    //        //        children: <Widget>[
-    //        //          const Text('Modal BottomSheet'),
-    //        //          ElevatedButton(
-    //        //            child: const Text('Close BottomSheet'),
-    //        //            onPressed: () => Navigator.pop(context),
-    //        //          )
-    //        //        ],
-    //        //      ),
-    //        //    ),
-    //        //  );
-    //        //},
-    //        ));
-    ////  },
-    ////);
   }
 
   void _produceFeeModal() {
@@ -858,29 +787,5 @@ class _SendState extends State<Send> {
       SelectionOptions.Standard,
       SelectionOptions.Slow
     ]).build();
-    //showModalBottomSheet<void>(
-    //    // if we want the scrim to cover the header too...
-    //    // we probably need to move this out to the main scaffold...
-    //    context: context,
-    //    enableDrag: true,
-    //    elevation: 1,
-    //    isScrollControlled: true,
-    //    shape: RoundedRectangleBorder(
-    //        borderRadius: BorderRadius.only(
-    //            topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
-    //    builder: (BuildContext context) => ListView(children: <Widget>[
-    //          //Column(children: <Widget>[
-    //          ...[SizedBox(height: 8)],
-    //          for (var fee in ['Cheap', 'Standard', 'Fast']) ...[
-    //            ListTile(
-    //              visualDensity: VisualDensity.compact,
-    //              onTap: () {
-    //                sendFee.text = fee;
-    //                Navigator.pop(context);
-    //              },
-    //              title: Text(fee, style: Theme.of(context).choices),
-    //            ),
-    //          ],
-    //        ]));
   }
 }
