@@ -59,8 +59,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                   Theme.of(context).disabledColor))
       //style: validateExistingCondition(validatedExisting) &&
       //        validateComplexityCondition(validatedComplexity)
-      //    ? components.buttonStyles.curvedSides
-      //    : components.buttonStyles.disabledCurvedSides(context)
+      //    ? components.styles.buttons.curvedSides
+      //    : components.styles.buttons.disabledCurvedSides(context)
       );
 
   bool validateExistingCondition([validatedExisting]) =>

@@ -1,10 +1,11 @@
-//import 'dart:uri';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:collection/collection.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
+import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/params.dart';
 import 'package:raven_front/utils/data.dart';
 import 'package:share/share.dart';
@@ -20,40 +21,42 @@ class Receive extends StatefulWidget {
 class _ReceiveState extends State<Receive> {
   Map<String, dynamic> data = {};
   late String address;
+  final requestMessage = TextEditingController();
   final requestAmount = TextEditingController();
   final requestLabel = TextEditingController();
-  final requestMessage = TextEditingController();
   FocusNode requestAmountFocus = FocusNode();
   FocusNode requestLabelFocus = FocusNode();
   FocusNode requestMessageFocus = FocusNode();
-  bool rawAddress = true;
   String uri = '';
   String username = '';
   List<Security> fetchedNames = <Security>[];
 
-  void _toggleRaw(_) {
-    setState(() {
-      rawAddress = !rawAddress;
-    });
-  }
+  bool get rawAddress =>
+      requestMessage.text == '' &&
+      requestAmount.text == '' &&
+      requestLabel.text == '';
 
   void _makeURI() {
-    var amount = requestAmount.text == ''
-        ? ''
-        : 'amount=${Uri.encodeComponent(requestAmount.text)}';
-    var label = requestLabel.text == ''
-        ? ''
-        : 'label=${Uri.encodeComponent(requestLabel.text)}';
-    var message = requestMessage.text == ''
-        ? ''
-        //: 'message=${Uri.encodeComponent(requestMessage.text)}';
-        : 'message=asset:${Uri.encodeComponent(requestMessage.text)}';
-    var to = username == '' ? '' : 'to=${Uri.encodeComponent(username)}';
-    var tail = [amount, label, message, to].join('&').replaceAll('&&', '&');
-    tail =
-        '?' + (tail.endsWith('&') ? tail.substring(0, tail.length - 1) : tail);
-    tail = tail.length == 1 ? '' : tail;
-    uri = rawAddress ? address : 'raven:$address$tail';
+    if (rawAddress) {
+      uri = address;
+    } else {
+      var amount = requestAmount.text == ''
+          ? ''
+          : 'amount=${Uri.encodeComponent(requestAmount.text)}';
+      var label = requestLabel.text == ''
+          ? ''
+          : 'label=${Uri.encodeComponent(requestLabel.text)}';
+      var message = requestMessage.text == ''
+          ? ''
+          //: 'message=${Uri.encodeComponent(requestMessage.text)}';
+          : 'message=asset:${Uri.encodeComponent(requestMessage.text)}';
+      var to = username == '' ? '' : 'to=${Uri.encodeComponent(username)}';
+      var tail = [amount, label, message, to].join('&').replaceAll('&&', '&');
+      tail = '?' +
+          (tail.endsWith('&') ? tail.substring(0, tail.length - 1) : tail);
+      tail = tail.length == 1 ? '' : tail;
+      uri = 'raven:$address$tail';
+    }
     setState(() => {});
   }
 
@@ -66,9 +69,9 @@ class _ReceiveState extends State<Receive> {
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
+    requestMessage.dispose();
     requestAmount.dispose();
     requestLabel.dispose();
-    requestMessage.dispose();
     super.dispose();
   }
 
@@ -86,9 +89,9 @@ class _ReceiveState extends State<Receive> {
     data = populateData(context, data);
     print(data['symbol']);
     requestMessage.text = requestMessage.text == ''
-        ? data['symbol'] == null || data['symbol'] == ''
-            ? 'RVN'
-            : data['symbol']
+        ? data['symbol'] != null && data['symbol'] != ''
+            ? data['symbol']
+            : ''
         : requestMessage.text;
     address = Current.account.wallets[0].addresses.firstOrNull?.address ?? '';
     uri = uri == '' ? address : uri;
@@ -106,145 +109,161 @@ class _ReceiveState extends State<Receive> {
         ));
   }
 
-  ListView body() =>
-      ListView(shrinkWrap: true, padding: EdgeInsets.all(10.0), children: <
-          Widget>[
-        /// if this is a RVNt account we could show that here...
-        //SizedBox(height: 15.0),
-        //Text(
-        //    // rvn is default but if balance is 0 then take the largest asset balance and also display name here.
-        //    'RVN',
-        //    textAlign: TextAlign.center,
-        //    style: Theme.of(context).textTheme.bodyText1),
-        SizedBox(height: 20.0),
-        Center(
-            child: QrImage(
-                backgroundColor: Colors.white,
-                data: rawAddress ? address : uri,
-                version: QrVersions.auto,
-                size: 300.0)),
-        SizedBox(height: 10.0),
-        Center(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-              /// does not belong on UI but I still want an indication that what is on QR code is not raw address...
-              Visibility(
-                  visible: !rawAddress,
-                  child: Text(
-                    'raven:',
-                    style: Theme.of(context).textTheme.caption,
-                  )),
-              SelectableText(
-                address,
-                cursorColor: Colors.grey[850],
-                showCursor: true,
-                toolbarOptions: ToolbarOptions(
-                    copy: true, selectAll: true, cut: false, paste: false),
-              ),
-              Visibility(
-                  visible: !rawAddress && username != '',
-                  child: Text(
-                    'to: $username',
-                    style: Theme.of(context).textTheme.caption,
-                  )),
-              Visibility(
-                  visible: !rawAddress && requestAmount.text != '',
-                  child: Text(
-                    'amount: ${requestAmount.text}',
-                    style: Theme.of(context).textTheme.caption,
-                  )),
-              Visibility(
-                  visible: !rawAddress && requestLabel.text != '',
-                  child: Text(
-                    'label: ${requestLabel.text}',
-                    style: Theme.of(context).textTheme.caption,
-                  )),
-              Visibility(
-                  visible: !rawAddress && requestMessage.text != '',
-                  child: Text(
-                    'message: ${requestMessage.text}',
-                    style: Theme.of(context).textTheme.caption,
-                  )),
-            ])),
-        SizedBox(height: 20.0),
-        Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Row(children: <Widget>[
-                Checkbox(
-                  value: rawAddress,
-                  onChanged: (_) {
-                    _toggleRaw(_);
-                    _makeURI();
-                    FocusScope.of(context).requestFocus(requestMessageFocus);
-                  },
-                ),
-                Text('address only'),
-              ]),
-              shareAddressButton(),
-            ]),
-        Visibility(
-            visible: !rawAddress,
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(height: 15),
-                  Text(
-                    'Requested Asset:',
-                    style: TextStyle(color: Theme.of(context).hintColor),
-                  ),
-                  //getAssetNames
-                  Autocomplete<Security>(
-                    displayStringForOption: _displayStringForOption,
-                    initialValue: TextEditingValue(text: requestMessage.text),
-                    optionsBuilder: (TextEditingValue textEditingValue) {
-                      requestMessage.text = textEditingValue.text;
-                      _makeURI();
-                      if (requestMessage.text == '') {
-                        return const Iterable<Security>.empty();
-                      }
-                      if (requestMessage.text == 't') {
-                        return [
-                          Security(
-                              symbol: 'testing',
-                              securityType: SecurityType.Fiat)
-                        ];
-                      }
-                      if (requestMessage.text.length >= 3) {
-                        return fetchedNames;
-                      }
-                      //(await services.client.api.getAllAssetNames(textEditingValue.text)).map((String s) => Security(
-                      //        symbol: s,
-                      //        securityType: SecurityType.RavenAsset));
-                      return securities.data
-                          .where((Security option) => option.symbol
-                              .contains(requestMessage.text.toUpperCase()))
-                          .toList()
-                          .reversed;
-                    },
-                    optionsMaxHeight: 100,
-                    onSelected: (Security selection) async {
-                      requestMessage.text = selection.symbol;
-                      _makeURI();
-                      FocusScope.of(context).requestFocus(requestAmountFocus);
-                    },
-                  ),
-                  SizedBox(height: 15.0),
-                ])),
-        Visibility(
-            visible: !rawAddress,
-            child: TextField(
-                focusNode: requestAmountFocus,
+  ListView body() => ListView(
+          shrinkWrap: true,
+          padding: EdgeInsets.all(10.0),
+          children: <Widget>[
+            /// if this is a RVNt account we could show that here...
+            //SizedBox(height: 15.0),
+            //Text(
+            //    // rvn is default but if balance is 0 then take the largest asset balance and also display name here.
+            //    'RVN',
+            //    textAlign: TextAlign.center,
+            //    style: Theme.of(context).textTheme.bodyText1),
+            SizedBox(height: 20.0),
+            Center(
+
+                /// long hold copy and maybe on tap?
+                child: QrImage(
+                    backgroundColor: Colors.white,
+                    data: rawAddress ? address : uri,
+                    version: QrVersions.auto,
+                    size: 300.0)),
+
+            /// At this time we're not going to show them any information but the
+            /// QR Code, not even the address, if they copy by long pressing the
+            /// QR Code, they can get the address or this information if its
+            /// constructed.
+            //SizedBox(height: 10.0),
+            //Center(
+            //    child: Column(
+            //        crossAxisAlignment: CrossAxisAlignment.center,
+            //        children: [
+            //      /// does not belong on UI but I still want an indication that what is on QR code is not raw address...
+            //      Visibility(
+            //          visible: !rawAddress,
+            //          child: Text(
+            //            'raven:',
+            //            style: Theme.of(context).textTheme.caption,
+            //          )),
+            //      SelectableText(
+            //        address,
+            //        cursorColor: Colors.grey[850],
+            //        showCursor: true,
+            //        toolbarOptions: ToolbarOptions(
+            //            copy: true, selectAll: true, cut: false, paste: false),
+            //      ),
+            //      Visibility(
+            //          visible: !rawAddress && username != '',
+            //          child: Text(
+            //            'to: $username',
+            //            style: Theme.of(context).textTheme.caption,
+            //          )),
+            //      Visibility(
+            //          visible: !rawAddress && requestMessage.text != '',
+            //          child: Text(
+            //            'asset: ${requestMessage.text}',
+            //            style: Theme.of(context).textTheme.caption,
+            //          )),
+            //      Visibility(
+            //          visible: !rawAddress && requestAmount.text != '',
+            //          child: Text(
+            //            'amount: ${requestAmount.text}',
+            //            style: Theme.of(context).textTheme.caption,
+            //          )),
+            //      Visibility(
+            //          visible: !rawAddress && requestLabel.text != '',
+            //          child: Text(
+            //            'note: ${requestLabel.text}',
+            //            style: Theme.of(context).textTheme.caption,
+            //          )),
+            //    ])),
+            //SizedBox(height: 20.0),
+
+            /// this autocomplete will actually populate after 3 characters
+            /// have been entered by asking electrum what assets start
+            /// with those 3 characters. However, this is old functionality
+            /// and will have to be modified anyway (because of our special
+            /// use of subsassets namespaces etc), Furthermore, it seems
+            /// an Autocomplete widget doesn't accept an InputDecoration,
+            /// making formatting it to look the same as the others difficult
+            /// thus, we're commenting it out now, in order to extract it's
+            /// functionality later and currently replacing it with a simple
+            /// text field.
+            //Column(
+            //    crossAxisAlignment: CrossAxisAlignment.start,
+            //    mainAxisAlignment: MainAxisAlignment.start,
+            //    children: <Widget>[
+            //      SizedBox(height: 15),
+            //      Text(
+            //        'Requested Asset:',
+            //        style: TextStyle(color: Theme.of(context).hintColor),
+            //      ),
+            //      Autocomplete<Security>(
+            //        displayStringForOption: _displayStringForOption,
+            //        initialValue: TextEditingValue(text: requestMessage.text),
+            //        optionsBuilder: (TextEditingValue textEditingValue) {
+            //          requestMessage.text = textEditingValue.text;
+            //          _makeURI();
+            //          if (requestMessage.text == '') {
+            //            return const Iterable<Security>.empty();
+            //          }
+            //          if (requestMessage.text == 't') {
+            //            return [
+            //              Security(
+            //                  symbol: 'testing',
+            //                  securityType: SecurityType.Fiat)
+            //            ];
+            //          }
+            //          if (requestMessage.text.length >= 3) {
+            //            return fetchedNames;
+            //          }
+            //          //(await services.client.api.getAllAssetNames(textEditingValue.text)).map((String s) => Security(
+            //          //        symbol: s,
+            //          //        securityType: SecurityType.RavenAsset));
+            //          return securities.data
+            //              .where((Security option) => option.symbol
+            //                  .contains(requestMessage.text.toUpperCase()))
+            //              .toList()
+            //              .reversed;
+            //        },
+            //        optionsMaxHeight: 100,
+            //        onSelected: (Security selection) async {
+            //          requestMessage.text = selection.symbol;
+            //          _makeURI();
+            //          FocusScope.of(context).requestFocus(requestAmountFocus);
+            //        },
+            //      ),
+            //      SizedBox(height: 15.0),
+            //    ]),
+            SizedBox(height: 16),
+            TextField(
+                controller: requestMessage,
                 autocorrect: false,
+                textInputAction: TextInputAction.done,
+                inputFormatters: [
+                  UpperCaseTextFormatter(),
+                ],
+                decoration: components.styles.decorations.textFeild(context,
+                    labelText: 'Requested Asset', hintText: 'Ravencoin'),
+                onChanged: (value) {
+                  requestMessage.text = cleanLabel(requestMessage.text);
+                  _makeURI();
+                },
+                onEditingComplete: () {
+                  requestMessage.text = cleanLabel(requestMessage.text);
+                  _makeURI();
+                  FocusScope.of(context).requestFocus(requestAmountFocus);
+                }),
+            SizedBox(height: 16),
+            TextField(
+                focusNode: requestAmountFocus,
                 controller: requestAmount,
+                autocorrect: false,
                 keyboardType: TextInputType.number,
                 textInputAction: TextInputAction.done,
-                decoration: InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'Amount (Optional)',
-                    hintText: 'Quantity'),
+                decoration: components.styles.decorations.textFeild(context,
+                    labelText: 'Amount', hintText: 'Quantity'),
                 onChanged: (value) {
                   requestAmount.text = cleanDecAmount(requestAmount.text);
                   _makeURI();
@@ -252,19 +271,15 @@ class _ReceiveState extends State<Receive> {
                 onEditingComplete: () {
                   requestAmount.text = cleanDecAmount(requestAmount.text);
                   _makeURI();
-                  // send focus to next element
                   FocusScope.of(context).requestFocus(requestLabelFocus);
-                })),
-        Visibility(
-            visible: !rawAddress,
-            child: TextField(
+                }),
+            SizedBox(height: 16),
+            TextField(
               focusNode: requestLabelFocus,
               autocorrect: false,
               controller: requestLabel,
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(),
-                  labelText: 'Label (Optional)',
-                  hintText: 'Groceries'),
+              decoration: components.styles.decorations.textFeild(context,
+                  labelText: 'Note', hintText: 'for groceries'),
               onChanged: (value) {
                 requestLabel.text = cleanLabel(requestLabel.text);
                 _makeURI();
@@ -274,15 +289,41 @@ class _ReceiveState extends State<Receive> {
                 _makeURI();
                 FocusScope.of(context).unfocus();
               },
-            )),
-      ]);
+            ),
+            SizedBox(height: 44),
+            Center(child: shareButton()),
+            SizedBox(height: 20),
+          ]);
 
-  static String _displayStringForOption(Security option) => option.symbol;
+  /// see Autocomplete above
+  //static String _displayStringForOption(Security option) => option.symbol;
 
-  ElevatedButton shareAddressButton() => ElevatedButton.icon(
-        icon: Icon(Icons.share),
-        label: Text('Share'),
+  Widget shareButton() => Container(
+      width: MediaQuery.of(context).size.width,
+      height: 40,
+      child: OutlinedButton.icon(
         onPressed: () => Share.share(uri),
-        //style: components.buttonStyles.curvedSides
-      );
+        icon: Icon(Icons.share),
+        label: Text('Share'.toUpperCase()),
+        style: ButtonStyle(
+          //fixedSize: MaterialStateProperty.all(Size(156, 40)),
+          textStyle: MaterialStateProperty.all(Theme.of(context).navBarButton),
+          foregroundColor: MaterialStateProperty.all(Color(0xDE000000)),
+          side: MaterialStateProperty.all(BorderSide(
+              color: Color(0xFF5C6BC0), width: 2, style: BorderStyle.solid)),
+          shape: MaterialStateProperty.all(RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0))),
+        ),
+      ));
+}
+
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    return TextEditingValue(
+      text: newValue.text.toUpperCase(),
+      selection: newValue.selection,
+    );
+  }
 }

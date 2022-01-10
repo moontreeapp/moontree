@@ -266,7 +266,7 @@ class _ImportState extends State<Import> {
         //      //  MaterialPageRoute(builder: (context) => Receive()),
         //      //);
         //    },
-        //    style: components.buttonStyles.leftSideCurved),
+        //    style: components.styles.buttons.leftSideCurved),
         ElevatedButton.icon(
           icon: Icon(Icons.upload_file),
           label: Text('File'),
@@ -274,7 +274,7 @@ class _ImportState extends State<Import> {
             var resp = await storage.readFromFilePickerRaw() ?? '';
             await attemptImport(resp);
           },
-          //style: components.buttonStyles.curvedSides
+          //style: components.styles.buttons.curvedSides
         )
       ]);
 }

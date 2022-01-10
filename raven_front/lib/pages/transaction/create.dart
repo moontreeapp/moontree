@@ -243,5 +243,5 @@ class _CreateAssetState extends State<CreateAsset> {
           // send tx using any/every wallet in the account
         }
       },
-      style: components.buttonStyles.curvedSides);
+      style: components.styles.buttons.curvedSides);
 }

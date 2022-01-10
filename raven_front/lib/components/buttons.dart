@@ -29,7 +29,7 @@ class ButtonComponents {
           label: Text('Receive'),
           onPressed: () => Navigator.pushNamed(context, '/transaction/receive',
               arguments: {'symbol': symbol}),
-          style: components.buttonStyles.leftSideCurved);
+          style: components.styles.buttons.leftSideCurved);
 
   ElevatedButton send(
     BuildContext context, {
@@ -44,7 +44,7 @@ class ButtonComponents {
               ? () {}
               : () => Navigator.pushNamed(context, '/transaction/send',
                   arguments: {'symbol': symbol}),
-          style: components.buttonStyles
+          style: components.styles.buttons
               .rightSideCurved(context, disabled: disabled));
 
   ElevatedButton getRVN(BuildContext context) => ElevatedButton(

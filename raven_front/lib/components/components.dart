@@ -1,5 +1,7 @@
 //import 'package:flutter/material.dart';
 
+import 'package:raven_front/components/styles/decorations.dart';
+
 import 'alerts.dart';
 import 'buttons.dart';
 import 'headers.dart';
@@ -11,16 +13,22 @@ import 'text.dart';
 import 'styles/buttons.dart';
 
 class components {
-  static AlertComponents alerts = AlertComponents();
-  static ButtonComponents buttons = ButtonComponents();
-  static ButtonStyleComponents buttonStyles = ButtonStyleComponents();
-  static IconComponents icons = IconComponents();
-  static TextComponents text = TextComponents();
-  static AppLifecycleReactor status = AppLifecycleReactor();
-  static EmptyComponents empty = EmptyComponents();
-  static HeaderComponents headers = HeaderComponents();
+  static final Styles styles = Styles();
+
+  static final AlertComponents alerts = AlertComponents();
+  static final ButtonComponents buttons = ButtonComponents();
+  static final IconComponents icons = IconComponents();
+  static final TextComponents text = TextComponents();
+  static final AppLifecycleReactor status = AppLifecycleReactor();
+  static final EmptyComponents empty = EmptyComponents();
+  static final HeaderComponents headers = HeaderComponents();
   //static final RouteObserver<PageRoute> routeObserver =
   //    RouteObserver<PageRoute>();
   // handled by navigator
   static final RouteStack navigator = RouteStack();
+}
+
+class Styles {
+  final ButtonStyleComponents buttons = ButtonStyleComponents();
+  final DecorationComponents decorations = DecorationComponents();
 }

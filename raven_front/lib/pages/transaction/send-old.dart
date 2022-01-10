@@ -538,7 +538,7 @@ class _SendState extends State<Send> {
       icon: Icon(Icons.send),
       label: Text('Send'),
       onPressed: () async => await startSend(),
-      style: components.buttonStyles.curvedSides);
+      style: components.styles.buttons.curvedSides);
 
   Future confirmMessage({
     required ravencoin.Transaction tx,

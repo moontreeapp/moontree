@@ -206,33 +206,16 @@ class _SendState extends State<Send> {
               TextField(
                 controller: sendAsset,
                 readOnly: true,
-                decoration: InputDecoration(
-                  errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide:
-                          BorderSide(color: Color(0xFFAA2E25), width: 2)),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide:
-                          BorderSide(color: Color(0xFF5C6BC0), width: 2)),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide: BorderSide(color: Color(0x1F000000))),
-                  labelText: 'Asset',
-                  labelStyle: Theme.of(context).sendFeildText,
-                  floatingLabelStyle: TextStyle(color: const Color(0xFF5C6BC0)),
-                  contentPadding:
-                      EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
-                  hintText: 'Ravencoin',
-                  suffixIcon: IconButton(
-                    icon: Padding(
-                        padding: EdgeInsets.only(right: 14),
-                        child: Icon(Icons.expand_more_rounded,
-                            //color: Color(0xFF606060))),
-                            color: Color(0xDE000000))),
-                    onPressed: () => _produceAssetModal(),
-                  ),
-                ),
+                decoration: components.styles.decorations.textFeild(context,
+                    labelText: 'Asset',
+                    hintText: 'Ravencoin',
+                    suffixIcon: IconButton(
+                      icon: Padding(
+                          padding: EdgeInsets.only(right: 14),
+                          child: Icon(Icons.expand_more_rounded,
+                              color: Color(0xDE000000))),
+                      onPressed: () => _produceAssetModal(),
+                    )),
                 onTap: () {
                   _produceAssetModal();
                 },
@@ -252,49 +235,29 @@ class _SendState extends State<Send> {
               TextField(
                 focusNode: sendAddressFocusNode,
                 controller: sendAddress,
-                decoration: InputDecoration(
-                  errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide:
-                          BorderSide(color: Color(0xFFAA2E25), width: 2)),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide:
-                          BorderSide(color: Color(0xFF5C6BC0), width: 2)),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide: BorderSide(color: Color(0x1F000000))),
-                  labelText: 'To',
-                  labelStyle: Theme.of(context).sendFeildText,
-                  floatingLabelStyle: TextStyle(color: const Color(0xFF5C6BC0)),
-                  contentPadding:
-                      EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
-                  hintText: 'Address',
-                  suffixIcon: IconButton(
-                    icon: Icon(MdiIcons.qrcodeScan, color: Color(0xDE000000)),
-                    //icon: ColorFiltered(
-                    //    colorFilter: ColorFilter.mode(
-                    //        Color(0xFF444444), BlendMode.srcATop),
-                    //    child: Image.asset('assets/icons/scan/scan.png',
-                    //        height: 24, width: 24)),
-                    onPressed: () async {
-                      ScanResult result = await BarcodeScanner.scan();
-                      switch (result.type) {
-                        case ResultType.Barcode:
-                          populateFromQR(result.rawContent);
-                          break;
-                        case ResultType.Error:
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(result.rawContent)),
-                          );
-                          break;
-                        case ResultType.Cancelled:
-                          // no problem, don't do anything
-                          break;
-                      }
-                    },
-                  ),
-                ),
+                autocorrect: false,
+                decoration: components.styles.decorations.textFeild(context,
+                    labelText: 'To',
+                    hintText: 'Address',
+                    suffixIcon: IconButton(
+                      icon: Icon(MdiIcons.qrcodeScan, color: Color(0xDE000000)),
+                      onPressed: () async {
+                        ScanResult result = await BarcodeScanner.scan();
+                        switch (result.type) {
+                          case ResultType.Barcode:
+                            populateFromQR(result.rawContent);
+                            break;
+                          case ResultType.Error:
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(result.rawContent)),
+                            );
+                            break;
+                          case ResultType.Cancelled:
+                            // no problem, don't do anything
+                            break;
+                        }
+                      },
+                    )),
                 onChanged: (value) {
                   _validateAddressColor(value);
                 },
@@ -320,42 +283,27 @@ class _SendState extends State<Send> {
                 focusNode: sendAmountFocusNode,
                 controller: sendAmount,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide:
-                          BorderSide(color: const Color(0xFFAA2E25), width: 2)),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide:
-                          BorderSide(color: const Color(0xFF5C6BC0), width: 2)),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide: BorderSide(color: Color(0x1F000000))),
-                  labelText: 'Amount', // Amount -> Amount*
-                  labelStyle: Theme.of(context).sendFeildText,
-                  floatingLabelStyle: TextStyle(color: const Color(0xFF5C6BC0)),
-                  contentPadding:
-                      EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
-                  hintText: 'Quantity',
-                  //suffixText: sendAll ? "don't send all" : 'send all',
-                  //suffixStyle: Theme.of(context).textTheme.caption,
-                  //suffixIcon: IconButton(
-                  //  icon: Icon(
-                  //      sendAll ? Icons.not_interested : Icons.all_inclusive,
-                  //      color: Color(0xFF606060)),
-                  //  onPressed: () {
-                  //    if (!sendAll) {
-                  //      sendAll = true;
-                  //      sendAmount.text = holding.toString();
-                  //    } else {
-                  //      sendAll = false;
-                  //      sendAmount.text = '';
-                  //    }
-                  //    verifyVisibleAmount(sendAmount.text);
-                  //  },
-                  //),
-                ),
+                decoration: components.styles.decorations.textFeild(context,
+                    labelText: 'Amount', // Amount -> Amount*
+                    hintText: 'Quantity'
+                    //suffixText: sendAll ? "don't send all" : 'send all',
+                    //suffixStyle: Theme.of(context).textTheme.caption,
+                    //suffixIcon: IconButton(
+                    //  icon: Icon(
+                    //      sendAll ? Icons.not_interested : Icons.all_inclusive,
+                    //      color: Color(0xFF606060)),
+                    //  onPressed: () {
+                    //    if (!sendAll) {
+                    //      sendAll = true;
+                    //      sendAmount.text = holding.toString();
+                    //    } else {
+                    //      sendAll = false;
+                    //      sendAmount.text = '';
+                    //    }
+                    //    verifyVisibleAmount(sendAmount.text);
+                    //  },
+                    //),
+                    ),
                 onChanged: (value) {
                   verifyVisibleAmount(value);
                   streams.app.spending.amount.add(double.parse(visibleAmount));
@@ -405,33 +353,17 @@ class _SendState extends State<Send> {
                 focusNode: sendFeeFocusNode,
                 controller: sendFee,
                 readOnly: true,
-                decoration: InputDecoration(
-                  errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide:
-                          BorderSide(color: Color(0xFFAA2E25), width: 2)),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide:
-                          BorderSide(color: Color(0xFF5C6BC0), width: 2)),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide: BorderSide(color: Color(0x1F000000))),
-                  labelText: 'Fee',
-                  labelStyle: Theme.of(context).sendFeildText,
-                  floatingLabelStyle: TextStyle(color: const Color(0xFF5C6BC0)),
-                  contentPadding:
-                      EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
-                  hintText: 'Standard',
-                  suffixIcon: IconButton(
-                    icon: Padding(
-                        padding: EdgeInsets.only(right: 14),
-                        child: Icon(Icons.expand_more_rounded,
-                            //color: Color(0xFF606060))),
-                            color: Color(0xDE000000))),
-                    onPressed: () => _produceFeeModal(),
-                  ),
-                ),
+                decoration: components.styles.decorations.textFeild(context,
+                    labelText: 'Fee',
+                    hintText: 'Standard',
+                    suffixIcon: IconButton(
+                      icon: Padding(
+                          padding: EdgeInsets.only(right: 14),
+                          child: Icon(Icons.expand_more_rounded,
+                              //color: Color(0xFF606060))),
+                              color: Color(0xDE000000))),
+                      onPressed: () => _produceFeeModal(),
+                    )),
                 onTap: () {
                   _produceFeeModal();
                 },
@@ -482,25 +414,8 @@ class _SendState extends State<Send> {
               TextField(
                 focusNode: sendNoteFocusNode,
                 controller: sendNote,
-                decoration: InputDecoration(
-                  errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide:
-                          BorderSide(color: Color(0xFFAA2E25), width: 2)),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide:
-                          BorderSide(color: Color(0xFF5C6BC0), width: 2)),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide: BorderSide(color: Color(0x1F000000))),
-                  labelText: 'Note',
-                  labelStyle: Theme.of(context).sendFeildText,
-                  floatingLabelStyle: TextStyle(color: const Color(0xFF5C6BC0)),
-                  contentPadding:
-                      EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
-                  hintText: 'Private note to self',
-                ),
+                decoration: components.styles.decorations.textFeild(context,
+                    labelText: 'Note', hintText: 'Private note to self'),
                 onEditingComplete: () async => startSend(),
               ),
               SizedBox(height: 44),
