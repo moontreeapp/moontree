@@ -63,15 +63,11 @@ class SelectionItems {
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
         builder: (BuildContext context) => Container(
-            // it seems like the screen thinks it's 210 larger than it is...
-            // something in the main scaffold is causing this issue...
-            height:
-                tall ? (MediaQuery.of(context).size.height + 394) / 2 : null,
+            height: tall ? (MediaQuery.of(context).size.height) / 2 : null,
             child: ListView(shrinkWrap: true, children: <Widget>[
               ...[SizedBox(height: 8)],
               ...items,
               ...[SizedBox(height: 8)],
-              ...[SizedBox(height: 201)], // workaround...
             ])));
   }
 

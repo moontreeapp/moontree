@@ -483,10 +483,18 @@ class BackdropScaffoldState extends State<BackdropScaffold>
       backPanelHeight = availableHeight;
       frontPanelHeight = -backPanelHeight;
     }
+    //print(backPanelHeight);
+    //print(availableHeight);
+    print(frontPanelHeight);
     return RelativeRectTween(
-      begin: RelativeRect.fromLTRB(0, backPanelHeight, 0, frontPanelHeight),
+      begin: RelativeRect.fromLTRB(
+          0, backPanelHeight, 0, backPanelHeight + frontPanelHeight),
       end: RelativeRect.fromLTRB(
-          0, availableHeight * (1 - widget.frontLayerActiveFactor), 0, 0),
+        0,
+        availableHeight * (1 - widget.frontLayerActiveFactor),
+        0,
+        0,
+      ),
     ).animate(CurvedAnimation(
         parent: animationController,
         curve: widget.animationCurve,

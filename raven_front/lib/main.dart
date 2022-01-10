@@ -67,8 +67,10 @@ class RavenMobileApp extends StatelessWidget {
       routes: pages.routes(context),
       builder: (context, child) {
         return BackdropScaffold(
+          //maintainBackLayerState: false,
+          //resizeToAvoidBottomInset: false,
+          //extendBody: true,
           stickyFrontLayer: true,
-          resizeToAvoidBottomInset: false,
           backgroundColor: Theme.of(context).backgroundColor,
           backLayerBackgroundColor: Theme.of(context).backgroundColor,
           frontLayerElevation: 1,

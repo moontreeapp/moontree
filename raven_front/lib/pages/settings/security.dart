@@ -81,7 +81,7 @@ class _SecurityState extends State<Security> {
             ],
           ),
           Padding(
-            padding: EdgeInsets.only(bottom: 40, left: 16, right: 16),
+            padding: EdgeInsets.only(top: 40, bottom: 40, left: 16, right: 16),
             child: Column(
 
                 // The crossAxisAlignment is needed to give content height > 0

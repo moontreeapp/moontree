@@ -118,10 +118,9 @@ class _SendState extends State<Send> {
     } catch (e) {
       visibleFiatAmount = '';
     }
+    print(MediaQuery.of(context).size.height);
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: body(),
-    );
+        onTap: () => FocusScope.of(context).unfocus(), child: body());
   }
 
   void populateFromQR(String code) {
@@ -192,239 +191,247 @@ class _SendState extends State<Send> {
 
   bool verifyMemo([String? memo]) => (memo ?? sendMemo.text).length <= 80;
 
-  Widget body() => ListView(
-        // solves scrolling while keyboard
-        shrinkWrap: true,
-        padding: EdgeInsets.all(16),
-        children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              //Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
-              //    style: Theme.of(context).textTheme.caption),
-              //;
-              TextField(
-                controller: sendAsset,
-                readOnly: true,
-                decoration: components.styles.decorations.textFeild(context,
-                    labelText: 'Asset',
-                    hintText: 'Ravencoin',
-                    suffixIcon: IconButton(
-                      icon: Padding(
-                          padding: EdgeInsets.only(right: 14),
-                          child: Icon(Icons.expand_more_rounded,
-                              color: Color(0xDE000000))),
-                      onPressed: () => _produceAssetModal(),
-                    )),
-                onTap: () {
-                  _produceAssetModal();
-                },
-                onEditingComplete: () async {
-                  /// should tell front end what it was so we can notify user we're substituting the asset name or uns domain for the actual address
-                  //var verifiedAddress =
-                  //    await verifyValidAddress(sendAddress.text);
-                  //sendAddress.text = verifiedAddress;
-                  FocusScope.of(context).requestFocus(sendAddressFocusNode);
-                  //setState(() {});
-                },
-              ),
+  Widget body() => Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Flexible(
+                child: ListView(
+              // solves scrolling while keyboard
+              shrinkWrap: true,
+              padding: EdgeInsets.only(top: 16, left: 16, right: 16),
+              children: <Widget>[
+                //Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
+                //    style: Theme.of(context).textTheme.caption),
+                //;
+                TextField(
+                  controller: sendAsset,
+                  readOnly: true,
+                  decoration: components.styles.decorations.textFeild(context,
+                      labelText: 'Asset',
+                      hintText: 'Ravencoin',
+                      suffixIcon: IconButton(
+                        icon: Padding(
+                            padding: EdgeInsets.only(right: 14),
+                            child: Icon(Icons.expand_more_rounded,
+                                color: Color(0xDE000000))),
+                        onPressed: () => _produceAssetModal(),
+                      )),
+                  onTap: () {
+                    _produceAssetModal();
+                  },
+                  onEditingComplete: () async {
+                    /// should tell front end what it was so we can notify user we're substituting the asset name or uns domain for the actual address
+                    //var verifiedAddress =
+                    //    await verifyValidAddress(sendAddress.text);
+                    //sendAddress.text = verifiedAddress;
+                    FocusScope.of(context).requestFocus(sendAddressFocusNode);
+                    //setState(() {});
+                  },
+                ),
 
-              SizedBox(height: 16.0),
-              Visibility(
-                  visible: addressName != '', child: Text('To: $addressName')),
-              TextField(
-                focusNode: sendAddressFocusNode,
-                controller: sendAddress,
-                autocorrect: false,
-                decoration: components.styles.decorations.textFeild(context,
-                    labelText: 'To',
-                    hintText: 'Address',
-                    suffixIcon: IconButton(
-                      icon: Icon(MdiIcons.qrcodeScan, color: Color(0xDE000000)),
-                      onPressed: () async {
-                        ScanResult result = await BarcodeScanner.scan();
-                        switch (result.type) {
-                          case ResultType.Barcode:
-                            populateFromQR(result.rawContent);
-                            break;
-                          case ResultType.Error:
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(result.rawContent)),
-                            );
-                            break;
-                          case ResultType.Cancelled:
-                            // no problem, don't do anything
-                            break;
-                        }
-                      },
-                    )),
-                onChanged: (value) {
-                  _validateAddressColor(value);
-                },
-                onEditingComplete: () async {
-                  /// should tell front end what it was so we can notify user we're substituting the asset name or uns domain for the actual address
-                  //var verifiedAddress =
-                  //    await verifyValidAddress(sendAddress.text);
-                  //sendAddress.text = verifiedAddress;
-                  FocusScope.of(context).requestFocus(sendAmountFocusNode);
-                  //setState(() {});
-                },
-              ),
-              //Visibility(
-              //    visible: !_validateAddress(sendAddress.text),
-              //    child: Text(
-              //      'Unrecognized Address',
-              //      style: TextStyle(color: Theme.of(context).bad),
-              //    )),
+                SizedBox(height: 16.0),
+                Visibility(
+                    visible: addressName != '',
+                    child: Text('To: $addressName')),
+                TextField(
+                  focusNode: sendAddressFocusNode,
+                  controller: sendAddress,
+                  autocorrect: false,
+                  decoration: components.styles.decorations.textFeild(context,
+                      labelText: 'To',
+                      hintText: 'Address',
+                      suffixIcon: IconButton(
+                        icon:
+                            Icon(MdiIcons.qrcodeScan, color: Color(0xDE000000)),
+                        onPressed: () async {
+                          ScanResult result = await BarcodeScanner.scan();
+                          switch (result.type) {
+                            case ResultType.Barcode:
+                              populateFromQR(result.rawContent);
+                              break;
+                            case ResultType.Error:
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(result.rawContent)),
+                              );
+                              break;
+                            case ResultType.Cancelled:
+                              // no problem, don't do anything
+                              break;
+                          }
+                        },
+                      )),
+                  onChanged: (value) {
+                    _validateAddressColor(value);
+                  },
+                  onEditingComplete: () async {
+                    /// should tell front end what it was so we can notify user we're substituting the asset name or uns domain for the actual address
+                    //var verifiedAddress =
+                    //    await verifyValidAddress(sendAddress.text);
+                    //sendAddress.text = verifiedAddress;
+                    FocusScope.of(context).requestFocus(sendAmountFocusNode);
+                    //setState(() {});
+                  },
+                ),
+                //Visibility(
+                //    visible: !_validateAddress(sendAddress.text),
+                //    child: Text(
+                //      'Unrecognized Address',
+                //      style: TextStyle(color: Theme.of(context).bad),
+                //    )),
 
-              SizedBox(height: 16.0),
-              TextField(
-                readOnly: sendAll,
-                focusNode: sendAmountFocusNode,
-                controller: sendAmount,
-                keyboardType: TextInputType.number,
-                decoration: components.styles.decorations.textFeild(context,
-                    labelText: 'Amount', // Amount -> Amount*
-                    hintText: 'Quantity'
-                    //suffixText: sendAll ? "don't send all" : 'send all',
-                    //suffixStyle: Theme.of(context).textTheme.caption,
-                    //suffixIcon: IconButton(
-                    //  icon: Icon(
-                    //      sendAll ? Icons.not_interested : Icons.all_inclusive,
-                    //      color: Color(0xFF606060)),
-                    //  onPressed: () {
-                    //    if (!sendAll) {
-                    //      sendAll = true;
-                    //      sendAmount.text = holding.toString();
-                    //    } else {
-                    //      sendAll = false;
-                    //      sendAmount.text = '';
-                    //    }
-                    //    verifyVisibleAmount(sendAmount.text);
-                    //  },
-                    //),
-                    ),
-                onChanged: (value) {
-                  verifyVisibleAmount(value);
-                  streams.app.spending.amount.add(double.parse(visibleAmount));
-                },
-                onEditingComplete: () {
-                  sendAmount.text = cleanDecAmount(sendAmount.text);
-                  verifyVisibleAmount(sendAmount.text);
-                  streams.app.spending.amount.add(double.parse(visibleAmount));
-                  FocusScope.of(context).requestFocus(sendFeeFocusNode);
-                },
-                //validator: (String? value) {  // validate as double/int
-                //  //if (value == null || value.isEmpty) {
-                //  //  return 'Please enter a valid send amount';
-                //  //}
-                //  //return null;
-                //},
-              ),
+                SizedBox(height: 16.0),
+                TextField(
+                  readOnly: sendAll,
+                  focusNode: sendAmountFocusNode,
+                  controller: sendAmount,
+                  keyboardType: TextInputType.number,
+                  decoration: components.styles.decorations.textFeild(context,
+                      labelText: 'Amount', // Amount -> Amount*
+                      hintText: 'Quantity'
+                      //suffixText: sendAll ? "don't send all" : 'send all',
+                      //suffixStyle: Theme.of(context).textTheme.caption,
+                      //suffixIcon: IconButton(
+                      //  icon: Icon(
+                      //      sendAll ? Icons.not_interested : Icons.all_inclusive,
+                      //      color: Color(0xFF606060)),
+                      //  onPressed: () {
+                      //    if (!sendAll) {
+                      //      sendAll = true;
+                      //      sendAmount.text = holding.toString();
+                      //    } else {
+                      //      sendAll = false;
+                      //      sendAmount.text = '';
+                      //    }
+                      //    verifyVisibleAmount(sendAmount.text);
+                      //  },
+                      //),
+                      ),
+                  onChanged: (value) {
+                    verifyVisibleAmount(value);
+                    streams.app.spending.amount
+                        .add(double.parse(visibleAmount));
+                  },
+                  onEditingComplete: () {
+                    sendAmount.text = cleanDecAmount(sendAmount.text);
+                    verifyVisibleAmount(sendAmount.text);
+                    streams.app.spending.amount
+                        .add(double.parse(visibleAmount));
+                    FocusScope.of(context).requestFocus(sendFeeFocusNode);
+                  },
+                  //validator: (String? value) {  // validate as double/int
+                  //  //if (value == null || value.isEmpty) {
+                  //  //  return 'Please enter a valid send amount';
+                  //  //}
+                  //  //return null;
+                  //},
+                ),
 
-              // todo replace fee estimate with fast, slow or regular
-              //Row(
-              //    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //    children: [Text('fee'), Text('0.01397191 RVN')]),
-              ////Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              ////  Text('remaining', style: Theme.of(context).annotate),
-              ////  Text('~ ${holding - double.parse(visibleAmount)}',
-              ////      style: Theme.of(context).annotate),
-              ////  TextButton.icon(
-              ////      onPressed: () {
-              ////        if (!sendAll) {
-              ////          sendAll = true;
-              ////          sendAmount.text = holding.toString();
-              ////        } else {
-              ////          sendAll = false;
-              ////          sendAmount.text = '';
-              ////        }
-              ////        verifyVisibleAmount(sendAmount.text);
-              ////      },
-              ////      icon: Icon(
-              ////          sendAll ? Icons.not_interested : Icons.all_inclusive),
-              ////      label: Text(sendAll ? "don't send all" : 'send all',
-              ////          style: Theme.of(context).textTheme.caption)),
-              ////]),
-              SizedBox(height: 16.0),
-              //Text('Transaction Fee',
-              //    style: Theme.of(context).textTheme.caption),
-              TextField(
-                focusNode: sendFeeFocusNode,
-                controller: sendFee,
-                readOnly: true,
-                decoration: components.styles.decorations.textFeild(context,
-                    labelText: 'Fee',
-                    hintText: 'Standard',
-                    suffixIcon: IconButton(
-                      icon: Padding(
-                          padding: EdgeInsets.only(right: 14),
-                          child: Icon(Icons.expand_more_rounded,
-                              //color: Color(0xFF606060))),
-                              color: Color(0xDE000000))),
-                      onPressed: () => _produceFeeModal(),
-                    )),
-                onTap: () {
-                  _produceFeeModal();
-                },
-                onChanged: (String? newValue) {
-                  feeGoal = {
-                        'Cheap': cheap,
-                        'Standard': standard,
-                        'Fast': fast,
-                      }[newValue] ??
-                      standard; // <--- replace by custom dialogue
-                  FocusScope.of(context).requestFocus(sendNoteFocusNode);
-                  setState(() {});
-                },
-                onEditingComplete: () async {
-                  //FocusScope.of(context).requestFocus(sendNoteFocusNode);
-                },
-              ),
+                // todo replace fee estimate with fast, slow or regular
+                //Row(
+                //    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //    children: [Text('fee'), Text('0.01397191 RVN')]),
+                ////Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                ////  Text('remaining', style: Theme.of(context).annotate),
+                ////  Text('~ ${holding - double.parse(visibleAmount)}',
+                ////      style: Theme.of(context).annotate),
+                ////  TextButton.icon(
+                ////      onPressed: () {
+                ////        if (!sendAll) {
+                ////          sendAll = true;
+                ////          sendAmount.text = holding.toString();
+                ////        } else {
+                ////          sendAll = false;
+                ////          sendAmount.text = '';
+                ////        }
+                ////        verifyVisibleAmount(sendAmount.text);
+                ////      },
+                ////      icon: Icon(
+                ////          sendAll ? Icons.not_interested : Icons.all_inclusive),
+                ////      label: Text(sendAll ? "don't send all" : 'send all',
+                ////          style: Theme.of(context).textTheme.caption)),
+                ////]),
+                SizedBox(height: 16.0),
+                //Text('Transaction Fee',
+                //    style: Theme.of(context).textTheme.caption),
+                TextField(
+                  focusNode: sendFeeFocusNode,
+                  controller: sendFee,
+                  readOnly: true,
+                  decoration: components.styles.decorations.textFeild(context,
+                      labelText: 'Fee',
+                      hintText: 'Standard',
+                      suffixIcon: IconButton(
+                        icon: Padding(
+                            padding: EdgeInsets.only(right: 14),
+                            child: Icon(Icons.expand_more_rounded,
+                                //color: Color(0xFF606060))),
+                                color: Color(0xDE000000))),
+                        onPressed: () => _produceFeeModal(),
+                      )),
+                  onTap: () {
+                    _produceFeeModal();
+                  },
+                  onChanged: (String? newValue) {
+                    feeGoal = {
+                          'Cheap': cheap,
+                          'Standard': standard,
+                          'Fast': fast,
+                        }[newValue] ??
+                        standard; // <--- replace by custom dialogue
+                    FocusScope.of(context).requestFocus(sendNoteFocusNode);
+                    setState(() {});
+                  },
+                  onEditingComplete: () async {
+                    //FocusScope.of(context).requestFocus(sendNoteFocusNode);
+                  },
+                ),
 
-              /// HIDE MEMO for beta - not supported by ravencoin anyway
-              //TextField(
-              //    focusNode: sendMemoFocusNode,
-              //    controller: sendMemo,
-              //    decoration: InputDecoration(
-              //        focusedBorder: UnderlineInputBorder(
-              //            borderSide: BorderSide(color: memoColor)),
-              //        enabledBorder: UnderlineInputBorder(
-              //            borderSide: BorderSide(color: memoColor)),
-              //        border: UnderlineInputBorder(),
-              //        labelText: 'Memo (optional)',
-              //        hintText: 'IPFS hash publicly posted on transaction'),
-              //    onChanged: (value) {
-              //      var oldMemoColor = memoColor;
-              //      memoColor = verifyMemo(value)
-              //          ? Theme.of(context).good!
-              //          : Theme.of(context).bad!;
-              //      if (value == '') {
-              //        memoColor = Colors.grey.shade400;
-              //      }
-              //      if (oldMemoColor != memoColor) {
-              //        setState(() {});
-              //      }
-              //    },
-              //    onEditingComplete: () {
-              //      FocusScope.of(context).requestFocus(sendNoteFocusNode);
-              //      setState(() {});
-              //    }),
-              SizedBox(height: 16.0),
-              TextField(
-                focusNode: sendNoteFocusNode,
-                controller: sendNote,
-                decoration: components.styles.decorations.textFeild(context,
-                    labelText: 'Note', hintText: 'Private note to self'),
-                onEditingComplete: () async => startSend(),
-              ),
-              SizedBox(height: 44),
-              Center(child: sendTransactionButton()),
-              SizedBox(height: 20),
-            ],
-          ),
-        ],
-      );
+                /// HIDE MEMO for beta - not supported by ravencoin anyway
+                //TextField(
+                //    focusNode: sendMemoFocusNode,
+                //    controller: sendMemo,
+                //    decoration: InputDecoration(
+                //        focusedBorder: UnderlineInputBorder(
+                //            borderSide: BorderSide(color: memoColor)),
+                //        enabledBorder: UnderlineInputBorder(
+                //            borderSide: BorderSide(color: memoColor)),
+                //        border: UnderlineInputBorder(),
+                //        labelText: 'Memo (optional)',
+                //        hintText: 'IPFS hash publicly posted on transaction'),
+                //    onChanged: (value) {
+                //      var oldMemoColor = memoColor;
+                //      memoColor = verifyMemo(value)
+                //          ? Theme.of(context).good!
+                //          : Theme.of(context).bad!;
+                //      if (value == '') {
+                //        memoColor = Colors.grey.shade400;
+                //      }
+                //      if (oldMemoColor != memoColor) {
+                //        setState(() {});
+                //      }
+                //    },
+                //    onEditingComplete: () {
+                //      FocusScope.of(context).requestFocus(sendNoteFocusNode);
+                //      setState(() {});
+                //    }),
+                SizedBox(height: 16.0),
+                TextField(
+                  focusNode: sendNoteFocusNode,
+                  controller: sendNote,
+                  decoration: components.styles.decorations.textFeild(context,
+                      labelText: 'Note', hintText: 'Private note to self'),
+                  onEditingComplete: () async => startSend(),
+                ),
+              ],
+            )),
+            Padding(
+              padding: EdgeInsets.only(bottom: 40, left: 16, right: 16),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [sendTransactionButton()]),
+            ),
+          ]);
 
   /// todo: fix the please wait, this is kinda sad:
   Future buildTransactionWithMessageAndConfirm(SendRequest sendRequest) async {
@@ -562,9 +569,9 @@ class _SendState extends State<Send> {
   /// should notes be in a separate reservoir? makes this simpler, but its nice
   /// to have it all in one place as in transaction.note....
   Widget sendTransactionButton() => Container(
-      width: MediaQuery.of(context).size.width,
-      height: 40,
-      child: OutlinedButton.icon(
+          //width: MediaQuery.of(context).size.width,
+          //height: 40,
+          child: OutlinedButton.icon(
         onPressed: () async => await startSend(),
         icon: Icon(MdiIcons.arrowTopRightThick),
         label: Text('SEND'.toUpperCase()),
