@@ -4,6 +4,7 @@
 /// for now we'll put it here because it'll be easy to move to main if we want.
 
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/extensions/object.dart';
 import 'package:raven_back/extensions/string.dart';
@@ -23,20 +24,14 @@ class SelectionItems {
 
   Widget leads(SelectionOptions name, {String? holding}) =>
       {
-        SelectionOptions.Fast: Icon(
-          Icons.speed_rounded, // speedometer
-          color: Color(0x99000000),
-        ),
-        SelectionOptions.Standard: Icon(
-          Icons.speed_rounded, // speedometer-medium
-          color: Color(0x99000000),
-        ),
-        SelectionOptions.Slow: Icon(
-          Icons.speed_rounded, // speedometer-slow
-          color: Color(0x99000000),
-        ),
+        SelectionOptions.Fast:
+            Icon(MdiIcons.speedometer, color: Color(0x99000000)),
+        SelectionOptions.Standard:
+            Icon(MdiIcons.speedometerMedium, color: Color(0x99000000)),
+        SelectionOptions.Slow:
+            Icon(MdiIcons.speedometerSlow, color: Color(0x99000000)),
       }[name] ??
-      Icon(Icons.home_rounded, color: Color(0x99000000));
+      Icon(MdiIcons.speedometerMedium, color: Color(0x99000000));
 
   Widget item(SelectionOptions name) => ListTile(
       visualDensity: VisualDensity.compact,
