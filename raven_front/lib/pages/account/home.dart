@@ -31,7 +31,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        resizeToAvoidBottomInset: false, // causes problems on all p
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.transparent,
         body: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             child: NotificationListener<UserScrollNotification>(

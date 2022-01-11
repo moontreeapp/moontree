@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:jdenticon_dart/jdenticon_dart.dart';
 import 'package:raven_back/extensions/string.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/records/records.dart';
@@ -40,8 +41,9 @@ class IconComponents {
     if (ret != null) {
       return ret;
     }
-    return _assetAvataridenticon(asset, height: height, width: width) ??
-        _assetAvatarGenerated(asset, height: height, width: width);
+    return _assetJdenticon(asset, height: height, width: width);
+    //return _assetAvataridenticon(asset, height: height, width: width) ??
+    //    _assetAvatarGenerated(asset, height: height, width: width);
   }
 
   Widget _assetAvatarRVN({double? height, double? width}) => Image.asset(
@@ -110,16 +112,26 @@ class IconComponents {
       );
       identicon.get().then((value) => (AssetLogos()
           .writeLogo(filename: '$assetName.svg', bytes: value.bytes)));
-      return SvgPicture.network(
-          Identicon(
-            name: '$assetName.svg',
-            size: 40,
-            radius: 50,
-            background: '23F57D00',
-          ).url,
-          height: height,
-          width: width);
+      return SvgPicture.network(identicon.url, height: height, width: width);
     }
+  }
+
+  Widget _assetJdenticon(String asset, {double? height, double? width}) {
+    return Stack(children: [
+      //SvgPicture.transparentCirlce(),
+      SvgPicture.string(
+        Jdenticon.toSvg(
+            asset.endsWith('!') ? asset.substring(0, asset.length - 1) : asset,
+            padding: 0,
+            colorSaturation: 1,
+            grayscaleSaturation: 1,
+            backColor: '#5C6BC0FF',
+            hues: [36]),
+        fit: BoxFit.contain,
+        height: height,
+        width: width,
+      )
+    ]);
   }
 
   // replace with the new thing...
