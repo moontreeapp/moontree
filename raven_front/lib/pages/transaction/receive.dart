@@ -57,7 +57,7 @@ class _ReceiveState extends State<Receive> {
       tail = tail.length == 1 ? '' : tail;
       uri = 'raven:$address$tail';
     }
-    setState(() => {});
+    //setState(() => {});
   }
 
   @override
@@ -249,8 +249,8 @@ class _ReceiveState extends State<Receive> {
                           labelText: 'Requested Asset',
                           hintText: 'Ravencoin'),
                       onChanged: (value) {
-                        requestMessage.text = cleanLabel(requestMessage.text);
-                        _makeURI();
+                        // /requestMessage.text = cleanLabel(requestMessage.text);
+                        // /_makeURI();
                       },
                       onEditingComplete: () {
                         requestMessage.text = cleanLabel(requestMessage.text);
@@ -269,8 +269,8 @@ class _ReceiveState extends State<Receive> {
                           labelText: 'Amount',
                           hintText: 'Quantity'),
                       onChanged: (value) {
-                        requestAmount.text = cleanDecAmount(requestAmount.text);
-                        _makeURI();
+                        //requestAmount.text = cleanDecAmount(requestAmount.text);
+                        //_makeURI();
                       },
                       onEditingComplete: () {
                         requestAmount.text = cleanDecAmount(requestAmount.text);
@@ -285,8 +285,8 @@ class _ReceiveState extends State<Receive> {
                     decoration: components.styles.decorations.textFeild(context,
                         labelText: 'Note', hintText: 'for groceries'),
                     onChanged: (value) {
-                      requestLabel.text = cleanLabel(requestLabel.text);
-                      _makeURI();
+                      //requestLabel.text = cleanLabel(requestLabel.text);
+                      //_makeURI();
                     },
                     onEditingComplete: () {
                       requestLabel.text = cleanLabel(requestLabel.text);
@@ -296,8 +296,7 @@ class _ReceiveState extends State<Receive> {
                   ),
                 ])),
             Padding(
-              padding:
-                  EdgeInsets.only(top: 40, bottom: 40, left: 16, right: 16),
+              padding: EdgeInsets.only(bottom: 40, left: 16, right: 16),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [shareButton()]),
@@ -308,9 +307,7 @@ class _ReceiveState extends State<Receive> {
   //static String _displayStringForOption(Security option) => option.symbol;
 
   Widget shareButton() => Container(
-      width: MediaQuery.of(context).size.width,
-      height: 40,
-      child: OutlinedButton.icon(
+          child: OutlinedButton.icon(
         onPressed: () => Share.share(uri),
         icon: Icon(Icons.share),
         label: Text('Share'.toUpperCase()),
