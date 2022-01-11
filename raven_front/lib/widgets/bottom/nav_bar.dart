@@ -59,6 +59,7 @@ class _NavBarState extends State<NavBar> {
         ].contains(pageTitle),
         child: Container(
           height: 118,
+          padding: EdgeInsets.only(left: 16, right: 16),
           width: MediaQuery.of(context).size.width,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -67,11 +68,12 @@ class _NavBarState extends State<NavBar> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   actionButton(name: 'send', link: '/transaction/send'),
+                  SizedBox(width: 16),
                   actionButton(name: 'receive', link: '/transaction/receive'),
                 ],
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   sectorIcon(name: 'wallet'),
                   sectorIcon(name: 'create'),
@@ -102,8 +104,8 @@ class _NavBarState extends State<NavBar> {
         ),
       );
 
-  Widget actionButton({required String name, required String link}) =>
-      OutlinedButton.icon(
+  Widget actionButton({required String name, required String link}) => Expanded(
+          child: OutlinedButton.icon(
         onPressed: () {
           Backdrop.of(components.navigator.routeContext!).concealBackLayer();
           Navigator.of(components.navigator.routeContext!).pushNamed(link);
@@ -114,7 +116,6 @@ class _NavBarState extends State<NavBar> {
         }[name]!),
         label: Text(name.toUpperCase()),
         style: ButtonStyle(
-          fixedSize: MaterialStateProperty.all(Size(156, 40)),
           textStyle: MaterialStateProperty.all(Theme.of(context).navBarButton),
           foregroundColor: MaterialStateProperty.all(Color(0xDE000000)),
           side: MaterialStateProperty.all(BorderSide(
@@ -122,7 +123,7 @@ class _NavBarState extends State<NavBar> {
           shape: MaterialStateProperty.all(RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20.0))),
         ),
-      );
+      ));
 
   Widget sectorIcon({required String name}) => IconButton(
         onPressed: () {
