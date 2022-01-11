@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -65,7 +68,19 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
     print('vouts: ${vouts.data}');
     print('wallets: ${wallets.data}');
     print('-------------------------');
-
+    var identicon = SvgPicture.network(
+        Identicon(
+          name: 'assetName.svg',
+          size: 40,
+          radius: 50,
+          background: '23F57D00',
+        ).url,
+        height: 40,
+        width: 40);
+    //print(identicon.toString());
+    print(identicon.toDiagnosticsNode().toString());
+    //print(identicon.toStringShallow());
+    //print(identicon.toStringShort());
     //for (var transaction in transactions.data) {
     //  print(transaction);
     //}
