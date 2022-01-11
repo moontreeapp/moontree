@@ -57,7 +57,7 @@ class _ReceiveState extends State<Receive> {
       tail = tail.length == 1 ? '' : tail;
       uri = 'raven:$address$tail';
     }
-    //setState(() => {});
+    setState(() => {});
   }
 
   @override
@@ -121,14 +121,22 @@ class _ReceiveState extends State<Receive> {
                   //    textAlign: TextAlign.center,
                   //    style: Theme.of(context).textTheme.bodyText1),
                   SizedBox(height: 20.0),
-                  Center(
+                  GestureDetector(
+                      onLongPress: () {
+                        Clipboard.setData(new ClipboardData(
+                            text: rawAddress ? address : uri));
+                        ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+                          content: new Text("Copied to Clipboard"),
+                        ));
+                      },
+                      child: Center(
 
-                      /// long hold copy and maybe on tap?
-                      child: QrImage(
-                          backgroundColor: Colors.white,
-                          data: rawAddress ? address : uri,
-                          version: QrVersions.auto,
-                          size: 300.0)),
+                          /// long hold copy and maybe on tap?
+                          child: QrImage(
+                              backgroundColor: Colors.white,
+                              data: rawAddress ? address : uri,
+                              version: QrVersions.auto,
+                              size: 300.0))),
 
                   /// At this time we're not going to show them any information but the
                   /// QR Code, not even the address, if they copy by long pressing the

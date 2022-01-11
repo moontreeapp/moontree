@@ -40,9 +40,6 @@ class _SendState extends State<Send> {
   String visibleFiatAmount = '';
   String validatedAddress = 'unknown';
   String validatedAmount = '-1';
-  Color addressColor = Colors.grey.shade400;
-  Color amountColor = Colors.grey.shade400;
-  Color memoColor = Colors.grey.shade400;
   bool useWallet = false;
   double holding = 0.0;
   FocusNode sendAddressFocusNode = FocusNode();
@@ -147,6 +144,7 @@ class _SendState extends State<Send> {
   }
 
   bool _validateAddress([String? address]) =>
+      sendAddress.text == '' ||
       rvnCondition(address ?? sendAddress.text, net: Current.account.net);
 
   bool _validateAddressColor([String? address]) {
@@ -155,16 +153,12 @@ class _SendState extends State<Send> {
     if (validatedAddress != '') {
       if ((validatedAddress == 'RVN' && Current.account.net == Net.Main) ||
           (validatedAddress == 'RVNt' && Current.account.net == Net.Test)) {
-        addressColor = Theme.of(context).good!;
         //} else if (validatedAddress == 'UNS') {
-        //  addressColor = Theme.of(context).primaryColor;
         //} else if (validatedAddress == 'ASSET') {
-        //  addressColor = Theme.of(context).primaryColor;
       }
       if (old != validatedAddress) setState(() => {});
       return true;
     }
-    addressColor = Theme.of(context).bad!;
     if (old != '') setState(() => {});
     return false;
   }
@@ -177,14 +171,10 @@ class _SendState extends State<Send> {
       value = value;
     }
     if (visibleAmount == '0' || visibleAmount != value) {
-      amountColor = Theme.of(context).bad!;
     } else {
       // todo: estimate fee
       if (double.parse(visibleAmount) <= holding) {
-        amountColor = Theme.of(context).good!;
-      } else {
-        amountColor = Theme.of(context).bad!;
-      }
+      } else {}
     }
     setState(() => {});
   }
@@ -221,12 +211,7 @@ class _SendState extends State<Send> {
                     _produceAssetModal();
                   },
                   onEditingComplete: () async {
-                    /// should tell front end what it was so we can notify user we're substituting the asset name or uns domain for the actual address
-                    //var verifiedAddress =
-                    //    await verifyValidAddress(sendAddress.text);
-                    //sendAddress.text = verifiedAddress;
                     FocusScope.of(context).requestFocus(sendAddressFocusNode);
-                    //setState(() {});
                   },
                 ),
 
@@ -241,6 +226,9 @@ class _SendState extends State<Send> {
                   decoration: components.styles.decorations.textFeild(context,
                       labelText: 'To',
                       hintText: 'Address',
+                      errorText: !_validateAddress(sendAddress.text)
+                          ? 'Unrecognized Address'
+                          : null,
                       suffixIcon: IconButton(
                         icon:
                             Icon(MdiIcons.qrcodeScan, color: Color(0xDE000000)),
@@ -264,21 +252,10 @@ class _SendState extends State<Send> {
                   onChanged: (value) {
                     _validateAddressColor(value);
                   },
-                  onEditingComplete: () async {
-                    /// should tell front end what it was so we can notify user we're substituting the asset name or uns domain for the actual address
-                    //var verifiedAddress =
-                    //    await verifyValidAddress(sendAddress.text);
-                    //sendAddress.text = verifiedAddress;
+                  onEditingComplete: () {
                     FocusScope.of(context).requestFocus(sendAmountFocusNode);
-                    //setState(() {});
                   },
                 ),
-                //Visibility(
-                //    visible: !_validateAddress(sendAddress.text),
-                //    child: Text(
-                //      'Unrecognized Address',
-                //      style: TextStyle(color: Theme.of(context).bad),
-                //    )),
 
                 SizedBox(height: 16.0),
                 TextField(
@@ -319,41 +296,9 @@ class _SendState extends State<Send> {
                         .add(double.parse(visibleAmount));
                     FocusScope.of(context).requestFocus(sendFeeFocusNode);
                   },
-                  //validator: (String? value) {  // validate as double/int
-                  //  //if (value == null || value.isEmpty) {
-                  //  //  return 'Please enter a valid send amount';
-                  //  //}
-                  //  //return null;
-                  //},
                 ),
 
-                // todo replace fee estimate with fast, slow or regular
-                //Row(
-                //    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //    children: [Text('fee'), Text('0.01397191 RVN')]),
-                ////Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                ////  Text('remaining', style: Theme.of(context).annotate),
-                ////  Text('~ ${holding - double.parse(visibleAmount)}',
-                ////      style: Theme.of(context).annotate),
-                ////  TextButton.icon(
-                ////      onPressed: () {
-                ////        if (!sendAll) {
-                ////          sendAll = true;
-                ////          sendAmount.text = holding.toString();
-                ////        } else {
-                ////          sendAll = false;
-                ////          sendAmount.text = '';
-                ////        }
-                ////        verifyVisibleAmount(sendAmount.text);
-                ////      },
-                ////      icon: Icon(
-                ////          sendAll ? Icons.not_interested : Icons.all_inclusive),
-                ////      label: Text(sendAll ? "don't send all" : 'send all',
-                ////          style: Theme.of(context).textTheme.caption)),
-                ////]),
                 SizedBox(height: 16.0),
-                //Text('Transaction Fee',
-                //    style: Theme.of(context).textTheme.caption),
                 TextField(
                   focusNode: sendFeeFocusNode,
                   controller: sendFee,
@@ -381,9 +326,6 @@ class _SendState extends State<Send> {
                         standard; // <--- replace by custom dialogue
                     FocusScope.of(context).requestFocus(sendNoteFocusNode);
                     setState(() {});
-                  },
-                  onEditingComplete: () async {
-                    //FocusScope.of(context).requestFocus(sendNoteFocusNode);
                   },
                 ),
 
@@ -452,7 +394,7 @@ class _SendState extends State<Send> {
 
   Future startSend() async {
     sendAmount.text = cleanDecAmount(sendAmount.text, zeroToBlank: true);
-    var vAddress = _validateAddress();
+    var vAddress = sendAddress.text != '' && _validateAddress();
     var vMemo = verifyMemo();
     if (_validateAddress() && verifyMemo()) {
       //sendAmount.text = cleanDecAmount(sendAmount.text);

@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/services/identicon.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
 
@@ -279,6 +281,22 @@ class _HoldingList extends State<HoldingList> {
       //        style: TextStyle(color: Theme.of(context).disabledColor))));
     }
 
-    return ListView(children: <Widget>[...rvnHolding, ...assetHoldings]);
+    return ListView(children: <Widget>[
+      SvgPicture.string(
+          '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 5 5" shape-rendering="crispEdges" width="40" height="40"><metadata><rdf:RDF><cc:Work><dc:format>image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/><dc:title>Identicon</dc:title><dc:creator><cc:Agent><dc:title>Florian Körner</dc:title></cc:Agent></dc:creator><dc:source>https://github.com/dicebear/dicebear</dc:source><cc:license rdf:resource="https://creativecommons.org/publicdomain/zero/1.0/"/></cc:Work><cc:License rdf:about="https://creativecommons.org/publicdomain/zero/1.0/"><cc:permits rdf:resource="https://creativecommons.org/ns#Reproduction"/><cc:permits rdf:resource="https://creativecommons.org/ns#Distribution"/><cc:permits rdf:resource="https://creativecommons.org/ns#DerivativeWorks"/></cc:License></rdf:RDF></metadata><mask id="avatarsRadiusMask"><rect width="5" height="5" rx="2.5" ry="2.5" x="0" y="0" fill="#fff"/></mask><g mask="url(#avatarsRadiusMask)"><rect fill="#F57D00" width="5" height="5" x="0" y="0"/><path d="M0 4h1v1H0V4zm4 0h1v1H4V4z" fill-rule="evenodd" fill="#FDD835"/><path d="M1 3h3v1H1V3z" fill="#FDD835"/><path d="M0 2h1v1H0V2zm4 0h1v1H4V2z" fill-rule="evenodd" fill="#FDD835"/><path d="M1 1h3v1H1V1z" fill="#FDD835"/><path d="M0 0h5v1H0V0z" fill="#FDD835"/></g></svg>',
+          width: 40,
+          height: 40),
+      SvgPicture.network(
+          Identicon(
+            name: 'random_file_name.svg',
+            size: 40,
+            radius: 50,
+            background: '23F57D00',
+          ).url,
+          width: 40,
+          height: 40),
+      ...rvnHolding,
+      ...assetHoldings
+    ]);
   }
 }

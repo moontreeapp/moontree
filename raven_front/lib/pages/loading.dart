@@ -6,6 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/wallet/constants.dart';
 import 'package:raven_front/listeners/listeners.dart';
+import 'package:raven_front/services/identicon.dart';
 import 'package:raven_front/services/storage.dart';
 
 class Loading extends StatefulWidget {
@@ -64,6 +65,7 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
     print('vouts: ${vouts.data}');
     print('wallets: ${wallets.data}');
     print('-------------------------');
+
     //for (var transaction in transactions.data) {
     //  print(transaction);
     //}

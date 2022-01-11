@@ -55,7 +55,7 @@ Future<void> main() async {
 
 class RavenMobileApp extends StatelessWidget {
   //static final GlobalKey<NavigatorState> navigatorKey = new GlobalKey();
-  //static final GlobalKey<ScaffoldState> _key = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -70,6 +70,8 @@ class RavenMobileApp extends StatelessWidget {
           //maintainBackLayerState: false,
           //resizeToAvoidBottomInset: false,
           //extendBody: true,
+          // for potentially modifying the persistent bottom sheet options:
+          scaffoldKey: components.scaffoldKey,
           stickyFrontLayer: true,
           backgroundColor: Theme.of(context).backgroundColor,
           backLayerBackgroundColor: Theme.of(context).backgroundColor,

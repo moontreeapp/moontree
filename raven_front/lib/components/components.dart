@@ -1,5 +1,6 @@
 //import 'package:flutter/material.dart';
 
+import 'package:flutter/material.dart';
 import 'package:raven_front/components/styles/decorations.dart';
 
 import 'alerts.dart';
@@ -26,6 +27,7 @@ class components {
   //    RouteObserver<PageRoute>();
   // handled by navigator
   static final RouteStack navigator = RouteStack();
+  static final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
 }
 
 class Styles {
