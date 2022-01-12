@@ -136,6 +136,7 @@ class _ConnectionLightState extends State<ConnectionLight>
         //    },
         //    child: Text('stop')),
         IconButton(
+          splashRadius: 24,
           onPressed: () => showDialog(
               //context: context,
               context: components.navigator.routeContext!,

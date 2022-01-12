@@ -103,6 +103,7 @@ class RavenMobileApp extends StatelessWidget {
               ConnectionLight(),
               SizedBox(width: 16),
               Icon(
+                //splashRadius: 24,
                 MdiIcons.qrcodeScan,
                 color: Colors.white,
               ),
