@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:raven_front/services/lookup.dart';
 import 'package:tuple/tuple.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/backdrop/backdrop.dart';
@@ -20,6 +21,7 @@ class _BalanceHeaderState extends State<BalanceHeader> {
   List<StreamSubscription> listeners = [];
   String symbol = 'RVN';
   double amount = 0.0;
+  double holding = 0.0;
   String visibleAmount = '0';
   String visibleFiatAmount = '';
   String validatedAddress = 'unknown';
@@ -56,7 +58,22 @@ class _BalanceHeaderState extends State<BalanceHeader> {
 
   @override
   Widget build(BuildContext context) {
+    var possibleHoldings = [
+      for (var balance in
+          //      useWallet
+          //      ? Current.walletHoldings(data['walletId'])
+          //      :
+          Current.holdings)
+        if (balance.security.symbol == symbol) satToAmount(balance.confirmed)
+    ];
+    if (possibleHoldings.length > 0) {
+      holding = possibleHoldings[0];
+    }
     var divisibility = 8; /* get asset divisibility...*/
+    var holdingSat = amountToSat(
+      holding,
+      divisibility: divisibility,
+    );
     try {
       visibleFiatAmount = components.text.securityAsReadable(
           amountToSat(
@@ -79,13 +96,20 @@ class _BalanceHeaderState extends State<BalanceHeader> {
             children: [
               //Image.asset('assets/rvnonly.png', height: 56, width: 56),
               ///symbol image placeholder
-              Container(height: 56, width: 56, child: Text(symbol)),
+              //Container(height: 56, width: 56, child: Text(symbol)),
+              components.icons.assetAvatar(symbol, height: 56, width: 56),
               SizedBox(height: 8),
               // get this from balance
-              Text('Balance', style: Theme.of(context).balanceAmount),
+              Text(
+                  components.text.securityAsReadable(holdingSat,
+                      symbol: symbol, asUSD: false),
+                  style: Theme.of(context).balanceAmount),
               SizedBox(height: 1),
               // USD amount of balance fix!
-              Text('\$ USD Balance', style: Theme.of(context).balanceDollar),
+              Text(
+                  components.text.securityAsReadable(holdingSat,
+                      symbol: symbol, asUSD: true),
+                  style: Theme.of(context).balanceDollar),
               SizedBox(height: 30),
               widget.pageTitle == 'Send'
                   ? Row(
@@ -93,8 +117,10 @@ class _BalanceHeaderState extends State<BalanceHeader> {
                       children: [
                           Text('Remaining:',
                               style: Theme.of(context).remaining),
-                          Text((balance - amount).toString(),
-                              style: Theme.of(context).remaining)
+                          Text((holding - amount).toString(),
+                              style: (holding - amount) >= 0
+                                  ? Theme.of(context).remaining
+                                  : Theme.of(context).remainingRed)
                         ])
                   : SizedBox(height: 14),
             ],
