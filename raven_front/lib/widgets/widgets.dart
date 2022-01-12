@@ -1,11 +1,13 @@
 export 'app_bar/connection.dart';
 export 'app_bar/lead.dart';
 export 'app_bar/title.dart';
+export 'app_bar/qrcode.dart';
 export 'back/back_layer.dart';
 export 'back/nav_drawer.dart';
 export 'back/balance_header.dart';
-export 'front/setting_items.dart';
 export 'front/holdings.dart';
+export 'front/loader.dart';
+export 'front/setting_items.dart';
 export 'front/transactions.dart';
 export 'bottom/nav_bar.dart';
 export 'bottom/selection_items.dart';

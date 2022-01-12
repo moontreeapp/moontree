@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import 'package:raven_front/widgets/bottom/selection_items.dart';
+import 'package:raven_front/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 import 'package:barcode_scan2/barcode_scan2.dart';
@@ -51,11 +52,15 @@ class _SendState extends State<Send> {
   TxGoal feeGoal = standard;
   bool sendAll = false;
   String addressName = '';
+  bool loading = false;
 
   @override
   void initState() {
     super.initState();
     listeners.add(streams.app.spending.symbol.listen((value) {
+      if (value == 'RVN') {
+        value = 'Ravencoin';
+      }
       if (sendAsset.text != value) {
         setState(() {
           sendAsset.text = value;
@@ -114,7 +119,8 @@ class _SendState extends State<Send> {
       visibleFiatAmount = '';
     }
     return GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(), child: body());
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: loading ? Loader() : body());
   }
 
   void populateFromQR(String code) {
@@ -442,37 +448,39 @@ class _SendState extends State<Send> {
           //mpkrK1GLPPdqpaC8qxPVDT5bn5fkAE1UUE
           //23150
           // https://rvnt.cryptoscope.io/address/?address=mpkrK1GLPPdqpaC8qxPVDT5bn5fkAE1UUE
-          streams.run.send.add(sendRequest);
+          ////streams.run.send.add(sendRequest);// temporary test of screen
           //todo: snackbar notification "sending in background"
-          Navigator.pop(context); // leave page so they don't hit send again
-        } else {
-          try {
-            await buildTransactionWithMessageAndConfirm(sendRequest);
-          } on InsufficientFunds catch (e) {
-            Navigator.pop(context);
-            showDialog(
-                context: context,
-                builder: (BuildContext context) => AlertDialog(
-                        title: Text('Error: Insufficient Funds'),
-                        content: Text(
-                            '$e: Unable to acquire inputs for transaction, this may be due to too many wallets holding too small amounts, a problem known as "dust." Try sending from another account.'),
-                        actions: [
-                          TextButton(
-                              child: Text('Ok'),
-                              onPressed: () => Navigator.pop(context))
-                        ]));
-          } catch (e) {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) => AlertDialog(
-                        title: Text('Error'),
-                        content: Text('Unable to create transaction: $e'),
-                        actions: [
-                          TextButton(
-                              child: Text('Ok'),
-                              onPressed: () => Navigator.pop(context))
-                        ]));
-          }
+          //Navigator.pop(context); // leave page so they don't hit send again
+          setState(() => loading = true);
+          // temporary test of screen:
+          ////} else {
+          ////  try {
+          ////    await buildTransactionWithMessageAndConfirm(sendRequest);
+          ////  } on InsufficientFunds catch (e) {
+          ////    Navigator.pop(context);
+          ////    showDialog(
+          ////        context: context,
+          ////        builder: (BuildContext context) => AlertDialog(
+          ////                title: Text('Error: Insufficient Funds'),
+          ////                content: Text(
+          ////                    '$e: Unable to acquire inputs for transaction, this may be due to too many wallets holding too small amounts, a problem known as "dust." Try sending from another account.'),
+          ////                actions: [
+          ////                  TextButton(
+          ////                      child: Text('Ok'),
+          ////                      onPressed: () => Navigator.pop(context))
+          ////                ]));
+          ////  } catch (e) {
+          ////    showDialog(
+          ////        context: context,
+          ////        builder: (BuildContext context) => AlertDialog(
+          ////                title: Text('Error'),
+          ////                content: Text('Unable to create transaction: $e'),
+          ////                actions: [
+          ////                  TextButton(
+          ////                      child: Text('Ok'),
+          ////                      onPressed: () => Navigator.pop(context))
+          ////                ]));
+          ////  }
         }
       } else {
         showDialog(

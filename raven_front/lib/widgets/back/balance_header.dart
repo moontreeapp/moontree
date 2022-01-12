@@ -32,6 +32,11 @@ class _BalanceHeaderState extends State<BalanceHeader> {
     Backdrop.of(components.navigator.routeContext!).revealBackLayer();
     super.initState();
     listeners.add(streams.app.spending.symbol.listen((String value) {
+      print(symbol);
+      print(value);
+      if (value == 'Ravencoin') {
+        value = 'RVN';
+      }
       if (symbol != value) {
         setState(() {
           symbol = value;
