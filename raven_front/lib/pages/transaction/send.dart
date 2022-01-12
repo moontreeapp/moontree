@@ -575,13 +575,17 @@ class _SendState extends State<Send> {
   Future confirmSend() => showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-              content: Text('Are you sure you want to send?'),
+              contentPadding: EdgeInsets.all(24.0),
+              content: Text('Are you sure you want to send?',
+                  style: Theme.of(context).sendConfirm),
               actions: [
                 TextButton(
-                    child: Text('Cancel'),
+                    child: Text('Cancel'.toUpperCase(),
+                        style: Theme.of(context).sendConfirmButton),
                     onPressed: () => Navigator.pop(context)),
                 TextButton(
-                    child: Text('Send'),
+                    child: Text('Send'.toUpperCase(),
+                        style: Theme.of(context).sendConfirmButton),
                     onPressed: () {
                       Navigator.pop(context);
                       // temporary test of screen:

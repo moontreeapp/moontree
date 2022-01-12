@@ -318,4 +318,43 @@ extension TextStyleExtension on ThemeData {
           fontWeight: FontWeightNames.semiBold,
           letterSpacing: 0.5,
           color: Color(0x61000000));
+  TextStyle? get sendConfirm => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Roboto',
+          fontWeight: FontWeightNames.regular,
+          letterSpacing: 0.25,
+          color: Color(0x99000000))
+      : TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Roboto',
+          fontWeight: FontWeightNames.regular,
+          letterSpacing: 0.25,
+          color: Color(0x99000000));
+  TextStyle? get sendConfirmButton => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeightNames.bold,
+          letterSpacing: 1.25,
+          color: Color(0xFF5C6BC0))
+      : TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeightNames.bold,
+          letterSpacing: 1.25,
+          color: Color(0xFF5C6BC0));
+  TextStyle? get loaderText => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 20.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeightNames.semiBold,
+          letterSpacing: 0.15,
+          color: Color(0xDE000000))
+      : TextStyle(
+          fontSize: 20.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeightNames.semiBold,
+          letterSpacing: 0.15,
+          color: Color(0xDE000000));
 }
