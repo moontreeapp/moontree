@@ -48,13 +48,13 @@ extension TextStyleExtension on ThemeData {
       ? TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.normal,
+          fontWeight: FontWeightNames.regular,
           letterSpacing: 0.5,
-          color: Colors.black.withOpacity(0.87))
+          color: Color(0xDE000000))
       : TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.normal,
+          fontWeight: FontWeightNames.regular,
           letterSpacing: 0.5,
           color: Colors.black.withOpacity(0.87));
   //text for holding values (secondarytext):
@@ -64,7 +64,7 @@ extension TextStyleExtension on ThemeData {
           fontFamily: 'Nunito',
           fontWeight: FontWeightNames.bold,
           letterSpacing: 0.25,
-          color: Colors.black.withOpacity(0.6))
+          color: Color(0x99000000))
       : TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
