@@ -42,15 +42,18 @@ class _PageLead extends State<PageLead> {
   @override
   Widget build(BuildContext context) => pageTitle == 'Wallet'
       ? IconButton(
+          splashRadius: 24,
           onPressed: () => Backdrop.of(context).fling(),
           padding: EdgeInsets.only(left: 16),
           icon: SvgPicture.asset('assets/icons/menu/menu.svg'))
       : pageTitle == 'Send'
           ? IconButton(
+              splashRadius: 24,
               icon: Icon(Icons.close_rounded, color: Colors.white),
               onPressed: () =>
                   Navigator.pop(components.navigator.routeContext ?? context))
           : IconButton(
+              splashRadius: 24,
               icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
               onPressed: () =>
                   Navigator.pop(components.navigator.routeContext ?? context));
