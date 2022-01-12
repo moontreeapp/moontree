@@ -99,6 +99,7 @@ flutter:
     - assets/icons/
     - assets/icons/create/
     - assets/icons/discord/
+    - assets/icons/extras/
     - assets/icons/import_export/
     - assets/icons/manage/
     - assets/icons/menu/

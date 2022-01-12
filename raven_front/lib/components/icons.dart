@@ -118,7 +118,6 @@ class IconComponents {
 
   Widget _assetJdenticon(String asset, {double? height, double? width}) {
     return Stack(children: [
-      //SvgPicture.transparentCirlce(),
       SvgPicture.string(
         Jdenticon.toSvg(
             asset.endsWith('!') ? asset.substring(0, asset.length - 1) : asset,
@@ -127,10 +126,14 @@ class IconComponents {
             grayscaleSaturation: 1,
             backColor: '#5C6BC0FF',
             hues: [36]),
-        fit: BoxFit.contain,
         height: height,
         width: width,
-      )
+      ),
+      SvgPicture.asset(
+        'assets/icons/extras/transparent_circle_white.svg',
+        height: height,
+        width: width,
+      ),
     ]);
   }
 
