@@ -21,11 +21,7 @@ class TextComponents {
     String? symbol,
     bool asUSD = false,
   }) {
-    security ??
-        symbol ??
-        (() => throw OneOfMultipleMissing(
-            'security or symbol required to identify record.'))();
-    symbol = security?.symbol ?? symbol ?? 'RVN';
+    symbol = getSymbol(symbol: symbol, security: security);
     if (symbol == 'RVN') {
       var asAmount = satToAmount(sats);
       return asUSD
@@ -33,11 +29,8 @@ class TextComponents {
           : NumberFormat('#,##0.########', 'en_US').format(asAmount);
     }
     // asset sats -> asset -> rvn -> usd
-    security = security ??
-        securities.bySymbolSecurityType
-            .getOne(symbol, SecurityType.RavenAsset) ??
-        Security(symbol: symbol, securityType: SecurityType.RavenAsset);
-    var asset = assets.bySymbol.getOne(symbol);
+    security = getSecurityOf(symbol: symbol, security: security);
+    var asset = getAssetOf(symbol: symbol);
     var asAmount = satToAmount(sats, divisibility: asset?.divisibility ?? 0);
     return asUSD
         ? rvnUSD(asAmount * (services.rate.assetToRVN(security) ?? 0.0))
@@ -45,5 +38,48 @@ class TextComponents {
                 '#,##0${(asset?.divisibility ?? 0) > 0 ? '.' + '#' * (asset?.divisibility ?? 0) : ''}',
                 'en_US')
             .format(asAmount);
+  }
+
+  Security getSecurityOf({
+    Security? security,
+    String? symbol,
+  }) {
+    symbol = getSymbol(symbol: symbol, security: security);
+    if (symbol == 'RVN') {
+      return securities.RVN;
+    }
+    if (symbol == 'USD') {
+      return securities.USD;
+    }
+    return security ??
+        securities.bySymbolSecurityType
+            .getOne(symbol, SecurityType.RavenAsset) ??
+        Security(symbol: symbol, securityType: SecurityType.RavenAsset);
+  }
+
+  Asset? getAssetOf({
+    Security? security,
+    String? symbol,
+  }) {
+    symbol = getSymbol(symbol: symbol, security: security);
+    if (symbol == 'RVN') {
+      return null;
+    }
+    security = security ??
+        securities.bySymbolSecurityType
+            .getOne(symbol, SecurityType.RavenAsset) ??
+        Security(symbol: symbol, securityType: SecurityType.RavenAsset);
+    return assets.bySymbol.getOne(symbol);
+  }
+
+  String getSymbol({
+    Security? security,
+    String? symbol,
+  }) {
+    security ??
+        symbol ??
+        (() => throw OneOfMultipleMissing(
+            'security or symbol required to identify record.'))();
+    return security?.symbol ?? symbol ?? 'RVN';
   }
 }

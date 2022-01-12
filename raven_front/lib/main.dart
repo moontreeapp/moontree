@@ -7,6 +7,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:barcode_scan2/barcode_scan2.dart';
 
 import 'package:raven_front/pages/pages.dart';
 import 'package:raven_front/components/components.dart';
@@ -102,10 +103,24 @@ class RavenMobileApp extends StatelessWidget {
               components.status,
               ConnectionLight(),
               SizedBox(width: 16),
-              Icon(
-                //splashRadius: 24,
-                MdiIcons.qrcodeScan,
-                color: Colors.white,
+              IconButton(
+                splashRadius: 24,
+                icon: Icon(
+                  MdiIcons.qrcodeScan,
+                  color: Colors.white,
+                ),
+                onPressed: () async {
+                  Backdrop.of(components.navigator.routeContext!)
+                      .concealBackLayer();
+                  ScanResult result = await BarcodeScanner.scan();
+                  Navigator.of(components.navigator.routeContext!)
+                      .pushNamed('/transaction/send', arguments: {
+                    'qrcode': <ResultType, String>{
+                          ResultType.Barcode: result.rawContent
+                        }[result.type] ??
+                        ''
+                  });
+                },
               ),
               SizedBox(width: 16),
             ],

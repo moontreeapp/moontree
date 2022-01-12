@@ -107,19 +107,28 @@ class _HoldingList extends State<HoldingList> {
       var thisHolding = ListTile(
           //dense: true,
           contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          onTap: () => Navigator.pushNamed(context,
-                  holding.security.symbol == 'RVN' ? '/transactions' : '/asset',
-                  arguments: {
-                    'holding': holding,
-                    'walletId': wallet?.walletId ?? null
-                  }), // wallet transactions are on wallet screen, so remove wallet id here.
+          onTap: () {
+            streams.app.spending.symbol.add(holding.security.symbol);
+            Navigator.of(components.navigator.routeContext!).pushNamed(
+                holding.security.symbol == 'RVN'
+                    ? '/transactions'
+                    : '/transactions',
+                arguments: {
+                  'holding': holding,
+                  'walletId': wallet?.walletId ?? null
+                });
+          }, // wallet transactions are on wallet screen, so remove wallet id here.
           leading: Container(
               height: 40,
               width: 40,
               child: components.icons.assetAvatar(holding.security.symbol)),
           title:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(holding.security.symbol, style: Theme.of(context).holdingName),
+            Text(
+                holding.security.symbol == 'RVN'
+                    ? 'Ravencoin'
+                    : holding.security.symbol,
+                style: Theme.of(context).holdingName),
             Text(
                 components.text.securityAsReadable(holding.value,
                     security: holding.security, asUSD: showUSD),

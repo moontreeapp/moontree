@@ -36,7 +36,6 @@ class SelectionItems {
   Widget item(SelectionOptions name) => ListTile(
       visualDensity: VisualDensity.compact,
       onTap: () {
-        print(asString(name));
         streams.app.spending.fee.add(asString(name));
         Navigator.pop(context);
       },
@@ -46,7 +45,6 @@ class SelectionItems {
   Widget holdingItem(String name) => ListTile(
       visualDensity: VisualDensity.compact,
       onTap: () {
-        print(name);
         streams.app.spending.symbol.add(name);
         Navigator.pop(context);
       },

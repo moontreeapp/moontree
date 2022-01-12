@@ -87,13 +87,11 @@ class _SendState extends State<Send> {
 
   @override
   Widget build(BuildContext context) {
-    /// either we need to animate it moving down the normal way, with a different thing behind or
-    /// we need to move it down ourselves and place something there... idk...
-    //Backdrop.of(components.navigator.routeContext!).revealBackLayer();
-    // could hold which asset to send...
     data = populateData(context, data);
     useWallet = data.containsKey('walletId') && data['walletId'] != null;
-    var divisibility = 8; /* get asset divisibility...*/
+    if (data.containsKey('qrcode')) populateFromQR(data['qrcode']);
+    var divisibility =
+        assets.bySymbol.getOne(data['symbol'] ?? '')?.divisibility ?? 8;
     var possibleHoldings = [
       for (var balance in useWallet
           ? Current.walletHoldings(data['walletId'])
@@ -115,7 +113,6 @@ class _SendState extends State<Send> {
     } catch (e) {
       visibleFiatAmount = '';
     }
-    print(MediaQuery.of(context).size.height);
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(), child: body());
   }
