@@ -252,6 +252,7 @@ class _ReceiveState extends State<Receive> {
                       inputFormatters: [
                         UpperCaseTextFormatter(),
                       ],
+                      maxLength: 32,
                       decoration: components.styles.decorations.textFeild(
                           context,
                           labelText: 'Requested Asset',
@@ -281,7 +282,10 @@ class _ReceiveState extends State<Receive> {
                         //_makeURI();
                       },
                       onEditingComplete: () {
-                        requestAmount.text = cleanDecAmount(requestAmount.text);
+                        requestAmount.text = cleanDecAmount(
+                          requestAmount.text,
+                          zeroToBlank: true,
+                        );
                         _makeURI();
                         FocusScope.of(context).requestFocus(requestLabelFocus);
                       }),

@@ -290,7 +290,10 @@ class _SendState extends State<Send> {
                         .add(double.parse(visibleAmount));
                   },
                   onEditingComplete: () {
-                    sendAmount.text = cleanDecAmount(sendAmount.text);
+                    sendAmount.text = cleanDecAmount(
+                      sendAmount.text,
+                      zeroToBlank: true,
+                    );
                     verifyVisibleAmount(sendAmount.text);
                     streams.app.spending.amount
                         .add(double.parse(visibleAmount));
