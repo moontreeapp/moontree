@@ -44,8 +44,9 @@ class _PageTitleState extends State<PageTitle> {
       return Text('', style: Theme.of(context).pageTitle);
     }
     if (pageTitle == 'Transactions') {
-      return Text(streams.app.spending.symbol.value,
-          style: Theme.of(context).pageTitle);
+      var symbol = streams.app.spending.symbol.value;
+      symbol = symbol == 'RVN' ? 'Ravencoin' : symbol;
+      return Text(symbol, style: Theme.of(context).pageTitle);
     }
     if (pageTitle != 'Wallet' || accounts.data.length <= 1) {
       return Text(pageTitle, style: Theme.of(context).pageTitle);
