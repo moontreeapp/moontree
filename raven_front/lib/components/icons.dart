@@ -117,24 +117,45 @@ class IconComponents {
   }
 
   Widget _assetJdenticon(String asset, {double? height, double? width}) {
-    return Stack(children: [
-      SvgPicture.string(
-        Jdenticon.toSvg(
-            asset.endsWith('!') ? asset.substring(0, asset.length - 1) : asset,
-            padding: 0,
-            colorSaturation: 1,
-            grayscaleSaturation: 1,
-            backColor: '#5C6BC0FF',
-            hues: [36]),
-        height: height,
-        width: width,
+    //return Stack(children: [
+    ///return ClipRRect(
+    ///    borderRadius: BorderRadius.circular(100.0),
+    ///    child:
+    return Container(
+      height: height,
+      width: width,
+      decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+              width: 2,
+              color:
+                  asset.endsWith('!') ? Color(0xFFFF9900) : Color(0xFF5C6BC0))),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(100.0),
+        child: Center(
+          child: SvgPicture.string(
+            Jdenticon.toSvg(
+                asset.endsWith('!')
+                    ? asset.substring(0, asset.length - 1)
+                    : asset,
+                padding: 0,
+                colorSaturation: 1,
+                grayscaleSaturation: 1,
+                backColor: '#5C6BC0FF',
+                hues: [36]),
+            height: height,
+            width: width,
+          ),
+        ),
       ),
-      SvgPicture.asset(
-        'assets/icons/extras/transparent_circle_white.svg',
-        height: height,
-        width: width,
-      ),
-    ]);
+    );
+    //  ),
+    //  SvgPicture.asset(
+    //    'assets/icons/extras/transparent_circle_white.svg',
+    //    height: height,
+    //    width: width,
+    //  ),
+    //]);
   }
 
   // replace with the new thing...

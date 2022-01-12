@@ -97,7 +97,9 @@ class _BalanceHeaderState extends State<BalanceHeader> {
               //Image.asset('assets/rvnonly.png', height: 56, width: 56),
               ///symbol image placeholder
               //Container(height: 56, width: 56, child: Text(symbol)),
+
               components.icons.assetAvatar(symbol, height: 56, width: 56),
+
               SizedBox(height: 8),
               // get this from balance
               Text(
