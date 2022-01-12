@@ -94,18 +94,16 @@ class _SendState extends State<Send> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
+    var symbol = streams.app.spending.symbol.value;
+    symbol = symbol == 'Ravencoin' ? 'RVN' : symbol;
     useWallet = data.containsKey('walletId') && data['walletId'] != null;
     if (data.containsKey('qrcode')) populateFromQR(data['qrcode']);
-    divisibility = assets.bySymbol
-            .getOne(streams.app.spending.symbol.value)
-            ?.divisibility ??
-        8;
+    divisibility = assets.bySymbol.getOne(symbol)?.divisibility ?? 8;
     var possibleHoldings = [
       for (var balance in useWallet
           ? Current.walletHoldings(data['walletId'])
           : Current.holdings)
-        if (balance.security.symbol == data['symbol'])
-          satToAmount(balance.confirmed)
+        if (balance.security.symbol == symbol) satToAmount(balance.confirmed)
     ];
     if (possibleHoldings.length > 0) {
       holding = possibleHoldings[0];
@@ -113,14 +111,14 @@ class _SendState extends State<Send> {
     try {
       visibleFiatAmount = components.text.securityAsReadable(
           amountToSat(double.parse(visibleAmount), divisibility: divisibility),
-          symbol: data['symbol'],
+          symbol: symbol,
           asUSD: true);
     } catch (e) {
       visibleFiatAmount = '';
     }
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: loading ? Loader() : body());
+        child: loading ? Loader(message: 'Sending Transaction') : body());
   }
 
   void populateFromQR(String code) {
@@ -404,7 +402,7 @@ class _SendState extends State<Send> {
     sendAmount.text = cleanDecAmount(sendAmount.text, zeroToBlank: true);
     var vAddress = sendAddress.text != '' && _validateAddress();
     var vMemo = verifyMemo();
-    if (_validateAddress() && verifyMemo()) {
+    if (sendAmount.text != '' && _validateAddress() && verifyMemo()) {
       //sendAmount.text = cleanDecAmount(sendAmount.text);
       //sendAddress.text = await verifyValidAddress(sendAddress.text);
       // if valid form: (
@@ -429,7 +427,7 @@ class _SendState extends State<Send> {
       FocusScope.of(context).unfocus();
       var sendAmountAsSats = amountToSat(
         double.parse(sendAmount.text),
-        divisibility: 8, /* get asset divisibility */
+        divisibility: divisibility,
       );
       if (holding >= double.parse(sendAmount.text)) {
         var sendRequest = SendRequest(
@@ -444,14 +442,15 @@ class _SendState extends State<Send> {
             visibleAmount: visibleAmount,
             sendAmountAsSats: sendAmountAsSats,
             feeGoal: feeGoal);
-        if (settings.primaryIndex.getOne(SettingName.Send_Immediate)!.value) {
+        ////if (settings.primaryIndex.getOne(SettingName.Send_Immediate)!.value) {
+        if (true) {
+          await confirmSend();
           //mpkrK1GLPPdqpaC8qxPVDT5bn5fkAE1UUE
           //23150
           // https://rvnt.cryptoscope.io/address/?address=mpkrK1GLPPdqpaC8qxPVDT5bn5fkAE1UUE
           ////streams.run.send.add(sendRequest);// temporary test of screen
           //todo: snackbar notification "sending in background"
           //Navigator.pop(context); // leave page so they don't hit send again
-          setState(() => loading = true);
           // temporary test of screen:
           ////} else {
           ////  try {
@@ -572,6 +571,24 @@ class _SendState extends State<Send> {
                         /*send to success or failure page*/
                         )
                   ]));
+
+  Future confirmSend() => showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+              content: Text('Are you sure you want to send?'),
+              actions: [
+                TextButton(
+                    child: Text('Cancel'),
+                    onPressed: () => Navigator.pop(context)),
+                TextButton(
+                    child: Text('Send'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      // temporary test of screen:
+                      //streams.run.send.add(sendRequest);
+                      setState(() => loading = true);
+                    })
+              ]));
 
   Widget addressNameText() {
     if (addressName == '') return Text(addressName);
