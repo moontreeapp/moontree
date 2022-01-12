@@ -48,7 +48,8 @@ class SelectionItems {
         streams.app.spending.symbol.add(name);
         Navigator.pop(context);
       },
-      leading: components.icons.assetAvatar(name, height: 24, width: 24),
+      leading: components.icons.assetAvatar(name == 'Ravencoin' ? 'RVN' : name,
+          height: 24, width: 24),
       title: Text(name, style: Theme.of(context).choices));
 
   void produceModal(List items, {bool tall = true}) {

@@ -43,6 +43,10 @@ class _PageTitleState extends State<PageTitle> {
     if (pageTitle == 'Send') {
       return Text('', style: Theme.of(context).pageTitle);
     }
+    if (pageTitle == 'Transactions') {
+      return Text(streams.app.spending.symbol.value,
+          style: Theme.of(context).pageTitle);
+    }
     if (pageTitle != 'Wallet' || accounts.data.length <= 1) {
       return Text(pageTitle, style: Theme.of(context).pageTitle);
     }

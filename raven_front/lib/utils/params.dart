@@ -71,6 +71,18 @@ String cleanDecAmount(String amount, {bool zeroToBlank = false}) {
   return ret;
 }
 
+String enforceDivisibility(String amount, {int divisibility = 8}) {
+  if (amount.contains('.')) {
+    var head = amount.split('.')[0];
+    var tail = amount.split('.').sublist(1).join('');
+    return head +
+        '.' +
+        tail.substring(
+            0, tail.length > divisibility ? divisibility : tail.length);
+  }
+  return amount;
+}
+
 String cleanLabel(String label) {
   return label;
 }

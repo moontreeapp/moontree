@@ -36,6 +36,7 @@ class _SendState extends State<Send> {
   final sendFee = TextEditingController();
   final sendMemo = TextEditingController();
   final sendNote = TextEditingController();
+  late int divisibility = 8;
   String visibleAmount = '0';
   String visibleFiatAmount = '';
   String validatedAddress = 'unknown';
@@ -90,8 +91,10 @@ class _SendState extends State<Send> {
     data = populateData(context, data);
     useWallet = data.containsKey('walletId') && data['walletId'] != null;
     if (data.containsKey('qrcode')) populateFromQR(data['qrcode']);
-    var divisibility =
-        assets.bySymbol.getOne(data['symbol'] ?? '')?.divisibility ?? 8;
+    divisibility = assets.bySymbol
+            .getOne(streams.app.spending.symbol.value)
+            ?.divisibility ??
+        8;
     var possibleHoldings = [
       for (var balance in useWallet
           ? Current.walletHoldings(data['walletId'])
@@ -104,10 +107,7 @@ class _SendState extends State<Send> {
     }
     try {
       visibleFiatAmount = components.text.securityAsReadable(
-          amountToSat(
-            double.parse(visibleAmount),
-            divisibility: divisibility,
-          ),
+          amountToSat(double.parse(visibleAmount), divisibility: divisibility),
           symbol: data['symbol'],
           asUSD: true);
     } catch (e) {
@@ -173,7 +173,7 @@ class _SendState extends State<Send> {
       if (double.parse(visibleAmount) <= holding) {
       } else {}
     }
-    setState(() => {});
+    //setState(() => {});
   }
 
   bool verifyMemo([String? memo]) => (memo ?? sendMemo.text).length <= 80;
@@ -291,6 +291,8 @@ class _SendState extends State<Send> {
                       sendAmount.text,
                       zeroToBlank: true,
                     );
+                    sendAmount.text = enforceDivisibility(sendAmount.text,
+                        divisibility: divisibility);
                     verifyVisibleAmount(sendAmount.text);
                     streams.app.spending.amount
                         .add(double.parse(visibleAmount));
@@ -638,11 +640,15 @@ class _SendState extends State<Send> {
   }
 
   void _produceAssetModal() {
+    var options = (useWallet
+            ? Current.walletHoldingNames(data['walletId'])
+            : Current.holdingNames)
+        .where((item) => item != 'RVN')
+        .toList();
     SelectionItems(context, names: [SelectionOptions.Holdings]).build(
-        holdingNames: (useWallet
-                ? Current.walletHoldingNames(data['walletId'])
-                : Current.holdingNames) +
-            ['Ravencoin', 'Amazon']);
+        holdingNames: options.isNotEmpty
+            ? ['Ravencoin'] + options
+            : ['Ravencoin', 'Amazon']);
   }
 
   void _produceFeeModal() {

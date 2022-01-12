@@ -69,23 +69,19 @@ class _BalanceHeaderState extends State<BalanceHeader> {
     if (possibleHoldings.length > 0) {
       holding = possibleHoldings[0];
     }
-    var divisibility = 8; /* get asset divisibility...*/
-    var holdingSat = amountToSat(
-      holding,
-      divisibility: divisibility,
-    );
+    //var divisibility = assets.bySymbol.getOne(symbol)?.divisibility ?? 8;
+    var divisibility = 8;
+    var holdingSat = amountToSat(holding, divisibility: divisibility);
+    var amountSat = amountToSat(amount,
+        divisibility: assets.bySymbol.getOne(symbol)?.divisibility ?? 8);
     try {
       visibleFiatAmount = components.text.securityAsReadable(
-          amountToSat(
-            double.parse(visibleAmount),
-            divisibility: divisibility,
-          ),
+          amountToSat(double.parse(visibleAmount), divisibility: divisibility),
           symbol: symbol,
           asUSD: true);
     } catch (e) {
       visibleFiatAmount = '';
     }
-    var balance = 0;
     return Container(
       padding: EdgeInsets.all(16),
       child: ListView(
@@ -94,12 +90,7 @@ class _BalanceHeaderState extends State<BalanceHeader> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              //Image.asset('assets/rvnonly.png', height: 56, width: 56),
-              ///symbol image placeholder
-              //Container(height: 56, width: 56, child: Text(symbol)),
-
               components.icons.assetAvatar(symbol, height: 56, width: 56),
-
               SizedBox(height: 8),
               // get this from balance
               Text(
@@ -119,7 +110,12 @@ class _BalanceHeaderState extends State<BalanceHeader> {
                       children: [
                           Text('Remaining:',
                               style: Theme.of(context).remaining),
-                          Text((holding - amount).toString(),
+                          Text(
+                              components.text.securityAsReadable(
+                                  holdingSat - amountSat,
+                                  symbol: symbol,
+                                  asUSD: false),
+                              //(holding - amount).toString(),
                               style: (holding - amount) >= 0
                                   ? Theme.of(context).remaining
                                   : Theme.of(context).remainingRed)

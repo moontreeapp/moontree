@@ -112,7 +112,7 @@ class _TransactionListState extends State<TransactionList> {
             onTap: () => Navigator.pushNamed(
                 context, '/transaction/transaction',
                 arguments: {'transactionRecord': transactionRecord}),
-            onLongPress: _toggleUSD,
+            //onLongPress: _toggleUSD,
             leading: Container(
                 height: 40,
                 width: 40,

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
-import 'package:raven_front/services/identicon.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
 
