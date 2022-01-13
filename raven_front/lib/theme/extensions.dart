@@ -21,7 +21,7 @@ extension TextStyleExtension on ThemeData {
       ? TextStyle(
           fontSize: 16.0,
           fontFamily: 'Courier',
-          fontWeight: FontWeightNames.bold,
+          fontWeight: FontWeights.bold,
           color: Colors.black)
       : TextStyle(
           fontSize: 16.0, fontFamily: 'Courier', color: Colors.grey.shade200);
@@ -48,13 +48,13 @@ extension TextStyleExtension on ThemeData {
       ? TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.regular,
+          fontWeight: FontWeights.regular,
           letterSpacing: 0.5,
           color: Color(0xDE000000))
       : TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.regular,
+          fontWeight: FontWeights.regular,
           letterSpacing: 0.5,
           color: Colors.black.withOpacity(0.87));
   //text for holding values (secondarytext):
@@ -62,338 +62,338 @@ extension TextStyleExtension on ThemeData {
       ? TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.bold,
+          fontWeight: FontWeights.bold,
           letterSpacing: 0.25,
           color: Color(0x99000000))
       : TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.bold,
+          fontWeight: FontWeights.bold,
           letterSpacing: 0.25,
           color: Colors.black.withOpacity(0.6));
   TextStyle? get pageTitle => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 20.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.15,
           color: Colors.white)
       : TextStyle(
           fontSize: 20.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.15,
           color: Colors.white);
   TextStyle? get pageValue => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 24.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.normal,
+          fontWeight: FontWeights.normal,
           letterSpacing: 0.18,
           color: Colors.black.withOpacity(0.87))
       : TextStyle(
           fontSize: 24.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.normal,
+          fontWeight: FontWeights.normal,
           letterSpacing: 0.18,
           color: Colors.black.withOpacity(0.87));
   TextStyle? get drawerTitle => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 24.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.normal,
+          fontWeight: FontWeights.normal,
           letterSpacing: 0.18,
           color: Colors.black.withOpacity(0.87))
       : TextStyle(
           fontSize: 24.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.normal,
+          fontWeight: FontWeights.normal,
           letterSpacing: 0.18,
           color: Colors.black.withOpacity(0.87));
   TextStyle? get drawerTitleSmall => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 18.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.normal,
+          fontWeight: FontWeights.normal,
           letterSpacing: 0.15,
           color: Colors.black.withOpacity(0.87))
       : TextStyle(
           fontSize: 18.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.normal,
+          fontWeight: FontWeights.normal,
           letterSpacing: 0.15,
           color: Colors.black.withOpacity(0.87));
   TextStyle? get drawerDestination => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.5,
           color: Colors.white)
       : TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.5,
           color: Colors.white);
   TextStyle? get navBarButton => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 1.25,
           color: Color(0xDE000000))
       : TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 1.25,
           color: Color(0xDE000000));
   TextStyle? get copyright => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 12.0,
           fontFamily: 'Roboto',
-          fontWeight: FontWeightNames.normal,
+          fontWeight: FontWeights.normal,
           letterSpacing: 0.4,
           color: Color(0xDE000000))
       : TextStyle(
           fontSize: 12.0,
           fontFamily: 'Roboto',
-          fontWeight: FontWeightNames.normal,
+          fontWeight: FontWeights.normal,
           letterSpacing: 0.4,
           color: Color(0xDE000000));
   TextStyle? get supportHeading => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 10.0,
           fontFamily: 'Roboto',
-          fontWeight: FontWeightNames.medium,
+          fontWeight: FontWeights.medium,
           letterSpacing: 1.5,
           color: Color(0xDE000000))
       : TextStyle(
           fontSize: 10.0,
           fontFamily: 'Roboto',
-          fontWeight: FontWeightNames.medium,
+          fontWeight: FontWeights.medium,
           letterSpacing: 1.5,
           color: Color(0xDE000000));
   TextStyle? get supportText => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.5,
           color: Color(0xFF000000))
       : TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.5,
           color: Color(0xFF000000));
   TextStyle? get sendFeildText => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.15,
           color: Color(0x99000000))
       : TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.15,
           color: Color(0x99000000));
   TextStyle? get textFieldError => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 12.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.4,
           color: Color(0xFFAA2E25))
       : TextStyle(
           fontSize: 12.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.4,
           color: Color(0xFFAA2E25));
   TextStyle? get balanceAmount => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 24.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.regular,
+          fontWeight: FontWeights.regular,
           letterSpacing: 0.18,
           color: Colors.white)
       : TextStyle(
           fontSize: 24.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.regular,
+          fontWeight: FontWeights.regular,
           letterSpacing: 0.18,
           color: Colors.white);
   TextStyle? get balanceDollar => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.regular,
+          fontWeight: FontWeights.regular,
           letterSpacing: 0.5,
           color: Colors.white)
       : TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.regular,
+          fontWeight: FontWeights.regular,
           letterSpacing: 0.5,
           color: Colors.white);
   TextStyle? get remaining => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.regular,
+          fontWeight: FontWeights.regular,
           letterSpacing: 0.25,
           color: Color(0xDEFFFFFF))
       : TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.regular,
+          fontWeight: FontWeights.regular,
           letterSpacing: 0.25,
           color: Color(0xDEFFFFFF));
   TextStyle? get remainingRed => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.regular,
+          fontWeight: FontWeights.regular,
           letterSpacing: 0.25,
           color: Color(0xFFFF1900))
       : TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.regular,
+          fontWeight: FontWeights.regular,
           letterSpacing: 0.25,
           color: Color(0xFFFF1900));
   TextStyle? get choices => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.bold,
+          fontWeight: FontWeights.bold,
           letterSpacing: 0.1,
           color: Color(0x99000000))
       : TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.bold,
+          fontWeight: FontWeights.bold,
           letterSpacing: 0.1,
           color: Color(0x99000000));
   TextStyle? get settingDestination => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.5,
           color: Color(0x99000000))
       : TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.5,
           color: Color(0x99000000));
   TextStyle? get securityDestination => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.5,
           color: Color(0xDE000000))
       : TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.5,
           color: Color(0xDE000000));
   TextStyle? get securityDisabled => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.5,
           color: Color(0x61000000))
       : TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.5,
           color: Color(0x61000000));
   TextStyle? get sendConfirm => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 14.0,
           fontFamily: 'Roboto',
-          fontWeight: FontWeightNames.regular,
+          fontWeight: FontWeights.regular,
           letterSpacing: 0.25,
           color: Color(0x99000000))
       : TextStyle(
           fontSize: 14.0,
           fontFamily: 'Roboto',
-          fontWeight: FontWeightNames.regular,
+          fontWeight: FontWeights.regular,
           letterSpacing: 0.25,
           color: Color(0x99000000));
   TextStyle? get sendConfirmButton => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.bold,
+          fontWeight: FontWeights.bold,
           letterSpacing: 1.25,
           color: Color(0xFF5C6BC0))
       : TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.bold,
+          fontWeight: FontWeights.bold,
           letterSpacing: 1.25,
           color: Color(0xFF5C6BC0));
   TextStyle? get loaderText => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 20.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.15,
           color: Color(0xDE000000))
       : TextStyle(
           fontSize: 20.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.15,
           color: Color(0xDE000000));
   TextStyle? get textButton => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.bold,
+          fontWeight: FontWeights.bold,
           letterSpacing: 1.25,
           color: Color(0xDE5C6BC0))
       : TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.bold,
+          fontWeight: FontWeights.bold,
           letterSpacing: 1.25,
           color: Color(0xDE5C6BC0));
   TextStyle? get disabledButton => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 1.25,
           color: Color(0x61000000))
       : TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 1.25,
           color: Color(0x61000000));
   TextStyle? get enabledButton => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 1.25,
           color: Color(0xDE000000))
       : TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeightNames.semiBold,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 1.25,
           color: Color(0xDE000000));
 }
