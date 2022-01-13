@@ -6,6 +6,7 @@ class AppStreams {
   final login = login$;
   final page = page$;
   final spending = Spending();
+  final import = import$;
 }
 
 /// resumed inactive paused detached
@@ -25,3 +26,11 @@ class Spending {
 final symbol$ = BehaviorSubject<String>.seeded('Ravencoin');
 final amount$ = BehaviorSubject<double>.seeded(0.0);
 final fee$ = BehaviorSubject<String>.seeded('Standard');
+
+class ImportRequest {
+  final String text;
+  final String accountId;
+  ImportRequest({required this.text, required this.accountId});
+}
+
+final import$ = BehaviorSubject<ImportRequest?>.seeded(null);

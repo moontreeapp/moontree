@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';
-import 'package:raven_front/services/import.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/data.dart';
 import 'package:raven_front/widgets/widgets.dart';
+import 'package:raven_back/services/import.dart';
 
 class Import extends StatefulWidget {
   final dynamic data;
@@ -199,29 +200,9 @@ class _ImportState extends State<Import> {
       }
       text = resp;
     }
-
-    /// TODO: turn this into a stream
-    var importFrom = ImportFrom(text, accountId: account.accountId);
-
+    streams.app.import
+        .add(ImportRequest(text: text, accountId: account.accountId));
     setState(() => loading = true);
-    //showDialog(
-    //    context: context,
-    //    builder: (BuildContext context) => AlertDialog(
-    //        title: Text('Importing...'),
-    //        content:
-    //            Text('Please wait, importing can take several seconds...')));
-    //// this is used to get the please wait message to show up
-    //// it needs enough time to display the message
-    //await Future.delayed(const Duration(milliseconds: 150));
-
-    /// TODO: move this to snackbar
-    //var success = await importFrom.handleImport();
-    //await alertImported(importFrom.importedTitle!, importFrom.importedMsg!);
-    //if (success) {
-    //  Navigator.popUntil(context, ModalRoute.withName('/home'));
-    //} else {
-    //  Navigator.of(context).pop();
-    //}
   }
 
   Widget body() => Padding(
