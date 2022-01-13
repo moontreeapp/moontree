@@ -74,6 +74,24 @@ class Backup extends Storage {
     }
   }
 
+  Future<FileDetails?> readExportSize({
+    File? file,
+    String? filename,
+    String? path,
+  }) async {
+    file = file ?? await _localFile(filename!, path: path);
+    try {
+      var content = await file.readAsString();
+      var size = file.lengthSync() / 1024;
+      return FileDetails(
+          filename: filename ?? 'unknown filename',
+          content: content,
+          size: size);
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<Map<String, dynamic>?> readFromFilePicker() async {
     FilePickerResult? result =
         await FilePicker.platform.pickFiles(allowMultiple: false);
@@ -93,6 +111,18 @@ class Backup extends Storage {
       return null;
     }
     return await readExportRaw(file: File(result.files.single.path!));
+  }
+
+  Future<FileDetails?> readFromFilePickerSize() async {
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowMultiple: false);
+    if (result == null) {
+      // file not found?
+      return null;
+    }
+    //return await readExport(
+    //    path: result.files[0].path, filename: result.files[0].name);
+    return await readExportSize(file: File(result.files.single.path!));
   }
 }
 
@@ -152,4 +182,13 @@ class AssetLogos extends Storage {
       //_localFileNow(filename, path);
       //_localFileNowPath(filePath);
       File(path);
+}
+
+class FileDetails {
+  final String filename;
+  final String content;
+  final double size;
+
+  FileDetails(
+      {required this.filename, required this.content, required this.size});
 }

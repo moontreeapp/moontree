@@ -26,6 +26,7 @@ class _ImportState extends State<Import> {
   final Backup storage = Backup();
   final TextEditingController password = TextEditingController();
   bool loading = false;
+  FileDetails? file;
 
   @override
   void dispose() {
@@ -99,7 +100,8 @@ class _ImportState extends State<Import> {
     var label = 'IMPORT';
     if (importEnabled) {
       return OutlinedButton.icon(
-          onPressed: () => attemptImport(),
+          onPressed: () async =>
+              await attemptImport(file?.content ?? words.text),
           icon: components.icons.import,
           label: Text(label, style: Theme.of(context).enabledButton),
           style: components.styles.buttons.bottom(context));
@@ -114,9 +116,10 @@ class _ImportState extends State<Import> {
     //        Theme.of(context).disabledColor)));
   }
 
-  void enableImport() {
+  void enableImport([String? given]) {
     var oldImportFormatDetected = importFormatDetected;
-    var detection = services.wallet.import.detectImportType(words.text.trim());
+    var detection =
+        services.wallet.import.detectImportType((given ?? words.text).trim());
     importEnabled = detection != null;
     if (importEnabled) {
       importFormatDetected =
@@ -158,7 +161,7 @@ class _ImportState extends State<Import> {
       });
 
   Future attemptImport([String? importData]) async {
-    var text = importData ?? words.text.trim();
+    var text = (importData ?? words.text).trim();
 
     /// decrypt if you must...
     if (importData != null) {
@@ -197,28 +200,28 @@ class _ImportState extends State<Import> {
       text = resp;
     }
 
-    /// perform import...
+    /// TODO: turn this into a stream
     var importFrom = ImportFrom(text, accountId: account.accountId);
-    // todo replace with a legit spinner, and reduce amount of time it's waiting
-    showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-            title: Text('Importing...'),
-            content:
-                Text('Please wait, importing can take several seconds...')));
-    // this is used to get the please wait message to show up
-    // it needs enough time to display the message
-    await Future.delayed(const Duration(milliseconds: 150));
 
-    /// nothing awaited, yet it takes 15 seconds... its like the app freezes
-    /// while addresses are being created...
-    var success = await importFrom.handleImport();
-    await alertImported(importFrom.importedTitle!, importFrom.importedMsg!);
-    if (success) {
-      Navigator.popUntil(context, ModalRoute.withName('/home'));
-    } else {
-      Navigator.of(context).pop();
-    }
+    setState(() => loading = true);
+    //showDialog(
+    //    context: context,
+    //    builder: (BuildContext context) => AlertDialog(
+    //        title: Text('Importing...'),
+    //        content:
+    //            Text('Please wait, importing can take several seconds...')));
+    //// this is used to get the please wait message to show up
+    //// it needs enough time to display the message
+    //await Future.delayed(const Duration(milliseconds: 150));
+
+    /// TODO: move this to snackbar
+    //var success = await importFrom.handleImport();
+    //await alertImported(importFrom.importedTitle!, importFrom.importedMsg!);
+    //if (success) {
+    //  Navigator.popUntil(context, ModalRoute.withName('/home'));
+    //} else {
+    //  Navigator.of(context).pop();
+    //}
   }
 
   Widget body() => Padding(
@@ -247,13 +250,14 @@ class _ImportState extends State<Import> {
                     onChanged: (value) => enableImport(),
                     onEditingComplete: () async => await attemptImport(),
                   )),
+              SizedBox(height: 16),
               importWaysButtons(context),
               Text(importFormatDetected),
             ],
           ),
           Padding(
               padding: EdgeInsets.only(
-                top: 20,
+                top: 0,
                 bottom: 40,
               ),
               child: Column(
@@ -262,29 +266,50 @@ class _ImportState extends State<Import> {
         ],
       ));
 
-  Row importWaysButtons(context) =>
-      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        //ElevatedButton.icon(
-        //    icon: Icon(Icons.qr_code_scanner),
-        //    label: Text('Scan'),
-        //    onPressed: () {
-        //      //Navigator.push(
-        //      //  context,
-        //      //  MaterialPageRoute(builder: (context) => Receive()),
-        //      //);
-        //    },
-        //    style: components.styles.buttons.leftSideCurved),
-        TextButton.icon(
+  Widget importWaysButtons(context) => file != null
+      ? Container(
+          height: 72,
+          decoration: BoxDecoration(
+              color: Color(0x1F5C6BC0),
+              borderRadius: BorderRadius.all(Radius.circular(8.0))),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(children: [
+                SizedBox(width: 18),
+                Icon(Icons.attachment_rounded),
+                SizedBox(width: 18),
+                Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(file!.filename,
+                          style: Theme.of(context).importedFile),
+                      Text('${file!.size.toString()} KB',
+                          style: Theme.of(context).importedSize),
+                    ]),
+              ]),
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                IconButton(
+                    icon: Icon(Icons.close_rounded),
+                    onPressed: () => setState(() => file = null)),
+                SizedBox(width: 13),
+              ])
+            ],
+          ))
+      : TextButton.icon(
           icon: Icon(
             MdiIcons.fileKey,
             color: Theme.of(context).backgroundColor,
           ),
           label: Text('IMPORT FILE', style: Theme.of(context).textButton),
           onPressed: () async {
-            var resp = await storage.readFromFilePickerRaw() ?? '';
-            await attemptImport(resp);
+            file = await storage.readFromFilePickerSize();
+            enableImport(file?.content ?? '');
+            setState(() {});
+            //var resp = await storage.readFromFilePickerRaw() ?? '';
+            //await attemptImport(resp);
           },
           //style: components.styles.buttons.curvedSides
-        )
-      ]);
+        );
 }
