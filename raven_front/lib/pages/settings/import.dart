@@ -7,6 +7,7 @@ import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/services/import.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/data.dart';
+import 'package:raven_front/widgets/widgets.dart';
 
 class Import extends StatefulWidget {
   final dynamic data;
@@ -24,6 +25,7 @@ class _ImportState extends State<Import> {
   String importFormatDetected = '';
   final Backup storage = Backup();
   final TextEditingController password = TextEditingController();
+  bool loading = false;
 
   @override
   void dispose() {
@@ -42,7 +44,8 @@ class _ImportState extends State<Import> {
     }
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: body(),
+      // somewhere: setState(() => loading = true);
+      child: loading ? Loader(message: 'Importing') : body(),
     );
   }
 
