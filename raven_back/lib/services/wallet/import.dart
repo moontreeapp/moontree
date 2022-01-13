@@ -36,6 +36,13 @@ class ImportWalletService {
 
     /// these are placeholders, they must be checked
     //var isSeed = text.length == 128;
+
+    /// if we were unable to find a import type, we should be able to check
+    /// something to get a good idea if this is known invalid, rather than
+    /// returning null. this is a placeholder for that.
+    if (text.contains('[')) {
+      return ImportFormat.invalid;
+    }
   }
 
   WalletType typeForImport(String walletType) =>

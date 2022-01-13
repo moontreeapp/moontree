@@ -8,6 +8,7 @@ class DecorationComponents {
     BuildContext context, {
     String? labelText,
     String? hintText,
+    String? helperText,
     String? errorText,
     Widget? suffixIcon,
   }) =>
@@ -34,6 +35,7 @@ class DecorationComponents {
           contentPadding: EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
           labelText: labelText,
           hintText: hintText,
+          helperText: helperText,
           // takes precedence -- only fill on field valdiation failure:
           errorText: errorText,
           suffixIcon: suffixIcon);

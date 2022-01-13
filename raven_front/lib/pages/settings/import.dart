@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/services/wallet/constants.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
@@ -121,12 +122,16 @@ class _ImportState extends State<Import> {
     var oldImportFormatDetected = importFormatDetected;
     var detection =
         services.wallet.import.detectImportType((given ?? words.text).trim());
-    importEnabled = detection != null;
+    importEnabled = detection != null && detection != ImportFormat.invalid;
+
     if (importEnabled) {
       importFormatDetected =
           'format recognized as ' + detection.toString().split('.')[1];
     } else {
       importFormatDetected = '';
+    }
+    if (detection == ImportFormat.invalid) {
+      importFormatDetected = 'Unknown';
     }
     if (oldImportFormatDetected != importFormatDetected) {
       setState(() => {});
@@ -227,13 +232,18 @@ class _ImportState extends State<Import> {
                       labelText: 'Seed, WIF, or Key',
                       hintText:
                           'Please enter your seed words, WIF, or private key',
+                      helperText: importFormatDetected == 'Unknown'
+                          ? null
+                          : importFormatDetected,
+                      errorText: importFormatDetected == 'Unknown'
+                          ? importFormatDetected
+                          : null,
                     ),
                     onChanged: (value) => enableImport(),
                     onEditingComplete: () async => await attemptImport(),
                   )),
               SizedBox(height: 16),
               importWaysButtons(context),
-              Text(importFormatDetected),
             ],
           ),
           Padding(

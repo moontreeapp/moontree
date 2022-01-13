@@ -11,6 +11,7 @@ enum ImportFormat {
   WIF,
   seed,
   privateKey,
+  invalid,
 }
 
 enum WalletType {
