@@ -323,15 +323,7 @@ class _ReceiveState extends State<Receive> {
         onPressed: () => Share.share(uri),
         icon: Icon(Icons.share),
         label: Text('Share'.toUpperCase()),
-        style: ButtonStyle(
-          //fixedSize: MaterialStateProperty.all(Size(156, 40)),
-          textStyle: MaterialStateProperty.all(Theme.of(context).navBarButton),
-          foregroundColor: MaterialStateProperty.all(Color(0xDE000000)),
-          side: MaterialStateProperty.all(BorderSide(
-              color: Color(0xFF5C6BC0), width: 2, style: BorderStyle.solid)),
-          shape: MaterialStateProperty.all(RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0))),
-        ),
+        style: components.styles.buttons.bottom(context),
       ));
 }
 

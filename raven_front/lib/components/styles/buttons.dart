@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raven_front/theme/extensions.dart';
 
 class ButtonStyleComponents {
   ButtonStyleComponents();
@@ -31,4 +32,18 @@ class ButtonStyleComponents {
               bottomLeft: Radius.circular(30.0),
               topRight: Radius.circular(30.0),
               bottomRight: Radius.circular(30.0)))));
+
+  ButtonStyle bottom(BuildContext context, {bool disabled = false}) =>
+      ButtonStyle(
+        textStyle: MaterialStateProperty.all(Theme.of(context).navBarButton),
+        foregroundColor: MaterialStateProperty.all(Color(0xDE000000)),
+        side: MaterialStateProperty.all(BorderSide(
+            color: disabled
+                ? Theme.of(context).disabledColor
+                : Theme.of(context).backgroundColor,
+            width: 2,
+            style: BorderStyle.solid)),
+        shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0))),
+      );
 }

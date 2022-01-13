@@ -25,6 +25,7 @@ class DecorationComponents {
               borderRadius: BorderRadius.circular(8.0),
               borderSide: BorderSide(color: Color(0x1F000000))),
           labelStyle: Theme.of(context).sendFeildText,
+          alignLabelWithHint: true,
           errorStyle: Theme.of(context).textFieldError,
           floatingLabelStyle: TextStyle(
               color: errorText == null

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-
-import 'package:raven_front/theme/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'package:raven_front/components/components.dart';
+import 'package:raven_front/theme/extensions.dart';
 
 class Support extends StatelessWidget {
   @override
@@ -88,16 +89,6 @@ class Support extends StatelessWidget {
                         ])),
             icon: Icon(MdiIcons.discord, color: Color(int.parse(color))),
             label: Text(name.toUpperCase()),
-            style: ButtonStyle(
-              textStyle:
-                  MaterialStateProperty.all(Theme.of(context).navBarButton),
-              foregroundColor: MaterialStateProperty.all(Color(0xDE000000)),
-              side: MaterialStateProperty.all(BorderSide(
-                  color: Color(0xFF5C6BC0),
-                  width: 2,
-                  style: BorderStyle.solid)),
-              shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0))),
-            ),
+            style: components.styles.buttons.bottom(context),
           ));
 }

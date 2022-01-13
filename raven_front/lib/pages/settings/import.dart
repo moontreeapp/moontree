@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/services/import.dart';
+import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/data.dart';
 
 class Import extends StatefulWidget {
@@ -24,11 +26,6 @@ class _ImportState extends State<Import> {
   final TextEditingController password = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
     words.dispose();
     super.dispose();
@@ -44,19 +41,10 @@ class _ImportState extends State<Import> {
           accounts.primaryIndex.getOne(data['accountId']) ?? Current.account;
     }
     return GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Scaffold(
-          //appBar: components.headers.back(context, 'Import Wallet'),
-          body: body(),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: submitButton(context),
-        ));
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: body(),
+    );
   }
-
-  /// returns id of account the wallet is already assigned to
-  //String? _walletFound(walletId) =>
-  //    wallets.primaryIndex.getOne(walletId)?.accountId;
 
   Future alertSuccess() {
     /// verify by looking up public key first - (import from private key vs wif)
@@ -103,21 +91,24 @@ class _ImportState extends State<Import> {
             ],
           ));
 
-  ElevatedButton submitButton(context) {
-    var label = 'Import into ' + account.name + ' account';
+  Widget submitButton(context) {
+    //var label = 'Import into ' + account.name + ' account';
+    var label = 'IMPORT';
     if (importEnabled) {
-      return ElevatedButton.icon(
+      return OutlinedButton.icon(
           onPressed: () => attemptImport(),
           icon: components.icons.import,
-          label: Text(label));
+          label: Text(label, style: Theme.of(context).enabledButton),
+          style: components.styles.buttons.bottom(context));
     }
-    return ElevatedButton.icon(
+    return OutlinedButton.icon(
         onPressed: () {},
         icon: components.icons.importDisabled(context),
-        label: Text(label),
-        style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(
-                Theme.of(context).disabledColor)));
+        label: Text(label, style: Theme.of(context).disabledButton),
+        style: components.styles.buttons.bottom(context, disabled: true));
+    //style: ButtonStyle(
+    //    backgroundColor: MaterialStateProperty.all<Color>(
+    //        Theme.of(context).disabledColor)));
   }
 
   void enableImport() {
@@ -227,33 +218,46 @@ class _ImportState extends State<Import> {
     }
   }
 
-  ListView body() {
-    return ListView(
-        shrinkWrap: true,
-        padding: EdgeInsets.all(20.0),
+  Widget body() => Padding(
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              TextField(
-                autocorrect: false,
-                controller: words,
-                keyboardType: TextInputType.multiline,
-                maxLines: 12,
-                textInputAction: TextInputAction.done,
-                decoration: InputDecoration(
-                    border: UnderlineInputBorder(),
-                    hintText:
-                        'Please enter your seed words, WIF, or private key.'),
-                onChanged: (value) => enableImport(),
-                onEditingComplete: () async => await attemptImport(),
-              ),
+              Container(
+                  height: 200,
+                  child: TextField(
+                    autocorrect: false,
+                    controller: words,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: 12,
+                    textInputAction: TextInputAction.done,
+                    decoration: components.styles.decorations.textFeild(
+                      context,
+                      labelText: 'Seed, WIF, or Key',
+                      hintText:
+                          'Please enter your seed words, WIF, or private key',
+                    ),
+                    onChanged: (value) => enableImport(),
+                    onEditingComplete: () async => await attemptImport(),
+                  )),
               importWaysButtons(context),
               Text(importFormatDetected),
             ],
           ),
-        ]);
-  }
+          Padding(
+              padding: EdgeInsets.only(
+                top: 20,
+                bottom: 40,
+              ),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [submitButton(context)]))
+        ],
+      ));
 
   Row importWaysButtons(context) =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -267,9 +271,12 @@ class _ImportState extends State<Import> {
         //      //);
         //    },
         //    style: components.styles.buttons.leftSideCurved),
-        ElevatedButton.icon(
-          icon: Icon(Icons.upload_file),
-          label: Text('File'),
+        TextButton.icon(
+          icon: Icon(
+            MdiIcons.fileKey,
+            color: Theme.of(context).backgroundColor,
+          ),
+          label: Text('IMPORT FILE', style: Theme.of(context).textButton),
           onPressed: () async {
             var resp = await storage.readFromFilePickerRaw() ?? '';
             await attemptImport(resp);

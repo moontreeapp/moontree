@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/extensions/object.dart';
 import 'package:raven_back/extensions/string.dart';
+import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/extensions.dart';
 
 enum SecurityOption { none, system_default, password }
@@ -106,15 +107,5 @@ class _SecurityState extends State<Security> {
           onPressed: () {/*navigate to set, change or other screens*/},
           icon: Icon(Icons.lock_rounded),
           label: Text('CHANGE'.toUpperCase()),
-          style: ButtonStyle(
-            textStyle:
-                MaterialStateProperty.all(Theme.of(context).navBarButton),
-            foregroundColor: MaterialStateProperty.all(Color(0xDE000000)),
-            side: MaterialStateProperty.all(BorderSide(
-                color: Theme.of(context).backgroundColor,
-                width: 2,
-                style: BorderStyle.solid)),
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0))),
-          )));
+          style: components.styles.buttons.bottom(context)));
 }

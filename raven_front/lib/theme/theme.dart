@@ -31,6 +31,7 @@ class CustomTheme with ChangeNotifier {
       brightness: Brightness.light,
       backgroundColor: primaryColor,
       primaryColor: primaryColor,
+      disabledColor: Color(0x61000000),
       //bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.black),
       //primarySwatch: generateMaterialColor(Palette.ravenBlue),
       fontFamily: 'Nunito',

@@ -357,4 +357,43 @@ extension TextStyleExtension on ThemeData {
           fontWeight: FontWeightNames.semiBold,
           letterSpacing: 0.15,
           color: Color(0xDE000000));
+  TextStyle? get textButton => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeightNames.bold,
+          letterSpacing: 1.25,
+          color: Color(0xDE5C6BC0))
+      : TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeightNames.bold,
+          letterSpacing: 1.25,
+          color: Color(0xDE5C6BC0));
+  TextStyle? get disabledButton => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeightNames.semiBold,
+          letterSpacing: 1.25,
+          color: Color(0x61000000))
+      : TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeightNames.semiBold,
+          letterSpacing: 1.25,
+          color: Color(0x61000000));
+  TextStyle? get enabledButton => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeightNames.semiBold,
+          letterSpacing: 1.25,
+          color: Color(0xDE000000))
+      : TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeightNames.semiBold,
+          letterSpacing: 1.25,
+          color: Color(0xDE000000));
 }

@@ -24,9 +24,9 @@ class IconComponents {
       Icon(Icons.north_east, size: 12.0, color: Theme.of(context).bad);
 
   Icon importDisabled(BuildContext context) =>
-      Icon(Icons.add_box_outlined, color: Theme.of(context).disabledColor);
+      Icon(Icons.vpn_key_rounded, color: Theme.of(context).disabledColor);
 
-  Icon get import => Icon(Icons.add_box_outlined);
+  Icon get import => Icon(Icons.vpn_key_rounded, color: Color(0xDE000000));
 
   Icon get export => Icon(Icons.save);
 
