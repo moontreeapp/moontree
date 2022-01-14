@@ -102,6 +102,7 @@ class RavenMobileApp extends StatelessWidget {
               SizedBox(width: 16),
               QRCodeButton(),
               SizedBox(width: 16),
+              SnackBarViewer()
             ],
           ),
           backLayer: BackLayer(),

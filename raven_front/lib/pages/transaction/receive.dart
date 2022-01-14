@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:collection/collection.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
@@ -85,6 +86,8 @@ class _ReceiveState extends State<Receive> {
 
   @override
   Widget build(BuildContext context) {
+    streams.app.snack.add(Snack(
+        message: 'message', link: 'http://www.google.com', label: 'google'));
     username = settings.primaryIndex.getOne(SettingName.User_Name)?.value ?? '';
     data = populateData(context, data);
     print(data['symbol']);

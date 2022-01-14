@@ -1,18 +1,10 @@
-//import 'package:backdrop/backdrop.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-
-import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/streams.dart';
+import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/components/components.dart';
-import 'package:raven_front/services/lookup.dart';
-import 'package:raven_front/services/account.dart';
 import 'package:raven_front/theme/extensions.dart';
-import 'package:settings_ui/settings_ui.dart';
-
-import 'package:raven_back/extensions/list.dart';
-import 'package:raven_back/utils/database.dart' as ravenDatabase;
 
 class NavBar extends StatefulWidget {
   NavBar({Key? key}) : super(key: key);

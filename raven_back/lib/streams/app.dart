@@ -7,6 +7,7 @@ class AppStreams {
   final page = page$;
   final spending = Spending();
   final import = import$;
+  final snack = snack$;
 }
 
 /// resumed inactive paused detached
@@ -34,3 +35,19 @@ class ImportRequest {
 }
 
 final import$ = BehaviorSubject<ImportRequest?>.seeded(null);
+
+class Snack {
+  final String message;
+  final String? details; // if they click on the message, popup details
+  final String? label; // link label
+  final String? link;
+  final Map<String, dynamic>? arguments;
+  Snack(
+      {required this.message,
+      this.details,
+      this.link,
+      this.arguments,
+      this.label});
+}
+
+final snack$ = BehaviorSubject<Snack?>.seeded(null);
