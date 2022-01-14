@@ -422,4 +422,30 @@ extension TextStyleExtension on ThemeData {
           fontWeight: FontWeights.regular,
           letterSpacing: 0.25,
           color: Color(0x61000000));
+  TextStyle? get snackMessage => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.25,
+          color: Color(0xDEFFFFFF))
+      : TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.25,
+          color: Color(0xDEFFFFFF));
+  TextStyle? get snackMessageBad => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.25,
+          color: Color(0xFFF44336))
+      : TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.25,
+          color: Color(0xFFF44336));
 }

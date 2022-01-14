@@ -86,8 +86,6 @@ class _ReceiveState extends State<Receive> {
 
   @override
   Widget build(BuildContext context) {
-    streams.app.snack.add(Snack(
-        message: 'message', link: 'http://www.google.com', label: 'google'));
     username = settings.primaryIndex.getOne(SettingName.User_Name)?.value ?? '';
     data = populateData(context, data);
     print(data['symbol']);

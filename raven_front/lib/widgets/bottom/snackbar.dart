@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/theme/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
@@ -43,14 +44,23 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
   }
 
   void show() {
+    var msg = Text(snack!.message,
+        style: snack!.positive
+            ? Theme.of(context).snackMessage
+            : Theme.of(context).snackMessageBad);
     if (snack!.link == null) {
       // should I just return a SnackBar?
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(snack!.message),
+        content: msg,
       ));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(snack!.message),
+          backgroundColor: Color(0xDE000000),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8.0),
+                  topRight: Radius.circular(8.0))),
+          content: msg,
           action: SnackBarAction(
               label: snack?.label ?? 'Go',
               onPressed: snack!.link!.startsWith('/')

@@ -29,7 +29,8 @@ final BlockWaiter blockWaiter = BlockWaiter();
 final RateWaiter rateWaiter = RateWaiter();
 final RavenClientWaiter ravenClientWaiter = RavenClientWaiter();
 final SettingWaiter settingWaiter = SettingWaiter();
+final SendWaiter sendWaiter = SendWaiter();
+final SendWaiter importWaiter = SendWaiter();
 // Wallets
 final LeaderWaiter leaderWaiter = LeaderWaiter();
 final SingleWaiter singleWaiter = SingleWaiter();
-final SendWaiter sendWaiter = SendWaiter();

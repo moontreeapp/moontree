@@ -32,18 +32,22 @@ class ImportRequest {
   final String text;
   final String accountId;
   ImportRequest({required this.text, required this.accountId});
+  @override
+  String toString() => 'ImportRequest(text=$text, accountId=$accountId)';
 }
 
 final import$ = BehaviorSubject<ImportRequest?>.seeded(null);
 
 class Snack {
   final String message;
+  final bool positive;
   final String? details; // if they click on the message, popup details
   final String? label; // link label
   final String? link;
   final Map<String, dynamic>? arguments;
   Snack(
       {required this.message,
+      this.positive = true,
       this.details,
       this.link,
       this.arguments,
