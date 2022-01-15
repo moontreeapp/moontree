@@ -381,49 +381,11 @@ class _SendState extends State<Send> {
             ),
           ]);
 
-  /// todo: fix the please wait, this is kinda sad:
-  Future buildTransactionWithMessageAndConfirm(SendRequest sendRequest) async {
-    services.busy.createTransactionOn();
-    showDialog(
-        context: context,
-        builder: (BuildContext context) =>
-            //Center(child: CircularProgressIndicator()));
-            AlertDialog(title: Text('Generating Transaction...')));
-    // this is used to get the please wait message to show up
-    // it needs enough time to display the message
-    await Future.delayed(const Duration(milliseconds: 150));
-    var tuple = services.transaction.make.transactionBy(sendRequest);
-    services.busy.createTransactionOff();
-    Navigator.pop(context);
-    confirmMessage(tx: tuple.item1, estimate: tuple.item2);
-  }
-
   Future startSend() async {
     sendAmount.text = cleanDecAmount(sendAmount.text, zeroToBlank: true);
     var vAddress = sendAddress.text != '' && _validateAddress();
     var vMemo = verifyMemo();
     if (sendAmount.text != '' && _validateAddress() && verifyMemo()) {
-      //sendAmount.text = cleanDecAmount(sendAmount.text);
-      //sendAddress.text = await verifyValidAddress(sendAddress.text);
-      // if valid form: (
-      //    valid to address - is a R34char address, or compiles to one using assetname or UNS,
-      //    valid memo - no more than 80 chars long,
-      //    valid note - code safe for serialization to and from database)
-      // NOT BETA
-      // if able to aquire inputs... (from single wallet or account...)
-      //    valid asset - this wallet or account has this asset,
-      //    valid amount - this wallet or account has this much of this asset (fees taken into account),
-
-      /// press send -> get a confirmation page -> press cancel -> return
-      /// press send -> get a confirmation page -> press confirm again -> sends
-      /// be sure to save the history record along with the note if successful
-
-      /// NOT BETA
-      //if (useWallet) {
-      //  // send using only this wallet
-      //
-      //} else {
-      // send using any/every wallet in the account
       FocusScope.of(context).unfocus();
       var sendAmountAsSats = amountToSat(
         double.parse(sendAmount.text),
@@ -442,45 +404,7 @@ class _SendState extends State<Send> {
             visibleAmount: visibleAmount,
             sendAmountAsSats: sendAmountAsSats,
             feeGoal: feeGoal);
-        ////if (settings.primaryIndex.getOne(SettingName.Send_Immediate)!.value) {
-        if (true) {
-          await confirmSend();
-          //mpkrK1GLPPdqpaC8qxPVDT5bn5fkAE1UUE
-          //23150
-          // https://rvnt.cryptoscope.io/address/?address=mpkrK1GLPPdqpaC8qxPVDT5bn5fkAE1UUE
-          ////streams.run.send.add(sendRequest);// temporary test of screen
-          //todo: snackbar notification "sending in background"
-          //Navigator.pop(context); // leave page so they don't hit send again
-          // temporary test of screen:
-          ////} else {
-          ////  try {
-          ////    await buildTransactionWithMessageAndConfirm(sendRequest);
-          ////  } on InsufficientFunds catch (e) {
-          ////    Navigator.pop(context);
-          ////    showDialog(
-          ////        context: context,
-          ////        builder: (BuildContext context) => AlertDialog(
-          ////                title: Text('Error: Insufficient Funds'),
-          ////                content: Text(
-          ////                    '$e: Unable to acquire inputs for transaction, this may be due to too many wallets holding too small amounts, a problem known as "dust." Try sending from another account.'),
-          ////                actions: [
-          ////                  TextButton(
-          ////                      child: Text('Ok'),
-          ////                      onPressed: () => Navigator.pop(context))
-          ////                ]));
-          ////  } catch (e) {
-          ////    showDialog(
-          ////        context: context,
-          ////        builder: (BuildContext context) => AlertDialog(
-          ////                title: Text('Error'),
-          ////                content: Text('Unable to create transaction: $e'),
-          ////                actions: [
-          ////                  TextButton(
-          ////                      child: Text('Ok'),
-          ////                      onPressed: () => Navigator.pop(context))
-          ////                ]));
-          ////  }
-        }
+        await confirmSend(sendRequest);
       } else {
         showDialog(
             context: context,
@@ -520,8 +444,6 @@ class _SendState extends State<Send> {
   /// should notes be in a separate reservoir? makes this simpler, but its nice
   /// to have it all in one place as in transaction.note....
   Widget sendTransactionButton() => Container(
-          //width: MediaQuery.of(context).size.width,
-          //height: 40,
           child: OutlinedButton.icon(
         onPressed: () async => await startSend(),
         icon: Icon(MdiIcons.arrowTopRightThick),
@@ -529,42 +451,7 @@ class _SendState extends State<Send> {
         style: components.styles.buttons.bottom(context),
       ));
 
-  Future confirmMessage({
-    required ravencoin.Transaction tx,
-    required SendEstimate estimate,
-  }) =>
-      showDialog(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-                  title: Text('Confirm'),
-                  content: Text('Send?'),
-                  actions: [
-                    TextButton(
-                        child: Text('Cancel'),
-                        onPressed: () => Navigator.pop(context)),
-                    TextButton(
-                        child: Text('Confirm'),
-                        onPressed: () async => await attemptSend(tx)
-
-                        /// https://pub.dev/packages/modal_progress_hud
-                        //showDialog(
-                        //    context: context,
-                        //    builder: (BuildContext context) => AlertDialog(
-                        //            title: Text(''),
-                        //            content: Text('Sending...'),
-                        //            actions: [
-                        //              TextButton(
-                        //                  child: Text('Ok'),
-                        //                  onPressed: () =>
-                        //                      Navigator.pop(context))
-                        //            ]))
-
-                        /*sending...*/
-                        /*send to success or failure page*/
-                        )
-                  ]));
-
-  Future confirmSend() => showDialog(
+  Future confirmSend(SendRequest sendRequest) => showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
               contentPadding: EdgeInsets.all(24.0),
@@ -581,84 +468,10 @@ class _SendState extends State<Send> {
                     onPressed: () {
                       Navigator.pop(context);
                       // temporary test of screen:
-                      //streams.run.send.add(sendRequest);
+                      streams.run.send.add(sendRequest);
                       setState(() => loading = true);
                     })
               ]));
-
-  Widget addressNameText() {
-    if (addressName == '') return Text(addressName);
-    if (addressName.length < 12) {
-      return Text(addressName);
-    }
-    var names = addressName.split(' ');
-    if (names.length > 1) {
-      if (names.first.length <= 9) {
-        return Text('${names.first} ${names.last.substring(0, 1)}.');
-      }
-      if (names.last.length <= 9) {
-        return Text('${names.first.substring(0, 1)}. ${names.last}');
-      }
-    }
-    return Text(
-        '${names.first.substring(0, 6)}... ${names.last.substring(0, 1)}.');
-  }
-
-  Future attemptSend(ravencoin.Transaction tx) async {
-    var client = streams.client.client.value;
-    if (client == null) {
-      // replace with snackbar or something
-      showDialog(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-                  title: Text('Error'),
-                  content: Text(
-                      'Unable to send Transaction: no connection to the server available. Please try again later.'),
-                  actions: [
-                    TextButton(
-                        child: Text('Ok'),
-                        onPressed: () => Navigator.pop(context))
-                  ]));
-    } else {
-      // needs testing on testnet
-      var txid = await services.client.api.sendTransaction(tx.toHex());
-      //var txid = '';
-      if (txid != '') {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-                    title: Text('Sent'),
-                    content: InkWell(
-                        child:
-                            Text('Success! See Transaction in browser: $txid'),
-                        onTap: () => launch(
-                            'https://rvnt.cryptoscope.io/tx/?txid=$txid')),
-                    actions: [
-                      TextButton(
-                          child: Text('Ok'),
-                          onPressed: () {
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                            //Navigator.popUntil(context, ModalRoute.withName('/security/login')) // might not have come here from homepage...
-                          })
-                    ]));
-      } else {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-                    title: Text('Unable to verify Transaction'),
-                    content: Text(
-                        'We were unable to verify the transaction succeeded, please try again later.'),
-                    actions: [
-                      TextButton(
-                          child: Text('Ok'),
-                          onPressed: () => Navigator.pop(context))
-                    ]));
-      }
-    }
-    //Navigator.pop(context);
-  }
 
   void _produceAssetModal() {
     var options = (useWallet

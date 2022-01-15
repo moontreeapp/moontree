@@ -1,28 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/theme/extensions.dart';
-import 'package:raven_front/utils/data.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:raven_front/components/components.dart';
 
 class Loader extends StatefulWidget {
   final String message;
-  const Loader({
-    this.message = 'Loading...',
-  }) : super();
+  const Loader({this.message = 'Loading...'}) : super();
 
   @override
   _LoaderState createState() => _LoaderState();
 }
 
 class _LoaderState extends State<Loader> {
-  Map<String, dynamic> data = {};
-  //final BehaviorSubject stream;
-  //final String request;
+  late List listeners = [];
+
+  @override
+  void initState() {
+    super.initState();
+    //listeners.add(streams.app.import.success.listen((bool? value) {
+    //  if (value ?? false) {
+    //    Navigator.popUntil(
+    //        components.navigator.routeContext!, ModalRoute.withName('/home'));
+    //  } else {
+    //    Navigator.of(components.navigator.routeContext!).pop();
+    //  }
+    //}));
+    //listeners.add(streams.app.spending.success.listen((bool? value) {
+    //  if (value ?? false) {
+    //    Navigator.popUntil(
+    //        components.navigator.routeContext!, ModalRoute.withName('/home'));
+    //  } else {
+    //    Navigator.of(components.navigator.routeContext!).pop();
+    //  }
+    //}));
+  }
+
+  @override
+  void dispose() {
+    for (var listener in listeners) {
+      listener.cancel();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    //data = populateData(context, data);
-    //WidgetsBinding.instance!.addPostFrameCallback((_) => afterBuild(context));
-    //print('build $data');
+    // maybe on click just go home?
     return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -33,9 +56,4 @@ class _LoaderState extends State<Loader> {
               height: 56, width: 56),
         ]);
   }
-
-  //void afterBuild(BuildContext context) {
-  //  print('afterbuild $data');
-  //  data['stream'].add(data['request']);
-  //}
 }

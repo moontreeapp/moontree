@@ -51,90 +51,9 @@ class _ImportState extends State<Import> {
     }
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      // somewhere: setState(() => loading = true);
-      child: loading ? showLoaderFirst() : body(),
+      child: loading ? Loader(message: 'Importing') : body(),
     );
   }
-
-  Widget showLoaderFirst() {
-    //showDialog(
-    //    useSafeArea: false,
-    //    context: context,
-    //    barrierColor: null,
-    //    barrierDismissible: true,
-    //    builder: (BuildContext context) => AlertDialog(
-    //        elevation: 0,
-    //        content: Container(
-    //            height: MediaQuery.of(context).size.height,
-    //            width: MediaQuery.of(context).size.width,
-    //            child: Loader(message: 'Importing'))));
-    // this is used to get the please wait message to show up
-    // it needs enough time to display the message
-    //await Future.delayed(const Duration(milliseconds: 200));
-    //Future.delayed(
-    //    Duration.zero,
-    //    () => ((_) {
-    streams.app.import
-        .add(ImportRequest(text: finalText!, accountId: finalAccountId!));
-    //        })(context));
-
-    return Loader(message: 'Importing');
-    //Navigator.pushNamed(context, '/loader', arguments: {
-    //  'stream': streams.app.import,
-    //  'request': ImportRequest(text: finalText, accountId: finalAccountId)
-    //});
-    //print('this still happens?');
-    //streams.app.import
-    //    .add(ImportRequest(text: finalText, accountId: finalAccountId));
-    //Loader(
-    //  message: 'Importing',
-    //);
-  }
-
-  Future alertSuccess() {
-    /// verify by looking up public key first - (import from private key vs wif)
-    /// verify we don't already have this wallet... that means create the wallet to compare, but don't save it yet,
-    ///wallet = singleWalletGenerationService.newSingleWallet(
-    ///    account: account, privateKey: walletSecret!, compressed: true);
-    ///wallet = leaderWalletGenerationService.newLeaderWallet(account, seed: walletSecret);
-    /// if (_walletFound(wallet.walletId) != null) {
-    ///   // save
-    ///   singleWalletGenerationService.saveSingleWallet(wallet);
-    ///   leaderWalletGenerationService.saveLeaderWallet(wallet);
-    ///   // alert sucess
-    ///   return ...
-    /// } else {
-    ///   // alert existing
-    ///   return ... already exists in the _walletFound(wallet.walletId) account
-    /// }
-    // should we await save?
-    // how else to verify?
-    //if (wallets.byAccount.getAll(account.accountId).map((e) => e.secret).contains(walletSecret)) {
-    if (true) {
-      return showDialog(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-                title: Text('success!'),
-                content: Text('wallet imported into account'),
-                actions: [
-                  TextButton(
-                      child: Text('ok'),
-                      onPressed: () => Navigator.pushNamed(context, '/home'))
-                ],
-              ));
-    }
-  }
-
-  Future alertImported(String title, String msg) => showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-            title: Text(title),
-            content: Text(msg),
-            actions: [
-              TextButton(
-                  child: Text('ok'), onPressed: () => Navigator.pop(context))
-            ],
-          ));
 
   Widget submitButton(context) {
     //var label = 'Import into ' + account.name + ' account';
@@ -152,9 +71,6 @@ class _ImportState extends State<Import> {
         icon: components.icons.importDisabled(context),
         label: Text(label, style: Theme.of(context).disabledButton),
         style: components.styles.buttons.bottom(context, disabled: true));
-    //style: ButtonStyle(
-    //    backgroundColor: MaterialStateProperty.all<Color>(
-    //        Theme.of(context).disabledColor)));
   }
 
   void enableImport([String? given]) {
@@ -206,6 +122,7 @@ class _ImportState extends State<Import> {
       });
 
   Future attemptImport([String? importData]) async {
+    FocusScope.of(context).unfocus();
     var text = (importData ?? words.text).trim();
 
     /// decrypt if you must...
@@ -244,12 +161,9 @@ class _ImportState extends State<Import> {
       }
       text = resp;
     }
-    //showLoaderFirst(text, account.accountId);
-    setState(() {
-      loading = true;
-      finalText = text;
-      finalAccountId = account.accountId;
-    });
+    streams.app.import.attempt
+        .add(ImportRequest(text: text, accountId: account.accountId));
+    setState(() => loading = true);
   }
 
   Widget body() => Padding(
