@@ -22,6 +22,7 @@ import 'package:raven_front/pages/transaction/receive.dart';
 import 'package:raven_front/pages/transaction/send.dart';
 import 'package:raven_front/pages/transaction/transaction.dart';
 import 'package:raven_front/pages/wallet/wallet.dart';
+import 'package:raven_front/widgets/front/loader.dart';
 
 class pages {
   //static Advanced loading = Advanced();
@@ -40,6 +41,7 @@ class pages {
   static Export export = Export();
   static Import import = Import();
   static ImportExport importExport = ImportExport();
+  static Loader loader = Loader();
   static ElectrumNetwork electrumNetwork = ElectrumNetwork();
   static Preferences preferences = Preferences();
   static Settings settings = Settings();
@@ -56,6 +58,7 @@ class pages {
         '/home': (context) => home,
         '/transactions': (context) => transactions,
         '/wallet': (context) => walletView,
+        '/loader': (context) => loader,
         '/security/change': (context) => changePassword,
         '/security/resume': (context) => changeResume,
         '/security/login': (context) => login,

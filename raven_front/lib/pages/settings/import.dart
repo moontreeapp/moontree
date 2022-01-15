@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
@@ -29,6 +31,8 @@ class _ImportState extends State<Import> {
   final TextEditingController password = TextEditingController();
   bool loading = false;
   FileDetails? file;
+  String? finalText;
+  String? finalAccountId;
 
   @override
   void dispose() {
@@ -50,6 +54,19 @@ class _ImportState extends State<Import> {
       // somewhere: setState(() => loading = true);
       child: loading ? Loader(message: 'Importing') : body(),
     );
+  }
+
+  Future<void> showLoaderFirst(String finalText, String finalAccountId) async {
+    Navigator.pushNamed(context, '/loader', arguments: {
+      'stream': streams.app.import,
+      'request': ImportRequest(text: finalText, accountId: finalAccountId)
+    });
+    //print('this still happens?');
+    //streams.app.import
+    //    .add(ImportRequest(text: finalText, accountId: finalAccountId));
+    //Loader(
+    //  message: 'Importing',
+    //);
   }
 
   Future alertSuccess() {
@@ -205,9 +222,12 @@ class _ImportState extends State<Import> {
       }
       text = resp;
     }
-    streams.app.import
-        .add(ImportRequest(text: text, accountId: account.accountId));
-    setState(() => loading = true);
+    showLoaderFirst(text, account.accountId);
+    //setState(() {
+    //  loading = true;
+    //  finalText = text;
+    //  finalAccountId = account.accountId;
+    //});
   }
 
   Widget body() => Padding(

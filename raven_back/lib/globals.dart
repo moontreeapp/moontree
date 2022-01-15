@@ -30,7 +30,7 @@ final RateWaiter rateWaiter = RateWaiter();
 final RavenClientWaiter ravenClientWaiter = RavenClientWaiter();
 final SettingWaiter settingWaiter = SettingWaiter();
 final SendWaiter sendWaiter = SendWaiter();
-final SendWaiter importWaiter = SendWaiter();
+final ImportWaiter importWaiter = ImportWaiter();
 // Wallets
 final LeaderWaiter leaderWaiter = LeaderWaiter();
 final SingleWaiter singleWaiter = SingleWaiter();

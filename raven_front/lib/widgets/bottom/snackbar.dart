@@ -16,6 +16,9 @@ class SnackBarViewer extends StatefulWidget {
 class _SnackBarViewerState extends State<SnackBarViewer> {
   Snack? snack;
   late List listeners = [];
+  final OutlinedBorder shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0)));
 
   @override
   void initState() {
@@ -48,56 +51,57 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         style: snack!.positive
             ? Theme.of(context).snackMessage
             : Theme.of(context).snackMessageBad);
-    if (snack!.link == null) {
-      // should I just return a SnackBar?
+    if (snack!.link == null && snack!.details == null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        shape: shape,
         content: msg,
       ));
-    } else {
+    } else if (snack!.link != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Color(0xDE000000),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(8.0),
-                  topRight: Radius.circular(8.0))),
+          shape: shape,
           content: msg,
           action: SnackBarAction(
-              label: snack?.label ?? 'Go',
+              label: snack?.label ?? 'go',
               onPressed: snack!.link!.startsWith('/')
                   // app page
                   ? () => Navigator.pushNamed(context, snack!.link!,
                       arguments: snack?.arguments ?? {})
-                  : snack!.details != null
-                      // details
-                      ? () => showDialog(
-                          context: components.navigator.routeContext!,
-                          builder: (BuildContext context) => AlertDialog(
-                                  title: Text('Details'),
-                                  content: Text(snack!.details!),
-                                  actions: [
-                                    TextButton(
-                                        child: Text('Ok'),
-                                        onPressed: () =>
-                                            Navigator.of(context).pop())
-                                  ]))
-                      // external site
-                      : () => showDialog(
-                          context: components.navigator.routeContext!,
-                          builder: (BuildContext context) => AlertDialog(
-                                  //title: Text('External App'),
-                                  content: Text('Open external app (browser)?'),
-                                  actions: [
-                                    TextButton(
-                                        child: Text('Cancel'),
-                                        onPressed: () =>
-                                            Navigator.of(context).pop()),
-                                    TextButton(
-                                        child: Text('Continue'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                          launch(snack!.link!);
-                                        })
-                                  ])))));
+                  // external site
+                  : () => showDialog(
+                      context: components.navigator.routeContext!,
+                      builder: (BuildContext context) => AlertDialog(
+                              //title: Text('External App'),
+                              content: Text('Open external app (browser)?'),
+                              actions: [
+                                TextButton(
+                                    child: Text('Cancel'),
+                                    onPressed: () =>
+                                        Navigator.of(context).pop()),
+                                TextButton(
+                                    child: Text('Continue'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      launch(snack!.link!);
+                                    })
+                              ])))));
+    } else if (snack!.details != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Color(0xDE000000),
+          shape: shape,
+          content: msg,
+          action: SnackBarAction(
+              label: snack?.label ?? 'details',
+              onPressed: () => showDialog(
+                  context: components.navigator.routeContext!,
+                  builder: (BuildContext context) => AlertDialog(
+                          title: Text('Details'),
+                          content: Text(snack!.details!),
+                          actions: [
+                            TextButton(
+                                child: Text('Ok'),
+                                onPressed: () => Navigator.of(context).pop())
+                          ])))));
     }
   }
 }
