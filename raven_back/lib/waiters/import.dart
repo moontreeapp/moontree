@@ -7,6 +7,7 @@ class ImportWaiter extends Waiter {
   void init() {
     streams.app.import.listen((ImportRequest? importRequest) async {
       print(importRequest);
+      await Future.delayed(const Duration(milliseconds: 500));
       if (importRequest != null) {
         var importFrom = ImportFrom(
             text: importRequest.text, accountId: importRequest.accountId);
@@ -22,7 +23,9 @@ class ImportWaiter extends Waiter {
               message: 'Sucessful Import', details: importFrom.importedMsg!));
         } else {
           streams.app.snack.add(Snack(
-              message: 'Error Importing', details: importFrom.importedMsg!));
+              message: 'Error Importing',
+              details: importFrom.importedMsg!,
+              positive: false));
         }
         //if (success) {
         //  Navigator.popUntil(context, ModalRoute.withName('/home'));

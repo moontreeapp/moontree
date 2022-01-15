@@ -20,9 +20,9 @@ class _LoaderState extends State<Loader> {
 
   @override
   Widget build(BuildContext context) {
-    data = populateData(context, data);
-    WidgetsBinding.instance!.addPostFrameCallback((_) => afterBuild(context));
-    print('build $data');
+    //data = populateData(context, data);
+    //WidgetsBinding.instance!.addPostFrameCallback((_) => afterBuild(context));
+    //print('build $data');
     return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -34,8 +34,8 @@ class _LoaderState extends State<Loader> {
         ]);
   }
 
-  void afterBuild(BuildContext context) {
-    print('afterbuild $data');
-    data['stream'].add(data['request']);
-  }
+  //void afterBuild(BuildContext context) {
+  //  print('afterbuild $data');
+  //  data['stream'].add(data['request']);
+  //}
 }

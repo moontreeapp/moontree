@@ -53,12 +53,13 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
             : Theme.of(context).snackMessageBad);
     if (snack!.link == null && snack!.details == null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        //backgroundColor: Color(0xDE000000),
         shape: shape,
         content: msg,
       ));
     } else if (snack!.link != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Color(0xDE000000),
+          //backgroundColor: Color(0xDE000000),
           shape: shape,
           content: msg,
           action: SnackBarAction(
@@ -87,7 +88,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                               ])))));
     } else if (snack!.details != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Color(0xDE000000),
+          //backgroundColor: Color(0xDE000000),
           shape: shape,
           content: msg,
           action: SnackBarAction(

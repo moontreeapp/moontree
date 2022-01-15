@@ -52,15 +52,37 @@ class _ImportState extends State<Import> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       // somewhere: setState(() => loading = true);
-      child: loading ? Loader(message: 'Importing') : body(),
+      child: loading ? showLoaderFirst() : body(),
     );
   }
 
-  Future<void> showLoaderFirst(String finalText, String finalAccountId) async {
-    Navigator.pushNamed(context, '/loader', arguments: {
-      'stream': streams.app.import,
-      'request': ImportRequest(text: finalText, accountId: finalAccountId)
-    });
+  Widget showLoaderFirst() {
+    //showDialog(
+    //    useSafeArea: false,
+    //    context: context,
+    //    barrierColor: null,
+    //    barrierDismissible: true,
+    //    builder: (BuildContext context) => AlertDialog(
+    //        elevation: 0,
+    //        content: Container(
+    //            height: MediaQuery.of(context).size.height,
+    //            width: MediaQuery.of(context).size.width,
+    //            child: Loader(message: 'Importing'))));
+    // this is used to get the please wait message to show up
+    // it needs enough time to display the message
+    //await Future.delayed(const Duration(milliseconds: 200));
+    //Future.delayed(
+    //    Duration.zero,
+    //    () => ((_) {
+    streams.app.import
+        .add(ImportRequest(text: finalText!, accountId: finalAccountId!));
+    //        })(context));
+
+    return Loader(message: 'Importing');
+    //Navigator.pushNamed(context, '/loader', arguments: {
+    //  'stream': streams.app.import,
+    //  'request': ImportRequest(text: finalText, accountId: finalAccountId)
+    //});
     //print('this still happens?');
     //streams.app.import
     //    .add(ImportRequest(text: finalText, accountId: finalAccountId));
@@ -222,12 +244,12 @@ class _ImportState extends State<Import> {
       }
       text = resp;
     }
-    showLoaderFirst(text, account.accountId);
-    //setState(() {
-    //  loading = true;
-    //  finalText = text;
-    //  finalAccountId = account.accountId;
-    //});
+    //showLoaderFirst(text, account.accountId);
+    setState(() {
+      loading = true;
+      finalText = text;
+      finalAccountId = account.accountId;
+    });
   }
 
   Widget body() => Padding(
