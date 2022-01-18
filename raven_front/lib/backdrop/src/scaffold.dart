@@ -594,6 +594,9 @@ class BackdropScaffoldState extends State<BackdropScaffold>
   }
 
   Widget _wrapInShadow(Widget frontPanel) {
+    if (streams.app.page.value == 'Transactions') {
+      return frontPanel;
+    }
     return Container(
       decoration: BoxDecoration(boxShadow: widget.frontLayerBoxShadow),
       child: frontPanel,
