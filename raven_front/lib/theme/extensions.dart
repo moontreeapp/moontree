@@ -474,4 +474,30 @@ extension TextStyleExtension on ThemeData {
           fontWeight: FontWeights.regular,
           letterSpacing: 0.25,
           color: Color(0x99000000));
+  TextStyle? get tabName => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Roboto',
+          fontWeight: FontWeights.medium,
+          letterSpacing: 1.25,
+          color: Color(0xFFFFFFFF))
+      : TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Roboto',
+          fontWeight: FontWeights.medium,
+          letterSpacing: 1.25,
+          color: Color(0xFFFFFFFF));
+  TextStyle? get tabNameInactive => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Roboto',
+          fontWeight: FontWeights.medium,
+          letterSpacing: 1.25,
+          color: Color(0x99FFFFFF))
+      : TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Roboto',
+          fontWeight: FontWeights.medium,
+          letterSpacing: 1.25,
+          color: Color(0x99FFFFFF));
 }

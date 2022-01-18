@@ -136,28 +136,9 @@ class _BalanceHeaderState extends State<BalanceHeader>
                       indicatorColor: Colors.white,
                       indicatorSize: TabBarIndicatorSize.tab,
                       indicator: _TabIndicator(),
-                      /* 
-                      ShapeDecoration(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(8),
-                                topRight: Radius.circular(8)),
-                            side: BorderSide(
-                                color: Color(0xDD613896), width: 8.0),
-                          ),
-                          color: Colors.red
-                          ),
- */
-/*                           UnderlineTabIndicator(
-                        borderSide: BorderSide(color: Colors.white, width: 8.0),
-                        insets: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-                      ),
- */
-                      /* use a back container with a fill white, 
-                          height of 16dp 
-                          and then curve the corner by 8dp.
-                          oh and then offset it by 2dp in Y direction */
-                      tabs: [Tab(text: 'Transactions'), Tab(text: 'Metadata')]),
+                      labelStyle: Theme.of(context).tabName,
+                      unselectedLabelStyle: Theme.of(context).tabNameInactive,
+                      tabs: [Tab(text: 'HISTORY'), Tab(text: 'DATA')]),
             ],
           )
         ],
