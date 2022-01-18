@@ -500,4 +500,17 @@ extension TextStyleExtension on ThemeData {
           fontWeight: FontWeights.medium,
           letterSpacing: 1.25,
           color: Color(0x99FFFFFF));
+  TextStyle? get viewData => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.bold,
+          letterSpacing: 1.25,
+          color: Color(0xFF5C6BC0))
+      : TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.bold,
+          letterSpacing: 1.25,
+          color: Color(0xFF5C6BC0));
 }

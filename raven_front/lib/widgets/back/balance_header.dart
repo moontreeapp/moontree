@@ -147,13 +147,6 @@ class _BalanceHeaderState extends State<BalanceHeader>
   }
 }
 
-/* TabBar(
-                  tabs: [Tab(text: 'Transactions'), Tab(text: 'Metadata')]))));
-
-DefaultTabController(
-        length: 2,
-        child:...TabBarView(children: <Widget>[]) */
-
 class _TabIndicator extends BoxDecoration {
   final BoxPainter _painter;
 

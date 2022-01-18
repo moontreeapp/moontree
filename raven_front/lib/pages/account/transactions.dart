@@ -10,6 +10,7 @@ import 'package:raven_back/services/transaction.dart';
 import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';
+import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/data.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/widgets/widgets.dart';
@@ -69,23 +70,27 @@ class _TransactionsState extends State<Transactions>
         ? Current.walletHoldings(data['walletId'])
         : Current.holdings;
     security = data['holding']!.security;
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: NotificationListener<UserScrollNotification>(
-          onNotification: visibilityOfSendReceive,
-          child: TransactionList(
-              transactions: currentTxs
-                  .where((tx) => tx.security.symbol == security.symbol),
-              msg: '\nNo ${security.symbol} transactions.\n')),
-    );
+    return TabBarView(
+        controller: components.navigator.tabController,
+        children: <Widget>[
+          GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: NotificationListener<UserScrollNotification>(
+                onNotification: visibilityOfSendReceive,
+                child: TransactionList(
+                    transactions: currentTxs
+                        .where((tx) => tx.security.symbol == security.symbol),
+                    msg: '\nNo ${security.symbol} transactions.\n')),
+          ),
+          _metadataView() ??
+              components.empty.message(
+                context,
+                icon: Icons.description,
+                msg: '\nNo metadata.\n',
+              ),
+        ]);
 
     /// no place to view metadata right now - this used to be tabs
-    //_metadataView() ??
-    //    components.empty.message(
-    //      context,
-    //      icon: Icons.description,
-    //      msg: '\nNo metadata.\n',
-    //    ),
   }
 
   /// old
@@ -124,35 +129,38 @@ class _TransactionsState extends State<Transactions>
   //            child: TabBar(
   //                tabs: [Tab(text: 'Transactions'), Tab(text: 'Metadata')]))));
 
-  ListView? _metadataView() {
+  Widget? _metadataView() {
     var securityAsset = security.asset;
     if (securityAsset == null || securityAsset.hasMetadata == false) {
       return null;
     }
     var chilren = <Widget>[];
     if (securityAsset.primaryMetadata == null && securityAsset.hasIpfs) {
-      chilren = [
-        InkWell(
-            child: Text('${securityAsset.metadata}',
-                style: TextStyle(color: Theme.of(context).indicatorColor)),
-            onTap: () => showDialog(
-                context: context,
-                builder: (BuildContext context) => AlertDialog(
-                        title: Text('Open in External App'),
-                        content: Text('Open ipfs data in browser?'),
-                        actions: [
-                          TextButton(
-                              child: Text('Cancel'),
-                              onPressed: () => Navigator.of(context).pop()),
-                          TextButton(
-                              child: Text('Continue'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                launch(
-                                    'https://ipfs.io/ipfs/${securityAsset.metadata}');
-                              })
-                        ])))
-      ];
+      return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            InkWell(
+                child: Text('VIEW DATA', //Text('${securityAsset.metadata}',
+                    style: Theme.of(context).viewData),
+                onTap: () => showDialog(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                            title: Text('Open in External App'),
+                            content: Text('Open ipfs data in browser?'),
+                            actions: [
+                              TextButton(
+                                  child: Text('Cancel'),
+                                  onPressed: () => Navigator.of(context).pop()),
+                              TextButton(
+                                  child: Text('Continue'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    launch(
+                                        'https://ipfs.io/ipfs/${securityAsset.metadata}');
+                                  })
+                            ])))
+          ]);
     } else if (securityAsset.primaryMetadata == null) {
       chilren = [SelectableText(securityAsset.metadata)];
     } else if (securityAsset.primaryMetadata!.kind == MetadataType.ImagePath) {
