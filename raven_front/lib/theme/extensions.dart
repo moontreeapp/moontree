@@ -448,4 +448,30 @@ extension TextStyleExtension on ThemeData {
           fontWeight: FontWeights.semiBold,
           letterSpacing: 0.25,
           color: Color(0xFFF44336));
+  TextStyle? get txAmount => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 16.0,
+          fontFamily: 'Roboto',
+          fontWeight: FontWeights.regular,
+          letterSpacing: 0.5,
+          color: Color(0xFF000000))
+      : TextStyle(
+          fontSize: 16.0,
+          fontFamily: 'Roboto',
+          fontWeight: FontWeights.regular,
+          letterSpacing: 0.5,
+          color: Color(0xFF000000));
+  TextStyle? get txDate => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Roboto',
+          fontWeight: FontWeights.regular,
+          letterSpacing: 0.25,
+          color: Color(0x99000000))
+      : TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Roboto',
+          fontWeight: FontWeights.regular,
+          letterSpacing: 0.25,
+          color: Color(0x99000000));
 }

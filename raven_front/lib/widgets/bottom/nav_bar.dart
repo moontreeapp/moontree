@@ -14,86 +14,53 @@ class NavBar extends StatefulWidget {
 }
 
 class _NavBarState extends State<NavBar> {
-  late String pageTitle = 'Wallet';
   late String selected = 'wallet';
-  late List listeners = [];
 
   @override
-  void initState() {
-    super.initState();
-    listeners.add(streams.app.page.stream.listen((value) {
-      if (value != pageTitle) {
-        setState(() {
-          pageTitle = value;
-        });
-      }
-    }));
-  }
-
-  @override
-  void dispose() {
-    for (var listener in listeners) {
-      listener.cancel();
-    }
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => Visibility(
-        visible: ![
-          'About',
-          'Support',
-          'Feedback',
-          'Settings',
-          'Import / Export',
-          'Send', // todo: disable if Current.holdings.length > 0
-          'Receive',
-        ].contains(pageTitle),
-        child: Container(
-          height: 118,
-          padding: EdgeInsets.only(left: 16, right: 16),
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  actionButton(name: 'send', link: '/transaction/send'),
-                  SizedBox(width: 16),
-                  actionButton(name: 'receive', link: '/transaction/receive'),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  sectorIcon(name: 'wallet'),
-                  sectorIcon(name: 'create'),
-                  sectorIcon(name: 'manage'),
-                  sectorIcon(name: 'swap'),
-                ],
-              )
-            ],
-          ),
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16), topRight: Radius.circular(16)),
-              boxShadow: [
-                BoxShadow(
-                    color: const Color(0x33000000),
-                    offset: Offset(0, 5),
-                    blurRadius: 5),
-                BoxShadow(
-                    color: const Color(0x1F000000),
-                    offset: Offset(0, 3),
-                    blurRadius: 14),
-                BoxShadow(
-                    color: const Color(0x3D000000),
-                    offset: Offset(0, 8),
-                    blurRadius: 10)
-              ]),
+  Widget build(BuildContext context) => Container(
+        height: 118,
+        padding: EdgeInsets.only(left: 16, right: 16),
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                actionButton(name: 'send', link: '/transaction/send'),
+                SizedBox(width: 16),
+                actionButton(name: 'receive', link: '/transaction/receive'),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                sectorIcon(name: 'wallet'),
+                sectorIcon(name: 'create'),
+                sectorIcon(name: 'manage'),
+                sectorIcon(name: 'swap'),
+              ],
+            )
+          ],
         ),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+            boxShadow: [
+              BoxShadow(
+                  color: const Color(0x33000000),
+                  offset: Offset(0, 5),
+                  blurRadius: 5),
+              BoxShadow(
+                  color: const Color(0x1F000000),
+                  offset: Offset(0, 3),
+                  blurRadius: 14),
+              BoxShadow(
+                  color: const Color(0x3D000000),
+                  offset: Offset(0, 8),
+                  blurRadius: 10)
+            ]),
       );
 
   Widget actionButton({required String name, required String link}) => Expanded(
@@ -107,14 +74,7 @@ class _NavBarState extends State<NavBar> {
           'receive': MdiIcons.arrowBottomLeftThick,
         }[name]!),
         label: Text(name.toUpperCase()),
-        style: ButtonStyle(
-          textStyle: MaterialStateProperty.all(Theme.of(context).navBarButton),
-          foregroundColor: MaterialStateProperty.all(Color(0xDE000000)),
-          side: MaterialStateProperty.all(BorderSide(
-              color: Color(0xFF5C6BC0), width: 2, style: BorderStyle.solid)),
-          shape: MaterialStateProperty.all(RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0))),
-        ),
+        style: components.styles.buttons.bottom(context),
       ));
 
   Widget sectorIcon({required String name}) => IconButton(

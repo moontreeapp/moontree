@@ -17,11 +17,13 @@ class IconComponents {
   Icon get back => Icon(Icons.chevron_left_rounded, color: Colors.white);
   Icon get close => Icon(Icons.close, color: Colors.white);
 
-  Icon income(BuildContext context) =>
-      Icon(Icons.south_west, size: 12.0, color: Theme.of(context).good);
+  Widget income(BuildContext context) =>
+      Image.asset('assets/icons/receive/receive_green.png');
+  //Icon(Icons.south_west, size: 12.0, color: Theme.of(context).good);
 
-  Icon out(BuildContext context) =>
-      Icon(Icons.north_east, size: 12.0, color: Theme.of(context).bad);
+  Widget out(BuildContext context) =>
+      Image.asset('assets/icons/send/send_red.png');
+  //Icon(Icons.north_east, size: 12.0, color: Theme.of(context).bad);
 
   Icon importDisabled(BuildContext context) =>
       Icon(Icons.vpn_key_rounded, color: Theme.of(context).disabledColor);

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction.dart';
+import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/utils/data.dart';
@@ -47,6 +48,17 @@ class _TransactionsState extends State<Transactions>
     super.dispose();
   }
 
+  bool visibilityOfSendReceive(notification) {
+    if (notification.direction == ScrollDirection.forward &&
+        Backdrop.of(components.navigator.routeContext!).isBackLayerConcealed) {
+      Backdrop.of(components.navigator.routeContext!).revealBackLayer();
+    } else if (notification.direction == ScrollDirection.reverse &&
+        Backdrop.of(components.navigator.routeContext!).isBackLayerRevealed) {
+      Backdrop.of(components.navigator.routeContext!).concealBackLayer();
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
@@ -57,16 +69,15 @@ class _TransactionsState extends State<Transactions>
         ? Current.walletHoldings(data['walletId'])
         : Current.holdings;
     security = data['holding']!.security;
-    return
-        //appBar: components.headers.asset(
-        //    context, security.symbol,
-        //    balance: components.text.securityAsReadable(
-        //        data['holding']!.value,
-        //        symbol: security.symbol)),
-        TransactionList(
-            transactions:
-                currentTxs.where((tx) => tx.security.symbol == security.symbol),
-            msg: '\nNo ${security.symbol} transactions.\n');
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: NotificationListener<UserScrollNotification>(
+          onNotification: visibilityOfSendReceive,
+          child: TransactionList(
+              transactions: currentTxs
+                  .where((tx) => tx.security.symbol == security.symbol),
+              msg: '\nNo ${security.symbol} transactions.\n')),
+    );
 
     /// no place to view metadata right now - this used to be tabs
     //_metadataView() ??
@@ -159,15 +170,4 @@ class _TransactionsState extends State<Transactions>
     }
     return ListView(padding: EdgeInsets.all(10.0), children: chilren);
   }
-
-  /// different from home.sendReceiveButtons because it prefills the chosen token
-  /// receive works the same
-  Row sendReceiveButtons() =>
-      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        components.buttons.receive(context, symbol: security.symbol),
-        currentHolds.length > 0
-            ? components.buttons.send(context, symbol: security.symbol)
-            : components.buttons
-                .send(context, symbol: security.symbol, disabled: true),
-      ]);
 }

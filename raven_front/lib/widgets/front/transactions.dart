@@ -108,41 +108,37 @@ class _TransactionListState extends State<TransactionList> {
   ListView _transactionsView(BuildContext context) =>
       ListView(children: <Widget>[
         for (var transactionRecord in transactions) ...[
-          ListTile(
-            onTap: () => Navigator.pushNamed(
-                context, '/transaction/transaction',
-                arguments: {'transactionRecord': transactionRecord}),
-            //onLongPress: _toggleUSD,
-            leading: Container(
-                height: 40,
-                width: 40,
-                child: components.icons
-                    .assetAvatar(transactionRecord.security.symbol)),
-            title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(transactionRecord.security.symbol,
-                            style: Theme.of(context).textTheme.bodyText2),
-                        Text(transactionRecord.formattedDatetime,
-                            style: Theme.of(context).annotate),
-                      ]),
-                  (transactionRecord.out
-                      ? components.icons.out(context)
-                      : components.icons.income(context)),
-                ]),
-            trailing: (transactionRecord.out
-                ? Text(
-                    components.text.securityAsReadable(transactionRecord.value,
-                        security: transactionRecord.security, asUSD: showUSD),
-                    style: TextStyle(color: Theme.of(context).bad))
-                : Text(
-                    components.text.securityAsReadable(transactionRecord.value,
-                        security: transactionRecord.security, asUSD: showUSD),
-                    style: TextStyle(color: Theme.of(context).good))),
-          )
+          ...[
+            ListTile(
+              //contentPadding:
+              //    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 13),
+              onTap: () => Navigator.pushNamed(
+                  context, '/transaction/transaction',
+                  arguments: {'transactionRecord': transactionRecord}),
+              //onLongPress: _toggleUSD,
+              //leading: Container(
+              //    height: 40,
+              //    width: 40,
+              //    child: components.icons
+              //        .assetAvatar(transactionRecord.security.symbol)),
+              title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                        components.text.securityAsReadable(
+                            transactionRecord.value,
+                            security: transactionRecord.security,
+                            asUSD: showUSD),
+                        style: Theme.of(context).txAmount),
+                    Text(transactionRecord.formattedDatetime,
+                        style: Theme.of(context).txDate),
+                  ]),
+              trailing: (transactionRecord.out
+                  ? components.icons.out(context)
+                  : components.icons.income(context)),
+            ),
+            Divider(indent: 16),
+          ]
         ]
       ]);
 }
