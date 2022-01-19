@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:raven_front/pages/account/home.dart';
 import 'package:raven_front/pages/account/transactions.dart';
-import 'package:raven_front/pages/loading.dart';
+import 'package:raven_front/pages/misc/loading.dart';
+import 'package:raven_front/pages/misc/scan.dart';
 import 'package:raven_front/pages/security/login.dart';
 import 'package:raven_front/pages/security/resume.dart';
 import 'package:raven_front/pages/security/change.dart';
@@ -25,7 +26,6 @@ import 'package:raven_front/pages/wallet/wallet.dart';
 import 'package:raven_front/widgets/front/loader.dart';
 
 class pages {
-  //static Advanced loading = Advanced();
   static Loading loading = Loading();
   static ChangePassword changePassword = ChangePassword();
   static ChangeResume changeResume = ChangeResume();
@@ -46,6 +46,7 @@ class pages {
   static Preferences preferences = Preferences();
   static Settings settings = Settings();
   static Currency currency = Currency();
+  static ScanQR scan = ScanQR();
   static Support support = Support();
   static Security security = Security();
   static TechnicalView technicalView = TechnicalView();
@@ -59,6 +60,7 @@ class pages {
         '/transactions': (context) => transactions,
         '/wallet': (context) => walletView,
         '/loader': (context) => loader,
+        '/scan': (context) => scan,
         '/security/change': (context) => changePassword,
         '/security/resume': (context) => changeResume,
         '/security/login': (context) => login,

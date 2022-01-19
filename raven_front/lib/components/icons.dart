@@ -9,7 +9,7 @@ import 'package:raven_front/services/identicon.dart';
 import 'package:raven_front/services/storage.dart';
 
 import 'package:raven_front/theme/extensions.dart';
-import 'package:raven_front/widgets/circle_gradient.dart';
+import 'package:raven_front/widgets/other/circle_gradient.dart';
 
 class IconComponents {
   IconComponents();

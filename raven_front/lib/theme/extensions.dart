@@ -513,4 +513,17 @@ extension TextStyleExtension on ThemeData {
           fontWeight: FontWeights.bold,
           letterSpacing: 1.25,
           color: Color(0xFF5C6BC0));
+  TextStyle? get qrMessage => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 16.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.bold,
+          letterSpacing: 0.14,
+          color: Color(0xDEFFFFFF))
+      : TextStyle(
+          fontSize: 16.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.bold,
+          letterSpacing: 0.14,
+          color: Color(0xDEFFFFFF));
 }
