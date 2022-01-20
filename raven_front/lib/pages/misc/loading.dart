@@ -68,33 +68,7 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
     print('vouts: ${vouts.data}');
     print('wallets: ${wallets.data}');
     print('-------------------------');
-    var identicon = SvgPicture.network(
-        Identicon(
-          name: 'assetName.svg',
-          size: 40,
-          radius: 50,
-          background: '23F57D00',
-        ).url,
-        height: 40,
-        width: 40);
-    //print(identicon.toString());
-    print(identicon.toDiagnosticsNode().toString());
-    //print(identicon.toStringShallow());
-    //print(identicon.toStringShort());
-    //for (var transaction in transactions.data) {
-    //  print(transaction);
-    //}
-    //var tx = transactions.primaryIndex.getOne(
-    //    'b13feb18ae0b66f47e1606230b0a70de7d40ab52fbfc5626488136fbaa668b34')!;
-    //print(tx);
-    //print(tx.vins);
-    //print(tx.vouts);
-    //print(tx.vins.map((vin) => vin.vout?.rvnValue ?? 0).toList().sumInt());
-    //print(tx.vins.map((vin) => vin.vout?.assetValue ?? 0).toList().sumInt());
-    //print(tx.vouts.map((vout) => vout.rvnValue).toList().sumInt());
-    //print(tx.vouts.map((vout) => vout.assetValue).toList().sumInt());
-    //print(tx.vins.map((vin) => vin.vout?.rvnValue ?? 0).toList().sumInt() -
-    //    tx.vouts.map((vout) => vout.rvnValue).toList().sumInt());
+    print(services.cipher.getPassword(altPassword: ''));
     print('-------------------------');
 
     if (services.password.required) {

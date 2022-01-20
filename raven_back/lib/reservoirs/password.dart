@@ -11,6 +11,7 @@ class PasswordReservoir extends Reservoir<_IdKey, Password> {
   int? get maxPasswordId =>
       max([for (var password in data) password.passwordId]);
 
-  /// todo: allow removal of password, does not require deletion of passwords
-  ///       since services.password.required is not keyed off maxPasswordId.
+  Password? get current => data
+      .where((password) => password.passwordId == maxPasswordId)
+      .firstOrNull;
 }

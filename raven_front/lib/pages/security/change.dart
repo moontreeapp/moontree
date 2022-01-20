@@ -41,7 +41,6 @@ class _ChangePasswordState extends State<ChangePassword> {
       );
 
   Widget body() {
-    //Navigator.of(context).pushNamed('/security/verify');
     var newPasswordField = TextField(
       focusNode: newPasswordFocusNode,
       autocorrect: false,
@@ -136,7 +135,7 @@ class _ChangePasswordState extends State<ChangePassword> {
               color: enabled ? null : Color(0x61000000),
             ),
             label: Text(
-              'Submit'.toUpperCase(),
+              'Set'.toUpperCase(),
               style: enabled
                   ? Theme.of(context).navBarButton
                   : Theme.of(context).navBarButtonDisabled,
@@ -224,7 +223,6 @@ class _ChangePasswordState extends State<ChangePassword> {
                     child:
                         Text('ok', style: Theme.of(context).sendConfirmButton),
                     onPressed: () {
-                      validateComplexity();
                       Navigator.popUntil(context, ModalRoute.withName('/home'));
                     })
               ]));

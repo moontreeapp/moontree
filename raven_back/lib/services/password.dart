@@ -94,11 +94,12 @@ class PasswordCreationService {
     return digest.toString();
   }
 
-  /// save password in reservoir
   Future save(String password) async {
     await passwords.save(Password(
         passwordId: (passwords.maxPasswordId ?? -1) + 1,
-        saltedHash: hashThis(saltPassword(
-            password, Password.getSalt((passwords.maxPasswordId ?? -1) + 1)))));
+        saltedHash: password == ''
+            ? ''
+            : hashThis(saltPassword(password,
+                Password.getSalt((passwords.maxPasswordId ?? -1) + 1)))));
   }
 }

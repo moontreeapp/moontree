@@ -4,6 +4,7 @@ import 'package:raven_front/pages/account/transactions.dart';
 import 'package:raven_front/pages/misc/loading.dart';
 import 'package:raven_front/pages/misc/scan.dart';
 import 'package:raven_front/pages/security/login.dart';
+import 'package:raven_front/pages/security/remove.dart';
 import 'package:raven_front/pages/security/resume.dart';
 import 'package:raven_front/pages/security/change.dart';
 import 'package:raven_front/pages/settings/about.dart';
@@ -44,6 +45,7 @@ class pages {
   static Loader loader = Loader();
   static ElectrumNetwork electrumNetwork = ElectrumNetwork();
   static Preferences preferences = Preferences();
+  static RemovePassword removePassword = RemovePassword();
   static Settings settings = Settings();
   static Currency currency = Currency();
   static ScanQR scan = ScanQR();
@@ -63,6 +65,7 @@ class pages {
         '/scan': (context) => scan,
         '/security/change': (context) => changePassword,
         '/security/resume': (context) => changeResume,
+        '/security/remove': (context) => removePassword,
         '/security/login': (context) => login,
         '/transaction/transaction': (context) => transaction,
         '/transaction/receive': (context) => receive,

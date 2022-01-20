@@ -38,27 +38,23 @@ class _SecurityState extends State<Security> {
                 title: Text(
                     SecurityOption.none.enumString
                         .toTitleCase(underscoreAsSpace: true),
-                    style: services.password.required
-                        ? Theme.of(context).securityDisabled
-                        : Theme.of(context).securityDestination),
+                    style: Theme.of(context).securityDestination),
                 value: SecurityOption.none,
                 groupValue: securityChoice,
-                onChanged: services.password.required
-                    ? null
-                    : (SecurityOption? value) {
-                        setState(() {
-                          securityChoice = value;
-                        });
-                      },
+                onChanged: (SecurityOption? value) {
+                  setState(() {
+                    securityChoice = value;
+                  });
+                },
               ),
               RadioListTile<SecurityOption>(
                 activeColor: Theme.of(context).backgroundColor,
                 title: Text(
                     SecurityOption.system_default.enumString
                         .toTitleCase(underscoreAsSpace: true),
-                    style: true
+                    style: services.password.required
                         ? Theme.of(context).securityDisabled
-                        : Theme.of(context).securityDestination),
+                        : Theme.of(context).securityDisabled),
                 value: SecurityOption.system_default,
                 groupValue: securityChoice,
                 onChanged: true
@@ -74,18 +70,14 @@ class _SecurityState extends State<Security> {
                 title: Text(
                     SecurityOption.password.enumString
                         .toTitleCase(underscoreAsSpace: true),
-                    style: services.password.required
-                        ? Theme.of(context).securityDestination
-                        : Theme.of(context).securityDestination),
+                    style: Theme.of(context).securityDestination),
                 value: SecurityOption.password,
                 groupValue: securityChoice,
-                onChanged: services.password.required
-                    ? null
-                    : (SecurityOption? value) {
-                        setState(() {
-                          securityChoice = value;
-                        });
-                      },
+                onChanged: (SecurityOption? value) {
+                  setState(() {
+                    securityChoice = value;
+                  });
+                },
               ),
             ],
           ),
@@ -109,7 +101,7 @@ class _SecurityState extends State<Security> {
         },
         SecurityOption.password: {
           true: behaviorChangePassword,
-          false: behaviorChangePassword,
+          false: behaviorSetPassword,
         },
         null: {
           true: behaviorSubmit,
@@ -126,6 +118,7 @@ class _SecurityState extends State<Security> {
   Widget behaviorSetPassword() => behaviorBuilder(
         label: 'Set',
         onPressed: () {
+          streams.app.verify.add(true);
           Navigator.of(context).pushNamed('/security/change');
         },
       );
@@ -135,13 +128,15 @@ class _SecurityState extends State<Security> {
         onPressed: () {
           streams.app.verify.add(false);
           Navigator.of(context).pushNamed('/security/change');
-          //Navigator.of(context).pushNamed('/security/verify');
         },
       );
 
   Widget behaviorRemovePassword() => behaviorBuilder(
         label: 'Remove Password',
-        onPressed: () {/*navigate to remove password*/},
+        onPressed: () {
+          streams.app.verify.add(false);
+          Navigator.of(context).pushNamed('/security/remove');
+        },
       );
 
   Widget behaviorBuilder({

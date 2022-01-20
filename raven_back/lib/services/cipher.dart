@@ -7,8 +7,11 @@ class CipherService {
   /// used in decrypting backups - we don't know what cipher it was encrypted with... we could save it...
   List<CipherType> get allCipherTypes => [CipherType.AES, CipherType.None];
 
-  CipherType get latestCipherType =>
-      services.password.exist ? CipherType.AES : CipherType.None;
+  CipherType get latestCipherType => services.password.exist
+      ? passwords.current!.saltedHash == ''
+          ? CipherType.None
+          : CipherType.AES
+      : CipherType.None;
 
   @override
   String toString() => 'latestCipherType: ${latestCipherType.enumString}';
@@ -16,10 +19,10 @@ class CipherService {
   CipherUpdate get currentCipherUpdate =>
       CipherUpdate(latestCipherType, passwordId: passwords.maxPasswordId);
 
-  CipherBase? get currentCipher => currentCipherBase?.cipher;
-
   Cipher? get currentCipherBase =>
       ciphers.primaryIndex.getOne(currentCipherUpdate);
+
+  CipherBase? get currentCipher => currentCipherBase?.cipher;
 
   /// make sure all wallets are on the latest ciphertype and password
   Future updateWallets({CipherBase? cipher}) async {
@@ -90,8 +93,9 @@ class CipherService {
     latest = latest ?? latestCipherType;
     password = getPassword(password: password, altPassword: altPassword);
     return ciphers.registerCipher(
-      //CipherUpdate(latest, passwordId: passwords.maxPasswordId),
-      currentCipherUpdate,
+      password == []
+          ? CipherUpdate(CipherType.None, passwordId: passwords.maxPasswordId)
+          : currentCipherUpdate,
       password,
     );
   }
