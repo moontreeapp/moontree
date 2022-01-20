@@ -73,14 +73,19 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                       context: components.navigator.routeContext!,
                       builder: (BuildContext context) => AlertDialog(
                               //title: Text('External App'),
-                              content: Text('Open external app (browser)?'),
+                              content: Text('Open external app (browser)?',
+                                  style: Theme.of(context).sendConfirm),
                               actions: [
                                 TextButton(
-                                    child: Text('Cancel'),
+                                    child: Text('Cancel',
+                                        style: Theme.of(context)
+                                            .sendConfirmButton),
                                     onPressed: () =>
                                         Navigator.of(context).pop()),
                                 TextButton(
-                                    child: Text('Continue'),
+                                    child: Text('Continue',
+                                        style: Theme.of(context)
+                                            .sendConfirmButton),
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                       launch(snack!.link!);
@@ -96,11 +101,14 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
               onPressed: () => showDialog(
                   context: components.navigator.routeContext!,
                   builder: (BuildContext context) => AlertDialog(
-                          title: Text('Details'),
-                          content: Text(snack!.details!),
+                          title: Text('Details',
+                              style: Theme.of(context).supportHeading),
+                          content: Text(snack!.details!,
+                              style: Theme.of(context).sendConfirm),
                           actions: [
                             TextButton(
-                                child: Text('Ok'),
+                                child: Text('Ok',
+                                    style: Theme.of(context).sendConfirmButton),
                                 onPressed: () => Navigator.of(context).pop())
                           ])))));
     }

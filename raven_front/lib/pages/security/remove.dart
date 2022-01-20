@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
-import 'package:raven_front/widgets/front/verify.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/widgets/widgets.dart';
 
 class RemovePassword extends StatefulWidget {
   @override
@@ -10,6 +10,8 @@ class RemovePassword extends StatefulWidget {
 }
 
 class _RemovePasswordState extends State<RemovePassword> {
+  bool loading = false;
+
   @override
   void initState() {
     super.initState();
@@ -23,9 +25,11 @@ class _RemovePasswordState extends State<RemovePassword> {
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: streams.app.verify.value
-            ? body()
-            : VerifyPassword(parentState: this),
+        child: loading
+            ? Loader(message: 'Decrypting Wallets')
+            : streams.app.verify.value
+                ? body()
+                : VerifyPassword(parentState: this),
       );
 
   Widget body() {
@@ -67,13 +71,8 @@ class _RemovePasswordState extends State<RemovePassword> {
 
   Future submit() async {
     FocusScope.of(context).unfocus();
-    var password = '';
-    await services.password.create.save(password);
-    var cipher = services.cipher.updatePassword(altPassword: password);
-    await services.cipher.updateWallets(cipher: cipher);
-    services.cipher.cleanupCiphers();
-    Navigator.of(context).pop(); // for please wait
-    successMessage();
+    streams.password.update.add('');
+    setState(() => loading = true);
   }
 
   Future successMessage() => showDialog(

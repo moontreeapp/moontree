@@ -26,11 +26,12 @@ final AddressWaiter addressWaiter = AddressWaiter();
 final AddressSubscriptionWaiter addressSubscriptionWaiter =
     AddressSubscriptionWaiter();
 final BlockWaiter blockWaiter = BlockWaiter();
+final ImportWaiter importWaiter = ImportWaiter();
+final PasswordWaiter passwordWaiter = PasswordWaiter();
 final RateWaiter rateWaiter = RateWaiter();
 final RavenClientWaiter ravenClientWaiter = RavenClientWaiter();
-final SettingWaiter settingWaiter = SettingWaiter();
 final SendWaiter sendWaiter = SendWaiter();
-final ImportWaiter importWaiter = ImportWaiter();
+final SettingWaiter settingWaiter = SettingWaiter();
 // Wallets
 final LeaderWaiter leaderWaiter = LeaderWaiter();
 final SingleWaiter singleWaiter = SingleWaiter();

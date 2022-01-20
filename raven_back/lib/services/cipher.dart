@@ -19,6 +19,9 @@ class CipherService {
   CipherUpdate get currentCipherUpdate =>
       CipherUpdate(latestCipherType, passwordId: passwords.maxPasswordId);
 
+  CipherUpdate get noneCipherUpdate =>
+      CipherUpdate(CipherType.None, passwordId: passwords.maxPasswordId);
+
   Cipher? get currentCipherBase =>
       ciphers.primaryIndex.getOne(currentCipherUpdate);
 

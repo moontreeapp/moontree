@@ -2,8 +2,9 @@ part of 'joins.dart';
 
 extension WalletBelongsToCipher on Wallet {
   //CipherBase? get cipher => globals.cipherRegistry.ciphers[cipherUpdate];
-  CipherBase? get cipher =>
-      globals.ciphers.primaryIndex.getOne(cipherUpdate)?.cipher;
+  CipherBase? get cipher => cipherUpdate.cipherType == CipherType.None
+      ? globals.ciphers.data.firstOrNull?.cipher
+      : globals.ciphers.primaryIndex.getOne(cipherUpdate)?.cipher;
 }
 
 extension WalletBelongsToAccount on Wallet {

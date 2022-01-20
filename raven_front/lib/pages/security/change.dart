@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
-import 'package:raven_front/widgets/front/verify.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/widgets/widgets.dart';
 
 class ChangePassword extends StatefulWidget {
   @override
@@ -19,6 +19,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   bool confirmPasswordVisible = false;
   bool validatedExisting = false;
   bool validatedComplexity = false;
+  bool loading = false;
 
   @override
   void initState() {
@@ -35,9 +36,11 @@ class _ChangePasswordState extends State<ChangePassword> {
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: streams.app.verify.value
-            ? body()
-            : VerifyPassword(parentState: this),
+        child: loading
+            ? Loader(message: 'Encrypting Wallets')
+            : streams.app.verify.value
+                ? body()
+                : VerifyPassword(parentState: this),
       );
 
   Widget body() {
@@ -179,51 +182,18 @@ class _ChangePasswordState extends State<ChangePassword> {
     }
   }
 
-  String _printDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, "0");
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
-  }
+  //String _printDuration(Duration duration) {
+  //  String twoDigits(int n) => n.toString().padLeft(2, "0");
+  //  String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+  //  String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+  //  return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
+  //}
 
   Future submit() async {
     if (services.password.validate.complexity(newPassword.text)) {
       FocusScope.of(context).unfocus();
-      var password = newPassword.text;
-      await services.password.create.save(password);
-
-      // todo: replace with responsive 'ecrypting wallet x, y, z... etc'
-      showDialog(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-              title: Text('Re-encrypting Wallets...'),
-              content: Text('Estimated wait time: ' +
-                  _printDuration(Duration(seconds: wallets.data.length * 2)) +
-                  ', please wait...')));
-      // this is used to get the please wait message to show up
-      // it needs enough time to display the message
-      await Future.delayed(const Duration(milliseconds: 150));
-
-      var cipher = services.cipher.updatePassword(altPassword: password);
-      await services.cipher.updateWallets(cipher: cipher);
-      services.cipher.cleanupCiphers();
-      Navigator.of(context).pop(); // for please wait
-      successMessage();
+      streams.password.update.add(newPassword.text);
+      setState(() => loading = true);
     }
   }
-
-  Future successMessage() => showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-              title: Text('Success!'),
-              content: Text('Please back up your password!\n\n'
-                  'There is NO recovery process for lost passwords!'),
-              actions: [
-                TextButton(
-                    child:
-                        Text('ok', style: Theme.of(context).sendConfirmButton),
-                    onPressed: () {
-                      Navigator.popUntil(context, ModalRoute.withName('/home'));
-                    })
-              ]));
 }

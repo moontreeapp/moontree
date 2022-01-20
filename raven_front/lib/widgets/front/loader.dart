@@ -33,6 +33,14 @@ class _LoaderState extends State<Loader> {
     //    Navigator.of(components.navigator.routeContext!).pop();
     //  }
     //}));
+    //listeners.add(streams.password.updated.listen((bool? value) {
+    //  if (value ?? false) {
+    //    Navigator.popUntil(
+    //        components.navigator.routeContext!, ModalRoute.withName('/home'));
+    //  } else {
+    //    Navigator.of(components.navigator.routeContext!).pop();
+    //  }
+    //}));
   }
 
   @override

@@ -6,9 +6,9 @@ import 'package:raven_back/raven_back.dart';
 class ImportWaiter extends Waiter {
   void init() {
     streams.app.import.attempt.listen((ImportRequest? importRequest) async {
-      services.busy.createWalletOn('importing wallet');
-      await Future.delayed(const Duration(milliseconds: 500));
       if (importRequest != null) {
+        services.busy.createWalletOn('importing wallet');
+        await Future.delayed(const Duration(milliseconds: 250));
         var importFrom = ImportFrom(
             text: importRequest.text, accountId: importRequest.accountId);
         var success = await importFrom.handleImport();
@@ -23,8 +23,8 @@ class ImportWaiter extends Waiter {
               positive: false));
           streams.app.import.success.add(false);
         }
+        services.busy.createWalletOff('done importing wallet');
       }
-      services.busy.createWalletOff('done importing wallet');
     });
   }
 }

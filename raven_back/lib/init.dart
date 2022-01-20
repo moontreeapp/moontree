@@ -13,6 +13,7 @@ Future initWaiters() async {
   blockWaiter.init();
   sendWaiter.init();
   importWaiter.init();
+  passwordWaiter.init();
   // todo: don't kill app if this fails
   await rateWaiter.init();
 }

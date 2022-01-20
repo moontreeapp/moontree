@@ -5,6 +5,7 @@ export 'block.dart';
 export 'client.dart';
 export 'import.dart';
 export 'leader.dart';
+export 'password.dart';
 export 'rate.dart';
 export 'send.dart';
 export 'setting.dart';

@@ -68,7 +68,7 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
     print('vouts: ${vouts.data}');
     print('wallets: ${wallets.data}');
     print('-------------------------');
-    print(services.cipher.getPassword(altPassword: ''));
+    //print(services.cipher.getPassword(altPassword: ''));
     print('-------------------------');
 
     if (services.password.required) {

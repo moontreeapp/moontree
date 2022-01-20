@@ -56,7 +56,6 @@ class _ImportState extends State<Import> {
   }
 
   Widget submitButton(context) {
-    //var label = 'Import into ' + account.name + ' account';
     var label = 'IMPORT';
     if (importEnabled) {
       return OutlinedButton.icon(
