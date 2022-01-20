@@ -45,6 +45,9 @@ class _PageTitleState extends State<PageTitle> {
     if (pageTitle == 'Import_export') {
       return Text('Import / Export', style: Theme.of(context).pageTitle);
     }
+    if (['Change', 'Remove'].contains(pageTitle)) {
+      return Text('Security', style: Theme.of(context).pageTitle);
+    }
     if (pageTitle == 'Transactions') {
       var symbol = streams.app.spending.symbol.value;
       symbol = symbol == 'RVN' ? 'Ravencoin' : symbol;

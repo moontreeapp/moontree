@@ -36,9 +36,13 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: body(),
-      );
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        //appBar: components.headers.back(context, services.password.required ? 'Change Password' : 'Set Password'),
+        body: body(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: submitButton(context),
+      ));
 
   ElevatedButton submitButton(context) => ElevatedButton.icon(
       onPressed: validateExistingCondition(validatedExisting) &&
@@ -67,51 +71,40 @@ class _ChangePasswordState extends State<ChangePassword> {
   bool validateComplexityCondition([givenValidatedComplexity]) =>
       givenValidatedComplexity ?? false ?? validateComplexity();
 
-  Widget body() {
+  Padding body() {
     var newPasswordField = TextField(
-      focusNode: newPasswordFocusNode,
-      autocorrect: false,
-      controller: newPassword,
-      obscureText: !newPasswordVisible,
-      textInputAction: TextInputAction.done,
-      decoration: components.styles.decorations.textFeild(
-        context,
-        labelText: 'new password',
-        hintText: 'new password',
-        helperText: [null, false].contains(validatedComplexity)
-            ? null
-            : newNotification,
-        errorText: [null, false].contains(validatedComplexity)
-            ? newNotification
-            : null,
-        suffixIcon: IconButton(
-          icon: Icon(
-              newPasswordVisible ? Icons.visibility : Icons.visibility_off,
-              color: Color(0x99000000)),
-          onPressed: () => setState(() {
-            newPasswordVisible = !newPasswordVisible;
-          }),
+        focusNode: newPasswordFocusNode,
+        autocorrect: false,
+        controller: newPassword,
+        obscureText: !newPasswordVisible,
+        textInputAction: TextInputAction.done,
+        decoration: InputDecoration(
+          border: UnderlineInputBorder(),
+          hintText: 'new password',
+          suffixIcon: IconButton(
+            icon: Icon(
+                newPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                color: Theme.of(context).primaryColorDark),
+            onPressed: () => setState(() {
+              newPasswordVisible = !newPasswordVisible;
+            }),
+          ),
         ),
-      ),
-      onChanged: (String value) => validateComplexity(password: value),
-      onEditingComplete: () async => await submit(),
-    );
+        onChanged: (String value) => validateComplexity(password: value),
+        onEditingComplete: () async => await submit());
     var existingPasswordField = TextField(
       autocorrect: false,
       enabled: services.password.required ? true : false,
       controller: existingPassword,
       obscureText: !existingPasswordVisible,
       textInputAction: TextInputAction.next,
-      decoration: components.styles.decorations.textFeild(
-        context,
-        labelText: 'existing password',
+      decoration: InputDecoration(
+        border: UnderlineInputBorder(),
         hintText: 'existing password',
-        helperText: validatedExisting ? existingNotification : null,
-        errorText: validatedExisting ? null : existingNotification,
         suffixIcon: IconButton(
           icon: Icon(
               existingPasswordVisible ? Icons.visibility : Icons.visibility_off,
-              color: Color(0x99000000)),
+              color: Theme.of(context).primaryColorDark),
           onPressed: () => setState(() {
             existingPasswordVisible = !existingPasswordVisible;
           }),
@@ -125,26 +118,31 @@ class _ChangePasswordState extends State<ChangePassword> {
       onEditingComplete: () => validateExisting(),
     );
     return Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(20.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  services.password.required
-                      ? existingPasswordField
-                      : newPasswordField,
-                ]),
-            Padding(
-                padding: EdgeInsets.only(
-                  top: 0,
-                  bottom: 40,
-                ),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [submitButton(context)]))
+            SizedBox(height: 20),
+            services.password.required
+                ? existingPasswordField
+                : Text('Setting a password is highly recommended.\n\n'
+                    'WARNING: Since all data is local to your device there '
+                    'is no password recovery process available.\n\n'
+                    'YOU MUST BACKUP YOUR OWN PASSWORD.'),
+            SizedBox(height: 5),
+            Text(existingNotification,
+                style: TextStyle(
+                    color: validatedExisting
+                        ? Theme.of(context).good
+                        : Theme.of(context).bad)),
+            newPasswordField,
+            SizedBox(height: 5),
+            Text(newNotification,
+                style: TextStyle(
+                    color: validatedComplexity == null || !validatedComplexity!
+                        ? Theme.of(context).bad
+                        : Theme.of(context).good))
           ],
         ));
   }

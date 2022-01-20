@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/extensions/object.dart';
 import 'package:raven_back/extensions/string.dart';
 import 'package:raven_front/components/components.dart';
@@ -13,7 +14,6 @@ class Security extends StatefulWidget {
 
 class _SecurityState extends State<Security> {
   SecurityOption? securityChoice;
-  bool hasPassword = false;
   String actionName = 'Set';
 
   @override
@@ -31,12 +31,12 @@ class _SecurityState extends State<Security> {
                 title: Text(
                     SecurityOption.none.enumString
                         .toTitleCase(underscoreAsSpace: true),
-                    style: hasPassword
+                    style: services.password.required
                         ? Theme.of(context).securityDisabled
                         : Theme.of(context).securityDestination),
                 value: SecurityOption.none,
                 groupValue: securityChoice,
-                onChanged: hasPassword
+                onChanged: services.password.required
                     ? null
                     : (SecurityOption? value) {
                         setState(() {
@@ -67,12 +67,12 @@ class _SecurityState extends State<Security> {
                 title: Text(
                     SecurityOption.password.enumString
                         .toTitleCase(underscoreAsSpace: true),
-                    style: hasPassword
+                    style: services.password.required
                         ? Theme.of(context).securityDestination
                         : Theme.of(context).securityDestination),
                 value: SecurityOption.password,
                 groupValue: securityChoice,
-                onChanged: hasPassword
+                onChanged: services.password.required
                     ? null
                     : (SecurityOption? value) {
                         setState(() {
@@ -108,7 +108,7 @@ class _SecurityState extends State<Security> {
           true: behaviorSubmit,
           false: behaviorSubmit,
         },
-      }[securityChoice]![hasPassword]!();
+      }[securityChoice]![services.password.required]!();
 
   Widget behaviorSubmit() => behaviorBuilder(
         label: 'Submit',
@@ -117,13 +117,17 @@ class _SecurityState extends State<Security> {
       );
 
   Widget behaviorSetPassword() => behaviorBuilder(
-        label: 'Set Password',
-        onPressed: () {/*navigate to set password*/},
+        label: 'Set',
+        onPressed: () {
+          Navigator.of(context).pushNamed('/security/change');
+        },
       );
 
   Widget behaviorChangePassword() => behaviorBuilder(
         label: 'Change',
-        onPressed: () {/*navigate to change password*/},
+        onPressed: () {
+          Navigator.of(context).pushNamed('/security/change');
+        },
       );
 
   Widget behaviorRemovePassword() => behaviorBuilder(
