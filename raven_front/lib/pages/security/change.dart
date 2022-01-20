@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/widgets/front/verify.dart';
 import 'package:raven_front/theme/extensions.dart';
 
 class ChangePassword extends StatefulWidget {
@@ -9,65 +10,38 @@ class ChangePassword extends StatefulWidget {
 }
 
 class _ChangePasswordState extends State<ChangePassword> {
-  var existingPassword = TextEditingController();
   var newPassword = TextEditingController();
+  var confirmPassword = TextEditingController();
   FocusNode newPasswordFocusNode = FocusNode();
-  String existingNotification = '';
+  FocusNode confirmPasswordFocusNode = FocusNode();
   String newNotification = '';
-  bool existingPasswordVisible = false;
   bool newPasswordVisible = false;
+  bool confirmPasswordVisible = false;
   bool validatedExisting = false;
-  bool? validatedComplexity;
+  bool validatedComplexity = false;
 
   @override
   void initState() {
-    existingPasswordVisible = false;
-    newPasswordVisible = false;
-    validatedExisting = false;
     super.initState();
   }
 
   @override
   void dispose() {
-    existingPassword.dispose();
     newPassword.dispose();
+    confirmPassword.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: body(),
+        child: streams.app.verify.value
+            ? body()
+            : VerifyPassword(parentState: this),
       );
-
-  ElevatedButton submitButton(context) => ElevatedButton.icon(
-      onPressed: validateExistingCondition(validatedExisting) &&
-              validateComplexityCondition(validatedComplexity)
-          ? () async => await submit()
-          : () {},
-      icon: Icon(Icons.login),
-      label: Text('Submit'),
-      style: validateExistingCondition(validatedExisting) &&
-              validateComplexityCondition(validatedComplexity)
-          ? null
-          : ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(
-                  Theme.of(context).disabledColor))
-      //style: validateExistingCondition(validatedExisting) &&
-      //        validateComplexityCondition(validatedComplexity)
-      //    ? components.styles.buttons.curvedSides
-      //    : components.styles.buttons.disabledCurvedSides(context)
-      );
-
-  bool validateExistingCondition([validatedExisting]) =>
-      services.password.required
-          ? validatedExisting ?? validateExisting()
-          : true;
-
-  bool validateComplexityCondition([givenValidatedComplexity]) =>
-      givenValidatedComplexity ?? false ?? validateComplexity();
 
   Widget body() {
+    //Navigator.of(context).pushNamed('/security/verify');
     var newPasswordField = TextField(
       focusNode: newPasswordFocusNode,
       autocorrect: false,
@@ -78,10 +52,8 @@ class _ChangePasswordState extends State<ChangePassword> {
         context,
         labelText: 'new password',
         hintText: 'new password',
-        helperText: [null, false].contains(validatedComplexity)
-            ? null
-            : newNotification,
-        errorText: [null, false].contains(validatedComplexity)
+        helperText: validatedComplexity ? newNotification : null,
+        errorText: !validatedComplexity && newNotification != ''
             ? newNotification
             : null,
         suffixIcon: IconButton(
@@ -94,35 +66,38 @@ class _ChangePasswordState extends State<ChangePassword> {
         ),
       ),
       onChanged: (String value) => validateComplexity(password: value),
-      onEditingComplete: () async => await submit(),
+      onEditingComplete: () =>
+          FocusScope.of(context).requestFocus(confirmPasswordFocusNode),
     );
-    var existingPasswordField = TextField(
+    var confirmPasswordField = TextField(
+      focusNode: confirmPasswordFocusNode,
       autocorrect: false,
-      enabled: services.password.required ? true : false,
-      controller: existingPassword,
-      obscureText: !existingPasswordVisible,
-      textInputAction: TextInputAction.next,
+      controller: confirmPassword,
+      obscureText: !confirmPasswordVisible,
+      textInputAction: TextInputAction.done,
       decoration: components.styles.decorations.textFeild(
         context,
-        labelText: 'existing password',
-        hintText: 'existing password',
-        helperText: validatedExisting ? existingNotification : null,
-        errorText: validatedExisting ? null : existingNotification,
+        labelText: 'confirm password',
+        hintText: 'confirm password',
+        helperText: confirmPassword.text != '' &&
+                confirmPassword.text == newPassword.text
+            ? 'match'
+            : null,
+        errorText: confirmPassword.text == '' ||
+                confirmPassword.text == newPassword.text
+            ? null
+            : 'do not match',
         suffixIcon: IconButton(
           icon: Icon(
-              existingPasswordVisible ? Icons.visibility : Icons.visibility_off,
+              confirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
               color: Color(0x99000000)),
           onPressed: () => setState(() {
-            existingPasswordVisible = !existingPasswordVisible;
+            confirmPasswordVisible = !confirmPasswordVisible;
           }),
         ),
       ),
-      onChanged: (String value) {
-        if (validateExisting()) {
-          FocusScope.of(context).requestFocus(newPasswordFocusNode);
-        }
-      },
-      onEditingComplete: () => validateExisting(),
+      onChanged: (String value) => setState(() {}),
+      onEditingComplete: () async => await submit(),
     );
     return Padding(
         padding: EdgeInsets.all(16.0),
@@ -133,9 +108,9 @@ class _ChangePasswordState extends State<ChangePassword> {
             Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  services.password.required
-                      ? existingPasswordField
-                      : newPasswordField,
+                  newPasswordField,
+                  SizedBox(height: 16),
+                  confirmPasswordField
                 ]),
             Padding(
                 padding: EdgeInsets.only(
@@ -144,56 +119,65 @@ class _ChangePasswordState extends State<ChangePassword> {
                 ),
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [submitButton(context)]))
+                    children: [submitButton()]))
           ],
         ));
   }
 
-  bool validateExisting({String? password}) {
-    password = password ?? existingPassword.text;
-    if (services.password.validate.password(password)) {
-      existingNotification = 'success!';
-      validatedExisting = true;
-      setState(() => {});
-      return true;
-    }
-    var old = validatedExisting;
-    var oldNotification = existingNotification;
-    var used = services.password.validate.previouslyUsed(password);
-    existingNotification = used == null
-        ? 'password unrecognized...'
-        : 'this password was used $used passwords ago';
-    validatedExisting = false;
-    if (old || oldNotification != existingNotification) setState(() => {});
-    return false;
+  Widget submitButton() {
+    var enabled =
+        validatedComplexity && confirmPassword.text == newPassword.text;
+    return Container(
+        height: 40,
+        child: OutlinedButton.icon(
+            onPressed: enabled ? () async => await submit() : () {},
+            icon: Icon(
+              Icons.lock_rounded,
+              color: enabled ? null : Color(0x61000000),
+            ),
+            label: Text(
+              'Submit'.toUpperCase(),
+              style: enabled
+                  ? Theme.of(context).navBarButton
+                  : Theme.of(context).navBarButtonDisabled,
+            ),
+            style: components.styles.buttons.bottom(
+              context,
+              disabled: !enabled,
+            )));
   }
 
-  bool validateComplexity({String? password}) {
+  void validateComplexity({String? password}) {
     password = password ?? newPassword.text;
-    var used;
+    var oldValidation = validatedComplexity;
     var oldNotification = newNotification;
     if (services.password.validate.complexity(password)) {
-      used = services.password.validate.previouslyUsed(password);
-      newNotification = used == null
-          ? 'This password has never been used and is a strong password'
-          : used > 0
-              ? 'Warnning: this password was used $used passwords ago'
-              : 'This is your current password';
-      if (used != 0) {
+      var used = services.password.validate.previouslyUsed(password);
+      newNotification = {
+            null: 'strong',
+            0: 'current',
+            1: 'prior',
+            2: 'password before last',
+          }[used] ??
+          'used $used passwords ago';
+      // allow reuse of previous passwords?
+      //if (used != 0) {
+      if (used == null) {
         validatedComplexity = true;
-        setState(() => {});
-        return true;
+      }
+    } else {
+      validatedComplexity = false;
+      if (password == '') {
+        newNotification = '';
+      } else {
+        newNotification =
+            services.password.validate.complexityExplained(password)[0];
       }
     }
-    var old = validatedComplexity;
-    if (used != 0) {
-      newNotification = ('weak password: '
-          '${services.password.validate.complexityExplained(password).join(' & ')}.');
-    }
-    validatedComplexity = false;
-    if (old != validatedComplexity || oldNotification != newNotification)
+    if (oldValidation != validatedComplexity ||
+        oldNotification != newNotification) {
       setState(() => {});
-    return false;
+    }
   }
 
   String _printDuration(Duration duration) {
@@ -204,7 +188,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   }
 
   Future submit() async {
-    if (validateComplexity() && validateExistingCondition()) {
+    if (services.password.validate.complexity(newPassword.text)) {
       FocusScope.of(context).unfocus();
       var password = newPassword.text;
       await services.password.create.save(password);
@@ -237,10 +221,11 @@ class _ChangePasswordState extends State<ChangePassword> {
                   'There is NO recovery process for lost passwords!'),
               actions: [
                 TextButton(
-                    child: Text('ok'),
+                    child:
+                        Text('ok', style: Theme.of(context).sendConfirmButton),
                     onPressed: () {
                       validateComplexity();
-                      Navigator.of(context).pop();
+                      Navigator.popUntil(context, ModalRoute.withName('/home'));
                     })
               ]));
 }

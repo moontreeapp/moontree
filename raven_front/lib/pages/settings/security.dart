@@ -14,7 +14,14 @@ class Security extends StatefulWidget {
 
 class _SecurityState extends State<Security> {
   SecurityOption? securityChoice;
-  String actionName = 'Set';
+
+  @override
+  void initState() {
+    super.initState();
+    securityChoice = services.password.required
+        ? SecurityOption.password
+        : SecurityOption.none;
+  }
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -126,7 +133,9 @@ class _SecurityState extends State<Security> {
   Widget behaviorChangePassword() => behaviorBuilder(
         label: 'Change',
         onPressed: () {
+          streams.app.verify.add(false);
           Navigator.of(context).pushNamed('/security/change');
+          //Navigator.of(context).pushNamed('/security/verify');
         },
       );
 

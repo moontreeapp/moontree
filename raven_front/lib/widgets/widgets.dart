@@ -9,6 +9,7 @@ export 'front/holdings.dart';
 export 'front/loader.dart';
 export 'front/setting_items.dart';
 export 'front/transactions.dart';
+export 'front/verify.dart';
 export 'bottom/nav_bar.dart';
 export 'bottom/selection_items.dart';
 export 'bottom/snackbar.dart';
