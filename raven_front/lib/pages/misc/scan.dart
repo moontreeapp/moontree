@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/components/components.dart';
 
 class ScanQR extends StatefulWidget {
   const ScanQR({Key? key}) : super(key: key);
@@ -88,6 +89,8 @@ class _ScanQRState extends State<ScanQR> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
+        Navigator.of(components.navigator.routeContext!)
+            .pushNamed('/transaction/send', arguments: {'qrcode': scanData});
       });
     });
   }

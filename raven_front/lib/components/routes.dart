@@ -5,6 +5,7 @@ import 'package:raven_back/extensions/string.dart';
 class RouteStack extends NavigatorObserver {
   List<Route<dynamic>> routeStack = [];
   BuildContext? routeContext;
+  BuildContext? scaffoldContext;
   TabController? tabController;
 
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {

@@ -14,6 +14,7 @@ class Security extends StatefulWidget {
 class _SecurityState extends State<Security> {
   SecurityOption? securityChoice;
   bool hasPassword = false;
+  String actionName = 'Set';
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -30,12 +31,12 @@ class _SecurityState extends State<Security> {
                 title: Text(
                     SecurityOption.none.enumString
                         .toTitleCase(underscoreAsSpace: true),
-                    style: !hasPassword
+                    style: hasPassword
                         ? Theme.of(context).securityDisabled
                         : Theme.of(context).securityDestination),
                 value: SecurityOption.none,
                 groupValue: securityChoice,
-                onChanged: !hasPassword
+                onChanged: hasPassword
                     ? null
                     : (SecurityOption? value) {
                         setState(() {
@@ -48,12 +49,12 @@ class _SecurityState extends State<Security> {
                 title: Text(
                     SecurityOption.system_default.enumString
                         .toTitleCase(underscoreAsSpace: true),
-                    style: !hasPassword
+                    style: true
                         ? Theme.of(context).securityDisabled
                         : Theme.of(context).securityDestination),
                 value: SecurityOption.system_default,
                 groupValue: securityChoice,
-                onChanged: !hasPassword
+                onChanged: true
                     ? null
                     : (SecurityOption? value) {
                         setState(() {
@@ -84,28 +85,73 @@ class _SecurityState extends State<Security> {
           Padding(
             padding: EdgeInsets.only(top: 40, bottom: 40, left: 16, right: 16),
             child: Column(
-
-                // The crossAxisAlignment is needed to give content height > 0
-                //   - we are in a Row, so crossAxis is Column, so this enforces
-                //     to "stretch height".
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [_buildBehavior()]),
+                children: [buildBehavior()]),
           )
         ],
       ));
 
-  Widget _buildBehavior() => {
-        SecurityOption.none: _buildBehavior1,
-        SecurityOption.system_default: _buildBehavior1,
-        SecurityOption.password: _buildBehavior1,
-        null: _buildBehavior1,
-      }[securityChoice]!();
+  Widget buildBehavior() => {
+        SecurityOption.none: {
+          true: behaviorRemovePassword,
+          false: behaviorSubmit,
+        },
+        SecurityOption.system_default: {
+          true: behaviorSubmit,
+          false: behaviorSubmit,
+        },
+        SecurityOption.password: {
+          true: behaviorChangePassword,
+          false: behaviorChangePassword,
+        },
+        null: {
+          true: behaviorSubmit,
+          false: behaviorSubmit,
+        },
+      }[securityChoice]![hasPassword]!();
 
-  Widget _buildBehavior1() => Container(
-      height: 40,
-      child: OutlinedButton.icon(
-          onPressed: () {/*navigate to set, change or other screens*/},
-          icon: Icon(Icons.lock_rounded),
-          label: Text('CHANGE'.toUpperCase()),
-          style: components.styles.buttons.bottom(context)));
+  Widget behaviorSubmit() => behaviorBuilder(
+        label: 'Submit',
+        onPressed: () {/* do nothing*/},
+        disabled: true,
+      );
+
+  Widget behaviorSetPassword() => behaviorBuilder(
+        label: 'Set Password',
+        onPressed: () {/*navigate to set password*/},
+      );
+
+  Widget behaviorChangePassword() => behaviorBuilder(
+        label: 'Change',
+        onPressed: () {/*navigate to change password*/},
+      );
+
+  Widget behaviorRemovePassword() => behaviorBuilder(
+        label: 'Remove Password',
+        onPressed: () {/*navigate to remove password*/},
+      );
+
+  Widget behaviorBuilder({
+    required String label,
+    required VoidCallback onPressed,
+    bool disabled = false,
+  }) =>
+      Container(
+          height: 40,
+          child: OutlinedButton.icon(
+              onPressed: onPressed,
+              icon: Icon(
+                Icons.lock_rounded,
+                color: disabled ? Color(0x61000000) : null,
+              ),
+              label: Text(
+                label.toUpperCase(),
+                style: disabled
+                    ? Theme.of(context).navBarButtonDisabled
+                    : Theme.of(context).navBarButton,
+              ),
+              style: components.styles.buttons.bottom(
+                context,
+                disabled: disabled,
+              )));
 }

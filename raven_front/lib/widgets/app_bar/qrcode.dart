@@ -58,9 +58,6 @@ class _QRCodeButtonState extends State<QRCodeButton> {
             //      ''
             //});
 
-            /// maybe we should send you over to send page, with a message to
-            /// immedately trigger the scan button...
-
             /// once the result is recognized on this page it'll send you over to
             /// send page with the result so send can populate itself...
             Navigator.of(components.navigator.routeContext!).pushNamed('/scan');
