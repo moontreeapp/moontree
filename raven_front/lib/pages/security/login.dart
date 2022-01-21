@@ -25,14 +25,7 @@ class _LoginState extends State<Login> {
   }
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        //appBar: components.headers.simple(context, 'Login'),
-        body: body(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: submitButton(),
-      ));
+  Widget build(BuildContext context) => body();
 
   ElevatedButton submitButton() => ElevatedButton.icon(
       onPressed: () async => await submit(),
@@ -55,15 +48,15 @@ class _LoginState extends State<Login> {
                   controller: password,
                   obscureText: !passwordVisible,
                   textInputAction: TextInputAction.done,
-                  decoration: InputDecoration(
-                    border: UnderlineInputBorder(),
-                    hintText: 'password',
+                  decoration: components.styles.decorations.textFeild(
+                    context,
+                    labelText: 'password',
                     suffixIcon: IconButton(
                       icon: Icon(
                           passwordVisible
                               ? Icons.visibility
                               : Icons.visibility_off,
-                          color: Theme.of(context).primaryColorDark),
+                          color: Color(0x99000000)),
                       onPressed: () => setState(() {
                         passwordVisible = !passwordVisible;
                       }),
