@@ -97,7 +97,10 @@ class _SendState extends State<Send> {
     var symbol = streams.app.spending.symbol.value;
     symbol = symbol == 'Ravencoin' ? 'RVN' : symbol;
     useWallet = data.containsKey('walletId') && data['walletId'] != null;
-    if (data.containsKey('qrcode')) populateFromQR(data['qrcode']);
+    if (data.containsKey('qrcode')) {
+      populateFromQR(data['qrcode']);
+      data.remove('qrcode');
+    }
     divisibility = assets.bySymbol.getOne(symbol)?.divisibility ?? 8;
     var possibleHoldings = [
       for (var balance in useWallet
@@ -139,6 +142,9 @@ class _SendState extends State<Send> {
               ? Current.walletHoldingNames(data['walletId'])
               : Current.holdingNames,
           current: data['symbol']);
+      if (!['', null].contains(data['symbol'])) {
+        streams.app.spending.symbol.add(data['symbol']);
+      }
     } else {
       sendAddress.text = code;
     }

@@ -83,15 +83,18 @@ class _ScanQRState extends State<ScanQR> {
   }
 
   void _onQRViewCreated(QRViewController controller) {
-    setState(() {
-      this.controller = controller;
-    });
-    controller.scannedDataStream.listen((scanData) {
+    if (this.controller != controller) {
       setState(() {
-        result = scanData;
-        Navigator.of(components.navigator.routeContext!)
-            .pushNamed('/transaction/send', arguments: {'qrcode': scanData});
+        this.controller = controller;
       });
+    }
+    controller.scannedDataStream.listen((scanData) {
+      //setState(() {
+      //  result = scanData;
+      //});
+      Navigator.of(components.navigator.routeContext!).pushReplacementNamed(
+          '/transaction/send',
+          arguments: {'qrcode': scanData.code});
     });
   }
 }

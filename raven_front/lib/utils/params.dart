@@ -4,6 +4,7 @@ import 'package:raven_front/utils/transform.dart';
 Map<String, String> parseReceiveParams(String address) =>
     Uri.parse(address).queryParameters;
 
+/// message=asset:MOONTREE0
 String requestedAsset(Map<String, String> params,
     {List? holdings, String? current}) {
   if (params.containsKey('message')) {

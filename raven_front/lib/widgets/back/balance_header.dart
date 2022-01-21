@@ -131,14 +131,22 @@ class _BalanceHeaderState extends State<BalanceHeader>
                                     : Theme.of(context).remainingRed)
                           ]))
                   //: SizedBox(height: 14+16),
-                  : TabBar(
-                      controller: components.navigator.tabController,
-                      indicatorColor: Colors.white,
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      indicator: _TabIndicator(),
-                      labelStyle: Theme.of(context).tabName,
-                      unselectedLabelStyle: Theme.of(context).tabNameInactive,
-                      tabs: [Tab(text: 'HISTORY'), Tab(text: 'DATA')]),
+                  : Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(8),
+                          topRight: Radius.circular(8),
+                        ),
+                      ),
+                      child: TabBar(
+                          controller: components.navigator.tabController,
+                          indicatorColor: Colors.white,
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          indicator: _TabIndicator(),
+                          labelStyle: Theme.of(context).tabName,
+                          unselectedLabelStyle:
+                              Theme.of(context).tabNameInactive,
+                          tabs: [Tab(text: 'HISTORY'), Tab(text: 'DATA')])),
             ],
           )
         ],
