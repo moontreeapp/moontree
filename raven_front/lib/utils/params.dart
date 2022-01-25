@@ -62,7 +62,11 @@ String cleanDecAmount(String amount, {bool zeroToBlank = false}) {
   // remove leading 0(s)
   var ret = '0';
   try {
-    ret = double.parse(amount).toString();
+    if (amount == '') {
+      ret = '0';
+    } else {
+      ret = double.parse(amount).toString();
+    }
   } catch (e) {
     ret = '0';
   }

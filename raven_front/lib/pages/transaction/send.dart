@@ -189,7 +189,9 @@ class _SendState extends State<Send> {
   String verifyVisibleAmount(String value) {
     var amount = cleanDecAmount(value);
     try {
-      value = double.parse(value).toString();
+      if (value != '') {
+        value = double.parse(value).toString();
+      }
     } catch (e) {
       value = value;
     }
@@ -330,6 +332,7 @@ class _SendState extends State<Send> {
                         form: streams.spend.form.value,
                         amount: double.parse(visibleAmount)));
                     FocusScope.of(context).requestFocus(sendFeeFocusNode);
+                    setState(() {});
                   },
                 ),
 
@@ -405,15 +408,37 @@ class _SendState extends State<Send> {
               padding: EdgeInsets.only(bottom: 40, left: 16, right: 16),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [sendTransactionButton()]),
+                  children: [
+                    allValidation()
+                        ? sendTransactionButton()
+                        : sendTransactionButton(disabled: true)
+                  ]),
             ),
           ]);
+
+  bool fieldValidation() {
+    sendAmount.text = cleanDecAmount(sendAmount.text, zeroToBlank: true);
+    return sendAddress.text != '' && _validateAddress() && verifyMemo();
+  }
+
+  bool holdingValidation() {
+    sendAmount.text = cleanDecAmount(sendAmount.text, zeroToBlank: true);
+    if (sendAmount.text == '') {
+      return false;
+    } else {
+      return holding >= double.parse(sendAmount.text);
+    }
+  }
+
+  bool allValidation() {
+    return fieldValidation() && holdingValidation();
+  }
 
   Future startSend() async {
     sendAmount.text = cleanDecAmount(sendAmount.text, zeroToBlank: true);
     var vAddress = sendAddress.text != '' && _validateAddress();
     var vMemo = verifyMemo();
-    if (sendAmount.text != '' && _validateAddress() && verifyMemo()) {
+    if (vAddress && vMemo) {
       FocusScope.of(context).unfocus();
       var sendAmountAsSats = amountToSat(
         double.parse(sendAmount.text),
@@ -471,13 +496,18 @@ class _SendState extends State<Send> {
   /// services.historyService.saveNote(hash, note {or history object})
   /// should notes be in a separate reservoir? makes this simpler, but its nice
   /// to have it all in one place as in transaction.note....
-  Widget sendTransactionButton() => Container(
+  Widget sendTransactionButton({bool disabled = false}) => Container(
       height: 40,
       child: OutlinedButton.icon(
-        onPressed: () async => await startSend(),
-        icon: Icon(MdiIcons.arrowTopRightThick),
-        label: Text('SEND'.toUpperCase()),
-        style: components.styles.buttons.bottom(context),
+        onPressed: disabled ? () {} : () async => await startSend(),
+        icon: Icon(MdiIcons.arrowTopRightThick,
+            color:
+                disabled ? Theme.of(context).disabledColor : Color(0xDE000000)),
+        label: Text('SEND'.toUpperCase(),
+            style: disabled
+                ? Theme.of(context).disabledButton
+                : Theme.of(context).enabledButton),
+        style: components.styles.buttons.bottom(context, disabled: disabled),
       ));
 
   Future confirmSend(SendRequest sendRequest) => showDialog(
