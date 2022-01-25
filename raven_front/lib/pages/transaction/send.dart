@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 import 'package:barcode_scan2/barcode_scan2.dart';
 
+import 'package:raven_back/streams/spend.dart';
 import 'package:raven_back/services/transaction/fee.dart';
 import 'package:raven_back/services/transaction_maker.dart';
 import 'package:raven_back/raven_back.dart';
@@ -32,6 +33,7 @@ class Send extends StatefulWidget {
 class _SendState extends State<Send> {
   Map<String, dynamic> data = {};
   List<StreamSubscription> listeners = [];
+  SpendForm? spendForm;
   final sendAsset = TextEditingController();
   final sendAddress = TextEditingController();
   final sendAmount = TextEditingController();
@@ -58,20 +60,29 @@ class _SendState extends State<Send> {
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.app.spending.symbol.listen((value) {
-      if (value == 'RVN') {
-        value = 'Ravencoin';
-      }
-      if (sendAsset.text != value) {
+    listeners.add(streams.spend.form.listen((SpendForm? value) {
+      print((SpendForm.merge(form: spendForm, amount: 0.0) !=
+          SpendForm.merge(form: value, amount: 0.0)));
+      print(SpendForm.merge(form: spendForm, amount: 0.0));
+      print(SpendForm.merge(form: value, amount: 0.0));
+      if ((SpendForm.merge(form: spendForm, amount: 0.0) !=
+          SpendForm.merge(form: value, amount: 0.0))) {
         setState(() {
-          sendAsset.text = value;
-        });
-      }
-    }));
-    listeners.add(streams.app.spending.fee.listen((value) {
-      if (sendFee.text != value) {
-        setState(() {
-          sendFee.text = value;
+          spendForm = value;
+          var asset = (value?.symbol ?? 'RVN');
+          sendAsset.text = asset == 'RVN' || asset == 'Ravencoin'
+              ? 'Ravencoin'
+              : (useWallet
+                          ? Current.walletHoldingNames(data['walletId'])
+                          : Current.holdingNames)
+                      .contains(asset)
+                  ? asset
+                  : sendAsset.text;
+          sendFee.text = value?.fee ?? 'Standard';
+          sendNote.text = value?.note ?? sendNote.text;
+          sendAmount.text = value?.amount?.toString() ?? sendAmount.text;
+          sendAddress.text = value?.address ?? sendAddress.text;
+          addressName = value?.addressName ?? addressName;
         });
       }
     }));
@@ -95,14 +106,12 @@ class _SendState extends State<Send> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    var symbol = streams.app.spending.symbol.value;
+    var symbol = streams.spend.form.value?.symbol ?? 'RVN';
     symbol = symbol == 'Ravencoin' ? 'RVN' : symbol;
     useWallet = data.containsKey('walletId') && data['walletId'] != null;
     if (data.containsKey('qrCode')) {
       handlePopulateFromQR(data['qrCode']);
       data.remove('qrCode');
-    } else {
-      handlePopulateFromQRExplict();
     }
     divisibility = assets.bySymbol.getOne(symbol)?.divisibility ?? 8;
     var possibleHoldings = [
@@ -148,43 +157,10 @@ class _SendState extends State<Send> {
       }
       data['symbol'] = qrData.symbol;
       if (!['', null].contains(data['symbol'])) {
-        streams.app.spending.symbol.add(data['symbol']);
-      }
-      setState(() {});
-    }
-  }
-
-  void handlePopulateFromQRExplict() {
-    if (data.containsKey('address')) {
-      sendAddress.text = data['address'] ?? '';
-      data.remove('address');
-      if (data.containsKey('addressName')) {
-        addressName = data['addressName'] ?? '';
-        data.remove('addressName');
-      }
-      if (data.containsKey('amount')) {
-        sendAmount.text = data['amount'] ?? '';
-        data.remove('amount');
-      }
-      if (data.containsKey('note')) {
-        sendNote.text = data['note'] ?? '';
-        data.remove('note');
-      }
-      if (data.containsKey('fee')) {
-        sendFee.text = data['fee'] ?? '';
-        data.remove('fee');
-      }
-      if (data.containsKey('asset')) {
-        data['symbol'] = (useWallet
-                    ? Current.walletHoldingNames(data['walletId'])
-                    : Current.holdingNames)
-                .contains(data['asset'])
-            ? data['asset']
-            : data['symbol'] ?? 'RVN';
-        data.remove('asset');
-        if (!['', null].contains(data['symbol'])) {
-          streams.app.spending.symbol.add(data['symbol']);
-        }
+        streams.spend.form.add(SpendForm.merge(
+          form: streams.spend.form.value,
+          symbol: data['symbol'],
+        ));
       }
       setState(() {});
     }
@@ -210,20 +186,21 @@ class _SendState extends State<Send> {
     return false;
   }
 
-  void verifyVisibleAmount(String value) {
-    visibleAmount = cleanDecAmount(value);
+  String verifyVisibleAmount(String value) {
+    var amount = cleanDecAmount(value);
     try {
       value = double.parse(value).toString();
     } catch (e) {
       value = value;
     }
-    if (visibleAmount == '0' || visibleAmount != value) {
+    if (amount == '0' || amount != value) {
     } else {
       // todo: estimate fee
-      if (double.parse(visibleAmount) <= holding) {
+      if (double.parse(amount) <= holding) {
       } else {}
     }
     //setState(() => {});
+    return amount;
   }
 
   bool verifyMemo([String? memo]) => (memo ?? sendMemo.text).length <= 80;
@@ -336,9 +313,10 @@ class _SendState extends State<Send> {
                       //),
                       ),
                   onChanged: (value) {
-                    verifyVisibleAmount(value);
-                    streams.app.spending.amount
-                        .add(double.parse(visibleAmount));
+                    visibleAmount = verifyVisibleAmount(value);
+                    streams.spend.form.add(SpendForm.merge(
+                        form: streams.spend.form.value,
+                        amount: double.parse(visibleAmount)));
                   },
                   onEditingComplete: () {
                     sendAmount.text = cleanDecAmount(
@@ -347,9 +325,10 @@ class _SendState extends State<Send> {
                     );
                     sendAmount.text = enforceDivisibility(sendAmount.text,
                         divisibility: divisibility);
-                    verifyVisibleAmount(sendAmount.text);
-                    streams.app.spending.amount
-                        .add(double.parse(visibleAmount));
+                    visibleAmount = verifyVisibleAmount(sendAmount.text);
+                    streams.spend.form.add(SpendForm.merge(
+                        form: streams.spend.form.value,
+                        amount: double.parse(visibleAmount)));
                     FocusScope.of(context).requestFocus(sendFeeFocusNode);
                   },
                 ),
@@ -518,7 +497,7 @@ class _SendState extends State<Send> {
                     onPressed: () {
                       Navigator.pop(context);
                       // temporary test of screen:
-                      streams.run.send.add(sendRequest);
+                      streams.spend.send.add(sendRequest);
                       setState(() => loading = true);
                     })
               ]));

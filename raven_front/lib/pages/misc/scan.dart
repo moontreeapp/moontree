@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/streams/spend.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/utils/data.dart';
@@ -98,19 +100,29 @@ class _ScanQRState extends State<ScanQR> {
       //setState(() {
       //  result = scanData;
       //});
-      Navigator.of(components.navigator.routeContext!).pushReplacementNamed(
+      var qrData = populateFromQR(code: scanData.code ?? '');
+      if (data.containsKey('addressOnly') && data['addressOnly']) {
+        streams.spend.form.add(SpendForm.merge(
+          form: streams.spend.form.value,
+          address: qrData.address,
+          addressName: qrData.addressName,
+        ));
+        Navigator.of(components.navigator.routeContext!)
+            .pushReplacementNamed('/transaction/send');
+      } else {
+        streams.spend.form.add(SpendForm.merge(
+          form: streams.spend.form.value,
+          address: qrData.address,
+          addressName: qrData.addressName,
+          symbol: qrData.symbol,
+          note: qrData.note,
+          amount: double.parse(qrData.amount ?? '0.0'),
+        ));
+        Navigator.of(components.navigator.routeContext!).pushReplacementNamed(
           '/transaction/send',
-          arguments: !data.containsKey('asset')
-              ? {'qrCode': scanData.code}
-              : {
-                  'address': populateFromQR(code: scanData.code ?? '').address,
-                  'addressName':
-                      populateFromQR(code: scanData.code ?? '').addressName,
-                  'asset': data['asset'],
-                  'amount': data['amount'],
-                  'fee': data['fee'],
-                  'note': data['note'],
-                });
+          //arguments: {'qrCode': scanData.code}
+        );
+      }
     });
   }
 }

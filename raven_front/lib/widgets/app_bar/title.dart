@@ -49,7 +49,7 @@ class _PageTitleState extends State<PageTitle> {
       return Text('Security', style: Theme.of(context).pageTitle);
     }
     if (pageTitle == 'Transactions') {
-      var symbol = streams.app.spending.symbol.value;
+      var symbol = streams.spend.form.value?.symbol ?? 'RVN';
       symbol = symbol == 'RVN' ? 'Ravencoin' : symbol;
       return Text(symbol, style: Theme.of(context).pageTitle);
     }

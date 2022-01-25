@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/wallet/constants.dart';
-import 'package:raven_back/streams/app.dart';
+import 'package:raven_back/streams/import.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';
@@ -160,7 +160,7 @@ class _ImportState extends State<Import> {
       }
       text = resp;
     }
-    streams.app.import.attempt
+    streams.import.attempt
         .add(ImportRequest(text: text, accountId: account.accountId));
     setState(() => loading = true);
   }

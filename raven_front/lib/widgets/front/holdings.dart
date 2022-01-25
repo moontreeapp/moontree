@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/streams/spend.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
@@ -107,7 +107,9 @@ class _HoldingList extends State<HoldingList> {
           //dense: true,
           contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
           onTap: () {
-            streams.app.spending.symbol.add(holding.security.symbol);
+            streams.spend.form.add(SpendForm.merge(
+                form: streams.spend.form.value,
+                symbol: holding.security.symbol));
             Navigator.of(components.navigator.routeContext!).pushNamed(
                 holding.security.symbol == 'RVN'
                     ? '/transactions'

@@ -6,19 +6,11 @@ import 'package:raven_front/components/components.dart';
 class QRCodeButton extends StatefulWidget {
   final String pageTitle;
   final bool light;
-  final String? asset;
-  final String? amount;
-  final String? fee;
-  final String? note;
 
   QRCodeButton({
     Key? key,
     this.pageTitle = 'Wallet',
     this.light = true,
-    this.asset,
-    this.amount,
-    this.fee,
-    this.note,
   }) : super(key: key);
 
   @override
@@ -49,12 +41,8 @@ class _QRCodeButtonState extends State<QRCodeButton> {
                 //});
                 if (widget.pageTitle == 'Send-to') {
                   Navigator.of(components.navigator.routeContext!)
-                      .pushNamed('/scan', arguments: {
-                    'asset': widget.asset,
-                    'amount': widget.amount,
-                    'fee': widget.fee,
-                    'note': widget.note,
-                  });
+                      .pushReplacementNamed('/scan',
+                          arguments: {'addressOnly': true});
                 } else {
                   Navigator.of(components.navigator.routeContext!)
                       .pushNamed('/scan');

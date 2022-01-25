@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:tuple/tuple.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/streams/spend.dart';
 import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/extensions.dart';
@@ -34,20 +35,14 @@ class _BalanceHeaderState extends State<BalanceHeader>
     super.initState();
     components.navigator.tabController = components.navigator.tabController ??
         TabController(length: 2, vsync: this);
-    listeners.add(streams.app.spending.symbol.listen((String value) {
-      if (value == 'Ravencoin') {
-        value = 'RVN';
-      }
-      if (symbol != value) {
+    listeners.add(streams.spend.form.listen((SpendForm? value) {
+      if (symbol !=
+              (value?.symbol == 'Ravencoin' ? 'RVN' : value?.symbol ?? 'RVN') ||
+          amount != (value?.amount ?? 0.0)) {
         setState(() {
-          symbol = value;
-        });
-      }
-    }));
-    listeners.add(streams.app.spending.amount.listen((double value) {
-      if (amount != value) {
-        setState(() {
-          amount = value;
+          symbol =
+              (value?.symbol == 'Ravencoin' ? 'RVN' : value?.symbol ?? 'RVN');
+          amount = (value?.amount ?? 0.0);
         });
       }
     }));

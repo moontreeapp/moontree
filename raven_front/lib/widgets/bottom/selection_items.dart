@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/streams/spend.dart';
 import 'package:raven_back/extensions/object.dart';
 import 'package:raven_back/extensions/string.dart';
 import 'package:raven_front/theme/extensions.dart';
@@ -36,7 +37,10 @@ class SelectionItems {
   Widget item(SelectionOptions name) => ListTile(
       visualDensity: VisualDensity.compact,
       onTap: () {
-        streams.app.spending.fee.add(asString(name));
+        streams.spend.form.add(SpendForm.merge(
+          form: streams.spend.form.value,
+          fee: asString(name),
+        ));
         Navigator.pop(context);
       },
       leading: leads(name),
@@ -45,7 +49,10 @@ class SelectionItems {
   Widget holdingItem(String name) => ListTile(
       visualDensity: VisualDensity.compact,
       onTap: () {
-        streams.app.spending.symbol.add(name);
+        streams.spend.form.add(SpendForm.merge(
+          form: streams.spend.form.value,
+          symbol: name,
+        ));
         Navigator.pop(context);
       },
       leading: components.icons.assetAvatar(name == 'Ravencoin' ? 'RVN' : name,
