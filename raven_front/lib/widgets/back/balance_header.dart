@@ -35,8 +35,6 @@ class _BalanceHeaderState extends State<BalanceHeader>
     components.navigator.tabController = components.navigator.tabController ??
         TabController(length: 2, vsync: this);
     listeners.add(streams.app.spending.symbol.listen((String value) {
-      print(symbol);
-      print(value);
       if (value == 'Ravencoin') {
         value = 'RVN';
       }

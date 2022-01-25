@@ -1,0 +1,64 @@
+import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:raven_front/backdrop/backdrop.dart';
+import 'package:raven_front/components/components.dart';
+
+class QRCodeButton extends StatefulWidget {
+  final String pageTitle;
+  final bool light;
+  final String? asset;
+  final String? amount;
+  final String? fee;
+  final String? note;
+
+  QRCodeButton({
+    Key? key,
+    this.pageTitle = 'Wallet',
+    this.light = true,
+    this.asset,
+    this.amount,
+    this.fee,
+    this.note,
+  }) : super(key: key);
+
+  @override
+  _QRCodeButtonState createState() => _QRCodeButtonState();
+}
+
+class _QRCodeButtonState extends State<QRCodeButton> {
+  @override
+  Widget build(BuildContext context) =>
+      ['Send', 'Scan'].contains(widget.pageTitle)
+          ? Container(width: 0)
+          : IconButton(
+              splashRadius: 24,
+              icon: Icon(
+                MdiIcons.qrcodeScan,
+                color: widget.light ? Colors.white : Colors.black,
+              ),
+              onPressed: () async {
+                Backdrop.of(components.navigator.routeContext!)
+                    .concealBackLayer();
+                //ScanResult result = await BarcodeScanner.scan();
+                //Navigator.of(components.navigator.routeContext!)
+                //    .pushNamed('/transaction/send', arguments: {
+                //  'qrcode': <ResultType, String>{
+                //        ResultType.Barcode: result.rawContent
+                //      }[result.type] ??
+                //      ''
+                //});
+                if (widget.pageTitle == 'Send-to') {
+                  Navigator.of(components.navigator.routeContext!)
+                      .pushNamed('/scan', arguments: {
+                    'asset': widget.asset,
+                    'amount': widget.amount,
+                    'fee': widget.fee,
+                    'note': widget.note,
+                  });
+                } else {
+                  Navigator.of(components.navigator.routeContext!)
+                      .pushNamed('/scan');
+                }
+              },
+            );
+}

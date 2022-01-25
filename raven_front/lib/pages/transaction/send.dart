@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:raven_front/utils/qrcode.dart';
 
 import 'package:raven_front/widgets/bottom/selection_items.dart';
 import 'package:raven_front/widgets/widgets.dart';
@@ -97,9 +98,11 @@ class _SendState extends State<Send> {
     var symbol = streams.app.spending.symbol.value;
     symbol = symbol == 'Ravencoin' ? 'RVN' : symbol;
     useWallet = data.containsKey('walletId') && data['walletId'] != null;
-    if (data.containsKey('qrcode')) {
-      populateFromQR(data['qrcode']);
-      data.remove('qrcode');
+    if (data.containsKey('qrCode')) {
+      handlePopulateFromQR(data['qrCode']);
+      data.remove('qrCode');
+    } else {
+      handlePopulateFromQRExplict();
     }
     divisibility = assets.bySymbol.getOne(symbol)?.divisibility ?? 8;
     var possibleHoldings = [
@@ -124,29 +127,66 @@ class _SendState extends State<Send> {
         child: loading ? Loader(message: 'Sending Transaction') : body());
   }
 
-  void populateFromQR(String code) {
-    if (code.startsWith('raven:')) {
-      sendAddress.text = code.substring(6).split('?')[0];
-      var params = parseReceiveParams(code);
-      if (params.containsKey('amount')) {
-        sendAmount.text = cleanDecAmount(params['amount']!);
+  void handlePopulateFromQR(String code) {
+    var qrData = populateFromQR(
+      code: code,
+      holdings: useWallet
+          ? Current.walletHoldingNames(data['walletId'])
+          : Current.holdingNames,
+      currentSymbol: data['symbol'],
+    );
+    if (qrData.address != null) {
+      sendAddress.text = qrData.address!;
+      if (qrData.addressName != null) {
+        addressName = qrData.addressName!;
       }
-      if (params.containsKey('label')) {
-        sendNote.text = cleanLabel(params['label']!);
+      if (qrData.amount != null) {
+        sendAmount.text = qrData.amount!;
       }
-      if (params.containsKey('to')) {
-        addressName = cleanLabel(params['to']!);
+      if (qrData.note != null) {
+        sendNote.text = qrData.note!;
       }
-      data['symbol'] = requestedAsset(params,
-          holdings: useWallet
-              ? Current.walletHoldingNames(data['walletId'])
-              : Current.holdingNames,
-          current: data['symbol']);
+      data['symbol'] = qrData.symbol;
       if (!['', null].contains(data['symbol'])) {
         streams.app.spending.symbol.add(data['symbol']);
       }
-    } else {
-      sendAddress.text = code;
+      setState(() {});
+    }
+  }
+
+  void handlePopulateFromQRExplict() {
+    if (data.containsKey('address')) {
+      sendAddress.text = data['address'] ?? '';
+      data.remove('address');
+      if (data.containsKey('addressName')) {
+        addressName = data['addressName'] ?? '';
+        data.remove('addressName');
+      }
+      if (data.containsKey('amount')) {
+        sendAmount.text = data['amount'] ?? '';
+        data.remove('amount');
+      }
+      if (data.containsKey('note')) {
+        sendNote.text = data['note'] ?? '';
+        data.remove('note');
+      }
+      if (data.containsKey('fee')) {
+        sendFee.text = data['fee'] ?? '';
+        data.remove('fee');
+      }
+      if (data.containsKey('asset')) {
+        data['symbol'] = (useWallet
+                    ? Current.walletHoldingNames(data['walletId'])
+                    : Current.holdingNames)
+                .contains(data['asset'])
+            ? data['asset']
+            : data['symbol'] ?? 'RVN';
+        data.remove('asset');
+        if (!['', null].contains(data['symbol'])) {
+          streams.app.spending.symbol.add(data['symbol']);
+        }
+      }
+      setState(() {});
     }
   }
 
@@ -230,32 +270,36 @@ class _SendState extends State<Send> {
                   focusNode: sendAddressFocusNode,
                   controller: sendAddress,
                   autocorrect: false,
-                  decoration: components.styles.decorations.textFeild(context,
-                      labelText: 'To',
-                      hintText: 'Address',
-                      errorText: !_validateAddress(sendAddress.text)
-                          ? 'Unrecognized Address'
-                          : null,
-                      suffixIcon: IconButton(
-                        icon:
-                            Icon(MdiIcons.qrcodeScan, color: Color(0xDE000000)),
-                        onPressed: () async {
-                          ScanResult result = await BarcodeScanner.scan();
-                          switch (result.type) {
-                            case ResultType.Barcode:
-                              populateFromQR(result.rawContent);
-                              break;
-                            case ResultType.Error:
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(result.rawContent)),
-                              );
-                              break;
-                            case ResultType.Cancelled:
-                              // no problem, don't do anything
-                              break;
-                          }
-                        },
-                      )),
+                  decoration: components.styles.decorations.textFeild(
+                    context,
+                    labelText: 'To',
+                    hintText: 'Address',
+                    errorText: !_validateAddress(sendAddress.text)
+                        ? 'Unrecognized Address'
+                        : null,
+                    suffixIcon:
+                        QRCodeButton(pageTitle: 'Send-to', light: false),
+                  ),
+                  //suffixIcon: IconButton(
+                  //  icon:
+                  //      Icon(MdiIcons.qrcodeScan, color: Color(0xDE000000)),
+                  //  onPressed: () async {
+                  //    ScanResult result = await BarcodeScanner.scan();
+                  //    switch (result.type) {
+                  //      case ResultType.Barcode:
+                  //        populateFromQR(result.rawContent);
+                  //        break;
+                  //      case ResultType.Error:
+                  //        ScaffoldMessenger.of(context).showSnackBar(
+                  //          SnackBar(content: Text(result.rawContent)),
+                  //        );
+                  //        break;
+                  //      case ResultType.Cancelled:
+                  //        // no problem, don't do anything
+                  //        break;
+                  //    }
+                  //  },
+                  //)),
                   onChanged: (value) {
                     _validateAddressColor(value);
                   },

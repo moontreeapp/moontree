@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_front/backdrop/backdrop.dart';
-import 'package:raven_front/components/components.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
-class QRCodeButton extends StatefulWidget {
-  QRCodeButton({Key? key}) : super(key: key);
+class QRCodeContainer extends StatefulWidget {
+  QRCodeContainer({Key? key}) : super(key: key);
 
   @override
-  _QRCodeButtonState createState() => _QRCodeButtonState();
+  _QRCodeContainerState createState() => _QRCodeContainerState();
 }
 
-class _QRCodeButtonState extends State<QRCodeButton> {
+class _QRCodeContainerState extends State<QRCodeContainer> {
   late String pageTitle = 'Wallet';
   late List listeners = [];
 
@@ -22,7 +18,9 @@ class _QRCodeButtonState extends State<QRCodeButton> {
     super.initState();
     listeners.add(streams.app.page.stream.listen((value) {
       if ((value == 'Scan' && pageTitle != 'Scan') ||
-          (value != 'Scan' && pageTitle == 'Scan')) {
+          (value != 'Scan' && pageTitle == 'Scan') ||
+          (value == 'Send' && pageTitle != 'Send') ||
+          (value != 'Send' && pageTitle == 'Send')) {
         setState(() {
           pageTitle = value;
         });
@@ -39,31 +37,9 @@ class _QRCodeButtonState extends State<QRCodeButton> {
   }
 
   @override
-  Widget build(BuildContext context) => pageTitle == 'Scan'
-      ? Container(width: 48)
-      : IconButton(
-          splashRadius: 24,
-          icon: Icon(
-            MdiIcons.qrcodeScan,
-            color: Colors.white,
-          ),
-          onPressed: () async {
-            Backdrop.of(components.navigator.routeContext!).concealBackLayer();
-            //ScanResult result = await BarcodeScanner.scan();
-            //Navigator.of(components.navigator.routeContext!)
-            //    .pushNamed('/transaction/send', arguments: {
-            //  'qrcode': <ResultType, String>{
-            //        ResultType.Barcode: result.rawContent
-            //      }[result.type] ??
-            //      ''
-            //});
-            if (pageTitle == 'Send') {
-              Navigator.of(components.navigator.routeContext!)
-                  .pushReplacementNamed('/scan');
-            } else {
-              Navigator.of(components.navigator.routeContext!)
-                  .pushNamed('/scan');
-            }
-          },
-        );
+  Widget build(BuildContext context) => ['Send', 'Scan'].contains(pageTitle)
+      ? Container(width: 0)
+      : Padding(
+          padding: EdgeInsets.only(left: 16),
+          child: QRCodeButton(pageTitle: pageTitle));
 }

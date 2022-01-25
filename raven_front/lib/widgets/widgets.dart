@@ -13,3 +13,4 @@ export 'front/verify.dart';
 export 'bottom/nav_bar.dart';
 export 'bottom/selection_items.dart';
 export 'bottom/snackbar.dart';
+export 'other/qrcode.dart';

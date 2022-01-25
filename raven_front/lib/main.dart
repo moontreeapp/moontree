@@ -100,10 +100,9 @@ class RavenMobileApp extends StatelessWidget {
             actions: <Widget>[
               components.status,
               ConnectionLight(),
-              SizedBox(width: 16),
-              QRCodeButton(),
-              SizedBox(width: 16),
-              SnackBarViewer()
+              QRCodeContainer(),
+              SnackBarViewer(),
+              SizedBox(width: 6),
             ],
           ),
           backLayer: BackLayer(),

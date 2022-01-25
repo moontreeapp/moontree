@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/utils/data.dart';
+import 'package:raven_front/utils/qrcode.dart';
 
 class ScanQR extends StatefulWidget {
   const ScanQR({Key? key}) : super(key: key);
@@ -14,6 +16,7 @@ class ScanQR extends StatefulWidget {
 }
 
 class _ScanQRState extends State<ScanQR> {
+  Map<String, dynamic> data = {};
   Barcode? result;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
@@ -37,24 +40,26 @@ class _ScanQRState extends State<ScanQR> {
 
   @override
   Widget build(BuildContext context) {
+    data = populateData(context, data);
     return Scaffold(
-        body: Container(
-            //padding: EdgeInsets.only(left: 16, right: 16),
-            child: Stack(children: [
-      _buildQrView(context),
-      Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-        Container(
-            height: 56,
-            decoration: BoxDecoration(
-                color: Theme.of(context).backgroundColor,
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(8.0),
-                    topLeft: Radius.circular(8.0))),
-            child: Center(
-                child: Text('Point your camera at a QR code',
-                    style: Theme.of(context).qrMessage))),
-      ])
-    ])));
+      body: Container(
+        child: Stack(children: [
+          _buildQrView(context),
+          Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+            Container(
+                height: 56,
+                decoration: BoxDecoration(
+                    color: Theme.of(context).backgroundColor,
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(8.0),
+                        topLeft: Radius.circular(8.0))),
+                child: Center(
+                    child: Text('Point your camera at a QR code',
+                        style: Theme.of(context).qrMessage))),
+          ])
+        ]),
+      ),
+    );
   }
 
   Widget _buildQrView(BuildContext context) {
@@ -71,6 +76,7 @@ class _ScanQRState extends State<ScanQR> {
       onQRViewCreated: _onQRViewCreated,
       // Choose formats you want to scan. Defaults to all formats.
       // formatsAllowed: [BarcodeFormat.qrcode],
+      overlayMargin: EdgeInsets.only(bottom: 50),
       overlay: QrScannerOverlayShape(
         //overlayColor: Color(0x00000061),
         borderColor: Color(0xff5C6BC0),
@@ -94,7 +100,17 @@ class _ScanQRState extends State<ScanQR> {
       //});
       Navigator.of(components.navigator.routeContext!).pushReplacementNamed(
           '/transaction/send',
-          arguments: {'qrcode': scanData.code});
+          arguments: !data.containsKey('asset')
+              ? {'qrCode': scanData.code}
+              : {
+                  'address': populateFromQR(code: scanData.code ?? '').address,
+                  'addressName':
+                      populateFromQR(code: scanData.code ?? '').addressName,
+                  'asset': data['asset'],
+                  'amount': data['amount'],
+                  'fee': data['fee'],
+                  'note': data['note'],
+                });
     });
   }
 }
