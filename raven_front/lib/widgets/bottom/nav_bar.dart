@@ -64,18 +64,21 @@ class _NavBarState extends State<NavBar> {
       );
 
   Widget actionButton({required String name, required String link}) => Expanded(
+      child: Container(
+          height: 40,
           child: OutlinedButton.icon(
-        onPressed: () {
-          Backdrop.of(components.navigator.routeContext!).concealBackLayer();
-          Navigator.of(components.navigator.routeContext!).pushNamed(link);
-        },
-        icon: Icon({
-          'send': MdiIcons.arrowTopRightThick,
-          'receive': MdiIcons.arrowBottomLeftThick,
-        }[name]!),
-        label: Text(name.toUpperCase()),
-        style: components.styles.buttons.bottom(context),
-      ));
+            onPressed: () {
+              Backdrop.of(components.navigator.routeContext!)
+                  .concealBackLayer();
+              Navigator.of(components.navigator.routeContext!).pushNamed(link);
+            },
+            icon: Icon({
+              'send': MdiIcons.arrowTopRightThick,
+              'receive': MdiIcons.arrowBottomLeftThick,
+            }[name]!),
+            label: Text(name.toUpperCase()),
+            style: components.styles.buttons.bottom(context),
+          )));
 
   Widget sectorIcon({required String name}) => IconButton(
         onPressed: () {

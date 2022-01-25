@@ -473,7 +473,8 @@ class _SendState extends State<Send> {
   /// should notes be in a separate reservoir? makes this simpler, but its nice
   /// to have it all in one place as in transaction.note....
   Widget sendTransactionButton() => Container(
-          child: OutlinedButton.icon(
+      height: 40,
+      child: OutlinedButton.icon(
         onPressed: () async => await startSend(),
         icon: Icon(MdiIcons.arrowTopRightThick),
         label: Text('SEND'.toUpperCase()),

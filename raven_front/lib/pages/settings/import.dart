@@ -208,7 +208,9 @@ class _ImportState extends State<Import> {
               ),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [submitButton(context)]))
+                  children: [
+                    Container(height: 40, child: submitButton(context))
+                  ]))
         ],
       ));
 
