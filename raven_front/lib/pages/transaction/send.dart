@@ -398,7 +398,6 @@ class _SendState extends State<Send> {
                   controller: sendNote,
                   decoration: components.styles.decorations.textFeild(context,
                       labelText: 'Note', hintText: 'Private note to self'),
-                  onEditingComplete: () async => startSend(),
                 ),
               ],
             )),

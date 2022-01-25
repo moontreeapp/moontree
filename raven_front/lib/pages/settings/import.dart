@@ -55,7 +55,7 @@ class _ImportState extends State<Import> {
     );
   }
 
-  Widget submitButton(context) {
+  Widget submitButton() {
     var label = 'IMPORT';
     if (importEnabled) {
       return OutlinedButton.icon(
@@ -198,7 +198,7 @@ class _ImportState extends State<Import> {
                     onEditingComplete: () async => await attemptImport(),
                   )),
               SizedBox(height: 16),
-              importWaysButtons(context),
+              importWaysButtons(),
             ],
           ),
           Padding(
@@ -208,13 +208,11 @@ class _ImportState extends State<Import> {
               ),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Container(height: 40, child: submitButton(context))
-                  ]))
+                  children: [Container(height: 40, child: submitButton())]))
         ],
       ));
 
-  Widget importWaysButtons(context) => file != null
+  Widget importWaysButtons() => file != null
       ? Container(
           height: 72,
           decoration: BoxDecoration(
