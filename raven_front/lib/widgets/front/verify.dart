@@ -58,8 +58,7 @@ class _VerifyPasswordState extends State<VerifyPassword> {
         if (verify()) {
           setState(() {});
         }
-        // don't show red
-        //setState(() {});
+        setState(() {});
       },
       onEditingComplete: () => verify(),
     );
@@ -110,15 +109,16 @@ class _VerifyPasswordState extends State<VerifyPassword> {
   }
 
   bool verify() =>
-      services.password.validate.password(existingPassword.text) &&
-      services.password.validate.previouslyUsed(existingPassword.text) == 0;
+      services.password.validate.password(existingPassword.text); // &&
+  //services.password.validate.previouslyUsed(existingPassword.text) == 0;
 
   String used() =>
       {
         null: 'unrecognized',
-        0: 'current password',
-        1: 'prior password',
-        2: 'password before last',
+        //0: 'current password',
+        //1: 'prior password',
+        //2: 'password before last',
       }[services.password.validate.previouslyUsed(existingPassword.text)] ??
-      'has been used before';
+      //'has been used before';
+      'unrecognized';
 }

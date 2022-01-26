@@ -41,11 +41,9 @@ class _SecurityState extends State<Security> {
                     style: Theme.of(context).securityDestination),
                 value: SecurityOption.none,
                 groupValue: securityChoice,
-                onChanged: (SecurityOption? value) {
-                  setState(() {
-                    securityChoice = value;
-                  });
-                },
+                onChanged: (SecurityOption? value) => services.password.required
+                    ? behaviorRemovePassword()
+                    : () {/* do nothing*/}(),
               ),
               RadioListTile<SecurityOption>(
                 activeColor: Theme.of(context).backgroundColor,
@@ -73,93 +71,51 @@ class _SecurityState extends State<Security> {
                     style: Theme.of(context).securityDestination),
                 value: SecurityOption.password,
                 groupValue: securityChoice,
-                onChanged: (SecurityOption? value) {
-                  setState(() {
-                    securityChoice = value;
-                  });
-                },
+                onChanged: (SecurityOption? value) => services.password.required
+                    ? behaviorChangePassword() // never gets triggered. use button
+                    : behaviorSetPassword(),
               ),
             ],
           ),
-          Padding(
-            padding: EdgeInsets.only(top: 40, bottom: 40, left: 16, right: 16),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [buildBehavior()]),
-          )
+          ...[
+            if (securityChoice == SecurityOption.password &&
+                services.password.required)
+              Padding(
+                padding:
+                    EdgeInsets.only(top: 40, bottom: 40, left: 16, right: 16),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                          height: 40,
+                          child: OutlinedButton.icon(
+                              onPressed: behaviorChangePassword,
+                              icon: Icon(
+                                Icons.lock_rounded,
+                              ),
+                              label: Text(
+                                'Change'.toUpperCase(),
+                                style: Theme.of(context).navBarButton,
+                              ),
+                              style: components.styles.buttons.bottom(context)))
+                    ]),
+              )
+          ]
         ],
       ));
 
-  Widget buildBehavior() => {
-        SecurityOption.none: {
-          true: behaviorRemovePassword,
-          false: behaviorSubmit,
-        },
-        SecurityOption.system_default: {
-          true: behaviorSubmit,
-          false: behaviorSubmit,
-        },
-        SecurityOption.password: {
-          true: behaviorChangePassword,
-          false: behaviorSetPassword,
-        },
-        null: {
-          true: behaviorSubmit,
-          false: behaviorSubmit,
-        },
-      }[securityChoice]![services.password.required]!();
+  void behaviorSetPassword() {
+    streams.app.verify.add(true);
+    Navigator.of(context).pushNamed('/security/change');
+  }
 
-  Widget behaviorSubmit() => behaviorBuilder(
-        label: 'Submit',
-        onPressed: () {/* do nothing*/},
-        disabled: true,
-      );
+  void behaviorChangePassword() {
+    streams.app.verify.add(false);
+    Navigator.of(context).pushNamed('/security/change');
+  }
 
-  Widget behaviorSetPassword() => behaviorBuilder(
-        label: 'Set',
-        onPressed: () {
-          streams.app.verify.add(true);
-          Navigator.of(context).pushNamed('/security/change');
-        },
-      );
-
-  Widget behaviorChangePassword() => behaviorBuilder(
-        label: 'Change',
-        onPressed: () {
-          streams.app.verify.add(false);
-          Navigator.of(context).pushNamed('/security/change');
-        },
-      );
-
-  Widget behaviorRemovePassword() => behaviorBuilder(
-        label: 'Remove Password',
-        onPressed: () {
-          streams.app.verify.add(false);
-          Navigator.of(context).pushNamed('/security/remove');
-        },
-      );
-
-  Widget behaviorBuilder({
-    required String label,
-    required VoidCallback onPressed,
-    bool disabled = false,
-  }) =>
-      Container(
-          height: 40,
-          child: OutlinedButton.icon(
-              onPressed: onPressed,
-              icon: Icon(
-                Icons.lock_rounded,
-                color: disabled ? Color(0x61000000) : null,
-              ),
-              label: Text(
-                label.toUpperCase(),
-                style: disabled
-                    ? Theme.of(context).navBarButtonDisabled
-                    : Theme.of(context).navBarButton,
-              ),
-              style: components.styles.buttons.bottom(
-                context,
-                disabled: disabled,
-              )));
+  void behaviorRemovePassword() {
+    streams.app.verify.add(false);
+    Navigator.of(context).pushNamed('/security/remove');
+  }
 }
