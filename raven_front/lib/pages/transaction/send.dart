@@ -60,11 +60,8 @@ class _SendState extends State<Send> {
   @override
   void initState() {
     super.initState();
+    sendAsset.text = sendAsset.text == '' ? 'Ravencoin' : sendAsset.text;
     listeners.add(streams.spend.form.listen((SpendForm? value) {
-      print((SpendForm.merge(form: spendForm, amount: 0.0) !=
-          SpendForm.merge(form: value, amount: 0.0)));
-      print(SpendForm.merge(form: spendForm, amount: 0.0));
-      print(SpendForm.merge(form: value, amount: 0.0));
       if ((SpendForm.merge(form: spendForm, amount: 0.0) !=
           SpendForm.merge(form: value, amount: 0.0))) {
         setState(() {
@@ -77,7 +74,9 @@ class _SendState extends State<Send> {
                           : Current.holdingNames)
                       .contains(asset)
                   ? asset
-                  : sendAsset.text;
+                  : sendAsset.text == ''
+                      ? 'Ravencoin'
+                      : sendAsset.text;
           sendFee.text = value?.fee ?? 'Standard';
           sendNote.text = value?.note ?? sendNote.text;
           sendAmount.text = value?.amount?.toString() ?? sendAmount.text;
@@ -132,8 +131,9 @@ class _SendState extends State<Send> {
       visibleFiatAmount = '';
     }
     return GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: loading ? Loader(message: 'Sending Transaction') : body());
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: loading ? Loader(message: 'Sending Transaction') : body(),
+    );
   }
 
   void handlePopulateFromQR(String code) {
@@ -207,16 +207,17 @@ class _SendState extends State<Send> {
 
   bool verifyMemo([String? memo]) => (memo ?? sendMemo.text).length <= 80;
 
-  Widget body() => Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Flexible(
-                child: ListView(
-              // solves scrolling while keyboard
-              shrinkWrap: true,
-              padding: EdgeInsets.only(top: 16, left: 16, right: 16),
+  Widget body() => Padding(
+      padding: EdgeInsets.only(top: 16, bottom: 40, left: 16, right: 16),
+      child: CustomScrollView(
+        // solves scrolling while keyboard
+        shrinkWrap: true,
+        slivers: <Widget>[
+          SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                // list items
                 //Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
                 //    style: Theme.of(context).textTheme.caption),
                 //;
@@ -403,18 +404,23 @@ class _SendState extends State<Send> {
                       labelText: 'Note', hintText: 'Private note to self'),
                 ),
               ],
-            )),
-            Padding(
-              padding: EdgeInsets.only(bottom: 40, left: 16, right: 16),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    allValidation()
-                        ? sendTransactionButton()
-                        : sendTransactionButton(disabled: true)
-                  ]),
             ),
-          ]);
+          ),
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Padding(
+                padding: EdgeInsets.only(top: 16),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      allValidation()
+                          ? sendTransactionButton()
+                          : sendTransactionButton(disabled: true)
+                    ])),
+          ),
+        ],
+      ));
 
   bool fieldValidation() {
     sendAmount.text = cleanDecAmount(sendAmount.text, zeroToBlank: true);

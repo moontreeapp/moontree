@@ -60,7 +60,7 @@ class RavenMobileApp extends StatelessWidget {
       initialRoute: '/',
       themeMode: ThemeMode.system,
       theme: CustomTheme.lightTheme,
-      darkTheme: CustomTheme.darkTheme,
+      darkTheme: CustomTheme.lightTheme, //dark
       navigatorObservers: [components.navigator],
       routes: pages.routes(context),
       builder: (context, child) {
@@ -71,6 +71,7 @@ class RavenMobileApp extends StatelessWidget {
           //resizeToAvoidBottomInset: false,
           //extendBody: true,
           // for potentially modifying the persistent bottom sheet options:
+          resizeToAvoidBottomInset: true,
           stickyFrontLayer: true,
           backgroundColor: Theme.of(context).backgroundColor,
           backLayerBackgroundColor: Theme.of(context).backgroundColor,
