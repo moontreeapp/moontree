@@ -56,8 +56,9 @@ class _PageTitleState extends State<PageTitle> {
     if (pageTitle != 'Wallet' || accounts.data.length <= 1) {
       return Text(pageTitle, style: Theme.of(context).pageTitle);
     }
-    //changeName.text = 'Wallets / ' + Current.account.name;
-    changeName.text = 'Wallet';
+    return Text('Wallet', style: Theme.of(context).pageTitle);
+    /* /// showing editable name of wallet account
+    changeName.text = 'Wallets / ' + Current.account.name;
     return TextField(
       textInputAction: TextInputAction.done,
       textAlign: TextAlign.left,
@@ -85,5 +86,6 @@ class _PageTitleState extends State<PageTitle> {
         setState(() {});
       },
     );
+    */
   }
 }
