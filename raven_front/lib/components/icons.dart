@@ -83,14 +83,15 @@ class IconComponents {
           shape: BoxShape.circle,
           border: Border.all(
               width: 2,
-              color:
+              color: // if you have the master?
                   asset.endsWith('!') ? Color(0xFFFF9900) : Color(0xFF5C6BC0))),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(100.0),
         child: Center(
           child: Container(
-              child: Image.memory(Uint8List.fromList(
-                  Identicon(foregroundColor: [123, 65, 72]).generate(asset)))),
+            child:
+                Image.memory(Uint8List.fromList(Identicon().generate(asset))),
+          ),
         ),
       ),
     );

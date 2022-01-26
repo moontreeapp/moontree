@@ -8,6 +8,14 @@ class Palette {
   //static const Color ravenBlue = Color(0xFF005898); // based off orange
   static const Color ravenOrange = Color(0xFFF15B22);
   static const Color primary = ravenBlue; //Color(0xFF2F4D7D);
+
+  // Brock's colors
+  // blue
+  //  5C6BC0 [92, 107, 192]
+  //995C6BC0
+  // orange
+  //  F57D00 [245, 125, 0]
+  //99F57D00
 }
 
 // orange-green #b6f122

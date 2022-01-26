@@ -88,20 +88,42 @@ class _HoldingList extends State<HoldingList> {
     //        [addresses.byAddress.getOne(widget.currentWalletAddress!)!]);
     return holdings.isEmpty // <-- on front tab...
         //? components.empty.holdings(context)
+        //    ? Container()
+        //    : Container(
+        //        color: Colors.transparent,
+        //        alignment: Alignment.center,
+        //        padding: EdgeInsets.only(top: 5.0),
+        //        child: RefreshIndicator(
+        //          child: _holdingsView(context),
+        //          onRefresh: () => refresh(),
+        //        ));
         ? Container()
-        : Container(
-            color: Colors.transparent,
-            alignment: Alignment.center,
-            padding: EdgeInsets.only(top: 5.0),
-            child: RefreshIndicator(
-              child: _holdingsView(context),
-              onRefresh: () => refresh(),
-            ));
-    //? Container()
-    //: Container(
-    //    height: 40,
-    //    width: 40,
-    //    child: components.icons.assetAvatar('MOONTREE0'));
+        : Column(children: [
+            Container(
+                height: 40,
+                width: 40,
+                child: components.icons.assetAvatar('MOONTREE')),
+            Container(
+                height: 40,
+                width: 40,
+                child: components.icons.assetAvatar('AMAZON')),
+            Container(
+                height: 40,
+                width: 40,
+                child: components.icons.assetAvatar('Tesla')),
+            Container(
+                height: 40,
+                width: 40,
+                child: components.icons.assetAvatar('TESLA')),
+            Container(
+                height: 40,
+                width: 40,
+                child: components.icons.assetAvatar('GOOG!')),
+            Container(
+                height: 40,
+                width: 40,
+                child: components.icons.assetAvatar('MOONTREE0!')),
+          ]);
   }
 
   ListView _holdingsView(BuildContext context, {Wallet? wallet}) {
