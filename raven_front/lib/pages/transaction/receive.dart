@@ -30,6 +30,7 @@ class _ReceiveState extends State<Receive> {
   FocusNode requestMessageFocus = FocusNode();
   String uri = '';
   String username = '';
+  String? errorText;
   List<Security> fetchedNames = <Security>[];
 
   bool get rawAddress =>
@@ -77,11 +78,13 @@ class _ReceiveState extends State<Receive> {
   }
 
   void _printLatestValue() async {
-    fetchedNames = (await services.client.api
-            .getAssetNames(requestMessage.text))
-        .toList()
-        .map((e) => Security(symbol: e, securityType: SecurityType.RavenAsset))
-        .toList();
+    fetchedNames = requestMessage.text.length <= 32
+        ? (await services.client.api.getAssetNames(requestMessage.text))
+            .toList()
+            .map((e) =>
+                Security(symbol: e, securityType: SecurityType.RavenAsset))
+            .toList()
+        : [];
   }
 
   @override
@@ -96,6 +99,8 @@ class _ReceiveState extends State<Receive> {
         : requestMessage.text;
     address = Current.account.wallets[0].addresses.firstOrNull?.address ?? '';
     uri = uri == '' ? address : uri;
+    requestMessage.selection =
+        TextSelection.collapsed(offset: requestMessage.text.length);
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -106,7 +111,7 @@ class _ReceiveState extends State<Receive> {
   }
 
   Widget body() => Padding(
-      padding: EdgeInsets.only(top: 16, bottom: 40, left: 16, right: 16),
+      padding: EdgeInsets.only(top: 16, left: 16, right: 16),
       child: CustomScrollView(
         // solves scrolling while keyboard
         shrinkWrap: true,
@@ -248,19 +253,27 @@ class _ReceiveState extends State<Receive> {
                 //    ]),
                 SizedBox(height: 16),
                 TextField(
+                    focusNode: requestMessageFocus,
                     controller: requestMessage,
                     autocorrect: false,
                     textInputAction: TextInputAction.done,
                     inputFormatters: [
                       UpperCaseTextFormatter(),
                     ],
-                    maxLength: 32,
-                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                    //maxLength: 32,
+                    //maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     decoration: components.styles.decorations.textFeild(context,
-                        labelText: 'Requested Asset', hintText: 'Ravencoin'),
+                        labelText: 'Requested Asset',
+                        hintText: 'Ravencoin',
+                        errorText: errorText),
                     onChanged: (value) {
                       // /requestMessage.text = cleanLabel(requestMessage.text);
                       // /_makeURI();
+                      var oldErrorText = errorText;
+                      errorText = value.length > 32 ? 'too long' : null;
+                      if (oldErrorText != errorText) {
+                        setState(() {});
+                      }
                     },
                     onEditingComplete: () {
                       requestMessage.text = cleanLabel(requestMessage.text);
@@ -311,8 +324,10 @@ class _ReceiveState extends State<Receive> {
           SliverFillRemaining(
             hasScrollBody: false,
             child: Padding(
-                padding: EdgeInsets.only(bottom: 40, left: 16, right: 16),
+                padding:
+                    EdgeInsets.only(bottom: 40, top: 16, left: 16, right: 16),
                 child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [shareButton()])),
           ),

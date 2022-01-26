@@ -208,7 +208,7 @@ class _SendState extends State<Send> {
   bool verifyMemo([String? memo]) => (memo ?? sendMemo.text).length <= 80;
 
   Widget body() => Padding(
-      padding: EdgeInsets.only(top: 16, bottom: 40, left: 16, right: 16),
+      padding: EdgeInsets.only(top: 16, left: 16, right: 16),
       child: CustomScrollView(
         // solves scrolling while keyboard
         shrinkWrap: true,
@@ -409,7 +409,7 @@ class _SendState extends State<Send> {
           SliverFillRemaining(
             hasScrollBody: false,
             child: Padding(
-                padding: EdgeInsets.only(top: 16),
+                padding: EdgeInsets.only(top: 16, bottom: 40),
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
