@@ -112,5 +112,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                                 onPressed: () => Navigator.of(context).pop())
                           ])))));
     }
+    Navigator.popUntil(
+        components.navigator.routeContext!, ModalRoute.withName('/home'));
   }
 }
