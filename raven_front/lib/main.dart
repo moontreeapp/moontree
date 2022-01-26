@@ -71,7 +71,6 @@ class RavenMobileApp extends StatelessWidget {
           //resizeToAvoidBottomInset: false,
           //extendBody: true,
           // for potentially modifying the persistent bottom sheet options:
-          resizeToAvoidBottomInset: true,
           stickyFrontLayer: true,
           backgroundColor: Theme.of(context).backgroundColor,
           backLayerBackgroundColor: Theme.of(context).backgroundColor,
