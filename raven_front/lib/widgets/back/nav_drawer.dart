@@ -212,6 +212,7 @@ class _NavDrawerState extends State<NavDrawer> {
               */
 
 /*
+*/
           SettingsTile(
               title: 'Clear Database',
               titleTextStyle: Theme.of(context).drawerDestination,
@@ -219,6 +220,7 @@ class _NavDrawerState extends State<NavDrawer> {
               onPressed: (BuildContext context) {
                 ravenDatabase.deleteDatabase();
               }),
+/*
           SettingsTile(
               title: 'show data',
               titleTextStyle: Theme.of(context).drawerDestination,

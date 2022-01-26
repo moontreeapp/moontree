@@ -97,6 +97,11 @@ class _HoldingList extends State<HoldingList> {
               child: _holdingsView(context),
               onRefresh: () => refresh(),
             ));
+    //? Container()
+    //: Container(
+    //    height: 40,
+    //    width: 40,
+    //    child: components.icons.assetAvatar('MOONTREE0'));
   }
 
   ListView _holdingsView(BuildContext context, {Wallet? wallet}) {
