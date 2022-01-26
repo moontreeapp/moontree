@@ -165,26 +165,26 @@ extension TextStyleExtension on ThemeData {
   TextStyle? get copyright => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 12.0,
-          fontFamily: 'Roboto',
+          fontFamily: 'Nunito',
           fontWeight: FontWeights.normal,
           letterSpacing: 0.4,
           color: Color(0xDE000000))
       : TextStyle(
           fontSize: 12.0,
-          fontFamily: 'Roboto',
+          fontFamily: 'Nunito',
           fontWeight: FontWeights.normal,
           letterSpacing: 0.4,
           color: Color(0xDE000000));
   TextStyle? get supportHeading => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 10.0,
-          fontFamily: 'Roboto',
+          fontFamily: 'Nunito',
           fontWeight: FontWeights.medium,
           letterSpacing: 1.5,
           color: Color(0xDE000000))
       : TextStyle(
           fontSize: 10.0,
-          fontFamily: 'Roboto',
+          fontFamily: 'Nunito',
           fontWeight: FontWeights.medium,
           letterSpacing: 1.5,
           color: Color(0xDE000000));
@@ -334,13 +334,13 @@ extension TextStyleExtension on ThemeData {
   TextStyle? get sendConfirm => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 14.0,
-          fontFamily: 'Roboto',
+          fontFamily: 'Nunito',
           fontWeight: FontWeights.regular,
           letterSpacing: 0.25,
           color: Color(0x99000000))
       : TextStyle(
           fontSize: 14.0,
-          fontFamily: 'Roboto',
+          fontFamily: 'Nunito',
           fontWeight: FontWeights.regular,
           letterSpacing: 0.25,
           color: Color(0x99000000));
@@ -464,52 +464,52 @@ extension TextStyleExtension on ThemeData {
   TextStyle? get txAmount => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 16.0,
-          fontFamily: 'Roboto',
+          fontFamily: 'Nunito',
           fontWeight: FontWeights.regular,
           letterSpacing: 0.5,
           color: Color(0xFF000000))
       : TextStyle(
           fontSize: 16.0,
-          fontFamily: 'Roboto',
+          fontFamily: 'Nunito',
           fontWeight: FontWeights.regular,
           letterSpacing: 0.5,
           color: Color(0xFF000000));
   TextStyle? get txDate => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 14.0,
-          fontFamily: 'Roboto',
+          fontFamily: 'Nunito',
           fontWeight: FontWeights.regular,
           letterSpacing: 0.25,
           color: Color(0x99000000))
       : TextStyle(
           fontSize: 14.0,
-          fontFamily: 'Roboto',
+          fontFamily: 'Nunito',
           fontWeight: FontWeights.regular,
           letterSpacing: 0.25,
           color: Color(0x99000000));
   TextStyle? get tabName => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 14.0,
-          fontFamily: 'Roboto',
+          fontFamily: 'Nunito',
           fontWeight: FontWeights.medium,
           letterSpacing: 1.25,
           color: Color(0xFFFFFFFF))
       : TextStyle(
           fontSize: 14.0,
-          fontFamily: 'Roboto',
+          fontFamily: 'Nunito',
           fontWeight: FontWeights.medium,
           letterSpacing: 1.25,
           color: Color(0xFFFFFFFF));
   TextStyle? get tabNameInactive => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 14.0,
-          fontFamily: 'Roboto',
+          fontFamily: 'Nunito',
           fontWeight: FontWeights.medium,
           letterSpacing: 1.25,
           color: Color(0x99FFFFFF))
       : TextStyle(
           fontSize: 14.0,
-          fontFamily: 'Roboto',
+          fontFamily: 'Nunito',
           fontWeight: FontWeights.medium,
           letterSpacing: 1.25,
           color: Color(0x99FFFFFF));

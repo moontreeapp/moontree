@@ -57,30 +57,21 @@ class PasswordValidationService {
     return ret;
   }
 
-  bool complexity(String password) =>
-      password.length >= 12 &&
-      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-          .any((int i) => password.contains(i.toString()));
-
-  List<String> complexityExplained1(String password) {
-    var ret = <String>[];
-    if (password.length < 12) {
-      ret.add('must be at least 12 characters long');
-    }
-    if ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-        .any((int i) => !password.contains(i.toString()))) {
-      ret.add('must contain at least one number');
-    }
-    return ret;
-  }
+  bool complexity(String password) => password != '';
+  //password.length >= 12 &&
+  //[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  //    .any((int i) => password.contains(i.toString()));
 
   List<String> complexityExplained(String password) => [
-        if (password.length < 12) ...['must be at least 12 characters long'],
-        if ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-            .any((int i) => !password.contains(i.toString()))) ...[
-          'must contain at least one number'
-        ]
+        if (password == '') ...['must not be blank']
       ];
+  //[
+  //  if (password.length < 12) ...['must be at least 12 characters long'],
+  //  if ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  //      .any((int i) => !password.contains(i.toString()))) ...[
+  //    'must contain at least one number'
+  //  ]
+  //];
 }
 
 class PasswordCreationService {

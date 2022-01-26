@@ -210,6 +210,8 @@ class _NavDrawerState extends State<NavDrawer> {
                   onPressed: (BuildContext context) =>
                       Navigator.pushNamed(context, '/settings/language')),
               */
+
+/*
           SettingsTile(
               title: 'Clear Database',
               titleTextStyle: Theme.of(context).drawerDestination,
@@ -284,8 +286,8 @@ class _NavDrawerState extends State<NavDrawer> {
                 //print(Current.account.vouts.first
                 //    .securityValue(security: securities.RVN));
               }),
-/*
 */
+
           //SettingsTile.switchTile(
           //  title: 'Use fingerprint',
           //  titleTextStyle: Theme.of(context).drawerDestination,

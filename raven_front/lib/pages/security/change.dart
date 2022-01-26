@@ -14,7 +14,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   var confirmPassword = TextEditingController();
   FocusNode newPasswordFocusNode = FocusNode();
   FocusNode confirmPasswordFocusNode = FocusNode();
-  String newNotification = '';
+  String? newNotification;
   bool newPasswordVisible = false;
   bool confirmPasswordVisible = false;
   bool validatedExisting = false;
@@ -98,7 +98,7 @@ class _ChangePasswordState extends State<ChangePassword> {
           }),
         ),
       ),
-      onChanged: (String value) => setState(() {}),
+      onChanged: (String value) => validateComplexity(),
       onEditingComplete: () async => await submit(),
     );
     return Padding(
@@ -154,23 +154,15 @@ class _ChangePasswordState extends State<ChangePassword> {
     var oldValidation = validatedComplexity;
     var oldNotification = newNotification;
     if (services.password.validate.complexity(password)) {
-      var used = services.password.validate.previouslyUsed(password);
-      newNotification = {
-            null: 'strong',
-            0: 'current',
-            1: 'prior',
-            2: 'password before last',
-          }[used] ??
-          'used $used passwords ago';
-      // allow reuse of previous passwords?
-      //if (used != 0) {
-      if (used == null) {
+      if (confirmPassword.text == newPassword.text) {
         validatedComplexity = true;
+      } else {
+        validatedComplexity = false;
       }
     } else {
       validatedComplexity = false;
       if (password == '') {
-        newNotification = '';
+        newNotification = null;
       } else {
         newNotification =
             services.password.validate.complexityExplained(password)[0];
