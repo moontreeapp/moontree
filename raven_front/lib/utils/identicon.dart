@@ -137,16 +137,15 @@ class Identicon {
 
   Uint8List generate(String text) {
     name = text;
-    var size = rows * cols;
+    hashedName = digest(utf8.encode(name)).toString();
+    _generateColors();
     var bytesLength = 16;
-    var hexDigest = digest(utf8.encode(name)).toString();
-    hashedName = hexDigest;
     var hexDigestByteList = List<int>.generate(bytesLength, (int i) {
-      return int.parse(hexDigest.substring(i * 2, i * 2 + 2),
+      return int.parse(hashedName.substring(i * 2, i * 2 + 2),
           radix: bytesLength);
     });
-    _generateColors();
     var matrix = _createMatrix(hexDigestByteList);
+    var size = rows * cols;
     return Uint8List.fromList(
         _createImage(matrix, size, size, (size * 0.1).toInt()));
   }
