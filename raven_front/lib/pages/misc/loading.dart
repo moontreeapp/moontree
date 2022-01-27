@@ -111,18 +111,6 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    // todo: make a gif converting the old logo to the
-    return Scaffold(
-        body: Center(
-            //child: Image(image: AssetImage("assets/splash/liquid.gif"))));
-            child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        //Image(image: AssetImage("assets/rvn.png")),
-        Image(image: AssetImage("assets/splash/fast.gif")),
-        Text('Loading...'),
-      ],
-    )));
+    return Image(image: AssetImage("assets/splash/fast.gif"));
   }
 }

@@ -2,7 +2,6 @@
 import 'package:raven_back/raven_back.dart';
 import 'package:test/test.dart';
 
-import 'package:raven_back/globals.dart';
 import '../fixtures/fixtures.dart' as fixtures;
 
 void main() async {

@@ -52,9 +52,11 @@ class _PageLead extends State<PageLead> {
               icon: Icon(Icons.close_rounded, color: Colors.white),
               onPressed: () =>
                   Navigator.pop(components.navigator.routeContext ?? context))
-          : IconButton(
-              splashRadius: 24,
-              icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
-              onPressed: () =>
-                  Navigator.pop(components.navigator.routeContext ?? context));
+          : pageTitle == ''
+              ? Container()
+              : IconButton(
+                  splashRadius: 24,
+                  icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+                  onPressed: () => Navigator.pop(
+                      components.navigator.routeContext ?? context));
 }

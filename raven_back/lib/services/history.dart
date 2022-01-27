@@ -1,97 +1,107 @@
 import 'dart:async';
 
+import 'package:raven_back/streams/wallet.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:tuple/tuple.dart';
 
-class AddressService {
+class HistoryService {
   Set<String> unretrieved = {};
+  Set<String> retrieving = {};
   Set<String> retrieved = {};
 
-  /// when an address status change: pull txs match blockchain
-  Future<bool> getAndSaveTransactionsByAddresses(Address address) async {
+  Future<bool> getHistories(Address address) async {
     var client = streams.client.client.value;
     if (client == null) {
       return false;
     }
-    // erase all vins and vouts not pulled. (or just remove all first - the simple way).
-    ///await res.vins.removeAll(res.vins.byAddress.getAll(addressId)); // broken join
-    ///await res.vouts.removeAll(res.vouts.byAddress.getAll(changedAddress.address));
+    var histories = await client.getHistory(address.addressId);
+    if (histories.isNotEmpty) {
+      unretrieved.addAll(histories.map((h) => h.txHash));
+      var wallet = address.wallet;
+      if (wallet is LeaderWallet) {
+        streams.wallet.deriveAddress.add(DeriveLeaderAddress(
+          leader: wallet,
+          exposure: address.exposure,
+        ));
+      }
+      streams.address.history.add(histories);
+    } else {
+      streams.address.empty.add(true);
+    }
+    return true;
+  }
 
-    /// never purge tx (unless theres a reorg or something)
-    /// transactions are not associated with addresses directly
-    //var removeTransactions = res.transactions.byScripthash.getAll(addressId);
-    //await res.transactions.removeAll(removeTransactions);
+  Future<bool> getTransactions(List<ScripthashHistory> histories) async {
+    var client = streams.client.client.value;
+    if (client == null) {
+      return false;
+    }
+    var txs = <Tx>[];
+    for (var txHash in histories.map((history) => history.txHash)) {
+      // we need to look into this on change of wallet from mainnet to testnet
+      // or even on new password or change or removal do we really need to
+      // download them all again? could we merely change the wallet id that the
+      // addresses point to, perhaps, so that this is valid, we never have to
+      // redownload individaul transactions again?
+      if ((res.transactions.primaryIndex.getOne(txHash) == null ||
+              res.transactions.mempool
+                  .map((t) => t.transactionId)
+                  .contains(txHash)) &&
+          !(retrieving.contains(txHash) || retrieved.contains(txHash))) {
+        // not already downloaded...
+        txs.add(await client.getTransaction(txHash));
+      } else {
+        print('skipping $txHash');
+      }
+      unretrieved.remove(txHash);
+      retrieving.add(txHash);
+    }
+    await saveTransactions(txs, client);
+    retrieving.removeAll(txs.map((t) => t.txid));
+    retrieved.addAll(txs.map((t) => t.txid));
 
-    // get a list of all historic transaction ids assicated with this address
-    // ignore: omit_local_variable_types
-    List<ScripthashHistory> histories =
-        await client.getHistory(address.addressId);
-
-    /// get all transactions - batch silently fails on some txHashes such as
-    /// 9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f
-    /// (or one in it's batch)
-    // ignore: omit_local_variable_types
-    await saveTransactions([
-      for (var txHash in histories.map((history) => history.txHash))
-
-        /// this successfully reduced download redundancy but if things
-        /// downloaded in a particular order, it caused the error of not
-        /// downloading every transaction we needed, somehow. So this
-        /// condition has been removed.
-        //if (res.transactions.primaryIndex.getOne(txHash) == null ||
-        //    res.transactions.primaryIndex.getOne(txHash)!.res.vins.isEmpty)
-        await client.getTransaction(txHash)
-    ], client);
-    unretrieved.remove(address.addressId);
-    retrieved.add(address.addressId);
-
-    /// this condition marks the end of the external loop: after we have
-    /// generated and looked for all transactions for those addresses...
-    /// pull vouts for vins that don't have corresponding vouts and
-    /// calculate all balances.
-    await triggerDeriveOrBalance(client);
     return true;
   }
 
   // if all the leader wallets have their empty addresses gaps satisfied,
   // you're done! trigger balance calculation, else trigger derive address.
-  Future triggerDeriveOrBalance([RavenElectrumClient? client]) async {
+  Future<bool> produceAddressOrBalance() async {
+    var client = streams.client.client.value;
+    if (client == null) {
+      return false;
+    }
+
     /// we should add to backlog and let the leader waiter take care of those
     /// if the cipher isn't currently available it should be since we obviously
     /// just used it to make an address, most likely, but maybe there are edge
     /// cases, so we should do the check anyway.
-    client = client ?? streams.client.client.value;
-    if (unretrieved.isEmpty) {
-      var allDone = true;
-      for (var leader in res.wallets.leaders) {
-        for (var exposure in [NodeExposure.Internal, NodeExposure.External]) {
-          if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
-            if (res.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
-              allDone = false;
-              var derived = services.wallet.leader.deriveMoreAddresses(
-                leader,
-                exposures: [exposure],
-              );
-              for (var addressId
-                  in derived.map((address) => address.addressId)) {
-                if (!services.address.retrieved.contains(addressId)) {
-                  services.address.unretrieved.add(addressId);
-                }
-              }
-              services.client.subscribe.toExistingAddresses();
-              //return; // break
-            } else {
-              services.wallet.leader.backlog.add(leader);
-            }
-          }
+    //print('unretrieved $unretrieved');
+    //print('retrieving $retrieving');
+    //print('retrieved $retrieved');
+    //print(
+    //    'DATA ${res.transactions.data.where((e) => retrieved.contains(e.transactionId))}');
+    //print(
+    //    'PROVEN ${retrieved.where((e) => !res.transactions.data.map((ee) => ee.transactionId).contains(e))}');
+
+    //if (unretrieved.isNotEmpty || retrieving.isNotEmpty) {
+    //  return false;
+    //}
+    var allDone = true;
+    for (var leader in res.wallets.leaders) {
+      for (var exposure in [NodeExposure.Internal, NodeExposure.External]) {
+        if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
+          allDone = false;
+          streams.wallet.deriveAddress
+              .add(DeriveLeaderAddress(leader: leader, exposure: exposure));
         }
       }
-      if (allDone) {
-        await saveDanglingTransactions(client!);
-        await services.balance.recalculateAllBalances();
-      }
     }
+    if (allDone) {
+      await saveDanglingTransactions(client);
+      await services.balance.recalculateAllBalances();
+    }
+    return allDone;
   }
 
   Future getAndSaveMempoolTransactions([RavenElectrumClient? client]) async {
@@ -110,13 +120,12 @@ class AddressService {
 
   /// when an address status change: make our historic tx data match blockchain
   Future saveTransactions(List<Tx> txs, RavenElectrumClient client) async {
-    // why called twice?
-
     /// save all vins, vouts and transactions
     var newVins = <Vin>{};
     var newVouts = <Vout>{};
     var newTxs = <Transaction>{};
     for (var tx in txs) {
+      print(tx.txid);
       for (var vin in tx.vin) {
         if (vin.txid != null && vin.vout != null) {
           newVins.add(Vin(
@@ -164,6 +173,7 @@ class AddressService {
         confirmed: (tx.confirmations ?? 0) > 0,
         time: tx.time,
       ));
+      print(tx.txid);
     }
 
     //await res.vins.removeAll(existingVins.difference(newVins));
@@ -176,9 +186,7 @@ class AddressService {
   }
 
   /// when an address status change: make our historic tx data match blockchain
-  Future saveDanglingTransactions(
-    RavenElectrumClient client,
-  ) async {
+  Future saveDanglingTransactions(RavenElectrumClient client) async {
     /// one more step - get all vins that have no corresponding vout (in the db)
     /// and get the vouts for them
     var finalVouts = <Vout>[];
@@ -186,12 +194,9 @@ class AddressService {
     // ignore: omit_local_variable_types
     var myVins =
         List.from(res.vins.danglingVins.map((vin) => vin.voutTransactionId));
-    // ignore: omit_local_variable_types
-    List<Tx> txs = [
+    for (var tx in [
       for (var txHash in myVins) await client.getTransaction(txHash)
-    ];
-
-    for (var tx in txs) {
+    ]) {
       for (var vout in tx.vout) {
         if (vout.scriptPubKey.type == 'nulldata') continue;
         var vs = await handleAssetData(client, tx, vout);
@@ -236,18 +241,22 @@ class AddressService {
     Tx tx,
     TxVout vout,
   ) async {
-    var symbol = 'RVN';
+    print('HANDLEASSET ${vout.scriptPubKey.asset}');
+    var symbol = vout.scriptPubKey.asset ?? 'RVN';
     var value = vout.valueSat;
     var security = res.securities.bySymbolSecurityType
         .getOne(symbol, SecurityType.RavenAsset);
     var asset = res.assets.bySymbol.getOne(symbol);
     if (security == null) {
       if (vout.scriptPubKey.type == 'transfer_asset') {
-        symbol = vout.scriptPubKey.asset!;
+        //print('ASSET-=----------');
+        //print(symbol);
         value = amountToSat(vout.scriptPubKey.amount,
             divisibility: vout.scriptPubKey.units ?? 8);
+        //print(value);
         //if we have no record of it in res.securities...
         var meta = await client.getMeta(symbol);
+        //print(meta);
         if (meta != null) {
           value = amountToSat(vout.scriptPubKey.amount,
               divisibility: vout.scriptPubKey.units ?? meta.divisions);

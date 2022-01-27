@@ -39,7 +39,5 @@ abstract class Waiter {
     }
   }
 
-  Future deinitKey(String key) async {
-    await deinitKeys([key]);
-  }
+  Future deinitKey(String key) async => await deinitKeys([key]);
 }

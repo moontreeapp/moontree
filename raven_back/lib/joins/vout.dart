@@ -17,6 +17,8 @@ extension VoutHasOneSecurity on Vout {
   Security? get security => assetSecurityId == null
       ? res.securities.RVN
       : res.securities.primaryIndex.getOne(assetSecurityId!);
+  // if this is not found we should go get it,
+  // because this should never not be found.
 }
 
 extension VoutBelongsToAddress on Vout {

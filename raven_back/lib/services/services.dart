@@ -1,5 +1,5 @@
 import 'account.dart';
-import 'address.dart';
+import 'history.dart';
 import 'balance.dart';
 import 'busy.dart';
 import 'cipher.dart';
@@ -11,7 +11,7 @@ import 'wallet.dart';
 
 class services {
   static AccountService account = AccountService();
-  static AddressService address = AddressService();
+  static HistoryService history = HistoryService();
   static BalanceService balance = BalanceService();
   static BusyService busy = BusyService();
   static CipherService cipher = CipherService();

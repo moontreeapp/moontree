@@ -91,11 +91,11 @@ class _WalletViewState extends State<WalletView> {
     return DefaultTabController(
         length: 3,
         child: Scaffold(
-          appBar: header(),
+          //appBar: header(),
           body: body(),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: isFabVisible ? sendButton() : null,
+          //floatingActionButtonLocation:
+          //    FloatingActionButtonLocation.centerFloat,
+          //floatingActionButton: isFabVisible ? sendButton() : null,
 
           /// hidden for beta
           //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide

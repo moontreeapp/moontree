@@ -89,7 +89,7 @@ class Vout with EquatableMixin {
 
   String get voutId => getVoutId(transactionId, position);
 
-  static String getVoutId(transactionId, position) =>
+  static String getVoutId(String transactionId, int position) =>
       '$transactionId:$position';
 
   List<String> get toAddresses => [toAddress, ...additionalAddresses ?? []];

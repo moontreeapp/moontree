@@ -3,6 +3,7 @@
 /// each time a new vout is saved that can be tied to a wallet we own.
 
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/streams/wallet.dart';
 import 'waiter.dart';
 
 class LeaderWaiter extends Waiter {
@@ -12,12 +13,10 @@ class LeaderWaiter extends Waiter {
       res.ciphers.changes,
       (Change<Cipher> change) {
         change.when(
-          loaded: (loaded) {
-            attemptLeaderWalletAddressDerive(change.data.cipherUpdate);
-          },
-          added: (added) {
-            attemptLeaderWalletAddressDerive(change.data.cipherUpdate);
-          },
+          loaded: (loaded) =>
+              attemptLeaderWalletAddressDerive(change.data.cipherUpdate),
+          added: (added) =>
+              attemptLeaderWalletAddressDerive(change.data.cipherUpdate),
           updated: (updated) {},
           removed: (removed) {},
         );
@@ -28,22 +27,26 @@ class LeaderWaiter extends Waiter {
     listen(
       'streams.wallet.leaderChanges',
       streams.wallet.leaderChanges,
-      (Change<Wallet> change) => produceLeader(change),
+      (Change<Wallet> change) => handleLeaderChange(change),
+      autoDeinit: true,
+    );
+
+    listen(
+      'streams.wallet.deriveAddress',
+      streams.wallet.deriveAddress,
+      (DeriveLeaderAddress? deriveDetails) => deriveDetails == null
+          ? () {/* do nothing */}
+          : handleDeriveAddress(
+              leader: deriveDetails.leader, exposure: deriveDetails.exposure),
       autoDeinit: true,
     );
   }
 
-  void produceLeader(Change<Wallet> change) {
+  void handleLeaderChange(Change<Wallet> change) {
     change.when(
         loaded: (loaded) {},
-        added: (added) {
-          var leader = added.data;
-          if (res.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
-            services.wallet.leader.deriveMoreAddresses(leader as LeaderWallet);
-          } else {
-            services.wallet.leader.backlog.add(leader as LeaderWallet);
-          }
-        },
+        added: (added) =>
+            handleDeriveAddress(leader: added.data as LeaderWallet),
         updated: (updated) async {
           /// when wallet is moved from one account to another...
           /// we need to derive all the addresses again because it might
@@ -62,28 +65,44 @@ class LeaderWaiter extends Waiter {
             );
           }
           // recreate the addresses of that wallet
-          if (res.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
-            services.wallet.leader.deriveMoreAddresses(leader as LeaderWallet);
-          } else {
-            services.wallet.leader.backlog.add(leader as LeaderWallet);
-          }
+          handleDeriveAddress(leader: leader as LeaderWallet);
         },
         removed: (removed) {});
   }
 
-  void attemptLeaderWalletAddressDerive(
-    CipherUpdate cipherUpdate,
-  ) {
+  void attemptLeaderWalletAddressDerive(CipherUpdate cipherUpdate) {
     var remove = <LeaderWallet>{};
     for (var wallet in services.wallet.leader.backlog) {
       if (wallet.cipherUpdate == cipherUpdate) {
-        services.wallet.leader.deriveMoreAddresses(wallet);
+        handleDeriveAddress(leader: wallet, bypassCipher: true);
         remove.add(wallet);
       }
     }
-    services.client.subscribe.toExistingAddresses();
     for (var wallet in remove) {
       services.wallet.leader.backlog.remove(wallet);
     }
+  }
+
+  void handleDeriveAddress({
+    required LeaderWallet leader,
+    NodeExposure? exposure,
+    bool bypassCipher = false,
+  }) {
+    // needs improvement
+    //var msg = 'Downloading transactions...';
+    //services.busy.clientOn(msg);
+
+    if (bypassCipher ||
+        res.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
+      services.wallet.leader.deriveMoreAddresses(
+        leader,
+        exposures: exposure == null ? null : [exposure],
+      );
+    } else {
+      services.wallet.leader.backlog.add(leader);
+    }
+
+    // move to build balances, and clear all messages, not just one.
+    //services.busy.clientOff(msg);
   }
 }

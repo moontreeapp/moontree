@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 
@@ -113,9 +112,8 @@ class ClientService {
 /// managing our address subscriptions
 class SubscribeService {
   final Map<String, StreamSubscription> subscriptionHandles = {};
-  //final PublishSubject<Address> movementDetected = PublishSubject();
 
-  List<Address> toExistingAddresses([RavenElectrumClient? client]) {
+  List<Address> toExistingAddresses() {
     var unhandledAddresses = <Address>[];
     for (var address in res.addresses) {
       if (address.account!.net ==
@@ -137,8 +135,7 @@ class SubscribeService {
       subscriptionHandles[address.addressId] = client
           .subscribeScripthash(address.addressId)
           .listen((String? status) {
-        unawaited(waiters.addressSubscription.retrieve(address));
-        //movementDetected.sink.add(address);
+        unawaited(waiters.subscription.retrieve(address));
       });
     }
     return true;
@@ -160,7 +157,6 @@ class ApiService {
           .owner;
 
   Future<String> sendTransaction(String rawTx) async {
-    //services.client.subscribe.subscribeToExistingAddresses();
     return await streams.client.client.value!.broadcastTransaction(rawTx);
   }
 

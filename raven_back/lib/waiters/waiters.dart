@@ -1,8 +1,9 @@
 import 'account.dart';
 import 'address.dart';
-import 'address_subscription.dart';
+import 'subscription.dart';
 import 'block.dart';
 import 'client.dart';
+import 'history.dart';
 import 'import.dart';
 import 'leader.dart';
 import 'password.dart';
@@ -14,13 +15,13 @@ import 'single.dart';
 class waiters {
   static AccountWaiter account = AccountWaiter();
   static AddressWaiter address = AddressWaiter();
-  static AddressSubscriptionWaiter addressSubscription =
-      AddressSubscriptionWaiter();
+  static SubscriptionWaiter subscription = SubscriptionWaiter();
   static BlockWaiter block = BlockWaiter();
   static ImportWaiter import = ImportWaiter();
+  static HistoryWaiter history = HistoryWaiter();
   static PasswordWaiter password = PasswordWaiter();
   static RateWaiter rate = RateWaiter();
-  static RavenClientWaiter ravenClient = RavenClientWaiter();
+  static RavenClientWaiter client = RavenClientWaiter();
   static SendWaiter send = SendWaiter();
   static SettingWaiter setting = SettingWaiter();
   // Wallets

@@ -57,14 +57,10 @@ class SingleWaiter extends Waiter {
     var remove = <SingleWallet>{};
     for (var wallet in backlog) {
       if (wallet.cipherUpdate == cipherUpdate) {
-        // why is this happening twice?
-        res.addresses.save(services.wallet.single.toAddress(wallet));
         res.addresses.save(services.wallet.single.toAddress(wallet));
         remove.add(wallet);
       }
     }
-    // subscribe to the addresses we just created
-    services.client.subscribe.toExistingAddresses();
     for (var wallet in remove) {
       backlog.remove(wallet);
     }

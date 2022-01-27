@@ -6,7 +6,6 @@ import 'package:test/test.dart';
 
 import 'package:raven_back/services/transaction_maker.dart';
 import 'package:raven_back/services/transaction/fee.dart';
-import 'package:raven_back/globals.dart';
 import '../../fixtures/fixtures.dart' as fixtures;
 
 const connectionTimeout = Duration(seconds: 5);

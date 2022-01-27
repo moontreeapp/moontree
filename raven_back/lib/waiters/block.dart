@@ -10,19 +10,20 @@ import 'waiter.dart';
 
 class BlockWaiter extends Waiter {
   void init() {
-    listen('streams.client.client', streams.client.client, (ravenClient) async {
-      if (ravenClient != null) {
-        subscribe(ravenClient as RavenElectrumClient);
-      }
-    });
+    listen(
+      'streams.client.client',
+      streams.client.client,
+      (RavenElectrumClient? ravenClient) async =>
+          ravenClient != null ? subscribe(ravenClient) : () {},
+    );
   }
 
   void subscribe(RavenElectrumClient ravenClient) {
     listen(
       'ravenClient.subscribeHeaders',
       ravenClient.subscribeHeaders(),
-      (blockHeader) async => await res.blocks
-          .save(Block.fromBlockHeader(blockHeader! as BlockHeader)),
+      (BlockHeader blockHeader) async =>
+          await res.blocks.save(Block.fromBlockHeader(blockHeader)),
       autoDeinit: true,
     );
 
@@ -30,9 +31,8 @@ class BlockWaiter extends Waiter {
     listen<Change<Block>>(
       'blocks.changes',
       res.blocks.changes,
-      (change) {
-        services.address.getAndSaveMempoolTransactions();
-      },
+      (Change<Block> change) =>
+          services.history.getAndSaveMempoolTransactions(),
       autoDeinit: true,
     );
   }

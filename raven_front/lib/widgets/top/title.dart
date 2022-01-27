@@ -39,7 +39,7 @@ class _PageTitleState extends State<PageTitle> {
 
   @override
   Widget build(BuildContext context) {
-    if (pageTitle == 'Send') {
+    if (['main', 'Send', ''].contains(pageTitle)) {
       return Text('', style: Theme.of(context).pageTitle);
     }
     if (pageTitle == 'Import_export') {

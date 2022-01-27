@@ -220,74 +220,42 @@ class _NavDrawerState extends State<NavDrawer> {
               onPressed: (BuildContext context) {
                 ravenDatabase.deleteDatabase();
               }),
-/*
+          destination(
+            icon: MdiIcons.shieldKey,
+            name: 'Accounts',
+            link: '/settings/technical',
+          ),
           SettingsTile(
               title: 'show data',
               titleTextStyle: Theme.of(context).drawerDestination,
               leading: Icon(Icons.info_outline_rounded),
               onPressed: (BuildContext context) async {
-                print(balances.bySecurity.getAll(Security(
-                    symbol: 'RVN', securityType: SecurityType.Crypto)));
-                //print(transactions.mempool);
-                //print(transactions.mempool.first.vouts);
-                //print(transactions.mempool.first.vins);
-                //for (var v in transactions.mempool.first.vouts) {
-                //  print(v.transaction!.confirmed);
-                //}
-                //print(vouts.data.where((vout) => vout.position < 0));
-                //print(VoutReservoir.whereUnconfirmed(
-                //    security: securities.RVN));
-                //print(VoutReservoir.whereUnspent(
-                //        security: securities.RVN, includeMempool: false)
-                //    .where((v) =>
-                //        v.transactionId ==
-                //        'b13feb18ae0b66f47e1606230b0a70de7d40ab52fbfc5626488136fbaa668b34'));
-                for (var v in //vouts.data
-                    VoutReservoir.whereUnspent(
-                        security: securities.RVN, includeMempool: false)) {
-                  //.where((Vout vout) =>
-                  //    vout.account?.net ==
-                  //        settings.primaryIndex
-                  //            .getOne(SettingName.Electrum_Net)!
-                  //            .value &&
-                  //    (vout.transaction?.confirmed ?? false))) {
-                  print(v);
+                print(res.addresses.byAddress
+                    .getOne('myA4k4Eogr2DXNibjmS2YSn2M2VT1d7tVD'));
+                print(res.vouts.byAddress
+                    .getAll('mxv3WJ9kfBxcwhrrEZ1EWa7xJHWXDKvnEU')[0]
+                    .vin);
+                print(res.vins.byVoutId.getOne(
+                    '86f9493e07cb039a3735ca7ac074a869464488d961ad60844134820fa67d6a56:0'));
+                print(res.vouts.primaryIndex
+                    .getOne(
+                        '90bf9bb181cb83dd9804a0a03186e6ae81a66ea738f3afd6b472387feb16d155:0')!
+                    .vin);
+                var tx = res.vouts.data
+                    //VoutReservoir.whereUnspent(includeMempool: false)
+                    .where((Vout vout) =>
+                        vout.account?.net ==
+                            res.settings.primaryIndex
+                                .getOne(SettingName.Electrum_Net)!
+                                .value &&
+                        (vout.transaction?.confirmed ?? false))
+                    .map((e) => e.assetSecurityId)
+                    .toList();
+                for (var id in tx) {
+                  print(id);
                 }
-                print(VoutReservoir.whereUnspent(
-                        security: securities.RVN, includeMempool: false)
-                    .map((e) => e.rvnValue)
-                    .toList()
-                    .sumInt());
-                //.where((v) =>
-                //    v.transactionId ==
-                //    'b13feb18ae0b66f47e1606230b0a70de7d40ab52fbfc5626488136fbaa668b34'));
-                print('${Current.balanceUSD != null ? '' : ''}');
-                print(Current.balanceUSD?.valueUSD);
-                print(Current.balanceRVN.valueRVN);
-                //print(vouts.data.where((vout) =>
-                //    ((vout.transaction?.confirmed ?? false) &&
-                //        vout.security == securities.RVN &&
-                //        vout.securityValue(security: securities.RVN) >
-                //            0 &&
-                //        vins
-                //            .where((vin) => (vin.voutTransactionId ==
-                //                    vout.transactionId &&
-                //                vin.voutPosition == vout.position))
-                //            .toList()
-                //            .isEmpty)));
-                //print(VoutReservoir.whereUnspent(
-                //        given: Current.account.vouts,
-                //        security: securities.RVN)
-                //    .toList());
-                //print(VoutReservoir.whereUnspent(
-                //        given: Current.account.vouts,
-                //        security: securities.bySymbolSecurityType
-                //            .getOne('MOONTREE', SecurityType.RavenAsset))
-                //    .toList());
-                //print(Current.account.vouts.first);
-                //print(Current.account.vouts.first
-                //    .securityValue(security: securities.RVN));
               }),
+/*
 */
 
           //SettingsTile.switchTile(

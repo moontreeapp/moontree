@@ -8,7 +8,8 @@ class _SecurityIdKey extends Key<Security> {
 }
 
 extension ByIdMethodsForSecurity on Index<_SecurityIdKey, Security> {
-  Security? getOne(String securityId) => getByKeyStr(securityId).firstOrNull;
+  Security? getOne(String? securityId) =>
+      securityId == null ? null : getByKeyStr(securityId).firstOrNull;
 }
 
 // bySymbol

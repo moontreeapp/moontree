@@ -22,7 +22,7 @@ void main() async {
 
   test('waiters listening', () async {
     for (var waiter in [
-      waiters.addressSubscription,
+      waiters.subscription,
       waiters.block,
       waiters.account,
       waiters.leader,

@@ -66,11 +66,7 @@ class AddressWaiter extends Waiter {
     backlog = returnToBacklog;
   }
 
-  void subscribeTo(Address address) {
-    if (!services.client.subscribe.to(address)) {
-      backlog.add(address);
-    } else {
-      backlog.remove(address);
-    }
-  }
+  void subscribeTo(Address address) => !services.client.subscribe.to(address)
+      ? backlog.add(address)
+      : backlog.remove(address);
 }

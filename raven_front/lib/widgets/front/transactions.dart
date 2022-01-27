@@ -58,20 +58,8 @@ class _TransactionListState extends State<TransactionList> {
     super.dispose();
   }
 
-  void _toggleUSD() {
-    setState(() {
-      if (res.rates.primaryIndex
-              .getOne(res.securities.RVN, res.securities.USD) ==
-          null) {
-        showUSD = false;
-      } else {
-        showUSD = !showUSD;
-      }
-    });
-  }
-
   Future refresh() async {
-    await services.address.triggerDeriveOrBalance();
+    await services.history.produceAddressOrBalance();
     await services.rate.saveRate();
     await services.balance.recalculateAllBalances();
     setState(() {});

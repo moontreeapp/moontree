@@ -7,9 +7,10 @@ Future initWaiters() async {
   waiters.leader.init();
   waiters.single.init();
   waiters.address.init();
-  waiters.ravenClient.init();
+  waiters.client.init();
+  waiters.history.init();
   waiters.setting.init();
-  waiters.addressSubscription.init();
+  waiters.subscription.init();
   waiters.block.init();
   waiters.send.init();
   waiters.import.init();

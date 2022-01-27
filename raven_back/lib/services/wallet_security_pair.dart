@@ -6,7 +6,7 @@ class WalletSecurityPair with EquatableMixin {
   final Wallet wallet;
   final Security security;
 
-  WalletSecurityPair(this.wallet, this.security);
+  WalletSecurityPair({required this.wallet, required this.security});
 
   @override
   List<Object?> get props => [wallet, security];
@@ -18,9 +18,8 @@ Set<WalletSecurityPair> securityPairsFromVoutChanges(List<Change> changes) {
     if (vout.wallet != null) {
       return set
         ..add(WalletSecurityPair(
-            vout.wallet!,
-            res.securities.primaryIndex.getOne(
-                vout.assetSecurityId ?? res.securities.RVN.securityId)!));
+            wallet: vout.wallet!,
+            security: vout.security ?? res.securities.RVN));
     }
     return set;
   });
@@ -31,8 +30,6 @@ Set<WalletSecurityPair> securityPairsFromVouts(List<Vout> vouts) {
     for (var vout in vouts)
       if (vout.wallet != null)
         WalletSecurityPair(
-            vout.wallet!,
-            res.securities.primaryIndex
-                .getOne(vout.assetSecurityId ?? res.securities.RVN.securityId)!)
+            wallet: vout.wallet!, security: vout.security ?? res.securities.RVN)
   };
 }

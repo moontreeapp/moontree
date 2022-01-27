@@ -18,12 +18,18 @@ class VoutReservoir extends Reservoir<_VoutKey, Vout> {
   /// makeshiftIndicies ///////////////////////////////////////////////////////
 
   /// unspent is any vout that doesn't have a corresponding vin
-  /// (accroding to vin.voutPosition == vout.position && vin.vouTxId = vout.transactionId).
-  static Iterable<Vout> whereUnspent(
-          {Iterable<Vout>? given,
-          Security? security,
-          bool includeMempool = true}) =>
-      (given ?? res.vouts.data).where((vout) =>
+  /// (accroding to vin.voutPosition == vout.position && vin.voutTransactionId = vout.transactionId).
+  static Iterable<Vout> whereUnspent({
+    Iterable<Vout>? given,
+    Security? security,
+    bool includeMempool = true,
+  }) =>
+      //(given ?? res.vouts.data).where((Vout vout) =>
+      //    (security != null ? vout.security == security : true) &&
+      //    vout.vin == null);
+      /*
+                  */
+      (given ?? res.vouts.data).where((Vout vout) =>
           ((includeMempool ? true : (vout.transaction?.confirmed ?? false)) &&
               (security != null ? vout.security == security : true) &&
               (security != null && security != res.securities.RVN
@@ -38,8 +44,10 @@ class VoutReservoir extends Reservoir<_VoutKey, Vout> {
                   .toList()
                   .isEmpty));
 
-  static Iterable<Vout> whereUnconfirmed(
-          {Iterable<Vout>? given, Security? security}) =>
+  static Iterable<Vout> whereUnconfirmed({
+    Iterable<Vout>? given,
+    Security? security,
+  }) =>
       (given ?? res.vouts.data).where((vout) =>
           !(vout.transaction?.confirmed ?? false) &&
           (security != null ? vout.security == security : true));
