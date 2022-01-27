@@ -8,7 +8,7 @@ class SingleWaiter extends Waiter {
   void init() {
     listen(
       'ciphers.changes',
-      ciphers.changes,
+      res.ciphers.changes,
       (Change<Cipher> change) {
         change.when(
           // if this cipher update is in the list of wallets missing ciphers...
@@ -35,9 +35,9 @@ class SingleWaiter extends Waiter {
             added: (added) {
               var wallet = added.data;
               if (wallet.cipher != null) {
-                addresses.save(
+                res.addresses.save(
                     services.wallet.single.toAddress(wallet as SingleWallet));
-                addresses.save(services.wallet.single.toAddress(wallet));
+                res.addresses.save(services.wallet.single.toAddress(wallet));
               } else {
                 backlog.add(wallet as SingleWallet);
               }
@@ -58,8 +58,8 @@ class SingleWaiter extends Waiter {
     for (var wallet in backlog) {
       if (wallet.cipherUpdate == cipherUpdate) {
         // why is this happening twice?
-        addresses.save(services.wallet.single.toAddress(wallet));
-        addresses.save(services.wallet.single.toAddress(wallet));
+        res.addresses.save(services.wallet.single.toAddress(wallet));
+        res.addresses.save(services.wallet.single.toAddress(wallet));
         remove.add(wallet);
       }
     }

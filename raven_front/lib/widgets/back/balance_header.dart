@@ -74,7 +74,7 @@ class _BalanceHeaderState extends State<BalanceHeader>
     var divisibility = 8;
     var holdingSat = amountToSat(holding, divisibility: divisibility);
     var amountSat = amountToSat(amount,
-        divisibility: assets.bySymbol.getOne(symbol)?.divisibility ?? 8);
+        divisibility: res.assets.bySymbol.getOne(symbol)?.divisibility ?? 8);
     try {
       visibleFiatAmount = components.text.securityAsReadable(
           amountToSat(double.parse(visibleAmount), divisibility: divisibility),

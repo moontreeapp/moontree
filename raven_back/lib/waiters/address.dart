@@ -2,7 +2,7 @@ import 'package:raven_back/raven_back.dart';
 import 'waiter.dart';
 
 class AddressWaiter extends Waiter {
-  Set<Change<Address>> backlog = {};
+  Set<Address> backlog = {};
 
   /// these two listeners follow the 'backlog' pattern in the event that we're
   /// ready to derive addresses on a newly created wallet, but we have no
@@ -15,15 +15,8 @@ class AddressWaiter extends Waiter {
   void init() {
     listen(
       'addresses.changes',
-      addresses.changes,
-      (Change<Address> change) {
-        if (streams.client.client.value == null ||
-            !streams.client.connected.value) {
-          backlog.add(change);
-        } else {
-          handleAddressChange(change);
-        }
-      },
+      res.addresses.changes,
+      (Change<Address> change) => handleAddressChange(change),
       autoDeinit: true,
     );
 
@@ -32,9 +25,13 @@ class AddressWaiter extends Waiter {
       streams.client.connected,
       (bool connected) {
         if (connected) {
-          backlog
-              .forEach((Change<Address> change) => handleAddressChange(change));
-          backlog.clear();
+          subscribeToBacklog();
+
+          /// everytime we get a connected message
+          /// just make sure you're subscribed to all addresses:
+          var unhandledAddresses =
+              services.client.subscribe.toExistingAddresses();
+          backlog.addAll(unhandledAddresses);
         }
       },
       autoDeinit: true,
@@ -44,17 +41,36 @@ class AddressWaiter extends Waiter {
   void handleAddressChange(Change<Address> change) {
     change.when(
         loaded: (loaded) {},
-        added: (added) {
-          services.client.subscribe.toExistingAddresses();
-        },
-        updated: (updated) {
-          services.client.subscribe.toExistingAddresses();
-        },
+        added: (added) => subscribeTo(added.data),
+        updated: (updated) => subscribeTo(updated.data),
         removed: (removed) {
           var address = removed.data;
-          // could be moved to waiter on transactions...
-          vouts.removeAll(address.vouts.map((vout) => vout).toList());
-          //vins.removeAll(address.vins.map((vin) => vin).toList()); // no way to join on it...
+          services.client.subscribe.unsubscribe(address.addressId);
+          //removed.id as String);
+
+          /// could be moved to waiter on transactions...
+          res.vouts.removeAll(address.vouts.map((vout) => vout).toList());
+
+          /// no way to join on this:
+          //vins.removeAll(address.vins.map((vin) => vin).toList());
         });
+  }
+
+  void subscribeToBacklog() {
+    var returnToBacklog = <Address>{};
+    for (var address in backlog) {
+      if (!services.client.subscribe.to(address)) {
+        returnToBacklog.add(address);
+      }
+    }
+    backlog = returnToBacklog;
+  }
+
+  void subscribeTo(Address address) {
+    if (!services.client.subscribe.to(address)) {
+      backlog.add(address);
+    } else {
+      backlog.remove(address);
+    }
   }
 }

@@ -46,13 +46,13 @@ class TextComponents {
   }) {
     symbol = getSymbol(symbol: symbol, security: security);
     if (symbol == 'RVN') {
-      return securities.RVN;
+      return res.securities.RVN;
     }
     if (symbol == 'USD') {
-      return securities.USD;
+      return res.securities.USD;
     }
     return security ??
-        securities.bySymbolSecurityType
+        res.securities.bySymbolSecurityType
             .getOne(symbol, SecurityType.RavenAsset) ??
         Security(symbol: symbol, securityType: SecurityType.RavenAsset);
   }
@@ -66,10 +66,10 @@ class TextComponents {
       return null;
     }
     security = security ??
-        securities.bySymbolSecurityType
+        res.securities.bySymbolSecurityType
             .getOne(symbol, SecurityType.RavenAsset) ??
         Security(symbol: symbol, securityType: SecurityType.RavenAsset);
-    return assets.bySymbol.getOne(symbol);
+    return res.assets.bySymbol.getOne(symbol);
   }
 
   String getSymbol({

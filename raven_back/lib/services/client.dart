@@ -35,33 +35,34 @@ class ClientService {
       electrumConnectionOptions[electrumSettingsChoice]!.item2;
 
   String get chosenDomain =>
-      settings.primaryIndex.getOne(chosenDomainSetting)!.value;
+      res.settings.primaryIndex.getOne(chosenDomainSetting)!.value;
 
-  int get chosenPort => settings.primaryIndex.getOne(chosenPortSetting)!.value;
+  int get chosenPort =>
+      res.settings.primaryIndex.getOne(chosenPortSetting)!.value;
 
   String get preferredElectrumDomain =>
-      settings.primaryIndex.getOne(SettingName.Electrum_Domain0)!.value;
+      res.settings.primaryIndex.getOne(SettingName.Electrum_Domain0)!.value;
 
   int get preferredElectrumPort =>
-      settings.primaryIndex.getOne(SettingName.Electrum_Port0)!.value;
+      res.settings.primaryIndex.getOne(SettingName.Electrum_Port0)!.value;
 
   String get firstBackupElectrumDomain =>
-      settings.primaryIndex.getOne(SettingName.Electrum_Domain1)!.value;
+      res.settings.primaryIndex.getOne(SettingName.Electrum_Domain1)!.value;
 
   int get firstBackupElectrumPort =>
-      settings.primaryIndex.getOne(SettingName.Electrum_Port1)!.value;
+      res.settings.primaryIndex.getOne(SettingName.Electrum_Port1)!.value;
 
   String get secondBackupElectrumDomain =>
-      settings.primaryIndex.getOne(SettingName.Electrum_Domain2)!.value;
+      res.settings.primaryIndex.getOne(SettingName.Electrum_Domain2)!.value;
 
   int get secondBackupElectrumPort =>
-      settings.primaryIndex.getOne(SettingName.Electrum_Port2)!.value;
+      res.settings.primaryIndex.getOne(SettingName.Electrum_Port2)!.value;
 
   String get testElectrumDomain =>
-      settings.primaryIndex.getOne(SettingName.Electrum_DomainTest)!.value;
+      res.settings.primaryIndex.getOne(SettingName.Electrum_DomainTest)!.value;
 
   int get testElectrumPort =>
-      settings.primaryIndex.getOne(SettingName.Electrum_PortTest)!.value;
+      res.settings.primaryIndex.getOne(SettingName.Electrum_PortTest)!.value;
 
   bool get connectionStatus =>
       streams.client.client.stream.valueOrNull != null ? true : false;
@@ -69,7 +70,7 @@ class ClientService {
   Future<RavenElectrumClient?> createClient(
       {String projectName = 'MTWallet', String buildVersion = '0.1'}) async {
     try {
-      if (settings.primaryIndex.getOne(SettingName.Electrum_Net)?.value ==
+      if (res.settings.primaryIndex.getOne(SettingName.Electrum_Net)?.value ==
           Net.Test) {
         return await RavenElectrumClient.connect(
           testElectrumDomain,
@@ -96,7 +97,7 @@ class ClientService {
 
   Future saveElectrumAddresses(
       {required List<String> domains, required List<int> ports}) async {
-    await settings.saveAll([
+    await res.settings.saveAll([
       Setting(name: SettingName.Electrum_Domain0, value: domains[0]),
       Setting(name: SettingName.Electrum_Port0, value: ports[0]),
       Setting(name: SettingName.Electrum_Domain1, value: domains[1]),
@@ -112,29 +113,35 @@ class ClientService {
 /// managing our address subscriptions
 class SubscribeService {
   final Map<String, StreamSubscription> subscriptionHandles = {};
-  final PublishSubject<Address> addressesNeedingUpdate = PublishSubject();
+  //final PublishSubject<Address> movementDetected = PublishSubject();
 
-  void toExistingAddresses([RavenElectrumClient? client]) {
-    for (var address in addresses) {
+  List<Address> toExistingAddresses([RavenElectrumClient? client]) {
+    var unhandledAddresses = <Address>[];
+    for (var address in res.addresses) {
       if (address.account!.net ==
-          settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value) {
-        if (!subscriptionHandles.keys.contains(address.addressId)) {
-          // getting a client error here during startup (before client instanteated)
-          // we shouldn't trigger thais until we have a client up.
-          // or we should backlog it.
-          to(client ?? streams.client.client.value!, address);
+          res.settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value) {
+        if (!to(address)) {
+          unhandledAddresses.add(address);
         }
       }
     }
+    return unhandledAddresses;
   }
 
-  void to(RavenElectrumClient client, Address address) {
-    // we get a status back as soon as we subscribe... so we don't need to do it here.
-    //addressesNeedingUpdate.sink.add(address);
-    var stream = client.subscribeScripthash(address.addressId);
-    subscriptionHandles[address.addressId] = stream.listen((status) {
-      addressesNeedingUpdate.sink.add(address);
-    });
+  bool to(Address address) {
+    var client = streams.client.client.value;
+    if (client == null) {
+      return false;
+    }
+    if (!subscriptionHandles.keys.contains(address.addressId)) {
+      subscriptionHandles[address.addressId] = client
+          .subscribeScripthash(address.addressId)
+          .listen((String? status) {
+        unawaited(waiters.addressSubscription.retrieve(address));
+        //movementDetected.sink.add(address);
+      });
+    }
+    return true;
   }
 
   void unsubscribe(String addressId) {

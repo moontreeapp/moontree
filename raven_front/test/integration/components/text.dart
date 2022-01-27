@@ -19,7 +19,7 @@ void main() {
     });
 
     test('asset amount with divisibilty', () async {
-      await assets.save(Asset(
+      await res.assets.save(Asset(
           symbol: 'MOONTREE',
           satsInCirculation: 1000,
           divisibility: 2,
@@ -43,7 +43,7 @@ void main() {
     });
 
     test('asset to RVN then to USD with rate (and divisibility)', () async {
-      await assets.save(Asset(
+      await res.assets.save(Asset(
           symbol: 'MOONTREE',
           satsInCirculation: 1000,
           divisibility: 2,
@@ -51,7 +51,7 @@ void main() {
           metadata: '',
           transactionId: '',
           position: 0));
-      await rates.saveAll([
+      await res.rates.saveAll([
         Rate(
             base: Security(symbol: 'RVN', securityType: SecurityType.Crypto),
             quote: Security(symbol: 'USD', securityType: SecurityType.Fiat),
@@ -78,7 +78,7 @@ void main() {
     });
 
     test('RVN to USD with rate', () async {
-      await rates.save(Rate(
+      await res.rates.save(Rate(
           base: Security(symbol: 'RVN', securityType: SecurityType.Crypto),
           quote: Security(symbol: 'USD', securityType: SecurityType.Fiat),
           rate: 3.0));

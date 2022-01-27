@@ -14,8 +14,8 @@ class TransactionReservoir extends Reservoir<_TxHashKey, Transaction> {
     byConfirmed = addIndexMultiple('confirmed', _ConfirmedKey());
   }
 
-  List<Transaction> get chronological => transactions.data.toList()
+  List<Transaction> get chronological => res.transactions.data.toList()
     ..sort((a, b) => (b.height ?? maxInt).compareTo(a.height ?? maxInt));
 
-  List<Transaction> get mempool => transactions.byConfirmed.getAll(false);
+  List<Transaction> get mempool => res.transactions.byConfirmed.getAll(false);
 }

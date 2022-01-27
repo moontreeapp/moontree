@@ -1,36 +1,37 @@
 part of 'joins.dart';
 
 extension AssetHasOneSecurity on Asset {
-  Security? get security => globals.securities.bySymbolSecurityType
+  Security? get security => globals.res.securities.bySymbolSecurityType
       .getOne(symbol, SecurityType.RavenAsset);
 }
 
 extension AssetHasOneMetadata on Asset {
   Metadata? get primaryMetadata => [
-        globals.metadatas.bySymbolMetadata.getOne(nonMasterSymbol, metadata)
+        globals.res.metadatas.bySymbolMetadata.getOne(nonMasterSymbol, metadata)
       ].where((md) => md?.parent == null).firstOrNull;
 }
 
 extension AssetHasManyMetadata on Asset {
   List<Metadata?> get metadatas =>
-      globals.metadatas.bySymbol.getAll(nonMasterSymbol);
+      globals.res.metadatas.bySymbol.getAll(nonMasterSymbol);
 }
 
 extension AssetHasOneLogoMetadata on Asset {
   Metadata? get logo {
-    var childrenMetadata = globals.metadatas.bySymbol.getAll(nonMasterSymbol);
+    var childrenMetadata =
+        globals.res.metadatas.bySymbol.getAll(nonMasterSymbol);
     for (var child in childrenMetadata) {
       if (child.logo) {
         return child;
       }
     }
     var primaryMetadata = [
-      globals.metadatas.bySymbolMetadata.getOne(nonMasterSymbol, metadata)
+      globals.res.metadatas.bySymbolMetadata.getOne(nonMasterSymbol, metadata)
     ].where((md) => md?.parent == null).firstOrNull;
     if (primaryMetadata?.kind == MetadataType.ImagePath) {
       return primaryMetadata;
     }
-    var nonMasterPrimaryMetadata = globals.metadatas.bySymbol
+    var nonMasterPrimaryMetadata = globals.res.metadatas.bySymbol
         .getAll(nonMasterSymbol)
         .where((md) => md.parent == null)
         .firstOrNull;

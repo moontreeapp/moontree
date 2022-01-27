@@ -86,34 +86,34 @@ class HiveInitializer {
   }
 
   void load() {
-    accounts.setSource(HiveSource('accounts'));
-    addresses.setSource(HiveSource('addresses'));
-    balances.setSource(HiveSource('balances'));
-    blocks.setSource(HiveSource('blocks'));
-    assets.setSource(HiveSource('assets'));
-    metadatas.setSource(HiveSource('metadatas'));
+    res.accounts.setSource(HiveSource('accounts'));
+    res.addresses.setSource(HiveSource('addresses'));
+    res.balances.setSource(HiveSource('balances'));
+    res.blocks.setSource(HiveSource('blocks'));
+    res.assets.setSource(HiveSource('assets'));
+    res.metadatas.setSource(HiveSource('metadatas'));
 
     /// this needs to be inmemory:
-    // ciphers.setSource(HiveSource(
+    // res.ciphers.setSource(HiveSource(
     //   'ciphers',
     //   defaults: CipherReservoir.defaults,
     // ));
-    ciphers.setSource(MapSource(CipherReservoir.defaults));
+    res.ciphers.setSource(MapSource(CipherReservoir.defaults));
 
-    passwords.setSource(HiveSource('passwords'));
-    rates.setSource(HiveSource('rates'));
-    securities.setSource(HiveSource(
+    res.passwords.setSource(HiveSource('passwords'));
+    res.rates.setSource(HiveSource('rates'));
+    res.securities.setSource(HiveSource(
       'securities',
       defaults: SecurityReservoir.defaults,
     ));
-    settings.setSource(HiveSource(
+    res.settings.setSource(HiveSource(
       'settings',
       defaults: SettingReservoir.defaults,
     ));
-    transactions.setSource(HiveSource('transactions'));
-    wallets.setSource(HiveSource('wallets'));
-    vins.setSource(HiveSource('vins'));
-    vouts.setSource(HiveSource('vouts'));
+    res.transactions.setSource(HiveSource('transactions'));
+    res.wallets.setSource(HiveSource('wallets'));
+    res.vins.setSource(HiveSource('vins'));
+    res.vouts.setSource(HiveSource('vouts'));
   }
 
   Future destroy() async {

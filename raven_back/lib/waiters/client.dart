@@ -44,7 +44,7 @@ class RavenClientWaiter extends Waiter {
                 streams.client.client.sink.add(newRavenClient);
                 await periodicTimer?.cancel();
               } else {
-                if (settings.primaryIndex
+                if (res.settings.primaryIndex
                         .getOne(SettingName.Electrum_Net)!
                         .value ==
                     Net.Main) {
@@ -79,7 +79,7 @@ class RavenClientWaiter extends Waiter {
 
     listen(
         'settings.changes',
-        settings.changes.where((change) =>
+        res.settings.changes.where((change) =>
             (change is Added || change is Updated) &&
             change.data.name == SettingName.Electrum_Net), (_) {
       streams.client.client.sink.add(null);

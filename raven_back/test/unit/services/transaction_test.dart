@@ -19,7 +19,8 @@ void main() async {
 
   group('Collect Unspents', () {
     test('rvn wallet unspents', () {
-      VoutReservoir.whereUnspent(given: wallet.vouts, security: securities.RVN)
+      VoutReservoir.whereUnspent(
+              given: wallet.vouts, security: res.securities.RVN)
           .toList();
       //expect(?, ?);
     });
@@ -32,7 +33,7 @@ void main() async {
     test('asset wallet unspents', () {
       VoutReservoir.whereUnspent(
               given: wallet.vouts,
-              security: securities.bySymbolSecurityType
+              security: res.securities.bySymbolSecurityType
                   .getOne('MOONTREE', SecurityType.RavenAsset))
           .toList();
       //expect(?, ?);
@@ -41,7 +42,7 @@ void main() async {
     test('asset account unspents', () {
       VoutReservoir.whereUnspent(
               given: account.vouts,
-              security: securities.bySymbolSecurityType
+              security: res.securities.bySymbolSecurityType
                   .getOne('MOONTREE', SecurityType.RavenAsset))
           .toList();
       //expect(?, ?);
@@ -50,7 +51,7 @@ void main() async {
     test('missing asset account unspents', () {
       VoutReservoir.whereUnspent(
               given: account.vouts,
-              security: securities.bySymbolSecurityType
+              security: res.securities.bySymbolSecurityType
                   .getOne('lalala', SecurityType.RavenAsset))
           .toList();
       //expect(0);
@@ -59,7 +60,8 @@ void main() async {
 
   group('Collect Sorted Unspents', () {
     test('rvn wallet unspents', () {
-      services.balance.sortedUnspentsWallets(wallet, security: securities.RVN);
+      services.balance
+          .sortedUnspentsWallets(wallet, security: res.securities.RVN);
       //expect(?, ?);
     });
 
@@ -70,14 +72,14 @@ void main() async {
 
     test('asset wallet unspents', () {
       services.balance.sortedUnspentsWallets(wallet,
-          security: securities.bySymbolSecurityType
+          security: res.securities.bySymbolSecurityType
               .getOne('MOONTREE', SecurityType.RavenAsset));
       //expect(?, ?);
     });
 
     test('asset account unspents', () {
       services.balance.sortedUnspents(account,
-          security: securities.bySymbolSecurityType
+          security: res.securities.bySymbolSecurityType
               .getOne('MOONTREE', SecurityType.RavenAsset));
       //expect(?, ?);
     });
@@ -85,7 +87,7 @@ void main() async {
     test('missing asset account unspents', () {
       services.balance
           .sortedUnspents(account,
-              security: securities.bySymbolSecurityType
+              security: res.securities.bySymbolSecurityType
                   .getOne('lalala', SecurityType.RavenAsset))
           .toList();
       //expect(0);
@@ -97,13 +99,13 @@ void main() async {
 
     test('pick smallest UTXO of sufficient size', () {
       var utxos = services.balance.collectUTXOs(
-          accounts.primaryIndex.getByKeyStr('a0')[0],
+          res.accounts.primaryIndex.getByKeyStr('a0')[0],
           amount: 500);
       expect(utxos.map((utxo) => utxo.rvnValue).toList(), [5000000]);
     });
     test('take multiple from the top', () {
       var utxos = services.balance.collectUTXOs(
-          accounts.primaryIndex.getByKeyStr('a0')[0],
+          res.accounts.primaryIndex.getByKeyStr('a0')[0],
           amount: 12000000);
       expect(utxos.map((utxo) => utxo.rvnValue).toList(), [10000000, 5000000]);
     });
@@ -114,17 +116,17 @@ void main() async {
 
     test('pick smallest UTXO of sufficient size', () {
       var utxos = services.balance.collectUTXOs(
-          accounts.primaryIndex.getByKeyStr('a0')[0],
+          res.accounts.primaryIndex.getByKeyStr('a0')[0],
           amount: 500,
-          security: securities.bySymbolSecurityType
+          security: res.securities.bySymbolSecurityType
               .getOne('MOONTREE', SecurityType.RavenAsset));
       expect(utxos.map((utxo) => utxo.rvnValue).toList(), [5000000]);
     });
     test('take multiple from the top', () {
       var utxos = services.balance.collectUTXOs(
-          accounts.primaryIndex.getByKeyStr('a0')[0],
+          res.accounts.primaryIndex.getByKeyStr('a0')[0],
           amount: 12000000,
-          security: securities.bySymbolSecurityType
+          security: res.securities.bySymbolSecurityType
               .getOne('MOONTREE', SecurityType.RavenAsset));
       expect(utxos.map((utxo) => utxo.rvnValue).toList(), [10000000, 5000000]);
     });
@@ -147,7 +149,7 @@ void main() async {
 
     test('test BuildTransaction', () {
       var t = TransactionService().buildTransaction(
-        accounts.primaryIndex.getByKeyStr('a0')[0],
+        res.accounts.primaryIndex.getByKeyStr('a0')[0],
         //'RM2fJN6HCLKp2DnmKMA5SBYvdKBCvmyaju',
         'mtraysi8CBwHSSmyoEHPKBWZxc4vh6Phpn',
         SendEstimate(4),

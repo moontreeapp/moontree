@@ -9,10 +9,10 @@ Future<bool> updateAcount(Account account, String name) async {
     return true;
   }
   name = removeChars(name);
-  if (accounts.byName.getAll(name).length > 0 || name == '') {
+  if (res.accounts.byName.getAll(name).length > 0 || name == '') {
     return false;
   }
-  await accounts.save(
+  await res.accounts.save(
       Account(accountId: account.accountId, name: name, net: account.net));
   return true;
 }
@@ -54,7 +54,7 @@ Future validateAndCreateAccount(
         msg: 'Please enter new account name');
     return;
   }
-  if (accounts.data
+  if (res.accounts.data
       .map((account) => account.name)
       .toList()
       .contains(desiredAccountName)) {
@@ -76,8 +76,8 @@ Future validateAndCreateAccount(
   // it needs enough time to display the message
   await Future.delayed(const Duration(milliseconds: 150));
   var account = await services.account.createSave(desiredAccountName,
-      net: settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value);
-  await settings.save(
+      net: res.settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value);
+  await res.settings.save(
       Setting(name: SettingName.Account_Current, value: account.accountId));
   Navigator.popUntil(context, ModalRoute.withName('/home'));
   desiredAccountName = '';

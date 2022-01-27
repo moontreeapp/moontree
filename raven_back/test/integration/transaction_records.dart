@@ -12,10 +12,10 @@ void main() async {
   group('create TransactionRecords list', () {
     test('', () {
       // for testing
-      print('accounts: ${accounts.data}');
-      print('accounts: ${transactions.data}');
-      print('accounts: ${vins.data}');
-      print('accounts: ${vouts.data}');
+      print('accounts: ${res.accounts.data}');
+      print('accounts: ${res.transactions.data}');
+      print('accounts: ${res.vins.data}');
+      print('accounts: ${res.vouts.data}');
       //print('wallets: ${wallets.data}');
       //print('passwords: ${passwords.data}');
       //print('addresses: ${addresses.data}');

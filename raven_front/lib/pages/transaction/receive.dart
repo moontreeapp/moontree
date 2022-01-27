@@ -89,7 +89,8 @@ class _ReceiveState extends State<Receive> {
 
   @override
   Widget build(BuildContext context) {
-    username = settings.primaryIndex.getOne(SettingName.User_Name)?.value ?? '';
+    username =
+        res.settings.primaryIndex.getOne(SettingName.User_Name)?.value ?? '';
     data = populateData(context, data);
     print(data['symbol']);
     requestMessage.text = requestMessage.text == ''

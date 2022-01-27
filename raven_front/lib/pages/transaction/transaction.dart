@@ -25,7 +25,7 @@ class _TransactionPageState extends State<TransactionPage> {
   @override
   void initState() {
     super.initState();
-    listeners.add(blocks.changes.listen((changes) {
+    listeners.add(res.blocks.changes.listen((changes) {
       setState(() {});
     }));
   }
@@ -58,7 +58,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
   int? getBlocksBetweenHelper({Transaction? tx, Block? current}) {
     tx = tx ?? transaction!;
-    current = current ?? blocks.latest;
+    current = current ?? res.blocks.latest;
     return (current != null && tx.height != null)
         ? current.height - tx.height!
         : null;

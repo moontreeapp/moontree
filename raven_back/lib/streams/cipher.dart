@@ -23,9 +23,9 @@ final latestCipherUpdate$ = CombineLatestStream.combine2(
 
 /// returns the latest cipher as defined by its inputs
 final Stream<Cipher> latestCipher$ = CombineLatestStream.combine2(
-        ciphers.changes,
+        res.ciphers.changes,
         latestCipherUpdate$,
         (Change<Cipher> change, CipherUpdate cipherUpdate) =>
-            ciphers.primaryIndex.getOne(cipherUpdate))
+            res.ciphers.primaryIndex.getOne(cipherUpdate))
     .whereType<Cipher>()
     .distinctUnique();

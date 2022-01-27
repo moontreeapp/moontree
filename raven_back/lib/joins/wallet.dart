@@ -1,18 +1,19 @@
 part of 'joins.dart';
 
 extension WalletBelongsToCipher on Wallet {
-  //CipherBase? get cipher => globals.cipherRegistry.ciphers[cipherUpdate];
+  //CipherBase? get cipher => globals.res.cipherRegistry.ciphers[cipherUpdate];
   CipherBase? get cipher => cipherUpdate.cipherType == CipherType.None
-      ? globals.ciphers.data.firstOrNull?.cipher
-      : globals.ciphers.primaryIndex.getOne(cipherUpdate)?.cipher;
+      ? globals.res.ciphers.data.firstOrNull?.cipher
+      : globals.res.ciphers.primaryIndex.getOne(cipherUpdate)?.cipher;
 }
 
 extension WalletBelongsToAccount on Wallet {
-  Account? get account => globals.accounts.primaryIndex.getOne(accountId);
+  Account? get account => globals.res.accounts.primaryIndex.getOne(accountId);
 }
 
 extension WalletHasManyAddresses on Wallet {
-  List<Address> get addresses => globals.addresses.byWallet.getAll(walletId);
+  List<Address> get addresses =>
+      globals.res.addresses.byWallet.getAll(walletId);
 }
 
 // change addresses
@@ -48,17 +49,17 @@ extension WalletHasManyUsedExternalAddresses on Wallet {
 }
 
 extension WalletHasManyBalances on Wallet {
-  List<Balance> get balances => globals.balances.byWallet.getAll(walletId);
+  List<Balance> get balances => globals.res.balances.byWallet.getAll(walletId);
 }
 
 extension WalletHasManyVouts on Wallet {
   Iterable<Vout> get vouts =>
-      globals.vouts.data.where((vout) => vout.wallet?.walletId == walletId);
+      globals.res.vouts.data.where((vout) => vout.wallet?.walletId == walletId);
 }
 
 extension WalletHasManyVins on Wallet {
   Iterable<Vin> get vins =>
-      globals.vins.data.where((vin) => vin.wallet?.walletId == walletId);
+      globals.res.vins.data.where((vin) => vin.wallet?.walletId == walletId);
 }
 
 extension WalletHasManyTransactions on Wallet {

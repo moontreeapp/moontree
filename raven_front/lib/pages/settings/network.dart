@@ -38,10 +38,11 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
         '${services.client.secondBackupElectrumDomain}:${services.client.secondBackupElectrumPort}';
     electrumAddressTest.text =
         '${services.client.testElectrumDomain}:${services.client.testElectrumPort}';
-    listeners.add(settings.changes.listen((changes) => setState(() {})));
+    listeners.add(res.settings.changes.listen((changes) => setState(() {})));
     listeners.add(streams.client.client.stream
         .listen((ravenClient) async => setState(() {})));
-    var value = settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value;
+    var value =
+        res.settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value;
     isSelected = isSelected ?? [value == Net.Main, value == Net.Test];
     super.initState();
   }
@@ -114,19 +115,21 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
               onPressed: (int index) async {
                 if (index == 0 && !isSelected!.first) {
                   isSelected = [true, false];
-                  await settings.save(
+                  await res.settings.save(
                       Setting(name: SettingName.Electrum_Net, value: Net.Main));
-                  var changeAccount = accounts.getBestAccount(Net.Main);
+                  var changeAccount = res.accounts.getBestAccount(Net.Main);
                   if (changeAccount != null) {
-                    await settings.setCurrentAccountId(changeAccount.accountId);
+                    await res.settings
+                        .setCurrentAccountId(changeAccount.accountId);
                   }
                 } else if (index == 1 && !isSelected!.last) {
                   isSelected = [false, true];
-                  await settings.save(
+                  await res.settings.save(
                       Setting(name: SettingName.Electrum_Net, value: Net.Test));
-                  var changeAccount = accounts.getBestAccount(Net.Test);
+                  var changeAccount = res.accounts.getBestAccount(Net.Test);
                   if (changeAccount != null) {
-                    await settings.setCurrentAccountId(changeAccount.accountId);
+                    await res.settings
+                        .setCurrentAccountId(changeAccount.accountId);
                   }
                 }
                 setState(() {});

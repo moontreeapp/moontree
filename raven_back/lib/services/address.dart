@@ -9,18 +9,19 @@ class AddressService {
   Set<String> retrieved = {};
 
   /// when an address status change: pull txs match blockchain
-  Future getAndSaveTransactionsByAddresses(
-    Address address,
-    RavenElectrumClient client,
-  ) async {
+  Future<bool> getAndSaveTransactionsByAddresses(Address address) async {
+    var client = streams.client.client.value;
+    if (client == null) {
+      return false;
+    }
     // erase all vins and vouts not pulled. (or just remove all first - the simple way).
-    ///await vins.removeAll(vins.byAddress.getAll(addressId)); // broken join
-    ///await vouts.removeAll(vouts.byAddress.getAll(changedAddress.address));
+    ///await res.vins.removeAll(res.vins.byAddress.getAll(addressId)); // broken join
+    ///await res.vouts.removeAll(res.vouts.byAddress.getAll(changedAddress.address));
 
     /// never purge tx (unless theres a reorg or something)
     /// transactions are not associated with addresses directly
-    //var removeTransactions = transactions.byScripthash.getAll(addressId);
-    //await transactions.removeAll(removeTransactions);
+    //var removeTransactions = res.transactions.byScripthash.getAll(addressId);
+    //await res.transactions.removeAll(removeTransactions);
 
     // get a list of all historic transaction ids assicated with this address
     // ignore: omit_local_variable_types
@@ -38,8 +39,8 @@ class AddressService {
         /// downloaded in a particular order, it caused the error of not
         /// downloading every transaction we needed, somehow. So this
         /// condition has been removed.
-        //if (transactions.primaryIndex.getOne(txHash) == null ||
-        //    transactions.primaryIndex.getOne(txHash)!.vins.isEmpty)
+        //if (res.transactions.primaryIndex.getOne(txHash) == null ||
+        //    res.transactions.primaryIndex.getOne(txHash)!.res.vins.isEmpty)
         await client.getTransaction(txHash)
     ], client);
     unretrieved.remove(address.addressId);
@@ -50,6 +51,7 @@ class AddressService {
     /// pull vouts for vins that don't have corresponding vouts and
     /// calculate all balances.
     await triggerDeriveOrBalance(client);
+    return true;
   }
 
   // if all the leader wallets have their empty addresses gaps satisfied,
@@ -62,10 +64,10 @@ class AddressService {
     client = client ?? streams.client.client.value;
     if (unretrieved.isEmpty) {
       var allDone = true;
-      for (var leader in wallets.leaders) {
+      for (var leader in res.wallets.leaders) {
         for (var exposure in [NodeExposure.Internal, NodeExposure.External]) {
           if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
-            if (ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
+            if (res.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
               allDone = false;
               var derived = services.wallet.leader.deriveMoreAddresses(
                 leader,
@@ -98,7 +100,7 @@ class AddressService {
     await saveTransactions(
       [
         for (var transactionId
-            in transactions.mempool.map((t) => t.transactionId))
+            in res.transactions.mempool.map((t) => t.transactionId))
           await client.getTransaction(transactionId)
       ],
       client,
@@ -164,13 +166,13 @@ class AddressService {
       ));
     }
 
-    //await vins.removeAll(existingVins.difference(newVins));
-    //await vouts.removeAll(existingVouts.difference(newVouts));
+    //await res.vins.removeAll(existingVins.difference(newVins));
+    //await res.vouts.removeAll(existingVouts.difference(newVouts));
 
     // must await?
-    await transactions.saveAll(newTxs);
-    await vins.saveAll(newVins);
-    await vouts.saveAll(newVouts);
+    await res.transactions.saveAll(newTxs);
+    await res.vins.saveAll(newVins);
+    await res.vouts.saveAll(newVouts);
   }
 
   /// when an address status change: make our historic tx data match blockchain
@@ -183,7 +185,7 @@ class AddressService {
     var finalTxs = <Transaction>[];
     // ignore: omit_local_variable_types
     var myVins =
-        List.from(vins.danglingVins.map((vin) => vin.voutTransactionId));
+        List.from(res.vins.danglingVins.map((vin) => vin.voutTransactionId));
     // ignore: omit_local_variable_types
     List<Tx> txs = [
       for (var txHash in myVins) await client.getTransaction(txHash)
@@ -222,8 +224,8 @@ class AddressService {
         time: tx.time,
       ));
     }
-    await transactions.saveAll(finalTxs);
-    await vouts.saveAll(finalVouts);
+    await res.transactions.saveAll(finalTxs);
+    await res.vouts.saveAll(finalVouts);
   }
 
   /// we capture securities here. if it's one we've never seen,
@@ -236,15 +238,15 @@ class AddressService {
   ) async {
     var symbol = 'RVN';
     var value = vout.valueSat;
-    var security =
-        securities.bySymbolSecurityType.getOne(symbol, SecurityType.RavenAsset);
-    var asset = assets.bySymbol.getOne(symbol);
+    var security = res.securities.bySymbolSecurityType
+        .getOne(symbol, SecurityType.RavenAsset);
+    var asset = res.assets.bySymbol.getOne(symbol);
     if (security == null) {
       if (vout.scriptPubKey.type == 'transfer_asset') {
         symbol = vout.scriptPubKey.asset!;
         value = amountToSat(vout.scriptPubKey.amount,
             divisibility: vout.scriptPubKey.units ?? 8);
-        //if we have no record of it in securities...
+        //if we have no record of it in res.securities...
         var meta = await client.getMeta(symbol);
         if (meta != null) {
           value = amountToSat(vout.scriptPubKey.amount,
@@ -267,7 +269,7 @@ class AddressService {
             symbol: meta.symbol,
             securityType: SecurityType.RavenAsset,
           );
-          await securities.save(security);
+          await res.securities.save(security);
         }
       } else if (vout.scriptPubKey.type == 'new_asset') {
         symbol = vout.scriptPubKey.asset!;
@@ -287,9 +289,9 @@ class AddressService {
           symbol: symbol,
           securityType: SecurityType.RavenAsset,
         );
-        await securities.save(security);
+        await res.securities.save(security);
       }
     }
-    return Tuple3(value, security ?? securities.RVN, asset);
+    return Tuple3(value, security ?? res.securities.RVN, asset);
   }
 }

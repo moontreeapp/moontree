@@ -23,13 +23,13 @@ class VoutReservoir extends Reservoir<_VoutKey, Vout> {
           {Iterable<Vout>? given,
           Security? security,
           bool includeMempool = true}) =>
-      (given ?? vouts.data).where((vout) =>
+      (given ?? res.vouts.data).where((vout) =>
           ((includeMempool ? true : (vout.transaction?.confirmed ?? false)) &&
               (security != null ? vout.security == security : true) &&
-              (security != null && security != securities.RVN
+              (security != null && security != res.securities.RVN
                   ? vout.securityValue(security: security) > 0
                   : true) &&
-              vins
+              res.vins
                   .where((vin) => ((includeMempool
                           ? true
                           : (vin.transaction?.confirmed ?? false)) &&
@@ -40,7 +40,7 @@ class VoutReservoir extends Reservoir<_VoutKey, Vout> {
 
   static Iterable<Vout> whereUnconfirmed(
           {Iterable<Vout>? given, Security? security}) =>
-      (given ?? vouts.data).where((vout) =>
+      (given ?? res.vouts.data).where((vout) =>
           !(vout.transaction?.confirmed ?? false) &&
           (security != null ? vout.security == security : true));
 }

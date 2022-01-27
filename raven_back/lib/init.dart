@@ -2,20 +2,20 @@ import 'package:raven_back/raven_back.dart';
 
 Future initWaiters() async {
   // The following waiters must be inited before HiveInitializer.load()
-  // accountWaiter.init();
+  //waiters.account.init();
 
-  leaderWaiter.init();
-  singleWaiter.init();
-  addressWaiter.init();
-  ravenClientWaiter.init();
-  settingWaiter.init();
-  addressSubscriptionWaiter.init();
-  blockWaiter.init();
-  sendWaiter.init();
-  importWaiter.init();
-  passwordWaiter.init();
+  waiters.leader.init();
+  waiters.single.init();
+  waiters.address.init();
+  waiters.ravenClient.init();
+  waiters.setting.init();
+  waiters.addressSubscription.init();
+  waiters.block.init();
+  waiters.send.init();
+  waiters.import.init();
+  waiters.password.init();
   // todo: don't kill app if this fails
-  await rateWaiter.init();
+  await waiters.rate.init();
 }
 
 

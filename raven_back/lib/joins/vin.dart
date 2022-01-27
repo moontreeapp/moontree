@@ -4,11 +4,11 @@ part of 'joins.dart';
 
 extension VinBelongsToTransaction on Vin {
   Transaction? get transaction =>
-      globals.transactions.primaryIndex.getOne(transactionId);
+      globals.res.transactions.primaryIndex.getOne(transactionId);
 }
 
 extension VinHasOneVout on Vin {
-  Vout? get vout => globals.vouts.primaryIndex
+  Vout? get vout => globals.res.vouts.primaryIndex
       .getOne(Vout.getVoutId(voutTransactionId, voutPosition));
 }
 

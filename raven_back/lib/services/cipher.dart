@@ -8,7 +8,7 @@ class CipherService {
   List<CipherType> get allCipherTypes => [CipherType.AES, CipherType.None];
 
   CipherType get latestCipherType => services.password.exist
-      ? passwords.current!.saltedHash == ''
+      ? res.passwords.current!.saltedHash == ''
           ? CipherType.None
           : CipherType.AES
       : CipherType.None;
@@ -17,13 +17,13 @@ class CipherService {
   String toString() => 'latestCipherType: ${latestCipherType.enumString}';
 
   CipherUpdate get currentCipherUpdate =>
-      CipherUpdate(latestCipherType, passwordId: passwords.maxPasswordId);
+      CipherUpdate(latestCipherType, passwordId: res.passwords.maxPasswordId);
 
   CipherUpdate get noneCipherUpdate =>
-      CipherUpdate(CipherType.None, passwordId: passwords.maxPasswordId);
+      CipherUpdate(CipherType.None, passwordId: res.passwords.maxPasswordId);
 
   Cipher? get currentCipherBase =>
-      ciphers.primaryIndex.getOne(currentCipherUpdate);
+      res.ciphers.primaryIndex.getOne(currentCipherUpdate);
 
   CipherBase? get currentCipher => currentCipherBase?.cipher;
 
@@ -31,7 +31,7 @@ class CipherService {
   Future updateWallets({CipherBase? cipher}) async {
     services.busy.encryptionOn();
     var records = <Wallet>[];
-    for (var wallet in wallets.data) {
+    for (var wallet in res.wallets.data) {
       if (wallet.cipherUpdate != currentCipherUpdate) {
         if (wallet is LeaderWallet) {
           records.add(reencryptLeaderWallet(wallet, cipher));
@@ -40,7 +40,7 @@ class CipherService {
         }
       }
     }
-    await wallets.saveAll(records);
+    await res.wallets.saveAll(records);
     services.busy.encryptionOff();
 
     /// completed successfully
@@ -84,7 +84,7 @@ class CipherService {
   }) {
     password = getPassword(password: password, altPassword: altPassword);
     for (var currentCipherUpdate in currentCipherUpdates ?? _cipherUpdates) {
-      ciphers.registerCipher(currentCipherUpdate, password);
+      res.ciphers.registerCipher(currentCipherUpdate, password);
     }
   }
 
@@ -95,9 +95,10 @@ class CipherService {
   }) {
     latest = latest ?? latestCipherType;
     password = getPassword(password: password, altPassword: altPassword);
-    return ciphers.registerCipher(
+    return res.ciphers.registerCipher(
       password == []
-          ? CipherUpdate(CipherType.None, passwordId: passwords.maxPasswordId)
+          ? CipherUpdate(CipherType.None,
+              passwordId: res.passwords.maxPasswordId)
           : currentCipherUpdate,
       password,
     );
@@ -106,10 +107,10 @@ class CipherService {
   /// after wallets are updated or verified to be up to date
   /// remove all ciphers that no wallet uses and that are not the current one
   void cleanupCiphers() {
-    ciphers.removeAll(ciphers.data
+    res.ciphers.removeAll(res.ciphers.data
         .where((cipher) => !_cipherUpdates.contains(cipher.cipherUpdate)));
 
-    if (ciphers.data.length > 2) {
+    if (res.ciphers.data.length > 2) {
       // in theory a wallet is not updated ... error?
       print('more ciphers than default and password - that is weird');
     }
@@ -123,7 +124,7 @@ class CipherService {
     password ??
         altPassword ??
         (() => throw OneOfMultipleMissing(
-            'password or altPassword required to initialize ciphers.'))();
+            'password or altPassword required to initialize res.ciphers.'))();
     return password ?? Uint8List.fromList(altPassword!.codeUnits);
   }
 }

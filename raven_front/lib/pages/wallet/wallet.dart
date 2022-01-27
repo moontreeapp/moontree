@@ -269,7 +269,7 @@ class _WalletViewState extends State<WalletView> {
                       ? components.icons.out(context)
                       : components.icons.income(context)),
                   Text(walletAddress.address,
-                      style: vouts.byAddress
+                      style: res.vouts.byAddress
                               .getAll(walletAddress.address)
                               .isNotEmpty
                           ? Theme.of(context)

@@ -37,36 +37,36 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
     var hiveInit = HiveInitializer(
         init: (dbDir) => Hive.initFlutter(),
         beforeLoad: () {
-          accountWaiter.init();
+          waiters.account.init();
         });
     await hiveInit.setUp();
     await initWaiters();
     initListeners();
-    await settings.save(Setting(
+    await res.settings.save(Setting(
         name: SettingName.Local_Path, value: await Storage().localPath));
-    if (accounts.data.isEmpty) {
+    if (res.accounts.data.isEmpty) {
       await setupAccounts();
       await setupRealWallet();
     }
-    settings.setCurrentAccountId();
+    res.settings.setCurrentAccountId();
 
     // for testing
     print('-------------------------');
-    print('accounts: ${accounts.data}');
-    print('addresses: ${addresses.data}');
-    print('assets: ${assets.data}');
-    print('balances: ${balances.data}');
-    print('blocks: ${blocks.data}');
-    print('ciphers: ${ciphers.data}');
-    print('metadata: ${metadatas.data}');
-    print('passwords: ${passwords.data}');
-    print('rates: ${rates.data}');
-    print('securities: ${securities.data}');
-    print('settings: ${settings.data}');
-    print('transactions: ${transactions.data}');
-    print('vins: ${vins.data}');
-    print('vouts: ${vouts.data}');
-    print('wallets: ${wallets.data}');
+    print('accounts: ${res.accounts.data}');
+    print('addresses: ${res.addresses.data}');
+    print('assets: ${res.assets.data}');
+    print('balances: ${res.balances.data}');
+    print('blocks: ${res.blocks.data}');
+    print('ciphers: ${res.ciphers.data}');
+    print('metadata: ${res.metadatas.data}');
+    print('passwords: ${res.passwords.data}');
+    print('rates: ${res.rates.data}');
+    print('securities: ${res.securities.data}');
+    print('settings: ${res.settings.data}');
+    print('transactions: ${res.transactions.data}');
+    print('vins: ${res.vins.data}');
+    print('vouts: ${res.vouts.data}');
+    print('wallets: ${res.wallets.data}');
     print('-------------------------');
     //print(services.cipher.getPassword(altPassword: ''));
     print('-------------------------');

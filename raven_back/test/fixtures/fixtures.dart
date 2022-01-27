@@ -14,24 +14,24 @@ import 'package:raven_back/utils/database.dart' as raven_database;
 /// useFixtureSources because this requires that the app state (contents of the
 /// reservoirs) be immediately present near the test and therefore obvious.
 void useEmptyFixtures({bool defaults = true}) {
-  globals.accounts.setSource(MapSource({}));
-  globals.addresses.setSource(MapSource({}));
-  globals.assets.setSource(MapSource({}));
-  globals.balances.setSource(MapSource({}));
-  globals.blocks.setSource(MapSource({}));
-  globals.ciphers
+  globals.res.accounts.setSource(MapSource({}));
+  globals.res.addresses.setSource(MapSource({}));
+  globals.res.assets.setSource(MapSource({}));
+  globals.res.balances.setSource(MapSource({}));
+  globals.res.blocks.setSource(MapSource({}));
+  globals.res.ciphers
       .setSource(MapSource(defaults ? CipherReservoir.defaults : {}));
-  globals.metadatas.setSource(MapSource({}));
-  globals.passwords.setSource(MapSource({}));
-  globals.rates.setSource(MapSource({}));
-  globals.transactions.setSource(MapSource({}));
-  globals.securities
+  globals.res.metadatas.setSource(MapSource({}));
+  globals.res.passwords.setSource(MapSource({}));
+  globals.res.rates.setSource(MapSource({}));
+  globals.res.transactions.setSource(MapSource({}));
+  globals.res.securities
       .setSource(MapSource(defaults ? SecurityReservoir.defaults : {}));
-  globals.settings
+  globals.res.settings
       .setSource(MapSource(defaults ? SettingReservoir.defaults : {}));
-  globals.vins.setSource(MapSource({}));
-  globals.vouts.setSource(MapSource({}));
-  globals.wallets.setSource(MapSource({}));
+  globals.res.vins.setSource(MapSource({}));
+  globals.res.vouts.setSource(MapSource({}));
+  globals.res.wallets.setSource(MapSource({}));
 }
 
 /// meant to be used for any number of complex groupings of app state
@@ -44,21 +44,21 @@ void useFixtureSources(int? version) {
   } else {
     set = FixtureSet0;
   }
-  globals.accounts.setSource(MapSource(set.accounts));
-  globals.addresses.setSource(MapSource(set.addresses));
-  globals.assets.setSource(MapSource(set.assets));
-  globals.balances.setSource(MapSource(set.balances));
-  globals.blocks.setSource(MapSource(set.blocks));
-  globals.ciphers.setSource(MapSource(set.ciphers));
-  globals.metadatas.setSource(MapSource(set.metadatas));
-  globals.passwords.setSource(MapSource(set.passwords));
-  globals.rates.setSource(MapSource(set.rates));
-  globals.transactions.setSource(MapSource(set.transactions));
-  globals.securities.setSource(MapSource(set.securities));
-  globals.settings.setSource(MapSource(set.settings));
-  globals.vins.setSource(MapSource(set.vins));
-  globals.vouts.setSource(MapSource(set.vouts));
-  globals.wallets.setSource(MapSource(set.wallets));
+  globals.res.accounts.setSource(MapSource(set.accounts));
+  globals.res.addresses.setSource(MapSource(set.addresses));
+  globals.res.assets.setSource(MapSource(set.assets));
+  globals.res.balances.setSource(MapSource(set.balances));
+  globals.res.blocks.setSource(MapSource(set.blocks));
+  globals.res.ciphers.setSource(MapSource(set.ciphers));
+  globals.res.metadatas.setSource(MapSource(set.metadatas));
+  globals.res.passwords.setSource(MapSource(set.passwords));
+  globals.res.rates.setSource(MapSource(set.rates));
+  globals.res.transactions.setSource(MapSource(set.transactions));
+  globals.res.securities.setSource(MapSource(set.securities));
+  globals.res.settings.setSource(MapSource(set.settings));
+  globals.res.vins.setSource(MapSource(set.vins));
+  globals.res.vouts.setSource(MapSource(set.vouts));
+  globals.res.wallets.setSource(MapSource(set.wallets));
 }
 
 void useFixtureSources1() => useFixtureSources(1);

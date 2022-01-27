@@ -6,30 +6,30 @@ import 'package:reservoir/reservoir.dart';
 
 Future deleteDatabase() async {
   try {
-    await accounts.clear();
-    await addresses.clear();
-    await balances.clear();
-    await rates.clear();
-    await securities.clear();
-    await settings.clear();
-    await transactions.clear();
-    await wallets.clear();
-    await vins.clear();
-    await vouts.clear();
+    await res.accounts.clear();
+    await res.addresses.clear();
+    await res.balances.clear();
+    await res.rates.clear();
+    await res.securities.clear();
+    await res.settings.clear();
+    await res.transactions.clear();
+    await res.wallets.clear();
+    await res.vins.clear();
+    await res.vouts.clear();
   } catch (e) {
     print('clearing failed');
   }
   try {
-    await (accounts.source as HiveSource).box.clear();
-    await (wallets.source as HiveSource).box.clear();
-    await (addresses.source as HiveSource).box.clear();
-    await (securities.source as HiveSource).box.clear();
-    await (transactions.source as HiveSource).box.clear();
-    await (vins.source as HiveSource).box.clear();
-    await (vouts.source as HiveSource).box.clear();
-    await (rates.source as HiveSource).box.clear();
-    await (balances.source as HiveSource).box.clear();
-    await (settings.source as HiveSource).box.clear();
+    await (res.accounts.source as HiveSource).box.clear();
+    await (res.wallets.source as HiveSource).box.clear();
+    await (res.addresses.source as HiveSource).box.clear();
+    await (res.securities.source as HiveSource).box.clear();
+    await (res.transactions.source as HiveSource).box.clear();
+    await (res.vins.source as HiveSource).box.clear();
+    await (res.vouts.source as HiveSource).box.clear();
+    await (res.rates.source as HiveSource).box.clear();
+    await (res.balances.source as HiveSource).box.clear();
+    await (res.settings.source as HiveSource).box.clear();
   } catch (e) {
     print('box clearing failed');
   }

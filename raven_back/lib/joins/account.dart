@@ -3,7 +3,7 @@ part of 'joins.dart';
 // Joins on Account
 
 extension AccountHasManyWallets on Account {
-  List<Wallet> get wallets => globals.wallets.byAccount.getAll(accountId);
+  List<Wallet> get wallets => globals.res.wallets.byAccount.getAll(accountId);
   List<LeaderWallet> get leaderWallets =>
       wallets.whereType<LeaderWallet>().toList();
   List<SingleWallet> get singleWallets =>
@@ -21,13 +21,13 @@ extension AccountHasManyBalances on Account {
 }
 
 extension AccountHasManyVouts on Account {
-  Iterable<Vout> get vouts =>
-      globals.vouts.data.where((vout) => vout.account?.accountId == accountId);
+  Iterable<Vout> get vouts => globals.res.vouts.data
+      .where((vout) => vout.account?.accountId == accountId);
 }
 
 extension AccountHasManyVins on Account {
   Iterable<Vin> get vins =>
-      globals.vins.data.where((vin) => vin.account?.accountId == accountId);
+      globals.res.vins.data.where((vin) => vin.account?.accountId == accountId);
 }
 
 extension AccountHasManyTransactions on Account {

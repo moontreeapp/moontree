@@ -43,7 +43,7 @@ void main() async {
             unconfirmed: 10)
       ]);
       // getChangedBalances doesn't save the result
-      expect(balances.data, fixtures.balances.values);
+      expect(res.balances.data, fixtures.balances.values);
     });
 
     test('saveChangedBalances', () async {

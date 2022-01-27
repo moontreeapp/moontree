@@ -35,13 +35,13 @@ class _TechnicalViewState extends State<TechnicalView> {
   @override
   void initState() {
     super.initState();
-    listeners.add(settings.changes.listen((changes) {
+    listeners.add(res.settings.changes.listen((changes) {
       setState(() {});
     }));
-    listeners.add(accounts.changes.listen((changes) {
+    listeners.add(res.accounts.changes.listen((changes) {
       setState(() {});
     }));
-    listeners.add(wallets.changes.listen((changes) {
+    listeners.add(res.wallets.changes.listen((changes) {
       setState(() {});
     }));
   }
@@ -96,7 +96,7 @@ class _TechnicalViewState extends State<TechnicalView> {
   /// change the accountId for this wallet and save
   void _moveWallet(details, account) {
     var wallet = details.data;
-    wallets.save(wallet is LeaderWallet
+    res.wallets.save(wallet is LeaderWallet
         ? LeaderWallet(
             walletId: wallet.walletId,
             accountId: account.accountId,
@@ -116,7 +116,7 @@ class _TechnicalViewState extends State<TechnicalView> {
                 cipherUpdate: wallet.cipherUpdate));
   }
 
-  List<Widget> _deleteIfMany(Account account) => accounts.data.length > 1
+  List<Widget> _deleteIfMany(Account account) => res.accounts.data.length > 1
       ? [
           IconButton(
               onPressed: () async {
@@ -170,7 +170,7 @@ class _TechnicalViewState extends State<TechnicalView> {
   ListView body() => ListView(
           //padding: const EdgeInsets.symmetric(horizontal: 5),
           children: <Widget>[
-            for (var account in accounts.data) ...[
+            for (var account in res.accounts.data) ...[
               DragTarget<Wallet>(
                 key: Key(account.accountId),
                 builder: (
@@ -179,7 +179,7 @@ class _TechnicalViewState extends State<TechnicalView> {
                   List<dynamic> rejected,
                 ) =>
                     Column(children: <Widget>[
-                  wallets.byAccount.getAll(account.accountId).length > 0
+                  res.wallets.byAccount.getAll(account.accountId).length > 0
                       //_getWallets(account.accountId).isNotEmpty
                       ? ListTile(
                           title: Row(
@@ -194,13 +194,14 @@ class _TechnicalViewState extends State<TechnicalView> {
                           trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
-                                settings.preferredAccountId == account.accountId
+                                res.settings.preferredAccountId ==
+                                        account.accountId
                                     ? IconButton(
                                         onPressed: () {},
                                         icon: Icon(Icons.star))
                                     : IconButton(
                                         onPressed: () {
-                                          settings.savePreferredAccountId(
+                                          res.settings.savePreferredAccountId(
                                               account.accountId);
                                         },
                                         icon: Icon(Icons.star_outline_sharp)),
@@ -229,7 +230,7 @@ class _TechnicalViewState extends State<TechnicalView> {
                                 ...(_deleteIfMany(account))
                               ])),
                   for (var wallet
-                      in wallets.byAccount.getAll(account.accountId)) ...[
+                      in res.wallets.byAccount.getAll(account.accountId)) ...[
                     //for (var wallet in _getWallets(account.accountId)) ...[
                     Draggable<Wallet>(
                       key: Key(wallet.walletId),

@@ -14,7 +14,7 @@ class _PreferencesState extends State<Preferences> {
 
   @override
   Widget build(BuildContext context) {
-    var name = settings.primaryIndex.getOne(SettingName.User_Name)?.value;
+    var name = res.settings.primaryIndex.getOne(SettingName.User_Name)?.value;
     if (name != null) {
       yourName.text = name;
     }
@@ -34,7 +34,7 @@ class _PreferencesState extends State<Preferences> {
               hintText: 'Satoshi Nakamoto',
             ),
             onEditingComplete: () async {
-              await settings.save(
+              await res.settings.save(
                   Setting(name: SettingName.User_Name, value: yourName.text));
               alertSuccess();
             },
@@ -44,13 +44,13 @@ class _PreferencesState extends State<Preferences> {
               controlAffinity: ListTileControlAffinity.leading,
               contentPadding: EdgeInsets.all(0),
               title: Text('Send immediately (without confirmation)'),
-              value: settings.primaryIndex
+              value: res.settings.primaryIndex
                   .getOne(SettingName.Send_Immediate)!
                   .value,
               onChanged: (bool? value) async {
-                await settings.save(Setting(
+                await res.settings.save(Setting(
                     name: SettingName.Send_Immediate,
-                    value: !settings.primaryIndex
+                    value: !res.settings.primaryIndex
                         .getOne(SettingName.Send_Immediate)!
                         .value));
                 setState(() {});

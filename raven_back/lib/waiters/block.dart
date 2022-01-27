@@ -21,15 +21,15 @@ class BlockWaiter extends Waiter {
     listen(
       'ravenClient.subscribeHeaders',
       ravenClient.subscribeHeaders(),
-      (blockHeader) async =>
-          await blocks.save(Block.fromBlockHeader(blockHeader! as BlockHeader)),
+      (blockHeader) async => await res.blocks
+          .save(Block.fromBlockHeader(blockHeader! as BlockHeader)),
       autoDeinit: true,
     );
 
     // update existing mempool transactions each block
     listen<Change<Block>>(
       'blocks.changes',
-      blocks.changes,
+      res.blocks.changes,
       (change) {
         services.address.getAndSaveMempoolTransactions();
       },

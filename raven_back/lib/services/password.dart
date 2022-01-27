@@ -6,7 +6,7 @@ class PasswordService {
   final PasswordValidationService validate = PasswordValidationService();
   final PasswordCreationService create = PasswordCreationService();
 
-  bool get exist => passwords.isEmpty ? false : true;
+  bool get exist => res.passwords.isEmpty ? false : true;
 
   /// are any wallets encrypted with something other than no cipher
   bool get required {
@@ -18,7 +18,7 @@ class PasswordService {
 
   bool interruptedPasswordChange() => {
         for (var cipherUpdate in services.wallet.getAllCipherUpdates)
-          if (cipherUpdate.passwordId != passwords.maxPasswordId)
+          if (cipherUpdate.passwordId != res.passwords.maxPasswordId)
             cipherUpdate.passwordId
       }.isNotEmpty;
 
@@ -31,12 +31,12 @@ class PasswordValidationService {
       .hashThis(services.password.create.saltPassword(password, salt));
 
   bool password(String password) =>
-      getHash(password, passwords.primaryIndex.getMostRecent()!.salt) ==
-      passwords.primaryIndex.getMostRecent()!.saltedHash;
+      getHash(password, res.passwords.primaryIndex.getMostRecent()!.salt) ==
+      res.passwords.primaryIndex.getMostRecent()!.saltedHash;
 
   bool previousPassword(String password) =>
-      getHash(password, passwords.primaryIndex.getPrevious()!.salt) ==
-      passwords.primaryIndex.getPrevious()!.saltedHash;
+      getHash(password, res.passwords.primaryIndex.getPrevious()!.salt) ==
+      res.passwords.primaryIndex.getPrevious()!.saltedHash;
 
   /// returns the number corresponding to how many passwords ago this was used
   /// null = not found
@@ -44,12 +44,12 @@ class PasswordValidationService {
   /// 1 = previous
   /// "password was used x passwords ago"
   int? previouslyUsed(String password) {
-    var m = passwords.maxPasswordId;
+    var m = res.passwords.maxPasswordId;
     if (m == null) {
       return null;
     }
     var ret;
-    for (var pass in passwords.data) {
+    for (var pass in res.passwords.data) {
       if (getHash(password, pass.salt) == pass.saltedHash) {
         ret = m - pass.passwordId;
       }
@@ -86,11 +86,11 @@ class PasswordCreationService {
   }
 
   Future save(String password) async {
-    await passwords.save(Password(
-        passwordId: (passwords.maxPasswordId ?? -1) + 1,
+    await res.passwords.save(Password(
+        passwordId: (res.passwords.maxPasswordId ?? -1) + 1,
         saltedHash: password == ''
             ? ''
             : hashThis(saltPassword(password,
-                Password.getSalt((passwords.maxPasswordId ?? -1) + 1)))));
+                Password.getSalt((res.passwords.maxPasswordId ?? -1) + 1)))));
   }
 }

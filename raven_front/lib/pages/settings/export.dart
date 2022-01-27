@@ -39,8 +39,8 @@ class _ExportState extends State<Export> {
     } else if (data['accountId'] == 'current' || data['accountId'] == null) {
       account = Current.account;
     } else {
-      account =
-          accounts.primaryIndex.getOne(data['accountId']) ?? Current.account;
+      account = res.accounts.primaryIndex.getOne(data['accountId']) ??
+          Current.account;
     }
     getExisting = [
       TextButton(
@@ -122,7 +122,7 @@ class _ExportState extends State<Export> {
             //],
             SizedBox(height: 25),
             ...[
-              if (account != null && accounts.length > 1)
+              if (account != null && res.accounts.length > 1)
                 TextButton.icon(
                     onPressed: () => setState(() {
                           data['accountId'] = 'all';

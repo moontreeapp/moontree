@@ -8,7 +8,7 @@ import 'package:raven_front/services/ipfs.dart';
 class AssetListener {
   void init() {
     streams.asset.added.distinctUnique().listen((Asset asset) async {
-      await assets.save(asset);
+      await res.assets.save(asset);
 
       /// don't pull logos or any ipfs data for mvp
       //if (asset.isMaster) {
@@ -23,7 +23,7 @@ class AssetListener {
   Future<void> grabMetadataForMaster(Asset asset) async {
     // master assets should look at the ipfs on the actual unique assets
     // what if we don't hold that asset? we should pull it?
-    var unique = assets.bySymbol.getOne(asset.nonMasterSymbol);
+    var unique = res.assets.bySymbol.getOne(asset.nonMasterSymbol);
     if (unique == null) {
       /// we should pull the asset data for this asset even if we don't own the
       /// asset because we need the ipfshash of it for master asset
@@ -49,7 +49,7 @@ class AssetListener {
         // pull the contents from ipfs and save a metadata record
         var ipfs = IpfsMiniExplorer(asset.metadata);
         var resp = await ipfs.get();
-        await metadatas.save(Metadata(
+        await res.metadatas.save(Metadata(
             symbol: asset.symbol,
             metadata: asset.metadata,
             data: resp,
@@ -76,7 +76,7 @@ class LogoListener {
     for (var hash in hashes) {
       var ipfs = IpfsMiniExplorer(hash);
       var resp = await ipfs.get();
-      metadatas.save(Metadata(
+      res.metadatas.save(Metadata(
         symbol: metadata.symbol,
         metadata: hash,
         data: resp,

@@ -10,14 +10,14 @@ class TransactionService {
   List<Vout> accountUnspents(Account account, {Security? security}) =>
       VoutReservoir.whereUnspent(
               given: account.vouts,
-              security: security ?? securities.RVN,
+              security: security ?? res.securities.RVN,
               includeMempool: false)
           .toList();
 
   List<Vout> walletUnspents(Wallet wallet, {Security? security}) =>
       VoutReservoir.whereUnspent(
               given: wallet.vouts,
-              security: security ?? securities.RVN,
+              security: security ?? res.securities.RVN,
               includeMempool: false)
           .toList();
 
@@ -26,7 +26,7 @@ class TransactionService {
         hash ??
         (() => throw OneOfMultipleMissing(
             'transaction or hash required to identify record.'))();
-    return transaction ?? transactions.primaryIndex.getOne(hash ?? '');
+    return transaction ?? res.transactions.primaryIndex.getOne(hash ?? '');
   }
 
   // setter for note value on Transaction record in reservoir
@@ -34,7 +34,7 @@ class TransactionService {
       {Transaction? transaction, String? hash}) async {
     transaction = getTransactionFrom(transaction: transaction, hash: hash);
     if (transaction != null) {
-      await transactions.save(Transaction(
+      await res.transactions.save(Transaction(
           height: transaction.height,
           transactionId: transaction.transactionId,
           confirmed: transaction.confirmed,
@@ -58,7 +58,7 @@ class TransactionService {
         ? account.addresses.map((address) => address.address).toList()
         : wallet!.addresses.map((address) => address.address).toList();
     var transactionRecords = <TransactionRecord>[];
-    for (var transaction in transactions.chronological) {
+    for (var transaction in res.transactions.chronological) {
       var securitiesInvolved = ((transaction.vins
                   .where((vin) =>
                       givenAddresses.contains(vin.vout?.toAddress) &&

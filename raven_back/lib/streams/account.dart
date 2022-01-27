@@ -9,6 +9,6 @@ class AccountStreams {
 }
 
 final Stream<Account> replayAccount$ = ReplaySubject<Account>()
-  ..addStream(accounts.changes
+  ..addStream(res.accounts.changes
       .where((change) => change is Loaded || change is Added)
       .map((added) => added.data));

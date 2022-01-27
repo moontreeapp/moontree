@@ -6,7 +6,7 @@ import 'waiter.dart';
 
 class SettingWaiter extends Waiter {
   void init() {
-    listen('settings.batchedChanges', settings.batchedChanges,
+    listen('settings.batchedChanges', res.settings.batchedChanges,
         (List<Change<Setting>> batchedChanges) {
       batchedChanges.forEach((change) {
         change.when(

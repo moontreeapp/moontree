@@ -13,24 +13,24 @@ void main() async {
   group('SendTransaction', () {
     test('', () {
       // for testing
-      print('accounts: ${accounts.data}');
-      print('wallets: ${wallets.data}');
-      print('passwords: ${passwords.data}');
-      print('addresses: ${addresses.data}');
-      print('balances: ${balances.data}');
-      print('rates: ${rates.data}');
-      print('settings: ${settings.data}');
+      print('accounts: ${res.accounts.data}');
+      print('wallets: ${res.wallets.data}');
+      print('passwords: ${res.passwords.data}');
+      print('addresses: ${res.addresses.data}');
+      print('balances: ${res.balances.data}');
+      print('rates: ${res.rates.data}');
+      print('settings: ${res.settings.data}');
       /* errors */
       var tuple = services.transaction.make.transaction(
-        addresses.byWallet
-            .getAll(wallets.byAccount
-                .getOne(accounts.primaryIndex
+        res.addresses.byWallet
+            .getAll(res.wallets.byAccount
+                .getOne(res.accounts.primaryIndex
                     .getByKeyStr('Secondary')[0]
                     .accountId)!
                 .walletId)[0]
             .address,
         SendEstimate(1),
-        account: accounts.primaryIndex.getByKeyStr('Primary').first,
+        account: res.accounts.primaryIndex.getByKeyStr('Primary').first,
       );
       //var txb = tuple.item1;
       var estimate = tuple.item2;

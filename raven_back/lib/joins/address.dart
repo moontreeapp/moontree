@@ -1,7 +1,7 @@
 part of 'joins.dart';
 
 extension AddressBelongsToWallet on Address {
-  Wallet? get wallet => globals.wallets.primaryIndex.getOne(walletId);
+  Wallet? get wallet => globals.res.wallets.primaryIndex.getOne(walletId);
 }
 
 extension AddressBelongsToAccount on Address {
@@ -9,5 +9,5 @@ extension AddressBelongsToAccount on Address {
 }
 
 extension AddressHasManyVouts on Address {
-  List<Vout> get vouts => globals.vouts.byAddress.getAll(address);
+  List<Vout> get vouts => globals.res.vouts.byAddress.getAll(address);
 }

@@ -16,7 +16,7 @@ class AccountReservoir extends Reservoir<_IdKey, Account> {
     byNet = addIndexMultiple('net', _NetKey());
   }
 
-  String get nextId => (accounts.data
+  String get nextId => (res.accounts.data
               .map((account) => int.parse(account.accountId))
               .toList()
               .reduce(max) +
@@ -25,9 +25,11 @@ class AccountReservoir extends Reservoir<_IdKey, Account> {
 
   /// returns prefered or first or null account with same net
   Account? getBestAccount(Net net) {
-    var netAccounts = accounts.byNet.getAll(net);
+    var netAccounts = res.accounts.byNet.getAll(net);
     for (var netAccount in netAccounts) {
-      if (settings.primaryIndex.getOne(SettingName.Account_Preferred)!.value ==
+      if (res.settings.primaryIndex
+              .getOne(SettingName.Account_Preferred)!
+              .value ==
           netAccount.accountId) {
         return netAccount;
       }

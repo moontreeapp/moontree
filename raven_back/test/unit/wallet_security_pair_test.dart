@@ -30,8 +30,8 @@ void main() async {
     ];
     var pairs = securityPairsFromVoutChanges(changes);
     expect(pairs, {
-      WalletSecurityPair(wallet, securities.RVN),
-      WalletSecurityPair(wallet, securities.USD),
+      WalletSecurityPair(wallet, res.securities.RVN),
+      WalletSecurityPair(wallet, res.securities.USD),
     });
   });
 }

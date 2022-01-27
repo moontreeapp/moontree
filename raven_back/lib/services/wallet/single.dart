@@ -8,7 +8,7 @@ import 'package:raven_back/security/encrypted_wif.dart';
 
 class SingleWalletService {
   Address toAddress(SingleWallet wallet) {
-    var net = accounts.primaryIndex.getOne(wallet.accountId)!.net;
+    var net = res.accounts.primaryIndex.getOne(wallet.accountId)!.net;
     var kpWallet = getKPWallet(wallet);
     return Address(
         addressId: kpWallet.scripthash,
@@ -35,9 +35,9 @@ class SingleWalletService {
       String? wif,
       bool alwaysReturn = false}) {
     wif = wif ??
-        generateRandomWIF(accounts.primaryIndex.getOne(accountId)!.network);
+        generateRandomWIF(res.accounts.primaryIndex.getOne(accountId)!.network);
     var encryptedWIF = EncryptedWIF.fromWIF(wif, cipher);
-    var existingWallet = wallets.primaryIndex.getOne(encryptedWIF.walletId);
+    var existingWallet = res.wallets.primaryIndex.getOne(encryptedWIF.walletId);
     if (existingWallet == null) {
       return SingleWallet(
           walletId: encryptedWIF.walletId,
@@ -53,7 +53,7 @@ class SingleWalletService {
     var singleWallet = makeSingleWallet(accountId, cipher,
         cipherUpdate: cipherUpdate, wif: wif);
     if (singleWallet != null) {
-      await wallets.save(singleWallet);
+      await res.wallets.save(singleWallet);
     }
   }
 

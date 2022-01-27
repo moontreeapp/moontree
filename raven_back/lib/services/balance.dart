@@ -18,7 +18,7 @@ class BalanceService {
               (int sum, Vout vout) =>
                   sum +
                   vout.securityValue(
-                      security: securities.primaryIndex.getOne(
+                      security: res.securities.primaryIndex.getOne(
                           vout.securityId))), // should this be rvnValue always?
       unconfirmed:
           VoutReservoir.whereUnconfirmed(given: wallet.vouts, security: security).fold(
@@ -26,11 +26,11 @@ class BalanceService {
               (sum, vout) =>
                   sum +
                   vout.securityValue(
-                      security: securities.primaryIndex.getOne(
+                      security: res.securities.primaryIndex.getOne(
                           vout.securityId)))); // should this be rvnValue always?
 
   /// If there is a change in its history, recalculate a balance. Return a list
-  /// of such balances.
+  /// of such res.balances.
   /// it has been seen in an edge case that this can produce the wrong results:
   /// when we have a weird situtation that we've sent stuff to ourselves
   /// mutliple times on the same addresses. Thus, the waiter instead
@@ -42,7 +42,7 @@ class BalanceService {
   /// Same as getChangedBalances, but saves them all as well.
   Future<Iterable<Balance>> saveChangedBalances(List<Change> changes) async {
     var changed = getChangedBalances(changes);
-    await balances.saveAll(changed.toList());
+    await res.balances.saveAll(changed.toList());
     return changed;
   }
 
@@ -51,11 +51,11 @@ class BalanceService {
           .map((pair) => sumBalance(pair.wallet, pair.security));
 
   Future recalculateAllBalances() async =>
-      await balances.saveAll(recalculateSpecificBalances(vouts.data
+      await res.balances.saveAll(recalculateSpecificBalances(res.vouts.data
           //VoutReservoir.whereUnspent(includeMempool: false)
           .where((Vout vout) =>
               vout.account?.net ==
-                  settings.primaryIndex
+                  res.settings.primaryIndex
                       .getOne(SettingName.Electrum_Net)!
                       .value &&
               (vout.transaction?.confirmed ?? false))
@@ -83,7 +83,7 @@ class BalanceService {
     Account account, {
     Security? security,
   }) {
-    if (accountBalance(account, security ?? securities.RVN).confirmed <
+    if (accountBalance(account, security ?? res.securities.RVN).confirmed <
         amount) {
       throw InsufficientFunds();
     }
@@ -95,7 +95,7 @@ class BalanceService {
     Wallet wallet, {
     Security? security,
   }) {
-    if (walletBalance(wallet, security ?? securities.RVN).confirmed < amount) {
+    if (walletBalance(wallet, security ?? res.securities.RVN).confirmed < amount) {
       throw InsufficientFunds();
     }
   }

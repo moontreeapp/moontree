@@ -53,7 +53,7 @@ class _PageTitleState extends State<PageTitle> {
       symbol = symbol == 'RVN' ? 'Ravencoin' : symbol;
       return Text(symbol, style: Theme.of(context).pageTitle);
     }
-    if (pageTitle != 'Wallet' || accounts.data.length <= 1) {
+    if (pageTitle != 'Wallet' || res.accounts.data.length <= 1) {
       return Text(pageTitle, style: Theme.of(context).pageTitle);
     }
     return Text('Wallet', style: Theme.of(context).pageTitle);

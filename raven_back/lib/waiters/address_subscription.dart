@@ -1,27 +1,22 @@
 import 'dart:async';
-
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_electrum/raven_electrum.dart';
-
 import 'waiter.dart';
 
-/// new address -> put in subscriptionHandles -> setup up subscription
-/// new subscriptionHandle -> setup up subscription to blockchain
-/// subscription -> retrieve data from blockchain
-
 class AddressSubscriptionWaiter extends Waiter {
-  final loggedInFlag = false;
-  late int id = 0;
-
-  Set<Address> backlogSubscriptions = {};
-  Set<Address> backlogRetrievals = {};
-  Set<Address> backlogWalletsToUpdate = {};
+  Set<Address> backlog = {};
 
   void init() {
-    setupSubscriptionsListener();
+    //  setupSubscriptionsListener();
     setupClientListener();
-    setupNewAddressListener();
   }
+
+  //void setupSubscriptionsListener() => listen(
+  //      'movementDetected',
+  //      services.client.subscribe.movementDetected,
+  //      (Address address) {
+  //        unawaited(retrieve(address));
+  //      },
+  //    );
 
   void deinitSubscriptionHandles() {
     for (var listener in services.client.subscribe.subscriptionHandles.values) {
@@ -30,83 +25,39 @@ class AddressSubscriptionWaiter extends Waiter {
     services.client.subscribe.subscriptionHandles.clear();
   }
 
-  void setupClientListener() =>
-      listen('streams.client.client', streams.client.client, (client) async {
-        if (client == null) {
-          deinitSubscriptionHandles();
-        } else {
-          backlogSubscriptions.forEach((address) {
-            if (!services.client.subscribe.subscriptionHandles.keys
-                .contains(address.addressId)) {
-              services.client.subscribe
-                  .to(client as RavenElectrumClient, address);
-            }
-          });
-          backlogSubscriptions.clear();
-          services.client.subscribe
-              .toExistingAddresses(client as RavenElectrumClient);
-          if (backlogRetrievals.isNotEmpty) {
-            for (var address in backlogRetrievals) {
-              unawaited(retrieveAndMakeNewAddress(client, address));
-            }
-            backlogRetrievals.clear();
+  void setupClientListener() => listen(
+        'streams.client.connected',
+        streams.client.connected,
+        (bool connected) async {
+          if (connected) {
+            await retrieveAllBacklog();
+          } else {
+            deinitSubscriptionHandles();
           }
-        }
-      });
+        },
+      );
 
-  void setupSubscriptionsListener() => listen(
-          'addressesNeedingUpdate',
-
-          /// we end up handling these one at a time so why buffer them?
-          // services.client.subscribe.addressesNeedingUpdate.stream
-          //     .bufferCountTimeout(10, Duration(milliseconds: 50)),
-          // (changedAddresses) {
-          services.client.subscribe.addressesNeedingUpdate.stream,
-          (Address address) {
-        var client = streams.client.client.value;
-        if (client == null) {
-          backlogRetrievals.add(address);
-        } else {
-          unawaited(retrieveAndMakeNewAddress(client, address));
-        }
-      });
-
-  void setupNewAddressListener() =>
-      listen('addresses.batchedChanges', addresses.batchedChanges,
-          (List<Change> batchedChanges) {
-        batchedChanges.forEach((change) {
-          change.when(
-              loaded: (loaded) {},
-              added: (added) async {
-                Address address = added.data;
-                // todo - move this into the stream:
-                //if (address.account!.net ==
-                //    settings.primaryIndex
-                //        .getOne(SettingName.Electrum_Net)!
-                //        .value) {
-                if (true) {
-                  var client = streams.client.client.value;
-                  if (client == null) {
-                    backlogSubscriptions.add(address);
-                  } else {
-                    services.client.subscribe.to(client, address);
-                  }
-                }
-              },
-              updated: (updated) {},
-              removed: (removed) {
-                services.client.subscribe.unsubscribe(removed.id as String);
-              });
-        });
-      });
-
-  Future retrieveAndMakeNewAddress(
-    RavenElectrumClient client,
-    Address address,
-  ) async {
+  Future retrieve(Address address) async {
     var msg = 'Downloading transactions for ${address.address}';
     services.busy.clientOn(msg);
-    await services.address.getAndSaveTransactionsByAddresses(address, client);
+    if (await services.address.getAndSaveTransactionsByAddresses(address)) {
+      backlog.remove(address);
+    } else {
+      backlog.add(address);
+    }
+    services.busy.clientOff(msg);
+  }
+
+  Future retrieveAllBacklog() async {
+    var msg = 'Downloading transactions...';
+    services.busy.clientOn(msg);
+    var returnToBacklog = <Address>{};
+    for (var address in backlog) {
+      if (!await services.address.getAndSaveTransactionsByAddresses(address)) {
+        returnToBacklog.add(address);
+      }
+    }
+    backlog = returnToBacklog;
     services.busy.clientOff(msg);
   }
 }

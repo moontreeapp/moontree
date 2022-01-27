@@ -8,7 +8,7 @@ void main() async {
 
   setUp(() async {
     await hiveInit.setUp();
-    settings.setSource(MapSource({
+    res.settings.setSource(MapSource({
       '0': Setting(
           name: SettingName.Electrum_Domain0, value: 'testnet.rvn.rocks'),
       '1': Setting(name: SettingName.Electrum_Port0, value: 50002),
@@ -22,14 +22,14 @@ void main() async {
 
   test('waiters listening', () async {
     for (var waiter in [
-      addressSubscriptionWaiter,
-      blockWaiter,
-      accountWaiter,
-      leaderWaiter,
-      singleWaiter,
-      addressWaiter,
-      // exchangeRateWaiter,
-      settingWaiter
+      waiters.addressSubscription,
+      waiters.block,
+      waiters.account,
+      waiters.leader,
+      waiters.single,
+      waiters.address,
+      // waiters.exchangeRate,
+      waiters.setting
     ]) {
       expect(waiter.listeners.isNotEmpty, true,
           reason: '${waiter.runtimeType} has no listeners');

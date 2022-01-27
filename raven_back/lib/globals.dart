@@ -2,36 +2,20 @@ import 'reservoirs/reservoirs.dart';
 import 'waiters/waiters.dart';
 
 // RESERVOIRS
-
-final AccountReservoir accounts = AccountReservoir();
-final AddressReservoir addresses = AddressReservoir();
-final AssetReservoir assets = AssetReservoir();
-final BlockReservoir blocks = BlockReservoir();
-final BalanceReservoir balances = BalanceReservoir();
-final CipherReservoir ciphers = CipherReservoir();
-final MetadataReservoir metadatas = MetadataReservoir();
-final PasswordReservoir passwords = PasswordReservoir();
-final ExchangeRateReservoir rates = ExchangeRateReservoir();
-final SecurityReservoir securities = SecurityReservoir();
-final SettingReservoir settings = SettingReservoir();
-final TransactionReservoir transactions = TransactionReservoir();
-final WalletReservoir wallets = WalletReservoir();
-final VinReservoir vins = VinReservoir();
-final VoutReservoir vouts = VoutReservoir();
-
-// WAITERS
-
-final AccountWaiter accountWaiter = AccountWaiter();
-final AddressWaiter addressWaiter = AddressWaiter();
-final AddressSubscriptionWaiter addressSubscriptionWaiter =
-    AddressSubscriptionWaiter();
-final BlockWaiter blockWaiter = BlockWaiter();
-final ImportWaiter importWaiter = ImportWaiter();
-final PasswordWaiter passwordWaiter = PasswordWaiter();
-final RateWaiter rateWaiter = RateWaiter();
-final RavenClientWaiter ravenClientWaiter = RavenClientWaiter();
-final SendWaiter sendWaiter = SendWaiter();
-final SettingWaiter settingWaiter = SettingWaiter();
-// Wallets
-final LeaderWaiter leaderWaiter = LeaderWaiter();
-final SingleWaiter singleWaiter = SingleWaiter();
+class res {
+  static final AccountReservoir accounts = AccountReservoir();
+  static final AddressReservoir addresses = AddressReservoir();
+  static final AssetReservoir assets = AssetReservoir();
+  static final BlockReservoir blocks = BlockReservoir();
+  static final BalanceReservoir balances = BalanceReservoir();
+  static final CipherReservoir ciphers = CipherReservoir();
+  static final MetadataReservoir metadatas = MetadataReservoir();
+  static final PasswordReservoir passwords = PasswordReservoir();
+  static final ExchangeRateReservoir rates = ExchangeRateReservoir();
+  static final SecurityReservoir securities = SecurityReservoir();
+  static final SettingReservoir settings = SettingReservoir();
+  static final TransactionReservoir transactions = TransactionReservoir();
+  static final WalletReservoir wallets = WalletReservoir();
+  static final VinReservoir vins = VinReservoir();
+  static final VoutReservoir vouts = VoutReservoir();
+}

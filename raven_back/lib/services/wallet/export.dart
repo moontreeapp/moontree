@@ -18,7 +18,8 @@ class ExportWalletService {
       };
 
   Map<String, dynamic> accountsForExport(Account? account) => {
-        for (var account in account != null ? [account] : accounts.data) ...{
+        for (var account
+            in account != null ? [account] : res.accounts.data) ...{
           account.accountId: {
             'name': account.name,
             'net': account.net.toString()
@@ -28,7 +29,7 @@ class ExportWalletService {
 
   Map<String, dynamic> walletsForExport(Account? account) => {
         for (var wallet
-            in account != null ? account.wallets : wallets.data) ...{
+            in account != null ? account.wallets : res.wallets.data) ...{
           if (wallet.cipher != null)
             wallet.walletId: {
               'accountId': wallet.accountId,

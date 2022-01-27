@@ -56,8 +56,8 @@ class ImportWalletService {
     /// json format of entire account or all accounts (merge)
     //try {
     /// {
-    ///   'accounts': {accounts.id: values},
-    ///   'wallets': {wallets.id: values}
+    ///   'accounts': {res.accounts.id: values},
+    ///   'wallets': {res.wallets.id: values}
     /// }
     /// try decrypt file
     var decodedJSON = json.decode(text) as Map<String, dynamic>;
@@ -161,27 +161,27 @@ class ImportWalletService {
 
   /// returns the accountId of existing account
   String? detectExistingAccount(Account account) =>
-      accounts.primaryIndex.getOne(account.accountId)?.accountId;
+      res.accounts.primaryIndex.getOne(account.accountId)?.accountId;
 
   /// returns the accountId of existing wallet
   String? detectExistingWallet(Wallet wallet) =>
-      wallets.primaryIndex.getOne(wallet.walletId)?.accountId;
+      res.wallets.primaryIndex.getOne(wallet.walletId)?.accountId;
 
   /// returns the accountId of existing account
   List detectExistingAccountByName(Account account) =>
-      accounts.byName.getAll(account.name);
+      res.accounts.byName.getAll(account.name);
 
   /// we even if an account by the same name exists we should import
-  /// (with date appended) remember the id's and use those for the wallets.
+  /// (with date appended) remember the id's and use those for the res.wallets.
   Future<Map<String, String>> attemptAccountSave(Account? account) async {
     if (account != null) {
       var existingAccountId = detectExistingAccount(account);
       var originalId = account.accountId;
       if (existingAccountId != null) {
-        account.accountId = accounts.nextId;
+        account.accountId = res.accounts.nextId;
       }
-      await accounts.save(account);
-      await settings.save(
+      await res.accounts.save(account);
+      await res.settings.save(
           Setting(name: SettingName.Account_Current, value: account.accountId));
       return {originalId: account.accountId};
     }
@@ -193,15 +193,17 @@ class ImportWalletService {
     if (wallet != null) {
       var existingAccountId = detectExistingWallet(wallet);
       if (existingAccountId == null) {
-        var importedChange = await wallets.save(wallet);
+        var importedChange = await res.wallets.save(wallet);
         return HandleResult(
             true,
-            accounts.primaryIndex.getOne(importedChange!.data.accountId)!.name,
+            res.accounts.primaryIndex
+                .getOne(importedChange!.data.accountId)!
+                .name,
             LingoKey.walletImportedAs);
       }
       return HandleResult(
           false,
-          accounts.primaryIndex.getOne(wallet.accountId)!.name,
+          res.accounts.primaryIndex.getOne(wallet.accountId)!.name,
           LingoKey.walletAlreadyExists);
     }
     return HandleResult(false, '', LingoKey.walletUnableToCreate);

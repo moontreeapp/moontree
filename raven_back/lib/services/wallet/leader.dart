@@ -29,7 +29,7 @@ class LeaderWalletService {
       LeaderWallet leaderWallet, CipherBase cipher, NodeExposure exposure) {
     var newAddress = maybeDeriveNextAddress(leaderWallet, cipher, exposure);
     if (newAddress != null) {
-      addresses.save(newAddress);
+      res.addresses.save(newAddress);
     }
   }
 
@@ -88,7 +88,7 @@ class LeaderWalletService {
     var i = 0;
     while (true) {
       var hdWallet = seedWallet.subwallet(i, exposure: exposure);
-      if (vouts.byAddress.getAll(hdWallet.address!).isEmpty) {
+      if (res.vouts.byAddress.getAll(hdWallet.address!).isEmpty) {
         return hdWallet;
       }
       i++;
@@ -105,7 +105,8 @@ class LeaderWalletService {
     services.busy.createWalletOn();
     entropy = entropy ?? bip39.mnemonicToEntropy(bip39.generateMnemonic());
     var encryptedEntropy = EncryptedEntropy.fromEntropy(entropy, cipher);
-    var existingWallet = wallets.primaryIndex.getOne(encryptedEntropy.walletId);
+    var existingWallet =
+        res.wallets.primaryIndex.getOne(encryptedEntropy.walletId);
     services.busy.createWalletOff();
     if (existingWallet == null) {
       return LeaderWallet(
@@ -124,7 +125,7 @@ class LeaderWalletService {
         cipherUpdate: cipherUpdate,
         entropy: mnemonic != null ? bip39.mnemonicToEntropy(mnemonic) : null);
     if (leaderWallet != null) {
-      await wallets.save(leaderWallet);
+      await res.wallets.save(leaderWallet);
     }
   }
 
@@ -168,11 +169,11 @@ class LeaderWalletService {
     for (var exposure in exposures) {
       newAddresses.addAll(maybeDeriveNextAddresses(
         wallet,
-        ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
+        res.ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
         exposure,
       ));
     }
-    addresses.saveAll(newAddresses);
+    res.addresses.saveAll(newAddresses);
     services.busy.addressDerivationOff();
     return newAddresses;
   }

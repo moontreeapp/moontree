@@ -7,7 +7,7 @@ class MetadataStreams {
 }
 
 final BehaviorSubject<Metadata?> addedJson$ = BehaviorSubject.seeded(null)
-  ..addStream(metadatas.changes
+  ..addStream(res.metadatas.changes
       .where((change) => change is Added)
       .map((change) => change.data)
       .where((data) => data.kind == MetadataType.JsonString));

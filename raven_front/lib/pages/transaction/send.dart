@@ -112,7 +112,7 @@ class _SendState extends State<Send> {
       handlePopulateFromQR(data['qrCode']);
       data.remove('qrCode');
     }
-    divisibility = assets.bySymbol.getOne(symbol)?.divisibility ?? 8;
+    divisibility = res.assets.bySymbol.getOne(symbol)?.divisibility ?? 8;
     var possibleHoldings = [
       for (var balance in useWallet
           ? Current.walletHoldings(data['walletId'])

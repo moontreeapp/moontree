@@ -19,20 +19,20 @@ void main() {
         accountId: 'a0',
         name: 'primary',
       );
-      accounts.setSource(MapSource({'a0': account}));
-      wallet = wallets.data.first as LeaderWallet;
+      res.accounts.setSource(MapSource({'a0': account}));
+      wallet = res.wallets.data.first as LeaderWallet;
 
       // put account in reservoir
-      await accounts.save(account);
-      expect(accounts.length, 1);
+      await res.accounts.save(account);
+      expect(res.accounts.length, 1);
     });
 
     test('2 addresses get created', () async {
       // make addresses
-      expect(addresses.length, 5);
-      await reservoirChanges(
-          addresses, () => services.wallet.leader.deriveAddress(wallet, 0), 2);
-      expect(addresses.length, 7);
+      expect(res.addresses.length, 5);
+      await reservoirChanges(res.addresses,
+          () => services.wallet.leader.deriveAddress(wallet, 0), 2);
+      expect(res.addresses.length, 7);
     });
 
     //test('20 addresses get created', () async {

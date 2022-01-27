@@ -46,8 +46,8 @@ class _ImportState extends State<Import> {
     if (data['accountId'] == 'current' || data['accountId'] == null) {
       account = Current.account;
     } else {
-      account =
-          accounts.primaryIndex.getOne(data['accountId']) ?? Current.account;
+      account = res.accounts.primaryIndex.getOne(data['accountId']) ??
+          Current.account;
     }
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),

@@ -17,24 +17,24 @@ class WalletService {
 
   // should return all cipherUpdates
   Set<CipherUpdate> get getAllCipherUpdates =>
-      wallets.data.map((wallet) => wallet.cipherUpdate).toSet();
+      res.wallets.data.map((wallet) => wallet.cipherUpdate).toSet();
 
   // should return cipherUpdates that must be used with current password...
-  Set<CipherUpdate> get getCurrentCipherUpdates => wallets.data
+  Set<CipherUpdate> get getCurrentCipherUpdates => res.wallets.data
       .map((wallet) => wallet.cipherUpdate)
-      .where(
-          (cipherUpdate) => cipherUpdate.passwordId == passwords.maxPasswordId)
+      .where((cipherUpdate) =>
+          cipherUpdate.passwordId == res.passwords.maxPasswordId)
       .toSet();
 
   // should return cipherUpdates that must be used with previous password...
   Set<CipherUpdate> get getPreviousCipherUpdates =>
-      passwords.maxPasswordId == null
+      res.passwords.maxPasswordId == null
           ? {}
-          : wallets.data
+          : res.wallets.data
               .map((wallet) => wallet.cipherUpdate)
               .where((cipherUpdate) =>
                   cipherUpdate.cipherType != CipherType.None &&
-                  cipherUpdate.passwordId! < passwords.maxPasswordId!)
+                  cipherUpdate.passwordId! < res.passwords.maxPasswordId!)
               .toSet();
 
   Future createSave({
@@ -46,13 +46,13 @@ class WalletService {
       {
         WalletType.leader: () async => await leader.makeSaveLeaderWallet(
               accountId,
-              ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+              res.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
               cipherUpdate: cipherUpdate,
               mnemonic: secret,
             ),
         WalletType.single: () async => await single.makeSaveSingleWallet(
               accountId,
-              ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+              res.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
               cipherUpdate: cipherUpdate,
               wif: secret,
             )
@@ -68,14 +68,14 @@ class WalletService {
       {
         WalletType.leader: () => leader.makeLeaderWallet(
               accountId,
-              ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+              res.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
               cipherUpdate: cipherUpdate,
               entropy: secret != null ? bip39.mnemonicToEntropy(secret) : null,
               alwaysReturn: alwaysReturn,
             ),
         WalletType.single: () => single.makeSingleWallet(
               accountId,
-              ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+              res.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
               cipherUpdate: cipherUpdate,
               wif: secret,
               alwaysReturn: alwaysReturn,

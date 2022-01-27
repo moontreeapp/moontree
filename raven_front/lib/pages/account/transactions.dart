@@ -36,7 +36,7 @@ class _TransactionsState extends State<Transactions>
   @override
   void initState() {
     super.initState();
-    listeners.add(balances.batchedChanges.listen((batchedChanges) {
+    listeners.add(res.balances.batchedChanges.listen((batchedChanges) {
       if (batchedChanges.isNotEmpty) setState(() {});
     }));
   }

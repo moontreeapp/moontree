@@ -27,8 +27,8 @@ class _TransactionListState extends State<TransactionList> {
   @override
   void initState() {
     super.initState();
-    listeners
-        .add(vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
+    listeners.add(
+        res.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
       // if vouts in our account has changed...
       if (batchedChanges
           .where((change) =>
@@ -37,12 +37,12 @@ class _TransactionListState extends State<TransactionList> {
         setState(() {});
       }
     }));
-    listeners.add(rates.batchedChanges.listen((batchedChanges) {
+    listeners.add(res.rates.batchedChanges.listen((batchedChanges) {
       // ignore: todo
       // TODO: should probably include any assets that are in the holding of the main account too...
       var changes = batchedChanges.where((change) =>
-          change.data.base == securities.RVN &&
-          change.data.quote == securities.USD);
+          change.data.base == res.securities.RVN &&
+          change.data.quote == res.securities.USD);
       if (changes.isNotEmpty)
         setState(() {
           rateUSD = changes.first.data;
@@ -60,7 +60,9 @@ class _TransactionListState extends State<TransactionList> {
 
   void _toggleUSD() {
     setState(() {
-      if (rates.primaryIndex.getOne(securities.RVN, securities.USD) == null) {
+      if (res.rates.primaryIndex
+              .getOne(res.securities.RVN, res.securities.USD) ==
+          null) {
         showUSD = false;
       } else {
         showUSD = !showUSD;

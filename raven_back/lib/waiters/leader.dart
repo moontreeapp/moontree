@@ -9,7 +9,7 @@ class LeaderWaiter extends Waiter {
   void init() {
     listen(
       'ciphers.changes',
-      ciphers.changes,
+      res.ciphers.changes,
       (Change<Cipher> change) {
         change.when(
           loaded: (loaded) {
@@ -38,7 +38,7 @@ class LeaderWaiter extends Waiter {
         loaded: (loaded) {},
         added: (added) {
           var leader = added.data;
-          if (ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
+          if (res.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
             services.wallet.leader.deriveMoreAddresses(leader as LeaderWallet);
           } else {
             services.wallet.leader.backlog.add(leader as LeaderWallet);
@@ -50,8 +50,9 @@ class LeaderWaiter extends Waiter {
           /// have moved from a testnet account to a mainnet account.
           // remove addresses of the wallet
           var leader = updated.data;
-          await addresses.removeAll(leader.addresses);
-          await balances.removeAll(balances.byWallet.getAll(leader.walletId));
+          await res.addresses.removeAll(leader.addresses);
+          await res.balances
+              .removeAll(res.balances.byWallet.getAll(leader.walletId));
 
           // remove the index from the registry
           for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
@@ -61,7 +62,7 @@ class LeaderWaiter extends Waiter {
             );
           }
           // recreate the addresses of that wallet
-          if (ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
+          if (res.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
             services.wallet.leader.deriveMoreAddresses(leader as LeaderWallet);
           } else {
             services.wallet.leader.backlog.add(leader as LeaderWallet);
