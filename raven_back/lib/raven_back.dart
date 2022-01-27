@@ -5,7 +5,6 @@ export 'services/services.dart';
 export 'streams/streams.dart';
 export 'waiters/waiters.dart';
 
-export 'globals.dart';
 export 'hive_initializer.dart';
 export 'init.dart';
 export 'joins/joins.dart';

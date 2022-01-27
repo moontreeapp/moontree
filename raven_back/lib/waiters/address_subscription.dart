@@ -6,17 +6,8 @@ class AddressSubscriptionWaiter extends Waiter {
   Set<Address> backlog = {};
 
   void init() {
-    //  setupSubscriptionsListener();
     setupClientListener();
   }
-
-  //void setupSubscriptionsListener() => listen(
-  //      'movementDetected',
-  //      services.client.subscribe.movementDetected,
-  //      (Address address) {
-  //        unawaited(retrieve(address));
-  //      },
-  //    );
 
   void deinitSubscriptionHandles() {
     for (var listener in services.client.subscribe.subscriptionHandles.values) {

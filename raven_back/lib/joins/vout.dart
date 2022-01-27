@@ -4,23 +4,23 @@ part of 'joins.dart';
 
 extension VoutBelongsToTransaction on Vout {
   Transaction? get transaction =>
-      globals.res.transactions.primaryIndex.getOne(transactionId);
+      res.transactions.primaryIndex.getOne(transactionId);
 }
 
 extension VoutBelongsToVin on Vout {
   Vin? get vin =>
-      globals.res.vins.byVoutId.getOne(Vout.getVoutId(transactionId, position));
+      res.vins.byVoutId.getOne(Vout.getVoutId(transactionId, position));
   // no vin - this is a unspent output
 }
 
 extension VoutHasOneSecurity on Vout {
   Security? get security => assetSecurityId == null
-      ? globals.res.securities.RVN
-      : globals.res.securities.primaryIndex.getOne(assetSecurityId!);
+      ? res.securities.RVN
+      : res.securities.primaryIndex.getOne(assetSecurityId!);
 }
 
 extension VoutBelongsToAddress on Vout {
-  Address? get address => globals.res.addresses.byAddress.getOne(toAddress);
+  Address? get address => res.addresses.byAddress.getOne(toAddress);
   // no address - we don't own this vout (we sent it to someone else)
 }
 
