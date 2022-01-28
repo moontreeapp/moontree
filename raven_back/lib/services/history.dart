@@ -19,7 +19,8 @@ class HistoryService {
     if (histories.isNotEmpty) {
       unretrieved.addAll(histories.map((h) => h.txHash));
       var wallet = address.wallet;
-      if (wallet is LeaderWallet) {
+      if (wallet is LeaderWallet && address.vouts.isEmpty) {
+        // if we had no history, and now we found some... derive a new address
         streams.wallet.deriveAddress.add(DeriveLeaderAddress(
           leader: wallet,
           exposure: address.exposure,

@@ -25,32 +25,6 @@ class LeaderWalletService {
   bool gapSatisfied(LeaderWallet leaderWallet, NodeExposure exposure) =>
       requiredGap - currentGap(leaderWallet, exposure) <= 0;
 
-  void maybeSaveNewAddress(
-      LeaderWallet leaderWallet, CipherBase cipher, NodeExposure exposure) {
-    var newAddress = maybeDeriveNextAddress(leaderWallet, cipher, exposure);
-    if (newAddress != null) {
-      res.addresses.save(newAddress);
-    }
-  }
-
-  /// this function is used to determine if we need to derive new addresses
-  /// based upon the idea that we want to retain a gap of empty histories
-  Address? maybeDeriveNextAddress(
-    LeaderWallet leaderWallet,
-    CipherBase cipher,
-    NodeExposure exposure,
-  ) {
-    var currentGap = exposure == NodeExposure.External
-        ? leaderWallet.emptyExternalAddresses.length
-        : leaderWallet.emptyInternalAddresses.length;
-    var usedCount = exposure == NodeExposure.External
-        ? leaderWallet.usedExternalAddresses.length
-        : leaderWallet.usedInternalAddresses.length;
-    if (currentGap < requiredGap) {
-      return deriveAddress(leaderWallet, usedCount, exposure: exposure);
-    }
-  }
-
   Address deriveAddress(
     LeaderWallet wallet,
     int hdIndex, {
@@ -131,7 +105,7 @@ class LeaderWalletService {
 
   /// this function is used to determine if we need to derive new addresses
   /// based upon the idea that we want to retain a gap of empty histories
-  Set<Address> maybeDeriveNextAddresses(
+  Set<Address> deriveNextAddresses(
     LeaderWallet leaderWallet,
     CipherBase cipher,
     NodeExposure exposure,
@@ -145,13 +119,13 @@ class LeaderWalletService {
     addressRegistry[hdIndexKey] =
         addressRegistry[hdIndexKey] ?? expectedhdIndex;
     var hdIndex = addressRegistry[hdIndexKey]!;
-    if (existingGap < requiredGap) {
-      return {
-        //for (var i = 0; i <= requiredGap - existingGap; i++)
-        deriveAddress(leaderWallet, hdIndex + 1, exposure: exposure)
-      };
-    }
-    return {};
+    //if (existingGap < requiredGap) {
+    return {
+      //for (var i = 0; i <= requiredGap - existingGap; i++)
+      deriveAddress(leaderWallet, hdIndex + 1, exposure: exposure)
+    };
+    //}
+    //return {};
   }
 
   HDWallet getChangeWallet(LeaderWallet wallet) => getNextEmptyWallet(wallet);
@@ -163,18 +137,19 @@ class LeaderWalletService {
     LeaderWallet wallet, {
     List<NodeExposure>? exposures,
   }) {
-    services.busy.addressDerivationOn();
+    //services.busy.addressDerivationOn();
     exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];
     var newAddresses = <Address>{};
     for (var exposure in exposures) {
-      newAddresses.addAll(maybeDeriveNextAddresses(
+      newAddresses.addAll(deriveNextAddresses(
         wallet,
         res.ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
         exposure,
       ));
     }
+    print('dervied $newAddresses');
     res.addresses.saveAll(newAddresses);
-    services.busy.addressDerivationOff();
+    //services.busy.addressDerivationOff();
     return newAddresses;
   }
 }

@@ -26,21 +26,21 @@ class HistoryWaiter extends Waiter {
   void doNothing() {}
 
   Future handleHistory(List<ScripthashHistory> transactions) async {
-    if (await services.history.getTransactions(transactions)) {
-      backlog.removeAll(transactions);
-      await areWeAllDone();
-    } else {
-      backlog.addAll(transactions);
-    }
+    //if (await services.history.getTransactions(transactions)) {
+    //  backlog.removeAll(transactions);
+    //  await areWeAllDone();
+    //} else {
+    //  backlog.addAll(transactions);
+    //}
   }
 
   Future handleBacklog() async {
-    if (backlog.isNotEmpty) {
-      if (await services.history.getTransactions(backlog.toList())) {
-        backlog.clear();
-        await areWeAllDone();
-      }
-    }
+    //if (backlog.isNotEmpty) {
+    //  if (await services.history.getTransactions(backlog.toList())) {
+    //    backlog.clear();
+    //    await areWeAllDone();
+    //  }
+    //}
   }
 
   Future areWeAllDone() async {
