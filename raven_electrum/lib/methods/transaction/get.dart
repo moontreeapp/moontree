@@ -273,7 +273,7 @@ class Tx with EquatableMixin {
     return 'Transaction(txid: $txid, hash: $hash, blockhash: $blockhash, '
         'blocktime: $blocktime, confirmations: $confirmations, height: $height, '
         'hex: $hex, locktime: $locktime, size: $size, vsize: $vsize, time: $time, '
-        'txid: $txid, version: $version, vin: $vin, vout: $vout)';
+        'version: $version, vin: $vin, vout: $vout)';
   }
 }
 

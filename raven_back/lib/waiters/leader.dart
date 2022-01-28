@@ -34,19 +34,33 @@ class LeaderWaiter extends Waiter {
     listen(
       'streams.wallet.deriveAddress',
       streams.wallet.deriveAddress,
-      (DeriveLeaderAddress? deriveDetails) => deriveDetails == null
-          ? () {/* do nothing */}
-          : handleDeriveAddress(
-              leader: deriveDetails.leader, exposure: deriveDetails.exposure),
+      (DeriveLeaderAddress? deriveDetails) {
+        print('deriveDetails == null ${deriveDetails == null}');
+        deriveDetails == null
+            ? () {/* do nothing */}
+            : handleDeriveAddress(
+                leader: deriveDetails.leader, exposure: deriveDetails.exposure);
+      },
       autoDeinit: true,
     );
   }
 
   void handleLeaderChange(Change<Wallet> change) {
     change.when(
-        loaded: (loaded) {},
-        added: (added) =>
-            handleDeriveAddress(leader: added.data as LeaderWallet),
+        loaded: (loaded) {
+          print('loaded, $loaded');
+          // are addresses loaded yet?
+          var leader = loaded.data as LeaderWallet;
+          for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
+            if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
+              handleDeriveAddress(leader: leader, exposure: exposure);
+            }
+          }
+        },
+        added: (added) {
+          print(0);
+          handleDeriveAddress(leader: added.data as LeaderWallet);
+        },
         updated: (updated) async {
           /// when wallet is moved from one account to another...
           /// we need to derive all the addresses again because it might
@@ -94,6 +108,8 @@ class LeaderWaiter extends Waiter {
 
     if (bypassCipher ||
         res.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
+      print(
+          'derving $bypassCipher, ${res.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null}');
       services.wallet.leader.deriveMoreAddresses(
         leader,
         exposures: exposure == null ? null : [exposure],
