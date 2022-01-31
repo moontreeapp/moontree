@@ -58,11 +58,12 @@ class RavenMobileApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       initialRoute: '/',
+      routes: pages
+          .routes(context), // look up flutter view model for sub app structure.
       themeMode: ThemeMode.system,
       theme: CustomTheme.lightTheme,
       darkTheme: CustomTheme.lightTheme, //dark
       navigatorObservers: [components.navigator],
-      routes: pages.routes(context),
       builder: (context, child) {
         components.navigator.scaffoldContext = context;
         return BackdropScaffold(

@@ -34,6 +34,11 @@ class Identicon {
     } else {
       foregroundColor = _getOrangeColorShade(lightenPercent);
       backgroundColor = _getBlueColorShade(lightenPercent);
+      print(Color.fromRgb(
+        foregroundColor![0],
+        foregroundColor![1],
+        foregroundColor![2],
+      ));
     }
   }
 
@@ -135,7 +140,7 @@ class Identicon {
     return matrix;
   }
 
-  Uint8List generate(String text) {
+  ImageDetails generate(String text) {
     name = text;
     hashedName = digest(utf8.encode(name)).toString();
     _generateColors();
@@ -146,7 +151,23 @@ class Identicon {
     });
     var matrix = _createMatrix(hexDigestByteList);
     var size = rows * cols;
-    return Uint8List.fromList(
-        _createImage(matrix, size, size, (size * 0.1).toInt()));
+
+    return ImageDetails(
+        image: Uint8List.fromList(
+            _createImage(matrix, size, size, (size * 0.1).toInt())),
+        foreground: foregroundColor!,
+        background: backgroundColor!);
   }
+}
+
+class ImageDetails {
+  Uint8List image;
+  List<int> foreground;
+  List<int> background;
+
+  ImageDetails({
+    required this.image,
+    required this.foreground,
+    required this.background,
+  });
 }

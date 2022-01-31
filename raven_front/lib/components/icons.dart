@@ -74,23 +74,30 @@ class IconComponents {
     }
   }
 
-  Widget _assetAvatarGeneratedIdenticon(String asset,
-      {double? height, double? width}) {
+  Widget _assetAvatarGeneratedIdenticon(
+    String asset, {
+    double? height,
+    double? width,
+  }) {
+    var imageDetails = Identicon().generate(asset);
     return Container(
       height: 40,
       width: 40,
       decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-              width: 2,
-              color: // if you have the master?
-                  asset.endsWith('!') ? Color(0xFFFF9900) : Color(0xFF5C6BC0))),
+              width: 1,
+              color: Color.fromARGB(
+                255,
+                imageDetails.foreground[0],
+                imageDetails.foreground[1],
+                imageDetails.foreground[2],
+              ))),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(100.0),
         child: Center(
           child: Container(
-            child:
-                Image.memory(Uint8List.fromList(Identicon().generate(asset))),
+            child: Image.memory(Uint8List.fromList(imageDetails.image)),
           ),
         ),
       ),
