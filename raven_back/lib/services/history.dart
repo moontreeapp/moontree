@@ -87,7 +87,7 @@ class HistoryService {
         // not already downloaded...
         txs.add(await client.getTransaction(txHash));
       } else {
-        print('skipping ${txHash.substring(0, 5)}');
+        print('skipping ${txHash}');
       }
       unretrieved.remove(txHash);
       retrieving.add(txHash);
@@ -224,6 +224,8 @@ class HistoryService {
 
   /// when an address status change: make our historic tx data match blockchain
   Future saveDanglingTransactions(RavenElectrumClient client) async {
+    print('GETTING DANGLING TRANSACTIONS');
+
     /// one more step - get all vins that have no corresponding vout (in the db)
     /// and get the vouts for them
     var finalVouts = <Vout>[];

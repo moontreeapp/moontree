@@ -43,13 +43,13 @@ class RavenElectrumClient extends SubscribingClient {
   String protocolVersion = '1.9';
   int port = 50002;
 
-  static Future<RavenElectrumClient> connect(dynamic host,
-      {port = 50002,
-      connectionTimeout = conn.connectionTimeout,
-      aliveTimerDuration = conn.aliveTimerDuration,
-      acceptUnverified = true,
-      clientName = 'MTWallet',
-      protocolVersion = '1.9'}) async {
+  static Future<RavenElectrumClient> connect(String host,
+      {int port = 50002,
+      Duration connectionTimeout = conn.connectionTimeout,
+      Duration aliveTimerDuration = conn.aliveTimerDuration,
+      bool acceptUnverified = true,
+      String clientName = 'MTWallet',
+      String protocolVersion = '1.9'}) async {
     var client = RavenElectrumClient(await conn.connect(host,
         port: port,
         connectionTimeout: connectionTimeout,
