@@ -46,60 +46,26 @@ class _PageTitleState extends State<PageTitle> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (settingTitle == '/settings/import_export') {
-      return Text('Import / Export', style: Theme.of(context).pageTitle);
-    }
-    if (settingTitle == '/settings/settings') {
-      return Text('Settings', style: Theme.of(context).pageTitle);
-    }
-    if (['main', 'Send', ''].contains(pageTitle)) {
-      return Text('', style: Theme.of(context).pageTitle);
-    }
-    if (pageTitle == 'Import_export') {
-      return Text('Import / Export', style: Theme.of(context).pageTitle);
-    }
-    if (['Change', 'Remove', 'Verify'].contains(pageTitle)) {
-      return Text('Security', style: Theme.of(context).pageTitle);
-    }
-    if (pageTitle == 'Transactions') {
-      var symbol = streams.spend.form.value?.symbol ?? 'RVN';
-      symbol = symbol == 'RVN' ? 'Ravencoin' : symbol;
-      return Text(symbol, style: Theme.of(context).pageTitle);
-    }
-    if (pageTitle != 'Wallet' || res.accounts.data.length <= 1) {
-      return Text(pageTitle, style: Theme.of(context).pageTitle);
-    }
-    return Text('Wallet', style: Theme.of(context).pageTitle);
-    /* /// showing editable name of wallet account
-    changeName.text = 'Wallets / ' + Current.account.name;
-    return TextField(
-      textInputAction: TextInputAction.done,
-      textAlign: TextAlign.left,
-      style: Theme.of(context).pageTitle,
-      decoration: const InputDecoration(
-          border: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          errorBorder: InputBorder.none,
-          disabledBorder: InputBorder.none),
-      controller: changeName,
-      onTap: () {
-        changeName.text = 'Wallets / ';
-        changeName.selection = TextSelection.fromPosition(
-            TextPosition(offset: changeName.text.length));
-      },
-      onSubmitted: (value) async {
-        if (!await updateAcount(
-            Current.account, value.replaceFirst('Wallets / ', ''))) {
-          components.alerts.failure(context,
-              headline: 'Unable rename account',
-              msg: 'Account name, "$value" is already taken. '
-                  'Please enter a uinque account name.');
-        }
-        setState(() {});
-      },
-    );
-    */
-  }
+  Widget build(BuildContext context) => Text(
+      {
+            '/settings/import_export': 'Import / Export',
+            '/settings/settings': 'Settings',
+          }[settingTitle] ??
+          {
+            '': '',
+            'main': '',
+            'Send': '',
+            'Import_export': 'Import / Export',
+            'Change': 'Security',
+            'Remove': 'Security',
+            'Verify': 'Security',
+            'Transactions':
+                ((streams.spend.form.value?.symbol ?? 'RVN') == 'RVN')
+                    ? 'Ravencoin'
+                    : streams.spend.form.value?.symbol,
+          }[pageTitle] ??
+          ((pageTitle != 'Wallet' || res.accounts.data.length <= 1)
+              ? pageTitle
+              : 'Wallet'),
+      style: Theme.of(context).pageTitle);
 }

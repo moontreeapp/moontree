@@ -7,7 +7,6 @@ export 'back/nav_drawer.dart';
 export 'back/balance_header.dart';
 export 'front/holdings.dart';
 export 'front/loader.dart';
-export 'front/setting_items.dart';
 export 'front/transactions.dart';
 export 'front/verify.dart';
 export 'bottom/nav_bar.dart';
