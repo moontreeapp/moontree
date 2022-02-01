@@ -74,14 +74,19 @@ class _TransactionsState extends State<Transactions>
         controller: components.navigator.tabController,
         children: <Widget>[
           GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: NotificationListener<UserScrollNotification>(
-                onNotification: visibilityOfSendReceive,
-                child: TransactionList(
-                    transactions: currentTxs
-                        .where((tx) => tx.security.symbol == security.symbol),
-                    msg: '\nNo ${security.symbol} transactions.\n')),
-          ),
+              onTap: () => FocusScope.of(context).unfocus(),
+              child:
+
+                  /// comments: to remove scroll functionality as it is not yet fluid. #182
+                  ///NotificationListener<UserScrollNotification>(
+                  ///    onNotification: visibilityOfSendReceive,
+                  ///    child:
+                  TransactionList(
+                      transactions: currentTxs
+                          .where((tx) => tx.security.symbol == security.symbol),
+                      msg: '\nNo ${security.symbol} transactions.\n')),
+
+          ///),
           _metadataView() ??
               components.empty.message(
                 context,
