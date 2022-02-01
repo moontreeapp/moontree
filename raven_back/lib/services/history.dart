@@ -6,31 +6,23 @@ import 'package:raven_back/raven_back.dart';
 import 'package:tuple/tuple.dart';
 
 class HistoryService {
-  //Set<String> unretrieved = {};
-  //Set<String> retrieving = {};
-  //Set<String> retrieved = {};
-
   Future<bool> getHistories(Address address) async {
     var client = streams.client.client.value;
     if (client == null) {
       return false;
     }
-
     var histories = await client.getHistory(address.addressId);
-
     if (histories.isNotEmpty) {
-      //unretrieved.addAll(histories.map((h) => h.txHash));
-      var wallet = address.wallet;
+      streams.address.history.add(histories.map((history) => history.txHash));
       // if we had no history, and now we found some... derive a new address
-      if (wallet is LeaderWallet && address.vouts.isEmpty) {
+      if (address.wallet is LeaderWallet && address.vouts.isEmpty) {
         streams.wallet.deriveAddress.add(DeriveLeaderAddress(
-          leader: wallet,
+          leader: address.wallet as LeaderWallet,
           exposure: address.exposure,
         ));
       }
-      streams.address.history.add(histories.map((history) => history.txHash));
     } else {
-      streams.address.empty.add(true);
+      streams.address.empty.add(address);
     }
     return true;
   }
@@ -48,22 +40,16 @@ class HistoryService {
       // addresses point to, perhaps, so that this is valid, we never have to
       // redownload individaul transactions again?
       if ((res.transactions.primaryIndex.getOne(txHash) == null ||
-              res.transactions.mempool
-                  .map((t) => t.transactionId)
-                  .contains(txHash))
-          //&& !(retrieving.contains(txHash) || retrieved.contains(txHash))
-          ) {
+          res.transactions.mempool
+              .map((t) => t.transactionId)
+              .contains(txHash))) {
         // not already downloaded...
         txs.add(await client.getTransaction(txHash));
       } else {
         print('skipping $txHash');
       }
-      //unretrieved.remove(txHash);
-      //retrieving.add(txHash);
     }
     await saveTransactions(txs, client);
-    //retrieving.removeAll(txs.map((t) => t.txid));
-    //retrieved.addAll(txs.map((t) => t.txid));
     return true;
   }
 
@@ -74,22 +60,6 @@ class HistoryService {
     if (client == null) {
       return false;
     }
-
-    /// we should add to backlog and let the leader waiter take care of those
-    /// if the cipher isn't currently available it should be since we obviously
-    /// just used it to make an address, most likely, but maybe there are edge
-    /// cases, so we should do the check anyway.
-    //print('unretrieved $unretrieved');
-    //print('retrieving $retrieving');
-    //print('retrieved $retrieved');
-    //print(
-    //    'DATA ${res.transactions.data.where((e) => retrieved.contains(e.transactionId))}');
-    //print(
-    //    'PROVEN ${retrieved.where((e) => !res.transactions.data.map((ee) => ee.transactionId).contains(e))}');
-
-    //if (unretrieved.isNotEmpty || retrieving.isNotEmpty) {
-    //  return false;
-    //}
     var allDone = true;
     for (var leader in res.wallets.leaders) {
       for (var exposure in [NodeExposure.Internal, NodeExposure.External]) {
@@ -122,28 +92,31 @@ class HistoryService {
   }
 
   /// when an address status change: make our historic tx data match blockchain
-  Future saveTransactions(List<Tx> txs, RavenElectrumClient client) async {
+  Future saveTransactions(List<Tx> txs, RavenElectrumClient client,
+      {bool saveVin = true}) async {
     /// save all vins, vouts and transactions
     var newVins = <Vin>{};
     var newVouts = <Vout>{};
     var newTxs = <Transaction>{};
     for (var tx in txs) {
       print('downloading  tx : ${tx.txid.substring(0, 5)}');
-      for (var vin in tx.vin) {
-        //print('downloading  vin: ${tx.txid.substring(0, 5)}');
-        if (vin.txid != null && vin.vout != null) {
-          newVins.add(Vin(
-            transactionId: tx.txid,
-            voutTransactionId: vin.txid!,
-            voutPosition: vin.vout!,
-          ));
-        } else if (vin.coinbase != null && vin.sequence != null) {
-          newVins.add(Vin(
-            transactionId: tx.txid,
-            voutTransactionId: vin.coinbase!,
-            voutPosition: vin.sequence!,
-            isCoinbase: true,
-          ));
+      if (saveVin) {
+        for (var vin in tx.vin) {
+          //print('downloading  vin: ${tx.txid.substring(0, 5)}');
+          if (vin.txid != null && vin.vout != null) {
+            newVins.add(Vin(
+              transactionId: tx.txid,
+              voutTransactionId: vin.txid!,
+              voutPosition: vin.vout!,
+            ));
+          } else if (vin.coinbase != null && vin.sequence != null) {
+            newVins.add(Vin(
+              transactionId: tx.txid,
+              voutTransactionId: vin.coinbase!,
+              voutPosition: vin.sequence!,
+              isCoinbase: true,
+            ));
+          }
         }
       }
       for (var vout in tx.vout) {
@@ -190,54 +163,15 @@ class HistoryService {
     await res.vouts.saveAll(newVouts);
   }
 
-  /// when an address status change: make our historic tx data match blockchain
+  /// one more step - get all vins that have no corresponding vout (in the db)
+  /// and get the vouts for them
   Future saveDanglingTransactions(RavenElectrumClient client) async {
-    print('GETTING DANGLING TRANSACTIONS');
-
-    /// one more step - get all vins that have no corresponding vout (in the db)
-    /// and get the vouts for them
-    var finalVouts = <Vout>[];
-    var finalTxs = <Transaction>[];
-    // ignore: omit_local_variable_types
-    var myVins =
-        List.from(res.vins.danglingVins.map((vin) => vin.voutTransactionId));
-    for (var tx in [
-      for (var txHash in myVins) await client.getTransaction(txHash)
-    ]) {
-      for (var vout in tx.vout) {
-        if (vout.scriptPubKey.type == 'nulldata') continue;
-        var vs = await handleAssetData(client, tx, vout);
-        finalVouts.add(Vout(
-          transactionId: tx.txid,
-          rvnValue: vs.item1,
-          position: vout.n,
-          memo: vout.memo,
-          type: vout.scriptPubKey.type,
-          toAddress: vout.scriptPubKey.addresses![0],
-          assetSecurityId: vs.item2.securityId,
-          assetValue: amountToSat(vout.scriptPubKey.amount,
-              divisibility:
-                  vs.item3?.divisibility ?? vout.scriptPubKey.units ?? 8),
-          // multisig - must detect if multisig...
-          additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
-              ? vout.scriptPubKey.addresses!
-                  .sublist(1, vout.scriptPubKey.addresses!.length)
-              : null,
-        ));
-      }
-
-      /// might as well just save them all  - maybe avoiding saving them all
-      /// can save some time, but then you have to also check confirmations
-      /// and see if anything else changed. meh, just save them all for now.
-      finalTxs.add(Transaction(
-        transactionId: tx.txid,
-        height: tx.height,
-        confirmed: (tx.confirmations ?? 0) > 0,
-        time: tx.time,
-      ));
+    var txs =
+        (res.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet());
+    print('GETTING DANGLING TRANSACTIONS: $txs');
+    for (var txHash in txs) {
+      await getTransaction(txHash, saveVin: false);
     }
-    await res.transactions.saveAll(finalTxs);
-    await res.vouts.saveAll(finalVouts);
   }
 
   /// we capture securities here. if it's one we've never seen,
@@ -305,5 +239,75 @@ class HistoryService {
       }
     }
     return Tuple3(value, security ?? res.securities.RVN, asset);
+  }
+
+  Future<bool> getTransaction(String transactionId,
+      {bool saveVin = true}) async {
+    var client = streams.client.client.value;
+    if (client == null) {
+      return false;
+    }
+    // not already downloaded?
+    if ((res.transactions.primaryIndex.getOne(transactionId) == null ||
+        res.transactions.mempool
+            .map((t) => t.transactionId)
+            .contains(transactionId))) {
+      print('downloading: $transactionId');
+      await saveTransaction(await client.getTransaction(transactionId), client,
+          saveVin: saveVin);
+    } else {
+      print('skipping $transactionId');
+    }
+    return true;
+  }
+
+  Future saveTransaction(Tx tx, RavenElectrumClient client,
+      {bool saveVin = true}) async {
+    print('parsing/saving: ${tx.txid}');
+    for (var vin in tx.vin) {
+      if (saveVin) {
+        if (vin.txid != null && vin.vout != null) {
+          await res.vins.save(Vin(
+            transactionId: tx.txid,
+            voutTransactionId: vin.txid!,
+            voutPosition: vin.vout!,
+          ));
+        } else if (vin.coinbase != null && vin.sequence != null) {
+          await res.vins.save(Vin(
+            transactionId: tx.txid,
+            voutTransactionId: vin.coinbase!,
+            voutPosition: vin.sequence!,
+            isCoinbase: true,
+          ));
+        }
+      }
+    }
+    for (var vout in tx.vout) {
+      if (vout.scriptPubKey.type == 'nulldata') continue;
+      var vs = await handleAssetData(client, tx, vout);
+      await res.vouts.save(Vout(
+        transactionId: tx.txid,
+        rvnValue: vs.item1,
+        position: vout.n,
+        memo: vout.memo,
+        type: vout.scriptPubKey.type,
+        toAddress: vout.scriptPubKey.addresses![0],
+        assetSecurityId: vs.item2.securityId,
+        assetValue: amountToSat(vout.scriptPubKey.amount,
+            divisibility:
+                vs.item3?.divisibility ?? vout.scriptPubKey.units ?? 8),
+        // multisig - must detect if multisig...
+        additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
+            ? vout.scriptPubKey.addresses!
+                .sublist(1, vout.scriptPubKey.addresses!.length)
+            : null,
+      ));
+      await res.transactions.save(Transaction(
+        transactionId: tx.txid,
+        height: tx.height,
+        confirmed: (tx.confirmations ?? 0) > 0,
+        time: tx.time,
+      ));
+    }
   }
 }

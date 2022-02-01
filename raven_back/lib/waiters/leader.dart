@@ -35,7 +35,6 @@ class LeaderWaiter extends Waiter {
       'streams.wallet.deriveAddress',
       streams.wallet.deriveAddress,
       (DeriveLeaderAddress? deriveDetails) {
-        print('deriveDetails == null ${deriveDetails == null}');
         deriveDetails == null
             ? () {/* do nothing */}
             : handleDeriveAddress(
@@ -48,6 +47,7 @@ class LeaderWaiter extends Waiter {
   void handleLeaderChange(Change<Wallet> change) {
     change.when(
         loaded: (loaded) {
+          print('LOADED: $loaded');
           var leader = loaded.data as LeaderWallet;
           for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
             if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
