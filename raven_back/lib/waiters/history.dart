@@ -5,15 +5,15 @@ import 'package:raven_electrum/raven_electrum.dart';
 import 'waiter.dart';
 
 class HistoryWaiter extends Waiter {
-  Set<ScripthashHistory> backlog = {};
+  Set<String> backlog = {};
 
   void init() {
     listen(
-      'streams.address.history',
-      streams.address.history,
-      (List<ScripthashHistory>? transactions) => transactions == null
+      'streams.address.uniqueHistory',
+      streams.address.uniqueHistory,
+      (String? transaction) => transaction == null
           ? doNothing(/* initial state */)
-          : handleHistory(transactions),
+          : handleHistory(transaction),
     );
 
     listen(
@@ -25,13 +25,14 @@ class HistoryWaiter extends Waiter {
 
   void doNothing() {}
 
-  Future handleHistory(List<ScripthashHistory> transactions) async {
-    if (await services.history.getTransactions(transactions)) {
-      backlog.removeAll(transactions);
+  Future handleHistory(String transaction) async {
+    print('handling $transaction');
+    if (await services.history.getTransactions([transaction])) {
+      backlog.remove(transaction);
       await areWeAllDone();
     } else {
       print('adding to backlog!');
-      backlog.addAll(transactions);
+      backlog.add(transaction);
     }
   }
 

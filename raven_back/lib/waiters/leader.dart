@@ -48,8 +48,6 @@ class LeaderWaiter extends Waiter {
   void handleLeaderChange(Change<Wallet> change) {
     change.when(
         loaded: (loaded) {
-          print('loaded, $loaded');
-          // are addresses loaded yet?
           var leader = loaded.data as LeaderWallet;
           for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
             if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
@@ -58,7 +56,6 @@ class LeaderWaiter extends Waiter {
           }
         },
         added: (added) {
-          print(0);
           handleDeriveAddress(leader: added.data as LeaderWallet);
         },
         updated: (updated) async {
@@ -108,8 +105,6 @@ class LeaderWaiter extends Waiter {
 
     if (bypassCipher ||
         res.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
-      print(
-          'derving $bypassCipher, ${res.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null}');
       services.wallet.leader.deriveMoreAddresses(
         leader,
         exposures: exposure == null ? null : [exposure],

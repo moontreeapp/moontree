@@ -22,58 +22,26 @@ class HistoryService {
       unretrieved.addAll(histories.map((h) => h.txHash));
       var wallet = address.wallet;
       if (wallet is LeaderWallet && address.vouts.isEmpty) {
-        var found = [
-          for (var item in [
-            '681c62266f6dc3c1c16ba5024c5bb875c627ab89815fd61f689519e06036832b',
-            'f585233ccb19f93912c094e66d5681b73a4adcf3db50c7455e5d9b2a724b2345',
-            '47f0fc510a930c56797d5bf2ed574e9a7d67153d8e34e6b342af6947d0efdddf',
-            'e80568e961b4a978dcf5ab533638505823bbb83bbea2c742afb35f6b22ff96b6',
-            'c512010a793a7a4296e1a34e1c11b94441226f602cf57c9b56d3a20307f02b41',
-            'fe08c278ad54f3fdcc35aa6d05de7b955f22d842d9ef75a501fa82aa68dbc178',
-            '00111be079656f15bc63afa843860f37e0ecbc6e374c2e35c11fac6eff9cb810',
-            '5fd5dc8fbb486404feb24762a838c09131d225b3547b9fa318920d1593591139',
-            'ef1be6f06025e6bd8d7e8319003296e168068ce9d08e6efc1612c06fcb13c330',
-            '14de222d2825ec8e187e4d8c2785bdf26663d6d8e9f5475cb97a5e6376a64d56',
-            '24031e0a46ae015cdb58d53dfb8910207d53b6a061387ffd2368730533043f3e',
-            '6b5d00227fc75b590d693877a32ecce55664fd851238de1cfa3fae5ce1362862',
-            '17b798480e340ae639c23a036ee39d61784b4418ca3d40c43ae2e7c9728e76e2',
-            '6ef14bbacb9dc343eb9cde1f2a311ae787231613fc6ae863cec11752a56c3308',
-            '53572c6054e8c00b847ed19682e487b1a44b4a28c3a6001bd84473db1c671044',
-            '5cdde1dc17f820320011ec648272237322e1cde48e62158b3cb56999c5aba0e8',
-            '7217229e9fa0e668aebc4d1478ab69320ee7d9b6ca6357c30a38b4b4a89a0c0d',
-            'c88fe87a5df1f8fac0ba929a7021038d66947fd4aabef2368eb7aa21aea2c3c5',
-            '9b64eb258a4352a68c4ce98cbbadddcbbcb285c422f7f9f97ed4b826d0a387d7',
-          ])
-            for (var thing in histories)
-              if (item == thing.txHash) item
-        ];
-        if (found.isNotEmpty) {
-          print(found);
-        }
-        print(address.address);
-        for (var item in histories) {
-          print(item);
-        }
         // if we had no history, and now we found some... derive a new address
         streams.wallet.deriveAddress.add(DeriveLeaderAddress(
           leader: wallet,
           exposure: address.exposure,
         ));
       }
-      streams.address.history.add(histories);
+      streams.address.history.add(histories.map((history) => history.txHash));
     } else {
       streams.address.empty.add(true);
     }
     return true;
   }
 
-  Future<bool> getTransactions(List<ScripthashHistory> histories) async {
+  Future<bool> getTransactions(Iterable<String> histories) async {
     var client = streams.client.client.value;
     if (client == null) {
       return false;
     }
     var txs = <Tx>[];
-    for (var txHash in histories.map((history) => history.txHash)) {
+    for (var txHash in histories) {
       // we need to look into this on change of wallet from mainnet to testnet
       // or even on new password or change or removal do we really need to
       // download them all again? could we merely change the wallet id that the
@@ -87,7 +55,7 @@ class HistoryService {
         // not already downloaded...
         txs.add(await client.getTransaction(txHash));
       } else {
-        print('skipping ${txHash}');
+        print('skipping $txHash');
       }
       unretrieved.remove(txHash);
       retrieving.add(txHash);
@@ -162,7 +130,7 @@ class HistoryService {
     for (var tx in txs) {
       print('downloading  tx : ${tx.txid.substring(0, 5)}');
       for (var vin in tx.vin) {
-        print('downloading  vin: ${tx.txid.substring(0, 5)}');
+        //print('downloading  vin: ${tx.txid.substring(0, 5)}');
         if (vin.txid != null && vin.vout != null) {
           newVins.add(Vin(
             transactionId: tx.txid,
@@ -179,7 +147,7 @@ class HistoryService {
         }
       }
       for (var vout in tx.vout) {
-        print('downloading  vout: ${tx.txid.substring(0, 5)}');
+        //print('downloading  vout: ${tx.txid.substring(0, 5)}');
         if (vout.scriptPubKey.type == 'nulldata') continue;
         var vs = await handleAssetData(client, tx, vout);
         newVouts.add(Vout(
@@ -210,7 +178,7 @@ class HistoryService {
         confirmed: (tx.confirmations ?? 0) > 0,
         time: tx.time,
       ));
-      print('done with tx: ${tx.txid.substring(0, 5)}');
+      //print('done with tx: ${tx.txid.substring(0, 5)}');
     }
 
     //await res.vins.removeAll(existingVins.difference(newVins));

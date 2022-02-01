@@ -1,11 +1,14 @@
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_electrum/raven_electrum.dart';
 import 'package:rxdart/rxdart.dart';
 
 class AddressStreams {
   final retrieved = BehaviorSubject<Address>();
-  final history = BehaviorSubject<List<ScripthashHistory>?>.seeded(null);
   final empty = BehaviorSubject<bool?>.seeded(null);
+  final history = history$;
+  final uniqueHistory = uniqueHistory$;
 }
 
-//final Stream<Address> addressRetrieved$ = ReplaySubject<Address>().distinctUnique();
+final history$ = BehaviorSubject<Iterable<String>?>.seeded(null);
+final flattenedHistory$ = BehaviorSubject<String?>.seeded(null)
+  ..addStream(history$.where((event) => event != null).expand((i) => i!));
+final uniqueHistory$ = flattenedHistory$.distinctUnique();

@@ -135,7 +135,7 @@ class SubscribeService {
       subscriptionHandles[address.addressId] = client
           .subscribeScripthash(address.addressId)
           .listen((String? status) {
-        unawaited(waiters.subscription.retrieve(address));
+        waiters.subscription.retrieve(address);
       });
     }
     return true;
