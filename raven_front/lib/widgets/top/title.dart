@@ -14,6 +14,7 @@ class PageTitle extends StatefulWidget {
 
 class _PageTitleState extends State<PageTitle> {
   late String pageTitle = 'Wallet';
+  late String? settingTitle = null;
   late List listeners = [];
   final changeName = TextEditingController();
 
@@ -24,6 +25,13 @@ class _PageTitleState extends State<PageTitle> {
       if (value != pageTitle) {
         setState(() {
           pageTitle = value;
+        });
+      }
+    }));
+    listeners.add(streams.app.setting.stream.listen((value) {
+      if (value != settingTitle) {
+        setState(() {
+          settingTitle = value;
         });
       }
     }));
@@ -39,6 +47,12 @@ class _PageTitleState extends State<PageTitle> {
 
   @override
   Widget build(BuildContext context) {
+    if (settingTitle == '/settings/import_export') {
+      return Text('Import / Export', style: Theme.of(context).pageTitle);
+    }
+    if (settingTitle == '/settings/settings') {
+      return Text('Settings', style: Theme.of(context).pageTitle);
+    }
     if (['main', 'Send', ''].contains(pageTitle)) {
       return Text('', style: Theme.of(context).pageTitle);
     }

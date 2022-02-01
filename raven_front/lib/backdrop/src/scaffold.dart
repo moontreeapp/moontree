@@ -312,7 +312,7 @@ class BackdropScaffold extends StatefulWidget {
     this.frontLayerBackgroundColor,
     double frontLayerActiveFactor = 1,
     this.backLayerBackgroundColor,
-    this.frontLayerScrim = Colors.white70,
+    this.frontLayerScrim = Colors.white, //Colors.white70,
     this.backLayerScrim = Colors.black54,
     this.onBackLayerConcealed,
     this.onBackLayerRevealed,

@@ -16,8 +16,9 @@ class PageLead extends StatefulWidget {
 }
 
 class _PageLead extends State<PageLead> {
-  String pageTitle = 'Wallet';
-  List listeners = [];
+  late String pageTitle = 'Wallet';
+  late String? settingTitle = null;
+  late List listeners = [];
 
   @override
   void initState() {
@@ -26,6 +27,13 @@ class _PageLead extends State<PageLead> {
       if (value != pageTitle) {
         setState(() {
           pageTitle = value;
+        });
+      }
+    }));
+    listeners.add(streams.app.setting.stream.listen((value) {
+      if (value != settingTitle) {
+        setState(() {
+          settingTitle = value;
         });
       }
     }));
@@ -40,23 +48,33 @@ class _PageLead extends State<PageLead> {
   }
 
   @override
-  Widget build(BuildContext context) => pageTitle == 'Wallet'
-      ? IconButton(
+  Widget build(BuildContext context) =>
+      {
+        '/settings/import_export': IconButton(
+            splashRadius: 24,
+            icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+            onPressed: () => streams.app.setting.add('/settings')),
+        '/settings/settings': IconButton(
+            splashRadius: 24,
+            icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+            onPressed: () => streams.app.setting.add('/settings'))
+      }[settingTitle] ??
+      {
+        'Wallet': IconButton(
+            splashRadius: 24,
+            onPressed: () => Backdrop.of(context).fling(),
+            padding: EdgeInsets.only(left: 16),
+            icon: SvgPicture.asset('assets/icons/menu/menu.svg')),
+        'Send': IconButton(
+            splashRadius: 24,
+            icon: Icon(Icons.close_rounded, color: Colors.white),
+            onPressed: () =>
+                Navigator.pop(components.navigator.routeContext ?? context)),
+        '': Container(),
+      }[pageTitle] ??
+      IconButton(
           splashRadius: 24,
-          onPressed: () => Backdrop.of(context).fling(),
-          padding: EdgeInsets.only(left: 16),
-          icon: SvgPicture.asset('assets/icons/menu/menu.svg'))
-      : pageTitle == 'Send'
-          ? IconButton(
-              splashRadius: 24,
-              icon: Icon(Icons.close_rounded, color: Colors.white),
-              onPressed: () =>
-                  Navigator.pop(components.navigator.routeContext ?? context))
-          : pageTitle == ''
-              ? Container()
-              : IconButton(
-                  splashRadius: 24,
-                  icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
-                  onPressed: () => Navigator.pop(
-                      components.navigator.routeContext ?? context));
+          icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+          onPressed: () =>
+              Navigator.pop(components.navigator.routeContext ?? context));
 }

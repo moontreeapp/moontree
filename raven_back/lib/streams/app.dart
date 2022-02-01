@@ -6,6 +6,7 @@ class AppStreams {
   final login = BehaviorSubject<bool>();
   final verify = BehaviorSubject<bool>.seeded(false);
   final page = BehaviorSubject<String>.seeded('main');
+  final setting = BehaviorSubject<String?>.seeded(null);
   final snack = BehaviorSubject<Snack?>.seeded(null);
 }
 

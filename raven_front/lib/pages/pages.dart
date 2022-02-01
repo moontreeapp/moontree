@@ -11,11 +11,10 @@ import 'package:raven_front/pages/settings/about.dart';
 import 'package:raven_front/pages/settings/currency.dart';
 import 'package:raven_front/pages/settings/export.dart';
 import 'package:raven_front/pages/settings/import.dart';
-import 'package:raven_front/pages/settings/import_export.dart';
 import 'package:raven_front/pages/settings/language.dart';
 import 'package:raven_front/pages/settings/network.dart';
+import 'package:raven_front/pages/settings/advanced.dart';
 import 'package:raven_front/pages/settings/preferences.dart';
-import 'package:raven_front/pages/settings/settings.dart';
 import 'package:raven_front/pages/settings/security.dart';
 import 'package:raven_front/pages/settings/support.dart';
 import 'package:raven_front/pages/settings/technical.dart';
@@ -38,15 +37,14 @@ class pages {
   static Send send = Send();
   static CreateAsset createAsset = CreateAsset();
   static About about = About();
-  static Language language = Language();
+  static Advanced advanced = Advanced();
   static Export export = Export();
   static Import import = Import();
-  static ImportExport importExport = ImportExport();
+  static Language language = Language();
   static Loader loader = Loader();
   static ElectrumNetwork electrumNetwork = ElectrumNetwork();
   static Preferences preferences = Preferences();
   static RemovePassword removePassword = RemovePassword();
-  static Settings settings = Settings();
   static Currency currency = Currency();
   static ScanQR scan = ScanQR();
   static Support support = Support();
@@ -72,14 +70,12 @@ class pages {
         '/transaction/send': (context) => send,
         '/transaction/create': (context) => createAsset,
         '/settings/about': (context) => about,
-        //'/settings/advanced': (context) => advanced,
+        '/settings/level': (context) => advanced,
         '/settings/currency': (context) => language,
         '/settings/export': (context) => export,
         '/settings/import': (context) => import,
-        '/settings/import_export': (context) => importExport,
         '/settings/network': (context) => electrumNetwork,
         '/settings/preferences': (context) => preferences,
-        '/settings/settings': (context) => settings,
         '/settings/security': (context) => security,
         '/settings/support': (context) => support,
         '/settings/technical': (context) => technicalView,
