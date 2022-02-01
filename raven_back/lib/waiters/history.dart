@@ -21,17 +21,21 @@ class HistoryWaiter extends Waiter {
       streams.client.connected,
       (bool connected) => connected ? handleBacklog() : doNothing(),
     );
+
+    listen(
+      'streams.address.empty',
+      streams.address.empty,
+      (bool? noTransactions) =>
+          noTransactions ?? false ? handleEmptyPull() : doNothing(),
+    );
   }
 
   void doNothing() {}
 
   Future handleHistory(String transaction) async {
-    print('handling $transaction');
     if (await services.history.getTransactions([transaction])) {
       backlog.remove(transaction);
-      await areWeAllDone();
     } else {
-      print('adding to backlog!');
       backlog.add(transaction);
     }
   }
@@ -40,7 +44,6 @@ class HistoryWaiter extends Waiter {
     if (backlog.isNotEmpty) {
       if (await services.history.getTransactions(backlog.toList())) {
         backlog.clear();
-        await areWeAllDone();
       }
     }
   }
@@ -52,5 +55,9 @@ class HistoryWaiter extends Waiter {
         streams.address.empty.add(null);
       }
     }
+  }
+
+  Future handleEmptyPull() async {
+    await services.history.produceAddressOrBalance();
   }
 }

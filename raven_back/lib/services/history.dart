@@ -6,9 +6,9 @@ import 'package:raven_back/raven_back.dart';
 import 'package:tuple/tuple.dart';
 
 class HistoryService {
-  Set<String> unretrieved = {};
-  Set<String> retrieving = {};
-  Set<String> retrieved = {};
+  //Set<String> unretrieved = {};
+  //Set<String> retrieving = {};
+  //Set<String> retrieved = {};
 
   Future<bool> getHistories(Address address) async {
     var client = streams.client.client.value;
@@ -19,10 +19,10 @@ class HistoryService {
     var histories = await client.getHistory(address.addressId);
 
     if (histories.isNotEmpty) {
-      unretrieved.addAll(histories.map((h) => h.txHash));
+      //unretrieved.addAll(histories.map((h) => h.txHash));
       var wallet = address.wallet;
+      // if we had no history, and now we found some... derive a new address
       if (wallet is LeaderWallet && address.vouts.isEmpty) {
-        // if we had no history, and now we found some... derive a new address
         streams.wallet.deriveAddress.add(DeriveLeaderAddress(
           leader: wallet,
           exposure: address.exposure,
@@ -50,20 +50,20 @@ class HistoryService {
       if ((res.transactions.primaryIndex.getOne(txHash) == null ||
               res.transactions.mempool
                   .map((t) => t.transactionId)
-                  .contains(txHash)) &&
-          !(retrieving.contains(txHash) || retrieved.contains(txHash))) {
+                  .contains(txHash))
+          //&& !(retrieving.contains(txHash) || retrieved.contains(txHash))
+          ) {
         // not already downloaded...
         txs.add(await client.getTransaction(txHash));
       } else {
         print('skipping $txHash');
       }
-      unretrieved.remove(txHash);
-      retrieving.add(txHash);
+      //unretrieved.remove(txHash);
+      //retrieving.add(txHash);
     }
     await saveTransactions(txs, client);
-    retrieving.removeAll(txs.map((t) => t.txid));
-    retrieved.addAll(txs.map((t) => t.txid));
-
+    //retrieving.removeAll(txs.map((t) => t.txid));
+    //retrieved.addAll(txs.map((t) => t.txid));
     return true;
   }
 
@@ -248,22 +248,18 @@ class HistoryService {
     Tx tx,
     TxVout vout,
   ) async {
-    print('HANDLEASSET ${vout.scriptPubKey.asset}');
     var symbol = vout.scriptPubKey.asset ?? 'RVN';
     var value = vout.valueSat;
     var security = res.securities.bySymbolSecurityType
         .getOne(symbol, SecurityType.RavenAsset);
     var asset = res.assets.bySymbol.getOne(symbol);
+
     if (security == null) {
       if (vout.scriptPubKey.type == 'transfer_asset') {
-        //print('ASSET-=----------');
-        //print(symbol);
         value = amountToSat(vout.scriptPubKey.amount,
             divisibility: vout.scriptPubKey.units ?? 8);
-        //print(value);
         //if we have no record of it in res.securities...
         var meta = await client.getMeta(symbol);
-        //print(meta);
         if (meta != null) {
           value = amountToSat(vout.scriptPubKey.amount,
               divisibility: vout.scriptPubKey.units ?? meta.divisions);

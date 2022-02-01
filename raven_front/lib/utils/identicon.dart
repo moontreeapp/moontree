@@ -34,11 +34,6 @@ class Identicon {
     } else {
       foregroundColor = _getOrangeColorShade(lightenPercent);
       backgroundColor = _getBlueColorShade(lightenPercent);
-      print(Color.fromRgb(
-        foregroundColor![0],
-        foregroundColor![1],
-        foregroundColor![2],
-      ));
     }
   }
 
