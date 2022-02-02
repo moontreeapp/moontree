@@ -22,3 +22,7 @@ dev_dependencies:
   lints: ^1.0.0
   test: ^1.16.0
   timing: ^1.0.0
+
+#dependency_overrides:
+#  json_stream_parser:
+#    path: ../../repos/dart-json-stream-decoder
