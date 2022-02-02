@@ -539,4 +539,82 @@ extension TextStyleExtension on ThemeData {
           fontWeight: FontWeights.bold,
           letterSpacing: 0.14,
           color: Color(0xDEFFFFFF));
+  TextStyle? get checkoutAsset => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 16.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.regular,
+          letterSpacing: 0.5,
+          color: Color(0xDE000000))
+      : TextStyle(
+          fontSize: 16.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.regular,
+          letterSpacing: 0.5,
+          color: Color(0xDE000000));
+  TextStyle? get checkoutSubAsset => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.bold,
+          letterSpacing: 0.25,
+          color: Color(0x99000000))
+      : TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.bold,
+          letterSpacing: 0.25,
+          color: Color(0x99000000));
+  TextStyle? get checkoutItem => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.25,
+          color: Color(0x99000000))
+      : TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.25,
+          color: Color(0x99000000));
+  TextStyle? get checkoutFees => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 12.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.4,
+          color: Color(0xDE000000))
+      : TextStyle(
+          fontSize: 12.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.4,
+          color: Color(0xDE000000));
+  TextStyle? get checkoutFee => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.25,
+          color: Color(0x99000000))
+      : TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.25,
+          color: Color(0x99000000));
+  TextStyle? get checkoutTotal => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 16.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.5,
+          color: Color(0xDE000000))
+      : TextStyle(
+          fontSize: 16.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.5,
+          color: Color(0xDE000000));
 }

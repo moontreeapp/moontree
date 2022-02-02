@@ -18,6 +18,7 @@ import 'package:raven_front/pages/settings/preferences.dart';
 import 'package:raven_front/pages/settings/security.dart';
 import 'package:raven_front/pages/settings/support.dart';
 import 'package:raven_front/pages/settings/technical.dart';
+import 'package:raven_front/pages/transaction/checkout.dart';
 import 'package:raven_front/pages/transaction/create.dart';
 import 'package:raven_front/pages/transaction/receive.dart';
 import 'package:raven_front/pages/transaction/send.dart';
@@ -32,6 +33,7 @@ class pages {
   static Login login = Login();
   static Home home = Home();
   static Transactions transactions = Transactions();
+  static Checkout checkout = Checkout();
   static TransactionPage transaction = TransactionPage();
   static Receive receive = Receive();
   static Send send = Send();
@@ -69,6 +71,7 @@ class pages {
         '/transaction/receive': (context) => receive,
         '/transaction/send': (context) => send,
         '/transaction/create': (context) => createAsset,
+        '/transaction/checkout': (context) => checkout,
         '/settings/about': (context) => about,
         '/settings/level': (context) => advanced,
         '/settings/currency': (context) => language,

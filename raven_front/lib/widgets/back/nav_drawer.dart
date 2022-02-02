@@ -254,7 +254,11 @@ class _NavDrawerState extends State<NavDrawer> {
                   onPressed: (BuildContext context) =>
                       Navigator.pushNamed(context, '/settings/language')),
               */
-
+          destination(
+            icon: MdiIcons.shieldKey,
+            name: 'Checkout Template',
+            link: '/transaction/checkout',
+          ),
 /*
           SettingsTile(
               title: 'Clear Database',
