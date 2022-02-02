@@ -24,23 +24,37 @@ class _NavBarState extends State<NavBar> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                actionButton(name: 'send', link: '/transaction/send'),
-                SizedBox(width: 16),
-                actionButton(name: 'receive', link: '/transaction/receive'),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                sectorIcon(name: 'wallet'),
-                sectorIcon(name: 'create'),
-                sectorIcon(name: 'manage'),
-                sectorIcon(name: 'swap'),
-              ],
-            )
+            // we will need to make these buttons dependant upon the navigation
+            // of the front page through streams but for now, we'll show they
+            // can changed based upon whats selected:
+            selected == 'wallet'
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      actionButton(name: 'send', link: '/transaction/send'),
+                      SizedBox(width: 16),
+                      actionButton(
+                          name: 'receive', link: '/transaction/receive'),
+                    ],
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      actionButton(name: 'create', link: '/transaction/send'),
+                      SizedBox(width: 16),
+                      actionButton(name: 'manage', link: '/transaction/send'),
+                    ],
+                  ),
+            Padding(
+                padding: EdgeInsets.only(left: 32, right: 32),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    sectorIcon(name: 'wallet'),
+                    sectorIcon(name: 'create'),
+                    sectorIcon(name: 'swap'),
+                  ],
+                ))
           ],
         ),
         decoration: BoxDecoration(
@@ -75,6 +89,8 @@ class _NavBarState extends State<NavBar> {
             icon: Icon({
               'send': MdiIcons.arrowTopRightThick,
               'receive': MdiIcons.arrowBottomLeftThick,
+              'create': MdiIcons.plusCircle,
+              'manage': MdiIcons.crown,
             }[name]!),
             label: Text(name.toUpperCase()),
             style: components.styles.buttons.bottom(context),
@@ -89,7 +105,6 @@ class _NavBarState extends State<NavBar> {
         icon: Icon({
           'wallet': MdiIcons.wallet,
           'create': MdiIcons.plusCircle,
-          'manage': MdiIcons.crown,
           'swap': MdiIcons.swapHorizontalBold,
         }[name]!),
         iconSize: selected == name ? 30 : 24,
