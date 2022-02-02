@@ -88,17 +88,18 @@ class _HoldingList extends State<HoldingList> {
     //        accounts.primaryIndex.getOne(widget.currentAccountId!)!)
     //    : services.balance.addressesBalances(
     //        [addresses.byAddress.getOne(widget.currentWalletAddress!)!]);
-    return holdings.isEmpty // <-- on front tab...
-        //? components.empty.holdings(context)
-        ? Container()
-        : Container(
-            color: Colors.transparent,
-            alignment: Alignment.center,
-            padding: EdgeInsets.only(top: 5.0),
-            child: RefreshIndicator(
-              child: _holdingsView(context),
-              onRefresh: () => refresh(),
-            ));
+    return holdings.isEmpty && res.vouts.data.isEmpty // <-- on front tab...
+        ? components.empty.holdings(context)
+        : holdings.isEmpty
+            ? Container(/* awaiting transactions placeholder... */)
+            : Container(
+                color: Colors.transparent,
+                alignment: Alignment.center,
+                padding: EdgeInsets.only(top: 5.0),
+                child: RefreshIndicator(
+                  child: _holdingsView(context),
+                  onRefresh: () => refresh(),
+                ));
   }
 
   ListView _holdingsView(BuildContext context, {Wallet? wallet}) {
