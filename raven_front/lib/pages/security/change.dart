@@ -19,7 +19,6 @@ class _ChangePasswordState extends State<ChangePassword> {
   bool confirmPasswordVisible = false;
   bool validatedExisting = false;
   bool validatedComplexity = false;
-  bool loading = false;
 
   @override
   void initState() {
@@ -36,11 +35,9 @@ class _ChangePasswordState extends State<ChangePassword> {
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: loading
-            ? Loader(message: 'Encrypting Wallets')
-            : streams.app.verify.value
-                ? body()
-                : VerifyPassword(parentState: this),
+        child: streams.app.verify.value
+            ? body()
+            : VerifyPassword(parentState: this),
       );
 
   Widget body() {
@@ -185,7 +182,8 @@ class _ChangePasswordState extends State<ChangePassword> {
     if (services.password.validate.complexity(newPassword.text)) {
       FocusScope.of(context).unfocus();
       streams.password.update.add(newPassword.text);
-      setState(() => loading = true);
+      Navigator.popUntil(
+          components.navigator.routeContext!, ModalRoute.withName('/home'));
     }
   }
 }

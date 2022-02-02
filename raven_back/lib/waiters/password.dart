@@ -19,6 +19,7 @@ class PasswordWaiter extends Waiter {
                 : ('Please back up your password!\n\n'
                     'There is NO recovery process for lost passwords!')));
         streams.password.updated.add(true);
+        streams.password.update.add(null);
       }
     });
   }

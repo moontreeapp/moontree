@@ -10,8 +10,6 @@ class RemovePassword extends StatefulWidget {
 }
 
 class _RemovePasswordState extends State<RemovePassword> {
-  bool loading = false;
-
   @override
   void initState() {
     super.initState();
@@ -25,11 +23,9 @@ class _RemovePasswordState extends State<RemovePassword> {
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: loading
-            ? Loader(message: 'Decrypting Wallets')
-            : streams.app.verify.value
-                ? body()
-                : VerifyPassword(parentState: this),
+        child: streams.app.verify.value
+            ? body()
+            : VerifyPassword(parentState: this),
       );
 
   Widget body() {
@@ -72,7 +68,8 @@ class _RemovePasswordState extends State<RemovePassword> {
   Future submit() async {
     FocusScope.of(context).unfocus();
     streams.password.update.add('');
-    setState(() => loading = true);
+    Navigator.popUntil(
+        components.navigator.routeContext!, ModalRoute.withName('/home'));
   }
 
   Future successMessage() => showDialog(

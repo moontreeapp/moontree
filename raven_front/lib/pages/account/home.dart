@@ -11,8 +11,9 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late AnimationController controller;
   late Animation<Offset> offset;
-  late bool importMsg = false;
-  late bool sendMsg = false;
+  late bool importTrigger = false;
+  late bool sendTrigger = false;
+  late bool passwordTrigger = false;
   late List listeners = [];
 
   @override
@@ -26,18 +27,26 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             curve: Curves.ease,
             reverseCurve: Curves.ease.flipped));
     listeners.add(streams.import.attempt.listen((value) {
-      if ((value == null && importMsg == true) ||
-          (value != null && importMsg == false)) {
+      if ((value == null && importTrigger == true) ||
+          (value != null && importTrigger == false)) {
         setState(() {
-          importMsg = !importMsg;
+          importTrigger = !importTrigger;
         });
       }
     }));
     listeners.add(streams.spend.send.listen((value) {
-      if ((value == null && sendMsg == true) ||
-          (value != null && sendMsg == false)) {
+      if ((value == null && sendTrigger == true) ||
+          (value != null && sendTrigger == false)) {
         setState(() {
-          sendMsg = !sendMsg;
+          sendTrigger = !sendTrigger;
+        });
+      }
+    }));
+    listeners.add(streams.password.update.listen((value) {
+      if ((value == null && passwordTrigger == true) ||
+          (value != null && passwordTrigger == false)) {
+        setState(() {
+          passwordTrigger = !passwordTrigger;
         });
       }
     }));
@@ -53,24 +62,26 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) => importMsg
+  Widget build(BuildContext context) => importTrigger
       ? Loader(message: 'Importing')
-      : sendMsg
+      : sendTrigger
           ? Loader(message: 'Sending Transaction')
-          : Scaffold(
-              resizeToAvoidBottomInset: false,
-              backgroundColor: Colors.transparent,
-              body: GestureDetector(
-                  onTap: () => FocusScope.of(context).unfocus(),
-                  // we want this to be liquid as well, #182
-                  child: NotificationListener<UserScrollNotification>(
-                      onNotification: visibilityOfSendReceive,
-                      child: HoldingList())),
-              floatingActionButton:
-                  SlideTransition(position: offset, child: NavBar()),
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerDocked,
-            );
+          : passwordTrigger
+              ? Loader(message: 'Managing Wallet Encryption')
+              : Scaffold(
+                  resizeToAvoidBottomInset: false,
+                  backgroundColor: Colors.transparent,
+                  body: GestureDetector(
+                      onTap: () => FocusScope.of(context).unfocus(),
+                      // we want this to be liquid as well, #182
+                      child: NotificationListener<UserScrollNotification>(
+                          onNotification: visibilityOfSendReceive,
+                          child: HoldingList())),
+                  floatingActionButton:
+                      SlideTransition(position: offset, child: NavBar()),
+                  floatingActionButtonLocation:
+                      FloatingActionButtonLocation.centerDocked,
+                );
 
   bool visibilityOfSendReceive(notification) {
     if (notification.direction == ScrollDirection.forward &&
