@@ -11,7 +11,7 @@ class Spend {
   //final addressName = BehaviorSubject<String>.seeded('');
 
   final form = BehaviorSubject<SpendForm?>.seeded(null);
-  final send = BehaviorSubject<SendRequest>();
+  final send = BehaviorSubject<SendRequest?>.seeded(null);
   final success = BehaviorSubject<bool?>.seeded(null);
 }
 

@@ -99,35 +99,6 @@ class _HoldingList extends State<HoldingList> {
               child: _holdingsView(context),
               onRefresh: () => refresh(),
             ));
-    /* offline example of identicons
-        ? Container()
-        : Column(children: [
-            Container(
-                height: 40,
-                width: 40,
-                child: components.icons.assetAvatar('MOONTREE')),
-            Container(
-                height: 40,
-                width: 40,
-                child: components.icons.assetAvatar('AMAZON')),
-            Container(
-                height: 40,
-                width: 40,
-                child: components.icons.assetAvatar('Tesla')),
-            Container(
-                height: 40,
-                width: 40,
-                child: components.icons.assetAvatar('TESLA')),
-            Container(
-                height: 40,
-                width: 40,
-                child: components.icons.assetAvatar('GOOG!')),
-            Container(
-                height: 40,
-                width: 40,
-                child: components.icons.assetAvatar('MOONTREE0!')),
-          ]);
-          */
   }
 
   ListView _holdingsView(BuildContext context, {Wallet? wallet}) {

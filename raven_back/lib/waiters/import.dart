@@ -24,6 +24,7 @@ class ImportWaiter extends Waiter {
               positive: false));
           streams.import.success.add(false);
         }
+        streams.import.attempt.add(null);
         services.busy.createWalletOff('done importing wallet');
       }
     });

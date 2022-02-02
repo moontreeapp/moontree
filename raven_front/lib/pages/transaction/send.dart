@@ -55,7 +55,6 @@ class _SendState extends State<Send> {
   TxGoal feeGoal = standard;
   bool sendAll = false;
   String addressName = '';
-  bool loading = false;
 
   @override
   void initState() {
@@ -132,7 +131,7 @@ class _SendState extends State<Send> {
     }
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: loading ? Loader(message: 'Sending Transaction') : body(),
+      child: body(),
     );
   }
 
@@ -534,7 +533,8 @@ class _SendState extends State<Send> {
                       Navigator.pop(context);
                       // temporary test of screen:
                       streams.spend.send.add(sendRequest);
-                      setState(() => loading = true);
+                      Navigator.popUntil(components.navigator.routeContext!,
+                          ModalRoute.withName('/home'));
                     })
               ]));
 

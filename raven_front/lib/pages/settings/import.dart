@@ -29,7 +29,6 @@ class _ImportState extends State<Import> {
   String importFormatDetected = '';
   final Backup storage = Backup();
   final TextEditingController password = TextEditingController();
-  bool loading = false;
   FileDetails? file;
   String? finalText;
   String? finalAccountId;
@@ -51,7 +50,7 @@ class _ImportState extends State<Import> {
     }
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: loading ? Loader(message: 'Importing') : body(),
+      child: body(),
     );
   }
 
@@ -162,7 +161,8 @@ class _ImportState extends State<Import> {
     }
     streams.import.attempt
         .add(ImportRequest(text: text, accountId: account.accountId));
-    setState(() => loading = true);
+    Navigator.popUntil(
+        components.navigator.routeContext!, ModalRoute.withName('/home'));
   }
 
   Widget body() => Padding(
