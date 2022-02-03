@@ -64,6 +64,7 @@ class _CheckoutState extends State<Checkout> {
   late CheckoutStruct struct;
   late List<StreamSubscription> listeners = [];
   late SendEstimate? estimate = null;
+  late bool disabled = false;
 
   @override
   void initState() {
@@ -146,7 +147,7 @@ class _CheckoutState extends State<Checkout> {
   }) {
     var rows = <Widget>[];
     for (var pair in pairs) {
-      var rightSide = getRightString(pair.toList()[1]);
+      var rightSide = fee ? getRightFee(pair.toList()[1]) : pair.toList()[1];
       rows.add(Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,10 +179,11 @@ class _CheckoutState extends State<Checkout> {
     return rows.intersperse(SizedBox(height: 21));
   }
 
-  String getRightString(String x) {
+  String getRightFee(String x) {
     if (x == 'calculating fee...') {
-      print('x$x|esimate$estimate');
+      disabled = true;
       if (estimate != null) {
+        disabled = false;
         return satToAmount(estimate!.fees).toString();
       }
       return x;
@@ -241,7 +243,9 @@ class _CheckoutState extends State<Checkout> {
 
   String getRightTotal(String x) {
     if (x == 'calculating total...') {
+      disabled = true;
       if (estimate != null) {
+        disabled = false;
         return satToAmount(estimate!.total).toString();
       }
     }
@@ -251,18 +255,24 @@ class _CheckoutState extends State<Checkout> {
   Widget submitButton() => Container(
       height: 40,
       child: OutlinedButton.icon(
-          onPressed: () async {
-            (struct.buttonAction ?? () {})();
-            Navigator.popUntil(components.navigator.routeContext!,
-                ModalRoute.withName('/home'));
-          },
+          onPressed: disabled
+              ? () {}
+              : () async {
+                  (struct.buttonAction ?? () {})();
+                  Navigator.popUntil(components.navigator.routeContext!,
+                      ModalRoute.withName('/home'));
+                },
           icon: Icon(
             struct.buttonIcon,
-            color: Color(0xDE000000),
+            color:
+                disabled ? Theme.of(context).disabledColor : Color(0xDE000000),
           ),
           label: Text(
             struct.buttonWord.toUpperCase(),
-            style: Theme.of(context).navBarButton,
+            style: disabled
+                ? Theme.of(context).disabledButton
+                : Theme.of(context).navBarButton, //.enabledButton?
           ),
-          style: components.styles.buttons.bottom(context)));
+          style:
+              components.styles.buttons.bottom(context, disabled: disabled)));
 }
