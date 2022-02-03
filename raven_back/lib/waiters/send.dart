@@ -8,6 +8,7 @@ class SendWaiter extends Waiter {
   void init() {
     streams.spend.send.listen((SendRequest? sendRequest) async {
       if (sendRequest != null) {
+        /// this needs to be removed, and moved to the send page itself
         var tuple;
         try {
           tuple = services.transaction.make.transactionBy(sendRequest);
@@ -24,6 +25,9 @@ class SendWaiter extends Waiter {
           ));
           streams.spend.success.add(false);
         }
+
+        ///
+
         var txid =
             await services.client.api.sendTransaction(tuple.item1.toHex());
         if (txid != '') {

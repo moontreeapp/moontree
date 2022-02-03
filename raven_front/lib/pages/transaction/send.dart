@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:raven_front/pages/transaction/checkout.dart';
 import 'package:raven_front/utils/qrcode.dart';
 
 import 'package:raven_front/widgets/bottom/selection_items.dart';
@@ -439,7 +440,7 @@ class _SendState extends State<Send> {
     return fieldValidation() && holdingValidation();
   }
 
-  Future startSend() async {
+  void startSend() {
     sendAmount.text = cleanDecAmount(sendAmount.text, zeroToBlank: true);
     var vAddress = sendAddress.text != '' && _validateAddress();
     var vMemo = verifyMemo();
@@ -462,7 +463,9 @@ class _SendState extends State<Send> {
             visibleAmount: visibleAmount,
             sendAmountAsSats: sendAmountAsSats,
             feeGoal: feeGoal);
-        await confirmSend(sendRequest);
+
+        /// replace with sending the send request to the checkout screen
+        confirmSend(sendRequest);
       } else {
         showDialog(
             context: context,
@@ -504,7 +507,7 @@ class _SendState extends State<Send> {
   Widget sendTransactionButton({bool disabled = false}) => Container(
       height: 40,
       child: OutlinedButton.icon(
-        onPressed: disabled ? () {} : () async => await startSend(),
+        onPressed: disabled ? () {} : () => startSend(),
         icon: Icon(MdiIcons.arrowTopRightThick,
             color:
                 disabled ? Theme.of(context).disabledColor : Color(0xDE000000)),
@@ -515,7 +518,55 @@ class _SendState extends State<Send> {
         style: components.styles.buttons.bottom(context, disabled: disabled),
       ));
 
-  Future confirmSend(SendRequest sendRequest) => showDialog(
+  void confirmSend(SendRequest sendRequest) =>
+      Navigator.of(components.navigator.routeContext!).pushNamed(
+        '/transaction/checkout',
+        arguments: {
+          //        var sendRequest = SendRequest(
+          //  useWallet: useWallet,
+          //  sendAll: sendAll,
+          //  wallet: data['walletId'] != null
+          //      ? Current.wallet(data['walletId'])
+          //      : null,
+          //  account: Current.account,
+          //  sendAddress: sendAddress.text,
+          //  holding: holding,
+          //  visibleAmount: visibleAmount,
+          //  sendAmountAsSats: sendAmountAsSats,
+          //  feeGoal: feeGoal);
+
+          // in order to create this struct we have to calculate or generate
+          // the fees, so we need to generate it as we used to with an await
+          // here... which requires us to show a spinner moon while it is
+          // generating the fee... or we could send them to the page, and the
+          // page could listen for updates on the fees and results...
+          // that seems really good, then the button could become active...
+          'struct': CheckoutStruct(
+            symbol: ((streams.spend.form.value?.symbol == 'Ravencoin'
+                    ? 'RVN'
+                    : streams.spend.form.value?.symbol) ??
+                'RVN'),
+            subSymbol: '',
+            paymentSymbol: 'RVN',
+            items: [
+              ['Amount', visibleAmount]
+            ],
+            fees: [
+              ['Transaction Fee', 'calculating...']
+            ],
+            total: 'calculating...',
+            buttonAction: () {
+              streams.spend.send.add(sendRequest);
+              //Navigator.popUntil(
+              //    components.navigator.routeContext!, ModalRoute.withName('/home'));
+            },
+            buttonIcon: MdiIcons.arrowTopRightThick,
+            buttonWord: 'Send',
+          )
+        },
+      );
+
+  Future confirmSendDialog(SendRequest sendRequest) => showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
               contentPadding: EdgeInsets.all(24.0),

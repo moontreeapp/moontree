@@ -62,12 +62,16 @@ class _NavDrawerState extends State<NavDrawer> {
     IconData? icon,
     Image? image,
     bool arrow = false,
+    Map<String, dynamic>? arguments,
   }) =>
       ListTile(
         onTap: () {
           if (!arrow) {
             Backdrop.of(components.navigator.routeContext!).fling();
-            Navigator.of(components.navigator.routeContext!).pushNamed(link);
+            Navigator.of(components.navigator.routeContext!).pushNamed(
+              link,
+              arguments: arguments,
+            );
             streams.app.setting.add(null);
           } else {
             streams.app.setting.add(link);

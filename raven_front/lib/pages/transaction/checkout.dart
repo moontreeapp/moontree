@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/utils/data.dart';
 
-class Checkout extends StatefulWidget {
+class CheckoutStruct {
   final String symbol;
   final String subSymbol;
   final String paymentSymbol;
@@ -14,15 +15,15 @@ class Checkout extends StatefulWidget {
   final IconData buttonIcon;
   final String buttonWord;
   static const Iterable<Iterable<String>> exampleItems = [
-    ['IPFS/Txid Hash', 'QmXwHQ43NrZPq'],
-    ['IPFS/Txid Hash', 'QmXwHQ43NrZPq123456789'],
+    ['Short Text', 'aligned right'],
+    ['Too Long Text (~20+ chars)', 'QmXwHQ43NrZPq123456789'],
     [
-      'Limited Multiline Item',
+      'Multiline (2) - Limited',
       '(#KYC && #COOLDUDE) || (#OVERRIDE || #MOONTREE) && (!! #IRS) && (!! #BASTARD)',
       '2'
     ],
     [
-      'Multiline Item',
+      'Multiline (5)',
       '(#KYC && #COOLDUDE) || (#OVERRIDE || #MOONTREE) && (!! #IRS) && (!! #BASTARD)',
       '5'
     ]
@@ -33,8 +34,7 @@ class Checkout extends StatefulWidget {
     ['long amount', '21,000,000.00000000']
   ];
 
-  const Checkout({
-    Key? key,
+  const CheckoutStruct({
     this.symbol = 'MoonTree',
     this.subSymbol = 'Main/',
     this.paymentSymbol = 'RVN',
@@ -44,13 +44,20 @@ class Checkout extends StatefulWidget {
     this.buttonAction,
     this.buttonIcon = Icons.add_rounded,
     this.buttonWord = 'Submit',
-  }) : super(key: key);
+  });
+}
+
+class Checkout extends StatefulWidget {
+  const Checkout({Key? key}) : super(key: key);
 
   @override
   _CheckoutState createState() => _CheckoutState();
 }
 
 class _CheckoutState extends State<Checkout> {
+  late Map<String, dynamic> data = {};
+  late CheckoutStruct struct;
+
   @override
   void initState() {
     super.initState();
@@ -62,7 +69,11 @@ class _CheckoutState extends State<Checkout> {
   }
 
   @override
-  Widget build(BuildContext context) => body();
+  Widget build(BuildContext context) {
+    data = populateData(context, data);
+    struct = data['struct'] ?? CheckoutStruct();
+    return body();
+  }
 
   Widget body() => CustomScrollView(
         shrinkWrap: true,
@@ -88,15 +99,15 @@ class _CheckoutState extends State<Checkout> {
   Widget header() => ListTile(
       dense: true,
       visualDensity: VisualDensity.compact,
-      leading: components.icons.assetAvatar(widget.symbol.toUpperCase()),
+      leading: components.icons.assetAvatar(struct.symbol.toUpperCase()),
       title: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
         SizedBox(width: 5),
-        Text(widget.symbol.toUpperCase(),
+        Text(struct.symbol.toUpperCase(),
             style: Theme.of(context).checkoutAsset)
       ]),
       subtitle: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
         SizedBox(width: 5),
-        Text(widget.subSymbol.toUpperCase(),
+        Text(struct.subSymbol.toUpperCase(),
             style: Theme.of(context).checkoutSubAsset),
       ]));
 
@@ -106,7 +117,7 @@ class _CheckoutState extends State<Checkout> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           ...detailItems(
-              pairs: widget.items, style: Theme.of(context).checkoutItem)
+              pairs: struct.items, style: Theme.of(context).checkoutItem)
         ],
       ));
 
@@ -122,18 +133,26 @@ class _CheckoutState extends State<Checkout> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(pair.toList()[0], style: style),
+                Container(
+                    width:
+                        (MediaQuery.of(context).size.width - 16 - 16 - 8) / 2,
+                    child: Text(pair.toList()[0],
+                        style: style,
+                        overflow: TextOverflow.fade,
+                        softWrap: false,
+                        maxLines: 1)),
                 fee || pair.toList()[1].length < 17
                     ? Text(pair.toList()[1], style: style)
                     : Container(
                         width:
-                            (MediaQuery.of(context).size.width - 16 - 16) / 2,
+                            (MediaQuery.of(context).size.width - 16 - 16 - 8) /
+                                2,
                         child: Text(
                           pair.toList()[1],
                           style: style,
                           overflow: pair.length == 2
                               ? TextOverflow.fade
-                              : TextOverflow.ellipsis,
+                              : TextOverflow.fade,
                           softWrap: pair.length == 2 ? false : true,
                           maxLines: pair.length == 2
                               ? 1
@@ -142,8 +161,6 @@ class _CheckoutState extends State<Checkout> {
               ]) as Widget,
         ]
       ].intersperse(SizedBox(height: 21));
-
-  String cutString(String x) => x.length > 13 ? x.substring(0, 13) + '...' : x;
 
   Widget bottomPart() => SliverFillRemaining(
         hasScrollBody: false,
@@ -181,7 +198,7 @@ class _CheckoutState extends State<Checkout> {
         Text('Fees', style: Theme.of(context).checkoutFees),
         SizedBox(height: 14),
         ...detailItems(
-          pairs: widget.fees,
+          pairs: struct.fees,
           style: Theme.of(context).checkoutFee,
           fee: true,
         ),
@@ -190,7 +207,7 @@ class _CheckoutState extends State<Checkout> {
   Widget total() =>
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Text('Total', style: Theme.of(context).checkoutTotal),
-        Text('${widget.total} ${widget.paymentSymbol.toUpperCase()}',
+        Text('${struct.total} ${struct.paymentSymbol.toUpperCase()}',
             style: Theme.of(context).checkoutTotal),
       ]);
 
@@ -198,16 +215,16 @@ class _CheckoutState extends State<Checkout> {
       height: 40,
       child: OutlinedButton.icon(
           onPressed: () async {
-            (widget.buttonAction ?? () {})();
+            (struct.buttonAction ?? () {})();
             Navigator.popUntil(components.navigator.routeContext!,
                 ModalRoute.withName('/home'));
           },
           icon: Icon(
-            widget.buttonIcon,
+            struct.buttonIcon,
             color: Color(0xDE000000),
           ),
           label: Text(
-            widget.buttonWord.toUpperCase(),
+            struct.buttonWord.toUpperCase(),
             style: Theme.of(context).navBarButton,
           ),
           style: components.styles.buttons.bottom(context)));
