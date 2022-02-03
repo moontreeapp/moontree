@@ -15,9 +15,7 @@ dependencies:
   pedantic: ^1.10.0
   stream_channel: ^2.1.0
   stack_trace: ^1.10.0
-  json_stream_parser:
-    git: https://github.com/kralverde/dart-json-stream-decoder.git
-
+  
 dev_dependencies:
   lints: ^1.0.0
   test: ^1.16.0
