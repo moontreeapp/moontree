@@ -99,9 +99,8 @@ class LeaderWaiter extends Waiter {
     NodeExposure? exposure,
     bool bypassCipher = false,
   }) {
-    // needs improvement
     //var msg = 'Downloading transactions...';
-    //services.busy.clientOn(msg);
+    //services.busy.processOn(msg);
 
     if (bypassCipher ||
         res.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
@@ -113,7 +112,7 @@ class LeaderWaiter extends Waiter {
       services.wallet.leader.backlog.add(leader);
     }
 
-    // move to build balances, and clear all messages, not just one.
-    //services.busy.clientOff(msg);
+    // clear all in history waiter instead
+    //services.busy.processOff(msg);
   }
 }

@@ -67,23 +67,36 @@ class BusyService {
   }
 
   bool get clientBusy => clientMessages.isNotEmpty;
+  bool get busy => clientMessages.isNotEmpty || processMessages.isNotEmpty;
 
-  void clientOn([String msg = 'Connecting to Electurm']) => clientAdd(msg);
-  bool clientOff([String msg = 'Connecting to Electurm']) => clientRemove(msg);
+  void clear() {
+    clientMessages.clear();
+    processMessages.clear();
+    client.add(null);
+    process.add(null);
+  }
 
-  void addressDerivationOn([String msg = 'Deriving New Address']) =>
+  void clientOn([String msg = 'connecting to electurm']) => clientAdd(msg);
+  bool clientOff([String msg = 'connecting to electurm']) => clientRemove(msg);
+
+  void processOn([String msg = 'running background process']) =>
       processAdd(msg);
-  bool addressDerivationOff([String msg = 'Deriving New Address']) =>
+  bool processOff([String msg = 'running background process']) =>
       processRemove(msg);
 
-  void encryptionOn([String msg = 'Encrypting Wallet']) => processAdd(msg);
-  bool encryptionOff([String msg = 'Encrypting Wallet']) => processRemove(msg);
-
-  void createWalletOn([String msg = 'Creating Wallet']) => processAdd(msg);
-  bool createWalletOff([String msg = 'Creating Wallet']) => processRemove(msg);
-
-  void createTransactionOn([String msg = 'Creating Transaction']) =>
+  void addressDerivationOn([String msg = 'deriving new address']) =>
       processAdd(msg);
-  bool createTransactionOff([String msg = 'Creating Transaction']) =>
+  bool addressDerivationOff([String msg = 'deriving new address']) =>
+      processRemove(msg);
+
+  void encryptionOn([String msg = 'encrypting wallet']) => processAdd(msg);
+  bool encryptionOff([String msg = 'encrypting wallet']) => processRemove(msg);
+
+  void createWalletOn([String msg = 'creating wallet']) => processAdd(msg);
+  bool createWalletOff([String msg = 'creating wallet']) => processRemove(msg);
+
+  void createTransactionOn([String msg = 'creating transaction']) =>
+      processAdd(msg);
+  bool createTransactionOff([String msg = 'creating transaction']) =>
       processRemove(msg);
 }

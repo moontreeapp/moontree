@@ -68,9 +68,9 @@ class RavenClientWaiter extends Waiter {
         if (active && (streams.client.client.value == null || !connected)) {
           additionalTimeout = Duration(seconds: 1);
           streams.client.client.add(null);
-          /*services.busy.clientOn();
+          services.busy.clientOn();
         } else if (active) {
-          services.busy.clientOff();*/
+          services.busy.clientOff();
         }
       },
     );

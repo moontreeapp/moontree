@@ -22,6 +22,7 @@ class _ConnectionLightState extends State<ConnectionLight>
   String? lastestProcessValue;
   bool connected = false;
   bool working = false;
+  Color connectedColor = Color(0xFFF44336);
 
   @override
   void initState() {
@@ -33,11 +34,11 @@ class _ConnectionLightState extends State<ConnectionLight>
     _animationControllerDown = _animationControllerDown ??
         AnimationController(vsync: this, duration: Duration(seconds: 2));
 
-    /// to make this animate correctly and have correct colors I think we nned
-    /// a combine lastest or something on these listeners.
+    /// to make this animate correctly and have correct colors I think we need
+    /// to combine lastest or something on these listeners.
     /// basically there are 3 states:
     /// 1. disconnected, busy trying to connect
-    /// 2. connected, busy working
+    /// 2. connected, busy working (interacting with server or running process)
     /// 3. connected, idle
     /// and 6 transitions:
     /// 1. connected idle -> disconnected busy : green still -> red moving, turn red, start moving, loop.
@@ -46,42 +47,60 @@ class _ConnectionLightState extends State<ConnectionLight>
     /// 4. connected busy -> connected idle : green moving -> green still, stop moving
     /// 5. disconnected busy -> connected idle : red moving -> green still, turn green, stop moving
     /// 6. disconnected busy -> connected busy : red moving -> green moving, turn green, loop
+    /// or rather
+    ///   2 movement transitions:
+    ///     1. idle -> busy : still -> moving : start moving, loop animation
+    ///     2. busy -> idle : moving -> still : stop moving, show image
+    ///   and 2 color transitions:
+    ///     1. connected -> disconnected : green -> red : turn red
+    ///     2. disconnected -> connected : red -> green : turn green
+    /// So color should just be a variable set by listener
+    /// and movement needs to remember previous state when changed.
+    /// So they probably don't need to be combined actually. we should be able
+    /// to keep them separated.
     listeners
         .add(streams.client.connected.listen((bool value) => value != connected
             ? setState(() {
+                print('CONNECTED VALUE1 $connected');
                 connected = value;
+                print('CONNECTED VALUE2 $connected');
+                connectedColor = value ? Color(0xFF4CAF50) : Color(0xFFF44336);
               })
             : () {/*do nothing*/}));
     listeners.add(services.busy.client.listen((String? value) {
-      if (value == null) {
-        setState(() {
-          lastestClientValue = value;
-          //connected = false;
-        });
-      } else {
-        setState(() {
-          lastestClientValue = value;
-          //connected = true;
-        });
+      if (mounted) {
+        if (value == null) {
+          setState(() {
+            lastestClientValue = value;
+          });
+        } else {
+          setState(() {
+            lastestClientValue = value;
+          });
+        }
       }
     }));
 
     listeners.add(services.busy.process.listen((String? value) async {
-      if (value == null) {
-        await Future.delayed(Duration(seconds: 2));
-        if (mounted) {
-          setState(() {
-            lastestProcessValue = value;
-            working = false;
-            activity = activity == 'working' ? 'down' : 'idle';
-          });
+      if (mounted) {
+        if (value == null && !services.busy.busy) {
+          if (activity != 'idle') {
+            //await Future.delayed(Duration(seconds: 2));
+            setState(() {
+              lastestProcessValue = value;
+              working = false;
+              activity = activity == 'working' ? 'down' : 'idle';
+            });
+          }
+        } else {
+          if (activity != 'working') {
+            setState(() {
+              lastestProcessValue = value;
+              working = true;
+              activity = activity == 'idle' ? 'up' : 'working';
+            });
+          }
         }
-      } else {
-        setState(() {
-          lastestProcessValue = value;
-          working = true;
-          activity = activity == 'idle' ? 'up' : 'working';
-        });
       }
     }));
   }
@@ -149,7 +168,7 @@ class _ConnectionLightState extends State<ConnectionLight>
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        /// for manual testing
+        /// for raw manual testing
         //TextButton(
         //    onPressed: () {
         //      print(_animationControllerUp!.value);
@@ -162,6 +181,19 @@ class _ConnectionLightState extends State<ConnectionLight>
         //      setState(() => activity = 'down');
         //    },
         //    child: Text('stop')),
+        /// for manual testing by stream use
+        //TextButton(
+        //    onPressed: () {
+        //      print(_animationControllerUp!.value);
+        //      setState(() => services.busy.processOn('test'));
+        //    },
+        //    child: Text('$activity')),
+        //TextButton(
+        //    onPressed: () {
+        //      print(_animationControllerActive!.value);
+        //      setState(() => services.busy.processOff('test'));
+        //    },
+        //    child: Text('stop')),
         IconButton(
           splashRadius: 24,
           onPressed: () => showDialog(
@@ -170,69 +202,54 @@ class _ConnectionLightState extends State<ConnectionLight>
               builder: (BuildContext context) => AlertDialog(
                   title: Text(status),
                   content: Text('Connection Status: $connectionMessage \n\n'
-                      'Background Tasks: $processMessage'))),
-          icon: Stack(
-            children: [
-              Visibility(
-                  visible: activity == 'idle',
-                  child: ColorFiltered(
-                      colorFilter: ColorFilter.mode(
-                          connected ? Color(0xFF4CAF50) : Color(0xFFF44336),
-                          BlendMode.srcATop),
-                      //child: Image(image: AssetImage('assets/icons/status/status_green_24px.png')))),
-                      child: Image(
-                          image: AssetImage("assets/status/center.png")))),
-              Visibility(
-                  visible: activity == 'working',
-                  child: RotationTransition(
-                      child: ColorFiltered(
-                          colorFilter: ColorFilter.mode(
-                              connected ? Color(0xFF4CAF50) : Color(0xFFF44336),
-                              BlendMode.srcATop),
-                          child: Image(
-                              image: AssetImage("assets/status/left.png"))),
-                      alignment: Alignment.center,
-                      turns: _animationControllerActive!)),
-              Visibility(
-                  visible: activity == 'up',
-                  child: RotationTransition(
-                      child: RotationTransition(
-                          child: ColorFiltered(
-                              colorFilter: ColorFilter.mode(
-                                  connected
-                                      ? Color(0xFF4CAF50)
-                                      : Color(0xFFF44336),
-                                  BlendMode.srcATop),
-                              child: Image(
-                                  image:
-                                      AssetImage("assets/status/center.png"))),
-                          alignment: Alignment(.3, 0),
-                          turns: _animationControllerUp!),
-                      alignment: Alignment.center,
-                      turns: _animationControllerUp!)),
-              Visibility(
-                visible: activity == 'down',
-                child: Transform.rotate(
-                  angle: 6.283184 * _animationControllerActive!.value,
-                  child: RotationTransition(
-                      child: RotationTransition(
-                          child: ColorFiltered(
-                              colorFilter: ColorFilter.mode(
-                                  connected
-                                      ? Color(0xFF4CAF50)
-                                      : Color(0xFFF44336),
-                                  BlendMode.srcATop),
-                              child: Image(
-                                  image:
-                                      AssetImage("assets/status/center.png"))),
-                          alignment: Alignment(.3, 0),
-                          turns: _animationControllerDown!),
-                      alignment: Alignment.center,
-                      turns: _animationControllerDown!),
-                ),
-              ),
-            ],
-          ),
+                      'Current Task: $processMessage'))),
+          icon: [
+            //if (activity == 'idle')
+            ColorFiltered(
+                colorFilter:
+                    ColorFilter.mode(connectedColor, BlendMode.srcATop),
+                child: Image(image: AssetImage("assets/status/center.png"))),
+            //if (activity == 'working')
+            //  RotationTransition(
+            //      child: ColorFiltered(
+            //          colorFilter:
+            //              ColorFilter.mode(connectedColor, BlendMode.srcATop),
+            //          child:
+            //              Image(image: AssetImage("assets/status/left.png"))),
+            //      alignment: Alignment.center,
+            //      turns: _animationControllerActive!),
+            //if (activity == 'up')
+            //  RotationTransition(
+            //      child: RotationTransition(
+            //          child: ColorFiltered(
+            //              colorFilter: ColorFilter.mode(
+            //                connectedColor,
+            //                BlendMode.srcATop,
+            //              ),
+            //              child: Image(
+            //                  image: AssetImage("assets/status/center.png"))),
+            //          alignment: Alignment(.3, 0),
+            //          turns: _animationControllerUp!),
+            //      alignment: Alignment.center,
+            //      turns: _animationControllerUp!),
+            //if (activity == 'down')
+            //  Transform.rotate(
+            //    angle: 6.283184 * _animationControllerActive!.value,
+            //    child: RotationTransition(
+            //        child: RotationTransition(
+            //            child: ColorFiltered(
+            //                colorFilter: ColorFilter.mode(
+            //                  connectedColor,
+            //                  BlendMode.srcATop,
+            //                ),
+            //                child: Image(
+            //                    image: AssetImage("assets/status/center.png"))),
+            //            alignment: Alignment(.3, 0),
+            //            turns: _animationControllerDown!),
+            //        alignment: Alignment.center,
+            //        turns: _animationControllerDown!),
+            //  ),
+          ][0],
         ),
       ],
     );
