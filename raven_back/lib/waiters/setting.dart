@@ -16,8 +16,13 @@ class SettingWaiter extends Waiter {
             },
             updated: (updated) {
               var setting = updated.data;
-              if ([services.client.chosenDomain, services.client.chosenPort]
-                  .contains(setting.name)) {
+              if ([
+                SettingName.Electrum_Net,
+                SettingName.Electrum_Domain,
+                SettingName.Electrum_Port,
+                SettingName.Electrum_DomainTest,
+                SettingName.Electrum_PortTest,
+              ].contains(setting.name)) {
                 streams.client.client.sink.add(null);
               }
             },

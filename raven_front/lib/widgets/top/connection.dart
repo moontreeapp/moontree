@@ -32,7 +32,13 @@ class _ConnectionLightState extends State<ConnectionLight>
         AnimationController(vsync: this, duration: Duration(seconds: 2));
     _animationControllerDown = _animationControllerDown ??
         AnimationController(vsync: this, duration: Duration(seconds: 2));
-    listeners.add(services.busy.client.stream.listen((value) {
+    listeners
+        .add(streams.client.connected.listen((bool value) => value != connected
+            ? setState(() {
+                connected = value;
+              })
+            : () {/*do nothing*/}));
+    listeners.add(services.busy.client.listen((String? value) {
       if (value == null) {
         setState(() {
           lastestClientValue = value;
@@ -45,7 +51,8 @@ class _ConnectionLightState extends State<ConnectionLight>
         });
       }
     }));
-    listeners.add(services.busy.process.stream.listen((value) async {
+
+    listeners.add(services.busy.process.listen((String? value) async {
       if (value == null) {
         await Future.delayed(Duration(seconds: 2));
         if (mounted) {
@@ -67,7 +74,6 @@ class _ConnectionLightState extends State<ConnectionLight>
 
   @override
   void dispose() {
-    super.dispose();
     for (var listener in listeners) {
       listener.cancel();
     }
@@ -75,12 +81,19 @@ class _ConnectionLightState extends State<ConnectionLight>
     // ignore: invalid_use_of_protected_member
     _animationControllerActive?.clearStatusListeners();
     // ignore: invalid_use_of_protected_member
+    _animationControllerActive?.clearListeners();
+    // ignore: invalid_use_of_protected_member
     _animationControllerUp?.clearStatusListeners();
     // ignore: invalid_use_of_protected_member
+    _animationControllerUp?.clearListeners();
+    // ignore: invalid_use_of_protected_member
     _animationControllerDown?.clearStatusListeners();
+    // ignore: invalid_use_of_protected_member
+    _animationControllerDown?.clearListeners();
     _animationControllerActive?.dispose();
     _animationControllerUp?.dispose();
     _animationControllerDown?.dispose();
+    super.dispose();
   }
 
   @override

@@ -19,7 +19,7 @@ class _ClientIndicatorState extends State<ClientIndicator> {
   void initState() {
     super.initState();
     // we can move a wallet from one account to another
-    listeners.add(services.busy.client.stream.listen((value) {
+    listeners.add(services.busy.client.listen((value) {
       if (value == null) {
         setState(() {
           lastestValue = value;

@@ -26,8 +26,8 @@ class BusyMessage {
 class BusyService {
   final List<String> clientMessages = [];
   final List<String> processMessages = [];
-  final BehaviorSubject client = BehaviorSubject<String?>();
-  final BehaviorSubject process = BehaviorSubject<String?>();
+  final BehaviorSubject<String?> client = BehaviorSubject<String?>();
+  final BehaviorSubject<String?> process = BehaviorSubject<String?>();
   late Timer timer;
 
   BusyService() {

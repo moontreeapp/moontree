@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:tuple/tuple.dart';
 import 'package:raven_electrum/raven_electrum.dart';
-
 import 'package:raven_back/raven_back.dart';
 
 /// client creation, logic, and settings.
@@ -11,57 +9,34 @@ class ClientService {
   final SubscribeService subscribe = SubscribeService();
   final ApiService api = ApiService();
 
-  static const Map<int, Tuple2<SettingName, SettingName>>
-      electrumConnectionOptions = {
-    0: Tuple2(SettingName.Electrum_Domain0, SettingName.Electrum_Port0),
-    1: Tuple2(SettingName.Electrum_Domain1, SettingName.Electrum_Port1),
-    2: Tuple2(SettingName.Electrum_Domain2, SettingName.Electrum_Port2),
-  };
-
   RavenElectrumClient? get client => streams.client.client.value;
 
-  ClientService? mostRecentAppStatus;
+  String get electrumDomain =>
+      res.settings.primaryIndex.getOne(SettingName.Electrum_Domain)!.value;
 
-  Future<RavenElectrumClient?> get clientOrNull async =>
-      await streams.client.client.last;
+  int get electrumPort =>
+      res.settings.primaryIndex.getOne(SettingName.Electrum_Port)!.value;
 
-  int electrumSettingsChoice = 0;
-
-  SettingName get chosenDomainSetting =>
-      electrumConnectionOptions[electrumSettingsChoice]!.item1;
-
-  SettingName get chosenPortSetting =>
-      electrumConnectionOptions[electrumSettingsChoice]!.item2;
-
-  String get chosenDomain =>
-      res.settings.primaryIndex.getOne(chosenDomainSetting)!.value;
-
-  int get chosenPort =>
-      res.settings.primaryIndex.getOne(chosenPortSetting)!.value;
-
-  String get preferredElectrumDomain =>
-      res.settings.primaryIndex.getOne(SettingName.Electrum_Domain0)!.value;
-
-  int get preferredElectrumPort =>
-      res.settings.primaryIndex.getOne(SettingName.Electrum_Port0)!.value;
-
-  String get firstBackupElectrumDomain =>
-      res.settings.primaryIndex.getOne(SettingName.Electrum_Domain1)!.value;
-
-  int get firstBackupElectrumPort =>
-      res.settings.primaryIndex.getOne(SettingName.Electrum_Port1)!.value;
-
-  String get secondBackupElectrumDomain =>
-      res.settings.primaryIndex.getOne(SettingName.Electrum_Domain2)!.value;
-
-  int get secondBackupElectrumPort =>
-      res.settings.primaryIndex.getOne(SettingName.Electrum_Port2)!.value;
-
-  String get testElectrumDomain =>
+  String get electrumDomainTest =>
       res.settings.primaryIndex.getOne(SettingName.Electrum_DomainTest)!.value;
 
-  int get testElectrumPort =>
+  int get electrumPortTest =>
       res.settings.primaryIndex.getOne(SettingName.Electrum_PortTest)!.value;
+
+  String get currentDomain =>
+      res.settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value ==
+              Net.Main
+          ? res.settings.primaryIndex.getOne(SettingName.Electrum_Domain)!.value
+          : res.settings.primaryIndex
+              .getOne(SettingName.Electrum_DomainTest)!
+              .value;
+
+  int get currentPort => res.settings.primaryIndex
+              .getOne(SettingName.Electrum_Net)!
+              .value ==
+          Net.Main
+      ? res.settings.primaryIndex.getOne(SettingName.Electrum_Port)!.value
+      : res.settings.primaryIndex.getOne(SettingName.Electrum_PortTest)!.value;
 
   bool get connectionStatus =>
       streams.client.client.stream.valueOrNull != null ? true : false;
@@ -70,17 +45,17 @@ class ClientService {
       {String projectName = 'MTWallet', String buildVersion = '0.1'}) async {
     try {
       if (res.settings.primaryIndex.getOne(SettingName.Electrum_Net)?.value ==
-          Net.Test) {
+          Net.Main) {
         return await RavenElectrumClient.connect(
-          testElectrumDomain,
-          port: testElectrumPort,
+          electrumDomain,
+          port: electrumPort,
           clientName: '$projectName/$buildVersion',
           connectionTimeout: connectionTimeout,
         );
       }
       return await RavenElectrumClient.connect(
-        chosenDomain,
-        port: chosenPort,
+        electrumDomainTest,
+        port: electrumPortTest,
         clientName: '$projectName/$buildVersion',
         connectionTimeout: connectionTimeout,
       );
@@ -89,24 +64,20 @@ class ClientService {
     }
   }
 
-  void cycleNextElectrumConnectionOption() {
-    electrumSettingsChoice =
-        (electrumSettingsChoice + 1) % electrumConnectionOptions.length;
-  }
-
-  Future saveElectrumAddresses(
-      {required List<String> domains, required List<int> ports}) async {
-    await res.settings.saveAll([
-      Setting(name: SettingName.Electrum_Domain0, value: domains[0]),
-      Setting(name: SettingName.Electrum_Port0, value: ports[0]),
-      Setting(name: SettingName.Electrum_Domain1, value: domains[1]),
-      Setting(name: SettingName.Electrum_Port1, value: ports[1]),
-      Setting(name: SettingName.Electrum_Domain2, value: domains[2]),
-      Setting(name: SettingName.Electrum_Port2, value: ports[2]),
-      Setting(name: SettingName.Electrum_DomainTest, value: domains[3]),
-      Setting(name: SettingName.Electrum_PortTest, value: ports[3]),
-    ]);
-  }
+  Future saveElectrumAddress({
+    required String domain,
+    required int port,
+  }) async =>
+      res.settings.primaryIndex.getOne(SettingName.Electrum_Net)?.value ==
+              Net.Main
+          ? await res.settings.saveAll([
+              Setting(name: SettingName.Electrum_Domain, value: domain),
+              Setting(name: SettingName.Electrum_Port, value: port),
+            ])
+          : await res.settings.saveAll([
+              Setting(name: SettingName.Electrum_DomainTest, value: domain),
+              Setting(name: SettingName.Electrum_PortTest, value: port),
+            ]);
 }
 
 /// managing our address subscriptions

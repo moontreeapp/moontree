@@ -63,9 +63,13 @@ class _NavDrawerState extends State<NavDrawer> {
     Image? image,
     bool arrow = false,
     Map<String, dynamic>? arguments,
+    Function? execute,
   }) =>
       ListTile(
         onTap: () {
+          if (execute != null) {
+            execute();
+          }
           if (!arrow) {
             Backdrop.of(components.navigator.routeContext!).fling();
             Navigator.of(components.navigator.routeContext!).pushNamed(
@@ -114,7 +118,10 @@ class _NavDrawerState extends State<NavDrawer> {
           destination(
               icon: MdiIcons.network,
               name: 'Network',
-              link: '/settings/network'),
+              link: '/settings/network',
+              execute: () {
+                streams.app.verify.add(false);
+              }),
         ],
       ),
       '/settings': ListView(

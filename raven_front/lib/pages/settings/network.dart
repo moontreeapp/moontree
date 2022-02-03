@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:raven_electrum/raven_electrum.dart';
 
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/transform.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_front/widgets/widgets.dart';
 
 class ElectrumNetwork extends StatefulWidget {
   final dynamic data;
@@ -16,43 +18,25 @@ class ElectrumNetwork extends StatefulWidget {
 }
 
 class _ElectrumNetworkState extends State<ElectrumNetwork> {
-  TextEditingController electrumAddress = TextEditingController(text: '');
-  TextEditingController electrumAddressFirstBackup =
-      TextEditingController(text: '');
-  TextEditingController electrumAddressSecondBackup =
-      TextEditingController(text: '');
-  TextEditingController electrumAddressTest = TextEditingController(text: '');
-  bool passwordVerified = false;
-  final TextEditingController password = TextEditingController();
   List<StreamSubscription> listeners = [];
-  List<bool>? isSelected;
+  TextEditingController serverAddress = TextEditingController(text: '');
+  FocusNode serverFocusNode = FocusNode();
+  bool validated = true;
 
   @override
   void initState() {
-    passwordVerified = false;
-    electrumAddress.text =
-        '${services.client.preferredElectrumDomain}:${services.client.preferredElectrumPort}';
-    electrumAddressFirstBackup.text =
-        '${services.client.firstBackupElectrumDomain}:${services.client.firstBackupElectrumPort}';
-    electrumAddressSecondBackup.text =
-        '${services.client.secondBackupElectrumDomain}:${services.client.secondBackupElectrumPort}';
-    electrumAddressTest.text =
-        '${services.client.testElectrumDomain}:${services.client.testElectrumPort}';
-    listeners.add(res.settings.changes.listen((changes) => setState(() {})));
-    listeners.add(streams.client.client.stream
-        .listen((ravenClient) async => setState(() {})));
-    var value =
-        res.settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value;
-    isSelected = isSelected ?? [value == Net.Main, value == Net.Test];
+    serverAddress.text =
+        '${services.client.currentDomain}:${services.client.currentPort}';
+    listeners.add(res.settings.changes
+        .listen((Change<Setting> changes) => setState(() {})));
+    listeners.add(streams.client.client
+        .listen((RavenElectrumClient? ravenClient) => setState(() {})));
     super.initState();
   }
 
   @override
   void dispose() {
-    electrumAddress.dispose();
-    electrumAddressFirstBackup.dispose();
-    electrumAddressSecondBackup.dispose();
-    electrumAddressTest.dispose();
+    serverAddress.dispose();
     for (var listener in listeners) {
       listener.cancel();
     }
@@ -62,222 +46,96 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Scaffold(
-          //appBar: components.headers.back(context, 'Electrum Server'),
-          body: body(),
-        ));
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: services.password.required && !streams.app.verify.value
+          ? VerifyPassword(parentState: this)
+          : body(),
+    );
   }
 
-  ListView body() => ListView(
-        padding: EdgeInsets.all(20),
+  Widget body() => Padding(
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                isSelected![0] == true
-                    ? streams.client.client.value != null
-                        ? Text(
-                            '${streams.client.client.value!.host}:${streams.client.client.value!.port}')
-                        : Text(
-                            '${services.client.chosenDomain}:${services.client.chosenPort.toString()}')
-                    : Text(
-                        '${services.client.testElectrumDomain}:${services.client.testElectrumPort.toString()}'),
-                ...[
-                  services.client.connectionStatus
-                      ? Text(
-                          'connected',
-                          style: TextStyle(color: Theme.of(context).good),
-                        )
-                      : Column(children: [
-                          Text(
-                            'disconnected',
-                            style: TextStyle(color: Theme.of(context).bad),
-                          ),
-                          Text('connecting...'),
-                        ])
-                ],
-                TextButton.icon(
-                    onPressed: () {
-                      // flush out current connection and allow waiter to reestablish one
-                      streams.client.client.sink.add(null);
-                      // show that waits for valid connection or times out...
-                      // todo
-                      setState(() {});
-                    },
-                    icon: Icon(Icons.refresh),
-                    label: Text('refresh connection')),
-              ]),
-          SizedBox(height: 20),
-          ToggleButtons(
-              children: <Widget>[Text('MainNet'), Text('TestNet')],
-              isSelected: isSelected ?? [false, true],
-              onPressed: (int index) async {
-                if (index == 0 && !isSelected!.first) {
-                  isSelected = [true, false];
-                  await res.settings.save(
-                      Setting(name: SettingName.Electrum_Net, value: Net.Main));
-                  var changeAccount = res.accounts.getBestAccount(Net.Main);
-                  if (changeAccount != null) {
-                    await res.settings
-                        .setCurrentAccountId(changeAccount.accountId);
-                  }
-                } else if (index == 1 && !isSelected!.last) {
-                  isSelected = [false, true];
-                  await res.settings.save(
-                      Setting(name: SettingName.Electrum_Net, value: Net.Test));
-                  var changeAccount = res.accounts.getBestAccount(Net.Test);
-                  if (changeAccount != null) {
-                    await res.settings
-                        .setCurrentAccountId(changeAccount.accountId);
-                  }
-                }
-                setState(() {});
-              }),
-          SizedBox(height: 20),
-          TextField(
-            autocorrect: false,
-            controller: electrumAddress,
-            textInputAction: TextInputAction.done,
-            decoration: InputDecoration(
-              border: UnderlineInputBorder(),
-              labelText: 'Preferred Electrum Domain:Port',
-              hintText: 'testnet.rvn.com:5000',
-            ),
-            onEditingComplete: () => attemptSave(),
-          ),
-          TextField(
-            autocorrect: false,
-            controller: electrumAddressFirstBackup,
-            textInputAction: TextInputAction.done,
-            decoration: InputDecoration(
-              border: UnderlineInputBorder(),
-              labelText: 'First Backup Electrum Domain:Port',
-              hintText: 'testnet.rvn.com:5000',
-            ),
-            onEditingComplete: () => attemptSave(),
-          ),
-          TextField(
-            autocorrect: false,
-            controller: electrumAddressSecondBackup,
-            textInputAction: TextInputAction.done,
-            decoration: InputDecoration(
-              border: UnderlineInputBorder(),
-              labelText: 'Second Backup Electrum Domain:Port',
-              hintText: 'testnet.rvn.com:5000',
-            ),
-            onEditingComplete: () => attemptSave(),
-          ),
-          TextField(
-            autocorrect: false,
-            controller: electrumAddressTest,
-            textInputAction: TextInputAction.done,
-            decoration: InputDecoration(
-              border: UnderlineInputBorder(),
-              labelText: 'TestNet Electrum Domain:Port',
-              hintText: 'testnet.rvn.com:5000',
-            ),
-            onEditingComplete: () => attemptSave(),
-          ),
-          SizedBox(height: 50),
-          Text('What is the Electrum server?\n',
-              style: Theme.of(context).textTheme.caption),
-          Text(
-              'The Electrum server is what connects this lightweight RavenWallet to the Ravencoin blockchain.\n\nIt holds a record of the entire blockchain so your device doesn\'t have to. As such, you should only connect to trusted Electrum servers.\n\nMore advanced users may run their own Electrum server and connect directly to it by modifying the settings on this page.'),
+          serverTextField(),
+          Padding(
+              padding: EdgeInsets.only(
+                top: 0,
+                bottom: 40,
+              ),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [submitButton()]))
         ],
+      ));
+
+  Widget serverTextField() => TextField(
+        focusNode: serverFocusNode,
+        autocorrect: false,
+        controller: serverAddress,
+        textInputAction: TextInputAction.done,
+        decoration: components.styles.decorations.textFeild(
+          context,
+          labelText: 'Server',
+          hintText: streams.client.client.value != null
+              ? '${streams.client.client.value!.host}:${streams.client.client.value!.port}'
+              : '${services.client.currentDomain}:${services.client.currentPort.toString()}',
+          helperText: validated
+              ? services.client.connectionStatus
+                  ? 'Connected'
+                  : 'Connecting...'
+              : null,
+          errorText: validated ? null : 'Invalid Server',
+        ),
+        onChanged: (String value) => validated = validateDomainPort(value),
+        onEditingComplete: () {
+          serverAddress.text = serverAddress.text.trim();
+          validated = validateDomainPort(serverAddress.text);
+        },
       );
 
-  void attemptSave() {
-    if (validateDomainPort(electrumAddress.text) &&
-        validateDomainPort(electrumAddressFirstBackup.text) &&
-        validateDomainPort(electrumAddressSecondBackup.text) &&
-        validateDomainPort(electrumAddressTest.text)) {
-      FocusScope.of(context).unfocus();
-      if (services.password.required && !passwordVerified) {
-        requestPassword();
-      } else {
-        save();
-        alertSuccess();
-      }
-    } else {
-      alertValidationFailure();
-    }
-  }
-
-  // validate this domain and port - url structure
-  bool validateDomainPort(String value) => (value.contains(':') &&
-      !value.split(':')[0].contains('://') &&
-      stringIsInt(value.split(':')[1]));
-
-  Future requestPassword() => showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Column(
-            children: <Widget>[
-              TextField(
-                  autocorrect: false,
-                  controller: password,
-                  obscureText: true,
-                  textInputAction: TextInputAction.done,
-                  decoration: InputDecoration(
-                    border: UnderlineInputBorder(),
-                    hintText: 'password',
-                  ),
-                  onEditingComplete: () {
-                    if (submit()) {
-                      Navigator.pop(context);
-                      alertSuccess();
-                    }
-                  }),
-            ],
+  Widget submitButton() => Container(
+      height: 40,
+      child: OutlinedButton.icon(
+          onPressed: validated ? () => attemptSave() : () {},
+          icon: Icon(
+            Icons.lock_rounded,
+            color: validated ? null : Color(0x61000000),
           ),
-        );
-      });
+          label: Text(
+            'Set'.toUpperCase(),
+            style: validated
+                ? Theme.of(context).enabledButton
+                : Theme.of(context).disabledButton,
+          ),
+          style: components.styles.buttons.bottom(
+            context,
+            disabled: !validated,
+          )));
 
-  bool submit() {
-    if (services.password.validate.password(password.text)) {
-      passwordVerified = true;
+  void attemptSave() {
+    if (validateDomainPort(serverAddress.text)) {
+      FocusScope.of(context).unfocus();
       save();
-      return true;
     }
-    return false;
   }
+
+  // validate domain:port structure
+  bool validateDomainPort(String value) =>
+      value.contains(':') && stringIsInt(value.split(':').last);
 
   void save() {
-    services.client.saveElectrumAddresses(domains: [
-      electrumAddress.text.split(':')[0],
-      electrumAddressFirstBackup.text.split(':')[0],
-      electrumAddressSecondBackup.text.split(':')[0],
-      electrumAddressTest.text.split(':')[0],
-    ], ports: [
-      int.parse(electrumAddress.text.split(':')[1]),
-      int.parse(electrumAddressFirstBackup.text.split(':')[1]),
-      int.parse(electrumAddressSecondBackup.text.split(':')[1]),
-      int.parse(electrumAddressTest.text.split(':')[1]),
-    ]);
+    var port = serverAddress.text.split(':').last;
+    var domain = serverAddress.text
+        .substring(0, serverAddress.text.lastIndexOf(port) - 1);
+    services.client.saveElectrumAddress(
+      domain: domain,
+      port: int.parse(port),
+    );
+    // flush out current connection and allow waiter to reestablish one
+    streams.client.client.sink.add(null);
+    setState(() {});
   }
-
-  Future alertSuccess() => showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-            title: Text('Success!'),
-            content: Text('Electrum Network Settings Saved!'),
-            actions: [
-              TextButton(
-                  child: Text('ok'), onPressed: () => Navigator.pop(context))
-            ],
-          ));
-
-  Future alertValidationFailure() => showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-            title: Text('Unrecognized Electrum URL'),
-            content: Text(
-                'Electrum Server addresses must follow this format: domain:port'),
-            actions: [
-              TextButton(
-                  child: Text('ok'), onPressed: () => Navigator.pop(context))
-            ],
-          ));
 }

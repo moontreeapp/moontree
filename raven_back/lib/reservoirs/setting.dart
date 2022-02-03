@@ -17,32 +17,24 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
   static final int defaultPort = 50002; // 50003;
 
   static Map<String, Setting> get defaults => {
-        SettingName.Electrum_Domain0:
-            Setting(name: SettingName.Electrum_Domain0, value: defaultUrl),
-        SettingName.Electrum_Port0:
-            Setting(name: SettingName.Electrum_Port0, value: defaultPort),
-        SettingName.Electrum_Domain1:
-            Setting(name: SettingName.Electrum_Domain1, value: defaultUrl),
-        SettingName.Electrum_Port1:
-            Setting(name: SettingName.Electrum_Port1, value: defaultPort),
-        SettingName.Electrum_Domain2:
-            Setting(name: SettingName.Electrum_Domain2, value: defaultUrl),
-        SettingName.Electrum_Port2:
-            Setting(name: SettingName.Electrum_Port2, value: defaultPort),
+        SettingName.Electrum_Net:
+            Setting(name: SettingName.Electrum_Net, value: Net.Test),
+        SettingName.Electrum_Domain:
+            Setting(name: SettingName.Electrum_Domain, value: defaultUrl),
+        SettingName.Electrum_Port:
+            Setting(name: SettingName.Electrum_Port, value: defaultPort),
         SettingName.Electrum_DomainTest:
             Setting(name: SettingName.Electrum_DomainTest, value: defaultUrl),
         SettingName.Electrum_PortTest:
             Setting(name: SettingName.Electrum_PortTest, value: defaultPort),
-        SettingName.Electrum_Net:
-            Setting(name: SettingName.Electrum_Net, value: Net.Test),
-        SettingName.User_Name:
-            Setting(name: SettingName.User_Name, value: null),
-        SettingName.Send_Immediate:
-            Setting(name: SettingName.Send_Immediate, value: false),
         SettingName.Account_Current:
             Setting(name: SettingName.Account_Current, value: '0'),
         SettingName.Account_Preferred:
             Setting(name: SettingName.Account_Preferred, value: '0'),
+        SettingName.User_Name:
+            Setting(name: SettingName.User_Name, value: null),
+        SettingName.Send_Immediate:
+            Setting(name: SettingName.Send_Immediate, value: false),
       }.map(
           (settingName, setting) => MapEntry(settingName.enumString, setting));
 

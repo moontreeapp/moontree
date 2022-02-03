@@ -9,14 +9,13 @@ import 'waiter.dart';
 
 class RavenClientWaiter extends Waiter {
   static const Duration connectionTimeout = Duration(seconds: 5);
-  static const int retries = 3;
+  Duration additionalTimeout = Duration(seconds: 1);
 
   StreamSubscription? periodicTimer;
-  int retriesLeft = retries;
 
   void init({Object? reconnect}) {
     if (!listeners.keys.contains('streams.client.client')) {
-      streams.client.client.sink.add(null);
+      streams.client.client.add(null);
     }
 
     listen(
@@ -26,36 +25,30 @@ class RavenClientWaiter extends Waiter {
         if (client != null) {
           await periodicTimer?.cancel();
           unawaited(client.peer.done.then((value) async {
-            streams.client.connected.sink.add(false);
+            streams.client.connected.add(false);
             if (streams.app.active.value) {
-              streams.client.client.sink.add(null);
+              streams.client.client.add(null);
             }
           }));
         } else {
+          streams.client.connected.add(false);
           await streams.client.client.value?.close();
           await periodicTimer?.cancel();
           periodicTimer =
-              Stream.periodic(connectionTimeout + Duration(seconds: 1))
-                  .listen((_) async {
-            if (streams.app.active.value) {
-              var newRavenClient = await services.client.createClient();
-              if (newRavenClient != null) {
-                streams.client.connected.sink.add(true);
-                streams.client.client.sink.add(newRavenClient);
-                await periodicTimer?.cancel();
-              } else {
-                if (res.settings.primaryIndex
-                        .getOne(SettingName.Electrum_Net)!
-                        .value ==
-                    Net.Main) {
-                  retriesLeft = retriesLeft <= 0
-                      ? retries
-                      : retriesLeft = retriesLeft - 1;
-                  services.client.cycleNextElectrumConnectionOption();
+              Stream.periodic(connectionTimeout + additionalTimeout).listen(
+            (_) async {
+              if (streams.app.active.value) {
+                var newRavenClient = await services.client.createClient();
+                if (newRavenClient != null) {
+                  streams.client.connected.sink.add(true);
+                  streams.client.client.sink.add(newRavenClient);
+                  await periodicTimer?.cancel();
+                } else {
+                  additionalTimeout += connectionTimeout;
                 }
               }
-            }
-          });
+            },
+          );
         }
       },
     );
@@ -72,6 +65,7 @@ class RavenClientWaiter extends Waiter {
         bool active = tuple.item1;
         bool connected = tuple.item2;
         if (active && (streams.client.client.value == null || !connected)) {
+          additionalTimeout = Duration(seconds: 1);
           streams.client.client.sink.add(null);
         }
       },

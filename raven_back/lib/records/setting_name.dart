@@ -9,44 +9,32 @@ part 'setting_name.g.dart';
 @HiveType(typeId: TypeId.SettingName)
 enum SettingName {
   @HiveField(0)
-  Electrum_Domain0,
-
-  @HiveField(1)
-  Electrum_Port0,
-
-  @HiveField(2)
-  Electrum_Domain1,
-
-  @HiveField(3)
-  Electrum_Port1,
-
-  @HiveField(4)
-  Electrum_Domain2,
-
-  @HiveField(5)
-  Electrum_Port2,
-
-  @HiveField(6)
-  Electrum_DomainTest,
-
-  @HiveField(7)
-  Electrum_PortTest,
-
-  @HiveField(8)
   Electrum_Net,
 
-  @HiveField(9)
+  @HiveField(1)
+  Electrum_Domain,
+
+  @HiveField(2)
+  Electrum_Port,
+
+  @HiveField(3)
+  Electrum_DomainTest,
+
+  @HiveField(4)
+  Electrum_PortTest,
+
+  @HiveField(5)
   Account_Current,
 
-  @HiveField(10)
+  @HiveField(6)
   Account_Preferred,
 
-  @HiveField(11)
+  @HiveField(7)
   Local_Path,
 
-  @HiveField(12)
+  @HiveField(8)
   User_Name,
 
-  @HiveField(13)
-  Send_Immediate, // no confirmation screen, no generating transaction screen, just does it in background
+  @HiveField(9)
+  Send_Immediate,
 }

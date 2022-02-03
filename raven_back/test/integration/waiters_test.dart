@@ -10,8 +10,8 @@ void main() async {
     await hiveInit.setUp();
     res.settings.setSource(MapSource({
       '0': Setting(
-          name: SettingName.Electrum_Domain0, value: 'testnet.rvn.rocks'),
-      '1': Setting(name: SettingName.Electrum_Port0, value: 50002),
+          name: SettingName.Electrum_Domain, value: 'testnet.rvn.rocks'),
+      '1': Setting(name: SettingName.Electrum_Port, value: 50002),
     }));
     //await services.settings.startWaiters(); // really old
   });
