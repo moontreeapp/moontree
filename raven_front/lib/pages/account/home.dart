@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/raven_back.dart';
 
@@ -14,6 +15,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late bool importTrigger = false;
   late bool sendTrigger = false;
   late bool passwordTrigger = false;
+  late AppContext currentContext = AppContext.wallet;
   late List listeners = [];
 
   @override
@@ -26,6 +28,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             parent: controller,
             curve: Curves.ease,
             reverseCurve: Curves.ease.flipped));
+    listeners.add(streams.app.context.listen((AppContext value) {
+      if (value != currentContext) {
+        setState(() {
+          currentContext = value;
+        });
+      }
+    }));
     listeners.add(streams.import.attempt.listen((value) {
       if ((value == null && importTrigger == true) ||
           (value != null && importTrigger == false)) {
@@ -76,9 +85,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       // we want this to be liquid as well, #182
                       child: NotificationListener<UserScrollNotification>(
                           onNotification: visibilityOfSendReceive,
-                          child:
-                              //HoldingList()
-                              AssetList())),
+                          child: currentContext == AppContext.wallet
+                              ? HoldingList()
+                              : currentContext == AppContext.manage
+                                  ? AssetList()
+                                  : Text('swap'))),
                   floatingActionButton:
                       SlideTransition(position: offset, child: NavBar()),
                   floatingActionButtonLocation:

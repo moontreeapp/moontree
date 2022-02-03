@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/streams/streams.dart';
 import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/components/components.dart';
@@ -100,6 +101,11 @@ class _NavBarState extends State<NavBar> {
         onPressed: () {
           setState(() {
             selected = name;
+            streams.app.context.add({
+              'wallet': AppContext.wallet,
+              'create': AppContext.manage,
+              'swap': AppContext.wallet,
+            }[name]!);
           });
         },
         icon: Icon({

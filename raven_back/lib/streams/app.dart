@@ -8,6 +8,7 @@ class AppStreams {
   final page = BehaviorSubject<String>.seeded('main');
   final setting = BehaviorSubject<String?>.seeded(null);
   final snack = BehaviorSubject<Snack?>.seeded(null);
+  final context = BehaviorSubject<AppContext>.seeded(AppContext.wallet);
 }
 
 /// resumed inactive paused detached
@@ -30,3 +31,5 @@ class Snack {
       this.arguments,
       this.label});
 }
+
+enum AppContext { wallet, manage, swap }

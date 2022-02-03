@@ -159,7 +159,7 @@ class _AssetList extends State<AssetList> {
                         style: Theme.of(context).holdingValue),
                   ]),
               trailing: Icon(Icons.chevron_right_rounded))
-      ].intersperse(Divider()).toList());
+      ].intersperse(Divider(height: 1)).toList());
 }
 
 class AssetHolding {
