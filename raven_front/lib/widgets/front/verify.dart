@@ -99,8 +99,8 @@ class _VerifyPasswordState extends State<VerifyPassword> {
             label: Text(
               'Submit'.toUpperCase(),
               style: enabled
-                  ? Theme.of(context).navBarButton
-                  : Theme.of(context).navBarButtonDisabled,
+                  ? Theme.of(context).enabledButton
+                  : Theme.of(context).disabledButton,
             ),
             style: components.styles.buttons.bottom(
               context,

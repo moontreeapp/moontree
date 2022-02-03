@@ -58,10 +58,8 @@ class _RemovePasswordState extends State<RemovePassword> {
               Icons.lock_rounded,
               color: Color(0x61000000),
             ),
-            label: Text(
-              'Yes, Remove Password'.toUpperCase(),
-              style: Theme.of(context).navBarButton,
-            ),
+            label: Text('Yes, Remove Password'.toUpperCase(),
+                style: Theme.of(context).enabledButton),
             style: components.styles.buttons.bottom(context)));
   }
 

@@ -137,8 +137,8 @@ class _ChangePasswordState extends State<ChangePassword> {
             label: Text(
               'Set'.toUpperCase(),
               style: enabled
-                  ? Theme.of(context).navBarButton
-                  : Theme.of(context).navBarButtonDisabled,
+                  ? Theme.of(context).enabledButton
+                  : Theme.of(context).disabledButton,
             ),
             style: components.styles.buttons.bottom(
               context,

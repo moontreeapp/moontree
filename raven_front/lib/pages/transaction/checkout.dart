@@ -271,7 +271,7 @@ class _CheckoutState extends State<Checkout> {
             struct.buttonWord.toUpperCase(),
             style: disabled
                 ? Theme.of(context).disabledButton
-                : Theme.of(context).navBarButton, //.enabledButton?
+                : Theme.of(context).enabledButton,
           ),
           style:
               components.styles.buttons.bottom(context, disabled: disabled)));

@@ -35,7 +35,7 @@ class ButtonStyleComponents {
 
   ButtonStyle bottom(BuildContext context, {bool disabled = false}) =>
       ButtonStyle(
-        textStyle: MaterialStateProperty.all(Theme.of(context).navBarButton),
+        textStyle: MaterialStateProperty.all(Theme.of(context).enabledButton),
         foregroundColor: MaterialStateProperty.all(Color(0xDE000000)),
         side: MaterialStateProperty.all(BorderSide(
             color: disabled

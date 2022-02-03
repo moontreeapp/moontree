@@ -95,7 +95,7 @@ class _SecurityState extends State<Security> {
                               ),
                               label: Text(
                                 'Change'.toUpperCase(),
-                                style: Theme.of(context).navBarButton,
+                                style: Theme.of(context).enabledButton,
                               ),
                               style: components.styles.buttons.bottom(context)))
                     ]),
