@@ -2,6 +2,8 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction.dart';
 
 class Current {
+  /// account ///
+
   static String get accountId => res.settings.currentAccountId;
 
   static Account get account => res.accounts.primaryIndex.getOne(accountId)!;
@@ -21,6 +23,8 @@ class Current {
       services.balance.accountBalances(account);
   static List<String> get holdingNames =>
       [for (var balance in holdings) balance.security.symbol];
+
+  /// wallet ///
 
   static Wallet wallet(String walletId) =>
       res.wallets.primaryIndex.getOne(walletId)!;

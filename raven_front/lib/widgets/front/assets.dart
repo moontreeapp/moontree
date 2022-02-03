@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:intersperse/intersperse.dart';
 
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
@@ -16,7 +17,7 @@ class AssetList extends StatefulWidget {
 
 class _AssetList extends State<AssetList> {
   List<StreamSubscription> listeners = [];
-  late Iterable<Asset> assets;
+  late Iterable<AssetHolding> assets;
 
   @override
   void initState() {
@@ -46,14 +47,10 @@ class _AssetList extends State<AssetList> {
     setState(() {});
   }
 
-  @override
-  Widget build(BuildContext context) {
+  List<AssetHolding> assetHoldings() {
     var holdings = Current.holdings
         .where((Balance balance) => balance.security.isAsset)
         .map((Balance balance) => balance.security.symbol);
-    //var mains = holdings.where((String name) => name.contains('/')).map((String name) => name.split('/').first).where((name) => !name.startsWith('#') && !name.startsWith('\$') && !name.endsWith('!')).toList().addAll(holdings.where((String name) => !name.contains('/')));
-    //var admins = holdings.map((String name) => );
-    //var restricted  = holdings.map((String name) => );
     var mains = [];
     var admins = [];
     var restricteds = [];
@@ -81,28 +78,44 @@ class _AssetList extends State<AssetList> {
         }
       }
     }
+    var cleanedMains = mains.toSet();
     var cleanedAdmins =
         admins.map((name) => name.substring(0, name.length - 1));
     var cleanedRestricteds =
         restricteds.map((name) => name.substring(1, name.length));
     var cleanedQualifiers =
         qualifiers.map((name) => name.substring(1, name.length));
-    for (var name in mains.toSet()
-      ..addAll(cleanedAdmins)
-      ..addAll(cleanedRestricteds)
-      ..addAll(cleanedQualifiers)) {
-      print(
-          '$name ${mains.contains(name) ? 'Main' : ''} ${cleanedAdmins.contains(name) ? 'Admin' : ''} ${cleanedRestricteds.contains(name) ? 'Restricted' : ''} ${cleanedQualifiers.contains(name) ? 'Qualifier' : ''}');
-    }
+    return [
+      for (var name in cleanedMains
+        ..addAll(cleanedAdmins)
+        ..addAll(cleanedRestricteds)
+        ..addAll(cleanedQualifiers))
+        AssetHolding(
+            symbol: name,
+            main: cleanedMains.contains(name),
+            admin: cleanedAdmins.contains(name),
+            restricted: cleanedRestricteds.contains(name),
+            qualifier: cleanedQualifiers.contains(name))
+    ];
+  }
 
-    //services.balance.accountBalances(
-    //        accounts.primaryIndex.getOne(widget.currentAccountId!)!)
-    //    : services.balance.addressesBalances(
-    //        [addresses.byAddress.getOne(widget.currentWalletAddress!)!]);
+  @override
+  Widget build(BuildContext context) {
+    assets = assetHoldings();
     return assets.isEmpty && res.vouts.data.isEmpty // <-- on front tab...
-        ? components.empty.assets(context)
+        ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text('This is where assets you can manage will show up...')
+            ],
+          ) //components.empty.assets(context)
         : assets.isEmpty
-            ? Container(/* awaiting transactions placeholder... */)
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [Text('No assets to manage. Create one!')],
+              ) //components.empty.assets(context)
             : Container(
                 color: Colors.transparent,
                 alignment: Alignment.center,
@@ -113,84 +126,53 @@ class _AssetList extends State<AssetList> {
                 ));
   }
 
-  ListView _assetsView(BuildContext context, {Wallet? wallet}) {
-    var rvnHolding = <Widget>[];
-    var assetHoldings = <Widget>[];
-    for (var holding in assets) {
-      var thisHolding = ListTile(
-          //dense: true,
-          contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          onTap: () {
-            streams.spend.form.add(SpendForm.merge(
-                form: streams.spend.form.value,
-                symbol: holding.security.symbol));
-            Navigator.of(components.navigator.routeContext!).pushNamed(
-                holding.security.symbol == 'RVN'
-                    ? '/transactions'
-                    : '/transactions',
-                arguments: {
-                  'holding': holding,
-                  'walletId': wallet?.walletId ?? null
-                });
-          }, // wallet transactions are on wallet screen, so remove wallet id here.
-          leading: Container(
-              height: 40,
-              width: 40,
-              child: components.icons.assetAvatar(holding.security.symbol)),
-          title:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(
-                holding.security.symbol == 'RVN'
-                    ? 'Ravencoin'
-                    : holding.security.symbol,
-                style: Theme.of(context).holdingName),
-            Text(
-                components.text.securityAsReadable(holding.value,
-                    security: holding.security, asUSD: showUSD),
-                style: Theme.of(context).holdingValue),
-          ]),
-          trailing: Icon(Icons.chevron_right_rounded));
-      if (holding.security.symbol == 'RVN') {
-        rvnHolding.add(thisHolding);
-        rvnHolding.add(Divider(height: 1));
+  ListView _assetsView(BuildContext context, {Wallet? wallet}) => ListView(
+          children: <Widget>[
+        for (var asset in assets)
+          ListTile(
+              //dense: true,
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+              onTap: () {
+                //streams.spend.form.add(SpendForm.merge(
+                //    form: streams.spend.form.value, symbol: asset.symbol));
+                //Navigator.of(components.navigator.routeContext!).pushNamed(
+                //    asset.symbol == 'RVN' ? '/transactions' : '/transactions',
+                //    arguments: {
+                //      'holding': holding,
+                //      'walletId': wallet?.walletId ?? null
+                //    });
+              }, // wallet transactions are on wallet screen, so remove wallet id here.
+              leading: Container(
+                  height: 40,
+                  width: 40,
+                  child: components.icons.assetAvatar(asset.symbol)),
+              title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(asset.symbol, style: Theme.of(context).holdingName),
+                    Text(
+                        (asset.main ? 'Main ' : '') +
+                            (asset.admin ? 'Admin ' : '') +
+                            (asset.restricted ? 'Restricted ' : '') +
+                            (asset.restricted ? 'Qualifier ' : ''),
+                        style: Theme.of(context).holdingValue),
+                  ]),
+              trailing: Icon(Icons.chevron_right_rounded))
+      ].intersperse(Divider()).toList());
+}
 
-        /// create asset should allow you to create an asset using a speicific address...
-        // hide create asset button - not beta
-        //if (holding.value < 600) {
-        //  rvnHolding.add(ListTile(
-        //      onTap: () {},
-        //      title: Text('+ Create Asset (not enough RVN)',
-        //          style: TextStyle(color: Theme.of(context).disabledColor))));
-        //} else {
-        //  rvnHolding.add(ListTile(
-        //      onTap: () {},
-        //      title: TextButton.icon(
-        //          onPressed: () => Navigator.pushNamed(context, '/transaction/create',
-        //            arguments: {'walletId': wallet?.walletId ?? null}),
-        //          icon: Icon(Icons.add),
-        //          label: Text('Create Asset'))));
-        //}
-      } else {
-        assetHoldings.add(thisHolding);
-        assetHoldings.add(Divider(height: 1));
-      }
-    }
-    if (rvnHolding.isEmpty) {
-      rvnHolding.add(ListTile(
-          onTap: () {},
-          title: Text('RVN', style: Theme.of(context).holdingName),
-          trailing: Text(showUSD ? '\$ 0' : '0',
-              style: Theme.of(context).holdingValue),
-          leading: Container(
-              height: 50,
-              width: 50,
-              child: components.icons.assetAvatar('RVN'))));
-      //rvnHolding.add(ListTile(
-      //    onTap: () {},
-      //    title: Text('+ Create Asset (not enough RVN)',
-      //        style: TextStyle(color: Theme.of(context).disabledColor))));
-    }
-
-    return ListView(children: <Widget>[...rvnHolding, ...assetHoldings]);
-  }
+class AssetHolding {
+  final String symbol;
+  final bool main;
+  final bool admin;
+  final bool restricted;
+  final bool qualifier;
+  AssetHolding({
+    required this.symbol,
+    this.main = false,
+    this.admin = false,
+    this.restricted = false,
+    this.qualifier = false,
+  });
 }

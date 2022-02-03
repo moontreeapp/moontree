@@ -76,7 +76,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       // we want this to be liquid as well, #182
                       child: NotificationListener<UserScrollNotification>(
                           onNotification: visibilityOfSendReceive,
-                          child: HoldingList())),
+                          child:
+                              //HoldingList()
+                              AssetList())),
                   floatingActionButton:
                       SlideTransition(position: offset, child: NavBar()),
                   floatingActionButtonLocation:
