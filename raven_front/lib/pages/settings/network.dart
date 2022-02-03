@@ -135,7 +135,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
       port: int.parse(port),
     );
     // flush out current connection and allow waiter to reestablish one
-    streams.client.client.sink.add(null);
+    streams.client.client.add(null);
     setState(() {});
   }
 }

@@ -16,7 +16,7 @@ class _BackLayerState extends State<BackLayer> {
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.app.page.stream.listen((value) {
+    listeners.add(streams.app.page.listen((value) {
       if (value != pageTitle) {
         setState(() {
           pageTitle = value;

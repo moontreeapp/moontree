@@ -22,8 +22,8 @@ class PasswordService {
             cipherUpdate.passwordId
       }.isNotEmpty;
 
-  void get broadcastLogin => streams.app.login.sink.add(true);
-  void get broadcastLogout => streams.app.login.sink.add(false);
+  void get broadcastLogin => streams.app.login.add(true);
+  void get broadcastLogout => streams.app.login.add(false);
 }
 
 class PasswordValidationService {

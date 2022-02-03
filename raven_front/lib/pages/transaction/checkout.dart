@@ -70,7 +70,6 @@ class _CheckoutState extends State<Checkout> {
   void initState() {
     super.initState();
     listeners.add(streams.spend.estimate.listen((SendEstimate? value) {
-      print('estimate: $value');
       if (value != estimate) {
         setState(() {
           estimate = value;

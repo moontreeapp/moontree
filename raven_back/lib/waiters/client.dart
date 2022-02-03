@@ -40,8 +40,8 @@ class RavenClientWaiter extends Waiter {
               if (streams.app.active.value) {
                 var newRavenClient = await services.client.createClient();
                 if (newRavenClient != null) {
-                  streams.client.connected.sink.add(true);
-                  streams.client.client.sink.add(newRavenClient);
+                  streams.client.connected.add(true);
+                  streams.client.client.add(newRavenClient);
                   await periodicTimer?.cancel();
                 } else {
                   additionalTimeout += connectionTimeout;
@@ -66,7 +66,7 @@ class RavenClientWaiter extends Waiter {
         bool connected = tuple.item2;
         if (active && (streams.client.client.value == null || !connected)) {
           additionalTimeout = Duration(seconds: 1);
-          streams.client.client.sink.add(null);
+          streams.client.client.add(null);
         }
       },
     );
@@ -76,7 +76,7 @@ class RavenClientWaiter extends Waiter {
         res.settings.changes.where((change) =>
             (change is Added || change is Updated) &&
             change.data.name == SettingName.Electrum_Net), (_) {
-      streams.client.client.sink.add(null);
+      streams.client.client.add(null);
     });
   }
 }

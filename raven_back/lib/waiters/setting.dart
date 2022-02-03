@@ -23,7 +23,7 @@ class SettingWaiter extends Waiter {
                 SettingName.Electrum_DomainTest,
                 SettingName.Electrum_PortTest,
               ].contains(setting.name)) {
-                streams.client.client.sink.add(null);
+                streams.client.client.add(null);
               }
             },
             removed: (removed) {});

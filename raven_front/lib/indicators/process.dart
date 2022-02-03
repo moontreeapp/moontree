@@ -19,7 +19,7 @@ class _ProcessIndicatorState extends State<ProcessIndicator> {
   void initState() {
     super.initState();
     // we can move a wallet from one account to another
-    listeners.add(services.busy.process.stream.listen((value) async {
+    listeners.add(services.busy.process.listen((value) async {
       if (value == null) {
         await Future.delayed(Duration(seconds: 2));
         if (mounted) {

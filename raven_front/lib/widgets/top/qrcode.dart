@@ -16,7 +16,7 @@ class _QRCodeContainerState extends State<QRCodeContainer> {
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.app.page.stream.listen((value) {
+    listeners.add(streams.app.page.listen((value) {
       if ((value == 'Scan' && pageTitle != 'Scan') ||
           (value != 'Scan' && pageTitle == 'Scan') ||
           (value == 'Send' && pageTitle != 'Send') ||

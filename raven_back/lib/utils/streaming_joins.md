@@ -10,13 +10,13 @@ In order to reliably join records with an unreliable order, we need to store a "
 
 For example, suppose we have two streams, Users and Clicks. At first, both streams are empty. Let's say that we receive a Click:
 
-> clickStream.sink.add(Click(id: 1, userId: 2));
+> clickStream.add(Click(id: 1, userId: 2));
 
 At this point, we don't have any such "userId: 2", so at the point we receive the click, we can't transmit a joined pair of (User, Click) objects. Instead, we store the Click in a backlog and wait.
 
 The opposite might also happen: we might receive a User before any of the user's clicks are recorded:
 
-> userStream.sink.add(User(id: 1, name: 'Duane'));
+> userStream.add(User(id: 1, name: 'Duane'));
 
 In this case, we store the User in a map and also wait. Any subsequent Click objects with `userId: 1` will now be satisfied.
 
@@ -57,7 +57,7 @@ The `streamingLeftJoin` code is a generalized (abstract) version of the followin
   userStream.listen((User user) {
     userIdMap[user.userId] = user;
     clicksWaitingForUserId[user.userId]?.forEach((Click click) {
-      clickBacklog.sink.add(click);
+      clickBacklog.add(click);
     });
   });
 

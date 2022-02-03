@@ -40,7 +40,7 @@ Stream<Join<A, B>> streamingLeftJoin<A, B>(
     var keyA = getKeyA(a);
     leftMap[keyA] = a;
     rightWaitingForLeft[keyA]?.forEach((B b) {
-      backlog.sink.add(b);
+      backlog.add(b);
     });
   });
 
