@@ -1,8 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/data.dart';
+import 'package:raven_back/services/transaction_maker.dart';
+import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/utils/transform.dart';
 
 class CheckoutStruct {
   final String symbol;
@@ -57,14 +62,27 @@ class Checkout extends StatefulWidget {
 class _CheckoutState extends State<Checkout> {
   late Map<String, dynamic> data = {};
   late CheckoutStruct struct;
+  late List<StreamSubscription> listeners = [];
+  late SendEstimate? estimate = null;
 
   @override
   void initState() {
     super.initState();
+    listeners.add(streams.spend.estimate.listen((SendEstimate? value) {
+      print('estimate: $value');
+      if (value != estimate) {
+        setState(() {
+          estimate = value;
+        });
+      }
+    }));
   }
 
   @override
   void dispose() {
+    for (var listener in listeners) {
+      listener.cancel();
+    }
     super.dispose();
   }
 
@@ -125,42 +143,51 @@ class _CheckoutState extends State<Checkout> {
     required Iterable<Iterable<String>> pairs,
     TextStyle? style,
     bool fee = false,
-  }) =>
-      [
-        for (var pair in pairs) ...[
-          // ignore: unnecessary_cast
-          Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
+  }) {
+    var rows = <Widget>[];
+    for (var pair in pairs) {
+      var rightSide = getRightString(pair.toList()[1]);
+      rows.add(Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+                width: (MediaQuery.of(context).size.width - 16 - 16 - 8) / 2,
+                child: Text(pair.toList()[0],
+                    style: style,
+                    overflow: TextOverflow.fade,
+                    softWrap: false,
+                    maxLines: 1)),
+            fee || rightSide.length < 21
+                ? Text(rightSide, style: style)
+                : Container(
                     width:
                         (MediaQuery.of(context).size.width - 16 - 16 - 8) / 2,
-                    child: Text(pair.toList()[0],
-                        style: style,
-                        overflow: TextOverflow.fade,
-                        softWrap: false,
-                        maxLines: 1)),
-                fee || pair.toList()[1].length < 17
-                    ? Text(pair.toList()[1], style: style)
-                    : Container(
-                        width:
-                            (MediaQuery.of(context).size.width - 16 - 16 - 8) /
-                                2,
-                        child: Text(
-                          pair.toList()[1],
-                          style: style,
-                          overflow: pair.length == 2
-                              ? TextOverflow.fade
-                              : TextOverflow.fade,
-                          softWrap: pair.length == 2 ? false : true,
-                          maxLines: pair.length == 2
-                              ? 1
-                              : int.parse(pair.toList()[2]),
-                        )),
-              ]) as Widget,
-        ]
-      ].intersperse(SizedBox(height: 21));
+                    child: Text(
+                      rightSide,
+                      style: style,
+                      overflow: pair.length == 2
+                          ? TextOverflow.fade
+                          : TextOverflow.fade,
+                      softWrap: pair.length == 2 ? false : true,
+                      maxLines:
+                          pair.length == 2 ? 1 : int.parse(pair.toList()[2]),
+                    )),
+          ]));
+    }
+    return rows.intersperse(SizedBox(height: 21));
+  }
+
+  String getRightString(String x) {
+    if (x == 'calculating fee...') {
+      print('x$x|esimate$estimate');
+      if (estimate != null) {
+        return satToAmount(estimate!.fees).toString();
+      }
+      return x;
+    }
+    return x;
+  }
 
   Widget bottomPart() => SliverFillRemaining(
         hasScrollBody: false,
@@ -207,9 +234,19 @@ class _CheckoutState extends State<Checkout> {
   Widget total() =>
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Text('Total', style: Theme.of(context).checkoutTotal),
-        Text('${struct.total} ${struct.paymentSymbol.toUpperCase()}',
+        Text(
+            '${getRightTotal(struct.total)} ${struct.paymentSymbol.toUpperCase()}',
             style: Theme.of(context).checkoutTotal),
       ]);
+
+  String getRightTotal(String x) {
+    if (x == 'calculating total...') {
+      if (estimate != null) {
+        return satToAmount(estimate!.total).toString();
+      }
+    }
+    return x;
+  }
 
   Widget submitButton() => Container(
       height: 40,

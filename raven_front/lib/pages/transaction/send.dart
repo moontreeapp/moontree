@@ -518,53 +518,65 @@ class _SendState extends State<Send> {
         style: components.styles.buttons.bottom(context, disabled: disabled),
       ));
 
-  void confirmSend(SendRequest sendRequest) =>
-      Navigator.of(components.navigator.routeContext!).pushNamed(
-        '/transaction/checkout',
-        arguments: {
-          //        var sendRequest = SendRequest(
-          //  useWallet: useWallet,
-          //  sendAll: sendAll,
-          //  wallet: data['walletId'] != null
-          //      ? Current.wallet(data['walletId'])
-          //      : null,
-          //  account: Current.account,
-          //  sendAddress: sendAddress.text,
-          //  holding: holding,
-          //  visibleAmount: visibleAmount,
-          //  sendAmountAsSats: sendAmountAsSats,
-          //  feeGoal: feeGoal);
+  void confirmSend(SendRequest sendRequest) {
+    streams.spend.make.add(sendRequest);
+    Navigator.of(components.navigator.routeContext!).pushNamed(
+      '/transaction/checkout',
+      arguments: {
+        //        var sendRequest = SendRequest(
+        //  useWallet: useWallet,
+        //  sendAll: sendAll,
+        //  wallet: data['walletId'] != null
+        //      ? Current.wallet(data['walletId'])
+        //      : null,
+        //  account: Current.account,
+        //  sendAddress: sendAddress.text,
+        //  holding: holding,
+        //  visibleAmount: visibleAmount,
+        //  sendAmountAsSats: sendAmountAsSats,
+        //  feeGoal: feeGoal);
 
-          // in order to create this struct we have to calculate or generate
-          // the fees, so we need to generate it as we used to with an await
-          // here... which requires us to show a spinner moon while it is
-          // generating the fee... or we could send them to the page, and the
-          // page could listen for updates on the fees and results...
-          // that seems really good, then the button could become active...
-          'struct': CheckoutStruct(
-            symbol: ((streams.spend.form.value?.symbol == 'Ravencoin'
-                    ? 'RVN'
-                    : streams.spend.form.value?.symbol) ??
-                'RVN'),
-            subSymbol: '',
-            paymentSymbol: 'RVN',
-            items: [
-              ['Amount', visibleAmount]
+        // in order to create this struct we have to calculate or generate
+        // the fees, so we need to generate it as we used to with an await
+        // here... which requires us to show a spinner moon while it is
+        // generating the fee... or we could send them to the page, and the
+        // page could listen for updates on the fees and results...
+        // that seems really good, then the button could become active...
+        'struct': CheckoutStruct(
+          symbol: ((streams.spend.form.value?.symbol == 'Ravencoin'
+                  ? 'RVN'
+                  : streams.spend.form.value?.symbol) ??
+              'RVN'),
+          subSymbol: '',
+          paymentSymbol: 'RVN',
+          items: [
+            [
+              'To', sendAddress.text
+              //sendAddress.text.length < 12
+              //    ? sendAddress.text
+              //    : '${sendAddress.text.substring(0, 5)}...${sendAddress.text.substring(sendAddress.text.length - 5, sendAddress.text.length)}'
             ],
-            fees: [
-              ['Transaction Fee', 'calculating...']
-            ],
-            total: 'calculating...',
-            buttonAction: () {
-              streams.spend.send.add(sendRequest);
-              //Navigator.popUntil(
-              //    components.navigator.routeContext!, ModalRoute.withName('/home'));
-            },
-            buttonIcon: MdiIcons.arrowTopRightThick,
-            buttonWord: 'Send',
-          )
-        },
-      );
+            if (addressName != '') ['Known As', addressName],
+            ['Amount', visibleAmount],
+            if (sendNote.text != '') ['Note', sendNote.text],
+            if (sendMemo.text != '') ['Memo', sendMemo.text]
+          ],
+          fees: [
+            ['Transaction Fee', 'calculating fee...']
+          ],
+          total: 'calculating total...',
+          buttonAction: () {
+            /// will this execute the values here or there?
+            streams.spend.send.add(streams.spend.made.value);
+            //Navigator.popUntil(
+            //    components.navigator.routeContext!, ModalRoute.withName('/home'));
+          },
+          buttonIcon: MdiIcons.arrowTopRightThick,
+          buttonWord: 'Send',
+        )
+      },
+    );
+  }
 
   Future confirmSendDialog(SendRequest sendRequest) => showDialog(
       context: context,
@@ -582,8 +594,9 @@ class _SendState extends State<Send> {
                         style: Theme.of(context).sendConfirmButton),
                     onPressed: () {
                       Navigator.pop(context);
-                      // temporary test of screen:
-                      streams.spend.send.add(sendRequest);
+                      // this is old code but to get it to work:
+                      // make listener on .made and pass value into .send
+                      streams.spend.make.add(sendRequest);
                       Navigator.popUntil(components.navigator.routeContext!,
                           ModalRoute.withName('/home'));
                     })
