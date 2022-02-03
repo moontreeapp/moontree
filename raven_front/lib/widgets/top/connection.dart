@@ -32,6 +32,20 @@ class _ConnectionLightState extends State<ConnectionLight>
         AnimationController(vsync: this, duration: Duration(seconds: 2));
     _animationControllerDown = _animationControllerDown ??
         AnimationController(vsync: this, duration: Duration(seconds: 2));
+
+    /// to make this animate correctly and have correct colors I think we nned
+    /// a combine lastest or something on these listeners.
+    /// basically there are 3 states:
+    /// 1. disconnected, busy trying to connect
+    /// 2. connected, busy working
+    /// 3. connected, idle
+    /// and 6 transitions:
+    /// 1. connected idle -> disconnected busy : green still -> red moving, turn red, start moving, loop.
+    /// 2. connected busy -> disconnected busy : green moving -> red moving, turn red, keep looping
+    /// 3. connected idle -> connected busy : green still -> green moving, start moving, loop
+    /// 4. connected busy -> connected idle : green moving -> green still, stop moving
+    /// 5. disconnected busy -> connected idle : red moving -> green still, turn green, stop moving
+    /// 6. disconnected busy -> connected busy : red moving -> green moving, turn green, loop
     listeners
         .add(streams.client.connected.listen((bool value) => value != connected
             ? setState(() {
@@ -42,12 +56,12 @@ class _ConnectionLightState extends State<ConnectionLight>
       if (value == null) {
         setState(() {
           lastestClientValue = value;
-          connected = false;
+          //connected = false;
         });
       } else {
         setState(() {
           lastestClientValue = value;
-          connected = true;
+          //connected = true;
         });
       }
     }));
@@ -120,7 +134,7 @@ class _ConnectionLightState extends State<ConnectionLight>
     var processMessage;
     if (connected) {
       status = 'Connected';
-      connectionMessage = lastestClientValue;
+      connectionMessage = lastestClientValue ?? 'Connection established.';
     } else {
       status = 'Disconnected';
       connectionMessage =
