@@ -61,9 +61,7 @@ class _ConnectionLightState extends State<ConnectionLight>
     listeners
         .add(streams.client.connected.listen((bool value) => value != connected
             ? setState(() {
-                print('CONNECTED VALUE1 $connected');
                 connected = value;
-                print('CONNECTED VALUE2 $connected');
                 connectedColor = value ? Color(0xFF4CAF50) : Color(0xFFF44336);
               })
             : () {/*do nothing*/}));

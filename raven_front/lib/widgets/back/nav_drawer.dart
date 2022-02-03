@@ -265,12 +265,12 @@ class _NavDrawerState extends State<NavDrawer> {
                   onPressed: (BuildContext context) =>
                       Navigator.pushNamed(context, '/settings/language')),
               */
+/*
           destination(
             icon: MdiIcons.shieldKey,
             name: 'Checkout Template',
             link: '/transaction/checkout',
           ),
-/*
           SettingsTile(
               title: 'Clear Database',
               titleTextStyle: Theme.of(context).drawerDestination,
@@ -283,20 +283,68 @@ class _NavDrawerState extends State<NavDrawer> {
             name: 'Accounts',
             link: '/settings/technical',
           ),
+*/
           SettingsTile(
               title: 'show data',
               titleTextStyle: Theme.of(context).drawerDestination,
               leading: Icon(Icons.info_outline_rounded),
               onPressed: (BuildContext context) async {
-                var txs = res.vins.danglingVins
-                    .map((vin) => vin.voutTransactionId)
-                    .toSet();
-                for (var tx in txs) {
-                  print(tx);
+                var holdings = Current.holdings
+                    .where((Balance balance) => balance.security.isAsset)
+                    .map((Balance balance) => balance.security.symbol);
+                //var mains = holdings.where((String name) => name.contains('/')).map((String name) => name.split('/').first).where((name) => !name.startsWith('#') && !name.startsWith('\$') && !name.endsWith('!')).toList().addAll(holdings.where((String name) => !name.contains('/')));
+                //var admins = holdings.map((String name) => );
+                //var restricted  = holdings.map((String name) => );
+                var mains = [];
+                var admins = [];
+                var restricteds = [];
+                var qualifiers = [];
+                for (var name in holdings) {
+                  if (name.contains('/')) {
+                    var firstName = name.split('/').first;
+                    if (firstName.startsWith('#')) {
+                      qualifiers.add(firstName);
+                    } else {
+                      mains.add(firstName);
+                    }
+                  } else if (name.contains('#')) {
+                    var firstName = name.split('#').first;
+                    mains.add(firstName);
+                  } else {
+                    if (name.startsWith('#')) {
+                      qualifiers.add(name);
+                    } else if (name.startsWith('\$')) {
+                      restricteds.add(name);
+                    } else if (name.endsWith('!')) {
+                      admins.add(name);
+                    } else {
+                      mains.add(name);
+                    }
+                  }
                 }
-                print(await services.history.produceAddressOrBalance());
+                var cleanedAdmins =
+                    admins.map((name) => name.substring(0, name.length - 1));
+                var cleanedRestricteds =
+                    restricteds.map((name) => name.substring(1, name.length));
+                var cleanedQualifiers =
+                    qualifiers.map((name) => name.substring(1, name.length));
+                for (var name in mains.toSet()
+                  ..addAll(cleanedAdmins)
+                  ..addAll(cleanedRestricteds)
+                  ..addAll(cleanedQualifiers)) {
+                  print(
+                      '$name ${mains.contains(name) ? 'Main' : ''} ${cleanedAdmins.contains(name) ? 'Admin' : ''} ${cleanedRestricteds.contains(name) ? 'Restricted' : ''} ${cleanedQualifiers.contains(name) ? 'Qualifier' : ''}');
+                }
+
+                //var txs = res.balances.data;
+                //for (var tx in txs) {
+                //  print(tx);
+                //}
+                //var txs = res.assets.data;
+                //for (var tx in txs) {
+                //  print(tx);
+                //}
               }),
-*/
           //var txHash =
           //    //'9b64eb258a4352a68c4ce98cbbadddcbbcb285c422f7f9f97ed4b826d0a387d7';
           //    '5cdde1dc17f820320011ec648272237322e1cde48e62158b3cb56999c5aba0e8';
