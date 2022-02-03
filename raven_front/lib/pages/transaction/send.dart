@@ -463,8 +463,6 @@ class _SendState extends State<Send> {
             visibleAmount: visibleAmount,
             sendAmountAsSats: sendAmountAsSats,
             feeGoal: feeGoal);
-
-        /// replace with sending the send request to the checkout screen
         confirmSend(sendRequest);
       } else {
         showDialog(
@@ -523,25 +521,6 @@ class _SendState extends State<Send> {
     Navigator.of(components.navigator.routeContext!).pushNamed(
       '/transaction/checkout',
       arguments: {
-        //        var sendRequest = SendRequest(
-        //  useWallet: useWallet,
-        //  sendAll: sendAll,
-        //  wallet: data['walletId'] != null
-        //      ? Current.wallet(data['walletId'])
-        //      : null,
-        //  account: Current.account,
-        //  sendAddress: sendAddress.text,
-        //  holding: holding,
-        //  visibleAmount: visibleAmount,
-        //  sendAmountAsSats: sendAmountAsSats,
-        //  feeGoal: feeGoal);
-
-        // in order to create this struct we have to calculate or generate
-        // the fees, so we need to generate it as we used to with an await
-        // here... which requires us to show a spinner moon while it is
-        // generating the fee... or we could send them to the page, and the
-        // page could listen for updates on the fees and results...
-        // that seems really good, then the button could become active...
         'struct': CheckoutStruct(
           symbol: ((streams.spend.form.value?.symbol == 'Ravencoin'
                   ? 'RVN'
@@ -550,12 +529,7 @@ class _SendState extends State<Send> {
           subSymbol: '',
           paymentSymbol: 'RVN',
           items: [
-            [
-              'To', sendAddress.text
-              //sendAddress.text.length < 12
-              //    ? sendAddress.text
-              //    : '${sendAddress.text.substring(0, 5)}...${sendAddress.text.substring(sendAddress.text.length - 5, sendAddress.text.length)}'
-            ],
+            ['To', sendAddress.text],
             if (addressName != '') ['Known As', addressName],
             ['Amount', visibleAmount],
             if (sendNote.text != '') ['Note', sendNote.text],
@@ -565,42 +539,15 @@ class _SendState extends State<Send> {
             ['Transaction Fee', 'calculating fee...']
           ],
           total: 'calculating total...',
-          buttonAction: () {
-            /// will this execute the values here or there?
-            streams.spend.send.add(streams.spend.made.value);
-            //Navigator.popUntil(
-            //    components.navigator.routeContext!, ModalRoute.withName('/home'));
-          },
+          buttonAction: () =>
+              // will this execute the values here or there?
+              streams.spend.send.add(streams.spend.made.value),
           buttonIcon: MdiIcons.arrowTopRightThick,
           buttonWord: 'Send',
         )
       },
     );
   }
-
-  Future confirmSendDialog(SendRequest sendRequest) => showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-              contentPadding: EdgeInsets.all(24.0),
-              content: Text('Are you sure you want to send?',
-                  style: Theme.of(context).sendConfirm),
-              actions: [
-                TextButton(
-                    child: Text('Cancel'.toUpperCase(),
-                        style: Theme.of(context).sendConfirmButton),
-                    onPressed: () => Navigator.pop(context)),
-                TextButton(
-                    child: Text('Send'.toUpperCase(),
-                        style: Theme.of(context).sendConfirmButton),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      // this is old code but to get it to work:
-                      // make listener on .made and pass value into .send
-                      streams.spend.make.add(sendRequest);
-                      Navigator.popUntil(components.navigator.routeContext!,
-                          ModalRoute.withName('/home'));
-                    })
-              ]));
 
   void _produceAssetModal() {
     var options = (useWallet
