@@ -5,7 +5,7 @@ import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/streams/streams.dart';
 import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/components/components.dart';
-import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/widgets/widgets.dart';
 
 class NavBar extends StatefulWidget {
   NavBar({Key? key}) : super(key: key);
@@ -41,9 +41,12 @@ class _NavBarState extends State<NavBar> {
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      actionButton(name: 'create', link: '/transaction/send'),
+                      actionButton(
+                          name: 'create', onPressed: _produceCreateModal),
                       SizedBox(width: 16),
-                      actionButton(name: 'manage', link: '/transaction/send'),
+                      actionButton(
+                          name: 'manage',
+                          onPressed: () {/* bring up options */}),
                     ],
                   ),
             Padding(
@@ -78,24 +81,32 @@ class _NavBarState extends State<NavBar> {
             ]),
       );
 
-  Widget actionButton({required String name, required String link}) => Expanded(
-      child: Container(
-          height: 40,
-          child: OutlinedButton.icon(
-            onPressed: () {
-              Backdrop.of(components.navigator.routeContext!)
-                  .concealBackLayer();
-              Navigator.of(components.navigator.routeContext!).pushNamed(link);
-            },
-            icon: Icon({
-              'send': MdiIcons.arrowTopRightThick,
-              'receive': MdiIcons.arrowBottomLeftThick,
-              'create': MdiIcons.plusCircle,
-              'manage': MdiIcons.crown,
-            }[name]!),
-            label: Text(name.toUpperCase()),
-            style: components.styles.buttons.bottom(context),
-          )));
+  Widget actionButton({
+    required String name,
+    String? link,
+    VoidCallback? onPressed,
+  }) =>
+      Expanded(
+          child: Container(
+              height: 40,
+              child: OutlinedButton.icon(
+                onPressed: link != null
+                    ? () {
+                        Backdrop.of(components.navigator.routeContext!)
+                            .concealBackLayer();
+                        Navigator.of(components.navigator.routeContext!)
+                            .pushNamed(link);
+                      }
+                    : onPressed ?? () {},
+                icon: Icon({
+                  'send': MdiIcons.arrowTopRightThick,
+                  'receive': MdiIcons.arrowBottomLeftThick,
+                  'create': MdiIcons.plusCircle,
+                  'manage': MdiIcons.crown,
+                }[name]!),
+                label: Text(name.toUpperCase()),
+                style: components.styles.buttons.bottom(context),
+              )));
 
   Widget sectorIcon({required String name}) => IconButton(
         onPressed: () {
@@ -116,4 +127,8 @@ class _NavBarState extends State<NavBar> {
         iconSize: selected == name ? 30 : 24,
         color: selected == name ? Color(0xFF5C6BC0) : Color(0x995C6BC0),
       );
+
+  void _produceCreateModal() {
+    SelectionItems(context, modalSet: SelectionSet.Create).build();
+  }
 }

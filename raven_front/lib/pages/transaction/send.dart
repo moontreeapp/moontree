@@ -555,17 +555,13 @@ class _SendState extends State<Send> {
             : Current.holdingNames)
         .where((item) => item != 'RVN')
         .toList();
-    SelectionItems(context, names: [SelectionOptions.Holdings]).build(
+    SelectionItems(context, modalSet: SelectionSet.Holdings).build(
         holdingNames: options.isNotEmpty
             ? ['Ravencoin'] + options
             : ['Ravencoin', 'Amazon']);
   }
 
   void _produceFeeModal() {
-    SelectionItems(context, names: [
-      SelectionOptions.Fast,
-      SelectionOptions.Standard,
-      SelectionOptions.Slow
-    ]).build();
+    SelectionItems(context, modalSet: SelectionSet.Fee).build();
   }
 }

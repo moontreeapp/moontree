@@ -3,9 +3,6 @@ import 'package:raven_back/extensions/string.dart';
 import 'package:raven_back/extensions/object.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
-import 'package:raven_front/components/components.dart';
-import 'package:raven_front/services/lookup.dart';
-import 'package:raven_front/services/account.dart';
 import 'package:raven_front/theme/extensions.dart';
 
 class PageTitle extends StatefulWidget {
@@ -70,12 +67,13 @@ class _PageTitleState extends State<PageTitle> {
             'Change': 'Security',
             'Remove': 'Security',
             'Verify': 'Security',
+            'Receive': 'Receive',
             'Transactions':
                 ((streams.spend.form.value?.symbol ?? 'RVN') == 'RVN')
                     ? 'Ravencoin'
                     : streams.spend.form.value?.symbol,
           }[pageTitle] ??
-          ((pageTitle != 'Wallet' || res.accounts.data.length <= 1)
+          (pageTitle == 'Wallet'
               ? appContext.enumString.toTitleCase()
               : pageTitle),
       style: Theme.of(context).pageTitle);

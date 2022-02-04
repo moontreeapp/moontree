@@ -12,13 +12,48 @@ import 'package:raven_back/extensions/string.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/components/components.dart';
 
-enum SelectionOptions { Fast, Standard, Slow, Holdings }
+enum SelectionSet { Fee, Holdings, Create, Manage, Asset }
+enum SelectionOptions {
+  Fast,
+  Standard,
+  Slow,
+  Holdings,
+  Main,
+  Restricted,
+  Qualifier,
+}
 
 class SelectionItems {
-  final List<SelectionOptions> names;
+  late List<SelectionOptions> names;
+  late List<VoidCallback> behaviors;
+  late SelectionSet? modalSet;
   final BuildContext context;
 
-  const SelectionItems(this.context, {required this.names});
+  SelectionItems(
+    this.context, {
+    List<SelectionOptions>? names,
+    List<VoidCallback>? behaviors,
+    SelectionSet? modalSet,
+  }) {
+    // handle the error here if we have to error.
+    this.modalSet = modalSet;
+    this.names = (names ??
+            {
+              SelectionSet.Holdings: [SelectionOptions.Holdings],
+              SelectionSet.Fee: [
+                SelectionOptions.Fast,
+                SelectionOptions.Standard,
+                SelectionOptions.Slow,
+              ],
+              SelectionSet.Create: [
+                SelectionOptions.Main,
+                SelectionOptions.Restricted,
+                SelectionOptions.Qualifier,
+              ],
+            }[modalSet]) ??
+        [];
+    this.behaviors = behaviors ?? [];
+  }
 
   String asString(SelectionOptions name) =>
       name.enumString.toTitleCase(underscoreAsSpace: true);
@@ -31,33 +66,57 @@ class SelectionItems {
             Icon(MdiIcons.speedometerMedium, color: Color(0x99000000)),
         SelectionOptions.Slow:
             Icon(MdiIcons.speedometerSlow, color: Color(0x99000000)),
+        SelectionOptions.Main:
+            Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
+        SelectionOptions.Restricted:
+            Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
+        SelectionOptions.Qualifier:
+            Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
       }[name] ??
-      Icon(MdiIcons.speedometerMedium, color: Color(0x99000000));
-
-  Widget item(SelectionOptions name) => ListTile(
-      visualDensity: VisualDensity.compact,
-      onTap: () {
-        streams.spend.form.add(SpendForm.merge(
-          form: streams.spend.form.value,
-          fee: asString(name),
-        ));
-        Navigator.pop(context);
-      },
-      leading: leads(name),
-      title: Text(asString(name), style: Theme.of(context).choices));
+      Icon(MdiIcons.information, color: Color(0x99000000));
 
   Widget holdingItem(String name) => ListTile(
       visualDensity: VisualDensity.compact,
       onTap: () {
+        Navigator.pop(context);
         streams.spend.form.add(SpendForm.merge(
           form: streams.spend.form.value,
           symbol: name,
         ));
-        Navigator.pop(context);
       },
-      leading: components.icons.assetAvatar(name == 'Ravencoin' ? 'RVN' : name,
-          height: 24, width: 24),
+      leading: components.icons.assetAvatar(
+        name == 'Ravencoin' ? 'RVN' : name,
+        height: 24,
+        width: 24,
+      ),
       title: Text(name, style: Theme.of(context).choices));
+
+  Widget item(SelectionOptions name, {VoidCallback? behavior}) => ListTile(
+      visualDensity: VisualDensity.compact,
+      onTap: () {
+        Navigator.pop(context);
+        (behavior ?? () {})();
+      },
+      leading: leads(name),
+      title: Text(asString(name), style: Theme.of(context).choices));
+
+  Widget feeItem(SelectionOptions name) => item(
+        name,
+        behavior: () => streams.spend.form.add(SpendForm.merge(
+          form: streams.spend.form.value,
+          fee: asString(name),
+        )),
+      );
+
+  Widget createItem(SelectionOptions name) => item(
+        name,
+        behavior: () => Navigator.pushNamed(
+          components.navigator.routeContext!,
+          '/transaction/receive', // replace with correct form...
+          //'/create/forms/${asString(name).toLowerCase}',
+          arguments: {'symbol': asString(name)},
+        ),
+      );
 
   void produceModal(List items, {bool tall = true}) {
     showModalBottomSheet<void>(
@@ -78,11 +137,24 @@ class SelectionItems {
   }
 
   void build({List<String>? holdingNames}) {
-    if (names.contains(SelectionOptions.Holdings)) {
+    if (modalSet == SelectionSet.Holdings) {
       produceModal(
         [for (var holding in holdingNames ?? []) holdingItem(holding)],
       );
+    } else if (modalSet == SelectionSet.Fee) {
+      produceModal([for (var name in names) feeItem(name)], tall: false);
+    } else if (modalSet == SelectionSet.Create) {
+      produceModal([for (var name in names) createItem(name)], tall: false);
     } else {
+      if (names.length == behaviors.length) {
+        produceModal([
+          for (var namedBehavior in [
+            for (var i = 0; i < names.length; i += 1) [names[i], behaviors[i]]
+          ])
+            item(namedBehavior[0] as SelectionOptions,
+                behavior: namedBehavior[1] as VoidCallback)
+        ], tall: false);
+      }
       produceModal([for (var name in names) item(name)], tall: false);
     }
   }
