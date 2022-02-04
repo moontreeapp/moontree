@@ -12,7 +12,7 @@ import 'package:raven_back/extensions/string.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/components/components.dart';
 
-enum SelectionSet { Fee, Holdings, Create, Manage, Asset }
+enum SelectionSet { Fee, Holdings, Create, Manage, Asset, Sub_Asset }
 enum SelectionOption {
   Fast,
   Standard,
@@ -26,6 +26,9 @@ enum SelectionOption {
   Restricted,
   Qualifier,
   Admin,
+  Sub_Asset,
+  NFT,
+  Messaging_Channel_Asset,
 }
 
 class SelectionItems {
@@ -54,6 +57,11 @@ class SelectionItems {
                 SelectionOption.Main,
                 SelectionOption.Restricted,
                 SelectionOption.Qualifier,
+              ],
+              SelectionSet.Sub_Asset: [
+                SelectionOption.Sub_Asset,
+                SelectionOption.NFT,
+                SelectionOption.Messaging_Channel_Asset,
               ],
             }[modalSet]) ??
         [];
@@ -86,6 +94,12 @@ class SelectionItems {
             Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
         SelectionOption.Admin:
             Icon(MdiIcons.crownCircle, color: Color(0xDE000000)),
+        SelectionOption.Sub_Asset:
+            Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
+        SelectionOption.NFT:
+            Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
+        SelectionOption.Messaging_Channel_Asset:
+            Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
       }[name] ??
       Icon(MdiIcons.information, color: Color(0x99000000));
 
@@ -142,6 +156,16 @@ class SelectionItems {
         ),
       );
 
+  Widget subAssetItem(SelectionOption name) => item(
+        name,
+        behavior: () => Navigator.pushNamed(
+          components.navigator.routeContext!,
+          '/transaction/receive', // replace with correct view page...
+          //'/manage/asset/${asString(name).toLowerCase}',
+          arguments: {'symbol': asString(name)},
+        ),
+      );
+
   void produceModal(List items, {bool tall = true}) {
     showModalBottomSheet<void>(
         context: context,
@@ -169,6 +193,8 @@ class SelectionItems {
       produceModal([for (var name in names) feeItem(name)], tall: false);
     } else if (modalSet == SelectionSet.Create) {
       produceModal([for (var name in names) createItem(name)], tall: false);
+    } else if (modalSet == SelectionSet.Sub_Asset) {
+      produceModal([for (var name in names) subAssetItem(name)], tall: false);
     } else {
       if (names.length == behaviors.length) {
         produceModal([
