@@ -3,10 +3,10 @@ import 'package:intersperse/intersperse.dart';
 
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/streams/spend.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/widgets/widgets.dart';
 
 class AssetList extends StatefulWidget {
   const AssetList({Key? key}) : super(key: key);
@@ -134,14 +134,35 @@ class _AssetList extends State<AssetList> {
               contentPadding:
                   EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
               onTap: () {
+                // probably:
                 //streams.spend.form.add(SpendForm.merge(
                 //    form: streams.spend.form.value, symbol: asset.symbol));
-                //Navigator.of(components.navigator.routeContext!).pushNamed(
-                //    asset.symbol == 'RVN' ? '/transactions' : '/transactions',
-                //    arguments: {
-                //      'holding': holding,
-                //      'walletId': wallet?.walletId ?? null
-                //    });
+
+                // probably nav
+
+                if (asset.length == 1) {
+                  //Navigator.of(components.navigator.routeContext!).pushNamed(
+                  //    asset.symbol == 'RVN' ? '/transactions' : '/transactions',
+                  //    arguments: {
+                  //      'holding': holding,
+                  //      'walletId': wallet?.walletId ?? null
+                  //    });
+                } else {
+                  SelectionItems(
+                    context,
+                    names: [
+                      if (asset.main) SelectionOption.Main,
+                      if (asset.admin) SelectionOption.Admin,
+                      if (asset.restricted) SelectionOption.Restricted,
+                      //if (asset.qualifier) SelectionOption.Qualifier,
+                    ],
+                    behaviors: [
+                      if (asset.main) () => print('navigate to main'),
+                      if (asset.admin) () => print('navigate to admin'),
+                      if (asset.restricted) () => print('nav to restricted'),
+                    ],
+                  ).build();
+                }
               }, // wallet transactions are on wallet screen, so remove wallet id here.
               leading: Container(
                   height: 40,
@@ -175,4 +196,13 @@ class AssetHolding {
     this.restricted = false,
     this.qualifier = false,
   });
+
+  String get typesView =>
+      (main ? 'Main ' : '') +
+      (admin ? 'Admin ' : '') +
+      (restricted ? 'Restricted ' : '') +
+      (restricted ? 'Qualifier ' : '');
+
+  int get length =>
+      [main, admin, restricted, restricted].where((element) => element).length;
 }

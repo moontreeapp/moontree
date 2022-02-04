@@ -13,25 +13,30 @@ import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/components/components.dart';
 
 enum SelectionSet { Fee, Holdings, Create, Manage, Asset }
-enum SelectionOptions {
+enum SelectionOption {
   Fast,
   Standard,
   Slow,
   Holdings,
+  Main_Asset,
+  Restricted_Asset,
+  Qualifier_Asset,
+  Admin_Asset,
   Main,
   Restricted,
   Qualifier,
+  Admin,
 }
 
 class SelectionItems {
-  late List<SelectionOptions> names;
+  late List<SelectionOption> names;
   late List<VoidCallback> behaviors;
   late SelectionSet? modalSet;
   final BuildContext context;
 
   SelectionItems(
     this.context, {
-    List<SelectionOptions>? names,
+    List<SelectionOption>? names,
     List<VoidCallback>? behaviors,
     SelectionSet? modalSet,
   }) {
@@ -39,39 +44,48 @@ class SelectionItems {
     this.modalSet = modalSet;
     this.names = (names ??
             {
-              SelectionSet.Holdings: [SelectionOptions.Holdings],
+              SelectionSet.Holdings: [SelectionOption.Holdings],
               SelectionSet.Fee: [
-                SelectionOptions.Fast,
-                SelectionOptions.Standard,
-                SelectionOptions.Slow,
+                SelectionOption.Fast,
+                SelectionOption.Standard,
+                SelectionOption.Slow,
               ],
               SelectionSet.Create: [
-                SelectionOptions.Main,
-                SelectionOptions.Restricted,
-                SelectionOptions.Qualifier,
+                SelectionOption.Main,
+                SelectionOption.Restricted,
+                SelectionOption.Qualifier,
               ],
             }[modalSet]) ??
         [];
     this.behaviors = behaviors ?? [];
   }
 
-  String asString(SelectionOptions name) =>
+  String asString(SelectionOption name) =>
       name.enumString.toTitleCase(underscoreAsSpace: true);
 
-  Widget leads(SelectionOptions name, {String? holding}) =>
+  Widget leads(SelectionOption name, {String? holding}) =>
       {
-        SelectionOptions.Fast:
+        SelectionOption.Fast:
             Icon(MdiIcons.speedometer, color: Color(0x99000000)),
-        SelectionOptions.Standard:
+        SelectionOption.Standard:
             Icon(MdiIcons.speedometerMedium, color: Color(0x99000000)),
-        SelectionOptions.Slow:
+        SelectionOption.Slow:
             Icon(MdiIcons.speedometerSlow, color: Color(0x99000000)),
-        SelectionOptions.Main:
+        SelectionOption.Main_Asset:
             Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
-        SelectionOptions.Restricted:
+        SelectionOption.Restricted_Asset:
             Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
-        SelectionOptions.Qualifier:
+        SelectionOption.Qualifier_Asset:
             Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
+        SelectionOption.Admin_Asset:
+            Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
+        SelectionOption.Main: Icon(MdiIcons.circle, color: Color(0xDE000000)),
+        SelectionOption.Restricted:
+            Icon(MdiIcons.lock, color: Color(0xDE000000)),
+        SelectionOption.Qualifier:
+            Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
+        SelectionOption.Admin:
+            Icon(MdiIcons.crownCircle, color: Color(0xDE000000)),
       }[name] ??
       Icon(MdiIcons.information, color: Color(0x99000000));
 
@@ -91,7 +105,7 @@ class SelectionItems {
       ),
       title: Text(name, style: Theme.of(context).choices));
 
-  Widget item(SelectionOptions name, {VoidCallback? behavior}) => ListTile(
+  Widget item(SelectionOption name, {VoidCallback? behavior}) => ListTile(
       visualDensity: VisualDensity.compact,
       onTap: () {
         Navigator.pop(context);
@@ -100,7 +114,7 @@ class SelectionItems {
       leading: leads(name),
       title: Text(asString(name), style: Theme.of(context).choices));
 
-  Widget feeItem(SelectionOptions name) => item(
+  Widget feeItem(SelectionOption name) => item(
         name,
         behavior: () => streams.spend.form.add(SpendForm.merge(
           form: streams.spend.form.value,
@@ -108,12 +122,22 @@ class SelectionItems {
         )),
       );
 
-  Widget createItem(SelectionOptions name) => item(
+  Widget createItem(SelectionOption name) => item(
         name,
         behavior: () => Navigator.pushNamed(
           components.navigator.routeContext!,
           '/transaction/receive', // replace with correct form...
           //'/create/forms/${asString(name).toLowerCase}',
+          arguments: {'symbol': asString(name)},
+        ),
+      );
+
+  Widget assetItem(SelectionOption name) => item(
+        name,
+        behavior: () => Navigator.pushNamed(
+          components.navigator.routeContext!,
+          '/transaction/receive', // replace with correct view page...
+          //'/manage/asset/${asString(name).toLowerCase}',
           arguments: {'symbol': asString(name)},
         ),
       );
@@ -151,11 +175,12 @@ class SelectionItems {
           for (var namedBehavior in [
             for (var i = 0; i < names.length; i += 1) [names[i], behaviors[i]]
           ])
-            item(namedBehavior[0] as SelectionOptions,
+            item(namedBehavior[0] as SelectionOption,
                 behavior: namedBehavior[1] as VoidCallback)
         ], tall: false);
+      } else {
+        produceModal([for (var name in names) item(name)], tall: false);
       }
-      produceModal([for (var name in names) item(name)], tall: false);
     }
   }
 }
