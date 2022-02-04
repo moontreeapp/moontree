@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:raven_back/extensions/string.dart';
+import 'package:raven_back/extensions/object.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/account.dart';
@@ -13,22 +16,30 @@ class PageTitle extends StatefulWidget {
 }
 
 class _PageTitleState extends State<PageTitle> {
+  late List listeners = [];
   late String pageTitle = 'Wallet';
   late String? settingTitle = null;
-  late List listeners = [];
+  late AppContext appContext = AppContext.wallet;
   final changeName = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.app.page.listen((value) {
+    listeners.add(streams.app.page.listen((String value) {
       if (value != pageTitle) {
         setState(() {
           pageTitle = value;
         });
       }
     }));
-    listeners.add(streams.app.setting.listen((value) {
+    listeners.add(streams.app.context.listen((AppContext value) {
+      if (value != appContext) {
+        setState(() {
+          appContext = value;
+        });
+      }
+    }));
+    listeners.add(streams.app.setting.listen((String? value) {
       if (value != settingTitle) {
         setState(() {
           settingTitle = value;
@@ -65,7 +76,7 @@ class _PageTitleState extends State<PageTitle> {
                     : streams.spend.form.value?.symbol,
           }[pageTitle] ??
           ((pageTitle != 'Wallet' || res.accounts.data.length <= 1)
-              ? pageTitle
-              : 'Wallet'),
+              ? appContext.enumString.toTitleCase()
+              : pageTitle),
       style: Theme.of(context).pageTitle);
 }
