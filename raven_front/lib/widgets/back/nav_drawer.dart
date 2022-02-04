@@ -283,7 +283,6 @@ class _NavDrawerState extends State<NavDrawer> {
             name: 'Accounts',
             link: '/settings/technical',
           ),
-*/
           SettingsTile(
               title: 'show data',
               titleTextStyle: Theme.of(context).drawerDestination,
@@ -345,6 +344,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 //  print(tx);
                 //}
               }),
+*/
           //var txHash =
           //    //'9b64eb258a4352a68c4ce98cbbadddcbbcb285c422f7f9f97ed4b826d0a387d7';
           //    '5cdde1dc17f820320011ec648272237322e1cde48e62158b3cb56999c5aba0e8';
