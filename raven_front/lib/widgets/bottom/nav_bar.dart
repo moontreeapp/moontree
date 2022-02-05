@@ -15,8 +15,6 @@ class NavBar extends StatefulWidget {
 }
 
 class _NavBarState extends State<NavBar> {
-  late String selected = 'wallet';
-
   @override
   Widget build(BuildContext context) => Container(
         height: 118,
@@ -28,7 +26,7 @@ class _NavBarState extends State<NavBar> {
             // we will need to make these buttons dependant upon the navigation
             // of the front page through streams but for now, we'll show they
             // can changed based upon whats selected:
-            selected == 'wallet'
+            streams.app.context.value == AppContext.wallet
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -54,9 +52,9 @@ class _NavBarState extends State<NavBar> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    sectorIcon(name: 'wallet'),
-                    sectorIcon(name: 'create'),
-                    sectorIcon(name: 'swap'),
+                    sectorIcon(appContext: AppContext.wallet),
+                    sectorIcon(appContext: AppContext.manage),
+                    sectorIcon(appContext: AppContext.swap),
                   ],
                 ))
           ],
@@ -108,24 +106,22 @@ class _NavBarState extends State<NavBar> {
                 style: components.styles.buttons.bottom(context),
               )));
 
-  Widget sectorIcon({required String name}) => IconButton(
+  Widget sectorIcon({required AppContext appContext}) => IconButton(
         onPressed: () {
+          Navigator.of(components.navigator.routeContext!).pushNamed('/home');
           setState(() {
-            selected = name;
-            streams.app.context.add({
-              'wallet': AppContext.wallet,
-              'create': AppContext.manage,
-              'swap': AppContext.wallet,
-            }[name]!);
+            streams.app.context.add(appContext);
           });
         },
         icon: Icon({
-          'wallet': MdiIcons.wallet,
-          'create': MdiIcons.plusCircle,
-          'swap': MdiIcons.swapHorizontalBold,
-        }[name]!),
-        iconSize: selected == name ? 30 : 24,
-        color: selected == name ? Color(0xFF5C6BC0) : Color(0x995C6BC0),
+          AppContext.wallet: MdiIcons.wallet,
+          AppContext.manage: MdiIcons.plusCircle,
+          AppContext.swap: MdiIcons.swapHorizontalBold,
+        }[appContext]!),
+        iconSize: streams.app.context.value == appContext ? 30 : 24,
+        color: streams.app.context.value == appContext
+            ? Color(0xFF5C6BC0)
+            : Color(0x995C6BC0),
       );
 
   void _produceCreateModal() {

@@ -23,24 +23,24 @@ class Asset extends StatefulWidget {
   _AssetState createState() => _AssetState();
 }
 
-class _AssetState extends State<Asset> /*with SingleTickerProviderStateMixin*/ {
+class _AssetState extends State<Asset> with SingleTickerProviderStateMixin {
   Map<String, dynamic> data = {};
   List<StreamSubscription> listeners = [];
-  //late AnimationController controller;
-  //late Animation<Offset> offset;
+  late AnimationController controller;
+  late Animation<Offset> offset;
   late List<TransactionRecord> currentTxs;
   late List<Balance> currentHolds;
 
   @override
   void initState() {
     super.initState();
-    //controller =
-    //    AnimationController(vsync: this, duration: Duration(milliseconds: 200));
-    //offset = Tween<Offset>(begin: Offset.zero, end: Offset(0.0, 1.0)).animate(
-    //    CurvedAnimation(
-    //        parent: controller,
-    //        curve: Curves.ease,
-    //        reverseCurve: Curves.ease.flipped));
+    controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    offset = Tween<Offset>(begin: Offset.zero, end: Offset(0.0, 1.0)).animate(
+        CurvedAnimation(
+            parent: controller,
+            curve: Curves.ease,
+            reverseCurve: Curves.ease.flipped));
 
     /// listen for new subassets??
     //listeners.add(res.balances.batchedChanges.listen((batchedChanges) {
@@ -77,32 +77,29 @@ class _AssetState extends State<Asset> /*with SingleTickerProviderStateMixin*/ {
         ? Current.walletHoldings(data['walletId'])
         : Current.holdings;
     var symbol = data['symbol'] as String;
-    return
-        //Scaffold(
-        //  resizeToAvoidBottomInset: false,
-        //  backgroundColor: Colors.transparent,
-        //  body:
-        //TabBarView(
-        //    controller: components.navigator.tabController,
-        //    children: <Widget>[
-        GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child:
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.transparent,
+      body:
+          //TabBarView(
+          //    controller: components.navigator.tabController,
+          //    children: <Widget>[
+          GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child:
 
-                /// comments: to remove scroll functionality as it is not yet fluid. #182
-                ///NotificationListener<UserScrollNotification>(
-                ///    onNotification: visibilityOfSendReceive,
-                ///    child:
+                  /// comments: to remove scroll functionality as it is not yet fluid. #182
+                  ///NotificationListener<UserScrollNotification>(
+                  ///    onNotification: visibilityOfSendReceive,
+                  ///    child:
 
-                SubAssetList(symbol: symbol)
-            //
-            )
-        //,
-        ///),
-        //])
-        //,
-        //floatingActionButton: SlideTransition(position: offset, child: NavBar()),
-        //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,)
-        ;
+                  SubAssetList(symbol: symbol))
+      //,
+      ///),
+      //])
+      ,
+      floatingActionButton: SlideTransition(position: offset, child: NavBar()),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    );
   }
 }
