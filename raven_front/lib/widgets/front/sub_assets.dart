@@ -8,14 +8,16 @@ import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
-class AssetList extends StatefulWidget {
-  const AssetList({Key? key}) : super(key: key);
+class SubAssetList extends StatefulWidget {
+  final String symbol;
+
+  const SubAssetList({Key? key, required this.symbol}) : super(key: key);
 
   @override
-  State<AssetList> createState() => _AssetList();
+  State<SubAssetList> createState() => _SubAssetList();
 }
 
-class _AssetList extends State<AssetList> {
+class _SubAssetList extends State<SubAssetList> {
   List<StreamSubscription> listeners = [];
   late Iterable<AssetHolding> assets;
 
@@ -47,61 +49,55 @@ class _AssetList extends State<AssetList> {
     setState(() {});
   }
 
-  List<AssetHolding> assetHoldings() {
+  List<AssetHolding> assetSubsHoldings(String asset) {
     var holdings = Current.holdings
         .where((Balance balance) => balance.security.isAsset)
-        .map((Balance balance) => balance.security.symbol);
+        .map((Balance balance) => balance.security.symbol)
+        .where((String symbol) =>
+            symbol.startsWith(asset) && symbol.length > asset.length)
+        .map((String symbol) => symbol.substring(asset.length, symbol.length))
+        .where((String symbol) =>
+            symbol.startsWith('/#') ||
+            symbol.startsWith('/') ||
+            symbol.startsWith('#'));
     var mains = [];
-    var admins = [];
-    var restricteds = [];
+    var uniques = [];
     var qualifiers = [];
     for (var name in holdings) {
-      if (name.contains('/')) {
-        var firstName = name.split('/').first;
-        if (firstName.startsWith('#')) {
+      if (name.startsWith('/#')) {
+        if (name.substring(2, name.length).contains('/')) {
+          var firstName = name.substring(2, name.length).split('/').first;
           qualifiers.add(firstName);
         } else {
+          qualifiers.add(name.substring(2, name.length));
+        }
+      } else if (name.startsWith('/')) {
+        if (name.substring(1, name.length).contains('/')) {
+          var firstName = name.substring(1, name.length).split('/').first;
           mains.add(firstName);
-        }
-      } else if (name.contains('#')) {
-        var firstName = name.split('#').first;
-        mains.add(firstName);
-      } else {
-        if (name.startsWith('#')) {
-          qualifiers.add(name);
-        } else if (name.startsWith('\$')) {
-          restricteds.add(name);
-        } else if (name.endsWith('!')) {
-          admins.add(name);
         } else {
-          mains.add(name);
+          mains.add(name.substring(1, name.length));
         }
+      } else if (name.startsWith('#')) {
+        uniques.add(name.substring(1, name.length));
       }
     }
-    var cleanedMains = mains.toSet();
-    var cleanedAdmins =
-        admins.map((name) => name.substring(0, name.length - 1));
-    var cleanedRestricteds =
-        restricteds.map((name) => name.substring(1, name.length));
-    var cleanedQualifiers =
-        qualifiers.map((name) => name.substring(1, name.length));
+    mains.toSet();
     return [
-      for (var name in cleanedMains
-        ..addAll(cleanedAdmins)
-        ..addAll(cleanedRestricteds)
-        ..addAll(cleanedQualifiers))
+      for (var name in mains
+        ..addAll(uniques)
+        ..addAll(qualifiers))
         AssetHolding(
             symbol: name,
-            main: cleanedMains.contains(name),
-            admin: cleanedAdmins.contains(name),
-            restricted: cleanedRestricteds.contains(name),
-            qualifier: cleanedQualifiers.contains(name))
+            main: mains.contains(name),
+            unique: uniques.contains(name),
+            qualifier: qualifiers.contains(name))
     ];
   }
 
   @override
   Widget build(BuildContext context) {
-    assets = assetHoldings();
+    assets = assetSubsHoldings(widget.symbol);
     return assets.isEmpty && res.vouts.data.isEmpty // <-- on front tab...
         ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -145,6 +141,8 @@ class _AssetList extends State<AssetList> {
                 //streams.spend.form.add(SpendForm.merge(
                 //    form: streams.spend.form.value, symbol: asset.symbol));
 
+                // probably nav
+
                 if (asset.length == 1) {
                   navigate(asset.singleSymbol!, wallet: wallet);
                 } else {
@@ -152,17 +150,15 @@ class _AssetList extends State<AssetList> {
                     context,
                     names: [
                       if (asset.main) SelectionOption.Main,
-                      if (asset.admin) SelectionOption.Admin,
-                      if (asset.restricted) SelectionOption.Restricted,
+                      if (asset.unique) SelectionOption.NFT,
                       if (asset.qualifier) SelectionOption.Qualifier,
                     ],
                     behaviors: [
                       if (asset.main)
-                        () => navigate(asset.symbol, wallet: wallet),
-                      if (asset.admin)
-                        () => navigate(asset.adminSymbol!, wallet: wallet),
-                      if (asset.restricted)
-                        () => navigate(asset.restrictedSymbol!, wallet: wallet),
+                        () => navigate('${widget.symbol}/${asset.subSymbol!}',
+                            wallet: wallet),
+                      if (asset.unique)
+                        () => navigate(asset.uniqueSymbol!, wallet: wallet),
                       if (asset.qualifier)
                         () => navigate(asset.qualifierSymbol!, wallet: wallet),
                     ],
@@ -186,56 +182,4 @@ class _AssetList extends State<AssetList> {
                   ]),
               trailing: Icon(Icons.chevron_right_rounded))
       ].intersperse(Divider(height: 1)).toList());
-}
-
-class AssetHolding {
-  final String symbol;
-  final bool main;
-  final bool admin;
-  final bool restricted;
-  final bool qualifier;
-  final bool unique;
-  AssetHolding({
-    required this.symbol,
-    this.main = false,
-    this.admin = false,
-    this.restricted = false,
-    this.qualifier = false,
-    this.unique = false,
-  });
-
-  @override
-  String toString() => 'AssetHolding('
-      'main: $main, '
-      'admin: $admin, '
-      'restricted: $restricted, '
-      'qualifier: $qualifier, '
-      'qualifier: $unique)';
-
-  String get typesView =>
-      (main ? 'Main ' : '') +
-      (admin ? 'Admin ' : '') +
-      (restricted ? 'Restricted ' : '') +
-      (qualifier ? 'Qualifier ' : '') +
-      (unique ? 'Unique ' : '');
-
-  int get length => [main, admin, restricted, qualifier, unique]
-      .where((element) => element)
-      .length;
-
-  String? get singleSymbol => length > 1
-      ? null
-      : main
-          ? symbol
-          : adminSymbol ??
-              restrictedSymbol ??
-              qualifierSymbol ??
-              uniqueSymbol ??
-              null;
-
-  String? get subSymbol => main ? '/${symbol}' : null;
-  String? get adminSymbol => admin ? '${symbol}!' : null;
-  String? get restrictedSymbol => restricted ? '\$${symbol}' : null;
-  String? get qualifierSymbol => qualifier ? '#${symbol}' : null;
-  String? get uniqueSymbol => unique ? '#${symbol}' : null; // must be subasset
 }

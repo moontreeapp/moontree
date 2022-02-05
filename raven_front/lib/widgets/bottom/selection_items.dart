@@ -22,6 +22,7 @@ enum SelectionOption {
   Restricted_Asset,
   Qualifier_Asset,
   Admin_Asset,
+  NFT_Asset,
   Main,
   Restricted,
   Qualifier,
@@ -90,6 +91,8 @@ class SelectionItems {
         SelectionOption.Main: Icon(MdiIcons.circle, color: Color(0xDE000000)),
         SelectionOption.Restricted:
             Icon(MdiIcons.lock, color: Color(0xDE000000)),
+        SelectionOption.NFT_Asset:
+            Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
         SelectionOption.Qualifier:
             Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
         SelectionOption.Admin:

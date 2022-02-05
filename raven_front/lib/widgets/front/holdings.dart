@@ -114,13 +114,12 @@ class _HoldingList extends State<HoldingList> {
                 form: streams.spend.form.value,
                 symbol: holding.security.symbol));
             Navigator.of(components.navigator.routeContext!).pushNamed(
-                holding.security.symbol == 'RVN'
-                    ? '/transactions'
-                    : '/transactions',
-                arguments: {
-                  'holding': holding,
-                  'walletId': wallet?.walletId ?? null
-                });
+              '/transactions',
+              arguments: {
+                'holding': holding,
+                'walletId': wallet?.walletId ?? null
+              },
+            );
           }, // wallet transactions are on wallet screen, so remove wallet id here.
           leading: Container(
               height: 40,

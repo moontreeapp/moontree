@@ -39,6 +39,8 @@ class _BackLayerState extends State<BackLayer> {
       return NavDrawer();
     } else if (['Send', 'Transactions'].contains(pageTitle)) {
       return BalanceHeader(pageTitle: pageTitle);
+    } else if (['Asset'].contains(pageTitle)) {
+      return BalanceHeader(pageTitle: pageTitle);
     }
     return Container(
       height: 0,

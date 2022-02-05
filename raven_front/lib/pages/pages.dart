@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:raven_front/pages/manage/assets.dart';
 import 'package:raven_front/pages/account/home.dart';
 import 'package:raven_front/pages/account/transactions.dart';
 import 'package:raven_front/pages/misc/loading.dart';
@@ -32,6 +33,7 @@ class pages {
   static ChangeResume changeResume = ChangeResume();
   static Login login = Login();
   static Home home = Home();
+  static Asset asset = Asset();
   static Transactions transactions = Transactions();
   static Checkout checkout = Checkout();
   static TransactionPage transaction = TransactionPage();
@@ -59,6 +61,7 @@ class pages {
       {
         '/': (context) => loading,
         '/home': (context) => home,
+        '/manage/asset': (context) => asset,
         '/transactions': (context) => transactions,
         '/wallet': (context) => walletView,
         '/loader': (context) => loader,
