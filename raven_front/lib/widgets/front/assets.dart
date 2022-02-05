@@ -114,7 +114,7 @@ class _AssetList extends State<AssetList> {
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [Text('No assets to manage. Create one!')],
+                children: [Text('No Assets to manage. Create one!')],
               ) //components.empty.assets(context)
             : Container(
                 color: Colors.transparent,

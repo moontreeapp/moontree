@@ -110,7 +110,7 @@ class _SubAssetList extends State<SubAssetList> {
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [Text('No assets to manage. Create one!')],
+                children: [Text('No Sub Assets to manage. Create one!')],
               ) //components.empty.assets(context)
             : Container(
                 color: Colors.transparent,

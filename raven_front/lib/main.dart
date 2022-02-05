@@ -53,6 +53,8 @@ Future<void> main() async {
 
 class RavenMobileApp extends StatelessWidget {
   //static final GlobalKey<NavigatorState> navigatorKey = new GlobalKey();
+  late AnimationController controller;
+  late Animation<Offset> offset;
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +67,13 @@ class RavenMobileApp extends StatelessWidget {
       darkTheme: CustomTheme.lightTheme, //dark
       navigatorObservers: [components.navigator],
       builder: (context, child) {
+        //controller =
+        //AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+        //offset = Tween<Offset>(begin: Offset.zero, end: Offset(0.0, 1.0))
+        //    .animate(CurvedAnimation(
+        //        parent: controller,
+        //        curve: Curves.ease,
+        //        reverseCurve: Curves.ease.flipped));
         components.navigator.scaffoldContext = context;
         return BackdropScaffold(
           //scaffoldKey: components.scaffoldKey, // thought this could help scrim issue, but it didn't
@@ -111,6 +120,11 @@ class RavenMobileApp extends StatelessWidget {
             color: Colors.white,
             child: child!,
           ),
+          //floatingActionButton:
+          //    SlideTransition(position: offset, child: NavBar()),
+          floatingActionButton: NavBar(),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
         );
       },
     );
