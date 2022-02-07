@@ -9,6 +9,7 @@ class AppStreams {
   final setting = BehaviorSubject<String?>.seeded(null);
   final snack = BehaviorSubject<Snack?>.seeded(null);
   final context = BehaviorSubject<AppContext>.seeded(AppContext.wallet);
+  final asset = BehaviorSubject<String?>.seeded(null);
 }
 
 /// resumed inactive paused detached

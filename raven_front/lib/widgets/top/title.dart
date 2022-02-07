@@ -54,7 +54,13 @@ class _PageTitleState extends State<PageTitle> {
   }
 
   @override
-  Widget build(BuildContext context) => Text(
+  Widget build(BuildContext context) {
+    print('streams.app.asset.value');
+    print(streams.app.asset.value);
+    return body();
+  }
+
+  Widget body() => Text(
       {
             '/settings/import_export': 'Import / Export',
             '/settings/settings': 'Settings',
@@ -72,6 +78,7 @@ class _PageTitleState extends State<PageTitle> {
                 ((streams.spend.form.value?.symbol ?? 'RVN') == 'RVN')
                     ? 'Ravencoin'
                     : streams.spend.form.value?.symbol,
+            'Asset': streams.app.asset.value ?? 'Asset',
           }[pageTitle] ??
           (pageTitle == 'Wallet'
               ? appContext.enumString.toTitleCase()

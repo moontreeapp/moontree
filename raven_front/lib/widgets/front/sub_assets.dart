@@ -123,6 +123,7 @@ class _SubAssetList extends State<SubAssetList> {
   }
 
   void navigate(String symbol, {Wallet? wallet}) {
+    streams.app.asset.add(symbol);
     Navigator.of(components.navigator.routeContext!).pushNamed(
       '/manage/asset',
       arguments: {'symbol': symbol, 'walletId': wallet?.walletId ?? null},
@@ -137,12 +138,6 @@ class _SubAssetList extends State<SubAssetList> {
               contentPadding:
                   EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
               onTap: () {
-                // probably:
-                //streams.spend.form.add(SpendForm.merge(
-                //    form: streams.spend.form.value, symbol: asset.symbol));
-
-                // probably nav
-
                 if (asset.length == 1) {
                   navigate(asset.singleSymbol!, wallet: wallet);
                 } else {
