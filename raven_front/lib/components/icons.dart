@@ -87,6 +87,16 @@ class IconComponents {
           shape: BoxShape.circle,
           border: Border.all(
               width: 1,
+
+              /// I think the border should change instead of the background
+              /// image based upon what type of asset it is...
+              /// gold for admin
+              /// silver or x for restricted
+              /// brons or y for qualifier
+              /// do we care about subassets? probably...
+              /// yellow for NFT
+              /// brons or x for sub qualifier
+              /// main can just be the foreground color like we have it
               color: Color.fromARGB(
                 255,
                 imageDetails.foreground[0],
