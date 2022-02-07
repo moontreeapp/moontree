@@ -6,6 +6,7 @@ import 'package:raven_back/streams/spend.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/widgets/widgets.dart';
 
 class HoldingList extends StatefulWidget {
   final Iterable<Balance>? holdings;
@@ -17,7 +18,7 @@ class HoldingList extends StatefulWidget {
 
 class _HoldingList extends State<HoldingList> {
   List<StreamSubscription> listeners = [];
-  late Iterable<Balance> holdings;
+  late Map<String, AssetHolding> holdings;
   bool showUSD = false;
   Rate? rateUSD;
 
@@ -81,13 +82,49 @@ class _HoldingList extends State<HoldingList> {
     //);
   }
 
+  Map<String, AssetHolding> assetHoldings({bool assetsOnly = false}) {
+    var holdings = assetsOnly
+        ? Current.holdings.where((Balance balance) => balance.security.isAsset)
+        : Current.holdings;
+    Map<String, AssetHolding> balances = {};
+    for (var balance in holdings) {
+      var baseSymbol =
+          balance.security.asset?.baseSymbol ?? balance.security.symbol;
+      var assetType =
+          balance.security.asset?.assetType ?? balance.security.securityType;
+      if (!balances.containsKey(baseSymbol)) {
+        balances[baseSymbol] = AssetHolding(
+          symbol: baseSymbol,
+          main: assetType == AssetType.Main ? balance : null,
+          admin: assetType == AssetType.Admin ? balance : null,
+          restricted: assetType == AssetType.Restricted ? balance : null,
+          qualifier: assetType == AssetType.Qualifier ? balance : null,
+          unique: assetType == AssetType.NFT ? balance : null,
+          channel: assetType == AssetType.Channel ? balance : null,
+          crypto: assetType == SecurityType.Crypto ? balance : null,
+          fiat: assetType == SecurityType.Fiat ? balance : null,
+        );
+      } else {
+        balances[baseSymbol] = AssetHolding.fromAssetHolding(
+          balances[baseSymbol]!,
+          main: assetType == AssetType.Main ? balance : null,
+          admin: assetType == AssetType.Admin ? balance : null,
+          restricted: assetType == AssetType.Restricted ? balance : null,
+          qualifier: assetType == AssetType.Qualifier ? balance : null,
+          unique: assetType == AssetType.NFT ? balance : null,
+          channel: assetType == AssetType.Channel ? balance : null,
+          crypto: assetType == SecurityType.Crypto ? balance : null,
+          fiat: assetType == SecurityType.Fiat ? balance : null,
+        );
+      }
+    }
+    return balances;
+  }
+
   @override
   Widget build(BuildContext context) {
-    holdings = widget.holdings ?? Current.holdings;
-    //services.balance.accountBalances(
-    //        accounts.primaryIndex.getOne(widget.currentAccountId!)!)
-    //    : services.balance.addressesBalances(
-    //        [addresses.byAddress.getOne(widget.currentWalletAddress!)!]);
+    //holdings = widget.holdings ?? Current.holdings;
+    holdings = assetHoldings();
     return holdings.isEmpty && res.vouts.data.isEmpty // <-- on front tab...
         ? components.empty.holdings(context)
         : holdings.isEmpty
@@ -102,43 +139,119 @@ class _HoldingList extends State<HoldingList> {
                 ));
   }
 
+  void navigate(Balance balance, {Wallet? wallet}) {
+    streams.spend.form.add(SpendForm.merge(
+        form: streams.spend.form.value, symbol: balance.security.symbol));
+    Navigator.of(components.navigator.routeContext!).pushNamed(
+      '/transactions',
+      arguments: {'holding': balance, 'walletId': wallet?.walletId ?? null},
+    );
+  }
+
   ListView _holdingsView(BuildContext context, {Wallet? wallet}) {
     var rvnHolding = <Widget>[];
     var assetHoldings = <Widget>[];
-    for (var holding in holdings) {
+    for (var holding in holdings.values) {
+      print('Holding: $holding');
       var thisHolding = ListTile(
           //dense: true,
           contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
           onTap: () {
-            streams.spend.form.add(SpendForm.merge(
-                form: streams.spend.form.value,
-                symbol: holding.security.symbol));
-            Navigator.of(components.navigator.routeContext!).pushNamed(
-              '/transactions',
-              arguments: {
-                'holding': holding,
-                'walletId': wallet?.walletId ?? null
-              },
-            );
+            if (holding.length == 1) {
+              navigate(holding.balance!, wallet: wallet);
+            } else {
+              SelectionItems(
+                context,
+                names: [
+                  if (holding.main != null) SelectionOption.Main,
+                  if (holding.admin != null) SelectionOption.Admin,
+                  if (holding.restricted != null) SelectionOption.Restricted,
+                  if (holding.qualifier != null) SelectionOption.Qualifier,
+                  if (holding.unique != null) SelectionOption.NFT_Asset,
+                  if (holding.channel != null)
+                    SelectionOption.Messaging_Channel_Asset,
+                ],
+                behaviors: [
+                  if (holding.main != null)
+                    () => navigate(holding.main!, wallet: wallet),
+                  if (holding.admin != null)
+                    () => navigate(holding.admin!, wallet: wallet),
+                  if (holding.restricted != null)
+                    () => navigate(holding.restricted!, wallet: wallet),
+                  if (holding.qualifier != null)
+                    () => navigate(holding.qualifier!, wallet: wallet),
+                  if (holding.unique != null)
+                    () => navigate(holding.unique!, wallet: wallet),
+                  if (holding.channel != null)
+                    () => navigate(holding.channel!, wallet: wallet),
+                ],
+                values: [
+                  if (holding.main != null)
+                    components.text.securityAsReadable(
+                      holding.main!.value,
+                      security: holding.main!.security,
+                      asUSD: showUSD,
+                    ),
+                  if (holding.admin != null)
+                    components.text.securityAsReadable(
+                      holding.admin!.value,
+                      security: holding.admin!.security,
+                      asUSD: showUSD,
+                    ),
+                  if (holding.restricted != null)
+                    components.text.securityAsReadable(
+                      holding.restricted!.value,
+                      security: holding.restricted!.security,
+                      asUSD: showUSD,
+                    ),
+                  if (holding.qualifier != null)
+                    components.text.securityAsReadable(
+                      holding.qualifier!.value,
+                      security: holding.qualifier!.security,
+                      asUSD: showUSD,
+                    ),
+                  if (holding.unique != null)
+                    components.text.securityAsReadable(
+                      holding.unique!.value,
+                      security: holding.unique!.security,
+                      asUSD: showUSD,
+                    ),
+                  if (holding.channel != null)
+                    components.text.securityAsReadable(
+                      holding.channel!.value,
+                      security: holding.channel!.security,
+                      asUSD: showUSD,
+                    ),
+                ],
+              ).build();
+            }
           }, // wallet transactions are on wallet screen, so remove wallet id here.
           leading: Container(
               height: 40,
               width: 40,
-              child: components.icons.assetAvatar(holding.security.symbol)),
+              child: components.icons.assetAvatar(holding.symbol)),
           title:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text(holding.symbol == 'RVN' ? 'Ravencoin' : holding.symbol,
+                  style: Theme.of(context).holdingName),
+              holding.length > 1
+                  ? Text('•' * (holding.length - 1),
+                      //(holding.admin != null ? '•' : '') +
+                      //    (holding.restricted != null ? '•' : '') +
+                      //    (holding.qualifier != null ? '•' : '') +
+                      //    (holding.unique != null ? '•' : '') +
+                      //    (holding.channel != null ? '•' : ''),
+                      style: Theme.of(context).holdingValue)
+                  : SizedBox(width: 1),
+            ]),
             Text(
-                holding.security.symbol == 'RVN'
-                    ? 'Ravencoin'
-                    : holding.security.symbol,
-                style: Theme.of(context).holdingName),
-            Text(
-                components.text.securityAsReadable(holding.value,
-                    security: holding.security, asUSD: showUSD),
+                components.text.securityAsReadable(holding.balance!.value,
+                    security: holding.balance!.security, asUSD: showUSD),
                 style: Theme.of(context).holdingValue),
           ]),
           trailing: Icon(Icons.chevron_right_rounded));
-      if (holding.security.symbol == 'RVN') {
+      if (holding.symbol == 'RVN') {
         rvnHolding.add(thisHolding);
         rvnHolding.add(Divider(height: 1));
 

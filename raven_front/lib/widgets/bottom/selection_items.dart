@@ -35,6 +35,7 @@ enum SelectionOption {
 class SelectionItems {
   late List<SelectionOption> names;
   late List<VoidCallback> behaviors;
+  late List<String> values;
   late SelectionSet? modalSet;
   final BuildContext context;
 
@@ -42,6 +43,7 @@ class SelectionItems {
     this.context, {
     List<SelectionOption>? names,
     List<VoidCallback>? behaviors,
+    List<String>? values,
     SelectionSet? modalSet,
   }) {
     // handle the error here if we have to error.
@@ -67,6 +69,7 @@ class SelectionItems {
             }[modalSet]) ??
         [];
     this.behaviors = behaviors ?? [];
+    this.values = values ?? [];
   }
 
   String asString(SelectionOption name) =>
@@ -122,14 +125,19 @@ class SelectionItems {
       ),
       title: Text(name, style: Theme.of(context).choices));
 
-  Widget item(SelectionOption name, {VoidCallback? behavior}) => ListTile(
-      visualDensity: VisualDensity.compact,
-      onTap: () {
-        Navigator.pop(context);
-        (behavior ?? () {})();
-      },
-      leading: leads(name),
-      title: Text(asString(name), style: Theme.of(context).choices));
+  Widget item(SelectionOption name, {VoidCallback? behavior, String? value}) =>
+      ListTile(
+        visualDensity: VisualDensity.compact,
+        onTap: () {
+          Navigator.pop(context);
+          (behavior ?? () {})();
+        },
+        leading: leads(name),
+        title: Text(asString(name), style: Theme.of(context).choices),
+        trailing: value != null
+            ? Text(value, style: Theme.of(context).choices)
+            : null,
+      );
 
   Widget feeItem(SelectionOption name) => item(
         name,
@@ -199,7 +207,17 @@ class SelectionItems {
     } else if (modalSet == SelectionSet.Sub_Asset) {
       produceModal([for (var name in names) subAssetItem(name)], tall: false);
     } else {
-      if (names.length == behaviors.length) {
+      if (names.length == behaviors.length && names.length == values.length) {
+        produceModal([
+          for (var namedBehavior in [
+            for (var i = 0; i < names.length; i += 1)
+              [names[i], behaviors[i], values[i]]
+          ])
+            item(namedBehavior[0] as SelectionOption,
+                behavior: namedBehavior[1] as VoidCallback,
+                value: namedBehavior[2] as String)
+        ], tall: false);
+      } else if (names.length == behaviors.length) {
         produceModal([
           for (var namedBehavior in [
             for (var i = 0; i < names.length; i += 1) [names[i], behaviors[i]]

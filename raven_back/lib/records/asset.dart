@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:raven_back/extensions/object.dart';
 
 import '_type_id.dart';
 
@@ -71,7 +72,56 @@ class Asset with EquatableMixin {
           r'Qm[1-9A-HJ-NP-Za-km-z]{44,}|b[A-Za-z2-7]{58,}|B[A-Z2-7]{58,}|z[1-9A-HJ-NP-Za-km-z]{48,}|F[0-9A-F]{50,}'));
 
   bool get hasMetadata => metadata != '';
-  bool get isMaster => symbol.endsWith('!');
-  String get nonMasterSymbol => symbol.replaceAll('!', '');
-  String get masterSymbol => nonMasterSymbol + '!';
+
+  bool get isAdmin => assetType == AssetType.Admin;
+
+  String get baseSymbol => symbol.startsWith('#') || symbol.startsWith('\$')
+      ? symbol.substring(1, symbol.length)
+      : symbol.endsWith('!')
+          ? symbol.substring(0, symbol.length - 1)
+          : symbol;
+
+  String get adminSymbol => baseSymbol + '!';
+
+  AssetType get assetType {
+    if (symbol.startsWith('#')) {
+      return AssetType.Qualifier;
+    }
+    if (symbol.startsWith('\$')) {
+      return AssetType.Restricted;
+    }
+    if (symbol.endsWith('!')) {
+      return AssetType.Admin;
+    }
+    if (symbol.contains('/')) {
+      var lastName = symbol.split('/').last;
+      if (lastName.startsWith('#')) {
+        return AssetType.NFT;
+      } else if (lastName.startsWith('~')) {
+        return AssetType.Channel;
+      }
+    }
+    return AssetType.Main;
+  }
+
+  String get assetTypeName => assetType.enumString;
+
+  //String? get subSymbol => main ? '/${symbol}' : null; // sub mains allowed
+  //String? get adminSymbol => admin ? '${symbol}!' : null; // must be top
+  //String? get restrictedSymbol =>
+  //    restricted ? '\$${symbol}' : null; // must be top
+  //String? get qualifierSymbol =>
+  //    qualifier ? '#${symbol}' : null; // sub qualifiers allowed
+  //String? get uniqueSymbol => unique ? '#${symbol}' : null; // must be subasset
+  //String? get channelSymbol =>
+  //    channel ? '~${symbol}' : null; // must be subasset
+}
+
+enum AssetType {
+  Main,
+  Admin,
+  Restricted,
+  Qualifier,
+  NFT,
+  Channel,
 }

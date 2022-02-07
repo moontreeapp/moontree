@@ -7,31 +7,30 @@ extension AssetHasOneSecurity on Asset {
 
 extension AssetHasOneMetadata on Asset {
   Metadata? get primaryMetadata => [
-        res.metadatas.bySymbolMetadata.getOne(nonMasterSymbol, metadata)
+        res.metadatas.bySymbolMetadata.getOne(baseSymbol, metadata)
       ].where((md) => md?.parent == null).firstOrNull;
 }
 
 extension AssetHasManyMetadata on Asset {
-  List<Metadata?> get metadatas =>
-      res.metadatas.bySymbol.getAll(nonMasterSymbol);
+  List<Metadata?> get metadatas => res.metadatas.bySymbol.getAll(baseSymbol);
 }
 
 extension AssetHasOneLogoMetadata on Asset {
   Metadata? get logo {
-    var childrenMetadata = res.metadatas.bySymbol.getAll(nonMasterSymbol);
+    var childrenMetadata = res.metadatas.bySymbol.getAll(baseSymbol);
     for (var child in childrenMetadata) {
       if (child.logo) {
         return child;
       }
     }
     var primaryMetadata = [
-      res.metadatas.bySymbolMetadata.getOne(nonMasterSymbol, metadata)
+      res.metadatas.bySymbolMetadata.getOne(baseSymbol, metadata)
     ].where((md) => md?.parent == null).firstOrNull;
     if (primaryMetadata?.kind == MetadataType.ImagePath) {
       return primaryMetadata;
     }
     var nonMasterPrimaryMetadata = res.metadatas.bySymbol
-        .getAll(nonMasterSymbol)
+        .getAll(baseSymbol)
         .where((md) => md.parent == null)
         .firstOrNull;
     if (nonMasterPrimaryMetadata?.kind == MetadataType.ImagePath) {

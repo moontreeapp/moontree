@@ -19,7 +19,7 @@ class SubAssetList extends StatefulWidget {
 
 class _SubAssetList extends State<SubAssetList> {
   List<StreamSubscription> listeners = [];
-  late Iterable<AssetHolding> assets;
+  late Map<String, AssetHolding> assets;
 
   @override
   void initState() {
@@ -49,55 +49,56 @@ class _SubAssetList extends State<SubAssetList> {
     setState(() {});
   }
 
-  List<AssetHolding> assetSubsHoldings(String asset) {
-    var holdings = Current.holdings
-        .where((Balance balance) => balance.security.isAsset)
-        .map((Balance balance) => balance.security.symbol)
-        .where((String symbol) =>
-            symbol.startsWith(asset) && symbol.length > asset.length)
-        .map((String symbol) => symbol.substring(asset.length, symbol.length))
-        .where((String symbol) =>
-            symbol.startsWith('/#') ||
-            symbol.startsWith('/') ||
-            symbol.startsWith('#'));
-    var mains = [];
-    var uniques = [];
-    var qualifiers = [];
-    for (var name in holdings) {
-      if (name.startsWith('/#')) {
-        if (name.substring(2, name.length).contains('/')) {
-          var firstName = name.substring(2, name.length).split('/').first;
-          qualifiers.add(firstName);
-        } else {
-          qualifiers.add(name.substring(2, name.length));
-        }
-      } else if (name.startsWith('/')) {
-        if (name.substring(1, name.length).contains('/')) {
-          var firstName = name.substring(1, name.length).split('/').first;
-          mains.add(firstName);
-        } else {
-          mains.add(name.substring(1, name.length));
-        }
-      } else if (name.startsWith('#')) {
-        uniques.add(name.substring(1, name.length));
+  Map<String, AssetHolding> assetHoldings({bool assetsOnly = false}) {
+    var holdings = assetsOnly
+        ? Current.holdings.where((Balance balance) => balance.security.isAsset)
+        : Current.holdings;
+    Map<String, AssetHolding> balances = {};
+    for (var balance in holdings) {
+      var baseSymbol =
+          balance.security.asset?.baseSymbol ?? balance.security.symbol;
+      var assetType =
+          balance.security.asset?.assetType ?? balance.security.securityType;
+      if (!balances.containsKey(baseSymbol)) {
+        balances[baseSymbol] = AssetHolding(
+          symbol: baseSymbol,
+          main: assetType == AssetType.Main ? balance : null,
+          admin: assetType == AssetType.Admin ? balance : null,
+          restricted: assetType == AssetType.Restricted ? balance : null,
+          qualifier: assetType == AssetType.Qualifier ? balance : null,
+          unique: assetType == AssetType.NFT ? balance : null,
+          channel: assetType == AssetType.Channel ? balance : null,
+          crypto: assetType == SecurityType.Crypto ? balance : null,
+          fiat: assetType == SecurityType.Fiat ? balance : null,
+        );
+      } else {
+        balances[baseSymbol] = AssetHolding.fromAssetHolding(
+          balances[baseSymbol]!,
+          main: assetType == AssetType.Main ? balance : null,
+          admin: assetType == AssetType.Admin ? balance : null,
+          restricted: assetType == AssetType.Restricted ? balance : null,
+          qualifier: assetType == AssetType.Qualifier ? balance : null,
+          unique: assetType == AssetType.NFT ? balance : null,
+          channel: assetType == AssetType.Channel ? balance : null,
+          crypto: assetType == SecurityType.Crypto ? balance : null,
+          fiat: assetType == SecurityType.Fiat ? balance : null,
+        );
       }
     }
-    mains.toSet();
-    return [
-      for (var name in mains
-        ..addAll(uniques)
-        ..addAll(qualifiers))
-        AssetHolding(
-            symbol: name,
-            main: mains.contains(name),
-            unique: uniques.contains(name),
-            qualifier: qualifiers.contains(name))
-    ];
+    return balances;
+  }
+
+  Map<String, AssetHolding> filterToSubAssetsFor(
+      String asset, Map<String, AssetHolding> assets) {
+    var subAssetKeys = assets.keys.where((String symbol) =>
+        symbol.startsWith(asset) && symbol.length > asset.length + 1);
+    assets.removeWhere((key, value) => !subAssetKeys.contains(key));
+    return assets;
   }
 
   @override
   Widget build(BuildContext context) {
-    assets = assetSubsHoldings(widget.symbol);
+    assets = filterToSubAssetsFor(widget.symbol, assetHoldings());
     return assets.isEmpty && res.vouts.data.isEmpty // <-- on front tab...
         ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -132,7 +133,7 @@ class _SubAssetList extends State<SubAssetList> {
 
   ListView _assetsView(BuildContext context, {Wallet? wallet}) => ListView(
           children: <Widget>[
-        for (var asset in assets)
+        for (var asset in assets.values)
           ListTile(
               //dense: true,
               contentPadding:
@@ -147,22 +148,22 @@ class _SubAssetList extends State<SubAssetList> {
                   SelectionItems(
                     context,
                     names: [
-                      if (asset.main) SelectionOption.Main,
-                      if (asset.unique) SelectionOption.NFT,
-                      if (asset.qualifier) SelectionOption.Qualifier,
+                      if (asset.main != null) SelectionOption.Main,
+                      if (asset.unique != null) SelectionOption.NFT,
+                      if (asset.qualifier != null) SelectionOption.Qualifier,
                     ],
                     behaviors: [
-                      if (asset.main)
+                      if (asset.main != null)
                         () => navigate(
                               '${widget.symbol}/${asset.subSymbol!}',
                               wallet: wallet,
                             ),
-                      if (asset.unique)
+                      if (asset.unique != null)
                         () => navigate(
                               '${widget.symbol}/${asset.uniqueSymbol!}',
                               wallet: wallet,
                             ),
-                      if (asset.qualifier)
+                      if (asset.qualifier != null)
                         () => navigate(
                               '${widget.symbol}/${asset.qualifierSymbol!}',
                               wallet: wallet,
@@ -180,10 +181,10 @@ class _SubAssetList extends State<SubAssetList> {
                   children: [
                     Text(asset.symbol, style: Theme.of(context).holdingName),
                     Text(
-                        (asset.main ? 'Main ' : '') +
-                            (asset.admin ? 'Admin ' : '') +
-                            (asset.restricted ? 'Restricted ' : '') +
-                            (asset.restricted ? 'Qualifier ' : ''),
+                        (asset.main != null ? 'Main ' : '') +
+                            (asset.admin != null ? 'Admin ' : '') +
+                            (asset.restricted != null ? 'Restricted ' : '') +
+                            (asset.restricted != null ? 'Qualifier ' : ''),
                         style: Theme.of(context).holdingValue),
                   ]),
               trailing: Icon(Icons.chevron_right_rounded))

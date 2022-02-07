@@ -11,7 +11,7 @@ class AssetListener {
       await res.assets.save(asset);
 
       /// don't pull logos or any ipfs data for mvp
-      //if (asset.isMaster) {
+      //if (asset.isAdmin) {
       //  await grabMetadataForMaster(asset);
       //} else {
       //  await grabMetadataFor(asset);
@@ -23,14 +23,14 @@ class AssetListener {
   Future<void> grabMetadataForMaster(Asset asset) async {
     // master assets should look at the ipfs on the actual unique assets
     // what if we don't hold that asset? we should pull it?
-    var unique = res.assets.bySymbol.getOne(asset.nonMasterSymbol);
+    var unique = res.assets.bySymbol.getOne(asset.baseSymbol);
     if (unique == null) {
       /// we should pull the asset data for this asset even if we don't own the
       /// asset because we need the ipfshash of it for master asset
-      /// so push the nonMasterSymbol into the stream to signal something
+      /// so push the baseSymbol into the stream to signal something
       /// to pull it from the client using getMeta function... resulting in...
       //streams.asset.added.add(Asset(
-      //    symbol: asset.nonMasterSymbol,
+      //    symbol: asset.baseSymbol,
       //    metadata: vout.scriptPubKey.ipfsHash ?? '',
       //    satsInCirculation: value,
       //    divisibility: vout.scriptPubKey.units ?? 0,
