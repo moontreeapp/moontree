@@ -85,66 +85,88 @@ class _BalanceHeaderState extends State<BalanceHeader>
     }
     return Container(
       padding: EdgeInsets.only(top: 16),
-      child: ListView(
-        shrinkWrap: true,
+      height: 201,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              components.icons.assetAvatar(symbol, height: 56, width: 56),
-              SizedBox(height: 8),
-              // get this from balance
-              Text(
-                  components.text.securityAsReadable(holdingSat,
-                      symbol: symbol, asUSD: false),
-                  style: Theme.of(context).balanceAmount),
-              SizedBox(height: 1),
-              // USD amount of balance fix!
-              Text(
-                  components.text.securityAsReadable(holdingSat,
-                      symbol: symbol, asUSD: true),
-                  style: Theme.of(context).balanceDollar),
-              SizedBox(height: 30),
-              widget.pageTitle == 'Send'
-                  ? Padding(
-                      padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Remaining:',
-                                style: Theme.of(context).remaining),
-                            Text(
-                                components.text.securityAsReadable(
-                                    holdingSat - amountSat,
-                                    symbol: symbol,
-                                    asUSD: false),
-                                //(holding - amount).toString(),
-                                style: (holding - amount) >= 0
-                                    ? Theme.of(context).remaining
-                                    : Theme.of(context).remainingRed)
-                          ]))
-                  //: SizedBox(height: 14+16),
-                  : Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(8),
-                          topRight: Radius.circular(8),
-                        ),
-                      ),
-                      child: TabBar(
-                          controller: components.navigator.tabController,
-                          indicatorColor: Colors.white,
-                          indicatorSize: TabBarIndicatorSize.tab,
-                          indicator: _TabIndicator(),
-                          labelStyle: Theme.of(context).tabName,
-                          unselectedLabelStyle:
-                              Theme.of(context).tabNameInactive,
-                          tabs: [Tab(text: 'HISTORY'), Tab(text: 'DATA')])),
+              ...headerCenter(holdingSat),
             ],
-          )
+          ),
+          headerBottom(holdingSat, amountSat),
         ],
       ),
     );
+  }
+
+  List<Widget> headerCenter(int holdingSat) {
+    var ret = [
+      components.icons.assetAvatar(symbol, height: 56, width: 56),
+      SizedBox(height: 8),
+      // get this from balance
+      Text(
+          components.text
+              .securityAsReadable(holdingSat, symbol: symbol, asUSD: false),
+          style: Theme.of(context).balanceAmount),
+      SizedBox(height: 1),
+    ];
+    // make it a fixed size
+    if (widget.pageTitle != 'Asset') {
+      ret.addAll([
+        // USD amount of balance fix!
+        Text(
+            components.text
+                .securityAsReadable(holdingSat, symbol: symbol, asUSD: true),
+            style: Theme.of(context).balanceDollar),
+        SizedBox(height: 30),
+      ]);
+    }
+    return ret;
+  }
+
+  Widget headerBottom(int holdingSat, int amountSat) {
+    if (widget.pageTitle == 'Asset') {
+      return Padding(
+          padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+          child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Text('asset/', style: Theme.of(context).remaining),
+          ]));
+      //: SizedBox(height: 14+16),
+    }
+    if (widget.pageTitle == 'Send') {
+      return Padding(
+          padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Text('Remaining:', style: Theme.of(context).remaining),
+            Text(
+                components.text.securityAsReadable(holdingSat - amountSat,
+                    symbol: symbol, asUSD: false),
+                //(holding - amount).toString(),
+                style: (holding - amount) >= 0
+                    ? Theme.of(context).remaining
+                    : Theme.of(context).remainingRed)
+          ]));
+      //: SizedBox(height: 14+16),
+    }
+    return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(8),
+            topRight: Radius.circular(8),
+          ),
+        ),
+        child: TabBar(
+            controller: components.navigator.tabController,
+            indicatorColor: Colors.white,
+            indicatorSize: TabBarIndicatorSize.tab,
+            indicator: _TabIndicator(),
+            labelStyle: Theme.of(context).tabName,
+            unselectedLabelStyle: Theme.of(context).tabNameInactive,
+            tabs: [Tab(text: 'HISTORY'), Tab(text: 'DATA')]));
   }
 }
 
