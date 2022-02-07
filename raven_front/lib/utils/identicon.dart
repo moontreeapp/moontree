@@ -28,13 +28,21 @@ class Identicon {
 
   void _generateColors() {
     var lightenPercent = _getShade();
+    var lightenPercentBack =
+        name.endsWith('!') ? lightenPercent / 2 : lightenPercent;
     if (name.startsWith('MOONTREE') || name.startsWith('MT/')) {
       foregroundColor = _getGreenColorShade(lightenPercent);
-      backgroundColor = _getWhiteColorShade(lightenPercent);
+      backgroundColor =
+          _getWhiteColorShade(admin: lightenPercentBack < lightenPercent);
     } else {
       foregroundColor = _getOrangeColorShade(lightenPercent);
-      backgroundColor = _getBlueColorShade(lightenPercent);
+      backgroundColor = _getBlueColorShade(lightenPercentBack);
     }
+  }
+
+  double _getShade() {
+    var lighten = int.parse(hashedName.substring(0, 2), radix: 16) / 1.5;
+    return lighten / 255;
   }
 
   List<int> _getPastelColor({int lighten = 127}) {
@@ -66,17 +74,17 @@ class Identicon {
     ];
   }
 
-  List<int> _getWhiteColorShade(double lightenPercent) {
-    if (lightenPercent >= .333) {
+  List<int> _getWhiteColorShade({bool admin = false}) {
+    if (admin) {
       return [33, 33, 33];
     } else {
       return [255, 255, 255];
     }
-  }
-
-  double _getShade() {
-    var lighten = int.parse(hashedName.substring(0, 2), radix: 16) / 1.5;
-    return lighten / 255;
+    //if (lightenPercent >= .333) {
+    //  return [33, 33, 33];
+    //} else {
+    //  return [255, 255, 255];
+    //}
   }
 
   bool _bitIsOne(int n, List<int> hashBytes) {
@@ -135,9 +143,15 @@ class Identicon {
     return matrix;
   }
 
+  String baseName() => name.startsWith('#') || name.startsWith('\$')
+      ? name.substring(1, name.length)
+      : name.endsWith('!')
+          ? name.substring(0, name.length - 1)
+          : name;
+
   ImageDetails generate(String text) {
     name = text;
-    hashedName = digest(utf8.encode(name)).toString();
+    hashedName = digest(utf8.encode(baseName())).toString();
     _generateColors();
     var bytesLength = 16;
     var hexDigestByteList = List<int>.generate(bytesLength, (int i) {

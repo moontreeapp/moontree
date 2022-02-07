@@ -15,6 +15,7 @@ class PageTitle extends StatefulWidget {
 class _PageTitleState extends State<PageTitle> {
   late List listeners = [];
   late String pageTitle = 'Wallet';
+  late String assetTitle = 'Manage';
   late String? settingTitle = null;
   late AppContext appContext = AppContext.wallet;
   final changeName = TextEditingController();
@@ -43,6 +44,15 @@ class _PageTitleState extends State<PageTitle> {
         });
       }
     }));
+    listeners.add(streams.app.asset.listen((String? value) {
+      if (appContext == AppContext.manage &&
+          value != assetTitle &&
+          value != null) {
+        setState(() {
+          assetTitle = value;
+        });
+      }
+    }));
   }
 
   @override
@@ -55,8 +65,6 @@ class _PageTitleState extends State<PageTitle> {
 
   @override
   Widget build(BuildContext context) {
-    print('streams.app.asset.value');
-    print(streams.app.asset.value);
     return body();
   }
 
@@ -78,7 +86,7 @@ class _PageTitleState extends State<PageTitle> {
                 ((streams.spend.form.value?.symbol ?? 'RVN') == 'RVN')
                     ? 'Ravencoin'
                     : streams.spend.form.value?.symbol,
-            'Asset': streams.app.asset.value ?? 'Asset',
+            'Asset': assetTitle.split('/').last,
           }[pageTitle] ??
           (pageTitle == 'Wallet'
               ? appContext.enumString.toTitleCase()

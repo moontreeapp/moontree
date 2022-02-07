@@ -71,7 +71,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) => importTrigger
+  Widget build(BuildContext context) {
+    return body();
+  }
+
+  Widget body() => importTrigger
       ? Loader(message: 'Importing')
       : sendTrigger
           ? Loader(message: 'Sending Transaction')

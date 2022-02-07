@@ -139,7 +139,10 @@ class _SubAssetList extends State<SubAssetList> {
                   EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
               onTap: () {
                 if (asset.length == 1) {
-                  navigate(asset.singleSymbol!, wallet: wallet);
+                  navigate(
+                    '${widget.symbol}/${asset.singleSymbol!}',
+                    wallet: wallet,
+                  );
                 } else {
                   SelectionItems(
                     context,
@@ -150,12 +153,20 @@ class _SubAssetList extends State<SubAssetList> {
                     ],
                     behaviors: [
                       if (asset.main)
-                        () => navigate('${widget.symbol}/${asset.subSymbol!}',
-                            wallet: wallet),
+                        () => navigate(
+                              '${widget.symbol}/${asset.subSymbol!}',
+                              wallet: wallet,
+                            ),
                       if (asset.unique)
-                        () => navigate(asset.uniqueSymbol!, wallet: wallet),
+                        () => navigate(
+                              '${widget.symbol}/${asset.uniqueSymbol!}',
+                              wallet: wallet,
+                            ),
                       if (asset.qualifier)
-                        () => navigate(asset.qualifierSymbol!, wallet: wallet),
+                        () => navigate(
+                              '${widget.symbol}/${asset.qualifierSymbol!}',
+                              wallet: wallet,
+                            ),
                     ],
                   ).build();
                 }

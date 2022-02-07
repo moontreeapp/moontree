@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:tuple/tuple.dart';
 import 'package:raven_back/raven_back.dart';
@@ -43,6 +44,15 @@ class _BalanceHeaderState extends State<BalanceHeader>
           symbol =
               (value?.symbol == 'Ravencoin' ? 'RVN' : value?.symbol ?? 'RVN');
           amount = (value?.amount ?? 0.0);
+        });
+      }
+    }));
+    listeners.add(streams.app.asset.listen((String? value) {
+      if (streams.app.context.value == AppContext.manage &&
+          symbol != value &&
+          value != null) {
+        setState(() {
+          symbol = value;
         });
       }
     }));
@@ -121,7 +131,7 @@ class _BalanceHeaderState extends State<BalanceHeader>
             components.text
                 .securityAsReadable(holdingSat, symbol: symbol, asUSD: true),
             style: Theme.of(context).balanceDollar),
-        SizedBox(height: 30),
+        //SizedBox(height: 30),
       ]);
     }
     return ret;
@@ -132,7 +142,7 @@ class _BalanceHeaderState extends State<BalanceHeader>
       return Padding(
           padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
           child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            Text('asset/', style: Theme.of(context).remaining),
+            Text('$symbol/', style: Theme.of(context).remaining),
           ]));
       //: SizedBox(height: 14+16),
     }
