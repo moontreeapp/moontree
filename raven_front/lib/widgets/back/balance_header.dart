@@ -144,7 +144,9 @@ class _BalanceHeaderState extends State<BalanceHeader>
       return Padding(
           padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
           child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            Text('$symbol/', style: Theme.of(context).remaining),
+            symbol.contains('/')
+                ? Text('$symbol/', style: Theme.of(context).remaining)
+                : Container(),
           ]));
       //: SizedBox(height: 14+16),
     }
