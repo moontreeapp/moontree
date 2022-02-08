@@ -87,7 +87,7 @@ class _PageTitleState extends State<PageTitle> {
                     ? 'Ravencoin'
                     : streams.spend.form.value!.symbol!.endsWith('!')
                         ? streams.spend.form.value!.symbol!
-                            .replaceAll('!', ' (Admin)')
+                            .replaceAll('!', '') //' (Admin)')
                         : streams.spend.form.value?.symbol,
             'Asset': assetTitle.split('/').last,
           }[pageTitle] ??
