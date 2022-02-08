@@ -10,6 +10,18 @@ import 'transaction/sign.dart';
 const ESTIMATED_OUTPUT_FEE = 0 /* why 34? */;
 const ESTIMATED_FEE_PER_INPUT = 0 /* why 51? */;
 
+class NFTCreateRequest {
+  late String name;
+  late String ipfs;
+  late String parent; // you have to use the wallet that holds the prent
+
+  NFTCreateRequest({
+    required this.name,
+    required this.ipfs,
+    required this.parent,
+  });
+}
+
 class SendRequest {
   late bool useWallet;
   late bool sendAll;

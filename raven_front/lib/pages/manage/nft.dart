@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/services/transaction_maker.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/pages/transaction/checkout.dart';
 import 'package:raven_front/theme/extensions.dart';
 
 class NFTCreate extends StatefulWidget {
@@ -15,6 +18,7 @@ class _NFTCreateState extends State<NFTCreate> {
   TextEditingController ipfsController = TextEditingController();
   FocusNode nameFocusNode = FocusNode();
   FocusNode ipfsFocusNode = FocusNode();
+  FocusNode nextFocusNode = FocusNode();
   bool nameValidated = false;
   bool ipfsValidated = false;
   // we will have to get this depending on which asset/subasset/ we're using to
@@ -74,7 +78,8 @@ class _NFTCreateState extends State<NFTCreate> {
             : null,
       ),
       onChanged: (String value) => validateIPFS(ipfs: value),
-      onEditingComplete: () async => await submit(),
+      onEditingComplete: () =>
+          FocusScope.of(context).requestFocus(nextFocusNode),
     );
     return Padding(
         padding: EdgeInsets.all(16.0),
@@ -105,7 +110,8 @@ class _NFTCreateState extends State<NFTCreate> {
     return Container(
         height: 40,
         child: OutlinedButton.icon(
-            onPressed: enabled ? () async => await submit() : () {},
+            focusNode: nextFocusNode,
+            onPressed: enabled ? () => submit() : () {},
             icon: Icon(
               Icons.chevron_right_rounded,
               color: enabled ? null : Color(0x61000000),
@@ -150,15 +156,55 @@ class _NFTCreateState extends State<NFTCreate> {
       ipfsController.text != '' &&
       ipfsValidation(ipfsController.text);
 
-  Future submit() async {
+  void submit() {
     if (enabled) {
       FocusScope.of(context).unfocus();
 
-      /// create TX by passing the details to a stream (see send page)
-      //streams.password.update.add(newPassword.text);
+      /// make the send request
+      var createRequest = NFTCreateRequest(
+          name: nameController.text,
+          ipfs: ipfsController.text,
+          parent: 'PARENT/ASSET/PATH/#');
 
-      /// send to transaction confirmation screen
-
+      /// send them to transaction checkout screen
+      confirmSend(createRequest);
     }
+  }
+
+  void confirmSend(NFTCreateRequest createRequest) {
+    /// send request to the correct stream
+    //streams.spend.make.add(createRequest);
+
+    /// go to confirmation page
+    Navigator.of(components.navigator.routeContext!).pushNamed(
+      '/transaction/checkout',
+      arguments: {
+        'struct': CheckoutStruct(
+          /// get the name we're creating the NFT under
+          //symbol: ((streams.spend.form.value?.symbol == 'Ravencoin'
+          //        ? 'RVN'
+          //        : streams.spend.form.value?.symbol) ??
+          //    'RVN'),
+          subSymbol: '',
+          paymentSymbol: 'RVN',
+          items: [
+            /// send the correct items
+            ['Parent', 'PARENT/ASSET/PATH/#', '2'],
+            ['NFT Name', nameController.text, '2'],
+            ['IPFS/Tx Id', ipfsController.text, '9'],
+          ],
+          fees: [
+            ['Transaction Fee', 'calculating fee...']
+          ],
+          total: 'calculating total...',
+          buttonAction: () => null,
+
+          /// send the NFTCreate request to the right stream
+          //streams.spend.send.add(streams.spend.made.value),
+          buttonIcon: MdiIcons.arrowTopRightThick,
+          buttonWord: 'Send',
+        )
+      },
+    );
   }
 }

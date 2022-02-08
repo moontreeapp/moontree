@@ -511,7 +511,7 @@ class _SendState extends State<Send> {
         icon: Icon(MdiIcons.arrowTopRightThick,
             color:
                 disabled ? Theme.of(context).disabledColor : Color(0xDE000000)),
-        label: Text('SEND'.toUpperCase(),
+        label: Text('NEXT'.toUpperCase(),
             style: disabled
                 ? Theme.of(context).disabledButton
                 : Theme.of(context).enabledButton),
