@@ -1,10 +1,10 @@
 import 'dart:async';
 
+import 'package:tuple/tuple.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/services/lookup.dart';
-import 'package:tuple/tuple.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/spend.dart';
 import 'package:raven_front/backdrop/backdrop.dart';
@@ -75,19 +75,21 @@ class _BalanceHeaderState extends State<BalanceHeader>
           //      ? Current.walletHoldings(data['walletId'])
           //      :
           Current.holdings)
-        if (balance.security.symbol == symbol) satToAmount(balance.confirmed)
+        if (balance.security.symbol == symbol)
+          utils.satToAmount(balance.confirmed)
     ];
     if (possibleHoldings.length > 0) {
       holding = possibleHoldings[0];
     }
     //var divisibility = assets.bySymbol.getOne(symbol)?.divisibility ?? 8;
     var divisibility = 8;
-    var holdingSat = amountToSat(holding, divisibility: divisibility);
-    var amountSat = amountToSat(amount,
+    var holdingSat = utils.amountToSat(holding, divisibility: divisibility);
+    var amountSat = utils.amountToSat(amount,
         divisibility: res.assets.bySymbol.getOne(symbol)?.divisibility ?? 8);
     try {
       visibleFiatAmount = components.text.securityAsReadable(
-          amountToSat(double.parse(visibleAmount), divisibility: divisibility),
+          utils.amountToSat(double.parse(visibleAmount),
+              divisibility: divisibility),
           symbol: symbol,
           asUSD: true);
     } catch (e) {

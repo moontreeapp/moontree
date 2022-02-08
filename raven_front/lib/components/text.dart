@@ -23,7 +23,7 @@ class TextComponents {
   }) {
     symbol = getSymbol(symbol: symbol, security: security);
     if (symbol == 'RVN') {
-      var asAmount = satToAmount(sats);
+      var asAmount = utils.satToAmount(sats);
       return asUSD
           ? rvnUSD(asAmount)
           : NumberFormat('#,##0.########', 'en_US').format(asAmount);
@@ -31,7 +31,8 @@ class TextComponents {
     // asset sats -> asset -> rvn -> usd
     security = getSecurityOf(symbol: symbol, security: security);
     var asset = getAssetOf(symbol: symbol);
-    var asAmount = satToAmount(sats, divisibility: asset?.divisibility ?? 0);
+    var asAmount =
+        utils.satToAmount(sats, divisibility: asset?.divisibility ?? 0);
     return asUSD
         ? rvnUSD(asAmount * (services.rate.assetToRVN(security) ?? 0.0))
         : NumberFormat(

@@ -82,49 +82,9 @@ class _HoldingList extends State<HoldingList> {
     //);
   }
 
-  Map<String, AssetHolding> assetHoldings({bool assetsOnly = false}) {
-    var holdings = assetsOnly
-        ? Current.holdings.where((Balance balance) => balance.security.isAsset)
-        : Current.holdings;
-    Map<String, AssetHolding> balances = {};
-    for (var balance in holdings) {
-      var baseSymbol =
-          balance.security.asset?.baseSymbol ?? balance.security.symbol;
-      var assetType =
-          balance.security.asset?.assetType ?? balance.security.securityType;
-      if (!balances.containsKey(baseSymbol)) {
-        balances[baseSymbol] = AssetHolding(
-          symbol: baseSymbol,
-          main: assetType == AssetType.Main ? balance : null,
-          admin: assetType == AssetType.Admin ? balance : null,
-          restricted: assetType == AssetType.Restricted ? balance : null,
-          qualifier: assetType == AssetType.Qualifier ? balance : null,
-          unique: assetType == AssetType.NFT ? balance : null,
-          channel: assetType == AssetType.Channel ? balance : null,
-          crypto: assetType == SecurityType.Crypto ? balance : null,
-          fiat: assetType == SecurityType.Fiat ? balance : null,
-        );
-      } else {
-        balances[baseSymbol] = AssetHolding.fromAssetHolding(
-          balances[baseSymbol]!,
-          main: assetType == AssetType.Main ? balance : null,
-          admin: assetType == AssetType.Admin ? balance : null,
-          restricted: assetType == AssetType.Restricted ? balance : null,
-          qualifier: assetType == AssetType.Qualifier ? balance : null,
-          unique: assetType == AssetType.NFT ? balance : null,
-          channel: assetType == AssetType.Channel ? balance : null,
-          crypto: assetType == SecurityType.Crypto ? balance : null,
-          fiat: assetType == SecurityType.Fiat ? balance : null,
-        );
-      }
-    }
-    return balances;
-  }
-
   @override
   Widget build(BuildContext context) {
-    //holdings = widget.holdings ?? Current.holdings;
-    holdings = assetHoldings();
+    holdings = utils.assetHoldings(widget.holdings ?? Current.holdings);
     return holdings.isEmpty && res.vouts.data.isEmpty // <-- on front tab...
         ? components.empty.holdings(context)
         : holdings.isEmpty

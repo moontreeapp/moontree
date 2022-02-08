@@ -131,7 +131,7 @@ class HistoryService {
           type: vout.scriptPubKey.type,
           toAddress: vout.scriptPubKey.addresses![0],
           assetSecurityId: vs.item2.securityId,
-          assetValue: amountToSat(vout.scriptPubKey.amount,
+          assetValue: utils.amountToSat(vout.scriptPubKey.amount,
               divisibility:
                   vs.item3?.divisibility ?? vout.scriptPubKey.units ?? 8),
           // multisig - must detect if multisig...
@@ -190,12 +190,12 @@ class HistoryService {
 
     if (security == null) {
       if (vout.scriptPubKey.type == 'transfer_asset') {
-        value = amountToSat(vout.scriptPubKey.amount,
+        value = utils.amountToSat(vout.scriptPubKey.amount,
             divisibility: vout.scriptPubKey.units ?? 8);
         //if we have no record of it in res.securities...
         var meta = await client.getMeta(symbol);
         if (meta != null) {
-          value = amountToSat(vout.scriptPubKey.amount,
+          value = utils.amountToSat(vout.scriptPubKey.amount,
               divisibility: vout.scriptPubKey.units ?? meta.divisions);
           asset = Asset(
             symbol: meta.symbol,
@@ -219,7 +219,7 @@ class HistoryService {
         }
       } else if (vout.scriptPubKey.type == 'new_asset') {
         symbol = vout.scriptPubKey.asset!;
-        value = amountToSat(vout.scriptPubKey.amount,
+        value = utils.amountToSat(vout.scriptPubKey.amount,
             divisibility: vout.scriptPubKey.units ?? 0);
         asset = Asset(
           symbol: symbol,
@@ -293,7 +293,7 @@ class HistoryService {
         type: vout.scriptPubKey.type,
         toAddress: vout.scriptPubKey.addresses![0],
         assetSecurityId: vs.item2.securityId,
-        assetValue: amountToSat(vout.scriptPubKey.amount,
+        assetValue: utils.amountToSat(vout.scriptPubKey.amount,
             divisibility:
                 vs.item3?.divisibility ?? vout.scriptPubKey.units ?? 8),
         // multisig - must detect if multisig...

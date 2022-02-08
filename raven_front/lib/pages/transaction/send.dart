@@ -117,14 +117,16 @@ class _SendState extends State<Send> {
       for (var balance in useWallet
           ? Current.walletHoldings(data['walletId'])
           : Current.holdings)
-        if (balance.security.symbol == symbol) satToAmount(balance.confirmed)
+        if (balance.security.symbol == symbol)
+          utils.satToAmount(balance.confirmed)
     ];
     if (possibleHoldings.length > 0) {
       holding = possibleHoldings[0];
     }
     try {
       visibleFiatAmount = components.text.securityAsReadable(
-          amountToSat(double.parse(visibleAmount), divisibility: divisibility),
+          utils.amountToSat(double.parse(visibleAmount),
+              divisibility: divisibility),
           symbol: symbol,
           asUSD: true);
     } catch (e) {
@@ -446,7 +448,7 @@ class _SendState extends State<Send> {
     var vMemo = verifyMemo();
     if (vAddress && vMemo) {
       FocusScope.of(context).unfocus();
-      var sendAmountAsSats = amountToSat(
+      var sendAmountAsSats = utils.amountToSat(
         double.parse(sendAmount.text),
         divisibility: divisibility,
       );

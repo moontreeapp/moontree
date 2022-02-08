@@ -245,7 +245,8 @@ class _WalletViewState extends State<WalletView> {
                           style: Theme.of(context).annotate),
                       Text(
                           'Balance: ' +
-                              satToAmount(services.transaction
+                              utils
+                                  .satToAmount(services.transaction
                                       .walletUnspents(wallet)
                                       .where((vout) =>
                                           vout.toAddress ==
@@ -278,7 +279,8 @@ class _WalletViewState extends State<WalletView> {
                               .replace(fontWeight: FontWeight.bold)
                           : Theme.of(context).textTheme.caption),
                   Text(
-                      satToAmount(services.transaction
+                      utils
+                          .satToAmount(services.transaction
                               .walletUnspents(wallet)
                               .where((vout) =>
                                   vout.toAddress == walletAddress.address)
