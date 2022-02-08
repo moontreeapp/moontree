@@ -97,7 +97,7 @@ class RavenMobileApp extends StatelessWidget {
             backgroundColor: Theme.of(context).backgroundColor,
             elevation: 0,
             leading: PageLead(mainContext: context),
-            title: PageTitle(),
+            title: FittedBox(fit: BoxFit.fitWidth, child: PageTitle()),
             actions: <Widget>[
               components.status,
               ConnectionLight(),

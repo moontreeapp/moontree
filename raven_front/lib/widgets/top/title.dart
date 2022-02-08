@@ -85,7 +85,10 @@ class _PageTitleState extends State<PageTitle> {
             'Transactions':
                 ((streams.spend.form.value?.symbol ?? 'RVN') == 'RVN')
                     ? 'Ravencoin'
-                    : streams.spend.form.value?.symbol,
+                    : streams.spend.form.value!.symbol!.endsWith('!')
+                        ? streams.spend.form.value!.symbol!
+                            .replaceAll('!', ' (Admin)')
+                        : streams.spend.form.value?.symbol,
             'Asset': assetTitle.split('/').last,
           }[pageTitle] ??
           (pageTitle == 'Wallet'
