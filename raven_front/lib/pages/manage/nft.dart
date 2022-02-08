@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/extensions.dart';
-import 'package:raven_front/widgets/widgets.dart';
 
 class NFTCreate extends StatefulWidget {
+  static const int ipfsLength = 89;
+
   @override
   _NFTCreateState createState() => _NFTCreateState();
 }
@@ -16,6 +17,10 @@ class _NFTCreateState extends State<NFTCreate> {
   FocusNode ipfsFocusNode = FocusNode();
   bool nameValidated = false;
   bool ipfsValidated = false;
+  // we will have to get this depending on which asset/subasset/ we're using to
+  // make the nft, but the most it could possibly be is 27 because main asset
+  // name is at least 3 characters plus /# and the most is 31: RVN/#26...
+  int remainingNameLength = 26;
 
   @override
   void initState() {
@@ -32,9 +37,7 @@ class _NFTCreateState extends State<NFTCreate> {
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: streams.app.verify.value
-            ? body()
-            : VerifyPassword(parentState: this),
+        child: body(),
       );
 
   Widget body() {
@@ -47,8 +50,10 @@ class _NFTCreateState extends State<NFTCreate> {
         context,
         labelText: 'NFT Name',
         hintText: 'NFT Name',
-        helperText: nameValidated ? 'something' : null,
-        errorText: !nameValidated ? 'err' : null,
+        //helperText: nameValidation(nameController.text) ? 'something' : null,
+        errorText: !nameValidation(nameController.text)
+            ? '${remainingNameLength - nameController.text.length}'
+            : null,
       ),
       onChanged: (String value) => validateName(name: value),
       onEditingComplete: () =>
@@ -63,8 +68,10 @@ class _NFTCreateState extends State<NFTCreate> {
         context,
         labelText: 'IPFS/TX id',
         hintText: 'IPFS/TX id',
-        helperText: ipfsValidated ? 'match' : null,
-        errorText: !ipfsValidated ? 'error' : null,
+        //helperText: ipfsValidation(ipfsController.text) ? 'match' : null,
+        errorText: !ipfsValidation(ipfsController.text)
+            ? '${NFTCreate.ipfsLength - ipfsController.text.length}'
+            : null,
       ),
       onChanged: (String value) => validateIPFS(ipfs: value),
       onEditingComplete: () async => await submit(),
@@ -95,17 +102,16 @@ class _NFTCreateState extends State<NFTCreate> {
   }
 
   Widget submitButton() {
-    var enabled = nameValidated && ipfsValidated;
     return Container(
         height: 40,
         child: OutlinedButton.icon(
             onPressed: enabled ? () async => await submit() : () {},
             icon: Icon(
-              Icons.lock_rounded,
+              Icons.chevron_right_rounded,
               color: enabled ? null : Color(0x61000000),
             ),
             label: Text(
-              'Set'.toUpperCase(),
+              'NEXT',
               style: enabled
                   ? Theme.of(context).enabledButton
                   : Theme.of(context).disabledButton,
@@ -116,7 +122,7 @@ class _NFTCreateState extends State<NFTCreate> {
             )));
   }
 
-  bool nameValidation(String name) => name != '' && name.length < 28;
+  bool nameValidation(String name) => name.length <= remainingNameLength;
 
   void validateName({String? name}) {
     name = name ?? nameController.text;
@@ -127,20 +133,25 @@ class _NFTCreateState extends State<NFTCreate> {
     }
   }
 
-  bool ipfsValidation(String ipfs) => ipfs != '' && ipfs.length < 28;
+  bool ipfsValidation(String ipfs) => ipfs.length <= NFTCreate.ipfsLength;
 
   void validateIPFS({String? ipfs}) {
     ipfs = ipfs ?? ipfsController.text;
     var oldValidation = ipfsValidated;
     ipfsValidated = ipfsValidation(ipfs);
-    if (oldValidation != ipfsValidated) {
+    if (oldValidation != ipfsValidated || !ipfsValidated) {
       setState(() => {});
     }
   }
 
+  bool get enabled =>
+      nameController.text != '' &&
+      nameValidation(nameController.text) &&
+      ipfsController.text != '' &&
+      ipfsValidation(ipfsController.text);
+
   Future submit() async {
-    if (nameValidation(nameController.text) &&
-        ipfsValidation(ipfsController.text)) {
+    if (enabled) {
       FocusScope.of(context).unfocus();
 
       /// create TX by passing the details to a stream (see send page)

@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
-import 'package:raven_front/pages/manage/assets.dart';
 import 'package:raven_front/pages/account/home.dart';
 import 'package:raven_front/pages/account/transactions.dart';
+import 'package:raven_front/pages/manage/assets.dart';
+import 'package:raven_front/pages/manage/nft.dart';
 import 'package:raven_front/pages/misc/loading.dart';
 import 'package:raven_front/pages/misc/scan.dart';
 import 'package:raven_front/pages/security/login.dart';
@@ -35,6 +36,7 @@ class pages {
   static Home home = Home();
   static Asset asset = Asset();
   static Transactions transactions = Transactions();
+  static NFTCreate nftCreate = NFTCreate();
   static Checkout checkout = Checkout();
   static TransactionPage transaction = TransactionPage();
   static Receive receive = Receive();
@@ -66,6 +68,7 @@ class pages {
         '/wallet': (context) => walletView,
         '/loader': (context) => loader,
         '/scan': (context) => scan,
+        '/manage/nft': (context) => nftCreate,
         '/security/change': (context) => changePassword,
         '/security/resume': (context) => changeResume,
         '/security/remove': (context) => removePassword,

@@ -156,6 +156,12 @@ class _NavDrawerState extends State<NavDrawer> {
             link: '/settings/about',
           ),
 
+          destination(
+            icon: Icons.info_rounded,
+            name: 'nft',
+            link: '/manage/nft',
+          ),
+
           ////SettingsTile(
           ////    title: 'Import/Export',
           ////    titleTextStyle: Theme.of(context).drawerDestination,
