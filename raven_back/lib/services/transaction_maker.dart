@@ -22,6 +22,23 @@ class NFTCreateRequest {
   });
 }
 
+class MainCreateRequest {
+  late String name;
+  late String ipfs;
+  late int quantity;
+  late int decimals;
+  late String?
+      parent; // you have to use the wallet that holds the prent if sub asset
+
+  MainCreateRequest({
+    required this.name,
+    required this.ipfs,
+    required this.quantity,
+    required this.decimals,
+    this.parent,
+  });
+}
+
 class SendRequest {
   late bool useWallet;
   late bool sendAll;

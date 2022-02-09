@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:raven_front/utils/transform.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_back/raven_back.dart';
 
@@ -8,7 +7,7 @@ Future<bool> updateAcount(Account account, String name) async {
   if (account.name == name) {
     return true;
   }
-  name = removeChars(name);
+  name = utils.removeChars(name);
   if (res.accounts.byName.getAll(name).length > 0 || name == '') {
     return false;
   }
@@ -46,7 +45,7 @@ Future validateAndCreateAccount(
   BuildContext context,
   TextEditingController accountName,
 ) async {
-  var desiredAccountName = removeChars(accountName.text.trim());
+  var desiredAccountName = utils.removeChars(accountName.text.trim());
   accountName.text = desiredAccountName;
   if (desiredAccountName == '') {
     components.alerts.failure(context,

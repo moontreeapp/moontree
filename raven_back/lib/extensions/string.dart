@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:raven_back/utils/utilities.dart';
+
 extension StringCasingExtension on String {
   String toCapitalized() =>
       length > 0 ? '${this[0].toUpperCase()}${substring(1)}' : '';
@@ -27,4 +29,38 @@ extension StringTrimExtension on String {
 
 extension StringBytesExtension on String {
   Uint8List get bytes => Uint8List.fromList(codeUnits);
+}
+
+extension StringNumericExtension on String {
+  bool get isInt {
+    try {
+      int.parse(this);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  int toInt() {
+    var text = utils.removeChars(
+      // ignore: unnecessary_this
+      this.split('.').first,
+      chars: utils.strings.punctuation + utils.strings.whiteSapce,
+    );
+    if (text == '') {
+      return 0;
+    }
+    if (int.parse(text) > 21000000000) {
+      return 21000000000;
+    }
+    return asInt();
+  }
+
+  int asInt() {
+    try {
+      return int.parse(this);
+    } catch (e) {
+      return 0;
+    }
+  }
 }

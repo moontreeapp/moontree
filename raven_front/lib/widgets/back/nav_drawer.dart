@@ -159,9 +159,13 @@ class _NavDrawerState extends State<NavDrawer> {
           destination(
             icon: Icons.info_rounded,
             name: 'nft',
-            link: '/manage/nft',
+            link: '/create/nft',
           ),
-
+          destination(
+            icon: Icons.info_rounded,
+            name: 'main',
+            link: '/create/main',
+          ),
           ////SettingsTile(
           ////    title: 'Import/Export',
           ////    titleTextStyle: Theme.of(context).drawerDestination,

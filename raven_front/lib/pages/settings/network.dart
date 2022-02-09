@@ -5,7 +5,6 @@ import 'package:raven_electrum/raven_electrum.dart';
 
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/extensions.dart';
-import 'package:raven_front/utils/transform.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
@@ -124,7 +123,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
 
   // validate domain:port structure
   bool validateDomainPort(String value) =>
-      value.contains(':') && stringIsInt(value.split(':').last);
+      value.contains(':') && value.split(':').last.isInt;
 
   void save() {
     var port = serverAddress.text.split(':').last;

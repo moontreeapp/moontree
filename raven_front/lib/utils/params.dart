@@ -1,5 +1,4 @@
-import 'package:raven_front/utils/strings.dart';
-import 'package:raven_front/utils/transform.dart';
+import 'package:raven_back/utils/utilities.dart';
 
 Map<String, String> parseReceiveParams(String address) =>
     Uri.parse(address).queryParameters;
@@ -19,8 +18,10 @@ String requestedAsset(Map<String, String> params,
 }
 
 String cleanSatAmount(String amount) {
-  var text = amount.split('.').first;
-  text = removeChars(text, chars: Strings.punctuation + Strings.whiteSapce);
+  var text = utils.removeChars(
+    amount.split('.').first,
+    chars: utils.strings.punctuation + utils.strings.whiteSapce,
+  );
   if (text == '') {
     text = '0';
   }
@@ -31,8 +32,8 @@ String cleanSatAmount(String amount) {
 }
 
 String cleanDecAmount(String amount, {bool zeroToBlank = false}) {
-  amount = removeChars(amount,
-      chars: Strings.whiteSapce + Strings.punctuationMinusCurrency);
+  amount = utils.removeChars(amount,
+      chars: utils.strings.whiteSapce + utils.strings.punctuationMinusCurrency);
   if (amount.length > 0) {
     if (amount.contains(',')) {
       amount = amount.replaceAll(',', '.');

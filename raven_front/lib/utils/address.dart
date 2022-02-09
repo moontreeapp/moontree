@@ -1,8 +1,8 @@
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_front/utils/strings.dart';
+import 'package:raven_back/utils/strings.dart';
 
 bool rvnCondition(String address, {Net? net}) =>
-    address.contains(RegExp(Strings.ravenBase58Regex(net)));
+    address.contains(RegExp(utils.strings.ravenBase58Regex(net)));
 
 bool assetCondition(String asset) =>
     !asset.contains('..') &&
@@ -12,7 +12,7 @@ bool assetCondition(String asset) =>
     !asset.endsWith('_') &&
     !asset.endsWith('.') &&
     !['RVN', 'RAVEN', 'RAVENCOIN'].contains(asset) &&
-    asset.contains(RegExp(Strings.assetBaseRegex));
+    asset.contains(RegExp(utils.strings.assetBaseRegex));
 
 /// unused but meant to verify a whole asset string such as:
 /// 'FANFT/RAVENHEAD24#PaintedRVN5'
@@ -41,7 +41,7 @@ bool subAssetCondition(String asset) =>
     !asset.endsWith('.') &&
     asset.length >= 3 &&
     !['RVN', 'RAVEN', 'RAVENCOIN'].contains(asset) &&
-    asset.contains(RegExp(Strings.subAssetBaseRegex));
+    asset.contains(RegExp(utils.strings.subAssetBaseRegex));
 
 /// not complete. todo
 bool unsCondition(String address) =>
