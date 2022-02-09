@@ -12,7 +12,7 @@ import 'package:raven_back/extensions/string.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/components/components.dart';
 
-enum SelectionSet { Fee, Holdings, Create, Manage, Asset, Sub_Asset }
+enum SelectionSet { Fee, Decimal, Holdings, Create, Manage, Asset, Sub_Asset }
 enum SelectionOption {
   Fast,
   Standard,
@@ -30,6 +30,15 @@ enum SelectionOption {
   Sub_Asset,
   NFT,
   Messaging_Channel_Asset,
+  Dec8,
+  Dec7,
+  Dec6,
+  Dec5,
+  Dec4,
+  Dec3,
+  Dec2,
+  Dec1,
+  Dec0,
 }
 
 class SelectionItems {
@@ -55,6 +64,17 @@ class SelectionItems {
                 SelectionOption.Fast,
                 SelectionOption.Standard,
                 SelectionOption.Slow,
+              ],
+              SelectionSet.Decimal: [
+                SelectionOption.Dec8,
+                SelectionOption.Dec7,
+                SelectionOption.Dec6,
+                SelectionOption.Dec5,
+                SelectionOption.Dec4,
+                SelectionOption.Dec3,
+                SelectionOption.Dec2,
+                SelectionOption.Dec1,
+                SelectionOption.Dec0,
               ],
               SelectionSet.Create: [
                 SelectionOption.Main,
@@ -106,6 +126,24 @@ class SelectionItems {
             Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
         SelectionOption.Messaging_Channel_Asset:
             Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
+        SelectionOption.Dec8:
+            Icon(MdiIcons.numeric8Circle, color: Colors.black),
+        SelectionOption.Dec7:
+            Icon(MdiIcons.numeric7Circle, color: Colors.black),
+        SelectionOption.Dec6:
+            Icon(MdiIcons.numeric6Circle, color: Colors.black),
+        SelectionOption.Dec5:
+            Icon(MdiIcons.numeric5Circle, color: Colors.black),
+        SelectionOption.Dec4:
+            Icon(MdiIcons.numeric4Circle, color: Colors.black),
+        SelectionOption.Dec3:
+            Icon(MdiIcons.numeric3Circle, color: Colors.black),
+        SelectionOption.Dec2:
+            Icon(MdiIcons.numeric2Circle, color: Colors.black),
+        SelectionOption.Dec1:
+            Icon(MdiIcons.numeric1Circle, color: Colors.black),
+        SelectionOption.Dec0:
+            Icon(MdiIcons.numeric0Circle, color: Colors.black),
       }[name] ??
       Icon(MdiIcons.information, color: Color(0x99000000));
 
@@ -125,7 +163,8 @@ class SelectionItems {
       ),
       title: Text(name, style: Theme.of(context).choices));
 
-  Widget item(SelectionOption name, {VoidCallback? behavior, String? value}) =>
+  Widget item(SelectionOption name,
+          {Widget? title, VoidCallback? behavior, String? value}) =>
       ListTile(
         visualDensity: VisualDensity.compact,
         onTap: () {
@@ -133,7 +172,7 @@ class SelectionItems {
           (behavior ?? () {})();
         },
         leading: leads(name),
-        title: Text(asString(name), style: Theme.of(context).choices),
+        title: title ?? Text(asString(name), style: Theme.of(context).choices),
         trailing: value != null
             ? Text(value, style: Theme.of(context).choices)
             : null,
@@ -145,6 +184,28 @@ class SelectionItems {
           form: streams.spend.form.value,
           fee: asString(name),
         )),
+      );
+
+  Widget decimalItem(SelectionOption name, String prefix) => item(
+        name,
+        title: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+          Text(prefix, style: Theme.of(context).choices),
+          Text(
+            {
+              SelectionOption.Dec8: '.${'0' * 8}',
+              SelectionOption.Dec7: '.${'0' * 7}',
+              SelectionOption.Dec6: '.${'0' * 6}',
+              SelectionOption.Dec5: '.${'0' * 5}',
+              SelectionOption.Dec4: '.${'0' * 4}',
+              SelectionOption.Dec3: '.${'0' * 3}',
+              SelectionOption.Dec2: '.${'0' * 2}',
+              SelectionOption.Dec1: '.${'0' * 1}',
+              SelectionOption.Dec0: '',
+            }[name]!,
+            style: Theme.of(context).choicesBlue,
+          ),
+        ]),
+        behavior: () => print(asString(name)),
       );
 
   Widget createItem(SelectionOption name) => item(
@@ -202,6 +263,9 @@ class SelectionItems {
       );
     } else if (modalSet == SelectionSet.Fee) {
       produceModal([for (var name in names) feeItem(name)], tall: false);
+    } else if (modalSet == SelectionSet.Decimal) {
+      produceModal([for (var name in names) decimalItem(name, '100')],
+          tall: false);
     } else if (modalSet == SelectionSet.Create) {
       produceModal([for (var name in names) createItem(name)], tall: false);
     } else if (modalSet == SelectionSet.Sub_Asset) {

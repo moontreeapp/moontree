@@ -8,6 +8,7 @@ import 'package:raven_front/pages/transaction/checkout.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/params.dart';
 import 'package:raven_back/utils/utilities.dart';
+import 'package:raven_front/widgets/widgets.dart';
 
 class MainCreate extends StatefulWidget {
   static const int ipfsLength = 89;
@@ -22,6 +23,7 @@ class _MainCreateState extends State<MainCreate> {
   TextEditingController ipfsController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController decimalController = TextEditingController();
+  bool reissueValue = true;
   FocusNode nameFocus = FocusNode();
   FocusNode ipfsFocus = FocusNode();
   FocusNode nextFocus = FocusNode();
@@ -114,6 +116,44 @@ class _MainCreateState extends State<MainCreate> {
           FocusScope.of(context).requestFocus(decimalFocus),
     );
 
+    var decimalField = TextField(
+      focusNode: decimalFocus,
+      controller: decimalController,
+      readOnly: true,
+      decoration: components.styles.decorations.textFeild(context,
+          labelText: 'Decimals',
+          hintText: 'Decimals',
+          suffixIcon: IconButton(
+            icon: Padding(
+                padding: EdgeInsets.only(right: 14),
+                child:
+                    Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
+            onPressed: () => _produceFeeModal(),
+          )),
+      onTap: () {
+        _produceFeeModal();
+      },
+      onChanged: (String? newValue) {
+        FocusScope.of(context).requestFocus(ipfsFocus);
+        setState(() {});
+      },
+    );
+
+    var reissueSwitch = SwitchListTile(
+      title: Text('Reissuable', style: Theme.of(context).switchText),
+      value: reissueValue,
+      activeColor: Theme.of(context).backgroundColor,
+      onChanged: (bool value) {
+        setState(() {
+          reissueValue = value;
+        });
+      },
+      secondary: const Icon(
+        Icons.help_rounded,
+        color: Colors.black,
+      ),
+    );
+
     return Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -127,11 +167,11 @@ class _MainCreateState extends State<MainCreate> {
                   SizedBox(height: 16),
                   quantityField,
                   SizedBox(height: 16),
-                  //decimalField,
+                  decimalField,
                   SizedBox(height: 16),
                   ipfsField,
                   SizedBox(height: 16),
-                  //reissueableField,
+                  reissueSwitch,
                   SizedBox(height: 16),
                 ]),
             Padding(
@@ -166,6 +206,10 @@ class _MainCreateState extends State<MainCreate> {
               context,
               disabled: !enabled,
             )));
+  }
+
+  void _produceFeeModal() {
+    SelectionItems(context, modalSet: SelectionSet.Decimal).build();
   }
 
   bool nameValidation(String name) => name.length <= remainingNameLength;
@@ -252,7 +296,13 @@ class _MainCreateState extends State<MainCreate> {
             ['Quantity', quantityController.text],
             ['Decimals', quantityController.text],
             ['IPFS/Tx Id', ipfsController.text, '9'],
-            ['Reissuable', quantityController.text],
+            [
+              'Reissuable',
+              reissueValue
+                  ? 'Yes'
+                  : 'NO  (WARNING: These settings will be PERMANENT forever!)',
+              '3'
+            ],
           ],
           fees: [
             ['Transaction Fee', 'calculating fee...']

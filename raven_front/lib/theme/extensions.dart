@@ -266,6 +266,19 @@ extension TextStyleExtension on ThemeData {
           fontWeight: FontWeights.bold,
           letterSpacing: 0.1,
           color: Color(0x99000000));
+  TextStyle? get choicesBlue => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.bold,
+          letterSpacing: 0.1,
+          color: Color(0xFF5C6BC0))
+      : TextStyle(
+          fontSize: 14.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.bold,
+          letterSpacing: 0.1,
+          color: Color(0xFF5C6BC0));
   TextStyle? get settingDestination => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 16.0,
@@ -579,6 +592,19 @@ extension TextStyleExtension on ThemeData {
           letterSpacing: 0.25,
           color: Color(0x99000000));
   TextStyle? get checkoutTotal => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 16.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.5,
+          color: Color(0xDE000000))
+      : TextStyle(
+          fontSize: 16.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.5,
+          color: Color(0xDE000000));
+  TextStyle? get switchText => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
