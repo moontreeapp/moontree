@@ -20,3 +20,4 @@ String ravenBase58Regex(Net? net) =>
     r'^' + (net == Net.Test ? '(m|n)' : 'R') + r'(' + base58Regex + r'{33})$';
 String assetBaseRegex = r'^[A-Z0-9]{1}[A-Z0-9_.]{2,29}[!]{0,1}$';
 String subAssetBaseRegex = r'^[A-Z0-9]{1}[a-zA-Z0-9_.#]{2,29}[!]{0,1}$';
+String mainAssetAllowed = '123456789ABCDEFGHJKLMNPQRSTUVWXYZ._';

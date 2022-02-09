@@ -4,8 +4,11 @@ Map<String, String> parseReceiveParams(String address) =>
     Uri.parse(address).queryParameters;
 
 /// message=asset:MOONTREE0
-String requestedAsset(Map<String, String> params,
-    {List? holdings, String? current}) {
+String requestedAsset(
+  Map<String, String> params, {
+  List? holdings,
+  String? current,
+}) {
   if (params.containsKey('message')) {
     if (params['message']!.startsWith('asset:')) {
       var desired = params['message']!.substring(6);

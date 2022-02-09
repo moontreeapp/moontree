@@ -2,6 +2,7 @@ import 'account.dart';
 import 'address.dart';
 import 'asset.dart';
 import 'app.dart';
+import 'create.dart';
 import 'cipher.dart';
 import 'client.dart';
 import 'import.dart';
@@ -17,6 +18,7 @@ class streams {
   static final asset = AssetStreams();
   static final cipher = CipherStreams();
   static final client = ClientStreams();
+  static final create = Create();
   static final metadata = MetadataStreams();
   static final password = PasswordStreams();
   static final wallet = WalletStreams();

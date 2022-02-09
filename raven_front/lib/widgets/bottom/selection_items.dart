@@ -11,6 +11,7 @@ import 'package:raven_back/extensions/object.dart';
 import 'package:raven_back/extensions/string.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_back/streams/create.dart';
 
 enum SelectionSet { Fee, Decimal, Holdings, Create, Manage, Asset, Sub_Asset }
 enum SelectionOption {
@@ -205,7 +206,10 @@ class SelectionItems {
             style: Theme.of(context).choicesBlue,
           ),
         ]),
-        behavior: () => print(asString(name)),
+        behavior: () => streams.create.form.add(GenericCreateForm.merge(
+          form: streams.create.form.value,
+          decimal: StringCharactersExtension(asString(name)).characters.last,
+        )),
       );
 
   Widget createItem(SelectionOption name) => item(

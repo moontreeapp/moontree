@@ -8,6 +8,7 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/params.dart';
+import 'package:raven_front/utils/transformers.dart';
 import 'package:raven_front/utils/data.dart';
 import 'package:share/share.dart';
 
@@ -100,8 +101,8 @@ class _ReceiveState extends State<Receive> {
         : requestMessage.text;
     address = Current.account.wallets[0].addresses.firstOrNull?.address ?? '';
     uri = uri == '' ? address : uri;
-    requestMessage.selection =
-        TextSelection.collapsed(offset: requestMessage.text.length);
+    //requestMessage.selection =
+    //    TextSelection.collapsed(offset: requestMessage.text.length);
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -259,7 +260,7 @@ class _ReceiveState extends State<Receive> {
                     autocorrect: false,
                     textInputAction: TextInputAction.done,
                     inputFormatters: [
-                      UpperCaseTextFormatter(),
+                      MainAssetNameTextFormatter(),
                     ],
                     //maxLength: 32,
                     //maxLengthEnforcement: MaxLengthEnforcement.enforced,
@@ -345,15 +346,4 @@ class _ReceiveState extends State<Receive> {
         label: Text('Share'.toUpperCase()),
         style: components.styles.buttons.bottom(context),
       ));
-}
-
-class UpperCaseTextFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
-    return TextEditingValue(
-      text: newValue.text.toUpperCase(),
-      selection: newValue.selection,
-    );
-  }
 }

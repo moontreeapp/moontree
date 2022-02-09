@@ -29,5 +29,17 @@ void main() {
       expect(''.bytes, []);
       expect('abc'.bytes, [97, 98, 99]);
     });
+    test('test characters', () {
+      expect('abc'.characters, ['a', 'b', 'c']);
+    });
+    test('test stringIsInt', () {
+      expect('abc'.isInt, false);
+      expect('a1'.isInt, false);
+      expect('123'.isInt, true);
+      expect('123.0'.isInt, false);
+      expect('123.1'.isInt, false);
+      expect('123.'.isInt, false);
+      expect('.0'.isInt, false);
+    });
   });
 }

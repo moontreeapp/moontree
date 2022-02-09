@@ -41,4 +41,21 @@ void main() {
     expect(amountToSat(10.129, divisibility: 2), 1012);
     expect(amountToSat(0.00000010, divisibility: 2), 0);
   });
+
+  test('test enumerate', () {
+    expect(enumerate('abc'), [0, 1, 2]);
+  });
+
+  test('test removeChars', () {
+    expect(removeChars('abcabc', chars: 'b'), 'acac');
+    expect(removeChars('abcabc', chars: 'bc'), 'aa');
+    expect(removeChars('a.&_ #'), 'a.&_ #');
+    expect(removeChars('a?`<>'), 'a');
+  });
+  test('test removeCharsOtherThan', () {
+    expect(removeCharsOtherThan('abcabc', chars: 'b'), 'bb');
+    expect(removeCharsOtherThan('abcabc', chars: 'bc'), 'bcbc');
+    expect(removeCharsOtherThan('a.&_ #'), 'a');
+    expect(removeCharsOtherThan('a?`<>'), 'a');
+  });
 }

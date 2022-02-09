@@ -10,7 +10,7 @@ class utils {
   static final satToAmount = transform.satToAmount;
   static final amountToSat = transform.amountToSat;
   static final divisor = transform.divisor;
-  static final characters = transform.characters;
+  //static final characters = transform.characters;
   static final removeChars = transform.removeChars;
   static final enumerate = transform.enumerate;
   static final removeCharsOtherThan = transform.removeCharsOtherThan;
@@ -30,4 +30,5 @@ class Strings {
   final ravenBase58Regex = imported_strings.ravenBase58Regex;
   final assetBaseRegex = imported_strings.assetBaseRegex;
   final subAssetBaseRegex = imported_strings.subAssetBaseRegex;
+  final mainAssetAllowed = imported_strings.mainAssetAllowed;
 }

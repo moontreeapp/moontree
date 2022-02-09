@@ -31,6 +31,10 @@ extension StringBytesExtension on String {
   Uint8List get bytes => Uint8List.fromList(codeUnits);
 }
 
+extension StringCharactersExtension on String {
+  List get characters => split('');
+}
+
 extension StringNumericExtension on String {
   bool get isInt {
     try {
@@ -43,8 +47,7 @@ extension StringNumericExtension on String {
 
   int toInt() {
     var text = utils.removeChars(
-      // ignore: unnecessary_this
-      this.split('.').first,
+      split('.').first,
       chars: utils.strings.punctuation + utils.strings.whiteSapce,
     );
     if (text == '') {
@@ -53,7 +56,7 @@ extension StringNumericExtension on String {
     if (int.parse(text) > 21000000000) {
       return 21000000000;
     }
-    return asInt();
+    return text.asInt();
   }
 
   int asInt() {
@@ -63,4 +66,29 @@ extension StringNumericExtension on String {
       return 0;
     }
   }
+}
+
+extension IntReadableNumericExtension on int {
+  String toCommaString({String comma = ','}) {
+    var str = toString();
+    var i = 0;
+    var ret = '';
+    for (var c in str.characters.reversed) {
+      if (i == 3) {
+        ret = '$c$comma$ret';
+        i = 1;
+      } else {
+        ret = '$c$ret';
+        i += 1;
+      }
+    }
+    return ret;
+  }
+}
+
+extension DoubleReadableNumericExtension on double {
+  String toCommaString() =>
+      toString().split('.').first.toInt().toCommaString() +
+      '.' +
+      toString().split('.').last;
 }
