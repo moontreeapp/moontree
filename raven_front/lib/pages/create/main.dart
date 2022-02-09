@@ -232,11 +232,9 @@ class _MainCreateState extends State<MainCreate> {
               onPressed: () => showDialog(
                 context: context,
                 builder: (BuildContext context) => AlertDialog(
-                  content: Text('Reissuable means the settings are only '
-                      'partly permanent. It allows you to reissue '
-                      'the asset, increasing the quantity, '
-                      'increasing the decimal, or even changing '
-                      'the ipfs hash.'),
+                  content: Text('Reissuable asset can increase in quantity and '
+                      'decimal in the future.\n\nNon-reissuable '
+                      'assets cannot be modified in anyway.'),
                 ),
               ),
               icon: const Icon(
@@ -364,7 +362,6 @@ class _MainCreateState extends State<MainCreate> {
   bool get enabled =>
       nameController.text.length > 2 &&
       nameValidation(nameController.text) &&
-      ipfsController.text != '' &&
       ipfsValidation(ipfsController.text) &&
       quantityController.text != '' &&
       quantityValidation(quantityController.text.toInt()) &&
