@@ -209,7 +209,8 @@ class _MainCreateState extends State<MainCreate> {
   }
 
   void _produceFeeModal() {
-    SelectionItems(context, modalSet: SelectionSet.Decimal).build();
+    SelectionItems(context, modalSet: SelectionSet.Decimal)
+        .build(decimalPrefix: quantityController.text);
   }
 
   bool nameValidation(String name) => name.length <= remainingNameLength;

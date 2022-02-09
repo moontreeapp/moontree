@@ -186,10 +186,10 @@ class SelectionItems {
         )),
       );
 
-  Widget decimalItem(SelectionOption name, String prefix) => item(
+  Widget decimalItem(SelectionOption name, {String? prefix}) => item(
         name,
         title: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-          Text(prefix, style: Theme.of(context).choices),
+          Text(prefix ?? '0', style: Theme.of(context).choices),
           Text(
             {
               SelectionOption.Dec8: '.${'0' * 8}',
@@ -256,7 +256,7 @@ class SelectionItems {
             ])));
   }
 
-  void build({List<String>? holdingNames}) {
+  void build({List<String>? holdingNames, String? decimalPrefix}) {
     if (modalSet == SelectionSet.Holdings) {
       produceModal(
         [for (var holding in holdingNames ?? []) holdingItem(holding)],
@@ -264,7 +264,8 @@ class SelectionItems {
     } else if (modalSet == SelectionSet.Fee) {
       produceModal([for (var name in names) feeItem(name)], tall: false);
     } else if (modalSet == SelectionSet.Decimal) {
-      produceModal([for (var name in names) decimalItem(name, '100')],
+      produceModal(
+          [for (var name in names) decimalItem(name, prefix: decimalPrefix)],
           tall: false);
     } else if (modalSet == SelectionSet.Create) {
       produceModal([for (var name in names) createItem(name)], tall: false);
