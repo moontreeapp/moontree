@@ -132,7 +132,6 @@ class _MainCreateState extends State<MainCreate> {
         context,
         labelText: 'Asset Name',
         hintText: 'MOONTREE_WALLET.COM',
-        //helperText: nameValidation(nameController.text) ? 'something' : null,
         errorText: nameController.text.length > 2 &&
                 !nameValidation(nameController.text)
             ? nameValidationErr
@@ -140,31 +139,16 @@ class _MainCreateState extends State<MainCreate> {
       ),
       onChanged: (String value) => validateName(name: value),
       onEditingComplete: () {
+        nameController.text =
+            nameController.text.substring(0, remainingNameLength);
         if (nameController.text.endsWith('_') ||
             nameController.text.endsWith('.')) {
           nameController.text =
               nameController.text.substring(0, nameController.text.length - 1);
         }
         validateName();
-        FocusScope.of(context).requestFocus(ipfsFocus);
+        FocusScope.of(context).requestFocus(quantityFocus);
       });
-  Widget ipfsField() => TextField(
-        focusNode: ipfsFocus,
-        autocorrect: false,
-        controller: ipfsController,
-        textInputAction: TextInputAction.done,
-        decoration: components.styles.decorations.textFeild(
-          context,
-          labelText: 'IPFS/TX id',
-          hintText: 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr',
-          //helperText: ipfsValidation(ipfsController.text) ? 'match' : null,
-          errorText: !ipfsValidation(ipfsController.text)
-              ? '${MainCreate.ipfsLength - ipfsController.text.length}'
-              : null,
-        ),
-        onChanged: (String value) => validateIPFS(ipfs: value),
-        onEditingComplete: () => FocusScope.of(context).requestFocus(nextFocus),
-      );
 
   Widget quantityField() => TextField(
         focusNode: quantityFocus,
@@ -211,6 +195,24 @@ class _MainCreateState extends State<MainCreate> {
           FocusScope.of(context).requestFocus(ipfsFocus);
           setState(() {});
         },
+      );
+
+  Widget ipfsField() => TextField(
+        focusNode: ipfsFocus,
+        autocorrect: false,
+        controller: ipfsController,
+        textInputAction: TextInputAction.done,
+        decoration: components.styles.decorations.textFeild(
+          context,
+          labelText: 'IPFS/TX id',
+          hintText: 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr',
+          //helperText: ipfsValidation(ipfsController.text) ? 'match' : null,
+          errorText: !ipfsValidation(ipfsController.text)
+              ? '${MainCreate.ipfsLength - ipfsController.text.length}'
+              : null,
+        ),
+        onChanged: (String value) => validateIPFS(ipfs: value),
+        onEditingComplete: () => FocusScope.of(context).requestFocus(nextFocus),
       );
 
   Widget reissueSwitch() => SwitchListTile(
@@ -311,15 +313,6 @@ class _MainCreateState extends State<MainCreate> {
     if (oldValidation != nameValidated || !nameValidated) {
       setState(() => {});
     }
-  }
-
-  void filterNameCharacters({String? name}) {
-    name = name ?? nameController.text;
-    nameController.text =
-        utils.removeCharsOtherThan(name, chars: utils.strings.mainAssetAllowed);
-    //if (name != nameController.text) {
-    //  setState(() => {});
-    //}
   }
 
   bool ipfsValidation(String ipfs) => ipfs.length <= MainCreate.ipfsLength;

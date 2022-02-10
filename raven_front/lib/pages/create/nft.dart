@@ -5,6 +5,7 @@ import 'package:raven_back/services/transaction_maker.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/pages/transaction/checkout.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/utils/transformers.dart';
 
 class NFTCreate extends StatefulWidget {
   static const int ipfsLength = 89;
@@ -21,6 +22,7 @@ class _NFTCreateState extends State<NFTCreate> {
   FocusNode nextFocus = FocusNode();
   bool nameValidated = false;
   bool ipfsValidated = false;
+  String? nameValidationErr;
   // we will have to get this depending on which asset/subasset/ we're using to
   // make the nft, but the most it could possibly be is 27 because main asset
   // name is at least 3 characters plus /# and the most is 31: RVN/#26...
@@ -44,61 +46,75 @@ class _NFTCreateState extends State<NFTCreate> {
         child: body(),
       );
 
-  Widget body() {
-    var nameField = TextField(
+  Widget body() => Padding(
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              nameField(),
+              SizedBox(height: 16),
+              ipfsField(),
+            ],
+          ),
+          Padding(
+              padding: EdgeInsets.only(
+                top: 0,
+                bottom: 40,
+              ),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [submitButton()]))
+        ],
+      ));
+
+  Widget nameField() => TextField(
       focusNode: nameFocus,
       autocorrect: false,
       controller: nameController,
       textInputAction: TextInputAction.done,
+      inputFormatters: [MainAssetNameTextFormatter()],
       decoration: components.styles.decorations.textFeild(
         context,
-        labelText: 'NFT Name',
-        hintText: 'NFT Name',
-        //helperText: nameValidation(nameController.text) ? 'something' : null,
-        errorText: !nameValidation(nameController.text)
-            ? '${remainingNameLength - nameController.text.length}'
+        labelText: 'Asset Name',
+        hintText: 'MOONTREE_WALLET.COM',
+        errorText: nameController.text.length > 2 &&
+                !nameValidation(nameController.text)
+            ? nameValidationErr
             : null,
       ),
       onChanged: (String value) => validateName(name: value),
-      onEditingComplete: () => FocusScope.of(context).requestFocus(ipfsFocus),
-    );
-    var ipfsField = TextField(
-      focusNode: ipfsFocus,
-      autocorrect: false,
-      controller: ipfsController,
-      textInputAction: TextInputAction.done,
-      decoration: components.styles.decorations.textFeild(
-        context,
-        labelText: 'IPFS/TX id',
-        hintText: 'IPFS/TX id',
-        //helperText: ipfsValidation(ipfsController.text) ? 'match' : null,
-        errorText: !ipfsValidation(ipfsController.text)
-            ? '${NFTCreate.ipfsLength - ipfsController.text.length}'
-            : null,
-      ),
-      onChanged: (String value) => validateIPFS(ipfs: value),
-      onEditingComplete: () => FocusScope.of(context).requestFocus(nextFocus),
-    );
-    return Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[nameField, SizedBox(height: 16), ipfsField]),
-            Padding(
-                padding: EdgeInsets.only(
-                  top: 0,
-                  bottom: 40,
-                ),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [submitButton()]))
-          ],
-        ));
-  }
+      onEditingComplete: () {
+        nameController.text =
+            nameController.text.substring(0, remainingNameLength);
+        if (nameController.text.endsWith('_') ||
+            nameController.text.endsWith('.')) {
+          nameController.text =
+              nameController.text.substring(0, nameController.text.length - 1);
+        }
+        validateName();
+        FocusScope.of(context).requestFocus(ipfsFocus);
+      });
+
+  Widget ipfsField() => TextField(
+        focusNode: ipfsFocus,
+        autocorrect: false,
+        controller: ipfsController,
+        textInputAction: TextInputAction.done,
+        decoration: components.styles.decorations.textFeild(
+          context,
+          labelText: 'IPFS/TX id',
+          hintText: 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr',
+          errorText: !ipfsValidation(ipfsController.text)
+              ? '${NFTCreate.ipfsLength - ipfsController.text.length}'
+              : null,
+        ),
+        onChanged: (String value) => validateIPFS(ipfs: value),
+        onEditingComplete: () => FocusScope.of(context).requestFocus(nextFocus),
+      );
 
   Widget submitButton() {
     return Container(
@@ -122,13 +138,25 @@ class _NFTCreateState extends State<NFTCreate> {
             )));
   }
 
-  bool nameValidation(String name) => name.length <= remainingNameLength;
+  bool nameValidation(String name) {
+    var ret = true;
+    if (!(name.length > 2 && name.length <= remainingNameLength)) {
+      nameValidationErr = '${remainingNameLength - nameController.text.length}';
+      ret = false;
+    } else if (name.endsWith('.') || name.endsWith('_')) {
+      nameValidationErr = 'cannot end with special character';
+      ret = false;
+    } else {
+      nameValidationErr = null;
+    }
+    return ret;
+  }
 
   void validateName({String? name}) {
     name = name ?? nameController.text;
     var oldValidation = nameValidated;
     nameValidated = nameValidation(name);
-    if (oldValidation != nameValidated) {
+    if (oldValidation != nameValidated || !nameValidated) {
       setState(() => {});
     }
   }
