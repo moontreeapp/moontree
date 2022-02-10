@@ -24,6 +24,10 @@ class Current {
   static List<String> get holdingNames =>
       [for (var balance in holdings) balance.security.symbol];
 
+  static Iterable<String> get adminNames => holdings
+      .where((Balance balance) => balance.security.asset?.isAdmin ?? false)
+      .map((Balance balance) => balance.security.symbol);
+
   /// wallet ///
 
   static Wallet wallet(String walletId) =>

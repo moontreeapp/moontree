@@ -31,4 +31,5 @@ class Strings {
   final assetBaseRegex = imported_strings.assetBaseRegex;
   final subAssetBaseRegex = imported_strings.subAssetBaseRegex;
   final mainAssetAllowed = imported_strings.mainAssetAllowed;
+  final verifierStringAllowed = imported_strings.verifierStringAllowed;
 }

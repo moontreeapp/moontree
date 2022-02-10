@@ -13,12 +13,30 @@ import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_back/streams/create.dart';
 
-enum SelectionSet { Fee, Decimal, Holdings, Create, Manage, Asset, Sub_Asset }
+enum SelectionSet {
+  Fee,
+  Decimal,
+  Holdings,
+  Admins,
+  Create,
+  Manage,
+  Asset,
+  Sub_Asset
+}
 enum SelectionOption {
+  // list of my assets
+  Holdings,
+  Admins,
+
+  // for admins
+  Restricted_Symbol,
+
+  // fee
   Fast,
   Standard,
   Slow,
-  Holdings,
+
+  // what to access or create
   Main_Asset,
   Restricted_Asset,
   Qualifier_Asset,
@@ -31,6 +49,8 @@ enum SelectionOption {
   Sub_Asset,
   NFT,
   Messaging_Channel_Asset,
+
+  // decimals divisibility
   Dec8,
   Dec7,
   Dec6,
@@ -61,6 +81,7 @@ class SelectionItems {
     this.names = (names ??
             {
               SelectionSet.Holdings: [SelectionOption.Holdings],
+              SelectionSet.Admins: [SelectionOption.Admins],
               SelectionSet.Fee: [
                 SelectionOption.Fast,
                 SelectionOption.Standard,
@@ -98,6 +119,8 @@ class SelectionItems {
 
   Widget leads(SelectionOption name, {String? holding}) =>
       {
+        SelectionOption.Restricted_Symbol:
+            Icon(Icons.attach_money_rounded, color: Colors.black),
         SelectionOption.Fast:
             Icon(MdiIcons.speedometer, color: Color(0x99000000)),
         SelectionOption.Standard:
@@ -164,8 +187,12 @@ class SelectionItems {
       ),
       title: Text(name, style: Theme.of(context).choices));
 
-  Widget item(SelectionOption name,
-          {Widget? title, VoidCallback? behavior, String? value}) =>
+  Widget item(
+    SelectionOption name, {
+    Widget? title,
+    VoidCallback? behavior,
+    String? value,
+  }) =>
       ListTile(
         visualDensity: VisualDensity.compact,
         onTap: () {
@@ -177,6 +204,15 @@ class SelectionItems {
         trailing: value != null
             ? Text(value, style: Theme.of(context).choices)
             : null,
+      );
+
+  Widget restrictedItem(String name) => item(
+        SelectionOption.Restricted_Symbol,
+        title: Text(name, style: Theme.of(context).choices),
+        behavior: () => streams.create.form.add(GenericCreateForm.merge(
+          form: streams.create.form.value,
+          name: name,
+        )),
       );
 
   Widget feeItem(SelectionOption name) => item(
@@ -263,18 +299,26 @@ class SelectionItems {
   void build({List<String>? holdingNames, String? decimalPrefix}) {
     if (modalSet == SelectionSet.Holdings) {
       produceModal(
-        [for (var holding in holdingNames ?? []) holdingItem(holding)],
+        [for (String holding in holdingNames ?? []) holdingItem(holding)],
       );
-    } else if (modalSet == SelectionSet.Fee) {
-      produceModal([for (var name in names) feeItem(name)], tall: false);
-    } else if (modalSet == SelectionSet.Decimal) {
+    } else if (modalSet == SelectionSet.Admins) {
       produceModal(
-          [for (var name in names) decimalItem(name, prefix: decimalPrefix)],
+          [for (String name in holdingNames ?? []) restrictedItem(name)],
           tall: false);
+    } else if (modalSet == SelectionSet.Fee) {
+      produceModal([for (SelectionOption name in names) feeItem(name)],
+          tall: false);
+    } else if (modalSet == SelectionSet.Decimal) {
+      produceModal([
+        for (SelectionOption name in names)
+          decimalItem(name, prefix: decimalPrefix)
+      ], tall: false);
     } else if (modalSet == SelectionSet.Create) {
-      produceModal([for (var name in names) createItem(name)], tall: false);
+      produceModal([for (SelectionOption name in names) createItem(name)],
+          tall: false);
     } else if (modalSet == SelectionSet.Sub_Asset) {
-      produceModal([for (var name in names) subAssetItem(name)], tall: false);
+      produceModal([for (SelectionOption name in names) subAssetItem(name)],
+          tall: false);
     } else {
       if (names.length == behaviors.length && names.length == values.length) {
         produceModal([
@@ -295,7 +339,8 @@ class SelectionItems {
                 behavior: namedBehavior[1] as VoidCallback)
         ], tall: false);
       } else {
-        produceModal([for (var name in names) item(name)], tall: false);
+        produceModal([for (SelectionOption name in names) item(name)],
+            tall: false);
       }
     }
   }

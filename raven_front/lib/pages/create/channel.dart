@@ -7,14 +7,14 @@ import 'package:raven_front/pages/transaction/checkout.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/transformers.dart';
 
-class NFTCreate extends StatefulWidget {
+class ChannelCreate extends StatefulWidget {
   static const int ipfsLength = 89;
 
   @override
-  _NFTCreateState createState() => _NFTCreateState();
+  _ChannelCreateState createState() => _ChannelCreateState();
 }
 
-class _NFTCreateState extends State<NFTCreate> {
+class _ChannelCreateState extends State<ChannelCreate> {
   TextEditingController nameController = TextEditingController();
   TextEditingController ipfsController = TextEditingController();
   FocusNode nameFocus = FocusNode();
@@ -23,9 +23,7 @@ class _NFTCreateState extends State<NFTCreate> {
   bool nameValidated = false;
   bool ipfsValidated = false;
   String? nameValidationErr;
-  // we will have to get this depending on which asset/subasset/ we're using to
-  // make the nft, but the most it could possibly be is 27 because main asset
-  // name is at least 3 characters plus /# and the most is 31: RVN/#26...
+  // must get exact number... 31: RVN/~26...
   int remainingNameLength = 26;
 
   @override
@@ -82,7 +80,7 @@ class _NFTCreateState extends State<NFTCreate> {
       inputFormatters: [MainAssetNameTextFormatter()],
       decoration: components.styles.decorations.textFeild(
         context,
-        labelText: 'Asset Name',
+        labelText: 'Message Channel Name',
         hintText: 'MOONTREE_WALLET.COM',
         errorText: nameController.text.length > 2 &&
                 !nameValidation(nameController.text)
@@ -112,7 +110,7 @@ class _NFTCreateState extends State<NFTCreate> {
           labelText: 'IPFS/Txid',
           hintText: 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr',
           errorText: !ipfsValidation(ipfsController.text)
-              ? '${NFTCreate.ipfsLength - ipfsController.text.length}'
+              ? '${ChannelCreate.ipfsLength - ipfsController.text.length}'
               : null,
         ),
         onChanged: (String value) => validateIPFS(ipfs: value),
@@ -164,7 +162,7 @@ class _NFTCreateState extends State<NFTCreate> {
     }
   }
 
-  bool ipfsValidation(String ipfs) => ipfs.length <= NFTCreate.ipfsLength;
+  bool ipfsValidation(String ipfs) => ipfs.length <= ChannelCreate.ipfsLength;
 
   void validateIPFS({String? ipfs}) {
     ipfs = ipfs ?? ipfsController.text;
@@ -178,7 +176,6 @@ class _NFTCreateState extends State<NFTCreate> {
   bool get enabled =>
       nameController.text.length > 2 &&
       nameValidation(nameController.text) &&
-      ipfsController.text != '' &&
       ipfsValidation(ipfsController.text);
 
   void submit() {
@@ -186,7 +183,7 @@ class _NFTCreateState extends State<NFTCreate> {
       FocusScope.of(context).unfocus();
 
       /// make the send request
-      var createRequest = NFTCreateRequest(
+      var createRequest = ChannelCreateRequest(
           name: nameController.text,
           ipfs: ipfsController.text,
           parent: 'PARENT/ASSET/PATH/#');
@@ -196,7 +193,7 @@ class _NFTCreateState extends State<NFTCreate> {
     }
   }
 
-  void confirmSend(NFTCreateRequest createRequest) {
+  void confirmSend(ChannelCreateRequest createRequest) {
     /// send request to the correct stream
     //streams.spend.make.add(createRequest);
 
@@ -215,7 +212,7 @@ class _NFTCreateState extends State<NFTCreate> {
           items: [
             /// send the correct items
             ['Parent', 'PARENT/ASSET/PATH/#', '2'],
-            ['NFT Name', nameController.text, '2'],
+            ['Message Channel Name', nameController.text, '2'],
             ['IPFS/Txid', ipfsController.text, '9'],
           ],
           fees: [
@@ -224,7 +221,7 @@ class _NFTCreateState extends State<NFTCreate> {
           total: 'calculating total...',
           buttonAction: () => null,
 
-          /// send the NFTCreate request to the right stream
+          /// send the ChannelCreate request to the right stream
           //streams.spend.send.add(streams.spend.made.value),
           buttonIcon: MdiIcons.arrowTopRightThick,
           buttonWord: 'Send',

@@ -33,9 +33,12 @@ class MainAssetNameTextFormatter extends TextInputFormatter {
     if (text.startsWith('_') || text.startsWith('.')) {
       text = text.substring(1, text.length);
     }
+    if (newValue.text.length == text.length) {
+      return newValue;
+    }
     return TextEditingValue(
       text: text,
-      selection: TextSelection.collapsed(offset: text.length),
+      selection: oldValue.selection,
     );
   }
 }
@@ -49,9 +52,34 @@ class CommaIntValueTextFormatter extends TextInputFormatter {
     var text = newValue.text.isInt
         ? newValue.text.toInt().toCommaString()
         : newValue.text;
+    if (newValue.text.length == text.length) {
+      return newValue;
+    }
     return TextEditingValue(
       text: text,
+      //selection: oldValue.selection,
+      //selection: newValue.selection.copyWith(
+      //    baseOffset: newValue.selection.baseOffset + 2,
+      //    extentOffset: newValue.selection.extentOffset + 2),
       selection: TextSelection.collapsed(offset: text.length),
+    );
+  }
+}
+
+class VerifierStringTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    var text = utils.removeCharsOtherThan(newValue.text.toUpperCase(),
+        chars: utils.strings.verifierStringAllowed);
+    if (newValue.text.length == text.length) {
+      return newValue;
+    }
+    return TextEditingValue(
+      text: text,
+      selection: oldValue.selection,
     );
   }
 }

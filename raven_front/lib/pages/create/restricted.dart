@@ -7,6 +7,7 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction_maker.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/pages/transaction/checkout.dart';
+import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/params.dart';
 import 'package:raven_back/utils/utilities.dart';
@@ -14,37 +15,36 @@ import 'package:raven_back/streams/create.dart';
 import 'package:raven_front/utils/transformers.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
-class MainCreate extends StatefulWidget {
+class RestrictedCreate extends StatefulWidget {
   static const int ipfsLength = 89;
   static const int quantityMax = 21000000;
 
   @override
-  _MainCreateState createState() => _MainCreateState();
+  _RestrictedCreateState createState() => _RestrictedCreateState();
 }
 
-class _MainCreateState extends State<MainCreate> {
+class _RestrictedCreateState extends State<RestrictedCreate> {
   List<StreamSubscription> listeners = [];
   GenericCreateForm? createForm;
   TextEditingController nameController = TextEditingController();
-  TextEditingController ipfsController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController decimalController = TextEditingController();
+  TextEditingController verifierController = TextEditingController();
+  TextEditingController ipfsController = TextEditingController();
   bool reissueValue = true;
   FocusNode nameFocus = FocusNode();
-  FocusNode ipfsFocus = FocusNode();
-  FocusNode nextFocus = FocusNode();
   FocusNode quantityFocus = FocusNode();
   FocusNode decimalFocus = FocusNode();
+  FocusNode verifierFocus = FocusNode();
+  FocusNode ipfsFocus = FocusNode();
+  FocusNode nextFocus = FocusNode();
   bool nameValidated = false;
   bool ipfsValidated = false;
   bool quantityValidated = false;
   bool decimalValidated = false;
-  String? nameValidationErr;
-  // if this is a sub asset...
-  // we will have to get this depending on which asset/subasset/ we're using to
-  // make the main, but the most it could possibly be is 27 because main asset
-  // name is at least 3 characters plus / and the most is 31: RVN/27...
-  int remainingNameLength = 31; //sub asset max length: 27;
+  bool verifierValidated = false;
+  String? verifierValidationErr;
+  int remainingVerifierLength = 89;
 
   @override
   void initState() {
@@ -59,6 +59,7 @@ class _MainCreateState extends State<MainCreate> {
               value?.quantity?.toString() ?? quantityController.text;
           decimalController.text = value?.decimal ?? decimalController.text;
           reissueValue = value?.reissuable ?? reissueValue;
+          verifierController.text = value?.verifier ?? verifierController.text;
         });
       }
     }));
@@ -67,14 +68,16 @@ class _MainCreateState extends State<MainCreate> {
   @override
   void dispose() {
     nameController.dispose();
-    ipfsController.dispose();
     quantityController.dispose();
     decimalController.dispose();
+    verifierController.dispose();
+    ipfsController.dispose();
     nameFocus.dispose();
-    ipfsFocus.dispose();
-    nextFocus.dispose();
     quantityFocus.dispose();
     decimalFocus.dispose();
+    verifierFocus.dispose();
+    ipfsFocus.dispose();
+    nextFocus.dispose();
     for (var listener in listeners) {
       listener.cancel();
     }
@@ -114,6 +117,10 @@ class _MainCreateState extends State<MainCreate> {
                         ),
                         Padding(
                           padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                          child: verifierField(),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
                           child: ipfsField(),
                         ),
                         //reissueSwitch,
@@ -137,26 +144,14 @@ class _MainCreateState extends State<MainCreate> {
       autocorrect: false,
       controller: nameController,
       textInputAction: TextInputAction.done,
-      inputFormatters: [MainAssetNameTextFormatter()],
       decoration: components.styles.decorations.textFeild(
         context,
-        labelText: 'Asset Name',
+        labelText: 'Restricted Asset Name',
         hintText: 'MOONTREE_WALLET.COM',
-        errorText: nameController.text.length > 2 &&
-                !nameValidation(nameController.text)
-            ? nameValidationErr
-            : null,
       ),
-      onChanged: (String value) => validateName(name: value),
+      onTap: _produceAdminAssetModal,
+      //onChanged: (String value) => validateName(name: value),
       onEditingComplete: () {
-        nameController.text =
-            nameController.text.substring(0, remainingNameLength);
-        if (nameController.text.endsWith('_') ||
-            nameController.text.endsWith('.')) {
-          nameController.text =
-              nameController.text.substring(0, nameController.text.length - 1);
-        }
-        validateName();
         FocusScope.of(context).requestFocus(quantityFocus);
       });
 
@@ -207,6 +202,27 @@ class _MainCreateState extends State<MainCreate> {
         },
       );
 
+  Widget verifierField() => TextField(
+      focusNode: verifierFocus,
+      autocorrect: false,
+      controller: verifierController,
+      textInputAction: TextInputAction.done,
+      inputFormatters: [VerifierStringTextFormatter()],
+      decoration: components.styles.decorations.textFeild(
+        context,
+        labelText: 'Verifier String',
+        hintText: '((#KYC & #ACCREDITED) | #EXEMPT) & !#IRS',
+        errorText: verifierController.text.length > 2 &&
+                !verifierValidation(verifierController.text)
+            ? verifierValidationErr
+            : null,
+      ),
+      onChanged: (String value) => validateVerifier(verifier: value),
+      onEditingComplete: () {
+        validateVerifier();
+        FocusScope.of(context).requestFocus(ipfsFocus);
+      });
+
   Widget ipfsField() => TextField(
         focusNode: ipfsFocus,
         autocorrect: false,
@@ -218,7 +234,7 @@ class _MainCreateState extends State<MainCreate> {
           hintText: 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr',
           //helperText: ipfsValidation(ipfsController.text) ? 'match' : null,
           errorText: !ipfsValidation(ipfsController.text)
-              ? '${MainCreate.ipfsLength - ipfsController.text.length}'
+              ? '${RestrictedCreate.ipfsLength - ipfsController.text.length}'
               : null,
         ),
         onChanged: (String value) => validateIPFS(ipfs: value),
@@ -293,30 +309,36 @@ class _MainCreateState extends State<MainCreate> {
         .build(decimalPrefix: quantityController.text);
   }
 
-  bool nameValidation(String name) {
-    var ret = true;
-    if (!(name.length > 2 && name.length <= remainingNameLength)) {
-      nameValidationErr = '${remainingNameLength - nameController.text.length}';
-      ret = false;
-    } else if (name.endsWith('.') || name.endsWith('_')) {
-      nameValidationErr = 'cannot end with special character';
-      ret = false;
-    } else {
-      nameValidationErr = null;
+  bool verifierValidation(String verifier) {
+    if (verifier.length > remainingVerifierLength) {
+      verifierValidationErr =
+          '${remainingVerifierLength - verifierController.text.length}';
+      return false;
+      //} else if (verifier.endsWith('.') || verifier.endsWith('_')) {
+      //  verifierValidationErr = 'allowed characters: A-Z, 0-9, (._#&|!)';
+      //  ret = false;
+    } else if ('('.allMatches(verifier).length !=
+        ')'.allMatches(verifier).length) {
+      verifierValidationErr =
+          '${'('.allMatches(verifier).length} open parenthesis, '
+          '${')'.allMatches(verifier).length} closed parenthesis';
+      return false;
     }
-    return ret;
+    verifierValidationErr = null;
+    return true;
   }
 
-  void validateName({String? name}) {
-    name = name ?? nameController.text;
-    var oldValidation = nameValidated;
-    nameValidated = nameValidation(name);
-    if (oldValidation != nameValidated || !nameValidated) {
+  void validateVerifier({String? verifier}) {
+    verifier = verifier ?? verifierController.text;
+    var oldValidation = verifierValidated;
+    verifierValidated = verifierValidation(verifier);
+    if (oldValidation != verifierValidated || !verifierValidated) {
       setState(() => {});
     }
   }
 
-  bool ipfsValidation(String ipfs) => ipfs.length <= MainCreate.ipfsLength;
+  bool ipfsValidation(String ipfs) =>
+      ipfs.length <= RestrictedCreate.ipfsLength;
 
   void validateIPFS({String? ipfs}) {
     ipfs = ipfs ?? ipfsController.text;
@@ -329,7 +351,7 @@ class _MainCreateState extends State<MainCreate> {
 
   bool quantityValidation(int quantity) =>
       quantityController.text != '' &&
-      quantity <= MainCreate.quantityMax &&
+      quantity <= RestrictedCreate.quantityMax &&
       quantity > 0;
 
   void validateQuantity({int? quantity}) {
@@ -355,7 +377,7 @@ class _MainCreateState extends State<MainCreate> {
 
   bool get enabled =>
       nameController.text.length > 2 &&
-      nameValidation(nameController.text) &&
+      verifierValidation(verifierController.text) &&
       quantityController.text != '' &&
       quantityValidation(quantityController.text.toInt()) &&
       decimalController.text != '' &&
@@ -367,20 +389,21 @@ class _MainCreateState extends State<MainCreate> {
       FocusScope.of(context).unfocus();
 
       /// make the send request
-      var createRequest = MainCreateRequest(
-          name: nameController.text,
-          ipfs: ipfsController.text,
-          quantity: 0,
-          decimals: 0,
-          reissuable: reissueValue,
-          parent: 'PARENT/ASSET/PATH/#');
+      var createRequest = RestrictedCreateRequest(
+        name: nameController.text,
+        verifier: verifierController.text,
+        ipfs: ipfsController.text,
+        quantity: 0,
+        decimals: 0,
+        reissuable: reissueValue,
+      );
 
       /// send them to transaction checkout screen
       confirmSend(createRequest);
     }
   }
 
-  void confirmSend(MainCreateRequest createRequest) {
+  void confirmSend(RestrictedCreateRequest createRequest) {
     /// send request to the correct stream
     //streams.spend.make.add(createRequest);
 
@@ -398,10 +421,10 @@ class _MainCreateState extends State<MainCreate> {
           paymentSymbol: 'RVN',
           items: [
             /// send the correct items
-            ['Parent', 'PARENT/ASSET/PATH/#', '2'],
-            ['Asset Name', nameController.text, '2'],
+            ['Restricted Asset Name', nameController.text, '2'],
             ['Quantity', quantityController.text],
             ['Decimals', decimalController.text],
+            ['Verifier String', verifierController.text, '6'],
             ['IPFS/Txid', ipfsController.text, '9'],
             [
               'Reissuable',
@@ -417,12 +440,19 @@ class _MainCreateState extends State<MainCreate> {
           total: 'calculating total...',
           buttonAction: () => null,
 
-          /// send the MainCreate request to the right stream
+          /// send the RestrictedCreate request to the right stream
           //streams.spend.send.add(streams.spend.made.value),
           buttonIcon: MdiIcons.arrowTopRightThick,
           buttonWord: 'Send',
         )
       },
     );
+  }
+
+  void _produceAdminAssetModal() {
+    SelectionItems(context, modalSet: SelectionSet.Admins).build(
+        holdingNames: Current.adminNames
+            .map((String name) => name.replaceAll('!', ''))
+            .toList());
   }
 }

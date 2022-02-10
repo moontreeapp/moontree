@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction_maker.dart';
@@ -7,26 +8,28 @@ import 'package:raven_front/pages/transaction/checkout.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/transformers.dart';
 
-class NFTCreate extends StatefulWidget {
+class QualifierCreate extends StatefulWidget {
   static const int ipfsLength = 89;
+  static const int quantityMax = 21000000;
 
   @override
-  _NFTCreateState createState() => _NFTCreateState();
+  _QualifierCreateState createState() => _QualifierCreateState();
 }
 
-class _NFTCreateState extends State<NFTCreate> {
+class _QualifierCreateState extends State<QualifierCreate> {
   TextEditingController nameController = TextEditingController();
+  TextEditingController quantityController = TextEditingController();
   TextEditingController ipfsController = TextEditingController();
   FocusNode nameFocus = FocusNode();
+  FocusNode quantityFocus = FocusNode();
   FocusNode ipfsFocus = FocusNode();
   FocusNode nextFocus = FocusNode();
   bool nameValidated = false;
+  bool quantityValidated = false;
   bool ipfsValidated = false;
   String? nameValidationErr;
-  // we will have to get this depending on which asset/subasset/ we're using to
-  // make the nft, but the most it could possibly be is 27 because main asset
-  // name is at least 3 characters plus /# and the most is 31: RVN/#26...
-  int remainingNameLength = 26;
+  // must get the exact number 30: #RVN/#25...
+  int remainingNameLength = 25;
 
   @override
   void initState() {
@@ -37,7 +40,9 @@ class _NFTCreateState extends State<NFTCreate> {
   void dispose() {
     nameController.dispose();
     ipfsController.dispose();
+    quantityController.dispose();
     nameFocus.dispose();
+    quantityFocus.dispose();
     ipfsFocus.dispose();
     nextFocus.dispose();
     super.dispose();
@@ -59,6 +64,8 @@ class _NFTCreateState extends State<NFTCreate> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               nameField(),
+              SizedBox(height: 16),
+              quantityField(),
               SizedBox(height: 16),
               ipfsField(),
             ],
@@ -82,7 +89,7 @@ class _NFTCreateState extends State<NFTCreate> {
       inputFormatters: [MainAssetNameTextFormatter()],
       decoration: components.styles.decorations.textFeild(
         context,
-        labelText: 'Asset Name',
+        labelText: 'Qualifier Asset Name',
         hintText: 'MOONTREE_WALLET.COM',
         errorText: nameController.text.length > 2 &&
                 !nameValidation(nameController.text)
@@ -102,6 +109,29 @@ class _NFTCreateState extends State<NFTCreate> {
         FocusScope.of(context).requestFocus(ipfsFocus);
       });
 
+  Widget quantityField() => TextField(
+        focusNode: quantityFocus,
+        controller: quantityController,
+        keyboardType: TextInputType.number,
+        textInputAction: TextInputAction.done,
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.digitsOnly,
+          CommaIntValueTextFormatter()
+        ], // Only numbers can be entered
+        decoration: components.styles.decorations.textFeild(
+          context,
+          labelText: 'Quantity',
+          hintText: '21,000,000',
+          //helperText: ipfsValidation(ipfsController.text) ? 'match' : null,
+          errorText: quantityController.text != '' &&
+                  !quantityValidation(quantityController.text.toInt())
+              ? 'must ${quantityController.text.toInt().toCommaString()} be between 1 and 21,000,000'
+              : null,
+        ),
+        onChanged: (String value) => validateQuantity(quantity: value.toInt()),
+        onEditingComplete: () => FocusScope.of(context).requestFocus(ipfsFocus),
+      );
+
   Widget ipfsField() => TextField(
         focusNode: ipfsFocus,
         autocorrect: false,
@@ -112,7 +142,7 @@ class _NFTCreateState extends State<NFTCreate> {
           labelText: 'IPFS/Txid',
           hintText: 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr',
           errorText: !ipfsValidation(ipfsController.text)
-              ? '${NFTCreate.ipfsLength - ipfsController.text.length}'
+              ? '${QualifierCreate.ipfsLength - ipfsController.text.length}'
               : null,
         ),
         onChanged: (String value) => validateIPFS(ipfs: value),
@@ -164,7 +194,21 @@ class _NFTCreateState extends State<NFTCreate> {
     }
   }
 
-  bool ipfsValidation(String ipfs) => ipfs.length <= NFTCreate.ipfsLength;
+  bool quantityValidation(int quantity) =>
+      quantityController.text != '' &&
+      quantity <= QualifierCreate.quantityMax &&
+      quantity > 0;
+
+  void validateQuantity({int? quantity}) {
+    quantity = quantity ?? quantityController.text.toInt();
+    var oldValidation = quantityValidated;
+    quantityValidated = quantityValidation(quantity);
+    if (oldValidation != quantityValidated || !quantityValidated) {
+      setState(() => {});
+    }
+  }
+
+  bool ipfsValidation(String ipfs) => ipfs.length <= QualifierCreate.ipfsLength;
 
   void validateIPFS({String? ipfs}) {
     ipfs = ipfs ?? ipfsController.text;
@@ -178,7 +222,8 @@ class _NFTCreateState extends State<NFTCreate> {
   bool get enabled =>
       nameController.text.length > 2 &&
       nameValidation(nameController.text) &&
-      ipfsController.text != '' &&
+      quantityController.text != '' &&
+      quantityValidation(quantityController.text.toInt()) &&
       ipfsValidation(ipfsController.text);
 
   void submit() {
@@ -186,17 +231,18 @@ class _NFTCreateState extends State<NFTCreate> {
       FocusScope.of(context).unfocus();
 
       /// make the send request
-      var createRequest = NFTCreateRequest(
+      var createRequest = QualifierCreateRequest(
           name: nameController.text,
           ipfs: ipfsController.text,
-          parent: 'PARENT/ASSET/PATH/#');
+          quantity: quantityController.text,
+          parent: '#PARENT/#ASSET/#PATH/#');
 
       /// send them to transaction checkout screen
       confirmSend(createRequest);
     }
   }
 
-  void confirmSend(NFTCreateRequest createRequest) {
+  void confirmSend(QualifierCreateRequest createRequest) {
     /// send request to the correct stream
     //streams.spend.make.add(createRequest);
 
@@ -214,8 +260,9 @@ class _NFTCreateState extends State<NFTCreate> {
           paymentSymbol: 'RVN',
           items: [
             /// send the correct items
-            ['Parent', 'PARENT/ASSET/PATH/#', '2'],
-            ['NFT Name', nameController.text, '2'],
+            ['Parent', '#PARENT/#ASSET/#PATH/#', '2'],
+            ['Qualifier Asset Name', nameController.text, '2'],
+            ['Quantity', quantityController.text, '2'],
             ['IPFS/Txid', ipfsController.text, '9'],
           ],
           fees: [
@@ -224,7 +271,7 @@ class _NFTCreateState extends State<NFTCreate> {
           total: 'calculating total...',
           buttonAction: () => null,
 
-          /// send the NFTCreate request to the right stream
+          /// send the QualifierCreate request to the right stream
           //streams.spend.send.add(streams.spend.made.value),
           buttonIcon: MdiIcons.arrowTopRightThick,
           buttonWord: 'Send',

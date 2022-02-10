@@ -22,11 +22,38 @@ class NFTCreateRequest {
   });
 }
 
+class ChannelCreateRequest {
+  late String name;
+  late String ipfs;
+  late String parent; // you have to use the wallet that holds the prent
+
+  ChannelCreateRequest({
+    required this.name,
+    required this.ipfs,
+    required this.parent,
+  });
+}
+
+class QualifierCreateRequest {
+  late String name;
+  late String ipfs;
+  late String quantity;
+  late String parent; // you have to use the wallet that holds the prent
+
+  QualifierCreateRequest({
+    required this.name,
+    required this.quantity,
+    required this.ipfs,
+    required this.parent,
+  });
+}
+
 class MainCreateRequest {
   late String name;
   late String ipfs;
   late int quantity;
   late int decimals;
+  late bool reissuable;
   late String?
       parent; // you have to use the wallet that holds the prent if sub asset
 
@@ -35,7 +62,26 @@ class MainCreateRequest {
     required this.ipfs,
     required this.quantity,
     required this.decimals,
+    required this.reissuable,
     this.parent,
+  });
+}
+
+class RestrictedCreateRequest {
+  late String name;
+  late String ipfs;
+  late int quantity;
+  late int decimals;
+  late String verifier;
+  late bool reissuable;
+
+  RestrictedCreateRequest({
+    required this.name,
+    required this.ipfs,
+    required this.quantity,
+    required this.decimals,
+    required this.verifier,
+    required this.reissuable,
   });
 }
 

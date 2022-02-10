@@ -4,6 +4,9 @@ import 'package:raven_front/pages/account/transactions.dart';
 import 'package:raven_front/pages/manage/assets.dart';
 import 'package:raven_front/pages/create/nft.dart';
 import 'package:raven_front/pages/create/main.dart';
+import 'package:raven_front/pages/create/qualifier.dart';
+import 'package:raven_front/pages/create/channel.dart';
+import 'package:raven_front/pages/create/restricted.dart';
 import 'package:raven_front/pages/misc/loading.dart';
 import 'package:raven_front/pages/misc/scan.dart';
 import 'package:raven_front/pages/security/login.dart';
@@ -39,6 +42,9 @@ class pages {
   static Transactions transactions = Transactions();
   static NFTCreate nftCreate = NFTCreate();
   static MainCreate mainCreate = MainCreate();
+  static QualifierCreate qualifierCreate = QualifierCreate();
+  static ChannelCreate channelCreate = ChannelCreate();
+  static RestrictedCreate restrictedCreate = RestrictedCreate();
   static Checkout checkout = Checkout();
   static TransactionPage transaction = TransactionPage();
   static Receive receive = Receive();
@@ -72,6 +78,9 @@ class pages {
         '/scan': (context) => scan,
         '/create/nft': (context) => nftCreate,
         '/create/main': (context) => mainCreate,
+        '/create/qualifier': (context) => qualifierCreate,
+        '/create/channel': (context) => channelCreate,
+        '/create/restricted': (context) => restrictedCreate,
         '/security/change': (context) => changePassword,
         '/security/resume': (context) => changeResume,
         '/security/remove': (context) => removePassword,

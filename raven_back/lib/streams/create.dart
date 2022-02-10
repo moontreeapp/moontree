@@ -15,6 +15,7 @@ class GenericCreateForm {
   final int? quantity;
   final String? decimal;
   final bool? reissuable;
+  final String? verifier;
   final String? parent; // you have to use the wallet that holds the prent
 
   GenericCreateForm({
@@ -22,6 +23,7 @@ class GenericCreateForm {
     this.ipfs,
     this.quantity,
     this.decimal,
+    this.verifier,
     this.reissuable,
     this.parent,
   });
@@ -31,6 +33,7 @@ class GenericCreateForm {
       'ipfs=$ipfs, '
       'quantity=$quantity, '
       'decimal=$decimal, '
+      'reissuable=$verifier, '
       'reissuable=$reissuable, '
       'parent=$parent)';
 
@@ -40,6 +43,7 @@ class GenericCreateForm {
     String? ipfs,
     int? quantity,
     String? decimal,
+    String? verifier,
     bool? reissuable,
     String? parent,
   }) {
@@ -48,6 +52,7 @@ class GenericCreateForm {
       ipfs: ipfs ?? form?.ipfs,
       quantity: quantity ?? form?.quantity,
       decimal: decimal ?? form?.decimal,
+      verifier: verifier ?? form?.verifier,
       reissuable: reissuable ?? form?.reissuable,
       parent: parent ?? form?.parent,
     );
@@ -62,6 +67,7 @@ class GenericCreateForm {
             form.ipfs == ipfs &&
             form.quantity == quantity &&
             form.decimal == decimal &&
+            form.verifier == verifier &&
             form.reissuable == reissuable &&
             form.parent == parent)
         : false;
