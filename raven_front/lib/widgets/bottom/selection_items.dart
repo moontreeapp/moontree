@@ -252,8 +252,12 @@ class SelectionItems {
         name,
         behavior: () => Navigator.pushNamed(
           components.navigator.routeContext!,
-          '/transaction/receive', // replace with correct form...
-          //'/create/forms/${asString(name).toLowerCase}',
+          '/create/' + asString(name).toLowerCase(),
+          //{
+          //  SelectionOption.Main: 'main',
+          //  SelectionOption.Restricted: 'restricted',
+          //  SelectionOption.Qualifier: 'qualifier',
+          //}[name]!,
           arguments: {'symbol': asString(name)},
         ),
       );
@@ -262,8 +266,12 @@ class SelectionItems {
         name,
         behavior: () => Navigator.pushNamed(
           components.navigator.routeContext!,
-          '/transaction/receive', // replace with correct view page...
-          //'/manage/asset/${asString(name).toLowerCase}',
+          '/create/' + asString(name).toLowerCase(),
+          //{
+          //  SelectionOption.Main: 'main',
+          //  SelectionOption.Restricted: 'restricted',
+          //  SelectionOption.Qualifier: 'qualifier',
+          //}[name]!,
           arguments: {'symbol': asString(name)},
         ),
       );
@@ -272,8 +280,12 @@ class SelectionItems {
         name,
         behavior: () => Navigator.pushNamed(
           components.navigator.routeContext!,
-          '/transaction/receive', // replace with correct view page...
-          //'/manage/asset/${asString(name).toLowerCase}',
+          '/create/' +
+              {
+                SelectionOption.Sub_Asset: 'sub',
+                SelectionOption.NFT: 'nft',
+                SelectionOption.Messaging_Channel_Asset: 'channel',
+              }[name]!,
           arguments: {'symbol': asString(name)},
         ),
       );

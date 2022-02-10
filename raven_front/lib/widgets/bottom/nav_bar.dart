@@ -40,7 +40,16 @@ class _NavBarState extends State<NavBar> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       actionButton(
-                          name: 'create', onPressed: _produceCreateModal),
+                          name: 'create',
+                          onPressed: streams.app.page.value == 'Wallet'
+                              ? _produceCreateModal
+                              : streams.app.page.value == 'Asset'
+                                  ? _produceSubCreateModal
+                                  : () {
+                                      /*if restricted or nft no create button,
+                                        if qualifier create a sub qualifier, 
+                                        else above */
+                                    }),
                       SizedBox(width: 16),
                       actionButton(
                           name: 'manage',
@@ -126,5 +135,9 @@ class _NavBarState extends State<NavBar> {
 
   void _produceCreateModal() {
     SelectionItems(context, modalSet: SelectionSet.Create).build();
+  }
+
+  void _produceSubCreateModal() {
+    SelectionItems(context, modalSet: SelectionSet.Sub_Asset).build();
   }
 }
