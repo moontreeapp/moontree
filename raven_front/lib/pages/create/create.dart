@@ -8,6 +8,7 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction_maker.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/pages/transaction/checkout.dart';
+import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/params.dart';
 import 'package:raven_back/utils/utilities.dart';
@@ -155,22 +156,16 @@ class _CreateSomethingState extends State<CreateSomething> {
         child: body(),
       );
 
-  bool get needsQuantity => [
-        FormPresets.main,
-        FormPresets.restricted,
-        FormPresets.qualifier
-      ].contains(widget.preset);
+  bool get isMain => widget.preset == FormPresets.main;
+  bool get isNFT => widget.preset == FormPresets.NFT;
+  bool get isChannel => widget.preset == FormPresets.channel;
+  bool get isQualifier => widget.preset == FormPresets.qualifier;
+  bool get isRestricted => widget.preset == FormPresets.restricted;
 
-  bool get needsDecimal =>
-      [FormPresets.main, FormPresets.restricted].contains(widget.preset);
-
-  bool get needsVerifier => [FormPresets.restricted].contains(widget.preset);
-
-  bool get needsReissue =>
-      [FormPresets.main, FormPresets.restricted].contains(widget.preset);
-
-  bool get isQualifierOrRestircted =>
-      [FormPresets.qualifier, FormPresets.restricted].contains(widget.preset);
+  bool get needsQuantity => isMain || isRestricted || isQualifier;
+  bool get needsDecimal => isMain || isRestricted;
+  bool get needsVerifier => isRestricted;
+  bool get needsReissue => isMain || isRestricted;
 
   Widget body() => CustomScrollView(
           // solves scrolling while keyboard
@@ -234,19 +229,20 @@ class _CreateSomethingState extends State<CreateSomething> {
         context,
         labelText: widget.nameTitle,
         hintText: 'MOONTREE_WALLET.COM',
-        errorText: isQualifierOrRestircted
+        errorText: isChannel || isRestricted
             ? null
             : nameController.text.length > 2 &&
                     !nameValidation(nameController.text)
                 ? nameValidationErr
                 : null,
       ),
-      onChanged: isQualifierOrRestircted
+      onTap: isQualifier || isRestricted ? _produceAdminAssetModal : null,
+      onChanged: isQualifier || isRestricted
           ? null
           : (String value) => validateName(name: value),
-      onEditingComplete: isQualifierOrRestircted
+      onEditingComplete: isQualifier || isRestricted
           ? () => FocusScope.of(context).requestFocus(quantityFocus)
-          : [FormPresets.NFT, FormPresets.channel].contains(widget.preset)
+          : isNFT || isChannel
               ? () => FocusScope.of(context).requestFocus(ipfsFocus)
               : () {
                   nameController.text =
@@ -279,8 +275,8 @@ class _CreateSomethingState extends State<CreateSomething> {
               : null,
         ),
         onChanged: (String value) => validateQuantity(quantity: value.toInt()),
-        onEditingComplete: () => FocusScope.of(context).requestFocus(
-            widget.preset == FormPresets.qualifier ? ipfsFocus : decimalFocus),
+        onEditingComplete: () => FocusScope.of(context)
+            .requestFocus(isQualifier ? ipfsFocus : decimalFocus),
       );
 
   Widget decimalField() => TextField(
@@ -295,11 +291,9 @@ class _CreateSomethingState extends State<CreateSomething> {
                   padding: EdgeInsets.only(right: 14),
                   child: Icon(Icons.expand_more_rounded,
                       color: Color(0xDE000000))),
-              onPressed: () => _produceFeeModal(),
+              onPressed: () => _produceDecimalModal(),
             )),
-        onTap: () {
-          _produceFeeModal();
-        },
+        onTap: () => _produceDecimalModal(),
         onChanged: (String? newValue) {
           FocusScope.of(context).requestFocus(ipfsFocus);
           setState(() {});
@@ -396,11 +390,6 @@ class _CreateSomethingState extends State<CreateSomething> {
             context,
             disabled: !enabled,
           )));
-
-  void _produceFeeModal() {
-    SelectionItems(context, modalSet: SelectionSet.Decimal)
-        .build(decimalPrefix: quantityController.text);
-  }
 
   bool nameValidation(String name) {
     if (!(name.length > 2 && name.length <= remainingNameLength)) {
@@ -499,7 +488,7 @@ class _CreateSomethingState extends State<CreateSomething> {
           ? decimalController.text != '' &&
               decimalValidation(decimalController.text.toInt())
           : true) &&
-      (widget.preset == FormPresets.NFT ? ipfsController.text != '' : true) &&
+      (isNFT ? ipfsController.text != '' : true) &&
       ipfsValidation(ipfsController.text);
 
   void submit() {
@@ -567,5 +556,17 @@ class _CreateSomethingState extends State<CreateSomething> {
         )
       },
     );
+  }
+
+  void _produceDecimalModal() {
+    SelectionItems(context, modalSet: SelectionSet.Decimal)
+        .build(decimalPrefix: quantityController.text);
+  }
+
+  void _produceAdminAssetModal() {
+    SelectionItems(context, modalSet: SelectionSet.Admins).build(
+        holdingNames: Current.adminNames
+            .map((String name) => name.replaceAll('!', ''))
+            .toList());
   }
 }
