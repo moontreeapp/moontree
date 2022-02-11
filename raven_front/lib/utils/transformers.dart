@@ -34,7 +34,7 @@ class MainAssetNameTextFormatter extends TextInputFormatter {
       text = text.substring(1, text.length);
     }
     if (newValue.text.length == text.length) {
-      return newValue;
+      return newValue.copyWith(text: newValue.text.toUpperCase());
     }
     return TextEditingValue(
       text: text,
@@ -75,7 +75,7 @@ class VerifierStringTextFormatter extends TextInputFormatter {
     var text = utils.removeCharsOtherThan(newValue.text.toUpperCase(),
         chars: utils.strings.verifierStringAllowed);
     if (newValue.text.length == text.length) {
-      return newValue;
+      return newValue.copyWith(text: newValue.text.toUpperCase());
     }
     return TextEditingValue(
       text: text,
