@@ -98,12 +98,8 @@ class _NavBarState extends State<NavBar> {
               height: 40,
               child: OutlinedButton.icon(
                 onPressed: link != null
-                    ? () {
-                        Backdrop.of(components.navigator.routeContext!)
-                            .concealBackLayer();
-                        Navigator.of(components.navigator.routeContext!)
-                            .pushNamed(link);
-                      }
+                    ? () => Navigator.of(components.navigator.routeContext!)
+                        .pushNamed(link)
                     : onPressed ?? () {},
                 icon: Icon({
                   'send': MdiIcons.arrowTopRightThick,

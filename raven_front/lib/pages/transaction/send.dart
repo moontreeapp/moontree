@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/pages/transaction/checkout.dart';
 import 'package:raven_front/utils/qrcode.dart';
 
@@ -60,6 +61,7 @@ class _SendState extends State<Send> {
   @override
   void initState() {
     super.initState();
+    Backdrop.of(components.navigator.routeContext!).revealBackLayer();
     sendAsset.text = sendAsset.text == '' ? 'Ravencoin' : sendAsset.text;
     listeners.add(streams.spend.form.listen((SpendForm? value) {
       if ((SpendForm.merge(form: spendForm, amount: 0.0) !=

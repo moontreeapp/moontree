@@ -53,6 +53,7 @@ class _AssetState extends State<Asset> with SingleTickerProviderStateMixin {
     for (var listener in listeners) {
       listener.cancel();
     }
+    controller.dispose();
     super.dispose();
   }
 

@@ -26,6 +26,8 @@ class Transactions extends StatefulWidget {
 
 class _TransactionsState extends State<Transactions>
     with SingleTickerProviderStateMixin {
+  late AnimationController controller;
+  late Animation<Offset> offset;
   Map<String, dynamic> data = {};
   List<StreamSubscription> listeners = [];
   bool showUSD = false;
@@ -36,6 +38,14 @@ class _TransactionsState extends State<Transactions>
   @override
   void initState() {
     super.initState();
+    controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    offset = Tween<Offset>(begin: Offset.zero, end: Offset(0.0, 1.0)).animate(
+        CurvedAnimation(
+            parent: controller,
+            curve: Curves.ease,
+            reverseCurve: Curves.ease.flipped));
+
     listeners.add(res.balances.batchedChanges.listen((batchedChanges) {
       if (batchedChanges.isNotEmpty) setState(() {});
     }));
@@ -46,6 +56,7 @@ class _TransactionsState extends State<Transactions>
     for (var listener in listeners) {
       listener.cancel();
     }
+    controller.dispose();
     super.dispose();
   }
 
@@ -70,30 +81,36 @@ class _TransactionsState extends State<Transactions>
         ? Current.walletHoldings(data['walletId'])
         : Current.holdings;
     security = data['holding']!.security;
-    return TabBarView(
-        controller: components.navigator.tabController,
-        children: <Widget>[
-          GestureDetector(
-              onTap: () => FocusScope.of(context).unfocus(),
-              child:
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.transparent,
+      body: TabBarView(
+          controller: components.navigator.tabController,
+          children: <Widget>[
+            GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
+                child:
 
-                  /// comments: to remove scroll functionality as it is not yet fluid. #182
-                  ///NotificationListener<UserScrollNotification>(
-                  ///    onNotification: visibilityOfSendReceive,
-                  ///    child:
-                  TransactionList(
-                      transactions: currentTxs
-                          .where((tx) => tx.security.symbol == security.symbol),
-                      msg: '\nNo ${security.symbol} transactions.\n')),
+                    /// comments: to remove scroll functionality as it is not yet fluid. #182
+                    ///NotificationListener<UserScrollNotification>(
+                    ///    onNotification: visibilityOfSendReceive,
+                    ///    child:
+                    TransactionList(
+                        transactions: currentTxs.where(
+                            (tx) => tx.security.symbol == security.symbol),
+                        msg: '\nNo ${security.symbol} transactions.\n')),
 
-          ///),
-          _metadataView() ??
-              components.empty.message(
-                context,
-                icon: Icons.description,
-                msg: '\nNo metadata.\n',
-              ),
-        ]);
+            ///),
+            _metadataView() ??
+                components.empty.message(
+                  context,
+                  icon: Icons.description,
+                  msg: '\nNo metadata.\n',
+                ),
+          ]),
+      floatingActionButton: SlideTransition(position: offset, child: NavBar()),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    );
 
     /// no place to view metadata right now - this used to be tabs
   }
