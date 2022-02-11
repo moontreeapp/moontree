@@ -107,7 +107,6 @@ class _AssetList extends State<AssetList> {
                   SelectionItems(
                     context,
                     names: [
-                      //if (asset.main != null) SelectionOption.Main,
                       if (asset.admin != null) SelectionOption.Main,
                       if (asset.restricted != null) SelectionOption.Restricted,
                       if (asset.qualifier != null) SelectionOption.Qualifier,
@@ -138,7 +137,6 @@ class _AssetList extends State<AssetList> {
                     Text(asset.symbol, style: Theme.of(context).holdingName),
                     Text(
                         [
-                          //if (asset.admin != null) 'Admin',
                           if (asset.main != null) 'Main',
                           if (asset.restricted != null) 'Restricted',
                           if (asset.restricted != null) 'Qualifier',
