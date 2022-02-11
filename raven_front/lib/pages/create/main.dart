@@ -1,6 +1,7 @@
 // this could be a stateless widget.
 
 import 'package:flutter/material.dart';
+import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class CreateMainAsset extends StatefulWidget {
@@ -25,5 +26,6 @@ class _CreateMainAssetState extends State<CreateMainAsset> {
         child: body(),
       );
 
-  Widget body() => CreateAsset(preset: FormPresets.main, parent: 'optional');
+  Widget body() =>
+      CreateAsset(preset: FormPresets.main, parent: streams.app.asset.value);
 }

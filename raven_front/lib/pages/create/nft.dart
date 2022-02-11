@@ -1,6 +1,7 @@
 // this could be a stateless widget.
 
 import 'package:flutter/material.dart';
+import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class CreateNFTAsset extends StatefulWidget {
@@ -25,5 +26,6 @@ class _CreateNFTAssetState extends State<CreateNFTAsset> {
         child: body(),
       );
 
-  Widget body() => CreateAsset(preset: FormPresets.NFT, parent: 'Parent');
+  Widget body() =>
+      CreateAsset(preset: FormPresets.NFT, parent: streams.app.asset.value);
 }

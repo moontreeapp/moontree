@@ -1,6 +1,7 @@
 // this could be a stateless widget.
 
 import 'package:flutter/material.dart';
+import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class CreateQualifierAsset extends StatefulWidget {
@@ -25,6 +26,6 @@ class _CreateQualifierAssetState extends State<CreateQualifierAsset> {
         child: body(),
       );
 
-  Widget body() =>
-      CreateAsset(preset: FormPresets.qualifier, parent: 'optional');
+  Widget body() => CreateAsset(
+      preset: FormPresets.qualifier, parent: streams.app.asset.value);
 }
