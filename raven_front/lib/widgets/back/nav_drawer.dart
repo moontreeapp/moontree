@@ -156,31 +156,6 @@ class _NavDrawerState extends State<NavDrawer> {
             link: '/settings/about',
           ),
 
-          destination(
-            icon: Icons.info_rounded,
-            name: 'nft',
-            link: '/create/nft',
-          ),
-          destination(
-            icon: Icons.info_rounded,
-            name: 'main',
-            link: '/create/main',
-          ),
-          destination(
-            icon: Icons.info_rounded,
-            name: 'qualifier',
-            link: '/create/qualifier',
-          ),
-          destination(
-            icon: Icons.info_rounded,
-            name: 'channel',
-            link: '/create/channel',
-          ),
-          destination(
-            icon: Icons.info_rounded,
-            name: 'restricted',
-            link: '/create/restricted',
-          ),
           ////SettingsTile(
           ////    title: 'Import/Export',
           ////    titleTextStyle: Theme.of(context).drawerDestination,

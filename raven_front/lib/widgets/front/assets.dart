@@ -97,14 +97,18 @@ class _AssetList extends State<AssetList> {
               contentPadding:
                   EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
               onTap: () {
-                if (asset.length == 1) {
+                if (asset.length == 1 && asset.admin != null) {
+                  navigate(asset.mainSymbol!, wallet: wallet);
+                } else if (asset.admin != null && asset.main != null) {
+                  navigate(asset.mainSymbol!, wallet: wallet);
+                } else if (asset.length == 1) {
                   navigate(asset.singleSymbol!, wallet: wallet);
                 } else {
                   SelectionItems(
                     context,
                     names: [
-                      if (asset.main != null) SelectionOption.Main,
-                      if (asset.admin != null) SelectionOption.Admin,
+                      //if (asset.main != null) SelectionOption.Main,
+                      if (asset.admin != null) SelectionOption.Main,
                       if (asset.restricted != null) SelectionOption.Restricted,
                       if (asset.qualifier != null) SelectionOption.Qualifier,
                     ],
@@ -134,7 +138,7 @@ class _AssetList extends State<AssetList> {
                     Text(asset.symbol, style: Theme.of(context).holdingName),
                     Text(
                         [
-                          if (asset.admin != null) 'Admin',
+                          //if (asset.admin != null) 'Admin',
                           if (asset.main != null) 'Main',
                           if (asset.restricted != null) 'Restricted',
                           if (asset.restricted != null) 'Qualifier',
