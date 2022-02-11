@@ -7,7 +7,6 @@ import 'package:raven_front/pages/create/main.dart';
 import 'package:raven_front/pages/create/qualifier.dart';
 import 'package:raven_front/pages/create/channel.dart';
 import 'package:raven_front/pages/create/restricted.dart';
-import 'package:raven_front/pages/create/sub.dart';
 import 'package:raven_front/pages/misc/loading.dart';
 import 'package:raven_front/pages/misc/scan.dart';
 import 'package:raven_front/pages/security/login.dart';
@@ -41,17 +40,15 @@ class pages {
   static Home home = Home();
   static Asset asset = Asset();
   static Transactions transactions = Transactions();
-  static NFTCreate nftCreate = NFTCreate();
-  static MainCreate mainCreate = MainCreate();
-  static QualifierCreate qualifierCreate = QualifierCreate();
-  static ChannelCreate channelCreate = ChannelCreate();
-  static RestrictedCreate restrictedCreate = RestrictedCreate();
-  static SubCreate subCreate = SubCreate();
+  static CreateNFTAsset createNFTAsset = CreateNFTAsset();
+  static CreateMainAsset createMainAsset = CreateMainAsset();
+  static CreateQualifierAsset createQualifierAsset = CreateQualifierAsset();
+  static CreateChannelAsset createChannelAsset = CreateChannelAsset();
+  static CreateRestrictedAsset createRestrictedAsset = CreateRestrictedAsset();
   static Checkout checkout = Checkout();
   static TransactionPage transaction = TransactionPage();
   static Receive receive = Receive();
   static Send send = Send();
-  static CreateAsset createAsset = CreateAsset();
   static About about = About();
   static Advanced advanced = Advanced();
   static Export export = Export();
@@ -78,13 +75,11 @@ class pages {
         '/wallet': (context) => walletView,
         '/loader': (context) => loader,
         '/scan': (context) => scan,
-        '/create/nft': (context) => nftCreate,
-        '/create/main': (context) => mainCreate,
-        '/create/qualifier': (context) => qualifierCreate,
-        //'/create/qualifier/sub': (context) => subQualifierCreate,
-        '/create/channel': (context) => channelCreate,
-        '/create/restricted': (context) => restrictedCreate,
-        '/create/main/sub': (context) => subCreate,
+        '/create/nft': (context) => createNFTAsset,
+        '/create/main': (context) => createMainAsset,
+        '/create/qualifier': (context) => createQualifierAsset,
+        '/create/channel': (context) => createChannelAsset,
+        '/create/restricted': (context) => createRestrictedAsset,
         '/security/change': (context) => changePassword,
         '/security/resume': (context) => changeResume,
         '/security/remove': (context) => removePassword,
@@ -92,7 +87,6 @@ class pages {
         '/transaction/transaction': (context) => transaction,
         '/transaction/receive': (context) => receive,
         '/transaction/send': (context) => send,
-        '/transaction/create': (context) => createAsset,
         '/transaction/checkout': (context) => checkout,
         '/settings/about': (context) => about,
         '/settings/level': (context) => advanced,

@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:mockito/mockito.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction_maker.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/pages/transaction/checkout.dart';
+import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/params.dart';
 import 'package:raven_back/utils/utilities.dart';
@@ -14,41 +16,74 @@ import 'package:raven_back/streams/create.dart';
 import 'package:raven_front/utils/transformers.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
-class SubCreate extends StatefulWidget {
+enum FormPresets {
+  main,
+  sub,
+  restricted,
+  qualifier,
+  subQualifier,
+  NFT,
+  channel,
+}
+
+class CreateAsset extends StatefulWidget {
   static const int ipfsLength = 89;
   static const int quantityMax = 21000000;
 
+  final FormPresets preset;
+  final String? parent;
+
+  CreateAsset({
+    required this.preset,
+    this.parent,
+  }) : super();
+
   @override
-  _SubCreateState createState() => _SubCreateState();
+  _CreateAssetState createState() => _CreateAssetState();
 }
 
-class _SubCreateState extends State<SubCreate> {
+class _CreateAssetState extends State<CreateAsset> {
   List<StreamSubscription> listeners = [];
   GenericCreateForm? createForm;
   TextEditingController nameController = TextEditingController();
   TextEditingController ipfsController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController decimalController = TextEditingController();
+  TextEditingController verifierController = TextEditingController();
   bool reissueValue = true;
   FocusNode nameFocus = FocusNode();
   FocusNode ipfsFocus = FocusNode();
   FocusNode nextFocus = FocusNode();
   FocusNode quantityFocus = FocusNode();
   FocusNode decimalFocus = FocusNode();
+  FocusNode verifierFocus = FocusNode();
   bool nameValidated = false;
   bool ipfsValidated = false;
   bool quantityValidated = false;
   bool decimalValidated = false;
   String? nameValidationErr;
-  // if this is a sub asset...
-  // we will have to get this depending on which asset/subasset/ we're using to
-  // make the main, but the most it could possibly be is 27 because main asset
-  // name is at least 3 characters plus / and the most is 31: RVN/27...
-  int remainingNameLength = 31; //sub asset max length: 27;
+  bool verifierValidated = false;
+  String? verifierValidationErr;
+  int remainingNameLength = 31;
+  int remainingVerifierLength = 89;
+  Map<FormPresets, String> presetToTitle = {
+    FormPresets.main: 'Asset Name',
+    FormPresets.restricted: 'Restricted Asset Name',
+    FormPresets.qualifier: 'Qualifier Name',
+    FormPresets.NFT: 'NFT Name',
+    FormPresets.channel: 'Message Channel Name',
+  };
 
   @override
   void initState() {
     super.initState();
+    remainingNameLength =
+        // max asset length
+        31 -
+            // parent text and implied '/'
+            (isSub ? widget.parent!.length + 1 : 0) -
+            // everything else has a special character denoting its type
+            (isMain ? 0 : 1);
     listeners.add(streams.create.form.listen((GenericCreateForm? value) {
       if (createForm != value) {
         setState(() {
@@ -59,6 +94,7 @@ class _SubCreateState extends State<SubCreate> {
               value?.quantity?.toString() ?? quantityController.text;
           decimalController.text = value?.decimal ?? decimalController.text;
           reissueValue = value?.reissuable ?? reissueValue;
+          verifierController.text = value?.verifier ?? verifierController.text;
         });
       }
     }));
@@ -75,6 +111,8 @@ class _SubCreateState extends State<SubCreate> {
     nextFocus.dispose();
     quantityFocus.dispose();
     decimalFocus.dispose();
+    verifierController.dispose();
+    verifierFocus.dispose();
     for (var listener in listeners) {
       listener.cancel();
     }
@@ -86,6 +124,24 @@ class _SubCreateState extends State<SubCreate> {
         onTap: () => FocusScope.of(context).unfocus(),
         child: body(),
       );
+
+  bool get isSub => widget.parent != null;
+  // above is shorthand, full logic:
+  //    !isRestricted &&
+  //    ((isNFT || isChannel) ||
+  //        (isMain && widget.parent != null) ||
+  //        (isQualifier && widget.parent != null));
+
+  bool get isMain => widget.preset == FormPresets.main;
+  bool get isNFT => widget.preset == FormPresets.NFT;
+  bool get isChannel => widget.preset == FormPresets.channel;
+  bool get isQualifier => widget.preset == FormPresets.qualifier;
+  bool get isRestricted => widget.preset == FormPresets.restricted;
+
+  bool get needsQuantity => isMain || isRestricted || isQualifier;
+  bool get needsDecimal => isMain || isRestricted;
+  bool get needsVerifier => isRestricted;
+  bool get needsReissue => isMain || isRestricted;
 
   Widget body() => CustomScrollView(
           // solves scrolling while keyboard
@@ -104,22 +160,29 @@ class _SubCreateState extends State<SubCreate> {
                           padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
                           child: nameField(),
                         ),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-                          child: quantityField(),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-                          child: decimalField(),
-                        ),
+                        if (needsQuantity)
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                            child: quantityField(),
+                          ),
+                        if (needsDecimal)
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                            child: decimalField(),
+                          ),
                         Padding(
                           padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
                           child: ipfsField(),
                         ),
-                        //reissueSwitch,
-                        Padding(
-                            padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
-                            child: reissueRow()),
+                        if (needsVerifier)
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                            child: verifierField(),
+                          ),
+                        if (needsReissue)
+                          Padding(
+                              padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
+                              child: reissueRow()),
                       ]),
                 ])),
             SliverFillRemaining(
@@ -137,51 +200,60 @@ class _SubCreateState extends State<SubCreate> {
       autocorrect: false,
       controller: nameController,
       textInputAction: TextInputAction.done,
+      keyboardType: isRestricted ? TextInputType.none : null,
       inputFormatters: [MainAssetNameTextFormatter()],
       decoration: components.styles.decorations.textFeild(
         context,
-        labelText: 'Asset Name',
+        labelText: presetToTitle[widget.preset]!,
         hintText: 'MOONTREE_WALLET.COM',
-        errorText: nameController.text.length > 2 &&
-                !nameValidation(nameController.text)
-            ? nameValidationErr
-            : null,
+        errorText: isChannel || isRestricted
+            ? null
+            : nameController.text.length > 2 &&
+                    !nameValidation(nameController.text)
+                ? nameValidationErr
+                : null,
       ),
-      onChanged: (String value) => validateName(name: value),
-      onEditingComplete: () {
-        nameController.text =
-            nameController.text.substring(0, remainingNameLength);
-        if (nameController.text.endsWith('_') ||
-            nameController.text.endsWith('.')) {
-          nameController.text =
-              nameController.text.substring(0, nameController.text.length - 1);
-        }
-        validateName();
-        FocusScope.of(context).requestFocus(quantityFocus);
-      });
+      onTap: isQualifier || isRestricted ? _produceAdminAssetModal : null,
+      onChanged: isQualifier || isRestricted
+          ? null
+          : (String value) => validateName(name: value),
+      onEditingComplete: isQualifier || isRestricted
+          ? () => FocusScope.of(context).requestFocus(quantityFocus)
+          : isNFT || isChannel
+              ? () => FocusScope.of(context).requestFocus(ipfsFocus)
+              : () {
+                  formatName();
+                  validateName();
+                  FocusScope.of(context).requestFocus(quantityFocus);
+                });
 
   Widget quantityField() => TextField(
         focusNode: quantityFocus,
         controller: quantityController,
-        keyboardType: TextInputType.number,
+//      keyboardType: TextInputType.number,
+        keyboardType:
+            TextInputType.numberWithOptions(decimal: false, signed: false),
         textInputAction: TextInputAction.done,
         inputFormatters: <TextInputFormatter>[
           FilteringTextInputFormatter.digitsOnly,
-          CommaIntValueTextFormatter()
-        ], // Only numbers can be entered
+          // selection messed up: don't do it on edit, do it on complete,
+          //CommaIntValueTextFormatter()
+        ],
         decoration: components.styles.decorations.textFeild(
           context,
           labelText: 'Quantity',
           hintText: '21,000,000',
-          //helperText: ipfsValidation(ipfsController.text) ? 'match' : null,
           errorText: quantityController.text != '' &&
                   !quantityValidation(quantityController.text.toInt())
               ? 'must ${quantityController.text.toInt().toCommaString()} be between 1 and 21,000,000'
               : null,
         ),
         onChanged: (String value) => validateQuantity(quantity: value.toInt()),
-        onEditingComplete: () =>
-            FocusScope.of(context).requestFocus(decimalFocus),
+        onEditingComplete: () {
+          formatQuantity();
+          FocusScope.of(context)
+              .requestFocus(isQualifier ? ipfsFocus : decimalFocus);
+        },
       );
 
   Widget decimalField() => TextField(
@@ -196,16 +268,35 @@ class _SubCreateState extends State<SubCreate> {
                   padding: EdgeInsets.only(right: 14),
                   child: Icon(Icons.expand_more_rounded,
                       color: Color(0xDE000000))),
-              onPressed: () => _produceFeeModal(),
+              onPressed: () => _produceDecimalModal(),
             )),
-        onTap: () {
-          _produceFeeModal();
-        },
+        onTap: () => _produceDecimalModal(),
         onChanged: (String? newValue) {
           FocusScope.of(context).requestFocus(ipfsFocus);
           setState(() {});
         },
       );
+
+  Widget verifierField() => TextField(
+      focusNode: verifierFocus,
+      autocorrect: false,
+      controller: verifierController,
+      textInputAction: TextInputAction.done,
+      inputFormatters: [VerifierStringTextFormatter()],
+      decoration: components.styles.decorations.textFeild(
+        context,
+        labelText: 'Verifier String',
+        hintText: '((#KYC & #ACCREDITED) | #EXEMPT) & !#IRS',
+        errorText: verifierController.text.length > 2 &&
+                !verifierValidation(verifierController.text)
+            ? verifierValidationErr
+            : null,
+      ),
+      onChanged: (String value) => validateVerifier(verifier: value),
+      onEditingComplete: () {
+        validateVerifier();
+        FocusScope.of(context).requestFocus(ipfsFocus);
+      });
 
   Widget ipfsField() => TextField(
         focusNode: ipfsFocus,
@@ -218,22 +309,11 @@ class _SubCreateState extends State<SubCreate> {
           hintText: 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr',
           //helperText: ipfsValidation(ipfsController.text) ? 'match' : null,
           errorText: !ipfsValidation(ipfsController.text)
-              ? '${SubCreate.ipfsLength - ipfsController.text.length}'
+              ? '${CreateAsset.ipfsLength - ipfsController.text.length}'
               : null,
         ),
         onChanged: (String value) => validateIPFS(ipfs: value),
         onEditingComplete: () => FocusScope.of(context).requestFocus(nextFocus),
-      );
-
-  Widget reissueSwitch() => SwitchListTile(
-        title: Text('Reissuable', style: Theme.of(context).switchText),
-        value: reissueValue,
-        activeColor: Theme.of(context).backgroundColor,
-        onChanged: (bool value) {
-          setState(() {
-            reissueValue = value;
-          });
-        },
       );
 
   Widget reissueRow() => Row(
@@ -288,23 +368,16 @@ class _SubCreateState extends State<SubCreate> {
             disabled: !enabled,
           )));
 
-  void _produceFeeModal() {
-    SelectionItems(context, modalSet: SelectionSet.Decimal)
-        .build(decimalPrefix: quantityController.text);
-  }
-
   bool nameValidation(String name) {
-    var ret = true;
     if (!(name.length > 2 && name.length <= remainingNameLength)) {
       nameValidationErr = '${remainingNameLength - nameController.text.length}';
-      ret = false;
+      return false;
     } else if (name.endsWith('.') || name.endsWith('_')) {
       nameValidationErr = 'cannot end with special character';
-      ret = false;
-    } else {
-      nameValidationErr = null;
+      return false;
     }
-    return ret;
+    nameValidationErr = null;
+    return true;
   }
 
   void validateName({String? name}) {
@@ -316,7 +389,35 @@ class _SubCreateState extends State<SubCreate> {
     }
   }
 
-  bool ipfsValidation(String ipfs) => ipfs.length <= SubCreate.ipfsLength;
+  bool verifierValidation(String verifier) {
+    if (verifier.length > remainingVerifierLength) {
+      verifierValidationErr =
+          '${remainingVerifierLength - verifierController.text.length}';
+      return false;
+      //} else if (verifier.endsWith('.') || verifier.endsWith('_')) {
+      //  verifierValidationErr = 'allowed characters: A-Z, 0-9, (._#&|!)';
+      //  ret = false;
+    } else if ('('.allMatches(verifier).length !=
+        ')'.allMatches(verifier).length) {
+      verifierValidationErr =
+          '${'('.allMatches(verifier).length} open parenthesis, '
+          '${')'.allMatches(verifier).length} closed parenthesis';
+      return false;
+    }
+    verifierValidationErr = null;
+    return true;
+  }
+
+  void validateVerifier({String? verifier}) {
+    verifier = verifier ?? verifierController.text;
+    var oldValidation = verifierValidated;
+    verifierValidated = verifierValidation(verifier);
+    if (oldValidation != verifierValidated || !verifierValidated) {
+      setState(() => {});
+    }
+  }
+
+  bool ipfsValidation(String ipfs) => ipfs.length <= CreateAsset.ipfsLength;
 
   void validateIPFS({String? ipfs}) {
     ipfs = ipfs ?? ipfsController.text;
@@ -329,7 +430,7 @@ class _SubCreateState extends State<SubCreate> {
 
   bool quantityValidation(int quantity) =>
       quantityController.text != '' &&
-      quantity <= SubCreate.quantityMax &&
+      quantity <= CreateAsset.quantityMax &&
       quantity > 0;
 
   void validateQuantity({int? quantity}) {
@@ -356,31 +457,35 @@ class _SubCreateState extends State<SubCreate> {
   bool get enabled =>
       nameController.text.length > 2 &&
       nameValidation(nameController.text) &&
-      quantityController.text != '' &&
-      quantityValidation(quantityController.text.toInt()) &&
-      decimalController.text != '' &&
-      decimalValidation(decimalController.text.toInt()) &&
+      (needsQuantity
+          ? quantityController.text != '' &&
+              quantityValidation(quantityController.text.toInt())
+          : true) &&
+      (needsDecimal
+          ? decimalController.text != '' &&
+              decimalValidation(decimalController.text.toInt())
+          : true) &&
+      (isNFT ? ipfsController.text != '' : true) &&
       ipfsValidation(ipfsController.text);
 
   void submit() {
     if (enabled) {
       FocusScope.of(context).unfocus();
 
-      /// make the send request
-      var createRequest = MainCreateRequest(
-          name: nameController.text,
-          ipfs: ipfsController.text,
-          quantity: 0,
-          decimals: 0,
-          reissuable: reissueValue,
-          parent: 'PARENT/ASSET/PATH/#');
-
       /// send them to transaction checkout screen
-      confirmSend(createRequest);
+      checkout(GenericCreateRequest(
+        name: nameController.text,
+        ipfs: ipfsController.text,
+        quantity: needsQuantity ? quantityController.text.toInt() : null,
+        decimals: needsDecimal ? decimalController.text.toInt() : null,
+        reissuable: needsReissue ? reissueValue : null,
+        verifier: needsVerifier ? verifierController.text : null,
+        parent: isSub ? widget.parent : null,
+      ));
     }
   }
 
-  void confirmSend(MainCreateRequest createRequest) {
+  void checkout(GenericCreateRequest createRequest) {
     /// send request to the correct stream
     //streams.spend.make.add(createRequest);
 
@@ -398,18 +503,26 @@ class _SubCreateState extends State<SubCreate> {
           paymentSymbol: 'RVN',
           items: [
             /// send the correct items
-            ['Parent', 'PARENT/ASSET/PATH/#', '2'],
+            if (isSub)
+              [
+                'Parent',
+                '${widget.parent}/${isNFT || isQualifier ? '#' : isChannel ? '~' : ''}',
+                '2'
+              ],
             ['Asset Name', nameController.text, '2'],
-            ['Quantity', quantityController.text],
-            ['Decimals', decimalController.text],
+            if (needsQuantity) ['Quantity', quantityController.text],
+            if (needsDecimal) ['Decimals', decimalController.text],
             ['IPFS/Txid', ipfsController.text, '9'],
-            [
-              'Reissuable',
-              reissueValue
-                  ? 'Yes'
-                  : 'NO  (WARNING: These settings will be PERMANENT forever!)',
-              '3'
-            ],
+            if (needsVerifier)
+              ['Verifier String', verifierController.text, '6'],
+            if (needsReissue)
+              [
+                'Reissuable',
+                reissueValue
+                    ? 'Yes'
+                    : 'NO  (WARNING: These settings will be PERMANENT forever!)',
+                '3'
+              ],
           ],
           fees: [
             ['Transaction Fee', 'calculating fee...']
@@ -417,12 +530,38 @@ class _SubCreateState extends State<SubCreate> {
           total: 'calculating total...',
           buttonAction: () => null,
 
-          /// send the SubCreate request to the right stream
+          /// send the MainCreate request to the right stream
           //streams.spend.send.add(streams.spend.made.value),
           buttonIcon: MdiIcons.arrowTopRightThick,
-          buttonWord: 'Send',
+          buttonWord: 'Create',
         )
       },
     );
+  }
+
+  void formatName() {
+    nameController.text = nameController.text.substring(0, remainingNameLength);
+    if (nameController.text.endsWith('_') ||
+        nameController.text.endsWith('.')) {
+      nameController.text =
+          nameController.text.substring(0, nameController.text.length - 1);
+    }
+  }
+
+  void formatQuantity() =>
+      quantityController.text = quantityController.text.isInt
+          ? quantityController.text.toInt().toCommaString()
+          : quantityController.text;
+
+  void _produceDecimalModal() {
+    SelectionItems(context, modalSet: SelectionSet.Decimal)
+        .build(decimalPrefix: quantityController.text);
+  }
+
+  void _produceAdminAssetModal() {
+    SelectionItems(context, modalSet: SelectionSet.Admins).build(
+        holdingNames: Current.adminNames
+            .map((String name) => name.replaceAll('!', ''))
+            .toList());
   }
 }

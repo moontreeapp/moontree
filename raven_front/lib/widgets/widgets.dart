@@ -6,6 +6,7 @@ export 'back/back_layer.dart';
 export 'back/nav_drawer.dart';
 export 'back/balance_header.dart';
 export 'front/assets.dart';
+export 'front/create.dart';
 export 'front/sub_assets.dart';
 export 'front/holdings.dart';
 export 'front/loader.dart';
