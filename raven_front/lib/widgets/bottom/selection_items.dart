@@ -282,7 +282,7 @@ class SelectionItems {
           components.navigator.routeContext!,
           '/create/' +
               {
-                SelectionOption.Sub_Asset: 'sub',
+                SelectionOption.Sub_Asset: 'main/sub',
                 SelectionOption.NFT: 'nft',
                 SelectionOption.Messaging_Channel_Asset: 'channel',
               }[name]!,

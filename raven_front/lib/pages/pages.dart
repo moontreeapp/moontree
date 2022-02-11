@@ -7,6 +7,7 @@ import 'package:raven_front/pages/create/main.dart';
 import 'package:raven_front/pages/create/qualifier.dart';
 import 'package:raven_front/pages/create/channel.dart';
 import 'package:raven_front/pages/create/restricted.dart';
+import 'package:raven_front/pages/create/sub.dart';
 import 'package:raven_front/pages/misc/loading.dart';
 import 'package:raven_front/pages/misc/scan.dart';
 import 'package:raven_front/pages/security/login.dart';
@@ -45,6 +46,7 @@ class pages {
   static QualifierCreate qualifierCreate = QualifierCreate();
   static ChannelCreate channelCreate = ChannelCreate();
   static RestrictedCreate restrictedCreate = RestrictedCreate();
+  static SubCreate subCreate = SubCreate();
   static Checkout checkout = Checkout();
   static TransactionPage transaction = TransactionPage();
   static Receive receive = Receive();
@@ -79,8 +81,10 @@ class pages {
         '/create/nft': (context) => nftCreate,
         '/create/main': (context) => mainCreate,
         '/create/qualifier': (context) => qualifierCreate,
+        //'/create/qualifier/sub': (context) => subQualifierCreate,
         '/create/channel': (context) => channelCreate,
         '/create/restricted': (context) => restrictedCreate,
+        '/create/main/sub': (context) => subCreate,
         '/security/change': (context) => changePassword,
         '/security/resume': (context) => changeResume,
         '/security/remove': (context) => removePassword,

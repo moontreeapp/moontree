@@ -85,6 +85,27 @@ class RestrictedCreateRequest {
   });
 }
 
+class GenericCreateRequest {
+  late String name;
+  late String ipfs;
+  late int? quantity;
+  late int? decimals;
+  late String? verifier;
+  late bool? reissuable;
+  late String?
+      parent; // you have to use the wallet that holds the prent if sub asset
+
+  GenericCreateRequest({
+    required this.name,
+    required this.ipfs,
+    this.quantity,
+    this.decimals,
+    this.verifier,
+    this.reissuable,
+    this.parent,
+  });
+}
+
 class SendRequest {
   late bool useWallet;
   late bool sendAll;
