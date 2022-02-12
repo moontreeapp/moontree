@@ -189,21 +189,33 @@ class _HoldingList extends State<HoldingList> {
           leading: Container(
               height: 40,
               width: 40,
-              child: components.icons.assetAvatar(holding.symbol)),
+              child: components.icons.assetAvatar(holding.admin != null
+                  ? holding.adminSymbol!
+                  : holding.restricted != null
+                      ? holding.restrictedSymbol!
+                      : holding.qualifier != null
+                          ? holding.qualifierSymbol!
+                          : holding.channel != null
+                              ? holding.channelSymbol!
+                              : holding.unique != null
+                                  ? holding.uniqueSymbol!
+                                  : holding.symbol)),
           title:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text(holding.symbol == 'RVN' ? 'Ravencoin' : holding.symbol,
                   style: Theme.of(context).holdingName),
-              holding.length > 1
-                  ? Text('•' * (holding.length - 1),
-                      //(holding.admin != null ? '•' : '') +
-                      //    (holding.restricted != null ? '•' : '') +
-                      //    (holding.qualifier != null ? '•' : '') +
-                      //    (holding.unique != null ? '•' : '') +
-                      //    (holding.channel != null ? '•' : ''),
-                      style: Theme.of(context).holdingValue)
-                  : SizedBox(width: 1),
+
+              /// replaced by admin icon as default
+              //holding.length > 1
+              //    ? Text('•' * (holding.length - 1),
+              //        //(holding.admin != null ? '•' : '') +
+              //        //    (holding.restricted != null ? '•' : '') +
+              //        //    (holding.qualifier != null ? '•' : '') +
+              //        //    (holding.unique != null ? '•' : '') +
+              //        //    (holding.channel != null ? '•' : ''),
+              //        style: Theme.of(context).holdingValue)
+              //    : SizedBox(width: 1),
             ]),
             Text(
                 components.text.securityAsReadable(holding.balance!.value,
