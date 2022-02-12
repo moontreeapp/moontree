@@ -28,15 +28,12 @@ class Identicon {
 
   void _generateColors() {
     var lightenPercent = _getShade();
-    var lightenPercentBack =
-        name.endsWith('!') ? lightenPercent / 2 : lightenPercent;
     if (name.startsWith('MOONTREE') || name.startsWith('MT/')) {
       foregroundColor = _getGreenColorShade(lightenPercent);
-      backgroundColor =
-          _getWhiteColorShade(admin: lightenPercentBack < lightenPercent);
+      backgroundColor = _getWhiteColorShade(lightenPercent);
     } else {
       foregroundColor = _getOrangeColorShade(lightenPercent);
-      backgroundColor = _getBlueColorShade(lightenPercentBack);
+      backgroundColor = _getBlueColorShade(lightenPercent);
     }
   }
 
@@ -74,17 +71,12 @@ class Identicon {
     ];
   }
 
-  List<int> _getWhiteColorShade({bool admin = false}) {
-    if (admin) {
+  List<int> _getWhiteColorShade(double lightenPercent) {
+    if (lightenPercent >= .333) {
       return [33, 33, 33];
     } else {
       return [255, 255, 255];
     }
-    //if (lightenPercent >= .333) {
-    //  return [33, 33, 33];
-    //} else {
-    //  return [255, 255, 255];
-    //}
   }
 
   bool _bitIsOne(int n, List<int> hashBytes) {

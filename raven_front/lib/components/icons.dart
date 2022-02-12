@@ -1,14 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fnv/fnv.dart';
-//import 'package:identicon/identicon.dart';
-import 'package:raven_back/extensions/string.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/records/records.dart';
 import 'package:raven_front/services/storage.dart';
-import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/identicon.dart';
 
 class IconComponents {
@@ -19,11 +15,9 @@ class IconComponents {
 
   Widget income(BuildContext context) =>
       Image.asset('assets/icons/receive/receive_green.png');
-  //Icon(Icons.south_west, size: 12.0, color: Theme.of(context).good);
 
   Widget out(BuildContext context) =>
       Image.asset('assets/icons/send/send_red.png');
-  //Icon(Icons.north_east, size: 12.0, color: Theme.of(context).bad);
 
   Icon importDisabled(BuildContext context) =>
       Icon(Icons.vpn_key_rounded, color: Theme.of(context).disabledColor);
@@ -44,9 +38,6 @@ class IconComponents {
       return ret;
     }
     return _assetAvatarGeneratedIdenticon(asset, height: height, width: width);
-    //return _assetJdenticon(asset, height: height, width: width);
-    //return _assetAvataridenticon(asset, height: height, width: width) ??
-    //    _assetAvatarGenerated(asset, height: height, width: width);
   }
 
   Widget _assetAvatarRVN({double? height, double? width}) => Image.asset(
@@ -66,7 +57,6 @@ class IconComponents {
             AssetLogos().readImageFileNow(security.asset?.logo?.data ?? ''),
             height: height,
             width: width);
-        //settings.primaryIndex.getOne(SettingName.Local_Path)!.value
       } catch (e) {
         print(
             'unable to open image asset file for ${security.asset?.logo?.data}: $e');
@@ -80,39 +70,83 @@ class IconComponents {
     double? width,
   }) {
     var imageDetails = Identicon().generate(asset);
-    return Container(
-      height: 40,
-      width: 40,
-      decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-              width: 1,
-
-              /// I think the border should change instead of the background
-              /// image based upon what type of asset it is...
-              /// gold for admin
-              /// silver or x for restricted
-              /// brons or y for qualifier
-              /// do we care about subassets? probably...
-              /// yellow for NFT
-              /// brons or x for sub qualifier
-              /// main can just be the foreground color like we have it
-              color: Color.fromARGB(
-                255,
-                imageDetails.foreground[0],
-                imageDetails.foreground[1],
-                imageDetails.foreground[2],
-              ))),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(100.0),
-        child: Center(
-          child: Container(
-            child: Image.memory(Uint8List.fromList(imageDetails.image)),
+    var indicator = generateIndicator(name: asset, imageDetails: imageDetails);
+    return Stack(alignment: Alignment.bottomRight, children: [
+      Container(
+        height: 40,
+        width: 40,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+                width: 2,
+                color: Color.fromARGB(
+                  255,
+                  imageDetails.foreground[0],
+                  imageDetails.foreground[1],
+                  imageDetails.foreground[2],
+                ))),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(100.0),
+          child: Center(
+            child: Container(
+              child: Image.memory(Uint8List.fromList(imageDetails.image)),
+            ),
           ),
         ),
       ),
-    );
+      if (indicator != null) indicator,
+    ]);
   }
+
+  Widget? generateIndicator({
+    required String name,
+    required ImageDetails imageDetails,
+  }) {
+    if (name.startsWith('#')) {
+      return Icon(Icons.ac_unit,
+          color: getIndicatorColor(imageDetails.background));
+    }
+    if (name.startsWith('\$')) {
+      return Icon(MdiIcons.lock,
+          color: getIndicatorColor(imageDetails.background));
+    }
+    if (name.endsWith('!')) {
+      //if (name.startsWith('M')) {
+      return Container(
+          height: 20,
+          width: 20,
+          decoration: BoxDecoration(
+              color: Color.fromARGB(
+                255,
+                imageDetails.background[0],
+                imageDetails.background[1],
+                imageDetails.background[2],
+              ),
+              shape: BoxShape.circle,
+              border: Border.all(
+                  width: 2,
+                  color: Color.fromARGB(
+                    255,
+                    imageDetails.foreground[0],
+                    imageDetails.foreground[1],
+                    imageDetails.foreground[2],
+                  ))),
+          child: ClipRRect(
+              borderRadius: BorderRadius.circular(100.0),
+              child: Center(
+                  child: Container(
+                      child: Icon(MdiIcons.crown,
+                          size: 14,
+                          color:
+                              getIndicatorColor(imageDetails.background))))));
+    }
+    return null;
+  }
+
+  Color getIndicatorColor(List<int> backgroundColor) {
+    return backgroundColor.sum() >= 128 ? Colors.black : Colors.white;
+  }
+
 /*
 import 'package:raven_front/widgets/other/circle_gradient.dart';
   /// no logo? no problem, we'll make one...
