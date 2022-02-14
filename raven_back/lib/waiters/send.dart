@@ -11,10 +11,8 @@ class SendWaiter extends Waiter {
       if (sendRequest != null) {
         await Future.delayed(const Duration(milliseconds: 500));
         var tuple;
-        print('MAKING');
         try {
           tuple = services.transaction.make.transactionBy(sendRequest);
-          print('WORKED');
         } on InsufficientFunds catch (e) {
           streams.app.snack.add(Snack(
             message: 'Send Failure',
@@ -30,8 +28,6 @@ class SendWaiter extends Waiter {
         }
         ravencoin.Transaction tx = tuple.item1;
         SendEstimate estimate = tuple.item2;
-        print('ESATIME:');
-        print(estimate);
         streams.spend.made.add(tx.toHex());
         streams.spend.estimate.add(estimate);
         streams.spend.make.add(null);
