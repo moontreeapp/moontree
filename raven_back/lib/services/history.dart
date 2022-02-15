@@ -194,29 +194,12 @@ class HistoryService {
         value = utils.amountToSat(vout.scriptPubKey.amount,
             divisibility: vout.scriptPubKey.units ?? 8);
         //if we have no record of it in res.securities...
-        var meta = await client.getMeta(symbol);
-        if (meta != null) {
-          value = utils.amountToSat(vout.scriptPubKey.amount,
-              divisibility: vout.scriptPubKey.units ?? meta.divisions);
-          asset = Asset(
-            symbol: meta.symbol,
-            metadata: (await client.getTransaction(meta.source.txHash))
-                    .vout[meta.source.txPos]
-                    .scriptPubKey
-                    .ipfsHash ??
-                '',
-            satsInCirculation: meta.satsInCirculation,
-            divisibility: meta.divisions,
-            reissuable: meta.reissuable == 1,
-            transactionId: meta.source.txHash,
-            position: meta.source.txPos,
-          );
-          streams.asset.added.add(asset);
-          security = Security(
-            symbol: meta.symbol,
-            securityType: SecurityType.RavenAsset,
-          );
-          await res.securities.save(security);
+        var assetRetrieved =
+            await services.download.asset.get(symbol, vout: vout);
+        if (assetRetrieved != null) {
+          value = assetRetrieved.value;
+          asset = assetRetrieved.asset;
+          security = assetRetrieved.security;
         }
       } else if (vout.scriptPubKey.type == 'new_asset') {
         symbol = vout.scriptPubKey.asset!;
