@@ -135,6 +135,7 @@ class ApiService {
       await streams.client.client.value!.getTransaction(transactionId);
 
   /// we should instead just be able to send an empty string and make one call
+  /// this returns too much data to be useful. we don't use this anymore.
   Future<Iterable<dynamic>> getAllAssetNames() async => [
         for (var char in 'abcdefghijklmnopqrstuvwxyz'.toUpperCase().split(''))
           await streams.client.client.value!.getAssetsByPrefix(char)

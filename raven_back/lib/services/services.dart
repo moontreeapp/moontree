@@ -1,4 +1,5 @@
 import 'account.dart';
+import 'download.dart';
 import 'history.dart';
 import 'balance.dart';
 import 'busy.dart';
@@ -20,4 +21,5 @@ class services {
   static RateService rate = RateService();
   static WalletService wallet = WalletService();
   static PasswordService password = PasswordService();
+  static DownloadService download = DownloadService();
 }

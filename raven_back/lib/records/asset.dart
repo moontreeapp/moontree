@@ -106,6 +106,11 @@ class Asset with EquatableMixin {
 
   String get assetTypeName => assetType.enumString;
 
+  bool get isSub =>
+      symbol.contains('/') && !(symbol.startsWith('\$') || symbol.endsWith('!'))
+          ? true
+          : false;
+
   //String? get subSymbol => main ? '/${symbol}' : null; // sub mains allowed
   //String? get adminSymbol => admin ? '${symbol}!' : null; // must be top
   //String? get restrictedSymbol =>

@@ -265,6 +265,24 @@ class _NavDrawerState extends State<NavDrawer> {
                   onPressed: (BuildContext context) =>
                       Navigator.pushNamed(context, '/settings/language')),
               */
+
+          SettingsTile(
+              title: 'test',
+              titleTextStyle: Theme.of(context).drawerDestination,
+              leading: Icon(Icons.info_outline_rounded),
+              onPressed: (BuildContext context) async {
+                //print(await services.client.api.getAssetNames('abc'));
+                services.download.asset.allAdminsSubs();
+                //print(
+                //    res.assets.bySymbol.getOne('WXRAVEN/P2P_MARKETPLACE/TEST'));
+                //print(res.assets.bySymbol
+                //    .getOne('WXRAVEN/P2P_MARKETPLACE/TEST!'));
+                //print(res.assets.bySymbol.getOne('ABC/VOTETOKEN'));
+                //print(res.assets.byAssetType
+                //    .getAll(AssetType.Admin)
+                //    .where((asset) => !asset.symbol.contains('/'))
+                //    .map((asset) => asset.symbol));
+              }),
 /*
           destination(
             icon: MdiIcons.shieldKey,

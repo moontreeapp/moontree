@@ -73,6 +73,7 @@ class HistoryService {
     if (allDone) {
       await saveDanglingTransactions(client);
       await services.balance.recalculateAllBalances();
+      services.download.asset.allAdminsSubs();
     }
     return allDone;
   }
