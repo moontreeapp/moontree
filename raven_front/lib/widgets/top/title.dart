@@ -68,38 +68,38 @@ class _PageTitleState extends State<PageTitle> {
     return body();
   }
 
-  Widget body() => FittedBox(
-      fit: BoxFit.fitWidth,
-      child: Text(
-          {
-                '/settings/import_export': 'Import / Export',
-                '/settings/settings': 'Settings',
-              }[settingTitle] ??
+  Widget body() => pageTitle == 'main' || pageTitle == ''
+      ? Text('')
+      : FittedBox(
+          fit: BoxFit.fitWidth,
+          child: Text(
               {
-                '': '',
-                'main': '',
-                'Send': '',
-                'Import_export': 'Import / Export',
-                'Change': 'Security',
-                'Remove': 'Security',
-                'Verify': 'Security',
-                'Receive': 'Receive',
-                'Channel': 'Create Message Channel',
-                'Nft': 'Create NFT',
-                'Main': 'Create Asset',
-                'Qualifier': 'Create Qualifier',
-                'Restricted': 'Create Restricted Asset',
-                'Transactions':
-                    ((streams.spend.form.value?.symbol ?? 'RVN') == 'RVN')
-                        ? 'Ravencoin'
-                        : streams.spend.form.value!.symbol!.endsWith('!')
-                            ? streams.spend.form.value!.symbol!
-                                .replaceAll('!', '') //' (Admin)')
-                            : streams.spend.form.value?.symbol,
-                'Asset': assetTitle.split('/').last,
-              }[pageTitle] ??
-              (pageTitle == 'Wallet'
-                  ? appContext.enumString.toTitleCase()
-                  : pageTitle),
-          style: Theme.of(context).pageTitle));
+                    '/settings/import_export': 'Import / Export',
+                    '/settings/settings': 'Settings',
+                  }[settingTitle] ??
+                  {
+                    'Send': '',
+                    'Import_export': 'Import / Export',
+                    'Change': 'Security',
+                    'Remove': 'Security',
+                    'Verify': 'Security',
+                    'Receive': 'Receive',
+                    'Channel': 'Create Message Channel',
+                    'Nft': 'Create NFT',
+                    'Main': 'Create Asset',
+                    'Qualifier': 'Create Qualifier',
+                    'Restricted': 'Create Restricted Asset',
+                    'Transactions':
+                        ((streams.spend.form.value?.symbol ?? 'RVN') == 'RVN')
+                            ? 'Ravencoin'
+                            : streams.spend.form.value!.symbol!.endsWith('!')
+                                ? streams.spend.form.value!.symbol!
+                                    .replaceAll('!', '') //' (Admin)')
+                                : streams.spend.form.value?.symbol,
+                    'Asset': assetTitle.split('/').last,
+                  }[pageTitle] ??
+                  (pageTitle == 'Wallet'
+                      ? appContext.enumString.toTitleCase()
+                      : pageTitle),
+              style: Theme.of(context).pageTitle));
 }
