@@ -102,15 +102,15 @@
                     <mxGeometry x="40" y="500" width="790" height="120" as="geometry"/>
                 </mxCell>
                 <mxCell id="25" value="Usecases of Streams (use-types)" style="swimlane;" parent="1" vertex="1">
-                    <mxGeometry x="40" y="620" width="760" height="620" as="geometry"/>
+                    <mxGeometry x="40" y="620" width="760" height="740" as="geometry"/>
                 </mxCell>
                 <mxCell id="41" value="Process Streams&#10;(to inidiate a process on the backend)" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="25" vertex="1">
-                    <mxGeometry x="40" y="300" width="680" height="300" as="geometry"/>
+                    <mxGeometry x="40" y="300" width="680" height="390" as="geometry"/>
                 </mxCell>
-                <mxCell id="52" value="streams.app.activity - Current state of use of app" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="41">
+                <mxCell id="52" value="streams.app.activity - Current state of use of app" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="41" vertex="1">
                     <mxGeometry y="30" width="680" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="53" value="streams.app.status - if the app is in use or not - this is used to stop unnecessary processing if the user minimized the app" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;fontStyle=0" vertex="1" parent="41">
+                <mxCell id="53" value="streams.app.status - if the app is in use or not - this is used to stop unnecessary processing if the user minimized the app" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;fontStyle=0" parent="41" vertex="1">
                     <mxGeometry y="60" width="680" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="44" value="streams.spend.make - start the process of making a send transaction (mainly calculate fee)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="41" vertex="1">
@@ -119,20 +119,29 @@
                 <mxCell id="43" value="streams.spend.made - after we calculate the fee we have the information for the user to approve" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="41" vertex="1">
                     <mxGeometry y="120" width="680" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="57" value="streams.spend.estimate - after we calculate the fee we have the information for the user to approve" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="41">
+                <mxCell id="57" value="streams.spend.estimate - after we calculate the fee we have the information for the user to approve" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="41" vertex="1">
                     <mxGeometry y="150" width="680" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="58" value="streams.spend.send - triggered by the user approving the send" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="41">
+                <mxCell id="58" value="streams.spend.send - triggered by the user approving the send" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="41" vertex="1">
                     <mxGeometry y="180" width="680" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="59" value="streams.spend.success - if the send transaction was successful, notify the user this way" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="41">
+                <mxCell id="59" value="streams.spend.success - if the send transaction was successful, notify the user this way" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="41" vertex="1">
                     <mxGeometry y="210" width="680" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="106" value="streams.import.attempt - a request from the user to import a specific something" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="41">
+                <mxCell id="106" value="streams.import.attempt - a request from the user to import a specific something" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="41" vertex="1">
                     <mxGeometry y="240" width="680" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="105" value="streams.import.success - if the import was successful, notify the user this way" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="41">
+                <mxCell id="105" value="streams.asset.added - a new asset has been discovered, must get ipfs logo data" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="41" vertex="1">
                     <mxGeometry y="270" width="680" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="107" value="streams.create.form - information added on the create page for creating assets" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="41">
+                    <mxGeometry y="300" width="680" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="108" value="streams.password.update - request to update the password to be a new one" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="41">
+                    <mxGeometry y="330" width="680" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="109" value="streams.password.updated - status of most recent update request" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="41">
+                    <mxGeometry y="360" width="680" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="45" value="Sync Streams&#10;(to keep elements of front end in sync)" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="25" vertex="1">
                     <mxGeometry x="40" y="60" width="680" height="180" as="geometry"/>
@@ -146,34 +155,34 @@
                 <mxCell id="48" value="streams.app.snack - message to send to snackbar" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="45" vertex="1">
                     <mxGeometry y="90" width="680" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="51" value="streams.app.context - which part of the app we're in Wallet, Manage, Swap" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="45">
+                <mxCell id="51" value="streams.app.context - which part of the app we're in Wallet, Manage, Swap" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="45" vertex="1">
                     <mxGeometry y="120" width="680" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="50" value="streams.spend.form - information input into the front send page" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" vertex="1" parent="45">
+                <mxCell id="50" value="streams.spend.form - information input into the front send page" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="45" vertex="1">
                     <mxGeometry y="150" width="680" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="60" value="Send Stream Flow" style="swimlane;" vertex="1" parent="1">
-                    <mxGeometry x="40" y="1280" width="760" height="510" as="geometry"/>
+                <mxCell id="60" value="Send Stream Flow" style="swimlane;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="1410" width="760" height="510" as="geometry"/>
                 </mxCell>
-                <mxCell id="75" value="streams.spend.form" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="60" source="61" target="65">
+                <mxCell id="75" value="streams.spend.form" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="60" source="61" target="65" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="61" value="User enters information on Send form" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                <mxCell id="61" value="User enters information on Send form" style="rounded=0;whiteSpace=wrap;html=1;" parent="60" vertex="1">
                     <mxGeometry x="20" y="40" width="160" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="65" value="Back Layer on front end updates" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                <mxCell id="65" value="Back Layer on front end updates" style="rounded=0;whiteSpace=wrap;html=1;" parent="60" vertex="1">
                     <mxGeometry x="360" y="40" width="160" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="76" value="streams.spend.make" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="60" source="66" target="68">
+                <mxCell id="76" value="streams.spend.make" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="60" source="66" target="68" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="78" value="navigate" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="60" source="66" target="77">
+                <mxCell id="78" value="navigate" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="60" source="66" target="77" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="66" value="User enters information on Send form" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                <mxCell id="66" value="User enters information on Send form" style="rounded=0;whiteSpace=wrap;html=1;" parent="60" vertex="1">
                     <mxGeometry x="20" y="110" width="160" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="79" value="streams.spend.estimate" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="60" source="68" target="77">
+                <mxCell id="79" value="streams.spend.estimate" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=1;entryY=0;entryDx=0;entryDy=0;" parent="60" source="68" target="77" edge="1">
                     <mxGeometry x="-0.1515" relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="440" y="190"/>
@@ -183,60 +192,60 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="68" value="Background process calculates fee" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                <mxCell id="68" value="Background process calculates fee" style="rounded=0;whiteSpace=wrap;html=1;" parent="60" vertex="1">
                     <mxGeometry x="360" y="110" width="160" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="81" value="reload upon new estimate" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="60" source="77" target="80">
+                <mxCell id="81" value="reload upon new estimate" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="60" source="77" target="80" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="77" value="checkout screen" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                <mxCell id="77" value="checkout screen" style="rounded=0;whiteSpace=wrap;html=1;" parent="60" vertex="1">
                     <mxGeometry x="20" y="240" width="160" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="85" style="edgeStyle=none;html=1;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="60" source="80" target="84">
+                <mxCell id="85" style="edgeStyle=none;html=1;entryX=1;entryY=0;entryDx=0;entryDy=0;" parent="60" source="80" target="84" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="80" value="checkout screen&lt;br&gt;(with fee)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                <mxCell id="80" value="checkout screen&lt;br&gt;(with fee)" style="rounded=0;whiteSpace=wrap;html=1;" parent="60" vertex="1">
                     <mxGeometry x="360" y="240" width="160" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="83" value=".value" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                <mxCell id="83" value=".value" style="rounded=0;whiteSpace=wrap;html=1;" parent="60" vertex="1">
                     <mxGeometry x="670" y="125" width="50" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="84" value="User confirms send" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                <mxCell id="84" value="User confirms send" style="rounded=0;whiteSpace=wrap;html=1;" parent="60" vertex="1">
                     <mxGeometry x="20" y="320" width="160" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="99" value="streams.app.snack" style="edgeStyle=none;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="60" source="87" target="97">
+                <mxCell id="99" value="streams.app.snack" style="edgeStyle=none;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" parent="60" source="87" target="97" edge="1">
                     <mxGeometry x="0.3333" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="100" value="streams.spend.success" style="edgeStyle=none;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="60" source="87" target="97">
+                <mxCell id="100" value="streams.spend.success" style="edgeStyle=none;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" parent="60" source="87" target="97" edge="1">
                     <mxGeometry x="-0.3333" y="-10" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="102" value="streams.spend.estimate" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" edge="1" parent="60" source="87" target="91">
+                <mxCell id="102" value="streams.spend.estimate" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" parent="60" source="87" target="91" edge="1">
                     <mxGeometry x="0.6522" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="103" value="streams.spend.made" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" edge="1" parent="60" source="87" target="91">
+                <mxCell id="103" value="streams.spend.made" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" parent="60" source="87" target="91" edge="1">
                     <mxGeometry x="-0.2" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="87" value="Background process sends contents of streams.spend.made to&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                <mxCell id="87" value="Background process sends contents of streams.spend.made to&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;" parent="60" vertex="1">
                     <mxGeometry x="360" y="320" width="160" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="86" value="streams.spend.make" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="60" source="84" target="87">
+                <mxCell id="86" value="streams.spend.make" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="60" source="84" target="87" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="190" y="150" as="sourcePoint"/>
                         <mxPoint x="370" y="150" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="89" value="back" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                <mxCell id="89" value="back" style="rounded=0;whiteSpace=wrap;html=1;" parent="60" vertex="1">
                     <mxGeometry x="600" y="180" width="50" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="88" value="navigate" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="60" source="80" target="89">
+                <mxCell id="88" value="navigate" style="edgeStyle=orthogonalEdgeStyle;html=1;" parent="60" source="80" target="89" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="600" y="230" as="targetPoint"/>
                         <Array as="points">
@@ -244,44 +253,44 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="91" value="null" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                <mxCell id="91" value="null" style="rounded=0;whiteSpace=wrap;html=1;" parent="60" vertex="1">
                     <mxGeometry x="560" y="270" width="160" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="92" value="streams.spend.estimate" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.25;entryY=0;entryDx=0;entryDy=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="60" source="89" target="91">
+                <mxCell id="92" value="streams.spend.estimate" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.25;entryY=0;entryDx=0;entryDy=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;" parent="60" source="89" target="91" edge="1">
                     <mxGeometry x="0.4483" relative="1" as="geometry">
                         <mxPoint x="372" y="180" as="sourcePoint"/>
                         <mxPoint x="190" y="250" as="targetPoint"/>
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="90" value="streams.spend.made" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="60" source="89" target="91">
+                <mxCell id="90" value="streams.spend.made" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" parent="60" source="89" target="91" edge="1">
                     <mxGeometry x="0.0476" y="10" relative="1" as="geometry">
                         <mxPoint x="690" y="290" as="targetPoint"/>
                         <mxPoint x="530" y="150" as="sourcePoint"/>
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="101" style="edgeStyle=none;html=1;" edge="1" parent="60" source="95" target="97">
+                <mxCell id="101" style="edgeStyle=none;html=1;" parent="60" source="95" target="97" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="95" value="Home&lt;br&gt;(with sending animation)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                <mxCell id="95" value="Home&lt;br&gt;(with sending animation)" style="rounded=0;whiteSpace=wrap;html=1;" parent="60" vertex="1">
                     <mxGeometry x="20" y="440" width="160" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="94" value="navigate" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="60" source="84" target="95">
+                <mxCell id="94" value="navigate" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="60" source="84" target="95" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="100" y="420" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="97" value="Snack Bar" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="60">
+                <mxCell id="97" value="Snack Bar" style="rounded=0;whiteSpace=wrap;html=1;" parent="60" vertex="1">
                     <mxGeometry x="360" y="440" width="160" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="82" value="streams.spend.made" style="edgeStyle=none;html=1;" edge="1" parent="1" source="68">
+                <mxCell id="82" value="streams.spend.made" style="edgeStyle=none;html=1;" parent="1" source="68" edge="1">
                     <mxGeometry relative="1" as="geometry">
-                        <mxPoint x="710" y="1420" as="targetPoint"/>
+                        <mxPoint x="710" y="1550" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="104" value="&lt;h1&gt;Process Patterns&lt;/h1&gt;&lt;p&gt;The above diagram for Send Stream Flow is the same pattern used in several processes with analogous streams. We use a similar pattern in Changing a password, a similar pattern in importing and exporting wallets, and even a simplified version of this in changing settings.&lt;/p&gt;&lt;p&gt;In all of these processes it comes down to one very simple pattern:&amp;nbsp;&lt;/p&gt;&lt;p&gt;1. the user supplies information&lt;br&gt;2. the front end fills a stream listened to by the backend&lt;br&gt;3. the back end fulfills or partially fulfills the request and pushes it's results onto a stream&lt;br&gt;4. which is listened to by the front end and updates the screen for the user&lt;/p&gt;&lt;p&gt;In the Send process there is extra back and forth, it is this pattern twice: once to calculate the fee, then send the transaction.&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
-                    <mxGeometry x="40" y="1840" width="760" height="320" as="geometry"/>
+                <mxCell id="104" value="&lt;h1&gt;Process Patterns&lt;/h1&gt;&lt;p&gt;The above diagram for Send Stream Flow is the same pattern used in several processes with analogous streams. We use a similar pattern in Changing a password, a similar pattern in importing and exporting wallets, and even a simplified version of this in changing settings.&lt;/p&gt;&lt;p&gt;In all of these processes it comes down to one very simple pattern:&amp;nbsp;&lt;/p&gt;&lt;p&gt;1. the user supplies information&lt;br&gt;2. the front end fills a stream listened to by the backend&lt;br&gt;3. the back end fulfills or partially fulfills the request and pushes it's results onto a stream&lt;br&gt;4. which is listened to by the front end and updates the screen for the user&lt;/p&gt;&lt;p&gt;In the Send process there is extra back and forth, it is this pattern twice: once to calculate the fee, then send the transaction.&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="1970" width="760" height="210" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

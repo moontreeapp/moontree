@@ -1,0 +1,58 @@
+<mxfile host="65bd71144e">
+    <diagram id="B2Imsyf_CLR86bu_pUIC" name="Page-1">
+        <mxGraphModel dx="1486" dy="472" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="13" style="edgeStyle=none;html=1;" edge="1" parent="1" source="2" target="12">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="&lt;b&gt;streams.import.attempt&lt;/b&gt;" style="shape=tape;whiteSpace=wrap;html=1;size=0.16653594970703126;" vertex="1" parent="1">
+                    <mxGeometry x="15" y="38" width="814" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.75;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="3" target="17">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="&lt;b&gt;streams.app.snack&lt;/b&gt;" style="shape=tape;whiteSpace=wrap;html=1;size=0.16653594970703126;" vertex="1" parent="1">
+                    <mxGeometry x="18" y="372" width="814" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="front end" style="swimlane;" vertex="1" parent="1">
+                    <mxGeometry x="45" y="160" width="93" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Import &lt;br&gt;Text" style="whiteSpace=wrap;html=1;" vertex="1" parent="4">
+                    <mxGeometry x="8.5" y="37" width="76" height="99" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Import" style="whiteSpace=wrap;html=1;" vertex="1" parent="4">
+                    <mxGeometry x="15.75" y="162" width="61.5" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" style="edgeStyle=none;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="10" target="8">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="205" y="264" as="targetPoint"/>
+                        <mxPoint x="195" y="329" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="20" style="edgeStyle=none;html=1;" edge="1" parent="1" source="8" target="2">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="&lt;div style=&quot;background-color: rgb(30 , 30 , 30) ; font-family: &amp;#34;consolas&amp;#34; , &amp;#34;courier new&amp;#34; , monospace ; font-weight: normal ; font-size: 14px ; line-height: 19px&quot;&gt;&lt;div style=&quot;color: rgb(212 , 212 , 212)&quot;&gt;&lt;span style=&quot;color: #4ec9b0&quot;&gt;streams&lt;/span&gt;&lt;span style=&quot;color: #d4d4d4&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #9cdcfe&quot;&gt;import&lt;/span&gt;&lt;span style=&quot;color: #d4d4d4&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #9cdcfe&quot;&gt;attempt&lt;/span&gt;.&lt;span style=&quot;color: rgb(220 , 220 , 170)&quot;&gt;add&lt;/span&gt;(&lt;/div&gt;&lt;div style=&quot;color: rgb(212 , 212 , 212)&quot;&gt;&lt;span style=&quot;color: rgb(78 , 201 , 176)&quot;&gt;&amp;nbsp; ImportRequest&lt;/span&gt;(&lt;/div&gt;&lt;div&gt;&lt;font color=&quot;#d4d4d4&quot;&gt;&amp;nbsp; &amp;nbsp;&amp;nbsp;&lt;/font&gt;&lt;span style=&quot;color: rgb(156 , 220 , 254)&quot;&gt;text&lt;/span&gt;&lt;font color=&quot;#d4d4d4&quot;&gt;: &lt;/font&gt;&lt;span style=&quot;color: rgb(156 , 220 , 254)&quot;&gt;text&lt;/span&gt;&lt;font color=&quot;#d4d4d4&quot;&gt;,&amp;nbsp;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(212 , 212 , 212)&quot;&gt;&lt;span style=&quot;color: #9cdcfe&quot;&gt;&amp;nbsp; &amp;nbsp; accountId&lt;/span&gt;&lt;span style=&quot;color: #d4d4d4&quot;&gt;:&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: #9cdcfe&quot;&gt;account&lt;/span&gt;&lt;span style=&quot;color: #d4d4d4&quot;&gt;.&lt;/span&gt;&lt;span style=&quot;color: #9cdcfe&quot;&gt;accountId&lt;/span&gt;&lt;span style=&quot;color: #d4d4d4&quot;&gt;));&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="158" y="202" width="278" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" style="edgeStyle=none;html=1;entryX=0.75;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="12" target="3">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="ImportWaiter&lt;br&gt;&lt;ul&gt;&lt;li style=&quot;text-align: left&quot;&gt;listens to streams.import.attempt&lt;/li&gt;&lt;li style=&quot;text-align: left&quot;&gt;attempts import&lt;/li&gt;&lt;li style=&quot;text-align: left&quot;&gt;if successful notifies&lt;/li&gt;&lt;li style=&quot;text-align: left&quot;&gt;either way adds null to stream.import.attempt&lt;/li&gt;&lt;/ul&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="460" y="172.5" width="248" height="149" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="front end" style="swimlane;" vertex="1" parent="1">
+                    <mxGeometry x="736" y="160" width="93" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="Home page" style="whiteSpace=wrap;html=1;" vertex="1" parent="15">
+                    <mxGeometry x="8.5" y="37" width="76" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="Snack Bar message" style="whiteSpace=wrap;html=1;" vertex="1" parent="15">
+                    <mxGeometry x="9" y="119" width="77" height="67" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

@@ -1,0 +1,37 @@
+<mxfile host="65bd71144e">
+    <diagram id="B2Imsyf_CLR86bu_pUIC" name="Page-1">
+        <mxGraphModel dx="1486" dy="472" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="536" value="Disk as single source of Truth" style="swimlane;" parent="1" vertex="1">
+                    <mxGeometry x="247" y="40" width="308" height="354" as="geometry"/>
+                </mxCell>
+                <mxCell id="525" value="Reservoir" style="rounded=1;whiteSpace=wrap;html=1;" parent="536" vertex="1">
+                    <mxGeometry x="17.5" y="157" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="533" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="536" source="526" target="525" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="526" value="Source (hive box)" style="rounded=0;whiteSpace=wrap;html=1;" parent="536" vertex="1">
+                    <mxGeometry x="17.5" y="258" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="524" value=".save" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="536" source="525" target="526" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="527" value=".save" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="536" source="528" target="525" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="528" value="Process (service)" style="ellipse;whiteSpace=wrap;html=1;" parent="536" vertex="1">
+                    <mxGeometry x="17.5" y="36" width="120" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="529" value="send data to res" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="536" vertex="1">
+                    <mxGeometry x="153.5" y="120" width="120" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="530" value="saves to box,&lt;br&gt;listens to box to modify in memory&lt;br&gt;and updates indecies" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="536" vertex="1">
+                    <mxGeometry x="170.5" y="208" width="120" height="63" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

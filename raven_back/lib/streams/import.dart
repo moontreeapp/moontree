@@ -10,5 +10,4 @@ class ImportRequest {
 
 class Import {
   final attempt = BehaviorSubject<ImportRequest?>.seeded(null);
-  final success = BehaviorSubject<bool?>.seeded(null);
 }

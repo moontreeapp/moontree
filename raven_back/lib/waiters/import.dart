@@ -12,17 +12,14 @@ class ImportWaiter extends Waiter {
         await Future.delayed(const Duration(milliseconds: 250));
         var importFrom = ImportFrom(
             text: importRequest.text, accountId: importRequest.accountId);
-        var success = await importFrom.handleImport();
-        if (success) {
+        if (await importFrom.handleImport()) {
           streams.app.snack.add(Snack(
               message: 'Sucessful Import', details: importFrom.importedMsg!));
-          streams.import.success.add(true);
         } else {
           streams.app.snack.add(Snack(
               message: 'Error Importing',
               details: importFrom.importedMsg!,
               positive: false));
-          streams.import.success.add(false);
         }
         streams.import.attempt.add(null);
         services.busy.createWalletOff('done importing wallet');

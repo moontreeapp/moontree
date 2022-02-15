@@ -1,20 +1,11 @@
 <mxfile host="65bd71144e">
     <diagram id="B2Imsyf_CLR86bu_pUIC" name="Page-1">
-        <mxGraphModel dx="828" dy="617" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="1486" dy="472" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
                 <mxCell id="186" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;flipH=1;rotation=-90;size=0.3428148148148129;" parent="1" vertex="1">
                     <mxGeometry x="327.82" y="25.94" width="33.75" height="629.37" as="geometry"/>
-                </mxCell>
-                <mxCell id="220" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="5" target="126" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="221" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="5" target="128" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="5" value="Master Seed" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="1" vertex="1">
-                    <mxGeometry x="90" y="260" width="80" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="147" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="126" target="143" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -111,12 +102,6 @@
                         <mxPoint x="520" y="630" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="198" value="Master Seed&lt;br&gt;as a setting&lt;br&gt;" style="shape=card;whiteSpace=wrap;html=1;size=0;" parent="1" vertex="1">
-                    <mxGeometry x="50" y="105" width="160" height="90" as="geometry"/>
-                </mxCell>
-                <mxCell id="200" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;flipH=1;rotation=-90;" parent="1" vertex="1">
-                    <mxGeometry x="106.25" y="185" width="47.5" height="75" as="geometry"/>
-                </mxCell>
                 <mxCell id="201" value="Key" style="swimlane;" parent="1" vertex="1">
                     <mxGeometry x="350" y="16.25" width="200" height="168.75" as="geometry"/>
                 </mxCell>
@@ -135,7 +120,7 @@
                 <mxCell id="222" value="Wallets&lt;br&gt;&lt;br&gt;- holds 2 types of models&lt;br&gt;" style="shape=card;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="455" y="200" width="205" height="118.75" as="geometry"/>
                 </mxCell>
-                <mxCell id="225" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="193">
+                <mxCell id="225" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="193" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="270" y="620" as="targetPoint"/>
                         <mxPoint x="199.59734693877556" y="772.5" as="sourcePoint"/>
