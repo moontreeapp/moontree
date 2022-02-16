@@ -162,8 +162,6 @@ class _TechnicalViewState extends State<TechnicalView> {
                         }))
               ])));
 
-//mpkrK1GLPPdqpaC8qxPVDT5bn5fkAE1UUE
-//leopard web return tilt height hundred tail focus view jungle alley twenty
   ///List _getWallets(accountId) => [
   ///      for (var wallet in wallets.data)
   ///        if (wallet.accountId == accountId) wallet

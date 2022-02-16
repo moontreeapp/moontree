@@ -65,18 +65,18 @@ class Identicon {
 
   List<int> _getGreenColorShade(double lightenPercent) {
     return [
-      120 + (lightenPercent * (255 - 120)).toInt(),
-      215 + (lightenPercent * (255 - 215)).toInt(),
-      0 + (lightenPercent * (255 - 0)).toInt(),
+      120 /*+ (lightenPercent * (255 - 120)).toInt()*/,
+      215 /*+ (lightenPercent * (255 - 215)).toInt()*/,
+      0 /*+ (lightenPercent * (255 - 0)).toInt()*/,
     ];
   }
 
   List<int> _getWhiteColorShade(double lightenPercent) {
-    if (lightenPercent >= .333) {
-      return [33, 33, 33];
-    } else {
-      return [255, 255, 255];
-    }
+    //if (lightenPercent >= .333) {
+    //  return [33, 33, 33];
+    //} else {
+    return [255, 255, 255];
+    //}
   }
 
   bool _bitIsOne(int n, List<int> hashBytes) {

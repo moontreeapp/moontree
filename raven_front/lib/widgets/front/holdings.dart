@@ -112,7 +112,6 @@ class _HoldingList extends State<HoldingList> {
     var rvnHolding = <Widget>[];
     var assetHoldings = <Widget>[];
     for (var holding in holdings.values) {
-      print('Holding: $holding');
       var thisHolding = ListTile(
           //dense: true,
           contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),

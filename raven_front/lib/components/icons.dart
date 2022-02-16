@@ -143,9 +143,8 @@ class IconComponents {
     return null;
   }
 
-  Color getIndicatorColor(List<int> backgroundColor) {
-    return backgroundColor.sum() >= 128 ? Colors.black : Colors.white;
-  }
+  Color getIndicatorColor(List<int> backgroundColor) =>
+      backgroundColor.sum() >= 128 ? Colors.black : Colors.white;
 
 /*
 import 'package:raven_front/widgets/other/circle_gradient.dart';
