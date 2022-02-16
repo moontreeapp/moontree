@@ -155,6 +155,7 @@ class _NavDrawerState extends State<NavDrawer> {
             name: 'About',
             link: '/settings/about',
           ),
+          /*
           SettingsTile(
               title: 'Clear Database',
               titleTextStyle: Theme.of(context).drawerDestination,
@@ -191,7 +192,6 @@ class _NavDrawerState extends State<NavDrawer> {
                 //    .where((asset) => !asset.symbol.contains('/'))
                 //    .map((asset) => asset.symbol));
               }),
-          /*
             */
         ],
       )
