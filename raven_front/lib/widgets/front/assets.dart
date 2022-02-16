@@ -96,10 +96,13 @@ class _AssetList extends State<AssetList> {
               contentPadding:
                   EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
               onTap: () {
+                print('len: ${asset.length} ASSET: $asset');
                 if (asset.length == 1 && asset.admin != null) {
-                  navigate(asset.mainSymbol!, wallet: wallet);
-                } else if (asset.admin != null && asset.main != null) {
-                  navigate(asset.mainSymbol!, wallet: wallet);
+                  navigate(asset.symbol, wallet: wallet);
+                } else if (asset.length == 2 &&
+                    asset.admin != null &&
+                    asset.main != null) {
+                  navigate(asset.symbol, wallet: wallet);
                 } else if (asset.length == 1) {
                   navigate(asset.singleSymbol!, wallet: wallet);
                 } else {
