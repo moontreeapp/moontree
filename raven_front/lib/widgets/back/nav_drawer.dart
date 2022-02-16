@@ -167,7 +167,6 @@ class _NavDrawerState extends State<NavDrawer> {
             name: 'Accounts',
             link: '/settings/technical',
           ),
-          /*
           destination(
             icon: MdiIcons.shieldKey,
             name: 'Checkout Template',
@@ -179,9 +178,11 @@ class _NavDrawerState extends State<NavDrawer> {
               leading: Icon(Icons.info_outline_rounded),
               onPressed: (BuildContext context) async {
                 //print(await services.client.api.getAssetNames('abc'));
-                services.download.asset.allAdminsSubs();
-                //print(
-                //    res.assets.bySymbol.getOne('WXRAVEN/P2P_MARKETPLACE/TEST'));
+                //services.download.asset.allAdminsSubs();
+                print(res.assets.data
+                    .where(
+                        (Asset asset) => asset.symbol.startsWith('MOONTREE2'))
+                    .map((e) => e.symbol));
                 //print(res.assets.bySymbol
                 //    .getOne('WXRAVEN/P2P_MARKETPLACE/TEST!'));
                 //print(res.assets.bySymbol.getOne('ABC/VOTETOKEN'));
@@ -190,6 +191,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 //    .where((asset) => !asset.symbol.contains('/'))
                 //    .map((asset) => asset.symbol));
               }),
+          /*
             */
         ],
       )

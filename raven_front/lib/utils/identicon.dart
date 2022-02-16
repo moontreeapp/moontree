@@ -143,7 +143,8 @@ class Identicon {
 
   ImageDetails generate(String text) {
     name = text;
-    hashedName = digest(utf8.encode(baseName())).toString();
+    name = baseName();
+    hashedName = digest(utf8.encode(name)).toString();
     _generateColors();
     var bytesLength = 16;
     var hexDigestByteList = List<int>.generate(bytesLength, (int i) {

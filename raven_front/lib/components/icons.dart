@@ -102,16 +102,7 @@ class IconComponents {
     required String name,
     required ImageDetails imageDetails,
   }) {
-    if (name.startsWith('#')) {
-      return Icon(Icons.ac_unit,
-          color: getIndicatorColor(imageDetails.background));
-    }
-    if (name.startsWith('\$')) {
-      return Icon(MdiIcons.lock,
-          color: getIndicatorColor(imageDetails.background));
-    }
-    if (name.endsWith('!')) {
-      //if (name.startsWith('M')) {
+    if (name.startsWith('#') || name.startsWith('\$') || name.endsWith('!')) {
       return Container(
           height: 20,
           width: 20,
@@ -135,7 +126,14 @@ class IconComponents {
               borderRadius: BorderRadius.circular(100.0),
               child: Center(
                   child: Container(
-                      child: Icon(MdiIcons.crown,
+                      child: Icon(
+                          name.endsWith('!')
+                              ? MdiIcons.crown
+                              : name.startsWith('#')
+                                  ? Icons.ac_unit
+                                  : name.startsWith('\$')
+                                      ? MdiIcons.lock
+                                      : Icons.circle_outlined,
                           size: 14,
                           color:
                               getIndicatorColor(imageDetails.background))))));
