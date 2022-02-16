@@ -49,56 +49,67 @@ class _SubAssetList extends State<SubAssetList> {
     setState(() {});
   }
 
-  Map<String, AssetHolding> assetHoldings({bool assetsOnly = false}) {
-    var holdings = assetsOnly
-        ? Current.holdings.where((Balance balance) => balance.security.isAsset)
-        : Current.holdings;
-    Map<String, AssetHolding> balances = {};
-    for (var balance in holdings) {
-      var baseSymbol =
-          balance.security.asset?.baseSymbol ?? balance.security.symbol;
-      var assetType =
-          balance.security.asset?.assetType ?? balance.security.securityType;
-      if (!balances.containsKey(baseSymbol)) {
-        balances[baseSymbol] = AssetHolding(
-          symbol: baseSymbol,
-          main: assetType == AssetType.Main ? balance : null,
-          admin: assetType == AssetType.Admin ? balance : null,
-          restricted: assetType == AssetType.Restricted ? balance : null,
-          qualifier: assetType == AssetType.Qualifier ? balance : null,
-          unique: assetType == AssetType.NFT ? balance : null,
-          channel: assetType == AssetType.Channel ? balance : null,
-          crypto: assetType == SecurityType.Crypto ? balance : null,
-          fiat: assetType == SecurityType.Fiat ? balance : null,
-        );
-      } else {
-        balances[baseSymbol] = AssetHolding.fromAssetHolding(
-          balances[baseSymbol]!,
-          main: assetType == AssetType.Main ? balance : null,
-          admin: assetType == AssetType.Admin ? balance : null,
-          restricted: assetType == AssetType.Restricted ? balance : null,
-          qualifier: assetType == AssetType.Qualifier ? balance : null,
-          unique: assetType == AssetType.NFT ? balance : null,
-          channel: assetType == AssetType.Channel ? balance : null,
-          crypto: assetType == SecurityType.Crypto ? balance : null,
-          fiat: assetType == SecurityType.Fiat ? balance : null,
-        );
-      }
-    }
-    return balances;
-  }
+  //Map<String, AssetHolding> assetHoldings({bool assetsOnly = false}) {
+  //  /// we don't want to just see holdings here we want to see all subassets
+  //  /// that we have the ability to manage (if we own the admin token).
+  //  //var holdings = assetsOnly
+  //  //    ? Current.holdings.where((Balance balance) => balance.security.isAsset)
+  //  //    : Current.holdings;
+  //  Map<String, AssetHolding> balances = {};
+  //  for (var balance in holdings) {
+  //    var baseSymbol =
+  //        balance.security.asset?.baseSymbol ?? balance.security.symbol;
+  //    var assetType =
+  //        balance.security.asset?.assetType ?? balance.security.securityType;
+  //    if (!balances.containsKey(baseSymbol)) {
+  //      balances[baseSymbol] = AssetHolding(
+  //        symbol: baseSymbol,
+  //        main: assetType == AssetType.Main ? balance : null,
+  //        admin: assetType == AssetType.Admin ? balance : null,
+  //        restricted: assetType == AssetType.Restricted ? balance : null,
+  //        qualifier: assetType == AssetType.Qualifier ? balance : null,
+  //        unique: assetType == AssetType.NFT ? balance : null,
+  //        channel: assetType == AssetType.Channel ? balance : null,
+  //        crypto: assetType == SecurityType.Crypto ? balance : null,
+  //        fiat: assetType == SecurityType.Fiat ? balance : null,
+  //      );
+  //    } else {
+  //      balances[baseSymbol] = AssetHolding.fromAssetHolding(
+  //        balances[baseSymbol]!,
+  //        main: assetType == AssetType.Main ? balance : null,
+  //        admin: assetType == AssetType.Admin ? balance : null,
+  //        restricted: assetType == AssetType.Restricted ? balance : null,
+  //        qualifier: assetType == AssetType.Qualifier ? balance : null,
+  //        unique: assetType == AssetType.NFT ? balance : null,
+  //        channel: assetType == AssetType.Channel ? balance : null,
+  //        crypto: assetType == SecurityType.Crypto ? balance : null,
+  //        fiat: assetType == SecurityType.Fiat ? balance : null,
+  //      );
+  //    }
+  //  }
+  //  return balances;
+  //}
 
   Map<String, AssetHolding> filterToSubAssetsFor(
       String asset, Map<String, AssetHolding> assets) {
+    //var prefix = '$asset/'; // filter out NFTs and message channels
     var subAssetKeys = assets.keys.where((String symbol) =>
-        symbol.startsWith(asset) && symbol.length > asset.length + 1);
+            symbol.startsWith(asset) &&
+            symbol.length > asset.length + 2 &&
+            !symbol.substring(asset.length + 1, symbol.length).contains('/') &&
+            !symbol.substring(asset.length + 1, symbol.length).contains('~')
+        //&& (!symbol.contains('#') || symbol.contains('/#')) // filter out NFTS
+        );
     assets.removeWhere((key, value) => !subAssetKeys.contains(key));
+    //assets.removeWhere((key, value) => !key.startsWith(prefix));
     return assets;
   }
 
   @override
   Widget build(BuildContext context) {
-    assets = filterToSubAssetsFor(widget.symbol, assetHoldings());
+    //assets = filterToSubAssetsFor(widget.symbol, assetHoldings());
+    assets = filterToSubAssetsFor(
+        widget.symbol, utils.assetHoldingsFromAssets(widget.symbol));
     return assets.isEmpty && res.vouts.data.isEmpty // <-- on front tab...
         ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -125,7 +136,8 @@ class _SubAssetList extends State<SubAssetList> {
 
   void navigate(String symbol, {Wallet? wallet}) {
     streams.app.asset.add(symbol);
-    Navigator.of(components.navigator.routeContext!).pushNamed(
+    print('sending $symbol');
+    Navigator.of(components.navigator.routeContext!).pushReplacementNamed(
       '/manage/asset',
       arguments: {'symbol': symbol, 'walletId': wallet?.walletId ?? null},
     );
@@ -139,9 +151,17 @@ class _SubAssetList extends State<SubAssetList> {
               contentPadding:
                   EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
               onTap: () {
-                if (asset.length == 1) {
+                if ((asset.length == 1) ||
+                    (asset.length == 2 &&
+                            (asset.admin != null && asset.main != null) ||
+                        (asset.admin != null && asset.unique != null) ||
+                        (asset.main != null && asset.unique != null)) ||
+                    (asset.length == 3 &&
+                        asset.admin != null &&
+                        asset.main != null &&
+                        asset.unique != null)) {
                   navigate(
-                    '${widget.symbol}/${asset.singleSymbol!}',
+                    asset.symbol,
                     wallet: wallet,
                   );
                 } else {
@@ -185,12 +205,16 @@ class _SubAssetList extends State<SubAssetList> {
               title: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(asset.symbol, style: Theme.of(context).holdingName),
+                    Text(asset.last, style: Theme.of(context).holdingName),
                     Text(
-                        //(asset.admin != null ? 'Main ' : '') +
-                        //(asset.main != null ? 'Main ' : '') +
-                        (asset.restricted != null ? 'Restricted ' : '') +
-                            (asset.restricted != null ? 'Qualifier ' : ''),
+                        [
+                          if (asset.admin != null) 'Admin',
+                          //if (asset.main != null) 'Main',
+                          if (asset.channel != null) 'Channel',
+                          if (asset.unique != null) 'NFT',
+                          if (asset.restricted != null) 'Restricted',
+                          if (asset.qualifier != null) 'Qualifier',
+                        ].join(', '),
                         style: Theme.of(context).holdingValue),
                   ]),
               trailing: Icon(Icons.chevron_right_rounded))

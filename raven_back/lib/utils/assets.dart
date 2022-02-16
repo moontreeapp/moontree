@@ -1,4 +1,6 @@
 /// used to aggregate multiple balances into one asset tree
+// ignore_for_file: omit_local_variable_types
+
 import 'package:raven_back/raven_back.dart';
 
 Map<String, AssetHolding> assetHoldings(Iterable<Balance> holdings) {
@@ -36,4 +38,44 @@ Map<String, AssetHolding> assetHoldings(Iterable<Balance> holdings) {
     }
   }
   return balances;
+}
+
+Balance blank(Asset asset) => Balance(
+    walletId: '',
+    confirmed: 0,
+    unconfirmed: 0,
+    security: asset.security ??
+        Security(securityType: SecurityType.RavenAsset, symbol: asset.symbol));
+
+Map<String, AssetHolding> assetHoldingsFromAssets(String parent) {
+  Map<String, AssetHolding> assets = {};
+  for (var asset in res.assets) {
+    var assetType = asset.assetType;
+    if (!assets.containsKey(asset.baseSubSymbol)) {
+      assets[asset.baseSubSymbol] = AssetHolding(
+        symbol: asset.baseSubSymbol,
+        main: assetType == AssetType.Main ? blank(asset) : null,
+        admin: assetType == AssetType.Admin ? blank(asset) : null,
+        restricted: assetType == AssetType.Restricted ? blank(asset) : null,
+        qualifier: assetType == AssetType.Qualifier ? blank(asset) : null,
+        unique: assetType == AssetType.NFT ? blank(asset) : null,
+        channel: assetType == AssetType.Channel ? blank(asset) : null,
+        //crypto: assetType == SecurityType.Crypto ? blank(asset) : null,
+        //fiat: assetType == SecurityType.Fiat ? blank(asset) : null,
+      );
+    } else {
+      assets[asset.baseSubSymbol] = AssetHolding.fromAssetHolding(
+        assets[asset.baseSubSymbol]!,
+        main: assetType == AssetType.Main ? blank(asset) : null,
+        admin: assetType == AssetType.Admin ? blank(asset) : null,
+        restricted: assetType == AssetType.Restricted ? blank(asset) : null,
+        qualifier: assetType == AssetType.Qualifier ? blank(asset) : null,
+        unique: assetType == AssetType.NFT ? blank(asset) : null,
+        channel: assetType == AssetType.Channel ? blank(asset) : null,
+        //crypto: assetType == SecurityType.Crypto ? blank(asset) : null,
+        //fiat: assetType == SecurityType.Fiat ? blank(asset) : null,
+      );
+    }
+  }
+  return assets;
 }

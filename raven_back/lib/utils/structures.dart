@@ -111,6 +111,15 @@ class AssetHolding {
       ? (fiat?.security.symbol ?? symbol)
       : null; // not a raven asset
 
+  String get first => symbol.split('/').first;
+  String get head => symbol.contains('/')
+      ? symbol.split('/').sublist(0, symbol.split('/').length - 1).join('/')
+      : symbol;
+  String get tail => symbol.contains('/')
+      ? symbol.split('/').sublist(1, symbol.split('/').length).join('/')
+      : symbol;
+  String get last => symbol.split('/').last.split('~').last.split('#').last;
+
   // returns the best value (main, qualifier, restricted, admin, channel, unique, crypto, fiat)
   Balance? get balance =>
       main ??

@@ -139,7 +139,8 @@ class _AssetList extends State<AssetList> {
                     Text(asset.symbol, style: Theme.of(context).holdingName),
                     Text(
                         [
-                          if (asset.main != null) 'Main',
+                          if (asset.admin != null) 'Admin',
+                          //if (asset.main != null) 'Main',
                           if (asset.restricted != null) 'Restricted',
                           if (asset.qualifier != null) 'Qualifier',
                         ].join(', '),

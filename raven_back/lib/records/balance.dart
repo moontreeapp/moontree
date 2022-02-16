@@ -50,6 +50,20 @@ class Balance with EquatableMixin {
         unconfirmed: balance.unconfirmed);
   }
 
+  factory Balance.fromBalance(
+    Balance balance, {
+    String? walletId,
+    Security? security,
+    int? confirmed,
+    int? unconfirmed,
+  }) {
+    return Balance(
+        walletId: walletId ?? balance.walletId,
+        security: security ?? balance.security,
+        confirmed: confirmed ?? balance.confirmed,
+        unconfirmed: unconfirmed ?? balance.unconfirmed);
+  }
+
   String get balanceId => Balance.balanceKey(walletId, security);
 
   static String balanceKey(String walletId, Security security) =>

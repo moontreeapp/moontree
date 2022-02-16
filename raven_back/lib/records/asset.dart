@@ -81,6 +81,12 @@ class Asset with EquatableMixin {
           ? symbol.substring(0, symbol.length - 1)
           : symbol;
 
+  String get baseSubSymbol => symbol.startsWith('#') || symbol.startsWith('\$')
+      ? symbol.substring(1, symbol.length)
+      : symbol.endsWith('!')
+          ? symbol.substring(0, symbol.length - 1)
+          : symbol.replaceAll('#', '/');
+
   String get adminSymbol => baseSymbol + '!';
 
   AssetType get assetType {
@@ -93,13 +99,11 @@ class Asset with EquatableMixin {
     if (symbol.endsWith('!')) {
       return AssetType.Admin;
     }
-    if (symbol.contains('/')) {
-      var lastName = symbol.split('/').last;
-      if (lastName.startsWith('#')) {
-        return AssetType.NFT;
-      } else if (lastName.startsWith('~')) {
-        return AssetType.Channel;
-      }
+    if (symbol.contains('#')) {
+      return AssetType.NFT;
+    }
+    if (symbol.contains('~')) {
+      return AssetType.Channel;
     }
     return AssetType.Main;
   }
