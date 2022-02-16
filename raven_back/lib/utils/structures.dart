@@ -94,16 +94,16 @@ class AssetHolding {
 
   String? get mainSymbol => main != null ? symbol : null;
   String? get subSymbol =>
-      main != null ? '/${symbol}' : null; // sub mains allowed
-  String? get adminSymbol => admin != null ? '${symbol}!' : null; // must be top
+      main != null ? '/$symbol' : null; // sub mains allowed
+  String? get adminSymbol => admin != null ? '$symbol!' : null; // must be top
   String? get restrictedSymbol =>
-      restricted != null ? '\$${symbol}' : null; // must be top
+      restricted != null ? '\$$symbol' : null; // must be top
   String? get qualifierSymbol =>
-      qualifier != null ? '#${symbol}' : null; // sub qualifiers allowed
+      qualifier != null ? '#$symbol' : null; // sub qualifiers allowed
   String? get uniqueSymbol =>
-      unique != null ? '#${symbol}' : null; // must be subasset
+      unique != null ? '#$symbol' : null; // must be subasset
   String? get channelSymbol =>
-      channel != null ? '~${symbol}' : null; // must be subasset
+      channel != null ? '~$symbol' : null; // must be subasset
   String? get cryptoSymbol => crypto != null
       ? (crypto?.security.symbol ?? symbol)
       : null; // not a raven asset

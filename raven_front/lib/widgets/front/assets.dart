@@ -49,7 +49,8 @@ class _AssetList extends State<AssetList> {
   Map<String, AssetHolding> filterToAdminAssets(
     Map<String, AssetHolding> assets,
   ) {
-    assets.removeWhere((key, balance) => balance.admin == null);
+    assets.removeWhere((key, AssetHolding asset) =>
+        asset.admin == null || asset.symbol.contains('/'));
     return assets;
   }
 
