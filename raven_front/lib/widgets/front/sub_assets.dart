@@ -148,16 +148,22 @@ class _SubAssetList extends State<SubAssetList> {
                   SelectionItems(
                     context,
                     names: [
-                      if (asset.main != null) SelectionOption.Main,
+                      if (asset.admin != null) SelectionOption.Main,
+                      //if (asset.main != null) SelectionOption.Main,
                       if (asset.unique != null) SelectionOption.NFT,
                       if (asset.qualifier != null) SelectionOption.Qualifier,
                     ],
                     behaviors: [
-                      if (asset.main != null)
+                      if (asset.admin != null)
                         () => navigate(
                               '${widget.symbol}/${asset.subSymbol!}',
                               wallet: wallet,
                             ),
+                      //if (asset.main != null)
+                      //  () => navigate(
+                      //        '${widget.symbol}/${asset.subSymbol!}',
+                      //        wallet: wallet,
+                      //      ),
                       if (asset.unique != null)
                         () => navigate(
                               '${widget.symbol}/${asset.uniqueSymbol!}',
@@ -181,9 +187,9 @@ class _SubAssetList extends State<SubAssetList> {
                   children: [
                     Text(asset.symbol, style: Theme.of(context).holdingName),
                     Text(
-                        (asset.main != null ? 'Main ' : '') +
-                            (asset.admin != null ? 'Admin ' : '') +
-                            (asset.restricted != null ? 'Restricted ' : '') +
+                        //(asset.admin != null ? 'Main ' : '') +
+                        //(asset.main != null ? 'Main ' : '') +
+                        (asset.restricted != null ? 'Restricted ' : '') +
                             (asset.restricted != null ? 'Qualifier ' : ''),
                         style: Theme.of(context).holdingValue),
                   ]),

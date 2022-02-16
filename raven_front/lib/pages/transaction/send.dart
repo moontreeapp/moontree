@@ -298,27 +298,28 @@ class _SendState extends State<Send> {
                   focusNode: sendAmountFocusNode,
                   controller: sendAmount,
                   keyboardType: TextInputType.number,
-                  decoration: components.styles.decorations.textFeild(context,
-                      labelText: 'Amount', // Amount -> Amount*
-                      hintText: 'Quantity'
-                      //suffixText: sendAll ? "don't send all" : 'send all',
-                      //suffixStyle: Theme.of(context).textTheme.caption,
-                      //suffixIcon: IconButton(
-                      //  icon: Icon(
-                      //      sendAll ? Icons.not_interested : Icons.all_inclusive,
-                      //      color: Color(0xFF606060)),
-                      //  onPressed: () {
-                      //    if (!sendAll) {
-                      //      sendAll = true;
-                      //      sendAmount.text = holding.toString();
-                      //    } else {
-                      //      sendAll = false;
-                      //      sendAmount.text = '';
-                      //    }
-                      //    verifyVisibleAmount(sendAmount.text);
-                      //  },
-                      //),
-                      ),
+                  decoration: components.styles.decorations.textFeild(
+                    context,
+                    labelText: 'Amount', // Amount -> Amount*
+                    hintText: 'Quantity',
+                    suffixText: sendAll ? "don't send all" : 'send all',
+                    suffixStyle: Theme.of(context).textTheme.caption,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                          sendAll ? Icons.not_interested : Icons.all_inclusive,
+                          color: Color(0xFF606060)),
+                      onPressed: () {
+                        if (!sendAll) {
+                          sendAll = true;
+                          sendAmount.text = holding.toString();
+                        } else {
+                          sendAll = false;
+                          sendAmount.text = '';
+                        }
+                        verifyVisibleAmount(sendAmount.text);
+                      },
+                    ),
+                  ),
                   onChanged: (value) {
                     visibleAmount = verifyVisibleAmount(value);
                     streams.spend.form.add(SpendForm.merge(

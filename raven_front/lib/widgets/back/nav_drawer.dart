@@ -155,7 +155,11 @@ class _NavDrawerState extends State<NavDrawer> {
             name: 'About',
             link: '/settings/about',
           ),
-
+          destination(
+            icon: Icons.info_rounded,
+            name: 'Accounts',
+            link: '/settings/technical',
+          ),
           ////SettingsTile(
           ////    title: 'Import/Export',
           ////    titleTextStyle: Theme.of(context).drawerDestination,

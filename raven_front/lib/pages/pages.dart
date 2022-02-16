@@ -25,7 +25,6 @@ import 'package:raven_front/pages/settings/security.dart';
 import 'package:raven_front/pages/settings/support.dart';
 import 'package:raven_front/pages/settings/technical.dart';
 import 'package:raven_front/pages/transaction/checkout.dart';
-import 'package:raven_front/pages/transaction/create.dart';
 import 'package:raven_front/pages/transaction/receive.dart';
 import 'package:raven_front/pages/transaction/send.dart';
 import 'package:raven_front/pages/transaction/transaction.dart';

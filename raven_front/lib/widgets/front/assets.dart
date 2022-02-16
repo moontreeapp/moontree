@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:intersperse/intersperse.dart';
 
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
@@ -114,9 +113,9 @@ class _AssetList extends State<AssetList> {
                     behaviors: [
                       if (asset.main != null)
                         () => navigate(asset.symbol, wallet: wallet),
-                      if (asset.admin != null)
-                        () => navigate(asset.admin!.security.symbol,
-                            wallet: wallet),
+                      //if (asset.admin != null)
+                      //  () => navigate(asset.admin!.security.symbol,
+                      //      wallet: wallet),
                       if (asset.restricted != null)
                         () => navigate(asset.restricted!.security.symbol,
                             wallet: wallet),
@@ -139,7 +138,7 @@ class _AssetList extends State<AssetList> {
                         [
                           if (asset.main != null) 'Main',
                           if (asset.restricted != null) 'Restricted',
-                          if (asset.restricted != null) 'Qualifier',
+                          if (asset.qualifier != null) 'Qualifier',
                         ].join(', '),
                         style: Theme.of(context).holdingValue),
                   ]),
