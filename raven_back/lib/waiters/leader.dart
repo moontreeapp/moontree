@@ -47,7 +47,6 @@ class LeaderWaiter extends Waiter {
   void handleLeaderChange(Change<Wallet> change) {
     change.when(
         loaded: (loaded) {
-          print('LOADED: $loaded');
           var leader = loaded.data as LeaderWallet;
           for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
             if (!services.wallet.leader.gapSatisfied(leader, exposure)) {

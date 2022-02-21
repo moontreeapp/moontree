@@ -35,14 +35,11 @@ void useEmptyFixtures({bool defaults = true}) {
 
 /// meant to be used for any number of complex groupings of app state
 void useFixtureSources(int? version) {
-  var set;
-  if (version == 0) {
-    set = FixtureSet0;
-  } else if (version == 1) {
-    set = FixtureSet1;
-  } else {
-    set = FixtureSet0;
-  }
+  var set = {
+        0: FixtureSet0(),
+        1: FixtureSet1(),
+      }[version] ??
+      FixtureSet0();
   res.accounts.setSource(MapSource(set.accounts));
   res.addresses.setSource(MapSource(set.addresses));
   res.assets.setSource(MapSource(set.assets));
@@ -61,5 +58,4 @@ void useFixtureSources(int? version) {
 }
 
 void useFixtureSources1() => useFixtureSources(1);
-
 void deleteDatabase() => raven_database.deleteDatabase();

@@ -6,33 +6,35 @@ import 'package:raven_back/raven_back.dart';
 
 import '../fixtures/fixtures.dart' as fixtures;
 import '../helper/reservoir_changes.dart';
+import 'package:dotenv/dotenv.dart' as dotenv;
+import 'package:bip39/bip39.dart' as bip39;
 
 void main() {
   group('addresses', () {
     late Account account;
     late LeaderWallet wallet;
     setUp(() async {
-      fixtures.useFixtureSources1();
-
-      // make account
+      fixtures.useEmptyFixtures();
       account = Account(
         accountId: 'a0',
         name: 'primary',
+        net: Net.Main,
       );
-      res.accounts.setSource(MapSource({'a0': account}));
-      wallet = res.wallets.data.first as LeaderWallet;
-
-      // put account in reservoir
       await res.accounts.save(account);
-      expect(res.accounts.length, 1);
+      dotenv.load();
+      waiters.leader.init();
+      await res.wallets.save(LeaderWallet(
+          walletId: '0',
+          accountId: 'a0',
+          cipherUpdate: CipherUpdate(CipherType.None),
+          encryptedEntropy:
+              bip39.mnemonicToEntropy(dotenv.env['TEST_WALLET_01']!)));
+      wallet = res.wallets.data.first as LeaderWallet;
     });
-
     test('2 addresses get created', () async {
-      // make addresses
-      expect(res.addresses.length, 5);
-      await reservoirChanges(res.addresses,
-          () => services.wallet.leader.deriveAddress(wallet, 0), 2);
-      expect(res.addresses.length, 7);
+      expect(res.addresses.length, 0);
+      await reservoirChanges(res.addresses, () {}, 2);
+      expect(res.addresses.length, 2);
     });
 
     //test('20 addresses get created', () async {

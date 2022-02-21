@@ -4,31 +4,34 @@ import 'package:raven_back/records/records.dart';
 import 'package:raven_back/security/cipher_none.dart';
 
 class FixtureSet {
-  static Map<String, Account> get accounts => {};
-  static Map<String, Address> get addresses => {};
-  static Map<String, Asset> get assets => {};
-  static Map<String, Balance> get balances => {};
-  static Map<String, Block> get blocks => {};
-  static Map<String, Cipher> get ciphers => {};
-  static Map<String, Metadata> get metadatas => {};
-  static Map<String, Password> get passwords => {};
-  static Map<String, Rate> get rates => {};
-  static Map<String, Security> get securities => {};
-  static Map<String, Setting> get settings => {};
-  static Map<String, Transaction> get transactions => {};
-  static Map<String, Vin> get vins => {};
-  static Map<String, Vout> get vouts => {};
-  static Map<String, Wallet> get wallets => {};
+  Map<String, Account> get accounts => {};
+  Map<String, Address> get addresses => {};
+  Map<String, Asset> get assets => {};
+  Map<String, Balance> get balances => {};
+  Map<String, Block> get blocks => {};
+  Map<String, Cipher> get ciphers => {};
+  Map<String, Metadata> get metadatas => {};
+  Map<String, Password> get passwords => {};
+  Map<String, Rate> get rates => {};
+  Map<String, Security> get securities => {};
+  Map<String, Setting> get settings => {};
+  Map<String, Transaction> get transactions => {};
+  Map<String, Vin> get vins => {};
+  Map<String, Vout> get vouts => {};
+  Map<String, Wallet> get wallets => {};
 }
 
 class FixtureSet0 extends FixtureSet {}
 
 class FixtureSet1 extends FixtureSet {
-  static Map<String, Account> get accounts => {
+  @override
+  Map<String, Account> get accounts => {
         '0': Account(name: 'Account 0', accountId: '0', net: Net.Main),
         '1': Account(name: 'Account 1', accountId: '1', net: Net.Test),
       };
-  static Map<String, Address> get addresses => {
+
+  @override
+  Map<String, Address> get addresses => {
         '0': Address(
             addressId: '0',
             address: 'address 0 address',
@@ -58,14 +61,16 @@ class FixtureSet1 extends FixtureSet {
             exposure: NodeExposure.External,
             net: Net.Test),
         '100': Address(
-            addressId: '0',
+            addressId: '100',
             address: 'address 1 address',
             walletId: '0',
             hdIndex: 3,
             exposure: NodeExposure.External,
             net: Net.Test),
       };
-  static Map<String, Asset> get assets => {
+
+  @override
+  Map<String, Asset> get assets => {
         '0': Asset(
             symbol: 'MOONTREE',
             satsInCirculation: 1000,
@@ -83,7 +88,9 @@ class FixtureSet1 extends FixtureSet {
             transactionId: '10',
             position: 0)
       };
-  static Map<String, Balance> get balances => {
+
+  @override
+  Map<String, Balance> get balances => {
         '0': Balance(
             walletId: '0',
             confirmed: 15000000,
@@ -96,15 +103,21 @@ class FixtureSet1 extends FixtureSet {
             unconfirmed: 0,
             security: Security(symbol: 'USD', securityType: SecurityType.Fiat)),
       };
-  static Map<String, Block> get blocks => {
+
+  @override
+  Map<String, Block> get blocks => {
         '0': Block(height: 0),
         '1': Block(height: 1),
       };
-  static Map<String, Cipher> get ciphers => {
+
+  @override
+  Map<String, Cipher> get ciphers => {
         '0': Cipher(
             cipherType: CipherType.None, passwordId: 0, cipher: CipherNone())
       };
-  static Map<String, Metadata> get metadatas => {
+
+  @override
+  Map<String, Metadata> get metadatas => {
         Metadata.metadataKey('MOONTREE', 'metadata'): Metadata(
             symbol: 'MOONTREE',
             metadata: 'metadata',
@@ -113,9 +126,12 @@ class FixtureSet1 extends FixtureSet {
             parent: null,
             logo: false)
       };
-  static Map<String, Password> get passwords =>
+
+  @override
+  Map<String, Password> get passwords =>
       {'0': Password(passwordId: 0, saltedHash: 'saltedHash')};
-  static Map<String, Rate> get rates => {
+  @override
+  Map<String, Rate> get rates => {
         'RVN:Crypto:USD:Fiat': Rate(
             base: Security(symbol: 'RVN', securityType: SecurityType.Crypto),
             quote: Security(symbol: 'USD', securityType: SecurityType.Fiat),
@@ -126,20 +142,26 @@ class FixtureSet1 extends FixtureSet {
             quote: Security(symbol: 'RVN', securityType: SecurityType.Crypto),
             rate: 100),
       };
-  static Map<String, Security> get securities => {
+
+  @override
+  Map<String, Security> get securities => {
         'RVN:Crypto':
             Security(symbol: 'RVN', securityType: SecurityType.Crypto),
         'USD:Fiat': Security(symbol: 'USD', securityType: SecurityType.Fiat),
         'MOONTREE:RavenAsset':
             Security(symbol: 'MOONTREE', securityType: SecurityType.RavenAsset),
       };
-  static Map<String, Setting> get settings => {
+
+  @override
+  Map<String, Setting> get settings => {
         'Send_Immediate':
             Setting(name: SettingName.Send_Immediate, value: true),
         'User_Name':
             Setting(name: SettingName.User_Name, value: 'Satoshi Nakamoto'),
       };
-  static Map<String, Transaction> get transactions => {
+
+  @override
+  Map<String, Transaction> get transactions => {
         '0': Transaction(
             transactionId:
                 'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
@@ -154,7 +176,8 @@ class FixtureSet1 extends FixtureSet {
             height: 2),
       };
 
-  static Map<String, Vin> get vins => {
+  @override
+  Map<String, Vin> get vins => {
         '0': Vin(
             transactionId: '0',
             voutTransactionId:
@@ -168,7 +191,9 @@ class FixtureSet1 extends FixtureSet {
                 'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
             voutPosition: 1),
       };
-  static Map<String, Vout> get vouts => {
+
+  @override
+  Map<String, Vout> get vouts => {
         '0': Vout(
             transactionId:
                 'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
@@ -222,7 +247,9 @@ class FixtureSet1 extends FixtureSet {
             assetValue: 100,
             additionalAddresses: null),
       };
-  static Map<String, Wallet> get wallets {
+
+  @override
+  Map<String, Wallet> get wallets {
     dotenv.load();
     var phrase = dotenv.env['TEST_WALLET_01']!;
     return {

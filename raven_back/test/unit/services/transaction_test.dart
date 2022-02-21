@@ -12,10 +12,14 @@ const connectionTimeout = Duration(seconds: 5);
 const aliveTimerDuration = Duration(seconds: 2);
 
 void main() async {
-  var wallet = fixtures.wallets().map['0'];
+  late Account account;
+  late LeaderWallet wallet;
 
-  setUp(fixtures.useFixtureSources);
-
+  setUp(() {
+    fixtures.useFixtureSources(1);
+    account = res.accounts.data.first;
+    wallet = res.wallets.data.first as LeaderWallet;
+  });
   group('Collect Unspents', () {
     test('rvn wallet unspents', () {
       VoutReservoir.whereUnspent(
@@ -94,43 +98,42 @@ void main() async {
   });
 
   group('CollectUTXOs RVN', () {
-    setUp(fixtures.useFixtureSources);
-
     test('pick smallest UTXO of sufficient size', () {
       var utxos = services.balance.collectUTXOs(
-          res.accounts.primaryIndex.getByKeyStr('a0')[0],
+          res.accounts.primaryIndex.getByKeyStr('1')[0],
           amount: 500);
       expect(utxos.map((utxo) => utxo.rvnValue).toList(), [5000000]);
     });
     test('take multiple from the top', () {
       var utxos = services.balance.collectUTXOs(
-          res.accounts.primaryIndex.getByKeyStr('a0')[0],
+          res.accounts.primaryIndex.getByKeyStr('1')[0],
           amount: 12000000);
       expect(utxos.map((utxo) => utxo.rvnValue).toList(), [10000000, 5000000]);
     });
   });
 
   group('CollectUTXOs asset', () {
-    setUp(fixtures.useFixtureSources);
-
     test('pick smallest UTXO of sufficient size', () {
+      var a = res.accounts.primaryIndex.getByKeyStr('1')[0];
+      print(a);
+      print(a.vouts);
       var utxos = services.balance.collectUTXOs(
-          res.accounts.primaryIndex.getByKeyStr('a0')[0],
-          amount: 500,
+          res.accounts.primaryIndex.getByKeyStr('1')[0],
+          amount: 5,
           security: res.securities.bySymbolSecurityType
               .getOne('MOONTREE', SecurityType.RavenAsset));
-      expect(utxos.map((utxo) => utxo.rvnValue).toList(), [5000000]);
+      print(utxos);
+      expect(utxos.map((utxo) => utxo.assetValue).toList(), [5000000]);
     });
     test('take multiple from the top', () {
       var utxos = services.balance.collectUTXOs(
-          res.accounts.primaryIndex.getByKeyStr('a0')[0],
+          res.accounts.primaryIndex.getByKeyStr('1')[0],
           amount: 12000000,
           security: res.securities.bySymbolSecurityType
               .getOne('MOONTREE', SecurityType.RavenAsset));
       expect(utxos.map((utxo) => utxo.rvnValue).toList(), [10000000, 5000000]);
     });
   });
-
   group('TransactionBuilder', () {
     test('default transaction version is 1', () {
       var txb = TransactionBuilder(network: mainnet);
@@ -144,15 +147,13 @@ void main() async {
     });
   });
   group('TransactionService', () {
-    setUp(fixtures.useFixtureSources);
-
     test('test BuildTransaction', () {
-      var t = TransactionService().buildTransaction(
-        res.accounts.primaryIndex.getByKeyStr('a0')[0],
-        //'RM2fJN6HCLKp2DnmKMA5SBYvdKBCvmyaju',
-        'mtraysi8CBwHSSmyoEHPKBWZxc4vh6Phpn',
-        SendEstimate(4),
-      );
+      var t = TransactionService().make.transaction(
+            //'RM2fJN6HCLKp2DnmKMA5SBYvdKBCvmyaju',
+            'mtraysi8CBwHSSmyoEHPKBWZxc4vh6Phpn',
+            SendEstimate(4),
+            account: res.accounts.primaryIndex.getByKeyStr('1')[0],
+          );
       var tx = t.item1;
       var estimate = t.item2;
       expect(tx.fee(), 247500);

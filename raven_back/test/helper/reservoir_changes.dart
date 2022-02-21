@@ -12,5 +12,5 @@ Future reservoirChanges(
   int changeCount = 1,
 ]) async {
   enqueueChange(change);
-  await res.changes.take(changeCount).toList();
+  return await res.changes.take(changeCount).toList();
 }

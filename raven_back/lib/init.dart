@@ -15,14 +15,5 @@ Future initWaiters() async {
   waiters.send.init();
   waiters.import.init();
   waiters.password.init();
-  // todo: don't kill app if this fails
   await waiters.rate.init();
 }
-
-
-
-/*
-issues:
-
-1. should we be able to view add the addresses in an hd wallet? and their balances etc?
-*/

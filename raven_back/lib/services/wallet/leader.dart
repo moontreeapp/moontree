@@ -147,7 +147,6 @@ class LeaderWalletService {
         exposure,
       ));
     }
-    print('dervied $newAddresses');
     res.addresses.saveAll(newAddresses);
     //services.busy.addressDerivationOff();
     return newAddresses;

@@ -83,9 +83,10 @@ class BalanceService {
     Account account, {
     Security? security,
   }) {
-    if (accountBalance(account, security ?? res.securities.RVN).confirmed <
-        amount) {
-      throw InsufficientFunds();
+    var totalBalance =
+        accountBalance(account, security ?? res.securities.RVN).confirmed;
+    if (totalBalance < amount) {
+      throw InsufficientFunds('$totalBalance < $amount');
     }
   }
 
@@ -95,7 +96,8 @@ class BalanceService {
     Wallet wallet, {
     Security? security,
   }) {
-    if (walletBalance(wallet, security ?? res.securities.RVN).confirmed < amount) {
+    if (walletBalance(wallet, security ?? res.securities.RVN).confirmed <
+        amount) {
       throw InsufficientFunds();
     }
   }
