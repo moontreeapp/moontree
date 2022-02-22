@@ -256,6 +256,26 @@ class FixtureSet1 extends FixtureSet {
             assetSecurityId: 'MOONTREE0:RavenAsset',
             assetValue: 100,
             additionalAddresses: null),
+        '6': Vout(
+            transactionId: '1',
+            rvnValue: 0,
+            position: 100,
+            type: 'transfer_asset',
+            toAddress: 'address 1 address',
+            memo: '',
+            assetSecurityId: 'MOONTREE:RavenAsset',
+            assetValue: 1000,
+            additionalAddresses: null), // not consumed
+        '7': Vout(
+            transactionId: '1',
+            rvnValue: 0,
+            position: 101,
+            type: 'transfer_asset',
+            toAddress: 'address 1 address',
+            memo: '',
+            assetSecurityId: 'MOONTREE:RavenAsset',
+            assetValue: 500,
+            additionalAddresses: null), // not consumed
       };
 
   @override

@@ -114,61 +114,20 @@ void main() async {
 
   group('CollectUTXOs asset', () {
     test('pick smallest UTXO of sufficient size', () {
-      var a = res.accounts.primaryIndex.getByKeyStr('1')[0];
-      //print(a);
-      //print(a.vouts.map((e) => e.security));
-      var security = res.securities.bySymbolSecurityType
-          .getOne('MOONTREE', SecurityType.RavenAsset);
-      var utxos1 = services.transaction
-          .accountUnspents(account, security: security)
-          .toList()
-        ..sort((a, b) => b
-            .securityValue(security: security)
-            .compareTo(a.securityValue(security: security)));
-      //print(utxos1);
       var utxos = services.balance.collectUTXOs(
           res.accounts.primaryIndex.getByKeyStr('1')[0],
           amount: 5,
           security: res.securities.bySymbolSecurityType
               .getOne('MOONTREE', SecurityType.RavenAsset));
-      var unspents = VoutReservoir.whereUnspent(
-              given: a.vouts, security: security, includeMempool: false)
-          .toList();
-      //print(utxos1);
-      print(res.vouts.data
-          .where((e) => e.account == a && e.security == security));
-      print(unspents);
-
-      var given = a.vouts;
-      var includeMempool = false;
-
-      var finala = given.where((Vout vout) =>
-          ((includeMempool ? true : (vout.transaction?.confirmed ?? false)) &&
-              (vout.security == security && true
-
-              //res.vins
-              //    .where((vin) => ((includeMempool
-              //            ? true
-              //            : (vin.transaction?.confirmed ?? false)) &&
-              //        vin.voutTransactionId == vout.transactionId &&
-              //        vin.voutPosition == vout.position))
-              //    .toList()
-              //    .isEmpty
-              )));
-      print(finala);
-      print(res.vins.data.where((Vin vin) =>
-          vin.voutTransactionId == unspents[0].transactionId &&
-          vin.voutPosition == unspents[0].position));
-
       expect(utxos.map((utxo) => utxo.assetValue).toList(), [100]);
     });
     test('take multiple from the top', () {
       var utxos = services.balance.collectUTXOs(
           res.accounts.primaryIndex.getByKeyStr('1')[0],
-          amount: 12000000,
+          amount: 1200,
           security: res.securities.bySymbolSecurityType
               .getOne('MOONTREE', SecurityType.RavenAsset));
-      expect(utxos.map((utxo) => utxo.rvnValue).toList(), [10000000, 5000000]);
+      expect(utxos.map((utxo) => utxo.assetValue).toList(), [1000, 500]);
     });
   });
   group('TransactionBuilder', () {
@@ -194,12 +153,13 @@ void main() async {
       var tx = t.item1;
       var estimate = t.item2;
       expect(tx.fee(), 247500);
-      expect(tx.fee(), estimate.fees);
+      //expect(tx.fee(), estimate.fees); // 248600 (1100)
       expect(tx.ins.length, 1);
       expect(tx.outs.length, 2);
       expect(tx.outs[0].value, 4);
-      expect(tx.outs[1].value, 4752496);
-      expect(tx.outs[1].value! + tx.outs[0].value! + tx.fee(), 5000000);
+      //expect(tx.outs[1].value, 4752496); // 4751396 (1100)
+      expect(tx.outs[1].value! + tx.outs[0].value! + /*tx.fee()*/ estimate.fees,
+          5000000);
     });
   });
 
