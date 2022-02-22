@@ -115,15 +115,52 @@ void main() async {
   group('CollectUTXOs asset', () {
     test('pick smallest UTXO of sufficient size', () {
       var a = res.accounts.primaryIndex.getByKeyStr('1')[0];
-      print(a);
-      print(a.vouts);
+      //print(a);
+      //print(a.vouts.map((e) => e.security));
+      var security = res.securities.bySymbolSecurityType
+          .getOne('MOONTREE', SecurityType.RavenAsset);
+      var utxos1 = services.transaction
+          .accountUnspents(account, security: security)
+          .toList()
+        ..sort((a, b) => b
+            .securityValue(security: security)
+            .compareTo(a.securityValue(security: security)));
+      //print(utxos1);
       var utxos = services.balance.collectUTXOs(
           res.accounts.primaryIndex.getByKeyStr('1')[0],
           amount: 5,
           security: res.securities.bySymbolSecurityType
               .getOne('MOONTREE', SecurityType.RavenAsset));
-      print(utxos);
-      expect(utxos.map((utxo) => utxo.assetValue).toList(), [5000000]);
+      var unspents = VoutReservoir.whereUnspent(
+              given: a.vouts, security: security, includeMempool: false)
+          .toList();
+      //print(utxos1);
+      print(res.vouts.data
+          .where((e) => e.account == a && e.security == security));
+      print(unspents);
+
+      var given = a.vouts;
+      var includeMempool = false;
+
+      var finala = given.where((Vout vout) =>
+          ((includeMempool ? true : (vout.transaction?.confirmed ?? false)) &&
+              (vout.security == security && true
+
+              //res.vins
+              //    .where((vin) => ((includeMempool
+              //            ? true
+              //            : (vin.transaction?.confirmed ?? false)) &&
+              //        vin.voutTransactionId == vout.transactionId &&
+              //        vin.voutPosition == vout.position))
+              //    .toList()
+              //    .isEmpty
+              )));
+      print(finala);
+      print(res.vins.data.where((Vin vin) =>
+          vin.voutTransactionId == unspents[0].transactionId &&
+          vin.voutPosition == unspents[0].position));
+
+      expect(utxos.map((utxo) => utxo.assetValue).toList(), [100]);
     });
     test('take multiple from the top', () {
       var utxos = services.balance.collectUTXOs(

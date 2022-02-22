@@ -214,8 +214,18 @@ class FixtureSet1 extends FixtureSet {
             memo: '',
             assetSecurityId: 'MOONTREE:RavenAsset',
             assetValue: 100,
-            additionalAddresses: null),
+            additionalAddresses: null), // claimed by a Vin
         '2': Vout(
+            transactionId: '1',
+            rvnValue: 0,
+            position: 99,
+            type: 'transfer_asset',
+            toAddress: 'address 1 address',
+            memo: '',
+            assetSecurityId: 'MOONTREE:RavenAsset',
+            assetValue: 100,
+            additionalAddresses: null), // not consumed
+        '3': Vout(
             transactionId: '2',
             rvnValue: 10000000,
             position: -1,
@@ -225,7 +235,7 @@ class FixtureSet1 extends FixtureSet {
             assetSecurityId: 'RVN:Crypto',
             assetValue: null,
             additionalAddresses: null),
-        '3': Vout(
+        '4': Vout(
             transactionId:
                 'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
             rvnValue: 10000000,
@@ -236,7 +246,7 @@ class FixtureSet1 extends FixtureSet {
             assetSecurityId: 'RVN:Crypto',
             assetValue: null,
             additionalAddresses: null),
-        '4': Vout(
+        '5': Vout(
             transactionId: '10',
             rvnValue: 0,
             position: 0,
