@@ -21,14 +21,12 @@ class LeaderWaiter extends Waiter {
           removed: (removed) {},
         );
       },
-      autoDeinit: true,
     );
 
     listen(
       'streams.wallet.leaderChanges',
       streams.wallet.leaderChanges,
       (Change<Wallet> change) => handleLeaderChange(change),
-      autoDeinit: true,
     );
 
     listen(
@@ -40,7 +38,6 @@ class LeaderWaiter extends Waiter {
             : handleDeriveAddress(
                 leader: deriveDetails.leader, exposure: deriveDetails.exposure);
       },
-      autoDeinit: true,
     );
   }
 

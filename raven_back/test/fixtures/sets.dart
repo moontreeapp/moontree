@@ -204,7 +204,7 @@ class FixtureSet1 extends FixtureSet {
             memo: '',
             assetSecurityId: 'RVN:Crypto',
             assetValue: null,
-            additionalAddresses: null),
+            additionalAddresses: null), // spent
         '1': Vout(
             transactionId: '1',
             rvnValue: 0,
@@ -234,7 +234,7 @@ class FixtureSet1 extends FixtureSet {
             memo: '',
             assetSecurityId: 'RVN:Crypto',
             assetValue: null,
-            additionalAddresses: null),
+            additionalAddresses: null), // spent
         '4': Vout(
             transactionId:
                 'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
@@ -245,7 +245,7 @@ class FixtureSet1 extends FixtureSet {
             memo: '',
             assetSecurityId: 'RVN:Crypto',
             assetValue: null,
-            additionalAddresses: null),
+            additionalAddresses: null), // spent
         '5': Vout(
             transactionId: '10',
             rvnValue: 0,
@@ -255,7 +255,7 @@ class FixtureSet1 extends FixtureSet {
             memo: '',
             assetSecurityId: 'MOONTREE0:RavenAsset',
             assetValue: 100,
-            additionalAddresses: null),
+            additionalAddresses: null), // consumed?
         '6': Vout(
             transactionId: '1',
             rvnValue: 0,
@@ -276,6 +276,38 @@ class FixtureSet1 extends FixtureSet {
             assetSecurityId: 'MOONTREE:RavenAsset',
             assetValue: 500,
             additionalAddresses: null), // not consumed
+        '8': Vout(
+            transactionId:
+                'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
+            rvnValue: 5000000,
+            position: 11,
+            type: 'pubkeyhash',
+            toAddress: 'address 1 address',
+            memo: '',
+            assetSecurityId: 'RVN:Crypto',
+            assetValue: null,
+            additionalAddresses: null), // unspent
+        '9': Vout(
+            transactionId: '2',
+            rvnValue: 10000000,
+            position: -10,
+            type: 'pubkeyhash',
+            toAddress: 'address 1 address',
+            memo: '',
+            assetSecurityId: 'RVN:Crypto',
+            assetValue: null,
+            additionalAddresses: null), // unspent
+        '10': Vout(
+            transactionId:
+                'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
+            rvnValue: 10000000,
+            position: 10,
+            type: 'pubkeyhash',
+            toAddress: 'address 0 address',
+            memo: '',
+            assetSecurityId: 'RVN:Crypto',
+            assetValue: null,
+            additionalAddresses: null), // unspent
       };
 
   @override

@@ -17,7 +17,6 @@ class AddressWaiter extends Waiter {
       'addresses.changes',
       res.addresses.changes,
       (Change<Address> change) => handleAddressChange(change),
-      autoDeinit: true,
     );
 
     listen(

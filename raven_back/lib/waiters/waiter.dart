@@ -9,14 +9,14 @@ abstract class Waiter {
 
   Waiter();
 
-  void listen<T>(
+  Future<void> listen<T>(
     String key,
     Stream<T> stream,
     Listener<T> listener, {
     bool autoDeinit = false,
-  }) {
+  }) async {
     if (autoDeinit) {
-      deinitKey(key);
+      await deinitKey(key);
     }
     if (!listeners.keys.contains(key)) {
       listeners[key] = stream.listen(listener);

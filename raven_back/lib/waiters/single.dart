@@ -23,7 +23,6 @@ class SingleWaiter extends Waiter {
           removed: (removed) {},
         );
       },
-      autoDeinit: true,
     );
 
     listen(
@@ -49,7 +48,6 @@ class SingleWaiter extends Waiter {
               /* handled by LeadersWaiter*/
             });
       },
-      autoDeinit: true,
     );
   }
 

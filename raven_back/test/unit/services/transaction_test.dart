@@ -108,7 +108,7 @@ void main() async {
       var utxos = services.balance.collectUTXOs(
           res.accounts.primaryIndex.getByKeyStr('1')[0],
           amount: 12000000);
-      expect(utxos.map((utxo) => utxo.rvnValue).toList(), [10000000, 5000000]);
+      expect(utxos.map((utxo) => utxo.rvnValue).toList(), [10000000, 10000000]);
     });
   });
 

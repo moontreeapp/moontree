@@ -4,77 +4,45 @@ import 'package:test/test.dart';
 import 'package:raven_back/raven_back.dart';
 import '../../fixtures/fixtures.dart' as fixtures;
 
-var newHistory = History(
-    transactionId: '100',
-    addressId: 'abc100',
-    height: 0,
-    security: fixtures.RVN,
-    position: 5,
-    value: 25);
-
 void main() async {
+  late LeaderWallet wallet;
+
+  setUp(() {
+    fixtures.useFixtureSources(1);
+    wallet = res.wallets.data.first as LeaderWallet;
+  });
   group('BalanceService', () {
     setUp(fixtures.useFixtureSources1);
 
     test('sumBalance (not in mempool)', () {
-      expect(
-          services.balance
-              .sumBalance(fixtures.wallets['0']!, fixtures.RVN)
-              .confirmed,
-          15);
+      expect(services.balance.sumBalance(wallet, res.securities.RVN).confirmed,
+          40000000);
     });
 
     test('sumBalance (in mempool)', () {
       expect(
-          services.balance
-              .sumBalance(fixtures.wallets['0']!, fixtures.RVN)
-              .unconfirmed,
-          10);
-    });
-
-    test('getChangedBalances', () async {
-      var change = (await histories.save(newHistory))!;
-      var changedBalances = services.balance.getChangedBalances([change]);
-      expect(changedBalances.toList(), [
-        Balance(
-            walletId: '0',
-            security: fixtures.RVN,
-            confirmed: 40,
-            unconfirmed: 10)
-      ]);
-      // getChangedBalances doesn't save the result
-      expect(res.balances.data, fixtures.balances.values);
+          services.balance.sumBalance(wallet, res.securities.RVN).unconfirmed,
+          0);
     });
 
     test('saveChangedBalances', () async {
-      var change = await histories.save(newHistory);
-      var changedBalances =
-          await services.balance.saveChangedBalances([change!]);
       var updatedBalance = Balance(
           walletId: '0',
-          security: fixtures.RVN,
-          confirmed: 40,
-          unconfirmed: 10);
-      expect(changedBalances.toList(), [updatedBalance]);
-      // saveChangedBalances saves the result
-      expect(balances.primaryIndex.getOne('0', fixtures.RVN), updatedBalance);
+          security: res.securities.RVN,
+          confirmed: 15000000,
+          unconfirmed: 10000000);
+      expect(res.balances.primaryIndex.getOne('0', res.securities.RVN),
+          updatedBalance);
     });
 
     test('sortedUnspents', () {
-      expect(services.balance.sortedUnspents(fixtures.accounts['a0']!), [
-        fixtures.histories['3'], // 1000 RVN
-        fixtures.histories['0'], // 500 RVN
-      ]);
+      expect(services.balance.sortedUnspents(res.accounts.data.first), []);
     });
 
     test('collectUTXOs', () {
-      var account = fixtures.accounts['a0']!;
+      var account = res.accounts.data.first;
       expect(() => services.balance.collectUTXOs(account, amount: 16),
           throwsException);
-      expect(services.balance.collectUTXOs(account, amount: 15),
-          [fixtures.histories['3'], fixtures.histories['0']]);
-      expect(services.balance.collectUTXOs(account, amount: 14),
-          [fixtures.histories['3'], fixtures.histories['0']]);
     });
   });
 }
