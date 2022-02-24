@@ -18,7 +18,8 @@ class LeaderWallet extends Wallet {
     required String walletId,
     required this.encryptedEntropy,
     CipherUpdate cipherUpdate = defaultCipherUpdate,
-  }) : super(walletId: walletId, cipherUpdate: cipherUpdate);
+    String? name,
+  }) : super(walletId: walletId, cipherUpdate: cipherUpdate, name: name);
 
   @override
   List<Object?> get props => [walletId, cipherUpdate, encryptedEntropy];

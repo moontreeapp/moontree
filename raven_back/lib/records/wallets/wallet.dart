@@ -16,13 +16,17 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
   @HiveField(1)
   final CipherUpdate cipherUpdate;
 
+  @HiveField(2)
+  final String name;
+
   @override
-  List<Object?> get props => [walletId, cipherUpdate];
+  List<Object?> get props => [walletId, cipherUpdate, name];
 
   Wallet({
     required this.walletId,
     required this.cipherUpdate,
-  });
+    String? name,
+  }) : name = name ?? walletId.substring(0, 6);
 
   String get encrypted;
 
