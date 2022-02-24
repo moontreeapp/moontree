@@ -25,7 +25,7 @@ class _ImportState extends State<Import> {
   dynamic data = {};
   var words = TextEditingController();
   bool importEnabled = false;
-  late Account account;
+  late Wallet wallet;
   String importFormatDetected = '';
   final Backup storage = Backup();
   final TextEditingController password = TextEditingController();
@@ -42,11 +42,11 @@ class _ImportState extends State<Import> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    if (data['accountId'] == 'current' || data['accountId'] == null) {
-      account = Current.account;
+    if (data['walletId'] == 'current' || data['walletId'] == null) {
+      wallet = Current.wallet;
     } else {
-      account = res.accounts.primaryIndex.getOne(data['accountId']) ??
-          Current.account;
+      wallet =
+          res.wallets.primaryIndex.getOne(data['walletId']) ?? Current.wallet;
     }
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -159,8 +159,7 @@ class _ImportState extends State<Import> {
       }
       text = resp;
     }
-    streams.import.attempt
-        .add(ImportRequest(text: text, accountId: account.accountId));
+    streams.import.attempt.add(ImportRequest(text: text));
     Navigator.popUntil(
         components.navigator.routeContext!, ModalRoute.withName('/home'));
   }

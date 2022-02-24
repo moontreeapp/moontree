@@ -38,9 +38,6 @@ class _TechnicalViewState extends State<TechnicalView> {
     listeners.add(res.settings.changes.listen((changes) {
       setState(() {});
     }));
-    listeners.add(res.accounts.changes.listen((changes) {
-      setState(() {});
-    }));
     listeners.add(res.wallets.changes.listen((changes) {
       setState(() {});
     }));
@@ -99,29 +96,26 @@ class _TechnicalViewState extends State<TechnicalView> {
     res.wallets.save(wallet is LeaderWallet
         ? LeaderWallet(
             walletId: wallet.walletId,
-            accountId: account.accountId,
             encryptedEntropy: wallet.encryptedEntropy,
             cipherUpdate: wallet.cipherUpdate)
         : wallet is SingleWallet
             ? SingleWallet(
                 walletId: wallet.walletId,
-                accountId: account.accountId,
                 encryptedWIF: wallet.encryptedWIF,
                 cipherUpdate: wallet.cipherUpdate)
             : SingleWallet(
                 // placeholder for other wallets
                 walletId: wallet.walletId,
-                accountId: account.accountId,
                 encryptedWIF: (wallet as SingleWallet).encryptedWIF,
                 cipherUpdate: wallet.cipherUpdate));
   }
 
-  List<Widget> _deleteIfMany(Account account) => res.accounts.data.length > 1
+  List<Widget> _deleteIfMany(Wallet wallet) => res.wallets.data.length > 1
       ? [
           IconButton(
               onPressed: () async {
                 // doesn't delete immediately - not working until indicies work right
-                await services.account.remove(account.accountId);
+                //await services.wallet.remove(account.accountId);
               },
               icon: Icon(Icons.delete))
         ]

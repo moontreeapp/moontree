@@ -22,7 +22,7 @@ class Export extends StatefulWidget {
 class _ExportState extends State<Export> {
   final Backup storage = Backup();
   dynamic data = {};
-  Account? account;
+  Wallet? wallet;
   File? file;
   List<Widget> getExisting = [];
   bool encryptExport = true;
@@ -35,12 +35,12 @@ class _ExportState extends State<Export> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    if (data['accountId'] == 'all') {
-    } else if (data['accountId'] == 'current' || data['accountId'] == null) {
-      account = Current.account;
+    if (data['walletId'] == 'all') {
+    } else if (data['walletId'] == 'current' || data['walletId'] == null) {
+      wallet = Current.wallet;
     } else {
-      account = res.accounts.primaryIndex.getOne(data['accountId']) ??
-          Current.account;
+      wallet =
+          res.wallets.primaryIndex.getOne(data['walletId']) ?? Current.wallet;
     }
     getExisting = [
       TextButton(
@@ -58,20 +58,19 @@ class _ExportState extends State<Export> {
     );
   }
 
-  String get _accountName =>
-      account != null ? 'Account: ' + account!.name : 'All Accounts';
-  String get _accountId =>
-      account != null ? account!.accountId : 'All Accounts';
+  String get _walletName =>
+      wallet != null ? 'Wallet: ' + wallet!.walletId : 'All Wallets';
+  String get _walletId => wallet != null ? wallet!.walletId : 'All Wallets';
 
   Future<File> _download() async => await storage.writeExport(
-      filename: _accountId + '-' + DateTime.now().toString(),
+      filename: _walletId + '-' + DateTime.now().toString(),
       rawExport: services.password.required && encryptExport
           ? hex.encrypt(
               convert.hex.encode(
-                  jsonEncode(services.wallet.export.structureForExport(account))
+                  jsonEncode(services.wallet.export.structureForExport())
                       .codeUnits),
               services.cipher.currentCipher!)
-          : jsonEncode(services.wallet.export.structureForExport(account)));
+          : jsonEncode(services.wallet.export.structureForExport()));
 
   Widget get exportButton => ElevatedButton.icon(
       icon: components.icons.export,
@@ -79,7 +78,7 @@ class _ExportState extends State<Export> {
         file = await _download();
         setState(() {});
       },
-      label: Text('Export ' + _accountName));
+      label: Text('Export ' + _walletName));
 
   // todo: fix visual of exported backups
   Future get existingFiles async {
@@ -122,11 +121,11 @@ class _ExportState extends State<Export> {
             //],
             SizedBox(height: 25),
             ...[
-              if (account != null && res.accounts.length > 1)
+              if (wallet != null && res.wallets.length > 1)
                 TextButton.icon(
                     onPressed: () => setState(() {
-                          data['accountId'] = 'all';
-                          account = null;
+                          data['walletId'] = 'all';
+                          wallet = null;
                         }),
                     icon: Icon(Icons.help),
                     label: Text('Export ALL?'))
