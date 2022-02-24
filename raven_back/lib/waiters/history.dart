@@ -42,8 +42,8 @@ class HistoryWaiter extends Waiter {
   bool initGaps() {
     for (var wallet in res.wallets.leaders) {
       for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
-        insertKeys(wallet.walletId, exposure);
-        gaps[wallet.walletId]?[exposure] =
+        insertKeys(wallet.id, exposure);
+        gaps[wallet.id]?[exposure] =
             services.wallet.leader.currentGap(wallet, exposure);
       }
     }
@@ -51,12 +51,12 @@ class HistoryWaiter extends Waiter {
   }
 
   bool gapFilled(Address address) =>
-      (gaps[address.wallet!.walletId]?[address.exposure] ?? 0) >= requiredGap;
+      (gaps[address.wallet!.id]?[address.exposure] ?? 0) >= requiredGap;
 
   bool gapsFilled() {
     for (var wallet in res.wallets.leaders) {
-      insertKeys(wallet.walletId, NodeExposure.External);
-      insertKeys(wallet.walletId, NodeExposure.Internal);
+      insertKeys(wallet.id, NodeExposure.External);
+      insertKeys(wallet.id, NodeExposure.Internal);
     }
     for (var walletId in gaps.keys) {
       for (var exposure in gaps[walletId]!.keys) {
@@ -67,9 +67,9 @@ class HistoryWaiter extends Waiter {
   }
 
   void incrementGap(Address address) {
-    insertKeys(address.wallet!.walletId, address.exposure);
-    gaps[address.wallet!.walletId]![address.exposure] =
-        gaps[address.wallet!.walletId]![address.exposure]! + 1;
+    insertKeys(address.wallet!.id, address.exposure);
+    gaps[address.wallet!.id]![address.exposure] =
+        gaps[address.wallet!.id]![address.exposure]! + 1;
   }
 
   void insertKeys(String walletId, NodeExposure exposure) {

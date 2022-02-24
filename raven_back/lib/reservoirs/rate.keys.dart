@@ -4,7 +4,7 @@ part of 'rate.dart';
 
 class _RateKey extends Key<Rate> {
   @override
-  String getKey(Rate rate) => rate.rateId;
+  String getKey(Rate rate) => rate.id;
 }
 
 extension ByRateMethodsForRate on Index<_RateKey, Rate> {

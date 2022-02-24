@@ -30,7 +30,7 @@ class AddressReservoir extends Reservoir<_ScripthashKey, Address> {
     var i = 0;
     for (var address
         in byWalletExposure.getAll(walletId, NodeExposure.Internal)) {
-      if (address.addressId == addressId) {
+      if (address.id == addressId) {
         return AddressLocation(i, NodeExposure.Internal);
       }
       i = i + 1;
@@ -38,7 +38,7 @@ class AddressReservoir extends Reservoir<_ScripthashKey, Address> {
     i = 0;
     for (var address
         in byWalletExposure.getAll(walletId, NodeExposure.External)) {
-      if (address.addressId == addressId) {
+      if (address.id == addressId) {
         return AddressLocation(i, NodeExposure.External);
       }
       i = i + 1;

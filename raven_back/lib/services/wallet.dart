@@ -98,7 +98,7 @@ class WalletService {
     if (wallet is SingleWallet) {
       return single.getKPWallet(wallet);
     }
-    throw WalletMissing("Wallet '${wallet.walletId}' has no change wallets");
+    throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
   }
 
   WalletBase getEmptyWallet(Wallet wallet) {
@@ -108,6 +108,6 @@ class WalletService {
     if (wallet is SingleWallet) {
       return single.getKPWallet(wallet);
     }
-    throw WalletMissing("Wallet '${wallet.walletId}' has no change wallets");
+    throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
   }
 }

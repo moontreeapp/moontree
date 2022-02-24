@@ -17,7 +17,7 @@ class TransactionAdapter extends TypeAdapter<Transaction> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Transaction(
-      transactionId: fields[0] as String,
+      id: fields[0] as String,
       confirmed: fields[1] as bool,
       time: fields[2] as int?,
       height: fields[3] as int?,
@@ -31,7 +31,7 @@ class TransactionAdapter extends TypeAdapter<Transaction> {
     writer
       ..writeByte(6)
       ..writeByte(0)
-      ..write(obj.transactionId)
+      ..write(obj.id)
       ..writeByte(1)
       ..write(obj.confirmed)
       ..writeByte(2)

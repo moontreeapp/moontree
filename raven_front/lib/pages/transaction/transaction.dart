@@ -172,12 +172,12 @@ class _TransactionPageState extends State<TransactionPage> {
             InkWell(
                 child: Wrap(children: [
                   Text('Transaction ID: '),
-                  Text('${transaction!.transactionId}',
+                  Text('${transaction!.id}',
                       style: TextStyle(
                           color: Theme.of(context).primaryColorLight)),
                 ]),
                 onTap: () => launch(
-                    'https://rvnt.cryptoscope.io/tx/?txid=${transaction!.transactionId}')),
+                    'https://rvnt.cryptoscope.io/tx/?txid=${transaction!.id}')),
             SizedBox(height: 15.0),
 
             /// vin --------------------------------------------------------

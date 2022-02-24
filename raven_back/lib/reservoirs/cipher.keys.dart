@@ -4,7 +4,7 @@ part of 'cipher.dart';
 
 class _CipherUpdateKey extends Key<Cipher> {
   @override
-  String getKey(Cipher cipher) => cipher.cipherId;
+  String getKey(Cipher cipher) => cipher.id;
 }
 
 extension ByCipherUpdateMethodsForCipher on Index<_CipherUpdateKey, Cipher> {
@@ -16,7 +16,7 @@ extension ByCipherUpdateMethodsForCipher on Index<_CipherUpdateKey, Cipher> {
 
 class _CipherTypePasswordIdKey extends Key<Cipher> {
   @override
-  String getKey(Cipher cipher) => cipher.cipherId;
+  String getKey(Cipher cipher) => cipher.id;
 }
 
 extension ByCipherTypePasswordIdMethodsForCipher

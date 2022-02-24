@@ -105,7 +105,7 @@ void main() {
     //    wif: 'Kxr9tQED9H44gCmp6HAdmemAzU3n84H3dGkuWTKvE23JgHMW8gct');
     var ewif = EncryptedWIF.fromWIF(wif, CipherNone());
     var wallet = SingleWallet(
-        walletId: ewif.walletId,
+        id: ewif.walletId,
         cipherUpdate: CipherUpdate(CipherType.None),
         encryptedWIF: ewif.encryptedSecret);
     expect(wallet.encryptedWIF,

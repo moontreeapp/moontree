@@ -87,7 +87,7 @@ class Vout with EquatableMixin {
         'additionalAddresses: $additionalAddresses)';
   }
 
-  String get voutId => getVoutId(transactionId, position);
+  String get id => getVoutId(transactionId, position);
 
   static String getVoutId(String transactionId, int position) =>
       '$transactionId:$position';
@@ -98,7 +98,7 @@ class Vout with EquatableMixin {
           (security.symbol == 'RVN' &&
               security.securityType == SecurityType.Crypto)
       ? rvnValue
-      : (security.securityId == assetSecurityId)
+      : (security.id == assetSecurityId)
           ? assetValue ?? 0
           : 0;
 

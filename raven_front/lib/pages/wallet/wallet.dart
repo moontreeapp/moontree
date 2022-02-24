@@ -322,7 +322,7 @@ class _WalletViewState extends State<WalletView> {
       onPressed: disabled
           ? () {}
           : () => Navigator.pushNamed(context, '/transaction/send',
-              arguments: {'symbol': 'RVN', 'walletId': wallet.walletId}),
+              arguments: {'symbol': 'RVN', 'walletId': wallet.id}),
       style: disabled
           ? components.styles.buttons.disabledCurvedSides(context)
           : components.styles.buttons.curvedSides);

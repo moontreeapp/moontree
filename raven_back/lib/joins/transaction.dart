@@ -17,23 +17,21 @@ extension TransactionBelongsToWallet on Transaction {
 }
 
 extension TransactionHasManyVins on Transaction {
-  List<Vin> get vins => res.vins.byTransaction.getAll(transactionId);
+  List<Vin> get vins => res.vins.byTransaction.getAll(id);
 }
 
 extension TransactionHasManyVouts on Transaction {
-  List<Vout> get vouts => res.vouts.byTransaction.getAll(transactionId);
+  List<Vout> get vouts => res.vouts.byTransaction.getAll(id);
 }
 
 extension TransactionHasManyMemos on Transaction {
-  List<String> get memos => res.vouts.byTransaction
-      .getAll(transactionId)
-      .map((vout) => vout.memo)
-      .toList();
+  List<String> get memos =>
+      res.vouts.byTransaction.getAll(id).map((vout) => vout.memo).toList();
 }
 
 extension TransactionHasOneValue on Transaction {
   int get value => res.vouts.byTransaction
-      .getAll(transactionId)
+      .getAll(id)
       .map((vout) => vout.rvnValue)
       .toList()
       .sumInt();

@@ -4,7 +4,7 @@ part of 'security.dart';
 
 class _SecurityIdKey extends Key<Security> {
   @override
-  String getKey(Security security) => security.securityId;
+  String getKey(Security security) => security.id;
 }
 
 extension ByIdMethodsForSecurity on Index<_SecurityIdKey, Security> {
@@ -41,7 +41,7 @@ extension BySecurityTypeMethodsForSecurity
 
 class _SymbolSecurityTypeKey extends Key<Security> {
   @override
-  String getKey(Security security) => security.securityId;
+  String getKey(Security security) => security.id;
 }
 
 extension BySymbolSecurityTypeMethodsForSecurity

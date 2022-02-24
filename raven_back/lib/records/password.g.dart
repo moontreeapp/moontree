@@ -17,7 +17,7 @@ class PasswordAdapter extends TypeAdapter<Password> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Password(
-      passwordId: fields[0] as int,
+      id: fields[0] as int,
       saltedHash: fields[1] as String,
     );
   }
@@ -27,7 +27,7 @@ class PasswordAdapter extends TypeAdapter<Password> {
     writer
       ..writeByte(2)
       ..writeByte(0)
-      ..write(obj.passwordId)
+      ..write(obj.id)
       ..writeByte(1)
       ..write(obj.saltedHash);
   }

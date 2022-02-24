@@ -17,7 +17,7 @@ void main() {
       dotenv.load();
       waiters.leader.init();
       await res.wallets.save(LeaderWallet(
-          walletId: '0',
+          id: '0',
           cipherUpdate: CipherUpdate(CipherType.None),
           encryptedEntropy:
               bip39.mnemonicToEntropy(dotenv.env['TEST_WALLET_01']!)));

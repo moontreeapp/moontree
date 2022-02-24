@@ -27,7 +27,7 @@ class Setting with EquatableMixin {
   @override
   String toString() => 'Setting($name, $value)';
 
-  String get settingId => Setting.settingKey(name);
+  String get id => Setting.settingKey(name);
 
   static String settingKey(SettingName name) => name.enumString;
 

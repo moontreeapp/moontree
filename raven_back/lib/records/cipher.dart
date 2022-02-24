@@ -28,7 +28,7 @@ class Cipher with EquatableMixin {
 
   String get cipherTypeString => cipherType.enumString;
 
-  String get cipherId => Cipher.cipherKey(cipherType, passwordId);
+  String get id => Cipher.cipherKey(cipherType, passwordId);
 
   static String cipherKey(CipherType cipherType, int? passwordId) =>
       CipherUpdate.cipherUpdateKey(cipherType, passwordId);

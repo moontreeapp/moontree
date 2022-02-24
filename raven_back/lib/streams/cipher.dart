@@ -19,7 +19,7 @@ final latestCipherUpdate$ = CombineLatestStream.combine2(
     latestCipherType$,
     streams.password.latest,
     (CipherType cipherType, Password? password) =>
-        CipherUpdate(cipherType, passwordId: password?.passwordId));
+        CipherUpdate(cipherType, passwordId: password?.id));
 
 /// returns the latest cipher as defined by its inputs
 final Stream<Cipher> latestCipher$ = CombineLatestStream.combine2(

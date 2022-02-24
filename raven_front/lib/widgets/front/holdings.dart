@@ -29,8 +29,8 @@ class _HoldingList extends State<HoldingList> {
         res.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
       // if vouts in our account has changed...
       if (batchedChanges
-          .where((change) =>
-              change.data.address?.wallet?.walletId == Current.walletId)
+          .where(
+              (change) => change.data.address?.wallet?.id == Current.walletId)
           .isNotEmpty) {
         setState(() {});
       }
@@ -104,7 +104,7 @@ class _HoldingList extends State<HoldingList> {
         form: streams.spend.form.value, symbol: balance.security.symbol));
     Navigator.of(components.navigator.routeContext!).pushNamed(
       '/transactions',
-      arguments: {'holding': balance, 'walletId': wallet?.walletId ?? null},
+      arguments: {'holding': balance, 'walletId': wallet?.id ?? null},
     );
   }
 

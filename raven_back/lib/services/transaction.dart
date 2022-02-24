@@ -28,8 +28,8 @@ class TransactionService {
     transaction = getTransactionFrom(transaction: transaction, hash: hash);
     if (transaction != null) {
       await res.transactions.save(Transaction(
+          id: transaction.id,
           height: transaction.height,
-          transactionId: transaction.transactionId,
           confirmed: transaction.confirmed,
           note: transaction.note,
           time: transaction.time));

@@ -11,7 +11,7 @@ export 'extended_wallet_base.dart';
 
 abstract class Wallet with HiveObjectMixin, EquatableMixin {
   @HiveField(0)
-  final String walletId;
+  final String id;
 
   @HiveField(1)
   final CipherUpdate cipherUpdate;
@@ -20,13 +20,13 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
   final String name;
 
   @override
-  List<Object?> get props => [walletId, cipherUpdate, name];
+  List<Object?> get props => [id, cipherUpdate, name];
 
   Wallet({
-    required this.walletId,
+    required this.id,
     required this.cipherUpdate,
     String? name,
-  }) : name = name ?? walletId.substring(0, 6);
+  }) : name = name ?? id.substring(0, 6);
 
   String get encrypted;
 
@@ -38,7 +38,7 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
 
   WalletType get walletType => WalletType.none;
 
-  String get publicKey => walletId;
+  String get publicKey => id;
 
   String get secretTypeToString => secretType.enumString;
   String get walletTypeToString => walletType.enumString;

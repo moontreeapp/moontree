@@ -17,7 +17,7 @@ class ExportWalletService {
   Map<String, Map<String, dynamic>> walletsForExport() => {
         for (var wallet in res.wallets) ...{
           if (wallet.cipher != null)
-            wallet.walletId: {
+            wallet.id: {
               'secret': wallet.secret(wallet.cipher!),
               'type': typeForExport(wallet),
               'cipherUpdate': wallet.cipherUpdate.toMap,

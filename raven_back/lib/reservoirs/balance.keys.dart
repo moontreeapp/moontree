@@ -4,7 +4,7 @@ part of 'balance.dart';
 
 class _WalletSecurityKey extends Key<Balance> {
   @override
-  String getKey(Balance balance) => balance.balanceId;
+  String getKey(Balance balance) => balance.id;
 }
 
 extension ByWalletSecurityMethodsForBalance
@@ -28,9 +28,9 @@ extension ByWalletMethodsForBalance on Index<_WalletKey, Balance> {
 
 class _SecurityKey extends Key<Balance> {
   @override
-  String getKey(Balance balance) => balance.security.securityId;
+  String getKey(Balance balance) => balance.security.id;
 }
 
 extension BySecurityMethodsForBalance on Index<_SecurityKey, Balance> {
-  List<Balance> getAll(Security security) => getByKeyStr(security.securityId);
+  List<Balance> getAll(Security security) => getByKeyStr(security.id);
 }

@@ -32,7 +32,7 @@ class Security with EquatableMixin {
   @override
   String toString() => 'Security(symbol: $symbol, securityType: $securityType)';
 
-  String get securityId => securityKey(symbol, securityType);
+  String get id => securityKey(symbol, securityType);
 
   static String securityKey(String symbol, SecurityType securityType) =>
       '$symbol:${securityType.enumString}';

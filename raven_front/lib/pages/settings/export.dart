@@ -59,8 +59,8 @@ class _ExportState extends State<Export> {
   }
 
   String get _walletName =>
-      wallet != null ? 'Wallet: ' + wallet!.walletId : 'All Wallets';
-  String get _walletId => wallet != null ? wallet!.walletId : 'All Wallets';
+      wallet != null ? 'Wallet: ' + wallet!.id : 'All Wallets';
+  String get _walletId => wallet != null ? wallet!.id : 'All Wallets';
 
   Future<File> _download() async => await storage.writeExport(
       filename: _walletId + '-' + DateTime.now().toString(),

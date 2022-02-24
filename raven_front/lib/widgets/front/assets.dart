@@ -25,8 +25,8 @@ class _AssetList extends State<AssetList> {
         res.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
       // if vouts in our account has changed...
       if (batchedChanges
-          .where((change) =>
-              change.data.address?.wallet?.walletId == Current.walletId)
+          .where(
+              (change) => change.data.address?.wallet?.id == Current.walletId)
           .isNotEmpty) {
         setState(() {});
       }
@@ -85,7 +85,7 @@ class _AssetList extends State<AssetList> {
     streams.app.asset.add(symbol);
     Navigator.of(components.navigator.routeContext!).pushNamed(
       '/manage/asset',
-      arguments: {'symbol': symbol, 'walletId': wallet?.walletId ?? null},
+      arguments: {'symbol': symbol, 'walletId': wallet?.id ?? null},
     );
   }
 

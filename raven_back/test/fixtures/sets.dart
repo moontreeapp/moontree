@@ -26,35 +26,35 @@ class FixtureSet1 extends FixtureSet {
   @override
   Map<String, Address> get addresses => {
         '0': Address(
-            addressId: '0',
+            id: '0',
             address: 'address 0 address',
             walletId: '0',
             hdIndex: 0,
             exposure: NodeExposure.Internal,
             net: Net.Test),
         '1': Address(
-            addressId: '1',
+            id: '1',
             address: 'address 1 address',
             walletId: '0',
             hdIndex: 1,
             exposure: NodeExposure.External,
             net: Net.Test),
         '2': Address(
-            addressId: '2',
+            id: '2',
             address: 'address 2 address',
             walletId: '0',
             hdIndex: 2,
             exposure: NodeExposure.External,
             net: Net.Test),
         '3': Address(
-            addressId: '3',
+            id: '3',
             address: 'address 3 address',
             walletId: '0',
             hdIndex: 3,
             exposure: NodeExposure.External,
             net: Net.Test),
         '100': Address(
-            addressId: '100',
+            id: '100',
             address: 'address 1 address',
             walletId: '0',
             hdIndex: 3,
@@ -122,7 +122,7 @@ class FixtureSet1 extends FixtureSet {
 
   @override
   Map<String, Password> get passwords =>
-      {'0': Password(passwordId: 0, saltedHash: 'saltedHash')};
+      {'0': Password(id: 0, saltedHash: 'saltedHash')};
   @override
   Map<String, Rate> get rates => {
         'RVN:Crypto:USD:Fiat': Rate(
@@ -156,15 +156,13 @@ class FixtureSet1 extends FixtureSet {
   @override
   Map<String, Transaction> get transactions => {
         '0': Transaction(
-            transactionId:
-                'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
+            id: 'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
             confirmed: true,
             height: 0),
-        '1': Transaction(transactionId: '1', confirmed: true, height: 1),
-        '2': Transaction(transactionId: '2', confirmed: true, height: 2),
+        '1': Transaction(id: '1', confirmed: true, height: 1),
+        '2': Transaction(id: '2', confirmed: true, height: 2),
         '3': Transaction(
-            transactionId:
-                'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
+            id: 'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
             confirmed: true,
             height: 2),
       };
@@ -309,16 +307,16 @@ class FixtureSet1 extends FixtureSet {
     var phrase = dotenv.env['TEST_WALLET_01']!;
     return {
       '0': LeaderWallet(
-          walletId: '0',
+          id: '0',
           cipherUpdate: CipherUpdate(CipherType.None),
           encryptedEntropy: bip39.mnemonicToEntropy(phrase)),
       // has no addresses
       '1': LeaderWallet(
-          walletId: '1',
+          id: '1',
           cipherUpdate: CipherUpdate(CipherType.None),
           encryptedEntropy: bip39.mnemonicToEntropy(phrase)),
       '2': LeaderWallet(
-          walletId: '2',
+          id: '2',
           cipherUpdate: CipherUpdate(CipherType.None),
           encryptedEntropy: bip39.mnemonicToEntropy(phrase)),
     };

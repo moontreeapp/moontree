@@ -4,7 +4,7 @@ part of 'metadata.dart';
 
 class _MetadataIdKey extends Key<Metadata> {
   @override
-  String getKey(Metadata metadata) => metadata.metadataId;
+  String getKey(Metadata metadata) => metadata.id;
 }
 
 extension ByIdMethodsForMetadata on Index<_MetadataIdKey, Metadata> {
@@ -16,7 +16,7 @@ extension ByIdMethodsForMetadata on Index<_MetadataIdKey, Metadata> {
 
 class _SymbolMetadataKey extends Key<Metadata> {
   @override
-  String getKey(Metadata metadata) => metadata.metadataId;
+  String getKey(Metadata metadata) => metadata.id;
 }
 
 extension BySymbolMetadataMethodsForMetadata

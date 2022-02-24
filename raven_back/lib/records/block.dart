@@ -27,7 +27,7 @@ class Block with EquatableMixin {
     return Block(height: blockHeader.height);
   }
 
-  String get blockId => Block.blockKey();
+  String get id => Block.blockKey();
 
   static String blockKey() => 'height';
 }

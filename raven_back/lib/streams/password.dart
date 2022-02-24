@@ -16,7 +16,7 @@ final BehaviorSubject<Password?> latestPassword$ = BehaviorSubject.seeded(null)
   ..addStream(res.passwords.changes
       .where((change) => change is Loaded || change is Added)
       .map((change) => change.data)
-      .maximum((p1, p2) => p1.passwordId - p2.passwordId));
+      .maximum((p1, p2) => p1.id - p2.id));
 
 final Stream<bool> passwordExists$ =
     latestPassword$.map((password) => password == null ? false : true);

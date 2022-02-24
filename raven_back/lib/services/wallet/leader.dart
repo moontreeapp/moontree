@@ -33,9 +33,9 @@ class LeaderWalletService {
     addressRegistry[addressRegistryKey(wallet, exposure)] = hdIndex;
     var subwallet = getSubWallet(wallet, hdIndex, exposure);
     return Address(
-        addressId: subwallet.scripthash,
+        id: subwallet.scripthash,
         address: subwallet.address!,
-        walletId: wallet.walletId,
+        walletId: wallet.id,
         hdIndex: hdIndex,
         exposure: exposure,
         net: res.settings.net);
@@ -83,7 +83,7 @@ class LeaderWalletService {
     services.busy.createWalletOff();
     if (existingWallet == null) {
       return LeaderWallet(
-        walletId: encryptedEntropy.walletId,
+        id: encryptedEntropy.walletId,
         encryptedEntropy: encryptedEntropy.encryptedSecret,
         cipherUpdate: cipherUpdate,
       );
@@ -141,7 +141,7 @@ class LeaderWalletService {
   HDWallet getChangeWallet(LeaderWallet wallet) => getNextEmptyWallet(wallet);
 
   String addressRegistryKey(LeaderWallet wallet, NodeExposure exposure) =>
-      '${wallet.walletId}:${exposure.enumString}';
+      '${wallet.id}:${exposure.enumString}';
 
   Set<Address> deriveMoreAddresses(
     LeaderWallet wallet, {

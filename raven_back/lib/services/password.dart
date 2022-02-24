@@ -51,7 +51,7 @@ class PasswordValidationService {
     var ret;
     for (var pass in res.passwords.data) {
       if (getHash(password, pass.salt) == pass.saltedHash) {
-        ret = m - pass.passwordId;
+        ret = m - pass.id;
       }
     }
     return ret;
@@ -87,7 +87,7 @@ class PasswordCreationService {
 
   Future save(String password) async {
     await res.passwords.save(Password(
-        passwordId: (res.passwords.maxPasswordId ?? -1) + 1,
+        id: (res.passwords.maxPasswordId ?? -1) + 1,
         saltedHash: password == ''
             ? ''
             : hashThis(saltPassword(password,

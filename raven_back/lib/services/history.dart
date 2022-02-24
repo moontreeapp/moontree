@@ -11,7 +11,7 @@ class HistoryService {
     if (client == null) {
       return false;
     }
-    var histories = await client.getHistory(address.addressId);
+    var histories = await client.getHistory(address.id);
     if (histories.isNotEmpty) {
       streams.address.history.add(histories.map((history) => history.txHash));
       // if we had no history, and now we found some... derive a new address
@@ -40,9 +40,7 @@ class HistoryService {
       // addresses point to, perhaps, so that this is valid, we never have to
       // redownload individaul transactions again?
       if ((res.transactions.primaryIndex.getOne(txHash) == null ||
-          res.transactions.mempool
-              .map((t) => t.transactionId)
-              .contains(txHash))) {
+          res.transactions.mempool.map((t) => t.id).contains(txHash))) {
         // not already downloaded...
         txs.add(await client.getTransaction(txHash));
       } else {
@@ -83,8 +81,7 @@ class HistoryService {
     if (client == null) return;
     await saveTransactions(
       [
-        for (var transactionId
-            in res.transactions.mempool.map((t) => t.transactionId))
+        for (var transactionId in res.transactions.mempool.map((t) => t.id))
           await client.getTransaction(transactionId)
       ],
       client,
@@ -131,7 +128,7 @@ class HistoryService {
           memo: vout.memo,
           type: vout.scriptPubKey.type,
           toAddress: vout.scriptPubKey.addresses![0],
-          assetSecurityId: vs.item2.securityId,
+          assetSecurityId: vs.item2.id,
           assetValue: utils.amountToSat(vout.scriptPubKey.amount,
               divisibility:
                   vs.item3?.divisibility ?? vout.scriptPubKey.units ?? 8),
@@ -147,7 +144,7 @@ class HistoryService {
       /// can save some time, but then you have to also check confirmations
       /// and see if anything else changed. meh, just save them all for now.
       newTxs.add(Transaction(
-        transactionId: tx.txid,
+        id: tx.txid,
         height: tx.height,
         confirmed: (tx.confirmations ?? 0) > 0,
         time: tx.time,
@@ -233,9 +230,7 @@ class HistoryService {
     }
     // not already downloaded?
     if ((res.transactions.primaryIndex.getOne(transactionId) == null ||
-        res.transactions.mempool
-            .map((t) => t.transactionId)
-            .contains(transactionId))) {
+        res.transactions.mempool.map((t) => t.id).contains(transactionId))) {
       print('downloading: $transactionId');
       await saveTransaction(await client.getTransaction(transactionId), client,
           saveVin: saveVin);
@@ -276,7 +271,7 @@ class HistoryService {
         memo: vout.memo,
         type: vout.scriptPubKey.type,
         toAddress: vout.scriptPubKey.addresses![0],
-        assetSecurityId: vs.item2.securityId,
+        assetSecurityId: vs.item2.id,
         assetValue: utils.amountToSat(vout.scriptPubKey.amount,
             divisibility:
                 vs.item3?.divisibility ?? vout.scriptPubKey.units ?? 8),
@@ -287,7 +282,7 @@ class HistoryService {
             : null,
       ));
       await res.transactions.save(Transaction(
-        transactionId: tx.txid,
+        id: tx.txid,
         height: tx.height,
         confirmed: (tx.confirmations ?? 0) > 0,
         time: tx.time,

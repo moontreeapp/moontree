@@ -8,7 +8,7 @@ extension WalletBelongsToCipher on Wallet {
 }
 
 extension WalletHasManyAddresses on Wallet {
-  List<Address> get addresses => res.addresses.byWallet.getAll(walletId);
+  List<Address> get addresses => res.addresses.byWallet.getAll(id);
 }
 
 // change addresses
@@ -44,17 +44,16 @@ extension WalletHasManyUsedExternalAddresses on Wallet {
 }
 
 extension WalletHasManyBalances on Wallet {
-  List<Balance> get balances => res.balances.byWallet.getAll(walletId);
+  List<Balance> get balances => res.balances.byWallet.getAll(id);
 }
 
 extension WalletHasManyVouts on Wallet {
   Iterable<Vout> get vouts =>
-      res.vouts.data.where((vout) => vout.wallet?.walletId == walletId);
+      res.vouts.data.where((vout) => vout.wallet?.id == id);
 }
 
 extension WalletHasManyVins on Wallet {
-  Iterable<Vin> get vins =>
-      res.vins.data.where((vin) => vin.wallet?.walletId == walletId);
+  Iterable<Vin> get vins => res.vins.data.where((vin) => vin.wallet?.id == id);
 }
 
 extension WalletHasManyTransactions on Wallet {

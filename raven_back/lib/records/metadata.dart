@@ -67,6 +67,6 @@ class Metadata with EquatableMixin {
 
   static String metadataKey(String symbol, String metadata) =>
       '$symbol:$metadata';
-  String get metadataId => '$symbol:$metadata';
+  String get id => '$symbol:$metadata';
   String get metadataTypeName => kind.enumString;
 }

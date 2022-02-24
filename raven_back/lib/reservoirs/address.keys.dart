@@ -4,7 +4,7 @@ part of 'address.dart';
 
 class _ScripthashKey extends Key<Address> {
   @override
-  String getKey(Address address) => address.addressId;
+  String getKey(Address address) => address.id;
 }
 
 extension ByRawScripthashMethodsForAddress on Index<_ScripthashKey, Address> {

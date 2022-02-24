@@ -26,8 +26,8 @@ class Rate with EquatableMixin {
   @override
   List<Object?> get props => [base, quote, rate];
 
-  String get rateId => Rate.rateKey(base, quote);
+  String get id => Rate.rateKey(base, quote);
 
   static String rateKey(Security base, Security quote) =>
-      '${base.securityId}:${quote.securityId}';
+      '${base.id}:${quote.id}';
 }

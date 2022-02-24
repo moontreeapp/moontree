@@ -11,9 +11,9 @@ class SingleWalletService {
     var net = res.settings.net;
     var kpWallet = getKPWallet(wallet);
     return Address(
-        addressId: kpWallet.scripthash,
+        id: kpWallet.scripthash,
         address: kpWallet.address!,
-        walletId: wallet.walletId,
+        walletId: wallet.id,
         hdIndex: 0,
         net: net);
   }
@@ -41,7 +41,7 @@ class SingleWalletService {
     var existingWallet = res.wallets.primaryIndex.getOne(encryptedWIF.walletId);
     if (existingWallet == null) {
       return SingleWallet(
-          walletId: encryptedWIF.walletId,
+          id: encryptedWIF.walletId,
           encryptedWIF: encryptedWIF.encryptedSecret,
           cipherUpdate: cipherUpdate);
     }

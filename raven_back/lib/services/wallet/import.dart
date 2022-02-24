@@ -141,7 +141,7 @@ class ImportWalletService {
   }
 
   String? detectExistingWallet(Wallet wallet) =>
-      res.wallets.primaryIndex.getOne(wallet.walletId)?.walletId;
+      res.wallets.primaryIndex.getOne(wallet.id)?.id;
 
   Future<HandleResult> attemptWalletSave(Wallet? wallet) async {
     if (wallet != null) {
@@ -150,14 +150,10 @@ class ImportWalletService {
         var importedChange = await res.wallets.save(wallet);
         return HandleResult(
             true,
-            res.wallets.primaryIndex
-                .getOne(importedChange!.data.walletId)!
-                .walletId,
+            res.wallets.primaryIndex.getOne(importedChange!.data.id)!.id,
             LingoKey.walletImportedAs);
       }
-      return HandleResult(
-          false,
-          res.wallets.primaryIndex.getOne(wallet.walletId)!.walletId,
+      return HandleResult(false, res.wallets.primaryIndex.getOne(wallet.id)!.id,
           LingoKey.walletAlreadyExists);
     }
     return HandleResult(false, '', LingoKey.walletUnableToCreate);

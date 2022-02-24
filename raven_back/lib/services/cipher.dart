@@ -53,9 +53,9 @@ class CipherService {
       EncryptedEntropy(wallet.encrypted, wallet.cipher!).entropy,
       cipher ?? currentCipher!,
     );
-    assert(wallet.walletId == reencrypt.walletId);
+    assert(wallet.id == reencrypt.walletId);
     return LeaderWallet(
-      walletId: reencrypt.walletId,
+      id: reencrypt.walletId,
       encryptedEntropy: reencrypt.encryptedSecret,
       cipherUpdate: currentCipherUpdate,
     );
@@ -67,9 +67,9 @@ class CipherService {
       EncryptedWIF(wallet.encrypted, wallet.cipher!).wif,
       cipher ?? currentCipher!,
     );
-    assert(wallet.walletId == reencrypt.walletId);
+    assert(wallet.id == reencrypt.walletId);
     return SingleWallet(
-      walletId: reencrypt.walletId,
+      id: reencrypt.walletId,
       encryptedWIF: reencrypt.encryptedSecret,
       cipherUpdate: currentCipherUpdate,
     );

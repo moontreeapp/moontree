@@ -8,10 +8,8 @@ part 'password.keys.dart';
 class PasswordReservoir extends Reservoir<_IdKey, Password> {
   PasswordReservoir() : super(_IdKey());
 
-  int? get maxPasswordId =>
-      max([for (var password in data) password.passwordId]);
+  int? get maxPasswordId => max([for (var password in data) password.id]);
 
-  Password? get current => data
-      .where((password) => password.passwordId == maxPasswordId)
-      .firstOrNull;
+  Password? get current =>
+      data.where((password) => password.id == maxPasswordId).firstOrNull;
 }

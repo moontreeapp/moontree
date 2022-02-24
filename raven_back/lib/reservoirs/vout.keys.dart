@@ -4,7 +4,7 @@ part of 'vout.dart';
 
 class _VoutKey extends Key<Vout> {
   @override
-  String getKey(Vout vout) => vout.voutId;
+  String getKey(Vout vout) => vout.id;
 }
 
 extension ByIdMethodsForVout on Index<_VoutKey, Vout> {
@@ -30,7 +30,7 @@ class _SecurityKey extends Key<Vout> {
 }
 
 extension BySecurityMethodsForVout on Index<_SecurityKey, Vout> {
-  List<Vout> getAll(Security security) => getByKeyStr(security.securityId);
+  List<Vout> getAll(Security security) => getByKeyStr(security.id);
 
   /// delete this
   //Iterable<Vout> unspents({required Security security}) =>

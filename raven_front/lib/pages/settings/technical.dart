@@ -95,17 +95,17 @@ class _TechnicalViewState extends State<TechnicalView> {
     var wallet = details.data;
     res.wallets.save(wallet is LeaderWallet
         ? LeaderWallet(
-            walletId: wallet.walletId,
+            id: wallet.id,
             encryptedEntropy: wallet.encryptedEntropy,
             cipherUpdate: wallet.cipherUpdate)
         : wallet is SingleWallet
             ? SingleWallet(
-                walletId: wallet.walletId,
+                id: wallet.id,
                 encryptedWIF: wallet.encryptedWIF,
                 cipherUpdate: wallet.cipherUpdate)
             : SingleWallet(
                 // placeholder for other wallets
-                walletId: wallet.walletId,
+                id: wallet.id,
                 encryptedWIF: (wallet as SingleWallet).encryptedWIF,
                 cipherUpdate: wallet.cipherUpdate));
   }
@@ -133,7 +133,7 @@ class _TechnicalViewState extends State<TechnicalView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                          '${wallet.walletId.substring(0, 6)}...${wallet.walletId.substring(wallet.walletId.length - 6, wallet.walletId.length)}',
+                          '${wallet.id.substring(0, 6)}...${wallet.id.substring(wallet.id.length - 6, wallet.id.length)}',
                           style: Theme.of(context).mono),
                       Text(
                           // todo use lingo keys depending on wallet type here...

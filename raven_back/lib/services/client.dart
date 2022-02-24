@@ -99,10 +99,9 @@ class SubscribeService {
     if (client == null) {
       return false;
     }
-    if (!subscriptionHandles.keys.contains(address.addressId)) {
-      subscriptionHandles[address.addressId] = client
-          .subscribeScripthash(address.addressId)
-          .listen((String? status) {
+    if (!subscriptionHandles.keys.contains(address.id)) {
+      subscriptionHandles[address.id] =
+          client.subscribeScripthash(address.id).listen((String? status) {
         waiters.subscription.retrieve(address);
       });
     }

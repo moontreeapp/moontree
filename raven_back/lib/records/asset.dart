@@ -62,7 +62,7 @@ class Asset with EquatableMixin {
       'position: $position)';
 
   static String assetKey(String symbol) => symbol;
-  String get assetId => symbol;
+  String get id => symbol;
 
   /// todo identify a ipfs hash correctly...
   // https://ethereum.stackexchange.com/questions/17094/how-to-store-ipfs-hash-using-bytes32/17112#17112

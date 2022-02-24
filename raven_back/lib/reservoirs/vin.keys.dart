@@ -4,7 +4,7 @@ part of 'vin.dart';
 
 class _VinIdKey extends Key<Vin> {
   @override
-  String getKey(Vin vin) => vin.vinId;
+  String getKey(Vin vin) => vin.id;
 }
 
 extension ByIdMethodsForVin on Index<_VinIdKey, Vin> {

@@ -17,22 +17,25 @@ class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return LeaderWallet(
-      walletId: fields[0] as String,
+      id: fields[0] as String,
       encryptedEntropy: fields[3] as String,
       cipherUpdate: fields[1] as CipherUpdate,
+      name: fields[2] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, LeaderWallet obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(3)
       ..write(obj.encryptedEntropy)
       ..writeByte(0)
-      ..write(obj.walletId)
+      ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.cipherUpdate);
+      ..write(obj.cipherUpdate)
+      ..writeByte(2)
+      ..write(obj.name);
   }
 
   @override

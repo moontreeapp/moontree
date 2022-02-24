@@ -28,8 +28,8 @@ class _SubAssetList extends State<SubAssetList> {
         res.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
       // if vouts in our account has changed...
       if (batchedChanges
-          .where((change) =>
-              change.data.address?.wallet?.walletId == Current.walletId)
+          .where(
+              (change) => change.data.address?.wallet?.id == Current.walletId)
           .isNotEmpty) {
         setState(() {});
       }
@@ -139,7 +139,7 @@ class _SubAssetList extends State<SubAssetList> {
     print('sending $symbol');
     Navigator.of(components.navigator.routeContext!).pushReplacementNamed(
       '/manage/asset',
-      arguments: {'symbol': symbol, 'walletId': wallet?.walletId ?? null},
+      arguments: {'symbol': symbol, 'walletId': wallet?.id ?? null},
     );
   }
 

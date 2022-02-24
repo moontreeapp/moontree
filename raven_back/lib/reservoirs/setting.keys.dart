@@ -4,7 +4,7 @@ part of 'setting.dart';
 
 class _SettingNameKey extends Key<Setting> {
   @override
-  String getKey(Setting setting) => setting.settingId;
+  String getKey(Setting setting) => setting.id;
 }
 
 extension BySettingNameMethodsForSetting on Index<_SettingNameKey, Setting> {

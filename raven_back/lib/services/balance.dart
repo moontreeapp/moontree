@@ -9,7 +9,7 @@ class BalanceService {
 
   /// Get (sum) the balance for a wallet-security pair
   Balance sumBalance(Wallet wallet, Security security) => Balance(
-      walletId: wallet.walletId,
+      walletId: wallet.id,
       security: security,
       confirmed: VoutReservoir.whereUnspent(
               given: wallet.vouts, security: security, includeMempool: false)

@@ -45,7 +45,7 @@ class Vin with EquatableMixin {
   }
 
   /// I think the vinId could be the same as voutId, but we'll just make another
-  String get vinId => sha256
+  String get id => sha256
       .convert(utf8.encode('$transactionId$voutTransactionId$voutPosition'))
       .toString();
 

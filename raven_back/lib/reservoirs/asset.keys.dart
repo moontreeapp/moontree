@@ -4,7 +4,7 @@ part of 'asset.dart';
 
 class _AssetIdKey extends Key<Asset> {
   @override
-  String getKey(Asset asset) => asset.assetId;
+  String getKey(Asset asset) => asset.id;
 }
 
 extension ByIdMethodsForAsset on Index<_AssetIdKey, Asset> {
