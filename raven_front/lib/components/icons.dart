@@ -79,6 +79,12 @@ class IconComponents {
         width: width,
         decoration: BoxDecoration(
             shape: BoxShape.circle,
+            color: Color.fromARGB(
+              255,
+              imageDetails.background[0],
+              imageDetails.background[1],
+              imageDetails.background[2],
+            ),
             border: Border.all(
                 width: 2,
                 color: Color.fromARGB(
