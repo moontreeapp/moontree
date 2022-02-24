@@ -99,7 +99,7 @@ class _ReceiveState extends State<Receive> {
             ? data['symbol']
             : ''
         : requestMessage.text;
-    address = Current.account.wallets[0].addresses.firstOrNull?.address ?? '';
+    address = services.wallet.getEmptyWallet(Current.wallet).address!;
     uri = uri == '' ? address : uri;
     //requestMessage.selection =
     //    TextSelection.collapsed(offset: requestMessage.text.length);

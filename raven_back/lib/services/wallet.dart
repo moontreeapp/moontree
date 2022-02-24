@@ -100,4 +100,14 @@ class WalletService {
     }
     throw WalletMissing("Wallet '${wallet.walletId}' has no change wallets");
   }
+
+  WalletBase getEmptyWallet(Wallet wallet) {
+    if (wallet is LeaderWallet) {
+      return leader.getNextEmptyWallet(wallet, exposure: NodeExposure.External);
+    }
+    if (wallet is SingleWallet) {
+      return single.getKPWallet(wallet);
+    }
+    throw WalletMissing("Wallet '${wallet.walletId}' has no change wallets");
+  }
 }

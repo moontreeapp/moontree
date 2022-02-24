@@ -45,8 +45,7 @@ class _CreateAssetState extends State<CreateAsset> {
         data.containsKey('divisibility') ? data['divisibility'] : '0';
     data['wallet'] = data.containsKey('wallet')
         ? data['wallet']
-        : res.wallets.byAccount.getOne(Current.account.accountId)?.walletId ??
-            '';
+        : res.wallets.data.first.walletId;
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(

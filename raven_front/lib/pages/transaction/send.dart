@@ -71,10 +71,7 @@ class _SendState extends State<Send> {
           var asset = (value?.symbol ?? 'RVN');
           sendAsset.text = asset == 'RVN' || asset == 'Ravencoin'
               ? 'Ravencoin'
-              : (useWallet
-                          ? Current.walletHoldingNames(data['walletId'])
-                          : Current.holdingNames)
-                      .contains(asset)
+              : Current.holdingNames.contains(asset)
                   ? asset
                   : sendAsset.text == ''
                       ? 'Ravencoin'
@@ -116,9 +113,7 @@ class _SendState extends State<Send> {
     }
     divisibility = res.assets.bySymbol.getOne(symbol)?.divisibility ?? 8;
     var possibleHoldings = [
-      for (var balance in useWallet
-          ? Current.walletHoldings(data['walletId'])
-          : Current.holdings)
+      for (var balance in Current.holdings)
         if (balance.security.symbol == symbol)
           utils.satToAmount(balance.confirmed)
     ];
@@ -143,9 +138,7 @@ class _SendState extends State<Send> {
   void handlePopulateFromQR(String code) {
     var qrData = populateFromQR(
       code: code,
-      holdings: useWallet
-          ? Current.walletHoldingNames(data['walletId'])
-          : Current.holdingNames,
+      holdings: Current.holdingNames,
       currentSymbol: data['symbol'],
     );
     if (qrData.address != null) {
@@ -172,14 +165,14 @@ class _SendState extends State<Send> {
 
   bool _validateAddress([String? address]) =>
       sendAddress.text == '' ||
-      rvnCondition(address ?? sendAddress.text, net: Current.account.net);
+      rvnCondition(address ?? sendAddress.text, net: res.settings.net);
 
   bool _validateAddressColor([String? address]) {
     var old = validatedAddress;
     validatedAddress = validateAddressType(address ?? sendAddress.text);
     if (validatedAddress != '') {
-      if ((validatedAddress == 'RVN' && Current.account.net == Net.Main) ||
-          (validatedAddress == 'RVNt' && Current.account.net == Net.Test)) {
+      if ((validatedAddress == 'RVN' && res.settings.net == Net.Main) ||
+          (validatedAddress == 'RVNt' && res.settings.net == Net.Test)) {
         //} else if (validatedAddress == 'UNS') {
         //} else if (validatedAddress == 'ASSET') {
       }
@@ -457,12 +450,8 @@ class _SendState extends State<Send> {
       );
       if (holding >= double.parse(sendAmount.text)) {
         var sendRequest = SendRequest(
-            useWallet: useWallet,
             sendAll: sendAll,
-            wallet: data['walletId'] != null
-                ? Current.wallet(data['walletId'])
-                : null,
-            account: Current.account,
+            wallet: Current.wallet,
             sendAddress: sendAddress.text,
             holding: holding,
             visibleAmount: visibleAmount,
@@ -555,11 +544,7 @@ class _SendState extends State<Send> {
   }
 
   void _produceAssetModal() {
-    var options = (useWallet
-            ? Current.walletHoldingNames(data['walletId'])
-            : Current.holdingNames)
-        .where((item) => item != 'RVN')
-        .toList();
+    var options = Current.holdingNames.where((item) => item != 'RVN').toList();
     SelectionItems(context, modalSet: SelectionSet.Holdings).build(
         holdingNames: options.isNotEmpty
             ? ['Ravencoin'] + options

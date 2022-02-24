@@ -160,8 +160,16 @@ class _TechnicalViewState extends State<TechnicalView> {
   ///      for (var wallet in wallets.data)
   ///        if (wallet.accountId == accountId) wallet
   ///    ];
-
   ListView body() => ListView(
+          //padding: const EdgeInsets.symmetric(horizontal: 5),
+          children: <Widget>[
+            for (var wallet in res.wallets) ...[
+              _wallet(context, wallet),
+            ]
+          ]);
+
+/*
+  ListView bodyOLD() => ListView(
           //padding: const EdgeInsets.symmetric(horizontal: 5),
           children: <Widget>[
             for (var account in res.accounts.data) ...[
@@ -240,7 +248,7 @@ class _TechnicalViewState extends State<TechnicalView> {
             ],
             ...createNewAcount(context, accountName),
           ]);
-
+*/
   // unused
   Future alertSuccess() => showDialog(
       context: context,
