@@ -2,10 +2,9 @@ import 'package:rxdart/rxdart.dart';
 
 class ImportRequest {
   final String text;
-  final String accountId;
-  ImportRequest({required this.text, required this.accountId});
+  ImportRequest({required this.text});
   @override
-  String toString() => 'ImportRequest(text=$text, accountId=$accountId)';
+  String toString() => 'ImportRequest(text=$text)';
 }
 
 class Import {

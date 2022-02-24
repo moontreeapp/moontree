@@ -15,7 +15,6 @@ import 'package:raven_back/utils/database.dart' as raven_database;
 /// useFixtureSources because this requires that the app state (contents of the
 /// reservoirs) be immediately present near the test and therefore obvious.
 void useEmptyFixtures({bool defaults = true}) {
-  res.accounts.setSource(MapSource({}));
   res.addresses.setSource(MapSource({}));
   res.assets.setSource(MapSource({}));
   res.balances.setSource(MapSource({}));
@@ -40,7 +39,6 @@ void useFixtureSources(int? version) {
         1: FixtureSet1(),
       }[version] ??
       FixtureSet0();
-  res.accounts.setSource(MapSource(set.accounts));
   res.addresses.setSource(MapSource(set.addresses));
   res.assets.setSource(MapSource(set.assets));
   res.balances.setSource(MapSource(set.balances));

@@ -1,4 +1,3 @@
-import 'account.dart';
 import 'download.dart';
 import 'history.dart';
 import 'balance.dart';
@@ -11,7 +10,6 @@ import 'rate.dart';
 import 'wallet.dart';
 
 class services {
-  static AccountService account = AccountService();
   static HistoryService history = HistoryService();
   static BalanceService balance = BalanceService();
   static BusyService busy = BusyService();

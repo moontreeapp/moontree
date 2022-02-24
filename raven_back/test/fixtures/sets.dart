@@ -4,7 +4,6 @@ import 'package:raven_back/records/records.dart';
 import 'package:raven_back/security/cipher_none.dart';
 
 class FixtureSet {
-  Map<String, Account> get accounts => {};
   Map<String, Address> get addresses => {};
   Map<String, Asset> get assets => {};
   Map<String, Balance> get balances => {};
@@ -24,12 +23,6 @@ class FixtureSet {
 class FixtureSet0 extends FixtureSet {}
 
 class FixtureSet1 extends FixtureSet {
-  @override
-  Map<String, Account> get accounts => {
-        '0': Account(name: 'Account 0', accountId: '0', net: Net.Main),
-        '1': Account(name: 'Account 1', accountId: '1', net: Net.Test),
-      };
-
   @override
   Map<String, Address> get addresses => {
         '0': Address(
@@ -317,18 +310,15 @@ class FixtureSet1 extends FixtureSet {
     return {
       '0': LeaderWallet(
           walletId: '0',
-          accountId: '1',
           cipherUpdate: CipherUpdate(CipherType.None),
           encryptedEntropy: bip39.mnemonicToEntropy(phrase)),
       // has no addresses
       '1': LeaderWallet(
           walletId: '1',
-          accountId: '1',
           cipherUpdate: CipherUpdate(CipherType.None),
           encryptedEntropy: bip39.mnemonicToEntropy(phrase)),
       '2': LeaderWallet(
           walletId: '2',
-          accountId: '1',
           cipherUpdate: CipherUpdate(CipherType.None),
           encryptedEntropy: bip39.mnemonicToEntropy(phrase)),
     };

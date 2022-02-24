@@ -1,3 +1,7 @@
+/// we'll probably need to convert this over for wallets so we'll keep it
+/// for reference 
+
+/*
 import 'package:flutter/material.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_back/raven_back.dart';
@@ -82,3 +86,4 @@ Future validateAndCreateAccount(
   desiredAccountName = '';
   accountName.text = '';
 }
+*/

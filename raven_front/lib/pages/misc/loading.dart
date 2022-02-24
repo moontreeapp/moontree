@@ -18,41 +18,30 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> with TickerProviderStateMixin {
-  Future setupAccounts() async {
-    await services.account.createSave('Primary', net: Net.Test);
-    //await services.account.createSave('Hodl', net: Net.Main);
-  }
-
   Future setupRealWallet() async {
     await dotenv.load(fileName: '.env');
     var mnemonic = dotenv.env['TEST_WALLET_02']!;
     await services.wallet.createSave(
         walletType: WalletType.leader,
-        accountId: '0',
         cipherUpdate: defaultCipherUpdate,
         secret: mnemonic);
   }
 
   Future setup() async {
-    var hiveInit = HiveInitializer(
-        init: (dbDir) => Hive.initFlutter(),
-        beforeLoad: () {
-          waiters.account.init();
-        });
+    var hiveInit =
+        HiveInitializer(init: (dbDir) => Hive.initFlutter(), beforeLoad: () {});
     await hiveInit.setUp();
     await initWaiters();
     initListeners();
     await res.settings.save(Setting(
         name: SettingName.Local_Path, value: await Storage().localPath));
-    if (res.accounts.data.isEmpty) {
-      await setupAccounts();
+    if (res.wallets.data.isEmpty) {
       await setupRealWallet();
     }
-    res.settings.setCurrentAccountId();
+    res.settings.setCurrentWalletId();
 
     // for testing
     print('-------------------------');
-    print('accounts: ${res.accounts.data}');
     print('addresses: ${res.addresses.data}');
     print('assets: ${res.assets.data}');
     print('balances: ${res.balances.data}');

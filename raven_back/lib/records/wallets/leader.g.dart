@@ -18,23 +18,20 @@ class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
     };
     return LeaderWallet(
       walletId: fields[0] as String,
-      accountId: fields[1] as String,
       encryptedEntropy: fields[3] as String,
-      cipherUpdate: fields[2] as CipherUpdate,
+      cipherUpdate: fields[1] as CipherUpdate,
     );
   }
 
   @override
   void write(BinaryWriter writer, LeaderWallet obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(3)
       ..writeByte(3)
       ..write(obj.encryptedEntropy)
       ..writeByte(0)
       ..write(obj.walletId)
       ..writeByte(1)
-      ..write(obj.accountId)
-      ..writeByte(2)
       ..write(obj.cipherUpdate);
   }
 

@@ -16,13 +16,6 @@ extension TransactionBelongsToWallet on Transaction {
     ..remove(null);
 }
 
-extension TransactionBelongsToAccount on Transaction {
-  Set<Account?>? get accounts => (vouts.map((vout) => vout.account).toList() +
-          vins.map((vin) => vin.account).toList())
-      .toSet()
-    ..remove(null);
-}
-
 extension TransactionHasManyVins on Transaction {
   List<Vin> get vins => res.vins.byTransaction.getAll(transactionId);
 }

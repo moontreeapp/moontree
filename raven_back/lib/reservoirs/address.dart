@@ -25,7 +25,7 @@ class AddressReservoir extends Reservoir<_ScripthashKey, Address> {
         addIndexMultiple('wallet-exposure', _WalletExposureKey());
   }
 
-  /// returns account addresses in order
+  /// returns addresses in order
   AddressLocation? getAddressLocationOf(String addressId, String walletId) {
     var i = 0;
     for (var address
@@ -45,8 +45,7 @@ class AddressReservoir extends Reservoir<_ScripthashKey, Address> {
     }
   }
 
-  void removeAddresses(Account account) {
-    account.addresses
-        .forEach((Address address) => primaryIndex.remove(address));
+  void removeAddresses(Wallet wallet) {
+    wallet.addresses.forEach((Address address) => primaryIndex.remove(address));
   }
 }

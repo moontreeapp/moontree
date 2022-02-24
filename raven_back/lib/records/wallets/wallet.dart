@@ -14,17 +14,13 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
   final String walletId;
 
   @HiveField(1)
-  final String accountId;
-
-  @HiveField(2)
   final CipherUpdate cipherUpdate;
 
   @override
-  List<Object?> get props => [walletId, accountId, cipherUpdate];
+  List<Object?> get props => [walletId, cipherUpdate];
 
   Wallet({
     required this.walletId,
-    required this.accountId,
     required this.cipherUpdate,
   });
 

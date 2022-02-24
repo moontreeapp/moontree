@@ -43,7 +43,6 @@ class HiveInitializer {
   void registerAdapters() {
     Hive.registerAdapter(BalanceAdapter());
     Hive.registerAdapter(BlockAdapter());
-    Hive.registerAdapter(AccountAdapter());
     Hive.registerAdapter(AssetAdapter());
     Hive.registerAdapter(LeaderWalletAdapter());
     Hive.registerAdapter(SingleWalletAdapter());
@@ -66,7 +65,6 @@ class HiveInitializer {
   }
 
   Future openAllBoxes() async {
-    await Hive.openBox<Account>('accounts');
     await Hive.openBox<Address>('addresses');
     await Hive.openBox<Asset>('assets');
     await Hive.openBox<Balance>('balances');
@@ -83,7 +81,6 @@ class HiveInitializer {
   }
 
   void load() {
-    res.accounts.setSource(HiveSource('accounts'));
     res.addresses.setSource(HiveSource('addresses'));
     res.balances.setSource(HiveSource('balances'));
     res.blocks.setSource(HiveSource('blocks'));

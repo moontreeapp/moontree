@@ -22,20 +22,15 @@ class SingleWallet extends Wallet {
 
   SingleWallet({
     required String walletId,
-    required String accountId,
     required this.encryptedWIF,
     CipherUpdate cipherUpdate = defaultCipherUpdate,
-  }) : super(
-            walletId: walletId,
-            accountId: accountId,
-            cipherUpdate: cipherUpdate);
+  }) : super(walletId: walletId, cipherUpdate: cipherUpdate);
 
   @override
-  List<Object?> get props => [walletId, accountId, cipherUpdate, encryptedWIF];
+  List<Object?> get props => [walletId, cipherUpdate, encryptedWIF];
 
   @override
-  String toString() =>
-      'SingleWallet($walletId, $accountId, $encryptedWIF, $cipherUpdate)';
+  String toString() => 'SingleWallet($walletId, $encryptedWIF, $cipherUpdate)';
 
   @override
   String get encrypted => encryptedWIF;

@@ -42,7 +42,7 @@ class SingleWaiter extends Waiter {
               }
             },
             updated: (updated) {
-              /* moved account */
+              /* never happens */
             },
             removed: (removed) {
               /* handled by LeadersWaiter*/

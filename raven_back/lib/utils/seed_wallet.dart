@@ -17,7 +17,6 @@ class SeedWallet {
       wallet.derivePath(getDerivationPath(hdIndex, exposure: exposure));
 }
 
-/// on import - verify it's being added to an account matching it's Net
 class SingleSelfWallet {
   String wif;
 

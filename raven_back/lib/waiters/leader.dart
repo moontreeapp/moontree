@@ -1,13 +1,34 @@
 /// this waiter is entirely concerned with derviving addresses:
 /// each time a new wallet is saved, and
 /// each time a new vout is saved that can be tied to a wallet we own.
-
+import 'package:rxdart/rxdart.dart';
+import 'package:tuple/tuple.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/wallet.dart';
 import 'waiter.dart';
 
 class LeaderWaiter extends Waiter {
   void init() {
+    /*
+    listen(
+      'wallets/cipher',
+      CombineLatestStream.combine2(
+          streams.wallet.replay,
+          streams.cipher.latest,
+          (Wallet wallet, Cipher cipher) => Tuple2(wallet, cipher)),
+      (Tuple2<Wallet, Cipher> tuple) {
+        services.wallet.leader.makeFirstWallet(tuple.item2);
+      },
+    );
+    */
+
+    // automatically make first leader wallet if there isn't one already
+    listen(
+      'cipher.latest,',
+      streams.cipher.latest,
+      (Cipher cipher) => services.wallet.leader.makeFirstWallet(cipher),
+    );
+
     listen(
       'ciphers.changes',
       res.ciphers.changes,
@@ -55,9 +76,11 @@ class LeaderWaiter extends Waiter {
           handleDeriveAddress(leader: added.data as LeaderWallet);
         },
         updated: (updated) async {
-          /// when wallet is moved from one account to another...
-          /// we need to derive all the addresses again because it might
-          /// have moved from a testnet account to a mainnet account.
+          /*
+          /// app is switched to mainnet to testnet or testnet to mainnet... 
+          /// we need to derive all the addresses again.
+          /// but this should go on that settings listener,
+          /// but we actually don't give the user the ability to do that.
           // remove addresses of the wallet
           var leader = updated.data;
           await res.addresses.removeAll(leader.addresses);
@@ -73,6 +96,7 @@ class LeaderWaiter extends Waiter {
           }
           // recreate the addresses of that wallet
           handleDeriveAddress(leader: leader as LeaderWallet);
+          */
         },
         removed: (removed) {});
   }

@@ -30,8 +30,3 @@ extension VoutBelongsToWallet on Vout {
   Wallet? get wallet => address?.wallet;
   // no wallet - we don't own this vout
 }
-
-extension VoutBelongsToAccount on Vout {
-  Account? get account => wallet?.account;
-  // no account - we don't own this vout
-}

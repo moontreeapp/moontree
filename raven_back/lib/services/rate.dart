@@ -36,8 +36,8 @@ class RateService {
     ));
   }
 
-  BalanceUSD? accountBalanceUSD(String accountId, List<Balance> holdings) {
-    var totalRVNBalance = getTotalRVN(accountId, holdings);
+  BalanceUSD? walletBalanceUSD(String walletId, List<Balance> holdings) {
+    var totalRVNBalance = getTotalRVN(walletId, holdings);
     var usd = BalanceUSD(confirmed: 0.0, unconfirmed: 0.0);
     if (totalRVNBalance.value > 0) {
       var rate = rvnToUSD;
@@ -51,12 +51,12 @@ class RateService {
     return usd;
   }
 
-  Balance getTotalRVN(String accountId, List<Balance> holdings) {
+  Balance getTotalRVN(String walletId, List<Balance> holdings) {
     var assetPercision = 100000000; /* get divisor of asset...  */
 
     /// per wallet...
-    var accountBalancesAsRVN = holdings.map((balance) => Balance(
-        walletId: accountId,
+    var walletBalancesAsRVN = holdings.map((balance) => Balance(
+        walletId: walletId,
         security: res.securities.RVN,
         confirmed: balance.security == res.securities.RVN
             ? balance.confirmed
@@ -68,9 +68,9 @@ class RateService {
             : ((balance.unconfirmed / assetPercision) *
                     assetToRVN(balance.security, defaultRate: 0.0)!)
                 .round()));
-    return accountBalancesAsRVN.fold(
+    return walletBalancesAsRVN.fold(
         Balance(
-          walletId: accountId,
+          walletId: walletId,
           security: res.securities.RVN,
           confirmed: 0,
           unconfirmed: 0,

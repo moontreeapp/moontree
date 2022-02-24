@@ -27,7 +27,3 @@ extension VinBelongsToAddress on Vin {
 extension VinBelongsToWallet on Vin {
   Wallet? get wallet => address?.wallet;
 }
-
-extension VinBelongsToAccount on Vin {
-  Account? get account => wallet?.account;
-}

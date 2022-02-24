@@ -11,21 +11,13 @@ import 'package:bip39/bip39.dart' as bip39;
 
 void main() {
   group('addresses', () {
-    late Account account;
     late LeaderWallet wallet;
     setUp(() async {
       fixtures.useEmptyFixtures();
-      account = Account(
-        accountId: 'a0',
-        name: 'primary',
-        net: Net.Main,
-      );
-      await res.accounts.save(account);
       dotenv.load();
       waiters.leader.init();
       await res.wallets.save(LeaderWallet(
           walletId: '0',
-          accountId: 'a0',
           cipherUpdate: CipherUpdate(CipherType.None),
           encryptedEntropy:
               bip39.mnemonicToEntropy(dotenv.env['TEST_WALLET_01']!)));

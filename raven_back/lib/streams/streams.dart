@@ -1,4 +1,3 @@
-import 'account.dart';
 import 'address.dart';
 import 'asset.dart';
 import 'app.dart';
@@ -12,7 +11,6 @@ import 'spend.dart';
 import 'wallet.dart';
 
 class streams {
-  static final account = AccountStreams();
   static final address = AddressStreams();
   static final app = AppStreams();
   static final asset = AssetStreams();

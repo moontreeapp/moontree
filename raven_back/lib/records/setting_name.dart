@@ -24,10 +24,10 @@ enum SettingName {
   Electrum_PortTest,
 
   @HiveField(5)
-  Account_Current,
+  Wallet_Current,
 
   @HiveField(6)
-  Account_Preferred,
+  Wallet_Preferred,
 
   @HiveField(7)
   Local_Path,

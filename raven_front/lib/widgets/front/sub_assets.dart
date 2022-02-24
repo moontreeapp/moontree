@@ -29,7 +29,7 @@ class _SubAssetList extends State<SubAssetList> {
       // if vouts in our account has changed...
       if (batchedChanges
           .where((change) =>
-              change.data.address?.wallet?.accountId == Current.accountId)
+              change.data.address?.wallet?.walletId == Current.walletId)
           .isNotEmpty) {
         setState(() {});
       }

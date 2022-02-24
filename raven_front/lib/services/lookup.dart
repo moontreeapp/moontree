@@ -2,25 +2,23 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction.dart';
 
 class Current {
-  /// account ///
+  static String get walletId => res.settings.currentWalletId;
 
-  static String get accountId => res.settings.currentAccountId;
-
-  static Account get account => res.accounts.primaryIndex.getOne(accountId)!;
+  static Wallet get wallet => res.wallets.primaryIndex.getOne(walletId)!;
 
   static Balance get balanceRVN =>
-      services.balance.accountBalance(account, res.securities.RVN);
+      services.balance.walletBalance(wallet, res.securities.RVN);
 
   static BalanceUSD? get balanceUSD =>
-      services.rate.accountBalanceUSD(accountId, holdings);
+      services.rate.walletBalanceUSD(walletId, holdings);
 
-  static Set<Transaction> get transactions => account.transactions;
+  static Set<Transaction> get transactions => wallet.transactions;
 
   static List<TransactionRecord> get compiledTransactions =>
-      services.transaction.getTransactionRecords(account: account);
+      services.transaction.getTransactionRecords(wallet: wallet);
 
-  static List<Balance> get holdings =>
-      services.balance.accountBalances(account);
+  static List<Balance> get holdings => services.balance.walletBalances(wallet);
+
   static List<String> get holdingNames =>
       [for (var balance in holdings) balance.security.symbol];
 
@@ -28,26 +26,6 @@ class Current {
       .where((Balance balance) => balance.security.asset?.isAdmin ?? false)
       .map((Balance balance) => balance.security.symbol);
 
-  /// wallet ///
-
-  static Wallet wallet(String walletId) =>
-      res.wallets.primaryIndex.getOne(walletId)!;
-
-  static Balance walletBalanceRVN(String walletId) =>
-      services.balance.walletBalance(wallet(walletId), res.securities.RVN);
-
-  static BalanceUSD? walletBalanceUSD(String walletId) =>
-      services.rate.accountBalanceUSD(walletId, walletHoldings(walletId));
-
-  static List<Balance> walletHoldings(String walletId) =>
-      services.balance.walletBalances(wallet(walletId));
-
-  static Set<Transaction> walletTransactions(String walletId) =>
-      wallet(walletId).transactions;
-
-  static List<String> walletHoldingNames(String walletId) =>
-      [for (var balance in walletHoldings(walletId)) balance.security.symbol];
-
-  static List<TransactionRecord> walletCompiledTransactions(String walletId) =>
-      services.transaction.getTransactionRecords(wallet: wallet(walletId));
+  static List<TransactionRecord> walletCompiledTransactions() =>
+      services.transaction.getTransactionRecords(wallet: wallet);
 }

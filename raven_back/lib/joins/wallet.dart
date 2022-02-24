@@ -7,10 +7,6 @@ extension WalletBelongsToCipher on Wallet {
       : res.ciphers.primaryIndex.getOne(cipherUpdate)?.cipher;
 }
 
-extension WalletBelongsToAccount on Wallet {
-  Account? get account => res.accounts.primaryIndex.getOne(accountId);
-}
-
 extension WalletHasManyAddresses on Wallet {
   List<Address> get addresses => res.addresses.byWallet.getAll(walletId);
 }

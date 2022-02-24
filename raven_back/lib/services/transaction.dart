@@ -7,13 +7,6 @@ import 'transaction_maker.dart';
 class TransactionService {
   final TransactionMaker make = TransactionMaker();
 
-  List<Vout> accountUnspents(Account account, {Security? security}) =>
-      VoutReservoir.whereUnspent(
-              given: account.vouts,
-              security: security ?? res.securities.RVN,
-              includeMempool: false)
-          .toList();
-
   List<Vout> walletUnspents(Wallet wallet, {Security? security}) =>
       VoutReservoir.whereUnspent(
               given: wallet.vouts,
@@ -51,12 +44,10 @@ class TransactionService {
   ///     transaction record: sum vins - some vouts
   /// return transaction records
   List<TransactionRecord> getTransactionRecords({
-    Account? account,
-    Wallet? wallet,
+    required Wallet wallet,
   }) {
-    var givenAddresses = account != null
-        ? account.addresses.map((address) => address.address).toList()
-        : wallet!.addresses.map((address) => address.address).toList();
+    var givenAddresses =
+        wallet.addresses.map((address) => address.address).toList();
     var transactionRecords = <TransactionRecord>[];
     for (var transaction in res.transactions.chronological) {
       var securitiesInvolved = ((transaction.vins

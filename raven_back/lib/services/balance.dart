@@ -1,4 +1,4 @@
-/// balances are by wallet, and aggregated to the account level.
+/// balances are by wallet
 /// if you want the balance of a subwallet (address) then get it from Histories.
 
 import 'package:raven_back/services/wallet_security_pair.dart';
@@ -53,45 +53,20 @@ class BalanceService {
   Future recalculateAllBalances() async =>
       await res.balances.saveAll(recalculateSpecificBalances(res.vouts.data
           //VoutReservoir.whereUnspent(includeMempool: false)
-          .where((Vout vout) =>
-              vout.account?.net ==
-                  res.settings.primaryIndex
-                      .getOne(SettingName.Electrum_Net)!
-                      .value &&
-              (vout.transaction?.confirmed ?? false))
+          .where((Vout vout) => vout.transaction?.confirmed ?? false)
           .toList()));
 
   /// Transaction Logic ///////////////////////////////////////////////////////
 
   /// Sort in descending order, from largest amount to smallest amount
-  List<Vout> sortedUnspents(Account account, {Security? security}) =>
-      services.transaction.accountUnspents(account, security: security).toList()
-        ..sort((a, b) => b
-            .securityValue(security: security)
-            .compareTo(a.securityValue(security: security)));
-
-  /// Sort in descending order, from largest amount to smallest amount
-  List<Vout> sortedUnspentsWallets(Wallet wallet, {Security? security}) =>
+  List<Vout> sortedUnspents(Wallet wallet, {Security? security}) =>
       services.transaction.walletUnspents(wallet, security: security).toList()
         ..sort((a, b) => b
             .securityValue(security: security)
             .compareTo(a.securityValue(security: security)));
 
-  /// Asserts that the asset in the account is greater than `amount`
+  /// Asserts that the asset in the wallet is greater than `amount`
   void assertSufficientFunds(
-    int amount,
-    Account account, {
-    Security? security,
-  }) {
-    var totalBalance =
-        accountBalance(account, security ?? res.securities.RVN).confirmed;
-    if (totalBalance < amount) {
-      throw InsufficientFunds('$totalBalance < $amount');
-    }
-  }
-
-  /// Asserts that the asset in the account is greater than `amount`
-  void assertSufficientFundsWallets(
     int amount,
     Wallet wallet, {
     Security? security,
@@ -109,44 +84,14 @@ class BalanceService {
   /// it if the 'amount' increases.
   ///
   List<Vout> collectUTXOs(
-    Account account, {
-    required int amount,
-    List<Vout> except = const [],
-    Security? security,
-  }) {
-    assertSufficientFunds(amount, account);
-
-    var unspents = sortedUnspents(account, security: security)
-      ..removeWhere((utxo) => except.contains(utxo));
-
-    /// Can we find a single, ideal UTXO by searching from smallest to largest?
-    for (var unspent in unspents.reversed) {
-      if (unspent.securityValue(security: security) >= amount) return [unspent];
-    }
-
-    /// Otherwise, satisfy the amount by combining UTXOs from largest to smallest
-    /// perhaps we could make the utxo variable full of objects that contain
-    /// the signing information too, that way we don't have to get it later...?
-    var collection = <Vout>[];
-    var remaining = amount;
-    for (var unspent in unspents) {
-      if (remaining > 0) collection.add(unspent);
-      if (remaining < unspent.securityValue(security: security)) break;
-      remaining -= unspent.securityValue(security: security);
-    }
-
-    return collection;
-  }
-
-  List<Vout> collectUTXOsWallet(
     Wallet wallet, {
     required int amount,
     List<Vout> except = const [],
     Security? security,
   }) {
-    assertSufficientFundsWallets(amount, wallet);
+    assertSufficientFunds(amount, wallet);
 
-    var unspents = sortedUnspentsWallets(wallet, security: security)
+    var unspents = sortedUnspents(wallet, security: security)
       ..removeWhere((utxo) => except.contains(utxo));
 
     /// Can we find a single, ideal UTXO by searching from smallest to largest?
@@ -169,31 +114,6 @@ class BalanceService {
   }
 
   /// Wallet Aggregation Logic ////////////////////////////////////////////////
-
-  List<Balance> accountBalances(Account account) {
-    // ignore: omit_local_variable_types
-    Map<Security, Balance> balancesBySecurity = {};
-    for (var balance in account.balances) {
-      if (!balancesBySecurity.containsKey(balance.security)) {
-        balancesBySecurity[balance.security] = balance;
-      } else {
-        balancesBySecurity[balance.security] =
-            balancesBySecurity[balance.security]! + balance;
-      }
-    }
-    return balancesBySecurity.values.toList();
-  }
-
-  Balance accountBalance(Account account, Security security) {
-    var retBalance =
-        Balance(walletId: '', confirmed: 0, unconfirmed: 0, security: security);
-    for (var balance in account.balances) {
-      if (balance.security == security) {
-        retBalance = retBalance + balance;
-      }
-    }
-    return retBalance;
-  }
 
   List<Balance> walletBalances(Wallet wallet) {
     // ignore: omit_local_variable_types

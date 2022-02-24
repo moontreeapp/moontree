@@ -36,12 +36,11 @@ void main() async {
     });
 
     test('sortedUnspents', () {
-      expect(services.balance.sortedUnspents(res.accounts.data.first), []);
+      expect(services.balance.sortedUnspents(wallet), []);
     });
 
     test('collectUTXOs', () {
-      var account = res.accounts.data.first;
-      expect(() => services.balance.collectUTXOs(account, amount: 16),
+      expect(() => services.balance.collectUTXOs(wallet, amount: 16),
           throwsException);
     });
   });

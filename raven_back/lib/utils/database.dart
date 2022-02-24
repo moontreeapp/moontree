@@ -6,7 +6,6 @@ import 'package:reservoir/reservoir.dart';
 
 Future deleteDatabase() async {
   try {
-    await res.accounts.clear();
     await res.addresses.clear();
     await res.balances.clear();
     await res.rates.clear();
@@ -20,7 +19,6 @@ Future deleteDatabase() async {
     print('clearing failed');
   }
   try {
-    await (res.accounts.source as HiveSource).box.clear();
     await (res.wallets.source as HiveSource).box.clear();
     await (res.addresses.source as HiveSource).box.clear();
     await (res.securities.source as HiveSource).box.clear();

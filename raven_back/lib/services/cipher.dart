@@ -56,7 +56,6 @@ class CipherService {
     assert(wallet.walletId == reencrypt.walletId);
     return LeaderWallet(
       walletId: reencrypt.walletId,
-      accountId: wallet.accountId,
       encryptedEntropy: reencrypt.encryptedSecret,
       cipherUpdate: currentCipherUpdate,
     );
@@ -71,7 +70,6 @@ class CipherService {
     assert(wallet.walletId == reencrypt.walletId);
     return SingleWallet(
       walletId: reencrypt.walletId,
-      accountId: wallet.accountId,
       encryptedWIF: reencrypt.encryptedSecret,
       cipherUpdate: currentCipherUpdate,
     );

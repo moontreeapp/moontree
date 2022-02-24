@@ -87,11 +87,8 @@ class SubscribeService {
   List<Address> toExistingAddresses() {
     var unhandledAddresses = <Address>[];
     for (var address in res.addresses) {
-      if (address.account!.net ==
-          res.settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value) {
-        if (!to(address)) {
-          unhandledAddresses.add(address);
-        }
+      if (!to(address)) {
+        unhandledAddresses.add(address);
       }
     }
     return unhandledAddresses;

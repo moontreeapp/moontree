@@ -87,7 +87,7 @@ class _WalletViewState extends State<WalletView> {
     } else {
       address = address ?? null;
     }
-    disabled = Current.walletHoldings(wallet.walletId).length == 0;
+    disabled = Current.holdings.length == 0;
     return DefaultTabController(
         length: 3,
         child: Scaffold(
@@ -117,7 +117,7 @@ class _WalletViewState extends State<WalletView> {
           flexibleSpace: Container(
             alignment: Alignment(0.0, -0.5),
             child: Text(
-                '\n ${Current.walletBalanceUSD(wallet.walletId)?.valueUSD ?? Current.walletBalanceRVN(wallet.walletId).value}',
+                '\n ${Current.balanceUSD?.valueUSD ?? Current.balanceRVN.value}',
                 style: Theme.of(context).textTheme.headline3),
           ),
           bottom: PreferredSize(
@@ -132,13 +132,12 @@ class _WalletViewState extends State<WalletView> {
         detailsView(),
         NotificationListener<UserScrollNotification>(
             onNotification: visibilityOfSendReceive,
-            child: HoldingList(
-                holdings: holdings ?? Current.walletHoldings(wallet.walletId))),
+            child: HoldingList(holdings: holdings ?? Current.holdings)),
         NotificationListener<UserScrollNotification>(
             onNotification: visibilityOfSendReceive,
             child: TransactionList(
-                transactions: transactions ??
-                    Current.walletCompiledTransactions(wallet.walletId))),
+                transactions:
+                    transactions ?? Current.walletCompiledTransactions())),
       ]);
 
   ListView detailsView() => ListView(
@@ -218,14 +217,13 @@ class _WalletViewState extends State<WalletView> {
                     curve: Curves.fastOutSlowIn);
 
                 //holdings = services.balance.addressesBalances([walletAddress]);
-                transactions =
-                    Current.walletCompiledTransactions(wallet.walletId)
-                        //.where((transactionRecord) =>
-                        //    transactionRecord.fromAddress ==
-                        //        walletAddress.address ||
-                        //    transactionRecord.toAddress ==
-                        //        walletAddress.address)
-                        .toList();
+                transactions = Current.walletCompiledTransactions()
+                    //.where((transactionRecord) =>
+                    //    transactionRecord.fromAddress ==
+                    //        walletAddress.address ||
+                    //    transactionRecord.toAddress ==
+                    //        walletAddress.address)
+                    .toList();
                 address = walletAddress.address;
                 privateKey = services.wallet.leader
                     .getSubWalletFromAddress(walletAddress)

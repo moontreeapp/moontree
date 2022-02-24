@@ -19,9 +19,7 @@ void main() {
     test('save a Wallet', () async {
       //var encryptedSeed = Uint8List(16);
       var wallet = LeaderWallet(
-          walletId: '0',
-          accountId: 'a1',
-          encryptedEntropy: bip39.mnemonicToEntropy(mnemonic));
+          walletId: '0', encryptedEntropy: bip39.mnemonicToEntropy(mnemonic));
       await res.save(wallet);
       expect(res.primaryIndex.getOne(wallet.walletId), wallet);
     });

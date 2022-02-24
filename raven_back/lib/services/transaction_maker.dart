@@ -107,26 +107,22 @@ class GenericCreateRequest {
 }
 
 class SendRequest {
-  late bool useWallet;
   late bool sendAll;
   late String sendAddress;
   late double holding;
   late String visibleAmount;
   late int sendAmountAsSats;
   late TxGoal feeGoal;
-  Wallet? wallet;
-  Account? account;
+  late Wallet wallet;
 
   SendRequest({
-    required this.useWallet,
     required this.sendAll,
     required this.sendAddress,
     required this.holding,
     required this.visibleAmount,
     required this.sendAmountAsSats,
     required this.feeGoal,
-    this.wallet,
-    this.account,
+    required this.wallet,
   });
 }
 
@@ -167,37 +163,20 @@ class TransactionMaker {
     SendRequest sendRequest,
   ) {
     var tuple;
-    if (sendRequest.useWallet) {
-      tuple = (sendRequest.sendAll ||
-              double.parse(sendRequest.visibleAmount) == sendRequest.holding)
-          ? transactionSendAll(
-              sendRequest.sendAddress,
-              SendEstimate(sendRequest.sendAmountAsSats),
-              wallet: sendRequest.wallet,
-              goal: sendRequest.feeGoal,
-            )
-          : transaction(
-              sendRequest.sendAddress,
-              SendEstimate(sendRequest.sendAmountAsSats),
-              wallet: sendRequest.wallet,
-              goal: sendRequest.feeGoal,
-            );
-    } else {
-      tuple = (sendRequest.sendAll ||
-              double.parse(sendRequest.visibleAmount) == sendRequest.holding)
-          ? transactionSendAll(
-              sendRequest.sendAddress,
-              SendEstimate(sendRequest.sendAmountAsSats),
-              account: sendRequest.account,
-              goal: sendRequest.feeGoal,
-            )
-          : transaction(
-              sendRequest.sendAddress,
-              SendEstimate(sendRequest.sendAmountAsSats),
-              account: sendRequest.account,
-              goal: sendRequest.feeGoal,
-            );
-    }
+    tuple = (sendRequest.sendAll ||
+            double.parse(sendRequest.visibleAmount) == sendRequest.holding)
+        ? transactionSendAll(
+            sendRequest.sendAddress,
+            SendEstimate(sendRequest.sendAmountAsSats),
+            wallet: sendRequest.wallet,
+            goal: sendRequest.feeGoal,
+          )
+        : transaction(
+            sendRequest.sendAddress,
+            SendEstimate(sendRequest.sendAmountAsSats),
+            wallet: sendRequest.wallet,
+            goal: sendRequest.feeGoal,
+          );
     return tuple;
   }
 
@@ -233,29 +212,25 @@ class TransactionMaker {
   Tuple2<ravencoin.Transaction, SendEstimate> transaction(
     String toAddress,
     SendEstimate estimate, {
-    Account? account,
-    Wallet? wallet,
+    required Wallet wallet,
     TxGoal? goal,
     Security? security,
   }) {
-    var useWallet = shouldUseWallet(account: account, wallet: wallet);
-
-    var txb = ravencoin.TransactionBuilder(
-        network: useWallet ? wallet!.account!.network : account!.network);
+    var txb = ravencoin.TransactionBuilder(network: res.settings.network);
 
     // Direct the transaction to send value to the desired address
     // measure fee?
     txb.addOutput(toAddress, estimate.amount);
 
-    // From the available wallets and UTXOs within our account,
+    // From the available wallets and UTXOs within our wallet,
     // find sufficient value to send to the address above
-    // result = addInputs(txb, account, SendEstimate(sendAmount));
+    // result = addInputs(txb, SendEstimate(sendAmount));
     // send
-    var utxos = useWallet
-        ? services.balance.collectUTXOsWallet(wallet!,
-            amount: estimate.total, security: security)
-        : services.balance
-            .collectUTXOs(account!, amount: estimate.total, security: security);
+    var utxos = services.balance.collectUTXOs(
+      wallet,
+      amount: estimate.total,
+      security: security,
+    );
 
     for (var utxo in utxos) {
       txb.addInput(utxo.transactionId, utxo.position);
@@ -264,9 +239,7 @@ class TransactionMaker {
     var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
 
     // Calculate change due, and return it to a wallet we control
-    var returnAddress = useWallet
-        ? services.wallet.getChangeWallet(wallet!).address
-        : services.account.getChangeWallet(account!).address;
+    var returnAddress = services.wallet.getChangeWallet(wallet).address;
     var preliminaryChangeDue = updatedEstimate.changeDue;
     txb.addOutput(returnAddress, preliminaryChangeDue);
 
@@ -286,7 +259,6 @@ class TransactionMaker {
         toAddress,
         updatedEstimate,
         goal: goal,
-        account: account,
         wallet: wallet,
         security: security,
       );
@@ -296,19 +268,14 @@ class TransactionMaker {
   Tuple2<ravencoin.Transaction, SendEstimate> transactionSendAll(
     String toAddress,
     SendEstimate estimate, {
-    Account? account,
-    Wallet? wallet,
+    required Wallet wallet,
     TxGoal? goal,
     Set<int>? previousFees,
     Security? security,
   }) {
     previousFees = previousFees ?? {};
-    var useWallet = shouldUseWallet(account: account, wallet: wallet);
-    var txb = ravencoin.TransactionBuilder(
-        network: useWallet ? wallet!.account!.network : account!.network);
-    var utxos = useWallet
-        ? services.balance.sortedUnspentsWallets(wallet!)
-        : services.balance.sortedUnspents(account!);
+    var txb = ravencoin.TransactionBuilder(network: res.settings.network);
+    var utxos = services.balance.sortedUnspents(wallet);
     var total = 0;
     for (var utxo in utxos) {
       txb.addInput(utxo.transactionId, utxo.position);
@@ -328,21 +295,10 @@ class TransactionMaker {
         toAddress,
         updatedEstimate,
         goal: goal,
-        account: account,
         wallet: wallet,
         previousFees: {...previousFees, fees},
         security: security,
       );
-    }
-  }
-
-  bool shouldUseWallet({Account? account, Wallet? wallet}) {
-    if (wallet != null) {
-      return true;
-    } else if (account != null) {
-      return false;
-    } else {
-      throw OneOfMultipleMissing('account or wallet required');
     }
   }
 }

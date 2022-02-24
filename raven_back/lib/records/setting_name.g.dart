@@ -24,9 +24,9 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
       case 4:
         return SettingName.Electrum_PortTest;
       case 5:
-        return SettingName.Account_Current;
+        return SettingName.Wallet_Current;
       case 6:
-        return SettingName.Account_Preferred;
+        return SettingName.Wallet_Preferred;
       case 7:
         return SettingName.Local_Path;
       case 8:
@@ -56,10 +56,10 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
       case SettingName.Electrum_PortTest:
         writer.writeByte(4);
         break;
-      case SettingName.Account_Current:
+      case SettingName.Wallet_Current:
         writer.writeByte(5);
         break;
-      case SettingName.Account_Preferred:
+      case SettingName.Wallet_Preferred:
         writer.writeByte(6);
         break;
       case SettingName.Local_Path:

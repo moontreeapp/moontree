@@ -38,13 +38,13 @@ class LeaderWalletService {
         walletId: wallet.walletId,
         hdIndex: hdIndex,
         exposure: exposure,
-        net: wallet.account!.net);
+        net: res.settings.net);
   }
 
   SeedWallet getSeedWallet(LeaderWallet wallet) {
     var encryptedEntropy =
         EncryptedEntropy(wallet.encryptedEntropy, wallet.cipher!);
-    return SeedWallet(encryptedEntropy.seed, wallet.account!.net);
+    return SeedWallet(encryptedEntropy.seed, res.settings.net);
   }
 
   HDWallet getSubWallet(
@@ -70,7 +70,6 @@ class LeaderWalletService {
   }
 
   LeaderWallet? makeLeaderWallet(
-    String accountId,
     CipherBase cipher, {
     required CipherUpdate cipherUpdate,
     String? entropy,
@@ -85,7 +84,6 @@ class LeaderWalletService {
     if (existingWallet == null) {
       return LeaderWallet(
         walletId: encryptedEntropy.walletId,
-        accountId: accountId,
         encryptedEntropy: encryptedEntropy.encryptedSecret,
         cipherUpdate: cipherUpdate,
       );
@@ -93,9 +91,21 @@ class LeaderWalletService {
     if (alwaysReturn) return existingWallet as LeaderWallet;
   }
 
-  Future<void> makeSaveLeaderWallet(String accountId, CipherBase cipher,
-      {required CipherUpdate cipherUpdate, String? mnemonic}) async {
-    var leaderWallet = makeLeaderWallet(accountId, cipher,
+  void makeFirstWallet(Cipher currentCipher) {
+    if (res.wallets.isEmpty) {
+      makeSaveLeaderWallet(
+        currentCipher.cipher,
+        cipherUpdate: currentCipher.cipherUpdate,
+      );
+    }
+  }
+
+  Future<void> makeSaveLeaderWallet(
+    CipherBase cipher, {
+    required CipherUpdate cipherUpdate,
+    String? mnemonic,
+  }) async {
+    var leaderWallet = makeLeaderWallet(cipher,
         cipherUpdate: cipherUpdate,
         entropy: mnemonic != null ? bip39.mnemonicToEntropy(mnemonic) : null);
     if (leaderWallet != null) {

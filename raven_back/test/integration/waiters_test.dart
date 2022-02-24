@@ -7,7 +7,6 @@ void main() async {
   var hiveInit = HiveInitializer(destroyOnTeardown: true);
 
   setUp(() async {
-    waiters.account.init();
     await hiveInit.setUp();
     res.settings.setSource(MapSource({
       '0': Setting(
@@ -37,7 +36,6 @@ void main() async {
     for (var waiter in [
       waiters.subscription,
       waiters.block,
-      waiters.account,
       waiters.leader,
       waiters.single,
       waiters.address,

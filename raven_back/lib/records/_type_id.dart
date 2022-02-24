@@ -1,6 +1,5 @@
 class TypeId {
   // Core
-  static const Account = 0;
   static const Address = 1;
   static const Balance = 2;
   static const Transaction = 3;

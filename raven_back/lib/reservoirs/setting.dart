@@ -4,6 +4,9 @@ import 'package:reservoir/reservoir.dart';
 import 'package:raven_back/extensions/object.dart';
 import 'package:raven_back/records/records.dart';
 
+import 'package:ravencoin_wallet/ravencoin_wallet.dart' show NetworkType;
+import 'package:raven_back/records/net.dart';
+
 part 'setting.keys.dart';
 
 class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
@@ -27,10 +30,10 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
             Setting(name: SettingName.Electrum_DomainTest, value: defaultUrl),
         SettingName.Electrum_PortTest:
             Setting(name: SettingName.Electrum_PortTest, value: defaultPort),
-        SettingName.Account_Current:
-            Setting(name: SettingName.Account_Current, value: '0'),
-        SettingName.Account_Preferred:
-            Setting(name: SettingName.Account_Preferred, value: '0'),
+        SettingName.Wallet_Current:
+            Setting(name: SettingName.Wallet_Current, value: '0'),
+        SettingName.Wallet_Preferred:
+            Setting(name: SettingName.Wallet_Preferred, value: '0'),
         SettingName.User_Name:
             Setting(name: SettingName.User_Name, value: null),
         SettingName.Send_Immediate:
@@ -38,18 +41,21 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
       }.map(
           (settingName, setting) => MapEntry(settingName.enumString, setting));
 
-  String get preferredAccountId =>
-      primaryIndex.getOne(SettingName.Account_Preferred)!.value;
+  String get preferredWalletId =>
+      primaryIndex.getOne(SettingName.Wallet_Preferred)!.value;
 
-  String get currentAccountId =>
-      primaryIndex.getOne(SettingName.Account_Current)!.value;
+  String get currentWalletId =>
+      primaryIndex.getOne(SettingName.Wallet_Current)!.value;
 
   String? get localPath => primaryIndex.getOne(SettingName.Local_Path)?.value;
 
-  Future savePreferredAccountId(String accountId) async => await save(
-      Setting(name: SettingName.Account_Preferred, value: accountId));
+  Future savePreferredWalletId(String walletId) async =>
+      await save(Setting(name: SettingName.Wallet_Preferred, value: walletId));
 
-  Future setCurrentAccountId([String? accountId]) async => await save(Setting(
-      name: SettingName.Account_Current,
-      value: accountId ?? preferredAccountId));
+  Future setCurrentWalletId([String? walletId]) async => await save(Setting(
+      name: SettingName.Wallet_Current, value: walletId ?? preferredWalletId));
+
+  Net get net => primaryIndex.getOne(SettingName.Electrum_Net)!.value;
+  NetworkType get network => networks[net]!;
+  String get netName => net.enumString;
 }

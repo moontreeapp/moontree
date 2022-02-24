@@ -22,9 +22,6 @@ class EncryptedEntropy extends EncryptedWalletSecret {
   @override
   String get secret => mnemonic;
 
-  /// this requires that we either do not allow testnet for users or
-  /// on import of wallet move from account if wallet exists and
-  /// is in an account associated with a different network (testnet vs mainnet)
   @override
   String get walletId => HDWallet.fromSeed(seed).pubKey;
 

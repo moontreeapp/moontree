@@ -8,7 +8,7 @@ class AddressWaiter extends Waiter {
   /// ready to derive addresses on a newly created wallet, but we have no
   /// electrum client connection available. we might be able to use a "combine
   /// latest" plus full replay subjects to achieve the same thing directly in
-  /// streams themselves. account.dart waiter may be a good example of that.
+  /// streams themselves. waiter may be a good example of that.
   /// Yet, a proliferation of streams comes with some small overhead and the
   /// backlog pattern is simple, even though split accross multiple listeners:
 

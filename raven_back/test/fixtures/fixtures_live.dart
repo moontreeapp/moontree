@@ -12,11 +12,8 @@ Future useLiveSources() async {
   await hiveInit.setUp();
   await services.wallet.createSave(
       walletType: WalletType.leader,
-      accountId: 'Primary',
       cipherUpdate: defaultCipherUpdate,
       secret: mnemonic);
-  await services.account.createSave('Primary');
-  await services.account.createSave('Savings');
   await initWaiters();
 }
 

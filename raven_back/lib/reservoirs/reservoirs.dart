@@ -1,4 +1,3 @@
-import 'account.dart';
 import 'address.dart';
 import 'asset.dart';
 import 'balance.dart';
@@ -14,7 +13,6 @@ import 'vin.dart';
 import 'vout.dart';
 import 'wallet.dart';
 
-export 'account.dart';
 export 'address.dart';
 export 'asset.dart';
 export 'balance.dart';
@@ -31,7 +29,6 @@ export 'vout.dart';
 export 'wallet.dart';
 
 class res {
-  static final AccountReservoir accounts = AccountReservoir();
   static final AddressReservoir addresses = AddressReservoir();
   static final AssetReservoir assets = AssetReservoir();
   static final BlockReservoir blocks = BlockReservoir();

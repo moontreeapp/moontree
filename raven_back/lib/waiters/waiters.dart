@@ -1,4 +1,3 @@
-import 'account.dart';
 import 'address.dart';
 import 'subscription.dart';
 import 'block.dart';
@@ -13,7 +12,6 @@ import 'setting.dart';
 import 'single.dart';
 
 class waiters {
-  static AccountWaiter account = AccountWaiter();
   static AddressWaiter address = AddressWaiter();
   static SubscriptionWaiter subscription = SubscriptionWaiter();
   static BlockWaiter block = BlockWaiter();

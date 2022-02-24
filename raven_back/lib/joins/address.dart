@@ -4,10 +4,6 @@ extension AddressBelongsToWallet on Address {
   Wallet? get wallet => res.wallets.primaryIndex.getOne(walletId);
 }
 
-extension AddressBelongsToAccount on Address {
-  Account? get account => wallet?.account;
-}
-
 extension AddressHasManyVouts on Address {
   List<Vout> get vouts => res.vouts.byAddress.getAll(address);
 }

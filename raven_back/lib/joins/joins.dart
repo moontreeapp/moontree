@@ -5,7 +5,6 @@ import 'package:raven_back/extensions/list.dart';
 import '../reservoirs/reservoirs.dart';
 import '../records/records.dart';
 
-part 'account.dart';
 part 'address.dart';
 part 'asset.dart';
 part 'balance.dart';
