@@ -10,6 +10,7 @@ class AppStreams {
   final snack = BehaviorSubject<Snack?>.seeded(null);
   final context = BehaviorSubject<AppContext>.seeded(AppContext.wallet);
   final asset = BehaviorSubject<String?>.seeded(null);
+  final hideNav = BehaviorSubject<bool?>.seeded(null);
 }
 
 /// resumed inactive paused detached

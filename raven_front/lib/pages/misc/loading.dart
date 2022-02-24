@@ -25,6 +25,8 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
         walletType: WalletType.leader,
         cipherUpdate: defaultCipherUpdate,
         secret: mnemonic);
+    res.settings.setCurrentWalletId(res.wallets.first.walletId);
+    res.settings.savePreferredWalletId(res.wallets.first.walletId);
   }
 
   Future setup() async {
@@ -38,7 +40,7 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
     if (res.wallets.data.isEmpty) {
       await setupRealWallet();
     }
-    res.settings.setCurrentWalletId();
+    //res.settings.setCurrentWalletId(res.wallets.first.walletId);
 
     // for testing
     print('-------------------------');

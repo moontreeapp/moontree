@@ -62,7 +62,11 @@ class _PageLead extends State<PageLead> {
       {
         'Wallet': IconButton(
             splashRadius: 24,
-            onPressed: () => Backdrop.of(context).fling(),
+            onPressed: () {
+              streams.app.hideNav
+                  .add(Backdrop.of(context).isBackLayerRevealed ? false : true);
+              Backdrop.of(context).fling();
+            },
             padding: EdgeInsets.only(left: 16),
             icon: SvgPicture.asset('assets/icons/menu/menu.svg')),
         'Send': IconButton(

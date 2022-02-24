@@ -68,7 +68,7 @@ class _PageTitleState extends State<PageTitle> {
     return body();
   }
 
-  Widget body() => pageTitle == 'main' || pageTitle == ''
+  Widget body() => ['main', '', 'Send'].contains(pageTitle)
       ? Text('')
       : FittedBox(
           fit: BoxFit.fitWidth,
