@@ -69,12 +69,14 @@ class IconComponents {
     double? height,
     double? width,
   }) {
+    height = height ?? 40;
+    width = width ?? 40;
     var imageDetails = Identicon().generate(asset);
     var indicator = generateIndicator(name: asset, imageDetails: imageDetails);
     return Stack(alignment: Alignment.bottomRight, children: [
       Container(
-        height: 40,
-        width: 40,
+        height: height,
+        width: width,
         decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
@@ -101,11 +103,13 @@ class IconComponents {
   Widget? generateIndicator({
     required String name,
     required ImageDetails imageDetails,
+    double? height,
+    double? width,
   }) {
     if (name.startsWith('#') || name.startsWith('\$') || name.endsWith('!')) {
       return Container(
-          height: 20,
-          width: 20,
+          height: height ?? 24,
+          width: width ?? 24,
           decoration: BoxDecoration(
               color: Color.fromARGB(
                 255,
@@ -134,7 +138,7 @@ class IconComponents {
                                   : name.startsWith('\$')
                                       ? MdiIcons.lock
                                       : Icons.circle_outlined,
-                          size: 14,
+                          size: 16,
                           color:
                               getIndicatorColor(imageDetails.background))))));
     }

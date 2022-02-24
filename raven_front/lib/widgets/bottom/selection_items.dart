@@ -185,7 +185,7 @@ class SelectionItems {
         height: 24,
         width: 24,
       ),
-      title: Text(name, style: Theme.of(context).choices));
+      title: Text(name, style: Theme.of(context).choicesHoldings));
 
   Widget item(
     SelectionOption name, {

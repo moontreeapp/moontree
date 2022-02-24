@@ -253,6 +253,19 @@ extension TextStyleExtension on ThemeData {
           fontWeight: FontWeights.regular,
           letterSpacing: 0.25,
           color: Color(0xFFFF1900));
+  TextStyle? get choicesHoldings => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 16.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.5,
+          color: Color(0xDE000000))
+      : TextStyle(
+          fontSize: 16.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.5,
+          color: Color(0xDE000000));
   TextStyle? get choices => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 14.0,
