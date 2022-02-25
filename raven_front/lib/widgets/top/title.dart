@@ -68,7 +68,7 @@ class _PageTitleState extends State<PageTitle> {
     return body();
   }
 
-  Widget body() => ['main', '', 'Send'].contains(pageTitle)
+  Widget body() => ['main', ''].contains(pageTitle)
       ? Text('')
       : FittedBox(
           fit: BoxFit.fitWidth,
@@ -78,7 +78,7 @@ class _PageTitleState extends State<PageTitle> {
                     '/settings/settings': 'Settings',
                   }[settingTitle] ??
                   {
-                    'Send': '',
+                    'Send': 'Send',
                     'Import_export': 'Import / Export',
                     'Change': 'Security',
                     'Remove': 'Security',

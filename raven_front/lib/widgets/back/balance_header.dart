@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:raven_front/widgets/widgets.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -102,47 +103,14 @@ class _BalanceHeaderState extends State<BalanceHeader>
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ...headerCenter(holdingSat),
-            ],
-          ),
+          Coin(
+              pageTitle: widget.pageTitle,
+              symbol: symbol,
+              holdingSat: holdingSat),
           headerBottom(holdingSat, amountSat),
         ],
       ),
     );
-  }
-
-  List<Widget> headerCenter(int holdingSat) {
-    var ret = [
-      components.icons.assetAvatar(symbol, size: 48),
-      SizedBox(height: 9),
-      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(Icons.circle, size: 6, color: Color(0xDEFFFFFF)),
-        SizedBox(width: 8),
-        Icon(Icons.circle_outlined, size: 6, color: Color(0x99FFFFFF)),
-      ]),
-      SizedBox(height: 5),
-      // get this from balance
-      Text(
-          components.text
-              .securityAsReadable(holdingSat, symbol: symbol, asUSD: false),
-          style: Theme.of(context).balanceAmount),
-      SizedBox(height: 1),
-    ];
-    // make it a fixed size
-    if (widget.pageTitle != 'Asset') {
-      ret.addAll([
-        // USD amount of balance fix!
-        Text(
-            components.text
-                .securityAsReadable(holdingSat, symbol: symbol, asUSD: true),
-            style: Theme.of(context).balanceDollar),
-        //SizedBox(height: 30),
-      ]);
-    }
-    return ret;
   }
 
   Widget headerBottom(int holdingSat, int amountSat) {
