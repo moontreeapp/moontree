@@ -29,7 +29,10 @@ class IconComponents {
   Image get assetMasterImage => Image.asset('assets/masterbag_transparent.png');
   Image get assetRegularImage => Image.asset('assets/assetbag_transparent.png');
 
-  Widget assetAvatar(String asset, {double? height, double? width}) {
+  Widget assetAvatar(String asset,
+      {double? size, double? height, double? width}) {
+    height = height ?? size;
+    width = width ?? size;
     if (asset.toUpperCase() == 'RVN') {
       return _assetAvatarRVN(height: height, width: width);
     }

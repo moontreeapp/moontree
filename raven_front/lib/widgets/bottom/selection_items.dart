@@ -50,6 +50,17 @@ enum SelectionOption {
   NFT,
   Messaging_Channel_Asset,
 
+  // Main,
+  Sub,
+  // NFT,
+  // Channel,
+  // Admin,
+  // Restricted,
+  Restricted_Admin,
+  // Qualifier,
+  Sub_Qualifier,
+  Channel,
+
   // decimals divisibility
   Dec8,
   Dec7,
@@ -66,6 +77,7 @@ class SelectionItems {
   late List<SelectionOption> names;
   late List<VoidCallback> behaviors;
   late List<String> values;
+  late String? symbol;
   late SelectionSet? modalSet;
   final BuildContext context;
 
@@ -74,6 +86,7 @@ class SelectionItems {
     List<SelectionOption>? names,
     List<VoidCallback>? behaviors,
     List<String>? values,
+    this.symbol,
     SelectionSet? modalSet,
   }) {
     // handle the error here if we have to error.
@@ -199,7 +212,21 @@ class SelectionItems {
           Navigator.pop(context);
           (behavior ?? () {})();
         },
-        leading: leads(name),
+        leading: symbol == null
+            ? leads(name)
+            : components.icons.assetAvatar(
+                {
+                  SelectionOption.Main: symbol,
+                  SelectionOption.Sub: symbol,
+                  SelectionOption.Admin: '$symbol!',
+                  SelectionOption.Restricted: '\$$symbol',
+                  SelectionOption.Restricted_Admin: '\$$symbol',
+                  SelectionOption.Qualifier: '#$symbol',
+                  SelectionOption.Sub_Qualifier: '#$symbol',
+                  SelectionOption.NFT: '$symbol',
+                  SelectionOption.Channel: '$symbol',
+                }[name]!,
+                size: 24),
         title: title ?? Text(asString(name), style: Theme.of(context).choices),
         trailing: value != null
             ? Text(value, style: Theme.of(context).choices)
@@ -333,15 +360,27 @@ class SelectionItems {
           tall: false);
     } else {
       if (names.length == behaviors.length && names.length == values.length) {
-        produceModal([
-          for (var namedBehavior in [
-            for (var i = 0; i < names.length; i += 1)
-              [names[i], behaviors[i], values[i]]
-          ])
-            item(namedBehavior[0] as SelectionOption,
-                behavior: namedBehavior[1] as VoidCallback,
-                value: namedBehavior[2] as String)
-        ], tall: false);
+        if (symbol == null) {
+          produceModal([
+            for (var namedBehaviorValue in [
+              for (var i = 0; i < names.length; i += 1)
+                [names[i], behaviors[i], values[i]]
+            ])
+              item(namedBehaviorValue[0] as SelectionOption,
+                  behavior: namedBehaviorValue[1] as VoidCallback,
+                  value: namedBehaviorValue[2] as String)
+          ], tall: false);
+        } else {
+          produceModal([
+            for (var namedBehaviorValue in [
+              for (var i = 0; i < names.length; i += 1)
+                [names[i], behaviors[i], values[i]]
+            ])
+              item(namedBehaviorValue[0] as SelectionOption,
+                  behavior: namedBehaviorValue[1] as VoidCallback,
+                  value: namedBehaviorValue[2] as String)
+          ], tall: false);
+        }
       } else if (names.length == behaviors.length) {
         produceModal([
           for (var namedBehavior in [

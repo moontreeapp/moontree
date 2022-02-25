@@ -69,16 +69,17 @@ class _PageLead extends State<PageLead> {
             },
             padding: EdgeInsets.only(left: 16),
             icon: SvgPicture.asset('assets/icons/menu/menu.svg')),
-        'Send': IconButton(
-            splashRadius: 24,
-            icon: Icon(Icons.close_rounded, color: Colors.white),
-            onPressed: () =>
-                Navigator.pop(components.navigator.routeContext ?? context)),
         '': Container(),
       }[pageTitle] ??
-      IconButton(
-          splashRadius: 24,
-          icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
-          onPressed: () =>
-              Navigator.pop(components.navigator.routeContext ?? context));
+      (['Send', 'Scan'].contains(pageTitle)
+          ? IconButton(
+              splashRadius: 24,
+              icon: Icon(Icons.close_rounded, color: Colors.white),
+              onPressed: () =>
+                  Navigator.pop(components.navigator.routeContext ?? context))
+          : IconButton(
+              splashRadius: 24,
+              icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+              onPressed: () =>
+                  Navigator.pop(components.navigator.routeContext ?? context)));
 }

@@ -121,14 +121,17 @@ class _HoldingList extends State<HoldingList> {
             } else {
               SelectionItems(
                 context,
+                symbol: holding.symbol,
                 names: [
                   if (holding.main != null) SelectionOption.Main,
+                  // NEED SUB
                   if (holding.admin != null) SelectionOption.Admin,
                   if (holding.restricted != null) SelectionOption.Restricted,
+                  // NEED RESTRICTED ADMIN
                   if (holding.qualifier != null) SelectionOption.Qualifier,
-                  if (holding.unique != null) SelectionOption.NFT_Asset,
-                  if (holding.channel != null)
-                    SelectionOption.Messaging_Channel_Asset,
+                  // NEED SUBQUALIFIER
+                  if (holding.unique != null) SelectionOption.NFT,
+                  if (holding.channel != null) SelectionOption.Channel,
                 ],
                 behaviors: [
                   if (holding.main != null)

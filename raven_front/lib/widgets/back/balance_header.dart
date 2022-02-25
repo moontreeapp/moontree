@@ -116,14 +116,14 @@ class _BalanceHeaderState extends State<BalanceHeader>
 
   List<Widget> headerCenter(int holdingSat) {
     var ret = [
-      components.icons.assetAvatar(symbol, height: 48, width: 48),
+      components.icons.assetAvatar(symbol, size: 48),
       SizedBox(height: 9),
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Icon(Icons.circle, size: 6, color: Color(0xDEFFFFFF)),
         SizedBox(width: 8),
-        Icon(Icons.circle_outlined, size: 6, color: Color(0x99000000)),
+        Icon(Icons.circle_outlined, size: 6, color: Color(0x99FFFFFF)),
       ]),
-      SizedBox(height: 8),
+      SizedBox(height: 5),
       // get this from balance
       Text(
           components.text
