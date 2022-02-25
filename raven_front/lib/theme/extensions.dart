@@ -207,26 +207,26 @@ extension TextStyleExtension on ThemeData {
           fontFamily: 'Nunito',
           fontWeight: FontWeights.regular,
           letterSpacing: 0.18,
-          color: Colors.white)
+          color: Color(0xDEFFFFFF))
       : TextStyle(
           fontSize: 24.0,
           fontFamily: 'Nunito',
           fontWeight: FontWeights.regular,
           letterSpacing: 0.18,
-          color: Colors.white);
+          color: Color(0xDEFFFFFF));
   TextStyle? get balanceDollar => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeights.regular,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.5,
-          color: Colors.white)
+          color: Color(0xDEFFFFFF))
       : TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeights.regular,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.5,
-          color: Colors.white);
+          color: Color(0xDEFFFFFF));
   TextStyle? get remaining => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 14.0,
