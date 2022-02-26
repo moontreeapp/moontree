@@ -5,9 +5,13 @@ class AssetHolding {
   final Balance? main;
   final Balance? admin;
   final Balance? restricted;
-  final Balance? qualifier;
-  final Balance? unique;
+  final Balance? restrictedAdmin;
+  final Balance? nft;
   final Balance? channel;
+  final Balance? sub;
+  final Balance? subAdmin;
+  final Balance? qualifier;
+  final Balance? qualifierSub;
   final Balance? crypto;
   final Balance? fiat;
 
@@ -16,9 +20,13 @@ class AssetHolding {
     this.main,
     this.admin,
     this.restricted,
-    this.qualifier,
-    this.unique,
+    this.restrictedAdmin,
+    this.nft,
     this.channel,
+    this.sub,
+    this.subAdmin,
+    this.qualifier,
+    this.qualifierSub,
     this.crypto,
     this.fiat,
   });
@@ -29,9 +37,13 @@ class AssetHolding {
     Balance? main,
     Balance? admin,
     Balance? restricted,
-    Balance? qualifier,
-    Balance? unique,
+    Balance? restrictedAdmin,
+    Balance? nft,
     Balance? channel,
+    Balance? sub,
+    Balance? subAdmin,
+    Balance? qualifier,
+    Balance? qualifierSub,
     Balance? crypto,
     Balance? fiat,
   }) =>
@@ -40,9 +52,13 @@ class AssetHolding {
         main: main ?? existing.main,
         admin: admin ?? existing.admin,
         restricted: restricted ?? existing.restricted,
-        qualifier: qualifier ?? existing.qualifier,
-        unique: unique ?? existing.unique,
+        restrictedAdmin: restrictedAdmin ?? existing.restrictedAdmin,
+        nft: nft ?? existing.nft,
         channel: channel ?? existing.channel,
+        sub: sub ?? existing.sub,
+        subAdmin: subAdmin ?? existing.subAdmin,
+        qualifier: qualifier ?? existing.qualifier,
+        qualifierSub: qualifierSub ?? existing.qualifierSub,
         crypto: crypto ?? existing.crypto,
         fiat: fiat ?? existing.fiat,
       );
@@ -53,20 +69,28 @@ class AssetHolding {
       'main: $main, '
       'admin: $admin, '
       'restricted: $restricted, '
-      'qualifier: $qualifier, '
-      'unique: $unique, '
+      'restrictedAdmin: $restrictedAdmin, '
+      'nft: $nft, '
       'channel: $channel, '
+      'sub: $sub, '
+      'subAdmin: $subAdmin, '
+      'qualifier: $qualifier, '
+      'qualifierSub: $qualifierSub, '
       'crypto: $crypto, '
       'fiat: $fiat, '
       ')';
 
   String get typesView =>
-      (main != null ? 'Main ' : '') +
-      (admin != null ? 'Admin ' : '') +
-      (restricted != null ? 'Restricted ' : '') +
-      (qualifier != null ? 'Qualifier ' : '') +
-      (unique != null ? 'Unique ' : '') +
-      (channel != null ? 'Channel ' : '') +
+      (main != null ? 'Main' : '') +
+      (admin != null ? 'Admin' : '') +
+      (restricted != null ? 'Restricted' : '') +
+      (restrictedAdmin != null ? 'RestrictedAdmin' : '') +
+      (nft != null ? 'Nft' : '') +
+      (channel != null ? 'Channel' : '') +
+      (sub != null ? 'Sub' : '') +
+      (subAdmin != null ? 'SubAdmin' : '') +
+      (qualifier != null ? 'Qualifier' : '') +
+      (qualifierSub != null ? 'QualifierSub' : '') +
       (crypto != null ? 'Crypto ' : '') +
       (fiat != null ? 'Fiat ' : '');
 
@@ -74,36 +98,43 @@ class AssetHolding {
         main,
         admin,
         restricted,
-        qualifier,
-        unique,
+        restrictedAdmin,
+        nft,
         channel,
+        sub,
+        subAdmin,
+        qualifier,
+        qualifierSub,
         crypto,
         fiat,
       ].where((element) => element != null).length;
 
   String? get singleSymbol => length > 1
       ? null
-      : (mainSymbol ??
-          adminSymbol ??
+      : (restrictedAdminSymbol ??
           restrictedSymbol ??
-          qualifierSymbol ??
-          uniqueSymbol ??
+          mainSymbol ??
+          adminSymbol ??
+          subSymbol ??
+          subAdminSymbol ??
+          nftSymbol ??
           channelSymbol ??
+          qualifierSymbol ??
+          qualifierSubSymbol ??
           cryptoSymbol ??
           fiatSymbol);
 
   String? get mainSymbol => main != null ? symbol : null;
-  String? get subSymbol =>
-      main != null ? '/$symbol' : null; // sub mains allowed
-  String? get adminSymbol => admin != null ? '$symbol!' : null; // must be top
-  String? get restrictedSymbol =>
-      restricted != null ? '\$$symbol' : null; // must be top
-  String? get qualifierSymbol =>
-      qualifier != null ? '#$symbol' : null; // sub qualifiers allowed
-  String? get uniqueSymbol =>
-      unique != null ? '#$symbol' : null; // must be subasset
-  String? get channelSymbol =>
-      channel != null ? '~$symbol' : null; // must be subasset
+  String? get adminSymbol => admin != null ? '$symbol!' : null;
+  String? get restrictedSymbol => restricted != null ? '\$$symbol' : null;
+  String? get restrictedAdminSymbol =>
+      restrictedAdmin != null ? '\$$symbol!' : null;
+  String? get nftSymbol => nft != null ? '#$symbol' : null;
+  String? get channelSymbol => channel != null ? '~$symbol' : null;
+  String? get subSymbol => sub != null ? '/$symbol' : null;
+  String? get subAdminSymbol => subAdmin != null ? '/$symbol!' : null;
+  String? get qualifierSymbol => qualifier != null ? '#$symbol' : null;
+  String? get qualifierSubSymbol => qualifierSub != null ? '/#$symbol' : null;
   String? get cryptoSymbol => crypto != null
       ? (crypto?.security.symbol ?? symbol)
       : null; // not a raven asset
@@ -120,13 +151,14 @@ class AssetHolding {
       : symbol;
   String get last => symbol.split('/').last.split('~').last.split('#').last;
 
-  // returns the best value (main, qualifier, restricted, admin, channel, unique, crypto, fiat)
+  // shouldn't be used?
+  // returns the best value (main, qualifier, restricted, admin, channel, nft, crypto, fiat)
   Balance? get balance =>
       main ??
       qualifier ??
       restricted ??
       admin ??
-      unique ??
+      nft ??
       channel ??
       crypto ??
       fiat;

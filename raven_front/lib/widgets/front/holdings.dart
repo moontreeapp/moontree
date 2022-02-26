@@ -111,7 +111,58 @@ class _HoldingList extends State<HoldingList> {
   ListView _holdingsView(BuildContext context, {Wallet? wallet}) {
     var rvnHolding = <Widget>[];
     var assetHoldings = <Widget>[];
+    var handled = []; // skip these.
+    for (var balance in Current.holdings) {
+      var baseSymbol =
+        balance.security.asset?.baseSymbol ?? balance.security.symbol;
+      var assetType =
+        balance.security.asset?.assetType ?? balance.security.securityType;
+      if ([
+        AssetType.Main,
+        AssetType.Admin,
+        AssetType.Restricted,
+        AssetType.RestrictedAdmin,].contains(assetType)) {
+          // combine based on some more logic
+          //var indicatorIcon = 
+      } else if (assetType == AssetType.Sub) {
+        // if you own the admin too make the icon with the sub and combine
+        // if you don't just make it
+      } else if (assetType == AssetType.SubAdmin) {
+        // if you own the sub do nothing
+        // if you don't own the sub make it and display it
+      } else {
+        // just make it (qualifier, sub qualifider, nft channel)
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    Current.holdings
     for (var holding in holdings.values) {
+      if (
+        holding.main != null ||
+        holding.admin != null ||
+        holding.restricted != null 
+        /*|| holding.restrictedAdmin*/){
       var thisHolding = ListTile(
           //dense: true,
           contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
@@ -139,7 +190,7 @@ class _HoldingList extends State<HoldingList> {
                   if (holding.admin != null)
                     () => navigate(holding.admin!, wallet: wallet),
                   if (holding.restricted != null)
-                    () => navigate(holding.restricted!, wallet: wallet),
+                    () => navigate(holding.restricted!, wallet: walbin let),
                   if (holding.qualifier != null)
                     () => navigate(holding.qualifier!, wallet: wallet),
                   if (holding.unique != null)
@@ -225,6 +276,19 @@ class _HoldingList extends State<HoldingList> {
                 style: Theme.of(context).holdingValue),
           ]),
           trailing: Icon(Icons.chevron_right_rounded));
+      } 
+      if(holding.qualifier != null){
+
+
+      } 
+      if(holding.unique != null){
+
+
+      } 
+      if(holding.channel != null){
+
+
+      }
       if (holding.symbol == 'RVN') {
         rvnHolding.add(thisHolding);
         rvnHolding.add(Divider(height: 1));

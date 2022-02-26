@@ -90,11 +90,23 @@ class Asset with EquatableMixin {
   String get adminSymbol => baseSymbol + '!';
 
   AssetType get assetType {
+    if (symbol.startsWith('#') && symbol.contains('/')) {
+      return AssetType.SubQualifier;
+    }
     if (symbol.startsWith('#')) {
       return AssetType.Qualifier;
     }
+    if (symbol.startsWith('\$') && symbol.endsWith('!')) {
+      return AssetType.RestrictedAdmin;
+    }
     if (symbol.startsWith('\$')) {
       return AssetType.Restricted;
+    }
+    if (symbol.contains('/') && symbol.endsWith('!')) {
+      return AssetType.SubAdmin;
+    }
+    if (symbol.contains('/')) {
+      return AssetType.Sub;
     }
     if (symbol.endsWith('!')) {
       return AssetType.Admin;
@@ -130,7 +142,11 @@ enum AssetType {
   Main,
   Admin,
   Restricted,
-  Qualifier,
+  RestrictedAdmin,
   NFT,
   Channel,
+  Sub,
+  SubAdmin,
+  Qualifier,
+  QualifierSub,
 }
