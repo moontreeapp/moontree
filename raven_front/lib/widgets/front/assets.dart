@@ -74,7 +74,7 @@ class _AssetList extends State<AssetList> {
             : Container(
                 color: Colors.transparent,
                 alignment: Alignment.center,
-                padding: EdgeInsets.only(top: 5.0),
+                padding: EdgeInsets.only(top: 8.0),
                 child: RefreshIndicator(
                   child: _assetsView(context),
                   onRefresh: () => refresh(),
@@ -93,61 +93,59 @@ class _AssetList extends State<AssetList> {
       ListView(children: <Widget>[
         for (var asset in assets.values) ...[
           ListTile(
-              //dense: true,
-              contentPadding:
-                  EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-              onTap: () {
-                if (asset.length == 1 && asset.admin != null) {
-                  navigate(asset.symbol, wallet: wallet);
-                } else if (asset.length == 2 &&
-                    asset.admin != null &&
-                    asset.main != null) {
-                  navigate(asset.symbol, wallet: wallet);
-                } else if (asset.length == 1) {
-                  navigate(asset.singleSymbol!, wallet: wallet);
-                } else {
-                  SelectionItems(
-                    context,
-                    names: [
-                      if (asset.admin != null) SelectionOption.Main,
-                      if (asset.restricted != null) SelectionOption.Restricted,
-                      if (asset.qualifier != null) SelectionOption.Qualifier,
-                    ],
-                    behaviors: [
-                      if (asset.main != null)
-                        () => navigate(asset.symbol, wallet: wallet),
-                      //if (asset.admin != null)
-                      //  () => navigate(asset.admin!.security.symbol,
-                      //      wallet: wallet),
-                      if (asset.restricted != null)
-                        () => navigate(asset.restricted!.security.symbol,
-                            wallet: wallet),
-                      if (asset.qualifier != null)
-                        () => navigate(asset.qualifier!.security.symbol,
-                            wallet: wallet),
-                    ],
-                  ).build();
-                }
-              }, // wallet transactions are on wallet screen, so remove wallet id here.
-              leading: Container(
-                  height: 40,
-                  width: 40,
-                  child: components.icons.assetAvatar(asset.symbol)),
-              title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(asset.symbol, style: Theme.of(context).holdingName),
-                    Text(
-                        [
-                          if (asset.admin != null) 'Admin',
-                          //if (asset.main != null) 'Main',
-                          if (asset.restricted != null) 'Restricted',
-                          if (asset.qualifier != null) 'Qualifier',
-                        ].join(', '),
-                        style: Theme.of(context).holdingValue),
-                  ]),
-              trailing: Icon(Icons.chevron_right_rounded)),
+            //dense: true,
+            //contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+            // wallet transactions are on wallet screen, so remove wallet id here.
+            onTap: () => onTap(wallet, asset),
+            leading: Container(
+                height: 40,
+                width: 40,
+                child: components.icons.assetAvatar(asset.symbol)),
+            title:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(asset.symbol, style: Theme.of(context).holdingName),
+              //Text(
+              //    [
+              //      if (asset.admin != null) 'Admin',
+              //      //if (asset.main != null) 'Main',
+              //      if (asset.restricted != null) 'Restricted',
+              //      if (asset.qualifier != null) 'Qualifier',
+              //    ].join(', '),
+              //    style: Theme.of(context).holdingValue),
+            ]),
+            //trailing: Icon(Icons.chevron_right_rounded)
+          ),
           Divider(height: 1)
         ]
       ]);
+
+  void onTap(Wallet? wallet, AssetHolding asset) {
+    if (asset.length == 1 && asset.admin != null) {
+      navigate(asset.symbol, wallet: wallet);
+    } else if (asset.length == 2 && asset.admin != null && asset.main != null) {
+      navigate(asset.symbol, wallet: wallet);
+    } else if (asset.length == 1) {
+      navigate(asset.singleSymbol!, wallet: wallet);
+    } else {
+      SelectionItems(
+        context,
+        symbol: asset.symbol,
+        names: [
+          if (asset.admin != null) SelectionOption.Main,
+          if (asset.restricted != null) SelectionOption.Restricted,
+          if (asset.qualifier != null) SelectionOption.Qualifier,
+        ],
+        behaviors: [
+          if (asset.main != null) () => navigate(asset.symbol, wallet: wallet),
+          //if (asset.admin != null)
+          //  () => navigate(asset.admin!.security.symbol,
+          //      wallet: wallet),
+          if (asset.restricted != null)
+            () => navigate(asset.restricted!.security.symbol, wallet: wallet),
+          if (asset.qualifier != null)
+            () => navigate(asset.qualifier!.security.symbol, wallet: wallet),
+        ],
+      ).build();
+    }
+  }
 }
