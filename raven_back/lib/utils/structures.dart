@@ -155,11 +155,15 @@ class AssetHolding {
   // returns the best value (main, qualifier, restricted, admin, channel, nft, crypto, fiat)
   Balance? get balance =>
       main ??
-      qualifier ??
+      restrictedAdmin ??
       restricted ??
       admin ??
+      sub ??
+      subAdmin ??
       nft ??
       channel ??
+      qualifier ??
+      qualifierSub ??
       crypto ??
       fiat;
 }

@@ -68,7 +68,7 @@ class _SubAssetList extends State<SubAssetList> {
   //        admin: assetType == AssetType.Admin ? balance : null,
   //        restricted: assetType == AssetType.Restricted ? balance : null,
   //        qualifier: assetType == AssetType.Qualifier ? balance : null,
-  //        unique: assetType == AssetType.NFT ? balance : null,
+  //        nft: assetType == AssetType.NFT ? balance : null,
   //        channel: assetType == AssetType.Channel ? balance : null,
   //        crypto: assetType == SecurityType.Crypto ? balance : null,
   //        fiat: assetType == SecurityType.Fiat ? balance : null,
@@ -80,7 +80,7 @@ class _SubAssetList extends State<SubAssetList> {
   //        admin: assetType == AssetType.Admin ? balance : null,
   //        restricted: assetType == AssetType.Restricted ? balance : null,
   //        qualifier: assetType == AssetType.Qualifier ? balance : null,
-  //        unique: assetType == AssetType.NFT ? balance : null,
+  //        nft: assetType == AssetType.NFT ? balance : null,
   //        channel: assetType == AssetType.Channel ? balance : null,
   //        crypto: assetType == SecurityType.Crypto ? balance : null,
   //        fiat: assetType == SecurityType.Fiat ? balance : null,
@@ -154,12 +154,12 @@ class _SubAssetList extends State<SubAssetList> {
                 if ((asset.length == 1) ||
                     (asset.length == 2 &&
                             (asset.admin != null && asset.main != null) ||
-                        (asset.admin != null && asset.unique != null) ||
-                        (asset.main != null && asset.unique != null)) ||
+                        (asset.admin != null && asset.nft != null) ||
+                        (asset.main != null && asset.nft != null)) ||
                     (asset.length == 3 &&
                         asset.admin != null &&
                         asset.main != null &&
-                        asset.unique != null)) {
+                        asset.nft != null)) {
                   navigate(
                     asset.symbol,
                     wallet: wallet,
@@ -170,7 +170,7 @@ class _SubAssetList extends State<SubAssetList> {
                     names: [
                       if (asset.admin != null) SelectionOption.Main,
                       //if (asset.main != null) SelectionOption.Main,
-                      if (asset.unique != null) SelectionOption.NFT,
+                      if (asset.nft != null) SelectionOption.NFT,
                       if (asset.qualifier != null) SelectionOption.Qualifier,
                     ],
                     behaviors: [
@@ -184,9 +184,9 @@ class _SubAssetList extends State<SubAssetList> {
                       //        '${widget.symbol}/${asset.subSymbol!}',
                       //        wallet: wallet,
                       //      ),
-                      if (asset.unique != null)
+                      if (asset.nft != null)
                         () => navigate(
-                              '${widget.symbol}/${asset.uniqueSymbol!}',
+                              '${widget.symbol}/${asset.nftSymbol!}',
                               wallet: wallet,
                             ),
                       if (asset.qualifier != null)
@@ -211,7 +211,7 @@ class _SubAssetList extends State<SubAssetList> {
                           if (asset.admin != null) 'Admin',
                           //if (asset.main != null) 'Main',
                           if (asset.channel != null) 'Channel',
-                          if (asset.unique != null) 'NFT',
+                          if (asset.nft != null) 'NFT',
                           if (asset.restricted != null) 'Restricted',
                           if (asset.qualifier != null) 'Qualifier',
                         ].join(', '),

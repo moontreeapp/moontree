@@ -18,7 +18,7 @@ class HoldingList extends StatefulWidget {
 
 class _HoldingList extends State<HoldingList> {
   List<StreamSubscription> listeners = [];
-  late Map<String, AssetHolding> holdings;
+  late List<AssetHolding> holdings;
   bool showUSD = false;
   Rate? rateUSD;
 
@@ -111,58 +111,7 @@ class _HoldingList extends State<HoldingList> {
   ListView _holdingsView(BuildContext context, {Wallet? wallet}) {
     var rvnHolding = <Widget>[];
     var assetHoldings = <Widget>[];
-    var handled = []; // skip these.
-    for (var balance in Current.holdings) {
-      var baseSymbol =
-        balance.security.asset?.baseSymbol ?? balance.security.symbol;
-      var assetType =
-        balance.security.asset?.assetType ?? balance.security.securityType;
-      if ([
-        AssetType.Main,
-        AssetType.Admin,
-        AssetType.Restricted,
-        AssetType.RestrictedAdmin,].contains(assetType)) {
-          // combine based on some more logic
-          //var indicatorIcon = 
-      } else if (assetType == AssetType.Sub) {
-        // if you own the admin too make the icon with the sub and combine
-        // if you don't just make it
-      } else if (assetType == AssetType.SubAdmin) {
-        // if you own the sub do nothing
-        // if you don't own the sub make it and display it
-      } else {
-        // just make it (qualifier, sub qualifider, nft channel)
-      }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    Current.holdings
-    for (var holding in holdings.values) {
-      if (
-        holding.main != null ||
-        holding.admin != null ||
-        holding.restricted != null 
-        /*|| holding.restrictedAdmin*/){
+    for (var holding in holdings) {
       var thisHolding = ListTile(
           //dense: true,
           contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
@@ -175,13 +124,16 @@ class _HoldingList extends State<HoldingList> {
                 symbol: holding.symbol,
                 names: [
                   if (holding.main != null) SelectionOption.Main,
-                  // NEED SUB
+                  if (holding.sub != null) SelectionOption.Sub,
+                  if (holding.subAdmin != null) SelectionOption.Sub_Admin,
                   if (holding.admin != null) SelectionOption.Admin,
                   if (holding.restricted != null) SelectionOption.Restricted,
-                  // NEED RESTRICTED ADMIN
+                  if (holding.restrictedAdmin != null)
+                    SelectionOption.Restricted_Admin,
                   if (holding.qualifier != null) SelectionOption.Qualifier,
-                  // NEED SUBQUALIFIER
-                  if (holding.unique != null) SelectionOption.NFT,
+                  if (holding.qualifierSub != null)
+                    SelectionOption.Sub_Qualifier,
+                  if (holding.nft != null) SelectionOption.NFT,
                   if (holding.channel != null) SelectionOption.Channel,
                 ],
                 behaviors: [
@@ -190,11 +142,11 @@ class _HoldingList extends State<HoldingList> {
                   if (holding.admin != null)
                     () => navigate(holding.admin!, wallet: wallet),
                   if (holding.restricted != null)
-                    () => navigate(holding.restricted!, wallet: walbin let),
+                    () => navigate(holding.restricted!, wallet: wallet),
                   if (holding.qualifier != null)
                     () => navigate(holding.qualifier!, wallet: wallet),
-                  if (holding.unique != null)
-                    () => navigate(holding.unique!, wallet: wallet),
+                  if (holding.nft != null)
+                    () => navigate(holding.nft!, wallet: wallet),
                   if (holding.channel != null)
                     () => navigate(holding.channel!, wallet: wallet),
                 ],
@@ -223,10 +175,10 @@ class _HoldingList extends State<HoldingList> {
                       security: holding.qualifier!.security,
                       asUSD: showUSD,
                     ),
-                  if (holding.unique != null)
+                  if (holding.nft != null)
                     components.text.securityAsReadable(
-                      holding.unique!.value,
-                      security: holding.unique!.security,
+                      holding.nft!.value,
+                      security: holding.nft!.security,
                       asUSD: showUSD,
                     ),
                   if (holding.channel != null)
@@ -250,8 +202,8 @@ class _HoldingList extends State<HoldingList> {
                           ? holding.qualifierSymbol!
                           : holding.channel != null
                               ? holding.channelSymbol!
-                              : holding.unique != null
-                                  ? holding.uniqueSymbol!
+                              : holding.nft != null
+                                  ? holding.nftSymbol!
                                   : holding.symbol)),
           title:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -265,7 +217,7 @@ class _HoldingList extends State<HoldingList> {
               //        //(holding.admin != null ? '•' : '') +
               //        //    (holding.restricted != null ? '•' : '') +
               //        //    (holding.qualifier != null ? '•' : '') +
-              //        //    (holding.unique != null ? '•' : '') +
+              //        //    (holding.nft != null ? '•' : '') +
               //        //    (holding.channel != null ? '•' : ''),
               //        style: Theme.of(context).holdingValue)
               //    : SizedBox(width: 1),
@@ -276,19 +228,6 @@ class _HoldingList extends State<HoldingList> {
                 style: Theme.of(context).holdingValue),
           ]),
           trailing: Icon(Icons.chevron_right_rounded));
-      } 
-      if(holding.qualifier != null){
-
-
-      } 
-      if(holding.unique != null){
-
-
-      } 
-      if(holding.channel != null){
-
-
-      }
       if (holding.symbol == 'RVN') {
         rvnHolding.add(thisHolding);
         rvnHolding.add(Divider(height: 1));
@@ -329,7 +268,6 @@ class _HoldingList extends State<HoldingList> {
       //    title: Text('+ Create Asset (not enough RVN)',
       //        style: TextStyle(color: Theme.of(context).disabledColor))));
     }
-
     return ListView(children: <Widget>[...rvnHolding, ...assetHoldings]);
   }
 }

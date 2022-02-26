@@ -91,7 +91,7 @@ class Asset with EquatableMixin {
 
   AssetType get assetType {
     if (symbol.startsWith('#') && symbol.contains('/')) {
-      return AssetType.SubQualifier;
+      return AssetType.QualifierSub;
     }
     if (symbol.startsWith('#')) {
       return AssetType.Qualifier;

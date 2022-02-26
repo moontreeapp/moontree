@@ -16,7 +16,7 @@ class AssetList extends StatefulWidget {
 
 class _AssetList extends State<AssetList> {
   List<StreamSubscription> listeners = [];
-  late Map<String, AssetHolding> assets;
+  late Iterable<AssetHolding> assets;
 
   @override
   void initState() {
@@ -46,13 +46,8 @@ class _AssetList extends State<AssetList> {
     setState(() {});
   }
 
-  Map<String, AssetHolding> filterToAdminAssets(
-    Map<String, AssetHolding> assets,
-  ) {
-    assets.removeWhere((key, AssetHolding asset) =>
-        asset.admin == null || asset.symbol.contains('/'));
-    return assets;
-  }
+  Iterable<AssetHolding> filterToAdminAssets(List<AssetHolding> assets) =>
+      assets.where((AssetHolding asset) => asset.admin != null);
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +86,7 @@ class _AssetList extends State<AssetList> {
 
   ListView _assetsView(BuildContext context, {Wallet? wallet}) =>
       ListView(children: <Widget>[
-        for (var asset in assets.values) ...[
+        for (var asset in assets) ...[
           ListTile(
             //dense: true,
             //contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
