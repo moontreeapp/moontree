@@ -82,15 +82,20 @@ class _AssetState extends State<Asset> with SingleTickerProviderStateMixin {
           //    controller: components.navigator.tabController,
           //    children: <Widget>[
           GestureDetector(
-              onTap: () => FocusScope.of(context).unfocus(),
-              child:
+        onTap: () => FocusScope.of(context).unfocus(),
+        child:
 
-                  /// comments: to remove scroll functionality as it is not yet fluid. #182
-                  ///NotificationListener<UserScrollNotification>(
-                  ///    onNotification: visibilityOfSendReceive,
-                  ///    child:
+            /// comments: to remove scroll functionality as it is not yet fluid. #182
+            ///NotificationListener<UserScrollNotification>(
+            ///    onNotification: visibilityOfSendReceive,
+            ///    child:
 
-                  SubAssetList(symbol: symbol))
+            /// we no longer show the children of an asset.
+            /// instead we show the details of the asset.
+            //SubAssetList(symbol: symbol),
+
+            AssetDetails(symbol: symbol),
+      )
       //,
       ///),
       //])

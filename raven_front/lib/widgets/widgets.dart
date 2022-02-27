@@ -8,7 +8,7 @@ export 'back/balance_header.dart';
 export 'back/coin.dart';
 export 'front/assets.dart';
 export 'front/create.dart';
-export 'front/sub_assets.dart';
+export 'front/asset_details.dart';
 export 'front/holdings.dart';
 export 'front/loader.dart';
 export 'front/transactions.dart';
