@@ -15,12 +15,14 @@ class Coin extends StatefulWidget {
   final String symbol;
   final String pageTitle;
   final int holdingSat;
+  final String? totalSupply;
 
   Coin({
     Key? key,
     required this.pageTitle,
     required this.symbol,
     required this.holdingSat,
+    this.totalSupply,
   }) : super(key: key);
 
   @override
@@ -75,6 +77,10 @@ class _CoinState extends State<Coin> {
             style: Theme.of(context).balanceDollar),
         //SizedBox(height: 30),
       ]);
+    } else if (front && widget.totalSupply != null) {
+      ret.addAll([
+        Text('Total Supply', style: Theme.of(context).balanceDollar),
+      ]);
     }
     return ret;
   }
@@ -90,11 +96,12 @@ class _CoinState extends State<Coin> {
       children: front ? selectionList : selectionList.reversed.toList());
 
   Widget get frontText => Text(
-      components.text.securityAsReadable(
-        widget.holdingSat,
-        symbol: widget.symbol,
-        asUSD: false,
-      ),
+      widget.totalSupply ??
+          components.text.securityAsReadable(
+            widget.holdingSat,
+            symbol: widget.symbol,
+            asUSD: false,
+          ),
       style: Theme.of(context).balanceAmount);
   Widget get backText => Text(
         widget.symbol.toTitleCase(underscoreAsSpace: true),

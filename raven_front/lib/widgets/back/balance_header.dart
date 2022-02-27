@@ -96,6 +96,10 @@ class _BalanceHeaderState extends State<BalanceHeader>
     } catch (e) {
       visibleFiatAmount = '';
     }
+    print('widget.pageTitle ${widget.pageTitle}');
+    var assetDetails = widget.pageTitle == 'Asset'
+        ? res.assets.primaryIndex.getOne(symbol)
+        : null;
     return Container(
       padding: EdgeInsets.only(top: 16),
       height: 201,
@@ -106,7 +110,13 @@ class _BalanceHeaderState extends State<BalanceHeader>
           Coin(
               pageTitle: widget.pageTitle,
               symbol: symbol,
-              holdingSat: holdingSat),
+              holdingSat: holdingSat,
+              totalSupply: widget.pageTitle == 'Asset' && assetDetails != null
+                  ? utils
+                      .satToAmount(assetDetails.satsInCirculation,
+                          divisibility: assetDetails.divisibility)
+                      .toCommaString()
+                  : null),
           headerBottom(holdingSat, amountSat),
         ],
       ),
