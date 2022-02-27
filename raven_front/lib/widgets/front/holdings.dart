@@ -223,8 +223,15 @@ class _HoldingList extends State<HoldingList> {
               //    : SizedBox(width: 1),
             ]),
             Text(
-                components.text.securityAsReadable(holding.balance!.value,
-                    security: holding.balance!.security, asUSD: showUSD),
+                holding.mainLength > 1 && holding.restricted != null
+                    ? [
+                        if (holding.main != null) 'Main',
+                        if (holding.admin != null) 'Admin',
+                        if (holding.restricted != null) 'Restricted',
+                        if (holding.restrictedAdmin != null) 'Restricted Admin',
+                      ].join(', ')
+                    : components.text.securityAsReadable(holding.balance!.value,
+                        security: holding.balance!.security, asUSD: showUSD),
                 style: Theme.of(context).holdingValue),
           ]),
           trailing: Icon(Icons.chevron_right_rounded));

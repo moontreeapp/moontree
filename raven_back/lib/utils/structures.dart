@@ -109,6 +109,18 @@ class AssetHolding {
         fiat,
       ].where((element) => element != null).length;
 
+  int get subLength => [
+        sub,
+        subAdmin,
+      ].where((element) => element != null).length;
+
+  int get mainLength => [
+        main,
+        admin,
+        restricted,
+        restrictedAdmin,
+      ].where((element) => element != null).length;
+
   String? get singleSymbol => length > 1
       ? null
       : (restrictedAdminSymbol ??
