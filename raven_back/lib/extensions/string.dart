@@ -25,6 +25,15 @@ extension StringTrimExtension on String {
     }
     return tempString;
   }
+
+  String cutOutMiddle({int length = 6}) {
+    if (this.length > length * 2) {
+      return substring(0, length) +
+          '...' +
+          substring(this.length - length, this.length);
+    }
+    return this;
+  }
 }
 
 extension StringBytesExtension on String {

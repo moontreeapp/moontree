@@ -18,8 +18,13 @@ class AssetDetails extends StatefulWidget {
 }
 
 class _AssetDetails extends State<AssetDetails> {
+  late Asset? assetDetails;
+
   @override
   Widget build(BuildContext context) {
+    assetDetails = res.assets.primaryIndex.getOne(widget.symbol);
+    print(assetDetails);
+    //Asset(symbol: MOONTREE, satsInCirculation: 100000000000000, divisibility: 0, reissuable: true, metadata: QmXExS4BMc1YrH6iWERyryFcDWkvobxryXSwECLrcd7Y1H, transactionId: 4e769a6d770b4e441ade1d5600926ad14f58fdb6ae4128ed03c811241ec72240, position: 3)
     return body();
   }
 
@@ -29,19 +34,20 @@ class _AssetDetails extends State<AssetDetails> {
           ListTile(
             dense: true,
             title: Text('Name', style: Theme.of(context).assetDetail),
-            trailing: Text(widget.symbol, style: Theme.of(context).assetDetail),
+            trailing:
+                Text(element('Name'), style: Theme.of(context).assetDetail),
           ),
           ListTile(
             dense: true,
             title: Text('Quantity', style: Theme.of(context).assetDetail),
             trailing:
-                Text('total quantity', style: Theme.of(context).assetDetail),
+                Text(element('Quantity'), style: Theme.of(context).assetDetail),
           ),
           ListTile(
             dense: true,
             title: Text('Decimals', style: Theme.of(context).assetDetail),
             trailing:
-                Text('divisibility', style: Theme.of(context).assetDetail),
+                Text(element('Decimals'), style: Theme.of(context).assetDetail),
           ),
           if (widget.symbol.startsWith('\$'))
             Padding(
@@ -56,19 +62,20 @@ class _AssetDetails extends State<AssetDetails> {
                     width:
                         (MediaQuery.of(context).size.width - 16 - 16 - 8) / 1.5,
                     child: Text(
-                        '(#KYC & #AML) OR #VERIFIED'
-                        '(#KYC & #AML) OR #VERIFIED'
-                        '(#KYC & #AML) OR #VERIFIED'
-                        '(#KYC & #AML) OR #VERIFIED'
-                        '(#KYC & #AML) OR #VERIFIED'
-                        '(#KYC & #AML) OR #VERIFIED'
-                        '(#KYC & #AML) OR #VERIFIED'
-                        '(#KYC & #AML) OR #VERIFIED'
-                        '(#KYC & #AML) OR #VERIFIED'
-                        '(#KYC & #AML) OR #VERIFIED'
-                        '(#KYC & #AML) OR #VERIFIED'
-                        '(#KYC & #AML) OR #VERIFIED'
-                        '(#KYC & #AML) OR #VERIFIED',
+                        element('Verifier') +
+                            '(#KYC & #AML) OR #VERIFIED'
+                                '(#KYC & #AML) OR #VERIFIED'
+                                '(#KYC & #AML) OR #VERIFIED'
+                                '(#KYC & #AML) OR #VERIFIED'
+                                '(#KYC & #AML) OR #VERIFIED'
+                                '(#KYC & #AML) OR #VERIFIED'
+                                '(#KYC & #AML) OR #VERIFIED'
+                                '(#KYC & #AML) OR #VERIFIED'
+                                '(#KYC & #AML) OR #VERIFIED'
+                                '(#KYC & #AML) OR #VERIFIED'
+                                '(#KYC & #AML) OR #VERIFIED'
+                                '(#KYC & #AML) OR #VERIFIED'
+                                '(#KYC & #AML) OR #VERIFIED',
                         overflow: TextOverflow.fade,
                         softWrap: true,
                         maxLines: 100,
@@ -80,14 +87,40 @@ class _AssetDetails extends State<AssetDetails> {
           ListTile(
             dense: true,
             title: Text('IPFS/Txid', style: Theme.of(context).assetDetail),
-            trailing: Text('link? QmXwHQ...EJkH22',
+            trailing: Text(element('IPFS/Txid'),
                 style: Theme.of(context).assetDetail),
           ),
           ListTile(
             dense: true,
             title: Text('Reissuable', style: Theme.of(context).assetDetail),
-            trailing: Text('No', style: Theme.of(context).assetDetail),
+            trailing: Text(element('Reissuable'),
+                style: Theme.of(context).assetDetail),
           ),
         ],
       );
+
+  String element(String humanName) {
+    if (assetDetails == null) {
+      return 'unknown';
+    }
+    switch (humanName) {
+      case 'Name':
+        return widget.symbol;
+      case 'Quantity':
+        return utils
+            .satToAmount(assetDetails!.satsInCirculation,
+                divisibility: assetDetails!.divisibility)
+            .toCommaString();
+      case 'Decimals':
+        return assetDetails!.divisibility.toString();
+      case 'Verifier':
+        return 'not captured...';
+      case 'IPFS/Txid':
+        return assetDetails!.metadata.cutOutMiddle();
+      case 'Reissuable':
+        return assetDetails!.reissuable ? 'Yes' : 'No';
+      default:
+        return 'unknown';
+    }
+  }
 }
