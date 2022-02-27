@@ -24,7 +24,7 @@ class _AssetDetails extends State<AssetDetails> {
   }
 
   Widget body() => ListView(
-        padding: EdgeInsets.only(top: 8),
+        padding: EdgeInsets.only(top: 8, bottom: 112),
         children: [
           ListTile(
             dense: true,
@@ -43,6 +43,40 @@ class _AssetDetails extends State<AssetDetails> {
             trailing:
                 Text('divisibility', style: Theme.of(context).assetDetail),
           ),
+          if (widget.symbol.startsWith('\$'))
+            Padding(
+              padding:
+                  EdgeInsets.only(left: 16, right: 16, top: 15, bottom: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Verifier', style: Theme.of(context).assetDetail),
+                  Container(
+                    width:
+                        (MediaQuery.of(context).size.width - 16 - 16 - 8) / 1.5,
+                    child: Text(
+                        '(#KYC & #AML) OR #VERIFIED'
+                        '(#KYC & #AML) OR #VERIFIED'
+                        '(#KYC & #AML) OR #VERIFIED'
+                        '(#KYC & #AML) OR #VERIFIED'
+                        '(#KYC & #AML) OR #VERIFIED'
+                        '(#KYC & #AML) OR #VERIFIED'
+                        '(#KYC & #AML) OR #VERIFIED'
+                        '(#KYC & #AML) OR #VERIFIED'
+                        '(#KYC & #AML) OR #VERIFIED'
+                        '(#KYC & #AML) OR #VERIFIED'
+                        '(#KYC & #AML) OR #VERIFIED'
+                        '(#KYC & #AML) OR #VERIFIED'
+                        '(#KYC & #AML) OR #VERIFIED',
+                        overflow: TextOverflow.fade,
+                        softWrap: true,
+                        maxLines: 100,
+                        style: Theme.of(context).assetDetail),
+                  )
+                ],
+              ),
+            ),
           ListTile(
             dense: true,
             title: Text('IPFS/Txid', style: Theme.of(context).assetDetail),
@@ -54,20 +88,6 @@ class _AssetDetails extends State<AssetDetails> {
             title: Text('Reissuable', style: Theme.of(context).assetDetail),
             trailing: Text('No', style: Theme.of(context).assetDetail),
           ),
-          ListTile(
-              dense: true, // multiline object or something
-              title: Text('Verifier', style: Theme.of(context).assetDetail),
-              trailing: Container(
-                width: (MediaQuery.of(context).size.width - 16 - 16 - 8) / 1.5,
-                child: Text(
-                    '(#KYC & #AML) OR #VERIFIED'
-                    '(#KYC & #AML) OR #VERIFIED'
-                    'only two lines long...because of ListTitle...',
-                    overflow: TextOverflow.fade,
-                    softWrap: true,
-                    maxLines: 4,
-                    style: Theme.of(context).assetDetail),
-              )),
         ],
       );
 }
