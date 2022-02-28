@@ -200,7 +200,6 @@ class HistoryService {
         }
       } else if (vout.scriptPubKey.type == 'new_asset') {
         symbol = vout.scriptPubKey.asset!;
-        print('SYMBOL: $symbol');
         value = utils.amountToSat(vout.scriptPubKey.amount,
             divisibility: vout.scriptPubKey.units ?? 0);
         asset = Asset(
@@ -262,17 +261,8 @@ class HistoryService {
         }
       }
     }
-    if (tx.hash ==
-        '9eaa220b15d2802d8ec04075f22136d0783a2064254b3c9cc5d762882f02bf15') {
-      print('FOUND IT! ${tx.vout.length}');
-    }
     for (var vout in tx.vout) {
-      if (tx.hash ==
-          '9eaa220b15d2802d8ec04075f22136d0783a2064254b3c9cc5d762882f02bf15') {
-        print('FOUND vout ${vout.n}! $vout');
-      }
       if (vout.scriptPubKey.type == 'nullassetdata') continue;
-
       var vs = await handleAssetData(client, tx, vout);
       await res.vouts.save(Vout(
         transactionId: tx.txid,
