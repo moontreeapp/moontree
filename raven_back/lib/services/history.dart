@@ -44,7 +44,7 @@ class HistoryService {
         // not already downloaded...
         txs.add(await client.getTransaction(txHash));
       } else {
-        print('skipping $txHash');
+        //print('skipping $txHash');
       }
     }
     await saveTransactions(txs, client);
@@ -97,7 +97,7 @@ class HistoryService {
     var newVouts = <Vout>{};
     var newTxs = <Transaction>{};
     for (var tx in txs) {
-      print('downloading  tx : ${tx.txid.substring(0, 5)}');
+      //print('downloading  tx : ${tx.txid.substring(0, 5)}');
       if (saveVin) {
         for (var vin in tx.vin) {
           //print('downloading  vin: ${tx.txid.substring(0, 5)}');
@@ -166,7 +166,7 @@ class HistoryService {
   Future saveDanglingTransactions(RavenElectrumClient client) async {
     var txs =
         (res.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet());
-    print('GETTING DANGLING TRANSACTIONS: $txs');
+    //print('GETTING DANGLING TRANSACTIONS: $txs');
     for (var txHash in txs) {
       await getTransaction(txHash, saveVin: false);
     }
@@ -200,6 +200,7 @@ class HistoryService {
         }
       } else if (vout.scriptPubKey.type == 'new_asset') {
         symbol = vout.scriptPubKey.asset!;
+        print('SYMBOL: $symbol');
         value = utils.amountToSat(vout.scriptPubKey.amount,
             divisibility: vout.scriptPubKey.units ?? 0);
         asset = Asset(
@@ -231,18 +232,18 @@ class HistoryService {
     // not already downloaded?
     if ((res.transactions.primaryIndex.getOne(transactionId) == null ||
         res.transactions.mempool.map((t) => t.id).contains(transactionId))) {
-      print('downloading: $transactionId');
+      //print('downloading: $transactionId');
       await saveTransaction(await client.getTransaction(transactionId), client,
           saveVin: saveVin);
     } else {
-      print('skipping $transactionId');
+      //print('skipping $transactionId');
     }
     return true;
   }
 
   Future saveTransaction(Tx tx, RavenElectrumClient client,
       {bool saveVin = true}) async {
-    print('parsing/saving: ${tx.txid}');
+    //print('parsing/saving: ${tx.txid}');
     for (var vin in tx.vin) {
       if (saveVin) {
         if (vin.txid != null && vin.vout != null) {
@@ -261,8 +262,17 @@ class HistoryService {
         }
       }
     }
+    if (tx.hash ==
+        '9eaa220b15d2802d8ec04075f22136d0783a2064254b3c9cc5d762882f02bf15') {
+      print('FOUND IT! ${tx.vout.length}');
+    }
     for (var vout in tx.vout) {
-      if (vout.scriptPubKey.type == 'nulldata') continue;
+      if (tx.hash ==
+          '9eaa220b15d2802d8ec04075f22136d0783a2064254b3c9cc5d762882f02bf15') {
+        print('FOUND vout ${vout.n}! $vout');
+      }
+      if (vout.scriptPubKey.type == 'nullassetdata') continue;
+
       var vs = await handleAssetData(client, tx, vout);
       await res.vouts.save(Vout(
         transactionId: tx.txid,

@@ -155,7 +155,6 @@ class _NavDrawerState extends State<NavDrawer> {
             name: 'About',
             link: '/settings/about',
           ),
-          /*
           SettingsTile(
               title: 'Clear Database',
               titleTextStyle: Theme.of(context).drawerDestination,
@@ -168,30 +167,20 @@ class _NavDrawerState extends State<NavDrawer> {
             name: 'Accounts',
             link: '/settings/technical',
           ),
-          destination(
-            icon: MdiIcons.shieldKey,
-            name: 'Checkout Template',
-            link: '/transaction/checkout',
-          ),
           SettingsTile(
               title: 'test',
               titleTextStyle: Theme.of(context).drawerDestination,
               leading: Icon(Icons.info_outline_rounded),
               onPressed: (BuildContext context) async {
-                //print(await services.client.api.getAssetNames('abc'));
-                //services.download.asset.allAdminsSubs();
                 print(res.assets.data
-                    .where(
-                        (Asset asset) => asset.symbol.startsWith('MOONTREE2'))
+                    .where((Asset asset) => asset.symbol.contains('MOONTREE2'))
                     .map((e) => e.symbol));
-                //print(res.assets.bySymbol
-                //    .getOne('WXRAVEN/P2P_MARKETPLACE/TEST!'));
-                //print(res.assets.bySymbol.getOne('ABC/VOTETOKEN'));
-                //print(res.assets.byAssetType
-                //    .getAll(AssetType.Admin)
-                //    .where((asset) => !asset.symbol.contains('/'))
-                //    .map((asset) => asset.symbol));
+                var client = streams.client.client.value!;
+                var tx = await client.getTransaction(
+                    '9eaa220b15d2802d8ec04075f22136d0783a2064254b3c9cc5d762882f02bf15');
+                print(tx.vout[4]);
               }),
+          /*
             */
         ],
       )
