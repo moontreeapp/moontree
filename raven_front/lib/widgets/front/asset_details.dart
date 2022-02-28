@@ -23,9 +23,6 @@ class _AssetDetails extends State<AssetDetails> {
   @override
   Widget build(BuildContext context) {
     assetDetails = res.assets.primaryIndex.getOne(widget.symbol);
-    res.assets.forEach((element) => print(element.symbol));
-
-    //Asset(symbol: MOONTREE, satsInCirculation: 100000000000000, divisibility: 0, reissuable: true, metadata: QmXExS4BMc1YrH6iWERyryFcDWkvobxryXSwECLrcd7Y1H, transactionId: 4e769a6d770b4e441ade1d5600926ad14f58fdb6ae4128ed03c811241ec72240, position: 3)
     return body();
   }
 

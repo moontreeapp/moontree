@@ -107,8 +107,6 @@ class _BalanceHeaderState extends State<BalanceHeader>
             .satToAmount(assetDetails!.satsInCirculation,
                 divisibility: assetDetails!.divisibility)
             .toCommaString();
-        print(assetDetails);
-        print(totalSupply);
       }
     }
     return Container(
