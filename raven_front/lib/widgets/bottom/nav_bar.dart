@@ -15,77 +15,96 @@ class NavBar extends StatefulWidget {
 
 class _NavBarState extends State<NavBar> {
   @override
-  Widget build(BuildContext context) => Container(
-        height: 118,
-        padding: EdgeInsets.only(left: 16, right: 16),
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            // we will need to make these buttons dependant upon the navigation
-            // of the front page through streams but for now, we'll show they
-            // can changed based upon whats selected:
-            streams.app.context.value == AppContext.wallet
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      actionButton(name: 'send', link: '/transaction/send'),
-                      SizedBox(width: 16),
-                      actionButton(
-                          name: 'receive', link: '/transaction/receive'),
-                    ],
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      actionButton(
-                          name: 'create',
-                          onPressed: streams.app.page.value == 'Wallet'
-                              ? _produceCreateModal
-                              : streams.app.page.value == 'Asset'
-                                  ? _produceSubCreateModal
-                                  : () {
-                                      /*if restricted or nft no create button,
+  Widget build(BuildContext context) {
+    return Container(
+      height: 118,
+      padding: EdgeInsets.only(left: 16, right: 16),
+      width: MediaQuery.of(context).size.width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          // we will need to make these buttons dependant upon the navigation
+          // of the front page through streams but for now, we'll show they
+          // can changed based upon whats selected:
+          streams.app.context.value == AppContext.wallet
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    actionButton(name: 'send', link: '/transaction/send'),
+                    SizedBox(width: 16),
+                    actionButton(name: 'receive', link: '/transaction/receive'),
+                  ],
+                )
+              : streams.app.page.value == 'Wallet'
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        actionButton(
+                            name: 'create',
+                            onPressed: streams.app.page.value == 'Wallet'
+                                ? _produceCreateModal
+                                : streams.app.page.value == 'Asset'
+                                    ? _produceSubCreateModal
+                                    : () {
+                                        /*if restricted or nft no create button,
                                         if qualifier create a sub qualifier, 
                                         else above */
-                                    }),
-                      SizedBox(width: 16),
-                      actionButton(
-                          name: 'manage',
-                          onPressed: () {/* bring up options */}),
-                    ],
-                  ),
-            Padding(
-                padding: EdgeInsets.only(left: 32, right: 32),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    sectorIcon(appContext: AppContext.wallet),
-                    sectorIcon(appContext: AppContext.manage),
-                    sectorIcon(appContext: AppContext.swap),
-                  ],
-                ))
-          ],
-        ),
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16), topRight: Radius.circular(16)),
-            boxShadow: [
-              BoxShadow(
-                  color: const Color(0x33000000),
-                  offset: Offset(0, 5),
-                  blurRadius: 5),
-              BoxShadow(
-                  color: const Color(0x1F000000),
-                  offset: Offset(0, 3),
-                  blurRadius: 14),
-              BoxShadow(
-                  color: const Color(0x3D000000),
-                  offset: Offset(0, 8),
-                  blurRadius: 10)
-            ]),
-      );
+                                      }),
+                      ],
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        actionButton(
+                            name: 'create',
+                            onPressed: streams.app.page.value == 'Wallet'
+                                ? _produceCreateModal
+                                : streams.app.page.value == 'Asset'
+                                    ? _produceSubCreateModal
+                                    : () {
+                                        /*if restricted or nft no create button,
+                                        if qualifier create a sub qualifier, 
+                                        else above */
+                                      }),
+                        SizedBox(width: 16),
+                        actionButton(
+                            name: 'manage',
+                            onPressed: () {/* bring up options */}),
+                      ],
+                    ),
+
+          Padding(
+              padding: EdgeInsets.only(left: 32, right: 32),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  sectorIcon(appContext: AppContext.wallet),
+                  sectorIcon(appContext: AppContext.manage),
+                  sectorIcon(appContext: AppContext.swap),
+                ],
+              ))
+        ],
+      ),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+          boxShadow: [
+            BoxShadow(
+                color: const Color(0x33000000),
+                offset: Offset(0, 5),
+                blurRadius: 5),
+            BoxShadow(
+                color: const Color(0x1F000000),
+                offset: Offset(0, 3),
+                blurRadius: 14),
+            BoxShadow(
+                color: const Color(0x3D000000),
+                offset: Offset(0, 8),
+                blurRadius: 10)
+          ]),
+    );
+  }
 
   Widget actionButton({
     required String name,
@@ -103,7 +122,7 @@ class _NavBarState extends State<NavBar> {
                 icon: Icon({
                   'send': MdiIcons.arrowTopRightThick,
                   'receive': MdiIcons.arrowBottomLeftThick,
-                  'create': MdiIcons.plusCircle,
+                  'create': MdiIcons.plus,
                   'manage': MdiIcons.crown,
                 }[name]!),
                 label: Text(name.toUpperCase()),
