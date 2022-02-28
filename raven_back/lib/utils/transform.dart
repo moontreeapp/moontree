@@ -2,6 +2,15 @@ import 'dart:math';
 import 'package:raven_back/extensions/string.dart';
 import 'package:raven_back/utils/strings.dart';
 
+/// special case saving assets:
+/// say amount=1000000 and satsInCirculation=100000000000000 and divisions=0
+/// we want to take satsInCirculation and use divisbility to derive amount
+/// so we invert divisibility from 0 to 8 then use satToAmount.
+int satToAmountInverse(int x, {int divisibility = 8}) =>
+    satToAmount(x, divisibility: invertDivisibility(divisibility)).toInt();
+
+int invertDivisibility(int divisibility) => 17 % (divisibility + 8 + 1);
+
 double satToAmount(int x, {int divisibility = 8}) =>
     (x / divisor(divisibility));
 int amountToSat(double x, {int divisibility = 8}) =>

@@ -59,7 +59,6 @@ extension GetAssetMetaMethod on RavenElectrumClient {
       'blockchain.asset.get_meta',
       [symbol],
     );
-
     if (response.runtimeType == String) {
       /// "_This rpc call is not functional unless -assetindex is enabled. To enable, please run the wallet with -assetindex, this will require a reindex to occur"
       return null; // todo: this should error and we should catch it above

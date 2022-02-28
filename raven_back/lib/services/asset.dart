@@ -43,7 +43,8 @@ class AssetService {
                 .scriptPubKey
                 .ipfsHash ??
             '',
-        satsInCirculation: meta.satsInCirculation,
+        satsInCirculation: utils.satToAmountInverse(meta.satsInCirculation,
+            divisibility: meta.divisions),
         divisibility: meta.divisions,
         reissuable: meta.reissuable == 1,
         transactionId: meta.source.txHash,

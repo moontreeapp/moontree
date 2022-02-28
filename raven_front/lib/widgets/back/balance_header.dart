@@ -96,10 +96,21 @@ class _BalanceHeaderState extends State<BalanceHeader>
     } catch (e) {
       visibleFiatAmount = '';
     }
-    print('widget.pageTitle ${widget.pageTitle}');
-    var assetDetails = widget.pageTitle == 'Asset'
-        ? res.assets.primaryIndex.getOne(symbol)
-        : null;
+    var assetDetails;
+    var totalSupply;
+    if (widget.pageTitle == 'Asset') {
+      assetDetails = widget.pageTitle == 'Asset'
+          ? res.assets.bySymbol.getOne(symbol)
+          : null;
+      if (assetDetails != null) {
+        totalSupply = utils
+            .satToAmount(assetDetails!.satsInCirculation,
+                divisibility: assetDetails!.divisibility)
+            .toCommaString();
+        print(assetDetails);
+        print(totalSupply);
+      }
+    }
     return Container(
       padding: EdgeInsets.only(top: 16),
       height: 201,
@@ -111,12 +122,7 @@ class _BalanceHeaderState extends State<BalanceHeader>
               pageTitle: widget.pageTitle,
               symbol: symbol,
               holdingSat: holdingSat,
-              totalSupply: widget.pageTitle == 'Asset' && assetDetails != null
-                  ? utils
-                      .satToAmount(assetDetails.satsInCirculation,
-                          divisibility: assetDetails.divisibility)
-                      .toCommaString()
-                  : null),
+              totalSupply: totalSupply),
           headerBottom(holdingSat, amountSat),
         ],
       ),
