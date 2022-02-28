@@ -9,7 +9,7 @@ import 'package:raven_back/utils/strings.dart';
 int satToAmountInverse(int x, {int divisibility = 8}) =>
     satToAmount(x, divisibility: invertDivisibility(divisibility)).toInt();
 
-int invertDivisibility(int divisibility) => 17 % (divisibility + 8 + 1);
+int invertDivisibility(int divisibility) => (16 + 1) % (divisibility + 8 + 1);
 
 double satToAmount(int x, {int divisibility = 8}) =>
     (x / divisor(divisibility));

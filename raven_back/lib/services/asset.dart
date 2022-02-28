@@ -13,14 +13,24 @@ class AssetService {
       .getAll(AssetType.Admin)
       .where((asset) => !asset.symbol.contains('/'))
       .map((asset) => asset.symbol)
-      .forEach(downloadSubs);
+      .forEach(downloadMain);
 
+  /// we actaully don't need all the subs now.
+  /// We only need the mains of admins we own.
+  /// So this is unused in preference to downloadMain
   Future<void> downloadSubs(String symbol) async {
     var symbolSlash = adminOrRestrictedToMainSlash(symbol);
     var children = await services.client.api.getAssetNames(symbolSlash);
     for (String kid in children
         .where((child) => res.assets.bySymbol.getOne(child) == null)) {
       await get(kid);
+    }
+  }
+
+  Future<void> downloadMain(String symbol) async {
+    symbol = adminOrRestrictedToMainSlash(symbol).replaceAll('/', '');
+    if (res.assets.bySymbol.getOne(symbol) == null) {
+      await get(symbol);
     }
   }
 
