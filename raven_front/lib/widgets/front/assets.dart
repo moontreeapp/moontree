@@ -95,7 +95,11 @@ class _AssetList extends State<AssetList> {
             leading: Container(
                 height: 40,
                 width: 40,
-                child: components.icons.assetAvatar(asset.symbol)),
+                child: components.icons.assetAvatar(asset.restricted != null
+                    ? asset.restrictedSymbol!
+                    : asset.qualifier != null
+                        ? asset.qualifierSymbol!
+                        : asset.symbol)),
             title:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(asset.symbol, style: Theme.of(context).holdingName),
@@ -122,6 +126,18 @@ class _AssetList extends State<AssetList> {
     } else if (asset.length == 1) {
       navigate(asset.singleSymbol!, wallet: wallet);
     } else {
+      var assetDetails = {};
+      if (asset.admin != null) {
+        assetDetails['main'] = res.assets.primaryIndex.getOne(asset.symbol);
+      }
+      if (asset.restricted != null) {
+        assetDetails['restricted'] =
+            res.assets.primaryIndex.getOne(asset.restrictedSymbol!);
+      }
+      if (asset.qualifier != null) {
+        assetDetails['qualifier'] =
+            res.assets.primaryIndex.getOne(asset.qualifierSymbol!);
+      }
       SelectionItems(
         context,
         symbol: asset.symbol,
@@ -131,14 +147,28 @@ class _AssetList extends State<AssetList> {
           if (asset.qualifier != null) SelectionOption.Qualifier,
         ],
         behaviors: [
-          if (asset.main != null) () => navigate(asset.symbol, wallet: wallet),
-          //if (asset.admin != null)
-          //  () => navigate(asset.admin!.security.symbol,
-          //      wallet: wallet),
+          if (asset.admin != null) () => navigate(asset.symbol, wallet: wallet),
           if (asset.restricted != null)
             () => navigate(asset.restricted!.security.symbol, wallet: wallet),
           if (asset.qualifier != null)
             () => navigate(asset.qualifier!.security.symbol, wallet: wallet),
+        ],
+        values: [
+          if (asset.admin != null)
+            utils
+                .satToAmount(assetDetails['main'].satsInCirculation,
+                    divisibility: assetDetails['main'].divisibility)
+                .toCommaString(),
+          if (asset.restricted != null)
+            utils
+                .satToAmount(assetDetails['restricted'].satsInCirculation,
+                    divisibility: assetDetails['restricted'].divisibility)
+                .toCommaString(),
+          if (asset.qualifier != null)
+            utils
+                .satToAmount(assetDetails['qualifier'].satsInCirculation,
+                    divisibility: assetDetails['qualifier'].divisibility)
+                .toCommaString(),
         ],
       ).build();
     }

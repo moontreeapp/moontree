@@ -115,82 +115,7 @@ class _HoldingList extends State<HoldingList> {
       var thisHolding = ListTile(
           //dense: true,
           contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          onTap: () {
-            if (holding.length == 1) {
-              navigate(holding.balance!, wallet: wallet);
-            } else {
-              SelectionItems(
-                context,
-                symbol: holding.symbol,
-                names: [
-                  if (holding.main != null) SelectionOption.Main,
-                  if (holding.sub != null) SelectionOption.Sub,
-                  if (holding.subAdmin != null) SelectionOption.Sub_Admin,
-                  if (holding.admin != null) SelectionOption.Admin,
-                  if (holding.restricted != null) SelectionOption.Restricted,
-                  if (holding.restrictedAdmin != null)
-                    SelectionOption.Restricted_Admin,
-                  if (holding.qualifier != null) SelectionOption.Qualifier,
-                  if (holding.qualifierSub != null)
-                    SelectionOption.Sub_Qualifier,
-                  if (holding.nft != null) SelectionOption.NFT,
-                  if (holding.channel != null) SelectionOption.Channel,
-                ],
-                behaviors: [
-                  if (holding.main != null)
-                    () => navigate(holding.main!, wallet: wallet),
-                  if (holding.admin != null)
-                    () => navigate(holding.admin!, wallet: wallet),
-                  if (holding.restricted != null)
-                    () => navigate(holding.restricted!, wallet: wallet),
-                  if (holding.qualifier != null)
-                    () => navigate(holding.qualifier!, wallet: wallet),
-                  if (holding.nft != null)
-                    () => navigate(holding.nft!, wallet: wallet),
-                  if (holding.channel != null)
-                    () => navigate(holding.channel!, wallet: wallet),
-                ],
-                values: [
-                  if (holding.main != null)
-                    components.text.securityAsReadable(
-                      holding.main!.value,
-                      security: holding.main!.security,
-                      asUSD: showUSD,
-                    ),
-                  if (holding.admin != null)
-                    components.text.securityAsReadable(
-                      holding.admin!.value,
-                      security: holding.admin!.security,
-                      asUSD: showUSD,
-                    ),
-                  if (holding.restricted != null)
-                    components.text.securityAsReadable(
-                      holding.restricted!.value,
-                      security: holding.restricted!.security,
-                      asUSD: showUSD,
-                    ),
-                  if (holding.qualifier != null)
-                    components.text.securityAsReadable(
-                      holding.qualifier!.value,
-                      security: holding.qualifier!.security,
-                      asUSD: showUSD,
-                    ),
-                  if (holding.nft != null)
-                    components.text.securityAsReadable(
-                      holding.nft!.value,
-                      security: holding.nft!.security,
-                      asUSD: showUSD,
-                    ),
-                  if (holding.channel != null)
-                    components.text.securityAsReadable(
-                      holding.channel!.value,
-                      security: holding.channel!.security,
-                      asUSD: showUSD,
-                    ),
-                ],
-              ).build();
-            }
-          }, // wallet transactions are on wallet screen, so remove wallet id here.
+          onTap: () => onTap(wallet, holding),
           leading: Container(
               height: 40,
               width: 40,
@@ -276,5 +201,79 @@ class _HoldingList extends State<HoldingList> {
       //        style: TextStyle(color: Theme.of(context).disabledColor))));
     }
     return ListView(children: <Widget>[...rvnHolding, ...assetHoldings]);
+  }
+
+  void onTap(Wallet? wallet, AssetHolding holding) {
+    if (holding.length == 1) {
+      navigate(holding.balance!, wallet: wallet);
+    } else {
+      SelectionItems(
+        context,
+        symbol: holding.symbol,
+        names: [
+          if (holding.main != null) SelectionOption.Main,
+          if (holding.sub != null) SelectionOption.Sub,
+          if (holding.subAdmin != null) SelectionOption.Sub_Admin,
+          if (holding.admin != null) SelectionOption.Admin,
+          if (holding.restricted != null) SelectionOption.Restricted,
+          if (holding.restrictedAdmin != null) SelectionOption.Restricted_Admin,
+          if (holding.qualifier != null) SelectionOption.Qualifier,
+          if (holding.qualifierSub != null) SelectionOption.Sub_Qualifier,
+          if (holding.nft != null) SelectionOption.NFT,
+          if (holding.channel != null) SelectionOption.Channel,
+        ],
+        behaviors: [
+          if (holding.main != null)
+            () => navigate(holding.main!, wallet: wallet),
+          if (holding.admin != null)
+            () => navigate(holding.admin!, wallet: wallet),
+          if (holding.restricted != null)
+            () => navigate(holding.restricted!, wallet: wallet),
+          if (holding.qualifier != null)
+            () => navigate(holding.qualifier!, wallet: wallet),
+          if (holding.nft != null) () => navigate(holding.nft!, wallet: wallet),
+          if (holding.channel != null)
+            () => navigate(holding.channel!, wallet: wallet),
+        ],
+        values: [
+          if (holding.main != null)
+            components.text.securityAsReadable(
+              holding.main!.value,
+              security: holding.main!.security,
+              asUSD: showUSD,
+            ),
+          if (holding.admin != null)
+            components.text.securityAsReadable(
+              holding.admin!.value,
+              security: holding.admin!.security,
+              asUSD: showUSD,
+            ),
+          if (holding.restricted != null)
+            components.text.securityAsReadable(
+              holding.restricted!.value,
+              security: holding.restricted!.security,
+              asUSD: showUSD,
+            ),
+          if (holding.qualifier != null)
+            components.text.securityAsReadable(
+              holding.qualifier!.value,
+              security: holding.qualifier!.security,
+              asUSD: showUSD,
+            ),
+          if (holding.nft != null)
+            components.text.securityAsReadable(
+              holding.nft!.value,
+              security: holding.nft!.security,
+              asUSD: showUSD,
+            ),
+          if (holding.channel != null)
+            components.text.securityAsReadable(
+              holding.channel!.value,
+              security: holding.channel!.security,
+              asUSD: showUSD,
+            ),
+        ],
+      ).build();
+    }
   }
 }
