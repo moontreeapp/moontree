@@ -30,8 +30,13 @@ class IconComponents {
   Image get assetMasterImage => Image.asset('assets/masterbag_transparent.png');
   Image get assetRegularImage => Image.asset('assets/assetbag_transparent.png');
 
-  Widget assetAvatar(String asset,
-      {double? size, double? height, double? width}) {
+  Widget assetAvatar(
+    String asset, {
+    double? size,
+    double? height,
+    double? width,
+    ImageDetails? imageDetails,
+  }) {
     height = height ?? size;
     width = width ?? size;
     if (asset.toUpperCase() == 'RVN') {
@@ -41,7 +46,12 @@ class IconComponents {
     if (ret != null) {
       return ret;
     }
-    return _assetAvatarGeneratedIdenticon(asset, height: height, width: width);
+    return assetAvatarGeneratedIdenticon(
+      asset: asset,
+      height: height,
+      width: width,
+      imageDetails: imageDetails,
+    );
   }
 
   Widget _assetAvatarRVN({double? height, double? width}) => Image.asset(
@@ -68,14 +78,19 @@ class IconComponents {
     }
   }
 
-  Widget _assetAvatarGeneratedIdenticon(
-    String asset, {
+  ImageDetails getImageDetails([String? asset]) =>
+      Identicon().generate(asset ?? '');
+
+  Widget assetAvatarGeneratedIdenticon({
+    String? asset,
     double? height,
     double? width,
+    ImageDetails? imageDetails,
+    AssetType? assetType,
   }) {
     height = height ?? 40;
     width = width ?? 40;
-    var imageDetails = Identicon().generate(asset);
+    imageDetails = imageDetails ?? getImageDetails(asset);
     var indicator = generateIndicator(name: asset, imageDetails: imageDetails);
     return Stack(alignment: Alignment.bottomRight, children: [
       Container(
@@ -111,47 +126,15 @@ class IconComponents {
   }
 
   Widget? generateIndicator({
-    required String name,
+    String? name,
     required ImageDetails imageDetails,
     double? height,
     double? width,
+    AssetType? assetType,
   }) {
-    var assetTypeIcon;
-    switch (Asset.assetTypeOf(name)) {
-      case AssetType.Admin:
-        assetTypeIcon = MdiIcons.crown;
-        break;
-      case AssetType.Channel:
-        assetTypeIcon = MdiIcons.message;
-        break;
-      case AssetType.NFT:
-        assetTypeIcon = MdiIcons.diamond;
-        break;
-      case AssetType.Main:
-        assetTypeIcon = Icons.circle_outlined;
-        break;
-      case AssetType.Qualifier:
-        assetTypeIcon = Icons.ac_unit;
-        break;
-      case AssetType.QualifierSub:
-        assetTypeIcon = Icons.ac_unit;
-        break;
-      case AssetType.Restricted:
-        assetTypeIcon = MdiIcons.lock;
-        break;
-      case AssetType.RestrictedAdmin:
-        assetTypeIcon = MdiIcons.lock;
-        break;
-      case AssetType.Sub:
-        assetTypeIcon = MdiIcons.slashForward;
-        break;
-      case AssetType.SubAdmin:
-        assetTypeIcon = MdiIcons.slashForwardBox;
-        break;
-      default:
-        assetTypeIcon = Icons.circle_outlined;
-    }
-    if (Asset.assetTypeOf(name) != AssetType.Main) {
+    assetType =
+        assetType ?? (name != null ? Asset.assetTypeOf(name) : AssetType.Main);
+    if (assetType != AssetType.Main) {
       return Container(
           height: height ?? 24,
           width: width ?? 24,
@@ -175,7 +158,7 @@ class IconComponents {
               borderRadius: BorderRadius.circular(100.0),
               child: Center(
                   child: Container(
-                      child: Icon(assetTypeIcon,
+                      child: Icon(assetTypeIcon(assetType: assetType),
                           size: 16,
                           color:
                               getIndicatorColor(imageDetails.background))))));
@@ -187,6 +170,36 @@ class IconComponents {
       (backgroundColor.sum() / backgroundColor.length) >= 128 + 64
           ? Colors.black
           : Colors.white;
+
+  IconData? assetTypeIcon({String? name, AssetType? assetType}) {
+    if (assetType == null && name == null) {
+      return null;
+    }
+    switch (assetType ?? Asset.assetTypeOf(name!)) {
+      case AssetType.Admin:
+        return MdiIcons.crown;
+      case AssetType.Channel:
+        return MdiIcons.message;
+      case AssetType.NFT:
+        return MdiIcons.diamond;
+      case AssetType.Main:
+        return Icons.circle_outlined;
+      case AssetType.Qualifier:
+        return Icons.ac_unit;
+      case AssetType.QualifierSub:
+        return Icons.ac_unit;
+      case AssetType.Restricted:
+        return MdiIcons.lock;
+      case AssetType.RestrictedAdmin:
+        return MdiIcons.lock;
+      case AssetType.Sub:
+        return MdiIcons.slashForward;
+      case AssetType.SubAdmin:
+        return MdiIcons.slashForwardBox;
+      default:
+        return Icons.circle_outlined;
+    }
+  }
 
 /*
 import 'package:raven_front/widgets/other/circle_gradient.dart';

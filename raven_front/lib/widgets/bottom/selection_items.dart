@@ -60,6 +60,7 @@ enum SelectionOption {
   Restricted_Admin,
   // Qualifier,
   Sub_Qualifier,
+  QualifierSub,
   Channel,
 
   // decimals divisibility
@@ -114,8 +115,12 @@ class SelectionItems {
               ],
               SelectionSet.Create: [
                 SelectionOption.Main,
+                SelectionOption.Sub,
                 SelectionOption.Restricted,
                 SelectionOption.Qualifier,
+                SelectionOption.QualifierSub,
+                SelectionOption.NFT,
+                SelectionOption.Channel,
               ],
               SelectionSet.Sub_Asset: [
                 SelectionOption.Sub_Asset,
@@ -131,59 +136,115 @@ class SelectionItems {
   String asString(SelectionOption name) =>
       name.enumString.toTitleCase(underscoreAsSpace: true);
 
-  Widget leads(SelectionOption name, {String? holding}) =>
-      {
-        SelectionOption.Restricted_Symbol:
-            Icon(Icons.attach_money_rounded, color: Colors.black),
-        SelectionOption.Fast:
-            Icon(MdiIcons.speedometer, color: Color(0x99000000)),
-        SelectionOption.Standard:
-            Icon(MdiIcons.speedometerMedium, color: Color(0x99000000)),
-        SelectionOption.Slow:
-            Icon(MdiIcons.speedometerSlow, color: Color(0x99000000)),
-        SelectionOption.Main_Asset:
-            Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
-        SelectionOption.Restricted_Asset:
-            Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
-        SelectionOption.Qualifier_Asset:
-            Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
-        SelectionOption.Admin_Asset:
-            Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
-        SelectionOption.Main: Icon(MdiIcons.circle, color: Color(0xDE000000)),
-        SelectionOption.Restricted:
-            Icon(MdiIcons.lock, color: Color(0xDE000000)),
-        SelectionOption.NFT_Asset:
-            Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
-        SelectionOption.Qualifier:
-            Icon(Icons.ac_unit, color: Color(0xDE000000)),
-        SelectionOption.Admin:
-            Icon(MdiIcons.crownCircle, color: Color(0xDE000000)),
-        SelectionOption.Sub_Asset:
-            Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
-        SelectionOption.NFT:
-            Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
-        SelectionOption.Messaging_Channel_Asset:
-            Icon(MdiIcons.plusCircle, color: Color(0xDE000000)),
-        SelectionOption.Dec8:
-            Icon(MdiIcons.numeric8Circle, color: Colors.black),
-        SelectionOption.Dec7:
-            Icon(MdiIcons.numeric7Circle, color: Colors.black),
-        SelectionOption.Dec6:
-            Icon(MdiIcons.numeric6Circle, color: Colors.black),
-        SelectionOption.Dec5:
-            Icon(MdiIcons.numeric5Circle, color: Colors.black),
-        SelectionOption.Dec4:
-            Icon(MdiIcons.numeric4Circle, color: Colors.black),
-        SelectionOption.Dec3:
-            Icon(MdiIcons.numeric3Circle, color: Colors.black),
-        SelectionOption.Dec2:
-            Icon(MdiIcons.numeric2Circle, color: Colors.black),
-        SelectionOption.Dec1:
-            Icon(MdiIcons.numeric1Circle, color: Colors.black),
-        SelectionOption.Dec0:
-            Icon(MdiIcons.numeric0Circle, color: Colors.black),
-      }[name] ??
-      Icon(MdiIcons.information, color: Color(0x99000000));
+  Widget createLeads(SelectionOption name) {
+    var imageDetails = components.icons.getImageDetails();
+    return components.icons.generateIndicator(
+            imageDetails: imageDetails,
+            height: 24,
+            width: 24,
+            assetType: {
+                  SelectionOption.Restricted_Symbol: AssetType.Restricted,
+                  SelectionOption.Main_Asset: AssetType.Main,
+                  SelectionOption.Restricted_Asset: AssetType.Restricted,
+                  SelectionOption.Qualifier_Asset: AssetType.Qualifier,
+                  SelectionOption.Admin_Asset: AssetType.Admin,
+                  SelectionOption.Main: AssetType.Main,
+                  SelectionOption.Restricted: AssetType.Restricted,
+                  SelectionOption.NFT_Asset: AssetType.NFT,
+                  SelectionOption.Qualifier: AssetType.Qualifier,
+                  SelectionOption.Sub_Qualifier: AssetType.QualifierSub,
+                  SelectionOption.QualifierSub: AssetType.QualifierSub,
+                  SelectionOption.Admin: AssetType.Admin,
+                  SelectionOption.Sub_Asset: AssetType.Sub,
+                  SelectionOption.Sub: AssetType.Sub,
+                  SelectionOption.NFT: AssetType.NFT,
+                  SelectionOption.Messaging_Channel_Asset: AssetType.Channel,
+                  SelectionOption.Channel: AssetType.Channel,
+                }[name] ??
+                AssetType.Main) ??
+        components.icons.assetAvatarGeneratedIdenticon(
+            height: 24,
+            width: 24,
+            imageDetails: imageDetails,
+            assetType: AssetType.Main);
+  }
+
+  Widget leads(SelectionOption name, {String? holding}) => Icon(
+      (holding != null
+              ? components.icons.assetTypeIcon(name: holding)
+              : components.icons.assetTypeIcon(
+                  assetType: {
+                        SelectionOption.Restricted_Symbol: AssetType.Restricted,
+                        SelectionOption.Main_Asset: AssetType.Main,
+                        SelectionOption.Restricted_Asset: AssetType.Restricted,
+                        SelectionOption.Qualifier_Asset: AssetType.Qualifier,
+                        SelectionOption.Admin_Asset: AssetType.Admin,
+                        SelectionOption.Main: AssetType.Main,
+                        SelectionOption.Restricted: AssetType.Restricted,
+                        SelectionOption.NFT_Asset: AssetType.NFT,
+                        SelectionOption.Qualifier: AssetType.Qualifier,
+                        SelectionOption.Admin: AssetType.Admin,
+                        SelectionOption.Sub_Asset: AssetType.Sub,
+                        SelectionOption.NFT: AssetType.NFT,
+                        SelectionOption.Messaging_Channel_Asset:
+                            AssetType.Channel,
+                        SelectionOption.Channel: AssetType.Channel,
+                      }[name] ??
+                      null)) ??
+          {
+            SelectionOption.Restricted_Symbol:
+                Icons.attach_money_rounded, //, color: Colors.black),
+            SelectionOption.Fast:
+                MdiIcons.speedometer, //, color: Color(0x99000000)),
+            SelectionOption.Standard:
+                MdiIcons.speedometerMedium, //, color: Color(0x99000000)),
+            SelectionOption.Slow:
+                MdiIcons.speedometerSlow, //, color: Color(0x99000000)),
+            SelectionOption.Main_Asset:
+                MdiIcons.plusCircle, //, color: Color(0xDE000000)),
+            SelectionOption.Restricted_Asset:
+                MdiIcons.plusCircle, //, color: Color(0xDE000000)),
+            SelectionOption.Qualifier_Asset:
+                MdiIcons.plusCircle, //, color: Color(0xDE000000)),
+            SelectionOption.Admin_Asset:
+                MdiIcons.plusCircle, //, color: Color(0xDE000000)),
+            SelectionOption.Main:
+                MdiIcons.circle, //, color: Color(0xDE000000)),
+            SelectionOption.Restricted:
+                MdiIcons.lock, //, color: Color(0xDE000000)),
+            SelectionOption.NFT_Asset:
+                MdiIcons.plusCircle, //, color: Color(0xDE000000)),
+            SelectionOption.Qualifier:
+                Icons.ac_unit, //, color: Color(0xDE000000)),
+            SelectionOption.Admin:
+                MdiIcons.crownCircle, //, color: Color(0xDE000000)),
+            SelectionOption.Sub_Asset:
+                MdiIcons.plusCircle, //, color: Color(0xDE000000)),
+            SelectionOption.NFT:
+                MdiIcons.plusCircle, //, color: Color(0xDE000000)),
+            SelectionOption.Messaging_Channel_Asset:
+                MdiIcons.plusCircle, //, color: Color(0xDE000000)),
+            SelectionOption.Dec8:
+                MdiIcons.numeric8Circle, //, color: Colors.black),
+            SelectionOption.Dec7:
+                MdiIcons.numeric7Circle, //, color: Colors.black),
+            SelectionOption.Dec6:
+                MdiIcons.numeric6Circle, //, color: Colors.black),
+            SelectionOption.Dec5:
+                MdiIcons.numeric5Circle, //, color: Colors.black),
+            SelectionOption.Dec4:
+                MdiIcons.numeric4Circle, //, color: Colors.black),
+            SelectionOption.Dec3:
+                MdiIcons.numeric3Circle, //, color: Colors.black),
+            SelectionOption.Dec2:
+                MdiIcons.numeric2Circle, //, color: Colors.black),
+            SelectionOption.Dec1:
+                MdiIcons.numeric1Circle, //, color: Colors.black),
+            SelectionOption.Dec0:
+                MdiIcons.numeric0Circle, //, color: Colors.black),
+          }[name] ??
+          MdiIcons.information,
+      color: Color(0x99000000));
 
   Widget holdingItem(String name) => ListTile(
       visualDensity: VisualDensity.compact,
@@ -214,7 +275,9 @@ class SelectionItems {
           (behavior ?? () {})();
         },
         leading: symbol == null
-            ? leads(name)
+            ? modalSet == SelectionSet.Create
+                ? createLeads(name)
+                : leads(name)
             : components.icons.assetAvatar(
                 {
                   SelectionOption.Main: symbol,
