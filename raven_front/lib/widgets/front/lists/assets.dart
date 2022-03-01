@@ -203,7 +203,9 @@ class _AssetList extends State<AssetList> {
         Text(asset.symbol == 'RVN' ? 'Ravencoin' : asset.last,
             style: Theme.of(context).holdingName),
         if (asset.symbol != asset.last && showPath)
-          Text('   (' + asset.notLast + ')',
-              style: Theme.of(context).holdingWhisper),
+          asset.symbol.length >= 25
+              ? Text('  (...)', style: Theme.of(context).holdingWhisper)
+              : Text('   (' + asset.notLast + ')',
+                  style: Theme.of(context).holdingWhisper),
       ]);
 }

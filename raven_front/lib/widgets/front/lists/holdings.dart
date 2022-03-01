@@ -304,8 +304,10 @@ class _HoldingList extends State<HoldingList> {
           Text(holding.symbol == 'RVN' ? 'Ravencoin' : holding.last,
               style: Theme.of(context).holdingName),
           if (holding.symbol != holding.last && showPath)
-            Text('   (' + holding.notLast + ')',
-                style: Theme.of(context).holdingWhisper),
+            holding.symbol.length >= 25
+                ? Text('  (...)', style: Theme.of(context).holdingWhisper)
+                : Text('   (' + holding.notLast + ')',
+                    style: Theme.of(context).holdingWhisper),
         ]),
         Text(
             holding.mainLength > 1 && holding.restricted != null
