@@ -100,7 +100,6 @@ class SelectionItems {
               SelectionSet.Fee: [
                 SelectionOption.Fast,
                 SelectionOption.Standard,
-                SelectionOption.Slow,
               ],
               SelectionSet.Decimal: [
                 SelectionOption.Dec8,
@@ -244,7 +243,7 @@ class SelectionItems {
                 MdiIcons.numeric0Circle, //, color: Colors.black),
           }[name] ??
           MdiIcons.information,
-      color: Color(0x99000000));
+      color: Color(0xDE000000));
 
   Widget holdingItem(String name) => ListTile(
       visualDensity: VisualDensity.compact,
