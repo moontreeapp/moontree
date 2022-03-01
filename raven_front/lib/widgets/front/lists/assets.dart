@@ -110,9 +110,6 @@ class _AssetList extends State<AssetList> {
       ]);
 
   void onTap(Wallet? wallet, AssetHolding asset) {
-    print(asset.symbol);
-    print(asset.length);
-    print('---------');
     if (asset.length == 1 && (asset.admin != null || asset.subAdmin != null)) {
       navigate(asset.symbol, wallet: wallet);
     } else if (asset.length == 2 && asset.admin != null && asset.main != null) {

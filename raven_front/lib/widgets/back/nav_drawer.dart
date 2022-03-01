@@ -155,6 +155,7 @@ class _NavDrawerState extends State<NavDrawer> {
             name: 'About',
             link: '/settings/about',
           ),
+          /*
           SettingsTile(
               title: 'Clear Database',
               titleTextStyle: Theme.of(context).drawerDestination,
@@ -180,7 +181,6 @@ class _NavDrawerState extends State<NavDrawer> {
                     '9eaa220b15d2802d8ec04075f22136d0783a2064254b3c9cc5d762882f02bf15');
                 print(tx.vout[4]);
               }),
-          /*
             */
         ],
       )

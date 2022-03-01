@@ -116,8 +116,6 @@ class IconComponents {
     double? height,
     double? width,
   }) {
-    print('na $name');
-    print(Asset.assetTypeOf(name));
     var assetTypeIcon;
     switch (Asset.assetTypeOf(name)) {
       case AssetType.Admin:

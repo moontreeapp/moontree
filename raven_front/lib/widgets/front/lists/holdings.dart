@@ -107,8 +107,6 @@ class _HoldingList extends State<HoldingList> {
   }
 
   void navigate(Balance balance, {Wallet? wallet}) {
-    print('BALANCE');
-    print(balance);
     streams.spend.form.add(SpendForm.merge(
         form: streams.spend.form.value, symbol: balance.security.symbol));
     Navigator.of(components.navigator.routeContext!).pushNamed(
@@ -121,7 +119,6 @@ class _HoldingList extends State<HoldingList> {
     var rvnHolding = <Widget>[];
     var assetHoldings = <Widget>[];
     for (var holding in holdings) {
-      print(holding.symbol);
       var thisHolding = ListTile(
         //dense: true,
         contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),

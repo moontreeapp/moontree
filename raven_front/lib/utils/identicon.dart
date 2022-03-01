@@ -28,7 +28,6 @@ class Identicon {
 
   void _generateColors() {
     var lightenPercent = _getShade();
-    print(name);
     if (name.startsWith('MOONTREE') || name.startsWith('MT/')) {
       foregroundColor = _getGreenColorShade(lightenPercent);
       backgroundColor = _getWhiteColorShade(lightenPercent);
