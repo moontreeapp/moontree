@@ -16,6 +16,7 @@ class NavBar extends StatefulWidget {
 class _NavBarState extends State<NavBar> {
   @override
   Widget build(BuildContext context) {
+    var assetType = Asset.assetTypeOf(streams.app.asset.value ?? '');
     return Container(
       height: 118,
       padding: EdgeInsets.only(left: 16, right: 16),
@@ -35,44 +36,35 @@ class _NavBarState extends State<NavBar> {
                     actionButton(name: 'receive', link: '/transaction/receive'),
                   ],
                 )
-              : streams.app.page.value == 'Wallet'
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        actionButton(
-                            name: 'create',
-                            onPressed: streams.app.page.value == 'Wallet'
-                                ? _produceCreateModal
-                                : streams.app.page.value == 'Asset'
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: streams.app.page.value == 'Wallet'
+                      ? [
+                          actionButton(
+                              name: 'create', onPressed: _produceCreateModal)
+                        ]
+                      : [
+                          if ([
+                            AssetType.Main,
+                            AssetType.Qualifier,
+                            AssetType.Sub
+                          ].contains(assetType)) ...[
+                            actionButton(
+                                name: 'create',
+                                onPressed: streams.app.page.value == 'Asset'
                                     ? _produceSubCreateModal
                                     : () {
                                         /*if restricted or nft no create button,
                                         if qualifier create a sub qualifier, 
                                         else above */
                                       }),
-                      ],
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        actionButton(
-                            name: 'create',
-                            onPressed: streams.app.page.value == 'Wallet'
-                                ? _produceCreateModal
-                                : streams.app.page.value == 'Asset'
-                                    ? _produceSubCreateModal
-                                    : () {
-                                        /*if restricted or nft no create button,
-                                        if qualifier create a sub qualifier, 
-                                        else above */
-                                      }),
-                        SizedBox(width: 16),
-                        actionButton(
-                            name: 'manage',
-                            onPressed: () {/* bring up options */}),
-                      ],
-                    ),
-
+                            SizedBox(width: 16)
+                          ],
+                          actionButton(
+                              name: 'manage',
+                              onPressed: () {/* bring up options */}),
+                        ],
+                ),
           Padding(
               padding: EdgeInsets.only(left: 32, right: 32),
               child: Row(

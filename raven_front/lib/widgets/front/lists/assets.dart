@@ -55,7 +55,12 @@ class _AssetList extends State<AssetList> {
 
   Iterable<AssetHolding> filterToAdminAssets(List<AssetHolding> assets) =>
       assets.where((AssetHolding asset) =>
-          asset.admin != null || asset.subAdmin != null);
+          asset.admin != null ||
+          asset.subAdmin != null ||
+          asset.channel != null ||
+          asset.qualifier != null ||
+          asset.qualifierSub != null ||
+          asset.restricted != null);
 
   @override
   Widget build(BuildContext context) {
