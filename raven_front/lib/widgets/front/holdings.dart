@@ -100,6 +100,8 @@ class _HoldingList extends State<HoldingList> {
   }
 
   void navigate(Balance balance, {Wallet? wallet}) {
+    print('BALANCE');
+    print(balance);
     streams.spend.form.add(SpendForm.merge(
         form: streams.spend.form.value, symbol: balance.security.symbol));
     Navigator.of(components.navigator.routeContext!).pushNamed(
@@ -112,54 +114,14 @@ class _HoldingList extends State<HoldingList> {
     var rvnHolding = <Widget>[];
     var assetHoldings = <Widget>[];
     for (var holding in holdings) {
+      print(holding.symbol);
       var thisHolding = ListTile(
-          //dense: true,
-          contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          onTap: () => onTap(wallet, holding),
-          leading: Container(
-              height: 40,
-              width: 40,
-              child: components.icons.assetAvatar(holding.admin != null
-                  ? holding.adminSymbol!
-                  : holding.restricted != null
-                      ? holding.restrictedSymbol!
-                      : holding.qualifier != null
-                          ? holding.qualifierSymbol!
-                          : holding.channel != null
-                              ? holding.channelSymbol!
-                              : holding.nft != null
-                                  ? holding.nftSymbol!
-                                  : holding.symbol)),
-          title:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text(holding.symbol == 'RVN' ? 'Ravencoin' : holding.symbol,
-                  style: Theme.of(context).holdingName),
-
-              /// replaced by admin icon as default
-              //holding.length > 1
-              //    ? Text('•' * (holding.length - 1),
-              //        //(holding.admin != null ? '•' : '') +
-              //        //    (holding.restricted != null ? '•' : '') +
-              //        //    (holding.qualifier != null ? '•' : '') +
-              //        //    (holding.nft != null ? '•' : '') +
-              //        //    (holding.channel != null ? '•' : ''),
-              //        style: Theme.of(context).holdingValue)
-              //    : SizedBox(width: 1),
-            ]),
-            Text(
-                holding.mainLength > 1 && holding.restricted != null
-                    ? [
-                        if (holding.main != null) 'Main',
-                        if (holding.admin != null) 'Admin',
-                        if (holding.restricted != null) 'Restricted',
-                        if (holding.restrictedAdmin != null) 'Restricted Admin',
-                      ].join(', ')
-                    : components.text.securityAsReadable(holding.balance!.value,
-                        security: holding.balance!.security, asUSD: showUSD),
-                style: Theme.of(context).holdingValue),
-          ]),
-          trailing: Icon(Icons.chevron_right_rounded));
+        //dense: true,
+        contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+        onTap: () => onTap(wallet, holding),
+        leading: leadingIcon(holding),
+        title: title(holding), /*trailing: Icon(Icons.chevron_right_rounded)*/
+      );
       if (holding.symbol == 'RVN') {
         rvnHolding.add(thisHolding);
         rvnHolding.add(Divider(height: 1));
@@ -225,13 +187,22 @@ class _HoldingList extends State<HoldingList> {
         behaviors: [
           if (holding.main != null)
             () => navigate(holding.main!, wallet: wallet),
+          if (holding.sub != null)
+            () => navigate(holding.sub!, wallet: wallet), /////
+          if (holding.subAdmin != null)
+            () => navigate(holding.subAdmin!, wallet: wallet),
           if (holding.admin != null)
             () => navigate(holding.admin!, wallet: wallet),
           if (holding.restricted != null)
             () => navigate(holding.restricted!, wallet: wallet),
+          if (holding.restrictedAdmin != null)
+            () => navigate(holding.restrictedAdmin!, wallet: wallet),
           if (holding.qualifier != null)
             () => navigate(holding.qualifier!, wallet: wallet),
-          if (holding.nft != null) () => navigate(holding.nft!, wallet: wallet),
+          if (holding.qualifierSub != null)
+            () => navigate(holding.qualifierSub!, wallet: wallet),
+          if (holding.nft != null)
+            () => navigate(holding.nft!, wallet: wallet), /////
           if (holding.channel != null)
             () => navigate(holding.channel!, wallet: wallet),
         ],
@@ -240,6 +211,18 @@ class _HoldingList extends State<HoldingList> {
             components.text.securityAsReadable(
               holding.main!.value,
               security: holding.main!.security,
+              asUSD: showUSD,
+            ),
+          if (holding.sub != null)
+            components.text.securityAsReadable(
+              holding.sub!.value,
+              security: holding.sub!.security,
+              asUSD: showUSD,
+            ),
+          if (holding.subAdmin != null)
+            components.text.securityAsReadable(
+              holding.subAdmin!.value,
+              security: holding.subAdmin!.security,
               asUSD: showUSD,
             ),
           if (holding.admin != null)
@@ -254,10 +237,22 @@ class _HoldingList extends State<HoldingList> {
               security: holding.restricted!.security,
               asUSD: showUSD,
             ),
+          if (holding.restrictedAdmin != null)
+            components.text.securityAsReadable(
+              holding.restrictedAdmin!.value,
+              security: holding.restrictedAdmin!.security,
+              asUSD: showUSD,
+            ),
           if (holding.qualifier != null)
             components.text.securityAsReadable(
               holding.qualifier!.value,
               security: holding.qualifier!.security,
+              asUSD: showUSD,
+            ),
+          if (holding.qualifierSub != null)
+            components.text.securityAsReadable(
+              holding.qualifierSub!.value,
+              security: holding.qualifierSub!.security,
               asUSD: showUSD,
             ),
           if (holding.nft != null)
@@ -276,4 +271,47 @@ class _HoldingList extends State<HoldingList> {
       ).build();
     }
   }
+
+  Widget leadingIcon(AssetHolding holding) => Container(
+      height: 40,
+      width: 40,
+      child: components.icons.assetAvatar(holding.admin != null
+          ? holding.adminSymbol!
+          : holding.restricted != null
+              ? holding.restrictedSymbol!
+              : holding.qualifier != null
+                  ? holding.qualifierSymbol!
+                  : holding.channel != null
+                      ? holding.channelSymbol!
+                      : holding.nft != null
+                          ? holding.nftSymbol!
+                          : holding.subAdmin != null
+                              ? holding.subAdminSymbol!
+                              : holding.sub != null
+                                  ? holding.subSymbol!
+                                  : holding.qualifierSub != null
+                                      ? holding.qualifierSubSymbol!
+                                      : holding.symbol));
+
+  Widget title(AssetHolding holding) =>
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+          Text(holding.symbol == 'RVN' ? 'Ravencoin' : holding.last,
+              style: Theme.of(context).holdingName),
+          if (holding.symbol != holding.last)
+            Text('   (' + holding.notLast + ')',
+                style: Theme.of(context).holdingWhisper),
+        ]),
+        Text(
+            holding.mainLength > 1 && holding.restricted != null
+                ? [
+                    if (holding.main != null) 'Main',
+                    if (holding.admin != null) 'Admin',
+                    if (holding.restricted != null) 'Restricted',
+                    if (holding.restrictedAdmin != null) 'Restricted Admin',
+                  ].join(', ')
+                : components.text.securityAsReadable(holding.balance!.value,
+                    security: holding.balance!.security, asUSD: showUSD),
+            style: Theme.of(context).holdingValue),
+      ]);
 }

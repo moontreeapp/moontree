@@ -123,7 +123,7 @@ class _NavBarState extends State<NavBar> {
                   'send': MdiIcons.arrowTopRightThick,
                   'receive': MdiIcons.arrowBottomLeftThick,
                   'create': MdiIcons.plus,
-                  'manage': MdiIcons.crown,
+                  'manage': MdiIcons.circleEditOutline,
                 }[name]!),
                 label: Text(name.toUpperCase()),
                 style: components.styles.buttons.bottom(context),

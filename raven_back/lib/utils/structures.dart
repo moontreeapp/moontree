@@ -141,12 +141,12 @@ class AssetHolding {
   String? get restrictedSymbol => restricted != null ? '\$$symbol' : null;
   String? get restrictedAdminSymbol =>
       restrictedAdmin != null ? '\$$symbol!' : null;
-  String? get nftSymbol => nft != null ? '#$symbol' : null;
-  String? get channelSymbol => channel != null ? '~$symbol' : null;
-  String? get subSymbol => sub != null ? '/$symbol' : null;
-  String? get subAdminSymbol => subAdmin != null ? '/$symbol!' : null;
+  String? get nftSymbol => nft != null ? '$symbol' : null;
+  String? get channelSymbol => channel != null ? '$symbol' : null;
+  String? get subSymbol => sub != null ? '$symbol' : null;
+  String? get subAdminSymbol => subAdmin != null ? '$symbol!' : null;
   String? get qualifierSymbol => qualifier != null ? '#$symbol' : null;
-  String? get qualifierSubSymbol => qualifierSub != null ? '/#$symbol' : null;
+  String? get qualifierSubSymbol => qualifierSub != null ? '#$symbol' : null;
   String? get cryptoSymbol => crypto != null
       ? (crypto?.security.symbol ?? symbol)
       : null; // not a raven asset
@@ -162,6 +162,7 @@ class AssetHolding {
       ? symbol.split('/').sublist(1, symbol.split('/').length).join('/')
       : symbol;
   String get last => symbol.split('/').last.split('~').last.split('#').last;
+  String get notLast => symbol.substring(0, symbol.length - last.length);
 
   // shouldn't be used?
   // returns the best value (main, qualifier, restricted, admin, channel, nft, crypto, fiat)

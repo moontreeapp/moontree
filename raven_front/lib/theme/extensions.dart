@@ -57,6 +57,19 @@ extension TextStyleExtension on ThemeData {
           fontWeight: FontWeights.semiBold,
           letterSpacing: 0.5,
           color: Colors.black.withOpacity(0.87));
+  TextStyle? get holdingWhisper => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 12.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.normal,
+          letterSpacing: 0.4,
+          color: Color(0xDE000000))
+      : TextStyle(
+          fontSize: 12.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.normal,
+          letterSpacing: 0.4,
+          color: Color(0xDE000000));
   //text for holding values (secondarytext):
   TextStyle? get holdingValue => this.brightness == Brightness.light
       ? TextStyle(

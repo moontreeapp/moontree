@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/records/records.dart';
@@ -115,7 +116,44 @@ class IconComponents {
     double? height,
     double? width,
   }) {
-    if (name.startsWith('#') || name.startsWith('\$') || name.endsWith('!')) {
+    print('na $name');
+    print(Asset.assetTypeOf(name));
+    var assetTypeIcon;
+    switch (Asset.assetTypeOf(name)) {
+      case AssetType.Admin:
+        assetTypeIcon = MdiIcons.crown;
+        break;
+      case AssetType.Channel:
+        assetTypeIcon = MdiIcons.message;
+        break;
+      case AssetType.NFT:
+        assetTypeIcon = MdiIcons.diamond;
+        break;
+      case AssetType.Main:
+        assetTypeIcon = Icons.circle_outlined;
+        break;
+      case AssetType.Qualifier:
+        assetTypeIcon = Icons.ac_unit;
+        break;
+      case AssetType.QualifierSub:
+        assetTypeIcon = Icons.ac_unit;
+        break;
+      case AssetType.Restricted:
+        assetTypeIcon = MdiIcons.lock;
+        break;
+      case AssetType.RestrictedAdmin:
+        assetTypeIcon = MdiIcons.lock;
+        break;
+      case AssetType.Sub:
+        assetTypeIcon = MdiIcons.slashForward;
+        break;
+      case AssetType.SubAdmin:
+        assetTypeIcon = MdiIcons.slashForwardBox;
+        break;
+      default:
+        assetTypeIcon = Icons.circle_outlined;
+    }
+    if (Asset.assetTypeOf(name) != AssetType.Main) {
       return Container(
           height: height ?? 24,
           width: width ?? 24,
@@ -139,14 +177,7 @@ class IconComponents {
               borderRadius: BorderRadius.circular(100.0),
               child: Center(
                   child: Container(
-                      child: Icon(
-                          name.endsWith('!')
-                              ? MdiIcons.crown
-                              : name.startsWith('#')
-                                  ? Icons.ac_unit
-                                  : name.startsWith('\$')
-                                      ? MdiIcons.lock
-                                      : Icons.circle_outlined,
+                      child: Icon(assetTypeIcon,
                           size: 16,
                           color:
                               getIndicatorColor(imageDetails.background))))));
@@ -155,7 +186,9 @@ class IconComponents {
   }
 
   Color getIndicatorColor(List<int> backgroundColor) =>
-      backgroundColor.sum() >= 128 ? Colors.black : Colors.white;
+      (backgroundColor.sum() / backgroundColor.length) >= 128 + 64
+          ? Colors.black
+          : Colors.white;
 
 /*
 import 'package:raven_front/widgets/other/circle_gradient.dart';

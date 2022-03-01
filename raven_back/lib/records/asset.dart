@@ -89,7 +89,9 @@ class Asset with EquatableMixin {
 
   String get adminSymbol => baseSymbol + '!';
 
-  AssetType get assetType {
+  AssetType get assetType => assetTypeOf(symbol);
+
+  static AssetType assetTypeOf(String symbol) {
     if (symbol.startsWith('#') && symbol.contains('/')) {
       return AssetType.QualifierSub;
     }
@@ -102,6 +104,12 @@ class Asset with EquatableMixin {
     if (symbol.startsWith('\$')) {
       return AssetType.Restricted;
     }
+    if (symbol.contains('#')) {
+      return AssetType.NFT;
+    }
+    if (symbol.contains('~')) {
+      return AssetType.Channel;
+    }
     if (symbol.contains('/') && symbol.endsWith('!')) {
       return AssetType.SubAdmin;
     }
@@ -110,12 +118,6 @@ class Asset with EquatableMixin {
     }
     if (symbol.endsWith('!')) {
       return AssetType.Admin;
-    }
-    if (symbol.contains('#')) {
-      return AssetType.NFT;
-    }
-    if (symbol.contains('~')) {
-      return AssetType.Channel;
     }
     return AssetType.Main;
   }
@@ -126,16 +128,6 @@ class Asset with EquatableMixin {
       symbol.contains('/') && !(symbol.startsWith('\$') || symbol.endsWith('!'))
           ? true
           : false;
-
-  //String? get subSymbol => main ? '/${symbol}' : null; // sub mains allowed
-  //String? get adminSymbol => admin ? '${symbol}!' : null; // must be top
-  //String? get restrictedSymbol =>
-  //    restricted ? '\$${symbol}' : null; // must be top
-  //String? get qualifierSymbol =>
-  //    qualifier ? '#${symbol}' : null; // sub qualifiers allowed
-  //String? get uniqueSymbol => unique ? '#${symbol}' : null; // must be subasset
-  //String? get channelSymbol =>
-  //    channel ? '~${symbol}' : null; // must be subasset
 }
 
 enum AssetType {
