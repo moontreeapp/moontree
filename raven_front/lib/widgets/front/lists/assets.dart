@@ -202,10 +202,12 @@ class _AssetList extends State<AssetList> {
       Row(mainAxisAlignment: MainAxisAlignment.start, children: [
         Text(asset.symbol == 'RVN' ? 'Ravencoin' : asset.last,
             style: Theme.of(context).holdingName),
+        /* //this feature can show the path 
         if (asset.symbol != asset.last && showPath)
-          asset.symbol.length >= 25
+          asset.last.length >= 20
               ? Text('  (...)', style: Theme.of(context).holdingWhisper)
               : Text('   (' + asset.notLast + ')',
                   style: Theme.of(context).holdingWhisper),
+                  */
       ]);
 }

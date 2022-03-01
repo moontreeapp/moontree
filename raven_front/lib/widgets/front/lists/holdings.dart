@@ -303,11 +303,13 @@ class _HoldingList extends State<HoldingList> {
         Row(mainAxisAlignment: MainAxisAlignment.start, children: [
           Text(holding.symbol == 'RVN' ? 'Ravencoin' : holding.last,
               style: Theme.of(context).holdingName),
+          /* //this feature can show the path 
           if (holding.symbol != holding.last && showPath)
-            holding.symbol.length >= 25
+            holding.last.length >= 20
                 ? Text('  (...)', style: Theme.of(context).holdingWhisper)
                 : Text('   (' + holding.notLast + ')',
                     style: Theme.of(context).holdingWhisper),
+                    */
         ]),
         Text(
             holding.mainLength > 1 && holding.restricted != null
