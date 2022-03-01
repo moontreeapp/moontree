@@ -20,6 +20,7 @@ class _HoldingList extends State<HoldingList> {
   List<StreamSubscription> listeners = [];
   late List<AssetHolding> holdings;
   bool showUSD = false;
+  bool showPath = false;
   Rate? rateUSD;
 
   @override
@@ -66,6 +67,12 @@ class _HoldingList extends State<HoldingList> {
       } else {
         showUSD = !showUSD;
       }
+    });
+  }
+
+  void _togglePath() {
+    setState(() {
+      showPath = !showPath;
     });
   }
 
@@ -119,6 +126,7 @@ class _HoldingList extends State<HoldingList> {
         //dense: true,
         contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
         onTap: () => onTap(wallet, holding),
+        onLongPress: _togglePath,
         leading: leadingIcon(holding),
         title: title(holding), /*trailing: Icon(Icons.chevron_right_rounded)*/
       );
@@ -298,7 +306,7 @@ class _HoldingList extends State<HoldingList> {
         Row(mainAxisAlignment: MainAxisAlignment.start, children: [
           Text(holding.symbol == 'RVN' ? 'Ravencoin' : holding.last,
               style: Theme.of(context).holdingName),
-          if (holding.symbol != holding.last)
+          if (holding.symbol != holding.last && showPath)
             Text('   (' + holding.notLast + ')',
                 style: Theme.of(context).holdingWhisper),
         ]),

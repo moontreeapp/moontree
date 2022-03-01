@@ -17,6 +17,7 @@ class AssetList extends StatefulWidget {
 class _AssetList extends State<AssetList> {
   List<StreamSubscription> listeners = [];
   late Iterable<AssetHolding> assets;
+  bool showPath = false;
 
   @override
   void initState() {
@@ -41,13 +42,20 @@ class _AssetList extends State<AssetList> {
     super.dispose();
   }
 
+  void _togglePath() {
+    setState(() {
+      showPath = !showPath;
+    });
+  }
+
   Future refresh() async {
     await services.history.produceAddressOrBalance();
     setState(() {});
   }
 
   Iterable<AssetHolding> filterToAdminAssets(List<AssetHolding> assets) =>
-      assets.where((AssetHolding asset) => asset.admin != null);
+      assets.where((AssetHolding asset) =>
+          asset.admin != null || asset.subAdmin != null);
 
   @override
   Widget build(BuildContext context) {
@@ -92,26 +100,9 @@ class _AssetList extends State<AssetList> {
             //contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
             // wallet transactions are on wallet screen, so remove wallet id here.
             onTap: () => onTap(wallet, asset),
-            leading: Container(
-                height: 40,
-                width: 40,
-                child: components.icons.assetAvatar(asset.restricted != null
-                    ? asset.restrictedSymbol!
-                    : asset.qualifier != null
-                        ? asset.qualifierSymbol!
-                        : asset.symbol)),
-            title:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(asset.symbol, style: Theme.of(context).holdingName),
-              //Text(
-              //    [
-              //      if (asset.admin != null) 'Admin',
-              //      //if (asset.main != null) 'Main',
-              //      if (asset.restricted != null) 'Restricted',
-              //      if (asset.qualifier != null) 'Qualifier',
-              //    ].join(', '),
-              //    style: Theme.of(context).holdingValue),
-            ]),
+            onLongPress: _togglePath,
+            leading: leadingIcon(asset),
+            title: title(asset),
             //trailing: Icon(Icons.chevron_right_rounded)
           ),
           Divider(height: 1)
@@ -119,15 +110,29 @@ class _AssetList extends State<AssetList> {
       ]);
 
   void onTap(Wallet? wallet, AssetHolding asset) {
-    if (asset.length == 1 && asset.admin != null) {
+    print(asset.symbol);
+    print(asset.length);
+    print('---------');
+    if (asset.length == 1 && (asset.admin != null || asset.subAdmin != null)) {
       navigate(asset.symbol, wallet: wallet);
     } else if (asset.length == 2 && asset.admin != null && asset.main != null) {
+      navigate(asset.symbol, wallet: wallet);
+    } else if (asset.length == 2 &&
+        asset.subAdmin != null &&
+        asset.sub != null) {
+      navigate(asset.symbol, wallet: wallet);
+    } else if (asset.length == 2 &&
+        asset.subAdmin != null &&
+        asset.nft != null) {
       navigate(asset.symbol, wallet: wallet);
     } else if (asset.length == 1) {
       navigate(asset.singleSymbol!, wallet: wallet);
     } else {
       var assetDetails = {};
       if (asset.admin != null) {
+        assetDetails['main'] = res.assets.primaryIndex.getOne(asset.symbol);
+      }
+      if (asset.subAdmin != null) {
         assetDetails['main'] = res.assets.primaryIndex.getOne(asset.symbol);
       }
       if (asset.restricted != null) {
@@ -143,11 +148,14 @@ class _AssetList extends State<AssetList> {
         symbol: asset.symbol,
         names: [
           if (asset.admin != null) SelectionOption.Main,
+          if (asset.subAdmin != null) SelectionOption.Main,
           if (asset.restricted != null) SelectionOption.Restricted,
           if (asset.qualifier != null) SelectionOption.Qualifier,
         ],
         behaviors: [
           if (asset.admin != null) () => navigate(asset.symbol, wallet: wallet),
+          if (asset.subAdmin != null)
+            () => navigate(asset.symbol, wallet: wallet),
           if (asset.restricted != null)
             () => navigate(asset.restricted!.security.symbol, wallet: wallet),
           if (asset.qualifier != null)
@@ -155,6 +163,11 @@ class _AssetList extends State<AssetList> {
         ],
         values: [
           if (asset.admin != null)
+            utils
+                .satToAmount(assetDetails['main'].satsInCirculation,
+                    divisibility: assetDetails['main'].divisibility)
+                .toCommaString(),
+          if (asset.subAdmin != null)
             utils
                 .satToAmount(assetDetails['main'].satsInCirculation,
                     divisibility: assetDetails['main'].divisibility)
@@ -173,4 +186,22 @@ class _AssetList extends State<AssetList> {
       ).build();
     }
   }
+
+  Widget leadingIcon(AssetHolding asset) => Container(
+      height: 40,
+      width: 40,
+      child: components.icons.assetAvatar(asset.restricted != null
+          ? asset.restrictedSymbol!
+          : asset.qualifier != null
+              ? asset.qualifierSymbol!
+              : asset.symbol));
+
+  Widget title(AssetHolding asset) =>
+      Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+        Text(asset.symbol == 'RVN' ? 'Ravencoin' : asset.last,
+            style: Theme.of(context).holdingName),
+        if (asset.symbol != asset.last && showPath)
+          Text('   (' + asset.notLast + ')',
+              style: Theme.of(context).holdingWhisper),
+      ]);
 }
