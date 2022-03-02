@@ -241,7 +241,7 @@ class _CheckoutState extends State<Checkout> {
 
   Widget total() =>
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text('Total', style: Theme.of(context).checkoutTotal),
+        Text('Total:', style: Theme.of(context).checkoutTotal),
         Text(
             '${getRightTotal(struct.total)} ${struct.paymentSymbol.toUpperCase()}',
             style: Theme.of(context).checkoutTotal),
@@ -263,14 +263,15 @@ class _CheckoutState extends State<Checkout> {
       child: OutlinedButton.icon(
           onPressed: disabled
               //? () {}
+              /// for testing
               ? () async {
-                  print('clicked');
-                  //
                   produceModal();
+                  print('working...');
                   await Future.delayed(Duration(seconds: 6));
                   streams.app.snack.add(Snack(message: 'test'));
                 }
               : () async {
+                  produceModal();
                   (struct.buttonAction ?? () {})();
                 },
           icon: Icon(

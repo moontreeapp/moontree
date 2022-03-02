@@ -560,9 +560,27 @@ class _CreateAssetState extends State<CreateAsset> {
             if (needsReissue) ['Reissuable', reissueValue ? 'Yes' : 'No', '3'],
           ],
           fees: [
-            ['Transaction Fee', 'calculating fee...']
+            // Standard / Fast transaction, will pull from settings?
+            ['Sandard Transaction', 'calculating fee...'],
+            isNFT
+                ? ['NFT', '5']
+                : isChannel
+                    ? ['Message Channel', '100']
+                    : isQualifier && isSub
+                        ? ['Sub Qualifier Asset', '100']
+                        : isSub
+                            ? ['Sub Asset', '100']
+                            : isMain
+                                ? ['Main Asset', '500']
+                                : isQualifier
+                                    ? ['Qualifier Asset', '1000']
+                                    : isRestricted
+                                        ? ['Restricted Asset', '1500']
+                                        : ['Asset', '500']
           ],
           total: 'calculating total...',
+          // produce transaction structure here and the checkout screen will
+          // send it up on submit:
           buttonAction: () => null,
 
           /// send the MainCreate request to the right stream
