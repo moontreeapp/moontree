@@ -59,49 +59,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            height: 8,
-            color: Colors.transparent,
-
-            /// this is a shadow within the snackbar....
-            /// we have to sacrifice the shadow above the snackbar if we want
-            /// to keep this pattern of spoofing that its behind the navbar
-            /// the ohter way to do it is not use a snackbar, but instead
-            /// make a custom snackbar actually behind the navbar by making it
-            /// a part of the navbar widget...
-            //decoration: BoxDecoration(
-            //    color: const Color(0xFF212121),
-            //    borderRadius: BorderRadius.only(
-            //      topLeft: Radius.circular(8),
-            //      topRight: Radius.circular(8),
-            //    ),
-            //    boxShadow: [
-            //      BoxShadow(
-            //          color: const Color(0x33000000),
-            //          offset: Offset(0, 5),
-            //          blurRadius: 5),
-            //      BoxShadow(
-            //          color: const Color(0x1F000000),
-            //          offset: Offset(0, 3),
-            //          blurRadius: 14),
-            //      BoxShadow(
-            //          color: const Color(0x3D000000),
-            //          offset: Offset(0, 8),
-            //          blurRadius: 10)
-            //      //BoxShadow(
-            //      //    color: const Color(0x33000000),
-            //      //    offset: Offset(0, -3),
-            //      //    blurRadius: 5),
-            //      //BoxShadow(
-            //      //    color: const Color(0x1F000000),
-            //      //    offset: Offset(0, -1),
-            //      //    blurRadius: 18),
-            //      //BoxShadow(
-            //      //    color: const Color(0x24000000),
-            //      //    offset: Offset(0, -6),
-            //      //    blurRadius: 10),
-            //    ]),
-          ),
+          Container(height: 8, color: Colors.transparent),
           Padding(
               padding: EdgeInsets.only(left: 16, right: 16),
               child: Text(snack!.message,
