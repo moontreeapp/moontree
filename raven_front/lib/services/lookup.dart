@@ -26,6 +26,10 @@ class Current {
       .where((Balance balance) => balance.security.asset?.isAdmin ?? false)
       .map((Balance balance) => balance.security.symbol);
 
+  static Iterable<String> get qualifierNames => holdings
+      .where((Balance balance) => balance.security.asset?.isQualifier ?? false)
+      .map((Balance balance) => balance.security.symbol);
+
   static List<TransactionRecord> walletCompiledTransactions() =>
       services.transaction.getTransactionRecords(wallet: wallet);
 }

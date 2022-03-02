@@ -21,7 +21,7 @@ enum FormPresets {
   sub,
   restricted,
   qualifier,
-  subQualifier,
+  qualifierSub,
   NFT,
   channel,
 }
@@ -29,13 +29,12 @@ enum FormPresets {
 class CreateAsset extends StatefulWidget {
   static const int ipfsLength = 89;
   static const int quantityMax = 21000000;
-
   final FormPresets preset;
-  final String? parent;
+  final bool isSub;
 
   CreateAsset({
     required this.preset,
-    this.parent,
+    this.isSub = false,
   }) : super();
 
   @override
@@ -45,12 +44,14 @@ class CreateAsset extends StatefulWidget {
 class _CreateAssetState extends State<CreateAsset> {
   List<StreamSubscription> listeners = [];
   GenericCreateForm? createForm;
+  TextEditingController parentController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController ipfsController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController decimalController = TextEditingController();
   TextEditingController verifierController = TextEditingController();
   bool reissueValue = true;
+  FocusNode parentFocus = FocusNode();
   FocusNode nameFocus = FocusNode();
   FocusNode ipfsFocus = FocusNode();
   FocusNode nextFocus = FocusNode();
@@ -77,17 +78,12 @@ class _CreateAssetState extends State<CreateAsset> {
   @override
   void initState() {
     super.initState();
-    remainingNameLength =
-        // max asset length
-        31 -
-            // parent text and implied '/'
-            (isSub ? widget.parent!.length + 1 : 0) -
-            // everything else has a special character denoting its type
-            (isMain ? 0 : 1);
     listeners.add(streams.create.form.listen((GenericCreateForm? value) {
+      print('value $value');
       if (createForm != value) {
         setState(() {
           createForm = value;
+          parentController.text = value?.parent ?? parentController.text;
           nameController.text = value?.name ?? nameController.text;
           ipfsController.text = value?.ipfs ?? ipfsController.text;
           quantityController.text =
@@ -102,6 +98,7 @@ class _CreateAssetState extends State<CreateAsset> {
 
   @override
   void dispose() {
+    parentFocus.dispose();
     nameController.dispose();
     ipfsController.dispose();
     quantityController.dispose();
@@ -120,12 +117,25 @@ class _CreateAssetState extends State<CreateAsset> {
   }
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: body(),
-      );
+  Widget build(BuildContext context) {
+    print(needsParent || needsQualifierParent);
+    print(isSub);
+    print(widget.preset);
+    remainingNameLength =
+        // max asset length
+        31 -
+            // parent text and implied '/'
+            (isSub ? parentController.text.length + 1 : 0) -
+            // everything else has a special character denoting its type
+            (isMain ? 0 : 1);
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: body(),
+    );
+  }
 
-  bool get isSub => widget.parent != null;
+  bool get isSub => widget.isSub;
+  // parentController.text.length > 0;
   // above is shorthand, full logic:
   //    !isRestricted &&
   //    ((isNFT || isChannel) ||
@@ -138,6 +148,9 @@ class _CreateAssetState extends State<CreateAsset> {
   bool get isQualifier => widget.preset == FormPresets.qualifier;
   bool get isRestricted => widget.preset == FormPresets.restricted;
 
+  bool get needsParent => isSub && (isMain || isNFT || isChannel);
+  bool get needsQualifierParent => isSub && isQualifier;
+  bool get needsNFTParent => isNFT || isChannel;
   bool get needsQuantity => isMain || isRestricted || isQualifier;
   bool get needsDecimal => isMain || isRestricted;
   bool get needsVerifier => isRestricted;
@@ -156,6 +169,11 @@ class _CreateAssetState extends State<CreateAsset> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
+                        if (needsParent || needsQualifierParent)
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                            child: parentFeild(),
+                          ),
                         Padding(
                           padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
                           child: nameField(),
@@ -195,6 +213,31 @@ class _CreateAssetState extends State<CreateAsset> {
                         children: [submitButton()])))
           ]);
 
+  Widget parentFeild() => TextField(
+        focusNode: parentFocus,
+        controller: parentController,
+        readOnly: true,
+        decoration: components.styles.decorations.textFeild(context,
+            labelText: 'Parent Asset',
+            hintText: 'Parent Asset',
+            suffixIcon: IconButton(
+              icon: Padding(
+                  padding: EdgeInsets.only(right: 14),
+                  child: Icon(Icons.expand_more_rounded,
+                      color: Color(0xDE000000))),
+              onPressed: () => isQualifier
+                  ? _produceQualifierParentModal()
+                  : _produceParentModal(), // main subs, nft, channel
+            )),
+        onTap: () => isQualifier
+            ? _produceQualifierParentModal()
+            : _produceParentModal(), // main subs, nft, channel
+        onChanged: (String? newValue) {
+          FocusScope.of(context).requestFocus(ipfsFocus);
+          setState(() {});
+        },
+      );
+
   Widget nameField() => TextField(
       focusNode: nameFocus,
       autocorrect: false,
@@ -204,7 +247,8 @@ class _CreateAssetState extends State<CreateAsset> {
       inputFormatters: [MainAssetNameTextFormatter()],
       decoration: components.styles.decorations.textFeild(
         context,
-        labelText: presetToTitle[widget.preset]!,
+        labelText: (isSub && !isNFT && !isChannel ? 'Sub ' : '') +
+            presetToTitle[widget.preset]!,
         hintText: 'MOONTREE_WALLET.COM',
         errorText: isChannel || isRestricted
             ? null
@@ -213,10 +257,9 @@ class _CreateAssetState extends State<CreateAsset> {
                 ? nameValidationErr
                 : null,
       ),
-      onTap: isQualifier || isRestricted ? _produceAdminAssetModal : null,
-      onChanged: isQualifier || isRestricted
-          ? null
-          : (String value) => validateName(name: value),
+      onTap: isRestricted ? _produceAdminAssetModal : null,
+      onChanged:
+          isRestricted ? null : (String value) => validateName(name: value),
       onEditingComplete: isQualifier || isRestricted
           ? () => FocusScope.of(context).requestFocus(quantityFocus)
           : isNFT || isChannel
@@ -480,7 +523,7 @@ class _CreateAssetState extends State<CreateAsset> {
         decimals: needsDecimal ? decimalController.text.toInt() : null,
         reissuable: needsReissue ? reissueValue : null,
         verifier: needsVerifier ? verifierController.text : null,
-        parent: isSub ? widget.parent : null,
+        parent: isSub ? parentController.text : null,
       ));
     }
   }
@@ -506,7 +549,7 @@ class _CreateAssetState extends State<CreateAsset> {
             if (isSub)
               [
                 'Parent',
-                '${widget.parent}/${isNFT || isQualifier ? '#' : isChannel ? '~' : ''}',
+                '${parentController.text}/${isNFT || isQualifier ? '#' : isChannel ? '~' : ''}',
                 '2'
               ],
             ['Asset Name', nameController.text, '2'],
@@ -553,6 +596,20 @@ class _CreateAssetState extends State<CreateAsset> {
           ? quantityController.text.toInt().toCommaString()
           : quantityController.text;
 
+  void _produceParentModal() {
+    SelectionItems(context, modalSet: SelectionSet.Parents).build(
+        holdingNames: Current.adminNames
+            .map((String name) => name.replaceAll('!', ''))
+            .toList());
+  }
+
+  void _produceQualifierParentModal() {
+    print(Current.qualifierNames);
+    SelectionItems(context, modalSet: SelectionSet.Parents).build(
+        holdingNames:
+            Current.qualifierNames.map((String name) => name).toList());
+  }
+
   void _produceDecimalModal() {
     SelectionItems(context, modalSet: SelectionSet.Decimal)
         .build(decimalPrefix: quantityController.text);
@@ -561,6 +618,7 @@ class _CreateAssetState extends State<CreateAsset> {
   void _produceAdminAssetModal() {
     SelectionItems(context, modalSet: SelectionSet.Admins).build(
         holdingNames: Current.adminNames
+            .where((String name) => !name.contains('/'))
             .map((String name) => name.replaceAll('!', ''))
             .toList());
   }

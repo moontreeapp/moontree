@@ -73,7 +73,11 @@ class Asset with EquatableMixin {
 
   bool get hasMetadata => metadata != '';
 
-  bool get isAdmin => assetType == AssetType.Admin;
+  bool get isAdmin =>
+      assetType == AssetType.Admin || assetType == AssetType.SubAdmin;
+
+  bool get isQualifier =>
+      assetType == AssetType.Qualifier || assetType == AssetType.QualifierSub;
 
   String get baseSymbol => symbol.startsWith('#') || symbol.startsWith('\$')
       ? symbol.substring(1, symbol.length)

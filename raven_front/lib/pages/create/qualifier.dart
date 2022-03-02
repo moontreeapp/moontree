@@ -26,6 +26,5 @@ class _CreateQualifierAssetState extends State<CreateQualifierAsset> {
         child: body(),
       );
 
-  Widget body() => CreateAsset(
-      preset: FormPresets.qualifier, parent: streams.app.asset.value);
+  Widget body() => CreateAsset(preset: FormPresets.qualifier);
 }

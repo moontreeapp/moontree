@@ -2,14 +2,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/streams/create.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
-class CreateQualifierAsset extends StatefulWidget {
+class CreateQualifierSubAsset extends StatefulWidget {
   @override
-  _CreateQualifierAssetState createState() => _CreateQualifierAssetState();
+  _CreateQualifierSubAssetState createState() =>
+      _CreateQualifierSubAssetState();
 }
 
-class _CreateQualifierAssetState extends State<CreateQualifierAsset> {
+class _CreateQualifierSubAssetState extends State<CreateQualifierSubAsset> {
   @override
   void initState() {
     super.initState();
@@ -21,11 +23,13 @@ class _CreateQualifierAssetState extends State<CreateQualifierAsset> {
   }
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: body(),
-      );
+  Widget build(BuildContext context) {
+    streams.create.form.add(GenericCreateForm(parent: streams.app.asset.value));
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: body(),
+    );
+  }
 
-  Widget body() => CreateAsset(
-      preset: FormPresets.qualifier, parent: streams.app.asset.value);
+  Widget body() => CreateAsset(preset: FormPresets.qualifier, isSub: true);
 }

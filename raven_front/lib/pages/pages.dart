@@ -4,7 +4,9 @@ import 'package:raven_front/pages/account/transactions.dart';
 import 'package:raven_front/pages/manage/assets.dart';
 import 'package:raven_front/pages/create/nft.dart';
 import 'package:raven_front/pages/create/main.dart';
+import 'package:raven_front/pages/create/sub.dart';
 import 'package:raven_front/pages/create/qualifier.dart';
+import 'package:raven_front/pages/create/qualifiersub.dart';
 import 'package:raven_front/pages/create/channel.dart';
 import 'package:raven_front/pages/create/restricted.dart';
 import 'package:raven_front/pages/misc/loading.dart';
@@ -41,7 +43,10 @@ class pages {
   static Transactions transactions = Transactions();
   static CreateNFTAsset createNFTAsset = CreateNFTAsset();
   static CreateMainAsset createMainAsset = CreateMainAsset();
+  static CreateMainSubAsset createMainSubAsset = CreateMainSubAsset();
   static CreateQualifierAsset createQualifierAsset = CreateQualifierAsset();
+  static CreateQualifierSubAsset createQualifierSubAsset =
+      CreateQualifierSubAsset();
   static CreateChannelAsset createChannelAsset = CreateChannelAsset();
   static CreateRestrictedAsset createRestrictedAsset = CreateRestrictedAsset();
   static Checkout checkout = Checkout();
@@ -76,9 +81,9 @@ class pages {
         '/scan': (context) => scan,
         '/create/nft': (context) => createNFTAsset,
         '/create/main': (context) => createMainAsset,
-        '/create/sub': (context) => createMainAsset,
+        '/create/sub': (context) => createMainSubAsset,
         '/create/qualifier': (context) => createQualifierAsset,
-        '/create/qualifiersub': (context) => createQualifierAsset,
+        '/create/qualifiersub': (context) => createQualifierSubAsset,
         '/create/channel': (context) => createChannelAsset,
         '/create/restricted': (context) => createRestrictedAsset,
         '/security/change': (context) => changePassword,

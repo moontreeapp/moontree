@@ -18,10 +18,11 @@ enum SelectionSet {
   Decimal,
   Holdings,
   Admins,
+  Parents,
   Create,
   Manage,
   Asset,
-  Sub_Asset
+  Sub_Asset,
 }
 enum SelectionOption {
   // list of my assets
@@ -261,6 +262,18 @@ class SelectionItems {
       ),
       title: Text(name, style: Theme.of(context).choicesHoldings));
 
+  Widget parentItem(String name) => ListTile(
+      visualDensity: VisualDensity.compact,
+      onTap: () {
+        Navigator.pop(context);
+        streams.create.form.add(GenericCreateForm.merge(
+          form: streams.create.form.value,
+          parent: name,
+        ));
+      },
+      leading: components.icons.assetAvatar(name, height: 24, width: 24),
+      title: Text(name, style: Theme.of(context).choicesHoldings));
+
   Widget item(
     SelectionOption name, {
     Widget? title,
@@ -407,6 +420,10 @@ class SelectionItems {
     } else if (modalSet == SelectionSet.Admins) {
       produceModal(
           [for (String name in holdingNames ?? []) restrictedItem(name)],
+          tall: false);
+    } else if (modalSet == SelectionSet.Parents) {
+      produceModal(
+          [for (String holding in holdingNames ?? []) parentItem(holding)],
           tall: false);
     } else if (modalSet == SelectionSet.Fee) {
       produceModal([for (SelectionOption name in names) feeItem(name)],
