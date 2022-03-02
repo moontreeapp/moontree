@@ -79,7 +79,6 @@ class _CreateAssetState extends State<CreateAsset> {
   void initState() {
     super.initState();
     listeners.add(streams.create.form.listen((GenericCreateForm? value) {
-      print('value $value');
       if (createForm != value) {
         setState(() {
           createForm = value;
@@ -528,6 +527,15 @@ class _CreateAssetState extends State<CreateAsset> {
     }
   }
 
+  String fullName([bool full = false]) => (isSub && full)
+      ? parentController.text +
+          (isNFT ? '#' : (isChannel ? '~' : (isQualifier ? '/#' : '/'))) +
+          nameController.text
+      : ((isQualifier || isNFT)
+              ? '#'
+              : (isChannel ? '~' : (isRestricted ? '\$' : ''))) +
+          nameController.text;
+
   void checkout(GenericCreateRequest createRequest) {
     /// send request to the correct stream
     //streams.spend.make.add(createRequest);
@@ -537,22 +545,15 @@ class _CreateAssetState extends State<CreateAsset> {
       '/transaction/checkout',
       arguments: {
         'struct': CheckoutStruct(
-          /// get the name we're creating the Asset under
-          //symbol: ((streams.spend.form.value?.symbol == 'Ravencoin'
-          //        ? 'RVN'
-          //        : streams.spend.form.value?.symbol) ??
-          //    'RVN'),
+          /// full symbol name
+          symbol: fullName(true),
+          displaySymbol: nameController.text,
           subSymbol: '',
           paymentSymbol: 'RVN',
           items: [
             /// send the correct items
-            if (isSub)
-              [
-                'Parent',
-                '${parentController.text}/${isNFT || isQualifier ? '#' : isChannel ? '~' : ''}',
-                '2'
-              ],
-            ['Asset Name', nameController.text, '2'],
+            if (isSub) ['Name', fullName(true), '2'],
+            if (!isSub) ['Name', fullName(), '2'],
             if (needsQuantity) ['Quantity', quantityController.text],
             if (needsDecimal) ['Decimals', decimalController.text],
             ['IPFS/Txid', ipfsController.text, '9'],

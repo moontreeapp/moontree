@@ -23,6 +23,7 @@ class _CreateMainAssetState extends State<CreateMainAsset> {
 
   @override
   Widget build(BuildContext context) {
+    streams.create.form.add(GenericCreateForm());
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: body(),

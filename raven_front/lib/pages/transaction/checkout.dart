@@ -11,6 +11,7 @@ import 'package:raven_back/utils/transform.dart';
 
 class CheckoutStruct {
   final String symbol;
+  final String displaySymbol;
   final String subSymbol;
   final String paymentSymbol;
   final Iterable<Iterable<String>> items;
@@ -40,7 +41,8 @@ class CheckoutStruct {
   ];
 
   const CheckoutStruct({
-    this.symbol = 'MoonTree',
+    this.symbol = '#MoonTree',
+    this.displaySymbol = 'MoonTree',
     this.subSymbol = 'Main/',
     this.paymentSymbol = 'RVN',
     this.items = exampleItems,
@@ -120,7 +122,7 @@ class _CheckoutState extends State<Checkout> {
       leading: components.icons.assetAvatar(struct.symbol.toUpperCase()),
       title: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
         SizedBox(width: 5),
-        Text(struct.symbol.toUpperCase(),
+        Text(struct.displaySymbol.toUpperCase(),
             style: Theme.of(context).checkoutAsset)
       ]),
       subtitle: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
