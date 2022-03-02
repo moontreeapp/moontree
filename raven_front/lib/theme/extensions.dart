@@ -569,13 +569,13 @@ extension TextStyleExtension on ThemeData {
       ? TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeights.regular,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.5,
           color: Color(0xDE000000))
       : TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeights.regular,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.5,
           color: Color(0xDE000000));
   TextStyle? get checkoutSubAsset => this.brightness == Brightness.light

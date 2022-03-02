@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:intersperse/intersperse.dart';
+import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/data.dart';
 import 'package:raven_back/services/transaction_maker.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/utils/transform.dart';
+import 'package:raven_front/widgets/front/loader.dart';
 
 class CheckoutStruct {
   final String symbol;
@@ -109,27 +111,30 @@ class _CheckoutState extends State<Checkout> {
           children: <Widget>[
             SizedBox(height: 12),
             header(),
-            Divider(indent: 16),
+            Divider(indent: 16 + 56),
             SizedBox(height: 14),
             transactionItems(),
+            SizedBox(height: 8),
+            Divider(indent: 16),
           ],
         ),
       );
 
   Widget header() => ListTile(
-      dense: true,
-      visualDensity: VisualDensity.compact,
-      leading: components.icons.assetAvatar(struct.symbol.toUpperCase()),
-      title: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-        SizedBox(width: 5),
-        Text(struct.displaySymbol.toUpperCase(),
-            style: Theme.of(context).checkoutAsset)
-      ]),
-      subtitle: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-        SizedBox(width: 5),
-        Text(struct.subSymbol.toUpperCase(),
-            style: Theme.of(context).checkoutSubAsset),
-      ]));
+        dense: true,
+        visualDensity: VisualDensity.compact,
+        leading: components.icons.assetAvatar(struct.symbol.toUpperCase()),
+        title: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+          SizedBox(width: 5),
+          Text(struct.displaySymbol.toUpperCase(),
+              style: Theme.of(context).checkoutAsset)
+        ]),
+        //subtitle: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+        //  SizedBox(width: 5),
+        //  Text(struct.subSymbol.toUpperCase(),
+        //      style: Theme.of(context).checkoutSubAsset),
+        //])
+      );
 
   Widget transactionItems() => Padding(
       padding: EdgeInsets.only(left: 16, right: 16),
@@ -257,11 +262,16 @@ class _CheckoutState extends State<Checkout> {
       height: 40,
       child: OutlinedButton.icon(
           onPressed: disabled
-              ? () {}
+              //? () {}
+              ? () async {
+                  print('clicked');
+                  //
+                  produceModal();
+                  await Future.delayed(Duration(seconds: 6));
+                  streams.app.snack.add(Snack(message: 'test'));
+                }
               : () async {
                   (struct.buttonAction ?? () {})();
-                  Navigator.popUntil(components.navigator.routeContext!,
-                      ModalRoute.withName('/home'));
                 },
           icon: Icon(
             struct.buttonIcon,
@@ -276,4 +286,18 @@ class _CheckoutState extends State<Checkout> {
           ),
           style:
               components.styles.buttons.bottom(context, disabled: disabled)));
+
+  void produceModal() {
+    showModalBottomSheet<void>(
+        context: context,
+        enableDrag: false,
+        elevation: 0,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        barrierColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
+        builder: (BuildContext context) => Loader(message: 'Creating Asset'));
+  }
 }

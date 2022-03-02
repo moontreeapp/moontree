@@ -117,9 +117,6 @@ class _CreateAssetState extends State<CreateAsset> {
 
   @override
   Widget build(BuildContext context) {
-    print(needsParent || needsQualifierParent);
-    print(isSub);
-    print(widget.preset);
     remainingNameLength =
         // max asset length
         31 -
@@ -556,17 +553,11 @@ class _CreateAssetState extends State<CreateAsset> {
             if (!isSub) ['Name', fullName(), '2'],
             if (needsQuantity) ['Quantity', quantityController.text],
             if (needsDecimal) ['Decimals', decimalController.text],
-            ['IPFS/Txid', ipfsController.text, '9'],
+            if (ipfsController.text != '')
+              ['IPFS/Txid', ipfsController.text, '9'],
             if (needsVerifier)
               ['Verifier String', verifierController.text, '6'],
-            if (needsReissue)
-              [
-                'Reissuable',
-                reissueValue
-                    ? 'Yes'
-                    : 'NO  (WARNING: These settings will be PERMANENT forever!)',
-                '3'
-              ],
+            if (needsReissue) ['Reissuable', reissueValue ? 'Yes' : 'No', '3'],
           ],
           fees: [
             ['Transaction Fee', 'calculating fee...']
@@ -605,7 +596,6 @@ class _CreateAssetState extends State<CreateAsset> {
   }
 
   void _produceQualifierParentModal() {
-    print(Current.qualifierNames);
     SelectionItems(context, modalSet: SelectionSet.Parents).build(
         holdingNames:
             Current.qualifierNames.map((String name) => name).toList());
