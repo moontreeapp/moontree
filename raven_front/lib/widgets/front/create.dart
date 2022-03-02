@@ -63,6 +63,7 @@ class _CreateAssetState extends State<CreateAsset> {
   bool quantityValidated = false;
   bool decimalValidated = false;
   String? nameValidationErr;
+  String? parentValidationErr;
   bool verifierValidated = false;
   String? verifierValidationErr;
   int remainingNameLength = 31;
@@ -216,6 +217,7 @@ class _CreateAssetState extends State<CreateAsset> {
         decoration: components.styles.decorations.textFeild(context,
             labelText: 'Parent Asset',
             hintText: 'Parent Asset',
+            errorText: parentValidationErr,
             suffixIcon: IconButton(
               icon: Padding(
                   padding: EdgeInsets.only(right: 14),
@@ -419,6 +421,18 @@ class _CreateAssetState extends State<CreateAsset> {
     return true;
   }
 
+  bool parentValidation(String name) {
+    if (isSub) {
+      if (!(name.length > 2)) {
+        //parentValidationErr =
+        //    '${isNFT ? 'NFT' : isChannel ? 'Message Channel' : isQualifier ? 'Sub Qualifier' : 'Sub'} Assets must have a parent';
+        return false;
+      }
+    }
+    //parentValidationErr = null;
+    return true;
+  }
+
   void validateName({String? name}) {
     name = name ?? nameController.text;
     var oldValidation = nameValidated;
@@ -505,6 +519,7 @@ class _CreateAssetState extends State<CreateAsset> {
               decimalValidation(decimalController.text.toInt())
           : true) &&
       (isNFT ? ipfsController.text != '' : true) &&
+      parentValidation(parentController.text) &&
       ipfsValidation(ipfsController.text);
 
   void submit() {
