@@ -17,8 +17,14 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
   Snack? snack;
   late List listeners = [];
   final OutlinedBorder shape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0)));
+    //side: BorderSide(), // no effect
+    borderRadius: BorderRadius.only(
+      topLeft: Radius.circular(8.0),
+      topRight: Radius.circular(8.0),
+      //bottomLeft: Radius.circular(-8.0), // no effect
+      //bottomRight: Radius.circular(-8.0), // no effect
+    ),
+  );
 
   @override
   void initState() {
@@ -47,21 +53,114 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
   }
 
   void show() {
-    var msg = Text(snack!.message,
-        style: snack!.positive
-            ? Theme.of(context).snackMessage
-            : Theme.of(context).snackMessageBad);
+    var msg = Container(
+      height: 72,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            height: 8,
+            color: Colors.transparent,
+
+            /// this is a shadow within the snackbar....
+            /// we have to sacrifice the shadow above the snackbar if we want
+            /// to keep this pattern of spoofing that its behind the navbar
+            /// the ohter way to do it is not use a snackbar, but instead
+            /// make a custom snackbar actually behind the navbar by making it
+            /// a part of the navbar widget...
+            //decoration: BoxDecoration(
+            //    color: const Color(0xFF212121),
+            //    borderRadius: BorderRadius.only(
+            //      topLeft: Radius.circular(8),
+            //      topRight: Radius.circular(8),
+            //    ),
+            //    boxShadow: [
+            //      BoxShadow(
+            //          color: const Color(0x33000000),
+            //          offset: Offset(0, 5),
+            //          blurRadius: 5),
+            //      BoxShadow(
+            //          color: const Color(0x1F000000),
+            //          offset: Offset(0, 3),
+            //          blurRadius: 14),
+            //      BoxShadow(
+            //          color: const Color(0x3D000000),
+            //          offset: Offset(0, 8),
+            //          blurRadius: 10)
+            //      //BoxShadow(
+            //      //    color: const Color(0x33000000),
+            //      //    offset: Offset(0, -3),
+            //      //    blurRadius: 5),
+            //      //BoxShadow(
+            //      //    color: const Color(0x1F000000),
+            //      //    offset: Offset(0, -1),
+            //      //    blurRadius: 18),
+            //      //BoxShadow(
+            //      //    color: const Color(0x24000000),
+            //      //    offset: Offset(0, -6),
+            //      //    blurRadius: 10),
+            //    ]),
+          ),
+          Padding(
+              padding: EdgeInsets.only(left: 16, right: 16),
+              child: Text(snack!.message,
+                  style: snack!.positive
+                      ? Theme.of(context).snackMessage
+                      : Theme.of(context).snackMessageBad)),
+          Container(
+            height: 16,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                ),
+                boxShadow: [
+                  // this one is to hide the shadow put on snackbars by default
+                  BoxShadow(color: const Color(0xFFFFFFFF), spreadRadius: 1),
+                  BoxShadow(
+                      color: const Color(0x33FFFFFF),
+                      offset: Offset(0, 5),
+                      blurRadius: 5),
+                  BoxShadow(
+                      color: const Color(0x1FFFFFFF),
+                      offset: Offset(0, 3),
+                      blurRadius: 14),
+                  BoxShadow(
+                      color: const Color(0x3DFFFFFF),
+                      offset: Offset(0, 8),
+                      blurRadius: 10)
+                ]),
+          )
+        ],
+      ),
+    );
     if (snack!.link == null && snack!.details == null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        //backgroundColor: Color(0xDE000000),
+        elevation: 0,
+        backgroundColor: const Color(0xFF212121),
         shape: shape,
         content: msg,
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.only(bottom: 102),
+        padding: EdgeInsets.only(
+          top: 0,
+          bottom: 0,
+        ),
       ));
     } else if (snack!.link != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          //backgroundColor: Color(0xDE000000),
+          elevation: 0,
+          backgroundColor: const Color(0xFF212121),
           shape: shape,
           content: msg,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(bottom: 102),
+          padding: EdgeInsets.only(
+            top: 0,
+            bottom: 0,
+          ),
           action: SnackBarAction(
               label: snack?.label ?? 'go',
               onPressed: snack!.link!.startsWith('/')
@@ -93,9 +192,16 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                               ])))));
     } else if (snack!.details != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          //backgroundColor: Color(0xDE000000),
+          elevation: 0,
+          backgroundColor: const Color(0xFF212121),
           shape: shape,
           content: msg,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(bottom: 102),
+          padding: EdgeInsets.only(
+            top: 0,
+            bottom: 0,
+          ),
           action: SnackBarAction(
               label: snack?.label ?? 'details',
               onPressed: () => showDialog(

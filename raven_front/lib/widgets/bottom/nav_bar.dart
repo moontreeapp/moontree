@@ -19,7 +19,7 @@ class _NavBarState extends State<NavBar> {
     var assetType = Asset.assetTypeOf(streams.app.asset.value ?? '');
     return Container(
       height: 118,
-      padding: EdgeInsets.only(left: 16, right: 16),
+      padding: EdgeInsets.only(left: 16, right: 16, top: 16),
       width: MediaQuery.of(context).size.width,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

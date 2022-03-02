@@ -467,13 +467,13 @@ extension TextStyleExtension on ThemeData {
           fontFamily: 'Nunito',
           fontWeight: FontWeights.semiBold,
           letterSpacing: 0.25,
-          color: Color(0xDEFFFFFF))
+          color: Color(0xFFFFFFFF))
       : TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
           fontWeight: FontWeights.semiBold,
           letterSpacing: 0.25,
-          color: Color(0xDEFFFFFF));
+          color: Color(0xFFFFFFFF));
   TextStyle? get snackMessageBad => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 14.0,
