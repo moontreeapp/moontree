@@ -19,14 +19,6 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
   final BorderRadius shape = BorderRadius.only(
     topLeft: Radius.circular(8.0),
     topRight: Radius.circular(8.0),
-    //OutlinedBorder shape = RoundedRectangleBorder(
-    //  //side: BorderSide(), // no effect
-    //  borderRadius: BorderRadius.only(
-    //    topLeft: Radius.circular(8.0),
-    //    topRight: Radius.circular(8.0),
-    //    //bottomLeft: Radius.circular(-8.0), // no effect
-    //    //bottomRight: Radius.circular(-8.0), // no effect
-    //  ),
   );
 
   @override
@@ -57,49 +49,12 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
 
   void show() {
     var msg = Container(
-      height: 80,
+      height: 72,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(height: 8, color: Colors.transparent),
-          //SizedBox(height: 8),
-          Container(
-            height: 8,
-            //color: Colors.transparent,
-            decoration: BoxDecoration(
-                color: const Color(0xFF212121),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(8),
-                  topRight: Radius.circular(8),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                      color: const Color(0x33000000),
-                      //offset: Offset(0, 5),
-                      blurRadius: 5),
-                  BoxShadow(
-                      color: const Color(0x1F000000),
-                      //offset: Offset(0, 3),
-                      blurRadius: 14),
-                  BoxShadow(
-                      color: const Color(0x3D000000),
-                      //offset: Offset(0, 8),
-                      blurRadius: 10)
-                  //BoxShadow(
-                  //    color: const Color(0x33000000),
-                  //    offset: Offset(0, -3),
-                  //    blurRadius: 5),
-                  //BoxShadow(
-                  //    color: const Color(0x1F000000),
-                  //    offset: Offset(0, -1),
-                  //    blurRadius: 18),
-                  //BoxShadow(
-                  //    color: const Color(0x24000000),
-                  //    offset: Offset(0, -6),
-                  //    blurRadius: 10),
-                ]),
-          ),
           Padding(
               padding: EdgeInsets.only(left: 16, right: 16),
               child: Text(snack!.message,
@@ -138,7 +93,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         elevation: 0,
         backgroundColor: const Color(0xFF212121),
-        //shape: RoundedRectangleBorder(borderRadius: shape),
+        shape: RoundedRectangleBorder(borderRadius: shape),
         content: msg,
         behavior: SnackBarBehavior.floating,
         margin: EdgeInsets.only(bottom: 102),
