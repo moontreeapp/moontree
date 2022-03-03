@@ -114,8 +114,8 @@ class _CheckoutState extends State<Checkout> {
             Divider(indent: 16 + 56),
             SizedBox(height: 14),
             transactionItems(),
-            SizedBox(height: 8),
-            Divider(indent: 16),
+            SizedBox(height: 16),
+            //Divider(indent: 16),
           ],
         ),
       );
