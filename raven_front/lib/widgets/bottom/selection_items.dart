@@ -23,6 +23,7 @@ enum SelectionSet {
   Manage,
   Asset,
   Sub_Asset,
+  Sub_Qualifier,
 }
 enum SelectionOption {
   // list of my assets
@@ -123,9 +124,12 @@ class SelectionItems {
                 SelectionOption.Channel,
               ],
               SelectionSet.Sub_Asset: [
-                SelectionOption.Sub_Asset,
+                SelectionOption.Sub,
                 SelectionOption.NFT,
-                SelectionOption.Messaging_Channel_Asset,
+                SelectionOption.Channel,
+              ],
+              SelectionSet.Sub_Qualifier: [
+                SelectionOption.QualifierSub,
               ],
             }[modalSet]) ??
         [];
@@ -279,6 +283,7 @@ class SelectionItems {
     Widget? title,
     VoidCallback? behavior,
     String? value,
+    bool useCreateLeads = false,
   }) =>
       ListTile(
         visualDensity: VisualDensity.compact,
@@ -287,7 +292,7 @@ class SelectionItems {
           (behavior ?? () {})();
         },
         leading: symbol == null
-            ? modalSet == SelectionSet.Create
+            ? useCreateLeads
                 ? createLeads(name)
                 : leads(name)
             : components.icons.assetAvatar(
@@ -364,6 +369,7 @@ class SelectionItems {
           //}[name]!,
           arguments: {'symbol': asString(name)},
         ),
+        useCreateLeads: true, // modalSet == SelectionSet.Create
       );
 
   Widget assetItem(SelectionOption name) => item(
@@ -437,7 +443,9 @@ class SelectionItems {
       produceModal([for (SelectionOption name in names) createItem(name)],
           tall: false);
     } else if (modalSet == SelectionSet.Sub_Asset) {
-      produceModal([for (SelectionOption name in names) subAssetItem(name)],
+      produceModal([
+        for (SelectionOption name in names) createItem(name)
+      ], //subAssetItem(name)],
           tall: false);
     } else {
       if (names.length == behaviors.length && names.length == values.length) {

@@ -168,7 +168,7 @@ class _CreateAssetState extends State<CreateAsset> {
                       children: <Widget>[
                         if (needsParent || needsQualifierParent)
                           Padding(
-                            padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                            padding: EdgeInsets.fromLTRB(16, 24, 16, 0),
                             child: parentFeild(),
                           ),
                         Padding(
@@ -215,8 +215,8 @@ class _CreateAssetState extends State<CreateAsset> {
         controller: parentController,
         readOnly: true,
         decoration: components.styles.decorations.textFeild(context,
-            labelText: 'Parent Asset',
-            hintText: 'Parent Asset',
+            labelText: 'Parent ' + (isQualifier ? 'Qualifier' : 'Asset'),
+            hintText: 'Parent ' + (isQualifier ? 'Qualifier' : 'Asset'),
             errorText: parentValidationErr,
             suffixIcon: IconButton(
               icon: Padding(

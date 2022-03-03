@@ -44,20 +44,29 @@ class _NavBarState extends State<NavBar> {
                               name: 'create', onPressed: _produceCreateModal)
                         ]
                       : [
-                          if ([
-                            AssetType.Main,
-                            AssetType.Qualifier,
-                            AssetType.Sub
-                          ].contains(assetType)) ...[
+                          if ([AssetType.Main, AssetType.Sub]
+                              .contains(assetType)) ...[
                             actionButton(
                                 name: 'create',
                                 onPressed: streams.app.page.value == 'Asset'
                                     ? _produceSubCreateModal
-                                    : () {
-                                        /*if restricted or nft no create button,
-                                        if qualifier create a sub qualifier, 
-                                        else above */
-                                      }),
+                                    : () {}),
+                            SizedBox(width: 16)
+                          ],
+                          if ([
+                            AssetType.Qualifier,
+                            AssetType.QualifierSub,
+                          ].contains(assetType)) ...[
+                            actionButton(
+                                name: 'create',
+                                onPressed: streams.app.page.value == 'Asset'
+                                    //? _produceSubQualifierModal
+                                    ? () => Navigator.pushNamed(
+                                          components.navigator.routeContext!,
+                                          '/create/qualifiersub',
+                                          arguments: {'symbol': 'QualifierSub'},
+                                        )
+                                    : () {}),
                             SizedBox(width: 16)
                           ],
                           actionButton(
@@ -145,5 +154,9 @@ class _NavBarState extends State<NavBar> {
 
   void _produceSubCreateModal() {
     SelectionItems(context, modalSet: SelectionSet.Sub_Asset).build();
+  }
+
+  void _produceSubQualifierModal() {
+    SelectionItems(context, modalSet: SelectionSet.Sub_Qualifier).build();
   }
 }

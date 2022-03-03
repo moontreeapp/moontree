@@ -73,22 +73,26 @@ class _PageTitleState extends State<PageTitle> {
       : FittedBox(
           fit: BoxFit.fitWidth,
           child: Text(
-              {
+              const {
                     '/settings/import_export': 'Import / Export',
                     '/settings/settings': 'Settings',
                   }[settingTitle] ??
-                  {
+                  const {
                     'Send': 'Send',
                     'Import_export': 'Import / Export',
                     'Change': 'Security',
                     'Remove': 'Security',
                     'Verify': 'Security',
                     'Receive': 'Receive',
-                    'Channel': 'Create Message Channel',
-                    'Nft': 'Create NFT',
-                    'Main': 'Create Asset',
-                    'Qualifier': 'Create Qualifier',
-                    'Restricted': 'Create Restricted Asset',
+                    'Channel': 'Create',
+                    'Nft': 'Create',
+                    'Main': 'Create',
+                    'Qualifier': 'Create',
+                    'Qualifiersub': 'Create',
+                    'Sub': 'Create',
+                    'Restricted': 'Create',
+                  }[pageTitle] ??
+                  {
                     'Transactions':
                         ((streams.spend.form.value?.symbol ?? 'RVN') == 'RVN')
                             ? 'Ravencoin'
