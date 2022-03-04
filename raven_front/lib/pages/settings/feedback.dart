@@ -116,9 +116,9 @@ class _FeedbackState extends State<Feedback> {
                     padding: EdgeInsets.only(right: 14),
                     child: Icon(Icons.expand_more_rounded,
                         color: Color(0xDE000000))),
-                onPressed: () => _produceAssetModal(),
+                onPressed: () => _produceFeedbackModal(),
               )),
-          onTap: () => _produceAssetModal(),
+          onTap: () => _produceFeedbackModal(),
           onEditingComplete: () =>
               FocusScope.of(context).requestFocus(descriptionFocus),
         ),
@@ -235,7 +235,7 @@ class _FeedbackState extends State<Feedback> {
     components.loading.screen(message: 'Sending Feedback');
   }
 
-  void _produceAssetModal() {
+  void _produceFeedbackModal() {
     SelectionItems(context, modalSet: SelectionSet.Feedback, behaviors: [
       () => setState(() => typeController.text = 'Change'),
       () => setState(() => typeController.text = 'Bug')

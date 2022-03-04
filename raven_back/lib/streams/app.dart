@@ -25,13 +25,15 @@ class Snack {
   final String? label; // link label
   final String? link;
   final Map<String, dynamic>? arguments;
+  final bool atBottom;
   Snack(
       {required this.message,
       this.positive = true,
       this.details,
       this.link,
       this.arguments,
-      this.label});
+      this.label,
+      this.atBottom = false});
 }
 
 enum AppContext { wallet, manage, swap }

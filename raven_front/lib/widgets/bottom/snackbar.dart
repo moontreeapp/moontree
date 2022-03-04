@@ -48,49 +48,62 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
   }
 
   void show() {
-    var msg = Container(
-      height: 72,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(height: 8, color: Colors.transparent),
-          Padding(
-              padding: EdgeInsets.only(left: 16, right: 16),
-              child: Text(snack!.message, style: Theme.of(context).snackMessage
-                  //snack!.positive
-                  //    ? Theme.of(context).snackMessage
-                  //    : Theme.of(context).snackMessageBad
-                  )),
-          Container(
-            height: 16,
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                ),
-                boxShadow: [
-                  // this one is to hide the shadow put on snackbars by default
-                  BoxShadow(color: const Color(0xFFFFFFFF), spreadRadius: 1),
-                  BoxShadow(
-                      color: const Color(0x33FFFFFF),
-                      offset: Offset(0, 5),
-                      blurRadius: 5),
-                  BoxShadow(
-                      color: const Color(0x1FFFFFFF),
-                      offset: Offset(0, 3),
-                      blurRadius: 14),
-                  BoxShadow(
-                      color: const Color(0x3DFFFFFF),
-                      offset: Offset(0, 8),
-                      blurRadius: 10)
-                ]),
-          )
-        ],
-      ),
-    );
-    if (snack!.link == null && snack!.details == null) {
+    var msg = snack!.atBottom
+        ? Padding(
+            padding: EdgeInsets.only(left: 16, right: 16),
+            child: Text(snack!.message, style: Theme.of(context).snackMessage))
+        : Container(
+            height: 72,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(height: 8, color: Colors.transparent),
+                Padding(
+                    padding: EdgeInsets.only(left: 16, right: 16),
+                    child: Text(snack!.message,
+                        style: Theme.of(context).snackMessage
+                        //snack!.positive
+                        //    ? Theme.of(context).snackMessage
+                        //    : Theme.of(context).snackMessageBad
+                        )),
+                Container(
+                  height: 16,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(16),
+                        topRight: Radius.circular(16),
+                      ),
+                      boxShadow: [
+                        // this one is to hide the shadow put on snackbars by default
+                        BoxShadow(
+                            color: const Color(0xFFFFFFFF), spreadRadius: 1),
+                        BoxShadow(
+                            color: const Color(0x33FFFFFF),
+                            offset: Offset(0, 5),
+                            blurRadius: 5),
+                        BoxShadow(
+                            color: const Color(0x1FFFFFFF),
+                            offset: Offset(0, 3),
+                            blurRadius: 14),
+                        BoxShadow(
+                            color: const Color(0x3DFFFFFF),
+                            offset: Offset(0, 8),
+                            blurRadius: 10)
+                      ]),
+                )
+              ],
+            ),
+          );
+    if (snack!.atBottom) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        elevation: 1,
+        backgroundColor: const Color(0xFF212121),
+        shape: RoundedRectangleBorder(borderRadius: shape),
+        content: msg,
+      ));
+    } else if (snack!.link == null && snack!.details == null) {
       /// this configuration of the snackbar always shows on top of the nav bar
       streams.app.hideNav.add(false);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

@@ -8,7 +8,8 @@ import 'package:raven_front/components/components.dart';
 
 class Loader extends StatefulWidget {
   final String message;
-  const Loader({this.message = 'Loading...'}) : super();
+  final bool returnHome;
+  const Loader({this.message = 'Loading...', this.returnHome = true}) : super();
 
   @override
   _LoaderState createState() => _LoaderState();
@@ -25,9 +26,12 @@ class _LoaderState extends State<Loader> {
     // like streams.spend.success or whatever.
     streams.app.snack.add(null); // clear out first just in case.
     listeners.add(streams.app.snack.listen((Snack? value) {
+      print(value);
       if (value != null) {
-        Navigator.popUntil(
-            components.navigator.routeContext!, ModalRoute.withName('/home'));
+        if (widget.returnHome) {
+          Navigator.popUntil(
+              components.navigator.routeContext!, ModalRoute.withName('/home'));
+        }
       }
     }));
   }

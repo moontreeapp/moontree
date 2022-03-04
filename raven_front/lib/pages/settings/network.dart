@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:raven_back/streams/app.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 
 import 'package:raven_front/components/components.dart';
@@ -21,6 +22,8 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
   TextEditingController serverAddress = TextEditingController(text: '');
   FocusNode serverFocusNode = FocusNode();
   bool validated = true;
+  bool pressed = false;
+  RavenElectrumClient? client;
 
   @override
   void initState() {
@@ -28,8 +31,15 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
         '${services.client.currentDomain}:${services.client.currentPort}';
     listeners.add(res.settings.changes
         .listen((Change<Setting> changes) => setState(() {})));
-    listeners.add(streams.client.client
-        .listen((RavenElectrumClient? ravenClient) => setState(() {})));
+    listeners
+        .add(streams.client.client.listen((RavenElectrumClient? ravenClient) {
+      if (ravenClient != null && client != ravenClient && pressed) {
+        setState(() {});
+        //Navigator.of(components.navigator.routeContext!).pop();
+        streams.app.snack
+            .add(Snack(message: 'Successfully Connected', atBottom: true));
+      }
+    }));
     super.initState();
   }
 
@@ -135,6 +145,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
     );
     // flush out current connection and allow waiter to reestablish one
     streams.client.client.add(null);
-    setState(() {});
+    components.loading.screen(message: 'Connecting', returnHome: false);
+    pressed = true;
   }
 }
