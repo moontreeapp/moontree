@@ -24,7 +24,6 @@ enum SelectionSet {
   Asset,
   Sub_Asset,
   Sub_Qualifier,
-  Wallets,
 }
 enum SelectionOption {
   // list of my assets
@@ -316,16 +315,6 @@ class SelectionItems {
             : null,
       );
 
-  Widget walletItem(Wallet wallet) => ListTile(
-        visualDensity: VisualDensity.compact,
-        onTap: () {
-          Navigator.pop(context);
-          res.settings.setCurrentWalletId(wallet.id);
-        },
-        leading: Icon(Icons.account_balance_wallet_rounded),
-        title: Text('Wallet ' + wallet.name, style: Theme.of(context).choices),
-      );
-
   Widget restrictedItem(String name) => item(
         SelectionOption.Restricted_Symbol,
         title: Text(name, style: Theme.of(context).choices),
@@ -434,10 +423,7 @@ class SelectionItems {
   }
 
   void build({List<String>? holdingNames, String? decimalPrefix}) {
-    if (modalSet == SelectionSet.Wallets) {
-      produceModal([for (Wallet wallet in res.wallets) walletItem(wallet)],
-          tall: true, extra: true);
-    } else if (modalSet == SelectionSet.Holdings) {
+    if (modalSet == SelectionSet.Holdings) {
       produceModal(
         [for (String holding in holdingNames ?? []) holdingItem(holding)],
       );

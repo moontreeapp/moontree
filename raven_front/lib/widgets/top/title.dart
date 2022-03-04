@@ -55,6 +55,9 @@ class _PageTitleState extends State<PageTitle> {
         });
       }
     }));
+    listeners.add(res.settings.changes.listen((Change change) {
+      setState(() {});
+    }));
   }
 
   @override
@@ -117,30 +120,37 @@ class _PageTitleState extends State<PageTitle> {
     }
     if (res.wallets.length > 1) {
       if (settingTitle == 'open') {
-        /// comes up but its hidden behind the scrim and at the bottom of the page that has been pushed down...
-        /// we could either use the bottom modal somehow, or we could spoof it
-        /// with a snackbar...
-        //Backdrop.of(components.navigator.routeContext!).revealBackLayer()
-        //ScaffoldMessenger.of(components.navigator.scaffoldContext).
-        /// disguise a snackbar as a bottom sheet?
-        //        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        //  elevation: 0,
-        //  backgroundColor: const Color(0xFF212121),
-        //  shape: RoundedRectangleBorder(borderRadius: shape),
-        //  content: msg,
-        //  behavior: SnackBarBehavior.floating,
-        //  margin: EdgeInsets.only(bottom: 102),
-        //  padding: EdgeInsets.only(
-        //    top: 0,
-        //    bottom: 0,
-        //  ),
-        //));
-        // on click: ScaffoldMessenger.of(context).hideCurrentSnackBar();
         return GestureDetector(
             onTap: () {
-              SelectionItems(components.navigator.routeContext!,
-                      modalSet: SelectionSet.Wallets)
-                  .build();
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                elevation: 0,
+                backgroundColor: const Color(0xFFFFFFFF),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8.0),
+                  topRight: Radius.circular(8.0),
+                )),
+                duration: Duration(seconds: 60),
+                content: Container(
+                    child: ListView(shrinkWrap: true, children: <Widget>[
+                  for (Wallet wallet in res.wallets)
+                    ListTile(
+                      visualDensity: VisualDensity.compact,
+                      onTap: () {
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        //Navigator.pop(context);
+                        res.settings.setCurrentWalletId(wallet.id);
+                      },
+                      leading: Icon(
+                        Icons.account_balance_wallet_rounded,
+                        color: Color(0xFF5C6BC0),
+                      ),
+                      title: Text('Wallet ' + wallet.name,
+                          style: Theme.of(context).choicesBlue),
+                    )
+                ])),
+              ));
+              // on click: ;
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,

@@ -69,6 +69,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         }
       }
     }));
+    listeners.add(res.settings.changes.listen((Change change) {
+      setState(() {});
+    }));
   }
 
   @override
