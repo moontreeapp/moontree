@@ -39,7 +39,7 @@ class ButtonStyleComponents {
         foregroundColor: MaterialStateProperty.all(Color(0xDE000000)),
         side: MaterialStateProperty.all(BorderSide(
             color: disabled
-                ? Theme.of(context).disabledColor
+                ? Color(0x615C6BC0) // Theme.of(context).disabledColor
                 : Theme.of(context).backgroundColor,
             width: 2,
             style: BorderStyle.solid)),

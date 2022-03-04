@@ -48,14 +48,95 @@ class _ImportState extends State<Import> {
       wallet =
           res.wallets.primaryIndex.getOne(data['walletId']) ?? Current.wallet;
     }
+    // testing
+    //file = FileDetails(
+    //  filename: 'file.name',
+    //  content: 'asdf',
+    //  size: 2.3,
+    //);
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: body(),
     );
   }
 
-  Widget submitButton() {
-    var label = 'IMPORT';
+  Widget body() => Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          file == null ? textInputField() : filePicked(),
+          Padding(
+              padding:
+                  EdgeInsets.only(top: 0, left: 16.0, right: 16.0, bottom: 40),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: file == null
+                    ? [
+                        Expanded(
+                            child: Container(height: 40, child: fileButton())),
+                        SizedBox(width: 16),
+                        Expanded(
+                            child:
+                                Container(height: 40, child: submitButton())),
+                      ]
+                    : [
+                        Expanded(
+                            child: Container(
+                                height: 40, child: submitButton('Import File')))
+                      ],
+              ))
+        ],
+      );
+
+  Widget textInputField() => Container(
+      height: 200,
+      padding: EdgeInsets.only(
+        top: 16,
+        left: 16.0,
+        right: 16.0,
+      ),
+      child: TextField(
+        autocorrect: false,
+        controller: words,
+        keyboardType: TextInputType.multiline,
+        maxLines: 12,
+        textInputAction: TextInputAction.done,
+        decoration: components.styles.decorations.textFeild(
+          context,
+          labelText: 'Seed, WIF, or Key',
+          hintText: 'Please enter your seed words, WIF, or private key',
+          helperText:
+              importFormatDetected == 'Unknown' ? null : importFormatDetected,
+          errorText:
+              importFormatDetected == 'Unknown' ? importFormatDetected : null,
+        ),
+        onChanged: (value) => enableImport(),
+        onEditingComplete: () async => await attemptImport(),
+      ));
+
+  Widget filePicked() => Column(children: [
+        Padding(
+            //padding: EdgeInsets.only(left: 8, top: 16.0),
+            padding: EdgeInsets.only(left: 16, right: 0, top: 16, bottom: 0),
+            child: ListTile(
+              dense: true,
+              contentPadding: EdgeInsets.all(0),
+              leading: Icon(Icons.attachment_rounded, color: Colors.black),
+              title:
+                  Text(file!.filename, style: Theme.of(context).importedFile),
+              subtitle: Text('${file!.size.toString()} KB',
+                  style: Theme.of(context).importedSize),
+              trailing: IconButton(
+                  icon: Icon(Icons.close_rounded, color: Color(0xDE000000)),
+                  onPressed: () => setState(() => file = null)),
+            )),
+        Divider(
+            //indent: 32,
+            ),
+      ]);
+
+  Widget submitButton([String? label]) {
+    label = (label ?? 'Import').toUpperCase();
     if (importEnabled) {
       return OutlinedButton.icon(
           onPressed: () async =>
@@ -70,6 +151,19 @@ class _ImportState extends State<Import> {
         label: Text(label, style: Theme.of(context).disabledButton),
         style: components.styles.buttons.bottom(context, disabled: true));
   }
+
+  Widget fileButton() => OutlinedButton.icon(
+      icon: Icon(
+        MdiIcons.fileKey,
+        color: Color(0xDE000000),
+      ),
+      label: Text('FILE', style: Theme.of(context).enabledButton),
+      onPressed: () async {
+        file = await storage.readFromFilePickerSize();
+        enableImport(file?.content ?? '');
+        setState(() {});
+      },
+      style: components.styles.buttons.bottom(context));
 
   void enableImport([String? given]) {
     var oldImportFormatDetected = importFormatDetected;
@@ -162,98 +256,4 @@ class _ImportState extends State<Import> {
     streams.import.attempt.add(ImportRequest(text: text));
     components.loading.screen(message: 'Importing');
   }
-
-  Widget body() => Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                  height: 200,
-                  child: TextField(
-                    autocorrect: false,
-                    controller: words,
-                    keyboardType: TextInputType.multiline,
-                    maxLines: 12,
-                    textInputAction: TextInputAction.done,
-                    decoration: components.styles.decorations.textFeild(
-                      context,
-                      labelText: 'Seed, WIF, or Key',
-                      hintText:
-                          'Please enter your seed words, WIF, or private key',
-                      helperText: importFormatDetected == 'Unknown'
-                          ? null
-                          : importFormatDetected,
-                      errorText: importFormatDetected == 'Unknown'
-                          ? importFormatDetected
-                          : null,
-                    ),
-                    onChanged: (value) => enableImport(),
-                    onEditingComplete: () async => await attemptImport(),
-                  )),
-              SizedBox(height: 16),
-              importWaysButtons(),
-            ],
-          ),
-          Padding(
-              padding: EdgeInsets.only(
-                top: 0,
-                bottom: 40,
-              ),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [Container(height: 40, child: submitButton())]))
-        ],
-      ));
-
-  Widget importWaysButtons() => file != null
-      ? Container(
-          height: 72,
-          decoration: BoxDecoration(
-              color: Color(0x1F5C6BC0),
-              borderRadius: BorderRadius.all(Radius.circular(8.0))),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(children: [
-                SizedBox(width: 18),
-                Icon(Icons.attachment_rounded),
-                SizedBox(width: 18),
-                Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(file!.filename,
-                          style: Theme.of(context).importedFile),
-                      Text('${file!.size.toString()} KB',
-                          style: Theme.of(context).importedSize),
-                    ]),
-              ]),
-              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                IconButton(
-                    icon: Icon(Icons.close_rounded),
-                    onPressed: () => setState(() => file = null)),
-                SizedBox(width: 13),
-              ])
-            ],
-          ))
-      : TextButton.icon(
-          icon: Icon(
-            MdiIcons.fileKey,
-            color: Theme.of(context).backgroundColor,
-          ),
-          label: Text('IMPORT FILE', style: Theme.of(context).textButton),
-          onPressed: () async {
-            file = await storage.readFromFilePickerSize();
-            enableImport(file?.content ?? '');
-            setState(() {});
-            //var resp = await storage.readFromFilePickerRaw() ?? '';
-            //await attemptImport(resp);
-          },
-          //style: components.styles.buttons.curvedSides
-        );
 }

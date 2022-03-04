@@ -452,26 +452,26 @@ extension TextStyleExtension on ThemeData {
       ? TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeights.regular,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.5,
           color: Color(0xDE000000))
       : TextStyle(
           fontSize: 16.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeights.regular,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.5,
           color: Color(0xDE000000));
   TextStyle? get importedSize => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeights.regular,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.25,
           color: Color(0x61000000))
       : TextStyle(
           fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeights.regular,
+          fontWeight: FontWeights.semiBold,
           letterSpacing: 0.25,
           color: Color(0x61000000));
   TextStyle? get snackMessage => this.brightness == Brightness.light
