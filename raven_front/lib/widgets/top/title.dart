@@ -4,6 +4,8 @@ import 'package:raven_back/extensions/object.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/widgets/widgets.dart';
+import 'package:raven_front/components/components.dart';
 
 class PageTitle extends StatefulWidget {
   PageTitle({Key? key}) : super(key: key);
@@ -114,10 +116,32 @@ class _PageTitleState extends State<PageTitle> {
       return null;
     }
     if (res.wallets.length > 1) {
-      print(settingTitle);
       if (settingTitle == 'open') {
+        /// comes up but its hidden behind the scrim and at the bottom of the page that has been pushed down...
+        /// we could either use the bottom modal somehow, or we could spoof it
+        /// with a snackbar...
+        //Backdrop.of(components.navigator.routeContext!).revealBackLayer()
+        //ScaffoldMessenger.of(components.navigator.scaffoldContext).
+        /// disguise a snackbar as a bottom sheet?
+        //        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        //  elevation: 0,
+        //  backgroundColor: const Color(0xFF212121),
+        //  shape: RoundedRectangleBorder(borderRadius: shape),
+        //  content: msg,
+        //  behavior: SnackBarBehavior.floating,
+        //  margin: EdgeInsets.only(bottom: 102),
+        //  padding: EdgeInsets.only(
+        //    top: 0,
+        //    bottom: 0,
+        //  ),
+        //));
+        // on click: ScaffoldMessenger.of(context).hideCurrentSnackBar();
         return GestureDetector(
-            onTap: () {},
+            onTap: () {
+              SelectionItems(components.navigator.routeContext!,
+                      modalSet: SelectionSet.Wallets)
+                  .build();
+            },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [

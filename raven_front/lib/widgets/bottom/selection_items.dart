@@ -24,6 +24,7 @@ enum SelectionSet {
   Asset,
   Sub_Asset,
   Sub_Qualifier,
+  Wallets,
 }
 enum SelectionOption {
   // list of my assets
@@ -315,6 +316,16 @@ class SelectionItems {
             : null,
       );
 
+  Widget walletItem(Wallet wallet) => ListTile(
+        visualDensity: VisualDensity.compact,
+        onTap: () {
+          Navigator.pop(context);
+          res.settings.setCurrentWalletId(wallet.id);
+        },
+        leading: Icon(Icons.account_balance_wallet_rounded),
+        title: Text('Wallet ' + wallet.name, style: Theme.of(context).choices),
+      );
+
   Widget restrictedItem(String name) => item(
         SelectionOption.Restricted_Symbol,
         title: Text(name, style: Theme.of(context).choices),
@@ -400,7 +411,7 @@ class SelectionItems {
         ),
       );
 
-  void produceModal(List items, {bool tall = true}) {
+  void produceModal(List items, {bool tall = true, bool extra = false}) {
     showModalBottomSheet<void>(
         context: context,
         enableDrag: true,
@@ -410,7 +421,11 @@ class SelectionItems {
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
         builder: (BuildContext context) => Container(
-            height: tall ? (MediaQuery.of(context).size.height) / 2 : null,
+            height: tall && extra
+                ? MediaQuery.of(context).size.height
+                : tall
+                    ? (MediaQuery.of(context).size.height) / 2
+                    : null,
             child: ListView(shrinkWrap: true, children: <Widget>[
               ...[SizedBox(height: 8)],
               ...items,
@@ -419,7 +434,10 @@ class SelectionItems {
   }
 
   void build({List<String>? holdingNames, String? decimalPrefix}) {
-    if (modalSet == SelectionSet.Holdings) {
+    if (modalSet == SelectionSet.Wallets) {
+      produceModal([for (Wallet wallet in res.wallets) walletItem(wallet)],
+          tall: true, extra: true);
+    } else if (modalSet == SelectionSet.Holdings) {
       produceModal(
         [for (String holding in holdingNames ?? []) holdingItem(holding)],
       );
