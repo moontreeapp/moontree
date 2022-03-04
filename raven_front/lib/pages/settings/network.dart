@@ -35,7 +35,6 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
         .add(streams.client.client.listen((RavenElectrumClient? ravenClient) {
       if (ravenClient != null && client != ravenClient && pressed) {
         setState(() {});
-        //Navigator.of(components.navigator.routeContext!).pop();
         streams.app.snack
             .add(Snack(message: 'Successfully Connected', atBottom: true));
       }

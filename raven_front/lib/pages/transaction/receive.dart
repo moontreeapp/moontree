@@ -134,9 +134,12 @@ class _ReceiveState extends State<Receive> {
                     onLongPress: () {
                       Clipboard.setData(
                           new ClipboardData(text: rawAddress ? address : uri));
-                      ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
-                        content: new Text("Copied to Clipboard"),
-                      ));
+                      streams.app.snack.add(Snack(
+                          message: 'Copied to Clipboard', atBottom: true));
+                      // not formatted the same...
+                      //ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+                      //  content: new Text("Copied to Clipboard"),
+                      //));
                     },
                     child: Center(
 
