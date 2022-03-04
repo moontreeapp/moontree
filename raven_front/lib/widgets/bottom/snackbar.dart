@@ -57,10 +57,11 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
           Container(height: 8, color: Colors.transparent),
           Padding(
               padding: EdgeInsets.only(left: 16, right: 16),
-              child: Text(snack!.message,
-                  style: snack!.positive
-                      ? Theme.of(context).snackMessage
-                      : Theme.of(context).snackMessageBad)),
+              child: Text(snack!.message, style: Theme.of(context).snackMessage
+                  //snack!.positive
+                  //    ? Theme.of(context).snackMessage
+                  //    : Theme.of(context).snackMessageBad
+                  )),
           Container(
             height: 16,
             decoration: BoxDecoration(

@@ -12,12 +12,11 @@ class ImportWaiter extends Waiter {
         await Future.delayed(const Duration(milliseconds: 250));
         var importFrom = ImportFrom(text: importRequest.text);
         if (await importFrom.handleImport()) {
-          streams.app.snack.add(Snack(
-              message: 'Sucessful Import', details: importFrom.importedMsg!));
+          streams.app.snack.add(Snack(message: 'Sucessful Import'));
         } else {
           streams.app.snack.add(Snack(
               message: 'Error Importing',
-              details: importFrom.importedMsg!,
+              //details: importFrom.importedMsg!, // good usecase for details
               positive: false));
         }
         streams.import.attempt.add(null);

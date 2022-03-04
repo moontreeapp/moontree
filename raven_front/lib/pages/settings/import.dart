@@ -160,8 +160,7 @@ class _ImportState extends State<Import> {
       text = resp;
     }
     streams.import.attempt.add(ImportRequest(text: text));
-    Navigator.popUntil(
-        components.navigator.routeContext!, ModalRoute.withName('/home'));
+    components.loading.screen(message: 'Importing');
   }
 
   Widget body() => Padding(

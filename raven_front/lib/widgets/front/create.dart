@@ -602,6 +602,7 @@ class _CreateAssetState extends State<CreateAsset> {
           //streams.spend.send.add(streams.spend.made.value),
           buttonIcon: MdiIcons.arrowTopRightThick,
           buttonWord: 'Create',
+          loadingMessage: 'Creating Asset',
         )
       },
     );

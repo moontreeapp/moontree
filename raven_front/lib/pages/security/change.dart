@@ -83,6 +83,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       ));
 
   Widget get existingPasswordField => TextField(
+        focusNode: existingPasswordFocusNode,
         autocorrect: false,
         enabled: services.password.required ? true : false,
         controller: existingPassword,
@@ -106,12 +107,17 @@ class _ChangePasswordState extends State<ChangePassword> {
           ),
         ),
         onChanged: (String value) {
-          if (verify()) {
-            setState(() {});
-          }
-          setState(() {});
+          setState(() {
+            if (verify()) {
+              FocusScope.of(context).requestFocus(newPasswordFocusNode);
+            }
+          });
         },
-        onEditingComplete: () => verify(),
+        onEditingComplete: () {
+          if (verify()) {
+            FocusScope.of(context).requestFocus(newPasswordFocusNode);
+          }
+        },
       );
 
   bool verify() =>
@@ -248,23 +254,7 @@ class _ChangePasswordState extends State<ChangePassword> {
     if (services.password.validate.complexity(newPassword.text)) {
       FocusScope.of(context).unfocus();
       streams.password.update.add(newPassword.text);
-      produceModal();
-      //Navigator.popUntil(
-      //    components.navigator.routeContext!, ModalRoute.withName('/home'));
+      components.loading.screen(message: 'Setting Password');
     }
-  }
-
-  void produceModal() {
-    showModalBottomSheet<void>(
-        context: context,
-        enableDrag: false,
-        elevation: 0,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        barrierColor: Colors.transparent,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
-        builder: (BuildContext context) => Loader(message: 'Setting Password'));
   }
 }

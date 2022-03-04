@@ -12,8 +12,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late AnimationController controller;
   late Animation<Offset> offset;
-  late bool importTrigger = false;
-  late bool sendTrigger = false;
   late AppContext currentContext = AppContext.wallet;
   late List listeners = [];
 
@@ -32,22 +30,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       if (value != currentContext) {
         setState(() {
           currentContext = value;
-        });
-      }
-    }));
-    listeners.add(streams.import.attempt.listen((value) {
-      if ((value == null && importTrigger == true) ||
-          (value != null && importTrigger == false)) {
-        setState(() {
-          importTrigger = !importTrigger;
-        });
-      }
-    }));
-    listeners.add(streams.spend.send.listen((value) {
-      if ((value == null && sendTrigger == true) ||
-          (value != null && sendTrigger == false)) {
-        setState(() {
-          sendTrigger = !sendTrigger;
         });
       }
     }));
@@ -79,28 +61,23 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return body();
   }
 
-  Widget body() => importTrigger
-      ? Loader(message: 'Importing')
-      : sendTrigger
-          ? Loader(message: 'Sending Transaction')
-          : Scaffold(
-              resizeToAvoidBottomInset: false,
-              backgroundColor: Colors.transparent,
-              body: GestureDetector(
-                  onTap: () => FocusScope.of(context).unfocus(),
-                  // we want this to be liquid as well, #182
-                  child: NotificationListener<UserScrollNotification>(
-                      onNotification: visibilityOfSendReceive,
-                      child: currentContext == AppContext.wallet
-                          ? HoldingList()
-                          : currentContext == AppContext.manage
-                              ? AssetList()
-                              : Text('swap'))),
-              floatingActionButton:
-                  SlideTransition(position: offset, child: NavBar()),
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerDocked,
-            );
+  Widget body() => Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.transparent,
+        body: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            // we want this to be liquid as well, #182
+            child: NotificationListener<UserScrollNotification>(
+                onNotification: visibilityOfSendReceive,
+                child: currentContext == AppContext.wallet
+                    ? HoldingList()
+                    : currentContext == AppContext.manage
+                        ? AssetList()
+                        : Text('swap'))),
+        floatingActionButton:
+            SlideTransition(position: offset, child: NavBar()),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      );
 
   bool visibilityOfSendReceive(notification) {
     if (notification.direction == ScrollDirection.forward &&
@@ -108,6 +85,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       controller.reverse();
     } else if (notification.direction == ScrollDirection.reverse &&
         controller.status == AnimationStatus.dismissed) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
       controller.forward();
     }
     return true;

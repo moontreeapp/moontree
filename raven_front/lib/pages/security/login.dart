@@ -25,7 +25,10 @@ class _LoginState extends State<Login> {
   }
 
   @override
-  Widget build(BuildContext context) => body();
+  Widget build(BuildContext context) {
+    print(MediaQuery.of(context).size.height);
+    return body();
+  }
 
   ElevatedButton submitButton() => ElevatedButton.icon(
       onPressed: () async => await submit(),
@@ -37,36 +40,31 @@ class _LoginState extends State<Login> {
               backgroundColor: MaterialStateProperty.all<Color>(
                   Theme.of(context).disabledColor)));
 
-  Column body() => Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-              padding: EdgeInsets.all(20.0),
-              child: TextField(
-                  autocorrect: false,
-                  controller: password,
-                  obscureText: !passwordVisible,
-                  textInputAction: TextInputAction.done,
-                  decoration: components.styles.decorations.textFeild(
-                    context,
-                    labelText: 'password',
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                          passwordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Color(0x99000000)),
-                      onPressed: () => setState(() {
-                        passwordVisible = !passwordVisible;
-                      }),
-                    ),
-                  ),
-                  onChanged: (_) async =>
-                      await submit(showFailureMessage: false),
-                  onEditingComplete: () async => await submit())),
-        ],
-      );
+  Widget body() => Container(
+      alignment: Alignment.topCenter,
+      padding: EdgeInsets.only(left: 16, right: 16),
+      child: Container(
+          alignment: Alignment.bottomCenter,
+          height: MediaQuery.of(context).size.height / 2,
+          child: TextField(
+              autocorrect: false,
+              controller: password,
+              obscureText: !passwordVisible,
+              textInputAction: TextInputAction.done,
+              decoration: components.styles.decorations.textFeild(
+                context,
+                labelText: 'password',
+                suffixIcon: IconButton(
+                  icon: Icon(
+                      passwordVisible ? Icons.visibility : Icons.visibility_off,
+                      color: Color(0x99000000)),
+                  onPressed: () => setState(() {
+                    passwordVisible = !passwordVisible;
+                  }),
+                ),
+              ),
+              onChanged: (_) async => await submit(showFailureMessage: false),
+              onEditingComplete: () async => await submit())));
 
   Future submit({bool showFailureMessage = true}) async {
     if (services.password.validate.password(password.text)) {

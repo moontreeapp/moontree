@@ -11,6 +11,7 @@ import 'empty.dart';
 import 'routes.dart';
 import 'status.dart';
 import 'text.dart';
+import 'loading.dart';
 import 'styles/buttons.dart';
 
 class components {
@@ -28,6 +29,7 @@ class components {
   // handled by navigator
   static final RouteStack navigator = RouteStack();
   static final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
+  static final LoadingComponents loading = LoadingComponents();
 }
 
 class Styles {

@@ -538,6 +538,7 @@ class _SendState extends State<Send> {
               streams.spend.send.add(streams.spend.made.value),
           buttonIcon: MdiIcons.arrowTopRightThick,
           buttonWord: 'Send',
+          loadingMessage: 'Sending',
         )
       },
     );

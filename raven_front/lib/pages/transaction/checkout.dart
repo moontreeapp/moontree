@@ -22,6 +22,7 @@ class CheckoutStruct {
   final Function? buttonAction;
   final IconData buttonIcon;
   final String buttonWord;
+  final String loadingMessage;
   static const Iterable<Iterable<String>> exampleItems = [
     ['Short Text', 'aligned right'],
     ['Too Long Text (~20+ chars)', 'QmXwHQ43NrZPq123456789'],
@@ -53,6 +54,7 @@ class CheckoutStruct {
     this.buttonAction,
     this.buttonIcon = Icons.add_rounded,
     this.buttonWord = 'Submit',
+    this.loadingMessage = 'Sending Transaction',
   });
 }
 
@@ -265,13 +267,13 @@ class _CheckoutState extends State<Checkout> {
               //? () {}
               /// for testing
               ? () async {
-                  produceModal();
+                  components.loading.screen(message: struct.loadingMessage);
                   print('working...');
                   await Future.delayed(Duration(seconds: 6));
                   streams.app.snack.add(Snack(message: 'test'));
                 }
               : () async {
-                  produceModal();
+                  components.loading.screen(message: struct.loadingMessage);
                   (struct.buttonAction ?? () {})();
                 },
           icon: Icon(
@@ -287,18 +289,4 @@ class _CheckoutState extends State<Checkout> {
           ),
           style:
               components.styles.buttons.bottom(context, disabled: disabled)));
-
-  void produceModal() {
-    showModalBottomSheet<void>(
-        context: context,
-        enableDrag: false,
-        elevation: 0,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        barrierColor: Colors.transparent,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
-        builder: (BuildContext context) => Loader(message: 'Creating Asset'));
-  }
 }
