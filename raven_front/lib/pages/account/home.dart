@@ -14,7 +14,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late Animation<Offset> offset;
   late bool importTrigger = false;
   late bool sendTrigger = false;
-  late bool passwordTrigger = false;
   late AppContext currentContext = AppContext.wallet;
   late List listeners = [];
 
@@ -52,14 +51,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         });
       }
     }));
-    listeners.add(streams.password.update.listen((value) {
-      if ((value == null && passwordTrigger == true) ||
-          (value != null && passwordTrigger == false)) {
-        setState(() {
-          passwordTrigger = !passwordTrigger;
-        });
-      }
-    }));
     listeners.add(streams.app.hideNav.listen((bool? value) {
       if (value != null) {
         if (value) {
@@ -92,26 +83,24 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ? Loader(message: 'Importing')
       : sendTrigger
           ? Loader(message: 'Sending Transaction')
-          : passwordTrigger
-              ? Loader(message: 'Managing Wallet Encryption')
-              : Scaffold(
-                  resizeToAvoidBottomInset: false,
-                  backgroundColor: Colors.transparent,
-                  body: GestureDetector(
-                      onTap: () => FocusScope.of(context).unfocus(),
-                      // we want this to be liquid as well, #182
-                      child: NotificationListener<UserScrollNotification>(
-                          onNotification: visibilityOfSendReceive,
-                          child: currentContext == AppContext.wallet
-                              ? HoldingList()
-                              : currentContext == AppContext.manage
-                                  ? AssetList()
-                                  : Text('swap'))),
-                  floatingActionButton:
-                      SlideTransition(position: offset, child: NavBar()),
-                  floatingActionButtonLocation:
-                      FloatingActionButtonLocation.centerDocked,
-                );
+          : Scaffold(
+              resizeToAvoidBottomInset: false,
+              backgroundColor: Colors.transparent,
+              body: GestureDetector(
+                  onTap: () => FocusScope.of(context).unfocus(),
+                  // we want this to be liquid as well, #182
+                  child: NotificationListener<UserScrollNotification>(
+                      onNotification: visibilityOfSendReceive,
+                      child: currentContext == AppContext.wallet
+                          ? HoldingList()
+                          : currentContext == AppContext.manage
+                              ? AssetList()
+                              : Text('swap'))),
+              floatingActionButton:
+                  SlideTransition(position: offset, child: NavBar()),
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerDocked,
+            );
 
   bool visibilityOfSendReceive(notification) {
     if (notification.direction == ScrollDirection.forward &&

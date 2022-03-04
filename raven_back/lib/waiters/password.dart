@@ -11,13 +11,7 @@ class PasswordWaiter extends Waiter {
         var cipher = services.cipher.updatePassword(altPassword: password);
         await services.cipher.updateWallets(cipher: cipher);
         services.cipher.cleanupCiphers();
-        streams.app.snack.add(Snack(
-            message: 'Password Updated',
-            details: password == ''
-                ? ('Password Removed!\n\n'
-                    'Be careful out there!')
-                : ('Please back up your password!\n\n'
-                    'There is NO recovery process for lost passwords!')));
+        streams.app.snack.add(Snack(message: 'Successfully Updated Security'));
         streams.password.updated.add(true);
         streams.password.update.add(null);
       }

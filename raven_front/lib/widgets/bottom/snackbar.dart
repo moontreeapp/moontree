@@ -90,6 +90,8 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       ),
     );
     if (snack!.link == null && snack!.details == null) {
+      /// this configuration of the snackbar always shows on top of the nav bar
+      streams.app.hideNav.add(false);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         elevation: 0,
         backgroundColor: const Color(0xFF212121),
@@ -102,6 +104,11 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
           bottom: 0,
         ),
       ));
+    }
+    /*
+    /// These are not used if we want to use them implement them this way:
+    /// https://github.com/moontreeapp/moontree/issues/271#issuecomment-1059342537
+    /// (leaving this here for future reference and easier implementation)
     } else if (snack!.link != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           elevation: 0,
@@ -171,6 +178,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                                 onPressed: () => Navigator.of(context).pop())
                           ])))));
     }
+    */
     Navigator.popUntil(
         components.navigator.routeContext!, ModalRoute.withName('/home'));
   }

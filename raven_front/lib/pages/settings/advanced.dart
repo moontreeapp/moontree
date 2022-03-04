@@ -10,7 +10,7 @@ class Advanced extends StatefulWidget {
 }
 
 class _AdvancedState extends State<Advanced> {
-  late UserLevel? chosenLevel;
+  late UserLevel? chosenLevel = UserLevel.beginner;
 
   @override
   void initState() {
