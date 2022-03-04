@@ -63,8 +63,10 @@ class _PageLead extends State<PageLead> {
         'Wallet': IconButton(
             splashRadius: 24,
             onPressed: () {
-              streams.app.hideNav
-                  .add(Backdrop.of(context).isBackLayerRevealed ? false : true);
+              var open =
+                  Backdrop.of(context).isBackLayerRevealed ? false : true;
+              streams.app.setting.add(open ? 'open' : null);
+              streams.app.hideNav.add(open);
               Backdrop.of(context).fling();
             },
             padding: EdgeInsets.only(left: 16),

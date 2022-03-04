@@ -155,7 +155,6 @@ class _NavDrawerState extends State<NavDrawer> {
             name: 'About',
             link: '/settings/about',
           ),
-          /*
           SettingsTile(
               title: 'Clear Database',
               titleTextStyle: Theme.of(context).drawerDestination,
@@ -168,6 +167,7 @@ class _NavDrawerState extends State<NavDrawer> {
             name: 'Accounts',
             link: '/settings/technical',
           ),
+          /*
           SettingsTile(
               title: 'test',
               titleTextStyle: Theme.of(context).drawerDestination,
@@ -194,6 +194,12 @@ class _NavDrawerState extends State<NavDrawer> {
         //  crossAxisAlignment: CrossAxisAlignment.start,
         ///
 
-        child: options[chosen] ?? options['/settings']);
+        child: Column(
+          children: [
+            if (res.wallets.length > 1)
+              Divider(indent: 0, color: Color(0x1FFFFFFF)),
+            (options[chosen] ?? options['/settings'])!
+          ],
+        ));
   }
 }

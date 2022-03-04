@@ -35,6 +35,7 @@ class SingleWalletService {
     required CipherUpdate cipherUpdate,
     String? wif,
     bool alwaysReturn = false,
+    String? name,
   }) {
     wif = wif ?? generateRandomWIF(res.settings.network);
     var encryptedWIF = EncryptedWIF.fromWIF(wif, cipher);
@@ -43,15 +44,24 @@ class SingleWalletService {
       return SingleWallet(
           id: encryptedWIF.walletId,
           encryptedWIF: encryptedWIF.encryptedSecret,
-          cipherUpdate: cipherUpdate);
+          cipherUpdate: cipherUpdate,
+          name: name ?? res.wallets.nextWalletName);
     }
     if (alwaysReturn) return existingWallet as SingleWallet;
   }
 
-  Future<void> makeSaveSingleWallet(CipherBase cipher,
-      {required CipherUpdate cipherUpdate, String? wif}) async {
-    var singleWallet =
-        makeSingleWallet(cipher, cipherUpdate: cipherUpdate, wif: wif);
+  Future<void> makeSaveSingleWallet(
+    CipherBase cipher, {
+    required CipherUpdate cipherUpdate,
+    String? wif,
+    String? name,
+  }) async {
+    var singleWallet = makeSingleWallet(
+      cipher,
+      cipherUpdate: cipherUpdate,
+      wif: wif,
+      name: name,
+    );
     if (singleWallet != null) {
       await res.wallets.save(singleWallet);
     }

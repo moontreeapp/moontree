@@ -18,15 +18,13 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> with TickerProviderStateMixin {
-  Future setupRealWallet() async {
+  Future setupRealWallet(String id) async {
     await dotenv.load(fileName: '.env');
-    var mnemonic = dotenv.env['TEST_WALLET_02']!;
+    var mnemonic = dotenv.env['TEST_WALLET_0$id']!;
     await services.wallet.createSave(
         walletType: WalletType.leader,
         cipherUpdate: defaultCipherUpdate,
         secret: mnemonic);
-    res.settings.setCurrentWalletId(res.wallets.first.id);
-    res.settings.savePreferredWalletId(res.wallets.first.id);
   }
 
   Future setup() async {
@@ -38,7 +36,10 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
     await res.settings.save(Setting(
         name: SettingName.Local_Path, value: await Storage().localPath));
     if (res.wallets.data.isEmpty) {
-      await setupRealWallet();
+      await setupRealWallet('2');
+      await setupRealWallet('1');
+      await res.settings.setCurrentWalletId(res.wallets.first.id);
+      await res.settings.savePreferredWalletId(res.wallets.first.id);
     }
     //res.settings.setCurrentWalletId(res.wallets.first.id);
 

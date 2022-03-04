@@ -74,6 +74,7 @@ class LeaderWalletService {
     required CipherUpdate cipherUpdate,
     String? entropy,
     bool alwaysReturn = false,
+    String? name,
   }) {
     services.busy.createWalletOn();
     entropy = entropy ?? bip39.mnemonicToEntropy(bip39.generateMnemonic());
@@ -83,10 +84,10 @@ class LeaderWalletService {
     services.busy.createWalletOff();
     if (existingWallet == null) {
       return LeaderWallet(
-        id: encryptedEntropy.walletId,
-        encryptedEntropy: encryptedEntropy.encryptedSecret,
-        cipherUpdate: cipherUpdate,
-      );
+          id: encryptedEntropy.walletId,
+          encryptedEntropy: encryptedEntropy.encryptedSecret,
+          cipherUpdate: cipherUpdate,
+          name: name ?? res.wallets.nextWalletName);
     }
     if (alwaysReturn) return existingWallet as LeaderWallet;
   }
@@ -104,10 +105,12 @@ class LeaderWalletService {
     CipherBase cipher, {
     required CipherUpdate cipherUpdate,
     String? mnemonic,
+    String? name,
   }) async {
     var leaderWallet = makeLeaderWallet(cipher,
         cipherUpdate: cipherUpdate,
-        entropy: mnemonic != null ? bip39.mnemonicToEntropy(mnemonic) : null);
+        entropy: mnemonic != null ? bip39.mnemonicToEntropy(mnemonic) : null,
+        name: name);
     if (leaderWallet != null) {
       await res.wallets.save(leaderWallet);
     }
