@@ -48,12 +48,6 @@ class _ImportState extends State<Import> {
       wallet =
           res.wallets.primaryIndex.getOne(data['walletId']) ?? Current.wallet;
     }
-    // testing
-    //file = FileDetails(
-    //  filename: 'file.name',
-    //  content: 'asdf',
-    //  size: 2.3,
-    //);
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: body(),
@@ -64,7 +58,7 @@ class _ImportState extends State<Import> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          file == null ? textInputField() : filePicked(),
+          file == null ? textInputField : filePicked,
           Padding(
               padding:
                   EdgeInsets.only(top: 0, left: 16.0, right: 16.0, bottom: 40),
@@ -73,7 +67,7 @@ class _ImportState extends State<Import> {
                 children: file == null
                     ? [
                         Expanded(
-                            child: Container(height: 40, child: fileButton())),
+                            child: Container(height: 40, child: fileButton)),
                         SizedBox(width: 16),
                         Expanded(
                             child:
@@ -88,7 +82,7 @@ class _ImportState extends State<Import> {
         ],
       );
 
-  Widget textInputField() => Container(
+  Widget get textInputField => Container(
       height: 200,
       padding: EdgeInsets.only(
         top: 16,
@@ -114,7 +108,7 @@ class _ImportState extends State<Import> {
         onEditingComplete: () async => await attemptImport(),
       ));
 
-  Widget filePicked() => Column(children: [
+  Widget get filePicked => Column(children: [
         Padding(
             //padding: EdgeInsets.only(left: 8, top: 16.0),
             padding: EdgeInsets.only(left: 16, right: 0, top: 16, bottom: 0),
@@ -130,9 +124,7 @@ class _ImportState extends State<Import> {
                   icon: Icon(Icons.close_rounded, color: Color(0xDE000000)),
                   onPressed: () => setState(() => file = null)),
             )),
-        Divider(
-            //indent: 32,
-            ),
+        Divider(),
       ]);
 
   Widget submitButton([String? label]) {
@@ -152,7 +144,7 @@ class _ImportState extends State<Import> {
         style: components.styles.buttons.bottom(context, disabled: true));
   }
 
-  Widget fileButton() => OutlinedButton.icon(
+  Widget get fileButton => OutlinedButton.icon(
       icon: Icon(
         MdiIcons.fileKey,
         color: Color(0xDE000000),

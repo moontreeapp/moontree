@@ -143,7 +143,7 @@ class _NavDrawerState extends State<NavDrawer> {
           destination(
             icon: Icons.feedback,
             name: 'Feedback',
-            link: '/settings/preferences',
+            link: '/settings/feedback',
           ),
           destination(
             icon: Icons.help,
@@ -155,6 +155,7 @@ class _NavDrawerState extends State<NavDrawer> {
             name: 'About',
             link: '/settings/about',
           ),
+          /*
           SettingsTile(
               title: 'Clear Database',
               titleTextStyle: Theme.of(context).drawerDestination,
@@ -167,7 +168,6 @@ class _NavDrawerState extends State<NavDrawer> {
             name: 'Accounts',
             link: '/settings/technical',
           ),
-          /*
           SettingsTile(
               title: 'test',
               titleTextStyle: Theme.of(context).drawerDestination,

@@ -24,6 +24,7 @@ enum SelectionSet {
   Asset,
   Sub_Asset,
   Sub_Qualifier,
+  Feedback,
 }
 enum SelectionOption {
   // list of my assets
@@ -75,6 +76,10 @@ enum SelectionOption {
   Dec2,
   Dec1,
   Dec0,
+
+  //feedback
+  Change,
+  Bug,
 }
 
 class SelectionItems {
@@ -130,6 +135,10 @@ class SelectionItems {
               ],
               SelectionSet.Sub_Qualifier: [
                 SelectionOption.QualifierSub,
+              ],
+              SelectionSet.Feedback: [
+                SelectionOption.Change,
+                SelectionOption.Bug,
               ],
             }[modalSet]) ??
         [];
@@ -246,6 +255,9 @@ class SelectionItems {
                 MdiIcons.numeric1Circle, //, color: Colors.black),
             SelectionOption.Dec0:
                 MdiIcons.numeric0Circle, //, color: Colors.black),
+            SelectionOption.Change: Icons.add_rounded, //, color: Colors.black),
+            SelectionOption.Bug:
+                Icons.bug_report_rounded, //, color: Colors.black),
           }[name] ??
           MdiIcons.information,
       color: Color(0xDE000000));

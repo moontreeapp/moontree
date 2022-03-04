@@ -18,6 +18,7 @@ import 'package:raven_front/pages/security/change.dart';
 import 'package:raven_front/pages/settings/about.dart';
 import 'package:raven_front/pages/settings/currency.dart';
 import 'package:raven_front/pages/settings/export.dart';
+import 'package:raven_front/pages/settings/feedback.dart';
 import 'package:raven_front/pages/settings/import.dart';
 import 'package:raven_front/pages/settings/language.dart';
 import 'package:raven_front/pages/settings/network.dart';
@@ -56,6 +57,7 @@ class pages {
   static About about = About();
   static Advanced advanced = Advanced();
   static Export export = Export();
+  static Feedback feedback = Feedback();
   static Import import = Import();
   static Language language = Language();
   static Loader loader = Loader();
@@ -98,6 +100,7 @@ class pages {
         '/settings/level': (context) => advanced,
         '/settings/currency': (context) => language,
         '/settings/export': (context) => export,
+        '/settings/feedback': (context) => feedback,
         '/settings/import': (context) => import,
         '/settings/network': (context) => electrumNetwork,
         '/settings/preferences': (context) => preferences,
