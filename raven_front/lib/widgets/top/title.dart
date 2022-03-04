@@ -84,12 +84,11 @@ class _PageTitleState extends State<PageTitle> {
                         '/settings/settings': 'Settings',
                       }[settingTitle] ??
                       const {
-                        'Send': 'Send',
+                        'Level': 'User Level',
                         'Import_export': 'Import / Export',
                         'Change': 'Security',
                         'Remove': 'Security',
                         'Verify': 'Security',
-                        'Receive': 'Receive',
                         'Channel': 'Create',
                         'Nft': 'Create',
                         'Main': 'Create',

@@ -149,6 +149,19 @@ extension TextStyleExtension on ThemeData {
           fontWeight: FontWeights.semiBold,
           letterSpacing: 0.5,
           color: Colors.white);
+  TextStyle? get userLevel => this.brightness == Brightness.light
+      ? TextStyle(
+          fontSize: 16.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.5,
+          color: Color(0xDE000000))
+      : TextStyle(
+          fontSize: 16.0,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.5,
+          color: Color(0xDE000000));
   TextStyle? get copyright => this.brightness == Brightness.light
       ? TextStyle(
           fontSize: 12.0,
@@ -164,16 +177,16 @@ extension TextStyleExtension on ThemeData {
           color: Color(0xDE000000));
   TextStyle? get supportHeading => this.brightness == Brightness.light
       ? TextStyle(
-          fontSize: 10.0,
+          fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeights.medium,
-          letterSpacing: 1.5,
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.1,
           color: Color(0xDE000000))
       : TextStyle(
-          fontSize: 10.0,
+          fontSize: 14.0,
           fontFamily: 'Nunito',
-          fontWeight: FontWeights.medium,
-          letterSpacing: 1.5,
+          fontWeight: FontWeights.semiBold,
+          letterSpacing: 0.1,
           color: Color(0xDE000000));
   TextStyle? get supportText => this.brightness == Brightness.light
       ? TextStyle(
