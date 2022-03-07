@@ -12,6 +12,7 @@ class IconComponents {
   IconComponents();
 
   Icon get back => Icon(Icons.chevron_left_rounded, color: Colors.white);
+
   Icon get close => Icon(Icons.close, color: Colors.white);
 
   Widget income(BuildContext context) =>
@@ -36,6 +37,8 @@ class IconComponents {
     double? height,
     double? width,
     ImageDetails? imageDetails,
+    Color? foreground,
+    Color? background,
   }) {
     height = height ?? size;
     width = width ?? size;
@@ -51,6 +54,8 @@ class IconComponents {
       height: height,
       width: width,
       imageDetails: imageDetails,
+      foreground: foreground,
+      background: background,
     );
   }
 
@@ -78,8 +83,17 @@ class IconComponents {
     }
   }
 
-  ImageDetails getImageDetails([String? asset]) =>
-      Identicon().generate(asset ?? '');
+  ImageDetails getImageDetails([
+    String? asset,
+    Color? foreground,
+    Color? background,
+  ]) =>
+      Identicon(
+        background: foreground,
+        foreground: background,
+      ).generate(
+        asset ?? '',
+      );
 
   Widget assetAvatarGeneratedIdenticon({
     String? asset,
@@ -87,10 +101,17 @@ class IconComponents {
     double? width,
     ImageDetails? imageDetails,
     AssetType? assetType,
+    Color? foreground,
+    Color? background,
   }) {
     height = height ?? 40;
     width = width ?? 40;
-    imageDetails = imageDetails ?? getImageDetails(asset);
+    imageDetails = imageDetails ??
+        getImageDetails(
+          asset,
+          foreground,
+          background,
+        );
     var indicator = generateIndicator(name: asset, imageDetails: imageDetails);
     return Stack(alignment: Alignment.bottomRight, children: [
       Container(

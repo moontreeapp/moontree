@@ -6,6 +6,7 @@ import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:image/image.dart';
+import 'package:raven_front/theme/colors.dart';
 
 var colorCache = Map<String, List<List<int>>>();
 
@@ -24,17 +25,28 @@ class Identicon {
   Identicon({
     this.rows = 6,
     this.cols = 6,
-  }) : this.digest = md5.convert;
+    foreground,
+    background,
+  })  : this.digest = md5.convert,
+        this.foregroundColor =
+            foreground != null ? AppColors.RGB(foreground) : null,
+        this.backgroundColor =
+            background != null ? AppColors.RGB(background) : null;
 
   void _generateColors() {
-    var lightenPercent = _getShade();
-    if (name.startsWith('MOONTREE') || name.startsWith('MT/')) {
-      foregroundColor = _getGreenColorShade(lightenPercent);
-      backgroundColor = _getWhiteColorShade(lightenPercent);
-    } else {
-      foregroundColor = _getOrangeColorShade(lightenPercent);
-      backgroundColor = _getBlueColorShade(lightenPercent);
-    }
+    var appColors = AppColors();
+    backgroundColor =
+        backgroundColor ?? AppColors.RGB(appColors.backgroundColor(name));
+    foregroundColor =
+        foregroundColor ?? AppColors.RGB(appColors.foregroundColor(name));
+    //var lightenPercent = _getShade();
+    //if (name.startsWith('MOONTREE') || name.startsWith('MT/')) {
+    //  foregroundColor = _getGreenColorShade(lightenPercent);
+    //  backgroundColor = _getWhiteColorShade(lightenPercent);
+    //} else {
+    //  foregroundColor = _getOrangeColorShade(lightenPercent);
+    //  backgroundColor = _getBlueColorShade(lightenPercent);
+    //}
   }
 
   double _getShade() {
