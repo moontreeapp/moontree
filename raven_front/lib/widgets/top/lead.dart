@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/streams.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/theme/theme.dart';
 
 class PageLead extends StatefulWidget {
   final BuildContext mainContext;
@@ -73,6 +74,14 @@ class _PageLead extends State<PageLead> {
             padding: EdgeInsets.only(left: 16),
             icon: SvgPicture.asset('assets/icons/menu/menu.svg')),
         '': Container(),
+        'Login': Container(
+          height: 24,
+          padding: EdgeInsets.only(left: 16),
+          child: SvgPicture.asset(
+            'assets/icons/menu/menu.svg',
+            color: AppColors.black38,
+          ),
+        ),
       }[pageTitle] ??
       (['Send', 'Scan'].contains(pageTitle)
           ? IconButton(

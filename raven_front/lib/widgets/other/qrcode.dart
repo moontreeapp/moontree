@@ -23,6 +23,7 @@ class _QRCodeButtonState extends State<QRCodeButton> {
       ['Send', 'Scan'].contains(widget.pageTitle)
           ? Container(width: 0)
           : IconButton(
+              padding: EdgeInsets.zero,
               splashRadius: 24,
               icon: Icon(
                 MdiIcons.qrcodeScan,
