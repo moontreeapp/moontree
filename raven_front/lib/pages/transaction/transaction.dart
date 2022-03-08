@@ -4,7 +4,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:raven_back/services/transaction.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
-import 'package:raven_front/indicators/indicators.dart';
 import 'package:raven_front/utils/data.dart';
 
 class TransactionPage extends StatefulWidget {
@@ -86,11 +85,7 @@ class _TransactionPageState extends State<TransactionPage> {
           elevation: 2,
           centerTitle: false,
           leading: components.buttons.back(context),
-          actions: <Widget>[
-            components.status,
-            indicators.process,
-            indicators.client,
-          ],
+          actions: <Widget>[components.status],
           title: Text('Transaction'),
           flexibleSpace: Container(
               alignment: Alignment.center,

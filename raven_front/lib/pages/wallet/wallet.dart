@@ -7,7 +7,6 @@ import 'package:raven_back/extensions/object.dart';
 import 'package:raven_back/extensions/string.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
-import 'package:raven_front/indicators/indicators.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/data.dart';
@@ -106,11 +105,7 @@ class _WalletViewState extends State<WalletView> {
           elevation: 2,
           centerTitle: false,
           title: Text('Wallet'),
-          actions: [
-            components.status,
-            indicators.process,
-            indicators.client,
-          ],
+          actions: [components.status],
           flexibleSpace: Container(
             alignment: Alignment(0.0, -0.5),
             child: Text(
