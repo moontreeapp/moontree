@@ -1,6 +1,8 @@
 /// balances are by wallet
 /// if you want the balance of a subwallet (address) then get it from Histories.
 
+// ignore_for_file: omit_local_variable_types
+
 import 'package:raven_back/services/wallet_security_pair.dart';
 import 'package:raven_back/raven_back.dart';
 
@@ -116,7 +118,6 @@ class BalanceService {
   /// Wallet Aggregation Logic ////////////////////////////////////////////////
 
   List<Balance> walletBalances(Wallet wallet) {
-    // ignore: omit_local_variable_types
     Map<Security, Balance> balancesBySecurity = {};
     for (var balance in wallet.balances) {
       if (!balancesBySecurity.containsKey(balance.security)) {

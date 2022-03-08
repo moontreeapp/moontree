@@ -12,29 +12,18 @@ List<AssetHolding> assetHoldings(Iterable<Balance> holdings) {
         balance.security.asset?.baseSymbol ?? balance.security.symbol;
     var assetType =
         balance.security.asset?.assetType ?? balance.security.securityType;
-    if ([
-      AssetType.RestrictedAdmin,
-      AssetType.Restricted,
-      AssetType.Main,
-      AssetType.Admin,
-    ].contains(assetType)) {
+    if ([AssetType.Main, AssetType.Admin].contains(assetType)) {
       if (!balancesMain.containsKey(baseSymbol)) {
         balancesMain[baseSymbol] = AssetHolding(
           symbol: baseSymbol,
           main: assetType == AssetType.Main ? balance : null,
           admin: assetType == AssetType.Admin ? balance : null,
-          restricted: assetType == AssetType.Restricted ? balance : null,
-          restrictedAdmin:
-              assetType == AssetType.RestrictedAdmin ? balance : null,
         );
       } else {
         balancesMain[baseSymbol] = AssetHolding.fromAssetHolding(
           balancesMain[baseSymbol]!,
           main: assetType == AssetType.Main ? balance : null,
           admin: assetType == AssetType.Admin ? balance : null,
-          restricted: assetType == AssetType.Restricted ? balance : null,
-          restrictedAdmin:
-              assetType == AssetType.RestrictedAdmin ? balance : null,
         );
       }
     } else if ([AssetType.Sub, AssetType.SubAdmin].contains(assetType)) {
@@ -57,6 +46,9 @@ List<AssetHolding> assetHoldings(Iterable<Balance> holdings) {
           symbol: baseSymbol,
           nft: assetType == AssetType.NFT ? balance : null,
           channel: assetType == AssetType.Channel ? balance : null,
+          restricted: assetType == AssetType.Restricted ? balance : null,
+          restrictedAdmin:
+              assetType == AssetType.RestrictedAdmin ? balance : null,
           qualifier: assetType == AssetType.Qualifier ? balance : null,
           qualifierSub: assetType == AssetType.QualifierSub ? balance : null,
           crypto: assetType == SecurityType.Crypto ? balance : null,
@@ -67,6 +59,9 @@ List<AssetHolding> assetHoldings(Iterable<Balance> holdings) {
           balancesOther[baseSymbol]!,
           nft: assetType == AssetType.NFT ? balance : null,
           channel: assetType == AssetType.Channel ? balance : null,
+          restricted: assetType == AssetType.Restricted ? balance : null,
+          restrictedAdmin:
+              assetType == AssetType.RestrictedAdmin ? balance : null,
           qualifier: assetType == AssetType.Qualifier ? balance : null,
           qualifierSub: assetType == AssetType.QualifierSub ? balance : null,
           crypto: assetType == SecurityType.Crypto ? balance : null,
