@@ -9,6 +9,7 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/data.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/services/import.dart';
@@ -188,35 +189,27 @@ class _FeedbackState extends State<Feedback> {
         Divider(),
       ]);
 
-  Widget get submitButton {
-    var label = 'Send'.toUpperCase();
-    if (sendEnabled) {
-      return OutlinedButton.icon(
-          onPressed: () async =>
-              await attemptSend(file?.content ?? descriptionController.text),
-          icon: components.icons.import,
-          label: Text(label, style: Theme.of(context).enabledButton),
-          style: components.styles.buttons.bottom(context));
-    }
-    return OutlinedButton.icon(
-        onPressed: () {},
-        icon: components.icons.importDisabled(context),
-        label: Text(label, style: Theme.of(context).disabledButton),
-        style: components.styles.buttons.bottom(context, disabled: true));
-  }
+  Widget get submitButton => components.buttons.actionButton(context,
+      enabled: sendEnabled,
+      label: 'Send'.toUpperCase(),
+      onPressed: () async =>
+          await attemptSend(file?.content ?? descriptionController.text),
+      icon: components.icons.import,
+      disabledIcon: components.icons.importDisabled(context));
 
-  Widget get fileButton => OutlinedButton.icon(
-      icon: Icon(
-        MdiIcons.fileKey,
-        color: Color(0xDE000000),
-      ),
-      label: Text('FILE', style: Theme.of(context).enabledButton),
-      onPressed: () async {
-        file = await storage.readFromFilePickerSize();
-        enableSend(file?.content ?? '');
-        setState(() {});
-      },
-      style: components.styles.buttons.bottom(context));
+  Widget get fileButton => components.buttons.actionButton(
+        context,
+        label: 'File',
+        icon: Icon(
+          MdiIcons.fileKey,
+          color: AppColors.black87,
+        ),
+        onPressed: () async {
+          file = await storage.readFromFilePickerSize();
+          enableSend(file?.content ?? '');
+          setState(() {});
+        },
+      );
 
   void enableSend([String? given]) {
     var oldsendEnabled = sendEnabled;

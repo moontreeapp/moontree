@@ -111,42 +111,6 @@ class _TransactionsState extends State<Transactions>
     /// no place to view metadata right now - this used to be tabs
   }
 
-  /// old
-  //PreferredSize header() => PreferredSize(
-  //    preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.34),
-  //    child: AppBar(
-  //        elevation: 2,
-  //        centerTitle: false,
-  //        leading: components.buttons.back(context),
-  //        actions: <Widget>[
-  //          components.status,
-  //          indicators.process,
-  //          indicators.client,
-  //        ],
-  //        title: Text(security.symbol),
-  //        flexibleSpace: Container(
-  //            alignment: Alignment.center,
-  //            child: Column(
-  //                mainAxisAlignment: MainAxisAlignment.center,
-  //                children: [
-  //                  SizedBox(height: 45.0),
-  //                  Container(
-  //                      height: 90,
-  //                      width: 90,
-  //                      child: components.icons
-  //                          .assetAvatar(security.symbol)),
-  //                  SizedBox(height: 10.0),
-  //                  Text(
-  //                      components.text.securityAsReadable(
-  //                          data['holding']!.value,
-  //                          symbol: security.symbol),
-  //                      ),
-  //                ])),
-  //        bottom: PreferredSize(
-  //            preferredSize: Size.fromHeight(50.0),
-  //            child: TabBar(
-  //                tabs: [Tab(text: 'Transactions'), Tab(text: 'Metadata')]))));
-
   Widget? _metadataView() {
     var securityAsset = security.asset;
     if (securityAsset == null || securityAsset.hasMetadata == false) {

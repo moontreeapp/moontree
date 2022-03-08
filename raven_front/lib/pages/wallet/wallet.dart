@@ -96,9 +96,6 @@ class _WalletViewState extends State<WalletView> {
           //floatingActionButtonLocation:
           //    FloatingActionButtonLocation.centerFloat,
           //floatingActionButton: isFabVisible ? sendButton() : null,
-
-          /// hidden for beta
-          //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
         ));
   }
 

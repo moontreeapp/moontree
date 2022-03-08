@@ -6,27 +6,31 @@ class ButtonComponents {
   IconButton back(BuildContext context) => IconButton(
       icon: components.icons.back, onPressed: () => Navigator.pop(context));
 
-  GestureDetector settings(BuildContext context /*, Function setStateFn*/) =>
-      GestureDetector(
-          onTap: () => Navigator.pushNamed(context, '/settings'),
-          child: Icon(Icons.more_vert));
-
-  BottomAppBar bottomNav(BuildContext context) => BottomAppBar(
-          child: ButtonBar(
-              alignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-            IconButton(
-                onPressed: () {/*to wallet*/},
-                icon: Icon(Icons.account_balance_wallet_rounded,
-                    color: Theme.of(context).primaryColor)),
-            IconButton(
-                onPressed: () {/*to trading*/}, icon: Icon(Icons.swap_horiz))
-          ]));
-
-  ElevatedButton getRVN(BuildContext context) => ElevatedButton(
-        onPressed: () {/* link to coinbase */},
-        child: Text('get RVN'),
-        style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(Theme.of(context).good)),
-      );
+  Widget actionButton(
+    BuildContext context, {
+    required String label,
+    required Widget icon,
+    Widget? disabledIcon,
+    String? link,
+    VoidCallback? onPressed,
+    bool enabled = true,
+  }) =>
+      Expanded(
+          child: Container(
+              height: 40,
+              child: OutlinedButton.icon(
+                onPressed: enabled
+                    ? (link != null
+                        ? () => Navigator.of(components.navigator.routeContext!)
+                            .pushNamed(link)
+                        : onPressed ?? () {})
+                    : () {},
+                icon: enabled ? icon : (disabledIcon ?? icon),
+                label: Text(label.toUpperCase(),
+                    style: enabled
+                        ? /*Theme.of(context).enabledButton*/ null
+                        : Theme.of(context).disabledButton),
+                style: components.styles.buttons
+                    .bottom(context, disabled: !enabled),
+              )));
 }

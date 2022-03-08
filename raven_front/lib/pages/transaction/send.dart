@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/pages/transaction/checkout.dart';
+import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/qrcode.dart';
 
 import 'package:raven_front/widgets/bottom/selection_items.dart';
@@ -205,7 +206,7 @@ class _SendState extends State<Send> {
   bool verifyMemo([String? memo]) => (memo ?? sendMemo.text).length <= 80;
 
   Widget body() => Padding(
-      padding: EdgeInsets.only(top: 16, left: 16, right: 16),
+      padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 40),
       child: CustomScrollView(
         // solves scrolling while keyboard
         shrinkWrap: true,
@@ -401,21 +402,17 @@ class _SendState extends State<Send> {
                   decoration: components.styles.decorations.textFeild(context,
                       labelText: 'Note', hintText: 'Private note to self'),
                 ),
+                SizedBox(height: 16.0),
               ],
             ),
           ),
           SliverFillRemaining(
             hasScrollBody: false,
-            child: Padding(
-                padding: EdgeInsets.only(top: 16, bottom: 40),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      allValidation()
-                          ? sendTransactionButton()
-                          : sendTransactionButton(disabled: true)
-                    ])),
+            child: Row(children: [
+              allValidation()
+                  ? sendTransactionButton()
+                  : sendTransactionButton(disabled: true)
+            ]),
           ),
         ],
       ));
@@ -496,19 +493,16 @@ class _SendState extends State<Send> {
   /// services.historyService.saveNote(hash, note {or history object})
   /// should notes be in a separate reservoir? makes this simpler, but its nice
   /// to have it all in one place as in transaction.note....
-  Widget sendTransactionButton({bool disabled = false}) => Container(
-      height: 40,
-      child: OutlinedButton.icon(
-        onPressed: disabled ? () {} : () => startSend(),
-        icon: Icon(MdiIcons.arrowTopRightThick,
-            color:
-                disabled ? Theme.of(context).disabledColor : Color(0xDE000000)),
-        label: Text('NEXT'.toUpperCase(),
-            style: disabled
-                ? Theme.of(context).disabledButton
-                : Theme.of(context).enabledButton),
-        style: components.styles.buttons.bottom(context, disabled: disabled),
-      ));
+  Widget sendTransactionButton({bool disabled = false}) =>
+      components.buttons.actionButton(
+        context,
+        enabled: !disabled,
+        onPressed: () => startSend(),
+        icon: Icon(MdiIcons.arrowTopRightThick, color: AppColors.black87),
+        disabledIcon: Icon(MdiIcons.arrowTopRightThick,
+            color: Theme.of(context).disabledColor),
+        label: 'Next',
+      );
 
   void confirmSend(SendRequest sendRequest) {
     streams.spend.make.add(sendRequest);

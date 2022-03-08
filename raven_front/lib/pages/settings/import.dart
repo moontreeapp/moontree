@@ -9,6 +9,7 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/data.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/services/import.dart';
@@ -127,35 +128,24 @@ class _ImportState extends State<Import> {
         Divider(),
       ]);
 
-  Widget submitButton([String? label]) {
-    label = (label ?? 'Import').toUpperCase();
-    if (importEnabled) {
-      return OutlinedButton.icon(
-          onPressed: () async =>
-              await attemptImport(file?.content ?? words.text),
-          icon: components.icons.import,
-          label: Text(label, style: Theme.of(context).enabledButton),
-          style: components.styles.buttons.bottom(context));
-    }
-    return OutlinedButton.icon(
-        onPressed: () {},
-        icon: components.icons.importDisabled(context),
-        label: Text(label, style: Theme.of(context).disabledButton),
-        style: components.styles.buttons.bottom(context, disabled: true));
-  }
+  Widget submitButton([String? label]) => components.buttons.actionButton(
+      context,
+      enabled: importEnabled,
+      label: (label ?? 'Import').toUpperCase(),
+      icon: components.icons.import,
+      disabledIcon: components.icons.importDisabled(context),
+      onPressed: () async => await attemptImport(file?.content ?? words.text));
 
-  Widget get fileButton => OutlinedButton.icon(
-      icon: Icon(
-        MdiIcons.fileKey,
-        color: Color(0xDE000000),
-      ),
-      label: Text('FILE', style: Theme.of(context).enabledButton),
-      onPressed: () async {
-        file = await storage.readFromFilePickerSize();
-        enableImport(file?.content ?? '');
-        setState(() {});
-      },
-      style: components.styles.buttons.bottom(context));
+  Widget get fileButton => components.buttons.actionButton(
+        context,
+        label: 'File',
+        icon: Icon(MdiIcons.fileKey, color: AppColors.black87),
+        onPressed: () async {
+          file = await storage.readFromFilePickerSize();
+          enableImport(file?.content ?? '');
+          setState(() {});
+        },
+      );
 
   void enableImport([String? given]) {
     var oldImportFormatDetected = importFormatDetected;

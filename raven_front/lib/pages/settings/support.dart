@@ -29,6 +29,8 @@ class Support extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyText1,
                   ),
                   SizedBox(height: 16),
+                  Divider(indent: 0),
+                  SizedBox(height: 16),
                   Text(
                     'MOONTREE',
                     style: Theme.of(context).supportHeading,
@@ -66,29 +68,26 @@ class Support extends StatelessWidget {
     required String color,
     String? link,
   }) =>
-      Container(
-          width: (MediaQuery.of(context).size.width / 2) - 24,
-          height: 40,
-          child: OutlinedButton.icon(
-            onPressed: () => showDialog(
-                context: context,
-                builder: (BuildContext context) => AlertDialog(
-                        title: Text('Open in External App'),
-                        content: Text('Open discord app or browser?'),
-                        actions: [
-                          TextButton(
-                              child: Text('Cancel'),
-                              onPressed: () => Navigator.of(context).pop()),
-                          TextButton(
-                              child: Text('Continue'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                launch(
-                                    'https://discord.gg/${link ?? name.toLowerCase()}');
-                              })
-                        ])),
-            icon: Icon(MdiIcons.discord, color: Color(int.parse(color))),
-            label: Text(name.toUpperCase()),
-            style: components.styles.buttons.bottom(context),
-          ));
+      components.buttons.actionButton(
+        context,
+        icon: Icon(MdiIcons.discord, color: Color(int.parse(color))),
+        label: name.toUpperCase(),
+        onPressed: () => showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                    title: Text('Open in External App'),
+                    content: Text('Open discord app or browser?'),
+                    actions: [
+                      TextButton(
+                          child: Text('Cancel'),
+                          onPressed: () => Navigator.of(context).pop()),
+                      TextButton(
+                          child: Text('Continue'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            launch(
+                                'https://discord.gg/${link ?? name.toLowerCase()}');
+                          })
+                    ])),
+      );
 }

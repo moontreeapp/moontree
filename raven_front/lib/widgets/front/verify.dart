@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/theme/theme.dart';
 
 class VerifyPassword extends StatefulWidget {
   final State? parentState;
@@ -48,7 +49,7 @@ class _VerifyPasswordState extends State<VerifyPassword> {
         suffixIcon: IconButton(
           icon: Icon(
               existingPasswordVisible ? Icons.visibility : Icons.visibility_off,
-              color: Color(0x99000000)),
+              color: AppColors.black60),
           onPressed: () => setState(() {
             existingPasswordVisible = !existingPasswordVisible;
           }),
@@ -63,50 +64,28 @@ class _VerifyPasswordState extends State<VerifyPassword> {
       onEditingComplete: () => verify(),
     );
     return Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 40),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             existingPasswordField,
-            Padding(
-                padding: EdgeInsets.only(
-                  top: 0,
-                  bottom: 40,
-                ),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [submitButton()]))
+            Row(children: [submitButton])
           ],
         ));
   }
 
-  Widget submitButton() {
-    var enabled = verify();
-    return Container(
-        height: 40,
-        child: OutlinedButton.icon(
-            onPressed: enabled
-                ? () {
-                    streams.app.verify.add(true);
-                    widget.parentState?.setState(() {});
-                  }
-                : () {},
-            icon: Icon(
-              Icons.login,
-              color: enabled ? null : Color(0x61000000),
-            ),
-            label: Text(
-              'Submit'.toUpperCase(),
-              style: enabled
-                  ? Theme.of(context).enabledButton
-                  : Theme.of(context).disabledButton,
-            ),
-            style: components.styles.buttons.bottom(
-              context,
-              disabled: !enabled,
-            )));
-  }
+  Widget get submitButton => components.buttons.actionButton(
+        context,
+        enabled: verify(),
+        label: 'Submit',
+        disabledIcon: Icon(Icons.login, color: AppColors.black38),
+        icon: Icon(Icons.login),
+        onPressed: () {
+          streams.app.verify.add(true);
+          widget.parentState?.setState(() {});
+        },
+      );
 
   bool verify() =>
       services.password.validate.password(existingPassword.text); // &&

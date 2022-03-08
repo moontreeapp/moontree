@@ -52,7 +52,6 @@ class _TransactionPageState extends State<TransactionPage> {
           body: body(metadata),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
-          //bottomNavigationBar: components.buttons.bottomNav(context), // alpha hide
         ));
   }
 

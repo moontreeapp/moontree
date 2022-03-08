@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class RemovePassword extends StatefulWidget {
@@ -30,38 +31,22 @@ class _RemovePasswordState extends State<RemovePassword> {
 
   Widget body() {
     return Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 40),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(height: 16),
             Text('Are you sure?', style: Theme.of(context).textTheme.headline2),
-            Padding(
-                padding: EdgeInsets.only(
-                  top: 0,
-                  bottom: 40,
-                ),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [submitButton()]))
+            Row(children: [submitButton])
           ],
         ));
   }
 
-  Widget submitButton() {
-    return Container(
-        height: 40,
-        child: OutlinedButton.icon(
-            onPressed: () async => await submit(),
-            icon: Icon(
-              Icons.lock_rounded,
-              color: Color(0x61000000),
-            ),
-            label: Text('Yes, Remove Password'.toUpperCase(),
-                style: Theme.of(context).enabledButton),
-            style: components.styles.buttons.bottom(context)));
-  }
+  Widget get submitButton => components.buttons.actionButton(context,
+      label: 'Yes, Remove Password',
+      icon: Icon(Icons.lock_rounded, color: AppColors.black38),
+      onPressed: () async => await submit());
 
   Future submit() async {
     FocusScope.of(context).unfocus();

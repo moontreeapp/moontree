@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class ChangePassword extends StatefulWidget {
@@ -59,7 +60,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       );
 
   Widget body() => Padding(
-      padding: EdgeInsets.all(16.0),
+      padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 40),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,14 +72,7 @@ class _ChangePasswordState extends State<ChangePassword> {
             SizedBox(height: 16),
             confirmPasswordField
           ]),
-          Padding(
-              padding: EdgeInsets.only(
-                top: 0,
-                bottom: 40,
-              ),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [submitButton()]))
+          Row(children: [submitButton])
         ],
       ));
 
@@ -194,29 +188,16 @@ class _ChangePasswordState extends State<ChangePassword> {
         onEditingComplete: () async => await submit(),
       );
 
-  Widget submitButton() {
-    var enabled = (!streams.app.verify.value ? verify() : true) &&
-        validatedComplexity &&
-        confirmPassword.text == newPassword.text;
-    return Container(
-        height: 40,
-        child: OutlinedButton.icon(
-            onPressed: enabled ? () async => await submit() : () {},
-            icon: Icon(
-              Icons.lock_rounded,
-              color: enabled ? null : Color(0x61000000),
-            ),
-            label: Text(
-              'Set'.toUpperCase(),
-              style: enabled
-                  ? Theme.of(context).enabledButton
-                  : Theme.of(context).disabledButton,
-            ),
-            style: components.styles.buttons.bottom(
-              context,
-              disabled: !enabled,
-            )));
-  }
+  Widget get submitButton => components.buttons.actionButton(
+        context,
+        label: 'Set',
+        icon: Icon(Icons.lock_rounded),
+        disabledIcon: Icon(Icons.lock_rounded, color: AppColors.black38),
+        onPressed: () async => await submit(),
+        enabled: (!streams.app.verify.value ? verify() : true) &&
+            validatedComplexity &&
+            confirmPassword.text == newPassword.text,
+      );
 
   void validateComplexity({String? password}) {
     password = password ?? newPassword.text;

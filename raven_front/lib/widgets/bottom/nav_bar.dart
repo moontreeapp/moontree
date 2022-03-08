@@ -31,23 +31,38 @@ class _NavBarState extends State<NavBar> {
               ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    actionButton(name: 'send', link: '/transaction/send'),
+                    components.buttons.actionButton(
+                      context,
+                      label: 'send',
+                      link: '/transaction/send',
+                      icon: Icon(MdiIcons.arrowTopRightThick),
+                    ),
                     SizedBox(width: 16),
-                    actionButton(name: 'receive', link: '/transaction/receive'),
+                    components.buttons.actionButton(
+                      context,
+                      label: 'receive',
+                      link: '/transaction/receive',
+                      icon: Icon(MdiIcons.arrowBottomLeftThick),
+                    ),
                   ],
                 )
               : Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: streams.app.page.value == 'Wallet'
-                      ? [
-                          actionButton(
-                              name: 'create', onPressed: _produceCreateModal)
+                      ? <Widget>[
+                          components.buttons.actionButton(
+                            context,
+                            label: 'create',
+                            icon: Icon(MdiIcons.plus),
+                            onPressed: _produceCreateModal,
+                          )
                         ]
-                      : [
+                      : <Widget>[
                           if ([AssetType.Main, AssetType.Sub]
                               .contains(assetType)) ...[
-                            actionButton(
-                                name: 'create',
+                            components.buttons.actionButton(context,
+                                label: 'create',
+                                icon: Icon(MdiIcons.plus),
                                 onPressed: streams.app.page.value == 'Asset'
                                     ? _produceSubCreateModal
                                     : () {}),
@@ -57,8 +72,9 @@ class _NavBarState extends State<NavBar> {
                             AssetType.Qualifier,
                             AssetType.QualifierSub,
                           ].contains(assetType)) ...[
-                            actionButton(
-                                name: 'create',
+                            components.buttons.actionButton(context,
+                                label: 'create',
+                                icon: Icon(MdiIcons.plus),
                                 onPressed: streams.app.page.value == 'Asset'
                                     //? _produceSubQualifierModal
                                     ? () => Navigator.pushNamed(
@@ -69,8 +85,9 @@ class _NavBarState extends State<NavBar> {
                                     : () {}),
                             SizedBox(width: 16)
                           ],
-                          actionButton(
-                              name: 'manage',
+                          components.buttons.actionButton(context,
+                              label: 'manage',
+                              icon: Icon(MdiIcons.circleEditOutline),
                               onPressed: () {/* bring up options */}),
                         ],
                 ),
@@ -107,29 +124,6 @@ class _NavBarState extends State<NavBar> {
     );
   }
 
-  Widget actionButton({
-    required String name,
-    String? link,
-    VoidCallback? onPressed,
-  }) =>
-      Expanded(
-          child: Container(
-              height: 40,
-              child: OutlinedButton.icon(
-                onPressed: link != null
-                    ? () => Navigator.of(components.navigator.routeContext!)
-                        .pushNamed(link)
-                    : onPressed ?? () {},
-                icon: Icon({
-                  'send': MdiIcons.arrowTopRightThick,
-                  'receive': MdiIcons.arrowBottomLeftThick,
-                  'create': MdiIcons.plus,
-                  'manage': MdiIcons.circleEditOutline,
-                }[name]!),
-                label: Text(name.toUpperCase()),
-                style: components.styles.buttons.bottom(context),
-              )));
-
   Widget sectorIcon({required AppContext appContext}) => IconButton(
         onPressed: () {
           Navigator.of(components.navigator.routeContext!).pushNamed('/home');
@@ -154,9 +148,5 @@ class _NavBarState extends State<NavBar> {
 
   void _produceSubCreateModal() {
     SelectionItems(context, modalSet: SelectionSet.Sub_Asset).build();
-  }
-
-  void _produceSubQualifierModal() {
-    SelectionItems(context, modalSet: SelectionSet.Sub_Qualifier).build();
   }
 }
