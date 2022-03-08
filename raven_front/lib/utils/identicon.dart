@@ -103,9 +103,13 @@ class Identicon {
           ? name.substring(0, name.length - 1)
           : name;
 
+  // same between main asset and admin asset
+  String commonName() =>
+      name.endsWith('!') ? name.substring(0, name.length - 1) : name;
+
   ImageDetails generate(String text) {
     name = text;
-    name = baseName();
+    name = commonName();
     hashedName = digest(utf8.encode(name)).toString();
     _generateColors();
     var bytesLength = 16;
