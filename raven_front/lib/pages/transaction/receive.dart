@@ -113,7 +113,7 @@ class _ReceiveState extends State<Receive> {
   }
 
   Widget body() => Padding(
-      padding: EdgeInsets.only(top: 16, left: 16, right: 16),
+      padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 40),
       child: CustomScrollView(
         // solves scrolling while keyboard
         shrinkWrap: true,
@@ -322,18 +322,13 @@ class _ReceiveState extends State<Receive> {
                     FocusScope.of(context).unfocus();
                   },
                 ),
+                SizedBox(height: 16),
               ],
             ),
           ),
           SliverFillRemaining(
             hasScrollBody: false,
-            child: Padding(
-                padding:
-                    EdgeInsets.only(bottom: 40, top: 16, left: 16, right: 16),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [shareButton()])),
+            child: Row(children: [shareButton]),
           ),
         ],
       ));
@@ -341,11 +336,10 @@ class _ReceiveState extends State<Receive> {
   /// see Autocomplete above
   //static String _displayStringForOption(Security option) => option.symbol;
 
-  Widget shareButton() => Container(
-          child: OutlinedButton.icon(
-        onPressed: () => Share.share(uri),
+  Widget get shareButton => components.buttons.actionButton(
+        context,
+        label: 'Share',
         icon: Icon(Icons.share),
-        label: Text('Share'.toUpperCase()),
-        style: components.styles.buttons.bottom(context),
-      ));
+        onPressed: () => Share.share(uri),
+      );
 }
