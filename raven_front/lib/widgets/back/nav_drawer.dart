@@ -7,6 +7,7 @@ import 'package:raven_back/streams/streams.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:settings_ui/settings_ui.dart';
 
@@ -184,21 +185,23 @@ class _NavDrawerState extends State<NavDrawer> {
         ],
       )
     };
-    return Container(
-        height: MediaQuery.of(context).size.height - 118 - 10,
+    return GestureDetector(
+        onTap: ScaffoldMessenger.of(context).hideCurrentSnackBar,
+        child: Container(
+            height: MediaQuery.of(context).size.height - 118 - 10,
 
-        /// using a listview makes it variable so you don't have to define height
-        //height: 300,
-        //child: Column(
-        //  crossAxisAlignment: CrossAxisAlignment.start,
-        ///
+            /// using a listview makes it variable so you don't have to define height
+            //height: 300,
+            //child: Column(
+            //  crossAxisAlignment: CrossAxisAlignment.start,
+            ///
 
-        child: Column(
-          children: [
-            if (res.wallets.length > 1)
-              Divider(indent: 0, color: Color(0x1FFFFFFF)),
-            (options[chosen] ?? options['/settings'])!
-          ],
-        ));
+            child: Column(
+              children: [
+                if (res.wallets.length > 1)
+                  Divider(indent: 0, color: AppColors.white12),
+                (options[chosen] ?? options['/settings'])!
+              ],
+            )));
   }
 }

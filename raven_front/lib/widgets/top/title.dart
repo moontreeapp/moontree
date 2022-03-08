@@ -4,6 +4,7 @@ import 'package:raven_back/extensions/object.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_front/components/components.dart';
 
@@ -123,7 +124,7 @@ class _PageTitleState extends State<PageTitle> {
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 elevation: 0,
-                backgroundColor: const Color(0xFFFFFFFF),
+                backgroundColor: AppColors.white,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(8.0),
@@ -142,7 +143,7 @@ class _PageTitleState extends State<PageTitle> {
                       },
                       leading: Icon(
                         Icons.account_balance_wallet_rounded,
-                        color: Color(0xFF5C6BC0),
+                        color: AppColors.primary,
                       ),
                       title: Text('Wallet ' + wallet.name,
                           style: Theme.of(context).choicesBlue),

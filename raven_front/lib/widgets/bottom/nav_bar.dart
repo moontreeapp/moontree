@@ -4,6 +4,7 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/streams/streams.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class NavBar extends StatefulWidget {
@@ -138,7 +139,7 @@ class _NavBarState extends State<NavBar> {
         }[appContext]!),
         iconSize: streams.app.context.value == appContext ? 30 : 24,
         color: streams.app.context.value == appContext
-            ? Color(0xFF5C6BC0)
+            ? AppColors.primary
             : Color(0x995C6BC0),
       );
 

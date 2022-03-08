@@ -321,7 +321,7 @@ import 'package:raven_front/widgets/other/circle_gradient.dart';
           border: Border.all(
               width: 2,
               color:
-                  asset.endsWith('!') ? Color(0xFFFF9900) : Color(0xFF5C6BC0))),
+                  asset.endsWith('!') ? Color(0xFFFF9900) : AppColors.primary)),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(100.0),
         child: Center(

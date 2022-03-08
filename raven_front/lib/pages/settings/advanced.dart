@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/theme/theme.dart';
 
 enum UserLevel { beginner, intermediate, advanced }
 
@@ -27,7 +28,7 @@ class _AdvancedState extends State<Advanced> {
         RadioListTile<UserLevel>(
             controlAffinity: ListTileControlAffinity.leading,
             contentPadding: EdgeInsets.all(0),
-            activeColor: Color(0xFF5C6BC0),
+            activeColor: AppColors.primary,
             value: UserLevel.beginner,
             groupValue: chosenLevel,
             title: Text(
@@ -47,7 +48,7 @@ class _AdvancedState extends State<Advanced> {
         RadioListTile<UserLevel>(
             controlAffinity: ListTileControlAffinity.leading,
             contentPadding: EdgeInsets.all(0),
-            activeColor: Color(0xFF5C6BC0),
+            activeColor: AppColors.primary,
             value: UserLevel.intermediate,
             groupValue: chosenLevel,
             title: Text('Intermediate',
@@ -60,7 +61,7 @@ class _AdvancedState extends State<Advanced> {
         RadioListTile<UserLevel>(
             controlAffinity: ListTileControlAffinity.leading,
             contentPadding: EdgeInsets.all(0),
-            activeColor: Color(0xFF5C6BC0),
+            activeColor: AppColors.primary,
             value: UserLevel.advanced,
             groupValue: chosenLevel,
             title:

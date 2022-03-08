@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/theme/theme.dart';
 
 class DecorationComponents {
   DecorationComponents();
@@ -17,23 +18,21 @@ class DecorationComponents {
       InputDecoration(
         focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: Color(0xFFAA2E25), width: 2)),
+            borderSide: BorderSide(color: AppColors.error, width: 2)),
         errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: Color(0xFFAA2E25), width: 2)),
+            borderSide: BorderSide(color: AppColors.error, width: 2)),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: Color(0xFF5C6BC0), width: 2)),
+            borderSide: BorderSide(color: AppColors.primary, width: 2)),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: Color(0x1F000000))),
+            borderSide: BorderSide(color: AppColors.black12)),
         labelStyle: Theme.of(context).textTheme.subtitle1,
         alignLabelWithHint: true,
         errorStyle: Theme.of(context).textFieldError,
         floatingLabelStyle: TextStyle(
-            color: errorText == null
-                ? const Color(0xFF5C6BC0)
-                : const Color(0xFFAA2E25)),
+            color: errorText == null ? AppColors.primary : AppColors.error),
         contentPadding: EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
         labelText: labelText,
         hintText: hintText,
