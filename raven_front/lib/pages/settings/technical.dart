@@ -55,13 +55,17 @@ class _TechnicalViewState extends State<TechnicalView> {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: Scaffold(
-            appBar: components.headers.back(
-              context,
-              'Accounts',
-              extraActions: [exportAllButton()],
-            ),
-            body: body()));
+        child:
+            //Scaffold(
+            //    appBar: components.headers.back(
+            //      context,
+            //      'Accounts',
+            //      extraActions: [exportAllButton()],
+            //    ),
+            //    body:
+            body()
+        //)
+        );
   }
 
   IconButton exportAllButton() => IconButton(

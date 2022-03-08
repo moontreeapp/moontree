@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:raven_front/components/styles/decorations.dart';
 
 import 'buttons.dart';
-import 'headers.dart';
 import 'icons.dart';
 import 'empty.dart';
 import 'routes.dart';
@@ -21,7 +20,6 @@ class components {
   static final TextComponents text = TextComponents();
   static final AppLifecycleReactor status = AppLifecycleReactor();
   static final EmptyComponents empty = EmptyComponents();
-  static final HeaderComponents headers = HeaderComponents();
   //static final RouteObserver<PageRoute> routeObserver =
   //    RouteObserver<PageRoute>();
   // handled by navigator
