@@ -49,7 +49,7 @@ class ButtonComponents {
 
   ElevatedButton getRVN(BuildContext context) => ElevatedButton(
         onPressed: () {/* link to coinbase */},
-        child: Text('get RVN', style: Theme.of(context).textTheme.headline2),
+        child: Text('get RVN'),
         style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all(Theme.of(context).good)),
       );

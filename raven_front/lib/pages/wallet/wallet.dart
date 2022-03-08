@@ -117,8 +117,8 @@ class _WalletViewState extends State<WalletView> {
           flexibleSpace: Container(
             alignment: Alignment(0.0, -0.5),
             child: Text(
-                '\n ${Current.balanceUSD?.valueUSD ?? Current.balanceRVN.value}',
-                style: Theme.of(context).textTheme.headline3),
+              '\n ${Current.balanceUSD?.valueUSD ?? Current.balanceRVN.value}',
+            ),
           ),
           bottom: PreferredSize(
               preferredSize: Size.fromHeight(50.0),
@@ -156,7 +156,6 @@ class _WalletViewState extends State<WalletView> {
                 secret,
                 cursorColor: Colors.grey[850],
                 showCursor: true,
-                style: Theme.of(context).mono,
                 toolbarOptions: toolbarOptions,
               ),
             )),
@@ -167,8 +166,7 @@ class _WalletViewState extends State<WalletView> {
                     ? 'Hide ' + secretName + ' Secret'
                     : 'Show ' + secretName + ' Secret')),
             SizedBox(height: 30.0),
-            Text('Wallet Addresses',
-                style: Theme.of(context).textTheme.headline4),
+            Text('Wallet Addresses'),
             SizedBox(height: 10.0),
             Center(
               child: Column(
@@ -187,7 +185,6 @@ class _WalletViewState extends State<WalletView> {
                       ? SelectableText(address!,
                           cursorColor: Colors.grey[850],
                           showCursor: true,
-                          style: Theme.of(context).mono,
                           toolbarOptions: toolbarOptions)
                       : Text(
                           'address unknown since wallet cannot be decrypted. Please login again.'),
@@ -234,13 +231,14 @@ class _WalletViewState extends State<WalletView> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text('Index: ' + walletAddress.hdIndex.toString(),
-                          style: Theme.of(context).annotate),
                       Text(
-                          (walletAddress.exposure == NodeExposure.Internal
-                              ? 'Internal (change)'
-                              : 'External (receive)'),
-                          style: Theme.of(context).annotate),
+                        'Index: ' + walletAddress.hdIndex.toString(),
+                      ),
+                      Text(
+                        (walletAddress.exposure == NodeExposure.Internal
+                            ? 'Internal (change)'
+                            : 'External (receive)'),
+                      ),
                       Text(
                           'Balance: ' +
                               utils
@@ -257,8 +255,9 @@ class _WalletViewState extends State<WalletView> {
                     ],
                   ),
                   SizedBox(height: 10),
-                  SelectableText('private key: ' + (privateKey ?? 'unknown'),
-                      style: Theme.of(context).annotate),
+                  SelectableText(
+                    'private key: ' + (privateKey ?? 'unknown'),
+                  ),
                 ]);
               }),
               title: Wrap(

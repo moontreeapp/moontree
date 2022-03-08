@@ -39,56 +39,6 @@ class Identicon {
         backgroundColor ?? AppColors.RGB(appColors.backgroundColor(name));
     foregroundColor =
         foregroundColor ?? AppColors.RGB(appColors.foregroundColor(name));
-    //var lightenPercent = _getShade();
-    //if (name.startsWith('MOONTREE') || name.startsWith('MT/')) {
-    //  foregroundColor = _getGreenColorShade(lightenPercent);
-    //  backgroundColor = _getWhiteColorShade(lightenPercent);
-    //} else {
-    //  foregroundColor = _getOrangeColorShade(lightenPercent);
-    //  backgroundColor = _getBlueColorShade(lightenPercent);
-    //}
-  }
-
-  double _getShade() {
-    var lighten = int.parse(hashedName.substring(0, 2), radix: 16) / 1.5;
-    return lighten / 255;
-  }
-
-  List<int> _getPastelColor({int lighten = 127}) {
-    var r = () => Random().nextInt(128) + lighten;
-    return [r(), r(), r()];
-  }
-
-  List<int> _getBlueColorShade(double lightenPercent) {
-    return [
-      (92 - 46) + (lightenPercent * (255 - (92 - 46))).toInt(),
-      (107 - 46) + (lightenPercent * (255 - (107 - 46))).toInt(),
-      (192 - 46) + (lightenPercent * (255 - (192 - 46))).toInt(),
-    ];
-  }
-
-  List<int> _getOrangeColorShade(double lightenPercent) {
-    return [
-      245 + (lightenPercent * (255 - 245)).toInt(),
-      125 + (lightenPercent * (255 - 125)).toInt(),
-      0 + (lightenPercent * (255 - 0)).toInt(),
-    ];
-  }
-
-  List<int> _getGreenColorShade(double lightenPercent) {
-    return [
-      120 /*+ (lightenPercent * (255 - 120)).toInt()*/,
-      215 /*+ (lightenPercent * (255 - 215)).toInt()*/,
-      0 /*+ (lightenPercent * (255 - 0)).toInt()*/,
-    ];
-  }
-
-  List<int> _getWhiteColorShade(double lightenPercent) {
-    //if (lightenPercent >= .333) {
-    //  return [33, 33, 33];
-    //} else {
-    return [255, 255, 255];
-    //}
   }
 
   bool _bitIsOne(int n, List<int> hashBytes) {

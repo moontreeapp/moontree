@@ -7,11 +7,3 @@ List zipLists(List lists) => [
     ];
 
 List<int> range(int end) => List<int>.generate(end, (i) => i + 1);
-
-// alternative to quiver
-//import 'package:collection/collection.dart';
-    //{
-    //  for (var pair in IterableZip([
-    //      primaryNames + lightPrimaryNames, primaries + lightPrimaries]))
-    //    pair[0] as int: pair[1] as Color
-    //};

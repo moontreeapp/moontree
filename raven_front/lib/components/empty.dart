@@ -44,7 +44,7 @@ class EmptyComponents {
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             Icon(icon ?? Icons.savings,
                 size: 50.0, color: Theme.of(context).secondaryHeaderColor),
-            Text(msg, style: Theme.of(context).textTheme.bodyText1),
+            Text(msg),
             //RavenButton.getRVN(context), // hidden for alpha
           ]));
 }

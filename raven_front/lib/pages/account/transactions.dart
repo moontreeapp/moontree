@@ -140,7 +140,7 @@ class _TransactionsState extends State<Transactions>
   //                      components.text.securityAsReadable(
   //                          data['holding']!.value,
   //                          symbol: security.symbol),
-  //                      style: Theme.of(context).textTheme.headline3),
+  //                      ),
   //                ])),
   //        bottom: PreferredSize(
   //            preferredSize: Size.fromHeight(50.0),

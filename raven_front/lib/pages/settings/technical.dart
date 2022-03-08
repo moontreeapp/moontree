@@ -133,14 +133,14 @@ class _TechnicalViewState extends State<TechnicalView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                          '${wallet.id.substring(0, 6)}...${wallet.id.substring(wallet.id.length - 6, wallet.id.length)}',
-                          style: Theme.of(context).mono),
+                        '${wallet.id.substring(0, 6)}...${wallet.id.substring(wallet.id.length - 6, wallet.id.length)}',
+                      ),
                       Text(
-                          // todo use lingo keys depending on wallet type here...
-                          wallet is LeaderWallet
-                              ? 'HD Wallet'
-                              : 'Private Key Wallet',
-                          style: Theme.of(context).annotate),
+                        // todo use lingo keys depending on wallet type here...
+                        wallet is LeaderWallet
+                            ? 'HD Wallet'
+                            : 'Private Key Wallet',
+                      ),
                     ]),
                 IconButton(
                     icon: Icon(Icons.remove_red_eye,
@@ -187,9 +187,7 @@ class _TechnicalViewState extends State<TechnicalView> {
                           title: Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                Text(account.name,
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1),
+                                Text(account.name),
                                 Text('  ${account.netName}net',
                                     style: Theme.of(context).textTheme.caption),
                               ]),
@@ -219,8 +217,7 @@ class _TechnicalViewState extends State<TechnicalView> {
                                     icon: components.icons.export),
                               ]))
                       : ListTile(
-                          title: Text(account.name,
-                              style: Theme.of(context).textTheme.bodyText1),
+                          title: Text(account.name),
                           trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[

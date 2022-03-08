@@ -99,14 +99,15 @@ class _TransactionPageState extends State<TransactionPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height: 22),
-                    Text(transactionRecord!.out ? 'Sent' : 'Received',
-                        style: Theme.of(context).textTheme.headline5),
                     Text(
-                        components.text
-                            .securityAsReadable(transactionRecord!.value,
-                                symbol: transactionRecord!.security.symbol)
-                            .toString(),
-                        style: Theme.of(context).textTheme.headline5)
+                      transactionRecord!.out ? 'Sent' : 'Received',
+                    ),
+                    Text(
+                      components.text
+                          .securityAsReadable(transactionRecord!.value,
+                              symbol: transactionRecord!.security.symbol)
+                          .toString(),
+                    )
                   ])),
           bottom: PreferredSize(
               preferredSize: Size.fromHeight(50.0),
@@ -194,8 +195,7 @@ class _TransactionPageState extends State<TransactionPage> {
                           width: 50,
                           child: components.icons
                               .assetAvatar(transactionRecord!.security.symbol)),
-                      title: Text(transactionRecord!.security.symbol,
-                          style: Theme.of(context).textTheme.bodyText2),
+                      title: Text(transactionRecord!.security.symbol),
                       trailing: Text(components.text.securityAsReadable(
                           transactionRecord!.totalIn,
                           security: transactionRecord!.security)),

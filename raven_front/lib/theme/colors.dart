@@ -24,9 +24,14 @@ class AppColors {
 
   static Color get error => const Color(0xFFEF5350);
   static Color get success => const Color(0xFF66BB6A);
-  static Color get primary => const Color(0x5C6BC0);
+  static Color get primary => const Color(0xFF5C6BC0);
   static Color get lime => const Color(0xFFD4E157);
   static Color get yellow => const Color(0xFFFFEE58);
+  static Color get disabled => const Color(0x61000000);
+  static Color get primaryDisabled => const Color(0xFFC1C7E7);
+  static Color get white => const Color(0xFFFFFFFF);
+  static Color get divider =>
+      const Color(0x1F000000); //Colors.black.withOpacity(0.12)
 
   static List<Color> get whites => [
         // alphas
@@ -34,16 +39,15 @@ class AppColors {
         const Color(0x61FFFFFF), // .38 Colors.white.withAlpha(38)
         const Color(0x99FFFFFF), // .60 Colors.white.withAlpha(60)
         const Color(0xDEFFFFFF), // .87 Colors.white.withAlpha(87)
-        const Color(0xFFFFFFFF), // 1.0 Colors.white.withAlpha(100)
+        white,
       ];
 
   static List<Color> get blacks => [
-        // alphas
-        const Color(0x1F000000), // .12
-        const Color(0x61000000), // .38
-        const Color(0x99000000), // .60
-        const Color(0xDE000000), // .87
-        const Color(0xFF000000), // 1.0
+        divider,
+        disabled,
+        const Color(0x99000000),
+        const Color(0xDE000000),
+        const Color(0xFF000000),
       ];
 
   static List<Color> get primaries => [
@@ -61,7 +65,7 @@ class AppColors {
 
   static List<Color> get lightPrimaries => [
         const Color(0xFF9DA6D9),
-        const Color(0xFFC1C7E7),
+        primaryDisabled,
       ];
 
   static List<int> get primaryNames =>
@@ -140,59 +144,4 @@ class AppColors {
   }
 
   static List<int> RGB(Color color) => [color.red, color.green, color.blue];
-
-/* to view all valid combinations (plus too close and clashing) all for testing
-/// needs flutter
-ListView(
-  children: [
-    for (var b in [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 13, 14, 15])
-      for (var f in [
-        0,
-        1,
-        2,
-        3,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15
-      ])
-        if (b != f &&
-            b != f - 1 &&
-            b != f + 1 &&
-            !(b == 0 && f == 15) &&
-            !(b == 15 && f == 0))
-          ListTile(
-            leading: components.icons.assetAvatar('',
-                foreground: AppColors.colors[f],
-                background: AppColors.colors[b]),
-            title: Text(
-                'background index: $b foreground index: $f'),
-            subtitle: Text(
-                'background: ${AppColors.colors[b]} foreground: ${AppColors.colors[f]}'),
-          )
-])
-*/
-/* possible combos
-ListView(
-  children: [
-  for (var b in AppColors().backgroundColors)
-    for (var f in AppColors().foregroundColors(b))
-      ListTile(
-        leading: components.icons
-            .assetAvatar('', foreground: f, background: b),
-        title:
-            Text('bc: $b  b: ${AppColors.colors.indexOf(b)}'),
-        subtitle:
-            Text('fc: $f  f: ${AppColors.colors.indexOf(f)}'),
-      )
-])
-*/
-
 }

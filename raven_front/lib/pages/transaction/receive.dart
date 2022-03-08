@@ -127,8 +127,7 @@ class _ReceiveState extends State<Receive> {
                 //Text(
                 //    // rvn is default but if balance is 0 then take the largest asset balance and also display name here.
                 //    'RVN',
-                //    textAlign: TextAlign.center,
-                //    style: Theme.of(context).textTheme.bodyText1),
+                //    textAlign: TextAlign.center),
                 SizedBox(height: 20.0),
                 GestureDetector(
                     onLongPress: () {

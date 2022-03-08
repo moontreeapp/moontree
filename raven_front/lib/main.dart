@@ -62,7 +62,7 @@ class RavenMobileApp extends StatelessWidget {
           .routes(context), // look up flutter view model for sub app structure.
       themeMode: ThemeMode.system,
       theme: CustomTheme.lightTheme,
-      darkTheme: CustomTheme.lightTheme, //dark
+      darkTheme: CustomTheme.lightTheme,
       navigatorObservers: [components.navigator],
       builder: (context, child) {
         components.navigator.scaffoldContext = context;
