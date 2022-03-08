@@ -98,7 +98,7 @@ class _FeedbackState extends State<Feedback> {
         padding: EdgeInsets.only(top: 16, left: 16.0, right: 16.0),
         child: Text(
           'Let us know what you want changed, added or fixed!',
-          style: Theme.of(context).feedbackGreeting,
+          style: Theme.of(context).textTheme.bodyText1,
         ),
       );
 
@@ -177,8 +177,8 @@ class _FeedbackState extends State<Feedback> {
               dense: true,
               contentPadding: EdgeInsets.all(0),
               leading: Icon(Icons.attachment_rounded, color: Colors.black),
-              title:
-                  Text(file!.filename, style: Theme.of(context).importedFile),
+              title: Text(file!.filename,
+                  style: Theme.of(context).textTheme.bodyText1),
               subtitle: Text('${file!.size.toString()} KB',
                   style: Theme.of(context).importedSize),
               trailing: IconButton(

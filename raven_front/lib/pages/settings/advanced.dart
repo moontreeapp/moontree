@@ -32,7 +32,7 @@ class _AdvancedState extends State<Advanced> {
             groupValue: chosenLevel,
             title: Text(
               'Beginner (Recommended)',
-              style: Theme.of(context).userLevel,
+              style: Theme.of(context).textTheme.bodyText1,
             ),
             onChanged: (value) /*async*/ {
               //await res.settings.save(Setting(
@@ -50,7 +50,8 @@ class _AdvancedState extends State<Advanced> {
             activeColor: Color(0xFF5C6BC0),
             value: UserLevel.intermediate,
             groupValue: chosenLevel,
-            title: Text('Intermediate', style: Theme.of(context).userLevel),
+            title: Text('Intermediate',
+                style: Theme.of(context).textTheme.bodyText1),
             onChanged: (value) {
               setState(() {
                 chosenLevel = value!;
@@ -62,7 +63,8 @@ class _AdvancedState extends State<Advanced> {
             activeColor: Color(0xFF5C6BC0),
             value: UserLevel.advanced,
             groupValue: chosenLevel,
-            title: Text('Advanced', style: Theme.of(context).userLevel),
+            title:
+                Text('Advanced', style: Theme.of(context).textTheme.bodyText1),
             onChanged: (value) {
               setState(() {
                 chosenLevel = value!;

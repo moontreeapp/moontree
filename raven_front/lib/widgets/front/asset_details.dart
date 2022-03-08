@@ -28,73 +28,65 @@ class _AssetDetails extends State<AssetDetails> {
 
   Widget body() => ListView(
         padding: EdgeInsets.only(top: 8, bottom: 112),
-        children: [
-          ListTile(
-            dense: true,
-            title: Text('Name', style: Theme.of(context).assetDetail),
-            trailing:
-                Text(element('Name'), style: Theme.of(context).assetDetail),
-          ),
-          ListTile(
-            dense: true,
-            title: Text('Quantity', style: Theme.of(context).assetDetail),
-            trailing:
-                Text(element('Quantity'), style: Theme.of(context).assetDetail),
-          ),
-          ListTile(
-            dense: true,
-            title: Text('Decimals', style: Theme.of(context).assetDetail),
-            trailing:
-                Text(element('Decimals'), style: Theme.of(context).assetDetail),
-          ),
-          if (widget.symbol.startsWith('\$'))
-            Padding(
-              padding:
-                  EdgeInsets.only(left: 16, right: 16, top: 15, bottom: 15),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Verifier', style: Theme.of(context).assetDetail),
-                  Container(
-                    width:
-                        (MediaQuery.of(context).size.width - 16 - 16 - 8) / 1.5,
-                    child: Text(
-                        element('Verifier') +
-                            '(#KYC & #AML) OR #VERIFIED'
+        children: <Widget>[
+              for (var text in ['Name', 'Quantity', 'Decimals'])
+                ListTile(
+                  dense: true,
+                  title:
+                      Text(text, style: Theme.of(context).textTheme.bodyText1),
+                  trailing: Text(element(text),
+                      style: Theme.of(context).textTheme.bodyText1),
+                ),
+            ] +
+            [
+              if (widget.symbol.startsWith('\$'))
+                Padding(
+                  padding:
+                      EdgeInsets.only(left: 16, right: 16, top: 15, bottom: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Verifier',
+                          style: Theme.of(context).textTheme.bodyText1),
+                      Container(
+                        width:
+                            (MediaQuery.of(context).size.width - 16 - 16 - 8) /
+                                1.5,
+                        child: Text(
+                            element('Verifier') +
                                 '(#KYC & #AML) OR #VERIFIED'
-                                '(#KYC & #AML) OR #VERIFIED'
-                                '(#KYC & #AML) OR #VERIFIED'
-                                '(#KYC & #AML) OR #VERIFIED'
-                                '(#KYC & #AML) OR #VERIFIED'
-                                '(#KYC & #AML) OR #VERIFIED'
-                                '(#KYC & #AML) OR #VERIFIED'
-                                '(#KYC & #AML) OR #VERIFIED'
-                                '(#KYC & #AML) OR #VERIFIED'
-                                '(#KYC & #AML) OR #VERIFIED'
-                                '(#KYC & #AML) OR #VERIFIED'
-                                '(#KYC & #AML) OR #VERIFIED',
-                        overflow: TextOverflow.fade,
-                        softWrap: true,
-                        maxLines: 100,
-                        style: Theme.of(context).assetDetail),
-                  )
-                ],
-              ),
-            ),
-          ListTile(
-            dense: true,
-            title: Text('IPFS/Txid', style: Theme.of(context).assetDetail),
-            trailing: Text(element('IPFS/Txid'),
-                style: Theme.of(context).assetDetail),
-          ),
-          ListTile(
-            dense: true,
-            title: Text('Reissuable', style: Theme.of(context).assetDetail),
-            trailing: Text(element('Reissuable'),
-                style: Theme.of(context).assetDetail),
-          ),
-        ],
+                                    '(#KYC & #AML) OR #VERIFIED'
+                                    '(#KYC & #AML) OR #VERIFIED'
+                                    '(#KYC & #AML) OR #VERIFIED'
+                                    '(#KYC & #AML) OR #VERIFIED'
+                                    '(#KYC & #AML) OR #VERIFIED'
+                                    '(#KYC & #AML) OR #VERIFIED'
+                                    '(#KYC & #AML) OR #VERIFIED'
+                                    '(#KYC & #AML) OR #VERIFIED'
+                                    '(#KYC & #AML) OR #VERIFIED'
+                                    '(#KYC & #AML) OR #VERIFIED'
+                                    '(#KYC & #AML) OR #VERIFIED'
+                                    '(#KYC & #AML) OR #VERIFIED',
+                            overflow: TextOverflow.fade,
+                            softWrap: true,
+                            maxLines: 100,
+                            style: Theme.of(context).textTheme.bodyText1),
+                      )
+                    ],
+                  ),
+                )
+            ] +
+            [
+              for (var text in ['IPFS/Txid', 'Reissuable'])
+                ListTile(
+                  dense: true,
+                  title:
+                      Text(text, style: Theme.of(context).textTheme.bodyText1),
+                  trailing: Text(element(text),
+                      style: Theme.of(context).textTheme.bodyText1),
+                ),
+            ],
       );
 
   String element(String humanName) {

@@ -375,7 +375,7 @@ class _CreateAssetState extends State<CreateAsset> {
                 color: Colors.black,
               ),
             ),
-            Text('Reissuable', style: Theme.of(context).switchText),
+            Text('Reissuable', style: Theme.of(context).textTheme.bodyText1),
           ]),
           Switch(
             value: reissueValue,

@@ -316,13 +316,11 @@ class _WalletViewState extends State<WalletView> {
         ];
 
   ElevatedButton sendButton() => ElevatedButton.icon(
-      icon: Icon(Icons.north_east),
-      label: Text('Send'),
-      onPressed: disabled
-          ? () {}
-          : () => Navigator.pushNamed(context, '/transaction/send',
-              arguments: {'symbol': 'RVN', 'walletId': wallet.id}),
-      style: disabled
-          ? components.styles.buttons.disabledCurvedSides(context)
-          : components.styles.buttons.curvedSides);
+        icon: Icon(Icons.north_east),
+        label: Text('Send'),
+        onPressed: disabled
+            ? () {}
+            : () => Navigator.pushNamed(context, '/transaction/send',
+                arguments: {'symbol': 'RVN', 'walletId': wallet.id}),
+      );
 }

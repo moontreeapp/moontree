@@ -155,9 +155,9 @@ class _HoldingList extends State<HoldingList> {
     if (rvnHolding.isEmpty) {
       rvnHolding.add(ListTile(
           onTap: () {},
-          title: Text('RVN', style: Theme.of(context).holdingName),
+          title: Text('RVN', style: Theme.of(context).textTheme.bodyText1),
           trailing: Text(showUSD ? '\$ 0' : '0',
-              style: Theme.of(context).holdingValue),
+              style: Theme.of(context).textTheme.bodyText2),
           leading: Container(
               height: 50,
               width: 50,
@@ -302,13 +302,13 @@ class _HoldingList extends State<HoldingList> {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(mainAxisAlignment: MainAxisAlignment.start, children: [
           Text(holding.symbol == 'RVN' ? 'Ravencoin' : holding.last,
-              style: Theme.of(context).holdingName),
+              style: Theme.of(context).textTheme.bodyText1),
           /* //this feature can show the path 
           if (holding.symbol != holding.last && showPath)
             holding.last.length >= 20
-                ? Text('  (...)', style: Theme.of(context).holdingWhisper)
+                ? Text('  (...)', style: Theme.of(context).textTheme.caption)
                 : Text('   (' + holding.notLast + ')',
-                    style: Theme.of(context).holdingWhisper),
+                    style: Theme.of(context).textTheme.caption),
                     */
         ]),
         Text(
@@ -321,6 +321,6 @@ class _HoldingList extends State<HoldingList> {
                   ].join(', ')
                 : components.text.securityAsReadable(holding.balance!.value,
                     security: holding.balance!.security, asUSD: showUSD),
-            style: Theme.of(context).holdingValue),
+            style: Theme.of(context).textTheme.bodyText2),
       ]);
 }

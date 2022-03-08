@@ -119,7 +119,7 @@ class _TransactionListState extends State<TransactionList> {
                             transactionRecord.value,
                             security: transactionRecord.security,
                             asUSD: showUSD),
-                        style: Theme.of(context).txAmount),
+                        style: Theme.of(context).textTheme.bodyText1),
                     Text(transactionRecord.formattedDatetime,
                         style: Theme.of(context).txDate),
                   ]),

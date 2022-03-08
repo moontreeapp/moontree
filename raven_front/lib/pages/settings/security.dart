@@ -38,7 +38,7 @@ class _SecurityState extends State<Security> {
                 title: Text(
                     SecurityOption.none.enumString
                         .toTitleCase(underscoreAsSpace: true),
-                    style: Theme.of(context).securityDestination),
+                    style: Theme.of(context).textTheme.bodyText1),
                 value: SecurityOption.none,
                 groupValue: securityChoice,
                 onChanged: (SecurityOption? value) => services.password.required
@@ -51,8 +51,8 @@ class _SecurityState extends State<Security> {
                     SecurityOption.system_default.enumString
                         .toTitleCase(underscoreAsSpace: true),
                     style: services.password.required
-                        ? Theme.of(context).securityDisabled
-                        : Theme.of(context).securityDisabled),
+                        ? Theme.of(context).textTheme.bodyText1
+                        : Theme.of(context).textTheme.bodyText1),
                 value: SecurityOption.system_default,
                 groupValue: securityChoice,
                 onChanged: true
@@ -68,7 +68,7 @@ class _SecurityState extends State<Security> {
                 title: Text(
                     SecurityOption.password.enumString
                         .toTitleCase(underscoreAsSpace: true),
-                    style: Theme.of(context).securityDestination),
+                    style: Theme.of(context).textTheme.bodyText1),
                 value: SecurityOption.password,
                 groupValue: securityChoice,
                 onChanged: (SecurityOption? value) => services.password.required

@@ -205,7 +205,8 @@ class _SubAssetList extends State<SubAssetList> {
               title: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(asset.last, style: Theme.of(context).holdingName),
+                    Text(asset.last,
+                        style: Theme.of(context).textTheme.bodyText1),
                     Text(
                         [
                           if (asset.admin != null) 'Admin',
@@ -215,7 +216,7 @@ class _SubAssetList extends State<SubAssetList> {
                           if (asset.restricted != null) 'Restricted',
                           if (asset.qualifier != null) 'Qualifier',
                         ].join(', '),
-                        style: Theme.of(context).holdingValue),
+                        style: Theme.of(context).textTheme.bodyText2),
                   ]),
               trailing: Icon(Icons.chevron_right_rounded))
       ].intersperse(Divider(height: 1)).toList());

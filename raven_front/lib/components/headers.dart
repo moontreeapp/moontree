@@ -12,7 +12,7 @@ class HeaderComponents {
         shadows,
         AppBar(
             centerTitle: false,
-            title: Text(title, style: Theme.of(context).pageTitle),
+            title: Text(title, style: Theme.of(context).textTheme.headline4),
             actions: <Widget>[components.status])
       ])));
 
@@ -29,7 +29,7 @@ class HeaderComponents {
             AppBar(
               leading: components.buttons.back(context),
               centerTitle: false,
-              title: Text(title, style: Theme.of(context).pageTitle),
+              title: Text(title, style: Theme.of(context).textTheme.headline4),
               actions: <Widget>[
                 ...[for (var action in extraActions ?? []) action],
                 components.status,
@@ -59,7 +59,8 @@ class HeaderComponents {
                   Icon(Icons.qr_code_scanner_rounded, size: 24),
                   SizedBox(width: 16)
                 ],
-                title: Text(title, style: Theme.of(context).pageTitle),
+                title:
+                    Text(title, style: Theme.of(context).textTheme.headline4),
                 flexibleSpace: Container(
                     alignment: Alignment.center,
                     // balance view should listen for valid usd
@@ -67,7 +68,8 @@ class HeaderComponents {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(balance, style: Theme.of(context).pageValue),
+                          Text(balance,
+                              style: Theme.of(context).textTheme.headline1),
                         ])))
           ])));
 

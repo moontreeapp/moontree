@@ -26,7 +26,7 @@ class Support extends StatelessWidget {
                   SizedBox(height: 8),
                   Text(
                     'Join the Ravencoin Discord for general Ravencoin discussions.',
-                    style: Theme.of(context).supportText,
+                    style: Theme.of(context).textTheme.bodyText1,
                   ),
                   SizedBox(height: 16),
                   Text(
@@ -36,7 +36,7 @@ class Support extends StatelessWidget {
                   SizedBox(height: 8),
                   Text(
                     'Join the Moontree Discord, where you can see frequently asked questions, find solutions and request help.',
-                    style: Theme.of(context).supportText,
+                    style: Theme.of(context).textTheme.bodyText1,
                   ),
                 ]),
             Row(

@@ -129,7 +129,7 @@ class _CheckoutState extends State<Checkout> {
         title: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
           SizedBox(width: 5),
           Text(struct.displaySymbol.toUpperCase(),
-              style: Theme.of(context).checkoutAsset)
+              style: Theme.of(context).textTheme.bodyText1)
         ]),
         //subtitle: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
         //  SizedBox(width: 5),
@@ -243,10 +243,10 @@ class _CheckoutState extends State<Checkout> {
 
   Widget total() =>
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text('Total:', style: Theme.of(context).checkoutTotal),
+        Text('Total:', style: Theme.of(context).textTheme.bodyText1),
         Text(
             '${getRightTotal(struct.total)} ${struct.paymentSymbol.toUpperCase()}',
-            style: Theme.of(context).checkoutTotal),
+            style: Theme.of(context).textTheme.bodyText1),
       ]);
 
   String getRightTotal(String x) {

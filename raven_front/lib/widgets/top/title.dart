@@ -111,7 +111,7 @@ class _PageTitleState extends State<PageTitle> {
                       (pageTitle == 'Wallet'
                           ? appContext.enumString.toTitleCase()
                           : pageTitle),
-                  style: Theme.of(context).pageTitle));
+                  style: Theme.of(context).textTheme.headline4));
 
   Widget? get walletNumber {
     if (pageTitle != 'Wallet') {
@@ -155,13 +155,13 @@ class _PageTitleState extends State<PageTitle> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text('Wallet ' + res.wallets.currentWalletName + ' ',
-                    style: Theme.of(context).pageTitle),
+                    style: Theme.of(context).textTheme.headline4),
                 Icon(Icons.expand_more_rounded, color: Colors.white),
               ],
             ));
       } else if (appContext == AppContext.wallet) {
         return Text('Wallet ' + res.wallets.currentWalletName + ' ',
-            style: Theme.of(context).pageTitle);
+            style: Theme.of(context).textTheme.headline4);
       }
     }
 

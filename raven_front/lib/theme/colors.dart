@@ -27,27 +27,38 @@ class AppColors {
   static Color get primary => const Color(0xFF5C6BC0);
   static Color get lime => const Color(0xFFD4E157);
   static Color get yellow => const Color(0xFFFFEE58);
-  static Color get disabled => const Color(0x61000000);
   static Color get primaryDisabled => const Color(0xFFC1C7E7);
+
+  // .12 Colors.white.withAlpha(12)
+  static Color get white12 => const Color(0x1FFFFFFF);
+  static Color get white38 => const Color(0x61FFFFFF);
+  static Color get white60 => const Color(0x99FFFFFF);
+  static Color get white87 => const Color(0xDEFFFFFF);
   static Color get white => const Color(0xFFFFFFFF);
-  static Color get divider =>
-      const Color(0x1F000000); //Colors.black.withOpacity(0.12)
+  static Color get black12 => const Color(0x1F000000);
+  static Color get black38 => const Color(0x61000000);
+  static Color get black60 => const Color(0x99000000);
+  static Color get black87 => const Color(0xDE000000);
+  static Color get black => const Color(0xFF000000);
+  static Color get divider => black12;
+  static Color get disabled => black38;
+  static Color get offBlack => black87;
+  static Color get offWhite => white87;
 
   static List<Color> get whites => [
-        // alphas
-        const Color(0x1FFFFFFF), // .12 Colors.white.withAlpha(12)
-        const Color(0x61FFFFFF), // .38 Colors.white.withAlpha(38)
-        const Color(0x99FFFFFF), // .60 Colors.white.withAlpha(60)
-        const Color(0xDEFFFFFF), // .87 Colors.white.withAlpha(87)
+        white12,
+        white38,
+        white60,
+        white87,
         white,
       ];
 
   static List<Color> get blacks => [
-        divider,
-        disabled,
-        const Color(0x99000000),
-        const Color(0xDE000000),
-        const Color(0xFF000000),
+        black12,
+        black38,
+        black60,
+        black87,
+        black,
       ];
 
   static List<Color> get primaries => [
@@ -64,14 +75,16 @@ class AppColors {
       ];
 
   static List<Color> get lightPrimaries => [
-        const Color(0xFF9DA6D9),
         primaryDisabled,
+        const Color(0xFF9DA6D9),
       ];
 
-  static List<int> get primaryNames =>
+  static List<int> get primaryNumbers =>
       [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
 
-  static List<int> get lightPrimaryNames => [60, 38];
+  static List<int> get lightPrimaryNumbers => [38, 60];
+  static List<int> get whiteNumbers => [12, 38, 60, 87, 100];
+  static List<int> get blackNumbers => [12, 38, 60, 87, 100];
 
   List<Color> get backgroundColors => colors
       .where((Color color) => ![lime, yellow, primary].contains(color))
@@ -132,7 +145,7 @@ class AppColors {
       {for (var i in tooClose(index) + tooClash(index)) colors[i]};
 
   Map<int, Color> get primaryMap =>
-      zipMap(primaryNames + lightPrimaryNames, primaries + lightPrimaries)
+      zipMap(primaryNumbers + lightPrimaryNumbers, primaries + lightPrimaries)
           as Map<int, Color>;
 
   Color backgroundColor(String name) =>

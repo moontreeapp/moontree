@@ -276,7 +276,7 @@ class SelectionItems {
         height: 24,
         width: 24,
       ),
-      title: Text(name, style: Theme.of(context).choicesHoldings));
+      title: Text(name, style: Theme.of(context).textTheme.bodyText1));
 
   Widget parentItem(String name) => ListTile(
       visualDensity: VisualDensity.compact,
@@ -288,7 +288,7 @@ class SelectionItems {
         ));
       },
       leading: components.icons.assetAvatar(name, height: 24, width: 24),
-      title: Text(name, style: Theme.of(context).choicesHoldings));
+      title: Text(name, style: Theme.of(context).textTheme.bodyText1));
 
   Widget item(
     SelectionOption name, {

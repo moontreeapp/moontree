@@ -27,7 +27,7 @@ class DecorationComponents {
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
             borderSide: BorderSide(color: Color(0x1F000000))),
-        labelStyle: Theme.of(context).sendFeildText,
+        labelStyle: Theme.of(context).textTheme.subtitle1,
         alignLabelWithHint: true,
         errorStyle: Theme.of(context).textFieldError,
         floatingLabelStyle: TextStyle(

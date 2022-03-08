@@ -74,12 +74,12 @@ class _CoinState extends State<Coin> {
               symbol: widget.symbol,
               asUSD: true,
             ),
-            style: Theme.of(context).balanceDollar),
+            style: Theme.of(context).textTheme.headline5),
         //SizedBox(height: 30),
       ]);
     } else if (front && widget.totalSupply != null) {
       ret.addAll([
-        Text('Total Supply', style: Theme.of(context).balanceDollar),
+        Text('Total Supply', style: Theme.of(context).textTheme.headline5),
       ]);
     }
     return ret;
@@ -102,9 +102,9 @@ class _CoinState extends State<Coin> {
             symbol: widget.symbol,
             asUSD: false,
           ),
-      style: Theme.of(context).balanceAmount);
+      style: Theme.of(context).textTheme.headline3);
   Widget get backText => Text(
         widget.symbol.toTitleCase(underscoreAsSpace: true),
-        style: Theme.of(context).balanceBackText,
+        style: Theme.of(context).textTheme.headline5,
       );
 }

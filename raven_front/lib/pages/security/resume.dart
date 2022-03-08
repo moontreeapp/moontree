@@ -42,13 +42,11 @@ class _ChangeResumeState extends State<ChangeResume> {
             onPressed: () => Navigator.pushReplacementNamed(
                 context, '/security/login', arguments: {}),
             icon: Icon(Icons.login),
-            style: components.styles.buttons.leftSideCurved,
             label: Text('Abort Password Change Process',
                 style: TextStyle(color: Theme.of(context).primaryColor))),
         TextButton.icon(
             onPressed: () => submit(),
             icon: Icon(Icons.login),
-            style: components.styles.buttons.rightSideCurved(context),
             label: Text('Login',
                 style: TextStyle(color: Theme.of(context).primaryColor))),
       ]);

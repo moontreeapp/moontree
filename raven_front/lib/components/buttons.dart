@@ -23,30 +23,6 @@ class ButtonComponents {
                 onPressed: () {/*to trading*/}, icon: Icon(Icons.swap_horiz))
           ]));
 
-  ElevatedButton receive(BuildContext context, {String symbol = 'RVN'}) =>
-      ElevatedButton.icon(
-          icon: Icon(Icons.south_east),
-          label: Text('Receive'),
-          onPressed: () => Navigator.pushNamed(context, '/transaction/receive',
-              arguments: {'symbol': symbol}),
-          style: components.styles.buttons.leftSideCurved);
-
-  ElevatedButton send(
-    BuildContext context, {
-    String symbol = 'RVN',
-    bool disabled = false,
-    String? walletId,
-  }) =>
-      ElevatedButton.icon(
-          icon: Icon(Icons.north_east),
-          label: Text('Send'),
-          onPressed: disabled
-              ? () {}
-              : () => Navigator.pushNamed(context, '/transaction/send',
-                  arguments: {'symbol': symbol}),
-          style: components.styles.buttons
-              .rightSideCurved(context, disabled: disabled));
-
   ElevatedButton getRVN(BuildContext context) => ElevatedButton(
         onPressed: () {/* link to coinbase */},
         child: Text('get RVN'),

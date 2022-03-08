@@ -16,7 +16,7 @@ class About extends StatelessWidget {
             children: <Widget>[
               Text(
                 '© 2022 Moontree, LLC',
-                style: Theme.of(context).copyright,
+                style: Theme.of(context).textTheme.caption,
               ),
               SizedBox(height: 40),
             ]),

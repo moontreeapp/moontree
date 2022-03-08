@@ -82,7 +82,7 @@ class _NavDrawerState extends State<NavDrawer> {
           }
         },
         leading: icon != null ? Icon(icon, color: Colors.white) : image!,
-        title: Text(name, style: Theme.of(context).drawerDestination),
+        title: Text(name, style: Theme.of(context).textTheme.headline5),
         trailing: arrow ? Icon(Icons.chevron_right, color: Colors.white) : null,
       );
 

@@ -116,8 +116,8 @@ class _ImportState extends State<Import> {
               dense: true,
               contentPadding: EdgeInsets.all(0),
               leading: Icon(Icons.attachment_rounded, color: Colors.black),
-              title:
-                  Text(file!.filename, style: Theme.of(context).importedFile),
+              title: Text(file!.filename,
+                  style: Theme.of(context).textTheme.bodyText1),
               subtitle: Text('${file!.size.toString()} KB',
                   style: Theme.of(context).importedSize),
               trailing: IconButton(

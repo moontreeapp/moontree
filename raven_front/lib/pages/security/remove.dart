@@ -36,7 +36,7 @@ class _RemovePasswordState extends State<RemovePassword> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(height: 16),
-            Text('Are you sure?', style: Theme.of(context).loaderText),
+            Text('Are you sure?', style: Theme.of(context).textTheme.headline2),
             Padding(
                 padding: EdgeInsets.only(
                   top: 0,

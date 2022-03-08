@@ -52,7 +52,8 @@ class _LoaderState extends State<Loader> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Text(widget.message, style: Theme.of(context).loaderText),
+              Text(widget.message,
+                  style: Theme.of(context).textTheme.headline2),
               SizedBox(height: 4),
               Image.asset('assets/logo/moontree_logo_56.png',
                   height: 56, width: 56),
