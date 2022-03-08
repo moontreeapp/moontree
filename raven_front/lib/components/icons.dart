@@ -7,9 +7,10 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/records/records.dart';
 import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/utils/identicon.dart';
+import 'package:equatable/equatable.dart';
 
 class IconComponents {
-  IconComponents();
+  Map<IconCacheKey, Widget> cache = {};
 
   Icon get back => Icon(Icons.chevron_left_rounded, color: Colors.white);
 
@@ -49,14 +50,7 @@ class IconComponents {
     if (ret != null) {
       return ret;
     }
-    return assetAvatarGeneratedIdenticon(
-      asset: asset,
-      height: height,
-      width: width,
-      imageDetails: imageDetails,
-      foreground: foreground,
-      background: background,
-    );
+    return assetFromCacheOrGenerate(asset: asset, height: height, width: width);
   }
 
   Widget _assetAvatarRVN({double? height, double? width}) => Image.asset(
@@ -83,6 +77,37 @@ class IconComponents {
     }
   }
 
+  Widget assetFromCacheOrGenerate({
+    String? asset,
+    AssetType? assetType,
+    double? height,
+    double? width,
+    ImageDetails? imageDetails,
+    Color? foreground,
+    Color? background,
+  }) {
+    asset = asset ?? '';
+    var assetType = Asset.assetTypeOf(asset);
+    var cacheKey = IconCacheKey(
+      asset: asset,
+      height: height ?? 40,
+      width: width ?? 40,
+      assetType: assetType,
+    );
+    print(cache.keys.length);
+    return cache[cacheKey] ??
+        assetAvatarGeneratedIdenticon(
+          asset: asset,
+          assetType: assetType,
+          height: height,
+          width: width,
+          imageDetails: imageDetails,
+          foreground: foreground,
+          background: background,
+          cacheKey: cacheKey,
+        );
+  }
+
   ImageDetails getImageDetails([
     String? asset,
     Color? foreground,
@@ -103,7 +128,9 @@ class IconComponents {
     AssetType? assetType,
     Color? foreground,
     Color? background,
+    IconCacheKey? cacheKey,
   }) {
+    print('BUILDING $asset');
     height = height ?? 40;
     width = width ?? 40;
     imageDetails = imageDetails ??
@@ -113,7 +140,7 @@ class IconComponents {
           background,
         );
     var indicator = generateIndicator(name: asset, imageDetails: imageDetails);
-    return Stack(alignment: Alignment.bottomRight, children: [
+    var ret = Stack(alignment: Alignment.bottomRight, children: [
       Container(
         height: height,
         width: width,
@@ -144,6 +171,10 @@ class IconComponents {
       ),
       if (indicator != null) indicator,
     ]);
+    if (cacheKey != null) {
+      cache[cacheKey] = ret;
+    }
+    return ret;
   }
 
   Widget? generateIndicator({
@@ -329,4 +360,24 @@ import 'package:raven_front/widgets/other/circle_gradient.dart';
   CircleAvatar walletAvatar(Wallet wallet) => wallet is LeaderWallet
       ? CircleAvatar(backgroundImage: AssetImage('assets/rvn256.png'))
       : CircleAvatar(backgroundImage: AssetImage('assets/rvn256.png'));
+}
+
+class IconCacheKey with EquatableMixin {
+  final String asset;
+  final AssetType assetType;
+  final double height;
+  final double width;
+  IconCacheKey({
+    required this.asset,
+    required this.assetType,
+    required this.height,
+    required this.width,
+  });
+  @override
+  List<Object> get props => [asset, assetType, height, width];
+
+  @override
+  String toString() {
+    return 'IconCacheKey($asset, $height, $width, $assetType)';
+  }
 }

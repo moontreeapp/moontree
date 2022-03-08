@@ -87,6 +87,7 @@ class SelectionItems {
   late List<VoidCallback> behaviors;
   late List<String> values;
   late String? symbol;
+  String? symbolColors;
   late SelectionSet? modalSet;
   final BuildContext context;
 
@@ -150,8 +151,9 @@ class SelectionItems {
       name.enumString.toTitleCase(underscoreAsSpace: true);
 
   Widget createLeads(SelectionOption name) {
-    var imageDetails = components.icons.getImageDetails();
+    var imageDetails = components.icons.getImageDetails(symbolColors);
     return components.icons.generateIndicator(
+            name: symbolColors,
             imageDetails: imageDetails,
             height: 24,
             width: 24,
@@ -175,7 +177,8 @@ class SelectionItems {
                   SelectionOption.Channel: AssetType.Channel,
                 }[name] ??
                 AssetType.Main) ??
-        components.icons.assetAvatarGeneratedIdenticon(
+        components.icons.assetFromCacheOrGenerate(
+            asset: symbolColors,
             height: 24,
             width: 24,
             imageDetails: imageDetails,
@@ -459,6 +462,8 @@ class SelectionItems {
       produceModal([for (SelectionOption name in names) createItem(name)],
           tall: false);
     } else if (modalSet == SelectionSet.Sub_Asset) {
+      symbolColors = streams.app.asset.value;
+      print(symbolColors);
       produceModal([
         for (SelectionOption name in names) createItem(name)
       ], //subAssetItem(name)],
