@@ -194,13 +194,16 @@ class _ConnectionLightState extends State<ConnectionLight>
         //    child: Text('stop')),
         IconButton(
           splashRadius: 24,
-          onPressed: () => showDialog(
-              //context: context,
-              context: components.navigator.routeContext!,
-              builder: (BuildContext context) => AlertDialog(
-                  title: Text(status),
-                  content: Text('Connection Status: $connectionMessage \n\n'
-                      'Current Task: $processMessage'))),
+          onPressed: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            showDialog(
+                //context: context,
+                context: components.navigator.routeContext!,
+                builder: (BuildContext context) => AlertDialog(
+                    title: Text(status),
+                    content: Text('Connection Status: $connectionMessage \n\n'
+                        'Current Task: $processMessage')));
+          },
           icon: [
             //if (activity == 'idle')
             ColorFiltered(

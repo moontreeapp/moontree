@@ -119,7 +119,7 @@ class _PageTitleState extends State<PageTitle> {
       return null;
     }
     if (res.wallets.length > 1) {
-      if (settingTitle == 'open') {
+      if (settingTitle != null) {
         return GestureDetector(
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(

@@ -71,6 +71,7 @@ class _NavDrawerState extends State<NavDrawer> {
             execute();
           }
           if (!arrow) {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
             Backdrop.of(components.navigator.routeContext!).fling();
             Navigator.of(components.navigator.routeContext!).pushNamed(
               link,
@@ -88,6 +89,7 @@ class _NavDrawerState extends State<NavDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     var options = {
       '/settings/import_export': ListView(
         shrinkWrap: true,
@@ -185,23 +187,21 @@ class _NavDrawerState extends State<NavDrawer> {
         ],
       )
     };
-    return GestureDetector(
-        onTap: ScaffoldMessenger.of(context).hideCurrentSnackBar,
-        child: Container(
-            height: MediaQuery.of(context).size.height - 118 - 10,
+    return Container(
+        height: MediaQuery.of(context).size.height - 118 - 10,
 
-            /// using a listview makes it variable so you don't have to define height
-            //height: 300,
-            //child: Column(
-            //  crossAxisAlignment: CrossAxisAlignment.start,
-            ///
+        /// using a listview makes it variable so you don't have to define height
+        //height: 300,
+        //child: Column(
+        //  crossAxisAlignment: CrossAxisAlignment.start,
+        ///
 
-            child: Column(
-              children: [
-                if (res.wallets.length > 1)
-                  Divider(indent: 0, color: AppColors.white12),
-                (options[chosen] ?? options['/settings'])!
-              ],
-            )));
+        child: Column(
+          children: [
+            if (res.wallets.length > 1)
+              Divider(indent: 0, color: AppColors.white12),
+            (options[chosen] ?? options['/settings'])!
+          ],
+        ));
   }
 }
