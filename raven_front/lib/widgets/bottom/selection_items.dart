@@ -12,6 +12,7 @@ import 'package:raven_back/extensions/string.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_back/streams/create.dart';
+import 'package:raven_front/theme/theme.dart';
 
 enum SelectionSet {
   Fee,
@@ -263,7 +264,11 @@ class SelectionItems {
                 Icons.bug_report_rounded, //, color: Colors.black),
           }[name] ??
           MdiIcons.information,
-      color: Color(0xDE000000));
+      color: {
+            SelectionOption.Change: AppColors.primary,
+            SelectionOption.Bug: AppColors.primary,
+          }[name] ??
+          AppColors.black87);
 
   Widget holdingItem(String name) => ListTile(
       visualDensity: VisualDensity.compact,
@@ -324,7 +329,8 @@ class SelectionItems {
                   SelectionOption.Channel: symbol,
                 }[name]!,
                 size: 24),
-        title: title ?? Text(asString(name), style: Theme.of(context).choices),
+        title: title ??
+            Text(asString(name), style: Theme.of(context).textTheme.bodyText1),
         trailing: value != null
             ? Text(value, style: Theme.of(context).choices)
             : null,

@@ -26,11 +26,13 @@ class _LoaderState extends State<Loader> {
     // like streams.spend.success or whatever.
     streams.app.snack.add(null); // clear out first just in case.
     listeners.add(streams.app.snack.listen((Snack? value) {
-      print(value);
       if (value != null) {
         if (widget.returnHome) {
+          print(widget.returnHome);
           Navigator.popUntil(
               components.navigator.routeContext!, ModalRoute.withName('/home'));
+        } else {
+          Navigator.of(context).pop();
         }
       }
     }));
