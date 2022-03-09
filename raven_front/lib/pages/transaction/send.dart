@@ -498,10 +498,6 @@ class _SendState extends State<Send> {
         context,
         enabled: !disabled,
         onPressed: () => startSend(),
-        icon: Icon(MdiIcons.arrowTopRightThick, color: AppColors.black87),
-        disabledIcon: Icon(MdiIcons.arrowTopRightThick,
-            color: Theme.of(context).disabledColor),
-        label: 'Next',
       );
 
   void confirmSend(SendRequest sendRequest) {

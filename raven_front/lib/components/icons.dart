@@ -6,6 +6,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/records/records.dart';
 import 'package:raven_front/services/storage.dart';
+import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/identicon.dart';
 import 'package:equatable/equatable.dart';
 
@@ -25,9 +26,14 @@ class IconComponents {
   Icon importDisabled(BuildContext context) =>
       Icon(Icons.vpn_key_rounded, color: Theme.of(context).disabledColor);
 
-  Icon get import => Icon(Icons.vpn_key_rounded, color: Color(0xDE000000));
+  Icon get import => Icon(Icons.vpn_key_rounded, color: AppColors.black87);
 
   Icon get export => Icon(Icons.save);
+
+  Icon get preview => Icon(MdiIcons.checkboxMarkedCircleOutline);
+
+  Icon get disabledPreview =>
+      Icon(MdiIcons.checkboxMarkedCircleOutline, color: AppColors.disabled);
 
   Image get assetMasterImage => Image.asset('assets/masterbag_transparent.png');
   Image get assetRegularImage => Image.asset('assets/assetbag_transparent.png');
@@ -94,7 +100,6 @@ class IconComponents {
       width: width ?? 40,
       assetType: assetType,
     );
-    print(cache.keys.length);
     return cache[cacheKey] ??
         assetAvatarGeneratedIdenticon(
           asset: asset,

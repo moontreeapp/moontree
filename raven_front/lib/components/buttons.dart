@@ -8,8 +8,8 @@ class ButtonComponents {
 
   Widget actionButton(
     BuildContext context, {
-    required String label,
-    required Widget icon,
+    String? label,
+    Widget? icon,
     Widget? disabledIcon,
     String? link,
     VoidCallback? onPressed,
@@ -25,12 +25,19 @@ class ButtonComponents {
                             .pushNamed(link)
                         : onPressed ?? () {})
                     : () {},
-                icon: enabled ? icon : (disabledIcon ?? icon),
-                label: Text(label.toUpperCase(),
+                icon: enabled
+                    ? _iconDefault(icon)
+                    : _iconDefaultDisabled(disabledIcon),
+                label: Text(_labelDefault(label),
                     style: enabled
                         ? /*Theme.of(context).enabledButton*/ null
                         : Theme.of(context).disabledButton),
                 style: components.styles.buttons
                     .bottom(context, disabled: !enabled),
               )));
+
+  Widget _iconDefault(Widget? icon) => icon ?? components.icons.preview;
+  Widget _iconDefaultDisabled(Widget? icon) =>
+      icon ?? components.icons.disabledPreview;
+  String _labelDefault(String? label) => (label ?? 'Preview').toUpperCase();
 }
