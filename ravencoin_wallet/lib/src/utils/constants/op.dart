@@ -135,4 +135,7 @@ const OPS = {
   'OP_NOP10': 0xb9,
 
   'OP_INVALIDOPCODE': 0xff,
+
+  // Ravencoin
+  'OP_RVN_ASSET': 0xc0,
 };
