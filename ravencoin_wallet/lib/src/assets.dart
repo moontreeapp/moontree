@@ -11,6 +11,7 @@ bool is_asset_name_good(String asset_name) {
     return true;
 }
 
+// standard_script should have no OP_PUSH
 Uint8List generate_asset_transfer_script(Uint8List standard_script, String asset_name, int amount, Uint8List? ipfs_data) {
     // ORIGINAL | OP_RVN_ASSET | OP_PUSH  ( b'rvnt' | var_int (asset_name) | sats | ipfs_data? ) | OP_DROP
     if (!is_asset_name_good(asset_name)) {
@@ -22,6 +23,7 @@ Uint8List generate_asset_transfer_script(Uint8List standard_script, String asset
     if (ipfs_data?.length != null && ipfs_data?.length != 34) {
         throw new ArgumentError('Invalid IPFS data');
     }
+
     final amount_data = ByteData(8);
     amount_data.setUint64(0, amount, Endian.little);
 
@@ -43,6 +45,5 @@ Uint8List generate_asset_transfer_script(Uint8List standard_script, String asset
     internal_builder.add(internal_script!);
     internal_builder.addByte(OPS['OP_DROP']!);
 
-    final complete_script = internal_builder.toBytes();
-    return bscript.compile([complete_script])!;
+    return internal_builder.toBytes();
 }
