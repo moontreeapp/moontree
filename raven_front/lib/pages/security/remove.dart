@@ -22,12 +22,8 @@ class _RemovePasswordState extends State<RemovePassword> {
   }
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: streams.app.verify.value
-            ? body()
-            : VerifyPassword(parentState: this),
-      );
+  Widget build(BuildContext context) =>
+      streams.app.verify.value ? body() : VerifyPassword(parentState: this);
 
   Widget body() {
     return Padding(
@@ -51,8 +47,9 @@ class _RemovePasswordState extends State<RemovePassword> {
   Future submit() async {
     FocusScope.of(context).unfocus();
     streams.password.update.add('');
-    Navigator.popUntil(
-        components.navigator.routeContext!, ModalRoute.withName('/home'));
+    components.loading.screen(message: 'Setting Password');
+    //Navigator.popUntil(
+    //    components.navigator.routeContext!, ModalRoute.withName('/home'));
   }
 
   Future successMessage() => showDialog(

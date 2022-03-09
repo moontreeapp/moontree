@@ -48,24 +48,6 @@ class _SecurityState extends State<Security> {
               RadioListTile<SecurityOption>(
                 activeColor: Theme.of(context).backgroundColor,
                 title: Text(
-                    SecurityOption.system_default.enumString
-                        .toTitleCase(underscoreAsSpace: true),
-                    style: services.password.required
-                        ? Theme.of(context).textTheme.bodyText1
-                        : Theme.of(context).textTheme.bodyText1),
-                value: SecurityOption.system_default,
-                groupValue: securityChoice,
-                onChanged: true
-                    ? null
-                    : (SecurityOption? value) {
-                        setState(() {
-                          securityChoice = value;
-                        });
-                      },
-              ),
-              RadioListTile<SecurityOption>(
-                activeColor: Theme.of(context).backgroundColor,
-                title: Text(
                     SecurityOption.password.enumString
                         .toTitleCase(underscoreAsSpace: true),
                     style: Theme.of(context).textTheme.bodyText1),

@@ -28,6 +28,7 @@ class AppColors {
   static Color get lime => const Color(0xFFD4E157);
   static Color get yellow => const Color(0xFFFFEE58);
   static Color get primaryDisabled => const Color(0xFFC1C7E7);
+  static Color get snackBar => const Color(0xFF212121);
 
   // .12 Colors.white.withAlpha(12)
   static Color get white12 => const Color(0x1FFFFFFF);

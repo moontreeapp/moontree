@@ -12,7 +12,6 @@ class PasswordWaiter extends Waiter {
         await services.cipher.updateWallets(cipher: cipher);
         services.cipher.cleanupCiphers();
         streams.app.snack.add(Snack(message: 'Successfully Updated Security'));
-        streams.password.updated.add(true);
         streams.password.update.add(null);
       }
     });

@@ -194,10 +194,13 @@ class _ChangePasswordState extends State<ChangePassword> {
         icon: Icon(Icons.lock_rounded),
         disabledIcon: Icon(Icons.lock_rounded, color: AppColors.black38),
         onPressed: () async => await submit(),
-        enabled: (!streams.app.verify.value ? verify() : true) &&
-            validatedComplexity &&
-            confirmPassword.text == newPassword.text,
+        enabled: enabledCheck(),
       );
+
+  bool enabledCheck() =>
+      (!streams.app.verify.value ? verify() : true) &&
+      validatedComplexity &&
+      confirmPassword.text == newPassword.text;
 
   void validateComplexity({String? password}) {
     password = password ?? newPassword.text;

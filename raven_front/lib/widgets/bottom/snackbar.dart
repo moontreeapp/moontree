@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/theme/theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
@@ -99,16 +100,17 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
     if (snack!.atBottom) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         elevation: 1,
-        backgroundColor: const Color(0xFF212121),
+        backgroundColor: AppColors.snackBar,
         shape: RoundedRectangleBorder(borderRadius: shape),
         content: msg,
       ));
     } else if (snack!.link == null && snack!.details == null) {
       /// this configuration of the snackbar always shows on top of the nav bar
       streams.app.hideNav.add(false);
+      print('IN SNACK!2');
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         elevation: 0,
-        backgroundColor: const Color(0xFF212121),
+        backgroundColor: AppColors.snackBar,
         shape: RoundedRectangleBorder(borderRadius: shape),
         content: msg,
         behavior: SnackBarBehavior.floating,
@@ -118,6 +120,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
           bottom: 0,
         ),
       ));
+      print('done');
     }
     /*
     /// These are not used if we want to use them implement them this way:
@@ -126,7 +129,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
     } else if (snack!.link != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           elevation: 0,
-          backgroundColor: const Color(0xFF212121),
+          backgroundColor: AppColors.snackBar,
           shape: RoundedRectangleBorder(borderRadius: shape),
           content: msg,
           behavior: SnackBarBehavior.floating,
@@ -167,7 +170,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
     } else if (snack!.details != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           elevation: 0,
-          backgroundColor: const Color(0xFF212121),
+          backgroundColor: AppColors.snackBar,
           shape: RoundedRectangleBorder(borderRadius: shape),
           content: msg,
           behavior: SnackBarBehavior.floating,

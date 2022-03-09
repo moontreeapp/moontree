@@ -34,46 +34,48 @@ class _VerifyPasswordState extends State<VerifyPassword> {
         child: body(),
       );
 
-  Widget body() {
-    var existingPasswordField = TextField(
-      autocorrect: false,
-      enabled: services.password.required ? true : false,
-      controller: existingPassword,
-      obscureText: !existingPasswordVisible,
-      textInputAction: TextInputAction.next,
-      decoration: components.styles.decorations.textFeild(
-        context,
-        labelText: 'Current Password',
-        helperText: existingPassword.text != '' && verify() ? 'sucess!' : null,
-        errorText: existingPassword.text != '' && !verify() ? used() : null,
-        suffixIcon: IconButton(
-          icon: Icon(
-              existingPasswordVisible ? Icons.visibility : Icons.visibility_off,
-              color: AppColors.black60),
-          onPressed: () => setState(() {
-            existingPasswordVisible = !existingPasswordVisible;
-          }),
+  Widget body() => Padding(
+      padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 40),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          existingPasswordField,
+          Row(children: [submitButton])
+        ],
+      ));
+
+  Widget get existingPasswordField => TextField(
+        autocorrect: false,
+        enabled: services.password.required ? true : false,
+        controller: existingPassword,
+        obscureText: !existingPasswordVisible,
+        textInputAction: TextInputAction.next,
+        decoration: components.styles.decorations.textFeild(
+          context,
+          labelText: 'Current Password',
+          helperText:
+              existingPassword.text != '' && verify() ? 'sucess!' : null,
+          errorText: existingPassword.text != '' && !verify() ? used() : null,
+          suffixIcon: IconButton(
+            icon: Icon(
+                existingPasswordVisible
+                    ? Icons.visibility
+                    : Icons.visibility_off,
+                color: AppColors.black60),
+            onPressed: () => setState(() {
+              existingPasswordVisible = !existingPasswordVisible;
+            }),
+          ),
         ),
-      ),
-      onChanged: (String value) {
-        if (verify()) {
+        onChanged: (String value) {
+          if (verify()) {
+            setState(() {});
+          }
           setState(() {});
-        }
-        setState(() {});
-      },
-      onEditingComplete: () => verify(),
-    );
-    return Padding(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 40),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            existingPasswordField,
-            Row(children: [submitButton])
-          ],
-        ));
-  }
+        },
+        onEditingComplete: () => verify(),
+      );
 
   Widget get submitButton => components.buttons.actionButton(
         context,

@@ -9,7 +9,6 @@ class PasswordStreams {
   final latest = latestPassword$;
   final exists = passwordExists$;
   final update = BehaviorSubject<String?>.seeded(null);
-  final updated = BehaviorSubject<bool?>.seeded(null);
 }
 
 final BehaviorSubject<Password?> latestPassword$ = BehaviorSubject.seeded(null)

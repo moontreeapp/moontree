@@ -20,7 +20,6 @@ class _QRCodeContainerState extends State<QRCodeContainer> {
   void initState() {
     super.initState();
     listeners.add(streams.app.page.listen((value) {
-      print('Value $value');
       if (((blanks.contains(value) && !blanks.contains(pageTitle)) ||
               (!blanks.contains(value) && blanks.contains(pageTitle))) ||
           ((value == 'Login' && pageTitle != value) ||
