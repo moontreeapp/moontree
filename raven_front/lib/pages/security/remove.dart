@@ -41,29 +41,12 @@ class _RemovePasswordState extends State<RemovePassword> {
 
   Widget get submitButton => components.buttons.actionButton(context,
       label: 'Yes, Remove Password',
-      icon: Icon(Icons.lock_rounded, color: AppColors.black38),
+      icon: Icon(Icons.lock_rounded, color: AppColors.black),
       onPressed: () async => await submit());
 
   Future submit() async {
     FocusScope.of(context).unfocus();
     streams.password.update.add('');
-    components.loading.screen(message: 'Setting Password');
-    //Navigator.popUntil(
-    //    components.navigator.routeContext!, ModalRoute.withName('/home'));
+    components.loading.screen(message: 'Removing Password');
   }
-
-  Future successMessage() => showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-              title: Text('Success!'),
-              content: Text('Password Removed!\n\n'
-                  'Be careful out there!'),
-              actions: [
-                TextButton(
-                    child:
-                        Text('ok', style: Theme.of(context).sendConfirmButton),
-                    onPressed: () {
-                      Navigator.popUntil(context, ModalRoute.withName('/home'));
-                    })
-              ]));
 }
