@@ -7,6 +7,7 @@ import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/params.dart';
 import 'package:raven_front/utils/transformers.dart';
 import 'package:raven_front/utils/data.dart';
@@ -147,6 +148,10 @@ class _ReceiveState extends State<Receive> {
                             backgroundColor: Colors.white,
                             data: rawAddress ? address : uri,
                             version: QrVersions.auto,
+                            foregroundColor: AppColors.primary,
+                            embeddedImage:
+                                Image.asset('assets/logo/moontree_logo.png')
+                                    .image,
                             size: 300.0))),
 
                 /// At this time we're not going to show them any information but the
