@@ -3,6 +3,7 @@ import 'package:raven_back/extensions/string.dart';
 import 'package:raven_back/extensions/object.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
+import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/widgets.dart';
@@ -137,9 +138,10 @@ class _PageTitleState extends State<PageTitle> {
                     ListTile(
                       visualDensity: VisualDensity.compact,
                       onTap: () {
-                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                        //Navigator.pop(context);
+                        ScaffoldMessenger.of(context).clearSnackBars();
+                        flingBackdrop(context);
                         res.settings.setCurrentWalletId(wallet.id);
+                        Navigator.pop(context);
                       },
                       leading: Icon(
                         Icons.account_balance_wallet_rounded,

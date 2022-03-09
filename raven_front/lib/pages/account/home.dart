@@ -88,7 +88,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       controller.reverse();
     } else if (notification.direction == ScrollDirection.reverse &&
         controller.status == AnimationStatus.dismissed) {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).clearSnackBars();
       controller.forward();
     }
     return true;

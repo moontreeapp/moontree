@@ -71,7 +71,7 @@ class _NavDrawerState extends State<NavDrawer> {
             execute();
           }
           if (!arrow) {
-            //ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            ScaffoldMessenger.of(context).clearSnackBars();
             Backdrop.of(components.navigator.routeContext!).fling();
             Navigator.of(components.navigator.routeContext!).pushNamed(
               link,
@@ -89,7 +89,6 @@ class _NavDrawerState extends State<NavDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    //ScaffoldMessenger.of(context).hideCurrentSnackBar();
     var options = {
       '/settings/import_export': ListView(
         shrinkWrap: true,

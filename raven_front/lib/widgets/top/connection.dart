@@ -195,7 +195,7 @@ class _ConnectionLightState extends State<ConnectionLight>
         IconButton(
           splashRadius: 24,
           onPressed: () {
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            ScaffoldMessenger.of(context).clearSnackBars();
             showDialog(
                 //context: context,
                 context: components.navigator.routeContext!,

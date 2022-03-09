@@ -107,7 +107,6 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
     } else if (snack!.link == null && snack!.details == null) {
       /// this configuration of the snackbar always shows on top of the nav bar
       streams.app.hideNav.add(false);
-      print('IN SNACK!2');
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         elevation: 0,
         backgroundColor: AppColors.snackBar,
@@ -120,7 +119,6 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
           bottom: 0,
         ),
       ));
-      print('done');
     }
     /*
     /// These are not used if we want to use them implement them this way:
