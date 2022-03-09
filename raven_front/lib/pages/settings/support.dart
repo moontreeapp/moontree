@@ -22,8 +22,8 @@ class Support extends StatelessWidget {
                   Padding(
                       padding: EdgeInsets.only(left: 16, right: 16),
                       child: Text(
-                        'RAVENCOIN',
-                        style: Theme.of(context).supportHeading,
+                        'Ravencoin',
+                        style: Theme.of(context).textTheme.bodyText1,
                       )),
                   SizedBox(height: 8),
                   Padding(
@@ -38,8 +38,8 @@ class Support extends StatelessWidget {
                   Padding(
                       padding: EdgeInsets.only(left: 16, right: 16),
                       child: Text(
-                        'MOONTREE',
-                        style: Theme.of(context).supportHeading,
+                        'Moontree',
+                        style: Theme.of(context).textTheme.bodyText1,
                       )),
                   SizedBox(height: 8),
                   Padding(
@@ -58,13 +58,13 @@ class Support extends StatelessWidget {
                       actionButton(
                         context,
                         name: 'RAVENCOIN',
-                        color: '0xFF4CAF50',
+                        color: '0xFFFFB84D',
                       ),
                       SizedBox(width: 16),
                       actionButton(
                         context,
                         name: 'MOONTREE',
-                        color: '0xFFFFB84D',
+                        color: '0xFF4CAF50',
                         link: 'Jh9aqeuB3Q',
                       ),
                     ])),
