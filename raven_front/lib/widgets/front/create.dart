@@ -10,6 +10,7 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/pages/transaction/checkout.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/params.dart';
 import 'package:raven_back/utils/utilities.dart';
 import 'package:raven_back/streams/create.dart';
@@ -169,35 +170,35 @@ class _CreateAssetState extends State<CreateAsset> {
                         if (needsParent || needsQualifierParent)
                           Padding(
                             padding: EdgeInsets.fromLTRB(16, 24, 16, 0),
-                            child: parentFeild(),
+                            child: parentFeild,
                           ),
                         Padding(
                           padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-                          child: nameField(),
+                          child: nameField,
                         ),
                         if (needsQuantity)
                           Padding(
                             padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-                            child: quantityField(),
+                            child: quantityField,
                           ),
                         if (needsDecimal)
                           Padding(
                             padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-                            child: decimalField(),
+                            child: decimalField,
                           ),
                         Padding(
                           padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-                          child: ipfsField(),
+                          child: ipfsField,
                         ),
                         if (needsVerifier)
                           Padding(
                             padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-                            child: verifierField(),
+                            child: verifierField,
                           ),
                         if (needsReissue)
                           Padding(
                               padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
-                              child: reissueRow()),
+                              child: reissueRow),
                       ]),
                 ])),
             SliverFillRemaining(
@@ -205,12 +206,14 @@ class _CreateAssetState extends State<CreateAsset> {
                 child: Padding(
                     padding: EdgeInsets.only(bottom: 40, left: 16, right: 16),
                     child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [submitButton()])))
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Row(children: [submitButton])
+                      ],
+                    )))
           ]);
 
-  Widget parentFeild() => TextField(
+  Widget get parentFeild => TextField(
         focusNode: parentFocus,
         controller: parentController,
         readOnly: true,
@@ -236,7 +239,7 @@ class _CreateAssetState extends State<CreateAsset> {
         },
       );
 
-  Widget nameField() => TextField(
+  Widget get nameField => TextField(
       focusNode: nameFocus,
       autocorrect: false,
       controller: nameController,
@@ -268,7 +271,7 @@ class _CreateAssetState extends State<CreateAsset> {
                   FocusScope.of(context).requestFocus(quantityFocus);
                 });
 
-  Widget quantityField() => TextField(
+  Widget get quantityField => TextField(
         focusNode: quantityFocus,
         controller: quantityController,
 //      keyboardType: TextInputType.number,
@@ -297,7 +300,7 @@ class _CreateAssetState extends State<CreateAsset> {
         },
       );
 
-  Widget decimalField() => TextField(
+  Widget get decimalField => TextField(
         focusNode: decimalFocus,
         controller: decimalController,
         readOnly: true,
@@ -318,7 +321,7 @@ class _CreateAssetState extends State<CreateAsset> {
         },
       );
 
-  Widget verifierField() => TextField(
+  Widget get verifierField => TextField(
       focusNode: verifierFocus,
       autocorrect: false,
       controller: verifierController,
@@ -339,7 +342,7 @@ class _CreateAssetState extends State<CreateAsset> {
         FocusScope.of(context).requestFocus(ipfsFocus);
       });
 
-  Widget ipfsField() => TextField(
+  Widget get ipfsField => TextField(
         focusNode: ipfsFocus,
         autocorrect: false,
         controller: ipfsController,
@@ -357,7 +360,7 @@ class _CreateAssetState extends State<CreateAsset> {
         onEditingComplete: () => FocusScope.of(context).requestFocus(nextFocus),
       );
 
-  Widget reissueRow() => Row(
+  Widget get reissueRow => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(children: [
@@ -389,25 +392,12 @@ class _CreateAssetState extends State<CreateAsset> {
         ],
       );
 
-  Widget submitButton() => Container(
-      height: 40,
-      child: OutlinedButton.icon(
-          focusNode: nextFocus,
-          onPressed: enabled ? () => submit() : () {},
-          icon: Icon(
-            Icons.chevron_right_rounded,
-            color: enabled ? null : Color(0x61000000),
-          ),
-          label: Text(
-            'NEXT',
-            style: enabled
-                ? Theme.of(context).enabledButton
-                : Theme.of(context).disabledButton,
-          ),
-          style: components.styles.buttons.bottom(
-            context,
-            disabled: !enabled,
-          )));
+  Widget get submitButton => components.buttons.actionButton(
+        context,
+        focusNode: nextFocus,
+        enabled: enabled,
+        onPressed: submit,
+      );
 
   bool nameValidation(String name) {
     if (!(name.length > 2 && name.length <= remainingNameLength)) {

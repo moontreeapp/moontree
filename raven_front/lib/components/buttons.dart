@@ -13,18 +13,21 @@ class ButtonComponents {
     Widget? disabledIcon,
     String? link,
     VoidCallback? onPressed,
+    VoidCallback? disabledOnPressed,
+    FocusNode? focusNode,
     bool enabled = true,
   }) =>
       Expanded(
           child: Container(
               height: 40,
               child: OutlinedButton.icon(
+                focusNode: focusNode,
                 onPressed: enabled
                     ? (link != null
                         ? () => Navigator.of(components.navigator.routeContext!)
                             .pushNamed(link)
                         : onPressed ?? () {})
-                    : () {},
+                    : disabledOnPressed ?? () {},
                 icon: enabled
                     ? _iconDefault(icon)
                     : _iconDefaultDisabled(disabledIcon),

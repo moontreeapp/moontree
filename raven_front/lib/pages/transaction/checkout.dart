@@ -5,6 +5,7 @@ import 'package:intersperse/intersperse.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/data.dart';
 import 'package:raven_back/services/transaction_maker.dart';
 import 'package:raven_back/raven_back.dart';
@@ -102,27 +103,27 @@ class _CheckoutState extends State<Checkout> {
   Widget body() => CustomScrollView(
         shrinkWrap: true,
         slivers: <Widget>[
-          topPart(),
-          bottomPart(),
+          topPart,
+          bottomPart,
         ],
       );
 
-  Widget topPart() => SliverToBoxAdapter(
+  Widget get topPart => SliverToBoxAdapter(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             SizedBox(height: 12),
-            header(),
+            header,
             Divider(indent: 16 + 56),
             SizedBox(height: 14),
-            transactionItems(),
+            transactionItems,
             SizedBox(height: 16),
             //Divider(indent: 16),
           ],
         ),
       );
 
-  Widget header() => ListTile(
+  Widget get header => ListTile(
         dense: true,
         visualDensity: VisualDensity.compact,
         leading: components.icons.assetAvatar(struct.symbol.toUpperCase()),
@@ -138,13 +139,15 @@ class _CheckoutState extends State<Checkout> {
         //])
       );
 
-  Widget transactionItems() => Padding(
+  Widget get transactionItems => Padding(
       padding: EdgeInsets.only(left: 16, right: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           ...detailItems(
-              pairs: struct.items, style: Theme.of(context).checkoutItem)
+            pairs: struct.items,
+            style: Theme.of(context).checkoutItem,
+          )
         ],
       ));
 
@@ -199,7 +202,7 @@ class _CheckoutState extends State<Checkout> {
     return x;
   }
 
-  Widget bottomPart() => SliverFillRemaining(
+  Widget get bottomPart => SliverFillRemaining(
         hasScrollBody: false,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -210,7 +213,7 @@ class _CheckoutState extends State<Checkout> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  ...fees(),
+                  ...fees,
                 ],
               ),
             ),
@@ -221,9 +224,9 @@ class _CheckoutState extends State<Checkout> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  total(),
+                  total,
                   SizedBox(height: 40),
-                  submitButton(),
+                  submitButton,
                 ],
               ),
             ),
@@ -231,7 +234,7 @@ class _CheckoutState extends State<Checkout> {
         ),
       );
 
-  List<Widget> fees() => [
+  List<Widget> get fees => [
         Text('Fees', style: Theme.of(context).checkoutFees),
         SizedBox(height: 14),
         ...detailItems(
@@ -241,7 +244,7 @@ class _CheckoutState extends State<Checkout> {
         ),
       ];
 
-  Widget total() =>
+  Widget get total =>
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Text('Total:', style: Theme.of(context).textTheme.bodyText1),
         Text(
@@ -260,33 +263,28 @@ class _CheckoutState extends State<Checkout> {
     return x;
   }
 
-  Widget submitButton() => Container(
-      height: 40,
-      child: OutlinedButton.icon(
-          onPressed: disabled
+  Widget get submitButton => Row(children: [
+        components.buttons.actionButton(
+          context,
+          label: struct.buttonWord,
+          icon: Icon(struct.buttonIcon, color: AppColors.black87),
+          disabledIcon: Icon(
+            struct.buttonIcon,
+            color: Theme.of(context).disabledColor,
+          ),
+          disabledOnPressed:
               //? () {}
               /// for testing
-              ? () async {
-                  components.loading.screen(message: struct.loadingMessage);
-                  print('working...');
-                  await Future.delayed(Duration(seconds: 6));
-                  streams.app.snack.add(Snack(message: 'test'));
-                }
-              : () async {
-                  components.loading.screen(message: struct.loadingMessage);
-                  (struct.buttonAction ?? () {})();
-                },
-          icon: Icon(
-            struct.buttonIcon,
-            color:
-                disabled ? Theme.of(context).disabledColor : Color(0xDE000000),
-          ),
-          label: Text(
-            struct.buttonWord.toUpperCase(),
-            style: disabled
-                ? Theme.of(context).disabledButton
-                : Theme.of(context).enabledButton,
-          ),
-          style:
-              components.styles.buttons.bottom(context, disabled: disabled)));
+              () async {
+            components.loading.screen(message: struct.loadingMessage);
+            print('working...');
+            await Future.delayed(Duration(seconds: 6));
+            streams.app.snack.add(Snack(message: 'test'));
+          },
+          onPressed: () async {
+            components.loading.screen(message: struct.loadingMessage);
+            (struct.buttonAction ?? () {})();
+          },
+        )
+      ]);
 }
