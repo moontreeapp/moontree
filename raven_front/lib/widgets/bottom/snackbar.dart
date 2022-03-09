@@ -54,12 +54,12 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
             padding: EdgeInsets.only(left: 16, right: 16),
             child: Text(snack!.message, style: Theme.of(context).snackMessage))
         : Container(
-            height: 72,
+            height: 64,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(height: 8, color: Colors.transparent),
+                Container(height: 0, color: Colors.transparent),
                 Padding(
                     padding: EdgeInsets.only(left: 16, right: 16),
                     child: Text(snack!.message,
@@ -114,10 +114,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         content: msg,
         behavior: SnackBarBehavior.floating,
         margin: EdgeInsets.only(bottom: 102),
-        padding: EdgeInsets.only(
-          top: 0,
-          bottom: 0,
-        ),
+        padding: EdgeInsets.only(top: 0, bottom: 0),
       ));
     }
     /*
