@@ -85,15 +85,16 @@ class TransactionBuilder {
 
   // Note: this function only works with RVN vouts and asset (t)ransfer vouts
   // Other types of scripts must be manually input in the *data* parameter.
-  int addOutput(dynamic data, int? value, String? asset, Uint8List? memo) {
+  int addOutput(dynamic data, int? value, {String? asset, Uint8List? memo}) {
     var scriptPubKey;
     if (data is String) {
       scriptPubKey = Address.addressToOutputScript(data, network);
       if (asset != null && value != null && scriptPubKey != null) {
-      // Replace script with asset transfer and reset value to 0.
-      scriptPubKey = generate_asset_transfer_script(scriptPubKey, asset, value, memo);
-      value = 0;
-    }
+        // Replace script with asset transfer and reset value to 0.
+        scriptPubKey =
+            generate_asset_transfer_script(scriptPubKey, asset, value, memo);
+        value = 0;
+      }
     } else if (data is Uint8List) {
       scriptPubKey = data;
     } else {
