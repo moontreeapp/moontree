@@ -26,5 +26,13 @@ void main() {
                 height: 969691)),
       );
     });
+    test('getRelayFee', () async {
+      var results = await client.getRelayFee();
+      expect(results, 0.01);
+    });
+    test('getEstimateFee', () async {
+      var results = await client.getFeeEstimate(100);
+      expect(results > 0.01, true);
+    });
   });
 }

@@ -21,6 +21,7 @@ export 'methods/server/version.dart';
 export 'methods/transaction/broadcast.dart';
 export 'methods/transaction/memo.dart';
 export 'methods/transaction/get.dart';
+export 'methods/transaction/fee.dart';
 
 export 'subscriptions/subscribe_headers.dart';
 export 'subscriptions/subscribe_asset.dart';

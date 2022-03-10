@@ -6,6 +6,7 @@ const SATS_PER_RVN = 100000000;
 
 // 0.01 RVN = 1,000,000 sats
 int MIN_FEE = (0.01 * SATS_PER_RVN).floor();
+// should be app setting set when we connect to a server
 
 class TxGoal {
   final double rate;
