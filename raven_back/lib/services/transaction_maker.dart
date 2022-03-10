@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:raven_back/raven_back.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
@@ -180,47 +181,18 @@ class TransactionMaker {
     return tuple;
   }
 
-  /// gets inputs, calculates fee, returns change
-  //
-  // EXAMPLE of recursive function
-  //
-  // Let's say we start with the following UTXOs available:
-  // utxos 60
-  //       50
-  //       9
-  //
-  // amount: 45
-  // estimate fee: 4
-  //
-  // utxos: [50]
-  // changeDue: 50 - 49 = 1
-  // setFees(25) <-- due to signing each input, fees grow
-  // updatedChangeDue: 50 - 70 = -20 : insufficient! -> iterate again, with updatedEstimate
-  //   updatedEstimate: amount = 45, fees = 25 -> iterate again
-  //
-  // utxos: [60, 50]
-  // changeDue: 110 - 70 = 40
-  // setFees(35) <-- we have more inputs this time, so fees grow
-  // updatedChangeDue: 110 - (45 + 35) = 30 : sufficient! BUT changeDue is WRONG
-  //   updatedEstimate: amount = 45, fees = 35 -> iterate again
-  //
-  // utxos: [60, 50]
-  // changeDue: 110 - (45 + 35) = 30
-  // setFees(35) <-- fee is the same because have the same number of inputs & outputs as previous iteration
-  // updatedChangeDue: 110 - (45 + 35) = 30 : sufficient! and changeDue is RIGHT
-  //   -> DONE with result
+  // TODO: ONLY FOR RVN
   Tuple2<ravencoin.Transaction, SendEstimate> transaction(
     String toAddress,
-    SendEstimate estimate, {
+    int amount_sats,
+    {
     required Wallet wallet,
     TxGoal? goal,
     Security? security,
-  }) {
+    Uint8List? memo,
+    }
+  ) {
     var txb = ravencoin.TransactionBuilder(network: res.settings.network);
-
-    // Direct the transaction to send value to the desired address
-    // measure fee?
-    txb.addOutput(toAddress, estimate.amount);
 
     // From the available wallets and UTXOs within our wallet,
     // find sufficient value to send to the address above
@@ -228,41 +200,61 @@ class TransactionMaker {
     // send
     var utxos = services.balance.collectUTXOs(
       wallet,
-      amount: estimate.total,
+      amount: amount_sats,
       security: security,
     );
 
     for (var utxo in utxos) {
       txb.addInput(utxo.transactionId, utxo.position);
     }
-
-    var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
-
-    // Calculate change due, and return it to a wallet we control
-    var returnAddress = services.wallet.getChangeWallet(wallet).address;
-    var preliminaryChangeDue = updatedEstimate.changeDue;
-    txb.addOutput(returnAddress, preliminaryChangeDue);
+    // Dummy outputs to account for return and actual send
+    txb.addOutput(toAddress, 0);
+    txb.addOutput(toAddress, 0);
 
     // Authorize the release of value by signing the transaction UTXOs
+    // TODO: Add virtual bytes per vin instead of signing
     txb.signEachInput(utxos);
 
     var tx = txb.build();
+    var fee_sats = tx.fee(goal);
+    var sats_in = utxos.fold(0, (int total, vout) => total + vout.rvnValue);
+    var sats_returned = sats_in - (security == null ? amount_sats : 0) - fee_sats;
+    var return_address = services.wallet.getChangeWallet(wallet).address;
 
-    updatedEstimate.setFees(max(tx.fee(goal), estimate.fees));
-    if (updatedEstimate.changeDue >= 0 &&
-        updatedEstimate.changeDue == preliminaryChangeDue) {
-      // success!
-      return Tuple2(tx, updatedEstimate);
-    } else {
-      // try again
-      return transaction(
-        toAddress,
-        updatedEstimate,
-        goal: goal,
-        wallet: wallet,
-        security: security,
+    while (sats_returned < 0) {
+      txb = ravencoin.TransactionBuilder(network: res.settings.network);
+      // Grab required RVN
+      var rvn_utxos = services.balance.collectUTXOs(
+        wallet,
+        amount: (security == null ? amount_sats : 0) + fee_sats,
+        security: null,
       );
+      // Grab required assets, if any
+      var security_utxos = security != null ? services.balance.collectUTXOs(
+        wallet,
+        amount: amount_sats,
+        security: security,
+      ) : [];
+      for (var utxo in (rvn_utxos + security_utxos)) {
+        txb.addInput(utxo.transactionId, utxo.position);
+      }
+
+      // Update avaliable RVN
+      sats_in = (rvn_utxos+security_utxos).fold(0, (int total, vout) => total + vout.rvnValue);
+      sats_returned = sats_in - (security == null ? amount_sats : 0) - fee_sats;
+
+      // Add actual values
+      txb.addOutput(return_address, sats_returned);
+      txb.addOutput(toAddress, amount_sats, asset: security?.symbol, memo: memo);
+
+      txb.signEachInput(utxos);
+      var tx = txb.build();
+      fee_sats = tx.fee(goal);
     }
+
+    //TODO: If doing virtual signing, actually sign here
+
+    return tx;
   }
 
   Tuple2<ravencoin.Transaction, SendEstimate> transactionSendAll(

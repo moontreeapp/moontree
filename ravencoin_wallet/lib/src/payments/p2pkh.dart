@@ -90,12 +90,12 @@ class P2PKH {
 }
 
 isValidOutput(Uint8List data) {
-  return data.length == 25 &&
-      data[0] == OPS['OP_DUP'] &&
+  return data[0] == OPS['OP_DUP'] &&
       data[1] == OPS['OP_HASH160'] &&
       data[2] == 0x14 &&
       data[23] == OPS['OP_EQUALVERIFY'] &&
-      data[24] == OPS['OP_CHECKSIG'];
+      data[24] == OPS['OP_CHECKSIG']) &&
+      (data.length == 25 || (data.length >= 25 && data[25] == OPS['OP_RVN_ASSET']));
 }
 
 // Backward compatibility
