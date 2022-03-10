@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:convert';
 
 import 'package:hex/hex.dart';
 
@@ -81,6 +82,23 @@ class TransactionBuilder {
       throw ArgumentError('No, this would invalidate signatures');
     }
     _tx!.locktime = locktime;
+  }
+
+  int addMemo(dynamic data) {
+    if (data is String) {
+      data = utf8.encode(data);
+    } else if (!(data is Uint8List)) {
+      throw ArgumentError('Memo can only be ascii or bytes');
+    }
+    if (data.length > 80) {
+      throw ArgumentError('OP_RETURN trivial data cannot be more that 80 bytes');
+    }
+    var script = bscript.compile([
+        OPS['OP_RETURN'],
+        data,
+      ]);
+
+    return _tx!.addOutput(script, 0);
   }
 
   // Note: this function only works with RVN vouts and asset (t)ransfer vouts
