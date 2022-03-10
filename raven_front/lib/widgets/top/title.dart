@@ -148,7 +148,7 @@ class _PageTitleState extends State<PageTitle> {
                         color: AppColors.primary,
                       ),
                       title: Text('Wallet ' + wallet.name,
-                          style: Theme.of(context).choicesBlue),
+                          style: Theme.of(context).textTheme.bodyText1),
                     )
                 ])),
               ));
