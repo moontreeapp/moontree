@@ -6,19 +6,16 @@ import 'dart:typed_data';
 import 'dart:convert';
 import 'utils/script.dart' as bscript;
 import 'utils/constants/op.dart';
+import 'validate.dart';
 
 const List<int> RVN_rvn = [0x72, 0x76, 0x6e];
 const List<int> RVN_t = [0x74];
-
-bool is_asset_name_good(String asset_name) {
-  return true;
-}
 
 // standard_script should have no OP_PUSH
 Uint8List generate_asset_transfer_script(Uint8List standard_script,
     String asset_name, int amount, Uint8List? ipfs_data) {
   // ORIGINAL | OP_RVN_ASSET | OP_PUSH  ( b'rvnt' | var_int (asset_name) | sats | ipfs_data? ) | OP_DROP
-  if (!is_asset_name_good(asset_name)) {
+  if (!isAssetNameGood(asset_name)) {
     throw new ArgumentError('Invalid asset name');
   }
   if (amount < 0 || amount > 21000000000) {

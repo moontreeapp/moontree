@@ -1,4 +1,9 @@
-// https://github.com/RavenProject/Ravencoin/blob/master/src/assets/assets.cpp
+/// we're not following this example exactly, we check the length first, then
+/// if that checks out we determin which type of asset it is, and for each
+/// type we gave a specific check. If it's a path, we break those peices apart
+/// and check each one individually.
+///
+/// https://github.com/RavenProject/Ravencoin/blob/master/src/assets/assets.cpp
 //// min lengths are expressed by quantifiers
 //const ROOT_NAME_CHARACTERS = r"^[A-Z0-9._]{3,}$";
 //const SUB_NAME_CHARACTERS = r"^[A-Z0-9._]+$";
@@ -19,101 +24,125 @@
 
 const MINIMUM_ASSET_LENGTH = 3;
 const MAXIMUM_ASSET_LENGTH = 32;
+const NFT_REGEX = r'^[a-zA-Z0-9]{1,}[a-zA-Z0-9@$%&*()\-{}_.?:]{0,}$';
+const MSG_REGEX = r'^[A-Z]{1}[A-Z0-9_]{2,}$';
+const QUALIFIER_REGEX = r'^[#]{1}[A-Z0-9]{1}[A-Z0-9_.]{2,}$';
 
-bool isAssetNameGood(String assetName) =>
-    goodLength(assetName) && goodType(assetName);
+bool isAssetNameGood(String asset) => goodLength(asset) && goodPattern(asset);
 
-bool goodLength(String assetName) =>
-    assetName.length >= MINIMUM_ASSET_LENGTH &&
-    assetName.length <= MAXIMUM_ASSET_LENGTH;
+bool goodLength(String asset) =>
+    asset.length >= MINIMUM_ASSET_LENGTH &&
+    asset.length <= MAXIMUM_ASSET_LENGTH;
 
-bool goodType(String assetName) {
+bool goodPattern(String asset) {
   // #qualifier/#../#subqualifier
-  if (assetName.startsWith('#') && assetName.substring(1).contains('#')) {
+  if (asset.startsWith('#') && asset.substring(1).contains('#')) {
     return [
-      for (var x in assetName.split('/'))
-        assetCondition(x, regex: RegExp(r'^[#]{1}[A-Z0-9]{1}[A-Z0-9_.]{2,28}$'))
+      for (var x in asset.split('/'))
+        validate.main(x, regex: RegExp(QUALIFIER_REGEX))
     ].every((bool item) => item);
   }
   // #qualifier
-  if (assetName.startsWith('#')) {
-    return assetCondition(assetName,
-        regex: RegExp(r'^[#]{1}[A-Z0-9]{1}[A-Z0-9_.]{2,30}$'));
+  if (asset.startsWith('#')) {
+    return validate.main(asset, regex: RegExp(QUALIFIER_REGEX));
   }
   // $restrictedadmin! ??
-  if (assetName.startsWith(r'$') && assetName.endsWith('!')) {
-    return assetCondition(assetName,
+  if (asset.startsWith(r'$') && asset.endsWith('!')) {
+    return validate.main(asset,
         regex: RegExp(r'^[$]{1}[A-Z0-9]{1}[A-Z0-9_.]{2,29}[!]{1}$'));
   }
   // $restricted
-  if (assetName.startsWith(r'$')) {
-    return assetCondition(assetName,
-        regex: RegExp(r'^[$]{1}[A-Z0-9]{1}[A-Z0-9_.]{2,30}$'));
+  if (asset.startsWith(r'$')) {
+    return validate.main(asset,
+        regex: RegExp(r'^[$]{1}[A-Z0-9]{1}[A-Z0-9_.]{2,}$'));
   }
   // asset/../sub#nft
-  if (assetName.contains('/') && assetName.contains('#')) {
-    return [
-          for (var x in assetName.split('#').first.split('/')) assetCondition(x)
-        ].every((bool item) => item) &&
-        assetCondition(assetName.split('#').last,
-            regex: RegExp(r'^[A-Z0-9]{1,28}[a-zA-Z0-9@$%&*()\{}_.?:]{2,28}$'));
+  if (asset.contains('/') && asset.contains('#')) {
+    if (asset.split('#').length != 2) return false;
+    var parts = getParts(asset, '#');
+    return validate.main(parts['head']) &&
+        validate.subs(parts['subs']) &&
+        validate.main(
+          parts['tail'],
+          regex: RegExp(NFT_REGEX),
+        );
   }
   // asset#nft
-  if (assetName.contains('#')) {
-    return assetName.split('#').length == 2 &&
-        assetCondition(assetName.split('#').first) &&
-        assetCondition(assetName.split('#').last,
-            regex: RegExp(r'^[A-Z0-9]{1,28}[a-zA-Z0-9@$%&*()\{}_.?:]{0,28}$'));
+  if (asset.contains('#')) {
+    if (asset.split('#').length != 2) return false;
+    var parts = getParts(asset, '#');
+    return validate.main(parts['head']) &&
+        validate.main(
+          parts['tail'],
+          regex: RegExp(NFT_REGEX),
+        );
   }
   // asset/../sub~msg
-  if (assetName.contains('/') && assetName.contains('~')) {
-    return assetName.split('~').length == 2 &&
-        [for (var x in assetName.split('~').first.split('/')) assetCondition(x)]
-            .every((bool item) => item) &&
-        assetCondition(assetName.split('~').last,
-            regex: RegExp(r'^[A-Z]{1}[A-Z0-9_]{2,28}$'));
+  if (asset.contains('/') && asset.contains('~')) {
+    if (asset.split('~').length != 2) return false;
+    var parts = getParts(asset, '~');
+    return validate.main(parts['head']) &&
+        validate.subs(parts['subs']) &&
+        validate.main(
+          parts['tail'],
+          regex: RegExp(MSG_REGEX),
+        );
   }
   // asset~msg
-  if (assetName.contains('~')) {
-    return assetName.split('~').length == 2 &&
-        assetCondition(
-          assetName.split('~').first,
-        ) &&
-        assetCondition(assetName.split('~').last,
-            regex: RegExp(r'^[A-Z]{1}[A-Z0-9_]{2,28}$'));
+  if (asset.contains('~')) {
+    if (asset.split('~').length != 2) return false;
+    var parts = getParts(asset, '~');
+    return validate.main(parts['head']) &&
+        validate.main(
+          parts['tail'],
+          regex: RegExp(MSG_REGEX),
+        );
   }
   // asset/../subadmin!
-  if (assetName.contains('/') && assetName.endsWith('!')) {
-    return [
-          for (var x in assetName
-              .split('/')
-              .sublist(0, assetName.split('/').length - 1))
-            assetCondition(x)
-        ].every((bool item) => item) &&
-        assetCondition(assetName.split('/').last,
-            regex: RegExp(r'^[A-Z0-9]{1}[a-zA-Z0-9_.]{2,29}[!]{0,1}$'));
+  if (asset.contains('/') && asset.endsWith('!')) {
+    if (asset.split('!').length != 2) return false;
+    var parts = getParts(asset, '!');
+    return validate.main(parts['head']) && validate.subs(parts['subs']);
   }
   // asset/sub
-  if (assetName.contains('/')) {
-    return [for (var x in assetName.split('/')) assetCondition(x)]
-        .every((bool item) => item);
+  if (asset.contains('/')) {
+    var parts = getParts(asset, '!');
+    return validate.main(parts['head']) && validate.subs(parts['subs']);
   }
   // admin!
-  if (assetName.endsWith('!')) {
-    return assetCondition(assetName.split('/').last,
-        regex: RegExp(r'^[A-Z0-9]{1}[A-Z0-9_.]{2,30}[!]{0,1}$'));
+  if (asset.endsWith('!')) {
+    return validate.main(asset,
+        regex: RegExp(r'^[A-Z0-9]{1}[A-Z0-9_.]{2,}[!]{1}$'));
   }
   // what about votes? ^??
   // asset
-  return assetCondition(assetName);
+  return validate.main(asset);
 }
 
-bool assetCondition(String asset, {RegExp? regex}) =>
-    !asset.contains('..') &&
-    !asset.contains('._') &&
-    !asset.contains('__') &&
-    !asset.contains('_.') &&
-    !asset.endsWith('_') &&
-    !asset.endsWith('.') &&
-    !['RVN', 'RAVEN', 'RAVENCOIN'].contains(asset) &&
-    asset.contains(regex ?? RegExp(r'^[A-Z0-9]{1}[A-Z0-9_.]{2,30}$'));
+Map<String, dynamic> getParts(String asset, String special) => {
+      'head': asset.split(special).first.split('/').first,
+      'subs': asset.split(special).first.split('/').sublist(1),
+      'tail': asset.split(special).last,
+    };
+
+class validate {
+  static bool main(String asset, {RegExp? regex}) =>
+      punc(asset) &&
+      !['RVN', 'RAVEN', 'RAVENCOIN'].contains(asset) &&
+      asset.contains(regex ?? RegExp(r'^[A-Z0-9]{1}[A-Z0-9_.]{2,}$'));
+
+  static bool sub(String asset, {RegExp? regex}) =>
+      punc(asset) &&
+      asset.contains(regex ?? RegExp(r'^[A-Z0-9]{1}[A-Z0-9_.]{0,}$'));
+
+  static bool subs(List subs) =>
+      [for (var s in subs) sub(s)].every((bool item) => item);
+
+  static bool punc(String asset) =>
+      !asset.contains('..') &&
+      !asset.contains('._') &&
+      !asset.contains('__') &&
+      !asset.contains('_.') &&
+      !asset.endsWith('_') &&
+      !asset.endsWith('.');
+}
