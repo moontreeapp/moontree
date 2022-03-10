@@ -3,7 +3,6 @@ import 'package:ravencoin_wallet/src/validate.dart';
 
 main() {
   group('name', () {
-    /*
     test('invalidate bad entire asset name', () {
       expect(isAssetNameGood(r'abcefghijklmnopqrstuvwxyzabcefghi'), false);
       expect(isAssetNameGood(r'a'), false);
@@ -69,7 +68,6 @@ main() {
       expect(isAssetNameGood('RAVENCOIN5000'), true);
       expect(isAssetNameGood('FANFT/RAVENHEAD24#PaintedRVN5'), true);
     });
-    */
     test('testing names from ravencoin.asset-explorer.net', () {
       expect(isAssetNameGood(r'HIGH_RAVEN_SOCIETY/S1#771'), true);
       expect(isAssetNameGood(r'CYBER_SAMURAI/HOLO_GRAPHIC#87'), true);

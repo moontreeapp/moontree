@@ -25,14 +25,18 @@
 const MINIMUM_ASSET_LENGTH = 3;
 const MAXIMUM_ASSET_LENGTH = 32;
 const NFT_REGEX = r'^[a-zA-Z0-9]{1,}[a-zA-Z0-9@$%&*()\-{}_.?:]{0,}$';
-const MSG_REGEX = r'^[A-Z]{1}[A-Z0-9_]{2,}$';
+const MSG_REGEX = r'^[A-Z0-9_]{0,12}$';
 const QUALIFIER_REGEX = r'^[#]{1}[A-Z0-9]{1}[A-Z0-9_.]{2,}$';
+// RAVEN_NAMES("^RVN$|^RAVEN$|^RAVENCOIN$|^#RVN$|^#RAVEN$|^#RAVENCOIN$");
 
 bool isAssetNameGood(String asset) => goodLength(asset) && goodPattern(asset);
 
 bool goodLength(String asset) =>
-    asset.length >= MINIMUM_ASSET_LENGTH &&
-    asset.length <= MAXIMUM_ASSET_LENGTH;
+    (asset.endsWith('!') || asset.startsWith(r'$') || asset.startsWith(r'#'))
+        ? (asset.length >= MINIMUM_ASSET_LENGTH &&
+            asset.length <= MAXIMUM_ASSET_LENGTH)
+        : (asset.length >= MINIMUM_ASSET_LENGTH &&
+            asset.length <= MAXIMUM_ASSET_LENGTH - 1);
 
 bool goodPattern(String asset) {
   // #qualifier/#../#subqualifier
@@ -45,11 +49,6 @@ bool goodPattern(String asset) {
   // #qualifier
   if (asset.startsWith('#')) {
     return validate.main(asset, regex: RegExp(QUALIFIER_REGEX));
-  }
-  // $restrictedadmin! ??
-  if (asset.startsWith(r'$') && asset.endsWith('!')) {
-    return validate.main(asset,
-        regex: RegExp(r'^[$]{1}[A-Z0-9]{1}[A-Z0-9_.]{2,29}[!]{1}$'));
   }
   // $restricted
   if (asset.startsWith(r'$')) {
@@ -106,7 +105,7 @@ bool goodPattern(String asset) {
   }
   // asset/sub
   if (asset.contains('/')) {
-    var parts = getParts(asset, '!');
+    var parts = getParts(asset, '***');
     return validate.main(parts['head']) && validate.subs(parts['subs']);
   }
   // admin!
