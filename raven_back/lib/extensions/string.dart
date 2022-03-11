@@ -1,5 +1,6 @@
+import 'dart:convert';
 import 'dart:typed_data';
-
+import 'package:convert/convert.dart';
 import 'package:raven_back/utils/utilities.dart';
 
 extension StringCasingExtension on String {
@@ -38,6 +39,8 @@ extension StringTrimExtension on String {
 
 extension StringBytesExtension on String {
   Uint8List get bytes => Uint8List.fromList(codeUnits);
+  Uint8List get hexBytes => Uint8List.fromList(hex.decode(this));
+  List<int> get uft8Bytes => utf8.encode(this);
 }
 
 extension StringCharactersExtension on String {

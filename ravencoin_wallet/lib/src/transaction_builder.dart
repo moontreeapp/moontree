@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'dart:convert';
 
 import 'package:hex/hex.dart';
+import 'package:ravencoin_wallet/src/utils/constants/op.dart';
 
 import 'utils/script.dart' as bscript;
 import 'ecpair.dart';
@@ -91,12 +92,13 @@ class TransactionBuilder {
       throw ArgumentError('Memo can only be ascii or bytes');
     }
     if (data.length > 80) {
-      throw ArgumentError('OP_RETURN trivial data cannot be more that 80 bytes');
+      throw ArgumentError(
+          'OP_RETURN trivial data cannot be more that 80 bytes');
     }
     var script = bscript.compile([
-        OPS['OP_RETURN'],
-        data,
-      ]);
+      OPS['OP_RETURN'],
+      data,
+    ]);
 
     return _tx!.addOutput(script, 0);
   }
@@ -110,7 +112,7 @@ class TransactionBuilder {
       if (asset != null && value != null && scriptPubKey != null) {
         // Replace script with asset transfer and reset value to 0.
         scriptPubKey =
-            generate_asset_transfer_script(scriptPubKey, asset, value, memo);
+            generateAssetTransferScript(scriptPubKey, asset, value, memo);
         value = 0;
       }
     } else if (data is Uint8List) {
