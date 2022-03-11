@@ -241,7 +241,11 @@ class TransactionBuilder {
     return _build(true);
   }
 
-  Transaction _build(bool allowIncomplete) {
+  Transaction buildSpoofedSigs() {
+    return _build(false, spoof_p2pkh_signature: true);
+  }
+
+  Transaction _build(bool allowIncomplete, {bool? spoof_p2pkh_signature}) {
     if (!allowIncomplete) {
       if (_tx!.ins.length == 0)
         throw ArgumentError('Transaction has no inputs');
@@ -273,6 +277,9 @@ class TransactionBuilder {
           tx.setInputScript(i, payment.data.input);
           tx.setWitness(i, payment.data.witness);
         }
+      } else if (spoof_p2pkh_signature != null && spoof_p2pkh_signature) {
+        // For P2PKH, the unlocking script is 106-107 bytes long
+        tx.setInputScript(i, Uint8List.fromList(List<int>.filled(107, 0)));
       } else if (!allowIncomplete) {
         throw ArgumentError('Transaction is not complete');
       }
