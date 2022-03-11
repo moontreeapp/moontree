@@ -95,7 +95,6 @@ class _ReceiveState extends State<Receive> {
     username =
         res.settings.primaryIndex.getOne(SettingName.User_Name)?.value ?? '';
     data = populateData(context, data);
-    print(data['symbol']);
     requestMessage.text = requestMessage.text == ''
         ? data['symbol'] != null && data['symbol'] != ''
             ? data['symbol']
@@ -106,15 +105,31 @@ class _ReceiveState extends State<Receive> {
     //requestMessage.selection =
     //    TextSelection.collapsed(offset: requestMessage.text.length);
     return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-        _makeURI();
-      },
-      child: body(),
-    );
+        onTap: () {
+          FocusScope.of(context).unfocus();
+          _makeURI();
+        },
+        child: fakeBody1 // body(),
+        );
   }
 
-  Widget get fakeBody => TextField();
+  Widget get fakeBody => Padding(
+      padding: EdgeInsets.only(top: 32, left: 16, right: 16, bottom: 40),
+      child: CustomScrollView(
+          // solves scrolling while keyboard
+          shrinkWrap: true,
+          slivers: <Widget>[
+            SliverToBoxAdapter(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[TextField()]))
+          ]));
+
+  Widget get fakeBody1 => Padding(
+      padding: EdgeInsets.only(top: 400, left: 16, right: 16, bottom: 40),
+      child: TextField());
+
+  /// its pushing up somethign on the body that is about 100 pixels high but transparent so you're clicking on that.
 
   Widget body() => Padding(
       padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 40),

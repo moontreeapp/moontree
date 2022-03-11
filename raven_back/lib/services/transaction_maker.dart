@@ -301,26 +301,27 @@ class TransactionMaker {
     TxGoal? goal,
   }) {
     var txb = ravencoin.TransactionBuilder(network: res.settings.network);
-    var utxos = services.balance.sortedUnspents(
+    var utxosOriginal = services.balance.sortedUnspents(
       wallet,
       security: estimate.security,
     );
     var total = 0;
-    for (var utxo in utxos.toSet()) {
+    for (var utxo in utxosOriginal.toSet()) {
       txb.addInput(utxo.transactionId, utxo.position);
       total = total + utxo.securityValue(security: estimate.security);
     }
     if (estimate.memo != null) {
       txb.addMemo(estimate.memo);
     }
-    estimate.setUTXOs(utxos);
+    estimate.setUTXOs(utxosOriginal);
     txb.addOutput(toAddress, estimate.amount);
-    txb.signEachInput(utxos);
+    txb.signEachInput(utxosOriginal);
     var tx = txb.build();
     var fees = tx.fee(goal);
     estimate.setFees(tx.fee(goal));
     estimate.setAmount(total - fees);
-    var satsIn = utxos.fold(0, (int total, vout) => total + vout.rvnValue);
+    var satsIn =
+        utxosOriginal.fold(0, (int total, vout) => total + vout.rvnValue);
     var satsReturn =
         satsIn - (estimate.security == null ? estimate.amount : 0) - fees;
     var return_address = services.wallet.getChangeWallet(wallet).address;
@@ -337,18 +338,18 @@ class TransactionMaker {
           security: null,
         );
         security_utxos =
-            utxos.where((utxo) => !rvn_utxos.contains(utxo)).toList();
+            utxosOriginal.where((utxo) => !rvn_utxos.contains(utxo)).toList();
       } else {
         rvn_utxos = [];
-        security_utxos = utxos;
+        security_utxos = utxosOriginal;
       }
-      for (var utxo in (rvn_utxos + security_utxos).toSet()) {
+      var utxos = (rvn_utxos + security_utxos).toSet();
+
+      for (var utxo in utxos) {
         txb.addInput(utxo.transactionId, utxo.position);
       }
       // Update avaliable RVN
-      satsIn = (rvn_utxos + security_utxos)
-          .toSet()
-          .fold(0, (int total, vout) => total + vout.rvnValue);
+      satsIn = utxos.fold(0, (int total, vout) => total + vout.rvnValue);
       satsReturn =
           satsIn - (estimate.security == null ? estimate.amount : 0) - fees;
       // Add actual values
@@ -363,7 +364,7 @@ class TransactionMaker {
       if (estimate.memo != null) {
         txb.addMemo(estimate.memo);
       }
-      txb.signEachInput(utxos);
+      txb.signEachInput(utxos.toList());
       tx = txb.build();
       fees = tx.fee(goal);
     }
