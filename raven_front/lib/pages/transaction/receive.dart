@@ -105,12 +105,12 @@ class _ReceiveState extends State<Receive> {
     //requestMessage.selection =
     //    TextSelection.collapsed(offset: requestMessage.text.length);
     return GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-          _makeURI();
-        },
-        child: fakeBody1 // body(),
-        );
+      onTap: () {
+        FocusScope.of(context).unfocus();
+        _makeURI();
+      },
+      child: body(),
+    );
   }
 
   Widget get fakeBody => Padding(

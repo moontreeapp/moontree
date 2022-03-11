@@ -217,7 +217,7 @@ class TransactionMaker {
       amount: estimate.amount,
       security: estimate.security,
     );
-    for (var utxo in utxos.toSet()) {
+    for (var utxo in utxos) {
       txb.addInput(utxo.transactionId, utxo.position);
     }
     // Dummy outputs to account for return and actual send
@@ -234,7 +234,10 @@ class TransactionMaker {
     var sats_in = utxos.fold(0, (int total, vout) => total + vout.rvnValue);
     var sats_returned =
         sats_in - (estimate.security == null ? estimate.amount : 0) - fee_sats;
-    var return_address = services.wallet.getChangeWallet(wallet).address;
+    Stopwatch stopwatch = new Stopwatch()..start();
+    var return_address =
+        services.wallet.getChangeWallet(wallet).address; // takes the longest
+    print('getChangeWallet costs: ${stopwatch.elapsed}');
     var rebuild = true;
     while (sats_returned < 0 || rebuild) {
       rebuild = false; // must rebuild transaction at least once.
@@ -282,10 +285,8 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       fee_sats = tx.fee(goal);
     }
-
     txb.signEachInput(utxos);
     tx = txb.build();
-    
     estimate.setFees(fee_sats);
     return Tuple2(tx, estimate);
   }
