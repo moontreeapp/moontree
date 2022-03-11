@@ -27,7 +27,8 @@ const MAXIMUM_ASSET_LENGTH = 32;
 const NFT_REGEX = r'^[a-zA-Z0-9]{1,}[a-zA-Z0-9@$%&*()\-{}_.?:]{0,}$';
 const MSG_REGEX = r'^[A-Z0-9_]{0,12}$';
 const QUALIFIER_REGEX = r'^[#]{1}[A-Z0-9]{1}[A-Z0-9_.]{2,}$';
-// RAVEN_NAMES("^RVN$|^RAVEN$|^RAVENCOIN$|^#RVN$|^#RAVEN$|^#RAVENCOIN$");
+List get RAVEN_NAMES =>
+    ['RVN', 'RAVEN', 'RAVENCOIN', '#RVN', '#RAVEN', '#RAVENCOIN'];
 
 bool isAssetNameGood(String asset) => goodLength(asset) && goodPattern(asset);
 
@@ -127,7 +128,7 @@ Map<String, dynamic> getParts(String asset, String special) => {
 class validate {
   static bool main(String asset, {RegExp? regex}) =>
       punc(asset) &&
-      !['RVN', 'RAVEN', 'RAVENCOIN'].contains(asset) &&
+      !RAVEN_NAMES.contains(asset) &&
       asset.contains(regex ?? RegExp(r'^[A-Z0-9]{1}[A-Z0-9_.]{2,}$'));
 
   static bool sub(String asset, {RegExp? regex}) =>

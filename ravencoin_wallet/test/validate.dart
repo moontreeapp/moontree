@@ -8,6 +8,8 @@ main() {
       expect(isAssetNameGood(r'a'), false);
       expect(isAssetNameGood(r'abc'), false);
       expect(isAssetNameGood(r'RVN'), false);
+      expect(isAssetNameGood(r'$123!'), false);
+      expect(isAssetNameGood(r'$ABC!'), false);
       expect(isAssetNameGood(r'ABC/'), false);
       expect(isAssetNameGood(r'$ABC/'), false);
       expect(isAssetNameGood(r'$ABC/abc'), false);
@@ -39,7 +41,6 @@ main() {
     });
     test('validate good entire asset name', () {
       expect(isAssetNameGood(r'123!'), true);
-      expect(isAssetNameGood(r'$123!'), true);
       expect(isAssetNameGood(r'$123'), true);
       expect(isAssetNameGood(r'#123'), true);
       expect(isAssetNameGood(r'123'), true);
@@ -47,7 +48,6 @@ main() {
       expect(isAssetNameGood(r'$ABC'), true);
       expect(isAssetNameGood(r'ABC!'), true);
       expect(isAssetNameGood(r'#ABC'), true);
-      expect(isAssetNameGood(r'$ABC!'), true);
       expect(isAssetNameGood(r'ABC/ABC'), true);
       expect(isAssetNameGood(r'ABC/ABC/ABC'), true);
       expect(isAssetNameGood(r'ABC/ABC!'), true);
