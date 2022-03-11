@@ -14,7 +14,7 @@ class TxGoal {
   const TxGoal(this.rate, [this.name]);
 }
 
-const double STANDARD_RATE = 1000;
+const double STANDARD_RATE = 10000;
 
 const TxGoal cheap = TxGoal(STANDARD_RATE * 1.0, 'Cheap');
 const TxGoal standard = TxGoal(STANDARD_RATE * 1.1, 'Standard');

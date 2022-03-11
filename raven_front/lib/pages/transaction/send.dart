@@ -62,7 +62,6 @@ class _SendState extends State<Send> {
   @override
   void initState() {
     super.initState();
-    Backdrop.of(components.navigator.routeContext!).revealBackLayer();
     sendAsset.text = sendAsset.text == '' ? 'Ravencoin' : sendAsset.text;
     listeners.add(streams.spend.form.listen((SpendForm? value) {
       if ((SpendForm.merge(form: spendForm, amount: 0.0) !=
@@ -207,8 +206,8 @@ class _SendState extends State<Send> {
 
   Widget body() => Padding(
       padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 40),
+      // solves scrolling while keyboard
       child: CustomScrollView(
-        // solves scrolling while keyboard
         shrinkWrap: true,
         slivers: <Widget>[
           SliverToBoxAdapter(
@@ -502,7 +501,6 @@ class _SendState extends State<Send> {
 
   void confirmSend(SendRequest sendRequest) {
     streams.spend.make.add(sendRequest);
-    print(sendRequest);
     Navigator.of(components.navigator.routeContext!).pushNamed(
       '/transaction/checkout',
       arguments: {
