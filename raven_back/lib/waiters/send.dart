@@ -41,6 +41,8 @@ class SendWaiter extends Waiter {
       if (transactionHex != null) {
         //try {
         var txid = await services.client.api.sendTransaction(transactionHex);
+        print('txid');
+        print(txid);
         if (txid != '') {
           streams.app.snack.add(Snack(
               message: 'Send Successful',

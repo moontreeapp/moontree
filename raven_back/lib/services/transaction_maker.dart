@@ -250,11 +250,13 @@ class TransactionMaker {
         security: null,
       );
       // Grab required assets for transfer amount
-      var security_utxos = services.balance.collectUTXOs(
-        wallet,
-        amount: estimate.amount,
-        security: estimate.security,
-      );
+      var security_utxos = estimate.security != null
+          ? services.balance.collectUTXOs(
+              wallet,
+              amount: estimate.amount,
+              security: estimate.security,
+            )
+          : <Vout>[];
       utxos = (rvn_utxos + security_utxos).toSet().toList();
       sats_in = 0;
       for (var utxo in utxos) {

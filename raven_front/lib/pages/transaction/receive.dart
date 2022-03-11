@@ -4,6 +4,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:collection/collection.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
+import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
@@ -112,6 +113,8 @@ class _ReceiveState extends State<Receive> {
       child: body(),
     );
   }
+
+  Widget get fakeBody => TextField();
 
   Widget body() => Padding(
       padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 40),
