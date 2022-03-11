@@ -502,6 +502,7 @@ class _SendState extends State<Send> {
 
   void confirmSend(SendRequest sendRequest) {
     streams.spend.make.add(sendRequest);
+    print(sendRequest);
     Navigator.of(components.navigator.routeContext!).pushNamed(
       '/transaction/checkout',
       arguments: {
@@ -510,6 +511,10 @@ class _SendState extends State<Send> {
                   ? 'RVN'
                   : streams.spend.form.value?.symbol) ??
               'RVN'),
+          displaySymbol: ((streams.spend.form.value?.symbol == 'Ravencoin'
+                  ? 'Ravencoin'
+                  : streams.spend.form.value?.symbol) ??
+              'Ravencoin'),
           subSymbol: '',
           paymentSymbol: 'RVN',
           items: [

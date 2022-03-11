@@ -49,9 +49,6 @@ class BaseClient {
   }
 
   Future request(String method, [parameters]) async {
-    /// I don't know how we're getting this error again, but it's back:
-    //Exception has occurred.
-    //StateError (Bad state: The client closed with pending request "blockchain.transaction.get".)
     return await peer.sendRequest(method, parameters);
   }
 

@@ -218,7 +218,7 @@ class TransactionMaker {
       amount: estimate.amount,
       security: estimate.security,
     );
-    for (var utxo in utxos) {
+    for (var utxo in utxos.toSet()) {
       txb.addInput(utxo.transactionId, utxo.position);
     }
     // Dummy outputs to account for return and actual send
@@ -256,13 +256,14 @@ class TransactionMaker {
         amount: estimate.amount,
         security: estimate.security,
       );
-      for (var utxo in (rvn_utxos + security_utxos)) {
+      utxos = (rvn_utxos + security_utxos).toSet().toList();
+      sats_in = 0;
+      for (var utxo in utxos) {
         txb.addInput(utxo.transactionId, utxo.position);
+        // Update avaliable RVN
+        sats_in += utxo.rvnValue;
       }
 
-      // Update avaliable RVN
-      sats_in = (rvn_utxos + security_utxos)
-          .fold(0, (int total, vout) => total + vout.rvnValue);
       sats_returned = sats_in -
           (estimate.security == null ? estimate.amount : 0) -
           fee_sats;
@@ -282,12 +283,12 @@ class TransactionMaker {
       }
 
       txb.signEachInput(utxos);
-      var tx = txb.build();
+      tx = txb.build();
       fee_sats = tx.fee(goal);
     }
 
     //TODO: If doing virtual signing, actually sign here
-
+    estimate.setFees(fee_sats);
     return Tuple2(tx, estimate);
   }
 
@@ -303,7 +304,7 @@ class TransactionMaker {
       security: estimate.security,
     );
     var total = 0;
-    for (var utxo in utxos) {
+    for (var utxo in utxos.toSet()) {
       txb.addInput(utxo.transactionId, utxo.position);
       total = total + utxo.securityValue(security: estimate.security);
     }
@@ -339,11 +340,12 @@ class TransactionMaker {
         rvn_utxos = [];
         security_utxos = utxos;
       }
-      for (var utxo in rvn_utxos + security_utxos) {
+      for (var utxo in (rvn_utxos + security_utxos).toSet()) {
         txb.addInput(utxo.transactionId, utxo.position);
       }
       // Update avaliable RVN
       satsIn = (rvn_utxos + security_utxos)
+          .toSet()
           .fold(0, (int total, vout) => total + vout.rvnValue);
       satsReturn =
           satsIn - (estimate.security == null ? estimate.amount : 0) - fees;
@@ -360,9 +362,10 @@ class TransactionMaker {
         txb.addMemo(estimate.memo);
       }
       txb.signEachInput(utxos);
-      var tx = txb.build();
+      tx = txb.build();
       fees = tx.fee(goal);
     }
+    estimate.setFees(fees);
     return Tuple2(tx, estimate);
   }
 

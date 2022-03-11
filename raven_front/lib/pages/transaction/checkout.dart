@@ -29,12 +29,12 @@ class CheckoutStruct {
     ['Too Long Text (~20+ chars)', 'QmXwHQ43NrZPq123456789'],
     [
       'Multiline (2) - Limited',
-      '(#KYC && #COOLDUDE) || (#OVERRIDE || #MOONTREE) && (!! #IRS) && (!! #BASTARD)',
+      '(#KYC && #COOLDUDE) || (#OVERRIDE || #MOONTREE) && (!! #IRS)',
       '2'
     ],
     [
       'Multiline (5)',
-      '(#KYC && #COOLDUDE) || (#OVERRIDE || #MOONTREE) && (!! #IRS) && (!! #BASTARD)',
+      '(#KYC && #COOLDUDE) || (#OVERRIDE || #MOONTREE) && (!! #IRS)',
       '5'
     ]
   ];
@@ -266,6 +266,7 @@ class _CheckoutState extends State<Checkout> {
   Widget get submitButton => Row(children: [
         components.buttons.actionButton(
           context,
+          enabled: !disabled,
           label: struct.buttonWord,
           icon: Icon(struct.buttonIcon, color: AppColors.black87),
           disabledIcon: Icon(

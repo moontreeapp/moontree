@@ -135,7 +135,6 @@ class IconComponents {
     Color? background,
     IconCacheKey? cacheKey,
   }) {
-    print('BUILDING $asset');
     height = height ?? 40;
     width = width ?? 40;
     imageDetails = imageDetails ??

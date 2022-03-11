@@ -1,4 +1,7 @@
+// ignore_for_file: omit_local_variable_types
+
 import 'package:raven_back/streams/app.dart';
+import 'package:tuple/tuple.dart';
 
 import 'waiter.dart';
 import 'package:raven_back/raven_back.dart';
@@ -10,9 +13,14 @@ class SendWaiter extends Waiter {
     streams.spend.make.listen((SendRequest? sendRequest) async {
       if (sendRequest != null) {
         await Future.delayed(const Duration(milliseconds: 500));
-        var tuple;
+        Tuple2<ravencoin.Transaction, SendEstimate> tuple;
         try {
           tuple = services.transaction.make.transactionBy(sendRequest);
+          ravencoin.Transaction tx = tuple.item1;
+          SendEstimate estimate = tuple.item2;
+          streams.spend.made.add(tx.toHex());
+          streams.spend.estimate.add(estimate);
+          streams.spend.make.add(null);
         } on InsufficientFunds catch (e) {
           streams.app.snack.add(Snack(
             message: 'Send Failure',
@@ -26,16 +34,12 @@ class SendWaiter extends Waiter {
           ));
           streams.spend.success.add(false);
         }
-        ravencoin.Transaction tx = tuple.item1;
-        SendEstimate estimate = tuple.item2;
-        streams.spend.made.add(tx.toHex());
-        streams.spend.estimate.add(estimate);
-        streams.spend.make.add(null);
       }
     });
 
     streams.spend.send.listen((String? transactionHex) async {
       if (transactionHex != null) {
+        //try {
         var txid = await services.client.api.sendTransaction(transactionHex);
         if (txid != '') {
           streams.app.snack.add(Snack(
@@ -51,6 +55,10 @@ class SendWaiter extends Waiter {
           ));
           streams.spend.success.add(false);
         }
+        //} catch (e) {
+        //  streams.app.snack.add(Snack(message: 'Send Failure'));
+        //  rethrow;
+        //}
         streams.spend.made.add(null);
         streams.spend.estimate.add(null);
         streams.spend.send.add(null);

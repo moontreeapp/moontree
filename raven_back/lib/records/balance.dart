@@ -82,9 +82,10 @@ class Balance with EquatableMixin {
   }
 
   Balance operator +(Balance balance) {
-    if (walletId != balance.walletId) {
-      throw BalanceMismatch("Balance walletId don't match - can't combine");
-    }
+    // its ok if they don't match.
+    //if (walletId != balance.walletId) {
+    //  throw BalanceMismatch("Balance walletId don't match - can't combine");
+    //}
     if (security != balance.security) {
       throw BalanceMismatch("Balance securities don't match - can't combine");
     }
