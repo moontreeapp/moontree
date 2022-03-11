@@ -205,7 +205,6 @@ class TransactionMaker {
     return tuple;
   }
 
-  // TODO: ONLY FOR RVN
   Tuple2<ravencoin.Transaction, SendEstimate> transaction(
     String toAddress,
     SendEstimate estimate, {
@@ -233,7 +232,7 @@ class TransactionMaker {
     // Authorize the release of value by signing the transaction UTXOs
     // TODO: Add virtual bytes per vin instead of signing
     txb.signEachInput(utxos);
-
+     
     var tx = txb.build();
     var fee_sats = tx.fee(goal);
     var sats_in = utxos.fold(0, (int total, vout) => total + vout.rvnValue);
