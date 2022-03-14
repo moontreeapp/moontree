@@ -56,8 +56,10 @@ class LeaderWalletService {
           .subwallet(address.hdIndex, exposure: address.exposure);
 
   /// returns the next internal or external node missing a history
-  HDWallet getNextEmptyWallet(LeaderWallet leaderWallet,
-      {NodeExposure exposure = NodeExposure.Internal}) {
+  HDWallet getNextEmptyWallet(
+    LeaderWallet leaderWallet, {
+    NodeExposure exposure = NodeExposure.Internal,
+  }) {
     var seedWallet = getSeedWallet(leaderWallet);
     var i = 0;
     while (true) {

@@ -129,17 +129,10 @@ class _SendState extends State<Send> {
     } catch (e) {
       visibleFiatAmount = '';
     }
-    return Scaffold(
-        appBar: PreferredSize(
-            preferredSize: Size.fromHeight(201),
-            child: BalanceHeader(
-              pageTitle: 'Send',
-              background: AppColors.primary,
-            )),
-        body: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: body(),
-        ));
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: body(),
+    );
   }
 
   void handlePopulateFromQR(String code) {

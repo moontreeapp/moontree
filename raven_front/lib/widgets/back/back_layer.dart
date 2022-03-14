@@ -39,15 +39,15 @@ class _BackLayerState extends State<BackLayer> {
   Widget build(BuildContext context) {
     if (pageTitle.startsWith('Wallet')) {
       return NavDrawer();
-    } else if (['Send', 'Transactions'].contains(pageTitle)) {
-      Backdrop.of(components.navigator.routeContext!).revealBackLayer();
-      return BalanceHeader(pageTitle: pageTitle);
+      //} else if (['Send', 'Transactions'].contains(pageTitle)) {
+      //  Backdrop.of(components.navigator.routeContext!).revealBackLayer();
+      //  return BalanceHeader(pageTitle: pageTitle);
     } else if (['Asset'].contains(pageTitle)) {
       Backdrop.of(components.navigator.routeContext!).revealBackLayer();
       return BalanceHeader(pageTitle: pageTitle);
-    } else if (['Receive'].contains(pageTitle)) {
-      //Backdrop.of(components.navigator.routeContext!).revealBackLayer();
-      //return Container(height: 100);
+      //} else if (['Receive'].contains(pageTitle)) {
+      //  Backdrop.of(components.navigator.routeContext!).revealBackLayer();
+      //  return Container(height: 100);
     }
 
     return Container(

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/gestures.dart';
@@ -14,7 +15,9 @@ import 'package:raven_front/theme/extensions.dart';
 
 class BalanceHeader extends StatefulWidget {
   final String pageTitle;
-  BalanceHeader({Key? key, required this.pageTitle}) : super(key: key);
+  final Color? background;
+  BalanceHeader({Key? key, required this.pageTitle, this.background})
+      : super(key: key);
 
   @override
   _BalanceHeaderState createState() => _BalanceHeaderState();
@@ -34,7 +37,8 @@ class _BalanceHeaderState extends State<BalanceHeader>
   @override
   void initState() {
     super.initState();
-    Backdrop.of(components.navigator.routeContext!).revealBackLayer();
+    //??
+    //Backdrop.of(components.navigator.routeContext!).revealBackLayer();
     components.navigator.tabController = components.navigator.tabController ??
         TabController(length: 2, vsync: this);
     listeners.add(streams.spend.form.listen((SpendForm? value) {
@@ -61,7 +65,8 @@ class _BalanceHeaderState extends State<BalanceHeader>
 
   @override
   void dispose() {
-    Backdrop.of(components.navigator.routeContext!).concealBackLayer();
+    //?
+    //Backdrop.of(components.navigator.routeContext!).concealBackLayer();
     for (var listener in listeners) {
       listener.cancel();
     }
@@ -112,6 +117,7 @@ class _BalanceHeaderState extends State<BalanceHeader>
     return Container(
       padding: EdgeInsets.only(top: 16),
       height: 201,
+      color: widget.background ?? Colors.transparent,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,

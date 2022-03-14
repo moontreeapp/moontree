@@ -69,7 +69,7 @@ class RavenMobileApp extends StatelessWidget {
         return BackdropScaffold(
           //scaffoldKey: components.scaffoldKey, // thought this could help scrim issue, but it didn't
           //maintainBackLayerState: false,
-          //resizeToAvoidBottomInset: false,
+          //resizeToAvoidBottomInset: true,
           //extendBody: true,
           // for potentially modifying the persistent bottom sheet options:
           stickyFrontLayer: true,

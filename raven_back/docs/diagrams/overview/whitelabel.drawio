@@ -1,0 +1,22 @@
+<mxfile host="65bd71144e">
+    <diagram id="lo9WaS8BLEjFj88zRVt5" name="Page-1">
+        <mxGraphModel dx="579" dy="472" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Redeem&lt;br&gt;(Send NFTs)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="400" y="120" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Show NFTs" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="240" y="120" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Receive NFTs" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="80" y="120" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="company has:&lt;br&gt;&lt;br&gt;account concept&lt;br&gt;(by cc number + name, etc)&lt;br&gt;&lt;br&gt;associate address" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="80" y="200" width="120" height="240" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
