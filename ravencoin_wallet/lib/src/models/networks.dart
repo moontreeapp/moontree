@@ -1,5 +1,3 @@
-import 'package:ravencoin_wallet/ravencoin_wallet.dart';
-
 class NetworkType {
   final String messagePrefix;
   final String? bech32;
