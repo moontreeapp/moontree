@@ -205,61 +205,49 @@ class TransactionMaker {
     return tuple;
   }
 
-  // TODO: WE NEED TO CHECK IF WE HAVE ENOUGH FOR ASSETS!
   Tuple2<ravencoin.Transaction, SendEstimate> transaction(
     String toAddress,
     SendEstimate estimate, {
     required Wallet wallet,
     TxGoal? goal,
   }) {
-    var txb = ravencoin.TransactionBuilder(network: res.settings.network);
-    var utxos = services.balance.collectUTXOs(
-      wallet,
-      amount: estimate.amount,
-      security: estimate.security,
-    );
-    for (var utxo in utxos) {
-      txb.addInput(utxo.transactionId, utxo.position);
+    // Grab required assets for transfer amount
+    var rvn_utxos = <Vout>[];
+    var security_utxos = estimate.security != null
+        ? services.balance.collectUTXOs(
+            wallet,
+            amount: estimate.amount,
+            security: estimate.security,
+          )
+        : <Vout>[];
+    var security_in = 0;
+    for (var utxo in security_utxos) {
+      // Update avaliable security amt
+      security_in += utxo.assetValue!;
     }
-    // Dummy outputs to account for return and actual send
-    txb.addOutput(toAddress, 0);
-    txb.addOutput(toAddress, 0);
+    var txb;
+    var tx;
+    var fee_sats = 0;
+    var sats_returned = -1; // Init to bad val
+    var security_change =
+        security_in - (estimate.security == null ? 0 : estimate.amount);
 
-    // Add transaction memo if one is given
-    if (estimate.memo != null) {
-      txb.addMemo(estimate.memo);
-    }
-
-    var tx = txb.buildSpoofedSigs();
-    var fee_sats = tx.fee(goal);
-    var sats_in = utxos.fold(0, (int total, vout) => total + vout.rvnValue);
-    var sats_returned =
-        sats_in - (estimate.security == null ? estimate.amount : 0) - fee_sats;
-    Stopwatch stopwatch = new Stopwatch()..start();
     var return_address =
         services.wallet.getChangeWallet(wallet).address; // takes the longest
-    print('getChangeWallet costs: ${stopwatch.elapsed}');
+
     var rebuild = true;
     while (sats_returned < 0 || rebuild) {
       rebuild = false; // must rebuild transaction at least once.
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee
-      var rvn_utxos = services.balance.collectUTXOs(
+      rvn_utxos = services.balance.collectUTXOs(
         wallet,
         amount: (estimate.security == null ? estimate.amount : 0) + fee_sats,
         security: null,
       );
-      // Grab required assets for transfer amount
-      var security_utxos = estimate.security != null
-          ? services.balance.collectUTXOs(
-              wallet,
-              amount: estimate.amount,
-              security: estimate.security,
-            )
-          : <Vout>[];
-      utxos = (rvn_utxos + security_utxos).toSet().toList();
-      sats_in = 0;
-      for (var utxo in utxos) {
+
+      var sats_in = 0;
+      for (var utxo in rvn_utxos + security_utxos) {
         txb.addInput(utxo.transactionId, utxo.position);
         // Update avaliable RVN
         sats_in += utxo.rvnValue;
@@ -270,14 +258,20 @@ class TransactionMaker {
           fee_sats;
 
       // Add actual values
-      txb.addOutput(return_address, sats_returned);
       txb.addOutput(
         toAddress,
         estimate.amount,
         asset: estimate.security?.symbol,
         memo: estimate.assetMemo?.hexBytes,
       );
-
+      if (security_change > 0) {
+        txb.addOutput(return_address, security_change,
+            asset: estimate.security!.symbol,
+            memo: estimate.assetMemo?.hexBytes);
+      }
+      if (sats_returned > 0) {
+        txb.addOutput(return_address, sats_returned);
+      }
       // Add transaction memo if one is given
       if (estimate.memo != null) {
         txb.addMemo(estimate.memo);
@@ -286,7 +280,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       fee_sats = tx.fee(goal);
     }
-    txb.signEachInput(utxos);
+    txb.signEachInput(rvn_utxos + security_utxos);
     tx = txb.build();
     estimate.setFees(fee_sats);
     return Tuple2(tx, estimate);
