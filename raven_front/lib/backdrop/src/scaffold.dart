@@ -398,6 +398,11 @@ class BackdropScaffoldState extends State<BackdropScaffold>
       animationController.status == AnimationStatus.dismissed ||
       animationController.status == AnimationStatus.reverse;
 
+  /// Whether the back layer is concealed or not.
+  bool get height =>
+      animationController.status == AnimationStatus.completed ||
+      animationController.status == AnimationStatus.forward;
+
   /// Toggles the backdrop functionality.
   ///
   /// If the back layer was concealed, it is animated to the "revealed" state
@@ -523,7 +528,6 @@ class BackdropScaffoldState extends State<BackdropScaffold>
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                // frontLayer
                 Flexible(child: widget.frontLayer),
               ],
             ),
