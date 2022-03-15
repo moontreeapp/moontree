@@ -205,6 +205,7 @@ class TransactionMaker {
     return tuple;
   }
 
+  // TODO: WE NEED TO CHECK IF WE HAVE ENOUGH FOR ASSETS!
   Tuple2<ravencoin.Transaction, SendEstimate> transaction(
     String toAddress,
     SendEstimate estimate, {
