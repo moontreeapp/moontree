@@ -129,17 +129,7 @@ class _SendState extends State<Send> {
     } catch (e) {
       visibleFiatAmount = '';
     }
-    return Scaffold(
-        appBar: PreferredSize(
-            preferredSize: Size.fromHeight(201),
-            child: BalanceHeader(
-              pageTitle: 'Send',
-              background: AppColors.primary,
-            )),
-        body: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: body(),
-        ));
+    return body();
   }
 
   void handlePopulateFromQR(String code) {
@@ -245,7 +235,10 @@ class _SendState extends State<Send> {
                     FocusScope.of(context).requestFocus(sendAddressFocusNode);
                   },
                 ),
-
+                SelectableText(
+                  'Select me custom menu',
+                  selectionControls: CustomToolBar(),
+                ),
                 SizedBox(height: 16.0),
                 Visibility(
                     visible: addressName != '',
