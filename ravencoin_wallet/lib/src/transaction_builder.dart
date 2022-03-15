@@ -85,7 +85,7 @@ class TransactionBuilder {
     _tx!.locktime = locktime;
   }
 
-  int addMemo(dynamic data) {
+  int addMemo(dynamic data, {int? offset}) {
     if (data is String) {
       data = utf8.encode(data);
     } else if (!(data is Uint8List)) {
@@ -100,7 +100,8 @@ class TransactionBuilder {
       data,
     ]);
 
-    return _tx!.addOutput(script, 0);
+    return _tx!.addChangeForAssetCreationOrReissuance(
+        (offset == null ? 0 : offset), script, 0);
   }
 
   // Note: this function generates all of the vouts for you. No other vouts may be added.
@@ -146,6 +147,114 @@ class TransactionBuilder {
 
     _tx!.addOutput(burnScriptPubKey, network.burnAmounts.issueMain);
     _tx!.addOutput(ownershipScriptPubKey, 0);
+    return _tx!.addOutput(assetScriptPubKey, 0);
+  }
+
+  int generateCreateSubAssetVouts(
+      dynamic newAssetTo,
+      dynamic ownershipAssetTo,
+      dynamic parentOwnershipAssetTo,
+      int value,
+      String ownerName,
+      String assetName,
+      int divisibility,
+      bool reissuable,
+      Uint8List? ipfsData) {
+    var assetScriptPubKey;
+    var ownershipScriptPubKey;
+    var parentOwnershipScriptPubKey;
+    if (newAssetTo is String) {
+      assetScriptPubKey = Address.addressToOutputScript(newAssetTo, network);
+    } else if (newAssetTo is Uint8List) {
+      assetScriptPubKey = newAssetTo;
+    } else {
+      throw ArgumentError('newAssetTo Address invalid');
+    }
+    if (ownershipAssetTo is String) {
+      ownershipScriptPubKey =
+          Address.addressToOutputScript(ownershipAssetTo, network);
+    } else if (ownershipAssetTo is Uint8List) {
+      ownershipScriptPubKey = ownershipAssetTo;
+    } else {
+      throw ArgumentError('ownershipAssetTo Address invalid');
+    }
+    if (parentOwnershipAssetTo is String) {
+      parentOwnershipScriptPubKey =
+          Address.addressToOutputScript(parentOwnershipAssetTo, network);
+    } else if (parentOwnershipAssetTo is Uint8List) {
+      parentOwnershipScriptPubKey = parentOwnershipAssetTo;
+    } else {
+      throw ArgumentError('ownershipAssetTo Address invalid');
+    }
+    if (!_canModifyOutputs()) {
+      throw ArgumentError('No, this would invalidate signatures');
+    }
+    if (_tx!.outs.isNotEmpty) {
+      throw ArgumentError('This transaction already has outputs!');
+    }
+    assetScriptPubKey = generateAssetCreateScript(assetScriptPubKey, assetName,
+        value, divisibility, reissuable, ipfsData);
+    ownershipScriptPubKey =
+        generateAssetOwnershipScript(ownershipScriptPubKey, assetName);
+    parentOwnershipScriptPubKey = generateAssetTransferScript(
+        parentOwnershipScriptPubKey, ownerName + '!', 100000000, null);
+    final burnScriptPubKey =
+        Address.addressToOutputScript(network.burnAddresses.issueSub, network);
+
+    _tx!.addOutput(burnScriptPubKey, network.burnAmounts.issueSub);
+    _tx!.addOutput(parentOwnershipScriptPubKey, 0);
+    _tx!.addOutput(ownershipScriptPubKey, 0);
+    return _tx!.addOutput(assetScriptPubKey, 0);
+  }
+
+  // For unique and message assets
+  int generateCreateChildAssetVouts(
+      dynamic newAssetTo,
+      dynamic parentOwnershipAssetTo,
+      String ownerName,
+      String assetName,
+      Uint8List? ipfsData) {
+    var assetScriptPubKey;
+    var parentOwnershipScriptPubKey;
+    if (newAssetTo is String) {
+      assetScriptPubKey = Address.addressToOutputScript(newAssetTo, network);
+    } else if (newAssetTo is Uint8List) {
+      assetScriptPubKey = newAssetTo;
+    } else {
+      throw ArgumentError('newAssetTo Address invalid');
+    }
+    if (parentOwnershipAssetTo is String) {
+      parentOwnershipScriptPubKey =
+          Address.addressToOutputScript(parentOwnershipAssetTo, network);
+    } else if (parentOwnershipAssetTo is Uint8List) {
+      parentOwnershipScriptPubKey = parentOwnershipAssetTo;
+    } else {
+      throw ArgumentError('ownershipAssetTo Address invalid');
+    }
+    if (!_canModifyOutputs()) {
+      throw ArgumentError('No, this would invalidate signatures');
+    }
+    if (_tx!.outs.isNotEmpty) {
+      throw ArgumentError('This transaction already has outputs!');
+    }
+    // Message channels cannot have associated IPFS data
+    var isMessage = assetName.contains('~');
+    assetScriptPubKey = generateAssetCreateScript(assetScriptPubKey, assetName,
+        100000000, 0, false, isMessage ? null : ipfsData);
+    parentOwnershipScriptPubKey = generateAssetTransferScript(
+        parentOwnershipScriptPubKey, ownerName + '!', 100000000, null);
+    final burnScriptPubKey = Address.addressToOutputScript(
+        isMessage
+            ? network.burnAddresses.issueMessage
+            : network.burnAddresses.issueUnique,
+        network);
+
+    _tx!.addOutput(
+        burnScriptPubKey,
+        isMessage
+            ? network.burnAmounts.issueMessage
+            : network.burnAmounts.issueSub);
+    _tx!.addOutput(parentOwnershipScriptPubKey, 0);
     return _tx!.addOutput(assetScriptPubKey, 0);
   }
 
@@ -227,7 +336,8 @@ class TransactionBuilder {
     return _tx!.addOutput(scriptPubKey, value);
   }
 
-  int addChangeToAssetCreationOrReissuance(dynamic data, int? value) {
+  int addChangeToAssetCreationOrReissuance(
+      int offset, dynamic data, int? value) {
     var scriptPubKey;
     if (data is String) {
       scriptPubKey = Address.addressToOutputScript(data, network);
@@ -239,7 +349,8 @@ class TransactionBuilder {
     if (!_canModifyOutputs()) {
       throw ArgumentError('No, this would invalidate signatures');
     }
-    return _tx!.addChangeForAssetCreationOrReissuance(scriptPubKey, value);
+    return _tx!
+        .addChangeForAssetCreationOrReissuance(offset, scriptPubKey, value);
   }
 
   int addInput(dynamic txHash, int vout,
