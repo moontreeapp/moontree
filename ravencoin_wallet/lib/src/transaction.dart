@@ -54,6 +54,12 @@ class Transaction {
     return outs.length - 1;
   }
 
+  int addChangeForAssetCreation(Uint8List? scriptPubKey, int? value) {
+    outs.insert(
+        outs.length - 2, new Output(script: scriptPubKey, value: value));
+    return outs.length - 1;
+  }
+
   bool hasWitnesses() {
     var witness = ins.firstWhereOrNull(
         (input) => input.witness != null && input.witness!.length != 0);
