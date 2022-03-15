@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:raven_back/raven_back.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 import 'package:ravencoin_wallet/src/fee.dart';
@@ -508,79 +510,63 @@ class TransactionMaker {
   }) {
     ravencoin.TransactionBuilder? txb;
     ravencoin.Transaction tx;
-    var fee_sats = 0;
-
+    var feeSats = 0;
     // Grab required assets for transfer amount
-    var rvn_utxos = <Vout>[];
-    var security_utxos = estimate.security != null
+    var utxosRaven = <Vout>[];
+    var utxosSecurity = estimate.security != null
         ? services.balance.collectUTXOs(
             wallet,
             amount: estimate.amount,
             security: estimate.security,
           )
         : <Vout>[];
-
-    var security_in = 0;
-    for (var utxo in security_utxos) {
-      security_in += utxo.assetValue!;
+    var securityIn = 0;
+    for (var utxo in utxosSecurity) {
+      securityIn += utxo.assetValue!;
     }
-    var security_change =
-        estimate.security == null ? 0 : security_in - estimate.amount;
-
-    var stopwatch = Stopwatch()..start();
-    var return_address = services.wallet.getChangeAddress(wallet);
-    print('getChangeWallet $return_address costs: ${stopwatch.elapsed}');
-
-    var sats_returned = -1; // Init to bad val
-    while (sats_returned < 0 || fee_sats != estimate.fees) {
-      fee_sats = estimate.fees;
+    var securityChange =
+        estimate.security == null ? 0 : securityIn - estimate.amount;
+    var returnAddress = services.wallet.getChangeAddress(wallet);
+    var returnRaven = -1; // Init to bad val
+    while (returnRaven < 0 || feeSats != estimate.fees) {
+      feeSats = estimate.fees;
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee (plus amount, maybe)
-      rvn_utxos = services.balance.collectUTXOs(
+      utxosRaven = services.balance.collectUTXOs(
         wallet,
-        amount: fee_sats + (estimate.security == null ? estimate.amount : 0),
+        amount: feeSats + (estimate.security == null ? estimate.amount : 0),
         security: null,
       );
-
-      var sats_in = 0;
-      for (var utxo in rvn_utxos) {
+      var satsIn = 0;
+      for (var utxo in utxosRaven) {
         txb.addInput(utxo.transactionId, utxo.position);
-        // Update avaliable RVN
-        sats_in += utxo.rvnValue;
+        satsIn += utxo.rvnValue;
       }
-
-      sats_returned = sats_in -
-          (estimate.security == null ? estimate.amount : 0) -
-          fee_sats;
-
-      // Add actual values
+      returnRaven =
+          satsIn - (estimate.security == null ? estimate.amount : 0) - feeSats;
       txb.addOutput(
-        toAddress, // mjQSgeVh5ZHfwGzBkiQcpr119Wh6QMyQ3b
+        toAddress,
         estimate.amount,
         asset: estimate.security?.symbol,
         memo: estimate.assetMemo?.hexBytes,
       );
-      if (security_change > 0) {
+      if (securityChange > 0) {
         txb.addOutput(
-          return_address, // n1tpotky5ybvsvYnMWwXzrrzDbX1X2pqsx
-          security_change,
+          returnAddress,
+          securityChange,
           asset: estimate.security!.symbol,
         );
       }
-      if (sats_returned > 0) {
-        txb.addOutput(return_address, sats_returned);
+      if (returnRaven > 0) {
+        txb.addOutput(returnAddress, returnRaven);
       }
       if (estimate.memo != null) {
         txb.addMemo(estimate.memo);
       }
-      var stopwatchSpoof = Stopwatch()..start();
       tx = txb.buildSpoofedSigs();
-      print('spoof costs: ${stopwatchSpoof.elapsed}');
       estimate.setFees(tx.fee(goal: goal));
     }
-    var stopwatchSign = Stopwatch()..start();
-    txb!.signEachInput(rvn_utxos + security_utxos);
-    print('signing costs: ${stopwatchSign.elapsed}');
+    txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
     return Tuple2(tx, estimate);
   }
