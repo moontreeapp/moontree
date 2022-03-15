@@ -103,6 +103,52 @@ class TransactionBuilder {
     return _tx!.addOutput(script, 0);
   }
 
+  // Note: this function generates all of the vouts for you. No other vouts may be added.
+  // Last two vouts must be the asset generations.
+  // Use Transaction.addChangeForAssetCreation to safely add.
+  int generateCreateAssetVouts(
+      dynamic newAssetTo,
+      dynamic ownershipAssetTo,
+      int value,
+      String assetName,
+      int divisibility,
+      bool reissuable,
+      Uint8List? ipfsData) {
+    var assetScriptPubKey;
+    var ownershipScriptPubKey;
+    if (newAssetTo is String) {
+      assetScriptPubKey = Address.addressToOutputScript(newAssetTo, network);
+    } else if (newAssetTo is Uint8List) {
+      assetScriptPubKey = newAssetTo;
+    } else {
+      throw ArgumentError('newAssetTo Address invalid');
+    }
+    if (ownershipAssetTo is String) {
+      ownershipScriptPubKey =
+          Address.addressToOutputScript(ownershipAssetTo, network);
+    } else if (ownershipAssetTo is Uint8List) {
+      ownershipScriptPubKey = ownershipAssetTo;
+    } else {
+      throw ArgumentError('ownershipAssetTo Address invalid');
+    }
+    if (!_canModifyOutputs()) {
+      throw ArgumentError('No, this would invalidate signatures');
+    }
+    if (_tx!.outs.isNotEmpty) {
+      throw ArgumentError('This transaction already has outputs!');
+    }
+    assetScriptPubKey = generateAssetCreateScript(assetScriptPubKey, assetName,
+        value, divisibility, reissuable, ipfsData);
+    ownershipScriptPubKey =
+        generateAssetOwnershipScript(ownershipScriptPubKey, assetName);
+    final burnScriptPubKey =
+        Address.addressToOutputScript(network.burnAddresses.issueMain, network);
+
+    _tx!.addOutput(burnScriptPubKey, network.burnAmounts.issueMain);
+    _tx!.addOutput(ownershipScriptPubKey, 0);
+    return _tx!.addOutput(assetScriptPubKey, 0);
+  }
+
   // Note: this function only works with RVN vouts and asset (t)ransfer vouts
   // Other types of scripts must be manually input in the *data* parameter.
   int addOutput(dynamic data, int? value, {String? asset, Uint8List? memo}) {
