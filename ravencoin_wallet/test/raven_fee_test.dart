@@ -1,7 +1,5 @@
-// dart --no-sound-null-safety test test/unit/raven_fee_test.dart
 import 'package:test/test.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart';
-import 'package:raven_back/services/transaction/fee.dart';
 
 void main() {
   test('totalFeeByBytes', () {
@@ -13,19 +11,21 @@ void main() {
     var tx = txb.tx!;
     var fee = tx.fee();
     expect(fee, 93500);
-    fee = tx.fee(cheap);
+    fee = tx.fee(goal: TxGoals.cheap);
     expect(fee, 85000);
-    fee = tx.fee(fast);
+    fee = tx.fee(goal: TxGoals.fast);
     expect(fee, 127500);
   });
 
   test('min fee is 0.01 RVN per 1000 bytes', () {
-    expect(calculateFee(1, standard), 1100);
-    expect(calculateFee(1, cheap), 1000);
-    expect(calculateFee(1, fast), 1500);
+    expect(
+        Transaction.feeCalculation(size: 1, rate: TxGoals.standard.rate), 1100);
+    expect(Transaction.feeCalculation(size: 1, rate: TxGoals.cheap.rate), 1000);
+    expect(Transaction.feeCalculation(size: 1, rate: TxGoals.fast.rate), 1500);
   });
 
   test('standard fee is 1000 sats per vsize', () {
-    expect(calculateFee(2000, standard), 2200000);
+    expect(Transaction.feeCalculation(size: 2000, rate: TxGoals.standard.rate),
+        2200000);
   });
 }

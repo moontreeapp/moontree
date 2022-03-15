@@ -10,7 +10,7 @@ class RateWaiter extends Waiter {
   Future init() async {
     unawaited(services.rate.saveRate());
 
-    listen(
+    await listen(
       'periodic',
       Stream.periodic(rateWait),
       (_) {

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:raven_back/streams/app.dart';
-import 'package:raven_front/theme/colors.dart';
-import 'package:raven_front/components/components.dart';
-import 'package:raven_front/utils/zips.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/raven_back.dart';
 

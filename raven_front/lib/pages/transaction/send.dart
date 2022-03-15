@@ -15,7 +15,6 @@ import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 import 'package:barcode_scan2/barcode_scan2.dart';
 
 import 'package:raven_back/streams/spend.dart';
-import 'package:raven_back/services/transaction/fee.dart';
 import 'package:raven_back/services/transaction_maker.dart';
 import 'package:raven_back/raven_back.dart';
 
@@ -56,7 +55,7 @@ class _SendState extends State<Send> {
   FocusNode sendFeeFocusNode = FocusNode();
   FocusNode sendMemoFocusNode = FocusNode();
   FocusNode sendNoteFocusNode = FocusNode();
-  TxGoal feeGoal = standard;
+  ravencoin.TxGoal feeGoal = ravencoin.TxGoals.standard;
   bool sendAll = false;
   String addressName = '';
   bool showPaste = false;
@@ -361,11 +360,12 @@ class _SendState extends State<Send> {
                   },
                   onChanged: (String? newValue) {
                     feeGoal = {
-                          'Cheap': cheap,
-                          'Standard': standard,
-                          'Fast': fast,
+                          'Cheap': ravencoin.TxGoals.cheap,
+                          'Standard': ravencoin.TxGoals.standard,
+                          'Fast': ravencoin.TxGoals.fast,
                         }[newValue] ??
-                        standard; // <--- replace by custom dialogue
+                        ravencoin.TxGoals
+                            .standard; // <--- replace by custom dialogue
                     FocusScope.of(context).requestFocus(sendNoteFocusNode);
                     setState(() {});
                   },

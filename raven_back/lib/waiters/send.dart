@@ -21,7 +21,7 @@ class SendWaiter extends Waiter {
           streams.spend.made.add(tx.toHex());
           streams.spend.estimate.add(estimate);
           streams.spend.make.add(null);
-        } on InsufficientFunds catch (e) {
+        } on InsufficientFunds {
           streams.app.snack.add(Snack(
             message: 'Send Failure',
             details: 'Insufficient Funds',

@@ -1,5 +1,4 @@
 // dart test test/unit/process_test.dart
-import 'package:reservoir/map_source.dart';
 import 'package:test/test.dart';
 
 import 'package:raven_back/raven_back.dart';
@@ -11,7 +10,7 @@ import 'package:bip39/bip39.dart' as bip39;
 
 void main() {
   group('addresses', () {
-    late LeaderWallet wallet;
+    //late LeaderWallet wallet;
     setUp(() async {
       fixtures.useEmptyFixtures();
       dotenv.load();
@@ -21,7 +20,7 @@ void main() {
           cipherUpdate: CipherUpdate(CipherType.None),
           encryptedEntropy:
               bip39.mnemonicToEntropy(dotenv.env['TEST_WALLET_01']!)));
-      wallet = res.wallets.data.first as LeaderWallet;
+      //wallet = res.wallets.data.first as LeaderWallet;
     });
     test('2 addresses get created', () async {
       expect(res.addresses.length, 0);

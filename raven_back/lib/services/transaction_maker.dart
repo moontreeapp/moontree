@@ -1,15 +1,9 @@
-import 'dart:math';
-import 'dart:typed_data';
-
 import 'package:raven_back/raven_back.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
+import 'package:ravencoin_wallet/src/fee.dart';
 import 'package:tuple/tuple.dart';
 
-import 'transaction/fee.dart';
 import 'transaction/sign.dart';
-
-const ESTIMATED_OUTPUT_FEE = 0 /* why 34? */;
-const ESTIMATED_FEE_PER_INPUT = 0 /* why 51? */;
 
 class NFTCreateRequest {
   late String name;
@@ -143,7 +137,7 @@ class SendEstimate {
 
   SendEstimate(
     this.amount, {
-    this.fees = ESTIMATED_OUTPUT_FEE + ESTIMATED_FEE_PER_INPUT,
+    this.fees = 0,
     List<Vout>? utxos,
     this.security,
     this.assetMemo,
@@ -211,6 +205,10 @@ class TransactionMaker {
     required Wallet wallet,
     TxGoal? goal,
   }) {
+    ravencoin.TransactionBuilder? txb;
+    ravencoin.Transaction tx;
+    var fee_sats = 0;
+
     // Grab required assets for transfer amount
     var rvn_utxos = <Vout>[];
     var security_utxos = estimate.security != null
@@ -220,34 +218,31 @@ class TransactionMaker {
             security: estimate.security,
           )
         : <Vout>[];
+
     var security_in = 0;
     for (var utxo in security_utxos) {
-      // Update avaliable security amt
       security_in += utxo.assetValue!;
     }
-    var txb;
-    var tx;
-    var fee_sats = 0;
-    var sats_returned = -1; // Init to bad val
     var security_change =
-        security_in - (estimate.security == null ? 0 : estimate.amount);
+        estimate.security == null ? 0 : security_in - estimate.amount;
 
-    var return_address =
-        services.wallet.getChangeWallet(wallet).address; // takes the longest
+    var stopwatch = Stopwatch()..start();
+    var return_address = services.wallet.getChangeAddress(wallet);
+    print('getChangeWallet $return_address costs: ${stopwatch.elapsed}');
 
-    var rebuild = true;
-    while (sats_returned < 0 || rebuild) {
-      rebuild = false; // must rebuild transaction at least once.
+    var sats_returned = -1; // Init to bad val
+    while (sats_returned < 0 || fee_sats != estimate.fees) {
+      fee_sats = estimate.fees;
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
-      // Grab required RVN for fee
+      // Grab required RVN for fee (plus amount, maybe)
       rvn_utxos = services.balance.collectUTXOs(
         wallet,
-        amount: (estimate.security == null ? estimate.amount : 0) + fee_sats,
+        amount: fee_sats + (estimate.security == null ? estimate.amount : 0),
         security: null,
       );
 
       var sats_in = 0;
-      for (var utxo in rvn_utxos + security_utxos) {
+      for (var utxo in rvn_utxos) {
         txb.addInput(utxo.transactionId, utxo.position);
         // Update avaliable RVN
         sats_in += utxo.rvnValue;
@@ -259,30 +254,33 @@ class TransactionMaker {
 
       // Add actual values
       txb.addOutput(
-        toAddress,
+        toAddress, // mjQSgeVh5ZHfwGzBkiQcpr119Wh6QMyQ3b
         estimate.amount,
         asset: estimate.security?.symbol,
         memo: estimate.assetMemo?.hexBytes,
       );
       if (security_change > 0) {
-        txb.addOutput(return_address, security_change,
-            asset: estimate.security!.symbol,
-            memo: estimate.assetMemo?.hexBytes);
+        txb.addOutput(
+          return_address, // n1tpotky5ybvsvYnMWwXzrrzDbX1X2pqsx
+          security_change,
+          asset: estimate.security!.symbol,
+        );
       }
       if (sats_returned > 0) {
         txb.addOutput(return_address, sats_returned);
       }
-      // Add transaction memo if one is given
       if (estimate.memo != null) {
         txb.addMemo(estimate.memo);
       }
-
+      var stopwatchSpoof = Stopwatch()..start();
       tx = txb.buildSpoofedSigs();
-      fee_sats = tx.fee(goal);
+      print('spoof costs: ${stopwatchSpoof.elapsed}');
+      estimate.setFees(tx.fee(goal: goal));
     }
-    txb.signEachInput(rvn_utxos + security_utxos);
+    var stopwatchSign = Stopwatch()..start();
+    txb!.signEachInput(rvn_utxos + security_utxos);
+    print('signing costs: ${stopwatchSign.elapsed}');
     tx = txb.build();
-    estimate.setFees(fee_sats);
     return Tuple2(tx, estimate);
   }
 
@@ -309,8 +307,8 @@ class TransactionMaker {
     txb.addOutput(toAddress, estimate.amount);
     txb.signEachInput(utxosOriginal);
     var tx = txb.build();
-    var fees = tx.fee(goal);
-    estimate.setFees(tx.fee(goal));
+    var fees = tx.fee(goal: goal);
+    estimate.setFees(tx.fee(goal: goal));
     estimate.setAmount(total - fees);
     var satsIn =
         utxosOriginal.fold(0, (int total, vout) => total + vout.rvnValue);
@@ -358,7 +356,7 @@ class TransactionMaker {
       }
       txb.signEachInput(utxos.toList());
       tx = txb.build();
-      fees = tx.fee(goal);
+      fees = tx.fee(goal: goal);
     }
     estimate.setFees(fees);
     return Tuple2(tx, estimate);
@@ -384,8 +382,8 @@ class TransactionMaker {
     txb.addOutput(toAddress, estimate.amount);
     txb.signEachInput(utxos);
     var tx = txb.build();
-    var fees = tx.fee(goal);
-    updatedEstimate.setFees(tx.fee(goal));
+    var fees = tx.fee(goal: goal);
+    updatedEstimate.setFees(tx.fee(goal: goal));
     updatedEstimate.setAmount(total - fees);
     if (previousFees.contains(fees)) {
       return Tuple2(tx, updatedEstimate);

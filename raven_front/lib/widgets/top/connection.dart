@@ -65,42 +65,6 @@ class _ConnectionLightState extends State<ConnectionLight>
                 connectedColor = value ? Color(0xFF4CAF50) : Color(0xFFF44336);
               })
             : () {/*do nothing*/}));
-    listeners.add(services.busy.client.listen((String? value) {
-      if (mounted) {
-        if (value == null) {
-          setState(() {
-            lastestClientValue = value;
-          });
-        } else {
-          setState(() {
-            lastestClientValue = value;
-          });
-        }
-      }
-    }));
-
-    listeners.add(services.busy.process.listen((String? value) async {
-      if (mounted) {
-        if (value == null && !services.busy.busy) {
-          if (activity != 'idle') {
-            //await Future.delayed(Duration(seconds: 2));
-            setState(() {
-              lastestProcessValue = value;
-              working = false;
-              activity = activity == 'working' ? 'down' : 'idle';
-            });
-          }
-        } else {
-          if (activity != 'working') {
-            setState(() {
-              lastestProcessValue = value;
-              working = true;
-              activity = activity == 'idle' ? 'up' : 'working';
-            });
-          }
-        }
-      }
-    }));
   }
 
   @override

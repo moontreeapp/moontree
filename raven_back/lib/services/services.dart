@@ -1,7 +1,6 @@
 import 'download.dart';
 import 'history.dart';
 import 'balance.dart';
-import 'busy.dart';
 import 'cipher.dart';
 import 'client.dart';
 import 'transaction.dart';
@@ -12,7 +11,6 @@ import 'wallet.dart';
 class services {
   static HistoryService history = HistoryService();
   static BalanceService balance = BalanceService();
-  static BusyService busy = BusyService();
   static CipherService cipher = CipherService();
   static ClientService client = ClientService();
   static TransactionService transaction = TransactionService();

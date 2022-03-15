@@ -29,7 +29,6 @@ class CipherService {
 
   /// make sure all wallets are on the latest ciphertype and password
   Future updateWallets({CipherBase? cipher}) async {
-    services.busy.encryptionOn();
     var records = <Wallet>[];
     for (var wallet in res.wallets.data) {
       if (wallet.cipherUpdate != currentCipherUpdate) {
@@ -41,7 +40,6 @@ class CipherService {
       }
     }
     await res.wallets.saveAll(records);
-    services.busy.encryptionOff();
 
     /// completed successfully
     assert(services.wallet.getPreviousCipherUpdates.isEmpty);

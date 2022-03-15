@@ -1,8 +1,6 @@
 /// this waiter is entirely concerned with derviving addresses:
 /// each time a new wallet is saved, and
 /// each time a new vout is saved that can be tied to a wallet we own.
-import 'package:rxdart/rxdart.dart';
-import 'package:tuple/tuple.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/wallet.dart';
 import 'waiter.dart';
