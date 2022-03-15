@@ -149,6 +149,61 @@ class TransactionBuilder {
     return _tx!.addOutput(assetScriptPubKey, 0);
   }
 
+  int generateCreateReissueVouts(
+      dynamic newAssetTo,
+      dynamic ownershipAssetTo,
+      int originalSats,
+      int satsAdded,
+      String assetName,
+      int original_divisibility,
+      int new_divisibility,
+      bool reissuable,
+      Uint8List? ipfsData) {
+    var assetScriptPubKey;
+    var ownershipScriptPubKey;
+    if (newAssetTo is String) {
+      assetScriptPubKey = Address.addressToOutputScript(newAssetTo, network);
+    } else if (newAssetTo is Uint8List) {
+      assetScriptPubKey = newAssetTo;
+    } else {
+      throw ArgumentError('newAssetTo Address invalid');
+    }
+    if (ownershipAssetTo is String) {
+      ownershipScriptPubKey =
+          Address.addressToOutputScript(ownershipAssetTo, network);
+    } else if (ownershipAssetTo is Uint8List) {
+      ownershipScriptPubKey = ownershipAssetTo;
+    } else {
+      throw ArgumentError('ownershipAssetTo Address invalid');
+    }
+    if (!_canModifyOutputs()) {
+      throw ArgumentError('No, this would invalidate signatures');
+    }
+    if (_tx!.outs.isNotEmpty) {
+      throw ArgumentError('This transaction already has outputs!');
+    }
+    assetScriptPubKey = generateAssetReissueScript(
+        assetScriptPubKey,
+        assetName,
+        originalSats,
+        satsAdded,
+        original_divisibility,
+        new_divisibility,
+        reissuable,
+        ipfsData);
+
+    // Transfer an ownership asset with a value of 1
+    // (Ownership assets have a virtual value of 100000000 sats).
+    ownershipScriptPubKey = generateAssetTransferScript(
+        ownershipScriptPubKey, assetName + '!', 100000000, null);
+    final burnScriptPubKey =
+        Address.addressToOutputScript(network.burnAddresses.reissue, network);
+
+    _tx!.addOutput(burnScriptPubKey, network.burnAmounts.reissue);
+    _tx!.addOutput(ownershipScriptPubKey, 0);
+    return _tx!.addOutput(assetScriptPubKey, 0);
+  }
+
   // Note: this function only works with RVN vouts and asset (t)ransfer vouts
   // Other types of scripts must be manually input in the *data* parameter.
   int addOutput(dynamic data, int? value, {String? asset, Uint8List? memo}) {
@@ -170,6 +225,21 @@ class TransactionBuilder {
       throw ArgumentError('No, this would invalidate signatures');
     }
     return _tx!.addOutput(scriptPubKey, value);
+  }
+
+  int addChangeToAssetCreationOrReissuance(dynamic data, int? value) {
+    var scriptPubKey;
+    if (data is String) {
+      scriptPubKey = Address.addressToOutputScript(data, network);
+    } else if (data is Uint8List) {
+      scriptPubKey = data;
+    } else {
+      throw ArgumentError('Address invalid');
+    }
+    if (!_canModifyOutputs()) {
+      throw ArgumentError('No, this would invalidate signatures');
+    }
+    return _tx!.addChangeForAssetCreationOrReissuance(scriptPubKey, value);
   }
 
   int addInput(dynamic txHash, int vout,

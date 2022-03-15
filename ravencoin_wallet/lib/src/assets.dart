@@ -9,9 +9,10 @@ import 'utils/constants/op.dart';
 import 'validate.dart';
 
 const List<int> RVN_rvn = [0x72, 0x76, 0x6e];
-const List<int> RVN_t = [0x74];
-const List<int> RVN_q = [0x71];
-const List<int> RVN_o = [0x6F];
+const int RVN_t = 0x74;
+const int RVN_q = 0x71;
+const int RVN_o = 0x6F;
+const int RVN_r = 0x72;
 
 // standard_script should have no OP_PUSH
 Uint8List generateAssetTransferScript(Uint8List standardScript,
@@ -32,7 +33,7 @@ Uint8List generateAssetTransferScript(Uint8List standardScript,
 
   final internal_builder = new BytesBuilder();
   internal_builder.add(RVN_rvn);
-  internal_builder.add(RVN_t);
+  internal_builder.addByte(RVN_t);
   internal_builder.addByte(assetName.length);
   internal_builder.add(utf8.encode(assetName));
   internal_builder.add(amountData.buffer.asUint8List());
@@ -72,7 +73,7 @@ Uint8List generateAssetCreateScript(Uint8List standardScript, String assetName,
 
   final internal_builder = new BytesBuilder();
   internal_builder.add(RVN_rvn);
-  internal_builder.add(RVN_q);
+  internal_builder.addByte(RVN_q);
   internal_builder.addByte(assetName.length);
   internal_builder.add(utf8.encode(assetName));
   internal_builder.add(amountData.buffer.asUint8List());
@@ -105,11 +106,67 @@ Uint8List generateAssetOwnershipScript(
 
   final internal_builder = new BytesBuilder();
   internal_builder.add(RVN_rvn);
-  internal_builder.add(RVN_o);
+  internal_builder.addByte(RVN_o);
   internal_builder.addByte(assetName.length + 1);
   internal_builder.add(utf8.encode(assetName + '!'));
 
   // OP_PUSH  ( b'rvno' | var_int (assetName) )
+  final internal_script = bscript.compile([internal_builder.takeBytes()]);
+
+  internal_builder.add(standardScript);
+  internal_builder.addByte(OPS['OP_RVN_ASSET']!);
+  internal_builder.add(internal_script!);
+  internal_builder.addByte(OPS['OP_DROP']!);
+
+  return internal_builder.toBytes();
+}
+
+Uint8List generateAssetReissueScript(
+    Uint8List standardScript,
+    String assetName,
+    int current_amount,
+    int amount_to_add,
+    int old_divisibility,
+    int divisibility,
+    bool reissuable,
+    Uint8List? ipfsData) {
+  // standardScript is where the new assets created (if any) are sent
+  if (!isAssetNameGood(assetName)) {
+    throw new ArgumentError('Invalid asset name');
+  }
+  if ((current_amount + amount_to_add) < 0 ||
+      (current_amount + amount_to_add) > 21000000000) {
+    throw new ArgumentError('Invalid asset amount');
+  }
+  if (divisibility < 0 || divisibility > 8) {
+    throw new ArgumentError('Invalid divisibility');
+  }
+  if (divisibility < old_divisibility) {
+    throw new ArgumentError(
+        'New divisibility cannot be lower than old divisibility');
+  }
+  if (ipfsData?.length != null && ipfsData?.length != 34) {
+    throw new ArgumentError('Invalid IPFS data');
+  }
+
+  final amountData = ByteData(8);
+  amountData.setUint64(0, amount_to_add, Endian.little);
+
+  final internal_builder = new BytesBuilder();
+  internal_builder.add(RVN_rvn);
+  internal_builder.addByte(RVN_r);
+  internal_builder.addByte(assetName.length);
+  internal_builder.add(utf8.encode(assetName));
+  internal_builder.add(amountData.buffer.asUint8List());
+  internal_builder
+      .addByte(divisibility == old_divisibility ? 0xff : divisibility);
+  internal_builder.addByte(reissuable ? 1 : 0);
+  // There is no "hasIPFS" boolean in asset reissuances. Do not get confused with "is reissuable?"
+  if (ipfsData != null) {
+    internal_builder.add(ipfsData);
+  }
+
+  // OP_PUSH  ( b'rvnr' | var_int (assetName) | sats | divisibility | reissuable | ipfsData? )
   final internal_script = bscript.compile([internal_builder.takeBytes()]);
 
   internal_builder.add(standardScript);
