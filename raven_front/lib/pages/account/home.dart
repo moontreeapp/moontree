@@ -36,15 +36,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         });
       }
     }));
-    listeners.add(streams.app.hideNav.listen((bool? value) {
-      if (value != null) {
-        if (value) {
-          controller.forward();
-        } else {
-          controller.reverse();
-        }
-      }
-    }));
     listeners.add(res.settings.changes.listen((Change change) {
       setState(() {});
     }));

@@ -40,10 +40,8 @@ class _BackLayerState extends State<BackLayer> {
     if (pageTitle.startsWith('Wallet')) {
       return NavDrawer();
     } else if (['Send', 'Transactions'].contains(pageTitle)) {
-      Backdrop.of(components.navigator.routeContext!).revealBackLayer();
       return BalanceHeader(pageTitle: pageTitle);
     } else if (['Asset'].contains(pageTitle)) {
-      Backdrop.of(components.navigator.routeContext!).revealBackLayer();
       return BalanceHeader(pageTitle: pageTitle);
     } else if (['Receive'].contains(pageTitle)) {
       //Backdrop.of(components.navigator.routeContext!).revealBackLayer();

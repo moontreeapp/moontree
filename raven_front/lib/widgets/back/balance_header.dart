@@ -37,8 +37,7 @@ class _BalanceHeaderState extends State<BalanceHeader>
   @override
   void initState() {
     super.initState();
-    //??
-    //Backdrop.of(components.navigator.routeContext!).revealBackLayer();
+    Backdrop.of(components.navigator.routeContext!).revealBackLayer();
     components.navigator.tabController = components.navigator.tabController ??
         TabController(length: 2, vsync: this);
     listeners.add(streams.spend.form.listen((SpendForm? value) {
@@ -65,8 +64,7 @@ class _BalanceHeaderState extends State<BalanceHeader>
 
   @override
   void dispose() {
-    //?
-    //Backdrop.of(components.navigator.routeContext!).concealBackLayer();
+    Backdrop.of(components.navigator.routeContext!).concealBackLayer();
     for (var listener in listeners) {
       listener.cancel();
     }
