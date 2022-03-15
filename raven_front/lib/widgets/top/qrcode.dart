@@ -47,7 +47,10 @@ class _QRCodeContainerState extends State<QRCodeContainer> {
             child: Icon(
               MdiIcons.qrcodeScan,
               color: AppColors.black38,
-            ))
+            )),
+        'Send': Padding(
+            padding: EdgeInsets.only(left: 16),
+            child: QRCodeButton(pageTitle: 'Send-to')),
       }[pageTitle] ??
       (blanks.contains(pageTitle)
           ? Container(width: 0)

@@ -57,7 +57,7 @@ dependencies:
   #backdrop: ^0.7.1 # using our own custom fork in this lib
   #jdenticon_dart: ^2.0.0
   #identicon: ^0.1.1
-
+  
   # MoonTree in-house dependencies
   raven_back:
     git: https://github.com/moontreeapp/raven_back.git

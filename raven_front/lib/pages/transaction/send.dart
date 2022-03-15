@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/pages/transaction/checkout.dart';
@@ -58,6 +59,7 @@ class _SendState extends State<Send> {
   TxGoal feeGoal = standard;
   bool sendAll = false;
   String addressName = '';
+  bool showPaste = false;
 
   @override
   void initState() {
@@ -235,48 +237,51 @@ class _SendState extends State<Send> {
                     FocusScope.of(context).requestFocus(sendAddressFocusNode);
                   },
                 ),
-                SelectableText(
-                  'Select me custom menu',
-                  selectionControls: CustomToolBar(),
-                ),
                 SizedBox(height: 16.0),
                 Visibility(
                     visible: addressName != '',
                     child: Text('To: $addressName')),
+                if (showPaste)
+                  TextButton.icon(
+                      onPressed: () async {
+                        sendAddress.text =
+                            (await Clipboard.getData('text/plain'))?.text ?? '';
+                        setState(() {
+                          showPaste = !showPaste;
+                        });
+                      },
+                      icon: Icon(Icons.paste_rounded),
+                      label: Text(() async {
+                            return (await Clipboard.getData('text/plain'))
+                                    ?.text ??
+                                '';
+                          }()
+                              .toString()
+                              .substring(0, 10) +
+                          '...')),
                 TextField(
+                  selectionControls: NoToolBar(),
                   focusNode: sendAddressFocusNode,
                   controller: sendAddress,
                   autocorrect: false,
-                  decoration: components.styles.decorations.textFeild(
-                    context,
-                    labelText: 'To',
-                    hintText: 'Address',
-                    errorText: !_validateAddress(sendAddress.text)
-                        ? 'Unrecognized Address'
-                        : null,
-                    suffixIcon:
-                        QRCodeButton(pageTitle: 'Send-to', light: false),
-                  ),
-                  //suffixIcon: IconButton(
-                  //  icon:
-                  //      Icon(MdiIcons.qrcodeScan, color: Color(0xDE000000)),
-                  //  onPressed: () async {
-                  //    ScanResult result = await BarcodeScanner.scan();
-                  //    switch (result.type) {
-                  //      case ResultType.Barcode:
-                  //        populateFromQR(result.rawContent);
-                  //        break;
-                  //      case ResultType.Error:
-                  //        ScaffoldMessenger.of(context).showSnackBar(
-                  //          SnackBar(content: Text(result.rawContent)),
-                  //        );
-                  //        break;
-                  //      case ResultType.Cancelled:
-                  //        // no problem, don't do anything
-                  //        break;
-                  //    }
-                  //  },
-                  //)),
+                  decoration: components.styles.decorations.textFeild(context,
+                      labelText: 'To',
+                      hintText: 'Address',
+                      errorText: sendAddress.text != '' &&
+                              !_validateAddress(sendAddress.text)
+                          ? 'Unrecognized Address'
+                          : null,
+                      suffixIcon:
+                          //QRCodeButton(pageTitle: 'Send-to', light: false),
+                          IconButton(
+                        icon:
+                            Icon(Icons.paste_rounded, color: AppColors.black60),
+                        onPressed: () async {
+                          sendAddress.text =
+                              (await Clipboard.getData('text/plain'))?.text ??
+                                  '';
+                        },
+                      )),
                   onChanged: (value) {
                     _validateAddressColor(value);
                   },
