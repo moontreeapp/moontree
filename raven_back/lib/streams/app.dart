@@ -20,12 +20,14 @@ final appActive$ = BehaviorSubject<bool>.seeded(true)
 
 class Snack {
   final String message;
+  final bool atBottom;
+  // not used
   final bool positive;
   final String? details; // if they click on the message, popup details
   final String? label; // link label
   final String? link;
   final Map<String, dynamic>? arguments;
-  final bool atBottom;
+
   Snack(
       {required this.message,
       this.positive = true,
@@ -34,6 +36,12 @@ class Snack {
       this.arguments,
       this.label,
       this.atBottom = false});
+
+  @override
+  String toString() {
+    return 'Snack(message: $message, atBottom: $atBottom, positive: $positive, '
+        'details: $details, label: $label, link: $link, arguments: $arguments ';
+  }
 }
 
 enum AppContext { wallet, manage, swap }

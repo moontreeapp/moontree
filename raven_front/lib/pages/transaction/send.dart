@@ -291,14 +291,17 @@ class _SendState extends State<Send> {
 
                 SizedBox(height: 16.0),
                 TextField(
+                  selectionControls: NoToolBar(),
                   readOnly: sendAll,
                   focusNode: sendAmountFocusNode,
                   controller: sendAmount,
                   keyboardType: TextInputType.number,
                   decoration: components.styles.decorations.textFeild(
                     context,
-                    labelText: 'Amount', // Amount -> Amount*
+                    labelText: 'Amount',
                     hintText: 'Quantity',
+                    // put ability to put it in as USD here
+                    /* // move send all to if you click on the amount at the top
                     suffixText: sendAll ? "don't send all" : 'send all',
                     suffixStyle: Theme.of(context).textTheme.caption,
                     suffixIcon: IconButton(
@@ -316,6 +319,7 @@ class _SendState extends State<Send> {
                         verifyVisibleAmount(sendAmount.text);
                       },
                     ),
+                    */
                   ),
                   onChanged: (value) {
                     visibleAmount = verifyVisibleAmount(value);
@@ -401,10 +405,23 @@ class _SendState extends State<Send> {
                 //    }),
                 SizedBox(height: 16.0),
                 TextField(
+                  selectionControls: NoToolBar(),
                   focusNode: sendNoteFocusNode,
                   controller: sendNote,
                   decoration: components.styles.decorations.textFeild(context,
-                      labelText: 'Note', hintText: 'Private note to self'),
+                      labelText: 'Note',
+                      hintText: 'Private note to self',
+                      suffixIcon:
+                          //QRCodeButton(pageTitle: 'Send-to', light: false),
+                          IconButton(
+                        icon:
+                            Icon(Icons.paste_rounded, color: AppColors.black60),
+                        onPressed: () async {
+                          sendNote.text =
+                              (await Clipboard.getData('text/plain'))?.text ??
+                                  '';
+                        },
+                      )),
                 ),
                 SizedBox(height: 16.0),
               ],
