@@ -56,6 +56,25 @@ class LeaderWalletService {
           .subwallet(address.hdIndex, exposure: address.exposure);
 
   /// returns the next internal or external node missing a history
+  String getNextEmptyAddress(
+    LeaderWallet leaderWallet, {
+    NodeExposure exposure = NodeExposure.Internal,
+  }) {
+    var addresses = exposure == NodeExposure.Internal
+        ? leaderWallet.emptyInternalAddresses
+        : leaderWallet.emptyExternalAddresses;
+    if (addresses.isNotEmpty) {
+      return addresses.first.address;
+    }
+    //TODO derive a new address and return that.
+    return '';
+  }
+
+  /// returns the next change address
+  String getNextChangeAddress(LeaderWallet leaderWallet) {
+    return getNextEmptyAddress(leaderWallet, exposure: NodeExposure.Internal);
+  }
+
   HDWallet getNextEmptyWallet(
     LeaderWallet leaderWallet, {
     NodeExposure exposure = NodeExposure.Internal,
@@ -78,12 +97,10 @@ class LeaderWalletService {
     bool alwaysReturn = false,
     String? name,
   }) {
-    services.busy.createWalletOn();
     entropy = entropy ?? bip39.mnemonicToEntropy(bip39.generateMnemonic());
     var encryptedEntropy = EncryptedEntropy.fromEntropy(entropy, cipher);
     var existingWallet =
         res.wallets.primaryIndex.getOne(encryptedEntropy.walletId);
-    services.busy.createWalletOff();
     if (existingWallet == null) {
       return LeaderWallet(
           id: encryptedEntropy.walletId,
@@ -109,10 +126,12 @@ class LeaderWalletService {
     String? mnemonic,
     String? name,
   }) async {
-    var leaderWallet = makeLeaderWallet(cipher,
-        cipherUpdate: cipherUpdate,
-        entropy: mnemonic != null ? bip39.mnemonicToEntropy(mnemonic) : null,
-        name: name);
+    var leaderWallet = makeLeaderWallet(
+      cipher,
+      cipherUpdate: cipherUpdate,
+      entropy: mnemonic != null ? bip39.mnemonicToEntropy(mnemonic) : null,
+      name: name,
+    );
     if (leaderWallet != null) {
       await res.wallets.save(leaderWallet);
     }

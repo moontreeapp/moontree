@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/theme/theme.dart';
@@ -99,23 +100,33 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
           );
     if (snack!.atBottom) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        elevation: 1,
-        backgroundColor: AppColors.snackBar,
-        shape: RoundedRectangleBorder(borderRadius: shape),
-        content: msg,
-      ));
+          elevation: 1,
+          backgroundColor: AppColors.snackBar,
+          shape: RoundedRectangleBorder(borderRadius: shape),
+          content: msg,
+          action: snack!.positive
+              ? null
+              : SnackBarAction(
+                  label: 'copy',
+                  onPressed: () =>
+                      Clipboard.setData(ClipboardData(text: snack!.message)))));
     } else if (snack!.link == null && snack!.details == null) {
       /// this configuration of the snackbar always shows on top of the nav bar
       streams.app.hideNav.add(false);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        elevation: 0,
-        backgroundColor: AppColors.snackBar,
-        shape: RoundedRectangleBorder(borderRadius: shape),
-        content: msg,
-        behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.only(bottom: 102),
-        padding: EdgeInsets.only(top: 0, bottom: 0),
-      ));
+          elevation: 0,
+          backgroundColor: AppColors.snackBar,
+          shape: RoundedRectangleBorder(borderRadius: shape),
+          content: msg,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(bottom: 102),
+          padding: EdgeInsets.only(top: 0, bottom: 0),
+          action: snack!.positive
+              ? null
+              : SnackBarAction(
+                  label: 'copy',
+                  onPressed: () =>
+                      Clipboard.setData(ClipboardData(text: snack!.message)))));
     }
     /*
     /// These are not used if we want to use them implement them this way:

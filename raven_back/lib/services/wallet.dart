@@ -104,6 +104,16 @@ class WalletService {
     throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
   }
 
+  String getChangeAddress(Wallet wallet) {
+    if (wallet is LeaderWallet) {
+      return leader.getNextChangeAddress(wallet);
+    }
+    if (wallet is SingleWallet) {
+      return wallet.addresses.first.address;
+    }
+    throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
+  }
+
   WalletBase getEmptyWallet(Wallet wallet) {
     if (wallet is LeaderWallet) {
       return leader.getNextEmptyWallet(wallet, exposure: NodeExposure.External);

@@ -232,6 +232,7 @@ class Tx with EquatableMixin {
   final int? confirmations;
   final int? time;
   final int? blocktime;
+  final String? memo;
 
   Tx({
     required this.txid,
@@ -248,6 +249,7 @@ class Tx with EquatableMixin {
     required this.confirmations,
     required this.time,
     required this.blocktime,
+    required this.memo,
   });
 
   @override
@@ -266,6 +268,7 @@ class Tx with EquatableMixin {
         confirmations,
         time,
         blocktime,
+        memo,
       ];
 
   @override
@@ -273,7 +276,7 @@ class Tx with EquatableMixin {
     return 'Transaction(txid: $txid, hash: $hash, blockhash: $blockhash, '
         'blocktime: $blocktime, confirmations: $confirmations, height: $height, '
         'hex: $hex, locktime: $locktime, size: $size, vsize: $vsize, time: $time, '
-        'version: $version, vin: $vin, vout: $vout)';
+        'version: $version, memo: $memo, vin: $vin, vout: $vout)';
   }
 }
 
@@ -293,7 +296,9 @@ extension GetTransactionMethod on RavenElectrumClient {
               vout: vin['vout'],
               sequence: vin['sequence'],
               scriptSig: TxScriptSig(
-                  asm: vin['scriptSig']['asm'], hex: vin['scriptSig']['hex']))
+                asm: vin['scriptSig']['asm'],
+                hex: vin['scriptSig']['hex'],
+              ))
     ];
     var vouts = [
       for (var vout in response['vout'])
@@ -319,6 +324,7 @@ extension GetTransactionMethod on RavenElectrumClient {
       confirmations: response['confirmations'],
       time: response['time'],
       blocktime: response['blocktime'],
+      memo: null, // to be implemented - look for a blank vout with op return?
     );
   }
 

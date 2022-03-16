@@ -79,32 +79,6 @@ class BackdropScaffold extends StatefulWidget {
   /// The widget that is shown on the front layer.
   final Widget frontLayer;
 
-  /// The widget shown at the top of the front layer.
-  ///
-  /// When the front layer is minimized (back layer revealed), the entire
-  /// [subHeader] will be visible unless [headerHeight] is specified.
-  final Widget? subHeader;
-
-  /// Keeps [subHeader] active when minimized (back layer revealed).
-  ///
-  /// If true, the scrim applied to the front layer while minimized (back layer
-  /// revealed) will not cover the [subHeader].  See [frontLayerScrim].
-  ///
-  /// Defaults to true.
-  final bool subHeaderAlwaysActive;
-
-  /// Defines the front layer's height when minimized (back layer revealed).
-  ///
-  /// Defaults to measured height of [subHeader] if provided, else 32.
-  ///
-  /// To automatically use the difference of the screen height and back layer's
-  /// height, see [stickyFrontLayer].  Note [headerHeight] is ignored if it is
-  /// less than the available size and [stickyFrontLayer] is `true`.
-  ///
-  /// To vary the front layer's height when active (back layer concealed),
-  /// see [frontLayerActiveFactor].
-  final double? headerHeight;
-
   /// Defines the [BorderRadius] applied to the front layer.
   ///
   /// Defaults to
@@ -177,9 +151,7 @@ class BackdropScaffold extends StatefulWidget {
 
   /// Scrim over [frontLayer] when minimized (back layer revealed) and animating.
   ///
-  /// Defaults to [Colors.white70].
-  ///
-  /// See [subHeaderAlwaysActive] to leave the [subHeader] outside the scrim.
+  /// Defaults to [Colors.white].
   final Color frontLayerScrim;
 
   /// Scrim over [backLayer] when active (back layer concealed).
@@ -296,9 +268,6 @@ class BackdropScaffold extends StatefulWidget {
     this.animationController,
     required this.backLayer,
     required this.frontLayer,
-    this.subHeader,
-    this.subHeaderAlwaysActive = true,
-    this.headerHeight,
     this.frontLayerBorderRadius = const BorderRadius.only(
       topLeft: Radius.circular(16),
       topRight: Radius.circular(16),
@@ -312,7 +281,7 @@ class BackdropScaffold extends StatefulWidget {
     this.frontLayerBackgroundColor,
     double frontLayerActiveFactor = 1,
     this.backLayerBackgroundColor,
-    this.frontLayerScrim = Colors.white, //Colors.white70,
+    this.frontLayerScrim = Colors.white,
     this.backLayerScrim = Colors.black54,
     this.onBackLayerConcealed,
     this.onBackLayerRevealed,
@@ -367,7 +336,6 @@ class BackdropScaffoldState extends State<BackdropScaffold>
   /// It exposes state of [Scaffold] used internally by [BackdropScaffold].
   GlobalKey<ScaffoldState>? scaffoldKey;
   double _backPanelHeight = 0;
-  double _subHeaderHeight = 0;
 
   /// [AnimationController] used for the backdrop animation.
   ///
@@ -430,6 +398,11 @@ class BackdropScaffoldState extends State<BackdropScaffold>
       animationController.status == AnimationStatus.dismissed ||
       animationController.status == AnimationStatus.reverse;
 
+  /// Whether the back layer is concealed or not.
+  bool get height =>
+      animationController.status == AnimationStatus.completed ||
+      animationController.status == AnimationStatus.forward;
+
   /// Toggles the backdrop functionality.
   ///
   /// If the back layer was concealed, it is animated to the "revealed" state
@@ -460,21 +433,12 @@ class BackdropScaffoldState extends State<BackdropScaffold>
     }
   }
 
-  double get _headerHeight {
-    // if defined then use it
-    if (widget.headerHeight != null) return widget.headerHeight!;
-
-    // if no subHeader then 32
-    if (widget.subHeader == null) return 32;
-
-    // if subHeader then height of subHeader
-    return _subHeaderHeight;
-  }
-
   Animation<RelativeRect> _getPanelAnimation(
-      BuildContext context, BoxConstraints constraints) {
+    BuildContext context,
+    BoxConstraints constraints,
+  ) {
     double backPanelHeight, frontPanelHeight;
-    final availableHeight = constraints.biggest.height - _headerHeight;
+    final availableHeight = constraints.biggest.height;
     if (widget.stickyFrontLayer && _backPanelHeight < availableHeight) {
       // height is adapted to the height of the back panel
       backPanelHeight = _backPanelHeight;
@@ -510,10 +474,6 @@ class BackdropScaffoldState extends State<BackdropScaffold>
           behavior: HitTestBehavior.opaque,
           child: Column(
             children: <Widget>[
-              // if subHeaderAlwaysActive then do not apply frontLayerScrim for
-              // area with _subHeaderHeight
-              if (widget.subHeader != null && widget.subHeaderAlwaysActive)
-                Container(height: _subHeaderHeight),
               Expanded(
                 child: Container(
                   color: widget.frontLayerScrim,
@@ -568,16 +528,6 @@ class BackdropScaffoldState extends State<BackdropScaffold>
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                // subHeader
-                _MeasureSize(
-                  onChange: (size) =>
-                      setState(() => _subHeaderHeight = size.height),
-                  child: DefaultTextStyle(
-                    style: Theme.of(context).textTheme.subtitle1!,
-                    child: widget.subHeader ?? Container(),
-                  ),
-                ),
-                // frontLayer
                 Flexible(child: widget.frontLayer),
               ],
             ),

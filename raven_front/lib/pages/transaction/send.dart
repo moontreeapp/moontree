@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/pages/transaction/checkout.dart';
@@ -14,7 +15,6 @@ import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 import 'package:barcode_scan2/barcode_scan2.dart';
 
 import 'package:raven_back/streams/spend.dart';
-import 'package:raven_back/services/transaction/fee.dart';
 import 'package:raven_back/services/transaction_maker.dart';
 import 'package:raven_back/raven_back.dart';
 
@@ -55,17 +55,22 @@ class _SendState extends State<Send> {
   FocusNode sendFeeFocusNode = FocusNode();
   FocusNode sendMemoFocusNode = FocusNode();
   FocusNode sendNoteFocusNode = FocusNode();
-  TxGoal feeGoal = standard;
+  ravencoin.TxGoal feeGoal = ravencoin.TxGoals.standard;
   bool sendAll = false;
   String addressName = '';
+  bool showPaste = false;
 
   @override
   void initState() {
     super.initState();
     sendAsset.text = sendAsset.text == '' ? 'Ravencoin' : sendAsset.text;
     listeners.add(streams.spend.form.listen((SpendForm? value) {
-      if ((SpendForm.merge(form: spendForm, amount: 0.0) !=
-          SpendForm.merge(form: value, amount: 0.0))) {
+      print('vs $spendForm');
+      print('heard $value');
+      if (value != null) {
+        //if ((SpendForm.merge(form: spendForm, amount: 0.0) !=
+        //    SpendForm.merge(form: value, amount: 0.0))) {
+        print('in if');
         setState(() {
           spendForm = value;
           var asset = (value?.symbol ?? 'RVN');
@@ -129,17 +134,7 @@ class _SendState extends State<Send> {
     } catch (e) {
       visibleFiatAmount = '';
     }
-    return Scaffold(
-        appBar: PreferredSize(
-            preferredSize: Size.fromHeight(201),
-            child: BalanceHeader(
-              pageTitle: 'Send',
-              background: AppColors.primary,
-            )),
-        body: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: body(),
-        ));
+    return body();
   }
 
   void handlePopulateFromQR(String code) {
@@ -245,45 +240,51 @@ class _SendState extends State<Send> {
                     FocusScope.of(context).requestFocus(sendAddressFocusNode);
                   },
                 ),
-
                 SizedBox(height: 16.0),
                 Visibility(
                     visible: addressName != '',
                     child: Text('To: $addressName')),
+                if (showPaste)
+                  TextButton.icon(
+                      onPressed: () async {
+                        sendAddress.text =
+                            (await Clipboard.getData('text/plain'))?.text ?? '';
+                        setState(() {
+                          showPaste = !showPaste;
+                        });
+                      },
+                      icon: Icon(Icons.paste_rounded),
+                      label: Text(() async {
+                            return (await Clipboard.getData('text/plain'))
+                                    ?.text ??
+                                '';
+                          }()
+                              .toString()
+                              .substring(0, 10) +
+                          '...')),
                 TextField(
+                  selectionControls: NoToolBar(),
                   focusNode: sendAddressFocusNode,
                   controller: sendAddress,
                   autocorrect: false,
-                  decoration: components.styles.decorations.textFeild(
-                    context,
-                    labelText: 'To',
-                    hintText: 'Address',
-                    errorText: !_validateAddress(sendAddress.text)
-                        ? 'Unrecognized Address'
-                        : null,
-                    suffixIcon:
-                        QRCodeButton(pageTitle: 'Send-to', light: false),
-                  ),
-                  //suffixIcon: IconButton(
-                  //  icon:
-                  //      Icon(MdiIcons.qrcodeScan, color: Color(0xDE000000)),
-                  //  onPressed: () async {
-                  //    ScanResult result = await BarcodeScanner.scan();
-                  //    switch (result.type) {
-                  //      case ResultType.Barcode:
-                  //        populateFromQR(result.rawContent);
-                  //        break;
-                  //      case ResultType.Error:
-                  //        ScaffoldMessenger.of(context).showSnackBar(
-                  //          SnackBar(content: Text(result.rawContent)),
-                  //        );
-                  //        break;
-                  //      case ResultType.Cancelled:
-                  //        // no problem, don't do anything
-                  //        break;
-                  //    }
-                  //  },
-                  //)),
+                  decoration: components.styles.decorations.textFeild(context,
+                      labelText: 'To',
+                      hintText: 'Address',
+                      errorText: sendAddress.text != '' &&
+                              !_validateAddress(sendAddress.text)
+                          ? 'Unrecognized Address'
+                          : null,
+                      suffixIcon:
+                          //QRCodeButton(pageTitle: 'Send-to', light: false),
+                          IconButton(
+                        icon:
+                            Icon(Icons.paste_rounded, color: AppColors.black60),
+                        onPressed: () async {
+                          sendAddress.text =
+                              (await Clipboard.getData('text/plain'))?.text ??
+                                  '';
+                        },
+                      )),
                   onChanged: (value) {
                     _validateAddressColor(value);
                   },
@@ -294,14 +295,17 @@ class _SendState extends State<Send> {
 
                 SizedBox(height: 16.0),
                 TextField(
+                  selectionControls: NoToolBar(),
                   readOnly: sendAll,
                   focusNode: sendAmountFocusNode,
                   controller: sendAmount,
                   keyboardType: TextInputType.number,
                   decoration: components.styles.decorations.textFeild(
                     context,
-                    labelText: 'Amount', // Amount -> Amount*
+                    labelText: 'Amount',
                     hintText: 'Quantity',
+                    // put ability to put it in as USD here
+                    /* // move send all to if you click on the amount at the top
                     suffixText: sendAll ? "don't send all" : 'send all',
                     suffixStyle: Theme.of(context).textTheme.caption,
                     suffixIcon: IconButton(
@@ -319,12 +323,13 @@ class _SendState extends State<Send> {
                         verifyVisibleAmount(sendAmount.text);
                       },
                     ),
+                    */
                   ),
                   onChanged: (value) {
                     visibleAmount = verifyVisibleAmount(value);
-                    streams.spend.form.add(SpendForm.merge(
-                        form: streams.spend.form.value,
-                        amount: double.parse(visibleAmount)));
+                    //streams.spend.form.add(SpendForm.merge(
+                    //    form: streams.spend.form.value,
+                    //    amount: double.parse(visibleAmount)));
                   },
                   onEditingComplete: () {
                     sendAmount.text = cleanDecAmount(
@@ -363,11 +368,12 @@ class _SendState extends State<Send> {
                   },
                   onChanged: (String? newValue) {
                     feeGoal = {
-                          'Cheap': cheap,
-                          'Standard': standard,
-                          'Fast': fast,
+                          'Cheap': ravencoin.TxGoals.cheap,
+                          'Standard': ravencoin.TxGoals.standard,
+                          'Fast': ravencoin.TxGoals.fast,
                         }[newValue] ??
-                        standard; // <--- replace by custom dialogue
+                        ravencoin.TxGoals
+                            .standard; // <--- replace by custom dialogue
                     FocusScope.of(context).requestFocus(sendNoteFocusNode);
                     setState(() {});
                   },
@@ -403,10 +409,23 @@ class _SendState extends State<Send> {
                 //    }),
                 SizedBox(height: 16.0),
                 TextField(
+                  selectionControls: NoToolBar(),
                   focusNode: sendNoteFocusNode,
                   controller: sendNote,
                   decoration: components.styles.decorations.textFeild(context,
-                      labelText: 'Note', hintText: 'Private note to self'),
+                      labelText: 'Note',
+                      hintText: 'Private note to self',
+                      suffixIcon:
+                          //QRCodeButton(pageTitle: 'Send-to', light: false),
+                          IconButton(
+                        icon:
+                            Icon(Icons.paste_rounded, color: AppColors.black60),
+                        onPressed: () async {
+                          sendNote.text =
+                              (await Clipboard.getData('text/plain'))?.text ??
+                                  '';
+                        },
+                      )),
                 ),
                 SizedBox(height: 16.0),
               ],
@@ -424,7 +443,6 @@ class _SendState extends State<Send> {
       ));
 
   bool fieldValidation() {
-    sendAmount.text = cleanDecAmount(sendAmount.text, zeroToBlank: true);
     return sendAddress.text != '' && _validateAddress() && verifyMemo();
   }
 

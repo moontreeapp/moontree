@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:hex/hex.dart';
 import 'package:collection/collection.dart' show IterableExtension;
+import 'package:ravencoin_wallet/src/fee.dart';
 
 import 'payments/index.dart' show PaymentData;
 import 'payments/p2pkh.dart' show P2PKH;
@@ -38,6 +39,13 @@ class Transaction {
   List<Output> outs = [];
   Transaction();
 
+  int fee({double? rate, TxGoal? goal}) => feeCalculation(
+        size: virtualSize(),
+        rate: (rate ?? goal?.rate ?? TxGoals.hardRelayFee),
+      );
+  static int feeCalculation({required int size, required double rate}) =>
+      (size * rate).ceil();
+
   int addInput(Uint8List hash, int? index,
       [int? sequence, Uint8List? scriptSig]) {
     ins.add(new Input(
@@ -51,6 +59,13 @@ class Transaction {
 
   int addOutput(Uint8List? scriptPubKey, int? value) {
     outs.add(new Output(script: scriptPubKey, value: value));
+    return outs.length - 1;
+  }
+
+  int addChangeForAssetCreationOrReissuance(
+      int offset, Uint8List? scriptPubKey, int? value) {
+    outs.insert(
+        outs.length - offset, new Output(script: scriptPubKey, value: value));
     return outs.length - 1;
   }
 

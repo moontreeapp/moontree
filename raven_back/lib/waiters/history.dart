@@ -134,7 +134,6 @@ class HistoryWaiter extends Waiter {
       var done = await services.history.produceAddressOrBalance();
       if (done) {
         streams.address.empty.add(null);
-        services.busy.clear();
       }
     }
   }

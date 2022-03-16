@@ -113,24 +113,6 @@ class _ReceiveState extends State<Receive> {
     );
   }
 
-  Widget get fakeBody => Padding(
-      padding: EdgeInsets.only(top: 32, left: 16, right: 16, bottom: 40),
-      child: CustomScrollView(
-          // solves scrolling while keyboard
-          shrinkWrap: true,
-          slivers: <Widget>[
-            SliverToBoxAdapter(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[TextField()]))
-          ]));
-
-  Widget get fakeBody1 => Padding(
-      padding: EdgeInsets.only(top: 400, left: 16, right: 16, bottom: 40),
-      child: TextField());
-
-  /// its pushing up somethign on the body that is about 100 pixels high but transparent so you're clicking on that.
-
   Widget body() => Padding(
       padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 40),
       child: CustomScrollView(

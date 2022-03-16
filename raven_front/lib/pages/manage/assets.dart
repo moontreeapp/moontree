@@ -8,12 +8,9 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction.dart';
 import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/services/lookup.dart';
-import 'package:raven_front/services/storage.dart';
-import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/data.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/widgets/widgets.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class Asset extends StatefulWidget {
   final dynamic data;

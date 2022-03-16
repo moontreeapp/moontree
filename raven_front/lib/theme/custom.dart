@@ -31,6 +31,12 @@ class CustomTheme with ChangeNotifier {
           iconTheme: IconThemeData.fallback(),
           centerTitle: false,
         ),
+        tooltipTheme: TooltipThemeData(preferBelow: true),
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: AppColors.primary,
+          selectionHandleColor: AppColors.primaryDisabled,
+          selectionColor: AppColors.disabled,
+        ),
         textTheme: TextTheme(
           headline1: AppText.h1,
           headline2: AppText.h2,

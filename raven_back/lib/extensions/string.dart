@@ -78,6 +78,8 @@ extension StringNumericExtension on String {
       return 0;
     }
   }
+
+  double toDouble() => double.parse(trim().split(',').join(''));
 }
 
 extension IntReadableNumericExtension on int {

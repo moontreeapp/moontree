@@ -107,8 +107,8 @@ class SelectionItems {
               SelectionSet.Holdings: [SelectionOption.Holdings],
               SelectionSet.Admins: [SelectionOption.Admins],
               SelectionSet.Fee: [
-                SelectionOption.Fast,
                 SelectionOption.Standard,
+                SelectionOption.Fast,
               ],
               SelectionSet.Decimal: [
                 SelectionOption.Dec8,

@@ -8,7 +8,6 @@ class ImportWaiter extends Waiter {
   void init() {
     streams.import.attempt.listen((ImportRequest? importRequest) async {
       if (importRequest != null) {
-        services.busy.createWalletOn('importing wallet');
         await Future.delayed(const Duration(milliseconds: 250));
         var importFrom = ImportFrom(text: importRequest.text);
         if (await importFrom.handleImport()) {
@@ -20,7 +19,6 @@ class ImportWaiter extends Waiter {
               positive: false));
         }
         streams.import.attempt.add(null);
-        services.busy.createWalletOff('done importing wallet');
       }
     });
   }

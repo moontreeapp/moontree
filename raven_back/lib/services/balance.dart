@@ -142,7 +142,6 @@ class BalanceService {
   }
 
   List<Balance> addressesBalances(List<Address> addresses) {
-    // ignore: omit_local_variable_types
     Map<Security, Balance> balancesBySecurity = {};
     var addressBalances = recalculateSpecificBalances(
         addresses.map((a) => a.vouts).expand((i) => i).toList());

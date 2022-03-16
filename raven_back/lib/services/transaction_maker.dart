@@ -1,15 +1,11 @@
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:raven_back/raven_back.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
+import 'package:ravencoin_wallet/src/fee.dart';
 import 'package:tuple/tuple.dart';
 
-import 'transaction/fee.dart';
 import 'transaction/sign.dart';
-
-const ESTIMATED_OUTPUT_FEE = 0 /* why 34? */;
-const ESTIMATED_FEE_PER_INPUT = 0 /* why 51? */;
 
 class NFTCreateRequest {
   late String name;
@@ -143,7 +139,7 @@ class SendEstimate {
 
   SendEstimate(
     this.amount, {
-    this.fees = ESTIMATED_OUTPUT_FEE + ESTIMATED_FEE_PER_INPUT,
+    this.fees = 0,
     List<Vout>? utxos,
     this.security,
     this.assetMemo,
@@ -205,89 +201,373 @@ class TransactionMaker {
     return tuple;
   }
 
-  Tuple2<ravencoin.Transaction, SendEstimate> transaction(
-    String toAddress,
-    SendEstimate estimate, {
+  Tuple2<ravencoin.Transaction, SendEstimate> transactionReissueAsset(
+    String newAssetToAddress,
+    SendEstimate estimate,
+    int originalDivisibility,
+    int currentSatsInCirculation,
+    int newDivisibility,
+    bool reissuability, {
+    String? ownershipToAddress,
+    Uint8List? ipfsData,
     required Wallet wallet,
     TxGoal? goal,
   }) {
-    var txb = ravencoin.TransactionBuilder(network: res.settings.network);
-    var utxos = services.balance.collectUTXOs(
+    // This is a "coinbase" for assets. Only need RVN vins and ownership vin.
+    var ownership_utxo = services.balance.collectUTXOs(
       wallet,
-      amount: estimate.amount,
-      security: estimate.security,
+      amount: 100000000,
+      security: Security(
+          symbol: estimate.security!.symbol + '!',
+          securityType: SecurityType.RavenAsset),
     );
-    for (var utxo in utxos) {
-      txb.addInput(utxo.transactionId, utxo.position);
+    if (ownership_utxo.isEmpty) {
+      throw ArgumentError('We don\'t own the ownership asset!');
     }
-    // Dummy outputs to account for return and actual send
-    txb.addOutput(toAddress, 0);
-    txb.addOutput(toAddress, 0);
+    var rvn_utxos = <Vout>[];
+    var txb;
+    var tx;
+    var fee_sats = 0;
+    var sats_returned = -1; // Init to bad val
 
-    // Add transaction memo if one is given
-    if (estimate.memo != null) {
-      txb.addMemo(estimate.memo);
-    }
-
-    var tx = txb.buildSpoofedSigs();
-    var fee_sats = tx.fee(goal);
-    var sats_in = utxos.fold(0, (int total, vout) => total + vout.rvnValue);
-    var sats_returned =
-        sats_in - (estimate.security == null ? estimate.amount : 0) - fee_sats;
-    Stopwatch stopwatch = new Stopwatch()..start();
     var return_address =
         services.wallet.getChangeWallet(wallet).address; // takes the longest
-    print('getChangeWallet costs: ${stopwatch.elapsed}');
+
     var rebuild = true;
     while (sats_returned < 0 || rebuild) {
       rebuild = false; // must rebuild transaction at least once.
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee
-      var rvn_utxos = services.balance.collectUTXOs(
+      rvn_utxos = services.balance.collectUTXOs(
         wallet,
         amount: (estimate.security == null ? estimate.amount : 0) + fee_sats,
         security: null,
       );
-      // Grab required assets for transfer amount
-      var security_utxos = estimate.security != null
-          ? services.balance.collectUTXOs(
-              wallet,
-              amount: estimate.amount,
-              security: estimate.security,
-            )
-          : <Vout>[];
-      utxos = (rvn_utxos + security_utxos).toSet().toList();
-      sats_in = 0;
-      for (var utxo in utxos) {
+
+      var sats_in = 0;
+      for (var utxo in rvn_utxos + ownership_utxo) {
+        txb.addInput(utxo.transactionId, utxo.position);
+        // Update avaliable RVN
+        sats_in += utxo.rvnValue;
+      }
+
+      sats_returned =
+          sats_in - res.settings.network.burnAmounts.reissue - fee_sats;
+
+      txb.generateCreateReissueVouts(
+          newAssetToAddress,
+          ownershipToAddress ?? newAssetToAddress,
+          currentSatsInCirculation,
+          estimate.amount,
+          estimate.security!.symbol,
+          originalDivisibility,
+          newDivisibility,
+          reissuability,
+          ipfsData);
+
+      txb.addChangeToAssetCreationOrReissuance(
+          2, return_address, sats_returned);
+      // Add transaction memo if one is given
+      if (estimate.memo != null) {
+        txb.addMemo(estimate.memo, offset: 2);
+      }
+
+      tx = txb.buildSpoofedSigs();
+      fee_sats = tx.fee(goal);
+    }
+    txb.signEachInput(rvn_utxos + ownership_utxo);
+    tx = txb.build();
+    estimate.setFees(fee_sats);
+    return Tuple2(tx, estimate);
+  }
+
+  Tuple2<ravencoin.Transaction, SendEstimate> transactionCreateMainAsset(
+    String newAssetToAddress,
+    SendEstimate estimate,
+    int divisibility,
+    bool reissuability, {
+    String? ownershipToAddress,
+    Uint8List? ipfsData,
+    required Wallet wallet,
+    TxGoal? goal,
+  }) {
+    // This is a "coinbase" for assets. Only need RVN vins.
+    var rvn_utxos = <Vout>[];
+    var txb;
+    var tx;
+    var fee_sats = 0;
+    var sats_returned = -1; // Init to bad val
+
+    var return_address =
+        services.wallet.getChangeWallet(wallet).address; // takes the longest
+
+    var rebuild = true;
+    while (sats_returned < 0 || rebuild) {
+      rebuild = false; // must rebuild transaction at least once.
+      txb = ravencoin.TransactionBuilder(network: res.settings.network);
+      // Grab required RVN for fee
+      rvn_utxos = services.balance.collectUTXOs(
+        wallet,
+        amount: (estimate.security == null ? estimate.amount : 0) + fee_sats,
+        security: null,
+      );
+
+      var sats_in = 0;
+      for (var utxo in rvn_utxos) {
+        txb.addInput(utxo.transactionId, utxo.position);
+        // Update avaliable RVN
+        sats_in += utxo.rvnValue;
+      }
+
+      sats_returned =
+          sats_in - res.settings.network.burnAmounts.issueMain - fee_sats;
+
+      txb.generateCreateAssetVouts(
+          newAssetToAddress,
+          ownershipToAddress ?? newAssetToAddress,
+          estimate.amount,
+          estimate.security!.symbol,
+          divisibility,
+          reissuability,
+          ipfsData);
+
+      txb.addChangeToAssetCreationOrReissuance(
+          2, return_address, sats_returned);
+      // Add transaction memo if one is given
+      if (estimate.memo != null) {
+        txb.addMemo(estimate.memo, offset: 2);
+      }
+
+      tx = txb.buildSpoofedSigs();
+      fee_sats = tx.fee(goal);
+    }
+    txb.signEachInput(rvn_utxos);
+    tx = txb.build();
+    estimate.setFees(fee_sats);
+    return Tuple2(tx, estimate);
+  }
+
+  Tuple2<ravencoin.Transaction, SendEstimate> transactionCreateSubAsset(
+    String newAssetToAddress,
+    String parentAsset,
+    SendEstimate estimate,
+    int divisibility,
+    bool reissuability, {
+    String? parentOwnershipToAddress,
+    String? ownershipToAddress,
+    Uint8List? ipfsData,
+    required Wallet wallet,
+    TxGoal? goal,
+  }) {
+    // This is a "coinbase" for assets. Only need RVN vins and ownership vin.
+    var ownership_utxo = services.balance.collectUTXOs(
+      wallet,
+      amount: 100000000,
+      security: Security(
+          symbol: parentAsset + '!', securityType: SecurityType.RavenAsset),
+    );
+    if (ownership_utxo.isEmpty) {
+      throw ArgumentError('We don\'t own the parent ownership asset!');
+    }
+    var rvn_utxos = <Vout>[];
+    var txb;
+    var tx;
+    var fee_sats = 0;
+    var sats_returned = -1; // Init to bad val
+
+    var return_address =
+        services.wallet.getChangeWallet(wallet).address; // takes the longest
+
+    var rebuild = true;
+    while (sats_returned < 0 || rebuild) {
+      rebuild = false; // must rebuild transaction at least once.
+      txb = ravencoin.TransactionBuilder(network: res.settings.network);
+      // Grab required RVN for fee
+      rvn_utxos = services.balance.collectUTXOs(
+        wallet,
+        amount: (estimate.security == null ? estimate.amount : 0) + fee_sats,
+        security: null,
+      );
+
+      var sats_in = 0;
+      for (var utxo in rvn_utxos + ownership_utxo) {
+        txb.addInput(utxo.transactionId, utxo.position);
+        // Update avaliable RVN
+        sats_in += utxo.rvnValue;
+      }
+
+      sats_returned =
+          sats_in - res.settings.network.burnAmounts.issueSub - fee_sats;
+
+      txb.generateCreateSubAssetVouts(
+          newAssetToAddress,
+          ownershipToAddress ?? newAssetToAddress,
+          parentOwnershipToAddress ?? return_address,
+          estimate.amount,
+          parentAsset,
+          estimate.security!.symbol,
+          divisibility,
+          reissuability,
+          ipfsData);
+
+      txb.addChangeToAssetCreationOrReissuance(
+          3, return_address, sats_returned);
+      // Add transaction memo if one is given
+      if (estimate.memo != null) {
+        txb.addMemo(estimate.memo, offset: 3);
+      }
+
+      tx = txb.buildSpoofedSigs();
+      fee_sats = tx.fee(goal);
+    }
+    txb.signEachInput(rvn_utxos + ownership_utxo);
+    tx = txb.build();
+    estimate.setFees(fee_sats);
+    return Tuple2(tx, estimate);
+  }
+
+  // Used for unique and message assets
+  Tuple2<ravencoin.Transaction, SendEstimate> transactionCreateChildAsset(
+    String newAssetToAddress,
+    String parentAsset,
+    SendEstimate estimate, {
+    String? parentOwnershipToAddress,
+    Uint8List? ipfsData,
+    required Wallet wallet,
+    TxGoal? goal,
+  }) {
+    // This is a "coinbase" for assets. Only need RVN vins and ownership vin.
+    var ownership_utxo = services.balance.collectUTXOs(
+      wallet,
+      amount: 100000000,
+      security: Security(
+          symbol: parentAsset + '!', securityType: SecurityType.RavenAsset),
+    );
+    if (ownership_utxo.isEmpty) {
+      throw ArgumentError('We don\'t own the parent ownership asset!');
+    }
+    var rvn_utxos = <Vout>[];
+    var txb;
+    var tx;
+    var fee_sats = 0;
+    var sats_returned = -1; // Init to bad val
+
+    var return_address =
+        services.wallet.getChangeWallet(wallet).address; // takes the longest
+
+    var rebuild = true;
+    while (sats_returned < 0 || rebuild) {
+      rebuild = false; // must rebuild transaction at least once.
+      txb = ravencoin.TransactionBuilder(network: res.settings.network);
+      // Grab required RVN for fee
+      rvn_utxos = services.balance.collectUTXOs(
+        wallet,
+        amount: (estimate.security == null ? estimate.amount : 0) + fee_sats,
+        security: null,
+      );
+
+      var sats_in = 0;
+      for (var utxo in rvn_utxos + ownership_utxo) {
         txb.addInput(utxo.transactionId, utxo.position);
         // Update avaliable RVN
         sats_in += utxo.rvnValue;
       }
 
       sats_returned = sats_in -
-          (estimate.security == null ? estimate.amount : 0) -
+          (estimate.security!.symbol.contains('~')
+              ? res.settings.network.burnAmounts.issueMessage
+              : res.settings.network.burnAmounts.issueUnique) -
           fee_sats;
 
-      // Add actual values
-      txb.addOutput(return_address, sats_returned);
+      txb.generateCreateSubAssetVouts(
+          newAssetToAddress,
+          parentOwnershipToAddress ?? return_address,
+          parentAsset,
+          estimate.security!.symbol,
+          ipfsData);
+
+      txb.addChangeToAssetCreationOrReissuance(
+          2, return_address, sats_returned);
+      // Add transaction memo if one is given
+      if (estimate.memo != null) {
+        txb.addMemo(estimate.memo, offset: 2);
+      }
+
+      tx = txb.buildSpoofedSigs();
+      fee_sats = tx.fee(goal);
+    }
+    txb.signEachInput(rvn_utxos + ownership_utxo);
+    tx = txb.build();
+    estimate.setFees(fee_sats);
+    return Tuple2(tx, estimate);
+  }
+
+  Tuple2<ravencoin.Transaction, SendEstimate> transaction(
+    String toAddress,
+    SendEstimate estimate, {
+    required Wallet wallet,
+    TxGoal? goal,
+  }) {
+    ravencoin.TransactionBuilder? txb;
+    ravencoin.Transaction tx;
+    var feeSats = 0;
+    // Grab required assets for transfer amount
+    var utxosRaven = <Vout>[];
+    var utxosSecurity = estimate.security != null
+        ? services.balance.collectUTXOs(
+            wallet,
+            amount: estimate.amount,
+            security: estimate.security,
+          )
+        : <Vout>[];
+    var securityIn = 0;
+    for (var utxo in utxosSecurity) {
+      securityIn += utxo.assetValue!;
+    }
+    var securityChange =
+        estimate.security == null ? 0 : securityIn - estimate.amount;
+    var returnAddress = services.wallet.getChangeAddress(wallet);
+    var returnRaven = -1; // Init to bad val
+    while (returnRaven < 0 || feeSats != estimate.fees) {
+      feeSats = estimate.fees;
+      txb = ravencoin.TransactionBuilder(network: res.settings.network);
+      // Grab required RVN for fee (plus amount, maybe)
+      utxosRaven = services.balance.collectUTXOs(
+        wallet,
+        amount: feeSats + (estimate.security == null ? estimate.amount : 0),
+        security: null,
+      );
+      var satsIn = 0;
+      for (var utxo in utxosRaven) {
+        txb.addInput(utxo.transactionId, utxo.position);
+        satsIn += utxo.rvnValue;
+      }
+      returnRaven =
+          satsIn - (estimate.security == null ? estimate.amount : 0) - feeSats;
       txb.addOutput(
         toAddress,
         estimate.amount,
         asset: estimate.security?.symbol,
         memo: estimate.assetMemo?.hexBytes,
       );
-
-      // Add transaction memo if one is given
+      if (securityChange > 0) {
+        txb.addOutput(
+          returnAddress,
+          securityChange,
+          asset: estimate.security!.symbol,
+        );
+      }
+      if (returnRaven > 0) {
+        txb.addOutput(returnAddress, returnRaven);
+      }
       if (estimate.memo != null) {
         txb.addMemo(estimate.memo);
       }
-
       tx = txb.buildSpoofedSigs();
-      fee_sats = tx.fee(goal);
+      estimate.setFees(tx.fee(goal: goal));
     }
-    txb.signEachInput(utxos);
+    txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
-    estimate.setFees(fee_sats);
     return Tuple2(tx, estimate);
   }
 
@@ -314,8 +594,8 @@ class TransactionMaker {
     txb.addOutput(toAddress, estimate.amount);
     txb.signEachInput(utxosOriginal);
     var tx = txb.build();
-    var fees = tx.fee(goal);
-    estimate.setFees(tx.fee(goal));
+    var fees = tx.fee(goal: goal);
+    estimate.setFees(tx.fee(goal: goal));
     estimate.setAmount(total - fees);
     var satsIn =
         utxosOriginal.fold(0, (int total, vout) => total + vout.rvnValue);
@@ -363,7 +643,7 @@ class TransactionMaker {
       }
       txb.signEachInput(utxos.toList());
       tx = txb.build();
-      fees = tx.fee(goal);
+      fees = tx.fee(goal: goal);
     }
     estimate.setFees(fees);
     return Tuple2(tx, estimate);
@@ -389,8 +669,8 @@ class TransactionMaker {
     txb.addOutput(toAddress, estimate.amount);
     txb.signEachInput(utxos);
     var tx = txb.build();
-    var fees = tx.fee(goal);
-    updatedEstimate.setFees(tx.fee(goal));
+    var fees = tx.fee(goal: goal);
+    updatedEstimate.setFees(tx.fee(goal: goal));
     updatedEstimate.setAmount(total - fees);
     if (previousFees.contains(fees)) {
       return Tuple2(tx, updatedEstimate);

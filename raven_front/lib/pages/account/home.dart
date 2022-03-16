@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:raven_back/streams/app.dart';
-import 'package:raven_front/theme/colors.dart';
-import 'package:raven_front/components/components.dart';
-import 'package:raven_front/utils/zips.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/raven_back.dart';
 
@@ -34,15 +31,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         setState(() {
           currentContext = value;
         });
-      }
-    }));
-    listeners.add(streams.app.hideNav.listen((bool? value) {
-      if (value != null) {
-        if (value) {
-          controller.forward();
-        } else {
-          controller.reverse();
-        }
       }
     }));
     listeners.add(res.settings.changes.listen((Change change) {

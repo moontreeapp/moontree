@@ -1,5 +1,4 @@
 // dart test test/sandbox/flatten_stream.dart
-import 'dart:async';
 
 import 'package:rxdart/rxdart.dart';
 import 'package:test/test.dart';
