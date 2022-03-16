@@ -2,6 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:raven_front/theme/theme.dart';
 
 class AppText {
+  static TextStyle? get link => TextStyle(
+      fontSize: 16.0,
+      fontFamily: 'Nunito',
+      fontWeight: FontWeights.semiBold,
+      letterSpacing: 0.5,
+      color: AppColors.primary);
+
   static TextStyle? get h1 => TextStyle(
       fontSize: 24.0,
       fontFamily: 'Nunito',

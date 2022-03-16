@@ -11,7 +11,12 @@ extension ValueColorExtension on ThemeData {
       this.brightness == Brightness.light ? AppColors.error : AppColors.error;
 }
 
+extension TextThemeStyleExtension on TextTheme {
+  TextStyle? get link => AppText.link;
+}
+
 extension TextStyleExtension on ThemeData {
+  TextStyle? get link => AppText.link;
   TextStyle? get supportHeading => AppText.supportHeading;
   TextStyle? get textFieldError => AppText.textFieldError;
   TextStyle? get remaining => AppText.remaining;

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:raven_front/theme/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:raven_back/services/transaction.dart';
 import 'package:raven_back/raven_back.dart';
@@ -44,15 +45,70 @@ class _TransactionPageState extends State<TransactionPage> {
     transaction = transactionRecord!.transaction;
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
     var metadata = transaction!.memo != null && transaction!.memo != '';
-    return DefaultTabController(
-        length: metadata ? 2 : 1,
-        child: Scaffold(
-          //appBar: header(metadata),
-          body: body(metadata),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-        ));
+    return detailsBody();
   }
+
+  String element(String humanName) {
+    switch (humanName) {
+      case 'Date':
+        return getDateBetweenHelper();
+      case 'Confirmations':
+        return getConfirmationsBetweenHelper();
+      case 'Type':
+        return transactionRecord!.totalIn <= transactionRecord!.totalOut
+            ? 'In'
+            : 'Out';
+      case 'ID':
+        return transaction!.id.cutOutMiddle();
+      case 'Memo/IPFS':
+        return 'transaction!.memo'.cutOutMiddle();
+      case 'Note':
+        return 'transaction!.note';
+      default:
+        return 'unknown';
+    }
+  }
+
+  String elementFull(String humanName) {
+    switch (humanName) {
+      case 'ID':
+        return transaction!.id;
+      case 'Memo/IPFS':
+        return transaction!.memo ?? '';
+      case 'Note':
+        return transaction!.note;
+      default:
+        return 'unknown';
+    }
+  }
+
+  Widget plain(String text) => ListTile(
+        dense: true,
+        title: Text(text, style: Theme.of(context).textTheme.bodyText1),
+        trailing:
+            Text(element(text), style: Theme.of(context).textTheme.bodyText1),
+      );
+
+  Widget link(String text, String link) => ListTile(
+        // inkwell link...
+        dense: true,
+        onTap: () => launch(link + elementFull(text)),
+        title: Text(text, style: Theme.of(context).textTheme.bodyText1),
+        trailing: Text(element(text), style: Theme.of(context).textTheme.link),
+      );
+
+  Widget detailsBody() => ListView(
+        padding: EdgeInsets.only(top: 8, bottom: 112),
+        children: <Widget>[
+              for (var text in ['Date', 'Confirmations', 'Type']) plain(text)
+            ] +
+            [
+              link('ID', 'https://rvnt.cryptoscope.io/tx/?txid='),
+              if (transaction!.memo != null && transaction!.memo != '')
+                link('Memo/IPFS', 'https://gateway.ipfs.io/ipfs/'),
+            ] +
+            (transaction!.note == '' ? [] : [plain('Note')]),
+      );
 
   int? getBlocksBetweenHelper({Transaction? tx, Block? current}) {
     tx = tx ?? transaction!;
@@ -78,37 +134,6 @@ class _TransactionPageState extends State<TransactionPage> {
       (getBlocksBetweenHelper() != null
           ? getBlocksBetweenHelper().toString()
           : 'unknown');
-
-  PreferredSize header(bool metadata) => PreferredSize(
-      preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.20),
-      child: AppBar(
-          elevation: 2,
-          centerTitle: false,
-          leading: components.buttons.back(context),
-          actions: <Widget>[components.status],
-          title: Text('Transaction'),
-          flexibleSpace: Container(
-              alignment: Alignment.center,
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 22),
-                    Text(
-                      transactionRecord!.out ? 'Sent' : 'Received',
-                    ),
-                    Text(
-                      components.text
-                          .securityAsReadable(transactionRecord!.value,
-                              symbol: transactionRecord!.security.symbol)
-                          .toString(),
-                    )
-                  ])),
-          bottom: PreferredSize(
-              preferredSize: Size.fromHeight(50.0),
-              child: TabBar(tabs: [
-                Tab(text: 'Details'),
-                ...(metadata ? [Tab(text: 'Memo')] : [])
-              ]))));
 
   TabBarView body(bool metadata) => TabBarView(children: [
         ListView(shrinkWrap: true, padding: EdgeInsets.all(20.0), children: <
