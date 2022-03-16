@@ -64,15 +64,12 @@ class _SendState extends State<Send> {
     super.initState();
     sendAsset.text = sendAsset.text == '' ? 'Ravencoin' : sendAsset.text;
     listeners.add(streams.spend.form.listen((SpendForm? value) {
-      print('vs $spendForm');
-      print('heard $value');
       if (value != null) {
         //if ((SpendForm.merge(form: spendForm, amount: 0.0) !=
         //    SpendForm.merge(form: value, amount: 0.0))) {
-        print('in if');
         setState(() {
           spendForm = value;
-          var asset = (value?.symbol ?? 'RVN');
+          var asset = (value.symbol ?? 'RVN');
           sendAsset.text = asset == 'RVN' || asset == 'Ravencoin'
               ? 'Ravencoin'
               : Current.holdingNames.contains(asset)
@@ -80,11 +77,11 @@ class _SendState extends State<Send> {
                   : sendAsset.text == ''
                       ? 'Ravencoin'
                       : sendAsset.text;
-          sendFee.text = value?.fee ?? 'Standard';
-          sendNote.text = value?.note ?? sendNote.text;
-          sendAmount.text = value?.amount?.toString() ?? sendAmount.text;
-          sendAddress.text = value?.address ?? sendAddress.text;
-          addressName = value?.addressName ?? addressName;
+          sendFee.text = value.fee ?? 'Standard';
+          sendNote.text = value.note ?? sendNote.text;
+          sendAmount.text = value.amount?.toString() ?? sendAmount.text;
+          sendAddress.text = value.address ?? sendAddress.text;
+          addressName = value.addressName ?? addressName;
         });
       }
     }));

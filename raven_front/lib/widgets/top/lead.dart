@@ -83,8 +83,10 @@ class _PageLead extends State<PageLead> {
           ? IconButton(
               splashRadius: 24,
               icon: Icon(Icons.close_rounded, color: Colors.white),
-              onPressed: () =>
-                  Navigator.pop(components.navigator.routeContext ?? context))
+              onPressed: () {
+                if (pageTitle == 'Send') streams.spend.form.add(null);
+                Navigator.pop(components.navigator.routeContext ?? context);
+              })
           : IconButton(
               splashRadius: 24,
               icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
