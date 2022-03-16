@@ -129,7 +129,7 @@ class _CheckoutState extends State<Checkout> {
         leading: components.icons.assetAvatar(struct.symbol.toUpperCase()),
         title: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
           SizedBox(width: 5),
-          Text(struct.displaySymbol.toUpperCase(),
+          Text(struct.displaySymbol,
               style: Theme.of(context).textTheme.bodyText1)
         ]),
         //subtitle: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
@@ -159,6 +159,12 @@ class _CheckoutState extends State<Checkout> {
     var rows = <Widget>[];
     for (var pair in pairs) {
       var rightSide = fee ? getRightFee(pair.toList()[1]) : pair.toList()[1];
+      if (rightSide.length > 20) {
+        rightSide =
+            ['To', 'IPFS', 'IPFS/TxId', 'ID', 'TxId'].contains(pair.toList()[0])
+                ? rightSide.cutOutMiddle()
+                : rightSide;
+      }
       rows.add(Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,

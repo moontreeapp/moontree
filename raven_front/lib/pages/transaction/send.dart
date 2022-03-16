@@ -56,7 +56,6 @@ class _SendState extends State<Send> {
   FocusNode sendMemoFocusNode = FocusNode();
   FocusNode sendNoteFocusNode = FocusNode();
   ravencoin.TxGoal feeGoal = ravencoin.TxGoals.standard;
-  bool sendAll = false;
   String addressName = '';
   bool showPaste = false;
 
@@ -296,7 +295,6 @@ class _SendState extends State<Send> {
                 SizedBox(height: 16.0),
                 TextField(
                   selectionControls: NoToolBar(),
-                  readOnly: sendAll,
                   focusNode: sendAmountFocusNode,
                   controller: sendAmount,
                   keyboardType: TextInputType.number,
@@ -305,7 +303,7 @@ class _SendState extends State<Send> {
                     labelText: 'Amount',
                     hintText: 'Quantity',
                     // put ability to put it in as USD here
-                    /* // move send all to if you click on the amount at the top
+                    /* // functionality has been moved to header
                     suffixText: sendAll ? "don't send all" : 'send all',
                     suffixStyle: Theme.of(context).textTheme.caption,
                     suffixIcon: IconButton(
@@ -471,7 +469,7 @@ class _SendState extends State<Send> {
       );
       if (holding >= double.parse(sendAmount.text)) {
         var sendRequest = SendRequest(
-            sendAll: sendAll,
+            sendAll: holding == visibleAmount.toDouble(),
             wallet: Current.wallet,
             sendAddress: sendAddress.text,
             holding: holding,
