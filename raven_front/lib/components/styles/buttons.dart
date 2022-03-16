@@ -8,7 +8,7 @@ class ButtonStyleComponents {
         foregroundColor: MaterialStateProperty.all(AppColors.offBlack),
         side: MaterialStateProperty.all(BorderSide(
             color: disabled
-                ? AppColors.disabled
+                ? AppColors.primaryDisabled
                 : Theme.of(context).backgroundColor,
             width: 2,
             style: BorderStyle.solid)),

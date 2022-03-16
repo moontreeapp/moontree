@@ -362,7 +362,6 @@ class _ReceiveState extends State<Receive> {
   Widget get shareButton => components.buttons.actionButton(
         context,
         label: 'Share',
-        icon: Icon(Icons.share),
         onPressed: () => Share.share(uri),
       );
 }

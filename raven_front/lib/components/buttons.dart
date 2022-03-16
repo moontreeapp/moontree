@@ -9,7 +9,7 @@ class ButtonComponents {
   Widget actionButton(
     BuildContext context, {
     String? label,
-    Widget? icon,
+    // Widget? icon,
     Widget? disabledIcon,
     String? link,
     VoidCallback? onPressed,
@@ -19,25 +19,22 @@ class ButtonComponents {
   }) =>
       Expanded(
           child: Container(
-              height: 40,
-              child: OutlinedButton.icon(
-                focusNode: focusNode,
-                onPressed: enabled
-                    ? (link != null
-                        ? () => Navigator.of(components.navigator.routeContext!)
-                            .pushNamed(link)
-                        : onPressed ?? () {})
-                    : disabledOnPressed ?? () {},
-                icon: enabled
-                    ? _iconDefault(icon)
-                    : _iconDefaultDisabled(disabledIcon),
-                label: Text(_labelDefault(label),
-                    style: enabled
-                        ? /*Theme.of(context).enabledButton*/ null
-                        : Theme.of(context).disabledButton),
-                style: components.styles.buttons
-                    .bottom(context, disabled: !enabled),
-              )));
+        height: 40,
+        child: OutlinedButton(
+          focusNode: focusNode,
+          onPressed: enabled
+              ? (link != null
+                  ? () => Navigator.of(components.navigator.routeContext!)
+                      .pushNamed(link)
+                  : onPressed ?? () {})
+              : disabledOnPressed ?? () {},
+          style: components.styles.buttons.bottom(context, disabled: !enabled),
+          child: Text(_labelDefault(label),
+              style: enabled
+                  ? /*Theme.of(context).enabledButton*/ null
+                  : Theme.of(context).disabledButton),
+        ),
+      ));
 
   Widget _iconDefault(Widget? icon) => icon ?? components.icons.preview;
   Widget _iconDefaultDisabled(Widget? icon) =>

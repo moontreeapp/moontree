@@ -268,7 +268,6 @@ class _CheckoutState extends State<Checkout> {
           context,
           enabled: !disabled,
           label: struct.buttonWord,
-          icon: Icon(struct.buttonIcon, color: AppColors.black87),
           disabledIcon: Icon(
             struct.buttonIcon,
             color: Theme.of(context).disabledColor,

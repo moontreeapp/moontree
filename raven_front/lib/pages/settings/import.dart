@@ -132,14 +132,12 @@ class _ImportState extends State<Import> {
       context,
       enabled: importEnabled,
       label: (label ?? 'Import').toUpperCase(),
-      icon: components.icons.import,
       disabledIcon: components.icons.importDisabled(context),
       onPressed: () async => await attemptImport(file?.content ?? words.text));
 
   Widget get fileButton => components.buttons.actionButton(
         context,
         label: 'File',
-        icon: Icon(MdiIcons.fileKey, color: AppColors.black87),
         onPressed: () async {
           file = await storage.readFromFilePickerSize();
           enableImport(file?.content ?? '');

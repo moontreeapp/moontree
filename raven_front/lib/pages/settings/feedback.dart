@@ -194,16 +194,11 @@ class _FeedbackState extends State<Feedback> {
       label: 'Send'.toUpperCase(),
       onPressed: () async =>
           await attemptSend(file?.content ?? descriptionController.text),
-      icon: components.icons.import,
       disabledIcon: components.icons.importDisabled(context));
 
   Widget get fileButton => components.buttons.actionButton(
         context,
         label: 'File',
-        icon: Icon(
-          MdiIcons.fileKey,
-          color: AppColors.black87,
-        ),
         onPressed: () async {
           file = await storage.readFromFilePickerSize();
           enableSend(file?.content ?? '');

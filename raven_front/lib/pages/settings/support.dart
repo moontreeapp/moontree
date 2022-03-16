@@ -80,7 +80,6 @@ class Support extends StatelessWidget {
   }) =>
       components.buttons.actionButton(
         context,
-        icon: Icon(MdiIcons.discord, color: Color(int.parse(color))),
         label: name.toUpperCase(),
         onPressed: () => showDialog(
             context: context,
