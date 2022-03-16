@@ -49,12 +49,12 @@ class _QRCodeContainerState extends State<QRCodeContainer> {
               color: AppColors.black38,
             )),
         'Send': Padding(
-            padding: EdgeInsets.only(left: 16),
+            padding: EdgeInsets.only(left: 0),
             child: QRCodeButton(pageTitle: 'Send-to')),
       }[pageTitle] ??
       (blanks.contains(pageTitle)
           ? Container(width: 0)
           : Padding(
-              padding: EdgeInsets.only(left: 16),
+              padding: EdgeInsets.only(left: 0),
               child: QRCodeButton(pageTitle: pageTitle)));
 }

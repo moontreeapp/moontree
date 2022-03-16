@@ -95,11 +95,9 @@ class _NavDrawerState extends State<NavDrawer> {
         padding: EdgeInsets.all(0),
         children: [
           destination(
-              icon: MdiIcons.fileImport,
-              name: 'Import',
-              link: '/settings/import'),
+              icon: MdiIcons.keyPlus, name: 'Import', link: '/settings/import'),
           destination(
-              icon: MdiIcons.fileExport,
+              icon: MdiIcons.keyMinus,
               name: 'Export',
               link: '/settings/export'),
         ],
@@ -134,6 +132,11 @@ class _NavDrawerState extends State<NavDrawer> {
             name: 'Import / Export',
             link: '/settings/import_export',
             arrow: true,
+          ),
+          destination(
+            icon: MdiIcons.drawPen,
+            name: 'Backup',
+            link: '/settings/backup',
           ),
           destination(
             icon: Icons.settings,

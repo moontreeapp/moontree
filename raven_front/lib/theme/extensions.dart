@@ -16,7 +16,6 @@ extension TextThemeStyleExtension on TextTheme {
 }
 
 extension TextStyleExtension on ThemeData {
-  TextStyle? get link => AppText.link;
   TextStyle? get supportHeading => AppText.supportHeading;
   TextStyle? get textFieldError => AppText.textFieldError;
   TextStyle? get remaining => AppText.remaining;
