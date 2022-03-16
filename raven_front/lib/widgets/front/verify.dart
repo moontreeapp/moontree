@@ -82,7 +82,6 @@ class _VerifyPasswordState extends State<VerifyPassword> {
         enabled: verify(),
         label: 'Submit',
         disabledIcon: Icon(Icons.login, color: AppColors.black38),
-        icon: Icon(Icons.login),
         onPressed: () {
           streams.app.verify.add(true);
           widget.parentState?.setState(() {});

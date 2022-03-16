@@ -39,14 +39,12 @@ class _NavBarState extends State<NavBar> {
                             context,
                             label: 'send',
                             link: '/transaction/send',
-                            icon: Icon(MdiIcons.arrowTopRightThick),
                           ),
                           SizedBox(width: 16),
                           components.buttons.actionButton(
                             context,
                             label: 'receive',
                             link: '/transaction/receive',
-                            icon: Icon(MdiIcons.arrowBottomLeftThick),
                           ),
                         ],
                       )
@@ -57,7 +55,6 @@ class _NavBarState extends State<NavBar> {
                                 components.buttons.actionButton(
                                   context,
                                   label: 'create',
-                                  icon: Icon(MdiIcons.plus),
                                   onPressed: _produceCreateModal,
                                 )
                               ]
@@ -66,7 +63,6 @@ class _NavBarState extends State<NavBar> {
                                     .contains(assetType)) ...[
                                   components.buttons.actionButton(context,
                                       label: 'create',
-                                      icon: Icon(MdiIcons.plus),
                                       onPressed:
                                           streams.app.page.value == 'Asset'
                                               ? _produceSubCreateModal
@@ -79,7 +75,6 @@ class _NavBarState extends State<NavBar> {
                                 ].contains(assetType)) ...[
                                   components.buttons.actionButton(context,
                                       label: 'create',
-                                      icon: Icon(MdiIcons.plus),
                                       onPressed:
                                           streams.app.page.value == 'Asset'
                                               //? _produceSubQualifierModal
@@ -94,10 +89,9 @@ class _NavBarState extends State<NavBar> {
                                               : () {}),
                                   SizedBox(width: 16)
                                 ],
-                                components.buttons.actionButton(context,
-                                    label: 'manage',
-                                    icon: Icon(MdiIcons.circleEditOutline),
-                                    onPressed: () {/* bring up options */}),
+                                components.buttons
+                                    .actionButton(context, label: 'manage',
+                                        onPressed: () {/* bring up options */}),
                               ],
                       ),
                 Padding(

@@ -189,7 +189,6 @@ class _ChangePasswordState extends State<ChangePassword> {
   Widget get submitButton => components.buttons.actionButton(
         context,
         label: 'Set',
-        icon: Icon(Icons.lock_rounded),
         disabledIcon: Icon(Icons.lock_rounded, color: AppColors.black38),
         onPressed: () async => await submit(),
         enabled: enabledCheck(),

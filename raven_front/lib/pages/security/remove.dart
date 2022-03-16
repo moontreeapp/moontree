@@ -39,9 +39,7 @@ class _RemovePasswordState extends State<RemovePassword> {
   }
 
   Widget get submitButton => components.buttons.actionButton(context,
-      label: 'Yes, Remove Password',
-      icon: Icon(Icons.lock_rounded, color: AppColors.black),
-      onPressed: () async => await submit());
+      label: 'Yes, Remove Password', onPressed: () async => await submit());
 
   Future submit() async {
     FocusScope.of(context).unfocus();
