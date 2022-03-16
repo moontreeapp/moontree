@@ -95,14 +95,24 @@ class _CoinState extends State<Coin> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: front ? selectionList : selectionList.reversed.toList());
 
-  Widget get frontText => Text(
-      widget.totalSupply ??
-          components.text.securityAsReadable(
-            widget.holdingSat,
-            symbol: widget.symbol,
-            asUSD: false,
-          ),
-      style: Theme.of(context).textTheme.headline3);
+  Widget get frontText {
+    var holding = components.text.securityAsReadable(
+      widget.holdingSat,
+      symbol: widget.symbol,
+      asUSD: false,
+    );
+    var text = Text(
+      widget.totalSupply ?? holding,
+      style: Theme.of(context).textTheme.headline3,
+    );
+    return widget.pageTitle == 'Send'
+        ? GestureDetector(
+            child: text,
+            onTap: () => streams.spend.form.add(SpendForm.merge(
+                form: streams.spend.form.value, amount: holding.toDouble())))
+        : text;
+  }
+
   Widget get backText => Text(
         widget.symbol.toTitleCase(underscoreAsSpace: true),
         style: Theme.of(context).textTheme.headline5,

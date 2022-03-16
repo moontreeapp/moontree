@@ -65,8 +65,12 @@ class _SendState extends State<Send> {
     super.initState();
     sendAsset.text = sendAsset.text == '' ? 'Ravencoin' : sendAsset.text;
     listeners.add(streams.spend.form.listen((SpendForm? value) {
-      if ((SpendForm.merge(form: spendForm, amount: 0.0) !=
-          SpendForm.merge(form: value, amount: 0.0))) {
+      print('vs $spendForm');
+      print('heard $value');
+      if (value != null) {
+        //if ((SpendForm.merge(form: spendForm, amount: 0.0) !=
+        //    SpendForm.merge(form: value, amount: 0.0))) {
+        print('in if');
         setState(() {
           spendForm = value;
           var asset = (value?.symbol ?? 'RVN');
@@ -323,9 +327,9 @@ class _SendState extends State<Send> {
                   ),
                   onChanged: (value) {
                     visibleAmount = verifyVisibleAmount(value);
-                    streams.spend.form.add(SpendForm.merge(
-                        form: streams.spend.form.value,
-                        amount: double.parse(visibleAmount)));
+                    //streams.spend.form.add(SpendForm.merge(
+                    //    form: streams.spend.form.value,
+                    //    amount: double.parse(visibleAmount)));
                   },
                   onEditingComplete: () {
                     sendAmount.text = cleanDecAmount(
@@ -439,7 +443,6 @@ class _SendState extends State<Send> {
       ));
 
   bool fieldValidation() {
-    sendAmount.text = cleanDecAmount(sendAmount.text, zeroToBlank: true);
     return sendAddress.text != '' && _validateAddress() && verifyMemo();
   }
 
