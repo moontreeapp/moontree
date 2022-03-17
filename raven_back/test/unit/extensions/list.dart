@@ -1,6 +1,6 @@
 // dart test test/unit/extensions/list.dart
 import 'package:test/test.dart';
-import 'package:raven_back/extensions/list.dart';
+import 'package:raven_back/extensions/iterable.dart';
 
 void main() {
   group('List Extensions', () {

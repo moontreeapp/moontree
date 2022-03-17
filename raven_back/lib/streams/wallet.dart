@@ -6,6 +6,8 @@ class WalletStreams {
   final leaderChanges = leaderChanges$;
   final singleChanges = singleChanges$;
   final deriveAddress = BehaviorSubject<DeriveLeaderAddress?>.seeded(null);
+  final transactions =
+      BehaviorSubject<WalletExposureTransactions?>.seeded(null);
 }
 
 final Stream<Wallet> replayWallet$ = ReplaySubject<Wallet>()
@@ -24,4 +26,18 @@ class DeriveLeaderAddress {
   final NodeExposure? exposure;
 
   DeriveLeaderAddress({required this.leader, this.exposure});
+}
+
+class WalletExposureTransactions {
+  final String walletId;
+  final NodeExposure exposure;
+  final Iterable<String> transactionIds;
+
+  WalletExposureTransactions({
+    required this.walletId,
+    required this.exposure,
+    required this.transactionIds,
+  });
+
+  String get key => walletId + exposure.enumString;
 }

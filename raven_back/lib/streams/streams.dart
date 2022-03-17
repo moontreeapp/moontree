@@ -1,4 +1,3 @@
-import 'address.dart';
 import 'asset.dart';
 import 'app.dart';
 import 'create.dart';
@@ -11,7 +10,6 @@ import 'spend.dart';
 import 'wallet.dart';
 
 class streams {
-  static final address = AddressStreams();
   static final app = AppStreams();
   static final asset = AssetStreams();
   static final cipher = CipherStreams();
@@ -23,6 +21,3 @@ class streams {
   static final spend = Spend();
   static final import = Import();
 }
-
-
-/// make two streams that record when the list of addresses that haven't been pulled is empty.

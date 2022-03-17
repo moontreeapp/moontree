@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:raven_back/streams/wallet.dart';
 import 'package:raven_electrum/raven_electrum.dart';
@@ -6,6 +7,8 @@ import 'package:raven_back/raven_back.dart';
 import 'package:tuple/tuple.dart';
 
 class HistoryService {
+  List<String> downloaded = [];
+
   Future<bool> getHistories(Address address) async {
     var client = streams.client.client.value;
     if (client == null) {
@@ -13,16 +16,43 @@ class HistoryService {
     }
     var histories = await client.getHistory(address.id);
     if (histories.isNotEmpty) {
-      streams.address.history.add(histories.map((history) => history.txHash));
-      // if we had no history, and now we found some... derive a new address
-      if (address.wallet is LeaderWallet && address.vouts.isEmpty) {
-        streams.wallet.deriveAddress.add(DeriveLeaderAddress(
-          leader: address.wallet as LeaderWallet,
+      if (address.wallet is LeaderWallet) {
+        streams.wallet.transactions.add(WalletExposureTransactions(
+          walletId: address.walletId,
           exposure: address.exposure,
+          transactionIds: histories.map((history) => history.txHash),
+        ));
+
+        /// if there is no existing address with a higher hdIndex...
+        /// that belongs to the same wallet and exposure...
+        /// then derive a new one.
+        var walletAddressesIndexes = res.addresses.byWalletExposure
+            .getAll(address.walletId, address.exposure)
+            .map((Address add) => address.hdIndex);
+        if (address.hdIndex >= walletAddressesIndexes.max()) {
+          streams.wallet.deriveAddress.add(DeriveLeaderAddress(
+            leader: address.wallet as LeaderWallet,
+            exposure: address.exposure,
+          ));
+        }
+      } else {
+        streams.wallet.transactions.add(WalletExposureTransactions(
+          walletId: address.walletId,
+          exposure: address.exposure,
+          transactionIds: histories.map((history) => history.txHash),
+        ));
+        streams.wallet.transactions.add(WalletExposureTransactions(
+          walletId: address.walletId,
+          exposure: address.exposure,
+          transactionIds: [],
         ));
       }
     } else {
-      streams.address.empty.add(address);
+      streams.wallet.transactions.add(WalletExposureTransactions(
+        walletId: address.walletId,
+        exposure: address.exposure,
+        transactionIds: [],
+      ));
     }
     return true;
   }
@@ -39,12 +69,14 @@ class HistoryService {
       // download them all again? could we merely change the wallet id that the
       // addresses point to, perhaps, so that this is valid, we never have to
       // redownload individaul transactions again?
-      if ((res.transactions.primaryIndex.getOne(txHash) == null ||
-          res.transactions.mempool.map((t) => t.id).contains(txHash))) {
+      if (!downloaded.contains(txHash) &&
+          (res.transactions.primaryIndex.getOne(txHash) == null ||
+              res.transactions.mempool.map((t) => t.id).contains(txHash))) {
         // not already downloaded...
+        downloaded.add(txHash);
         txs.add(await client.getTransaction(txHash));
       } else {
-        //print('skipping $txHash');
+        print('skipping $txHash');
       }
     }
     await saveTransactions(txs, client);
@@ -53,6 +85,23 @@ class HistoryService {
 
   // if all the leader wallets have their empty addresses gaps satisfied,
   // you're done! trigger balance calculation, else trigger derive address.
+  Future<bool> produceAddressOrBalanceFor(
+    String walletId,
+    NodeExposure exposure,
+  ) async {
+    var leader =
+        res.wallets.leaders.where((leader) => leader.id == walletId).first;
+    if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
+      streams.wallet.deriveAddress
+          .add(DeriveLeaderAddress(leader: leader, exposure: exposure));
+    } else {
+      //saveDanglingTransactionsFor(leader, exposure);
+      //await services.balance.recalculateBalancesFor(leader, exposure);
+      //services.download.asset.allAdminsSubs(); // only immediate subs right?
+    }
+    return true;
+  }
+
   Future<bool> produceAddressOrBalance() async {
     var client = streams.client.client.value;
     if (client == null) {
@@ -168,8 +217,25 @@ class HistoryService {
         (res.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet());
     //print('GETTING DANGLING TRANSACTIONS: $txs');
     for (var txHash in txs) {
+      downloaded.add(txHash);
       await getTransaction(txHash, saveVin: false);
     }
+  }
+
+  Future saveDanglingTransactionsFor(
+      LeaderWallet leader, NodeExposure exposure) async {
+    var client = streams.client.client.value;
+    if (client == null) {
+      return false;
+    }
+
+    //how? leader.vins?
+    //var txs =
+    //    (res.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet());
+    ////print('GETTING DANGLING TRANSACTIONS: $txs');
+    //for (var txHash in txs) {
+    //  await getTransaction(txHash, saveVin: false);
+    //}
   }
 
   /// we capture securities here. if it's one we've never seen,

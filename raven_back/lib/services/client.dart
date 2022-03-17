@@ -84,14 +84,10 @@ class ClientService {
 class SubscribeService {
   final Map<String, StreamSubscription> subscriptionHandles = {};
 
-  List<Address> toExistingAddresses() {
-    var unhandledAddresses = <Address>[];
+  void toAllAddresses() {
     for (var address in res.addresses) {
-      if (!to(address)) {
-        unhandledAddresses.add(address);
-      }
+      to(address);
     }
-    return unhandledAddresses;
   }
 
   bool to(Address address) {
@@ -102,7 +98,7 @@ class SubscribeService {
     if (!subscriptionHandles.keys.contains(address.id)) {
       subscriptionHandles[address.id] =
           client.subscribeScripthash(address.id).listen((String? status) {
-        waiters.subscription.retrieve(address);
+        services.history.getHistories(address);
       });
     }
     return true;

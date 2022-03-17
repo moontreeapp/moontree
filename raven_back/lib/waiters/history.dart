@@ -1,155 +1,55 @@
 /// when activity is detected on an address we download a list of txids (its history)
-/// this picks it up and downloads them.
+/// this picks it up and saves them by wallet-exposure. We wait till no history was
+/// found for that wallet-exposure then we go download all the transactions for it.
+/// doing so allows us to know when we should calculate the balance for it: right
+/// after all the transactions are downloaded for that wallet-exposure...
+
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/wallet.dart';
 import 'waiter.dart';
 
 class HistoryWaiter extends Waiter {
-  int requiredGap = services.wallet.leader.requiredGap;
-  Map<String, Map<NodeExposure, int>> gaps = {};
-  Set<String> backlog = {};
-  Set<String> retrieved = {};
+  Map<String, List<String>> TxsByWalletExposureKeys = {};
 
-  void init() {
-    listen(
+  void init() => listen(
       'streams.address.history',
-      streams.address.history,
-      (Iterable<String>? transactions) => transactions == null
-          ? doNothing(/* initial state */)
-          : gapsFilled()
-              ? handleHistories(transactions)
-              : backlog.addAll(transactions),
-    );
-
-    listen(
-      'streams.client.connected',
-      streams.client.connected,
-      (bool connected) => connected ? handleBacklog() : doNothing(),
-    );
-
-    listen(
-      'streams.address.empty',
-      streams.address.empty,
-      (Address? address) =>
-          address == null ? doNothing() : handleEmptyPull(address),
-    );
-
-    initGaps();
-  }
+      streams.wallet.transactions,
+      (WalletExposureTransactions? keyedTransactions) =>
+          keyedTransactions == null
+              ? doNothing(/* initial state */)
+              : keyedTransactions.transactionIds.isEmpty
+                  ? pull(keyedTransactions)
+                  : remember(keyedTransactions));
 
   void doNothing() {}
 
-  bool initGaps() {
-    for (var wallet in res.wallets.leaders) {
-      for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
-        insertKeys(wallet.id, exposure);
-        gaps[wallet.id]?[exposure] =
-            services.wallet.leader.currentGap(wallet, exposure);
-      }
-    }
-    return true;
+  void remember(WalletExposureTransactions keyedTransactions) =>
+      TxsByWalletExposureKeys[keyedTransactions.key] =
+          (TxsByWalletExposureKeys[keyedTransactions.key] ?? []) +
+              keyedTransactions.transactionIds.toList();
+
+  void pull(WalletExposureTransactions keyedTransactions) {
+    var txs = TxsByWalletExposureKeys[keyedTransactions.key] ?? [];
+    TxsByWalletExposureKeys[keyedTransactions.key] = [];
+    getTransactionsAndCalculateBalance(
+        keyedTransactions.walletId, keyedTransactions.exposure, txs);
   }
 
-  bool gapFilled(Address address) =>
-      (gaps[address.wallet!.id]?[address.exposure] ?? 0) >= requiredGap;
-
-  bool gapsFilled() {
-    for (var wallet in res.wallets.leaders) {
-      insertKeys(wallet.id, NodeExposure.External);
-      insertKeys(wallet.id, NodeExposure.Internal);
+  // if we could get a batch of transactions that'd be better...
+  Future<void> getTransactionsAndCalculateBalance(
+    String walletId,
+    NodeExposure exposure,
+    Iterable<String> transactionIds,
+  ) async {
+    for (var transactionId in transactionIds) {
+      await getTransaction(transactionId);
     }
-    for (var walletId in gaps.keys) {
-      for (var exposure in gaps[walletId]!.keys) {
-        if (gaps[walletId]![exposure]! < requiredGap) return false;
-      }
-    }
-    return true;
+    // calculate balances (for that wallet exposure)
+    //var done =
+    //    await services.history.produceAddressOrBalanceFor(walletId, exposure);
+    var done = await services.history.produceAddressOrBalance();
   }
 
-  void incrementGap(Address address) {
-    insertKeys(address.wallet!.id, address.exposure);
-    gaps[address.wallet!.id]![address.exposure] =
-        gaps[address.wallet!.id]![address.exposure]! + 1;
-  }
-
-  void insertKeys(String walletId, NodeExposure exposure) {
-    if (!gaps.containsKey(walletId)) {
-      gaps[walletId] = {exposure: 0};
-    }
-    if (!gaps[walletId]!.containsKey(exposure)) {
-      gaps[walletId]![exposure] = 0;
-    }
-  }
-
-  void handleHistories(Iterable<String> transactions) {
-    //if (await services.history.getTransactions(transactions)) {
-    //  backlog.removeAll(transactions);
-    //} else {
-    //  backlog.addAll(transactions);
-    //}
-    for (var transactionId in transactions) {
-      handleHistory(transactionId);
-    }
-  }
-
-  Future handleHistory(String transaction) async {
-    if (!retrieved.contains(transaction)) {
-      if (await services.history.getTransaction(transaction)) {
-        retrieved.add(transaction);
-      } else {
-        backlog.add(transaction);
-      }
-    }
-  }
-
-  Future handleBacklog() async {
-    cleanBacklog();
-    if (backlog.isNotEmpty) {
-      //if (await services.history.getTransactions(backlog.toList())) {
-      //  backlog.clear();
-      //}
-      try {
-        for (var transactionId in backlog) {
-          await handleHistory(transactionId);
-        }
-      } catch (e) {
-        //print("please don't modify backlog while something loops through it: $e");
-      }
-    }
-    await areWeAllDone();
-  }
-
-  void cleanBacklog() {
-    try {
-      backlog.removeAll(retrieved);
-      retrieved.removeAll(retrieved.where((item) => !backlog.contains(item)));
-    } catch (e) {
-      //print("please don't modify backlog while something loops through it: $e");
-    }
-  }
-
-  Future areWeAllDone() async {
-    cleanBacklog();
-    if (backlog.isEmpty) {
-      var done = await services.history.produceAddressOrBalance();
-      if (done) {
-        streams.address.empty.add(null);
-      }
-    }
-  }
-
-  void handleEmptyPull(Address address) {
-    incrementGap(address);
-    if (gapFilled(address)) {
-      if (gapsFilled()) {
-        print('filled all gaps: $gaps');
-        handleBacklog();
-      }
-    } else {
-      streams.wallet.deriveAddress.add(DeriveLeaderAddress(
-        leader: address.wallet as LeaderWallet,
-        exposure: address.exposure,
-      ));
-    }
-  }
+  Future getTransaction(String transaction) async =>
+      await services.history.getTransaction(transaction);
 }

@@ -1,5 +1,4 @@
 import 'package:intl/intl.dart';
-import 'package:raven_back/extensions/list.dart';
 import 'package:raven_back/raven_back.dart';
 
 import 'transaction_maker.dart';
