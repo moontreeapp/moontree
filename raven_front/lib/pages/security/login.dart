@@ -105,6 +105,9 @@ class _LoginState extends State<Login> {
 
   bool validate() => services.password.validate.password(password.text);
 
+  Future fakeSubmit({bool showFailureMessage = true}) =>
+      Navigator.pushReplacementNamed(context, '/home', arguments: {});
+
   Future submit({bool showFailureMessage = true}) async {
     if (services.password.validate.password(password.text)) {
       setState(() {

@@ -42,19 +42,19 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
 
     // for testing
     print('-------------------------');
-    print('addresses: ${res.addresses.data}');
-    print('assets: ${res.assets.data}');
-    print('balances: ${res.balances.data}');
+    print('addresses: ${res.addresses.length}');
+    print('assets: ${res.assets.length}');
+    print('balances: ${res.balances.length}');
     print('blocks: ${res.blocks.data}');
     print('ciphers: ${res.ciphers.data}');
-    print('metadata: ${res.metadatas.data}');
-    print('passwords: ${res.passwords.data}');
+    print('metadata: ${res.metadatas.length}');
+    print('passwords: ${res.passwords.length}');
     print('rates: ${res.rates.data}');
-    print('securities: ${res.securities.data}');
-    print('settings: ${res.settings.data}');
-    print('transactions: ${res.transactions.data}');
-    print('vins: ${res.vins.data}');
-    print('vouts: ${res.vouts.data}');
+    print('securities: ${res.securities.length}');
+    print('settings: ${res.settings.length}');
+    print('transactions: ${res.transactions.length}');
+    print('vins: ${res.vins.length}');
+    print('vouts: ${res.vouts.length}');
     print('wallets: ${res.wallets.data}');
     print('-------------------------');
     //print(services.cipher.getPassword(altPassword: ''));

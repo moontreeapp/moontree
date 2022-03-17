@@ -214,6 +214,19 @@ class _NavMenuState extends State<NavMenu> {
         context,
         label: 'Logout',
         invert: true,
-        onPressed: () => print('logging out'),
+        onPressed: logout,
       );
+
+  void logout() async {
+    print('logging out');
+    // remove ciphers
+    // still testing... got interrupted by #346
+    //services.cipher.clearCiphers();
+    //await services.cipher.clearWallets();
+    //services.password.broadcastLogout;
+    //Navigator.pushReplacementNamed(
+    //    components.navigator.routeContext!, '/security/login',
+    //    arguments: {});
+    //flingBackdrop(context);
+  }
 }
