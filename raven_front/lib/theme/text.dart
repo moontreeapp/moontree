@@ -37,7 +37,7 @@ class AppText {
 
   static TextStyle? get subtitle1 => TextStyle(
       fontSize: 16.0,
-      //height: 24px so...1.5? or something? https://stackoverflow.com/questions/58156806/how-do-set-text-line-height-in-flutter
+      height: 1.5,
       fontFamily: 'Nunito',
       fontWeight: FontWeights.semiBold,
       letterSpacing: 0.15,
@@ -45,7 +45,7 @@ class AppText {
 
   static TextStyle? get subtitle2 => TextStyle(
       fontSize: 14.0,
-      //height: 24px so...1.5? or something? https://stackoverflow.com/questions/58156806/how-do-set-text-line-height-in-flutter
+      height: 1.714,
       fontFamily: 'Nunito',
       fontWeight: FontWeights.normal,
       letterSpacing: 0.1,
@@ -53,14 +53,14 @@ class AppText {
 
   static TextStyle? get body1 => TextStyle(
       fontSize: 16.0,
-      //height: 24px so...1.5? or something? https://stackoverflow.com/questions/58156806/how-do-set-text-line-height-in-flutter
+      height: 1.5,
       fontFamily: 'Nunito',
       fontWeight: FontWeights.semiBold,
       letterSpacing: 0.5,
       color: AppColors.black);
   static TextStyle? get body1white => TextStyle(
       fontSize: 16.0,
-      //height: 24px so...1.5? or something? https://stackoverflow.com/questions/58156806/how-do-set-text-line-height-in-flutter
+      height: 1.5,
       fontFamily: 'Nunito',
       fontWeight: FontWeights.semiBold,
       letterSpacing: 0.5,
@@ -68,7 +68,7 @@ class AppText {
 
   static TextStyle? get body2 => TextStyle(
       fontSize: 14.0,
-      //height: 24px so...1.5? or something? https://stackoverflow.com/questions/58156806/how-do-set-text-line-height-in-flutter
+      height: 1.714,
       fontFamily: 'Nunito',
       fontWeight: FontWeights.normal,
       letterSpacing: 0.25,
@@ -76,7 +76,7 @@ class AppText {
 
   static TextStyle? get button => TextStyle(
       fontSize: 14.0,
-      //height: 16px so...1.15? or something? https://stackoverflow.com/questions/58156806/how-do-set-text-line-height-in-flutter
+      height: 1.143,
       fontFamily: 'Nunito',
       fontWeight: FontWeights.normal,
       letterSpacing: 1.25,
@@ -84,7 +84,7 @@ class AppText {
 
   static TextStyle? get caption => TextStyle(
       fontSize: 12.0,
-      //height: 16px so...1.15? or something? https://stackoverflow.com/questions/58156806/how-do-set-text-line-height-in-flutter
+      height: 1.333,
       fontFamily: 'Nunito',
       fontWeight: FontWeights.normal,
       letterSpacing: 0.4,
@@ -92,7 +92,7 @@ class AppText {
 
   static TextStyle? get overline => TextStyle(
       fontSize: 10.0,
-      //height: 16px so...1.25? or something? https://stackoverflow.com/questions/58156806/how-do-set-text-line-height-in-flutter
+      height: 1.6,
       fontFamily: 'Nunito',
       fontWeight: FontWeights.normal,
       letterSpacing: 1.5,

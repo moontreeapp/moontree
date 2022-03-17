@@ -12,9 +12,11 @@ part 'wallet.keys.dart';
 class WalletReservoir extends Reservoir<_IdKey, Wallet> {
   // final CipherRegistry cipherRegistry;
   late IndexMultiple<_WalletTypeKey, Wallet> byWalletType;
+  late IndexMultiple<_NameKey, Wallet> byName;
 
   WalletReservoir() : super(_IdKey()) {
     byWalletType = addIndexMultiple('walletType', _WalletTypeKey());
+    byName = addIndexMultiple('name', _NameKey());
   }
 
   List<LeaderWallet> get leaders => byWalletType

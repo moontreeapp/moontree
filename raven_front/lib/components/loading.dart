@@ -3,12 +3,12 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class LoadingComponents {
-  void screen({
+  Future<void> screen({
     BuildContext? context,
     String? message,
     bool returnHome = true,
-  }) {
-    showModalBottomSheet<void>(
+  }) async {
+    await showModalBottomSheet<void>(
         context: context ?? components.navigator.routeContext!,
         enableDrag: false,
         elevation: 0,

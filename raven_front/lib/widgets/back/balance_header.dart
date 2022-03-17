@@ -134,7 +134,7 @@ class _BalanceHeaderState extends State<BalanceHeader>
   Widget headerBottom(int holdingSat, int amountSat) {
     if (widget.pageTitle == 'Asset') {
       return Padding(
-          padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+          padding: EdgeInsets.only(left: 16, right: 16, bottom: 8),
           child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             symbol.contains('/')
                 ? Text('$symbol/', style: Theme.of(context).remaining)
@@ -144,7 +144,7 @@ class _BalanceHeaderState extends State<BalanceHeader>
     }
     if (widget.pageTitle == 'Send') {
       return Padding(
-          padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+          padding: EdgeInsets.only(left: 16, right: 16, bottom: 8),
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text('Remaining:', style: Theme.of(context).remaining),

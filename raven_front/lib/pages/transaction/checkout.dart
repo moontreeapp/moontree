@@ -13,16 +13,19 @@ import 'package:raven_back/utils/transform.dart';
 import 'package:raven_front/widgets/front/loader.dart';
 
 class CheckoutStruct {
-  final String symbol;
+  final Widget? icon;
+  final String? symbol;
   final String displaySymbol;
-  final String subSymbol;
-  final String paymentSymbol;
+  final String? subSymbol;
+  final String? paymentSymbol;
+  final double? left;
   final Iterable<Iterable<String>> items;
-  final Iterable<Iterable<String>> fees;
-  final String total;
+  final Iterable<Iterable<String>>? fees;
+  final String? total;
+  final String? confirm;
   final Function? buttonAction;
-  final IconData buttonIcon;
-  final String buttonWord;
+  final String? buttonWord;
+  final Widget? button;
   final String loadingMessage;
   static const Iterable<Iterable<String>> exampleItems = [
     ['Short Text', 'aligned right'],
@@ -45,6 +48,8 @@ class CheckoutStruct {
   ];
 
   const CheckoutStruct({
+    this.icon,
+    this.left,
     this.symbol = '#MoonTree',
     this.displaySymbol = 'MoonTree',
     this.subSymbol = 'Main/',
@@ -53,9 +58,10 @@ class CheckoutStruct {
     this.fees = exampleFees,
     this.total = '101',
     this.buttonAction,
-    this.buttonIcon = Icons.add_rounded,
     this.buttonWord = 'Submit',
     this.loadingMessage = 'Sending Transaction',
+    this.confirm,
+    this.button,
   });
 }
 
@@ -126,7 +132,8 @@ class _CheckoutState extends State<Checkout> {
   Widget get header => ListTile(
         dense: true,
         visualDensity: VisualDensity.compact,
-        leading: components.icons.assetAvatar(struct.symbol.toUpperCase()),
+        leading: struct.icon ??
+            components.icons.assetAvatar(struct.symbol!.toUpperCase()),
         title: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
           SizedBox(width: 5),
           Text(struct.displaySymbol,
@@ -134,7 +141,7 @@ class _CheckoutState extends State<Checkout> {
         ]),
         //subtitle: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
         //  SizedBox(width: 5),
-        //  Text(struct.subSymbol.toUpperCase(),
+        //  Text(struct.subSymbol!.toUpperCase(),
         //      style: Theme.of(context).checkoutSubAsset),
         //])
       );
@@ -170,20 +177,22 @@ class _CheckoutState extends State<Checkout> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-                width: (MediaQuery.of(context).size.width - 16 - 16 - 8) / 2,
+                width: (MediaQuery.of(context).size.width - 16 - 16 - 8) *
+                    (struct.left ?? .5),
                 child: Text(pair.toList()[0],
                     style: style,
                     overflow: TextOverflow.fade,
                     softWrap: false,
                     maxLines: 1)),
             fee || rightSide.length < 21
-                ? Text(rightSide, style: style)
+                ? Text(rightSide, style: style, textAlign: TextAlign.right)
                 : Container(
-                    width:
-                        (MediaQuery.of(context).size.width - 16 - 16 - 8) / 2,
+                    width: (MediaQuery.of(context).size.width - 16 - 16 - 8) *
+                        (1 - (struct.left ?? .5)),
                     child: Text(
                       rightSide,
                       style: style,
+                      textAlign: TextAlign.right,
                       overflow: pair.length == 2
                           ? TextOverflow.fade
                           : TextOverflow.fade,
@@ -214,28 +223,43 @@ class _CheckoutState extends State<Checkout> {
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: EdgeInsets.only(left: 16, right: 16, bottom: 7),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ...fees,
-                ],
+            if (struct.fees != null)
+              Padding(
+                padding: EdgeInsets.only(left: 16, right: 16, bottom: 7),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ...fees,
+                  ],
+                ),
               ),
-            ),
             Divider(indent: 0),
-            Padding(
-              padding:
-                  EdgeInsets.only(top: 10, left: 16, right: 16, bottom: 40),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  total,
-                  SizedBox(height: 40),
-                  submitButton,
-                ],
+            if (struct.total != null)
+              Padding(
+                padding:
+                    EdgeInsets.only(top: 10, left: 16, right: 16, bottom: 40),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    total,
+                    SizedBox(height: 40),
+                    submitButton,
+                  ],
+                ),
               ),
-            ),
+            if (struct.confirm != null)
+              Padding(
+                padding:
+                    EdgeInsets.only(top: 10, left: 16, right: 16, bottom: 40),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    confirm,
+                    SizedBox(height: 40),
+                    struct.button == null ? submitButton : struct.button!,
+                  ],
+                ),
+              ),
           ],
         ),
       );
@@ -244,7 +268,7 @@ class _CheckoutState extends State<Checkout> {
         Text('Fees', style: Theme.of(context).checkoutFees),
         SizedBox(height: 14),
         ...detailItems(
-          pairs: struct.fees,
+          pairs: struct.fees!,
           style: Theme.of(context).checkoutFee,
           fee: true,
         ),
@@ -254,8 +278,13 @@ class _CheckoutState extends State<Checkout> {
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Text('Total:', style: Theme.of(context).textTheme.bodyText1),
         Text(
-            '${getRightTotal(struct.total)} ${struct.paymentSymbol.toUpperCase()}',
+            '${getRightTotal(struct.total!)} ${struct.paymentSymbol!.toUpperCase()}',
             style: Theme.of(context).textTheme.bodyText1),
+      ]);
+
+  Widget get confirm =>
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text(struct.confirm!, style: Theme.of(context).textTheme.bodyText1),
       ]);
 
   String getRightTotal(String x) {
@@ -274,16 +303,11 @@ class _CheckoutState extends State<Checkout> {
           context,
           enabled: !disabled,
           label: struct.buttonWord,
-          disabledIcon: Icon(
-            struct.buttonIcon,
-            color: Theme.of(context).disabledColor,
-          ),
           disabledOnPressed:
               //? () {}
               /// for testing
               () async {
             components.loading.screen(message: struct.loadingMessage);
-            print('working...');
             await Future.delayed(Duration(seconds: 6));
             streams.app.snack.add(Snack(message: 'test'));
           },

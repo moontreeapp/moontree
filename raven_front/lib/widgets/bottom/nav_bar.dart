@@ -18,7 +18,6 @@ class _NavBarState extends State<NavBar> {
   @override
   Widget build(BuildContext context) {
     var assetType = Asset.assetTypeOf(streams.app.asset.value ?? '');
-    print(streams.app.page.value);
     return streams.app.page.value == 'Send'
         ? Container(height: 0)
         : Container(

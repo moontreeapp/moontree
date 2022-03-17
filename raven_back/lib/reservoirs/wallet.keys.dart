@@ -23,3 +23,14 @@ extension ByWalletTypeMethodsForWallet on Index<_WalletTypeKey, Wallet> {
   List<Wallet> getAll(WalletType walletType) =>
       getByKeyStr(walletType.enumString);
 }
+
+/// byWalletType
+
+class _NameKey extends Key<Wallet> {
+  @override
+  String getKey(Wallet wallet) => wallet.name;
+}
+
+extension ByNameMethodsForWallet on Index<_NameKey, Wallet> {
+  Wallet? getOne(String name) => getByKeyStr(name).firstOrNull;
+}

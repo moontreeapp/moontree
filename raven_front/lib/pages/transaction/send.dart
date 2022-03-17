@@ -549,7 +549,6 @@ class _SendState extends State<Send> {
           buttonAction: () =>
               // will this execute the values here or there?
               streams.spend.send.add(streams.spend.made.value),
-          buttonIcon: MdiIcons.arrowTopRightThick,
           buttonWord: 'Send',
           loadingMessage: 'Sending',
         )

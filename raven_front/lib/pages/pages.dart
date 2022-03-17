@@ -96,6 +96,7 @@ class pages {
         '/transaction/receive': (context) => receive,
         '/transaction/send': (context) => send,
         '/transaction/checkout': (context) => checkout,
+        '/settings/export/export': (context) => checkout,
         '/settings/about': (context) => about,
         '/settings/level': (context) => advanced,
         '/settings/currency': (context) => language,

@@ -26,6 +26,7 @@ enum SelectionSet {
   Sub_Asset,
   Sub_Qualifier,
   Feedback,
+  Wallets,
 }
 enum SelectionOption {
   // list of my assets
@@ -286,6 +287,34 @@ class SelectionItems {
       ),
       title: Text(name, style: Theme.of(context).textTheme.bodyText1));
 
+  Widget walletItem(Wallet wallet, TextEditingController controller) =>
+      ListTile(
+          visualDensity: VisualDensity.compact,
+          onTap: () {
+            Navigator.pop(context);
+            controller.text = 'Wallet ' + wallet.name;
+          },
+          leading: Icon(
+            Icons.account_balance_wallet_rounded,
+            color: AppColors.primary,
+            size: 20,
+          ),
+          title: Text('Wallet ' + wallet.name,
+              style: Theme.of(context).textTheme.bodyText1));
+
+  Widget walletItemAll(TextEditingController controller) => ListTile(
+      visualDensity: VisualDensity.compact,
+      onTap: () {
+        Navigator.pop(context);
+        controller.text = 'All Wallets';
+      },
+      leading: Icon(
+        Icons.account_balance_wallet_rounded,
+        color: AppColors.primary,
+        size: 24,
+      ),
+      title: Text('All Wallets', style: Theme.of(context).textTheme.bodyText1));
+
   Widget parentItem(String name) => ListTile(
       visualDensity: VisualDensity.compact,
       onTap: () {
@@ -421,8 +450,12 @@ class SelectionItems {
         ),
       );
 
-  void produceModal(List items, {bool tall = true, bool extra = false}) {
-    showModalBottomSheet<void>(
+  Future<void> produceModal(
+    List items, {
+    bool tall = true,
+    bool extra = false,
+  }) async {
+    await showModalBottomSheet<void>(
         context: context,
         enableDrag: true,
         elevation: 1,
@@ -443,8 +476,18 @@ class SelectionItems {
             ])));
   }
 
-  void build({List<String>? holdingNames, String? decimalPrefix}) {
-    if (modalSet == SelectionSet.Holdings) {
+  Future<void> build({
+    List<String>? holdingNames,
+    String? decimalPrefix,
+    TextEditingController? controller,
+  }) async {
+    if (modalSet == SelectionSet.Wallets) {
+      await produceModal(
+        [walletItemAll(controller!)] +
+            [for (Wallet wallet in res.wallets) walletItem(wallet, controller)],
+        tall: false,
+      );
+    } else if (modalSet == SelectionSet.Holdings) {
       produceModal(
         [for (String holding in holdingNames ?? []) holdingItem(holding)],
       );

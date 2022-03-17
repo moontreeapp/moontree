@@ -2,18 +2,19 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:raven_back/raven_back.dart';
-import 'package:raven_front/components/components.dart';
-import 'package:raven_front/services/lookup.dart';
-import 'package:raven_front/services/storage.dart';
-import 'package:raven_front/utils/data.dart';
-import 'package:raven_back/utils/hex.dart' as hex;
+import 'package:share/share.dart';
 import 'package:convert/convert.dart' as convert;
+import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/streams/app.dart';
+import 'package:raven_back/utils/hex.dart' as hex;
+import 'package:raven_front/components/components.dart';
+import 'package:raven_front/pages/transaction/checkout.dart';
+import 'package:raven_front/services/storage.dart';
+import 'package:raven_front/theme/theme.dart';
+import 'package:raven_front/widgets/widgets.dart';
 
 class Export extends StatefulWidget {
-  //final Storage storage;
-  final dynamic data;
-  const Export({this.data}) : super();
+  const Export() : super();
 
   @override
   _ExportState createState() => _ExportState();
@@ -21,11 +22,12 @@ class Export extends StatefulWidget {
 
 class _ExportState extends State<Export> {
   final Backup storage = Backup();
-  dynamic data = {};
   Wallet? wallet;
   File? file;
   List<Widget> getExisting = [];
   bool encryptExport = true;
+  FocusNode previewFocus = FocusNode();
+  TextEditingController walletController = TextEditingController();
 
   @override
   void initState() {
@@ -33,122 +35,141 @@ class _ExportState extends State<Export> {
   }
 
   @override
+  void dispose() {
+    previewFocus.dispose();
+    walletController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    data = populateData(context, data);
-    if (data['walletId'] == 'all') {
-    } else if (data['walletId'] == 'current' || data['walletId'] == null) {
-      wallet = Current.wallet;
-    } else {
-      wallet =
-          res.wallets.primaryIndex.getOne(data['walletId']) ?? Current.wallet;
-    }
-    getExisting = [
-      TextButton(
+    wallet =
+        walletController.text != '' && walletController.text != 'All Wallets'
+            ? res.wallets.byName.getOne(walletController.text)
+            : null;
+    return body();
+  }
+
+  Widget body() => Padding(
+      padding: EdgeInsets.only(left: 16.0, top: 16, right: 16, bottom: 40),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          walletChoices,
+          Row(children: [previewButton])
+        ],
+      ));
+
+  Widget get walletChoices => TextField(
+        controller: walletController,
+        readOnly: true,
+        decoration: components.styles.decorations.textFeild(
+          context,
+          labelText: 'Wallet',
+          helperText: walletController.text == ''
+              ? ''
+              : 'A wallet password is recommended.',
+          helperStyle: TextStyle(color: AppColors.error),
+          suffixIcon: IconButton(
+            icon: Padding(
+                padding: EdgeInsets.only(right: 14),
+                child:
+                    Icon(Icons.expand_more_rounded, color: AppColors.black87)),
+            onPressed: () => _produceWalletModal(),
+          ),
+        ),
+        onTap: () {
+          _produceWalletModal();
+        },
+        onEditingComplete: () async {
+          FocusScope.of(context).requestFocus(previewFocus);
+        },
+      );
+
+  Widget get previewButton => components.buttons.actionButton(
+        context,
+        enabled: walletController.text != '',
+        focusNode: previewFocus,
+        onPressed: () async {
+          Navigator.of(components.navigator.routeContext!).pushNamed(
+            '/settings/export/export',
+            arguments: {
+              'struct': CheckoutStruct(
+                icon: Icon(Icons.account_balance_wallet_rounded,
+                    size: 36, color: AppColors.primary),
+                symbol: null,
+                displaySymbol: walletController.text,
+                subSymbol: null,
+                paymentSymbol: null,
+                left: .25,
+                items: [
+                  ['Location', await storage.localPath, '3'],
+                  ['File', filePrefix + today + '.json', '2'],
+                ],
+                fees: null,
+                total: null,
+                confirm: 'Are you sure you want to export?',
+                buttonAction: () => null,
+                buttonWord: null,
+                button: finalSubmitButtons,
+                loadingMessage: 'Exporting',
+              )
+            },
+          );
+        },
+      );
+
+  Widget get finalSubmitButtons => Row(children: [
+        components.buttons.actionButton(
+          context,
+          enabled: true,
+          label: 'Share',
           onPressed: () async {
-            await existingFiles;
-            setState(() {});
+            await Share.share(rawExport);
           },
-          child: Text('get'))
-    ];
-    return Scaffold(
-      //appBar: components.headers.back(context, 'Export'),
-      body: body(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: exportButton,
-    );
+        ),
+        SizedBox(width: 16),
+        components.buttons.actionButton(
+          context,
+          enabled: true,
+          label: 'Export',
+          onPressed: () async {
+            components.loading.screen(message: 'Exporting');
+            file = await export();
+            await Future.delayed(Duration(seconds: 1));
+            streams.app.snack.add(Snack(
+              message: 'Successfully Exported ${walletController.text}',
+            ));
+          },
+        )
+      ]);
+
+  Future<File> export() async => await storage.writeExport(
+        filename: filePrefix + today,
+        rawExport: rawExport,
+      );
+
+  String get filePrefix => 'moontree_backup_';
+
+  String get today =>
+      DateTime.now().month.toString() +
+      '_' +
+      DateTime.now().day.toString() +
+      '_' +
+      DateTime.now().year.toString().substring(2);
+
+  String get rawExport => services.password.required && encryptExport
+      ? hex.encrypt(
+          convert.hex.encode(
+              jsonEncode(services.wallet.export.structureForExport())
+                  .codeUnits),
+          services.cipher.currentCipher!)
+      : jsonEncode(services.wallet.export.structureForExport());
+
+  void _produceWalletModal() async {
+    await SelectionItems(context, modalSet: SelectionSet.Wallets)
+        .build(controller: walletController);
+    setState(() {/* to refresh and enable the button */});
   }
-
-  String get _walletName =>
-      wallet != null ? 'Wallet: ' + wallet!.id : 'All Wallets';
-  String get _walletId => wallet != null ? wallet!.id : 'All Wallets';
-
-  Future<File> _download() async => await storage.writeExport(
-      filename: _walletId + '-' + DateTime.now().toString(),
-      rawExport: services.password.required && encryptExport
-          ? hex.encrypt(
-              convert.hex.encode(
-                  jsonEncode(services.wallet.export.structureForExport())
-                      .codeUnits),
-              services.cipher.currentCipher!)
-          : jsonEncode(services.wallet.export.structureForExport()));
-
-  Widget get exportButton => ElevatedButton.icon(
-      icon: components.icons.export,
-      onPressed: () async {
-        file = await _download();
-        setState(() {});
-      },
-      label: Text('Export ' + _walletName));
-
-  // todo: fix visual of exported backups
-  Future get existingFiles async {
-    print(await storage.listDir());
-    print([
-      for (var f in (await storage.listDir()).whereType<File>())
-        if (f.path.endsWith('.jason')) f.path
-    ]);
-    getExisting = [
-      for (var f in (await storage.listDir()).whereType<File>()) Text(f.path)
-    ];
-  }
-
-  Column body() => Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            ...[
-              if (!services.password.required)
-                TextButton.icon(
-                    onPressed: () =>
-                        Navigator.pushNamed(context, '/security/change'),
-                    icon: Icon(Icons.warning),
-                    label: Text(
-                        'For added security, it is advised to set a password '
-                        'before exporting. To set a password, just click here.'))
-            ],
-
-            /// we shouldn't give the option, because if users want to backup without encryption they can get the primary keys or seed phrases manually
-            //...[
-            //  if (services.password.required)
-            //    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            //      Checkbox(
-            //          value: encryptExport,
-            //          onChanged: (_) => setState(() {
-            //                encryptExport = !encryptExport;
-            //              })),
-            //      Text('Encrypt this backup')
-            //    ])
-            //],
-            SizedBox(height: 25),
-            ...[
-              if (wallet != null && res.wallets.length > 1)
-                TextButton.icon(
-                    onPressed: () => setState(() {
-                          data['walletId'] = 'all';
-                          wallet = null;
-                        }),
-                    icon: Icon(Icons.help),
-                    label: Text('Export ALL?'))
-            ],
-            SizedBox(height: 25),
-            Center(
-                child: Visibility(
-                    visible: true,
-                    child: Padding(
-                        padding: EdgeInsets.all(20.0),
-                        child: file == null
-                            ? Text('')
-                            : Center(
-                                child: Column(children: [
-                                Text('file saved to:'),
-                                Text('${file?.path}'),
-                                SizedBox(height: 25),
-                                ElevatedButton.icon(
-                                  onPressed: () => storage.share(file!.path),
-                                  icon: Icon(Icons.share),
-                                  label: Text('Share'),
-                                ),
-                              ]))))),
-            //...(getExisting),
-          ]);
 }

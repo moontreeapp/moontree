@@ -13,6 +13,7 @@ class DecorationComponents {
     String? errorText,
     Widget? suffixIcon,
     String? suffixText,
+    TextStyle? helperStyle,
     TextStyle? suffixStyle,
   }) =>
       InputDecoration(
@@ -42,5 +43,6 @@ class DecorationComponents {
         suffixIcon: suffixIcon,
         suffixText: suffixText,
         suffixStyle: suffixStyle,
+        helperStyle: helperStyle,
       );
 }

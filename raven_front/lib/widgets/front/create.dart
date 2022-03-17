@@ -590,7 +590,6 @@ class _CreateAssetState extends State<CreateAsset> {
 
           /// send the MainCreate request to the right stream
           //streams.spend.send.add(streams.spend.made.value),
-          buttonIcon: MdiIcons.arrowTopRightThick,
           buttonWord: 'Create',
           loadingMessage: 'Creating Asset',
         )
