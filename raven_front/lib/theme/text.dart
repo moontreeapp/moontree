@@ -167,6 +167,12 @@ class AppText {
       fontWeight: FontWeights.semiBold,
       letterSpacing: 0.1,
       color: AppColors.offBlack);
+  static TextStyle? get invertButton => TextStyle(
+      fontSize: 14.0,
+      fontFamily: 'Nunito',
+      fontWeight: FontWeights.semiBold,
+      letterSpacing: 1.25,
+      color: AppColors.white);
   static TextStyle? get disabledButton => TextStyle(
       fontSize: 14.0,
       fontFamily: 'Nunito',

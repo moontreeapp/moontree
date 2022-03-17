@@ -38,7 +38,7 @@ class _BackLayerState extends State<BackLayer> {
   @override
   Widget build(BuildContext context) {
     if (pageTitle.startsWith('Wallet')) {
-      return NavDrawer();
+      return NavMenu();
     }
     if (['Send', 'Transactions'].contains(pageTitle)) {
       return BalanceHeader(pageTitle: pageTitle);

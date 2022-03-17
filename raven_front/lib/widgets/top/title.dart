@@ -98,6 +98,7 @@ class _PageTitleState extends State<PageTitle> {
                         'Qualifiersub': 'Create',
                         'Sub': 'Create',
                         'Restricted': 'Create',
+                        'Login': 'Unlock',
                       }[pageTitle] ??
                       {
                         'Transactions': ((streams.spend.form.value?.symbol ??
@@ -123,36 +124,46 @@ class _PageTitleState extends State<PageTitle> {
       if (settingTitle != null) {
         return GestureDetector(
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                elevation: 0,
-                backgroundColor: AppColors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(8.0),
-                  topRight: Radius.circular(8.0),
-                )),
-                duration: Duration(seconds: 60),
-                content: Container(
-                    child: ListView(shrinkWrap: true, children: <Widget>[
-                  for (Wallet wallet in res.wallets)
-                    ListTile(
-                      visualDensity: VisualDensity.compact,
-                      onTap: () {
-                        ScaffoldMessenger.of(context).clearSnackBars();
-                        flingBackdrop(context);
-                        res.settings.setCurrentWalletId(wallet.id);
-                        Navigator.pop(context);
-                      },
-                      leading: Icon(
-                        Icons.account_balance_wallet_rounded,
-                        color: AppColors.primary,
-                      ),
-                      title: Text('Wallet ' + wallet.name,
-                          style: Theme.of(context).textTheme.bodyText1),
-                    )
-                ])),
-              ));
-              // on click: ;
+              if (components.navigator.isSnackbarActive) {
+                components.navigator.isSnackbarActive = false;
+                ScaffoldMessenger.of(context).clearSnackBars();
+              } else {
+                components.navigator.isSnackbarActive = true;
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(
+                      elevation: 0,
+                      backgroundColor: AppColors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(8.0),
+                        topRight: Radius.circular(8.0),
+                      )),
+                      duration: Duration(seconds: 60),
+                      content: Container(
+                          child: ListView(shrinkWrap: true, children: <Widget>[
+                        for (Wallet wallet in res.wallets)
+                          ListTile(
+                            visualDensity: VisualDensity.compact,
+                            onTap: () {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              flingBackdrop(context);
+                              res.settings.setCurrentWalletId(wallet.id);
+                              Navigator.pop(context);
+                            },
+                            leading: Icon(
+                              Icons.account_balance_wallet_rounded,
+                              color: AppColors.primary,
+                            ),
+                            title: Text('Wallet ' + wallet.name,
+                                style: Theme.of(context).textTheme.bodyText1),
+                          )
+                      ])),
+                    ))
+                    .closed
+                    .then((SnackBarClosedReason reason) {
+                  components.navigator.isSnackbarActive = false;
+                });
+              }
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,

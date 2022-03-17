@@ -18,14 +18,14 @@ import 'package:raven_back/utils/database.dart' as ravenDatabase;
 import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_electrum/methods/transaction/get.dart';
 
-class NavDrawer extends StatefulWidget {
-  NavDrawer({Key? key}) : super(key: key);
+class NavMenu extends StatefulWidget {
+  NavMenu({Key? key}) : super(key: key);
 
   @override
-  _NavDrawerState createState() => _NavDrawerState();
+  _NavMenuState createState() => _NavMenuState();
 }
 
-class _NavDrawerState extends State<NavDrawer> {
+class _NavMenuState extends State<NavMenu> {
   List listeners = [];
   String? chosen = '/settings';
 
@@ -191,19 +191,29 @@ class _NavDrawerState extends State<NavDrawer> {
     };
     return Container(
         height: MediaQuery.of(context).size.height - 118 - 10,
-
-        /// using a listview makes it variable so you don't have to define height
-        //height: 300,
-        //child: Column(
-        //  crossAxisAlignment: CrossAxisAlignment.start,
-        ///
-
         child: Column(
-          children: [
-            if (res.wallets.length > 1)
-              Divider(indent: 0, color: AppColors.white12),
-            (options[chosen] ?? options['/settings'])!
-          ],
-        ));
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(children: [
+                if (res.wallets.length > 1)
+                  Divider(indent: 0, color: AppColors.white12),
+                (options[chosen] ?? options['/settings'])!
+              ]),
+              Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+                Padding(
+                    padding: EdgeInsets.only(left: 16, right: 16, top: 0),
+                    child: Row(
+                      children: [logoutButton],
+                    )),
+                SizedBox(height: 40)
+              ]),
+            ]));
   }
+
+  Widget get logoutButton => components.buttons.actionButton(
+        context,
+        label: 'Logout',
+        invert: true,
+        onPressed: () => print('logging out'),
+      );
 }

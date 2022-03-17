@@ -9,13 +9,13 @@ class ButtonComponents {
   Widget actionButton(
     BuildContext context, {
     String? label,
-    // Widget? icon,
     Widget? disabledIcon,
     String? link,
     VoidCallback? onPressed,
     VoidCallback? disabledOnPressed,
     FocusNode? focusNode,
     bool enabled = true,
+    bool invert = false,
   }) =>
       Expanded(
           child: Container(
@@ -28,10 +28,14 @@ class ButtonComponents {
                       .pushNamed(link)
                   : onPressed ?? () {})
               : disabledOnPressed ?? () {},
-          style: components.styles.buttons.bottom(context, disabled: !enabled),
+          style: invert
+              ? components.styles.buttons.bottom(context, invert: true)
+              : components.styles.buttons.bottom(context, disabled: !enabled),
           child: Text(_labelDefault(label),
               style: enabled
-                  ? /*Theme.of(context).enabledButton*/ null
+                  ? invert
+                      ? Theme.of(context).invertButton
+                      : null
                   : Theme.of(context).disabledButton),
         ),
       ));

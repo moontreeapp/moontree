@@ -25,6 +25,7 @@ extension TextStyleExtension on ThemeData {
   TextStyle? get sendConfirm => AppText.sendConfirm;
   TextStyle? get sendConfirmButton => AppText.sendConfirmButton;
   TextStyle? get textButton => AppText.textButton;
+  TextStyle? get invertButton => AppText.invertButton;
   TextStyle? get disabledButton => AppText.disabledButton;
   TextStyle? get enabledButton => AppText.enabledButton;
   TextStyle? get importedSize => AppText.importedSize;

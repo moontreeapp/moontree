@@ -7,6 +7,7 @@ class RouteStack extends NavigatorObserver {
   BuildContext? routeContext;
   BuildContext? scaffoldContext;
   TabController? tabController;
+  bool isSnackbarActive = false;
 
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     routeStack.add(route);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/theme/theme.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -11,6 +12,7 @@ class _LoginState extends State<Login> {
   var password = TextEditingController();
   var passwordVisible = false;
   bool buttonEnabled = false;
+  FocusNode unlockFocus = FocusNode();
 
   @override
   void initState() {
@@ -21,12 +23,12 @@ class _LoginState extends State<Login> {
   @override
   void dispose() {
     password.dispose();
+    unlockFocus.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size.height);
     return body();
   }
 
@@ -41,30 +43,67 @@ class _LoginState extends State<Login> {
                   Theme.of(context).disabledColor)));
 
   Widget body() => Container(
-      alignment: Alignment.topCenter,
-      padding: EdgeInsets.only(left: 16, right: 16),
-      child: Container(
-          alignment: Alignment.bottomCenter,
-          height: MediaQuery.of(context).size.height / 2,
-          child: TextField(
-              autocorrect: false,
-              controller: password,
-              obscureText: !passwordVisible,
-              textInputAction: TextInputAction.done,
-              decoration: components.styles.decorations.textFeild(
-                context,
-                labelText: 'password',
-                suffixIcon: IconButton(
-                  icon: Icon(
-                      passwordVisible ? Icons.visibility : Icons.visibility_off,
-                      color: Color(0x99000000)),
-                  onPressed: () => setState(() {
-                    passwordVisible = !passwordVisible;
-                  }),
-                ),
-              ),
-              onChanged: (_) async => await submit(showFailureMessage: false),
-              onEditingComplete: () async => await submit())));
+      padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
+      child: CustomScrollView(slivers: <Widget>[
+        SliverToBoxAdapter(
+          child: Container(
+              height: (MediaQuery.of(context).size.height - 16 - 40 - 70) / 2,
+              child: welcomeMessage),
+        ),
+        SliverToBoxAdapter(
+          child: Container(
+              alignment: Alignment.center, height: 70, child: loginField),
+        ),
+        SliverFillRemaining(
+            hasScrollBody: false,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(height: 80),
+                  Row(children: [unlockButton]),
+                  SizedBox(height: 40),
+                ])),
+      ]));
+
+  Widget get welcomeMessage =>
+      Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Image(image: AssetImage('assets/logo/moontree.png')),
+        SizedBox(height: 8),
+        Text(
+          'Welcome Back',
+          style: Theme.of(context).textTheme.headline1,
+        ),
+      ]);
+
+  Widget get loginField => TextField(
+      autocorrect: false,
+      controller: password,
+      obscureText: !passwordVisible,
+      textInputAction: TextInputAction.done,
+      decoration: components.styles.decorations.textFeild(
+        context,
+        labelText: 'password',
+        suffixIcon: IconButton(
+          icon: Icon(passwordVisible ? Icons.visibility : Icons.visibility_off,
+              color: AppColors.black60),
+          onPressed: () => setState(() {
+            passwordVisible = !passwordVisible;
+          }),
+        ),
+      ),
+      onChanged: (_) {},
+      onEditingComplete: () {
+        FocusScope.of(context).requestFocus(unlockFocus);
+        setState(() {});
+      });
+
+  Widget get unlockButton => components.buttons.actionButton(context,
+      enabled: validate(),
+      focusNode: unlockFocus,
+      onPressed: () async => await submit());
+
+  bool validate() => services.password.validate.password(password.text);
 
   Future submit({bool showFailureMessage = true}) async {
     if (services.password.validate.password(password.text)) {

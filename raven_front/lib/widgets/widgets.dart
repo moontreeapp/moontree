@@ -3,7 +3,7 @@ export 'top/lead.dart';
 export 'top/title.dart';
 export 'top/qrcode.dart';
 export 'back/back_layer.dart';
-export 'back/nav_drawer.dart';
+export 'back/menu.dart';
 export 'back/balance_header.dart';
 export 'back/coin.dart';
 export 'front/lists/assets.dart';

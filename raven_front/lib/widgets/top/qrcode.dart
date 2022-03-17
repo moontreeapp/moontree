@@ -14,16 +14,14 @@ class QRCodeContainer extends StatefulWidget {
 class _QRCodeContainerState extends State<QRCodeContainer> {
   late String pageTitle = 'Wallet';
   late List listeners = [];
-  final List<String> blanks = ['main', '', 'Scan', 'Send'];
+  final List<String> blanks = ['main', '', 'Scan', 'Send', 'Login'];
 
   @override
   void initState() {
     super.initState();
     listeners.add(streams.app.page.listen((value) {
       if (((blanks.contains(value) && !blanks.contains(pageTitle)) ||
-              (!blanks.contains(value) && blanks.contains(pageTitle))) ||
-          ((value == 'Login' && pageTitle != value) ||
-              (value != 'Login' && pageTitle == 'Login'))) {
+          (!blanks.contains(value) && blanks.contains(pageTitle)))) {
         setState(() {
           pageTitle = value;
         });
@@ -42,12 +40,6 @@ class _QRCodeContainerState extends State<QRCodeContainer> {
   @override
   Widget build(BuildContext context) =>
       {
-        'Login': Padding(
-            padding: EdgeInsets.only(left: 16, right: 12),
-            child: Icon(
-              MdiIcons.qrcodeScan,
-              color: AppColors.black38,
-            )),
         'Send': Padding(
             padding: EdgeInsets.only(left: 0),
             child: QRCodeButton(pageTitle: 'Send-to')),
