@@ -92,7 +92,9 @@ class _LoginState extends State<Login> {
           }),
         ),
       ),
-      onChanged: (_) {},
+      onChanged: (_) {
+        setState(() {});
+      },
       onEditingComplete: () {
         FocusScope.of(context).requestFocus(unlockFocus);
         setState(() {});
@@ -118,7 +120,6 @@ class _LoginState extends State<Login> {
       services.cipher.initCiphers(altPassword: password.text);
       await services.cipher.updateWallets();
       services.cipher.cleanupCiphers();
-      services.password.broadcastLogin;
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
     } else {
       buttonEnabled = false;

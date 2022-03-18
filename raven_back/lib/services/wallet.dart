@@ -40,23 +40,26 @@ class WalletService {
   Future createSave({
     required WalletType walletType,
     required CipherUpdate cipherUpdate,
-    required String secret,
+    String? secret,
     String? name,
-  }) async =>
-      {
-        WalletType.leader: () async => await leader.makeSaveLeaderWallet(
-              res.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
-              cipherUpdate: cipherUpdate,
-              mnemonic: secret,
-              name: name,
-            ),
-        WalletType.single: () async => await single.makeSaveSingleWallet(
-              res.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
-              cipherUpdate: cipherUpdate,
-              wif: secret,
-              name: name,
-            )
-      }[walletType]!();
+  }) async {
+    if (walletType == WalletType.leader) {
+      await leader.makeSaveLeaderWallet(
+        res.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+        cipherUpdate: cipherUpdate,
+        mnemonic: secret,
+        name: name,
+      );
+    } else {
+      //WalletType.single
+      await single.makeSaveSingleWallet(
+        res.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+        cipherUpdate: cipherUpdate,
+        wif: secret,
+        name: name,
+      );
+    }
+  }
 
   Wallet? create({
     required WalletType walletType,
