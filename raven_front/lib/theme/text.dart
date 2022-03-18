@@ -100,6 +100,14 @@ class AppText {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+  static TextStyle? get subtitle1OffBlack => TextStyle(
+      fontSize: 16.0,
+      height: 1.5,
+      fontFamily: 'Nunito',
+      fontWeight: FontWeights.semiBold,
+      letterSpacing: 0.15,
+      color: AppColors.black87);
+
   static TextStyle? get textFieldError => TextStyle(
       fontSize: 12.0,
       fontFamily: 'Nunito',

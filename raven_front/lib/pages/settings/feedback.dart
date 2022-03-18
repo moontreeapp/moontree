@@ -35,7 +35,22 @@ class _FeedbackState extends State<Feedback> {
   bool sendEnabled = false;
 
   @override
+  void initState() {
+    super.initState();
+    descriptionFocus.addListener(_handleFocusChange);
+    emailFocus.addListener(_handleFocusChange);
+  }
+
+  void _handleFocusChange() {
+    print("descriptionFocus focus: ${descriptionFocus.hasFocus}");
+    print("emailFocus focus: ${emailFocus.hasFocus}");
+    setState(() {});
+  }
+
+  @override
   void dispose() {
+    descriptionFocus.removeListener(_handleFocusChange);
+    emailFocus.removeListener(_handleFocusChange);
     typeController.dispose();
     descriptionController.dispose();
     emailController.dispose();
@@ -129,25 +144,30 @@ class _FeedbackState extends State<Feedback> {
       height: 200,
       padding: EdgeInsets.only(top: 16, left: 16.0, right: 16.0),
       child: TextField(
-        focusNode: descriptionFocus,
-        autocorrect: false,
-        controller: descriptionController,
-        keyboardType: TextInputType.multiline,
-        maxLines: 1000,
-        textInputAction: TextInputAction.done,
-        decoration: components.styles.decorations.textFeild(
-          context,
-          labelText: 'Description',
-          hintText: 'As a user... I want... so that...',
-          helperText: descriptionController.text == ''
-              ? 'As a user... I want... so that...'
-              : null,
-          errorText: null,
-        ),
-        onChanged: (value) => enableSend(),
-        onEditingComplete: () =>
-            FocusScope.of(context).requestFocus(emailFocus),
-      ));
+          focusNode: descriptionFocus,
+          autocorrect: false,
+          controller: descriptionController,
+          keyboardType: TextInputType.multiline,
+          maxLines: 1000,
+          textInputAction: TextInputAction.done,
+          style: descriptionFocus.hasFocus
+              ? Theme.of(context).textTheme.subtitle1OffBlack
+              : Theme.of(context).textTheme.subtitle1,
+          decoration: components.styles.decorations.textFeild(
+            context,
+            labelText: 'Description',
+            hintText: 'As a user... I want... so that...',
+            helperText: descriptionController.text == ''
+                ? 'As a user... I want... so that...'
+                : null,
+            errorText: null,
+          ),
+          onChanged: (value) => enableSend(),
+          onEditingComplete: () {
+            print(descriptionFocus.hasFocus);
+            FocusScope.of(context).requestFocus(emailFocus);
+            setState(() {});
+          }));
 
   Widget get emailField => Container(
       padding: EdgeInsets.only(top: 16, left: 16.0, right: 16.0),
@@ -157,6 +177,9 @@ class _FeedbackState extends State<Feedback> {
         controller: emailController,
         keyboardType: TextInputType.emailAddress,
         textInputAction: TextInputAction.done,
+        style: emailFocus.hasFocus
+            ? Theme.of(context).textTheme.subtitle1OffBlack
+            : Theme.of(context).textTheme.subtitle1,
         decoration: components.styles.decorations.textFeild(
           context,
           labelText: 'Email Address',
