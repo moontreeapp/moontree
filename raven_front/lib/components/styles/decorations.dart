@@ -13,6 +13,7 @@ class DecorationComponents {
     String? errorText,
     Widget? suffixIcon,
     String? suffixText,
+    TextStyle? labelStyle,
     TextStyle? helperStyle,
     TextStyle? suffixStyle,
   }) =>
@@ -29,7 +30,7 @@ class DecorationComponents {
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
             borderSide: BorderSide(color: AppColors.black12)),
-        labelStyle: Theme.of(context).textTheme.subtitle1,
+        labelStyle: labelStyle ?? Theme.of(context).textTheme.subtitle1,
         alignLabelWithHint: true,
         errorStyle: Theme.of(context).textFieldError,
         floatingLabelStyle: TextStyle(

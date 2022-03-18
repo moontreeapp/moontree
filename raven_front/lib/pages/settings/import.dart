@@ -24,7 +24,8 @@ class Import extends StatefulWidget {
 
 class _ImportState extends State<Import> {
   dynamic data = {};
-  var words = TextEditingController();
+  FocusNode wordsFocus = FocusNode();
+  TextEditingController words = TextEditingController();
   bool importEnabled = false;
   late Wallet wallet;
   String importFormatDetected = '';
@@ -35,7 +36,18 @@ class _ImportState extends State<Import> {
   String? finalAccountId;
 
   @override
+  void initState() {
+    super.initState();
+    wordsFocus.addListener(_handleFocusChange);
+  }
+
+  void _handleFocusChange() {
+    setState(() {});
+  }
+
+  @override
   void dispose() {
+    wordsFocus.removeListener(_handleFocusChange);
     words.dispose();
     super.dispose();
   }
@@ -91,6 +103,7 @@ class _ImportState extends State<Import> {
         right: 16.0,
       ),
       child: TextField(
+        focusNode: wordsFocus,
         autocorrect: false,
         controller: words,
         keyboardType: TextInputType.multiline,
@@ -98,8 +111,13 @@ class _ImportState extends State<Import> {
         textInputAction: TextInputAction.done,
         decoration: components.styles.decorations.textFeild(
           context,
-          labelText: 'Seed, WIF, or Key',
-          hintText: 'Please enter your seed words, WIF, or private key',
+          labelStyle: Theme.of(context)
+              .textTheme
+              .subtitle1OffSmallLineHeight, // needs work
+          labelText: wordsFocus.hasFocus
+              ? 'Seed | WIF | Key'
+              : 'Please enter your seed words, WIF, \n\nor private key.',
+          hintText: 'Please enter your seed words, WIF, or private key.',
           helperText:
               importFormatDetected == 'Unknown' ? null : importFormatDetected,
           errorText:

@@ -42,8 +42,6 @@ class _FeedbackState extends State<Feedback> {
   }
 
   void _handleFocusChange() {
-    print("descriptionFocus focus: ${descriptionFocus.hasFocus}");
-    print("emailFocus focus: ${emailFocus.hasFocus}");
     setState(() {});
   }
 
