@@ -174,18 +174,11 @@ class _NavMenuState extends State<NavMenu> {
           ),
           SettingsTile(
               title: 'test',
-              titleTextStyle: Theme.of(context).drawerDestination,
               leading: Icon(Icons.info_outline_rounded),
               onPressed: (BuildContext context) async {
-                print(res.assets.data
-                    .where((Asset asset) => asset.symbol.contains('MOONTREE2'))
-                    .map((e) => e.symbol));
-                var client = streams.client.client.value!;
-                var tx = await client.getTransaction(
-                    '9eaa220b15d2802d8ec04075f22136d0783a2064254b3c9cc5d762882f02bf15');
-                print(tx.vout[4]);
+                print(res.ciphers);
               }),
-            */
+          */
         ],
       )
     };
@@ -218,15 +211,10 @@ class _NavMenuState extends State<NavMenu> {
       );
 
   void logout() async {
-    print('logging out');
-    // remove ciphers
-    // still testing... got interrupted by #346
-    //services.cipher.clearCiphers();
-    //await services.cipher.clearWallets();
-    //services.password.broadcastLogout;
-    //Navigator.pushReplacementNamed(
-    //    components.navigator.routeContext!, '/security/login',
-    //    arguments: {});
-    //flingBackdrop(context);
+    res.ciphers.clear();
+    Navigator.pushReplacementNamed(
+        components.navigator.routeContext!, '/security/login',
+        arguments: {});
+    flingBackdrop(context);
   }
 }

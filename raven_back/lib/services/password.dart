@@ -21,9 +21,6 @@ class PasswordService {
           if (cipherUpdate.passwordId != res.passwords.maxPasswordId)
             cipherUpdate.passwordId
       }.isNotEmpty;
-
-  void get broadcastLogin => streams.app.login.add(true);
-  void get broadcastLogout => streams.app.login.add(false);
 }
 
 class PasswordValidationService {
@@ -34,10 +31,12 @@ class PasswordValidationService {
       getHash(password, res.passwords.primaryIndex.getMostRecent()!.salt) ==
       res.passwords.primaryIndex.getMostRecent()!.saltedHash;
 
+  /// unused
   bool previousPassword(String password) =>
       getHash(password, res.passwords.primaryIndex.getPrevious()!.salt) ==
       res.passwords.primaryIndex.getPrevious()!.saltedHash;
 
+  /// unused
   /// returns the number corresponding to how many passwords ago this was used
   /// null = not found
   /// 0 = current

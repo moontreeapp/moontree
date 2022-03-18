@@ -45,26 +45,10 @@ class CipherService {
     assert(services.wallet.getPreviousCipherUpdates.isEmpty);
   }
 
-  /// make sure all wallets are on the latest ciphertype and password
-  Future clearWallets({CipherBase? cipher}) async {
-    var records = <Wallet>[];
-    for (var wallet in res.wallets.data) {
-      if (wallet is LeaderWallet) {
-        records.add(reencryptLeaderWallet(wallet,
-            res.ciphers.byCipherType.getAll(CipherType.None).first.cipher));
-      } else if (wallet is SingleWallet) {
-        records.add(reencryptSingleWallet(wallet,
-            res.ciphers.byCipherType.getAll(CipherType.None).first.cipher));
-      }
-    }
-    await res.wallets.saveAll(records);
-
-    /// completed successfully
-    assert(services.wallet.getPreviousCipherUpdates.isEmpty);
-  }
-
-  LeaderWallet reencryptLeaderWallet(LeaderWallet wallet,
-      [CipherBase? cipher]) {
+  LeaderWallet reencryptLeaderWallet(
+    LeaderWallet wallet, [
+    CipherBase? cipher,
+  ]) {
     var reencrypt = EncryptedEntropy.fromEntropy(
       EncryptedEntropy(wallet.encrypted, wallet.cipher!).entropy,
       cipher ?? currentCipher!,
@@ -74,6 +58,7 @@ class CipherService {
       id: reencrypt.walletId,
       encryptedEntropy: reencrypt.encryptedSecret,
       cipherUpdate: currentCipherUpdate,
+      name: wallet.name,
     );
   }
 
@@ -88,6 +73,7 @@ class CipherService {
       id: reencrypt.walletId,
       encryptedWIF: reencrypt.encryptedSecret,
       cipherUpdate: currentCipherUpdate,
+      name: wallet.name,
     );
   }
 
@@ -123,16 +109,6 @@ class CipherService {
   void cleanupCiphers() {
     res.ciphers.removeAll(res.ciphers.data
         .where((cipher) => !_cipherUpdates.contains(cipher.cipherUpdate)));
-
-    if (res.ciphers.data.length > 2) {
-      // in theory a wallet is not updated ... error?
-      print('more ciphers than default and password - that is weird');
-    }
-  }
-
-  void clearCiphers() {
-    res.ciphers.removeAll(res.ciphers.data
-        .where((cipher) => cipher.cipherType != CipherType.None));
 
     if (res.ciphers.data.length > 2) {
       // in theory a wallet is not updated ... error?
