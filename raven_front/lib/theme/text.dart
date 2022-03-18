@@ -108,15 +108,6 @@ class AppText {
       letterSpacing: 0.15,
       color: AppColors.black87);
 
-  static TextStyle? get subtitle1OffSmallLineHeight => TextStyle(
-      textBaseline: TextBaseline.ideographic,
-      fontSize: 16.0,
-      height: 0,
-      fontFamily: 'Nunito',
-      fontWeight: FontWeights.semiBold,
-      letterSpacing: 0.15,
-      color: AppColors.black60);
-
   static TextStyle? get textFieldError => TextStyle(
       fontSize: 12.0,
       fontFamily: 'Nunito',

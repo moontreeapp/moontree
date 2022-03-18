@@ -111,12 +111,7 @@ class _ImportState extends State<Import> {
         textInputAction: TextInputAction.done,
         decoration: components.styles.decorations.textFeild(
           context,
-          labelStyle: Theme.of(context)
-              .textTheme
-              .subtitle1OffSmallLineHeight, // needs work
-          labelText: wordsFocus.hasFocus
-              ? 'Seed | WIF | Key'
-              : 'Please enter your seed words, WIF, \n\nor private key.',
+          labelText: wordsFocus.hasFocus ? 'Seed | WIF | Key' : null,
           hintText: 'Please enter your seed words, WIF, or private key.',
           helperText:
               importFormatDetected == 'Unknown' ? null : importFormatDetected,
