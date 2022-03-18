@@ -13,6 +13,7 @@ import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 import 'package:raven_front/backdrop/backdrop.dart';
+import 'package:raven_back/streams/streams.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -94,9 +95,10 @@ class RavenMobileApp extends StatelessWidget {
                 blurRadius: 2),
           ],
           appBar: BackdropAppBar(
+            automaticallyImplyLeading: false,
             backgroundColor: Theme.of(context).backgroundColor,
             elevation: 0,
-            leading: PageLead(mainContext: context),
+            leading: leading(context),
             title: /*FittedBox(fit: BoxFit.fitWidth, child: */ PageTitle() /*)*/,
             actions: <Widget>[
               components.status,
@@ -115,4 +117,10 @@ class RavenMobileApp extends StatelessWidget {
       },
     );
   }
+
+  Widget? leading(BuildContext context) =>
+      //['', 'Login'].contains(streams.app.page.value)
+      //    ? null
+      //    : PageLead(mainContext: context);
+      PageLead(mainContext: context).show();
 }

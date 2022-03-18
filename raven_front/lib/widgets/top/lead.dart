@@ -3,7 +3,6 @@ import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/streams/streams.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
 
@@ -14,12 +13,15 @@ class PageLead extends StatefulWidget {
 
   @override
   _PageLead createState() => _PageLead();
+
+  Widget? show() => _PageLead().show;
 }
 
 class _PageLead extends State<PageLead> {
   late String pageTitle = 'Wallet';
   late String? settingTitle = null;
   late List listeners = [];
+  Widget? show = null;
 
   @override
   void initState() {
@@ -49,7 +51,14 @@ class _PageLead extends State<PageLead> {
   }
 
   @override
-  Widget build(BuildContext context) =>
+  Widget build(BuildContext context) {
+    print('${streams.app.page.value}...');
+    var bod = body();
+    show = streams.app.page.value == 'Login' ? null : bod;
+    return bod;
+  }
+
+  Widget body() =>
       {
         '/settings/import_export': IconButton(
             splashRadius: 24,
@@ -69,8 +78,9 @@ class _PageLead extends State<PageLead> {
             },
             padding: EdgeInsets.only(left: 16),
             icon: SvgPicture.asset('assets/icons/menu/menu.svg')),
-        '': Container(),
-        'Login': Container(
+        '': null,
+        'Login': null,
+        '1Login': Container(
           height: 24,
           padding: EdgeInsets.only(left: 16),
           child: SvgPicture.asset(
