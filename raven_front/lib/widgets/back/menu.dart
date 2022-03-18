@@ -192,14 +192,16 @@ class _NavMenuState extends State<NavMenu> {
                   Divider(indent: 0, color: AppColors.white12),
                 (options[chosen] ?? options['/settings'])!
               ]),
-              Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                Padding(
-                    padding: EdgeInsets.only(left: 16, right: 16, top: 0),
-                    child: Row(
-                      children: [logoutButton],
-                    )),
-                SizedBox(height: 40)
-              ]),
+              services.password.required
+                  ? Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+                      Padding(
+                          padding: EdgeInsets.only(left: 16, right: 16, top: 0),
+                          child: Row(
+                            children: [logoutButton],
+                          )),
+                      SizedBox(height: 40)
+                    ])
+                  : Container(),
             ]));
   }
 
