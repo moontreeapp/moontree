@@ -14,6 +14,7 @@ extension ValueColorExtension on ThemeData {
 extension TextThemeStyleExtension on TextTheme {
   TextStyle? get link => AppText.link;
   TextStyle? get subtitle1OffBlack => AppText.subtitle1OffBlack;
+  TextStyle? get subtitle1Black => AppText.subtitle1Black;
 }
 
 extension TextStyleExtension on ThemeData {

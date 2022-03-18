@@ -108,6 +108,14 @@ class AppText {
       letterSpacing: 0.15,
       color: AppColors.black87);
 
+  static TextStyle? get subtitle1Black => TextStyle(
+      fontSize: 16.0,
+      height: 1.5,
+      fontFamily: 'Nunito',
+      fontWeight: FontWeights.semiBold,
+      letterSpacing: 0.15,
+      color: AppColors.black);
+
   static TextStyle? get textFieldError => TextStyle(
       fontSize: 12.0,
       fontFamily: 'Nunito',

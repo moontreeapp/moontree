@@ -9,14 +9,17 @@ class About extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         SizedBox(height: 40),
-        Image.asset('assets/logo/moontree_logo_56.png'),
+        Container(
+            height: 48,
+            width: 48,
+            child: Image.asset('assets/logo/moontree_logo.png')),
         Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Text(
                 '© 2022 Moontree, LLC',
-                style: Theme.of(context).textTheme.caption,
+                style: Theme.of(context).textTheme.subtitle1Black,
               ),
               SizedBox(height: 40),
             ]),

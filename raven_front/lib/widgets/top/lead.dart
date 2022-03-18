@@ -79,7 +79,7 @@ class _PageLead extends State<PageLead> {
           ),
         ),
       }[pageTitle] ??
-      (['Send', 'Scan'].contains(pageTitle)
+      (['Send', 'Scan', 'Receive'].contains(pageTitle)
           ? IconButton(
               splashRadius: 24,
               icon: Icon(Icons.close_rounded, color: Colors.white),
