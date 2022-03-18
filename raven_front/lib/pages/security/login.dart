@@ -12,6 +12,7 @@ class _LoginState extends State<Login> {
   var password = TextEditingController();
   var passwordVisible = false;
   bool buttonEnabled = false;
+  FocusNode loginFocus = FocusNode();
   FocusNode unlockFocus = FocusNode();
 
   @override
@@ -31,16 +32,6 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return body();
   }
-
-  ElevatedButton submitButton() => ElevatedButton.icon(
-      onPressed: () async => await submit(),
-      icon: Icon(Icons.login),
-      label: Text('Login'),
-      style: buttonEnabled
-          ? null
-          : ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(
-                  Theme.of(context).disabledColor)));
 
   Widget body() => Container(
       padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
@@ -77,13 +68,15 @@ class _LoginState extends State<Login> {
       ]);
 
   Widget get loginField => TextField(
+      focusNode: loginFocus,
       autocorrect: false,
       controller: password,
       obscureText: !passwordVisible,
       textInputAction: TextInputAction.done,
       decoration: components.styles.decorations.textFeild(
         context,
-        labelText: 'password',
+        focusNode: loginFocus,
+        labelText: 'Password',
         suffixIcon: IconButton(
           icon: Icon(passwordVisible ? Icons.visibility : Icons.visibility_off,
               color: AppColors.black60),
@@ -107,9 +100,6 @@ class _LoginState extends State<Login> {
 
   bool validate() => services.password.validate.password(password.text);
 
-  Future fakeSubmit({bool showFailureMessage = true}) =>
-      Navigator.pushReplacementNamed(context, '/home', arguments: {});
-
   Future submit({bool showFailureMessage = true}) async {
     if (services.password.validate.password(password.text)) {
       setState(() {
@@ -123,25 +113,6 @@ class _LoginState extends State<Login> {
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
     } else {
       buttonEnabled = false;
-      if (showFailureMessage) {
-        var used = services.password.validate.previouslyUsed(password.text);
-        failureMessage(used == null
-            ? 'This password was not recognized to match any previously used passwords.'
-            : 'The provided password was used $used passwords ago.');
-        setState(() => {});
-      }
     }
   }
-
-  Future failureMessage(String msg) => showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-              title: Text('Login failure'),
-              content: Text('password did not match. $msg'),
-              actions: [
-                TextButton(
-                    child: Text('ok'), onPressed: () => Navigator.pop(context))
-              ]));
 }
-
-//asdf = fd80cb8b18e1f2b044c8341e9bf79bcb6b66d9490a72bc1d16a65b043700456f

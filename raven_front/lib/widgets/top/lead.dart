@@ -72,9 +72,8 @@ class _PageLead extends State<PageLead> {
             },
             padding: EdgeInsets.only(left: 16),
             icon: SvgPicture.asset('assets/icons/menu/menu.svg')),
-        '': null,
-        'Login': null,
-        '1Login': Container(
+        '': Container(),
+        'Login': Container(
           height: 24,
           padding: EdgeInsets.only(left: 16),
           child: SvgPicture.asset(

@@ -49,6 +49,8 @@ class _FeedbackState extends State<Feedback> {
   void dispose() {
     descriptionFocus.removeListener(_handleFocusChange);
     emailFocus.removeListener(_handleFocusChange);
+    descriptionFocus.dispose();
+    emailFocus.dispose();
     typeController.dispose();
     descriptionController.dispose();
     emailController.dispose();

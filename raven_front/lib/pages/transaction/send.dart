@@ -50,11 +50,13 @@ class _SendState extends State<Send> {
   String validatedAmount = '-1';
   bool useWallet = false;
   double holding = 0.0;
+  FocusNode sendAssetFocusNode = FocusNode();
   FocusNode sendAddressFocusNode = FocusNode();
   FocusNode sendAmountFocusNode = FocusNode();
   FocusNode sendFeeFocusNode = FocusNode();
   FocusNode sendMemoFocusNode = FocusNode();
   FocusNode sendNoteFocusNode = FocusNode();
+  FocusNode previewFocusNode = FocusNode();
   ravencoin.TxGoal feeGoal = ravencoin.TxGoals.standard;
   String addressName = '';
   bool showPaste = false;
@@ -63,6 +65,14 @@ class _SendState extends State<Send> {
   void initState() {
     super.initState();
     sendAsset.text = sendAsset.text == '' ? 'Ravencoin' : sendAsset.text;
+    sendFee.text = sendFee.text == '' ? 'Standard' : sendAsset.text;
+    sendAssetFocusNode.addListener(refresh);
+    sendAddressFocusNode.addListener(refresh);
+    sendAmountFocusNode.addListener(refresh);
+    sendFeeFocusNode.addListener(refresh);
+    sendMemoFocusNode.addListener(refresh);
+    sendNoteFocusNode.addListener(refresh);
+
     listeners.add(streams.spend.form.listen((SpendForm? value) {
       if (value != null) {
         //if ((SpendForm.merge(form: spendForm, amount: 0.0) !=
@@ -90,6 +100,19 @@ class _SendState extends State<Send> {
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
+    sendAssetFocusNode.removeListener(refresh);
+    sendAddressFocusNode.removeListener(refresh);
+    sendAmountFocusNode.removeListener(refresh);
+    sendFeeFocusNode.removeListener(refresh);
+    sendMemoFocusNode.removeListener(refresh);
+    sendNoteFocusNode.removeListener(refresh);
+    sendAssetFocusNode.dispose();
+    sendAddressFocusNode.dispose();
+    sendAmountFocusNode.dispose();
+    sendFeeFocusNode.dispose();
+    sendMemoFocusNode.dispose();
+    sendNoteFocusNode.dispose();
+    previewFocusNode.dispose();
     sendAsset.dispose();
     sendAddress.dispose();
     sendAmount.dispose();
@@ -101,6 +124,8 @@ class _SendState extends State<Send> {
     }
     super.dispose();
   }
+
+  void refresh() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
@@ -217,9 +242,11 @@ class _SendState extends State<Send> {
                 //    style: Theme.of(context).textTheme.caption),
                 //;
                 TextField(
+                  focusNode: sendAssetFocusNode,
                   controller: sendAsset,
                   readOnly: true,
                   decoration: components.styles.decorations.textFeild(context,
+                      focusNode: sendAssetFocusNode,
                       labelText: 'Asset',
                       hintText: 'Ravencoin',
                       suffixIcon: IconButton(
@@ -264,6 +291,7 @@ class _SendState extends State<Send> {
                   controller: sendAddress,
                   autocorrect: false,
                   decoration: components.styles.decorations.textFeild(context,
+                      focusNode: sendAddressFocusNode,
                       labelText: 'To',
                       hintText: 'Address',
                       errorText: sendAddress.text != '' &&
@@ -297,6 +325,7 @@ class _SendState extends State<Send> {
                   keyboardType: TextInputType.number,
                   decoration: components.styles.decorations.textFeild(
                     context,
+                    focusNode: sendAmountFocusNode,
                     labelText: 'Amount',
                     hintText: 'Quantity',
                     // put ability to put it in as USD here
@@ -348,8 +377,9 @@ class _SendState extends State<Send> {
                   controller: sendFee,
                   readOnly: true,
                   decoration: components.styles.decorations.textFeild(context,
-                      labelText: 'Fee',
+                      labelText: 'Transaction Speed',
                       hintText: 'Standard',
+                      focusNode: sendFeeFocusNode,
                       suffixIcon: IconButton(
                         icon: Padding(
                             padding: EdgeInsets.only(right: 14),
@@ -369,60 +399,77 @@ class _SendState extends State<Send> {
                         }[newValue] ??
                         ravencoin.TxGoals
                             .standard; // <--- replace by custom dialogue
-                    FocusScope.of(context).requestFocus(sendNoteFocusNode);
+                    FocusScope.of(context).requestFocus(sendMemoFocusNode);
                     setState(() {});
                   },
                 ),
-
-                /// HIDE MEMO for beta - not supported by ravencoin anyway
-                //TextField(
-                //    focusNode: sendMemoFocusNode,
-                //    controller: sendMemo,
-                //    decoration: InputDecoration(
-                //        focusedBorder: UnderlineInputBorder(
-                //            borderSide: BorderSide(color: memoColor)),
-                //        enabledBorder: UnderlineInputBorder(
-                //            borderSide: BorderSide(color: memoColor)),
-                //        border: UnderlineInputBorder(),
-                //        labelText: 'Memo (optional)',
-                //        hintText: 'IPFS hash publicly posted on transaction'),
-                //    onChanged: (value) {
-                //      var oldMemoColor = memoColor;
-                //      memoColor = verifyMemo(value)
-                //          ? Theme.of(context).good!
-                //          : Theme.of(context).bad!;
-                //      if (value == '') {
-                //        memoColor = Colors.grey.shade400;
-                //      }
-                //      if (oldMemoColor != memoColor) {
-                //        setState(() {});
-                //      }
-                //    },
-                //    onEditingComplete: () {
-                //      FocusScope.of(context).requestFocus(sendNoteFocusNode);
-                //      setState(() {});
-                //    }),
                 SizedBox(height: 16.0),
                 TextField(
-                  selectionControls: NoToolBar(),
-                  focusNode: sendNoteFocusNode,
-                  controller: sendNote,
-                  decoration: components.styles.decorations.textFeild(context,
-                      labelText: 'Note',
-                      hintText: 'Private note to self',
-                      suffixIcon:
-                          //QRCodeButton(pageTitle: 'Send-to', light: false),
-                          IconButton(
-                        icon:
-                            Icon(Icons.paste_rounded, color: AppColors.black60),
-                        onPressed: () async {
-                          sendNote.text =
-                              (await Clipboard.getData('text/plain'))?.text ??
-                                  '';
-                        },
-                      )),
-                ),
+                    selectionControls: NoToolBar(),
+                    focusNode: sendMemoFocusNode,
+                    controller: sendMemo,
+                    decoration: components.styles.decorations.textFeild(
+                      context,
+                      focusNode: sendMemoFocusNode,
+                      labelText: 'Memo',
+                      hintText: 'IPFS',
+                      helperText: sendMemoFocusNode.hasFocus
+                          ? 'Saved on the blockchain'
+                          : null,
+                      helperStyle: Theme.of(context)
+                          .textTheme
+                          .caption!
+                          .copyWith(height: .7, color: AppColors.primary),
+                      //suffixIcon:
+                      //    IconButton(
+                      //  icon: Icon(Icons.paste_rounded,
+                      //      color: AppColors.black60),
+                      //  onPressed: () async {
+                      //    sendNote.text =
+                      //        (await Clipboard.getData('text/plain'))?.text ??
+                      //            '';
+                      //  },
+                      //)
+                    ),
+                    onChanged: (value) {},
+                    onEditingComplete: () {
+                      FocusScope.of(context).requestFocus(sendNoteFocusNode);
+                      setState(() {});
+                    }),
                 SizedBox(height: 16.0),
+                TextField(
+                    selectionControls: NoToolBar(),
+                    focusNode: sendNoteFocusNode,
+                    controller: sendNote,
+                    decoration: components.styles.decorations.textFeild(
+                      context,
+                      focusNode: sendNoteFocusNode,
+                      labelText: 'Note',
+                      hintText: 'Purchase',
+                      helperText: sendNoteFocusNode.hasFocus
+                          ? 'Saved to your phone'
+                          : null,
+                      helperStyle: Theme.of(context)
+                          .textTheme
+                          .caption!
+                          .copyWith(height: .7, color: AppColors.primary),
+                      //suffixIcon:
+                      //    IconButton(
+                      //  icon:
+                      //      Icon(Icons.paste_rounded, color: AppColors.black60),
+                      //  onPressed: () async {
+                      //    sendNote.text =
+                      //        (await Clipboard.getData('text/plain'))?.text ??
+                      //            '';
+                      //  },
+                      //)
+                    ),
+                    onChanged: (value) {},
+                    onEditingComplete: () {
+                      FocusScope.of(context).requestFocus(previewFocusNode);
+                      setState(() {});
+                    }),
+                SizedBox(height: 24.0),
               ],
             ),
           ),
@@ -515,6 +562,7 @@ class _SendState extends State<Send> {
   Widget sendTransactionButton({bool disabled = false}) =>
       components.buttons.actionButton(
         context,
+        focusNode: previewFocusNode,
         enabled: !disabled,
         onPressed: () => startSend(),
       );
@@ -539,8 +587,8 @@ class _SendState extends State<Send> {
             ['To', sendAddress.text],
             if (addressName != '') ['Known As', addressName],
             ['Amount', visibleAmount],
+            if (sendMemo.text != '') ['Memo', sendMemo.text],
             if (sendNote.text != '') ['Note', sendNote.text],
-            if (sendMemo.text != '') ['Memo', sendMemo.text]
           ],
           fees: [
             ['Transaction Fee', 'calculating fee...']

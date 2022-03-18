@@ -209,7 +209,7 @@ class BackdropAppBar extends StatelessWidget implements PreferredSizeWidget {
       toolbarOpacity: toolbarOpacity,
       bottomOpacity: bottomOpacity,
       toolbarHeight: toolbarHeight,
-      leadingWidth: leadingWidth,
+      //leadingWidth: leadingWidth, // removed so we have have a large leading thing if we don't want a title.
       toolbarTextStyle: toolbarTextStyle,
       titleTextStyle: titleTextStyle,
       systemOverlayStyle: systemOverlayStyle,
