@@ -119,6 +119,6 @@ class LeaderWaiter extends Waiter {
     } else {
       services.wallet.leader.backlog.add(leader);
     }
-    print(s.elapsed);
+    print('deriving: ${s.elapsed}');
   }
 }

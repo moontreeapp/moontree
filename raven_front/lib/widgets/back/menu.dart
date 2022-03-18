@@ -159,6 +159,7 @@ class _NavMenuState extends State<NavMenu> {
             name: 'About',
             link: '/settings/about',
           ),
+          /*
           SettingsTile(
               title: 'Clear Database',
               leading: Icon(Icons.info_outline_rounded),
@@ -182,7 +183,6 @@ class _NavMenuState extends State<NavMenu> {
                     'e9ec208d98a621758af246f5c9253843cdbb744365eb234cc8eb201f002ca280'));
                 print(waiters.history.txsByWalletExposureKeys);
               }),
-          /*
           */
         ],
       )

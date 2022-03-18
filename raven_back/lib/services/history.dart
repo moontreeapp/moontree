@@ -15,7 +15,7 @@ class HistoryService {
     var histories = await client.getHistory(address.id);
     if (histories.isNotEmpty) {
       if (address.wallet is LeaderWallet) {
-        print('${address.address} histories found!');
+        //print('${address.address} histories found!');
         streams.wallet.transactions.add(WalletExposureTransactions(
           walletId: address.walletId,
           exposure: address.exposure,
@@ -29,7 +29,7 @@ class HistoryService {
             .getAll(address.walletId, address.exposure)
             .map((Address add) => add.hdIndex);
         if (address.hdIndex >= walletAddressesIndexes.max) {
-          print('${address.address} derive!');
+          //print('${address.address} derive!');
           streams.wallet.deriveAddress.add(DeriveLeaderAddress(
             leader: address.wallet as LeaderWallet,
             exposure: address.exposure,
@@ -48,7 +48,7 @@ class HistoryService {
         ));
       }
     } else {
-      print('${address.address} not found!');
+      //print('${address.address} not found!');
       streams.wallet.transactions.add(WalletExposureTransactions(
         walletId: address.walletId,
         exposure: address.exposure,
@@ -109,19 +109,19 @@ class HistoryService {
       return false;
     }
     var allDone = true;
-    print('inspecting Gaps!');
+    //print('inspecting Gaps!');
     for (var leader in res.wallets.leaders) {
       for (var exposure in [NodeExposure.Internal, NodeExposure.External]) {
         if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
           allDone = false;
-          print('deriving ${leader.id.substring(0, 4)} ${exposure.enumString}');
+          //print('deriving ${leader.id.substring(0, 4)} ${exposure.enumString}');
           streams.wallet.deriveAddress
               .add(DeriveLeaderAddress(leader: leader, exposure: exposure));
         }
       }
     }
     if (allDone) {
-      print('ALL DONE!');
+      //print('ALL DONE!');
       await saveDanglingTransactions(client);
       await services.balance.recalculateAllBalances();
       services.download.asset.allAdminsSubs();
@@ -219,19 +219,21 @@ class HistoryService {
   Future saveDanglingTransactions(RavenElectrumClient client) async {
     var txs =
         (res.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet());
-    print('GETTING DANGLING TRANSACTIONS: $txs');
+    //print('GETTING DANGLING TRANSACTIONS: $txs');
     for (var txHash in txs) {
       if (!downloaded.contains(txHash)) {
         downloaded.add(txHash);
         await getTransaction(txHash, saveVin: false);
       } else {
-        print('skiped $txHash');
+        //print('skiped $txHash');
       }
     }
   }
 
   Future saveDanglingTransactionsFor(
-      LeaderWallet leader, NodeExposure exposure) async {
+    LeaderWallet leader,
+    NodeExposure exposure,
+  ) async {
     var client = streams.client.client.value;
     if (client == null) {
       return false;
@@ -296,28 +298,36 @@ class HistoryService {
     return Tuple3(value, security ?? res.securities.RVN, asset);
   }
 
-  Future<bool> getTransaction(String transactionId,
-      {bool saveVin = true}) async {
+  Future<bool> getTransaction(
+    String transactionId, {
+    bool saveVin = true,
+  }) async {
     var client = streams.client.client.value;
     if (client == null) {
       return false;
     }
     // not already downloaded?
-    if ((res.transactions.primaryIndex.getOne(transactionId) == null ||
-        res.transactions.mempool.map((t) => t.id).contains(transactionId))) {
+    if (!downloaded.contains(transactionId) &&
+        (res.transactions.primaryIndex.getOne(transactionId) == null ||
+            res.transactions.mempool
+                .map((t) => t.id)
+                .contains(transactionId))) {
       print('downloading: $transactionId');
       var s = Stopwatch()..start();
       await saveTransaction(await client.getTransaction(transactionId), client,
           saveVin: saveVin);
       print('download time: ${s.elapsed}');
     } else {
-      print('skipping $transactionId');
+      print('skipping: $transactionId');
     }
     return true;
   }
 
-  Future saveTransaction(Tx tx, RavenElectrumClient client,
-      {bool saveVin = true}) async {
+  Future saveTransaction(
+    Tx tx,
+    RavenElectrumClient client, {
+    bool saveVin = true,
+  }) async {
     //print('parsing/saving: ${tx.txid}');
     for (var vin in tx.vin) {
       if (saveVin) {

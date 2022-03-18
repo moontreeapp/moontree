@@ -51,7 +51,7 @@ class HistoryWaiter extends Waiter {
     // calculate balances (for that wallet exposure)
     //var done =
     //    await services.history.produceAddressOrBalanceFor(walletId, exposure);
-    var done = await services.history.produceAddressOrBalance();
+    await services.history.produceAddressOrBalance();
   }
 
   Future getTransaction(String transaction) async =>
