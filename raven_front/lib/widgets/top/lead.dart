@@ -13,15 +13,12 @@ class PageLead extends StatefulWidget {
 
   @override
   _PageLead createState() => _PageLead();
-
-  Widget? show() => _PageLead().show;
 }
 
 class _PageLead extends State<PageLead> {
   late String pageTitle = 'Wallet';
   late String? settingTitle = null;
   late List listeners = [];
-  Widget? show = null;
 
   @override
   void initState() {
@@ -52,10 +49,7 @@ class _PageLead extends State<PageLead> {
 
   @override
   Widget build(BuildContext context) {
-    print('${streams.app.page.value}...');
-    var bod = body();
-    show = streams.app.page.value == 'Login' ? null : bod;
-    return bod;
+    return body();
   }
 
   Widget body() =>

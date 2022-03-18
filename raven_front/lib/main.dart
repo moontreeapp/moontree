@@ -98,7 +98,7 @@ class RavenMobileApp extends StatelessWidget {
             automaticallyImplyLeading: false,
             backgroundColor: Theme.of(context).backgroundColor,
             elevation: 0,
-            leading: leading(context),
+            leading: PageLead(mainContext: context),
             title: /*FittedBox(fit: BoxFit.fitWidth, child: */ PageTitle() /*)*/,
             actions: <Widget>[
               components.status,
@@ -117,10 +117,4 @@ class RavenMobileApp extends StatelessWidget {
       },
     );
   }
-
-  Widget? leading(BuildContext context) =>
-      //['', 'Login'].contains(streams.app.page.value)
-      //    ? null
-      //    : PageLead(mainContext: context);
-      PageLead(mainContext: context).show();
 }
