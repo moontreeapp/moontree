@@ -84,8 +84,8 @@ class _ChangePasswordState extends State<ChangePassword> {
         decoration: components.styles.decorations.textFeild(
           context,
           labelText: 'Current Password',
-          helperText:
-              existingPassword.text != '' && verify() ? 'sucess!' : null,
+          //helperText:
+          //    existingPassword.text != '' && verify() ? 'Verified' : null,
           errorText: existingPassword.text != '' && !verify() ? used() : null,
           suffixIcon: IconButton(
             icon: Icon(
@@ -133,8 +133,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         textInputAction: TextInputAction.done,
         decoration: components.styles.decorations.textFeild(
           context,
-          labelText: 'new password',
-          hintText: 'new password',
+          labelText: 'New Password',
           helperText: validatedComplexity ? newNotification : null,
           errorText: !validatedComplexity && newNotification != ''
               ? newNotification
@@ -161,16 +160,15 @@ class _ChangePasswordState extends State<ChangePassword> {
         textInputAction: TextInputAction.done,
         decoration: components.styles.decorations.textFeild(
           context,
-          labelText: 'confirm password',
-          hintText: 'confirm password',
+          labelText: 'Confirm New Password',
           helperText: confirmPassword.text != '' &&
                   confirmPassword.text == newPassword.text
-              ? 'match'
+              ? 'Match'
               : null,
           errorText: confirmPassword.text == '' ||
                   confirmPassword.text == newPassword.text
               ? null
-              : 'do not match',
+              : 'No Match',
           suffixIcon: IconButton(
             icon: Icon(
                 confirmPasswordVisible
