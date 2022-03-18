@@ -16,6 +16,7 @@ class DecorationComponents {
     TextStyle? helperStyle,
     TextStyle? suffixStyle,
     FocusNode? focusNode,
+    bool alwaysShowHelper = false,
   }) =>
       InputDecoration(
         focusedErrorBorder: OutlineInputBorder(
@@ -37,7 +38,7 @@ class DecorationComponents {
         contentPadding: EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
         labelText: labelText,
         hintText: hintText,
-        helperText: getHelperText(focusNode, helperText),
+        helperText: getHelperText(focusNode, helperText, alwaysShowHelper),
         // takes precedence -- only fill on field valdiation failure:
         errorText: errorText,
         suffixIcon: suffixIcon,
@@ -47,7 +48,7 @@ class DecorationComponents {
             Theme.of(context)
                 .textTheme
                 .caption!
-                .copyWith(height: .7, color: AppColors.primary),
+                .copyWith(height: .8, color: AppColors.primary),
       );
 
   static TextStyle labelColor(FocusNode? focusNode, String? errorText) {
@@ -61,11 +62,17 @@ class DecorationComponents {
             color: errorText == null ? AppColors.black60 : AppColors.error);
   }
 
-  static String? getHelperText(FocusNode? focusNode, String? helperText) {
-    return focusNode != null
-        ? focusNode.hasFocus
-            ? helperText
-            : null
-        : helperText;
+  static String? getHelperText(
+    FocusNode? focusNode,
+    String? helperText, [
+    bool alwaysShowHelper = false,
+  ]) {
+    return alwaysShowHelper
+        ? helperText
+        : focusNode != null
+            ? focusNode.hasFocus
+                ? helperText
+                : null
+            : helperText;
   }
 }

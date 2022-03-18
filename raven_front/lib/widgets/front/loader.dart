@@ -57,7 +57,7 @@ class _LoaderState extends State<Loader> {
               Text(widget.message,
                   style: Theme.of(context).textTheme.headline2),
               SizedBox(height: 4),
-              Image.asset('assets/logo/moontree_logo_56.png',
+              Image.asset('assets/logo/moontree_logo.png',
                   height: 56, width: 56),
             ]));
   }

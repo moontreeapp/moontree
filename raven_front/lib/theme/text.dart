@@ -86,7 +86,7 @@ class AppText {
       fontSize: 12.0,
       height: 1.333,
       fontFamily: 'Nunito',
-      fontWeight: FontWeights.normal,
+      fontWeight: FontWeights.semiBold,
       letterSpacing: 0.4,
       color: AppColors.black);
 

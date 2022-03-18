@@ -38,7 +38,7 @@ class _LoginState extends State<Login> {
       child: CustomScrollView(slivers: <Widget>[
         SliverToBoxAdapter(
           child: Container(
-              height: (MediaQuery.of(context).size.height - 16 - 40 - 70) / 2,
+              height: MediaQuery.of(context).size.height / 3 + 16 + 16,
               child: welcomeMessage),
         ),
         SliverToBoxAdapter(
@@ -51,7 +51,7 @@ class _LoginState extends State<Login> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SizedBox(height: 80),
+                  SizedBox(height: 100),
                   Row(children: [unlockButton]),
                   SizedBox(height: 40),
                 ])),
@@ -71,19 +71,19 @@ class _LoginState extends State<Login> {
       focusNode: loginFocus,
       autocorrect: false,
       controller: password,
-      obscureText: !passwordVisible,
+      obscureText: !passwordVisible, // masked controller for immediate?
       textInputAction: TextInputAction.done,
       decoration: components.styles.decorations.textFeild(
         context,
         focusNode: loginFocus,
         labelText: 'Password',
-        suffixIcon: IconButton(
-          icon: Icon(passwordVisible ? Icons.visibility : Icons.visibility_off,
-              color: AppColors.black60),
-          onPressed: () => setState(() {
-            passwordVisible = !passwordVisible;
-          }),
-        ),
+        //suffixIcon: IconButton(
+        //  icon: Icon(passwordVisible ? Icons.visibility : Icons.visibility_off,
+        //      color: AppColors.black60),
+        //  onPressed: () => setState(() {
+        //    passwordVisible = !passwordVisible;
+        //  }),
+        //),
       ),
       onChanged: (_) {
         setState(() {});

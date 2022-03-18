@@ -5,6 +5,7 @@ import 'package:raven_back/streams/app.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/theme/colors.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/widgets/widgets.dart';
@@ -19,8 +20,11 @@ class ElectrumNetwork extends StatefulWidget {
 
 class _ElectrumNetworkState extends State<ElectrumNetwork> {
   List<StreamSubscription> listeners = [];
+  TextEditingController network = TextEditingController(text: 'Ravencoin');
   TextEditingController serverAddress = TextEditingController(text: '');
-  FocusNode serverFocusNode = FocusNode();
+  FocusNode networkFocus = FocusNode();
+  FocusNode serverFocus = FocusNode();
+  FocusNode connectFocus = FocusNode();
   bool validated = true;
   bool pressed = false;
   RavenElectrumClient? client;
@@ -44,6 +48,10 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
 
   @override
   void dispose() {
+    connectFocus.dispose();
+    networkFocus.dispose();
+    serverFocus.dispose();
+    network.dispose();
     serverAddress.dispose();
     for (var listener in listeners) {
       listener.cancel();
@@ -61,67 +69,89 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
     );
   }
 
-  Widget body() => Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          serverTextField(),
-          Padding(
-              padding: EdgeInsets.only(
-                top: 0,
-                bottom: 40,
-              ),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [submitButton()]))
-        ],
+  Widget body() => Container(
+      padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
+      child: CustomScrollView(slivers: <Widget>[
+        //SliverToBoxAdapter(child: networkTextField),
+        //SliverToBoxAdapter(child: SizedBox(height: 16)),
+        SliverToBoxAdapter(child: SizedBox(height: 6)),
+        SliverToBoxAdapter(child: serverTextField),
+        SliverToBoxAdapter(
+            child: Container(height: MediaQuery.of(context).size.height / 2)),
+        SliverFillRemaining(
+            hasScrollBody: false,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(height: 100),
+                  Row(children: [submitButton]),
+                  SizedBox(height: 40),
+                ])),
+      ]));
+
+  Widget get networkTextField => Container(
+      height: 81,
+      alignment: Alignment.bottomCenter,
+      child: TextField(
+        focusNode: networkFocus,
+        autocorrect: false,
+        controller: network,
+        textInputAction: TextInputAction.done,
+        decoration: components.styles.decorations.textFeild(
+          context,
+          focusNode: networkFocus,
+          labelText: 'Network',
+        ),
+        onEditingComplete: () {
+          network.text = network.text.trim();
+        },
       ));
 
-  Widget serverTextField() => TextField(
-        focusNode: serverFocusNode,
+  Widget get serverTextField => TextField(
+        focusNode: serverFocus,
         autocorrect: false,
         controller: serverAddress,
         textInputAction: TextInputAction.done,
         decoration: components.styles.decorations.textFeild(
           context,
+          focusNode: serverFocus,
           labelText: 'Server',
           hintText: streams.client.client.value != null
               ? '${streams.client.client.value!.host}:${streams.client.client.value!.port}'
               : '${services.client.currentDomain}:${services.client.currentPort.toString()}',
           helperText: validated
-              ? services.client.connectionStatus
+              ? services.client.connectionStatus && matches
                   ? 'Connected'
-                  : 'Connecting...'
+                  : null
               : null,
           errorText: validated ? null : 'Invalid Server',
+          helperStyle: Theme.of(context)
+              .textTheme
+              .caption!
+              .copyWith(height: .8, color: AppColors.success),
+          alwaysShowHelper: true,
         ),
         onChanged: (String value) => validated = validateDomainPort(value),
         onEditingComplete: () {
           serverAddress.text = serverAddress.text.trim();
           validated = validateDomainPort(serverAddress.text);
+          connectFocus.requestFocus();
+          setState(() {});
         },
       );
 
-  Widget submitButton() => Container(
-      height: 40,
-      child: OutlinedButton.icon(
-          onPressed: validated ? () => attemptSave() : () {},
-          icon: Icon(
-            Icons.lock_rounded,
-            color: validated ? null : Color(0x61000000),
-          ),
-          label: Text(
-            'Set'.toUpperCase(),
-            style: validated
-                ? Theme.of(context).enabledButton
-                : Theme.of(context).disabledButton,
-          ),
-          style: components.styles.buttons.bottom(
-            context,
-            disabled: !validated,
-          )));
+  bool get matches =>
+      serverAddress.text ==
+      '${services.client.currentDomain}:${services.client.currentPort.toString()}';
+
+  Widget get submitButton => components.buttons.actionButton(
+        context,
+        focusNode: connectFocus,
+        enabled: validateDomainPort(serverAddress.text),
+        label: 'Connect',
+        onPressed: attemptSave,
+      );
 
   void attemptSave() {
     if (validateDomainPort(serverAddress.text)) {

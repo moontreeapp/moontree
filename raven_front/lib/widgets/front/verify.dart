@@ -16,6 +16,8 @@ class VerifyPassword extends StatefulWidget {
 class _VerifyPasswordState extends State<VerifyPassword> {
   var existingPassword = TextEditingController();
   bool existingPasswordVisible = false;
+  FocusNode existingFocus = FocusNode();
+  FocusNode submitFocus = FocusNode();
 
   @override
   void initState() {
@@ -25,6 +27,8 @@ class _VerifyPasswordState extends State<VerifyPassword> {
   @override
   void dispose() {
     existingPassword.dispose();
+    existingFocus.dispose();
+    submitFocus.dispose();
     super.dispose();
   }
 
@@ -34,7 +38,7 @@ class _VerifyPasswordState extends State<VerifyPassword> {
         child: body(),
       );
 
-  Widget body() => Padding(
+  Widget oldbody() => Padding(
       padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 40),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -45,7 +49,32 @@ class _VerifyPasswordState extends State<VerifyPassword> {
         ],
       ));
 
+  Widget body() => Container(
+      padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
+      child: CustomScrollView(slivers: <Widget>[
+        SliverToBoxAdapter(
+          child: Container(height: (MediaQuery.of(context).size.height) / 3),
+        ),
+        SliverToBoxAdapter(
+          child: Container(
+              alignment: Alignment.center,
+              height: 70,
+              child: existingPasswordField),
+        ),
+        SliverFillRemaining(
+            hasScrollBody: false,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(height: 100),
+                  Row(children: [submitButton]),
+                  SizedBox(height: 40),
+                ])),
+      ]));
+
   Widget get existingPasswordField => TextField(
+        focusNode: existingFocus,
         autocorrect: false,
         enabled: services.password.required ? true : false,
         controller: existingPassword,
@@ -53,20 +82,19 @@ class _VerifyPasswordState extends State<VerifyPassword> {
         textInputAction: TextInputAction.next,
         decoration: components.styles.decorations.textFeild(
           context,
-          labelText: 'Current Password',
-          helperText:
-              existingPassword.text != '' && verify() ? 'sucess!' : null,
+          focusNode: existingFocus,
+          labelText: 'Password',
           errorText: existingPassword.text != '' && !verify() ? used() : null,
-          suffixIcon: IconButton(
-            icon: Icon(
-                existingPasswordVisible
-                    ? Icons.visibility
-                    : Icons.visibility_off,
-                color: AppColors.black60),
-            onPressed: () => setState(() {
-              existingPasswordVisible = !existingPasswordVisible;
-            }),
-          ),
+          //suffixIcon: IconButton(
+          //  icon: Icon(
+          //      existingPasswordVisible
+          //          ? Icons.visibility
+          //          : Icons.visibility_off,
+          //      color: AppColors.black60),
+          //  onPressed: () => setState(() {
+          //    existingPasswordVisible = !existingPasswordVisible;
+          //  }),
+          //),
         ),
         onChanged: (String value) {
           if (verify()) {
@@ -74,14 +102,17 @@ class _VerifyPasswordState extends State<VerifyPassword> {
           }
           setState(() {});
         },
-        onEditingComplete: () => verify(),
+        onEditingComplete: () {
+          verify();
+          submitFocus.requestFocus();
+        },
       );
 
   Widget get submitButton => components.buttons.actionButton(
         context,
+        focusNode: submitFocus,
         enabled: verify(),
         label: 'Submit',
-        disabledIcon: Icon(Icons.login, color: AppColors.black38),
         onPressed: () {
           streams.app.verify.add(true);
           widget.parentState?.setState(() {});
