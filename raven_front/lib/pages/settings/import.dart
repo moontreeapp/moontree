@@ -34,6 +34,7 @@ class _ImportState extends State<Import> {
   FileDetails? file;
   String? finalText;
   String? finalAccountId;
+  bool importVisible = true;
 
   @override
   void initState() {
@@ -106,8 +107,9 @@ class _ImportState extends State<Import> {
         focusNode: wordsFocus,
         autocorrect: false,
         controller: words,
+        obscureText: !importVisible,
         keyboardType: TextInputType.multiline,
-        maxLines: 12,
+        maxLines: importVisible ? 12 : 1,
         textInputAction: TextInputAction.done,
         decoration: components.styles.decorations.textFeild(
           context,
@@ -117,6 +119,13 @@ class _ImportState extends State<Import> {
               importFormatDetected == 'Unknown' ? null : importFormatDetected,
           errorText:
               importFormatDetected == 'Unknown' ? importFormatDetected : null,
+          suffixIcon: IconButton(
+            icon: Icon(importVisible ? Icons.visibility : Icons.visibility_off,
+                color: AppColors.black60),
+            onPressed: () => setState(() {
+              importVisible = !importVisible;
+            }),
+          ),
         ),
         onChanged: (value) => enableImport(),
         onEditingComplete: () async => await attemptImport(),
