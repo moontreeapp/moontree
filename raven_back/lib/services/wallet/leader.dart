@@ -30,7 +30,6 @@ class LeaderWalletService {
     int hdIndex, {
     exposure = NodeExposure.External,
   }) {
-    addressRegistry[addressRegistryKey(wallet, exposure)] = hdIndex;
     var subwallet = getSubWallet(wallet, hdIndex, exposure);
     return Address(
         id: subwallet.scripthash,
@@ -148,11 +147,7 @@ class LeaderWalletService {
     var usedCount = exposure == NodeExposure.External
         ? leaderWallet.usedExternalAddresses.length
         : leaderWallet.usedInternalAddresses.length;
-    var expectedhdIndex = (existingGap + usedCount - 1);
-    var hdIndexKey = addressRegistryKey(leaderWallet, exposure);
-    addressRegistry[hdIndexKey] =
-        addressRegistry[hdIndexKey] ?? expectedhdIndex;
-    var hdIndex = addressRegistry[hdIndexKey]!;
+    var hdIndex = (existingGap + usedCount - 1);
     //if (existingGap < requiredGap) {
     return {
       //for (var i = 0; i <= requiredGap - existingGap; i++)
@@ -164,14 +159,10 @@ class LeaderWalletService {
 
   HDWallet getChangeWallet(LeaderWallet wallet) => getNextEmptyWallet(wallet);
 
-  String addressRegistryKey(LeaderWallet wallet, NodeExposure exposure) =>
-      '${wallet.id}:${exposure.enumString}';
-
   Set<Address> deriveMoreAddresses(
     LeaderWallet wallet, {
     List<NodeExposure>? exposures,
   }) {
-    //services.busy.addressDerivationOn();
     exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];
     var newAddresses = <Address>{};
     for (var exposure in exposures) {
@@ -182,7 +173,6 @@ class LeaderWalletService {
       ));
     }
     res.addresses.saveAll(newAddresses);
-    //services.busy.addressDerivationOff();
     return newAddresses;
   }
 }

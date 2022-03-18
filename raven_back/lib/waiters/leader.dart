@@ -84,14 +84,6 @@ class LeaderWaiter extends Waiter {
           await res.addresses.removeAll(leader.addresses);
           await res.balances
               .removeAll(res.balances.byWallet.getAll(leader.walletId));
-
-          // remove the index from the registry
-          for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
-            services.wallet.leader.addressRegistry.remove(
-              services.wallet.leader
-                  .addressRegistryKey(leader as LeaderWallet, exposure),
-            );
-          }
           // recreate the addresses of that wallet
           handleDeriveAddress(leader: leader as LeaderWallet);
           */
@@ -117,9 +109,7 @@ class LeaderWaiter extends Waiter {
     NodeExposure? exposure,
     bool bypassCipher = false,
   }) {
-    //var msg = 'Downloading transactions...';
-    //services.busy.processOn(msg);
-
+    var s = Stopwatch()..start();
     if (bypassCipher ||
         res.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
       services.wallet.leader.deriveMoreAddresses(
@@ -129,8 +119,6 @@ class LeaderWaiter extends Waiter {
     } else {
       services.wallet.leader.backlog.add(leader);
     }
-
-    // clear all in history waiter instead
-    //services.busy.processOff(msg);
+    print(s.elapsed);
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 extension SumAList on Iterable {
   num sum() => fold(
       0,
@@ -8,7 +10,12 @@ extension SumAList on Iterable {
   double sumDouble() => sum().toDouble();
 }
 
-extension MinMaxOfAIteratable on Iterable {
-  num max() => isNotEmpty ? reduce((v, e) => v > e ? v : e) : 0;
-  num min() => isNotEmpty ? reduce((v, e) => v < e ? v : e) : 0;
+extension MinMaxOfAIteratableInt on Iterable<int> {
+  int get max => reduce(math.max);
+  int get min => reduce(math.min);
+}
+
+extension MinMaxOfAIteratableDouble on Iterable<double> {
+  double get max => reduce(math.max);
+  double get min => reduce(math.min);
 }

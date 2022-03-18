@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:math';
-
-import 'package:raven_back/streams/wallet.dart';
-import 'package:raven_electrum/raven_electrum.dart';
-import 'package:raven_back/raven_back.dart';
 import 'package:tuple/tuple.dart';
+import 'package:raven_electrum/raven_electrum.dart';
+import 'package:raven_back/streams/wallet.dart';
+import 'package:raven_back/raven_back.dart';
 
 class HistoryService {
   List<String> downloaded = [];
@@ -17,6 +15,7 @@ class HistoryService {
     var histories = await client.getHistory(address.id);
     if (histories.isNotEmpty) {
       if (address.wallet is LeaderWallet) {
+        print('${address.address} histories found!');
         streams.wallet.transactions.add(WalletExposureTransactions(
           walletId: address.walletId,
           exposure: address.exposure,
@@ -28,8 +27,9 @@ class HistoryService {
         /// then derive a new one.
         var walletAddressesIndexes = res.addresses.byWalletExposure
             .getAll(address.walletId, address.exposure)
-            .map((Address add) => address.hdIndex);
-        if (address.hdIndex >= walletAddressesIndexes.max()) {
+            .map((Address add) => add.hdIndex);
+        if (address.hdIndex >= walletAddressesIndexes.max) {
+          print('${address.address} derive!');
           streams.wallet.deriveAddress.add(DeriveLeaderAddress(
             leader: address.wallet as LeaderWallet,
             exposure: address.exposure,
@@ -48,6 +48,7 @@ class HistoryService {
         ));
       }
     } else {
+      print('${address.address} not found!');
       streams.wallet.transactions.add(WalletExposureTransactions(
         walletId: address.walletId,
         exposure: address.exposure,
@@ -108,16 +109,19 @@ class HistoryService {
       return false;
     }
     var allDone = true;
+    print('inspecting Gaps!');
     for (var leader in res.wallets.leaders) {
       for (var exposure in [NodeExposure.Internal, NodeExposure.External]) {
         if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
           allDone = false;
+          print('deriving ${leader.id.substring(0, 4)} ${exposure.enumString}');
           streams.wallet.deriveAddress
               .add(DeriveLeaderAddress(leader: leader, exposure: exposure));
         }
       }
     }
     if (allDone) {
+      print('ALL DONE!');
       await saveDanglingTransactions(client);
       await services.balance.recalculateAllBalances();
       services.download.asset.allAdminsSubs();
@@ -215,10 +219,14 @@ class HistoryService {
   Future saveDanglingTransactions(RavenElectrumClient client) async {
     var txs =
         (res.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet());
-    //print('GETTING DANGLING TRANSACTIONS: $txs');
+    print('GETTING DANGLING TRANSACTIONS: $txs');
     for (var txHash in txs) {
-      downloaded.add(txHash);
-      await getTransaction(txHash, saveVin: false);
+      if (!downloaded.contains(txHash)) {
+        downloaded.add(txHash);
+        await getTransaction(txHash, saveVin: false);
+      } else {
+        print('skiped $txHash');
+      }
     }
   }
 
@@ -297,11 +305,13 @@ class HistoryService {
     // not already downloaded?
     if ((res.transactions.primaryIndex.getOne(transactionId) == null ||
         res.transactions.mempool.map((t) => t.id).contains(transactionId))) {
-      //print('downloading: $transactionId');
+      print('downloading: $transactionId');
+      var s = Stopwatch()..start();
       await saveTransaction(await client.getTransaction(transactionId), client,
           saveVin: saveVin);
+      print('download time: ${s.elapsed}');
     } else {
-      //print('skipping $transactionId');
+      print('skipping $transactionId');
     }
     return true;
   }

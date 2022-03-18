@@ -9,7 +9,7 @@ import 'package:raven_back/streams/wallet.dart';
 import 'waiter.dart';
 
 class HistoryWaiter extends Waiter {
-  Map<String, List<String>> TxsByWalletExposureKeys = {};
+  Map<String, List<String>> txsByWalletExposureKeys = {};
 
   void init() => listen(
       'streams.address.history',
@@ -24,15 +24,19 @@ class HistoryWaiter extends Waiter {
   void doNothing() {}
 
   void remember(WalletExposureTransactions keyedTransactions) =>
-      TxsByWalletExposureKeys[keyedTransactions.key] =
-          (TxsByWalletExposureKeys[keyedTransactions.key] ?? []) +
+      txsByWalletExposureKeys[keyedTransactions.key] =
+          (txsByWalletExposureKeys[keyedTransactions.key] ?? []) +
               keyedTransactions.transactionIds.toList();
 
-  void pull(WalletExposureTransactions keyedTransactions) {
-    var txs = TxsByWalletExposureKeys[keyedTransactions.key] ?? [];
-    TxsByWalletExposureKeys[keyedTransactions.key] = [];
-    getTransactionsAndCalculateBalance(
-        keyedTransactions.walletId, keyedTransactions.exposure, txs);
+  Future<void> pull(WalletExposureTransactions keyedTransactions) async {
+    var txs = txsByWalletExposureKeys.containsKey(keyedTransactions.key)
+        ? txsByWalletExposureKeys[keyedTransactions.key]
+        : null;
+    if (txs != null) {
+      txsByWalletExposureKeys[keyedTransactions.key] = [];
+      await getTransactionsAndCalculateBalance(
+          keyedTransactions.walletId, keyedTransactions.exposure, txs);
+    }
   }
 
   // if we could get a batch of transactions that'd be better...
