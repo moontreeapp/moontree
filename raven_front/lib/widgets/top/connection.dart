@@ -49,6 +49,7 @@ class _ConnectionLightState extends State<ConnectionLight>
           onPressed: () {
             ScaffoldMessenger.of(context).clearSnackBars();
             streams.app.verify.add(false);
+            streams.app.xlead.add(true);
             Navigator.of(components.navigator.routeContext!)
                 .pushNamed('/settings/network');
           },

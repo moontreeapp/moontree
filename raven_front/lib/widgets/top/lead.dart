@@ -18,6 +18,7 @@ class PageLead extends StatefulWidget {
 class _PageLead extends State<PageLead> {
   late String pageTitle = 'Wallet';
   late String? settingTitle = null;
+  late bool xlead = false;
   late List listeners = [];
 
   @override
@@ -37,6 +38,13 @@ class _PageLead extends State<PageLead> {
         });
       }
     }));
+    listeners.add(streams.app.xlead.listen((value) {
+      if (value != xlead) {
+        setState(() {
+          xlead = value;
+        });
+      }
+    }));
   }
 
   @override
@@ -52,47 +60,58 @@ class _PageLead extends State<PageLead> {
     return body();
   }
 
-  Widget body() =>
-      {
-        '/settings/import_export': IconButton(
-            splashRadius: 24,
-            icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
-            onPressed: () => streams.app.setting.add('/settings')),
-        '/settings/settings': IconButton(
-            splashRadius: 24,
-            icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
-            onPressed: () => streams.app.setting.add('/settings'))
-      }[settingTitle] ??
-      {
-        'Wallet': IconButton(
-            splashRadius: 24,
-            onPressed: () {
-              ScaffoldMessenger.of(context).clearSnackBars();
-              flingBackdrop(context);
-            },
-            padding: EdgeInsets.only(left: 16),
-            icon: SvgPicture.asset('assets/icons/menu/menu.svg')),
-        '': Container(),
-        'Login': Container(
-          height: 24,
+  Widget body() {
+    var ret = null;
+    if (settingTitle == '/settings/import_export') {
+      return IconButton(
+          splashRadius: 24,
+          icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+          onPressed: () => streams.app.setting.add('/settings'));
+    }
+    if (settingTitle == '/settings/settings') {
+      return IconButton(
+          splashRadius: 24,
+          icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+          onPressed: () => streams.app.setting.add('/settings'));
+    }
+
+    if (pageTitle == 'Wallet') {
+      return IconButton(
+          splashRadius: 24,
+          onPressed: () {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            flingBackdrop(context);
+          },
           padding: EdgeInsets.only(left: 16),
-          child: SvgPicture.asset(
-            'assets/icons/menu/menu.svg',
-            color: AppColors.black38,
-          ),
+          icon: SvgPicture.asset('assets/icons/menu/menu.svg'));
+    }
+    if (pageTitle == '') {
+      return Container();
+    }
+    if (pageTitle == 'Login') {
+      return Container(
+        height: 24,
+        padding: EdgeInsets.only(left: 16),
+        child: SvgPicture.asset(
+          'assets/icons/menu/menu.svg',
+          color: AppColors.black38,
         ),
-      }[pageTitle] ??
-      (['Send', 'Scan', 'Receive'].contains(pageTitle)
-          ? IconButton(
-              splashRadius: 24,
-              icon: Icon(Icons.close_rounded, color: Colors.white),
-              onPressed: () {
-                if (pageTitle == 'Send') streams.spend.form.add(null);
-                Navigator.pop(components.navigator.routeContext ?? context);
-              })
-          : IconButton(
-              splashRadius: 24,
-              icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
-              onPressed: () =>
-                  Navigator.pop(components.navigator.routeContext ?? context)));
+      );
+    }
+    if (xlead || ['Send', 'Scan', 'Receive'].contains(pageTitle)) {
+      return IconButton(
+          splashRadius: 24,
+          icon: Icon(Icons.close_rounded, color: Colors.white),
+          onPressed: () {
+            if (pageTitle == 'Send') streams.spend.form.add(null);
+            if (xlead) streams.app.xlead.add(false);
+            Navigator.pop(components.navigator.routeContext ?? context);
+          });
+    }
+    return IconButton(
+        splashRadius: 24,
+        icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+        onPressed: () =>
+            Navigator.pop(components.navigator.routeContext ?? context));
+  }
 }

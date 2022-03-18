@@ -6,6 +6,7 @@ class AppStreams {
   final verify = BehaviorSubject<bool>.seeded(false);
   final page = BehaviorSubject<String>.seeded('main');
   final setting = BehaviorSubject<String?>.seeded(null);
+  final xlead = BehaviorSubject<bool>.seeded(false);
   final snack = BehaviorSubject<Snack?>.seeded(null);
   final context = BehaviorSubject<AppContext>.seeded(AppContext.wallet);
   final asset = BehaviorSubject<String?>.seeded(null);
