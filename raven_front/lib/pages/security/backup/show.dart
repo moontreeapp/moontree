@@ -1,14 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:raven_back/streams/app.dart';
-import 'package:raven_electrum/raven_electrum.dart';
-
+import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/colors.dart';
-import 'package:raven_front/theme/extensions.dart';
-import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class BackupSeed extends StatefulWidget {
@@ -27,9 +21,7 @@ class _BackupSeedState extends State<BackupSeed> {
   @override
   Widget build(BuildContext context) {
     buttonWidth = (MediaQuery.of(context).size.width - (17 + 17 + 16 + 16)) / 3;
-    secret = Current.wallet.cipher != null
-        ? Current.wallet.secret(Current.wallet.cipher!).split(' ')
-        : ['unknown'];
+    secret = Current.wallet.secret(Current.wallet.cipher!).split(' ');
     return services.password.required && !streams.app.verify.value
         ? VerifyPassword(parentState: this)
         : body();
@@ -40,7 +32,6 @@ class _BackupSeedState extends State<BackupSeed> {
       child: CustomScrollView(slivers: <Widget>[
         SliverToBoxAdapter(child: SizedBox(height: 6)),
         SliverToBoxAdapter(child: instructions),
-        //SliverToBoxAdapter(child: SizedBox(height: 16)),
         SliverToBoxAdapter(child: words),
         SliverFillRemaining(
             hasScrollBody: false,
@@ -65,13 +56,10 @@ class _BackupSeedState extends State<BackupSeed> {
       ));
 
   Widget get words => Container(
-      height:
-          MediaQuery.of(context).size.height - 380, // centered between text...
-      //392, // center of screen
+      height: MediaQuery.of(context).size.height - 380,
       alignment: Alignment.bottomCenter,
       child: Container(
           height: 272,
-          //color: Colors.grey,
           child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

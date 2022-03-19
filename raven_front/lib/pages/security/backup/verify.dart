@@ -1,14 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
-import 'package:raven_electrum/raven_electrum.dart';
-
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/colors.dart';
-import 'package:raven_front/theme/extensions.dart';
-import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class SecretWord {
@@ -43,12 +38,7 @@ class _VerifySeedState extends State<VerifySeed> {
 
   @override
   void initState() {
-    secret = Current.wallet.cipher != null
-        ? Current.wallet.secret(Current.wallet.cipher!).split(' ')
-        : ['unknown'];
-    // testing duplicates
-    //secret = secret.sublist(0, 10) + [secret.last] + [secret.last];
-    //print(secret);
+    secret = Current.wallet.secret(Current.wallet.cipher!).split(' ');
     var shuffledList = [
       for (var s in secret.enumerated()) SecretWord(s[1], s[0])
     ];
@@ -98,13 +88,10 @@ class _VerifySeedState extends State<VerifySeed> {
       ));
 
   Widget get words => Container(
-      height:
-          MediaQuery.of(context).size.height - 380, // centered between text...
-      //392, // center of screen
+      height: MediaQuery.of(context).size.height - 380,
       alignment: Alignment.bottomCenter,
       child: Container(
           height: 272,
-          //color: Colors.grey,
           child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -120,9 +107,6 @@ class _VerifySeedState extends State<VerifySeed> {
                               onPressed: () {
                             if (click < 13) {
                               var clicked = (i + x) - 1;
-                              print(clicked);
-                              print(click);
-                              print(shuffled[clicked]);
                               if (shuffled[clicked]!.chosen == click) {
                                 shuffled[clicked]!.chosen = null;
                                 click--;
@@ -130,7 +114,6 @@ class _VerifySeedState extends State<VerifySeed> {
                                 click++;
                                 shuffled[clicked]!.chosen = click;
                               }
-                              for (var y in shuffled.entries) print(y);
                             }
                             setState(() {});
                           }, number: shuffled[(i + x) - 1]!.chosen)
@@ -139,7 +122,6 @@ class _VerifySeedState extends State<VerifySeed> {
 
   bool checkOrder() {
     for (var secretWord in shuffled.values) {
-      print(secretWord.correct);
       if (secretWord.chosen == null) return false;
       if (!secretWord.correct &&
           secretWord.word != secret[secretWord.chosen! - 1]) return false;

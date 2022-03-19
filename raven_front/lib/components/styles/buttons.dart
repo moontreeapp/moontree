@@ -21,6 +21,7 @@ class ButtonStyleComponents {
         shape: MaterialStateProperty.all(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0))),
       );
+
   ButtonStyle word(
     BuildContext context, {
     bool chosen = false,
