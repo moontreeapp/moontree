@@ -63,7 +63,7 @@ class ButtonComponents {
                   .copyWith(color: AppColors.black60),
             )),
         Container(
-          height: 24,
+          height: 32,
           width: width,
           child: OutlinedButton(
             onPressed: enabled ? onPressed ?? () {} : () {},

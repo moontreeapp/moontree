@@ -11,7 +11,8 @@ import 'package:raven_front/pages/create/channel.dart';
 import 'package:raven_front/pages/create/restricted.dart';
 import 'package:raven_front/pages/misc/loading.dart';
 import 'package:raven_front/pages/misc/scan.dart';
-import 'package:raven_front/pages/security/backup.dart';
+import 'package:raven_front/pages/security/backup/show.dart';
+import 'package:raven_front/pages/security/backup/verify.dart';
 import 'package:raven_front/pages/security/login.dart';
 import 'package:raven_front/pages/security/remove.dart';
 import 'package:raven_front/pages/security/resume.dart';
@@ -68,7 +69,8 @@ class pages {
   static Currency currency = Currency();
   static ScanQR scan = ScanQR();
   static Support support = Support();
-  static BackupSeed backup = BackupSeed();
+  static BackupSeed backupShow = BackupSeed();
+  static VerifySeed backupVerify = VerifySeed();
   static Security security = Security();
   static TechnicalView technicalView = TechnicalView();
   static WalletView walletView = WalletView();
@@ -90,7 +92,8 @@ class pages {
         '/create/qualifiersub': (context) => createQualifierSubAsset,
         '/create/channel': (context) => createChannelAsset,
         '/create/restricted': (context) => createRestrictedAsset,
-        '/security/backup': (context) => backup,
+        '/security/backup': (context) => backupShow,
+        '/security/backupConfirm': (context) => backupVerify,
         '/security/change': (context) => changePassword,
         '/security/resume': (context) => changeResume,
         '/security/remove': (context) => removePassword,

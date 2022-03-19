@@ -75,7 +75,7 @@ class _BackupSeedState extends State<BackupSeed> {
           child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                for (var x in [1, 2, 3, 4])
+                for (var x in [0, 3, 6, 9])
                   Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -83,9 +83,9 @@ class _BackupSeedState extends State<BackupSeed> {
                           components.buttons.wordButton(context,
                               width: buttonWidth,
                               chosen: false,
-                              label: secret[(i * x) - 1],
+                              label: secret[(i + x) - 1],
                               onPressed: () {},
-                              number: i * x)
+                              number: i + x)
                       ]),
               ])));
 
@@ -104,6 +104,6 @@ class _BackupSeedState extends State<BackupSeed> {
         context,
         enabled: true,
         label: 'Next',
-        onPressed: () {},
+        link: '/security/backupConfirm',
       );
 }

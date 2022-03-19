@@ -58,6 +58,7 @@ dependencies:
   #jdenticon_dart: ^2.0.0
   #identicon: ^0.1.1
   #share_plus: ^4.0.1
+  quiver: ^3.0.1
 
   # MoonTree in-house dependencies
   raven_back:

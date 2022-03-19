@@ -100,6 +100,7 @@ class _PageTitleState extends State<PageTitle> {
                         'Change': 'Security',
                         'Remove': 'Security',
                         'Verify': 'Security',
+                        'BackupConfirm': 'Backup',
                         'Channel': 'Create',
                         'Nft': 'Create',
                         'Main': 'Create',

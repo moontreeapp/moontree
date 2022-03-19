@@ -1,5 +1,8 @@
 import 'dart:math' as math;
 
+import 'package:collection/src/iterable_extensions.dart';
+import 'package:quiver/iterables.dart';
+
 extension SumAList on Iterable {
   num sum() => fold(
       0,
@@ -18,4 +21,9 @@ extension MinMaxOfAIteratableInt on Iterable<int> {
 extension MinMaxOfAIteratableDouble on Iterable<double> {
   double get max => reduce(math.max);
   double get min => reduce(math.min);
+}
+
+extension EnumeratedIteratable on Iterable {
+  Iterable<List> enumerated() =>
+      zip([mapIndexed((index, element) => index).toList(), this]);
 }
