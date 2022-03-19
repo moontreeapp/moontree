@@ -5,6 +5,7 @@ import 'package:raven_back/streams/app.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/colors.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_back/raven_back.dart';
@@ -20,9 +21,15 @@ class BackupSeed extends StatefulWidget {
 
 class _BackupSeedState extends State<BackupSeed> {
   bool validated = true;
+  late double buttonWidth;
+  late List<String> secret;
 
   @override
   Widget build(BuildContext context) {
+    buttonWidth = (MediaQuery.of(context).size.width - (17 + 17 + 16 + 16)) / 3;
+    secret = Current.wallet.cipher != null
+        ? Current.wallet.secret(Current.wallet.cipher!).split(' ')
+        : ['unknown'];
     return services.password.required && !streams.app.verify.value
         ? VerifyPassword(parentState: this)
         : body();
@@ -64,8 +71,23 @@ class _BackupSeedState extends State<BackupSeed> {
       alignment: Alignment.bottomCenter,
       child: Container(
           height: 272,
-          color: Colors.grey,
-          child: Text('words', style: Theme.of(context).textTheme.subtitle1)));
+          //color: Colors.grey,
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                for (var x in [1, 2, 3, 4])
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        for (var i in [1, 2, 3])
+                          components.buttons.wordButton(context,
+                              width: buttonWidth,
+                              chosen: false,
+                              label: secret[(i * x) - 1],
+                              onPressed: () {},
+                              number: i * x)
+                      ]),
+              ])));
 
   Widget get warning => Container(
       height: 48,

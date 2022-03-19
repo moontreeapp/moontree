@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/theme/theme.dart';
 
 class ButtonComponents {
   IconButton back(BuildContext context) => IconButton(
@@ -40,8 +41,40 @@ class ButtonComponents {
         ),
       ));
 
-  Widget _iconDefault(Widget? icon) => icon ?? components.icons.preview;
-  Widget _iconDefaultDisabled(Widget? icon) =>
-      icon ?? components.icons.disabledPreview;
   String _labelDefault(String? label) => (label ?? 'Preview').toUpperCase();
+
+  Widget wordButton(
+    BuildContext context, {
+    required String label,
+    VoidCallback? onPressed,
+    bool enabled = true,
+    bool chosen = false,
+    double width = 98,
+    int? number,
+  }) =>
+      Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        Container(
+            height: 24,
+            child: Text(
+              number?.toString() ?? '',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText2!
+                  .copyWith(color: AppColors.black60),
+            )),
+        Container(
+          height: 24,
+          width: width,
+          child: OutlinedButton(
+            onPressed: enabled ? onPressed ?? () {} : () {},
+            style: chosen
+                ? components.styles.buttons.word(context, chosen: true)
+                : components.styles.buttons.word(context, chosen: false),
+            child: Text(
+              label.toLowerCase(),
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          ),
+        )
+      ]);
 }
