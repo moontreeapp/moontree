@@ -1,0 +1,87 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:raven_back/streams/app.dart';
+import 'package:raven_electrum/raven_electrum.dart';
+
+import 'package:raven_front/components/components.dart';
+import 'package:raven_front/theme/colors.dart';
+import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_back/raven_back.dart';
+import 'package:raven_front/widgets/widgets.dart';
+
+class BackupSeed extends StatefulWidget {
+  final dynamic data;
+  const BackupSeed({this.data}) : super();
+
+  @override
+  _BackupSeedState createState() => _BackupSeedState();
+}
+
+class _BackupSeedState extends State<BackupSeed> {
+  bool validated = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return services.password.required && !streams.app.verify.value
+        ? VerifyPassword(parentState: this)
+        : body();
+  }
+
+  Widget body() => Container(
+      padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
+      child: CustomScrollView(slivers: <Widget>[
+        SliverToBoxAdapter(child: SizedBox(height: 6)),
+        SliverToBoxAdapter(child: instructions),
+        //SliverToBoxAdapter(child: SizedBox(height: 16)),
+        SliverToBoxAdapter(child: words),
+        SliverFillRemaining(
+            hasScrollBody: false,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  warning,
+                  Row(children: [submitButton]),
+                  SizedBox(height: 40),
+                ])),
+      ]));
+
+  Widget get instructions => Container(
+      height: 48,
+      child: Text(
+        'Please backup your wallet by writing down these words on a piece of paper.',
+        style: Theme.of(context)
+            .textTheme
+            .subtitle1!
+            .copyWith(color: AppColors.black),
+      ));
+
+  Widget get words => Container(
+      height:
+          MediaQuery.of(context).size.height - 380, // centered between text...
+      //392, // center of screen
+      alignment: Alignment.bottomCenter,
+      child: Container(
+          height: 272,
+          color: Colors.grey,
+          child: Text('words', style: Theme.of(context).textTheme.subtitle1)));
+
+  Widget get warning => Container(
+      height: 48,
+      alignment: Alignment.topCenter,
+      child: Text(
+        'You will need these words for recovery.',
+        style: Theme.of(context)
+            .textTheme
+            .subtitle1!
+            .copyWith(color: AppColors.error),
+      ));
+
+  Widget get submitButton => components.buttons.actionButton(
+        context,
+        enabled: true,
+        label: 'Next',
+        onPressed: () {},
+      );
+}

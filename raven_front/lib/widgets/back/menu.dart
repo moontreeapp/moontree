@@ -134,10 +134,12 @@ class _NavMenuState extends State<NavMenu> {
             arrow: true,
           ),
           destination(
-            icon: MdiIcons.drawPen,
-            name: 'Backup',
-            link: '/settings/backup',
-          ),
+              icon: MdiIcons.drawPen,
+              name: 'Backup',
+              link: '/security/backup',
+              execute: () {
+                streams.app.verify.add(false);
+              }),
           destination(
             icon: Icons.settings,
             name: 'Settings',
