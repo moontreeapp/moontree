@@ -48,8 +48,17 @@ class _PageTitleState extends State<PageTitle> {
         });
       }
     }));
-    listeners.add(streams.app.asset.listen((String? value) {
+    listeners.add(streams.app.manage.asset.listen((String? value) {
       if (appContext == AppContext.manage &&
+          value != assetTitle &&
+          value != null) {
+        setState(() {
+          assetTitle = value;
+        });
+      }
+    }));
+    listeners.add(streams.app.wallet.asset.listen((String? value) {
+      if (appContext == AppContext.wallet &&
           value != assetTitle &&
           value != null) {
         setState(() {
@@ -101,20 +110,34 @@ class _PageTitleState extends State<PageTitle> {
                         'Login': 'Unlock',
                       }[pageTitle] ??
                       {
-                        'Transactions': ((streams.spend.form.value?.symbol ??
-                                    'RVN') ==
-                                'RVN')
+                        'Transactions': assetTitle == 'RVN'
                             ? 'Ravencoin'
-                            : streams.spend.form.value!.symbol!.endsWith('!')
-                                ? streams.spend.form.value!.symbol!
-                                    .replaceAll('!', '') //' (Admin)')
-                                : streams.spend.form.value?.symbol,
-                        'Asset': assetTitle.split('/').last,
+                            : assetName(assetTitle),
+                        'Asset': assetName(assetTitle),
                       }[pageTitle] ??
                       (pageTitle == 'Wallet'
                           ? appContext.enumString.toTitleCase()
                           : pageTitle),
                   style: Theme.of(context).textTheme.headline4));
+
+  String assetName(String given) {
+    print('$given vs $assetTitle');
+    if (given.contains('~')) {
+      return given.toLowerCase().split('~').last.toTitleCase();
+    }
+    if (given.contains('#')) {
+      return given.toLowerCase().split('#').last.toTitleCase();
+    }
+    return given
+        .toLowerCase()
+        .split('/')
+        .last
+        .replaceAll('#', '')
+        .replaceAll('~', '')
+        .replaceAll(r'$', '')
+        .replaceAll('!', '')
+        .toTitleCase();
+  }
 
   Widget? get walletNumber {
     if (pageTitle != 'Wallet') {

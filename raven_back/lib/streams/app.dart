@@ -9,8 +9,23 @@ class AppStreams {
   final xlead = BehaviorSubject<bool>.seeded(false);
   final snack = BehaviorSubject<Snack?>.seeded(null);
   final context = BehaviorSubject<AppContext>.seeded(AppContext.wallet);
-  final asset = BehaviorSubject<String?>.seeded(null);
   final hideNav = BehaviorSubject<bool?>.seeded(null);
+
+  WalletSideStreams wallet = WalletSideStreams();
+  ManageSideStreams manage = ManageSideStreams();
+  SwapSideStreams swap = SwapSideStreams();
+}
+
+class WalletSideStreams {
+  final asset = BehaviorSubject<String?>.seeded(null);
+}
+
+class ManageSideStreams {
+  final asset = BehaviorSubject<String?>.seeded(null);
+}
+
+class SwapSideStreams {
+  final asset = BehaviorSubject<String?>.seeded(null);
 }
 
 /// resumed inactive paused detached

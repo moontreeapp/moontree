@@ -18,7 +18,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    if (streams.app.asset.value != null) streams.app.asset.add(null);
+    if (streams.app.manage.asset.value != null)
+      streams.app.manage.asset.add(null);
     controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 200));
     offset = Tween<Offset>(begin: Offset.zero, end: Offset(0.0, 1.0)).animate(

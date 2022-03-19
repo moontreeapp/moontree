@@ -51,7 +51,7 @@ class _BalanceHeaderState extends State<BalanceHeader>
         });
       }
     }));
-    listeners.add(streams.app.asset.listen((String? value) {
+    listeners.add(streams.app.manage.asset.listen((String? value) {
       if (streams.app.context.value == AppContext.manage &&
           symbol != value &&
           value != null) {

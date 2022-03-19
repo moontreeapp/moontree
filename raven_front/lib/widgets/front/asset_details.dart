@@ -7,6 +7,7 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AssetDetails extends StatefulWidget {
   final String symbol;
@@ -77,8 +78,9 @@ class _AssetDetails extends State<AssetDetails> {
                   ),
                 )
             ] +
+            [link('IPFS', 'https://gateway.ipfs.io/ipfs/')] +
             [
-              for (var text in ['IPFS/Txid', 'Reissuable'])
+              for (var text in ['Reissuable'])
                 ListTile(
                   dense: true,
                   title:
@@ -105,7 +107,7 @@ class _AssetDetails extends State<AssetDetails> {
         return assetDetails!.divisibility.toString();
       case 'Verifier':
         return 'not captured...';
-      case 'IPFS/Txid':
+      case 'IPFS':
         return assetDetails!.metadata.cutOutMiddle();
       case 'Reissuable':
         return assetDetails!.reissuable ? 'Yes' : 'No';
@@ -113,4 +115,20 @@ class _AssetDetails extends State<AssetDetails> {
         return 'unknown';
     }
   }
+
+  String elementFull(String humanName) {
+    switch (humanName) {
+      case 'IPFS':
+        return assetDetails!.metadata;
+      default:
+        return 'unknown';
+    }
+  }
+
+  Widget link(String text, String link) => ListTile(
+        dense: true,
+        onTap: () => launch(link + elementFull(text)),
+        title: Text(text, style: Theme.of(context).textTheme.bodyText1),
+        trailing: Text(element(text), style: Theme.of(context).textTheme.link),
+      );
 }

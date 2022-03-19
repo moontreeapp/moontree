@@ -67,7 +67,7 @@ class _WalletViewState extends State<WalletView> {
     secret = data['secret'];
     secretName = (data['secretName'] as SecretType)
         .enumString
-        .toTitleCase(underscoreAsSpace: true);
+        .toTitleCase(underscoresAsSpace: true);
     wallet = data['wallet'];
     walletType = wallet is LeaderWallet ? 'LeaderWallet' : 'SingleWallet';
     wallet = wallet is LeaderWallet

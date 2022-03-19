@@ -150,7 +150,7 @@ class SelectionItems {
   }
 
   String asString(SelectionOption name) =>
-      name.enumString.toTitleCase(underscoreAsSpace: true);
+      name.enumString.toTitleCase(underscoresAsSpace: true);
 
   Widget createLeads(SelectionOption name) {
     var imageDetails = components.icons.getImageDetails(symbolColors);
@@ -511,7 +511,7 @@ class SelectionItems {
       produceModal([for (SelectionOption name in names) createItem(name)],
           tall: false);
     } else if (modalSet == SelectionSet.Sub_Asset) {
-      symbolColors = streams.app.asset.value;
+      symbolColors = streams.app.manage.asset.value;
       print(symbolColors);
       produceModal([
         for (SelectionOption name in names) createItem(name)

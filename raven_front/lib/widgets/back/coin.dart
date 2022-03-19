@@ -29,33 +29,52 @@ class Coin extends StatefulWidget {
   _CoinState createState() => _CoinState();
 }
 
-class _CoinState extends State<Coin> {
+class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
   bool front = true;
+  late AnimationController controller;
+  late Animation<double> animation;
 
   @override
   void initState() {
     super.initState();
+    controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 960));
+    animation = Tween(begin: 0.0, end: 1.0).animate(controller);
   }
 
   @override
   void dispose() {
+    controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    controller.forward();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: headerCenter(),
+      children: [icon, subHeader],
     );
   }
 
-  List<Widget> headerCenter() {
-    var ret = [
-      GestureDetector(
-        onTap: () => setState(() => front = !front),
+  Widget get icon => GestureDetector(
+        onTap: () {
+          controller.reset();
+          controller.duration = Duration(milliseconds: 160);
+          setState(() {
+            front = !front;
+            controller.forward();
+          });
+        },
         child: components.icons.assetAvatar(widget.symbol, size: 48),
-      ),
+      );
+
+  Widget get subHeader =>
+      FadeTransition(opacity: animation, child: Column(children: belowIcon));
+
+  List<Widget> get belowIcon {
+    var ret = [
       SizedBox(height: 9),
       selections,
       SizedBox(height: 5),
@@ -114,7 +133,7 @@ class _CoinState extends State<Coin> {
   }
 
   Widget get backText => Text(
-        widget.symbol.toTitleCase(underscoreAsSpace: true),
+        widget.symbol == 'RVN' ? 'Ravencoin' : widget.symbol,
         style: Theme.of(context).textTheme.headline5,
       );
 }

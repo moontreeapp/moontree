@@ -135,7 +135,7 @@ class _SubAssetList extends State<SubAssetList> {
   }
 
   void navigate(String symbol, {Wallet? wallet}) {
-    streams.app.asset.add(symbol);
+    streams.app.manage.asset.add(symbol);
     print('sending $symbol');
     Navigator.of(components.navigator.routeContext!).pushReplacementNamed(
       '/manage/asset',

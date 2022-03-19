@@ -16,7 +16,7 @@ void main() {
       expect('foo bar'.toTitleCase(), 'Foo Bar');
       expect('fOO BaR'.toTitleCase(), 'FOO BaR');
       expect('user_name'.toTitleCase(), 'User_name');
-      expect('user_name'.toTitleCase(underscoreAsSpace: true), 'User Name');
+      expect('user_name'.toTitleCase(underscoresAsSpace: true), 'User Name');
     });
     test('trimPattern', () {
       expect(''.trimPattern(''), '');

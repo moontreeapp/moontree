@@ -37,7 +37,7 @@ class _SecurityState extends State<Security> {
                 activeColor: Theme.of(context).backgroundColor,
                 title: Text(
                     SecurityOption.none.enumString
-                        .toTitleCase(underscoreAsSpace: true),
+                        .toTitleCase(underscoresAsSpace: true),
                     style: Theme.of(context).textTheme.bodyText1),
                 value: SecurityOption.none,
                 groupValue: securityChoice,
@@ -49,7 +49,7 @@ class _SecurityState extends State<Security> {
                 activeColor: Theme.of(context).backgroundColor,
                 title: Text(
                     SecurityOption.password.enumString
-                        .toTitleCase(underscoreAsSpace: true),
+                        .toTitleCase(underscoresAsSpace: true),
                     style: Theme.of(context).textTheme.bodyText1),
                 value: SecurityOption.password,
                 groupValue: securityChoice,

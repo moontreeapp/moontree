@@ -5,13 +5,14 @@ import 'package:raven_back/utils/utilities.dart';
 
 extension StringCasingExtension on String {
   String toCapitalized() =>
-      length > 0 ? '${this[0].toUpperCase()}${substring(1)}' : '';
-  String toTitleCase({bool underscoreAsSpace = false}) =>
+      1 < length ? substring(0, 1).toUpperCase() + substring(1) : toUpperCase();
+
+  String toTitleCase({bool underscoresAsSpace = false}) =>
       replaceAll(RegExp(' +'), ' ')
           // for enums especially:
-          .replaceAll(underscoreAsSpace ? RegExp('_+') : ' ', ' ')
+          .replaceAll(underscoresAsSpace ? RegExp('_+') : ' ', ' ')
           .split(' ')
-          .map((str) => str.toCapitalized())
+          .map((String str) => str.toCapitalized())
           .join(' ');
 }
 

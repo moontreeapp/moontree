@@ -23,7 +23,8 @@ class _CreateNFTAssetState extends State<CreateNFTAsset> {
 
   @override
   Widget build(BuildContext context) {
-    streams.create.form.add(GenericCreateForm(parent: streams.app.asset.value));
+    streams.create.form
+        .add(GenericCreateForm(parent: streams.app.manage.asset.value));
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: body(),

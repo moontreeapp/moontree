@@ -17,7 +17,7 @@ class NavBar extends StatefulWidget {
 class _NavBarState extends State<NavBar> {
   @override
   Widget build(BuildContext context) {
-    var assetType = Asset.assetTypeOf(streams.app.asset.value ?? '');
+    var assetType = Asset.assetTypeOf(streams.app.manage.asset.value ?? '');
     return streams.app.page.value == 'Send'
         ? Container(height: 0)
         : Container(

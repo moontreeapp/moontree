@@ -250,7 +250,7 @@ class IconComponents {
       case AssetType.Sub:
         return MdiIcons.slashForward;
       case AssetType.SubAdmin:
-        return MdiIcons.slashForwardBox;
+        return MdiIcons.crown;
       default:
         return Icons.circle_outlined;
     }
