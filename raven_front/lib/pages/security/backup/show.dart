@@ -56,8 +56,19 @@ class _BackupSeedState extends State<BackupSeed> {
             .copyWith(color: AppColors.black),
       ));
 
+  Widget get warning => Container(
+      height: 48,
+      //alignment: Alignment.topCenter,
+      child: Text(
+        'You will need these words for recovery.',
+        style: Theme.of(context)
+            .textTheme
+            .subtitle1!
+            .copyWith(color: AppColors.error),
+      ));
+
   Widget get words => Container(
-      height: MediaQuery.of(context).size.height - 380,
+      height: MediaQuery.of(context).size.height - 428,
       alignment: Alignment.bottomCenter,
       child: Container(
           height: 272,
@@ -77,17 +88,6 @@ class _BackupSeedState extends State<BackupSeed> {
                               number: i + x)
                       ]),
               ])));
-
-  Widget get warning => Container(
-      height: 48,
-      alignment: Alignment.topCenter,
-      child: Text(
-        'You will need these words for recovery.',
-        style: Theme.of(context)
-            .textTheme
-            .subtitle1!
-            .copyWith(color: AppColors.error),
-      ));
 
   Widget get submitButton => components.buttons.actionButton(
         context,
