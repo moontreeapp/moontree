@@ -241,95 +241,101 @@ class _SendState extends State<Send> {
                 //Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
                 //    style: Theme.of(context).textTheme.caption),
                 //;
-                TextField(
-                  focusNode: sendAssetFocusNode,
-                  controller: sendAsset,
-                  readOnly: true,
-                  decoration: components.styles.decorations.textFeild(context,
-                      focusNode: sendAssetFocusNode,
-                      labelText: 'Asset',
-                      hintText: 'Ravencoin',
-                      suffixIcon: IconButton(
-                        icon: Padding(
-                            padding: EdgeInsets.only(right: 14),
-                            child: Icon(Icons.expand_more_rounded,
-                                color: Color(0xDE000000))),
-                        onPressed: () => _produceAssetModal(),
-                      )),
-                  onTap: () {
-                    _produceAssetModal();
-                  },
-                  onEditingComplete: () async {
-                    FocusScope.of(context).requestFocus(sendAddressFocusNode);
-                  },
-                ),
+                sendAssetField,
                 SizedBox(height: 16.0),
-                Visibility(
-                    visible: addressName != '',
-                    child: Text('To: $addressName')),
-                if (showPaste)
-                  TextButton.icon(
-                      onPressed: () async {
-                        sendAddress.text =
-                            (await Clipboard.getData('text/plain'))?.text ?? '';
-                        setState(() {
-                          showPaste = !showPaste;
-                        });
-                      },
-                      icon: Icon(Icons.paste_rounded),
-                      label: Text(() async {
-                            return (await Clipboard.getData('text/plain'))
-                                    ?.text ??
-                                '';
-                          }()
-                              .toString()
-                              .substring(0, 10) +
-                          '...')),
-                TextField(
-                  selectionControls: NoToolBar(),
-                  focusNode: sendAddressFocusNode,
-                  controller: sendAddress,
-                  autocorrect: false,
-                  decoration: components.styles.decorations.textFeild(context,
-                      focusNode: sendAddressFocusNode,
-                      labelText: 'To',
-                      hintText: 'Address',
-                      errorText: sendAddress.text != '' &&
-                              !_validateAddress(sendAddress.text)
-                          ? 'Unrecognized Address'
-                          : null,
-                      suffixIcon:
-                          //QRCodeButton(pageTitle: 'Send-to', light: false),
-                          IconButton(
-                        icon:
-                            Icon(Icons.paste_rounded, color: AppColors.black60),
-                        onPressed: () async {
-                          sendAddress.text =
-                              (await Clipboard.getData('text/plain'))?.text ??
-                                  '';
-                        },
-                      )),
-                  onChanged: (value) {
-                    _validateAddressColor(value);
-                  },
-                  onEditingComplete: () {
-                    FocusScope.of(context).requestFocus(sendAmountFocusNode);
-                  },
-                ),
+                toName,
+                sendAddressField,
+                SizedBox(height: 16.0),
+                sendAmountField,
+                SizedBox(height: 16.0),
+                sendFeeField,
+                SizedBox(height: 16.0),
+                sendMemoField,
+                SizedBox(height: 16.0),
+                sendNoteField,
+                SizedBox(height: 24.0),
+              ],
+            ),
+          ),
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Row(children: [
+              allValidation()
+                  ? sendTransactionButton()
+                  : sendTransactionButton(disabled: true)
+            ]),
+          ),
+        ],
+      ));
 
-                SizedBox(height: 16.0),
-                TextField(
-                  selectionControls: NoToolBar(),
-                  focusNode: sendAmountFocusNode,
-                  controller: sendAmount,
-                  keyboardType: TextInputType.number,
-                  decoration: components.styles.decorations.textFeild(
-                    context,
-                    focusNode: sendAmountFocusNode,
-                    labelText: 'Amount',
-                    hintText: 'Quantity',
-                    // put ability to put it in as USD here
-                    /* // functionality has been moved to header
+  Widget get sendAssetField => TextField(
+        focusNode: sendAssetFocusNode,
+        controller: sendAsset,
+        readOnly: true,
+        decoration: components.styles.decorations.textFeild(context,
+            focusNode: sendAssetFocusNode,
+            labelText: 'Asset',
+            hintText: 'Ravencoin',
+            suffixIcon: IconButton(
+              icon: Padding(
+                  padding: EdgeInsets.only(right: 14),
+                  child: Icon(Icons.expand_more_rounded,
+                      color: Color(0xDE000000))),
+              onPressed: () => _produceAssetModal(),
+            )),
+        onTap: () {
+          _produceAssetModal();
+        },
+        onEditingComplete: () async {
+          FocusScope.of(context).requestFocus(sendAddressFocusNode);
+        },
+      );
+
+  Widget get toName =>
+      Visibility(visible: addressName != '', child: Text('To: $addressName'));
+
+  Widget get sendAddressField => TextField(
+        selectionControls: NoToolBar(),
+        focusNode: sendAddressFocusNode,
+        controller: sendAddress,
+        autocorrect: false,
+        decoration: components.styles.decorations.textFeild(context,
+            focusNode: sendAddressFocusNode,
+            labelText: 'To',
+            hintText: 'Address',
+            errorText:
+                sendAddress.text != '' && !_validateAddress(sendAddress.text)
+                    ? 'Unrecognized Address'
+                    : null,
+            suffixIcon:
+                //QRCodeButton(pageTitle: 'Send-to', light: false),
+                IconButton(
+              icon: Icon(Icons.paste_rounded, color: AppColors.black60),
+              onPressed: () async {
+                sendAddress.text =
+                    (await Clipboard.getData('text/plain'))?.text ?? '';
+              },
+            )),
+        onChanged: (value) {
+          _validateAddressColor(value);
+        },
+        onEditingComplete: () {
+          FocusScope.of(context).requestFocus(sendAmountFocusNode);
+        },
+      );
+
+  Widget get sendAmountField => TextField(
+        selectionControls: NoToolBar(),
+        focusNode: sendAmountFocusNode,
+        controller: sendAmount,
+        keyboardType: TextInputType.number,
+        decoration: components.styles.decorations.textFeild(
+          context,
+          focusNode: sendAmountFocusNode,
+          labelText: 'Amount',
+          hintText: 'Quantity',
+          // put ability to put it in as USD here
+          /* // functionality has been moved to header
                     suffixText: sendAll ? "don't send all" : 'send all',
                     suffixStyle: Theme.of(context).textTheme.caption,
                     suffixIcon: IconButton(
@@ -348,141 +354,122 @@ class _SendState extends State<Send> {
                       },
                     ),
                     */
-                  ),
-                  onChanged: (value) {
-                    visibleAmount = verifyVisibleAmount(value);
-                    //streams.spend.form.add(SpendForm.merge(
-                    //    form: streams.spend.form.value,
-                    //    amount: double.parse(visibleAmount)));
-                  },
-                  onEditingComplete: () {
-                    sendAmount.text = cleanDecAmount(
-                      sendAmount.text,
-                      zeroToBlank: true,
-                    );
-                    sendAmount.text = enforceDivisibility(sendAmount.text,
-                        divisibility: divisibility);
-                    visibleAmount = verifyVisibleAmount(sendAmount.text);
-                    streams.spend.form.add(SpendForm.merge(
-                        form: streams.spend.form.value,
-                        amount: double.parse(visibleAmount)));
-                    FocusScope.of(context).requestFocus(sendFeeFocusNode);
-                    setState(() {});
-                  },
-                ),
+        ),
+        onChanged: (value) {
+          visibleAmount = verifyVisibleAmount(value);
+          //streams.spend.form.add(SpendForm.merge(
+          //    form: streams.spend.form.value,
+          //    amount: double.parse(visibleAmount)));
+        },
+        onEditingComplete: () {
+          sendAmount.text = cleanDecAmount(
+            sendAmount.text,
+            zeroToBlank: true,
+          );
+          sendAmount.text =
+              enforceDivisibility(sendAmount.text, divisibility: divisibility);
+          visibleAmount = verifyVisibleAmount(sendAmount.text);
+          streams.spend.form.add(SpendForm.merge(
+              form: streams.spend.form.value,
+              amount: double.parse(visibleAmount)));
+          FocusScope.of(context).requestFocus(sendFeeFocusNode);
+          setState(() {});
+        },
+      );
 
-                SizedBox(height: 16.0),
-                TextField(
-                  focusNode: sendFeeFocusNode,
-                  controller: sendFee,
-                  readOnly: true,
-                  decoration: components.styles.decorations.textFeild(context,
-                      labelText: 'Transaction Speed',
-                      hintText: 'Standard',
-                      focusNode: sendFeeFocusNode,
-                      suffixIcon: IconButton(
-                        icon: Padding(
-                            padding: EdgeInsets.only(right: 14),
-                            child: Icon(Icons.expand_more_rounded,
-                                //color: Color(0xFF606060))),
-                                color: Color(0xDE000000))),
-                        onPressed: () => _produceFeeModal(),
-                      )),
-                  onTap: () {
-                    _produceFeeModal();
-                  },
-                  onChanged: (String? newValue) {
-                    feeGoal = {
-                          'Cheap': ravencoin.TxGoals.cheap,
-                          'Standard': ravencoin.TxGoals.standard,
-                          'Fast': ravencoin.TxGoals.fast,
-                        }[newValue] ??
-                        ravencoin.TxGoals
-                            .standard; // <--- replace by custom dialogue
-                    FocusScope.of(context).requestFocus(sendMemoFocusNode);
-                    setState(() {});
-                  },
-                ),
-                SizedBox(height: 16.0),
-                TextField(
-                    selectionControls: NoToolBar(),
-                    focusNode: sendMemoFocusNode,
-                    controller: sendMemo,
-                    decoration: components.styles.decorations.textFeild(
-                      context,
-                      focusNode: sendMemoFocusNode,
-                      labelText: 'Memo',
-                      hintText: 'IPFS',
-                      helperText: sendMemoFocusNode.hasFocus
-                          ? 'Saved on the blockchain'
-                          : null,
-                      helperStyle: Theme.of(context)
-                          .textTheme
-                          .caption!
-                          .copyWith(height: .7, color: AppColors.primary),
-                      //suffixIcon:
-                      //    IconButton(
-                      //  icon: Icon(Icons.paste_rounded,
-                      //      color: AppColors.black60),
-                      //  onPressed: () async {
-                      //    sendNote.text =
-                      //        (await Clipboard.getData('text/plain'))?.text ??
-                      //            '';
-                      //  },
-                      //)
-                    ),
-                    onChanged: (value) {},
-                    onEditingComplete: () {
-                      FocusScope.of(context).requestFocus(sendNoteFocusNode);
-                      setState(() {});
-                    }),
-                SizedBox(height: 16.0),
-                TextField(
-                    selectionControls: NoToolBar(),
-                    focusNode: sendNoteFocusNode,
-                    controller: sendNote,
-                    decoration: components.styles.decorations.textFeild(
-                      context,
-                      focusNode: sendNoteFocusNode,
-                      labelText: 'Note',
-                      hintText: 'Purchase',
-                      helperText: sendNoteFocusNode.hasFocus
-                          ? 'Saved to your phone'
-                          : null,
-                      helperStyle: Theme.of(context)
-                          .textTheme
-                          .caption!
-                          .copyWith(height: .7, color: AppColors.primary),
-                      //suffixIcon:
-                      //    IconButton(
-                      //  icon:
-                      //      Icon(Icons.paste_rounded, color: AppColors.black60),
-                      //  onPressed: () async {
-                      //    sendNote.text =
-                      //        (await Clipboard.getData('text/plain'))?.text ??
-                      //            '';
-                      //  },
-                      //)
-                    ),
-                    onChanged: (value) {},
-                    onEditingComplete: () {
-                      FocusScope.of(context).requestFocus(previewFocusNode);
-                      setState(() {});
-                    }),
-                SizedBox(height: 24.0),
-              ],
-            ),
-          ),
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Row(children: [
-              allValidation()
-                  ? sendTransactionButton()
-                  : sendTransactionButton(disabled: true)
-            ]),
-          ),
-        ],
-      ));
+  //SizedBox(height: 16.0),
+  Widget get sendFeeField => TextField(
+        focusNode: sendFeeFocusNode,
+        controller: sendFee,
+        readOnly: true,
+        decoration: components.styles.decorations.textFeild(context,
+            labelText: 'Transaction Speed',
+            hintText: 'Standard',
+            focusNode: sendFeeFocusNode,
+            suffixIcon: IconButton(
+              icon: Padding(
+                  padding: EdgeInsets.only(right: 14),
+                  child: Icon(Icons.expand_more_rounded,
+                      //color: Color(0xFF606060))),
+                      color: Color(0xDE000000))),
+              onPressed: () => _produceFeeModal(),
+            )),
+        onTap: () {
+          _produceFeeModal();
+        },
+        onChanged: (String? newValue) {
+          feeGoal = {
+                'Cheap': ravencoin.TxGoals.cheap,
+                'Standard': ravencoin.TxGoals.standard,
+                'Fast': ravencoin.TxGoals.fast,
+              }[newValue] ??
+              ravencoin.TxGoals.standard; // <--- replace by custom dialogue
+          FocusScope.of(context).requestFocus(sendMemoFocusNode);
+          setState(() {});
+        },
+      );
+  Widget get sendMemoField => TextField(
+      selectionControls: NoToolBar(),
+      focusNode: sendMemoFocusNode,
+      controller: sendMemo,
+      decoration: components.styles.decorations.textFeild(
+        context,
+        focusNode: sendMemoFocusNode,
+        labelText: 'Memo',
+        hintText: 'IPFS',
+        helperText:
+            sendMemoFocusNode.hasFocus ? 'Saved on the blockchain' : null,
+        helperStyle: Theme.of(context)
+            .textTheme
+            .caption!
+            .copyWith(height: .7, color: AppColors.primary),
+        //suffixIcon:
+        //    IconButton(
+        //  icon: Icon(Icons.paste_rounded,
+        //      color: AppColors.black60),
+        //  onPressed: () async {
+        //    sendNote.text =
+        //        (await Clipboard.getData('text/plain'))?.text ??
+        //            '';
+        //  },
+        //)
+      ),
+      onChanged: (value) {},
+      onEditingComplete: () {
+        FocusScope.of(context).requestFocus(sendNoteFocusNode);
+        setState(() {});
+      });
+
+  Widget get sendNoteField => TextField(
+      selectionControls: NoToolBar(),
+      focusNode: sendNoteFocusNode,
+      controller: sendNote,
+      decoration: components.styles.decorations.textFeild(
+        context,
+        focusNode: sendNoteFocusNode,
+        labelText: 'Note',
+        hintText: 'Purchase',
+        helperText: sendNoteFocusNode.hasFocus ? 'Saved to your phone' : null,
+        helperStyle: Theme.of(context)
+            .textTheme
+            .caption!
+            .copyWith(height: .7, color: AppColors.primary),
+        //suffixIcon:
+        //    IconButton(
+        //  icon:
+        //      Icon(Icons.paste_rounded, color: AppColors.black60),
+        //  onPressed: () async {
+        //    sendNote.text =
+        //        (await Clipboard.getData('text/plain'))?.text ??
+        //            '';
+        //  },
+        //)
+      ),
+      onChanged: (value) {},
+      onEditingComplete: () {
+        FocusScope.of(context).requestFocus(previewFocusNode);
+        setState(() {});
+      });
 
   bool fieldValidation() {
     return sendAddress.text != '' && _validateAddress() && verifyMemo();
