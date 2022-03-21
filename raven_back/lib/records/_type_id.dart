@@ -19,6 +19,7 @@ class TypeId {
   static const Security = 23;
   static const Asset = 24;
   static const Metadata = 25;
+  static const Note = 26;
 
   // enums
   static const Net = 100;

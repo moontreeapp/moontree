@@ -36,20 +36,8 @@ class Transaction with EquatableMixin {
   //// 0 if its in the most recent block.
   //// 1 if another block has passed.
 
-  // not from transaction.get
-  @HiveField(4)
-  String? memo;
-
-  @HiveField(5)
-  String note;
-
   Transaction(
-      {required this.id,
-      required this.confirmed,
-      this.time,
-      this.height,
-      this.memo,
-      this.note = ''});
+      {required this.id, required this.confirmed, this.time, this.height});
 
   @override
   List<Object?> get props => [
@@ -57,15 +45,12 @@ class Transaction with EquatableMixin {
         confirmed,
         time,
         id,
-        memo,
-        note,
       ];
 
   @override
   String toString() {
     return 'Transaction('
-        'id: $id, height: $height, confirmed: $confirmed, time: $time, '
-        'memo: $memo, note: $note)';
+        'id: $id, height: $height, confirmed: $confirmed, time: $time)';
   }
 
   // technically belongs on frontend...

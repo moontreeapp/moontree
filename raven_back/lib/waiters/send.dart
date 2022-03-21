@@ -1,6 +1,7 @@
 // ignore_for_file: omit_local_variable_types
 
 import 'package:raven_back/streams/app.dart';
+import 'package:raven_back/streams/spend.dart';
 import 'package:tuple/tuple.dart';
 
 import 'waiter.dart';
@@ -18,7 +19,10 @@ class SendWaiter extends Waiter {
           tuple = services.transaction.make.transactionBy(sendRequest);
           ravencoin.Transaction tx = tuple.item1;
           SendEstimate estimate = tuple.item2;
-          streams.spend.made.add(tx.toHex());
+          streams.spend.made.add(TransactionNote(
+            txHex: tx.toHex(),
+            note: sendRequest.note,
+          )); // tx + note
           streams.spend.estimate.add(estimate);
           streams.spend.make.add(null);
         } on InsufficientFunds {
@@ -39,10 +43,16 @@ class SendWaiter extends Waiter {
       }
     });
 
-    streams.spend.send.listen((String? transactionHex) async {
-      if (transactionHex != null) {
+    streams.spend.send.listen((TransactionNote? transactionNote) async {
+      // tx + note
+      if (transactionNote != null) {
         //try {
-        var txid = await services.client.api.sendTransaction(transactionHex);
+        var txid =
+            await services.client.api.sendTransaction(transactionNote.txHex);
+        if (transactionNote.note != null) {
+          await res.note
+              .save(Note(transactionId: txid, note: transactionNote.note!));
+        }
         print('txid');
         print(txid);
         if (txid != '') {

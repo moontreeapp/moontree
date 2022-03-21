@@ -493,13 +493,18 @@ class _SendState extends State<Send> {
       );
       if (holding >= double.parse(sendAmount.text)) {
         var sendRequest = SendRequest(
-            sendAll: holding == visibleAmount.toDouble(),
-            wallet: Current.wallet,
-            sendAddress: sendAddress.text,
-            holding: holding,
-            visibleAmount: visibleAmount,
-            sendAmountAsSats: sendAmountAsSats,
-            feeGoal: feeGoal);
+          sendAll: holding == visibleAmount.toDouble(),
+          wallet: Current.wallet,
+          sendAddress: sendAddress.text,
+          holding: holding,
+          visibleAmount: visibleAmount,
+          sendAmountAsSats: sendAmountAsSats,
+          feeGoal: feeGoal,
+          // assetMemo: // we don't have a UI field for this.
+          // should we use the memo field for assetMemo if sending asset
+          // or should always use that field for op return memos??
+          memo: sendMemo.text,
+        );
         confirmSend(sendRequest);
       } else {
         showDialog(

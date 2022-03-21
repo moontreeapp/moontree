@@ -29,10 +29,19 @@ extension TransactionHasManyMemos on Transaction {
       res.vouts.byTransaction.getAll(id).map((vout) => vout.memo).toList();
 }
 
+extension TransactionHasManyAssetMemos on Transaction {
+  List<String> get assetMemos =>
+      res.vouts.byTransaction.getAll(id).map((vout) => vout.assetMemo).toList();
+}
+
 extension TransactionHasOneValue on Transaction {
   int get value => res.vouts.byTransaction
       .getAll(id)
       .map((vout) => vout.rvnValue)
       .toList()
       .sumInt();
+}
+
+extension TransactionHasOneNote on Transaction {
+  String? get note => res.note.primaryIndex.getOne(id)?.note;
 }

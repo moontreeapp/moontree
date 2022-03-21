@@ -21,22 +21,6 @@ class TransactionService {
     return transaction ?? res.transactions.primaryIndex.getOne(hash ?? '');
   }
 
-  // setter for note value on Transaction record in reservoir
-  Future<bool> saveNote(String note,
-      {Transaction? transaction, String? hash}) async {
-    transaction = getTransactionFrom(transaction: transaction, hash: hash);
-    if (transaction != null) {
-      await res.transactions.save(Transaction(
-          id: transaction.id,
-          height: transaction.height,
-          confirmed: transaction.confirmed,
-          note: transaction.note,
-          time: transaction.time));
-      return true;
-    }
-    return false;
-  }
-
   /// for each transaction
   ///   get a list of all securities involved on vins.vouts and vouts
   ///   for each security involed
