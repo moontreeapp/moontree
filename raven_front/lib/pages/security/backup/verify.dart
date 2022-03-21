@@ -60,24 +60,15 @@ class _VerifySeedState extends State<VerifySeed> {
         : body();
   }
 
-  Widget body() => Container(
-      padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
-      child: CustomScrollView(slivers: <Widget>[
-        SliverToBoxAdapter(child: SizedBox(height: 6)),
-        SliverToBoxAdapter(child: instructions),
-        SliverToBoxAdapter(child: SizedBox(height: 16)),
-        SliverToBoxAdapter(child: warning),
-        SliverToBoxAdapter(child: words),
-        SliverFillRemaining(
-            hasScrollBody: false,
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(children: [submitButton]),
-                  SizedBox(height: 40),
-                ])),
-      ]));
+  Widget body() => components.page.form(
+        context,
+        columnWidgets: <Widget>[
+          instructions,
+          warning,
+          words,
+        ],
+        buttons: [submitButton],
+      );
 
   Widget get instructions => Container(
       height: 48,
@@ -95,7 +86,7 @@ class _VerifySeedState extends State<VerifySeed> {
       );
 
   Widget get words => Container(
-      height: MediaQuery.of(context).size.height - 428,
+      height: MediaQuery.of(context).size.height - 444,
       alignment: Alignment.bottomCenter,
       child: Container(
           height: 272,
