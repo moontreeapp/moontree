@@ -142,7 +142,7 @@ class _VerifySeedState extends State<VerifySeed> {
         label: 'Verify',
         onPressed: () {
           Navigator.popUntil(context, ModalRoute.withName('/home'));
-          streams.app.snack.add(Snack(message: 'Successfully Created Backup'));
+          streams.app.snack.add(Snack(message: 'Successfully Verified Backup'));
         },
       );
 }
