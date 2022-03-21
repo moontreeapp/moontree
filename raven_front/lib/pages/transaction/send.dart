@@ -127,6 +127,34 @@ class _SendState extends State<Send> {
 
   void refresh() => setState(() {});
 
+  void handlePopulateFromQR(String code) {
+    var qrData = populateFromQR(
+      code: code,
+      holdings: Current.holdingNames,
+      currentSymbol: data['symbol'],
+    );
+    if (qrData.address != null) {
+      sendAddress.text = qrData.address!;
+      if (qrData.addressName != null) {
+        addressName = qrData.addressName!;
+      }
+      if (qrData.amount != null) {
+        sendAmount.text = qrData.amount!;
+      }
+      if (qrData.note != null) {
+        sendNote.text = qrData.note!;
+      }
+      data['symbol'] = qrData.symbol;
+      if (!['', null].contains(data['symbol'])) {
+        streams.spend.form.add(SpendForm.merge(
+          form: streams.spend.form.value,
+          symbol: data['symbol'],
+        ));
+      }
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
@@ -158,115 +186,28 @@ class _SendState extends State<Send> {
     return body();
   }
 
-  void handlePopulateFromQR(String code) {
-    var qrData = populateFromQR(
-      code: code,
-      holdings: Current.holdingNames,
-      currentSymbol: data['symbol'],
-    );
-    if (qrData.address != null) {
-      sendAddress.text = qrData.address!;
-      if (qrData.addressName != null) {
-        addressName = qrData.addressName!;
-      }
-      if (qrData.amount != null) {
-        sendAmount.text = qrData.amount!;
-      }
-      if (qrData.note != null) {
-        sendNote.text = qrData.note!;
-      }
-      data['symbol'] = qrData.symbol;
-      if (!['', null].contains(data['symbol'])) {
-        streams.spend.form.add(SpendForm.merge(
-          form: streams.spend.form.value,
-          symbol: data['symbol'],
-        ));
-      }
-      setState(() {});
-    }
-  }
-
-  bool _validateAddress([String? address]) =>
-      sendAddress.text == '' ||
-      rvnCondition(address ?? sendAddress.text, net: res.settings.net);
-
-  bool _validateAddressColor([String? address]) {
-    var old = validatedAddress;
-    validatedAddress = validateAddressType(address ?? sendAddress.text);
-    if (validatedAddress != '') {
-      if ((validatedAddress == 'RVN' && res.settings.net == Net.Main) ||
-          (validatedAddress == 'RVNt' && res.settings.net == Net.Test)) {
-        //} else if (validatedAddress == 'UNS') {
-        //} else if (validatedAddress == 'ASSET') {
-      }
-      if (old != validatedAddress) setState(() => {});
-      return true;
-    }
-    if (old != '') setState(() => {});
-    return false;
-  }
-
-  String verifyVisibleAmount(String value) {
-    var amount = cleanDecAmount(value);
-    try {
-      if (value != '') {
-        value = double.parse(value).toString();
-      }
-    } catch (e) {
-      value = value;
-    }
-    if (amount == '0' || amount != value) {
-    } else {
-      // todo: estimate fee
-      if (double.parse(amount) <= holding) {
-      } else {}
-    }
-    //setState(() => {});
-    return amount;
-  }
-
-  bool verifyMemo([String? memo]) => (memo ?? sendMemo.text).length <= 80;
-
-  Widget body() => Padding(
-      padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 40),
-      // solves scrolling while keyboard
-      child: CustomScrollView(
-        shrinkWrap: true,
-        slivers: <Widget>[
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                // list items
-                //Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
-                //    style: Theme.of(context).textTheme.caption),
-                //;
-                sendAssetField,
-                SizedBox(height: 16.0),
-                toName,
-                sendAddressField,
-                SizedBox(height: 16.0),
-                sendAmountField,
-                SizedBox(height: 16.0),
-                sendFeeField,
-                SizedBox(height: 16.0),
-                sendMemoField,
-                SizedBox(height: 16.0),
-                sendNoteField,
-                SizedBox(height: 24.0),
-              ],
-            ),
-          ),
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Row(children: [
-              allValidation()
-                  ? sendTransactionButton()
-                  : sendTransactionButton(disabled: true)
-            ]),
-          ),
+  Widget body() => components.page.form(
+        context,
+        columnWidgets: <Widget>[
+          // list items
+          //Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
+          //    style: Theme.of(context).textTheme.caption),
+          //;
+          sendAssetField,
+          //toName,
+          sendAddressField,
+          sendAmountField,
+          sendFeeField,
+          sendMemoField,
+          sendNoteField,
+          SizedBox(height: 8.0),
         ],
-      ));
+        buttons: [
+          allValidation()
+              ? sendTransactionButton()
+              : sendTransactionButton(disabled: true)
+        ],
+      );
 
   Widget get sendAssetField => TextField(
         focusNode: sendAssetFocusNode,
@@ -470,6 +411,47 @@ class _SendState extends State<Send> {
         FocusScope.of(context).requestFocus(previewFocusNode);
         setState(() {});
       });
+
+  bool _validateAddress([String? address]) =>
+      sendAddress.text == '' ||
+      rvnCondition(address ?? sendAddress.text, net: res.settings.net);
+
+  bool _validateAddressColor([String? address]) {
+    var old = validatedAddress;
+    validatedAddress = validateAddressType(address ?? sendAddress.text);
+    if (validatedAddress != '') {
+      if ((validatedAddress == 'RVN' && res.settings.net == Net.Main) ||
+          (validatedAddress == 'RVNt' && res.settings.net == Net.Test)) {
+        //} else if (validatedAddress == 'UNS') {
+        //} else if (validatedAddress == 'ASSET') {
+      }
+      if (old != validatedAddress) setState(() => {});
+      return true;
+    }
+    if (old != '') setState(() => {});
+    return false;
+  }
+
+  String verifyVisibleAmount(String value) {
+    var amount = cleanDecAmount(value);
+    try {
+      if (value != '') {
+        value = double.parse(value).toString();
+      }
+    } catch (e) {
+      value = value;
+    }
+    if (amount == '0' || amount != value) {
+    } else {
+      // todo: estimate fee
+      if (double.parse(amount) <= holding) {
+      } else {}
+    }
+    //setState(() => {});
+    return amount;
+  }
+
+  bool verifyMemo([String? memo]) => (memo ?? sendMemo.text).length <= 80;
 
   bool fieldValidation() {
     return sendAddress.text != '' && _validateAddress() && verifyMemo();

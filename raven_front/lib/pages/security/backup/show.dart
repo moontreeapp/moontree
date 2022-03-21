@@ -32,6 +32,8 @@ class _BackupSeedState extends State<BackupSeed> {
       child: CustomScrollView(slivers: <Widget>[
         SliverToBoxAdapter(child: SizedBox(height: 6)),
         SliverToBoxAdapter(child: instructions),
+        SliverToBoxAdapter(child: SizedBox(height: 16)),
+        SliverToBoxAdapter(child: warning),
         SliverToBoxAdapter(child: words),
         SliverFillRemaining(
             hasScrollBody: false,
@@ -39,7 +41,6 @@ class _BackupSeedState extends State<BackupSeed> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  warning,
                   Row(children: [submitButton]),
                   SizedBox(height: 40),
                 ])),
