@@ -17,6 +17,7 @@ class DecorationComponents {
     TextStyle? suffixStyle,
     FocusNode? focusNode,
     bool alwaysShowHelper = false,
+    bool enabled = true, // be sure to set the field to enabled: false
   }) =>
       InputDecoration(
         focusedErrorBorder: OutlineInputBorder(
@@ -31,7 +32,13 @@ class DecorationComponents {
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
             borderSide: BorderSide(color: AppColors.black12)),
-        labelStyle: Theme.of(context).textTheme.subtitle1,
+        disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide(color: AppColors.black12)),
+        labelStyle: Theme.of(context)
+            .textTheme
+            .subtitle1!
+            .copyWith(color: enabled ? null : AppColors.black38),
         alignLabelWithHint: true,
         errorStyle: Theme.of(context).textFieldError,
         floatingLabelStyle: labelColor(focusNode, errorText),
