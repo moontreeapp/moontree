@@ -44,7 +44,6 @@ class _TransactionPageState extends State<TransactionPage> {
     transactionRecord = data['transactionRecord'];
     transaction = transactionRecord!.transaction;
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
-    var metadata = transaction!.memo != null && transaction!.memo != '';
     return detailsBody();
   }
 
@@ -69,14 +68,20 @@ class _TransactionPageState extends State<TransactionPage> {
     }
   }
 
+  String? get transactionMemo => transaction!.memos.isNotEmpty
+      ? transaction!.memos.first
+      : transaction!.assetMemos.isNotEmpty
+          ? transaction!.assetMemos.first
+          : null;
+
   String elementFull(String humanName) {
     switch (humanName) {
       case 'ID':
         return transaction!.id;
       case 'Memo/IPFS':
-        return transaction!.memo ?? '';
+        return transactionMemo ?? '';
       case 'Note':
-        return transaction!.note;
+        return transaction!.note ?? '';
       default:
         return 'unknown';
     }
@@ -104,7 +109,7 @@ class _TransactionPageState extends State<TransactionPage> {
             ] +
             [
               link('ID', 'https://rvnt.cryptoscope.io/tx/?txid='),
-              if (transaction!.memo != null && transaction!.memo != '')
+              if (transactionMemo != null)
                 link('Memo/IPFS', 'https://gateway.ipfs.io/ipfs/'),
             ] +
             (transaction!.note == '' ? [] : [plain('Note')]),
@@ -179,7 +184,7 @@ class _TransactionPageState extends State<TransactionPage> {
                     TextField(
                         readOnly: true,
                         controller:
-                            TextEditingController(text: transaction!.memo),
+                            TextEditingController(text: transactionMemo),
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         decoration: InputDecoration(
