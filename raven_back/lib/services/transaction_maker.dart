@@ -553,11 +553,9 @@ class TransactionMaker {
       feeSats = estimate.fees;
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee (plus amount, maybe)
-      utxosRaven = services.balance.collectUTXOs(
-        wallet,
-        amount: feeSats + (estimate.security == null ? estimate.amount : 0),
-        security: null,
-      );
+      utxosRaven = services.balance.collectUTXOs(wallet,
+          amount: feeSats + (estimate.security == null ? estimate.amount : 0),
+          security: null);
       var satsIn = 0;
       // We also add inputs in this loop
       for (var utxo in utxosRaven + utxosSecurity) {
