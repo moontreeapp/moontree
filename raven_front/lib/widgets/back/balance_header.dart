@@ -26,7 +26,9 @@ class BalanceHeader extends StatefulWidget {
 class _BalanceHeaderState extends State<BalanceHeader>
     with TickerProviderStateMixin {
   List<StreamSubscription> listeners = [];
-  String symbol = 'RVN';
+  String symbolSend = 'RVN';
+  String symbolTransactions = 'RVN';
+  String symbolManage = 'RVN';
   double amount = 0.0;
   double holding = 0.0;
   String visibleAmount = '0';
@@ -41,11 +43,11 @@ class _BalanceHeaderState extends State<BalanceHeader>
     components.navigator.tabController = components.navigator.tabController ??
         TabController(length: 2, vsync: this);
     listeners.add(streams.spend.form.listen((SpendForm? value) {
-      if (symbol !=
+      if (symbolSend !=
               (value?.symbol == 'Ravencoin' ? 'RVN' : value?.symbol ?? 'RVN') ||
           amount != (value?.amount ?? 0.0)) {
         setState(() {
-          symbol =
+          symbolSend =
               (value?.symbol == 'Ravencoin' ? 'RVN' : value?.symbol ?? 'RVN');
           amount = (value?.amount ?? 0.0);
         });
@@ -53,10 +55,19 @@ class _BalanceHeaderState extends State<BalanceHeader>
     }));
     listeners.add(streams.app.manage.asset.listen((String? value) {
       if (streams.app.context.value == AppContext.manage &&
-          symbol != value &&
+          symbolManage != value &&
           value != null) {
         setState(() {
-          symbol = value;
+          symbolManage = value;
+        });
+      }
+    }));
+    listeners.add(streams.app.wallet.asset.listen((String? value) {
+      if (streams.app.context.value == AppContext.wallet &&
+          symbolTransactions != value &&
+          value != null) {
+        setState(() {
+          symbolTransactions = value;
         });
       }
     }));
@@ -70,6 +81,14 @@ class _BalanceHeaderState extends State<BalanceHeader>
     }
     super.dispose();
   }
+
+  String get symbol => streams.app.context.value == AppContext.wallet
+      ? streams.app.page.value == 'Send'
+          ? symbolSend
+          : symbolTransactions
+      : streams.app.context.value == AppContext.manage
+          ? symbolManage
+          : symbolTransactions;
 
   @override
   Widget build(BuildContext context) {
