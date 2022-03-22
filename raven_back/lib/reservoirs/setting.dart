@@ -15,6 +15,8 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
   /// some other options for testing before we get our own electrum server up:
   // mainnet electrum3.rvn.rocks
   // testnet rvn4lyfe.com:50003
+  // 143.198.142.78:50002
+  // mjQSgeVh5ZHfwGzBkiQcpr119Wh6QMyQ3b
 
   static final String defaultUrl = 'testnet.rvn.rocks'; // 'rvn4lyfe.com';
   static final int defaultPort = 50002; // 50003;

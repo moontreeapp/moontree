@@ -58,7 +58,7 @@ extension BySecurityMethodsForVout on Index<_SecurityKey, Vout> {
 
 class _AddressKey extends Key<Vout> {
   @override
-  String getKey(Vout vout) => vout.toAddress;
+  String getKey(Vout vout) => vout.toAddress ?? '';
 }
 
 extension ByAddressMethodsForVout on Index<_AddressKey, Vout> {

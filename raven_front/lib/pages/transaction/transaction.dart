@@ -43,6 +43,7 @@ class _TransactionPageState extends State<TransactionPage> {
     data = populateData(context, data);
     transactionRecord = data['transactionRecord'];
     transaction = transactionRecord!.transaction;
+    print(res.note.data);
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
     return detailsBody();
   }
@@ -62,7 +63,7 @@ class _TransactionPageState extends State<TransactionPage> {
       case 'Memo/IPFS':
         return 'transaction!.memo'.cutOutMiddle();
       case 'Note':
-        return 'transaction!.note';
+        return transaction!.note ?? '';
       default:
         return 'unknown';
     }

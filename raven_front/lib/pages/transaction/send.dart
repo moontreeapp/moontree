@@ -466,6 +466,9 @@ class _SendState extends State<Send> {
   }
 
   bool allValidation() {
+    print('validateAddress: ${_validateAddress()}');
+    print(fieldValidation());
+    print(holdingValidation());
     return fieldValidation() && holdingValidation();
   }
 
@@ -491,7 +494,7 @@ class _SendState extends State<Send> {
           // assetMemo: // we don't have a UI field for this.
           // should we use the memo field for assetMemo if sending asset
           // or should always use that field for op return memos??
-          memo: sendMemo.text,
+          memo: sendMemo.text != '' ? sendMemo.text : null,
         );
         confirmSend(sendRequest);
       } else {
