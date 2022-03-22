@@ -40,5 +40,3 @@ fvm flutter run
 # (or just `flutter run` if you are managing your own flutter versions)
 ```
 
-Test
-
