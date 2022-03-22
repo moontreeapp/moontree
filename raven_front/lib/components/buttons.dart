@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intersperse/src/intersperse_extensions.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/theme/theme.dart';
@@ -76,5 +77,53 @@ class ButtonComponents {
             ),
           ),
         )
+      ]);
+
+  Widget floatingButtons(
+    BuildContext context, {
+    required List<Widget> buttons,
+    List<Widget>? boxedWidgets,
+    List<Widget>? columnWidgets,
+    Widget? heightSpacer,
+    Widget? widthSpacer,
+  }) =>
+      Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Container(),
+        Container(
+          height: 120,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                height: 40,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.white.withOpacity(0.0),
+                      Colors.white,
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                height: 80,
+                alignment: Alignment.topCenter,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(width: 16),
+                    ...<Widget>[
+                      for (var button in buttons) button,
+                    ].intersperse(widthSpacer ?? SizedBox(width: 16)),
+                    SizedBox(width: 16),
+                  ],
+                ),
+                decoration: BoxDecoration(color: Colors.white),
+              ),
+            ],
+          ),
+        ),
       ]);
 }

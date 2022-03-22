@@ -186,39 +186,27 @@ class _SendState extends State<Send> {
     return body();
   }
 
-  Widget
-      body() => /*ShaderMask(
-      shaderCallback: (rect) {
-        return LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [Colors.transparent, Colors.white])
-            .createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-      },
-      blendMode: BlendMode.dstIn,
-      child: */
-          components.page.form(
-            context,
-            columnWidgets: <Widget>[
-              // list items
-              //Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
-              //    style: Theme.of(context).textTheme.caption),
-              //;
-              sendAssetField,
-              //toName,
-              sendAddressField,
-              sendAmountField,
-              sendFeeField,
-              sendMemoField,
-              sendNoteField,
-              SizedBox(height: 8.0),
-            ],
-            buttons: [
-              allValidation()
-                  ? sendTransactionButton()
-                  : sendTransactionButton(disabled: true)
-            ],
-          ) /*)*/;
+  Widget body() => components.page.form(
+        context,
+        columnWidgets: <Widget>[
+          // list items
+          //Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
+          //    style: Theme.of(context).textTheme.caption),
+          //;
+          sendAssetField,
+          //toName,
+          sendAddressField,
+          sendAmountField,
+          sendFeeField,
+          sendMemoField,
+          sendNoteField,
+        ],
+        floatingButtons: [
+          allValidation()
+              ? sendTransactionButton()
+              : sendTransactionButton(disabled: true)
+        ],
+      );
 
   Widget get sendAssetField => TextField(
         focusNode: sendAssetFocusNode,

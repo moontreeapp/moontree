@@ -1,17 +1,56 @@
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
 
+import 'package:raven_front/components/components.dart';
+
 class PageComponents {
-  /// front page widget made mainly for forms
   Widget form(
     BuildContext context, {
     List<Widget>? boxedWidgets,
     List<Widget>? columnWidgets,
     List<Widget>? buttons,
-    List<Widget>? layeredWidgets,
+    List<Widget>? floatingButtons,
     Widget? heightSpacer,
     Widget? widthSpacer,
   }) {
+    heightSpacer = heightSpacer ?? SizedBox(height: 16);
+    widthSpacer = widthSpacer ?? SizedBox(width: 16);
+    var fields = formFields(
+      context,
+      boxedWidgets: boxedWidgets,
+      columnWidgets: columnWidgets,
+      buttons: buttons,
+      heightSpacer: heightSpacer,
+      widthSpacer: widthSpacer,
+      extraSpace: floatingButtons != null,
+    );
+    return floatingButtons == null
+        ? fields
+        : Stack(
+            children: [
+              fields,
+              components.buttons.floatingButtons(
+                context,
+                boxedWidgets: boxedWidgets,
+                columnWidgets: columnWidgets,
+                buttons: floatingButtons,
+                heightSpacer: heightSpacer,
+                widthSpacer: widthSpacer,
+              )
+            ],
+          );
+  }
+
+  Widget formFields(
+    BuildContext context, {
+    List<Widget>? boxedWidgets,
+    List<Widget>? columnWidgets,
+    List<Widget>? buttons,
+    Widget? heightSpacer,
+    Widget? widthSpacer,
+    bool extraSpace = false,
+  }) {
+    print(extraSpace);
     heightSpacer = heightSpacer ?? SizedBox(height: 16);
     widthSpacer = widthSpacer ?? SizedBox(width: 16);
     return Container(
@@ -31,19 +70,21 @@ class PageComponents {
                   .intersperse(heightSpacer)
                   .toList(),
             )),
-          SliverFillRemaining(
-              hasScrollBody: false,
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          for (var widget in buttons ?? []) widget
-                        ]),
-                    SizedBox(height: 40),
-                  ])),
+          if (extraSpace) SliverToBoxAdapter(child: SizedBox(height: 120.0)),
+          if (buttons != null)
+            SliverFillRemaining(
+                hasScrollBody: false,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            for (var widget in buttons) widget
+                          ]),
+                      SizedBox(height: 40),
+                    ])),
         ]));
   }
 }
