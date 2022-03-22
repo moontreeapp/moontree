@@ -164,18 +164,18 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                       builder: (BuildContext context) => AlertDialog(
                               //title: Text('External App'),
                               content: Text('Open external app (browser)?',
-                                  style: Theme.of(context).sendConfirm),
+                                  style: Theme.of(context).textTheme.bodyText2!.copyWith(color: AppColors.black60)),
                               actions: [
                                 TextButton(
                                     child: Text('Cancel',
                                         style: Theme.of(context)
-                                            .sendConfirmButton),
+                                            .textTheme.bodyText2!.copyWith(fontWeight: FontWeights.bold, letterSpacing: 1.25, color: AppColors.primary))),
                                     onPressed: () =>
                                         Navigator.of(context).pop()),
                                 TextButton(
                                     child: Text('Continue',
                                         style: Theme.of(context)
-                                            .sendConfirmButton),
+                                            .textTheme.bodyText2!.copyWith(fontWeight: FontWeights.bold,      letterSpacing: 1.25,      color: AppColors.primary))),
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                       launch(snack!.link!);
@@ -199,13 +199,13 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                   context: components.navigator.routeContext!,
                   builder: (BuildContext context) => AlertDialog(
                           title: Text('Details',
-                              style: Theme.of(context).supportHeading),
+                              style: Theme.of(context).testTheme.body2),
                           content: Text(snack!.details!,
-                              style: Theme.of(context).sendConfirm),
+                              style: Theme.of(context).textTheme.bodyText2!.copyWith(color: AppColors.black60)),
                           actions: [
                             TextButton(
                                 child: Text('Ok',
-                                    style: Theme.of(context).sendConfirmButton),
+                                    style: Theme.of(context).textTheme.bodyText2!.copyWith(fontWeight: FontWeights.bold,      letterSpacing: 1.25,      color: AppColors.primary))),
                                 onPressed: () => Navigator.of(context).pop())
                           ])))));
     }

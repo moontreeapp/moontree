@@ -143,7 +143,10 @@ class _ImportState extends State<Import> {
               title: Text(file!.filename,
                   style: Theme.of(context).textTheme.bodyText1),
               subtitle: Text('${file!.size.toString()} KB',
-                  style: Theme.of(context).importedSize),
+                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                      height: 1,
+                      fontWeight: FontWeights.semiBold,
+                      color: AppColors.black38)),
               trailing: IconButton(
                   icon: Icon(Icons.close_rounded, color: Color(0xDE000000)),
                   onPressed: () => setState(() => file = null)),

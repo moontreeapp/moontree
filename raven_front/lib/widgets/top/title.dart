@@ -119,7 +119,10 @@ class _PageTitleState extends State<PageTitle> {
                       (pageTitle == 'Wallet'
                           ? appContext.enumString.toTitleCase()
                           : pageTitle),
-                  style: Theme.of(context).textTheme.headline4));
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline2!
+                      .copyWith(color: AppColors.white)));
 
   String assetName(String given) {
     print('$given vs $assetTitle');
@@ -193,13 +196,19 @@ class _PageTitleState extends State<PageTitle> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text('Wallet ' + res.wallets.currentWalletName + ' ',
-                    style: Theme.of(context).textTheme.headline4),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline2!
+                        .copyWith(color: AppColors.white)),
                 Icon(Icons.expand_more_rounded, color: Colors.white),
               ],
             ));
       } else if (appContext == AppContext.wallet) {
         return Text('Wallet ' + res.wallets.currentWalletName + ' ',
-            style: Theme.of(context).textTheme.headline4);
+            style: Theme.of(context)
+                .textTheme
+                .headline2!
+                .copyWith(color: AppColors.white));
       }
     }
 

@@ -36,9 +36,9 @@ class ButtonComponents {
           child: Text(_labelDefault(label),
               style: enabled
                   ? invert
-                      ? Theme.of(context).invertButton
+                      ? Theme.of(context).textTheme.invertButton
                       : null
-                  : Theme.of(context).disabledButton),
+                  : Theme.of(context).textTheme.disabledButton),
         ),
       ));
 

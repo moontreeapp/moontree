@@ -153,7 +153,7 @@ class _CheckoutState extends State<Checkout> {
         children: <Widget>[
           ...detailItems(
             pairs: struct.items,
-            style: Theme.of(context).checkoutItem,
+            style: Theme.of(context).textTheme.checkoutItem,
           )
         ],
       ));
@@ -265,11 +265,11 @@ class _CheckoutState extends State<Checkout> {
       );
 
   List<Widget> get fees => [
-        Text('Fees', style: Theme.of(context).checkoutFees),
+        Text('Fees', style: Theme.of(context).textTheme.checkoutFees),
         SizedBox(height: 14),
         ...detailItems(
           pairs: struct.fees!,
-          style: Theme.of(context).checkoutFee,
+          style: Theme.of(context).textTheme.checkoutFee,
           fee: true,
         ),
       ];

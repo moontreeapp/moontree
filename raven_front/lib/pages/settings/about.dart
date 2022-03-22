@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/theme/theme.dart';
 
 class About extends StatelessWidget {
   @override
@@ -19,7 +20,10 @@ class About extends StatelessWidget {
             children: <Widget>[
               Text(
                 '© 2022 Moontree, LLC',
-                style: Theme.of(context).textTheme.subtitle1Black,
+                style: Theme.of(context)
+                    .textTheme
+                    .subtitle1!
+                    .copyWith(color: AppColors.black),
               ),
               SizedBox(height: 40),
             ]),

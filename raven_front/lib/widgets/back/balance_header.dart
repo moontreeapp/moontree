@@ -156,7 +156,11 @@ class _BalanceHeaderState extends State<BalanceHeader>
           padding: EdgeInsets.only(left: 16, right: 16, bottom: 1),
           child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             symbol.contains('/')
-                ? Text('$symbol/', style: Theme.of(context).remaining)
+                ? Text('$symbol/',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText2!
+                        .copyWith(color: AppColors.offWhite))
                 : Container(),
           ]));
       //: SizedBox(height: 14+16),
@@ -166,14 +170,24 @@ class _BalanceHeaderState extends State<BalanceHeader>
           padding: EdgeInsets.only(left: 16, right: 16, bottom: 1),
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text('Remaining:', style: Theme.of(context).remaining),
+            Text('Remaining:',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText2!
+                    .copyWith(color: AppColors.offWhite)),
             Text(
                 components.text.securityAsReadable(holdingSat - amountSat,
                     symbol: symbol, asUSD: false),
                 //(holding - amount).toString(),
                 style: (holding - amount) >= 0
-                    ? Theme.of(context).remaining
-                    : Theme.of(context).remainingRed)
+                    ? Theme.of(context)
+                        .textTheme
+                        .bodyText2!
+                        .copyWith(color: AppColors.offWhite)
+                    : Theme.of(context)
+                        .textTheme
+                        .bodyText2!
+                        .copyWith(color: AppColors.error))
           ]));
       //: SizedBox(height: 14+16),
     }
@@ -189,8 +203,17 @@ class _BalanceHeaderState extends State<BalanceHeader>
             indicatorColor: Colors.white,
             indicatorSize: TabBarIndicatorSize.tab,
             indicator: _TabIndicator(),
-            labelStyle: Theme.of(context).tabName,
-            unselectedLabelStyle: Theme.of(context).tabNameInactive,
+            labelStyle: Theme.of(context).textTheme.bodyText2!.copyWith(
+                fontWeight: FontWeights.medium,
+                letterSpacing: 1.25,
+                color: AppColors.white),
+            unselectedLabelStyle: Theme.of(context)
+                .textTheme
+                .bodyText2!
+                .copyWith(
+                    fontWeight: FontWeights.medium,
+                    letterSpacing: 1.25,
+                    color: AppColors.white60),
             tabs: [Tab(text: 'HISTORY'), Tab(text: 'DATA')]));
   }
 }

@@ -83,7 +83,11 @@ class _NavMenuState extends State<NavMenu> {
           }
         },
         leading: icon != null ? Icon(icon, color: Colors.white) : image!,
-        title: Text(name, style: Theme.of(context).textTheme.headline5),
+        title: Text(name,
+            style: Theme.of(context)
+                .textTheme
+                .bodyText1!
+                .copyWith(color: AppColors.white)),
         trailing: arrow ? Icon(Icons.chevron_right, color: Colors.white) : null,
       );
 

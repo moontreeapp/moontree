@@ -6,6 +6,7 @@ import 'package:raven_back/services/transaction.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/theme/theme.dart';
 
 class TransactionList extends StatefulWidget {
   final Iterable<TransactionRecord>? transactions;
@@ -121,7 +122,10 @@ class _TransactionListState extends State<TransactionList> {
                             asUSD: showUSD),
                         style: Theme.of(context).textTheme.bodyText1),
                     Text(transactionRecord.formattedDatetime,
-                        style: Theme.of(context).txDate),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText2!
+                            .copyWith(color: AppColors.black60)),
                   ]),
               trailing: (transactionRecord.out
                   ? components.icons.out(context)

@@ -11,6 +11,7 @@ import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/data.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/widgets/widgets.dart';
@@ -124,7 +125,10 @@ class _TransactionsState extends State<Transactions>
           children: [
             InkWell(
                 child: Text('VIEW DATA', //Text('${securityAsset.metadata}',
-                    style: Theme.of(context).viewData),
+                    style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                        fontWeight: FontWeights.bold,
+                        letterSpacing: 1.25,
+                        color: AppColors.primary)),
                 onTap: () => showDialog(
                     context: context,
                     builder: (BuildContext context) => AlertDialog(

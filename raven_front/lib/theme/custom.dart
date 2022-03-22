@@ -40,9 +40,6 @@ class CustomTheme with ChangeNotifier {
         textTheme: TextTheme(
           headline1: AppText.h1,
           headline2: AppText.h2,
-          headline3: AppText.h1white,
-          headline4: AppText.h2white,
-          headline5: AppText.body1white,
           subtitle1: AppText.subtitle1,
           subtitle2: AppText.subtitle2,
           bodyText1: AppText.body1,
