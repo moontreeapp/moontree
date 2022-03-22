@@ -60,35 +60,33 @@ class _VerifySeedState extends State<VerifySeed> {
         : body();
   }
 
-  Widget body() => Container(
-      padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
-      child: CustomScrollView(slivers: <Widget>[
-        SliverToBoxAdapter(child: SizedBox(height: 6)),
-        SliverToBoxAdapter(child: instructions),
-        SliverToBoxAdapter(child: words),
-        SliverFillRemaining(
-            hasScrollBody: false,
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(children: [submitButton]),
-                  SizedBox(height: 40),
-                ])),
-      ]));
+  Widget body() => components.page.form(
+        context,
+        columnWidgets: <Widget>[
+          instructions,
+          warning,
+          words,
+        ],
+        buttons: [submitButton],
+      );
 
   Widget get instructions => Container(
       height: 48,
       child: Text(
-        'Please backup your wallet by writing down these words on a piece of paper.',
+        'Please tap your words in the correct order.',
         style: Theme.of(context)
             .textTheme
             .subtitle1!
             .copyWith(color: AppColors.black),
       ));
 
+  Widget get warning => Container(
+        height: 48,
+        //alignment: Alignment.topCenter,
+      );
+
   Widget get words => Container(
-      height: MediaQuery.of(context).size.height - 380,
+      height: MediaQuery.of(context).size.height - 444,
       alignment: Alignment.bottomCenter,
       child: Container(
           height: 272,
@@ -132,10 +130,10 @@ class _VerifySeedState extends State<VerifySeed> {
   Widget get submitButton => components.buttons.actionButton(
         context,
         enabled: checkOrder(),
-        label: 'Next',
+        label: 'Verify',
         onPressed: () {
           Navigator.popUntil(context, ModalRoute.withName('/home'));
-          streams.app.snack.add(Snack(message: 'Successfully Created Backup'));
+          streams.app.snack.add(Snack(message: 'Successfully Verified Backup'));
         },
       );
 }

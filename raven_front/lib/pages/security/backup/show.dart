@@ -27,23 +27,15 @@ class _BackupSeedState extends State<BackupSeed> {
         : body();
   }
 
-  Widget body() => Container(
-      padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
-      child: CustomScrollView(slivers: <Widget>[
-        SliverToBoxAdapter(child: SizedBox(height: 6)),
-        SliverToBoxAdapter(child: instructions),
-        SliverToBoxAdapter(child: words),
-        SliverFillRemaining(
-            hasScrollBody: false,
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  warning,
-                  Row(children: [submitButton]),
-                  SizedBox(height: 40),
-                ])),
-      ]));
+  Widget body() => components.page.form(
+        context,
+        columnWidgets: <Widget>[
+          instructions,
+          warning,
+          words,
+        ],
+        buttons: [submitButton],
+      );
 
   Widget get instructions => Container(
       height: 48,
@@ -55,8 +47,19 @@ class _BackupSeedState extends State<BackupSeed> {
             .copyWith(color: AppColors.black),
       ));
 
+  Widget get warning => Container(
+      height: 48,
+      //alignment: Alignment.topCenter,
+      child: Text(
+        'You will need these words for recovery.',
+        style: Theme.of(context)
+            .textTheme
+            .subtitle1!
+            .copyWith(color: AppColors.error),
+      ));
+
   Widget get words => Container(
-      height: MediaQuery.of(context).size.height - 380,
+      height: MediaQuery.of(context).size.height - 444,
       alignment: Alignment.bottomCenter,
       child: Container(
           height: 272,
@@ -76,17 +79,6 @@ class _BackupSeedState extends State<BackupSeed> {
                               number: i + x)
                       ]),
               ])));
-
-  Widget get warning => Container(
-      height: 48,
-      alignment: Alignment.topCenter,
-      child: Text(
-        'You will need these words for recovery.',
-        style: Theme.of(context)
-            .textTheme
-            .subtitle1!
-            .copyWith(color: AppColors.error),
-      ));
 
   Widget get submitButton => components.buttons.actionButton(
         context,

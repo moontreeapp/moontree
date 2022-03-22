@@ -1,41 +1,35 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'transaction.dart';
+part of 'note.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class TransactionAdapter extends TypeAdapter<Transaction> {
+class NoteAdapter extends TypeAdapter<Note> {
   @override
-  final int typeId = 3;
+  final int typeId = 26;
 
   @override
-  Transaction read(BinaryReader reader) {
+  Note read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Transaction(
-      id: fields[0] as String,
-      confirmed: fields[1] as bool,
-      time: fields[2] as int?,
-      height: fields[3] as int?,
+    return Note(
+      transactionId: fields[0] as String,
+      note: fields[1] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Transaction obj) {
+  void write(BinaryWriter writer, Note obj) {
     writer
-      ..writeByte(4)
-      ..writeByte(0)
-      ..write(obj.id)
-      ..writeByte(1)
-      ..write(obj.confirmed)
       ..writeByte(2)
-      ..write(obj.time)
-      ..writeByte(3)
-      ..write(obj.height);
+      ..writeByte(0)
+      ..write(obj.transactionId)
+      ..writeByte(1)
+      ..write(obj.note);
   }
 
   @override
@@ -44,7 +38,7 @@ class TransactionAdapter extends TypeAdapter<Transaction> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is TransactionAdapter &&
+      other is NoteAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

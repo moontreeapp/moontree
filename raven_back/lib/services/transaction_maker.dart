@@ -114,6 +114,7 @@ class SendRequest {
   late Security? security;
   late String? assetMemo;
   late String? memo;
+  late String? note;
 
   SendRequest({
     required this.sendAll,
@@ -126,6 +127,7 @@ class SendRequest {
     this.security,
     this.assetMemo,
     this.memo,
+    this.note,
   });
 }
 

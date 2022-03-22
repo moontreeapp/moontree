@@ -12,10 +12,17 @@ class Spend {
 
   final form = BehaviorSubject<SpendForm?>.seeded(null);
   final make = BehaviorSubject<SendRequest?>.seeded(null);
-  final made = BehaviorSubject<String?>.seeded(null);
+  final made = BehaviorSubject<TransactionNote?>.seeded(null);
   final estimate = BehaviorSubject<SendEstimate?>.seeded(null);
-  final send = BehaviorSubject<String?>.seeded(null);
+  final send = BehaviorSubject<TransactionNote?>.seeded(null);
   final success = BehaviorSubject<bool?>.seeded(null);
+}
+
+class TransactionNote {
+  String txHex;
+  String? note;
+
+  TransactionNote({required this.txHex, this.note});
 }
 
 class SpendForm {

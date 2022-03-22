@@ -62,6 +62,16 @@ class TxVin with EquatableMixin {
 ///     name: PORKYPUNX\/AIRDROP2,
 ///     amount: 1},
 ///   addresses: [RJbjk5VTNxBER4iBq61upUWhHuEeYBHD1J]},
+/// scriptPubKey:{
+///   asm: OP_DUP OP_HASH160 0a6e44c0b7a5da84c38ed2900c6b6ce3b8c2e27a OP_EQUALVERIFY OP_CHECKSIG OP_RVN_ASSET 3872766e74094d4f4f4e5452454531804a5d05000000001220da203afd5eda1f45deeafb70ae9d5c15907cd32ec2cd747c641fc1e9ab55b8e875,
+///   hex: 76a9140a6e44c0b7a5da84c38ed2900c6b6ce3b8c2e27a88acc03872766e74094d4f4f4e5452454531804a5d05000000001220da203afd5eda1f45deeafb70ae9d5c15907cd32ec2cd747c641fc1e9ab55b8e875,
+///   reqSigs:1,
+///   type: transfer_asset,
+///   asset:{
+///     name: MOONTREE1,
+///     amount: 0.9,
+///     message: Qmd286K6pohQcTKYqnS1YhWrCiS4gz7Xi34sdwMe9USZ7u}, // "assetMemo"
+///   addresses:[mgU79ZpEeoGbgQi46qp2LY2kSa8XSe6sV8]}
 /// scriptPubKey: {
 ///   asm: OP_DUP OP_HASH160 f7addfa2061fb7752a81b7fbb1de409b62efcb63 OP_EQUALVERIFY OP_CHECKSIG OP_RVN_ASSET 4472766e7112504f524b5950554e582f41495244524f50320001b2c4000000000000011220c48f7efaf0a05d4145f17d95f02858aa7f5fc4e2100bbc6bb666ea07f6a50ce575,
 ///   hex: 76a914f7addfa2061fb7752a81b7fbb1de409b62efcb6388acc04472766e7112504f524b5950554e582f41495244524f50320001b2c4000000000000011220c48f7efaf0a05d4145f17d95f02858aa7f5fc4e2100bbc6bb666ea07f6a50ce575,
@@ -84,6 +94,7 @@ class TxScriptPubKey with EquatableMixin {
   final double amount;
   final int? units;
   final int? reissuable;
+  final String? assetMemo;
   final String? ipfsHash;
 
   TxScriptPubKey({
@@ -96,6 +107,7 @@ class TxScriptPubKey with EquatableMixin {
     this.amount = 0.0,
     this.units,
     this.reissuable,
+    this.assetMemo,
     this.ipfsHash,
   });
 
@@ -110,6 +122,7 @@ class TxScriptPubKey with EquatableMixin {
         amount,
         units,
         reissuable,
+        assetMemo,
         ipfsHash
       ];
 
@@ -132,6 +145,7 @@ class TxScriptPubKey with EquatableMixin {
           hex: scriptPubKey['hex'],
           type: scriptPubKey['type'],
           reqSigs: scriptPubKey['reqSigs'],
+          assetMemo: scriptPubKey['message'],
           addresses: <String>[
             for (String addr in scriptPubKey['addresses']) addr
           ]);
@@ -156,7 +170,7 @@ class TxScriptPubKey with EquatableMixin {
   String toString() => 'TxScriptPubKey('
       'asm: $asm, hex: $hex, type: $type, reqSigs: $reqSigs, '
       'addresses: $addresses, asset: $asset, amount: $amount, units: $units, '
-      'reissuable: $reissuable, ipfsHash: $ipfsHash)';
+      'reissuable: $reissuable, assetMemo: $assetMemo, ipfsHash: $ipfsHash)';
 
   String get memo {
     var x = asm.split(' ');
@@ -168,14 +182,17 @@ class TxScriptPubKey with EquatableMixin {
     return '';
   }
 
-  Map<String, dynamic> get assetData => {
-        'type': type,
-        'asset': asset,
-        'amount': amount,
-        'units': units,
-        'reissuable': reissuable,
-        'ipfsHash': ipfsHash,
-      };
+  /// not used - getMeta is used in preference to this
+  Map<String, dynamic> get assetData => type == 'new_asset'
+      ? {
+          'type': type,
+          'asset': asset,
+          'amount': amount,
+          'units': units,
+          'reissuable': reissuable,
+          'ipfsHash': ipfsHash,
+        }
+      : {};
 }
 
 /// vout: [{
@@ -199,7 +216,9 @@ class TxVout with EquatableMixin {
   @override
   List<Object?> get props => [value, n, valueSat, scriptPubKey];
 
-  String get memo => scriptPubKey.memo;
+  String get memo => scriptPubKey.memo; // op return memo
+  String get assetMemo =>
+      scriptPubKey.assetMemo ?? ''; // transactional asset memo
 }
 
 /// https://electrumx-ravencoin.readthedocs.io/en/latest/protocol-methods.html#blockchain-transaction-get
@@ -340,7 +359,6 @@ extension GetTransactionMethod on RavenElectrumClient {
     return results;
   }
 }
-
 
 /*
 { txid: 0,

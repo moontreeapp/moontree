@@ -8,6 +8,7 @@ export 'cipher_update.dart';
 export 'metadata.dart';
 export 'metadata_type.dart';
 export 'net.dart';
+export 'note.dart';
 export 'node_exposure.dart';
 export 'password.dart';
 export 'rate.dart';

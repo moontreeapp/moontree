@@ -21,20 +21,23 @@ class Vout with EquatableMixin {
   @HiveField(3)
   String memo;
 
+  @HiveField(4)
+  String assetMemo;
+
   /// other values include
   // final double value;
   // final TxScriptPubKey scriptPubKey; // has pertinent information
 
   // transaction type 'pubkeyhash' 'transfer_asset' 'new_asset' 'nulldata' etc
-  @HiveField(4)
+  @HiveField(5)
   String type;
 
   // non-multisig transactions
-  @HiveField(5)
+  @HiveField(6)
   String toAddress;
 
   // this is the composite id
-  @HiveField(6)
+  @HiveField(7)
   String? assetSecurityId;
 
   // amount of asset to send
@@ -50,6 +53,7 @@ class Vout with EquatableMixin {
     required this.rvnValue,
     required this.position,
     this.memo = '',
+    this.assetMemo = '',
     required this.type,
     required this.toAddress,
     this.assetSecurityId,
@@ -68,6 +72,7 @@ class Vout with EquatableMixin {
         rvnValue,
         position,
         memo,
+        assetMemo,
         type,
         toAddress,
         assetSecurityId,
@@ -82,7 +87,7 @@ class Vout with EquatableMixin {
   String toString() {
     return 'Vout('
         'transactionId: $transactionId, rvnValue: $rvnValue, position: $position, '
-        'memo: $memo, type: $type, toAddress: $toAddress, '
+        'memo: $memo, assetMemo: $assetMemo, type: $type, toAddress: $toAddress, '
         'assetSecurityId: $assetSecurityId, assetValue: $assetValue, '
         'additionalAddresses: $additionalAddresses)';
   }

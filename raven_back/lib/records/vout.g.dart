@@ -21,9 +21,10 @@ class VoutAdapter extends TypeAdapter<Vout> {
       rvnValue: fields[1] as int,
       position: fields[2] as int,
       memo: fields[3] as String,
-      type: fields[4] as String,
-      toAddress: fields[5] as String,
-      assetSecurityId: fields[6] as String?,
+      assetMemo: fields[4] as String,
+      type: fields[5] as String,
+      toAddress: fields[6] as String,
+      assetSecurityId: fields[7] as String?,
       assetValue: fields[8] as int?,
       additionalAddresses: (fields[9] as List?)?.cast<String>(),
     );
@@ -32,7 +33,7 @@ class VoutAdapter extends TypeAdapter<Vout> {
   @override
   void write(BinaryWriter writer, Vout obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.transactionId)
       ..writeByte(1)
@@ -42,10 +43,12 @@ class VoutAdapter extends TypeAdapter<Vout> {
       ..writeByte(3)
       ..write(obj.memo)
       ..writeByte(4)
-      ..write(obj.type)
+      ..write(obj.assetMemo)
       ..writeByte(5)
-      ..write(obj.toAddress)
+      ..write(obj.type)
       ..writeByte(6)
+      ..write(obj.toAddress)
+      ..writeByte(7)
       ..write(obj.assetSecurityId)
       ..writeByte(8)
       ..write(obj.assetValue)

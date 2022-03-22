@@ -34,8 +34,11 @@ class AssetService {
     }
   }
 
-  Future<AssetRetrieved?> get(String symbol,
-      {RavenElectrumClient? client, TxVout? vout}) async {
+  Future<AssetRetrieved?> get(
+    String symbol, {
+    RavenElectrumClient? client,
+    TxVout? vout,
+  }) async {
     client = client ?? streams.client.client.value;
     if (client == null) {
       return null;
