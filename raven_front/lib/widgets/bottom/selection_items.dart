@@ -269,7 +269,7 @@ class SelectionItems {
             SelectionOption.Change: AppColors.primary,
             SelectionOption.Bug: AppColors.primary,
           }[name] ??
-          AppColors.black87);
+          AppColors.primary);
 
   Widget holdingItem(String name) => ListTile(
       visualDensity: VisualDensity.compact,
