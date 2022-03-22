@@ -207,18 +207,6 @@ class AppText {
       fontWeight: FontWeights.semiBold,
       letterSpacing: 0.25,
       color: AppColors.black38);
-  static TextStyle? get snackMessage => TextStyle(
-      fontSize: 14.0,
-      fontFamily: 'Nunito',
-      fontWeight: FontWeights.semiBold,
-      letterSpacing: 0.25,
-      color: AppColors.white);
-  static TextStyle? get snackMessageBad => TextStyle(
-      fontSize: 14.0,
-      fontFamily: 'Nunito',
-      fontWeight: FontWeights.semiBold,
-      letterSpacing: 0.25,
-      color: AppColors.error);
 
   static TextStyle? get remaining => TextStyle(
       fontSize: 14.0,

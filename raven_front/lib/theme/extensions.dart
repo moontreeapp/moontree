@@ -31,8 +31,6 @@ extension TextStyleExtension on ThemeData {
   TextStyle? get disabledButton => AppText.disabledButton;
   TextStyle? get enabledButton => AppText.enabledButton;
   TextStyle? get importedSize => AppText.importedSize;
-  TextStyle? get snackMessage => AppText.snackMessage;
-  TextStyle? get snackMessageBad => AppText.snackMessageBad;
   TextStyle? get txDate => AppText.txDate;
   TextStyle? get tabName => AppText.tabName;
   TextStyle? get tabNameInactive => AppText.tabNameInactive;

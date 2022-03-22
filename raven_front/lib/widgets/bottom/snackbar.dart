@@ -53,7 +53,11 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
     var msg = snack!.atBottom
         ? Padding(
             padding: EdgeInsets.only(left: 16, right: 16),
-            child: Text(snack!.message, style: Theme.of(context).snackMessage))
+            child: Text(snack!.message,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText2!
+                    .copyWith(color: AppColors.white)))
         : Container(
             height: 64,
             child: Column(
