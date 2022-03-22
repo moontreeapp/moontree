@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:raven_front/theme/theme.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -93,12 +94,19 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
               symbol: widget.symbol,
               asUSD: true,
             ),
-            style: Theme.of(context).textTheme.headline5),
+            style: Theme.of(context)
+                .textTheme
+                .bodyText1!
+                .copyWith(color: AppColors.white)),
         //SizedBox(height: 30),
       ]);
     } else if (front && widget.totalSupply != null) {
       ret.addAll([
-        Text('Total Supply', style: Theme.of(context).textTheme.headline5),
+        Text('Total Supply',
+            style: Theme.of(context)
+                .textTheme
+                .bodyText1!
+                .copyWith(color: AppColors.white)),
       ]);
     }
     return ret;
@@ -122,7 +130,10 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
     );
     var text = Text(
       widget.totalSupply ?? holding,
-      style: Theme.of(context).textTheme.headline3,
+      style: Theme.of(context)
+          .textTheme
+          .headline1!
+          .copyWith(color: AppColors.white),
     );
     return widget.pageTitle == 'Send'
         ? GestureDetector(
@@ -134,6 +145,9 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
 
   Widget get backText => Text(
         widget.symbol == 'RVN' ? 'Ravencoin' : widget.symbol,
-        style: Theme.of(context).textTheme.headline5,
+        style: Theme.of(context)
+            .textTheme
+            .bodyText1!
+            .copyWith(color: AppColors.white),
       );
 }

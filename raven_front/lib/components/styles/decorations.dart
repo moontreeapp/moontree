@@ -40,7 +40,10 @@ class DecorationComponents {
             .subtitle1!
             .copyWith(color: enabled ? null : AppColors.black38),
         alignLabelWithHint: true,
-        errorStyle: Theme.of(context).textFieldError,
+        errorStyle: Theme.of(context)
+            .textTheme
+            .caption!
+            .copyWith(color: AppColors.error),
         floatingLabelStyle: labelColor(focusNode, errorText),
         contentPadding: EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
         labelText: labelText,

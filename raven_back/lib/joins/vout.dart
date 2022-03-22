@@ -22,7 +22,8 @@ extension VoutHasOneSecurity on Vout {
 }
 
 extension VoutBelongsToAddress on Vout {
-  Address? get address => res.addresses.byAddress.getOne(toAddress);
+  Address? get address =>
+      toAddress != null ? res.addresses.byAddress.getOne(toAddress!) : null;
   // no address - we don't own this vout (we sent it to someone else)
 }
 

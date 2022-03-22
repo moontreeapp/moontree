@@ -357,7 +357,7 @@ class HistoryService {
         memo: vout.memo,
         assetMemo: vout.assetMemo,
         type: vout.scriptPubKey.type,
-        toAddress: vout.scriptPubKey.addresses![0],
+        toAddress: vout.scriptPubKey.addresses?[0],
         assetSecurityId: vs.item2.id,
         assetValue: utils.amountToSat(vout.scriptPubKey.amount,
             divisibility:

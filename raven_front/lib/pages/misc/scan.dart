@@ -7,6 +7,7 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/spend.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/data.dart';
 import 'package:raven_front/utils/qrcode.dart';
 
@@ -57,7 +58,10 @@ class _ScanQRState extends State<ScanQR> {
                         topLeft: Radius.circular(8.0))),
                 child: Center(
                     child: Text('Point your camera at a QR code',
-                        style: Theme.of(context).qrMessage))),
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                            fontWeight: FontWeights.bold,
+                            letterSpacing: 0.14,
+                            color: AppColors.offWhite)))),
           ])
         ]),
       ),

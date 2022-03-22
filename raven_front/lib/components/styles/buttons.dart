@@ -8,7 +8,8 @@ class ButtonStyleComponents {
     bool invert = false,
   }) =>
       ButtonStyle(
-        textStyle: MaterialStateProperty.all(Theme.of(context).enabledButton),
+        textStyle: MaterialStateProperty.all(
+            Theme.of(context).textTheme.enabledButton),
         foregroundColor: MaterialStateProperty.all(AppColors.offBlack),
         side: MaterialStateProperty.all(BorderSide(
             color: disabled

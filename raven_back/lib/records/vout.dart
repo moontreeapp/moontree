@@ -34,7 +34,7 @@ class Vout with EquatableMixin {
 
   // non-multisig transactions
   @HiveField(6)
-  String toAddress;
+  String? toAddress;
 
   // this is the composite id
   @HiveField(7)
@@ -97,7 +97,8 @@ class Vout with EquatableMixin {
   static String getVoutId(String transactionId, int position) =>
       '$transactionId:$position';
 
-  List<String> get toAddresses => [toAddress, ...additionalAddresses ?? []];
+  List<String> get toAddresses =>
+      [if (toAddress != null) toAddress!, ...additionalAddresses ?? []];
 
   int securityValue({Security? security}) => security == null ||
           (security.symbol == 'RVN' &&

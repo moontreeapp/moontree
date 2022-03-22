@@ -269,7 +269,7 @@ class SelectionItems {
             SelectionOption.Change: AppColors.primary,
             SelectionOption.Bug: AppColors.primary,
           }[name] ??
-          AppColors.black87);
+          AppColors.primary);
 
   Widget holdingItem(String name) => ListTile(
       visualDensity: VisualDensity.compact,
@@ -361,13 +361,21 @@ class SelectionItems {
         title: title ??
             Text(asString(name), style: Theme.of(context).textTheme.bodyText1),
         trailing: value != null
-            ? Text(value, style: Theme.of(context).choices)
+            ? Text(value,
+                style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                    fontWeight: FontWeights.bold,
+                    letterSpacing: 0.1,
+                    color: AppColors.black60))
             : null,
       );
 
   Widget restrictedItem(String name) => item(
         SelectionOption.Restricted_Symbol,
-        title: Text(name, style: Theme.of(context).choices),
+        title: Text(name,
+            style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                fontWeight: FontWeights.bold,
+                letterSpacing: 0.1,
+                color: AppColors.black60)),
         behavior: () => streams.create.form.add(GenericCreateForm.merge(
           form: streams.create.form.value,
           name: name,
@@ -385,7 +393,11 @@ class SelectionItems {
   Widget decimalItem(SelectionOption name, {String? prefix}) => item(
         name,
         title: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-          Text(prefix ?? '0', style: Theme.of(context).choices),
+          Text(prefix ?? '0',
+              style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                  fontWeight: FontWeights.bold,
+                  letterSpacing: 0.1,
+                  color: AppColors.black60)),
           Text(
             {
               SelectionOption.Dec8: '.${'0' * 8}',
@@ -398,7 +410,10 @@ class SelectionItems {
               SelectionOption.Dec1: '.${'0' * 1}',
               SelectionOption.Dec0: '',
             }[name]!,
-            style: Theme.of(context).choicesBlue,
+            style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                fontWeight: FontWeights.bold,
+                letterSpacing: 0.1,
+                color: AppColors.primary),
           ),
         ]),
         behavior: () => streams.create.form.add(GenericCreateForm.merge(

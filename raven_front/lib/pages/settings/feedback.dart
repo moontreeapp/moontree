@@ -151,7 +151,10 @@ class _FeedbackState extends State<Feedback> {
           maxLines: 1000,
           textInputAction: TextInputAction.done,
           style: descriptionFocus.hasFocus
-              ? Theme.of(context).textTheme.subtitle1OffBlack
+              ? Theme.of(context)
+                  .textTheme
+                  .subtitle1!
+                  .copyWith(color: AppColors.offBlack)
               : Theme.of(context).textTheme.subtitle1,
           decoration: components.styles.decorations.textFeild(
             context,
@@ -178,7 +181,10 @@ class _FeedbackState extends State<Feedback> {
         keyboardType: TextInputType.emailAddress,
         textInputAction: TextInputAction.done,
         style: emailFocus.hasFocus
-            ? Theme.of(context).textTheme.subtitle1OffBlack
+            ? Theme.of(context)
+                .textTheme
+                .subtitle1!
+                .copyWith(color: AppColors.offBlack)
             : Theme.of(context).textTheme.subtitle1,
         decoration: components.styles.decorations.textFeild(
           context,
@@ -204,7 +210,10 @@ class _FeedbackState extends State<Feedback> {
               title: Text(file!.filename,
                   style: Theme.of(context).textTheme.bodyText1),
               subtitle: Text('${file!.size.toString()} KB',
-                  style: Theme.of(context).importedSize),
+                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                      height: 1,
+                      fontWeight: FontWeights.semiBold,
+                      color: AppColors.black38)),
               trailing: IconButton(
                   icon: Icon(Icons.close_rounded, color: Color(0xDE000000)),
                   onPressed: () => setState(() => file = null)),
