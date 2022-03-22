@@ -21,7 +21,7 @@ Uint8List generateAssetTransferScript(Uint8List standardScript,
   if (!isAssetNameGood(assetName)) {
     throw new ArgumentError('Invalid asset name');
   }
-  if (amount < 0 || amount > 21000000000) {
+  if (amount < 0 || amount > 21000000000 * 100000000) {
     throw new ArgumentError('Invalid asset amount');
   }
   if (ipfsData?.length != null && ipfsData?.length != 34) {
@@ -58,7 +58,7 @@ Uint8List generateAssetCreateScript(Uint8List standardScript, String assetName,
   if (!isAssetNameGood(assetName)) {
     throw new ArgumentError('Invalid asset name');
   }
-  if (amount < 0 || amount > 21000000000) {
+  if (amount < 0 || amount > 21000000000 * 100000000) {
     throw new ArgumentError('Invalid asset amount');
   }
   if (divisibility < 0 || divisibility > 8) {
@@ -97,6 +97,7 @@ Uint8List generateAssetCreateScript(Uint8List standardScript, String assetName,
   return internal_builder.toBytes();
 }
 
+// assetName must not including the ! only the actual asset name.
 Uint8List generateAssetOwnershipScript(
     Uint8List standardScript, String assetName) {
   // standardScript is where the new asset is sent
@@ -135,7 +136,7 @@ Uint8List generateAssetReissueScript(
     throw new ArgumentError('Invalid asset name');
   }
   if ((current_amount + amount_to_add) < 0 ||
-      (current_amount + amount_to_add) > 21000000000) {
+      (current_amount + amount_to_add) > 21000000000 * 100000000) {
     throw new ArgumentError('Invalid asset amount');
   }
   if (divisibility < 0 || divisibility > 8) {
