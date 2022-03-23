@@ -134,8 +134,8 @@ void main() async {
     });
   });
   group('TransactionService', () {
-    test('test BuildTransaction', () {
-      var t = TransactionService().make.transaction(
+    test('test BuildTransaction', () async {
+      var t = await TransactionService().make.transaction(
             //'RM2fJN6HCLKp2DnmKMA5SBYvdKBCvmyaju',
             'mtraysi8CBwHSSmyoEHPKBWZxc4vh6Phpn',
             SendEstimate(4),

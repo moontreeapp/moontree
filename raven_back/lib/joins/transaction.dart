@@ -27,7 +27,7 @@ extension TransactionHasManyVouts on Transaction {
 extension TransactionHasManyMemos on Transaction {
   List<String> get memos => res.vouts.byTransaction
       .getAll(id)
-      .map((Vout vout) => vout.memo)
+      .map((Vout vout) => vout.memo ?? '')
       .where((String m) => m != '')
       .toList();
 }
@@ -35,7 +35,7 @@ extension TransactionHasManyMemos on Transaction {
 extension TransactionHasManyAssetMemos on Transaction {
   List<String> get assetMemos => res.vouts.byTransaction
       .getAll(id)
-      .map((Vout vout) => vout.assetMemo)
+      .map((Vout vout) => vout.assetMemo ?? '')
       .where((String m) => m != '')
       .toList();
 }

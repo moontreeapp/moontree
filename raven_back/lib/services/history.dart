@@ -58,51 +58,6 @@ class HistoryService {
     return true;
   }
 
-  Future<bool> getTransactions(Iterable<String> histories) async {
-    var client = streams.client.client.value;
-    if (client == null) {
-      return false;
-    }
-    var txs = <Tx>[];
-    for (var txHash in histories) {
-      // we need to look into this on change of wallet from mainnet to testnet
-      // or even on new password or change or removal do we really need to
-      // download them all again? could we merely change the wallet id that the
-      // addresses point to, perhaps, so that this is valid, we never have to
-      // redownload individaul transactions again?
-      if (!downloaded.contains(txHash) &&
-          (res.transactions.primaryIndex.getOne(txHash) == null ||
-              res.transactions.mempool.map((t) => t.id).contains(txHash))) {
-        // not already downloaded...
-        downloaded.add(txHash);
-        txs.add(await client.getTransaction(txHash));
-      } else {
-        print('skipping $txHash');
-      }
-    }
-    await saveTransactions(txs, client);
-    return true;
-  }
-
-  // if all the leader wallets have their empty addresses gaps satisfied,
-  // you're done! trigger balance calculation, else trigger derive address.
-  Future<bool> produceAddressOrBalanceFor(
-    String walletId,
-    NodeExposure exposure,
-  ) async {
-    var leader =
-        res.wallets.leaders.where((leader) => leader.id == walletId).first;
-    if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
-      streams.wallet.deriveAddress
-          .add(DeriveLeaderAddress(leader: leader, exposure: exposure));
-    } else {
-      //saveDanglingTransactionsFor(leader, exposure);
-      //await services.balance.recalculateBalancesFor(leader, exposure);
-      //services.download.asset.allAdminsSubs(); // only immediate subs right?
-    }
-    return true;
-  }
-
   Future<bool> produceAddressOrBalance() async {
     var client = streams.client.client.value;
     if (client == null) {
@@ -125,6 +80,7 @@ class HistoryService {
       await saveDanglingTransactions(client);
       await services.balance.recalculateAllBalances();
       services.download.asset.allAdminsSubs();
+      // remove vouts pointing to addresses we don't own?
     }
     return allDone;
   }
@@ -176,13 +132,15 @@ class HistoryService {
         var vs = await handleAssetData(client, tx, vout);
         newVouts.add(Vout(
           transactionId: tx.txid,
-          rvnValue: vs.item1,
           position: vout.n,
-          memo: vout.memo,
           type: vout.scriptPubKey.type,
-          toAddress: vout.scriptPubKey.addresses![0],
-          assetSecurityId: vs.item2.id,
+          lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
+          rvnValue: vs.item3 != null ? 0 : vs.item1,
           assetValue: utils.amountToSat(vout.scriptPubKey.amount),
+          assetSecurityId: vs.item2.id,
+          memo: vout.memo,
+          assetMemo: vout.assetMemo,
+          toAddress: vout.scriptPubKey.addresses![0],
           // multisig - must detect if multisig...
           additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
               ? vout.scriptPubKey.addresses!
@@ -349,14 +307,16 @@ class HistoryService {
       var vs = await handleAssetData(client, tx, vout);
       await res.vouts.save(Vout(
         transactionId: tx.txid,
-        rvnValue: vs.item1,
         position: vout.n,
+        type: vout.scriptPubKey.type,
+        lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
+        // TEST THIS -- redownload everything and verify that asset vouts have 0 rvnValue
+        rvnValue: vs.item3 != null ? 0 : vs.item1,
+        assetValue: utils.amountToSat(vout.scriptPubKey.amount),
+        assetSecurityId: vs.item2.id,
         memo: vout.memo,
         assetMemo: vout.assetMemo,
-        type: vout.scriptPubKey.type,
         toAddress: vout.scriptPubKey.addresses?[0],
-        assetSecurityId: vs.item2.id,
-        assetValue: utils.amountToSat(vout.scriptPubKey.amount),
         // multisig - must detect if multisig...
         additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
             ? vout.scriptPubKey.addresses!

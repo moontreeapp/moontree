@@ -172,14 +172,14 @@ class TxScriptPubKey with EquatableMixin {
       'addresses: $addresses, asset: $asset, amount: $amount, units: $units, '
       'reissuable: $reissuable, assetMemo: $assetMemo, ipfsHash: $ipfsHash)';
 
-  String get memo {
+  String? get memo {
     var x = asm.split(' ');
     var i = 0;
     for (var item in x) {
       if (item == 'OP_RETURN') return x[i + 1];
       i = i + 1;
     }
-    return '';
+    return null;
   }
 
   /// not used - getMeta is used in preference to this
@@ -216,12 +216,11 @@ class TxVout with EquatableMixin {
   @override
   List<Object?> get props => [value, n, valueSat, scriptPubKey];
 
-  String get memo => scriptPubKey.memo; // op return memo
-  String get assetMemo =>
-      scriptPubKey.assetMemo ?? ''; // transactional asset memo
+  String? get memo => scriptPubKey.memo; // op return memo
+  String? get assetMemo => scriptPubKey.assetMemo; // transactional asset memo
 }
 
-/// https://electrumx-ravencoin.readthedocs.io/en/latest/protocol-methods.html#blockchain-transaction-get
+/// htelectrumx-ravencoin.readthedocs.io/en/latest/protocol-methods.html#blockchain-transaction-get
 /// { txid: e86f693b46f1ca33480d904acd526079ba7585896cff6d0ae5dcef322d9dc52a,
 ///   hash: ccabf8580cc55890cba647960bf52760f37caf1923b2f184198e424fd356e3d2,
 ///   version: 2,

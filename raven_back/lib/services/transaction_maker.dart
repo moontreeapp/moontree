@@ -198,9 +198,9 @@ class SendEstimate {
 }
 
 class TransactionMaker {
-  Tuple2<ravencoin.Transaction, SendEstimate> transactionBy(
+  Future<Tuple2<ravencoin.Transaction, SendEstimate>> transactionBy(
     SendRequest sendRequest,
-  ) {
+  ) async {
     var tuple;
     var estimate = SendEstimate(
       sendRequest.sendAmountAsSats,
@@ -224,7 +224,7 @@ class TransactionMaker {
                 wallet: sendRequest.wallet,
                 goal: sendRequest.feeGoal,
               ))
-        : transaction(
+        : await transaction(
             sendRequest.sendAddress,
             estimate,
             wallet: sendRequest.wallet,
@@ -548,12 +548,12 @@ class TransactionMaker {
     return Tuple2(tx, estimate);
   }
 
-  Tuple2<ravencoin.Transaction, SendEstimate> transaction(
+  Future<Tuple2<ravencoin.Transaction, SendEstimate>> transaction(
     String toAddress,
     SendEstimate estimate, {
     required Wallet wallet,
     TxGoal? goal,
-  }) {
+  }) async {
     ravencoin.TransactionBuilder? txb;
     ravencoin.Transaction tx;
     var feeSats = 0;
@@ -585,9 +585,12 @@ class TransactionMaker {
           security: null);
       var satsIn = 0;
       // We also add inputs in this loop
-      for (var utxo in utxosRaven + utxosSecurity) {
+      for (var utxo in utxosRaven) {
         txb.addInput(utxo.transactionId, utxo.position);
         satsIn += utxo.rvnValue;
+      }
+      for (var utxo in utxosSecurity) {
+        txb.addInput(utxo.transactionId, utxo.position);
       }
       returnRaven =
           satsIn - (estimate.security == null ? estimate.amount : 0) - feeSats;
@@ -614,7 +617,7 @@ class TransactionMaker {
       estimate.setFees(tx.fee(goal: goal));
     }
     print('calling sign: $utxosRaven + $utxosSecurity');
-    txb!.signEachInput(utxosRaven + utxosSecurity);
+    await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
     return Tuple2(tx, estimate);
   }

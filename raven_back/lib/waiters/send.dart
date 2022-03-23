@@ -16,7 +16,7 @@ class SendWaiter extends Waiter {
         await Future.delayed(const Duration(milliseconds: 500));
         Tuple2<ravencoin.Transaction, SendEstimate> tuple;
         try {
-          tuple = services.transaction.make.transactionBy(sendRequest);
+          tuple = await services.transaction.make.transactionBy(sendRequest);
           ravencoin.Transaction tx = tuple.item1;
           SendEstimate estimate = tuple.item2;
           streams.spend.made.add(TransactionNote(
@@ -49,7 +49,6 @@ class SendWaiter extends Waiter {
         //try {
         var txid =
             await services.client.api.sendTransaction(transactionNote.txHex);
-        print(transactionNote);
         if (transactionNote.note != null) {
           await res.notes
               .save(Note(transactionId: txid, note: transactionNote.note!));
@@ -58,9 +57,10 @@ class SendWaiter extends Waiter {
         print(txid);
         if (txid != '') {
           streams.app.snack.add(Snack(
-              message: 'Send Successful',
-              label: 'Transaction ID',
-              link: 'https://rvnt.cryptoscope.io/tx/?txid=$txid'));
+            message: 'Send Successful: ${txid.cutOutMiddle(length: 3)}',
+            //label: 'Transaction ID',
+            //link: 'https://rvnt.cryptoscope.io/tx/?txid=$txid'
+          ));
           streams.spend.success.add(true);
         } else {
           streams.app.snack.add(Snack(

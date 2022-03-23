@@ -7,10 +7,25 @@ extension SignEachInput on ravencoin.TransactionBuilder {
   /// need to find the keypair for each type of wallet and use it to sign the
   /// inputs.
   /// input order of the created transaction
-  void signEachInput(List<Vout> utxos) {
-    utxos.asMap().forEach((i, utxo) {
+  Future<void> signEachInput(List<Vout> utxos) async {
+    for (var e in utxos.enumerated()) {
+      int i = e[0];
+      Vout utxo = e[1];
       var keyPair = services.wallet.getAddressKeypair(utxo.address!);
-      sign(vin: i, keyPair: keyPair);
-    });
+      sign(
+        vin: i,
+        keyPair: keyPair,
+        prevOutScriptOverride: utxo.isAsset
+            ? (utxo.lockingScript == null
+                    ? (await services.client.api
+                            .getTransaction(utxo.transactionId))
+                        .vout[utxo.position]
+                        .scriptPubKey
+                        .hex
+                    : utxo.lockingScript!)
+                .hexBytes
+            : null,
+      );
+    }
   }
 }

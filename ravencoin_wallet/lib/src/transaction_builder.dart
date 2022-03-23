@@ -376,13 +376,15 @@ class TransactionBuilder {
         Input(sequence: sequence, prevOutScript: prevOutScript, value: value));
   }
 
-  sign(
-      {required int vin,
-      required ECPair keyPair,
-      Uint8List? redeemScript,
-      int? witnessValue,
-      Uint8List? witnessScript,
-      int? hashType}) {
+  sign({
+    required int vin,
+    required ECPair keyPair,
+    Uint8List? redeemScript,
+    int? witnessValue,
+    Uint8List? witnessScript,
+    int? hashType,
+    Uint8List? prevOutScriptOverride,
+  }) {
     if (keyPair.network.toString().compareTo(network.toString()) != 0)
       throw ArgumentError('Inconsistent network');
     if (vin >= _inputs.length) throw ArgumentError('No input at index: $vin');
@@ -420,14 +422,16 @@ class TransactionBuilder {
                   .output;
         } else {
           // DRY CODE
-          Uint8List? prevOutScript = pubkeyToOutputScript(ourPubKey);
+          Uint8List? prevOutScript =
+              prevOutScriptOverride ?? pubkeyToOutputScript(ourPubKey);
           input.prevOutType = SCRIPT_TYPES['P2PKH'];
           input.signatures = [null];
           input.pubkeys = [ourPubKey];
           input.signScript = prevOutScript;
         }
       } else {
-        Uint8List? prevOutScript = pubkeyToOutputScript(ourPubKey);
+        Uint8List? prevOutScript =
+            prevOutScriptOverride ?? pubkeyToOutputScript(ourPubKey);
         input.prevOutType = SCRIPT_TYPES['P2PKH'];
         input.signatures = [null];
         input.pubkeys = [ourPubKey];

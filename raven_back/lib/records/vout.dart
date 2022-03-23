@@ -8,56 +8,61 @@ import '_type_id.dart';
 part 'vout.g.dart';
 
 @HiveType(typeId: TypeId.Vout)
-class Vout with EquatableMixin {
+class Vout with EquatableMixin, ToStringMixin {
   @HiveField(0)
   String transactionId;
 
   @HiveField(1)
-  int rvnValue; // always RVN
-
-  @HiveField(2)
   int position;
 
-  @HiveField(3)
-  String memo;
+  // transaction type 'pubkeyhash' 'transfer_asset' 'new_asset' 'nulldata' etc
+  @HiveField(2)
+  String type;
 
+  @HiveField(3)
+  int rvnValue; // always RVN
+
+  // amount of asset
   @HiveField(4)
-  String assetMemo;
+  int? assetValue;
+
+  // used in asset transfers
+  @HiveField(5)
+  String? lockingScript;
+
+  @HiveField(6)
+  String? memo;
+
+  @HiveField(7)
+  String? assetMemo;
 
   /// other values include
   // final double value;
   // final TxScriptPubKey scriptPubKey; // has pertinent information
 
-  // transaction type 'pubkeyhash' 'transfer_asset' 'new_asset' 'nulldata' etc
-  @HiveField(5)
-  String type;
-
-  // non-multisig transactions
-  @HiveField(6)
-  String? toAddress;
-
   // this is the composite id
-  @HiveField(7)
+  @HiveField(8)
   String? assetSecurityId;
 
-  // amount of asset to send
-  @HiveField(8)
-  int? assetValue;
+  // non-multisig transactions // op return memos don't have a to address
+  @HiveField(9)
+  String? toAddress;
 
   // multisig, in addition to toAddress
-  @HiveField(9)
+  @HiveField(10)
   List<String>? additionalAddresses;
 
   Vout({
     required this.transactionId,
-    required this.rvnValue,
     required this.position,
-    this.memo = '',
-    this.assetMemo = '',
     required this.type,
-    required this.toAddress,
-    this.assetSecurityId,
+    required this.rvnValue,
     this.assetValue,
+    this.lockingScript,
+    this.memo,
+    this.assetMemo,
+    this.assetSecurityId,
+    this.toAddress,
     this.additionalAddresses,
   });
 
@@ -69,14 +74,15 @@ class Vout with EquatableMixin {
   @override
   List<Object?> get props => [
         transactionId,
-        rvnValue,
         position,
+        type,
+        rvnValue,
+        assetValue,
+        lockingScript,
         memo,
         assetMemo,
-        type,
-        toAddress,
         assetSecurityId,
-        assetValue,
+        toAddress,
         additionalAddresses,
       ];
 
@@ -84,13 +90,19 @@ class Vout with EquatableMixin {
   bool? get stringify => true;
 
   @override
-  String toString() {
-    return 'Vout('
-        'transactionId: $transactionId, rvnValue: $rvnValue, position: $position, '
-        'memo: $memo, assetMemo: $assetMemo, type: $type, toAddress: $toAddress, '
-        'assetSecurityId: $assetSecurityId, assetValue: $assetValue, '
-        'additionalAddresses: $additionalAddresses)';
-  }
+  List<String> get propNames => [
+        'transactionId',
+        'position',
+        'type',
+        'rvnValue',
+        'assetValue',
+        'lockingScript',
+        'memo',
+        'assetMemo',
+        'assetSecurityId',
+        'toAddress',
+        'additionalAddresses',
+      ];
 
   String get id => getVoutId(transactionId, position);
 
@@ -109,4 +121,6 @@ class Vout with EquatableMixin {
           : 0;
 
   String get securityId => assetSecurityId ?? 'RVN:Crypto';
+
+  bool get isAsset => securityId != res.securities.RVN.id;
 }
