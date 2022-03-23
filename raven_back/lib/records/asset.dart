@@ -65,8 +65,6 @@ class Asset with EquatableMixin {
   static String assetKey(String symbol) => symbol;
   String get id => symbol;
 
-  /// todo identify a ipfs hash correctly...
-  // https://ethereum.stackexchange.com/questions/17094/how-to-store-ipfs-hash-using-bytes32/17112#17112
   bool get hasIpfs => metadata.isIpfs;
 
   bool get hasMetadata => metadata != '';

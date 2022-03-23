@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:raven_back/services/transaction.dart';
@@ -61,7 +63,13 @@ class _TransactionPageState extends State<TransactionPage> {
       case 'ID':
         return transaction!.id.cutOutMiddle();
       case 'Memo/IPFS':
-        return (transactionMemo ?? '').cutOutMiddle();
+        return (String humanName) {
+          var txMemo = (transactionMemo ?? '') + '21234567890';
+          if (txMemo.isIpfs) {
+            return txMemo.cutOutMiddle();
+          }
+          return txMemo;
+        }(humanName);
       case 'Note':
         return transaction!.note ?? '';
       default:
@@ -88,34 +96,51 @@ class _TransactionPageState extends State<TransactionPage> {
     }
   }
 
-  Widget plain(String text) => ListTile(
+  Widget plain(String text, String value) => ListTile(
         dense: true,
         title: Text(text, style: Theme.of(context).textTheme.bodyText1),
-        trailing:
-            Text(element(text), style: Theme.of(context).textTheme.bodyText1),
+        trailing: GestureDetector(
+          onLongPress: () {
+            Clipboard.setData(ClipboardData(text: value));
+            streams.app.snack
+                .add(Snack(message: 'Copied to Clipboard', atBottom: true));
+          },
+          child: Text(
+            value,
+            style: Theme.of(context).textTheme.bodyText1,
+            maxLines: text == 'Memo/IPFS' && !value.isIpfs ? 3 : null,
+          ),
+        ),
       );
 
   Widget link(String text, String link) => ListTile(
-        // inkwell link...
         dense: true,
-        onTap: () => launch(link + elementFull(text)),
         title: Text(text, style: Theme.of(context).textTheme.bodyText1),
+        onTap: () => launch(link + elementFull(text)),
+        onLongPress: () {
+          Clipboard.setData(ClipboardData(text: elementFull(text)));
+          streams.app.snack
+              .add(Snack(message: 'Copied to Clipboard', atBottom: true));
+        },
         trailing: Text(element(text), style: Theme.of(context).textTheme.link),
       );
 
   Widget detailsBody() => ListView(
         padding: EdgeInsets.only(top: 8, bottom: 112),
         children: <Widget>[
-              for (var text in ['Date', 'Confirmations', 'Type']) plain(text)
+              for (var text in ['Date', 'Confirmations', 'Type'])
+                plain(text, element(text))
             ] +
             [
               link('ID', 'https://rvnt.cryptoscope.io/tx/?txid='),
               if (transactionMemo != null)
-                link('Memo/IPFS', 'https://gateway.ipfs.io/ipfs/'),
+                transactionMemo!.isIpfs
+                    ? link('Memo/IPFS', 'https://gateway.ipfs.io/ipfs/')
+                    : plain('Memo/IPFS', element('Memo/IPFS')),
             ] +
             (transaction!.note == null || transaction!.note == ''
                 ? []
-                : [plain('Note')]),
+                : [plain('Note', element('Note'))]),
       );
 
   int? getBlocksBetweenHelper({Transaction? tx, Block? current}) {
