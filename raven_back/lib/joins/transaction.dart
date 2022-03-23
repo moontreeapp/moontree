@@ -49,5 +49,5 @@ extension TransactionHasOneValue on Transaction {
 }
 
 extension TransactionHasOneNote on Transaction {
-  String? get note => res.note.primaryIndex.getOne(id)?.note;
+  String? get note => res.notes.primaryIndex.getOne(id)?.note;
 }

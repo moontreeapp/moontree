@@ -1,4 +1,4 @@
-import 'package:raven_back/utils/rate.dart';
+import 'package:raven_back/utilities/rate.dart';
 import 'package:raven_back/raven_back.dart';
 
 class RateService {

@@ -43,8 +43,8 @@ class _TransactionPageState extends State<TransactionPage> {
     data = populateData(context, data);
     transactionRecord = data['transactionRecord'];
     transaction = transactionRecord!.transaction;
-    print(res.note.data);
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
+    print(transaction!.note);
     return detailsBody();
   }
 
@@ -61,7 +61,7 @@ class _TransactionPageState extends State<TransactionPage> {
       case 'ID':
         return transaction!.id.cutOutMiddle();
       case 'Memo/IPFS':
-        return 'transaction!.memo'.cutOutMiddle();
+        return (transactionMemo ?? '').cutOutMiddle();
       case 'Note':
         return transaction!.note ?? '';
       default:
@@ -70,9 +70,9 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   String? get transactionMemo => transaction!.memos.isNotEmpty
-      ? transaction!.memos.first
+      ? transaction!.memos.first.hexToAscii
       : transaction!.assetMemos.isNotEmpty
-          ? transaction!.assetMemos.first
+          ? transaction!.assetMemos.first /*.hexToAscii ?*/
           : null;
 
   String elementFull(String humanName) {
@@ -113,7 +113,9 @@ class _TransactionPageState extends State<TransactionPage> {
               if (transactionMemo != null)
                 link('Memo/IPFS', 'https://gateway.ipfs.io/ipfs/'),
             ] +
-            (transaction!.note == '' ? [] : [plain('Note')]),
+            (transaction!.note == null || transaction!.note == ''
+                ? []
+                : [plain('Note')]),
       );
 
   int? getBlocksBetweenHelper({Transaction? tx, Block? current}) {

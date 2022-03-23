@@ -9,30 +9,31 @@ import 'package:stream_channel/stream_channel.dart';
 /// A [StreamChannelTransformer] similar to the default jsonDocument
 /// transformer that is built in to stream_channel, but adds a newline
 /// at the end of the JSON document, per Electrum's RPC requirement.
-final StreamChannelTransformer<Object?, String> jsonNewlineDocument = const _JsonNewlineTransformer();
+final StreamChannelTransformer<Object?, String> jsonNewlineDocument =
+    const _JsonNewlineTransformer();
 
-class _JsonNewlineTransformer implements StreamChannelTransformer<Object?, String> {
+class _JsonNewlineTransformer
+    implements StreamChannelTransformer<Object?, String> {
   const _JsonNewlineTransformer();
-  
+
   @override
   StreamChannel<Object?> bind(StreamChannel<String> channel) {
     var stream = channel.stream.transform(ContinuousJsonDecoder());
     var sink = StreamSinkTransformer<Object, String>.fromHandlers(
-      handleData: (data, sink) {
-        if ((data as Map).containsKey('error')) {
-          /// todo: fix lower layers so this never happens.
-          print('ERROR @ '
+        handleData: (data, sink) {
+      if ((data as Map).containsKey('error')) {
+        /// todo: fix lower layers so this never happens.
+        print('ERROR @ '
             'raven_electrum.lib.client.json_newline_transformer.dart: $data');
-        } else {
-          sink.add(jsonEncode(data) + '\n');
-        }
+      } else {
+        sink.add(jsonEncode(data) + '\n');
       }
-    ).bind(channel.sink);
+    }).bind(channel.sink);
     return StreamChannel.withCloseGuarantee(stream, sink);
   }
 }
 
-// The follow is copied from 
+// The follow is copied from
 // https://github.com/dart-lang/sdk/blob/9df38b50da5f6442f51c903182da7880abc45fca/sdk/lib/convert/json.dart#L590
 // and
 // https://github.com/dart-lang/sdk/blob/main/sdk/lib/_internal/vm/lib/convert_patch.dart
@@ -44,31 +45,35 @@ class _JsonNewlineTransformer implements StreamChannelTransformer<Object?, Strin
 // BSD-style license that can be found in the LICENSE file.
 
 const POWERS_OF_TEN = const [
-  1.0,  /*  0 */
+  1.0,
+  /*  0 */
   10.0,
   100.0,
   1000.0,
   10000.0,
-  100000.0,  /*  5 */
+  100000.0,
+  /*  5 */
   1000000.0,
   10000000.0,
   100000000.0,
   1000000000.0,
-  10000000000.0,  /* 10 */
+  10000000000.0,
+  /* 10 */
   100000000000.0,
   1000000000000.0,
   10000000000000.0,
   100000000000000.0,
-  1000000000000000.0,  /*  15 */
+  1000000000000000.0,
+  /*  15 */
   10000000000000000.0,
   100000000000000000.0,
   1000000000000000000.0,
   10000000000000000000.0,
-  100000000000000000000.0,  /*  20 */
+  100000000000000000000.0,
+  /*  20 */
   1000000000000000000000.0,
   10000000000000000000000.0,
 ];
-
 
 /// This class parses JSON strings and builds the corresponding objects.
 ///
@@ -195,7 +200,6 @@ abstract class _JsonListener {
  * seen value in a variable, and uses it depending on the following event.
  */
 class _BuildJsonListener extends _JsonListener {
-
   /** The current [Map] or [List] being built. */
   dynamic currentContainer;
   /** The most recently read property key. */
@@ -493,8 +497,6 @@ abstract class _ChunkedJsonParser<T> {
   // The current parsing state.
   int state = STATE_INITIAL;
   List<int> states = <int>[];
-
-
 
   /**
    * Stores tokenizer state between chunks.
@@ -1368,6 +1370,17 @@ abstract class _ChunkedJsonParser<T> {
           // Is 1 if digit is 8 or 9 and sign == 0, or digit is 9 and sign < 0;
           int highDigit = digit >> 3;
           if (sign < 0) highDigit &= digit;
+          /* chrome:  https://github.com/moontreeapp/moontree/issues/372
+          : Error: The integer literal 922337203685477580 can't be represented 
+            exactly in JavaScript.
+          ../…/client/json_newline_transformer.dart:1371
+          Try changing the literal to something that can be represented in
+            Javascript. In Javascript 922337203685477632 is the nearest value
+            that can be represented exactly.
+          if (digitCount == 19 || intValue - highDigit < -922337203685477580) {
+                                                          ^^^^^^^^^^^^^^^^^^
+          Failed to compile application.
+          */
           if (digitCount == 19 || intValue - highDigit < -922337203685477580) {
             isDouble = true;
             // Big value that we know is not trusted to be exact later,
@@ -1494,7 +1507,8 @@ class _JsonStringParser extends _ChunkedJsonParser<String> {
   String chunk = '';
   int chunkEnd = 0;
 
-  _JsonStringParser(_JsonListener listener, Sink<Object?>? sink): super(listener, sink);
+  _JsonStringParser(_JsonListener listener, Sink<Object?>? sink)
+      : super(listener, sink);
 
   int getChar(int position) => chunk.codeUnitAt(position);
 
@@ -1535,7 +1549,6 @@ class _JsonStringParser extends _ChunkedJsonParser<String> {
       throw "Invalid double";
     }
     return d;
-  
   }
 }
 
@@ -1554,7 +1567,8 @@ class _JsonStringDecoderSink extends StringConversionSinkBase {
       : _parser = _createParser(_reviver, _sink);
 
   static _JsonStringParser _createParser(
-      Object? Function(Object? key, Object? value)? reviver, Sink<Object?> sink) {
+      Object? Function(Object? key, Object? value)? reviver,
+      Sink<Object?> sink) {
     _BuildJsonListener listener;
     if (reviver == null) {
       listener = new _BuildJsonListener();
@@ -1666,31 +1680,31 @@ double? _parseDouble(String str, int start, int end) {
 }
 
 int? _tryParseSmi(String str, int first, int last) {
-    assert(first <= last);
-    var ix = first;
-    var sign = 1;
-    var c = str.codeUnitAt(ix);
-    // Check for leading '+' or '-'.
-    if ((c == 0x2b) || (c == 0x2d)) {
-      ix++;
-      sign = 0x2c - c; // -1 for '-', +1 for '+'.
-      if (ix > last) {
-        return null; // Empty.
-      }
+  assert(first <= last);
+  var ix = first;
+  var sign = 1;
+  var c = str.codeUnitAt(ix);
+  // Check for leading '+' or '-'.
+  if ((c == 0x2b) || (c == 0x2d)) {
+    ix++;
+    sign = 0x2c - c; // -1 for '-', +1 for '+'.
+    if (ix > last) {
+      return null; // Empty.
     }
-    //var smiLimit = has63BitSmis ? 18 : 9;
-    // Default to smallest
-    var smiLimit = 9;
-    if ((last - ix) >= smiLimit) {
-      return null; // May not fit into a Smi.
-    }
-    var result = 0;
-    for (int i = ix; i <= last; i++) {
-      var c = 0x30 ^ str.codeUnitAt(i);
-      if (9 < c) {
-        return null;
-      }
-      result = 10 * result + c;
-    }
-    return sign * result;
   }
+  //var smiLimit = has63BitSmis ? 18 : 9;
+  // Default to smallest
+  var smiLimit = 9;
+  if ((last - ix) >= smiLimit) {
+    return null; // May not fit into a Smi.
+  }
+  var result = 0;
+  for (int i = ix; i <= last; i++) {
+    var c = 0x30 ^ str.codeUnitAt(i);
+    if (9 < c) {
+      return null;
+    }
+    result = 10 * result + c;
+  }
+  return sign * result;
+}

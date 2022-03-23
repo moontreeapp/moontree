@@ -49,8 +49,9 @@ class SendWaiter extends Waiter {
         //try {
         var txid =
             await services.client.api.sendTransaction(transactionNote.txHex);
+        print(transactionNote);
         if (transactionNote.note != null) {
-          await res.note
+          await res.notes
               .save(Note(transactionId: txid, note: transactionNote.note!));
         }
         print('txid');

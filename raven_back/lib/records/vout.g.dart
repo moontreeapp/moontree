@@ -23,7 +23,7 @@ class VoutAdapter extends TypeAdapter<Vout> {
       memo: fields[3] as String,
       assetMemo: fields[4] as String,
       type: fields[5] as String,
-      toAddress: fields[6] as String,
+      toAddress: fields[6] as String?,
       assetSecurityId: fields[7] as String?,
       assetValue: fields[8] as int?,
       additionalAddresses: (fields[9] as List?)?.cast<String>(),

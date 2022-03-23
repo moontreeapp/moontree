@@ -6,7 +6,7 @@ import 'package:share/share.dart';
 import 'package:convert/convert.dart' as convert;
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
-import 'package:raven_back/utils/hex.dart' as hex;
+import 'package:raven_back/utilities/hex.dart' as hex;
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/pages/transaction/checkout.dart';
 import 'package:raven_front/services/storage.dart';

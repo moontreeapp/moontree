@@ -1,5 +1,5 @@
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/utils/strings.dart';
+import 'package:raven_back/utilities/strings.dart';
 
 bool rvnCondition(String address, {Net? net}) =>
     address.contains(RegExp(utils.strings.ravenBase58Regex(net)));

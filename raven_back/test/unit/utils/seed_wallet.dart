@@ -2,7 +2,7 @@
 import 'package:raven_back/raven_back.dart';
 import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
-import 'package:raven_back/utils/seed_wallet.dart';
+import 'package:raven_back/utilities/seed_wallet.dart';
 
 void main() {
   test('SingleSelfWallet', () {

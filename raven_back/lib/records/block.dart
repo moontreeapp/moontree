@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:raven_back/raven_back.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 
 import '_type_id.dart';
@@ -7,7 +8,7 @@ import '_type_id.dart';
 part 'block.g.dart';
 
 @HiveType(typeId: TypeId.Block)
-class Block with EquatableMixin {
+class Block with EquatableMixin, ToStringMixin {
   @HiveField(0)
   final int height;
 
@@ -21,7 +22,7 @@ class Block with EquatableMixin {
   List<Object> get props => [height];
 
   @override
-  String toString() => 'Block($height)';
+  List<String> get propNames => ['height'];
 
   factory Block.fromBlockHeader(BlockHeader blockHeader) {
     return Block(height: blockHeader.height);

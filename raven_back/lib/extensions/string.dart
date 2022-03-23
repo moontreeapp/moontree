@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:convert/convert.dart';
-import 'package:raven_back/utils/utilities.dart';
+import 'package:raven_back/utilities/utilities.dart';
 
 extension StringCasingExtension on String {
   String toCapitalized() =>
@@ -42,6 +42,15 @@ extension StringBytesExtension on String {
   Uint8List get bytesUint8 => Uint8List.fromList(bytes);
   Uint8List get hexBytes => Uint8List.fromList(hex.decode(this));
   List<int> get bytes => utf8.encode(this);
+  String get hexToAscii => List.generate(
+        length ~/ 2,
+        (i) => String.fromCharCode(
+            int.parse(substring(i * 2, (i * 2) + 2), radix: 16)),
+      ).join();
+}
+
+extension StringVerificationsExtension on String {
+  bool get isIpfs => utils.isIpfs(this);
 }
 
 extension StringCharactersExtension on String {

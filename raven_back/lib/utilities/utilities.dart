@@ -1,6 +1,7 @@
 import 'assets.dart' as assets;
 import 'transform.dart' as transform;
 import 'strings.dart' as imported_strings;
+import 'validate.dart' as validate;
 
 export 'exceptions.dart';
 export 'structures.dart';
@@ -14,6 +15,8 @@ class utils {
   static final removeChars = transform.removeChars;
   static final enumerate = transform.enumerate;
   static final removeCharsOtherThan = transform.removeCharsOtherThan;
+  static final toStringOverride = imported_strings.toStringOverride;
+  static final isIpfs = validate.isIPFS;
   static final Strings strings = Strings();
 }
 
@@ -32,4 +35,12 @@ class Strings {
   final subAssetBaseRegex = imported_strings.subAssetBaseRegex;
   final mainAssetAllowed = imported_strings.mainAssetAllowed;
   final verifierStringAllowed = imported_strings.verifierStringAllowed;
+}
+
+abstract class ToStringMixin {
+  @override
+  String toString() =>
+      imported_strings.toStringOverride(this, props, propNames);
+  List<Object> get props => [];
+  List<String> get propNames => [];
 }

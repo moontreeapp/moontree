@@ -1,6 +1,6 @@
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/wallet/constants.dart';
-import 'package:raven_back/utils/hex.dart' as hexx;
+import 'package:raven_back/utilities/hex.dart' as hexx;
 
 class ImportFrom {
   late String text;

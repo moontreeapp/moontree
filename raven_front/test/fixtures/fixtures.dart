@@ -1,6 +1,6 @@
 import 'package:raven_back/raven_back.dart';
 import 'package:reservoir/map_source.dart';
-import 'package:raven_back/utils/database.dart' as raven_database;
+import 'package:raven_back/utilities/database.dart' as raven_database;
 
 void useFixtureSources() {
   res.assets.setSource(MapSource({}));

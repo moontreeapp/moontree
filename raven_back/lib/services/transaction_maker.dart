@@ -103,7 +103,7 @@ class GenericCreateRequest {
   });
 }
 
-class SendRequest {
+class SendRequest with ToStringMixin {
   late bool sendAll;
   late String sendAddress;
   late double holding;
@@ -129,6 +129,35 @@ class SendRequest {
     this.memo,
     this.note,
   });
+
+  @override
+  List<Object> get props => [
+        sendAll,
+        sendAddress,
+        holding,
+        visibleAmount,
+        sendAmountAsSats,
+        feeGoal,
+        wallet,
+        security ?? '?',
+        assetMemo ?? '?',
+        memo ?? '?',
+        note ?? '?',
+      ];
+  @override
+  List<String> get propNames => [
+        'sendAll',
+        'sendAddress',
+        'holding',
+        'visibleAmount',
+        'sendAmountAsSats',
+        'feeGoal',
+        'wallet',
+        'security',
+        'assetMemo',
+        'memo',
+        'note',
+      ];
 }
 
 class SendEstimate {
@@ -149,7 +178,8 @@ class SendEstimate {
   }) : utxos = utxos ?? [];
 
   @override
-  String toString() => 'amount: $amount, fees: $fees, utxos: $utxos';
+  String toString() =>
+      'SendEstimate(amount: $amount, fees: $fees, utxos: $utxos)';
 
   int get total => amount + fees;
   int get utxoTotal => utxos.fold(

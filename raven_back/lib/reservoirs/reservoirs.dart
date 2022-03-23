@@ -37,7 +37,7 @@ class res {
   static final BalanceReservoir balances = BalanceReservoir();
   static final CipherReservoir ciphers = CipherReservoir();
   static final MetadataReservoir metadatas = MetadataReservoir();
-  static final NoteReservoir note = NoteReservoir();
+  static final NoteReservoir notes = NoteReservoir();
   static final PasswordReservoir passwords = PasswordReservoir();
   static final ExchangeRateReservoir rates = ExchangeRateReservoir();
   static final SecurityReservoir securities = SecurityReservoir();

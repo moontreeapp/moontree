@@ -2,7 +2,7 @@ import 'package:raven_back/extensions/object.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' show HDWallet;
 import 'package:bip39/bip39.dart' as bip39;
 
-import 'package:raven_back/utils/seed_wallet.dart';
+import 'package:raven_back/utilities/seed_wallet.dart';
 import 'package:raven_back/raven_back.dart';
 
 // derives addresses for leaderwallets

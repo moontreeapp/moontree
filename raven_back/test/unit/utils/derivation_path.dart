@@ -1,6 +1,6 @@
 import 'package:raven_back/records/node_exposure.dart';
 import 'package:test/test.dart';
-import 'package:raven_back/utils/derivation_path.dart';
+import 'package:raven_back/utilities/derivation_path.dart';
 
 void main() {
   test('derive', () {

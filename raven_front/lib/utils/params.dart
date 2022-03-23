@@ -1,4 +1,4 @@
-import 'package:raven_back/utils/utilities.dart';
+import 'package:raven_back/utilities/utilities.dart';
 
 Map<String, String> parseReceiveParams(String address) =>
     Uri.parse(address).queryParameters;

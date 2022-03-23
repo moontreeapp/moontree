@@ -1,6 +1,6 @@
 // dart test test/unit/utils/random.dart
 import 'package:test/test.dart';
-import 'package:raven_back/utils/random.dart';
+import 'package:raven_back/utilities/random.dart';
 
 void main() {
   test('random works as expected', () {

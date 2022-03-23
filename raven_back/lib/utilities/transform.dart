@@ -3,7 +3,7 @@
 /// divisibility of 0 is no decimal places, 1 is one.
 
 import 'package:raven_back/extensions/string.dart';
-import 'package:raven_back/utils/strings.dart';
+import 'package:raven_back/utilities/strings.dart';
 
 int invertDivisibility(int divisibility) => (16 + 1) % (divisibility + 8 + 1);
 

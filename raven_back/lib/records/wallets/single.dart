@@ -7,7 +7,7 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/records/cipher_update.dart';
 import 'package:raven_back/security/cipher_base.dart';
 import 'package:raven_back/security/encrypted_wif.dart';
-import 'package:raven_back/utils/seed_wallet.dart';
+import 'package:raven_back/utilities/seed_wallet.dart';
 
 import '../net.dart';
 import '../_type_id.dart';

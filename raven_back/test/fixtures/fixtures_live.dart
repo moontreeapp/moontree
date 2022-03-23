@@ -3,7 +3,7 @@ import 'package:raven_back/hive_initializer.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:dotenv/dotenv.dart' as dotenv;
 import 'package:raven_back/services/wallet/constants.dart';
-import 'package:raven_back/utils/database.dart' as raven_database;
+import 'package:raven_back/utilities/database.dart' as raven_database;
 
 Future useLiveSources() async {
   dotenv.load();

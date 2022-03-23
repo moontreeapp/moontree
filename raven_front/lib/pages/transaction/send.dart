@@ -492,7 +492,16 @@ class _SendState extends State<Send> {
           // assetMemo: // we don't have a UI field for this.
           // should we use the memo field for assetMemo if sending asset
           // or should always use that field for op return memos??
-          memo: sendMemo.text != '' ? sendMemo.text : null,
+
+          // we should use assetMemo on IPFS hashes since assetMemos can only
+          // be ipfs or txids. otherwise we should use memo which can be
+          // any text up to lenght bytes 80.
+          // sendMemo.text.isAssetMemo
+          assetMemo: sendMemo.text.isIpfs ? sendMemo.text : null,
+          memo: !sendMemo.text.isIpfs && sendMemo.text != ''
+              ? sendMemo.text
+              : null,
+          note: sendNote.text != '' ? sendNote.text : null,
         );
         print(sendRequest);
         confirmSend(sendRequest);

@@ -9,7 +9,7 @@ import 'sets.dart';
 
 import 'package:reservoir/map_source.dart';
 
-import 'package:raven_back/utils/database.dart' as raven_database;
+import 'package:raven_back/utilities/database.dart' as raven_database;
 
 /// meant to be used for loading only what the test/group needs. preferred to
 /// useFixtureSources because this requires that the app state (contents of the

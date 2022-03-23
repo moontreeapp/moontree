@@ -1,5 +1,6 @@
 import 'package:rxdart/rxdart.dart';
 import 'package:raven_back/services/transaction_maker.dart';
+import 'package:raven_back/utilities/utilities.dart';
 
 // used in pages.send and BalanceHeader of raven_front
 class Spend {
@@ -18,11 +19,17 @@ class Spend {
   final success = BehaviorSubject<bool?>.seeded(null);
 }
 
-class TransactionNote {
+class TransactionNote with ToStringMixin {
   String txHex;
   String? note;
 
   TransactionNote({required this.txHex, this.note});
+
+  @override
+  List<Object> get props => [txHex, note ?? 'null'];
+
+  @override
+  List<String> get propNames => ['txHex', 'note?'];
 }
 
 class SpendForm {

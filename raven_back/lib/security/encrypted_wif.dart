@@ -4,7 +4,7 @@ import 'package:ravencoin_wallet/ravencoin_wallet.dart' show KPWallet;
 import 'package:bs58check/bs58check.dart' as bs58;
 
 import 'package:raven_back/security/cipher_base.dart';
-import 'package:raven_back/utils/hex.dart' as hex;
+import 'package:raven_back/utilities/hex.dart' as hex;
 
 import 'encrypted_wallet_secret.dart';
 

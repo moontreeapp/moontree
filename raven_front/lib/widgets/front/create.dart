@@ -12,7 +12,7 @@ import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/params.dart';
-import 'package:raven_back/utils/utilities.dart';
+import 'package:raven_back/utilities/utilities.dart';
 import 'package:raven_back/streams/create.dart';
 import 'package:raven_front/utils/transformers.dart';
 import 'package:raven_front/widgets/widgets.dart';

@@ -1,4 +1,4 @@
-import 'package:raven_back/utils/hex.dart';
+import 'package:raven_back/utilities/hex.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart'
     show KPWallet, NetworkType, ECPair;
 

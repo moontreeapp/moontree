@@ -1,4 +1,5 @@
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:raven_back/streams/spend.dart';
 
 import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,7 @@ import 'package:raven_front/widgets/widgets.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import 'package:raven_back/extensions/list.dart';
-import 'package:raven_back/utils/database.dart' as ravenDatabase;
+import 'package:raven_back/utilities/database.dart' as ravenDatabase;
 
 //testing
 import 'package:raven_electrum/raven_electrum.dart';
@@ -182,9 +183,7 @@ class _NavMenuState extends State<NavMenu> {
               title: 'test',
               leading: Icon(Icons.info_outline_rounded),
               onPressed: (BuildContext context) async {
-                for (var s in res.assets) {
-                  print(s);
-                }
+                print(res.notes.first);
               }),
         ],
       )

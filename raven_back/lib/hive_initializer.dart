@@ -52,6 +52,7 @@ class HiveInitializer {
     Hive.registerAdapter(VoutAdapter());
     Hive.registerAdapter(NetAdapter());
     Hive.registerAdapter(NodeExposureAdapter());
+    Hive.registerAdapter(NoteAdapter());
     Hive.registerAdapter(PasswordAdapter());
     Hive.registerAdapter(RateAdapter());
     Hive.registerAdapter(CipherUpdateAdapter());
@@ -70,6 +71,7 @@ class HiveInitializer {
     await Hive.openBox<Balance>('balances');
     await Hive.openBox<Block>('blocks');
     await Hive.openBox<Metadata>('metadatas');
+    await Hive.openBox<Note>('notes');
     await Hive.openBox<Password>('passwords');
     await Hive.openBox<Rate>('rates');
     await Hive.openBox<Security>('securities');
@@ -86,6 +88,7 @@ class HiveInitializer {
     res.blocks.setSource(HiveSource('blocks'));
     res.assets.setSource(HiveSource('assets'));
     res.metadatas.setSource(HiveSource('metadatas'));
+    res.notes.setSource(HiveSource('notes'));
 
     /// this needs to be inmemory:
     // res.ciphers.setSource(HiveSource(
