@@ -4,7 +4,7 @@ import 'package:raven_back/extensions/string.dart';
 
 const int DEFAULT_ITERATIONS = 2;
 const int DEFAULT_MEMORY = 16;
-final Uint8List DEFAULT_SALT = 'aeree5Zaeveexooj'.bytes;
+final Uint8List DEFAULT_SALT = 'aeree5Zaeveexooj'.bytesUint8;
 
 abstract class CipherBase {
   Uint8List encrypt(Uint8List plainText);

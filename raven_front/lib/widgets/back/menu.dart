@@ -177,19 +177,15 @@ class _NavMenuState extends State<NavMenu> {
             name: 'Accounts',
             link: '/settings/technical',
           ),
+          */
           SettingsTile(
               title: 'test',
               leading: Icon(Icons.info_outline_rounded),
               onPressed: (BuildContext context) async {
-                print(res.transactions.data.where((element) =>
-                    element.id ==
-                    'e9ec208d98a621758af246f5c9253843cdbb744365eb234cc8eb201f002ca280'));
-                print(res.vouts.data.where((element) =>
-                    element.transactionId ==
-                    'e9ec208d98a621758af246f5c9253843cdbb744365eb234cc8eb201f002ca280'));
-                print(waiters.history.txsByWalletExposureKeys);
+                for (var s in res.assets) {
+                  print(s);
+                }
               }),
-          */
         ],
       )
     };

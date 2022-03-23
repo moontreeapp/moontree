@@ -176,8 +176,7 @@ class _SendState extends State<Send> {
     }
     try {
       visibleFiatAmount = components.text.securityAsReadable(
-          utils.amountToSat(double.parse(visibleAmount),
-              divisibility: divisibility),
+          utils.amountToSat(double.parse(visibleAmount)),
           symbol: symbol,
           asUSD: true);
     } catch (e) {
@@ -202,9 +201,10 @@ class _SendState extends State<Send> {
           sendNoteField,
         ],
         floatingButtons: [
-          allValidation()
-              ? sendTransactionButton()
-              : sendTransactionButton(disabled: true)
+          //allValidation()
+          //?
+          sendTransactionButton()
+          //: sendTransactionButton(disabled: true)
         ],
       );
 
@@ -450,7 +450,7 @@ class _SendState extends State<Send> {
     return amount;
   }
 
-  bool verifyMemo([String? memo]) => (memo ?? sendMemo.text).length <= 80;
+  bool verifyMemo([String? memo]) => (memo ?? sendMemo.text).bytes.length <= 80;
 
   bool fieldValidation() {
     return sendAddress.text != '' && _validateAddress() && verifyMemo();
@@ -466,9 +466,6 @@ class _SendState extends State<Send> {
   }
 
   bool allValidation() {
-    print('validateAddress: ${_validateAddress()}');
-    print(fieldValidation());
-    print(holdingValidation());
     return fieldValidation() && holdingValidation();
   }
 
@@ -478,10 +475,7 @@ class _SendState extends State<Send> {
     var vMemo = verifyMemo();
     if (vAddress && vMemo) {
       FocusScope.of(context).unfocus();
-      var sendAmountAsSats = utils.amountToSat(
-        double.parse(sendAmount.text),
-        divisibility: divisibility,
-      );
+      var sendAmountAsSats = utils.amountToSat(double.parse(sendAmount.text));
       if (holding >= double.parse(sendAmount.text)) {
         var sendRequest = SendRequest(
           sendAll: holding == visibleAmount.toDouble(),
@@ -491,11 +485,16 @@ class _SendState extends State<Send> {
           visibleAmount: visibleAmount,
           sendAmountAsSats: sendAmountAsSats,
           feeGoal: feeGoal,
+          security: sendAsset.text == 'Ravencoin'
+              ? null
+              : res.securities.bySymbolSecurityType
+                  .getOne(sendAsset.text, SecurityType.RavenAsset),
           // assetMemo: // we don't have a UI field for this.
           // should we use the memo field for assetMemo if sending asset
           // or should always use that field for op return memos??
           memo: sendMemo.text != '' ? sendMemo.text : null,
         );
+        print(sendRequest);
         confirmSend(sendRequest);
       } else {
         showDialog(

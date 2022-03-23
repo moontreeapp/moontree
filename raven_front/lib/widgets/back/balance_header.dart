@@ -104,15 +104,11 @@ class _BalanceHeaderState extends State<BalanceHeader>
     if (possibleHoldings.length > 0) {
       holding = possibleHoldings[0];
     }
-    //var divisibility = assets.bySymbol.getOne(symbol)?.divisibility ?? 8;
-    var divisibility = 8;
-    var holdingSat = utils.amountToSat(holding, divisibility: divisibility);
-    var amountSat = utils.amountToSat(amount,
-        divisibility: res.assets.bySymbol.getOne(symbol)?.divisibility ?? 8);
+    var holdingSat = utils.amountToSat(holding);
+    var amountSat = utils.amountToSat(amount);
     try {
       visibleFiatAmount = components.text.securityAsReadable(
-          utils.amountToSat(double.parse(visibleAmount),
-              divisibility: divisibility),
+          utils.amountToSat(double.parse(visibleAmount)),
           symbol: symbol,
           asUSD: true);
     } catch (e) {
@@ -125,10 +121,8 @@ class _BalanceHeaderState extends State<BalanceHeader>
           ? res.assets.bySymbol.getOne(symbol)
           : null;
       if (assetDetails != null) {
-        totalSupply = utils
-            .satToAmount(assetDetails!.satsInCirculation,
-                divisibility: assetDetails!.divisibility)
-            .toCommaString();
+        totalSupply =
+            utils.satToAmount(assetDetails!.satsInCirculation).toCommaString();
       }
     }
     return Container(

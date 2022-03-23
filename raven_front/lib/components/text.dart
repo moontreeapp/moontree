@@ -31,8 +31,7 @@ class TextComponents {
     // asset sats -> asset -> rvn -> usd
     security = getSecurityOf(symbol: symbol, security: security);
     var asset = getAssetOf(symbol: symbol);
-    var asAmount =
-        utils.satToAmount(sats, divisibility: asset?.divisibility ?? 0);
+    var asAmount = utils.satToAmount(sats);
     return asUSD
         ? rvnUSD(asAmount * (services.rate.assetToRVN(security) ?? 0.0))
         : NumberFormat(

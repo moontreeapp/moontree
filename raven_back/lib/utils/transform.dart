@@ -1,22 +1,14 @@
-import 'dart:math';
+/// divisibilitiy should only be for the front end.
+/// on the back end we should always save in sats, equal in size to raven's
+/// divisibility of 0 is no decimal places, 1 is one.
+
 import 'package:raven_back/extensions/string.dart';
 import 'package:raven_back/utils/strings.dart';
 
-/// special case saving assets:
-/// say amount=1000000 and satsInCirculation=100000000000000 and divisions=0
-/// we want to take satsInCirculation and use divisbility to derive amount
-/// so we invert divisibility from 0 to 8 then use satToAmount.
-int satToAmountInverse(int x, {int divisibility = 8}) =>
-    satToAmount(x, divisibility: invertDivisibility(divisibility)).toInt();
-
 int invertDivisibility(int divisibility) => (16 + 1) % (divisibility + 8 + 1);
 
-double satToAmount(int x, {int divisibility = 8}) =>
-    (x / divisor(divisibility));
-int amountToSat(double x, {int divisibility = 8}) =>
-    (x * divisor(divisibility)).floor().toInt();
-
-int divisor(int divisibility) => int.parse('1' + ('0' * min(divisibility, 8)));
+double satToAmount(int x) => (x / 100000000);
+int amountToSat(double x) => (x * 100000000).floor().toInt();
 
 String removeChars(
   String text, {

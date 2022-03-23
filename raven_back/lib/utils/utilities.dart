@@ -8,10 +8,8 @@ export 'structures.dart';
 class utils {
   static final assetHoldings = assets.assetHoldings;
   static final assetHoldingsFromAssets = assets.assetHoldingsFromAssets;
-  static final satToAmountInverse = transform.satToAmountInverse;
   static final satToAmount = transform.satToAmount;
   static final amountToSat = transform.amountToSat;
-  static final divisor = transform.divisor;
   //static final characters = transform.characters;
   static final removeChars = transform.removeChars;
   static final enumerate = transform.enumerate;

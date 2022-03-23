@@ -5,7 +5,7 @@ import 'package:raven_back/security/encrypted_entropy.dart';
 import 'package:raven_back/extensions/string.dart';
 import '../../fixtures/mnemonic.dart';
 
-var cipher = CipherAES('password'.bytes);
+var cipher = CipherAES('password'.bytesUint8);
 
 void main() {
   group('Encrypted Wallet Entropy', () {

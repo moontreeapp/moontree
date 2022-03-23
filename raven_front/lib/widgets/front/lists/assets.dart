@@ -166,23 +166,19 @@ class _AssetList extends State<AssetList> {
         values: [
           if (asset.admin != null)
             utils
-                .satToAmount(assetDetails['main'].satsInCirculation,
-                    divisibility: assetDetails['main'].divisibility)
+                .satToAmount(assetDetails['main'].satsInCirculation)
                 .toCommaString(),
           if (asset.subAdmin != null)
             utils
-                .satToAmount(assetDetails['main'].satsInCirculation,
-                    divisibility: assetDetails['main'].divisibility)
+                .satToAmount(assetDetails['main'].satsInCirculation)
                 .toCommaString(),
           if (asset.restricted != null)
             utils
-                .satToAmount(assetDetails['restricted'].satsInCirculation,
-                    divisibility: assetDetails['restricted'].divisibility)
+                .satToAmount(assetDetails['restricted'].satsInCirculation)
                 .toCommaString(),
           if (asset.qualifier != null)
             utils
-                .satToAmount(assetDetails['qualifier'].satsInCirculation,
-                    divisibility: assetDetails['qualifier'].divisibility)
+                .satToAmount(assetDetails['qualifier'].satsInCirculation)
                 .toCommaString(),
         ],
       ).build();

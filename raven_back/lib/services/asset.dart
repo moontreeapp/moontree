@@ -45,10 +45,8 @@ class AssetService {
     }
     var meta = await client.getMeta(symbol);
     if (meta != null) {
-      var value = vout == null
-          ? 0
-          : utils.amountToSat(vout.scriptPubKey.amount,
-              divisibility: vout.scriptPubKey.units ?? meta.divisions);
+      var value =
+          vout == null ? 0 : utils.amountToSat(vout.scriptPubKey.amount);
       var asset = Asset(
         symbol: meta.symbol,
         metadata: (await client.getTransaction(meta.source.txHash))
@@ -56,8 +54,7 @@ class AssetService {
                 .scriptPubKey
                 .ipfsHash ??
             '',
-        satsInCirculation: utils.satToAmountInverse(meta.satsInCirculation,
-            divisibility: meta.divisions),
+        satsInCirculation: meta.satsInCirculation,
         divisibility: meta.divisions,
         reissuable: meta.reissuable == 1,
         transactionId: meta.source.txHash,

@@ -125,7 +125,6 @@ class _PageTitleState extends State<PageTitle> {
                       .copyWith(color: AppColors.white)));
 
   String assetName(String given) {
-    print('$given vs $assetTitle');
     if (given.contains('~')) {
       return given.toLowerCase().split('~').last.toTitleCase();
     }

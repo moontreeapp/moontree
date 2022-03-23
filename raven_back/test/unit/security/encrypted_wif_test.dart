@@ -6,7 +6,7 @@ import 'package:raven_back/extensions/string.dart';
 
 // WIF derived from 'daring field mesh message behave tenant immense shrimp asthma gadget that mammal'
 var wif = 'L3H4yjsqop3NY4kncJ6WLsyrhjiCRrvn3xw4pztQgP5EiCeLZ23c';
-var cipher = CipherAES('password'.bytes);
+var cipher = CipherAES('password'.bytesUint8);
 
 void main() {
   group('Encrypted Wallet Entropy', () {

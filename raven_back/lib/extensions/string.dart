@@ -39,9 +39,9 @@ extension StringTrimExtension on String {
 }
 
 extension StringBytesExtension on String {
-  Uint8List get bytes => Uint8List.fromList(codeUnits);
+  Uint8List get bytesUint8 => Uint8List.fromList(bytes);
   Uint8List get hexBytes => Uint8List.fromList(hex.decode(this));
-  List<int> get uft8Bytes => utf8.encode(this);
+  List<int> get bytes => utf8.encode(this);
 }
 
 extension StringCharactersExtension on String {

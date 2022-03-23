@@ -100,8 +100,7 @@ class _AssetDetails extends State<AssetDetails> {
         return widget.symbol;
       case 'Quantity':
         return utils
-            .satToAmount(assetDetails!.satsInCirculation,
-                divisibility: assetDetails!.divisibility)
+            .satToAmount(assetDetails!.satsInCirculation)
             .toCommaString();
       case 'Decimals':
         return assetDetails!.divisibility.toString();

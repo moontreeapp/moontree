@@ -182,9 +182,7 @@ class HistoryService {
           type: vout.scriptPubKey.type,
           toAddress: vout.scriptPubKey.addresses![0],
           assetSecurityId: vs.item2.id,
-          assetValue: utils.amountToSat(vout.scriptPubKey.amount,
-              divisibility:
-                  vs.item3?.divisibility ?? vout.scriptPubKey.units ?? 8),
+          assetValue: utils.amountToSat(vout.scriptPubKey.amount),
           // multisig - must detect if multisig...
           additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
               ? vout.scriptPubKey.addresses!
@@ -262,10 +260,10 @@ class HistoryService {
         .getOne(symbol, SecurityType.RavenAsset);
     var asset = res.assets.bySymbol.getOne(symbol);
 
-    if (security == null) {
-      if (vout.scriptPubKey.type == 'transfer_asset') {
-        value = utils.amountToSat(vout.scriptPubKey.amount,
-            divisibility: vout.scriptPubKey.units ?? 8);
+    if (security == null || vout.scriptPubKey.type == 'reissue_asset') {
+      if (['transfer_asset', 'reissue_asset']
+          .contains(vout.scriptPubKey.type)) {
+        value = utils.amountToSat(vout.scriptPubKey.amount);
         //if we have no record of it in res.securities...
         var assetRetrieved =
             await services.download.asset.get(symbol, vout: vout);
@@ -276,8 +274,7 @@ class HistoryService {
         }
       } else if (vout.scriptPubKey.type == 'new_asset') {
         symbol = vout.scriptPubKey.asset!;
-        value = utils.amountToSat(vout.scriptPubKey.amount,
-            divisibility: vout.scriptPubKey.units ?? 0);
+        value = utils.amountToSat(vout.scriptPubKey.amount);
         asset = Asset(
           symbol: symbol,
           metadata: vout.scriptPubKey.ipfsHash ?? '',
@@ -359,9 +356,7 @@ class HistoryService {
         type: vout.scriptPubKey.type,
         toAddress: vout.scriptPubKey.addresses?[0],
         assetSecurityId: vs.item2.id,
-        assetValue: utils.amountToSat(vout.scriptPubKey.amount,
-            divisibility:
-                vs.item3?.divisibility ?? vout.scriptPubKey.units ?? 8),
+        assetValue: utils.amountToSat(vout.scriptPubKey.amount),
         // multisig - must detect if multisig...
         additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
             ? vout.scriptPubKey.addresses!
