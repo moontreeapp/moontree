@@ -257,12 +257,12 @@ class TransactionMaker {
 
       // This inserts change in a valid index
       if (returnRaven > 0) {
-        txb.addChangeToAssetCreationOrReissuance(2, returnAddress, returnRaven);
+        txb.addChangeToAssetCreationOrReissuance(1, returnAddress, returnRaven);
       }
 
       // This inserts a memo in a valid index
       if (estimate.memo != null) {
-        txb.addMemo(estimate.memo, offset: 2);
+        txb.addMemo(estimate.memo, offset: 1);
       }
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: goal));
@@ -293,11 +293,9 @@ class TransactionMaker {
       feeSats = estimate.fees;
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee + burn
-      utxosRaven = services.balance.collectUTXOs(
-        wallet,
-        amount: feeSats + res.settings.network.burnAmounts.issueMain,
-        security: null,
-      );
+      utxosRaven = services.balance.collectUTXOs(wallet,
+          amount: feeSats + res.settings.network.burnAmounts.issueMain,
+          security: null);
       var satsIn = 0;
       for (var utxo in utxosRaven) {
         txb.addInput(utxo.transactionId, utxo.position);
@@ -316,10 +314,10 @@ class TransactionMaker {
           ipfsData);
 
       if (returnRaven > 0) {
-        txb.addChangeToAssetCreationOrReissuance(2, returnAddress, returnRaven);
+        txb.addChangeToAssetCreationOrReissuance(1, returnAddress, returnRaven);
       }
       if (estimate.memo != null) {
-        txb.addMemo(estimate.memo, offset: 2);
+        txb.addMemo(estimate.memo, offset: 1);
       }
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: goal));
@@ -383,10 +381,10 @@ class TransactionMaker {
           reissuability,
           ipfsData);
       if (returnRaven > 0) {
-        txb.addChangeToAssetCreationOrReissuance(3, returnAddress, returnRaven);
+        txb.addChangeToAssetCreationOrReissuance(1, returnAddress, returnRaven);
       }
       if (estimate.memo != null) {
-        txb.addMemo(estimate.memo, offset: 3);
+        txb.addMemo(estimate.memo, offset: 1);
       }
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: goal));
@@ -450,10 +448,10 @@ class TransactionMaker {
           estimate.security!.symbol,
           ipfsData);
       if (returnRaven > 0) {
-        txb.addChangeToAssetCreationOrReissuance(2, returnAddress, returnRaven);
+        txb.addChangeToAssetCreationOrReissuance(1, returnAddress, returnRaven);
       }
       if (estimate.memo != null) {
-        txb.addMemo(estimate.memo, offset: 2);
+        txb.addMemo(estimate.memo, offset: 1);
       }
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: goal));
@@ -497,7 +495,13 @@ class TransactionMaker {
         satsIn += utxo.rvnValue;
       }
       returnRaven = satsIn - feeSats;
+      if (returnRaven > 0) {
+        txb.addOutput(returnAddress, returnRaven);
+      }
 
+      if (estimate.memo != null) {
+        txb.addMemo(estimate.memo);
+      }
       // Sends the asset to the address currently holding it with a message
       txb.addOutput(
         utxosRaven.first.toAddress,
@@ -506,13 +510,6 @@ class TransactionMaker {
         memo: estimate.assetMemo!.hexBytes,
       );
 
-      if (returnRaven > 0) {
-        txb.addOutput(returnAddress, returnRaven);
-      }
-
-      if (estimate.memo != null) {
-        txb.addMemo(estimate.memo);
-      }
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: goal));
     }
@@ -564,6 +561,12 @@ class TransactionMaker {
       }
       returnRaven =
           satsIn - (estimate.security == null ? estimate.amount : 0) - feeSats;
+      if (returnRaven > 0) {
+        txb.addOutput(returnAddress, returnRaven);
+      }
+      if (estimate.memo != null) {
+        txb.addMemo(estimate.memo);
+      }
       txb.addOutput(
         toAddress,
         estimate.amount,
@@ -576,12 +579,6 @@ class TransactionMaker {
           securityChange,
           asset: estimate.security!.symbol,
         );
-      }
-      if (returnRaven > 0) {
-        txb.addOutput(returnAddress, returnRaven);
-      }
-      if (estimate.memo != null) {
-        txb.addMemo(estimate.memo);
       }
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: goal));
