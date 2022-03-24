@@ -99,77 +99,18 @@ class HistoryService {
   }
 
   /// when an address status change: make our historic tx data match blockchain
-  Future saveTransactions(List<Tx> txs, RavenElectrumClient client,
-      {bool saveVin = true}) async {
-    /// save all vins, vouts and transactions
-    var newVins = <Vin>{};
-    var newVouts = <Vout>{};
-    var newTxs = <Transaction>{};
+  Future saveTransactions(
+    List<Tx> txs,
+    RavenElectrumClient client, {
+    bool saveVin = true,
+  }) async {
+    var allThree;
     for (var tx in txs) {
-      //print('downloading  tx : ${tx.txid.substring(0, 5)}');
-      if (saveVin) {
-        for (var vin in tx.vin) {
-          //print('downloading  vin: ${tx.txid.substring(0, 5)}');
-          if (vin.txid != null && vin.vout != null) {
-            newVins.add(Vin(
-              transactionId: tx.txid,
-              voutTransactionId: vin.txid!,
-              voutPosition: vin.vout!,
-            ));
-          } else if (vin.coinbase != null && vin.sequence != null) {
-            newVins.add(Vin(
-              transactionId: tx.txid,
-              voutTransactionId: vin.coinbase!,
-              voutPosition: vin.sequence!,
-              isCoinbase: true,
-            ));
-          }
-        }
-      }
-      for (var vout in tx.vout) {
-        //print('downloading  vout: ${tx.txid.substring(0, 5)}');
-        if (vout.scriptPubKey.type == 'nulldata') continue;
-        var vs = await handleAssetData(client, tx, vout);
-        newVouts.add(Vout(
-          transactionId: tx.txid,
-          position: vout.n,
-          type: vout.scriptPubKey.type,
-          lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
-          rvnValue: vs.item3 != null ? 0 : vs.item1,
-          assetValue: vs.item3 == null
-              ? null
-              : utils.amountToSat(vout.scriptPubKey.amount),
-          assetSecurityId: vs.item2.id,
-          memo: vout.memo,
-          assetMemo: vout.assetMemo,
-          toAddress: vout.scriptPubKey.addresses![0],
-          // multisig - must detect if multisig...
-          additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
-              ? vout.scriptPubKey.addresses!
-                  .sublist(1, vout.scriptPubKey.addresses!.length)
-              : null,
-        ));
-      }
-
-      /// might as well just save them all  - maybe avoiding saving them all
-      /// can save some time, but then you have to also check confirmations
-      /// and see if anything else changed. meh, just save them all for now.
-      newTxs.add(Transaction(
-        id: tx.txid,
-        height: tx.height,
-        confirmed: (tx.confirmations ?? 0) > 0,
-        time: tx.time,
-      ));
-      //print('done with tx: ${tx.txid.substring(0, 5)}');
+      allThree = saveTransaction(tx, client, saveVin: saveVin);
     }
-
-    //await res.vins.removeAll(existingVins.difference(newVins));
-    //await res.vouts.removeAll(existingVouts.difference(newVouts));
-
-    // must await?
-    await res.transactions.saveAll(newTxs);
-    await res.vins.saveAll(newVins);
-    await res.vouts.saveAll(newVouts);
+    await res.transactions.saveAll(allThree[2] as Set<Transaction>);
+    await res.vins.saveAll(allThree[0] as Set<Vin>);
+    await res.vouts.saveAll(allThree[1] as Set<Vout>);
   }
 
   /// one more step - get all vins that have no corresponding vout (in the db)
@@ -284,18 +225,22 @@ class HistoryService {
     Tx tx,
     RavenElectrumClient client, {
     bool saveVin = true,
+    bool justReturn = false,
   }) async {
+    var newVins = <Vin>{};
+    var newVouts = <Vout>{};
+    var newTxs = <Transaction>{};
     //print('parsing/saving: ${tx.txid}');
-    for (var vin in tx.vin) {
-      if (saveVin) {
+    if (saveVin) {
+      for (var vin in tx.vin) {
         if (vin.txid != null && vin.vout != null) {
-          await res.vins.save(Vin(
+          newVins.add(Vin(
             transactionId: tx.txid,
             voutTransactionId: vin.txid!,
             voutPosition: vin.vout!,
           ));
         } else if (vin.coinbase != null && vin.sequence != null) {
-          await res.vins.save(Vin(
+          newVins.add(Vin(
             transactionId: tx.txid,
             voutTransactionId: vin.coinbase!,
             voutPosition: vin.sequence!,
@@ -307,7 +252,7 @@ class HistoryService {
     for (var vout in tx.vout) {
       if (vout.scriptPubKey.type == 'nullassetdata') continue;
       var vs = await handleAssetData(client, tx, vout);
-      await res.vouts.save(Vout(
+      newVouts.add(Vout(
         transactionId: tx.txid,
         position: vout.n,
         type: vout.scriptPubKey.type,
@@ -327,12 +272,19 @@ class HistoryService {
                 .sublist(1, vout.scriptPubKey.addresses!.length)
             : null,
       ));
-      await res.transactions.save(Transaction(
+      newTxs.add(Transaction(
         id: tx.txid,
         height: tx.height,
         confirmed: (tx.confirmations ?? 0) > 0,
         time: tx.time,
       ));
+    }
+    if (justReturn) {
+      return [newVins, newVouts, newTxs];
+    } else {
+      await res.transactions.saveAll(newTxs);
+      await res.vins.saveAll(newVins);
+      await res.vouts.saveAll(newVouts);
     }
   }
 }
