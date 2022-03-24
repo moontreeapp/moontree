@@ -344,10 +344,10 @@ class TransactionMaker {
           ipfsData);
 
       if (returnRaven > 0) {
-        txb.addChangeToAssetCreationOrReissuance(1, returnAddress, returnRaven);
+        txb.addChangeToAssetCreationOrReissuance(2, returnAddress, returnRaven);
       }
       if (estimate.memo != null) {
-        txb.addMemo(estimate.memo, offset: 1);
+        txb.addMemo(estimate.memo, offset: 2);
       }
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: goal));
@@ -411,10 +411,10 @@ class TransactionMaker {
           reissuability,
           ipfsData);
       if (returnRaven > 0) {
-        txb.addChangeToAssetCreationOrReissuance(1, returnAddress, returnRaven);
+        txb.addChangeToAssetCreationOrReissuance(3, returnAddress, returnRaven);
       }
       if (estimate.memo != null) {
-        txb.addMemo(estimate.memo, offset: 1);
+        txb.addMemo(estimate.memo, offset: 3);
       }
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: goal));
@@ -478,10 +478,10 @@ class TransactionMaker {
           estimate.security!.symbol,
           ipfsData);
       if (returnRaven > 0) {
-        txb.addChangeToAssetCreationOrReissuance(1, returnAddress, returnRaven);
+        txb.addChangeToAssetCreationOrReissuance(2, returnAddress, returnRaven);
       }
       if (estimate.memo != null) {
-        txb.addMemo(estimate.memo, offset: 1);
+        txb.addMemo(estimate.memo, offset: 2);
       }
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: goal));
