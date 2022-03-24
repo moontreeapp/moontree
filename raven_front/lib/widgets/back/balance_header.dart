@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/widgets.dart';
-import 'package:tuple/tuple.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/services/lookup.dart';
@@ -11,7 +9,6 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/spend.dart';
 import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/components/components.dart';
-import 'package:raven_front/theme/extensions.dart';
 
 class BalanceHeader extends StatefulWidget {
   final String pageTitle;
@@ -231,7 +228,7 @@ class _TabIndicatorPainter extends BoxPainter {
 
   @override
   void paint(Canvas canvas, Offset offset, ImageConfiguration cfg) {
-    final double _xPos = offset.dx + cfg.size!.width / 2;
+    //final double _xPos = offset.dx + cfg.size!.width / 2;
 
     canvas.drawRRect(
       RRect.fromRectAndCorners(

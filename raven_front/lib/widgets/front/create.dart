@@ -2,17 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:mockito/mockito.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction_maker.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/pages/transaction/checkout.dart';
 import 'package:raven_front/services/lookup.dart';
-import 'package:raven_front/theme/extensions.dart';
-import 'package:raven_front/theme/theme.dart';
-import 'package:raven_front/utils/params.dart';
-import 'package:raven_back/utilities/utilities.dart';
 import 'package:raven_back/streams/create.dart';
 import 'package:raven_front/utils/transformers.dart';
 import 'package:raven_front/widgets/widgets.dart';

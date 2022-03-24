@@ -3,7 +3,6 @@
 ///   only matters when trying to backup wallets right?
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_front/components/components.dart';
 
 class ChangeResume extends StatefulWidget {
   @override

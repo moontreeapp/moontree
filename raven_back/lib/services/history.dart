@@ -87,7 +87,7 @@ class HistoryService {
 
   Future getAndSaveMempoolTransactions([RavenElectrumClient? client]) async {
     client = client ?? streams.client.client.value;
-    if (client == null) return;
+    if (client == null || res.transactions.mempool.isEmpty) return;
     await saveTransactions(
       [
         for (var transactionId in res.transactions.mempool.map((t) => t.id))

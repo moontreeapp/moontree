@@ -10,12 +10,13 @@ class NoToolBar extends MaterialTextSelectionControls {
     Offset selectionMidpoint,
     List<TextSelectionPoint> endpoints,
     TextSelectionDelegate delegate,
-    ClipboardStatusNotifier clipboardStatus,
+    ClipboardStatusNotifier? clipboardStatus,
     Offset? lastSecondaryTapDownPosition,
   ) {
     return Container(height: 0, width: 0);
   }
 }
+
 /*
 class CustomToolBar extends MaterialTextSelectionControls {
   static const double _kToolbarContentDistanceBelow = 20.0;

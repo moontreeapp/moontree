@@ -174,6 +174,7 @@ class AssetLogos extends Storage {
     if (returnEmptyFile) {
       return file;
     }
+    return null;
   }
 
   /// usecase:

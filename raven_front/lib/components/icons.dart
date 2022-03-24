@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/records/records.dart';
 import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/identicon.dart';
@@ -80,6 +79,7 @@ class IconComponents {
             'unable to open image asset file for ${security.asset?.logo?.data}: $e');
       }
     }
+    return null;
   }
 
   Widget assetFromCacheOrGenerate({

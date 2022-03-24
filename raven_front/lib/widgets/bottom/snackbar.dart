@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:raven_front/components/components.dart';
-import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/theme/theme.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/streams/streams.dart';

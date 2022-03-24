@@ -43,6 +43,7 @@ class AddressReservoir extends Reservoir<_ScripthashKey, Address> {
       }
       i = i + 1;
     }
+    return null;
   }
 
   void removeAddresses(Wallet wallet) {

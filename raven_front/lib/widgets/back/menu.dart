@@ -1,23 +1,12 @@
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:raven_back/streams/spend.dart';
 
 import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/streams/streams.dart';
 import 'package:raven_front/components/components.dart';
-import 'package:raven_front/services/lookup.dart';
-import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/theme/theme.dart';
-import 'package:raven_front/widgets/widgets.dart';
-import 'package:settings_ui/settings_ui.dart';
 
-import 'package:raven_back/extensions/list.dart';
-import 'package:raven_back/utilities/database.dart' as ravenDatabase;
-
-//testing
-import 'package:raven_electrum/raven_electrum.dart';
-import 'package:raven_electrum/methods/transaction/get.dart';
+//import 'package:raven_back/utilities/database.dart' as ravenDatabase;
 
 class NavMenu extends StatefulWidget {
   NavMenu({Key? key}) : super(key: key);
@@ -171,12 +160,7 @@ class _NavMenuState extends State<NavMenu> {
               title: 'Clear Database',
               leading: Icon(Icons.info_outline_rounded),
               onPressed: (BuildContext context) {
-                ravenDatabase.deleteDatabase();
-              }),
-          destination(
-            icon: Icons.info_rounded,
-            name: 'Accounts',
-            link: '/settings/technical',
+            //    ravenDatabase.deleteDatabase();
           ),
           SettingsTile(
               title: 'test',

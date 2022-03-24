@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/extensions/object.dart';
 
 class CipherService {
   /// used in decrypting backups - we don't know what cipher it was encrypted with... we could save it...

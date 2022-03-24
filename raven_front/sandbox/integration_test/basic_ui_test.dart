@@ -1,13 +1,12 @@
 // not relevant
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
+//import 'package:integration_test/integration_test.dart'; // for binding
 
 import 'package:raven_front/main.dart';
 
 void main() {
-  var binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
-      as IntegrationTestWidgetsFlutterBinding;
+  //var binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Basic UI', () {
     // testWidgets('settings page exists', (WidgetTester tester) async {
@@ -29,11 +28,11 @@ void main() {
     // });
 
     testWidgets('send page exists', (WidgetTester tester) async {
-      await binding.convertFlutterSurfaceToImage();
+      //await binding.convertFlutterSurfaceToImage();
 
       await tester.pumpWidget(RavenMobileApp());
 
-      await binding.takeScreenshot('screenshot-1');
+      //await binding.takeScreenshot('screenshot-1');
       // Verify the "Receive / Send" buttons exist
       final Finder button = find.text('Send');
       expect(find.text('Send'), findsOneWidget);

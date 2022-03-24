@@ -1,4 +1,3 @@
-import 'package:raven_back/extensions/object.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' show HDWallet;
 import 'package:bip39/bip39.dart' as bip39;
 
@@ -108,6 +107,7 @@ class LeaderWalletService {
           name: name ?? res.wallets.nextWalletName);
     }
     if (alwaysReturn) return existingWallet as LeaderWallet;
+    return null;
   }
 
   void makeFirstWallet(Cipher currentCipher) {

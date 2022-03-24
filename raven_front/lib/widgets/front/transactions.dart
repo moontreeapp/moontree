@@ -5,7 +5,6 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
-import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/theme/theme.dart';
 
 class TransactionList extends StatefulWidget {

@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'package:ravencoin_wallet/src/assets.dart';
 import 'package:test/test.dart';
 import 'package:convert/convert.dart';
 import 'package:bs58/bs58.dart';

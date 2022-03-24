@@ -8,3 +8,6 @@ export 'src/button.dart';
 export 'src/navigation.dart';
 export 'src/scaffold.dart';
 export 'src/utils.dart';
+//export 'lib/sliding_panel.dart';
+//export 'lib/sample_content/layer_content.dart';
+//export 'lib/sample_content/back_layer_content.dart';

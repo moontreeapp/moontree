@@ -3,8 +3,6 @@ import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/utilities/exceptions.dart';
-import 'package:raven_back/extensions/string.dart';
 import 'package:raven_front/services/storage.dart';
 
 class LogoGetter extends IpfsCall {
@@ -121,6 +119,7 @@ class IpfsMiniExplorer extends IpfsCall {
     } catch (e) {
       print(e);
     }
+    return null;
   }
 
   Future<String?> _getMetadata() async {
@@ -136,6 +135,7 @@ class IpfsMiniExplorer extends IpfsCall {
         return await _saveImage(response.bodyBytes);
       }
     }
+    return null;
   }
 
   bool _verify(http.Response response) =>
@@ -162,6 +162,7 @@ class IpfsMiniExplorer extends IpfsCall {
       print(e);
       // unable to save (perhaps bytes wasn't an image)
     }
+    return null;
   }
 }
 
@@ -199,6 +200,7 @@ class IpfsCall {
       }
       return logo;
     }
+    return null;
   }
 
   static bool isIpfs(String hash) => hash.contains(

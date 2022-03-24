@@ -61,7 +61,6 @@ class _PageLead extends State<PageLead> {
   }
 
   Widget body() {
-    var ret = null;
     if (settingTitle == '/settings/import_export') {
       return IconButton(
           splashRadius: 24,

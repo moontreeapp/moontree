@@ -5,7 +5,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/extensions/object.dart';
 
 class AppLifecycleReactor extends StatefulWidget {
   const AppLifecycleReactor({Key? key}) : super(key: key);
@@ -19,12 +18,12 @@ class _AppLifecycleReactorState extends State<AppLifecycleReactor>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance?.addObserver(this);
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance?.removeObserver(this);
     super.dispose();
   }
 

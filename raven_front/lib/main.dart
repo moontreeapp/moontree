@@ -10,10 +10,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:raven_front/pages/pages.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
-import 'package:raven_front/widgets/widgets.dart';
 
 import 'package:raven_front/backdrop/backdrop.dart';
-import 'package:raven_back/streams/streams.dart';
+
+import 'widgets/widgets.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -67,6 +67,16 @@ class RavenMobileApp extends StatelessWidget {
       navigatorObservers: [components.navigator],
       builder: (context, child) {
         components.navigator.scaffoldContext = context;
+        //return Scaffold(
+        //  appBar: AppBar(
+        //    title: const Text('Wallet'),
+        //  ),
+        //  //body: SlidingPanel(
+        //  //  backContent: const BackLayerContent(),
+        //  //  frontContent: LayerContent(title: 'Front Content'),
+        //  //  controlHeight: 0.5,
+        //  //),
+        //);
         return BackdropScaffold(
           //scaffoldKey: components.scaffoldKey, // thought this could help scrim issue, but it didn't
           //maintainBackLayerState: false,

@@ -1,16 +1,8 @@
-import 'dart:async';
-
 import 'package:raven_front/theme/theme.dart';
-import 'package:tuple/tuple.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:raven_back/streams/app.dart';
-import 'package:raven_front/services/lookup.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/spend.dart';
-import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/components/components.dart';
-import 'package:raven_front/theme/extensions.dart';
 
 class Coin extends StatefulWidget {
   final String symbol;

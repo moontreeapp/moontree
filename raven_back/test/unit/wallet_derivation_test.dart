@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 //import 'package:raven_back/records/wallets/leader.dart';
 import 'package:raven_back/records/records.dart';
-import 'package:raven_back/records/wallets/single.dart';
 import 'package:raven_back/security/cipher_none.dart';
 import 'package:raven_back/security/encrypted_wif.dart';
 import 'package:raven_back/utilities/random.dart';

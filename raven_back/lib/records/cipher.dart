@@ -1,8 +1,6 @@
 /// in memory only record so we don't need hive
 import 'package:equatable/equatable.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/records/cipher_type.dart';
-import 'package:raven_back/extensions/object.dart';
 
 class Cipher with EquatableMixin {
   final CipherType cipherType;

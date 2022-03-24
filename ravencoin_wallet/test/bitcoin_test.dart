@@ -2,7 +2,6 @@ import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
 
 import 'package:ravencoin_wallet/ravencoin_wallet.dart';
-import 'package:ravencoin_wallet/src/models/networks.dart';
 
 void main() {
   group('bitcoin-dart (HDWallet)', () {

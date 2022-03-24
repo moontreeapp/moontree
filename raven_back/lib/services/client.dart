@@ -62,6 +62,7 @@ class ClientService {
     } on SocketException catch (_) {
       print(_);
     }
+    return null;
   }
 
   Future saveElectrumAddress({

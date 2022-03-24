@@ -38,5 +38,6 @@ extension GetAssetAddressesMethod on RavenElectrumClient {
     if (response.isNotEmpty) {
       return AssetAddresses(asset: symbol, assetCountByAddress: response);
     }
+    return null;
   }
 }

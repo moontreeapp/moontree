@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/records/security.dart';
 
 import '_type_id.dart';
 

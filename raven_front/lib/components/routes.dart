@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/extensions/string.dart';
 
 class RouteStack extends NavigatorObserver {
   List<Route<dynamic>> routeStack = [];

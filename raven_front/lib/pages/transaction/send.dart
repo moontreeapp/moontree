@@ -2,17 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/pages/transaction/checkout.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/qrcode.dart';
 
-import 'package:raven_front/widgets/bottom/selection_items.dart';
 import 'package:raven_front/widgets/widgets.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
-import 'package:barcode_scan2/barcode_scan2.dart';
 
 import 'package:raven_back/streams/spend.dart';
 import 'package:raven_back/services/transaction_maker.dart';
@@ -23,7 +18,6 @@ import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/utils/address.dart';
 import 'package:raven_front/utils/params.dart';
 import 'package:raven_front/utils/data.dart';
-import 'package:raven_front/theme/extensions.dart';
 
 class Send extends StatefulWidget {
   final dynamic data;

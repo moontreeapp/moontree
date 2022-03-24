@@ -5,8 +5,6 @@ import 'package:raven_back/raven_back.dart';
 import 'package:reservoir/reservoir.dart';
 import 'package:ulid/ulid.dart';
 
-import 'records/records.dart';
-
 class HiveInitializer {
   late final String id;
   late Function init;

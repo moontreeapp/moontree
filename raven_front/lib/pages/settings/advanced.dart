@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:raven_back/raven_back.dart';
-import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/theme/theme.dart';
 
 enum UserLevel { beginner, intermediate, advanced }

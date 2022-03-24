@@ -43,6 +43,7 @@ class ImportWalletService {
     if (text.contains('[')) {
       return ImportFormat.invalid;
     }
+    return null;
   }
 
   WalletType typeForImport(String walletType) =>

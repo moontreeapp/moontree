@@ -77,6 +77,7 @@ extension GetAssetMetaMethod on RavenElectrumClient {
             height: response['source']['height']),
       );
     }
+    return null;
   }
 
   /// returns histories in the same order as txHashes passed in

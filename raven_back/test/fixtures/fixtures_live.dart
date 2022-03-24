@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-import 'package:raven_back/hive_initializer.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:dotenv/dotenv.dart' as dotenv;
 import 'package:raven_back/services/wallet/constants.dart';

@@ -5,7 +5,6 @@ import 'package:raven_back/extensions/object.dart';
 import 'package:raven_back/records/records.dart';
 
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' show NetworkType;
-import 'package:raven_back/records/net.dart';
 
 part 'setting.keys.dart';
 

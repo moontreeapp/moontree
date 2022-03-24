@@ -36,5 +36,6 @@ extension AssetHasOneLogoMetadata on Asset {
     if (nonMasterPrimaryMetadata?.kind == MetadataType.ImagePath) {
       return nonMasterPrimaryMetadata; // assume parent is logo, could check dims ratio...
     }
+    return null;
   }
 }

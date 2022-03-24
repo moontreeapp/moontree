@@ -1,11 +1,9 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/spend.dart';
-import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/data.dart';

@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'dart:convert';
 
 import "dart:typed_data";
@@ -44,7 +46,7 @@ class _JsonNewlineTransformer
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-const POWERS_OF_TEN = const [
+const powersOfTen = [
   1.0,
   /*  0 */
   10.0,
@@ -112,7 +114,8 @@ class ContinuousJsonDecoder extends Converter<String, Object?> {
   /// Constructs a new JsonDecoder.
   ///
   /// The [reviver] may be `null`.
-  const ContinuousJsonDecoder([Object? reviver(Object? key, Object? value)?])
+  const ContinuousJsonDecoder(
+      [Object? Function(Object? key, Object? value)? reviver])
       : _reviver = reviver;
 
   /// Converts the given JSON-string [input] to its corresponding object.
@@ -128,16 +131,19 @@ class ContinuousJsonDecoder extends Converter<String, Object?> {
   /// the value of that property instead the parsed value.
   ///
   /// Throws [FormatException] if the input is not valid JSON text.
+  @override
   dynamic convert(String input) => _parseJson(input, _reviver);
 
   /// Starts a conversion from a chunked JSON string to its corresponding object.
   ///
   /// The output [sink] receives exactly one decoded element through `add`.
+  @override
   StringConversionSink startChunkedConversion(Sink<Object?> sink) {
-    return new _JsonStringDecoderSink(this._reviver, sink);
+    return _JsonStringDecoderSink(_reviver, sink);
   }
 
   // Override the base class's bind, to provide a better type.
+  @override
   Stream<Object?> bind(Stream<String> stream) => super.bind(stream);
 }
 
@@ -146,11 +152,11 @@ dynamic _parseJson(
     String source, Object? Function(Object? key, Object? value)? reviver) {
   _BuildJsonListener listener;
   if (reviver == null) {
-    listener = new _BuildJsonListener();
+    listener = _BuildJsonListener();
   } else {
-    listener = new _ReviverJsonListener(reviver);
+    listener = _ReviverJsonListener(reviver);
   }
-  var parser = new _JsonStringParser(listener, null);
+  var parser = _JsonStringParser(listener, null);
   parser.chunk = source;
   parser.chunkEnd = source.length;
   parser.parse(0);
@@ -160,17 +166,13 @@ dynamic _parseJson(
 
 // Simple API for JSON parsing.
 
-/**
- * Listener for parsing events from [_ChunkedJsonParser].
- */
+/// Listener for parsing events from [_ChunkedJsonParser].
 abstract class _JsonListener {
-  /**
-   * Stack used to handle nested containers.
-   *
-   * The current container is pushed on the stack when a new one is
-   * started. If the container is a [Map], there is also a current [key]
-   * which is also stored on the stack.
-   */
+  /// Stack used to handle nested containers.
+  ///
+  /// The current container is pushed on the stack when a new one is
+  /// started. If the container is a [Map], there is also a current [key]
+  /// which is also stored on the stack.
   final List<Object?> stack = [];
 
   void handleString(String value) {}
@@ -185,67 +187,72 @@ abstract class _JsonListener {
   void arrayElement() {}
   void endArray() {}
 
-  /**
-   * Read out the final result of parsing a JSON string.
-   *
-   * Must only be called when the entire input has been parsed.
-   */
+  /// Read out the final result of parsing a JSON string.
+  ///
+  /// Must only be called when the entire input has been parsed.
   dynamic get result;
 }
 
-/**
- * A [_JsonListener] that builds data objects from the parser events.
- *
- * This is a simple stack-based object builder. It keeps the most recently
- * seen value in a variable, and uses it depending on the following event.
- */
+/// A [_JsonListener] that builds data objects from the parser events.
+///
+/// This is a simple stack-based object builder. It keeps the most recently
+/// seen value in a variable, and uses it depending on the following event.
 class _BuildJsonListener extends _JsonListener {
-  /** The current [Map] or [List] being built. */
+  /// The current [Map] or [List] being built. */
   dynamic currentContainer;
-  /** The most recently read property key. */
+
+  /// The most recently read property key. */
   String key = '';
-  /** The most recently read value. */
+
+  /// The most recently read value. */
   dynamic value;
 
-  /** Pushes the currently active container (and key, if a [Map]). */
+  /// Pushes the currently active container (and key, if a [Map]). */
   void pushContainer() {
     if (currentContainer is Map) stack.add(key);
     stack.add(currentContainer);
   }
 
-  /** Pops the top container from the [stack], including a key if applicable. */
+  /// Pops the top container from the [stack], including a key if applicable. */
   void popContainer() {
     value = currentContainer;
     currentContainer = stack.removeLast();
     if (currentContainer is Map) key = stack.removeLast() as String;
   }
 
+  @override
   void handleString(String value) {
     this.value = value;
   }
 
+  @override
   void handleNumber(num value) {
     this.value = value;
   }
 
+  @override
   void handleBool(bool value) {
     this.value = value;
   }
 
+  @override
   void handleNull() {
-    this.value = null;
+    value = null;
   }
 
+  @override
   void beginObject() {
     pushContainer();
     currentContainer = <String, dynamic>{};
   }
 
+  @override
   void propertyName() {
     key = value;
     value = null;
   }
 
+  @override
   void propertyValue() {
     Map map = currentContainer;
     map[key] = value;
@@ -253,25 +260,30 @@ class _BuildJsonListener extends _JsonListener {
     value = null;
   }
 
+  @override
   void endObject() {
     popContainer();
   }
 
+  @override
   void beginArray() {
     pushContainer();
     currentContainer = [];
   }
 
+  @override
   void arrayElement() {
     currentContainer.add(value);
     value = null;
   }
 
+  @override
   void endArray() {
     popContainer();
   }
 
-  /** Read out the final result of parsing a JSON string. */
+  /// Read out the final result of parsing a JSON string. */
+  @override
   dynamic get result {
     assert(currentContainer == null);
     return value;
@@ -282,37 +294,38 @@ class _ReviverJsonListener extends _BuildJsonListener {
   final Object? Function(Object? key, Object? value) reviver;
   _ReviverJsonListener(this.reviver);
 
+  @override
   void arrayElement() {
     List list = currentContainer;
     value = reviver(list.length, value);
     super.arrayElement();
   }
 
+  @override
   void propertyValue() {
     value = reviver(key, value);
     super.propertyValue();
   }
 
+  @override
   dynamic get result {
     return reviver(null, value);
   }
 }
 
-/**
- * Buffer holding parts of a numeral.
- *
- * The buffer contains the characters of a JSON number.
- * These are all ASCII, so an [Uint8List] is used as backing store.
- *
- * This buffer is used when a JSON number is split between separate chunks.
- */
+/// Buffer holding parts of a numeral.
+///
+/// The buffer contains the characters of a JSON number.
+/// These are all ASCII, so an [Uint8List] is used as backing store.
+///
+/// This buffer is used when a JSON number is split between separate chunks.
 class _NumberBuffer {
   static const int minCapacity = 16;
   static const int defaultOverhead = 5;
   Uint8List list;
   int length = 0;
   _NumberBuffer(int initialCapacity)
-      : list = new Uint8List(_initialCapacity(initialCapacity));
+      : list = Uint8List(_initialCapacity(initialCapacity));
 
   int get capacity => list.length;
 
@@ -335,13 +348,13 @@ class _NumberBuffer {
   void ensureCapacity(int newCapacity) {
     Uint8List list = this.list;
     if (newCapacity <= list.length) return;
-    Uint8List newList = new Uint8List(newCapacity);
+    Uint8List newList = Uint8List(newCapacity);
     newList.setRange(0, list.length, list, 0);
     this.list = newList;
   }
 
   String getString() {
-    String result = new String.fromCharCodes(list, 0, length);
+    String result = String.fromCharCodes(list, 0, length);
     return result;
   }
 
@@ -352,14 +365,12 @@ class _NumberBuffer {
   double parseDouble() => double.parse(getString());
 }
 
-/**
- * Chunked JSON parser.
- *
- * Receives inputs in chunks, gives access to individual parts of the input,
- * and stores input state between chunks.
- *
- * Implementations include [String] and UTF-8 parsers.
- */
+/// Chunked JSON parser.
+///
+/// Receives inputs in chunks, gives access to individual parts of the input,
+/// and stores input state between chunks.
+///
+/// Implementations include [String] and UTF-8 parsers.
 abstract class _ChunkedJsonParser<T> {
   // A simple non-recursive state-based parser for JSON.
   //
@@ -401,7 +412,7 @@ abstract class _ChunkedJsonParser<T> {
   // At this position, they may either have an entry or a close-bracket.
   static const int EMPTY = 0;
   static const int NON_EMPTY = 16;
-  static const int EMPTY_MASK = 16; // Empty if zero.
+  //static const int EMPTY_MASK = 16; // Empty if zero. //unused
 
   // Actual states               : Context | Is empty? | Next?
   static const int STATE_INITIAL = TOP_LEVEL | EMPTY | ALLOW_VALUE;
@@ -435,9 +446,9 @@ abstract class _ChunkedJsonParser<T> {
   static const int DECIMALPOINT = 0x2e;
   static const int SLASH = 0x2f;
   static const int CHAR_0 = 0x30;
-  static const int CHAR_9 = 0x39;
+  //static const int CHAR_9 = 0x39; // unused
   static const int COLON = 0x3a;
-  static const int CHAR_E = 0x45;
+  //static const int CHAR_E = 0x45; // unused
   static const int LBRACKET = 0x5b;
   static const int BACKSLASH = 0x5c;
   static const int RBRACKET = 0x5d;
@@ -470,7 +481,7 @@ abstract class _ChunkedJsonParser<T> {
   static const int NUM_E = 20; // After 'e' or 'E'.
   static const int NUM_E_SIGN = 24; // After '-' or '+' after 'e' or 'E'.
   static const int NUM_E_DIGIT = 28; // After exponent digit.
-  static const int NUM_SUCCESS = 32; // Never stored as partial state.
+  //static const int NUM_SUCCESS = 32; // Never stored as partial state. unused
 
   // Partial states for strings.
   static const int STR_PLAIN = 0; // Inside string, but not escape.
@@ -498,84 +509,74 @@ abstract class _ChunkedJsonParser<T> {
   int state = STATE_INITIAL;
   List<int> states = <int>[];
 
-  /**
-   * Stores tokenizer state between chunks.
-   *
-   * This state is stored when a chunk stops in the middle of a
-   * token (string, numeral, boolean or null).
-   *
-   * The partial state is used to continue parsing on the next chunk.
-   * The previous chunk is not retained, any data needed are stored in
-   * this integer, or in the [buffer] field as a string-building buffer
-   * or a [_NumberBuffer].
-   *
-   * Prefix state stored in [prefixState] as bits.
-   *
-   *            ..00 : No partial value (NO_PARTIAL).
-   *
-   *         ..00001 : Partial string, not inside escape.
-   *         ..00101 : Partial string, after '\'.
-   *     ..vvvv1dd01 : Partial \u escape.
-   *                   The 'dd' bits (2-3) encode the number of hex digits seen.
-   *                   Bits 5-16 encode the value of the hex digits seen so far.
-   *
-   *        ..0ddd10 : Partial numeral.
-   *                   The `ddd` bits store the parts of in the numeral seen so
-   *                   far, as the constants `NUM_*` defined above.
-   *                   The characters of the numeral are stored in [buffer]
-   *                   as a [_NumberBuffer].
-   *
-   *      ..0ddd0011 : Partial 'null' keyword.
-   *      ..0ddd0111 : Partial 'true' keyword.
-   *      ..0ddd1011 : Partial 'false' keyword.
-   *      ..0ddd1111 : Partial UTF-8 BOM byte seqeuence ("\xEF\xBB\xBF").
-   *                   For all keywords, the `ddd` bits encode the number
-   *                   of letters seen.
-   *                   The BOM byte sequence is only used by [_JsonUtf8Parser],
-   *                   and only at the very beginning of input.
-   */
+  /// Stores tokenizer state between chunks.
+  ///
+  /// This state is stored when a chunk stops in the middle of a
+  /// token (string, numeral, boolean or null).
+  ///
+  /// The partial state is used to continue parsing on the next chunk.
+  /// The previous chunk is not retained, any data needed are stored in
+  /// this integer, or in the [buffer] field as a string-building buffer
+  /// or a [_NumberBuffer].
+  ///
+  /// Prefix state stored in [prefixState] as bits.
+  ///
+  ///            ..00 : No partial value (NO_PARTIAL).
+  ///
+  ///         ..00001 : Partial string, not inside escape.
+  ///         ..00101 : Partial string, after '\'.
+  ///     ..vvvv1dd01 : Partial \u escape.
+  ///                   The 'dd' bits (2-3) encode the number of hex digits seen.
+  ///                   Bits 5-16 encode the value of the hex digits seen so far.
+  ///
+  ///        ..0ddd10 : Partial numeral.
+  ///                   The `ddd` bits store the parts of in the numeral seen so
+  ///                   far, as the constants `NUM_*` defined above.
+  ///                   The characters of the numeral are stored in [buffer]
+  ///                   as a [_NumberBuffer].
+  ///
+  ///      ..0ddd0011 : Partial 'null' keyword.
+  ///      ..0ddd0111 : Partial 'true' keyword.
+  ///      ..0ddd1011 : Partial 'false' keyword.
+  ///      ..0ddd1111 : Partial UTF-8 BOM byte seqeuence ("\xEF\xBB\xBF").
+  ///                   For all keywords, the `ddd` bits encode the number
+  ///                   of letters seen.
+  ///                   The BOM byte sequence is only used by [_JsonUtf8Parser],
+  ///                   and only at the very beginning of input.
   int partialState = NO_PARTIAL;
 
-  /**
-   * Extra data stored while parsing a primitive value.
-   * May be set during parsing, always set at chunk end if a value is partial.
-   *
-   * May contain a string buffer while parsing strings.
-   */
-  dynamic buffer = null;
+  /// Extra data stored while parsing a primitive value.
+  /// May be set during parsing, always set at chunk end if a value is partial.
+  ///
+  /// May contain a string buffer while parsing strings.
+  dynamic buffer;
 
   _ChunkedJsonParser(this.listener, [this._sink]);
 
-  /**
-   * Push the current parse [state] on a stack.
-   *
-   * State is pushed when a new array or object literal starts,
-   * so the parser can go back to the correct value when the literal ends.
-   */
+  /// Push the current parse [state] on a stack.
+  ///
+  /// State is pushed when a new array or object literal starts,
+  /// so the parser can go back to the correct value when the literal ends.
   void saveState(int state) {
     states.add(state);
   }
 
-  /**
-   * Restore a state pushed with [saveState].
-   */
+  /// Restore a state pushed with [saveState].
   int restoreState() {
     return states.removeLast(); // Throws if empty.
   }
 
-  /**
-   * Finalizes the parsing.
-   *
-   * Throws if the source read so far doesn't end up with a complete
-   * parsed value. That means it must not be inside a list or object
-   * literal, and any partial value read should also be a valid complete
-   * value.
-   *
-   * The only valid partial state is a number that ends in a digit, and
-   * only if the number is the entire JSON value being parsed
-   * (otherwise it would be inside a list or object).
-   * Such a number will be completed. Any other partial state is an error.
-   */
+  /// Finalizes the parsing.
+  ///
+  /// Throws if the source read so far doesn't end up with a complete
+  /// parsed value. That means it must not be inside a list or object
+  /// literal, and any partial value read should also be a valid complete
+  /// value.
+  ///
+  /// The only valid partial state is a number that ends in a digit, and
+  /// only if the number is the entire JSON value being parsed
+  /// (otherwise it would be inside a list or object).
+  /// Such a number will be completed. Any other partial state is an error.
   void close() {
     if (partialState != NO_PARTIAL) {
       int partialType = partialState & MASK_PARTIAL;
@@ -600,121 +601,98 @@ abstract class _ChunkedJsonParser<T> {
     }
   }
 
-  /**
-   * Read out the result after successfully closing the parser.
-   *
-   * The parser is closed by calling [close] or calling [addSourceChunk] with
-   * `true` as second (`isLast`) argument.
-   */
+  /// Read out the result after successfully closing the parser.
+  ///
+  /// The parser is closed by calling [close] or calling [addSourceChunk] with
+  /// `true` as second (`isLast`) argument.
   dynamic get result {
     return listener.result;
   }
 
-  /** Sets the current source chunk. */
-  void set chunk(T source);
+  /// Sets the current source chunk. */
+  set chunk(T source);
 
-  /**
-   * Length of current chunk.
-   *
-   * The valid arguments to [getChar] are 0 .. `chunkEnd - 1`.
-   */
+  /// Length of current chunk.
+  ///
+  /// The valid arguments to [getChar] are 0 .. `chunkEnd - 1`.
   int get chunkEnd;
 
-  /**
-   * Returns the chunk itself.
-   *
-   * Only used by [fail] to include the chunk in the thrown [FormatException].
-   */
+  /// Returns the chunk itself.
+  ///
+  /// Only used by [fail] to include the chunk in the thrown [FormatException].
   T get chunk;
 
-  /**
-   * Get charcacter/code unit of current chunk.
-   *
-   * The [index] must be non-negative and less than `chunkEnd`.
-   * In practive, [index] will be no smaller than the `start` argument passed
-   * to [parse].
-   */
+  /// Get charcacter/code unit of current chunk.
+  ///
+  /// The [index] must be non-negative and less than `chunkEnd`.
+  /// In practive, [index] will be no smaller than the `start` argument passed
+  /// to [parse].
   int getChar(int index);
 
-  /**
-   * Copy ASCII characters from start to end of chunk into a list.
-   *
-   * Used for number buffer (always copies ASCII, so encoding is not important).
-   */
+  /// Copy ASCII characters from start to end of chunk into a list.
+  ///
+  /// Used for number buffer (always copies ASCII, so encoding is not important).
   void copyCharsToList(int start, int end, List<int> target, int offset);
 
-  /**
-   * Build a string using input code units.
-   *
-   * Creates a string buffer and enables adding characters and slices
-   * to that buffer.
-   * The buffer is stored in the [buffer] field. If the string is unterminated,
-   * the same buffer is used to continue parsing in the next chunk.
-   */
+  /// Build a string using input code units.
+  ///
+  /// Creates a string buffer and enables adding characters and slices
+  /// to that buffer.
+  /// The buffer is stored in the [buffer] field. If the string is unterminated,
+  /// the same buffer is used to continue parsing in the next chunk.
   void beginString();
-  /**
-   * Add single character code to string being built.
-   *
-   * Used for unparsed escape sequences.
-   */
+
+  /// Add single character code to string being built.
+  ///
+  /// Used for unparsed escape sequences.
   void addCharToString(int charCode);
 
-  /**
-   * Adds slice of current chunk to string being built.
-   *
-   * The [start] positions is inclusive, [end] is exclusive.
-   */
+  /// Adds slice of current chunk to string being built.
+  ///
+  /// The [start] positions is inclusive, [end] is exclusive.
   void addSliceToString(int start, int end);
 
-  /** Finalizes the string being built and returns it as a String. */
+  /// Finalizes the string being built and returns it as a String. */
   String endString();
 
-  /**
-   * Extracts a literal string from a slice of the current chunk.
-   *
-   * No interpretation of the content is performed, except for converting
-   * the source format to string.
-   * This can be implemented more or less efficiently depending on the
-   * underlying source.
-   *
-   * This is used for string literals that contain no escapes.
-   *
-   * The [bits] integer is an upper bound on the code point in the range
-   * from `start` to `end`.
-   * Usually found by doing bitwise or of all the values.
-   * The function may choose to optimize depending on the value.
-   */
+  /// Extracts a literal string from a slice of the current chunk.
+  ///
+  /// No interpretation of the content is performed, except for converting
+  /// the source format to string.
+  /// This can be implemented more or less efficiently depending on the
+  /// underlying source.
+  ///
+  /// This is used for string literals that contain no escapes.
+  ///
+  /// The [bits] integer is an upper bound on the code point in the range
+  /// from `start` to `end`.
+  /// Usually found by doing bitwise or of all the values.
+  /// The function may choose to optimize depending on the value.
   String getString(int start, int end, int bits);
 
-  /**
-   * Parse a slice of the current chunk as a number.
-   *
-   * Since integers have a maximal value, and we don't track the value
-   * in the buffer, a sequence of digits can be either an int or a double.
-   * The `num.parse` function does the right thing.
-   *
-   * The format is expected to be correct.
-   */
+  /// Parse a slice of the current chunk as a number.
+  ///
+  /// Since integers have a maximal value, and we don't track the value
+  /// in the buffer, a sequence of digits can be either an int or a double.
+  /// The `num.parse` function does the right thing.
+  ///
+  /// The format is expected to be correct.
   num parseNum(int start, int end) {
     const int asciiBits = 0x7f; // Number literals are ASCII only.
     return num.parse(getString(start, end, asciiBits));
   }
 
-  /**
-   * Parse a slice of the current chunk as a double.
-   *
-   * The format is expected to be correct.
-   * This is used by [parseNumber] when the double value cannot be
-   * built exactly during parsing.
-   */
+  /// Parse a slice of the current chunk as a double.
+  ///
+  /// The format is expected to be correct.
+  /// This is used by [parseNumber] when the double value cannot be
+  /// built exactly during parsing.
   double parseDouble(int start, int end) {
     const int asciiBits = 0x7f; // Double literals are ASCII only.
     return double.parse(getString(start, end, asciiBits));
   }
 
-  /**
-   * Continues parsing a partial value.
-   */
+  /// Continues parsing a partial value.
   int parsePartial(int position) {
     if (position == chunkEnd) return position;
     int partialState = this.partialState;
@@ -733,15 +711,13 @@ abstract class _ChunkedJsonParser<T> {
     return position;
   }
 
-  /**
-   * Parses the remainder of a number into the number buffer.
-   *
-   * Syntax is checked while pasing.
-   * Starts at position, which is expected to be the start of the chunk,
-   * and returns the index of the first non-number-literal character found,
-   * or chunkEnd if the entire chunk is a valid number continuation.
-   * Throws if a syntax error is detected.
-   */
+  /// Parses the remainder of a number into the number buffer.
+  ///
+  /// Syntax is checked while pasing.
+  /// Starts at position, which is expected to be the start of the chunk,
+  /// and returns the index of the first non-number-literal character found,
+  /// or chunkEnd if the entire chunk is a valid number continuation.
+  /// Throws if a syntax error is detected.
   int parsePartialNumber(int position, int state) {
     int start = position;
     // Primitive implementation, can be optimized.
@@ -833,12 +809,10 @@ abstract class _ChunkedJsonParser<T> {
     return chunkEnd;
   }
 
-  /**
-   * Continues parsing a partial string literal.
-   *
-   * Handles partial escapes and then hands the parsing off to
-   * [parseStringToBuffer].
-   */
+  /// Continues parsing a partial string literal.
+  ///
+  /// Handles partial escapes and then hands the parsing off to
+  /// [parseStringToBuffer].
   int parsePartialString(int position, int partialState) {
     if (partialState == STR_PLAIN) {
       return parseStringToBuffer(position);
@@ -863,9 +837,7 @@ abstract class _ChunkedJsonParser<T> {
     return parseStringToBuffer(position);
   }
 
-  /**
-   * Continues parsing a partial keyword.
-   */
+  /// Continues parsing a partial keyword.
   int parsePartialKeyword(int position, int partialState) {
     int keywordType = partialState & KWD_TYPE_MASK;
     int count = partialState >> KWD_COUNT_SHIFT;
@@ -898,7 +870,7 @@ abstract class _ChunkedJsonParser<T> {
     return position;
   }
 
-  /** Convert hex-digit to its value. Returns -1 if char is not a hex digit. */
+  /// Convert hex-digit to its value. Returns -1 if char is not a hex digit. */
   int parseHexDigit(int char) {
     int digit = char ^ 0x30;
     if (digit <= 9) return digit;
@@ -908,12 +880,10 @@ abstract class _ChunkedJsonParser<T> {
     return -1;
   }
 
-  /**
-   * Parses the current chunk as a chunk of JSON.
-   *
-   * Starts parsing at [position] and continues until [chunkEnd].
-   * Continues parsing where the previous chunk (if any) ended.
-   */
+  /// Parses the current chunk as a chunk of JSON.
+  ///
+  /// Starts parsing at [position] and continues until [chunkEnd].
+  /// Continues parsing where the previous chunk (if any) ended.
   void parse(int position) {
     int length = chunkEnd;
     if (partialState != NO_PARTIAL) {
@@ -1024,11 +994,9 @@ abstract class _ChunkedJsonParser<T> {
     this.state = state;
   }
 
-  /**
-   * Parses a "true" literal starting at [position].
-   *
-   * The character `source[position]` must be "t".
-   */
+  /// Parses a "true" literal starting at [position].
+  ///
+  /// The character `source[position]` must be "t".
   int parseTrue(int position) {
     assert(getChar(position) == CHAR_t);
     if (chunkEnd < position + 4) {
@@ -1043,11 +1011,9 @@ abstract class _ChunkedJsonParser<T> {
     return position + 4;
   }
 
-  /**
-   * Parses a "false" literal starting at [position].
-   *
-   * The character `source[position]` must be "f".
-   */
+  /// Parses a "false" literal starting at [position].
+  ///
+  /// The character `source[position]` must be "f".
   int parseFalse(int position) {
     assert(getChar(position) == CHAR_f);
     if (chunkEnd < position + 5) {
@@ -1063,11 +1029,9 @@ abstract class _ChunkedJsonParser<T> {
     return position + 5;
   }
 
-  /**
-   * Parses a "null" literal starting at [position].
-   *
-   * The character `source[position]` must be "n".
-   */
+  /// Parses a "null" literal starting at [position].
+  ///
+  /// The character `source[position]` must be "n".
   int parseNull(int position) {
     assert(getChar(position) == CHAR_n);
     if (chunkEnd < position + 4) {
@@ -1092,16 +1056,14 @@ abstract class _ChunkedJsonParser<T> {
       if (char != chars.codeUnitAt(count)) fail(start);
       count++;
     }
-    this.partialState = PARTIAL_KEYWORD | type | (count << KWD_COUNT_SHIFT);
+    partialState = PARTIAL_KEYWORD | type | (count << KWD_COUNT_SHIFT);
     return length;
   }
 
-  /**
-   * Parses a string value.
-   *
-   * Initial [position] is right after the initial quote.
-   * Returned position right after the final quote.
-   */
+  /// Parses a string value.
+  ///
+  /// Initial [position] is right after the initial quote.
+  /// Returned position right after the final quote.
   int parseString(int position) {
     // Format: '"'([^\x00-\x1f\\\"]|'\\'[bfnrt/\\"])*'"'
     // Initial position is right after first '"'.
@@ -1134,27 +1096,23 @@ abstract class _ChunkedJsonParser<T> {
     return chunkString(STR_PLAIN);
   }
 
-  /**
-   * Sets up a partial string state.
-   *
-   * The state is either not inside an escape, or right after a backslash.
-   * For partial strings ending inside a Unicode escape, use
-   * [chunkStringEscapeU].
-   */
+  /// Sets up a partial string state.
+  ///
+  /// The state is either not inside an escape, or right after a backslash.
+  /// For partial strings ending inside a Unicode escape, use
+  /// [chunkStringEscapeU].
   int chunkString(int stringState) {
     partialState = PARTIAL_STRING | stringState;
     return chunkEnd;
   }
 
-  /**
-   * Sets up a partial string state for a partially parsed Unicode escape.
-   *
-   * The partial string state includes the current [buffer] and the
-   * number of hex digits of the Unicode seen so far (e.g., for `"\u30')
-   * the state knows that two digits have been seen, and what their value is.
-   *
-   * Returns [chunkEnd] so it can be used as part of a return statement.
-   */
+  /// Sets up a partial string state for a partially parsed Unicode escape.
+  ///
+  /// The partial string state includes the current [buffer] and the
+  /// number of hex digits of the Unicode seen so far (e.g., for `"\u30')
+  /// the state knows that two digits have been seen, and what their value is.
+  ///
+  /// Returns [chunkEnd] so it can be used as part of a return statement.
   int chunkStringEscapeU(int count, int value) {
     partialState = PARTIAL_STRING |
         STR_U |
@@ -1163,16 +1121,14 @@ abstract class _ChunkedJsonParser<T> {
     return chunkEnd;
   }
 
-  /**
-   * Parses the remainder of a string literal into a buffer.
-   *
-   * The buffer is stored in [buffer] and its underlying format depends on
-   * the input chunk type. For example UTF-8 decoding happens in the
-   * buffer, not in the parser, since all significant JSON characters are ASCII.
-   *
-   * This function scans through the string literal for escapes, and copies
-   * slices of non-escape characters using [addSliceToString].
-   */
+  /// Parses the remainder of a string literal into a buffer.
+  ///
+  /// The buffer is stored in [buffer] and its underlying format depends on
+  /// the input chunk type. For example UTF-8 decoding happens in the
+  /// buffer, not in the parser, since all significant JSON characters are ASCII.
+  ///
+  /// This function scans through the string literal for escapes, and copies
+  /// slices of non-escape characters using [addSliceToString].
   int parseStringToBuffer(int position) {
     int end = chunkEnd;
     int start = position;
@@ -1208,18 +1164,16 @@ abstract class _ChunkedJsonParser<T> {
       if (position == end) return position;
       start = position;
     }
-    return -1; // UNREACHABLE.
+    //return -1; // UNREACHABLE.
   }
 
-  /**
-   * Parse a string escape.
-   *
-   * Position is right after the initial backslash.
-   * The following escape is parsed into a character code which is added to
-   * the current string buffer using [addCharToString].
-   *
-   * Returns position after the last character of the escape.
-   */
+  /// Parse a string escape.
+  ///
+  /// Position is right after the initial backslash.
+  /// The following escape is parsed into a character code which is added to
+  /// the current string buffer using [addCharToString].
+  ///
+  /// Returns position after the last character of the escape.
   int parseStringEscape(int position) {
     int char = getChar(position++);
     int length = chunkEnd;
@@ -1277,11 +1231,11 @@ abstract class _ChunkedJsonParser<T> {
   int beginChunkNumber(int state, int start) {
     int end = chunkEnd;
     int length = end - start;
-    var buffer = new _NumberBuffer(length);
+    var buffer = _NumberBuffer(length);
     copyCharsToList(start, end, buffer.list, 0);
     buffer.length = length;
     this.buffer = buffer;
-    this.partialState = PARTIAL_NUMERAL | state;
+    partialState = PARTIAL_NUMERAL | state;
     return end;
   }
 
@@ -1300,7 +1254,7 @@ abstract class _ChunkedJsonParser<T> {
     int end = chunkEnd;
     addNumberChunk(buffer, start, end, _NumberBuffer.defaultOverhead);
     this.buffer = buffer;
-    this.partialState = PARTIAL_NUMERAL | state;
+    partialState = PARTIAL_NUMERAL | state;
     return end;
   }
 
@@ -1471,7 +1425,7 @@ abstract class _ChunkedJsonParser<T> {
       double signedMantissa = doubleValue * sign;
       if (exponent >= -22) {
         if (exponent < 0) {
-          listener.handleNumber(signedMantissa / POWERS_OF_TEN[-exponent]);
+          listener.handleNumber(signedMantissa / powersOfTen[-exponent]);
           return position;
         }
         if (exponent == 0) {
@@ -1479,7 +1433,7 @@ abstract class _ChunkedJsonParser<T> {
           return position;
         }
         if (exponent <= 22) {
-          listener.handleNumber(signedMantissa * POWERS_OF_TEN[exponent]);
+          listener.handleNumber(signedMantissa * powersOfTen[exponent]);
           return position;
         }
       }
@@ -1496,46 +1450,53 @@ abstract class _ChunkedJsonParser<T> {
       message = "Unexpected character";
       if (position == chunkEnd) message = "Unexpected end of input";
     }
-    throw new FormatException(message, chunk, position);
+    throw FormatException(message, chunk, position);
   }
 }
 
-/**
- * Chunked JSON parser that parses [String] chunks.
- */
+/// Chunked JSON parser that parses [String] chunks.
 class _JsonStringParser extends _ChunkedJsonParser<String> {
+  @override
   String chunk = '';
+  @override
   int chunkEnd = 0;
 
   _JsonStringParser(_JsonListener listener, Sink<Object?>? sink)
       : super(listener, sink);
 
+  @override
   int getChar(int position) => chunk.codeUnitAt(position);
 
+  @override
   String getString(int start, int end, int bits) {
     return chunk.substring(start, end);
   }
 
+  @override
   void beginString() {
-    this.buffer = new StringBuffer();
+    buffer = StringBuffer();
   }
 
+  @override
   void addSliceToString(int start, int end) {
     StringBuffer buffer = this.buffer;
     buffer.write(chunk.substring(start, end));
   }
 
+  @override
   void addCharToString(int charCode) {
     StringBuffer buffer = this.buffer;
     buffer.writeCharCode(charCode);
   }
 
+  @override
   String endString() {
     StringBuffer buffer = this.buffer;
     this.buffer = null;
     return buffer.toString();
   }
 
+  @override
   void copyCharsToList(int start, int end, List target, int offset) {
     int length = end - start;
     for (int i = 0; i < length; i++) {
@@ -1543,6 +1504,7 @@ class _JsonStringParser extends _ChunkedJsonParser<String> {
     }
   }
 
+  @override
   double parseDouble(int start, int end) {
     double? d = _parseDouble(chunk, start, end);
     if (d == null) {
@@ -1552,14 +1514,12 @@ class _JsonStringParser extends _ChunkedJsonParser<String> {
   }
 }
 
-/**
- * Implements the chunked conversion from a JSON string to its corresponding
- * object.
- *
- * The sink only creates one object, but its input can be chunked.
- */
+/// Implements the chunked conversion from a JSON string to its corresponding
+/// object.
+///
+/// The sink only creates one object, but its input can be chunked.
 class _JsonStringDecoderSink extends StringConversionSinkBase {
-  _JsonStringParser _parser;
+  final _JsonStringParser _parser;
   final Object? Function(Object? key, Object? value)? _reviver;
   final Sink<Object?> _sink;
 
@@ -1571,13 +1531,14 @@ class _JsonStringDecoderSink extends StringConversionSinkBase {
       Sink<Object?> sink) {
     _BuildJsonListener listener;
     if (reviver == null) {
-      listener = new _BuildJsonListener();
+      listener = _BuildJsonListener();
     } else {
-      listener = new _ReviverJsonListener(reviver);
+      listener = _ReviverJsonListener(reviver);
     }
-    return new _JsonStringParser(listener, sink);
+    return _JsonStringParser(listener, sink);
   }
 
+  @override
   void addSlice(String chunk, int start, int end, bool isLast) {
     _parser.chunk = chunk;
     _parser.chunkEnd = end;
@@ -1585,15 +1546,18 @@ class _JsonStringDecoderSink extends StringConversionSinkBase {
     if (isLast) _parser.close();
   }
 
+  @override
   void add(String chunk) {
     addSlice(chunk, 0, chunk.length, false);
   }
 
+  @override
   void close() {
     _parser.close();
     _sink.close();
   }
 
+  @override
   ByteConversionSink asUtf8Sink(bool allowMalformed) {
     throw "Unimplemented";
   }
@@ -1669,7 +1633,7 @@ double? _parseDouble(String str, int start, int end) {
   }
   if (!digitsSeen) return null; // No digits.
   if (exponent == 0) return sign * doubleValue;
-  const P10 = POWERS_OF_TEN; // From shared library
+  const P10 = powersOfTen; // From shared library
   if (exponent < 0) {
     int negExponent = -exponent;
     if (negExponent >= P10.length) return null;

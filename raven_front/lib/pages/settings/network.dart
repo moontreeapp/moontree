@@ -6,7 +6,6 @@ import 'package:raven_electrum/raven_electrum.dart';
 
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/colors.dart';
-import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/widgets/widgets.dart';
 

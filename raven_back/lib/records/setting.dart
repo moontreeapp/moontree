@@ -2,8 +2,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/records/setting_name.dart';
-import 'package:raven_back/extensions/object.dart';
 
 import '_type_id.dart';
 part 'setting.g.dart';

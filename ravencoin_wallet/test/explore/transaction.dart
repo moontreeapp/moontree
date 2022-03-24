@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import '../../lib/src/ecpair.dart';
 import '../../lib/src/transaction_builder.dart';
 import '../../lib/src/models/networks.dart';
-import '../../lib/src/payments/p2wpkh.dart' show P2WPKH;
-import '../../lib/src/payments/index.dart' show PaymentData;
+//import '../../lib/src/payments/p2wpkh.dart' show P2WPKH;
+//import '../../lib/src/payments/index.dart' show PaymentData;
 
 main() {
   test('can create a 1-to-1 Transaction', () {

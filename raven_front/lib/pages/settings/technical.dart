@@ -7,7 +7,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
-import 'package:raven_front/theme/extensions.dart';
 
 /// make our own 2-layer hierarchy view
 /// use draggable to move things between the levels:
@@ -74,18 +73,18 @@ class _TechnicalViewState extends State<TechnicalView> {
       );
 
   /// set that account as current and go to import page
-  void _importTo(context, account) {
-    //await settings.setCurrentAccountId(account.accountId);
-    Navigator.pushNamed(context, '/settings/import',
-        arguments: {'accountId': account.accountId});
-  }
+  //void _importTo(context, account) {
+  //  //await settings.setCurrentAccountId(account.accountId);
+  //  Navigator.pushNamed(context, '/settings/import',
+  //      arguments: {'accountId': account.accountId});
+  //}
 
   /// set that account as current and go to export page
-  void _exportTo(context, account) {
-    //await settings.setCurrentAccountId(account.accountId);
-    Navigator.pushNamed(context, '/settings/export',
-        arguments: {'accountId': account.accountId});
-  }
+  //void _exportTo(context, account) {
+  //  //await settings.setCurrentAccountId(account.accountId);
+  //  Navigator.pushNamed(context, '/settings/export',
+  //      arguments: {'accountId': account.accountId});
+  //}
 
   /// export all acounts ability
   void _exportAll(context) {
@@ -94,35 +93,35 @@ class _TechnicalViewState extends State<TechnicalView> {
   }
 
   /// change the accountId for this wallet and save
-  void _moveWallet(details, account) {
-    var wallet = details.data;
-    res.wallets.save(wallet is LeaderWallet
-        ? LeaderWallet(
-            id: wallet.id,
-            encryptedEntropy: wallet.encryptedEntropy,
-            cipherUpdate: wallet.cipherUpdate)
-        : wallet is SingleWallet
-            ? SingleWallet(
-                id: wallet.id,
-                encryptedWIF: wallet.encryptedWIF,
-                cipherUpdate: wallet.cipherUpdate)
-            : SingleWallet(
-                // placeholder for other wallets
-                id: wallet.id,
-                encryptedWIF: (wallet as SingleWallet).encryptedWIF,
-                cipherUpdate: wallet.cipherUpdate));
-  }
+  //void _moveWallet(details, account) {
+  //  var wallet = details.data;
+  //  res.wallets.save(wallet is LeaderWallet
+  //      ? LeaderWallet(
+  //          id: wallet.id,
+  //          encryptedEntropy: wallet.encryptedEntropy,
+  //          cipherUpdate: wallet.cipherUpdate)
+  //      : wallet is SingleWallet
+  //          ? SingleWallet(
+  //              id: wallet.id,
+  //              encryptedWIF: wallet.encryptedWIF,
+  //              cipherUpdate: wallet.cipherUpdate)
+  //          : SingleWallet(
+  //              // placeholder for other wallets
+  //              id: wallet.id,
+  //              encryptedWIF: (wallet as SingleWallet).encryptedWIF,
+  //              cipherUpdate: wallet.cipherUpdate));
+  //}
 
-  List<Widget> _deleteIfMany(Wallet wallet) => res.wallets.data.length > 1
-      ? [
-          IconButton(
-              onPressed: () async {
-                // doesn't delete immediately - not working until indicies work right
-                //await services.wallet.remove(account.accountId);
-              },
-              icon: Icon(Icons.delete))
-        ]
-      : [];
+  //List<Widget> _deleteIfMany(Wallet wallet) => res.wallets.data.length > 1
+  //    ? [
+  //        IconButton(
+  //            onPressed: () async {
+  //              // doesn't delete immediately - not working until indicies work right
+  //              //await services.wallet.remove(account.accountId);
+  //            },
+  //            icon: Icon(Icons.delete))
+  //      ]
+  //    : [];
 
   Card _wallet(BuildContext context, Wallet wallet) => Card(
       margin: const EdgeInsets.fromLTRB(40.0, 0.0, 10.0, 5),

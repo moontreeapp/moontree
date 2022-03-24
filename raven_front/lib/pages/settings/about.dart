@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/theme/theme.dart';
 
 class About extends StatelessWidget {

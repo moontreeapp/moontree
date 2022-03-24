@@ -3,8 +3,6 @@ import 'package:ravencoin_wallet/ravencoin_wallet.dart'
     show KPWallet, NetworkType, ECPair;
 
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/security/cipher_base.dart';
-import 'package:raven_back/security/encrypted_wif.dart';
 
 class SingleWalletService {
   Address toAddress(SingleWallet wallet) {
@@ -48,6 +46,7 @@ class SingleWalletService {
           name: name ?? res.wallets.nextWalletName);
     }
     if (alwaysReturn) return existingWallet as SingleWallet;
+    return null;
   }
 
   Future<void> makeSaveSingleWallet(

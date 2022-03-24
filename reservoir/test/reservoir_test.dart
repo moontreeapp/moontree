@@ -1,8 +1,6 @@
 import 'package:test/test.dart';
 
 import 'package:reservoir/reservoir.dart';
-import 'package:reservoir/change.dart';
-import 'package:reservoir/map_source.dart';
 
 import 'helpers/simple_record.dart';
 
