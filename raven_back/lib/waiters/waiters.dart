@@ -2,6 +2,7 @@ import 'address.dart';
 import 'subscription.dart';
 import 'block.dart';
 import 'client.dart';
+import 'create.dart';
 import 'history.dart';
 import 'import.dart';
 import 'leader.dart';
@@ -15,6 +16,7 @@ class waiters {
   static AddressWaiter address = AddressWaiter();
   static SubscriptionWaiter subscription = SubscriptionWaiter();
   static BlockWaiter block = BlockWaiter();
+  static CreateWaiter create = CreateWaiter();
   static ImportWaiter import = ImportWaiter();
   static HistoryWaiter history = HistoryWaiter();
   static PasswordWaiter password = PasswordWaiter();

@@ -6,6 +6,7 @@ import 'package:ravencoin_wallet/src/fee.dart';
 import 'package:tuple/tuple.dart';
 
 import 'transaction/sign.dart';
+import 'package:bs58/bs58.dart';
 
 class NFTCreateRequest {
   late String name;
@@ -83,8 +84,16 @@ class RestrictedCreateRequest {
 }
 
 class GenericCreateRequest {
+  late bool isSub;
+  late bool isMain;
+  late bool isNFT;
+  late bool isChannel;
+  late bool isQualifier;
+  late bool isRestricted;
+  late String fullName;
+  late Wallet wallet;
   late String name;
-  late String ipfs;
+  late String? ipfs;
   late int? quantity;
   late int? decimals;
   late String? verifier;
@@ -93,14 +102,25 @@ class GenericCreateRequest {
       parent; // you have to use the wallet that holds the prent if sub asset
 
   GenericCreateRequest({
+    required this.isSub,
+    required this.isMain,
+    required this.isNFT,
+    required this.isChannel,
+    required this.isQualifier,
+    required this.isRestricted,
     required this.name,
-    required this.ipfs,
+    required this.fullName,
+    required this.wallet,
+    this.ipfs,
     this.quantity,
     this.decimals,
     this.verifier,
     this.reissuable,
     this.parent,
   });
+
+  Security get security =>
+      Security(symbol: fullName, securityType: SecurityType.RavenAsset);
 }
 
 class SendRequest with ToStringMixin {
@@ -233,6 +253,33 @@ class TransactionMaker {
     return tuple;
   }
 
+  Future<Tuple2<ravencoin.Transaction, SendEstimate>> createTransactionBy(
+    GenericCreateRequest createRequest,
+  ) async {
+    var estimate = SendEstimate(
+      createRequest.quantity!,
+      security: createRequest.security,
+      //assetMemo: createRequest.assetMemo, // not on front end
+      //memo: createRequest.memo, // op return memos allowed, but not on front end
+    );
+    // MOONTREETESTASSET
+    // QmQsUFxsd4S5FZGxQJjVSBVSPv8Gt1adRE16nACt2zv6KP
+
+    print('createTransactionBy');
+    return
+        //createRequest.isSub ? transactionCreateSubAsset() : createRequest.isNFT || createRequest.isChannel ? transactionCreateChildAsset :
+        await transactionCreateMainAsset(
+      estimate,
+      createRequest.decimals ?? 0,
+      createRequest.reissuable ?? false,
+      ipfsData: createRequest.ipfs != null
+          ? base58.decode(createRequest.ipfs!)
+          : null, // maybe this should be bytes from front
+      wallet: createRequest.wallet,
+      goal: TxGoals.standard,
+    );
+  }
+
   Tuple2<ravencoin.Transaction, SendEstimate> transactionReissueAsset(
     String newAssetToAddress,
     SendEstimate estimate,
@@ -302,16 +349,17 @@ class TransactionMaker {
     return Tuple2(tx, estimate);
   }
 
-  Tuple2<ravencoin.Transaction, SendEstimate> transactionCreateMainAsset(
-    String newAssetToAddress,
+  Future<Tuple2<ravencoin.Transaction, SendEstimate>>
+      transactionCreateMainAsset(
     SendEstimate estimate,
     int divisibility,
     bool reissuability, {
+    String? newAssetToAddress,
     String? ownershipToAddress,
     Uint8List? ipfsData,
     required Wallet wallet,
     TxGoal? goal,
-  }) {
+  }) async {
     ravencoin.TransactionBuilder? txb;
     ravencoin.Transaction tx;
     var feeSats = 0;
@@ -320,6 +368,8 @@ class TransactionMaker {
     var returnAddress = services.wallet.getChangeAddress(wallet);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
+      print('feeSats $feeSats ${estimate.fees}');
+      print('returnRaven $returnRaven');
       feeSats = estimate.fees;
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee + burn
@@ -335,8 +385,8 @@ class TransactionMaker {
           satsIn - res.settings.network.burnAmounts.issueMain - feeSats;
 
       txb.generateCreateAssetVouts(
-          newAssetToAddress,
-          ownershipToAddress ?? newAssetToAddress,
+          newAssetToAddress ?? returnAddress,
+          ownershipToAddress ?? newAssetToAddress ?? returnAddress,
           estimate.amount,
           estimate.security!.symbol,
           divisibility,
@@ -352,7 +402,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: goal));
     }
-    txb!.signEachInput(utxosRaven);
+    await txb!.signEachInput(utxosRaven);
     tx = txb.build();
     return Tuple2(tx, estimate);
   }

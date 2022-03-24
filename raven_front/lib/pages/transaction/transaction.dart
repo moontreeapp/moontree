@@ -64,9 +64,12 @@ class _TransactionPageState extends State<TransactionPage> {
         return transaction!.id.cutOutMiddle();
       case 'Memo/IPFS':
         return (String humanName) {
-          var txMemo = (transactionMemo ?? '') + '21234567890';
+          var txMemo = (transactionMemo ?? '');
           if (txMemo.isIpfs) {
             return txMemo.cutOutMiddle();
+          }
+          if (txMemo.length > 30) {
+            return txMemo.cutOutMiddle(length: 12);
           }
           return txMemo;
         }(humanName);

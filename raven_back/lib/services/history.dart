@@ -108,9 +108,11 @@ class HistoryService {
     for (var tx in txs) {
       allThree = saveTransaction(tx, client, saveVin: saveVin);
     }
-    await res.transactions.saveAll(allThree[2] as Set<Transaction>);
-    await res.vins.saveAll(allThree[0] as Set<Vin>);
-    await res.vouts.saveAll(allThree[1] as Set<Vout>);
+    if (allThree[2].isNotEmpty)
+      await res.transactions.saveAll(allThree[2] as Set<Transaction>);
+    if (allThree[0].isNotEmpty) await res.vins.saveAll(allThree[0] as Set<Vin>);
+    if (allThree[1].isNotEmpty)
+      await res.vouts.saveAll(allThree[1] as Set<Vout>);
   }
 
   /// one more step - get all vins that have no corresponding vout (in the db)
