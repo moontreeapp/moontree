@@ -18,41 +18,44 @@ class VoutAdapter extends TypeAdapter<Vout> {
     };
     return Vout(
       transactionId: fields[0] as String,
-      rvnValue: fields[1] as int,
-      position: fields[2] as int,
-      memo: fields[3] as String,
-      assetMemo: fields[4] as String,
-      type: fields[5] as String,
-      toAddress: fields[6] as String?,
-      assetSecurityId: fields[7] as String?,
-      assetValue: fields[8] as int?,
-      additionalAddresses: (fields[9] as List?)?.cast<String>(),
+      position: fields[1] as int,
+      type: fields[2] as String,
+      rvnValue: fields[3] as int,
+      assetValue: fields[4] as int?,
+      lockingScript: fields[5] as String?,
+      memo: fields[6] as String?,
+      assetMemo: fields[7] as String?,
+      assetSecurityId: fields[8] as String?,
+      toAddress: fields[9] as String?,
+      additionalAddresses: (fields[10] as List?)?.cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Vout obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.transactionId)
       ..writeByte(1)
-      ..write(obj.rvnValue)
-      ..writeByte(2)
       ..write(obj.position)
-      ..writeByte(3)
-      ..write(obj.memo)
-      ..writeByte(4)
-      ..write(obj.assetMemo)
-      ..writeByte(5)
+      ..writeByte(2)
       ..write(obj.type)
-      ..writeByte(6)
-      ..write(obj.toAddress)
-      ..writeByte(7)
-      ..write(obj.assetSecurityId)
-      ..writeByte(8)
+      ..writeByte(3)
+      ..write(obj.rvnValue)
+      ..writeByte(4)
       ..write(obj.assetValue)
+      ..writeByte(5)
+      ..write(obj.lockingScript)
+      ..writeByte(6)
+      ..write(obj.memo)
+      ..writeByte(7)
+      ..write(obj.assetMemo)
+      ..writeByte(8)
+      ..write(obj.assetSecurityId)
       ..writeByte(9)
+      ..write(obj.toAddress)
+      ..writeByte(10)
       ..write(obj.additionalAddresses);
   }
 

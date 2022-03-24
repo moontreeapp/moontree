@@ -7,11 +7,13 @@ part 'vout.keys.dart';
 class VoutReservoir extends Reservoir<_VoutKey, Vout> {
   late IndexMultiple<_TransactionKey, Vout> byTransaction;
   late IndexMultiple<_SecurityKey, Vout> bySecurity;
+  late IndexMultiple<_SecurityTypeKey, Vout> bySecurityType;
   late IndexMultiple<_AddressKey, Vout> byAddress;
 
   VoutReservoir() : super(_VoutKey()) {
     byTransaction = addIndexMultiple('transaction', _TransactionKey());
     bySecurity = addIndexMultiple('security', _SecurityKey());
+    bySecurityType = addIndexMultiple('securityType', _SecurityTypeKey());
     byAddress = addIndexMultiple('address', _AddressKey());
   }
 

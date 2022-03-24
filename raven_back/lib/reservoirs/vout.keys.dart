@@ -31,27 +31,18 @@ class _SecurityKey extends Key<Vout> {
 
 extension BySecurityMethodsForVout on Index<_SecurityKey, Vout> {
   List<Vout> getAll(Security security) => getByKeyStr(security.id);
+}
 
-  /// delete this
-  //Iterable<Vout> unspents({required Security security}) =>
-  //    VoutReservoir.whereUnspent(given: getAll(security), security: security);
-  //
-  ///// ! todo this is probably broken because I don't think we can use joins
-  ///// in here. Besides, I'm not even sure why this is here...
-  //BalanceRaw balance({
-  //  required Security security,
-  //}) =>
-  //    unspents(security: security).fold(
-  //        BalanceRaw(confirmed: 0, unconfirmed: 0),
-  //        (sum, vout) =>
-  //            sum +
-  //            BalanceRaw(
-  //                confirmed: ((vout.transaction?.confirmed ?? true)
-  //                    ? vout.rvnValue
-  //                    : 0),
-  //                unconfirmed: (!(vout.transaction?.confirmed ?? true)
-  //                    ? vout.rvnValue
-  //                    : 0)));
+// bySecurityType
+
+class _SecurityTypeKey extends Key<Vout> {
+  @override
+  String getKey(Vout vout) => vout.securityId.split(':').last;
+}
+
+extension BySecurityTypeMethodsForVout on Index<_SecurityTypeKey, Vout> {
+  List<Vout> getAll(SecurityType securityType) =>
+      getByKeyStr(securityType.enumString);
 }
 
 // byAddress - not every vout has an address

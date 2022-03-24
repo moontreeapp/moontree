@@ -183,7 +183,17 @@ class _NavMenuState extends State<NavMenu> {
               title: 'test',
               leading: Icon(Icons.info_outline_rounded),
               onPressed: (BuildContext context) async {
-                print(res.notes.first);
+                print(res.vouts.data.length);
+                print(res.vouts.bySecurity.getAll(res.securities.RVN).length);
+                print(res.vouts.bySecurityType
+                    .getAll(SecurityType.RavenAsset)
+                    .length);
+                print(res.vouts.bySecurity
+                    .getAll(res.securities.RVN)
+                    .where((e) => e.lockingScript != null));
+                print(res.vouts.bySecurityType
+                    .getAll(SecurityType.RavenAsset)
+                    .where((e) => e.lockingScript == null));
               }),
         ],
       )
