@@ -253,7 +253,7 @@ class TransactionBuilder {
         burnScriptPubKey,
         isMessage
             ? network.burnAmounts.issueMessage
-            : network.burnAmounts.issueSub);
+            : network.burnAmounts.issueUnique);
     _tx!.addOutput(parentOwnershipScriptPubKey, 0);
     return _tx!.addOutput(assetScriptPubKey, 0);
   }
