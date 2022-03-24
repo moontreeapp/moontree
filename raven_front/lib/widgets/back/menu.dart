@@ -178,7 +178,6 @@ class _NavMenuState extends State<NavMenu> {
             name: 'Accounts',
             link: '/settings/technical',
           ),
-          */
           SettingsTile(
               title: 'test',
               leading: Icon(Icons.info_outline_rounded),
@@ -211,6 +210,7 @@ class _NavMenuState extends State<NavMenu> {
                     .where((e) => e.rvnValue == 0)
                     .length);
               }),
+          */
         ],
       )
     };
