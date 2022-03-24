@@ -224,7 +224,7 @@ class SendEstimate with ToStringMixin {
         'creation',
       ];
 
-  int get total => (creation ? amount : 0) + fees + extraFees;
+  int get total => (creation ? 0 : amount) + fees + extraFees;
   int get utxoTotal => utxos.fold(
       0, (int total, vout) => total + vout.securityValue(security: security));
 
@@ -288,6 +288,7 @@ class TransactionMaker {
       //assetMemo: createRequest.assetMemo, // not on front end
       //memo: createRequest.memo, // op return memos allowed, but not on front end
     );
+    print(estimate.total);
     // MOONTREETESTASSET
     // QmQsUFxsd4S5FZGxQJjVSBVSPv8Gt1adRE16nACt2zv6KP
 
@@ -517,6 +518,10 @@ class TransactionMaker {
       estimate.setFees(tx.fee(goal: goal));
     }
     estimate.setExtraFees(res.settings.network.burnAmounts.issueSub);
+    print(estimate.amount);
+    print(estimate.fees);
+    print(estimate.extraFees);
+    print(estimate.total);
     txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
     return Tuple2(tx, estimate);
