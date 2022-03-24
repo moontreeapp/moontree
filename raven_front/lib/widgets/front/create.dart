@@ -518,7 +518,7 @@ class _CreateAssetState extends State<CreateAsset> {
         isChannel: isChannel,
         isQualifier: isQualifier,
         isRestricted: isRestricted,
-        fullName: fullName(),
+        fullName: fullName(true),
         wallet: Current.wallet,
         name: nameController.text,
         ipfs: ipfsController.text == '' ? null : ipfsController.text,

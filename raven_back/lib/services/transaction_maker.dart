@@ -83,7 +83,7 @@ class RestrictedCreateRequest {
   });
 }
 
-class GenericCreateRequest {
+class GenericCreateRequest with ToStringMixin {
   late bool isSub;
   late bool isMain;
   late bool isNFT;
@@ -118,6 +118,43 @@ class GenericCreateRequest {
     this.reissuable,
     this.parent,
   });
+
+  @override
+  List<Object?> get props => [
+        isSub,
+        isMain,
+        isNFT,
+        isChannel,
+        isQualifier,
+        isRestricted,
+        fullName,
+        wallet,
+        name,
+        ipfs,
+        quantity,
+        decimals,
+        verifier,
+        reissuable,
+        parent,
+      ];
+  @override
+  List<String> get propNames => [
+        'isSub',
+        'isMain',
+        'isNFT',
+        'isChannel',
+        'isQualifier',
+        'isRestricted',
+        'fullName',
+        'wallet',
+        'name',
+        'ipfs',
+        'quantity',
+        'decimals',
+        'verifier',
+        'reissuable',
+        'parent',
+      ];
 
   Security get security =>
       Security(symbol: fullName, securityType: SecurityType.RavenAsset);
@@ -282,7 +319,7 @@ class TransactionMaker {
     GenericCreateRequest createRequest,
   ) async {
     var estimate = SendEstimate(
-      createRequest.quantity! * 100000000,
+      (createRequest.quantity ?? 1) * 100000000,
       security: createRequest.security,
       creation: true,
       //assetMemo: createRequest.assetMemo, // not on front end
@@ -293,22 +330,22 @@ class TransactionMaker {
     // QmQsUFxsd4S5FZGxQJjVSBVSPv8Gt1adRE16nACt2zv6KP
 
     print('createTransactionBy $estimate');
-    return createRequest.isSub
-        ? transactionCreateSubAsset(
+    return createRequest.isNFT || createRequest.isChannel
+        ? transactionCreateChildAsset(
             createRequest.parent!,
             estimate,
-            createRequest.decimals ?? 0,
-            createRequest.reissuable ?? false,
             ipfsData: createRequest.ipfs != null
                 ? base58.decode(createRequest.ipfs!)
                 : null, // maybe this should be bytes from front
             wallet: createRequest.wallet,
             goal: TxGoals.standard,
           )
-        : createRequest.isNFT || createRequest.isChannel
-            ? transactionCreateChildAsset(
+        : createRequest.isSub
+            ? transactionCreateSubAsset(
                 createRequest.parent!,
                 estimate,
+                createRequest.decimals ?? 0,
+                createRequest.reissuable ?? false,
                 ipfsData: createRequest.ipfs != null
                     ? base58.decode(createRequest.ipfs!)
                     : null, // maybe this should be bytes from front
@@ -518,10 +555,6 @@ class TransactionMaker {
       estimate.setFees(tx.fee(goal: goal));
     }
     estimate.setExtraFees(res.settings.network.burnAmounts.issueSub);
-    print(estimate.amount);
-    print(estimate.fees);
-    print(estimate.extraFees);
-    print(estimate.total);
     txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
     return Tuple2(tx, estimate);

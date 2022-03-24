@@ -104,15 +104,22 @@ class HistoryService {
     RavenElectrumClient client, {
     bool saveVin = true,
   }) async {
-    var allThree;
     for (var tx in txs) {
-      allThree = await saveTransaction(tx, client, saveVin: saveVin);
+      var allThree =
+          await saveTransaction(tx, client, saveVin: saveVin, justReturn: true);
+      // todo could move out of for loop... call saveAll once.
+      if (allThree.isNotEmpty) {
+        if (allThree[2].isNotEmpty) {
+          await res.transactions.saveAll(allThree[2] as Set<Transaction>);
+        }
+        if (allThree[0].isNotEmpty) {
+          await res.vins.saveAll(allThree[0] as Set<Vin>);
+        }
+        if (allThree[1].isNotEmpty) {
+          await res.vouts.saveAll(allThree[1] as Set<Vout>);
+        }
+      }
     }
-    if (allThree[2].isNotEmpty)
-      await res.transactions.saveAll(allThree[2] as Set<Transaction>);
-    if (allThree[0].isNotEmpty) await res.vins.saveAll(allThree[0] as Set<Vin>);
-    if (allThree[1].isNotEmpty)
-      await res.vouts.saveAll(allThree[1] as Set<Vout>);
   }
 
   /// one more step - get all vins that have no corresponding vout (in the db)
