@@ -194,6 +194,22 @@ class _NavMenuState extends State<NavMenu> {
                 print(res.vouts.bySecurityType
                     .getAll(SecurityType.RavenAsset)
                     .where((e) => e.lockingScript == null));
+                print(res.vouts.bySecurity
+                    .getAll(res.securities.RVN)
+                    .where((e) => e.assetValue == null)
+                    .length);
+                print(res.vouts.bySecurityType
+                    .getAll(SecurityType.RavenAsset)
+                    .where((e) => e.assetValue == null)
+                    .length);
+                print(res.vouts.bySecurity
+                    .getAll(res.securities.RVN)
+                    .where((e) => e.rvnValue > 0)
+                    .length);
+                print(res.vouts.bySecurityType
+                    .getAll(SecurityType.RavenAsset)
+                    .where((e) => e.rvnValue == 0)
+                    .length);
               }),
         ],
       )

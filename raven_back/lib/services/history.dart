@@ -136,7 +136,9 @@ class HistoryService {
           type: vout.scriptPubKey.type,
           lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
           rvnValue: vs.item3 != null ? 0 : vs.item1,
-          assetValue: utils.amountToSat(vout.scriptPubKey.amount),
+          assetValue: vs.item3 == null
+              ? null
+              : utils.amountToSat(vout.scriptPubKey.amount),
           assetSecurityId: vs.item2.id,
           memo: vout.memo,
           assetMemo: vout.assetMemo,
@@ -312,7 +314,9 @@ class HistoryService {
         lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
         // TEST THIS -- redownload everything and verify that asset vouts have 0 rvnValue
         rvnValue: vs.item3 != null ? 0 : vs.item1,
-        assetValue: utils.amountToSat(vout.scriptPubKey.amount),
+        assetValue: vs.item3 == null
+            ? null
+            : utils.amountToSat(vout.scriptPubKey.amount),
         assetSecurityId: vs.item2.id,
         memo: vout.memo,
         assetMemo: vout.assetMemo,
