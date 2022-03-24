@@ -512,8 +512,16 @@ class _CreateAssetState extends State<CreateAsset> {
 
       /// send them to transaction checkout screen
       checkout(GenericCreateRequest(
+        isSub: widget.isSub,
+        isMain: isMain,
+        isNFT: isNFT,
+        isChannel: isChannel,
+        isQualifier: isQualifier,
+        isRestricted: isRestricted,
+        fullName: fullName(),
+        wallet: Current.wallet,
         name: nameController.text,
-        ipfs: ipfsController.text,
+        ipfs: ipfsController.text == '' ? null : ipfsController.text,
         quantity: needsQuantity ? quantityController.text.toInt() : null,
         decimals: needsDecimal ? decimalController.text.toInt() : null,
         reissuable: needsReissue ? reissueValue : null,
@@ -534,7 +542,7 @@ class _CreateAssetState extends State<CreateAsset> {
 
   void checkout(GenericCreateRequest createRequest) {
     /// send request to the correct stream
-    //streams.spend.make.add(createRequest);
+    streams.create.request.add(createRequest);
 
     /// go to confirmation page
     Navigator.of(components.navigator.routeContext!).pushNamed(
@@ -580,10 +588,8 @@ class _CreateAssetState extends State<CreateAsset> {
           total: 'calculating total...',
           // produce transaction structure here and the checkout screen will
           // send it up on submit:
-          buttonAction: () => null,
-
-          /// send the MainCreate request to the right stream
-          //streams.spend.send.add(streams.spend.made.value),
+          buttonAction: () =>
+              streams.create.send.add(streams.create.made.value),
           buttonWord: 'Create',
           loadingMessage: 'Creating Asset',
         )
@@ -592,6 +598,7 @@ class _CreateAssetState extends State<CreateAsset> {
   }
 
   void formatName() {
+    // moontreetestasset //RangeError (RangeError (end): Invalid value: Not in inclusive range 0..17: 31)
     nameController.text = nameController.text.substring(0, remainingNameLength);
     if (nameController.text.endsWith('_') ||
         nameController.text.endsWith('.')) {

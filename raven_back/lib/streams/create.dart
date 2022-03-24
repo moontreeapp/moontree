@@ -1,12 +1,14 @@
+import 'package:raven_back/services/transaction_maker.dart';
 import 'package:rxdart/rxdart.dart';
 
 class Create {
   final form = BehaviorSubject<GenericCreateForm?>.seeded(null);
+  final request = BehaviorSubject<GenericCreateRequest?>.seeded(null);
   //final make = BehaviorSubject<SendRequest?>.seeded(null);
-  //final made = BehaviorSubject<String?>.seeded(null);
-  //final estimate = BehaviorSubject<SendEstimate?>.seeded(null);
-  //final send = BehaviorSubject<String?>.seeded(null);
-  //final success = BehaviorSubject<bool?>.seeded(null);
+  final made = BehaviorSubject<String?>.seeded(null);
+  final estimate = BehaviorSubject<SendEstimate?>.seeded(null);
+  final send = BehaviorSubject<String?>.seeded(null);
+  final success = BehaviorSubject<bool?>.seeded(null);
 }
 
 class GenericCreateForm {

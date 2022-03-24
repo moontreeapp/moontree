@@ -357,6 +357,7 @@ class _SendState extends State<Send> {
             .textTheme
             .caption!
             .copyWith(height: .7, color: AppColors.primary),
+        errorText: verifyMemo() ? null : 'too long',
         //suffixIcon:
         //    IconButton(
         //  icon: Icon(Icons.paste_rounded,

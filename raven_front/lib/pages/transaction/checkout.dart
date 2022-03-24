@@ -88,6 +88,13 @@ class _CheckoutState extends State<Checkout> {
         });
       }
     }));
+    listeners.add(streams.create.estimate.listen((SendEstimate? value) {
+      if (value != estimate) {
+        setState(() {
+          estimate = value;
+        });
+      }
+    }));
   }
 
   @override
