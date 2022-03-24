@@ -106,7 +106,7 @@ class HistoryService {
   }) async {
     var allThree;
     for (var tx in txs) {
-      allThree = saveTransaction(tx, client, saveVin: saveVin);
+      allThree = await saveTransaction(tx, client, saveVin: saveVin);
     }
     if (allThree[2].isNotEmpty)
       await res.transactions.saveAll(allThree[2] as Set<Transaction>);
