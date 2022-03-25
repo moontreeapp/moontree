@@ -53,6 +53,7 @@ class _CreateAssetState extends State<CreateAsset> {
   FocusNode decimalFocus = FocusNode();
   FocusNode verifierFocus = FocusNode();
   bool nameValidated = false;
+  bool nameTakenValidated = false;
   bool ipfsValidated = false;
   bool quantityValidated = false;
   bool decimalValidated = false;
@@ -228,7 +229,6 @@ class _CreateAssetState extends State<CreateAsset> {
             : _produceParentModal(), // main subs, nft, channel
         onChanged: (String? newValue) {
           FocusScope.of(context).requestFocus(ipfsFocus);
-          setState(() {});
         },
       );
 
@@ -246,9 +246,11 @@ class _CreateAssetState extends State<CreateAsset> {
         hintText: 'MOONTREE_WALLET.COM',
         errorText: isChannel || isRestricted
             ? null
-            : nameController.text.length > 2 &&
-                    !nameValidation(nameController.text)
-                ? nameValidationErr
+            : nameController.text.length > 2 && !nameValidated
+                //!nameValidation(nameController.text))
+                ? nameTakenValidated
+                    ? nameValidationErr
+                    : 'Taken'
                 : null,
       ),
       onTap: isRestricted ? _produceAdminAssetModal : null,
@@ -259,8 +261,8 @@ class _CreateAssetState extends State<CreateAsset> {
           : isNFT || isChannel
               ? () => FocusScope.of(context).requestFocus(ipfsFocus)
               : () {
-                  formatName();
                   validateName();
+                  nameNotTakenValid(nameController.text);
                   FocusScope.of(context).requestFocus(quantityFocus);
                 });
 
@@ -311,7 +313,6 @@ class _CreateAssetState extends State<CreateAsset> {
         onTap: () => _produceDecimalModal(),
         onChanged: (String? newValue) {
           FocusScope.of(context).requestFocus(ipfsFocus);
-          setState(() {});
         },
       );
 
@@ -389,12 +390,26 @@ class _CreateAssetState extends State<CreateAsset> {
   Widget get submitButton => components.buttons.actionButton(
         context,
         focusNode: nextFocus,
-        enabled: enabled,
+        enabled: nameTakenValidated && enabled,
         onPressed: submit,
       );
 
-  bool nameValidation(String name) =>
-      nameLengthValid(name) && nameTypeValid(name);
+  bool nameValidation(String name) {
+    var validName = nameLengthValid(name) && nameTypeValid(name);
+    nameValidationErr = validName ? null : nameValidationErr;
+    return validName;
+  }
+
+  Future<bool> nameNotTakenValid(String name) async {
+    var old = nameTakenValidated;
+    nameTakenValidated = !(await services.client.api.getAssetNames(name))
+        .toList()
+        .contains(name);
+    if (old != nameTakenValidated) {
+      setState(() {});
+    }
+    return nameTakenValidated;
+  }
 
   bool nameTypeValid(String name) {
     if (isMain && !name.isMainAsset) {
@@ -425,7 +440,7 @@ class _CreateAssetState extends State<CreateAsset> {
       nameValidationErr = 'invalid SubAsset';
       return false;
     }
-    nameValidationErr = null;
+    nameValidationErr = nameValidationErr;
     return true;
   }
 
@@ -434,16 +449,20 @@ class _CreateAssetState extends State<CreateAsset> {
       nameValidationErr = '${remainingNameLength - nameController.text.length}';
       return false;
     }
-    nameValidationErr = null;
+    nameValidationErr = nameValidationErr;
     return true;
   }
 
-  void validateName({String? name}) {
+  Future<void> validateName({String? name}) async {
     name = name ?? nameController.text;
     var oldValidation = nameValidated;
     nameValidated = nameValidation(name);
-    if (oldValidation != nameValidated || !nameValidated) {
-      setState(() => {});
+    if (nameValidated) {
+      var awaited = await nameNotTakenValid(name);
+      nameValidated = nameValidated && awaited;
+    }
+    if (oldValidation != nameValidated) {
+      setState(() {});
     }
   }
 
@@ -471,7 +490,7 @@ class _CreateAssetState extends State<CreateAsset> {
     var oldValidation = verifierValidated;
     verifierValidated = verifierValidation(verifier);
     if (oldValidation != verifierValidated || !verifierValidated) {
-      setState(() => {});
+      setState(() {});
     }
   }
 
@@ -482,7 +501,7 @@ class _CreateAssetState extends State<CreateAsset> {
     var oldValidation = ipfsValidated;
     ipfsValidated = ipfsValidation(ipfs);
     if (oldValidation != ipfsValidated || !ipfsValidated) {
-      setState(() => {});
+      setState(() {});
     }
   }
 
@@ -494,7 +513,7 @@ class _CreateAssetState extends State<CreateAsset> {
     var oldValidation = quantityValidated;
     quantityValidated = quantityValidation(quantity);
     if (oldValidation != quantityValidated || !quantityValidated) {
-      setState(() => {});
+      setState(() {});
     }
   }
 
@@ -506,13 +525,14 @@ class _CreateAssetState extends State<CreateAsset> {
     var oldValidation = decimalValidated;
     decimalValidated = decimalValidation(decimal);
     if (oldValidation != decimalValidated || !decimalValidated) {
-      setState(() => {});
+      setState(() {});
     }
   }
 
   bool get enabled =>
       nameController.text.length > 2 &&
       nameValidation(nameController.text) &&
+      nameTakenValidated &&
       (needsQuantity
           ? quantityController.text != '' &&
               quantityValidation(quantityController.text.toInt())
@@ -521,11 +541,27 @@ class _CreateAssetState extends State<CreateAsset> {
           ? decimalController.text != '' &&
               decimalValidation(decimalController.text.toInt())
           : true) &&
-      (isNFT ? ipfsController.text != '' : true) &&
-      ipfsValidation(ipfsController.text);
+      (isNFT
+          ? ipfsValidation(ipfsController.text)
+          : ipfsController.text == '' || ipfsValidation(ipfsController.text));
 
-  void submit() {
-    if (enabled) {
+  Future<bool> get enabledAsync async => nameController.text.length > 2 &&
+          nameValidation(nameController.text) &&
+          await nameNotTakenValid(nameController.text) &&
+          (needsQuantity
+              ? quantityController.text != '' &&
+                  quantityValidation(quantityController.text.toInt())
+              : true) &&
+          (needsDecimal
+              ? decimalController.text != '' &&
+                  decimalValidation(decimalController.text.toInt())
+              : true) &&
+          isNFT
+      ? ipfsValidation(ipfsController.text)
+      : (ipfsController.text == '' || ipfsValidation(ipfsController.text));
+
+  Future<void> submit() async {
+    if (await enabledAsync) {
       FocusScope.of(context).unfocus();
 
       /// send them to transaction checkout screen
@@ -613,16 +649,6 @@ class _CreateAssetState extends State<CreateAsset> {
         )
       },
     );
-  }
-
-  void formatName() {
-    // moontreetestasset //RangeError (RangeError (end): Invalid value: Not in inclusive range 0..17: 31)
-    nameController.text = nameController.text.substring(0, remainingNameLength);
-    if (nameController.text.endsWith('_') ||
-        nameController.text.endsWith('.')) {
-      nameController.text =
-          nameController.text.substring(0, nameController.text.length - 1);
-    }
   }
 
   void formatQuantity() =>

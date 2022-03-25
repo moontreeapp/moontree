@@ -115,10 +115,21 @@ class _TransactionListState extends State<TransactionList> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                        components.text.securityAsReadable(
-                            transactionRecord.value,
-                            security: transactionRecord.security,
-                            asUSD: showUSD),
+                        //() {
+                        //  var amountToDisplay = components.text.securityAsReadable(
+                        //      transactionRecord.value,
+                        //      security: transactionRecord.security,
+                        //      asUSD: showUSD);
+                        //  return amountToDisplay == '0'
+                        //      ? 'sent to self'
+                        //      : amountToDisplay;
+                        //}()
+                        transactionRecord.toSelf!
+                            ? 'sent to self'
+                            : components.text.securityAsReadable(
+                                transactionRecord.value,
+                                security: transactionRecord.security,
+                                asUSD: showUSD),
                         style: Theme.of(context).textTheme.bodyText1),
                     Text(transactionRecord.formattedDatetime,
                         style: Theme.of(context)

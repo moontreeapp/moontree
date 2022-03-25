@@ -11,7 +11,7 @@ export 'front/create.dart';
 export 'front/asset_details.dart';
 export 'front/lists/holdings.dart';
 export 'front/loader.dart';
-export 'front/transactions.dart';
+export 'front/lists/transactions.dart';
 export 'front/verify.dart';
 export 'bottom/nav_bar.dart';
 export 'bottom/selection_items.dart';

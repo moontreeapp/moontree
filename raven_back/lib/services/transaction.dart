@@ -47,24 +47,41 @@ class TransactionService {
                   .toList()))
           .toSet();
       for (var security in securitiesInvolved) {
+        var selfIn = transaction.vins
+            .where((vin) =>
+                givenAddresses.contains(vin.vout?.toAddress) &&
+                vin.vout?.security == security)
+            .map((vin) => vin.vout?.securityValue(security: security))
+            .toList()
+            .sumInt();
+        var othersIn = transaction.vins
+            .where((vin) =>
+                !givenAddresses.contains(vin.vout?.toAddress) &&
+                vin.vout?.security == security)
+            .map((vin) => vin.vout?.securityValue(security: security))
+            .toList()
+            .sumInt();
+        var othersOut = transaction.vouts
+            .where((vout) =>
+                !givenAddresses.contains(vout.toAddress) &&
+                vout.security == security)
+            .map((vout) => vout.securityValue(security: security))
+            .toList()
+            .sumInt();
+        var selfOut = transaction.vouts
+            .where((vout) =>
+                givenAddresses.contains(vout.toAddress) &&
+                vout.security == security)
+            .map((vout) => vout.securityValue(security: security))
+            .toList()
+            .sumInt();
         transactionRecords.add(TransactionRecord(
           transaction: transaction,
           security: security!,
-          totalIn: transaction.vins
-              .where((vin) =>
-                  givenAddresses.contains(vin.vout?.toAddress) &&
-                  vin.vout?.security == security)
-              .map((vin) => vin.vout?.securityValue(security: security))
-              .toList()
-              .sumInt(),
-          totalOut: transaction.vouts
-              .where((vout) =>
-                  givenAddresses.contains(vout.toAddress) &&
-                  vout.security == security)
-              .map((vout) => vout.securityValue(security: security))
-              .toList()
-              .sumInt(),
+          totalIn: selfIn,
+          totalOut: selfOut,
           height: transaction.height,
+          toSelf: selfIn == selfOut,
           formattedDatetime: transaction.formattedDatetime,
         ));
       }
@@ -90,11 +107,13 @@ class TransactionRecord {
   int totalIn;
   int totalOut;
   int? height;
+  bool? toSelf = false;
 
   TransactionRecord({
     required this.transaction,
     required this.security,
     required this.formattedDatetime,
+    this.toSelf,
     this.height,
     this.totalIn = 0,
     this.totalOut = 0,
