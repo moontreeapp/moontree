@@ -492,6 +492,8 @@ class _SendState extends State<Send> {
           // be ipfs or txids. otherwise we should use memo which can be
           // any text up to lenght bytes 80.
           // sendMemo.text.isAssetMemo
+
+          // TODO: Convert text to UInt8Array here to pass on
           assetMemo: sendMemo.text.isIpfs ? sendMemo.text : null,
           memo: !sendMemo.text.isIpfs && sendMemo.text != ''
               ? sendMemo.text

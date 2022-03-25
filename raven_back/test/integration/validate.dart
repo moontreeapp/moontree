@@ -3,7 +3,7 @@ import 'package:raven_back/utilities/validate.dart';
 import 'package:raven_electrum/connect.dart';
 import 'package:raven_electrum/client/base_client.dart';
 
-const PORT = 50003;
+const PORT = 50002;
 
 void main() {
   test('validate standard assets on chain', () async {
@@ -14,9 +14,6 @@ void main() {
         'Z'.codeUnitAt(0) - 'A'.codeUnitAt(0) + 1,
         (index) => String.fromCharCode('A'.codeUnitAt(0) + index))) {
       print('Checking $letter assets');
-      if (letter == 'U') {
-        continue;
-      }
       var response = await client
           .request('blockchain.asset.get_assets_with_prefix', [letter]);
       response.forEach((element) => {

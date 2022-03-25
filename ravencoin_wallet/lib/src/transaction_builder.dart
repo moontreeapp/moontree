@@ -197,7 +197,7 @@ class TransactionBuilder {
     ownershipScriptPubKey =
         generateAssetOwnershipScript(ownershipScriptPubKey, assetName);
     parentOwnershipScriptPubKey = generateAssetTransferScript(
-        parentOwnershipScriptPubKey, ownerName + '!', 100000000, null);
+        parentOwnershipScriptPubKey, ownerName + '!', 100000000);
     final burnScriptPubKey =
         Address.addressToOutputScript(network.burnAddresses.issueSub, network);
 
@@ -242,7 +242,7 @@ class TransactionBuilder {
     assetScriptPubKey = generateAssetCreateScript(assetScriptPubKey, assetName,
         100000000, 0, false, isMessage ? null : ipfsData);
     parentOwnershipScriptPubKey = generateAssetTransferScript(
-        parentOwnershipScriptPubKey, ownerName + '!', 100000000, null);
+        parentOwnershipScriptPubKey, ownerName + '!', 100000000);
     final burnScriptPubKey = Address.addressToOutputScript(
         isMessage
             ? network.burnAddresses.issueMessage
@@ -304,7 +304,7 @@ class TransactionBuilder {
     // Transfer an ownership asset with a value of 1
     // (Ownership assets have a virtual value of 100000000 sats).
     ownershipScriptPubKey = generateAssetTransferScript(
-        ownershipScriptPubKey, assetName + '!', 100000000, null);
+        ownershipScriptPubKey, assetName + '!', 100000000);
     final burnScriptPubKey =
         Address.addressToOutputScript(network.burnAddresses.reissue, network);
 
@@ -315,14 +315,15 @@ class TransactionBuilder {
 
   // Note: this function only works with RVN vouts and asset (t)ransfer vouts
   // Other types of scripts must be manually input in the *data* parameter.
-  int addOutput(dynamic data, int? value, {String? asset, Uint8List? memo}) {
+  int addOutput(dynamic data, int? value,
+      {String? asset, Uint8List? memo, int? expiry}) {
     var scriptPubKey;
     if (data is String) {
       scriptPubKey = Address.addressToOutputScript(data, network);
       if (asset != null && value != null && scriptPubKey != null) {
         // Replace script with asset transfer and reset value to 0.
-        scriptPubKey =
-            generateAssetTransferScript(scriptPubKey, asset, value, memo);
+        scriptPubKey = generateAssetTransferScript(scriptPubKey, asset, value,
+            ipfsData: memo, expireEpoch: expiry);
         value = 0;
       }
     } else if (data is Uint8List) {
