@@ -23,7 +23,6 @@ enum FormPresets {
 
 class CreateAsset extends StatefulWidget {
   static const int ipfsLength = 89;
-  static const int quantityMax = 21000000;
   final FormPresets preset;
   final bool isSub;
 
@@ -288,6 +287,7 @@ class _CreateAssetState extends State<CreateAsset> {
         ),
         onChanged: (String value) => validateQuantity(quantity: value.toInt()),
         onEditingComplete: () {
+          validateQuantity();
           formatQuantity();
           FocusScope.of(context)
               .requestFocus(isQualifier ? ipfsFocus : decimalFocus);
@@ -346,9 +346,9 @@ class _CreateAssetState extends State<CreateAsset> {
           labelText: 'IPFS/Txid',
           hintText: 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr',
           //helperText: ipfsValidation(ipfsController.text) ? 'match' : null,
-          errorText: !ipfsValidation(ipfsController.text)
-              ? '${CreateAsset.ipfsLength - ipfsController.text.length}'
-              : null,
+          errorText: ipfsController.text == '' || ipfsValidated
+              ? null
+              : 'invalid IPFS',
         ),
         onChanged: (String value) => validateIPFS(ipfs: value),
         onEditingComplete: () => FocusScope.of(context).requestFocus(nextFocus),
@@ -393,27 +393,48 @@ class _CreateAssetState extends State<CreateAsset> {
         onPressed: submit,
       );
 
-  bool nameValidation(String name) {
-    if (!(name.length > 2 && name.length <= remainingNameLength)) {
-      nameValidationErr = '${remainingNameLength - nameController.text.length}';
+  bool nameValidation(String name) =>
+      nameLengthValid(name) && nameTypeValid(name);
+
+  bool nameTypeValid(String name) {
+    if (isMain && !name.isMainAsset) {
+      nameValidationErr = 'invalid Main';
       return false;
-    } else if (name.endsWith('.') || name.endsWith('_')) {
-      nameValidationErr = 'cannot end with special character';
+    }
+    if (isNFT && !name.isNFT) {
+      nameValidationErr = 'invalid NFT';
+      return false;
+    }
+    if (isChannel && !name.isChannel) {
+      nameValidationErr = 'invalid Channel';
+      return false;
+    }
+    if (isRestricted && !name.isRestricted) {
+      nameValidationErr = 'invalid Restricted';
+      return false;
+    }
+    if (isQualifier && !name.isQualifier) {
+      nameValidationErr = 'invalid Qualifier';
+      return false;
+    }
+    if (isSub && isQualifier && !name.isSubQualifier) {
+      nameValidationErr = 'invalid Sub Qualifier';
+      return false;
+    }
+    if (isSub && !name.isSubAsset) {
+      nameValidationErr = 'invalid SubAsset';
       return false;
     }
     nameValidationErr = null;
     return true;
   }
 
-  bool parentValidation(String name) {
-    if (isSub) {
-      if (!(name.length > 2)) {
-        //parentValidationErr =
-        //    '${isNFT ? 'NFT' : isChannel ? 'Message Channel' : isQualifier ? 'Sub Qualifier' : 'Sub'} Assets must have a parent';
-        return false;
-      }
+  bool nameLengthValid(String name) {
+    if (!(name.length > 2 && name.length <= remainingNameLength)) {
+      nameValidationErr = '${remainingNameLength - nameController.text.length}';
+      return false;
     }
-    //parentValidationErr = null;
+    nameValidationErr = null;
     return true;
   }
 
@@ -454,7 +475,7 @@ class _CreateAssetState extends State<CreateAsset> {
     }
   }
 
-  bool ipfsValidation(String ipfs) => ipfs.length <= CreateAsset.ipfsLength;
+  bool ipfsValidation(String ipfs) => ipfs.isIpfs;
 
   void validateIPFS({String? ipfs}) {
     ipfs = ipfs ?? ipfsController.text;
@@ -466,9 +487,7 @@ class _CreateAssetState extends State<CreateAsset> {
   }
 
   bool quantityValidation(int quantity) =>
-      quantityController.text != '' &&
-      quantity <= CreateAsset.quantityMax &&
-      quantity > 0;
+      quantityController.text != '' && quantity.isRVNAmount;
 
   void validateQuantity({int? quantity}) {
     quantity = quantity ?? quantityController.text.toInt();
@@ -503,7 +522,6 @@ class _CreateAssetState extends State<CreateAsset> {
               decimalValidation(decimalController.text.toInt())
           : true) &&
       (isNFT ? ipfsController.text != '' : true) &&
-      parentValidation(parentController.text) &&
       ipfsValidation(ipfsController.text);
 
   void submit() {

@@ -7,10 +7,53 @@ class ListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8),
-      child: Container(
-          child: const ListTile(
-        title: Text('List Item'),
-        leading: Icon(Icons.people),
+      child: Card(
+          child: InkWell(
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text("Clicked"),
+                content: const Text("You clicked the card"),
+                actions: [
+                  TextButton(
+                    child: const Text("OK"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        child: ListTile(
+          title: const Text('List Item '),
+          leading: const Icon(Icons.check),
+          trailing: TextButton(
+            child: const Text('Clickable Button'),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text("Clicked"),
+                    content: const Text("You clicked the Button"),
+                    actions: [
+                      TextButton(
+                        child: const Text("OK"),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ),
       )),
     );
   }

@@ -12,7 +12,6 @@ import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 class CreateWaiter extends Waiter {
   void init() {
     streams.create.request.listen((GenericCreateRequest? createRequest) async {
-      print('streams.create.request: $createRequest');
       if (createRequest != null) {
         await Future.delayed(
             const Duration(milliseconds: 500)); // wait for please wait

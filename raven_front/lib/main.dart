@@ -67,16 +67,24 @@ class RavenMobileApp extends StatelessWidget {
       navigatorObservers: [components.navigator],
       builder: (context, child) {
         components.navigator.scaffoldContext = context;
-        //return Scaffold(
-        //  appBar: AppBar(
-        //    title: const Text('Wallet'),
-        //  ),
-        //  //body: SlidingPanel(
-        //  //  backContent: const BackLayerContent(),
-        //  //  frontContent: LayerContent(title: 'Front Content'),
-        //  //  controlHeight: 0.5,
-        //  //),
-        //);
+/*
+        return Scaffold(
+            appBar: AppBar(
+              title: const Text('Wallet'),
+            ),
+            body: SlidingPanel(
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+              controlHeight: MediaQuery.of(context).size.height / 2,
+              header: header,
+              // the content at the front layer, scroll controller must be passed to the listview builder
+              // to prevent scrolling while the panel not fully shown
+              panelBuilder: (scrollController) =>
+                  FrontLayerContent(scrollController),
+              //Content at the back layer
+              body: const BackLayerContent(),
+            ));
+        */
         return BackdropScaffold(
           //scaffoldKey: components.scaffoldKey, // thought this could help scrim issue, but it didn't
           //maintainBackLayerState: false,
@@ -127,4 +135,16 @@ class RavenMobileApp extends StatelessWidget {
       },
     );
   }
+
+  Widget header = Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Container(
+      color: Colors.white,
+      width: double.infinity,
+      child: const Center(
+        child: Text('Content',
+            style: TextStyle(fontSize: 20, color: Colors.black)),
+      ),
+    ),
+  );
 }

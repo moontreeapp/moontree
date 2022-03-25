@@ -17,8 +17,8 @@ class _BackLayerContentState extends State<BackLayerContent> {
           const Padding(
             padding: EdgeInsets.all(10),
             child: Center(
-              child: Text('Some Content',
-                  style: TextStyle(fontSize: 20, color: Colors.black)),
+              child:
+                  Text('', style: TextStyle(fontSize: 20, color: Colors.black)),
             ),
           ),
           Container(

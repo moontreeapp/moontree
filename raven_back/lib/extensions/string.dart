@@ -50,7 +50,23 @@ extension StringBytesExtension on String {
 }
 
 extension StringVerificationsExtension on String {
-  bool get isIpfs => utils.isIpfs(this);
+  bool get isIpfs => utils.validate.isIpfs(this);
+  bool get isAddressRVN => utils.validate.isAddressRVN(this);
+  bool get isAddressRVNt => utils.validate.isAddressRVNt(this);
+  bool get isTxIdRVN => utils.validate.isTxIdRVN(this);
+  bool get isTxIdFlow => utils.validate.isTxIdFlow(this);
+  bool get isAdmin => utils.validate.isAdmin(this);
+  bool get isAssetPath => utils.validate.isAssetPath(this);
+  bool get isMainAsset => utils.validate.isMainAsset(this);
+  bool get isSubAsset => utils.validate.isSubAsset(this);
+  bool get isNFT => utils.validate.isNFT(this);
+  bool get isChannel => utils.validate.isChannel(this);
+  bool get isQualifier => utils.validate.isQualifier(this);
+  bool get isSubQualifier => utils.validate.isSubQualifier(this);
+  bool get isQualifierString => utils.validate.isQualifierString(this);
+  bool get isRestricted => utils.validate.isRestricted(this);
+  bool get isMemo => utils.validate.isMemo(this);
+  bool get isAssetMemo => utils.validate.isAssetMemo(this);
 }
 
 extension StringCharactersExtension on String {
@@ -59,6 +75,9 @@ extension StringCharactersExtension on String {
 
 extension StringNumericExtension on String {
   bool get isInt {
+    if (length > 15) {
+      return false;
+    }
     try {
       int.parse(this);
       return true;
@@ -72,12 +91,15 @@ extension StringNumericExtension on String {
       split('.').first,
       chars: utils.strings.punctuation + utils.strings.whiteSapce,
     );
+    if (text.length > 15) {
+      text = text.substring(0, 15);
+    }
     if (text == '') {
       return 0;
     }
-    if (int.parse(text) > 21000000000) {
-      return 21000000000;
-    }
+    //if (int.parse(text) > 21000000000) {
+    //  return 21000000000;
+    //}
     return text.asInt();
   }
 
@@ -116,4 +138,8 @@ extension DoubleReadableNumericExtension on double {
       (toString().split('.').last == '0'
           ? ''
           : '.' + toString().split('.').last);
+}
+
+extension ValidateNumericExtension on num {
+  bool get isRVNAmount => utils.validate.isRVNAmount(this);
 }

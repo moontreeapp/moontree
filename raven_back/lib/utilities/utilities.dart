@@ -16,8 +16,29 @@ class utils {
   static final enumerate = transform.enumerate;
   static final removeCharsOtherThan = transform.removeCharsOtherThan;
   static final toStringOverride = imported_strings.toStringOverride;
-  static final isIpfs = validate.isIPFS;
   static final Strings strings = Strings();
+  static final Validate validate = Validate();
+}
+
+class Validate {
+  final isIpfs = validate.isIpfs;
+  final isAddressRVN = validate.isAddressRVN;
+  final isAddressRVNt = validate.isAddressRVNt;
+  final isTxIdRVN = validate.isTxIdRVN;
+  final isTxIdFlow = validate.isTxIdFlow;
+  final isAdmin = validate.isAdmin;
+  final isAssetPath = validate.isAssetPath;
+  final isMainAsset = validate.isMainAsset;
+  final isSubAsset = validate.isSubAsset;
+  final isNFT = validate.isNFT;
+  final isChannel = validate.isChannel;
+  final isRestricted = validate.isRestricted;
+  final isQualifier = validate.isQualifier;
+  final isSubQualifier = validate.isSubQualifier;
+  final isQualifierString = validate.isQualifierString;
+  final isMemo = validate.isMemo;
+  final isAssetMemo = validate.isAssetMemo;
+  final isRVNAmount = validate.isRVNAmount;
 }
 
 class Strings {

@@ -30,7 +30,7 @@ final RegExp RAVEN_NAMES =
 /// todo identify a ipfs hash correctly...
 // https://ethereum.stackexchange.com/questions/17094/how-to-store-ipfs-hash-using-bytes32/17112#17112
 // looks like we just need to consider hex strings or something...
-bool isIPFS(String x) => x.contains(RegExp(
+bool isIpfs(String x) => x.contains(RegExp(
     r'^Qm[1-9A-HJ-NP-Za-km-z]{44}$|^b[A-Za-z2-7]{58}$|^B[A-Z2-7]{58}$|^z[1-9A-HJ-NP-Za-km-z]{48}$|^F[0-9A-F]{50}$'));
 
 bool isAddressRVN(String x) => Address.validateAddress(x, networks.mainnet);
@@ -182,4 +182,5 @@ bool isRestricted(String x) =>
     !x.contains(RAVEN_NAMES);
 // bool isVote(String x) => x.contains(RegExp(r'^$')); // Unused
 bool isMemo(String x) => x.contains(RegExp(r'^.{1,80}$')); // byte len <80
-bool isAssetMemo(String x) => isIPFS(x) || isTxIdFlow(x);
+bool isAssetMemo(String x) => isIpfs(x) || isTxIdFlow(x);
+bool isRVNAmount(num x) => x <= 21000000000 && x > 0;
