@@ -125,7 +125,7 @@ class _TransactionListState extends State<TransactionList> {
                         //      : amountToDisplay;
                         //}()
                         transactionRecord.toSelf!
-                            ? 'sent to self'
+                            ? 'Sent to Self'
                             : components.text.securityAsReadable(
                                 transactionRecord.value,
                                 security: transactionRecord.security,

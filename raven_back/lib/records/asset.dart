@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:raven_back/extensions/object.dart';
-import 'package:raven_back/extensions/string.dart';
+import 'package:raven_back/extensions/validation.dart';
 
 import '_type_id.dart';
 

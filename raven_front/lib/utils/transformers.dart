@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:raven_back/extensions/string.dart';
+import 'package:raven_back/extensions/extensions.dart';
 import 'package:raven_back/utilities/utilities.dart';
 
 class UpperCaseTextFormatter extends TextInputFormatter {

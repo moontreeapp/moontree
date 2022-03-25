@@ -135,7 +135,6 @@ class ApiService {
       ].expand((i) => i);
 
   Future<Iterable<dynamic>> getAssetNames(String prefix) async =>
-      //prefix.isNotEmpty
       prefix.length >= 3
           ? await streams.client.client.value?.getAssetsByPrefix(prefix) ?? []
           : [];

@@ -1,3 +1,4 @@
+import 'package:raven_back/extensions/string.dart';
 import 'package:ravencoin_wallet/src/address.dart' show Address;
 import 'package:ravencoin_wallet/src/models/networks.dart' as networks;
 
@@ -181,6 +182,7 @@ bool isRestricted(String x) =>
     !x.contains(TRAILING_PUNCTUATION) &&
     !x.contains(RAVEN_NAMES);
 // bool isVote(String x) => x.contains(RegExp(r'^$')); // Unused
-bool isMemo(String x) => x.contains(RegExp(r'^.{1,80}$')); // byte len <80
+// bool isMemo(String x) => x.bytes.length <= 80;
+bool isMemo(String x) => x.contains(RegExp(r'^.{1,80}$'));
 bool isAssetMemo(String x) => isIpfs(x) || isTxIdFlow(x);
 bool isRVNAmount(num x) => x <= 21000000000 && x > 0;

@@ -1,6 +1,7 @@
 // dart test test/unit/extensions/string.dart
 import 'package:test/test.dart';
 import 'package:raven_back/extensions/string.dart';
+import 'package:raven_back/extensions/validation.dart';
 
 void main() {
   group('String Extensions', () {
