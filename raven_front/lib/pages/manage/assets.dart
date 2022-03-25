@@ -68,7 +68,6 @@ class _AssetState extends State<Asset> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    currentTxs = Current.compiledTransactions;
     currentHolds = Current.holdings;
     var symbol = data['symbol'] as String;
     return Scaffold(
