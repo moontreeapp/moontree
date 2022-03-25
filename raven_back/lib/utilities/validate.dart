@@ -19,6 +19,10 @@ final RegExp DOUBLE_PUNCTUATION = RegExp(r'^.*[._]{2,}.*$');
 final RegExp LEADING_PUNCTUATION = RegExp(r'^[._].*$');
 final RegExp TRAILING_PUNCTUATION = RegExp(r'^.*[._]$');
 final RegExp QUALIFIER_LEADING_PUNCTUATION = RegExp(r'^[#\$][._].*$');
+final RegExp QUALIFING_STRING_LOGIC_NO_PARENTHESIS =
+    RegExp(r'^((!?[A-Z0-9._]{3,})|((!?[A-Z0-9._]{3,}[|&])+!?[A-Z0-9._]{3,}))$');
+final RegExp EMPTY_PARENTHESIS = RegExp(r'\(\)');
+final RegExp CHILD_ASSETS = RegExp(r'#|/|~');
 
 final RegExp RAVEN_NAMES =
     RegExp(r'^RVN$|^RAVEN$|^RAVENCOIN$|^#RVN$|^#RAVEN$|^#RAVENCOIN$');
@@ -51,7 +55,7 @@ bool isAssetPath(String x) {
   if (x[x.length - 1] == '!') {
     lengthAdds += 1;
   }
-  if (x.contains('#') || x.contains('/') || x.contains('~')) {
+  if (x.contains(CHILD_ASSETS)) {
     lengthAdds += 1;
   }
   if (x.length > 30 + lengthAdds) {
@@ -141,15 +145,34 @@ bool isSubQualifier(String x) =>
     !x.contains(DOUBLE_PUNCTUATION) &&
     !x.contains(LEADING_PUNCTUATION) &&
     !x.contains(TRAILING_PUNCTUATION);
-//This is for on chain. Should be relaxed for user input and parsed down
+
 bool isQualifierString(String x) =>
     x == 'true' ||
     (x.length <= MAX_VERIFIER_STRING &&
+        x
+            .replaceAll(RegExp(r'\s+'), '')
+            .replaceAll(RegExp(r'[\(\)]'), '')
+            .contains(QUALIFING_STRING_LOGIC_NO_PARENTHESIS) &&
+        !x.replaceAll(RegExp(r'\s+'), '').contains(EMPTY_PARENTHESIS) &&
+        x.replaceAll(RegExp(r'\s+'), '').split('').fold(0,
+                (num previousValue, element) {
+              if (element == '(') {
+                return previousValue + 1;
+              } else if (element == ')') {
+                if (previousValue == 0) {
+                  // End parenthsis with no beginning
+                  return 50000;
+                }
+                return previousValue - 1;
+              }
+              return previousValue;
+            }) ==
+            0 &&
         !x.contains(DOUBLE_PUNCTUATION) &&
         !x.contains(QUALIFIER_LEADING_PUNCTUATION) &&
         !x.contains(TRAILING_PUNCTUATION) &&
         !x.contains(RAVEN_NAMES) &&
-        x.replaceAll(RegExp(r'[()|&!]'), ' ').split(' ').every(
+        x.replaceAll(RegExp(r'[\(\)|&!]'), ' ').split(' ').every(
             (element) => element.isEmpty ? true : isQualifier('#' + element)));
 bool isRestricted(String x) =>
     x.contains(RESTRICTED_NAME_CHARACTERS) &&

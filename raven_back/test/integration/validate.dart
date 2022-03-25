@@ -23,6 +23,16 @@ void main() {
             if (!isAssetPath(element)) {fail(element)}
           });
     }
+    for (var letter in List<String>.generate(
+        '9'.codeUnitAt(0) - '0'.codeUnitAt(0) + 1,
+        (index) => String.fromCharCode('0'.codeUnitAt(0) + index))) {
+      print('Checking $letter assets');
+      var response = await client
+          .request('blockchain.asset.get_assets_with_prefix', [letter]);
+      response.forEach((element) => {
+            if (!isAssetPath(element)) {fail(element)}
+          });
+    }
   });
   test('bad standard assets', () {
     expect(isAssetPath('..'), false);
@@ -45,10 +55,10 @@ void main() {
     var response =
         await client.request('blockchain.asset.get_assets_with_prefix', ['\$']);
     for (var element in response) {
-      if (!isAssetPath(element)) fail(element);
+      if (!isAssetPath(element)) fail('Restricted: $element');
       var resp =
           await client.request('blockchain.asset.validator_string', [element]);
-      if (!isQualifierString(resp['string'])) fail(resp['string']);
+      if (!isQualifierString(resp['string'])) fail('String: ${resp['string']}');
     }
   });
 }
