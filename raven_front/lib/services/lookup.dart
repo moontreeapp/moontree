@@ -14,9 +14,6 @@ class Current {
 
   static Set<Transaction> get transactions => wallet.transactions;
 
-  static List<TransactionRecord> get compiledTransactions =>
-      services.transaction.getTransactionRecords(wallet: wallet);
-
   static List<Balance> get holdings => services.balance.walletBalances(wallet);
 
   static List<String> get holdingNames =>

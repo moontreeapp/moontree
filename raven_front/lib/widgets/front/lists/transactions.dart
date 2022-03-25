@@ -73,17 +73,8 @@ class _TransactionListState extends State<TransactionList> {
 
   @override
   Widget build(BuildContext context) {
-    transactions = widget.transactions ?? Current.compiledTransactions;
-    //? services.transaction.getTransactionRecords(
-    //    account: accounts.primaryIndex.getOne(widget.currentAccountId!))
-    //: Current.walletCompiledTransactions(widget.currentWalletId!)
-    //    .where((transactionRecord) =>
-    //        transactionRecord.fromAddress == widget.currentWalletAddress ||
-    //        transactionRecord.toAddress == widget.currentWalletAddress)
-    //    .toList();
-    //for (var tx in transactions) print(tx);
-    //print(vouts.primaryIndex.getOne(
-    //    'b13feb18ae0b66f47e1606230b0a70de7d40ab52fbfc5626488136fbaa668b34:0'));
+    transactions = widget.transactions ??
+        services.transaction.getTransactionRecords(wallet: Current.wallet);
     return transactions.isEmpty
         ? components.empty.transactions(context, msg: widget.msg)
         : Container(

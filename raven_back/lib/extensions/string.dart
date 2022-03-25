@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:convert/convert.dart';
 import 'package:raven_back/utilities/utilities.dart';
 
+import '../utilities/transform.dart';
+
 extension StringCasingExtension on String {
   String toCapitalized() =>
       1 < length ? substring(0, 1).toUpperCase() + substring(1) : toUpperCase();
@@ -98,6 +100,8 @@ extension IntReadableNumericExtension on int {
     }
     return ret;
   }
+
+  double toAmount() => satToAmount(this);
 }
 
 extension DoubleReadableNumericExtension on double {

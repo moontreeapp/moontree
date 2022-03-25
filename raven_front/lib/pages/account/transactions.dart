@@ -74,9 +74,10 @@ class _TransactionsState extends State<Transactions>
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    currentTxs = Current.compiledTransactions;
-    currentHolds = Current.holdings;
     security = data['holding']!.security;
+    currentHolds = Current.holdings;
+    currentTxs = services.transaction
+        .getTransactionRecords(wallet: Current.wallet, securities: {security});
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.transparent,
