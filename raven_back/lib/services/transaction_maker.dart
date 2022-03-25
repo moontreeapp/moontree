@@ -686,6 +686,7 @@ class TransactionMaker {
     SendEstimate estimate, {
     required Wallet wallet,
     TxGoal? goal,
+    int? assetMemoExpiry,
   }) async {
     ravencoin.TransactionBuilder? txb;
     ravencoin.Transaction tx;
@@ -738,6 +739,7 @@ class TransactionMaker {
         estimate.amount,
         asset: estimate.security?.symbol,
         memo: estimate.assetMemo?.hexBytes,
+        expiry: assetMemoExpiry,
       );
       if (securityChange > 0) {
         txb.addOutput(

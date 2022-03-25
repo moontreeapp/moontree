@@ -25,8 +25,7 @@ main() {
       var data = assets.generateAssetTransferScript(
           decode('76a914f05325e90d5211def86b856c9569e5480820129088ac'),
           'SCAMCOIN',
-          1 * ONE_SAT,
-          null);
+          1 * ONE_SAT);
       expect(encode(data),
           '76a914f05325e90d5211def86b856c9569e5480820129088acc01572766e74085343414d434f494e00e1f5050000000075');
     });
@@ -42,7 +41,8 @@ main() {
           decode('76a9140a6e44c0b7a5da84c38ed2900c6b6ce3b8c2e27a88ac'),
           'MOONTREE1',
           (0.9 * ONE_SAT).toInt(),
-          base58.decode('Qmd286K6pohQcTKYqnS1YhWrCiS4gz7Xi34sdwMe9USZ7u'));
+          ipfsData:
+              base58.decode('Qmd286K6pohQcTKYqnS1YhWrCiS4gz7Xi34sdwMe9USZ7u'));
       expect(encode(data),
           '76a9140a6e44c0b7a5da84c38ed2900c6b6ce3b8c2e27a88acc03872766e74094d4f4f4e5452454531804a5d05000000001220da203afd5eda1f45deeafb70ae9d5c15907cd32ec2cd747c641fc1e9ab55b8e875');
     });
@@ -55,8 +55,8 @@ main() {
       //https://rvn.cryptoscope.io/api/getrawtransaction/?txid=bae95f349f15effe42e75134ee7f4560f53462ddc19c47efdd03f85ef4ab8f40&decode=1
       var script = Address.addressToOutputScript(
           'RXBurnXXXXXXXXXXXXXXXXXXXXXXWUo9FV', mainnet);
-      var data = assets.generateAssetTransferScript(
-          script!, 'SCAMCOIN', 1 * ONE_SAT, null);
+      var data =
+          assets.generateAssetTransferScript(script!, 'SCAMCOIN', 1 * ONE_SAT);
       expect(encode(data),
           '76a914f05325e90d5211def86b856c9569e5480820129088acc01572766e74085343414d434f494e00e1f5050000000075');
       // To add asset:
@@ -127,6 +127,37 @@ main() {
           base58.decode('QmYHbwuTfsbwh6Z8rmdTXkgEcLAntinju5SR9x8drn9oQ3'));
       expect(encode(data),
           '76a91448fb91baa2f03a0abb7cdc853d7f6cbe716481e388acc03672766e7205504b42495400000000000000000801122093cd00f45e38dfd4ab071d94999ef24951f131385b3383cd12784e3e68955be075');
+    });
+    //TODO:
+    test('asset memo w/ expire', () {});
+
+    test('null qualifier tag', () {
+      //#SYSTEM/#GALAXY
+      //True
+      //RSCHsa4HKH6qQ1cbHWAnQ8AxPHehwMwpkL
+      //c014b98ce5280197c46eb0c8423534fe81cbdedf9aef110f2353595354454d2f2347414c41585901
+      //https://rvn.cryptoscope.io/api/getrawtransaction/?txid=4ea3369ef6fb57fc26e176ad5903d4684a8c64f641aa0e1f02e5c7428609e060&decode=1
+      var address_bytes = base58.decode('RSCHsa4HKH6qQ1cbHWAnQ8AxPHehwMwpkL');
+      var data = assets.generateNullQualifierTag('#SYSTEM/#GALAXY',
+          address_bytes.sublist(1, address_bytes.length - 4), true);
+      expect(encode(data),
+          'c014b98ce5280197c46eb0c8423534fe81cbdedf9aef110f2353595354454d2f2347414c41585901');
+    });
+
+    test('null verifier string', () {
+      //BONO_QUALIFIER
+      //c0500f0e424f4e4f5f5155414c4946494552
+      //https://rvn.cryptoscope.io/api/getrawtransaction/?txid=477a0b2214475d11e316524b500e29837c6763fec256594c2ca7aa369b15888b&decode=1
+      var data = assets.generateNullVerifierTag('BONO_QUALIFIER');
+      expect(encode(data), 'c0500f0e424f4e4f5f5155414c4946494552');
+    });
+
+    test('global freeze', () {
+      //$BONO_MAIN
+      //c050500c0a24424f4e4f5f4d41494e00
+      //https://rvn.cryptoscope.io/api/getrawtransaction/?txid=2fc0bb7e3a33d12ca08f72add0effc3d059cf63382bebcad96e8923e91c3c537&decode=1
+      var data = assets.generateNullGlobalFreezeTag('\$BONO_MAIN', false);
+      expect(encode(data), 'c050500c0a24424f4e4f5f4d41494e00');
     });
   });
 }

@@ -8,6 +8,8 @@ import 'utils/script.dart' as bscript;
 import 'utils/constants/op.dart';
 import 'validate.dart';
 
+import "package:hex/hex.dart";
+
 const List<int> RVN_rvn = [0x72, 0x76, 0x6e];
 const int RVN_t = 0x74;
 const int RVN_q = 0x71;
@@ -15,8 +17,9 @@ const int RVN_o = 0x6F;
 const int RVN_r = 0x72;
 
 // standard_script should have no OP_PUSH
-Uint8List generateAssetTransferScript(Uint8List standardScript,
-    String assetName, int amount, Uint8List? ipfsData) {
+Uint8List generateAssetTransferScript(
+    Uint8List standardScript, String assetName, int amount,
+    {Uint8List? ipfsData, int? expireEpoch}) {
   // ORIGINAL | OP_RVN_ASSET | OP_PUSH  ( b'rvnt' | var_int (assetName) | sats | ipfsData? ) | OP_DROP
   if (!isAssetNameGood(assetName)) {
     throw new ArgumentError('Invalid asset name');
@@ -26,6 +29,9 @@ Uint8List generateAssetTransferScript(Uint8List standardScript,
   }
   if (ipfsData?.length != null && ipfsData?.length != 34) {
     throw new ArgumentError('Invalid IPFS data');
+  }
+  if (expireEpoch != null && expireEpoch <= 0) {
+    throw new ArgumentError('Invalid expire time');
   }
 
   final amountData = ByteData(8);
@@ -39,6 +45,10 @@ Uint8List generateAssetTransferScript(Uint8List standardScript,
   internal_builder.add(amountData.buffer.asUint8List());
   if (ipfsData != null) {
     internal_builder.add(ipfsData);
+  }
+  if (expireEpoch != null) {
+    amountData.setUint64(0, expireEpoch, Endian.little);
+    internal_builder.add(amountData.buffer.asUint8List());
   }
 
   // OP_PUSH  ( b'rvnt' | var_int (assetName) | sats | ipfsData? )
@@ -176,4 +186,43 @@ Uint8List generateAssetReissueScript(
   internal_builder.addByte(OPS['OP_DROP']!);
 
   return internal_builder.toBytes();
+}
+
+// Tag true:
+//  Restricted assets: banned
+//  Qualifier assets: qualified
+// Tag false:
+//  Restricted assets: allowed
+//  Qualifier assets: not qualified
+
+Uint8List generateNullQualifierTag(String asset, Uint8List h160, bool tag) {
+  if (h160.length != 0x14) {
+    throw new ArgumentError('Invalid h160 length');
+  }
+  if (!asset.contains(RegExp(r'^(\$|#).+$'))) {
+    throw new ArgumentError(
+        'Asset must be a restricted asset, qualifier, or sub qualifier');
+  }
+
+  final internal_builder = new BytesBuilder();
+
+  internal_builder.addByte(asset.length);
+  internal_builder.add(utf8.encode(asset));
+  internal_builder.addByte(tag ? 1 : 0);
+
+  return bscript
+      .compile([OPS['OP_RVN_ASSET'], h160, internal_builder.toBytes()])!;
+}
+
+Uint8List generateNullVerifierTag(String verifier_string) {
+  final internal_script = bscript.compile([utf8.encode(verifier_string)]);
+  return bscript.compile([OPS['OP_RVN_ASSET'], 0x50, internal_script])!;
+}
+
+Uint8List generateNullGlobalFreezeTag(String asset, bool flag) {
+  if (!asset.contains(RegExp(r'^\$.+$'))) {
+    throw new ArgumentError('Asset must be a restricted asset');
+  }
+  final internal_script = bscript.compile([utf8.encode(asset), flag ? 1 : 0]);
+  return bscript.compile([OPS['OP_RVN_ASSET'], 0x50, 0x50, internal_script])!;
 }
