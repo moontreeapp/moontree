@@ -83,7 +83,7 @@ class RestrictedCreateRequest {
   });
 }
 
-class GenericCreateRequest {
+class GenericCreateRequest with ToStringMixin {
   late bool isSub;
   late bool isMain;
   late bool isNFT;
@@ -118,6 +118,43 @@ class GenericCreateRequest {
     this.reissuable,
     this.parent,
   });
+
+  @override
+  List<Object?> get props => [
+        isSub,
+        isMain,
+        isNFT,
+        isChannel,
+        isQualifier,
+        isRestricted,
+        fullName,
+        wallet,
+        name,
+        ipfs,
+        quantity,
+        decimals,
+        verifier,
+        reissuable,
+        parent,
+      ];
+  @override
+  List<String> get propNames => [
+        'isSub',
+        'isMain',
+        'isNFT',
+        'isChannel',
+        'isQualifier',
+        'isRestricted',
+        'fullName',
+        'wallet',
+        'name',
+        'ipfs',
+        'quantity',
+        'decimals',
+        'verifier',
+        'reissuable',
+        'parent',
+      ];
 
   Security get security =>
       Security(symbol: fullName, securityType: SecurityType.RavenAsset);
@@ -180,13 +217,15 @@ class SendRequest with ToStringMixin {
       ];
 }
 
-class SendEstimate {
+class SendEstimate with ToStringMixin {
   int amount;
   int fees;
   List<Vout> utxos;
   Security? security;
   String? assetMemo;
   String? memo;
+  int extraFees = 0;
+  bool creation;
 
   SendEstimate(
     this.amount, {
@@ -195,13 +234,34 @@ class SendEstimate {
     this.security,
     this.assetMemo,
     this.memo,
+    this.creation = false,
   }) : utxos = utxos ?? [];
 
   @override
-  String toString() =>
-      'SendEstimate(amount: $amount, fees: $fees, utxos: $utxos)';
+  List<Object?> get props => [
+        amount,
+        fees,
+        utxos,
+        security,
+        assetMemo,
+        memo,
+        extraFees,
+        creation,
+      ];
 
-  int get total => amount + fees;
+  @override
+  List<String> get propNames => [
+        'amount',
+        'fees',
+        'utxos',
+        'security',
+        'assetMemo',
+        'memo',
+        'extraFees',
+        'creation',
+      ];
+
+  int get total => (creation ? 0 : amount) + fees + extraFees;
   int get utxoTotal => utxos.fold(
       0, (int total, vout) => total + vout.securityValue(security: security));
 
@@ -213,6 +273,8 @@ class SendEstimate {
   }
 
   void setFees(int fees_) => fees = fees_;
+  void setExtraFees(int fees_) => extraFees = fees_;
+  void setCreation(bool creation_) => creation = creation_;
   void setUTXOs(List<Vout> utxos_) => utxos = utxos_;
   void setAmount(int amount_) => amount = amount_;
 }
@@ -257,36 +319,60 @@ class TransactionMaker {
     GenericCreateRequest createRequest,
   ) async {
     var estimate = SendEstimate(
-      createRequest.quantity!,
+      (createRequest.quantity ?? 1) * 100000000,
       security: createRequest.security,
+      creation: true,
       //assetMemo: createRequest.assetMemo, // not on front end
       //memo: createRequest.memo, // op return memos allowed, but not on front end
     );
+    print(estimate.total);
     // MOONTREETESTASSET
     // QmQsUFxsd4S5FZGxQJjVSBVSPv8Gt1adRE16nACt2zv6KP
 
-    print('createTransactionBy');
-    return
-        //createRequest.isSub ? transactionCreateSubAsset() : createRequest.isNFT || createRequest.isChannel ? transactionCreateChildAsset :
-        await transactionCreateMainAsset(
-      estimate,
-      createRequest.decimals ?? 0,
-      createRequest.reissuable ?? false,
-      ipfsData: createRequest.ipfs != null
-          ? base58.decode(createRequest.ipfs!)
-          : null, // maybe this should be bytes from front
-      wallet: createRequest.wallet,
-      goal: TxGoals.standard,
-    );
+    print('createTransactionBy $estimate');
+    return createRequest.isNFT || createRequest.isChannel
+        ? transactionCreateChildAsset(
+            createRequest.parent!,
+            estimate,
+            ipfsData: createRequest.ipfs != null
+                ? base58.decode(createRequest.ipfs!)
+                : null, // maybe this should be bytes from front
+            wallet: createRequest.wallet,
+            goal: TxGoals.standard,
+          )
+        : createRequest.isSub
+            ? transactionCreateSubAsset(
+                createRequest.parent!,
+                estimate,
+                createRequest.decimals ?? 0,
+                createRequest.reissuable ?? false,
+                ipfsData: createRequest.ipfs != null
+                    ? base58.decode(createRequest.ipfs!)
+                    : null, // maybe this should be bytes from front
+                wallet: createRequest.wallet,
+                goal: TxGoals.standard,
+              )
+            :
+            // Restricted and Qualifier
+            await transactionCreateMainAsset(
+                estimate,
+                createRequest.decimals ?? 0,
+                createRequest.reissuable ?? false,
+                ipfsData: createRequest.ipfs != null
+                    ? base58.decode(createRequest.ipfs!)
+                    : null, // maybe this should be bytes from front
+                wallet: createRequest.wallet,
+                goal: TxGoals.standard,
+              );
   }
 
   Tuple2<ravencoin.Transaction, SendEstimate> transactionReissueAsset(
-    String newAssetToAddress,
     SendEstimate estimate,
     int originalDivisibility,
     int currentSatsInCirculation,
     int newDivisibility,
     bool reissuability, {
+    String? newAssetToAddress,
     String? ownershipToAddress,
     Uint8List? ipfsData,
     required Wallet wallet,
@@ -322,8 +408,8 @@ class TransactionMaker {
 
       // This populates the transaction with vouts for reissuing
       txb.generateCreateReissueVouts(
-          newAssetToAddress,
-          ownershipToAddress ?? newAssetToAddress,
+          newAssetToAddress ?? returnAddress,
+          ownershipToAddress ?? newAssetToAddress ?? returnAddress,
           currentSatsInCirculation,
           estimate.amount,
           estimate.security!.symbol,
@@ -368,8 +454,6 @@ class TransactionMaker {
     var returnAddress = services.wallet.getChangeAddress(wallet);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
-      print('feeSats $feeSats ${estimate.fees}');
-      print('returnRaven $returnRaven');
       feeSats = estimate.fees;
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee + burn
@@ -402,17 +486,18 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: goal));
     }
+    estimate.setExtraFees(res.settings.network.burnAmounts.issueMain);
     await txb!.signEachInput(utxosRaven);
     tx = txb.build();
     return Tuple2(tx, estimate);
   }
 
   Tuple2<ravencoin.Transaction, SendEstimate> transactionCreateSubAsset(
-    String newAssetToAddress,
     String parentAsset,
     SendEstimate estimate,
     int divisibility,
     bool reissuability, {
+    String? newAssetToAddress,
     String? parentOwnershipToAddress,
     String? ownershipToAddress,
     Uint8List? ipfsData,
@@ -451,8 +536,8 @@ class TransactionMaker {
       returnRaven =
           satsIn - res.settings.network.burnAmounts.issueSub - feeSats;
       txb.generateCreateSubAssetVouts(
-          newAssetToAddress,
-          ownershipToAddress ?? newAssetToAddress,
+          newAssetToAddress ?? returnAddress,
+          ownershipToAddress ?? newAssetToAddress ?? returnAddress,
           parentOwnershipToAddress ?? returnAddress,
           estimate.amount,
           parentAsset,
@@ -469,6 +554,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: goal));
     }
+    estimate.setExtraFees(res.settings.network.burnAmounts.issueSub);
     txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
     return Tuple2(tx, estimate);
@@ -476,9 +562,9 @@ class TransactionMaker {
 
   // Used for unique and message assets
   Tuple2<ravencoin.Transaction, SendEstimate> transactionCreateChildAsset(
-    String newAssetToAddress,
     String parentAsset,
     SendEstimate estimate, {
+    String? newAssetToAddress,
     String? parentOwnershipToAddress,
     Uint8List? ipfsData,
     required Wallet wallet,
@@ -499,16 +585,16 @@ class TransactionMaker {
         : <Vout>[];
     var returnAddress = services.wallet.getChangeAddress(wallet);
     var returnRaven = -1; // Init to bad val
+    var extraFee = (estimate.security!.symbol.contains('~')
+        ? res.settings.network.burnAmounts.issueMessage
+        : res.settings.network.burnAmounts.issueUnique);
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee plus burn
       utxosRaven = services.balance.collectUTXOs(
         wallet,
-        amount: feeSats +
-            (estimate.security!.symbol.contains('~')
-                ? res.settings.network.burnAmounts.issueMessage
-                : res.settings.network.burnAmounts.issueUnique),
+        amount: feeSats + extraFee,
         security: null,
       );
       var satsIn = 0;
@@ -516,13 +602,9 @@ class TransactionMaker {
         txb.addInput(utxo.transactionId, utxo.position);
         satsIn += utxo.rvnValue;
       }
-      returnRaven = satsIn -
-          (estimate.security!.symbol.contains('~')
-              ? res.settings.network.burnAmounts.issueMessage
-              : res.settings.network.burnAmounts.issueUnique) -
-          feeSats;
+      returnRaven = satsIn - extraFee - feeSats;
       txb.generateCreateChildAssetVouts(
-          newAssetToAddress,
+          newAssetToAddress ?? returnAddress,
           parentOwnershipToAddress ?? returnAddress,
           parentAsset,
           estimate.security!.symbol,
@@ -536,6 +618,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: goal));
     }
+    estimate.setExtraFees(extraFee);
     txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
     return Tuple2(tx, estimate);
