@@ -104,6 +104,184 @@ class TransactionBuilder {
         (offset == null ? 0 : offset), script, 0);
   }
 
+  int generateCreateQualifierVouts(
+      dynamic newAssetTo, int value, String assetName, Uint8List? ipfsData) {
+    var assetScriptPubKey;
+    if (newAssetTo is String) {
+      assetScriptPubKey = Address.addressToOutputScript(newAssetTo, network);
+    } else if (newAssetTo is Uint8List) {
+      assetScriptPubKey = newAssetTo;
+    } else {
+      throw ArgumentError('newAssetTo Address invalid');
+    }
+
+    if (!_canModifyOutputs()) {
+      throw ArgumentError('No, this would invalidate signatures');
+    }
+    if (_tx!.outs.isNotEmpty) {
+      throw ArgumentError('This transaction already has outputs!');
+    }
+
+    final burnScriptPubKey = Address.addressToOutputScript(
+        network.burnAddresses.issueQualifier, network);
+
+    assetScriptPubKey = generateAssetCreateScript(
+        assetScriptPubKey, assetName, value, 0, false, ipfsData);
+
+    _tx!.addOutput(burnScriptPubKey, network.burnAmounts.issueQualifier);
+    return _tx!.addOutput(assetScriptPubKey, 0);
+  }
+
+  int generateCreateSubQualifierVouts(dynamic newAssetTo, dynamic parentAssetTo,
+      int value, String parentName, String assetName, Uint8List? ipfsData) {
+    var assetScriptPubKey;
+    var ownerScriptPubKey;
+    if (newAssetTo is String) {
+      assetScriptPubKey = Address.addressToOutputScript(newAssetTo, network);
+    } else if (newAssetTo is Uint8List) {
+      assetScriptPubKey = newAssetTo;
+    } else {
+      throw ArgumentError('newAssetTo Address invalid');
+    }
+    if (parentAssetTo is String) {
+      ownerScriptPubKey = Address.addressToOutputScript(parentAssetTo, network);
+    } else if (newAssetTo is Uint8List) {
+      ownerScriptPubKey = parentAssetTo;
+    } else {
+      throw ArgumentError('newAssetTo Address invalid');
+    }
+
+    if (!_canModifyOutputs()) {
+      throw ArgumentError('No, this would invalidate signatures');
+    }
+    if (_tx!.outs.isNotEmpty) {
+      throw ArgumentError('This transaction already has outputs!');
+    }
+
+    final burnScriptPubKey = Address.addressToOutputScript(
+        network.burnAddresses.issueSubQualifier, network);
+
+    ownerScriptPubKey =
+        generateAssetTransferScript(parentAssetTo, parentName, 100000000);
+    assetScriptPubKey = generateAssetCreateScript(
+        assetScriptPubKey, assetName, value, 0, false, ipfsData);
+
+    _tx!.addOutput(burnScriptPubKey, network.burnAmounts.issueSubQualifier);
+    _tx!.addOutput(ownerScriptPubKey, 0);
+    return _tx!.addOutput(assetScriptPubKey, 0);
+  }
+
+  int generateCreateRestrictedVouts(
+      dynamic newAssetTo,
+      dynamic parentAssetTo,
+      int value,
+      int divisibility,
+      bool reissuable,
+      Uint8List? ipfsData,
+      String assetName,
+      String? verifier) {
+    var assetScriptPubKey;
+    var ownerScriptPubKey;
+
+    if (newAssetTo is String) {
+      assetScriptPubKey = Address.addressToOutputScript(newAssetTo, network);
+    } else if (newAssetTo is Uint8List) {
+      assetScriptPubKey = newAssetTo;
+    } else {
+      throw ArgumentError('newAssetTo Address invalid');
+    }
+
+    if (parentAssetTo is String) {
+      ownerScriptPubKey = Address.addressToOutputScript(parentAssetTo, network);
+    } else if (newAssetTo is Uint8List) {
+      ownerScriptPubKey = parentAssetTo;
+    } else {
+      throw ArgumentError('newAssetTo Address invalid');
+    }
+
+    if (!_canModifyOutputs()) {
+      throw ArgumentError('No, this would invalidate signatures');
+    }
+    if (_tx!.outs.isNotEmpty) {
+      throw ArgumentError('This transaction already has outputs!');
+    }
+
+    final burnScriptPubKey = Address.addressToOutputScript(
+        network.burnAddresses.issueRestricted, network);
+    final verifierScriptPubKey = generateNullVerifierTag(
+        (verifier == null || verifier.isEmpty) ? 'true' : verifier);
+    assetScriptPubKey = generateAssetCreateScript(assetScriptPubKey, assetName,
+        value, divisibility, reissuable, ipfsData);
+    ownerScriptPubKey = generateAssetTransferScript(
+        ownerScriptPubKey, assetName.substring(1) + '!', 100000000);
+
+    _tx!.addOutput(burnScriptPubKey, network.burnAmounts.issueRestricted);
+    _tx!.addOutput(ownerScriptPubKey, 0);
+    _tx!.addOutput(verifierScriptPubKey, 0);
+    return _tx!.addOutput(assetScriptPubKey, 0);
+  }
+
+  int generateReissueRestrictedVouts(
+      dynamic newAssetTo,
+      dynamic parentAssetTo,
+      int originalSats,
+      int satsAdded,
+      int old_divisibility,
+      int divisibility,
+      bool reissuable,
+      Uint8List? ipfsData,
+      String assetName,
+      String? verifier) {
+    var assetScriptPubKey;
+    var ownerScriptPubKey;
+
+    if (newAssetTo is String) {
+      assetScriptPubKey = Address.addressToOutputScript(newAssetTo, network);
+    } else if (newAssetTo is Uint8List) {
+      assetScriptPubKey = newAssetTo;
+    } else {
+      throw ArgumentError('newAssetTo Address invalid');
+    }
+
+    if (parentAssetTo is String) {
+      ownerScriptPubKey = Address.addressToOutputScript(parentAssetTo, network);
+    } else if (newAssetTo is Uint8List) {
+      ownerScriptPubKey = parentAssetTo;
+    } else {
+      throw ArgumentError('newAssetTo Address invalid');
+    }
+
+    if (!_canModifyOutputs()) {
+      throw ArgumentError('No, this would invalidate signatures');
+    }
+    if (_tx!.outs.isNotEmpty) {
+      throw ArgumentError('This transaction already has outputs!');
+    }
+
+    final burnScriptPubKey =
+        Address.addressToOutputScript(network.burnAddresses.reissue, network);
+    final verifierScriptPubKey = generateNullVerifierTag(
+        (verifier == null || verifier.isEmpty) ? 'true' : verifier);
+    assetScriptPubKey = generateAssetReissueScript(
+        assetScriptPubKey,
+        assetName,
+        originalSats,
+        satsAdded,
+        old_divisibility,
+        divisibility,
+        reissuable,
+        ipfsData);
+    ownerScriptPubKey = generateAssetTransferScript(
+        ownerScriptPubKey, assetName.substring(1) + '!', 100000000);
+
+    _tx!.addOutput(burnScriptPubKey, network.burnAmounts.reissue);
+    _tx!.addOutput(ownerScriptPubKey, 0);
+    if (verifier != null && verifier.isNotEmpty) {
+      _tx!.addOutput(verifierScriptPubKey, 0);
+    }
+    return _tx!.addOutput(assetScriptPubKey, 0);
+  }
+
   // Note: this function generates all of the vouts for you. No other vouts may be added.
   // Last two vouts must be the asset generations.
   // Use Transaction.addChangeForAssetCreation to safely add.

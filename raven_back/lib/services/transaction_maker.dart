@@ -418,15 +418,15 @@ class TransactionMaker {
           reissuability,
           ipfsData);
 
+      // This inserts a memo in a valid index
+      if (estimate.memo != null) {
+        txb.addMemo(estimate.memo, offset: 1);
+      }
       // This inserts change in a valid index
       if (returnRaven > 0) {
         txb.addChangeToAssetCreationOrReissuance(1, returnAddress, returnRaven);
       }
 
-      // This inserts a memo in a valid index
-      if (estimate.memo != null) {
-        txb.addMemo(estimate.memo, offset: 1);
-      }
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: goal));
     }
@@ -477,11 +477,11 @@ class TransactionMaker {
           reissuability,
           ipfsData);
 
-      if (returnRaven > 0) {
-        txb.addChangeToAssetCreationOrReissuance(2, returnAddress, returnRaven);
-      }
       if (estimate.memo != null) {
-        txb.addMemo(estimate.memo, offset: 2);
+        txb.addMemo(estimate.memo, offset: 1);
+      }
+      if (returnRaven > 0) {
+        txb.addChangeToAssetCreationOrReissuance(1, returnAddress, returnRaven);
       }
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: goal));
@@ -545,11 +545,11 @@ class TransactionMaker {
           divisibility,
           reissuability,
           ipfsData);
-      if (returnRaven > 0) {
-        txb.addChangeToAssetCreationOrReissuance(3, returnAddress, returnRaven);
-      }
       if (estimate.memo != null) {
-        txb.addMemo(estimate.memo, offset: 3);
+        txb.addMemo(estimate.memo, offset: 1);
+      }
+      if (returnRaven > 0) {
+        txb.addChangeToAssetCreationOrReissuance(1, returnAddress, returnRaven);
       }
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: goal));
@@ -609,11 +609,11 @@ class TransactionMaker {
           parentAsset,
           estimate.security!.symbol,
           ipfsData);
-      if (returnRaven > 0) {
-        txb.addChangeToAssetCreationOrReissuance(2, returnAddress, returnRaven);
-      }
       if (estimate.memo != null) {
-        txb.addMemo(estimate.memo, offset: 2);
+        txb.addMemo(estimate.memo, offset: 1);
+      }
+      if (returnRaven > 0) {
+        txb.addChangeToAssetCreationOrReissuance(1, returnAddress, returnRaven);
       }
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: goal));
