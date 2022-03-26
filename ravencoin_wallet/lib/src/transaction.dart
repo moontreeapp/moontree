@@ -64,8 +64,10 @@ class Transaction {
 
   int addChangeForAssetCreationOrReissuance(
       int offset, Uint8List? scriptPubKey, int? value) {
-    outs.insert(
-        outs.length - offset, new Output(script: scriptPubKey, value: value));
+    if (offset < 0) {
+      offset = outs.length - offset;
+    }
+    outs.insert(offset, new Output(script: scriptPubKey, value: value));
     return outs.length - 1;
   }
 
