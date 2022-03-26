@@ -24,6 +24,7 @@ enum SelectionSet {
   Sub_Qualifier,
   Feedback,
   Wallets,
+  MainManage
 }
 
 enum SelectionOption {
@@ -80,6 +81,10 @@ enum SelectionOption {
   //feedback
   Change,
   Bug,
+
+  // manage
+  Reissue,
+  Issue_Dividend,
 }
 
 class SelectionItems {
@@ -140,6 +145,10 @@ class SelectionItems {
               SelectionSet.Feedback: [
                 SelectionOption.Change,
                 SelectionOption.Bug,
+              ],
+              SelectionSet.MainManage: [
+                SelectionOption.Reissue,
+                SelectionOption.Issue_Dividend,
               ],
             }[modalSet]) ??
         [];
@@ -261,6 +270,8 @@ class SelectionItems {
             SelectionOption.Change: Icons.add_rounded, //, color: Colors.black),
             SelectionOption.Bug:
                 Icons.bug_report_rounded, //, color: Colors.black),
+            SelectionOption.Reissue: Icons.refresh_rounded,
+            SelectionOption.Issue_Dividend: MdiIcons.handCoin,
           }[name] ??
           MdiIcons.information,
       color: {

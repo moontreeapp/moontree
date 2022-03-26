@@ -87,9 +87,15 @@ class _NavBarState extends State<NavBar> {
                                               : () {}),
                                   SizedBox(width: 16)
                                 ],
-                                components.buttons
-                                    .actionButton(context, label: 'manage',
-                                        onPressed: () {/* bring up options */}),
+                                components.buttons.actionButton(context,
+                                    label: 'manage', onPressed: () {
+                                  // if main do this
+                                  _produceMainManageModal();
+                                  // if sub do this
+                                  //_produceSubManageModal();
+                                  // if other do this
+                                  //
+                                }),
                               ],
                       ),
                 Padding(
@@ -150,5 +156,9 @@ class _NavBarState extends State<NavBar> {
 
   void _produceSubCreateModal() {
     SelectionItems(context, modalSet: SelectionSet.Sub_Asset).build();
+  }
+
+  void _produceMainManageModal() async {
+    await SelectionItems(context, modalSet: SelectionSet.MainManage).build();
   }
 }
