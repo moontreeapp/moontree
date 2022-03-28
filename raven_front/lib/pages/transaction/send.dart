@@ -40,7 +40,7 @@ class _SendState extends State<Send> {
   late int divisibility = 8;
   String visibleAmount = '0';
   String visibleFiatAmount = '';
-  String validatedAddress = 'unknown';
+  bool validatedAddress = true;
   String validatedAmount = '-1';
   bool useWallet = false;
   double holding = 0.0;
@@ -54,6 +54,7 @@ class _SendState extends State<Send> {
   ravencoin.TxGoal feeGoal = ravencoin.TxGoals.standard;
   String addressName = '';
   bool showPaste = false;
+  String clipboard = '';
 
   @override
   void initState() {
@@ -83,7 +84,9 @@ class _SendState extends State<Send> {
                       : sendAsset.text;
           sendFee.text = value.fee ?? 'Standard';
           sendNote.text = value.note ?? sendNote.text;
-          sendAmount.text = value.amount?.toString() ?? sendAmount.text;
+          sendAmount.text = value.amount == 0.0
+              ? ''
+              : value.amount?.toString() ?? sendAmount.text;
           sendAddress.text = value.address ?? sendAddress.text;
           addressName = value.addressName ?? addressName;
         });
@@ -176,7 +179,10 @@ class _SendState extends State<Send> {
     } catch (e) {
       visibleFiatAmount = '';
     }
-    return body();
+    return GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        // we want this to be liquid as well, #182
+        child: body());
   }
 
   Widget body() => components.page.form(
@@ -229,10 +235,16 @@ class _SendState extends State<Send> {
       Visibility(visible: addressName != '', child: Text('To: $addressName'));
 
   Widget get sendAddressField => TextField(
+        onTap: () async {
+          clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
+        },
         selectionControls: NoToolBar(),
         focusNode: sendAddressFocusNode,
         controller: sendAddress,
         autocorrect: false,
+        inputFormatters: [
+          FilteringTextInputFormatter(RegExp(r'[a-zA-Z0-9]'), allow: true)
+        ],
         decoration: components.styles.decorations.textFeild(context,
             focusNode: sendAddressFocusNode,
             labelText: 'To',
@@ -241,15 +253,19 @@ class _SendState extends State<Send> {
                 sendAddress.text != '' && !_validateAddress(sendAddress.text)
                     ? 'Unrecognized Address'
                     : null,
-            suffixIcon:
+            suffixIcon: true ||
+                    (res.settings.net == Net.Main && clipboard.isAddressRVN) ||
+                    (res.settings.net == Net.Test && clipboard.isAddressRVNt)
+                ?
                 //QRCodeButton(pageTitle: 'Send-to', light: false),
                 IconButton(
-              icon: Icon(Icons.paste_rounded, color: AppColors.black60),
-              onPressed: () async {
-                sendAddress.text =
-                    (await Clipboard.getData('text/plain'))?.text ?? '';
-              },
-            )),
+                    icon: Icon(Icons.paste_rounded, color: AppColors.black60),
+                    onPressed: () async {
+                      sendAddress.text =
+                          (await Clipboard.getData('text/plain'))?.text ?? '';
+                    },
+                  )
+                : null),
         onChanged: (value) {
           _validateAddressColor(value);
         },
@@ -262,12 +278,28 @@ class _SendState extends State<Send> {
         selectionControls: NoToolBar(),
         focusNode: sendAmountFocusNode,
         controller: sendAmount,
+        textInputAction: TextInputAction.done,
         keyboardType: TextInputType.number,
         decoration: components.styles.decorations.textFeild(
           context,
           focusNode: sendAmountFocusNode,
           labelText: 'Amount',
           hintText: 'Quantity',
+          errorText: sendAmount.text == ''
+              ? null
+              : sendAmount.text == '0.0'
+                  ? 'must be greater than 0'
+                  : (String x) {
+                      if (x.isNumeric) {
+                        var y = x.toNum();
+                        if (y != null && y.isRVNAmount) {
+                          return true;
+                        }
+                      }
+                      return false;
+                    }(sendAmount.text)
+                      ? null
+                      : 'Unrecognized Amount',
           // put ability to put it in as USD here
           /* // functionality has been moved to header
                     suffixText: sendAll ? "don't send all" : 'send all',
@@ -290,22 +322,22 @@ class _SendState extends State<Send> {
                     */
         ),
         onChanged: (value) {
-          visibleAmount = verifyVisibleAmount(value);
+          //visibleAmount = verifyVisibleAmount(value);
           //streams.spend.form.add(SpendForm.merge(
           //    form: streams.spend.form.value,
           //    amount: double.parse(visibleAmount)));
         },
         onEditingComplete: () {
-          sendAmount.text = cleanDecAmount(
-            sendAmount.text,
-            zeroToBlank: true,
-          );
+          //sendAmount.text = cleanDecAmount(
+          //  sendAmount.text,
+          //  zeroToBlank: true,
+          //);
           sendAmount.text =
               enforceDivisibility(sendAmount.text, divisibility: divisibility);
           visibleAmount = verifyVisibleAmount(sendAmount.text);
           streams.spend.form.add(SpendForm.merge(
               form: streams.spend.form.value,
-              amount: double.parse(visibleAmount)));
+              amount: visibleAmount == '' ? 0 : double.parse(visibleAmount)));
           FocusScope.of(context).requestFocus(sendFeeFocusNode);
           setState(() {});
         },
@@ -343,6 +375,20 @@ class _SendState extends State<Send> {
         },
       );
   Widget get sendMemoField => TextField(
+      onTap: () async {
+        clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
+
+        /// scroll to bottom of form for form
+        //final ScrollController _controller = ScrollController();
+        //// This is what you're looking for!
+        //void _scrollDown() {
+        //  _controller.animateTo(
+        //    _controller.position.maxScrollExtent,
+        //    duration: Duration(seconds: 2),
+        //    curve: Curves.fastOutSlowIn,
+        //  );
+        //}
+      },
       selectionControls: NoToolBar(),
       focusNode: sendMemoFocusNode,
       controller: sendMemo,
@@ -358,16 +404,14 @@ class _SendState extends State<Send> {
             .caption!
             .copyWith(height: .7, color: AppColors.primary),
         errorText: verifyMemo() ? null : 'too long',
-        //suffixIcon:
-        //    IconButton(
-        //  icon: Icon(Icons.paste_rounded,
-        //      color: AppColors.black60),
-        //  onPressed: () async {
-        //    sendNote.text =
-        //        (await Clipboard.getData('text/plain'))?.text ??
-        //            '';
-        //  },
-        //)
+        suffixIcon: clipboard.isAssetMemo || clipboard.isIpfs
+            ? IconButton(
+                icon: Icon(Icons.paste_rounded, color: AppColors.black60),
+                onPressed: () async {
+                  sendNote.text =
+                      (await Clipboard.getData('text/plain'))?.text ?? '';
+                })
+            : null,
       ),
       onChanged: (value) {},
       onEditingComplete: () {
@@ -376,30 +420,33 @@ class _SendState extends State<Send> {
       });
 
   Widget get sendNoteField => TextField(
+      onTap: () async {
+        clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
+      },
       selectionControls: NoToolBar(),
       focusNode: sendNoteFocusNode,
       controller: sendNote,
-      decoration: components.styles.decorations.textFeild(
-        context,
-        focusNode: sendNoteFocusNode,
-        labelText: 'Note',
-        hintText: 'Purchase',
-        helperText: sendNoteFocusNode.hasFocus ? 'Saved to your phone' : null,
-        helperStyle: Theme.of(context)
-            .textTheme
-            .caption!
-            .copyWith(height: .7, color: AppColors.primary),
-        //suffixIcon:
-        //    IconButton(
-        //  icon:
-        //      Icon(Icons.paste_rounded, color: AppColors.black60),
-        //  onPressed: () async {
-        //    sendNote.text =
-        //        (await Clipboard.getData('text/plain'))?.text ??
-        //            '';
-        //  },
-        //)
-      ),
+      decoration: components.styles.decorations.textFeild(context,
+          focusNode: sendNoteFocusNode,
+          labelText: 'Note',
+          hintText: 'Purchase',
+          helperText: sendNoteFocusNode.hasFocus ? 'Saved to your phone' : null,
+          helperStyle: Theme.of(context)
+              .textTheme
+              .caption!
+              .copyWith(height: .7, color: AppColors.primary),
+          suffixIcon: clipboard == '' ||
+                  clipboard.isIpfs ||
+                  clipboard.isAddressRVN ||
+                  clipboard.isAddressRVNt
+              ? null
+              : IconButton(
+                  icon: Icon(Icons.paste_rounded, color: AppColors.black60),
+                  onPressed: () async {
+                    sendNote.text =
+                        (await Clipboard.getData('text/plain'))?.text ?? '';
+                  },
+                )),
       onChanged: (value) {},
       onEditingComplete: () {
         FocusScope.of(context).requestFocus(previewFocusNode);
@@ -408,22 +455,15 @@ class _SendState extends State<Send> {
 
   bool _validateAddress([String? address]) =>
       sendAddress.text == '' ||
-      rvnCondition(address ?? sendAddress.text, net: res.settings.net);
+      (res.settings.net == Net.Main
+          ? sendAddress.text.isAddressRVN
+          : sendAddress.text.isAddressRVNt);
 
   bool _validateAddressColor([String? address]) {
     var old = validatedAddress;
-    validatedAddress = validateAddressType(address ?? sendAddress.text);
-    if (validatedAddress != '') {
-      if ((validatedAddress == 'RVN' && res.settings.net == Net.Main) ||
-          (validatedAddress == 'RVNt' && res.settings.net == Net.Test)) {
-        //} else if (validatedAddress == 'UNS') {
-        //} else if (validatedAddress == 'ASSET') {
-      }
-      if (old != validatedAddress) setState(() => {});
-      return true;
-    }
-    if (old != '') setState(() => {});
-    return false;
+    validatedAddress = _validateAddress(address ?? sendAddress.text);
+    if (old != validatedAddress) setState(() => {});
+    return validatedAddress;
   }
 
   String verifyVisibleAmount(String value) {
@@ -438,14 +478,15 @@ class _SendState extends State<Send> {
     if (amount == '0' || amount != value) {
     } else {
       // todo: estimate fee
-      if (double.parse(amount) <= holding) {
+      if (amount != '' && double.parse(amount) <= holding) {
       } else {}
     }
     //setState(() => {});
     return amount;
   }
 
-  bool verifyMemo([String? memo]) => (memo ?? sendMemo.text).bytes.length <= 80;
+  bool verifyMemo([String? memo]) =>
+      (memo ?? sendMemo.text).isMemo || (memo ?? sendMemo.text).isIpfs;
 
   bool fieldValidation() {
     return sendAddress.text != '' && _validateAddress() && verifyMemo();
@@ -494,44 +535,21 @@ class _SendState extends State<Send> {
           // sendMemo.text.isAssetMemo
 
           // TODO: Convert text to UInt8Array here to pass on
-          assetMemo: sendMemo.text.isIpfs ? sendMemo.text : null,
-          memo: !sendMemo.text.isIpfs && sendMemo.text != ''
+          assetMemo: sendAsset.text != 'Ravencoin' && sendMemo.text.isIpfs
               ? sendMemo.text
               : null,
+          memo: sendAsset.text == 'Ravencoin' &&
+                  sendMemo.text != '' &&
+                  verifyMemo(sendMemo.text)
+              ? sendMemo.text
+              : !sendMemo.text.isIpfs && verifyMemo(sendMemo.text)
+                  ? sendMemo.text
+                  : null,
           note: sendNote.text != '' ? sendNote.text : null,
         );
-        print(sendRequest);
+        print('sendRequest $sendRequest');
         confirmSend(sendRequest);
-      } else {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) =>
-                AlertDialog(
-                    title: Text('Unable to Create Transaction'),
-                    content:
-                        Text('Send Amount is larger than account holding.'),
-                    actions: [
-                      TextButton(
-                          child: Text('Ok'),
-                          onPressed: () => Navigator.pop(context))
-                    ]));
       }
-    } else {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-                  title: Text('Unable to Create Transaction'),
-                  content: Text((!vAddress
-                          ? 'Invalid Address: please double check.\n'
-                          : '') +
-                      (!vMemo
-                          ? 'Invalid Memo: Must not exceed 80 characters.'
-                          : '')),
-                  actions: [
-                    TextButton(
-                        child: Text('Ok'),
-                        onPressed: () => Navigator.pop(context))
-                  ]));
     }
   }
 
