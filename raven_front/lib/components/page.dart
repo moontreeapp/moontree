@@ -2,6 +2,7 @@ import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
 
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/widgets/widgets.dart';
 
 class PageComponents {
   Widget form(
@@ -12,6 +13,7 @@ class PageComponents {
     List<Widget>? floatingButtons,
     Widget? heightSpacer,
     Widget? widthSpacer,
+    ScrollController? controller,
   }) {
     heightSpacer = heightSpacer ?? SizedBox(height: 16);
     widthSpacer = widthSpacer ?? SizedBox(width: 16);
@@ -23,20 +25,22 @@ class PageComponents {
       heightSpacer: heightSpacer,
       widthSpacer: widthSpacer,
       extraSpace: floatingButtons != null,
+      controller: controller,
     );
     return floatingButtons == null
         ? fields
         : Stack(
             children: [
               fields,
-              components.buttons.floatingButtons(
+              KeyboardHidesWidget(
+                  child: components.buttons.floatingButtons(
                 context,
                 boxedWidgets: boxedWidgets,
                 columnWidgets: columnWidgets,
                 buttons: floatingButtons,
                 heightSpacer: heightSpacer,
                 widthSpacer: widthSpacer,
-              )
+              ))
             ],
           );
   }
@@ -48,14 +52,14 @@ class PageComponents {
     List<Widget>? buttons,
     Widget? heightSpacer,
     Widget? widthSpacer,
+    ScrollController? controller,
     bool extraSpace = false,
   }) {
-    print(extraSpace);
     heightSpacer = heightSpacer ?? SizedBox(height: 16);
     widthSpacer = widthSpacer ?? SizedBox(width: 16);
     return Container(
         padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
-        child: CustomScrollView(slivers: <Widget>[
+        child: CustomScrollView(controller: controller, slivers: <Widget>[
           SliverToBoxAdapter(child: SizedBox(height: 6)),
           ...<Widget>[
             if ((boxedWidgets ?? []).isNotEmpty)

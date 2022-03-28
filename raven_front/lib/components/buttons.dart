@@ -87,7 +87,15 @@ class ButtonComponents {
     Widget? widthSpacer,
   }) =>
       Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Container(),
+        Container(
+            /*height: MediaQuery.of(context).size.height - 100, // example
+          instead of this which causes bottom overflow issues we implemented
+          a listener on the keyboard to hide the button if the keyboard is
+          visible. Not ideal because you must dismiss the keyboard in order 
+          to see the button, but I think its nearer to the Truth. see 
+          KeyboardHidesWidget
+          */
+            ),
         Container(
           height: 120,
           child: Column(

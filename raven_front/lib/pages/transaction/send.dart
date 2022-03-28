@@ -55,6 +55,7 @@ class _SendState extends State<Send> {
   String addressName = '';
   bool showPaste = false;
   String clipboard = '';
+  final ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
@@ -187,6 +188,7 @@ class _SendState extends State<Send> {
 
   Widget body() => components.page.form(
         context,
+        controller: scrollController,
         columnWidgets: <Widget>[
           // list items
           //Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
@@ -377,17 +379,7 @@ class _SendState extends State<Send> {
   Widget get sendMemoField => TextField(
       onTap: () async {
         clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
-
-        /// scroll to bottom of form for form
-        //final ScrollController _controller = ScrollController();
-        //// This is what you're looking for!
-        //void _scrollDown() {
-        //  _controller.animateTo(
-        //    _controller.position.maxScrollExtent,
-        //    duration: Duration(seconds: 2),
-        //    curve: Curves.fastOutSlowIn,
-        //  );
-        //}
+        //_scrollDown();
       },
       selectionControls: NoToolBar(),
       focusNode: sendMemoFocusNode,
@@ -422,6 +414,7 @@ class _SendState extends State<Send> {
   Widget get sendNoteField => TextField(
       onTap: () async {
         clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
+        //_scrollDown();
       },
       selectionControls: NoToolBar(),
       focusNode: sendNoteFocusNode,
@@ -452,6 +445,12 @@ class _SendState extends State<Send> {
         FocusScope.of(context).requestFocus(previewFocusNode);
         setState(() {});
       });
+
+  void _scrollDown() => scrollController.animateTo(
+        scrollController.position.maxScrollExtent,
+        duration: Duration(seconds: 2),
+        curve: Curves.fastOutSlowIn,
+      );
 
   bool _validateAddress([String? address]) =>
       sendAddress.text == '' ||
