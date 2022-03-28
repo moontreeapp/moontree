@@ -8,7 +8,7 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+class _HomeState extends State<Home> {
   late AppContext currentContext = AppContext.wallet;
   late List listeners = [];
 
