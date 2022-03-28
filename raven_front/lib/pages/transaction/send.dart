@@ -371,7 +371,7 @@ class _SendState extends State<Send> {
                 'Standard': ravencoin.TxGoals.standard,
                 'Fast': ravencoin.TxGoals.fast,
               }[newValue] ??
-              ravencoin.TxGoals.standard; // <--- replace by custom dialogue
+              ravencoin.TxGoals.standard;
           FocusScope.of(context).requestFocus(sendMemoFocusNode);
           setState(() {});
         },
@@ -379,7 +379,6 @@ class _SendState extends State<Send> {
   Widget get sendMemoField => TextField(
       onTap: () async {
         clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
-        //_scrollDown();
       },
       selectionControls: NoToolBar(),
       focusNode: sendMemoFocusNode,
@@ -414,7 +413,6 @@ class _SendState extends State<Send> {
   Widget get sendNoteField => TextField(
       onTap: () async {
         clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
-        //_scrollDown();
       },
       selectionControls: NoToolBar(),
       focusNode: sendNoteFocusNode,
@@ -445,12 +443,6 @@ class _SendState extends State<Send> {
         FocusScope.of(context).requestFocus(previewFocusNode);
         setState(() {});
       });
-
-  void _scrollDown() => scrollController.animateTo(
-        scrollController.position.maxScrollExtent,
-        duration: Duration(seconds: 2),
-        curve: Curves.fastOutSlowIn,
-      );
 
   bool _validateAddress([String? address]) =>
       sendAddress.text == '' ||
