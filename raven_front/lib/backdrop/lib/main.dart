@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import './sample_content/back_layer_content.dart';
 import './sample_content/front_layer_content.dart';
-import './sliding_panel_widget.dart';
+import 'modified_draggable_scrollable_sheet.dart' as slide;
 
 void main() => runApp(MyApp());
 
@@ -14,41 +14,38 @@ class MyApp extends StatelessWidget {
           primaryColor: const Color.fromARGB(255, 0, 132, 255),
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
               .copyWith(secondary: Colors.blue)),
-      home: MyHomePage(),
+      home: SlidingPanel(),
     );
   }
 }
 
-Widget header = Padding(
-  padding: const EdgeInsets.all(8.0),
-  child: Container(
-    color: Colors.white,
-    width: double.infinity,
-    child: const Center(
-      child:
-          Text('Content', style: TextStyle(fontSize: 20, color: Colors.black)),
-    ),
-  ),
-);
+class SlidingPanel extends StatefulWidget {
+  @override
+  State<SlidingPanel> createState() => _SlidingPanelState();
+}
 
-class MyHomePage extends StatelessWidget {
+class _SlidingPanelState extends State<SlidingPanel> {
+  final controller = slide.DraggableScrollableController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Wallet'),
-        ),
-        body: SlidingPanel(
-          borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-          controlHeight: MediaQuery.of(context).size.height / 2,
-          header: header,
-          // the content at the front layer, scroll controller must be passed to the listview builder
-          // to prevent scrolling while the panel not fully shown
-          panelBuilder: (scrollController) =>
-              FrontLayerContent(scrollController),
-          //Content at the back layer
-          body: const BackLayerContent(),
-        ));
+      appBar: AppBar(title: const Text('Wallet')),
+      body: Stack(
+        children: [
+          const BackLayerContent(),
+          slide.DraggableScrollableActuator(
+            child: slide.DraggableScrollableSheet(
+              controller: controller,
+              initialChildSize: 0.5,
+              maxChildSize: 1,
+              minChildSize: 0.5,
+              snap: true,
+              builder: (context, scrollController) =>
+                  FrontLayerContent(scrollController),
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
