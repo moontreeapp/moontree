@@ -15,10 +15,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    if (streams.app.manage.asset.value != null)
-      streams.app.manage.asset.add(null);
     listeners.add(streams.app.context.listen((AppContext value) {
       if (value != currentContext) {
+        if (value == AppContext.wallet &&
+            streams.app.manage.asset.value != null) {
+          streams.app.manage.asset.add(null);
+        } else if (value == AppContext.manage &&
+            streams.app.wallet.asset.value != null) {
+          streams.app.wallet.asset.add(null);
+        }
         setState(() {
           currentContext = value;
         });
@@ -42,21 +47,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return body();
   }
 
-  Widget body() => Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.transparent,
-        body: GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: Column(
-              children: [
-                Expanded(
-                    child: currentContext == AppContext.wallet
-                        ? HoldingList()
-                        : currentContext == AppContext.manage
-                            ? AssetList()
-                            : Text('swap')),
-                NavBar(),
-              ],
-            )),
+  Widget body() => Column(
+        children: [
+          Expanded(
+              child: currentContext == AppContext.wallet
+                  ? HoldingList()
+                  : currentContext == AppContext.manage
+                      ? AssetList()
+                      : Text('swap')),
+          NavBar(),
+        ],
       );
 }
