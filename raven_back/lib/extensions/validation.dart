@@ -1,6 +1,18 @@
 import 'package:raven_back/utilities/utilities.dart';
 
-extension TypeValidationNumericExtension on String {
+extension AmountValidationNumericExtension on num {
+  bool get isRVNAmount => utils.validate.isRVNAmount(this);
+}
+
+extension AmountValidationIntExtension on int {
+  bool get isRVNAmount => utils.validate.isRVNAmount(this);
+}
+
+extension AmountValidationDoubleExtension on double {
+  bool get isRVNAmount => utils.validate.isRVNAmount(this);
+}
+
+extension RVNNumericValidationExtension on String {
   bool get isInt {
     if (length > 15) {
       return false;
@@ -12,10 +24,50 @@ extension TypeValidationNumericExtension on String {
       return false;
     }
   }
-}
 
-extension AmountValidationNumericExtension on num {
-  bool get isRVNAmount => utils.validate.isRVNAmount(this);
+  bool get isDouble {
+    if (contains('.')) {
+      var num = split('.');
+      var whole = num.first;
+      var remainder = num.sublist(1).join('');
+      if (whole.length > 15 || remainder.length > 8) {
+        return false;
+      }
+    }
+    try {
+      double.parse(this);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  bool get isNumeric => isInt || isDouble;
+  num? toNum() {
+    var amount;
+    if (isInt) {
+      amount = int.parse(this);
+    } else if (isDouble) {
+      amount = double.parse(this);
+    }
+    return amount;
+  }
+
+  num? toRVNAmount() {
+    var amount;
+    if (isInt) {
+      amount = int.parse(this);
+    } else if (isDouble) {
+      amount = double.parse(this);
+    }
+    if (amount == null) {
+      return null;
+    }
+    if (amount.isRVNAmount) {
+      return amount;
+    }
+    return null;
+  }
 }
 
 extension StringValidationExtension on String {

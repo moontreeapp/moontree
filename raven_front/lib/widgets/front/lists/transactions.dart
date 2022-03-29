@@ -86,54 +86,55 @@ class _TransactionListState extends State<TransactionList> {
             ));
   }
 
-  ListView _transactionsView(BuildContext context) =>
-      ListView(children: <Widget>[
-        for (var transactionRecord in transactions) ...[
-          ...[
-            ListTile(
-              //contentPadding:
-              //    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 13),
-              onTap: () => Navigator.pushNamed(
-                  context, '/transaction/transaction',
-                  arguments: {'transactionRecord': transactionRecord}),
-              //onLongPress: _toggleUSD,
-              //leading: Container(
-              //    height: 40,
-              //    width: 40,
-              //    child: components.icons
-              //        .assetAvatar(transactionRecord.security.symbol)),
-              title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                        //() {
-                        //  var amountToDisplay = components.text.securityAsReadable(
-                        //      transactionRecord.value,
-                        //      security: transactionRecord.security,
-                        //      asUSD: showUSD);
-                        //  return amountToDisplay == '0'
-                        //      ? 'sent to self'
-                        //      : amountToDisplay;
-                        //}()
-                        transactionRecord.toSelf!
-                            ? 'Sent to Self'
-                            : components.text.securityAsReadable(
-                                transactionRecord.value,
-                                security: transactionRecord.security,
-                                asUSD: showUSD),
-                        style: Theme.of(context).textTheme.bodyText1),
-                    Text(transactionRecord.formattedDatetime,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText2!
-                            .copyWith(color: AppColors.black60)),
-                  ]),
-              trailing: (transactionRecord.out
-                  ? components.icons.out(context)
-                  : components.icons.income(context)),
-            ),
-            Divider(indent: 16),
-          ]
-        ]
-      ]);
+  ListView _transactionsView(BuildContext context) => ListView(
+          controller: components.navigator.scrollController,
+          children: <Widget>[
+            for (var transactionRecord in transactions) ...[
+              ...[
+                ListTile(
+                  //contentPadding:
+                  //    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 13),
+                  onTap: () => Navigator.pushNamed(
+                      context, '/transaction/transaction',
+                      arguments: {'transactionRecord': transactionRecord}),
+                  //onLongPress: _toggleUSD,
+                  //leading: Container(
+                  //    height: 40,
+                  //    width: 40,
+                  //    child: components.icons
+                  //        .assetAvatar(transactionRecord.security.symbol)),
+                  title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                            //() {
+                            //  var amountToDisplay = components.text.securityAsReadable(
+                            //      transactionRecord.value,
+                            //      security: transactionRecord.security,
+                            //      asUSD: showUSD);
+                            //  return amountToDisplay == '0'
+                            //      ? 'sent to self'
+                            //      : amountToDisplay;
+                            //}()
+                            transactionRecord.toSelf
+                                ? 'Sent to Self'
+                                : components.text.securityAsReadable(
+                                    transactionRecord.value,
+                                    security: transactionRecord.security,
+                                    asUSD: showUSD),
+                            style: Theme.of(context).textTheme.bodyText1),
+                        Text(transactionRecord.formattedDatetime,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2!
+                                .copyWith(color: AppColors.black60)),
+                      ]),
+                  trailing: (transactionRecord.out
+                      ? components.icons.out(context)
+                      : components.icons.income(context)),
+                ),
+                Divider(indent: 16),
+              ]
+            ]
+          ]);
 }

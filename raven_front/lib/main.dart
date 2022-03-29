@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/services.dart';
 
 import 'package:raven_front/pages/pages.dart';
 import 'package:raven_front/components/components.dart';
@@ -14,6 +15,8 @@ import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/backdrop/backdrop.dart';
 
 import 'widgets/widgets.dart';
+import 'package:raven_front/backdrop/lib/modified_draggable_scrollable_sheet.dart'
+    as slide;
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -54,9 +57,9 @@ Future<void> main() async {
 
 class RavenMobileApp extends StatelessWidget {
   //static final GlobalKey<NavigatorState> navigatorKey = new GlobalKey();
-
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     return MaterialApp(
       initialRoute: '/',
       routes: pages
@@ -67,24 +70,44 @@ class RavenMobileApp extends StatelessWidget {
       navigatorObservers: [components.navigator],
       builder: (context, child) {
         components.navigator.scaffoldContext = context;
-/*
+        final controller = slide.DraggableScrollableController();
         return Scaffold(
-            appBar: AppBar(
-              title: const Text('Wallet'),
-            ),
-            body: SlidingPanel(
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-              controlHeight: MediaQuery.of(context).size.height / 2,
-              header: header,
-              // the content at the front layer, scroll controller must be passed to the listview builder
-              // to prevent scrolling while the panel not fully shown
-              panelBuilder: (scrollController) =>
-                  FrontLayerContent(scrollController),
-              //Content at the back layer
-              body: const BackLayerContent(),
-            ));
-        */
+          appBar: BackdropAppBar(
+            backgroundColor: Theme.of(context).backgroundColor,
+            automaticallyImplyLeading: false,
+            elevation: 0,
+            leading: PageLead(mainContext: context),
+            title: /*FittedBox(fit: BoxFit.fitWidth, child: */ PageTitle() /*)*/,
+            actions: <Widget>[
+              components.status,
+              ConnectionLight(),
+              QRCodeContainer(),
+              SnackBarViewer(),
+              SizedBox(width: 6),
+            ],
+          ),
+          body: Stack(
+            children: [
+              BackLayer(),
+              slide.DraggableScrollableActuator(
+                child: slide.DraggableScrollableSheet(
+                    controller: controller,
+                    initialChildSize: 0.5,
+                    maxChildSize: 1,
+                    minChildSize: 0.5,
+                    snap: true,
+                    builder: (context, scrollController) {
+                      components.navigator.scrollController = scrollController;
+                      return Container(
+                        color: Colors.white,
+                        child: child!,
+                      );
+                    }),
+              )
+            ],
+          ),
+        );
+        /*
         return BackdropScaffold(
           //scaffoldKey: components.scaffoldKey, // thought this could help scrim issue, but it didn't
           //maintainBackLayerState: false,
@@ -132,6 +155,7 @@ class RavenMobileApp extends StatelessWidget {
             child: child!,
           ),
         );
+        */
       },
     );
   }

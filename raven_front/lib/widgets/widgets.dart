@@ -18,3 +18,4 @@ export 'bottom/selection_items.dart';
 export 'bottom/snackbar.dart';
 export 'other/qrcode.dart';
 export 'other/toolbar.dart';
+export 'other/keyboard.dart';

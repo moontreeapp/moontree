@@ -34,7 +34,8 @@ String cleanSatAmount(String amount) {
   return text;
 }
 
-String cleanDecAmount(String amount, {bool zeroToBlank = false}) {
+String cleanDecAmount(String amount,
+    {bool zeroToBlank = false, bool blankToZero = false}) {
   amount = utils.removeChars(amount,
       chars: utils.strings.whiteSapce + utils.strings.punctuationMinusCurrency);
   if (amount.length > 0) {
@@ -60,19 +61,25 @@ String cleanDecAmount(String amount, {bool zeroToBlank = false}) {
         amount = '0';
       }
     } else {
-      amount = '0';
+      if (blankToZero) {
+        amount = '0';
+      }
     }
   }
   // remove leading 0(s)
-  var ret = '0';
+  var ret = '';
   try {
     if (amount == '') {
-      ret = '0';
+      if (blankToZero) {
+        ret = '0';
+      }
     } else {
       ret = double.parse(amount).toString();
     }
   } catch (e) {
-    ret = '0';
+    if (blankToZero) {
+      ret = '0';
+    }
   }
   if (zeroToBlank && ['0', '0.0'].contains(ret)) {
     return '';

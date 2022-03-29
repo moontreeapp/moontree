@@ -9,5 +9,6 @@ export 'src/navigation.dart';
 export 'src/scaffold.dart';
 export 'src/utils.dart';
 export 'lib/sliding_panel_widget.dart';
+export 'lib/modified_draggable_scrollable_sheet.dart';
 export 'lib/sample_content/front_layer_content.dart';
 export 'lib/sample_content/back_layer_content.dart';
