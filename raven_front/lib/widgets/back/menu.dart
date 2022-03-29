@@ -200,6 +200,7 @@ class _NavMenuState extends State<NavMenu> {
     };
     return Container(
         height: MediaQuery.of(context).size.height - 118 - 10,
+        color: Theme.of(context).backgroundColor,
         child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
+import 'package:raven_front/backdrop/jm/layers.dart';
 
 import 'package:raven_front/pages/pages.dart';
 import 'package:raven_front/components/components.dart';
@@ -70,6 +71,24 @@ class RavenMobileApp extends StatelessWidget {
       navigatorObservers: [components.navigator],
       builder: (context, child) {
         components.navigator.scaffoldContext = context;
+        //final controller = slide.DraggableScrollableController();
+        return Scaffold(
+            appBar: BackdropAppBar(
+              backgroundColor: Theme.of(context).backgroundColor,
+              automaticallyImplyLeading: false,
+              elevation: 0,
+              leading: PageLead(mainContext: context),
+              title: /*FittedBox(fit: BoxFit.fitWidth, child: */ PageTitle() /*)*/,
+              actions: <Widget>[
+                components.status,
+                ConnectionLight(),
+                QRCodeContainer(),
+                SnackBarViewer(),
+                SizedBox(width: 6),
+              ],
+            ),
+            body: child!);
+        /*
         final controller = slide.DraggableScrollableController();
         return Scaffold(
           appBar: BackdropAppBar(
@@ -107,7 +126,6 @@ class RavenMobileApp extends StatelessWidget {
             ],
           ),
         );
-        /*
         return BackdropScaffold(
           //scaffoldKey: components.scaffoldKey, // thought this could help scrim issue, but it didn't
           //maintainBackLayerState: false,

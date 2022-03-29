@@ -536,8 +536,7 @@ class _DraggableScrollableSheetState extends State<DraggableScrollableSheet>
     _extent = _DraggableSheetExtent(
       minSize: widget.minChildSize,
       maxSize: widget.maxChildSize,
-      //snap: widget.snap,
-      snap: false,
+      snap: widget.snap,
       snapSizes: _impliedSnapSizes(),
       initialSize: widget.initialChildSize,
       onSizeChanged: _setExtent,

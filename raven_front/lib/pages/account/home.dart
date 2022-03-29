@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/streams/app.dart';
+import 'package:raven_front/backdrop/jm/layers.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/raven_back.dart';
 
@@ -47,15 +48,42 @@ class _HomeState extends State<Home> {
     return body();
   }
 
-  Widget body() => Column(
+  Widget body() => BackdropLayers(
+      back: BackLayer(),
+      front: Column(
         children: [
           Expanded(
-              child: currentContext == AppContext.wallet
-                  ? HoldingList()
-                  : currentContext == AppContext.manage
-                      ? AssetList()
-                      : Text('swap')),
+              child: DraggableScrollableSheet(
+            initialChildSize: 0.5,
+            minChildSize: 0.25,
+            maxChildSize: 1.0,
+            builder: ((context, scrollController) {
+              return HoldingList(scrollController: scrollController);
+            }),
+          )),
           NavBar(),
         ],
-      );
+      ));
+  //  front: Container(
+  //    //height: 200, // variable height
+  //    alignment: Alignment.bottomCenter,
+  //    color: Colors.white,
+  //    child: Container(
+  //      height: 100,
+  //      color: Colors.green,
+  //    ),
+  //  ),
+  //);
+
+  //Widget body() => Column(
+  //      children: [
+  //        Expanded(
+  //            child: currentContext == AppContext.wallet
+  //                ? HoldingList()
+  //                : currentContext == AppContext.manage
+  //                    ? AssetList()
+  //                    : Text('swap')),
+  //        NavBar(),
+  //      ],
+  //    );
 }

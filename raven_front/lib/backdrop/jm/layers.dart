@@ -46,17 +46,21 @@ class _BackdropLayersState extends State<BackdropLayers> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Stack(children: [
-        Container(
-            color: Colors.transparent,
-            alignment: Alignment.topCenter,
-            child: widget.back),
-        Container(
-            color: Colors.transparent,
-            alignment: Alignment.bottomCenter,
-            child: widget.front),
-      ]),
-    );
+    return //Flex(direction: Axis.vertical, children: [
+        //Expanded(
+        //child:
+        Stack(children: [
+      Container(
+          color: Colors.white,
+          alignment: Alignment.topCenter,
+          child: widget.back),
+      Container(
+        color: Colors.transparent,
+        alignment: Alignment.bottomCenter,
+        child: widget.front,
+      ),
+    ]);
+    //)
+    //]);
   }
 }

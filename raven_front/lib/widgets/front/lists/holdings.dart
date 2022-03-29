@@ -11,7 +11,9 @@ import 'package:raven_front/widgets/widgets.dart';
 
 class HoldingList extends StatefulWidget {
   final Iterable<Balance>? holdings;
-  const HoldingList({this.holdings, Key? key}) : super(key: key);
+  final ScrollController? scrollController;
+  const HoldingList({this.holdings, this.scrollController, Key? key})
+      : super(key: key);
 
   @override
   State<HoldingList> createState() => _HoldingList();
@@ -98,7 +100,7 @@ class _HoldingList extends State<HoldingList> {
         : holdings.isEmpty
             ? Container(/* awaiting transactions placeholder... */)
             : Container(
-                color: Colors.transparent,
+                color: Colors.white,
                 alignment: Alignment.center,
                 padding: EdgeInsets.only(top: 5.0),
                 child: RefreshIndicator(
@@ -170,7 +172,8 @@ class _HoldingList extends State<HoldingList> {
       //        style: TextStyle(color: Theme.of(context).disabledColor))));
     }
     return ListView(
-        controller: components.navigator.scrollController,
+        //controller: components.navigator.scrollController,
+        controller: widget.scrollController,
         dragStartBehavior: DragStartBehavior.start,
         physics: const BouncingScrollPhysics(),
         children: <Widget>[...rvnHolding, ...assetHoldings]);
