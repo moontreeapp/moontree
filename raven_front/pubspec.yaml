@@ -21,9 +21,7 @@ environment:
   sdk: '>=2.14.0 <3.0.0'
 
 dependencies:
-  barcode_scan2: ^4.1.4
   cupertino_icons: ^1.0.2
-  datadog_flutter: ^1.4.0
   date_format: ^2.0.4
   firebase_core: ^1.10.0
   firebase_crashlytics:
@@ -34,7 +32,6 @@ dependencies:
     sdk: flutter
   flutter_dotenv: ^5.0.0
   flutter_spinkit: ^5.0.0
-  #flutter_treeview: ^1.0.6+1 # no need
   flutter_launcher_icons: '^0.9.1'
   flutter_svg: ^1.0.0
   material_design_icons_flutter: ^5.0.6595
@@ -42,8 +39,7 @@ dependencies:
   hive: ^2.0.4
   hive_flutter: ^1.1.0
   qr_flutter: ^4.0.0
-  qr_code_scanner: ^0.6.1
-  settings_ui: ^1.0.0
+  qr_code_scanner: ^0.7.0
   ulid: ^2.0.0
   url_launcher: ^6.0.10
   ravencoin_wallet: ^3.0.0
@@ -54,6 +50,7 @@ dependencies:
   intl: ^0.17.0
   mockito: ^5.0.17 # just for testing
   intersperse: ^2.0.0
+  flutter_keyboard_visibility: ^5.2.0
   #backdrop: ^0.7.1 # using our own custom fork in this lib
   #jdenticon_dart: ^2.0.0
   #identicon: ^0.1.1
