@@ -1,16 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/services/transaction.dart';
-import 'package:raven_front/components/components.dart';
-import 'package:raven_front/services/lookup.dart';
-import 'package:raven_front/theme/theme.dart';
 
 class BackdropLayers extends StatefulWidget {
-  final Widget? back;
-  final Widget? front;
-  const BackdropLayers({Key? key, this.back, this.front}) : super(key: key);
+  final Widget back;
+  final Widget front;
+  const BackdropLayers({
+    Key? key,
+    required this.back,
+    required this.front,
+  }) : super(key: key);
 
   @override
   State<BackdropLayers> createState() => _BackdropLayersState();

@@ -12,6 +12,7 @@ import 'package:raven_front/widgets/widgets.dart';
 class HoldingList extends StatefulWidget {
   final Iterable<Balance>? holdings;
   final ScrollController? scrollController;
+
   const HoldingList({this.holdings, this.scrollController, Key? key})
       : super(key: key);
 
@@ -99,14 +100,10 @@ class _HoldingList extends State<HoldingList> {
         ? components.empty.holdings(context)
         : holdings.isEmpty
             ? Container(/* awaiting transactions placeholder... */)
-            : Container(
-                color: Colors.white,
-                alignment: Alignment.center,
-                padding: EdgeInsets.only(top: 5.0),
-                child: RefreshIndicator(
-                  child: _holdingsView(context),
-                  onRefresh: () => refresh(),
-                ));
+            : RefreshIndicator(
+                child: _holdingsView(context),
+                onRefresh: () => refresh(),
+              );
   }
 
   void navigate(Balance balance, {Wallet? wallet}) {
@@ -171,12 +168,18 @@ class _HoldingList extends State<HoldingList> {
       //    title: Text('+ Create Asset (not enough RVN)',
       //        style: TextStyle(color: Theme.of(context).disabledColor))));
     }
+    var blankNavArea = [
+      Container(
+        height: 118,
+        color: Colors.white,
+      )
+    ];
     return ListView(
         //controller: components.navigator.scrollController,
         controller: widget.scrollController,
         dragStartBehavior: DragStartBehavior.start,
         physics: const BouncingScrollPhysics(),
-        children: <Widget>[...rvnHolding, ...assetHoldings]);
+        children: <Widget>[...rvnHolding, ...assetHoldings, ...blankNavArea]);
   }
 
   void onTap(Wallet? wallet, AssetHolding holding) {

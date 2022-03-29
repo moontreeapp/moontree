@@ -36,9 +36,8 @@ class _BalanceHeaderState extends State<BalanceHeader>
   @override
   void initState() {
     super.initState();
-    Backdrop.of(components.navigator.routeContext!).revealBackLayer();
-    components.navigator.tabController = components.navigator.tabController ??
-        TabController(length: 2, vsync: this);
+    //Backdrop.of(components.navigator.routeContext!).revealBackLayer();
+
     listeners.add(streams.spend.form.listen((SpendForm? value) {
       if (symbolSend !=
               (value?.symbol == 'Ravencoin' ? 'RVN' : value?.symbol ?? 'RVN') ||
@@ -122,10 +121,12 @@ class _BalanceHeaderState extends State<BalanceHeader>
             utils.satToAmount(assetDetails!.satsInCirculation).toCommaString();
       }
     }
+    components.navigator.tabController = components.navigator.tabController ??
+        TabController(length: 2, vsync: this);
     return Container(
       padding: EdgeInsets.only(top: 16),
       height: 201,
-      color: widget.background ?? Colors.transparent,
+      color: Theme.of(context).backgroundColor,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,

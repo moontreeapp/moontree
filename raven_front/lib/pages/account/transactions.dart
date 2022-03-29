@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction.dart';
-import 'package:raven_front/backdrop/backdrop.dart';
+//import 'package:raven_front/backdrop/backdrop.dart';
+import 'package:raven_front/backdrop/jm/curve.dart';
+import 'package:raven_front/backdrop/jm/layers.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/theme/theme.dart';
@@ -25,7 +27,7 @@ class Transactions extends StatefulWidget {
 }
 
 class _TransactionsState extends State<Transactions>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController controller;
   late Animation<Offset> offset;
   Map<String, dynamic> data = {};
@@ -60,16 +62,16 @@ class _TransactionsState extends State<Transactions>
     super.dispose();
   }
 
-  bool visibilityOfSendReceive(notification) {
-    if (notification.direction == ScrollDirection.forward &&
-        Backdrop.of(components.navigator.routeContext!).isBackLayerConcealed) {
-      Backdrop.of(components.navigator.routeContext!).revealBackLayer();
-    } else if (notification.direction == ScrollDirection.reverse &&
-        Backdrop.of(components.navigator.routeContext!).isBackLayerRevealed) {
-      Backdrop.of(components.navigator.routeContext!).concealBackLayer();
-    }
-    return true;
-  }
+  //bool visibilityOfSendReceive(notification) {
+  //  if (notification.direction == ScrollDirection.forward &&
+  //      Backdrop.of(components.navigator.routeContext!).isBackLayerConcealed) {
+  //    Backdrop.of(components.navigator.routeContext!).revealBackLayer();
+  //  } else if (notification.direction == ScrollDirection.reverse &&
+  //      Backdrop.of(components.navigator.routeContext!).isBackLayerRevealed) {
+  //    Backdrop.of(components.navigator.routeContext!).concealBackLayer();
+  //  }
+  //  return true;
+  //}
 
   @override
   Widget build(BuildContext context) {
@@ -78,33 +80,81 @@ class _TransactionsState extends State<Transactions>
     currentHolds = Current.holdings;
     currentTxs = services.transaction
         .getTransactionRecords(wallet: Current.wallet, securities: {security});
-    return TabBarView(
-        controller: components.navigator.tabController,
-        children: <Widget>[
-          GestureDetector(
-              onTap: () => FocusScope.of(context).unfocus(),
-              child:
+    var back = BalanceHeader(pageTitle: 'Transactions');
+    components.navigator.tabController = components.navigator.tabController ??
+        TabController(length: 2, vsync: this);
+    return BackdropLayers(
+      back: back, // must be created first
+      front: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          TabBarView(
+              controller: components.navigator.tabController,
+              children: <Widget>[
+                Column(
+                  children: [
+                    Expanded(
+                      child: DraggableScrollableSheet(
+                          initialChildSize: 0.5,
+                          minChildSize: 0.25,
+                          maxChildSize: 1.0,
+                          builder: ((context, scrollController) {
+                            return FrontCurve(
+                                child: TransactionList(
+                                    transactions: currentTxs.where((tx) =>
+                                        tx.security.symbol == security.symbol),
+                                    msg:
+                                        '\nNo ${security.symbol} transactions.\n'));
+                          })),
+                    ),
+                  ],
+                ),
+                _metadataView() ??
+                    components.empty.message(
+                      context,
+                      icon: Icons.description,
+                      msg: '\nNo metadata.\n',
+                    ),
+              ]),
+          NavBar(),
+          Container(
+            height: 118,
+            color: Colors.transparent,
+          )
+        ],
+      ),
+    );
 
-                  /// comments: to remove scroll functionality as it is not yet fluid. #182
-                  ///NotificationListener<UserScrollNotification>(
-                  ///    onNotification: visibilityOfSendReceive,
-                  ///    child:
-                  TransactionList(
-                      transactions: currentTxs
-                          .where((tx) => tx.security.symbol == security.symbol),
-                      msg: '\nNo ${security.symbol} transactions.\n')),
+    Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.transparent,
+      body: TabBarView(
+          controller: components.navigator.tabController,
+          children: <Widget>[
+            GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
+                child:
 
-          ///),
-          _metadataView() ??
-              components.empty.message(
-                context,
-                icon: Icons.description,
-                msg: '\nNo metadata.\n',
-              ),
-        ]);
-    //  floatingActionButton: SlideTransition(position: offset, child: NavBar()),
-    //  floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-    //);
+                    /// comments: to remove scroll functionality as it is not yet fluid. #182
+                    ///NotificationListener<UserScrollNotification>(
+                    ///    onNotification: visibilityOfSendReceive,
+                    ///    child:
+                    TransactionList(
+                        transactions: currentTxs.where(
+                            (tx) => tx.security.symbol == security.symbol),
+                        msg: '\nNo ${security.symbol} transactions.\n')),
+
+            ///),
+            _metadataView() ??
+                components.empty.message(
+                  context,
+                  icon: Icons.description,
+                  msg: '\nNo metadata.\n',
+                ),
+          ]),
+      floatingActionButton: SlideTransition(position: offset, child: NavBar()),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    );
 
     /// no place to view metadata right now - this used to be tabs
   }

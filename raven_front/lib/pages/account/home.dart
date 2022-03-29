@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/streams/app.dart';
+import 'package:raven_front/backdrop/jm/curve.dart';
 import 'package:raven_front/backdrop/jm/layers.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/raven_back.dart';
@@ -49,21 +50,33 @@ class _HomeState extends State<Home> {
   }
 
   Widget body() => BackdropLayers(
-      back: BackLayer(),
-      front: Column(
-        children: [
-          Expanded(
-              child: DraggableScrollableSheet(
-            initialChildSize: 0.5,
-            minChildSize: 0.25,
-            maxChildSize: 1.0,
-            builder: ((context, scrollController) {
-              return HoldingList(scrollController: scrollController);
-            }),
-          )),
-          NavBar(),
-        ],
-      ));
+        back: NavMenu(),
+        front: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  child: DraggableScrollableSheet(
+                      initialChildSize: 0.5,
+                      minChildSize: 0.25,
+                      maxChildSize: 1.0,
+                      builder: ((context, scrollController) {
+                        return FrontCurve(
+                            child: HoldingList(
+                                scrollController: scrollController));
+                      })),
+                ),
+              ],
+            ),
+            NavBar(),
+            Container(
+              height: 118,
+              color: Colors.transparent,
+            )
+          ],
+        ),
+      );
   //  front: Container(
   //    //height: 200, // variable height
   //    alignment: Alignment.bottomCenter,
