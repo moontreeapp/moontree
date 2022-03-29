@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'package:raven_back/raven_back.dart';
@@ -168,7 +169,11 @@ class _HoldingList extends State<HoldingList> {
       //    title: Text('+ Create Asset (not enough RVN)',
       //        style: TextStyle(color: Theme.of(context).disabledColor))));
     }
-    return ListView(children: <Widget>[...rvnHolding, ...assetHoldings]);
+    return ListView(
+        controller: components.navigator.scrollController,
+        dragStartBehavior: DragStartBehavior.start,
+        physics: const BouncingScrollPhysics(),
+        children: <Widget>[...rvnHolding, ...assetHoldings]);
   }
 
   void onTap(Wallet? wallet, AssetHolding holding) {

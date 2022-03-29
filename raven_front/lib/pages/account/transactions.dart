@@ -78,36 +78,33 @@ class _TransactionsState extends State<Transactions>
     currentHolds = Current.holdings;
     currentTxs = services.transaction
         .getTransactionRecords(wallet: Current.wallet, securities: {security});
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.transparent,
-      body: TabBarView(
-          controller: components.navigator.tabController,
-          children: <Widget>[
-            GestureDetector(
-                onTap: () => FocusScope.of(context).unfocus(),
-                child:
+    return TabBarView(
+        controller: components.navigator.tabController,
+        children: <Widget>[
+          GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child:
 
-                    /// comments: to remove scroll functionality as it is not yet fluid. #182
-                    ///NotificationListener<UserScrollNotification>(
-                    ///    onNotification: visibilityOfSendReceive,
-                    ///    child:
-                    TransactionList(
-                        transactions: currentTxs.where(
-                            (tx) => tx.security.symbol == security.symbol),
-                        msg: '\nNo ${security.symbol} transactions.\n')),
+                  /// comments: to remove scroll functionality as it is not yet fluid. #182
+                  ///NotificationListener<UserScrollNotification>(
+                  ///    onNotification: visibilityOfSendReceive,
+                  ///    child:
+                  TransactionList(
+                      transactions: currentTxs
+                          .where((tx) => tx.security.symbol == security.symbol),
+                      msg: '\nNo ${security.symbol} transactions.\n')),
 
-            ///),
-            _metadataView() ??
-                components.empty.message(
-                  context,
-                  icon: Icons.description,
-                  msg: '\nNo metadata.\n',
-                ),
-          ]),
-      floatingActionButton: SlideTransition(position: offset, child: NavBar()),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-    );
+          ///),
+          _metadataView() ??
+              components.empty.message(
+                context,
+                icon: Icons.description,
+                msg: '\nNo metadata.\n',
+              ),
+        ]);
+    //  floatingActionButton: SlideTransition(position: offset, child: NavBar()),
+    //  floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    //);
 
     /// no place to view metadata right now - this used to be tabs
   }

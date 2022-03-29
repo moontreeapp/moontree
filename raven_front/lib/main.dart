@@ -70,28 +70,44 @@ class RavenMobileApp extends StatelessWidget {
       navigatorObservers: [components.navigator],
       builder: (context, child) {
         components.navigator.scaffoldContext = context;
-/*
         final controller = slide.DraggableScrollableController();
         return Scaffold(
-          appBar: AppBar(title: const Text('Wallet')),
+          appBar: BackdropAppBar(
+            backgroundColor: Theme.of(context).backgroundColor,
+            automaticallyImplyLeading: false,
+            elevation: 0,
+            leading: PageLead(mainContext: context),
+            title: /*FittedBox(fit: BoxFit.fitWidth, child: */ PageTitle() /*)*/,
+            actions: <Widget>[
+              components.status,
+              ConnectionLight(),
+              QRCodeContainer(),
+              SnackBarViewer(),
+              SizedBox(width: 6),
+            ],
+          ),
           body: Stack(
             children: [
-              const BackLayerContent(),
+              BackLayer(),
               slide.DraggableScrollableActuator(
                 child: slide.DraggableScrollableSheet(
-                  controller: controller,
-                  initialChildSize: 0.5,
-                  maxChildSize: 1,
-                  minChildSize: 0.5,
-                  snap: true,
-                  builder: (context, scrollController) =>
-                      FrontLayerContent(scrollController),
-                ),
+                    controller: controller,
+                    initialChildSize: 0.5,
+                    maxChildSize: 1,
+                    minChildSize: 0.5,
+                    snap: true,
+                    builder: (context, scrollController) {
+                      components.navigator.scrollController = scrollController;
+                      return Container(
+                        color: Colors.white,
+                        child: child!,
+                      );
+                    }),
               )
             ],
           ),
         );
-        */
+        /*
         return BackdropScaffold(
           //scaffoldKey: components.scaffoldKey, // thought this could help scrim issue, but it didn't
           //maintainBackLayerState: false,
@@ -139,6 +155,7 @@ class RavenMobileApp extends StatelessWidget {
             child: child!,
           ),
         );
+        */
       },
     );
   }
