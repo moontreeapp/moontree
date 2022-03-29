@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/streams/app.dart';
-import 'package:raven_front/backdrop/jm/curve.dart';
-import 'package:raven_front/backdrop/jm/layers.dart';
 import 'package:raven_front/widgets/widgets.dart';
+import 'package:raven_front/components/components.dart';
+import 'package:raven_front/backdrop/lib/modified_draggable_scrollable_sheet.dart'
+    as modified;
 import 'package:raven_back/raven_back.dart';
 
 class Home extends StatefulWidget {
@@ -10,13 +11,28 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late AppContext currentContext = AppContext.wallet;
   late List listeners = [];
+  late BuildContext? draggableSheetContext;
+  static const double minExtent = .26;
+  static const double maxExtent = 1.0;
+  //late ScrollController draggableScrollController;
+  late modified.DraggableScrollableController draggableScrollController =
+      modified.DraggableScrollableController();
+  bool isExpanded = true;
+  double initialExtent = maxExtent;
+
+  late AnimationController animationController;
 
   @override
   void initState() {
     super.initState();
+    animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+      value: 1,
+    );
     listeners.add(streams.app.context.listen((AppContext value) {
       if (value != currentContext) {
         if (value == AppContext.wallet &&
@@ -57,22 +73,26 @@ class _HomeState extends State<Home> {
             Column(
               children: [
                 Expanded(
-                  child: DraggableScrollableSheet(
-                      initialChildSize: 0.5,
-                      minChildSize: 0.25,
-                      maxChildSize: 1.0,
+                  child: modified.DraggableScrollableActuator(
+                    child: modified.DraggableScrollableSheet(
+                      controller: draggableScrollController,
+                      initialChildSize: initialExtent,
+                      minChildSize: minExtent,
+                      maxChildSize: maxExtent,
                       builder: ((context, scrollController) {
+                        draggableSheetContext = context;
                         return FrontCurve(
                             child: HoldingList(
                                 scrollController: scrollController));
-                      })),
+                      }),
+                    ),
+                  ),
                 ),
               ],
             ),
-            NavBar(),
-            Container(
-              height: 118,
-              color: Colors.transparent,
+            GestureDetector(
+              onTap: fling,
+              child: NavBar(),
             )
           ],
         ),
@@ -99,4 +119,35 @@ class _HomeState extends State<Home> {
   //        NavBar(),
   //      ],
   //    );
+
+  void fling() {
+    print('fling');
+
+    /// scrolls the list only
+    //draggableScrollController.animateTo(
+    //  0, // to the top
+    //  duration: animationController.duration!,
+    //  curve: Curves.ease,
+    //);
+    //if (draggableSheetContext != null) {
+    //  //setState(() {
+    //  //  initialExtent = isExpanded ? minExtent : maxExtent;
+    //  //  isExpanded = !isExpanded;
+    //  //});
+    //  DraggableScrollableActuator.reset(draggableSheetContext!);
+    //}
+    if (draggableScrollController.size < maxExtent) {
+      draggableScrollController.animateTo(
+        maxExtent,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOutCubicEmphasized,
+      );
+    } else {
+      draggableScrollController.animateTo(
+        minExtent,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOutCubicEmphasized,
+      );
+    }
+  }
 }

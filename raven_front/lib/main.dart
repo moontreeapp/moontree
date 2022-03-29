@@ -7,7 +7,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
-import 'package:raven_front/backdrop/jm/layers.dart';
 
 import 'package:raven_front/pages/pages.dart';
 import 'package:raven_front/components/components.dart';

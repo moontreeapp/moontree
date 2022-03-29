@@ -13,8 +13,11 @@ class HoldingList extends StatefulWidget {
   final Iterable<Balance>? holdings;
   final ScrollController? scrollController;
 
-  const HoldingList({this.holdings, this.scrollController, Key? key})
-      : super(key: key);
+  const HoldingList({
+    this.holdings,
+    this.scrollController,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<HoldingList> createState() => _HoldingList();
@@ -175,7 +178,6 @@ class _HoldingList extends State<HoldingList> {
       )
     ];
     return ListView(
-        //controller: components.navigator.scrollController,
         controller: widget.scrollController,
         dragStartBehavior: DragStartBehavior.start,
         physics: const BouncingScrollPhysics(),

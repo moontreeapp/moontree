@@ -79,7 +79,8 @@ class _PageLead extends State<PageLead> {
           splashRadius: 24,
           onPressed: () {
             ScaffoldMessenger.of(context).clearSnackBars();
-            flingBackdrop(context);
+            //flingBackdrop(context);
+            //fling(context);
           },
           padding: EdgeInsets.only(left: 16),
           icon: SvgPicture.asset('assets/icons/menu/menu.svg'));

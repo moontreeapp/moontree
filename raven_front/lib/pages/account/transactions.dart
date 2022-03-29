@@ -3,13 +3,14 @@
 
 import 'dart:async';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction.dart';
+import 'package:raven_back/streams/app.dart';
+import 'package:raven_back/streams/spend.dart';
 //import 'package:raven_front/backdrop/backdrop.dart';
-import 'package:raven_front/backdrop/jm/curve.dart';
-import 'package:raven_front/backdrop/jm/layers.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/theme/theme.dart';
@@ -81,82 +82,45 @@ class _TransactionsState extends State<Transactions>
     currentTxs = services.transaction
         .getTransactionRecords(wallet: Current.wallet, securities: {security});
     var back = BalanceHeader(pageTitle: 'Transactions');
-    components.navigator.tabController = components.navigator.tabController ??
-        TabController(length: 2, vsync: this);
+    //components.navigator.tabController = components.navigator.tabController ??
+    //    TabController(length: 2, vsync: this);
+    var minHeight = 1 - (201 + 16) / MediaQuery.of(context).size.height;
     return BackdropLayers(
       back: back, // must be created first
       front: Stack(
         alignment: Alignment.bottomCenter,
         children: [
-          TabBarView(
-              controller: components.navigator.tabController,
-              children: <Widget>[
-                Column(
-                  children: [
-                    Expanded(
-                      child: DraggableScrollableSheet(
-                          initialChildSize: 0.5,
-                          minChildSize: 0.25,
-                          maxChildSize: 1.0,
-                          builder: ((context, scrollController) {
-                            return FrontCurve(
-                                child: TransactionList(
-                                    transactions: currentTxs.where((tx) =>
-                                        tx.security.symbol == security.symbol),
-                                    msg:
-                                        '\nNo ${security.symbol} transactions.\n'));
-                          })),
-                    ),
-                  ],
-                ),
-                _metadataView() ??
-                    components.empty.message(
-                      context,
-                      icon: Icons.description,
-                      msg: '\nNo metadata.\n',
-                    ),
-              ]),
+          /// struggling to get Tabs to work (makes back area unresponsive)...
+          /// we could simply rebuild this with the corresponding stuff rather
+          /// than using tab view...
+          //TabBarView(
+          //    controller: components.navigator.tabController,
+          //    dragStartBehavior: DragStartBehavior.down,
+          //    children: <Widget>[
+          DraggableScrollableSheet(
+              initialChildSize: minHeight,
+              minChildSize: minHeight,
+              maxChildSize: 1.0,
+              builder: ((context, scrollController) {
+                return FrontCurve(
+                    frontLayerBoxShadow: [],
+                    child: TransactionList(
+                        scrollController: scrollController,
+                        transactions: currentTxs.where(
+                            (tx) => tx.security.symbol == security.symbol),
+                        msg: '\nNo ${security.symbol} transactions.\n'));
+              })),
+          //_metadataView() ??
+          //    components.empty.message(
+          //      context,
+          //      icon: Icons.description,
+          //      msg: '\nNo metadata.\n',
+          //    ),
+          //]),
           NavBar(),
-          Container(
-            height: 118,
-            color: Colors.transparent,
-          )
         ],
       ),
     );
-
-    Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.transparent,
-      body: TabBarView(
-          controller: components.navigator.tabController,
-          children: <Widget>[
-            GestureDetector(
-                onTap: () => FocusScope.of(context).unfocus(),
-                child:
-
-                    /// comments: to remove scroll functionality as it is not yet fluid. #182
-                    ///NotificationListener<UserScrollNotification>(
-                    ///    onNotification: visibilityOfSendReceive,
-                    ///    child:
-                    TransactionList(
-                        transactions: currentTxs.where(
-                            (tx) => tx.security.symbol == security.symbol),
-                        msg: '\nNo ${security.symbol} transactions.\n')),
-
-            ///),
-            _metadataView() ??
-                components.empty.message(
-                  context,
-                  icon: Icons.description,
-                  msg: '\nNo metadata.\n',
-                ),
-          ]),
-      floatingActionButton: SlideTransition(position: offset, child: NavBar()),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-    );
-
-    /// no place to view metadata right now - this used to be tabs
   }
 
   Widget? _metadataView() {

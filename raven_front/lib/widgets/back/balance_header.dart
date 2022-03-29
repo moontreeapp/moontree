@@ -13,6 +13,7 @@ import 'package:raven_front/components/components.dart';
 class BalanceHeader extends StatefulWidget {
   final String pageTitle;
   final Color? background;
+
   BalanceHeader({Key? key, required this.pageTitle, this.background})
       : super(key: key);
 
@@ -36,8 +37,6 @@ class _BalanceHeaderState extends State<BalanceHeader>
   @override
   void initState() {
     super.initState();
-    //Backdrop.of(components.navigator.routeContext!).revealBackLayer();
-
     listeners.add(streams.spend.form.listen((SpendForm? value) {
       if (symbolSend !=
               (value?.symbol == 'Ravencoin' ? 'RVN' : value?.symbol ?? 'RVN') ||
@@ -71,7 +70,7 @@ class _BalanceHeaderState extends State<BalanceHeader>
 
   @override
   void dispose() {
-    Backdrop.of(components.navigator.routeContext!).concealBackLayer();
+    //Backdrop.of(components.navigator.routeContext!).concealBackLayer();
     for (var listener in listeners) {
       listener.cancel();
     }

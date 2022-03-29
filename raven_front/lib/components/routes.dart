@@ -8,6 +8,7 @@ class RouteStack extends NavigatorObserver {
   TabController? tabController;
   bool isSnackbarActive = false;
   ScrollController? scrollController;
+  BuildContext? draggableSheetContext;
 
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     routeStack.add(route);
@@ -45,4 +46,15 @@ class RouteStack extends NavigatorObserver {
 
   //void set setScrollController(ScrollController controller) =>
   //    scrollController = controller;
+
+  //void fling() {
+  //  if (draggableSheetContext != null) {
+  //    setState(() {
+  //      //initialExtent = isExpanded ? minExtent : maxExtent;
+  //      //isExpanded = !isExpanded;
+  //    });
+  //    DraggableScrollableActuator.reset(draggableSheetContext);
+  //  }
+  //}
+
 }

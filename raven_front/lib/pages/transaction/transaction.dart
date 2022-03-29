@@ -2,9 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:raven_back/streams/app.dart';
-import 'package:raven_front/backdrop/jm/curve.dart';
-import 'package:raven_front/backdrop/jm/layers.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:raven_back/services/transaction.dart';
 import 'package:raven_back/raven_back.dart';
@@ -49,8 +48,9 @@ class _TransactionPageState extends State<TransactionPage> {
     transaction = transactionRecord!.transaction;
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
     return BackdropLayers(
-        back: Container(color: Theme.of(context).backgroundColor),
-        front: FrontCurve(child: detailsBody()));
+      back: BlankBack(),
+      front: FrontCurve(child: detailsBody()),
+    );
   }
 
   String element(String humanName) {

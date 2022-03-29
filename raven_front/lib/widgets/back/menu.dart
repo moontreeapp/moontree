@@ -62,7 +62,8 @@ class _NavMenuState extends State<NavMenu> {
           }
           if (!arrow) {
             ScaffoldMessenger.of(context).clearSnackBars();
-            Backdrop.of(components.navigator.routeContext!).fling();
+            //Backdrop.of(components.navigator.routeContext!).fling();
+            //DraggableScrollableActuator.reset(context);
             Navigator.of(components.navigator.routeContext!).pushNamed(
               link,
               arguments: arguments,

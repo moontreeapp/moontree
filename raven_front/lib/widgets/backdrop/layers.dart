@@ -22,7 +22,7 @@ class _BackdropLayersState extends State<BackdropLayers> {
   void initState() {
     super.initState();
 
-    /// refresh?
+    /// refresh? fling?
     //  listeners.add(
     //      res.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
     //    // if vouts in our account has changed...
@@ -45,21 +45,15 @@ class _BackdropLayersState extends State<BackdropLayers> {
 
   @override
   Widget build(BuildContext context) {
-    return //Flex(direction: Axis.vertical, children: [
-        //Expanded(
-        //child:
-        Stack(children: [
+    return Stack(children: [
       Container(
-          color: Colors.white,
+          color: Theme.of(context).backgroundColor,
           alignment: Alignment.topCenter,
           child: widget.back),
       Container(
-        color: Colors.transparent,
         alignment: Alignment.bottomCenter,
         child: widget.front,
       ),
     ]);
-    //)
-    //]);
   }
 }
