@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'dart:convert';
 
+import 'package:bs58check/bs58check.dart' as bs58check;
 import 'package:hex/hex.dart';
 import 'package:ravencoin_wallet/src/utils/constants/op.dart';
 
@@ -282,6 +283,47 @@ class TransactionBuilder {
     return _tx!.addOutput(assetScriptPubKey, 0);
   }
 
+  int generateQualifyAddressVouts(
+      dynamic qualifierTo, String assetName, dynamic h160ToQualify, bool tag) {
+    var qualifierPubKey;
+    var modifiedh160;
+    if (qualifierTo is String) {
+      qualifierPubKey = Address.addressToOutputScript(qualifierTo, network);
+    } else if (qualifierTo is Uint8List) {
+      qualifierPubKey = qualifierTo;
+    } else {
+      throw ArgumentError('newAssetTo Address invalid');
+    }
+    if (h160ToQualify is String) {
+      modifiedh160 = bs58check.base58.decode(h160ToQualify);
+      modifiedh160 = modifiedh160.sublist(1, modifiedh160.length - 4);
+    } else if (h160ToQualify is Uint8List) {
+      modifiedh160 = h160ToQualify;
+    } else {
+      throw ArgumentError('h160ToQualify must be the h160 or an address');
+    }
+
+    if (!_canModifyOutputs()) {
+      throw ArgumentError('No, this would invalidate signatures');
+    }
+    if (_tx!.outs.isNotEmpty) {
+      throw ArgumentError('This transaction already has outputs!');
+    }
+
+    final verifierScriptPubKey =
+        generateNullQualifierTag(assetName, modifiedh160, tag);
+    final qualifierScriptPubKey = generateAssetTransferScript(
+        qualifierPubKey,
+        assetName[0] == '\$' ? assetName.substring(1) + '!' : assetName,
+        100000000);
+    final burnScriptPubKey =
+        Address.addressToOutputScript(network.burnAddresses.addTag, network);
+
+    _tx!.addOutput(qualifierScriptPubKey, 0);
+    _tx!.addOutput(verifierScriptPubKey, 0);
+    return _tx!.addOutput(burnScriptPubKey, network.burnAmounts.addTag);
+  }
+
   // Note: this function generates all of the vouts for you. No other vouts may be added.
   // Last two vouts must be the asset generations.
   // Use Transaction.addChangeForAssetCreation to safely add.
@@ -515,8 +557,8 @@ class TransactionBuilder {
     return _tx!.addOutput(scriptPubKey, value);
   }
 
-  int addChangeToAssetCreationOrReissuance(
-      int offset, dynamic data, int? value) {
+  int addChangeToAssetCreationOrReissuance(int offset, dynamic data, int? value,
+      {String? asset, Uint8List? memo, int? expiry}) {
     var scriptPubKey;
     if (data is String) {
       scriptPubKey = Address.addressToOutputScript(data, network);
@@ -525,6 +567,13 @@ class TransactionBuilder {
     } else {
       throw ArgumentError('Address invalid');
     }
+
+    if (asset != null) {
+      scriptPubKey = generateAssetTransferScript(scriptPubKey, asset, value!,
+          ipfsData: memo, expireEpoch: expiry);
+      value = 0;
+    }
+
     if (!_canModifyOutputs()) {
       throw ArgumentError('No, this would invalidate signatures');
     }

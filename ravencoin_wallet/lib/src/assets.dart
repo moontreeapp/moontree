@@ -8,8 +8,6 @@ import 'utils/script.dart' as bscript;
 import 'utils/constants/op.dart';
 import 'validate.dart';
 
-import "package:hex/hex.dart";
-
 const List<int> RVN_rvn = [0x72, 0x76, 0x6e];
 const int RVN_t = 0x74;
 const int RVN_q = 0x71;
