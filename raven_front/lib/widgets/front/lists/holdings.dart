@@ -11,6 +11,7 @@ import 'package:raven_front/widgets/widgets.dart';
 
 class HoldingList extends StatefulWidget {
   final Iterable<Balance>? holdings;
+
   const HoldingList({this.holdings, Key? key}) : super(key: key);
 
   @override

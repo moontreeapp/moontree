@@ -8,9 +8,10 @@ import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/theme.dart';
 
 class BackdropLayers extends StatefulWidget {
-  final Widget? back;
-  final Widget? front;
-  const BackdropLayers({Key? key, this.back, this.front}) : super(key: key);
+  final Widget back;
+  final Widget front;
+  const BackdropLayers({Key? key, required this.back, required this.front})
+      : super(key: key);
 
   @override
   State<BackdropLayers> createState() => _BackdropLayersState();
