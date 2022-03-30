@@ -5,6 +5,7 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
+import 'package:raven_front/widgets/widgets.dart';
 
 class Loader extends StatefulWidget {
   final String message;
@@ -47,22 +48,25 @@ class _LoaderState extends State<Loader> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        color: AppColors.white87,
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                widget.message,
-                style: Theme.of(context).textTheme.headline2,
-              ),
-              SizedBox(height: 4),
-              Image.asset(
-                'assets/logo/moontree_logo.png',
-                height: 56,
-                width: 56,
-              ),
-            ]));
+    return BackdropLayers(
+        back: BlankBack(),
+        front: FrontCurve(
+            child: Container(
+                color: AppColors.white87,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        widget.message,
+                        style: Theme.of(context).textTheme.headline2,
+                      ),
+                      SizedBox(height: 4),
+                      Image.asset(
+                        'assets/logo/moontree_logo.png',
+                        height: 56,
+                        width: 56,
+                      ),
+                    ]))));
   }
 }

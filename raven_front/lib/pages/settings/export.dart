@@ -47,7 +47,7 @@ class _ExportState extends State<Export> {
         walletController.text != '' && walletController.text != 'All Wallets'
             ? res.wallets.byName.getOne(walletController.text)
             : null;
-    return body();
+    return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
   }
 
   Widget body() => Padding(

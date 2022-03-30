@@ -10,6 +10,7 @@ import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/data.dart';
 import 'package:raven_back/services/import.dart';
+import 'package:raven_front/widgets/widgets.dart';
 
 class Import extends StatefulWidget {
   final dynamic data;
@@ -59,10 +60,13 @@ class _ImportState extends State<Import> {
       wallet =
           res.wallets.primaryIndex.getOne(data['walletId']) ?? Current.wallet;
     }
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: body(),
-    );
+    return BackdropLayers(
+        back: BlankBack(),
+        front: FrontCurve(
+            child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: body(),
+        )));
   }
 
   Widget body() => Column(
