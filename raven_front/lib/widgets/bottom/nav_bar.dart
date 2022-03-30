@@ -140,6 +140,7 @@ class _NavBarState extends State<NavBar> {
 
   Widget sectorIcon({required AppContext appContext}) => IconButton(
         onPressed: () {
+          //streams.app.fling.add(false);
           Navigator.of(components.navigator.routeContext!).pushNamed('/home');
           setState(() {
             streams.app.context.add(appContext);

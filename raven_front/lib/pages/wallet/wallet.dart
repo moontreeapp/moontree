@@ -121,7 +121,10 @@ class _WalletViewState extends State<WalletView> {
         detailsView(),
         NotificationListener<UserScrollNotification>(
             onNotification: visibilityOfSendReceive,
-            child: HoldingList(holdings: holdings ?? Current.holdings)),
+            child: HoldingList(
+              holdings: holdings ?? Current.holdings,
+              scrollController: ScrollController(),
+            )),
         NotificationListener<UserScrollNotification>(
             onNotification: visibilityOfSendReceive,
             child: TransactionList(
