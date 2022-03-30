@@ -141,10 +141,16 @@ class _NavBarState extends State<NavBar> {
   Widget sectorIcon({required AppContext appContext}) => IconButton(
         onPressed: () {
           //streams.app.fling.add(false);
-          Navigator.of(components.navigator.routeContext!).pushNamed('/home');
-          setState(() {
-            streams.app.context.add(appContext);
-          });
+          //setState(() {
+          streams.app.context.add(appContext);
+          //});
+          if (!['Wallet', 'Manage', 'Swap'].contains(streams.app.page.value)) {
+            Navigator.popUntil(components.navigator.routeContext!,
+                ModalRoute.withName('/home'));
+          }
+          //Navigator.of(components.navigator.routeContext!)
+          //    .pushNamedAndRemoveUntil('/home', (route) => false);
+          //Navigator.of(components.navigator.routeContext!).pushNamed('/home');
         },
         icon: Icon({
           AppContext.wallet: MdiIcons.wallet,

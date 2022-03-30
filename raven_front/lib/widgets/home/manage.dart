@@ -12,7 +12,6 @@ class ManageHome extends StatefulWidget {
 
 class _ManageHomeState extends State<ManageHome>
     with SingleTickerProviderStateMixin {
-  late AppContext currentContext = AppContext.wallet;
   late List listeners = [];
   static const double minExtent = .2;
   static const double maxExtent = 1.0;
@@ -22,10 +21,10 @@ class _ManageHomeState extends State<ManageHome>
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.app.fling.listen((bool? value) {
-      print(value);
+    draggableScrollController = modified.DraggableScrollableController();
+    listeners.add(streams.app.fling.listen((bool? value) async {
       if (value != null) {
-        fling(value == false ? value : null);
+        await fling(value == false ? value : null);
         streams.app.fling.add(null);
       }
     }));
@@ -36,12 +35,12 @@ class _ManageHomeState extends State<ManageHome>
     for (var listener in listeners) {
       listener.cancel();
     }
+    draggableScrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    draggableScrollController = modified.DraggableScrollableController();
     return body();
   }
 
@@ -75,13 +74,13 @@ class _ManageHomeState extends State<ManageHome>
         ),
       );
 
-  void fling([bool? open]) {
-    var flingDown = () => draggableScrollController.animateTo(
+  Future<void> fling([bool? open]) async {
+    var flingDown = () async => await draggableScrollController.animateTo(
           minExtent,
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOutCubicEmphasized,
         );
-    var flingUp = () => draggableScrollController.animateTo(
+    var flingUp = () async => await draggableScrollController.animateTo(
           maxExtent,
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOutCubicEmphasized,
@@ -90,7 +89,8 @@ class _ManageHomeState extends State<ManageHome>
       flingDown();
     } else if (!(open ?? true)) {
       flingUp();
-    } else if (draggableScrollController.size >= (maxExtent + minExtent) / 2) {
+    } else if (await draggableScrollController.size >=
+        (maxExtent + minExtent) / 2) {
       flingDown();
     } else {
       flingUp();

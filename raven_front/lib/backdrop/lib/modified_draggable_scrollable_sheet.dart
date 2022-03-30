@@ -53,6 +53,11 @@ class DraggableScrollableController {
     return _attachedController!.extent.pixelsToSize(pixels);
   }
 
+  // modified: added, necessary!
+  void dispose() {
+    _attachedController?.dispose();
+  }
+
   /// Animates the attached sheet from its current size to [size] to the
   /// provided new `size`, a fractional value of the parent container's height.
   ///
@@ -105,6 +110,8 @@ class DraggableScrollableController {
       }
     });
     await animationController.animateTo(size, duration: duration);
+    // modified: added, necessary?
+    animationController.dispose();
   }
 
   /// Jumps the attached sheet from its current size to the given [size], a

@@ -2,21 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/widgets/widgets.dart';
+import 'package:raven_front/backdrop/lib/modified_draggable_scrollable_sheet.dart'
+    as modified;
 
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  late AppContext currentContext = AppContext.wallet;
+class _HomeState extends State<Home> {
+  late AppContext appContext = AppContext.wallet;
   late List listeners = [];
 
   @override
   void initState() {
     super.initState();
     listeners.add(streams.app.context.listen((AppContext value) {
-      if (value != currentContext) {
+      if (value != appContext) {
         if (value == AppContext.wallet &&
             streams.app.manage.asset.value != null) {
           streams.app.manage.asset.add(null);
@@ -25,7 +27,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           streams.app.wallet.asset.add(null);
         }
         setState(() {
-          currentContext = value;
+          appContext = value;
         });
       }
     }));
@@ -47,9 +49,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return body();
   }
 
-  Widget body() => currentContext == AppContext.wallet
+  Widget body() => appContext == AppContext.wallet
       ? WalletHome()
-      : currentContext == AppContext.manage
+      : appContext == AppContext.manage
           ? ManageHome()
           : SwapHome();
 }
