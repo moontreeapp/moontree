@@ -196,9 +196,9 @@ class _SendState extends State<Send> {
       back: CoinSpec(pageTitle: 'Send', security: security),
       front: Flexible(
           child: Column(children: [
-        SizedBox(height: 201 + 16),
+        SizedBox(height: 201),
         FrontCurve(
-          height: MediaQuery.of(context).size.height - (201 + 16 + 56),
+          height: MediaQuery.of(context).size.height - (201 + 56),
           child: content(scrollController),
         )
       ])));
