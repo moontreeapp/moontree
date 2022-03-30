@@ -10,6 +10,7 @@ import 'package:raven_front/pages/create/qualifiersub.dart';
 import 'package:raven_front/pages/create/channel.dart';
 import 'package:raven_front/pages/create/restricted.dart';
 import 'package:raven_front/pages/misc/loading.dart';
+import 'package:raven_front/pages/misc/splash.dart';
 import 'package:raven_front/pages/misc/scan.dart';
 import 'package:raven_front/pages/security/backup/show.dart';
 import 'package:raven_front/pages/security/backup/verify.dart';
@@ -37,6 +38,7 @@ import 'package:raven_front/pages/wallet/wallet.dart';
 import 'package:raven_front/widgets/front/loader.dart';
 
 class pages {
+  static Splash splash = Splash();
   static Loading loading = Loading();
   static ChangePassword changePassword = ChangePassword();
   static ChangeResume changeResume = ChangeResume();
@@ -78,6 +80,7 @@ class pages {
   static Map<String, Widget Function(BuildContext)> routes(
           BuildContext context) =>
       {
+        '/splash': (context) => splash,
         '/': (context) => loading,
         '/home': (context) => home,
         '/manage/asset': (context) => asset,

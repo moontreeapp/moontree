@@ -13,6 +13,7 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
 
 import 'package:raven_front/backdrop/backdrop.dart';
+import 'package:raven_front/pages/misc/splash.dart';
 
 import 'widgets/widgets.dart';
 import 'package:raven_front/backdrop/lib/modified_draggable_scrollable_sheet.dart'
@@ -61,7 +62,7 @@ class RavenMobileApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     return MaterialApp(
-      initialRoute: '/',
+      initialRoute: '/splash',
       routes: pages
           .routes(context), // look up flutter view model for sub app structure.
       themeMode: ThemeMode.system,
@@ -70,54 +71,54 @@ class RavenMobileApp extends StatelessWidget {
       navigatorObservers: [components.navigator],
       builder: (context, child) {
         components.navigator.scaffoldContext = context;
-
-        return BackdropScaffold(
-          //scaffoldKey: components.scaffoldKey, // thought this could help scrim issue, but it didn't
-          //maintainBackLayerState: false,
-          //resizeToAvoidBottomInset: true,
-          //extendBody: true,
-          // for potentially modifying the persistent bottom sheet options:
-          stickyFrontLayer: true,
-          backgroundColor: Theme.of(context).backgroundColor,
-          backLayerBackgroundColor: Theme.of(context).backgroundColor,
-          frontLayerElevation: 1,
-          frontLayerBackgroundColor: Colors.transparent,
-          frontLayerBorderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(8), topRight: Radius.circular(8)),
-          frontLayerBoxShadow: [
-            BoxShadow(
-                color: const Color(0x33000000),
-                offset: Offset(0, 1),
-                blurRadius: 5),
-            BoxShadow(
-                color: const Color(0x1F000000),
-                offset: Offset(0, 3),
-                blurRadius: 1),
-            BoxShadow(
-                color: const Color(0x24000000),
-                offset: Offset(0, 2),
-                blurRadius: 2),
-          ],
-          appBar: BackdropAppBar(
-            automaticallyImplyLeading: false,
-            backgroundColor: Theme.of(context).backgroundColor,
-            elevation: 0,
-            leading: PageLead(mainContext: context),
-            title: /*FittedBox(fit: BoxFit.fitWidth, child: */ PageTitle() /*)*/,
-            actions: <Widget>[
-              components.status,
-              ConnectionLight(),
-              QRCodeContainer(),
-              SnackBarViewer(),
-              SizedBox(width: 6),
-            ],
-          ),
-          backLayer: BackLayer(),
-          frontLayer: Container(
-            color: Colors.white,
-            child: child!,
-          ),
-        );
+        return Splash();
+        // return BackdropScaffold(
+        //   //scaffoldKey: components.scaffoldKey, // thought this could help scrim issue, but it didn't
+        //   //maintainBackLayerState: false,
+        //   //resizeToAvoidBottomInset: true,
+        //   //extendBody: true,
+        //   // for potentially modifying the persistent bottom sheet options:
+        //   stickyFrontLayer: true,
+        //   backgroundColor: Theme.of(context).backgroundColor,
+        //   backLayerBackgroundColor: Theme.of(context).backgroundColor,
+        //   frontLayerElevation: 1,
+        //   frontLayerBackgroundColor: Colors.transparent,
+        //   frontLayerBorderRadius: const BorderRadius.only(
+        //       topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+        //   frontLayerBoxShadow: [
+        //     BoxShadow(
+        //         color: const Color(0x33000000),
+        //         offset: Offset(0, 1),
+        //         blurRadius: 5),
+        //     BoxShadow(
+        //         color: const Color(0x1F000000),
+        //         offset: Offset(0, 3),
+        //         blurRadius: 1),
+        //     BoxShadow(
+        //         color: const Color(0x24000000),
+        //         offset: Offset(0, 2),
+        //         blurRadius: 2),
+        //   ],
+        //   appBar: BackdropAppBar(
+        //     automaticallyImplyLeading: false,
+        //     backgroundColor: Theme.of(context).backgroundColor,
+        //     elevation: 0,
+        //     leading: PageLead(mainContext: context),
+        //     title: /*FittedBox(fit: BoxFit.fitWidth, child: */ PageTitle() /*)*/,
+        //     actions: <Widget>[
+        //       components.status,
+        //       ConnectionLight(),
+        //       QRCodeContainer(),
+        //       SnackBarViewer(),
+        //       SizedBox(width: 6),
+        //     ],
+        //   ),
+        //   backLayer: BackLayer(),
+        //   frontLayer: Container(
+        //     color: Colors.white,
+        //     child: child!,
+        //   ),
+        // );
       },
     );
   }

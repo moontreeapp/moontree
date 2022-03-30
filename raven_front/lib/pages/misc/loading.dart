@@ -96,8 +96,9 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  // Loading probably doesn't make sense as a page. It is more of a background process'
   @override
   Widget build(BuildContext context) {
-    return Image(image: AssetImage("assets/splash/fast.gif"));
+    return Container();
   }
 }
