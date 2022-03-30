@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/widgets/widgets.dart';
-import 'package:raven_front/backdrop/lib/modified_draggable_scrollable_sheet.dart'
-    as modified;
 import 'package:raven_back/raven_back.dart';
 
 class SwapHome extends StatefulWidget {
@@ -16,12 +13,12 @@ class _SwapHomeState extends State<SwapHome>
   static const double minExtent = .2;
   static const double maxExtent = 1.0;
   static const double initialExtent = maxExtent;
-  late modified.DraggableScrollableController draggableScrollController;
+  late DraggableScrollableController draggableScrollController;
 
   @override
   void initState() {
     super.initState();
-    draggableScrollController = modified.DraggableScrollableController();
+    draggableScrollController = DraggableScrollableController();
     listeners.add(streams.app.fling.listen((bool? value) async {
       if (value != null) {
         await fling(value == false ? value : null);
@@ -35,7 +32,7 @@ class _SwapHomeState extends State<SwapHome>
     for (var listener in listeners) {
       listener.cancel();
     }
-    draggableScrollController.dispose();
+    //draggableScrollController.dispose();
     super.dispose();
   }
 
@@ -52,8 +49,8 @@ class _SwapHomeState extends State<SwapHome>
             Column(
               children: [
                 Expanded(
-                  child: modified.DraggableScrollableActuator(
-                    child: modified.DraggableScrollableSheet(
+                  child: DraggableScrollableActuator(
+                    child: DraggableScrollableSheet(
                       controller: draggableScrollController,
                       snap: false,
                       initialChildSize: initialExtent,

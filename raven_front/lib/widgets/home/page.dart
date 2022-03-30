@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/raven_back.dart';
 
-class WalletHome extends StatefulWidget {
+class HomePage extends StatefulWidget {
+  final AppContext appContext;
+
+  const HomePage({
+    required this.appContext,
+    Key? key,
+  }) : super(key: key);
+
   @override
-  _WalletHomeState createState() => _WalletHomeState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _WalletHomeState extends State<WalletHome>
+class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late List listeners = [];
   static const double minExtent = .2;
@@ -58,8 +66,16 @@ class _WalletHomeState extends State<WalletHome>
                       maxChildSize: maxExtent,
                       builder: ((context, scrollController) {
                         return FrontCurve(
-                            child: HoldingList(
-                                scrollController: scrollController));
+                            child: widget.appContext == AppContext.wallet
+                                ? HoldingList(
+                                    scrollController: scrollController)
+                                : widget.appContext == AppContext.manage
+                                    ? AssetList(
+                                        scrollController: scrollController)
+                                    : Scroller(
+                                        controller: scrollController,
+                                        child: Text(
+                                            'swap\n\n\n\n\n\n\n\n\n\n\n\n')));
                       }),
                     ),
                   ),

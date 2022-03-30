@@ -8,6 +8,10 @@
 /// For our purposes, it actaully may be possible to use the out of the box
 /// versions... but we did keep getting errors around dispose so that function
 /// may be necessary...
+/// You might think, ok, if all you need is dispose() just make it an extension
+/// method. Well. Dart doesn't let you access _private variables in extensions
+/// so it seems impossible to take that wonderfully simple approach, instead we
+/// get to do this:
 ////////////////////////////////////////////////////////////////////////////////
 
 import 'dart:math' as math;

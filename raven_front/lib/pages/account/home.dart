@@ -49,9 +49,10 @@ class _HomeState extends State<Home> {
     return body();
   }
 
-  Widget body() => appContext == AppContext.wallet
-      ? WalletHome()
-      : appContext == AppContext.manage
-          ? ManageHome()
-          : SwapHome();
+  //Widget body() => appContext == AppContext.wallet
+  //    ? WalletHome()
+  //    : appContext == AppContext.manage
+  //        ? ManageHome()
+  //        : SwapHome();
+  Widget body() => HomePage(appContext: appContext);
 }
