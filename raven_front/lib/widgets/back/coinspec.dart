@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/streams/spend.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
@@ -20,6 +18,8 @@ class CoinSpec extends StatefulWidget {
 
   @override
   _CoinSpecState createState() => _CoinSpecState();
+
+  static Map<int, String> get tabIndex => {0: 'HISTORY', 1: 'DATA'};
 }
 
 class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
@@ -52,10 +52,9 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
   }
 
   void changeContent() =>
-      streams.app.coinspec.add(tabIndex[tabController.index]);
+      streams.app.coinspec.add(widget.tabIndex[tabController.index]);
 
   String get symbol => widget.security.symbol;
-  Map<int, String> get tabIndex => {0: 'HISTORY', 1: 'DATA'};
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +169,10 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
                     fontWeight: FontWeights.medium,
                     letterSpacing: 1.25,
                     color: AppColors.white60),
-            tabs: [Tab(text: tabIndex[0]), Tab(text: tabIndex[1])]));
+            tabs: [
+              Tab(text: widget.tabIndex[0]),
+              Tab(text: widget.tabIndex[1]),
+            ]));
   }
 }
 

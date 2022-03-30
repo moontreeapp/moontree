@@ -56,6 +56,7 @@ class _TransactionsState extends State<Transactions>
       if (value != null) {
         setState(() {
           tabChoice = value;
+          streams.app.coinspec.add(null);
         });
       }
     }));
@@ -110,7 +111,8 @@ class _TransactionsState extends State<Transactions>
     );
   }
 
-  Widget content(ScrollController scrollController) => tabChoice == 'HISTORY'
+  Widget content(ScrollController scrollController) => tabChoice ==
+          CoinSpec.tabIndex[0]
       ? TransactionList(
           scrollController: scrollController,
           transactions:
