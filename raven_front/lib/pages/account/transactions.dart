@@ -15,8 +15,8 @@ import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/data.dart';
-import 'package:raven_front/components/components.dart';
 import 'package:raven_front/widgets/widgets.dart';
+import 'package:raven_front/components/components.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Transactions extends StatefulWidget {
@@ -81,44 +81,47 @@ class _TransactionsState extends State<Transactions>
     currentHolds = Current.holdings;
     currentTxs = services.transaction
         .getTransactionRecords(wallet: Current.wallet, securities: {security});
-    var back = BalanceHeader(pageTitle: 'Transactions');
     //components.navigator.tabController = components.navigator.tabController ??
     //    TabController(length: 2, vsync: this);
     var minHeight = 1 - (201 + 16) / MediaQuery.of(context).size.height;
-    return BackdropLayers(
-      back: back, // must be created first
-      front: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          /// struggling to get Tabs to work (makes back area unresponsive)...
-          /// we could simply rebuild this with the corresponding stuff rather
-          /// than using tab view...
-          //TabBarView(
-          //    controller: components.navigator.tabController,
-          //    dragStartBehavior: DragStartBehavior.down,
-          //    children: <Widget>[
-          DraggableScrollableSheet(
-              initialChildSize: minHeight,
-              minChildSize: minHeight,
-              maxChildSize: 1.0,
-              builder: ((context, scrollController) {
-                return FrontCurve(
-                    frontLayerBoxShadow: [],
-                    child: TransactionList(
-                        scrollController: scrollController,
-                        transactions: currentTxs.where(
-                            (tx) => tx.security.symbol == security.symbol),
-                        msg: '\nNo ${security.symbol} transactions.\n'));
-              })),
-          //_metadataView() ??
-          //    components.empty.message(
-          //      context,
-          //      icon: Icons.description,
-          //      msg: '\nNo metadata.\n',
-          //    ),
-          //]),
-          NavBar(),
-        ],
+    return DefaultTabController(
+      length: 2,
+      child: BackdropLayers(
+        back: CoinSpec(pageTitle: 'Transactions', security: security),
+        front: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            /// struggling to get Tabs to work (makes back area unresponsive)...
+            /// we could simply rebuild this with the corresponding stuff rather
+            /// than using tab view...
+            TabBarView(
+                //    controller: components.navigator.tabController,
+                dragStartBehavior: DragStartBehavior.down,
+                children: <Widget>[
+                  DraggableScrollableSheet(
+                      initialChildSize: minHeight,
+                      minChildSize: minHeight,
+                      maxChildSize: 1.0,
+                      builder: ((context, scrollController) {
+                        return FrontCurve(
+                            frontLayerBoxShadow: [],
+                            child: TransactionList(
+                                scrollController: scrollController,
+                                transactions: currentTxs.where((tx) =>
+                                    tx.security.symbol == security.symbol),
+                                msg:
+                                    '\nNo ${security.symbol} transactions.\n'));
+                      })),
+                  _metadataView() ??
+                      components.empty.message(
+                        context,
+                        icon: Icons.description,
+                        msg: '\nNo metadata.\n',
+                      ),
+                ]),
+            NavBar(),
+          ],
+        ),
       ),
     );
   }

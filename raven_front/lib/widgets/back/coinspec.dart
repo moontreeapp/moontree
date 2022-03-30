@@ -8,24 +8,21 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
-class BalanceHeader extends StatefulWidget {
+class CoinSpec extends StatefulWidget {
   final String pageTitle;
-  final Security? security;
-  final Color? background;
+  final Security security;
 
-  BalanceHeader({
+  CoinSpec({
     Key? key,
     required this.pageTitle,
-    this.security,
-    this.background,
+    required this.security,
   }) : super(key: key);
 
   @override
-  _BalanceHeaderState createState() => _BalanceHeaderState();
+  _CoinSpecState createState() => _CoinSpecState();
 }
 
-class _BalanceHeaderState extends State<BalanceHeader>
-    with TickerProviderStateMixin {
+class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
   List<StreamSubscription> listeners = [];
   String symbolSend = 'RVN';
   String symbolTransactions = 'RVN';
@@ -40,64 +37,22 @@ class _BalanceHeaderState extends State<BalanceHeader>
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.spend.form.listen((SpendForm? value) {
-      if (symbolSend !=
-              (value?.symbol == 'Ravencoin' ? 'RVN' : value?.symbol ?? 'RVN') ||
-          amount != (value?.amount ?? 0.0)) {
-        setState(() {
-          symbolSend =
-              (value?.symbol == 'Ravencoin' ? 'RVN' : value?.symbol ?? 'RVN');
-          amount = (value?.amount ?? 0.0);
-        });
-      }
-    }));
-    listeners.add(streams.app.manage.asset.listen((String? value) {
-      if (streams.app.context.value == AppContext.manage &&
-          symbolManage != value &&
-          value != null) {
-        setState(() {
-          symbolManage = value;
-        });
-      }
-    }));
-    listeners.add(streams.app.wallet.asset.listen((String? value) {
-      if (streams.app.context.value == AppContext.wallet &&
-          symbolTransactions != value &&
-          value != null) {
-        setState(() {
-          symbolTransactions = value;
-        });
-      }
-    }));
   }
 
   @override
   void dispose() {
-    //Backdrop.of(components.navigator.routeContext!).concealBackLayer();
     for (var listener in listeners) {
       listener.cancel();
     }
     super.dispose();
   }
 
-  String get symbol => widget.security != null
-      ? widget.security!.symbol
-      : streams.app.context.value == AppContext.wallet
-          ? streams.app.page.value == 'Send'
-              ? symbolSend
-              : symbolTransactions
-          : streams.app.context.value == AppContext.manage
-              ? symbolManage
-              : symbolTransactions;
+  String get symbol => widget.security.symbol;
 
   @override
   Widget build(BuildContext context) {
     var possibleHoldings = [
-      for (var balance in
-          //      useWallet
-          //      ? Current.walletHoldings(data['walletId'])
-          //      :
-          Current.holdings)
+      for (var balance in Current.holdings)
         if (balance.security.symbol == symbol)
           utils.satToAmount(balance.confirmed)
     ];
@@ -125,12 +80,9 @@ class _BalanceHeaderState extends State<BalanceHeader>
             utils.satToAmount(assetDetails!.satsInCirculation).toCommaString();
       }
     }
-    components.navigator.tabController = components.navigator.tabController ??
-        TabController(length: 2, vsync: this);
     return Container(
       padding: EdgeInsets.only(top: 16),
       height: 201,
-      color: Theme.of(context).backgroundColor,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -195,7 +147,7 @@ class _BalanceHeaderState extends State<BalanceHeader>
           ),
         ),
         child: TabBar(
-            controller: components.navigator.tabController,
+            //controller: TabController(length: 2, vsync: this),
             indicatorColor: Colors.white,
             indicatorSize: TabBarIndicatorSize.tab,
             indicator: _TabIndicator(),

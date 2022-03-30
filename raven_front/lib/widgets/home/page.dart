@@ -18,12 +18,12 @@ class _HomePageState extends State<HomePage>
   static const double minExtent = .2;
   static const double maxExtent = 1.0;
   static const double initialExtent = maxExtent;
-  late DraggableScrollableController draggableScrollController;
+  late DraggableScrollableController draggableScrollController =
+      DraggableScrollableController();
 
   @override
   void initState() {
     super.initState();
-    draggableScrollController = DraggableScrollableController();
     listeners.add(streams.app.fling.listen((bool? value) async {
       if (value != null) {
         await fling(value == false ? value : null);
