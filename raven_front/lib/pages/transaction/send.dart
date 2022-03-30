@@ -193,17 +193,13 @@ class _SendState extends State<Send> {
   }
 
   Widget body() => BackdropLayers(
-      back: CoinSpec(pageTitle: 'Send', security: security),
-      front: Flexible(
-          child: Column(children: [
-        SizedBox(height: 201),
-        FrontCurve(
-          height: MediaQuery.of(context).size.height - (201 + 56),
-          child: content(scrollController),
-        )
-      ])));
+        back: CoinSpec(pageTitle: 'Send', security: security),
+        front: content(scrollController),
+      );
 
-  Widget content(ScrollController scrollController) => components.page.form(
+  Widget content(ScrollController scrollController) => FrontCurve(
+      height: MediaQuery.of(context).size.height - (201 + 56),
+      child: components.page.form(
         context,
         controller: scrollController,
         columnWidgets: <Widget>[
@@ -225,7 +221,7 @@ class _SendState extends State<Send> {
           sendTransactionButton()
           //: sendTransactionButton(disabled: true)
         ],
-      );
+      ));
 
   Widget get sendAssetField => TextField(
         focusNode: sendAssetFocusNode,

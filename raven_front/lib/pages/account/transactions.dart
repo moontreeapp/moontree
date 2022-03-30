@@ -94,7 +94,6 @@ class _TransactionsState extends State<Transactions>
       back: CoinSpec(
         pageTitle: 'Transactions',
         security: security,
-        bottom: CoinSpecTabs(),
       ),
       front: Stack(
         alignment: Alignment.bottomCenter,
