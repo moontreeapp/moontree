@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/services/lookup.dart';
@@ -9,50 +8,34 @@ import 'package:raven_front/widgets/widgets.dart';
 class CoinSpec extends StatefulWidget {
   final String pageTitle;
   final Security security;
+  final Widget? bottom;
 
   CoinSpec({
     Key? key,
     required this.pageTitle,
     required this.security,
+    this.bottom,
   }) : super(key: key);
 
   @override
   _CoinSpecState createState() => _CoinSpecState();
-
-  static Map<int, String> get tabIndex => {0: 'HISTORY', 1: 'DATA'};
 }
 
 class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
-  List<StreamSubscription> listeners = [];
-  String symbolSend = 'RVN';
-  String symbolTransactions = 'RVN';
-  String symbolManage = 'RVN';
   double amount = 0.0;
   double holding = 0.0;
   String visibleAmount = '0';
   String visibleFiatAmount = '';
-  String validatedAddress = 'unknown';
-  String validatedAmount = '-1';
-  late TabController tabController;
+
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 2, vsync: this);
-    tabController.addListener(changeContent);
   }
 
   @override
   void dispose() {
-    for (var listener in listeners) {
-      listener.cancel();
-    }
-    tabController.removeListener(changeContent);
-    tabController.dispose();
     super.dispose();
   }
-
-  void changeContent() =>
-      streams.app.coinspec.add(widget.tabIndex[tabController.index]);
 
   String get symbol => widget.security.symbol;
 
@@ -99,7 +82,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
               symbol: symbol,
               holdingSat: holdingSat,
               totalSupply: totalSupply),
-          headerBottom(holdingSat, amountSat),
+          widget.bottom ?? headerBottom(holdingSat, amountSat),
         ],
       ),
     );
@@ -107,18 +90,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
 
   Widget headerBottom(int holdingSat, int amountSat) {
     if (widget.pageTitle == 'Asset') {
-      return Padding(
-          padding: EdgeInsets.only(left: 16, right: 16, bottom: 1),
-          child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            symbol.contains('/')
-                ? Text('$symbol/',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText2!
-                        .copyWith(color: AppColors.offWhite))
-                : Container(),
-          ]));
-      //: SizedBox(height: 14+16),
+      return AssetSpecBottom(symbol: symbol);
     }
     if (widget.pageTitle == 'Send') {
       return Padding(
@@ -133,7 +105,6 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
             Text(
                 components.text.securityAsReadable(holdingSat - amountSat,
                     symbol: symbol, asUSD: false),
-                //(holding - amount).toString(),
                 style: (holding - amount) >= 0
                     ? Theme.of(context)
                         .textTheme
@@ -144,71 +115,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
                         .bodyText2!
                         .copyWith(color: AppColors.error))
           ]));
-      //: SizedBox(height: 14+16),
     }
-    return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(8),
-            topRight: Radius.circular(8),
-          ),
-        ),
-        child: TabBar(
-            controller: tabController,
-            indicatorColor: Colors.white,
-            indicatorSize: TabBarIndicatorSize.tab,
-            indicator: _TabIndicator(),
-            labelStyle: Theme.of(context).textTheme.bodyText2!.copyWith(
-                fontWeight: FontWeights.medium,
-                letterSpacing: 1.25,
-                color: AppColors.white),
-            unselectedLabelStyle: Theme.of(context)
-                .textTheme
-                .bodyText2!
-                .copyWith(
-                    fontWeight: FontWeights.medium,
-                    letterSpacing: 1.25,
-                    color: AppColors.white60),
-            tabs: [
-              Tab(text: widget.tabIndex[0]),
-              Tab(text: widget.tabIndex[1]),
-            ]));
-  }
-}
-
-class _TabIndicator extends BoxDecoration {
-  final BoxPainter _painter;
-
-  _TabIndicator() : _painter = _TabIndicatorPainter();
-
-  @override
-  BoxPainter createBoxPainter([onChanged]) => _painter;
-}
-
-class _TabIndicatorPainter extends BoxPainter {
-  final Paint _paint;
-
-  _TabIndicatorPainter()
-      : _paint = Paint()
-          ..color = Colors.white
-          ..isAntiAlias = true;
-
-  @override
-  void paint(Canvas canvas, Offset offset, ImageConfiguration cfg) {
-    //final double _xPos = offset.dx + cfg.size!.width / 2;
-
-    canvas.drawRRect(
-      RRect.fromRectAndCorners(
-        Rect.fromLTRB(
-          offset.dx,
-          offset.dy + cfg.size!.height + 10,
-          offset.dx + cfg.size!.width,
-          offset.dy + cfg.size!.height - 2,
-        ),
-        topLeft: const Radius.circular(8.0),
-        topRight: const Radius.circular(8.0),
-      ),
-      _paint,
-    );
+    return CoinSpecTabs();
   }
 }

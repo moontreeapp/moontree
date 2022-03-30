@@ -91,7 +91,11 @@ class _TransactionsState extends State<Transactions>
         .getTransactionRecords(wallet: Current.wallet, securities: {security});
     var minHeight = 1 - (201 + 16) / MediaQuery.of(context).size.height;
     return BackdropLayers(
-      back: CoinSpec(pageTitle: 'Transactions', security: security),
+      back: CoinSpec(
+        pageTitle: 'Transactions',
+        security: security,
+        bottom: CoinSpecTabs(),
+      ),
       front: Stack(
         alignment: Alignment.bottomCenter,
         children: [
@@ -112,7 +116,7 @@ class _TransactionsState extends State<Transactions>
   }
 
   Widget content(ScrollController scrollController) => tabChoice ==
-          CoinSpec.tabIndex[0]
+          CoinSpecTabs.tabIndex[0]
       ? TransactionList(
           scrollController: scrollController,
           transactions:

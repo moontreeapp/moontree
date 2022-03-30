@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 class FrontCurve extends StatefulWidget {
   final Widget child;
+  final double? height;
   final BorderRadius frontLayerBorderRadius;
   final List<BoxShadow> frontLayerBoxShadow;
   const FrontCurve({
     Key? key,
     required this.child,
+    this.height,
     this.frontLayerBorderRadius = const BorderRadius.only(
       topLeft: Radius.circular(8),
       topRight: Radius.circular(8),
@@ -40,6 +42,7 @@ class _FrontCurveState extends State<FrontCurve> {
     return Container(
         padding: EdgeInsets.only(top: 5.0),
         alignment: Alignment.bottomCenter,
+        height: widget.height,
         decoration: BoxDecoration(
             borderRadius: widget.frontLayerBorderRadius,
             boxShadow: widget.frontLayerBoxShadow,
