@@ -194,7 +194,7 @@ class _SendState extends State<Send> {
 
   Widget body() => BackdropLayers(
       back: CoinSpec(pageTitle: 'Send', security: security),
-      front: Expanded(
+      front: Flexible(
           child: Column(children: [
         SizedBox(height: 201 + 16),
         FrontCurve(
