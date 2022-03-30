@@ -31,8 +31,7 @@ class _QRCodeButtonState extends State<QRCodeButton> {
               ),
               onPressed: () async {
                 ScaffoldMessenger.of(context).clearSnackBars();
-                Backdrop.of(components.navigator.routeContext!)
-                    .concealBackLayer();
+                //Backdrop.of(components.navigator.routeContext!).concealBackLayer();
                 //ScanResult result = await BarcodeScanner.scan();
                 //Navigator.of(components.navigator.routeContext!)
                 //    .pushNamed('/transaction/send', arguments: {

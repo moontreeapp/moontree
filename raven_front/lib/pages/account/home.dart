@@ -14,25 +14,15 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late AppContext currentContext = AppContext.wallet;
   late List listeners = [];
-  late BuildContext? draggableSheetContext;
-  static const double minExtent = .26;
+  static const double minExtent = .2;
   static const double maxExtent = 1.0;
-  //late ScrollController draggableScrollController;
   late modified.DraggableScrollableController draggableScrollController =
       modified.DraggableScrollableController();
-  bool isExpanded = true;
   double initialExtent = maxExtent;
-
-  late AnimationController animationController;
 
   @override
   void initState() {
     super.initState();
-    animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 200),
-      value: 1,
-    );
     listeners.add(streams.app.context.listen((AppContext value) {
       if (value != currentContext) {
         if (value == AppContext.wallet &&
@@ -49,6 +39,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     }));
     listeners.add(res.settings.changes.listen((Change change) {
       setState(() {});
+    }));
+
+    listeners.add(streams.app.fling.listen((bool? value) {
+      if (value != null) {
+        fling(true);
+        streams.app.fling.add(null);
+      }
     }));
   }
 
@@ -76,78 +73,52 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   child: modified.DraggableScrollableActuator(
                     child: modified.DraggableScrollableSheet(
                       controller: draggableScrollController,
+                      snap: false,
                       initialChildSize: initialExtent,
                       minChildSize: minExtent,
                       maxChildSize: maxExtent,
                       builder: ((context, scrollController) {
-                        draggableSheetContext = context;
                         return FrontCurve(
-                            child: HoldingList(
-                                scrollController: scrollController));
+                            child: currentContext == AppContext.wallet
+                                ? HoldingList(
+                                    scrollController: scrollController)
+                                : currentContext == AppContext.manage
+                                    ? AssetList(
+                                        scrollController: scrollController)
+                                    : Scroller(
+                                        controller: scrollController,
+                                        child: Text(
+                                            'swap\n\n\n\n\n\n\n\n\n\n\n\n')));
                       }),
                     ),
                   ),
                 ),
               ],
             ),
-            GestureDetector(
-              onTap: fling,
-              child: NavBar(),
-            )
+            NavBar(),
           ],
         ),
       );
-  //  front: Container(
-  //    //height: 200, // variable height
-  //    alignment: Alignment.bottomCenter,
-  //    color: Colors.white,
-  //    child: Container(
-  //      height: 100,
-  //      color: Colors.green,
-  //    ),
-  //  ),
-  //);
 
-  //Widget body() => Column(
-  //      children: [
-  //        Expanded(
-  //            child: currentContext == AppContext.wallet
-  //                ? HoldingList()
-  //                : currentContext == AppContext.manage
-  //                    ? AssetList()
-  //                    : Text('swap')),
-  //        NavBar(),
-  //      ],
-  //    );
-
-  void fling() {
-    print('fling');
-
-    /// scrolls the list only
-    //draggableScrollController.animateTo(
-    //  0, // to the top
-    //  duration: animationController.duration!,
-    //  curve: Curves.ease,
-    //);
-    //if (draggableSheetContext != null) {
-    //  //setState(() {
-    //  //  initialExtent = isExpanded ? minExtent : maxExtent;
-    //  //  isExpanded = !isExpanded;
-    //  //});
-    //  DraggableScrollableActuator.reset(draggableSheetContext!);
-    //}
-    if (draggableScrollController.size < maxExtent) {
-      draggableScrollController.animateTo(
-        maxExtent,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOutCubicEmphasized,
-      );
+  void fling([bool? open]) {
+    var flingDown = () => draggableScrollController.animateTo(
+          minExtent,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOutCubicEmphasized,
+        );
+    var flingUp = () => draggableScrollController.animateTo(
+          maxExtent,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOutCubicEmphasized,
+        );
+    if ((open ?? false)) {
+      flingDown();
+    } else if (!(open ?? true)) {
+      flingUp();
+    } else if (draggableScrollController.size >= (maxExtent + minExtent) / 2) {
+      flingDown();
     } else {
-      draggableScrollController.animateTo(
-        minExtent,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOutCubicEmphasized,
-      );
+      flingUp();
     }
   }
 }

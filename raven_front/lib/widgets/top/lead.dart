@@ -81,6 +81,7 @@ class _PageLead extends State<PageLead> {
             ScaffoldMessenger.of(context).clearSnackBars();
             //flingBackdrop(context);
             //fling(context);
+            streams.app.fling.add(true);
           },
           padding: EdgeInsets.only(left: 16),
           icon: SvgPicture.asset('assets/icons/menu/menu.svg'));

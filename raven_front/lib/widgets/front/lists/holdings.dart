@@ -11,11 +11,11 @@ import 'package:raven_front/widgets/widgets.dart';
 
 class HoldingList extends StatefulWidget {
   final Iterable<Balance>? holdings;
-  final ScrollController? scrollController;
+  final ScrollController scrollController;
 
   const HoldingList({
     this.holdings,
-    this.scrollController,
+    required this.scrollController,
     Key? key,
   }) : super(key: key);
 
@@ -100,13 +100,15 @@ class _HoldingList extends State<HoldingList> {
   Widget build(BuildContext context) {
     holdings = utils.assetHoldings(widget.holdings ?? Current.holdings);
     return holdings.isEmpty && res.vouts.data.isEmpty // <-- on front tab...
-        ? components.empty.holdings(context)
+        ? Scroller(
+            controller: widget.scrollController,
+            child: components.empty.holdings(context))
         : holdings.isEmpty
             ? Container(/* awaiting transactions placeholder... */)
-            : RefreshIndicator(
-                child: _holdingsView(context),
-                onRefresh: () => refresh(),
-              );
+            : //RefreshIndicator( child:
+            _holdingsView(context);
+    //  onRefresh: () => refresh(),
+    //);
   }
 
   void navigate(Balance balance, {Wallet? wallet}) {
