@@ -33,10 +33,12 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
   String visibleFiatAmount = '';
   String validatedAddress = 'unknown';
   String validatedAmount = '-1';
-
+  late TabController tabController;
   @override
   void initState() {
     super.initState();
+    tabController = TabController(length: 2, vsync: this);
+    tabController.addListener(changeContent);
   }
 
   @override
@@ -44,10 +46,16 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
     for (var listener in listeners) {
       listener.cancel();
     }
+    tabController.removeListener(changeContent);
+    tabController.dispose();
     super.dispose();
   }
 
+  void changeContent() =>
+      streams.app.coinspec.add(tabIndex[tabController.index]);
+
   String get symbol => widget.security.symbol;
+  Map<int, String> get tabIndex => {0: 'HISTORY', 1: 'DATA'};
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +155,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
           ),
         ),
         child: TabBar(
-            //controller: TabController(length: 2, vsync: this),
+            controller: tabController,
             indicatorColor: Colors.white,
             indicatorSize: TabBarIndicatorSize.tab,
             indicator: _TabIndicator(),
@@ -162,7 +170,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
                     fontWeight: FontWeights.medium,
                     letterSpacing: 1.25,
                     color: AppColors.white60),
-            tabs: [Tab(text: 'HISTORY'), Tab(text: 'DATA')]));
+            tabs: [Tab(text: tabIndex[0]), Tab(text: tabIndex[1])]));
   }
 }
 

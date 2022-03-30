@@ -20,8 +20,7 @@ import 'package:raven_front/components/components.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Transactions extends StatefulWidget {
-  final dynamic data;
-  const Transactions({this.data}) : super();
+  const Transactions({Key? key}) : super(key: key);
 
   @override
   _TransactionsState createState() => _TransactionsState();
@@ -37,6 +36,7 @@ class _TransactionsState extends State<Transactions>
   late List<TransactionRecord> currentTxs;
   late List<Balance> currentHolds;
   late Security security;
+  String tabChoice = 'HISTORY';
 
   @override
   void initState() {
@@ -51,6 +51,13 @@ class _TransactionsState extends State<Transactions>
 
     listeners.add(res.balances.batchedChanges.listen((batchedChanges) {
       if (batchedChanges.isNotEmpty) setState(() {});
+    }));
+    listeners.add(streams.app.coinspec.listen((String? value) {
+      if (value != null) {
+        setState(() {
+          tabChoice = value;
+        });
+      }
     }));
   }
 
@@ -81,50 +88,43 @@ class _TransactionsState extends State<Transactions>
     currentHolds = Current.holdings;
     currentTxs = services.transaction
         .getTransactionRecords(wallet: Current.wallet, securities: {security});
-    //components.navigator.tabController = components.navigator.tabController ??
-    //    TabController(length: 2, vsync: this);
     var minHeight = 1 - (201 + 16) / MediaQuery.of(context).size.height;
-    return DefaultTabController(
-      length: 2,
-      child: BackdropLayers(
-        back: CoinSpec(pageTitle: 'Transactions', security: security),
-        front: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            /// struggling to get Tabs to work (makes back area unresponsive)...
-            /// we could simply rebuild this with the corresponding stuff rather
-            /// than using tab view...
-            TabBarView(
-                //    controller: components.navigator.tabController,
-                dragStartBehavior: DragStartBehavior.down,
-                children: <Widget>[
-                  DraggableScrollableSheet(
-                      initialChildSize: minHeight,
-                      minChildSize: minHeight,
-                      maxChildSize: 1.0,
-                      builder: ((context, scrollController) {
-                        return FrontCurve(
-                            frontLayerBoxShadow: [],
-                            child: TransactionList(
-                                scrollController: scrollController,
-                                transactions: currentTxs.where((tx) =>
-                                    tx.security.symbol == security.symbol),
-                                msg:
-                                    '\nNo ${security.symbol} transactions.\n'));
-                      })),
-                  _metadataView() ??
-                      components.empty.message(
-                        context,
-                        icon: Icons.description,
-                        msg: '\nNo metadata.\n',
-                      ),
-                ]),
-            NavBar(),
-          ],
-        ),
+    return BackdropLayers(
+      back: CoinSpec(pageTitle: 'Transactions', security: security),
+      front: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          DraggableScrollableSheet(
+              initialChildSize: minHeight,
+              minChildSize: minHeight,
+              maxChildSize: 1.0,
+              builder: ((context, scrollController) {
+                return FrontCurve(
+                  frontLayerBoxShadow: [],
+                  child: content(scrollController),
+                );
+              })),
+          NavBar(),
+        ],
       ),
     );
   }
+
+  Widget content(ScrollController scrollController) => tabChoice == 'HISTORY'
+      ? TransactionList(
+          scrollController: scrollController,
+          transactions:
+              currentTxs.where((tx) => tx.security.symbol == security.symbol),
+          msg: '\nNo ${security.symbol} transactions.\n')
+      : metadata; //(scrollController: scrollController) //at present we can't scroll metadata
+
+  Widget get metadata =>
+      _metadataView() ??
+      components.empty.message(
+        context,
+        icon: Icons.description,
+        msg: '\nNo metadata.\n',
+      );
 
   Widget? _metadataView() {
     var securityAsset = security.asset;
