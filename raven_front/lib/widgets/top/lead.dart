@@ -79,8 +79,6 @@ class _PageLead extends State<PageLead> {
           splashRadius: 24,
           onPressed: () {
             ScaffoldMessenger.of(context).clearSnackBars();
-            //flingBackdrop(context);
-            //fling(context);
             streams.app.fling.add(true);
           },
           padding: EdgeInsets.only(left: 16),
