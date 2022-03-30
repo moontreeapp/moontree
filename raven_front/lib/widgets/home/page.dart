@@ -6,10 +6,7 @@ import 'package:raven_back/raven_back.dart';
 class HomePage extends StatefulWidget {
   final AppContext appContext;
 
-  const HomePage({
-    required this.appContext,
-    Key? key,
-  }) : super(key: key);
+  const HomePage({Key? key, required this.appContext}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -40,7 +37,6 @@ class _HomePageState extends State<HomePage>
     for (var listener in listeners) {
       listener.cancel();
     }
-    //draggableScrollController.dispose();
     super.dispose();
   }
 
