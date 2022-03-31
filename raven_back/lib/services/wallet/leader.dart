@@ -1,5 +1,6 @@
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' show HDWallet;
 import 'package:bip39/bip39.dart' as bip39;
+import 'package:raven_back/utilities/hex.dart' as hex;
 
 import 'package:raven_back/utilities/seed_wallet.dart';
 import 'package:raven_back/raven_back.dart';
@@ -40,9 +41,7 @@ class LeaderWalletService {
   }
 
   SeedWallet getSeedWallet(LeaderWallet wallet) {
-    var encryptedEntropy =
-        EncryptedEntropy(wallet.encryptedEntropy, wallet.cipher!);
-    return SeedWallet(encryptedEntropy.seed, res.settings.net);
+    return SeedWallet(wallet.seed, res.settings.net);
   }
 
   HDWallet getSubWallet(
@@ -96,13 +95,16 @@ class LeaderWalletService {
     String? name,
   }) {
     entropy = entropy ?? bip39.mnemonicToEntropy(bip39.generateMnemonic());
-    var encryptedEntropy = EncryptedEntropy.fromEntropy(entropy, cipher);
-    var existingWallet =
-        res.wallets.primaryIndex.getOne(encryptedEntropy.walletId);
+    final mnemonic = bip39.entropyToMnemonic(entropy);
+    final seed = bip39.mnemonicToSeed(mnemonic);
+    final newId = HDWallet.fromSeed(seed).pubKey;
+    final encrypted_entropy = hex.encrypt(entropy, cipher);
+
+    var existingWallet = res.wallets.primaryIndex.getOne(newId);
     if (existingWallet == null) {
       return LeaderWallet(
-          id: encryptedEntropy.walletId,
-          encryptedEntropy: encryptedEntropy.encryptedSecret,
+          id: newId,
+          encryptedEntropy: encrypted_entropy,
           cipherUpdate: cipherUpdate,
           name: name ?? res.wallets.nextWalletName);
     }

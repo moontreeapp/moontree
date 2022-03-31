@@ -1,4 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:hive/hive.dart';
+import 'package:bip39/bip39.dart' as bip39;
+import 'package:raven_back/utilities/hex.dart' as hex;
+
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/wallet/constants.dart';
 import 'package:raven_back/utilities/seed_wallet.dart';
@@ -19,6 +24,7 @@ class LeaderWallet extends Wallet {
     CipherUpdate cipherUpdate = defaultCipherUpdate,
     String? name,
   }) : super(id: id, cipherUpdate: cipherUpdate, name: name);
+  Uint8List? _seed;
 
   @override
   List<Object?> get props => [id, cipherUpdate, encryptedEntropy];
@@ -30,17 +36,16 @@ class LeaderWallet extends Wallet {
   String get encrypted => encryptedEntropy;
 
   @override
-  String secret(CipherBase cipher) =>
-      EncryptedEntropy(encrypted, cipher).secret;
+  String secret(CipherBase cipher) => mnemonic;
 
   @override
   HDWallet seedWallet(CipherBase cipher, {Net net = Net.Main}) => SeedWallet(
-        EncryptedEntropy(encrypted, cipher).seed,
+        seed,
         net,
       ).wallet;
 
   @override
-  SecretType get secretType => EncryptedEntropy.secretType;
+  SecretType get secretType => SecretType.mnemonic;
 
   @override
   WalletType get walletType => WalletType.leader;
@@ -50,4 +55,13 @@ class LeaderWallet extends Wallet {
 
   @override
   String get walletTypeToString => walletType.enumString;
+
+  Uint8List get seed {
+    _seed ??= bip39.mnemonicToSeed(mnemonic);
+    return _seed!;
+  }
+
+  String get mnemonic => bip39.entropyToMnemonic(entropy);
+
+  String get entropy => hex.decrypt(encryptedEntropy, cipher!);
 }
