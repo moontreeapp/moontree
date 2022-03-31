@@ -193,8 +193,30 @@ class _SendState extends State<Send> {
   }
 
   Widget body() => BackdropLayers(
-        back: CoinSpec(pageTitle: 'Send', security: security),
-        front: content(scrollController),
+      back: CoinSpec(pageTitle: 'Send', security: security),
+      front:
+          //Column(children: [
+          SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
+        child:
+            //ConstrainedBox(
+            //  constraints: BoxConstraints(
+            //    minWidth: MediaQuery.of(context).size.width,
+            //    minHeight: MediaQuery.of(context).size.height,
+            //  ),
+            //  child: IntrinsicHeight(
+            //    child:
+            Column(
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Container(height: 201),
+            content(scrollController),
+          ],
+        ),
+        //  ),
+        //),
+      )
+      //])
       );
 
   Widget content(ScrollController scrollController) => FrontCurve(
