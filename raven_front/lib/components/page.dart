@@ -59,8 +59,9 @@ class PageComponents {
     widthSpacer = widthSpacer ?? SizedBox(width: 16);
     return Container(
         padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
+        alignment: Alignment.bottomCenter,
         child: CustomScrollView(
-            //shrinkWrap: true,
+            shrinkWrap: true,
             controller: controller,
             slivers: <Widget>[
               SliverToBoxAdapter(child: SizedBox(height: 6)),

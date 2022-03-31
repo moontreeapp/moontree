@@ -9,12 +9,14 @@ class CoinSpec extends StatefulWidget {
   final String pageTitle;
   final Security security;
   final Widget? bottom;
+  final Color? color;
 
   CoinSpec({
     Key? key,
     required this.pageTitle,
     required this.security,
     this.bottom,
+    this.color,
   }) : super(key: key);
 
   @override
@@ -73,6 +75,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
     return Container(
       padding: EdgeInsets.only(top: 16),
       height: 201,
+      color: widget.color,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
