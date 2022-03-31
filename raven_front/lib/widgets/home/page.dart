@@ -61,6 +61,12 @@ class _HomePageState extends State<HomePage>
                       minChildSize: minExtent,
                       maxChildSize: maxExtent,
                       builder: ((context, scrollController) {
+                        if (draggableScrollController.size == minExtent) {
+                          streams.app.setting.add('/settings');
+                        } else if (draggableScrollController.size ==
+                            maxExtent) {
+                          streams.app.setting.add(null);
+                        }
                         return FrontCurve(
                             child: widget.appContext == AppContext.wallet
                                 ? HoldingList(
