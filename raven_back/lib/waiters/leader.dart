@@ -71,6 +71,7 @@ class LeaderWaiter extends Waiter {
           }
         },
         added: (added) {
+          print('added: $added');
           handleDeriveAddress(leader: added.data as LeaderWallet);
         },
         updated: (updated) async {

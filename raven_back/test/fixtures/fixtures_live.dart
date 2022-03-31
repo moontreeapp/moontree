@@ -9,11 +9,13 @@ Future useLiveSources() async {
   var mnemonic = dotenv.env['TEST_WALLET_01']!;
   var hiveInit = HiveInitializer(init: (dbDir) => Hive.init('database'));
   await hiveInit.setUp();
+  await initWaiters();
   await services.wallet.createSave(
       walletType: WalletType.leader,
       cipherUpdate: defaultCipherUpdate,
       secret: mnemonic);
-  await initWaiters();
+  await res.settings.setCurrentWalletId(res.wallets.first.id);
+  await res.settings.savePreferredWalletId(res.wallets.first.id);
 }
 
 void deleteDatabase() => raven_database.deleteDatabase();

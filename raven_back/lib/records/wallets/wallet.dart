@@ -26,7 +26,7 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
     required this.id,
     required this.cipherUpdate,
     String? name,
-  }) : name = name ?? id.substring(0, 6);
+  }) : name = name ?? (id.length > 5 ? id.substring(0, 6) : id[0]);
 
   String get encrypted;
 
