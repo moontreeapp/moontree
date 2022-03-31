@@ -104,7 +104,9 @@ class _HoldingList extends State<HoldingList> {
             controller: widget.scrollController,
             child: components.empty.holdings(context))
         : holdings.isEmpty
-            ? Container(/* awaiting transactions placeholder... */)
+            ? Scroller(
+                controller: widget.scrollController,
+                child: Container(/* awaiting transactions placeholder... */))
             : //RefreshIndicator( child:
             _holdingsView(context);
     //  onRefresh: () => refresh(),

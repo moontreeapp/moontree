@@ -72,7 +72,7 @@ class _NavBarState extends State<NavBar> {
                       )
                     : Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: streams.app.page.value == 'Wallet'
+                        children: streams.app.page.value == 'Home'
                             ? <Widget>[
                                 components.buttons.actionButton(
                                   context,
@@ -141,7 +141,7 @@ class _NavBarState extends State<NavBar> {
   Widget sectorIcon({required AppContext appContext}) => IconButton(
         onPressed: () {
           streams.app.context.add(appContext);
-          if (!['Wallet', 'Manage', 'Swap'].contains(streams.app.page.value)) {
+          if (!['Home', 'Manage', 'Swap'].contains(streams.app.page.value)) {
             Navigator.popUntil(components.navigator.routeContext!,
                 ModalRoute.withName('/home'));
           }

@@ -89,11 +89,14 @@ class _HomePageState extends State<HomePage>
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOutCubicEmphasized,
         );
-    var flingUp = () async => await draggableScrollController.animateTo(
-          maxExtent,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOutCubicEmphasized,
-        );
+    var flingUp = () async {
+      streams.app.setting.add(null);
+      await draggableScrollController.animateTo(
+        maxExtent,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOutCubicEmphasized,
+      );
+    };
     if ((open ?? false)) {
       flingDown();
     } else if (!(open ?? true)) {

@@ -22,13 +22,6 @@ class _NavMenuState extends State<NavMenu> {
   @override
   void initState() {
     super.initState();
-    //listeners.add(streams.app.page.listen((value) {
-    //  if (value != pageTitle) {
-    //    setState(() {
-    //      pageTitle = value;
-    //    });
-    //  }
-    //}));
     listeners.add(streams.app.setting.listen((String? value) {
       if (value != chosen) {
         setState(() {
@@ -62,8 +55,6 @@ class _NavMenuState extends State<NavMenu> {
           }
           if (!arrow) {
             ScaffoldMessenger.of(context).clearSnackBars();
-            //Backdrop.of(components.navigator.routeContext!).fling();
-            //DraggableScrollableActuator.reset(context);
             Navigator.of(components.navigator.routeContext!).pushNamed(
               link,
               arguments: arguments,

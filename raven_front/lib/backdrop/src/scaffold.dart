@@ -626,7 +626,7 @@ class BackdropScaffoldState extends State<BackdropScaffold>
   /// according to a widget variable which was modified in realtime by
   /// `.revealBackLayer(activeFront: true);` but that failed to work, so
   /// though this is not the pure top-down solution I was hoping for, it works:
-  bool get _hasFrontLayerScrim => streams.app.page.value == 'Wallet';
+  bool get _hasFrontLayerScrim => streams.app.page.value == 'Home';
 
   @override
   Widget build(BuildContext context) {

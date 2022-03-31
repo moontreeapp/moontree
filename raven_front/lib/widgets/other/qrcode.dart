@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/components/components.dart';
 
 class QRCodeButton extends StatefulWidget {
@@ -9,7 +8,7 @@ class QRCodeButton extends StatefulWidget {
 
   QRCodeButton({
     Key? key,
-    this.pageTitle = 'Wallet',
+    this.pageTitle = 'Home',
     this.light = true,
   }) : super(key: key);
 

@@ -38,7 +38,5 @@ class RouteStack extends NavigatorObserver {
   }
 
   String conformName(String? name) =>
-      handleHome(name?.split('/').last.toTitleCase() ?? streams.app.page.value);
-
-  String handleHome(String name) => name == 'Home' ? 'Wallet' : name;
+      name?.split('/').last.toTitleCase() ?? streams.app.page.value;
 }

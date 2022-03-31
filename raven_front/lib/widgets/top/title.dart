@@ -10,11 +10,32 @@ class PageTitle extends StatefulWidget {
 
   @override
   _PageTitleState createState() => _PageTitleState();
+
+  static Map<String, String> settingsMap = const {
+    '/settings/import_export': 'Import / Export',
+    '/settings/settings': 'Settings',
+  };
+  static Map<String, String> pageMap = const {
+    'Level': 'User Level',
+    'Import_export': 'Import / Export',
+    'Change': 'Security',
+    'Remove': 'Security',
+    'Verify': 'Security',
+    'BackupConfirm': 'Backup',
+    'Channel': 'Create',
+    'Nft': 'Create',
+    'Main': 'Create',
+    'Qualifier': 'Create',
+    'Qualifiersub': 'Create',
+    'Sub': 'Create',
+    'Restricted': 'Create',
+    'Login': 'Unlock',
+  };
 }
 
 class _PageTitleState extends State<PageTitle> {
   late List listeners = [];
-  late String pageTitle = 'Wallet';
+  late String pageTitle = 'Home';
   late String assetTitle = 'Manage';
   late String? settingTitle = null;
   late AppContext appContext = AppContext.wallet;
@@ -80,45 +101,27 @@ class _PageTitleState extends State<PageTitle> {
     return body();
   }
 
-  Widget body() => ['main', ''].contains(pageTitle)
-      ? Text('')
-      : walletNumber ??
-          FittedBox(
-              fit: BoxFit.fitWidth,
-              child: Text(
-                  const {
-                        '/settings/import_export': 'Import / Export',
-                        '/settings/settings': 'Settings',
-                      }[settingTitle] ??
-                      const {
-                        'Level': 'User Level',
-                        'Import_export': 'Import / Export',
-                        'Change': 'Security',
-                        'Remove': 'Security',
-                        'Verify': 'Security',
-                        'BackupConfirm': 'Backup',
-                        'Channel': 'Create',
-                        'Nft': 'Create',
-                        'Main': 'Create',
-                        'Qualifier': 'Create',
-                        'Qualifiersub': 'Create',
-                        'Sub': 'Create',
-                        'Restricted': 'Create',
-                        'Login': 'Unlock',
-                      }[pageTitle] ??
-                      {
-                        'Transactions': assetTitle == 'RVN'
-                            ? 'Ravencoin'
-                            : assetName(assetTitle),
-                        'Asset': assetName(assetTitle),
-                      }[pageTitle] ??
-                      (pageTitle == 'Wallet'
-                          ? appContext.enumString.toTitleCase()
-                          : pageTitle),
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline2!
-                      .copyWith(color: AppColors.white)));
+  Widget body() {
+    if (['main', ''].contains(pageTitle)) {
+      return Text('');
+    }
+    var wrap = (String x) => FittedBox(
+        fit: BoxFit.fitWidth,
+        child: Text(x,
+            style: Theme.of(context)
+                .textTheme
+                .headline2!
+                .copyWith(color: AppColors.white)));
+    if (['Asset', 'Transactions'].contains(pageTitle)) {
+      return wrap(assetName(assetTitle));
+    }
+    return walletNumber() ??
+        wrap(PageTitle.settingsMap[settingTitle] ??
+            PageTitle.pageMap[pageTitle] ??
+            (pageTitle == 'Home'
+                ? appContext.enumString.toTitleCase()
+                : pageTitle));
+  }
 
   String assetName(String given) {
     if (given.contains('~')) {
@@ -138,66 +141,13 @@ class _PageTitleState extends State<PageTitle> {
         .toTitleCase();
   }
 
-  Widget? get walletNumber {
-    if (pageTitle != 'Wallet') {
+  Widget? walletNumber() {
+    if (pageTitle != 'Home') {
       return null;
     }
     if (res.wallets.length > 1) {
       if (settingTitle != null) {
-        return GestureDetector(
-            onTap: () {
-              if (components.navigator.isSnackbarActive) {
-                components.navigator.isSnackbarActive = false;
-                ScaffoldMessenger.of(context).clearSnackBars();
-              } else {
-                components.navigator.isSnackbarActive = true;
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(
-                      elevation: 0,
-                      backgroundColor: AppColors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(8.0),
-                        topRight: Radius.circular(8.0),
-                      )),
-                      duration: Duration(seconds: 60),
-                      content: Container(
-                          child: ListView(shrinkWrap: true, children: <Widget>[
-                        for (Wallet wallet in res.wallets)
-                          ListTile(
-                            visualDensity: VisualDensity.compact,
-                            onTap: () {
-                              ScaffoldMessenger.of(context).clearSnackBars();
-                              flingBackdrop(context);
-                              res.settings.setCurrentWalletId(wallet.id);
-                              Navigator.pop(context);
-                            },
-                            leading: Icon(
-                              Icons.account_balance_wallet_rounded,
-                              color: AppColors.primary,
-                            ),
-                            title: Text('Wallet ' + wallet.name,
-                                style: Theme.of(context).textTheme.bodyText1),
-                          )
-                      ])),
-                    ))
-                    .closed
-                    .then((SnackBarClosedReason reason) {
-                  components.navigator.isSnackbarActive = false;
-                });
-              }
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text('Wallet ' + res.wallets.currentWalletName + ' ',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline2!
-                        .copyWith(color: AppColors.white)),
-                Icon(Icons.expand_more_rounded, color: Colors.white),
-              ],
-            ));
+        return walletDropDown();
       } else if (appContext == AppContext.wallet) {
         return Text('Wallet ' + res.wallets.currentWalletName + ' ',
             style: Theme.of(context)
@@ -209,4 +159,57 @@ class _PageTitleState extends State<PageTitle> {
 
     return null;
   }
+
+  Widget walletDropDown() => GestureDetector(
+      onTap: () {
+        if (components.navigator.isSnackbarActive) {
+          components.navigator.isSnackbarActive = false;
+          ScaffoldMessenger.of(context).clearSnackBars();
+        } else {
+          components.navigator.isSnackbarActive = true;
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(
+                elevation: 0,
+                backgroundColor: AppColors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8.0),
+                  topRight: Radius.circular(8.0),
+                )),
+                duration: Duration(seconds: 60),
+                content: Container(
+                    child: ListView(shrinkWrap: true, children: <Widget>[
+                  for (Wallet wallet in res.wallets)
+                    ListTile(
+                      visualDensity: VisualDensity.compact,
+                      onTap: () {
+                        ScaffoldMessenger.of(context).clearSnackBars();
+                        res.settings.setCurrentWalletId(wallet.id);
+                      },
+                      leading: Icon(
+                        Icons.account_balance_wallet_rounded,
+                        color: AppColors.primary,
+                      ),
+                      title: Text('Wallet ' + wallet.name,
+                          style: Theme.of(context).textTheme.bodyText1),
+                    )
+                ])),
+              ))
+              .closed
+              .then((SnackBarClosedReason reason) {
+            components.navigator.isSnackbarActive = false;
+          });
+        }
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text('Wallet ' + res.wallets.currentWalletName + ' ',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline2!
+                  .copyWith(color: AppColors.white)),
+          Icon(Icons.expand_more_rounded, color: Colors.white),
+        ],
+      ));
 }
