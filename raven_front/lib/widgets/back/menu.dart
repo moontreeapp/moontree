@@ -60,6 +60,7 @@ class _NavMenuState extends State<NavMenu> {
               arguments: arguments,
             );
             streams.app.setting.add(null);
+            streams.app.fling.add(false);
           } else {
             streams.app.setting.add(link);
           }
