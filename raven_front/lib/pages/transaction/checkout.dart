@@ -10,6 +10,7 @@ import 'package:raven_front/utils/data.dart';
 import 'package:raven_back/services/transaction_maker.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/utilities/transform.dart';
+import 'package:raven_front/widgets/widgets.dart';
 
 class CheckoutStruct {
   final Widget? icon;
@@ -109,7 +110,7 @@ class _CheckoutState extends State<Checkout> {
   Widget build(BuildContext context) {
     data = populateData(context, data);
     struct = data['struct'] ?? CheckoutStruct();
-    return body();
+    return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
   }
 
   Widget body() => CustomScrollView(

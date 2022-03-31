@@ -56,10 +56,13 @@ class _FeedbackState extends State<Feedback> {
     //  content: 'asdf',
     //  size: 2.3,
     //);
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: body(),
-    );
+    return BackdropLayers(
+        back: BlankBack(),
+        front: FrontCurve(
+            child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: body(),
+        )));
   }
 
   Widget body() => CustomScrollView(

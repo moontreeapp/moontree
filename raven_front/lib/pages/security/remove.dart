@@ -24,17 +24,22 @@ class _RemovePasswordState extends State<RemovePassword> {
       streams.app.verify.value ? body() : VerifyPassword(parentState: this);
 
   Widget body() {
-    return Padding(
-        padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 40),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(height: 16),
-            Text('Are you sure?', style: Theme.of(context).textTheme.headline2),
-            Row(children: [submitButton])
-          ],
-        ));
+    return BackdropLayers(
+        back: BlankBack(),
+        front: FrontCurve(
+            child: Padding(
+                padding:
+                    EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 40),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(height: 16),
+                    Text('Are you sure?',
+                        style: Theme.of(context).textTheme.headline2),
+                    Row(children: [submitButton])
+                  ],
+                ))));
   }
 
   Widget get submitButton => components.buttons.actionButton(context,

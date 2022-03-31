@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/streams/app.dart';
-import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_front/widgets/widgets.dart';
+import 'package:raven_front/backdrop/lib/modified_draggable_scrollable_sheet.dart'
+    as modified;
 
 class Home extends StatefulWidget {
   @override
@@ -9,14 +11,14 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late AppContext currentContext = AppContext.wallet;
+  late AppContext appContext = AppContext.wallet;
   late List listeners = [];
 
   @override
   void initState() {
     super.initState();
     listeners.add(streams.app.context.listen((AppContext value) {
-      if (value != currentContext) {
+      if (value != appContext) {
         if (value == AppContext.wallet &&
             streams.app.manage.asset.value != null) {
           streams.app.manage.asset.add(null);
@@ -25,7 +27,7 @@ class _HomeState extends State<Home> {
           streams.app.wallet.asset.add(null);
         }
         setState(() {
-          currentContext = value;
+          appContext = value;
         });
       }
     }));
@@ -47,15 +49,5 @@ class _HomeState extends State<Home> {
     return body();
   }
 
-  Widget body() => Column(
-        children: [
-          Expanded(
-              child: currentContext == AppContext.wallet
-                  ? HoldingList()
-                  : currentContext == AppContext.manage
-                      ? AssetList()
-                      : Text('swap')),
-          NavBar(),
-        ],
-      );
+  Widget body() => HomePage(appContext: appContext);
 }

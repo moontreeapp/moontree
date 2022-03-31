@@ -1,5 +1,4 @@
 //import 'package:backdrop/backdrop.dart';
-import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
@@ -16,7 +15,7 @@ class PageLead extends StatefulWidget {
 }
 
 class _PageLead extends State<PageLead> {
-  late String pageTitle = 'Wallet';
+  late String pageTitle = '';
   late String? settingTitle = null;
   late bool xlead = false;
   late List listeners = [];
@@ -61,25 +60,19 @@ class _PageLead extends State<PageLead> {
   }
 
   Widget body() {
-    if (settingTitle == '/settings/import_export') {
+    if (settingTitle?.startsWith('/settings/') ?? false) {
       return IconButton(
           splashRadius: 24,
           icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
           onPressed: () => streams.app.setting.add('/settings'));
     }
-    if (settingTitle == '/settings/settings') {
-      return IconButton(
-          splashRadius: 24,
-          icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
-          onPressed: () => streams.app.setting.add('/settings'));
-    }
-
-    if (pageTitle == 'Wallet') {
+    if (pageTitle == 'Home') {
       return IconButton(
           splashRadius: 24,
           onPressed: () {
             ScaffoldMessenger.of(context).clearSnackBars();
-            flingBackdrop(context);
+            streams.app.fling.add(true);
+            streams.app.setting.add('/settings');
           },
           padding: EdgeInsets.only(left: 16),
           icon: SvgPicture.asset('assets/icons/menu/menu.svg'));
@@ -116,3 +109,27 @@ class _PageLead extends State<PageLead> {
         });
   }
 }
+
+/*
+  Widget _buildInactiveLayer(BuildContext context) {
+    return Offstage(
+      offstage: animationController.status == AnimationStatus.completed,
+      child: FadeTransition(
+        opacity: Tween<double>(begin: 1, end: 0).animate(animationController),
+        child: GestureDetector(
+          onTap: () => fling(),
+          behavior: HitTestBehavior.opaque,
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  color: widget.frontLayerScrim,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  */

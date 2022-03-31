@@ -3,29 +3,31 @@
 
 import 'dart:async';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction.dart';
-import 'package:raven_front/backdrop/backdrop.dart';
+import 'package:raven_back/streams/app.dart';
+import 'package:raven_back/streams/spend.dart';
+//import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/data.dart';
-import 'package:raven_front/components/components.dart';
 import 'package:raven_front/widgets/widgets.dart';
+import 'package:raven_front/components/components.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Transactions extends StatefulWidget {
-  final dynamic data;
-  const Transactions({this.data}) : super();
+  const Transactions({Key? key}) : super(key: key);
 
   @override
   _TransactionsState createState() => _TransactionsState();
 }
 
 class _TransactionsState extends State<Transactions>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController controller;
   late Animation<Offset> offset;
   Map<String, dynamic> data = {};
@@ -34,6 +36,7 @@ class _TransactionsState extends State<Transactions>
   late List<TransactionRecord> currentTxs;
   late List<Balance> currentHolds;
   late Security security;
+  String tabChoice = 'HISTORY';
 
   @override
   void initState() {
@@ -49,6 +52,14 @@ class _TransactionsState extends State<Transactions>
     listeners.add(res.balances.batchedChanges.listen((batchedChanges) {
       if (batchedChanges.isNotEmpty) setState(() {});
     }));
+    listeners.add(streams.app.coinspec.listen((String? value) {
+      if (value != null) {
+        setState(() {
+          tabChoice = value;
+          streams.app.coinspec.add(null);
+        });
+      }
+    }));
   }
 
   @override
@@ -60,16 +71,16 @@ class _TransactionsState extends State<Transactions>
     super.dispose();
   }
 
-  bool visibilityOfSendReceive(notification) {
-    if (notification.direction == ScrollDirection.forward &&
-        Backdrop.of(components.navigator.routeContext!).isBackLayerConcealed) {
-      Backdrop.of(components.navigator.routeContext!).revealBackLayer();
-    } else if (notification.direction == ScrollDirection.reverse &&
-        Backdrop.of(components.navigator.routeContext!).isBackLayerRevealed) {
-      Backdrop.of(components.navigator.routeContext!).concealBackLayer();
-    }
-    return true;
-  }
+  //bool visibilityOfSendReceive(notification) {
+  //  if (notification.direction == ScrollDirection.forward &&
+  //      Backdrop.of(components.navigator.routeContext!).isBackLayerConcealed) {
+  //    Backdrop.of(components.navigator.routeContext!).revealBackLayer();
+  //  } else if (notification.direction == ScrollDirection.reverse &&
+  //      Backdrop.of(components.navigator.routeContext!).isBackLayerRevealed) {
+  //    Backdrop.of(components.navigator.routeContext!).concealBackLayer();
+  //  }
+  //  return true;
+  //}
 
   @override
   Widget build(BuildContext context) {
@@ -78,36 +89,47 @@ class _TransactionsState extends State<Transactions>
     currentHolds = Current.holdings;
     currentTxs = services.transaction
         .getTransactionRecords(wallet: Current.wallet, securities: {security});
-    return TabBarView(
-        controller: components.navigator.tabController,
-        children: <Widget>[
-          GestureDetector(
-              onTap: () => FocusScope.of(context).unfocus(),
-              child:
-
-                  /// comments: to remove scroll functionality as it is not yet fluid. #182
-                  ///NotificationListener<UserScrollNotification>(
-                  ///    onNotification: visibilityOfSendReceive,
-                  ///    child:
-                  TransactionList(
-                      transactions: currentTxs
-                          .where((tx) => tx.security.symbol == security.symbol),
-                      msg: '\nNo ${security.symbol} transactions.\n')),
-
-          ///),
-          _metadataView() ??
-              components.empty.message(
-                context,
-                icon: Icons.description,
-                msg: '\nNo metadata.\n',
-              ),
-        ]);
-    //  floatingActionButton: SlideTransition(position: offset, child: NavBar()),
-    //  floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-    //);
-
-    /// no place to view metadata right now - this used to be tabs
+    var minHeight = 1 - (201 + 16) / MediaQuery.of(context).size.height;
+    return BackdropLayers(
+      back: CoinSpec(
+        pageTitle: 'Transactions',
+        security: security,
+      ),
+      front: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          DraggableScrollableSheet(
+              initialChildSize: minHeight,
+              minChildSize: minHeight,
+              maxChildSize: 1.0,
+              builder: ((context, scrollController) {
+                return FrontCurve(
+                  frontLayerBoxShadow: [],
+                  child: content(scrollController),
+                );
+              })),
+          NavBar(),
+        ],
+      ),
+    );
   }
+
+  Widget content(ScrollController scrollController) => tabChoice ==
+          CoinSpecTabs.tabIndex[0]
+      ? TransactionList(
+          scrollController: scrollController,
+          transactions:
+              currentTxs.where((tx) => tx.security.symbol == security.symbol),
+          msg: '\nNo ${security.symbol} transactions.\n')
+      : metadata; //(scrollController: scrollController) //at present we can't scroll metadata
+
+  Widget get metadata =>
+      _metadataView() ??
+      components.empty.message(
+        context,
+        icon: Icons.description,
+        msg: '\nNo metadata.\n',
+      );
 
   Widget? _metadataView() {
     var securityAsset = security.asset;

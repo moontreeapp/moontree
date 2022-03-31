@@ -1,20 +1,24 @@
 import 'dart:async';
-
-import 'package:raven_front/theme/theme.dart';
-import 'package:raven_front/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/streams/app.dart';
-import 'package:raven_front/services/lookup.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/spend.dart';
-import 'package:raven_front/backdrop/backdrop.dart';
+import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/theme/theme.dart';
+import 'package:raven_front/widgets/widgets.dart';
 
 class BalanceHeader extends StatefulWidget {
   final String pageTitle;
+  final Security? security;
   final Color? background;
-  BalanceHeader({Key? key, required this.pageTitle, this.background})
-      : super(key: key);
+
+  BalanceHeader({
+    Key? key,
+    required this.pageTitle,
+    this.security,
+    this.background,
+  }) : super(key: key);
 
   @override
   _BalanceHeaderState createState() => _BalanceHeaderState();
@@ -36,9 +40,6 @@ class _BalanceHeaderState extends State<BalanceHeader>
   @override
   void initState() {
     super.initState();
-    Backdrop.of(components.navigator.routeContext!).revealBackLayer();
-    components.navigator.tabController = components.navigator.tabController ??
-        TabController(length: 2, vsync: this);
     listeners.add(streams.spend.form.listen((SpendForm? value) {
       if (symbolSend !=
               (value?.symbol == 'Ravencoin' ? 'RVN' : value?.symbol ?? 'RVN') ||
@@ -72,20 +73,22 @@ class _BalanceHeaderState extends State<BalanceHeader>
 
   @override
   void dispose() {
-    Backdrop.of(components.navigator.routeContext!).concealBackLayer();
+    //Backdrop.of(components.navigator.routeContext!).concealBackLayer();
     for (var listener in listeners) {
       listener.cancel();
     }
     super.dispose();
   }
 
-  String get symbol => streams.app.context.value == AppContext.wallet
-      ? streams.app.page.value == 'Send'
-          ? symbolSend
-          : symbolTransactions
-      : streams.app.context.value == AppContext.manage
-          ? symbolManage
-          : symbolTransactions;
+  String get symbol => widget.security != null
+      ? widget.security!.symbol
+      : streams.app.context.value == AppContext.wallet
+          ? streams.app.page.value == 'Send'
+              ? symbolSend
+              : symbolTransactions
+          : streams.app.context.value == AppContext.manage
+              ? symbolManage
+              : symbolTransactions;
 
   @override
   Widget build(BuildContext context) {
@@ -122,10 +125,12 @@ class _BalanceHeaderState extends State<BalanceHeader>
             utils.satToAmount(assetDetails!.satsInCirculation).toCommaString();
       }
     }
+    components.navigator.tabController = components.navigator.tabController ??
+        TabController(length: 2, vsync: this);
     return Container(
       padding: EdgeInsets.only(top: 16),
       height: 201,
-      color: widget.background ?? Colors.transparent,
+      color: Theme.of(context).backgroundColor,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,

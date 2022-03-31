@@ -1,3 +1,19 @@
+////////////////////////////////////////////////////////////////////////////////
+/// This is code from Flutter, it's been modified only slightly.
+/// Mainly, we added a dispose() on the DraggableScrollableController
+/// which runs dispose on it's attacted controller.
+/// We also disposed of the AnimationController in the same object, but that
+/// may not have been necessary.
+/// There's a couple other things that we're not using.
+/// For our purposes, it actaully may be possible to use the out of the box
+/// versions... but we did keep getting errors around dispose so that function
+/// may be necessary...
+/// You might think, ok, if all you need is dispose() just make it an extension
+/// method. Well. Dart doesn't let you access _private variables in extensions
+/// so it seems impossible to take that wonderfully simple approach, instead we
+/// get to do this:
+////////////////////////////////////////////////////////////////////////////////
+
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';

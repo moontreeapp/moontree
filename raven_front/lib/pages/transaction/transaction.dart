@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:raven_back/services/transaction.dart';
 import 'package:raven_back/raven_back.dart';
@@ -46,8 +47,10 @@ class _TransactionPageState extends State<TransactionPage> {
     transactionRecord = data['transactionRecord'];
     transaction = transactionRecord!.transaction;
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
-    print(transaction!.note);
-    return detailsBody();
+    return BackdropLayers(
+      back: BlankBack(),
+      front: FrontCurve(child: detailsBody()),
+    );
   }
 
   String element(String humanName) {

@@ -31,6 +31,8 @@ class _SendState extends State<Send> {
   Map<String, dynamic> data = {};
   List<StreamSubscription> listeners = [];
   SpendForm? spendForm;
+  late Security security;
+  double? minHeight;
   final sendAsset = TextEditingController();
   final sendAddress = TextEditingController();
   final sendAmount = TextEditingController();
@@ -60,6 +62,7 @@ class _SendState extends State<Send> {
   @override
   void initState() {
     super.initState();
+    //minHeight = 1 - (201 + 16) / MediaQuery.of(context).size.height;
     sendAsset.text = sendAsset.text == '' ? 'Ravencoin' : sendAsset.text;
     sendFee.text = sendFee.text == '' ? 'Standard' : sendAsset.text;
     sendAssetFocusNode.addListener(refresh);
@@ -155,8 +158,11 @@ class _SendState extends State<Send> {
 
   @override
   Widget build(BuildContext context) {
+    minHeight =
+        minHeight ?? 1 - (201 + 16) / MediaQuery.of(context).size.height;
     data = populateData(context, data);
     var symbol = streams.spend.form.value?.symbol ?? 'RVN';
+    security = res.securities.bySymbol.getAll(symbol).first;
     symbol = symbol == 'Ravencoin' ? 'RVN' : symbol;
     useWallet = data.containsKey('walletId') && data['walletId'] != null;
     if (data.containsKey('qrCode')) {
@@ -181,34 +187,48 @@ class _SendState extends State<Send> {
       visibleFiatAmount = '';
     }
     return GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        // we want this to be liquid as well, #182
-        child: body());
+        onTap: () => FocusScope.of(context).unfocus(), child: body());
   }
 
-  Widget body() => components.page.form(
-        context,
-        controller: scrollController,
-        columnWidgets: <Widget>[
-          // list items
-          //Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
-          //    style: Theme.of(context).textTheme.caption),
-          //;
-          sendAssetField,
-          //toName,
-          sendAddressField,
-          sendAmountField,
-          sendFeeField,
-          sendMemoField,
-          sendNoteField,
-        ],
-        floatingButtons: [
-          //allValidation()
-          //?
-          sendTransactionButton()
-          //: sendTransactionButton(disabled: true)
-        ],
+  Widget body() => BackdropLayers(
+        backAlignment: Alignment.bottomCenter,
+        frontAlignment: Alignment.topCenter,
+        front: CoinSpec(
+            pageTitle: 'Send',
+            security: security,
+            color: Theme.of(context).backgroundColor),
+        back: content(scrollController),
       );
+
+  Widget content(ScrollController scrollController) => FrontCurve(
+          child: Stack(
+        children: [
+          ListView(
+            padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
+            children: <Widget>[
+              Container(height: 201),
+              sendAssetField,
+              SizedBox(height: 16),
+              //toName,
+              sendAddressField,
+              SizedBox(height: 16),
+              sendAmountField,
+              SizedBox(height: 16),
+              sendFeeField,
+              SizedBox(height: 16),
+              sendMemoField,
+              SizedBox(height: 16),
+              sendNoteField,
+            ],
+          ),
+          KeyboardHidesWidget(
+              child: components.buttons.floatingButtons(
+            context,
+            buttons: [sendTransactionButton()],
+            widthSpacer: SizedBox(width: 16),
+          ))
+        ],
+      ));
 
   Widget get sendAssetField => TextField(
         focusNode: sendAssetFocusNode,

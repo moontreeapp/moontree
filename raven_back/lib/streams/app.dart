@@ -10,6 +10,8 @@ class AppStreams {
   final snack = BehaviorSubject<Snack?>.seeded(null);
   final context = BehaviorSubject<AppContext>.seeded(AppContext.wallet);
   final hideNav = BehaviorSubject<bool?>.seeded(null);
+  final fling = BehaviorSubject<bool?>.seeded(null);
+  final coinspec = BehaviorSubject<String?>.seeded(null);
 
   WalletSideStreams wallet = WalletSideStreams();
   ManageSideStreams manage = ManageSideStreams();

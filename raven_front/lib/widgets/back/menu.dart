@@ -22,13 +22,6 @@ class _NavMenuState extends State<NavMenu> {
   @override
   void initState() {
     super.initState();
-    //listeners.add(streams.app.page.listen((value) {
-    //  if (value != pageTitle) {
-    //    setState(() {
-    //      pageTitle = value;
-    //    });
-    //  }
-    //}));
     listeners.add(streams.app.setting.listen((String? value) {
       if (value != chosen) {
         setState(() {
@@ -62,12 +55,12 @@ class _NavMenuState extends State<NavMenu> {
           }
           if (!arrow) {
             ScaffoldMessenger.of(context).clearSnackBars();
-            Backdrop.of(components.navigator.routeContext!).fling();
             Navigator.of(components.navigator.routeContext!).pushNamed(
               link,
               arguments: arguments,
             );
             streams.app.setting.add(null);
+            streams.app.fling.add(false);
           } else {
             streams.app.setting.add(link);
           }
@@ -200,6 +193,7 @@ class _NavMenuState extends State<NavMenu> {
     };
     return Container(
         height: MediaQuery.of(context).size.height - 118 - 10,
+        color: Theme.of(context).backgroundColor,
         child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

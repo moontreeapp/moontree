@@ -10,7 +10,7 @@ class BackLayer extends StatefulWidget {
 }
 
 class _BackLayerState extends State<BackLayer> {
-  late String pageTitle = 'Wallet';
+  late String pageTitle = 'Home';
   late List listeners = [];
 
   @override
@@ -35,7 +35,7 @@ class _BackLayerState extends State<BackLayer> {
 
   @override
   Widget build(BuildContext context) {
-    if (pageTitle.startsWith('Wallet')) {
+    if (pageTitle.startsWith('Home')) {
       return NavMenu();
     }
     if (['Send', 'Transactions'].contains(pageTitle)) {

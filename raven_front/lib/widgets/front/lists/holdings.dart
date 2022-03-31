@@ -11,8 +11,13 @@ import 'package:raven_front/widgets/widgets.dart';
 
 class HoldingList extends StatefulWidget {
   final Iterable<Balance>? holdings;
+  final ScrollController scrollController;
 
-  const HoldingList({this.holdings, Key? key}) : super(key: key);
+  const HoldingList({
+    this.holdings,
+    required this.scrollController,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<HoldingList> createState() => _HoldingList();
@@ -95,17 +100,17 @@ class _HoldingList extends State<HoldingList> {
   Widget build(BuildContext context) {
     holdings = utils.assetHoldings(widget.holdings ?? Current.holdings);
     return holdings.isEmpty && res.vouts.data.isEmpty // <-- on front tab...
-        ? components.empty.holdings(context)
+        ? Scroller(
+            controller: widget.scrollController,
+            child: components.empty.holdings(context))
         : holdings.isEmpty
-            ? Container(/* awaiting transactions placeholder... */)
-            : Container(
-                color: Colors.transparent,
-                alignment: Alignment.center,
-                padding: EdgeInsets.only(top: 5.0),
-                child: RefreshIndicator(
-                  child: _holdingsView(context),
-                  onRefresh: () => refresh(),
-                ));
+            ? Scroller(
+                controller: widget.scrollController,
+                child: Container(/* awaiting transactions placeholder... */))
+            : //RefreshIndicator( child:
+            _holdingsView(context);
+    //  onRefresh: () => refresh(),
+    //);
   }
 
   void navigate(Balance balance, {Wallet? wallet}) {
@@ -170,11 +175,17 @@ class _HoldingList extends State<HoldingList> {
       //    title: Text('+ Create Asset (not enough RVN)',
       //        style: TextStyle(color: Theme.of(context).disabledColor))));
     }
+    var blankNavArea = [
+      Container(
+        height: 118,
+        color: Colors.white,
+      )
+    ];
     return ListView(
-        controller: components.navigator.scrollController,
+        controller: widget.scrollController,
         dragStartBehavior: DragStartBehavior.start,
         physics: const BouncingScrollPhysics(),
-        children: <Widget>[...rvnHolding, ...assetHoldings]);
+        children: <Widget>[...rvnHolding, ...assetHoldings, ...blankNavArea]);
   }
 
   void onTap(Wallet? wallet, AssetHolding holding) {

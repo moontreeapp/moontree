@@ -6,6 +6,7 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/wallet/constants.dart';
 import 'package:raven_front/listeners/listeners.dart';
 import 'package:raven_front/services/storage.dart';
+import 'package:raven_front/widgets/widgets.dart';
 
 class Loading extends StatefulWidget {
   @override
@@ -98,6 +99,9 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Image(image: AssetImage("assets/splash/fast.gif"));
+    return BackdropLayers(
+        back: BlankBack(),
+        front: FrontCurve(
+            child: Image(image: AssetImage("assets/splash/fast.gif"))));
   }
 }

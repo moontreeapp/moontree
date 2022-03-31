@@ -19,10 +19,34 @@ class _NavBarState extends State<NavBar> {
     var assetType = Asset.assetTypeOf(streams.app.manage.asset.value ?? '');
     return streams.app.page.value == 'Send'
         ? Container(height: 0)
-        : Container(
+        : //Container(
+        //  alignment: Alignment.bottomCenter,
+        //  width: MediaQuery.of(context).size.height,
+        //  color: Colors.white,
+        //  child:
+        Container(
             height: 118,
             padding: EdgeInsets.only(left: 16, right: 16, top: 16),
             width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+              boxShadow: [
+                BoxShadow(
+                    color: const Color(0x33000000),
+                    offset: Offset(0, 5),
+                    blurRadius: 5),
+                BoxShadow(
+                    color: const Color(0x1F000000),
+                    offset: Offset(0, 3),
+                    blurRadius: 14),
+                BoxShadow(
+                    color: const Color(0x3D000000),
+                    offset: Offset(0, 8),
+                    blurRadius: 10)
+              ],
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -48,7 +72,7 @@ class _NavBarState extends State<NavBar> {
                       )
                     : Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: streams.app.page.value == 'Wallet'
+                        children: streams.app.page.value == 'Home'
                             ? <Widget>[
                                 components.buttons.actionButton(
                                   context,
@@ -110,34 +134,17 @@ class _NavBarState extends State<NavBar> {
                     ))
               ],
             ),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16)),
-                boxShadow: [
-                  BoxShadow(
-                      color: const Color(0x33000000),
-                      offset: Offset(0, 5),
-                      blurRadius: 5),
-                  BoxShadow(
-                      color: const Color(0x1F000000),
-                      offset: Offset(0, 3),
-                      blurRadius: 14),
-                  BoxShadow(
-                      color: const Color(0x3D000000),
-                      offset: Offset(0, 8),
-                      blurRadius: 10)
-                ]),
+            //  ),
           );
   }
 
   Widget sectorIcon({required AppContext appContext}) => IconButton(
         onPressed: () {
-          Navigator.of(components.navigator.routeContext!).pushNamed('/home');
-          setState(() {
-            streams.app.context.add(appContext);
-          });
+          streams.app.context.add(appContext);
+          if (!['Home', 'Manage', 'Swap'].contains(streams.app.page.value)) {
+            Navigator.popUntil(components.navigator.routeContext!,
+                ModalRoute.withName('/home'));
+          }
         },
         icon: Icon({
           AppContext.wallet: MdiIcons.wallet,

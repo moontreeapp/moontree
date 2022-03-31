@@ -7,7 +7,6 @@ class RouteStack extends NavigatorObserver {
   BuildContext? scaffoldContext;
   TabController? tabController;
   bool isSnackbarActive = false;
-  ScrollController? scrollController;
 
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     routeStack.add(route);
@@ -39,10 +38,5 @@ class RouteStack extends NavigatorObserver {
   }
 
   String conformName(String? name) =>
-      handleHome(name?.split('/').last.toTitleCase() ?? streams.app.page.value);
-
-  String handleHome(String name) => name == 'Home' ? 'Wallet' : name;
-
-  //void set setScrollController(ScrollController controller) =>
-  //    scrollController = controller;
+      name?.split('/').last.toTitleCase() ?? streams.app.page.value;
 }

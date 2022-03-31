@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/extensions.dart';
+import 'package:raven_front/widgets/widgets.dart';
 
 enum SecurityOption { none, system_default, password }
 
@@ -22,68 +23,75 @@ class _SecurityState extends State<Security> {
   }
 
   @override
-  Widget build(BuildContext context) => Padding(
-      padding: EdgeInsets.only(top: 2),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              RadioListTile<SecurityOption>(
-                activeColor: Theme.of(context).backgroundColor,
-                title: Text(
-                    SecurityOption.none.enumString
-                        .toTitleCase(underscoresAsSpace: true),
-                    style: Theme.of(context).textTheme.bodyText1),
-                value: SecurityOption.none,
-                groupValue: securityChoice,
-                onChanged: (SecurityOption? value) => services.password.required
-                    ? behaviorRemovePassword()
-                    : () {/* do nothing*/}(),
-              ),
-              RadioListTile<SecurityOption>(
-                activeColor: Theme.of(context).backgroundColor,
-                title: Text(
-                    SecurityOption.password.enumString
-                        .toTitleCase(underscoresAsSpace: true),
-                    style: Theme.of(context).textTheme.bodyText1),
-                value: SecurityOption.password,
-                groupValue: securityChoice,
-                onChanged: (SecurityOption? value) => services.password.required
-                    ? behaviorChangePassword() // never gets triggered. use button
-                    : behaviorSetPassword(),
-              ),
-            ],
-          ),
-          ...[
-            if (securityChoice == SecurityOption.password &&
-                services.password.required)
-              Padding(
-                padding:
-                    EdgeInsets.only(top: 40, bottom: 40, left: 16, right: 16),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Container(
-                          height: 40,
-                          child: OutlinedButton.icon(
-                              onPressed: behaviorChangePassword,
-                              icon: Icon(
-                                Icons.lock_rounded,
-                              ),
-                              label: Text(
-                                'Change'.toUpperCase(),
-                                style:
-                                    Theme.of(context).textTheme.enabledButton,
-                              ),
-                              style: components.styles.buttons.bottom(context)))
-                    ]),
-              )
-          ]
-        ],
-      ));
+  Widget build(BuildContext context) => BackdropLayers(
+      back: BlankBack(),
+      front: FrontCurve(
+          child: Padding(
+              padding: EdgeInsets.only(top: 2),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      RadioListTile<SecurityOption>(
+                        activeColor: Theme.of(context).backgroundColor,
+                        title: Text(
+                            SecurityOption.none.enumString
+                                .toTitleCase(underscoresAsSpace: true),
+                            style: Theme.of(context).textTheme.bodyText1),
+                        value: SecurityOption.none,
+                        groupValue: securityChoice,
+                        onChanged: (SecurityOption? value) =>
+                            services.password.required
+                                ? behaviorRemovePassword()
+                                : () {/* do nothing*/}(),
+                      ),
+                      RadioListTile<SecurityOption>(
+                        activeColor: Theme.of(context).backgroundColor,
+                        title: Text(
+                            SecurityOption.password.enumString
+                                .toTitleCase(underscoresAsSpace: true),
+                            style: Theme.of(context).textTheme.bodyText1),
+                        value: SecurityOption.password,
+                        groupValue: securityChoice,
+                        onChanged: (SecurityOption? value) => services
+                                .password.required
+                            ? behaviorChangePassword() // never gets triggered. use button
+                            : behaviorSetPassword(),
+                      ),
+                    ],
+                  ),
+                  ...[
+                    if (securityChoice == SecurityOption.password &&
+                        services.password.required)
+                      Padding(
+                        padding: EdgeInsets.only(
+                            top: 40, bottom: 40, left: 16, right: 16),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Container(
+                                  height: 40,
+                                  child: OutlinedButton.icon(
+                                      onPressed: behaviorChangePassword,
+                                      icon: Icon(
+                                        Icons.lock_rounded,
+                                      ),
+                                      label: Text(
+                                        'Change'.toUpperCase(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .enabledButton,
+                                      ),
+                                      style: components.styles.buttons
+                                          .bottom(context)))
+                            ]),
+                      )
+                  ]
+                ],
+              ))));
 
   void behaviorSetPassword() {
     streams.app.verify.add(true);

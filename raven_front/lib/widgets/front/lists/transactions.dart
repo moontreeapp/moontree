@@ -10,8 +10,14 @@ import 'package:raven_front/theme/theme.dart';
 class TransactionList extends StatefulWidget {
   final Iterable<TransactionRecord>? transactions;
   final String? msg;
-  const TransactionList({this.transactions, this.msg, Key? key})
-      : super(key: key);
+  final ScrollController? scrollController;
+
+  const TransactionList({
+    this.transactions,
+    this.msg,
+    this.scrollController,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<TransactionList> createState() => _TransactionListState();
@@ -87,8 +93,8 @@ class _TransactionListState extends State<TransactionList> {
   }
 
   ListView _transactionsView(BuildContext context) => ListView(
-          controller: components.navigator.scrollController,
-          children: <Widget>[
+      controller: widget.scrollController,
+      children: <Widget>[
             for (var transactionRecord in transactions) ...[
               ...[
                 ListTile(
@@ -136,5 +142,11 @@ class _TransactionListState extends State<TransactionList> {
                 Divider(indent: 16),
               ]
             ]
+          ] +
+          [
+            Container(
+              height: 118,
+              color: Colors.white,
+            )
           ]);
 }
