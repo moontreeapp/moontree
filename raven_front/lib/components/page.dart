@@ -1,3 +1,8 @@
+/// see Send, this used to be the only real way to make a form that behaved
+/// our custom way we wanted, but now with the new backdrop it was replaced
+/// in send by an inverted BackdropLayers and a Stack ListView on the front
+/// so this might be obsolete.
+
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
 

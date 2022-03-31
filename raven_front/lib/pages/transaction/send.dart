@@ -187,9 +187,7 @@ class _SendState extends State<Send> {
       visibleFiatAmount = '';
     }
     return GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        // we want this to be liquid as well, #182
-        child: body());
+        onTap: () => FocusScope.of(context).unfocus(), child: body());
   }
 
   Widget body() => BackdropLayers(
@@ -199,20 +197,10 @@ class _SendState extends State<Send> {
             pageTitle: 'Send',
             security: security,
             color: Theme.of(context).backgroundColor),
-        back: contentByListView(scrollController),
+        back: content(scrollController),
       );
-  ////SingleChildScrollView(
-  ////    physics: NeverScrollableScrollPhysics(),
-  ////    child:
-  //Expanded(
-  //    child: Column(
-  //  mainAxisSize: MainAxisSize.max,
-  //  children: <Widget>[
-  //  ],
-  //));
 
-  Widget contentByListView(ScrollController scrollController) => FrontCurve(
-          //height: MediaQuery.of(context).size.height - (201 + 56),
+  Widget content(ScrollController scrollController) => FrontCurve(
           child: Stack(
         children: [
           ListView(
@@ -231,7 +219,6 @@ class _SendState extends State<Send> {
               sendMemoField,
               SizedBox(height: 16),
               sendNoteField,
-              SizedBox(height: 16),
             ],
           ),
           KeyboardHidesWidget(
@@ -240,32 +227,6 @@ class _SendState extends State<Send> {
             buttons: [sendTransactionButton()],
             widthSpacer: SizedBox(width: 16),
           ))
-        ],
-      ));
-
-  Widget content(ScrollController scrollController) => FrontCurve(
-      height: MediaQuery.of(context).size.height - (201 + 56),
-      child: components.page.form(
-        context,
-        controller: scrollController,
-        columnWidgets: <Widget>[
-          // list items
-          //Text(useWallet ? 'Use Wallet: ' + data['walletId'] : '',
-          //    style: Theme.of(context).textTheme.caption),
-          //;
-          sendAssetField,
-          //toName,
-          sendAddressField,
-          sendAmountField,
-          sendFeeField,
-          sendMemoField,
-          sendNoteField,
-        ],
-        floatingButtons: [
-          //allValidation()
-          //?
-          sendTransactionButton()
-          //: sendTransactionButton(disabled: true)
         ],
       ));
 
