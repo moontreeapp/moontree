@@ -10,7 +10,7 @@ class QRCodeContainer extends StatefulWidget {
 }
 
 class _QRCodeContainerState extends State<QRCodeContainer> {
-  late String pageTitle = 'Wallet';
+  late String pageTitle = 'Home';
   late List listeners = [];
   final List<String> blanks = ['main', '', 'Scan', 'Send', 'Login'];
 

@@ -7,7 +7,8 @@ import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class AssetList extends StatefulWidget {
-  const AssetList({Key? key}) : super(key: key);
+  final ScrollController scrollController;
+  const AssetList({Key? key, required this.scrollController}) : super(key: key);
 
   @override
   State<AssetList> createState() => _AssetList();
@@ -65,27 +66,27 @@ class _AssetList extends State<AssetList> {
   Widget build(BuildContext context) {
     assets = filterToAdminAssets(utils.assetHoldings(Current.holdings));
     return assets.isEmpty && res.vouts.data.isEmpty // <-- on front tab...
-        ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text('This is where assets you can manage will show up...')
-            ],
+        ? Container(
+            alignment: Alignment.center,
+            child: Scroller(
+                controller: widget.scrollController,
+                child: Text(
+                    'This is where assets you can manage will show up...')),
           ) //components.empty.assets(context)
         : assets.isEmpty
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [Text('No Assets to manage. Create one!')],
+            ? Container(
+                alignment: Alignment.center,
+                child: Scroller(
+                    controller: widget.scrollController,
+                    child:
+                        Text('No Assets to manage. You could create one...')),
               ) //components.empty.assets(context)
             : Container(
                 color: Colors.transparent,
                 alignment: Alignment.center,
                 padding: EdgeInsets.only(top: 8.0),
-                child: RefreshIndicator(
-                  child: _assetsView(context),
-                  onRefresh: () => refresh(),
-                ));
+                child: _assetsView(context),
+              );
   }
 
   void navigate(String symbol, {Wallet? wallet}) {
@@ -97,7 +98,7 @@ class _AssetList extends State<AssetList> {
   }
 
   ListView _assetsView(BuildContext context, {Wallet? wallet}) =>
-      ListView(children: <Widget>[
+      ListView(controller: widget.scrollController, children: <Widget>[
         for (var asset in assets) ...[
           ListTile(
             //dense: true,

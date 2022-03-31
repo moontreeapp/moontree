@@ -26,10 +26,13 @@ class _CreateQualifierSubAssetState extends State<CreateQualifierSubAsset> {
   Widget build(BuildContext context) {
     streams.create.form
         .add(GenericCreateForm(parent: streams.app.manage.asset.value));
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: body(),
-    );
+    return BackdropLayers(
+        back: BlankBack(),
+        front: FrontCurve(
+            child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: body(),
+        )));
   }
 
   Widget body() => CreateAsset(preset: FormPresets.qualifier, isSub: true);

@@ -1,9 +1,27 @@
+// Copyright 2014 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/physics.dart';
 
-import 'package:flutter/widgets.dart';
+import 'basic.dart';
+import 'binding.dart';
+import 'framework.dart';
+import 'inherited_notifier.dart';
+import 'layout_builder.dart';
+import 'notification_listener.dart';
+import 'scroll_activity.dart';
+import 'scroll_context.dart';
+import 'scroll_controller.dart';
+import 'scroll_notification.dart';
+import 'scroll_physics.dart';
+import 'scroll_position.dart';
+import 'scroll_position_with_single_context.dart';
+import 'scroll_simulation.dart';
 
 /// The signature of a method that provides a [BuildContext] and
 /// [ScrollController] for building a widget that may overflow the draggable
@@ -51,11 +69,6 @@ class DraggableScrollableController {
   double pixelsToSize(double pixels) {
     _assertAttached();
     return _attachedController!.extent.pixelsToSize(pixels);
-  }
-
-  // modified: added, necessary!
-  void dispose() {
-    _attachedController?.dispose();
   }
 
   /// Animates the attached sheet from its current size to [size] to the
@@ -110,8 +123,6 @@ class DraggableScrollableController {
       }
     });
     await animationController.animateTo(size, duration: duration);
-    // modified: added, necessary?
-    animationController.dispose();
   }
 
   /// Jumps the attached sheet from its current size to the given [size], a
@@ -245,10 +256,15 @@ class DraggableScrollableSheet extends StatefulWidget {
     this.snapSizes,
     this.controller,
     required this.builder,
-  })  : assert(minChildSize >= 0.0),
+  })  : assert(initialChildSize != null),
+        assert(minChildSize != null),
+        assert(maxChildSize != null),
+        assert(minChildSize >= 0.0),
         assert(maxChildSize <= 1.0),
         assert(minChildSize <= initialChildSize),
         assert(initialChildSize <= maxChildSize),
+        assert(expand != null),
+        assert(builder != null),
         super(key: key);
 
   /// The initial fractional value of the parent container's height to use when
@@ -361,12 +377,17 @@ class DraggableScrollableNotification extends Notification
     required this.maxExtent,
     required this.initialExtent,
     required this.context,
-  })  : assert(0.0 <= minExtent),
+  })  : assert(extent != null),
+        assert(initialExtent != null),
+        assert(minExtent != null),
+        assert(maxExtent != null),
+        assert(0.0 <= minExtent),
         assert(maxExtent <= 1.0),
         assert(minExtent <= extent),
         assert(minExtent <= initialExtent),
         assert(extent <= maxExtent),
-        assert(initialExtent <= maxExtent);
+        assert(initialExtent <= maxExtent),
+        assert(context != null);
 
   /// The current value of the extent, between [minExtent] and [maxExtent].
   final double extent;
@@ -416,7 +437,10 @@ class _DraggableSheetExtent {
     required this.onSizeChanged,
     ValueNotifier<double>? currentSize,
     bool? hasDragged,
-  })  : assert(minSize >= 0),
+  })  : assert(minSize != null),
+        assert(maxSize != null),
+        assert(initialSize != null),
+        assert(minSize >= 0),
         assert(maxSize <= 1),
         assert(minSize <= initialSize),
         assert(initialSize <= maxSize),
@@ -485,8 +509,8 @@ class _DraggableSheetExtent {
   /// This can be triggered by a programmatic (e.g. controller triggered) change
   /// or a user drag.
   void updateSize(double newSize, BuildContext context) {
+    assert(newSize != null);
     _currentSize.value = newSize.clamp(minSize, maxSize);
-
     DraggableScrollableNotification(
       minExtent: minSize,
       maxExtent: maxSize,
@@ -532,8 +556,7 @@ class _DraggableSheetExtent {
   }
 }
 
-class _DraggableScrollableSheetState extends State<DraggableScrollableSheet>
-    with SingleTickerProviderStateMixin {
+class _DraggableScrollableSheetState extends State<DraggableScrollableSheet> {
   late _DraggableScrollableSheetScrollController _scrollController;
   late _DraggableSheetExtent _extent;
 
@@ -594,52 +617,20 @@ class _DraggableScrollableSheetState extends State<DraggableScrollableSheet>
       // _extent has been updated when this is called.
     });
   }
-  // onTap: () {
-  //       if (_extent.isAtMin) {
 
-  //         widget.controller?.animateTo(
-  //           _extent.maxSize,
-  //           duration: const Duration(milliseconds: 100),
-  //           curve: Curves.linear,
-  //         );
-  //       } else {
-  //         widget.controller?.animateTo(
-  //           _extent.minSize,
-  //           duration: const Duration(milliseconds: 100),
-  //           curve: Curves.easeOutBack,
-  //         );
-  //       }
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        print('object');
-        if (_extent.isAtMin) {
-          widget.controller?.animateTo(
-            _extent.maxSize,
-            duration: const Duration(milliseconds: 100),
-            curve: Curves.linear,
-          );
-        } else {
-          widget.controller?.animateTo(
-            _extent.minSize,
-            duration: const Duration(milliseconds: 100),
-            curve: Curves.easeOutBack,
-          );
-        }
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        _extent.availablePixels =
+            widget.maxChildSize * constraints.biggest.height;
+        final Widget sheet = FractionallySizedBox(
+          heightFactor: _extent.currentSize,
+          alignment: Alignment.bottomCenter,
+          child: widget.builder(context, _scrollController),
+        );
+        return widget.expand ? SizedBox.expand(child: sheet) : sheet;
       },
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          _extent.availablePixels =
-              widget.maxChildSize * constraints.biggest.height;
-          final Widget sheet = FractionallySizedBox(
-            heightFactor: _extent.currentSize,
-            alignment: Alignment.bottomCenter,
-            child: widget.builder(context, _scrollController),
-          );
-          return widget.expand ? SizedBox.expand(child: sheet) : sheet;
-        },
-      ),
     );
   }
 
@@ -710,7 +701,8 @@ class _DraggableScrollableSheetScrollController extends ScrollController {
     double initialScrollOffset = 0.0,
     String? debugLabel,
     required this.extent,
-  }) : super(
+  })  : assert(extent != null),
+        super(
           debugLabel: debugLabel,
           initialScrollOffset: initialScrollOffset,
         );
@@ -1049,7 +1041,7 @@ class _SnappingSimulation extends Simulation {
 
   // A minimum speed to snap at. Used to ensure that the snapping animation
   // does not play too slowly.
-  static const double minimumSpeed = 2500.0;
+  static const double minimumSpeed = 1600.0;
 
   late final double _pixelSnapSize;
 

@@ -9,6 +9,7 @@ import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/params.dart';
 import 'package:raven_front/utils/transformers.dart';
 import 'package:raven_front/utils/data.dart';
+import 'package:raven_front/widgets/widgets.dart';
 import 'package:share/share.dart';
 
 class Receive extends StatefulWidget {
@@ -101,13 +102,16 @@ class _ReceiveState extends State<Receive> {
     uri = uri == '' ? address : uri;
     //requestMessage.selection =
     //    TextSelection.collapsed(offset: requestMessage.text.length);
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-        _makeURI();
-      },
-      child: body(),
-    );
+    return BackdropLayers(
+        back: BlankBack(),
+        front: FrontCurve(
+            child: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+            _makeURI();
+          },
+          child: body(),
+        )));
   }
 
   Widget body() => Padding(

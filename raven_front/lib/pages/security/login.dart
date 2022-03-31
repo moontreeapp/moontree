@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/widgets/widgets.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -29,7 +30,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return body();
+    return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
   }
 
   Widget body() => Container(

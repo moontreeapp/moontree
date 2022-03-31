@@ -27,7 +27,10 @@ class _BackupSeedState extends State<BackupSeed> {
         : body();
   }
 
-  Widget body() => components.page.form(
+  Widget body() => BackdropLayers(
+      back: BlankBack(),
+      front: FrontCurve(
+          child: components.page.form(
         context,
         columnWidgets: <Widget>[
           instructions,
@@ -35,7 +38,7 @@ class _BackupSeedState extends State<BackupSeed> {
           words,
         ],
         buttons: [submitButton],
-      );
+      )));
 
   Widget get instructions => Container(
       height: 48,

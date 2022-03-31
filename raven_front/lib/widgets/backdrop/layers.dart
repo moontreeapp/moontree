@@ -1,17 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/services/transaction.dart';
-import 'package:raven_front/components/components.dart';
-import 'package:raven_front/services/lookup.dart';
-import 'package:raven_front/theme/theme.dart';
 
 class BackdropLayers extends StatefulWidget {
   final Widget back;
   final Widget front;
-  const BackdropLayers({Key? key, required this.back, required this.front})
-      : super(key: key);
+
+  const BackdropLayers({
+    Key? key,
+    required this.back,
+    required this.front,
+  }) : super(key: key);
 
   @override
   State<BackdropLayers> createState() => _BackdropLayersState();
@@ -24,7 +23,7 @@ class _BackdropLayersState extends State<BackdropLayers> {
   void initState() {
     super.initState();
 
-    /// refresh?
+    /// refresh? fling?
     //  listeners.add(
     //      res.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
     //    // if vouts in our account has changed...
@@ -47,17 +46,15 @@ class _BackdropLayersState extends State<BackdropLayers> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Stack(children: [
-        Container(
-            color: Colors.transparent,
-            alignment: Alignment.topCenter,
-            child: widget.back),
-        Container(
-            color: Colors.transparent,
-            alignment: Alignment.bottomCenter,
-            child: widget.front),
-      ]),
-    );
+    return Stack(children: [
+      Container(
+          color: Theme.of(context).backgroundColor,
+          alignment: Alignment.topCenter,
+          child: widget.back),
+      Container(
+        alignment: Alignment.bottomCenter,
+        child: widget.front,
+      ),
+    ]);
   }
 }

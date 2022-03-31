@@ -31,6 +31,8 @@ class _SendState extends State<Send> {
   Map<String, dynamic> data = {};
   List<StreamSubscription> listeners = [];
   SpendForm? spendForm;
+  late Security security;
+  double? minHeight;
   final sendAsset = TextEditingController();
   final sendAddress = TextEditingController();
   final sendAmount = TextEditingController();
@@ -60,6 +62,7 @@ class _SendState extends State<Send> {
   @override
   void initState() {
     super.initState();
+    //minHeight = 1 - (201 + 16) / MediaQuery.of(context).size.height;
     sendAsset.text = sendAsset.text == '' ? 'Ravencoin' : sendAsset.text;
     sendFee.text = sendFee.text == '' ? 'Standard' : sendAsset.text;
     sendAssetFocusNode.addListener(refresh);
@@ -155,8 +158,11 @@ class _SendState extends State<Send> {
 
   @override
   Widget build(BuildContext context) {
+    minHeight =
+        minHeight ?? 1 - (201 + 16) / MediaQuery.of(context).size.height;
     data = populateData(context, data);
     var symbol = streams.spend.form.value?.symbol ?? 'RVN';
+    security = res.securities.bySymbol.getAll(symbol).first;
     symbol = symbol == 'Ravencoin' ? 'RVN' : symbol;
     useWallet = data.containsKey('walletId') && data['walletId'] != null;
     if (data.containsKey('qrCode')) {
@@ -186,7 +192,14 @@ class _SendState extends State<Send> {
         child: body());
   }
 
-  Widget body() => components.page.form(
+  Widget body() => BackdropLayers(
+        back: CoinSpec(pageTitle: 'Send', security: security),
+        front: content(scrollController),
+      );
+
+  Widget content(ScrollController scrollController) => FrontCurve(
+      height: MediaQuery.of(context).size.height - (201 + 56),
+      child: components.page.form(
         context,
         controller: scrollController,
         columnWidgets: <Widget>[
@@ -208,7 +221,7 @@ class _SendState extends State<Send> {
           sendTransactionButton()
           //: sendTransactionButton(disabled: true)
         ],
-      );
+      ));
 
   Widget get sendAssetField => TextField(
         focusNode: sendAssetFocusNode,

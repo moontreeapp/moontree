@@ -33,7 +33,7 @@ class CipherAES implements CipherBase {
         ));
 
   PaddedBlockCipherImpl cipher(encrypt) {
-    var blockCipher = CBCBlockCipher(AESFastEngine());
+    var blockCipher = CBCBlockCipher(AESEngine());
     var params = ParametersWithIV<KeyParameter>(KeyParameter(_key), _iv);
     var paddingParams =
         PaddedBlockCipherParameters<ParametersWithIV<KeyParameter>, Null>(
