@@ -185,6 +185,7 @@ class _PageTitleState extends State<PageTitle> {
                       onTap: () {
                         ScaffoldMessenger.of(context).clearSnackBars();
                         res.settings.setCurrentWalletId(wallet.id);
+                        streams.app.setting.add(null);
                       },
                       leading: Icon(
                         Icons.account_balance_wallet_rounded,
