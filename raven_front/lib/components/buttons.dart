@@ -81,9 +81,6 @@ class ButtonComponents {
   Widget floatingButtons(
     BuildContext context, {
     required List<Widget> buttons,
-    List<Widget>? boxedWidgets,
-    List<Widget>? columnWidgets,
-    Widget? heightSpacer,
     Widget? widthSpacer,
   }) =>
       Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [

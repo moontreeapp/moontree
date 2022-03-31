@@ -35,10 +35,7 @@ class PageComponents {
               KeyboardHidesWidget(
                   child: components.buttons.floatingButtons(
                 context,
-                boxedWidgets: boxedWidgets,
-                columnWidgets: columnWidgets,
                 buttons: floatingButtons,
-                heightSpacer: heightSpacer,
                 widthSpacer: widthSpacer,
               ))
             ],
@@ -61,7 +58,7 @@ class PageComponents {
         padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
         alignment: Alignment.bottomCenter,
         child: CustomScrollView(
-            shrinkWrap: true,
+            //shrinkWrap: true,
             controller: controller,
             slivers: <Widget>[
               SliverToBoxAdapter(child: SizedBox(height: 6)),

@@ -199,7 +199,7 @@ class _SendState extends State<Send> {
             pageTitle: 'Send',
             security: security,
             color: Theme.of(context).backgroundColor),
-        back: content(scrollController),
+        back: contentByListView(scrollController),
       );
   ////SingleChildScrollView(
   ////    physics: NeverScrollableScrollPhysics(),
@@ -210,6 +210,38 @@ class _SendState extends State<Send> {
   //  children: <Widget>[
   //  ],
   //));
+
+  Widget contentByListView(ScrollController scrollController) => FrontCurve(
+          //height: MediaQuery.of(context).size.height - (201 + 56),
+          child: Stack(
+        children: [
+          ListView(
+            padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
+            children: <Widget>[
+              Container(height: 201),
+              sendAssetField,
+              SizedBox(height: 16),
+              //toName,
+              sendAddressField,
+              SizedBox(height: 16),
+              sendAmountField,
+              SizedBox(height: 16),
+              sendFeeField,
+              SizedBox(height: 16),
+              sendMemoField,
+              SizedBox(height: 16),
+              sendNoteField,
+              SizedBox(height: 16),
+            ],
+          ),
+          KeyboardHidesWidget(
+              child: components.buttons.floatingButtons(
+            context,
+            buttons: [sendTransactionButton()],
+            widthSpacer: SizedBox(width: 16),
+          ))
+        ],
+      ));
 
   Widget content(ScrollController scrollController) => FrontCurve(
       height: MediaQuery.of(context).size.height - (201 + 56),
