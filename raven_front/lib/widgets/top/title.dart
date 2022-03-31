@@ -124,6 +124,9 @@ class _PageTitleState extends State<PageTitle> {
   }
 
   String assetName(String given) {
+    if (given == 'RVN') {
+      return 'Ravencoin';
+    }
     if (given.contains('~')) {
       return given.toLowerCase().split('~').last.toTitleCase();
     }
