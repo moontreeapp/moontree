@@ -184,7 +184,7 @@ class _HoldingList extends State<HoldingList> {
     return ListView(
         controller: widget.scrollController,
         dragStartBehavior: DragStartBehavior.start,
-        physics: const BouncingScrollPhysics(),
+        physics: PageScrollPhysics(), //const BouncingScrollPhysics(),
         children: <Widget>[...rvnHolding, ...assetHoldings, ...blankNavArea]);
   }
 

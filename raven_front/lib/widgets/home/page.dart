@@ -48,72 +48,90 @@ class _HomePageState extends State<HomePage>
 
   Widget body() => BackdropLayers(
         back: NavMenu(),
-        front: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  child: DraggableScrollableActuator(
-                    child: DraggableScrollableSheet(
-                      controller: draggableScrollController,
-                      snap: false,
-                      initialChildSize: initialExtent,
-                      minChildSize: minExtent,
-                      maxChildSize: maxExtent,
-                      builder: ((context, scrollController) {
-                        if (draggableScrollController.size == minExtent) {
-                          streams.app.setting.add('/settings');
-                        } else if (draggableScrollController.size ==
-                            maxExtent) {
-                          streams.app.setting.add(null);
-                        }
-                        return FrontCurve(
-                            fuzzyTop: true,
-                            child: widget.appContext == AppContext.wallet
-                                ? HoldingList(
-                                    scrollController: scrollController)
-                                : widget.appContext == AppContext.manage
-                                    ? AssetList(
-                                        scrollController: scrollController)
-                                    : Scroller(
-                                        controller: scrollController,
-                                        child: Text(
-                                            'swap\n\n\n\n\n\n\n\n\n\n\n\n')));
-                      }),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            NavBar(),
-          ],
+        front: DraggableScrollableActuator(
+          child: DraggableScrollableSheet(
+            controller: draggableScrollController,
+            snap: false,
+            initialChildSize: initialExtent,
+            minChildSize: minExtent,
+            maxChildSize: maxExtent,
+            builder: ((context, scrollController) {
+              if (draggableScrollController.size == minExtent) {
+                streams.app.setting.add('/settings');
+              } else if (draggableScrollController.size == maxExtent) {
+                streams.app.setting.add(null);
+              }
+              return FrontCurve(
+                  fuzzyTop: true,
+                  child: Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      widget.appContext == AppContext.wallet
+                          ? HoldingList(scrollController: scrollController)
+                          : widget.appContext == AppContext.manage
+                              ? AssetList(scrollController: scrollController)
+                              : Scroller(
+                                  controller: scrollController,
+                                  child: Text('swap\n\n\n\n\n\n\n\n\n\n\n\n')),
+                      NavBar()
+                    ],
+                  ));
+            }),
+          ),
         ),
       );
 
   Future<void> fling([bool? open]) async {
-    var flingDown = () async => await draggableScrollController.animateTo(
-          minExtent,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOutCubicEmphasized,
-        );
-    var flingUp = () async {
-      streams.app.setting.add(null);
-      await draggableScrollController.animateTo(
-        maxExtent,
+    if ((open ?? false)) {
+      await flingDown();
+    } else if (!(open ?? true)) {
+      await flingUp();
+    } else if (await draggableScrollController.size >=
+        (maxExtent + minExtent) / 2) {
+      await flingDown();
+    } else {
+      await flingUp();
+    }
+  }
+
+  Future<void> flingDown() async => await draggableScrollController.animateTo(
+        minExtent,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOutCubicEmphasized,
       );
-    };
-    if ((open ?? false)) {
-      flingDown();
-    } else if (!(open ?? true)) {
-      flingUp();
-    } else if (await draggableScrollController.size >=
-        (maxExtent + minExtent) / 2) {
-      flingDown();
-    } else {
-      flingUp();
-    }
+
+  Future<void> flingUp() async {
+    streams.app.setting.add(null);
+    await draggableScrollController.animateTo(
+      maxExtent,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOutCubicEmphasized,
+    );
   }
 }
+/* we want to hide the nav bar if we open the menu, so we can put this on a 
+scaffold to do it, or we can do what is above: push it down w/ the front sheet.
+NotificationListener<UserScrollNotification>(
+                onNotification: visibilityOfSendReceive,
+                child: currentContext == AppContext.wallet
+                    ? HoldingList()
+                    : currentContext == AppContext.manage
+                        ? AssetList()
+                        : Text('swap'))),
+        floatingActionButton:
+            SlideTransition(position: offset, child: NavBar()),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      );
+
+  bool visibilityOfSendReceive(notification) {
+    if (notification.direction == ScrollDirection.forward &&
+        controller.status == AnimationStatus.completed) {
+      controller.reverse();
+    } else if (notification.direction == ScrollDirection.reverse &&
+        controller.status == AnimationStatus.dismissed) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      controller.forward();
+    }
+    return true;
+  }
+*/
