@@ -15,7 +15,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late List listeners = [];
-  static const double minExtent = .0736842105263158;
+  //static const double minExtent = .0736842105263158;
+  static const double minExtent = .10;
   static const double maxExtent = 1.0;
   static const double initialExtent = maxExtent;
   late DraggableScrollableController draggableScrollController =

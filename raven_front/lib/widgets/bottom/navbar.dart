@@ -19,7 +19,7 @@ class _NavBarState extends State<NavBar> {
     var assetType = Asset.assetTypeOf(streams.app.manage.asset.value ?? '');
     return Container(
       height: MediaQuery.of(context).size.height * (118 / 760),
-      padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+      padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         color: Colors.white,
