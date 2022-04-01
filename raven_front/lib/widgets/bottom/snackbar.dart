@@ -75,7 +75,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                                 .bodyText2!
                                 .copyWith(color: AppColors.error))),
                 Container(
-                  height: 16,
+                  height: 12,
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
@@ -124,7 +124,8 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
           shape: RoundedRectangleBorder(borderRadius: shape),
           content: msg,
           behavior: SnackBarBehavior.floating,
-          margin: EdgeInsets.only(bottom: 102),
+          margin: EdgeInsets.only(
+              bottom: MediaQuery.of(context).size.height * (106 / 760)),
           padding: EdgeInsets.only(top: 0, bottom: 0),
           action: snack!.positive
               ? null

@@ -48,25 +48,21 @@ class _LoaderState extends State<Loader> {
 
   @override
   Widget build(BuildContext context) {
-    return BackdropLayers(
-        back: BlankBack(),
-        front: FrontCurve(
-            child: Container(
-                color: AppColors.white87,
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        widget.message,
-                        style: Theme.of(context).textTheme.headline2,
-                      ),
-                      SizedBox(height: 4),
-                      Image.asset(
-                        'assets/logo/moontree_logo.png',
-                        height: 56,
-                        width: 56,
-                      ),
-                    ]))));
+    return FrontCurve(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+          Text(
+            widget.message,
+            style: Theme.of(context).textTheme.headline2,
+          ),
+          SizedBox(height: 4),
+          Image.asset(
+            'assets/logo/moontree_logo.png',
+            height: 56,
+            width: 56,
+          ),
+        ]));
   }
 }

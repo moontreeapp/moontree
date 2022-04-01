@@ -136,3 +136,29 @@ NotificationListener<UserScrollNotification>(
     return true;
   }
 */
+
+
+/*
+we should be able to use this to apply a scrim to the front layer
+  Widget _buildInactiveLayer(BuildContext context) {
+    return Offstage(
+      offstage: animationController.status == AnimationStatus.completed,
+      child: FadeTransition(
+        opacity: Tween<double>(begin: 1, end: 0).animate(animationController),
+        child: GestureDetector(
+          onTap: () => fling(),
+          behavior: HitTestBehavior.opaque,
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  color: widget.frontLayerScrim,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  */
