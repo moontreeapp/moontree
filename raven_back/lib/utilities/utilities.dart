@@ -2,6 +2,7 @@ import 'assets.dart' as assets;
 import 'transform.dart' as transform;
 import 'strings.dart' as imported_strings;
 import 'validate.dart' as validate;
+import 'search.dart' as search;
 
 export 'exceptions.dart';
 export 'structures.dart';

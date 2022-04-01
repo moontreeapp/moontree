@@ -177,4 +177,26 @@ class LeaderWalletService {
     res.addresses.saveAll(newAddresses);
     return newAddresses;
   }
+
+  /// derive 20
+  /// check all for history
+  /// take the largest index that has history + 20
+  /// derive those
+  /// repeat
+  Set<Address> deriveMoreAddressesWithGap(
+    LeaderWallet wallet, {
+    List<NodeExposure>? exposures,
+  }) {
+    exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];
+    var newAddresses = <Address>{};
+    for (var exposure in exposures) {
+      newAddresses.addAll(deriveNextAddresses(
+        wallet,
+        res.ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
+        exposure,
+      ));
+    }
+    res.addresses.saveAll(newAddresses);
+    return newAddresses;
+  }
 }

@@ -12,7 +12,7 @@ class HistoryWaiter extends Waiter {
   Map<String, List<String>> txsByWalletExposureKeys = {};
 
   void init() => listen(
-      'streams.address.history',
+      'streams.wallet.transactions',
       streams.wallet.transactions,
       (WalletExposureTransactions? keyedTransactions) =>
           keyedTransactions == null

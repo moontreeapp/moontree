@@ -13,7 +13,9 @@ class AddressWaiter extends Waiter {
   void handleAddressChange(Change<Address> change) {
     change.when(
         loaded: (loaded) {},
-        added: (added) => services.client.subscribe.to(added.data),
+        added: (added) {
+          services.client.subscribe.to(added.data);
+        },
         updated: (updated) => services.client.subscribe.to(updated.data),
         removed: (removed) {
           var address = removed.data;

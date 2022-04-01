@@ -63,16 +63,17 @@ class LeaderWaiter extends Waiter {
   void handleLeaderChange(Change<Wallet> change) {
     change.when(
         loaded: (loaded) {
-          var leader = loaded.data as LeaderWallet;
-          for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
-            if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
-              handleDeriveAddress(leader: leader, exposure: exposure);
-            }
-          }
+          handleSyncWallet(leader: loaded.data as LeaderWallet);
+          //var leader = loaded.data as LeaderWallet;
+          //for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
+          //  if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
+          //    handleDeriveAddress(leader: leader, exposure: exposure);
+          //  }
+          //}
         },
         added: (added) {
-          print('added: $added');
-          handleDeriveAddress(leader: added.data as LeaderWallet);
+          handleSyncWallet(leader: added.data as LeaderWallet);
+          //handleDeriveAddress(leader: added.data as LeaderWallet);
         },
         updated: (updated) async {
           /*
@@ -114,6 +115,26 @@ class LeaderWaiter extends Waiter {
     if (bypassCipher ||
         res.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
       services.wallet.leader.deriveMoreAddresses(
+        leader,
+        exposures: exposure == null ? null : [exposure],
+      );
+    } else {
+      services.wallet.leader.backlog.add(leader);
+    }
+    print('deriving: ${s.elapsed}');
+  }
+
+  void handleSyncWallet({
+    required LeaderWallet leader,
+    NodeExposure? exposure,
+    bool bypassCipher = false,
+  }) {
+    var s = Stopwatch()..start();
+    if (bypassCipher ||
+        res.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
+      services.wallet
+          .handleSync(leader, exposures: exposure == null ? null : [exposure]);
+      services.wallet.leader.deriveMoreAddressesWithGap(
         leader,
         exposures: exposure == null ? null : [exposure],
       );
