@@ -14,6 +14,17 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> with TickerProviderStateMixin {
+  Future setupDatabase() async {
+    var hiveInit =
+        HiveInitializer(init: (dbDir) => Hive.initFlutter(), beforeLoad: () {});
+    await hiveInit.setUp();
+    await initWaiters();
+    initListeners();
+    //await res.settings.save(
+    //    Setting(name: SettingName.Local_Path, value: await Storage().localPath));
+    setupWallets();
+  }
+
   Future setupRealWallet(String? id) async {
     await dotenv.load(fileName: '.env');
     var mnemonic = id == null ? null : dotenv.env['TEST_WALLET_0$id']!;
@@ -23,20 +34,13 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
         secret: mnemonic);
   }
 
-  Future setup() async {
-    var hiveInit =
-        HiveInitializer(init: (dbDir) => Hive.initFlutter(), beforeLoad: () {});
-    await hiveInit.setUp();
-    await initWaiters();
-    initListeners();
-    await res.settings.save(Setting(
-        name: SettingName.Local_Path, value: await Storage().localPath));
+  Future setupWallets() async {
     if (res.wallets.data.isEmpty) {
       await setupRealWallet('2');
-      await setupRealWallet('1');
-      await setupRealWallet(null);
       await res.settings.setCurrentWalletId(res.wallets.first.id);
       await res.settings.savePreferredWalletId(res.wallets.first.id);
+      setupRealWallet('1');
+      setupRealWallet(null);
     }
 
     // for testing
@@ -58,7 +62,10 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
     print('-------------------------');
     //print(services.cipher.getPassword(altPassword: ''));
     print('-------------------------');
+    redirectToLoginOrHome();
+  }
 
+  Future redirectToLoginOrHome() async {
     if (services.password.required) {
       if (services.password.interruptedPasswordChange()) {
         showDialog(
@@ -89,7 +96,7 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    setup();
+    setupDatabase();
   }
 
   @override
@@ -97,12 +104,15 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  // Loading probably doesn't make sense as a page. It is more of a background process'
+  // Loading probably doesn't make sense as a page.
+  // It is more of a background process - move the above computation to
+  // somewhere else.
   @override
   Widget build(BuildContext context) {
-    return BackdropLayers(
-        back: BlankBack(),
-        front: FrontCurve(
-            child: Image(image: AssetImage("assets/splash/fast.gif"))));
+    return Container();
+    //BackdropLayers(
+    //    back: BlankBack(),
+    //    front: FrontCurve(
+    //        child: Image(image: AssetImage("assets/splash/fast.gif"))));
   }
 }
