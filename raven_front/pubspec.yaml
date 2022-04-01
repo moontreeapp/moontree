@@ -56,7 +56,6 @@ dependencies:
   #jdenticon_dart: ^2.0.0
   #identicon: ^0.1.1
   #share_plus: ^4.0.1
-  flutter_easyloading: ^3.0.3
 
   # MoonTree in-house dependencies
   raven_back:

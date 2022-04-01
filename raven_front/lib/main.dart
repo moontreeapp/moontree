@@ -15,7 +15,6 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_front/listeners/listeners.dart';
-import 'package:raven_front/services/storage.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
