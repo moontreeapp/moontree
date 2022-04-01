@@ -174,16 +174,22 @@ bool binaryRemove({
   return false;
 }
 
-void binaryInsert({
+bool binaryInsert({
   required List list,
   required dynamic value,
   Comparator? comp,
+  bool double_add = false,
 }) {
+  comp = comp ?? (a, b) => a - b;
   var index =
       binaryClosest(list: list, value: value, type: Nearest.CEIL, comp: comp);
   if (index >= 0) {
+    if (!double_add && comp(value, list[index]) == 0) {
+      return false;
+    }
     list.insert(index, value);
   } else {
     list.add(value);
   }
+  return true;
 }
