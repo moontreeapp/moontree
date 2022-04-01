@@ -14,7 +14,7 @@ extension AmountValidationDoubleExtension on double {
 
 extension RVNNumericValidationExtension on String {
   bool get isInt {
-    if (length > 15) {
+    if (length > 15 || contains('.')) {
       return false;
     }
     try {

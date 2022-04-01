@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/streams/spend.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
@@ -24,6 +27,7 @@ class CoinSpec extends StatefulWidget {
 }
 
 class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
+  List<StreamSubscription> listeners = [];
   double amount = 0.0;
   double holding = 0.0;
   String visibleAmount = '0';
@@ -32,6 +36,13 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    listeners.add(streams.spend.form.listen((SpendForm? value) {
+      if (value != null && value.amount != null && value.amount != amount) {
+        setState(() {
+          amount = value.amount!;
+        });
+      }
+    }));
   }
 
   @override
@@ -85,13 +96,13 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
               symbol: symbol,
               holdingSat: holdingSat,
               totalSupply: totalSupply),
-          widget.bottom ?? headerBottom(holdingSat, amountSat),
+          widget.bottom ?? specBottom(holdingSat, amountSat),
         ],
       ),
     );
   }
 
-  Widget headerBottom(int holdingSat, int amountSat) {
+  Widget specBottom(int holdingSat, int amountSat) {
     if (widget.pageTitle == 'Asset') {
       return AssetSpecBottom(symbol: symbol);
     }

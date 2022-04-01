@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:convert/convert.dart';
+import 'package:bs58/bs58.dart';
 import 'package:raven_back/utilities/utilities.dart';
 
 import '../utilities/transform.dart';
@@ -49,6 +50,7 @@ extension StringBytesExtension on String {
         (i) => String.fromCharCode(
             int.parse(substring(i * 2, (i * 2) + 2), radix: 16)),
       ).join();
+  Uint8List get base58Decode => base58.decode(this);
 }
 
 extension StringCharactersExtension on String {

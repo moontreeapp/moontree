@@ -222,7 +222,7 @@ class SendEstimate with ToStringMixin {
   int fees;
   List<Vout> utxos;
   Security? security;
-  String? assetMemo;
+  Uint8List? assetMemo;
   String? memo;
   int extraFees = 0;
   bool creation;
@@ -287,7 +287,7 @@ class TransactionMaker {
     var estimate = SendEstimate(
       sendRequest.sendAmountAsSats,
       security: sendRequest.security,
-      assetMemo: sendRequest.assetMemo,
+      assetMemo: sendRequest.assetMemo?.base58Decode,
       memo: sendRequest.memo,
     );
 
@@ -1028,7 +1028,7 @@ class TransactionMaker {
         utxosRaven.first.toAddress,
         100000000,
         asset: estimate.security!.symbol,
-        memo: estimate.assetMemo!.hexBytes,
+        memo: estimate.assetMemo!,
       );
 
       tx = txb.buildSpoofedSigs();
@@ -1096,7 +1096,7 @@ class TransactionMaker {
         toAddress,
         estimate.amount,
         asset: estimate.security?.symbol,
-        memo: estimate.assetMemo?.hexBytes,
+        memo: estimate.assetMemo,
         expiry: assetMemoExpiry,
       );
       if (securityChange > 0) {
@@ -1179,7 +1179,7 @@ class TransactionMaker {
         toAddress,
         estimate.amount,
         asset: estimate.security?.symbol,
-        memo: estimate.assetMemo?.hexBytes,
+        memo: estimate.assetMemo,
       );
       // Add transaction memo if one is given
       if (estimate.memo != null) {

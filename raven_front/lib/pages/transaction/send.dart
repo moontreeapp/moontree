@@ -74,26 +74,27 @@ class _SendState extends State<Send> {
 
     listeners.add(streams.spend.form.listen((SpendForm? value) {
       if (value != null) {
-        //if ((SpendForm.merge(form: spendForm, amount: 0.0) !=
-        //    SpendForm.merge(form: value, amount: 0.0))) {
-        setState(() {
-          spendForm = value;
-          var asset = (value.symbol ?? 'RVN');
-          sendAsset.text = asset == 'RVN' || asset == 'Ravencoin'
-              ? 'Ravencoin'
-              : Current.holdingNames.contains(asset)
-                  ? asset
-                  : sendAsset.text == ''
-                      ? 'Ravencoin'
-                      : sendAsset.text;
-          sendFee.text = value.fee ?? 'Standard';
-          sendNote.text = value.note ?? sendNote.text;
-          sendAmount.text = value.amount == 0.0
-              ? ''
-              : value.amount?.toString() ?? sendAmount.text;
-          sendAddress.text = value.address ?? sendAddress.text;
-          addressName = value.addressName ?? addressName;
-        });
+        if ((SpendForm.merge(form: spendForm, amount: 0.0) !=
+            SpendForm.merge(form: value, amount: 0.0))) {
+          setState(() {
+            spendForm = value;
+            var asset = (value.symbol ?? 'RVN');
+            sendAsset.text = asset == 'RVN' || asset == 'Ravencoin'
+                ? 'Ravencoin'
+                : Current.holdingNames.contains(asset)
+                    ? asset
+                    : sendAsset.text == ''
+                        ? 'Ravencoin'
+                        : sendAsset.text;
+            sendFee.text = value.fee ?? 'Standard';
+            sendNote.text = value.note ?? sendNote.text;
+            sendAmount.text = value.amount == 0.0
+                ? ''
+                : value.amount?.toString() ?? sendAmount.text;
+            sendAddress.text = value.address ?? sendAddress.text;
+            addressName = value.addressName ?? addressName;
+          });
+        }
       }
     }));
   }
@@ -450,10 +451,10 @@ class _SendState extends State<Send> {
                     */
         ),
         onChanged: (value) {
-          //visibleAmount = verifyVisibleAmount(value);
-          //streams.spend.form.add(SpendForm.merge(
-          //    form: streams.spend.form.value,
-          //    amount: double.parse(visibleAmount)));
+          visibleAmount = verifyVisibleAmount(value);
+          streams.spend.form.add(SpendForm.merge(
+              form: streams.spend.form.value,
+              amount: doubleAmount(visibleAmount)));
         },
         onEditingComplete: () {
           //sendAmount.text = cleanDecAmount(
@@ -465,11 +466,14 @@ class _SendState extends State<Send> {
           visibleAmount = verifyVisibleAmount(sendAmount.text);
           streams.spend.form.add(SpendForm.merge(
               form: streams.spend.form.value,
-              amount: visibleAmount == '' ? 0 : double.parse(visibleAmount)));
+              amount: doubleAmount(visibleAmount)));
           FocusScope.of(context).requestFocus(sendFeeFocusNode);
           setState(() {});
         },
       );
+
+  double doubleAmount(String visibleAmount) =>
+      visibleAmount == '' ? 0 : double.parse(visibleAmount);
 
   //SizedBox(height: 16.0),
   Widget get sendFeeField => TextField(
@@ -502,6 +506,7 @@ class _SendState extends State<Send> {
           setState(() {});
         },
       );
+
   Widget get sendMemoField => TextField(
       onTap: () async {
         clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
@@ -525,7 +530,7 @@ class _SendState extends State<Send> {
             ? IconButton(
                 icon: Icon(Icons.paste_rounded, color: AppColors.black60),
                 onPressed: () async {
-                  sendNote.text =
+                  sendMemo.text =
                       (await Clipboard.getData('text/plain'))?.text ?? '';
                 })
             : null,
@@ -642,16 +647,6 @@ class _SendState extends State<Send> {
               ? null
               : res.securities.bySymbolSecurityType
                   .getOne(sendAsset.text, SecurityType.RavenAsset),
-          // assetMemo: // we don't have a UI field for this.
-          // should we use the memo field for assetMemo if sending asset
-          // or should always use that field for op return memos??
-
-          // we should use assetMemo on IPFS hashes since assetMemos can only
-          // be ipfs or txids. otherwise we should use memo which can be
-          // any text up to lenght bytes 80.
-          // sendMemo.text.isAssetMemo
-
-          // TODO: Convert text to UInt8Array here to pass on
           assetMemo: sendAsset.text != 'Ravencoin' && sendMemo.text.isIpfs
               ? sendMemo.text
               : null,
