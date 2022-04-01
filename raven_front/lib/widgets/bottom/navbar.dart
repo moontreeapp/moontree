@@ -110,9 +110,9 @@ class _NavBarState extends State<NavBar> {
                           }),
                         ],
                 ),
-          SizedBox(height: 16),
+          SizedBox(height: 6),
           Padding(
-              padding: EdgeInsets.only(left: 32, right: 32),
+              padding: EdgeInsets.only(left: 0, right: 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -128,8 +128,9 @@ class _NavBarState extends State<NavBar> {
   }
 
   Widget sectorIcon({required AppContext appContext}) => Container(
-      height: 40,
-      width: 40,
+      height: 56,
+      width: (MediaQuery.of(context).size.width - 32 - 0) / 3,
+      alignment: Alignment.center,
       child: IconButton(
         onPressed: () {
           streams.app.context.add(appContext);

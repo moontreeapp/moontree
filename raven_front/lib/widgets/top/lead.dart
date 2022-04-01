@@ -95,8 +95,29 @@ class _PageLead extends State<PageLead> {
           splashRadius: 24,
           icon: Icon(Icons.close_rounded, color: Colors.white),
           onPressed: () {
+            streams.app.fling.add(false);
             if (pageTitle == 'Send') streams.spend.form.add(null);
             if (xlead) streams.app.xlead.add(false);
+            Navigator.pop(components.navigator.routeContext ?? context);
+          });
+    }
+    if ([
+      'Transactions',
+      'Asset',
+      'Main',
+      'Sub',
+      'Restricted',
+      'Qualifier',
+      'Qualifiersub',
+      'Nft',
+      'Channel',
+    ].contains(pageTitle)) {
+      return IconButton(
+          splashRadius: 24,
+          icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+          onPressed: () {
+            streams.app.fling.add(false);
+            if (pageTitle == 'Transaction') streams.spend.form.add(null);
             Navigator.pop(components.navigator.routeContext ?? context);
           });
     }
