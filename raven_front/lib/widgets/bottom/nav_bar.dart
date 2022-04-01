@@ -25,8 +25,8 @@ class _NavBarState extends State<NavBar> {
         //  color: Colors.white,
         //  child:
         Container(
-            height: 118,
-            padding: EdgeInsets.only(left: 16, right: 16, top: 16),
+            height: MediaQuery.of(context).size.height * (118 / 760),
+            padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               color: Colors.white,
@@ -48,7 +48,7 @@ class _NavBarState extends State<NavBar> {
               ],
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 // we will need to make these buttons dependant upon the navigation
                 // of the front page through streams but for now, we'll show they
@@ -138,7 +138,10 @@ class _NavBarState extends State<NavBar> {
           );
   }
 
-  Widget sectorIcon({required AppContext appContext}) => IconButton(
+  Widget sectorIcon({required AppContext appContext}) => Container(
+      height: 40,
+      width: 40,
+      child: IconButton(
         onPressed: () {
           streams.app.context.add(appContext);
           if (!['Home', 'Manage', 'Swap'].contains(streams.app.page.value)) {
@@ -151,11 +154,11 @@ class _NavBarState extends State<NavBar> {
           AppContext.manage: MdiIcons.plusCircle,
           AppContext.swap: MdiIcons.swapHorizontalBold,
         }[appContext]!),
-        iconSize: streams.app.context.value == appContext ? 30 : 24,
+        iconSize: streams.app.context.value == appContext ? 32 : 24,
         color: streams.app.context.value == appContext
             ? AppColors.primary
             : Color(0x995C6BC0),
-      );
+      ));
 
   void _produceCreateModal() {
     SelectionItems(context, modalSet: SelectionSet.Create).build();

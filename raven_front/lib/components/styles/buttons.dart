@@ -19,8 +19,9 @@ class ButtonStyleComponents {
                     : Theme.of(context).backgroundColor,
             width: 2,
             style: BorderStyle.solid)),
-        shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0))),
+        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+                (MediaQuery.of(context).size.height * 0.05263157895) * .5))),
       );
 
   ButtonStyle word(
@@ -35,7 +36,8 @@ class ButtonStyleComponents {
             chosen ? AppColors.primaries[1] : AppColors.primaries[0]),
         side: MaterialStateProperty.all(
             BorderSide(width: 0, style: BorderStyle.none)),
-        shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0))),
+        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+                (MediaQuery.of(context).size.height * (32 / 760)) * .5))),
       );
 }

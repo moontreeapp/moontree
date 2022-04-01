@@ -15,7 +15,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late List listeners = [];
-  static const double minExtent = .2;
+  static const double minExtent = .0736842105263158;
   static const double maxExtent = 1.0;
   static const double initialExtent = maxExtent;
   late DraggableScrollableController draggableScrollController =
@@ -42,6 +42,7 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
+    //minExtent = 1-(MediaQuery.of(context).size.height - 56)  // pix
     return body();
   }
 

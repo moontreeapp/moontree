@@ -74,7 +74,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
     }
     return Container(
       padding: EdgeInsets.only(top: 16),
-      height: 201,
+      height: widget.pageTitle == 'Send' ? 209 : 201,
       color: widget.color,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -97,7 +97,8 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
     }
     if (widget.pageTitle == 'Send') {
       return Padding(
-          padding: EdgeInsets.only(left: 16, right: 16, bottom: 1),
+          padding: EdgeInsets.only(
+              left: 16, right: 16, bottom: widget.pageTitle == 'Send' ? 9 : 1),
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text('Remaining:',

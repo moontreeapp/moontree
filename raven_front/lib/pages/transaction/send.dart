@@ -193,20 +193,53 @@ class _SendState extends State<Send> {
   Widget body() => BackdropLayers(
         backAlignment: Alignment.bottomCenter,
         frontAlignment: Alignment.topCenter,
-        front: CoinSpec(
-            pageTitle: 'Send',
-            security: security,
-            color: Theme.of(context).backgroundColor),
+        front: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            CoinSpec(
+                pageTitle: 'Send',
+                security: security,
+                color: Theme.of(context).backgroundColor),
+            FrontCurve(height: 8, frontLayerBoxShadow: [
+              BoxShadow(
+                  color: const Color(0x1F000000),
+                  offset: Offset(0, -2),
+                  blurRadius: 3),
+              BoxShadow(
+                  color: const Color(0x1F000000),
+                  offset: Offset(0, -2),
+                  blurRadius: 3),
+              BoxShadow(
+                  color: const Color(0x1F000000),
+                  offset: Offset(0, -2),
+                  blurRadius: 3),
+              BoxShadow(
+                  color: const Color(0xFFFFFFFF),
+                  offset: Offset(0, 2),
+                  blurRadius: 1),
+              BoxShadow(
+                  color: const Color(0x1FFFFFFF),
+                  offset: Offset(0, 3),
+                  blurRadius: 2),
+              BoxShadow(
+                  color: const Color(0x3DFFFFFF),
+                  offset: Offset(0, 4),
+                  blurRadius: 4),
+            ]),
+          ],
+        ),
         back: content(scrollController),
       );
 
-  Widget content(ScrollController scrollController) => FrontCurve(
-          child: Stack(
+  Widget content(ScrollController scrollController) => Container(
+      color: AppColors.white,
+      child: Stack(
         children: [
           ListView(
             padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
             children: <Widget>[
               Container(height: 201),
+              SizedBox(height: 8),
               sendAssetField,
               SizedBox(height: 16),
               //toName,
@@ -230,6 +263,87 @@ class _SendState extends State<Send> {
         ],
       ));
 
+  //Widget body() {
+  //  return Container(
+  //      alignment: Alignment.topCenter,
+  //      child: CustomScrollView(shrinkWrap: true,
+  //          //controller: controller,
+  //          slivers: <Widget>[
+  //            SliverToBoxAdapter(
+  //              child: CoinSpec(
+  //                  pageTitle: 'Send',
+  //                  security: security,
+  //                  color: Theme.of(context).backgroundColor),
+  //            ),
+  //            SliverToBoxAdapter(child: SizedBox(height: 6)),
+  //            SliverToBoxAdapter(
+  //                child: Column(
+  //                    crossAxisAlignment: CrossAxisAlignment.start,
+  //                    children: <Widget>[
+  //                  sendAssetField,
+  //                  SizedBox(height: 16),
+  //                  //toName,
+  //                  sendAddressField,
+  //                  SizedBox(height: 16),
+  //                  sendAmountField,
+  //                  SizedBox(height: 16),
+  //                  sendFeeField,
+  //                  SizedBox(height: 16),
+  //                  sendMemoField,
+  //                  SizedBox(height: 16),
+  //                  sendNoteField,
+  //                ])),
+  //          ]));
+  //}
+
+  //Widget body() => BackdropLayers(
+  //      //backAlignment: Alignment.bottomCenter,
+  //      frontAlignment: Alignment.bottomCenter,
+  //      back: CoinSpec(
+  //          pageTitle: 'Send',
+  //          security: security,
+  //          color: Theme.of(context).backgroundColor),
+  //      front: content(scrollController),
+  //      //frontHeight: MediaQuery.of(context).size.height - (201 + 56),
+  //    );
+//
+  //Widget content(ScrollController scrollController) => FrontCurve(
+  //    height: MediaQuery.of(context).size.height - (201 + 56),
+  //    child: TextField()
+  //    //Stack(
+  //    //  children: [
+  //    //    Container(
+  //    //      alignment: Alignment.bottomCenter,
+  //    //      height: MediaQuery.of(context).size.height - (201 + 56),
+  //    //      child: ListView(
+  //    //        shrinkWrap: true,
+  //    //        padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
+  //    //        children: <Widget>[
+  //    //          sendAssetField,
+  //    //          SizedBox(height: 16),
+  //    //          //toName,
+  //    //          sendAddressField,
+  //    //          SizedBox(height: 16),
+  //    //          sendAmountField,
+  //    //          SizedBox(height: 16),
+  //    //          sendFeeField,
+  //    //          SizedBox(height: 16),
+  //    //          sendMemoField,
+  //    //          SizedBox(height: 16),
+  //    //          sendNoteField,
+  //    //        ],
+  //    //      ),
+  //    //    ),
+  //    //    KeyboardHidesWidget(
+  //    //        child: components.buttons.floatingButtons(
+  //    //      context,
+  //    //      buttons: [sendTransactionButton()],
+  //    //      widthSpacer: SizedBox(width: 16),
+  //    //    ))
+  //    //  ],
+  //    //)
+  //    );
+//
   Widget get sendAssetField => TextField(
         focusNode: sendAssetFocusNode,
         controller: sendAsset,

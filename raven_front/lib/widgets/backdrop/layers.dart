@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 class BackdropLayers extends StatefulWidget {
   final Widget back;
   final Widget front;
+  final double? backHeight;
+  final double? frontHeight;
   final Alignment? backAlignment;
   final Alignment? frontAlignment;
 
@@ -12,8 +14,10 @@ class BackdropLayers extends StatefulWidget {
     Key? key,
     required this.back,
     required this.front,
+    this.backHeight,
     this.backAlignment,
     this.frontAlignment,
+    this.frontHeight,
   }) : super(key: key);
 
   @override
@@ -53,9 +57,11 @@ class _BackdropLayersState extends State<BackdropLayers> {
     return Stack(children: [
       Container(
           color: Theme.of(context).backgroundColor,
+          height: widget.backHeight,
           alignment: widget.backAlignment ?? Alignment.topCenter,
           child: widget.back),
       Container(
+        height: widget.frontHeight,
         alignment: widget.frontAlignment ?? Alignment.bottomCenter,
         child: widget.front,
       ),

@@ -20,7 +20,7 @@ class ButtonComponents {
   }) =>
       Expanded(
           child: Container(
-        height: 40,
+        height: MediaQuery.of(context).size.height * (40 / 760),
         child: OutlinedButton(
           focusNode: focusNode,
           onPressed: enabled
@@ -63,7 +63,7 @@ class ButtonComponents {
                   .copyWith(color: AppColors.black60),
             )),
         Container(
-          height: 32,
+          height: MediaQuery.of(context).size.height * (32 / 760),
           width: width,
           child: OutlinedButton(
             onPressed: enabled ? onPressed ?? () {} : () {},
