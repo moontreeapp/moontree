@@ -12,7 +12,7 @@ import 'package:raven_front/pages/pages.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
 
-import 'package:raven_front/backdrop/backdrop.dart';
+import 'package:raven_front/pages/misc/splash.dart';
 
 import 'widgets/widgets.dart';
 import 'package:raven_front/backdrop/lib/modified_draggable_scrollable_sheet.dart'
@@ -57,11 +57,13 @@ Future<void> main() async {
 
 class RavenMobileApp extends StatelessWidget {
   //static final GlobalKey<NavigatorState> navigatorKey = new GlobalKey();
+  //final Future _initFuture; // Init.initialize();
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     return MaterialApp(
-      initialRoute: '/',
+      initialRoute: '/splash',
+      //initialRoute: '/',
       routes: pages
           .routes(context), // look up flutter view model for sub app structure.
       themeMode: ThemeMode.system,
@@ -70,23 +72,7 @@ class RavenMobileApp extends StatelessWidget {
       navigatorObservers: [components.navigator],
       builder: (context, child) {
         components.navigator.scaffoldContext = context;
-        //final controller = slide.DraggableScrollableController();
-        return Scaffold(
-            appBar: BackdropAppBar(
-              backgroundColor: Theme.of(context).backgroundColor,
-              automaticallyImplyLeading: false,
-              elevation: 0,
-              leading: PageLead(mainContext: context),
-              title: /*FittedBox(fit: BoxFit.fitWidth, child: */ PageTitle() /*)*/,
-              actions: <Widget>[
-                components.status,
-                ConnectionLight(),
-                QRCodeContainer(),
-                SnackBarViewer(),
-                SizedBox(width: 6),
-              ],
-            ),
-            body: child!);
+        return Scaffold(appBar: BackdropAppBar(), body: child!);
       },
     );
   }

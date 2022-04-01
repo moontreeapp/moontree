@@ -12,6 +12,7 @@ class AppStreams {
   final hideNav = BehaviorSubject<bool?>.seeded(null);
   final fling = BehaviorSubject<bool?>.seeded(null);
   final coinspec = BehaviorSubject<String?>.seeded(null);
+  final splash = BehaviorSubject<bool>.seeded(true);
 
   WalletSideStreams wallet = WalletSideStreams();
   ManageSideStreams manage = ManageSideStreams();

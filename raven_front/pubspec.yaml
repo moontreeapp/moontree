@@ -51,10 +51,12 @@ dependencies:
   mockito: ^5.0.17 # just for testing
   intersperse: ^2.0.0
   flutter_keyboard_visibility: ^5.2.0
+  lottie: ^1.2.2
   #backdrop: ^0.7.1 # using our own custom fork in this lib
   #jdenticon_dart: ^2.0.0
   #identicon: ^0.1.1
   #share_plus: ^4.0.1
+  flutter_easyloading: ^3.0.3
 
   # MoonTree in-house dependencies
   raven_back:
