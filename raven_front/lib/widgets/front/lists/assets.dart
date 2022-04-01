@@ -84,7 +84,6 @@ class _AssetList extends State<AssetList> {
             : Container(
                 color: Colors.transparent,
                 alignment: Alignment.center,
-                padding: EdgeInsets.only(top: 8.0),
                 child: _assetsView(context),
               );
   }

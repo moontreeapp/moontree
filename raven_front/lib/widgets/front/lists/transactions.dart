@@ -85,7 +85,6 @@ class _TransactionListState extends State<TransactionList> {
         ? components.empty.transactions(context, msg: widget.msg)
         : Container(
             alignment: Alignment.center,
-            padding: EdgeInsets.only(top: 5.0),
             child: RefreshIndicator(
               child: _transactionsView(context),
               onRefresh: () => refresh(),
