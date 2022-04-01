@@ -17,7 +17,7 @@ void main() async {
   await useLiveSources();
 
   final wallet = res.wallets.primaryIndex.values.first;
-  sleep(Duration(minutes: 1));
+  sleep(Duration(seconds: 10));
 
   print(wallet);
   print(wallet.addresses);
