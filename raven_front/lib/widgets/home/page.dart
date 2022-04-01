@@ -69,6 +69,7 @@ class _HomePageState extends State<HomePage>
                           streams.app.setting.add(null);
                         }
                         return FrontCurve(
+                            fuzzyTop: true,
                             child: widget.appContext == AppContext.wallet
                                 ? HoldingList(
                                     scrollController: scrollController)
