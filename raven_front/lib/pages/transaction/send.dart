@@ -200,17 +200,9 @@ class _SendState extends State<Send> {
                 pageTitle: 'Send',
                 security: security,
                 color: Theme.of(context).backgroundColor),
-            FrontCurve(height: 8, frontLayerBoxShadow: [
+            FrontCurve(fuzzyTop: false, height: 8, frontLayerBoxShadow: [
               BoxShadow(
-                  color: const Color(0x1F000000),
-                  offset: Offset(0, -2),
-                  blurRadius: 3),
-              BoxShadow(
-                  color: const Color(0x1F000000),
-                  offset: Offset(0, -2),
-                  blurRadius: 3),
-              BoxShadow(
-                  color: const Color(0x1F000000),
+                  color: const Color(0x33000000),
                   offset: Offset(0, -2),
                   blurRadius: 3),
               BoxShadow(
