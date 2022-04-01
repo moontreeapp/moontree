@@ -16,10 +16,12 @@ void main() {
           list2.add(e);
         });
         list2.remove(i);
-        expect(binaryRemove(list1, (a, b) => a - b, i), true);
+        expect(utils.binaryRemove(list: list1, comp: (a, b) => a - b, value: i),
+            true);
         expect(list1, list2);
       }
-      expect(binaryRemove(list, (a, b) => a - b, 1001), false);
+      expect(utils.binaryRemove(list: list, comp: (a, b) => a - b, value: 1001),
+          false);
     });
   });
 }

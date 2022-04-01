@@ -64,12 +64,9 @@ class LeaderWaiter extends Waiter {
     change.when(
         loaded: (loaded) {
           handleSyncWallet(leader: loaded.data as LeaderWallet);
-          //var leader = loaded.data as LeaderWallet;
-          //for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
           //  if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
           //    handleDeriveAddress(leader: leader, exposure: exposure);
           //  }
-          //}
         },
         added: (added) {
           handleSyncWallet(leader: added.data as LeaderWallet);
@@ -126,18 +123,14 @@ class LeaderWaiter extends Waiter {
 
   void handleSyncWallet({
     required LeaderWallet leader,
-    NodeExposure? exposure,
     bool bypassCipher = false,
   }) {
     var s = Stopwatch()..start();
     if (bypassCipher ||
         res.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
-      services.wallet
-          .handleSync(leader, exposures: exposure == null ? null : [exposure]);
-      services.wallet.leader.deriveMoreAddressesWithGap(
-        leader,
-        exposures: exposure == null ? null : [exposure],
-      );
+      for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
+        services.wallet.handleSync(leader: leader, exposure: exposure);
+      }
     } else {
       services.wallet.leader.backlog.add(leader);
     }

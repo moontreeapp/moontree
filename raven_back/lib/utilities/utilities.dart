@@ -17,6 +17,7 @@ class utils {
   static final enumerate = transform.enumerate;
   static final removeCharsOtherThan = transform.removeCharsOtherThan;
   static final toStringOverride = imported_strings.toStringOverride;
+  static final binaryRemove = search.binaryRemove;
   static final Strings strings = Strings();
   static final Validate validate = Validate();
 }
@@ -65,41 +66,4 @@ abstract class ToStringMixin {
       imported_strings.toStringOverride(this, props, propNames);
   List<Object?> get props => [];
   List<String> get propNames => [];
-}
-
-bool binaryRemove(List list1, Comparator comp1, dynamic value1) {
-  // Quick returns
-  if (list1.isEmpty) {
-    return false;
-  }
-  if (comp1(list1[0], value1) == 0) {
-    list1.removeAt(0);
-    return true;
-  }
-  if (comp1(list1[list1.length - 1], value1) == 0) {
-    list1.removeAt(list1.length - 1);
-    return true;
-  }
-
-  // Actual stuff
-  bool binaryRemoveInternal(
-      List list, Comparator comp, dynamic value, int start, int end) {
-    if (end >= start) {
-      final mid = ((start + end) / 2).floor();
-      if (comp(value, list[mid]) == 0) {
-        //print('Removed $mid');
-        list.removeAt(mid);
-        return true;
-      } else if (comp(value, list[mid]) > 0) {
-        //print('Going up');
-        return binaryRemoveInternal(list, comp, value, mid + 1, end);
-      } else {
-        //print('Going down');
-        return binaryRemoveInternal(list, comp, value, start, mid - 1);
-      }
-    }
-    return false;
-  }
-
-  return binaryRemoveInternal(list1, comp1, value1, 0, list1.length - 1);
 }
