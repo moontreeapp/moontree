@@ -67,24 +67,39 @@ abstract class ToStringMixin {
   List<String> get propNames => [];
 }
 
-void binaryRemove(List list, Comparator comp, dynamic value) {
-  if (list.isEmpty) {
-    return;
+bool binaryRemove(List list1, Comparator comp1, dynamic value1) {
+  // Quick returns
+  if (list1.isEmpty) {
+    return false;
+  }
+  if (comp1(list1[0], value1) == 0) {
+    list1.removeAt(0);
+    return true;
+  }
+  if (comp1(list1[list1.length - 1], value1) == 0) {
+    list1.removeAt(list1.length - 1);
+    return true;
   }
 
-  void binaryRemoveInternal(
+  // Actual stuff
+  bool binaryRemoveInternal(
       List list, Comparator comp, dynamic value, int start, int end) {
-    if (start >= end) {
+    if (end >= start) {
       final mid = ((start + end) / 2).floor();
       if (comp(value, list[mid]) == 0) {
+        //print('Removed $mid');
         list.removeAt(mid);
+        return true;
       } else if (comp(value, list[mid]) > 0) {
-        binaryRemoveInternal(list, comp, value, mid + 1, end);
+        //print('Going up');
+        return binaryRemoveInternal(list, comp, value, mid + 1, end);
       } else {
-        binaryRemoveInternal(list, comp, value, start, mid - 1);
+        //print('Going down');
+        return binaryRemoveInternal(list, comp, value, start, mid - 1);
       }
     }
+    return false;
   }
 
-  binaryRemoveInternal(list, comp, value, 0, list.length - 1);
+  return binaryRemoveInternal(list1, comp1, value1, 0, list1.length - 1);
 }
