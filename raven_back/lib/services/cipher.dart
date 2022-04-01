@@ -1,6 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/utilities/hex.dart' as hex;
+
+import 'package:ravencoin_wallet/ravencoin_wallet.dart';
 
 class CipherService {
   /// used in decrypting backups - we don't know what cipher it was encrypted with... we could save it...
@@ -48,14 +51,14 @@ class CipherService {
     LeaderWallet wallet, [
     CipherBase? cipher,
   ]) {
-    var reencrypt = EncryptedEntropy.fromEntropy(
-      EncryptedEntropy(wallet.encrypted, wallet.cipher!).entropy,
-      cipher ?? currentCipher!,
-    );
-    assert(wallet.id == reencrypt.walletId);
+    final encrypted_entropy =
+        hex.encrypt(wallet.entropy, cipher ?? currentCipher!);
+    ;
+    final newId = HDWallet.fromSeed(wallet.seed).pubKey;
+    assert(wallet.id == newId);
     return LeaderWallet(
-      id: reencrypt.walletId,
-      encryptedEntropy: reencrypt.encryptedSecret,
+      id: newId,
+      encryptedEntropy: encrypted_entropy,
       cipherUpdate: currentCipherUpdate,
       name: wallet.name,
     );
