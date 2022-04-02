@@ -13,28 +13,31 @@ class HistoryService {
       return false;
     }
     var histories = await client.getHistory(address.id);
+    var leader = address.wallet! as LeaderWallet;
     if (histories.isNotEmpty) {
       if (address.wallet is LeaderWallet) {
+        /// update cache
+        if (address.exposure == NodeExposure.External) {
+          leader.removeUnusedExternal(address.hdIndex);
+        } else if (address.exposure == NodeExposure.Internal) {
+          leader.removeUnusedInternal(address.hdIndex);
+        }
+        if (address.exposure == NodeExposure.External) {
+          if (address.hdIndex > leader.highestUsedExternalIndex) {
+            leader.highestUsedExternalIndex = address.hdIndex;
+          }
+        } else if (address.exposure == NodeExposure.Internal) {
+          if (address.hdIndex > leader.highestUsedInternalIndex) {
+            leader.highestUsedExternalIndex = address.hdIndex;
+          }
+        }
+
         //print('${address.address} histories found!');
         streams.wallet.transactions.add(WalletExposureTransactions(
           walletId: address.walletId,
           exposure: address.exposure,
           transactionIds: histories.map((history) => history.txHash),
         ));
-
-        /// if there is no existing address with a higher hdIndex...
-        /// that belongs to the same wallet and exposure...
-        /// then derive a new one.
-        var walletAddressesIndexes = res.addresses.byWalletExposure
-            .getAll(address.walletId, address.exposure)
-            .map((Address add) => add.hdIndex);
-        if (address.hdIndex >= walletAddressesIndexes.max) {
-          //print('${address.address} derive!');
-          streams.wallet.deriveAddress.add(DeriveLeaderAddress(
-            leader: address.wallet as LeaderWallet,
-            exposure: address.exposure,
-          ));
-        }
       } else {
         streams.wallet.transactions.add(WalletExposureTransactions(
           walletId: address.walletId,
@@ -48,7 +51,14 @@ class HistoryService {
         ));
       }
     } else {
+      if (address.exposure == NodeExposure.External) {
+        leader.addUnusedExternal(address.hdIndex);
+      } else if (address.exposure == NodeExposure.Internal) {
+        leader.addUnusedInternal(address.hdIndex);
+      }
       //print('${address.address} not found!');
+      for wallet exposure get addresses.length
+      if (cache count => res.address.length)
       streams.wallet.transactions.add(WalletExposureTransactions(
         walletId: address.walletId,
         exposure: address.exposure,
@@ -67,12 +77,12 @@ class HistoryService {
     //print('inspecting Gaps!');
     for (var leader in res.wallets.leaders) {
       for (var exposure in [NodeExposure.Internal, NodeExposure.External]) {
-        if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
+        //if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
           allDone = false;
           //print('deriving ${leader.id.substring(0, 4)} ${exposure.enumString}');
           streams.wallet.deriveAddress
               .add(DeriveLeaderAddress(leader: leader, exposure: exposure));
-        }
+        //}
       }
     }
     if (allDone) {

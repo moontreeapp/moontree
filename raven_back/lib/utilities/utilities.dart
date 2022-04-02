@@ -17,7 +17,9 @@ class utils {
   static final enumerate = transform.enumerate;
   static final removeCharsOtherThan = transform.removeCharsOtherThan;
   static final toStringOverride = imported_strings.toStringOverride;
+  static final binarySearch = search.binarySearch;
   static final binaryRemove = search.binaryRemove;
+  static final binaryInsert = search.binaryInsert;
   static final Strings strings = Strings();
   static final Validate validate = Validate();
 }

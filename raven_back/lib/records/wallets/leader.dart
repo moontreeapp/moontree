@@ -7,7 +7,7 @@ import 'package:raven_back/utilities/hex.dart' as hex;
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/wallet/constants.dart';
 import 'package:raven_back/utilities/seed_wallet.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart';
+import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravenwallet;
 
 import '../_type_id.dart';
 
@@ -18,18 +18,6 @@ class LeaderWallet extends Wallet {
   @HiveField(3)
   final String encryptedEntropy;
 
-  @HiveField(4)
-  int highestUsedExternalIndex = -1;
-
-  @HiveField(5)
-  int highestSavedExternalIndex = -1;
-
-  @HiveField(6)
-  int highestUsedInternalIndex = -1;
-
-  @HiveField(7)
-  int highestSavedInternalIndex = -1;
-
   LeaderWallet({
     required String id,
     required this.encryptedEntropy,
@@ -38,24 +26,24 @@ class LeaderWallet extends Wallet {
   }) : super(id: id, cipherUpdate: cipherUpdate, name: name);
 
   Uint8List? _seed;
-  List _unusedInternalIndexes = [];
-  List _unusedExternalIndexes = [];
+
+  /// caching optimization
+  int highestUsedExternalIndex = -1;
+  int highestSavedExternalIndex = -1;
+  int highestUsedInternalIndex = -1;
+  int highestSavedInternalIndex = -1;
+  List _unusedInternalIndices = [];
+  List _unusedExternalIndices = [];
 
   @override
   List<Object?> get props => [
         id,
         cipherUpdate,
         encryptedEntropy,
-        highestUsedExternalIndex,
-        highestSavedExternalIndex,
-        highestUsedInternalIndex,
-        highestSavedInternalIndex,
       ];
 
   @override
-  String toString() => 'LeaderWallet($id,  $encryptedEntropy, $cipherUpdate, '
-      '$highestUsedExternalIndex, $highestSavedExternalIndex, '
-      '$highestUsedInternalIndex, $highestSavedInternalIndex)';
+  String toString() => 'LeaderWallet($id,  $encryptedEntropy, $cipherUpdate)';
 
   @override
   String get encrypted => encryptedEntropy;
@@ -64,7 +52,8 @@ class LeaderWallet extends Wallet {
   String secret(CipherBase cipher) => mnemonic;
 
   @override
-  HDWallet seedWallet(CipherBase cipher, {Net net = Net.Main}) => SeedWallet(
+  ravenwallet.HDWallet seedWallet(CipherBase cipher, {Net net = Net.Main}) =>
+      SeedWallet(
         seed,
         net,
       ).wallet;
@@ -90,17 +79,25 @@ class LeaderWallet extends Wallet {
 
   String get entropy => hex.decrypt(encryptedEntropy, cipher!);
 
-  List get unusedInternal => _unusedInternalIndexes;
-  List get unusedExternal => _unusedExternalIndexes;
+  void addUnusedInternal(int hdIndex) => utils.binaryInsert(
+        list: _unusedInternalIndices,
+        value: hdIndex,
+      );
+  void addUnusedExternal(int hdIndex) => utils.binaryInsert(
+        list: _unusedExternalIndices,
+        value: hdIndex,
+      );
+  void removeUnusedInternal(int hdIndex) => utils.binaryRemove(
+        list: _unusedInternalIndices,
+        value: hdIndex,
+      );
+  void removeUnusedExternal(int hdIndex) => utils.binaryRemove(
+        list: _unusedExternalIndices,
+        value: hdIndex,
+      );
 
-  void addUnusedInternal(String hdIndex) => _unusedInternalIndexes.add(hdIndex);
-  void addUnusedExternal(String hdIndex) => _unusedExternalIndexes.add(hdIndex);
-  void removeUnusedInternal(String hdIndex) => utils.binaryRemove(
-        list: _unusedInternalIndexes,
-        value: hdIndex,
-      );
-  void removeUnusedExternal(String hdIndex) => utils.binaryRemove(
-        list: _unusedExternalIndexes,
-        value: hdIndex,
-      );
+  Address? get unusedInternalAddress => res.addresses.byWalletExposureIndex
+      .getOne(id, NodeExposure.Internal, _unusedInternalIndices.first);
+  Address? get unusedExternalAddress => res.addresses.byWalletExposureIndex
+      .getOne(id, NodeExposure.External, _unusedExternalIndices.first);
 }

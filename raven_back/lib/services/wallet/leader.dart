@@ -12,15 +12,14 @@ class LeaderWalletService {
     /* walletId + exposure : highest hdIndex created*/
   };
   Set<LeaderWallet> backlog = {};
-  final int requiredGap = 2;
+  final int requiredGap = 20;
 
   int currentGap(LeaderWallet leaderWallet, NodeExposure exposure) =>
       exposure == NodeExposure.External
-          ? leaderWallet.emptyExternalAddresses.length
-          : leaderWallet.emptyInternalAddresses.length;
-
-  int missingGap(LeaderWallet leaderWallet, NodeExposure exposure) =>
-      requiredGap - currentGap(leaderWallet, exposure);
+          ? leaderWallet.highestSavedExternalIndex -
+              leaderWallet.highestUsedExternalIndex
+          : leaderWallet.highestSavedInternalIndex -
+              leaderWallet.highestUsedInternalIndex;
 
   bool gapSatisfied(LeaderWallet leaderWallet, NodeExposure exposure) =>
       requiredGap - currentGap(leaderWallet, exposure) <= 0;
@@ -31,6 +30,15 @@ class LeaderWalletService {
     exposure = NodeExposure.External,
   }) {
     var subwallet = getSubWallet(wallet, hdIndex, exposure);
+    if (exposure == NodeExposure.External) {
+      if (hdIndex > wallet.highestSavedExternalIndex) {
+        wallet.highestSavedExternalIndex = hdIndex;
+      }
+    } else if (exposure == NodeExposure.Internal) {
+      if (hdIndex > wallet.highestSavedInternalIndex) {
+        wallet.highestSavedExternalIndex = hdIndex;
+      }
+    }
     return Address(
         id: subwallet.scripthash,
         address: subwallet.address!,
@@ -57,14 +65,9 @@ class LeaderWalletService {
     LeaderWallet leaderWallet, {
     NodeExposure exposure = NodeExposure.Internal,
   }) {
-    var addresses = exposure == NodeExposure.Internal
-        ? leaderWallet.emptyInternalAddresses
-        : leaderWallet.emptyExternalAddresses;
-    if (addresses.isNotEmpty) {
-      return addresses.first.address;
-    }
-    //TODO derive a new address and return that.
-    return '';
+    return exposure == NodeExposure.Internal
+        ? leaderWallet.unusedInternalAddress!.address
+        : leaderWallet.unusedExternalAddress!.address;
   }
 
   /// returns the next change address
@@ -145,23 +148,33 @@ class LeaderWalletService {
     CipherBase cipher,
     NodeExposure exposure,
   ) {
-    var existingGap = currentGap(leaderWallet, exposure);
-    var usedCount = exposure == NodeExposure.External
-        ? leaderWallet.usedExternalAddresses.length
-        : leaderWallet.usedInternalAddresses.length;
-    var hdIndex = (existingGap + usedCount - 1);
-    //if (existingGap < requiredGap) {
-    return {
-      //for (var i = 0; i <= requiredGap - existingGap; i++)
-      deriveAddress(leaderWallet, hdIndex + 1, exposure: exposure)
-    };
-    //}
-    //return {};
+    // get current gap from cache.
+    var generate = requiredGap - currentGap(leaderWallet, exposure);
+    var target = 0;
+    if (exposure == NodeExposure.External) {
+      if (generate > 0) {
+        leaderWallet.highestSavedExternalIndex += generate;
+      }
+      target = leaderWallet.highestSavedExternalIndex;
+    }
+    if (exposure == NodeExposure.Internal) {
+      if (generate > 0) {
+        leaderWallet.highestSavedInternalIndex += generate;
+      }
+      target = leaderWallet.highestSavedInternalIndex;
+    }
+    if (generate > 0) {
+      return {
+        for (var i = target - generate; i <= target; i++)
+          deriveAddress(leaderWallet, i, exposure: exposure)
+      };
+    }
+    return {};
   }
 
   HDWallet getChangeWallet(LeaderWallet wallet) => getNextEmptyWallet(wallet);
 
-  Set<Address> deriveMoreAddresses(
+  void deriveMoreAddresses(
     LeaderWallet wallet, {
     List<NodeExposure>? exposures,
   }) {
@@ -175,28 +188,5 @@ class LeaderWalletService {
       ));
     }
     res.addresses.saveAll(newAddresses);
-    return newAddresses;
-  }
-
-  /// derive 20
-  /// check all for history
-  /// take the largest index that has history + 20
-  /// derive those
-  /// repeat
-  Set<Address> deriveMoreAddressesWithGap(
-    LeaderWallet wallet, {
-    List<NodeExposure>? exposures,
-  }) {
-    exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];
-    var newAddresses = <Address>{};
-    for (var exposure in exposures) {
-      newAddresses.addAll(deriveNextAddresses(
-        wallet,
-        res.ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
-        exposure,
-      ));
-    }
-    res.addresses.saveAll(newAddresses);
-    return newAddresses;
   }
 }

@@ -63,14 +63,10 @@ class LeaderWaiter extends Waiter {
   void handleLeaderChange(Change<Wallet> change) {
     change.when(
         loaded: (loaded) {
-          handleSyncWallet(leader: loaded.data as LeaderWallet);
-          //  if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
-          //    handleDeriveAddress(leader: leader, exposure: exposure);
-          //  }
+          handleDeriveAddress(leader: loaded.data as LeaderWallet);
         },
         added: (added) {
-          handleSyncWallet(leader: added.data as LeaderWallet);
-          //handleDeriveAddress(leader: added.data as LeaderWallet);
+          handleDeriveAddress(leader: added.data as LeaderWallet);
         },
         updated: (updated) async {
           /*
@@ -115,22 +111,6 @@ class LeaderWaiter extends Waiter {
         leader,
         exposures: exposure == null ? null : [exposure],
       );
-    } else {
-      services.wallet.leader.backlog.add(leader);
-    }
-    print('deriving: ${s.elapsed}');
-  }
-
-  void handleSyncWallet({
-    required LeaderWallet leader,
-    bool bypassCipher = false,
-  }) {
-    var s = Stopwatch()..start();
-    if (bypassCipher ||
-        res.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
-      for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
-        services.wallet.handleSync(leader: leader, exposure: exposure);
-      }
     } else {
       services.wallet.leader.backlog.add(leader);
     }
