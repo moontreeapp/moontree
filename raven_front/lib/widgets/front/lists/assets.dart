@@ -26,8 +26,7 @@ class _AssetList extends State<AssetList> {
         res.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
       // if vouts in our account has changed...
       if (batchedChanges
-          .where(
-              (change) => change.data.address?.wallet?.id == Current.walletId)
+          .where((change) => change.data.address?.wallet.id == Current.walletId)
           .isNotEmpty) {
         setState(() {});
       }

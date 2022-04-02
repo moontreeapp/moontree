@@ -83,7 +83,7 @@ class WalletService {
       }[walletType]!();
 
   ECPair getAddressKeypair(Address address) {
-    var wallet = address.wallet!;
+    var wallet = address.wallet;
     if (wallet is LeaderWallet) {
       var seedWallet = services.wallet.leader.getSeedWallet(wallet);
       var hdWallet =

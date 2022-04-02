@@ -35,7 +35,7 @@ class HistoryWaiter extends Waiter {
 
   Future<void> pullIf(WalletExposureTransactions keyedTransactions) async {
     if ((addressesByWalletExposureKeys[keyedTransactions.key]?.length ?? 0) >=
-        keyedTransactions.address.wallet!
+        keyedTransactions.address.wallet
             .exposureAddresses(keyedTransactions.address.exposure)
             .toList()
             .length) {
