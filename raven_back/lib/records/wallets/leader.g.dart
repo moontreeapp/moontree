@@ -25,15 +25,13 @@ class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
       ..highestUsedExternalIndex = fields[4] as int
       ..highestSavedExternalIndex = fields[5] as int
       ..highestUsedInternalIndex = fields[6] as int
-      ..highestSavedInternalIndex = fields[7] as int
-      ..unusedInternalIndexes = (fields[8] as List).cast<dynamic>()
-      ..unusedExternalIndexes = (fields[9] as List).cast<dynamic>();
+      ..highestSavedInternalIndex = fields[7] as int;
   }
 
   @override
   void write(BinaryWriter writer, LeaderWallet obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(8)
       ..writeByte(3)
       ..write(obj.encryptedEntropy)
       ..writeByte(4)
@@ -44,10 +42,6 @@ class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
       ..write(obj.highestUsedInternalIndex)
       ..writeByte(7)
       ..write(obj.highestSavedInternalIndex)
-      ..writeByte(8)
-      ..write(obj.unusedInternalIndexes)
-      ..writeByte(9)
-      ..write(obj.unusedExternalIndexes)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)

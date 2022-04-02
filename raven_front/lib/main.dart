@@ -82,16 +82,4 @@ class RavenMobileApp extends StatelessWidget {
       },
     );
   }
-
-  Widget header = Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Container(
-      color: Colors.white,
-      width: double.infinity,
-      child: const Center(
-        child: Text('Content',
-            style: TextStyle(fontSize: 20, color: Colors.black)),
-      ),
-    ),
-  );
 }

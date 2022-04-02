@@ -1,7 +1,7 @@
 part of 'joins.dart';
 
 extension AddressBelongsToWallet on Address {
-  Wallet get wallet => res.wallets.primaryIndex.getOne(walletId)!;
+  Wallet? get wallet => res.wallets.primaryIndex.getOne(walletId);
 }
 
 extension AddressHasManyVouts on Address {

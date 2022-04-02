@@ -47,7 +47,7 @@ class HistoryService {
     var histories = await client.getHistory(address.id);
     if (histories.isNotEmpty) {
       if (address.wallet is LeaderWallet) {
-        updateCounts(address.wallet! as LeaderWallet);
+        updateCounts(address.wallet as LeaderWallet);
         //print('${address.address} histories found!');
         sendToStream(histories.map((history) => history.txHash));
       } else {
@@ -56,7 +56,7 @@ class HistoryService {
       }
     } else {
       if (address.wallet is LeaderWallet) {
-        updateCache(address.wallet! as LeaderWallet);
+        updateCache(address.wallet as LeaderWallet);
       }
       //print('${address.address} not found!');
       sendToStream([]);

@@ -5,8 +5,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/wallet/constants.dart';
 import 'package:raven_front/listeners/listeners.dart';
-import 'package:raven_front/services/storage.dart';
-import 'package:raven_front/widgets/widgets.dart';
 
 class Loading extends StatefulWidget {
   @override
