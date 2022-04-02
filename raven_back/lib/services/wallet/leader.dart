@@ -29,7 +29,9 @@ class LeaderWalletService {
     int hdIndex, {
     exposure = NodeExposure.External,
   }) {
+    var s = Stopwatch()..start();
     var subwallet = getSubWallet(wallet, hdIndex, exposure);
+    //print('derive Address getSubWallet: ${s.elapsed}');
     if (exposure == NodeExposure.External) {
       if (hdIndex > wallet.highestSavedExternalIndex) {
         wallet.highestSavedExternalIndex = hdIndex;
@@ -163,6 +165,8 @@ class LeaderWalletService {
       }
       target = leaderWallet.highestSavedInternalIndex;
     }
+    print('Starting: ${target - generate}');
+    print('Derive target: $target');
     if (generate > 0) {
       return {
         for (var i = target - generate; i <= target; i++)

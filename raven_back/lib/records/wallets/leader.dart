@@ -28,12 +28,12 @@ class LeaderWallet extends Wallet {
   Uint8List? _seed;
 
   /// caching optimization
-  int highestUsedExternalIndex = -1;
-  int highestSavedExternalIndex = -1;
-  int highestUsedInternalIndex = -1;
-  int highestSavedInternalIndex = -1;
-  List _unusedInternalIndices = [];
-  List _unusedExternalIndices = [];
+  int highestUsedExternalIndex = 0;
+  int highestSavedExternalIndex = 0;
+  int highestUsedInternalIndex = 0;
+  int highestSavedInternalIndex = 0;
+  final List<int> _unusedInternalIndices = [];
+  final List<int> _unusedExternalIndices = [];
 
   @override
   List<Object?> get props => [
