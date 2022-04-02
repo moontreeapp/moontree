@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_final_fields
+
 import 'dart:typed_data';
 
 import 'package:hive/hive.dart';
@@ -18,6 +20,18 @@ class LeaderWallet extends Wallet {
   @HiveField(3)
   final String encryptedEntropy;
 
+  @HiveField(4)
+  int highestUsedExternalIndex = 0;
+
+  @HiveField(5)
+  int highestSavedExternalIndex = 0;
+
+  @HiveField(6)
+  int highestUsedInternalIndex = 0;
+
+  @HiveField(7)
+  int highestSavedInternalIndex = 0;
+
   LeaderWallet({
     required String id,
     required this.encryptedEntropy,
@@ -28,10 +42,11 @@ class LeaderWallet extends Wallet {
   Uint8List? _seed;
 
   /// caching optimization
-  int highestUsedExternalIndex = 0;
-  int highestSavedExternalIndex = 0;
-  int highestUsedInternalIndex = 0;
-  int highestSavedInternalIndex = 0;
+
+  //int highestUsedExternalIndex = -1;
+  //int highestSavedExternalIndex = -1;
+  //int highestUsedInternalIndex = -1;
+  //int highestSavedInternalIndex = -1;
   final List<int> _unusedInternalIndices = [];
   final List<int> _unusedExternalIndices = [];
 
@@ -79,6 +94,7 @@ class LeaderWallet extends Wallet {
 
   String get entropy => hex.decrypt(encryptedEntropy, cipher!);
 
+  /// caching optimization
   void addUnusedInternal(int hdIndex) => utils.binaryInsert(
         list: _unusedInternalIndices,
         value: hdIndex,
@@ -95,7 +111,6 @@ class LeaderWallet extends Wallet {
         list: _unusedExternalIndices,
         value: hdIndex,
       );
-
   Address? get unusedInternalAddress => res.addresses.byWalletExposureIndex
       .getOne(id, NodeExposure.Internal, _unusedInternalIndices.first);
   Address? get unusedExternalAddress => res.addresses.byWalletExposureIndex

@@ -11,11 +11,6 @@ extension WalletHasManyAddresses on Wallet {
   List<Address> get addresses => res.addresses.byWallet.getAll(id);
 }
 
-extension WalletHasManyAddressesByExposure on Wallet {
-  Iterable<Address> exposureAddresses(NodeExposure exposure) =>
-      addresses.where((Address address) => address.exposure == exposure);
-}
-
 extension WalletHasManyBalances on Wallet {
   List<Balance> get balances => res.balances.byWallet.getAll(id);
 }
@@ -37,7 +32,6 @@ extension WalletHasManyTransactions on Wallet {
         ..remove(null);
 }
 
-/* unused
 // change addresses
 extension WalletHasManyInternalAddresses on Wallet {
   Iterable<Address> get internalAddresses =>
@@ -69,4 +63,5 @@ extension WalletHasManyUsedExternalAddresses on Wallet {
   Iterable<Address> get usedExternalAddresses =>
       externalAddresses.where((address) => address.vouts.isNotEmpty);
 }
+/* unused
 */

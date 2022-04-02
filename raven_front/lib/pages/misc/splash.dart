@@ -1,9 +1,7 @@
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/services/wallet/constants.dart';
 
 /// This works by creating an AnimationController instance and passing it
 /// to the Lottie widget.

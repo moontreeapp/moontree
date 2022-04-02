@@ -3,13 +3,9 @@
 
 import 'dart:async';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction.dart';
-import 'package:raven_back/streams/app.dart';
-import 'package:raven_back/streams/spend.dart';
 //import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';

@@ -83,7 +83,7 @@ class WalletService {
       }[walletType]!();
 
   ECPair getAddressKeypair(Address address) {
-    var wallet = address.wallet!;
+    var wallet = address.wallet;
     if (wallet is LeaderWallet) {
       var seedWallet = services.wallet.leader.getSeedWallet(wallet);
       var hdWallet =
@@ -125,35 +125,5 @@ class WalletService {
       return single.getKPWallet(wallet);
     }
     throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
-  }
-
-  /// new process
-  void handleSync({
-    required LeaderWallet leader,
-    required NodeExposure exposure,
-  }) {
-    var sortedAddresses =
-        res.addresses.byWalletExposure.getAll(leader.id, exposure);
-    sortedAddresses.sort((a, b) => a.hdIndex.compareTo(b.hdIndex));
-
-    var highestUsed = 0;
-    var highest = 0;
-    for (var address in sortedAddresses) {
-      /// and update highest used for internal and external
-      /// (not absolutely necessary here, in theory we don't need it)
-      //if (address.hdIndex > highest) {
-      //  highest = address.hdIndex;
-      //}
-      //if (address.hdIndex > highestUsed && address.vouts.isNotEmpty) {
-      //  highestUsed = address.hdIndex;
-      //}
-
-      /// generate shallow list of unused addresses one list for each internal and external
-      address.vouts.isNotEmpty;
-
-      // subscribe
-
-    }
-    //derive more addresses if gap is not correct for each wallet exposure
   }
 }

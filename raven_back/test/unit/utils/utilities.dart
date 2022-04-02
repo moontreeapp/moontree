@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:raven_back/utilities/search.dart';
 import 'package:test/test.dart';
-import '../../../lib/utilities/utilities.dart';
+import 'package:raven_back/utilities/utilities.dart';
 
 void main() {
   group('Binary', () {

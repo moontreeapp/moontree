@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'list_item.dart';
 
 class FrontLayerContent extends StatefulWidget {
-  ScrollController scrollController;
+  final ScrollController scrollController;
   FrontLayerContent(this.scrollController);
 
   @override

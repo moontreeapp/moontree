@@ -59,7 +59,7 @@ class LeaderWalletService {
       getSeedWallet(wallet).subwallet(hdIndex, exposure: exposure);
 
   HDWallet getSubWalletFromAddress(Address address) =>
-      getSeedWallet(address.wallet! as LeaderWallet)
+      getSeedWallet(address.wallet as LeaderWallet)
           .subwallet(address.hdIndex, exposure: address.exposure);
 
   /// returns the next internal or external node missing a history
