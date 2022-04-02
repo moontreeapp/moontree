@@ -8,61 +8,58 @@ class HistoryService {
   List<String> downloaded = [];
 
   Future<bool> getHistories(Address address) async {
-    var client = streams.client.client.value;
-    if (client == null) {
-      return false;
+    void sendToStream(Iterable<String> txs) {
+      streams.wallet.transactions.add(WalletExposureTransactions(
+        address: address,
+        transactionIds: txs,
+      ));
     }
-    var histories = await client.getHistory(address.id);
-    var leader = address.wallet! as LeaderWallet;
-    if (histories.isNotEmpty) {
-      if (address.wallet is LeaderWallet) {
-        /// update cache
-        if (address.exposure == NodeExposure.External) {
-          leader.removeUnusedExternal(address.hdIndex);
-        } else if (address.exposure == NodeExposure.Internal) {
-          leader.removeUnusedInternal(address.hdIndex);
-        }
-        if (address.exposure == NodeExposure.External) {
-          if (address.hdIndex > leader.highestUsedExternalIndex) {
-            leader.highestUsedExternalIndex = address.hdIndex;
-          }
-        } else if (address.exposure == NodeExposure.Internal) {
-          if (address.hdIndex > leader.highestUsedInternalIndex) {
-            leader.highestUsedExternalIndex = address.hdIndex;
-          }
-        }
 
-        //print('${address.address} histories found!');
-        streams.wallet.transactions.add(WalletExposureTransactions(
-          walletId: address.walletId,
-          exposure: address.exposure,
-          transactionIds: histories.map((history) => history.txHash),
-        ));
-      } else {
-        streams.wallet.transactions.add(WalletExposureTransactions(
-          walletId: address.walletId,
-          exposure: address.exposure,
-          transactionIds: histories.map((history) => history.txHash),
-        ));
-        streams.wallet.transactions.add(WalletExposureTransactions(
-          walletId: address.walletId,
-          exposure: address.exposure,
-          transactionIds: [],
-        ));
+    void updateCounts(LeaderWallet leader) {
+      if (address.exposure == NodeExposure.External) {
+        leader.removeUnusedExternal(address.hdIndex);
+      } else if (address.exposure == NodeExposure.Internal) {
+        leader.removeUnusedInternal(address.hdIndex);
       }
-    } else {
+      if (address.exposure == NodeExposure.External) {
+        if (address.hdIndex > leader.highestUsedExternalIndex) {
+          leader.highestUsedExternalIndex = address.hdIndex;
+        }
+      } else if (address.exposure == NodeExposure.Internal) {
+        if (address.hdIndex > leader.highestUsedInternalIndex) {
+          leader.highestUsedExternalIndex = address.hdIndex;
+        }
+      }
+    }
+
+    void updateCache(LeaderWallet leader) {
       if (address.exposure == NodeExposure.External) {
         leader.addUnusedExternal(address.hdIndex);
       } else if (address.exposure == NodeExposure.Internal) {
         leader.addUnusedInternal(address.hdIndex);
       }
+    }
+
+    var client = streams.client.client.value;
+    if (client == null) {
+      return false;
+    }
+    var histories = await client.getHistory(address.id);
+    if (histories.isNotEmpty) {
+      if (address.wallet is LeaderWallet) {
+        updateCounts(address.wallet! as LeaderWallet);
+        //print('${address.address} histories found!');
+        sendToStream(histories.map((history) => history.txHash));
+      } else {
+        sendToStream(histories.map((history) => history.txHash));
+        sendToStream([]);
+      }
+    } else {
+      if (address.wallet is LeaderWallet) {
+        updateCache(address.wallet! as LeaderWallet);
+      }
       //print('${address.address} not found!');
-      streams.wallet.transactions.add(WalletExposureTransactions(
-        walletId: address.walletId,
-        exposure: address.exposure,
-        wallet: address.wallet,
-        transactionIds: [],
-      ));
+      sendToStream([]);
     }
     return true;
   }

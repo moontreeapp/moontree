@@ -10,6 +10,7 @@ import 'waiter.dart';
 
 class HistoryWaiter extends Waiter {
   Map<String, List<String>> txsByWalletExposureKeys = {};
+  Map<String, List<String>> addressesByWalletExposureKeys = {};
 
   void init() => listen(
       'streams.wallet.transactions',
@@ -23,15 +24,19 @@ class HistoryWaiter extends Waiter {
 
   void doNothing() {}
 
-  void remember(WalletExposureTransactions keyedTransactions) =>
-      txsByWalletExposureKeys[keyedTransactions.key] =
-          (txsByWalletExposureKeys[keyedTransactions.key] ?? []) +
-              keyedTransactions.transactionIds.toList();
+  void remember(WalletExposureTransactions keyedTransactions) {
+    addressesByWalletExposureKeys[keyedTransactions.key] =
+        (addressesByWalletExposureKeys[keyedTransactions.key] ?? []) +
+            [keyedTransactions.address.id];
+    txsByWalletExposureKeys[keyedTransactions.key] =
+        (txsByWalletExposureKeys[keyedTransactions.key] ?? []) +
+            keyedTransactions.transactionIds.toList();
+  }
 
   Future<void> pullIf(WalletExposureTransactions keyedTransactions) async {
-    if ((txsByWalletExposureKeys[keyedTransactions.key]?.length ?? 0) >=
-        keyedTransactions.wallet!
-            .exposureAddresses(keyedTransactions.exposure)
+    if ((addressesByWalletExposureKeys[keyedTransactions.key]?.length ?? 0) >=
+        keyedTransactions.address.wallet!
+            .exposureAddresses(keyedTransactions.address.exposure)
             .toList()
             .length) {
       await pull(keyedTransactions);
@@ -45,7 +50,9 @@ class HistoryWaiter extends Waiter {
     if (txs != null) {
       txsByWalletExposureKeys[keyedTransactions.key] = [];
       await getTransactionsAndCalculateBalance(
-          keyedTransactions.walletId, keyedTransactions.exposure, txs);
+          keyedTransactions.address.walletId,
+          keyedTransactions.address.exposure,
+          txs);
     }
   }
 
