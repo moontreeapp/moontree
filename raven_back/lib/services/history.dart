@@ -57,11 +57,10 @@ class HistoryService {
         leader.addUnusedInternal(address.hdIndex);
       }
       //print('${address.address} not found!');
-      for wallet exposure get addresses.length
-      if (cache count => res.address.length)
       streams.wallet.transactions.add(WalletExposureTransactions(
         walletId: address.walletId,
         exposure: address.exposure,
+        wallet: address.wallet,
         transactionIds: [],
       ));
     }
@@ -78,10 +77,10 @@ class HistoryService {
     for (var leader in res.wallets.leaders) {
       for (var exposure in [NodeExposure.Internal, NodeExposure.External]) {
         //if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
-          allDone = false;
-          //print('deriving ${leader.id.substring(0, 4)} ${exposure.enumString}');
-          streams.wallet.deriveAddress
-              .add(DeriveLeaderAddress(leader: leader, exposure: exposure));
+        allDone = false;
+        //print('deriving ${leader.id.substring(0, 4)} ${exposure.enumString}');
+        streams.wallet.deriveAddress
+            .add(DeriveLeaderAddress(leader: leader, exposure: exposure));
         //}
       }
     }

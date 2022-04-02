@@ -32,11 +32,13 @@ class WalletExposureTransactions {
   final String walletId;
   final NodeExposure exposure;
   final Iterable<String> transactionIds;
+  final Wallet? wallet;
 
   WalletExposureTransactions({
     required this.walletId,
     required this.exposure,
     required this.transactionIds,
+    this.wallet,
   });
 
   String get key => walletId + exposure.enumString;

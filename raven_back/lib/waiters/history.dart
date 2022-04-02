@@ -18,7 +18,7 @@ class HistoryWaiter extends Waiter {
           keyedTransactions == null
               ? doNothing(/* initial state */)
               : keyedTransactions.transactionIds.isEmpty
-                  ? pull(keyedTransactions)
+                  ? pullIf(keyedTransactions)
                   : remember(keyedTransactions));
 
   void doNothing() {}
@@ -27,6 +27,16 @@ class HistoryWaiter extends Waiter {
       txsByWalletExposureKeys[keyedTransactions.key] =
           (txsByWalletExposureKeys[keyedTransactions.key] ?? []) +
               keyedTransactions.transactionIds.toList();
+
+  Future<void> pullIf(WalletExposureTransactions keyedTransactions) async {
+    if ((txsByWalletExposureKeys[keyedTransactions.key]?.length ?? 0) >=
+        keyedTransactions.wallet!
+            .exposureAddresses(keyedTransactions.exposure)
+            .toList()
+            .length) {
+      await pull(keyedTransactions);
+    }
+  }
 
   Future<void> pull(WalletExposureTransactions keyedTransactions) async {
     var txs = txsByWalletExposureKeys.containsKey(keyedTransactions.key)

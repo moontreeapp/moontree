@@ -11,6 +11,11 @@ extension WalletHasManyAddresses on Wallet {
   List<Address> get addresses => res.addresses.byWallet.getAll(id);
 }
 
+extension WalletHasManyAddressesByExposure on Wallet {
+  Iterable<Address> exposureAddresses(NodeExposure exposure) =>
+      addresses.where((Address address) => address.exposure == exposure);
+}
+
 extension WalletHasManyBalances on Wallet {
   List<Balance> get balances => res.balances.byWallet.getAll(id);
 }
