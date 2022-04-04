@@ -1,7 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/records/cipher_update.dart';
 import 'package:raven_back/records/net.dart';
+import 'package:raven_back/records/node_exposure.dart';
 import 'package:raven_back/security/security.dart';
 import 'package:raven_back/services/wallet/constants.dart';
 import 'package:raven_back/extensions/object.dart';
@@ -58,4 +60,41 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
 
   String get secretTypeToString => secretType.enumString;
   String get walletTypeToString => walletType.enumString;
+
+  /// caching optimization
+  int currentGap(NodeExposure exposure) => exposure == NodeExposure.External
+      ? highestSavedExternalIndex - highestUsedExternalIndex
+      : highestSavedInternalIndex - highestUsedInternalIndex;
+
+  int getHighestSavedIndex(NodeExposure exposure) =>
+      exposure == NodeExposure.Internal
+          ? highestSavedInternalIndex
+          : highestSavedExternalIndex;
+
+  int getHighestUsedIndex(NodeExposure exposure) =>
+      exposure == NodeExposure.Internal
+          ? highestUsedInternalIndex
+          : highestUsedExternalIndex;
+
+  /// only updates if it's larger
+  /// not sure you can call res.wallets.save from here.
+  void updateHighestUsedIndex(int value, NodeExposure exposure) {
+    if (this is LeaderWallet) {
+      if (exposure == NodeExposure.Internal) {
+        if (value > highestUsedInternalIndex) {
+          res.wallets.save(LeaderWallet.from(
+            this as LeaderWallet,
+            highestUsedInternalIndex: value,
+          ));
+        }
+      } else {
+        if (value > highestUsedExternalIndex) {
+          res.wallets.save(LeaderWallet.from(
+            this as LeaderWallet,
+            highestUsedExternalIndex: value,
+          ));
+        }
+      }
+    }
+  }
 }

@@ -13,17 +13,19 @@ class HistoryWaiter extends Waiter {
   Map<String, List<String>> addressesByWalletExposureKeys = {};
 
   void init() => listen(
-      'streams.wallet.transactions',
-      streams.wallet.transactions,
-      (WalletExposureTransactions? keyedTransactions) =>
-          keyedTransactions == null
-              ? doNothing(/* initial state */)
-              : keyedTransactions.transactionIds.isEmpty
-                  ? () {
-                      remember(keyedTransactions);
-                      pullIf(keyedTransactions);
-                    }()
-                  : remember(keyedTransactions));
+        'streams.wallet.transactions',
+        streams.wallet.transactions,
+        (WalletExposureTransactions? keyedTransactions) {
+          if (keyedTransactions != null) {
+            if (keyedTransactions.transactionIds.isEmpty) {
+              remember(keyedTransactions);
+              pullIf(keyedTransactions);
+            } else {
+              remember(keyedTransactions);
+            }
+          }
+        },
+      );
 
   void doNothing() {}
 
@@ -37,12 +39,9 @@ class HistoryWaiter extends Waiter {
   }
 
   Future<void> pullIf(WalletExposureTransactions keyedTransactions) async {
-    var addressCount =
-        keyedTransactions.address.exposure == NodeExposure.Internal
-            ? keyedTransactions.address.wallet?.highestSavedInternalIndex ?? 0
-            : keyedTransactions.address.wallet?.highestSavedExternalIndex ?? 0;
-    print(
-        '${keyedTransactions.key.cutOutMiddle()} address Count: $addressCount vs: ${addressesByWalletExposureKeys[keyedTransactions.key]?.length}');
+    var addressCount = keyedTransactions.address.wallet
+            ?.getHighestSavedIndex(keyedTransactions.address.exposure) ??
+        0;
     if ((addressesByWalletExposureKeys[keyedTransactions.key]?.length ?? 0) >=
         (addressCount)) {
       await pull(keyedTransactions);

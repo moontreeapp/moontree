@@ -29,6 +29,8 @@ class LeaderWallet extends Wallet {
     int highestSavedExternalIndex = 0,
     int highestUsedInternalIndex = 0,
     int highestSavedInternalIndex = 0,
+    List<int>? unusedInternalIndices,
+    List<int>? unusedExternalIndices,
   }) : super(
           id: id,
           cipherUpdate: cipherUpdate,
@@ -37,13 +39,16 @@ class LeaderWallet extends Wallet {
           highestSavedExternalIndex: highestSavedExternalIndex,
           highestUsedInternalIndex: highestUsedInternalIndex,
           highestSavedInternalIndex: highestSavedInternalIndex,
-        );
+        ) {
+    this.unusedInternalIndices = unusedInternalIndices ?? [];
+    this.unusedExternalIndices = unusedExternalIndices ?? [];
+  }
 
   Uint8List? _seed;
 
   /// caching optimization
-  final List<int> _unusedInternalIndices = [];
-  final List<int> _unusedExternalIndices = [];
+  late List<int> unusedInternalIndices;
+  late List<int> unusedExternalIndices;
 
   factory LeaderWallet.from(
     LeaderWallet existing, {
@@ -55,6 +60,8 @@ class LeaderWallet extends Wallet {
     int? highestSavedExternalIndex,
     int? highestUsedInternalIndex,
     int? highestSavedInternalIndex,
+    List<int>? unusedInternalIndices,
+    List<int>? unusedExternalIndices,
   }) =>
       LeaderWallet(
         id: id ?? existing.id,
@@ -69,6 +76,10 @@ class LeaderWallet extends Wallet {
             highestUsedInternalIndex ?? existing.highestUsedInternalIndex,
         highestSavedInternalIndex:
             highestSavedInternalIndex ?? existing.highestSavedInternalIndex,
+        unusedInternalIndices:
+            unusedInternalIndices ?? existing.unusedInternalIndices,
+        unusedExternalIndices:
+            unusedExternalIndices ?? existing.unusedExternalIndices,
       );
 
   @override
@@ -121,20 +132,7 @@ class LeaderWallet extends Wallet {
 
   String get entropy => hex.decrypt(encryptedEntropy, cipher!);
 
-  /// caching optimization
-  int currentGap(NodeExposure exposure) => exposure == NodeExposure.External
-      ? highestSavedExternalIndex - highestUsedExternalIndex
-      : highestSavedInternalIndex - highestUsedInternalIndex;
-
-  int getHighestSavedIndex(NodeExposure exposure) =>
-      exposure == NodeExposure.Internal
-          ? highestSavedInternalIndex
-          : highestSavedExternalIndex;
-  void setHighestSavedIndex(int value, NodeExposure exposure) =>
-      exposure == NodeExposure.Internal
-          ? highestSavedInternalIndex = value
-          : highestSavedExternalIndex = value;
-
+  /// caching optimization ///
   void addUnused(int hdIndex, NodeExposure exposure) =>
       exposure == NodeExposure.Internal
           ? addUnusedInternal(hdIndex)
@@ -144,23 +142,27 @@ class LeaderWallet extends Wallet {
           ? removeUnusedInternal(hdIndex)
           : removeUnusedExternal(hdIndex);
   void addUnusedInternal(int hdIndex) => utils.binaryInsert(
-        list: _unusedInternalIndices,
+        list: unusedInternalIndices,
         value: hdIndex,
       );
   void addUnusedExternal(int hdIndex) => utils.binaryInsert(
-        list: _unusedExternalIndices,
+        list: unusedExternalIndices,
         value: hdIndex,
       );
   void removeUnusedInternal(int hdIndex) => utils.binaryRemove(
-        list: _unusedInternalIndices,
+        list: unusedInternalIndices,
         value: hdIndex,
       );
   void removeUnusedExternal(int hdIndex) => utils.binaryRemove(
-        list: _unusedExternalIndices,
+        list: unusedExternalIndices,
         value: hdIndex,
       );
+  Address? getUnusedAddress(NodeExposure exposure) =>
+      exposure == NodeExposure.Internal
+          ? unusedInternalAddress
+          : unusedExternalAddress;
   Address? get unusedInternalAddress => res.addresses.byWalletExposureIndex
-      .getOne(id, NodeExposure.Internal, _unusedInternalIndices.first);
+      .getOne(id, NodeExposure.Internal, unusedInternalIndices.first);
   Address? get unusedExternalAddress => res.addresses.byWalletExposureIndex
-      .getOne(id, NodeExposure.External, _unusedExternalIndices.first);
+      .getOne(id, NodeExposure.External, unusedExternalIndices.first);
 }

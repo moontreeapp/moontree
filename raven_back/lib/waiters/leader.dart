@@ -69,7 +69,6 @@ class LeaderWaiter extends Waiter {
           handleDeriveAddress(leader: added.data as LeaderWallet);
         },
         updated: (updated) async {
-          print('LEADER UPDATED ${updated.data}');
           /*
           /// app is switched to mainnet to testnet or testnet to mainnet... 
           /// we need to derive all the addresses again.

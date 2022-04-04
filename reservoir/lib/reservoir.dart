@@ -98,9 +98,7 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
 
   /// Save a `record`, index it, and broadcast the change
   Future<Change<Record>?> save(Record record) async {
-    print('savingRecord $record');
     var change = await _saveSilently(record);
-    print('changeAfterSave $change');
     if (change != null) _changes.add([change]);
     return change;
   }
@@ -125,7 +123,6 @@ class Reservoir<PrimaryKey extends Key<Record>, Record extends Object>
   // Index & save one record without broadcasting any changes
   Future<Change<Record>?> _saveSilently(Record record) async {
     var change = await source.save(primaryKey(record), record);
-    print(change);
     change?.when(
         loaded: (change) {},
         added: (change) {

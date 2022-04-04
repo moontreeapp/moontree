@@ -16,26 +16,23 @@ class HistoryService {
     }
 
     void updateCounts(LeaderWallet leader) {
-      if (address.exposure == NodeExposure.External) {
-        leader.removeUnusedExternal(address.hdIndex);
-      } else if (address.exposure == NodeExposure.Internal) {
-        leader.removeUnusedInternal(address.hdIndex);
-      }
-      if (address.exposure == NodeExposure.External) {
-        if (address.hdIndex > leader.highestUsedExternalIndex) {
-          res.wallets.save(LeaderWallet.from(
-            leader,
-            highestUsedExternalIndex: address.hdIndex,
-          ));
-        }
-      } else if (address.exposure == NodeExposure.Internal) {
-        if (address.hdIndex > leader.highestUsedInternalIndex) {
-          res.wallets.save(LeaderWallet.from(
-            leader,
-            highestUsedInternalIndex: address.hdIndex,
-          ));
-        }
-      }
+      leader.removeUnused(address.hdIndex, address.exposure);
+      leader.updateHighestUsedIndex(address.hdIndex, address.exposure);
+      //if (address.exposure == NodeExposure.External) {
+      //  if (address.hdIndex > leader.highestUsedExternalIndex) {
+      //    res.wallets.save(LeaderWallet.from(
+      //      leader,
+      //      highestUsedExternalIndex: address.hdIndex,
+      //    ));
+      //  }
+      //} else if (address.exposure == NodeExposure.Internal) {
+      //  if (address.hdIndex > leader.highestUsedInternalIndex) {
+      //    res.wallets.save(LeaderWallet.from(
+      //      leader,
+      //      highestUsedInternalIndex: address.hdIndex,
+      //    ));
+      //  }
+      //}
     }
 
     void updateCache(LeaderWallet leader) {

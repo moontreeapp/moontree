@@ -51,9 +51,7 @@ class LeaderWalletService {
     LeaderWallet leaderWallet, {
     NodeExposure exposure = NodeExposure.Internal,
   }) {
-    return exposure == NodeExposure.Internal
-        ? leaderWallet.unusedInternalAddress!.address
-        : leaderWallet.unusedExternalAddress!.address;
+    return leaderWallet.getUnusedAddress(exposure)!.address;
   }
 
   /// returns the next change address
@@ -168,7 +166,6 @@ class LeaderWalletService {
             highestSavedExternalIndex:
                 wallet.highestSavedExternalIndex + externalCount));
       }
-      print('saving $wallet');
     }
 
     exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];
