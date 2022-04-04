@@ -33,11 +33,7 @@ class HistoryService {
     }
 
     void updateCache(LeaderWallet leader) {
-      if (address.exposure == NodeExposure.External) {
-        leader.addUnusedExternal(address.hdIndex);
-      } else if (address.exposure == NodeExposure.Internal) {
-        leader.addUnusedInternal(address.hdIndex);
-      }
+      leader.addUnused(address.hdIndex, address.exposure);
     }
 
     var client = streams.client.client.value;

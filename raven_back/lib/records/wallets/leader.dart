@@ -38,10 +38,18 @@ class LeaderWallet extends Wallet {
         id,
         cipherUpdate,
         encryptedEntropy,
+        highestUsedExternalIndex,
+        highestSavedExternalIndex,
+        highestUsedInternalIndex,
+        highestSavedInternalIndex,
       ];
 
   @override
-  String toString() => 'LeaderWallet($id,  $encryptedEntropy, $cipherUpdate)';
+  String toString() => 'LeaderWallet($id, $encryptedEntropy, $cipherUpdate, '
+      '$highestUsedExternalIndex, '
+      '$highestSavedExternalIndex, '
+      '$highestUsedInternalIndex, '
+      '$highestSavedInternalIndex)';
 
   @override
   String get encrypted => encryptedEntropy;
@@ -82,15 +90,23 @@ class LeaderWallet extends Wallet {
       ? highestSavedExternalIndex - highestUsedExternalIndex
       : highestSavedInternalIndex - highestUsedInternalIndex;
 
-  int getHighestSavedAddress(NodeExposure exposure) =>
+  int getHighestSavedIndex(NodeExposure exposure) =>
       exposure == NodeExposure.Internal
           ? highestSavedInternalIndex
           : highestSavedExternalIndex;
-  void setHighestSavedAddress(int value, NodeExposure exposure) =>
+  void setHighestSavedIndex(int value, NodeExposure exposure) =>
       exposure == NodeExposure.Internal
           ? highestSavedInternalIndex = value
           : highestSavedExternalIndex = value;
 
+  void addUnused(int hdIndex, NodeExposure exposure) =>
+      exposure == NodeExposure.Internal
+          ? addUnusedInternal(hdIndex)
+          : addUnusedExternal(hdIndex);
+  void removeUnused(int hdIndex, NodeExposure exposure) =>
+      exposure == NodeExposure.Internal
+          ? removeUnusedInternal(hdIndex)
+          : removeUnusedExternal(hdIndex);
   void addUnusedInternal(int hdIndex) => utils.binaryInsert(
         list: _unusedInternalIndices,
         value: hdIndex,

@@ -137,12 +137,7 @@ class LeaderWalletService {
     // get current gap from cache.
     var generate = requiredGap - leaderWallet.currentGap(exposure);
     var target = 0;
-    if (exposure == NodeExposure.External) {
-      target = leaderWallet.highestSavedExternalIndex + generate;
-    }
-    if (exposure == NodeExposure.Internal) {
-      target = leaderWallet.highestSavedInternalIndex + generate;
-    }
+    target = leaderWallet.getHighestSavedIndex(exposure) + generate;
     print('Starting: ${target - generate}');
     print('Derive target: $target');
     if (generate > 0) {
@@ -172,6 +167,8 @@ class LeaderWalletService {
       if (externalCount > 0) {
         wallet.highestSavedExternalIndex += externalCount;
       }
+      print('saving $wallet');
+      res.wallets.save(wallet);
     }
 
     exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];

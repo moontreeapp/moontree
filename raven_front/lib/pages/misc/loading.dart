@@ -59,6 +59,16 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
     print('wallets: ${res.wallets}');
     print('-------------------------');
     //print(services.cipher.getPassword(altPassword: ''));
+    for (var wallet in res.wallets) {
+      print(
+          'Wallet${wallet.id.cutOutMiddle()} SavedIn:${wallet.highestSavedInternalIndex}');
+      print(
+          'Wallet${wallet.id.cutOutMiddle()} SavedEx:${wallet.highestSavedExternalIndex}');
+      print(
+          'Wallet${wallet.id.cutOutMiddle()} UsedIn:${wallet.highestUsedInternalIndex}');
+      print(
+          'Wallet${wallet.id.cutOutMiddle()} UsedEx:${wallet.highestUsedExternalIndex}');
+    }
     print('-------------------------');
     redirectToLoginOrHome();
   }
