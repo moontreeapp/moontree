@@ -142,7 +142,7 @@ class LeaderWalletService {
     print('Derive target: $target');
     if (generate > 0) {
       return {
-        for (var i = target - generate; i <= target; i++)
+        for (var i = target - generate; i < target; i++)
           deriveAddress(leaderWallet, i, exposure: exposure)
       };
     }
