@@ -19,12 +19,15 @@ class SingleWallet extends Wallet {
     required this.encryptedWIF,
     CipherUpdate cipherUpdate = defaultCipherUpdate,
     String? name,
-  }) : super(id: id, cipherUpdate: cipherUpdate, name: name) {
-    highestUsedExternalIndex = 1;
-    highestSavedExternalIndex = 1;
-    highestUsedInternalIndex = 1;
-    highestSavedInternalIndex = 1;
-  }
+  }) : super(
+          id: id,
+          cipherUpdate: cipherUpdate,
+          name: name,
+          highestUsedExternalIndex: 1,
+          highestSavedExternalIndex: 1,
+          highestUsedInternalIndex: 1,
+          highestSavedInternalIndex: 1,
+        );
 
   @override
   List<Object?> get props => [id, cipherUpdate, encryptedWIF];

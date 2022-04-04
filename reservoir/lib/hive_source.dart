@@ -22,8 +22,12 @@ class HiveSource<Record> extends Source<Record> {
 
   @override
   Future<Change<Record>?> save(String key, Record record) async {
+    print('key $key');
     var existing = box.get(key);
+    print('existing $existing');
+    print('record $record');
     if (existing == record) {
+      print('equal');
       return null;
     }
     await box.put(key, record);

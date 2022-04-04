@@ -161,14 +161,14 @@ class LeaderWalletService {
     List<NodeExposure>? exposures,
   }) {
     void updateCacheCounts(int internalCount, int externalCount) {
-      if (internalCount > 0) {
-        wallet.highestSavedInternalIndex += internalCount;
-      }
-      if (externalCount > 0) {
-        wallet.highestSavedExternalIndex += externalCount;
+      if (internalCount > 0 || externalCount > 0) {
+        res.wallets.save(LeaderWallet.from(wallet,
+            highestSavedInternalIndex:
+                wallet.highestSavedInternalIndex + internalCount,
+            highestSavedExternalIndex:
+                wallet.highestSavedExternalIndex + externalCount));
       }
       print('saving $wallet');
-      res.wallets.save(wallet);
     }
 
     exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];

@@ -53,7 +53,6 @@ class CipherService {
   ]) {
     final encrypted_entropy =
         hex.encrypt(wallet.entropy, cipher ?? currentCipher!);
-    ;
     final newId = HDWallet.fromSeed(wallet.seed).pubKey;
     assert(wallet.id == newId);
     return LeaderWallet(
@@ -61,6 +60,10 @@ class CipherService {
       encryptedEntropy: encrypted_entropy,
       cipherUpdate: currentCipherUpdate,
       name: wallet.name,
+      highestUsedExternalIndex: wallet.highestUsedExternalIndex,
+      highestSavedExternalIndex: wallet.highestSavedExternalIndex,
+      highestUsedInternalIndex: wallet.highestUsedInternalIndex,
+      highestSavedInternalIndex: wallet.highestSavedInternalIndex,
     );
   }
 

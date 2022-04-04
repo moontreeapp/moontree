@@ -23,11 +23,17 @@ class HistoryService {
       }
       if (address.exposure == NodeExposure.External) {
         if (address.hdIndex > leader.highestUsedExternalIndex) {
-          leader.highestUsedExternalIndex = address.hdIndex;
+          res.wallets.save(LeaderWallet.from(
+            leader,
+            highestUsedExternalIndex: address.hdIndex,
+          ));
         }
       } else if (address.exposure == NodeExposure.Internal) {
         if (address.hdIndex > leader.highestUsedInternalIndex) {
-          leader.highestUsedExternalIndex = address.hdIndex;
+          res.wallets.save(LeaderWallet.from(
+            leader,
+            highestUsedInternalIndex: address.hdIndex,
+          ));
         }
       }
     }

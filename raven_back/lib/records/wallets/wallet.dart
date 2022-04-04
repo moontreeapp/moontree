@@ -20,16 +20,16 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
   final String name;
 
   @HiveField(3)
-  int highestUsedExternalIndex = 0;
+  int highestUsedExternalIndex;
 
   @HiveField(4)
-  int highestSavedExternalIndex = 0;
+  int highestSavedExternalIndex;
 
   @HiveField(5)
-  int highestUsedInternalIndex = 0;
+  int highestUsedInternalIndex;
 
   @HiveField(6)
-  int highestSavedInternalIndex = 0;
+  int highestSavedInternalIndex;
 
   @override
   List<Object?> get props => [id, cipherUpdate, name];
@@ -38,6 +38,10 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
     required this.id,
     required this.cipherUpdate,
     String? name,
+    this.highestUsedExternalIndex = 0,
+    this.highestSavedExternalIndex = 0,
+    this.highestUsedInternalIndex = 0,
+    this.highestSavedInternalIndex = 0,
   }) : name = name ?? (id.length > 5 ? id.substring(0, 6) : id[0]);
 
   String get encrypted;

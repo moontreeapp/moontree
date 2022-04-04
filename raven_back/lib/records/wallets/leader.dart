@@ -25,13 +25,51 @@ class LeaderWallet extends Wallet {
     required this.encryptedEntropy,
     CipherUpdate cipherUpdate = defaultCipherUpdate,
     String? name,
-  }) : super(id: id, cipherUpdate: cipherUpdate, name: name);
+    int highestUsedExternalIndex = 0,
+    int highestSavedExternalIndex = 0,
+    int highestUsedInternalIndex = 0,
+    int highestSavedInternalIndex = 0,
+  }) : super(
+          id: id,
+          cipherUpdate: cipherUpdate,
+          name: name,
+          highestUsedExternalIndex: highestUsedExternalIndex,
+          highestSavedExternalIndex: highestSavedExternalIndex,
+          highestUsedInternalIndex: highestUsedInternalIndex,
+          highestSavedInternalIndex: highestSavedInternalIndex,
+        );
 
   Uint8List? _seed;
 
   /// caching optimization
   final List<int> _unusedInternalIndices = [];
   final List<int> _unusedExternalIndices = [];
+
+  factory LeaderWallet.from(
+    LeaderWallet existing, {
+    String? id,
+    String? encryptedEntropy,
+    CipherUpdate? cipherUpdate,
+    String? name,
+    int? highestUsedExternalIndex,
+    int? highestSavedExternalIndex,
+    int? highestUsedInternalIndex,
+    int? highestSavedInternalIndex,
+  }) =>
+      LeaderWallet(
+        id: id ?? existing.id,
+        encryptedEntropy: encryptedEntropy ?? existing.encryptedEntropy,
+        cipherUpdate: cipherUpdate ?? existing.cipherUpdate,
+        name: name ?? existing.name,
+        highestUsedExternalIndex:
+            highestUsedExternalIndex ?? existing.highestUsedExternalIndex,
+        highestSavedExternalIndex:
+            highestSavedExternalIndex ?? existing.highestSavedExternalIndex,
+        highestUsedInternalIndex:
+            highestUsedInternalIndex ?? existing.highestUsedInternalIndex,
+        highestSavedInternalIndex:
+            highestSavedInternalIndex ?? existing.highestSavedInternalIndex,
+      );
 
   @override
   List<Object?> get props => [
@@ -46,10 +84,8 @@ class LeaderWallet extends Wallet {
 
   @override
   String toString() => 'LeaderWallet($id, $encryptedEntropy, $cipherUpdate, '
-      '$highestUsedExternalIndex, '
-      '$highestSavedExternalIndex, '
-      '$highestUsedInternalIndex, '
-      '$highestSavedInternalIndex)';
+      '$highestUsedExternalIndex, $highestSavedExternalIndex, '
+      '$highestUsedInternalIndex, $highestSavedInternalIndex)';
 
   @override
   String get encrypted => encryptedEntropy;

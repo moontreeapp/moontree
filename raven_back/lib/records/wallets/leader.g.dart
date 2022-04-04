@@ -21,11 +21,11 @@ class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
       encryptedEntropy: fields[7] as String,
       cipherUpdate: fields[1] as CipherUpdate,
       name: fields[2] as String?,
-    )
-      ..highestUsedExternalIndex = fields[3] as int
-      ..highestSavedExternalIndex = fields[4] as int
-      ..highestUsedInternalIndex = fields[5] as int
-      ..highestSavedInternalIndex = fields[6] as int;
+      highestUsedExternalIndex: fields[3] as int,
+      highestSavedExternalIndex: fields[4] as int,
+      highestUsedInternalIndex: fields[5] as int,
+      highestSavedInternalIndex: fields[6] as int,
+    );
   }
 
   @override
