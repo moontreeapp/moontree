@@ -14,15 +14,8 @@ class LeaderWalletService {
   Set<LeaderWallet> backlog = {};
   final int requiredGap = 20;
 
-  int currentGap(LeaderWallet leaderWallet, NodeExposure exposure) =>
-      exposure == NodeExposure.External
-          ? leaderWallet.highestSavedExternalIndex -
-              leaderWallet.highestUsedExternalIndex
-          : leaderWallet.highestSavedInternalIndex -
-              leaderWallet.highestUsedInternalIndex;
-
   bool gapSatisfied(LeaderWallet leaderWallet, NodeExposure exposure) =>
-      requiredGap - currentGap(leaderWallet, exposure) <= 0;
+      requiredGap - leaderWallet.currentGap(exposure) <= 0;
 
   Address deriveAddress(
     LeaderWallet wallet,
@@ -31,16 +24,7 @@ class LeaderWalletService {
   }) {
     var s = Stopwatch()..start();
     var subwallet = getSubWallet(wallet, hdIndex, exposure);
-    //print('derive Address getSubWallet: ${s.elapsed}');
-    if (exposure == NodeExposure.External) {
-      if (hdIndex > wallet.highestSavedExternalIndex) {
-        wallet.highestSavedExternalIndex = hdIndex;
-      }
-    } else if (exposure == NodeExposure.Internal) {
-      if (hdIndex > wallet.highestSavedInternalIndex) {
-        wallet.highestSavedExternalIndex = hdIndex;
-      }
-    }
+    print('derive Address getSubWallet: ${s.elapsed}');
     return Address(
         id: subwallet.scripthash,
         address: subwallet.address!,
@@ -151,19 +135,13 @@ class LeaderWalletService {
     NodeExposure exposure,
   ) {
     // get current gap from cache.
-    var generate = requiredGap - currentGap(leaderWallet, exposure);
+    var generate = requiredGap - leaderWallet.currentGap(exposure);
     var target = 0;
     if (exposure == NodeExposure.External) {
-      if (generate > 0) {
-        leaderWallet.highestSavedExternalIndex += generate;
-      }
-      target = leaderWallet.highestSavedExternalIndex;
+      target = leaderWallet.highestSavedExternalIndex + generate;
     }
     if (exposure == NodeExposure.Internal) {
-      if (generate > 0) {
-        leaderWallet.highestSavedInternalIndex += generate;
-      }
-      target = leaderWallet.highestSavedInternalIndex;
+      target = leaderWallet.highestSavedInternalIndex + generate;
     }
     print('Starting: ${target - generate}');
     print('Derive target: $target');
@@ -178,19 +156,42 @@ class LeaderWalletService {
 
   HDWallet getChangeWallet(LeaderWallet wallet) => getNextEmptyWallet(wallet);
 
+  /// deriveMoreAddresses also updates the cache we keep of highest saved
+  /// addresses for each wallet-exposure. It does so after addresses are
+  /// actually saved. the reason for this is that if we update the count to
+  /// be higher than the number of addresses actually saved, we'll enter an
+  /// infinite loop.
   void deriveMoreAddresses(
     LeaderWallet wallet, {
     List<NodeExposure>? exposures,
   }) {
+    void updateCacheCounts(int internalCount, int externalCount) {
+      if (internalCount > 0) {
+        wallet.highestSavedInternalIndex += internalCount;
+      }
+      if (externalCount > 0) {
+        wallet.highestSavedExternalIndex += externalCount;
+      }
+    }
+
     exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];
     var newAddresses = <Address>{};
+    var internalCount = 0;
+    var externalCount = 0;
     for (var exposure in exposures) {
-      newAddresses.addAll(deriveNextAddresses(
+      var derivedAddresses = deriveNextAddresses(
         wallet,
         res.ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
         exposure,
-      ));
+      );
+      newAddresses.addAll(derivedAddresses);
+      if (exposure == NodeExposure.Internal) {
+        internalCount = derivedAddresses.length;
+      } else {
+        externalCount = derivedAddresses.length;
+      }
     }
     res.addresses.saveAll(newAddresses);
+    updateCacheCounts(internalCount, externalCount);
   }
 }

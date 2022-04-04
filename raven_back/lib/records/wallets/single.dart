@@ -11,7 +11,7 @@ part 'single.g.dart';
 
 @HiveType(typeId: TypeId.SingleWallet)
 class SingleWallet extends Wallet {
-  @HiveField(3)
+  @HiveField(7)
   final String encryptedWIF;
 
   SingleWallet({
@@ -19,7 +19,12 @@ class SingleWallet extends Wallet {
     required this.encryptedWIF,
     CipherUpdate cipherUpdate = defaultCipherUpdate,
     String? name,
-  }) : super(id: id, cipherUpdate: cipherUpdate, name: name);
+  }) : super(id: id, cipherUpdate: cipherUpdate, name: name) {
+    highestUsedExternalIndex = 1;
+    highestSavedExternalIndex = 1;
+    highestUsedInternalIndex = 1;
+    highestSavedInternalIndex = 1;
+  }
 
   @override
   List<Object?> get props => [id, cipherUpdate, encryptedWIF];

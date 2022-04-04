@@ -85,24 +85,37 @@ class ClientService {
 class SubscribeService {
   final Map<String, StreamSubscription> subscriptionHandles = {};
 
-  void toAllAddresses() {
-    for (var address in res.addresses) {
-      to(address);
+  bool toAllAddresses() {
+    var client = streams.client.client.value;
+    print(
+        'To all addresses called subscribe.to client==null: ${client == null}');
+    if (client == null) {
+      return false;
     }
+    for (var address in res.addresses) {
+      print('subscribing');
+      onlySubscribe(client, address);
+    }
+    return true;
   }
 
   bool to(Address address) {
     var client = streams.client.client.value;
+    print('subscribe.to client==null: ${client == null}');
     if (client == null) {
       return false;
     }
+    onlySubscribe(client, address);
+    return true;
+  }
+
+  void onlySubscribe(RavenElectrumClient client, Address address) {
     if (!subscriptionHandles.keys.contains(address.id)) {
       subscriptionHandles[address.id] =
           client.subscribeScripthash(address.id).listen((String? status) {
         services.history.getHistories(address);
       });
     }
-    return true;
   }
 
   void unsubscribe(String addressId) {

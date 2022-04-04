@@ -17,20 +17,8 @@ part 'leader.g.dart';
 
 @HiveType(typeId: TypeId.LeaderWallet)
 class LeaderWallet extends Wallet {
-  @HiveField(3)
-  final String encryptedEntropy;
-
-  @HiveField(4)
-  int highestUsedExternalIndex = 0;
-
-  @HiveField(5)
-  int highestSavedExternalIndex = 0;
-
-  @HiveField(6)
-  int highestUsedInternalIndex = 0;
-
   @HiveField(7)
-  int highestSavedInternalIndex = 0;
+  final String encryptedEntropy;
 
   LeaderWallet({
     required String id,
@@ -42,11 +30,6 @@ class LeaderWallet extends Wallet {
   Uint8List? _seed;
 
   /// caching optimization
-
-  //int highestUsedExternalIndex = -1;
-  //int highestSavedExternalIndex = -1;
-  //int highestUsedInternalIndex = -1;
-  //int highestSavedInternalIndex = -1;
   final List<int> _unusedInternalIndices = [];
   final List<int> _unusedExternalIndices = [];
 
@@ -95,6 +78,19 @@ class LeaderWallet extends Wallet {
   String get entropy => hex.decrypt(encryptedEntropy, cipher!);
 
   /// caching optimization
+  int currentGap(NodeExposure exposure) => exposure == NodeExposure.External
+      ? highestSavedExternalIndex - highestUsedExternalIndex
+      : highestSavedInternalIndex - highestUsedInternalIndex;
+
+  int getHighestSavedAddress(NodeExposure exposure) =>
+      exposure == NodeExposure.Internal
+          ? highestSavedInternalIndex
+          : highestSavedExternalIndex;
+  void setHighestSavedAddress(int value, NodeExposure exposure) =>
+      exposure == NodeExposure.Internal
+          ? highestSavedInternalIndex = value
+          : highestSavedExternalIndex = value;
+
   void addUnusedInternal(int hdIndex) => utils.binaryInsert(
         list: _unusedInternalIndices,
         value: hdIndex,

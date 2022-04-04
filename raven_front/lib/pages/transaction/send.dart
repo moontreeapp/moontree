@@ -249,7 +249,11 @@ class _SendState extends State<Send> {
           KeyboardHidesWidget(
               child: components.buttons.floatingButtons(
             context,
-            buttons: [sendTransactionButton()],
+            buttons: [
+              allValidation()
+                  ? sendTransactionButton()
+                  : sendTransactionButton(disabled: true)
+            ],
             widthSpacer: SizedBox(width: 16),
           ))
         ],

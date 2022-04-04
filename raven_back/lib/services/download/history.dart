@@ -48,7 +48,7 @@ class HistoryService {
     if (histories.isNotEmpty) {
       if (address.wallet is LeaderWallet) {
         updateCounts(address.wallet as LeaderWallet);
-        //print('${address.address} histories found!');
+        print('${address.address} histories found!');
         sendToStream(histories.map((history) => history.txHash));
       } else {
         sendToStream(histories.map((history) => history.txHash));
@@ -58,7 +58,7 @@ class HistoryService {
       if (address.wallet is LeaderWallet) {
         updateCache(address.wallet as LeaderWallet);
       }
-      //print('${address.address} not found!');
+      print('${address.address} not found!');
       sendToStream([]);
     }
     return true;
@@ -70,19 +70,19 @@ class HistoryService {
       return false;
     }
     var allDone = true;
-    //print('inspecting Gaps!');
+    print('inspecting Gaps!');
     for (var leader in res.wallets.leaders) {
       for (var exposure in [NodeExposure.Internal, NodeExposure.External]) {
-        //if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
-        allDone = false;
-        //print('deriving ${leader.id.substring(0, 4)} ${exposure.enumString}');
-        streams.wallet.deriveAddress
-            .add(DeriveLeaderAddress(leader: leader, exposure: exposure));
-        //}
+        if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
+          allDone = false;
+          print('deriving ${leader.id.substring(0, 4)} ${exposure.enumString}');
+          streams.wallet.deriveAddress
+              .add(DeriveLeaderAddress(leader: leader, exposure: exposure));
+        }
       }
     }
     if (allDone) {
-      //print('ALL DONE!');
+      print('ALL DONE!');
       await saveDanglingTransactions(client);
       await services.balance.recalculateAllBalances();
       services.download.asset.allAdminsSubs();
@@ -133,13 +133,13 @@ class HistoryService {
   Future saveDanglingTransactions(RavenElectrumClient client) async {
     var txs =
         (res.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet());
-    //print('GETTING DANGLING TRANSACTIONS: $txs');
+    print('GETTING DANGLING TRANSACTIONS: $txs');
     for (var txHash in txs) {
       if (!downloaded.contains(txHash)) {
         downloaded.add(txHash);
         await getTransaction(txHash, saveVin: false);
       } else {
-        //print('skiped $txHash');
+        print('skiped $txHash');
       }
     }
   }

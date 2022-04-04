@@ -3,12 +3,16 @@ import 'waiter.dart';
 
 class SubscriptionWaiter extends Waiter {
   void init() {
-    listen(
-        'streams.client.connected',
-        streams.client.connected,
-        (bool connected) => connected
-            ? services.client.subscribe.toAllAddresses()
-            : deinitAllSubscriptions());
+    listen('streams.client.connected', streams.client.connected,
+        (bool connected) {
+      print('CLIENT CONNECTED $connected');
+      connected
+          ? services.client.subscribe.toAllAddresses()
+          : deinitAllSubscriptions();
+    });
+    //(bool connected) => connected
+    //    ? services.client.subscribe.toAllAddresses()
+    //    : deinitAllSubscriptions());
   }
 
   void deinitAllSubscriptions() {

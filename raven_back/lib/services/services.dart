@@ -1,5 +1,5 @@
-import 'download.dart';
-import 'history.dart';
+import 'download/download.dart';
+import 'download/history.dart';
 import 'balance.dart';
 import 'cipher.dart';
 import 'client.dart';

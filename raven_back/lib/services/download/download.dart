@@ -1,4 +1,4 @@
-import 'package:raven_back/services/asset.dart';
+import 'package:raven_back/services/download/asset.dart';
 
 class DownloadService {
   AssetService asset = AssetService();

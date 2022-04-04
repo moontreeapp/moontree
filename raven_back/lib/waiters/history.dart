@@ -19,7 +19,10 @@ class HistoryWaiter extends Waiter {
           keyedTransactions == null
               ? doNothing(/* initial state */)
               : keyedTransactions.transactionIds.isEmpty
-                  ? pullIf(keyedTransactions)
+                  ? () {
+                      remember(keyedTransactions);
+                      pullIf(keyedTransactions);
+                    }()
                   : remember(keyedTransactions));
 
   void doNothing() {}
@@ -34,13 +37,14 @@ class HistoryWaiter extends Waiter {
   }
 
   Future<void> pullIf(WalletExposureTransactions keyedTransactions) async {
-    var addressCount = keyedTransactions.address.wallet?.addresses
-        .where((Address address) =>
-            address.exposure == keyedTransactions.address.exposure)
-        .toList()
-        .length;
+    var addressCount =
+        keyedTransactions.address.exposure == NodeExposure.Internal
+            ? keyedTransactions.address.wallet?.highestSavedInternalIndex ?? 0
+            : keyedTransactions.address.wallet?.highestSavedExternalIndex ?? 0;
+    print(
+        '${keyedTransactions.key.cutOutMiddle()} address Count: $addressCount vs: ${addressesByWalletExposureKeys[keyedTransactions.key]?.length}');
     if ((addressesByWalletExposureKeys[keyedTransactions.key]?.length ?? 0) >=
-        (addressCount ?? 0)) {
+        (addressCount)) {
       await pull(keyedTransactions);
     }
   }

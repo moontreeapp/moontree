@@ -19,6 +19,18 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
   @HiveField(2)
   final String name;
 
+  @HiveField(3)
+  int highestUsedExternalIndex = 0;
+
+  @HiveField(4)
+  int highestSavedExternalIndex = 0;
+
+  @HiveField(5)
+  int highestUsedInternalIndex = 0;
+
+  @HiveField(6)
+  int highestSavedInternalIndex = 0;
+
   @override
   List<Object?> get props => [id, cipherUpdate, name];
 
