@@ -1,9 +1,11 @@
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:raven_electrum/raven_electrum.dart';
 
 import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/theme.dart';
 
 //import 'package:raven_back/utilities/database.dart' as ravenDatabase;
@@ -155,39 +157,61 @@ class _NavMenuState extends State<NavMenu> {
               onPressed: (BuildContext context) {
             //    ravenDatabase.deleteDatabase();
           ),
-          SettingsTile(
-              title: 'test',
-              leading: Icon(Icons.info_outline_rounded),
-              onPressed: (BuildContext context) async {
-                print(res.vouts.data.length);
-                print(res.vouts.bySecurity.getAll(res.securities.RVN).length);
-                print(res.vouts.bySecurityType
-                    .getAll(SecurityType.RavenAsset)
-                    .length);
-                print(res.vouts.bySecurity
-                    .getAll(res.securities.RVN)
-                    .where((e) => e.lockingScript != null));
-                print(res.vouts.bySecurityType
-                    .getAll(SecurityType.RavenAsset)
-                    .where((e) => e.lockingScript == null));
-                print(res.vouts.bySecurity
-                    .getAll(res.securities.RVN)
-                    .where((e) => e.assetValue == null)
-                    .length);
-                print(res.vouts.bySecurityType
-                    .getAll(SecurityType.RavenAsset)
-                    .where((e) => e.assetValue == null)
-                    .length);
-                print(res.vouts.bySecurity
-                    .getAll(res.securities.RVN)
-                    .where((e) => e.rvnValue > 0)
-                    .length);
-                print(res.vouts.bySecurityType
-                    .getAll(SecurityType.RavenAsset)
-                    .where((e) => e.rvnValue == 0)
-                    .length);
-              }),
           */
+          ListTile(
+              title: Text('test'),
+              leading: Icon(Icons.info_outline_rounded),
+              onTap: () async {
+                //print(res.balances.bySecurity.getAll(res.securities.RVN));
+                //print(res.vouts.bySecurity.getAll(res.securities.RVN).length);
+                //for (var add in res.addresses.byWallet
+                //    .getAll(res.wallets.currentWallet.id)) {
+                //  var unspents =
+                //      await services.client.client!.getUnspent(add.scripthash);
+                //  for (var u in unspents) {
+                //    print(u);
+                //  }
+                //}
+                //for (var u in services.transaction
+                //    .getTransactionRecords(wallet: Current.wallet)) {
+                //  print(u);
+                //}
+                //print(services.balance.recalculateSpecificBalances(res
+                //    .vouts.data
+                //    //VoutReservoir.whereUnspent(includeMempool: false)
+                //    .where((Vout vout) => vout.security == res.securities.RVN && (vout.transaction?.confirmed ?? false));
+                //    .toList()));
+
+                //await services.history
+                //    .saveDanglingTransactions(services.client.client!);
+                //await services.balance.recalculateAllBalances();
+
+                //print('txsbywalletexposure: ${[
+                //  for (var t in waiters.history.txsByWalletExposureKeys.keys)
+                //    waiters.history.txsByWalletExposureKeys[t]?.length
+                //]}');
+                //print('txsbywalletexposure: ${[
+                //  for (var t in waiters.history.txsByWalletExposureKeys.keys) t
+                //]}');
+                //print(waiters.history.txsByWalletExposureKeys[
+                //    '03d992f22d9e178a4de02e99ffffe885bd5135e65d183200da3b566502eca79342Internal']);
+                ////waiters.history.manualPull(
+                ////    keyedTransactionsKey:
+                ////        '03d992f22d9e178a4de02e99ffffe885bd5135e65d183200da3b566502eca79342Internal',
+                ////    walletId:
+                ////        '03d992f22d9e178a4de02e99ffffe885bd5135e65d183200da3b566502eca79342',
+                ////    exposure: NodeExposure.Internal);
+                ////print(
+                ////    Current.wallet.getHighestSavedIndex(NodeExposure.Internal));
+                ////print(
+                ////    Current.wallet.getHighestSavedIndex(NodeExposure.External));
+                ////print(res.addresses.byWallet.getAll(Current.walletId).length);
+                //print(res.transactions.primaryIndex.getOne(
+                //    '7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c'));
+                for (var x in res.vouts.byTransaction.getAll(
+                    '7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c'))
+                  print(x);
+              }),
         ],
       )
     };

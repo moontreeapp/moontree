@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage>
         front: DraggableScrollableActuator(
           child: DraggableScrollableSheet(
             controller: draggableScrollController,
-            snap: false,
+            snap: true,
             initialChildSize: initialExtent,
             minChildSize: minExtent,
             maxChildSize: maxExtent,

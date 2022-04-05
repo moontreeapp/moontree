@@ -337,8 +337,12 @@ class _HoldingList extends State<HoldingList> {
                     if (holding.restricted != null) 'Restricted',
                     if (holding.restrictedAdmin != null) 'Restricted Admin',
                   ].join(', ')
-                : components.text.securityAsReadable(holding.balance!.value,
-                    security: holding.balance!.security, asUSD: showUSD),
+                : components.text.securityAsReadable(
+                    holding.balance?.value ?? 0,
+                    security: holding.balance?.security ??
+                        Security(
+                            symbol: 'unknown', securityType: SecurityType.Fiat),
+                    asUSD: showUSD),
             style: Theme.of(context).textTheme.bodyText2),
       ]);
 }

@@ -21,16 +21,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print('Handling a background message ${message.messageId}');
 }
 
-Future setup() async {
-  var hiveInit =
-      HiveInitializer(init: (dbDir) => Hive.initFlutter(), beforeLoad: () {});
-  await hiveInit.setUp();
-  await initWaiters();
-  initListeners();
-  //await res.settings.save(
-  //    Setting(name: SettingName.Local_Path, value: await Storage().localPath));
-}
-
 Future<void> main() async {
   // Catch errors without crashing the app:
   runZonedGuarded<Future<void>>(() async {
@@ -58,7 +48,6 @@ Future<void> main() async {
       badge: true,
       sound: false,
     );
-    //setup();
     runApp(RavenMobileApp());
   }, (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack));
 }

@@ -18,21 +18,6 @@ class HistoryService {
     void updateCounts(LeaderWallet leader) {
       leader.removeUnused(address.hdIndex, address.exposure);
       leader.updateHighestUsedIndex(address.hdIndex, address.exposure);
-      //if (address.exposure == NodeExposure.External) {
-      //  if (address.hdIndex > leader.highestUsedExternalIndex) {
-      //    res.wallets.save(LeaderWallet.from(
-      //      leader,
-      //      highestUsedExternalIndex: address.hdIndex,
-      //    ));
-      //  }
-      //} else if (address.exposure == NodeExposure.Internal) {
-      //  if (address.hdIndex > leader.highestUsedInternalIndex) {
-      //    res.wallets.save(LeaderWallet.from(
-      //      leader,
-      //      highestUsedInternalIndex: address.hdIndex,
-      //    ));
-      //  }
-      //}
     }
 
     void updateCache(LeaderWallet leader) {
@@ -69,7 +54,6 @@ class HistoryService {
       return false;
     }
     var allDone = true;
-    print('inspecting Gaps!');
     for (var leader in res.wallets.leaders) {
       for (var exposure in [NodeExposure.Internal, NodeExposure.External]) {
         if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
@@ -86,6 +70,8 @@ class HistoryService {
       await services.balance.recalculateAllBalances();
       services.download.asset.allAdminsSubs();
       // remove vouts pointing to addresses we don't own?
+    } else {
+      print('NOT ALL DONE');
     }
     return allDone;
   }
@@ -175,7 +161,9 @@ class HistoryService {
         .getOne(symbol, SecurityType.RavenAsset);
     var asset = res.assets.bySymbol.getOne(symbol);
 
-    if (security == null || vout.scriptPubKey.type == 'reissue_asset') {
+    if (security == null ||
+        asset == null ||
+        vout.scriptPubKey.type == 'reissue_asset') {
       if (['transfer_asset', 'reissue_asset']
           .contains(vout.scriptPubKey.type)) {
         value = utils.amountToSat(vout.scriptPubKey.amount);
@@ -199,12 +187,13 @@ class HistoryService {
           transactionId: tx.txid,
           position: vout.n,
         );
-        streams.asset.added.add(asset);
         security = Security(
           symbol: symbol,
           securityType: SecurityType.RavenAsset,
         );
+        await res.assets.save(asset);
         await res.securities.save(security);
+        streams.asset.added.add(asset);
       }
     }
     return Tuple3(value, security ?? res.securities.RVN, asset);
@@ -265,6 +254,10 @@ class HistoryService {
     }
     for (var vout in tx.vout) {
       if (vout.scriptPubKey.type == 'nullassetdata') continue;
+      if (tx.txid ==
+          '7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c') {
+        print('tx');
+      }
       var vs = await handleAssetData(client, tx, vout);
       newVouts.add(Vout(
         transactionId: tx.txid,

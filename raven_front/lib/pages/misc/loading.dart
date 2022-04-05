@@ -37,8 +37,8 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
       await setupRealWallet('2');
       await res.settings.setCurrentWalletId(res.wallets.first.id);
       await res.settings.savePreferredWalletId(res.wallets.first.id);
-      setupRealWallet('1');
-      setupRealWallet(null);
+      //setupRealWallet('1');
+      //setupRealWallet(null);
     }
 
     // for testing

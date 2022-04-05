@@ -58,7 +58,7 @@ class _FrontCurveState extends State<FrontCurve> {
         widget.child ?? Container(),
         IgnorePointer(
             child: Container(
-                height: 12,
+                height: 8,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: widget.frontLayerBorderRadius,

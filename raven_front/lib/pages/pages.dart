@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:raven_front/pages/account/home.dart';
-import 'package:raven_front/pages/account/transactions.dart';
+import 'package:raven_front/pages/home/home.dart';
+import 'package:raven_front/pages/home/transactions.dart';
 import 'package:raven_front/pages/manage/assets.dart';
 import 'package:raven_front/pages/create/nft.dart';
 import 'package:raven_front/pages/create/main.dart';

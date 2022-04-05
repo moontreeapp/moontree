@@ -22,6 +22,7 @@ class HistoryWaiter extends Waiter {
               pullIf(keyedTransactions);
             } else {
               remember(keyedTransactions);
+              deriveIf(keyedTransactions);
             }
           }
         },
@@ -38,17 +39,34 @@ class HistoryWaiter extends Waiter {
             keyedTransactions.transactionIds.toList();
   }
 
+  Future<void> deriveIf(WalletExposureTransactions keyedTransactions) async {
+    var leader = keyedTransactions.address.wallet!;
+    var exposure = keyedTransactions.address.exposure;
+    if (leader is LeaderWallet) {
+      await derive(leader, exposure);
+    }
+  }
+
+  Future<void> derive(LeaderWallet leader, NodeExposure exposure) async {
+    if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
+      streams.wallet.deriveAddress
+          .add(DeriveLeaderAddress(leader: leader, exposure: exposure));
+    }
+  }
+
   Future<void> pullIf(WalletExposureTransactions keyedTransactions) async {
     var addressCount = keyedTransactions.address.wallet
             ?.getHighestSavedIndex(keyedTransactions.address.exposure) ??
         0;
     if ((addressesByWalletExposureKeys[keyedTransactions.key]?.length ?? 0) >=
-        (addressCount)) {
+        addressCount) {
       await pull(keyedTransactions);
     }
   }
 
-  Future<void> pull(WalletExposureTransactions keyedTransactions) async {
+  Future<void> pull(
+    WalletExposureTransactions keyedTransactions,
+  ) async {
     var txs = txsByWalletExposureKeys.containsKey(keyedTransactions.key)
         ? txsByWalletExposureKeys[keyedTransactions.key]
         : null;
@@ -61,21 +79,36 @@ class HistoryWaiter extends Waiter {
     }
   }
 
+  Future<void> manualPull({
+    required String keyedTransactionsKey,
+    required String walletId,
+    required NodeExposure exposure,
+  }) async {
+    var txs = txsByWalletExposureKeys.containsKey(keyedTransactionsKey)
+        ? txsByWalletExposureKeys[keyedTransactionsKey]
+        : null;
+    if (txs != null) {
+      txsByWalletExposureKeys[keyedTransactionsKey] = [];
+      await getTransactionsAndCalculateBalance(walletId, exposure, txs);
+    }
+  }
+
   // if we could get a batch of transactions that'd be better...
   Future<void> getTransactionsAndCalculateBalance(
     String walletId,
     NodeExposure exposure,
     Iterable<String> transactionIds,
   ) async {
+    print('txsbywalletexposure: ${[
+      for (var t in txsByWalletExposureKeys.keys)
+        txsByWalletExposureKeys[t]?.length
+    ]}');
     for (var transactionId in transactionIds) {
-      await getTransaction(transactionId);
+      await services.history.getTransaction(transactionId);
     }
     // calculate balances (for that wallet exposure)
     //var done =
     //    await services.history.produceAddressOrBalanceFor(walletId, exposure);
     await services.history.produceAddressOrBalance();
   }
-
-  Future getTransaction(String transaction) async =>
-      await services.history.getTransaction(transaction);
 }
