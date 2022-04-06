@@ -24,8 +24,13 @@ final Stream<Change<Wallet>> singleChanges$ =
 class DeriveLeaderAddress {
   final LeaderWallet leader;
   final NodeExposure? exposure;
+  final bool justOne;
 
-  DeriveLeaderAddress({required this.leader, this.exposure});
+  DeriveLeaderAddress({
+    required this.leader,
+    this.exposure,
+    this.justOne = false,
+  });
 }
 
 class WalletExposureTransactions {

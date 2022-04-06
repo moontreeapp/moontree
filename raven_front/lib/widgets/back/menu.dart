@@ -1,5 +1,4 @@
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:raven_electrum/raven_electrum.dart';
 
 import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
@@ -201,16 +200,22 @@ class _NavMenuState extends State<NavMenu> {
                 ////    walletId:
                 ////        '03d992f22d9e178a4de02e99ffffe885bd5135e65d183200da3b566502eca79342',
                 ////    exposure: NodeExposure.Internal);
-                ////print(
-                ////    Current.wallet.getHighestSavedIndex(NodeExposure.Internal));
-                ////print(
-                ////    Current.wallet.getHighestSavedIndex(NodeExposure.External));
-                ////print(res.addresses.byWallet.getAll(Current.walletId).length);
+                print(
+                    Current.wallet.getHighestSavedIndex(NodeExposure.Internal));
+                print(
+                    Current.wallet.getHighestSavedIndex(NodeExposure.External));
+                print(res.addresses.byWallet.getAll(Current.walletId).length);
+                print(
+                    Current.wallet.getHighestUsedIndex(NodeExposure.Internal));
+                print(
+                    Current.wallet.getHighestUsedIndex(NodeExposure.External));
+                print(services.wallet.leader.gapSatisfied(
+                    Current.wallet as LeaderWallet, NodeExposure.Internal));
                 //print(res.transactions.primaryIndex.getOne(
                 //    '7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c'));
-                for (var x in res.vouts.byTransaction.getAll(
-                    '7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c'))
-                  print(x);
+                //for (var x in res.vouts.byTransaction.getAll(
+                //    '7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c'))
+                //  print(x);
               }),
         ],
       )

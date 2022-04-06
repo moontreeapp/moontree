@@ -34,6 +34,10 @@ class HistoryService {
         updateCounts(address.wallet as LeaderWallet);
         print('${address.address} histories found!');
         sendToStream(histories.map((history) => history.txHash));
+        streams.wallet.deriveAddress.add(DeriveLeaderAddress(
+            leader: address.wallet as LeaderWallet,
+            exposure: address.exposure,
+            justOne: true));
       } else {
         sendToStream(histories.map((history) => history.txHash));
         sendToStream([]);
@@ -160,7 +164,6 @@ class HistoryService {
     var security = res.securities.bySymbolSecurityType
         .getOne(symbol, SecurityType.RavenAsset);
     var asset = res.assets.bySymbol.getOne(symbol);
-
     if (security == null ||
         asset == null ||
         vout.scriptPubKey.type == 'reissue_asset') {
@@ -215,9 +218,11 @@ class HistoryService {
                 .contains(transactionId))) {
       print('downloading: $transactionId');
       var s = Stopwatch()..start();
-      await saveTransaction(await client.getTransaction(transactionId), client,
-          saveVin: saveVin);
+      var tx = await client.getTransaction(transactionId);
       print('download time: ${s.elapsed}');
+      s = Stopwatch()..start();
+      await saveTransaction(tx, client, saveVin: saveVin);
+      print('saving   time: ${s.elapsed}');
     } else {
       print('skipping: $transactionId');
     }
@@ -254,10 +259,10 @@ class HistoryService {
     }
     for (var vout in tx.vout) {
       if (vout.scriptPubKey.type == 'nullassetdata') continue;
-      if (tx.txid ==
-          '7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c') {
-        print('tx');
-      }
+      //if (tx.txid ==
+      //    '7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c') {
+      //  print('tx');
+      //}
       var vs = await handleAssetData(client, tx, vout);
       newVouts.add(Vout(
         transactionId: tx.txid,

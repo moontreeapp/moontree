@@ -2,7 +2,7 @@
 /// if you want the balance of a subwallet (address) then get it from Histories.
 
 // ignore_for_file: omit_local_variable_types
-
+import 'dart:math';
 import 'package:raven_back/services/wallet_security_pair.dart';
 import 'package:raven_back/raven_back.dart';
 
@@ -112,6 +112,23 @@ class BalanceService {
       remaining -= unspent.securityValue(security: security);
     }
 
+    return collection;
+  }
+
+  List<Vout> collectUTXOsNew({required int amount, Security? security}) {
+    services.download.unspents.assertSufficientFunds(amount, security);
+    var gathered = 0;
+    var unspents = services.download.unspents.getUnspents(security);
+    var collection = <Vout>[];
+    final _random = Random();
+    while (amount - gathered > 0) {
+      var randomIndex = _random.nextInt(unspents.length);
+      var unspent = unspents[randomIndex];
+      unspents.removeAt(randomIndex);
+      gathered += unspent.value;
+      collection.add(res.vouts.byTransactionPosition
+          .getOne(unspent.txHash, unspent.txPos)!);
+    }
     return collection;
   }
 

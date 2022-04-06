@@ -15,14 +15,14 @@ class HistoryWaiter extends Waiter {
   void init() => listen(
         'streams.wallet.transactions',
         streams.wallet.transactions,
-        (WalletExposureTransactions? keyedTransactions) {
+        (WalletExposureTransactions? keyedTransactions) async {
           if (keyedTransactions != null) {
             if (keyedTransactions.transactionIds.isEmpty) {
               remember(keyedTransactions);
-              pullIf(keyedTransactions);
+              await deriveOrPull(keyedTransactions);
             } else {
               remember(keyedTransactions);
-              deriveIf(keyedTransactions);
+              //deriveIf(keyedTransactions);
             }
           }
         },
@@ -39,19 +39,25 @@ class HistoryWaiter extends Waiter {
             keyedTransactions.transactionIds.toList();
   }
 
-  Future<void> deriveIf(WalletExposureTransactions keyedTransactions) async {
-    var leader = keyedTransactions.address.wallet!;
-    var exposure = keyedTransactions.address.exposure;
-    if (leader is LeaderWallet) {
-      await derive(leader, exposure);
+  Future<void> deriveOrPull(
+      WalletExposureTransactions keyedTransactions) async {
+    if (!await deriveIf(keyedTransactions)) {
+      await pullIf(keyedTransactions);
     }
   }
 
-  Future<void> derive(LeaderWallet leader, NodeExposure exposure) async {
-    if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
-      streams.wallet.deriveAddress
-          .add(DeriveLeaderAddress(leader: leader, exposure: exposure));
+  Future<bool> deriveIf(WalletExposureTransactions keyedTransactions) async {
+    var leader = keyedTransactions.address.wallet!;
+    var exposure = keyedTransactions.address.exposure;
+    if (leader is LeaderWallet) {
+      if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
+        streams.wallet.deriveAddress
+            .add(DeriveLeaderAddress(leader: leader, exposure: exposure));
+        return true;
+      }
+      print('GAP SATISFIED');
     }
+    return false;
   }
 
   Future<void> pullIf(WalletExposureTransactions keyedTransactions) async {
@@ -60,11 +66,14 @@ class HistoryWaiter extends Waiter {
         0;
     if ((addressesByWalletExposureKeys[keyedTransactions.key]?.length ?? 0) >=
         addressCount) {
-      await pull(keyedTransactions);
+      print('PULLING!');
+      await services.download.unspents.pullUnspents(
+          addressesByWalletExposureKeys[keyedTransactions.key] ?? []);
+      await pullTransactions(keyedTransactions);
     }
   }
 
-  Future<void> pull(
+  Future<void> pullTransactions(
     WalletExposureTransactions keyedTransactions,
   ) async {
     var txs = txsByWalletExposureKeys.containsKey(keyedTransactions.key)
@@ -104,11 +113,11 @@ class HistoryWaiter extends Waiter {
         txsByWalletExposureKeys[t]?.length
     ]}');
     for (var transactionId in transactionIds) {
-      await services.history.getTransaction(transactionId);
+      await services.download.history.getTransaction(transactionId);
     }
     // calculate balances (for that wallet exposure)
     //var done =
-    //    await services.history.produceAddressOrBalanceFor(walletId, exposure);
-    await services.history.produceAddressOrBalance();
+    //    await services.download.history.produceAddressOrBalanceFor(walletId, exposure);
+    await services.download.history.produceAddressOrBalance();
   }
 }

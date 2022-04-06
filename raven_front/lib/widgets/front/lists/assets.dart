@@ -49,7 +49,7 @@ class _AssetList extends State<AssetList> {
   }
 
   Future refresh() async {
-    await services.history.produceAddressOrBalance();
+    await services.download.history.produceAddressOrBalance();
     setState(() {});
   }
 

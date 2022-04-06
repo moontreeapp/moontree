@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
@@ -9,12 +8,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/pages/pages.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/widgets.dart';
-import 'package:raven_front/listeners/listeners.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();

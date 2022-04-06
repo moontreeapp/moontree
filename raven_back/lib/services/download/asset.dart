@@ -65,6 +65,7 @@ class AssetService {
         symbol: meta.symbol,
         securityType: SecurityType.RavenAsset,
       );
+      await res.assets.save(asset);
       await res.securities.save(security);
       return AssetRetrieved(asset, security, value);
     }

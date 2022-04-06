@@ -39,7 +39,10 @@ class LeaderWalletService {
   }
 
   HDWallet getSubWallet(
-          LeaderWallet wallet, int hdIndex, NodeExposure exposure) =>
+    LeaderWallet wallet,
+    int hdIndex,
+    NodeExposure exposure,
+  ) =>
       getSeedWallet(wallet).subwallet(hdIndex, exposure: exposure);
 
   HDWallet getSubWalletFromAddress(Address address) =>
@@ -130,10 +133,12 @@ class LeaderWalletService {
   Set<Address> deriveNextAddresses(
     LeaderWallet leaderWallet,
     CipherBase cipher,
-    NodeExposure exposure,
-  ) {
+    NodeExposure exposure, {
+    bool justOne = false,
+  }) {
     // get current gap from cache.
-    var generate = requiredGap - leaderWallet.currentGap(exposure);
+    var generate =
+        justOne ? 1 : requiredGap - leaderWallet.currentGap(exposure);
     var target = 0;
     target = leaderWallet.getHighestSavedIndex(exposure) + generate;
     print('Starting: ${target - generate}');
@@ -157,6 +162,7 @@ class LeaderWalletService {
   void deriveMoreAddresses(
     LeaderWallet wallet, {
     List<NodeExposure>? exposures,
+    bool justOne = false,
   }) {
     void updateCacheCounts(int internalCount, int externalCount) {
       if (internalCount > 0 || externalCount > 0) {
@@ -177,6 +183,7 @@ class LeaderWalletService {
         wallet,
         res.ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
         exposure,
+        justOne: justOne,
       );
       newAddresses.addAll(derivedAddresses);
       if (exposure == NodeExposure.Internal) {

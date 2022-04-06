@@ -93,7 +93,6 @@ class SubscribeService {
       return false;
     }
     for (var address in res.addresses) {
-      print('subscribing');
       onlySubscribe(client, address);
     }
     return true;
@@ -101,7 +100,6 @@ class SubscribeService {
 
   bool to(Address address) {
     var client = streams.client.client.value;
-    print('subscribe.to client==null: ${client == null}');
     if (client == null) {
       return false;
     }
@@ -113,7 +111,7 @@ class SubscribeService {
     if (!subscriptionHandles.keys.contains(address.id)) {
       subscriptionHandles[address.id] =
           client.subscribeScripthash(address.id).listen((String? status) {
-        services.history.getHistories(address);
+        services.download.history.getHistories(address);
       });
     }
   }
