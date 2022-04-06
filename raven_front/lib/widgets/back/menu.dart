@@ -1,4 +1,5 @@
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:raven_back/streams/wallet.dart';
 
 import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
@@ -216,6 +217,19 @@ class _NavMenuState extends State<NavMenu> {
                 //for (var x in res.vouts.byTransaction.getAll(
                 //    '7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c'))
                 //  print(x);
+                print([
+                  for (var t in waiters.history.txsByWalletExposureKeys.keys)
+                    waiters.history.txsByWalletExposureKeys[t]?.length
+                ]);
+                print([
+                  for (var t
+                      in waiters.history.addressesByWalletExposureKeys.keys)
+                    waiters.history.addressesByWalletExposureKeys[t]?.length
+                ]);
+                var addresses = res.addresses.byWallet.getAll(Current.walletId);
+                print(addresses.map((e) => e.exposure));
+                waiters.history.pullIf(WalletExposureTransactions(
+                    address: addresses[1], transactionIds: []));
               }),
         ],
       )

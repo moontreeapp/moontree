@@ -108,16 +108,24 @@ class HistoryWaiter extends Waiter {
     NodeExposure exposure,
     Iterable<String> transactionIds,
   ) async {
-    print('txsbywalletexposure: ${[
-      for (var t in txsByWalletExposureKeys.keys)
-        txsByWalletExposureKeys[t]?.length
-    ]}');
     for (var transactionId in transactionIds) {
       await services.download.history.getTransaction(transactionId);
     }
     // calculate balances (for that wallet exposure)
     //var done =
     //    await services.download.history.produceAddressOrBalanceFor(walletId, exposure);
+
+    /// alternative to above and alternative to just trying for everything everytime...
+    /// if everything looks empty then we should try to calculate balances, and or derive again for all wallets.
+    /// if we can reliably get to [0,0...] then run balance, we can probably avoid the
+    /// current problem we're seeing: balances are calculated before all transactions have been
+    /// downloaded resulting in the wrong balance displaying first then being replaced by the correct one.
+    //if ([
+    //  for (var t in txsByWalletExposureKeys.keys)
+    //    txsByWalletExposureKeys[t]?.length
+    //].every((e) => e == 0)) {
+    // above is not working as desired.
     await services.download.history.produceAddressOrBalance();
+    //}
   }
 }
