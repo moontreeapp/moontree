@@ -166,11 +166,14 @@ class LeaderWalletService {
   }) {
     void updateCacheCounts(int internalCount, int externalCount) {
       if (internalCount > 0 || externalCount > 0) {
-        res.wallets.save(LeaderWallet.from(wallet,
-            highestSavedInternalIndex:
-                wallet.highestSavedInternalIndex + internalCount,
-            highestSavedExternalIndex:
-                wallet.highestSavedExternalIndex + externalCount));
+        res.wallets.save(LeaderWallet.from(
+          wallet,
+          highestSavedInternalIndex:
+              wallet.highestSavedInternalIndex + internalCount,
+          highestSavedExternalIndex:
+              wallet.highestSavedExternalIndex + externalCount,
+          seed: wallet.seed,
+        ));
       }
     }
 

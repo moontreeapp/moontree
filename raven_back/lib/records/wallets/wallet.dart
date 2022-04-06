@@ -80,6 +80,7 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
           res.wallets.save(LeaderWallet.from(
             this as LeaderWallet,
             highestUsedInternalIndex: value,
+            seed: (this as LeaderWallet).seed,
           ));
         }
       } else {
@@ -87,6 +88,7 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
           res.wallets.save(LeaderWallet.from(
             this as LeaderWallet,
             highestUsedExternalIndex: value,
+            seed: (this as LeaderWallet).seed,
           ));
         }
       }

@@ -31,6 +31,7 @@ class LeaderWallet extends Wallet {
     int highestSavedInternalIndex = 0,
     List<int>? unusedInternalIndices,
     List<int>? unusedExternalIndices,
+    Uint8List? seed,
   }) : super(
           id: id,
           cipherUpdate: cipherUpdate,
@@ -42,6 +43,7 @@ class LeaderWallet extends Wallet {
         ) {
     this.unusedInternalIndices = unusedInternalIndices ?? [];
     this.unusedExternalIndices = unusedExternalIndices ?? [];
+    _seed = seed;
   }
 
   Uint8List? _seed;
@@ -62,6 +64,7 @@ class LeaderWallet extends Wallet {
     int? highestSavedInternalIndex,
     List<int>? unusedInternalIndices,
     List<int>? unusedExternalIndices,
+    Uint8List? seed,
   }) =>
       LeaderWallet(
         id: id ?? existing.id,
@@ -80,6 +83,7 @@ class LeaderWallet extends Wallet {
             unusedInternalIndices ?? existing.unusedInternalIndices,
         unusedExternalIndices:
             unusedExternalIndices ?? existing.unusedExternalIndices,
+        seed: seed ?? existing.seed,
       );
 
   @override
