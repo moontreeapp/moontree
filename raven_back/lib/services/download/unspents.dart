@@ -9,11 +9,19 @@ import 'package:raven_back/raven_back.dart';
 class UnspentService {
   Map<Security, List<ScripthashUnspent>> unspentsBySecurity = {};
 
-  Future<void> pullUnspents(
-    List<String> scripthashes, {
+  Security defaultSecurity(Security? security) =>
+      security ?? res.securities.RVN;
+
+  Iterable<String> defaultScripthashes(Iterable<String>? scripthashes) =>
+      scripthashes ??
+      res.wallets.currentWallet.addresses.map((e) => e.scripthash).toList();
+
+  Future<void> pullUnspents({
+    Iterable<String>? scripthashes,
     Security? security,
   }) async {
     security = defaultSecurity(security);
+    scripthashes = defaultScripthashes(scripthashes);
     print('Downloading Unspents');
     var s = Stopwatch()..start();
     for (var scripthash in scripthashes) {
@@ -29,10 +37,11 @@ class UnspentService {
         }
       }
     }
-    print('Unspents downloaded: ${s.elapsed} $unspentsBySecurity');
+    print(
+        'Unspents downloaded: ${scripthashes.length} ${s.elapsed} ${total()}');
   }
 
-  int total(Security? security) =>
+  int total([Security? security]) =>
       unspentsBySecurity[defaultSecurity(security)]!.fold(
           0,
           (int previousValue, ScripthashUnspent element) =>
@@ -43,9 +52,6 @@ class UnspentService {
       throw InsufficientFunds();
     }
   }
-
-  Security defaultSecurity(Security? security) =>
-      security ?? res.securities.RVN;
 
   List<ScripthashUnspent> getUnspents(Security? security) =>
       unspentsBySecurity[defaultSecurity(security)] ?? <ScripthashUnspent>[];

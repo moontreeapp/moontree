@@ -67,7 +67,8 @@ class HistoryWaiter extends Waiter {
     if ((addressesByWalletExposureKeys[keyedTransactions.key]?.length ?? 0) >=
         addressCount) {
       await services.download.unspents.pullUnspents(
-          addressesByWalletExposureKeys[keyedTransactions.key] ?? []);
+          scripthashes:
+              addressesByWalletExposureKeys[keyedTransactions.key] ?? []);
       await pullTransactions(keyedTransactions);
     }
   }
