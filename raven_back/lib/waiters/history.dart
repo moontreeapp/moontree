@@ -11,6 +11,7 @@ import 'waiter.dart';
 class HistoryWaiter extends Waiter {
   Map<String, List<String>> txsByWalletExposureKeys = {};
   Map<String, List<String>> addressesByWalletExposureKeys = {};
+  Set<String> pulledWalletExposureKeys = {};
 
   void init() => listen(
         'streams.wallet.transactions',
@@ -66,6 +67,7 @@ class HistoryWaiter extends Waiter {
         0;
     if ((addressesByWalletExposureKeys[keyedTransactions.key]?.length ?? 0) >=
         addressCount) {
+      pulledWalletExposureKeys.add(keyedTransactions.key);
       await services.download.unspents.pullUnspents(
           scripthashes:
               addressesByWalletExposureKeys[keyedTransactions.key] ?? []);
@@ -125,7 +127,28 @@ class HistoryWaiter extends Waiter {
     //    txsByWalletExposureKeys[t]?.length
     //].every((e) => e == 0)) {
     // above is not working as desired.
+    /// to avoid downloading the actual transactions until all the unspents have been downloaded:
+    /// if each wallet-exposure has pulled the history for all of it's addresses...
+    //for (var leader in res.wallets.leaders) {
+    //  for (var exposure in [NodeExposure.Internal, NodeExposure.External]) {
+    //    if (!services.wallet.leader.gapSatisfied(leader, exposure) ||
+    //        !((addressesByWalletExposureKeys[
+    //                        WalletExposureTransactions.produceKey(
+    //                            leader.id, exposure)]
+    //                    ?.length ??
+    //                0) >=
+    //            leader.getHighestSavedIndex(exposure))) {
+    //      return;
+    //    }
+    //  }
+    //}
+    /// instead of looking it up each time, just reference a cache:
+    //print(
+    //    'pulledWalletExposureKeys.length ${pulledWalletExposureKeys.length} addressesByWalletExposureKeys.keys.length ${addressesByWalletExposureKeys.keys.length}');
+    //if (pulledWalletExposureKeys.length ==
+    //    addressesByWalletExposureKeys.keys.length) {
     await services.download.history.produceAddressOrBalance();
+    //}
     //}
   }
 }
