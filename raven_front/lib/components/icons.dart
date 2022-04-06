@@ -18,8 +18,10 @@ class IconComponents {
   Widget income(BuildContext context) =>
       Image.asset('assets/icons/receive/receive_green.png');
 
-  Widget out(BuildContext context) =>
-      Image.asset('assets/icons/send/send_red.png');
+  Widget out(BuildContext context, {Color? color}) => Image.asset(
+        'assets/icons/send/send_red.png',
+        color: color,
+      );
 
   Icon importDisabled(BuildContext context) =>
       Icon(Icons.vpn_key_rounded, color: Theme.of(context).disabledColor);

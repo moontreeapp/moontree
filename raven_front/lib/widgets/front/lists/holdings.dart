@@ -7,6 +7,7 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/spend.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
+import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class HoldingList extends StatefulWidget {
@@ -100,13 +101,13 @@ class _HoldingList extends State<HoldingList> {
   Widget build(BuildContext context) {
     holdings = utils.assetHoldings(widget.holdings ?? Current.holdings);
     return holdings.isEmpty && res.vouts.data.isEmpty // <-- on front tab...
-        ? Scroller(
-            controller: widget.scrollController,
-            child: components.empty.holdings(context))
+        ? components.empty.gettingAssetsPlaceholder(context,
+            scrollController: widget.scrollController) //Scroller(
+        //  controller: widget.scrollController,
+        //  child: components.empty.holdings(context))
         : holdings.isEmpty
-            ? Scroller(
-                controller: widget.scrollController,
-                child: Container(/* awaiting transactions placeholder... */))
+            ? components.empty.gettingAssetsPlaceholder(context,
+                scrollController: widget.scrollController)
             : //RefreshIndicator( child:
             _holdingsView(context);
     //  onRefresh: () => refresh(),
