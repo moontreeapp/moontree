@@ -23,10 +23,10 @@ environment:
 dependencies:
   cupertino_icons: ^1.0.2
   date_format: ^2.0.4
-#   firebase_core: ^1.10.0
-#   firebase_crashlytics:
-#     ^2.4.1
-#   firebase_messaging: ^11.2.0
+  # firebase_core: ^1.10.0
+  # firebase_crashlytics:
+  #   ^2.4.1
+  # firebase_messaging: ^11.2.0
   flutter:
     sdk: flutter
   flutter_dotenv: ^5.0.0
