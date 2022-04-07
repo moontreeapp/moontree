@@ -71,9 +71,11 @@ class _HomePageState extends State<HomePage>
                           ? HoldingList(scrollController: scrollController)
                           : widget.appContext == AppContext.manage
                               ? AssetList(scrollController: scrollController)
-                              : Scroller(
+                              : ListView(
                                   controller: scrollController,
-                                  child: Text('swap\n\n\n\n\n\n\n\n\n\n\n\n')),
+                                  children: [
+                                      Text('swap\n\n\n\n\n\n\n\n\n\n\n\n')
+                                    ]),
                       NavBar()
                     ],
                   ));
