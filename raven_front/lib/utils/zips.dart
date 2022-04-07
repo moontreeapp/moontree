@@ -6,4 +6,4 @@ List zipLists(List lists) => [
         [for (var list in lists) list[i]]
     ];
 
-List<int> range(int end) => List<int>.generate(end, (i) => i + 1);
+List<int> range(int end) => List<int>.generate(end, (i) => i);

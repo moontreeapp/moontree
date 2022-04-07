@@ -12,6 +12,7 @@ class HistoryWaiter extends Waiter {
   Map<String, List<String>> txsByWalletExposureKeys = {};
   Map<String, List<String>> addressesByWalletExposureKeys = {};
   Set<String> pulledWalletExposureKeys = {};
+  List<Future<Null>> futures = [];
 
   void init() => listen(
         'streams.wallet.transactions',
@@ -110,9 +111,16 @@ class HistoryWaiter extends Waiter {
     NodeExposure exposure,
     Iterable<String> transactionIds,
   ) async {
-    for (var transactionId in transactionIds) {
-      await services.download.history.getTransaction(transactionId);
+    var future = services.download.history.getTransactions(transactionIds);
+    if (future != null) {
+      futures.add(future);
     }
+
+    // List<Tx> results = await Future.wait<Tx>(futures);
+
+    //for (var transactionId in transactionIds) {
+    //  await services.download.history.getTransaction(transactionId);
+    //}
     // calculate balances (for that wallet exposure)
     //var done =
     //    await services.download.history.produceAddressOrBalanceFor(walletId, exposure);
@@ -147,7 +155,7 @@ class HistoryWaiter extends Waiter {
     //    'pulledWalletExposureKeys.length ${pulledWalletExposureKeys.length} addressesByWalletExposureKeys.keys.length ${addressesByWalletExposureKeys.keys.length}');
     //if (pulledWalletExposureKeys.length ==
     //    addressesByWalletExposureKeys.keys.length) {
-    await services.download.history.produceAddressOrBalance();
+    await services.download.history.produceAddressOrBalance(futures);
     //}
     //}
   }

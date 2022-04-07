@@ -5,7 +5,7 @@ import 'package:raven_back/streams/wallet.dart';
 import 'package:raven_back/raven_back.dart';
 
 class HistoryService {
-  List<String> downloaded = [];
+  Set<String> downloaded = {};
 
   Future<bool> getHistories(Address address) async {
     void sendToStream(Iterable<String> txs) {
@@ -28,6 +28,9 @@ class HistoryService {
     if (client == null) {
       return false;
     }
+    // TODO: edge case to consider...
+    // if a history is too long, don't error
+    // will have to just not show all historic transactions...
     var histories = await client.getHistory(address.id);
     if (histories.isNotEmpty) {
       if (address.wallet is LeaderWallet) {
@@ -55,7 +58,7 @@ class HistoryService {
     return true;
   }
 
-  Future<bool> produceAddressOrBalance() async {
+  Future<bool> produceAddressOrBalance(List<Future<Null>> futures) async {
     var client = streams.client.client.value;
     if (client == null) {
       return false;
@@ -72,6 +75,8 @@ class HistoryService {
       }
     }
     if (allDone) {
+      await Future.wait(futures);
+      futures.clear();
       print('ALL DONE!');
       await saveDanglingTransactions(client);
       await services.balance.recalculateAllBalances();
@@ -120,20 +125,15 @@ class HistoryService {
     }
   }
 
+  /// don't need this for creating UTXO set anymore but...
+  /// still need this for getting correct balances of some transactions...
   /// one more step - get all vins that have no corresponding vout (in the db)
   /// and get the vouts for them
   Future saveDanglingTransactions(RavenElectrumClient client) async {
     var txs =
         (res.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet());
     print('GETTING DANGLING TRANSACTIONS: $txs');
-    for (var txHash in txs) {
-      if (!downloaded.contains(txHash)) {
-        downloaded.add(txHash);
-        await getTransaction(txHash, saveVin: false);
-      } else {
-        print('skiped $txHash');
-      }
-    }
+    await getTransactions(txs, saveVin: false);
   }
 
   Future saveDanglingTransactionsFor(
@@ -205,31 +205,59 @@ class HistoryService {
     return Tuple3(value, security ?? res.securities.RVN, asset);
   }
 
-  Future<bool> getTransaction(
+  Future<Null>? getTransaction(
     String transactionId, {
+    bool saveVin = true,
+  }) {
+    var client = streams.client.client.value;
+    if (client == null) {
+      return null;
+    }
+    // not already downloaded?
+    if (!downloaded.contains(transactionId)) {
+      downloaded.add(transactionId);
+      print('downloading: $transactionId');
+      var s = Stopwatch()..start();
+      return client.getTransaction(transactionId).then((tx) async {
+        print('download time: ${s.elapsed}');
+        s = Stopwatch()..start();
+        await saveTransaction(tx, client, saveVin: saveVin);
+        print('saving   time: ${s.elapsed}');
+      });
+    } else {
+      print('skipping: $transactionId');
+    }
+    return null;
+  }
+
+  Future<Null>? getTransactions(
+    Iterable<String> transactionIds, {
     bool saveVin = true,
   }) async {
     var client = streams.client.client.value;
     if (client == null) {
-      return false;
+      return null;
     }
-    // not already downloaded?
-    if (!downloaded.contains(transactionId) &&
-        (res.transactions.primaryIndex.getOne(transactionId) == null ||
-            res.transactions.mempool
-                .map((t) => t.id)
-                .contains(transactionId))) {
-      print('downloading: $transactionId');
-      var s = Stopwatch()..start();
-      var tx = await client.getTransaction(transactionId);
-      print('download time: ${s.elapsed}');
-      s = Stopwatch()..start();
-      await saveTransaction(tx, client, saveVin: saveVin);
-      print('saving   time: ${s.elapsed}');
-    } else {
-      print('skipping: $transactionId');
-    }
-    return true;
+    // filter out already downloaded
+    print('b4 transactionIds: $transactionIds');
+    transactionIds = transactionIds
+        .where((transactionId) => !downloaded.contains(transactionId))
+        .toList();
+    print('after transactionIds: $transactionIds, downloaded: $downloaded');
+    downloaded.addAll(transactionIds);
+    print('downloading: ${transactionIds.length}');
+    return client.getTransactions(transactionIds).then((txs) async {
+      print('downloaded: ${txs.length}');
+      await saveTransactions(txs, client, saveVin: saveVin);
+    }).catchError((e) async {
+      print('error caught $e');
+      var txs = <Future<Tx>>[];
+      for (var transactionId in transactionIds) {
+        txs.add(client.getTransaction(transactionId));
+      }
+      var results = await Future.wait<Tx>(txs);
+      await saveTransactions(results, client, saveVin: saveVin);
+    });
   }
 
   Future saveTransaction(
@@ -241,7 +269,7 @@ class HistoryService {
     var newVins = <Vin>{};
     var newVouts = <Vout>{};
     var newTxs = <Transaction>{};
-    //print('parsing/saving: ${tx.txid}');
+    print('parsing/saving: ${tx.txid}');
     if (saveVin) {
       for (var vin in tx.vin) {
         if (vin.txid != null && vin.vout != null) {

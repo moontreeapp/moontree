@@ -22,9 +22,7 @@ class LeaderWalletService {
     int hdIndex, {
     exposure = NodeExposure.External,
   }) {
-    var s = Stopwatch()..start();
     var subwallet = getSubWallet(wallet, hdIndex, exposure);
-    print('derive Address getSubWallet: ${s.elapsed}');
     return Address(
         id: subwallet.scripthash,
         address: subwallet.address!,
@@ -130,12 +128,12 @@ class LeaderWalletService {
 
   /// this function is used to determine if we need to derive new addresses
   /// based upon the idea that we want to retain a gap of empty histories
-  Set<Address> deriveNextAddresses(
+  Future<Set<Address>> deriveNextAddresses(
     LeaderWallet leaderWallet,
     CipherBase cipher,
     NodeExposure exposure, {
     bool justOne = false,
-  }) {
+  }) async {
     // get current gap from cache.
     var generate =
         justOne ? 1 : requiredGap - leaderWallet.currentGap(exposure);
@@ -144,10 +142,14 @@ class LeaderWalletService {
     print('Starting: ${target - generate}');
     print('Derive target: $target');
     if (generate > 0) {
-      return {
-        for (var i = target - generate; i < target; i++)
-          deriveAddress(leaderWallet, i, exposure: exposure)
-      };
+      var futures = <Future<Address>>[
+        for (var i = target - generate + 1; i <= target; i++)
+          () async {
+            return deriveAddress(leaderWallet, i, exposure: exposure);
+          }()
+      ];
+
+      return (await Future.wait(futures)).toSet();
     }
     return {};
   }
@@ -159,11 +161,11 @@ class LeaderWalletService {
   /// actually saved. the reason for this is that if we update the count to
   /// be higher than the number of addresses actually saved, we'll enter an
   /// infinite loop.
-  void deriveMoreAddresses(
+  Future<void> deriveMoreAddresses(
     LeaderWallet wallet, {
     List<NodeExposure>? exposures,
     bool justOne = false,
-  }) {
+  }) async {
     void updateCacheCounts(int internalCount, int externalCount) {
       if (internalCount > 0 || externalCount > 0) {
         res.wallets.save(LeaderWallet.from(
@@ -182,12 +184,14 @@ class LeaderWalletService {
     var internalCount = 0;
     var externalCount = 0;
     for (var exposure in exposures) {
-      var derivedAddresses = deriveNextAddresses(
+      var s = Stopwatch()..start();
+      var derivedAddresses = await deriveNextAddresses(
         wallet,
         res.ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
         exposure,
         justOne: justOne,
       );
+      print('derive Address: ${s.elapsed}');
       newAddresses.addAll(derivedAddresses);
       if (exposure == NodeExposure.Internal) {
         internalCount = derivedAddresses.length;
@@ -195,7 +199,7 @@ class LeaderWalletService {
         externalCount = derivedAddresses.length;
       }
     }
-    res.addresses.saveAll(newAddresses);
+    await res.addresses.saveAll(newAddresses);
     updateCacheCounts(internalCount, externalCount);
   }
 }

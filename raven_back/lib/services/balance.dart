@@ -62,7 +62,8 @@ class BalanceService {
       await res.balances.save(Balance(
           walletId: res.wallets.currentWallet.id,
           security: res.securities.RVN,
-          confirmed: services.download.unspents.total(res.securities.RVN),
+          confirmed:
+              services.download.unspents.total(res.securities.RVN.symbol),
           unconfirmed: 0));
 
   /// Transaction Logic ///////////////////////////////////////////////////////
@@ -123,9 +124,10 @@ class BalanceService {
   }
 
   List<Vout> collectUTXOsNew({required int amount, Security? security}) {
-    services.download.unspents.assertSufficientFunds(amount, security);
+    services.download.unspents.assertSufficientFunds(amount, security?.symbol);
     var gathered = 0;
-    var unspents = services.download.unspents.getUnspents(security).toList();
+    var unspents =
+        services.download.unspents.getUnspents(security?.symbol).toList();
     var collection = <Vout>[];
     final _random = Random();
     while (amount - gathered > 0) {

@@ -7,52 +7,53 @@ import 'package:raven_back/raven_back.dart';
 /// must re-run this when we switch wallets
 /// must re-run this after we get all updates on addresses
 class UnspentService {
-  Map<Security, Set<ScripthashUnspent>> unspentsBySecurity = {};
+  Map<String, Set<ScripthashUnspent>> unspentsBySymbol = {};
 
-  Security defaultSecurity(Security? security) =>
-      security ?? res.securities.RVN;
+  String defaultSymbol(String? symbol) => symbol ?? 'RVN';
 
   Iterable<String> defaultScripthashes(Iterable<String>? scripthashes) =>
       scripthashes ??
       res.wallets.currentWallet.addresses.map((e) => e.scripthash).toList();
 
-  Future<void> pull({
-    Iterable<String>? scripthashes,
-    Security? security,
-  }) async {
-    security = defaultSecurity(security);
+  Future<void> pull({Iterable<String>? scripthashes, bool? updateRVN}) async {
     scripthashes = defaultScripthashes(scripthashes);
     print('Downloading Unspents');
     var s = Stopwatch()..start();
-    for (var scripthash in scripthashes) {
-      if (security == res.securities.RVN) {
-        var utxos = await services.client.client!.getUnspent(scripthash);
-        //var utxos = await services.client.client!.AssetGetUnspent(scripthash);
-        if (!unspentsBySecurity.keys.contains(security)) {
-          unspentsBySecurity[security] = <ScripthashUnspent>{};
+    var rvn = 'RVN';
+    if (updateRVN ?? true) {
+      var utxos = (await services.client.client!.getUnspents(scripthashes))
+          .expand((i) => i);
+      if (!unspentsBySymbol.keys.contains(rvn)) {
+        unspentsBySymbol[rvn] = <ScripthashUnspent>{};
+      }
+      unspentsBySymbol[rvn]!.addAll(utxos);
+    }
+    if (!(updateRVN ?? false)) {
+      var utxos = (await services.client.client!.getAssetUnspents(scripthashes))
+          .expand((i) => i);
+      for (var utxo in utxos) {
+        if (!unspentsBySymbol.keys.contains(utxo.symbol)) {
+          unspentsBySymbol[utxo.symbol!] = <ScripthashUnspent>{};
         }
-        unspentsBySecurity[security]!.addAll(utxos);
-        for (var u in utxos) {
-          print(u);
-        }
+        unspentsBySymbol[utxo.symbol]!.addAll(utxos);
       }
     }
     print(
         'Unspents downloaded: ${scripthashes.length} ${s.elapsed} ${total()}');
   }
 
-  int total([Security? security]) =>
-      unspentsBySecurity.keys.contains(defaultSecurity(security))
-          ? unspentsBySecurity[defaultSecurity(security)]!.fold(
+  int total([String? symbol]) =>
+      unspentsBySymbol.keys.contains(defaultSymbol(symbol))
+          ? unspentsBySymbol[defaultSymbol(symbol)]!.fold(
               0, (int total, ScripthashUnspent item) => item.value + total)
           : 0;
 
-  void assertSufficientFunds(int amount, Security? security) {
-    if (total(defaultSecurity(security)) >= amount) {
+  void assertSufficientFunds(int amount, String? symbol) {
+    if (total(defaultSymbol(symbol)) >= amount) {
       throw InsufficientFunds();
     }
   }
 
-  Set<ScripthashUnspent> getUnspents(Security? security) =>
-      unspentsBySecurity[defaultSecurity(security)] ?? <ScripthashUnspent>{};
+  Set<ScripthashUnspent> getUnspents(String? symbol) =>
+      unspentsBySymbol[defaultSymbol(symbol)] ?? <ScripthashUnspent>{};
 }

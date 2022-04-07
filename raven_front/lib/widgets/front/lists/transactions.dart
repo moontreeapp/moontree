@@ -65,7 +65,6 @@ class _TransactionListState extends State<TransactionList> {
   }
 
   Future refresh() async {
-    await services.download.history.produceAddressOrBalance();
     await services.rate.saveRate();
     await services.balance.recalculateAllBalances();
     setState(() {});
