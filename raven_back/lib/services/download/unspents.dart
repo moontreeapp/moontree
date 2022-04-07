@@ -16,7 +16,7 @@ class UnspentService {
       scripthashes ??
       res.wallets.currentWallet.addresses.map((e) => e.scripthash).toList();
 
-  Future<void> pullUnspents({
+  Future<void> pull({
     Iterable<String>? scripthashes,
     Security? security,
   }) async {

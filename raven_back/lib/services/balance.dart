@@ -58,6 +58,13 @@ class BalanceService {
           .where((Vout vout) => vout.transaction?.confirmed ?? false)
           .toList()));
 
+  Future recalculateRVNBalanceFromUnspents() async =>
+      await res.balances.save(Balance(
+          walletId: res.wallets.currentWallet.id,
+          security: res.securities.RVN,
+          confirmed: services.download.unspents.total(res.securities.RVN),
+          unconfirmed: 0));
+
   /// Transaction Logic ///////////////////////////////////////////////////////
 
   /// Sort in descending order, from largest amount to smallest amount

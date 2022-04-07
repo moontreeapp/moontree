@@ -157,6 +157,7 @@ class _NavMenuState extends State<NavMenu> {
               onPressed: (BuildContext context) {
             //    ravenDatabase.deleteDatabase();
           ),
+          */
           ListTile(
               title: Text('test'),
               leading: Icon(Icons.info_outline_rounded),
@@ -245,16 +246,17 @@ class _NavMenuState extends State<NavMenu> {
                 //for (var w in res.vins) {
                 //  print(w);
                 //}
-                print('vouts to me');
-                for (var w in res.vouts.where((e) => e.wallet != null)) {
-                  print(w);
-                }
-                print('vouts where vin');
-                for (var w in res.vouts.where((e) => e.vin != null)) {
-                  print(w);
-                }
+                //print('vouts to me');
+                //for (var w in res.vouts.where((e) => e.wallet != null)) {
+                //  print(w);
+                //}
+                //print('vouts where vin');
+                //for (var w in res.vouts.where((e) => e.vin != null)) {
+                //  print(w);
+                //}
+                print(services
+                    .download.unspents.unspentsBySecurity[res.securities.RVN]);
               }),
-          */
         ],
       )
     };

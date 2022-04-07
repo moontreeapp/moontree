@@ -96,6 +96,9 @@ class _SendState extends State<Send> {
         }
       }
     }));
+    services.download.unspents
+        .pull()
+        .then((value) => services.balance.recalculateRVNBalanceFromUnspents());
   }
 
   @override
