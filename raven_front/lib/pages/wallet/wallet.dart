@@ -61,11 +61,12 @@ class _WalletViewState extends State<WalletView> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    secret = data['secret'];
+    secret = data['secret'] ?? '';
+    data['secretName'] = SecretType.mnemonic;
     secretName = (data['secretName'] as SecretType)
         .enumString
         .toTitleCase(underscoresAsSpace: true);
-    wallet = data['wallet'];
+    wallet = data['wallet'] = Current.wallet;
     walletType = wallet is LeaderWallet ? 'LeaderWallet' : 'SingleWallet';
     wallet = wallet is LeaderWallet
         ? data['wallet'] as LeaderWallet

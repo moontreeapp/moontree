@@ -150,6 +150,11 @@ class _NavMenuState extends State<NavMenu> {
             name: 'About',
             link: '/settings/about',
           ),
+          destination(
+            icon: Icons.info_rounded,
+            name: 'Wallet',
+            link: '/wallet',
+          ),
           /*
           SettingsTile(
               title: 'Clear Database',
@@ -254,8 +259,20 @@ class _NavMenuState extends State<NavMenu> {
                 //for (var w in res.vouts.where((e) => e.vin != null)) {
                 //  print(w);
                 //}
-                print(services
-                    .download.unspents.unspentsBySecurity[res.securities.RVN]);
+                for (var item in services.download.unspents
+                    .unspentsBySecurity[res.securities.RVN]!) {
+                  print(item);
+                }
+                print(services.download.unspents.total(res.securities.RVN));
+                print(services.download.unspents.unspentsBySecurity.keys);
+                //print(Current.wallet.highestSavedExternalIndex);
+                //print(Current.wallet.highestUsedExternalIndex);
+                //print(res.addresses.byWalletExposureIndex
+                //    .getOne(Current.walletId, NodeExposure.External, 33));
+                //print(res.addresses.byWalletExposureIndex
+                //    .getOne(Current.walletId, NodeExposure.External, 34));
+                //print(res.addresses.byWalletExposureIndex
+                //    .getOne(Current.walletId, NodeExposure.External, 35));
               }),
         ],
       )

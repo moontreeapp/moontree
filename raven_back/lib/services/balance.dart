@@ -125,7 +125,7 @@ class BalanceService {
   List<Vout> collectUTXOsNew({required int amount, Security? security}) {
     services.download.unspents.assertSufficientFunds(amount, security);
     var gathered = 0;
-    var unspents = services.download.unspents.getUnspents(security);
+    var unspents = services.download.unspents.getUnspents(security).toList();
     var collection = <Vout>[];
     final _random = Random();
     while (amount - gathered > 0) {

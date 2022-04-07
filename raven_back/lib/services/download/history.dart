@@ -34,10 +34,13 @@ class HistoryService {
         updateCounts(address.wallet as LeaderWallet);
         print('${address.address} histories found!');
         sendToStream(histories.map((history) => history.txHash));
-        streams.wallet.deriveAddress.add(DeriveLeaderAddress(
-            leader: address.wallet as LeaderWallet,
-            exposure: address.exposure,
-            justOne: true));
+        if (address.hdIndex >=
+            address.wallet!.getHighestSavedIndex(address.exposure)) {
+          streams.wallet.deriveAddress.add(DeriveLeaderAddress(
+              leader: address.wallet as LeaderWallet,
+              exposure: address.exposure,
+              justOne: true));
+        }
       } else {
         sendToStream(histories.map((history) => history.txHash));
         sendToStream([]);
