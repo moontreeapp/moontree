@@ -157,7 +157,6 @@ class _NavMenuState extends State<NavMenu> {
               onPressed: (BuildContext context) {
             //    ravenDatabase.deleteDatabase();
           ),
-          */
           ListTile(
               title: Text('test'),
               leading: Icon(Icons.info_outline_rounded),
@@ -199,38 +198,63 @@ class _NavMenuState extends State<NavMenu> {
                 ////    keyedTransactionsKey:
                 ////        '03d992f22d9e178a4de02e99ffffe885bd5135e65d183200da3b566502eca79342Internal',
                 ////    walletId:
-                ////        '03d992f22d9e178a4de02e99ffffe885bd5135e65d183200da3b566502eca79342',
-                ////    exposure: NodeExposure.Internal);
-                print(
-                    Current.wallet.getHighestSavedIndex(NodeExposure.Internal));
-                print(
-                    Current.wallet.getHighestSavedIndex(NodeExposure.External));
-                print(res.addresses.byWallet.getAll(Current.walletId).length);
-                print(
-                    Current.wallet.getHighestUsedIndex(NodeExposure.Internal));
-                print(
-                    Current.wallet.getHighestUsedIndex(NodeExposure.External));
-                print(services.wallet.leader.gapSatisfied(
-                    Current.wallet as LeaderWallet, NodeExposure.Internal));
-                //print(res.transactions.primaryIndex.getOne(
-                //    '7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c'));
-                //for (var x in res.vouts.byTransaction.getAll(
-                //    '7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c'))
-                //  print(x);
-                print([
-                  for (var t in waiters.history.txsByWalletExposureKeys.keys)
-                    waiters.history.txsByWalletExposureKeys[t]?.length
-                ]);
-                print([
-                  for (var t
-                      in waiters.history.addressesByWalletExposureKeys.keys)
-                    waiters.history.addressesByWalletExposureKeys[t]?.length
-                ]);
-                var addresses = res.addresses.byWallet.getAll(Current.walletId);
-                print(addresses.map((e) => e.exposure));
-                waiters.history.pullIf(WalletExposureTransactions(
-                    address: addresses[1], transactionIds: []));
+                //////        '03d992f22d9e178a4de02e99ffffe885bd5135e65d183200da3b566502eca79342',
+                //////    exposure: NodeExposure.Internal);
+                //print(
+                //    Current.wallet.getHighestSavedIndex(NodeExposure.Internal));
+                //print(
+                //    Current.wallet.getHighestSavedIndex(NodeExposure.External));
+                //print(res.addresses.byWallet.getAll(Current.walletId).length);
+                //print(
+                //    Current.wallet.getHighestUsedIndex(NodeExposure.Internal));
+                //print(
+                //    Current.wallet.getHighestUsedIndex(NodeExposure.External));
+                //print(services.wallet.leader.gapSatisfied(
+                //    Current.wallet as LeaderWallet, NodeExposure.Internal));
+                ////print(res.transactions.primaryIndex.getOne(
+                ////    '7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c'));
+                ////for (var x in res.vouts.byTransaction.getAll(
+                ////    '7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c'))
+                ////  print(x);
+                //print([
+                //  for (var t in waiters.history.txsByWalletExposureKeys.keys)
+                //    waiters.history.txsByWalletExposureKeys[t]?.length
+                //]);
+                //print([
+                //  for (var t
+                //      in waiters.history.addressesByWalletExposureKeys.keys)
+                //    waiters.history.addressesByWalletExposureKeys[t]?.length
+                //]);
+                //var addresses = res.addresses.byWallet.getAll(Current.walletId);
+                //print(addresses.map((e) => e.exposure));
+                //waiters.history.pullIf(WalletExposureTransactions(
+                //    address: addresses[1], transactionIds: []));
+                //print('wallets');
+                //for (var w in res.wallets) {
+                //  print(w);
+                //}
+                //print('addresses');
+                //for (var w in res.addresses) {
+                //  print(w);
+                //}
+                //print('transactions');
+                //for (var w in res.transactions) {
+                //  print(w);
+                //}
+                //print('vins');
+                //for (var w in res.vins) {
+                //  print(w);
+                //}
+                print('vouts to me');
+                for (var w in res.vouts.where((e) => e.wallet != null)) {
+                  print(w);
+                }
+                print('vouts where vin');
+                for (var w in res.vouts.where((e) => e.vin != null)) {
+                  print(w);
+                }
               }),
+          */
         ],
       )
     };
