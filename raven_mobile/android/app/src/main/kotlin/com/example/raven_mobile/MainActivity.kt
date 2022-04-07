@@ -1,4 +1,4 @@
-package com.example.raven_mobile
+package com.moontree.ravenmobile
 
 import io.flutter.embedding.android.FlutterActivity
 

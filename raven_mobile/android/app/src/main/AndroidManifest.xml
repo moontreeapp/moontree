@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.raven_mobile">
+    package="com.moontree.ravenmobile">
    <application
         android:label="raven_mobile"
         android:name="${applicationName}"
