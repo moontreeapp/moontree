@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/pages/pages.dart';
@@ -16,10 +16,10 @@ import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_front/listeners/listeners.dart';
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print('Handling a background message ${message.messageId}');
-}
+// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+//   await Firebase.initializeApp();
+//   print('Handling a background message ${message.messageId}');
+// }
 
 Future setup() async {
   var hiveInit =
@@ -33,34 +33,38 @@ Future setup() async {
 
 Future<void> main() async {
   // Catch errors without crashing the app:
-  runZonedGuarded<Future<void>>(() async {
-    WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(RavenMobileApp());
 
-    await Firebase.initializeApp();
+  // runZonedGuarded<Future<void>>(() async {
+  //   WidgetsFlutterBinding.ensureInitialized();
+  //   WidgetsFlutterBinding.ensureInitialized();
 
-    // Let local development handle errors normally
-    await FirebaseCrashlytics.instance
-        .setCrashlyticsCollectionEnabled(!kDebugMode);
-    // NOTE: To test firebase crashlytics in debug mode, set the above to
-    // `true` and call `FirebaseCrashlytics.instance.crash()` at some point
-    //  later in the code.
+  //   await Firebase.initializeApp();
 
-    // Errors that we don't catch should be sent to Crashlytics
-    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  //   // Let local development handle errors normally
+  //   await FirebaseCrashlytics.instance
+  //       .setCrashlyticsCollectionEnabled(!kDebugMode);
+  //   // NOTE: To test firebase crashlytics in debug mode, set the above to
+  //   // `true` and call `FirebaseCrashlytics.instance.crash()` at some point
+  //   //  later in the code.
 
-    // Set the background messaging handler early on, as a named top-level function
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  //   // Errors that we don't catch should be sent to Crashlytics
+  //   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 
-    // In-app error notification when foregrounded
-    await FirebaseMessaging.instance
-        .setForegroundNotificationPresentationOptions(
-      alert: true, // Required to display a heads up notification
-      badge: true,
-      sound: false,
-    );
-    //setup();
-    runApp(RavenMobileApp());
-  }, (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack));
+  //   // Set the background messaging handler early on, as a named top-level function
+  //   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  //   // In-app error notification when foregrounded
+  //   await FirebaseMessaging.instance
+  //       .setForegroundNotificationPresentationOptions(
+  //     alert: true, // Required to display a heads up notification
+  //     badge: true,
+  //     sound: false,
+  //   );
+  //   //setup();
+  //   runApp(RavenMobileApp());
+  // }, (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack));
 }
 
 class RavenMobileApp extends StatelessWidget {

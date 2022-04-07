@@ -29,6 +29,7 @@
 .packages
 .pub-cache/
 .pub/
+.fvm/flutter_sdk
 /build/
 
 # Web related
@@ -44,3 +45,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+*.lock
+
+# custom
+*.env
+database/
+testdb/
+*.exe
