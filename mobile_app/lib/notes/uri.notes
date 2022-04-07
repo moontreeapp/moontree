@@ -1,0 +1,11 @@
+Is there a standard way to represent a QR code across cryptocurrencies? If someone opens up their bitcoin wallet and tells me (a RVN wallet) to send coin, how does the QR code know to reject that address? I guess I'm looking for something like a URI protocol prefix, e.g. "rvn:" or "btc:" embedded in the QR code data...?
+
+Tron — Today at 12:15 PM
+This is an example URI from Ravencoin core:
+[12:15 PM]
+raven:RMveV3d1CGc2H84QW93g5Y8hZjUetFYcwD?amount=5.12340000&label=This%20is%20a%20label&message=This%20is%20a%20message
+NEW
+[12:17 PM]
+If you want to check a Ravencoin address, there is a byte at the beginning if you base58 decode the address.  The first byte after decoding will be 60 (decimal).   Bitcoin's first byte will decode to 0x00
+
+THIS affects send, receive pages.
