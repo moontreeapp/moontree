@@ -1,0 +1,44 @@
+how do we use IPFS? 
+
+requirements:
+- given a hash from a rvn transaction, download the file
+- interpret (as json, or maybe directly as image)
+- use icon, display json data in metadata or something...
+
+not required:
+- upload
+
+How to download the file:
+- simple request: 
+- - to download the file we need should be able to make a simple request to 'https://gateway.ipfs.io/ipfs/' like so:
+- - - https://gateway.ipfs.io/ipfs/QmRAQB6YaCyidP37UdDnjFY5vQuiBrcqdyoW1CuDgwxkD4
+- file explorer 1: 
+- - https://ipfs.io/ipfs/QmTkzDwWqPbnAh5YiV5VwcTLnGdwSNsNTn2aDxdXBFca7D/
+- - https://ipfs.io/ipfs/QmTkzDwWqPbnAh5YiV5VwcTLnGdwSNsNTn2aDxdXBFca7D/example#/ipfs/QmTDMoVqvyBkNMRhzvukTDznntByUNDwyNdSfV8dZ3VKRC/readme.md
+- file explorer 2: (https://docs.web3.storage/how-tos/retrieve/#using-curl-or-powershell)
+- - https://bafybeie2bjap32zi2yqh5jmpve5njwulnkualcbiszvwfu36jzjyqskceq.ipfs.dweb.link/
+- js web3 client: (https://docs.web3.storage/how-tos/retrieve/#using-the-client-libraries)
+- - dart has the ability to execute javascript I think so in theory we could use a web3 client library for js, idk.
+- ipfs dart library:
+- - I have tried to install 3 different ipfs libraries for dart. 
+- - all of them seem out of date as they require old and conflicting versions of other libraries.
+- - I think if we used a dart library we'd have to fix someones or roll our own.
+
+I prefer the simple request if it has no drawbacks or issues, however should we point to the regular gateway.ipfs.io or stand up our own gateway?
+
+when pulling data for an asset we need to:
+1. grab the ipfs for it and download the logo and save it to the images folder.
+2. save the ipfshash that we saved to the images folder to the symbol object.
+that way we can pull the correct logo for that item later simply by the name of the symbol
+
+this means we want the act of getting the ipfsLogo to be reactive:
+...see drawio
+
+isolate.spawn()
+https://stackoverflow.com/questions/69994375/can-you-force-separate-threads-in-dart?noredirect=1#comment123730894_69994375
+https://medium.com/dartlang/dart-asynchronous-programming-isolates-and-event-loops-bffc3e296a6a
+https://www.woolha.com/tutorials/dart-spawn-kill-send-message-to-isolate
+
+valueNotifier is more lightweight than composable streams:
+https://api.flutter.dev/flutter/foundation/ValueNotifier-class.html
+https://medium.com/dartlang/dart-asynchronous-programming-isolates-and-event-loops-bffc3e296a6a
