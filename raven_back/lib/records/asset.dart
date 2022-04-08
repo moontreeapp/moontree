@@ -30,6 +30,9 @@ class Asset with EquatableMixin {
   @HiveField(6)
   final int position;
 
+  @HiveField(7)
+  final String status;
+
   //late final TxSource source;
   ////late final String txHash; // where it originated?
   ////late final int txPos; // the vout it originated?
@@ -43,6 +46,7 @@ class Asset with EquatableMixin {
     required this.metadata,
     required this.transactionId,
     required this.position,
+    this.status = '',
   });
 
   @override
@@ -59,8 +63,8 @@ class Asset with EquatableMixin {
   @override
   String toString() => 'Asset(symbol: $symbol, '
       'satsInCirculation: $satsInCirculation, divisibility: $divisibility, '
-      'reissuable: $reissuable, metadata: $metadata, transactionId: $transactionId, '
-      'position: $position)';
+      'reissuable: $reissuable, metadata: $metadata, '
+      'transactionId: $transactionId, position: $position, status: $status)';
 
   static String assetKey(String symbol) => symbol;
   String get id => symbol;
