@@ -111,8 +111,7 @@ class SubscribeService {
     if (!subscriptionHandles.keys.contains(address.id)) {
       subscriptionHandles[address.id] =
           client.subscribeScripthash(address.id).listen((String? status) {
-        var addressStatus = res.status.byAddress.getOne(address);
-        if (addressStatus?.status != status) {
+        if (address.status?.status != status) {
           res.status.save(Status(
               linkId: address.id,
               statusType: StatusType.address,

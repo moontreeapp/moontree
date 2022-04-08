@@ -1,5 +1,9 @@
 part of 'joins.dart';
 
+extension AssetHasOneStatus on Asset {
+  Status? get status => res.status.byAsset.getOne(this);
+}
+
 extension AssetHasOneSecurity on Asset {
   Security? get security => res.securities.bySymbolSecurityType
       .getOne(symbol, SecurityType.RavenAsset);
