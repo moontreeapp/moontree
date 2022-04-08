@@ -16,16 +16,6 @@ import 'package:raven_back/streams/create.dart';
 import 'package:raven_front/utils/transformers.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
-enum FormPresets {
-  main,
-  sub,
-  restricted,
-  qualifier,
-  qualifierSub,
-  NFT,
-  channel,
-}
-
 class ReissueAsset extends StatefulWidget {
   static const int ipfsLength = 89;
   final FormPresets preset;
