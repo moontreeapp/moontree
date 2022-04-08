@@ -111,10 +111,10 @@ class HistoryWaiter extends Waiter {
     NodeExposure exposure,
     Iterable<String> transactionIds,
   ) async {
-    var future = services.download.history.getTransactions(transactionIds);
-    if (future != null) {
-      futures.add(future);
-    }
+    await services.download.history.getTransactions(transactionIds);
+    //if (futureItems != null) {
+    //  futures = futures + futureItems;
+    //}
 
     // List<Tx> results = await Future.wait<Tx>(futures);
 

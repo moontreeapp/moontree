@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:quiver/iterables.dart';
 import 'package:tuple/tuple.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/streams/wallet.dart';
@@ -75,9 +76,9 @@ class HistoryService {
       }
     }
     if (allDone) {
-      await Future.wait(futures);
-      futures.clear();
-      print('ALL DONE!');
+      //await Future.wait(futures);
+      //futures.clear();
+      //print('ALL DONE!');
       await saveDanglingTransactions(client);
       await services.balance.recalculateAllBalances();
       services.download.asset.allAdminsSubs();
@@ -107,22 +108,47 @@ class HistoryService {
     RavenElectrumClient client, {
     bool saveVin = true,
   }) async {
-    for (var tx in txs) {
-      var allThree =
-          await saveTransaction(tx, client, saveVin: saveVin, justReturn: true);
-      // todo could move out of for loop... call saveAll once.
-      if (allThree.isNotEmpty) {
-        if (allThree[2].isNotEmpty) {
-          await res.transactions.saveAll(allThree[2] as Set<Transaction>);
+    var futures = [
+      for (var tx in txs)
+        saveTransaction(tx, client, saveVin: saveVin, justReturn: true)
+    ];
+    var threes = await Future.wait<List<Set>>(futures);
+    print(threes.length);
+
+    //var items = {0: <Vin>{}, 1: <Vout>{}, 2: <Transaction>{}};
+    for (var three in threes) {
+      if (three.isNotEmpty) {
+        if (three[2].isNotEmpty) {
+          await res.transactions.saveAll(three[2] as Set<Transaction>);
         }
-        if (allThree[0].isNotEmpty) {
-          await res.vins.saveAll(allThree[0] as Set<Vin>);
+        if (three[0].isNotEmpty) {
+          await res.vins.saveAll(three[0] as Set<Vin>);
         }
-        if (allThree[1].isNotEmpty) {
-          await res.vouts.saveAll(allThree[1] as Set<Vout>);
+        if (three[1].isNotEmpty) {
+          await res.vouts.saveAll(three[1] as Set<Vout>);
         }
+        //if (items[2]!.isNotEmpty) {
+        //  items[2]!.addAll(three[2] as Set<Transaction>);
+        //}
+        //if (items[0]!.isNotEmpty) {
+        //  items[0]!.addAll(three[0] as Set<Vin>);
+        //}
+        //if (items[1]!.isNotEmpty) {
+        //  items[1]!.addAll(three[1] as Set<Vout>);
+        //}
       }
     }
+    //print('ITEMS: ${items.length}, $items, ${items.length}');
+    //if (items[2]!.isNotEmpty) {
+    //  await res.transactions.saveAll(items[2]! as Set<Transaction>);
+    //}
+    //if (items[0]!.isNotEmpty) {
+    //  await res.vins.saveAll(items[0]! as Set<Vin>);
+    //}
+    //if (items[1]!.isNotEmpty) {
+    //  await res.vouts.saveAll(items[1]! as Set<Vout>);
+    //}
+    print('done saving');
   }
 
   /// don't need this for creating UTXO set anymore but...
@@ -242,25 +268,31 @@ class HistoryService {
     print('b4 transactionIds: $transactionIds');
     transactionIds = transactionIds
         .where((transactionId) => !downloaded.contains(transactionId))
-        .toList();
+        .toSet();
     print('after transactionIds: $transactionIds, downloaded: $downloaded');
     downloaded.addAll(transactionIds);
     print('downloading: ${transactionIds.length}');
-    return client.getTransactions(transactionIds).then((txs) async {
+    var txs = <Tx>[];
+    try {
+      txs = await client.getTransactions(transactionIds);
       print('downloaded: ${txs.length}');
-      await saveTransactions(txs, client, saveVin: saveVin);
-    }).catchError((e) async {
+    } catch (e) {
       print('error caught $e');
-      var txs = <Future<Tx>>[];
+      var futures = <Future<Tx>>[];
       for (var transactionId in transactionIds) {
-        txs.add(client.getTransaction(transactionId));
+        futures.add(client.getTransaction(transactionId));
       }
-      var results = await Future.wait<Tx>(txs);
-      await saveTransactions(results, client, saveVin: saveVin);
-    });
+      txs = await Future.wait<Tx>(futures);
+    }
+    await saveTransactions(
+      txs,
+      client,
+      saveVin: saveVin,
+    );
+    return null;
   }
 
-  Future saveTransaction(
+  Future<List<Set>> saveTransaction(
     Tx tx,
     RavenElectrumClient client, {
     bool saveVin = true,
@@ -329,5 +361,6 @@ class HistoryService {
       await res.vins.saveAll(newVins);
       await res.vouts.saveAll(newVouts);
     }
+    return [{}];
   }
 }
