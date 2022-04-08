@@ -35,13 +35,8 @@ void main() async {
           updatedBalance);
     });
 
-    test('sortedUnspents', () {
-      expect(services.balance.sortedUnspents(wallet), []);
-    });
-
     test('collectUTXOs', () {
-      expect(() => services.balance.collectUTXOs(wallet, amount: 16),
-          throwsException);
+      expect(() => services.balance.collectUTXOs(amount: 16), throwsException);
     });
   });
 }
