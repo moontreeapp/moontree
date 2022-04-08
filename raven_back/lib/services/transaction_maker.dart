@@ -1122,8 +1122,8 @@ class TransactionMaker {
     TxGoal? goal,
   }) {
     var txb = ravencoin.TransactionBuilder(network: res.settings.network);
-    var utxosOriginal = services.balance.sortedUnspents(
-      wallet,
+    var utxosOriginal = services.balance.collectUTXOs(
+      amount: estimate.amount,
       security: estimate.security,
     );
     var total = 0;
@@ -1154,7 +1154,6 @@ class TransactionMaker {
       if (estimate.security != null) {
         // Grab required RVN for fee
         rvn_utxos = services.balance.collectUTXOs(
-          wallet,
           amount: fees,
           security: null,
         );
