@@ -31,7 +31,7 @@ class Asset with EquatableMixin {
   final int position;
 
   @HiveField(7)
-  final String status;
+  final String? status;
 
   //late final TxSource source;
   ////late final String txHash; // where it originated?
@@ -46,7 +46,7 @@ class Asset with EquatableMixin {
     required this.metadata,
     required this.transactionId,
     required this.position,
-    this.status = '',
+    this.status,
   });
 
   @override
@@ -58,6 +58,7 @@ class Asset with EquatableMixin {
         metadata,
         transactionId,
         position,
+        status ?? '',
       ];
 
   @override

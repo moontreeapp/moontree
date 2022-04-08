@@ -112,6 +112,7 @@ class SubscribeService {
       subscriptionHandles[address.id] =
           client.subscribeScripthash(address.id).listen((String? status) {
         if (address.status != status) {
+          address.status = status;
           services.download.history.getHistories(address);
           services.download.unspents.pull(scripthashes: [address.id]);
         }
