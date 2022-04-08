@@ -1,6 +1,3 @@
 {
-    "dart.flutterSdkPath": ".fvm/flutter_sdk",
-    "search.exclude": {
-        "**/.fvm": true
-    }
+    "dart.flutterSdkPath": "/Users/adventure/dev/flutter/bin"
 }
