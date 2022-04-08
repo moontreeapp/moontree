@@ -16,7 +16,7 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late List listeners = [];
   //static const double minExtent = .0736842105263158;
-  static const double minExtent = .10;
+  static const double minExtent = .50;
   static const double maxExtent = 1.0;
   static const double initialExtent = maxExtent;
   late DraggableScrollableController draggableScrollController =
@@ -44,43 +44,41 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     //minExtent = 1-(MediaQuery.of(context).size.height - 56)  // pix
-    return body();
-  }
-
-  Widget body() => BackdropLayers(
-        back: NavMenu(),
-        front: DraggableScrollableActuator(
-          child: DraggableScrollableSheet(
-            controller: draggableScrollController,
-            snap: false,
-            initialChildSize: initialExtent,
-            minChildSize: minExtent,
-            maxChildSize: maxExtent,
-            builder: ((context, scrollController) {
-              if (draggableScrollController.size == minExtent) {
-                streams.app.setting.add('/settings');
-              } else if (draggableScrollController.size == maxExtent) {
-                streams.app.setting.add(null);
-              }
-              return FrontCurve(
-                  fuzzyTop: true,
-                  child: Stack(
-                    alignment: Alignment.bottomCenter,
-                    children: [
-                      widget.appContext == AppContext.wallet
-                          ? HoldingList(scrollController: scrollController)
-                          : widget.appContext == AppContext.manage
-                              ? AssetList(scrollController: scrollController)
-                              : Scroller(
-                                  controller: scrollController,
-                                  child: Text('swap\n\n\n\n\n\n\n\n\n\n\n\n')),
-                      NavBar()
-                    ],
-                  ));
-            }),
-          ),
+    return BackdropLayers(
+      back: NavMenu(),
+      front: DraggableScrollableActuator(
+        child: DraggableScrollableSheet(
+          controller: draggableScrollController,
+          snap: true,
+          initialChildSize: initialExtent,
+          minChildSize: minExtent,
+          maxChildSize: maxExtent,
+          builder: ((context, scrollController) {
+            if (draggableScrollController.size == minExtent) {
+              streams.app.setting.add('/settings');
+            } else if (draggableScrollController.size == maxExtent) {
+              streams.app.setting.add(null);
+            }
+            return FrontCurve(
+                fuzzyTop: true,
+                child: Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    widget.appContext == AppContext.wallet
+                        ? HoldingList(scrollController: scrollController)
+                        : widget.appContext == AppContext.manage
+                            ? AssetList(scrollController: scrollController)
+                            : Scroller(
+                                controller: scrollController,
+                                child: Text('swap\n\n\n\n\n\n\n\n\n\n\n\n')),
+                    NavBar()
+                  ],
+                ));
+          }),
         ),
-      );
+      ),
+    );
+  }
 
   Future<void> fling([bool? open]) async {
     if ((open ?? false)) {
