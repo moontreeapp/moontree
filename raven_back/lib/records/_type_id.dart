@@ -30,4 +30,5 @@ class TypeId {
   static const SecurityType = 104;
   static const MetadataType = 105;
   static const AssetType = 106;
+  static const StatusType = 107;
 }

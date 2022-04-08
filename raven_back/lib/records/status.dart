@@ -1,12 +1,11 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:raven_back/extensions/extensions.dart';
+import 'package:raven_back/records/status_type.dart';
 
 import '_type_id.dart';
 
 part 'status.g.dart';
-
-enum StatusType { header, address, asset }
 
 @HiveType(typeId: TypeId.Status)
 class Status with EquatableMixin {

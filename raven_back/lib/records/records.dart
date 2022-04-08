@@ -17,6 +17,7 @@ export 'security_type.dart';
 export 'setting.dart';
 export 'setting_name.dart';
 export 'status.dart';
+export 'status_type.dart';
 export 'transaction.dart';
 export 'wallets/leader.dart';
 export 'wallets/single.dart';

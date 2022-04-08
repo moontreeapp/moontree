@@ -59,6 +59,8 @@ class HiveInitializer {
     Hive.registerAdapter(MetadataAdapter());
     Hive.registerAdapter(SettingAdapter());
     Hive.registerAdapter(SettingNameAdapter());
+    Hive.registerAdapter(StatusAdapter());
+    Hive.registerAdapter(StatusTypeAdapter());
     Hive.registerAdapter(SecurityAdapter());
     Hive.registerAdapter(SecurityTypeAdapter());
   }
@@ -74,6 +76,7 @@ class HiveInitializer {
     await Hive.openBox<Rate>('rates');
     await Hive.openBox<Security>('securities');
     await Hive.openBox<Setting>('settings');
+    await Hive.openBox<Status>('status');
     await Hive.openBox<Transaction>('transactions');
     await Hive.openBox<Vin>('vins');
     await Hive.openBox<Vout>('vouts');
@@ -109,6 +112,7 @@ class HiveInitializer {
     res.vins.setSource(HiveSource('vins'));
     res.vouts.setSource(HiveSource('vouts'));
     res.wallets.setSource(HiveSource('wallets'));
+    res.wallets.setSource(HiveSource('status'));
   }
 
   Future destroy() async {
