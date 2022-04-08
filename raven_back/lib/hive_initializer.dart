@@ -112,7 +112,7 @@ class HiveInitializer {
     res.vins.setSource(HiveSource('vins'));
     res.vouts.setSource(HiveSource('vouts'));
     res.wallets.setSource(HiveSource('wallets'));
-    res.wallets.setSource(HiveSource('status'));
+    res.status.setSource(HiveSource('status'));
   }
 
   Future destroy() async {
