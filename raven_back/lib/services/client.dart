@@ -111,8 +111,10 @@ class SubscribeService {
     if (!subscriptionHandles.keys.contains(address.id)) {
       subscriptionHandles[address.id] =
           client.subscribeScripthash(address.id).listen((String? status) {
-        services.download.history.getHistories(address);
-        services.download.unspents.pull(scripthashes: [address.id]);
+        if (address.status != status) {
+          services.download.history.getHistories(address);
+          services.download.unspents.pull(scripthashes: [address.id]);
+        }
       });
     }
   }
