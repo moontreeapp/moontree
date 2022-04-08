@@ -111,8 +111,12 @@ class SubscribeService {
     if (!subscriptionHandles.keys.contains(address.id)) {
       subscriptionHandles[address.id] =
           client.subscribeScripthash(address.id).listen((String? status) {
-        if (address.status != status) {
-          address.status = status;
+        var addressStatus = res.status.byAddress.getOne(address);
+        if (addressStatus?.status != status) {
+          res.status.save(Status(
+              linkId: address.id,
+              statusType: StatusType.address,
+              status: status));
           services.download.history.getHistories(address);
           services.download.unspents.pull(scripthashes: [address.id]);
         }

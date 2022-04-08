@@ -12,6 +12,7 @@ import 'setting.dart';
 import 'transaction.dart';
 import 'vin.dart';
 import 'vout.dart';
+import 'status.dart';
 import 'wallet.dart';
 
 export 'address.dart';
@@ -25,6 +26,7 @@ export 'note.dart';
 export 'rate.dart';
 export 'security.dart';
 export 'setting.dart';
+export 'status.dart';
 export 'transaction.dart';
 export 'vin.dart';
 export 'vout.dart';
@@ -42,6 +44,7 @@ class res {
   static final ExchangeRateReservoir rates = ExchangeRateReservoir();
   static final SecurityReservoir securities = SecurityReservoir();
   static final SettingReservoir settings = SettingReservoir();
+  static final StatusReservoir status = StatusReservoir();
   static final TransactionReservoir transactions = TransactionReservoir();
   static final WalletReservoir wallets = WalletReservoir();
   static final VinReservoir vins = VinReservoir();

@@ -27,9 +27,6 @@ class Address with EquatableMixin {
   @HiveField(5)
   Net net;
 
-  @HiveField(5)
-  String? status;
-
   Address({
     required this.id,
     required this.address,
@@ -37,17 +34,22 @@ class Address with EquatableMixin {
     required this.hdIndex,
     this.exposure = NodeExposure.External,
     this.net = Net.Test,
-    this.status,
   });
 
   @override
-  List<Object> get props =>
-      [id, address, walletId, hdIndex, exposure, net, status ?? ''];
+  List<Object> get props => [
+        id,
+        address,
+        walletId,
+        hdIndex,
+        exposure,
+        net,
+      ];
 
   @override
   String toString() =>
       'Address(id: $id, address: $address, walletId: $walletId, '
-      'hdIndex: $hdIndex, exposure: $exposure, net: $net, status: $status)';
+      'hdIndex: $hdIndex, exposure: $exposure, net: $net)';
 
   int compareTo(Address other) {
     if (exposure != other.exposure) {
