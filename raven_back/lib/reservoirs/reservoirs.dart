@@ -44,7 +44,7 @@ class res {
   static final ExchangeRateReservoir rates = ExchangeRateReservoir();
   static final SecurityReservoir securities = SecurityReservoir();
   static final SettingReservoir settings = SettingReservoir();
-  static final StatusReservoir status = StatusReservoir();
+  static final StatusReservoir statuses = StatusReservoir();
   static final TransactionReservoir transactions = TransactionReservoir();
   static final WalletReservoir wallets = WalletReservoir();
   static final VinReservoir vins = VinReservoir();

@@ -247,8 +247,6 @@ class IconComponents {
         return Icons.ac_unit;
       case AssetType.Restricted:
         return MdiIcons.lock;
-      case AssetType.RestrictedAdmin:
-        return MdiIcons.lock;
       case AssetType.Sub:
         return MdiIcons.slashForward;
       case AssetType.SubAdmin:

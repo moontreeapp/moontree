@@ -76,7 +76,7 @@ class HiveInitializer {
     await Hive.openBox<Rate>('rates');
     await Hive.openBox<Security>('securities');
     await Hive.openBox<Setting>('settings');
-    await Hive.openBox<Status>('status');
+    await Hive.openBox<Status>('statuses');
     await Hive.openBox<Transaction>('transactions');
     await Hive.openBox<Vin>('vins');
     await Hive.openBox<Vout>('vouts');
@@ -112,7 +112,7 @@ class HiveInitializer {
     res.vins.setSource(HiveSource('vins'));
     res.vouts.setSource(HiveSource('vouts'));
     res.wallets.setSource(HiveSource('wallets'));
-    res.status.setSource(HiveSource('status'));
+    res.statuses.setSource(HiveSource('statuses'));
   }
 
   Future destroy() async {

@@ -112,7 +112,7 @@ class SubscribeService {
       subscriptionHandles[address.id] =
           client.subscribeScripthash(address.id).listen((String? status) {
         if (address.status?.status != status) {
-          res.status.save(Status(
+          res.statuses.save(Status(
               linkId: address.id,
               statusType: StatusType.address,
               status: status));

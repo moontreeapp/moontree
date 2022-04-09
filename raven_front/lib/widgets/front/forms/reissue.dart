@@ -140,11 +140,6 @@ class _ReissueAssetState extends State<ReissueAsset> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
-                        if (needsParent)
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(16, 24, 16, 0),
-                            child: parentFeild,
-                          ),
                         Padding(
                           padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
                           child: nameField,
@@ -210,6 +205,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
   Widget get nameField => TextField(
       focusNode: nameFocus,
       autocorrect: false,
+      enabled: false,
       controller: nameController,
       textInputAction: TextInputAction.done,
       keyboardType: isRestricted ? TextInputType.none : null,
@@ -240,7 +236,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
 
   Widget get quantityField => TextField(
         focusNode: quantityFocus,
-        controller: quantityController,
+        controller: quantityController, // can't be lower than  minQuantity
 //      keyboardType: TextInputType.number,
         keyboardType:
             TextInputType.numberWithOptions(decimal: false, signed: false),
@@ -252,7 +248,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
         ],
         decoration: components.styles.decorations.textFeild(
           context,
-          labelText: 'Quantity',
+          labelText: 'Additional Quantity',
           hintText: '21,000,000',
           errorText: quantityController.text != '' &&
                   !quantityValidation(quantityController.text.toInt())
@@ -269,7 +265,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
 
   Widget get decimalField => TextField(
         focusNode: decimalFocus,
-        controller: decimalController,
+        controller: decimalController, // cannot be lower than minDecimal
         readOnly: true,
         decoration: components.styles.decorations.textFeild(context,
             labelText: 'Decimals',
@@ -600,12 +596,6 @@ class _ReissueAssetState extends State<ReissueAsset> {
         holdingNames: Current.adminNames
             .map((String name) => name.replaceAll('!', ''))
             .toList());
-  }
-
-  void _produceQualifierParentModal() {
-    SelectionItems(context, modalSet: SelectionSet.Parents).build(
-        holdingNames:
-            Current.qualifierNames.map((String name) => name).toList());
   }
 
   void _produceDecimalModal() {
