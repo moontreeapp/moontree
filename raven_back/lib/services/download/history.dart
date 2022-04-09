@@ -6,6 +6,7 @@ import 'package:raven_back/raven_back.dart';
 
 class HistoryService {
   Set<String> downloaded = {};
+  Map<String, List<List<String>>> txsListsByWalletExposureKeys = {};
 
   Future<bool?> getHistories(Address address) async {
     void sendToStream(Iterable<String> txs) {
@@ -25,7 +26,7 @@ class HistoryService {
       leader.addUnused(address.hdIndex, address.exposure);
     }
 
-    print('getHistory for ${address.hdIndex}');
+    //print('getHistory for ${address.hdIndex}');
     var client = streams.client.client.value;
     if (client == null) {
       return false;
@@ -45,7 +46,7 @@ class HistoryService {
       if (address.wallet is LeaderWallet) {
         updateCache(address.wallet as LeaderWallet);
       }
-      print('${address.address} not found!');
+      //print('${address.address} not found!');
       //sendToStream([]);
     }
     var saved = services.wallet.leader
@@ -60,16 +61,34 @@ class HistoryService {
     /// I think we would actually prefer if it downloaded the actaul transaction
     /// later because we'd like to derive as many addresses as possible before
     /// all that. this is alternative to the HistoryWaiter.
-    //if (address.wallet is SingleWallet ||
-    //    (address.hdIndex >=
-    //        services.wallet.leader
-    //            .getIndexOf(address.wallet as LeaderWallet, address.exposure)
-    //            .saved)) {
-    //  await getTransactions(histories.map((history) => history.txHash));
-    //  return await produceAddressOrBalance();
-    //}
+    if (address.wallet is SingleWallet ||
+        (address.hdIndex >=
+            services.wallet.leader
+                .getIndexOf(address.wallet as LeaderWallet, address.exposure)
+                .saved)) {
+      /// mark key as done
+
+    }
     //unawaited(getTransactions(histories.map((history) => history.txHash)));
+    remember(address, histories.map((history) => history.txHash));
+    //if all marked as done:
+    ////for (var txsList
+    //  //    in txsListsByWalletExposureKeys[produceKey(address)] ?? []) {
+    //  //  await getTransactions(txsList);
+    //  //}
+    //  //txsListsByWalletExposureKeys[produceKey(address)] = <List<String>>[];
+    //  //return await produceAddressOrBalance();
     return null;
+  }
+
+  String produceKey(Address address) =>
+      address.walletId + address.exposure.enumString;
+
+  void remember(Address address, Iterable<String> txs) {
+    var key = produceKey(address);
+    txsListsByWalletExposureKeys.containsKey(key)
+        ? txsListsByWalletExposureKeys[key]!.add(txs.toList())
+        : txsListsByWalletExposureKeys[key] = <List<String>>[];
   }
 
   Future<bool> produceAddressOrBalance() async {
