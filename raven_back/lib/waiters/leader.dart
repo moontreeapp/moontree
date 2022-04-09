@@ -55,9 +55,7 @@ class LeaderWaiter extends Waiter {
         deriveDetails == null
             ? () {/* do nothing */}
             : await handleDeriveAddress(
-                leader: deriveDetails.leader,
-                exposure: deriveDetails.exposure,
-                justOne: deriveDetails.justOne);
+                leader: deriveDetails.leader, exposure: deriveDetails.exposure);
       },
     );
   }
@@ -125,7 +123,6 @@ class LeaderWaiter extends Waiter {
     required LeaderWallet leader,
     NodeExposure? exposure,
     bool bypassCipher = false,
-    bool justOne = false,
   }) async {
     var s = Stopwatch()..start();
     if (bypassCipher ||
@@ -133,7 +130,6 @@ class LeaderWaiter extends Waiter {
       await services.wallet.leader.deriveMoreAddresses(
         leader,
         exposures: exposure == null ? null : [exposure],
-        justOne: justOne,
       );
     } else {
       services.wallet.leader.backlog.add(leader);

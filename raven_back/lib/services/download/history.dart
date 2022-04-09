@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:quiver/iterables.dart';
 import 'package:tuple/tuple.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/streams/wallet.dart';
@@ -39,15 +38,14 @@ class HistoryService {
       if (address.wallet is LeaderWallet) {
         updateCounts(address.wallet as LeaderWallet);
         print('${address.address} histories found!');
-        sendToStream(histories.map((history) => history.txHash));
+        //sendToStream(histories.map((history) => history.txHash));
         if (address.hdIndex >=
             services.wallet.leader
                 .getIndexOf(address.wallet as LeaderWallet, address.exposure)
                 .saved) {
           streams.wallet.deriveAddress.add(DeriveLeaderAddress(
               leader: address.wallet as LeaderWallet,
-              exposure: address.exposure,
-              justOne: true));
+              exposure: address.exposure));
         }
       } else {
         sendToStream(histories.map((history) => history.txHash));

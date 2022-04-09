@@ -158,13 +158,10 @@ class LeaderWalletService {
   Future<Set<Address>> deriveNextAddresses(
     LeaderWallet leaderWallet,
     CipherBase cipher,
-    NodeExposure exposure, {
-    bool justOne = false,
-  }) async {
+    NodeExposure exposure,
+  ) async {
     // get current gap from cache.
-    var generate = justOne
-        ? 1
-        : requiredGap - getIndexOf(leaderWallet, exposure).currentGap;
+    var generate = requiredGap - getIndexOf(leaderWallet, exposure).currentGap;
     var target = 0;
     target = getIndexOf(leaderWallet, exposure).saved + generate;
     print('Starting: ${target - generate}');
@@ -192,7 +189,6 @@ class LeaderWalletService {
   Future<void> deriveMoreAddresses(
     LeaderWallet wallet, {
     List<NodeExposure>? exposures,
-    bool justOne = false,
   }) async {
     exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];
     var newAddresses = <Address>{};
@@ -202,7 +198,6 @@ class LeaderWalletService {
         wallet,
         res.ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
         exposure,
-        justOne: justOne,
       );
       print('derive Address: ${s.elapsed}');
       newAddresses.addAll(derivedAddresses);
