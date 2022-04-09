@@ -60,10 +60,7 @@ class CipherService {
       encryptedEntropy: encrypted_entropy,
       cipherUpdate: currentCipherUpdate,
       name: wallet.name,
-      highestUsedExternalIndex: wallet.highestUsedExternalIndex,
-      highestSavedExternalIndex: wallet.highestSavedExternalIndex,
-      highestUsedInternalIndex: wallet.highestUsedInternalIndex,
-      highestSavedInternalIndex: wallet.highestSavedInternalIndex,
+      seed: wallet.seed, // necessary?
     );
   }
 

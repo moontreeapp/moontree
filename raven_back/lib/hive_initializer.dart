@@ -66,6 +66,8 @@ class HiveInitializer {
   }
 
   Future openAllBoxes() async {
+    // address must open before wallets because on load in wallets waiter
+    // we look up addresses to get highest hdindex
     await Hive.openBox<Address>('addresses');
     await Hive.openBox<Asset>('assets');
     await Hive.openBox<Balance>('balances');

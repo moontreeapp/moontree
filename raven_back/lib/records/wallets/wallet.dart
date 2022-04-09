@@ -16,18 +16,6 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
   @HiveField(2)
   final String name;
 
-  @HiveField(3)
-  int highestUsedExternalIndex;
-
-  @HiveField(4)
-  int highestSavedExternalIndex;
-
-  @HiveField(5)
-  int highestUsedInternalIndex;
-
-  @HiveField(6)
-  int highestSavedInternalIndex;
-
   @override
   List<Object?> get props => [id, cipherUpdate, name];
 
@@ -35,10 +23,6 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
     required this.id,
     required this.cipherUpdate,
     String? name,
-    this.highestUsedExternalIndex = 0,
-    this.highestSavedExternalIndex = 0,
-    this.highestUsedInternalIndex = 0,
-    this.highestSavedInternalIndex = 0,
   }) : name = name ?? (id.length > 5 ? id.substring(0, 6) : id[0]);
 
   String get encrypted;
@@ -55,43 +39,4 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
 
   String get secretTypeToString => secretType.enumString;
   String get walletTypeToString => walletType.enumString;
-
-  /// caching optimization
-  int currentGap(NodeExposure exposure) => exposure == NodeExposure.External
-      ? highestSavedExternalIndex - highestUsedExternalIndex
-      : highestSavedInternalIndex - highestUsedInternalIndex;
-
-  int getHighestSavedIndex(NodeExposure exposure) =>
-      exposure == NodeExposure.Internal
-          ? highestSavedInternalIndex
-          : highestSavedExternalIndex;
-
-  int getHighestUsedIndex(NodeExposure exposure) =>
-      exposure == NodeExposure.Internal
-          ? highestUsedInternalIndex
-          : highestUsedExternalIndex;
-
-  /// only updates if it's larger
-  /// not sure you can call res.wallets.save from here.
-  void updateHighestUsedIndex(int value, NodeExposure exposure) {
-    if (this is LeaderWallet) {
-      if (exposure == NodeExposure.Internal) {
-        if (value > highestUsedInternalIndex) {
-          res.wallets.save(LeaderWallet.from(
-            this as LeaderWallet,
-            highestUsedInternalIndex: value,
-            seed: (this as LeaderWallet).seed,
-          ));
-        }
-      } else {
-        if (value > highestUsedExternalIndex) {
-          res.wallets.save(LeaderWallet.from(
-            this as LeaderWallet,
-            highestUsedExternalIndex: value,
-            seed: (this as LeaderWallet).seed,
-          ));
-        }
-      }
-    }
-  }
 }

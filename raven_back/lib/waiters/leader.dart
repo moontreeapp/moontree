@@ -65,6 +65,7 @@ class LeaderWaiter extends Waiter {
   void handleLeaderChange(Change<Wallet> change) {
     change.when(
         loaded: (loaded) async {
+          updateIndex(loaded.data as LeaderWallet);
           await handleDeriveAddress(leader: loaded.data as LeaderWallet);
         },
         added: (added) async {
@@ -86,6 +87,24 @@ class LeaderWaiter extends Waiter {
           */
         },
         removed: (removed) {});
+  }
+
+  /// this function allows us to avoid creating a 'hdindex' reservoir,
+  /// which is nice. this is why
+  void updateIndex(LeaderWallet leader) {
+    for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
+      var addresses =
+          res.addresses.byWalletExposure.getAll(leader.id, exposure);
+      services.wallet.leader.updateIndexOf(
+        leader,
+        exposure,
+        saved: addresses.map((a) => a.hdIndex).max,
+        used: addresses
+            .where((a) => a.vouts.isNotEmpty)
+            .map((a) => a.hdIndex)
+            .max,
+      );
+    }
   }
 
   Future<void> attemptLeaderWalletAddressDerive(

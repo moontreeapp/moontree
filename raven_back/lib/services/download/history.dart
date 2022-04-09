@@ -18,7 +18,8 @@ class HistoryService {
 
     void updateCounts(LeaderWallet leader) {
       leader.removeUnused(address.hdIndex, address.exposure);
-      leader.updateHighestUsedIndex(address.hdIndex, address.exposure);
+      services.wallet.leader
+          .updateIndexOf(leader, address.exposure, used: address.hdIndex);
     }
 
     void updateCache(LeaderWallet leader) {
@@ -33,13 +34,16 @@ class HistoryService {
     // if a history is too long, don't error
     // will have to just not show all historic transactions...
     var histories = await client.getHistory(address.id);
+
     if (histories.isNotEmpty) {
       if (address.wallet is LeaderWallet) {
         updateCounts(address.wallet as LeaderWallet);
         print('${address.address} histories found!');
         sendToStream(histories.map((history) => history.txHash));
         if (address.hdIndex >=
-            address.wallet!.getHighestSavedIndex(address.exposure)) {
+            services.wallet.leader
+                .getIndexOf(address.wallet as LeaderWallet, address.exposure)
+                .saved) {
           streams.wallet.deriveAddress.add(DeriveLeaderAddress(
               leader: address.wallet as LeaderWallet,
               exposure: address.exposure,

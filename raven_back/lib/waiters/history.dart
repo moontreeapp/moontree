@@ -24,6 +24,39 @@ class HistoryWaiter extends Waiter {
               await deriveOrPull(keyedTransactions);
             } else {
               remember(keyedTransactions);
+              /*
+              logic for downloading transactions:
+              
+              derive address -> save address -> subscribe to address -> 
+              download unspent and tx history (but not transactions yet.
+              (wait a second, why not? because transactions take a while to 
+              download. sure. and I want to get through with my deriving asap
+              so I can show the correct agg totals asap. so I have this logic
+              below...))
+              -> send tx list to here -> then what?
+
+              -> save txs and address by wallet-exposure ->
+
+              if the gap is not satisfied, derive more else ->
+              if we have the same number of addresses as have been derived ->
+              pull tx for those addresses (that wallet-exposure). ->
+              if all gaps have been satisfied, 
+              and all addresses have been pulled ->
+              get the transactions for any remaining tx list ->
+              then pull dangling transactions minus vins ->
+              then calculate and display totals.
+
+              that is...
+              once we have checked for histories for each address that exists
+              in this wallet-exposure AND the gap has been satisfied... 
+              (so we might as well keep track of that gap here rather than
+              on a leader wallet object which has to be saved to the database 
+              again and again... because we're going to regenerate that number
+              every single time we run the thing.)
+              ...we can pull transactions for these addresses 
+              (furthermore, if we have filled the gap for all wallets we can
+              get the dangling transactions...)
+              */
               //deriveIf(keyedTransactions);
             }
           }
@@ -63,9 +96,10 @@ class HistoryWaiter extends Waiter {
   }
 
   Future<void> pullIf(WalletExposureTransactions keyedTransactions) async {
-    var addressCount = keyedTransactions.address.wallet
-            ?.getHighestSavedIndex(keyedTransactions.address.exposure) ??
-        0;
+    var addressCount = services.wallet.leader
+        .getIndexOf(keyedTransactions.address.wallet! as LeaderWallet,
+            keyedTransactions.address.exposure)
+        .saved;
     if ((addressesByWalletExposureKeys[keyedTransactions.key]?.length ?? 0) >=
         addressCount) {
       pulledWalletExposureKeys.add(keyedTransactions.key);

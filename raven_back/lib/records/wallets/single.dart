@@ -23,10 +23,6 @@ class SingleWallet extends Wallet {
           id: id,
           cipherUpdate: cipherUpdate,
           name: name,
-          highestUsedExternalIndex: 1,
-          highestSavedExternalIndex: 1,
-          highestUsedInternalIndex: 1,
-          highestSavedInternalIndex: 1,
         );
 
   @override

@@ -8,14 +8,41 @@ import 'package:raven_back/raven_back.dart';
 // derives addresses for leaderwallets
 // returns any that it can't find a cipher for
 class LeaderWalletService {
-  final Map<String, int> addressRegistry = {
-    /* walletId + exposure : highest hdIndex created*/
-  };
-  Set<LeaderWallet> backlog = {};
   final int requiredGap = 20;
+  Set backlog = <LeaderWallet>{};
+  Map<LeaderExposureKey, LeaderExposureIndex> indexRegistry = {};
 
-  bool gapSatisfied(LeaderWallet leaderWallet, NodeExposure exposure) =>
-      requiredGap - leaderWallet.currentGap(exposure) <= 0;
+  /// caching optimization
+  LeaderExposureIndex getIndexOf(LeaderWallet leader, NodeExposure exposure) {
+    var key = LeaderExposureKey(leader, exposure);
+    if (!indexRegistry.keys.contains(key)) {
+      indexRegistry[key] = LeaderExposureIndex();
+    }
+    return indexRegistry[key]!;
+  }
+
+  void updateIndexOf(LeaderWallet leader, NodeExposure exposure,
+      {int? used, int? saved, int? usedPlus, int? savedPlus}) {
+    var key = LeaderExposureKey(leader, exposure);
+    if (!indexRegistry.keys.contains(key)) {
+      indexRegistry[key] = LeaderExposureIndex();
+    }
+    if (saved != null) {
+      indexRegistry[key]!.updateUsed(saved);
+    }
+    if (used != null) {
+      indexRegistry[key]!.updateUsed(used);
+    }
+    if (savedPlus != null) {
+      indexRegistry[key]!.updateSavedPlus(savedPlus);
+    }
+    if (usedPlus != null) {
+      indexRegistry[key]!.updateUsedPlus(usedPlus);
+    }
+  }
+
+  bool gapSatisfied(LeaderWallet leader, NodeExposure exposure) =>
+      requiredGap - (getIndexOf(leader, exposure).currentGap) <= 0;
 
   Address deriveAddress(
     LeaderWallet wallet,
@@ -135,10 +162,11 @@ class LeaderWalletService {
     bool justOne = false,
   }) async {
     // get current gap from cache.
-    var generate =
-        justOne ? 1 : requiredGap - leaderWallet.currentGap(exposure);
+    var generate = justOne
+        ? 1
+        : requiredGap - getIndexOf(leaderWallet, exposure).currentGap;
     var target = 0;
-    target = leaderWallet.getHighestSavedIndex(exposure) + generate;
+    target = getIndexOf(leaderWallet, exposure).saved + generate;
     print('Starting: ${target - generate}');
     print('Derive target: $target');
     if (generate > 0) {
@@ -166,23 +194,8 @@ class LeaderWalletService {
     List<NodeExposure>? exposures,
     bool justOne = false,
   }) async {
-    void updateCacheCounts(int internalCount, int externalCount) {
-      if (internalCount > 0 || externalCount > 0) {
-        res.wallets.save(LeaderWallet.from(
-          wallet,
-          highestSavedInternalIndex:
-              wallet.highestSavedInternalIndex + internalCount,
-          highestSavedExternalIndex:
-              wallet.highestSavedExternalIndex + externalCount,
-          seed: wallet.seed,
-        ));
-      }
-    }
-
     exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];
     var newAddresses = <Address>{};
-    var internalCount = 0;
-    var externalCount = 0;
     for (var exposure in exposures) {
       var s = Stopwatch()..start();
       var derivedAddresses = await deriveNextAddresses(
@@ -193,13 +206,33 @@ class LeaderWalletService {
       );
       print('derive Address: ${s.elapsed}');
       newAddresses.addAll(derivedAddresses);
-      if (exposure == NodeExposure.Internal) {
-        internalCount = derivedAddresses.length;
-      } else {
-        externalCount = derivedAddresses.length;
-      }
+      updateIndexOf(wallet, exposure, savedPlus: derivedAddresses.length);
     }
     await res.addresses.saveAll(newAddresses);
-    updateCacheCounts(internalCount, externalCount);
   }
+}
+
+class LeaderExposureKey {
+  LeaderWallet leader;
+  NodeExposure exposure;
+
+  LeaderExposureKey(this.leader, this.exposure);
+
+  String get key => produceKey(leader.id, exposure);
+  static String produceKey(String walletId, NodeExposure exposure) =>
+      walletId + exposure.enumString;
+}
+
+class LeaderExposureIndex {
+  int saved = 0;
+  int used = 0;
+
+  LeaderExposureIndex({this.saved = -1, this.used = -1});
+
+  int get currentGap => saved - used;
+
+  void updateSaved(int value) => saved = value > saved ? value : saved;
+  void updateUsed(int value) => used = value > used ? value : used;
+  void updateSavedPlus(int value) => saved = saved + value;
+  void updateUsedPlus(int value) => used = used + value;
 }

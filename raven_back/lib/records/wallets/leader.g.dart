@@ -21,17 +21,13 @@ class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
       encryptedEntropy: fields[7] as String,
       cipherUpdate: fields[1] as CipherUpdate,
       name: fields[2] as String?,
-      highestUsedExternalIndex: fields[3] as int,
-      highestSavedExternalIndex: fields[4] as int,
-      highestUsedInternalIndex: fields[5] as int,
-      highestSavedInternalIndex: fields[6] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, LeaderWallet obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(4)
       ..writeByte(7)
       ..write(obj.encryptedEntropy)
       ..writeByte(0)
@@ -39,15 +35,7 @@ class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
       ..writeByte(1)
       ..write(obj.cipherUpdate)
       ..writeByte(2)
-      ..write(obj.name)
-      ..writeByte(3)
-      ..write(obj.highestUsedExternalIndex)
-      ..writeByte(4)
-      ..write(obj.highestSavedExternalIndex)
-      ..writeByte(5)
-      ..write(obj.highestUsedInternalIndex)
-      ..writeByte(6)
-      ..write(obj.highestSavedInternalIndex);
+      ..write(obj.name);
   }
 
   @override

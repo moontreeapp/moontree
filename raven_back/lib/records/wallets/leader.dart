@@ -25,10 +25,6 @@ class LeaderWallet extends Wallet {
     required this.encryptedEntropy,
     CipherUpdate cipherUpdate = defaultCipherUpdate,
     String? name,
-    int highestUsedExternalIndex = -1,
-    int highestSavedExternalIndex = -1,
-    int highestUsedInternalIndex = -1,
-    int highestSavedInternalIndex = -1,
     List<int>? unusedInternalIndices,
     List<int>? unusedExternalIndices,
     Uint8List? seed,
@@ -36,10 +32,6 @@ class LeaderWallet extends Wallet {
           id: id,
           cipherUpdate: cipherUpdate,
           name: name,
-          highestUsedExternalIndex: highestUsedExternalIndex,
-          highestSavedExternalIndex: highestSavedExternalIndex,
-          highestUsedInternalIndex: highestUsedInternalIndex,
-          highestSavedInternalIndex: highestSavedInternalIndex,
         ) {
     this.unusedInternalIndices = unusedInternalIndices ?? [];
     this.unusedExternalIndices = unusedExternalIndices ?? [];
@@ -58,10 +50,6 @@ class LeaderWallet extends Wallet {
     String? encryptedEntropy,
     CipherUpdate? cipherUpdate,
     String? name,
-    int? highestUsedExternalIndex,
-    int? highestSavedExternalIndex,
-    int? highestUsedInternalIndex,
-    int? highestSavedInternalIndex,
     List<int>? unusedInternalIndices,
     List<int>? unusedExternalIndices,
     Uint8List? seed,
@@ -71,14 +59,6 @@ class LeaderWallet extends Wallet {
         encryptedEntropy: encryptedEntropy ?? existing.encryptedEntropy,
         cipherUpdate: cipherUpdate ?? existing.cipherUpdate,
         name: name ?? existing.name,
-        highestUsedExternalIndex:
-            highestUsedExternalIndex ?? existing.highestUsedExternalIndex,
-        highestSavedExternalIndex:
-            highestSavedExternalIndex ?? existing.highestSavedExternalIndex,
-        highestUsedInternalIndex:
-            highestUsedInternalIndex ?? existing.highestUsedInternalIndex,
-        highestSavedInternalIndex:
-            highestSavedInternalIndex ?? existing.highestSavedInternalIndex,
         unusedInternalIndices:
             unusedInternalIndices ?? existing.unusedInternalIndices,
         unusedExternalIndices:
@@ -87,20 +67,10 @@ class LeaderWallet extends Wallet {
       );
 
   @override
-  List<Object?> get props => [
-        id,
-        cipherUpdate,
-        encryptedEntropy,
-        highestUsedExternalIndex,
-        highestSavedExternalIndex,
-        highestUsedInternalIndex,
-        highestSavedInternalIndex,
-      ];
+  List<Object?> get props => [id, cipherUpdate, encryptedEntropy];
 
   @override
-  String toString() => 'LeaderWallet($id, $encryptedEntropy, $cipherUpdate, '
-      '$highestUsedExternalIndex, $highestSavedExternalIndex, '
-      '$highestUsedInternalIndex, $highestSavedInternalIndex)';
+  String toString() => 'LeaderWallet($id, $encryptedEntropy, $cipherUpdate)';
 
   @override
   String get encrypted => encryptedEntropy;
@@ -110,10 +80,7 @@ class LeaderWallet extends Wallet {
 
   @override
   ravenwallet.HDWallet seedWallet(CipherBase cipher, {Net net = Net.Main}) =>
-      SeedWallet(
-        seed,
-        net,
-      ).wallet;
+      SeedWallet(seed, net).wallet;
 
   @override
   SecretType get secretType => SecretType.mnemonic;
