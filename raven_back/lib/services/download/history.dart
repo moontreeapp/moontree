@@ -7,7 +7,7 @@ import 'package:raven_back/raven_back.dart';
 class HistoryService {
   Set<String> downloaded = {};
 
-  Future<bool> getHistories(Address address) async {
+  Future<bool?> getHistories(Address address) async {
     void sendToStream(Iterable<String> txs) {
       streams.wallet.transactions.add(WalletExposureTransactions(
         address: address,
@@ -25,6 +25,7 @@ class HistoryService {
       leader.addUnused(address.hdIndex, address.exposure);
     }
 
+    print('getHistory for ${address.hdIndex}');
     var client = streams.client.client.value;
     if (client == null) {
       return false;
@@ -33,35 +34,45 @@ class HistoryService {
     // if a history is too long, don't error
     // will have to just not show all historic transactions...
     var histories = await client.getHistory(address.id);
-
     if (histories.isNotEmpty) {
       if (address.wallet is LeaderWallet) {
         updateCounts(address.wallet as LeaderWallet);
-        print('${address.address} histories found!');
-        //sendToStream(histories.map((history) => history.txHash));
-        if (address.hdIndex >=
-            services.wallet.leader
-                .getIndexOf(address.wallet as LeaderWallet, address.exposure)
-                .saved) {
-          streams.wallet.deriveAddress.add(DeriveLeaderAddress(
-              leader: address.wallet as LeaderWallet,
-              exposure: address.exposure));
-        }
       } else {
-        sendToStream(histories.map((history) => history.txHash));
-        sendToStream([]);
+        //sendToStream(histories.map((history) => history.txHash));
+        //sendToStream([]);
       }
     } else {
       if (address.wallet is LeaderWallet) {
         updateCache(address.wallet as LeaderWallet);
       }
       print('${address.address} not found!');
-      sendToStream([]);
+      //sendToStream([]);
     }
-    return true;
+    var saved = services.wallet.leader
+        .getIndexOf(address.wallet as LeaderWallet, address.exposure)
+        .saved;
+    print('${address.hdIndex} VS $saved');
+    if (address.wallet is LeaderWallet && address.hdIndex >= saved) {
+      streams.wallet.deriveAddress.add(DeriveLeaderAddress(
+          leader: address.wallet as LeaderWallet, exposure: address.exposure));
+    }
+
+    /// I think we would actually prefer if it downloaded the actaul transaction
+    /// later because we'd like to derive as many addresses as possible before
+    /// all that. this is alternative to the HistoryWaiter.
+    //if (address.wallet is SingleWallet ||
+    //    (address.hdIndex >=
+    //        services.wallet.leader
+    //            .getIndexOf(address.wallet as LeaderWallet, address.exposure)
+    //            .saved)) {
+    //  await getTransactions(histories.map((history) => history.txHash));
+    //  return await produceAddressOrBalance();
+    //}
+    //unawaited(getTransactions(histories.map((history) => history.txHash)));
+    return null;
   }
 
-  Future<bool> produceAddressOrBalance(List<Future<Null>> futures) async {
+  Future<bool> produceAddressOrBalance() async {
     var client = streams.client.client.value;
     if (client == null) {
       return false;
@@ -71,16 +82,13 @@ class HistoryService {
       for (var exposure in [NodeExposure.Internal, NodeExposure.External]) {
         if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
           allDone = false;
-          print('deriving ${leader.id.substring(0, 4)} ${exposure.enumString}');
-          streams.wallet.deriveAddress
-              .add(DeriveLeaderAddress(leader: leader, exposure: exposure));
         }
       }
     }
     if (allDone) {
       //await Future.wait(futures);
       //futures.clear();
-      //print('ALL DONE!');
+      print('ALL DONE!');
       await saveDanglingTransactions(client);
       await services.balance.recalculateAllBalances();
       services.download.asset.allAdminsSubs();

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:raven_back/streams/wallet.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/raven_back.dart';
 
@@ -110,14 +111,24 @@ class SubscribeService {
   void onlySubscribe(RavenElectrumClient client, Address address) {
     if (!subscriptionHandles.keys.contains(address.id)) {
       subscriptionHandles[address.id] =
-          client.subscribeScripthash(address.id).listen((String? status) {
-        if (address.status?.status != status) {
-          res.statuses.save(Status(
+          client.subscribeScripthash(address.id).listen((String? status) async {
+        print(
+            'subscribe for ${address.hdIndex}, ${address.status?.status}, $status');
+        if (status == null || address.status?.status != status) {
+          await res.statuses.save(Status(
               linkId: address.id,
               statusType: StatusType.address,
               status: status));
-          services.download.history.getHistories(address);
-          services.download.unspents.pull(scripthashes: [address.id]);
+          await services.download.unspents.pull(scripthashes: [address.id]);
+          var allDone = await services.download.history.getHistories(address);
+          if (allDone != null && !allDone && address.wallet is LeaderWallet) {
+            print('deriving ${address.wallet!.id.substring(0, 4)} '
+                '${address.exposure.enumString}');
+            streams.wallet.deriveAddress.add(DeriveLeaderAddress(
+              leader: address.wallet! as LeaderWallet,
+              exposure: address.exposure,
+            ));
+          }
         }
       });
     }

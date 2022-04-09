@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' show HDWallet;
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:raven_back/utilities/hex.dart' as hex;
@@ -21,14 +22,20 @@ class LeaderWalletService {
     return indexRegistry[key]!;
   }
 
-  void updateIndexOf(LeaderWallet leader, NodeExposure exposure,
-      {int? used, int? saved, int? usedPlus, int? savedPlus}) {
+  void updateIndexOf(
+    LeaderWallet leader,
+    NodeExposure exposure, {
+    int? saved,
+    int? used,
+    int? savedPlus,
+    int? usedPlus,
+  }) {
     var key = LeaderExposureKey(leader, exposure);
     if (!indexRegistry.keys.contains(key)) {
       indexRegistry[key] = LeaderExposureIndex();
     }
     if (saved != null) {
-      indexRegistry[key]!.updateUsed(saved);
+      indexRegistry[key]!.updateSaved(saved);
     }
     if (used != null) {
       indexRegistry[key]!.updateUsed(used);
@@ -162,6 +169,8 @@ class LeaderWalletService {
   ) async {
     // get current gap from cache.
     var generate = requiredGap - getIndexOf(leaderWallet, exposure).currentGap;
+    print('getIndexOf ${getIndexOf(leaderWallet, exposure).currentGap}');
+    print('generate $generate');
     var target = 0;
     target = getIndexOf(leaderWallet, exposure).saved + generate;
     print('Starting: ${target - generate}');
@@ -170,11 +179,13 @@ class LeaderWalletService {
       var futures = <Future<Address>>[
         for (var i = target - generate + 1; i <= target; i++)
           () async {
+            print('i $i');
             return deriveAddress(leaderWallet, i, exposure: exposure);
           }()
       ];
-
-      return (await Future.wait(futures)).toSet();
+      var ret = (await Future.wait(futures)).toSet();
+      print('len ${futures.length} vs ${ret.length}');
+      return ret;
     }
     return {};
   }
@@ -199,15 +210,17 @@ class LeaderWalletService {
         res.ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
         exposure,
       );
-      print('derive Address: ${s.elapsed}');
+      print('derive Address: ${s.elapsed} ${derivedAddresses.length}');
       newAddresses.addAll(derivedAddresses);
       updateIndexOf(wallet, exposure, savedPlus: derivedAddresses.length);
     }
+    print('save Address: ${newAddresses.length}');
+    print('save address: ${newAddresses.map((e) => e.hdIndex).toList()}');
     await res.addresses.saveAll(newAddresses);
   }
 }
 
-class LeaderExposureKey {
+class LeaderExposureKey with EquatableMixin {
   LeaderWallet leader;
   NodeExposure exposure;
 
@@ -216,6 +229,12 @@ class LeaderExposureKey {
   String get key => produceKey(leader.id, exposure);
   static String produceKey(String walletId, NodeExposure exposure) =>
       walletId + exposure.enumString;
+
+  @override
+  List<Object> get props => [leader, exposure];
+
+  @override
+  String toString() => 'LeaderExposureKey($leader, $exposure)';
 }
 
 class LeaderExposureIndex {

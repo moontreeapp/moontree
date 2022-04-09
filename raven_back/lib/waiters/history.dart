@@ -186,7 +186,7 @@ class HistoryWaiter extends Waiter {
     //    'pulledWalletExposureKeys.length ${pulledWalletExposureKeys.length} addressesByWalletExposureKeys.keys.length ${addressesByWalletExposureKeys.keys.length}');
     //if (pulledWalletExposureKeys.length ==
     //    addressesByWalletExposureKeys.keys.length) {
-    await services.download.history.produceAddressOrBalance(futures);
+    await services.download.history.produceAddressOrBalance();
     //}
     //}
   }

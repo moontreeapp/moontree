@@ -9,7 +9,7 @@ import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/zips.dart';
 
-//import 'package:raven_back/utilities/database.dart' as ravenDatabase;
+import 'package:raven_back/utilities/database.dart' as ravenDatabase;
 
 class NavMenu extends StatefulWidget {
   NavMenu({Key? key}) : super(key: key);
@@ -156,13 +156,12 @@ class _NavMenuState extends State<NavMenu> {
             name: 'Wallet',
             link: '/wallet',
           ),
+          destination(
+              icon: Icons.info_outline_rounded,
+              name: 'Clear Database',
+              link: '/home',
+              execute: ravenDatabase.deleteDatabase),
           /*
-          SettingsTile(
-              title: 'Clear Database',
-              leading: Icon(Icons.info_outline_rounded),
-              onPressed: (BuildContext context) {
-            //    ravenDatabase.deleteDatabase();
-          ),
           */
           ListTile(
               title: Text('test'),

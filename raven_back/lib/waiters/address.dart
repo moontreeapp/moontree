@@ -14,7 +14,14 @@ class AddressWaiter extends Waiter {
     change.when(
         loaded: (loaded) {},
         added: (added) {
-          services.client.subscribe.to(added.data);
+          var address = added.data;
+          print('address saved: ${address.hdIndex}');
+          //if (address.wallet is LeaderWallet) {
+          //  services.wallet.leader.updateIndexOf(
+          //      address.wallet! as LeaderWallet, address.exposure,
+          //      saved: address.hdIndex);
+          //}
+          services.client.subscribe.to(address);
         },
         updated: (updated) => services.client.subscribe.to(updated.data),
         removed: (removed) {

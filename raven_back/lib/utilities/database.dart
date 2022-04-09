@@ -5,6 +5,9 @@ import 'package:raven_back/raven_back.dart';
 import 'package:reservoir/reservoir.dart';
 
 Future deleteDatabase() async {
+  services.wallet.leader.indexRegistry.clear();
+  services.download.history.downloaded.clear();
+  services.client.subscribe.subscriptionHandles.clear();
   try {
     await res.addresses.clear();
     await res.balances.clear();
