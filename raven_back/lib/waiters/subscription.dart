@@ -10,9 +10,6 @@ class SubscriptionWaiter extends Waiter {
           ? services.client.subscribe.toAllAddresses()
           : deinitAllSubscriptions();
     });
-    //(bool connected) => connected
-    //    ? services.client.subscribe.toAllAddresses()
-    //    : deinitAllSubscriptions());
   }
 
   void deinitAllSubscriptions() {

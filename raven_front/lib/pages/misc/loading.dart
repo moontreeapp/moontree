@@ -33,15 +33,15 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
   }
 
   Future setupWallets() async {
+    if (res.addresses.data.isNotEmpty) {
+      services.wallet.leader.updateIndexes();
+    }
     if (res.wallets.data.isEmpty) {
       await setupRealWallet('2');
       await res.settings.setCurrentWalletId(res.wallets.first.id);
       await res.settings.savePreferredWalletId(res.wallets.first.id);
       //setupRealWallet('1');
       //setupRealWallet(null);
-    }
-    if (res.addresses.data.isNotEmpty) {
-      services.wallet.leader.updateIndexes();
     }
     // for testing
     print('-------------------------');

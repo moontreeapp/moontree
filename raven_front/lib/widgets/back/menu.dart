@@ -235,33 +235,38 @@ class _NavMenuState extends State<NavMenu> {
                 //print(addresses.map((e) => e.exposure));
                 //waiters.history.pullIf(WalletExposureTransactions(
                 //    address: addresses[1], transactionIds: []));
-                print('wallets');
-                for (var w in res.wallets) {
-                  print(w);
+                //print('wallets');
+                //for (var w in res.wallets) {
+                //  print(w);
+                //}
+                //print('addresses');
+                //for (var w in res.addresses) {
+                //  print(w);
+                //}
+                //print('transactions');
+                //for (var w in res.transactions) {
+                //  print(w);
+                //}
+                //print(services.download.history.addresses.length);
+                //for (var leader in res.wallets.leaders) {
+                //  for (var exposure in [
+                //    NodeExposure.Internal,
+                //    NodeExposure.External
+                //  ]) {
+                //    if (!services.wallet.leader
+                //        .gapSatisfied(leader, exposure)) {
+                //      print('false');
+                //    }
+                //  }
+                //}
+                //print(services.wallet.leader.indexRegistry.values
+                //    .map((e) => e.saved)
+                //    .sum());
+                for (var x in services
+                    .download.unspents.unspentsBySymbol['MOONTREE']!) {
+                  print(x);
                 }
-                print('addresses');
-                for (var w in res.addresses) {
-                  print(w);
-                }
-                print('transactions');
-                for (var w in res.transactions) {
-                  print(w);
-                }
-                print(services.download.history.addresses.length);
-                for (var leader in res.wallets.leaders) {
-                  for (var exposure in [
-                    NodeExposure.Internal,
-                    NodeExposure.External
-                  ]) {
-                    if (!services.wallet.leader
-                        .gapSatisfied(leader, exposure)) {
-                      print('false');
-                    }
-                  }
-                }
-                print(services.wallet.leader.indexRegistry.values
-                    .map((e) => e.saved)
-                    .sum());
+
                 //print('vins');
                 //for (var w in res.vins) {
                 //  print(w);

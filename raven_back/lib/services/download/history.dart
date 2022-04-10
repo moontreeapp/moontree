@@ -63,7 +63,7 @@ class HistoryService {
           }
           return true;
         }()) {
-      //await services.balance.recalculateAllBalancesByUnspents();
+      await services.balance.recalculateAllBalancesByUnspents();
       print('getting Transactions');
       for (var key in txsListsByWalletExposureKeys.keys) {
         for (var txsList in txsListsByWalletExposureKeys[key]!) {
@@ -115,7 +115,7 @@ class HistoryService {
     }
     print('ALL DONE!');
     await saveDanglingTransactions(client);
-    await services.balance.recalculateAllBalances();
+    //await services.balance.recalculateAllBalances();
     //services.download.asset.allAdminsSubs(); // why?
     // remove vouts pointing to addresses we don't own?
   }
@@ -130,7 +130,7 @@ class HistoryService {
       ],
       client,
     );
-    await services.balance.recalculateAllBalances();
+    //await services.balance.recalculateAllBalances();
   }
 
   /// when an address status change: make our historic tx data match blockchain

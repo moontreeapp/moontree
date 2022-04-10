@@ -45,7 +45,8 @@ class UnspentService {
               transactionId: '',
               position: 0));
         }
-        unspentsBySymbol[utxo.symbol]!.addAll(utxos);
+
+        unspentsBySymbol[utxo.symbol]!.add(utxo);
       }
     }
   }

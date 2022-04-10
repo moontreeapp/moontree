@@ -63,7 +63,6 @@ class LeaderWaiter extends Waiter {
   void handleLeaderChange(Change<Wallet> change) {
     change.when(
         loaded: (loaded) async {
-          services.wallet.leader.updateIndex(loaded.data as LeaderWallet);
           await handleDeriveAddress(leader: loaded.data as LeaderWallet);
         },
         added: (added) async {
