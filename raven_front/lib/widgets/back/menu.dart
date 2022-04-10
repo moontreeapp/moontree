@@ -152,7 +152,6 @@ class _NavMenuState extends State<NavMenu> {
             link: '/settings/about',
           ),
           /*
-          */
           destination(
             icon: Icons.info_rounded,
             name: 'Wallet',
@@ -262,10 +261,12 @@ class _NavMenuState extends State<NavMenu> {
                 //print(services.wallet.leader.indexRegistry.values
                 //    .map((e) => e.saved)
                 //    .sum());
-                for (var x in services
-                    .download.unspents.unspentsBySymbol['MOONTREE']!) {
+                for (var x
+                    in services.download.unspents.unspentsBySymbol['RVN']!) {
                   print(x);
                 }
+                //services
+                //    .download.unspents.pull()
 
                 //print('vins');
                 //for (var w in res.vins) {
@@ -310,6 +311,7 @@ class _NavMenuState extends State<NavMenu> {
                 }
                 */
               }),
+          */
         ],
       )
     };

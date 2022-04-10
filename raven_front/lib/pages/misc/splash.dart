@@ -1,15 +1,16 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/services/wallet/constants.dart';
 
 import '../../listeners/listeners.dart';
 
 /// This works by creating an AnimationController instance and passing it
 /// to the Lottie widget.
 /// The AnimationController class has a rich API to run the animation in various ways.
-
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
 
