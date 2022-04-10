@@ -8,16 +8,8 @@ class HistoryService {
   Set<String> downloaded = {};
   Set<Address> addresses = {};
   Map<String, List<List<String>>> txsListsByWalletExposureKeys = {};
-  Set<String> walletExposureKeysDone = {};
 
   Future<bool?> getHistories(Address address) async {
-    void sendToStream(Iterable<String> txs) {
-      streams.wallet.transactions.add(WalletExposureTransactions(
-        address: address,
-        transactionIds: txs,
-      ));
-    }
-
     void updateCounts(LeaderWallet leader) {
       leader.removeUnused(address.hdIndex, address.exposure);
       services.wallet.leader
@@ -28,7 +20,6 @@ class HistoryService {
       leader.addUnused(address.hdIndex, address.exposure);
     }
 
-    //print('getHistory for ${address.hdIndex}');
     var client = streams.client.client.value;
     if (client == null) {
       return false;
@@ -41,47 +32,25 @@ class HistoryService {
     if (histories.isNotEmpty) {
       if (address.wallet is LeaderWallet) {
         updateCounts(address.wallet as LeaderWallet);
-      } else {
-        //sendToStream(histories.map((history) => history.txHash));
-        //sendToStream([]);
       }
     } else {
       if (address.wallet is LeaderWallet) {
         updateCache(address.wallet as LeaderWallet);
       }
-      //print('${address.address} not found!');
-      //sendToStream([]);
     }
-    var saved = services.wallet.leader
-        .getIndexOf(address.wallet as LeaderWallet, address.exposure)
-        .saved;
-    print('${address.hdIndex} VS $saved');
-    if (address.wallet is LeaderWallet && address.hdIndex >= saved) {
+    if (address.wallet is LeaderWallet &&
+        address.hdIndex >=
+            services.wallet.leader
+                .getIndexOf(address.wallet as LeaderWallet, address.exposure)
+                .saved) {
       streams.wallet.deriveAddress.add(DeriveLeaderAddress(
           leader: address.wallet as LeaderWallet, exposure: address.exposure));
     }
-
-    /// I think we would actually prefer if it downloaded the actaul transaction
-    /// later because we'd like to derive as many addresses as possible before
-    /// all that. this is alternative to the HistoryWaiter.
-    //unawaited(getTransactions(histories.map((history) => history.txHash)));
     remember(address, histories.map((history) => history.txHash));
-    //if all marked as done:
-    //for (var wallet in res.wallets) {
-    //  for (var exposure in {NodeExposure.External, NodeExposure.Internal}) {
-    //    // how to check if rememberDone not used.
-    //    // if all services.wallet.leader.getIndexOf(wallet, exposure).keys.length
-    //    //    == txsListsByWalletExposureKeys.each item, sum number of lists in value...
-    //  }
-    //}
-    //if (address.wallet is SingleWallet || ) {
-    //  rememberDone(address);
-    //}
     if (addresses.length ==
             services.wallet.leader.indexRegistry.values
                 .map((e) => e.saved)
                 .sum() /*plus single wallets*2 */
-        //&& all gaps filled
         &&
         () {
           for (var leader in res.wallets.leaders) {
@@ -96,21 +65,16 @@ class HistoryService {
           }
           return true;
         }()) {
-      //if (walletExposureKeysDone.length ==
-      //    txsListsByWalletExposureKeys.keys.length) {
-      /// FYI here's a good place of a life cycle hook:
-      /// in between derving -> saving -> getting histories and
-      /// then right here
-      /// downloading all transactions -> downloading dangling transactions
+      //await services.balance.recalculateAllBalancesByUnspents();
       for (var key in txsListsByWalletExposureKeys.keys) {
         for (var txsList in txsListsByWalletExposureKeys[key]!) {
           await getTransactions(txsList);
         }
       }
-      print(
-          'RUNNING CLEAR ${walletExposureKeysDone.length} ${services.wallet.leader.getIndexOf(address.wallet as LeaderWallet, address.exposure)}');
-      txsListsByWalletExposureKeys[produceKey(address)] = <List<String>>[];
-      walletExposureKeysDone.clear();
+      // shouldn't need this, we can probably clean up the memory.
+      //txsListsByWalletExposureKeys[produceKey(address)] = <List<String>>[];
+      // don't clear because if we get updates we want to pull tx
+      //addresses.clear();
       return await produceAddressOrBalance();
     }
     return null;
@@ -126,9 +90,6 @@ class HistoryService {
         : txsListsByWalletExposureKeys[key] = <List<String>>[];
   }
 
-  void rememberDone(Address address) =>
-      walletExposureKeysDone.add(produceKey(address));
-
   Future<bool> produceAddressOrBalance() async {
     var client = streams.client.client.value;
     if (client == null) {
@@ -143,15 +104,11 @@ class HistoryService {
       }
     }
     if (allDone) {
-      //await Future.wait(futures);
-      //futures.clear();
       print('ALL DONE!');
       await saveDanglingTransactions(client);
       await services.balance.recalculateAllBalances();
       services.download.asset.allAdminsSubs();
       // remove vouts pointing to addresses we don't own?
-    } else {
-      print('NOT ALL DONE');
     }
     return allDone;
   }
@@ -180,9 +137,6 @@ class HistoryService {
         saveTransaction(tx, client, saveVin: saveVin, justReturn: true)
     ];
     var threes = await Future.wait<List<Set>>(futures);
-    print(threes.length);
-
-    //var items = {0: <Vin>{}, 1: <Vout>{}, 2: <Transaction>{}};
     for (var three in threes) {
       if (three.isNotEmpty) {
         if (three[2].isNotEmpty) {
@@ -194,28 +148,8 @@ class HistoryService {
         if (three[1].isNotEmpty) {
           await res.vouts.saveAll(three[1] as Set<Vout>);
         }
-        //if (items[2]!.isNotEmpty) {
-        //  items[2]!.addAll(three[2] as Set<Transaction>);
-        //}
-        //if (items[0]!.isNotEmpty) {
-        //  items[0]!.addAll(three[0] as Set<Vin>);
-        //}
-        //if (items[1]!.isNotEmpty) {
-        //  items[1]!.addAll(three[1] as Set<Vout>);
-        //}
       }
     }
-    //print('ITEMS: ${items.length}, $items, ${items.length}');
-    //if (items[2]!.isNotEmpty) {
-    //  await res.transactions.saveAll(items[2]! as Set<Transaction>);
-    //}
-    //if (items[0]!.isNotEmpty) {
-    //  await res.vins.saveAll(items[0]! as Set<Vin>);
-    //}
-    //if (items[1]!.isNotEmpty) {
-    //  await res.vouts.saveAll(items[1]! as Set<Vout>);
-    //}
-    print('done saving');
   }
 
   /// don't need this for creating UTXO set anymore but...
@@ -225,7 +159,6 @@ class HistoryService {
   Future saveDanglingTransactions(RavenElectrumClient client) async {
     var txs =
         (res.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet());
-    print('GETTING DANGLING TRANSACTIONS: $txs');
     await getTransactions(txs, saveVin: false);
   }
 
@@ -237,14 +170,6 @@ class HistoryService {
     if (client == null) {
       return false;
     }
-
-    //how? leader.vins?
-    //var txs =
-    //    (res.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet());
-    ////print('GETTING DANGLING TRANSACTIONS: $txs');
-    //for (var txHash in txs) {
-    //  await getTransaction(txHash, saveVin: false);
-    //}
   }
 
   /// we capture securities here. if it's one we've never seen,
@@ -309,13 +234,8 @@ class HistoryService {
     // not already downloaded?
     if (!downloaded.contains(transactionId)) {
       downloaded.add(transactionId);
-      print('downloading: $transactionId');
-      var s = Stopwatch()..start();
       return client.getTransaction(transactionId).then((tx) async {
-        print('download time: ${s.elapsed}');
-        s = Stopwatch()..start();
         await saveTransaction(tx, client, saveVin: saveVin);
-        print('saving   time: ${s.elapsed}');
       });
     } else {
       print('skipping: $transactionId');
@@ -332,19 +252,14 @@ class HistoryService {
       return null;
     }
     // filter out already downloaded
-    print('b4 transactionIds: $transactionIds');
     transactionIds = transactionIds
         .where((transactionId) => !downloaded.contains(transactionId))
         .toSet();
-    print('after transactionIds: $transactionIds, downloaded: $downloaded');
     downloaded.addAll(transactionIds);
-    print('downloading: ${transactionIds.length}');
     var txs = <Tx>[];
     try {
       txs = await client.getTransactions(transactionIds);
-      print('downloaded: ${txs.length}');
     } catch (e) {
-      print('error caught $e');
       var futures = <Future<Tx>>[];
       for (var transactionId in transactionIds) {
         futures.add(client.getTransaction(transactionId));
@@ -368,7 +283,6 @@ class HistoryService {
     var newVins = <Vin>{};
     var newVouts = <Vout>{};
     var newTxs = <Transaction>{};
-    print('parsing/saving: ${tx.txid}');
     if (saveVin) {
       for (var vin in tx.vin) {
         if (vin.txid != null && vin.vout != null) {
@@ -389,17 +303,12 @@ class HistoryService {
     }
     for (var vout in tx.vout) {
       if (vout.scriptPubKey.type == 'nullassetdata') continue;
-      //if (tx.txid ==
-      //    '7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c') {
-      //  print('tx');
-      //}
       var vs = await handleAssetData(client, tx, vout);
       newVouts.add(Vout(
         transactionId: tx.txid,
         position: vout.n,
         type: vout.scriptPubKey.type,
         lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
-        // TEST THIS -- redownload everything and verify that asset vouts have 0 rvnValue
         rvnValue: vs.item3 != null ? 0 : vs.item1,
         assetValue: vs.item3 == null
             ? null

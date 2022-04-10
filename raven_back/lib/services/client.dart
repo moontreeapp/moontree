@@ -112,8 +112,6 @@ class SubscribeService {
     if (!subscriptionHandles.keys.contains(address.id)) {
       subscriptionHandles[address.id] =
           client.subscribeScripthash(address.id).listen((String? status) async {
-        print(
-            'subscribe for ${address.hdIndex}, ${address.status?.status}, $status');
         if (status == null || address.status?.status != status) {
           await res.statuses.save(Status(
               linkId: address.id,
@@ -122,8 +120,6 @@ class SubscribeService {
           await services.download.unspents.pull(scripthashes: [address.id]);
           var allDone = await services.download.history.getHistories(address);
           if (allDone != null && !allDone && address.wallet is LeaderWallet) {
-            print('deriving ${address.wallet!.id.substring(0, 4)} '
-                '${address.exposure.enumString}');
             streams.wallet.deriveAddress.add(DeriveLeaderAddress(
               leader: address.wallet! as LeaderWallet,
               exposure: address.exposure,

@@ -5,7 +5,6 @@ Future initWaiters() async {
   waiters.single.init();
   waiters.address.init();
   waiters.client.init();
-  waiters.history.init();
   waiters.setting.init();
   waiters.subscription.init();
   waiters.block.init();

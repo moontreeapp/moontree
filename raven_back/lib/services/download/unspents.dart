@@ -17,8 +17,6 @@ class UnspentService {
 
   Future<void> pull({Iterable<String>? scripthashes, bool? updateRVN}) async {
     scripthashes = defaultScripthashes(scripthashes);
-    print('Downloading Unspents');
-    var s = Stopwatch()..start();
     var rvn = 'RVN';
     if (updateRVN ?? true) {
       var utxos = (await services.client.client!.getUnspents(scripthashes))
@@ -38,8 +36,6 @@ class UnspentService {
         unspentsBySymbol[utxo.symbol]!.addAll(utxos);
       }
     }
-    print(
-        'Unspents downloaded: ${scripthashes.length} ${s.elapsed} ${total()}');
   }
 
   int total([String? symbol]) =>

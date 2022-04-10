@@ -178,22 +178,16 @@ class LeaderWalletService {
   ) async {
     // get current gap from cache.
     var generate = requiredGap - getIndexOf(leaderWallet, exposure).currentGap;
-    //print('getIndexOf ${getIndexOf(leaderWallet, exposure).currentGap}');
-    //print('generate $generate');
     var target = 0;
     target = getIndexOf(leaderWallet, exposure).saved + generate;
-    //print('Starting: ${target - generate}');
-    //print('Derive target: $target');
     if (generate > 0) {
       var futures = <Future<Address>>[
         for (var i = target - generate + 1; i <= target; i++)
           () async {
-            //print('i $i');
             return deriveAddress(leaderWallet, i, exposure: exposure);
           }()
       ];
       var ret = (await Future.wait(futures)).toSet();
-      //print('len ${futures.length} vs ${ret.length}');
       return ret;
     }
     return {};
@@ -219,12 +213,9 @@ class LeaderWalletService {
         res.ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
         exposure,
       );
-      //print('derive Address: ${s.elapsed} ${derivedAddresses.length}');
       newAddresses.addAll(derivedAddresses);
       updateIndexOf(wallet, exposure, savedPlus: derivedAddresses.length);
     }
-    //print('save Address: ${newAddresses.length}');
-    //print('save address: ${newAddresses.map((e) => e.hdIndex).toList()}');
     await res.addresses.saveAll(newAddresses);
   }
 }

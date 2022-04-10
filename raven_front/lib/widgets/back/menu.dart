@@ -151,6 +151,7 @@ class _NavMenuState extends State<NavMenu> {
             name: 'About',
             link: '/settings/about',
           ),
+          /*
           destination(
             icon: Icons.info_rounded,
             name: 'Wallet',
@@ -161,8 +162,6 @@ class _NavMenuState extends State<NavMenu> {
               name: 'Clear Database',
               link: '/home',
               execute: ravenDatabase.deleteDatabase),
-          /*
-          */
           ListTile(
               title: Text('test'),
               leading: Icon(Icons.info_outline_rounded),
@@ -290,6 +289,7 @@ class _NavMenuState extends State<NavMenu> {
                 }
                 */
               }),
+          */
         ],
       )
     };
