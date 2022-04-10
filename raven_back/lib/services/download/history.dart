@@ -63,21 +63,27 @@ class HistoryService {
           }
           return true;
         }()) {
-      await services.balance.recalculateAllBalancesByUnspents();
+      await services.balance.recalculateAllBalances();
       print('getting Transactions');
       for (var key in txsListsByWalletExposureKeys.keys) {
         for (var txsList in txsListsByWalletExposureKeys[key]!) {
           await getTransactions(txsList);
         }
+
+        /// shouldn't need this, we can probably clean up the memory.
+        txsListsByWalletExposureKeys[key] = <List<String>>[];
       }
-      // shouldn't need this, we can probably clean up the memory.
-      //txsListsByWalletExposureKeys[produceKey(address)] = <List<String>>[];
+
       // don't clear because if we get updates we want to pull tx
       //addresses.clear();
       return await produceAddressOrBalance();
     }
     return null;
   }
+
+  bool transactionsDownloaded() => txsListsByWalletExposureKeys.values
+      .map((e) => e.isEmpty)
+      .every((bool b) => b);
 
   String produceKey(Address address) =>
       address.walletId + address.exposure.enumString;
@@ -104,6 +110,7 @@ class HistoryService {
     }
     if (allDone) {
       await allDoneProcess(client);
+      print('TRANSACTIONS DOWNLOADED');
     }
     return allDone;
   }
@@ -115,7 +122,7 @@ class HistoryService {
     }
     print('ALL DONE!');
     await saveDanglingTransactions(client);
-    //await services.balance.recalculateAllBalances();
+    //await services.balance.recalculateAllBalancesFromTransactions();
     //services.download.asset.allAdminsSubs(); // why?
     // remove vouts pointing to addresses we don't own?
   }
@@ -130,7 +137,7 @@ class HistoryService {
       ],
       client,
     );
-    //await services.balance.recalculateAllBalances();
+    await services.balance.recalculateAllBalances();
   }
 
   /// when an address status change: make our historic tx data match blockchain

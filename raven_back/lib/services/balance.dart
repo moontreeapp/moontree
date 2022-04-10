@@ -52,7 +52,7 @@ class BalanceService {
       securityPairsFromVouts(givenVouts)
           .map((pair) => sumBalance(pair.wallet, pair.security));
 
-  Future recalculateAllBalancesByUnspents() async {
+  Future recalculateAllBalances() async {
     // wont work when it needs to until we save asset data when we save unspents
     for (var key in services.download.unspents.unspentsBySymbol.keys) {
       await res.balances.save(Balance(
@@ -63,19 +63,18 @@ class BalanceService {
     }
   }
 
-  Future recalculateAllBalances() async =>
+  /// a good testing heuristic for verfiying transactions are correctly downloaded.
+  Future recalculateAllBalancesFromTransactions() async =>
       await res.balances.saveAll(recalculateSpecificBalances(res.vouts.data
           //VoutReservoir.whereUnspent(includeMempool: false)
           .where((Vout vout) => vout.transaction?.confirmed ?? false)
           .toList()));
 
-  Future recalculateRVNBalanceFromUnspents() async =>
-      await res.balances.save(Balance(
-          walletId: res.wallets.currentWallet.id,
-          security: res.securities.RVN,
-          confirmed:
-              services.download.unspents.total(res.securities.RVN.symbol),
-          unconfirmed: 0));
+  Future recalculateRVNBalance() async => await res.balances.save(Balance(
+      walletId: res.wallets.currentWallet.id,
+      security: res.securities.RVN,
+      confirmed: services.download.unspents.total(res.securities.RVN.symbol),
+      unconfirmed: 0));
 
   /// Transaction Logic ///////////////////////////////////////////////////////
 
