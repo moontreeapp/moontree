@@ -33,6 +33,7 @@ class _TransactionsState extends State<Transactions>
   late List<Balance> currentHolds;
   late Security security;
   String tabChoice = 'HISTORY';
+  Widget? cachedMetadataView;
 
   @override
   void initState() {
@@ -86,10 +87,12 @@ class _TransactionsState extends State<Transactions>
     currentTxs = services.transaction
         .getTransactionRecords(wallet: Current.wallet, securities: {security});
     var minHeight = 1 - (201 + 16) / MediaQuery.of(context).size.height;
+    cachedMetadataView = _metadataView();
     return BackdropLayers(
       back: CoinSpec(
         pageTitle: 'Transactions',
         security: security,
+        bottom: cachedMetadataView != null ? null : Container(),
       ),
       front: Stack(
         alignment: Alignment.bottomCenter,
@@ -120,7 +123,7 @@ class _TransactionsState extends State<Transactions>
       : metadata; //(scrollController: scrollController) //at present we can't scroll metadata
 
   Widget get metadata =>
-      _metadataView() ??
+      cachedMetadataView ??
       components.empty.message(
         context,
         icon: Icons.description,
