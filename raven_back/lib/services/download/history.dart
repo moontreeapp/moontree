@@ -6,7 +6,9 @@ import 'package:raven_back/raven_back.dart';
 
 class HistoryService {
   Set<String> downloaded = {};
+  Set<Address> addresses = {};
   Map<String, List<List<String>>> txsListsByWalletExposureKeys = {};
+  Set<String> walletExposureKeysDone = {};
 
   Future<bool?> getHistories(Address address) async {
     void sendToStream(Iterable<String> txs) {
@@ -35,6 +37,7 @@ class HistoryService {
     // if a history is too long, don't error
     // will have to just not show all historic transactions...
     var histories = await client.getHistory(address.id);
+    addresses.add(address);
     if (histories.isNotEmpty) {
       if (address.wallet is LeaderWallet) {
         updateCounts(address.wallet as LeaderWallet);
@@ -61,23 +64,55 @@ class HistoryService {
     /// I think we would actually prefer if it downloaded the actaul transaction
     /// later because we'd like to derive as many addresses as possible before
     /// all that. this is alternative to the HistoryWaiter.
-    if (address.wallet is SingleWallet ||
-        (address.hdIndex >=
-            services.wallet.leader
-                .getIndexOf(address.wallet as LeaderWallet, address.exposure)
-                .saved)) {
-      /// mark key as done
-
-    }
     //unawaited(getTransactions(histories.map((history) => history.txHash)));
     remember(address, histories.map((history) => history.txHash));
     //if all marked as done:
-    ////for (var txsList
-    //  //    in txsListsByWalletExposureKeys[produceKey(address)] ?? []) {
-    //  //  await getTransactions(txsList);
-    //  //}
-    //  //txsListsByWalletExposureKeys[produceKey(address)] = <List<String>>[];
-    //  //return await produceAddressOrBalance();
+    //for (var wallet in res.wallets) {
+    //  for (var exposure in {NodeExposure.External, NodeExposure.Internal}) {
+    //    // how to check if rememberDone not used.
+    //    // if all services.wallet.leader.getIndexOf(wallet, exposure).keys.length
+    //    //    == txsListsByWalletExposureKeys.each item, sum number of lists in value...
+    //  }
+    //}
+    //if (address.wallet is SingleWallet || ) {
+    //  rememberDone(address);
+    //}
+    if (addresses.length ==
+            services.wallet.leader.indexRegistry.values
+                .map((e) => e.saved)
+                .sum() /*plus single wallets*2 */
+        //&& all gaps filled
+        &&
+        () {
+          for (var leader in res.wallets.leaders) {
+            for (var exposure in [
+              NodeExposure.Internal,
+              NodeExposure.External
+            ]) {
+              if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
+                return false;
+              }
+            }
+          }
+          return true;
+        }()) {
+      //if (walletExposureKeysDone.length ==
+      //    txsListsByWalletExposureKeys.keys.length) {
+      /// FYI here's a good place of a life cycle hook:
+      /// in between derving -> saving -> getting histories and
+      /// then right here
+      /// downloading all transactions -> downloading dangling transactions
+      for (var key in txsListsByWalletExposureKeys.keys) {
+        for (var txsList in txsListsByWalletExposureKeys[key]!) {
+          await getTransactions(txsList);
+        }
+      }
+      print(
+          'RUNNING CLEAR ${walletExposureKeysDone.length} ${services.wallet.leader.getIndexOf(address.wallet as LeaderWallet, address.exposure)}');
+      txsListsByWalletExposureKeys[produceKey(address)] = <List<String>>[];
+      walletExposureKeysDone.clear();
+      return await produceAddressOrBalance();
+    }
     return null;
   }
 
@@ -90,6 +125,9 @@ class HistoryService {
         ? txsListsByWalletExposureKeys[key]!.add(txs.toList())
         : txsListsByWalletExposureKeys[key] = <List<String>>[];
   }
+
+  void rememberDone(Address address) =>
+      walletExposureKeysDone.add(produceKey(address));
 
   Future<bool> produceAddressOrBalance() async {
     var client = streams.client.client.value;

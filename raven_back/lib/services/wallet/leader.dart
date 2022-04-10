@@ -22,6 +22,15 @@ class LeaderWalletService {
     return indexRegistry[key]!;
   }
 
+  LeaderExposureIndex getIndexOfKey(
+      LeaderWallet leader, NodeExposure exposure) {
+    var key = LeaderExposureKey(leader, exposure);
+    if (!indexRegistry.keys.contains(key)) {
+      indexRegistry[key] = LeaderExposureIndex();
+    }
+    return indexRegistry[key]!;
+  }
+
   void updateIndexOf(
     LeaderWallet leader,
     NodeExposure exposure, {
