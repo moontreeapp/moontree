@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' show HDWallet;
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:raven_back/utilities/hex.dart' as hex;
@@ -8,22 +9,80 @@ import 'package:raven_back/raven_back.dart';
 // derives addresses for leaderwallets
 // returns any that it can't find a cipher for
 class LeaderWalletService {
-  final Map<String, int> addressRegistry = {
-    /* walletId + exposure : highest hdIndex created*/
-  };
-  Set<LeaderWallet> backlog = {};
-  final int requiredGap = 2;
+  final int requiredGap = 20;
+  Set backlog = <LeaderWallet>{};
+  Map<LeaderExposureKey, LeaderExposureIndex> indexRegistry = {};
 
-  int currentGap(LeaderWallet leaderWallet, NodeExposure exposure) =>
-      exposure == NodeExposure.External
-          ? leaderWallet.emptyExternalAddresses.length
-          : leaderWallet.emptyInternalAddresses.length;
+  /// caching optimization
+  LeaderExposureIndex getIndexOf(LeaderWallet leader, NodeExposure exposure) {
+    var key = LeaderExposureKey(leader, exposure);
+    if (!indexRegistry.keys.contains(key)) {
+      indexRegistry[key] = LeaderExposureIndex();
+    }
+    return indexRegistry[key]!;
+  }
 
-  int missingGap(LeaderWallet leaderWallet, NodeExposure exposure) =>
-      requiredGap - currentGap(leaderWallet, exposure);
+  LeaderExposureIndex getIndexOfKey(
+      LeaderWallet leader, NodeExposure exposure) {
+    var key = LeaderExposureKey(leader, exposure);
+    if (!indexRegistry.keys.contains(key)) {
+      indexRegistry[key] = LeaderExposureIndex();
+    }
+    return indexRegistry[key]!;
+  }
 
-  bool gapSatisfied(LeaderWallet leaderWallet, NodeExposure exposure) =>
-      requiredGap - currentGap(leaderWallet, exposure) <= 0;
+  void updateIndexOf(
+    LeaderWallet leader,
+    NodeExposure exposure, {
+    int? saved,
+    int? used,
+    int? savedPlus,
+    int? usedPlus,
+  }) {
+    var key = LeaderExposureKey(leader, exposure);
+    if (!indexRegistry.keys.contains(key)) {
+      indexRegistry[key] = LeaderExposureIndex();
+    }
+    if (saved != null) {
+      indexRegistry[key]!.updateSaved(saved);
+    }
+    if (used != null) {
+      indexRegistry[key]!.updateUsed(used);
+    }
+    if (savedPlus != null) {
+      indexRegistry[key]!.updateSavedPlus(savedPlus);
+    }
+    if (usedPlus != null) {
+      indexRegistry[key]!.updateUsedPlus(usedPlus);
+    }
+  }
+
+  void updateIndexes() {
+    for (var leader in res.wallets.leaders) {
+      updateIndex(leader);
+    }
+  }
+
+  /// this function allows us to avoid creating a 'hdindex' reservoir,
+  /// which is nice. this is why
+  void updateIndex(LeaderWallet leader) {
+    for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
+      var addresses =
+          res.addresses.byWalletExposure.getAll(leader.id, exposure);
+      services.wallet.leader.updateIndexOf(
+        leader,
+        exposure,
+        saved: addresses.map((a) => a.hdIndex).max,
+        used: addresses
+            .where((a) => a.vouts.isNotEmpty)
+            .map((a) => a.hdIndex)
+            .max,
+      );
+    }
+  }
+
+  bool gapSatisfied(LeaderWallet leader, NodeExposure exposure) =>
+      requiredGap - (getIndexOf(leader, exposure).currentGap) <= 0;
 
   Address deriveAddress(
     LeaderWallet wallet,
@@ -45,11 +104,14 @@ class LeaderWalletService {
   }
 
   HDWallet getSubWallet(
-          LeaderWallet wallet, int hdIndex, NodeExposure exposure) =>
+    LeaderWallet wallet,
+    int hdIndex,
+    NodeExposure exposure,
+  ) =>
       getSeedWallet(wallet).subwallet(hdIndex, exposure: exposure);
 
   HDWallet getSubWalletFromAddress(Address address) =>
-      getSeedWallet(address.wallet! as LeaderWallet)
+      getSeedWallet(address.wallet as LeaderWallet)
           .subwallet(address.hdIndex, exposure: address.exposure);
 
   /// returns the next internal or external node missing a history
@@ -57,14 +119,7 @@ class LeaderWalletService {
     LeaderWallet leaderWallet, {
     NodeExposure exposure = NodeExposure.Internal,
   }) {
-    var addresses = exposure == NodeExposure.Internal
-        ? leaderWallet.emptyInternalAddresses
-        : leaderWallet.emptyExternalAddresses;
-    if (addresses.isNotEmpty) {
-      return addresses.first.address;
-    }
-    //TODO derive a new address and return that.
-    return '';
+    return leaderWallet.getUnusedAddress(exposure)!.address;
   }
 
   /// returns the next change address
@@ -140,41 +195,82 @@ class LeaderWalletService {
 
   /// this function is used to determine if we need to derive new addresses
   /// based upon the idea that we want to retain a gap of empty histories
-  Set<Address> deriveNextAddresses(
+  Future<Set<Address>> deriveNextAddresses(
     LeaderWallet leaderWallet,
     CipherBase cipher,
     NodeExposure exposure,
-  ) {
-    var existingGap = currentGap(leaderWallet, exposure);
-    var usedCount = exposure == NodeExposure.External
-        ? leaderWallet.usedExternalAddresses.length
-        : leaderWallet.usedInternalAddresses.length;
-    var hdIndex = (existingGap + usedCount - 1);
-    //if (existingGap < requiredGap) {
-    return {
-      //for (var i = 0; i <= requiredGap - existingGap; i++)
-      deriveAddress(leaderWallet, hdIndex + 1, exposure: exposure)
-    };
-    //}
-    //return {};
+  ) async {
+    // get current gap from cache.
+    var generate = requiredGap - getIndexOf(leaderWallet, exposure).currentGap;
+    var target = 0;
+    target = getIndexOf(leaderWallet, exposure).saved + generate;
+    if (generate > 0) {
+      var futures = <Future<Address>>[
+        for (var i = target - generate + 1; i <= target; i++)
+          () async {
+            return deriveAddress(leaderWallet, i, exposure: exposure);
+          }()
+      ];
+      var ret = (await Future.wait(futures)).toSet();
+      return ret;
+    }
+    return {};
   }
 
   HDWallet getChangeWallet(LeaderWallet wallet) => getNextEmptyWallet(wallet);
 
-  Set<Address> deriveMoreAddresses(
+  /// deriveMoreAddresses also updates the cache we keep of highest saved
+  /// addresses for each wallet-exposure. It does so after addresses are
+  /// actually saved. the reason for this is that if we update the count to
+  /// be higher than the number of addresses actually saved, we'll enter an
+  /// infinite loop.
+  Future<void> deriveMoreAddresses(
     LeaderWallet wallet, {
     List<NodeExposure>? exposures,
-  }) {
+  }) async {
     exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];
     var newAddresses = <Address>{};
     for (var exposure in exposures) {
-      newAddresses.addAll(deriveNextAddresses(
+      var s = Stopwatch()..start();
+      var derivedAddresses = await deriveNextAddresses(
         wallet,
         res.ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
         exposure,
-      ));
+      );
+      newAddresses.addAll(derivedAddresses);
+      updateIndexOf(wallet, exposure, savedPlus: derivedAddresses.length);
     }
-    res.addresses.saveAll(newAddresses);
-    return newAddresses;
+    await res.addresses.saveAll(newAddresses);
   }
+}
+
+class LeaderExposureKey with EquatableMixin {
+  LeaderWallet leader;
+  NodeExposure exposure;
+
+  LeaderExposureKey(this.leader, this.exposure);
+
+  String get key => produceKey(leader.id, exposure);
+  static String produceKey(String walletId, NodeExposure exposure) =>
+      walletId + exposure.enumString;
+
+  @override
+  List<Object> get props => [leader, exposure];
+
+  @override
+  String toString() => 'LeaderExposureKey($leader, $exposure)';
+}
+
+class LeaderExposureIndex {
+  int saved = 0;
+  int used = 0;
+
+  LeaderExposureIndex({this.saved = -1, this.used = -1});
+
+  int get currentGap => saved - used;
+
+  void updateSaved(int value) => saved = value > saved ? value : saved;
+  void updateUsed(int value) => used = value > used ? value : used;
+  void updateSavedPlus(int value) => saved = saved + value;
+  void updateUsedPlus(int value) => used = used + value;
 }

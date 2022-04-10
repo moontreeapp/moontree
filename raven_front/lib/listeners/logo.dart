@@ -8,8 +8,6 @@ import 'package:raven_front/services/ipfs.dart';
 class AssetListener {
   void init() {
     streams.asset.added.distinctUnique().listen((Asset asset) async {
-      await res.assets.save(asset);
-
       /// don't pull logos or any ipfs data for mvp
       //if (asset.isAdmin) {
       //  await grabMetadataForMaster(asset);

@@ -1,5 +1,5 @@
-import 'download.dart';
-import 'history.dart';
+import 'download/download.dart';
+
 import 'balance.dart';
 import 'cipher.dart';
 import 'client.dart';
@@ -9,7 +9,6 @@ import 'rate.dart';
 import 'wallet.dart';
 
 class services {
-  static HistoryService history = HistoryService();
   static BalanceService balance = BalanceService();
   static CipherService cipher = CipherService();
   static ClientService client = ClientService();

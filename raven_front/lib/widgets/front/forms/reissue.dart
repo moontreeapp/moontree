@@ -16,16 +16,6 @@ import 'package:raven_back/streams/create.dart';
 import 'package:raven_front/utils/transformers.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
-enum FormPresets {
-  main,
-  sub,
-  restricted,
-  qualifier,
-  qualifierSub,
-  NFT,
-  channel,
-}
-
 class ReissueAsset extends StatefulWidget {
   static const int ipfsLength = 89;
   final FormPresets preset;
@@ -69,11 +59,8 @@ class _ReissueAssetState extends State<ReissueAsset> {
   int remainingNameLength = 31;
   int remainingVerifierLength = 89;
   Map<FormPresets, String> presetToTitle = {
-    FormPresets.main: 'Asset Name',
-    FormPresets.restricted: 'Restricted Asset Name',
-    FormPresets.qualifier: 'Qualifier Name',
-    FormPresets.NFT: 'NFT Name',
-    FormPresets.channel: 'Message Channel Name',
+    FormPresets.main: 'Reissue',
+    FormPresets.restricted: 'Reissue',
   };
 
   @override
@@ -132,23 +119,10 @@ class _ReissueAssetState extends State<ReissueAsset> {
   }
 
   bool get isSub => widget.isSub;
-  // parentController.text.length > 0;
-  // above is shorthand, full logic:
-  //    !isRestricted &&
-  //    ((isNFT || isChannel) ||
-  //        (isMain && widget.parent != null) ||
-  //        (isQualifier && widget.parent != null));
-
   bool get isMain => widget.preset == FormPresets.main;
-  bool get isNFT => widget.preset == FormPresets.NFT;
-  bool get isChannel => widget.preset == FormPresets.channel;
-  bool get isQualifier => widget.preset == FormPresets.qualifier;
   bool get isRestricted => widget.preset == FormPresets.restricted;
-
-  bool get needsParent => isSub && (isMain || isNFT || isChannel);
-  bool get needsQualifierParent => isSub && isQualifier;
-  bool get needsNFTParent => isNFT || isChannel;
-  bool get needsQuantity => isMain || isRestricted || isQualifier;
+  bool get needsParent => isSub && isMain;
+  bool get needsQuantity => isMain || isRestricted;
   bool get needsDecimal => isMain || isRestricted;
   bool get needsVerifier => isRestricted;
   bool get needsReissue => isMain || isRestricted;
@@ -166,11 +140,6 @@ class _ReissueAssetState extends State<ReissueAsset> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
-                        if (needsParent || needsQualifierParent)
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(16, 24, 16, 0),
-                            child: parentFeild,
-                          ),
                         Padding(
                           padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
                           child: nameField,
@@ -217,21 +186,17 @@ class _ReissueAssetState extends State<ReissueAsset> {
         controller: parentController,
         readOnly: true,
         decoration: components.styles.decorations.textFeild(context,
-            labelText: 'Parent ' + (isQualifier ? 'Qualifier' : 'Asset'),
-            hintText: 'Parent ' + (isQualifier ? 'Qualifier' : 'Asset'),
+            labelText: 'Parent ' + 'Asset',
+            hintText: 'Parent ' + 'Asset',
             errorText: parentValidationErr,
             suffixIcon: IconButton(
               icon: Padding(
                   padding: EdgeInsets.only(right: 14),
                   child: Icon(Icons.expand_more_rounded,
                       color: Color(0xDE000000))),
-              onPressed: () => isQualifier
-                  ? _produceQualifierParentModal()
-                  : _produceParentModal(), // main subs, nft, channel
+              onPressed: () => _produceParentModal(), // main subs, nft, channel
             )),
-        onTap: () => isQualifier
-            ? _produceQualifierParentModal()
-            : _produceParentModal(), // main subs, nft, channel
+        onTap: () => _produceParentModal(), // main subs, nft, channel
         onChanged: (String? newValue) {
           FocusScope.of(context).requestFocus(ipfsFocus);
         },
@@ -240,16 +205,16 @@ class _ReissueAssetState extends State<ReissueAsset> {
   Widget get nameField => TextField(
       focusNode: nameFocus,
       autocorrect: false,
+      enabled: false,
       controller: nameController,
       textInputAction: TextInputAction.done,
       keyboardType: isRestricted ? TextInputType.none : null,
       inputFormatters: [MainAssetNameTextFormatter()],
       decoration: components.styles.decorations.textFeild(
         context,
-        labelText: (isSub && !isNFT && !isChannel ? 'Sub ' : '') +
-            presetToTitle[widget.preset]!,
+        labelText: (isSub ? 'Sub ' : '') + presetToTitle[widget.preset]!,
         hintText: 'MOONTREE_WALLET.COM',
-        errorText: isChannel || isRestricted
+        errorText: isRestricted
             ? null
             : nameController.text.length > 2 && !nameValidated
                 //!nameValidation(nameController.text))
@@ -261,19 +226,17 @@ class _ReissueAssetState extends State<ReissueAsset> {
       onTap: isRestricted ? _produceAdminAssetModal : null,
       onChanged:
           isRestricted ? null : (String value) => validateName(name: value),
-      onEditingComplete: isQualifier || isRestricted
+      onEditingComplete: isRestricted
           ? () => FocusScope.of(context).requestFocus(quantityFocus)
-          : isNFT || isChannel
-              ? () => FocusScope.of(context).requestFocus(ipfsFocus)
-              : () {
-                  validateName();
-                  nameNotTakenValid(nameController.text);
-                  FocusScope.of(context).requestFocus(quantityFocus);
-                });
+          : () {
+              validateName();
+              nameNotTakenValid(nameController.text);
+              FocusScope.of(context).requestFocus(quantityFocus);
+            });
 
   Widget get quantityField => TextField(
         focusNode: quantityFocus,
-        controller: quantityController,
+        controller: quantityController, // can't be lower than  minQuantity
 //      keyboardType: TextInputType.number,
         keyboardType:
             TextInputType.numberWithOptions(decimal: false, signed: false),
@@ -285,7 +248,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
         ],
         decoration: components.styles.decorations.textFeild(
           context,
-          labelText: 'Quantity',
+          labelText: 'Additional Quantity',
           hintText: '21,000,000',
           errorText: quantityController.text != '' &&
                   !quantityValidation(quantityController.text.toInt())
@@ -296,14 +259,13 @@ class _ReissueAssetState extends State<ReissueAsset> {
         onEditingComplete: () {
           validateQuantity();
           formatQuantity();
-          FocusScope.of(context)
-              .requestFocus(isQualifier ? ipfsFocus : decimalFocus);
+          FocusScope.of(context).requestFocus(decimalFocus);
         },
       );
 
   Widget get decimalField => TextField(
         focusNode: decimalFocus,
-        controller: decimalController,
+        controller: decimalController, // cannot be lower than minDecimal
         readOnly: true,
         decoration: components.styles.decorations.textFeild(context,
             labelText: 'Decimals',
@@ -421,24 +383,8 @@ class _ReissueAssetState extends State<ReissueAsset> {
       nameValidationErr = 'invalid Main';
       return false;
     }
-    if (isNFT && !name.isNFT) {
-      nameValidationErr = 'invalid NFT';
-      return false;
-    }
-    if (isChannel && !name.isChannel) {
-      nameValidationErr = 'invalid Channel';
-      return false;
-    }
     if (isRestricted && !name.isRestricted) {
       nameValidationErr = 'invalid Restricted';
-      return false;
-    }
-    if (isQualifier && !name.isQualifier) {
-      nameValidationErr = 'invalid Qualifier';
-      return false;
-    }
-    if (isSub && isQualifier && !name.isSubQualifier) {
-      nameValidationErr = 'invalid Sub Qualifier';
       return false;
     }
     if (isSub && !name.isSubAsset) {
@@ -546,24 +492,21 @@ class _ReissueAssetState extends State<ReissueAsset> {
           ? decimalController.text != '' &&
               decimalValidation(decimalController.text.toInt())
           : true) &&
-      (isNFT
-          ? ipfsValidation(ipfsController.text)
-          : ipfsController.text == '' || ipfsValidation(ipfsController.text));
+      (ipfsController.text == '' || ipfsValidation(ipfsController.text));
 
-  Future<bool> get enabledAsync async => nameController.text.length > 2 &&
-          nameValidation(nameController.text) &&
-          await nameNotTakenValid(nameController.text) &&
-          (needsQuantity
-              ? quantityController.text != '' &&
-                  quantityValidation(quantityController.text.toInt())
-              : true) &&
-          (needsDecimal
-              ? decimalController.text != '' &&
-                  decimalValidation(decimalController.text.toInt())
-              : true) &&
-          isNFT
-      ? ipfsValidation(ipfsController.text)
-      : (ipfsController.text == '' || ipfsValidation(ipfsController.text));
+  Future<bool> get enabledAsync async =>
+      nameController.text.length > 2 &&
+      nameValidation(nameController.text) &&
+      await nameNotTakenValid(nameController.text) &&
+      (needsQuantity
+          ? quantityController.text != '' &&
+              quantityValidation(quantityController.text.toInt())
+          : true) &&
+      (needsDecimal
+          ? decimalController.text != '' &&
+              decimalValidation(decimalController.text.toInt())
+          : true) &&
+      (ipfsController.text == '' || ipfsValidation(ipfsController.text));
 
   Future<void> submit() async {
     if (await enabledAsync) {
@@ -573,9 +516,9 @@ class _ReissueAssetState extends State<ReissueAsset> {
       checkout(GenericCreateRequest(
         isSub: widget.isSub,
         isMain: isMain,
-        isNFT: isNFT,
-        isChannel: isChannel,
-        isQualifier: isQualifier,
+        isNFT: false,
+        isChannel: false,
+        isQualifier: false,
         isRestricted: isRestricted,
         fullName: fullName(true),
         wallet: Current.wallet,
@@ -591,13 +534,8 @@ class _ReissueAssetState extends State<ReissueAsset> {
   }
 
   String fullName([bool full = false]) => (isSub && full)
-      ? parentController.text +
-          (isNFT ? '#' : (isChannel ? '~' : (isQualifier ? '/#' : '/'))) +
-          nameController.text
-      : ((isQualifier || isNFT)
-              ? '#'
-              : (isChannel ? '~' : (isRestricted ? '\$' : ''))) +
-          nameController.text;
+      ? parentController.text + '/' + nameController.text
+      : nameController.text;
 
   void checkout(GenericCreateRequest createRequest) {
     /// send request to the correct stream
@@ -628,29 +566,21 @@ class _ReissueAssetState extends State<ReissueAsset> {
           fees: [
             // Standard / Fast transaction, will pull from settings?
             ['Sandard Transaction', 'calculating fee...'],
-            isNFT
-                ? ['NFT', '5']
-                : isChannel
-                    ? ['Message Channel', '100']
-                    : isQualifier && isSub
-                        ? ['Sub Qualifier Asset', '100']
-                        : isSub
-                            ? ['Sub Asset', '100']
-                            : isMain
-                                ? ['Main Asset', '500']
-                                : isQualifier
-                                    ? ['Qualifier Asset', '1000']
-                                    : isRestricted
-                                        ? ['Restricted Asset', '1500']
-                                        : ['Asset', '500']
+            isSub
+                ? ['Reissue', '100']
+                : isMain
+                    ? ['Reissue', '100']
+                    : isRestricted
+                        ? ['Reissue', '100']
+                        : ['Reissue', '100']
           ],
           total: 'calculating total...',
           // produce transaction structure here and the checkout screen will
           // send it up on submit:
           buttonAction: () =>
               streams.create.send.add(streams.create.made.value),
-          buttonWord: 'Create',
-          loadingMessage: 'Creating Asset',
+          buttonWord: 'Reissue',
+          loadingMessage: 'Reissuing Asset',
         )
       },
     );
@@ -666,12 +596,6 @@ class _ReissueAssetState extends State<ReissueAsset> {
         holdingNames: Current.adminNames
             .map((String name) => name.replaceAll('!', ''))
             .toList());
-  }
-
-  void _produceQualifierParentModal() {
-    SelectionItems(context, modalSet: SelectionSet.Parents).build(
-        holdingNames:
-            Current.qualifierNames.map((String name) => name).toList());
   }
 
   void _produceDecimalModal() {

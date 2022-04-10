@@ -1,12 +1,15 @@
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:raven_back/streams/wallet.dart';
 
 import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/theme.dart';
+import 'package:raven_front/utils/zips.dart';
 
-//import 'package:raven_back/utilities/database.dart' as ravenDatabase;
+import 'package:raven_back/utilities/database.dart' as ravenDatabase;
 
 class NavMenu extends StatefulWidget {
   NavMenu({Key? key}) : super(key: key);
@@ -149,45 +152,164 @@ class _NavMenuState extends State<NavMenu> {
             link: '/settings/about',
           ),
           /*
-          SettingsTile(
-              title: 'Clear Database',
-              leading: Icon(Icons.info_outline_rounded),
-              onPressed: (BuildContext context) {
-            //    ravenDatabase.deleteDatabase();
-          ),
-          SettingsTile(
-              title: 'test',
-              leading: Icon(Icons.info_outline_rounded),
-              onPressed: (BuildContext context) async {
-                print(res.vouts.data.length);
-                print(res.vouts.bySecurity.getAll(res.securities.RVN).length);
-                print(res.vouts.bySecurityType
-                    .getAll(SecurityType.RavenAsset)
-                    .length);
-                print(res.vouts.bySecurity
-                    .getAll(res.securities.RVN)
-                    .where((e) => e.lockingScript != null));
-                print(res.vouts.bySecurityType
-                    .getAll(SecurityType.RavenAsset)
-                    .where((e) => e.lockingScript == null));
-                print(res.vouts.bySecurity
-                    .getAll(res.securities.RVN)
-                    .where((e) => e.assetValue == null)
-                    .length);
-                print(res.vouts.bySecurityType
-                    .getAll(SecurityType.RavenAsset)
-                    .where((e) => e.assetValue == null)
-                    .length);
-                print(res.vouts.bySecurity
-                    .getAll(res.securities.RVN)
-                    .where((e) => e.rvnValue > 0)
-                    .length);
-                print(res.vouts.bySecurityType
-                    .getAll(SecurityType.RavenAsset)
-                    .where((e) => e.rvnValue == 0)
-                    .length);
-              }),
           */
+          destination(
+            icon: Icons.info_rounded,
+            name: 'Wallet',
+            link: '/wallet',
+          ),
+          destination(
+              icon: Icons.info_outline_rounded,
+              name: 'Clear Database',
+              link: '/home',
+              execute: ravenDatabase.deleteDatabase),
+          ListTile(
+              title: Text('test'),
+              leading: Icon(Icons.info_outline_rounded),
+              onTap: () async {
+                //print(res.balances.bySecurity.getAll(res.securities.RVN));
+                //print(res.vouts.bySecurity.getAll(res.securities.RVN).length);
+                //for (var add in res.addresses.byWallet
+                //    .getAll(res.wallets.currentWallet.id)) {
+                //  var unspents =
+                //      await services.client.client!.getUnspent(add.scripthash);
+                //  for (var u in unspents) {
+                //    print(u);
+                //  }
+                //}
+                //for (var u in services.transaction
+                //    .getTransactionRecords(wallet: Current.wallet)) {
+                //  print(u);
+                //}
+                //print(services.balance.recalculateSpecificBalances(res
+                //    .vouts.data
+                //    //VoutReservoir.whereUnspent(includeMempool: false)
+                //    .where((Vout vout) => vout.security == res.securities.RVN && (vout.transaction?.confirmed ?? false));
+                //    .toList()));
+
+                //await services.history
+                //    .saveDanglingTransactions(services.client.client!);
+                //await services.balance.recalculateAllBalances();
+
+                //print('txsbywalletexposure: ${[
+                //  for (var t in waiters.history.txsByWalletExposureKeys.keys)
+                //    waiters.history.txsByWalletExposureKeys[t]?.length
+                //]}');
+                //print('txsbywalletexposure: ${[
+                //  for (var t in waiters.history.txsByWalletExposureKeys.keys) t
+                //]}');
+                //print(waiters.history.txsByWalletExposureKeys[
+                //    '03d992f22d9e178a4de02e99ffffe885bd5135e65d183200da3b566502eca79342Internal']);
+                ////waiters.history.manualPull(
+                ////    keyedTransactionsKey:
+                ////        '03d992f22d9e178a4de02e99ffffe885bd5135e65d183200da3b566502eca79342Internal',
+                ////    walletId:
+                //////        '03d992f22d9e178a4de02e99ffffe885bd5135e65d183200da3b566502eca79342',
+                //////    exposure: NodeExposure.Internal);
+                //print(
+                //    Current.wallet.getHighestSavedIndex(NodeExposure.Internal));
+                //print(
+                //    Current.wallet.getHighestSavedIndex(NodeExposure.External));
+                //print(res.addresses.byWallet.getAll(Current.walletId).length);
+                //print(
+                //    Current.wallet.getHighestUsedIndex(NodeExposure.Internal));
+                //print(
+                //    Current.wallet.getHighestUsedIndex(NodeExposure.External));
+                //print(services.wallet.leader.gapSatisfied(
+                //    Current.wallet as LeaderWallet, NodeExposure.Internal));
+                ////print(res.transactions.primaryIndex.getOne(
+                ////    '7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c'));
+                ////for (var x in res.vouts.byTransaction.getAll(
+                ////    '7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c'))
+                ////  print(x);
+                //print([
+                //  for (var t in waiters.history.txsByWalletExposureKeys.keys)
+                //    waiters.history.txsByWalletExposureKeys[t]?.length
+                //]);
+                //print([
+                //  for (var t
+                //      in waiters.history.addressesByWalletExposureKeys.keys)
+                //    waiters.history.addressesByWalletExposureKeys[t]?.length
+                //]);
+                //var addresses = res.addresses.byWallet.getAll(Current.walletId);
+                //print(addresses.map((e) => e.exposure));
+                //waiters.history.pullIf(WalletExposureTransactions(
+                //    address: addresses[1], transactionIds: []));
+                //print('wallets');
+                //for (var w in res.wallets) {
+                //  print(w);
+                //}
+                //print('addresses');
+                //for (var w in res.addresses) {
+                //  print(w);
+                //}
+                //print('transactions');
+                //for (var w in res.transactions) {
+                //  print(w);
+                //}
+                //print(services.download.history.addresses.length);
+                //for (var leader in res.wallets.leaders) {
+                //  for (var exposure in [
+                //    NodeExposure.Internal,
+                //    NodeExposure.External
+                //  ]) {
+                //    if (!services.wallet.leader
+                //        .gapSatisfied(leader, exposure)) {
+                //      print('false');
+                //    }
+                //  }
+                //}
+                //print(services.wallet.leader.indexRegistry.values
+                //    .map((e) => e.saved)
+                //    .sum());
+                for (var x in services
+                    .download.unspents.unspentsBySymbol['MOONTREE']!) {
+                  print(x);
+                }
+
+                //print('vins');
+                //for (var w in res.vins) {
+                //  print(w);
+                //}
+                //print('vouts to me');
+                //for (var w in res.vouts.where((e) => e.wallet != null)) {
+                //  print(w);
+                //}
+                //print('vouts where vin');
+                //for (var w in res.vouts.where((e) => e.vin != null)) {
+                //  print(w);
+                //}
+                //for (var item in services.download.unspents
+                //    .unspentsBySymbol[res.securities.RVN.symbol]!) {
+                //  print(item);
+                //}
+                //print(services.download.unspents.total(res.securities.RVN));
+                //print(services.download.unspents.unspentsBySymbol.keys);
+                /*
+                print(Current.wallet.highestSavedExternalIndex);
+                print(Current.wallet.highestUsedExternalIndex);
+                print(res.addresses.byWalletExposureIndex.getOne(
+                    Current.walletId,
+                    NodeExposure.External,
+                    Current.wallet.highestSavedExternalIndex));
+                print(res.addresses.byWalletExposureIndex.getOne(
+                    Current.walletId,
+                    NodeExposure.External,
+                    Current.wallet.highestSavedExternalIndex + 1));
+                print(res.addresses.byWalletExposureIndex.getOne(
+                    Current.walletId,
+                    NodeExposure.External,
+                    Current.wallet.highestSavedExternalIndex + 2));
+                for (var i in range(Current.wallet.highestSavedExternalIndex)) {
+                  print(res.addresses.byWalletExposureIndex
+                      .getOne(Current.walletId, NodeExposure.External, i));
+                }
+                for (var i in range(Current.wallet.highestSavedInternalIndex)) {
+                  print(
+                      '$i ${res.addresses.byWalletExposureIndex.getOne(Current.walletId, NodeExposure.Internal, i)}');
+                }
+                */
+              }),
         ],
       )
     };

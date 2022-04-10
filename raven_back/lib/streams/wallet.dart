@@ -25,19 +25,22 @@ class DeriveLeaderAddress {
   final LeaderWallet leader;
   final NodeExposure? exposure;
 
-  DeriveLeaderAddress({required this.leader, this.exposure});
+  DeriveLeaderAddress({
+    required this.leader,
+    this.exposure,
+  });
 }
 
 class WalletExposureTransactions {
-  final String walletId;
-  final NodeExposure exposure;
+  final Address address;
   final Iterable<String> transactionIds;
 
   WalletExposureTransactions({
-    required this.walletId,
-    required this.exposure,
+    required this.address,
     required this.transactionIds,
   });
 
-  String get key => walletId + exposure.enumString;
+  String get key => produceKey(address.walletId, address.exposure);
+  static String produceKey(String walletId, NodeExposure exposure) =>
+      walletId + exposure.enumString;
 }

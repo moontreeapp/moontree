@@ -32,7 +32,7 @@ class BlockWaiter extends Waiter {
       'blocks.changes',
       res.blocks.changes,
       (Change<Block> change) =>
-          services.history.getAndSaveMempoolTransactions(),
+          services.download.history.getAndSaveMempoolTransactions(),
       autoDeinit: true,
     );
   }

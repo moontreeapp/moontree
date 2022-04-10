@@ -2,7 +2,23 @@
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/ravencoin_wallet/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/ravencoin_wallet/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/ravencoin_wallet/build" />
+      <excludeFolder url="file://$MODULE_DIR$/raven_front/build" />
+      <excludeFolder url="file://$MODULE_DIR$/raven_front/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/raven_front/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/raven_electrum/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/raven_electrum/build" />
+      <excludeFolder url="file://$MODULE_DIR$/raven_electrum/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/raven_back/build" />
+      <excludeFolder url="file://$MODULE_DIR$/raven_back/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/raven_back/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/reservoir/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/reservoir/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/reservoir/build" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

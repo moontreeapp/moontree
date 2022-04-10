@@ -49,3 +49,22 @@ extension ByWalletExposureMethodsForAddress
   List<Address> getAll(String walletId, NodeExposure exposure) =>
       getByKeyStr(_walletExposureToKey(walletId, exposure));
 }
+
+// byWalletExposureIndex
+
+String _walletExposureHDToKey(
+        String walletId, NodeExposure exposure, int hdIndex) =>
+    '$walletId:$exposure:$hdIndex';
+
+class _WalletExposureHDKey extends Key<Address> {
+  @override
+  String getKey(Address address) => _walletExposureHDToKey(
+      address.walletId, address.exposure, address.hdIndex);
+}
+
+extension ByWalletExposureHDMethodsForAddress
+    on Index<_WalletExposureHDKey, Address> {
+  Address? getOne(String walletId, NodeExposure exposure, int hdIndex) =>
+      getByKeyStr(_walletExposureHDToKey(walletId, exposure, hdIndex))
+          .firstOrNull;
+}

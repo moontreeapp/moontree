@@ -59,11 +59,15 @@ class HiveInitializer {
     Hive.registerAdapter(MetadataAdapter());
     Hive.registerAdapter(SettingAdapter());
     Hive.registerAdapter(SettingNameAdapter());
+    Hive.registerAdapter(StatusAdapter());
+    Hive.registerAdapter(StatusTypeAdapter());
     Hive.registerAdapter(SecurityAdapter());
     Hive.registerAdapter(SecurityTypeAdapter());
   }
 
   Future openAllBoxes() async {
+    // address must open before wallets because on load in wallets waiter
+    // we look up addresses to get highest hdindex
     await Hive.openBox<Address>('addresses');
     await Hive.openBox<Asset>('assets');
     await Hive.openBox<Balance>('balances');
@@ -74,6 +78,7 @@ class HiveInitializer {
     await Hive.openBox<Rate>('rates');
     await Hive.openBox<Security>('securities');
     await Hive.openBox<Setting>('settings');
+    await Hive.openBox<Status>('statuses');
     await Hive.openBox<Transaction>('transactions');
     await Hive.openBox<Vin>('vins');
     await Hive.openBox<Vout>('vouts');
@@ -109,6 +114,7 @@ class HiveInitializer {
     res.vins.setSource(HiveSource('vins'));
     res.vouts.setSource(HiveSource('vouts'));
     res.wallets.setSource(HiveSource('wallets'));
+    res.statuses.setSource(HiveSource('statuses'));
   }
 
   Future destroy() async {

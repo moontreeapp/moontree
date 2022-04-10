@@ -3,7 +3,6 @@ import 'subscription.dart';
 import 'block.dart';
 import 'client.dart';
 import 'create.dart';
-import 'history.dart';
 import 'import.dart';
 import 'leader.dart';
 import 'password.dart';
@@ -18,7 +17,6 @@ class waiters {
   static BlockWaiter block = BlockWaiter();
   static CreateWaiter create = CreateWaiter();
   static ImportWaiter import = ImportWaiter();
-  static HistoryWaiter history = HistoryWaiter();
   static PasswordWaiter password = PasswordWaiter();
   static RateWaiter rate = RateWaiter();
   static RavenClientWaiter client = RavenClientWaiter();

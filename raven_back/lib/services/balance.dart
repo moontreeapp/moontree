@@ -2,7 +2,7 @@
 /// if you want the balance of a subwallet (address) then get it from Histories.
 
 // ignore_for_file: omit_local_variable_types
-
+import 'dart:math';
 import 'package:raven_back/services/wallet_security_pair.dart';
 import 'package:raven_back/raven_back.dart';
 
@@ -52,66 +52,47 @@ class BalanceService {
       securityPairsFromVouts(givenVouts)
           .map((pair) => sumBalance(pair.wallet, pair.security));
 
-  Future recalculateAllBalances() async =>
+  Future recalculateAllBalances() async {
+    // wont work when it needs to until we save asset data when we save unspents
+    for (var key in services.download.unspents.unspentsBySymbol.keys) {
+      await res.balances.save(Balance(
+          walletId: res.wallets.currentWallet.id,
+          security: res.securities.bySymbol.getAll(key).first,
+          confirmed: services.download.unspents.total(key),
+          unconfirmed: 0));
+    }
+  }
+
+  /// a good testing heuristic for verfiying transactions are correctly downloaded.
+  Future recalculateAllBalancesFromTransactions() async =>
       await res.balances.saveAll(recalculateSpecificBalances(res.vouts.data
           //VoutReservoir.whereUnspent(includeMempool: false)
           .where((Vout vout) => vout.transaction?.confirmed ?? false)
           .toList()));
 
+  Future recalculateRVNBalance() async => await res.balances.save(Balance(
+      walletId: res.wallets.currentWallet.id,
+      security: res.securities.RVN,
+      confirmed: services.download.unspents.total(res.securities.RVN.symbol),
+      unconfirmed: 0));
+
   /// Transaction Logic ///////////////////////////////////////////////////////
 
-  /// Sort in descending order, from largest amount to smallest amount
-  List<Vout> sortedUnspents(Wallet wallet, {Security? security}) =>
-      services.transaction.walletUnspents(wallet, security: security).toList()
-        ..sort((a, b) => b
-            .securityValue(security: security)
-            .compareTo(a.securityValue(security: security)));
-
-  /// Asserts that the asset in the wallet is greater than `amount`
-  void assertSufficientFunds(
-    int amount,
-    Wallet wallet, {
-    Security? security,
-  }) {
-    if (walletBalance(wallet, security ?? res.securities.RVN).confirmed <
-        amount) {
-      throw InsufficientFunds();
-    }
-  }
-
-  /// Returns the smallest number of inputs to satisfy the amount
-  ///
-  /// NOTE: buildTransaction depends on this function returning a UTXO list
-  /// size that either STAYS THE SAME or INCREASES IN SIZE since last calling
-  /// it if the 'amount' increases.
-  ///
-  List<Vout> collectUTXOs(
-    Wallet wallet, {
-    required int amount,
-    List<Vout> except = const [],
-    Security? security,
-  }) {
-    assertSufficientFunds(amount, wallet);
-
-    var unspents = sortedUnspents(wallet, security: security)
-      ..removeWhere((utxo) => except.contains(utxo));
-
-    /// Can we find a single, ideal UTXO by searching from smallest to largest?
-    for (var unspent in unspents.reversed) {
-      if (unspent.securityValue(security: security) >= amount) return [unspent];
-    }
-
-    /// Otherwise, satisfy the amount by combining UTXOs from largest to smallest
-    /// perhaps we could make the utxo variable full of objects that contain
-    /// the signing information too, that way we don't have to get it later...?
+  List<Vout> collectUTXOs({required int amount, Security? security}) {
+    services.download.unspents.assertSufficientFunds(amount, security?.symbol);
+    var gathered = 0;
+    var unspents =
+        services.download.unspents.getUnspents(security?.symbol).toList();
     var collection = <Vout>[];
-    var remaining = amount;
-    for (var unspent in unspents) {
-      if (remaining > 0) collection.add(unspent);
-      if (remaining < unspent.securityValue(security: security)) break;
-      remaining -= unspent.securityValue(security: security);
+    final _random = Random();
+    while (amount - gathered > 0) {
+      var randomIndex = _random.nextInt(unspents.length);
+      var unspent = unspents[randomIndex];
+      unspents.removeAt(randomIndex);
+      gathered += unspent.value;
+      collection.add(res.vouts.byTransactionPosition
+          .getOne(unspent.txHash, unspent.txPos)!);
     }
-
     return collection;
   }
 

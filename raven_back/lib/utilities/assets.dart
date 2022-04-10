@@ -47,8 +47,6 @@ List<AssetHolding> assetHoldings(Iterable<Balance> holdings) {
           nft: assetType == AssetType.NFT ? balance : null,
           channel: assetType == AssetType.Channel ? balance : null,
           restricted: assetType == AssetType.Restricted ? balance : null,
-          restrictedAdmin:
-              assetType == AssetType.RestrictedAdmin ? balance : null,
           qualifier: assetType == AssetType.Qualifier ? balance : null,
           qualifierSub: assetType == AssetType.QualifierSub ? balance : null,
           crypto: assetType == SecurityType.Crypto ? balance : null,
@@ -60,8 +58,6 @@ List<AssetHolding> assetHoldings(Iterable<Balance> holdings) {
           nft: assetType == AssetType.NFT ? balance : null,
           channel: assetType == AssetType.Channel ? balance : null,
           restricted: assetType == AssetType.Restricted ? balance : null,
-          restrictedAdmin:
-              assetType == AssetType.RestrictedAdmin ? balance : null,
           qualifier: assetType == AssetType.Qualifier ? balance : null,
           qualifierSub: assetType == AssetType.QualifierSub ? balance : null,
           crypto: assetType == SecurityType.Crypto ? balance : null,

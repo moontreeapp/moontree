@@ -44,8 +44,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return body();
+    return HomePage(appContext: appContext);
   }
-
-  Widget body() => HomePage(appContext: appContext);
 }

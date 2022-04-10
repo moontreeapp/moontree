@@ -58,47 +58,13 @@ void main() async {
     });
   });
 
-  group('Collect Sorted Unspents', () {
-    test('rvn wallet unspents', () {
-      services.balance.sortedUnspents(wallet, security: res.securities.RVN);
-      //expect(?, ?);
-    });
-
-    test('asset wallet unspents', () {
-      services.balance.sortedUnspents(wallet,
-          security: res.securities.bySymbolSecurityType
-              .getOne('MOONTREE', SecurityType.RavenAsset));
-      //expect(?, ?);
-    });
-
-    test('asset wallet unspents', () {
-      services.balance.sortedUnspents(wallet,
-          security: res.securities.bySymbolSecurityType
-              .getOne('MOONTREE', SecurityType.RavenAsset));
-      //expect(?, ?);
-    });
-
-    test('missing asset wallet unspents', () {
-      services.balance
-          .sortedUnspents(wallet,
-              security: res.securities.bySymbolSecurityType
-                  .getOne('lalala', SecurityType.RavenAsset))
-          .toList();
-      //expect(0);
-    });
-  });
-
   group('CollectUTXOs RVN', () {
     test('pick smallest UTXO of sufficient size', () {
-      var utxos = services.balance.collectUTXOs(
-          res.wallets.primaryIndex.getByKeyStr('1')[0],
-          amount: 500);
+      var utxos = services.balance.collectUTXOs(amount: 500);
       expect(utxos.map((utxo) => utxo.rvnValue).toList(), [5000000]);
     });
     test('take multiple from the top', () {
-      var utxos = services.balance.collectUTXOs(
-          res.wallets.primaryIndex.getByKeyStr('1')[0],
-          amount: 12000000);
+      var utxos = services.balance.collectUTXOs(amount: 12000000);
       expect(utxos.map((utxo) => utxo.rvnValue).toList(), [10000000, 10000000]);
     });
   });
@@ -106,7 +72,6 @@ void main() async {
   group('CollectUTXOs asset', () {
     test('pick smallest UTXO of sufficient size', () {
       var utxos = services.balance.collectUTXOs(
-          res.wallets.primaryIndex.getByKeyStr('1')[0],
           amount: 5,
           security: res.securities.bySymbolSecurityType
               .getOne('MOONTREE', SecurityType.RavenAsset));
@@ -114,7 +79,6 @@ void main() async {
     });
     test('take multiple from the top', () {
       var utxos = services.balance.collectUTXOs(
-          res.wallets.primaryIndex.getByKeyStr('1')[0],
           amount: 1200,
           security: res.securities.bySymbolSecurityType
               .getOne('MOONTREE', SecurityType.RavenAsset));
