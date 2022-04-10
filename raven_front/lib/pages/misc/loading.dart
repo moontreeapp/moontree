@@ -40,7 +40,9 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
       //setupRealWallet('1');
       //setupRealWallet(null);
     }
-
+    if (res.addresses.data.isNotEmpty) {
+      services.wallet.leader.updateIndexes();
+    }
     // for testing
     print('-------------------------');
     print('addresses: ${res.addresses.length}');
@@ -49,19 +51,14 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
     print('blocks: ${res.blocks}');
     print('ciphers: ${res.ciphers}');
     print('metadata: ${res.metadatas.length}');
-    print('passwords: ${res.passwords}');
+    print('passwords: ${res.passwords.data}');
     print('rates: ${res.rates}');
     print('securities: ${res.securities.length}');
     print('settings: ${res.settings.length}');
     print('transactions: ${res.transactions.length}');
     print('vins: ${res.vins.length}');
     print('vouts: ${res.vouts.length}');
-    print('wallets: ${res.wallets}');
-    print('-------------------------');
-    //print(services.cipher.getPassword(altPassword: ''));
-    for (var wallet in res.wallets) {
-      print(wallet);
-    }
+    print('wallets: ${res.wallets.data}');
     print('-------------------------');
     redirectToLoginOrHome();
   }

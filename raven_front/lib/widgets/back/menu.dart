@@ -152,6 +152,7 @@ class _NavMenuState extends State<NavMenu> {
             link: '/settings/about',
           ),
           /*
+          */
           destination(
             icon: Icons.info_rounded,
             name: 'Wallet',
@@ -246,6 +247,21 @@ class _NavMenuState extends State<NavMenu> {
                 for (var w in res.transactions) {
                   print(w);
                 }
+                print(services.download.history.addresses.length);
+                for (var leader in res.wallets.leaders) {
+                  for (var exposure in [
+                    NodeExposure.Internal,
+                    NodeExposure.External
+                  ]) {
+                    if (!services.wallet.leader
+                        .gapSatisfied(leader, exposure)) {
+                      print('false');
+                    }
+                  }
+                }
+                print(services.wallet.leader.indexRegistry.values
+                    .map((e) => e.saved)
+                    .sum());
                 //print('vins');
                 //for (var w in res.vins) {
                 //  print(w);
@@ -289,7 +305,6 @@ class _NavMenuState extends State<NavMenu> {
                 }
                 */
               }),
-          */
         ],
       )
     };

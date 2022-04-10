@@ -15,12 +15,12 @@ class AddressWaiter extends Waiter {
         loaded: (loaded) {},
         added: (added) {
           var address = added.data;
-          services.client.subscribe.to(address);
+          services.client.subscribe.toAddress(address);
         },
-        updated: (updated) => services.client.subscribe.to(updated.data),
+        updated: (updated) => services.client.subscribe.toAddress(updated.data),
         removed: (removed) {
           var address = removed.data;
-          services.client.subscribe.unsubscribe(address.id);
+          services.client.subscribe.unsubscribeAddress(address.id);
           //removed.id as String);
 
           /// could be moved to waiter on transactions...

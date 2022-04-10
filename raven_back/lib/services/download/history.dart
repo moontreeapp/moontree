@@ -29,22 +29,20 @@ class HistoryService {
     // will have to just not show all historic transactions...
     var histories = await client.getHistory(address.id);
     addresses.add(address);
-    if (histories.isNotEmpty) {
-      if (address.wallet is LeaderWallet) {
+    if (address.wallet is LeaderWallet) {
+      if (histories.isNotEmpty) {
         updateCounts(address.wallet as LeaderWallet);
-      }
-    } else {
-      if (address.wallet is LeaderWallet) {
+      } else {
         updateCache(address.wallet as LeaderWallet);
       }
-    }
-    if (address.wallet is LeaderWallet &&
-        address.hdIndex >=
-            services.wallet.leader
-                .getIndexOf(address.wallet as LeaderWallet, address.exposure)
-                .saved) {
-      streams.wallet.deriveAddress.add(DeriveLeaderAddress(
-          leader: address.wallet as LeaderWallet, exposure: address.exposure));
+      if (address.hdIndex >=
+          services.wallet.leader
+              .getIndexOf(address.wallet as LeaderWallet, address.exposure)
+              .saved) {
+        streams.wallet.deriveAddress.add(DeriveLeaderAddress(
+            leader: address.wallet as LeaderWallet,
+            exposure: address.exposure));
+      }
     }
     remember(address, histories.map((history) => history.txHash));
     if (addresses.length ==
@@ -66,6 +64,7 @@ class HistoryService {
           return true;
         }()) {
       //await services.balance.recalculateAllBalancesByUnspents();
+      print('getting Transactions');
       for (var key in txsListsByWalletExposureKeys.keys) {
         for (var txsList in txsListsByWalletExposureKeys[key]!) {
           await getTransactions(txsList);
@@ -104,13 +103,21 @@ class HistoryService {
       }
     }
     if (allDone) {
-      print('ALL DONE!');
-      await saveDanglingTransactions(client);
-      await services.balance.recalculateAllBalances();
-      services.download.asset.allAdminsSubs();
-      // remove vouts pointing to addresses we don't own?
+      await allDoneProcess(client);
     }
     return allDone;
+  }
+
+  Future allDoneProcess([RavenElectrumClient? client]) async {
+    client = client ?? streams.client.client.value;
+    if (client == null) {
+      return false;
+    }
+    print('ALL DONE!');
+    await saveDanglingTransactions(client);
+    await services.balance.recalculateAllBalances();
+    //services.download.asset.allAdminsSubs(); // why?
+    // remove vouts pointing to addresses we don't own?
   }
 
   Future getAndSaveMempoolTransactions([RavenElectrumClient? client]) async {

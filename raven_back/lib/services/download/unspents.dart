@@ -32,6 +32,18 @@ class UnspentService {
       for (var utxo in utxos) {
         if (!unspentsBySymbol.keys.contains(utxo.symbol)) {
           unspentsBySymbol[utxo.symbol!] = <ScripthashUnspent>{};
+
+          // Subscribe to a dummy asset of this type
+          // This method checks if we're already subscribed and
+          // handles downloads if we are not
+          services.client.subscribe.toAsset(Asset(
+              symbol: utxo.symbol!,
+              satsInCirculation: 0,
+              divisibility: 0,
+              reissuable: false,
+              metadata: '',
+              transactionId: '',
+              position: 0));
         }
         unspentsBySymbol[utxo.symbol]!.addAll(utxos);
       }

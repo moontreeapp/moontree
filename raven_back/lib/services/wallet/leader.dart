@@ -57,6 +57,30 @@ class LeaderWalletService {
     }
   }
 
+  void updateIndexes() {
+    for (var leader in res.wallets.leaders) {
+      updateIndex(leader);
+    }
+  }
+
+  /// this function allows us to avoid creating a 'hdindex' reservoir,
+  /// which is nice. this is why
+  void updateIndex(LeaderWallet leader) {
+    for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
+      var addresses =
+          res.addresses.byWalletExposure.getAll(leader.id, exposure);
+      services.wallet.leader.updateIndexOf(
+        leader,
+        exposure,
+        saved: addresses.map((a) => a.hdIndex).max,
+        used: addresses
+            .where((a) => a.vouts.isNotEmpty)
+            .map((a) => a.hdIndex)
+            .max,
+      );
+    }
+  }
+
   bool gapSatisfied(LeaderWallet leader, NodeExposure exposure) =>
       requiredGap - (getIndexOf(leader, exposure).currentGap) <= 0;
 
