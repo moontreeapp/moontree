@@ -151,7 +151,6 @@ class _NavMenuState extends State<NavMenu> {
             name: 'About',
             link: '/settings/about',
           ),
-          /*
           destination(
             icon: Icons.info_rounded,
             name: 'Wallet',
@@ -166,6 +165,8 @@ class _NavMenuState extends State<NavMenu> {
               title: Text('test'),
               leading: Icon(Icons.info_outline_rounded),
               onTap: () async {
+                //print(services.download.history.transactionsDownloaded());
+
                 //print(res.balances.bySecurity.getAll(res.securities.RVN));
                 //print(res.vouts.bySecurity.getAll(res.securities.RVN).length);
                 //for (var add in res.addresses.byWallet
@@ -261,10 +262,10 @@ class _NavMenuState extends State<NavMenu> {
                 //print(services.wallet.leader.indexRegistry.values
                 //    .map((e) => e.saved)
                 //    .sum());
-                for (var x
-                    in services.download.unspents.unspentsBySymbol['RVN']!) {
-                  print(x);
-                }
+                //for (var x
+                //    in services.download.unspents.unspentsBySymbol['RVN']!) {
+                //  print(x);
+                //}
                 //services
                 //    .download.unspents.pull()
 
@@ -311,6 +312,7 @@ class _NavMenuState extends State<NavMenu> {
                 }
                 */
               }),
+          /*
           */
         ],
       )

@@ -7,7 +7,7 @@ import 'package:raven_back/raven_back.dart';
 class HistoryService {
   Set<String> downloaded = {};
   Set<Address> addresses = {};
-  Map<String, List<List<String>>> txsListsByWalletExposureKeys = {};
+  Map<String, Set<Set<String>>> txsListsByWalletExposureKeys = {};
 
   Future<bool?> getHistories(Address address) async {
     void updateCounts(LeaderWallet leader) {
@@ -71,7 +71,7 @@ class HistoryService {
         }
 
         /// shouldn't need this, we can probably clean up the memory.
-        txsListsByWalletExposureKeys[key] = <List<String>>[];
+        txsListsByWalletExposureKeys[key] = <Set<String>>{};
       }
 
       // don't clear because if we get updates we want to pull tx
@@ -81,9 +81,21 @@ class HistoryService {
     return null;
   }
 
-  bool transactionsDownloaded() => txsListsByWalletExposureKeys.values
-      .map((e) => e.isEmpty)
-      .every((bool b) => b);
+  bool transactionsDownloaded() {
+    for (var x in txsListsByWalletExposureKeys.values) {
+      if (x.isNotEmpty) {
+        for (var y in x) {
+          if (y.isNotEmpty) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+  //bool transactionsDownloaded() => txsListsByWalletExposureKeys.values
+  //    .map((e) => e.isEmpty)
+  //    .every((bool b) => b);
 
   String produceKey(Address address) =>
       address.walletId + address.exposure.enumString;
@@ -91,8 +103,8 @@ class HistoryService {
   void remember(Address address, Iterable<String> txs) {
     var key = produceKey(address);
     txsListsByWalletExposureKeys.containsKey(key)
-        ? txsListsByWalletExposureKeys[key]!.add(txs.toList())
-        : txsListsByWalletExposureKeys[key] = <List<String>>[];
+        ? txsListsByWalletExposureKeys[key]!.add(txs.toSet())
+        : txsListsByWalletExposureKeys[key] = <Set<String>>{};
   }
 
   Future<bool> produceAddressOrBalance() async {
