@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_front/components/components.dart';
 
 class HomePage extends StatefulWidget {
   final AppContext appContext;
@@ -76,13 +77,37 @@ class _HomePageState extends State<HomePage>
                                   children: [
                                       Text('swap\n\n\n\n\n\n\n\n\n\n\n\n')
                                     ]),
-                      NavBar()
+                      NavBar(
+                          actionButtons: widget.appContext == AppContext.wallet
+                              ? <Widget>[
+                                  components.buttons.actionButton(
+                                    context,
+                                    label: 'send',
+                                    link: '/transaction/send',
+                                  ),
+                                  components.buttons.actionButton(
+                                    context,
+                                    label: 'receive',
+                                    link: '/transaction/receive',
+                                  )
+                                ]
+                              : <Widget>[
+                                  components.buttons.actionButton(
+                                    context,
+                                    label: 'create',
+                                    onPressed: _produceCreateModal,
+                                  )
+                                ])
                     ],
                   ));
             }),
           ),
         ),
       );
+
+  void _produceCreateModal() {
+    SelectionItems(context, modalSet: SelectionSet.Create).build();
+  }
 
   Future<void> fling([bool? open]) async {
     if ((open ?? false)) {

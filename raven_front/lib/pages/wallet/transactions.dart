@@ -108,7 +108,21 @@ class _TransactionsState extends State<Transactions>
                   child: content(scrollController),
                 );
               })),
-          NavBar(),
+          NavBar(
+            includeSectors: false,
+            actionButtons: <Widget>[
+              components.buttons.actionButton(
+                context,
+                label: 'send',
+                link: '/transaction/send',
+              ),
+              components.buttons.actionButton(
+                context,
+                label: 'receive',
+                link: '/transaction/receive',
+              )
+            ],
+          ),
         ],
       ),
     );
