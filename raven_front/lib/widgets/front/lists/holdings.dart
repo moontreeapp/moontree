@@ -27,6 +27,7 @@ class HoldingList extends StatefulWidget {
 class _HoldingList extends State<HoldingList> {
   List<StreamSubscription> listeners = [];
   late List<AssetHolding> holdings;
+  int holdingCount = 1;
   bool showUSD = false;
   bool showPath = false;
   Rate? rateUSD;
@@ -34,6 +35,15 @@ class _HoldingList extends State<HoldingList> {
   @override
   void initState() {
     super.initState();
+    listeners.add(res.assets.changes.listen((Change<Asset> change) {
+      // if vouts in our account has changed...
+      var count = res.assets.length;
+      if (count > holdingCount) {
+        setState(() {
+          holdingCount = count;
+        });
+      }
+    }));
     listeners.add(
         res.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
       // if vouts in our account has changed...
@@ -101,12 +111,13 @@ class _HoldingList extends State<HoldingList> {
     holdings = utils.assetHoldings(widget.holdings ?? Current.holdings);
     return holdings.isEmpty && res.vouts.data.isEmpty // <-- on front tab...
         ? components.empty.gettingAssetsPlaceholder(context,
-            scrollController: widget.scrollController) //Scroller(
+            scrollController: widget.scrollController,
+            count: holdingCount) //Scroller(
         //  controller: widget.scrollController,
         //  child: components.empty.holdings(context))
         : holdings.isEmpty
             ? components.empty.gettingAssetsPlaceholder(context,
-                scrollController: widget.scrollController)
+                scrollController: widget.scrollController, count: holdingCount)
             : //RefreshIndicator( child:
             _holdingsView(context);
     //  onRefresh: () => refresh(),

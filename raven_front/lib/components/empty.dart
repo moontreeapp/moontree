@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/utils/zips.dart';
 import 'package:shimmer/shimmer.dart';
 
 class EmptyComponents {
@@ -55,6 +56,7 @@ class EmptyComponents {
   ListView gettingAssetsPlaceholder(
     BuildContext context, {
     required ScrollController scrollController,
+    int count = 1,
   }) {
     var thisHolding = Shimmer.fromColors(
         baseColor: AppColors.primaries[0],
@@ -113,20 +115,9 @@ class EmptyComponents {
         physics: PageScrollPhysics(), //const BouncingScrollPhysics(),
         children: <Widget>[
           SizedBox(height: 8),
-          thisHolding,
-          Divider(),
-          thisHolding,
-          Divider(),
-          thisHolding,
-          Divider(),
-          thisHolding,
-          Divider(),
-          thisHolding,
-          Divider(),
-          thisHolding,
-          Divider(),
-          thisHolding,
-          Divider(),
+          ...[
+            for (var i in range(count)) ...[thisHolding, Divider()]
+          ],
           ...blankNavArea
         ]);
   }
@@ -134,6 +125,7 @@ class EmptyComponents {
   ListView gettingTransactionsPlaceholder(
     BuildContext context, {
     required ScrollController scrollController,
+    int count = 1,
   }) {
     var thisTransaction = Shimmer.fromColors(
         baseColor: AppColors.primaries[0],
@@ -187,22 +179,9 @@ class EmptyComponents {
         physics: PageScrollPhysics(), //const BouncingScrollPhysics(),
         children: <Widget>[
           SizedBox(height: 8),
-          thisTransaction,
-          Divider(indent: 16),
-          thisTransaction,
-          Divider(indent: 16),
-          thisTransaction,
-          Divider(indent: 16),
-          thisTransaction,
-          Divider(indent: 16),
-          thisTransaction,
-          Divider(indent: 16),
-          thisTransaction,
-          Divider(indent: 16),
-          thisTransaction,
-          Divider(indent: 16),
-          thisTransaction,
-          Divider(indent: 16),
+          ...[
+            for (var i in range(count)) ...[thisTransaction, Divider()]
+          ],
           ...blankNavArea
         ]);
   }

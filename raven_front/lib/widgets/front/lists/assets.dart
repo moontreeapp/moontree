@@ -18,10 +18,20 @@ class _AssetList extends State<AssetList> {
   List<StreamSubscription> listeners = [];
   late Iterable<AssetHolding> assets;
   bool showPath = false;
+  int assetCount = 0;
 
   @override
   void initState() {
     super.initState();
+    listeners.add(res.assets.changes.listen((Change<Asset> change) {
+      // if vouts in our account has changed...
+      var count = res.assets.length;
+      if (count > assetCount) {
+        setState(() {
+          assetCount = count;
+        });
+      }
+    }));
     listeners.add(
         res.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
       // if vouts in our account has changed...
@@ -67,7 +77,7 @@ class _AssetList extends State<AssetList> {
     assets = filterToAdminAssets(utils.assetHoldings(Current.holdings));
     return assets.isEmpty && res.vouts.data.isEmpty // <-- on front tab...
         ? components.empty.gettingAssetsPlaceholder(context,
-            scrollController: widget.scrollController)
+            scrollController: widget.scrollController, count: assetCount)
         //Container(
         //  alignment: Alignment.center,
         //  child: Scroller(
@@ -77,7 +87,7 @@ class _AssetList extends State<AssetList> {
         //) //components.empty.assets(context)
         : assets.isEmpty
             ? components.empty.gettingAssetsPlaceholder(context,
-                scrollController: widget.scrollController)
+                scrollController: widget.scrollController, count: assetCount)
             //Container(
             //    alignment: Alignment.center,
             //    child: Scroller(

@@ -29,6 +29,7 @@ class _TransactionListState extends State<TransactionList> {
   late Iterable<TransactionRecord> transactions;
   bool showUSD = false;
   Rate? rateUSD;
+  int transactionCount = 1;
 
   @override
   void initState() {
@@ -36,11 +37,12 @@ class _TransactionListState extends State<TransactionList> {
     listeners.add(
         res.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
       // if vouts in our account has changed...
-      if (batchedChanges
-          .where(
-              (change) => change.data.address?.wallet?.id == Current.walletId)
-          .isNotEmpty) {
-        setState(() {});
+      var items = batchedChanges
+          .where((change) => change.data.address?.walletId == Current.walletId);
+      if (items.isNotEmpty) {
+        setState(() {
+          transactionCount = items.length;
+        });
       }
     }));
     listeners.add(res.rates.batchedChanges.listen((batchedChanges) {
@@ -83,7 +85,7 @@ class _TransactionListState extends State<TransactionList> {
     return transactions.isEmpty
         //? components.empty.transactions(context, msg: widget.msg)
         ? components.empty.gettingTransactionsPlaceholder(context,
-            scrollController: widget.scrollController!)
+            scrollController: widget.scrollController!, count: transactionCount)
         : Container(
             alignment: Alignment.center,
             child: RefreshIndicator(
