@@ -16,6 +16,7 @@ NETWORKS.NetworkType litecoin = new NETWORKS.NetworkType(
     pubKeyHash: 0x30,
     scriptHash: 0x32,
     wif: 0xb0,
+    derivationAccountPath: "m/44'/1'/0'",
     burnAddresses: NETWORKS.BurnAddress.DUMMY,
     burnAmounts: NETWORKS.BurnAmount.DUMMY);
 // deterministic RNG for testing only
