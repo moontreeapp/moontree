@@ -101,7 +101,7 @@ class pages {
         '/security/resume': (context) => ChangeResume(),
         '/security/remove': (context) => RemovePassword(),
         '/security/login': (context) => Login(),
-        '/transaction/transaction': (context) => Transactions(),
+        '/transaction/transaction': (context) => TransactionPage(),
         '/transaction/receive': (context) => Receive(),
         '/transaction/send': (context) => Send(),
         '/transaction/checkout': (context) => Checkout(),
