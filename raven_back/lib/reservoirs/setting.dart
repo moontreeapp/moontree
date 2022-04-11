@@ -60,6 +60,8 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
       name: SettingName.Wallet_Current, value: walletId ?? preferredWalletId));
 
   Net get net => primaryIndex.getOne(SettingName.Electrum_Net)!.value;
+  bool get mainnet =>
+      primaryIndex.getOne(SettingName.Electrum_Net)!.value == Net.Main;
   NetworkType get network => networks[net]!;
   String get netName => net.enumString;
 }

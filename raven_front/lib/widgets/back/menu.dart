@@ -8,6 +8,7 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/zips.dart';
+import 'package:raven_front/theme/extensions.dart';
 
 import 'package:raven_back/utilities/database.dart' as ravenDatabase;
 
@@ -162,13 +163,15 @@ class _NavMenuState extends State<NavMenu> {
               name: 'Clear Database',
               link: '/home',
               execute: ravenDatabase.deleteDatabase),
+          */
           ListTile(
               title: Text('test'),
               leading: Icon(Icons.info_outline_rounded),
               onTap: () async {
-    
+                for (var a in res.addresses) {
+                  print('${a.address} ${a.walletId.cutOutMiddle()}');
+                }
               }),
-          */
         ],
       )
     };

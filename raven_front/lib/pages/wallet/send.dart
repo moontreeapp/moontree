@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:raven_front/pages/transaction/checkout.dart';
+import 'package:raven_front/pages/misc/checkout.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/qrcode.dart';
 

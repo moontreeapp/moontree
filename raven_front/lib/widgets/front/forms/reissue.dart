@@ -10,7 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction_maker.dart';
 import 'package:raven_front/components/components.dart';
-import 'package:raven_front/pages/transaction/checkout.dart';
+import 'package:raven_front/pages/misc/checkout.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_back/streams/create.dart';
 import 'package:raven_front/utils/transformers.dart';

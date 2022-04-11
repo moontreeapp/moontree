@@ -9,6 +9,10 @@ class HistoryService {
   Set<Address> addresses = {};
   Map<String, Set<Set<String>>> txsListsByWalletExposureKeys = {};
 
+  /// in order to not get concurrent modification error
+  /// but retain logic for determining if we're done (all empty)
+  Map<String, Set<Set<String>>> txsListsByWalletExposureKeysEraseable = {};
+
   Future<bool?> getHistories(Address address) async {
     void updateCounts(LeaderWallet leader) {
       leader.removeUnused(address.hdIndex, address.exposure);
@@ -69,9 +73,7 @@ class HistoryService {
         for (var txsList in txsListsByWalletExposureKeys[key]!) {
           await getTransactions(txsList);
         }
-
-        /// shouldn't need this, we can probably clean up the memory.
-        txsListsByWalletExposureKeys[key] = <Set<String>>{};
+        txsListsByWalletExposureKeysEraseable[key] = <Set<String>>{};
       }
 
       // don't clear because if we get updates we want to pull tx
@@ -82,7 +84,7 @@ class HistoryService {
   }
 
   bool transactionsDownloaded() {
-    for (var x in txsListsByWalletExposureKeys.values) {
+    for (var x in txsListsByWalletExposureKeysEraseable.values) {
       if (x.isNotEmpty) {
         for (var y in x) {
           if (y.isNotEmpty) {
@@ -105,6 +107,9 @@ class HistoryService {
     txsListsByWalletExposureKeys.containsKey(key)
         ? txsListsByWalletExposureKeys[key]!.add(txs.toSet())
         : txsListsByWalletExposureKeys[key] = <Set<String>>{};
+    txsListsByWalletExposureKeysEraseable.containsKey(key)
+        ? txsListsByWalletExposureKeysEraseable[key]!.add(txs.toSet())
+        : txsListsByWalletExposureKeysEraseable[key] = <Set<String>>{};
   }
 
   Future<bool> produceAddressOrBalance() async {

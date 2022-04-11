@@ -3,11 +3,13 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/pages/manage/assets.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class NavBar extends StatefulWidget {
-  NavBar({Key? key}) : super(key: key);
+  String? symbol;
+  NavBar({Key? key, this.symbol}) : super(key: key);
 
   @override
   _NavBarState createState() => _NavBarState();
@@ -16,7 +18,8 @@ class NavBar extends StatefulWidget {
 class _NavBarState extends State<NavBar> {
   @override
   Widget build(BuildContext context) {
-    var assetType = Asset.assetTypeOf(streams.app.manage.asset.value ?? '');
+    var assetType = widget.symbol ??
+        ''; //Asset.assetTypeOf(streams.app.manage.asset.value ?? '');
     return Container(
       height: MediaQuery.of(context).size.height * (118 / 760),
       padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),

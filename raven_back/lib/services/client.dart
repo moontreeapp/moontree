@@ -24,18 +24,13 @@ class ClientService {
   int get electrumPortTest =>
       res.settings.primaryIndex.getOne(SettingName.Electrum_PortTest)!.value;
 
-  String get currentDomain =>
-      res.settings.primaryIndex.getOne(SettingName.Electrum_Net)!.value ==
-              Net.Main
-          ? res.settings.primaryIndex.getOne(SettingName.Electrum_Domain)!.value
-          : res.settings.primaryIndex
-              .getOne(SettingName.Electrum_DomainTest)!
-              .value;
+  String get currentDomain => res.settings.mainnet
+      ? res.settings.primaryIndex.getOne(SettingName.Electrum_Domain)!.value
+      : res.settings.primaryIndex
+          .getOne(SettingName.Electrum_DomainTest)!
+          .value;
 
-  int get currentPort => res.settings.primaryIndex
-              .getOne(SettingName.Electrum_Net)!
-              .value ==
-          Net.Main
+  int get currentPort => res.settings.mainnet
       ? res.settings.primaryIndex.getOne(SettingName.Electrum_Port)!.value
       : res.settings.primaryIndex.getOne(SettingName.Electrum_PortTest)!.value;
 
@@ -45,8 +40,7 @@ class ClientService {
   Future<RavenElectrumClient?> createClient(
       {String projectName = 'MTWallet', String buildVersion = '0.1'}) async {
     try {
-      if (res.settings.primaryIndex.getOne(SettingName.Electrum_Net)?.value ==
-          Net.Main) {
+      if (res.settings.mainnet) {
         return await RavenElectrumClient.connect(
           electrumDomain,
           port: electrumPort,
@@ -70,8 +64,7 @@ class ClientService {
     required String domain,
     required int port,
   }) async =>
-      res.settings.primaryIndex.getOne(SettingName.Electrum_Net)?.value ==
-              Net.Main
+      res.settings.mainnet
           ? await res.settings.saveAll([
               Setting(name: SettingName.Electrum_Domain, value: domain),
               Setting(name: SettingName.Electrum_Port, value: port),

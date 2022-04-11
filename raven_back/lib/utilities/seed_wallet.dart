@@ -14,7 +14,8 @@ class SeedWallet {
   HDWallet get wallet => HDWallet.fromSeed(seed, network: networks[net]!);
 
   HDWallet subwallet(int hdIndex, {exposure = NodeExposure.External}) =>
-      wallet.derivePath(getDerivationPath(hdIndex, exposure: exposure));
+      wallet.derivePath(getDerivationPath(hdIndex,
+          exposure: exposure, mainnet: res.settings.mainnet));
 }
 
 class SingleSelfWallet {

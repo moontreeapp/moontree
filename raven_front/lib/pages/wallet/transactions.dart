@@ -101,6 +101,7 @@ class _TransactionsState extends State<Transactions>
               initialChildSize: minHeight,
               minChildSize: minHeight,
               maxChildSize: 1.0,
+              //snap: true, // if snap then show amount in app bar
               builder: ((context, scrollController) {
                 return FrontCurve(
                   frontLayerBoxShadow: [],
