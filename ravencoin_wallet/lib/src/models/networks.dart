@@ -5,6 +5,7 @@ class NetworkType {
   final int pubKeyHash;
   final int scriptHash;
   final int wif;
+  final String derivationAccountPath;
   final BurnAddress burnAddresses;
   final BurnAmount burnAmounts;
 
@@ -15,6 +16,7 @@ class NetworkType {
       required this.pubKeyHash,
       required this.scriptHash,
       required this.wif,
+      required this.derivationAccountPath,
       required this.burnAddresses,
       required this.burnAmounts});
 
@@ -116,6 +118,7 @@ const mainnet = NetworkType(
     pubKeyHash: 0x3c,
     scriptHash: 0x7a,
     wif: 0x80,
+    derivationAccountPath: "m/44'/175'/0'",
     burnAddresses: BurnAddress(
         issueMain: 'RXissueAssetXXXXXXXXXXXXXXXXXhhZGt',
         reissue: 'RXReissueAssetXXXXXXXXXXXXXXVEFAWu',
@@ -146,6 +149,7 @@ const testnet = NetworkType(
     pubKeyHash: 0x6f,
     scriptHash: 0xc4,
     wif: 0xef,
+    derivationAccountPath: "m/44'/1'/0'",
     burnAddresses: BurnAddress(
         issueMain: 'n1issueAssetXXXXXXXXXXXXXXXXWdnemQ',
         reissue: 'n1ReissueAssetXXXXXXXXXXXXXXWG9NLd',
@@ -178,6 +182,7 @@ const bitcoinMainnet = NetworkType(
     pubKeyHash: 0x00,
     scriptHash: 0x05,
     wif: 0x80,
+    derivationAccountPath: "m/44'/1'/0'",
     burnAddresses: BurnAddress.DUMMY,
     burnAmounts: BurnAmount.DUMMY);
 
@@ -188,6 +193,7 @@ const bitcoinTestnet = NetworkType(
     pubKeyHash: 0x6f,
     scriptHash: 0xc4,
     wif: 0xef,
+    derivationAccountPath: "m/44'/1'/0'",
     burnAddresses: BurnAddress.DUMMY,
     burnAmounts: BurnAmount.DUMMY);
 
