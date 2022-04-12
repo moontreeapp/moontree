@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage>
                           child: widget,
                         );
                       },
-                      child: draggableScrollController.size > minExtent
+                      child: draggableScrollController.size > (minExtent + 0.2)
                           ? NavBar(
                               actionButtons:
                                   widget.appContext == AppContext.wallet
