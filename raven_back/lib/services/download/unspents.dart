@@ -58,7 +58,7 @@ class UnspentService {
           : 0;
 
   void assertSufficientFunds(int amount, String? symbol) {
-    if (total(defaultSymbol(symbol)) >= amount) {
+    if (total(defaultSymbol(symbol)) < amount) {
       throw InsufficientFunds();
     }
   }

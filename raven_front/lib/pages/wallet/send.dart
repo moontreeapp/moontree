@@ -64,13 +64,12 @@ class _SendState extends State<Send> {
     //minHeight = 1 - (201 + 16) / MediaQuery.of(context).size.height;
     sendAsset.text = sendAsset.text == '' ? 'Ravencoin' : sendAsset.text;
     sendFee.text = sendFee.text == '' ? 'Standard' : sendAsset.text;
-    sendAssetFocusNode.addListener(refresh);
-    sendAddressFocusNode.addListener(refresh);
-    sendAmountFocusNode.addListener(refresh);
-    sendFeeFocusNode.addListener(refresh);
-    sendMemoFocusNode.addListener(refresh);
-    sendNoteFocusNode.addListener(refresh);
-
+    //sendAssetFocusNode.addListener(refresh);
+    //sendAddressFocusNode.addListener(refresh);
+    //sendAmountFocusNode.addListener(refresh);
+    //sendFeeFocusNode.addListener(refresh);
+    //sendMemoFocusNode.addListener(refresh);
+    //sendNoteFocusNode.addListener(refresh);
     listeners.add(streams.spend.form.listen((SpendForm? value) {
       if (value != null) {
         if ((SpendForm.merge(form: spendForm, amount: 0.0) !=
@@ -96,20 +95,17 @@ class _SendState extends State<Send> {
         }
       }
     }));
-    services.download.unspents
-        .pull()
-        .then((value) => services.balance.recalculateRVNBalance());
   }
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    sendAssetFocusNode.removeListener(refresh);
-    sendAddressFocusNode.removeListener(refresh);
-    sendAmountFocusNode.removeListener(refresh);
-    sendFeeFocusNode.removeListener(refresh);
-    sendMemoFocusNode.removeListener(refresh);
-    sendNoteFocusNode.removeListener(refresh);
+    //sendAssetFocusNode.removeListener(refresh);
+    //sendAddressFocusNode.removeListener(refresh);
+    //sendAmountFocusNode.removeListener(refresh);
+    //sendFeeFocusNode.removeListener(refresh);
+    //sendMemoFocusNode.removeListener(refresh);
+    //sendNoteFocusNode.removeListener(refresh);
     sendAssetFocusNode.dispose();
     sendAddressFocusNode.dispose();
     sendAmountFocusNode.dispose();
@@ -165,8 +161,8 @@ class _SendState extends State<Send> {
         minHeight ?? 1 - (201 + 16) / MediaQuery.of(context).size.height;
     data = populateData(context, data);
     var symbol = streams.spend.form.value?.symbol ?? 'RVN';
-    security = res.securities.bySymbol.getAll(symbol).first;
     symbol = symbol == 'Ravencoin' ? 'RVN' : symbol;
+    security = res.securities.bySymbol.getAll(symbol).first;
     useWallet = data.containsKey('walletId') && data['walletId'] != null;
     if (data.containsKey('qrCode')) {
       handlePopulateFromQR(data['qrCode']);
@@ -291,6 +287,7 @@ class _SendState extends State<Send> {
   Widget get sendAddressField => TextField(
         focusNode: sendAddressFocusNode,
         controller: sendAddress,
+        textInputAction: TextInputAction.done,
         autocorrect: false,
         inputFormatters: [
           FilteringTextInputFormatter(RegExp(r'[a-zA-Z0-9]'), allow: true)
@@ -309,6 +306,7 @@ class _SendState extends State<Send> {
           _validateAddressColor(value);
         },
         onEditingComplete: () {
+          //setState(() {});
           FocusScope.of(context).requestFocus(sendAmountFocusNode);
         },
       );
@@ -384,7 +382,6 @@ class _SendState extends State<Send> {
   double doubleAmount(String visibleAmount) =>
       visibleAmount == '' ? 0 : double.parse(visibleAmount);
 
-  //SizedBox(height: 16.0),
   Widget get sendFeeField => TextField(
         focusNode: sendFeeFocusNode,
         controller: sendFee,
@@ -397,7 +394,6 @@ class _SendState extends State<Send> {
               icon: Padding(
                   padding: EdgeInsets.only(right: 14),
                   child: Icon(Icons.expand_more_rounded,
-                      //color: Color(0xFF606060))),
                       color: Color(0xDE000000))),
               onPressed: () => _produceFeeModal(),
             )),

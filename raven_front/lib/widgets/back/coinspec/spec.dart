@@ -38,9 +38,11 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
     super.initState();
     listeners.add(streams.spend.form.listen((SpendForm? value) {
       if (value != null && value.amount != null && value.amount != amount) {
-        setState(() {
-          amount = value.amount!;
-        });
+        if (mounted) {
+          setState(() {
+            amount = value.amount!;
+          });
+        }
       }
     }));
   }
