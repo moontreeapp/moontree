@@ -48,7 +48,6 @@ class _ReissueAssetState extends State<ReissueAsset> {
   FocusNode decimalFocus = FocusNode();
   FocusNode verifierFocus = FocusNode();
   bool nameValidated = false;
-  bool nameTakenValidated = false;
   bool ipfsValidated = false;
   bool quantityValidated = false;
   bool decimalValidated = false;
@@ -356,7 +355,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
   Widget get submitButton => components.buttons.actionButton(
         context,
         focusNode: nextFocus,
-        enabled: nameTakenValidated && enabled,
+        enabled: enabled,
         onPressed: submit,
       );
 
@@ -423,30 +422,17 @@ class _ReissueAssetState extends State<ReissueAsset> {
     }
   }
 
-  bool get enabled =>
-      (needsQuantity
-          ? quantityController.text != '' &&
-              quantityValidation(quantityController.text.toInt())
-          : true) &&
-      (needsDecimal
-          ? decimalController.text != '' &&
-              decimalValidation(decimalController.text.toInt())
-          : true) &&
-      (ipfsController.text == '' || ipfsValidation(ipfsController.text));
-
-  Future<bool> get enabledAsync async =>
-      (needsQuantity
-          ? quantityController.text != '' &&
-              quantityValidation(quantityController.text.toInt())
-          : true) &&
-      (needsDecimal
-          ? decimalController.text != '' &&
-              decimalValidation(decimalController.text.toInt())
-          : true) &&
-      (ipfsController.text == '' || ipfsValidation(ipfsController.text));
+  bool get enabled => [
+        quantityController.text != '' &&
+            quantityValidation(quantityController.text.toInt()),
+        decimalController.text != minDecimal.toString() &&
+            decimalValidation(decimalController.text.toInt()),
+        ipfsController.text != '' && ipfsValidation(ipfsController.text),
+        reissueValue == false,
+      ].any((e) => e);
 
   Future<void> submit() async {
-    if (await enabledAsync) {
+    if (enabled) {
       FocusScope.of(context).unfocus();
 
       /// send them to transaction checkout screen

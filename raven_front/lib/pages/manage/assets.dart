@@ -36,7 +36,6 @@ class _AssetState extends State<Asset> {
                     .contains(chosenAsset.assetType)) ...[
                   components.buttons.actionButton(context,
                       label: 'create', onPressed: _produceSubCreateModal),
-                  SizedBox(width: 16)
                 ],
                 if ([
                   AssetType.Qualifier,
@@ -49,7 +48,6 @@ class _AssetState extends State<Asset> {
                             '/create/qualifiersub',
                             arguments: {'symbol': 'QualifierSub'},
                           )),
-                  SizedBox(width: 16)
                 ],
                 components.buttons.actionButton(context, label: 'manage',
                     onPressed: () {
