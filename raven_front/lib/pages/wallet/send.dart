@@ -262,87 +262,6 @@ class _SendState extends State<Send> {
         ],
       ));
 
-  //Widget body() {
-  //  return Container(
-  //      alignment: Alignment.topCenter,
-  //      child: CustomScrollView(shrinkWrap: true,
-  //          //controller: controller,
-  //          slivers: <Widget>[
-  //            SliverToBoxAdapter(
-  //              child: CoinSpec(
-  //                  pageTitle: 'Send',
-  //                  security: security,
-  //                  color: Theme.of(context).backgroundColor),
-  //            ),
-  //            SliverToBoxAdapter(child: SizedBox(height: 6)),
-  //            SliverToBoxAdapter(
-  //                child: Column(
-  //                    crossAxisAlignment: CrossAxisAlignment.start,
-  //                    children: <Widget>[
-  //                  sendAssetField,
-  //                  SizedBox(height: 16),
-  //                  //toName,
-  //                  sendAddressField,
-  //                  SizedBox(height: 16),
-  //                  sendAmountField,
-  //                  SizedBox(height: 16),
-  //                  sendFeeField,
-  //                  SizedBox(height: 16),
-  //                  sendMemoField,
-  //                  SizedBox(height: 16),
-  //                  sendNoteField,
-  //                ])),
-  //          ]));
-  //}
-
-  //Widget body() => BackdropLayers(
-  //      //backAlignment: Alignment.bottomCenter,
-  //      frontAlignment: Alignment.bottomCenter,
-  //      back: CoinSpec(
-  //          pageTitle: 'Send',
-  //          security: security,
-  //          color: Theme.of(context).backgroundColor),
-  //      front: content(scrollController),
-  //      //frontHeight: MediaQuery.of(context).size.height - (201 + 56),
-  //    );
-//
-  //Widget content(ScrollController scrollController) => FrontCurve(
-  //    height: MediaQuery.of(context).size.height - (201 + 56),
-  //    child: TextField()
-  //    //Stack(
-  //    //  children: [
-  //    //    Container(
-  //    //      alignment: Alignment.bottomCenter,
-  //    //      height: MediaQuery.of(context).size.height - (201 + 56),
-  //    //      child: ListView(
-  //    //        shrinkWrap: true,
-  //    //        padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
-  //    //        children: <Widget>[
-  //    //          sendAssetField,
-  //    //          SizedBox(height: 16),
-  //    //          //toName,
-  //    //          sendAddressField,
-  //    //          SizedBox(height: 16),
-  //    //          sendAmountField,
-  //    //          SizedBox(height: 16),
-  //    //          sendFeeField,
-  //    //          SizedBox(height: 16),
-  //    //          sendMemoField,
-  //    //          SizedBox(height: 16),
-  //    //          sendNoteField,
-  //    //        ],
-  //    //      ),
-  //    //    ),
-  //    //    KeyboardHidesWidget(
-  //    //        child: components.buttons.floatingButtons(
-  //    //      context,
-  //    //      buttons: [sendTransactionButton()],
-  //    //      widthSpacer: SizedBox(width: 16),
-  //    //    ))
-  //    //  ],
-  //    //)
-  //    );
-//
   Widget get sendAssetField => TextField(
         focusNode: sendAssetFocusNode,
         controller: sendAsset,
@@ -373,34 +292,23 @@ class _SendState extends State<Send> {
         onTap: () async {
           clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
         },
-        selectionControls: NoToolBar(),
+        //selectionControls: NoToolBar(),
         focusNode: sendAddressFocusNode,
         controller: sendAddress,
         autocorrect: false,
         inputFormatters: [
           FilteringTextInputFormatter(RegExp(r'[a-zA-Z0-9]'), allow: true)
         ],
-        decoration: components.styles.decorations.textFeild(context,
-            focusNode: sendAddressFocusNode,
-            labelText: 'To',
-            hintText: 'Address',
-            errorText:
-                sendAddress.text != '' && !_validateAddress(sendAddress.text)
-                    ? 'Unrecognized Address'
-                    : null,
-            suffixIcon: true ||
-                    (res.settings.net == Net.Main && clipboard.isAddressRVN) ||
-                    (res.settings.net == Net.Test && clipboard.isAddressRVNt)
-                ?
-                //QRCodeButton(pageTitle: 'Send-to', light: false),
-                IconButton(
-                    icon: Icon(Icons.paste_rounded, color: AppColors.black60),
-                    onPressed: () async {
-                      sendAddress.text =
-                          (await Clipboard.getData('text/plain'))?.text ?? '';
-                    },
-                  )
-                : null),
+        decoration: components.styles.decorations.textFeild(
+          context,
+          focusNode: sendAddressFocusNode,
+          labelText: 'To',
+          hintText: 'Address',
+          errorText:
+              sendAddress.text != '' && !_validateAddress(sendAddress.text)
+                  ? 'Unrecognized Address'
+                  : null,
+        ),
         onChanged: (value) {
           _validateAddressColor(value);
         },

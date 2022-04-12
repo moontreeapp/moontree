@@ -189,9 +189,6 @@ class Asset with EquatableMixin {
           ? true
           : false;
 
-  String get amountWithCommas =>
-      utils.satToAmount(satsInCirculation).toCommaString();
-
   double get amount => utils.satToAmount(satsInCirculation);
 }
 

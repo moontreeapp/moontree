@@ -72,17 +72,6 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
     } catch (e) {
       visibleFiatAmount = '';
     }
-    var assetDetails;
-    var totalSupply;
-    if (widget.pageTitle == 'Asset') {
-      assetDetails = widget.pageTitle == 'Asset'
-          ? res.assets.bySymbol.getOne(symbol)
-          : null;
-      if (assetDetails != null) {
-        totalSupply =
-            utils.satToAmount(assetDetails!.satsInCirculation).toCommaString();
-      }
-    }
     return Container(
       padding: EdgeInsets.only(top: 16),
       height: widget.pageTitle == 'Send' ? 209 : 201,
@@ -95,7 +84,9 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
               pageTitle: widget.pageTitle,
               symbol: symbol,
               holdingSat: holdingSat,
-              totalSupply: totalSupply),
+              totalSupply: widget.pageTitle == 'Asset'
+                  ? res.assets.bySymbol.getOne(symbol)?.amount.toCommaString()
+                  : null),
           widget.bottom ?? specBottom(holdingSat, amountSat),
         ],
       ),

@@ -143,7 +143,7 @@ class _AssetList extends State<AssetList> {
     } else if (asset.length == 1) {
       navigate(asset.singleSymbol!, wallet: wallet);
     } else {
-      var assetDetails = {};
+      var assetDetails = <String, Asset?>{};
       if (asset.admin != null) {
         assetDetails['main'] = res.assets.primaryIndex.getOne(asset.symbol);
       }
@@ -177,22 +177,13 @@ class _AssetList extends State<AssetList> {
             () => navigate(asset.qualifier!.security.symbol, wallet: wallet),
         ],
         values: [
-          if (asset.admin != null)
-            utils
-                .satToAmount(assetDetails['main'].satsInCirculation)
-                .toCommaString(),
+          if (asset.admin != null) assetDetails['main']!.amount.toCommaString(),
           if (asset.subAdmin != null)
-            utils
-                .satToAmount(assetDetails['main'].satsInCirculation)
-                .toCommaString(),
+            assetDetails['main']!.amount.toCommaString(),
           if (asset.restricted != null)
-            utils
-                .satToAmount(assetDetails['restricted'].satsInCirculation)
-                .toCommaString(),
+            assetDetails['restricted']!.amount.toCommaString(),
           if (asset.qualifier != null)
-            utils
-                .satToAmount(assetDetails['qualifier'].satsInCirculation)
-                .toCommaString(),
+            assetDetails['qualifier']!.amount.toCommaString(),
         ],
       ).build();
     }
