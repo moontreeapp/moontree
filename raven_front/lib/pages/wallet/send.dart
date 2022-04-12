@@ -289,10 +289,6 @@ class _SendState extends State<Send> {
       Visibility(visible: addressName != '', child: Text('To: $addressName'));
 
   Widget get sendAddressField => TextField(
-        onTap: () async {
-          clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
-        },
-        //selectionControls: NoToolBar(),
         focusNode: sendAddressFocusNode,
         controller: sendAddress,
         autocorrect: false,
@@ -318,7 +314,6 @@ class _SendState extends State<Send> {
       );
 
   Widget get sendAmountField => TextField(
-        selectionControls: NoToolBar(),
         focusNode: sendAmountFocusNode,
         controller: sendAmount,
         textInputAction: TextInputAction.done,
@@ -425,7 +420,6 @@ class _SendState extends State<Send> {
       onTap: () async {
         clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
       },
-      selectionControls: NoToolBar(),
       focusNode: sendMemoFocusNode,
       controller: sendMemo,
       decoration: components.styles.decorations.textFeild(
@@ -459,7 +453,6 @@ class _SendState extends State<Send> {
       onTap: () async {
         clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
       },
-      selectionControls: NoToolBar(),
       focusNode: sendNoteFocusNode,
       controller: sendNote,
       decoration: components.styles.decorations.textFeild(context,
