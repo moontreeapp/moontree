@@ -15,9 +15,9 @@ class GenericCreateForm {
   final String? name;
   final String? ipfs;
   final int? quantity;
-  final String? decimal;
+  final int? decimal;
   final int? minQuantity;
-  final String? minDecimal;
+  final int? minDecimal;
   final bool? reissuable;
   final String? verifier;
   final String? parent; // you have to use the wallet that holds the prent
@@ -51,8 +51,8 @@ class GenericCreateForm {
     String? ipfs,
     int? quantity,
     int? minQuantity,
-    String? decimal,
-    String? minDecimal,
+    int? decimal,
+    int? minDecimal,
     String? verifier,
     bool? reissuable,
     String? parent,

@@ -30,6 +30,11 @@ class PageTitle extends StatefulWidget {
     'Restricted': 'Create',
     'Login': 'Unlock',
   };
+  static Map<String, String> pageMapReissue = const {
+    'Main': 'Reissue',
+    'Sub': 'Reissue',
+    'Restricted': 'Reissue',
+  };
 }
 
 class _PageTitleState extends State<PageTitle> {
@@ -116,6 +121,9 @@ class _PageTitleState extends State<PageTitle> {
     }
     return walletNumber() ??
         wrap(PageTitle.settingsMap[settingTitle] ??
+            (streams.create.form.value?.minQuantity != null
+                ? PageTitle.pageMapReissue[pageTitle]
+                : null) ??
             PageTitle.pageMap[pageTitle] ??
             (pageTitle == 'Home'
                 ? appContext.enumString.toTitleCase()

@@ -1,7 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:raven_back/extensions/object.dart';
+import 'package:raven_back/extensions/string.dart';
 import 'package:raven_back/extensions/validation.dart';
+import 'package:raven_back/utilities/utilities.dart';
 
 import '_type_id.dart';
 
@@ -186,6 +188,11 @@ class Asset with EquatableMixin {
       symbol.contains('/') && !(symbol.startsWith('\$') || symbol.endsWith('!'))
           ? true
           : false;
+
+  String get amountWithCommas =>
+      utils.satToAmount(satsInCirculation).toCommaString();
+
+  double get amount => utils.satToAmount(satsInCirculation);
 }
 
 enum AssetType {

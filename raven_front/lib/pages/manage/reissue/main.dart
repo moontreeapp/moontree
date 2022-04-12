@@ -29,10 +29,9 @@ class _ReissueMainAssetState extends State<ReissueMainAsset> {
       streams.create.form.add(GenericCreateForm(
         parent: asset.parent?.symbol,
         name: asset.symbol,
-        minQuantity: asset.satsInCirculation,
-        quantity: asset.satsInCirculation,
-        minDecimal: asset.divisibility.toString(),
-        decimal: asset.divisibility.toString(),
+        minQuantity: asset.amount.toInt(),
+        minDecimal: asset.divisibility,
+        decimal: asset.divisibility,
         reissuable: asset.reissuable,
       ));
       return BackdropLayers(

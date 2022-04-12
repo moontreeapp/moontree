@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_front/utils/data.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/records/asset.dart' as assetRecord;
 import 'package:raven_front/components/components.dart';
 
 class Asset extends StatefulWidget {
@@ -18,7 +19,7 @@ class _AssetState extends State<Asset> {
   Widget build(BuildContext context) {
     data = populateData(context, data);
     var symbol = data['symbol'] as String;
-    var assetType = symbol;
+    var chosenAsset = res.assets.bySymbol.getOne(symbol)!;
     return BackdropLayers(
       back: CoinSpec(
           pageTitle: 'Asset',
@@ -31,7 +32,8 @@ class _AssetState extends State<Asset> {
             NavBar(
               includeSectors: false,
               actionButtons: <Widget>[
-                if ([AssetType.Main, AssetType.Sub].contains(assetType)) ...[
+                if ([AssetType.Main, AssetType.Sub]
+                    .contains(chosenAsset.assetType)) ...[
                   components.buttons.actionButton(context,
                       label: 'create', onPressed: _produceSubCreateModal),
                   SizedBox(width: 16)
@@ -39,7 +41,7 @@ class _AssetState extends State<Asset> {
                 if ([
                   AssetType.Qualifier,
                   AssetType.QualifierSub,
-                ].contains(assetType)) ...[
+                ].contains(chosenAsset.assetType)) ...[
                   components.buttons.actionButton(context,
                       label: 'create',
                       onPressed: () => Navigator.pushNamed(
@@ -52,7 +54,7 @@ class _AssetState extends State<Asset> {
                 components.buttons.actionButton(context, label: 'manage',
                     onPressed: () {
                   // if main do this
-                  _produceMainManageModal();
+                  _produceMainManageModal(chosenAsset);
                   // if sub do this
                   //_produceSubManageModal();
                   // if other do this
@@ -68,7 +70,31 @@ class _AssetState extends State<Asset> {
     SelectionItems(context, modalSet: SelectionSet.Sub_Asset).build();
   }
 
-  void _produceMainManageModal() async {
-    await SelectionItems(context, modalSet: SelectionSet.MainManage).build();
+  void _produceMainManageModal(assetRecord.Asset asset) async {
+    if (asset.reissuable &&
+        [AssetType.Main, AssetType.Sub, AssetType.Restricted]
+            .contains(asset.assetType)) {
+      await SelectionItems(
+        context,
+        //symbol: symbol,
+        modalSet: SelectionSet.MainManage,
+        behaviors: [
+          () {
+            Navigator.pushNamed(
+              context,
+              '/reissue/' + asset.assetType.enumString.toLowerCase(),
+              arguments: {'symbol': asset.symbol},
+            );
+          },
+          () {
+            ///Navigator.pushNamed(
+            ///  context,
+            ///  '/issue/dividend' + assetType.enumString.toLowerCase(),
+            ///  arguments: {'symbol': symbol},
+            ///);
+          },
+        ],
+      ).build();
+    }
   }
 }

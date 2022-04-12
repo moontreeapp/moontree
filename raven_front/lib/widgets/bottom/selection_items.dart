@@ -423,11 +423,12 @@ class SelectionItems {
                 fontWeight: FontWeights.bold,
                 letterSpacing: 0.1,
                 color: AppColors.primary),
-          ),
+          )
         ]),
         behavior: () => streams.create.form.add(GenericCreateForm.merge(
           form: streams.create.form.value,
-          decimal: StringCharactersExtension(asString(name)).characters.last,
+          decimal: int.parse(
+              StringCharactersExtension(asString(name)).characters.last),
         )),
       );
 
@@ -436,11 +437,6 @@ class SelectionItems {
         behavior: () => Navigator.pushNamed(
           components.navigator.routeContext!,
           '/create/' + asString(name).toLowerCase(),
-          //{
-          //  SelectionOption.Main: 'main',
-          //  SelectionOption.Restricted: 'restricted',
-          //  SelectionOption.Qualifier: 'qualifier',
-          //}[name]!,
           arguments: {'symbol': asString(name)},
         ),
         useCreateLeads: true, // modalSet == SelectionSet.Create
@@ -504,6 +500,7 @@ class SelectionItems {
     List<String>? holdingNames,
     String? decimalPrefix,
     TextEditingController? controller,
+    int? minDecimal,
   }) async {
     if (modalSet == SelectionSet.Wallets) {
       await produceModal(
@@ -528,7 +525,8 @@ class SelectionItems {
           tall: false);
     } else if (modalSet == SelectionSet.Decimal) {
       produceModal([
-        for (SelectionOption name in names)
+        for (SelectionOption name
+            in names.sublist(0, names.length - (minDecimal ?? 0)))
           decimalItem(name, prefix: decimalPrefix)
       ], tall: false);
     } else if (modalSet == SelectionSet.Create) {
@@ -536,7 +534,6 @@ class SelectionItems {
           tall: false);
     } else if (modalSet == SelectionSet.Sub_Asset) {
       symbolColors = streams.app.manage.asset.value;
-      print(symbolColors);
       produceModal([
         for (SelectionOption name in names) createItem(name)
       ], //subAssetItem(name)],

@@ -58,6 +58,8 @@ class _ReissueAssetState extends State<ReissueAsset> {
   String? verifierValidationErr;
   int remainingNameLength = 31;
   int remainingVerifierLength = 89;
+  int minQuantity = 0;
+  int minDecimal = 0;
   Map<FormPresets, String> presetToTitle = {
     FormPresets.main: 'Reissue',
     FormPresets.restricted: 'Reissue',
@@ -74,10 +76,13 @@ class _ReissueAssetState extends State<ReissueAsset> {
           nameController.text = value?.name ?? nameController.text;
           ipfsController.text = value?.ipfs ?? ipfsController.text;
           quantityController.text =
-              value?.quantity?.toString() ?? quantityController.text;
-          decimalController.text = value?.decimal ?? decimalController.text;
+              value?.quantity?.toCommaString() ?? quantityController.text;
+          decimalController.text =
+              value?.decimal.toString() ?? decimalController.text;
           reissueValue = value?.reissuable ?? reissueValue;
           verifierController.text = value?.verifier ?? verifierController.text;
+          minQuantity = value?.minQuantity ?? 0;
+          minDecimal = value?.minDecimal ?? 0;
         });
       }
     }));
@@ -112,6 +117,10 @@ class _ReissueAssetState extends State<ReissueAsset> {
             (isSub ? parentController.text.length + 1 : 0) -
             // everything else has a special character denoting its type
             (isMain ? 0 : 1);
+    decimalController.text = decimalController.text == '' ||
+            decimalController.text.toDouble() < minDecimal
+        ? minDecimal.toString()
+        : decimalController.text;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: body(),
@@ -214,23 +223,12 @@ class _ReissueAssetState extends State<ReissueAsset> {
         context,
         labelText: (isSub ? 'Sub ' : '') + presetToTitle[widget.preset]!,
         hintText: 'MOONTREE_WALLET.COM',
-        errorText: isRestricted
-            ? null
-            : nameController.text.length > 2 && !nameValidated
-                //!nameValidation(nameController.text))
-                ? nameTakenValidated
-                    ? nameValidationErr
-                    : 'Taken'
-                : null,
       ),
       onTap: isRestricted ? _produceAdminAssetModal : null,
-      onChanged:
-          isRestricted ? null : (String value) => validateName(name: value),
+      onChanged: null,
       onEditingComplete: isRestricted
           ? () => FocusScope.of(context).requestFocus(quantityFocus)
           : () {
-              validateName();
-              nameNotTakenValid(nameController.text);
               FocusScope.of(context).requestFocus(quantityFocus);
             });
 
@@ -252,7 +250,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
           hintText: '21,000,000',
           errorText: quantityController.text != '' &&
                   !quantityValidation(quantityController.text.toInt())
-              ? 'must ${quantityController.text.toInt().toCommaString()} be between 1 and 21,000,000'
+              ? 'Additional Quantity cannot exceed ${21000000000 - minQuantity}'
               : null,
         ),
         onChanged: (String value) => validateQuantity(quantity: value.toInt()),
@@ -260,6 +258,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
           validateQuantity();
           formatQuantity();
           FocusScope.of(context).requestFocus(decimalFocus);
+          setState(() {});
         },
       );
 
@@ -361,62 +360,6 @@ class _ReissueAssetState extends State<ReissueAsset> {
         onPressed: submit,
       );
 
-  bool nameValidation(String name) {
-    var validName = nameLengthValid(name) && nameTypeValid(name);
-    nameValidationErr = validName ? null : nameValidationErr;
-    return validName;
-  }
-
-  Future<bool> nameNotTakenValid(String name) async {
-    var old = nameTakenValidated;
-    nameTakenValidated = !(await services.client.api.getAssetNames(name))
-        .toList()
-        .contains(name);
-    if (old != nameTakenValidated) {
-      setState(() {});
-    }
-    return nameTakenValidated;
-  }
-
-  bool nameTypeValid(String name) {
-    if (isMain && !name.isMainAsset) {
-      nameValidationErr = 'invalid Main';
-      return false;
-    }
-    if (isRestricted && !name.isRestricted) {
-      nameValidationErr = 'invalid Restricted';
-      return false;
-    }
-    if (isSub && !name.isSubAsset) {
-      nameValidationErr = 'invalid SubAsset';
-      return false;
-    }
-    nameValidationErr = nameValidationErr;
-    return true;
-  }
-
-  bool nameLengthValid(String name) {
-    if (!(name.length > 2 && name.length <= remainingNameLength)) {
-      nameValidationErr = '${remainingNameLength - nameController.text.length}';
-      return false;
-    }
-    nameValidationErr = nameValidationErr;
-    return true;
-  }
-
-  Future<void> validateName({String? name}) async {
-    name = name ?? nameController.text;
-    var oldValidation = nameValidated;
-    nameValidated = nameValidation(name);
-    if (nameValidated) {
-      var awaited = await nameNotTakenValid(name);
-      nameValidated = nameValidated && awaited;
-    }
-    if (oldValidation != nameValidated) {
-      setState(() {});
-    }
-  }
-
   bool verifierValidation(String verifier) {
     if (verifier.length > remainingVerifierLength) {
       verifierValidationErr =
@@ -457,7 +400,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
   }
 
   bool quantityValidation(int quantity) =>
-      quantityController.text != '' && quantity.isRVNAmount;
+      quantityController.text != '' && (quantity + minQuantity).isRVNAmount;
 
   void validateQuantity({int? quantity}) {
     quantity = quantity ?? quantityController.text.toInt();
@@ -481,9 +424,6 @@ class _ReissueAssetState extends State<ReissueAsset> {
   }
 
   bool get enabled =>
-      nameController.text.length > 2 &&
-      nameValidation(nameController.text) &&
-      nameTakenValidated &&
       (needsQuantity
           ? quantityController.text != '' &&
               quantityValidation(quantityController.text.toInt())
@@ -495,9 +435,6 @@ class _ReissueAssetState extends State<ReissueAsset> {
       (ipfsController.text == '' || ipfsValidation(ipfsController.text));
 
   Future<bool> get enabledAsync async =>
-      nameController.text.length > 2 &&
-      nameValidation(nameController.text) &&
-      await nameNotTakenValid(nameController.text) &&
       (needsQuantity
           ? quantityController.text != '' &&
               quantityValidation(quantityController.text.toInt())
@@ -600,7 +537,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
 
   void _produceDecimalModal() {
     SelectionItems(context, modalSet: SelectionSet.Decimal)
-        .build(decimalPrefix: quantityController.text);
+        .build(decimalPrefix: quantityController.text, minDecimal: minDecimal);
   }
 
   void _produceAdminAssetModal() {

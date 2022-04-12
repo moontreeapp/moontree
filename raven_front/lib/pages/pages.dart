@@ -9,6 +9,9 @@ import 'package:raven_front/pages/manage/create/qualifier.dart';
 import 'package:raven_front/pages/manage/create/qualifiersub.dart';
 import 'package:raven_front/pages/manage/create/channel.dart';
 import 'package:raven_front/pages/manage/create/restricted.dart';
+import 'package:raven_front/pages/manage/reissue/restricted.dart';
+import 'package:raven_front/pages/manage/reissue/main.dart';
+import 'package:raven_front/pages/manage/reissue/sub.dart';
 import 'package:raven_front/pages/misc/loading.dart';
 import 'package:raven_front/pages/misc/splash.dart';
 import 'package:raven_front/pages/misc/scan.dart';
@@ -95,6 +98,9 @@ class pages {
         '/create/qualifiersub': (context) => CreateQualifierSubAsset(),
         '/create/channel': (context) => CreateChannelAsset(),
         '/create/restricted': (context) => CreateRestrictedAsset(),
+        '/reissue/main': (context) => ReissueMainAsset(),
+        '/reissue/sub': (context) => ReissueMainSubAsset(),
+        '/reissue/restricted': (context) => ReissueRestrictedAsset(),
         '/security/backup': (context) => BackupSeed(),
         '/security/backupConfirm': (context) => VerifySeed(),
         '/security/change': (context) => ChangePassword(),
