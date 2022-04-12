@@ -77,27 +77,29 @@ class _HomePageState extends State<HomePage>
                                   children: [
                                       Text('swap\n\n\n\n\n\n\n\n\n\n\n\n')
                                     ]),
-                      NavBar(
-                          actionButtons: widget.appContext == AppContext.wallet
-                              ? <Widget>[
-                                  components.buttons.actionButton(
-                                    context,
-                                    label: 'send',
-                                    link: '/transaction/send',
-                                  ),
-                                  components.buttons.actionButton(
-                                    context,
-                                    label: 'receive',
-                                    link: '/transaction/receive',
-                                  )
-                                ]
-                              : <Widget>[
-                                  components.buttons.actionButton(
-                                    context,
-                                    label: 'create',
-                                    onPressed: _produceCreateModal,
-                                  )
-                                ])
+                      if (draggableScrollController.size > minExtent)
+                        NavBar(
+                            actionButtons:
+                                widget.appContext == AppContext.wallet
+                                    ? <Widget>[
+                                        components.buttons.actionButton(
+                                          context,
+                                          label: 'send',
+                                          link: '/transaction/send',
+                                        ),
+                                        components.buttons.actionButton(
+                                          context,
+                                          label: 'receive',
+                                          link: '/transaction/receive',
+                                        )
+                                      ]
+                                    : <Widget>[
+                                        components.buttons.actionButton(
+                                          context,
+                                          label: 'create',
+                                          onPressed: _produceCreateModal,
+                                        )
+                                      ])
                     ],
                   ));
             }),
