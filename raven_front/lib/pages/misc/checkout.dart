@@ -242,30 +242,31 @@ class _CheckoutState extends State<Checkout> {
               ),
             Divider(indent: 0),
             if (struct.total != null)
-              Padding(
-                padding:
-                    EdgeInsets.only(top: 10, left: 16, right: 16, bottom: 40),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    total,
-                    SizedBox(height: 40),
-                    submitButton,
-                  ],
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                      padding: EdgeInsets.only(
+                          top: 10, left: 16, right: 16, bottom: 0),
+                      child: total),
+                  SizedBox(height: 40),
+                  components.containers.navBar(context, child: submitButton),
+                ],
               ),
             if (struct.confirm != null)
-              Padding(
-                padding:
-                    EdgeInsets.only(top: 10, left: 16, right: 16, bottom: 40),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    confirm,
-                    SizedBox(height: 40),
-                    struct.button == null ? submitButton : struct.button!,
-                  ],
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                      padding: EdgeInsets.only(
+                          top: 10, left: 16, right: 16, bottom: 0),
+                      child: confirm),
+                  SizedBox(height: 40),
+                  components.containers.navBar(context,
+                      child: struct.button == null
+                          ? submitButton
+                          : struct.button!),
+                ],
               ),
           ],
         ),

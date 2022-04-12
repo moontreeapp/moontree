@@ -23,30 +23,9 @@ class NavBar extends StatefulWidget {
 class _NavBarState extends State<NavBar> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height *
-          ((widget.includeSectors ? 118 : 72) / 760),
-      padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16), topRight: Radius.circular(16)),
-        boxShadow: [
-          BoxShadow(
-              color: const Color(0x33000000),
-              offset: Offset(0, 5),
-              blurRadius: 5),
-          BoxShadow(
-              color: const Color(0x1F000000),
-              offset: Offset(0, 3),
-              blurRadius: 14),
-          BoxShadow(
-              color: const Color(0x3D000000),
-              offset: Offset(0, 8),
-              blurRadius: 10)
-        ],
-      ),
+    return components.containers.navBar(
+      context,
+      tall: widget.includeSectors,
       child: ListView(
         //mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

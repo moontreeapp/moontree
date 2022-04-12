@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_front/components/styles/decorations.dart';
 
 import 'buttons.dart';
+import 'containers.dart';
 import 'icons.dart';
 import 'empty.dart';
 import 'routes.dart';
@@ -17,6 +18,7 @@ class components {
   static final Styles styles = Styles();
 
   static final ButtonComponents buttons = ButtonComponents();
+  static final ContainerComponents containers = ContainerComponents();
   static final IconComponents icons = IconComponents();
   static final TextComponents text = TextComponents();
   static final AppLifecycleReactor status = AppLifecycleReactor();

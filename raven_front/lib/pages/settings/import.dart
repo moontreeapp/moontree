@@ -63,37 +63,29 @@ class _ImportState extends State<Import> {
     return BackdropLayers(
         back: BlankBack(),
         front: FrontCurve(
+            fuzzyTop: false,
             child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: body(),
-        )));
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: body(),
+            )));
   }
 
   Widget body() => Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           file == null ? textInputField : filePicked,
-          Padding(
-              padding:
-                  EdgeInsets.only(top: 0, left: 16.0, right: 16.0, bottom: 40),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+          components.containers.navBar(
+            context,
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: file == null
                     ? [
-                        Expanded(
-                            child: Container(height: 40, child: fileButton)),
+                        fileButton,
                         SizedBox(width: 16),
-                        Expanded(
-                            child:
-                                Container(height: 40, child: submitButton())),
+                        submitButton(),
                       ]
-                    : [
-                        Expanded(
-                            child: Container(
-                                height: 40, child: submitButton('Import File')))
-                      ],
-              ))
+                    : [submitButton('Import File')]),
+          )
         ],
       );
 
