@@ -235,6 +235,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
         focusNode: quantityFocus,
         controller: quantityController, // can't be lower than  minQuantity
 //      keyboardType: TextInputType.number,
+        enabled: minQuantity == 21000000000 ? false : true,
         keyboardType:
             TextInputType.numberWithOptions(decimal: false, signed: false),
         textInputAction: TextInputAction.done,
