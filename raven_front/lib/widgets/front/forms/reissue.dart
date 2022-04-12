@@ -274,9 +274,9 @@ class _ReissueAssetState extends State<ReissueAsset> {
                   padding: EdgeInsets.only(right: 14),
                   child: Icon(Icons.expand_more_rounded,
                       color: Color(0xDE000000))),
-              onPressed: () => _produceDecimalModal(),
+              onPressed: minDecimal == 8 ? () {} : () => _produceDecimalModal(),
             )),
-        onTap: () => _produceDecimalModal(),
+        onTap: minDecimal == 8 ? () {} : () => _produceDecimalModal(),
         onChanged: (String? newValue) {
           FocusScope.of(context).requestFocus(ipfsFocus);
         },
