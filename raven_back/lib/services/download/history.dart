@@ -5,57 +5,111 @@ import 'package:raven_back/streams/wallet.dart';
 import 'package:raven_back/raven_back.dart';
 
 class HistoryService {
-  List<String> downloaded = [];
+  Set<String> downloaded = {};
+  Set<Address> addresses = {};
+  Map<String, Set<Set<String>>> txsListsByWalletExposureKeys = {};
 
-  Future<bool> getHistories(Address address) async {
+  /// in order to not get concurrent modification error
+  /// but retain logic for determining if we're done (all empty)
+  Map<String, Set<Set<String>>> txsListsByWalletExposureKeysEraseable = {};
+
+  Future<bool?> getHistories(Address address) async {
+    void updateCounts(LeaderWallet leader) {
+      leader.removeUnused(address.hdIndex, address.exposure);
+      services.wallet.leader
+          .updateIndexOf(leader, address.exposure, used: address.hdIndex);
+    }
+
+    void updateCache(LeaderWallet leader) {
+      leader.addUnused(address.hdIndex, address.exposure);
+    }
+
     var client = streams.client.client.value;
     if (client == null) {
       return false;
     }
+    // TODO: edge case to consider...
+    // if a history is too long, don't error
+    // will have to just not show all historic transactions...
     var histories = await client.getHistory(address.id);
-    if (histories.isNotEmpty) {
-      if (address.wallet is LeaderWallet) {
-        //print('${address.address} histories found!');
-        streams.wallet.transactions.add(WalletExposureTransactions(
-          walletId: address.walletId,
-          exposure: address.exposure,
-          transactionIds: histories.map((history) => history.txHash),
-        ));
-
-        /// if there is no existing address with a higher hdIndex...
-        /// that belongs to the same wallet and exposure...
-        /// then derive a new one.
-        var walletAddressesIndexes = res.addresses.byWalletExposure
-            .getAll(address.walletId, address.exposure)
-            .map((Address add) => add.hdIndex);
-        if (address.hdIndex >= walletAddressesIndexes.max) {
-          //print('${address.address} derive!');
-          streams.wallet.deriveAddress.add(DeriveLeaderAddress(
-            leader: address.wallet as LeaderWallet,
-            exposure: address.exposure,
-          ));
-        }
+    addresses.add(address);
+    if (address.wallet is LeaderWallet) {
+      if (histories.isNotEmpty) {
+        updateCounts(address.wallet as LeaderWallet);
       } else {
-        streams.wallet.transactions.add(WalletExposureTransactions(
-          walletId: address.walletId,
-          exposure: address.exposure,
-          transactionIds: histories.map((history) => history.txHash),
-        ));
-        streams.wallet.transactions.add(WalletExposureTransactions(
-          walletId: address.walletId,
-          exposure: address.exposure,
-          transactionIds: [],
-        ));
+        updateCache(address.wallet as LeaderWallet);
       }
-    } else {
-      //print('${address.address} not found!');
-      streams.wallet.transactions.add(WalletExposureTransactions(
-        walletId: address.walletId,
-        exposure: address.exposure,
-        transactionIds: [],
-      ));
+      if (address.hdIndex >=
+          services.wallet.leader
+              .getIndexOf(address.wallet as LeaderWallet, address.exposure)
+              .saved) {
+        streams.wallet.deriveAddress.add(DeriveLeaderAddress(
+            leader: address.wallet as LeaderWallet,
+            exposure: address.exposure));
+      }
+    }
+    remember(address, histories.map((history) => history.txHash));
+    if (addresses.length ==
+            services.wallet.leader.indexRegistry.values
+                .map((e) => e.saved)
+                .sum() /*plus single wallets*2 */
+        &&
+        () {
+          for (var leader in res.wallets.leaders) {
+            for (var exposure in [
+              NodeExposure.Internal,
+              NodeExposure.External
+            ]) {
+              if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
+                return false;
+              }
+            }
+          }
+          return true;
+        }()) {
+      await services.balance.recalculateAllBalances();
+      print('getting Transactions');
+      for (var key in txsListsByWalletExposureKeys.keys) {
+        for (var txsList in txsListsByWalletExposureKeys[key]!) {
+          await getTransactions(txsList);
+        }
+        txsListsByWalletExposureKeysEraseable[key] = <Set<String>>{};
+      }
+
+      // don't clear because if we get updates we want to pull tx
+      //addresses.clear();
+      return await produceAddressOrBalance();
+    }
+    return null;
+  }
+
+  bool transactionsDownloaded() {
+    for (var x in txsListsByWalletExposureKeysEraseable.values) {
+      if (x.isNotEmpty) {
+        for (var y in x) {
+          if (y.isNotEmpty) {
+            return false;
+          }
+        }
+      }
     }
     return true;
+  }
+  //bool transactionsDownloaded() => txsListsByWalletExposureKeys.values
+  //    .map((e) => e.isEmpty)
+  //    .every((bool b) => b);
+
+  String produceKey(Address address) =>
+      address.walletId + address.exposure.enumString;
+
+  void remember(Address address, Iterable<String> txs) {
+    var key = produceKey(address);
+    txsListsByWalletExposureKeys.containsKey(key)
+        ? txsListsByWalletExposureKeys[key]!.add(txs.toSet())
+        : txsListsByWalletExposureKeys[key] = <Set<String>>{};
+    txsListsByWalletExposureKeysEraseable.containsKey(key)
+        ? txsListsByWalletExposureKeysEraseable[key]!.add(txs.toSet())
+        : txsListsByWalletExposureKeysEraseable[key] = <Set<String>>{};
   }
 
   Future<bool> produceAddressOrBalance() async {
@@ -64,25 +118,30 @@ class HistoryService {
       return false;
     }
     var allDone = true;
-    //print('inspecting Gaps!');
     for (var leader in res.wallets.leaders) {
       for (var exposure in [NodeExposure.Internal, NodeExposure.External]) {
         if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
           allDone = false;
-          //print('deriving ${leader.id.substring(0, 4)} ${exposure.enumString}');
-          streams.wallet.deriveAddress
-              .add(DeriveLeaderAddress(leader: leader, exposure: exposure));
         }
       }
     }
     if (allDone) {
-      //print('ALL DONE!');
-      await saveDanglingTransactions(client);
-      await services.balance.recalculateAllBalances();
-      services.download.asset.allAdminsSubs();
-      // remove vouts pointing to addresses we don't own?
+      await allDoneProcess(client);
+      print('TRANSACTIONS DOWNLOADED');
     }
     return allDone;
+  }
+
+  Future allDoneProcess([RavenElectrumClient? client]) async {
+    client = client ?? streams.client.client.value;
+    if (client == null) {
+      return false;
+    }
+    print('ALL DONE!');
+    await saveDanglingTransactions(client);
+    //await services.balance.recalculateAllBalancesFromTransactions();
+    //services.download.asset.allAdminsSubs(); // why?
+    // remove vouts pointing to addresses we don't own?
   }
 
   Future getAndSaveMempoolTransactions([RavenElectrumClient? client]) async {
@@ -104,38 +163,34 @@ class HistoryService {
     RavenElectrumClient client, {
     bool saveVin = true,
   }) async {
-    for (var tx in txs) {
-      var allThree =
-          await saveTransaction(tx, client, saveVin: saveVin, justReturn: true);
-      // todo could move out of for loop... call saveAll once.
-      if (allThree.isNotEmpty) {
-        if (allThree[2].isNotEmpty) {
-          await res.transactions.saveAll(allThree[2] as Set<Transaction>);
+    var futures = [
+      for (var tx in txs)
+        saveTransaction(tx, client, saveVin: saveVin, justReturn: true)
+    ];
+    var threes = await Future.wait<List<Set>>(futures);
+    for (var three in threes) {
+      if (three.isNotEmpty) {
+        if (three[2].isNotEmpty) {
+          await res.transactions.saveAll(three[2] as Set<Transaction>);
         }
-        if (allThree[0].isNotEmpty) {
-          await res.vins.saveAll(allThree[0] as Set<Vin>);
+        if (three[0].isNotEmpty) {
+          await res.vins.saveAll(three[0] as Set<Vin>);
         }
-        if (allThree[1].isNotEmpty) {
-          await res.vouts.saveAll(allThree[1] as Set<Vout>);
+        if (three[1].isNotEmpty) {
+          await res.vouts.saveAll(three[1] as Set<Vout>);
         }
       }
     }
   }
 
+  /// don't need this for creating UTXO set anymore but...
+  /// still need this for getting correct balances of some transactions...
   /// one more step - get all vins that have no corresponding vout (in the db)
   /// and get the vouts for them
   Future saveDanglingTransactions(RavenElectrumClient client) async {
     var txs =
         (res.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet());
-    //print('GETTING DANGLING TRANSACTIONS: $txs');
-    for (var txHash in txs) {
-      if (!downloaded.contains(txHash)) {
-        downloaded.add(txHash);
-        await getTransaction(txHash, saveVin: false);
-      } else {
-        //print('skiped $txHash');
-      }
-    }
+    await getTransactions(txs, saveVin: false);
   }
 
   Future saveDanglingTransactionsFor(
@@ -146,14 +201,6 @@ class HistoryService {
     if (client == null) {
       return false;
     }
-
-    //how? leader.vins?
-    //var txs =
-    //    (res.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet());
-    ////print('GETTING DANGLING TRANSACTIONS: $txs');
-    //for (var txHash in txs) {
-    //  await getTransaction(txHash, saveVin: false);
-    //}
   }
 
   /// we capture securities here. if it's one we've never seen,
@@ -169,8 +216,9 @@ class HistoryService {
     var security = res.securities.bySymbolSecurityType
         .getOne(symbol, SecurityType.RavenAsset);
     var asset = res.assets.bySymbol.getOne(symbol);
-
-    if (security == null || vout.scriptPubKey.type == 'reissue_asset') {
+    if (security == null ||
+        asset == null ||
+        vout.scriptPubKey.type == 'reissue_asset') {
       if (['transfer_asset', 'reissue_asset']
           .contains(vout.scriptPubKey.type)) {
         value = utils.amountToSat(vout.scriptPubKey.amount);
@@ -194,43 +242,70 @@ class HistoryService {
           transactionId: tx.txid,
           position: vout.n,
         );
-        streams.asset.added.add(asset);
         security = Security(
           symbol: symbol,
           securityType: SecurityType.RavenAsset,
         );
+        await res.assets.save(asset);
         await res.securities.save(security);
+        streams.asset.added.add(asset);
       }
     }
     return Tuple3(value, security ?? res.securities.RVN, asset);
   }
 
-  Future<bool> getTransaction(
+  Future<Null>? getTransaction(
     String transactionId, {
+    bool saveVin = true,
+  }) {
+    var client = streams.client.client.value;
+    if (client == null) {
+      return null;
+    }
+    // not already downloaded?
+    if (!downloaded.contains(transactionId)) {
+      downloaded.add(transactionId);
+      return client.getTransaction(transactionId).then((tx) async {
+        await saveTransaction(tx, client, saveVin: saveVin);
+      });
+    } else {
+      print('skipping: $transactionId');
+    }
+    return null;
+  }
+
+  Future<Null>? getTransactions(
+    Iterable<String> transactionIds, {
     bool saveVin = true,
   }) async {
     var client = streams.client.client.value;
     if (client == null) {
-      return false;
+      return null;
     }
-    // not already downloaded?
-    if (!downloaded.contains(transactionId) &&
-        (res.transactions.primaryIndex.getOne(transactionId) == null ||
-            res.transactions.mempool
-                .map((t) => t.id)
-                .contains(transactionId))) {
-      print('downloading: $transactionId');
-      var s = Stopwatch()..start();
-      await saveTransaction(await client.getTransaction(transactionId), client,
-          saveVin: saveVin);
-      print('download time: ${s.elapsed}');
-    } else {
-      print('skipping: $transactionId');
+    // filter out already downloaded
+    transactionIds = transactionIds
+        .where((transactionId) => !downloaded.contains(transactionId))
+        .toSet();
+    downloaded.addAll(transactionIds);
+    var txs = <Tx>[];
+    try {
+      txs = await client.getTransactions(transactionIds);
+    } catch (e) {
+      var futures = <Future<Tx>>[];
+      for (var transactionId in transactionIds) {
+        futures.add(client.getTransaction(transactionId));
+      }
+      txs = await Future.wait<Tx>(futures);
     }
-    return true;
+    await saveTransactions(
+      txs,
+      client,
+      saveVin: saveVin,
+    );
+    return null;
   }
 
-  Future saveTransaction(
+  Future<List<Set>> saveTransaction(
     Tx tx,
     RavenElectrumClient client, {
     bool saveVin = true,
@@ -239,7 +314,6 @@ class HistoryService {
     var newVins = <Vin>{};
     var newVouts = <Vout>{};
     var newTxs = <Transaction>{};
-    //print('parsing/saving: ${tx.txid}');
     if (saveVin) {
       for (var vin in tx.vin) {
         if (vin.txid != null && vin.vout != null) {
@@ -266,7 +340,6 @@ class HistoryService {
         position: vout.n,
         type: vout.scriptPubKey.type,
         lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
-        // TEST THIS -- redownload everything and verify that asset vouts have 0 rvnValue
         rvnValue: vs.item3 != null ? 0 : vs.item1,
         assetValue: vs.item3 == null
             ? null
@@ -295,5 +368,6 @@ class HistoryService {
       await res.vins.saveAll(newVins);
       await res.vouts.saveAll(newVouts);
     }
+    return [{}];
   }
 }

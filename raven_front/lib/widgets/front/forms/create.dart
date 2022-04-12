@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction_maker.dart';
 import 'package:raven_front/components/components.dart';
-import 'package:raven_front/pages/transaction/checkout.dart';
+import 'package:raven_front/pages/misc/checkout.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_back/streams/create.dart';
 import 'package:raven_front/utils/transformers.dart';
@@ -83,7 +83,8 @@ class _CreateAssetState extends State<CreateAsset> {
           ipfsController.text = value?.ipfs ?? ipfsController.text;
           quantityController.text =
               value?.quantity?.toString() ?? quantityController.text;
-          decimalController.text = value?.decimal ?? decimalController.text;
+          decimalController.text =
+              value?.decimal.toString() ?? decimalController.text;
           reissueValue = value?.reissuable ?? reissueValue;
           verifierController.text = value?.verifier ?? verifierController.text;
         });
@@ -284,7 +285,7 @@ class _CreateAssetState extends State<CreateAsset> {
           hintText: '21,000,000',
           errorText: quantityController.text != '' &&
                   !quantityValidation(quantityController.text.toInt())
-              ? 'must ${quantityController.text.toInt().toCommaString()} be between 1 and 21,000,000'
+              ? 'must ${quantityController.text.toInt().toCommaString()} be between 1 and 21,000,000,000'
               : null,
         ),
         onChanged: (String value) => validateQuantity(quantity: value.toInt()),

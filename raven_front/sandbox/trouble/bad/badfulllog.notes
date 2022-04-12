@@ -1,0 +1,889 @@
+Launching lib\main.dart on sdk gphone x86 in debug mode...
+√  Built build\app\outputs\flutter-apk\app-debug.apk.
+Connecting to VM Service at ws://127.0.0.1:56634/72rgu8ySRLQ=/ws
+W/FlutterJNI( 5636): FlutterJNI.loadLibrary called more than once
+W/FlutterJNI( 5636): FlutterJNI.prefetchDefaultFontManager called more than once
+I/ResourceExtractor( 5636): Found extracted resources res_timestamp-1-1649360181129
+W/FlutterJNI( 5636): FlutterJNI.init called more than once
+I/FLTFireBGExecutor( 5636): Creating background FlutterEngine instance, with args: [--start-paused, --enable-dart-profiling]
+D/EGL_emulation( 5636): eglCreateContext: 0xe9522c20: maj 2 min 0 rcv 2
+D/EGL_emulation( 5636): eglCreateContext: 0xe95222f0: maj 2 min 0 rcv 2
+D/HostConnection( 5636): HostConnection::get() New Host Connection established 0xe9522050, tid 6096
+D/HostConnection( 5636): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_native_sync_v3 ANDROID_EMU_native_sync_v4 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_async_unmap_buffer ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_async_frame_commands ANDROID_EMU_gles_max_version_2
+D/EGL_emulation( 5636): eglMakeCurrent: 0xe95222f0: ver 2 0 (tinfo 0xb52d0ad0) (first time)
+D/PathProviderPlugin( 5636): Use TaskQueues.
+I/FLTFireMsgService( 5636): FlutterFirebaseMessagingBackgroundService started!
+I/flutter ( 5636): CLIENT CONNECTED false
+I/flutter ( 5636): CLIENT CONNECTED false
+I/flutter ( 5636): Starting: -1
+I/flutter ( 5636): Derive target: 19
+I/flutter ( 5636): derive Address getSubWallet: 0:00:04.829265
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.329508
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.370330
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.713340
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.416618
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.476123
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.333108
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.770904
+I/flutter ( 5636): derive Address getSubWallet: 0:00:01.013055
+I/flutter ( 5636): derive Address getSubWallet: 0:00:01.257917
+I/flutter ( 5636): derive Address getSubWallet: 0:00:01.192290
+I/flutter ( 5636): derive Address getSubWallet: 0:00:01.082719
+I/flutter ( 5636): derive Address getSubWallet: 0:00:01.616519
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.509846
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.462411
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.986751
+I/flutter ( 5636): derive Address getSubWallet: 0:00:01.001712
+I/flutter ( 5636): derive Address getSubWallet: 0:00:01.021384
+I/flutter ( 5636): derive Address getSubWallet: 0:00:02.176336
+I/flutter ( 5636): derive Address getSubWallet: 0:00:01.771364
+I/flutter ( 5636): Starting: -1
+I/flutter ( 5636): Derive target: 19
+I/flutter ( 5636): derive Address getSubWallet: 0:00:02.316498
+I/flutter ( 5636): derive Address getSubWallet: 0:00:02.075130
+I/flutter ( 5636): derive Address getSubWallet: 0:00:01.210624
+I/flutter ( 5636): derive Address getSubWallet: 0:00:01.781736
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.627172
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.988966
+I/flutter ( 5636): derive Address getSubWallet: 0:00:01.186324
+I/flutter ( 5636): derive Address getSubWallet: 0:00:01.307160
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.750587
+I/flutter ( 5636): derive Address getSubWallet: 0:00:01.025445
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.541090
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.640510
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.278948
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.264568
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.287848
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.414520
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.383124
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.454556
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.476919
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.628671
+I/flutter ( 5636): deriving: 0:00:40.486299
+I/flutter ( 5636): HandshakeException: Connection terminated during handshake
+I/flutter ( 5636): -------------------------
+I/flutter ( 5636): addresses: 1
+I/flutter ( 5636): assets: 0
+I/flutter ( 5636): balances: 0
+I/flutter ( 5636): blocks: Reservoir(Instance of 'HiveSource<Block>', size: 0, indices: _primary)
+I/flutter ( 5636): ciphers: Reservoir(MapSource({None:null: {CipherType: None, PasswordId: null, Cipher: Instance of 'CipherNone'}}), size: 1, indices: _primary,password,cipherType,cipherTypePasswordId)
+I/flutter ( 5636): metadata: 0
+I/flutter ( 5636): passwords: Reservoir(Instance of 'HiveSource<Password>', size: 0, indices: _primary)
+I/flutter ( 5636): rates: Reservoir(Instance of 'HiveSource<Rate>', size: 0, indices: _primary)
+I/flutter ( 5636): securities: 2
+I/flutter ( 5636): settings: 9
+I/flutter ( 5636): transactions: 0
+I/flutter ( 5636): vins: 0
+I/flutter ( 5636): vouts: 0
+I/flutter ( 5636): wallets: Reservoir(Instance of 'HiveSource<Wallet>', size: 1, indices: _primary,walletType,name)
+I/flutter ( 5636): -------------------------
+I/flutter ( 5636): LeaderWallet(03d992f22d9e178a4de02e99ffffe885bd5135e65d183200da3b566502eca79342, 18aff5c78bcb068d804e20c240394b16, {CipherType: None, PasswordId: null}, -1, 19, -1, 19)
+I/flutter ( 5636): -------------------------
+I/flutter ( 5636): CLIENT CONNECTED true
+I/flutter ( 5636): To all addresses called subscribe.to client==null: false
+I/flutter ( 5636): CLIENT CONNECTED true
+I/flutter ( 5636): To all addresses called subscribe.to client==null: false
+I/flutter ( 5636): mtaKFVYgHF9vV1XqmLzAbFLEssS3MRRLUu histories found!
+I/flutter ( 5636): mjtDhzjgoQfp63ocbp1jZxZeFosQ3KnH5S histories found!
+I/flutter ( 5636): n42JxuKLLhUKYbVzWs6vhF6Aqjgy9QaBxG histories found!
+I/flutter ( 5636): n3gqJAxXzTMtDjtGtGkb9LvhwDzyUpF1Xe histories found!
+I/flutter ( 5636): mmzDfHCDSgnsHbfajYs18dqC9wfbCAc2pe histories found!
+I/flutter ( 5636): myZ8Wj5PiDMfeEjMi44UcPPMNeb2CMu716 histories found!
+I/flutter ( 5636): ms9vMzmK3KB9j6gsLSXaLKKzfF17umue3D histories found!
+I/flutter ( 5636): mqTDFJsCiBaDY5UYupbZgoJbgDk3s9ApRt histories found!
+I/flutter ( 5636): mzSED3enx8mPaaDobDxzaBaKpySNfpUxdE histories found!
+I/flutter ( 5636): mxwHd1yF49299A7RnP6oe79sLvMsP19GVf histories found!
+I/flutter ( 5636): mia15mxui5RVc1tBisLLrKFojNaiZUtsiW histories found!
+I/flutter ( 5636): mnjw2iCuUXhgHsqTMH9dE8EZ1AspSozpp2 histories found!
+I/flutter ( 5636): mpkrK1GLPPdqpaC8qxPVDT5bn5fkAE1UUE histories found!
+I/flutter ( 5636): mjQSgeVh5ZHfwGzBkiQcpr119Wh6QMyQ3b histories found!
+I/flutter ( 5636): mkocKhnKZSTTvQJXNpHhWmpRRVrs93D9s1 histories found!
+I/flutter ( 5636): mnKXDgXN3mNLeQbKBp9bBpwyQrrtYHX3zv not found!
+I/flutter ( 5636): Starting: 19
+I/flutter ( 5636): Derive target: 37
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.203179
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.195166
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.198299
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.242038
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.180062
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.166930
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.168607
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.224726
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.289774
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.286179
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.197903
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.173786
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.258822
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.258301
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.260595
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.214024
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.205895
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.178841
+I/flutter ( 5636): deriving: 0:00:03.927016
+I/flutter ( 5636): mgU79ZpEeoGbgQi46qp2LY2kSa8XSe6sV8 histories found!
+I/flutter ( 5636): n4g9V1nMGH92rVi4SbJnDu7cNQAe5kdiVh not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): muAiVK2RDEkanHiyt37qkx3zy8ziFZi4dL histories found!
+I/flutter ( 5636): mpVNTrVvNGK6YfSoLsiMMCrpLoX2Vt6Tkm histories found!
+I/flutter ( 5636): mh2cDvPh5h3ivLmgAUcKX3eVkHFGYc9Sfv histories found!
+I/flutter ( 5636): mvGqVjyz14NLhN6pmopZKCrm44guHRYZY3 histories found!
+I/flutter ( 5636): muby9GjSWZjn6TWoSdMSwgEjvfzixrkA5Y histories found!
+I/flutter ( 5636): mxQtbqouKFcFK7Tf98PVnmig1jgJ8LB38Q histories found!
+I/flutter ( 5636): mgMBe1JhWWRr7YvAXaNjCF9u7fSxqjUMNf histories found!
+I/flutter ( 5636): mqkt8ZNFySs4QtsxHp5PsAjLS85hJuDH6Y histories found!
+I/flutter ( 5636): mzZgSfR8vjpJj8Pqg3cPcYbA8iTJPn6XuZ histories found!
+I/flutter ( 5636): mymfFGHkJYT4F7QKmRYccU1kCv4hBKF1uy histories found!
+I/flutter ( 5636): mj5CSPg3rnz9bzR4hmrrsvrPqjgFSpYrWa histories found!
+I/flutter ( 5636): muTjRHJ4T2dKBiAcj9pdvJPHAcsKG7uF4H histories found!
+I/flutter ( 5636): myA4k4Eogr2DXNibjmS2YSn2M2VT1d7tVD histories found!
+I/flutter ( 5636): mxv3WJ9kfBxcwhrrEZ1EWa7xJHWXDKvnEU histories found!
+I/flutter ( 5636): mxx5uTiYo5XZRWdpBaMDE2bHtxuf6MRAXt histories found!
+I/flutter ( 5636): mtLmNs9zwURC7QKeFCbqiedwjpQfY2WNzS histories found!
+I/flutter ( 5636): n4Q9MQdPRYXxP9vitiXNpmcjA33v2R9KZ7 histories found!
+I/flutter ( 5636): mqBfJTphDRdQvs5QEDobaSTVo2qZgGDJat histories found!
+I/flutter ( 5636): mjXZqv4vn4FF1Qkrh2FhDFqQanh1Wv8SLv histories found!
+I/flutter ( 5636): mgdmDub4etnvMN48ZuCibLrvNp6zeB4ZQa histories found!
+I/flutter ( 5636): mi8UJ1SPpnQDTKqHJKApwrYmo1wc1b8T8J histories found!
+I/flutter ( 5636): mfgq2fYLLWiqDADNF2zojcwXKkD6fKyknM histories found!
+I/flutter ( 5636): Starting: 19
+I/flutter ( 5636): Derive target: 20
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.271044
+I/flutter ( 5636): deriving: 0:00:00.281074
+I/flutter ( 5636): mhNwnbGPq6qpTuViWQTVyt5Q9bpxtJUQnV not found!
+I/flutter ( 5636): Starting: 19
+I/flutter ( 5636): Derive target: 34
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.176950
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.152104
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.159133
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.163641
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.189583
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.224474
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.227673
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.379687
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.275779
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.288052
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.290795
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.276152
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.292665
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.204230
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.163933
+I/flutter ( 5636): deriving: 0:00:03.488173
+I/flutter ( 5636): moiGWCRjuJySMXy7yHrVx1KN5zgHmpK2uo not found!
+I/flutter ( 5636): Starting: 19
+I/flutter ( 5636): Derive target: 34
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.457625
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.410143
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.245936
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.203294
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.160450
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.189371
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.163330
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.155372
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.163241
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.154086
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.162613
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.147329
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.145123
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.224857
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.177628
+I/flutter ( 5636): deriving: 0:00:03.180834
+I/flutter ( 5636): mx3eKECK7W2aUGfLGQTZcyBdBHUDKuBaXk not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): moUrH8oiN3fkinvgeGz9uzs814D6Bg73nN not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): mz7NPiSUU6qroj6WzSqr5N1EwfLqrcpEr4 not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): mwtCqVZ9xNLcuhcNnWgpV7w2bYkym6V49N not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): mtDQUz8JPj2mAdq9gSAzJx5XzEFS93X2Th not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): n2uS243SktigeU86FzQAjNFkuTws19zQkC not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): mjJ28hD53PxTVSH2epgBAoKSWHjJuG6fQ9 not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): mx1kY9coUAzLTgRHQaJZs65bADKu48f3Ko not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): mgNsCnxGN73Kr3yQqfREoFP94Y7fNDmvrf not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): mwiRv7UoAYm494MhUbFBAQdyaEe2gvAVB2 not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): n4c4prVKWrKJJ4qsKkMdnkX3invaLihrvQ not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): miimFLzqFnmA9qaUkfgZp8YRKc2PbyAc7F not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): Downloading Unspents
+I/flutter ( 5636): msFoRkSb62pphK83c6zzEGR6dfR427quTf not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): Downloading Unspents
+I/flutter ( 5636): n1u1mT6DnxtoKZCUtB2Qko1vcJBrbACovs not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): Downloading Unspents
+I/flutter ( 5636): n1xUcNydMsm1Nq13hTMua5RXse94m7r9df not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): Downloading Unspents
+I/flutter ( 5636): n1DxzVEyo7woHZBhtbMQ6qm13mbBRk2uRS not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): Downloading Unspents
+I/flutter ( 5636): mudCgady81Zx1vBXTw2YCUbudaYekBeQZZ histories found!
+I/flutter ( 5636): Starting: 20
+I/flutter ( 5636): Derive target: 21
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.190125
+I/flutter ( 5636): deriving: 0:00:00.196801
+I/flutter ( 5636): n1tpotky5ybvsvYnMWwXzrrzDbX1X2pqsx histories found!
+I/flutter ( 5636): Starting: 21
+I/flutter ( 5636): Derive target: 22
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.150871
+I/flutter ( 5636): deriving: 0:00:00.155600
+I/flutter ( 5636): mtGFkQ1HrACpJR3DkSxFwNXPzeJAJWiyXD histories found!
+I/flutter ( 5636): Starting: 22
+I/flutter ( 5636): Derive target: 23
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.187759
+I/flutter ( 5636): deriving: 0:00:00.196376
+I/flutter ( 5636): mfZscVQxnDKKTgwXBRfwLWibVvZXQ9irPn histories found!
+I/flutter ( 5636): Starting: 23
+I/flutter ( 5636): Derive target: 24
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.214476
+I/flutter ( 5636): deriving: 0:00:00.221252
+I/flutter ( 5636): mrry2vCVRVBZUeN9Snb76AAmVEEcJ6HCP7 not found!
+I/flutter ( 5636): Starting: 24
+I/flutter ( 5636): Derive target: 37
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.099087
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.080973
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.085238
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.091620
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.098577
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.109612
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.110840
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.117632
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.118769
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.114937
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.120218
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.116007
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.120592
+I/flutter ( 5636): deriving: 0:00:01.398050
+I/flutter ( 5636): ScripthashUnspent(scripthash: 93c897e495e265ed29009359152672a6e8b0d98b883be0b72ca10eaf86b484b6, txHash: f685401aaa1c84aa7a88a324e259bf014ffff259958b1b18caf28f97b1159b78, txPos: 1, value: 100000000, height: 1129551, ticker: null, memo: null)
+I/chatty  ( 5636): uid=10154(com.rvnbag.ravenmobile) 1.ui identical 3 lines
+I/flutter ( 5636): ScripthashUnspent(scripthash: 93c897e495e265ed29009359152672a6e8b0d98b883be0b72ca10eaf86b484b6, txHash: f685401aaa1c84aa7a88a324e259bf014ffff259958b1b18caf28f97b1159b78, txPos: 1, value: 100000000, height: 1129551, ticker: null, memo: null)
+I/flutter ( 5636): n2XQrkgUHPKDMZRwXcHcqBMz2cZyQrRmia histories found!
+I/flutter ( 5636): mnX49TgeF2hgXwEfwb6eVFeBSBXZ1y7WGt histories found!
+I/flutter ( 5636): mgJFXZL56GCx45W668ahnTAMkmCVFUdyUW histories found!
+I/flutter ( 5636): mtWubnG3WAmnnEAHGWb77ANABRxp7z9bMg histories found!
+I/flutter ( 5636): mvAVUfQQNUdYdJFrNUJ9EwTiMAZL8aExug histories found!
+I/flutter ( 5636): myTPg2jeBTuQwMjX6qQNcLXrx2umnFjy2D histories found!
+I/flutter ( 5636): mg6dtzj3BNPi8vvtrr4KmE3LeXRxEpStwS histories found!
+I/flutter ( 5636): n449yt9F4VE69VBFzA4bHnxYiy6GUzjELC histories found!
+I/flutter ( 5636): myBJ5HPjgmFqNEMqaBxSyX8GT2TTjdcfw3 histories found!
+I/flutter ( 5636): n4GYrgdbUWmEn81xeAHrpnANLha76JPgEc histories found!
+I/flutter ( 5636): n2K7rhKxSF5qSQxNaKNcz2ps4ZDm4uXTxu histories found!
+I/flutter ( 5636): mrNnfxN8JmLkvRN9nqDXsmgx35VfcWVTN1 not found!
+I/flutter ( 5636): Starting: 37
+I/flutter ( 5636): Derive target: 52
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.201365
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.193171
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.168028
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.125696
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.124612
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.140596
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.147206
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.149655
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.166388
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.222144
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.205348
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.206912
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.168444
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.166590
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.124578
+I/flutter ( 5636): deriving: 0:00:02.545391
+I/flutter ( 5636): mmLpL2UR5UYpJ8uZLZpQTMCgSh2SEPfVBE not found!
+I/flutter ( 5636): Starting: 37
+I/flutter ( 5636): Derive target: 52
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.126354
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.108518
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.112329
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.107364
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.113689
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.109067
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.108332
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.103817
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.105384
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.101053
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.138792
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.129563
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.122097
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.111805
+I/flutter ( 5636): derive Address getSubWallet: 0:00:00.104746
+I/flutter ( 5636): deriving: 0:00:01.715059
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 03cf5532852c4683c63832477c0e54fd34e640ae45cd7fcb43636d10394cbbfa, txPos: 0, value: 100000000, height: 1137077, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 9d8567a341dffe03d12a947a6e1dfb01ead70ec5574073c6783505bdce7eae4e, txPos: 0, value: 100000000, height: 1137098, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 3f4e781a2034d72c54895aa12851a6913a5d9366c3e322fbc105baf3730fa8f5, txPos: 0, value: 100000000, height: 1137104, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 16975fb8e888583e00fb3db48e86007371dd3f113396c4915d0eba4210a531fc, txPos: 0, value: 100000000, height: 1137122, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 4b24f7b33ff023da4ad60b7b3daf0e557bab05c03130d6ca4ff2c07aca26b0f8, txPos: 0, value: 100000000, height: 1137127, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: d50baec51087d5cf06b00b33fcbcb59a6e90a01c1df468e2fb522a0d8f947b93, txPos: 0, value: 100000000, height: 1137271, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: a4d2e8920afc504ec91b0ff0f1bada20cee3637c2213e71f4e3bce936997f619, txPos: 1, value: 100000000, height: 1138184, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 72dc40405dfb496f96b9ebcd003eaeb61243953448fa211e20b3bc6083ff529c, txPos: 1, value: 100000000, height: 1138367, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: b0a770fcbcb5ae4db646004c04bd0a17d4d643dada8d75faf8b90cbd7e967e67, txPos: 2, value: 100000000, height: 1139847, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 03cf5532852c4683c63832477c0e54fd34e640ae45cd7fcb43636d10394cbbfa, txPos: 0, value: 100000000, height: 1137077, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 9d8567a341dffe03d12a947a6e1dfb01ead70ec5574073c6783505bdce7eae4e, txPos: 0, value: 100000000, height: 1137098, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 3f4e781a2034d72c54895aa12851a6913a5d9366c3e322fbc105baf3730fa8f5, txPos: 0, value: 100000000, height: 1137104, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 16975fb8e888583e00fb3db48e86007371dd3f113396c4915d0eba4210a531fc, txPos: 0, value: 100000000, height: 1137122, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 4b24f7b33ff023da4ad60b7b3daf0e557bab05c03130d6ca4ff2c07aca26b0f8, txPos: 0, value: 100000000, height: 1137127, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: d50baec51087d5cf06b00b33fcbcb59a6e90a01c1df468e2fb522a0d8f947b93, txPos: 0, value: 100000000, height: 1137271, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: a4d2e8920afc504ec91b0ff0f1bada20cee3637c2213e71f4e3bce936997f619, txPos: 1, value: 100000000, height: 1138184, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 72dc40405dfb496f96b9ebcd003eaeb61243953448fa211e20b3bc6083ff529c, txPos: 1, value: 100000000, height: 1138367, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: b0a770fcbcb5ae4db646004c04bd0a17d4d643dada8d75faf8b90cbd7e967e67, txPos: 2, value: 100000000, height: 1139847, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 03cf5532852c4683c63832477c0e54fd34e640ae45cd7fcb43636d10394cbbfa, txPos: 0, value: 100000000, height: 1137077, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 9d8567a341dffe03d12a947a6e1dfb01ead70ec5574073c6783505bdce7eae4e, txPos: 0, value: 100000000, height: 1137098, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 3f4e781a2034d72c54895aa12851a6913a5d9366c3e322fbc105baf3730fa8f5, txPos: 0, value: 100000000, height: 1137104, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 16975fb8e888583e00fb3db48e86007371dd3f113396c4915d0eba4210a531fc, txPos: 0, value: 100000000, height: 1137122, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 4b24f7b33ff023da4ad60b7b3daf0e557bab05c03130d6ca4ff2c07aca26b0f8, txPos: 0, value: 100000000, height: 1137127, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: d50baec51087d5cf06b00b33fcbcb59a6e90a01c1df468e2fb522a0d8f947b93, txPos: 0, value: 100000000, height: 1137271, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: a4d2e8920afc504ec91b0ff0f1bada20cee3637c2213e71f4e3bce936997f619, txPos: 1, value: 100000000, height: 1138184, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 72dc40405dfb496f96b9ebcd003eaeb61243953448fa211e20b3bc6083ff529c, txPos: 1, value: 100000000, height: 1138367, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: b0a770fcbcb5ae4db646004c04bd0a17d4d643dada8d75faf8b90cbd7e967e67, txPos: 2, value: 100000000, height: 1139847, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 03cf5532852c4683c63832477c0e54fd34e640ae45cd7fcb43636d10394cbbfa, txPos: 0, value: 100000000, height: 1137077, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 9d8567a341dffe03d12a947a6e1dfb01ead70ec5574073c6783505bdce7eae4e, txPos: 0, value: 100000000, height: 1137098, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 3f4e781a2034d72c54895aa12851a6913a5d9366c3e322fbc105baf3730fa8f5, txPos: 0, value: 100000000, height: 1137104, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 16975fb8e888583e00fb3db48e86007371dd3f113396c4915d0eba4210a531fc, txPos: 0, value: 100000000, height: 1137122, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 4b24f7b33ff023da4ad60b7b3daf0e557bab05c03130d6ca4ff2c07aca26b0f8, txPos: 0, value: 100000000, height: 1137127, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: d50baec51087d5cf06b00b33fcbcb59a6e90a01c1df468e2fb522a0d8f947b93, txPos: 0, value: 100000000, height: 1137271, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: a4d2e8920afc504ec91b0ff0f1bada20cee3637c2213e71f4e3bce936997f619, txPos: 1, value: 100000000, height: 1138184, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 72dc40405dfb496f96b9ebcd003eaeb61243953448fa211e20b3bc6083ff529c, txPos: 1, value: 100000000, height: 1138367, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: b0a770fcbcb5ae4db646004c04bd0a17d4d643dada8d75faf8b90cbd7e967e67, txPos: 2, value: 100000000, height: 1139847, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 03cf5532852c4683c63832477c0e54fd34e640ae45cd7fcb43636d10394cbbfa, txPos: 0, value: 100000000, height: 1137077, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 9d8567a341dffe03d12a947a6e1dfb01ead70ec5574073c6783505bdce7eae4e, txPos: 0, value: 100000000, height: 1137098, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 3f4e781a2034d72c54895aa12851a6913a5d9366c3e322fbc105baf3730fa8f5, txPos: 0, value: 100000000, height: 1137104, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 16975fb8e888583e00fb3db48e86007371dd3f113396c4915d0eba4210a531fc, txPos: 0, value: 100000000, height: 1137122, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 4b24f7b33ff023da4ad60b7b3daf0e557bab05c03130d6ca4ff2c07aca26b0f8, txPos: 0, value: 100000000, height: 1137127, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: d50baec51087d5cf06b00b33fcbcb59a6e90a01c1df468e2fb522a0d8f947b93, txPos: 0, value: 100000000, height: 1137271, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: a4d2e8920afc504ec91b0ff0f1bada20cee3637c2213e71f4e3bce936997f619, txPos: 1, value: 100000000, height: 1138184, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: 72dc40405dfb496f96b9ebcd003eaeb61243953448fa211e20b3bc6083ff529c, txPos: 1, value: 100000000, height: 1138367, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 13cd3f297630e7752312ef4a3d6824f60baf3012a8d1d0168bbb803f4da22dac, txHash: b0a770fcbcb5ae4db646004c04bd0a17d4d643dada8d75faf8b90cbd7e967e67, txPos: 2, value: 100000000, height: 1139847, ticker: null, memo: null)
+I/flutter ( 5636): mqKn1JPhvQBRedtMAwS5dNF3be7XvPx7Zz not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): mhSBMeEjtWyTbP1i6FrpVTvYih6iYTGBBD not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): mwZDhJkB89f7NufwPkS9vruAbWXKREvSvH not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): mptewiveEVTgW6SpANMbUTkR5GgRv1ho7x not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): mpBMwKjYDy9pV83xrGLZNRzcJVwZ7caMVf not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): miUZVb8y18aXVLMRYTgAvKwfLeP3qvGFYj not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): mkWXBwnfzca9CNwCHJpppqB8tKYRvLLZNu not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): mtVkuSjfGZgLY5LDmw19TLik5PxEBBtX4v not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): miVGTf3sRbgqHdtR1gczCicQpEHyAuaGeQ not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): mm5MA6aqZoSt9trbE5bBqnr6p3R4cS9aUY not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): n4DGGbsHZtoMDtZK1TEbp1NmoAAFee9y3D not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): mwztVb2oync8D56yoMdaFBNRdNPqJU9Vmn not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): mzwXDqASTBSXqB6hmqaDppWjfcXwoxjqtg not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): mzFNQ4tiz89ek2jPHsU3MciyEh7kSZMt8A not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): Downloading Unspents
+I/flutter ( 5636): mmgmEwa4j4Fzdn3wLYKeSTMLB3v2uRyATQ not found!
+I/flutter ( 5636): GAP SATISFIED
+I/flutter ( 5636): Downloading Unspents
+I/flutter ( 5636): ScripthashUnspent(scripthash: 43f3e6c4db88bce8fb28bd955bd3e38c5ad21cf74788b8bb5265da5f026ab736, txHash: debc55a8f1f0ac5224ff4fa28dd2b9b272414eb8df60fcafa257ae14e464aa28, txPos: 1, value: 50000000, height: 1129454, ticker: null, memo: null)
+I/chatty  ( 5636): uid=10154(com.rvnbag.ravenmobile) 1.ui identical 3 lines
+I/flutter ( 5636): ScripthashUnspent(scripthash: 43f3e6c4db88bce8fb28bd955bd3e38c5ad21cf74788b8bb5265da5f026ab736, txHash: debc55a8f1f0ac5224ff4fa28dd2b9b272414eb8df60fcafa257ae14e464aa28, txPos: 1, value: 50000000, height: 1129454, ticker: null, memo: null)
+I/flutter ( 5636): Unspents downloaded: 34 0:00:08.640627 1050000000
+I/flutter ( 5636): downloading: 6157c77511af147fad4f90c304bf08cb996b701fa4449176dfa571cfbb96c538
+I/flutter ( 5636): download time: 0:00:00.068600
+I/flutter ( 5636): saving   time: 0:00:00.083679
+I/flutter ( 5636): downloading: d5df08a40715ce1669cb51792a3a66651d4803f3a26ea9f4603d135b00f5ae37
+I/flutter ( 5636): Unspents downloaded: 35 0:00:08.808461 1050000000
+I/flutter ( 5636): ALL DONE!
+I/flutter ( 5636): GETTING DANGLING TRANSACTIONS: {9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f}
+I/flutter ( 5636): skipping: 9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f
+I/flutter ( 5636): download time: 0:00:00.117510
+I/flutter ( 5636): saving   time: 0:00:00.021970
+I/flutter ( 5636): downloading: 592ef253d19fbea6ed5944d52b962672818446afda21acc90ba5a2765dcedfcd
+I/flutter ( 5636): Unspents downloaded: 36 0:00:08.948850 1050000000
+I/flutter ( 5636): ALL DONE!
+I/flutter ( 5636): GETTING DANGLING TRANSACTIONS: {9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f}
+I/flutter ( 5636): skiped 9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f
+I/flutter ( 5636): download time: 0:00:00.275817
+I/flutter ( 5636): Unspents downloaded: 37 0:00:09.263870 1050000000
+I/flutter ( 5636): ALL DONE!
+I/flutter ( 5636): GETTING DANGLING TRANSACTIONS: {9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f, 84ab4db04a5d32fc81025db3944e6534c4c201fcc93749da6d1e5ecf98355533}
+I/flutter ( 5636): skiped 9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f
+I/flutter ( 5636): skipping: 84ab4db04a5d32fc81025db3944e6534c4c201fcc93749da6d1e5ecf98355533
+I/flutter ( 5636): saving   time: 0:00:00.087484
+I/flutter ( 5636): downloading: e21908318dbfc960a55d2b6bb5445c32037e8a87be2985c500ef9057cafa4e58
+I/flutter ( 5636): Unspents downloaded: 38 0:00:09.364524 1050000000
+I/flutter ( 5636): ALL DONE!
+I/flutter ( 5636): GETTING DANGLING TRANSACTIONS: {9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f, 84ab4db04a5d32fc81025db3944e6534c4c201fcc93749da6d1e5ecf98355533}
+I/flutter ( 5636): skiped 9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f
+I/flutter ( 5636): skiped 84ab4db04a5d32fc81025db3944e6534c4c201fcc93749da6d1e5ecf98355533
+I/flutter ( 5636): download time: 0:00:00.124241
+I/flutter ( 5636): saving   time: 0:00:00.194268
+I/flutter ( 5636): downloading: 480885f8f02af18bea569879d206214c21ac049c38edc7e1d637fa3b71096f1e
+I/flutter ( 5636): download time: 0:00:00.204989
+I/flutter ( 5636): saving   time: 0:00:00.071191
+I/flutter ( 5636): downloading: d7fbd716a31d435873ecce6c3d28755b7a87c2d4e77ce019912320b510cbf994
+I/flutter ( 5636): download time: 0:00:00.120734
+I/flutter ( 5636): saving   time: 0:00:00.100888
+I/flutter ( 5636): skipping: 9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f
+I/flutter ( 5636): skipping: 6157c77511af147fad4f90c304bf08cb996b701fa4449176dfa571cfbb96c538
+I/flutter ( 5636): downloading: 90bf9bb181cb83dd9804a0a03186e6ae81a66ea738f3afd6b472387feb16d155
+I/flutter ( 5636): download time: 0:00:00.130396
+I/flutter ( 5636): saving   time: 0:00:00.032617
+I/flutter ( 5636): downloading: a6a58a43cc0a28041a5a6de36caedc318a4c666ef137e4d60a3038d90fe6f554
+I/flutter ( 5636): download time: 0:00:00.081529
+I/flutter ( 5636): saving   time: 0:00:00.056357
+I/flutter ( 5636): skipping: a6a58a43cc0a28041a5a6de36caedc318a4c666ef137e4d60a3038d90fe6f554
+I/flutter ( 5636): downloading: 31a331097670a2b76caafefcf74ccb26e38ac3949e05e44c08a84f30c1ee998b
+I/flutter ( 5636): download time: 0:00:00.109055
+I/flutter ( 5636): saving   time: 0:00:00.035272
+I/flutter ( 5636): downloading: 9bc5463610b074a5aa4ea6045c983fbdd787548edccae732e000524b96833713
+I/flutter ( 5636): ScripthashUnspent(scripthash: c297c5e88db813b49bbf30490d2b2a39febc4a6b22b1b0b64c38a6ae89b7968e, txHash: 7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c, txPos: 0, value: 42498000, height: 1138539, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: c297c5e88db813b49bbf30490d2b2a39febc4a6b22b1b0b64c38a6ae89b7968e, txHash: 7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c, txPos: 0, value: 42498000, height: 1138539, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 396112f446bc47dcb50b78119206c9fec52e73d95ba6ca9e9de61410a6ee96e3, txHash: b0a770fcbcb5ae4db646004c04bd0a17d4d643dada8d75faf8b90cbd7e967e67, txPos: 0, value: 276713000, height: 1139847, ticker: null, memo: null)
+I/flutter ( 5636): download time: 0:00:00.180156
+I/flutter ( 5636): saving   time: 0:00:00.058520
+I/flutter ( 5636): downloading: 65e6bd3b0290983df6b96ad0c66c5ddfe3a34d19e7467a40e05a3d7a8f76d1a6
+I/flutter ( 5636): ScripthashUnspent(scripthash: 396112f446bc47dcb50b78119206c9fec52e73d95ba6ca9e9de61410a6ee96e3, txHash: b0a770fcbcb5ae4db646004c04bd0a17d4d643dada8d75faf8b90cbd7e967e67, txPos: 0, value: 276713000, height: 1139847, ticker: null, memo: null)
+I/flutter ( 5636): download time: 0:00:00.110335
+I/flutter ( 5636): saving   time: 0:00:00.127085
+I/flutter ( 5636): downloading: e60b13e882f89cd2cdc1d57d74479b317954512b426dccce7e7ded5ea1f181dc
+I/flutter ( 5636): download time: 0:00:00.108488
+I/flutter ( 5636): saving   time: 0:00:00.037272
+I/flutter ( 5636): downloading: 73829f290348b43f8898a1da9a3545ecfe8224d7f66d6f112693720f11801274
+I/flutter ( 5636): ScripthashUnspent(scripthash: 2dcd964c484a0339d8d0788a1778128d62d73c5a32dfe4310aa90eb36553c1df, txHash: 191839fbc7100e9992421cdc3337b98036d361540d17f584f60e2c15438f9699, txPos: 1, value: 4237611469050, height: 1140073, ticker: null, memo: null)
+I/flutter ( 5636): ScripthashUnspent(scripthash: 2dcd964c484a0339d8d0788a1778128d62d73c5a32dfe4310aa90eb36553c1df, txHash: 191839fbc7100e9992421cdc3337b98036d361540d17f584f60e2c15438f9699, txPos: 1, value: 4237611469050, height: 1140073, ticker: null, memo: null)
+I/flutter ( 5636): download time: 0:00:00.122577
+I/flutter ( 5636): saving   time: 0:00:00.072713
+I/flutter ( 5636): skipping: 31a331097670a2b76caafefcf74ccb26e38ac3949e05e44c08a84f30c1ee998b
+I/flutter ( 5636): skipping: 9bc5463610b074a5aa4ea6045c983fbdd787548edccae732e000524b96833713
+I/flutter ( 5636): downloading: 237e0d6d8797327765d42bed9fa4f6debef59f8d720ed4c85d7ebd704831c781
+I/flutter ( 5636): download time: 0:00:00.207280
+I/flutter ( 5636): saving   time: 0:00:00.892898
+I/flutter ( 5636): downloading: 4fec4a48431bb4787e4953555444bfa644bb25e3a731b677255ca954967a856d
+I/flutter ( 5636): download time: 0:00:05.636091
+I/flutter ( 5636): Unspents downloaded: 52 0:00:11.866406 4238980680050
+I/flutter ( 5636): skipping: d5df08a40715ce1669cb51792a3a66651d4803f3a26ea9f4603d135b00f5ae37
+I/flutter ( 5636): downloading: d1ce79279cf472930b59992a91b1bf1f97f1fa20e5853b4167020097c5eb3de7
+I/flutter ( 5636): download time: 0:00:00.103548
+I/flutter ( 5636): Unspents downloaded: 53 0:00:11.990513 4238980680050
+I/flutter ( 5636): ALL DONE!
+I/flutter ( 5636): GETTING DANGLING TRANSACTIONS: {9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f, 84ab4db04a5d32fc81025db3944e6534c4c201fcc93749da6d1e5ecf98355533, 86f9493e07cb039a3735ca7ac074a869464488d961ad60844134820fa67d6a56, 9fe2a5d640f4c2bc9b2445d0cd8d3fe158983277c5e237866c4d5302015ebc72, bb772cad2f0942e0bc30ad85f4a42985fe977ea52759538983f6d3b38636d3dd, 4e769a6d770b4e441ade1d5600926ad14f58fdb6ae4128ed03c811241ec72240, 53572c6054e8c00b847ed19682e487b1a44b4a28c3a6001bd84473db1c671044}
+I/flutter ( 5636): skiped 9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f
+I/flutter ( 5636): skiped 84ab4db04a5d32fc81025db3944e6534c4c201fcc93749da6d1e5ecf98355533
+I/flutter ( 5636): skipping: 86f9493e07cb039a3735ca7ac074a869464488d961ad60844134820fa67d6a56
+I/flutter ( 5636): skipping: 9fe2a5d640f4c2bc9b2445d0cd8d3fe158983277c5e237866c4d5302015ebc72
+I/flutter ( 5636): skipping: bb772cad2f0942e0bc30ad85f4a42985fe977ea52759538983f6d3b38636d3dd
+I/flutter ( 5636): skipping: 4e769a6d770b4e441ade1d5600926ad14f58fdb6ae4128ed03c811241ec72240
+I/flutter ( 5636): skipping: 53572c6054e8c00b847ed19682e487b1a44b4a28c3a6001bd84473db1c671044
+I/flutter ( 5636): saving   time: 0:00:00.059846
+I/flutter ( 5636): skipping: d1ce79279cf472930b59992a91b1bf1f97f1fa20e5853b4167020097c5eb3de7
+I/flutter ( 5636): downloading: 02a913fd26e02edd17e3aabcb9245acb02223a9ff3262f9da294b8aecda6872a
+I/flutter ( 5636): download time: 0:00:00.909087
+I/flutter ( 5636): saving   time: 0:00:00.053281
+I/flutter ( 5636): skipping: 02a913fd26e02edd17e3aabcb9245acb02223a9ff3262f9da294b8aecda6872a
+I/flutter ( 5636): downloading: 81c5368a096785577e6d7e7b3cd8003e726c0b4b54d466de60e17c912a68fbf9
+I/flutter ( 5636): download time: 0:00:00.126483
+I/flutter ( 5636): saving   time: 0:00:00.051699
+I/flutter ( 5636): skipping: 81c5368a096785577e6d7e7b3cd8003e726c0b4b54d466de60e17c912a68fbf9
+I/flutter ( 5636): downloading: a4c98b02009d93720ecd75f25c7140d90142fbd2899178482227a5a064afb144
+I/flutter ( 5636): download time: 0:00:00.061630
+I/flutter ( 5636): saving   time: 0:00:00.035129
+I/flutter ( 5636): skipping: a4c98b02009d93720ecd75f25c7140d90142fbd2899178482227a5a064afb144
+I/flutter ( 5636): downloading: 661a2db68b3e8dbf5415ea89dd58a233c2c4a41a8daf025802f1abcc2c99905d
+I/flutter ( 5636): download time: 0:00:00.138141
+I/flutter ( 5636): saving   time: 0:00:00.148851
+I/flutter ( 5636): skipping: 661a2db68b3e8dbf5415ea89dd58a233c2c4a41a8daf025802f1abcc2c99905d
+I/flutter ( 5636): downloading: ef1c38030c19f65da67ab32bf57276e5c729948b509a6051c6707de8a65a163e
+I/flutter ( 5636): download time: 0:00:00.126224
+I/flutter ( 5636): saving   time: 0:00:00.148686
+I/flutter ( 5636): skipping: ef1c38030c19f65da67ab32bf57276e5c729948b509a6051c6707de8a65a163e
+I/flutter ( 5636): downloading: 17ffe035975ff89ca6674d94a2f0bfab965cf4b1127ccbd0a2cc659deefe3f31
+I/flutter ( 5636): download time: 0:00:00.209357
+I/flutter ( 5636): saving   time: 0:00:00.089805
+I/flutter ( 5636): skipping: 17ffe035975ff89ca6674d94a2f0bfab965cf4b1127ccbd0a2cc659deefe3f31
+I/flutter ( 5636): downloading: b88b0dcf16a15f5f94d43c24787a05df0bbfeeb31e9851d5dd4a163272fa6246
+I/flutter ( 5636): download time: 0:00:00.342568
+I/flutter ( 5636): saving   time: 0:00:00.033944
+I/flutter ( 5636): skipping: b88b0dcf16a15f5f94d43c24787a05df0bbfeeb31e9851d5dd4a163272fa6246
+I/flutter ( 5636): downloading: 8f47fd4460bb509717abd5629592c68b34befbe16ad1fcec0f4ccf02801d8972
+I/flutter ( 5636): download time: 0:00:00.088707
+I/flutter ( 5636): saving   time: 0:00:00.063902
+I/flutter ( 5636): skipping: 8f47fd4460bb509717abd5629592c68b34befbe16ad1fcec0f4ccf02801d8972
+I/flutter ( 5636): downloading: 8cc0b9a82f5f5a54d6539b92ee1ea5895eaada63234c721102a1e49a2c0f2627
+I/flutter ( 5636): download time: 0:00:00.128663
+I/flutter ( 5636): saving   time: 0:00:00.042165
+I/flutter ( 5636): skipping: 8cc0b9a82f5f5a54d6539b92ee1ea5895eaada63234c721102a1e49a2c0f2627
+I/flutter ( 5636): skipping: 86f9493e07cb039a3735ca7ac074a869464488d961ad60844134820fa67d6a56
+I/flutter ( 5636): skipping: 86f9493e07cb039a3735ca7ac074a869464488d961ad60844134820fa67d6a56
+I/flutter ( 5636): skipping: 90bf9bb181cb83dd9804a0a03186e6ae81a66ea738f3afd6b472387feb16d155
+I/flutter ( 5636): skipping: 9bc5463610b074a5aa4ea6045c983fbdd787548edccae732e000524b96833713
+I/flutter ( 5636): skipping: 4e769a6d770b4e441ade1d5600926ad14f58fdb6ae4128ed03c811241ec72240
+I/flutter ( 5636): skipping: bb772cad2f0942e0bc30ad85f4a42985fe977ea52759538983f6d3b38636d3dd
+I/flutter ( 5636): skipping: 237e0d6d8797327765d42bed9fa4f6debef59f8d720ed4c85d7ebd704831c781
+I/flutter ( 5636): skipping: 65e6bd3b0290983df6b96ad0c66c5ddfe3a34d19e7467a40e05a3d7a8f76d1a6
+I/flutter ( 5636): skipping: bb772cad2f0942e0bc30ad85f4a42985fe977ea52759538983f6d3b38636d3dd
+I/flutter ( 5636): downloading: a2f9125194906f3f8f0081f6352fb26aff51c1ab629eaaa05ad4a9c9f79983ab
+I/flutter ( 5636): download time: 0:00:00.066061
+I/flutter ( 5636): saving   time: 0:00:00.050787
+I/flutter ( 5636): skipping: 9fe2a5d640f4c2bc9b2445d0cd8d3fe158983277c5e237866c4d5302015ebc72
+I/flutter ( 5636): downloading: 0e058906c72b33ec28aeb52d306bb945672b3d7efbe4445c4f6f4953026b96ed
+I/flutter ( 5636): download time: 0:00:00.076336
+I/flutter ( 5636): saving   time: 0:00:00.074687
+I/flutter ( 5636): downloading: 0117c2ee397d403a8bb469496c21b3b8321469b7f9ced150c5db58d85c6d8fb1
+I/flutter ( 5636): download time: 0:00:00.167538
+I/flutter ( 5636): saving   time: 0:00:00.183880
+I/flutter ( 5636): skipping: 0117c2ee397d403a8bb469496c21b3b8321469b7f9ced150c5db58d85c6d8fb1
+I/flutter ( 5636): downloading: 8698cd3ec90e366a9dc699e7a1fbb4f4e9db46d2612cd0198cfc2b4d3cba2bbb
+I/flutter ( 5636): download time: 0:00:00.154548
+I/flutter ( 5636): saving   time: 0:00:00.052456
+I/flutter ( 5636): skipping: 8698cd3ec90e366a9dc699e7a1fbb4f4e9db46d2612cd0198cfc2b4d3cba2bbb
+I/flutter ( 5636): downloading: f685401aaa1c84aa7a88a324e259bf014ffff259958b1b18caf28f97b1159b78
+I/flutter ( 5636): download time: 0:00:00.108396
+I/flutter ( 5636): saving   time: 0:00:00.174975
+I/flutter ( 5636): downloading: debc55a8f1f0ac5224ff4fa28dd2b9b272414eb8df60fcafa257ae14e464aa28
+I/flutter ( 5636): download time: 0:00:00.088671
+I/flutter ( 5636): saving   time: 0:00:00.049819
+I/flutter ( 5636): downloading: 7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c
+I/flutter ( 5636): download time: 0:00:00.115916
+I/flutter ( 5636): saving   time: 0:00:00.120733
+I/flutter ( 5636): skipping: f685401aaa1c84aa7a88a324e259bf014ffff259958b1b18caf28f97b1159b78
+I/flutter ( 5636): downloading: 05a7614e416d96cf5687017f7e3cdf0fe786de7293152ff84e40b80386e7b921
+I/flutter ( 5636): download time: 0:00:00.081874
+I/flutter ( 5636): saving   time: 0:00:00.051595
+I/flutter ( 5636): skipping: 05a7614e416d96cf5687017f7e3cdf0fe786de7293152ff84e40b80386e7b921
+I/flutter ( 5636): downloading: 39233709050549287a0342524b493dbaf31f6b57a1e896b38ebf08ced799ac52
+I/flutter ( 5636): download time: 0:00:00.085637
+I/flutter ( 5636): saving   time: 0:00:00.121463
+I/flutter ( 5636): downloading: 03cf5532852c4683c63832477c0e54fd34e640ae45cd7fcb43636d10394cbbfa
+I/flutter ( 5636): download time: 0:00:00.130611
+I/flutter ( 5636): saving   time: 0:00:00.038506
+I/flutter ( 5636): downloading: 9d8567a341dffe03d12a947a6e1dfb01ead70ec5574073c6783505bdce7eae4e
+I/flutter ( 5636): download time: 0:00:00.100402
+I/flutter ( 5636): saving   time: 0:00:00.054953
+I/flutter ( 5636): downloading: 3f4e781a2034d72c54895aa12851a6913a5d9366c3e322fbc105baf3730fa8f5
+I/flutter ( 5636): download time: 0:00:00.083985
+I/flutter ( 5636): saving   time: 0:00:00.051040
+I/flutter ( 5636): downloading: 16975fb8e888583e00fb3db48e86007371dd3f113396c4915d0eba4210a531fc
+I/flutter ( 5636): download time: 0:00:00.077218
+I/flutter ( 5636): saving   time: 0:00:00.138822
+I/flutter ( 5636): skipping: 9d8567a341dffe03d12a947a6e1dfb01ead70ec5574073c6783505bdce7eae4e
+I/flutter ( 5636): skipping: 3f4e781a2034d72c54895aa12851a6913a5d9366c3e322fbc105baf3730fa8f5
+I/flutter ( 5636): skipping: 16975fb8e888583e00fb3db48e86007371dd3f113396c4915d0eba4210a531fc
+I/flutter ( 5636): downloading: 4b24f7b33ff023da4ad60b7b3daf0e557bab05c03130d6ca4ff2c07aca26b0f8
+I/flutter ( 5636): download time: 0:00:00.280336
+I/flutter ( 5636): saving   time: 0:00:00.107525
+I/flutter ( 5636): skipping: 4b24f7b33ff023da4ad60b7b3daf0e557bab05c03130d6ca4ff2c07aca26b0f8
+I/flutter ( 5636): downloading: d50baec51087d5cf06b00b33fcbcb59a6e90a01c1df468e2fb522a0d8f947b93
+I/flutter ( 5636): download time: 0:00:00.132450
+I/flutter ( 5636): saving   time: 0:00:00.099554
+I/flutter ( 5636): skipping: d50baec51087d5cf06b00b33fcbcb59a6e90a01c1df468e2fb522a0d8f947b93
+I/flutter ( 5636): downloading: a4d2e8920afc504ec91b0ff0f1bada20cee3637c2213e71f4e3bce936997f619
+I/flutter ( 5636): download time: 0:00:00.076744
+I/flutter ( 5636): saving   time: 0:00:00.069299
+I/flutter ( 5636): skipping: a4d2e8920afc504ec91b0ff0f1bada20cee3637c2213e71f4e3bce936997f619
+I/flutter ( 5636): downloading: 72dc40405dfb496f96b9ebcd003eaeb61243953448fa211e20b3bc6083ff529c
+I/flutter ( 5636): download time: 0:00:00.077178
+I/flutter ( 5636): saving   time: 0:00:00.036880
+I/flutter ( 5636): skipping: 72dc40405dfb496f96b9ebcd003eaeb61243953448fa211e20b3bc6083ff529c
+I/flutter ( 5636): downloading: b0a770fcbcb5ae4db646004c04bd0a17d4d643dada8d75faf8b90cbd7e967e67
+I/flutter ( 5636): download time: 0:00:00.078177
+I/flutter ( 5636): saving   time: 0:00:00.067486
+I/flutter ( 5636): skipping: 7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c
+I/flutter ( 5636): skipping: b0a770fcbcb5ae4db646004c04bd0a17d4d643dada8d75faf8b90cbd7e967e67
+I/flutter ( 5636): skipping: 39233709050549287a0342524b493dbaf31f6b57a1e896b38ebf08ced799ac52
+I/flutter ( 5636): downloading: e042d89243e991fdd50b723bc481b3a9657c0f42df5f9f32b543cf92b83b5cfa
+I/flutter ( 5636): download time: 0:00:00.077621
+I/flutter ( 5636): saving   time: 0:00:00.076448
+I/flutter ( 5636): skipping: e042d89243e991fdd50b723bc481b3a9657c0f42df5f9f32b543cf92b83b5cfa
+I/flutter ( 5636): downloading: 0f9a409666124cc9c57f924324f24e6180cc9e361f4b604d21b0cac1e5531160
+I/flutter ( 5636): download time: 0:00:00.074194
+I/flutter ( 5636): saving   time: 0:00:00.086148
+I/flutter ( 5636): skipping: 0f9a409666124cc9c57f924324f24e6180cc9e361f4b604d21b0cac1e5531160
+I/flutter ( 5636): downloading: 191839fbc7100e9992421cdc3337b98036d361540d17f584f60e2c15438f9699
+I/flutter ( 5636): download time: 0:00:00.074854
+I/flutter ( 5636): saving   time: 0:00:00.057456
+I/flutter ( 5636): skipping: 191839fbc7100e9992421cdc3337b98036d361540d17f584f60e2c15438f9699
+I/flutter ( 5636): ALL DONE!
+I/flutter ( 5636): GETTING DANGLING TRANSACTIONS: {9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f, 84ab4db04a5d32fc81025db3944e6534c4c201fcc93749da6d1e5ecf98355533, 86f9493e07cb039a3735ca7ac074a869464488d961ad60844134820fa67d6a56, 9fe2a5d640f4c2bc9b2445d0cd8d3fe158983277c5e237866c4d5302015ebc72, bb772cad2f0942e0bc30ad85f4a42985fe977ea52759538983f6d3b38636d3dd, 4e769a6d770b4e441ade1d5600926ad14f58fdb6ae4128ed03c811241ec72240, 53572c6054e8c00b847ed19682e487b1a44b4a28c3a6001bd84473db1c671044, 6e584749715af4ad224b55e43aa49d71c1a66d453dce6b3a8cfae911cfb1cb0b}
+I/flutter ( 5636): skiped 9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f
+I/flutter ( 5636): skiped 84ab4db04a5d32fc81025db3944e6534c4c201fcc93749da6d1e5ecf98355533
+I/flutter ( 5636): skiped 86f9493e07cb039a3735ca7ac074a869464488d961ad60844134820fa67d6a56
+I/flutter ( 5636): skiped 9fe2a5d640f4c2bc9b2445d0cd8d3fe158983277c5e237866c4d5302015ebc72
+I/flutter ( 5636): skiped bb772cad2f0942e0bc30ad85f4a42985fe977ea52759538983f6d3b38636d3dd
+I/flutter ( 5636): skiped 4e769a6d770b4e441ade1d5600926ad14f58fdb6ae4128ed03c811241ec72240
+I/flutter ( 5636): skiped 53572c6054e8c00b847ed19682e487b1a44b4a28c3a6001bd84473db1c671044
+I/flutter ( 5636): skipping: 6e584749715af4ad224b55e43aa49d71c1a66d453dce6b3a8cfae911cfb1cb0b
+I/flutter ( 5636): saving   time: 0:00:10.975645
+I/flutter ( 5636): downloading: 8ac0511768f9610e88631dd8ed9c3be4e695429eca09259182487ebacbce114b
+I/flutter ( 5636): download time: 0:00:00.852077
+I/flutter ( 5636): saving   time: 0:00:02.758000
+I/flutter ( 5636): downloading: f5aef6a132178870185991f0bc5a71a26d8b4a91168df15f99536a0c977d3525
+I/flutter ( 5636): download time: 0:00:00.917635
+I/flutter ( 5636): saving   time: 0:00:02.877356
+I/flutter ( 5636): downloading: 1f317dd90d95c785cc9ed631cef06cc33b064b3bd30e784f6b02146ebde581ec
+I/flutter ( 5636): download time: 0:00:00.887661
+I/flutter ( 5636): saving   time: 0:00:02.985227
+I/flutter ( 5636): downloading: f3452cbba6d533b6e20e574e4bfdb6dc81aaf8d3e6d56fdbbcbb158ef16d2500
+I/flutter ( 5636): download time: 0:00:00.797523
+I/flutter ( 5636): saving   time: 0:00:02.762960
+I/flutter ( 5636): downloading: 30b820ae12936fbce6e702c7e9398edb6c7372f9c3af5b780d75af6f2e38ecb1
+I/flutter ( 5636): download time: 0:00:00.896206
+I/flutter ( 5636): saving   time: 0:00:02.710325
+I/flutter ( 5636): downloading: f482eed82afd29aba49a07b3384f613962d7ac1d3e5da00365010b1d6945536a
+I/flutter ( 5636): download time: 0:00:00.883792
+I/flutter ( 5636): saving   time: 0:00:03.751912
+I/flutter ( 5636): downloading: b83f7088ce3c1498dbb425b6e1eb1be6a0f4eaada62de615add50d2fe4acd8ee
+I/flutter ( 5636): download time: 0:00:00.594790
+I/flutter ( 5636): saving   time: 0:00:03.041533
+I/flutter ( 5636): downloading: 16b56147209e283fd53961ffd89ae44b96b071827664f8e160be9d5f49ae61e2
+I/flutter ( 5636): download time: 0:00:00.825482
+I/flutter ( 5636): saving   time: 0:00:03.014875
+I/flutter ( 5636): downloading: 78bcf1b919e6e720c6d01d20a25cf50011bf8a9489514fec16b133a4274a43e8
+I/flutter ( 5636): download time: 0:00:00.858983
+I/flutter ( 5636): saving   time: 0:00:08.831224
+I/flutter ( 5636): downloading: fb25abf83f4777a5d13206d5bf92ef9f51ecd8f1d0bdbfff97549e15c96b2d9a
+I/flutter ( 5636): download time: 0:00:02.416535
+I/flutter ( 5636): saving   time: 0:00:08.452824
+I/flutter ( 5636): downloading: 82f879eed5857757ba9342451d24ae9253822877ad82957bec372d0986e4ca23
+I/flutter ( 5636): download time: 0:00:01.955777
+I/flutter ( 5636): saving   time: 0:00:08.908152
+I/flutter ( 5636): downloading: 9fe4e97a716808e40991cbb9a31c4bd789a008fdcc92beada4a34538ee333397
+I/flutter ( 5636): download time: 0:00:02.708043
+I/flutter ( 5636): saving   time: 0:00:06.988661
+I/flutter ( 5636): skipping: 7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c
+I/flutter ( 5636): downloading: 9b64eb258a4352a68c4ce98cbbadddcbbcb285c422f7f9f97ed4b826d0a387d7
+I/flutter ( 5636): download time: 0:00:00.066317
+I/flutter ( 5636): saving   time: 0:00:00.419985
+I/flutter ( 5636): downloading: c88fe87a5df1f8fac0ba929a7021038d66947fd4aabef2368eb7aa21aea2c3c5
+I/flutter ( 5636): download time: 0:00:00.158202
+I/flutter ( 5636): saving   time: 0:00:00.051458
+I/flutter ( 5636): downloading: 7217229e9fa0e668aebc4d1478ab69320ee7d9b6ca6357c30a38b4b4a89a0c0d
+I/flutter ( 5636): download time: 0:00:00.143439
+I/flutter ( 5636): saving   time: 0:00:00.308653
+I/flutter ( 5636): downloading: 5cdde1dc17f820320011ec648272237322e1cde48e62158b3cb56999c5aba0e8
+I/flutter ( 5636): download time: 0:00:02.064711
+I/flutter ( 5636): saving   time: 0:00:06.700740
+I/flutter ( 5636): skipping: 53572c6054e8c00b847ed19682e487b1a44b4a28c3a6001bd84473db1c671044
+I/flutter ( 5636): downloading: 6ef14bbacb9dc343eb9cde1f2a311ae787231613fc6ae863cec11752a56c3308
+I/flutter ( 5636): download time: 0:00:01.737851
+I/flutter ( 5636): saving   time: 0:00:06.871556
+I/flutter ( 5636): downloading: 17b798480e340ae639c23a036ee39d61784b4418ca3d40c43ae2e7c9728e76e2
+I/flutter ( 5636): download time: 0:00:01.775787
+I/flutter ( 5636): saving   time: 0:00:06.263469
+I/flutter ( 5636): downloading: 6b5d00227fc75b590d693877a32ecce55664fd851238de1cfa3fae5ce1362862
+I/flutter ( 5636): download time: 0:00:02.164761
+D/CompatibilityChangeReporter( 5636): Compat change id reported: 150939131; UID 10154; state: ENABLED
+I/flutter ( 5636): saving   time: 0:00:10.394096
+I/flutter ( 5636): downloading: 24031e0a46ae015cdb58d53dfb8910207d53b6a061387ffd2368730533043f3e
+I/flutter ( 5636): download time: 0:00:02.002776
+I/flutter ( 5636): saving   time: 0:00:08.861498
+I/flutter ( 5636): downloading: 14de222d2825ec8e187e4d8c2785bdf26663d6d8e9f5475cb97a5e6376a64d56
+I/flutter ( 5636): download time: 0:00:01.397480
+I/flutter ( 5636): saving   time: 0:00:07.903249
+I/flutter ( 5636): downloading: ef1be6f06025e6bd8d7e8319003296e168068ce9d08e6efc1612c06fcb13c330
+I/flutter ( 5636): download time: 0:00:01.448314
+I/flutter ( 5636): saving   time: 0:00:05.080192
+I/flutter ( 5636): downloading: 5fd5dc8fbb486404feb24762a838c09131d225b3547b9fa318920d1593591139
+I/flutter ( 5636): download time: 0:00:01.895970
+I/flutter ( 5636): saving   time: 0:00:05.755575
+I/flutter ( 5636): downloading: 00111be079656f15bc63afa843860f37e0ecbc6e374c2e35c11fac6eff9cb810
+I/flutter ( 5636): download time: 0:00:01.430888
+I/flutter ( 5636): saving   time: 0:00:04.413297
+I/flutter ( 5636): downloading: fe08c278ad54f3fdcc35aa6d05de7b955f22d842d9ef75a501fa82aa68dbc178
+I/flutter ( 5636): download time: 0:00:00.856290
+I/flutter ( 5636): saving   time: 0:00:02.507645
+I/flutter ( 5636): downloading: 47f0fc510a930c56797d5bf2ed574e9a7d67153d8e34e6b342af6947d0efdddf
+I/flutter ( 5636): download time: 0:00:00.751857
+I/flutter ( 5636): saving   time: 0:00:02.858145
+I/flutter ( 5636): downloading: e80568e961b4a978dcf5ab533638505823bbb83bbea2c742afb35f6b22ff96b6
+I/flutter ( 5636): download time: 0:00:00.843527
+I/flutter ( 5636): saving   time: 0:00:03.080576
+I/flutter ( 5636): downloading: c512010a793a7a4296e1a34e1c11b94441226f602cf57c9b56d3a20307f02b41
+I/flutter ( 5636): download time: 0:00:00.826384
+I/flutter ( 5636): saving   time: 0:00:04.149090
+I/flutter ( 5636): downloading: f585233ccb19f93912c094e66d5681b73a4adcf3db50c7455e5d9b2a724b2345
+I/flutter ( 5636): download time: 0:00:00.738232
+I/flutter ( 5636): saving   time: 0:00:02.769798
+I/flutter ( 5636): downloading: 681c62266f6dc3c1c16ba5024c5bb875c627ab89815fd61f689519e06036832b
+I/flutter ( 5636): download time: 0:00:00.842741
+I/flutter ( 5636): saving   time: 0:00:03.071910
+I/flutter ( 5636): downloading: c4824d89f01fff6af19387d8aa51adaaf49e509d17f766740e5524a89e557baf
+I/flutter ( 5636): download time: 0:00:00.786109
+I/flutter ( 5636): saving   time: 0:00:03.249360
+I/flutter ( 5636): skipping: 73829f290348b43f8898a1da9a3545ecfe8224d7f66d6f112693720f11801274
+I/flutter ( 5636): downloading: af288ad6f644f3123c5828f6cccc42e2e38c1acf88e3eb2f1e13732fea2f93ae
+I/flutter ( 5636): download time: 0:00:00.047356
+I/flutter ( 5636): saving   time: 0:00:00.114250
+I/flutter ( 5636): downloading: bae05a0081d4d6820ee87d9b84261028d0d23a0923becfda00dc352c6d3583c5
+I/flutter ( 5636): download time: 0:00:00.047969
+I/flutter ( 5636): saving   time: 0:00:00.136857
+I/flutter ( 5636): downloading: e9ec208d98a621758af246f5c9253843cdbb744365eb234cc8eb201f002ca280
+I/flutter ( 5636): download time: 0:00:00.060568
+I/flutter ( 5636): saving   time: 0:00:00.018348
+I/flutter ( 5636): downloading: a198fa666aaee3fed3d9ad18c6a8fd3443918be854e59221d0c9edd76da9d3bf
+I/flutter ( 5636): download time: 0:00:00.851664
+I/flutter ( 5636): saving   time: 0:00:04.154305
+I/flutter ( 5636): downloading: 5e92d7072ec001bec67be4c97363b6b92c6677ddc49f4dd017645049ec2407bb
+I/flutter ( 5636): download time: 0:00:00.857693
+I/flutter ( 5636): saving   time: 0:00:04.000750
+I/flutter ( 5636): downloading: 6ce9151422d28f9434edad6f8e25abe251a382b26096f05a0eba8465403c572e
+I/flutter ( 5636): download time: 0:00:00.920985
+I/flutter ( 5636): saving   time: 0:00:03.508480
+I/flutter ( 5636): downloading: 4a74bcb3a4079554f47c1fe42604355eb5796b83344f7f0e87ec6473408e6ea3
+I/flutter ( 5636): download time: 0:00:00.774086
+I/flutter ( 5636): saving   time: 0:00:02.707686
+I/flutter ( 5636): downloading: 2c0326ebe52bc3cab2586cdca09da44e692aa82d523661adda5174d2fbc17d1e
+I/flutter ( 5636): download time: 0:00:00.777353
+I/flutter ( 5636): saving   time: 0:00:03.520500
+I/flutter ( 5636): downloading: f313cdc0b929f33259ab47fad7aab5e6d1d21b4df2f60f2e224c81b3b0b65f24
+I/flutter ( 5636): download time: 0:00:00.771147
+I/flutter ( 5636): saving   time: 0:00:02.587895
+I/flutter ( 5636): downloading: f40744571d77ec1d6447feae81d2febe9959dd9074613425d2ab5c5d8a9fb90a
+I/flutter ( 5636): download time: 0:00:00.707807
+I/flutter ( 5636): saving   time: 0:00:02.796279
+I/flutter ( 5636): downloading: b7a412f090a621d5719a55f20a3718df0980520835f09142b1167785e8eae16d
+I/flutter ( 5636): download time: 0:00:00.755567
+I/flutter ( 5636): saving   time: 0:00:02.687740
+I/flutter ( 5636): downloading: 0d9da5fbd3a4401b21157d66bfad4988a5e5287feb7da0a683fa8cd006c9e994
+I/flutter ( 5636): download time: 0:00:00.783728
+I/flutter ( 5636): saving   time: 0:00:02.547539
+I/flutter ( 5636): downloading: 0ef1ada073022616411fb1b654ad7fbeb7eef7d57b2fe8bdfa324e15e838f853
+I/flutter ( 5636): download time: 0:00:00.783845
+I/flutter ( 5636): saving   time: 0:00:02.839481
+I/flutter ( 5636): downloading: 743b991dedaef70aae545219f1fd7cc14ccdaefc34c20f679e46664d0f78bfc1
+I/flutter ( 5636): download time: 0:00:00.746257
+I/flutter ( 5636): saving   time: 0:00:03.207537
+I/flutter ( 5636): downloading: f12731e5eb08942f1167a24a615fc11b6ee0cbb0827723d320da1820020a05dc
+I/flutter ( 5636): download time: 0:00:00.954071
+I/flutter ( 5636): saving   time: 0:00:03.697347
+I/flutter ( 5636): downloading: 056f967339e578eee83f18f53c5d0d5212f05f2a7bd09daace7cf445ba593738
+I/flutter ( 5636): download time: 0:00:00.049633
+I/flutter ( 5636): saving   time: 0:00:00.010550
+I/flutter ( 5636): downloading: b13feb18ae0b66f47e1606230b0a70de7d40ab52fbfc5626488136fbaa668b34
+I/flutter ( 5636): download time: 0:00:00.052496
+I/flutter ( 5636): saving   time: 0:00:00.017485
+I/flutter ( 5636): skipping: f685401aaa1c84aa7a88a324e259bf014ffff259958b1b18caf28f97b1159b78
+I/flutter ( 5636): skipping: b13feb18ae0b66f47e1606230b0a70de7d40ab52fbfc5626488136fbaa668b34
+I/flutter ( 5636): downloading: 941958f0a867da5f1f377a195789c65f7ed4a5cfebf5d67a2984265a485d8997
+I/flutter ( 5636): download time: 0:00:00.046547
+I/flutter ( 5636): saving   time: 0:00:00.013433
+I/flutter ( 5636): downloading: 422a920148b594eca0be78efb90b1d44bc7ac57bdf3dfa8b4efbec6af6f2d95a
+I/flutter ( 5636): download time: 0:00:00.048279
+I/flutter ( 5636): saving   time: 0:00:00.016598
+I/flutter ( 5636): skipping: 05a7614e416d96cf5687017f7e3cdf0fe786de7293152ff84e40b80386e7b921
+I/flutter ( 5636): skipping: 03cf5532852c4683c63832477c0e54fd34e640ae45cd7fcb43636d10394cbbfa
+I/flutter ( 5636): downloading: 719aa3ff0cd9af3636cbe607164c3a70233c0b2056b5655fa47aa4ab5fd49de0
+I/flutter ( 5636): download time: 0:00:00.043598
+I/flutter ( 5636): saving   time: 0:00:00.010740
+I/flutter ( 5636): downloading: b30480454a4204300a9e2154728f0e0964fb317092599e862d286bd9a9b578bd
+I/flutter ( 5636): download time: 0:00:00.057179
+I/flutter ( 5636): saving   time: 0:00:00.021747
+I/flutter ( 5636): downloading: 676ecb543cd854c51ae4f23fb61bebf23de9d4e1f71825b3975a3602664ea69b
+I/flutter ( 5636): download time: 0:00:00.045979
+I/flutter ( 5636): saving   time: 0:00:00.142520
+I/flutter ( 5636): downloading: 7db8b141bf3a8313319cb1dc313b3c93b40dd6c16f53aca1a8f1bf74f5f2cfa2
+I/flutter ( 5636): download time: 0:00:00.073170
+I/flutter ( 5636): saving   time: 0:00:00.032657
+I/flutter ( 5636): downloading: 9eaa220b15d2802d8ec04075f22136d0783a2064254b3c9cc5d762882f02bf15
+I/flutter ( 5636): download time: 0:00:00.118865
+I/flutter ( 5636): saving   time: 0:00:00.216606
+I/flutter ( 5636): downloading: ebf76f1500333bb328590ec6160e96f4ec4a2d54feb78a32ed386b6a26670644
+I/flutter ( 5636): download time: 0:00:00.099051
+I/flutter ( 5636): saving   time: 0:00:00.029812
+I/flutter ( 5636): downloading: e7417eaf442d1c64efd826be5c2c2789dad4d6600ad25fa6336195200eb23270
+I/flutter ( 5636): download time: 0:00:00.075559
+I/flutter ( 5636): saving   time: 0:00:00.045806
+I/flutter ( 5636): downloading: a4e692dd7ce8a1a4d3014d352cc4f52fd4cc64f09a325abf3bebb06040d672df
+I/flutter ( 5636): download time: 0:00:00.197330
+I/flutter ( 5636): saving   time: 0:00:00.206473
+I/flutter ( 5636): downloading: 88245a1069e6d653b863daa9bfadbe521ccd07d907ba5af7a1f17552a96b1a75
+I/flutter ( 5636): download time: 0:00:00.068417
+I/flutter ( 5636): saving   time: 0:00:00.149891
+I/flutter ( 5636): downloading: 78543f2e905dc5649b044e9847c1da8cad3ed95515ac72fdd41dc7882947a491
+I/flutter ( 5636): download time: 0:00:00.073126
+I/flutter ( 5636): saving   time: 0:00:00.149928
+I/flutter ( 5636): downloading: d4d825122e41b70ad5e94890abf55d078dac2ac52cb0f5f676add651641ad0cf
+I/flutter ( 5636): download time: 0:00:00.077601
+I/flutter ( 5636): saving   time: 0:00:00.148002
+I/flutter ( 5636): skipping: 03cf5532852c4683c63832477c0e54fd34e640ae45cd7fcb43636d10394cbbfa
+I/flutter ( 5636): skipping: 9d8567a341dffe03d12a947a6e1dfb01ead70ec5574073c6783505bdce7eae4e
+I/flutter ( 5636): skipping: 3f4e781a2034d72c54895aa12851a6913a5d9366c3e322fbc105baf3730fa8f5
+I/flutter ( 5636): skipping: 16975fb8e888583e00fb3db48e86007371dd3f113396c4915d0eba4210a531fc
+I/flutter ( 5636): skipping: 4b24f7b33ff023da4ad60b7b3daf0e557bab05c03130d6ca4ff2c07aca26b0f8
+I/flutter ( 5636): skipping: d50baec51087d5cf06b00b33fcbcb59a6e90a01c1df468e2fb522a0d8f947b93
+I/flutter ( 5636): skipping: a4d2e8920afc504ec91b0ff0f1bada20cee3637c2213e71f4e3bce936997f619
+I/flutter ( 5636): skipping: 72dc40405dfb496f96b9ebcd003eaeb61243953448fa211e20b3bc6083ff529c
+I/flutter ( 5636): skipping: 7df22524d784b184fd5aaad900d638328c7cc3749f9f8b8c3ce648e80840494c
+I/flutter ( 5636): skipping: b0a770fcbcb5ae4db646004c04bd0a17d4d643dada8d75faf8b90cbd7e967e67
+I/flutter ( 5636): skipping: 6e584749715af4ad224b55e43aa49d71c1a66d453dce6b3a8cfae911cfb1cb0b
+I/flutter ( 5636): skipping: 0e058906c72b33ec28aeb52d306bb945672b3d7efbe4445c4f6f4953026b96ed
+I/flutter ( 5636): downloading: aa093a7ac5e8cd1d47ec6354d6df134e7ebfd61e2f0d402e11e6cf7cb3f827bf
+I/flutter ( 5636): download time: 0:00:00.048911
+I/flutter ( 5636): saving   time: 0:00:00.026750
+I/flutter ( 5636): skipping: 0e058906c72b33ec28aeb52d306bb945672b3d7efbe4445c4f6f4953026b96ed
+I/flutter ( 5636): skipping: 0117c2ee397d403a8bb469496c21b3b8321469b7f9ced150c5db58d85c6d8fb1
+I/flutter ( 5636): skipping: 0117c2ee397d403a8bb469496c21b3b8321469b7f9ced150c5db58d85c6d8fb1
+I/flutter ( 5636): skipping: 8698cd3ec90e366a9dc699e7a1fbb4f4e9db46d2612cd0198cfc2b4d3cba2bbb
+I/flutter ( 5636): skipping: debc55a8f1f0ac5224ff4fa28dd2b9b272414eb8df60fcafa257ae14e464aa28
+I/flutter ( 5636): ALL DONE!
+I/flutter ( 5636): GETTING DANGLING TRANSACTIONS: {9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f, 84ab4db04a5d32fc81025db3944e6534c4c201fcc93749da6d1e5ecf98355533, 86f9493e07cb039a3735ca7ac074a869464488d961ad60844134820fa67d6a56, 9fe2a5d640f4c2bc9b2445d0cd8d3fe158983277c5e237866c4d5302015ebc72, bb772cad2f0942e0bc30ad85f4a42985fe977ea52759538983f6d3b38636d3dd, 4e769a6d770b4e441ade1d5600926ad14f58fdb6ae4128ed03c811241ec72240, 53572c6054e8c00b847ed19682e487b1a44b4a28c3a6001bd84473db1c671044, 6e584749715af4ad224b55e43aa49d71c1a66d453dce6b3a8cfae911cfb1cb0b, 7a64c38d6c668160663e58b9e4a072332d6c7db4e24d9dee73a5568221606fc3, a0ef5f5213a57a3ba41005a581504ec79ba8b8023ac8affe897e6bddfea4127e, 0b3563bdcae3ebe6710ea1c67debab183f82ada87994789b6dc1d742ad7e038e, 1d27c9dfb4e05f3735c0c8d05f8f932d8c230977f5b719832ee653b8998f80af, 24c3437f73b0434ec721f093cb1aa05497cb7b87dc9ca77323b7dc6c6ad3b0b6, 45a501b53a2bf07bb51bcec3e0fdd02da90ab8af202bdccf4656413c4f40df3a, 5340b1b5f3fc77b90d4b853481402ffb919cc1dd2056d6e046f479f995012aec, f
+I/flutter ( 5636): skiped 9c0175c81d47fb3e8d99ec5a7b7f901769185682ebad31a8fcec9f77c656a97f
+I/flutter ( 5636): skiped 84ab4db04a5d32fc81025db3944e6534c4c201fcc93749da6d1e5ecf98355533
+I/flutter ( 5636): skiped 86f9493e07cb039a3735ca7ac074a869464488d961ad60844134820fa67d6a56
+I/flutter ( 5636): skiped 9fe2a5d640f4c2bc9b2445d0cd8d3fe158983277c5e237866c4d5302015ebc72
+I/flutter ( 5636): skiped bb772cad2f0942e0bc30ad85f4a42985fe977ea52759538983f6d3b38636d3dd
+I/flutter ( 5636): skiped 4e769a6d770b4e441ade1d5600926ad14f58fdb6ae4128ed03c811241ec72240
+I/flutter ( 5636): skiped 53572c6054e8c00b847ed19682e487b1a44b4a28c3a6001bd84473db1c671044
+I/flutter ( 5636): skiped 6e584749715af4ad224b55e43aa49d71c1a66d453dce6b3a8cfae911cfb1cb0b
+I/flutter ( 5636): skipping: 7a64c38d6c668160663e58b9e4a072332d6c7db4e24d9dee73a5568221606fc3
+I/flutter ( 5636): skipping: a0ef5f5213a57a3ba41005a581504ec79ba8b8023ac8affe897e6bddfea4127e
+I/flutter ( 5636): skipping: 0b3563bdcae3ebe6710ea1c67debab183f82ada87994789b6dc1d742ad7e038e
+I/flutter ( 5636): skipping: 1d27c9dfb4e05f3735c0c8d05f8f932d8c230977f5b719832ee653b8998f80af
+I/flutter ( 5636): skipping: 24c3437f73b0434ec721f093cb1aa05497cb7b87dc9ca77323b7dc6c6ad3b0b6
+I/flutter ( 5636): skipping: 45a501b53a2bf07bb51bcec3e0fdd02da90ab8af202bdccf4656413c4f40df3a
+I/flutter ( 5636): skipping: 5340b1b5f3fc77b90d4b853481402ffb919cc1dd2056d6e046f479f995012aec
+I/flutter ( 5636): skipping: f1fc509ad3cbd85e55efb92056c7d6439d64c47da49617ed0a5792f476b33ea6
+I/flutter ( 5636): skipping: 289aeb8506e4920fcd29be752e406d8c8fbd72759bd2d70d23c50d4ed068c5bb
+I/flutter ( 5636): skipping: 8c40377bfd0d1fcfcf24e4f059b834f84a821a046650bb1742ba52bf11198964
+I/flutter ( 5636): skipping: 471b02b447808463de480ce5673ddc1d88d1f50862d39b9fea185a6a59895692
+I/flutter ( 5636): skipping: a5f82aed0e44ed5fad2252b1758479667fbd60d533f7ab0b25b787f7583f1582
+I/flutter ( 5636): skipping: 34a4c722c439e9c07172825ddf95b766d6a30542982ce6b1558927f6ef87e5bc
+I/flutter ( 5636): skipping: b6cb3eb1f6ab34b67dacf3988747d9233372f4001f3c8b1cf5dc6f0d19511a9a
+I/flutter ( 5636): skipping: 544c3efde3bca4cd7d203b983c29f5f9c81f514ed2e9935dddaa8c81220c095d
+I/flutter ( 5636): skipping: a2e9d46850ade47e5bb60e7ecb73e950ef553800b927ae52550106cf97a8d26b
+I/flutter ( 5636): skipping: 63d6fff655f7f9cbcfa84c12802eb612db105f90aa6efc81f5a7b9a734a5708b
+I/flutter ( 5636): skipping: 1c36cb42977c0e9a8b3418fe298e68b581c53b1328b37e5548f0667b65c5e36f
+I/flutter ( 5636): skipping: 39b703e67a56d7e015ff0629f1c32712cc8d3c235e237e1d82c75ca97b5028d3
+I/flutter ( 5636): skipping: 2927117965791aca48a0ba2b614a68df13eb5d9a4577ea8fc67a637ae364c8d8
+I/flutter ( 5636): skipping: ffccc1bba37ed9d1c08d127717e6dd7a0595285ecb18399b890add39406a03ae
+I/flutter ( 5636): skipping: 1321b6b632fda21d95f2d4e372869809d6bc04ad47aff6f824436e5bce638f78
+I/flutter ( 5636): skipping: de3fa82ef038928d9ee0c02c78820062bcbefef4dc94709111f5ac064c4d97f3
+I/flutter ( 5636): skipping: 5e01483fb95b88d6cbb5cfd17171bec726f3d4daf0ebce4cd7ca7fd448c12596
+I/flutter ( 5636): skipping: f300272e63032e11b1709fd545d57d2f706e5a2a9b6e8fd5815d0b6e19778448
+I/flutter ( 5636): skipping: 374e18a876499b962e504f7b5be4c502e0cff5ee2292118c1d8ca83f3b3e04ab
+I/flutter ( 5636): skipping: b1b5116cdda2fdb887bc7bc83498ecb0e66bff7c44aaa575b2be075a72e0342a
+I/flutter ( 5636): skipping: b27fd2706999ebe0ed0ef2df302b1928b20e67aaacb3bc916e8650877f6df40e
+I/flutter ( 5636): skipping: b258543b255309ad6097b9be644858d74c4e73024d1a03368954dbde834f952e
+I/flutter ( 5636): skipping: 1a568789dfe91f3b3f9e1be0f8d6cc511abb15703832c682290d038ffb989bcf
+I/flutter ( 5636): skipping: 6984d492be101d0e76838369112f65e74472357cbd5d9820571e124032eeedf2
+I/flutter ( 5636): skipping: 9efa45c8a2d10cf7daac4af78a8598e71a0db1c1a6ecb65b463db517a6f04633
+I/flutter ( 5636): skipping: 9b563956e72e87944f1c7419b198891ec502b2f805b7fd2978952860439ee26a
+I/flutter ( 5636): skipping: f631325c206d5175eda27e4284242613cea536708d886d3f173187b728c8821c
+I/flutter ( 5636): skipping: 97d4055b20ad60db54612c6dc6ec1093b94e5f695082f3828bd7fcbb537e34d2
+I/flutter ( 5636): skipping: 2be7f61a75267350bab8b92abeb26e6d14dd3ffc466d36b2a1faea66ffbf2db0
+I/flutter ( 5636): skipping: 2345d2e0f55de622dbacf19ccec38b8efc2ea744517c665699dca725ff8e7e9d
+I/flutter ( 5636): skipping: ab5286ca58997372b4ffe464f447c549ce24ba32a8c72ba04427dddb53e3d5ff
+I/flutter ( 5636): skipping: eb98a3d4f1522ec3ec8f226fe9632f6aa5b970ccc12630669d7a29489e25d590
+I/flutter ( 5636): skipping: b973d79997b84c40740949c378f68e638ccf3d3d6dbd58a014a04dbd595f2d4e
+I/flutter ( 5636): skipping: e72a8db316f0c243be704bfe67d3bd04b3e2c41d8d8dbad685d9a956e67f9476
+I/flutter ( 5636): skipping: 8a511936af83f03d920f10af3f38c2a30af8d62ee7a73c8e301fa2c37e5e089a
+I/flutter ( 5636): skipping: a4ce27252dfe44125e57ed0df37c13d139c99ab0a34334cd4304551ae942c905
+I/flutter ( 5636): skipping: de5da30c845c47bdc1d469f6cc9cc3f6f35066eea53a38ff3242206ce892e2eb
+I/flutter ( 5636): skipping: 642590ed89295241651ae1bb5054a58474c056efcdc6e0c34c08a40a877a62cd
+Reloaded 1 of 2240 libraries in 1,994ms.

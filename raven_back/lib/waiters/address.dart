@@ -13,11 +13,14 @@ class AddressWaiter extends Waiter {
   void handleAddressChange(Change<Address> change) {
     change.when(
         loaded: (loaded) {},
-        added: (added) => services.client.subscribe.to(added.data),
-        updated: (updated) => services.client.subscribe.to(updated.data),
+        added: (added) {
+          var address = added.data;
+          services.client.subscribe.toAddress(address);
+        },
+        updated: (updated) => services.client.subscribe.toAddress(updated.data),
         removed: (removed) {
           var address = removed.data;
-          services.client.subscribe.unsubscribe(address.id);
+          services.client.subscribe.unsubscribeAddress(address.id);
           //removed.id as String);
 
           /// could be moved to waiter on transactions...

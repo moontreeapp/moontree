@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
-import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/components/components.dart';
 
@@ -30,6 +29,11 @@ class PageTitle extends StatefulWidget {
     'Sub': 'Create',
     'Restricted': 'Create',
     'Login': 'Unlock',
+  };
+  static Map<String, String> pageMapReissue = const {
+    'Main': 'Reissue',
+    'Sub': 'Reissue',
+    'Restricted': 'Reissue',
   };
 }
 
@@ -117,6 +121,9 @@ class _PageTitleState extends State<PageTitle> {
     }
     return walletNumber() ??
         wrap(PageTitle.settingsMap[settingTitle] ??
+            (streams.create.form.value?.minQuantity != null
+                ? PageTitle.pageMapReissue[pageTitle]
+                : null) ??
             PageTitle.pageMap[pageTitle] ??
             (pageTitle == 'Home'
                 ? appContext.enumString.toTitleCase()

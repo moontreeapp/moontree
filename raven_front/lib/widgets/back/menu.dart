@@ -1,12 +1,16 @@
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:raven_back/streams/wallet.dart';
 
 import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/theme.dart';
+import 'package:raven_front/utils/zips.dart';
+import 'package:raven_front/theme/extensions.dart';
 
-//import 'package:raven_back/utilities/database.dart' as ravenDatabase;
+import 'package:raven_back/utilities/database.dart' as ravenDatabase;
 
 class NavMenu extends StatefulWidget {
   NavMenu({Key? key}) : super(key: key);
@@ -149,45 +153,25 @@ class _NavMenuState extends State<NavMenu> {
             link: '/settings/about',
           ),
           /*
-          SettingsTile(
-              title: 'Clear Database',
-              leading: Icon(Icons.info_outline_rounded),
-              onPressed: (BuildContext context) {
-            //    ravenDatabase.deleteDatabase();
+          destination(
+            icon: Icons.info_rounded,
+            name: 'Wallet',
+            link: '/wallet',
           ),
-          SettingsTile(
-              title: 'test',
-              leading: Icon(Icons.info_outline_rounded),
-              onPressed: (BuildContext context) async {
-                print(res.vouts.data.length);
-                print(res.vouts.bySecurity.getAll(res.securities.RVN).length);
-                print(res.vouts.bySecurityType
-                    .getAll(SecurityType.RavenAsset)
-                    .length);
-                print(res.vouts.bySecurity
-                    .getAll(res.securities.RVN)
-                    .where((e) => e.lockingScript != null));
-                print(res.vouts.bySecurityType
-                    .getAll(SecurityType.RavenAsset)
-                    .where((e) => e.lockingScript == null));
-                print(res.vouts.bySecurity
-                    .getAll(res.securities.RVN)
-                    .where((e) => e.assetValue == null)
-                    .length);
-                print(res.vouts.bySecurityType
-                    .getAll(SecurityType.RavenAsset)
-                    .where((e) => e.assetValue == null)
-                    .length);
-                print(res.vouts.bySecurity
-                    .getAll(res.securities.RVN)
-                    .where((e) => e.rvnValue > 0)
-                    .length);
-                print(res.vouts.bySecurityType
-                    .getAll(SecurityType.RavenAsset)
-                    .where((e) => e.rvnValue == 0)
-                    .length);
-              }),
+          destination(
+              icon: Icons.info_outline_rounded,
+              name: 'Clear Database',
+              link: '/home',
+              execute: ravenDatabase.deleteDatabase),
           */
+          ListTile(
+              title: Text('test'),
+              leading: Icon(Icons.info_outline_rounded),
+              onTap: () async {
+                for (var a in res.addresses) {
+                  print('${a.address} ${a.walletId.cutOutMiddle()}');
+                }
+              }),
         ],
       )
     };

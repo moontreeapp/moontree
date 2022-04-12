@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
@@ -9,27 +8,15 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 
-import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/pages/pages.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/widgets.dart';
-import 'package:raven_front/listeners/listeners.dart';
 
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 //   await Firebase.initializeApp();
 //   print('Handling a background message ${message.messageId}');
 // }
-
-Future setup() async {
-  var hiveInit =
-      HiveInitializer(init: (dbDir) => Hive.initFlutter(), beforeLoad: () {});
-  await hiveInit.setUp();
-  await initWaiters();
-  initListeners();
-  //await res.settings.save(
-  //    Setting(name: SettingName.Local_Path, value: await Storage().localPath));
-}
 
 Future<void> main() async {
   // Catch errors without crashing the app:
@@ -86,16 +73,4 @@ class RavenMobileApp extends StatelessWidget {
       },
     );
   }
-
-  Widget header = Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Container(
-      color: Colors.white,
-      width: double.infinity,
-      child: const Center(
-        child: Text('Content',
-            style: TextStyle(fontSize: 20, color: Colors.black)),
-      ),
-    ),
-  );
 }

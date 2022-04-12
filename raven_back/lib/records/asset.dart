@@ -1,7 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:raven_back/extensions/object.dart';
+import 'package:raven_back/extensions/string.dart';
 import 'package:raven_back/extensions/validation.dart';
+import 'package:raven_back/utilities/utilities.dart';
 
 import '_type_id.dart';
 
@@ -64,6 +66,53 @@ class Asset with EquatableMixin {
 
   static String assetKey(String symbol) => symbol;
   String get id => symbol;
+  String? get parentId {
+    if (assetType == AssetType.Sub) {
+      var splits = symbol.split('/');
+      return splits.sublist(0, splits.length - 1).join('/');
+    }
+    if (assetType == AssetType.SubAdmin) {
+      var splits = symbol.split('/');
+      return splits.sublist(0, splits.length - 1).join('/');
+    }
+    if (assetType == AssetType.QualifierSub) {
+      var splits = symbol.split('/#');
+      return splits.sublist(0, splits.length - 1).join('/#');
+    }
+    if (assetType == AssetType.NFT) {
+      var splits = symbol.split('#');
+      return splits.sublist(0, splits.length - 1).join('#');
+    }
+    if (assetType == AssetType.Channel) {
+      var splits = symbol.split('~');
+      return splits.sublist(0, splits.length - 1).join('~');
+    }
+    return null;
+  }
+
+  String? get shortName {
+    if (assetType == AssetType.Sub) {
+      var splits = symbol.split('/');
+      return splits[splits.length - 1];
+    }
+    if (assetType == AssetType.SubAdmin) {
+      var splits = symbol.split('/');
+      return splits[splits.length - 1];
+    }
+    if (assetType == AssetType.QualifierSub) {
+      var splits = symbol.split('/#');
+      return splits[splits.length - 1];
+    }
+    if (assetType == AssetType.NFT) {
+      var splits = symbol.split('#');
+      return splits[splits.length - 1];
+    }
+    if (assetType == AssetType.Channel) {
+      var splits = symbol.split('~');
+      return splits[splits.length - 1];
+    }
+    return null;
+  }
 
   bool get hasIpfs => metadata.isIpfs;
 
@@ -72,8 +121,22 @@ class Asset with EquatableMixin {
   bool get isAdmin =>
       assetType == AssetType.Admin || assetType == AssetType.SubAdmin;
 
+  bool get isSubAdmin => assetType == AssetType.SubAdmin;
+
   bool get isQualifier =>
       assetType == AssetType.Qualifier || assetType == AssetType.QualifierSub;
+
+  bool get isAnySub =>
+      assetType == AssetType.QualifierSub ||
+      assetType == AssetType.SubAdmin ||
+      assetType == AssetType.Sub ||
+      assetType == AssetType.NFT ||
+      assetType == AssetType.Channel;
+
+  bool get isRestricted => assetType == AssetType.Restricted;
+  bool get isMain => assetType == AssetType.Main;
+  bool get isNFT => assetType == AssetType.NFT;
+  bool get isChannel => assetType == AssetType.NFT;
 
   String get baseSymbol => symbol.startsWith('#') || symbol.startsWith('\$')
       ? symbol.substring(1, symbol.length)
@@ -97,9 +160,6 @@ class Asset with EquatableMixin {
     }
     if (symbol.startsWith('#')) {
       return AssetType.Qualifier;
-    }
-    if (symbol.startsWith('\$') && symbol.endsWith('!')) {
-      return AssetType.RestrictedAdmin;
     }
     if (symbol.startsWith('\$')) {
       return AssetType.Restricted;
@@ -128,13 +188,17 @@ class Asset with EquatableMixin {
       symbol.contains('/') && !(symbol.startsWith('\$') || symbol.endsWith('!'))
           ? true
           : false;
+
+  String get amountWithCommas =>
+      utils.satToAmount(satsInCirculation).toCommaString();
+
+  double get amount => utils.satToAmount(satsInCirculation);
 }
 
 enum AssetType {
   Main,
   Admin,
   Restricted,
-  RestrictedAdmin,
   NFT,
   Channel,
   Sub,

@@ -1,23 +1,26 @@
 import 'package:flutter/cupertino.dart';
-import 'package:raven_front/pages/account/home.dart';
-import 'package:raven_front/pages/account/transactions.dart';
+import 'package:raven_front/pages/home/home.dart';
+import 'package:raven_front/pages/wallet/transactions.dart';
 import 'package:raven_front/pages/manage/assets.dart';
-import 'package:raven_front/pages/create/nft.dart';
-import 'package:raven_front/pages/create/main.dart';
-import 'package:raven_front/pages/create/sub.dart';
-import 'package:raven_front/pages/create/qualifier.dart';
-import 'package:raven_front/pages/create/qualifiersub.dart';
-import 'package:raven_front/pages/create/channel.dart';
-import 'package:raven_front/pages/create/restricted.dart';
+import 'package:raven_front/pages/manage/create/nft.dart';
+import 'package:raven_front/pages/manage/create/main.dart';
+import 'package:raven_front/pages/manage/create/sub.dart';
+import 'package:raven_front/pages/manage/create/qualifier.dart';
+import 'package:raven_front/pages/manage/create/qualifiersub.dart';
+import 'package:raven_front/pages/manage/create/channel.dart';
+import 'package:raven_front/pages/manage/create/restricted.dart';
+import 'package:raven_front/pages/manage/reissue/restricted.dart';
+import 'package:raven_front/pages/manage/reissue/main.dart';
+import 'package:raven_front/pages/manage/reissue/sub.dart';
 import 'package:raven_front/pages/misc/loading.dart';
 import 'package:raven_front/pages/misc/splash.dart';
 import 'package:raven_front/pages/misc/scan.dart';
-import 'package:raven_front/pages/security/backup/show.dart';
-import 'package:raven_front/pages/security/backup/verify.dart';
-import 'package:raven_front/pages/security/login.dart';
-import 'package:raven_front/pages/security/remove.dart';
-import 'package:raven_front/pages/security/resume.dart';
-import 'package:raven_front/pages/security/change.dart';
+import 'package:raven_front/pages/settings/security/backup/show.dart';
+import 'package:raven_front/pages/settings/security/backup/verify.dart';
+import 'package:raven_front/pages/settings/security/login.dart';
+import 'package:raven_front/pages/settings/security/remove.dart';
+import 'package:raven_front/pages/settings/security/resume.dart';
+import 'package:raven_front/pages/settings/security/change.dart';
 import 'package:raven_front/pages/settings/about.dart';
 import 'package:raven_front/pages/settings/currency.dart';
 import 'package:raven_front/pages/settings/export.dart';
@@ -30,11 +33,11 @@ import 'package:raven_front/pages/settings/preferences.dart';
 import 'package:raven_front/pages/settings/security.dart';
 import 'package:raven_front/pages/settings/support.dart';
 import 'package:raven_front/pages/settings/technical.dart';
-import 'package:raven_front/pages/transaction/checkout.dart';
-import 'package:raven_front/pages/transaction/receive.dart';
-import 'package:raven_front/pages/transaction/send.dart';
-import 'package:raven_front/pages/transaction/transaction.dart';
-import 'package:raven_front/pages/wallet/wallet.dart';
+import 'package:raven_front/pages/misc/checkout.dart';
+import 'package:raven_front/pages/wallet/receive.dart';
+import 'package:raven_front/pages/wallet/send.dart';
+import 'package:raven_front/pages/wallet/transaction.dart';
+import 'package:raven_front/pages/settings/wallet.dart';
 import 'package:raven_front/widgets/front/loader.dart';
 
 class pages {
@@ -95,13 +98,16 @@ class pages {
         '/create/qualifiersub': (context) => CreateQualifierSubAsset(),
         '/create/channel': (context) => CreateChannelAsset(),
         '/create/restricted': (context) => CreateRestrictedAsset(),
+        '/reissue/main': (context) => ReissueMainAsset(),
+        '/reissue/sub': (context) => ReissueMainSubAsset(),
+        '/reissue/restricted': (context) => ReissueRestrictedAsset(),
         '/security/backup': (context) => BackupSeed(),
         '/security/backupConfirm': (context) => VerifySeed(),
         '/security/change': (context) => ChangePassword(),
         '/security/resume': (context) => ChangeResume(),
         '/security/remove': (context) => RemovePassword(),
         '/security/login': (context) => Login(),
-        '/transaction/transaction': (context) => Transactions(),
+        '/transaction/transaction': (context) => TransactionPage(),
         '/transaction/receive': (context) => Receive(),
         '/transaction/send': (context) => Send(),
         '/transaction/checkout': (context) => Checkout(),

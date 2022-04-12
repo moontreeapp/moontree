@@ -22,6 +22,18 @@ extension ByTransactionMethodsForVout on Index<_TransactionKey, Vout> {
   List<Vout> getAll(String transactionId) => getByKeyStr(transactionId);
 }
 
+// byTransactionPosition same as primary
+
+class _TransactionPositionKey extends Key<Vout> {
+  @override
+  String getKey(Vout vout) => vout.id;
+}
+
+extension ByTransactionPositionMethodsForVout
+    on Index<_TransactionPositionKey, Vout> {
+  Vout? getOne(String transactionId, int position) =>
+      getByKeyStr(Vout.getVoutId(transactionId, position)).firstOrNull;
+}
 // bySecurity
 
 class _SecurityKey extends Key<Vout> {

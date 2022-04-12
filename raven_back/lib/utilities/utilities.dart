@@ -2,6 +2,7 @@ import 'assets.dart' as assets;
 import 'transform.dart' as transform;
 import 'strings.dart' as imported_strings;
 import 'validate.dart' as validate;
+import 'search.dart' as search;
 
 export 'exceptions.dart';
 export 'structures.dart';
@@ -16,6 +17,9 @@ class utils {
   static final enumerate = transform.enumerate;
   static final removeCharsOtherThan = transform.removeCharsOtherThan;
   static final toStringOverride = imported_strings.toStringOverride;
+  static final binarySearch = search.binarySearch;
+  static final binaryRemove = search.binaryRemove;
+  static final binaryInsert = search.binaryInsert;
   static final Strings strings = Strings();
   static final Validate validate = Validate();
 }

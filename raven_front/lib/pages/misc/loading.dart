@@ -5,8 +5,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/wallet/constants.dart';
 import 'package:raven_front/listeners/listeners.dart';
-import 'package:raven_front/services/storage.dart';
-import 'package:raven_front/widgets/widgets.dart';
 
 class Loading extends StatefulWidget {
   @override
@@ -35,14 +33,16 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
   }
 
   Future setupWallets() async {
+    if (res.addresses.data.isNotEmpty) {
+      services.wallet.leader.updateIndexes();
+    }
     if (res.wallets.data.isEmpty) {
       await setupRealWallet('2');
       await res.settings.setCurrentWalletId(res.wallets.first.id);
       await res.settings.savePreferredWalletId(res.wallets.first.id);
-      setupRealWallet('1');
-      setupRealWallet(null);
+      //setupRealWallet('1');
+      //setupRealWallet(null);
     }
-
     // for testing
     print('-------------------------');
     print('addresses: ${res.addresses.length}');
@@ -51,16 +51,14 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
     print('blocks: ${res.blocks}');
     print('ciphers: ${res.ciphers}');
     print('metadata: ${res.metadatas.length}');
-    print('passwords: ${res.passwords}');
+    print('passwords: ${res.passwords.data}');
     print('rates: ${res.rates}');
     print('securities: ${res.securities.length}');
     print('settings: ${res.settings.length}');
     print('transactions: ${res.transactions.length}');
     print('vins: ${res.vins.length}');
     print('vouts: ${res.vouts.length}');
-    print('wallets: ${res.wallets}');
-    print('-------------------------');
-    //print(services.cipher.getPassword(altPassword: ''));
+    print('wallets: ${res.wallets.data}');
     print('-------------------------');
     redirectToLoginOrHome();
   }

@@ -38,8 +38,9 @@ class WalletReservoir extends Reservoir<_IdKey, Wallet> {
 
   String get nextWalletName => (data.length + 1).toString();
 
-  String get currentWalletName => primaryIndex
+  Wallet get currentWallet => primaryIndex
       .getOne(
-          res.settings.primaryIndex.getOne(SettingName.Wallet_Current)?.value)!
-      .name;
+          res.settings.primaryIndex.getOne(SettingName.Wallet_Current)?.value)!;
+
+  String get currentWalletName => currentWallet.name;
 }

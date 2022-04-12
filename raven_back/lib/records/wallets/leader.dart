@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_final_fields
+
 import 'dart:typed_data';
 
 import 'package:hive/hive.dart';
@@ -7,7 +9,7 @@ import 'package:raven_back/utilities/hex.dart' as hex;
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/wallet/constants.dart';
 import 'package:raven_back/utilities/seed_wallet.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart';
+import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravenwallet;
 
 import '../_type_id.dart';
 
@@ -15,7 +17,7 @@ part 'leader.g.dart';
 
 @HiveType(typeId: TypeId.LeaderWallet)
 class LeaderWallet extends Wallet {
-  @HiveField(3)
+  @HiveField(7)
   final String encryptedEntropy;
 
   LeaderWallet({
@@ -23,14 +25,52 @@ class LeaderWallet extends Wallet {
     required this.encryptedEntropy,
     CipherUpdate cipherUpdate = defaultCipherUpdate,
     String? name,
-  }) : super(id: id, cipherUpdate: cipherUpdate, name: name);
+    List<int>? unusedInternalIndices,
+    List<int>? unusedExternalIndices,
+    Uint8List? seed,
+  }) : super(
+          id: id,
+          cipherUpdate: cipherUpdate,
+          name: name,
+        ) {
+    this.unusedInternalIndices = unusedInternalIndices ?? [];
+    this.unusedExternalIndices = unusedExternalIndices ?? [];
+    _seed = seed;
+  }
+
   Uint8List? _seed;
+
+  /// caching optimization
+  late List<int> unusedInternalIndices;
+  late List<int> unusedExternalIndices;
+
+  factory LeaderWallet.from(
+    LeaderWallet existing, {
+    String? id,
+    String? encryptedEntropy,
+    CipherUpdate? cipherUpdate,
+    String? name,
+    List<int>? unusedInternalIndices,
+    List<int>? unusedExternalIndices,
+    Uint8List? seed,
+  }) =>
+      LeaderWallet(
+        id: id ?? existing.id,
+        encryptedEntropy: encryptedEntropy ?? existing.encryptedEntropy,
+        cipherUpdate: cipherUpdate ?? existing.cipherUpdate,
+        name: name ?? existing.name,
+        unusedInternalIndices:
+            unusedInternalIndices ?? existing.unusedInternalIndices,
+        unusedExternalIndices:
+            unusedExternalIndices ?? existing.unusedExternalIndices,
+        seed: seed ?? existing.seed,
+      );
 
   @override
   List<Object?> get props => [id, cipherUpdate, encryptedEntropy];
 
   @override
-  String toString() => 'LeaderWallet($id,  $encryptedEntropy, $cipherUpdate)';
+  String toString() => 'LeaderWallet($id, $encryptedEntropy, $cipherUpdate)';
 
   @override
   String get encrypted => encryptedEntropy;
@@ -39,10 +79,8 @@ class LeaderWallet extends Wallet {
   String secret(CipherBase cipher) => mnemonic;
 
   @override
-  HDWallet seedWallet(CipherBase cipher, {Net net = Net.Main}) => SeedWallet(
-        seed,
-        net,
-      ).wallet;
+  ravenwallet.HDWallet seedWallet(CipherBase cipher, {Net net = Net.Main}) =>
+      SeedWallet(seed, net).wallet;
 
   @override
   SecretType get secretType => SecretType.mnemonic;
@@ -64,4 +102,38 @@ class LeaderWallet extends Wallet {
   String get mnemonic => bip39.entropyToMnemonic(entropy);
 
   String get entropy => hex.decrypt(encryptedEntropy, cipher!);
+
+  /// caching optimization ///
+  void addUnused(int hdIndex, NodeExposure exposure) =>
+      exposure == NodeExposure.Internal
+          ? addUnusedInternal(hdIndex)
+          : addUnusedExternal(hdIndex);
+  void removeUnused(int hdIndex, NodeExposure exposure) =>
+      exposure == NodeExposure.Internal
+          ? removeUnusedInternal(hdIndex)
+          : removeUnusedExternal(hdIndex);
+  void addUnusedInternal(int hdIndex) => utils.binaryInsert(
+        list: unusedInternalIndices,
+        value: hdIndex,
+      );
+  void addUnusedExternal(int hdIndex) => utils.binaryInsert(
+        list: unusedExternalIndices,
+        value: hdIndex,
+      );
+  void removeUnusedInternal(int hdIndex) => utils.binaryRemove(
+        list: unusedInternalIndices,
+        value: hdIndex,
+      );
+  void removeUnusedExternal(int hdIndex) => utils.binaryRemove(
+        list: unusedExternalIndices,
+        value: hdIndex,
+      );
+  Address? getUnusedAddress(NodeExposure exposure) =>
+      exposure == NodeExposure.Internal
+          ? unusedInternalAddress
+          : unusedExternalAddress;
+  Address? get unusedInternalAddress => res.addresses.byWalletExposureIndex
+      .getOne(id, NodeExposure.Internal, unusedInternalIndices.first);
+  Address? get unusedExternalAddress => res.addresses.byWalletExposureIndex
+      .getOne(id, NodeExposure.External, unusedExternalIndices.first);
 }

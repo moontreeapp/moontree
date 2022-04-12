@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:raven_front/pages/transaction/checkout.dart';
+import 'package:raven_front/pages/misc/checkout.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/qrcode.dart';
 
@@ -15,7 +15,6 @@ import 'package:raven_back/raven_back.dart';
 
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
-import 'package:raven_front/utils/address.dart';
 import 'package:raven_front/utils/params.dart';
 import 'package:raven_front/utils/data.dart';
 
@@ -97,6 +96,9 @@ class _SendState extends State<Send> {
         }
       }
     }));
+    services.download.unspents
+        .pull()
+        .then((value) => services.balance.recalculateRVNBalance());
   }
 
   @override
@@ -250,7 +252,11 @@ class _SendState extends State<Send> {
           KeyboardHidesWidget(
               child: components.buttons.floatingButtons(
             context,
-            buttons: [sendTransactionButton()],
+            buttons: [
+              allValidation()
+                  ? sendTransactionButton()
+                  : sendTransactionButton(disabled: true)
+            ],
             widthSpacer: SizedBox(width: 16),
           ))
         ],

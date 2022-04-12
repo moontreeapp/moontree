@@ -3,13 +3,9 @@
 
 import 'dart:async';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction.dart';
-import 'package:raven_back/streams/app.dart';
-import 'package:raven_back/streams/spend.dart';
 //import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';
@@ -37,6 +33,7 @@ class _TransactionsState extends State<Transactions>
   late List<Balance> currentHolds;
   late Security security;
   String tabChoice = 'HISTORY';
+  Widget? cachedMetadataView;
 
   @override
   void initState() {
@@ -90,10 +87,12 @@ class _TransactionsState extends State<Transactions>
     currentTxs = services.transaction
         .getTransactionRecords(wallet: Current.wallet, securities: {security});
     var minHeight = 1 - (201 + 16) / MediaQuery.of(context).size.height;
+    cachedMetadataView = _metadataView();
     return BackdropLayers(
       back: CoinSpec(
         pageTitle: 'Transactions',
         security: security,
+        bottom: cachedMetadataView != null ? null : Container(),
       ),
       front: Stack(
         alignment: Alignment.bottomCenter,
@@ -102,13 +101,28 @@ class _TransactionsState extends State<Transactions>
               initialChildSize: minHeight,
               minChildSize: minHeight,
               maxChildSize: 1.0,
+              //snap: true, // if snap then show amount in app bar
               builder: ((context, scrollController) {
                 return FrontCurve(
                   frontLayerBoxShadow: [],
                   child: content(scrollController),
                 );
               })),
-          NavBar(),
+          NavBar(
+            includeSectors: false,
+            actionButtons: <Widget>[
+              components.buttons.actionButton(
+                context,
+                label: 'send',
+                link: '/transaction/send',
+              ),
+              components.buttons.actionButton(
+                context,
+                label: 'receive',
+                link: '/transaction/receive',
+              )
+            ],
+          ),
         ],
       ),
     );
@@ -124,7 +138,7 @@ class _TransactionsState extends State<Transactions>
       : metadata; //(scrollController: scrollController) //at present we can't scroll metadata
 
   Widget get metadata =>
-      _metadataView() ??
+      cachedMetadataView ??
       components.empty.message(
         context,
         icon: Icons.description,

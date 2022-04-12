@@ -17,8 +17,11 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
   // 143.198.142.78:50002
   // mjQSgeVh5ZHfwGzBkiQcpr119Wh6QMyQ3b
 
-  static final String defaultUrl = 'testnet.rvn.rocks'; // 'rvn4lyfe.com';
-  static final int defaultPort = 50002; // 50003;
+  //static final String defaultUrl = 'testnet.rvn.rocks'; // 'rvn4lyfe.com';
+  //static final int defaultPort = 50002; // 50003;
+
+  static final String defaultUrl = '143.198.142.78';
+  static final int defaultPort = 50002;
 
   static Map<String, Setting> get defaults => {
         SettingName.Electrum_Net:
@@ -57,6 +60,8 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
       name: SettingName.Wallet_Current, value: walletId ?? preferredWalletId));
 
   Net get net => primaryIndex.getOne(SettingName.Electrum_Net)!.value;
+  bool get mainnet =>
+      primaryIndex.getOne(SettingName.Electrum_Net)!.value == Net.Main;
   NetworkType get network => networks[net]!;
   String get netName => net.enumString;
 }

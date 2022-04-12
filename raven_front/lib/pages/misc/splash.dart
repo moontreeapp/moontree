@@ -11,7 +11,6 @@ import '../../listeners/listeners.dart';
 /// This works by creating an AnimationController instance and passing it
 /// to the Lottie widget.
 /// The AnimationController class has a rich API to run the animation in various ways.
-
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
 
@@ -109,8 +108,8 @@ class DataLoadingHelper {
       await setupRealWallet('2');
       await res.settings.setCurrentWalletId(res.wallets.first.id);
       await res.settings.savePreferredWalletId(res.wallets.first.id);
-      setupRealWallet('1');
-      setupRealWallet(null);
+      //setupRealWallet('1');
+      //setupRealWallet(null);
     }
 
     // for testing

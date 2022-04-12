@@ -51,6 +51,8 @@ dependencies:
   intersperse: ^2.0.0
   flutter_keyboard_visibility: ^5.2.0
   lottie: ^1.2.2
+  shimmer: ^2.0.0
+  
   # raven_back:
   #   git: https://github.com/moontreeapp/raven_back.git
   raven_electrum: ^2.0.0

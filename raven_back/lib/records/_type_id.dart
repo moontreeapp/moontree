@@ -7,6 +7,7 @@ class TypeId {
   static const Block = 5;
   static const Vin = 6;
   static const Vout = 7;
+  static const Status = 8;
 
   // Wallets
   static const SingleWallet = 10;
@@ -29,4 +30,5 @@ class TypeId {
   static const SecurityType = 104;
   static const MetadataType = 105;
   static const AssetType = 106;
+  static const StatusType = 107;
 }

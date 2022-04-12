@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_front/components/components.dart';
 
 class HomePage extends StatefulWidget {
   final AppContext appContext;
@@ -59,6 +60,7 @@ class _HomePageState extends State<HomePage>
             } else if (draggableScrollController.size == maxExtent) {
               streams.app.setting.add(null);
             }
+            print("Min extent : ${draggableScrollController.size}");
             return FrontCurve(
                 fuzzyTop: true,
                 child: Stack(
@@ -68,16 +70,57 @@ class _HomePageState extends State<HomePage>
                         ? HoldingList(scrollController: scrollController)
                         : widget.appContext == AppContext.manage
                             ? AssetList(scrollController: scrollController)
-                            : Scroller(
+                            : ListView(
                                 controller: scrollController,
-                                child: Text('swap\n\n\n\n\n\n\n\n\n\n\n\n')),
-                    NavBar()
+                                children: [
+                                  Text('swap\n\n\n\n\n\n\n\n\n\n\n\n')
+                                ],
+                              ),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      transitionBuilder: (widget, animation) {
+                        return SlideTransition(
+                          position: Tween<Offset>(
+                                  begin: Offset(0, 1), end: Offset(0, 0))
+                              .animate(animation),
+                          child: widget,
+                        );
+                      },
+                      child: draggableScrollController.size > minExtent
+                          ? NavBar(
+                              actionButtons:
+                                  widget.appContext == AppContext.wallet
+                                      ? <Widget>[
+                                          components.buttons.actionButton(
+                                            context,
+                                            label: 'send',
+                                            link: '/transaction/send',
+                                          ),
+                                          components.buttons.actionButton(
+                                            context,
+                                            label: 'receive',
+                                            link: '/transaction/receive',
+                                          )
+                                        ]
+                                      : <Widget>[
+                                          components.buttons.actionButton(
+                                            context,
+                                            label: 'create',
+                                            onPressed: _produceCreateModal,
+                                          )
+                                        ])
+                          : SizedBox(),
+                    )
                   ],
                 ));
           }),
         ),
       ),
     );
+  }
+
+  void _produceCreateModal() {
+    SelectionItems(context, modalSet: SelectionSet.Create).build();
   }
 
   Future<void> fling([bool? open]) async {
