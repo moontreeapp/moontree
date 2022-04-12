@@ -71,7 +71,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
       body: Lottie.asset(
         'assets/splash/moontree_v2_001.json',
         animate: true,
-        repeat: true,
+        repeat: false,
         width: double.infinity,
         height: double.infinity,
         fit: BoxFit.fitWidth,
