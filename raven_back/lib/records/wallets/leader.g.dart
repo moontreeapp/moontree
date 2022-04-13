@@ -18,7 +18,7 @@ class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
     };
     return LeaderWallet(
       id: fields[0] as String,
-      encryptedEntropy: fields[7] as String,
+      encryptedEntropy: (fields[7] ?? "").toString(),
       cipherUpdate: fields[1] as CipherUpdate,
       name: fields[2] as String?,
     );
