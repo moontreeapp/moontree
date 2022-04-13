@@ -266,7 +266,7 @@ class _WalletViewState extends State<WalletView> {
                           ? Theme.of(context)
                               .textTheme
                               .caption!
-                              .replace(fontWeight: FontWeight.bold)
+                              .copyWith(fontWeight: FontWeight.bold)
                           : Theme.of(context).textTheme.caption),
                   Text(
                       utils

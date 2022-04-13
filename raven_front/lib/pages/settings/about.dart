@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:raven_front/theme/theme.dart';
+import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class About extends StatelessWidget {
@@ -13,10 +14,10 @@ class About extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(height: 40),
-            Container(
-                height: 48,
-                width: 48,
-                child: Image.asset('assets/logo/moontree_logo.png')),
+            Image.asset(
+              'assets/logo/moontree_logo.png',
+              height: 72.relative(context),
+            ),
             Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
