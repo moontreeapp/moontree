@@ -66,29 +66,17 @@ class _SecurityState extends State<Security> {
                   ...[
                     if (securityChoice == SecurityOption.password &&
                         services.password.required)
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: 40, bottom: 40, left: 16, right: 16),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Container(
-                                  height: 40,
-                                  child: OutlinedButton.icon(
-                                      onPressed: behaviorChangePassword,
-                                      icon: Icon(
-                                        Icons.lock_rounded,
-                                      ),
-                                      label: Text(
-                                        'Change'.toUpperCase(),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .enabledButton,
-                                      ),
-                                      style: components.styles.buttons
-                                          .bottom(context)))
-                            ]),
-                      )
+                      components.containers.navBar(context,
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                components.buttons.actionButton(
+                                  context,
+                                  onPressed: behaviorChangePassword,
+                                  label: 'Change'.toUpperCase(),
+                                )
+                              ]))
                   ]
                 ],
               ))));

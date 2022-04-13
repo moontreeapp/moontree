@@ -61,22 +61,28 @@ class _ChangePasswordState extends State<ChangePassword> {
         child: body(),
       )));
 
-  Widget body() => Padding(
-      padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 40),
-      child: Column(
+  Widget body() => Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-            if (!streams.app.verify.value) existingPasswordField,
-            SizedBox(height: 16),
-            newPasswordField,
-            SizedBox(height: 16),
-            confirmPasswordField
-          ]),
-          Row(children: [submitButton])
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              for (var x in [
+                if (!streams.app.verify.value) existingPasswordField,
+                newPasswordField,
+                confirmPasswordField
+              ])
+                Padding(
+                    padding: EdgeInsets.only(left: 16, right: 16, top: 16),
+                    child: x)
+            ],
+          ),
+          KeyboardHidesWidget(
+              child: components.containers
+                  .navBar(context, child: Row(children: [submitButton])))
         ],
-      ));
+      );
 
   Widget get existingPasswordField => TextField(
         focusNode: existingPasswordFocusNode,
@@ -186,6 +192,9 @@ class _ChangePasswordState extends State<ChangePassword> {
         ),
         onChanged: (String value) => validateComplexity(),
         onEditingComplete: () async => await submit(),
+
+        /// should we just dismiss the keyboard instead of submitting?
+        // FocusManager.instance.primaryFocus?.unfocus();
       );
 
   Widget get submitButton => components.buttons.actionButton(
