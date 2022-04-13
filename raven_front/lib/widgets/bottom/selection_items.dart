@@ -148,7 +148,7 @@ class SelectionItems {
               ],
               SelectionSet.MainManage: [
                 SelectionOption.Reissue,
-                SelectionOption.Issue_Dividend,
+                // TODO: Not yet implemented: SelectionOption.Issue_Dividend,
               ],
             }[modalSet]) ??
         [];
