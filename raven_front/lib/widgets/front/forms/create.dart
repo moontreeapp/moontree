@@ -623,7 +623,7 @@ class _CreateAssetState extends State<CreateAsset> {
           ],
           fees: [
             // Standard / Fast transaction, will pull from settings?
-            ['Sandard Transaction', 'calculating fee...'],
+            ['Standard Transaction', 'calculating fee...'],
             isNFT
                 ? ['NFT', '5']
                 : isChannel

@@ -489,7 +489,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
           ],
           fees: [
             // Standard / Fast transaction, will pull from settings?
-            ['Sandard Transaction', 'calculating fee...'],
+            ['Standard Transaction', 'calculating fee...'],
             isSub
                 ? ['Reissue', '100']
                 : isMain
