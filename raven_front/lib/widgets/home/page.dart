@@ -4,6 +4,17 @@ import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 
+class HomePage2 extends StatelessWidget {
+  const HomePage2({ Key? key }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      
+    );
+  }
+}
+
 class HomePage extends StatefulWidget {
   final AppContext appContext;
 
@@ -17,7 +28,7 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late List listeners = [];
   //static const double minExtent = .0736842105263158;
-  static const double minExtent = .50;
+  static const double minExtent = .10;
   static const double maxExtent = 1.0;
   static const double initialExtent = maxExtent;
   late DraggableScrollableController draggableScrollController =

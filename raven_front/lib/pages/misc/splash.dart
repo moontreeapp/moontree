@@ -19,27 +19,11 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> with TickerProviderStateMixin {
-  BuildContext? givenContext;
 
   @override
   void initState() {
     super.initState();
     _init();
-    // _controller = AnimationController(vsync: this)
-    //   ..value = 0
-    //   ..addListener(() {
-    //     if (_controller.value == 1) {
-    //       streams.app.splash.add(false);
-    //       Future.microtask(() => Navigator.pushReplacementNamed(
-    //           context, '/loading',
-    //           arguments: {}));
-    //     } else {
-    //       setState(() {
-    //         // Rebuild the widget at each frame to update the "progress" label.
-    //       });
-    //     }
-    //   });
-    //Navigator.pushReplacementNamed(components.navigator.routeContext!, '/home');
   }
 
   DateTime startTime = DateTime.now();
@@ -49,11 +33,6 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     final loadingHelper = DataLoadingHelper(context);
 
     await loadingHelper.setupDatabase();
-    final totalMsTaken = DateTime.now().difference(startTime).inMilliseconds;
-    final remainingMs = 7000 - totalMsTaken;
-    final totalDelayTime = remainingMs > 0 ? remainingMs : 0;
-
-    await Future.delayed(Duration(milliseconds: totalDelayTime));
     loadingHelper.redirectToLoginOrHome();
     streams.app.splash.add(false);
   }
@@ -65,7 +44,6 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    givenContext = context;
     return Scaffold(
       body: Lottie.asset(
         'assets/splash/moontree_v2_001.json',
