@@ -16,6 +16,7 @@ class PageComponents {
     List<Widget>? columnWidgets,
     List<Widget>? buttons,
     List<Widget>? floatingButtons,
+    List<Widget>? layeredButtons,
     Widget? heightSpacer,
     Widget? widthSpacer,
     ScrollController? controller,
@@ -60,7 +61,7 @@ class PageComponents {
     heightSpacer = heightSpacer ?? SizedBox(height: 16);
     widthSpacer = widthSpacer ?? SizedBox(width: 16);
     return Container(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
+        padding: EdgeInsets.only(left: 0, right: 0, top: 10, bottom: 0),
         alignment: Alignment.bottomCenter,
         child: CustomScrollView(
             //shrinkWrap: true,
@@ -70,15 +71,21 @@ class PageComponents {
               ...<Widget>[
                 if ((boxedWidgets ?? []).isNotEmpty)
                   for (var widget in boxedWidgets!)
-                    SliverToBoxAdapter(child: widget)
+                    SliverToBoxAdapter(
+                        child: Padding(
+                            padding: EdgeInsets.only(left: 16, right: 16),
+                            child: widget))
               ].intersperse(heightSpacer),
               if ((columnWidgets ?? []).isNotEmpty)
                 SliverToBoxAdapter(
                     child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[for (var widget in columnWidgets!) widget]
-                      .intersperse(heightSpacer)
-                      .toList(),
+                  children: <Widget>[
+                    for (var widget in columnWidgets!)
+                      Padding(
+                          padding: EdgeInsets.only(left: 16, right: 16),
+                          child: widget)
+                  ].intersperse(heightSpacer).toList(),
                 )),
               if (extraSpace)
                 SliverToBoxAdapter(child: SizedBox(height: 120.0)),
@@ -89,12 +96,13 @@ class PageComponents {
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                for (var widget in buttons) widget
-                              ]),
-                          SizedBox(height: 40),
+                          components.containers.navBar(context,
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    for (var widget in buttons) widget
+                                  ].intersperse(widthSpacer).toList())),
                         ])),
             ]));
   }
