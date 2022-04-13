@@ -309,9 +309,9 @@ class _ReceiveState extends State<Receive> {
                                     var oldErrorText = errorText;
                                     errorText =
                                         value.length > 32 ? 'too long' : null;
-                                    //if (oldErrorText != errorText) {
-                                    //  setState(() {});
-                                    //}
+                                    if (oldErrorText != errorText) {
+                                      setState(() {});
+                                    }
                                   },
                                   onEditingComplete: () {
                                     requestMessage.text =

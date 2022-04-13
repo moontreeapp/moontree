@@ -116,7 +116,7 @@ class EmptyComponents {
         children: <Widget>[
           SizedBox(height: 8),
           ...[
-            for (var i in range(count)) ...[thisHolding, Divider()]
+            for (var _ in range(count)) ...[thisHolding, Divider()]
           ],
           ...blankNavArea
         ]);
@@ -180,7 +180,7 @@ class EmptyComponents {
         children: <Widget>[
           SizedBox(height: 8),
           ...[
-            for (var i in range(count)) ...[thisTransaction, Divider()]
+            for (var _ in range(count)) ...[thisTransaction, Divider()]
           ],
           ...blankNavArea
         ]);
