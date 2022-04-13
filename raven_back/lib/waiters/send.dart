@@ -33,6 +33,8 @@ class SendWaiter extends Waiter {
               positive: false));
           streams.spend.success.add(false);
         } catch (e) {
+          print('Send:');
+          print(e);
           streams.app.snack.add(Snack(
             message: 'Error Generating Transaction: $e',
             atBottom: true,
