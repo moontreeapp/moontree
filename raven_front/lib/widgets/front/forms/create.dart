@@ -61,7 +61,7 @@ class _CreateAssetState extends State<CreateAsset> {
   String? parentValidationErr;
   bool verifierValidated = false;
   String? verifierValidationErr;
-  int remainingNameLength = 31;
+  int remainingNameLength = 30;
   int remainingVerifierLength = 89;
   Map<FormPresets, String> presetToTitle = {
     FormPresets.main: 'Asset Name',
@@ -82,9 +82,9 @@ class _CreateAssetState extends State<CreateAsset> {
           nameController.text = value?.name ?? nameController.text;
           ipfsController.text = value?.ipfs ?? ipfsController.text;
           quantityController.text =
-              value?.quantity?.toString() ?? quantityController.text;
+              (value?.quantity ?? quantityController.text).toString();
           decimalController.text =
-              value?.decimal.toString() ?? decimalController.text;
+              (value?.decimal ?? decimalController.text).toString();
           reissueValue = value?.reissuable ?? reissueValue;
           verifierController.text = value?.verifier ?? verifierController.text;
         });
@@ -116,7 +116,7 @@ class _CreateAssetState extends State<CreateAsset> {
   Widget build(BuildContext context) {
     remainingNameLength =
         // max asset length
-        31 -
+        30 -
             // parent text and implied '/'
             (isSub ? parentController.text.length + 1 : 0) -
             // everything else has a special character denoting its type
@@ -244,27 +244,25 @@ class _CreateAssetState extends State<CreateAsset> {
         context,
         labelText: (isSub && !isNFT && !isChannel ? 'Sub ' : '') +
             presetToTitle[widget.preset]!,
-        hintText: 'MOONTREE_WALLET.COM',
+        hintText: 'MOONTREE.COM',
         errorText: isChannel || isRestricted
             ? null
-            : nameController.text.length > 2 && !nameValidated
-                //!nameValidation(nameController.text))
-                ? nameTakenValidated
-                    ? nameValidationErr
-                    : 'Taken'
+            : nameController.text.length > 0 && !nameValidated
+                ? nameValidationErr
                 : null,
       ),
       onTap: isRestricted ? _produceAdminAssetModal : null,
       onChanged:
           isRestricted ? null : (String value) => validateName(name: value),
-      onEditingComplete: isQualifier || isRestricted
+      onEditingComplete: (isQualifier || isRestricted)
           ? () => FocusScope.of(context).requestFocus(quantityFocus)
-          : isNFT || isChannel
+          : (isNFT || isChannel)
               ? () => FocusScope.of(context).requestFocus(ipfsFocus)
               : () {
                   validateName();
-                  nameNotTakenValid(nameController.text);
-                  FocusScope.of(context).requestFocus(quantityFocus);
+                  if (nameValidated) {
+                    FocusScope.of(context).requestFocus(quantityFocus);
+                  }
                 });
 
   Widget get quantityField => TextField(
@@ -402,14 +400,13 @@ class _CreateAssetState extends State<CreateAsset> {
   }
 
   Future<bool> nameNotTakenValid(String name) async {
-    var old = nameTakenValidated;
-    nameTakenValidated = !(await services.client.api.getAssetNames(name))
+    var ret = !(await services.client.api.getAssetNames(name))
         .toList()
         .contains(name);
-    if (old != nameTakenValidated) {
-      setState(() {});
+    if (!ret) {
+      nameValidationErr = 'not available';
     }
-    return nameTakenValidated;
+    return ret;
   }
 
   bool nameTypeValid(String name) {
@@ -441,7 +438,6 @@ class _CreateAssetState extends State<CreateAsset> {
       nameValidationErr = 'invalid SubAsset';
       return false;
     }
-    nameValidationErr = nameValidationErr;
     return true;
   }
 
@@ -450,7 +446,6 @@ class _CreateAssetState extends State<CreateAsset> {
       nameValidationErr = '${remainingNameLength - nameController.text.length}';
       return false;
     }
-    nameValidationErr = nameValidationErr;
     return true;
   }
 
@@ -459,8 +454,7 @@ class _CreateAssetState extends State<CreateAsset> {
     var oldValidation = nameValidated;
     nameValidated = nameValidation(name);
     if (nameValidated) {
-      var awaited = await nameNotTakenValid(name);
-      nameValidated = nameValidated && awaited;
+      nameValidated = await nameNotTakenValid(fullName(true));
     }
     if (oldValidation != nameValidated) {
       setState(() {});

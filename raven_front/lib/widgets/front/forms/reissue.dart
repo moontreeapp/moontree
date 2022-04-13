@@ -77,7 +77,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
           quantityController.text =
               value?.quantity?.toCommaString() ?? quantityController.text;
           decimalController.text =
-              value?.decimal.toString() ?? decimalController.text;
+              (value?.decimal ?? decimalController.text).toString();
           reissueValue = value?.reissuable ?? reissueValue;
           verifierController.text = value?.verifier ?? verifierController.text;
           minQuantity = value?.minQuantity ?? 0;
@@ -221,7 +221,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
       decoration: components.styles.decorations.textFeild(
         context,
         labelText: (isSub ? 'Sub ' : '') + presetToTitle[widget.preset]!,
-        hintText: 'MOONTREE_WALLET.COM',
+        hintText: 'MOONTREE.COM',
       ),
       onTap: isRestricted ? _produceAdminAssetModal : null,
       onChanged: null,
