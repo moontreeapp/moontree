@@ -27,19 +27,20 @@ class _RemovePasswordState extends State<RemovePassword> {
     return BackdropLayers(
         back: BlankBack(),
         front: FrontCurve(
-            child: Padding(
-                padding:
-                    EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 40),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: 16),
-                    Text('Are you sure?',
-                        style: Theme.of(context).textTheme.headline2),
-                    Row(children: [submitButton])
-                  ],
-                ))));
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(height: 16),
+            Padding(
+                padding: EdgeInsets.only(top: 16, left: 16, right: 16),
+                child: Text('Are you sure?',
+                    style: Theme.of(context).textTheme.headline2)),
+            KeyboardHidesWidget(
+                child: components.containers
+                    .navBar(context, child: Row(children: [submitButton])))
+          ],
+        )));
   }
 
   Widget get submitButton => components.buttons.actionButton(context,

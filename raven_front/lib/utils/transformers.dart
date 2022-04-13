@@ -21,15 +21,15 @@ class MainAssetNameTextFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    var text = utils.removeCharsOtherThan(newValue.text.toUpperCase(),
-        chars: utils.strings.mainAssetAllowed);
+    var text = newValue.text.toUpperCase();
     text = ['RVN', 'RAVEN', 'RAVENCOIN'].contains(text)
         ? ''
         : text
             .replaceAll('..', '.')
             .replaceAll('._', '.')
             .replaceAll('__', '_')
-            .replaceAll('_.', '_');
+            .replaceAll('_.', '_')
+            .replaceAll('//', '/');
     if (text.startsWith('_') || text.startsWith('.')) {
       text = text.substring(1, text.length);
     }
@@ -38,7 +38,9 @@ class MainAssetNameTextFormatter extends TextInputFormatter {
     }
     return TextEditingValue(
       text: text,
-      selection: oldValue.selection,
+      selection: newValue.selection.baseOffset < oldValue.selection.baseOffset
+          ? newValue.selection
+          : oldValue.selection,
     );
   }
 }

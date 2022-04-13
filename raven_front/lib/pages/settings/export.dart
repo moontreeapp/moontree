@@ -50,18 +50,21 @@ class _ExportState extends State<Export> {
     return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
   }
 
-  Widget body() => Padding(
-      padding: EdgeInsets.only(left: 16.0, top: 16, right: 16, bottom: 40),
-      child: Column(
+  Widget body() => Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           walletChoices,
-          Row(children: [previewButton])
+          components.containers.navBar(
+            context,
+            child: Row(children: [previewButton]),
+          )
         ],
-      ));
+      );
 
-  Widget get walletChoices => TextField(
+  Widget get walletChoices => Padding(
+      padding: EdgeInsets.only(left: 16.0, top: 16, right: 16, bottom: 40),
+      child: TextField(
         controller: walletController,
         readOnly: true,
         decoration: components.styles.decorations.textFeild(
@@ -85,7 +88,7 @@ class _ExportState extends State<Export> {
         onEditingComplete: () async {
           FocusScope.of(context).requestFocus(previewFocus);
         },
-      );
+      ));
 
   Widget get previewButton => components.buttons.actionButton(
         context,

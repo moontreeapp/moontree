@@ -3,9 +3,6 @@ import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/raven_back.dart';
 
 /// we use the electrum server directly for determining our UTXO set
-///
-/// must re-run this when we switch wallets
-/// must re-run this after we get all updates on addresses
 class UnspentService {
   Map<String, Set<ScripthashUnspent>> unspentsBySymbol = {};
 
@@ -58,7 +55,7 @@ class UnspentService {
           : 0;
 
   void assertSufficientFunds(int amount, String? symbol) {
-    if (total(defaultSymbol(symbol)) >= amount) {
+    if (total(defaultSymbol(symbol)) < amount) {
       throw InsufficientFunds();
     }
   }

@@ -6,7 +6,7 @@ import 'package:tuple/tuple.dart';
 
 import 'waiter.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/services/transaction_maker.dart';
+import 'package:raven_back/services/transaction/maker.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 
 class SendWaiter extends Waiter {
@@ -23,14 +23,14 @@ class SendWaiter extends Waiter {
           streams.spend.made.add(TransactionNote(
             txHex: tx.toHex(),
             note: sendRequest.note,
-          )); // tx + note
+          ));
           streams.spend.estimate.add(estimate);
           streams.spend.make.add(null);
         } on InsufficientFunds {
           streams.app.snack.add(Snack(
-            message: 'Send Failure',
-            details: 'Insufficient Funds',
-          ));
+              message: 'Send Failure: Insufficient Funds',
+              atBottom: true,
+              positive: false));
           streams.spend.success.add(false);
         } catch (e) {
           streams.app.snack.add(Snack(

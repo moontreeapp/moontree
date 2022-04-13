@@ -34,8 +34,11 @@ String cleanSatAmount(String amount) {
   return text;
 }
 
-String cleanDecAmount(String amount,
-    {bool zeroToBlank = false, bool blankToZero = false}) {
+String cleanDecAmount(
+  String amount, {
+  bool zeroToBlank = false,
+  bool blankToZero = false,
+}) {
   amount = utils.removeChars(amount,
       chars: utils.strings.whiteSapce + utils.strings.punctuationMinusCurrency);
   if (amount.length > 0) {

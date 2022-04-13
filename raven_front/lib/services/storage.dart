@@ -80,15 +80,24 @@ class Backup extends Storage {
     String? path,
   }) async {
     file = file ?? await _localFile(filename!, path: path);
+    var size = file.lengthSync() / 1024;
     try {
-      var content = await file.readAsString();
-      var size = file.lengthSync() / 1024;
+      //try {
+      //  var content = file.readAsStringSync();
+      //  return FileDetails(
+      //      filename: filename ?? 'unknown filename',
+      //      content: content,
+      //      size: size);
+      //} catch (e) {
+      var contentBytes = await file.readAsBytes();
       return FileDetails(
-          filename: filename ?? 'unknown filename',
-          content: content,
+          filename: filename ?? file.path.split('/').last,
+          contentBytes: contentBytes,
           size: size);
+      //}
     } catch (e) {
-      return null;
+      return FileDetails(
+          filename: 'Unable to Read File', content: 'unknown', size: size);
     }
   }
 
@@ -187,9 +196,13 @@ class AssetLogos extends Storage {
 
 class FileDetails {
   final String filename;
-  final String content;
+  final Uint8List? contentBytes;
+  final String? content;
   final double size;
 
   FileDetails(
-      {required this.filename, required this.content, required this.size});
+      {required this.filename,
+      required this.size,
+      this.content,
+      this.contentBytes});
 }

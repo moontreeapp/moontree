@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/widgets/widgets.dart';
 
 class VerifyPassword extends StatefulWidget {
   final State? parentState;
@@ -36,26 +37,14 @@ class _VerifyPasswordState extends State<VerifyPassword> {
         child: body(),
       );
 
-  Widget oldbody() => Padding(
-      padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 40),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          existingPasswordField,
-          Row(children: [submitButton])
-        ],
-      ));
-
-  Widget body() => Container(
-      padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
-      child: CustomScrollView(slivers: <Widget>[
+  Widget body() => CustomScrollView(slivers: <Widget>[
         SliverToBoxAdapter(
           child: Container(height: (MediaQuery.of(context).size.height) / 3),
         ),
         SliverToBoxAdapter(
           child: Container(
               alignment: Alignment.center,
+              padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
               height: 70,
               child: existingPasswordField),
         ),
@@ -66,10 +55,11 @@ class _VerifyPasswordState extends State<VerifyPassword> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   SizedBox(height: 100),
-                  Row(children: [submitButton]),
-                  SizedBox(height: 40),
+                  KeyboardHidesWidget(
+                      child: components.containers.navBar(context,
+                          child: Row(children: [submitButton]))),
                 ])),
-      ]));
+      ]);
 
   Widget get existingPasswordField => TextField(
         focusNode: existingFocus,

@@ -3,7 +3,7 @@ import 'download/download.dart';
 import 'balance.dart';
 import 'cipher.dart';
 import 'client.dart';
-import 'transaction.dart';
+import 'transaction/transaction.dart';
 import 'password.dart';
 import 'rate.dart';
 import 'wallet.dart';

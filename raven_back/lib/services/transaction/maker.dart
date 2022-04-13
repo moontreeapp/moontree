@@ -5,7 +5,7 @@ import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 import 'package:ravencoin_wallet/src/fee.dart';
 import 'package:tuple/tuple.dart';
 
-import 'transaction/sign.dart';
+import 'sign.dart';
 import 'package:bs58/bs58.dart';
 
 class NFTCreateRequest {

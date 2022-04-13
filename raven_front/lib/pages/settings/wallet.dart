@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:raven_back/services/transaction.dart';
+import 'package:raven_back/services/transaction/transaction.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
@@ -266,7 +266,7 @@ class _WalletViewState extends State<WalletView> {
                           ? Theme.of(context)
                               .textTheme
                               .caption!
-                              .replace(fontWeight: FontWeight.bold)
+                              .copyWith(fontWeight: FontWeight.bold)
                           : Theme.of(context).textTheme.caption),
                   Text(
                       utils

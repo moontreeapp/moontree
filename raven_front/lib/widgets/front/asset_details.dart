@@ -93,9 +93,7 @@ class _AssetDetails extends State<AssetDetails> {
       case 'Name':
         return widget.symbol;
       case 'Quantity':
-        return utils
-            .satToAmount(assetDetails!.satsInCirculation)
-            .toCommaString();
+        return assetDetails!.amount.toCommaString();
       case 'Decimals':
         return assetDetails!.divisibility.toString();
       case 'Verifier':

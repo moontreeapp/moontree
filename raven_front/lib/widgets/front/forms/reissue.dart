@@ -8,7 +8,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/services/transaction_maker.dart';
+import 'package:raven_back/services/transaction/maker.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/pages/misc/checkout.dart';
 import 'package:raven_front/services/lookup.dart';
@@ -48,7 +48,6 @@ class _ReissueAssetState extends State<ReissueAsset> {
   FocusNode decimalFocus = FocusNode();
   FocusNode verifierFocus = FocusNode();
   bool nameValidated = false;
-  bool nameTakenValidated = false;
   bool ipfsValidated = false;
   bool quantityValidated = false;
   bool decimalValidated = false;
@@ -236,6 +235,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
         focusNode: quantityFocus,
         controller: quantityController, // can't be lower than  minQuantity
 //      keyboardType: TextInputType.number,
+        enabled: minQuantity == 21000000000 ? false : true,
         keyboardType:
             TextInputType.numberWithOptions(decimal: false, signed: false),
         textInputAction: TextInputAction.done,
@@ -274,9 +274,9 @@ class _ReissueAssetState extends State<ReissueAsset> {
                   padding: EdgeInsets.only(right: 14),
                   child: Icon(Icons.expand_more_rounded,
                       color: Color(0xDE000000))),
-              onPressed: () => _produceDecimalModal(),
+              onPressed: minDecimal == 8 ? () {} : () => _produceDecimalModal(),
             )),
-        onTap: () => _produceDecimalModal(),
+        onTap: minDecimal == 8 ? () {} : () => _produceDecimalModal(),
         onChanged: (String? newValue) {
           FocusScope.of(context).requestFocus(ipfsFocus);
         },
@@ -356,7 +356,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
   Widget get submitButton => components.buttons.actionButton(
         context,
         focusNode: nextFocus,
-        enabled: nameTakenValidated && enabled,
+        enabled: enabled,
         onPressed: submit,
       );
 
@@ -423,30 +423,17 @@ class _ReissueAssetState extends State<ReissueAsset> {
     }
   }
 
-  bool get enabled =>
-      (needsQuantity
-          ? quantityController.text != '' &&
-              quantityValidation(quantityController.text.toInt())
-          : true) &&
-      (needsDecimal
-          ? decimalController.text != '' &&
-              decimalValidation(decimalController.text.toInt())
-          : true) &&
-      (ipfsController.text == '' || ipfsValidation(ipfsController.text));
-
-  Future<bool> get enabledAsync async =>
-      (needsQuantity
-          ? quantityController.text != '' &&
-              quantityValidation(quantityController.text.toInt())
-          : true) &&
-      (needsDecimal
-          ? decimalController.text != '' &&
-              decimalValidation(decimalController.text.toInt())
-          : true) &&
-      (ipfsController.text == '' || ipfsValidation(ipfsController.text));
+  bool get enabled => [
+        quantityController.text != '' &&
+            quantityValidation(quantityController.text.toInt()),
+        decimalController.text != minDecimal.toString() &&
+            decimalValidation(decimalController.text.toInt()),
+        ipfsController.text != '' && ipfsValidation(ipfsController.text),
+        reissueValue == false,
+      ].any((e) => e);
 
   Future<void> submit() async {
-    if (await enabledAsync) {
+    if (enabled) {
       FocusScope.of(context).unfocus();
 
       /// send them to transaction checkout screen

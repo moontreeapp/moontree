@@ -1,10 +1,10 @@
 // dart test .\test\unit\services\transaction_test.dart
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/services/transaction.dart';
+import 'package:raven_back/services/transaction/transaction.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart';
 import 'package:test/test.dart';
 
-import 'package:raven_back/services/transaction_maker.dart';
+import 'package:raven_back/services/transaction/maker.dart';
 import '../../fixtures/fixtures.dart' as fixtures;
 
 const connectionTimeout = Duration(seconds: 5);

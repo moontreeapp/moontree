@@ -71,13 +71,15 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
         )));
   }
 
-  Widget body() => Container(
-      padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
-      child: CustomScrollView(slivers: <Widget>[
+  Widget body() => CustomScrollView(slivers: <Widget>[
         //SliverToBoxAdapter(child: networkTextField),
         //SliverToBoxAdapter(child: SizedBox(height: 16)),
         SliverToBoxAdapter(child: SizedBox(height: 6)),
-        SliverToBoxAdapter(child: serverTextField),
+        SliverToBoxAdapter(
+            child: Padding(
+                padding:
+                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
+                child: serverTextField)),
         SliverToBoxAdapter(
             child: Container(height: MediaQuery.of(context).size.height / 2)),
         SliverFillRemaining(
@@ -87,10 +89,10 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   SizedBox(height: 100),
-                  Row(children: [submitButton]),
-                  SizedBox(height: 40),
+                  components.containers
+                      .navBar(context, child: Row(children: [submitButton])),
                 ])),
-      ]));
+      ]);
 
   Widget get networkTextField => Container(
       height: 81,
