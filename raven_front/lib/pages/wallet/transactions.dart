@@ -120,6 +120,9 @@ class _TransactionsState extends State<Transactions>
                 context,
                 label: 'receive',
                 link: '/transaction/receive',
+                arguments: security != res.securities.RVN
+                    ? {'symbol': security.symbol}
+                    : null,
               )
             ],
           ),

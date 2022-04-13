@@ -12,6 +12,7 @@ class ButtonComponents {
     String? label,
     Widget? disabledIcon,
     String? link,
+    Map<String, dynamic>? arguments,
     VoidCallback? onPressed,
     VoidCallback? disabledOnPressed,
     FocusNode? focusNode,
@@ -26,7 +27,7 @@ class ButtonComponents {
           onPressed: enabled
               ? (link != null
                   ? () => Navigator.of(components.navigator.routeContext!)
-                      .pushNamed(link)
+                      .pushNamed(link, arguments: arguments)
                   : onPressed ?? () {})
               : disabledOnPressed ?? () {},
           style: invert

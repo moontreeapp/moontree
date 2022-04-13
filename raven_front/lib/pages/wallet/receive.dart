@@ -39,7 +39,7 @@ class _ReceiveState extends State<Receive> {
       requestAmount.text == '' &&
       requestLabel.text == '';
 
-  void _makeURI() {
+  void _makeURI({bool refresh = true}) {
     if (rawAddress) {
       uri = address;
     } else {
@@ -60,7 +60,9 @@ class _ReceiveState extends State<Receive> {
       tail = tail.length == 1 ? '' : tail;
       uri = 'raven:$address$tail';
     }
-    setState(() => {});
+    if (refresh) {
+      setState(() => {});
+    }
   }
 
   @override
@@ -102,6 +104,9 @@ class _ReceiveState extends State<Receive> {
     uri = uri == '' ? address : uri;
     //requestMessage.selection =
     //    TextSelection.collapsed(offset: requestMessage.text.length);
+    if (requestMessage.text != '') {
+      _makeURI(refresh: false);
+    }
     double height = MediaQuery.of(context).size.height - 56;
     return BackdropLayers(
         back: BlankBack(),
@@ -280,20 +285,33 @@ class _ReceiveState extends State<Receive> {
                                   ],
                                   //maxLength: 32,
                                   //maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                                  decoration: components.styles.decorations
-                                      .textFeild(context,
-                                          labelText: 'Requested Asset',
-                                          hintText: 'Ravencoin',
-                                          errorText: errorText),
+                                  decoration:
+                                      components.styles.decorations.textFeild(
+                                    context,
+                                    labelText: 'Requested Asset',
+                                    hintText: 'MOONTREE',
+                                    errorText: errorText,
+                                    suffixIcon: requestMessage.text == ''
+                                        ? null
+                                        : IconButton(
+                                            alignment: Alignment.centerRight,
+                                            //padding: EdgeInsets.all(0),
+                                            icon: Icon(Icons.close_rounded,
+                                                color: AppColors.black60),
+                                            onPressed: () => setState(() {
+                                                  requestMessage.text = '';
+                                                  data['symbol'] = null;
+                                                })),
+                                  ),
                                   onChanged: (value) {
                                     // /requestMessage.text = cleanLabel(requestMessage.text);
                                     // /_makeURI();
                                     var oldErrorText = errorText;
                                     errorText =
                                         value.length > 32 ? 'too long' : null;
-                                    if (oldErrorText != errorText) {
-                                      setState(() {});
-                                    }
+                                    //if (oldErrorText != errorText) {
+                                    //  setState(() {});
+                                    //}
                                   },
                                   onEditingComplete: () {
                                     requestMessage.text =
