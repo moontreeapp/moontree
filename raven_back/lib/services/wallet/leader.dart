@@ -231,7 +231,6 @@ class LeaderWalletService {
     exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];
     var newAddresses = <Address>{};
     for (var exposure in exposures) {
-      var s = Stopwatch()..start();
       var derivedAddresses = await deriveNextAddresses(
         wallet,
         res.ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,

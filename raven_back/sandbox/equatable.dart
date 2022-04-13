@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 void main() {
-  LeaderWalletService lws = LeaderWalletService();
+  var lws = LeaderWalletService();
   print(lws.indexRegistry);
   lws.getIndexOf('a', 'b');
   print(lws.indexRegistry);
@@ -66,7 +66,7 @@ class LeaderExposureKey with EquatableMixin {
   List<Object> get props => [leader, exposure];
 
   @override
-  toString() => '$leader, $exposure';
+  String toString() => '$leader, $exposure';
 }
 
 class LeaderExposureIndex {
@@ -83,5 +83,5 @@ class LeaderExposureIndex {
   void updateUsedPlus(int value) => used = used + value;
 
   @override
-  toString() => '$saved, $used';
+  String toString() => '$saved, $used';
 }

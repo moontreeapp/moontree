@@ -22,7 +22,7 @@ import 'package:raven_front/pages/settings/security/remove.dart';
 import 'package:raven_front/pages/settings/security/resume.dart';
 import 'package:raven_front/pages/settings/security/change.dart';
 import 'package:raven_front/pages/settings/about.dart';
-import 'package:raven_front/pages/settings/currency.dart';
+//import 'package:raven_front/pages/settings/currency.dart';
 import 'package:raven_front/pages/settings/export.dart';
 import 'package:raven_front/pages/settings/feedback.dart';
 import 'package:raven_front/pages/settings/import.dart';

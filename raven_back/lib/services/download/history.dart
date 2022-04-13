@@ -28,9 +28,6 @@ class HistoryService {
     if (client == null) {
       return false;
     }
-    // TODO: edge case to consider...
-    // if a history is too long, don't error
-    // will have to just not show all historic transactions...
     var histories = await client.getHistory(address.id);
     addresses.add(address);
     if (address.wallet is LeaderWallet) {

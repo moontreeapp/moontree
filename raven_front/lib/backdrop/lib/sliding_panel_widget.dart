@@ -24,7 +24,7 @@ class SlidingPanel extends StatefulWidget {
 
   final Widget? footer;
 
-  double controlHeight;
+  final double controlHeight;
 
   final double? snapPoint;
 
