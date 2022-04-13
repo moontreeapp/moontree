@@ -10,7 +10,7 @@ import 'package:raven_front/widgets/widgets.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 
 import 'package:raven_back/streams/spend.dart';
-import 'package:raven_back/services/transaction_maker.dart';
+import 'package:raven_back/services/transaction/maker.dart';
 import 'package:raven_back/raven_back.dart';
 
 import 'package:raven_front/components/components.dart';
@@ -246,13 +246,9 @@ class _SendState extends State<Send> {
             ],
           ),
           KeyboardHidesWidget(
-              child: components.buttons.floatingButtons(
+              child: components.buttons.layeredButtons(
             context,
-            buttons: [
-              allValidation()
-                  ? sendTransactionButton()
-                  : sendTransactionButton(disabled: true)
-            ],
+            buttons: [sendTransactionButton(disabled: !allValidation())],
             widthSpacer: SizedBox(width: 16),
           ))
         ],

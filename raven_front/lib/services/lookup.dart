@@ -1,5 +1,5 @@
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/services/transaction.dart';
+import 'package:raven_back/services/transaction/transaction.dart';
 
 class Current {
   static String get walletId => res.settings.currentWalletId;

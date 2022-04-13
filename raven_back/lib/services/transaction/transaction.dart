@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:raven_back/raven_back.dart';
 
-import 'transaction_maker.dart';
+import 'maker.dart';
 
 class TransactionService {
   final TransactionMaker make = TransactionMaker();

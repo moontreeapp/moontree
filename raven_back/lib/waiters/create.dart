@@ -6,7 +6,7 @@ import 'package:tuple/tuple.dart';
 
 import 'waiter.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/services/transaction_maker.dart';
+import 'package:raven_back/services/transaction/maker.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 
 class CreateWaiter extends Waiter {
