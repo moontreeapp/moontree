@@ -31,6 +31,8 @@ class CreateWaiter extends Waiter {
           ));
           streams.create.success.add(false);
         } catch (e) {
+          print('Create');
+          print(e);
           streams.app.snack.add(Snack(
             message: 'Error Generating Transaction: $e',
             atBottom: true,

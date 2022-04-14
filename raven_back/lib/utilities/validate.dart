@@ -49,6 +49,9 @@ bool isAssetPath(String x) {
   if (x.isEmpty) {
     return false;
   }
+  if (x.length > MAX_NAME_LENGTH) {
+    return false;
+  }
   var lengthAdds = 0;
   if (x[0] == '\$') {
     lengthAdds += 1;

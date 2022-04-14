@@ -8,6 +8,7 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/pages/misc/checkout.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_back/streams/create.dart';
+import 'package:raven_back/utilities/validate.dart';
 import 'package:raven_front/utils/transformers.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
@@ -116,7 +117,7 @@ class _CreateAssetState extends State<CreateAsset> {
   Widget build(BuildContext context) {
     remainingNameLength =
         // max asset length
-        30 -
+        MAX_NAME_LENGTH -
             // parent text and implied '/'
             (isSub ? parentController.text.length + 1 : 0) -
             // everything else has a special character denoting its type
