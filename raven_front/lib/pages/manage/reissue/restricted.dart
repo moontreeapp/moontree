@@ -1,7 +1,7 @@
 // this could be a stateless widget.
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/streams/create.dart';
+import 'package:raven_back/streams/reissue.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class ReissueRestrictedAsset extends StatefulWidget {
@@ -25,7 +25,7 @@ class _ReissueRestrictedAssetState extends State<ReissueRestrictedAsset> {
     var asset =
         res.assets.bySymbol.getOne(streams.app.manage.asset.value ?? '');
     if (asset != null && asset.reissuable) {
-      streams.create.form.add(GenericCreateForm(
+      streams.reissue.form.add(GenericReissueForm(
         parent: asset.parent?.symbol,
         name: asset.symbol,
         minQuantity: asset.amount.toInt(),

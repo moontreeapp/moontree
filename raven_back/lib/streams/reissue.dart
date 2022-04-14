@@ -1,55 +1,62 @@
 import 'package:raven_back/services/transaction/maker.dart';
 import 'package:rxdart/rxdart.dart';
 
-class CreateStreams {
-  final form = BehaviorSubject<GenericCreateForm?>.seeded(null);
-  final request = BehaviorSubject<GenericCreateRequest?>.seeded(null);
-  //final make = BehaviorSubject<SendRequest?>.seeded(null);
+class ReissueStreams {
+  final form = BehaviorSubject<GenericReissueForm?>.seeded(null);
+  final request = BehaviorSubject<GenericReissueRequest?>.seeded(null);
   final made = BehaviorSubject<String?>.seeded(null);
   final estimate = BehaviorSubject<SendEstimate?>.seeded(null);
   final send = BehaviorSubject<String?>.seeded(null);
   final success = BehaviorSubject<bool?>.seeded(null);
 }
 
-class GenericCreateForm {
+class GenericReissueForm {
   final String? name;
   final String? ipfs;
   final int? quantity;
   final int? decimal;
+  final int? minQuantity;
+  final int? minDecimal;
   final bool? reissuable;
   final String? verifier;
   final String? parent; // you have to use the wallet that holds the prent
 
-  GenericCreateForm({
+  GenericReissueForm({
     this.name,
     this.ipfs,
     this.quantity,
     this.decimal,
+    this.minQuantity,
+    this.minDecimal,
     this.verifier,
     this.reissuable,
     this.parent,
   });
   @override
-  String toString() => 'GenericCreateForm('
+  String toString() => 'GenericReissueForm('
       'name=$name, '
       'ipfs=$ipfs, '
       'quantity=$quantity, '
       'decimal=$decimal, '
+      'minQuantity=$minQuantity, '
+      'minDecimal=$minDecimal, '
       'verifier=$verifier, '
       'reissuable=$reissuable, '
       'parent=$parent)';
 
-  factory GenericCreateForm.merge({
-    GenericCreateForm? form,
+  factory GenericReissueForm.merge({
+    GenericReissueForm? form,
     String? name,
     String? ipfs,
     int? quantity,
+    int? minQuantity,
     int? decimal,
+    int? minDecimal,
     String? verifier,
     bool? reissuable,
     String? parent,
   }) {
-    return GenericCreateForm(
+    return GenericReissueForm(
       name: name ?? form?.name,
       ipfs: ipfs ?? form?.ipfs,
       quantity: quantity ?? form?.quantity,
@@ -64,7 +71,7 @@ class GenericCreateForm {
 
   @override
   bool operator ==(Object form) {
-    return form is GenericCreateForm
+    return form is GenericReissueForm
         ? (form.name == name &&
             form.ipfs == ipfs &&
             form.quantity == quantity &&

@@ -12,7 +12,7 @@ import 'package:raven_back/services/transaction/maker.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/pages/misc/checkout.dart';
 import 'package:raven_front/services/lookup.dart';
-import 'package:raven_back/streams/create.dart';
+import 'package:raven_back/streams/reissue.dart';
 import 'package:raven_front/utils/transformers.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
@@ -32,7 +32,7 @@ class ReissueAsset extends StatefulWidget {
 
 class _ReissueAssetState extends State<ReissueAsset> {
   List<StreamSubscription> listeners = [];
-  GenericCreateForm? createForm;
+  GenericReissueForm? reissueForm;
   TextEditingController parentController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController ipfsController = TextEditingController();
@@ -67,10 +67,10 @@ class _ReissueAssetState extends State<ReissueAsset> {
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.create.form.listen((GenericCreateForm? value) {
-      if (createForm != value) {
+    listeners.add(streams.reissue.form.listen((GenericReissueForm? value) {
+      if (reissueForm != value) {
         setState(() {
-          createForm = value;
+          reissueForm = value;
           parentController.text = value?.parent ?? parentController.text;
           nameController.text = value?.name ?? nameController.text;
           ipfsController.text = value?.ipfs ?? ipfsController.text;
@@ -437,19 +437,18 @@ class _ReissueAssetState extends State<ReissueAsset> {
       FocusScope.of(context).unfocus();
 
       /// send them to transaction checkout screen
-      checkout(GenericCreateRequest(
+      checkout(GenericReissueRequest(
         isSub: widget.isSub,
         isMain: isMain,
-        isNFT: false,
-        isChannel: false,
-        isQualifier: false,
         isRestricted: isRestricted,
         fullName: fullName(true),
         wallet: Current.wallet,
         name: nameController.text,
-        ipfs: ipfsController.text == '' ? null : ipfsController.text,
         quantity: needsQuantity ? quantityController.text.toInt() : null,
         decimals: needsDecimal ? decimalController.text.toInt() : null,
+        originalQuantity: minQuantity,
+        originalDecimals: minDecimal,
+        ipfs: ipfsController.text == '' ? null : ipfsController.text,
         reissuable: needsReissue ? reissueValue : null,
         verifier: needsVerifier ? verifierController.text : null,
         parent: isSub ? parentController.text : null,
@@ -461,9 +460,9 @@ class _ReissueAssetState extends State<ReissueAsset> {
       ? parentController.text + '/' + nameController.text
       : nameController.text;
 
-  void checkout(GenericCreateRequest createRequest) {
+  void checkout(GenericReissueRequest reissueRequest) {
     /// send request to the correct stream
-    streams.create.request.add(createRequest);
+    streams.reissue.request.add(reissueRequest);
 
     /// go to confirmation page
     Navigator.of(components.navigator.routeContext!).pushNamed(
@@ -502,7 +501,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
           // produce transaction structure here and the checkout screen will
           // send it up on submit:
           buttonAction: () =>
-              streams.create.send.add(streams.create.made.value),
+              streams.reissue.send.add(streams.reissue.made.value),
           buttonWord: 'Reissue',
           loadingMessage: 'Reissuing Asset',
         )

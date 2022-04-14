@@ -160,6 +160,79 @@ class GenericCreateRequest with ToStringMixin {
       Security(symbol: fullName, securityType: SecurityType.RavenAsset);
 }
 
+class GenericReissueRequest with ToStringMixin {
+  late bool isSub;
+  late bool isMain;
+  late bool isRestricted;
+  late String fullName;
+  late Wallet wallet;
+  late String name;
+  late int? quantity;
+  late int? decimals;
+  late int? originalQuantity;
+  late int? originalDecimals;
+  late String? ipfs;
+  late String? verifier;
+  late bool? reissuable;
+  late String?
+      parent; // you have to use the wallet that holds the prent if sub asset
+
+  GenericReissueRequest({
+    required this.isSub,
+    required this.isMain,
+    required this.isRestricted,
+    required this.name,
+    required this.fullName,
+    required this.wallet,
+    required this.quantity,
+    required this.decimals,
+    required this.originalQuantity,
+    required this.originalDecimals,
+    this.ipfs,
+    this.verifier,
+    this.reissuable,
+    this.parent,
+  });
+
+  @override
+  List<Object?> get props => [
+        isSub,
+        isMain,
+        isRestricted,
+        fullName,
+        wallet,
+        name,
+        quantity,
+        decimals,
+        originalQuantity,
+        originalDecimals,
+        ipfs,
+        verifier,
+        reissuable,
+        parent,
+      ];
+  @override
+  List<String> get propNames => [
+        'isSub',
+        'isMain',
+        'isRestricted',
+        'fullName',
+        'wallet',
+        'name',
+        'quantity',
+        'decimals',
+        'originalQuantity',
+        'originalDecimals',
+        'ipfs',
+        'verifier',
+        'reissuable',
+        'parent',
+      ];
+
+  Security get security =>
+      Security(symbol: fullName, securityType: SecurityType.RavenAsset);
+}
+
 class SendRequest with ToStringMixin {
   late bool sendAll;
   late String sendAddress;
@@ -334,10 +407,10 @@ class TransactionMaker {
         ? await transactionCreateChildAsset(
             createRequest.parent!,
             estimate,
+            wallet: createRequest.wallet,
             ipfsData: createRequest.ipfs != null
                 ? base58.decode(createRequest.ipfs!)
                 : null, // maybe this should be bytes from front
-            wallet: createRequest.wallet,
             goal: TxGoals.standard,
           )
         : createRequest.isSub
@@ -346,10 +419,10 @@ class TransactionMaker {
                 estimate,
                 createRequest.decimals ?? 0,
                 createRequest.reissuable ?? false,
+                wallet: createRequest.wallet,
                 ipfsData: createRequest.ipfs != null
                     ? base58.decode(createRequest.ipfs!)
                     : null, // maybe this should be bytes from front
-                wallet: createRequest.wallet,
                 goal: TxGoals.standard,
               )
             :
@@ -358,20 +431,61 @@ class TransactionMaker {
                 estimate,
                 createRequest.decimals ?? 0,
                 createRequest.reissuable ?? false,
+                wallet: createRequest.wallet,
                 ipfsData: createRequest.ipfs != null
                     ? base58.decode(createRequest.ipfs!)
                     : null, // maybe this should be bytes from front
-                wallet: createRequest.wallet,
                 goal: TxGoals.standard,
               );
   }
 
+  Future<Tuple2<ravencoin.Transaction, SendEstimate>> reissueTransactionBy(
+    GenericReissueRequest reissueRequest,
+  ) async {
+    var estimate = SendEstimate(
+      (reissueRequest.quantity ?? 1) * 100000000,
+      security: reissueRequest.security,
+      creation: true,
+    );
+    print('reissueTransactionBy $estimate');
+    return reissueRequest.isRestricted
+        ? await transactionReissueRestrictedAsset(
+            estimate,
+            reissueRequest.originalDecimals ?? 0,
+            reissueRequest.originalQuantity ?? 0,
+            reissueRequest.decimals ?? 0,
+            reissueRequest.reissuable ?? false,
+            wallet: reissueRequest.wallet,
+            verifier: null,
+            newAssetToAddress: null,
+            ownershipToAddress: null,
+            ipfsData: reissueRequest.ipfs != null
+                ? base58.decode(reissueRequest.ipfs!)
+                : null, // maybe this should be bytes from front
+            goal: TxGoals.standard)
+        : await transactionReissueAsset(
+            estimate,
+            reissueRequest.originalDecimals ?? 0,
+            reissueRequest.originalQuantity ?? 0,
+            reissueRequest.decimals ?? 0,
+            reissueRequest.reissuable ?? false,
+            wallet: reissueRequest.wallet,
+            newAssetToAddress: null,
+            ownershipToAddress: null,
+            ipfsData: reissueRequest.ipfs != null
+                ? base58.decode(reissueRequest.ipfs!)
+                : null, // maybe this should be bytes from front
+            goal: TxGoals.standard);
+  }
+
   Future<Tuple2<ravencoin.Transaction, SendEstimate>>
-      transactionCreateQualifier(SendEstimate estimate,
-          {required Wallet wallet,
-          Uint8List? ipfsData,
-          TxGoal? goal,
-          String? newAssetToAddress}) async {
+      transactionCreateQualifier(
+    SendEstimate estimate, {
+    required Wallet wallet,
+    Uint8List? ipfsData,
+    TxGoal? goal,
+    String? newAssetToAddress,
+  }) async {
     ravencoin.TransactionBuilder? txb;
     ravencoin.Transaction tx;
 
@@ -420,12 +534,15 @@ class TransactionMaker {
   }
 
   Future<Tuple2<ravencoin.Transaction, SendEstimate>>
-      transactionCreateSubQualifier(SendEstimate estimate, String parentAsset,
-          {required Wallet wallet,
-          Uint8List? ipfsData,
-          TxGoal? goal,
-          String? newAssetToAddress,
-          String? parentAssetToAddress}) async {
+      transactionCreateSubQualifier(
+    SendEstimate estimate,
+    String parentAsset, {
+    required Wallet wallet,
+    Uint8List? ipfsData,
+    TxGoal? goal,
+    String? newAssetToAddress,
+    String? parentAssetToAddress,
+  }) async {
     ravencoin.TransactionBuilder? txb;
     ravencoin.Transaction tx;
 
@@ -497,13 +614,16 @@ class TransactionMaker {
 
   Future<Tuple2<ravencoin.Transaction, SendEstimate>>
       transactionCreateRestricted(
-          SendEstimate estimate, int divisibility, bool reissuable,
-          {String? newAssetToAddress,
-          String? parentAssetToAddress,
-          Uint8List? ipfsData,
-          String? verifier,
-          required Wallet wallet,
-          TxGoal? goal}) async {
+    SendEstimate estimate,
+    int divisibility,
+    bool reissuable, {
+    required Wallet wallet,
+    String? newAssetToAddress,
+    String? parentAssetToAddress,
+    Uint8List? ipfsData,
+    String? verifier,
+    TxGoal? goal,
+  }) async {
     ravencoin.TransactionBuilder? txb;
     ravencoin.Transaction tx;
     if (estimate.security == null || estimate.security!.symbol[0] != '\$') {
@@ -570,11 +690,11 @@ class TransactionMaker {
     int currentSatsInCirculation,
     int newDivisibility,
     bool reissuability, {
+    required Wallet wallet,
     String? verifier,
     String? newAssetToAddress,
     String? ownershipToAddress,
     Uint8List? ipfsData,
-    required Wallet wallet,
     TxGoal? goal,
   }) async {
     ravencoin.TransactionBuilder? txb;
@@ -641,13 +761,14 @@ class TransactionMaker {
   }
 
   Future<Tuple2<ravencoin.Transaction, SendEstimate>> transactionQualifyAddress(
-      SendEstimate estimate,
-      String qualifyingAsset,
-      String addressToQualify,
-      bool tag,
-      {String? qualifierToAddress,
-      required Wallet wallet,
-      TxGoal? goal}) async {
+    SendEstimate estimate,
+    String qualifyingAsset,
+    String addressToQualify,
+    bool tag, {
+    required Wallet wallet,
+    String? qualifierToAddress,
+    TxGoal? goal,
+  }) async {
     ravencoin.TransactionBuilder? txb;
     ravencoin.Transaction tx;
     if (estimate.security == null ||
@@ -723,10 +844,10 @@ class TransactionMaker {
     int currentSatsInCirculation,
     int newDivisibility,
     bool reissuability, {
+    required Wallet wallet,
     String? newAssetToAddress,
     String? ownershipToAddress,
     Uint8List? ipfsData,
-    required Wallet wallet,
     TxGoal? goal,
   }) async {
     ravencoin.TransactionBuilder? txb;
@@ -791,10 +912,10 @@ class TransactionMaker {
     SendEstimate estimate,
     int divisibility,
     bool reissuability, {
+    required Wallet wallet,
     String? newAssetToAddress,
     String? ownershipToAddress,
     Uint8List? ipfsData,
-    required Wallet wallet,
     TxGoal? goal,
   }) async {
     ravencoin.TransactionBuilder? txb;
@@ -848,11 +969,11 @@ class TransactionMaker {
     SendEstimate estimate,
     int divisibility,
     bool reissuability, {
+    required Wallet wallet,
     String? newAssetToAddress,
     String? parentOwnershipToAddress,
     String? ownershipToAddress,
     Uint8List? ipfsData,
-    required Wallet wallet,
     TxGoal? goal,
   }) async {
     ravencoin.TransactionBuilder? txb;
@@ -915,10 +1036,10 @@ class TransactionMaker {
       transactionCreateChildAsset(
     String parentAsset,
     SendEstimate estimate, {
+    required Wallet wallet,
     String? newAssetToAddress,
     String? parentOwnershipToAddress,
     Uint8List? ipfsData,
-    required Wallet wallet,
     TxGoal? goal,
   }) async {
     ravencoin.TransactionBuilder? txb;
