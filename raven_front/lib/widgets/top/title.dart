@@ -121,7 +121,7 @@ class _PageTitleState extends State<PageTitle> {
     }
     return walletNumber() ??
         wrap(PageTitle.settingsMap[settingTitle] ??
-            (streams.create.form.value?.minQuantity != null
+            (streams.reissue.form.value != null
                 ? PageTitle.pageMapReissue[pageTitle]
                 : null) ??
             PageTitle.pageMap[pageTitle] ??
