@@ -463,9 +463,11 @@ class TransactionMaker {
             verifier: null,
             newAssetToAddress: null,
             ownershipToAddress: null,
-            ipfsData: reissueRequest.ipfs != null
-                ? base58.decode(reissueRequest.ipfs!)
-                : null, // maybe this should be bytes from front
+            ipfsData: reissueRequest.ipfs == reissueRequest.originalIpfs
+                ? null
+                : (reissueRequest.ipfs != null && reissueRequest.ipfs != '')
+                    ? base58.decode(reissueRequest.ipfs!)
+                    : null, // maybe this should be bytes from front
             goal: TxGoals.standard)
         : await transactionReissueAsset(
             estimate,
@@ -476,9 +478,11 @@ class TransactionMaker {
             wallet: reissueRequest.wallet,
             newAssetToAddress: null,
             ownershipToAddress: null,
-            ipfsData: reissueRequest.ipfs != null
-                ? base58.decode(reissueRequest.ipfs!)
-                : null, // maybe this should be bytes from front
+            ipfsData: reissueRequest.ipfs == reissueRequest.originalIpfs
+                ? null
+                : (reissueRequest.ipfs != null && reissueRequest.ipfs != '')
+                    ? base58.decode(reissueRequest.ipfs!)
+                    : null, // maybe this should be bytes from front
             goal: TxGoals.standard);
   }
 
