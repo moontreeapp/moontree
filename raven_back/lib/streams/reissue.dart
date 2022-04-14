@@ -15,6 +15,7 @@ class GenericReissueForm {
   final String? ipfs;
   final int? quantity;
   final int? decimal;
+  final String? minIpfs;
   final int? minQuantity;
   final int? minDecimal;
   final bool? reissuable;
@@ -26,6 +27,7 @@ class GenericReissueForm {
     this.ipfs,
     this.quantity,
     this.decimal,
+    this.minIpfs,
     this.minQuantity,
     this.minDecimal,
     this.verifier,
@@ -38,6 +40,7 @@ class GenericReissueForm {
       'ipfs=$ipfs, '
       'quantity=$quantity, '
       'decimal=$decimal, '
+      'minIpfs=$minIpfs, '
       'minQuantity=$minQuantity, '
       'minDecimal=$minDecimal, '
       'verifier=$verifier, '
@@ -49,8 +52,9 @@ class GenericReissueForm {
     String? name,
     String? ipfs,
     int? quantity,
-    int? minQuantity,
     int? decimal,
+    String? minIpfs,
+    int? minQuantity,
     int? minDecimal,
     String? verifier,
     bool? reissuable,
@@ -61,6 +65,9 @@ class GenericReissueForm {
       ipfs: ipfs ?? form?.ipfs,
       quantity: quantity ?? form?.quantity,
       decimal: decimal ?? form?.decimal,
+      minIpfs: minIpfs ?? form?.minIpfs,
+      minQuantity: minQuantity ?? form?.minQuantity,
+      minDecimal: minDecimal ?? form?.minDecimal,
       verifier: verifier ?? form?.verifier,
       reissuable: reissuable ?? form?.reissuable,
       parent: parent ?? form?.parent,
@@ -76,6 +83,9 @@ class GenericReissueForm {
             form.ipfs == ipfs &&
             form.quantity == quantity &&
             form.decimal == decimal &&
+            form.minIpfs == minIpfs &&
+            form.minQuantity == minQuantity &&
+            form.minDecimal == minDecimal &&
             form.verifier == verifier &&
             form.reissuable == reissuable &&
             form.parent == parent)

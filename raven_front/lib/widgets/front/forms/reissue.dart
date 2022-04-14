@@ -56,10 +56,11 @@ class _ReissueAssetState extends State<ReissueAsset> {
   String? parentValidationErr;
   bool verifierValidated = false;
   String? verifierValidationErr;
-  int remainingNameLength = 31;
+  int remainingNameLength = 30;
   int remainingVerifierLength = 89;
   int minQuantity = 0;
   int minDecimal = 0;
+  String minIpfs = '';
   Map<FormPresets, String> presetToTitle = {
     FormPresets.main: 'Reissue',
     FormPresets.restricted: 'Reissue',
@@ -83,6 +84,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
           verifierController.text = value?.verifier ?? verifierController.text;
           minQuantity = value?.minQuantity ?? 0;
           minDecimal = value?.minDecimal ?? 0;
+          minIpfs = value?.minIpfs ?? '';
         });
       }
     }));
@@ -449,6 +451,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
         decimals: needsDecimal ? decimalController.text.toInt() : null,
         originalQuantity: minQuantity,
         originalDecimals: minDecimal,
+        originalIpfs: minIpfs,
         ipfs: ipfsController.text == '' ? null : ipfsController.text,
         reissuable: needsReissue ? reissueValue : null,
         verifier: needsVerifier ? verifierController.text : null,

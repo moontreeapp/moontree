@@ -171,6 +171,7 @@ class GenericReissueRequest with ToStringMixin {
   late int? decimals;
   late int? originalQuantity;
   late int? originalDecimals;
+  late String? originalIpfs;
   late String? ipfs;
   late String? verifier;
   late bool? reissuable;
@@ -188,6 +189,7 @@ class GenericReissueRequest with ToStringMixin {
     required this.decimals,
     required this.originalQuantity,
     required this.originalDecimals,
+    required this.originalIpfs,
     this.ipfs,
     this.verifier,
     this.reissuable,
@@ -206,6 +208,7 @@ class GenericReissueRequest with ToStringMixin {
         decimals,
         originalQuantity,
         originalDecimals,
+        originalIpfs,
         ipfs,
         verifier,
         reissuable,
@@ -223,6 +226,7 @@ class GenericReissueRequest with ToStringMixin {
         'decimals',
         'originalQuantity',
         'originalDecimals',
+        'originalIpfs',
         'ipfs',
         'verifier',
         'reissuable',

@@ -32,6 +32,7 @@ class _ReissueMainSubAssetState extends State<ReissueMainSubAsset> {
         minQuantity: asset.amount.toInt(),
         minDecimal: asset.divisibility,
         decimal: asset.divisibility,
+        minIpfs: asset.ipfs,
         ipfs: asset.ipfs,
         reissuable: asset.reissuable,
       ));
