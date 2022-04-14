@@ -13,11 +13,14 @@ class AppStreams {
   final fling = BehaviorSubject<bool?>.seeded(null);
   final coinspec = BehaviorSubject<String?>.seeded(null);
   final splash = BehaviorSubject<bool>.seeded(true);
+  final triggers = BehaviorSubject<ThresholdTrigger?>.seeded(null);
 
   WalletSideStreams wallet = WalletSideStreams();
   ManageSideStreams manage = ManageSideStreams();
   SwapSideStreams swap = SwapSideStreams();
 }
+
+enum ThresholdTrigger { backup }
 
 class WalletSideStreams {
   final asset = BehaviorSubject<String?>.seeded(null);

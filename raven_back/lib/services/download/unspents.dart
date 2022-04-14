@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:raven_back/streams/app.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/raven_back.dart';
 
@@ -12,29 +13,23 @@ class UnspentService {
       scripthashes ??
       res.wallets.currentWallet.addresses.map((e) => e.scripthash).toList();
 
-  Future<void> pull({Iterable<String>? scripthashes, bool? updateRVN}) async {
-    scripthashes = defaultScripthashes(scripthashes);
-    var rvn = 'RVN';
-    if (updateRVN ?? true) {
-      var utxos = (await services.client.client!.getUnspents(scripthashes))
-          .expand((i) => i);
-      if (!unspentsBySymbol.keys.contains(rvn)) {
-        unspentsBySymbol[rvn] = <ScripthashUnspent>{};
+  void addUnspent({
+    required String symbol,
+    required Iterable<ScripthashUnspent> unspents,
+    bool subscribe = false,
+  }) {
+    if (unspents.isNotEmpty) {
+      if (unspentsBySymbol.keys.isEmpty) {
+        streams.app.triggers.add(ThresholdTrigger.backup);
       }
-      unspentsBySymbol[rvn]!.addAll(utxos);
-    }
-    if (!(updateRVN ?? false)) {
-      var utxos = (await services.client.client!.getAssetUnspents(scripthashes))
-          .expand((i) => i);
-      for (var utxo in utxos) {
-        if (!unspentsBySymbol.keys.contains(utxo.symbol)) {
-          unspentsBySymbol[utxo.symbol!] = <ScripthashUnspent>{};
-
+      if (!unspentsBySymbol.keys.contains(symbol)) {
+        unspentsBySymbol[symbol] = <ScripthashUnspent>{};
+        if (subscribe) {
           // Subscribe to a dummy asset of this type
           // This method checks if we're already subscribed and
           // handles downloads if we are not
           services.client.subscribe.toAsset(Asset(
-              symbol: utxo.symbol!,
+              symbol: symbol,
               satsInCirculation: 0,
               divisibility: 0,
               reissuable: false,
@@ -42,8 +37,26 @@ class UnspentService {
               transactionId: '',
               position: 0));
         }
+      }
+      unspentsBySymbol[symbol]!.addAll(unspents);
+    }
+  }
 
-        unspentsBySymbol[utxo.symbol]!.add(utxo);
+  Future<void> pull({Iterable<String>? scripthashes, bool? updateRVN}) async {
+    scripthashes = defaultScripthashes(scripthashes);
+    var rvn = 'RVN';
+    if (updateRVN ?? true) {
+      var utxos = (await services.client.client!.getUnspents(scripthashes))
+          .expand((i) => i);
+      addUnspent(symbol: rvn, unspents: utxos);
+    }
+    if (!(updateRVN ?? false)) {
+      var utxos = (await services.client.client!.getAssetUnspents(scripthashes))
+          .expand((i) => i);
+      for (var utxo in utxos) {
+        if (utxo.symbol != null) {
+          addUnspent(symbol: utxo.symbol!, unspents: {utxo}, subscribe: true);
+        }
       }
     }
   }

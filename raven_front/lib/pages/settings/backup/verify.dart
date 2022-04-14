@@ -134,7 +134,11 @@ class _VerifySeedState extends State<VerifySeed> {
         context,
         enabled: checkOrder(),
         label: 'Verify',
-        onPressed: () {
+        onPressed: () async {
+          if (Current.wallet is LeaderWallet) {
+            await services.wallet.leader
+                .backedUp(Current.wallet as LeaderWallet);
+          }
           Navigator.popUntil(context, ModalRoute.withName('/home'));
           streams.app.snack.add(Snack(message: 'Successfully Verified Backup'));
         },

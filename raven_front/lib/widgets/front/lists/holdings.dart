@@ -329,8 +329,15 @@ class _HoldingList extends State<HoldingList> {
   Widget title(AssetHolding holding) =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-          Text(holding.symbol == 'RVN' ? 'Ravencoin' : holding.last,
-              style: Theme.of(context).textTheme.bodyText1),
+          Container(
+              width: MediaQuery.of(context).size.width - (16 + 40 + 16 + 16),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                    holding.symbol == 'RVN' ? 'Ravencoin' : holding.last,
+                    style: Theme.of(context).textTheme.bodyText1),
+              ))
           /* //this feature can show the path 
           if (holding.symbol != holding.last && showPath)
             holding.last.length >= 20

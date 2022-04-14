@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class Home extends StatefulWidget {
@@ -31,6 +32,17 @@ class _HomeState extends State<Home> {
     }));
     listeners.add(res.settings.changes.listen((Change change) {
       setState(() {});
+    }));
+    listeners
+        .add(streams.app.triggers.listen((ThresholdTrigger? thresholdTrigger) {
+      if (Current.wallet is LeaderWallet &&
+          thresholdTrigger == ThresholdTrigger.backup &&
+          !(Current.wallet as LeaderWallet).backedUp) {
+        print('PROMPT FOR BACKUP HERE');
+        //setState(() {});
+        /// reset till next time they open app?
+        //streams.app.triggers.add(null);
+      }
     }));
   }
 

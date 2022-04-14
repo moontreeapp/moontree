@@ -200,8 +200,14 @@ class _AssetList extends State<AssetList> {
 
   Widget title(AssetHolding asset) =>
       Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-        Text(asset.symbol == 'RVN' ? 'Ravencoin' : asset.last,
-            style: Theme.of(context).textTheme.bodyText1),
+        Container(
+            width: MediaQuery.of(context).size.width - (16 + 40 + 16 + 16),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(asset.symbol == 'RVN' ? 'Ravencoin' : asset.last,
+                  style: Theme.of(context).textTheme.bodyText1),
+            ))
         /* //this feature can show the path 
         if (asset.symbol != asset.last && showPath)
           asset.last.length >= 20

@@ -84,6 +84,15 @@ class LeaderWalletService {
   bool gapSatisfied(LeaderWallet leader, NodeExposure exposure) =>
       requiredGap - (getIndexOf(leader, exposure).currentGap) <= 0;
 
+  Future<void> backedUp(LeaderWallet leader) async {
+    await res.wallets.save(LeaderWallet.from(leader, backedUp: true));
+  }
+
+  /// maybe we don't need the stream:
+  bool needsBackup(LeaderWallet leader) =>
+      services.download.unspents.unspentsBySymbol.keys.isNotEmpty &&
+      !leader.backedUp;
+
   Address deriveAddress(
     LeaderWallet wallet,
     int hdIndex, {

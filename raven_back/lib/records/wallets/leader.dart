@@ -20,9 +20,13 @@ class LeaderWallet extends Wallet {
   @HiveField(7)
   final String encryptedEntropy;
 
+  @HiveField(8)
+  final bool backedUp;
+
   LeaderWallet({
     required String id,
     required this.encryptedEntropy,
+    this.backedUp = false,
     CipherUpdate cipherUpdate = defaultCipherUpdate,
     String? name,
     List<int>? unusedInternalIndices,
@@ -48,6 +52,7 @@ class LeaderWallet extends Wallet {
     LeaderWallet existing, {
     String? id,
     String? encryptedEntropy,
+    bool? backedUp,
     CipherUpdate? cipherUpdate,
     String? name,
     List<int>? unusedInternalIndices,
@@ -57,6 +62,7 @@ class LeaderWallet extends Wallet {
       LeaderWallet(
         id: id ?? existing.id,
         encryptedEntropy: encryptedEntropy ?? existing.encryptedEntropy,
+        backedUp: backedUp ?? existing.backedUp,
         cipherUpdate: cipherUpdate ?? existing.cipherUpdate,
         name: name ?? existing.name,
         unusedInternalIndices:
@@ -67,10 +73,11 @@ class LeaderWallet extends Wallet {
       );
 
   @override
-  List<Object?> get props => [id, cipherUpdate, encryptedEntropy];
+  List<Object?> get props => [id, cipherUpdate, encryptedEntropy, backedUp];
 
   @override
-  String toString() => 'LeaderWallet($id, $encryptedEntropy, $cipherUpdate)';
+  String toString() =>
+      'LeaderWallet($id, $encryptedEntropy, $cipherUpdate, $backedUp)';
 
   @override
   String get encrypted => encryptedEntropy;

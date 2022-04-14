@@ -19,6 +19,7 @@ class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
     return LeaderWallet(
       id: fields[0] as String,
       encryptedEntropy: fields[7] as String,
+      backedUp: fields[8] as bool,
       cipherUpdate: fields[1] as CipherUpdate,
       name: fields[2] as String?,
     );
@@ -27,9 +28,11 @@ class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
   @override
   void write(BinaryWriter writer, LeaderWallet obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(7)
       ..write(obj.encryptedEntropy)
+      ..writeByte(8)
+      ..write(obj.backedUp)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
