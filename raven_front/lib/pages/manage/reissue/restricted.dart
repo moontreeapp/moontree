@@ -31,6 +31,7 @@ class _ReissueRestrictedAssetState extends State<ReissueRestrictedAsset> {
         minQuantity: asset.amount.toInt(),
         minDecimal: asset.divisibility,
         decimal: asset.divisibility,
+        ipfs: asset.ipfs,
         reissuable: asset.reissuable,
       ));
       return BackdropLayers(

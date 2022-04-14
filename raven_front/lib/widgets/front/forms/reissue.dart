@@ -15,6 +15,7 @@ import 'package:raven_front/services/lookup.dart';
 import 'package:raven_back/streams/reissue.dart';
 import 'package:raven_front/utils/transformers.dart';
 import 'package:raven_front/widgets/widgets.dart';
+import 'package:raven_back/utilities/validate.dart';
 
 class ReissueAsset extends StatefulWidget {
   static const int ipfsLength = 89;
@@ -111,7 +112,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
   Widget build(BuildContext context) {
     remainingNameLength =
         // max asset length
-        31 -
+        MAX_NAME_LENGTH -
             // parent text and implied '/'
             (isSub ? parentController.text.length + 1 : 0) -
             // everything else has a special character denoting its type

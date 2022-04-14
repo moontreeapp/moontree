@@ -115,6 +115,8 @@ class Asset with EquatableMixin {
 
   bool get hasIpfs => metadata.isIpfs;
 
+  String? get ipfs => hasIpfs ? metadata : null;
+
   bool get hasMetadata => metadata != '';
 
   bool get isAdmin =>
