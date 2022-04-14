@@ -12,5 +12,6 @@ Future initWaiters() async {
   waiters.import.init();
   waiters.password.init();
   waiters.create.init();
+  waiters.reissue.init();
   await waiters.rate.init();
 }

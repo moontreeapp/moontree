@@ -7,6 +7,7 @@ import 'import.dart';
 import 'leader.dart';
 import 'password.dart';
 import 'rate.dart';
+import 'reissue.dart';
 import 'send.dart';
 import 'setting.dart';
 import 'single.dart';
@@ -20,6 +21,7 @@ class waiters {
   static PasswordWaiter password = PasswordWaiter();
   static RateWaiter rate = RateWaiter();
   static RavenClientWaiter client = RavenClientWaiter();
+  static ReissueWaiter reissue = ReissueWaiter();
   static SendWaiter send = SendWaiter();
   static SettingWaiter setting = SettingWaiter();
   // Wallets
