@@ -426,7 +426,7 @@ class _SendState extends State<Send> {
             .caption!
             .copyWith(height: .7, color: AppColors.primary),
         errorText: verifyMemo() ? null : 'too long',
-        suffixIcon: clipboard.isAssetMemo || clipboard.isIpfs
+        suffixIcon: clipboard.isAssetData || clipboard.isIpfs
             ? IconButton(
                 icon: Icon(Icons.paste_rounded, color: AppColors.black60),
                 onPressed: () async {

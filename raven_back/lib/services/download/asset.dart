@@ -52,7 +52,7 @@ class AssetService {
         metadata: (await client.getTransaction(meta.source.txHash))
                 .vout[meta.source.txPos]
                 .scriptPubKey
-                .ipfsHash ??
+                .ipfsHash ?? // This can also be a TXID
             '',
         satsInCirculation: meta.satsInCirculation,
         divisibility: meta.divisions,

@@ -42,7 +42,7 @@ class AssetListener {
   }
 
   Future<void> grabMetadataFor(Asset asset) async {
-    if (asset.hasIpfs) {
+    if (asset.hasData && asset.data!.isIpfs) {
       if (asset.primaryMetadata == null) {
         // pull the contents from ipfs and save a metadata record
         var ipfs = IpfsMiniExplorer(asset.metadata);
