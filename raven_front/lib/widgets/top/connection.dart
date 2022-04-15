@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/streams/client.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/theme/theme.dart';
 
 class ConnectionLight extends StatefulWidget {
   ConnectionLight({Key? key}) : super(key: key);
@@ -14,17 +16,23 @@ class ConnectionLight extends StatefulWidget {
 class _ConnectionLightState extends State<ConnectionLight>
     with TickerProviderStateMixin, AnimationEagerListenerMixin {
   List<StreamSubscription> listeners = [];
-  bool connected = false;
-  Color connectedColor = Color(0xFFF44336);
+  ConnectionStatus connected = ConnectionStatus.disconnected;
+  Color connectedColor = AppColors.error;
+
+  Map<ConnectionStatus, Color> connectionColor = {
+    ConnectionStatus.connected: AppColors.success,
+    ConnectionStatus.connecting: AppColors.yellow,
+    ConnectionStatus.disconnected: AppColors.error,
+  };
 
   @override
   void initState() {
     super.initState();
-    listeners
-        .add(streams.client.connected.listen((bool value) => value != connected
+    listeners.add(streams.client.connected
+        .listen((ConnectionStatus value) => value != connected
             ? setState(() {
                 connected = value;
-                connectedColor = value ? Color(0xFF4CAF50) : Color(0xFFF44336);
+                connectedColor = connectionColor[value]!;
               })
             : () {/*do nothing*/}));
   }

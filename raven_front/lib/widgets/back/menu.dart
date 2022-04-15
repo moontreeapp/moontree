@@ -162,13 +162,13 @@ class _NavMenuState extends State<NavMenu> {
               name: 'Clear Database',
               link: '/home',
               execute: ravenDatabase.deleteDatabase),
-          */
           ListTile(
               title: Text('test'),
               leading: Icon(Icons.info_outline_rounded),
               onTap: () async {
                 print(services.download.unspents.unspentsBySymbol);
               }),
+          */
         ],
       )
     };
