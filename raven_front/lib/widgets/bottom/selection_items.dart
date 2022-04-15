@@ -9,6 +9,7 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/spend.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_back/streams/create.dart';
+import 'package:raven_back/streams/reissue.dart';
 import 'package:raven_front/theme/theme.dart';
 
 enum SelectionSet {
@@ -399,7 +400,9 @@ class SelectionItems {
         )),
       );
 
-  Widget decimalItem(SelectionOption name, {String? prefix}) => item(
+  Widget decimalItem(SelectionOption name,
+          {String? prefix, bool reissue = false}) =>
+      item(
         name,
         title: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
           Text(prefix ?? '0',
@@ -425,11 +428,19 @@ class SelectionItems {
                 color: AppColors.primary),
           )
         ]),
-        behavior: () => streams.create.form.add(GenericCreateForm.merge(
-          form: streams.create.form.value,
-          decimal: int.parse(
-              StringCharactersExtension(asString(name)).characters.last),
-        )),
+        behavior: reissue
+            ? () => streams.create.form.add(GenericCreateForm.merge(
+                  form: streams.create.form.value,
+                  decimal: int.parse(StringCharactersExtension(asString(name))
+                      .characters
+                      .last),
+                ))
+            : () => streams.reissue.form.add(GenericReissueForm.merge(
+                  form: streams.reissue.form.value,
+                  decimal: int.parse(StringCharactersExtension(asString(name))
+                      .characters
+                      .last),
+                )),
       );
 
   Widget createItem(SelectionOption name) => item(
@@ -527,7 +538,7 @@ class SelectionItems {
       produceModal([
         for (SelectionOption name
             in names.sublist(0, names.length - (minDecimal ?? 0)))
-          decimalItem(name, prefix: decimalPrefix)
+          decimalItem(name, prefix: decimalPrefix, reissue: minDecimal != null)
       ], tall: false);
     } else if (modalSet == SelectionSet.Create) {
       produceModal([for (SelectionOption name in names) createItem(name)],
