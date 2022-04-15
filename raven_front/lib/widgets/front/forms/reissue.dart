@@ -17,6 +17,8 @@ import 'package:raven_front/utils/transformers.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/utilities/validate.dart';
 
+import 'package:bs58/bs58.dart';
+
 class ReissueAsset extends StatefulWidget {
   static const int ipfsLength = 89;
   final FormPresets preset;
@@ -477,8 +479,16 @@ class _ReissueAssetState extends State<ReissueAsset> {
         decimals: needsDecimal ? decimalController.text.toInt() : null,
         originalQuantity: minQuantity,
         originalDecimals: minDecimal,
-        originalIpfs: minIpfs,
-        ipfs: ipfsController.text == '' ? null : ipfsController.text,
+        originalAssetData: minIpfs == ''
+            ? null
+            : (minIpfs.isIpfs
+                ? minIpfs.base58Decode
+                : minIpfs.hexBytesForScript),
+        assetData: ipfsController.text == ''
+            ? null
+            : (ipfsController.text.isIpfs
+                ? ipfsController.text.base58Decode
+                : ipfsController.text.hexBytesForScript),
         reissuable: needsReissue ? reissueValue : null,
         verifier: needsVerifier ? verifierController.text : null,
         parent: isSub ? parentController.text : null,

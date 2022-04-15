@@ -6,8 +6,8 @@ import 'package:ravencoin_wallet/src/fee.dart';
 import 'package:tuple/tuple.dart';
 
 import 'sign.dart';
-import 'package:bs58/bs58.dart';
 
+/* Unused
 class NFTCreateRequest {
   late String name;
   late String ipfs;
@@ -82,6 +82,7 @@ class RestrictedCreateRequest {
     required this.reissuable,
   });
 }
+*/
 
 class GenericCreateRequest with ToStringMixin {
   late bool isSub;
@@ -93,7 +94,7 @@ class GenericCreateRequest with ToStringMixin {
   late String fullName;
   late Wallet wallet;
   late String name;
-  late String? ipfs;
+  late Uint8List? assetData;
   late int? quantity;
   late int? decimals;
   late String? verifier;
@@ -111,7 +112,7 @@ class GenericCreateRequest with ToStringMixin {
     required this.name,
     required this.fullName,
     required this.wallet,
-    this.ipfs,
+    this.assetData,
     this.quantity,
     this.decimals,
     this.verifier,
@@ -130,7 +131,7 @@ class GenericCreateRequest with ToStringMixin {
         fullName,
         wallet,
         name,
-        ipfs,
+        assetData,
         quantity,
         decimals,
         verifier,
@@ -171,8 +172,8 @@ class GenericReissueRequest with ToStringMixin {
   late int? decimals;
   late int? originalQuantity;
   late int? originalDecimals;
-  late String? originalIpfs;
-  late String? ipfs;
+  late Uint8List? originalAssetData;
+  late Uint8List? assetData;
   late String? verifier;
   late bool? reissuable;
   late String?
@@ -189,8 +190,8 @@ class GenericReissueRequest with ToStringMixin {
     required this.decimals,
     required this.originalQuantity,
     required this.originalDecimals,
-    required this.originalIpfs,
-    this.ipfs,
+    required this.originalAssetData,
+    this.assetData,
     this.verifier,
     this.reissuable,
     this.parent,
@@ -208,8 +209,8 @@ class GenericReissueRequest with ToStringMixin {
         decimals,
         originalQuantity,
         originalDecimals,
-        originalIpfs,
-        ipfs,
+        originalAssetData,
+        assetData,
         verifier,
         reissuable,
         parent,
@@ -412,9 +413,7 @@ class TransactionMaker {
             createRequest.parent!,
             estimate,
             wallet: createRequest.wallet,
-            ipfsData: createRequest.ipfs != null
-                ? base58.decode(createRequest.ipfs!)
-                : null, // maybe this should be bytes from front
+            ipfsData: createRequest.assetData,
             goal: TxGoals.standard,
           )
         : createRequest.isSub
@@ -424,9 +423,7 @@ class TransactionMaker {
                 createRequest.decimals ?? 0,
                 createRequest.reissuable ?? false,
                 wallet: createRequest.wallet,
-                ipfsData: createRequest.ipfs != null
-                    ? base58.decode(createRequest.ipfs!)
-                    : null, // maybe this should be bytes from front
+                ipfsData: createRequest.assetData,
                 goal: TxGoals.standard,
               )
             :
@@ -436,9 +433,7 @@ class TransactionMaker {
                 createRequest.decimals ?? 0,
                 createRequest.reissuable ?? false,
                 wallet: createRequest.wallet,
-                ipfsData: createRequest.ipfs != null
-                    ? base58.decode(createRequest.ipfs!)
-                    : null, // maybe this should be bytes from front
+                ipfsData: createRequest.assetData,
                 goal: TxGoals.standard,
               );
   }
@@ -463,11 +458,10 @@ class TransactionMaker {
             verifier: null,
             newAssetToAddress: null,
             ownershipToAddress: null,
-            ipfsData: reissueRequest.ipfs == reissueRequest.originalIpfs
-                ? null
-                : (reissueRequest.ipfs != null && reissueRequest.ipfs != '')
-                    ? base58.decode(reissueRequest.ipfs!)
-                    : null, // maybe this should be bytes from front
+            ipfsData:
+                reissueRequest.assetData == reissueRequest.originalAssetData
+                    ? null
+                    : reissueRequest.assetData,
             goal: TxGoals.standard)
         : await transactionReissueAsset(
             estimate,
@@ -478,11 +472,10 @@ class TransactionMaker {
             wallet: reissueRequest.wallet,
             newAssetToAddress: null,
             ownershipToAddress: null,
-            ipfsData: reissueRequest.ipfs == reissueRequest.originalIpfs
-                ? null
-                : (reissueRequest.ipfs != null && reissueRequest.ipfs != '')
-                    ? base58.decode(reissueRequest.ipfs!)
-                    : null, // maybe this should be bytes from front
+            ipfsData:
+                reissueRequest.assetData == reissueRequest.originalAssetData
+                    ? null
+                    : reissueRequest.assetData,
             goal: TxGoals.standard);
   }
 
