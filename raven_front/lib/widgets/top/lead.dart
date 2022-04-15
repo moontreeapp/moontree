@@ -18,11 +18,19 @@ class _PageLead extends State<PageLead> {
   late String pageTitle = '';
   late String? settingTitle = null;
   late bool xlead = false;
+  late bool loading = false;
   late List listeners = [];
 
   @override
   void initState() {
     super.initState();
+    listeners.add(streams.app.loading.listen((bool value) {
+      if (value != loading) {
+        setState(() {
+          loading = value;
+        });
+      }
+    }));
     listeners.add(streams.app.page.listen((value) {
       if (value != pageTitle) {
         setState(() {
@@ -60,6 +68,9 @@ class _PageLead extends State<PageLead> {
   }
 
   Widget body() {
+    if (loading) {
+      return Container();
+    }
     if (settingTitle?.startsWith('/settings/') ?? false) {
       return IconButton(
           splashRadius: 24,

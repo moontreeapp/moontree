@@ -14,6 +14,7 @@ class AppStreams {
   final coinspec = BehaviorSubject<String?>.seeded(null);
   final splash = BehaviorSubject<bool>.seeded(true);
   final triggers = BehaviorSubject<ThresholdTrigger?>.seeded(null);
+  final loading = BehaviorSubject<bool>.seeded(false);
 
   WalletSideStreams wallet = WalletSideStreams();
   ManageSideStreams manage = ManageSideStreams();

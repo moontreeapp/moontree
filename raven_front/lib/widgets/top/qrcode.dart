@@ -13,10 +13,18 @@ class _QRCodeContainerState extends State<QRCodeContainer> {
   late String pageTitle = 'Home';
   late List listeners = [];
   final List<String> blanks = ['main', '', 'Scan', 'Send', 'Login'];
+  late bool loading = false;
 
   @override
   void initState() {
     super.initState();
+    listeners.add(streams.app.loading.listen((bool value) {
+      if (value != loading) {
+        setState(() {
+          loading = value;
+        });
+      }
+    }));
     listeners.add(streams.app.page.listen((value) {
       if (((blanks.contains(value) && !blanks.contains(pageTitle)) ||
           (!blanks.contains(value) && blanks.contains(pageTitle)))) {
@@ -36,15 +44,16 @@ class _QRCodeContainerState extends State<QRCodeContainer> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      {
-        'Send': Padding(
-            padding: EdgeInsets.only(left: 0),
-            child: QRCodeButton(pageTitle: 'Send-to')),
-      }[pageTitle] ??
-      (blanks.contains(pageTitle)
-          ? Container(width: 0)
-          : Padding(
-              padding: EdgeInsets.only(left: 0),
-              child: QRCodeButton(pageTitle: pageTitle)));
+  Widget build(BuildContext context) => loading
+      ? Container(width: 0)
+      : {
+            'Send': Padding(
+                padding: EdgeInsets.only(left: 0),
+                child: QRCodeButton(pageTitle: 'Send-to')),
+          }[pageTitle] ??
+          (blanks.contains(pageTitle)
+              ? Container(width: 0)
+              : Padding(
+                  padding: EdgeInsets.only(left: 0),
+                  child: QRCodeButton(pageTitle: pageTitle)));
 }

@@ -21,6 +21,7 @@ class _LoaderState extends State<Loader> {
   @override
   void initState() {
     super.initState();
+    streams.app.loading.add(true);
     // not ideal sends to home page even on error - in order to go back
     // intelligently we must know which stream matters and listen to that
     // like streams.spend.success or whatever.
@@ -42,6 +43,7 @@ class _LoaderState extends State<Loader> {
     for (var listener in listeners) {
       listener.cancel();
     }
+    streams.app.loading.add(false);
     super.dispose();
   }
 

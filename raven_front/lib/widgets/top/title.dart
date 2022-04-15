@@ -39,6 +39,7 @@ class PageTitle extends StatefulWidget {
 
 class _PageTitleState extends State<PageTitle> {
   late List listeners = [];
+  late bool loading = false;
   late String pageTitle = 'Home';
   late String assetTitle = 'Manage';
   late String? settingTitle = null;
@@ -48,6 +49,13 @@ class _PageTitleState extends State<PageTitle> {
   @override
   void initState() {
     super.initState();
+    listeners.add(streams.app.loading.listen((bool value) {
+      if (value != loading) {
+        setState(() {
+          loading = value;
+        });
+      }
+    }));
     listeners.add(streams.app.page.listen((String value) {
       if (value != pageTitle) {
         setState(() {
@@ -106,7 +114,7 @@ class _PageTitleState extends State<PageTitle> {
   }
 
   Widget body() {
-    if (['main', ''].contains(pageTitle)) {
+    if (loading || ['main', ''].contains(pageTitle)) {
       return Text('');
     }
     var wrap = (String x) => FittedBox(
