@@ -85,6 +85,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
           minQuantity = value?.minQuantity ?? 0;
           minDecimal = value?.minDecimal ?? 0;
           minIpfs = value?.minIpfs ?? '';
+          validateIPFS(ipfs: minIpfs);
         });
       }
     }));
@@ -314,11 +315,18 @@ class _ReissueAssetState extends State<ReissueAsset> {
         decoration: components.styles.decorations.textFeild(
           context,
           labelText: 'IPFS/Txid',
-          hintText: 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr',
+          hintText: minIpfs == ''
+              ? 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr'
+              : minIpfs,
           //helperText: ipfsValidation(ipfsController.text) ? 'match' : null,
-          errorText: ipfsController.text == '' || ipfsValidated
-              ? null
-              : 'invalid IPFS',
+          //errorText: ipfsController.text == '' || ipfsValidated
+          //    ? null
+          //    : 'Invalid IPFS',
+          errorText: ipfsController.text == ''
+              ? (minIpfs == '' ? null : 'You must input an IPFS')
+              : ipfsValidated
+                  ? null
+                  : 'Invalid IPFS',
         ),
         onChanged: (String value) => validateIPFS(ipfs: value),
         onEditingComplete: () => FocusScope.of(context).requestFocus(nextFocus),
@@ -426,7 +434,18 @@ class _ReissueAssetState extends State<ReissueAsset> {
     }
   }
 
-  bool get enabled => [
+  // If we change anything, then we are good to go (with IPFS validation)
+  bool get enabled =>
+      ((quantityController.text != '' &&
+              quantityValidation(quantityController.text.toInt())) ||
+          (decimalController.text != minDecimal.toString() &&
+              decimalValidation(decimalController.text.toInt())) ||
+          reissueValue == false ||
+          (ipfsController.text != '' && ipfsValidation(ipfsController.text))) &&
+      // Don't enable if invalid IPFS state
+      (minIpfs != '' && ipfsValidation(ipfsController.text));
+
+  /*[
         quantityController.text != '' &&
             quantityValidation(quantityController.text.toInt()),
         decimalController.text != minDecimal.toString() &&
@@ -434,6 +453,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
         ipfsController.text != '' && ipfsValidation(ipfsController.text),
         reissueValue == false,
       ].any((e) => e);
+*/
 
   Future<void> submit() async {
     if (enabled) {
