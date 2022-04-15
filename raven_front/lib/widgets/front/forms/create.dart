@@ -54,7 +54,6 @@ class _CreateAssetState extends State<CreateAsset> {
   FocusNode decimalFocus = FocusNode();
   FocusNode verifierFocus = FocusNode();
   bool nameValidated = false;
-  bool nameTakenValidated = false;
   bool ipfsValidated = false;
   bool quantityValidated = false;
   bool decimalValidated = false;
@@ -390,7 +389,7 @@ class _CreateAssetState extends State<CreateAsset> {
   Widget get submitButton => components.buttons.actionButton(
         context,
         focusNode: nextFocus,
-        enabled: nameTakenValidated && enabled,
+        enabled: nameValidated && enabled,
         onPressed: submit,
       );
 
@@ -528,7 +527,7 @@ class _CreateAssetState extends State<CreateAsset> {
   bool get enabled =>
       nameController.text.length > 2 &&
       nameValidation(nameController.text) &&
-      nameTakenValidated &&
+      nameValidated &&
       (needsQuantity
           ? quantityController.text != '' &&
               quantityValidation(quantityController.text.toInt())
