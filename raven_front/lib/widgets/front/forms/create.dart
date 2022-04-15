@@ -537,7 +537,7 @@ class _CreateAssetState extends State<CreateAsset> {
           ? decimalController.text != '' &&
               decimalValidation(decimalController.text.toInt())
           : true) &&
-      assetDataValidation(ipfsController.text);
+      (ipfsController.text == '' || assetDataValidation(ipfsController.text));
 
   Future<bool> get enabledAsync async => nameController.text.length > 2 &&
           nameValidation(nameController.text) &&
