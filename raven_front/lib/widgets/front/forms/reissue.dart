@@ -434,16 +434,22 @@ class _ReissueAssetState extends State<ReissueAsset> {
     }
   }
 
-  // If we change anything, then we are good to go (with IPFS validation)
   bool get enabled =>
+      // If we change anything
       ((quantityController.text != '' &&
-              quantityValidation(quantityController.text.toInt())) ||
-          (decimalController.text != minDecimal.toString() &&
-              decimalValidation(decimalController.text.toInt())) ||
+              quantityController.text.toInt() != 0) ||
+          decimalController.text != minDecimal.toString() ||
           reissueValue == false ||
-          (ipfsController.text != '' && ipfsValidation(ipfsController.text))) &&
-      // Don't enable if invalid IPFS state
-      (minIpfs != '' && ipfsValidation(ipfsController.text));
+          (minIpfs != ipfsController.text)) &&
+      // Don't enable if invalid state
+      ((minIpfs == ''
+              ? (ipfsController.text == ''
+                  ? true
+                  : ipfsValidation(ipfsController.text))
+              : (ipfsController.text != '' &&
+                  ipfsValidation(ipfsController.text))) &&
+          quantityValidation(quantityController.text.toInt()) &&
+          decimalValidation(decimalController.text.toInt()));
 
   /*[
         quantityController.text != '' &&
