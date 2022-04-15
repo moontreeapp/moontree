@@ -63,12 +63,12 @@ class RavenClientWaiter extends Waiter {
         (ConnectionStatus connected, bool active) => Tuple2(connected, active),
       ),
       (Tuple2 tuple) {
-        bool active = tuple.item1;
-        ConnectionStatus connected = tuple.item2;
+        ConnectionStatus connected = tuple.item1;
+        bool active = tuple.item2;
         /*var msg = 'Establishing Connection...';*/
         if (active &&
-            (streams.client.client.value == null ||
-                connected != ConnectionStatus.connected)) {
+            (streams.client.client.value == null &&
+                connected == ConnectionStatus.disconnected)) {
           additionalTimeout = Duration(seconds: 1);
           streams.client.client.add(null);
         } else if (active) {}
