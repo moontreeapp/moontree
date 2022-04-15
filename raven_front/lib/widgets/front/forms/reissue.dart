@@ -85,6 +85,9 @@ class _ReissueAssetState extends State<ReissueAsset> {
           minQuantity = value?.minQuantity ?? 0;
           minDecimal = value?.minDecimal ?? 0;
           minIpfs = value?.minIpfs ?? '';
+          if (value?.ipfs != null) {
+            ipfsValidated = ipfsValidation(value!.ipfs!);
+          }
         });
       }
     }));

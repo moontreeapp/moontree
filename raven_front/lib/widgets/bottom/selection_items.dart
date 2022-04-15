@@ -400,8 +400,11 @@ class SelectionItems {
         )),
       );
 
-  Widget decimalItem(SelectionOption name,
-          {String? prefix, bool reissue = false}) =>
+  Widget decimalItem(
+    SelectionOption name, {
+    String? prefix,
+    bool reissue = false,
+  }) =>
       item(
         name,
         title: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
@@ -429,14 +432,14 @@ class SelectionItems {
           )
         ]),
         behavior: reissue
-            ? () => streams.create.form.add(GenericCreateForm.merge(
-                  form: streams.create.form.value,
+            ? () => streams.reissue.form.add(GenericReissueForm.merge(
+                  form: streams.reissue.form.value,
                   decimal: int.parse(StringCharactersExtension(asString(name))
                       .characters
                       .last),
                 ))
-            : () => streams.reissue.form.add(GenericReissueForm.merge(
-                  form: streams.reissue.form.value,
+            : () => streams.create.form.add(GenericCreateForm.merge(
+                  form: streams.create.form.value,
                   decimal: int.parse(StringCharactersExtension(asString(name))
                       .characters
                       .last),
