@@ -18,6 +18,7 @@ class _ReissueMainSubAssetState extends State<ReissueMainSubAsset> {
 
   @override
   void dispose() {
+    streams.reissue.form.add(null);
     super.dispose();
   }
 

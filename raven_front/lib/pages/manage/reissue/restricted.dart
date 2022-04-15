@@ -17,6 +17,7 @@ class _ReissueRestrictedAssetState extends State<ReissueRestrictedAsset> {
 
   @override
   void dispose() {
+    streams.reissue.form.add(null);
     super.dispose();
   }
 
