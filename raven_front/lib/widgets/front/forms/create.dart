@@ -343,12 +343,12 @@ class _CreateAssetState extends State<CreateAsset> {
         textInputAction: TextInputAction.done,
         decoration: components.styles.decorations.textFeild(
           context,
-          labelText: 'IPFS/Txid',
+          labelText: 'IPFS/TXID',
           hintText: 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr',
           //helperText: ipfsValidation(ipfsController.text) ? 'match' : null,
           errorText: ipfsController.text == '' || ipfsValidated
               ? null
-              : 'invalid IPFS',
+              : 'invalid IPFS/TXID',
         ),
         onChanged: (String value) => validateAssetData(data: value),
         onEditingComplete: () => FocusScope.of(context).requestFocus(nextFocus),

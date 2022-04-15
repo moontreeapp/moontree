@@ -87,7 +87,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
           minQuantity = value?.minQuantity ?? 0;
           minDecimal = value?.minDecimal ?? 0;
           minIpfs = value?.minIpfs ?? '';
-          validateIPFS(ipfs: minIpfs);
+          validateAssetData(data: minIpfs);
         });
       }
     }));
@@ -316,7 +316,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
         textInputAction: TextInputAction.done,
         decoration: components.styles.decorations.textFeild(
           context,
-          labelText: 'IPFS/Txid',
+          labelText: 'IPFS/TXID',
           hintText: minIpfs == ''
               ? 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr'
               : minIpfs,
@@ -325,12 +325,12 @@ class _ReissueAssetState extends State<ReissueAsset> {
           //    ? null
           //    : 'Invalid IPFS',
           errorText: ipfsController.text == ''
-              ? (minIpfs == '' ? null : 'You must input an IPFS')
+              ? (minIpfs == '' ? null : 'You must input an IPFS/TXID')
               : ipfsValidated
                   ? null
-                  : 'Invalid IPFS',
+                  : 'Invalid IPFS/TXID',
         ),
-        onChanged: (String value) => validateIPFS(ipfs: value),
+        onChanged: (String value) => validateAssetData(data: value),
         onEditingComplete: () => FocusScope.of(context).requestFocus(nextFocus),
       );
 
@@ -401,12 +401,12 @@ class _ReissueAssetState extends State<ReissueAsset> {
     }
   }
 
-  bool ipfsValidation(String ipfs) => ipfs.isIpfs;
+  bool assetDataValidation(String ipfs) => ipfs.isAssetData;
 
-  void validateIPFS({String? ipfs}) {
-    ipfs = ipfs ?? ipfsController.text;
+  void validateAssetData({String? data}) {
+    data = data ?? ipfsController.text;
     var oldValidation = ipfsValidated;
-    ipfsValidated = ipfsValidation(ipfs);
+    ipfsValidated = assetDataValidation(data);
     if (oldValidation != ipfsValidated || !ipfsValidated) {
       setState(() {});
     }
@@ -447,9 +447,9 @@ class _ReissueAssetState extends State<ReissueAsset> {
       ((minIpfs == ''
               ? (ipfsController.text == ''
                   ? true
-                  : ipfsValidation(ipfsController.text))
+                  : assetDataValidation(ipfsController.text))
               : (ipfsController.text != '' &&
-                  ipfsValidation(ipfsController.text))) &&
+                  assetDataValidation(ipfsController.text))) &&
           quantityValidation(quantityController.text.toInt()) &&
           decimalValidation(decimalController.text.toInt()));
 
