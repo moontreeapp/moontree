@@ -21,7 +21,6 @@ environment:
   sdk: '>=2.14.0 <3.0.0'
 
 dependencies:
-  synchronized: ^3.0.0+2
   cupertino_icons: ^1.0.2
   date_format: ^2.0.4
   firebase_core: ^1.10.0

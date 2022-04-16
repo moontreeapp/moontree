@@ -1,16 +1,15 @@
 import 'dart:async';
 import 'package:raven_back/streams/app.dart';
+import 'package:raven_back/utilities/lock.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:synchronized/synchronized.dart';
 
 /// we use the electrum server directly for determining our UTXO set
 class UnspentService {
   // "Security name" -> address -> {unspents}
   // This can be concurrently modified while we iterate over keys, i.e. recalc balances
   final Map<String, Map<String, Set<ScripthashUnspent>>> _unspentsBySymbol = {};
-  // Ideally we'd have some kind of RWLock
-  final unspentLock = Lock();
+  final _unspentsLock = ReaderWriterLock();
 
   String defaultSymbol(String? symbol) => symbol ?? 'RVN';
 
@@ -18,19 +17,26 @@ class UnspentService {
       scripthashes ??
       res.wallets.currentWallet.addresses.map((e) => e.scripthash).toList();
 
-  void _clearUnspentsForScripthash(String scripthash, String symbol) {
+  Future<void> _clearUnspentsForScripthash(
+      String scripthash, String symbol) async {
+    await _unspentsLock.enterWrite();
     _unspentsBySymbol[symbol]?[scripthash]?.clear();
+    await _unspentsLock.exitWrite();
   }
 
-  void _addUnspent({
+  Future<void> _addUnspent({
     required String symbol,
     required Iterable<ScripthashUnspent> unspents,
     bool subscribe = false,
-  }) {
+  }) async {
     if (unspents.isNotEmpty) {
+      await _unspentsLock.enterRead();
       if (_unspentsBySymbol.keys.isEmpty) {
         streams.app.triggers.add(ThresholdTrigger.backup);
       }
+      await _unspentsLock.exitRead();
+
+      await _unspentsLock.enterWrite();
       if (!_unspentsBySymbol.keys.contains(symbol)) {
         _unspentsBySymbol[symbol] = <String, Set<ScripthashUnspent>>{};
         if (subscribe) {
@@ -54,70 +60,68 @@ class UnspentService {
         }
         _unspentsBySymbol[symbol]![unspent.scripthash]!.add(unspent);
       }
+      await _unspentsLock.exitWrite();
     }
   }
 
   Future<void> pull({Iterable<String>? scripthashes, bool? updateRVN}) async {
-    await unspentLock.synchronized(() async {
-      final new_scripthashes = defaultScripthashes(scripthashes);
-      final rvn = 'RVN';
-      if (updateRVN ?? true) {
-        var utxos =
-            (await services.client.client!.getUnspents(new_scripthashes))
-                .expand((i) => i);
-        // Wipe relevant unspents and re-add
-        new_scripthashes.forEach((x) => _clearUnspentsForScripthash(x, rvn));
-        _addUnspent(symbol: rvn, unspents: utxos);
-      }
-      if (!(updateRVN ?? false)) {
-        var utxos =
-            (await services.client.client!.getAssetUnspents(new_scripthashes))
-                .expand((i) => i);
+    final new_scripthashes = defaultScripthashes(scripthashes);
+    final rvn = 'RVN';
 
-        // Parse it into something more digestable
-        final downloaded = <String, Map<String, Set<ScripthashUnspent>>>{};
-        for (final utxo in utxos) {
-          if (utxo.symbol != null) {
-            // Should never be null but can't hurt to be safe
-            if (!downloaded.containsKey(utxo.symbol!)) {
-              downloaded[utxo.symbol!] = <String, Set<ScripthashUnspent>>{};
-            }
-            if (!downloaded[utxo.symbol!]!.containsKey(utxo.scripthash)) {
-              downloaded[utxo.symbol!]![utxo.scripthash] =
-                  <ScripthashUnspent>{};
-            }
-            downloaded[utxo.symbol!]![utxo.scripthash]!.add(utxo);
-          }
-        }
+    if (updateRVN ?? true) {
+      var utxos = (await services.client.client!.getUnspents(new_scripthashes))
+          .expand((i) => i);
+      // Wipe relevant unspents and re-add
+      new_scripthashes.forEach((x) => _clearUnspentsForScripthash(x, rvn));
+      await _addUnspent(symbol: rvn, unspents: utxos);
+    }
+    if (!(updateRVN ?? false)) {
+      var utxos =
+          (await services.client.client!.getAssetUnspents(new_scripthashes))
+              .expand((i) => i);
 
-        // And then remove and add
-        for (final symbol in downloaded.keys) {
-          final scripthashes_internal = downloaded[symbol]!.keys;
-          scripthashes_internal
-              .forEach((x) => _clearUnspentsForScripthash(x, symbol));
-          for (final scripthash_internal in scripthashes_internal) {
-            _addUnspent(
-                symbol: symbol,
-                unspents: downloaded[symbol]![scripthash_internal]!,
-                subscribe: true);
+      // Parse it into something more digestable
+      final downloaded = <String, Map<String, Set<ScripthashUnspent>>>{};
+      for (final utxo in utxos) {
+        if (utxo.symbol != null) {
+          // Should never be null but can't hurt to be safe
+          if (!downloaded.containsKey(utxo.symbol!)) {
+            downloaded[utxo.symbol!] = <String, Set<ScripthashUnspent>>{};
           }
+          if (!downloaded[utxo.symbol!]!.containsKey(utxo.scripthash)) {
+            downloaded[utxo.symbol!]![utxo.scripthash] = <ScripthashUnspent>{};
+          }
+          downloaded[utxo.symbol!]![utxo.scripthash]!.add(utxo);
         }
       }
-    });
+
+      // And then remove and add
+      for (final symbol in downloaded.keys) {
+        final scripthashes_internal = downloaded[symbol]!.keys;
+        scripthashes_internal
+            .forEach((x) => _clearUnspentsForScripthash(x, symbol));
+        for (final scripthash_internal in scripthashes_internal) {
+          await _addUnspent(
+              symbol: symbol,
+              unspents: downloaded[symbol]![scripthash_internal]!,
+              subscribe: true);
+        }
+      }
+    }
   }
 
   // TODO: Maybe cache instead of calculating each time?
-  Future<int> total([String? symbol]) async =>
-      await unspentLock.synchronized(() {
-        final result = _unspentsBySymbol.keys.contains(defaultSymbol(symbol))
-            ? _unspentsBySymbol[defaultSymbol(symbol)]!
-                .values // List of iterable of items
-                .expand((element) => element) // Flatten the list of iterables
-                .fold(0,
-                    (int total, ScripthashUnspent item) => item.value + total)
-            : 0;
-        return result;
-      });
+  Future<int> total([String? symbol]) async {
+    await _unspentsLock.enterRead();
+    final result = _unspentsBySymbol.keys.contains(defaultSymbol(symbol))
+        ? _unspentsBySymbol[defaultSymbol(symbol)]!
+            .values // List of iterable of items
+            .expand((element) => element) // Flatten the list of iterables
+            .fold(0, (int total, ScripthashUnspent item) => item.value + total)
+        : 0;
+    await _unspentsLock.exitRead();
+    return result;
+  }
 
   Future<void> assertSufficientFunds(int amount, String? symbol) async {
     if (await total(defaultSymbol(symbol)) < amount) {
@@ -125,14 +129,21 @@ class UnspentService {
     }
   }
 
-  Future<Set<ScripthashUnspent>> getUnspents(String? symbol) async =>
-      await unspentLock.synchronized(() =>
-          _unspentsBySymbol[defaultSymbol(symbol)]
-              ?.values
-              .expand((element) => element)
-              .toSet() ??
-          <ScripthashUnspent>{});
+  Future<Set<ScripthashUnspent>> getUnspents(String? symbol) async {
+    await _unspentsLock.enterRead();
+    final result = _unspentsBySymbol[defaultSymbol(symbol)]
+            ?.values
+            .expand((element) => element)
+            .toSet() ??
+        <ScripthashUnspent>{};
+    await _unspentsLock.exitRead();
+    return result;
+  }
 
-  Future<Iterable<String>> getSymbols() async =>
-      await unspentLock.synchronized(() => _unspentsBySymbol.keys.toSet());
+  Future<Iterable<String>> getSymbols() async {
+    await _unspentsLock.enterRead();
+    final result = _unspentsBySymbol.keys.toSet();
+    await _unspentsLock.exitRead();
+    return result;
+  }
 }
