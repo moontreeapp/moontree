@@ -140,6 +140,8 @@ class SubscribeService {
               leader: address.wallet! as LeaderWallet,
               exposure: address.exposure,
             ));
+          } else {
+            await services.balance.recalculateAllBalances();
           }
         } else {
           services.download.history.addresses.add(address);

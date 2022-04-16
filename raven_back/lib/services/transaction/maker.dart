@@ -94,8 +94,8 @@ class GenericCreateRequest with ToStringMixin {
   late String fullName;
   late Wallet wallet;
   late String name;
+  late double? quantity;
   late Uint8List? assetData;
-  late int? quantity;
   late int? decimals;
   late String? verifier;
   late bool? reissuable;
@@ -168,9 +168,9 @@ class GenericReissueRequest with ToStringMixin {
   late String fullName;
   late Wallet wallet;
   late String name;
-  late int? quantity;
+  late double? quantity;
   late int? decimals;
-  late int? originalQuantity;
+  late double? originalQuantity;
   late int? originalDecimals;
   late Uint8List? originalAssetData;
   late Uint8List? assetData;
@@ -296,7 +296,7 @@ class SendRequest with ToStringMixin {
 }
 
 class SendEstimate with ToStringMixin {
-  int amount;
+  int amount; //sats
   int fees;
   List<Vout> utxos;
   Security? security;
@@ -397,7 +397,7 @@ class TransactionMaker {
     GenericCreateRequest createRequest,
   ) async {
     var estimate = SendEstimate(
-      (createRequest.quantity ?? 1) * 100000000,
+      ((createRequest.quantity ?? 1) * 100000000).toInt(),
       security: createRequest.security,
       creation: true,
       //assetMemo: createRequest.assetMemo, // not on front end
@@ -442,7 +442,7 @@ class TransactionMaker {
     GenericReissueRequest reissueRequest,
   ) async {
     var estimate = SendEstimate(
-      (reissueRequest.quantity ?? 0) * 100000000,
+      ((reissueRequest.quantity ?? 1) * 100000000).toInt(),
       security: reissueRequest.security,
       creation: true,
     );
@@ -451,7 +451,7 @@ class TransactionMaker {
         ? await transactionReissueRestrictedAsset(
             estimate,
             reissueRequest.originalDecimals ?? 0,
-            reissueRequest.originalQuantity ?? 0,
+            (reissueRequest.originalQuantity! * 100000000).toInt(),
             reissueRequest.decimals ?? 0,
             reissueRequest.reissuable ?? false,
             wallet: reissueRequest.wallet,
@@ -466,7 +466,7 @@ class TransactionMaker {
         : await transactionReissueAsset(
             estimate,
             reissueRequest.originalDecimals ?? 0,
-            reissueRequest.originalQuantity ?? 0,
+            (reissueRequest.originalQuantity! * 100000000).toInt(),
             reissueRequest.decimals ?? 0,
             reissueRequest.reissuable ?? false,
             wallet: reissueRequest.wallet,

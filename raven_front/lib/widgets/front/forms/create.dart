@@ -71,6 +71,17 @@ class _CreateAssetState extends State<CreateAsset> {
     FormPresets.channel: 'Message Channel Name',
   };
 
+  String limitQ(String q, String d) {
+    if (q.contains('.')) {
+      var splits = q.split('.');
+      var maxd = int.parse(d);
+      if (splits[1].length > maxd) {
+        return splits.first + '.' + splits[1].substring(0, maxd);
+      }
+    }
+    return q;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -81,10 +92,11 @@ class _CreateAssetState extends State<CreateAsset> {
           parentController.text = value?.parent ?? parentController.text;
           nameController.text = value?.name ?? nameController.text;
           ipfsController.text = value?.ipfs ?? ipfsController.text;
-          quantityController.text =
-              (value?.quantity ?? quantityController.text).toString();
           decimalController.text =
               (value?.decimal ?? decimalController.text).toString();
+          quantityController.text = limitQ(
+              value?.quantity?.toCommaString() ?? quantityController.text,
+              decimalController.text);
           reissueValue = value?.reissuable ?? reissueValue;
           verifierController.text = value?.verifier ?? verifierController.text;
         });
@@ -268,25 +280,25 @@ class _CreateAssetState extends State<CreateAsset> {
   Widget get quantityField => TextField(
         focusNode: quantityFocus,
         controller: quantityController,
-//      keyboardType: TextInputType.number,
         keyboardType:
-            TextInputType.numberWithOptions(decimal: false, signed: false),
+            TextInputType.numberWithOptions(decimal: true, signed: false),
         textInputAction: TextInputAction.done,
         inputFormatters: <TextInputFormatter>[
-          FilteringTextInputFormatter.digitsOnly,
-          // selection messed up: don't do it on edit, do it on complete,
-          //CommaIntValueTextFormatter()
+          DecimalTextInputFormatter(
+              decimalRange: int.parse(
+                  decimalController.text == '' ? '0' : decimalController.text))
         ],
         decoration: components.styles.decorations.textFeild(
           context,
           labelText: 'Quantity',
           hintText: '21,000,000',
           errorText: quantityController.text != '' &&
-                  !quantityValidation(quantityController.text.toInt())
+                  !quantityValidation(quantityController.text.toDouble())
               ? 'must ${quantityController.text.toInt().toCommaString()} be between 1 and 21,000,000,000'
               : null,
         ),
-        onChanged: (String value) => validateQuantity(quantity: value.toInt()),
+        onChanged: (String value) =>
+            validateQuantity(quantity: value == '' ? 0.0 : value.toDouble()),
         onEditingComplete: () {
           validateQuantity();
           formatQuantity();
@@ -389,7 +401,7 @@ class _CreateAssetState extends State<CreateAsset> {
   Widget get submitButton => components.buttons.actionButton(
         context,
         focusNode: nextFocus,
-        enabled: nameValidated && enabled,
+        enabled: enabled,
         onPressed: submit,
       );
 
@@ -500,11 +512,13 @@ class _CreateAssetState extends State<CreateAsset> {
     }
   }
 
-  bool quantityValidation(int quantity) =>
+  bool quantityValidation(double quantity) =>
       quantityController.text != '' && quantity.isRVNAmount;
 
-  void validateQuantity({int? quantity}) {
-    quantity = quantity ?? quantityController.text.toInt();
+  void validateQuantity({double? quantity}) {
+    quantity = quantity ??
+        (quantityController.text == '' ? '0' : quantityController.text)
+            .toDouble();
     var oldValidation = quantityValidated;
     quantityValidated = quantityValidation(quantity);
     if (oldValidation != quantityValidated || !quantityValidated) {
@@ -525,12 +539,11 @@ class _CreateAssetState extends State<CreateAsset> {
   }
 
   bool get enabled =>
-      nameController.text.length > 2 &&
-      nameValidation(nameController.text) &&
       nameValidated &&
+      //nameValidation(nameController.text) &&
       (needsQuantity
           ? quantityController.text != '' &&
-              quantityValidation(quantityController.text.toInt())
+              quantityValidation(quantityController.text.toDouble())
           : true) &&
       (needsDecimal
           ? decimalController.text != '' &&
@@ -543,7 +556,7 @@ class _CreateAssetState extends State<CreateAsset> {
           await nameNotTakenValid(nameController.text) &&
           (needsQuantity
               ? quantityController.text != '' &&
-                  quantityValidation(quantityController.text.toInt())
+                  quantityValidation(quantityController.text.toDouble())
               : true) &&
           (needsDecimal
               ? decimalController.text != '' &&
@@ -568,12 +581,12 @@ class _CreateAssetState extends State<CreateAsset> {
         fullName: fullName(true),
         wallet: Current.wallet,
         name: nameController.text,
+        quantity: needsQuantity ? quantityController.text.toDouble() : null,
         assetData: ipfsController.text == ''
             ? null
             : (ipfsController.text.isIpfs
                 ? ipfsController.text.base58Decode
                 : ipfsController.text.hexBytesForScript),
-        quantity: needsQuantity ? quantityController.text.toInt() : null,
         decimals: needsDecimal ? decimalController.text.toInt() : null,
         reissuable: needsReissue ? reissueValue : null,
         verifier: needsVerifier ? verifierController.text : null,
@@ -651,7 +664,7 @@ class _CreateAssetState extends State<CreateAsset> {
   void formatQuantity() =>
       quantityController.text = quantityController.text.isInt
           ? quantityController.text.toInt().toCommaString()
-          : quantityController.text;
+          : quantityController.text.toDouble().toCommaString();
 
   void _produceParentModal() {
     SelectionItems(context, modalSet: SelectionSet.Parents).build(
@@ -668,7 +681,7 @@ class _CreateAssetState extends State<CreateAsset> {
 
   void _produceDecimalModal() {
     SelectionItems(context, modalSet: SelectionSet.Decimal)
-        .build(decimalPrefix: quantityController.text);
+        .build(decimalPrefix: quantityController.text.split('.').first);
   }
 
   void _produceAdminAssetModal() {

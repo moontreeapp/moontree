@@ -14,7 +14,7 @@ class CreateStreams {
 class GenericCreateForm {
   final String? name;
   final String? ipfs;
-  final int? quantity;
+  final double? quantity;
   final int? decimal;
   final bool? reissuable;
   final String? verifier;
@@ -43,7 +43,7 @@ class GenericCreateForm {
     GenericCreateForm? form,
     String? name,
     String? ipfs,
-    int? quantity,
+    double? quantity,
     int? decimal,
     String? verifier,
     bool? reissuable,

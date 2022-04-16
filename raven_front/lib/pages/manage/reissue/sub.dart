@@ -30,7 +30,7 @@ class _ReissueMainSubAssetState extends State<ReissueMainSubAsset> {
       streams.reissue.form.add(GenericReissueForm(
         parent: asset.parent?.symbol,
         name: asset.symbol,
-        minQuantity: asset.amount.toInt(),
+        minQuantity: asset.amount,
         minDecimal: asset.divisibility,
         decimal: asset.divisibility,
         minIpfs: asset.data,
