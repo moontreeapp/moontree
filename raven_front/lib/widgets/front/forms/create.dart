@@ -224,7 +224,7 @@ class _CreateAssetState extends State<CreateAsset> {
         focusNode: parentFocus,
         controller: parentController,
         readOnly: true,
-        decoration: components.styles.decorations.textFeild(context,
+        decoration: components.styles.decorations.textField(context,
             labelText: 'Parent ' + (isQualifier ? 'Qualifier' : 'Asset'),
             hintText: 'Parent ' + (isQualifier ? 'Qualifier' : 'Asset'),
             errorText: parentValidationErr,
@@ -252,7 +252,7 @@ class _CreateAssetState extends State<CreateAsset> {
       textInputAction: TextInputAction.done,
       keyboardType: isRestricted ? TextInputType.none : null,
       inputFormatters: [MainAssetNameTextFormatter()],
-      decoration: components.styles.decorations.textFeild(
+      decoration: components.styles.decorations.textField(
         context,
         labelText: (isSub && !isNFT && !isChannel ? 'Sub ' : '') +
             presetToTitle[widget.preset]!,
@@ -288,7 +288,7 @@ class _CreateAssetState extends State<CreateAsset> {
               decimalRange: int.parse(
                   decimalController.text == '' ? '0' : decimalController.text))
         ],
-        decoration: components.styles.decorations.textFeild(
+        decoration: components.styles.decorations.textField(
           context,
           labelText: 'Quantity',
           hintText: '21,000,000',
@@ -311,7 +311,7 @@ class _CreateAssetState extends State<CreateAsset> {
         focusNode: decimalFocus,
         controller: decimalController,
         readOnly: true,
-        decoration: components.styles.decorations.textFeild(context,
+        decoration: components.styles.decorations.textField(context,
             labelText: 'Decimals',
             hintText: 'Decimals',
             suffixIcon: IconButton(
@@ -333,7 +333,7 @@ class _CreateAssetState extends State<CreateAsset> {
       controller: verifierController,
       textInputAction: TextInputAction.done,
       inputFormatters: [VerifierStringTextFormatter()],
-      decoration: components.styles.decorations.textFeild(
+      decoration: components.styles.decorations.textField(
         context,
         labelText: 'Verifier String',
         hintText: '((#KYC & #ACCREDITED) | #EXEMPT) & !#IRS',
@@ -353,7 +353,7 @@ class _CreateAssetState extends State<CreateAsset> {
         autocorrect: false,
         controller: ipfsController,
         textInputAction: TextInputAction.done,
-        decoration: components.styles.decorations.textFeild(
+        decoration: components.styles.decorations.textField(
           context,
           labelText: 'IPFS/TXID',
           hintText: 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr',
