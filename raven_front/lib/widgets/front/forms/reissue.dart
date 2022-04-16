@@ -265,12 +265,12 @@ class _ReissueAssetState extends State<ReissueAsset> {
           labelText: 'Additional Quantity',
           hintText: '21,000,000',
           errorText: quantityController.text != '' &&
-                  !quantityValidation(double.parse(quantityController.text))
+                  !quantityValidation(quantityController.text.toDouble())
               ? 'Additional Quantity cannot exceed ${21000000000 - minQuantity}'
               : null,
         ),
         onChanged: (String value) =>
-            validateQuantity(quantity: value == '' ? 0.0 : double.parse(value)),
+            validateQuantity(quantity: value == '' ? 0.0 : value.toDouble()),
         onEditingComplete: () {
           validateQuantity();
           formatQuantity();
@@ -428,8 +428,8 @@ class _ReissueAssetState extends State<ReissueAsset> {
 
   void validateQuantity({double? quantity}) {
     quantity = quantity ??
-        double.parse(
-            quantityController.text == '' ? '0' : quantityController.text);
+        (quantityController.text == '' ? '0' : quantityController.text)
+            .toDouble();
     var oldValidation = quantityValidated;
     quantityValidated = quantityValidation(quantity);
     if (oldValidation != quantityValidated || !quantityValidated) {
@@ -452,7 +452,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
   bool get enabled =>
       // If we change anything
       ((quantityController.text != '' &&
-              double.parse(quantityController.text) != 0.0) ||
+              quantityController.text.toDouble() != 0.0) ||
           decimalController.text != minDecimal.toString() ||
           reissueValue == false ||
           (minIpfs != ipfsController.text)) &&
@@ -463,7 +463,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
                   : assetDataValidation(ipfsController.text))
               : (ipfsController.text != '' &&
                   assetDataValidation(ipfsController.text))) &&
-          quantityValidation(double.parse(quantityController.text)) &&
+          quantityValidation(quantityController.text.toDouble()) &&
           decimalValidation(decimalController.text.toInt()));
 
   /*[
@@ -488,7 +488,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
         fullName: fullName(true),
         wallet: Current.wallet,
         name: nameController.text,
-        quantity: needsQuantity ? double.parse(quantityController.text) : null,
+        quantity: needsQuantity ? quantityController.text.toDouble() : null,
         decimals: needsDecimal ? decimalController.text.toInt() : null,
         originalQuantity: minQuantity,
         originalDecimals: minDecimal,
@@ -565,7 +565,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
   void formatQuantity() =>
       quantityController.text = quantityController.text.isInt
           ? quantityController.text.toInt().toCommaString()
-          : quantityController.text;
+          : quantityController.text.toDouble().toCommaString();
 
   void _produceParentModal() {
     SelectionItems(context, modalSet: SelectionSet.Parents).build(

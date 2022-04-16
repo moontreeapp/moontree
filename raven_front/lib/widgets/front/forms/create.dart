@@ -293,12 +293,12 @@ class _CreateAssetState extends State<CreateAsset> {
           labelText: 'Quantity',
           hintText: '21,000,000',
           errorText: quantityController.text != '' &&
-                  !quantityValidation(double.parse(quantityController.text))
+                  !quantityValidation(quantityController.text.toDouble())
               ? 'must ${quantityController.text.toInt().toCommaString()} be between 1 and 21,000,000,000'
               : null,
         ),
         onChanged: (String value) =>
-            validateQuantity(quantity: value == '' ? 0.0 : double.parse(value)),
+            validateQuantity(quantity: value == '' ? 0.0 : value.toDouble()),
         onEditingComplete: () {
           validateQuantity();
           formatQuantity();
@@ -517,8 +517,8 @@ class _CreateAssetState extends State<CreateAsset> {
 
   void validateQuantity({double? quantity}) {
     quantity = quantity ??
-        double.parse(
-            quantityController.text == '' ? '0' : quantityController.text);
+        (quantityController.text == '' ? '0' : quantityController.text)
+            .toDouble();
     var oldValidation = quantityValidated;
     quantityValidated = quantityValidation(quantity);
     if (oldValidation != quantityValidated || !quantityValidated) {
@@ -543,7 +543,7 @@ class _CreateAssetState extends State<CreateAsset> {
       //nameValidation(nameController.text) &&
       (needsQuantity
           ? quantityController.text != '' &&
-              quantityValidation(double.parse(quantityController.text))
+              quantityValidation(quantityController.text.toDouble())
           : true) &&
       (needsDecimal
           ? decimalController.text != '' &&
@@ -556,7 +556,7 @@ class _CreateAssetState extends State<CreateAsset> {
           await nameNotTakenValid(nameController.text) &&
           (needsQuantity
               ? quantityController.text != '' &&
-                  quantityValidation(double.parse(quantityController.text))
+                  quantityValidation(quantityController.text.toDouble())
               : true) &&
           (needsDecimal
               ? decimalController.text != '' &&
@@ -581,7 +581,7 @@ class _CreateAssetState extends State<CreateAsset> {
         fullName: fullName(true),
         wallet: Current.wallet,
         name: nameController.text,
-        quantity: needsQuantity ? double.parse(quantityController.text) : null,
+        quantity: needsQuantity ? quantityController.text.toDouble() : null,
         assetData: ipfsController.text == ''
             ? null
             : (ipfsController.text.isIpfs
@@ -664,7 +664,7 @@ class _CreateAssetState extends State<CreateAsset> {
   void formatQuantity() =>
       quantityController.text = quantityController.text.isInt
           ? quantityController.text.toInt().toCommaString()
-          : quantityController.text;
+          : quantityController.text.toDouble().toCommaString();
 
   void _produceParentModal() {
     SelectionItems(context, modalSet: SelectionSet.Parents).build(
