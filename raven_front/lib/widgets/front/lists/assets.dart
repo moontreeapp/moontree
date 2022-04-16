@@ -26,7 +26,7 @@ class _AssetList extends State<AssetList> {
     listeners.add(res.assets.changes.listen((Change<Asset> change) {
       // if vouts in our account has changed...
       var count = res.assets.length;
-      if (count > assetCount) {
+      if (count != assetCount) {
         setState(() {
           assetCount = count;
         });

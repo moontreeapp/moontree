@@ -6,7 +6,6 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
 
-import 'package:raven_front/services/lookup.dart';
 //import 'package:raven_front/utils/zips.dart';
 //import 'package:raven_front/theme/extensions.dart';
 //import 'package:raven_back/utilities/database.dart' as ravenDatabase;
