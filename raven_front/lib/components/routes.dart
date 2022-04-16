@@ -18,7 +18,8 @@ class RouteStack extends NavigatorObserver {
     routeStack.removeLast();
     routeContext =
         routeStack.isEmpty ? null : routeStack.last.navigator?.context;
-    streams.app.page.add(conformName(routeStack.last.settings.name));
+    streams.app.page.add(
+        conformName(routeStack.isEmpty ? null : routeStack.last.settings.name));
   }
 
   @override
