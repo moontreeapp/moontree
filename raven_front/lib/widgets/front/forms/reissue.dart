@@ -452,7 +452,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
   bool get enabled =>
       // If we change anything
       ((quantityController.text != '' &&
-              quantityController.text.toInt() != 0) ||
+              double.parse(quantityController.text) != 0.0) ||
           decimalController.text != minDecimal.toString() ||
           reissueValue == false ||
           (minIpfs != ipfsController.text)) &&
@@ -463,7 +463,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
                   : assetDataValidation(ipfsController.text))
               : (ipfsController.text != '' &&
                   assetDataValidation(ipfsController.text))) &&
-          quantityValidation(quantityController.text.toInt()) &&
+          quantityValidation(double.parse(quantityController.text)) &&
           decimalValidation(decimalController.text.toInt()));
 
   /*[
