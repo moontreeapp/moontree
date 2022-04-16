@@ -72,7 +72,17 @@ class _AssetDetails extends State<AssetDetails> {
                   ),
                 )
             ] +
-            [link('IPFS', 'https://gateway.ipfs.io/ipfs/')] +
+            [
+              (assetDetails!.metadata == '' || assetDetails!.metadata.isIpfs)
+                  ? link('IPFS', 'https://gateway.ipfs.io/ipfs/')
+                  : ListTile(
+                      dense: true,
+                      title: Text('TXID',
+                          style: Theme.of(context).textTheme.bodyText1),
+                      trailing: Text(element('TXID'),
+                          style: Theme.of(context).textTheme.bodyText1),
+                    )
+            ] +
             [
               for (var text in ['Reissuable'])
                 ListTile(
@@ -99,6 +109,7 @@ class _AssetDetails extends State<AssetDetails> {
       case 'Verifier':
         return 'not captured...';
       case 'IPFS':
+      case 'TXID':
         return assetDetails!.metadata.cutOutMiddle();
       case 'Reissuable':
         return assetDetails!.reissuable ? 'Yes' : 'No';
