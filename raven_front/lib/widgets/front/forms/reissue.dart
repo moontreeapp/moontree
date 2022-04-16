@@ -58,13 +58,24 @@ class _ReissueAssetState extends State<ReissueAsset> {
   String? verifierValidationErr;
   int remainingNameLength = 30;
   int remainingVerifierLength = 89;
-  int minQuantity = 0;
+  double minQuantity = 0;
   int minDecimal = 0;
   String minIpfs = '';
   Map<FormPresets, String> presetToTitle = {
     FormPresets.main: 'Reissue',
     FormPresets.restricted: 'Reissue',
   };
+
+  String limitQ(String q, String d) {
+    if (q.contains('.')) {
+      var splits = q.split('.');
+      var maxd = int.parse(d);
+      if (splits[1].length > maxd) {
+        return splits.first + '.' + splits[1].substring(0, maxd);
+      }
+    }
+    return q;
+  }
 
   @override
   void initState() {
@@ -76,13 +87,14 @@ class _ReissueAssetState extends State<ReissueAsset> {
           parentController.text = value?.parent ?? parentController.text;
           nameController.text = value?.name ?? nameController.text;
           ipfsController.text = value?.ipfs ?? ipfsController.text;
-          quantityController.text =
-              value?.quantity?.toCommaString() ?? quantityController.text;
           decimalController.text =
               (value?.decimal ?? decimalController.text).toString();
+          quantityController.text = limitQ(
+              value?.quantity?.toCommaString() ?? quantityController.text,
+              decimalController.text);
           reissueValue = value?.reissuable ?? reissueValue;
           verifierController.text = value?.verifier ?? verifierController.text;
-          minQuantity = value?.minQuantity ?? 0;
+          minQuantity = value?.minQuantity ?? 0.0;
           minDecimal = value?.minDecimal ?? 0;
           minIpfs = value?.minIpfs ?? '';
           if (value?.ipfs != null) {
@@ -239,27 +251,26 @@ class _ReissueAssetState extends State<ReissueAsset> {
 
   Widget get quantityField => TextField(
         focusNode: quantityFocus,
-        controller: quantityController, // can't be lower than  minQuantity
-//      keyboardType: TextInputType.number,
+        controller: quantityController,
         enabled: minQuantity == 21000000000 ? false : true,
         keyboardType:
-            TextInputType.numberWithOptions(decimal: false, signed: false),
+            TextInputType.numberWithOptions(decimal: true, signed: false),
         textInputAction: TextInputAction.done,
         inputFormatters: <TextInputFormatter>[
-          FilteringTextInputFormatter.digitsOnly,
-          // selection messed up: don't do it on edit, do it on complete,
-          //CommaIntValueTextFormatter()
+          DecimalTextInputFormatter(
+              decimalRange: int.parse(decimalController.text))
         ],
         decoration: components.styles.decorations.textFeild(
           context,
           labelText: 'Additional Quantity',
           hintText: '21,000,000',
           errorText: quantityController.text != '' &&
-                  !quantityValidation(quantityController.text.toInt())
+                  !quantityValidation(double.parse(quantityController.text))
               ? 'Additional Quantity cannot exceed ${21000000000 - minQuantity}'
               : null,
         ),
-        onChanged: (String value) => validateQuantity(quantity: value.toInt()),
+        onChanged: (String value) =>
+            validateQuantity(quantity: value == '' ? 0.0 : double.parse(value)),
         onEditingComplete: () {
           validateQuantity();
           formatQuantity();
@@ -405,11 +416,13 @@ class _ReissueAssetState extends State<ReissueAsset> {
     }
   }
 
-  bool quantityValidation(int quantity) =>
-      quantityController.text != '' && (quantity + minQuantity).isRVNAmount;
+  bool quantityValidation(double quantity) =>
+      quantityController.text != '' && quantity.isRVNAmount;
 
-  void validateQuantity({int? quantity}) {
-    quantity = quantity ?? quantityController.text.toInt();
+  void validateQuantity({double? quantity}) {
+    quantity = quantity ??
+        double.parse(
+            quantityController.text == '' ? '0' : quantityController.text);
     var oldValidation = quantityValidated;
     quantityValidated = quantityValidation(quantity);
     if (oldValidation != quantityValidated || !quantityValidated) {
@@ -431,7 +444,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
 
   bool get enabled => [
         quantityController.text != '' &&
-            quantityValidation(quantityController.text.toInt()),
+            quantityValidation(double.parse(quantityController.text)),
         decimalController.text != minDecimal.toString() &&
             decimalValidation(decimalController.text.toInt()),
         ipfsController.text != '' && ipfsValidation(ipfsController.text),
@@ -450,7 +463,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
         fullName: fullName(true),
         wallet: Current.wallet,
         name: nameController.text,
-        quantity: needsQuantity ? quantityController.text.toInt() : null,
+        quantity: needsQuantity ? double.parse(quantityController.text) : null,
         decimals: needsDecimal ? decimalController.text.toInt() : null,
         originalQuantity: minQuantity,
         originalDecimals: minDecimal,
@@ -529,8 +542,9 @@ class _ReissueAssetState extends State<ReissueAsset> {
   }
 
   void _produceDecimalModal() {
-    SelectionItems(context, modalSet: SelectionSet.Decimal)
-        .build(decimalPrefix: quantityController.text, minDecimal: minDecimal);
+    SelectionItems(context, modalSet: SelectionSet.Decimal).build(
+        decimalPrefix: quantityController.text.split('.').first,
+        minDecimal: minDecimal);
   }
 
   void _produceAdminAssetModal() {

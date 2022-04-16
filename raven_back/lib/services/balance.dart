@@ -55,9 +55,14 @@ class BalanceService {
   Future recalculateAllBalances() async {
     // wont work when it needs to until we save asset data when we save unspents
     for (var key in services.download.unspents.unspentsBySymbol.keys) {
+      var securities = res.securities.bySymbol.getAll(key);
+      if (securities.isEmpty) {
+        // security isn't saved to the database yet
+        return;
+      }
       await res.balances.save(Balance(
           walletId: res.wallets.currentWallet.id,
-          security: res.securities.bySymbol.getAll(key).first,
+          security: securities.first,
           confirmed: services.download.unspents.total(key),
           unconfirmed: 0));
     }

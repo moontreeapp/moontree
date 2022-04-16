@@ -13,10 +13,10 @@ class ReissueStreams {
 class GenericReissueForm {
   final String? name;
   final String? ipfs;
-  final int? quantity;
+  final double? quantity;
   final int? decimal;
   final String? minIpfs;
-  final int? minQuantity;
+  final double? minQuantity;
   final int? minDecimal;
   final bool? reissuable;
   final String? verifier;
@@ -51,10 +51,10 @@ class GenericReissueForm {
     GenericReissueForm? form,
     String? name,
     String? ipfs,
-    int? quantity,
+    double? quantity,
     int? decimal,
     String? minIpfs,
-    int? minQuantity,
+    double? minQuantity,
     int? minDecimal,
     String? verifier,
     bool? reissuable,
