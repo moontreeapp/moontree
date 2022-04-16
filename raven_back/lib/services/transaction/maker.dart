@@ -505,7 +505,7 @@ class TransactionMaker {
       feeSats = estimate.fees;
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee + burn
-      utxosRaven = services.balance.collectUTXOs(
+      utxosRaven = await services.balance.collectUTXOs(
           amount: feeSats + res.settings.network.burnAmounts.issueQualifier,
           security: null);
       var satsIn = 0;
@@ -558,7 +558,7 @@ class TransactionMaker {
     var utxosRaven = <Vout>[];
     // 1 parent qualifier asset, may have leftover
     var utxosSecurity = estimate.security != null
-        ? services.balance.collectUTXOs(
+        ? await services.balance.collectUTXOs(
             amount: 100000000,
             security: Security(
                 symbol: parentAsset, securityType: SecurityType.RavenAsset))
@@ -575,7 +575,7 @@ class TransactionMaker {
       feeSats = estimate.fees;
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee + burn
-      utxosRaven = services.balance.collectUTXOs(
+      utxosRaven = await services.balance.collectUTXOs(
         amount: feeSats + res.settings.network.burnAmounts.issueSubQualifier,
         security: null,
       );
@@ -635,7 +635,7 @@ class TransactionMaker {
     var utxosRaven = <Vout>[];
     // 1 virtual ownership asset for the parent
     var utxosSecurity = estimate.security != null
-        ? services.balance.collectUTXOs(
+        ? await services.balance.collectUTXOs(
             amount: 100000000,
             security: Security(
                 symbol: estimate.security!.symbol.substring(1) + '!',
@@ -647,7 +647,7 @@ class TransactionMaker {
       feeSats = estimate.fees;
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee + burn
-      utxosRaven = services.balance.collectUTXOs(
+      utxosRaven = await services.balance.collectUTXOs(
         amount: feeSats + res.settings.network.burnAmounts.issueRestricted,
         security: null,
       );
@@ -708,7 +708,7 @@ class TransactionMaker {
     var feeSats = 0;
     // Grab required assets for transfer amount
     var utxosRaven = <Vout>[];
-    var utxosSecurity = services.balance.collectUTXOs(
+    var utxosSecurity = await services.balance.collectUTXOs(
         amount: 100000000, // 1 virtual sat for ownership asset
         security: Security(
             symbol: estimate.security!.symbol.substring(1) + '!',
@@ -719,7 +719,7 @@ class TransactionMaker {
       feeSats = estimate.fees;
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee + burn amount
-      utxosRaven = services.balance.collectUTXOs(
+      utxosRaven = await services.balance.collectUTXOs(
         amount: feeSats + res.settings.network.burnAmounts.reissue,
         security: null,
       );
@@ -779,7 +779,7 @@ class TransactionMaker {
     var feeSats = 0;
     // Grab required assets for transfer amount
     var utxosRaven = <Vout>[];
-    var utxosSecurity = services.balance.collectUTXOs(
+    var utxosSecurity = await services.balance.collectUTXOs(
         amount: 100000000, // 1 sat for ownership asset
         security: Security(
             symbol: estimate.security!.symbol[0] == '\$'
@@ -798,7 +798,7 @@ class TransactionMaker {
       feeSats = estimate.fees;
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee + burn amount
-      utxosRaven = services.balance.collectUTXOs(
+      utxosRaven = await services.balance.collectUTXOs(
         amount: feeSats + res.settings.network.burnAmounts.addTag,
         security: null,
       );
@@ -856,7 +856,7 @@ class TransactionMaker {
     var feeSats = 0;
     // Grab required assets for transfer amount
     var utxosRaven = <Vout>[];
-    var utxosSecurity = services.balance.collectUTXOs(
+    var utxosSecurity = await services.balance.collectUTXOs(
         amount: 100000000, // 1 virtual sat for ownership asset
         security: Security(
             symbol: estimate.security!.symbol + '!',
@@ -867,7 +867,7 @@ class TransactionMaker {
       feeSats = estimate.fees;
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee + burn amount
-      utxosRaven = services.balance.collectUTXOs(
+      utxosRaven = await services.balance.collectUTXOs(
         amount: feeSats + res.settings.network.burnAmounts.reissue,
         security: null,
       );
@@ -930,7 +930,7 @@ class TransactionMaker {
       feeSats = estimate.fees;
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee + burn
-      utxosRaven = services.balance.collectUTXOs(
+      utxosRaven = await services.balance.collectUTXOs(
           amount: feeSats + res.settings.network.burnAmounts.issueMain,
           security: null);
       var satsIn = 0;
@@ -984,7 +984,7 @@ class TransactionMaker {
     var utxosRaven = <Vout>[];
     // 1 virtual ownership asset for the parent
     var utxosSecurity = estimate.security != null
-        ? services.balance.collectUTXOs(
+        ? await services.balance.collectUTXOs(
             amount: 100000000,
             security: Security(
                 symbol: parentAsset + '!',
@@ -996,7 +996,7 @@ class TransactionMaker {
       feeSats = estimate.fees;
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee + burn
-      utxosRaven = services.balance.collectUTXOs(
+      utxosRaven = await services.balance.collectUTXOs(
         amount: feeSats + res.settings.network.burnAmounts.issueSub,
         security: null,
       );
@@ -1050,7 +1050,7 @@ class TransactionMaker {
     var utxosRaven = <Vout>[];
     // 1 virtual ownership asset for the parent
     var utxosSecurity = estimate.security != null
-        ? services.balance.collectUTXOs(
+        ? await services.balance.collectUTXOs(
             amount: 100000000,
             security: Security(
                 symbol: parentAsset + '!',
@@ -1065,7 +1065,7 @@ class TransactionMaker {
       feeSats = estimate.fees;
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee plus burn
-      utxosRaven = services.balance.collectUTXOs(
+      utxosRaven = await services.balance.collectUTXOs(
         amount: feeSats + extraFee,
         security: null,
       );
@@ -1112,7 +1112,7 @@ class TransactionMaker {
     ravencoin.Transaction tx;
     var feeSats = 0;
     var utxosRaven = <Vout>[];
-    var utxosSecurity = services.balance
+    var utxosSecurity = await services.balance
         .collectUTXOs(amount: 100000000, security: estimate.security!);
     var returnAddress = services.wallet.getChangeAddress(wallet);
     var returnRaven = -1; // Init to bad val
@@ -1120,7 +1120,7 @@ class TransactionMaker {
       feeSats = estimate.fees;
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee plus burn
-      utxosRaven = services.balance.collectUTXOs(
+      utxosRaven = await services.balance.collectUTXOs(
         amount: feeSats,
         security: null,
       );
@@ -1166,7 +1166,7 @@ class TransactionMaker {
     // Grab required assets for transfer amount
     var utxosRaven = <Vout>[];
     var utxosSecurity = estimate.security != null
-        ? services.balance.collectUTXOs(
+        ? await services.balance.collectUTXOs(
             amount: estimate.amount,
             security: estimate.security,
           )
@@ -1185,7 +1185,7 @@ class TransactionMaker {
       feeSats = estimate.fees;
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee (plus amount, maybe)
-      utxosRaven = services.balance.collectUTXOs(
+      utxosRaven = await services.balance.collectUTXOs(
           amount: feeSats + (estimate.security == null ? estimate.amount : 0),
           security: null);
       var satsIn = 0;
@@ -1228,14 +1228,14 @@ class TransactionMaker {
     return Tuple2(tx, estimate);
   }
 
-  Tuple2<ravencoin.Transaction, SendEstimate> transactionSendAll(
+  Future<Tuple2<ravencoin.Transaction, SendEstimate>> transactionSendAll(
     String toAddress,
     SendEstimate estimate, {
     required Wallet wallet,
     TxGoal? goal,
-  }) {
+  }) async {
     var txb = ravencoin.TransactionBuilder(network: res.settings.network);
-    var utxosOriginal = services.balance.collectUTXOs(
+    var utxosOriginal = await services.balance.collectUTXOs(
       amount: estimate.amount,
       security: estimate.security,
     );
@@ -1249,7 +1249,7 @@ class TransactionMaker {
     }
     estimate.setUTXOs(utxosOriginal);
     txb.addOutput(toAddress, estimate.amount);
-    txb.signEachInput(utxosOriginal);
+    await txb.signEachInput(utxosOriginal);
     var tx = txb.build();
     var fees = tx.fee(goal: goal);
     estimate.setFees(tx.fee(goal: goal));
@@ -1266,7 +1266,7 @@ class TransactionMaker {
       List<Vout> security_utxos;
       if (estimate.security != null) {
         // Grab required RVN for fee
-        rvn_utxos = services.balance.collectUTXOs(
+        rvn_utxos = await services.balance.collectUTXOs(
           amount: fees,
           security: null,
         );
@@ -1297,7 +1297,7 @@ class TransactionMaker {
       if (estimate.memo != null) {
         txb.addMemo(estimate.memo);
       }
-      txb.signEachInput(utxos.toList());
+      await txb.signEachInput(utxos.toList());
       tx = txb.build();
       fees = tx.fee(goal: goal);
     }
@@ -1305,17 +1305,17 @@ class TransactionMaker {
     return Tuple2(tx, estimate);
   }
 
-  Tuple2<ravencoin.Transaction, SendEstimate> transactionSendAllRVN(
+  Future<Tuple2<ravencoin.Transaction, SendEstimate>> transactionSendAllRVN(
     String toAddress,
     SendEstimate estimate, {
     required Wallet wallet,
     TxGoal? goal,
     Set<int>? previousFees,
     Security? security,
-  }) {
+  }) async {
     previousFees = previousFees ?? {};
     var txb = ravencoin.TransactionBuilder(network: res.settings.network);
-    var utxos = services.balance.collectUTXOs(
+    var utxos = await services.balance.collectUTXOs(
       amount: estimate.amount,
       security: null,
     );
@@ -1326,7 +1326,7 @@ class TransactionMaker {
     }
     var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
     txb.addOutput(toAddress, estimate.amount);
-    txb.signEachInput(utxos);
+    await txb.signEachInput(utxos);
     var tx = txb.build();
     var fees = tx.fee(goal: goal);
     updatedEstimate.setFees(tx.fee(goal: goal));

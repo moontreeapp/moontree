@@ -169,7 +169,7 @@ class _NavMenuState extends State<NavMenu> {
               onTap: () async {
                 //print(services.download.unspents.unspentsBySymbol);
                 //print(services.download.unspents.total());
-                print(services.download.unspents.unspentsBySymbol['MOONTREE3']);
+                //print(services.download.unspents.unspentsBySymbol['MOONTREE3']);
                 //print(res.balances.data);
               }),
         ],

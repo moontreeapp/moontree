@@ -54,7 +54,7 @@ class BalanceService {
 
   Future recalculateAllBalances() async {
     // wont work when it needs to until we save asset data when we save unspents
-    for (var key in services.download.unspents.unspentsBySymbol.keys) {
+    for (var key in await services.download.unspents.getSymbols()) {
       var securities = res.securities.bySymbol.getAll(key);
       if (securities.isEmpty) {
         // security isn't saved to the database yet
@@ -63,7 +63,7 @@ class BalanceService {
       await res.balances.save(Balance(
           walletId: res.wallets.currentWallet.id,
           security: securities.first,
-          confirmed: services.download.unspents.total(key),
+          confirmed: await services.download.unspents.total(key),
           unconfirmed: 0));
     }
   }
@@ -78,16 +78,20 @@ class BalanceService {
   Future recalculateRVNBalance() async => await res.balances.save(Balance(
       walletId: res.wallets.currentWallet.id,
       security: res.securities.RVN,
-      confirmed: services.download.unspents.total(res.securities.RVN.symbol),
+      confirmed:
+          await services.download.unspents.total(res.securities.RVN.symbol),
       unconfirmed: 0));
 
   /// Transaction Logic ///////////////////////////////////////////////////////
 
-  List<Vout> collectUTXOs({required int amount, Security? security}) {
-    services.download.unspents.assertSufficientFunds(amount, security?.symbol);
+  Future<List<Vout>> collectUTXOs(
+      {required int amount, Security? security}) async {
+    await services.download.unspents
+        .assertSufficientFunds(amount, security?.symbol);
     var gathered = 0;
     var unspents =
-        services.download.unspents.getUnspents(security?.symbol).toList();
+        (await services.download.unspents.getUnspents(security?.symbol))
+            .toList();
     var collection = <Vout>[];
     final _random = Random();
     while (amount - gathered > 0) {

@@ -89,8 +89,8 @@ class LeaderWalletService {
   }
 
   /// maybe we don't need the stream:
-  bool needsBackup(LeaderWallet leader) =>
-      services.download.unspents.unspentsBySymbol.keys.isNotEmpty &&
+  Future<bool> needsBackup(LeaderWallet leader) async =>
+      (await services.download.unspents.getSymbols()).isNotEmpty &&
       !leader.backedUp;
 
   Address deriveAddress(

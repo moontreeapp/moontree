@@ -257,8 +257,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
             TextInputType.numberWithOptions(decimal: true, signed: false),
         textInputAction: TextInputAction.done,
         inputFormatters: <TextInputFormatter>[
-          DecimalTextInputFormatter(
-              decimalRange: int.parse(decimalController.text))
+          DecimalTextInputFormatter(decimalRange: minDecimal)
         ],
         decoration: components.styles.decorations.textField(
           context,
@@ -424,7 +423,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
   }
 
   bool quantityValidation(double quantity) =>
-      quantityController.text != '' && quantity.isRVNAmount;
+      quantityController.text != '' && (minQuantity + quantity).isRVNAmount;
 
   void validateQuantity({double? quantity}) {
     quantity = quantity ??
@@ -438,7 +437,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
   }
 
   bool decimalValidation(int decimal) =>
-      decimalController.text != '' && decimal >= 0 && decimal <= 8;
+      decimalController.text != '' && decimal >= minDecimal && decimal <= 8;
 
   void validateDecimal({int? decimal}) {
     decimal = decimal ?? decimalController.text.toInt();
@@ -463,7 +462,8 @@ class _ReissueAssetState extends State<ReissueAsset> {
                   : assetDataValidation(ipfsController.text))
               : (ipfsController.text != '' &&
                   assetDataValidation(ipfsController.text))) &&
-          quantityValidation(quantityController.text.toDouble()) &&
+          (quantityController.text == '' ||
+              quantityValidation(quantityController.text.toDouble())) &&
           decimalValidation(decimalController.text.toInt()));
 
   /*[
@@ -488,7 +488,11 @@ class _ReissueAssetState extends State<ReissueAsset> {
         fullName: fullName(true),
         wallet: Current.wallet,
         name: nameController.text,
-        quantity: needsQuantity ? quantityController.text.toDouble() : null,
+        quantity: needsQuantity
+            ? (quantityController.text == ''
+                ? null
+                : quantityController.text.toDouble())
+            : null,
         decimals: needsDecimal ? decimalController.text.toInt() : null,
         originalQuantity: minQuantity,
         originalDecimals: minDecimal,
