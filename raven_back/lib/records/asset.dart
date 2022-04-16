@@ -185,11 +185,6 @@ class Asset with EquatableMixin {
 
   String get assetTypeName => assetType.enumString;
 
-  bool get isSub =>
-      symbol.contains('/') && !(symbol.startsWith('\$') || symbol.endsWith('!'))
-          ? true
-          : false;
-
   double get amount => utils.satToAmount(satsInCirculation);
 }
 

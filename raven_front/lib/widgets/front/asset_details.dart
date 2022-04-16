@@ -102,7 +102,7 @@ class _AssetDetails extends State<AssetDetails> {
     switch (humanName) {
       case 'Name':
         return widget.symbol;
-      case 'Quantity':
+      case 'Global Quantity':
         return assetDetails!.amount.toCommaString();
       case 'Decimals':
         return assetDetails!.divisibility.toString();
