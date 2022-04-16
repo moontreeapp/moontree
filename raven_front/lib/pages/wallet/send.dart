@@ -258,7 +258,7 @@ class _SendState extends State<Send> {
         focusNode: sendAssetFocusNode,
         controller: sendAsset,
         readOnly: true,
-        decoration: components.styles.decorations.textFeild(context,
+        decoration: components.styles.decorations.textField(context,
             focusNode: sendAssetFocusNode,
             labelText: 'Asset',
             hintText: 'Ravencoin',
@@ -288,7 +288,7 @@ class _SendState extends State<Send> {
         inputFormatters: [
           FilteringTextInputFormatter(RegExp(r'[a-zA-Z0-9]'), allow: true)
         ],
-        decoration: components.styles.decorations.textFeild(
+        decoration: components.styles.decorations.textField(
           context,
           focusNode: sendAddressFocusNode,
           labelText: 'To',
@@ -312,7 +312,7 @@ class _SendState extends State<Send> {
         controller: sendAmount,
         textInputAction: TextInputAction.done,
         keyboardType: TextInputType.number,
-        decoration: components.styles.decorations.textFeild(
+        decoration: components.styles.decorations.textField(
           context,
           focusNode: sendAmountFocusNode,
           labelText: 'Amount',
@@ -382,7 +382,7 @@ class _SendState extends State<Send> {
         focusNode: sendFeeFocusNode,
         controller: sendFee,
         readOnly: true,
-        decoration: components.styles.decorations.textFeild(context,
+        decoration: components.styles.decorations.textField(context,
             labelText: 'Transaction Speed',
             hintText: 'Standard',
             focusNode: sendFeeFocusNode,
@@ -414,7 +414,7 @@ class _SendState extends State<Send> {
       },
       focusNode: sendMemoFocusNode,
       controller: sendMemo,
-      decoration: components.styles.decorations.textFeild(
+      decoration: components.styles.decorations.textField(
         context,
         focusNode: sendMemoFocusNode,
         labelText: 'Memo',
@@ -447,7 +447,7 @@ class _SendState extends State<Send> {
       },
       focusNode: sendNoteFocusNode,
       controller: sendNote,
-      decoration: components.styles.decorations.textFeild(context,
+      decoration: components.styles.decorations.textField(context,
           focusNode: sendNoteFocusNode,
           labelText: 'Note',
           hintText: 'Purchase',

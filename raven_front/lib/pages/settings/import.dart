@@ -104,7 +104,7 @@ class _ImportState extends State<Import> {
         keyboardType: TextInputType.multiline,
         maxLines: importVisible ? 12 : 1,
         textInputAction: TextInputAction.done,
-        decoration: components.styles.decorations.textFeild(
+        decoration: components.styles.decorations.textField(
           context,
           focusNode: wordsFocus,
           labelText: wordsFocus.hasFocus ? 'Seed | WIF | Key' : null,

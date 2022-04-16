@@ -67,7 +67,7 @@ class _ExportState extends State<Export> {
       child: TextField(
         controller: walletController,
         readOnly: true,
-        decoration: components.styles.decorations.textFeild(
+        decoration: components.styles.decorations.textField(
           context,
           labelText: 'Wallet',
           helperText: walletController.text == ''

@@ -286,7 +286,7 @@ class _ReceiveState extends State<Receive> {
                                   //maxLength: 32,
                                   //maxLengthEnforcement: MaxLengthEnforcement.enforced,
                                   decoration:
-                                      components.styles.decorations.textFeild(
+                                      components.styles.decorations.textField(
                                     context,
                                     labelText: 'Requested Asset',
                                     hintText: 'MOONTREE',
@@ -328,7 +328,7 @@ class _ReceiveState extends State<Receive> {
                                   keyboardType: TextInputType.number,
                                   textInputAction: TextInputAction.done,
                                   decoration: components.styles.decorations
-                                      .textFeild(context,
+                                      .textField(context,
                                           labelText: 'Amount',
                                           hintText: 'Quantity'),
                                   onChanged: (value) {
@@ -350,7 +350,7 @@ class _ReceiveState extends State<Receive> {
                                 autocorrect: false,
                                 controller: requestLabel,
                                 decoration: components.styles.decorations
-                                    .textFeild(context,
+                                    .textField(context,
                                         labelText: 'Note',
                                         hintText: 'for groceries'),
                                 onChanged: (value) {

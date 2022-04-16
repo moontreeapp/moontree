@@ -102,7 +102,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
         autocorrect: false,
         controller: network,
         textInputAction: TextInputAction.done,
-        decoration: components.styles.decorations.textFeild(
+        decoration: components.styles.decorations.textField(
           context,
           focusNode: networkFocus,
           labelText: 'Network',
@@ -117,7 +117,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
         autocorrect: false,
         controller: serverAddress,
         textInputAction: TextInputAction.done,
-        decoration: components.styles.decorations.textFeild(
+        decoration: components.styles.decorations.textField(
           context,
           focusNode: serverFocus,
           labelText: 'Server',

@@ -91,7 +91,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         controller: existingPassword,
         obscureText: !existingPasswordVisible,
         textInputAction: TextInputAction.next,
-        decoration: components.styles.decorations.textFeild(
+        decoration: components.styles.decorations.textField(
           context,
           labelText: 'Current Password',
           //helperText:
@@ -141,7 +141,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         controller: newPassword,
         obscureText: !newPasswordVisible,
         textInputAction: TextInputAction.done,
-        decoration: components.styles.decorations.textFeild(
+        decoration: components.styles.decorations.textField(
           context,
           labelText: 'New Password',
           helperText: validatedComplexity ? newNotification : null,
@@ -168,7 +168,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         controller: confirmPassword,
         obscureText: !confirmPasswordVisible,
         textInputAction: TextInputAction.done,
-        decoration: components.styles.decorations.textFeild(
+        decoration: components.styles.decorations.textField(
           context,
           labelText: 'Confirm New Password',
           helperText: confirmPassword.text != '' &&

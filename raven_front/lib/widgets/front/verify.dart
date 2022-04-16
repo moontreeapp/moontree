@@ -68,7 +68,7 @@ class _VerifyPasswordState extends State<VerifyPassword> {
         controller: existingPassword,
         obscureText: !existingPasswordVisible,
         textInputAction: TextInputAction.next,
-        decoration: components.styles.decorations.textFeild(
+        decoration: components.styles.decorations.textField(
           context,
           focusNode: existingFocus,
           labelText: 'Password',

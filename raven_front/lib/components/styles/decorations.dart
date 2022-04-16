@@ -4,7 +4,7 @@ import 'package:raven_front/theme/theme.dart';
 class DecorationComponents {
   DecorationComponents();
 
-  InputDecoration textFeild(
+  InputDecoration textField(
     BuildContext context, {
     String? labelText,
     String? hintText,

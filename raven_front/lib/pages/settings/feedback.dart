@@ -86,7 +86,7 @@ class _FeedbackState extends State<Feedback> {
         focusNode: typeFocus,
         controller: typeController,
         readOnly: true,
-        decoration: components.styles.decorations.textFeild(context,
+        decoration: components.styles.decorations.textField(context,
             labelText: 'Request Type',
             hintText: 'Request Type',
             suffixIcon: IconButton(
@@ -116,7 +116,7 @@ class _FeedbackState extends State<Feedback> {
                   .subtitle1!
                   .copyWith(color: AppColors.offBlack)
               : Theme.of(context).textTheme.subtitle1,
-          decoration: components.styles.decorations.textFeild(
+          decoration: components.styles.decorations.textField(
             context,
             labelText: 'Description',
             hintText: 'As a user... I want... so that...',
@@ -144,7 +144,7 @@ class _FeedbackState extends State<Feedback> {
                 .subtitle1!
                 .copyWith(color: AppColors.offBlack)
             : Theme.of(context).textTheme.subtitle1,
-        decoration: components.styles.decorations.textFeild(
+        decoration: components.styles.decorations.textField(
           context,
           labelText: 'Email Address',
           helperText: emailController.text == ''

@@ -73,7 +73,7 @@ class _LoginState extends State<Login> {
       controller: password,
       obscureText: !passwordVisible, // masked controller for immediate?
       textInputAction: TextInputAction.done,
-      decoration: components.styles.decorations.textFeild(
+      decoration: components.styles.decorations.textField(
         context,
         focusNode: loginFocus,
         labelText: 'Password',

@@ -211,7 +211,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
         focusNode: parentFocus,
         controller: parentController,
         readOnly: true,
-        decoration: components.styles.decorations.textFeild(context,
+        decoration: components.styles.decorations.textField(context,
             labelText: 'Parent ' + 'Asset',
             hintText: 'Parent ' + 'Asset',
             errorText: parentValidationErr,
@@ -236,7 +236,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
       textInputAction: TextInputAction.done,
       keyboardType: isRestricted ? TextInputType.none : null,
       inputFormatters: [MainAssetNameTextFormatter()],
-      decoration: components.styles.decorations.textFeild(
+      decoration: components.styles.decorations.textField(
         context,
         labelText: (isSub ? 'Sub ' : '') + presetToTitle[widget.preset]!,
         hintText: 'MOONTREE.COM',
@@ -260,7 +260,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
           DecimalTextInputFormatter(
               decimalRange: int.parse(decimalController.text))
         ],
-        decoration: components.styles.decorations.textFeild(
+        decoration: components.styles.decorations.textField(
           context,
           labelText: 'Additional Quantity',
           hintText: '21,000,000',
@@ -283,7 +283,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
         focusNode: decimalFocus,
         controller: decimalController, // cannot be lower than minDecimal
         readOnly: true,
-        decoration: components.styles.decorations.textFeild(context,
+        decoration: components.styles.decorations.textField(context,
             labelText: 'Decimals',
             hintText: 'Decimals',
             suffixIcon: IconButton(
@@ -305,7 +305,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
       controller: verifierController,
       textInputAction: TextInputAction.done,
       inputFormatters: [VerifierStringTextFormatter()],
-      decoration: components.styles.decorations.textFeild(
+      decoration: components.styles.decorations.textField(
         context,
         labelText: 'Verifier String',
         hintText: '((#KYC & #ACCREDITED) | #EXEMPT) & !#IRS',
@@ -325,7 +325,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
         autocorrect: false,
         controller: ipfsController,
         textInputAction: TextInputAction.done,
-        decoration: components.styles.decorations.textFeild(
+        decoration: components.styles.decorations.textField(
           context,
           labelText: 'IPFS/TXID',
           hintText: minIpfs == ''
