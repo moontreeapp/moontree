@@ -11,6 +11,7 @@ class HistoryService {
 
   /// in order to not get concurrent modification error
   /// but retain logic for determining if we're done (all empty)
+  /// TODO: Concurrent modification is still possible. Async? Maybe add mutex
   Map<String, Set<Set<String>>> txsListsByWalletExposureKeysEraseable = {};
 
   Future<bool?> getHistories(Address address) async {

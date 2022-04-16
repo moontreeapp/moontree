@@ -32,14 +32,16 @@ final RegExp RAVEN_NAMES =
 // https://ethereum.stackexchange.com/questions/17094/how-to-store-ipfs-hash-using-bytes32/17112#17112
 // looks like we just need to consider hex strings or something...
 bool isIpfs(String x) => x.contains(RegExp(
-    r'^Qm[1-9A-HJ-NP-Za-km-z]{44}$|^b[A-Za-z2-7]{58}$|^B[A-Z2-7]{58}$|^z[1-9A-HJ-NP-Za-km-z]{48}$|^F[0-9A-F]{50}$'));
+    r'^Qm[1-9A-HJ-NP-Za-km-z]{44}$')); //|^b[A-Za-z2-7]{58}$|^B[A-Z2-7]{58}$|^z[1-9A-HJ-NP-Za-km-z]{48}$|^F[0-9A-F]{50}$'));
+// We currently only support the base58 version of IPFS
+// TODO: Validate and handle all kinds of IPFS validation
 
 bool isAddressRVN(String x) => Address.validateAddress(x, networks.mainnet);
 bool isAddressRVNt(String x) => Address.validateAddress(x, networks.testnet);
 bool isTxIdRVN(String x) => x.contains(RegExp(r'^[0-9a-f]{64}$'));
 // This is the raw hex that will be input into the chain as the associated IPFS
 // Should be check as input as isTxIdRVN
-bool isTxIdFlow(String x) => x.contains(RegExp(r'^5420[0-9a-f]{64}$'));
+//bool isTxIdFlow(String x) => x.contains(RegExp(r'^5420[0-9a-f]{64}$'));
 bool isAdmin(String x) =>
     x.isNotEmpty &&
     x[x.length - 1] == '!' &&
@@ -186,5 +188,5 @@ bool isRestricted(String x) =>
     !x.contains(RAVEN_NAMES);
 // bool isVote(String x) => x.contains(RegExp(r'^$')); // Unused
 bool isMemo(String x) => x.bytes.length <= 80;
-bool isAssetMemo(String x) => isIpfs(x) || isTxIdFlow(x);
+bool isAssetData(String x) => isIpfs(x) || isTxIdRVN(x);
 bool isRVNAmount(num x) => x <= 21000000000 && x > 0;

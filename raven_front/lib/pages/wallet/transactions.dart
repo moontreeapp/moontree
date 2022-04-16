@@ -154,7 +154,9 @@ class _TransactionsState extends State<Transactions>
       return null;
     }
     var chilren = <Widget>[];
-    if (securityAsset.primaryMetadata == null && securityAsset.hasIpfs) {
+    if (securityAsset.primaryMetadata == null &&
+        securityAsset.hasData &&
+        securityAsset.data!.isIpfs) {
       return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,

@@ -24,7 +24,7 @@ class _AssetDetails extends State<AssetDetails> {
   Widget body() => ListView(
         padding: EdgeInsets.only(top: 8, bottom: 112),
         children: <Widget>[
-              for (var text in ['Name', 'Quantity', 'Decimals'])
+              for (var text in ['Name', 'Global Quantity', 'Decimals'])
                 ListTile(
                   dense: true,
                   title:
@@ -72,7 +72,17 @@ class _AssetDetails extends State<AssetDetails> {
                   ),
                 )
             ] +
-            [link('IPFS', 'https://gateway.ipfs.io/ipfs/')] +
+            [
+              (assetDetails!.metadata == '' || assetDetails!.metadata.isIpfs)
+                  ? link('IPFS', 'https://gateway.ipfs.io/ipfs/')
+                  : ListTile(
+                      dense: true,
+                      title: Text('TXID',
+                          style: Theme.of(context).textTheme.bodyText1),
+                      trailing: Text(element('TXID'),
+                          style: Theme.of(context).textTheme.bodyText1),
+                    )
+            ] +
             [
               for (var text in ['Reissuable'])
                 ListTile(
@@ -92,13 +102,14 @@ class _AssetDetails extends State<AssetDetails> {
     switch (humanName) {
       case 'Name':
         return widget.symbol;
-      case 'Quantity':
+      case 'Global Quantity':
         return assetDetails!.amount.toCommaString();
       case 'Decimals':
         return assetDetails!.divisibility.toString();
       case 'Verifier':
         return 'not captured...';
       case 'IPFS':
+      case 'TXID':
         return assetDetails!.metadata.cutOutMiddle();
       case 'Reissuable':
         return assetDetails!.reissuable ? 'Yes' : 'No';

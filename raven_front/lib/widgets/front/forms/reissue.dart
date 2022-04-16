@@ -17,6 +17,8 @@ import 'package:raven_front/utils/transformers.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/utilities/validate.dart';
 
+import 'package:bs58/bs58.dart';
+
 class ReissueAsset extends StatefulWidget {
   static const int ipfsLength = 89;
   final FormPresets preset;
@@ -97,9 +99,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
           minQuantity = value?.minQuantity ?? 0.0;
           minDecimal = value?.minDecimal ?? 0;
           minIpfs = value?.minIpfs ?? '';
-          if (value?.ipfs != null) {
-            ipfsValidated = ipfsValidation(value!.ipfs!);
-          }
+          validateAssetData(data: minIpfs);
         });
       }
     }));
@@ -327,14 +327,21 @@ class _ReissueAssetState extends State<ReissueAsset> {
         textInputAction: TextInputAction.done,
         decoration: components.styles.decorations.textFeild(
           context,
-          labelText: 'IPFS/Txid',
-          hintText: 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr',
+          labelText: 'IPFS/TXID',
+          hintText: minIpfs == ''
+              ? 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr'
+              : minIpfs,
           //helperText: ipfsValidation(ipfsController.text) ? 'match' : null,
-          errorText: ipfsController.text == '' || ipfsValidated
-              ? null
-              : 'invalid IPFS',
+          //errorText: ipfsController.text == '' || ipfsValidated
+          //    ? null
+          //    : 'Invalid IPFS',
+          errorText: ipfsController.text == ''
+              ? (minIpfs == '' ? null : 'You must input an IPFS/TXID')
+              : ipfsValidated
+                  ? null
+                  : 'Invalid IPFS/TXID',
         ),
-        onChanged: (String value) => validateIPFS(ipfs: value),
+        onChanged: (String value) => validateAssetData(data: value),
         onEditingComplete: () => FocusScope.of(context).requestFocus(nextFocus),
       );
 
@@ -405,12 +412,12 @@ class _ReissueAssetState extends State<ReissueAsset> {
     }
   }
 
-  bool ipfsValidation(String ipfs) => ipfs.isIpfs;
+  bool assetDataValidation(String ipfs) => ipfs.isAssetData;
 
-  void validateIPFS({String? ipfs}) {
-    ipfs = ipfs ?? ipfsController.text;
+  void validateAssetData({String? data}) {
+    data = data ?? ipfsController.text;
     var oldValidation = ipfsValidated;
-    ipfsValidated = ipfsValidation(ipfs);
+    ipfsValidated = assetDataValidation(data);
     if (oldValidation != ipfsValidated || !ipfsValidated) {
       setState(() {});
     }
@@ -442,7 +449,24 @@ class _ReissueAssetState extends State<ReissueAsset> {
     }
   }
 
-  bool get enabled => [
+  bool get enabled =>
+      // If we change anything
+      ((quantityController.text != '' &&
+              quantityController.text.toInt() != 0) ||
+          decimalController.text != minDecimal.toString() ||
+          reissueValue == false ||
+          (minIpfs != ipfsController.text)) &&
+      // Don't enable if invalid state
+      ((minIpfs == ''
+              ? (ipfsController.text == ''
+                  ? true
+                  : assetDataValidation(ipfsController.text))
+              : (ipfsController.text != '' &&
+                  assetDataValidation(ipfsController.text))) &&
+          quantityValidation(quantityController.text.toInt()) &&
+          decimalValidation(decimalController.text.toInt()));
+
+  /*[
         quantityController.text != '' &&
             quantityValidation(double.parse(quantityController.text)),
         decimalController.text != minDecimal.toString() &&
@@ -450,6 +474,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
         ipfsController.text != '' && ipfsValidation(ipfsController.text),
         reissueValue == false,
       ].any((e) => e);
+*/
 
   Future<void> submit() async {
     if (enabled) {
@@ -467,8 +492,16 @@ class _ReissueAssetState extends State<ReissueAsset> {
         decimals: needsDecimal ? decimalController.text.toInt() : null,
         originalQuantity: minQuantity,
         originalDecimals: minDecimal,
-        originalIpfs: minIpfs,
-        ipfs: ipfsController.text == '' ? null : ipfsController.text,
+        originalAssetData: minIpfs == ''
+            ? null
+            : (minIpfs.isIpfs
+                ? minIpfs.base58Decode
+                : minIpfs.hexBytesForScript),
+        assetData: ipfsController.text == ''
+            ? null
+            : (ipfsController.text.isIpfs
+                ? ipfsController.text.base58Decode
+                : ipfsController.text.hexBytesForScript),
         reissuable: needsReissue ? reissueValue : null,
         verifier: needsVerifier ? verifierController.text : null,
         parent: isSub ? parentController.text : null,

@@ -29,7 +29,6 @@ class Validate {
   final isAddressRVN = validate.isAddressRVN;
   final isAddressRVNt = validate.isAddressRVNt;
   final isTxIdRVN = validate.isTxIdRVN;
-  final isTxIdFlow = validate.isTxIdFlow;
   final isAdmin = validate.isAdmin;
   final isAssetPath = validate.isAssetPath;
   final isMainAsset = validate.isMainAsset;
@@ -41,7 +40,7 @@ class Validate {
   final isSubQualifier = validate.isSubQualifier;
   final isQualifierString = validate.isQualifierString;
   final isMemo = validate.isMemo;
-  final isAssetMemo = validate.isAssetMemo;
+  final isAssetData = validate.isAssetData;
   final isRVNAmount = validate.isRVNAmount;
 }
 

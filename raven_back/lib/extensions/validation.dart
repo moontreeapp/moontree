@@ -75,7 +75,6 @@ extension StringValidationExtension on String {
   bool get isAddressRVN => utils.validate.isAddressRVN(this);
   bool get isAddressRVNt => utils.validate.isAddressRVNt(this);
   bool get isTxIdRVN => utils.validate.isTxIdRVN(this);
-  bool get isTxIdFlow => utils.validate.isTxIdFlow(this);
   bool get isAdmin => utils.validate.isAdmin(this);
   bool get isAssetPath => utils.validate.isAssetPath(this);
   bool get isMainAsset => utils.validate.isMainAsset(this);
@@ -87,5 +86,5 @@ extension StringValidationExtension on String {
   bool get isQualifierString => utils.validate.isQualifierString(this);
   bool get isRestricted => utils.validate.isRestricted(this);
   bool get isMemo => utils.validate.isMemo(this);
-  bool get isAssetMemo => utils.validate.isAssetMemo(this);
+  bool get isAssetData => utils.validate.isAssetData(this);
 }

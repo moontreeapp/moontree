@@ -113,9 +113,9 @@ class Asset with EquatableMixin {
     return null;
   }
 
-  bool get hasIpfs => metadata.isIpfs;
+  bool get hasData => metadata.isAssetData;
 
-  String? get ipfs => hasIpfs ? metadata : null;
+  String? get data => hasData ? metadata : null;
 
   bool get hasMetadata => metadata != '';
 
@@ -184,11 +184,6 @@ class Asset with EquatableMixin {
   }
 
   String get assetTypeName => assetType.enumString;
-
-  bool get isSub =>
-      symbol.contains('/') && !(symbol.startsWith('\$') || symbol.endsWith('!'))
-          ? true
-          : false;
 
   double get amount => utils.satToAmount(satsInCirculation);
 }

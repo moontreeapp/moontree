@@ -44,6 +44,8 @@ extension StringTrimExtension on String {
 extension StringBytesExtension on String {
   Uint8List get bytesUint8 => Uint8List.fromList(bytes);
   Uint8List get hexBytes => Uint8List.fromList(hex.decode(this));
+  Uint8List get hexBytesForScript =>
+      Uint8List.fromList([0x54, 0x20] + hex.decode(this));
   List<int> get bytes => utf8.encode(this);
   String get hexToAscii => List.generate(
         length ~/ 2,

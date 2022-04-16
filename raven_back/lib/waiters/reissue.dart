@@ -17,6 +17,7 @@ class ReissueWaiter extends Waiter {
         await Future.delayed(
             const Duration(milliseconds: 500)); // wait for please wait
         Tuple2<ravencoin.Transaction, SendEstimate> tuple;
+        print(reissueRequest.isRestricted);
         try {
           tuple = await services.transaction.make
               .reissueTransactionBy(reissueRequest);

@@ -54,7 +54,6 @@ class _CreateAssetState extends State<CreateAsset> {
   FocusNode decimalFocus = FocusNode();
   FocusNode verifierFocus = FocusNode();
   bool nameValidated = false;
-  bool nameTakenValidated = false;
   bool ipfsValidated = false;
   bool quantityValidated = false;
   bool decimalValidated = false;
@@ -356,14 +355,14 @@ class _CreateAssetState extends State<CreateAsset> {
         textInputAction: TextInputAction.done,
         decoration: components.styles.decorations.textFeild(
           context,
-          labelText: 'IPFS/Txid',
+          labelText: 'IPFS/TXID',
           hintText: 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr',
           //helperText: ipfsValidation(ipfsController.text) ? 'match' : null,
           errorText: ipfsController.text == '' || ipfsValidated
               ? null
-              : 'invalid IPFS',
+              : 'invalid IPFS/TXID',
         ),
-        onChanged: (String value) => validateIPFS(ipfs: value),
+        onChanged: (String value) => validateAssetData(data: value),
         onEditingComplete: () => FocusScope.of(context).requestFocus(nextFocus),
       );
 
@@ -502,12 +501,12 @@ class _CreateAssetState extends State<CreateAsset> {
     }
   }
 
-  bool ipfsValidation(String ipfs) => ipfs.isIpfs;
+  bool assetDataValidation(String data) => data.isAssetData;
 
-  void validateIPFS({String? ipfs}) {
-    ipfs = ipfs ?? ipfsController.text;
+  void validateAssetData({String? data}) {
+    data = data ?? ipfsController.text;
     var oldValidation = ipfsValidated;
-    ipfsValidated = ipfsValidation(ipfs);
+    ipfsValidated = assetDataValidation(data);
     if (oldValidation != ipfsValidated || !ipfsValidated) {
       setState(() {});
     }
@@ -550,9 +549,7 @@ class _CreateAssetState extends State<CreateAsset> {
           ? decimalController.text != '' &&
               decimalValidation(decimalController.text.toInt())
           : true) &&
-      (isNFT
-          ? ipfsValidation(ipfsController.text)
-          : ipfsController.text == '' || ipfsValidation(ipfsController.text));
+      (ipfsController.text == '' || assetDataValidation(ipfsController.text));
 
   Future<bool> get enabledAsync async => nameController.text.length > 2 &&
           nameValidation(nameController.text) &&
@@ -566,8 +563,8 @@ class _CreateAssetState extends State<CreateAsset> {
                   decimalValidation(decimalController.text.toInt())
               : true) &&
           isNFT
-      ? ipfsValidation(ipfsController.text)
-      : (ipfsController.text == '' || ipfsValidation(ipfsController.text));
+      ? assetDataValidation(ipfsController.text)
+      : (ipfsController.text == '' || assetDataValidation(ipfsController.text));
 
   Future<void> submit() async {
     if (await enabledAsync) {
@@ -584,8 +581,12 @@ class _CreateAssetState extends State<CreateAsset> {
         fullName: fullName(true),
         wallet: Current.wallet,
         name: nameController.text,
-        ipfs: ipfsController.text == '' ? null : ipfsController.text,
         quantity: needsQuantity ? double.parse(quantityController.text) : null,
+        assetData: ipfsController.text == ''
+            ? null
+            : (ipfsController.text.isIpfs
+                ? ipfsController.text.base58Decode
+                : ipfsController.text.hexBytesForScript),
         decimals: needsDecimal ? decimalController.text.toInt() : null,
         reissuable: needsReissue ? reissueValue : null,
         verifier: needsVerifier ? verifierController.text : null,
