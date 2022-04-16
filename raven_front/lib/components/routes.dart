@@ -25,8 +25,10 @@ class RouteStack extends NavigatorObserver {
   @override
   void didRemove(Route route, Route? previousRoute) {
     routeStack.removeLast();
-    routeContext = routeStack.last.navigator?.context;
-    streams.app.page.add(conformName(routeStack.last.settings.name));
+    routeContext =
+        routeStack.isEmpty ? null : routeStack.last.navigator?.context;
+    streams.app.page.add(
+        conformName(routeStack.isEmpty ? null : routeStack.last.settings.name));
   }
 
   @override
@@ -35,8 +37,10 @@ class RouteStack extends NavigatorObserver {
     if (newRoute != null) {
       routeStack.add(newRoute);
     }
-    routeContext = routeStack.last.navigator?.context;
-    streams.app.page.add(conformName(routeStack.last.settings.name));
+    routeContext =
+        routeStack.isEmpty ? null : routeStack.last.navigator?.context;
+    streams.app.page.add(
+        conformName(routeStack.isEmpty ? null : routeStack.last.settings.name));
   }
 
   String conformName(String? name) =>
