@@ -24,7 +24,7 @@ class _AssetDetails extends State<AssetDetails> {
   Widget body() => ListView(
         padding: EdgeInsets.only(top: 8, bottom: 112),
         children: <Widget>[
-              for (var text in ['Name', 'Quantity', 'Decimals'])
+              for (var text in ['Name', 'Global Quantity', 'Decimals'])
                 ListTile(
                   dense: true,
                   title:

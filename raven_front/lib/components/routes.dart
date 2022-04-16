@@ -16,7 +16,8 @@ class RouteStack extends NavigatorObserver {
 
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
     routeStack.removeLast();
-    routeContext = routeStack.last.navigator?.context;
+    routeContext =
+        routeStack.isEmpty ? null : routeStack.last.navigator?.context;
     streams.app.page.add(conformName(routeStack.last.settings.name));
   }
 
