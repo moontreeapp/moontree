@@ -5,6 +5,7 @@ import 'dart:async';
 // Multiple reads can happen at once
 // Only one write can happen at once
 // Reads cannot occur during writes.
+// Writes cannot occur during reads.
 
 // This class will always prioritize writes
 // TODO: Do we want to prioritize reads sometimes or flip-flop between?

@@ -17,8 +17,6 @@ import 'package:raven_front/utils/transformers.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/utilities/validate.dart';
 
-import 'package:bs58/bs58.dart';
-
 class ReissueAsset extends StatefulWidget {
   static const int ipfsLength = 89;
   final FormPresets preset;

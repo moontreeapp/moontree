@@ -17,26 +17,20 @@ class UnspentService {
       scripthashes ??
       res.wallets.currentWallet.addresses.map((e) => e.scripthash).toList();
 
-  Future<void> _clearUnspentsForScripthash(
-      String scripthash, String symbol) async {
-    await _unspentsLock.enterWrite();
+  void _clearUnspentsForScripthash(String scripthash, String symbol) {
     _unspentsBySymbol[symbol]?[scripthash]?.clear();
-    await _unspentsLock.exitWrite();
   }
 
-  Future<void> _addUnspent({
+  void _addUnspent({
     required String symbol,
     required Iterable<ScripthashUnspent> unspents,
     bool subscribe = false,
-  }) async {
+  }) {
     if (unspents.isNotEmpty) {
-      await _unspentsLock.enterRead();
       if (_unspentsBySymbol.keys.isEmpty) {
         streams.app.triggers.add(ThresholdTrigger.backup);
       }
-      await _unspentsLock.exitRead();
 
-      await _unspentsLock.enterWrite();
       if (!_unspentsBySymbol.keys.contains(symbol)) {
         _unspentsBySymbol[symbol] = <String, Set<ScripthashUnspent>>{};
         if (subscribe) {
@@ -60,7 +54,6 @@ class UnspentService {
         }
         _unspentsBySymbol[symbol]![unspent.scripthash]!.add(unspent);
       }
-      await _unspentsLock.exitWrite();
     }
   }
 
@@ -72,8 +65,10 @@ class UnspentService {
       var utxos = (await services.client.client!.getUnspents(new_scripthashes))
           .expand((i) => i);
       // Wipe relevant unspents and re-add
+      await _unspentsLock.enterWrite();
       new_scripthashes.forEach((x) => _clearUnspentsForScripthash(x, rvn));
-      await _addUnspent(symbol: rvn, unspents: utxos);
+      _addUnspent(symbol: rvn, unspents: utxos);
+      await _unspentsLock.exitWrite();
     }
     if (!(updateRVN ?? false)) {
       var utxos =
@@ -98,14 +93,16 @@ class UnspentService {
       // And then remove and add
       for (final symbol in downloaded.keys) {
         final scripthashes_internal = downloaded[symbol]!.keys;
+        await _unspentsLock.enterWrite();
         scripthashes_internal
             .forEach((x) => _clearUnspentsForScripthash(x, symbol));
         for (final scripthash_internal in scripthashes_internal) {
-          await _addUnspent(
+          _addUnspent(
               symbol: symbol,
               unspents: downloaded[symbol]![scripthash_internal]!,
               subscribe: true);
         }
+        await _unspentsLock.exitWrite();
       }
     }
   }
