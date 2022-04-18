@@ -171,6 +171,7 @@ class _NavMenuState extends State<NavMenu> {
                 //print(services.download.unspents.total());
                 //print(services.download.unspents.unspentsBySymbol['MOONTREE3']);
                 //print(res.balances.data);
+                print(res.vouts.length);
               }),
         ],
       )

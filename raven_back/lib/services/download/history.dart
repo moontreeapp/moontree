@@ -287,6 +287,13 @@ class HistoryService {
     downloaded.addAll(transactionIds);
     var txs = <Tx>[];
     try {
+      /// kinda a hack https://github.com/moontreeapp/moontree/issues/444#issuecomment-1101667621
+      if (!saveVin) {
+        /// for a wallet with any serious amount of transactions getTransactions
+        /// will probably error in the event we're getting dangling transactions
+        /// (saveVin == false) so in that case go straight to catch clause:
+        throw Exception();
+      }
       txs = await client.getTransactions(transactionIds);
     } catch (e) {
       var futures = <Future<Tx>>[];
