@@ -84,7 +84,7 @@ class _TransactionListState extends State<TransactionList> {
         services.transaction.getTransactionRecords(wallet: Current.wallet);
     return transactions.isEmpty
         //? components.empty.transactions(context, msg: widget.msg)
-        ? components.empty.gettingTransactionsPlaceholder(context,
+        ? components.empty.getTransactionsPlaceholder(context,
             scrollController: widget.scrollController!, count: transactionCount)
         : Container(
             alignment: Alignment.center,
