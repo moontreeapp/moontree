@@ -53,3 +53,4 @@ app.*.map.json
 database/
 testdb/
 *.exe
+*analysis_options.yaml
