@@ -442,7 +442,7 @@ class TransactionMaker {
     GenericReissueRequest reissueRequest,
   ) async {
     var estimate = SendEstimate(
-      ((reissueRequest.quantity ?? 1) * 100000000).toInt(),
+      ((reissueRequest.quantity ?? 0) * 100000000).toInt(),
       security: reissueRequest.security,
       creation: true,
     );
