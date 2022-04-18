@@ -488,17 +488,11 @@ class SelectionItems {
         ),
       );
 
-  Future<void> produceModal(
-    List items, {
-    bool tall = true,
-    bool extra = false,
-  }) async {
+  Future<void> produceModal(List items) async {
     await showModalBottomSheet<void>(
         context: context,
-        enableDrag: true, // has no effect on draggable sheet either way
         elevation: 1,
-        isScrollControlled: true, // necessary
-        useRootNavigator: true, // doesn't apply scrim to app bar, doesn't hurt
+        isScrollControlled: true,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
@@ -530,17 +524,6 @@ class SelectionItems {
                   ));
             }),
           );
-          //  return Container(
-          //      height: tall && extra
-          //          ? MediaQuery.of(context).size.height
-          //          : tall
-          //              ? (MediaQuery.of(context).size.height) / 2
-          //              : null,
-          //      child: ListView(shrinkWrap: true, children: <Widget>[
-          //        ...[SizedBox(height: 8)],
-          //        ...items,
-          //        ...[SizedBox(height: 8)],
-          //      ]));
         });
   }
 
@@ -551,73 +534,83 @@ class SelectionItems {
     int? minDecimal,
   }) async {
     if (modalSet == SelectionSet.Wallets) {
-      await produceModal(
-        [walletItemAll(controller!)] +
-            [for (Wallet wallet in res.wallets) walletItem(wallet, controller)],
-        tall: false,
-      );
+      await produceModal([walletItemAll(controller!)] +
+          [for (Wallet wallet in res.wallets) walletItem(wallet, controller)]);
     } else if (modalSet == SelectionSet.Holdings) {
       produceModal(
           [for (String holding in holdingNames ?? []) holdingItem(holding)]);
     } else if (modalSet == SelectionSet.Admins) {
       produceModal(
-          [for (String name in holdingNames ?? []) restrictedItem(name)],
-          tall: false);
+        [for (String name in holdingNames ?? []) restrictedItem(name)],
+      );
     } else if (modalSet == SelectionSet.Parents) {
       produceModal(
           [for (String holding in holdingNames ?? []) parentItem(holding)]);
     } else if (modalSet == SelectionSet.Fee) {
-      produceModal([for (SelectionOption name in names) feeItem(name)],
-          tall: false);
+      produceModal(
+        [for (SelectionOption name in names) feeItem(name)],
+      );
     } else if (modalSet == SelectionSet.Decimal) {
-      produceModal([
-        for (SelectionOption name
-            in names.sublist(0, names.length - (minDecimal ?? 0)))
-          decimalItem(name, prefix: decimalPrefix, reissue: minDecimal != null)
-      ], tall: false);
+      produceModal(
+        [
+          for (SelectionOption name
+              in names.sublist(0, names.length - (minDecimal ?? 0)))
+            decimalItem(name,
+                prefix: decimalPrefix, reissue: minDecimal != null)
+        ],
+      );
     } else if (modalSet == SelectionSet.Create) {
-      produceModal([for (SelectionOption name in names) createItem(name)],
-          tall: false);
+      produceModal(
+        [for (SelectionOption name in names) createItem(name)],
+      );
     } else if (modalSet == SelectionSet.Sub_Asset) {
       symbolColors = streams.app.manage.asset.value;
-      produceModal([
-        for (SelectionOption name in names) createItem(name)
-      ], //subAssetItem(name)],
-          tall: false);
+      produceModal(
+        [
+          for (SelectionOption name in names) createItem(name)
+        ], //subAssetItem(name)],
+      );
     } else {
       if (names.length == behaviors.length && names.length == values.length) {
         if (symbol == null) {
-          produceModal([
-            for (var namedBehaviorValue in [
-              for (var i = 0; i < names.length; i += 1)
-                [names[i], behaviors[i], values[i]]
-            ])
-              item(namedBehaviorValue[0] as SelectionOption,
-                  behavior: namedBehaviorValue[1] as VoidCallback,
-                  value: namedBehaviorValue[2] as String)
-          ], tall: false);
+          produceModal(
+            [
+              for (var namedBehaviorValue in [
+                for (var i = 0; i < names.length; i += 1)
+                  [names[i], behaviors[i], values[i]]
+              ])
+                item(namedBehaviorValue[0] as SelectionOption,
+                    behavior: namedBehaviorValue[1] as VoidCallback,
+                    value: namedBehaviorValue[2] as String)
+            ],
+          );
         } else {
-          produceModal([
-            for (var namedBehaviorValue in [
-              for (var i = 0; i < names.length; i += 1)
-                [names[i], behaviors[i], values[i]]
-            ])
-              item(namedBehaviorValue[0] as SelectionOption,
-                  behavior: namedBehaviorValue[1] as VoidCallback,
-                  value: namedBehaviorValue[2] as String)
-          ], tall: false);
+          produceModal(
+            [
+              for (var namedBehaviorValue in [
+                for (var i = 0; i < names.length; i += 1)
+                  [names[i], behaviors[i], values[i]]
+              ])
+                item(namedBehaviorValue[0] as SelectionOption,
+                    behavior: namedBehaviorValue[1] as VoidCallback,
+                    value: namedBehaviorValue[2] as String)
+            ],
+          );
         }
       } else if (names.length == behaviors.length) {
-        produceModal([
-          for (var namedBehavior in [
-            for (var i = 0; i < names.length; i += 1) [names[i], behaviors[i]]
-          ])
-            item(namedBehavior[0] as SelectionOption,
-                behavior: namedBehavior[1] as VoidCallback)
-        ], tall: false);
+        produceModal(
+          [
+            for (var namedBehavior in [
+              for (var i = 0; i < names.length; i += 1) [names[i], behaviors[i]]
+            ])
+              item(namedBehavior[0] as SelectionOption,
+                  behavior: namedBehavior[1] as VoidCallback)
+          ],
+        );
       } else {
-        produceModal([for (SelectionOption name in names) item(name)],
-            tall: false);
+        produceModal(
+          [for (SelectionOption name in names) item(name)],
+        );
       }
     }
   }
