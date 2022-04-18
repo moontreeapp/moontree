@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/widgets/widgets.dart';
@@ -5,13 +7,11 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 
 class HomePage2 extends StatelessWidget {
-  const HomePage2({ Key? key }) : super(key: key);
+  const HomePage2({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      
-    );
+    return Container();
   }
 }
 
@@ -33,6 +33,7 @@ class _HomePageState extends State<HomePage>
   static const double initialExtent = maxExtent;
   late DraggableScrollableController draggableScrollController =
       DraggableScrollableController();
+  ValueNotifier<double> _notifier = ValueNotifier(1);
 
   @override
   void initState() {
@@ -71,67 +72,27 @@ class _HomePageState extends State<HomePage>
             } else if (draggableScrollController.size == maxExtent) {
               streams.app.setting.add(null);
             }
+            _notifier.value = draggableScrollController.size;
             print("Min extent : ${draggableScrollController.size}");
             return FrontCurve(
                 fuzzyTop: true,
                 child: Stack(
                   alignment: Alignment.bottomCenter,
                   children: [
-                    widget.appContext == AppContext.wallet
-                        ? HoldingList(scrollController: scrollController)
-                        : widget.appContext == AppContext.manage
-                            ? AssetList(scrollController: scrollController)
-                            : ListView(
-                                controller: scrollController,
-                                children: [
-                                  Text('swap\n\n\n\n\n\n\n\n\n\n\n\n')
-                                ],
-                              ),
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      transitionBuilder: (widget, animation) {
-                        return SlideTransition(
-                          position: Tween<Offset>(
-                                  begin: Offset(0, 1), end: Offset(0, 0))
-                              .animate(animation),
-                          child: widget,
-                        );
-                      },
-                      child: draggableScrollController.size > (minExtent + 0.2)
-                          ? NavBar(
-                              actionButtons:
-                                  widget.appContext == AppContext.wallet
-                                      ? <Widget>[
-                                          components.buttons.actionButton(
-                                            context,
-                                            label: 'send',
-                                            link: '/transaction/send',
-                                          ),
-                                          components.buttons.actionButton(
-                                            context,
-                                            label: 'receive',
-                                            link: '/transaction/receive',
-                                          )
-                                        ]
-                                      : <Widget>[
-                                          components.buttons.actionButton(
-                                            context,
-                                            label: 'create',
-                                            onPressed: _produceCreateModal,
-                                          )
-                                        ])
-                          : SizedBox(),
-                    )
+                    AllAssetsHome(
+                      dragController: draggableScrollController,
+                      scrollController: scrollController,
+                      appContext: widget.appContext,
+                      notifier: _notifier,
+                    ),
+                    BottomNavBar(widget.appContext, draggableScrollController,
+                        scrollController, _notifier),
                   ],
                 ));
           }),
         ),
       ),
     );
-  }
-
-  void _produceCreateModal() {
-    SelectionItems(context, modalSet: SelectionSet.Create).build();
   }
 
   Future<void> fling([bool? open]) async {
@@ -159,6 +120,104 @@ class _HomePageState extends State<HomePage>
       maxExtent,
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOutCubicEmphasized,
+    );
+  }
+}
+
+class BottomNavBar extends StatelessWidget {
+  const BottomNavBar(this.appContext, this.dragController,
+      this.scrollController, this.notifier,
+      {Key? key})
+      : super(key: key);
+
+  final DraggableScrollableController dragController;
+  final ScrollController scrollController;
+  final AppContext appContext;
+  final ValueNotifier<double> notifier;
+  void _produceCreateModal(BuildContext context) {
+    SelectionItems(context, modalSet: SelectionSet.Create).build();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print("Drag size: ${dragController.size}");
+    return AnimatedBuilder(
+      animation: notifier,
+      builder: (context, _) {
+        return Transform.rotate(
+          angle: 2 * pi * notifier.value,
+         // offset: Offset(dragController.size, dragController.size),
+
+          child: Container(
+            child: dragController.size > (0.5 + 0.2)
+                ? NavBar(
+                    actionButtons: appContext == AppContext.wallet
+                        ? <Widget>[
+                            components.buttons.actionButton(
+                              context,
+                              label: 'send',
+                              link: '/transaction/send',
+                            ),
+                            components.buttons.actionButton(
+                              context,
+                              label: 'receive',
+                              link: '/transaction/receive',
+                            )
+                          ]
+                        : <Widget>[
+                            components.buttons.actionButton(
+                              context,
+                              label: 'create',
+                              onPressed: () {
+                                _produceCreateModal(context);
+                              },
+                            )
+                          ],
+                  )
+                : SizedBox(),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class AllAssetsHome extends StatelessWidget {
+  const AllAssetsHome({
+    Key? key,
+    required this.dragController,
+    required this.scrollController,
+    required this.appContext,
+    required this.notifier,
+  }) : super(key: key);
+
+  final DraggableScrollableController dragController;
+  final ScrollController scrollController;
+  final AppContext appContext;
+  final ValueNotifier<double> notifier;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: notifier,
+      builder: (context, _) {
+        return Transform.rotate(
+          angle: 2 * pi * notifier.value,
+          // offset: Offset(0, dragController.size),
+          child: Container(
+            child: appContext == AppContext.wallet
+                ? HoldingList(scrollController: scrollController)
+                : appContext == AppContext.manage
+                    ? AssetList(scrollController: scrollController)
+                    : ListView(
+                        controller: scrollController,
+                        children: [
+                          Text('swap\n\n\n\n\n\n\n\n\n\n\n\n'),
+                        ],
+                      ),
+          ),
+        );
+      },
     );
   }
 }
