@@ -92,6 +92,11 @@ class _ReceiveState extends State<Receive> {
 
   @override
   Widget build(BuildContext context) {
+    if (Current.wallet is LeaderWallet &&
+        streams.app.triggers.value == ThresholdTrigger.backup &&
+        !(Current.wallet as LeaderWallet).backedUp) {
+      print('PROMPT FOR BACKUP HERE');
+    }
     username =
         res.settings.primaryIndex.getOne(SettingName.User_Name)?.value ?? '';
     data = populateData(context, data);

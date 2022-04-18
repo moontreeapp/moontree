@@ -11,6 +11,7 @@ import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 
 import 'package:raven_back/streams/spend.dart';
 import 'package:raven_back/services/transaction/maker.dart';
+import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/raven_back.dart';
 
 import 'package:raven_front/components/components.dart';
@@ -157,6 +158,11 @@ class _SendState extends State<Send> {
 
   @override
   Widget build(BuildContext context) {
+    if (Current.wallet is LeaderWallet &&
+        streams.app.triggers.value == ThresholdTrigger.backup &&
+        !(Current.wallet as LeaderWallet).backedUp) {
+      print('PROMPT FOR BACKUP HERE');
+    }
     minHeight =
         minHeight ?? 1 - (201 + 16) / MediaQuery.of(context).size.height;
     data = populateData(context, data);
