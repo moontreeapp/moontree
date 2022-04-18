@@ -3,6 +3,8 @@
 /// which changes based upon a page or messages from a stream... idk, but,
 /// for now we'll put it here because it'll be easy to move to main if we want.
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
@@ -11,6 +13,8 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_back/streams/create.dart';
 import 'package:raven_back/streams/reissue.dart';
 import 'package:raven_front/theme/theme.dart';
+import 'package:raven_front/utils/extensions.dart';
+import 'package:raven_front/widgets/backdrop/backdrop.dart';
 
 enum SelectionSet {
   Fee,
@@ -491,23 +495,53 @@ class SelectionItems {
   }) async {
     await showModalBottomSheet<void>(
         context: context,
-        enableDrag: true,
+        enableDrag: true, // has no effect on draggable sheet either way
         elevation: 1,
-        isScrollControlled: true,
+        isScrollControlled: true, // necessary
+        useRootNavigator: true, // doesn't apply scrim to app bar, doesn't hurt
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
-        builder: (BuildContext context) => Container(
-            height: tall && extra
-                ? MediaQuery.of(context).size.height
-                : tall
-                    ? (MediaQuery.of(context).size.height) / 2
-                    : null,
-            child: ListView(shrinkWrap: true, children: <Widget>[
-              ...[SizedBox(height: 8)],
-              ...items,
-              ...[SizedBox(height: 8)],
-            ])));
+        builder: (BuildContext context) {
+          DraggableScrollableController draggableScrollController =
+              DraggableScrollableController();
+          var minExtent = min((items.length * 52 + 16).relative(context), 0.5);
+          var initialExtent = minExtent;
+          var maxExtent = (items.length * 52 + 16).relative(context);
+          maxExtent = min(1.0, max(minExtent, maxExtent));
+          return DraggableScrollableSheet(
+            controller: draggableScrollController,
+            snap: true,
+            expand: false,
+            initialChildSize: initialExtent,
+            minChildSize: minExtent,
+            maxChildSize: maxExtent,
+            builder: ((context, scrollController) {
+              return FrontCurve(
+                  fuzzyTop: true,
+                  child: ListView(
+                    shrinkWrap: true,
+                    controller: scrollController,
+                    children: <Widget>[
+                      ...[SizedBox(height: 8)],
+                      ...items,
+                      ...[SizedBox(height: 8)],
+                    ],
+                  ));
+            }),
+          );
+          //  return Container(
+          //      height: tall && extra
+          //          ? MediaQuery.of(context).size.height
+          //          : tall
+          //              ? (MediaQuery.of(context).size.height) / 2
+          //              : null,
+          //      child: ListView(shrinkWrap: true, children: <Widget>[
+          //        ...[SizedBox(height: 8)],
+          //        ...items,
+          //        ...[SizedBox(height: 8)],
+          //      ]));
+        });
   }
 
   Future<void> build({
@@ -524,16 +558,14 @@ class SelectionItems {
       );
     } else if (modalSet == SelectionSet.Holdings) {
       produceModal(
-        [for (String holding in holdingNames ?? []) holdingItem(holding)],
-      );
+          [for (String holding in holdingNames ?? []) holdingItem(holding)]);
     } else if (modalSet == SelectionSet.Admins) {
       produceModal(
           [for (String name in holdingNames ?? []) restrictedItem(name)],
           tall: false);
     } else if (modalSet == SelectionSet.Parents) {
       produceModal(
-          [for (String holding in holdingNames ?? []) parentItem(holding)],
-          tall: false);
+          [for (String holding in holdingNames ?? []) parentItem(holding)]);
     } else if (modalSet == SelectionSet.Fee) {
       produceModal([for (SelectionOption name in names) feeItem(name)],
           tall: false);
