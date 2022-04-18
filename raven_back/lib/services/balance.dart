@@ -99,6 +99,7 @@ class BalanceService {
       var unspent = unspents[randomIndex];
       unspents.removeAt(randomIndex);
       gathered += unspent.value;
+      // TODO: This can be null.
       collection.add(res.vouts.byTransactionPosition
           .getOne(unspent.txHash, unspent.txPos)!);
     }
