@@ -1,18 +1,15 @@
 import 'dart:async';
+import 'package:raven_back/utilities/lock.dart';
 import 'package:tuple/tuple.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/streams/wallet.dart';
 import 'package:raven_back/raven_back.dart';
 
 class HistoryService {
-  Set<String> downloaded = {};
-  Set<Address> addresses = {};
-  Map<String, Set<Set<String>>> txsListsByWalletExposureKeys = {};
-
-  /// in order to not get concurrent modification error
-  /// but retain logic for determining if we're done (all empty)
-  /// TODO: Concurrent modification is still possible. Async? Maybe add mutex
-  Map<String, Set<Set<String>>> txsListsByWalletExposureKeysEraseable = {};
+  final Set<String> downloadedOrDownloadQueried = {};
+  final Set<Address> addresses = {};
+  final Map<String, Set<Set<String>>> _txsListsByWalletExposureKeys = {};
+  final _txsListsByWalletExposureKeysLock = ReaderWriterLock();
 
   Future<bool?> getHistories(Address address) async {
     void updateCounts(LeaderWallet leader) {
@@ -46,7 +43,7 @@ class HistoryService {
             exposure: address.exposure));
       }
     }
-    remember(address, histories.map((history) => history.txHash));
+    await _remember(address, histories.map((history) => history.txHash));
     if (addresses.length ==
             services.wallet.leader.indexRegistry.values
                 .map((e) => e.saved)
@@ -67,11 +64,23 @@ class HistoryService {
         }()) {
       await services.balance.recalculateAllBalances();
       print('getting Transactions');
-      for (var key in txsListsByWalletExposureKeys.keys) {
-        for (var txsList in txsListsByWalletExposureKeys[key]!) {
-          await getTransactions(txsList);
+
+      var txsToDownload = <String>[];
+      await _txsListsByWalletExposureKeysLock.enterRead();
+      for (var key in _txsListsByWalletExposureKeys.keys) {
+        for (var txsList in _txsListsByWalletExposureKeys[key]!) {
+          txsToDownload.addAll(txsList);
         }
-        txsListsByWalletExposureKeysEraseable[key] = <Set<String>>{};
+      }
+      await _txsListsByWalletExposureKeysLock.exitRead();
+
+      // Get transactions 10 at a time
+      // Arbitrary number
+      while (txsToDownload.isNotEmpty) {
+        final chunk_size =
+            txsToDownload.length < 10 ? txsToDownload.length : 10;
+        await getTransactions(txsToDownload.sublist(0, chunk_size));
+        txsToDownload = txsToDownload.sublist(chunk_size);
       }
 
       // don't clear because if we get updates we want to pull tx
@@ -81,18 +90,6 @@ class HistoryService {
     return null;
   }
 
-  bool transactionsDownloaded() {
-    for (var x in txsListsByWalletExposureKeysEraseable.values) {
-      if (x.isNotEmpty) {
-        for (var y in x) {
-          if (y.isNotEmpty) {
-            return false;
-          }
-        }
-      }
-    }
-    return true;
-  }
   //bool transactionsDownloaded() => txsListsByWalletExposureKeys.values
   //    .map((e) => e.isEmpty)
   //    .every((bool b) => b);
@@ -100,14 +97,15 @@ class HistoryService {
   String produceKey(Address address) =>
       address.walletId + address.exposure.enumString;
 
-  void remember(Address address, Iterable<String> txs) {
+  Future<void> _remember(Address address, Iterable<String> txs) async {
     var key = produceKey(address);
-    txsListsByWalletExposureKeys.containsKey(key)
-        ? txsListsByWalletExposureKeys[key]!.add(txs.toSet())
-        : txsListsByWalletExposureKeys[key] = <Set<String>>{};
-    txsListsByWalletExposureKeysEraseable.containsKey(key)
-        ? txsListsByWalletExposureKeysEraseable[key]!.add(txs.toSet())
-        : txsListsByWalletExposureKeysEraseable[key] = <Set<String>>{};
+
+    await _txsListsByWalletExposureKeysLock.enterWrite();
+    if (!_txsListsByWalletExposureKeys.containsKey(key)) {
+      _txsListsByWalletExposureKeys[key] = <Set<String>>{};
+    }
+    _txsListsByWalletExposureKeys[key]!.add(txs.toSet());
+    await _txsListsByWalletExposureKeysLock.exitWrite();
   }
 
   Future<bool> produceAddressOrBalance() async {
@@ -261,8 +259,8 @@ class HistoryService {
       return null;
     }
     // not already downloaded?
-    if (!downloaded.contains(transactionId)) {
-      downloaded.add(transactionId);
+    if (!downloadedOrDownloadQueried.contains(transactionId)) {
+      downloadedOrDownloadQueried.add(transactionId);
       return client.getTransaction(transactionId).then((tx) async {
         await saveTransaction(tx, client, saveVin: saveVin);
       });
@@ -282,9 +280,10 @@ class HistoryService {
     }
     // filter out already downloaded
     transactionIds = transactionIds
-        .where((transactionId) => !downloaded.contains(transactionId))
+        .where((transactionId) =>
+            !downloadedOrDownloadQueried.contains(transactionId))
         .toSet();
-    downloaded.addAll(transactionIds);
+    downloadedOrDownloadQueried.addAll(transactionIds);
     var txs = <Tx>[];
     try {
       /// kinda a hack https://github.com/moontreeapp/moontree/issues/444#issuecomment-1101667621

@@ -32,7 +32,8 @@ class ReissueWaiter extends Waiter {
             details: 'Insufficient Funds',
           ));
           streams.reissue.success.add(false);
-        } catch (e) {
+        } catch (e, stack) {
+          print(stack);
           streams.app.snack.add(Snack(
             message: 'Error Generating Transaction: $e',
             atBottom: true,

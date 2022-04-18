@@ -40,8 +40,8 @@ void main() {
 
     var w_1 = write_1();
     var r_1 = read_1();
-    var r_2 = read_2();
     var w_2 = write_2();
+    var r_2 = read_2();
 
     await Future.wait([r_1, r_2, w_1, w_2]);
   });
