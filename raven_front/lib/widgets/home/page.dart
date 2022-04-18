@@ -144,38 +144,36 @@ class BottomNavBar extends StatelessWidget {
     return AnimatedBuilder(
       animation: notifier,
       builder: (context, _) {
-        return Transform.rotate(
-          angle: 2 * pi * notifier.value,
-         // offset: Offset(dragController.size, dragController.size),
-
+        return Transform.translate(
+          //angle: 2 * pi * notifier.value,
+          offset: Offset(0.0, 100 * (1.2 - dragController.size)),
+          //offset: Offset(dragController.size, dragController.size),
+          //scale: dragController.size,
           child: Container(
-            child: dragController.size > (0.5 + 0.2)
-                ? NavBar(
-                    actionButtons: appContext == AppContext.wallet
-                        ? <Widget>[
-                            components.buttons.actionButton(
-                              context,
-                              label: 'send',
-                              link: '/transaction/send',
-                            ),
-                            components.buttons.actionButton(
-                              context,
-                              label: 'receive',
-                              link: '/transaction/receive',
-                            )
-                          ]
-                        : <Widget>[
-                            components.buttons.actionButton(
-                              context,
-                              label: 'create',
-                              onPressed: () {
-                                _produceCreateModal(context);
-                              },
-                            )
-                          ],
-                  )
-                : SizedBox(),
-          ),
+              child: NavBar(
+            actionButtons: appContext == AppContext.wallet
+                ? <Widget>[
+                    components.buttons.actionButton(
+                      context,
+                      label: 'send',
+                      link: '/transaction/send',
+                    ),
+                    components.buttons.actionButton(
+                      context,
+                      label: 'receive',
+                      link: '/transaction/receive',
+                    )
+                  ]
+                : <Widget>[
+                    components.buttons.actionButton(
+                      context,
+                      label: 'create',
+                      onPressed: () {
+                        _produceCreateModal(context);
+                      },
+                    )
+                  ],
+          )),
         );
       },
     );
@@ -198,26 +196,17 @@ class AllAssetsHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: notifier,
-      builder: (context, _) {
-        return Transform.rotate(
-          angle: 2 * pi * notifier.value,
-          // offset: Offset(0, dragController.size),
-          child: Container(
-            child: appContext == AppContext.wallet
-                ? HoldingList(scrollController: scrollController)
-                : appContext == AppContext.manage
-                    ? AssetList(scrollController: scrollController)
-                    : ListView(
-                        controller: scrollController,
-                        children: [
-                          Text('swap\n\n\n\n\n\n\n\n\n\n\n\n'),
-                        ],
-                      ),
-          ),
-        );
-      },
+    return Container(
+      child: appContext == AppContext.wallet
+          ? HoldingList(scrollController: scrollController)
+          : appContext == AppContext.manage
+              ? AssetList(scrollController: scrollController)
+              : ListView(
+                  controller: scrollController,
+                  children: [
+                    Text('swap\n\n\n\n\n\n\n\n\n\n\n\n'),
+                  ],
+                ),
     );
   }
 }
