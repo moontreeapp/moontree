@@ -146,7 +146,7 @@ class BottomNavBar extends StatelessWidget {
       builder: (context, _) {
         return Transform.translate(
           //angle: 2 * pi * notifier.value,
-          offset: Offset(0.0, 100 * (1.2 - dragController.size)),
+          offset: Offset(0.0, 100 * (1 - dragController.size)*1.35),
           //offset: Offset(dragController.size, dragController.size),
           //scale: dragController.size,
           child: Container(
