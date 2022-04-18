@@ -65,6 +65,22 @@ class UnspentService {
       var utxos = (await services.client.client!.getUnspents(new_scripthashes))
           .expand((i) => i);
       // Wipe relevant unspents and re-add
+
+      await _unspentsLock.enterRead();
+      // If we have new utxos, get the vouts now.
+      final new_utxos = utxos.toSet().difference(
+          (_unspentsBySymbol[rvn] ?? <String, Set<ScripthashUnspent>>{})
+              .values
+              .expand((element) => element)
+              .toSet());
+      new_utxos.removeWhere((element) =>
+          res.vouts.byTransactionPosition
+              .getOne(element.txHash, element.txPos) !=
+          null);
+      await services.download.history
+          .getTransactions(new_utxos.map((x) => x.txHash));
+      await _unspentsLock.exitRead();
+
       await _unspentsLock.enterWrite();
       new_scripthashes.forEach((x) => _clearUnspentsForScripthash(x, rvn));
       _addUnspent(symbol: rvn, unspents: utxos);
@@ -93,6 +109,22 @@ class UnspentService {
       // And then remove and add
       for (final symbol in downloaded.keys) {
         final scripthashes_internal = downloaded[symbol]!.keys;
+
+        await _unspentsLock.enterRead();
+        // If we have new utxos, get the vouts now.
+        final new_utxos = utxos.toSet().difference(
+            (_unspentsBySymbol[symbol] ?? <String, Set<ScripthashUnspent>>{})
+                .values
+                .expand((element) => element)
+                .toSet());
+        new_utxos.removeWhere((element) =>
+            res.vouts.byTransactionPosition
+                .getOne(element.txHash, element.txPos) !=
+            null);
+        await services.download.history
+            .getTransactions(new_utxos.map((x) => x.txHash));
+        await _unspentsLock.exitRead();
+
         await _unspentsLock.enterWrite();
         scripthashes_internal
             .forEach((x) => _clearUnspentsForScripthash(x, symbol));
