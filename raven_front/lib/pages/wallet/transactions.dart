@@ -2,6 +2,7 @@
 /// that should probably happen at some point - when we start using assets more.
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
@@ -11,6 +12,7 @@ import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/data.dart';
+import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -86,6 +88,10 @@ class _TransactionsState extends State<Transactions>
     currentHolds = Current.holdings;
     currentTxs = services.transaction
         .getTransactionRecords(wallet: Current.wallet, securities: {security});
+    var maxExtent = (currentTxs.length * 80 +
+            80 +
+            (!services.download.history.transactionsDownloaded() ? 80 : 0))
+        .relative(context);
     var minHeight = 1 - (201 + 16) / MediaQuery.of(context).size.height;
     cachedMetadataView = _metadataView();
     return BackdropLayers(
@@ -100,7 +106,7 @@ class _TransactionsState extends State<Transactions>
           DraggableScrollableSheet(
               initialChildSize: minHeight,
               minChildSize: minHeight,
-              maxChildSize: 1.0,
+              maxChildSize: min(1.0, max(minHeight, maxExtent)),
               //snap: true, // if snap then show amount in app bar
               builder: ((context, scrollController) {
                 return FrontCurve(
