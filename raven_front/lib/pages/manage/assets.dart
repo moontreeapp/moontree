@@ -25,9 +25,10 @@ class _AssetState extends State<Asset> {
           pageTitle: 'Asset',
           security: res.securities.bySymbolSecurityType
               .getOne(symbol, SecurityType.RavenAsset)!),
-      front: true
-          ? ComingSoonPlaceholder(message: 'Create & Manage Assets')
-          : FrontCurve(
+      front: //true
+          //? ComingSoonPlaceholder(message: 'Create & Manage Assets')
+          //:
+          FrontCurve(
               height: MediaQuery.of(context).size.height - (201 + 56),
               child: Column(children: [
                 Expanded(child: AssetDetails(symbol: symbol)),

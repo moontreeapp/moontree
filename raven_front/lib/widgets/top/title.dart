@@ -37,18 +37,25 @@ class PageTitle extends StatefulWidget {
   };
 }
 
-class _PageTitleState extends State<PageTitle> {
-  late List listeners = [];
-  late bool loading = false;
-  late String pageTitle = 'Home';
-  late String assetTitle = 'Manage';
-  late String? settingTitle = null;
-  late AppContext appContext = AppContext.wallet;
+class _PageTitleState extends State<PageTitle>
+    with SingleTickerProviderStateMixin {
+  List listeners = [];
+  bool loading = false;
+  bool fullname = false;
+  String pageTitle = 'Home';
+  String assetTitle = 'Manage';
+  String? settingTitle = null;
+  AppContext appContext = AppContext.wallet;
   final changeName = TextEditingController();
+  late AnimationController controller;
+  late Animation<double> animation;
 
   @override
   void initState() {
     super.initState();
+    controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 960));
+    animation = Tween(begin: 0.0, end: 1.0).animate(controller);
     listeners.add(streams.app.loading.listen((bool value) {
       if (value != loading) {
         setState(() {
@@ -123,10 +130,23 @@ class _PageTitleState extends State<PageTitle> {
             style: Theme.of(context).textTheme.headline2!.copyWith(
                   color: AppColors.white,
                   fontWeight:
-                      x.length >= 28 ? FontWeights.bold : FontWeights.semiBold,
+                      x.length >= 25 ? FontWeights.bold : FontWeights.semiBold,
                 )));
+    var assetWrap = (String x) => FadeTransition(
+        opacity: animation,
+        child: FittedBox(
+            fit: BoxFit.fitWidth,
+            child: GestureDetector(
+                onTap: () => setState(() => fullname = !fullname),
+                child: Text(x,
+                    style: Theme.of(context).textTheme.headline2!.copyWith(
+                          color: AppColors.white,
+                          fontWeight: x.length >= 25
+                              ? FontWeights.bold
+                              : FontWeights.semiBold,
+                        )))));
     if (['Asset', 'Transactions'].contains(pageTitle)) {
-      return wrap(assetName(assetTitle));
+      return assetWrap(fullname ? assetTitle : assetName(assetTitle));
     }
     return walletNumber() ??
         wrap(PageTitle.settingsMap[settingTitle] ??
