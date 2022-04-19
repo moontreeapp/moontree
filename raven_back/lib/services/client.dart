@@ -145,7 +145,7 @@ class SubscribeService {
             await services.balance.recalculateAllBalances();
           }
         } else {
-          services.download.history.addresses.add(address);
+          await services.download.history.addAddressToSkipHistory(address);
         }
       });
     }

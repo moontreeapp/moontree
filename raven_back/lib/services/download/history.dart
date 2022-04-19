@@ -6,9 +6,15 @@ import 'package:raven_back/streams/wallet.dart';
 import 'package:raven_back/raven_back.dart';
 
 class HistoryService {
-  int downloadedCount = 0;
-  final Set<String> downloadedOrDownloadQueried = {};
-  final Set<Address> addresses = {};
+  // These are all modified from a bunch of places so it seems smart to have
+  // A lock on them, unsure if nessissary
+  final Set<String> _downloadQueried = {};
+  final _downloadQueriedLock = ReaderWriterLock();
+  int _downloaded = 0;
+  // Init to true; case no history
+  bool downloads_complete = true;
+  final Set<Address> _addresses = {};
+  final _addressesLock = ReaderWriterLock();
   final Map<String, Set<Set<String>>> _txsListsByWalletExposureKeys = {};
   final _txsListsByWalletExposureKeysLock = ReaderWriterLock();
 
@@ -28,7 +34,9 @@ class HistoryService {
       return false;
     }
     var histories = await client.getHistory(address.id);
-    addresses.add(address);
+    await _addressesLock.enterWrite();
+    _addresses.add(address);
+    await _addressesLock.exitWrite();
     if (address.wallet is LeaderWallet) {
       if (histories.isNotEmpty) {
         updateCounts(address.wallet as LeaderWallet);
@@ -45,7 +53,10 @@ class HistoryService {
       }
     }
     await _remember(address, histories.map((history) => history.txHash));
-    if (addresses.length ==
+    await _addressesLock.enterRead();
+    final addr_length = _addresses.length;
+    await _addressesLock.exitRead();
+    if (addr_length ==
             services.wallet.leader.indexRegistry.values
                 .map((e) => e.saved)
                 .sum() /*plus single wallets*2 */
@@ -89,10 +100,6 @@ class HistoryService {
       return await produceAddressOrBalance();
     }
     return null;
-  }
-
-  bool transactionsDownloaded() {
-    return downloadedCount == downloadedOrDownloadQueried.length;
   }
 
   String produceKey(Address address) =>
@@ -251,29 +258,38 @@ class HistoryService {
     return Tuple3(value, security ?? res.securities.RVN, asset);
   }
 
-  Future<Null>? getTransaction(
+  Future<void>? getTransaction(
     String transactionId, {
     bool saveVin = true,
-  }) {
+  }) async {
     var client = streams.client.client.value;
     if (client == null) {
-      return null;
+      return;
     }
     // not already downloaded?
-    if (!downloadedOrDownloadQueried.contains(transactionId)) {
-      downloadedOrDownloadQueried.add(transactionId);
-      var ret = client.getTransaction(transactionId).then((tx) async {
-        await saveTransaction(tx, client, saveVin: saveVin);
-      });
-      downloadedCount += 1;
-      return ret;
+    await _downloadQueriedLock.enterRead();
+    final downloadNewTx = !_downloadQueried.contains(transactionId);
+    await _downloadQueriedLock.exitRead();
+    if (downloadNewTx) {
+      await _downloadQueriedLock.enterWrite();
+      _downloadQueried.add(transactionId);
+      await _downloadQueriedLock.exitWrite();
+
+      final tx = await client.getTransaction(transactionId);
+      await saveTransaction(tx, client, saveVin: saveVin);
+      _downloaded += 1;
+
+      await _downloadQueriedLock.enterRead();
+      final new_length = _downloadQueried.length;
+      await _downloadQueriedLock.exitRead();
+
+      downloads_complete = _downloaded == new_length;
     } else {
       print('skipping: $transactionId');
     }
-    return null;
   }
 
-  Future<Null>? getTransactions(
+  Future<void>? getTransactions(
     Iterable<String> transactionIds, {
     bool saveVin = true,
   }) async {
@@ -283,10 +299,11 @@ class HistoryService {
     }
     // filter out already downloaded
     transactionIds = transactionIds
-        .where((transactionId) =>
-            !downloadedOrDownloadQueried.contains(transactionId))
+        .where((transactionId) => !_downloadQueried.contains(transactionId))
         .toSet();
-    downloadedOrDownloadQueried.addAll(transactionIds);
+    await _downloadQueriedLock.enterWrite();
+    _downloadQueried.addAll(transactionIds);
+    await _downloadQueriedLock.exitWrite();
     var txs = <Tx>[];
     try {
       /// kinda a hack https://github.com/moontreeapp/moontree/issues/444#issuecomment-1101667621
@@ -309,8 +326,12 @@ class HistoryService {
       client,
       saveVin: saveVin,
     );
-    downloadedCount += transactionIds.length;
-    return null;
+    _downloaded += transactionIds.length;
+    await _downloadQueriedLock.enterRead();
+    final new_length = _downloadQueried.length;
+    await _downloadQueriedLock.exitRead();
+
+    downloads_complete = _downloaded == new_length;
   }
 
   Future<List<Set>> saveTransaction(
@@ -377,5 +398,19 @@ class HistoryService {
       await res.vouts.saveAll(newVouts);
     }
     return [{}];
+  }
+
+  Future<void> addAddressToSkipHistory(Address address) async {
+    await _addressesLock.enterWrite();
+    _addresses.add(address);
+    await _addressesLock.exitWrite();
+  }
+
+  Future<void> clearDownloadState() async {
+    await _downloadQueriedLock.enterWrite();
+    _downloadQueried.clear();
+    _downloaded = 0;
+    downloads_complete = true;
+    await _downloadQueriedLock.exitWrite();
   }
 }
