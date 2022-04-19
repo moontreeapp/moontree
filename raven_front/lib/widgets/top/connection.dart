@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/client.dart';
 import 'package:raven_front/components/components.dart';
@@ -63,7 +64,8 @@ class _ConnectionLightState extends State<ConnectionLight>
           },
           icon: ColorFiltered(
               colorFilter: ColorFilter.mode(connectedColor, BlendMode.srcATop),
-              child: Image(image: AssetImage("assets/status/center.png"))),
+              //child: Image(image: AssetImage("assets/status/icon.svg")))
+              child: SvgPicture.asset('assets/status/icon.svg')),
         ),
       ],
     );
