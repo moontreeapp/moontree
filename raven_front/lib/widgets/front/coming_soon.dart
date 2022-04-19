@@ -20,19 +20,51 @@ class ComingSoonPlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     return FrontCurve(
       child: Stack(
+        alignment: Alignment.bottomCenter,
         children: [
-          ListView(
+          IgnorePointer(
+              child: ListView(
             controller: scrollController,
             children: [
-              for (var _ in range(5))
+              for (var _ in range(19))
                 swap
                     ? components.empty.swapPlaceholder(context)
                     : components.empty.assetPlaceholder(context)
             ],
+          )),
+          IgnorePointer(
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.white.withOpacity(0.0),
+                    Colors.white,
+                  ],
+                ),
+              ),
+            ),
           ),
           IgnorePointer(
             child: Container(
-              height: MediaQuery.of(context).size.height * .6,
+              height: MediaQuery.of(context).size.height / 2,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.white.withOpacity(0.0),
+                    Colors.white,
+                  ],
+                ),
+              ),
+            ),
+          ),
+          IgnorePointer(
+            child: Container(
+              height: MediaQuery.of(context).size.height / 1.5,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
@@ -46,9 +78,11 @@ class ComingSoonPlaceholder extends StatelessWidget {
             ),
           ),
           Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              Container(
+                  height: (MediaQuery.of(context).size.height - 118 - 56) / 2),
               Center(
                   child: Text('Coming Soon',
                       textAlign: TextAlign.center,

@@ -56,8 +56,8 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
           controller.reset();
           controller.duration = Duration(milliseconds: 160);
           setState(() {
-            front = !front;
-            controller.forward();
+            //front = !front;
+            //controller.forward();
           });
         },
         child: components.icons.assetAvatar(widget.symbol, size: 48),
