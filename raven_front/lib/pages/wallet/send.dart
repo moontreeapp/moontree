@@ -158,11 +158,6 @@ class _SendState extends State<Send> {
 
   @override
   Widget build(BuildContext context) {
-    if (Current.wallet is LeaderWallet &&
-        streams.app.triggers.value == ThresholdTrigger.backup &&
-        !(Current.wallet as LeaderWallet).backedUp) {
-      print('PROMPT FOR BACKUP HERE');
-    }
     minHeight =
         minHeight ?? 1 - (201 + 16) / MediaQuery.of(context).size.height;
     data = populateData(context, data);

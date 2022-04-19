@@ -15,6 +15,7 @@ class BackupSeed extends StatefulWidget {
 
 class _BackupSeedState extends State<BackupSeed> {
   bool validated = true;
+  bool warn = true;
   late double buttonWidth;
   late List<String> secret;
 
@@ -30,20 +31,55 @@ class _BackupSeedState extends State<BackupSeed> {
   Widget body() => BackdropLayers(
       back: BlankBack(),
       front: FrontCurve(
-          child: components.page.form(
-        context,
-        columnWidgets: <Widget>[
-          instructions,
-          warning,
-          words,
-        ],
-        buttons: [submitButton],
-      )));
+          child: warn
+              ? components.page.form(
+                  context,
+                  columnWidgets: <Widget>[
+                    intro,
+                    safe,
+                  ],
+                  buttons: [showButton],
+                )
+              : components.page.form(
+                  context,
+                  columnWidgets: <Widget>[
+                    instructions,
+                    warning,
+                    words,
+                  ],
+                  buttons: [submitButton],
+                )));
+
+  Widget get intro => Container(
+      height: 48,
+      alignment: Alignment.topCenter,
+      child: Text(
+        'Your wallet is valuable.\nPlease create a backup!',
+        textAlign: TextAlign.center,
+        style: Theme.of(context)
+            .textTheme
+            .subtitle1!
+            .copyWith(color: AppColors.black),
+      ));
+
+  Widget get safe => Container(
+      height: 48,
+      alignment: Alignment.topCenter,
+      child: Text(
+        'You are about to backup your seed words.\nKeep it secret, keep it safe.',
+        textAlign: TextAlign.center,
+        style: Theme.of(context)
+            .textTheme
+            .subtitle1!
+            .copyWith(color: AppColors.error),
+      ));
 
   Widget get instructions => Container(
       height: 48,
+      alignment: Alignment.topCenter,
       child: Text(
         'Please backup your wallet by writing down these words on a piece of paper.',
+        textAlign: TextAlign.center,
         style: Theme.of(context)
             .textTheme
             .subtitle1!
@@ -52,9 +88,10 @@ class _BackupSeedState extends State<BackupSeed> {
 
   Widget get warning => Container(
       height: 48,
-      //alignment: Alignment.topCenter,
+      alignment: Alignment.topCenter,
       child: Text(
         'You will need these words for recovery.',
+        textAlign: TextAlign.center,
         style: Theme.of(context)
             .textTheme
             .subtitle1!
@@ -82,6 +119,11 @@ class _BackupSeedState extends State<BackupSeed> {
                               number: i + x)
                       ]),
               ])));
+
+  Widget get showButton => components.buttons.actionButton(context,
+      enabled: true,
+      label: 'Show Seed',
+      onPressed: () => setState(() => warn = false));
 
   Widget get submitButton => components.buttons.actionButton(
         context,

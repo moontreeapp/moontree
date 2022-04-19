@@ -3,6 +3,7 @@ import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/widgets/widgets.dart';
+import 'package:raven_front/components/components.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -38,7 +39,8 @@ class _HomeState extends State<Home> {
       if (Current.wallet is LeaderWallet &&
           thresholdTrigger == ThresholdTrigger.backup &&
           !(Current.wallet as LeaderWallet).backedUp) {
-        print('PROMPT FOR BACKUP HERE');
+        Navigator.of(components.navigator.routeContext!)
+            .pushNamed('/security/backup');
         //setState(() {});
         /// reset till next time they open app?
         //streams.app.triggers.add(null);

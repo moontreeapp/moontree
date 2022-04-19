@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/streams/app.dart';
+import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
@@ -191,16 +192,30 @@ class BottomNavBar extends StatelessWidget {
               child: NavBar(
             actionButtons: appContext == AppContext.wallet
                 ? <Widget>[
-                    components.buttons.actionButton(
-                      context,
-                      label: 'send',
-                      link: '/transaction/send',
-                    ),
-                    components.buttons.actionButton(
-                      context,
-                      label: 'receive',
-                      link: '/transaction/receive',
-                    )
+                    components.buttons.actionButton(context, label: 'send',
+                        onPressed: () {
+                      Navigator.of(components.navigator.routeContext!)
+                          .pushNamed('/transaction/send');
+                      if (Current.wallet is LeaderWallet &&
+                          streams.app.triggers.value ==
+                              ThresholdTrigger.backup &&
+                          !(Current.wallet as LeaderWallet).backedUp) {
+                        Navigator.of(components.navigator.routeContext!)
+                            .pushNamed('/security/backup');
+                      }
+                    }),
+                    components.buttons.actionButton(context, label: 'receive',
+                        onPressed: () {
+                      Navigator.of(components.navigator.routeContext!)
+                          .pushNamed('/transaction/receive');
+                      if (Current.wallet is LeaderWallet &&
+                          streams.app.triggers.value ==
+                              ThresholdTrigger.backup &&
+                          !(Current.wallet as LeaderWallet).backedUp) {
+                        Navigator.of(components.navigator.routeContext!)
+                            .pushNamed('/security/backup');
+                      }
+                    })
                   ]
                 : <Widget>[
                     components.buttons.actionButton(

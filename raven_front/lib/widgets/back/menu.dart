@@ -162,7 +162,6 @@ class _NavMenuState extends State<NavMenu> {
               name: 'Clear Database',
               link: '/home',
               execute: ravenDatabase.deleteDatabase),
-          */
           ListTile(
               title: Text('test'),
               leading: Icon(Icons.info_outline_rounded),
@@ -173,6 +172,7 @@ class _NavMenuState extends State<NavMenu> {
                 //print(res.balances.data);
                 print(res.vouts.length);
               }),
+          */
         ],
       )
     };
