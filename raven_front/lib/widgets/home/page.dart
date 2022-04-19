@@ -117,7 +117,7 @@ class _HomePageState extends State<HomePage>
     _scrollController!.jumpTo(_scrollController!.position.minScrollExtent);
     await draggableScrollController.animateTo(
       minExtent,
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 400),
       curve: Curves.easeInOutCirc,
     );
   }
@@ -126,7 +126,7 @@ class _HomePageState extends State<HomePage>
     streams.app.setting.add(null);
     await draggableScrollController.animateTo(
       maxExtent,
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 400),
       curve: Curves.easeInOutCirc,
     );
     setState(() {
