@@ -23,36 +23,37 @@ class NavBar extends StatefulWidget {
 class _NavBarState extends State<NavBar> {
   @override
   Widget build(BuildContext context) {
-    return components.containers.navBar(
-      context,
-      tall: widget.includeSectors,
-      child: ListView(
-        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // we will need to make these buttons dependant upon the navigation
-          // of the front page through streams but for now, we'll show they
-          // can changed based upon whats selected:
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children:
-                widget.actionButtons.intersperse(SizedBox(width: 16)).toList(),
+    return components.containers.navBar(context,
+        tall: widget.includeSectors,
+        child: SingleChildScrollView(
+          child: Column(
+            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // we will need to make these buttons dependant upon the navigation
+              // of the front page through streams but for now, we'll show they
+              // can changed based upon whats selected:
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: widget.actionButtons
+                    .intersperse(SizedBox(width: 16))
+                    .toList(),
+              ),
+              if (widget.includeSectors) ...[
+                SizedBox(height: 6),
+                Padding(
+                    padding: EdgeInsets.only(left: 0, right: 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        sectorIcon(appContext: AppContext.wallet),
+                        sectorIcon(appContext: AppContext.manage),
+                        sectorIcon(appContext: AppContext.swap),
+                      ],
+                    ))
+              ]
+            ],
           ),
-          if (widget.includeSectors) ...[
-            SizedBox(height: 6),
-            Padding(
-                padding: EdgeInsets.only(left: 0, right: 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    sectorIcon(appContext: AppContext.wallet),
-                    sectorIcon(appContext: AppContext.manage),
-                    sectorIcon(appContext: AppContext.swap),
-                  ],
-                ))
-          ]
-        ],
-      ),
-    );
+        ));
   }
 
   Widget sectorIcon({required AppContext appContext}) => Container(

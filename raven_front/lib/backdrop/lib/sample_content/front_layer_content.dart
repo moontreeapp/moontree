@@ -38,7 +38,7 @@ class _LayerContentState extends State<FrontLayerContent> {
             child: Container(
               child: ListView.builder(
                 dragStartBehavior: DragStartBehavior.start,
-                physics: const BouncingScrollPhysics(),
+                physics: const ClampingScrollPhysics(),
                 controller: widget.scrollController,
                 itemCount: 100,
                 itemBuilder: (BuildContext context, int index) {

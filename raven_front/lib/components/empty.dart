@@ -61,48 +61,7 @@ class EmptyComponents {
     var thisHolding = Shimmer.fromColors(
         baseColor: AppColors.primaries[0],
         highlightColor: Colors.white,
-        child: Container(
-            height: 72,
-            padding: EdgeInsets.only(top: 8.0, left: 16),
-            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-              Container(
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.primaries[0],
-                    border:
-                        Border.all(width: 2, color: AppColors.primaries[0])),
-                //child: ClipRRect(borderRadius: BorderRadius.circular(100.0)),
-              ),
-              SizedBox(width: 16),
-              Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: MediaQuery.of(context).size.height * (12 / 760),
-                      width: 79,
-                      decoration: BoxDecoration(
-                          color: AppColors.primaries[0],
-                          borderRadius: BorderRadius.circular(
-                              (MediaQuery.of(context).size.height *
-                                      (12 / 760)) *
-                                  .5)),
-                    ),
-                    SizedBox(height: 8),
-                    Container(
-                      height: MediaQuery.of(context).size.height * (12 / 760),
-                      width: 148,
-                      decoration: BoxDecoration(
-                          color: AppColors.primaries[0],
-                          borderRadius: BorderRadius.circular(
-                              (MediaQuery.of(context).size.height *
-                                      (12 / 760)) *
-                                  .5)),
-                    ),
-                  ])
-            ])));
+        child: assetPlaceholder(context));
     var blankNavArea = [
       Container(
         height: 118,
@@ -112,7 +71,7 @@ class EmptyComponents {
     return ListView(
         controller: scrollController,
         dragStartBehavior: DragStartBehavior.start,
-        physics: PageScrollPhysics(), //const BouncingScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
         children: <Widget>[
           SizedBox(height: 8),
           ...[
@@ -122,51 +81,51 @@ class EmptyComponents {
         ]);
   }
 
-  ListView gettingTransactionsPlaceholder(
+  Widget assetPlaceholder(BuildContext context) => Container(
+      height: 72,
+      padding: EdgeInsets.only(top: 8.0, left: 16),
+      child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+        Container(
+          height: 40,
+          width: 40,
+          decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.primaries[0],
+              border: Border.all(width: 2, color: AppColors.primaries[0])),
+          //child: ClipRRect(borderRadius: BorderRadius.circular(100.0)),
+        ),
+        SizedBox(width: 16),
+        Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * (12 / 760),
+                width: 79,
+                decoration: BoxDecoration(
+                    color: AppColors.primaries[0],
+                    borderRadius: BorderRadius.circular(
+                        (MediaQuery.of(context).size.height * (12 / 760)) *
+                            .5)),
+              ),
+              SizedBox(height: 8),
+              Container(
+                height: MediaQuery.of(context).size.height * (12 / 760),
+                width: 148,
+                decoration: BoxDecoration(
+                    color: AppColors.primaries[0],
+                    borderRadius: BorderRadius.circular(
+                        (MediaQuery.of(context).size.height * (12 / 760)) *
+                            .5)),
+              ),
+            ])
+      ]));
+
+  ListView getTransactionsPlaceholder(
     BuildContext context, {
     required ScrollController scrollController,
     int count = 1,
   }) {
-    var thisTransaction = Shimmer.fromColors(
-        baseColor: AppColors.primaries[0],
-        highlightColor: Colors.white,
-        child: Container(
-            height: 64,
-            padding: EdgeInsets.only(top: 8.0, left: 16, right: 16),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height:
-                              MediaQuery.of(context).size.height * (12 / 760),
-                          width: 79,
-                          decoration: BoxDecoration(
-                              color: AppColors.primaries[0],
-                              borderRadius: BorderRadius.circular(
-                                  (MediaQuery.of(context).size.height *
-                                          (12 / 760)) *
-                                      .5)),
-                        ),
-                        SizedBox(height: 8),
-                        Container(
-                          height:
-                              MediaQuery.of(context).size.height * (12 / 760),
-                          width: 148,
-                          decoration: BoxDecoration(
-                              color: AppColors.primaries[0],
-                              borderRadius: BorderRadius.circular(
-                                  (MediaQuery.of(context).size.height *
-                                          (12 / 760)) *
-                                      .5)),
-                        ),
-                      ]),
-                  components.icons.out(context, color: AppColors.primaries[0])
-                ])));
-
     var blankNavArea = [
       Container(
         height: 118,
@@ -176,13 +135,51 @@ class EmptyComponents {
     return ListView(
         controller: scrollController,
         dragStartBehavior: DragStartBehavior.start,
-        physics: PageScrollPhysics(), //const BouncingScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
         children: <Widget>[
           SizedBox(height: 8),
           ...[
-            for (var _ in range(count)) ...[thisTransaction, Divider()]
+            for (var _ in range(count)) ...[
+              getTransactionsShimmer(context),
+              Divider()
+            ]
           ],
           ...blankNavArea
         ]);
   }
+
+  Widget getTransactionsShimmer(BuildContext context) => Shimmer.fromColors(
+      baseColor: AppColors.primaries[0],
+      highlightColor: Colors.white,
+      child: Container(
+          height: 64,
+          padding: EdgeInsets.only(top: 8.0, left: 16, right: 16),
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: MediaQuery.of(context).size.height * (12 / 760),
+                    width: 79,
+                    decoration: BoxDecoration(
+                        color: AppColors.primaries[0],
+                        borderRadius: BorderRadius.circular(
+                            (MediaQuery.of(context).size.height * (12 / 760)) *
+                                .5)),
+                  ),
+                  SizedBox(height: 8),
+                  Container(
+                    height: MediaQuery.of(context).size.height * (12 / 760),
+                    width: 148,
+                    decoration: BoxDecoration(
+                        color: AppColors.primaries[0],
+                        borderRadius: BorderRadius.circular(
+                            (MediaQuery.of(context).size.height * (12 / 760)) *
+                                .5)),
+                  ),
+                ]),
+            components.icons.out(context, color: AppColors.primaries[0])
+          ])));
 }

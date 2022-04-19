@@ -75,8 +75,10 @@ class _VerifySeedState extends State<VerifySeed> {
 
   Widget get instructions => Container(
       height: 48,
+      alignment: Alignment.topCenter,
       child: Text(
         'Please tap your words in the correct order.',
+        textAlign: TextAlign.center,
         style: Theme.of(context)
             .textTheme
             .subtitle1!

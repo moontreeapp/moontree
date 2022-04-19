@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/streams/app.dart';
+import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
@@ -22,6 +23,7 @@ class _HomePageState extends State<HomePage>
   static const double initialExtent = maxExtent;
   late DraggableScrollableController draggableScrollController =
       DraggableScrollableController();
+  ValueNotifier<double> _notifier = ValueNotifier(1);
 
   @override
   void initState() {
@@ -45,70 +47,42 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     //minExtent = 1-(MediaQuery.of(context).size.height - 56)  // pix
-    return body();
-  }
-
-  Widget body() => BackdropLayers(
-        back: NavMenu(),
-        front: DraggableScrollableActuator(
-          child: DraggableScrollableSheet(
-            controller: draggableScrollController,
-            snap: true,
-            initialChildSize: initialExtent,
-            minChildSize: minExtent,
-            maxChildSize: maxExtent,
-            builder: ((context, scrollController) {
-              if (draggableScrollController.size == minExtent) {
-                streams.app.setting.add('/settings');
-              } else if (draggableScrollController.size == maxExtent) {
-                streams.app.setting.add(null);
-              }
-              return FrontCurve(
-                  fuzzyTop: true,
-                  child: Stack(
-                    alignment: Alignment.bottomCenter,
-                    children: [
-                      widget.appContext == AppContext.wallet
-                          ? HoldingList(scrollController: scrollController)
-                          : widget.appContext == AppContext.manage
-                              ? AssetList(scrollController: scrollController)
-                              : ListView(
-                                  controller: scrollController,
-                                  children: [
-                                      Text('swap\n\n\n\n\n\n\n\n\n\n\n\n')
-                                    ]),
-                      if (draggableScrollController.size > minExtent)
-                        NavBar(
-                            actionButtons:
-                                widget.appContext == AppContext.wallet
-                                    ? <Widget>[
-                                        components.buttons.actionButton(
-                                          context,
-                                          label: 'send',
-                                          link: '/transaction/send',
-                                        ),
-                                        components.buttons.actionButton(
-                                          context,
-                                          label: 'receive',
-                                          link: '/transaction/receive',
-                                        )
-                                      ]
-                                    : <Widget>[
-                                        components.buttons.actionButton(
-                                          context,
-                                          label: 'create',
-                                          onPressed: _produceCreateModal,
-                                        )
-                                      ])
-                    ],
-                  ));
-            }),
-          ),
+    return BackdropLayers(
+      back: NavMenu(),
+      front: DraggableScrollableActuator(
+        child: DraggableScrollableSheet(
+          controller: draggableScrollController,
+          snap: true,
+          initialChildSize: initialExtent,
+          minChildSize: minExtent,
+          maxChildSize: maxExtent,
+          builder: ((context, scrollController) {
+            if (draggableScrollController.size == minExtent) {
+              streams.app.setting.add('/settings');
+            } else if (draggableScrollController.size == maxExtent) {
+              streams.app.setting.add(null);
+            }
+            _notifier.value = draggableScrollController.size;
+            return FrontCurve(
+                fuzzyTop: true,
+                child: Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    AllAssetsHome(
+                      scrollController: scrollController,
+                      appContext: widget.appContext,
+                    ),
+                    BottomNavBar(
+                      appContext: widget.appContext,
+                      dragController: draggableScrollController,
+                      notifier: _notifier,
+                    ),
+                  ],
+                ));
+          }),
         ),
-      );
-
-  void _produceCreateModal() {
-    SelectionItems(context, modalSet: SelectionSet.Create).build();
+      ),
+    );
   }
 
   Future<void> fling([bool? open]) async {
@@ -166,7 +140,6 @@ NotificationListener<UserScrollNotification>(
   }
 */
 
-
 /*
 we should be able to use this to apply a scrim to the front layer
   Widget _buildInactiveLayer(BuildContext context) {
@@ -191,3 +164,98 @@ we should be able to use this to apply a scrim to the front layer
     );
   }
   */
+
+class BottomNavBar extends StatelessWidget {
+  final DraggableScrollableController dragController;
+  final AppContext appContext;
+  final ValueNotifier<double> notifier;
+
+  const BottomNavBar({
+    required this.appContext,
+    required this.dragController,
+    required this.notifier,
+    Key? key,
+  }) : super(key: key);
+
+  void _produceCreateModal(BuildContext context) {
+    SelectionItems(context, modalSet: SelectionSet.Create).build();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: notifier,
+      builder: (context, _) {
+        return Transform.translate(
+          offset: Offset(0.0, 100 * (1 - dragController.size) * 1.50),
+          child: Container(
+              child: NavBar(
+            actionButtons: appContext == AppContext.wallet
+                ? <Widget>[
+                    components.buttons.actionButton(context, label: 'send',
+                        onPressed: () {
+                      Navigator.of(components.navigator.routeContext!)
+                          .pushNamed('/transaction/send');
+                      if (Current.wallet is LeaderWallet &&
+                          streams.app.triggers.value ==
+                              ThresholdTrigger.backup &&
+                          !(Current.wallet as LeaderWallet).backedUp) {
+                        Navigator.of(components.navigator.routeContext!)
+                            .pushNamed('/security/backup');
+                      }
+                    }),
+                    components.buttons.actionButton(context, label: 'receive',
+                        onPressed: () {
+                      Navigator.of(components.navigator.routeContext!)
+                          .pushNamed('/transaction/receive');
+                      if (Current.wallet is LeaderWallet &&
+                          streams.app.triggers.value ==
+                              ThresholdTrigger.backup &&
+                          !(Current.wallet as LeaderWallet).backedUp) {
+                        Navigator.of(components.navigator.routeContext!)
+                            .pushNamed('/security/backup');
+                      }
+                    })
+                  ]
+                : <Widget>[
+                    components.buttons.actionButton(
+                      context,
+                      label: 'create',
+                      onPressed: () {
+                        _produceCreateModal(context);
+                      },
+                    )
+                  ],
+          )),
+        );
+      },
+    );
+  }
+}
+
+class AllAssetsHome extends StatelessWidget {
+  final ScrollController scrollController;
+  final AppContext appContext;
+
+  const AllAssetsHome({
+    required this.scrollController,
+    required this.appContext,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: appContext == AppContext.wallet
+          ? HoldingList(scrollController: scrollController)
+          : appContext == AppContext.manage
+              ? AssetList(scrollController: scrollController)
+              : ListView(
+                  controller: scrollController,
+                  children: [
+                    Text('swap\n\n\n\n\n\n\n\n\n\n\n\n'),
+                  ],
+                ),
+    );
+  }
+}

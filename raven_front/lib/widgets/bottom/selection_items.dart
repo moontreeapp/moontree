@@ -3,6 +3,8 @@
 /// which changes based upon a page or messages from a stream... idk, but,
 /// for now we'll put it here because it'll be easy to move to main if we want.
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
@@ -11,6 +13,8 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_back/streams/create.dart';
 import 'package:raven_back/streams/reissue.dart';
 import 'package:raven_front/theme/theme.dart';
+import 'package:raven_front/utils/extensions.dart';
+import 'package:raven_front/widgets/backdrop/backdrop.dart';
 
 enum SelectionSet {
   Fee,
@@ -484,30 +488,43 @@ class SelectionItems {
         ),
       );
 
-  Future<void> produceModal(
-    List items, {
-    bool tall = true,
-    bool extra = false,
-  }) async {
+  Future<void> produceModal(List items) async {
     await showModalBottomSheet<void>(
         context: context,
-        enableDrag: true,
         elevation: 1,
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
-        builder: (BuildContext context) => Container(
-            height: tall && extra
-                ? MediaQuery.of(context).size.height
-                : tall
-                    ? (MediaQuery.of(context).size.height) / 2
-                    : null,
-            child: ListView(shrinkWrap: true, children: <Widget>[
-              ...[SizedBox(height: 8)],
-              ...items,
-              ...[SizedBox(height: 8)],
-            ])));
+        builder: (BuildContext context) {
+          DraggableScrollableController draggableScrollController =
+              DraggableScrollableController();
+          var minExtent = min((items.length * 52 + 16).relative(context), 0.5);
+          var initialExtent = minExtent;
+          var maxExtent = (items.length * 52 + 16).relative(context);
+          maxExtent = min(1.0, max(minExtent, maxExtent));
+          return DraggableScrollableSheet(
+            controller: draggableScrollController,
+            snap: true,
+            expand: false,
+            initialChildSize: initialExtent,
+            minChildSize: minExtent,
+            maxChildSize: maxExtent,
+            builder: ((context, scrollController) {
+              return FrontCurve(
+                  fuzzyTop: true,
+                  child: ListView(
+                    shrinkWrap: true,
+                    controller: scrollController,
+                    children: <Widget>[
+                      ...[SizedBox(height: 8)],
+                      ...items,
+                      ...[SizedBox(height: 8)],
+                    ],
+                  ));
+            }),
+          );
+        });
   }
 
   Future<void> build({
@@ -517,75 +534,83 @@ class SelectionItems {
     int? minDecimal,
   }) async {
     if (modalSet == SelectionSet.Wallets) {
-      await produceModal(
-        [walletItemAll(controller!)] +
-            [for (Wallet wallet in res.wallets) walletItem(wallet, controller)],
-        tall: false,
-      );
+      await produceModal([walletItemAll(controller!)] +
+          [for (Wallet wallet in res.wallets) walletItem(wallet, controller)]);
     } else if (modalSet == SelectionSet.Holdings) {
       produceModal(
-        [for (String holding in holdingNames ?? []) holdingItem(holding)],
-      );
+          [for (String holding in holdingNames ?? []) holdingItem(holding)]);
     } else if (modalSet == SelectionSet.Admins) {
       produceModal(
-          [for (String name in holdingNames ?? []) restrictedItem(name)],
-          tall: false);
+        [for (String name in holdingNames ?? []) restrictedItem(name)],
+      );
     } else if (modalSet == SelectionSet.Parents) {
       produceModal(
-          [for (String holding in holdingNames ?? []) parentItem(holding)],
-          tall: false);
+          [for (String holding in holdingNames ?? []) parentItem(holding)]);
     } else if (modalSet == SelectionSet.Fee) {
-      produceModal([for (SelectionOption name in names) feeItem(name)],
-          tall: false);
+      produceModal(
+        [for (SelectionOption name in names) feeItem(name)],
+      );
     } else if (modalSet == SelectionSet.Decimal) {
-      produceModal([
-        for (SelectionOption name
-            in names.sublist(0, names.length - (minDecimal ?? 0)))
-          decimalItem(name, prefix: decimalPrefix, reissue: minDecimal != null)
-      ], tall: false);
+      produceModal(
+        [
+          for (SelectionOption name
+              in names.sublist(0, names.length - (minDecimal ?? 0)))
+            decimalItem(name,
+                prefix: decimalPrefix, reissue: minDecimal != null)
+        ],
+      );
     } else if (modalSet == SelectionSet.Create) {
-      produceModal([for (SelectionOption name in names) createItem(name)],
-          tall: false);
+      produceModal(
+        [for (SelectionOption name in names) createItem(name)],
+      );
     } else if (modalSet == SelectionSet.Sub_Asset) {
       symbolColors = streams.app.manage.asset.value;
-      produceModal([
-        for (SelectionOption name in names) createItem(name)
-      ], //subAssetItem(name)],
-          tall: false);
+      produceModal(
+        [
+          for (SelectionOption name in names) createItem(name)
+        ], //subAssetItem(name)],
+      );
     } else {
       if (names.length == behaviors.length && names.length == values.length) {
         if (symbol == null) {
-          produceModal([
-            for (var namedBehaviorValue in [
-              for (var i = 0; i < names.length; i += 1)
-                [names[i], behaviors[i], values[i]]
-            ])
-              item(namedBehaviorValue[0] as SelectionOption,
-                  behavior: namedBehaviorValue[1] as VoidCallback,
-                  value: namedBehaviorValue[2] as String)
-          ], tall: false);
+          produceModal(
+            [
+              for (var namedBehaviorValue in [
+                for (var i = 0; i < names.length; i += 1)
+                  [names[i], behaviors[i], values[i]]
+              ])
+                item(namedBehaviorValue[0] as SelectionOption,
+                    behavior: namedBehaviorValue[1] as VoidCallback,
+                    value: namedBehaviorValue[2] as String)
+            ],
+          );
         } else {
-          produceModal([
-            for (var namedBehaviorValue in [
-              for (var i = 0; i < names.length; i += 1)
-                [names[i], behaviors[i], values[i]]
-            ])
-              item(namedBehaviorValue[0] as SelectionOption,
-                  behavior: namedBehaviorValue[1] as VoidCallback,
-                  value: namedBehaviorValue[2] as String)
-          ], tall: false);
+          produceModal(
+            [
+              for (var namedBehaviorValue in [
+                for (var i = 0; i < names.length; i += 1)
+                  [names[i], behaviors[i], values[i]]
+              ])
+                item(namedBehaviorValue[0] as SelectionOption,
+                    behavior: namedBehaviorValue[1] as VoidCallback,
+                    value: namedBehaviorValue[2] as String)
+            ],
+          );
         }
       } else if (names.length == behaviors.length) {
-        produceModal([
-          for (var namedBehavior in [
-            for (var i = 0; i < names.length; i += 1) [names[i], behaviors[i]]
-          ])
-            item(namedBehavior[0] as SelectionOption,
-                behavior: namedBehavior[1] as VoidCallback)
-        ], tall: false);
+        produceModal(
+          [
+            for (var namedBehavior in [
+              for (var i = 0; i < names.length; i += 1) [names[i], behaviors[i]]
+            ])
+              item(namedBehavior[0] as SelectionOption,
+                  behavior: namedBehavior[1] as VoidCallback)
+          ],
+        );
       } else {
-        produceModal([for (SelectionOption name in names) item(name)],
-            tall: false);
+        produceModal(
+          [for (SelectionOption name in names) item(name)],
+        );
       }
     }
   }

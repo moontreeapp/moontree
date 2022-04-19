@@ -6,6 +6,7 @@ import 'package:raven_back/streams/wallet.dart';
 import 'package:raven_back/raven_back.dart';
 
 class HistoryService {
+  int downloadedCount = 0;
   final Set<String> downloadedOrDownloadQueried = {};
   final Set<Address> addresses = {};
   final Map<String, Set<Set<String>>> _txsListsByWalletExposureKeys = {};
@@ -90,9 +91,9 @@ class HistoryService {
     return null;
   }
 
-  //bool transactionsDownloaded() => txsListsByWalletExposureKeys.values
-  //    .map((e) => e.isEmpty)
-  //    .every((bool b) => b);
+  bool transactionsDownloaded() {
+    return downloadedCount == downloadedOrDownloadQueried.length;
+  }
 
   String produceKey(Address address) =>
       address.walletId + address.exposure.enumString;
@@ -261,9 +262,11 @@ class HistoryService {
     // not already downloaded?
     if (!downloadedOrDownloadQueried.contains(transactionId)) {
       downloadedOrDownloadQueried.add(transactionId);
-      return client.getTransaction(transactionId).then((tx) async {
+      var ret = client.getTransaction(transactionId).then((tx) async {
         await saveTransaction(tx, client, saveVin: saveVin);
       });
+      downloadedCount += 1;
+      return ret;
     } else {
       print('skipping: $transactionId');
     }
@@ -286,6 +289,13 @@ class HistoryService {
     downloadedOrDownloadQueried.addAll(transactionIds);
     var txs = <Tx>[];
     try {
+      /// kinda a hack https://github.com/moontreeapp/moontree/issues/444#issuecomment-1101667621
+      if (!saveVin) {
+        /// for a wallet with any serious amount of transactions getTransactions
+        /// will probably error in the event we're getting dangling transactions
+        /// (saveVin == false) so in that case go straight to catch clause:
+        throw Exception();
+      }
       txs = await client.getTransactions(transactionIds);
     } catch (e) {
       var futures = <Future<Tx>>[];
@@ -299,6 +309,7 @@ class HistoryService {
       client,
       saveVin: saveVin,
     );
+    downloadedCount += transactionIds.length;
     return null;
   }
 

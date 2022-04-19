@@ -84,7 +84,7 @@ class _TransactionListState extends State<TransactionList> {
         services.transaction.getTransactionRecords(wallet: Current.wallet);
     return transactions.isEmpty
         //? components.empty.transactions(context, msg: widget.msg)
-        ? components.empty.gettingTransactionsPlaceholder(context,
+        ? components.empty.getTransactionsPlaceholder(context,
             scrollController: widget.scrollController!, count: transactionCount)
         : Container(
             alignment: Alignment.center,
@@ -94,10 +94,11 @@ class _TransactionListState extends State<TransactionList> {
             ));
   }
 
-  ListView _transactionsView(BuildContext context) =>
-      ListView(controller: widget.scrollController, children: <Widget>[
-        SizedBox(height: 16),
-        ...[
+  ListView _transactionsView(BuildContext context) => ListView(
+      controller: widget.scrollController,
+      children: <Widget>[
+            SizedBox(height: 16),
+            ...[
               for (var transactionRecord in transactions) ...[
                 ...[
                   ListTile(
@@ -145,12 +146,16 @@ class _TransactionListState extends State<TransactionList> {
                   Divider(indent: 16),
                 ]
               ]
-            ] +
-            [
-              Container(
-                height: 118,
-                color: Colors.white,
-              )
             ]
-      ]);
+          ] +
+          [
+            if (!services.download.history.transactionsDownloaded())
+              components.empty.getTransactionsShimmer(context)
+          ] +
+          [
+            Container(
+              height: 80,
+              color: Colors.white,
+            )
+          ]);
 }

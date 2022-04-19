@@ -30,6 +30,10 @@ class TransactionService {
     required Wallet wallet,
     Set<Security>? securities,
   }) {
+    /// if we see tx not all downloaded add a blank record onto the end...
+    //if (!services.download.history.transactionsDownloaded()) {
+    //  return <TransactionRecord>[];
+    //}
     var givenAddresses =
         wallet.addresses.map((address) => address.address).toList();
     var transactionRecords = <TransactionRecord>[];
