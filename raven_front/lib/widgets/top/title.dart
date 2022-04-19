@@ -120,10 +120,11 @@ class _PageTitleState extends State<PageTitle> {
     var wrap = (String x) => FittedBox(
         fit: BoxFit.fitWidth,
         child: Text(x,
-            style: Theme.of(context)
-                .textTheme
-                .headline2!
-                .copyWith(color: AppColors.white)));
+            style: Theme.of(context).textTheme.headline2!.copyWith(
+                  color: AppColors.white,
+                  fontWeight:
+                      x.length >= 28 ? FontWeights.bold : FontWeights.semiBold,
+                )));
     if (['Asset', 'Transactions'].contains(pageTitle)) {
       return wrap(assetName(assetTitle));
     }

@@ -4,5 +4,6 @@ export 'lists/transactions.dart';
 export 'forms/create.dart';
 export 'forms/reissue.dart';
 export 'asset_details.dart';
+export 'coming_soon.dart';
 export 'loader.dart';
 export 'verify.dart';
