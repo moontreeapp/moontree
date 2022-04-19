@@ -153,6 +153,7 @@ class _PageTitleState extends State<PageTitle>
     if (['Asset', 'Transactions'].contains(pageTitle)) {
       return assetWrap(fullname ? assetTitle : assetName(assetTitle));
     }
+    fullname = false;
     return walletNumber() ??
         wrap(PageTitle.settingsMap[settingTitle] ??
             (streams.reissue.form.value != null

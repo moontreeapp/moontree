@@ -64,7 +64,6 @@ class _ConnectionLightState extends State<ConnectionLight>
           },
           icon: ColorFiltered(
               colorFilter: ColorFilter.mode(connectedColor, BlendMode.srcATop),
-              //child: Image(image: AssetImage("assets/status/icon.svg")))
               child: SvgPicture.asset('assets/status/icon.svg')),
         ),
       ],
