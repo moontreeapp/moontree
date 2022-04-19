@@ -18,6 +18,7 @@ class ComingSoonPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height - 118 - 56;
     return FrontCurve(
       child: Stack(
         alignment: Alignment.topCenter,
@@ -38,7 +39,7 @@ class ComingSoonPlaceholder extends StatelessWidget {
               children: <Widget>[
                 IgnorePointer(
                   child: Container(
-                    height: MediaQuery.of(context).size.height / 2,
+                    height: height / 2,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
@@ -53,7 +54,7 @@ class ComingSoonPlaceholder extends StatelessWidget {
                 ),
                 IgnorePointer(
                   child: Container(
-                    height: MediaQuery.of(context).size.height / 2,
+                    height: height / 2,
                     color: Colors.white,
                   ),
                 ),
@@ -62,8 +63,7 @@ class ComingSoonPlaceholder extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Container(
-                  height: (MediaQuery.of(context).size.height - 118 - 56) / 2),
+              Container(height: (height - 16) / 2),
               Center(
                   child: Text('Coming Soon',
                       textAlign: TextAlign.center,
