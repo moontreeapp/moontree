@@ -23,6 +23,7 @@ class _HomePageState extends State<HomePage>
   static const double initialExtent = maxExtent;
   late DraggableScrollableController draggableScrollController =
       DraggableScrollableController();
+  ScrollController? _scrollController;
   ValueNotifier<double> _notifier = ValueNotifier(1);
 
   @override
@@ -57,22 +58,28 @@ class _HomePageState extends State<HomePage>
           minChildSize: minExtent,
           maxChildSize: maxExtent,
           builder: ((context, scrollController) {
+            var ignoring = false;
             if (draggableScrollController.size == minExtent) {
               streams.app.setting.add('/settings');
+              ignoring = true;
             } else if (draggableScrollController.size == maxExtent) {
               streams.app.setting.add(null);
             }
             _notifier.value = draggableScrollController.size;
+            _scrollController = scrollController;
             return FrontCurve(
                 fuzzyTop: true,
                 child: Stack(
                   alignment: Alignment.bottomCenter,
                   children: [
-                    AllAssetsHome(
-                      scrollController: scrollController,
-                      appContext: widget.appContext,
-                      placeholderManage: false,
-                      placeholderSwap: true,
+                    IgnorePointer(
+                      ignoring: ignoring,
+                      child: AllAssetsHome(
+                        scrollController: scrollController,
+                        appContext: widget.appContext,
+                        placeholderManage: false,
+                        placeholderSwap: true,
+                      ),
                     ),
                     BottomNavBar(
                       appContext: widget.appContext,
@@ -102,11 +109,14 @@ class _HomePageState extends State<HomePage>
     }
   }
 
-  Future<void> flingDown() async => await draggableScrollController.animateTo(
-        minExtent,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOutCirc,
-      );
+  Future<void> flingDown() async {
+    _scrollController!.jumpTo(_scrollController!.position.minScrollExtent);
+    await draggableScrollController.animateTo(
+      minExtent,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOutCirc,
+    );
+  }
 
   Future<void> flingUp() async {
     streams.app.setting.add(null);

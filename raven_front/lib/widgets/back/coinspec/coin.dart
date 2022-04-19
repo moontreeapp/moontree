@@ -61,7 +61,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
         },
         child:
 
-            /// column used to push it down because we hid stuff and want to cetner:
+            /// used to push it down because we hid stuff and want to cetner:
             Column(
           children: [
             SizedBox(height: 9),
@@ -97,7 +97,6 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
                 .textTheme
                 .bodyText1!
                 .copyWith(color: AppColors.white)),
-        //SizedBox(height: 30),
       ]);
     } else if (front && widget.totalSupply != null) {
       ret.addAll([
