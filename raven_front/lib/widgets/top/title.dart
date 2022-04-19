@@ -54,8 +54,8 @@ class _PageTitleState extends State<PageTitle>
   void initState() {
     super.initState();
     controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 960));
-    animation = Tween(begin: 0.2, end: .8).animate(controller);
+        AnimationController(vsync: this, duration: Duration(milliseconds: 240));
+    animation = Tween(begin: 0.0, end: 1.0).animate(controller);
     listeners.add(streams.app.loading.listen((bool value) {
       if (value != loading) {
         setState(() {
@@ -118,6 +118,7 @@ class _PageTitleState extends State<PageTitle>
 
   @override
   Widget build(BuildContext context) {
+    controller.forward();
     return body();
   }
 
@@ -136,20 +137,23 @@ class _PageTitleState extends State<PageTitle>
     var assetWrap = (String x) => FittedBox(
         fit: BoxFit.fitWidth,
         child: GestureDetector(
-            onTap: () => setState(() => fullname = !fullname),
-            child:
-                //FadeTransition( // why does this make it disappear completely?
-                //    opacity: animation,
-                //    child:
-                Text(x,
+            onTap: () async {
+              controller.reverse();
+              await Future.delayed(Duration(milliseconds: 240));
+              setState(() {
+                fullname = !fullname;
+              });
+            },
+            child: FadeTransition(
+                // why does this make it disappear completely?
+                opacity: animation,
+                child: Text(x,
                     style: Theme.of(context).textTheme.headline2!.copyWith(
                           color: AppColors.white,
                           fontWeight: x.length >= 25
                               ? FontWeights.bold
                               : FontWeights.semiBold,
-                        )))
-        //)
-        );
+                        )))));
     if (['Asset', 'Transactions'].contains(pageTitle)) {
       return assetWrap(fullname ? assetTitle : assetName(assetTitle));
     }
