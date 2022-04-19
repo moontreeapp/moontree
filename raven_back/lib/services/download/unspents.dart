@@ -3,7 +3,6 @@ import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/utilities/lock.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:tuple/tuple.dart';
 
 /// we use the electrum server directly for determining our UTXO set
 class UnspentService {
@@ -84,15 +83,15 @@ class UnspentService {
       await services.download.history
           .getTransactions(new_utxos.map((x) => x.txHash));
 
-      // New info; clear cache
-      await _cachedBySymbolLock.enterWrite();
-      _cachedBySymbol.remove(rvn);
-      await _cachedBySymbolLock.exitWrite();
-
       await _unspentsLock.enterWrite();
       new_scripthashes.forEach((x) => _clearUnspentsForScripthash(x, rvn));
       _addUnspent(symbol: rvn, unspents: utxos);
       await _unspentsLock.exitWrite();
+
+      // New info; clear cache
+      await _cachedBySymbolLock.enterWrite();
+      _cachedBySymbol.remove(rvn);
+      await _cachedBySymbolLock.exitWrite();
     }
     if (!(updateRVN ?? false)) {
       var utxos =
@@ -134,11 +133,6 @@ class UnspentService {
         await services.download.history
             .getTransactions(new_utxos.map((x) => x.txHash));
 
-        // New info; clear cache
-        await _cachedBySymbolLock.enterWrite();
-        _cachedBySymbol.remove(symbol);
-        await _cachedBySymbolLock.exitWrite();
-
         await _unspentsLock.enterWrite();
         scripthashes_internal
             .forEach((x) => _clearUnspentsForScripthash(x, symbol));
@@ -149,6 +143,11 @@ class UnspentService {
               subscribe: true);
         }
         await _unspentsLock.exitWrite();
+
+        // New info; clear cache
+        await _cachedBySymbolLock.enterWrite();
+        _cachedBySymbol.remove(symbol);
+        await _cachedBySymbolLock.exitWrite();
       }
     }
   }
