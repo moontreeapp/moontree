@@ -227,6 +227,7 @@ class BottomNavBar extends StatelessWidget {
                             streams.app.triggers.value ==
                                 ThresholdTrigger.backup &&
                             !(Current.wallet as LeaderWallet).backedUp) {
+                          streams.app.xlead.add(true);
                           Navigator.of(components.navigator.routeContext!)
                               .pushNamed('/security/backup');
                         }
@@ -242,6 +243,7 @@ class BottomNavBar extends StatelessWidget {
                             streams.app.triggers.value ==
                                 ThresholdTrigger.backup &&
                             !(Current.wallet as LeaderWallet).backedUp) {
+                          streams.app.xlead.add(true);
                           Navigator.of(components.navigator.routeContext!)
                               .pushNamed('/security/backup');
                         }
