@@ -100,16 +100,16 @@ class _HomePageState extends State<HomePage>
 
   Future<void> flingDown() async => await draggableScrollController.animateTo(
         minExtent,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOutCubicEmphasized,
+        duration: const Duration(milliseconds: 2000),
+        curve: Curves.easeInOutCirc,
       );
 
   Future<void> flingUp() async {
     streams.app.setting.add(null);
     await draggableScrollController.animateTo(
       maxExtent,
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeInOutCubicEmphasized,
+      duration: const Duration(milliseconds: 2000),
+      curve: Curves.easeInOutCirc,
     );
   }
 }
