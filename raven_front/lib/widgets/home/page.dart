@@ -73,7 +73,6 @@ class _HomePageState extends State<HomePage>
               streams.app.setting.add(null);
             }
             _notifier.value = draggableScrollController.size;
-            print("Min extent : ${draggableScrollController.size}");
             return FrontCurve(
                 fuzzyTop: true,
                 child: Stack(
@@ -140,15 +139,11 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("Drag size: ${dragController.size}");
     return AnimatedBuilder(
       animation: notifier,
       builder: (context, _) {
         return Transform.translate(
-          //angle: 2 * pi * notifier.value,
-          offset: Offset(0.0, 100 * (1 - dragController.size)*1.35),
-          //offset: Offset(dragController.size, dragController.size),
-          //scale: dragController.size,
+          offset: Offset(0.0, 100 * (1 - dragController.size)*1.95),
           child: Container(
               child: NavBar(
             actionButtons: appContext == AppContext.wallet
