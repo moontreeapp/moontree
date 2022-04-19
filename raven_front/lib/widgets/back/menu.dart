@@ -100,10 +100,12 @@ class _NavMenuState extends State<NavMenu> {
               icon: Icons.lock_rounded,
               name: 'Security',
               link: '/settings/security'),
+          /*
           destination(
               icon: MdiIcons.accountCog,
               name: 'User Level',
               link: '/settings/level'),
+          */
           destination(
               icon: MdiIcons.network,
               name: 'Network',
@@ -136,11 +138,13 @@ class _NavMenuState extends State<NavMenu> {
             link: '/settings/settings',
             arrow: true,
           ),
+          /*
           destination(
             icon: Icons.feedback,
             name: 'Feedback',
             link: '/settings/feedback',
           ),
+          */
           destination(
             icon: Icons.help,
             name: 'Support',
