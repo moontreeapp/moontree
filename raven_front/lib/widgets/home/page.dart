@@ -71,11 +71,15 @@ class _HomePageState extends State<HomePage>
                     AllAssetsHome(
                       scrollController: scrollController,
                       appContext: widget.appContext,
+                      placeholderManage: false,
+                      placeholderSwap: true,
                     ),
                     BottomNavBar(
                       appContext: widget.appContext,
                       dragController: draggableScrollController,
                       notifier: _notifier,
+                      placeholderManage: false,
+                      placeholderSwap: true,
                     ),
                   ],
                 ));
@@ -169,11 +173,15 @@ class BottomNavBar extends StatelessWidget {
   final DraggableScrollableController dragController;
   final AppContext appContext;
   final ValueNotifier<double> notifier;
+  final bool placeholderManage;
+  final bool placeholderSwap;
 
   const BottomNavBar({
     required this.appContext,
     required this.dragController,
     required this.notifier,
+    this.placeholderManage = false,
+    this.placeholderSwap = false,
     Key? key,
   }) : super(key: key);
 
@@ -192,40 +200,66 @@ class BottomNavBar extends StatelessWidget {
               child: NavBar(
             actionButtons: appContext == AppContext.wallet
                 ? <Widget>[
-                    components.buttons.actionButton(context, label: 'send',
-                        onPressed: () {
-                      Navigator.of(components.navigator.routeContext!)
-                          .pushNamed('/transaction/send');
-                      if (Current.wallet is LeaderWallet &&
-                          streams.app.triggers.value ==
-                              ThresholdTrigger.backup &&
-                          !(Current.wallet as LeaderWallet).backedUp) {
-                        Navigator.of(components.navigator.routeContext!)
-                            .pushNamed('/security/backup');
-                      }
-                    }),
-                    components.buttons.actionButton(context, label: 'receive',
-                        onPressed: () {
-                      Navigator.of(components.navigator.routeContext!)
-                          .pushNamed('/transaction/receive');
-                      if (Current.wallet is LeaderWallet &&
-                          streams.app.triggers.value ==
-                              ThresholdTrigger.backup &&
-                          !(Current.wallet as LeaderWallet).backedUp) {
-                        Navigator.of(components.navigator.routeContext!)
-                            .pushNamed('/security/backup');
-                      }
-                    })
-                  ]
-                : <Widget>[
                     components.buttons.actionButton(
                       context,
-                      label: 'create',
+                      label: 'send',
                       onPressed: () {
-                        _produceCreateModal(context);
+                        Navigator.of(components.navigator.routeContext!)
+                            .pushNamed('/transaction/send');
+                        if (Current.wallet is LeaderWallet &&
+                            streams.app.triggers.value ==
+                                ThresholdTrigger.backup &&
+                            !(Current.wallet as LeaderWallet).backedUp) {
+                          Navigator.of(components.navigator.routeContext!)
+                              .pushNamed('/security/backup');
+                        }
+                      },
+                    ),
+                    components.buttons.actionButton(
+                      context,
+                      label: 'receive',
+                      onPressed: () {
+                        Navigator.of(components.navigator.routeContext!)
+                            .pushNamed('/transaction/receive');
+                        if (Current.wallet is LeaderWallet &&
+                            streams.app.triggers.value ==
+                                ThresholdTrigger.backup &&
+                            !(Current.wallet as LeaderWallet).backedUp) {
+                          Navigator.of(components.navigator.routeContext!)
+                              .pushNamed('/security/backup');
+                        }
                       },
                     )
-                  ],
+                  ]
+                : appContext == AppContext.manage
+                    ? <Widget>[
+                        components.buttons.actionButton(
+                          context,
+                          label: 'create',
+                          enabled: !placeholderManage,
+                          onPressed: () {
+                            _produceCreateModal(context);
+                          },
+                        )
+                      ]
+                    : <Widget>[
+                        components.buttons.actionButton(
+                          context,
+                          label: 'buy',
+                          enabled: !placeholderSwap,
+                          onPressed: () {
+                            _produceCreateModal(context);
+                          },
+                        ),
+                        components.buttons.actionButton(
+                          context,
+                          label: 'sell',
+                          enabled: !placeholderSwap,
+                          onPressed: () {
+                            _produceCreateModal(context);
+                          },
+                        )
+                      ],
           )),
         );
       },
@@ -236,10 +270,14 @@ class BottomNavBar extends StatelessWidget {
 class AllAssetsHome extends StatelessWidget {
   final ScrollController scrollController;
   final AppContext appContext;
+  final bool placeholderManage;
+  final bool placeholderSwap;
 
   const AllAssetsHome({
     required this.scrollController,
     required this.appContext,
+    this.placeholderManage = false,
+    this.placeholderSwap = false,
     Key? key,
   }) : super(key: key);
 
@@ -249,15 +287,16 @@ class AllAssetsHome extends StatelessWidget {
       child: appContext == AppContext.wallet
           ? HoldingList(scrollController: scrollController)
           : appContext == AppContext.manage
-              ? false
+              ? placeholderManage
                   ? ComingSoonPlaceholder(
-                      message: 'Create & Manage Assets',
-                      scrollController: scrollController)
+                      scrollController: scrollController,
+                      message: 'Create & Manage Assets')
                   : AssetList(scrollController: scrollController)
-              : false
+              : placeholderSwap
                   ? ComingSoonPlaceholder(
-                      message: 'Swap Assets',
-                      scrollController: scrollController)
+                      scrollController: scrollController,
+                      message: 'Decentralized Asset Swaps',
+                      swap: true)
                   : ListView(
                       controller: scrollController,
                       children: [

@@ -6,13 +6,13 @@ import 'package:raven_front/widgets/widgets.dart';
 
 class ComingSoonPlaceholder extends StatelessWidget {
   final String message;
-  final bool returnHome;
+  final bool swap;
   final ScrollController scrollController;
 
   const ComingSoonPlaceholder({
-    this.message = 'Loading...',
-    this.returnHome = true,
     required this.scrollController,
+    this.message = 'Loading...',
+    this.swap = false, // different background placeholder
     Key? key,
   }) : super(key: key);
 
@@ -24,7 +24,10 @@ class ComingSoonPlaceholder extends StatelessWidget {
           ListView(
             controller: scrollController,
             children: [
-              for (var _ in range(4)) components.empty.assetPlaceholder(context)
+              for (var _ in range(4))
+                swap
+                    ? components.empty.swapPlaceholder(context)
+                    : components.empty.assetPlaceholder(context)
             ],
           ),
           IgnorePointer(
