@@ -31,7 +31,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 960));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 240));
     animation = Tween(begin: 0.0, end: 1.0).animate(controller);
   }
 
@@ -52,15 +52,22 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
   }
 
   Widget get icon => GestureDetector(
-        onTap: () {
-          controller.reset();
-          controller.duration = Duration(milliseconds: 160);
-          setState(() {
-            //front = !front;
-            //controller.forward();
-          });
+        onTap: () async {
+          //controller.reverse();
+          //await Future.delayed(Duration(milliseconds: 240));
+          //setState(() {
+          //  front = !front;
+          //});
         },
-        child: components.icons.assetAvatar(widget.symbol, size: 48),
+        child:
+
+            /// column used to push it down because we hid stuff and want to cetner:
+            Column(
+          children: [
+            SizedBox(height: 9),
+            components.icons.assetAvatar(widget.symbol, size: 48),
+          ],
+        ),
       );
 
   Widget get subHeader =>
@@ -68,8 +75,8 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
 
   List<Widget> get belowIcon {
     var ret = [
-      SizedBox(height: 9),
-      selections,
+      //SizedBox(height: 9),
+      //selections,
       SizedBox(height: 5),
       // get this from balance
       front ? frontText : backText,
