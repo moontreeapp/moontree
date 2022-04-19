@@ -76,7 +76,7 @@ class _AssetList extends State<AssetList> {
   Widget build(BuildContext context) {
     assets = filterToAdminAssets(utils.assetHoldings(Current.holdings));
     return assets.isEmpty && res.vouts.data.isEmpty // <-- on front tab...
-        ? components.empty.gettingAssetsPlaceholder(context,
+        ? components.empty.getAssetsPlaceholder(context,
             scrollController: widget.scrollController, count: assetCount)
         //Container(
         //  alignment: Alignment.center,
@@ -86,7 +86,7 @@ class _AssetList extends State<AssetList> {
         //          'This is where assets you can manage will show up...')),
         //) //components.empty.assets(context)
         : assets.isEmpty
-            ? components.empty.gettingAssetsPlaceholder(context,
+            ? components.empty.getAssetsPlaceholder(context,
                 scrollController: widget.scrollController, count: assetCount)
             //Container(
             //    alignment: Alignment.center,

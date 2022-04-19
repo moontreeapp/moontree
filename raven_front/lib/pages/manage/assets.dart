@@ -25,45 +25,42 @@ class _AssetState extends State<Asset> {
           pageTitle: 'Asset',
           security: res.securities.bySymbolSecurityType
               .getOne(symbol, SecurityType.RavenAsset)!),
-      front: //true
-          //? ComingSoonPlaceholder(message: 'Create & Manage Assets')
-          //:
-          FrontCurve(
-              height: MediaQuery.of(context).size.height - (201 + 56),
-              child: Column(children: [
-                Expanded(child: AssetDetails(symbol: symbol)),
-                NavBar(
-                  includeSectors: false,
-                  actionButtons: <Widget>[
-                    if ([AssetType.Main, AssetType.Sub]
-                        .contains(chosenAsset.assetType)) ...[
-                      components.buttons.actionButton(context,
-                          label: 'create', onPressed: _produceSubCreateModal),
-                    ],
-                    if ([
-                      AssetType.Qualifier,
-                      AssetType.QualifierSub,
-                    ].contains(chosenAsset.assetType)) ...[
-                      components.buttons.actionButton(context,
-                          label: 'create',
-                          onPressed: () => Navigator.pushNamed(
-                                components.navigator.routeContext!,
-                                '/create/qualifiersub',
-                                arguments: {'symbol': 'QualifierSub'},
-                              )),
-                    ],
-                    components.buttons.actionButton(context, label: 'manage',
-                        onPressed: () {
-                      // if main do this
-                      _produceMainManageModal(chosenAsset);
-                      // if sub do this
-                      //_produceSubManageModal();
-                      // if other do this
-                      //
-                    }),
-                  ],
-                )
-              ])),
+      front: FrontCurve(
+          height: MediaQuery.of(context).size.height - (201 + 56),
+          child: Column(children: [
+            Expanded(child: AssetDetails(symbol: symbol)),
+            NavBar(
+              includeSectors: false,
+              actionButtons: <Widget>[
+                if ([AssetType.Main, AssetType.Sub]
+                    .contains(chosenAsset.assetType)) ...[
+                  components.buttons.actionButton(context,
+                      label: 'create', onPressed: _produceSubCreateModal),
+                ],
+                if ([
+                  AssetType.Qualifier,
+                  AssetType.QualifierSub,
+                ].contains(chosenAsset.assetType)) ...[
+                  components.buttons.actionButton(context,
+                      label: 'create',
+                      onPressed: () => Navigator.pushNamed(
+                            components.navigator.routeContext!,
+                            '/create/qualifiersub',
+                            arguments: {'symbol': 'QualifierSub'},
+                          )),
+                ],
+                components.buttons.actionButton(context, label: 'manage',
+                    onPressed: () {
+                  // if main do this
+                  _produceMainManageModal(chosenAsset);
+                  // if sub do this
+                  //_produceSubManageModal();
+                  // if other do this
+                  //
+                }),
+              ],
+            )
+          ])),
     );
   }
 

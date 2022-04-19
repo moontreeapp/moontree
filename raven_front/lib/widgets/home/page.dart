@@ -249,13 +249,21 @@ class AllAssetsHome extends StatelessWidget {
       child: appContext == AppContext.wallet
           ? HoldingList(scrollController: scrollController)
           : appContext == AppContext.manage
-              ? AssetList(scrollController: scrollController)
-              : ListView(
-                  controller: scrollController,
-                  children: [
-                    Text('swap\n\n\n\n\n\n\n\n\n\n\n\n'),
-                  ],
-                ),
+              ? false
+                  ? ComingSoonPlaceholder(
+                      message: 'Create & Manage Assets',
+                      scrollController: scrollController)
+                  : AssetList(scrollController: scrollController)
+              : false
+                  ? ComingSoonPlaceholder(
+                      message: 'Swap Assets',
+                      scrollController: scrollController)
+                  : ListView(
+                      controller: scrollController,
+                      children: [
+                        Text('swap\n\n\n\n\n\n\n\n\n\n\n\n'),
+                      ],
+                    ),
     );
   }
 }

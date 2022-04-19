@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/theme/colors.dart';
+import 'package:raven_front/utils/zips.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class ComingSoonPlaceholder extends StatelessWidget {
   final String message;
   final bool returnHome;
+  final ScrollController scrollController;
 
   const ComingSoonPlaceholder({
     this.message = 'Loading...',
     this.returnHome = true,
+    required this.scrollController,
     Key? key,
   }) : super(key: key);
 
@@ -18,11 +22,14 @@ class ComingSoonPlaceholder extends StatelessWidget {
       child: Stack(
         children: [
           ListView(
-            children: [components.empty.assetPlaceholder(context)],
+            controller: scrollController,
+            children: [
+              for (var _ in range(4)) components.empty.assetPlaceholder(context)
+            ],
           ),
           IgnorePointer(
             child: Container(
-              height: MediaQuery.of(context).size.height * .72,
+              height: MediaQuery.of(context).size.height * .5,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
@@ -39,8 +46,20 @@ class ComingSoonPlaceholder extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Text('Coming Soon', style: Theme.of(context).textTheme.headline1),
-              Text(message, style: Theme.of(context).textTheme.bodyText1),
+              Center(
+                  child: Text('Coming Soon',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline1
+                          ?.copyWith(color: AppColors.primaries[6]))),
+              Center(
+                  child: Text(message,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          ?.copyWith(color: AppColors.primaries[4]))),
             ],
           ),
         ],

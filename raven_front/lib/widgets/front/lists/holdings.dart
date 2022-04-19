@@ -109,13 +109,13 @@ class _HoldingList extends State<HoldingList> {
   Widget build(BuildContext context) {
     holdings = utils.assetHoldings(widget.holdings ?? Current.holdings);
     return holdings.isEmpty && res.vouts.data.isEmpty // <-- on front tab...
-        ? components.empty.gettingAssetsPlaceholder(context,
+        ? components.empty.getAssetsPlaceholder(context,
             scrollController: widget.scrollController,
             count: holdingCount) //Scroller(
         //  controller: widget.scrollController,
         //  child: components.empty.holdings(context))
         : holdings.isEmpty
-            ? components.empty.gettingAssetsPlaceholder(context,
+            ? components.empty.getAssetsPlaceholder(context,
                 scrollController: widget.scrollController, count: holdingCount)
             : //RefreshIndicator( child:
             _holdingsView(context);

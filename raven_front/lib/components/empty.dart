@@ -53,7 +53,7 @@ class EmptyComponents {
             //RavenButton.getRVN(context), // hidden for alpha
           ]));
 
-  ListView gettingAssetsPlaceholder(
+  ListView getAssetsPlaceholder(
     BuildContext context, {
     required ScrollController scrollController,
     int count = 1,
@@ -99,16 +99,16 @@ class EmptyComponents {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                height: MediaQuery.of(context).size.height * (12 / 760),
-                width: 79,
-                decoration: BoxDecoration(
-                    color: AppColors.primaries[0],
-                    borderRadius: BorderRadius.circular(
-                        (MediaQuery.of(context).size.height * (12 / 760)) *
-                            .5)),
-              ),
-              SizedBox(height: 8),
+              //Container(
+              //  height: MediaQuery.of(context).size.height * (12 / 760),
+              //  width: 79,
+              //  decoration: BoxDecoration(
+              //      color: AppColors.primaries[0],
+              //      borderRadius: BorderRadius.circular(
+              //          (MediaQuery.of(context).size.height * (12 / 760)) *
+              //              .5)),
+              //),
+              //SizedBox(height: 8),
               Container(
                 height: MediaQuery.of(context).size.height * (12 / 760),
                 width: 148,

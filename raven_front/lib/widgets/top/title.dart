@@ -55,7 +55,7 @@ class _PageTitleState extends State<PageTitle>
     super.initState();
     controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 960));
-    animation = Tween(begin: 0.0, end: 1.0).animate(controller);
+    animation = Tween(begin: 0.2, end: .8).animate(controller);
     listeners.add(streams.app.loading.listen((bool value) {
       if (value != loading) {
         setState(() {
@@ -109,6 +109,7 @@ class _PageTitleState extends State<PageTitle>
 
   @override
   void dispose() {
+    controller.dispose();
     for (var listener in listeners) {
       listener.cancel();
     }
@@ -132,19 +133,23 @@ class _PageTitleState extends State<PageTitle>
                   fontWeight:
                       x.length >= 25 ? FontWeights.bold : FontWeights.semiBold,
                 )));
-    var assetWrap = (String x) => FadeTransition(
-        opacity: animation,
-        child: FittedBox(
-            fit: BoxFit.fitWidth,
-            child: GestureDetector(
-                onTap: () => setState(() => fullname = !fullname),
-                child: Text(x,
+    var assetWrap = (String x) => FittedBox(
+        fit: BoxFit.fitWidth,
+        child: GestureDetector(
+            onTap: () => setState(() => fullname = !fullname),
+            child:
+                //FadeTransition( // why does this make it disappear completely?
+                //    opacity: animation,
+                //    child:
+                Text(x,
                     style: Theme.of(context).textTheme.headline2!.copyWith(
                           color: AppColors.white,
                           fontWeight: x.length >= 25
                               ? FontWeights.bold
                               : FontWeights.semiBold,
-                        )))));
+                        )))
+        //)
+        );
     if (['Asset', 'Transactions'].contains(pageTitle)) {
       return assetWrap(fullname ? assetTitle : assetName(assetTitle));
     }
