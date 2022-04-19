@@ -20,7 +20,7 @@ class ComingSoonPlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     return FrontCurve(
       child: Stack(
-        alignment: Alignment.bottomCenter,
+        alignment: Alignment.topCenter,
         children: [
           IgnorePointer(
               child: ListView(
@@ -32,51 +32,32 @@ class ComingSoonPlaceholder extends StatelessWidget {
                     : components.empty.assetPlaceholder(context)
             ],
           )),
-          IgnorePointer(
-            child: Container(
-              height: MediaQuery.of(context).size.height,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.white.withOpacity(0.0),
-                    Colors.white,
-                  ],
+          Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                IgnorePointer(
+                  child: Container(
+                    height: MediaQuery.of(context).size.height / 2,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.white.withOpacity(0.0),
+                          Colors.white,
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
-          IgnorePointer(
-            child: Container(
-              height: MediaQuery.of(context).size.height / 2,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.white.withOpacity(0.0),
-                    Colors.white,
-                  ],
+                IgnorePointer(
+                  child: Container(
+                    height: MediaQuery.of(context).size.height / 2,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-            ),
-          ),
-          IgnorePointer(
-            child: Container(
-              height: MediaQuery.of(context).size.height / 1.5,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.white.withOpacity(0.0),
-                    Colors.white,
-                  ],
-                ),
-              ),
-            ),
-          ),
+              ]),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
