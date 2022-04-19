@@ -24,7 +24,7 @@ class ComingSoonPlaceholder extends StatelessWidget {
           ListView(
             controller: scrollController,
             children: [
-              for (var _ in range(4))
+              for (var _ in range(5))
                 swap
                     ? components.empty.swapPlaceholder(context)
                     : components.empty.assetPlaceholder(context)
@@ -32,7 +32,7 @@ class ComingSoonPlaceholder extends StatelessWidget {
           ),
           IgnorePointer(
             child: Container(
-              height: MediaQuery.of(context).size.height * .5,
+              height: MediaQuery.of(context).size.height * .6,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
