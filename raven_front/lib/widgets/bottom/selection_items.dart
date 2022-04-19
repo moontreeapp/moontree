@@ -505,7 +505,7 @@ class SelectionItems {
           maxExtent = min(1.0, max(minExtent, maxExtent));
           return DraggableScrollableSheet(
             controller: draggableScrollController,
-            snap: true,
+            snap: false,
             expand: false,
             initialChildSize: initialExtent,
             minChildSize: minExtent,
