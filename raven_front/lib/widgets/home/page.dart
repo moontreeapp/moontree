@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late List listeners = [];
   //static const double minExtent = .0736842105263158;
-  static const double minExtent = .10;
+  double minExtent = 1.0;
   static const double maxExtent = 1.0;
   static const double initialExtent = maxExtent;
   late DraggableScrollableController draggableScrollController =
@@ -59,7 +59,8 @@ class _HomePageState extends State<HomePage>
           maxChildSize: maxExtent,
           builder: ((context, scrollController) {
             var ignoring = false;
-            if (draggableScrollController.size == minExtent) {
+            if (draggableScrollController.size == minExtent &&
+                minExtent < 1.0) {
               streams.app.setting.add('/settings');
               ignoring = true;
             } else if (draggableScrollController.size == maxExtent) {
@@ -110,6 +111,9 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<void> flingDown() async {
+    setState(() {
+      minExtent = .10;
+    });
     _scrollController!.jumpTo(_scrollController!.position.minScrollExtent);
     await draggableScrollController.animateTo(
       minExtent,
@@ -125,6 +129,9 @@ class _HomePageState extends State<HomePage>
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOutCirc,
     );
+    setState(() {
+      minExtent = 1.0;
+    });
   }
 }
 /* we want to hide the nav bar if we open the menu, so we can put this on a 
