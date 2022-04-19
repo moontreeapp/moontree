@@ -63,7 +63,7 @@ class ComingSoonPlaceholder extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Container(height: (height - 16) / 2),
+                Container(height: (height - 16 - 56) / 2),
                 Center(
                     child: Text('Coming Soon',
                         textAlign: TextAlign.center,
