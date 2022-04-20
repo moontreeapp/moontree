@@ -130,11 +130,11 @@ class SubscribeService {
           client.subscribeScripthash(address.id).listen((String? status) async {
         await services.download.unspents.pull(scripthashes: [address.id]);
         if (status == null || address.status?.status != status) {
+          var allDone = await services.download.history.getHistories(address);
           await res.statuses.save(Status(
               linkId: address.id,
               statusType: StatusType.address,
               status: status));
-          var allDone = await services.download.history.getHistories(address);
           if (allDone != null && !allDone && address.wallet is LeaderWallet) {
             streams.wallet.deriveAddress.add(DeriveLeaderAddress(
               leader: address.wallet! as LeaderWallet,

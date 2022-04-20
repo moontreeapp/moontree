@@ -147,3 +147,52 @@ class BalanceService {
     return balancesBySecurity.values.toList();
   }
 }
+/*
+class TrimUnspent with EquatableMixin {
+  String transactionId;
+  int position;
+  int rvnValue;
+  int assetValue;
+  Address address;
+  String lockingScript;
+
+  TrimUnspent({
+    required this.transactionId,
+    required this.position,
+    required this.rvnValue,
+    required this.assetValue,
+    required this.address,
+    required this.lockingScript,
+  });
+
+  factory TrimUnspent.fromScripthashUnspent(ScripthashUnspent given) {
+    var isRVN = given.symbol == null ||
+        given.symbol == '' ||
+        given.symbol == 'RVN' ||
+        given.symbol == 'Ravencoin';
+    return TrimUnspent(
+      transactionId: given.txHash,
+      position: given.txPos,
+      rvnValue: isRVN ? given.value : 0,
+      assetValue: isRVN ? 0 : given.value,
+      address: ,
+      lockingScript: '',
+    );
+  }
+
+  @override
+  List<Object> get props => [
+        transactionId,
+        position,
+        rvnValue,
+        assetValue,
+      ];
+
+  @override
+  String toString() {
+    return 'TrimUnspent(transactionId: $transactionId, position: $position, rvnValue: $rvnValue, assetValue: $assetValue)';
+  }
+
+  bool get isAsset => assetValue > rvnValue;
+}
+*/
