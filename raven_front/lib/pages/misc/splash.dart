@@ -77,8 +77,8 @@ class DataLoadingHelper {
       await setupRealWallet('2');
       await res.settings.setCurrentWalletId(res.wallets.first.id);
       await res.settings.savePreferredWalletId(res.wallets.first.id);
-      //setupRealWallet('1');
-      //setupRealWallet(null);
+      await setupRealWallet('1');
+      await setupRealWallet(null);
     }
 
     // for testing

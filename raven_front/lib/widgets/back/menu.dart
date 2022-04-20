@@ -4,6 +4,7 @@ import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/theme.dart';
 
 //import 'package:raven_front/services/lookup.dart';
@@ -166,6 +167,7 @@ class _NavMenuState extends State<NavMenu> {
               name: 'Clear Database',
               link: '/home',
               execute: ravenDatabase.deleteDatabase),
+          */
           ListTile(
               title: Text('test'),
               leading: Icon(Icons.info_outline_rounded),
@@ -174,9 +176,9 @@ class _NavMenuState extends State<NavMenu> {
                 //print(services.download.unspents.total());
                 //print(services.download.unspents.unspentsBySymbol['MOONTREE3']);
                 //print(res.balances.data);
-                print(res.vouts.length);
+                //print(res.vouts.length);
+                print(Current.walletId);
               }),
-          */
         ],
       )
     };

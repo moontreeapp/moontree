@@ -57,11 +57,12 @@ class EmptyComponents {
     BuildContext context, {
     required ScrollController scrollController,
     int count = 1,
+    bool holding = false,
   }) {
     var thisHolding = Shimmer.fromColors(
         baseColor: AppColors.primaries[0],
         highlightColor: Colors.white,
-        child: assetPlaceholder(context));
+        child: assetPlaceholder(context, holding: holding));
     var blankNavArea = [
       Container(
         height: 118,
@@ -81,45 +82,52 @@ class EmptyComponents {
         ]);
   }
 
-  Widget assetPlaceholder(BuildContext context) => Container(
-      height: 72,
-      padding: EdgeInsets.only(top: 8.0, left: 16),
-      child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-        Container(
-          height: 40,
-          width: 40,
-          decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.primaries[0],
-              border: Border.all(width: 2, color: AppColors.primaries[0])),
-          //child: ClipRRect(borderRadius: BorderRadius.circular(100.0)),
-        ),
-        SizedBox(width: 16),
-        Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //Container(
-              //  height: MediaQuery.of(context).size.height * (12 / 760),
-              //  width: 79,
-              //  decoration: BoxDecoration(
-              //      color: AppColors.primaries[0],
-              //      borderRadius: BorderRadius.circular(
-              //          (MediaQuery.of(context).size.height * (12 / 760)) *
-              //              .5)),
-              //),
-              //SizedBox(height: 8),
-              Container(
-                height: MediaQuery.of(context).size.height * (12 / 760),
-                width: 148,
-                decoration: BoxDecoration(
-                    color: AppColors.primaries[0],
-                    borderRadius: BorderRadius.circular(
-                        (MediaQuery.of(context).size.height * (12 / 760)) *
-                            .5)),
-              ),
-            ])
-      ]));
+  Widget assetPlaceholder(
+    BuildContext context, {
+    bool holding = false,
+  }) =>
+      Container(
+          height: 72,
+          padding: EdgeInsets.only(top: 8.0, left: 16),
+          child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.primaries[0],
+                  border: Border.all(width: 2, color: AppColors.primaries[0])),
+              //child: ClipRRect(borderRadius: BorderRadius.circular(100.0)),
+            ),
+            SizedBox(width: 16),
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (holding) ...[
+                    Container(
+                      height: MediaQuery.of(context).size.height * (12 / 760),
+                      width: 79,
+                      decoration: BoxDecoration(
+                          color: AppColors.primaries[0],
+                          borderRadius: BorderRadius.circular(
+                              (MediaQuery.of(context).size.height *
+                                      (12 / 760)) *
+                                  .5)),
+                    ),
+                    SizedBox(height: 8),
+                  ],
+                  Container(
+                    height: MediaQuery.of(context).size.height * (12 / 760),
+                    width: 148,
+                    decoration: BoxDecoration(
+                        color: AppColors.primaries[0],
+                        borderRadius: BorderRadius.circular(
+                            (MediaQuery.of(context).size.height * (12 / 760)) *
+                                .5)),
+                  ),
+                ])
+          ]));
 
   Widget swapPlaceholder(BuildContext context) => ListTile(
       leading: Container(
@@ -171,61 +179,7 @@ class EmptyComponents {
                       (MediaQuery.of(context).size.height * (12 / 760)) * .5)),
             ),
           ]));
-  /*
-  Container(
-      height: 72,
-      padding: EdgeInsets.only(top: 8.0, left: 16),
-      child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-        Container(
-          height: 40,
-          width: 40,
-          decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.primaries[0],
-              border: Border.all(width: 2, color: AppColors.primaries[0])),
-          //child: ClipRRect(borderRadius: BorderRadius.circular(100.0)),
-        ),
-        SizedBox(width: 16),
-        Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height * (12 / 760),
-                    width: 79,
-                    decoration: BoxDecoration(
-                        color: AppColors.primaries[0],
-                        borderRadius: BorderRadius.circular(
-                            (MediaQuery.of(context).size.height * (12 / 760)) *
-                                .5)),
-                  ),
-                  Container(
-                    height: MediaQuery.of(context).size.height * (12 / 760),
-                    width: 79,
-                    decoration: BoxDecoration(
-                        color: AppColors.primaries[0],
-                        borderRadius: BorderRadius.circular(
-                            (MediaQuery.of(context).size.height * (12 / 760)) *
-                                .5)),
-                  ),
-                ],
-              ),
-              SizedBox(height: 8),
-              Container(
-                height: MediaQuery.of(context).size.height * (12 / 760),
-                width: 148,
-                decoration: BoxDecoration(
-                    color: AppColors.primaries[0],
-                    borderRadius: BorderRadius.circular(
-                        (MediaQuery.of(context).size.height * (12 / 760)) *
-                            .5)),
-              ),
-            ])
-      ]));
-*/
+
   ListView getTransactionsPlaceholder(
     BuildContext context, {
     required ScrollController scrollController,

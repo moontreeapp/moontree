@@ -111,12 +111,15 @@ class _HoldingList extends State<HoldingList> {
     return holdings.isEmpty && res.vouts.data.isEmpty // <-- on front tab...
         ? components.empty.getAssetsPlaceholder(context,
             scrollController: widget.scrollController,
-            count: holdingCount) //Scroller(
+            count: holdingCount,
+            holding: true) //Scroller(
         //  controller: widget.scrollController,
         //  child: components.empty.holdings(context))
         : holdings.isEmpty
             ? components.empty.getAssetsPlaceholder(context,
-                scrollController: widget.scrollController, count: holdingCount)
+                scrollController: widget.scrollController,
+                count: holdingCount,
+                holding: true)
             : //RefreshIndicator( child:
             _holdingsView(context);
     //  onRefresh: () => refresh(),
