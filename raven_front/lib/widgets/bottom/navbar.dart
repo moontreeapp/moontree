@@ -47,7 +47,7 @@ class _NavBarState extends State<NavBar> {
               blurRadius: 10)
         ],
       ),
-      child: Column(
+      child: ListView(
         //mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // we will need to make these buttons dependant upon the navigation
