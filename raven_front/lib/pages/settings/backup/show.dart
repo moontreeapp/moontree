@@ -24,7 +24,7 @@ class _BackupSeedState extends State<BackupSeed> {
     buttonWidth = (MediaQuery.of(context).size.width - (17 + 17 + 16 + 16)) / 3;
     secret = Current.wallet.secret(Current.wallet.cipher!).split(' ');
     return services.password.required && !streams.app.verify.value
-        ? VerifyPassword(parentState: this)
+        ? VerifyPassword(parentState: this, suffix: 'with backup process')
         : body();
   }
 

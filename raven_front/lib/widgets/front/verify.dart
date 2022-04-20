@@ -5,8 +5,13 @@ import 'package:raven_front/widgets/widgets.dart';
 
 class VerifyPassword extends StatefulWidget {
   final State? parentState;
+  final String? suffix;
 
-  VerifyPassword({Key? key, this.parentState}) : super(key: key);
+  VerifyPassword({
+    Key? key,
+    this.parentState,
+    this.suffix,
+  }) : super(key: key);
 
   @override
   _VerifyPasswordState createState() => _VerifyPasswordState();
@@ -33,9 +38,26 @@ class _VerifyPasswordState extends State<VerifyPassword> {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: body(),
-      );
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: BackdropLayers(
+          back: BlankBack(),
+          front: FrontCurve(
+            child: components.page.form(
+              context,
+              columnWidgets: <Widget>[
+                Container(height: (MediaQuery.of(context).size.height) / 6),
+                Center(
+                    child: Text(
+                        'Please verify your password\nto proceed' +
+                            (widget.suffix != null ? ' ' + widget.suffix! : ''),
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyText1)),
+                SizedBox(height: 8),
+                existingPasswordField,
+              ],
+              buttons: [submitButton],
+            ),
+          )));
 
   Widget body() => CustomScrollView(slivers: <Widget>[
         SliverToBoxAdapter(
