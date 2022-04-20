@@ -83,7 +83,6 @@ class _PageLead extends State<PageLead> {
           onPressed: () {
             ScaffoldMessenger.of(context).clearSnackBars();
             streams.app.fling.add(true);
-            streams.app.setting.add('/settings');
           },
           padding: EdgeInsets.only(left: 16),
           icon: SvgPicture.asset('assets/icons/menu/menu.svg'));

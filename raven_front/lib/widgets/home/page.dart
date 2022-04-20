@@ -123,7 +123,6 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<void> flingUp() async {
-    streams.app.setting.add(null);
     await draggableScrollController.animateTo(
       maxExtent,
       duration: const Duration(milliseconds: 400),
