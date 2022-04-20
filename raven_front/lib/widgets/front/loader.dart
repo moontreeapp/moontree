@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/components/components.dart';
@@ -16,6 +17,7 @@ class Loader extends StatefulWidget {
 }
 
 class _LoaderState extends State<Loader> {
+  //DateTime startTime = DateTime.now();
   late List<StreamSubscription> listeners = [];
 
   @override
@@ -58,11 +60,19 @@ class _LoaderState extends State<Loader> {
             widget.message,
             style: Theme.of(context).textTheme.headline2,
           ),
-          SizedBox(height: 4),
-          Image.asset(
-            'assets/logo/moontree_logo.png',
-            height: 56,
-            width: 56,
+          SizedBox(height: 16),
+          //Image.asset(
+          //  'assets/logo/moontree_logo.png',
+          //  height: 56,
+          //  width: 56,
+          //),
+          Lottie.asset(
+            'assets/spinner/moontree_spinner_v2_002_1.json',
+            animate: true,
+            repeat: false,
+            width: 100,
+            height: 58.6,
+            fit: BoxFit.fitWidth,
           ),
         ]));
   }

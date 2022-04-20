@@ -19,7 +19,7 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> with TickerProviderStateMixin {
-  DateTime startTime = DateTime.now();
+  //DateTime startTime = DateTime.now();
 
   @override
   void initState() {
@@ -28,7 +28,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   }
 
   Future<void> _init() async {
-    startTime = DateTime.now();
+    //startTime = DateTime.now();
     await Future.delayed(Duration(milliseconds: 4000));
     final loadingHelper = DataLoadingHelper(context);
     await loadingHelper.setupDatabase();
