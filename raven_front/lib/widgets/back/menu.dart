@@ -1,7 +1,5 @@
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-
-import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
@@ -218,6 +216,5 @@ class _NavMenuState extends State<NavMenu> {
     Navigator.pushReplacementNamed(
         components.navigator.routeContext!, '/security/login',
         arguments: {});
-    flingBackdrop(context);
   }
 }

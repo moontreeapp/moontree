@@ -106,11 +106,11 @@ class _LoginState extends State<Login> {
         buttonEnabled = true;
       });
       FocusScope.of(context).unfocus();
+      Navigator.pushReplacementNamed(context, '/home', arguments: {});
       // create ciphers for wallets we have
       services.cipher.initCiphers(altPassword: password.text);
       await services.cipher.updateWallets();
       services.cipher.cleanupCiphers();
-      Navigator.pushReplacementNamed(context, '/home', arguments: {});
     } else {
       buttonEnabled = false;
     }

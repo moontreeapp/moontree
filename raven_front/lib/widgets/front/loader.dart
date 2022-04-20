@@ -83,7 +83,7 @@ class _LoaderState extends State<Loader> {
                   width: 56,
                 )
               : Lottie.asset(
-                  'assets/spinner/moontree_spinner_v2_002_1.json',
+                  'assets/spinner/moontree_spinner_v2_002_1_recolored.json',
                   animate: true,
                   repeat: true,
                   width: 100,
