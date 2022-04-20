@@ -77,14 +77,15 @@ class _SendState extends State<Send> {
             SpendForm.merge(form: value, amount: 0.0))) {
           setState(() {
             spendForm = value;
-            var asset = (value.symbol ?? 'RVN');
-            sendAsset.text = asset == 'RVN' || asset == 'Ravencoin'
-                ? 'Ravencoin'
-                : Current.holdingNames.contains(asset)
-                    ? asset
-                    : sendAsset.text == ''
-                        ? 'Ravencoin'
-                        : sendAsset.text;
+            var asset = (value.symbol ?? res.securities.RVN.symbol);
+            sendAsset.text =
+                asset == res.securities.RVN.symbol || asset == 'Ravencoin'
+                    ? 'Ravencoin'
+                    : Current.holdingNames.contains(asset)
+                        ? asset
+                        : sendAsset.text == ''
+                            ? 'Ravencoin'
+                            : sendAsset.text;
             sendFee.text = value.fee ?? 'Standard';
             sendNote.text = value.note ?? sendNote.text;
             sendAmount.text = value.amount == 0.0
@@ -161,8 +162,8 @@ class _SendState extends State<Send> {
     minHeight =
         minHeight ?? 1 - (201 + 16) / MediaQuery.of(context).size.height;
     data = populateData(context, data);
-    var symbol = streams.spend.form.value?.symbol ?? 'RVN';
-    symbol = symbol == 'Ravencoin' ? 'RVN' : symbol;
+    var symbol = streams.spend.form.value?.symbol ?? res.securities.RVN.symbol;
+    symbol = symbol == 'Ravencoin' ? res.securities.RVN.symbol : symbol;
     security = res.securities.bySymbol.getAll(symbol).first;
     useWallet = data.containsKey('walletId') && data['walletId'] != null;
     if (data.containsKey('qrCode')) {
@@ -585,15 +586,15 @@ class _SendState extends State<Send> {
       arguments: {
         'struct': CheckoutStruct(
           symbol: ((streams.spend.form.value?.symbol == 'Ravencoin'
-                  ? 'RVN'
+                  ? res.securities.RVN.symbol
                   : streams.spend.form.value?.symbol) ??
-              'RVN'),
+              res.securities.RVN.symbol),
           displaySymbol: ((streams.spend.form.value?.symbol == 'Ravencoin'
                   ? 'Ravencoin'
                   : streams.spend.form.value?.symbol) ??
               'Ravencoin'),
           subSymbol: '',
-          paymentSymbol: 'RVN',
+          paymentSymbol: res.securities.RVN.symbol,
           items: [
             ['To', sendAddress.text],
             if (addressName != '') ['Known As', addressName],

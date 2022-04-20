@@ -9,6 +9,8 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
+final rvn = res.securities.RVN.symbol;
+
 class HoldingList extends StatefulWidget {
   final Iterable<Balance>? holdings;
   final ScrollController scrollController;
@@ -25,7 +27,11 @@ class HoldingList extends StatefulWidget {
 
 class _HoldingList extends State<HoldingList> {
   List<StreamSubscription> listeners = [];
+  static bool _hideList = true;
+  static bool _useCurrent = true;
+  static bool _holdingsWasEmpty = false;
   late List<AssetHolding> holdings;
+  List<Balance> _unspentBalances = [];
   int holdingCount = 1;
   bool showUSD = false;
   bool showPath = false;
@@ -64,6 +70,14 @@ class _HoldingList extends State<HoldingList> {
           rateUSD = changes.first.data;
         });
     }));
+
+    listeners.add(streams.wallet.scripthashCallback.listen((value) async {
+      if (services.download.unspents.scripthashesChecked <
+          Current.wallet.addresses.length) {
+        return;
+      }
+      await refresh();
+    }));
   }
 
   @override
@@ -96,6 +110,17 @@ class _HoldingList extends State<HoldingList> {
   Future refresh() async {
     await services.rate.saveRate();
     await services.balance.recalculateAllBalances();
+    final balances = <Balance>[];
+    for (final asset_symbol in await services.download.unspents.getSymbols()) {
+      balances.add(Balance(
+          walletId: Current.walletId,
+          security: res.securities.bySymbol.getByKeyStr(asset_symbol).first,
+          confirmed:
+              await services.download.unspents.totalConfirmed(asset_symbol),
+          unconfirmed:
+              await services.download.unspents.totalUnconfirmed(asset_symbol)));
+    }
+    _unspentBalances = balances;
     setState(() {});
     // showing snackbar
     //_scaffoldKey.currentState.showSnackBar(
@@ -107,18 +132,40 @@ class _HoldingList extends State<HoldingList> {
 
   @override
   Widget build(BuildContext context) {
-    holdings = utils.assetHoldings(widget.holdings ?? Current.holdings);
-    return holdings.isEmpty && res.vouts.data.isEmpty // <-- on front tab...
+    // Use cached holdings on start up
+    if (_useCurrent) {
+      holdings = utils.assetHoldings(widget.holdings ?? Current.holdings);
+    }
+
+    // If new; shimmer until we have all
+    if (!_holdingsWasEmpty) {
+      _holdingsWasEmpty = Current.holdings.isEmpty;
+    }
+
+    // Update with our unspent values when utd
+    if (!_useCurrent ||
+        services.download.unspents.scripthashesChecked >=
+                Current.wallet.addresses.length &&
+            _unspentBalances.length ==
+                services.download.unspents.uniqueAssets) {
+      // Initially show our state from previous app
+      _useCurrent = false;
+      holdings = utils.assetHoldings(_unspentBalances);
+    }
+
+    holdings.sort((first, second) => first.symbol.compareTo(second.symbol));
+
+    if (_hideList) {
+      _hideList = services.download.unspents.scripthashesChecked <
+              Current.wallet.addresses.length &&
+          _holdingsWasEmpty;
+    }
+
+    return _hideList
         ? components.empty.gettingAssetsPlaceholder(context,
-            scrollController: widget.scrollController,
-            count: holdingCount) //Scroller(
-        //  controller: widget.scrollController,
-        //  child: components.empty.holdings(context))
-        : holdings.isEmpty
-            ? components.empty.gettingAssetsPlaceholder(context,
-                scrollController: widget.scrollController, count: holdingCount)
-            : //RefreshIndicator( child:
-            _holdingsView(context);
+            scrollController: widget.scrollController, count: holdingCount)
+        : //RefreshIndicator( child:
+        _holdingsView(context);
     //  onRefresh: () => refresh(),
     //);
   }
@@ -145,7 +192,7 @@ class _HoldingList extends State<HoldingList> {
         leading: leadingIcon(holding),
         title: title(holding), /*trailing: Icon(Icons.chevron_right_rounded)*/
       );
-      if (holding.symbol == 'RVN') {
+      if (holding.symbol == rvn) {
         rvnHolding.add(thisHolding);
         rvnHolding.add(Divider(height: 1));
 
@@ -172,14 +219,17 @@ class _HoldingList extends State<HoldingList> {
     }
     if (rvnHolding.isEmpty) {
       rvnHolding.add(ListTile(
-          onTap: () {},
-          title: Text('RVN', style: Theme.of(context).textTheme.bodyText1),
-          trailing: Text(showUSD ? '\$ 0' : '0',
-              style: Theme.of(context).textTheme.bodyText2),
-          leading: Container(
-              height: 50,
-              width: 50,
-              child: components.icons.assetAvatar('RVN'))));
+        //dense: true,
+        contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+        onTap: () {},
+        leading: Container(
+            height: 50,
+            width: 50,
+            child: components.icons.assetAvatar(res.securities.RVN.symbol)),
+        title: Text(res.securities.RVN.symbol,
+            style: Theme.of(context).textTheme.bodyText1),
+      ));
+      rvnHolding.add(Divider(height: 1));
       //rvnHolding.add(ListTile(
       //    onTap: () {},
       //    title: Text('+ Create Asset (not enough RVN)',
@@ -334,8 +384,7 @@ class _HoldingList extends State<HoldingList> {
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,
-                child: Text(
-                    holding.symbol == 'RVN' ? 'Ravencoin' : holding.last,
+                child: Text(holding.symbol == rvn ? 'Ravencoin' : holding.last,
                     style: Theme.of(context).textTheme.bodyText1),
               ))
           /* //this feature can show the path 

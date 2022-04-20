@@ -617,7 +617,7 @@ class _CreateAssetState extends State<CreateAsset> {
           symbol: fullName(true),
           displaySymbol: nameController.text,
           subSymbol: '',
-          paymentSymbol: 'RVN',
+          paymentSymbol: res.securities.RVN.symbol,
           items: [
             /// send the correct items
             if (isSub) ['Name', fullName(true), '2'],

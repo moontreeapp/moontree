@@ -313,6 +313,9 @@ class _WalletViewState extends State<WalletView> {
         onPressed: disabled
             ? () {}
             : () => Navigator.pushNamed(context, '/transaction/send',
-                arguments: {'symbol': 'RVN', 'walletId': wallet.id}),
+                    arguments: {
+                      'symbol': res.securities.RVN.symbol,
+                      'walletId': wallet.id
+                    }),
       );
 }

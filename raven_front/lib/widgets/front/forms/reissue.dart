@@ -528,7 +528,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
           symbol: fullName(true),
           displaySymbol: nameController.text,
           subSymbol: '',
-          paymentSymbol: 'RVN',
+          paymentSymbol: res.securities.RVN.symbol,
           items: [
             /// send the correct items
             if (isSub) ['Name', fullName(true), '2'],

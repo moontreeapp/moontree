@@ -11,8 +11,7 @@ class HistoryService {
   final Set<String> _downloadQueried = {};
   final _downloadQueriedLock = ReaderWriterLock();
   int _downloaded = 0;
-  // Init to true; case no history
-  bool downloads_complete = true;
+  int _new_length = 0;
   final Set<Address> _addresses = {};
   final _addressesLock = ReaderWriterLock();
   final Map<String, Set<Set<String>>> _txsListsByWalletExposureKeys = {};
@@ -273,17 +272,12 @@ class HistoryService {
     if (downloadNewTx) {
       await _downloadQueriedLock.enterWrite();
       _downloadQueried.add(transactionId);
+      _new_length = _downloadQueried.length;
       await _downloadQueriedLock.exitWrite();
 
       final tx = await client.getTransaction(transactionId);
       await saveTransaction(tx, client, saveVin: saveVin);
       _downloaded += 1;
-
-      await _downloadQueriedLock.enterRead();
-      final new_length = _downloadQueried.length;
-      await _downloadQueriedLock.exitRead();
-
-      downloads_complete = _downloaded == new_length;
     } else {
       print('skipping: $transactionId');
     }
@@ -303,6 +297,7 @@ class HistoryService {
         .toSet();
     await _downloadQueriedLock.enterWrite();
     _downloadQueried.addAll(transactionIds);
+    _new_length = _downloadQueried.length;
     await _downloadQueriedLock.exitWrite();
     var txs = <Tx>[];
     try {
@@ -327,11 +322,6 @@ class HistoryService {
       saveVin: saveVin,
     );
     _downloaded += transactionIds.length;
-    await _downloadQueriedLock.enterRead();
-    final new_length = _downloadQueried.length;
-    await _downloadQueriedLock.exitRead();
-
-    downloads_complete = _downloaded == new_length;
   }
 
   Future<List<Set>> saveTransaction(
@@ -410,7 +400,9 @@ class HistoryService {
     await _downloadQueriedLock.enterWrite();
     _downloadQueried.clear();
     _downloaded = 0;
-    downloads_complete = true;
+    _new_length = 0;
     await _downloadQueriedLock.exitWrite();
   }
+
+  bool get downloads_complete => _downloaded == _new_length;
 }

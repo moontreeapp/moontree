@@ -147,6 +147,7 @@ class SubscribeService {
         } else {
           await services.download.history.addAddressToSkipHistory(address);
         }
+        streams.wallet.scripthashCallback.add(null);
       });
     }
   }

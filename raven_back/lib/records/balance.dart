@@ -104,7 +104,7 @@ class BalanceUSD {
   BalanceUSD({required this.confirmed, required this.unconfirmed});
 
   double get value {
-    return confirmed /*+ unconfirmed*/;
+    return confirmed + unconfirmed;
   }
 
   String get valueUSD {
