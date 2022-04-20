@@ -63,8 +63,8 @@ class BalanceService {
       await res.balances.save(Balance(
           walletId: res.wallets.currentWallet.id,
           security: securities.first,
-          confirmed: await services.download.unspents.total(key),
-          unconfirmed: 0));
+          confirmed: await services.download.unspents.totalConfirmed(key),
+          unconfirmed: await services.download.unspents.totalUnconfirmed(key)));
     }
   }
 
@@ -78,9 +78,10 @@ class BalanceService {
   Future recalculateRVNBalance() async => await res.balances.save(Balance(
       walletId: res.wallets.currentWallet.id,
       security: res.securities.RVN,
-      confirmed:
-          await services.download.unspents.total(res.securities.RVN.symbol),
-      unconfirmed: 0));
+      confirmed: await services.download.unspents
+          .totalConfirmed(res.securities.RVN.symbol),
+      unconfirmed: await services.download.unspents
+          .totalUnconfirmed(res.securities.RVN.symbol)));
 
   /// Transaction Logic ///////////////////////////////////////////////////////
 
@@ -99,7 +100,6 @@ class BalanceService {
       var unspent = unspents[randomIndex];
       unspents.removeAt(randomIndex);
       gathered += unspent.value;
-      // TODO: This can be null.
       collection.add(res.vouts.byTransactionPosition
           .getOne(unspent.txHash, unspent.txPos)!);
     }

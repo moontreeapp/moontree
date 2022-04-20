@@ -295,7 +295,7 @@ class SelectionItems {
         ));
       },
       leading: components.icons.assetAvatar(
-        name == 'Ravencoin' ? 'RVN' : name,
+        name == 'Ravencoin' ? res.securities.RVN.symbol : name,
         height: 24,
         width: 24,
       ),

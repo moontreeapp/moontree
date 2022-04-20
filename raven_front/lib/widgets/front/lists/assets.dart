@@ -205,7 +205,10 @@ class _AssetList extends State<AssetList> {
             child: FittedBox(
               fit: BoxFit.scaleDown,
               alignment: Alignment.centerLeft,
-              child: Text(asset.symbol == 'RVN' ? 'Ravencoin' : asset.last,
+              child: Text(
+                  asset.symbol == res.securities.RVN.symbol
+                      ? 'Ravencoin'
+                      : asset.last,
                   style: Theme.of(context).textTheme.bodyText1),
             ))
         /* //this feature can show the path 

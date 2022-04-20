@@ -8,6 +8,7 @@ class WalletStreams {
   final deriveAddress = BehaviorSubject<DeriveLeaderAddress?>.seeded(null);
   final transactions =
       BehaviorSubject<WalletExposureTransactions?>.seeded(null);
+  final scripthashCallback = BehaviorSubject<Null>.seeded(null);
 }
 
 final Stream<Wallet> replayWallet$ = ReplaySubject<Wallet>()

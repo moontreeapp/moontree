@@ -17,7 +17,7 @@ class RVNtoFiat {
       serviceName = 'CoinGecko';
       return await getRate();
     } catch (e) {
-      print(e);
+      //print(e);
       try {
         serviceName = 'Bittrex';
         return await getRate();
@@ -49,8 +49,11 @@ class RVNtoFiat {
   Future<http.Response> call() async {
     return await http.get(
         Uri.parse({
+          /*
+          We're getting shut out by API
           'CoinGecko': 'https://api.coingecko.com/api/v3/simple/price?'
               'ids=ravencoin&vs_currencies=$fiatConformed',
+              */
           'Bittrex':
               'https://api.bittrex.com/v3/markets/RVN-$fiatConformed/ticker',
           'Nomi': 'https://api.nomics.com/v1/currencies/ticker?'

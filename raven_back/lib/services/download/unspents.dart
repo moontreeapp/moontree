@@ -5,13 +5,22 @@ import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/raven_back.dart';
 
 /// we use the electrum server directly for determining our UTXO set
+/// This gets erased when we swap wallets
 class UnspentService {
   // "Security name" -> address -> {unspents}
   // This can be concurrently modified while we iterate over keys, i.e. recalc balances
   final Map<String, Map<String, Set<ScripthashUnspent>>> _unspentsBySymbol = {};
   final _unspentsLock = ReaderWriterLock();
 
-  String defaultSymbol(String? symbol) => symbol ?? 'RVN';
+  final Map<String, List<int?>> _cachedBySymbol = {};
+  final _cachedBySymbolLock = ReaderWriterLock();
+
+  final Set<String> _scripthashesChecked = {};
+  final _scripthashesCheckedLock = ReaderWriterLock();
+  int scripthashesChecked = 0;
+  int uniqueAssets = 0;
+
+  String defaultSymbol(String? symbol) => symbol ?? res.securities.RVN.symbol;
 
   Iterable<String> defaultScripthashes(Iterable<String>? scripthashes) =>
       scripthashes ??
@@ -59,13 +68,32 @@ class UnspentService {
 
   Future<void> pull({Iterable<String>? scripthashes, bool? updateRVN}) async {
     final new_scripthashes = defaultScripthashes(scripthashes);
-    final rvn = 'RVN';
-
+    final rvn = res.securities.RVN.symbol;
     if (updateRVN ?? true) {
       var utxos = (await services.client.client!.getUnspents(new_scripthashes))
           .expand((i) => i);
+
       // Wipe relevant unspents and re-add
+      await _unspentsLock.enterRead();
+      // If we have new utxos, get the vouts now.
+      final new_utxos = utxos.toSet().difference(
+          (_unspentsBySymbol[rvn] ?? <String, Set<ScripthashUnspent>>{})
+              .values
+              .expand((element) => element)
+              .toSet());
+      await _unspentsLock.exitRead();
+      new_utxos.removeWhere((element) =>
+          res.vouts.byTransactionPosition
+              .getOne(element.txHash, element.txPos) !=
+          null);
+      await services.download.history
+          .getTransactions(new_utxos.map((x) => x.txHash));
+
       await _unspentsLock.enterWrite();
+      // New info; clear cache
+      await _cachedBySymbolLock.enterWrite();
+      _cachedBySymbol.remove(rvn);
+      await _cachedBySymbolLock.exitWrite();
       new_scripthashes.forEach((x) => _clearUnspentsForScripthash(x, rvn));
       _addUnspent(symbol: rvn, unspents: utxos);
       await _unspentsLock.exitWrite();
@@ -93,7 +121,28 @@ class UnspentService {
       // And then remove and add
       for (final symbol in downloaded.keys) {
         final scripthashes_internal = downloaded[symbol]!.keys;
+
+        await _unspentsLock.enterRead();
+        // If we have new utxos, get the vouts now.
+        final new_utxos = utxos.toSet().difference(
+            (_unspentsBySymbol[symbol] ?? <String, Set<ScripthashUnspent>>{})
+                .values
+                .expand((element) => element)
+                .toSet());
+        await _unspentsLock.exitRead();
+
+        new_utxos.removeWhere((element) =>
+            res.vouts.byTransactionPosition
+                .getOne(element.txHash, element.txPos) !=
+            null);
+        await services.download.history
+            .getTransactions(new_utxos.map((x) => x.txHash));
+
         await _unspentsLock.enterWrite();
+        // New info; clear cache
+        await _cachedBySymbolLock.enterWrite();
+        _cachedBySymbol.remove(symbol);
+        await _cachedBySymbolLock.exitWrite();
         scripthashes_internal
             .forEach((x) => _clearUnspentsForScripthash(x, symbol));
         for (final scripthash_internal in scripthashes_internal) {
@@ -105,23 +154,86 @@ class UnspentService {
         await _unspentsLock.exitWrite();
       }
     }
+    await _scripthashesCheckedLock.enterWrite();
+    _scripthashesChecked.addAll(new_scripthashes);
+    scripthashesChecked = _scripthashesChecked.length;
+    await _scripthashesCheckedLock.exitWrite();
+    await _unspentsLock.enterRead();
+    uniqueAssets = _unspentsBySymbol.length;
+    await _unspentsLock.exitRead();
   }
 
-  // TODO: Maybe cache instead of calculating each time?
-  Future<int> total([String? symbol]) async {
+  Future<int> totalConfirmed([String? symbolMaybeNull]) async {
+    final symbol = defaultSymbol(symbolMaybeNull);
+
+    await _cachedBySymbolLock.enterRead();
+    final cachedResult = _cachedBySymbol[symbol]?[0];
+    await _cachedBySymbolLock.exitRead();
+    if (cachedResult != null) {
+      return cachedResult;
+    }
+
     await _unspentsLock.enterRead();
-    final result = _unspentsBySymbol.keys.contains(defaultSymbol(symbol))
-        ? _unspentsBySymbol[defaultSymbol(symbol)]!
+    final result = _unspentsBySymbol.keys.contains(symbol)
+        ? _unspentsBySymbol[symbol]!
             .values // List of iterable of items
             .expand((element) => element) // Flatten the list of iterables
-            .fold(0, (int total, ScripthashUnspent item) => item.value + total)
+            .fold(
+                0,
+                (int total, ScripthashUnspent item) =>
+                    item.height == 0 ? total : item.value + total)
         : 0;
     await _unspentsLock.exitRead();
+
+    await _cachedBySymbolLock.enterWrite();
+    if (!_cachedBySymbol.containsKey(symbol)) {
+      _cachedBySymbol[symbol] = [null, null];
+    }
+    _cachedBySymbol[symbol]![0] = result;
+    await _cachedBySymbolLock.exitWrite();
+
     return result;
   }
 
-  Future<void> assertSufficientFunds(int amount, String? symbol) async {
-    if (await total(defaultSymbol(symbol)) < amount) {
+  Future<int> totalUnconfirmed([String? symbolMaybeNull]) async {
+    final symbol = defaultSymbol(symbolMaybeNull);
+
+    await _cachedBySymbolLock.enterRead();
+    final cachedResult = _cachedBySymbol[symbol]?[1];
+    await _cachedBySymbolLock.exitRead();
+    if (cachedResult != null) {
+      return cachedResult;
+    }
+
+    await _unspentsLock.enterRead();
+    final result = _unspentsBySymbol.keys.contains(symbol)
+        ? _unspentsBySymbol[symbol]!
+            .values // List of iterable of items
+            .expand((element) => element) // Flatten the list of iterables
+            .fold(
+                0,
+                (int total, ScripthashUnspent item) =>
+                    item.height == 0 ? item.value + total : total)
+        : 0;
+    await _unspentsLock.exitRead();
+
+    await _cachedBySymbolLock.enterWrite();
+    if (!_cachedBySymbol.containsKey(symbol)) {
+      _cachedBySymbol[symbol] = [null, null];
+    }
+    _cachedBySymbol[symbol]![1] = result;
+    await _cachedBySymbolLock.exitWrite();
+
+    return result;
+  }
+
+  Future<void> assertSufficientFunds(int amount, String? symbol,
+      {bool allowUnconfirmed = true}) async {
+    var total = await totalConfirmed(defaultSymbol(symbol));
+    if (allowUnconfirmed) {
+      total += await totalUnconfirmed(defaultSymbol(symbol));
+    }
+    if (total < amount) {
       throw InsufficientFunds();
     }
   }
@@ -142,5 +254,19 @@ class UnspentService {
     final result = _unspentsBySymbol.keys.toSet();
     await _unspentsLock.exitRead();
     return result;
+  }
+
+  Future<void> clearData() async {
+    await _unspentsLock.enterWrite();
+    _unspentsBySymbol.clear();
+    await _unspentsLock.exitWrite();
+    await _cachedBySymbolLock.enterWrite();
+    _cachedBySymbol.clear();
+    await _cachedBySymbolLock.exitWrite();
+    await _scripthashesCheckedLock.enterWrite();
+    _scripthashesChecked.clear();
+    await _scripthashesCheckedLock.exitWrite();
+    scripthashesChecked = 0;
+    uniqueAssets = 0;
   }
 }

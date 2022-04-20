@@ -170,7 +170,7 @@ class _PageTitleState extends State<PageTitle>
   }
 
   String assetName(String given) {
-    if (given == 'RVN') {
+    if (given == res.securities.RVN.symbol) {
       return 'Ravencoin';
     }
     if (given.contains('~')) {

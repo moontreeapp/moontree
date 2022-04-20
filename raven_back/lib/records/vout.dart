@@ -112,14 +112,14 @@ class Vout with EquatableMixin, ToStringMixin {
       [if (toAddress != null) toAddress!, ...additionalAddresses ?? []];
 
   int securityValue({Security? security}) => security == null ||
-          (security.symbol == 'RVN' &&
+          (security.symbol == res.securities.RVN.symbol &&
               security.securityType == SecurityType.Crypto)
       ? rvnValue
       : (security.id == assetSecurityId)
           ? assetValue ?? 0
           : 0;
 
-  String get securityId => assetSecurityId ?? 'RVN:Crypto';
+  String get securityId => assetSecurityId ?? res.securities.RVN.id;
 
   bool get isAsset => securityId != res.securities.RVN.id;
 }
