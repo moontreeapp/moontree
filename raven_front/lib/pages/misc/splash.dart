@@ -37,7 +37,7 @@ class _SplashState extends State<Splash> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Lottie.asset(
-        'assets/splash/moontree_v2_001.json',
+        'assets/splash/moontree_v2_001_recolored.json',
         animate: true,
         repeat: false,
         width: double.infinity,
