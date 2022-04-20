@@ -150,7 +150,7 @@ class _HoldingList extends State<HoldingList> {
                 services.download.unspents.uniqueAssets) {
       // Initially show our state from previous app
       _useCurrent = false;
-      holdings = utils.assetHoldings(_unspentBalances);
+      holdings = utils.assetHoldings(widget.holdings ?? _unspentBalances);
     }
 
     holdings.sort((first, second) => first.symbol.compareTo(second.symbol));
