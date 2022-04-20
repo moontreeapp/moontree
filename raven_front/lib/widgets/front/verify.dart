@@ -67,7 +67,7 @@ class _VerifyPasswordState extends State<VerifyPassword> {
         enabled: services.password.required ? true : false,
         controller: existingPassword,
         obscureText: !existingPasswordVisible,
-        textInputAction: TextInputAction.next,
+        textInputAction: TextInputAction.done,
         decoration: components.styles.decorations.textField(
           context,
           focusNode: existingFocus,
@@ -92,7 +92,8 @@ class _VerifyPasswordState extends State<VerifyPassword> {
         },
         onEditingComplete: () {
           verify();
-          submitFocus.requestFocus();
+          //submitFocus.requestFocus();
+          FocusScope.of(context).requestFocus(submitFocus);
         },
       );
 

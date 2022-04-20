@@ -9,8 +9,13 @@ import 'package:raven_front/widgets/widgets.dart';
 
 class Loader extends StatefulWidget {
   final String message;
+  final bool staticImage;
   final bool returnHome;
-  const Loader({this.message = 'Loading...', this.returnHome = true}) : super();
+  const Loader({
+    this.message = 'Loading...',
+    this.returnHome = true,
+    this.staticImage = false,
+  }) : super();
 
   @override
   _LoaderState createState() => _LoaderState();
@@ -19,6 +24,7 @@ class Loader extends StatefulWidget {
 class _LoaderState extends State<Loader> {
   //DateTime startTime = DateTime.now();
   late List<StreamSubscription> listeners = [];
+  late DateTime startTime;
 
   @override
   void initState() {
@@ -28,8 +34,14 @@ class _LoaderState extends State<Loader> {
     // intelligently we must know which stream matters and listen to that
     // like streams.spend.success or whatever.
     streams.app.snack.add(null); // clear out first just in case.
-    listeners.add(streams.app.snack.listen((Snack? value) {
+    listeners.add(streams.app.snack.listen((Snack? value) async {
       if (value != null) {
+        if (!widget.staticImage) {
+          var duration = 1330;
+          var waited = DateTime.now().difference(startTime).inMilliseconds;
+          var wait = (duration - (waited % duration)) % duration;
+          await Future.delayed(Duration(milliseconds: wait));
+        }
         if (widget.returnHome) {
           Navigator.popUntil(
               components.navigator.routeContext!, ModalRoute.withName('/home'));
@@ -38,6 +50,9 @@ class _LoaderState extends State<Loader> {
         }
       }
     }));
+    if (!widget.staticImage) {
+      startTime = DateTime.now();
+    }
   }
 
   @override
@@ -61,19 +76,20 @@ class _LoaderState extends State<Loader> {
             style: Theme.of(context).textTheme.headline2,
           ),
           SizedBox(height: 16),
-          //Image.asset(
-          //  'assets/logo/moontree_logo.png',
-          //  height: 56,
-          //  width: 56,
-          //),
-          Lottie.asset(
-            'assets/spinner/moontree_spinner_v2_002_1.json',
-            animate: true,
-            repeat: false,
-            width: 100,
-            height: 58.6,
-            fit: BoxFit.fitWidth,
-          ),
+          widget.staticImage
+              ? Image.asset(
+                  'assets/logo/moontree_logo.png',
+                  height: 56,
+                  width: 56,
+                )
+              : Lottie.asset(
+                  'assets/spinner/moontree_spinner_v2_002_1.json',
+                  animate: true,
+                  repeat: true,
+                  width: 100,
+                  height: 58.6,
+                  fit: BoxFit.fitWidth,
+                ),
         ]));
   }
 }

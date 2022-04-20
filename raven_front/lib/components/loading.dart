@@ -6,6 +6,7 @@ class LoadingComponents {
   Future<void> screen({
     BuildContext? context,
     String? message,
+    bool staticImage = false,
     bool returnHome = true,
   }) async {
     await showModalBottomSheet<void>(
@@ -21,6 +22,7 @@ class LoadingComponents {
         builder: (BuildContext context) => Loader(
               message: message ?? 'Loading',
               returnHome: returnHome,
+              staticImage: staticImage,
             ));
   }
 }

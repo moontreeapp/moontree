@@ -13,9 +13,10 @@ class _ChangePasswordState extends State<ChangePassword> {
   var existingPassword = TextEditingController();
   var newPassword = TextEditingController();
   var confirmPassword = TextEditingController();
-  FocusNode existingPasswordFocusNode = FocusNode();
-  FocusNode newPasswordFocusNode = FocusNode();
-  FocusNode confirmPasswordFocusNode = FocusNode();
+  FocusNode existingPasswordFocus = FocusNode();
+  FocusNode newPasswordFocus = FocusNode();
+  FocusNode confirmPasswordFocus = FocusNode();
+  FocusNode buttonFocus = FocusNode();
   String? newNotification;
   bool existingPasswordVisible = false;
   bool newPasswordVisible = false;
@@ -33,9 +34,9 @@ class _ChangePasswordState extends State<ChangePassword> {
     newPassword.dispose();
     confirmPassword.dispose();
     existingPassword.dispose();
-    existingPasswordFocusNode.dispose();
-    newPasswordFocusNode.dispose();
-    confirmPasswordFocusNode.dispose();
+    existingPasswordFocus.dispose();
+    newPasswordFocus.dispose();
+    confirmPasswordFocus.dispose();
 
     super.dispose();
   }
@@ -85,7 +86,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       );
 
   Widget get existingPasswordField => TextField(
-        focusNode: existingPasswordFocusNode,
+        focusNode: existingPasswordFocus,
         autocorrect: false,
         enabled: services.password.required ? true : false,
         controller: existingPassword,
@@ -111,13 +112,13 @@ class _ChangePasswordState extends State<ChangePassword> {
         onChanged: (String value) {
           setState(() {
             if (verify()) {
-              FocusScope.of(context).requestFocus(newPasswordFocusNode);
+              FocusScope.of(context).requestFocus(newPasswordFocus);
             }
           });
         },
         onEditingComplete: () {
           if (verify()) {
-            FocusScope.of(context).requestFocus(newPasswordFocusNode);
+            FocusScope.of(context).requestFocus(newPasswordFocus);
           }
         },
       );
@@ -136,7 +137,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       'unrecognized';
 
   Widget get newPasswordField => TextField(
-        focusNode: newPasswordFocusNode,
+        focusNode: newPasswordFocus,
         autocorrect: false,
         controller: newPassword,
         obscureText: !newPasswordVisible,
@@ -159,11 +160,11 @@ class _ChangePasswordState extends State<ChangePassword> {
         ),
         onChanged: (String value) => validateComplexity(password: value),
         onEditingComplete: () =>
-            FocusScope.of(context).requestFocus(confirmPasswordFocusNode),
+            FocusScope.of(context).requestFocus(confirmPasswordFocus),
       );
 
   Widget get confirmPasswordField => TextField(
-        focusNode: confirmPasswordFocusNode,
+        focusNode: confirmPasswordFocus,
         autocorrect: false,
         controller: confirmPassword,
         obscureText: !confirmPasswordVisible,
@@ -191,7 +192,9 @@ class _ChangePasswordState extends State<ChangePassword> {
           ),
         ),
         onChanged: (String value) => validateComplexity(),
-        onEditingComplete: () async => await submit(),
+        //onEditingComplete: () async => await submit(),
+        onEditingComplete: () =>
+            FocusScope.of(context).requestFocus(buttonFocus),
 
         /// should we just dismiss the keyboard instead of submitting?
         // FocusManager.instance.primaryFocus?.unfocus();
@@ -200,6 +203,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   Widget get submitButton => components.buttons.actionButton(
         context,
         label: 'Set',
+        focusNode: buttonFocus,
         disabledIcon: Icon(Icons.lock_rounded, color: AppColors.black38),
         onPressed: () async => await submit(),
         enabled: enabledCheck(),
@@ -246,7 +250,7 @@ class _ChangePasswordState extends State<ChangePassword> {
     if (services.password.validate.complexity(newPassword.text)) {
       FocusScope.of(context).unfocus();
       streams.password.update.add(newPassword.text);
-      components.loading.screen(message: 'Setting Password');
+      components.loading.screen(message: 'Setting Password', staticImage: true);
     }
   }
 }

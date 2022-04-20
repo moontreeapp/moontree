@@ -2,15 +2,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/wallet/constants.dart';
+import 'package:raven_front/listeners/listeners.dart';
 
-import '../../listeners/listeners.dart';
-
-/// This works by creating an AnimationController instance and passing it
-/// to the Lottie widget.
-/// The AnimationController class has a rich API to run the animation in various ways.
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
 
@@ -18,9 +13,7 @@ class Splash extends StatefulWidget {
   _SplashState createState() => _SplashState();
 }
 
-class _SplashState extends State<Splash> with TickerProviderStateMixin {
-  //DateTime startTime = DateTime.now();
-
+class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
@@ -28,7 +21,6 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   }
 
   Future<void> _init() async {
-    //startTime = DateTime.now();
     await Future.delayed(Duration(milliseconds: 4000));
     final loadingHelper = DataLoadingHelper(context);
     await loadingHelper.setupDatabase();
