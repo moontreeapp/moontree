@@ -59,7 +59,6 @@ class _AssetList extends State<AssetList> {
   }
 
   Future refresh() async {
-    await services.balance.recalculateAllBalances();
     setState(() {});
   }
 

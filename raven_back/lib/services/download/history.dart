@@ -17,6 +17,8 @@ class HistoryService {
   final Map<String, Set<Set<String>>> _txsListsByWalletExposureKeys = {};
   final _txsListsByWalletExposureKeysLock = ReaderWriterLock();
 
+  List<Iterable<String>> unspentsTxsFetchFirst = [];
+
   Future<bool?> getHistories(Address address) async {
     void updateCounts(LeaderWallet leader) {
       leader.removeUnused(address.hdIndex, address.exposure);
@@ -73,7 +75,6 @@ class HistoryService {
           }
           return true;
         }()) {
-      await services.balance.recalculateAllBalances();
       print('getting Transactions');
       //streams.wallet.scripthashCallback.add(null); // make home listen to balances instead?
       var txsToDownload = await _txsListsByWalletExposureKeysLock.read(() {
@@ -85,6 +86,14 @@ class HistoryService {
         }
         return txsToDownload;
       });
+
+      // Get unspents first
+      // Unspents we don't have implies history we dont have implies this gets called
+      while (unspentsTxsFetchFirst.isNotEmpty) {
+        //print('Getting transactions from unspents');
+        await getTransactions(unspentsTxsFetchFirst.removeAt(0));
+      }
+
       // Get transactions 10 at a time
       // Arbitrary number
       while (txsToDownload.isNotEmpty) {
@@ -156,7 +165,6 @@ class HistoryService {
       ],
       client,
     );
-    await services.balance.recalculateAllBalances();
   }
 
   /// when an address status change: make our historic tx data match blockchain

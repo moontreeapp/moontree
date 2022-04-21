@@ -85,7 +85,9 @@ class SubscribeService {
       return false;
     }
     var existing = false;
-    for (var address in res.addresses) {
+    for (var address in res.wallets.primaryIndex
+        .getOne(res.settings.currentWalletId)!
+        .addresses) {
       onlySubscribeAddress(client, address);
       existing = true;
     }
@@ -130,6 +132,7 @@ class SubscribeService {
           client.subscribeScripthash(address.id).listen((String? status) async {
         print('Received call back for subscription to ${address.address}');
         await services.download.unspents.pull(scripthashes: [address.id]);
+
         if (status == null || address.status?.status != status) {
           var allDone = await services.download.history.getHistories(address);
           await res.statuses.save(Status(
@@ -141,15 +144,10 @@ class SubscribeService {
               leader: address.wallet! as LeaderWallet,
               exposure: address.exposure,
             ));
-          } else {
-            // why are we doing this here? happens in get history...
-            await services.balance.recalculateAllBalances();
           }
         } else {
           await services.download.history.addAddressToSkipHistory(address);
         }
-        // happens in get history...
-        //streams.wallet.scripthashCallback.add(null);
       });
     }
   }
