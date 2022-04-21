@@ -548,14 +548,18 @@ class _SendState extends State<Send> {
               ? null
               : res.securities.bySymbolSecurityType
                   .getOne(sendAsset.text, SecurityType.RavenAsset),
-          assetMemo: sendAsset.text != 'Ravencoin' && sendMemo.text.isIpfs
+          assetMemo: sendAsset.text != 'Ravencoin' &&
+                  sendMemo.text != '' &&
+                  sendMemo.text.isIpfs
               ? sendMemo.text
               : null,
           memo: sendAsset.text == 'Ravencoin' &&
                   sendMemo.text != '' &&
                   verifyMemo(sendMemo.text)
               ? sendMemo.text
-              : !sendMemo.text.isIpfs && verifyMemo(sendMemo.text)
+              : !sendMemo.text.isIpfs &&
+                      sendMemo.text != '' &&
+                      verifyMemo(sendMemo.text)
                   ? sendMemo.text
                   : null,
           note: sendNote.text != '' ? sendNote.text : null,
