@@ -163,7 +163,9 @@ class _HoldingList extends State<HoldingList> {
 
     return _hideList
         ? components.empty.getAssetsPlaceholder(context,
-            scrollController: widget.scrollController, count: holdingCount)
+            scrollController: widget.scrollController,
+            count: holdingCount,
+            holding: true)
         : //RefreshIndicator( child:
         _holdingsView(context);
 

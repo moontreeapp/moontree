@@ -36,14 +36,12 @@ class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Lottie.asset(
-        'assets/splash/moontree_v2_001_recolored.json',
-        animate: true,
-        repeat: false,
-        width: double.infinity,
-        height: double.infinity,
-        fit: BoxFit.fitWidth,
-      ),
+      body: Lottie.asset('assets/splash/moontree_v2_001_recolored.json',
+          animate: true,
+          repeat: false,
+          width: double.infinity,
+          height: double.infinity,
+          fit: BoxFit.fill),
       backgroundColor: Colors.white,
     );
   }

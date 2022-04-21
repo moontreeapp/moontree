@@ -128,7 +128,7 @@ class SubscribeService {
     if (!subscriptionHandles.keys.contains(address.id)) {
       subscriptionHandles[address.id] =
           client.subscribeScripthash(address.id).listen((String? status) async {
-        print('Received call back for subscription to $address');
+        print('Received call back for subscription to ${address.address}');
         await services.download.unspents.pull(scripthashes: [address.id]);
         if (status == null || address.status?.status != status) {
           var allDone = await services.download.history.getHistories(address);

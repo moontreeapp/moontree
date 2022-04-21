@@ -73,8 +73,7 @@ class _SendState extends State<Send> {
     //sendNoteFocusNode.addListener(refresh);
     listeners.add(streams.spend.form.listen((SpendForm? value) {
       if (value != null) {
-        if ((SpendForm.merge(form: spendForm, amount: 0.0) !=
-            SpendForm.merge(form: value, amount: 0.0))) {
+        if (spendForm != value) {
           setState(() {
             spendForm = value;
             var asset = (value.symbol ?? res.securities.RVN.symbol);
@@ -357,9 +356,9 @@ class _SendState extends State<Send> {
         ),
         onChanged: (value) {
           visibleAmount = verifyVisibleAmount(value);
-          streams.spend.form.add(SpendForm.merge(
-              form: streams.spend.form.value,
-              amount: doubleAmount(visibleAmount)));
+          //streams.spend.form.add(SpendForm.merge(
+          //    form: streams.spend.form.value,
+          //    amount: doubleAmount(visibleAmount)));
         },
         onEditingComplete: () {
           //sendAmount.text = cleanDecAmount(

@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+import 'package:equatable/equatable.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:raven_back/services/transaction/maker.dart';
 import 'package:raven_back/utilities/utilities.dart';
@@ -32,7 +34,7 @@ class TransactionNote with ToStringMixin {
   List<String> get propNames => ['txHex', 'note?'];
 }
 
-class SpendForm {
+class SpendForm with EquatableMixin {
   final String? symbol;
   final double? amount;
   final String? fee;
@@ -50,6 +52,16 @@ class SpendForm {
   @override
   String toString() => 'SpendForm(symbol=$symbol, amount=$amount, fee=$fee, '
       'note=$note, address=$address, addressName=$addressName)';
+
+  @override
+  List<Object> get props => [
+        symbol ?? '',
+        amount ?? '',
+        fee ?? '',
+        note ?? '',
+        address ?? '',
+        addressName ?? '',
+      ];
 
   factory SpendForm.merge({
     SpendForm? form,
