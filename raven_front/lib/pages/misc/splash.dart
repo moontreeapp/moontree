@@ -39,9 +39,10 @@ class _SplashState extends State<Splash> {
       body: Lottie.asset('assets/splash/moontree_v2_001_recolored.json',
           animate: true,
           repeat: false,
+          alignment: Alignment.center,
           width: double.infinity,
           height: double.infinity,
-          fit: BoxFit.fill),
+          fit: BoxFit.cover),
       backgroundColor: Colors.white,
     );
   }
