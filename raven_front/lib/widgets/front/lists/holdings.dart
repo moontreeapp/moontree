@@ -28,8 +28,6 @@ class HoldingList extends StatefulWidget {
 class _HoldingList extends State<HoldingList> {
   List<StreamSubscription> listeners = [];
   static bool _hideList = true;
-  static bool _useCurrent = true;
-  static bool _holdingsWasEmpty = false;
   late List<AssetHolding> holdings;
   List<Balance> _unspentBalances = [];
   int holdingCount = 1;
@@ -133,32 +131,15 @@ class _HoldingList extends State<HoldingList> {
   @override
   Widget build(BuildContext context) {
     // Use cached holdings on start up
-    if (_useCurrent) {
-      holdings = utils.assetHoldings(widget.holdings ?? Current.holdings);
-    }
+    holdings = utils.assetHoldings(widget.holdings ?? _unspentBalances);
 
-    // If new; shimmer until we have all
-    if (!_holdingsWasEmpty) {
-      _holdingsWasEmpty = Current.holdings.isEmpty;
-    }
-
-    // Update with our unspent values when utd
-    if (!_useCurrent ||
-        services.download.unspents.scripthashesChecked >=
-                Current.wallet.addresses.length &&
-            _unspentBalances.length ==
-                services.download.unspents.uniqueAssets) {
-      // Initially show our state from previous app
-      _useCurrent = false;
-      holdings = utils.assetHoldings(widget.holdings ?? _unspentBalances);
-    }
-
+    // TODO: User decides how to sort?
     holdings.sort((first, second) => first.symbol.compareTo(second.symbol));
 
     if (_hideList) {
       _hideList = services.download.unspents.scripthashesChecked <
-              Current.wallet.addresses.length &&
-          _holdingsWasEmpty;
+              Current.wallet.addresses.length ||
+          Current.holdings.isEmpty;
     }
 
     return _hideList
