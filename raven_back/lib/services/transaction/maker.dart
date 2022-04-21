@@ -1221,7 +1221,10 @@ class TransactionMaker {
     return Tuple2(tx, estimate);
   }
 
-  // we can skip the while loop because we know we want to include all unspents
+  /// we can skip the while loop because we know we want to include all unspents
+  /// asside from taking a shortcut, this function is actually necessary because
+  /// the other transaction function assume the amount is constant and adds fees
+  /// onto it, but when sending all you want the fee taken out of amount sent...
   Future<Tuple2<ravencoin.Transaction, SendEstimate>> transactionSendAllRVN(
     String toAddress,
     SendEstimate estimate, {
