@@ -1,5 +1,7 @@
 import 'dart:async';
 
+enum LockType { read, write }
+
 // TODO: More robust checking, errors, etc for coder
 
 // Multiple reads can happen at once
@@ -15,6 +17,22 @@ class ReaderWriterLock {
 
   final List<Completer<void>> _write_queue = <Completer<void>>[];
   Completer<void> _read_after_write = Completer();
+
+  Future<T> lockScope<T>(
+    T Function() callback, {
+    required LockType lockType,
+  }) async {
+    lockType == LockType.write ? await enterWrite() : await enterRead();
+    var x = callback();
+    lockType == LockType.write ? await exitWrite() : await exitRead();
+    return x;
+  }
+
+  Future<T> read<T>(T Function() fn) async =>
+      await lockScope(fn, lockType: LockType.read);
+
+  Future<T> write<T>(T Function() fn) async =>
+      await lockScope(fn, lockType: LockType.write);
 
   Future<void> enterRead() async {
     while (_is_writing_or_waiting_to_write) {

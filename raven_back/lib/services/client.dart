@@ -142,12 +142,16 @@ class SubscribeService {
               exposure: address.exposure,
             ));
           } else {
+            // why are we doing this here? happens in get history...
             await services.balance.recalculateAllBalances();
           }
         } else {
+          // why does this need to happen again?
           await services.download.history.addAddressToSkipHistory(address);
         }
-        streams.wallet.scripthashCallback.add(null);
+
+        /// happens in get history...
+        //streams.wallet.scripthashCallback.add(null);
       });
     }
   }

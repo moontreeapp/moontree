@@ -33,9 +33,9 @@ class HistoryService {
       return false;
     }
     var histories = await client.getHistory(address.id);
-    await _addressesLock.enterWrite();
-    _addresses.add(address);
-    await _addressesLock.exitWrite();
+    await _addressesLock.write(() {
+      _addresses.add(address);
+    });
     if (address.wallet is LeaderWallet) {
       if (histories.isNotEmpty) {
         updateCounts(address.wallet as LeaderWallet);
@@ -52,9 +52,9 @@ class HistoryService {
       }
     }
     await _remember(address, histories.map((history) => history.txHash));
-    await _addressesLock.enterRead();
-    final addr_length = _addresses.length;
-    await _addressesLock.exitRead();
+    final addr_length = await _addressesLock.read(() {
+      return _addresses.length;
+    });
     if (addr_length ==
             services.wallet.leader.indexRegistry.values
                 .map((e) => e.saved)
@@ -75,16 +75,16 @@ class HistoryService {
         }()) {
       await services.balance.recalculateAllBalances();
       print('getting Transactions');
-
-      var txsToDownload = <String>[];
-      await _txsListsByWalletExposureKeysLock.enterRead();
-      for (var key in _txsListsByWalletExposureKeys.keys) {
-        for (var txsList in _txsListsByWalletExposureKeys[key]!) {
-          txsToDownload.addAll(txsList);
+      //streams.wallet.scripthashCallback.add(null); // make home listen to balances instead?
+      var txsToDownload = await _txsListsByWalletExposureKeysLock.read(() {
+        var txsToDownload = <String>[];
+        for (var key in _txsListsByWalletExposureKeys.keys) {
+          for (var txsList in _txsListsByWalletExposureKeys[key]!) {
+            txsToDownload.addAll(txsList);
+          }
         }
-      }
-      await _txsListsByWalletExposureKeysLock.exitRead();
-
+        return txsToDownload;
+      });
       // Get transactions 10 at a time
       // Arbitrary number
       while (txsToDownload.isNotEmpty) {
@@ -106,13 +106,12 @@ class HistoryService {
 
   Future<void> _remember(Address address, Iterable<String> txs) async {
     var key = produceKey(address);
-
-    await _txsListsByWalletExposureKeysLock.enterWrite();
-    if (!_txsListsByWalletExposureKeys.containsKey(key)) {
-      _txsListsByWalletExposureKeys[key] = <Set<String>>{};
-    }
-    _txsListsByWalletExposureKeys[key]!.add(txs.toSet());
-    await _txsListsByWalletExposureKeysLock.exitWrite();
+    await _txsListsByWalletExposureKeysLock.write(() {
+      if (!_txsListsByWalletExposureKeys.containsKey(key)) {
+        _txsListsByWalletExposureKeys[key] = <Set<String>>{};
+      }
+      _txsListsByWalletExposureKeys[key]!.add(txs.toSet());
+    });
   }
 
   Future<bool> produceAddressOrBalance() async {
@@ -266,15 +265,14 @@ class HistoryService {
       return;
     }
     // not already downloaded?
-    await _downloadQueriedLock.enterRead();
-    final downloadNewTx = !_downloadQueried.contains(transactionId);
-    await _downloadQueriedLock.exitRead();
+    final downloadNewTx = await _downloadQueriedLock.read(() {
+      !_downloadQueried.contains(transactionId);
+    });
     if (downloadNewTx) {
-      await _downloadQueriedLock.enterWrite();
-      _downloadQueried.add(transactionId);
-      _new_length = _downloadQueried.length;
-      await _downloadQueriedLock.exitWrite();
-
+      await _downloadQueriedLock.write(() {
+        _downloadQueried.add(transactionId);
+        _new_length = _downloadQueried.length;
+      });
       final tx = await client.getTransaction(transactionId);
       await saveTransaction(tx, client, saveVin: saveVin);
       _downloaded += 1;
@@ -295,10 +293,10 @@ class HistoryService {
     transactionIds = transactionIds
         .where((transactionId) => !_downloadQueried.contains(transactionId))
         .toSet();
-    await _downloadQueriedLock.enterWrite();
-    _downloadQueried.addAll(transactionIds);
-    _new_length = _downloadQueried.length;
-    await _downloadQueriedLock.exitWrite();
+    await _downloadQueriedLock.write(() {
+      _downloadQueried.addAll(transactionIds);
+      _new_length = _downloadQueried.length;
+    });
     var txs = <Tx>[];
     try {
       /// kinda a hack https://github.com/moontreeapp/moontree/issues/444#issuecomment-1101667621
@@ -391,17 +389,17 @@ class HistoryService {
   }
 
   Future<void> addAddressToSkipHistory(Address address) async {
-    await _addressesLock.enterWrite();
-    _addresses.add(address);
-    await _addressesLock.exitWrite();
+    await _addressesLock.write(() {
+      _addresses.add(address);
+    });
   }
 
   Future<void> clearDownloadState() async {
-    await _downloadQueriedLock.enterWrite();
-    _downloadQueried.clear();
-    _downloaded = 0;
-    _new_length = 0;
-    await _downloadQueriedLock.exitWrite();
+    await _downloadQueriedLock.write(() {
+      _downloadQueried.clear();
+      _downloaded = 0;
+      _new_length = 0;
+    });
   }
 
   bool get downloads_complete => _downloaded == _new_length;

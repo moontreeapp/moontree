@@ -4,7 +4,6 @@ import 'package:raven_back/utilities/lock.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/raven_back.dart';
 
-enum LockType { read, write }
 enum TotalType { confirmed, unconfirmed }
 
 /// we use the electrum server directly for determining our UTXO set
@@ -22,20 +21,6 @@ class UnspentService {
   final _scripthashesCheckedLock = ReaderWriterLock();
   int scripthashesChecked = 0;
   int uniqueAssets = 0;
-
-  Future<T> lockScope<T>({
-    required T Function() fn,
-    ReaderWriterLock? lock,
-    LockType lockType = LockType.read,
-  }) async {
-    lock = lock ?? _unspentsLock;
-    lockType == LockType.write
-        ? await lock.enterWrite()
-        : await lock.enterRead();
-    var x = fn();
-    lockType == LockType.write ? await lock.exitWrite() : await lock.exitRead();
-    return x;
-  }
 
   String defaultSymbol(String? symbol) => symbol ?? res.securities.RVN.symbol;
 
@@ -92,7 +77,7 @@ class UnspentService {
 
       // Wipe relevant unspents and re-add
       // If we have new utxos, get the vouts now.
-      final new_utxos = await lockScope(fn: () {
+      final new_utxos = await _unspentsLock.read(() {
         return utxos.toSet().difference(
             (_unspentsBySymbol[rvn] ?? <String, Set<ScripthashUnspent>>{})
                 .values
@@ -106,20 +91,13 @@ class UnspentService {
       await services.download.history
           .getTransactions(new_utxos.map((x) => x.txHash));
       // New info; clear cache
-      await lockScope(
-        lock: _cachedBySymbolLock,
-        lockType: LockType.write,
-        fn: () {
-          _cachedBySymbol.remove(rvn);
-        },
-      );
-      await lockScope(
-        lockType: LockType.write,
-        fn: () {
-          finalScripthashes.forEach((x) => _clearUnspentsForScripthash(x, rvn));
-          _addUnspent(symbol: rvn, unspents: utxos);
-        },
-      );
+      await _cachedBySymbolLock.write(() {
+        _cachedBySymbol.remove(rvn);
+      });
+      await _unspentsLock.write(() {
+        finalScripthashes.forEach((x) => _clearUnspentsForScripthash(x, rvn));
+        _addUnspent(symbol: rvn, unspents: utxos);
+      });
     }
     if (!(updateRVN ?? false)) {
       var utxos =
@@ -146,7 +124,7 @@ class UnspentService {
         final scripthashes_internal = downloaded[symbol]!.keys;
 
         // If we have new utxos, get the vouts now.
-        final new_utxos = await lockScope(fn: () {
+        final new_utxos = await _unspentsLock.read(() {
           return utxos.toSet().difference(
               (_unspentsBySymbol[symbol] ?? <String, Set<ScripthashUnspent>>{})
                   .values
@@ -161,35 +139,27 @@ class UnspentService {
         await services.download.history
             .getTransactions(new_utxos.map((x) => x.txHash));
 
-        await lockScope(
-            lock: _cachedBySymbolLock,
-            lockType: LockType.write,
-            fn: () {
-              _cachedBySymbol.remove(symbol);
-            });
-        await lockScope(
-            lockType: LockType.write,
-            fn: () {
-              // New info; clear cache
-              scripthashes_internal
-                  .forEach((x) => _clearUnspentsForScripthash(x, symbol));
-              for (final scripthash_internal in scripthashes_internal) {
-                _addUnspent(
-                    symbol: symbol,
-                    unspents: downloaded[symbol]![scripthash_internal]!,
-                    subscribe: true);
-              }
-            });
+        await _cachedBySymbolLock.write(() {
+          _cachedBySymbol.remove(symbol);
+        });
+        await _unspentsLock.write(() {
+          // New info; clear cache
+          scripthashes_internal
+              .forEach((x) => _clearUnspentsForScripthash(x, symbol));
+          for (final scripthash_internal in scripthashes_internal) {
+            _addUnspent(
+                symbol: symbol,
+                unspents: downloaded[symbol]![scripthash_internal]!,
+                subscribe: true);
+          }
+        });
       }
     }
-    scripthashesChecked = await lockScope(
-        lock: _scripthashesCheckedLock,
-        lockType: LockType.write,
-        fn: () {
-          _scripthashesChecked.addAll(finalScripthashes);
-          return _scripthashesChecked.length;
-        });
-    uniqueAssets = await lockScope(fn: () {
+    scripthashesChecked = await _scripthashesCheckedLock.write(() {
+      _scripthashesChecked.addAll(finalScripthashes);
+      return _scripthashesChecked.length;
+    });
+    uniqueAssets = await _unspentsLock.read(() {
       return _unspentsBySymbol.length;
     });
   }
@@ -198,16 +168,13 @@ class UnspentService {
     totalType = totalType ?? TotalType.confirmed;
     final totalIndex = totalType == TotalType.confirmed ? 0 : 1;
     final symbol = defaultSymbol(symbolMaybeNull);
-    final cachedResult = await lockScope(
-        lock: _cachedBySymbolLock,
-        lockType: LockType.read,
-        fn: () {
-          return _cachedBySymbol[symbol]?[totalIndex];
-        });
+    final cachedResult = await _cachedBySymbolLock.read(() {
+      return _cachedBySymbol[symbol]?[totalIndex];
+    });
     if (cachedResult != null) {
       return cachedResult;
     }
-    final result = await lockScope(fn: () {
+    final result = await _unspentsLock.read(() {
       return _unspentsBySymbol.keys.contains(symbol)
           ? _unspentsBySymbol[symbol]!
               .values // List of iterable of items
@@ -224,15 +191,12 @@ class UnspentService {
                               : total)
           : 0;
     });
-    await lockScope(
-        lock: _cachedBySymbolLock,
-        lockType: LockType.write,
-        fn: () {
-          if (!_cachedBySymbol.containsKey(symbol)) {
-            _cachedBySymbol[symbol] = [null, null];
-          }
-          _cachedBySymbol[symbol]![totalIndex] = result;
-        });
+    await _cachedBySymbolLock.write(() {
+      if (!_cachedBySymbol.containsKey(symbol)) {
+        _cachedBySymbol[symbol] = [null, null];
+      }
+      _cachedBySymbol[symbol]![totalIndex] = result;
+    });
     return result;
   }
 
@@ -256,7 +220,7 @@ class UnspentService {
   }
 
   Future<Set<ScripthashUnspent>> getUnspents(String? symbol) async {
-    return await lockScope(fn: () {
+    return await _unspentsLock.read(() {
       return _unspentsBySymbol[defaultSymbol(symbol)]
               ?.values
               .expand((element) => element)
@@ -266,29 +230,21 @@ class UnspentService {
   }
 
   Future<Iterable<String>> getSymbols() async {
-    return await lockScope(fn: () {
+    return await _unspentsLock.read(() {
       return _unspentsBySymbol.keys.toSet();
     });
   }
 
   Future<void> clearData() async {
-    await lockScope(
-        lockType: LockType.write,
-        fn: () {
-          _unspentsBySymbol.clear();
-        });
-    await lockScope(
-        lock: _cachedBySymbolLock,
-        lockType: LockType.write,
-        fn: () {
-          _cachedBySymbol.clear();
-        });
-    await lockScope(
-        lock: _scripthashesCheckedLock,
-        lockType: LockType.write,
-        fn: () {
-          _scripthashesChecked.clear();
-        });
+    await _unspentsLock.write(() {
+      _unspentsBySymbol.clear();
+    });
+    await _cachedBySymbolLock.write(() {
+      _cachedBySymbol.clear();
+    });
+    await _scripthashesCheckedLock.write(() {
+      _scripthashesChecked.clear();
+    });
     scripthashesChecked = 0;
     uniqueAssets = 0;
   }
