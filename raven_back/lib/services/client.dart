@@ -146,11 +146,9 @@ class SubscribeService {
             await services.balance.recalculateAllBalances();
           }
         } else {
-          // why does this need to happen again?
           await services.download.history.addAddressToSkipHistory(address);
         }
-
-        /// happens in get history...
+        // happens in get history...
         //streams.wallet.scripthashCallback.add(null);
       });
     }
