@@ -34,6 +34,7 @@ class _HoldingList extends State<HoldingList> {
   bool showUSD = false;
   bool showPath = false;
   Rate? rateUSD;
+  Set<Balance> balances = {};
 
   @override
   void initState() {
@@ -57,24 +58,33 @@ class _HoldingList extends State<HoldingList> {
     //    setState(() {});
     //  }
     //}));
-    listeners.add(res.rates.batchedChanges.listen((batchedChanges) {
-      // ignore: todo
-      // TODO: should probably include any assets that are in the holding of the main account too...
-      var changes = batchedChanges.where((change) =>
-          change.data.base == res.securities.RVN &&
-          change.data.quote == res.securities.USD);
-      if (changes.isNotEmpty)
+    /// don't need to pull rates to this page
+    //listeners.add(res.rates.batchedChanges.listen((batchedChanges) {
+    //  // ignore: todo
+    //  // TODO: should probably include any assets that are in the holding of the main account too...
+    //  var changes = batchedChanges.where((change) =>
+    //      change.data.base == res.securities.RVN &&
+    //      change.data.quote == res.securities.USD);
+    //  if (changes.isNotEmpty)
+    //    setState(() {
+    //      rateUSD = changes.first.data;
+    //    });
+    //}));
+    /// lets try watching balances instead
+    //listeners.add(streams.wallet.scripthashCallback.listen((value) async {
+    //  if (services.download.unspents.scripthashesChecked <
+    //      Current.wallet.addresses.length) {
+    //    return;
+    //  }
+    //  await refresh();
+    //}));
+    listeners.add(res.balances.changes.listen((Change<Balance> change) {
+      var interimBalances = res.balances.data.toSet();
+      if (balances != interimBalances) {
         setState(() {
-          rateUSD = changes.first.data;
+          balances = interimBalances;
         });
-    }));
-
-    listeners.add(streams.wallet.scripthashCallback.listen((value) async {
-      if (services.download.unspents.scripthashesChecked <
-          Current.wallet.addresses.length) {
-        return;
       }
-      await refresh();
     }));
   }
 
