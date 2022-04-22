@@ -85,7 +85,10 @@ extension StringNumericExtension on String {
     }
   }
 
-  double toDouble() => double.parse(trim().split(',').join(''));
+  double toDouble() {
+    print(this);
+    return double.parse(trim().split(',').join(''));
+  }
 }
 
 extension IntReadableNumericExtension on int {

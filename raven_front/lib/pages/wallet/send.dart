@@ -531,6 +531,7 @@ class _SendState extends State<Send> {
     sendAmount.text = cleanDecAmount(sendAmount.text, zeroToBlank: true);
     var vAddress = sendAddress.text != '' && _validateAddress();
     var vMemo = verifyMemo();
+    visibleAmount = verifyVisibleAmount(sendAmount.text);
     if (vAddress && vMemo) {
       FocusScope.of(context).unfocus();
       var sendAmountAsSats = utils.amountToSat(double.parse(sendAmount.text));

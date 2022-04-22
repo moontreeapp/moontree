@@ -339,7 +339,9 @@ class SendEstimate with ToStringMixin {
         'creation',
       ];
 
-  int get total => (creation ? 0 : amount) + fees + extraFees;
+  int get total => security == null || security == res.securities.RVN
+      ? (creation ? 0 : amount) + fees + extraFees
+      : fees + extraFees;
   int get utxoTotal => utxos.fold(
       0, (int total, vout) => total + vout.securityValue(security: security));
 
@@ -362,6 +364,9 @@ class TransactionMaker {
     SendRequest sendRequest,
   ) async {
     var tuple;
+    print('sendRequest.assetMemo: ${sendRequest.assetMemo}');
+    print(
+        'sendRequest.assetMemo?.base58Decode: ${sendRequest.assetMemo?.base58Decode}');
     var estimate = SendEstimate(
       sendRequest.sendAmountAsSats,
       security: sendRequest.security,
@@ -1243,6 +1248,7 @@ class TransactionMaker {
         txb.addInput(utxo.transactionId, utxo.position);
         total = total + utxo.rvnValue;
       }
+      print('extimate.assetMemo: ${estimate.assetMemo}');
       txb.addOutput(
         toAddress,
         estimate.amount,
@@ -1256,6 +1262,7 @@ class TransactionMaker {
       return txb;
     }
 
+    print('in sendall');
     var utxos = await services.balance.collectUTXOs(
       amount: estimate.amount,
       security: null,
