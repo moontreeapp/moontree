@@ -57,15 +57,16 @@ class _LoginState extends State<Login> {
                 ])),
       ]));
 
-  Widget get welcomeMessage =>
-      Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+  Widget get welcomeMessage => GestureDetector(
+      onTap: () => streams.app.splash.add(false),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Image(image: AssetImage('assets/logo/moontree.png')),
         SizedBox(height: 8),
         Text(
           'Welcome Back',
           style: Theme.of(context).textTheme.headline1,
         ),
-      ]);
+      ]));
 
   Widget get loginField => TextField(
       focusNode: loginFocus,
@@ -96,23 +97,20 @@ class _LoginState extends State<Login> {
   Widget get unlockButton => components.buttons.actionButton(context,
       enabled: validate(),
       focusNode: unlockFocus,
+      label: 'Unlock',
       onPressed: () async => await submit());
 
   bool validate() => services.password.validate.password(password.text);
 
   Future submit({bool showFailureMessage = true}) async {
     if (services.password.validate.password(password.text)) {
-      setState(() {
-        buttonEnabled = true;
-      });
       FocusScope.of(context).unfocus();
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
       // create ciphers for wallets we have
       services.cipher.initCiphers(altPassword: password.text);
       await services.cipher.updateWallets();
       services.cipher.cleanupCiphers();
-    } else {
-      buttonEnabled = false;
-    }
+      streams.app.splash.add(false); // trigger to refresh app bar again
+    } else {}
   }
 }

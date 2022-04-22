@@ -91,14 +91,15 @@ class _PageLead extends State<PageLead> {
       return Container();
     }
     if (pageTitle == 'Login') {
-      return Container(
-        height: 24,
-        padding: EdgeInsets.only(left: 16),
-        child: SvgPicture.asset(
-          'assets/icons/menu/menu.svg',
-          color: AppColors.black38,
-        ),
-      );
+      return Container();
+      //return Container(
+      //  height: 24,
+      //  padding: EdgeInsets.only(left: 16),
+      //  child: SvgPicture.asset(
+      //    'assets/icons/menu/menu.svg',
+      //    color: AppColors.black38,
+      //  ),
+      //);
     }
     if (xlead || ['Send', 'Scan', 'Receive'].contains(pageTitle)) {
       return IconButton(

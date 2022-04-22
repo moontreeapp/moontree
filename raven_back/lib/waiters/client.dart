@@ -9,43 +9,69 @@ import 'package:tuple/tuple.dart';
 import 'waiter.dart';
 
 class RavenClientWaiter extends Waiter {
-  static const Duration connectionTimeout = Duration(seconds: 5);
-  Duration additionalTimeout = Duration(seconds: 1);
+  static const Duration connectionTimeout = Duration(seconds: 6);
+  static const Duration originalAdditionalTimeout = Duration(seconds: 1);
+  Duration additionalTimeout = originalAdditionalTimeout;
 
   StreamSubscription? periodicTimer;
+
+  //late clientDoneListener =
 
   void init({Object? reconnect}) {
     if (!listeners.keys.contains('streams.client.client')) {
       streams.client.client.add(null);
     }
 
+    /// maintains an active connection to electrum server as long app is active
+    ///
     listen(
       'streams.client.client',
       streams.client.client,
       (RavenElectrumClient? client) async {
+        print('client: $client');
         if (client != null) {
+          print('in if');
           await periodicTimer?.cancel();
+          additionalTimeout = originalAdditionalTimeout;
+
+          /// here we should setup a ping to the server.
+          /// this isn't getting executed when the peer closes the client:
           unawaited(client.peer.done.then((value) async {
             streams.client.connected.add(ConnectionStatus.disconnected);
+            print('streams.app.active.value ${streams.app.active.value}');
             if (streams.app.active.value) {
               streams.client.client.add(null);
             }
+          }, onError: (value) async {
+            print('Client ERROR $value');
+            print('streams.app.active.value ${streams.app.active.value}');
+            //streams.client.connected.add(ConnectionStatus.disconnected);
+            //if (streams.app.active.value) {
+            //  streams.client.client.add(null);
+            //}
           }));
         } else {
           streams.client.connected.add(ConnectionStatus.connecting);
           await streams.client.client.value?.close();
           await periodicTimer?.cancel();
-          periodicTimer =
-              Stream.periodic(connectionTimeout + additionalTimeout).listen(
+          periodicTimer = Stream.periodic(connectionTimeout).listen(
             (_) async {
+              print(
+                  '(else) streams.app.active.value: ${streams.app.active.value}');
               if (streams.app.active.value) {
                 var newRavenClient = await services.client.createClient();
+                print('(else) newRavenClient: $newRavenClient');
                 if (newRavenClient != null) {
                   streams.client.connected.add(ConnectionStatus.connected);
                   streams.client.client.add(newRavenClient);
                   await periodicTimer?.cancel();
+                  additionalTimeout = originalAdditionalTimeout;
                 } else {
-                  additionalTimeout += connectionTimeout;
+                  print('additionalTimeout: $additionalTimeout');
+                  additionalTimeout += originalAdditionalTimeout;
+                  periodicTimer!.pause();
+                  await Future.delayed(additionalTimeout);
+                  periodicTimer!.resume();
                 }
               }
             },

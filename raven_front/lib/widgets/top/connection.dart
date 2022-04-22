@@ -14,8 +14,7 @@ class ConnectionLight extends StatefulWidget {
   _ConnectionLightState createState() => _ConnectionLightState();
 }
 
-class _ConnectionLightState extends State<ConnectionLight>
-    with TickerProviderStateMixin, AnimationEagerListenerMixin {
+class _ConnectionLightState extends State<ConnectionLight> {
   List<StreamSubscription> listeners = [];
   ConnectionStatus connected = ConnectionStatus.disconnected;
   Color connectedColor = AppColors.error;
@@ -56,11 +55,13 @@ class _ConnectionLightState extends State<ConnectionLight>
           splashRadius: 24,
           padding: EdgeInsets.zero,
           onPressed: () {
-            ScaffoldMessenger.of(context).clearSnackBars();
-            streams.app.verify.add(false);
-            streams.app.xlead.add(true);
-            Navigator.of(components.navigator.routeContext!)
-                .pushNamed('/settings/network');
+            if (streams.app.page.value != 'Login') {
+              ScaffoldMessenger.of(context).clearSnackBars();
+              streams.app.verify.add(false);
+              streams.app.xlead.add(true);
+              Navigator.of(components.navigator.routeContext!)
+                  .pushNamed('/settings/network');
+            }
           },
           icon: ColorFiltered(
               colorFilter: ColorFilter.mode(connectedColor, BlendMode.srcATop),

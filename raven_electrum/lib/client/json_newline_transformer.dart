@@ -23,10 +23,17 @@ class _JsonNewlineTransformer
     var stream = channel.stream.transform(ContinuousJsonDecoder());
     var sink = StreamSinkTransformer<Object, String>.fromHandlers(
         handleData: (data, sink) {
-      //if ((data as Map).containsKey('error')) {
-      //  /// todo: fix lower layers so this never happens.
-      //  print('ERROR @ '
-      //      'raven_electrum.lib.client.json_newline_transformer.dart: $data');
+      //if (data is List) {
+      //  //  /// todo: fix lower layers so this never happens.
+      //  //  print('ERROR @ '
+      //  //      'raven_electrum.lib.client.json_newline_transformer.dart: $data');
+      //  for (var d in data) {
+      //    if ((d as Map).containsKey('error')) {
+      //      print('ERROR @ '
+      //          'raven_electrum.lib.client.json_newline_transformer.dart: $d');
+      //      //sink.close();
+      //    }
+      //  }
       //} else {
       sink.add(jsonEncode(data) + '\n');
       //}

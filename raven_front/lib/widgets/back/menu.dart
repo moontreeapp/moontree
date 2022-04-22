@@ -126,12 +126,13 @@ class _NavMenuState extends State<NavMenu> {
             arrow: true,
           ),
           destination(
-              icon: MdiIcons.drawPen,
-              name: 'Backup',
-              link: '/security/backup',
-              execute: () {
-                streams.app.verify.add(false);
-              }),
+            icon: MdiIcons.drawPen,
+            name: 'Backup',
+            link: '/security/backup',
+            //execute: () {
+            //  streams.app.verify.add(false);
+            //}
+          ),
           destination(
             icon: Icons.settings,
             name: 'Settings',
@@ -213,6 +214,20 @@ class _NavMenuState extends State<NavMenu> {
                 //]));
               }),
           */
+          ListTile(
+              title: Text('test'),
+              leading: Icon(Icons.info_outline_rounded),
+              onTap: () async {
+                print(services.client.client);
+                //print(await services.client.client!.peer.done);
+                print(services.client.client!.peer.isClosed);
+              }),
+          ListTile(
+              title: Text('call'),
+              leading: Icon(Icons.info_outline_rounded),
+              onTap: () async {
+                print(await services.client.client!.getRelayFee());
+              }),
         ],
       )
     };
@@ -252,5 +267,6 @@ class _NavMenuState extends State<NavMenu> {
     Navigator.pushReplacementNamed(
         components.navigator.routeContext!, '/security/login',
         arguments: {});
+    streams.app.splash.add(false);
   }
 }

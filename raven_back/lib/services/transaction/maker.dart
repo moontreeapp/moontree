@@ -1206,6 +1206,7 @@ class TransactionMaker {
       if (estimate.memo != null) {
         txb.addMemo(estimate.memo);
       }
+      print('extimate.assetMemo: ${estimate.assetMemo}');
       txb.addOutput(
         toAddress,
         estimate.amount,

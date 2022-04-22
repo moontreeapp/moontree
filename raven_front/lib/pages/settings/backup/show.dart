@@ -3,6 +3,7 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/colors.dart';
+import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class BackupSeed extends StatefulWidget {
@@ -18,14 +19,23 @@ class _BackupSeedState extends State<BackupSeed> {
   bool warn = true;
   late double buttonWidth;
   late List<String> secret;
+  TextEditingController existingPassword = TextEditingController();
+  FocusNode existingFocus = FocusNode();
+  FocusNode showFocus = FocusNode();
+
+  @override
+  void dispose() {
+    existingPassword.dispose();
+    existingFocus.dispose();
+    showFocus.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     buttonWidth = (MediaQuery.of(context).size.width - (17 + 17 + 16 + 16)) / 3;
     secret = Current.wallet.secret(Current.wallet.cipher!).split(' ');
-    return services.password.required && !streams.app.verify.value
-        ? VerifyPassword(parentState: this, suffix: 'with backup process')
-        : body();
+    return body();
   }
 
   Widget body() => BackdropLayers(
@@ -37,6 +47,8 @@ class _BackupSeedState extends State<BackupSeed> {
                   columnWidgets: <Widget>[
                     intro,
                     safe,
+                    SizedBox(height: .2.ofMediaHeight(context)),
+                    if (services.password.required) login,
                   ],
                   buttons: [showButton],
                 )
@@ -98,6 +110,31 @@ class _BackupSeedState extends State<BackupSeed> {
             .copyWith(color: AppColors.error),
       ));
 
+  Widget get login => TextField(
+        focusNode: existingFocus,
+        autocorrect: false,
+        enabled: services.password.required ? true : false,
+        controller: existingPassword,
+        obscureText: true,
+        textInputAction: TextInputAction.done,
+        decoration: components.styles.decorations.textField(
+          context,
+          focusNode: existingFocus,
+          labelText: 'Password',
+          errorText:
+              existingPassword.text != '' && !verify() ? 'not match' : null,
+        ),
+        onChanged: (String value) {
+          if (verify()) {
+            setState(() {});
+          }
+          setState(() {});
+        },
+        onEditingComplete: () {
+          FocusScope.of(context).requestFocus(showFocus);
+        },
+      );
+
   Widget get words => Container(
       height: MediaQuery.of(context).size.height - 444,
       alignment: Alignment.bottomCenter,
@@ -120,9 +157,12 @@ class _BackupSeedState extends State<BackupSeed> {
                       ]),
               ])));
 
+  bool verify() => services.password.validate.password(existingPassword.text);
+
   Widget get showButton => components.buttons.actionButton(context,
-      enabled: true,
+      enabled: services.password.required ? verify() : true,
       label: 'Show Seed',
+      focusNode: showFocus,
       onPressed: () => setState(() => warn = false));
 
   Widget get submitButton => components.buttons.actionButton(

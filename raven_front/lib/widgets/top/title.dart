@@ -28,7 +28,7 @@ class PageTitle extends StatefulWidget {
     'Qualifiersub': 'Create',
     'Sub': 'Create',
     'Restricted': 'Create',
-    'Login': 'Unlock',
+    'Login': 'Locked',
   };
   static Map<String, String> pageMapReissue = const {
     'Main': 'Reissue',
