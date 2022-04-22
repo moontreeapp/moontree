@@ -133,12 +133,14 @@ class SubscribeService {
         print('Received call back for subscription to ${address.address}');
         await services.download.unspents.pull(scripthashes: [address.id]);
 
-        if (status == null || address.status?.status != status) {
-          var allDone = await services.download.history.getHistories(address);
-          await res.statuses.save(Status(
-              linkId: address.id,
-              statusType: StatusType.address,
-              status: status));
+        print('Recieved status: $status vs our ${address.status?.status}');
+
+        // null status = no history, but we still want to walk thru the following our first time
+        if ((status == null && address.status == null) ||
+            address.status?.status != status) {
+          var allDone =
+              await services.download.history.getHistories(address, status);
+
           if (allDone != null && !allDone && address.wallet is LeaderWallet) {
             streams.wallet.deriveAddress.add(DeriveLeaderAddress(
               leader: address.wallet! as LeaderWallet,

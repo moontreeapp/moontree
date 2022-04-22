@@ -81,8 +81,11 @@ class LeaderWalletService {
     }
   }
 
-  bool gapSatisfied(LeaderWallet leader, NodeExposure exposure) =>
-      requiredGap - (getIndexOf(leader, exposure).currentGap) <= 0;
+  bool gapSatisfied(LeaderWallet leader, NodeExposure exposure) {
+    final index = getIndexOf(leader, exposure);
+    print('${index.currentGap} ${index.used} ${index.saved}');
+    return requiredGap - index.currentGap <= 0;
+  }
 
   Future<void> backedUp(LeaderWallet leader) async {
     await res.wallets.save(LeaderWallet.from(leader, backedUp: true));
@@ -211,6 +214,7 @@ class LeaderWalletService {
   ) async {
     // get current gap from cache.
     var generate = requiredGap - getIndexOf(leaderWallet, exposure).currentGap;
+    print('Want to generate $generate for $exposure');
     var target = 0;
     target = getIndexOf(leaderWallet, exposure).saved + generate;
     if (generate > 0) {
@@ -221,6 +225,7 @@ class LeaderWalletService {
           }()
       ];
       var ret = (await Future.wait(futures)).toSet();
+      print(ret);
       return ret;
     }
     return {};
@@ -249,6 +254,9 @@ class LeaderWalletService {
       updateIndexOf(wallet, exposure, savedPlus: derivedAddresses.length);
     }
     await res.addresses.saveAll(newAddresses);
+    for (final address in newAddresses) {
+      services.client.subscribe.toAddress(address);
+    }
   }
 }
 

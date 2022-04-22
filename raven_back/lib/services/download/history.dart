@@ -14,12 +14,14 @@ class HistoryService {
   int _new_length = 0;
   final Set<Address> _addresses = {};
   final _addressesLock = ReaderWriterLock();
+  final Map<Address, String?> _statusesToSave = {};
+  final _statusesLock = ReaderWriterLock();
   final Map<String, Set<Set<String>>> _txsListsByWalletExposureKeys = {};
   final _txsListsByWalletExposureKeysLock = ReaderWriterLock();
 
   List<Iterable<String>> unspentsTxsFetchFirst = [];
 
-  Future<bool?> getHistories(Address address) async {
+  Future<bool?> getHistories(Address address, String? status) async {
     void updateCounts(LeaderWallet leader) {
       leader.removeUnused(address.hdIndex, address.exposure);
       services.wallet.leader
@@ -28,12 +30,15 @@ class HistoryService {
 
     void updateCache(LeaderWallet leader) {
       leader.addUnused(address.hdIndex, address.exposure);
+      services.wallet.leader
+          .updateIndexOf(leader, address.exposure, saved: address.hdIndex);
     }
 
     var client = streams.client.client.value;
     if (client == null) {
       return false;
     }
+    await _statusesLock.write(() => _statusesToSave[address] = status);
     var histories = await client.getHistory(address.id);
     await _addressesLock.write(() {
       _addresses.add(address);
@@ -48,6 +53,8 @@ class HistoryService {
           services.wallet.leader
               .getIndexOf(address.wallet as LeaderWallet, address.exposure)
               .saved) {
+        print(
+            'Checked address ${address.address} is >= saved address of that exposure');
         streams.wallet.deriveAddress.add(DeriveLeaderAddress(
             leader: address.wallet as LeaderWallet,
             exposure: address.exposure));
@@ -57,18 +64,22 @@ class HistoryService {
     final addr_length = await _addressesLock.read(() {
       return _addresses.length;
     });
+
+    print(
+        'Gotten $addr_length vs have ${res.wallets.primaryIndex.getOne(res.settings.currentWalletId)!.addresses.length}');
+
+    final current =
+        res.wallets.primaryIndex.getOne(res.settings.currentWalletId)!;
     if (addr_length ==
-            services.wallet.leader.indexRegistry.values
-                .map((e) => e.saved)
-                .sum() /*plus single wallets*2 */
-        &&
+            (current is LeaderWallet ? current.addresses.length : 1) &&
         () {
-          for (var leader in res.wallets.leaders) {
+          if (current is LeaderWallet) {
             for (var exposure in [
               NodeExposure.Internal,
               NodeExposure.External
             ]) {
-              if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
+              if (!services.wallet.leader.gapSatisfied(current, exposure)) {
+                print('Exposure $exposure is not satisfied');
                 return false;
               }
             }
@@ -103,9 +114,24 @@ class HistoryService {
         txsToDownload = txsToDownload.sublist(chunk_size);
       }
 
+      final statuses = <Address, String?>{};
+      await _statusesLock.write(() {
+        for (final address in _statusesToSave.keys) {
+          statuses[address] = _statusesToSave[address];
+        }
+        _statusesToSave.clear();
+      });
+
+      for (final address in statuses.keys) {
+        await res.statuses.save(Status(
+            linkId: address.id,
+            statusType: StatusType.address,
+            status: statuses[address]));
+      }
+
       // don't clear because if we get updates we want to pull tx
       //addresses.clear();
-      return await produceAddressOrBalance();
+      return await _produceAddressOrBalance();
     }
     return null;
   }
@@ -123,7 +149,7 @@ class HistoryService {
     });
   }
 
-  Future<bool> produceAddressOrBalance() async {
+  Future<bool> _produceAddressOrBalance() async {
     var client = streams.client.client.value;
     if (client == null) {
       return false;
