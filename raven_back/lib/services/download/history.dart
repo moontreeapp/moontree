@@ -53,8 +53,10 @@ class HistoryService {
           services.wallet.leader
               .getIndexOf(address.wallet as LeaderWallet, address.exposure)
               .saved) {
+        /*
         print(
             'Checked address ${address.address} is >= saved address of that exposure');
+        */
         streams.wallet.deriveAddress.add(DeriveLeaderAddress(
             leader: address.wallet as LeaderWallet,
             exposure: address.exposure));

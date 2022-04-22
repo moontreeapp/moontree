@@ -130,10 +130,10 @@ class SubscribeService {
     if (!subscriptionHandles.keys.contains(address.id)) {
       subscriptionHandles[address.id] =
           client.subscribeScripthash(address.id).listen((String? status) async {
-        print('Received call back for subscription to ${address.address}');
+        //print('Received call back for subscription to ${address.address}');
         await services.download.unspents.pull(scripthashes: [address.id]);
 
-        print('Recieved status: $status vs our ${address.status?.status}');
+        //print('Recieved status: $status vs our ${address.status?.status}');
 
         // null status = no history, but we still want to walk thru the following our first time
         if ((status == null && address.status == null) ||

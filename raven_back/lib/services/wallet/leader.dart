@@ -83,7 +83,7 @@ class LeaderWalletService {
 
   bool gapSatisfied(LeaderWallet leader, NodeExposure exposure) {
     final index = getIndexOf(leader, exposure);
-    print('${index.currentGap} ${index.used} ${index.saved}');
+    //print('${index.currentGap} ${index.used} ${index.saved}');
     return requiredGap - index.currentGap <= 0;
   }
 
