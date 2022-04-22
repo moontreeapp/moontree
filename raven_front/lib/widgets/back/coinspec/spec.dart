@@ -58,8 +58,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     var possibleHoldings = [
       for (var balance in Current.holdings)
-        if (balance.security.symbol == symbol)
-          utils.satToAmount(balance.confirmed)
+        if (balance.security.symbol == symbol) utils.satToAmount(balance.value)
     ];
     if (possibleHoldings.length > 0) {
       holding = possibleHoldings[0];
