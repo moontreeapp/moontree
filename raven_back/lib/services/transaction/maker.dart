@@ -379,12 +379,14 @@ class TransactionMaker {
             estimate,
             wallet: sendRequest.wallet,
             goal: sendRequest.feeGoal,
+            /*assetMemoExpiry: not captured yet*/
           )
         : await transaction(
             sendRequest.sendAddress,
             estimate,
             wallet: sendRequest.wallet,
             goal: sendRequest.feeGoal,
+            /*assetMemoExpiry: not captured yet*/
           );
     return tuple;
   }
@@ -1231,6 +1233,7 @@ class TransactionMaker {
     required Wallet wallet,
     TxGoal? goal,
     Set<int>? previousFees,
+    int? assetMemoExpiry,
   }) async {
     ravencoin.TransactionBuilder makeTxBuilder(
         List<Vout> utxos, SendEstimate estimate) {
@@ -1240,7 +1243,16 @@ class TransactionMaker {
         txb.addInput(utxo.transactionId, utxo.position);
         total = total + utxo.rvnValue;
       }
-      txb.addOutput(toAddress, estimate.amount);
+      txb.addOutput(
+        toAddress,
+        estimate.amount,
+        asset: estimate.security?.symbol,
+        memo: estimate.assetMemo,
+        expiry: assetMemoExpiry,
+      );
+      if (estimate.memo != null) {
+        txb.addMemo(estimate.memo);
+      }
       return txb;
     }
 
