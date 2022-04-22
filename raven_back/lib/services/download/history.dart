@@ -19,6 +19,8 @@ class HistoryService {
   final Map<String, Set<Set<String>>> _txsListsByWalletExposureKeys = {};
   final _txsListsByWalletExposureKeysLock = ReaderWriterLock();
 
+  var _saveImmediately = false;
+
   List<Iterable<String>> unspentsTxsFetchFirst = [];
 
   Future<bool?> getHistories(Address address, String? status) async {
@@ -67,27 +69,31 @@ class HistoryService {
       return _addresses.length;
     });
 
+    /*
     print(
         'Gotten $addr_length vs have ${res.wallets.primaryIndex.getOne(res.settings.currentWalletId)!.addresses.length}');
+    */
 
     final current =
         res.wallets.primaryIndex.getOne(res.settings.currentWalletId)!;
-    if (addr_length ==
-            (current is LeaderWallet ? current.addresses.length : 1) &&
-        () {
-          if (current is LeaderWallet) {
-            for (var exposure in [
-              NodeExposure.Internal,
-              NodeExposure.External
-            ]) {
-              if (!services.wallet.leader.gapSatisfied(current, exposure)) {
-                print('Exposure $exposure is not satisfied');
-                return false;
+    if (_saveImmediately ||
+        (addr_length ==
+                (current is LeaderWallet ? current.addresses.length : 1) &&
+            () {
+              if (current is LeaderWallet) {
+                for (var exposure in [
+                  NodeExposure.Internal,
+                  NodeExposure.External
+                ]) {
+                  if (!services.wallet.leader.gapSatisfied(current, exposure)) {
+                    print('Exposure $exposure is not satisfied');
+                    return false;
+                  }
+                }
               }
-            }
-          }
-          return true;
-        }()) {
+              return true;
+            }())) {
+      _saveImmediately = true;
       print('getting Transactions');
       //streams.wallet.scripthashCallback.add(null); // make home listen to balances instead?
       var txsToDownload = await _txsListsByWalletExposureKeysLock.read(() {
@@ -425,8 +431,14 @@ class HistoryService {
   }
 
   Future<void> addAddressToSkipHistory(Address address) async {
+    final wallet = res.wallets.primaryIndex
+        .getOne(res.settings.currentWalletId)!
+        .addresses;
+    final addressesNeeded =
+        wallet is LeaderWallet ? (wallet as LeaderWallet).addresses.length : 1;
     await _addressesLock.write(() {
       _addresses.add(address);
+      if (_addresses.length >= addressesNeeded) _saveImmediately = true;
     });
   }
 

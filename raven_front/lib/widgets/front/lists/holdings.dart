@@ -139,9 +139,17 @@ class _HoldingList extends State<HoldingList> {
     if (_hideList) {
       // If new wallet, let assets pop up as we get them (can't figure out how to hide this until we're done. fix isGapSatisfied?)
       // Otherwise hide until our checked scripthashes are >= our current wallets address count
-      _hideList = services.download.unspents.scripthashesChecked <
-              Current.wallet.addresses.length &&
-          !_balanceWasEmpty;
+      _hideList = _balanceWasEmpty
+          ? (Current.wallet is LeaderWallet
+              ? services.wallet.leader.gapSatisfied(
+                      Current.wallet as LeaderWallet, NodeExposure.External) &&
+                  services.wallet.leader.gapSatisfied(
+                      Current.wallet as LeaderWallet, NodeExposure.Internal) &&
+                  services.download.unspents.scripthashesChecked <
+                      Current.wallet.addresses.length
+              : false)
+          : services.download.unspents.scripthashesChecked <
+              Current.wallet.addresses.length;
     }
 
     /*

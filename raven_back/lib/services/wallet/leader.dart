@@ -214,7 +214,7 @@ class LeaderWalletService {
   ) async {
     // get current gap from cache.
     var generate = requiredGap - getIndexOf(leaderWallet, exposure).currentGap;
-    print('Want to generate $generate for $exposure');
+    //print('Want to generate $generate for $exposure');
     var target = 0;
     target = getIndexOf(leaderWallet, exposure).saved + generate;
     if (generate > 0) {
@@ -225,7 +225,7 @@ class LeaderWalletService {
           }()
       ];
       var ret = (await Future.wait(futures)).toSet();
-      print(ret);
+      //print(ret);
       return ret;
     }
     return {};
