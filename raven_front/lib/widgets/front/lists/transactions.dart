@@ -81,6 +81,7 @@ class _TransactionListState extends State<TransactionList> {
   Widget build(BuildContext context) {
     transactions = widget.transactions ??
         services.transaction.getTransactionRecords(wallet: Current.wallet);
+    print('transactions is ${transactions.isEmpty}');
     return transactions.isEmpty
         //? components.empty.transactions(context, msg: widget.msg)
         ? components.empty.getTransactionsPlaceholder(context,

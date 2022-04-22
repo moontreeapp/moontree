@@ -143,9 +143,12 @@ class _HoldingList extends State<HoldingList> {
               Current.wallet.addresses.length &&
           !_balanceWasEmpty;
     }
+
+    /*
     print(
         '${services.download.unspents.scripthashesChecked} vs ${Current.wallet.addresses.length}');
     print('was empty: $_balanceWasEmpty');
+    */
 
     return _hideList
         ? components.empty.getAssetsPlaceholder(context,
