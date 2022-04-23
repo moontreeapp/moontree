@@ -105,7 +105,7 @@ class LeaderWaiter extends Waiter {
     NodeExposure? exposure,
     bool bypassCipher = false,
   }) async {
-    var s = Stopwatch()..start();
+    //var s = Stopwatch()..start();
     if (bypassCipher ||
         res.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
       await services.wallet.leader.deriveMoreAddresses(
@@ -115,6 +115,6 @@ class LeaderWaiter extends Waiter {
     } else {
       services.wallet.leader.backlog.add(leader);
     }
-    print('deriving: ${s.elapsed}');
+    //print('deriving: ${s.elapsed}');
   }
 }

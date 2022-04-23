@@ -84,7 +84,7 @@ class HistoryService {
               return true;
             }())) {
       _saveImmediately = true;
-      print('getting Transactions');
+      //print('getting Transactions');
       //streams.wallet.scripthashCallback.add(null); // make home listen to balances instead?
       var txsToDownload = await _txsListsByWalletExposureKeysLock.read(() {
         var txsToDownload = <String>[];
@@ -99,7 +99,6 @@ class HistoryService {
       // Get unspents first
       // Unspents we don't have implies history we dont have implies this gets called
       while (unspentsTxsFetchFirst.isNotEmpty) {
-        //print('Getting transactions from unspents');
         await getTransactions(unspentsTxsFetchFirst.removeAt(0));
       }
 
@@ -421,15 +420,22 @@ class HistoryService {
   }
 
   Future<void> addAddressToSkipHistory(Address address) async {
-    final wallet = res.wallets.primaryIndex
-        .getOne(res.settings.currentWalletId)!
-        .addresses;
-    final addressesNeeded =
-        wallet is LeaderWallet ? (wallet as LeaderWallet).addresses.length : 1;
-    await _addressesLock.write(() {
-      _addresses.add(address);
-      if (_addresses.length >= addressesNeeded) _saveImmediately = true;
-    });
+    if (!_saveImmediately) {
+      final wallet = res.wallets.primaryIndex
+          .getOne(res.settings.currentWalletId)!
+          .addresses;
+      final addressesNeeded = wallet is LeaderWallet
+          ? (wallet as LeaderWallet).addresses.length
+          : 1;
+      await _addressesLock.write(() {
+        _addresses.add(address);
+        if (_addresses.length >= addressesNeeded) _saveImmediately = true;
+      });
+    } else {
+      await _addressesLock.write(() {
+        _addresses.add(address);
+      });
+    }
   }
 
   Future<void> clearDownloadState() async {

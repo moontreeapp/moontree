@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
-import 'package:raven_front/theme/theme.dart';
 
 class PageLead extends StatefulWidget {
   final BuildContext mainContext;

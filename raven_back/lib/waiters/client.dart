@@ -28,9 +28,7 @@ class RavenClientWaiter extends Waiter {
       'streams.client.client',
       streams.client.client,
       (RavenElectrumClient? client) async {
-        print('client: $client');
         if (client != null) {
-          print('in if');
           await periodicTimer?.cancel();
 
           /// this isn't getting executed when the server closes the connection.
