@@ -133,57 +133,46 @@ class _HomePageState extends State<HomePage>
     });
   }
 }
-/* we want to hide the nav bar if we open the menu, so we can put this on a 
-scaffold to do it, or we can do what is above: push it down w/ the front sheet.
-NotificationListener<UserScrollNotification>(
-                onNotification: visibilityOfSendReceive,
-                child: currentContext == AppContext.wallet
-                    ? HoldingList()
-                    : currentContext == AppContext.manage
-                        ? AssetList()
-                        : Text('swap'))),
-        floatingActionButton:
-            SlideTransition(position: offset, child: NavBar()),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      );
 
-  bool visibilityOfSendReceive(notification) {
-    if (notification.direction == ScrollDirection.forward &&
-        controller.status == AnimationStatus.completed) {
-      controller.reverse();
-    } else if (notification.direction == ScrollDirection.reverse &&
-        controller.status == AnimationStatus.dismissed) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      controller.forward();
-    }
-    return true;
-  }
-*/
+class AllAssetsHome extends StatelessWidget {
+  final ScrollController scrollController;
+  final AppContext appContext;
+  final bool placeholderManage;
+  final bool placeholderSwap;
 
-/*
-we should be able to use this to apply a scrim to the front layer
-  Widget _buildInactiveLayer(BuildContext context) {
-    return Offstage(
-      offstage: animationController.status == AnimationStatus.completed,
-      child: FadeTransition(
-        opacity: Tween<double>(begin: 1, end: 0).animate(animationController),
-        child: GestureDetector(
-          onTap: () => fling(),
-          behavior: HitTestBehavior.opaque,
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: Container(
-                  color: widget.frontLayerScrim,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+  const AllAssetsHome({
+    required this.scrollController,
+    required this.appContext,
+    this.placeholderManage = false,
+    this.placeholderSwap = false,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: appContext == AppContext.wallet
+          ? HoldingList(scrollController: scrollController)
+          : appContext == AppContext.manage
+              ? placeholderManage
+                  ? ComingSoonPlaceholder(
+                      scrollController: scrollController,
+                      message: 'Create & Manage Assets')
+                  : AssetList(scrollController: scrollController)
+              : placeholderSwap
+                  ? ComingSoonPlaceholder(
+                      scrollController: scrollController,
+                      message: 'Decentralized Asset Swaps',
+                      swap: true)
+                  : ListView(
+                      controller: scrollController,
+                      children: [
+                        Text('swap\n\n\n\n\n\n\n\n\n\n\n\n'),
+                      ],
+                    ),
     );
   }
-  */
+}
 
 class BottomNavBar extends StatelessWidget {
   final DraggableScrollableController dragController;
@@ -285,42 +274,55 @@ class BottomNavBar extends StatelessWidget {
   }
 }
 
-class AllAssetsHome extends StatelessWidget {
-  final ScrollController scrollController;
-  final AppContext appContext;
-  final bool placeholderManage;
-  final bool placeholderSwap;
 
-  const AllAssetsHome({
-    required this.scrollController,
-    required this.appContext,
-    this.placeholderManage = false,
-    this.placeholderSwap = false,
-    Key? key,
-  }) : super(key: key);
+/* we want to hide the nav bar if we open the menu, so we can put this on a 
+scaffold to do it, or we can do what is above: push it down w/ the front sheet.
+NotificationListener<UserScrollNotification>(
+                onNotification: visibilityOfSendReceive,
+                child: currentContext == AppContext.wallet
+                    ? HoldingList()
+                    : currentContext == AppContext.manage
+                        ? AssetList()
+                        : Text('swap'))),
+        floatingActionButton:
+            SlideTransition(position: offset, child: NavBar()),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      );
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: appContext == AppContext.wallet
-          ? HoldingList(scrollController: scrollController)
-          : appContext == AppContext.manage
-              ? placeholderManage
-                  ? ComingSoonPlaceholder(
-                      scrollController: scrollController,
-                      message: 'Create & Manage Assets')
-                  : AssetList(scrollController: scrollController)
-              : placeholderSwap
-                  ? ComingSoonPlaceholder(
-                      scrollController: scrollController,
-                      message: 'Decentralized Asset Swaps',
-                      swap: true)
-                  : ListView(
-                      controller: scrollController,
-                      children: [
-                        Text('swap\n\n\n\n\n\n\n\n\n\n\n\n'),
-                      ],
-                    ),
+  bool visibilityOfSendReceive(notification) {
+    if (notification.direction == ScrollDirection.forward &&
+        controller.status == AnimationStatus.completed) {
+      controller.reverse();
+    } else if (notification.direction == ScrollDirection.reverse &&
+        controller.status == AnimationStatus.dismissed) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      controller.forward();
+    }
+    return true;
+  }
+*/
+
+/*
+we should be able to use this to apply a scrim to the front layer
+  Widget _buildInactiveLayer(BuildContext context) {
+    return Offstage(
+      offstage: animationController.status == AnimationStatus.completed,
+      child: FadeTransition(
+        opacity: Tween<double>(begin: 1, end: 0).animate(animationController),
+        child: GestureDetector(
+          onTap: () => fling(),
+          behavior: HitTestBehavior.opaque,
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  color: widget.frontLayerScrim,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
-}
+  */
