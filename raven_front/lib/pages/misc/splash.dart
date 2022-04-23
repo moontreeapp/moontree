@@ -73,10 +73,10 @@ class DataLoadingHelper {
 
   Future setupWallets() async {
     if (res.wallets.data.isEmpty) {
-      await setupRealWallet('2');
+      await setupRealWallet('1');
       await res.settings.setCurrentWalletId(res.wallets.first.id);
       await res.settings.savePreferredWalletId(res.wallets.first.id);
-      await setupRealWallet('1');
+      //await setupRealWallet('2');
       await setupRealWallet(null);
     }
 

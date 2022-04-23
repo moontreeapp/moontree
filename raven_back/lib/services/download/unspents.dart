@@ -1,11 +1,12 @@
 import 'dart:async';
+import 'package:equatable/equatable.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/utilities/lock.dart';
 import 'package:raven_back/utilities/search.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/raven_back.dart';
 
-enum TotalType { confirmed, unconfirmed }
+enum ValueType { confirmed, unconfirmed }
 
 /// we use the electrum server directly for determining our UTXO set
 /// This gets erased when we swap wallets
@@ -193,8 +194,8 @@ class UnspentService {
                   ? res.securities.RVN
                   : Security(
                       symbol: symbol, securityType: SecurityType.RavenAsset),
-              confirmed: await total(symbol, TotalType.confirmed),
-              unconfirmed: await total(symbol, TotalType.unconfirmed)),
+              confirmed: await total(symbol, ValueType.confirmed),
+              unconfirmed: await total(symbol, ValueType.unconfirmed)),
           comp: (first, second) =>
               first.security.symbol.compareTo(second.security.symbol));
     }
@@ -202,9 +203,9 @@ class UnspentService {
     unspentBalances = tempBalances;
   }
 
-  Future<int> total([String? symbolMaybeNull, TotalType? totalType]) async {
-    totalType = totalType ?? TotalType.confirmed;
-    final totalIndex = totalType == TotalType.confirmed ? 0 : 1;
+  Future<int> total([String? symbolMaybeNull, ValueType? totalType]) async {
+    totalType = totalType ?? ValueType.confirmed;
+    final totalIndex = totalType == ValueType.confirmed ? 0 : 1;
     final symbol = defaultSymbol(symbolMaybeNull);
     final cachedResult = await _cachedBySymbolLock.read(() {
       return _cachedBySymbol[symbol]?[totalIndex];
@@ -220,7 +221,7 @@ class UnspentService {
               .fold(
                   0,
                   (int total, ScripthashUnspent item) =>
-                      totalType == TotalType.confirmed
+                      totalType == ValueType.confirmed
                           ? item.height == 0
                               ? total
                               : item.value + total
@@ -239,11 +240,11 @@ class UnspentService {
   }
 
   Future<int> totalConfirmed([String? symbolMaybeNull]) async {
-    return total(symbolMaybeNull, TotalType.confirmed);
+    return total(symbolMaybeNull, ValueType.confirmed);
   }
 
   Future<int> totalUnconfirmed([String? symbolMaybeNull]) async {
-    return total(symbolMaybeNull, TotalType.unconfirmed);
+    return total(symbolMaybeNull, ValueType.unconfirmed);
   }
 
   Future<void> assertSufficientFunds(int amount, String? symbol,
@@ -286,5 +287,47 @@ class UnspentService {
     unspentBalances = [];
     scripthashesChecked = 0;
     uniqueAssets = 0;
+  }
+}
+
+class Unspent with EquatableMixin {
+  Address address;
+  String transactionId;
+  int position;
+  int value;
+  ValueType valueType;
+  String symbol;
+
+  Unspent({
+    required this.address,
+    required this.transactionId,
+    required this.position,
+    required this.value,
+    required this.valueType,
+    this.symbol = 'RVN',
+  });
+
+  @override
+  List<Object> get props =>
+      [address, transactionId, position, value, valueType, symbol];
+
+  factory Unspent.fromScripthashUnspent(ScripthashUnspent scripthashUnspent) {
+    return Unspent(
+      address: res.addresses.primaryIndex.getOne(scripthashUnspent.scripthash)!,
+      transactionId: scripthashUnspent.txHash,
+      position: scripthashUnspent.txPos,
+      valueType: scripthashUnspent.height > 0
+          ? ValueType.confirmed
+          : ValueType.unconfirmed,
+      value: scripthashUnspent.value,
+      symbol: scripthashUnspent.symbol ?? res.securities.RVN.symbol,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'Unspent(address: $address, transactionId: $transactionId, '
+        'position: $position, valueType: $valueType, value: $value, '
+        'symbol: $symbol)';
   }
 }

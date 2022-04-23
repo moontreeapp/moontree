@@ -87,7 +87,6 @@ class LeaderWalletService {
   }
 
   void updateCache(Address address, LeaderWallet leader) {
-    print('updatingCache');
     leader.addUnused(address.hdIndex, address.exposure);
     updateIndexOf(leader, address.exposure, saved: address.hdIndex);
   }

@@ -23,6 +23,7 @@ class Import extends StatefulWidget {
 class _ImportState extends State<Import> {
   dynamic data = {};
   FocusNode wordsFocus = FocusNode();
+  FocusNode submitFocus = FocusNode();
   TextEditingController words = TextEditingController();
   bool importEnabled = false;
   late Wallet wallet;
@@ -48,6 +49,8 @@ class _ImportState extends State<Import> {
   void dispose() {
     wordsFocus.removeListener(_handleFocusChange);
     words.dispose();
+    wordsFocus.dispose();
+    submitFocus.dispose();
     super.dispose();
   }
 
@@ -122,7 +125,8 @@ class _ImportState extends State<Import> {
           ),
         ),
         onChanged: (value) => enableImport(),
-        onEditingComplete: () async => await attemptImport(),
+        onEditingComplete: () =>
+            FocusScope.of(context).requestFocus(submitFocus),
       ));
 
   Widget get filePicked => Column(children: [
@@ -150,6 +154,7 @@ class _ImportState extends State<Import> {
   Widget submitButton([String? label]) => components.buttons.actionButton(
       context,
       enabled: importEnabled,
+      focusNode: submitFocus,
       label: (label ?? 'Import').toUpperCase(),
       disabledIcon: components.icons.importDisabled(context),
       onPressed: () async => await attemptImport(file?.content ?? words.text));

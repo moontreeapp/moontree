@@ -77,9 +77,11 @@ class ClientService {
 
 /// managing our address subscriptions
 class SubscribeService {
-  final Map<String, StreamSubscription> subscriptionHandles = {};
+  final Map<String, StreamSubscription> subscriptionHandlesUnspent = {};
+  final Map<String, StreamSubscription> subscriptionHandlesHistory = {};
+  final Map<String, StreamSubscription> subscriptionHandlesAsset = {};
 
-  bool toAllAddresses() {
+  Future<bool> toAllAddresses() async {
     var client = streams.client.client.value;
     if (client == null) {
       return false;
@@ -94,8 +96,11 @@ class SubscribeService {
     //final addresses = res.addresses.data;
     var existing = false;
     for (var address in addresses) {
-      onlySubscribeAddress(client, address);
+      onlySubscribeAddressUnspent(client, address);
       existing = true;
+    }
+    for (var address in addresses) {
+      onlySubscribeAddressHistory(client, address);
     }
     if (existing) {
       services.download.history.allDoneProcess(client);
@@ -129,7 +134,8 @@ class SubscribeService {
     if (client == null) {
       return false;
     }
-    onlySubscribeAddress(client, address);
+    onlySubscribeAddressUnspent(client, address);
+    onlySubscribeAddressHistory(client, address);
     return true;
   }
 
@@ -142,22 +148,30 @@ class SubscribeService {
     return true;
   }
 
-  void onlySubscribeAddress(RavenElectrumClient client, Address address) {
-    if (!subscriptionHandles.keys.contains(address.id)) {
-      subscriptionHandles[address.id] =
+  void onlySubscribeAddressUnspent(
+      RavenElectrumClient client, Address address) {
+    if (!subscriptionHandlesUnspent.keys.contains(address.id)) {
+      subscriptionHandlesUnspent[address.id] =
           client.subscribeScripthash(address.id).listen((String? status) async {
-        //print('Received call back for subscription to ${address.address}');
         await services.download.unspents.pull(scripthashes: [address.id]);
+      });
+    }
+  }
 
-        //print('Recieved status: $status vs our ${address.status?.status}');
-
-        // null status = no history, but we still want to walk thru the following our first time
-        if ((status == null && address.status == null) ||
-            address.status?.status != status) {
+  void onlySubscribeAddressHistory(
+      RavenElectrumClient client, Address address) {
+    if (!subscriptionHandlesHistory.keys.contains(address.id)) {
+      subscriptionHandlesHistory[address.id] =
+          client.subscribeScripthash(address.id).listen((String? status) async {
+        if (status == null || address.status?.status != status) {
           var allDone =
               await services.download.history.getHistories(address, status);
-
-          if (allDone != null && !allDone && address.wallet is LeaderWallet) {
+          //// why not just do this here?
+          //await res.statuses.save(Status(
+          //    linkId: address.id,
+          //    statusType: StatusType.address,
+          //    status: status));
+          if (allDone == false && address.wallet is LeaderWallet) {
             streams.wallet.deriveAddress.add(DeriveLeaderAddress(
               leader: address.wallet! as LeaderWallet,
               exposure: address.exposure,
@@ -165,14 +179,18 @@ class SubscribeService {
           }
         } else {
           await services.download.history.addAddressToSkipHistory(address);
+          if (address.wallet is LeaderWallet) {
+            services.wallet.leader
+                .updateCounts(address, address.wallet as LeaderWallet);
+          }
         }
       });
     }
   }
 
   void onlySubscribeAsset(RavenElectrumClient client, Asset asset) {
-    if (!subscriptionHandles.keys.contains(asset.symbol)) {
-      subscriptionHandles[asset.symbol] =
+    if (!subscriptionHandlesAsset.keys.contains(asset.symbol)) {
+      subscriptionHandlesAsset[asset.symbol] =
           client.subscribeAsset(asset.symbol).listen((String? status) {
         if (asset.status?.status != status) {
           res.statuses.save(Status(
@@ -187,11 +205,12 @@ class SubscribeService {
   }
 
   void unsubscribeAddress(String addressId) {
-    subscriptionHandles.remove(addressId)?.cancel();
+    subscriptionHandlesUnspent.remove(addressId)?.cancel();
+    subscriptionHandlesHistory.remove(addressId)?.cancel();
   }
 
   void unsubscribeAsset(String asset) {
-    subscriptionHandles.remove(asset)?.cancel();
+    subscriptionHandlesAsset.remove(asset)?.cancel();
   }
 }
 
