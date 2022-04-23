@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/utilities/lock.dart';
+import 'package:raven_back/utilities/search.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/raven_back.dart';
 
@@ -21,6 +22,8 @@ class UnspentService {
   final _scripthashesCheckedLock = ReaderWriterLock();
   int scripthashesChecked = 0;
   int uniqueAssets = 0;
+
+  List<Balance> unspentBalances = <Balance>[];
 
   String defaultSymbol(String? symbol) => symbol ?? res.securities.RVN.symbol;
 
@@ -88,8 +91,12 @@ class UnspentService {
           res.vouts.byTransactionPosition
               .getOne(element.txHash, element.txPos) !=
           null);
-      await services.download.history
-          .getTransactions(new_utxos.map((x) => x.txHash));
+
+      if (new_utxos.isNotEmpty) {
+        services.download.history.unspentsTxsFetchFirst
+            .add(new_utxos.map((x) => x.txHash));
+      }
+
       // New info; clear cache
       await _cachedBySymbolLock.write(() {
         _cachedBySymbol.remove(rvn);
@@ -136,8 +143,11 @@ class UnspentService {
             res.vouts.byTransactionPosition
                 .getOne(element.txHash, element.txPos) !=
             null);
-        await services.download.history
-            .getTransactions(new_utxos.map((x) => x.txHash));
+
+        if (new_utxos.isNotEmpty) {
+          services.download.history.unspentsTxsFetchFirst
+              .add(new_utxos.map((x) => x.txHash));
+        }
 
         await _cachedBySymbolLock.write(() {
           _cachedBySymbol.remove(symbol);
@@ -162,6 +172,34 @@ class UnspentService {
     uniqueAssets = await _unspentsLock.read(() {
       return _unspentsBySymbol.length;
     });
+    await _updateUnspentsBalance();
+    // Balances are based on unspents now
+    await services.balance.recalculateAllBalances();
+    streams.wallet.unspentsCallback.add(null);
+  }
+
+  Future<void> _updateUnspentsBalance() async {
+    final tempBalances = <Balance>[];
+    final symbols = await _unspentsLock.read(() {
+      return _unspentsBySymbol.keys.toSet();
+    });
+    for (final symbol in symbols) {
+      // TODO: User decides how to sort?
+      binaryInsert(
+          list: tempBalances,
+          value: Balance(
+              walletId: res.settings.currentWalletId,
+              security: symbol == res.securities.RVN.symbol
+                  ? res.securities.RVN
+                  : Security(
+                      symbol: symbol, securityType: SecurityType.RavenAsset),
+              confirmed: await total(symbol, TotalType.confirmed),
+              unconfirmed: await total(symbol, TotalType.unconfirmed)),
+          comp: (first, second) =>
+              first.security.symbol.compareTo(second.security.symbol));
+    }
+    // Update pointer for async ness
+    unspentBalances = tempBalances;
   }
 
   Future<int> total([String? symbolMaybeNull, TotalType? totalType]) async {
@@ -245,6 +283,7 @@ class UnspentService {
     await _scripthashesCheckedLock.write(() {
       _scripthashesChecked.clear();
     });
+    unspentBalances = [];
     scripthashesChecked = 0;
     uniqueAssets = 0;
   }

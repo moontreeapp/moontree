@@ -14,38 +14,41 @@ class HistoryService {
   int _new_length = 0;
   final Set<Address> _addresses = {};
   final _addressesLock = ReaderWriterLock();
+  final Map<Address, String?> _statusesToSave = {};
+  final _statusesLock = ReaderWriterLock();
   final Map<String, Set<Set<String>>> _txsListsByWalletExposureKeys = {};
   final _txsListsByWalletExposureKeysLock = ReaderWriterLock();
 
-  Future<bool?> getHistories(Address address) async {
-    void updateCounts(LeaderWallet leader) {
-      leader.removeUnused(address.hdIndex, address.exposure);
-      services.wallet.leader
-          .updateIndexOf(leader, address.exposure, used: address.hdIndex);
-    }
+  var _saveImmediately = false;
 
-    void updateCache(LeaderWallet leader) {
-      leader.addUnused(address.hdIndex, address.exposure);
-    }
+  List<Iterable<String>> unspentsTxsFetchFirst = [];
 
+  Future<bool?> getHistories(Address address, String? status) async {
     var client = streams.client.client.value;
     if (client == null) {
       return false;
     }
+    await _statusesLock.write(() => _statusesToSave[address] = status);
     var histories = await client.getHistory(address.id);
     await _addressesLock.write(() {
       _addresses.add(address);
     });
     if (address.wallet is LeaderWallet) {
       if (histories.isNotEmpty) {
-        updateCounts(address.wallet as LeaderWallet);
+        services.wallet.leader
+            .updateCounts(address, address.wallet as LeaderWallet);
       } else {
-        updateCache(address.wallet as LeaderWallet);
+        services.wallet.leader
+            .updateCache(address, address.wallet as LeaderWallet);
       }
       if (address.hdIndex >=
           services.wallet.leader
               .getIndexOf(address.wallet as LeaderWallet, address.exposure)
               .saved) {
+        /*
+        print(
+            'Checked address ${address.address} is >= saved address of that exposure');
+        */
         streams.wallet.deriveAddress.add(DeriveLeaderAddress(
             leader: address.wallet as LeaderWallet,
             exposure: address.exposure));
@@ -55,25 +58,32 @@ class HistoryService {
     final addr_length = await _addressesLock.read(() {
       return _addresses.length;
     });
-    if (addr_length ==
-            services.wallet.leader.indexRegistry.values
-                .map((e) => e.saved)
-                .sum() /*plus single wallets*2 */
-        &&
-        () {
-          for (var leader in res.wallets.leaders) {
-            for (var exposure in [
-              NodeExposure.Internal,
-              NodeExposure.External
-            ]) {
-              if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
-                return false;
+
+    /*
+    print(
+        'Gotten $addr_length vs have ${res.wallets.primaryIndex.getOne(res.settings.currentWalletId)!.addresses.length}');
+    */
+
+    final current =
+        res.wallets.primaryIndex.getOne(res.settings.currentWalletId)!;
+    if (_saveImmediately ||
+        (addr_length ==
+                (current is LeaderWallet ? current.addresses.length : 1) &&
+            () {
+              if (current is LeaderWallet) {
+                for (var exposure in [
+                  NodeExposure.Internal,
+                  NodeExposure.External
+                ]) {
+                  if (!services.wallet.leader.gapSatisfied(current, exposure)) {
+                    print('Exposure $exposure is not satisfied');
+                    return false;
+                  }
+                }
               }
-            }
-          }
-          return true;
-        }()) {
-      await services.balance.recalculateAllBalances();
+              return true;
+            }())) {
+      _saveImmediately = true;
       print('getting Transactions');
       //streams.wallet.scripthashCallback.add(null); // make home listen to balances instead?
       var txsToDownload = await _txsListsByWalletExposureKeysLock.read(() {
@@ -85,6 +95,14 @@ class HistoryService {
         }
         return txsToDownload;
       });
+
+      // Get unspents first
+      // Unspents we don't have implies history we dont have implies this gets called
+      while (unspentsTxsFetchFirst.isNotEmpty) {
+        //print('Getting transactions from unspents');
+        await getTransactions(unspentsTxsFetchFirst.removeAt(0));
+      }
+
       // Get transactions 10 at a time
       // Arbitrary number
       while (txsToDownload.isNotEmpty) {
@@ -94,9 +112,24 @@ class HistoryService {
         txsToDownload = txsToDownload.sublist(chunk_size);
       }
 
+      final statuses = <Address, String?>{};
+      await _statusesLock.write(() {
+        for (final address in _statusesToSave.keys) {
+          statuses[address] = _statusesToSave[address];
+        }
+        _statusesToSave.clear();
+      });
+
+      for (final address in statuses.keys) {
+        await res.statuses.save(Status(
+            linkId: address.id,
+            statusType: StatusType.address,
+            status: statuses[address]));
+      }
+
       // don't clear because if we get updates we want to pull tx
       //addresses.clear();
-      return await produceAddressOrBalance();
+      return await _produceAddressOrBalance();
     }
     return null;
   }
@@ -114,7 +147,7 @@ class HistoryService {
     });
   }
 
-  Future<bool> produceAddressOrBalance() async {
+  Future<bool> _produceAddressOrBalance() async {
     var client = streams.client.client.value;
     if (client == null) {
       return false;
@@ -156,7 +189,6 @@ class HistoryService {
       ],
       client,
     );
-    await services.balance.recalculateAllBalances();
   }
 
   /// when an address status change: make our historic tx data match blockchain
@@ -389,8 +421,14 @@ class HistoryService {
   }
 
   Future<void> addAddressToSkipHistory(Address address) async {
+    final wallet = res.wallets.primaryIndex
+        .getOne(res.settings.currentWalletId)!
+        .addresses;
+    final addressesNeeded =
+        wallet is LeaderWallet ? (wallet as LeaderWallet).addresses.length : 1;
     await _addressesLock.write(() {
       _addresses.add(address);
+      if (_addresses.length >= addressesNeeded) _saveImmediately = true;
     });
   }
 

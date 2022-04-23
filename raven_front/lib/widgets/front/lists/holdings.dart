@@ -28,10 +28,8 @@ class HoldingList extends StatefulWidget {
 class _HoldingList extends State<HoldingList> {
   List<StreamSubscription> listeners = [];
   static bool _hideList = true;
-  static bool _useCurrent = true;
-  static bool _holdingsWasEmpty = false;
+  static bool _balanceWasEmpty = false;
   late List<AssetHolding> holdings;
-  List<Balance> _unspentBalances = [];
   int holdingCount = 1;
   bool showUSD = false;
   bool showPath = false;
@@ -73,13 +71,14 @@ class _HoldingList extends State<HoldingList> {
     //    });
     //}));
     /// lets try watching balances instead
-    //listeners.add(streams.wallet.scripthashCallback.listen((value) async {
-    //  if (services.download.unspents.scripthashesChecked <
-    //      Current.wallet.addresses.length) {
-    //    return;
-    //  }
-    //  await refresh();
-    //}));
+    listeners.add(streams.wallet.unspentsCallback.listen((value) async {
+      if (services.download.unspents.scripthashesChecked <
+          Current.wallet.addresses.length) {
+        return;
+      }
+      setState(() {});
+    }));
+
     listeners.add(res.balances.changes.listen((Change<Balance> change) {
       var interimBalances = res.balances.data.toSet();
       if (balances != interimBalances) {
@@ -119,18 +118,6 @@ class _HoldingList extends State<HoldingList> {
 
   Future refresh() async {
     await services.rate.saveRate();
-    await services.balance.recalculateAllBalances();
-    final balances = <Balance>[];
-    for (final asset_symbol in await services.download.unspents.getSymbols()) {
-      balances.add(Balance(
-          walletId: Current.walletId,
-          security: res.securities.bySymbol.getByKeyStr(asset_symbol).first,
-          confirmed:
-              await services.download.unspents.totalConfirmed(asset_symbol),
-          unconfirmed:
-              await services.download.unspents.totalUnconfirmed(asset_symbol)));
-    }
-    _unspentBalances = balances;
     setState(() {});
     // showing snackbar
     //_scaffoldKey.currentState.showSnackBar(
@@ -142,39 +129,40 @@ class _HoldingList extends State<HoldingList> {
 
   @override
   Widget build(BuildContext context) {
-    // Use cached holdings on start up
-    if (_useCurrent) {
-      holdings = utils.assetHoldings(widget.holdings ?? Current.holdings);
+    if (!_balanceWasEmpty) {
+      _balanceWasEmpty = (widget.holdings ?? Current.holdings).isEmpty;
     }
 
-    // If new; shimmer until we have all
-    if (!_holdingsWasEmpty) {
-      _holdingsWasEmpty = Current.holdings.isEmpty;
-    }
-
-    // Update with our unspent values when utd
-    if (!_useCurrent ||
-        services.download.unspents.scripthashesChecked >=
-                Current.wallet.addresses.length &&
-            _unspentBalances.length ==
-                services.download.unspents.uniqueAssets) {
-      // Initially show our state from previous app
-      _useCurrent = false;
-      holdings = utils.assetHoldings(widget.holdings ?? _unspentBalances);
-    }
-
-    holdings.sort((first, second) => first.symbol.compareTo(second.symbol));
+    holdings = utils.assetHoldings(widget.holdings ??
+        services.download.unspents.unspentBalances
+            .where((balance) => balance.walletId == Current.walletId));
 
     if (_hideList) {
-      _hideList = services.download.unspents.scripthashesChecked <
-              Current.wallet.addresses.length &&
-          _holdingsWasEmpty;
+      // If new wallet, let assets pop up as we get them (can't figure out how to hide this until we're done. fix isGapSatisfied?)
+      // Otherwise hide until our checked scripthashes are >= our current wallets address count
+      _hideList = _balanceWasEmpty
+          ? (Current.wallet is LeaderWallet
+              ? services.wallet.leader.gapSatisfied(
+                      Current.wallet as LeaderWallet, NodeExposure.External) &&
+                  services.wallet.leader.gapSatisfied(
+                      Current.wallet as LeaderWallet, NodeExposure.Internal) &&
+                  services.download.unspents.scripthashesChecked <
+                      Current.wallet.addresses.length
+              : false)
+          : services.download.unspents.scripthashesChecked <
+              Current.wallet.addresses.length;
     }
+
+    /*
+    print(
+        '${services.download.unspents.scripthashesChecked} vs ${Current.wallet.addresses.length}');
+    print('was empty: $_balanceWasEmpty');
+    */
 
     return _hideList
         ? components.empty.getAssetsPlaceholder(context,
             scrollController: widget.scrollController,
-            count: holdingCount,
+            count: _balanceWasEmpty ? holdingCount : Current.holdings.length,
             holding: true)
         : //RefreshIndicator( child:
         _holdingsView(context);

@@ -17,6 +17,7 @@ export 'methods/scripthash/history.dart';
 export 'methods/scripthash/unspent.dart';
 export 'methods/server/features.dart';
 export 'methods/server/stats.dart';
+export 'methods/server/ping.dart';
 export 'methods/server/version.dart';
 export 'methods/transaction/broadcast.dart';
 export 'methods/transaction/memo.dart';

@@ -32,7 +32,6 @@ class RavenClientWaiter extends Waiter {
         if (client != null) {
           print('in if');
           await periodicTimer?.cancel();
-          additionalTimeout = originalAdditionalTimeout;
 
           /// here we should setup a ping to the server.
           /// this isn't getting executed when the peer closes the client:
@@ -108,5 +107,30 @@ class RavenClientWaiter extends Waiter {
             change.data.name == SettingName.Electrum_Net), (_) {
       streams.client.client.add(null);
     });
+
+    /// this pings the server every 60 seconds if the user is using the app and
+    /// we have a connection to the server. it's good enough. what would be
+    /// better is to make a clock that resets to 0 every time we send any
+    /// request to the server, if the clock hits 60 seconds it sends a ping.
+    listen(
+      'streams.app.ping',
+      CombineLatestStream.combine3(
+        streams.client.client,
+        streams.app.active,
+        streams.app.ping,
+        (RavenElectrumClient? client, bool active, dynamic ping) =>
+            Tuple3(client, active, ping),
+      ).where((Tuple3 event) => event.item1 != null && event.item2),
+      (Tuple3 tuple) {
+        RavenElectrumClient? client = tuple.item1;
+        try {
+          client!.ping();
+        } on StateError {
+          print(
+              'STATE ERROR - server must have closed our connection without us knowing.');
+          streams.client.client.add(null);
+        }
+      },
+    );
   }
 }

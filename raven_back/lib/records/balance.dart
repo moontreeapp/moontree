@@ -70,7 +70,7 @@ class Balance with EquatableMixin {
       '$walletId:${security.id}';
 
   int get value {
-    return confirmed; //+ unconfirmed;
+    return confirmed + unconfirmed;
   }
 
   double get rvn {

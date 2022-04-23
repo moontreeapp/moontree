@@ -84,13 +84,30 @@ class SubscribeService {
     if (client == null) {
       return false;
     }
+    final addresses = res.wallets.primaryIndex
+        .getOne(res.settings.currentWalletId)!
+        .addresses;
+
+    /// better to get them all so when we switch wallets we see totals
+    /// immediately, but that requires that we save balances in unspentBalances
+    /// by walletId... and we wouldn't have to reset connection (in title.dart)
+    //final addresses = res.addresses.data;
     var existing = false;
-    for (var address in res.addresses) {
+    for (var address in addresses) {
       onlySubscribeAddress(client, address);
       existing = true;
     }
     if (existing) {
       services.download.history.allDoneProcess(client);
+      for (var address in addresses) {
+        if (address.wallet is LeaderWallet && address.vouts.isNotEmpty) {
+          services.wallet.leader
+              .updateCounts(address, address.wallet as LeaderWallet);
+        } else {
+          services.wallet.leader
+              .updateCache(address, address.wallet as LeaderWallet);
+        }
+      }
     }
     return true;
   }
@@ -128,28 +145,26 @@ class SubscribeService {
     if (!subscriptionHandles.keys.contains(address.id)) {
       subscriptionHandles[address.id] =
           client.subscribeScripthash(address.id).listen((String? status) async {
-        print('Received call back for subscription to ${address.address}');
+        //print('Received call back for subscription to ${address.address}');
         await services.download.unspents.pull(scripthashes: [address.id]);
-        if (status == null || address.status?.status != status) {
-          var allDone = await services.download.history.getHistories(address);
-          await res.statuses.save(Status(
-              linkId: address.id,
-              statusType: StatusType.address,
-              status: status));
+
+        //print('Recieved status: $status vs our ${address.status?.status}');
+
+        // null status = no history, but we still want to walk thru the following our first time
+        if ((status == null && address.status == null) ||
+            address.status?.status != status) {
+          var allDone =
+              await services.download.history.getHistories(address, status);
+
           if (allDone != null && !allDone && address.wallet is LeaderWallet) {
             streams.wallet.deriveAddress.add(DeriveLeaderAddress(
               leader: address.wallet! as LeaderWallet,
               exposure: address.exposure,
             ));
-          } else {
-            // why are we doing this here? happens in get history...
-            await services.balance.recalculateAllBalances();
           }
         } else {
           await services.download.history.addAddressToSkipHistory(address);
         }
-        // happens in get history...
-        //streams.wallet.scripthashCallback.add(null);
       });
     }
   }
