@@ -15,26 +15,23 @@ class ClientService {
 
   /// if we want to talk to electrum safely, this will try to talk,
   /// if communication fails it will reconnect and try again.
+  /// for example:
+  ///   await services.client.scope(() async {
+  ///     print('erroring if client is null is desirable in this scope');
+  ///     return await services.client.client!.getRelayFee();
+  ///   }));
   Future<T> scope<T>(Future<T> Function() callback) async {
     var x;
     try {
-      x = await callback(); // client?.callback?
+      x = await callback();
     } catch (e) {
-      //} on StateError {//print('STATE ERROR - trying again');
-      await res.settings.save(Setting(
-          name: SettingName.Electrum_DomainTest, value: '143.198.142.78'));
-      await res.settings
-          .save(Setting(name: SettingName.Electrum_PortTest, value: 50002));
-      print(res.settings.primaryIndex.getOne(SettingName.Electrum_PortTest));
+      // reconnect on any error, not just server disconnected } on StateError {
       streams.client.client.add(null);
       while (streams.client.client.value == null) {
         await Future.delayed(Duration(milliseconds: 100));
       }
-      print('getting relay fee');
       x = await callback();
-      print('replayfee $x');
     }
-    print('returning $x');
     return x;
   }
 
