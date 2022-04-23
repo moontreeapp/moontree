@@ -229,7 +229,7 @@ class _PageTitleState extends State<PageTitle>
                 duration: Duration(seconds: 60),
                 content: Container(
                     child: ListView(shrinkWrap: true, children: <Widget>[
-                  for (Wallet wallet in res.wallets)
+                  for (Wallet wallet in res.wallets.ordered)
                     ListTile(
                       visualDensity: VisualDensity.compact,
                       onTap: () {

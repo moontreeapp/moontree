@@ -109,6 +109,7 @@ class SubscribeService {
         }
       }
     }
+    print('all EXISTING addresses subscribed');
     return true;
   }
 
