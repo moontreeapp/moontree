@@ -166,6 +166,7 @@ class _NavMenuState extends State<NavMenu> {
               name: 'Clear Database',
               link: '/home',
               execute: ravenDatabase.deleteDatabase),
+          */
           ListTile(
               title: Text('test'),
               leading: Icon(Icons.info_outline_rounded),
@@ -179,24 +180,33 @@ class _NavMenuState extends State<NavMenu> {
                 //var get = (e) => res.addresses.byWalletExposureIndex
                 //    .getOne(Current.walletId, NodeExposure.External, e)!
                 //    .address;
-                //var x = Current.wallet.emptyExternalAddresses
-                //    .map((e) => e.hdIndex)
-                //    .toList();
-                //x.sort();
-                //x.forEach((e) => print(get(e)));
-                //print('---');
+                ////var x = Current.wallet.emptyExternalAddresses
+                ////    .map((e) => e.hdIndex)
+                ////    .toList();
+                ////x.sort();
+                ////x.forEach((e) => print(get(e)));
+                ////print('---');
                 //(Current.wallet as LeaderWallet)
                 //    .unusedExternalIndices
-                //    .forEach((e) => print(e));
-                // the old way is giving us an address that shouldn't exist (not empty)
-                // mnxzyHLczuYC8NaFNzs45xPku3fUo5SrdR
-                // why?
-                var a = res.addresses.byAddress
-                    .getOne('mit5fwMviprT5GJXsjMxismbCqvRpCtxPg')!;
-                print(a.address);
-                print(a.id);
+                //    .forEach((e) => print(get(e)));
+                //// the old way is giving us an address that shouldn't exist (not empty)
+                //// mnxzyHLczuYC8NaFNzs45xPku3fUo5SrdR
+                //// why?
+                //var a = res.addresses.byAddress
+                //    .getOne('mkpbZecTxmzU78xqeaKAPeeDSfJw2sSAWt')!;
+                //print(a.address);
+                //print(a.id);
+                //print(a.hdIndex);
+                //print(a.exposure);
+                //print(a);
                 //print(res.vouts.byAddress
-                //    .getAll('mit5fwMviprT5GJXsjMxismbCqvRpCtxPg'));
+                //    .getAll('mkpbZecTxmzU78xqeaKAPeeDSfJw2sSAWt'));
+                //res.transactions.chronological.forEach((element) => print(
+                //    element.addresses
+                //        ?.contains('mkpbZecTxmzU78xqeaKAPeeDSfJw2sSAWt')));
+                //print(await services.client.client?.getHistory(a.id));
+                //print(res.transactions.primaryIndex.getOne(
+                //    '4e769a6d770b4e441ade1d5600926ad14f58fdb6ae4128ed03c811241ec72240'));
                 //print(res.transactions.primaryIndex.getOne(
                 //    'a172254a2aec36b73d00e03ef1c8005feec7fde54365edc232415081e91dd33d'));
                 //print(services.download.history.downloadedOrDownloadQueried
@@ -211,8 +221,26 @@ class _NavMenuState extends State<NavMenu> {
                 //print(await services.client.client!.getTransactions([
                 //  'a172254a2aec36b73d00e03ef1c8005feec7fde54365edc232415081e91dd33d'
                 //]));
+                //print(services.wallet
+                //    .getEmptyAddress(Current.wallet, random: true));
+                //print(services.wallet
+                //    .getEmptyAddress(Current.wallet, random: false));
+                //print(services.wallet.getEmptyWallet(Current.wallet).address);
+                //print(await services.client.client!.peer.done
+                //    .asStream()
+                //    .listen((event) {
+                //  print('its done $event');
+                //}));
+                //print(services.client.client!.peer.isClosed);
+                //try {
+                //  print(await services.client.client!.getRelayFee());
+                //} on StateError {
+                //  print('err');
+                //}
+                print(Current.wallet);
+                print(Current.wallet.addresses.length);
+                print(Current.wallet.addresses);
               }),
-          */
         ],
       )
     };

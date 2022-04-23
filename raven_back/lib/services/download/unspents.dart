@@ -188,7 +188,7 @@ class UnspentService {
       binaryInsert(
           list: tempBalances,
           value: Balance(
-              walletId: 'unsaved',
+              walletId: res.settings.currentWalletId,
               security: symbol == res.securities.RVN.symbol
                   ? res.securities.RVN
                   : Security(

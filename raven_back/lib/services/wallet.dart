@@ -117,10 +117,10 @@ class WalletService {
     throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
   }
 
-  String getEmptyAddress(Wallet wallet) {
+  String getEmptyAddress(Wallet wallet, {bool random = false}) {
     if (wallet is LeaderWallet) {
       return leader.getNextEmptyAddress(wallet,
-          exposure: NodeExposure.External);
+          exposure: NodeExposure.External, random: random);
     }
     if (wallet is SingleWallet) {
       return wallet.addresses.first.address;

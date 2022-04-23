@@ -69,7 +69,7 @@ class LeaderWalletService {
     for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
       var addresses =
           res.addresses.byWalletExposure.getAll(leader.id, exposure);
-      services.wallet.leader.updateIndexOf(
+      updateIndexOf(
         leader,
         exposure,
         saved: addresses.map((a) => a.hdIndex).max,
@@ -79,6 +79,17 @@ class LeaderWalletService {
             .max,
       );
     }
+  }
+
+  void updateCounts(Address address, LeaderWallet leader) {
+    leader.removeUnused(address.hdIndex, address.exposure);
+    updateIndexOf(leader, address.exposure, used: address.hdIndex);
+  }
+
+  void updateCache(Address address, LeaderWallet leader) {
+    print('updatingCache');
+    leader.addUnused(address.hdIndex, address.exposure);
+    updateIndexOf(leader, address.exposure, saved: address.hdIndex);
   }
 
   bool gapSatisfied(LeaderWallet leader, NodeExposure exposure) {
@@ -130,8 +141,11 @@ class LeaderWalletService {
   String getNextEmptyAddress(
     LeaderWallet leaderWallet, {
     NodeExposure exposure = NodeExposure.Internal,
+    bool random = false,
   }) {
-    return leaderWallet.getUnusedAddress(exposure)!.address;
+    return random
+        ? leaderWallet.getRandomUnusedAddress(exposure)!.address
+        : leaderWallet.getUnusedAddress(exposure)!.address;
   }
 
   /// returns the next change address

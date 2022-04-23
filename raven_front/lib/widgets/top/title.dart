@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
+import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/components/components.dart';
 
@@ -233,8 +234,11 @@ class _PageTitleState extends State<PageTitle>
                       visualDensity: VisualDensity.compact,
                       onTap: () {
                         ScaffoldMessenger.of(context).clearSnackBars();
-                        res.settings.setCurrentWalletId(wallet.id);
-                        streams.app.setting.add(null);
+                        if (wallet.id != Current.walletId) {
+                          res.settings.setCurrentWalletId(wallet.id);
+                          streams.app.setting.add(null);
+                          streams.client.client.add(null);
+                        }
                       },
                       leading: Icon(
                         Icons.account_balance_wallet_rounded,

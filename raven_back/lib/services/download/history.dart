@@ -24,18 +24,6 @@ class HistoryService {
   List<Iterable<String>> unspentsTxsFetchFirst = [];
 
   Future<bool?> getHistories(Address address, String? status) async {
-    void updateCounts(LeaderWallet leader) {
-      leader.removeUnused(address.hdIndex, address.exposure);
-      services.wallet.leader
-          .updateIndexOf(leader, address.exposure, used: address.hdIndex);
-    }
-
-    void updateCache(LeaderWallet leader) {
-      leader.addUnused(address.hdIndex, address.exposure);
-      services.wallet.leader
-          .updateIndexOf(leader, address.exposure, saved: address.hdIndex);
-    }
-
     var client = streams.client.client.value;
     if (client == null) {
       return false;
@@ -47,9 +35,11 @@ class HistoryService {
     });
     if (address.wallet is LeaderWallet) {
       if (histories.isNotEmpty) {
-        updateCounts(address.wallet as LeaderWallet);
+        services.wallet.leader
+            .updateCounts(address, address.wallet as LeaderWallet);
       } else {
-        updateCache(address.wallet as LeaderWallet);
+        services.wallet.leader
+            .updateCache(address, address.wallet as LeaderWallet);
       }
       if (address.hdIndex >=
           services.wallet.leader

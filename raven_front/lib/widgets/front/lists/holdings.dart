@@ -133,8 +133,9 @@ class _HoldingList extends State<HoldingList> {
       _balanceWasEmpty = (widget.holdings ?? Current.holdings).isEmpty;
     }
 
-    holdings = utils.assetHoldings(
-        widget.holdings ?? services.download.unspents.unspentBalances);
+    holdings = utils.assetHoldings(widget.holdings ??
+        services.download.unspents.unspentBalances
+            .where((balance) => balance.walletId == Current.walletId));
 
     if (_hideList) {
       // If new wallet, let assets pop up as we get them (can't figure out how to hide this until we're done. fix isGapSatisfied?)
