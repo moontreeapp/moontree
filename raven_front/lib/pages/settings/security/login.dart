@@ -57,16 +57,15 @@ class _LoginState extends State<Login> {
                 ])),
       ]));
 
-  Widget get welcomeMessage => GestureDetector(
-      onTap: () => streams.app.splash.add(false),
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+  Widget get welcomeMessage =>
+      Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Image(image: AssetImage('assets/logo/moontree.png')),
         SizedBox(height: 8),
         Text(
           'Welcome Back',
           style: Theme.of(context).textTheme.headline1,
         ),
-      ]));
+      ]);
 
   Widget get loginField => TextField(
       focusNode: loginFocus,
