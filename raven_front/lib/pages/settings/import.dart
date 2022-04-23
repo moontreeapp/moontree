@@ -258,6 +258,6 @@ class _ImportState extends State<Import> {
       text = resp;
     }
     streams.import.attempt.add(ImportRequest(text: text));
-    components.loading.screen(message: 'Importing');
+    components.loading.screen(message: 'Importing', staticImage: true);
   }
 }

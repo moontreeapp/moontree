@@ -11,6 +11,32 @@ class ClientService {
   final ApiService api = ApiService();
 
   RavenElectrumClient? get client => streams.client.client.value;
+  RavenElectrumClient? get useClient => streams.client.client.value;
+
+  /// if we want to talk to electrum safely, this will try to talk,
+  /// if communication fails it will reconnect and try again.
+  Future<T> scope<T>(Future<T> Function() callback) async {
+    var x;
+    try {
+      x = await callback(); // client?.callback?
+    } catch (e) {
+      //} on StateError {//print('STATE ERROR - trying again');
+      await res.settings.save(Setting(
+          name: SettingName.Electrum_DomainTest, value: '143.198.142.78'));
+      await res.settings
+          .save(Setting(name: SettingName.Electrum_PortTest, value: 50002));
+      print(res.settings.primaryIndex.getOne(SettingName.Electrum_PortTest));
+      streams.client.client.add(null);
+      while (streams.client.client.value == null) {
+        await Future.delayed(Duration(milliseconds: 100));
+      }
+      print('getting relay fee');
+      x = await callback();
+      print('replayfee $x');
+    }
+    print('returning $x');
+    return x;
+  }
 
   String get electrumDomain =>
       res.settings.primaryIndex.getOne(SettingName.Electrum_Domain)!.value;
@@ -37,8 +63,10 @@ class ClientService {
   bool get connectionStatus =>
       streams.client.client.stream.valueOrNull != null ? true : false;
 
-  Future<RavenElectrumClient?> createClient(
-      {String projectName = 'MTWallet', String buildVersion = '0.1'}) async {
+  Future<RavenElectrumClient?> createClient({
+    String projectName = 'MTWallet',
+    String buildVersion = '0.1',
+  }) async {
     try {
       if (res.settings.mainnet) {
         return await RavenElectrumClient.connect(
@@ -103,7 +131,7 @@ class SubscribeService {
       onlySubscribeAddressHistory(client, address);
     }
     if (existing) {
-      services.download.history.allDoneProcess(client);
+      unawaited(services.download.history.allDoneProcess(client));
       for (var address in addresses) {
         if (address.wallet is LeaderWallet && address.vouts.isNotEmpty) {
           services.wallet.leader

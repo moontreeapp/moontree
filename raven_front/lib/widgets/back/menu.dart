@@ -249,13 +249,21 @@ class _NavMenuState extends State<NavMenu> {
                 //print(await services.client.client!.peer.done);
                 print(services.client.client!.peer.isClosed);
               }),
+          */
           ListTile(
               title: Text('call'),
               leading: Icon(Icons.info_outline_rounded),
               onTap: () async {
-                print(await services.client.client!.getRelayFee());
+                //print(services.client.client);
+                //services.client.client!..close();
+                //print(services.client.client);
+                print(await services.client.scope(() async {
+                  print('running');
+                  return await services.client.client!.getRelayFee();
+                }));
+                //print('await services.client.client!.getRelayFee()');
+                //print(await services.client.client!.getRelayFee());
               }),
-          */
         ],
       )
     };

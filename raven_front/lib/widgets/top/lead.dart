@@ -68,7 +68,7 @@ class _PageLead extends State<PageLead> {
   }
 
   Widget body() {
-    if (loading) {
+    if (loading && pageTitle != 'Network') {
       return Container();
     }
     if (settingTitle?.startsWith('/settings/') ?? false) {

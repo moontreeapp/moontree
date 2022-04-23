@@ -33,21 +33,23 @@ class RavenClientWaiter extends Waiter {
           print('in if');
           await periodicTimer?.cancel();
 
-          /// here we should setup a ping to the server.
-          /// this isn't getting executed when the peer closes the client:
+          /// this isn't getting executed when the server closes the connection.
+          /// we've setup a ping to help us avoid the server closing our
+          /// connection, but if it does happen we wont know about it until we
+          /// try to use the client connection object again. then it will error.
+          /// but we do have, as an alternative to this, a client scope function
+          /// which allows us to automatically reconnect if we're not connected.
           unawaited(client.peer.done.then((value) async {
             streams.client.connected.add(ConnectionStatus.disconnected);
-            print('streams.app.active.value ${streams.app.active.value}');
             if (streams.app.active.value) {
               streams.client.client.add(null);
             }
           }, onError: (value) async {
             print('Client ERROR $value');
-            print('streams.app.active.value ${streams.app.active.value}');
-            //streams.client.connected.add(ConnectionStatus.disconnected);
-            //if (streams.app.active.value) {
-            //  streams.client.client.add(null);
-            //}
+            streams.client.connected.add(ConnectionStatus.disconnected);
+            if (streams.app.active.value) {
+              streams.client.client.add(null);
+            }
           }));
         } else {
           streams.client.connected.add(ConnectionStatus.connecting);
@@ -55,18 +57,14 @@ class RavenClientWaiter extends Waiter {
           await periodicTimer?.cancel();
           periodicTimer = Stream.periodic(connectionTimeout).listen(
             (_) async {
-              print(
-                  '(else) streams.app.active.value: ${streams.app.active.value}');
               if (streams.app.active.value) {
                 var newRavenClient = await services.client.createClient();
-                print('(else) newRavenClient: $newRavenClient');
                 if (newRavenClient != null) {
                   streams.client.connected.add(ConnectionStatus.connected);
                   streams.client.client.add(newRavenClient);
                   await periodicTimer?.cancel();
                   additionalTimeout = originalAdditionalTimeout;
                 } else {
-                  print('additionalTimeout: $additionalTimeout');
                   additionalTimeout += originalAdditionalTimeout;
                   periodicTimer!.pause();
                   await Future.delayed(additionalTimeout);
