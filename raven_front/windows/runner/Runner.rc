@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "raven_mobile" "\0"
+            VALUE "FileDescription", "moontree_raven" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "raven_mobile" "\0"
+            VALUE "InternalName", "moontree_raven" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2022 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "raven_mobile.exe" "\0"
-            VALUE "ProductName", "raven_mobile" "\0"
+            VALUE "OriginalFilename", "moontree_raven.exe" "\0"
+            VALUE "ProductName", "moontree_raven" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

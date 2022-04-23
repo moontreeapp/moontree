@@ -1,6 +1,6 @@
 /// listens for new securities and derives and saves logo to disk as image file
 /// why does this live here?
-/// because raven_mobile manages storage for exports and other files like asset logos.
+/// because moontree_raven manages storage for exports and other files like asset logos.
 import 'package:rxdart/rxdart.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/services/ipfs.dart';

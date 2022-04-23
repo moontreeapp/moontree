@@ -1,6 +1,6 @@
 {
-    "name": "raven_mobile",
-    "short_name": "raven_mobile",
+    "name": "moontree_raven",
+    "short_name": "moontree_raven",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

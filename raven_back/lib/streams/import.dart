@@ -9,4 +9,5 @@ class ImportRequest {
 
 class Import {
   final attempt = BehaviorSubject<ImportRequest?>.seeded(null);
+  final result = BehaviorSubject<ImportRequest?>.seeded(null);
 }
