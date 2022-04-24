@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -62,6 +63,7 @@ class RavenMobileApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/splash',
       // look up flutter view model for sub app structure.
+      //routes: pages.routes(context),
       routes: pages.routes(context),
       themeMode: ThemeMode.system,
       theme: CustomTheme.lightTheme,
@@ -73,4 +75,73 @@ class RavenMobileApp extends StatelessWidget {
       },
     );
   }
+}
+
+class MyCustomRoute<T> extends MaterialPageRoute<T> {
+  MyCustomRoute(
+      {required WidgetBuilder builder, required RouteSettings settings})
+      : super(builder: builder, settings: settings);
+
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 1000);
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    final Animation<double> curve =
+        CurvedAnimation(parent: animation, curve: Curves.easeOut);
+    if (settings.name == "/splash") return child;
+    // Fades between routes. (If you don't want any animation,
+    // just return child.)
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(0.0, -1.0),
+        end: Offset.zero,
+      ).animate(curve),
+      child: FadeTransition(opacity: curve, child: child),
+    );
+  }
+}
+
+class EnterExitRoute extends PageRouteBuilder {
+  final Widget enterPage;
+  final Widget exitPage;
+  EnterExitRoute({required this.exitPage, required this.enterPage})
+      : super(
+          pageBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) =>
+              enterPage,
+              transitionDuration: const Duration(seconds: 1),
+              reverseTransitionDuration: const Duration(seconds: 1),
+          transitionsBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) =>
+              Stack(
+            children: <Widget>[
+              FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: new Tween<Offset>(
+                    begin: Offset.zero,
+                    end: const Offset(0.0, 1.0),
+                  ).animate(animation),
+                  child: exitPage,
+                ),
+              ),
+              SlideTransition(
+                position: new Tween<Offset>(
+                  begin: const Offset(0.0, -1.0),
+                  end: Offset.zero,
+                ).animate(animation),
+                child: enterPage,
+              )
+            ],
+          ),
+        );
 }

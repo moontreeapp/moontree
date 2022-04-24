@@ -83,6 +83,7 @@ class pages {
   static Map<String, Widget Function(BuildContext)> routes(
           BuildContext context) =>
       {
+        '/': (context) => Splash(),
         '/splash': (context) => Splash(),
         '/loading': (context) => Loading(),
         '/home': (context) => Home(),
