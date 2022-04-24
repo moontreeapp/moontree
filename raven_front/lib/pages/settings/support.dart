@@ -92,22 +92,4 @@ class Support extends StatelessWidget {
           },
         ),
       );
-
-  //showDialog(
-  //    context: context,
-  //    builder: (BuildContext context) => AlertDialog(
-  //            title: Text('Open in External App'),
-  //            content: Text('Open discord app or browser?'),
-  //            actions: [
-  //              TextButton(
-  //                  child: Text('Cancel'),
-  //                  onPressed: () => Navigator.of(context).pop()),
-  //              TextButton(
-  //                  child: Text('Continue'),
-  //                  onPressed: () {
-  //                    Navigator.of(context).pop();
-  //                    launch(
-  //                        'https://discord.gg/${link ?? name.toLowerCase()}');
-  //                  })
-  //            ])),
 }

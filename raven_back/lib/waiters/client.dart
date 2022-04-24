@@ -124,14 +124,15 @@ class RavenClientWaiter extends Waiter {
             Tuple3(client, active, ping),
       ).where((Tuple3 event) => event.item1 != null && event.item2),
       (Tuple3 tuple) {
-        RavenElectrumClient? client = tuple.item1;
-        try {
-          client!.ping();
-        } on StateError {
-          print(
-              'STATE ERROR - server must have closed our connection without us knowing.');
-          streams.client.client.add(null);
-        }
+        //RavenElectrumClient? client = tuple.item1;
+        services.client.scope(services.client.client!.ping);
+        //try {
+        //  client!.ping();
+        //} on StateError {
+        //  print(
+        //      'STATE ERROR - server must have closed our connection without us knowing.');
+        //  streams.client.client.add(null);
+        //}
       },
     );
   }

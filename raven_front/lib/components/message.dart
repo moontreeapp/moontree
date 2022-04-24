@@ -13,13 +13,6 @@ class MessageComponents {
             AlertDialog(title: Text(title), content: Text(content), actions: [
               for (var key in behaviors.keys)
                 TextButton(child: Text(key), onPressed: behaviors[key]),
-              //TextButton(
-              //    child: Text('Continue'),
-              //    onPressed: () {
-              //      Navigator.of(context).pop();
-              //      launch(
-              //          'https://discord.gg/${link ?? name.toLowerCase()}');
-              //    })
             ]));
   }
 }
