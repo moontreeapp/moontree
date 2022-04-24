@@ -173,23 +173,19 @@ class _TransactionsState extends State<Transactions>
                         fontWeight: FontWeights.bold,
                         letterSpacing: 1.25,
                         color: AppColors.primary)),
-                onTap: () => showDialog(
-                    context: context,
-                    builder: (BuildContext context) => AlertDialog(
-                            title: Text('Open in External App'),
-                            content: Text('Open ipfs data in browser?'),
-                            actions: [
-                              TextButton(
-                                  child: Text('Cancel'),
-                                  onPressed: () => Navigator.of(context).pop()),
-                              TextButton(
-                                  child: Text('Continue'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    launch(
-                                        'https://ipfs.io/ipfs/${securityAsset.metadata}');
-                                  })
-                            ])))
+                onTap: () => components.message.giveChoices(
+                      context,
+                      title: 'Open in External App',
+                      content: 'Open ipfs data in browser?',
+                      behaviors: {
+                        'Cancel': Navigator.of(context).pop,
+                        'Continue': () {
+                          Navigator.of(context).pop();
+                          launch(
+                              'https://ipfs.io/ipfs/${securityAsset.metadata}'); //'https://gateway.ipfs.io/ipfs/'
+                        },
+                      },
+                    ))
           ]);
     } else if (securityAsset.primaryMetadata == null) {
       chilren = [SelectableText(securityAsset.metadata)];
