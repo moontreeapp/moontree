@@ -49,7 +49,6 @@ class _BackupSeedState extends State<BackupSeed>
   Widget build(BuildContext context) {
     buttonWidth = (MediaQuery.of(context).size.width - (17 + 17 + 16 + 16)) / 3;
     secret = Current.wallet.secret(Current.wallet.cipher!).split(' ');
-    controller.forward();
     return body();
   }
 
@@ -70,30 +69,19 @@ class _BackupSeedState extends State<BackupSeed>
               : components.page.form(
                   context,
                   columnWidgets: <Widget>[
-                    SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(0.0, -1.0),
-                          end: Offset.zero,
-                        ).animate(curve),
-                        child: FadeTransition(
-                            opacity: animation, child: instructions)),
-                    SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(0.0, -1.0),
-                          end: Offset.zero,
-                        ).animate(curve),
-                        child:
-                            FadeTransition(opacity: animation, child: warning)),
-                    SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(0.0, -1.0),
-                          end: Offset.zero,
-                        ).animate(curve),
-                        child:
-                            FadeTransition(opacity: animation, child: words)),
+                    inAnimation(instructions),
+                    inAnimation(warning),
+                    inAnimation(words),
                   ],
                   buttons: [submitButton],
                 )));
+
+  Widget inAnimation(child) => SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(0.0, -1.0),
+        end: Offset.zero,
+      ).animate(curve),
+      child: FadeTransition(opacity: animation, child: child));
 
   Widget get intro => Container(
       height: 48,
@@ -196,7 +184,10 @@ class _BackupSeedState extends State<BackupSeed>
       enabled: services.password.required ? verify() : true,
       label: 'Show Seed',
       focusNode: showFocus,
-      onPressed: () => setState(() => warn = false));
+      onPressed: () => setState(() {
+            warn = false;
+            controller.forward();
+          }));
 
   Widget get submitButton => components.buttons.actionButton(
         context,
