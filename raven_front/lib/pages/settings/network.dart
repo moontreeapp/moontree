@@ -26,6 +26,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
   FocusNode connectFocus = FocusNode();
   bool validated = true;
   bool pressed = false;
+  bool enableSubmit = false;
   RavenElectrumClient? client;
 
   @override
@@ -139,7 +140,10 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
               .copyWith(height: .8, color: AppColors.success),
           alwaysShowHelper: true,
         ),
-        onChanged: (String value) => validated = validateDomainPort(value),
+        onChanged: (String value) {
+          enableSubmit = true;
+          validated = validateDomainPort(value);
+        },
         onEditingComplete: () {
           serverAddress.text = serverAddress.text.trim();
           validated = validateDomainPort(serverAddress.text);
@@ -155,7 +159,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
   Widget get submitButton => components.buttons.actionButton(
         context,
         focusNode: connectFocus,
-        enabled: validateDomainPort(serverAddress.text),
+        enabled: validateDomainPort(serverAddress.text) && enableSubmit,
         label: 'Connect',
         onPressed: attemptSave,
       );
