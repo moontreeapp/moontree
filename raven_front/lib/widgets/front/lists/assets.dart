@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
+import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class AssetList extends StatefulWidget {
@@ -109,22 +110,24 @@ class _AssetList extends State<AssetList> {
     );
   }
 
-  ListView _assetsView(BuildContext context, {Wallet? wallet}) =>
-      ListView(controller: widget.scrollController, children: <Widget>[
-        for (var asset in assets) ...[
-          ListTile(
-            //dense: true,
-            //contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-            // wallet transactions are on wallet screen, so remove wallet id here.
-            onTap: () => onTap(wallet, asset),
-            onLongPress: _togglePath,
-            leading: leadingIcon(asset),
-            title: title(asset),
-            //trailing: Icon(Icons.chevron_right_rounded)
-          ),
-          Divider(height: 1)
-        ]
-      ]);
+  ListView _assetsView(BuildContext context, {Wallet? wallet}) => ListView(
+      controller: widget.scrollController,
+      children: <Widget>[
+            for (var asset in assets) ...[
+              ListTile(
+                //dense: true,
+                //contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+                // wallet transactions are on wallet screen, so remove wallet id here.
+                onTap: () => onTap(wallet, asset),
+                onLongPress: _togglePath,
+                leading: leadingIcon(asset),
+                title: title(asset),
+                //trailing: Icon(Icons.chevron_right_rounded)
+              ),
+              Divider(height: 1)
+            ]
+          ] +
+          [components.empty.blankNavArea(context)]);
 
   void onTap(Wallet? wallet, AssetHolding asset) {
     if (asset.length == 1 && (asset.admin != null || asset.subAdmin != null)) {

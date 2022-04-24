@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/other/keyboard.dart';
 
 class ContainerComponents {
@@ -9,8 +10,7 @@ class ContainerComponents {
   }) =>
       KeyboardHidesWidget(
           child: Container(
-              height: MediaQuery.of(context).size.height *
-                  ((tall ? 118 : 72) / 760),
+              height: (tall ? 118 : 72).figma(context),
               padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
               width: MediaQuery.of(context).size.width,
               alignment: Alignment.topCenter,

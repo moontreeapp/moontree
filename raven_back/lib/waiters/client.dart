@@ -68,6 +68,8 @@ class RavenClientWaiter extends Waiter {
                   //await Future.delayed(additionalTimeout);
                   //periodicTimer!.resume();
                   while (!streams.app.active.value) {
+                    print(
+                        'streams.app.active.value: ${streams.app.active.value}');
                     await Future.delayed(Duration(seconds: 1));
                   }
                 }
@@ -86,15 +88,16 @@ class RavenClientWaiter extends Waiter {
         streams.app.active,
         (ConnectionStatus connected, bool active) => Tuple2(connected, active),
       ),
-      (Tuple2 tuple) {
+      (Tuple2 tuple) async {
         ConnectionStatus connected = tuple.item1;
         bool active = tuple.item2;
         /*var msg = 'Establishing Connection...';*/
         if (active &&
-            (streams.client.client.value == null ||
+            (streams.client.client.value == null &&
                 connected == ConnectionStatus.disconnected)) {
           additionalTimeout = Duration(seconds: 1);
           streams.client.client.add(null);
+          await Future.delayed(Duration(seconds: 6));
         } else if (active) {}
       },
     );

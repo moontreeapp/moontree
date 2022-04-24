@@ -8,6 +8,7 @@ import 'package:raven_back/streams/spend.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/colors.dart';
+import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -229,17 +230,16 @@ class _HoldingList extends State<HoldingList> {
       //    title: Text('+ Create Asset (not enough RVN)',
       //        style: TextStyle(color: Theme.of(context).disabledColor))));
     }
-    var blankNavArea = [
-      Container(
-        height: 118,
-        color: Colors.white,
-      )
-    ];
+
     return ListView(
         controller: widget.scrollController,
         dragStartBehavior: DragStartBehavior.start,
         physics: ClampingScrollPhysics(),
-        children: <Widget>[...rvnHolding, ...assetHoldings, ...blankNavArea]);
+        children: <Widget>[
+          ...rvnHolding,
+          ...assetHoldings,
+          ...[components.empty.blankNavArea(context)]
+        ]);
   }
 
   void onTap(Wallet? wallet, AssetHolding holding) {
