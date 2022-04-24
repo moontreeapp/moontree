@@ -11,7 +11,6 @@ import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 
 import 'package:raven_back/streams/spend.dart';
 import 'package:raven_back/services/transaction/maker.dart';
-import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/raven_back.dart';
 
 import 'package:raven_front/components/components.dart';
@@ -244,6 +243,7 @@ class _SendState extends State<Send> {
               sendMemoField,
               SizedBox(height: 16),
               sendNoteField,
+              SizedBox(height: 8),
             ],
           ),
           KeyboardHidesWidget(
@@ -324,6 +324,7 @@ class _SendState extends State<Send> {
                   ? 'must be greater than 0'
                   : (String x) {
                       if (x.isNumeric) {
+                        print('is numeric');
                         var y = x.toNum();
                         if (y != null && y.isRVNAmount) {
                           return true;
@@ -359,6 +360,7 @@ class _SendState extends State<Send> {
           //streams.spend.form.add(SpendForm.merge(
           //    form: streams.spend.form.value,
           //    amount: doubleAmount(visibleAmount)));
+          setState(() {});
         },
         onEditingComplete: () {
           //sendAmount.text = cleanDecAmount(
@@ -420,8 +422,9 @@ class _SendState extends State<Send> {
         focusNode: sendMemoFocusNode,
         labelText: 'Memo',
         hintText: 'IPFS',
-        helperText:
-            sendMemoFocusNode.hasFocus ? 'Saved on the blockchain' : null,
+        helperText: sendMemoFocusNode.hasFocus
+            ? 'will be saved on the blockchain'
+            : null,
         helperStyle: Theme.of(context)
             .textTheme
             .caption!
@@ -436,7 +439,9 @@ class _SendState extends State<Send> {
                 })
             : null,
       ),
-      onChanged: (value) {},
+      onChanged: (value) {
+        setState(() {});
+      },
       onEditingComplete: () {
         FocusScope.of(context).requestFocus(sendNoteFocusNode);
         setState(() {});
@@ -452,7 +457,8 @@ class _SendState extends State<Send> {
           focusNode: sendNoteFocusNode,
           labelText: 'Note',
           hintText: 'Purchase',
-          helperText: sendNoteFocusNode.hasFocus ? 'Saved to your phone' : null,
+          helperText:
+              sendNoteFocusNode.hasFocus ? 'will be saved to your phone' : null,
           helperStyle: Theme.of(context)
               .textTheme
               .caption!
