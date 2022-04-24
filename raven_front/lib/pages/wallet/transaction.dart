@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:raven_back/services/transaction/transaction.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/utils/data.dart';
+import 'package:raven_front/components/components.dart';
 
 class TransactionPage extends StatefulWidget {
   final dynamic data;
@@ -122,10 +123,26 @@ class _TransactionPageState extends State<TransactionPage> {
         ),
       );
 
-  Widget link(String text, String link) => ListTile(
+  Widget link({
+    required String text,
+    required String url,
+    required String description,
+  }) =>
+      ListTile(
         dense: true,
         title: Text(text, style: Theme.of(context).textTheme.bodyText1),
-        onTap: () => launch(link + elementFull(text)),
+        onTap: () => components.message.giveChoices(
+          context,
+          title: 'Open in External App',
+          content: 'Open ${description} in browser?',
+          behaviors: {
+            'Cancel': Navigator.of(context).pop,
+            'Continue': () {
+              Navigator.of(context).pop();
+              launch(url + elementFull(text));
+            },
+          },
+        ),
         onLongPress: () {
           Clipboard.setData(ClipboardData(text: elementFull(text)));
           streams.app.snack
@@ -141,10 +158,18 @@ class _TransactionPageState extends State<TransactionPage> {
                 plain(text, element(text))
             ] +
             [
-              link('ID', 'https://rvnt.cryptoscope.io/tx/?txid='),
+              link(
+                text: 'ID',
+                url: 'https://rvnt.cryptoscope.io/tx/?txid=',
+                description: 'block explorer',
+              ),
               if (transactionMemo != null)
                 transactionMemo!.isIpfs
-                    ? link('Memo/IPFS', 'https://gateway.ipfs.io/ipfs/')
+                    ? link(
+                        text: 'Memo/IPFS',
+                        url: 'https://gateway.ipfs.io/ipfs/',
+                        description: 'ipfs gateway',
+                      )
                     : plain('Memo/IPFS', element('Memo/IPFS')),
             ] +
             (transaction!.note == null || transaction!.note == ''

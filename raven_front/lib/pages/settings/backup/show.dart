@@ -26,6 +26,7 @@ class _BackupSeedState extends State<BackupSeed>
   late AnimationController controller;
   late Animation<double> animation;
   late Animation<double> curve;
+  Offset offset = Offset(0.0, -1.0);
 
   @override
   void initState() {
@@ -69,16 +70,16 @@ class _BackupSeedState extends State<BackupSeed>
               : components.page.form(
                   context,
                   columnWidgets: <Widget>[
-                    inAnimation(instructions),
-                    inAnimation(warning),
-                    inAnimation(words),
+                    animate(instructions),
+                    animate(warning),
+                    animate(words),
                   ],
                   buttons: [submitButton],
                 )));
 
-  Widget inAnimation(child) => SlideTransition(
+  Widget animate(child) => SlideTransition(
       position: Tween<Offset>(
-        begin: const Offset(0.0, -1.0),
+        begin: offset,
         end: Offset.zero,
       ).animate(curve),
       child: FadeTransition(opacity: animation, child: child));
@@ -194,5 +195,15 @@ class _BackupSeedState extends State<BackupSeed>
         enabled: true,
         label: 'Next',
         link: '/security/backupConfirm',
+        onPressed: () async {
+          // change animation...
+          animation = Tween(begin: 1.0, end: 0.0).animate(controller);
+          curve = CurvedAnimation(parent: animation, curve: Curves.easeOut);
+          offset = Offset(0.0, 0.5);
+          controller.reset();
+          controller.forward();
+          // wait the approapriate amount of time for the animation to play
+          await Future.delayed(Duration(milliseconds: 2400));
+        },
       );
 }
