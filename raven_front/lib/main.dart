@@ -114,8 +114,8 @@ class EnterExitRoute extends PageRouteBuilder {
             Animation<double> secondaryAnimation,
           ) =>
               enterPage,
-          transitionDuration: const Duration(milliseconds: 500),
-          reverseTransitionDuration: const Duration(milliseconds: 500),
+          transitionDuration: const Duration(milliseconds: 400),
+          reverseTransitionDuration: const Duration(milliseconds: 400),
           transitionsBuilder: (
             BuildContext context,
             Animation<double> animation,
@@ -139,7 +139,7 @@ class EnterExitRoute extends PageRouteBuilder {
                   child: SlideTransition(
                     position: new Tween<Offset>(
                       begin: Offset.zero,
-                      end: const Offset(0.0, 1.0),
+                      end: const Offset(0.0, 0.5),
                     ).animate(animation),
                     child: exitPage,
                   ),
@@ -148,7 +148,7 @@ class EnterExitRoute extends PageRouteBuilder {
                   opacity: animation,
                   child: SlideTransition(
                     position: new Tween<Offset>(
-                      begin: const Offset(0.0, -1.0),
+                      begin: const Offset(0.0, -0.5),
                       end: Offset.zero,
                     ).animate(animation),
                     child: enterPage,
