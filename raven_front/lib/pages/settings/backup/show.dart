@@ -23,23 +23,28 @@ class _BackupSeedState extends State<BackupSeed>
   TextEditingController existingPassword = TextEditingController();
   FocusNode existingFocus = FocusNode();
   FocusNode showFocus = FocusNode();
-  late AnimationController controller;
-  late Animation<double> animation;
-  late Animation<double> curve;
-  Offset offset = Offset(0.0, -1.0);
+
+  /// from exploring animations - want to return to
+  //late AnimationController controller;
+  //late Animation<double> animation;
+  //late Animation<double> curve;
+  //Offset offset = Offset(0.0, -1.0);
 
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
-        vsync: this, duration: Duration(milliseconds: 2400));
-    animation = Tween(begin: 0.0, end: 1.0).animate(controller);
-    curve = CurvedAnimation(parent: animation, curve: Curves.easeOut);
+
+    /// from exploring animations - want to return to
+    //controller = AnimationController(
+    //    vsync: this, duration: Duration(milliseconds: 2400));
+    //animation = Tween(begin: 0.0, end: 1.0).animate(controller);
+    //curve = CurvedAnimation(parent: animation, curve: Curves.easeOut);
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    /// from exploring animations - want to return to
+    //controller.dispose();
     existingPassword.dispose();
     existingFocus.dispose();
     showFocus.dispose();
@@ -70,19 +75,21 @@ class _BackupSeedState extends State<BackupSeed>
               : components.page.form(
                   context,
                   columnWidgets: <Widget>[
-                    animate(instructions),
-                    animate(warning),
-                    animate(words),
+                    instructions,
+                    warning,
+                    words,
                   ],
                   buttons: [submitButton],
                 )));
 
-  Widget animate(child) => SlideTransition(
-      position: Tween<Offset>(
-        begin: offset,
-        end: Offset.zero,
-      ).animate(curve),
-      child: FadeTransition(opacity: animation, child: child));
+  /// from exploring animations - want to return to
+  /// animate()
+  //Widget animate(child) => SlideTransition(
+  //    position: Tween<Offset>(
+  //      begin: offset,
+  //      end: Offset.zero,
+  //    ).animate(curve),
+  //    child: FadeTransition(opacity: animation, child: child));
 
   Widget get intro => Container(
       height: 48,
@@ -187,7 +194,9 @@ class _BackupSeedState extends State<BackupSeed>
       focusNode: showFocus,
       onPressed: () => setState(() {
             warn = false;
-            controller.forward();
+
+            /// from exploring animations - want to return to
+            //controller.forward();
           }));
 
   Widget get submitButton => components.buttons.actionButton(
@@ -195,15 +204,17 @@ class _BackupSeedState extends State<BackupSeed>
         enabled: true,
         label: 'Next',
         link: '/security/backupConfirm',
-        onPressed: () async {
-          // change animation...
-          animation = Tween(begin: 1.0, end: 0.0).animate(controller);
-          curve = CurvedAnimation(parent: animation, curve: Curves.easeOut);
-          offset = Offset(0.0, 0.5);
-          controller.reset();
-          controller.forward();
-          // wait the approapriate amount of time for the animation to play
-          await Future.delayed(Duration(milliseconds: 2400));
-        },
+
+        /// from exploring animations - want to return to
+        //onPressed: () async {
+        //  // change animation...
+        //  animation = Tween(begin: 1.0, end: 0.0).animate(controller);
+        //  curve = CurvedAnimation(parent: animation, curve: Curves.easeOut);
+        //  offset = Offset(0.0, 0.5);
+        //  controller.reset();
+        //  controller.forward();
+        //  // wait the approapriate amount of time for the animation to play
+        //  await Future.delayed(Duration(milliseconds: 2400));
+        //},
       );
 }
