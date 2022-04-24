@@ -101,6 +101,7 @@ class _ImportState extends State<Import> {
       ),
       child: TextField(
         focusNode: wordsFocus,
+        enableInteractiveSelection: true,
         autocorrect: false,
         controller: words,
         obscureText: !importVisible,
