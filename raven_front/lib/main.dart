@@ -126,12 +126,23 @@ class EnterExitRoute extends PageRouteBuilder {
             color: Colors.white,
             child: Stack(
               children: <Widget>[
-                SlideTransition(
-                  position: new Tween<Offset>(
-                    begin: Offset.zero,
-                    end: const Offset(0.0, 1.0),
-                  ).animate(animation),
-                  child: exitPage,
+                FadeTransition(
+                  opacity: Tween<double>(
+                    begin: 1.0,
+                    end: 0.0,
+                  ).animate(
+                    CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOut,
+                    ),
+                  ),
+                  child: SlideTransition(
+                    position: new Tween<Offset>(
+                      begin: Offset.zero,
+                      end: const Offset(0.0, 1.0),
+                    ).animate(animation),
+                    child: exitPage,
+                  ),
                 ),
                 FadeTransition(
                   opacity: animation,
