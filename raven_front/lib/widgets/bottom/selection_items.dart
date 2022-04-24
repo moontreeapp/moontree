@@ -245,7 +245,7 @@ class SelectionItems {
             SelectionOption.NFT_Asset:
                 MdiIcons.plusCircle, //, color: Color(0xDE000000)),
             SelectionOption.Qualifier:
-                Icons.ac_unit, //, color: Color(0xDE000000)),
+                MdiIcons.pound, //, color: Color(0xDE000000)),
             SelectionOption.Admin:
                 MdiIcons.crownCircle, //, color: Color(0xDE000000)),
             SelectionOption.Sub_Asset:
