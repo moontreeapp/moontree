@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage>
                       child: AllAssetsHome(
                         scrollController: scrollController,
                         appContext: widget.appContext,
-                        placeholderManage: false,
+                        placeholderManage: true,
                         placeholderSwap: true,
                       ),
                     ),
@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage>
                       appContext: widget.appContext,
                       dragController: draggableScrollController,
                       notifier: _notifier,
-                      placeholderManage: false,
+                      placeholderManage: true,
                       placeholderSwap: true,
                     ),
                   ],

@@ -27,7 +27,7 @@ class ButtonComponents {
           onPressed: enabled
               ? (link != null
                   ? () {
-                      onPressed == null ? () {} : onPressed(); // why not both?
+                      onPressed == null ? () {} : onPressed();
                       Navigator.of(components.navigator.routeContext!)
                           .pushNamed(link, arguments: arguments);
                     }
