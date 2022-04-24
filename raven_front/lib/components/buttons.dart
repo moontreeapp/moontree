@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intersperse/src/intersperse_extensions.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
+import '../pages/pages.dart';
+
+import '../main.dart';
 
 class ButtonComponents {
   IconButton back(BuildContext context) => IconButton(
@@ -12,6 +15,7 @@ class ButtonComponents {
     String? label,
     Widget? disabledIcon,
     String? link,
+    @required String? currentLink,
     Map<String, dynamic>? arguments,
     VoidCallback? onPressed,
     VoidCallback? disabledOnPressed,
@@ -26,8 +30,24 @@ class ButtonComponents {
           focusNode: focusNode,
           onPressed: enabled
               ? (link != null
-                  ? () => Navigator.of(components.navigator.routeContext!)
-                      .pushNamed(link, arguments: arguments)
+                  ? () {
+                      try {
+                        final exitWidget =
+                            pages.routes(context)[currentLink]!(context);
+                        Navigator.push(
+                            context,
+                            EnterExitRoute(
+                                exitPage: exitWidget,
+                                enterPage:
+                                    pages.routes(context)[link]!(context)));
+                      } catch (_) {
+                        Navigator.of(components.navigator.routeContext!)
+                            .pushNamed(
+                          link,
+                          arguments: arguments,
+                        );
+                      }
+                    }
                   : onPressed ?? () {})
               : disabledOnPressed ?? () {},
           style: invert

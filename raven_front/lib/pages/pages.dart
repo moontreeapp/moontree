@@ -83,6 +83,7 @@ class pages {
   static Map<String, Widget Function(BuildContext)> routes(
           BuildContext context) =>
       {
+        '/': (context) => Splash(),
         '/splash': (context) => Splash(),
         '/loading': (context) => Loading(),
         '/home': (context) => Home(),
@@ -102,6 +103,7 @@ class pages {
         '/reissue/sub': (context) => ReissueMainSubAsset(),
         '/reissue/restricted': (context) => ReissueRestrictedAsset(),
         '/security/backup': (context) => BackupSeed(),
+        '/security/backupNext': (context) => BackupNext(),
         '/security/backupConfirm': (context) => VerifySeed(),
         '/security/change': (context) => ChangePassword(),
         '/security/resume': (context) => ChangeResume(),
