@@ -30,7 +30,18 @@ class ClientService {
       while (streams.client.client.value == null) {
         await Future.delayed(Duration(milliseconds: 100));
       }
-      x = await callback();
+
+      /// making this two layers deep because we got an error here too...
+      try {
+        x = await callback();
+      } catch (e) {
+        x = await callback();
+        // reconnect on any error, not just server disconnected } on StateError {
+        streams.client.client.add(null);
+        while (streams.client.client.value == null) {
+          await Future.delayed(Duration(milliseconds: 100));
+        }
+      }
     }
     return x;
   }

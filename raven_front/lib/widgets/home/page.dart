@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late List listeners = [];
-  //static const double minExtent = .0736842105263158;
+  static const double minExtentClicked = .065; //.0736842105263158;
   double minExtent = 1.0;
   static const double maxExtent = 1.0;
   static const double initialExtent = maxExtent;
@@ -112,7 +112,7 @@ class _HomePageState extends State<HomePage>
 
   Future<void> flingDown() async {
     setState(() {
-      minExtent = .10;
+      minExtent = minExtentClicked;
     });
     _scrollController!.jumpTo(_scrollController!.position.minScrollExtent);
     await draggableScrollController.animateTo(
