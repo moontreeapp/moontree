@@ -31,17 +31,22 @@ class ButtonComponents {
           onPressed: enabled
               ? (link != null
                   ? () {
-                      Navigator.push(
-                          context,
-                          EnterExitRoute(
-                              exitPage: context.widget,
-                              enterPage:
-                                  pages.routes(context)[link]!(context)));
-                      // Navigator.of(components.navigator.routeContext!)
-                      //     .pushNamed(
-                      //   link,
-                      //   arguments: arguments,
-                      // );
+                      try {
+                        final exitWidget =
+                            pages.routes(context)[currentLink]!(context);
+                        Navigator.push(
+                            context,
+                            EnterExitRoute(
+                                exitPage: exitWidget,
+                                enterPage:
+                                    pages.routes(context)[link]!(context)));
+                      } catch (_) {
+                        Navigator.of(components.navigator.routeContext!)
+                            .pushNamed(
+                          link,
+                          arguments: arguments,
+                        );
+                      }
                     }
                   : onPressed ?? () {})
               : disabledOnPressed ?? () {},

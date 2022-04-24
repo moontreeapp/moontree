@@ -103,6 +103,7 @@ class pages {
         '/reissue/sub': (context) => ReissueMainSubAsset(),
         '/reissue/restricted': (context) => ReissueRestrictedAsset(),
         '/security/backup': (context) => BackupSeed(),
+        '/security/backupNext': (context) => BackupNext(),
         '/security/backupConfirm': (context) => VerifySeed(),
         '/security/change': (context) => ChangePassword(),
         '/security/resume': (context) => ChangeResume(),
