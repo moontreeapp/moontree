@@ -103,6 +103,7 @@ class _LoginState extends State<Login> {
 
   Future submit({bool showFailureMessage = true}) async {
     if (services.password.validate.password(password.text)) {
+      await Future.delayed(Duration(milliseconds: 200));
       FocusScope.of(context).unfocus();
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
       // create ciphers for wallets we have
