@@ -114,34 +114,37 @@ class EnterExitRoute extends PageRouteBuilder {
             Animation<double> secondaryAnimation,
           ) =>
               enterPage,
-              transitionDuration: const Duration(seconds: 1),
-              reverseTransitionDuration: const Duration(seconds: 1),
+          transitionDuration: const Duration(seconds: 4),
+          reverseTransitionDuration: const Duration(seconds: 4),
           transitionsBuilder: (
             BuildContext context,
             Animation<double> animation,
             Animation<double> secondaryAnimation,
             Widget child,
           ) =>
-              Stack(
-            children: <Widget>[
-              FadeTransition(
-                opacity: animation,
-                child: SlideTransition(
+              Container(
+            color: Colors.white,
+            child: Stack(
+              children: <Widget>[
+                SlideTransition(
                   position: new Tween<Offset>(
                     begin: Offset.zero,
                     end: const Offset(0.0, 1.0),
                   ).animate(animation),
                   child: exitPage,
                 ),
-              ),
-              SlideTransition(
-                position: new Tween<Offset>(
-                  begin: const Offset(0.0, -1.0),
-                  end: Offset.zero,
-                ).animate(animation),
-                child: enterPage,
-              )
-            ],
+                FadeTransition(
+                  opacity: animation,
+                  child: SlideTransition(
+                    position: new Tween<Offset>(
+                      begin: const Offset(0.0, -1.0),
+                      end: Offset.zero,
+                    ).animate(animation),
+                    child: enterPage,
+                  ),
+                )
+              ],
+            ),
           ),
         );
 }
