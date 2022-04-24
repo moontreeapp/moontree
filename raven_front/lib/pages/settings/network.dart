@@ -84,11 +84,6 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
                     EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
                 child: serverTextField)),
         SliverToBoxAdapter(
-            child: Padding(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
-                child: debug)),
-        SliverToBoxAdapter(
             child: Container(height: MediaQuery.of(context).size.height / 2)),
         SliverFillRemaining(
             hasScrollBody: false,
@@ -152,8 +147,6 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
           setState(() {});
         },
       );
-
-  Widget get debug => Text(waiters.client.additionalTimeout.toString());
 
   bool get matches =>
       serverAddress.text ==
