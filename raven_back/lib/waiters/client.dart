@@ -64,9 +64,12 @@ class RavenClientWaiter extends Waiter {
                   additionalTimeout = originalAdditionalTimeout;
                 } else {
                   additionalTimeout += originalAdditionalTimeout;
-                  periodicTimer!.pause();
-                  await Future.delayed(additionalTimeout);
-                  periodicTimer!.resume();
+                  //periodicTimer!.pause();
+                  //await Future.delayed(additionalTimeout);
+                  //periodicTimer!.resume();
+                  while (!streams.app.active.value) {
+                    await Future.delayed(Duration(seconds: 1));
+                  }
                 }
               }
             },
@@ -88,7 +91,7 @@ class RavenClientWaiter extends Waiter {
         bool active = tuple.item2;
         /*var msg = 'Establishing Connection...';*/
         if (active &&
-            (streams.client.client.value == null &&
+            (streams.client.client.value == null ||
                 connected == ConnectionStatus.disconnected)) {
           additionalTimeout = Duration(seconds: 1);
           streams.client.client.add(null);
