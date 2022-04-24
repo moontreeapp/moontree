@@ -146,7 +146,6 @@ class _PageTitleState extends State<PageTitle>
               });
             },
             child: FadeTransition(
-                // why does this make it disappear completely?
                 opacity: animation,
                 child: Text(x,
                     style: Theme.of(context).textTheme.headline2!.copyWith(

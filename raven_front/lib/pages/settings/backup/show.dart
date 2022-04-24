@@ -14,7 +14,8 @@ class BackupSeed extends StatefulWidget {
   _BackupSeedState createState() => _BackupSeedState();
 }
 
-class _BackupSeedState extends State<BackupSeed> {
+class _BackupSeedState extends State<BackupSeed>
+    with SingleTickerProviderStateMixin {
   bool validated = true;
   bool warn = true;
   late double buttonWidth;
@@ -22,9 +23,22 @@ class _BackupSeedState extends State<BackupSeed> {
   TextEditingController existingPassword = TextEditingController();
   FocusNode existingFocus = FocusNode();
   FocusNode showFocus = FocusNode();
+  late AnimationController controller;
+  late Animation<double> animation;
+  late Animation<double> curve;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 2400));
+    animation = Tween(begin: 0.0, end: 1.0).animate(controller);
+    curve = CurvedAnimation(parent: animation, curve: Curves.easeOut);
+  }
 
   @override
   void dispose() {
+    controller.dispose();
     existingPassword.dispose();
     existingFocus.dispose();
     showFocus.dispose();
@@ -35,6 +49,7 @@ class _BackupSeedState extends State<BackupSeed> {
   Widget build(BuildContext context) {
     buttonWidth = (MediaQuery.of(context).size.width - (17 + 17 + 16 + 16)) / 3;
     secret = Current.wallet.secret(Current.wallet.cipher!).split(' ');
+    controller.forward();
     return body();
   }
 
@@ -55,9 +70,27 @@ class _BackupSeedState extends State<BackupSeed> {
               : components.page.form(
                   context,
                   columnWidgets: <Widget>[
-                    instructions,
-                    warning,
-                    words,
+                    SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0.0, -1.0),
+                          end: Offset.zero,
+                        ).animate(curve),
+                        child: FadeTransition(
+                            opacity: animation, child: instructions)),
+                    SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0.0, -1.0),
+                          end: Offset.zero,
+                        ).animate(curve),
+                        child:
+                            FadeTransition(opacity: animation, child: warning)),
+                    SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0.0, -1.0),
+                          end: Offset.zero,
+                        ).animate(curve),
+                        child:
+                            FadeTransition(opacity: animation, child: words)),
                   ],
                   buttons: [submitButton],
                 )));
