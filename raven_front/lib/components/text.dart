@@ -22,7 +22,7 @@ class TextComponents {
     bool asUSD = false,
   }) {
     symbol = getSymbol(symbol: symbol, security: security);
-    if (symbol == 'RVN') {
+    if (symbol == res.securities.RVN.symbol) {
       var asAmount = utils.satToAmount(sats);
       return asUSD
           ? rvnUSD(asAmount)
@@ -45,7 +45,7 @@ class TextComponents {
     String? symbol,
   }) {
     symbol = getSymbol(symbol: symbol, security: security);
-    if (symbol == 'RVN') {
+    if (symbol == res.securities.RVN.symbol) {
       return res.securities.RVN;
     }
     if (symbol == 'USD') {
@@ -62,7 +62,7 @@ class TextComponents {
     String? symbol,
   }) {
     symbol = getSymbol(symbol: symbol, security: security);
-    if (symbol == 'RVN') {
+    if (symbol == res.securities.RVN.symbol) {
       return null;
     }
     security = security ??
@@ -80,6 +80,6 @@ class TextComponents {
         symbol ??
         (() => throw OneOfMultipleMissing(
             'security or symbol required to identify record.'))();
-    return security?.symbol ?? symbol ?? 'RVN';
+    return security?.symbol ?? symbol ?? res.securities.RVN.symbol;
   }
 }

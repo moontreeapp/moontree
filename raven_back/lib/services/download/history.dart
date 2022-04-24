@@ -6,74 +6,102 @@ import 'package:raven_back/streams/wallet.dart';
 import 'package:raven_back/raven_back.dart';
 
 class HistoryService {
-  int downloadedCount = 0;
-  final Set<String> downloadedOrDownloadQueried = {};
-  final Set<Address> addresses = {};
+  // These are all modified from a bunch of places so it seems smart to have
+  // A lock on them, unsure if nessissary
+  final Set<String> _downloadQueried = {};
+  final _downloadQueriedLock = ReaderWriterLock();
+  int _downloaded = 0;
+  int _new_length = 0;
+  final Set<Address> _addresses = {};
+  final _addressesLock = ReaderWriterLock();
+  final Map<Address, String?> _statusesToSave = {};
+  final _statusesLock = ReaderWriterLock();
   final Map<String, Set<Set<String>>> _txsListsByWalletExposureKeys = {};
   final _txsListsByWalletExposureKeysLock = ReaderWriterLock();
 
-  Future<bool?> getHistories(Address address) async {
-    void updateCounts(LeaderWallet leader) {
-      leader.removeUnused(address.hdIndex, address.exposure);
-      services.wallet.leader
-          .updateIndexOf(leader, address.exposure, used: address.hdIndex);
-    }
+  var _saveImmediately = false;
 
-    void updateCache(LeaderWallet leader) {
-      leader.addUnused(address.hdIndex, address.exposure);
-    }
+  List<Iterable<String>> unspentsTxsFetchFirst = [];
 
+  Future<bool?> getHistories(Address address, String? status) async {
     var client = streams.client.client.value;
     if (client == null) {
       return false;
     }
+    await _statusesLock.write(() => _statusesToSave[address] = status);
     var histories = await client.getHistory(address.id);
-    addresses.add(address);
+    await _addressesLock.write(() {
+      _addresses.add(address);
+    });
     if (address.wallet is LeaderWallet) {
       if (histories.isNotEmpty) {
-        updateCounts(address.wallet as LeaderWallet);
+        services.wallet.leader
+            .updateCounts(address, address.wallet as LeaderWallet);
       } else {
-        updateCache(address.wallet as LeaderWallet);
+        services.wallet.leader
+            .updateCache(address, address.wallet as LeaderWallet);
       }
       if (address.hdIndex >=
           services.wallet.leader
               .getIndexOf(address.wallet as LeaderWallet, address.exposure)
               .saved) {
+        /*
+        print(
+            'Checked address ${address.address} is >= saved address of that exposure');
+        */
         streams.wallet.deriveAddress.add(DeriveLeaderAddress(
             leader: address.wallet as LeaderWallet,
             exposure: address.exposure));
       }
     }
     await _remember(address, histories.map((history) => history.txHash));
-    if (addresses.length ==
-            services.wallet.leader.indexRegistry.values
-                .map((e) => e.saved)
-                .sum() /*plus single wallets*2 */
-        &&
-        () {
-          for (var leader in res.wallets.leaders) {
-            for (var exposure in [
-              NodeExposure.Internal,
-              NodeExposure.External
-            ]) {
-              if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
-                return false;
-              }
-            }
-          }
-          return true;
-        }()) {
-      await services.balance.recalculateAllBalances();
-      print('getting Transactions');
+    final addr_length = await _addressesLock.read(() {
+      return _addresses.length;
+    });
 
-      var txsToDownload = <String>[];
-      await _txsListsByWalletExposureKeysLock.enterRead();
-      for (var key in _txsListsByWalletExposureKeys.keys) {
-        for (var txsList in _txsListsByWalletExposureKeys[key]!) {
-          txsToDownload.addAll(txsList);
+    /*
+    print(
+        'Gotten $addr_length vs have ${res.wallets.primaryIndex.getOne(res.settings.currentWalletId)!.addresses.length}');
+    */
+
+    final current =
+        res.wallets.primaryIndex.getOne(res.settings.currentWalletId)!;
+    if (_saveImmediately ||
+        (addr_length ==
+                (current is LeaderWallet ? current.addresses.length : 1) &&
+            () {
+              if (current is LeaderWallet) {
+                for (var exposure in [
+                  NodeExposure.Internal,
+                  NodeExposure.External
+                ]) {
+                  if (!services.wallet.leader.gapSatisfied(current, exposure)) {
+                    print('Exposure $exposure is not satisfied');
+                    return false;
+                  }
+                }
+              }
+              return true;
+            }())) {
+      _saveImmediately = true;
+      print('getting Transactions');
+      //streams.wallet.scripthashCallback.add(null); // make home listen to balances instead?
+      var txsToDownload = await _txsListsByWalletExposureKeysLock.read(() {
+        var txsToDownload = <String>[];
+        for (var key in _txsListsByWalletExposureKeys.keys) {
+          for (var txsList in _txsListsByWalletExposureKeys[key]!) {
+            txsToDownload.addAll(txsList);
+          }
         }
+        return txsToDownload;
+      });
+
+      // Get unspents first
+      // Unspents we don't have implies history we dont have implies this gets called
+      while (unspentsTxsFetchFirst.isNotEmpty) {
+        //print('Getting transactions from unspents');
+        await getTransactions(unspentsTxsFetchFirst.removeAt(0));
       }
-      await _txsListsByWalletExposureKeysLock.exitRead();
 
       // Get transactions 10 at a time
       // Arbitrary number
@@ -84,15 +112,26 @@ class HistoryService {
         txsToDownload = txsToDownload.sublist(chunk_size);
       }
 
+      final statuses = <Address, String?>{};
+      await _statusesLock.write(() {
+        for (final address in _statusesToSave.keys) {
+          statuses[address] = _statusesToSave[address];
+        }
+        _statusesToSave.clear();
+      });
+
+      for (final address in statuses.keys) {
+        await res.statuses.save(Status(
+            linkId: address.id,
+            statusType: StatusType.address,
+            status: statuses[address]));
+      }
+
       // don't clear because if we get updates we want to pull tx
       //addresses.clear();
-      return await produceAddressOrBalance();
+      return await _produceAddressOrBalance();
     }
     return null;
-  }
-
-  bool transactionsDownloaded() {
-    return downloadedCount == downloadedOrDownloadQueried.length;
   }
 
   String produceKey(Address address) =>
@@ -100,16 +139,15 @@ class HistoryService {
 
   Future<void> _remember(Address address, Iterable<String> txs) async {
     var key = produceKey(address);
-
-    await _txsListsByWalletExposureKeysLock.enterWrite();
-    if (!_txsListsByWalletExposureKeys.containsKey(key)) {
-      _txsListsByWalletExposureKeys[key] = <Set<String>>{};
-    }
-    _txsListsByWalletExposureKeys[key]!.add(txs.toSet());
-    await _txsListsByWalletExposureKeysLock.exitWrite();
+    await _txsListsByWalletExposureKeysLock.write(() {
+      if (!_txsListsByWalletExposureKeys.containsKey(key)) {
+        _txsListsByWalletExposureKeys[key] = <Set<String>>{};
+      }
+      _txsListsByWalletExposureKeys[key]!.add(txs.toSet());
+    });
   }
 
-  Future<bool> produceAddressOrBalance() async {
+  Future<bool> _produceAddressOrBalance() async {
     var client = streams.client.client.value;
     if (client == null) {
       return false;
@@ -151,7 +189,6 @@ class HistoryService {
       ],
       client,
     );
-    await services.balance.recalculateAllBalances();
   }
 
   /// when an address status change: make our historic tx data match blockchain
@@ -251,29 +288,32 @@ class HistoryService {
     return Tuple3(value, security ?? res.securities.RVN, asset);
   }
 
-  Future<Null>? getTransaction(
+  Future<void>? getTransaction(
     String transactionId, {
     bool saveVin = true,
-  }) {
+  }) async {
     var client = streams.client.client.value;
     if (client == null) {
-      return null;
+      return;
     }
     // not already downloaded?
-    if (!downloadedOrDownloadQueried.contains(transactionId)) {
-      downloadedOrDownloadQueried.add(transactionId);
-      var ret = client.getTransaction(transactionId).then((tx) async {
-        await saveTransaction(tx, client, saveVin: saveVin);
+    final downloadNewTx = await _downloadQueriedLock.read(() {
+      !_downloadQueried.contains(transactionId);
+    });
+    if (downloadNewTx) {
+      await _downloadQueriedLock.write(() {
+        _downloadQueried.add(transactionId);
+        _new_length = _downloadQueried.length;
       });
-      downloadedCount += 1;
-      return ret;
+      final tx = await client.getTransaction(transactionId);
+      await saveTransaction(tx, client, saveVin: saveVin);
+      _downloaded += 1;
     } else {
       print('skipping: $transactionId');
     }
-    return null;
   }
 
-  Future<Null>? getTransactions(
+  Future<void>? getTransactions(
     Iterable<String> transactionIds, {
     bool saveVin = true,
   }) async {
@@ -283,10 +323,12 @@ class HistoryService {
     }
     // filter out already downloaded
     transactionIds = transactionIds
-        .where((transactionId) =>
-            !downloadedOrDownloadQueried.contains(transactionId))
+        .where((transactionId) => !_downloadQueried.contains(transactionId))
         .toSet();
-    downloadedOrDownloadQueried.addAll(transactionIds);
+    await _downloadQueriedLock.write(() {
+      _downloadQueried.addAll(transactionIds);
+      _new_length = _downloadQueried.length;
+    });
     var txs = <Tx>[];
     try {
       /// kinda a hack https://github.com/moontreeapp/moontree/issues/444#issuecomment-1101667621
@@ -309,8 +351,7 @@ class HistoryService {
       client,
       saveVin: saveVin,
     );
-    downloadedCount += transactionIds.length;
-    return null;
+    _downloaded += transactionIds.length;
   }
 
   Future<List<Set>> saveTransaction(
@@ -378,4 +419,26 @@ class HistoryService {
     }
     return [{}];
   }
+
+  Future<void> addAddressToSkipHistory(Address address) async {
+    final wallet = res.wallets.primaryIndex
+        .getOne(res.settings.currentWalletId)!
+        .addresses;
+    final addressesNeeded =
+        wallet is LeaderWallet ? (wallet as LeaderWallet).addresses.length : 1;
+    await _addressesLock.write(() {
+      _addresses.add(address);
+      if (_addresses.length >= addressesNeeded) _saveImmediately = true;
+    });
+  }
+
+  Future<void> clearDownloadState() async {
+    await _downloadQueriedLock.write(() {
+      _downloadQueried.clear();
+      _downloaded = 0;
+      _new_length = 0;
+    });
+  }
+
+  bool get downloads_complete => _downloaded == _new_length;
 }

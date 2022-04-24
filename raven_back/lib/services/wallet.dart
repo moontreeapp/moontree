@@ -117,8 +117,20 @@ class WalletService {
     throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
   }
 
+  String getEmptyAddress(Wallet wallet, {bool random = false}) {
+    if (wallet is LeaderWallet) {
+      return leader.getNextEmptyAddress(wallet,
+          exposure: NodeExposure.External, random: random);
+    }
+    if (wallet is SingleWallet) {
+      return wallet.addresses.first.address;
+    }
+    throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
+  }
+
   WalletBase getEmptyWallet(Wallet wallet) {
     if (wallet is LeaderWallet) {
+      // here we could use the cache list on wallet.
       return leader.getNextEmptyWallet(wallet, exposure: NodeExposure.External);
     }
     if (wallet is SingleWallet) {

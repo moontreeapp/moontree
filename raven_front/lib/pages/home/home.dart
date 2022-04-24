@@ -39,6 +39,7 @@ class _HomeState extends State<Home> {
       if (Current.wallet is LeaderWallet &&
           thresholdTrigger == ThresholdTrigger.backup &&
           !(Current.wallet as LeaderWallet).backedUp) {
+        return;
         streams.app.xlead.add(true);
         Navigator.of(components.navigator.routeContext!)
             .pushNamed('/security/backup');
@@ -59,6 +60,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    print('addresses ${Current.wallet.addresses.length}');
     return HomePage(appContext: appContext);
   }
 }

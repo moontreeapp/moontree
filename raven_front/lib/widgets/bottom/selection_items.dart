@@ -295,7 +295,7 @@ class SelectionItems {
         ));
       },
       leading: components.icons.assetAvatar(
-        name == 'Ravencoin' ? 'RVN' : name,
+        name == 'Ravencoin' ? res.securities.RVN.symbol : name,
         height: 24,
         width: 24,
       ),
@@ -499,9 +499,10 @@ class SelectionItems {
         builder: (BuildContext context) {
           DraggableScrollableController draggableScrollController =
               DraggableScrollableController();
-          var minExtent = min((items.length * 52 + 16).relative(context), 0.5);
+          var minExtent =
+              min((items.length * 52 + 16).ofMediaHeight(context), 0.5);
           var initialExtent = minExtent;
-          var maxExtent = (items.length * 52 + 16).relative(context);
+          var maxExtent = (items.length * 52 + 16).ofMediaHeight(context);
           maxExtent = min(1.0, max(minExtent, maxExtent));
           return DraggableScrollableSheet(
             controller: draggableScrollController,

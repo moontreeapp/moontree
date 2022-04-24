@@ -7,12 +7,14 @@ class FrontCurve extends StatefulWidget {
   final BorderRadius frontLayerBorderRadius;
   final List<BoxShadow> frontLayerBoxShadow;
   final bool fuzzyTop;
+  final Color? color;
 
   const FrontCurve({
     Key? key,
     this.child,
     this.height,
     this.alignment,
+    this.color,
     this.fuzzyTop = true,
     this.frontLayerBorderRadius = const BorderRadius.only(
       topLeft: Radius.circular(8),
@@ -50,7 +52,7 @@ class _FrontCurveState extends State<FrontCurve> {
         decoration: BoxDecoration(
             borderRadius: widget.frontLayerBorderRadius,
             boxShadow: widget.frontLayerBoxShadow,
-            color: Colors.white),
+            color: widget.color ?? Colors.white),
         child: widget.fuzzyTop ? fuzzy() : widget.child);
   }
 
@@ -60,7 +62,7 @@ class _FrontCurveState extends State<FrontCurve> {
             child: Container(
                 height: 8,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: widget.color ?? Colors.white,
                   borderRadius: widget.frontLayerBorderRadius,
                   gradient: LinearGradient(
                     begin: Alignment.bottomCenter,

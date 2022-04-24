@@ -70,7 +70,7 @@ class Balance with EquatableMixin {
       '$walletId:${security.id}';
 
   int get value {
-    return confirmed; //+ unconfirmed;
+    return confirmed + unconfirmed;
   }
 
   double get rvn {
@@ -104,7 +104,7 @@ class BalanceUSD {
   BalanceUSD({required this.confirmed, required this.unconfirmed});
 
   double get value {
-    return confirmed /*+ unconfirmed*/;
+    return confirmed + unconfirmed;
   }
 
   String get valueUSD {

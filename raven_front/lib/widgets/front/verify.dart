@@ -18,7 +18,7 @@ class VerifyPassword extends StatefulWidget {
 }
 
 class _VerifyPasswordState extends State<VerifyPassword> {
-  var existingPassword = TextEditingController();
+  TextEditingController existingPassword = TextEditingController();
   bool existingPasswordVisible = false;
   FocusNode existingFocus = FocusNode();
   FocusNode submitFocus = FocusNode();
@@ -45,43 +45,19 @@ class _VerifyPasswordState extends State<VerifyPassword> {
             child: components.page.form(
               context,
               columnWidgets: <Widget>[
-                Container(height: (MediaQuery.of(context).size.height) / 6),
-                Center(
-                    child: Text(
-                        'Please verify your password\nto proceed' +
-                            (widget.suffix != null ? ' ' + widget.suffix! : ''),
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyText1)),
-                SizedBox(height: 8),
+                Container(height: (MediaQuery.of(context).size.height) / 3),
+                //Center(
+                //    child: Text(
+                //        'Please verify your password\nto proceed' +
+                //            (widget.suffix != null ? ' ' + widget.suffix! : ''),
+                //        textAlign: TextAlign.center,
+                //        style: Theme.of(context).textTheme.bodyText1)),
+                //SizedBox(height: 8),
                 existingPasswordField,
               ],
               buttons: [submitButton],
             ),
           )));
-
-  Widget body() => CustomScrollView(slivers: <Widget>[
-        SliverToBoxAdapter(
-          child: Container(height: (MediaQuery.of(context).size.height) / 3),
-        ),
-        SliverToBoxAdapter(
-          child: Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
-              height: 70,
-              child: existingPasswordField),
-        ),
-        SliverFillRemaining(
-            hasScrollBody: false,
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(height: 100),
-                  KeyboardHidesWidget(
-                      child: components.containers.navBar(context,
-                          child: Row(children: [submitButton]))),
-                ])),
-      ]);
 
   Widget get existingPasswordField => TextField(
         focusNode: existingFocus,

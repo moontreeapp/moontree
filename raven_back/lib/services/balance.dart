@@ -63,8 +63,8 @@ class BalanceService {
       await res.balances.save(Balance(
           walletId: res.wallets.currentWallet.id,
           security: securities.first,
-          confirmed: await services.download.unspents.total(key),
-          unconfirmed: 0));
+          confirmed: await services.download.unspents.totalConfirmed(key),
+          unconfirmed: await services.download.unspents.totalUnconfirmed(key)));
     }
   }
 
@@ -78,9 +78,10 @@ class BalanceService {
   Future recalculateRVNBalance() async => await res.balances.save(Balance(
       walletId: res.wallets.currentWallet.id,
       security: res.securities.RVN,
-      confirmed:
-          await services.download.unspents.total(res.securities.RVN.symbol),
-      unconfirmed: 0));
+      confirmed: await services.download.unspents
+          .totalConfirmed(res.securities.RVN.symbol),
+      unconfirmed: await services.download.unspents
+          .totalUnconfirmed(res.securities.RVN.symbol)));
 
   /// Transaction Logic ///////////////////////////////////////////////////////
 
@@ -99,7 +100,6 @@ class BalanceService {
       var unspent = unspents[randomIndex];
       unspents.removeAt(randomIndex);
       gathered += unspent.value;
-      // TODO: This can be null.
       collection.add(res.vouts.byTransactionPosition
           .getOne(unspent.txHash, unspent.txPos)!);
     }
@@ -147,3 +147,52 @@ class BalanceService {
     return balancesBySecurity.values.toList();
   }
 }
+/*
+class TrimUnspent with EquatableMixin {
+  String transactionId;
+  int position;
+  int rvnValue;
+  int assetValue;
+  Address address;
+  String lockingScript;
+
+  TrimUnspent({
+    required this.transactionId,
+    required this.position,
+    required this.rvnValue,
+    required this.assetValue,
+    required this.address,
+    required this.lockingScript,
+  });
+
+  factory TrimUnspent.fromScripthashUnspent(ScripthashUnspent given) {
+    var isRVN = given.symbol == null ||
+        given.symbol == '' ||
+        given.symbol == 'RVN' ||
+        given.symbol == 'Ravencoin';
+    return TrimUnspent(
+      transactionId: given.txHash,
+      position: given.txPos,
+      rvnValue: isRVN ? given.value : 0,
+      assetValue: isRVN ? 0 : given.value,
+      address: ,
+      lockingScript: '',
+    );
+  }
+
+  @override
+  List<Object> get props => [
+        transactionId,
+        position,
+        rvnValue,
+        assetValue,
+      ];
+
+  @override
+  String toString() {
+    return 'TrimUnspent(transactionId: $transactionId, position: $position, rvnValue: $rvnValue, assetValue: $assetValue)';
+  }
+
+  bool get isAsset => assetValue > rvnValue;
+}
+*/

@@ -68,7 +68,9 @@ class _ReceiveState extends State<Receive> {
   @override
   void initState() {
     super.initState();
+    //var s = Stopwatch()..start();
     requestMessage.addListener(_printLatestValue);
+    //print('init: ${s.elapsed}');
   }
 
   @override
@@ -92,6 +94,7 @@ class _ReceiveState extends State<Receive> {
 
   @override
   Widget build(BuildContext context) {
+    //var s = Stopwatch()..start();
     username =
         res.settings.primaryIndex.getOne(SettingName.User_Name)?.value ?? '';
     data = populateData(context, data);
@@ -100,7 +103,11 @@ class _ReceiveState extends State<Receive> {
             ? data['symbol']
             : ''
         : requestMessage.text;
-    address = services.wallet.getEmptyWallet(Current.wallet).address!;
+    try {
+      address = services.wallet.getEmptyAddress(Current.wallet, random: true);
+    } catch (e) {
+      address = services.wallet.getEmptyWallet(Current.wallet).address!;
+    }
     uri = uri == '' ? address : uri;
     //requestMessage.selection =
     //    TextSelection.collapsed(offset: requestMessage.text.length);
@@ -108,6 +115,7 @@ class _ReceiveState extends State<Receive> {
       _makeURI(refresh: false);
     }
     double height = MediaQuery.of(context).size.height - 56;
+    //print('prebuild: ${s.elapsed}');
     return BackdropLayers(
         back: BlankBack(),
         front: FrontCurve(

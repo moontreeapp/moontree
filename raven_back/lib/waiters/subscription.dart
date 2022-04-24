@@ -20,6 +20,7 @@ class SubscriptionWaiter extends Waiter {
       listener.cancel();
     }
     services.client.subscribe.subscriptionHandles.clear();
-    services.download.history.downloadedOrDownloadQueried.clear();
+    services.download.history.clearDownloadState();
+    services.download.unspents.clearData();
   }
 }

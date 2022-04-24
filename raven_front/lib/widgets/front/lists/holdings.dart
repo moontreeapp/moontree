@@ -7,7 +7,11 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/spend.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
+import 'package:raven_front/theme/colors.dart';
 import 'package:raven_front/widgets/widgets.dart';
+import 'package:shimmer/shimmer.dart';
+
+final rvn = res.securities.RVN.symbol;
 
 class HoldingList extends StatefulWidget {
   final Iterable<Balance>? holdings;
@@ -25,11 +29,14 @@ class HoldingList extends StatefulWidget {
 
 class _HoldingList extends State<HoldingList> {
   List<StreamSubscription> listeners = [];
+  static bool _hideList = true;
+  static bool _balanceWasEmpty = false;
   late List<AssetHolding> holdings;
   int holdingCount = 1;
   bool showUSD = false;
   bool showPath = false;
   Rate? rateUSD;
+  Set<Balance> balances = {};
 
   @override
   void initState() {
@@ -43,26 +50,44 @@ class _HoldingList extends State<HoldingList> {
         });
       }
     }));
-    listeners.add(
-        res.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
-      // if vouts in our account has changed...
-      if (batchedChanges
-          .where(
-              (change) => change.data.address?.wallet?.id == Current.walletId)
-          .isNotEmpty) {
-        setState(() {});
+    //listeners.add(
+    //    res.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
+    //  // if vouts in our account has changed...
+    //  if (batchedChanges
+    //      .where(
+    //          (change) => change.data.address?.wallet?.id == Current.walletId)
+    //      .isNotEmpty) {
+    //    setState(() {});
+    //  }
+    //}));
+    /// don't need to pull rates to this page
+    //listeners.add(res.rates.batchedChanges.listen((batchedChanges) {
+    //  // ignore: todo
+    //  // TODO: should probably include any assets that are in the holding of the main account too...
+    //  var changes = batchedChanges.where((change) =>
+    //      change.data.base == res.securities.RVN &&
+    //      change.data.quote == res.securities.USD);
+    //  if (changes.isNotEmpty)
+    //    setState(() {
+    //      rateUSD = changes.first.data;
+    //    });
+    //}));
+    /// lets try watching balances instead
+    listeners.add(streams.wallet.unspentsCallback.listen((value) async {
+      if (services.download.unspents.scripthashesChecked <
+          Current.wallet.addresses.length) {
+        return;
       }
+      setState(() {});
     }));
-    listeners.add(res.rates.batchedChanges.listen((batchedChanges) {
-      // ignore: todo
-      // TODO: should probably include any assets that are in the holding of the main account too...
-      var changes = batchedChanges.where((change) =>
-          change.data.base == res.securities.RVN &&
-          change.data.quote == res.securities.USD);
-      if (changes.isNotEmpty)
+
+    listeners.add(res.balances.changes.listen((Change<Balance> change) {
+      var interimBalances = res.balances.data.toSet();
+      if (balances != interimBalances) {
         setState(() {
-          rateUSD = changes.first.data;
+          balances = interimBalances;
         });
+      }
     }));
   }
 
@@ -95,7 +120,6 @@ class _HoldingList extends State<HoldingList> {
 
   Future refresh() async {
     await services.rate.saveRate();
-    await services.balance.recalculateAllBalances();
     setState(() {});
     // showing snackbar
     //_scaffoldKey.currentState.showSnackBar(
@@ -107,21 +131,44 @@ class _HoldingList extends State<HoldingList> {
 
   @override
   Widget build(BuildContext context) {
-    holdings = utils.assetHoldings(widget.holdings ?? Current.holdings);
-    return holdings.isEmpty && res.vouts.data.isEmpty // <-- on front tab...
+    if (!_balanceWasEmpty) {
+      _balanceWasEmpty = (widget.holdings ?? Current.holdings).isEmpty;
+    }
+
+    holdings = utils.assetHoldings(widget.holdings ??
+        services.download.unspents.unspentBalances
+            .where((balance) => balance.walletId == Current.walletId));
+
+    if (_hideList) {
+      // If new wallet, let assets pop up as we get them (can't figure out how to hide this until we're done. fix isGapSatisfied?)
+      // Otherwise hide until our checked scripthashes are >= our current wallets address count
+      _hideList = _balanceWasEmpty
+          ? (Current.wallet is LeaderWallet
+              ? services.wallet.leader.gapSatisfied(
+                      Current.wallet as LeaderWallet, NodeExposure.External) &&
+                  services.wallet.leader.gapSatisfied(
+                      Current.wallet as LeaderWallet, NodeExposure.Internal) &&
+                  services.download.unspents.scripthashesChecked <
+                      Current.wallet.addresses.length
+              : false)
+          : services.download.unspents.scripthashesChecked <
+              Current.wallet.addresses.length;
+    }
+
+    /*
+    print(
+        '${services.download.unspents.scripthashesChecked} vs ${Current.wallet.addresses.length}');
+    print('was empty: $_balanceWasEmpty');
+    */
+
+    return _hideList
         ? components.empty.getAssetsPlaceholder(context,
             scrollController: widget.scrollController,
-            count: holdingCount,
-            holding: true) //Scroller(
-        //  controller: widget.scrollController,
-        //  child: components.empty.holdings(context))
-        : holdings.isEmpty
-            ? components.empty.getAssetsPlaceholder(context,
-                scrollController: widget.scrollController,
-                count: holdingCount,
-                holding: true)
-            : //RefreshIndicator( child:
-            _holdingsView(context);
+            count: _balanceWasEmpty ? holdingCount : Current.holdings.length,
+            holding: true)
+        : //RefreshIndicator( child:
+        _holdingsView(context);
+
     //  onRefresh: () => refresh(),
     //);
   }
@@ -148,7 +195,7 @@ class _HoldingList extends State<HoldingList> {
         leading: leadingIcon(holding),
         title: title(holding), /*trailing: Icon(Icons.chevron_right_rounded)*/
       );
-      if (holding.symbol == 'RVN') {
+      if (holding.symbol == rvn) {
         rvnHolding.add(thisHolding);
         rvnHolding.add(Divider(height: 1));
 
@@ -174,15 +221,22 @@ class _HoldingList extends State<HoldingList> {
       }
     }
     if (rvnHolding.isEmpty) {
-      rvnHolding.add(ListTile(
-          onTap: () {},
-          title: Text('RVN', style: Theme.of(context).textTheme.bodyText1),
-          trailing: Text(showUSD ? '\$ 0' : '0',
-              style: Theme.of(context).textTheme.bodyText2),
-          leading: Container(
-              height: 50,
-              width: 50,
-              child: components.icons.assetAvatar('RVN'))));
+      rvnHolding.add(Shimmer.fromColors(
+              baseColor: AppColors.primaries[0],
+              highlightColor: Colors.white,
+              child: components.empty.assetPlaceholder(context, holding: true))
+          //ListTile(
+          ////dense: true,
+          //contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+          //onTap: () {},
+          //leading: Container(
+          //    height: 50,
+          //    width: 50,
+          //    child: components.icons.assetAvatar(res.securities.RVN.symbol)),
+          //title: Text(res.securities.RVN.symbol,
+          //    style: Theme.of(context).textTheme.bodyText1),)
+          );
+      rvnHolding.add(Divider(height: 1));
       //rvnHolding.add(ListTile(
       //    onTap: () {},
       //    title: Text('+ Create Asset (not enough RVN)',
@@ -337,8 +391,7 @@ class _HoldingList extends State<HoldingList> {
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,
-                child: Text(
-                    holding.symbol == 'RVN' ? 'Ravencoin' : holding.last,
+                child: Text(holding.symbol == rvn ? 'Ravencoin' : holding.last,
                     style: Theme.of(context).textTheme.bodyText1),
               ))
           /* //this feature can show the path 

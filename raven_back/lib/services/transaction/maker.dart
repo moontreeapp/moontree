@@ -339,7 +339,9 @@ class SendEstimate with ToStringMixin {
         'creation',
       ];
 
-  int get total => (creation ? 0 : amount) + fees + extraFees;
+  int get total => security == null || security == res.securities.RVN
+      ? (creation ? 0 : amount) + fees + extraFees
+      : fees + extraFees;
   int get utxoTotal => utxos.fold(
       0, (int total, vout) => total + vout.securityValue(security: security));
 
@@ -362,6 +364,9 @@ class TransactionMaker {
     SendRequest sendRequest,
   ) async {
     var tuple;
+    print('sendRequest.assetMemo: ${sendRequest.assetMemo}');
+    print(
+        'sendRequest.assetMemo?.base58Decode: ${sendRequest.assetMemo?.base58Decode}');
     var estimate = SendEstimate(
       sendRequest.sendAmountAsSats,
       security: sendRequest.security,
@@ -370,25 +375,23 @@ class TransactionMaker {
     );
 
     tuple = (sendRequest.sendAll ||
-            double.parse(sendRequest.visibleAmount) == sendRequest.holding)
-        ? (sendRequest.security == null
-            ? transactionSendAllRVN(
-                sendRequest.sendAddress,
-                estimate,
-                wallet: sendRequest.wallet,
-                goal: sendRequest.feeGoal,
-              )
-            : transactionSendAll(
-                sendRequest.sendAddress,
-                estimate,
-                wallet: sendRequest.wallet,
-                goal: sendRequest.feeGoal,
-              ))
+                double.parse(sendRequest.visibleAmount) ==
+                    sendRequest.holding) &&
+            (sendRequest.security == null ||
+                sendRequest.security == res.securities.RVN)
+        ? await transactionSendAllRVN(
+            sendRequest.sendAddress,
+            estimate,
+            wallet: sendRequest.wallet,
+            goal: sendRequest.feeGoal,
+            /*assetMemoExpiry: not captured yet*/
+          )
         : await transaction(
             sendRequest.sendAddress,
             estimate,
             wallet: sendRequest.wallet,
             goal: sendRequest.feeGoal,
+            /*assetMemoExpiry: not captured yet*/
           );
     return tuple;
   }
@@ -1180,8 +1183,6 @@ class TransactionMaker {
     var returnAddress = services.wallet.getChangeAddress(wallet);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
-      print('feeSats $feeSats ${estimate.fees}');
-      print('returnRaven $returnRaven');
       feeSats = estimate.fees;
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee (plus amount, maybe)
@@ -1205,6 +1206,7 @@ class TransactionMaker {
       if (estimate.memo != null) {
         txb.addMemo(estimate.memo);
       }
+      print('extimate.assetMemo: ${estimate.assetMemo}');
       txb.addOutput(
         toAddress,
         estimate.amount,
@@ -1222,126 +1224,57 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: goal));
     }
-    print('calling sign: $utxosRaven + $utxosSecurity');
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
     return Tuple2(tx, estimate);
   }
 
-  Future<Tuple2<ravencoin.Transaction, SendEstimate>> transactionSendAll(
-    String toAddress,
-    SendEstimate estimate, {
-    required Wallet wallet,
-    TxGoal? goal,
-  }) async {
-    var txb = ravencoin.TransactionBuilder(network: res.settings.network);
-    var utxosOriginal = await services.balance.collectUTXOs(
-      amount: estimate.amount,
-      security: estimate.security,
-    );
-    var total = 0;
-    for (var utxo in utxosOriginal.toSet()) {
-      txb.addInput(utxo.transactionId, utxo.position);
-      total = total + utxo.securityValue(security: estimate.security);
-    }
-    if (estimate.memo != null) {
-      txb.addMemo(estimate.memo);
-    }
-    estimate.setUTXOs(utxosOriginal);
-    txb.addOutput(toAddress, estimate.amount);
-    await txb.signEachInput(utxosOriginal);
-    var tx = txb.build();
-    var fees = tx.fee(goal: goal);
-    estimate.setFees(tx.fee(goal: goal));
-    estimate.setAmount(total - fees);
-    var satsIn =
-        utxosOriginal.fold(0, (int total, vout) => total + vout.rvnValue);
-    var satsReturn =
-        satsIn - (estimate.security == null ? estimate.amount : 0) - fees;
-    var return_address = services.wallet.getChangeWallet(wallet).address;
-    var rebuild = true;
-    while (satsReturn < 0 || rebuild) {
-      txb = ravencoin.TransactionBuilder(network: res.settings.network);
-      List<Vout> rvn_utxos;
-      List<Vout> security_utxos;
-      if (estimate.security != null) {
-        // Grab required RVN for fee
-        rvn_utxos = await services.balance.collectUTXOs(
-          amount: fees,
-          security: null,
-        );
-        security_utxos =
-            utxosOriginal.where((utxo) => !rvn_utxos.contains(utxo)).toList();
-      } else {
-        rvn_utxos = [];
-        security_utxos = utxosOriginal;
-      }
-      var utxos = (rvn_utxos + security_utxos).toSet();
-
-      for (var utxo in utxos) {
-        txb.addInput(utxo.transactionId, utxo.position);
-      }
-      // Update avaliable RVN
-      satsIn = utxos.fold(0, (int total, vout) => total + vout.rvnValue);
-      satsReturn =
-          satsIn - (estimate.security == null ? estimate.amount : 0) - fees;
-      // Add actual values
-      txb.addOutput(return_address, satsReturn);
-      txb.addOutput(
-        toAddress,
-        estimate.amount,
-        asset: estimate.security?.symbol,
-        memo: estimate.assetMemo,
-      );
-      // Add transaction memo if one is given
-      if (estimate.memo != null) {
-        txb.addMemo(estimate.memo);
-      }
-      await txb.signEachInput(utxos.toList());
-      tx = txb.build();
-      fees = tx.fee(goal: goal);
-    }
-    estimate.setFees(fees);
-    return Tuple2(tx, estimate);
-  }
-
+  /// we can skip the while loop because we know we want to include all unspents
+  /// asside from taking a shortcut, this function is actually necessary because
+  /// the other transaction function assume the amount is constant and adds fees
+  /// onto it but when sending all you want the fee taken out of the send amount
   Future<Tuple2<ravencoin.Transaction, SendEstimate>> transactionSendAllRVN(
     String toAddress,
     SendEstimate estimate, {
     required Wallet wallet,
     TxGoal? goal,
     Set<int>? previousFees,
-    Security? security,
+    int? assetMemoExpiry,
   }) async {
-    previousFees = previousFees ?? {};
-    var txb = ravencoin.TransactionBuilder(network: res.settings.network);
+    ravencoin.TransactionBuilder makeTxBuilder(
+        List<Vout> utxos, SendEstimate estimate) {
+      var total = 0;
+      var txb = ravencoin.TransactionBuilder(network: res.settings.network);
+      for (var utxo in utxos) {
+        txb.addInput(utxo.transactionId, utxo.position);
+        total = total + utxo.rvnValue;
+      }
+      print('extimate.assetMemo: ${estimate.assetMemo}');
+      txb.addOutput(
+        toAddress,
+        estimate.amount,
+        asset: estimate.security?.symbol,
+        memo: estimate.assetMemo,
+        expiry: assetMemoExpiry,
+      );
+      if (estimate.memo != null) {
+        txb.addMemo(estimate.memo);
+      }
+      return txb;
+    }
+
+    print('in sendall');
     var utxos = await services.balance.collectUTXOs(
       amount: estimate.amount,
       security: null,
     );
-    var total = 0;
-    for (var utxo in utxos) {
-      txb.addInput(utxo.transactionId, utxo.position);
-      total = total + utxo.securityValue(security: security);
-    }
-    var updatedEstimate = SendEstimate.copy(estimate)..setUTXOs(utxos);
-    txb.addOutput(toAddress, estimate.amount);
+    var txb = makeTxBuilder(utxos, estimate);
+    var tx = txb.buildSpoofedSigs();
+    estimate.setFees(tx.fee(goal: goal));
+    estimate.setAmount(estimate.amount - estimate.fees);
+    txb = makeTxBuilder(utxos, estimate);
     await txb.signEachInput(utxos);
-    var tx = txb.build();
-    var fees = tx.fee(goal: goal);
-    updatedEstimate.setFees(tx.fee(goal: goal));
-    updatedEstimate.setAmount(total - fees);
-    if (previousFees.contains(fees)) {
-      return Tuple2(tx, updatedEstimate);
-    } else {
-      return transactionSendAllRVN(
-        toAddress,
-        updatedEstimate,
-        goal: goal,
-        wallet: wallet,
-        previousFees: {...previousFees, fees},
-        security: security,
-      );
-    }
+    tx = txb.build();
+    return Tuple2(tx, estimate);
   }
 }

@@ -1,4 +1,5 @@
 import 'package:raven_back/utilities/utilities.dart';
+import 'package:raven_back/reservoirs/reservoirs.dart';
 
 Map<String, String> parseReceiveParams(String address) =>
     Uri.parse(address).queryParameters;
@@ -17,7 +18,7 @@ String requestedAsset(
       }
     }
   }
-  return current ?? 'RVN';
+  return current ?? res.securities.RVN.symbol;
 }
 
 String cleanSatAmount(String amount) {

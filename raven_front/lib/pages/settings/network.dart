@@ -72,9 +72,12 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
   }
 
   Widget body() => CustomScrollView(slivers: <Widget>[
-        //SliverToBoxAdapter(child: networkTextField),
-        //SliverToBoxAdapter(child: SizedBox(height: 16)),
-        SliverToBoxAdapter(child: SizedBox(height: 6)),
+        //SliverToBoxAdapter(child: SizedBox(height: 6)),
+        //SliverToBoxAdapter(
+        //    child: Padding(
+        //        padding:
+        //            EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
+        //        child: networkTextField)),
         SliverToBoxAdapter(
             child: Padding(
                 padding:
@@ -140,7 +143,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
         onEditingComplete: () {
           serverAddress.text = serverAddress.text.trim();
           validated = validateDomainPort(serverAddress.text);
-          connectFocus.requestFocus();
+          FocusScope.of(context).requestFocus(connectFocus);
           setState(() {});
         },
       );

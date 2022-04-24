@@ -73,18 +73,18 @@ class _SendState extends State<Send> {
     //sendNoteFocusNode.addListener(refresh);
     listeners.add(streams.spend.form.listen((SpendForm? value) {
       if (value != null) {
-        if ((SpendForm.merge(form: spendForm, amount: 0.0) !=
-            SpendForm.merge(form: value, amount: 0.0))) {
+        if (spendForm != value) {
           setState(() {
             spendForm = value;
-            var asset = (value.symbol ?? 'RVN');
-            sendAsset.text = asset == 'RVN' || asset == 'Ravencoin'
-                ? 'Ravencoin'
-                : Current.holdingNames.contains(asset)
-                    ? asset
-                    : sendAsset.text == ''
-                        ? 'Ravencoin'
-                        : sendAsset.text;
+            var asset = (value.symbol ?? res.securities.RVN.symbol);
+            sendAsset.text =
+                asset == res.securities.RVN.symbol || asset == 'Ravencoin'
+                    ? 'Ravencoin'
+                    : Current.holdingNames.contains(asset)
+                        ? asset
+                        : sendAsset.text == ''
+                            ? 'Ravencoin'
+                            : sendAsset.text;
             sendFee.text = value.fee ?? 'Standard';
             sendNote.text = value.note ?? sendNote.text;
             sendAmount.text = value.amount == 0.0
@@ -161,8 +161,8 @@ class _SendState extends State<Send> {
     minHeight =
         minHeight ?? 1 - (201 + 16) / MediaQuery.of(context).size.height;
     data = populateData(context, data);
-    var symbol = streams.spend.form.value?.symbol ?? 'RVN';
-    symbol = symbol == 'Ravencoin' ? 'RVN' : symbol;
+    var symbol = streams.spend.form.value?.symbol ?? res.securities.RVN.symbol;
+    symbol = symbol == 'Ravencoin' ? res.securities.RVN.symbol : symbol;
     security = res.securities.bySymbol.getAll(symbol).first;
     useWallet = data.containsKey('walletId') && data['walletId'] != null;
     if (data.containsKey('qrCode')) {
@@ -356,9 +356,9 @@ class _SendState extends State<Send> {
         ),
         onChanged: (value) {
           visibleAmount = verifyVisibleAmount(value);
-          streams.spend.form.add(SpendForm.merge(
-              form: streams.spend.form.value,
-              amount: doubleAmount(visibleAmount)));
+          //streams.spend.form.add(SpendForm.merge(
+          //    form: streams.spend.form.value,
+          //    amount: doubleAmount(visibleAmount)));
         },
         onEditingComplete: () {
           //sendAmount.text = cleanDecAmount(
@@ -531,6 +531,7 @@ class _SendState extends State<Send> {
     sendAmount.text = cleanDecAmount(sendAmount.text, zeroToBlank: true);
     var vAddress = sendAddress.text != '' && _validateAddress();
     var vMemo = verifyMemo();
+    visibleAmount = verifyVisibleAmount(sendAmount.text);
     if (vAddress && vMemo) {
       FocusScope.of(context).unfocus();
       var sendAmountAsSats = utils.amountToSat(double.parse(sendAmount.text));
@@ -547,14 +548,18 @@ class _SendState extends State<Send> {
               ? null
               : res.securities.bySymbolSecurityType
                   .getOne(sendAsset.text, SecurityType.RavenAsset),
-          assetMemo: sendAsset.text != 'Ravencoin' && sendMemo.text.isIpfs
+          assetMemo: sendAsset.text != 'Ravencoin' &&
+                  sendMemo.text != '' &&
+                  sendMemo.text.isIpfs
               ? sendMemo.text
               : null,
           memo: sendAsset.text == 'Ravencoin' &&
                   sendMemo.text != '' &&
                   verifyMemo(sendMemo.text)
               ? sendMemo.text
-              : !sendMemo.text.isIpfs && verifyMemo(sendMemo.text)
+              : !sendMemo.text.isIpfs &&
+                      sendMemo.text != '' &&
+                      verifyMemo(sendMemo.text)
                   ? sendMemo.text
                   : null,
           note: sendNote.text != '' ? sendNote.text : null,
@@ -585,15 +590,15 @@ class _SendState extends State<Send> {
       arguments: {
         'struct': CheckoutStruct(
           symbol: ((streams.spend.form.value?.symbol == 'Ravencoin'
-                  ? 'RVN'
+                  ? res.securities.RVN.symbol
                   : streams.spend.form.value?.symbol) ??
-              'RVN'),
+              res.securities.RVN.symbol),
           displaySymbol: ((streams.spend.form.value?.symbol == 'Ravencoin'
                   ? 'Ravencoin'
                   : streams.spend.form.value?.symbol) ??
               'Ravencoin'),
           subSymbol: '',
-          paymentSymbol: 'RVN',
+          paymentSymbol: res.securities.RVN.symbol,
           items: [
             ['To', sendAddress.text],
             if (addressName != '') ['Known As', addressName],

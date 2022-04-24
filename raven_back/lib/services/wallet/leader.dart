@@ -69,7 +69,7 @@ class LeaderWalletService {
     for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
       var addresses =
           res.addresses.byWalletExposure.getAll(leader.id, exposure);
-      services.wallet.leader.updateIndexOf(
+      updateIndexOf(
         leader,
         exposure,
         saved: addresses.map((a) => a.hdIndex).max,
@@ -81,8 +81,22 @@ class LeaderWalletService {
     }
   }
 
-  bool gapSatisfied(LeaderWallet leader, NodeExposure exposure) =>
-      requiredGap - (getIndexOf(leader, exposure).currentGap) <= 0;
+  void updateCounts(Address address, LeaderWallet leader) {
+    leader.removeUnused(address.hdIndex, address.exposure);
+    updateIndexOf(leader, address.exposure, used: address.hdIndex);
+  }
+
+  void updateCache(Address address, LeaderWallet leader) {
+    print('updatingCache');
+    leader.addUnused(address.hdIndex, address.exposure);
+    updateIndexOf(leader, address.exposure, saved: address.hdIndex);
+  }
+
+  bool gapSatisfied(LeaderWallet leader, NodeExposure exposure) {
+    final index = getIndexOf(leader, exposure);
+    //print('${index.currentGap} ${index.used} ${index.saved}');
+    return requiredGap - index.currentGap <= 0;
+  }
 
   Future<void> backedUp(LeaderWallet leader) async {
     await res.wallets.save(LeaderWallet.from(leader, backedUp: true));
@@ -127,8 +141,11 @@ class LeaderWalletService {
   String getNextEmptyAddress(
     LeaderWallet leaderWallet, {
     NodeExposure exposure = NodeExposure.Internal,
+    bool random = false,
   }) {
-    return leaderWallet.getUnusedAddress(exposure)!.address;
+    return random
+        ? leaderWallet.getRandomUnusedAddress(exposure)!.address
+        : leaderWallet.getUnusedAddress(exposure)!.address;
   }
 
   /// returns the next change address
@@ -211,6 +228,7 @@ class LeaderWalletService {
   ) async {
     // get current gap from cache.
     var generate = requiredGap - getIndexOf(leaderWallet, exposure).currentGap;
+    //print('Want to generate $generate for $exposure');
     var target = 0;
     target = getIndexOf(leaderWallet, exposure).saved + generate;
     if (generate > 0) {
@@ -221,6 +239,7 @@ class LeaderWalletService {
           }()
       ];
       var ret = (await Future.wait(futures)).toSet();
+      //print(ret);
       return ret;
     }
     return {};
@@ -249,6 +268,9 @@ class LeaderWalletService {
       updateIndexOf(wallet, exposure, savedPlus: derivedAddresses.length);
     }
     await res.addresses.saveAll(newAddresses);
+    for (final address in newAddresses) {
+      services.client.subscribe.toAddress(address);
+    }
   }
 }
 

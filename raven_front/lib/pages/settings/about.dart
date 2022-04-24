@@ -16,7 +16,7 @@ class About extends StatelessWidget {
             SizedBox(height: 40),
             Image.asset(
               'assets/logo/moontree_logo.png',
-              height: 72.relative(context),
+              height: 72.ofMediaHeight(context),
             ),
             Column(
                 mainAxisAlignment: MainAxisAlignment.center,

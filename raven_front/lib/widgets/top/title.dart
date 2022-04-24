@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
+import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/components/components.dart';
 
@@ -28,7 +29,7 @@ class PageTitle extends StatefulWidget {
     'Qualifiersub': 'Create',
     'Sub': 'Create',
     'Restricted': 'Create',
-    'Login': 'Unlock',
+    'Login': 'Locked',
   };
   static Map<String, String> pageMapReissue = const {
     'Main': 'Reissue',
@@ -170,7 +171,7 @@ class _PageTitleState extends State<PageTitle>
   }
 
   String assetName(String given) {
-    if (given == 'RVN') {
+    if (given == res.securities.RVN.symbol) {
       return 'Ravencoin';
     }
     if (given.contains('~')) {
@@ -233,8 +234,11 @@ class _PageTitleState extends State<PageTitle>
                       visualDensity: VisualDensity.compact,
                       onTap: () {
                         ScaffoldMessenger.of(context).clearSnackBars();
-                        res.settings.setCurrentWalletId(wallet.id);
-                        streams.app.setting.add(null);
+                        if (wallet.id != Current.walletId) {
+                          res.settings.setCurrentWalletId(wallet.id);
+                          streams.app.setting.add(null);
+                          streams.client.client.add(null);
+                        }
                       },
                       leading: Icon(
                         Icons.account_balance_wallet_rounded,

@@ -49,7 +49,7 @@ class IconComponents {
   }) {
     height = height ?? size;
     width = width ?? size;
-    if (asset.toUpperCase() == 'RVN') {
+    if (asset.toUpperCase() == res.securities.RVN.symbol) {
       return _assetAvatarRVN(height: height, width: width);
     }
     var ret = _assetAvatarSecurity(asset, height: height, width: width);

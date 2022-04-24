@@ -68,7 +68,6 @@ class _TransactionListState extends State<TransactionList> {
 
   Future refresh() async {
     await services.rate.saveRate();
-    await services.balance.recalculateAllBalances();
     setState(() {});
     // showing snackbar
     //_scaffoldKey.currentState.showSnackBar(
@@ -149,7 +148,7 @@ class _TransactionListState extends State<TransactionList> {
             ]
           ] +
           [
-            if (!services.download.history.transactionsDownloaded())
+            if (!services.download.history.downloads_complete)
               components.empty.getTransactionsShimmer(context)
           ] +
           [

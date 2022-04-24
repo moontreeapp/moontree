@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/theme.dart';
@@ -125,12 +126,13 @@ class _NavMenuState extends State<NavMenu> {
             arrow: true,
           ),
           destination(
-              icon: MdiIcons.drawPen,
-              name: 'Backup',
-              link: '/security/backup',
-              execute: () {
-                streams.app.verify.add(false);
-              }),
+            icon: MdiIcons.drawPen,
+            name: 'Backup',
+            link: '/security/backup',
+            //execute: () {
+            //  streams.app.verify.add(false);
+            //}
+          ),
           destination(
             icon: Icons.settings,
             name: 'Settings',
@@ -165,7 +167,6 @@ class _NavMenuState extends State<NavMenu> {
               name: 'Clear Database',
               link: '/home',
               execute: ravenDatabase.deleteDatabase),
-          */
           ListTile(
               title: Text('test'),
               leading: Icon(Icons.info_outline_rounded),
@@ -175,8 +176,86 @@ class _NavMenuState extends State<NavMenu> {
                 //print(services.download.unspents.unspentsBySymbol['MOONTREE3']);
                 //print(res.balances.data);
                 //print(res.vouts.length);
-                print(Current.walletId);
+
+                //var get = (e) => res.addresses.byWalletExposureIndex
+                //    .getOne(Current.walletId, NodeExposure.External, e)!
+                //    .address;
+                ////var x = Current.wallet.emptyExternalAddresses
+                ////    .map((e) => e.hdIndex)
+                ////    .toList();
+                ////x.sort();
+                ////x.forEach((e) => print(get(e)));
+                ////print('---');
+                //(Current.wallet as LeaderWallet)
+                //    .unusedExternalIndices
+                //    .forEach((e) => print(get(e)));
+                //// the old way is giving us an address that shouldn't exist (not empty)
+                //// mnxzyHLczuYC8NaFNzs45xPku3fUo5SrdR
+                //// why?
+                //var a = res.addresses.byAddress
+                //    .getOne('mkpbZecTxmzU78xqeaKAPeeDSfJw2sSAWt')!;
+                //print(a.address);
+                //print(a.id);
+                //print(a.hdIndex);
+                //print(a.exposure);
+                //print(a);
+                //print(res.vouts.byAddress
+                //    .getAll('mkpbZecTxmzU78xqeaKAPeeDSfJw2sSAWt'));
+                //res.transactions.chronological.forEach((element) => print(
+                //    element.addresses
+                //        ?.contains('mkpbZecTxmzU78xqeaKAPeeDSfJw2sSAWt')));
+                //print(await services.client.client?.getHistory(a.id));
+                //print(res.transactions.primaryIndex.getOne(
+                //    '4e769a6d770b4e441ade1d5600926ad14f58fdb6ae4128ed03c811241ec72240'));
+                //print(res.transactions.primaryIndex.getOne(
+                //    'a172254a2aec36b73d00e03ef1c8005feec7fde54365edc232415081e91dd33d'));
+                //print(services.download.history.downloadedOrDownloadQueried
+                //    .contains(
+                //        'a172254a2aec36b73d00e03ef1c8005feec7fde54365edc232415081e91dd33d'));
+                //print(services.client.subscribe.subscriptionHandles.keys
+                //    .contains('mit5fwMviprT5GJXsjMxismbCqvRpCtxPg'));
+                //print(services.client.subscribe.subscriptionHandles.keys
+                //    .contains(a.scripthash));
+                //print('--');
+                //print(await services.client.client!.getHistory(a.id));
+                //print(await services.client.client!.getTransactions([
+                //  'a172254a2aec36b73d00e03ef1c8005feec7fde54365edc232415081e91dd33d'
+                //]));
+                //print(services.wallet
+                //    .getEmptyAddress(Current.wallet, random: true));
+                //print(services.wallet
+                //    .getEmptyAddress(Current.wallet, random: false));
+                //print(services.wallet.getEmptyWallet(Current.wallet).address);
+                //print(await services.client.client!.peer.done
+                //    .asStream()
+                //    .listen((event) {
+                //  print('its done $event');
+                //}));
+                //print(services.client.client!.peer.isClosed);
+                //try {
+                //  print(await services.client.client!.getRelayFee());
+                //} on StateError {
+                //  print('err');
+                //}
+                print(Current.wallet);
+                print(Current.wallet.addresses.length);
+                print(Current.wallet.addresses);
               }),
+          ListTile(
+              title: Text('test'),
+              leading: Icon(Icons.info_outline_rounded),
+              onTap: () async {
+                print(services.client.client);
+                //print(await services.client.client!.peer.done);
+                print(services.client.client!.peer.isClosed);
+              }),
+          ListTile(
+              title: Text('call'),
+              leading: Icon(Icons.info_outline_rounded),
+              onTap: () async {
+                print(await services.client.client!.getRelayFee());
+              }),
+          */
         ],
       )
     };
@@ -216,5 +295,6 @@ class _NavMenuState extends State<NavMenu> {
     Navigator.pushReplacementNamed(
         components.navigator.routeContext!, '/security/login',
         arguments: {});
+    streams.app.splash.add(false);
   }
 }

@@ -139,8 +139,20 @@ class LeaderWallet extends Wallet {
       exposure == NodeExposure.Internal
           ? unusedInternalAddress
           : unusedExternalAddress;
+  Address? getRandomUnusedAddress(NodeExposure exposure) =>
+      exposure == NodeExposure.Internal
+          ? randomUnusedInternalAddress
+          : randomUnusedExternalAddress;
+
   Address? get unusedInternalAddress => res.addresses.byWalletExposureIndex
       .getOne(id, NodeExposure.Internal, unusedInternalIndices.first);
   Address? get unusedExternalAddress => res.addresses.byWalletExposureIndex
       .getOne(id, NodeExposure.External, unusedExternalIndices.first);
+
+  Address? get randomUnusedInternalAddress => res
+      .addresses.byWalletExposureIndex
+      .getOne(id, NodeExposure.Internal, unusedInternalIndices.randomChoice);
+  Address? get randomUnusedExternalAddress => res
+      .addresses.byWalletExposureIndex
+      .getOne(id, NodeExposure.External, unusedExternalIndices.randomChoice);
 }
