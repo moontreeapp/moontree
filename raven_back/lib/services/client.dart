@@ -85,7 +85,7 @@ class SubscribeService {
       return false;
     }
     var existing = false;
-    for (var address in res.wallets.primaryIndex
+    for (var address in res.wallets.primaryIndex //res.addresses
         .getOne(res.settings.currentWalletId)!
         .addresses) {
       onlySubscribeAddress(client, address);

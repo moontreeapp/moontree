@@ -141,12 +141,14 @@ class _HoldingList extends State<HoldingList> {
       // Otherwise hide until our checked scripthashes are >= our current wallets address count
       _hideList = _balanceWasEmpty
           ? (Current.wallet is LeaderWallet
-              ? services.wallet.leader.gapSatisfied(
-                      Current.wallet as LeaderWallet, NodeExposure.External) &&
-                  services.wallet.leader.gapSatisfied(
-                      Current.wallet as LeaderWallet, NodeExposure.Internal) &&
+              ? !services.wallet.leader.gapSatisfied(
+                      Current.wallet as LeaderWallet, NodeExposure.External) ||
+                  !services.wallet.leader.gapSatisfied(
+                      Current.wallet as LeaderWallet, NodeExposure.Internal) ||
                   services.download.unspents.scripthashesChecked <
-                      Current.wallet.addresses.length
+                      Current.wallet.addresses.length ||
+                  Current.wallet.addresses.length <
+                      services.wallet.leader.requiredGap
               : false)
           : services.download.unspents.scripthashesChecked <
               Current.wallet.addresses.length;
