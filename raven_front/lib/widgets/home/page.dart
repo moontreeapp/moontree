@@ -66,12 +66,11 @@ class _HomePageState extends State<HomePage>
           maxChildSize: maxExtent,
           builder: ((context, scrollController) {
             var ignoring = false;
-            if (minExtent < 1.0) {
-              print('ADDING SETTINGS HERE');
+            if (draggableScrollController.size == maxExtent) {
+              streams.app.setting.add(null);
+            } else if (minExtent < 1.0) {
               streams.app.setting.add('/settings');
               ignoring = true;
-            } else if (draggableScrollController.size == maxExtent) {
-              streams.app.setting.add(null);
             }
             /** notifier-start */
             _notifier.value = draggableScrollController.size;
