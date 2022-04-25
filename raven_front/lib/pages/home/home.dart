@@ -34,14 +34,17 @@ class _HomeState extends State<Home> {
     listeners.add(res.settings.changes.listen((Change change) {
       setState(() {});
     }));
-    listeners
-        .add(streams.app.triggers.listen((ThresholdTrigger? thresholdTrigger) {
+    listeners.add(
+        streams.app.triggers.listen((ThresholdTrigger? thresholdTrigger) async {
       if (Current.wallet is LeaderWallet &&
           thresholdTrigger == ThresholdTrigger.backup &&
           !(Current.wallet as LeaderWallet).backedUp) {
+        await Future.delayed(Duration(seconds: 5));
         streams.app.xlead.add(true);
-        Navigator.of(components.navigator.routeContext!)
-            .pushNamed('/security/backup');
+        Navigator.of(components.navigator.routeContext!).pushNamed(
+          '/security/backup',
+          arguments: {'fadeIn': true},
+        );
         return;
         //setState(() {});
         /// reset till next time they open app?

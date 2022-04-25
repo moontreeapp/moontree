@@ -90,10 +90,14 @@ enum SelectionOption {
   // manage
   Reissue,
   Issue_Dividend,
+
+  // Test Widgets
+  CustomName,
 }
 
 class SelectionItems {
   late List<SelectionOption> names;
+  late List<String> customNames;
   late List<VoidCallback> behaviors;
   late List<String> values;
   late String? symbol;
@@ -104,6 +108,7 @@ class SelectionItems {
   SelectionItems(
     this.context, {
     List<SelectionOption>? names,
+    List<String>? customNames,
     List<VoidCallback>? behaviors,
     List<String>? values,
     this.symbol,
@@ -159,6 +164,7 @@ class SelectionItems {
         [];
     this.behaviors = behaviors ?? [];
     this.values = values ?? [];
+    this.customNames = customNames ?? [];
   }
 
   String asString(SelectionOption name) =>
@@ -612,5 +618,54 @@ class SelectionItems {
         );
       }
     }
+  }
+}
+
+class SimpleSelectionItems {
+  final BuildContext context;
+  late List<Widget> items;
+
+  SimpleSelectionItems(this.context, {required this.items});
+
+  Future<void> produceModal(List items) async {
+    await showModalBottomSheet<void>(
+        context: context,
+        elevation: 1,
+        isScrollControlled: true,
+        shape: components.shape.topRounded,
+        builder: (BuildContext context) {
+          DraggableScrollableController draggableScrollController =
+              DraggableScrollableController();
+          var minExtent =
+              min((items.length * 52 + 16).ofMediaHeight(context), 0.5);
+          var initialExtent = minExtent;
+          var maxExtent = (items.length * 52 + 16).ofMediaHeight(context);
+          maxExtent = min(1.0, max(minExtent, maxExtent));
+          return DraggableScrollableSheet(
+            controller: draggableScrollController,
+            snap: false,
+            expand: false,
+            initialChildSize: initialExtent,
+            minChildSize: minExtent,
+            maxChildSize: maxExtent,
+            builder: ((context, scrollController) {
+              return FrontCurve(
+                  fuzzyTop: true,
+                  child: ListView(
+                    shrinkWrap: true,
+                    controller: scrollController,
+                    children: <Widget>[
+                      ...[SizedBox(height: 8)],
+                      ...items,
+                      ...[SizedBox(height: 8)],
+                    ],
+                  ));
+            }),
+          );
+        });
+  }
+
+  Future<void> build() async {
+    produceModal([for (Widget item in items) item]);
   }
 }

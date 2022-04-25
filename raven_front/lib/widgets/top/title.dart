@@ -4,6 +4,7 @@ import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/widgets/bottom/selection_items.dart';
 
 class PageTitle extends StatefulWidget {
   PageTitle({Key? key}) : super(key: key);
@@ -209,46 +210,86 @@ class _PageTitleState extends State<PageTitle>
     return null;
   }
 
+  /// produces a snackbar with options - has to be a snackbar because the front
+  /// layer is down, that's where anything like a bottom modal popup would be,
+  /// but there's not enough room on the front layer for that.
   Widget walletDropDown() => GestureDetector(
       onTap: () {
-        if (components.navigator.isSnackbarActive) {
-          components.navigator.isSnackbarActive = false;
-          ScaffoldMessenger.of(context).clearSnackBars();
-        } else {
-          components.navigator.isSnackbarActive = true;
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(
-                elevation: 0,
-                backgroundColor: AppColors.white,
-                shape: components.shape.topRounded,
-                duration: Duration(seconds: 60),
-                content: Container(
-                    child: ListView(shrinkWrap: true, children: <Widget>[
-                  for (Wallet wallet in res.wallets.ordered)
-                    ListTile(
-                      visualDensity: VisualDensity.compact,
-                      onTap: () {
-                        ScaffoldMessenger.of(context).clearSnackBars();
-                        if (wallet.id != Current.walletId) {
-                          res.settings.setCurrentWalletId(wallet.id);
-                          streams.app.setting.add(null);
-                          streams.client.client.add(null);
-                        }
-                      },
-                      leading: Icon(
-                        Icons.account_balance_wallet_rounded,
-                        color: AppColors.primary,
-                      ),
-                      title: Text('Wallet ' + wallet.name,
-                          style: Theme.of(context).textTheme.bodyText1),
-                    )
-                ])),
-              ))
-              .closed
-              .then((SnackBarClosedReason reason) {
-            components.navigator.isSnackbarActive = false;
-          });
-        }
+        //if (components.navigator.isSnackbarActive) {
+        //  components.navigator.isSnackbarActive = false;
+        //  ScaffoldMessenger.of(context).clearSnackBars();
+        //} else {
+        //  components.navigator.isSnackbarActive = true;
+
+        /// we can produce a scrim using an bottom modal sheet but we'll need
+        /// to connect the dismiss of the snackbar to clicking on the scrim
+        /// and we'll have to connect the choice of a snackbar item to the
+        /// dismissal of the bottom modal sheet. actaully we can display the
+        /// modal sheet infront of everything so this is best.
+        SimpleSelectionItems(
+          components.navigator.routeContext!,
+          items: [
+            for (Wallet wallet in res.wallets.ordered)
+              ListTile(
+                visualDensity: VisualDensity.compact,
+                onTap: () {
+                  Navigator.pop(components.navigator.routeContext!);
+                  if (wallet.id != Current.walletId) {
+                    res.settings.setCurrentWalletId(wallet.id);
+                    streams.app.setting.add(null);
+                    streams.client.client.add(null);
+                    setState(() {});
+                  }
+                },
+                leading: Icon(
+                  Icons.account_balance_wallet_rounded,
+                  color: AppColors.primary,
+                ),
+                title: Text('Wallet ' + wallet.name,
+                    style: Theme.of(context).textTheme.bodyText1),
+              )
+          ],
+        ).build();
+
+        //ScaffoldMessenger.of(context)
+        //    .showSnackBar(SnackBar(
+        //      elevation: 0,
+        //      backgroundColor: AppColors.white,
+        //      shape: components.shape.topRounded,
+        //      duration: Duration(seconds: 60),
+        //      content:
+        //          //Stack(
+        //          //  children: [
+        //          //Scrim(),
+        //          Container(
+        //              child: ListView(shrinkWrap: true, children: <Widget>[
+        //        for (Wallet wallet in res.wallets.ordered)
+        //          ListTile(
+        //            visualDensity: VisualDensity.compact,
+        //            onTap: () {
+        //              ScaffoldMessenger.of(context).clearSnackBars();
+        //              if (wallet.id != Current.walletId) {
+        //                res.settings.setCurrentWalletId(wallet.id);
+        //                streams.app.setting.add(null);
+        //                streams.client.client.add(null);
+        //              }
+        //            },
+        //            leading: Icon(
+        //              Icons.account_balance_wallet_rounded,
+        //              color: AppColors.primary,
+        //            ),
+        //            title: Text('Wallet ' + wallet.name,
+        //                style: Theme.of(context).textTheme.bodyText1),
+        //          )
+        //      ])),
+        //      //],
+        //      //)
+        //    ))
+        //    .closed
+        //    .then((SnackBarClosedReason reason) {
+        //  components.navigator.isSnackbarActive = false;
+        //});
+        //}
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -261,4 +302,37 @@ class _PageTitleState extends State<PageTitle>
           Icon(Icons.expand_more_rounded, color: Colors.white),
         ],
       ));
+}
+
+class Scrim extends StatelessWidget {
+  final bool applied;
+  //final Widget child;
+
+  final double opacity;
+  final Duration speed;
+  final Color color;
+
+  const Scrim({
+    Key? key,
+    this.applied = true,
+    //this.child,
+    this.opacity = 0.75,
+    this.color = Colors.white,
+    this.speed = const Duration(milliseconds: 200),
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AbsorbPointer(
+      absorbing: applied,
+      child: AnimatedContainer(
+        duration: speed,
+        curve: const Interval(0.0, 0.4, curve: Curves.easeInOut),
+        foregroundDecoration: BoxDecoration(
+          color: color.withOpacity(applied ? opacity : 0.0),
+        ),
+        //child: child,
+      ),
+    );
+  }
 }
