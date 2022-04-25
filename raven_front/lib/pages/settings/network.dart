@@ -7,6 +7,7 @@ import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/colors.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/streams/client.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class ElectrumNetwork extends StatefulWidget {
@@ -61,6 +62,10 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
 
   @override
   Widget build(BuildContext context) {
+    print(services.client.connectionStatus);
+    print(matches);
+    print(streams.client.connected.value == ConnectionStatus.connected);
+    print(streams.client.connected);
     return BackdropLayers(
         back: BlankBack(),
         front: FrontCurve(
@@ -129,7 +134,10 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
               ? '${streams.client.client.value!.host}:${streams.client.client.value!.port}'
               : '${services.client.currentDomain}:${services.client.currentPort.toString()}',
           helperText: validated
-              ? services.client.connectionStatus && matches
+              ? services.client.connectionStatus &&
+                      matches &&
+                      streams.client.connected.value ==
+                          ConnectionStatus.connected
                   ? 'Connected'
                   : null
               : null,
