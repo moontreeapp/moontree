@@ -226,6 +226,7 @@ class _PageTitleState extends State<PageTitle>
                   if (wallet.id != Current.walletId) {
                     res.settings.setCurrentWalletId(wallet.id);
                     streams.app.setting.add(null);
+                    // want to remove this to avoid reconnecting
                     streams.client.client.add(null);
                     setState(() {});
                   }
