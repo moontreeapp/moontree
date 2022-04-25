@@ -197,19 +197,28 @@ class UnspentService {
       final tempList = <Balance>[];
       for (final symbol in symbols) {
         // TODO: User decides how to sort?
-        binaryInsert(
-            list: tempList,
-            value: Balance(
-                walletId: res.settings.currentWalletId,
-                security: symbol == res.securities.RVN.symbol
-                    ? res.securities.RVN
-                    : Security(
-                        symbol: symbol, securityType: SecurityType.RavenAsset),
-                confirmed: await _total(walletId, symbol, ValueType.confirmed),
-                unconfirmed:
-                    await _total(walletId, symbol, ValueType.unconfirmed)),
-            comp: (first, second) =>
-                first.security.symbol.compareTo(second.security.symbol));
+        final confirmed = await _total(walletId, symbol, ValueType.confirmed);
+        final unconfirmed =
+            await _total(walletId, symbol, ValueType.unconfirmed);
+
+        // TODO: If we eventually want to show assets that a user spent all of,
+        // This will need to change (more likely we will need to incorporate a
+        // history check)
+        if (confirmed + unconfirmed > 0) {
+          binaryInsert(
+              list: tempList,
+              value: Balance(
+                  walletId: res.settings.currentWalletId,
+                  security: symbol == res.securities.RVN.symbol
+                      ? res.securities.RVN
+                      : Security(
+                          symbol: symbol,
+                          securityType: SecurityType.RavenAsset),
+                  confirmed: confirmed,
+                  unconfirmed: unconfirmed),
+              comp: (first, second) =>
+                  first.security.symbol.compareTo(second.security.symbol));
+        }
       }
       tempBalances[walletId] = tempList;
     }
