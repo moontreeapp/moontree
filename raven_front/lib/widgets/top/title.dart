@@ -50,12 +50,12 @@ class _PageTitleState extends State<PageTitle>
   final changeName = TextEditingController();
   late AnimationController controller;
   late Animation<double> animation;
+  final Duration animationDuration = Duration(milliseconds: 160);
 
   @override
   void initState() {
     super.initState();
-    controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 240));
+    controller = AnimationController(vsync: this, duration: animationDuration);
     animation = Tween(begin: 0.0, end: 1.0).animate(controller);
     listeners.add(streams.app.loading.listen((bool value) {
       if (value != loading) {
@@ -140,7 +140,7 @@ class _PageTitleState extends State<PageTitle>
         child: GestureDetector(
             onTap: () async {
               controller.reverse();
-              await Future.delayed(Duration(milliseconds: 240));
+              await Future.delayed(animationDuration);
               setState(() {
                 fullname = !fullname;
               });
