@@ -124,10 +124,6 @@ class SubscribeService {
     }
     final addresses = res.addresses.toList();
 
-    /// better to get them all so when we switch wallets we see totals
-    /// immediately, but that requires that we save balances in unspentBalances
-    /// by walletId... and we wouldn't have to reset connection (in title.dart)
-    //final addresses = res.addresses.data;
     var existing = false;
     for (var address in addresses) {
       onlySubscribeAddressUnspent(client, address);
