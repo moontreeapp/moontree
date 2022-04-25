@@ -13,9 +13,10 @@ class ImportWaiter extends Waiter {
         if (await importFrom.handleImport()) {
           // send user to see new wallet
           streams.app.setting.add(null);
-          streams.client.client.add(null);
           streams.app.snack.add(Snack(message: 'Sucessful Import'));
         } else {
+          // todo: recognize if it's an existing wallet already,
+          //       currenlty it just errors in that case.
           streams.app.snack.add(Snack(
               message: 'Error Importing',
               //details: importFrom.importedMsg!, // good usecase for details

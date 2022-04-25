@@ -67,6 +67,7 @@ class _HomePageState extends State<HomePage>
           builder: ((context, scrollController) {
             var ignoring = false;
             if (minExtent < 1.0) {
+              print('ADDING SETTINGS HERE');
               streams.app.setting.add('/settings');
               ignoring = true;
             } else if (draggableScrollController.size == maxExtent) {
