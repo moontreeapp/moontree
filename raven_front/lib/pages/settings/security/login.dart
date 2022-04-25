@@ -47,14 +47,15 @@ class _LoginState extends State<Login> {
         ),
         SliverFillRemaining(
             hasScrollBody: false,
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
+            child: KeyboardHidesWidget(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
                   SizedBox(height: 100),
                   Row(children: [unlockButton]),
                   SizedBox(height: 40),
-                ])),
+                ]))),
       ]));
 
   Widget get welcomeMessage =>
