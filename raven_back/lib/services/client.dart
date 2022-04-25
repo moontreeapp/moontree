@@ -122,9 +122,7 @@ class SubscribeService {
     if (client == null) {
       return false;
     }
-    final addresses = res.wallets.primaryIndex
-        .getOne(res.settings.currentWalletId)!
-        .addresses;
+    final addresses = res.addresses.toList();
 
     /// better to get them all so when we switch wallets we see totals
     /// immediately, but that requires that we save balances in unspentBalances
