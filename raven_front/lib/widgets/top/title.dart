@@ -215,17 +215,6 @@ class _PageTitleState extends State<PageTitle>
   /// but there's not enough room on the front layer for that.
   Widget walletDropDown() => GestureDetector(
       onTap: () {
-        //if (components.navigator.isSnackbarActive) {
-        //  components.navigator.isSnackbarActive = false;
-        //  ScaffoldMessenger.of(context).clearSnackBars();
-        //} else {
-        //  components.navigator.isSnackbarActive = true;
-
-        /// we can produce a scrim using an bottom modal sheet but we'll need
-        /// to connect the dismiss of the snackbar to clicking on the scrim
-        /// and we'll have to connect the choice of a snackbar item to the
-        /// dismissal of the bottom modal sheet. actaully we can display the
-        /// modal sheet infront of everything so this is best.
         SimpleSelectionItems(
           components.navigator.routeContext!,
           items: [
@@ -250,46 +239,6 @@ class _PageTitleState extends State<PageTitle>
               )
           ],
         ).build();
-
-        //ScaffoldMessenger.of(context)
-        //    .showSnackBar(SnackBar(
-        //      elevation: 0,
-        //      backgroundColor: AppColors.white,
-        //      shape: components.shape.topRounded,
-        //      duration: Duration(seconds: 60),
-        //      content:
-        //          //Stack(
-        //          //  children: [
-        //          //Scrim(),
-        //          Container(
-        //              child: ListView(shrinkWrap: true, children: <Widget>[
-        //        for (Wallet wallet in res.wallets.ordered)
-        //          ListTile(
-        //            visualDensity: VisualDensity.compact,
-        //            onTap: () {
-        //              ScaffoldMessenger.of(context).clearSnackBars();
-        //              if (wallet.id != Current.walletId) {
-        //                res.settings.setCurrentWalletId(wallet.id);
-        //                streams.app.setting.add(null);
-        //                streams.client.client.add(null);
-        //              }
-        //            },
-        //            leading: Icon(
-        //              Icons.account_balance_wallet_rounded,
-        //              color: AppColors.primary,
-        //            ),
-        //            title: Text('Wallet ' + wallet.name,
-        //                style: Theme.of(context).textTheme.bodyText1),
-        //          )
-        //      ])),
-        //      //],
-        //      //)
-        //    ))
-        //    .closed
-        //    .then((SnackBarClosedReason reason) {
-        //  components.navigator.isSnackbarActive = false;
-        //});
-        //}
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
