@@ -5,6 +5,11 @@ import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 
+/// the notifier seems to slow down the animation so we're going to comment it
+/// out using /** notifier */ and alternative solution with /** notifier-alt */
+/// it didn't seem to help much so I think we may have to do something with
+/// an animation with vsync on this widget or something, idk.
+
 class HomePage extends StatefulWidget {
   final AppContext appContext;
 
@@ -24,7 +29,9 @@ class _HomePageState extends State<HomePage>
   late DraggableScrollableController draggableScrollController =
       DraggableScrollableController();
   ScrollController? _scrollController;
+  /** notifier 
   ValueNotifier<double> _notifier = ValueNotifier(1);
+  */
 
   @override
   void initState() {
@@ -59,14 +66,16 @@ class _HomePageState extends State<HomePage>
           maxChildSize: maxExtent,
           builder: ((context, scrollController) {
             var ignoring = false;
-            if (draggableScrollController.size == minExtent &&
+            if ( //draggableScrollController.size == minExtent &&
                 minExtent < 1.0) {
               streams.app.setting.add('/settings');
               ignoring = true;
             } else if (draggableScrollController.size == maxExtent) {
               streams.app.setting.add(null);
             }
+            /** notifier 
             _notifier.value = draggableScrollController.size;
+            */
             _scrollController = scrollController;
             return FrontCurve(
                 fuzzyTop: true,
@@ -82,13 +91,18 @@ class _HomePageState extends State<HomePage>
                         placeholderSwap: true,
                       ),
                     ),
-                    BottomNavBar(
-                      appContext: widget.appContext,
-                      dragController: draggableScrollController,
+                    /** notifier-alt */
+                    if (draggableScrollController.size == maxExtent)
+                      /** notifier-alt-end */
+                      BottomNavBar(
+                        appContext: widget.appContext,
+                        dragController: draggableScrollController,
+                        /** notifier
                       notifier: _notifier,
-                      placeholderManage: true,
-                      placeholderSwap: true,
-                    ),
+                       */
+                        placeholderManage: true,
+                        placeholderSwap: true,
+                      ),
                   ],
                 ));
           }),
@@ -115,19 +129,17 @@ class _HomePageState extends State<HomePage>
       minExtent = minExtentClicked;
     });
     _scrollController!.jumpTo(_scrollController!.position.minScrollExtent);
-    await draggableScrollController.animateTo(
-      minExtent,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOutCirc,
-    );
+    await draggableScrollController.animateTo(minExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.linear //Curves.easeInOutCirc,
+        );
   }
 
   Future<void> flingUp() async {
-    await draggableScrollController.animateTo(
-      maxExtent,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOutCirc,
-    );
+    await draggableScrollController.animateTo(maxExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.linear //Curves.easeInOutCirc,
+        );
     setState(() {
       minExtent = 1.0;
     });
@@ -177,14 +189,18 @@ class AllAssetsHome extends StatelessWidget {
 class BottomNavBar extends StatelessWidget {
   final DraggableScrollableController dragController;
   final AppContext appContext;
+  /** notifier
   final ValueNotifier<double> notifier;
+  */
   final bool placeholderManage;
   final bool placeholderSwap;
 
   const BottomNavBar({
     required this.appContext,
     required this.dragController,
+    /** notifier
     required this.notifier,
+    */
     this.placeholderManage = false,
     this.placeholderSwap = false,
     Key? key,
@@ -196,84 +212,87 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
+    return
+        /** notifier
+    AnimatedBuilder(
       animation: notifier,
       builder: (context, _) {
-        return Transform.translate(
+        return 
+        Transform.translate(
           offset: Offset(0.0, 100 * (1 - dragController.size) * 1.50),
           child: Container(
-              child: NavBar(
-            actionButtons: appContext == AppContext.wallet
-                ? <Widget>[
-                    components.buttons.actionButton(
-                      context,
-                      label: 'send',
-                      onPressed: () {
-                        Navigator.of(components.navigator.routeContext!)
-                            .pushNamed('/transaction/send');
-                        if (Current.wallet is LeaderWallet &&
-                            streams.app.triggers.value ==
-                                ThresholdTrigger.backup &&
-                            !(Current.wallet as LeaderWallet).backedUp) {
-                          streams.app.xlead.add(true);
-                          Navigator.of(components.navigator.routeContext!)
-                              .pushNamed('/security/backup');
-                        }
-                      },
-                    ),
-                    components.buttons.actionButton(
-                      context,
-                      label: 'receive',
-                      onPressed: () {
-                        Navigator.of(components.navigator.routeContext!)
-                            .pushNamed('/transaction/receive');
-                        if (Current.wallet is LeaderWallet &&
-                            streams.app.triggers.value ==
-                                ThresholdTrigger.backup &&
-                            !(Current.wallet as LeaderWallet).backedUp) {
-                          streams.app.xlead.add(true);
-                          Navigator.of(components.navigator.routeContext!)
-                              .pushNamed('/security/backup');
-                        }
-                      },
-                    )
-                  ]
-                : appContext == AppContext.manage
-                    ? <Widget>[
-                        components.buttons.actionButton(
-                          context,
-                          label: 'create',
-                          enabled: !placeholderManage,
-                          onPressed: () {
-                            _produceCreateModal(context);
-                          },
-                        )
-                      ]
-                    : <Widget>[
-                        components.buttons.actionButton(
-                          context,
-                          label: 'buy',
-                          enabled: !placeholderSwap,
-                          onPressed: () {
-                            _produceCreateModal(context);
-                          },
-                        ),
-                        components.buttons.actionButton(
-                          context,
-                          label: 'sell',
-                          enabled: !placeholderSwap,
-                          onPressed: () {
-                            _produceCreateModal(context);
-                          },
-                        )
-                      ],
-          )),
+              child: 
+        */
+        NavBar(
+      actionButtons: appContext == AppContext.wallet
+          ? <Widget>[
+              components.buttons.actionButton(
+                context,
+                label: 'send',
+                onPressed: () {
+                  Navigator.of(components.navigator.routeContext!)
+                      .pushNamed('/transaction/send');
+                  if (Current.wallet is LeaderWallet &&
+                      streams.app.triggers.value == ThresholdTrigger.backup &&
+                      !(Current.wallet as LeaderWallet).backedUp) {
+                    streams.app.xlead.add(true);
+                    Navigator.of(components.navigator.routeContext!)
+                        .pushNamed('/security/backup');
+                  }
+                },
+              ),
+              components.buttons.actionButton(
+                context,
+                label: 'receive',
+                onPressed: () {
+                  Navigator.of(components.navigator.routeContext!)
+                      .pushNamed('/transaction/receive');
+                  if (Current.wallet is LeaderWallet &&
+                      streams.app.triggers.value == ThresholdTrigger.backup &&
+                      !(Current.wallet as LeaderWallet).backedUp) {
+                    streams.app.xlead.add(true);
+                    Navigator.of(components.navigator.routeContext!)
+                        .pushNamed('/security/backup');
+                  }
+                },
+              )
+            ]
+          : appContext == AppContext.manage
+              ? <Widget>[
+                  components.buttons.actionButton(
+                    context,
+                    label: 'create',
+                    enabled: !placeholderManage,
+                    onPressed: () {
+                      _produceCreateModal(context);
+                    },
+                  )
+                ]
+              : <Widget>[
+                  components.buttons.actionButton(
+                    context,
+                    label: 'buy',
+                    enabled: !placeholderSwap,
+                    onPressed: () {
+                      _produceCreateModal(context);
+                    },
+                  ),
+                  components.buttons.actionButton(
+                    context,
+                    label: 'sell',
+                    enabled: !placeholderSwap,
+                    onPressed: () {
+                      _produceCreateModal(context);
+                    },
+                  )
+                ],
+    ) /** notifier),
         );
       },
-    );
+    )*/
+        ;
   }
 }
-
 
 /* we want to hide the nav bar if we open the menu, so we can put this on a 
 scaffold to do it, or we can do what is above: push it down w/ the front sheet.
