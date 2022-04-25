@@ -318,16 +318,9 @@ class _CheckoutState extends State<Checkout> {
           context,
           enabled: !disabled,
           label: struct.buttonWord,
-          disabledOnPressed:
-              //? () {}
-              /// for testing
-              () async {
-            components.loading.screen(message: struct.loadingMessage);
-            await Future.delayed(Duration(seconds: 6));
-            streams.app.snack.add(Snack(message: 'test'));
-          },
           onPressed: () async {
             components.loading.screen(message: struct.loadingMessage);
+            streams.spend.form.add(null);
             (struct.buttonAction ?? () {})();
           },
         )

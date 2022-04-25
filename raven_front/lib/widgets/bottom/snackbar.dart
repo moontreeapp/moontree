@@ -47,7 +47,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
     return Container(height: 0, width: 0);
   }
 
-  void show() {
+  Future<void> show() async {
     var msg = snack!.atBottom
         ? Padding(
             padding: EdgeInsets.only(left: 16, right: 16),
@@ -104,6 +104,16 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
               ],
             ),
           );
+
+    /// make sure we don't display until we've been sent back home
+    var x = 0;
+    while (streams.app.page.value != 'Home') {
+      await Future.delayed(Duration(milliseconds: 665));
+      x += 1;
+      if (x > 10) {
+        break;
+      }
+    }
     if (snack!.atBottom) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           elevation: 1,
