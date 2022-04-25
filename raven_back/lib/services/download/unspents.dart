@@ -11,20 +11,22 @@ enum ValueType { confirmed, unconfirmed }
 /// we use the electrum server directly for determining our UTXO set
 /// This gets erased when we swap wallets
 class UnspentService {
-  // "Security name" -> address -> {unspents}
+  // "Security name" -> scripthash -> {unspents}
   // This can be concurrently modified while we iterate over keys, i.e. recalc balances
   final Map<String, Map<String, Set<ScripthashUnspent>>> _unspentsBySymbol = {};
   final _unspentsLock = ReaderWriterLock();
 
-  final Map<String, List<int?>> _cachedBySymbol = {};
+  final Map<String, Map<String, List<int?>>> _cachedByWalletAndSymbol = {};
   final _cachedBySymbolLock = ReaderWriterLock();
 
   final Set<String> _scripthashesChecked = {};
+
   final _scripthashesCheckedLock = ReaderWriterLock();
   int scripthashesChecked = 0;
   int uniqueAssets = 0;
 
-  List<Balance> unspentBalances = <Balance>[];
+  Map<String, Iterable<Balance>> unspentBalancesByWalletId =
+      <String, Iterable<Balance>>{};
 
   String defaultSymbol(String? symbol) => symbol ?? res.securities.RVN.symbol;
 
@@ -100,7 +102,9 @@ class UnspentService {
 
       // New info; clear cache
       await _cachedBySymbolLock.write(() {
-        _cachedBySymbol.remove(rvn);
+        for (final walletId in _cachedByWalletAndSymbol.keys) {
+          _cachedByWalletAndSymbol[walletId]!.remove(rvn);
+        }
       });
       await _unspentsLock.write(() {
         finalScripthashes.forEach((x) => _clearUnspentsForScripthash(x, rvn));
@@ -151,7 +155,9 @@ class UnspentService {
         }
 
         await _cachedBySymbolLock.write(() {
-          _cachedBySymbol.remove(symbol);
+          for (final walletId in _cachedByWalletAndSymbol.keys) {
+            _cachedByWalletAndSymbol[walletId]!.remove(symbol);
+          }
         });
         await _unspentsLock.write(() {
           // New info; clear cache
@@ -173,85 +179,127 @@ class UnspentService {
     uniqueAssets = await _unspentsLock.read(() {
       return _unspentsBySymbol.length;
     });
-    await _updateUnspentsBalance();
+    await _updateUnspentsBalances();
     // Balances are based on unspents now
     await services.balance.recalculateAllBalances();
     streams.wallet.unspentsCallback.add(null);
   }
 
-  Future<void> _updateUnspentsBalance() async {
-    final tempBalances = <Balance>[];
+  Future<void> _updateUnspentsBalances() async {
+    final tempBalances = <String, Iterable<Balance>>{};
     final symbols = await _unspentsLock.read(() {
       return _unspentsBySymbol.keys.toSet();
     });
-    for (final symbol in symbols) {
-      // TODO: User decides how to sort?
-      binaryInsert(
-          list: tempBalances,
-          value: Balance(
-              walletId: res.settings.currentWalletId,
-              security: symbol == res.securities.RVN.symbol
-                  ? res.securities.RVN
-                  : Security(
-                      symbol: symbol, securityType: SecurityType.RavenAsset),
-              confirmed: await total(symbol, ValueType.confirmed),
-              unconfirmed: await total(symbol, ValueType.unconfirmed)),
-          comp: (first, second) =>
-              first.security.symbol.compareTo(second.security.symbol));
+    for (final wallet in res.wallets.data) {
+      print('Recalculating balances for ${wallet.id}');
+
+      final walletId = wallet.id;
+      final tempList = <Balance>[];
+      for (final symbol in symbols) {
+        // TODO: User decides how to sort?
+        binaryInsert(
+            list: tempList,
+            value: Balance(
+                walletId: res.settings.currentWalletId,
+                security: symbol == res.securities.RVN.symbol
+                    ? res.securities.RVN
+                    : Security(
+                        symbol: symbol, securityType: SecurityType.RavenAsset),
+                confirmed: await _total(walletId, symbol, ValueType.confirmed),
+                unconfirmed:
+                    await _total(walletId, symbol, ValueType.unconfirmed)),
+            comp: (first, second) =>
+                first.security.symbol.compareTo(second.security.symbol));
+      }
+      tempBalances[walletId] = tempList;
     }
     // Update pointer for async ness
-    unspentBalances = tempBalances;
+    unspentBalancesByWalletId = tempBalances;
   }
 
-  Future<int> total([String? symbolMaybeNull, ValueType? totalType]) async {
+  Future<int> _total(String walletId,
+      [String? symbolMaybeNull, ValueType? totalType]) async {
     totalType = totalType ?? ValueType.confirmed;
     final totalIndex = totalType == ValueType.confirmed ? 0 : 1;
     final symbol = defaultSymbol(symbolMaybeNull);
     final cachedResult = await _cachedBySymbolLock.read(() {
-      return _cachedBySymbol[symbol]?[totalIndex];
+      return _cachedByWalletAndSymbol[walletId]?[symbol]?[totalIndex];
     });
     if (cachedResult != null) {
       return cachedResult;
     }
+
+    // Recalc
     final result = await _unspentsLock.read(() {
       return _unspentsBySymbol.keys.contains(symbol)
           ? _unspentsBySymbol[symbol]!
               .values // List of iterable of items
               .expand((element) => element) // Flatten the list of iterables
-              .fold(
-                  0,
-                  (int total, ScripthashUnspent item) =>
-                      totalType == ValueType.confirmed
-                          ? item.height == 0
-                              ? total
-                              : item.value + total
-                          : item.height == 0
-                              ? item.value + total
-                              : total)
-          : 0;
+              .fold(<String, List<int?>>{}, (Map<String, List<int?>> gatherer,
+                  ScripthashUnspent unspent) {
+              final address =
+                  res.addresses.byScripthash.getOne(unspent.scripthash);
+              if (address == null) {
+                throw StateError(
+                    'We are tracking a scripthash that has no associated address');
+              }
+
+              var walletId = address.walletId;
+
+              if (!gatherer.containsKey(walletId)) {
+                gatherer[walletId] = [0, 0];
+              }
+
+              if (unspent.height > 0) {
+                // Confirmed
+                gatherer[walletId]![0] =
+                    gatherer[walletId]![0]! + unspent.value;
+              } else {
+                // Mempool
+                gatherer[walletId]![1] =
+                    gatherer[walletId]![1]! + unspent.value;
+              }
+
+              return gatherer;
+            })
+          : null;
     });
+
     await _cachedBySymbolLock.write(() {
-      if (!_cachedBySymbol.containsKey(symbol)) {
-        _cachedBySymbol[symbol] = [null, null];
+      if (result == null) {
+        // We don't have anything on this but we're asking for it?
+        // Just cache 0 for a quick return
+        if (!_cachedByWalletAndSymbol.containsKey(walletId)) {
+          _cachedByWalletAndSymbol[walletId] = <String, List<int?>>{};
+        }
+        _cachedByWalletAndSymbol[walletId]![symbol] = [0, 0];
+      } else {
+        for (final walletId in result.keys) {
+          if (!_cachedByWalletAndSymbol.containsKey(walletId)) {
+            _cachedByWalletAndSymbol[walletId] = <String, List<int?>>{};
+          }
+          _cachedByWalletAndSymbol[walletId]![symbol] = result[walletId]!;
+        }
       }
-      _cachedBySymbol[symbol]![totalIndex] = result;
     });
-    return result;
+    return _cachedByWalletAndSymbol[walletId]![symbol]![totalIndex]!;
   }
 
-  Future<int> totalConfirmed([String? symbolMaybeNull]) async {
-    return total(symbolMaybeNull, ValueType.confirmed);
+  Future<int> totalConfirmed(String walletId, [String? symbolMaybeNull]) async {
+    return _total(walletId, symbolMaybeNull, ValueType.confirmed);
   }
 
-  Future<int> totalUnconfirmed([String? symbolMaybeNull]) async {
-    return total(symbolMaybeNull, ValueType.unconfirmed);
+  Future<int> totalUnconfirmed(String walletId,
+      [String? symbolMaybeNull]) async {
+    return _total(walletId, symbolMaybeNull, ValueType.unconfirmed);
   }
 
-  Future<void> assertSufficientFunds(int amount, String? symbol,
+  Future<void> assertSufficientFunds(
+      String walletId, int amount, String? symbol,
       {bool allowUnconfirmed = true}) async {
-    var total = await totalConfirmed(defaultSymbol(symbol));
+    var total = await totalConfirmed(walletId, defaultSymbol(symbol));
     if (allowUnconfirmed) {
-      total += await totalUnconfirmed(defaultSymbol(symbol));
+      total += await totalUnconfirmed(walletId, defaultSymbol(symbol));
     }
     if (total < amount) {
       throw InsufficientFunds();
@@ -279,12 +327,12 @@ class UnspentService {
       _unspentsBySymbol.clear();
     });
     await _cachedBySymbolLock.write(() {
-      _cachedBySymbol.clear();
+      _cachedByWalletAndSymbol.clear();
     });
     await _scripthashesCheckedLock.write(() {
       _scripthashesChecked.clear();
     });
-    unspentBalances = [];
+    unspentBalancesByWalletId = {};
     scripthashesChecked = 0;
     uniqueAssets = 0;
   }

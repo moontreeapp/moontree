@@ -18,6 +18,7 @@ class AddressReservoir extends Reservoir<_ScripthashKey, Address> {
   late IndexMultiple<_WalletKey, Address> byWallet;
   late IndexMultiple<_WalletExposureKey, Address> byWalletExposure;
   late IndexMultiple<_WalletExposureHDKey, Address> byWalletExposureIndex;
+  late IndexMultiple<_ScripthashKey, Address> byScripthash;
 
   AddressReservoir() : super(_ScripthashKey()) {
     byAddress = addIndexMultiple('address', _AddressKey());
@@ -26,6 +27,7 @@ class AddressReservoir extends Reservoir<_ScripthashKey, Address> {
         addIndexMultiple('wallet-exposure', _WalletExposureKey());
     byWalletExposureIndex =
         addIndexMultiple('wallet-exposure-hdindex', _WalletExposureHDKey());
+    byScripthash = addIndexMultiple('scripthash', _ScripthashKey());
   }
 
   /// returns addresses in order

@@ -76,7 +76,7 @@ class _HoldingList extends State<HoldingList> {
     /// lets try watching balances instead
     listeners.add(streams.wallet.unspentsCallback.listen((value) async {
       if (services.download.unspents.scripthashesChecked <
-          Current.wallet.addresses.length) {
+          res.addresses.length) {
         return;
       }
       setState(() {});
@@ -137,8 +137,10 @@ class _HoldingList extends State<HoldingList> {
     }
 
     // Needs to be unspend because this updates immediately
-    holdings = utils.assetHoldings(
-        widget.holdings ?? services.download.unspents.unspentBalances);
+    holdings = utils.assetHoldings(widget.holdings ??
+        services
+            .download.unspents.unspentBalancesByWalletId[Current.walletId] ??
+        []);
 
     if (_hideList) {
       // If new wallet, let assets pop up as we get them (can't figure out how to hide this until we're done. fix isGapSatisfied?)
@@ -155,13 +157,17 @@ class _HoldingList extends State<HoldingList> {
                       services.wallet.leader.requiredGap
               : false)
           : services.download.unspents.scripthashesChecked <
-              Current.wallet.addresses.length;
+              res.addresses.length;
     }
 
-    _hideList = Current.wallet is LeaderWallet
-        ? services.client.subscribe.subscriptionHandlesHistory.length <
-            Current.wallet.addresses.length
-        : false;
+    // We don't want to un-hide the list once we reveal it
+    if (_hideList) {
+      _hideList = Current.wallet is LeaderWallet
+          ? services.client.subscribe.subscriptionHandlesHistory.length <
+              Current.wallet.addresses.length
+          : false;
+    }
+
     /*
     print(services.wallet.leader
         .gapSatisfied(Current.wallet as LeaderWallet, NodeExposure.External));
