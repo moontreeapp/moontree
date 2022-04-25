@@ -153,13 +153,12 @@ class _BackupSeedState extends State<BackupSeed>
           errorText:
               existingPassword.text != '' && !verify() ? 'not match' : null,
         ),
-        onChanged: (String value) {
+        onChanged: (String value) {},
+        onEditingComplete: () {
           if (verify()) {
             setState(() {});
           }
           setState(() {});
-        },
-        onEditingComplete: () {
           FocusScope.of(context).requestFocus(showFocus);
         },
       );

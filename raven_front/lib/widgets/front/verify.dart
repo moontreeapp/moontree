@@ -82,14 +82,12 @@ class _VerifyPasswordState extends State<VerifyPassword> {
           //  }),
           //),
         ),
-        onChanged: (String value) {
+        onChanged: (String value) {},
+        onEditingComplete: () {
           if (verify()) {
             setState(() {});
           }
           setState(() {});
-        },
-        onEditingComplete: () {
-          verify();
           //submitFocus.requestFocus();
           FocusScope.of(context).requestFocus(submitFocus);
         },

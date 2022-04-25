@@ -110,15 +110,17 @@ class _ChangePasswordState extends State<ChangePassword> {
           ),
         ),
         onChanged: (String value) {
-          setState(() {
-            if (verify()) {
-              FocusScope.of(context).requestFocus(newPasswordFocus);
-            }
-          });
+          //setState(() {
+          //  if (verify()) {
+          //    FocusScope.of(context).requestFocus(newPasswordFocus);
+          //  }
+          //});
         },
         onEditingComplete: () {
           if (verify()) {
-            FocusScope.of(context).requestFocus(newPasswordFocus);
+            setState(() {
+              FocusScope.of(context).requestFocus(newPasswordFocus);
+            });
           }
         },
       );

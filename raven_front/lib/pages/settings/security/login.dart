@@ -85,9 +85,7 @@ class _LoginState extends State<Login> {
         //  }),
         //),
       ),
-      onChanged: (_) {
-        setState(() {});
-      },
+      onChanged: (_) {},
       onEditingComplete: () {
         FocusScope.of(context).requestFocus(unlockFocus);
         setState(() {});
