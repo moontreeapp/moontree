@@ -12,6 +12,7 @@ import 'status.dart';
 import 'text.dart';
 import 'loading.dart';
 import 'message.dart';
+import 'shape.dart';
 import 'page.dart';
 import 'styles/buttons.dart';
 
@@ -32,6 +33,7 @@ class components {
   static final LoadingComponents loading = LoadingComponents();
   static final MessageComponents message = MessageComponents();
   static final PageComponents page = PageComponents();
+  static final ShapeComponents shape = ShapeComponents();
 }
 
 class Styles {

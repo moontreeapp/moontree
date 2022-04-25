@@ -16,9 +16,7 @@ class LoadingComponents {
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
         barrierColor: Colors.transparent,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
+        shape: components.shape.topRounded,
         builder: (BuildContext context) => Loader(
               message: message ?? 'Loading',
               returnHome: returnHome,

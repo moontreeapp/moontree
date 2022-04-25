@@ -4,6 +4,7 @@ import 'package:raven_front/theme/theme.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/streams/streams.dart';
+import 'package:raven_front/components/components.dart';
 
 class SnackBarViewer extends StatefulWidget {
   SnackBarViewer({Key? key}) : super(key: key);
@@ -107,7 +108,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           elevation: 1,
           backgroundColor: AppColors.snackBar,
-          shape: RoundedRectangleBorder(borderRadius: shape),
+          shape: components.shape.topRounded,
           content: msg,
           action: snack!.positive
               ? null
@@ -121,7 +122,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           elevation: 0,
           backgroundColor: AppColors.snackBar,
-          shape: RoundedRectangleBorder(borderRadius: shape),
+          shape: components.shape.topRounded,
           content: msg,
           behavior: SnackBarBehavior.floating,
           margin: EdgeInsets.only(
@@ -142,7 +143,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           elevation: 0,
           backgroundColor: AppColors.snackBar,
-          shape: RoundedRectangleBorder(borderRadius: shape),
+          shape:components.shape.topRounded,
           content: msg,
           behavior: SnackBarBehavior.floating,
           margin: EdgeInsets.only(bottom: 102),
@@ -183,7 +184,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           elevation: 0,
           backgroundColor: AppColors.snackBar,
-          shape: RoundedRectangleBorder(borderRadius: shape),
+          shape:components.shape.topRounded,
           content: msg,
           behavior: SnackBarBehavior.floating,
           margin: EdgeInsets.only(bottom: 102),

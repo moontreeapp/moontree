@@ -493,9 +493,7 @@ class SelectionItems {
         context: context,
         elevation: 1,
         isScrollControlled: true,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0))),
+        shape: components.shape.topRounded,
         builder: (BuildContext context) {
           DraggableScrollableController draggableScrollController =
               DraggableScrollableController();

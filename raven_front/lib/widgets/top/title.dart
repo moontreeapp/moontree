@@ -220,11 +220,7 @@ class _PageTitleState extends State<PageTitle>
               .showSnackBar(SnackBar(
                 elevation: 0,
                 backgroundColor: AppColors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(8.0),
-                  topRight: Radius.circular(8.0),
-                )),
+                shape: components.shape.topRounded,
                 duration: Duration(seconds: 60),
                 content: Container(
                     child: ListView(shrinkWrap: true, children: <Widget>[

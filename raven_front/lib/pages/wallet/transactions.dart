@@ -91,9 +91,10 @@ class _TransactionsState extends State<Transactions>
         .getTransactionRecords(wallet: Current.wallet, securities: {security});
     var maxExtent = (currentTxs.length * 80 +
             80 +
+            40 +
             (!services.download.history.downloads_complete ? 80 : 0))
         .ofMediaHeight(context);
-    var minHeight = 1 - (201 + 16) / MediaQuery.of(context).size.height;
+    var minHeight = 1 - (201 + 25) / MediaQuery.of(context).size.height;
     cachedMetadataView = _metadataView();
     return BackdropLayers(
       back: CoinSpec(

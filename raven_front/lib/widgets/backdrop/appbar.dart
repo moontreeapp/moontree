@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_front/components/components.dart';
@@ -37,6 +38,18 @@ class _BackdropAppBarState extends State<BackdropAppBar> {
     return streams.app.splash.value
         ? PreferredSize(preferredSize: Size(0, 0), child: Container(height: 0))
         : AppBar(
+            /// makes a black area for the clock -- superceeded by SafeArea
+            /// and black backgroundColor on Scaffold
+            systemOverlayStyle: SystemUiOverlayStyle(
+              // Status bar color
+              statusBarColor: Colors.black,
+              // Status bar brightness (optional)
+              statusBarIconBrightness: Brightness.light, // For Android
+              statusBarBrightness: Brightness.dark, // For iOS
+            ),
+
+            /// rounded top corners
+            shape: components.shape.topRounded,
             backgroundColor: Theme.of(context).backgroundColor,
             automaticallyImplyLeading: false,
             elevation: 0,
