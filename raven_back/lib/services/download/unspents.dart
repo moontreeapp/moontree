@@ -265,7 +265,7 @@ class UnspentService {
           : null;
     });
 
-    await _cachedBySymbolLock.write(() {
+    return await _cachedBySymbolLock.write(() {
       if (result == null) {
         // We don't have anything on this but we're asking for it?
         // Just cache 0 for a quick return
@@ -281,8 +281,18 @@ class UnspentService {
           _cachedByWalletAndSymbol[walletId]![symbol] = result[walletId]!;
         }
       }
+      // We recalc all relevant outpoints of a symbol, but if a symbol wasn't
+      // a part of the wallet, we don't catch it.
+      // Do another check here
+      final res = _cachedByWalletAndSymbol[walletId]![symbol];
+      if (res == null) {
+        // Cache as 0
+        _cachedByWalletAndSymbol[walletId]![symbol] = [0, 0];
+        return 0;
+      } else {
+        return res[totalIndex]!;
+      }
     });
-    return _cachedByWalletAndSymbol[walletId]![symbol]![totalIndex]!;
   }
 
   Future<int> totalConfirmed(String walletId, [String? symbolMaybeNull]) async {
