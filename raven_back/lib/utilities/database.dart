@@ -8,7 +8,9 @@ Future deleteDatabase() async {
   services.wallet.leader.indexRegistry.clear();
   await services.download.history.clearDownloadState();
   await services.download.unspents.clearData();
-  services.client.subscribe.subscriptionHandles.clear();
+  services.client.subscribe.subscriptionHandlesUnspent.clear();
+  services.client.subscribe.subscriptionHandlesHistory.clear();
+  services.client.subscribe.subscriptionHandlesAsset.clear();
   try {
     await res.addresses.clear();
     await res.assets.clear();

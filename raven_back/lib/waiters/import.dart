@@ -11,6 +11,9 @@ class ImportWaiter extends Waiter {
         await Future.delayed(const Duration(milliseconds: 250));
         var importFrom = ImportFrom(text: importRequest.text);
         if (await importFrom.handleImport()) {
+          // send user to see new wallet
+          streams.app.setting.add(null);
+          streams.client.client.add(null);
           streams.app.snack.add(Snack(message: 'Sucessful Import'));
         } else {
           streams.app.snack.add(Snack(

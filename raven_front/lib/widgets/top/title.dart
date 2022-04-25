@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
+import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/components/components.dart';
 
@@ -28,7 +29,7 @@ class PageTitle extends StatefulWidget {
     'Qualifiersub': 'Create',
     'Sub': 'Create',
     'Restricted': 'Create',
-    'Login': 'Unlock',
+    'Login': 'Locked',
   };
   static Map<String, String> pageMapReissue = const {
     'Main': 'Reissue',
@@ -145,7 +146,6 @@ class _PageTitleState extends State<PageTitle>
               });
             },
             child: FadeTransition(
-                // why does this make it disappear completely?
                 opacity: animation,
                 child: Text(x,
                     style: Theme.of(context).textTheme.headline2!.copyWith(
@@ -228,13 +228,16 @@ class _PageTitleState extends State<PageTitle>
                 duration: Duration(seconds: 60),
                 content: Container(
                     child: ListView(shrinkWrap: true, children: <Widget>[
-                  for (Wallet wallet in res.wallets)
+                  for (Wallet wallet in res.wallets.ordered)
                     ListTile(
                       visualDensity: VisualDensity.compact,
                       onTap: () {
                         ScaffoldMessenger.of(context).clearSnackBars();
-                        res.settings.setCurrentWalletId(wallet.id);
-                        streams.app.setting.add(null);
+                        if (wallet.id != Current.walletId) {
+                          res.settings.setCurrentWalletId(wallet.id);
+                          streams.app.setting.add(null);
+                          streams.client.client.add(null);
+                        }
                       },
                       leading: Icon(
                         Icons.account_balance_wallet_rounded,

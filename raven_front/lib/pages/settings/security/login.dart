@@ -85,9 +85,7 @@ class _LoginState extends State<Login> {
         //  }),
         //),
       ),
-      onChanged: (_) {
-        setState(() {});
-      },
+      onChanged: (_) {},
       onEditingComplete: () {
         FocusScope.of(context).requestFocus(unlockFocus);
         setState(() {});
@@ -96,23 +94,21 @@ class _LoginState extends State<Login> {
   Widget get unlockButton => components.buttons.actionButton(context,
       enabled: validate(),
       focusNode: unlockFocus,
+      label: 'Unlock',
       onPressed: () async => await submit());
 
   bool validate() => services.password.validate.password(password.text);
 
   Future submit({bool showFailureMessage = true}) async {
     if (services.password.validate.password(password.text)) {
-      setState(() {
-        buttonEnabled = true;
-      });
+      await Future.delayed(Duration(milliseconds: 200));
       FocusScope.of(context).unfocus();
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
       // create ciphers for wallets we have
       services.cipher.initCiphers(altPassword: password.text);
       await services.cipher.updateWallets();
       services.cipher.cleanupCiphers();
-    } else {
-      buttonEnabled = false;
-    }
+      streams.app.splash.add(false); // trigger to refresh app bar again
+    } else {}
   }
 }

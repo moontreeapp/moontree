@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/theme/colors.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class Loader extends StatefulWidget {
@@ -67,29 +68,32 @@ class _LoaderState extends State<Loader> {
   @override
   Widget build(BuildContext context) {
     return FrontCurve(
+        fuzzyTop: false,
+        frontLayerBoxShadow: [],
+        color: AppColors.white87,
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-          Text(
-            widget.message,
-            style: Theme.of(context).textTheme.headline2,
-          ),
-          SizedBox(height: 16),
-          widget.staticImage
-              ? Image.asset(
-                  'assets/logo/moontree_logo.png',
-                  height: 56,
-                  width: 56,
-                )
-              : Lottie.asset(
-                  'assets/spinner/moontree_spinner_v2_002_1_recolored.json',
-                  animate: true,
-                  repeat: true,
-                  width: 100,
-                  height: 58.6,
-                  fit: BoxFit.fitWidth,
-                ),
-        ]));
+              Text(
+                widget.message,
+                style: Theme.of(context).textTheme.headline2,
+              ),
+              SizedBox(height: 16),
+              widget.staticImage
+                  ? Image.asset(
+                      'assets/logo/moontree_logo.png',
+                      height: 56,
+                      width: 56,
+                    )
+                  : Lottie.asset(
+                      'assets/spinner/moontree_spinner_v2_002_1_recolored.json',
+                      animate: true,
+                      repeat: true,
+                      width: 100,
+                      height: 58.6,
+                      fit: BoxFit.fitWidth,
+                    ),
+            ]));
   }
 }

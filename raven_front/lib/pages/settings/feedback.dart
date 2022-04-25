@@ -211,7 +211,7 @@ class _FeedbackState extends State<Feedback> {
   Future attemptSend([String? importData]) async {
     FocusScope.of(context).unfocus();
     //var text = (importData ?? descriptionController.text).trim();
-    //streams.import.attempt.add(ImportRequest(text: text));
+    //streams.feeback.send.add(ImportRequest(text: text)); // not real
     components.loading.screen(message: 'Sending Feedback');
   }
 

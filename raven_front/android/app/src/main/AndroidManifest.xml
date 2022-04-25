@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.moontree.ravenmobile">
    <application
-        android:label="raven_mobile"
+        android:label="Moontree"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

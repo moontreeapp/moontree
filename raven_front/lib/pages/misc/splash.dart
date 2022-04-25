@@ -39,9 +39,10 @@ class _SplashState extends State<Splash> {
       body: Lottie.asset('assets/splash/moontree_v2_001_recolored.json',
           animate: true,
           repeat: false,
+          alignment: Alignment.center,
           width: double.infinity,
           height: double.infinity,
-          fit: BoxFit.fill),
+          fit: BoxFit.cover),
       backgroundColor: Colors.white,
     );
   }
@@ -72,32 +73,32 @@ class DataLoadingHelper {
 
   Future setupWallets() async {
     if (res.wallets.data.isEmpty) {
-      await setupRealWallet('2');
+      //await setupRealWallet('1');
+      //await setupRealWallet('2');
+      await setupRealWallet(null);
       await res.settings.setCurrentWalletId(res.wallets.first.id);
       await res.settings.savePreferredWalletId(res.wallets.first.id);
-      await setupRealWallet('1');
-      await setupRealWallet(null);
     }
 
     // for testing
-    print('-------------------------');
-    print('addresses: ${res.addresses.length}');
-    print('assets: ${res.assets.length}');
-    print('balances: ${res.balances.length}');
-    print('blocks: ${res.blocks}');
-    print('ciphers: ${res.ciphers}');
-    print('metadata: ${res.metadatas.length}');
-    print('passwords: ${res.passwords}');
-    print('rates: ${res.rates}');
-    print('securities: ${res.securities.length}');
-    print('settings: ${res.settings.length}');
-    print('transactions: ${res.transactions.length}');
-    print('vins: ${res.vins.length}');
-    print('vouts: ${res.vouts.length}');
-    print('wallets: ${res.wallets}');
-    print('-------------------------');
-    //print(services.cipher.getPassword(altPassword: ''));
-    print('-------------------------');
+    //print('-------------------------');
+    //print('addresses: ${res.addresses.length}');
+    //print('assets: ${res.assets.length}');
+    //print('balances: ${res.balances.length}');
+    //print('blocks: ${res.blocks}');
+    //print('ciphers: ${res.ciphers}');
+    //print('metadata: ${res.metadatas.length}');
+    //print('passwords: ${res.passwords}');
+    //print('rates: ${res.rates}');
+    //print('securities: ${res.securities.length}');
+    //print('settings: ${res.settings.length}');
+    //print('transactions: ${res.transactions.length}');
+    //print('vins: ${res.vins.length}');
+    //print('vouts: ${res.vouts.length}');
+    //print('wallets: ${res.wallets}');
+    //print('-------------------------');
+    ////print(services.cipher.getPassword(altPassword: ''));
+    //print('-------------------------');
   }
 
   Future redirectToLoginOrHome() async {

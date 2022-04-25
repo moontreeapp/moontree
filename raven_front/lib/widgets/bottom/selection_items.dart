@@ -245,7 +245,7 @@ class SelectionItems {
             SelectionOption.NFT_Asset:
                 MdiIcons.plusCircle, //, color: Color(0xDE000000)),
             SelectionOption.Qualifier:
-                Icons.ac_unit, //, color: Color(0xDE000000)),
+                MdiIcons.pound, //, color: Color(0xDE000000)),
             SelectionOption.Admin:
                 MdiIcons.crownCircle, //, color: Color(0xDE000000)),
             SelectionOption.Sub_Asset:
@@ -499,9 +499,10 @@ class SelectionItems {
         builder: (BuildContext context) {
           DraggableScrollableController draggableScrollController =
               DraggableScrollableController();
-          var minExtent = min((items.length * 52 + 16).relative(context), 0.5);
+          var minExtent =
+              min((items.length * 52 + 16).ofMediaHeight(context), 0.5);
           var initialExtent = minExtent;
-          var maxExtent = (items.length * 52 + 16).relative(context);
+          var maxExtent = (items.length * 52 + 16).ofMediaHeight(context);
           maxExtent = min(1.0, max(minExtent, maxExtent));
           return DraggableScrollableSheet(
             controller: draggableScrollController,

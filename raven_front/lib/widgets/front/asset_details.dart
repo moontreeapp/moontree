@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:raven_front/components/components.dart';
 
 class AssetDetails extends StatefulWidget {
   final String symbol;
@@ -129,8 +130,37 @@ class _AssetDetails extends State<AssetDetails> {
 
   Widget link(String text, String link) => ListTile(
         dense: true,
-        onTap: () => launch(link + elementFull(text)),
+        onTap: () => components.message.giveChoices(
+          context,
+          title: 'Open in External App',
+          content: 'Open block explorer in browser?',
+          behaviors: {
+            'Cancel': Navigator.of(context).pop,
+            'Continue': () {
+              Navigator.of(context).pop();
+              launch(link + elementFull(text));
+            },
+          },
+        ),
         title: Text(text, style: Theme.of(context).textTheme.bodyText1),
         trailing: Text(element(text), style: Theme.of(context).textTheme.link),
       );
 }
+
+// showDialog(
+//            context: context,
+//            builder: (BuildContext context) => AlertDialog(
+//                    title: Text('Open in External App'),
+//                    content: Text('Open discord app or browser?'),
+//                    actions: [
+//                      TextButton(
+//                          child: Text('Cancel'),
+//                          onPressed: () => Navigator.of(context).pop()),
+//                      TextButton(
+//                          child: Text('Continue'),
+//                          onPressed: () {
+//                            Navigator.of(context).pop();
+//                            launch(
+//                                'https://discord.gg/${link ?? name.toLowerCase()}');
+//                          })
+//                    ])),

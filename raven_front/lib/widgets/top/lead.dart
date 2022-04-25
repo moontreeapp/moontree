@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
-import 'package:raven_front/theme/theme.dart';
 
 class PageLead extends StatefulWidget {
   final BuildContext mainContext;
@@ -68,7 +67,7 @@ class _PageLead extends State<PageLead> {
   }
 
   Widget body() {
-    if (loading) {
+    if (loading && pageTitle != 'Network') {
       return Container();
     }
     if (settingTitle?.startsWith('/settings/') ?? false) {
@@ -91,14 +90,15 @@ class _PageLead extends State<PageLead> {
       return Container();
     }
     if (pageTitle == 'Login') {
-      return Container(
-        height: 24,
-        padding: EdgeInsets.only(left: 16),
-        child: SvgPicture.asset(
-          'assets/icons/menu/menu.svg',
-          color: AppColors.black38,
-        ),
-      );
+      return Container();
+      //return Container(
+      //  height: 24,
+      //  padding: EdgeInsets.only(left: 16),
+      //  child: SvgPicture.asset(
+      //    'assets/icons/menu/menu.svg',
+      //    color: AppColors.black38,
+      //  ),
+      //);
     }
     if (xlead || ['Send', 'Scan', 'Receive'].contains(pageTitle)) {
       return IconButton(

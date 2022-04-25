@@ -26,8 +26,11 @@ class ButtonComponents {
           focusNode: focusNode,
           onPressed: enabled
               ? (link != null
-                  ? () => Navigator.of(components.navigator.routeContext!)
-                      .pushNamed(link, arguments: arguments)
+                  ? () {
+                      onPressed == null ? () {} : onPressed();
+                      Navigator.of(components.navigator.routeContext!)
+                          .pushNamed(link, arguments: arguments);
+                    }
                   : onPressed ?? () {})
               : disabledOnPressed ?? () {},
           style: invert

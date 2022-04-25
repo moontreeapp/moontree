@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/utils/zips.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -59,16 +60,10 @@ class EmptyComponents {
     int count = 1,
     bool holding = false,
   }) {
-    var thisHolding = Shimmer.fromColors(
+    final thisHolding = Shimmer.fromColors(
         baseColor: AppColors.primaries[0],
         highlightColor: Colors.white,
         child: assetPlaceholder(context, holding: holding));
-    var blankNavArea = [
-      Container(
-        height: 118,
-        color: Colors.white,
-      )
-    ];
     return ListView(
         controller: scrollController,
         dragStartBehavior: DragStartBehavior.start,
@@ -78,7 +73,7 @@ class EmptyComponents {
           ...[
             for (var _ in range(count)) ...[thisHolding, Divider()]
           ],
-          ...blankNavArea
+          ...[blankNavArea(context)]
         ]);
   }
 
@@ -180,17 +175,16 @@ class EmptyComponents {
             ),
           ]));
 
+  Widget blankNavArea(BuildContext context) => Container(
+        height: 118.figma(context),
+        color: Colors.white,
+      );
+
   ListView getTransactionsPlaceholder(
     BuildContext context, {
     required ScrollController scrollController,
     int count = 1,
   }) {
-    var blankNavArea = [
-      Container(
-        height: 118,
-        color: Colors.white,
-      )
-    ];
     return ListView(
         controller: scrollController,
         dragStartBehavior: DragStartBehavior.start,
@@ -203,7 +197,7 @@ class EmptyComponents {
               Divider()
             ]
           ],
-          ...blankNavArea
+          ...[blankNavArea(context)]
         ]);
   }
 

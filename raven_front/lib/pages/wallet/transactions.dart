@@ -4,6 +4,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction/transaction.dart';
@@ -91,7 +92,7 @@ class _TransactionsState extends State<Transactions>
     var maxExtent = (currentTxs.length * 80 +
             80 +
             (!services.download.history.downloads_complete ? 80 : 0))
-        .relative(context);
+        .ofMediaHeight(context);
     var minHeight = 1 - (201 + 16) / MediaQuery.of(context).size.height;
     cachedMetadataView = _metadataView();
     return BackdropLayers(
@@ -163,34 +164,30 @@ class _TransactionsState extends State<Transactions>
     if (securityAsset.primaryMetadata == null &&
         securityAsset.hasData &&
         securityAsset.data!.isIpfs) {
-      return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            InkWell(
-                child: Text('VIEW DATA', //Text('${securityAsset.metadata}',
-                    style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                        fontWeight: FontWeights.bold,
-                        letterSpacing: 1.25,
-                        color: AppColors.primary)),
-                onTap: () => showDialog(
-                    context: context,
-                    builder: (BuildContext context) => AlertDialog(
-                            title: Text('Open in External App'),
-                            content: Text('Open ipfs data in browser?'),
-                            actions: [
-                              TextButton(
-                                  child: Text('Cancel'),
-                                  onPressed: () => Navigator.of(context).pop()),
-                              TextButton(
-                                  child: Text('Continue'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    launch(
-                                        'https://ipfs.io/ipfs/${securityAsset.metadata}');
-                                  })
-                            ])))
-          ]);
+      return Container(
+          alignment: Alignment.topCenter,
+          height:
+              (MediaQuery.of(context).size.height - (72.figma(context) + 56)) *
+                  0.5,
+          child: InkWell(
+              child: Text('VIEW DATA', //Text('${securityAsset.metadata}',
+                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                      fontWeight: FontWeights.bold,
+                      letterSpacing: 1.25,
+                      color: AppColors.primary)),
+              onTap: () => components.message.giveChoices(
+                    context,
+                    title: 'Open in External App',
+                    content: 'Open ipfs data in browser?',
+                    behaviors: {
+                      'Cancel': Navigator.of(context).pop,
+                      'Continue': () {
+                        Navigator.of(context).pop();
+                        launch(
+                            'https://ipfs.io/ipfs/${securityAsset.metadata}'); //'https://gateway.ipfs.io/ipfs/'
+                      },
+                    },
+                  )));
     } else if (securityAsset.primaryMetadata == null) {
       chilren = [SelectableText(securityAsset.metadata)];
     } else if (securityAsset.primaryMetadata!.kind == MetadataType.ImagePath) {

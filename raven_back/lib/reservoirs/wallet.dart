@@ -17,6 +17,8 @@ class WalletReservoir extends Reservoir<_IdKey, Wallet> {
     byName = addIndexMultiple('name', _NameKey());
   }
 
+  List<Wallet> get ordered => data.sorted((a, b) => a.name.compareTo(b.name));
+
   List<LeaderWallet> get leaders => byWalletType
       .getAll(WalletType.leader)
       .map((wallet) => wallet as LeaderWallet)
@@ -38,9 +40,8 @@ class WalletReservoir extends Reservoir<_IdKey, Wallet> {
 
   String get nextWalletName => (data.length + 1).toString();
 
-  Wallet get currentWallet => primaryIndex
-      .getOne(
-          res.settings.primaryIndex.getOne(SettingName.Wallet_Current)?.value)!;
+  Wallet get currentWallet => primaryIndex.getOne(
+      res.settings.primaryIndex.getOne(SettingName.Wallet_Current)?.value)!;
 
   String get currentWalletName => currentWallet.name;
 }

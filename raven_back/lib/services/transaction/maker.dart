@@ -339,7 +339,9 @@ class SendEstimate with ToStringMixin {
         'creation',
       ];
 
-  int get total => (creation ? 0 : amount) + fees + extraFees;
+  int get total => security == null || security == res.securities.RVN
+      ? (creation ? 0 : amount) + fees + extraFees
+      : fees + extraFees;
   int get utxoTotal => utxos.fold(
       0, (int total, vout) => total + vout.securityValue(security: security));
 
@@ -362,6 +364,9 @@ class TransactionMaker {
     SendRequest sendRequest,
   ) async {
     var tuple;
+    print('sendRequest.assetMemo: ${sendRequest.assetMemo}');
+    print(
+        'sendRequest.assetMemo?.base58Decode: ${sendRequest.assetMemo?.base58Decode}');
     var estimate = SendEstimate(
       sendRequest.sendAmountAsSats,
       security: sendRequest.security,
@@ -379,12 +384,14 @@ class TransactionMaker {
             estimate,
             wallet: sendRequest.wallet,
             goal: sendRequest.feeGoal,
+            /*assetMemoExpiry: not captured yet*/
           )
         : await transaction(
             sendRequest.sendAddress,
             estimate,
             wallet: sendRequest.wallet,
             goal: sendRequest.feeGoal,
+            /*assetMemoExpiry: not captured yet*/
           );
     return tuple;
   }
@@ -1199,6 +1206,7 @@ class TransactionMaker {
       if (estimate.memo != null) {
         txb.addMemo(estimate.memo);
       }
+      print('extimate.assetMemo: ${estimate.assetMemo}');
       txb.addOutput(
         toAddress,
         estimate.amount,
@@ -1231,6 +1239,7 @@ class TransactionMaker {
     required Wallet wallet,
     TxGoal? goal,
     Set<int>? previousFees,
+    int? assetMemoExpiry,
   }) async {
     ravencoin.TransactionBuilder makeTxBuilder(
         List<Vout> utxos, SendEstimate estimate) {
@@ -1240,10 +1249,21 @@ class TransactionMaker {
         txb.addInput(utxo.transactionId, utxo.position);
         total = total + utxo.rvnValue;
       }
-      txb.addOutput(toAddress, estimate.amount);
+      print('extimate.assetMemo: ${estimate.assetMemo}');
+      txb.addOutput(
+        toAddress,
+        estimate.amount,
+        asset: estimate.security?.symbol,
+        memo: estimate.assetMemo,
+        expiry: assetMemoExpiry,
+      );
+      if (estimate.memo != null) {
+        txb.addMemo(estimate.memo);
+      }
       return txb;
     }
 
+    print('in sendall');
     var utxos = await services.balance.collectUTXOs(
       amount: estimate.amount,
       security: null,

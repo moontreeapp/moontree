@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
-project(raven_mobile LANGUAGES CXX)
+project(moontree_raven LANGUAGES CXX)
 
-set(BINARY_NAME "raven_mobile")
+set(BINARY_NAME "moontree_raven")
 
 cmake_policy(SET CMP0063 NEW)
 

@@ -242,9 +242,9 @@ class IconComponents {
       case AssetType.Main:
         return Icons.circle_outlined;
       case AssetType.Qualifier:
-        return Icons.ac_unit;
+        return MdiIcons.pound;
       case AssetType.QualifierSub:
-        return Icons.ac_unit;
+        return MdiIcons.pound;
       case AssetType.Restricted:
         return MdiIcons.lock;
       case AssetType.Sub:

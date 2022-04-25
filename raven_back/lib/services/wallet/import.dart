@@ -149,9 +149,11 @@ class ImportWalletService {
       var existingWalletId = detectExistingWallet(wallet);
       if (existingWalletId == null) {
         var importedChange = await res.wallets.save(wallet);
+        // set it as current before returning
+        await res.settings.setCurrentWalletId(importedChange!.data.id);
         return HandleResult(
             true,
-            res.wallets.primaryIndex.getOne(importedChange!.data.id)!.id,
+            res.wallets.primaryIndex.getOne(importedChange.data.id)!.id,
             LingoKey.walletImportedAs);
       }
       return HandleResult(false, res.wallets.primaryIndex.getOne(wallet.id)!.id,

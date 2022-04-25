@@ -24,18 +24,6 @@ class HistoryService {
   List<Iterable<String>> unspentsTxsFetchFirst = [];
 
   Future<bool?> getHistories(Address address, String? status) async {
-    void updateCounts(LeaderWallet leader) {
-      leader.removeUnused(address.hdIndex, address.exposure);
-      services.wallet.leader
-          .updateIndexOf(leader, address.exposure, used: address.hdIndex);
-    }
-
-    void updateCache(LeaderWallet leader) {
-      leader.addUnused(address.hdIndex, address.exposure);
-      services.wallet.leader
-          .updateIndexOf(leader, address.exposure, saved: address.hdIndex);
-    }
-
     var client = streams.client.client.value;
     if (client == null) {
       return false;
@@ -47,9 +35,11 @@ class HistoryService {
     });
     if (address.wallet is LeaderWallet) {
       if (histories.isNotEmpty) {
-        updateCounts(address.wallet as LeaderWallet);
+        services.wallet.leader
+            .updateCounts(address, address.wallet as LeaderWallet);
       } else {
-        updateCache(address.wallet as LeaderWallet);
+        services.wallet.leader
+            .updateCache(address, address.wallet as LeaderWallet);
       }
       if (address.hdIndex >=
           services.wallet.leader
@@ -94,7 +84,7 @@ class HistoryService {
               return true;
             }())) {
       _saveImmediately = true;
-      print('getting Transactions');
+      //print('getting Transactions');
       //streams.wallet.scripthashCallback.add(null); // make home listen to balances instead?
       var txsToDownload = await _txsListsByWalletExposureKeysLock.read(() {
         var txsToDownload = <String>[];
@@ -109,7 +99,6 @@ class HistoryService {
       // Get unspents first
       // Unspents we don't have implies history we dont have implies this gets called
       while (unspentsTxsFetchFirst.isNotEmpty) {
-        //print('Getting transactions from unspents');
         await getTransactions(unspentsTxsFetchFirst.removeAt(0));
       }
 
@@ -431,15 +420,22 @@ class HistoryService {
   }
 
   Future<void> addAddressToSkipHistory(Address address) async {
-    final wallet = res.wallets.primaryIndex
-        .getOne(res.settings.currentWalletId)!
-        .addresses;
-    final addressesNeeded =
-        wallet is LeaderWallet ? (wallet as LeaderWallet).addresses.length : 1;
-    await _addressesLock.write(() {
-      _addresses.add(address);
-      if (_addresses.length >= addressesNeeded) _saveImmediately = true;
-    });
+    if (!_saveImmediately) {
+      final wallet = res.wallets.primaryIndex
+          .getOne(res.settings.currentWalletId)!
+          .addresses;
+      final addressesNeeded = wallet is LeaderWallet
+          ? (wallet as LeaderWallet).addresses.length
+          : 1;
+      await _addressesLock.write(() {
+        _addresses.add(address);
+        if (_addresses.length >= addressesNeeded) _saveImmediately = true;
+      });
+    } else {
+      await _addressesLock.write(() {
+        _addresses.add(address);
+      });
+    }
   }
 
   Future<void> clearDownloadState() async {

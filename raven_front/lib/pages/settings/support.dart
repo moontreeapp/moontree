@@ -57,12 +57,13 @@ class Support extends StatelessWidget {
                             actionButton(
                               context,
                               name: 'RAVENCOIN',
+                              link: 'HEpYFdDx',
                             ),
                             SizedBox(width: 16),
                             actionButton(
                               context,
                               name: 'MOONTREE',
-                              link: 'Jh9aqeuB3Q',
+                              link: 'QakhMk5c',
                             ),
                           ])),
                 ])),
@@ -78,22 +79,17 @@ class Support extends StatelessWidget {
       components.buttons.actionButton(
         context,
         label: name.toUpperCase(),
-        onPressed: () => showDialog(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-                    title: Text('Open in External App'),
-                    content: Text('Open discord app or browser?'),
-                    actions: [
-                      TextButton(
-                          child: Text('Cancel'),
-                          onPressed: () => Navigator.of(context).pop()),
-                      TextButton(
-                          child: Text('Continue'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            launch(
-                                'https://discord.gg/${link ?? name.toLowerCase()}');
-                          })
-                    ])),
+        onPressed: () async => await components.message.giveChoices(
+          context,
+          title: 'Open in External App',
+          content: 'Open discord app or browser?',
+          behaviors: {
+            'Cancel': Navigator.of(context).pop,
+            'Continue': () {
+              Navigator.of(context).pop();
+              launch('https://discord.gg/${link ?? name.toLowerCase()}');
+            },
+          },
+        ),
       );
 }

@@ -40,7 +40,9 @@ class _BackdropAppBarState extends State<BackdropAppBar> {
             backgroundColor: Theme.of(context).backgroundColor,
             automaticallyImplyLeading: false,
             elevation: 0,
-            leading: PageLead(mainContext: context),
+            leading: streams.app.page.value == 'Login'
+                ? null
+                : PageLead(mainContext: context),
             title: /*FittedBox(fit: BoxFit.fitWidth, child: */ PageTitle() /*)*/,
             actions: <Widget>[
               components.status,

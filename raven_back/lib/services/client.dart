@@ -5,12 +5,46 @@ import 'package:raven_back/streams/wallet.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/raven_back.dart';
 
-/// client creation, logic, and settings.
+/// client creation, logic, and settings.s
 class ClientService {
   final SubscribeService subscribe = SubscribeService();
   final ApiService api = ApiService();
 
   RavenElectrumClient? get client => streams.client.client.value;
+  RavenElectrumClient? get useClient => streams.client.client.value;
+
+  /// if we want to talk to electrum safely, this will try to talk,
+  /// if communication fails it will reconnect and try again.
+  /// for example:
+  ///   await services.client.scope(() async {
+  ///     print('erroring if client is null is desirable in this scope');
+  ///     return await services.client.client!.getRelayFee();
+  ///   }));
+  Future<T> scope<T>(Future<T> Function() callback) async {
+    var x;
+    try {
+      x = await callback();
+    } catch (e) {
+      // reconnect on any error, not just server disconnected } on StateError {
+      streams.client.client.add(null);
+      while (streams.client.client.value == null) {
+        await Future.delayed(Duration(milliseconds: 100));
+      }
+
+      /// making this two layers deep because we got an error here too...
+      try {
+        x = await callback();
+      } catch (e) {
+        x = await callback();
+        // reconnect on any error, not just server disconnected } on StateError {
+        streams.client.client.add(null);
+        while (streams.client.client.value == null) {
+          await Future.delayed(Duration(milliseconds: 100));
+        }
+      }
+    }
+    return x;
+  }
 
   String get electrumDomain =>
       res.settings.primaryIndex.getOne(SettingName.Electrum_Domain)!.value;
@@ -37,8 +71,10 @@ class ClientService {
   bool get connectionStatus =>
       streams.client.client.stream.valueOrNull != null ? true : false;
 
-  Future<RavenElectrumClient?> createClient(
-      {String projectName = 'MTWallet', String buildVersion = '0.1'}) async {
+  Future<RavenElectrumClient?> createClient({
+    String projectName = 'MTWallet',
+    String buildVersion = '0.1',
+  }) async {
     try {
       if (res.settings.mainnet) {
         return await RavenElectrumClient.connect(
@@ -77,22 +113,42 @@ class ClientService {
 
 /// managing our address subscriptions
 class SubscribeService {
-  final Map<String, StreamSubscription> subscriptionHandles = {};
+  final Map<String, StreamSubscription> subscriptionHandlesUnspent = {};
+  final Map<String, StreamSubscription> subscriptionHandlesHistory = {};
+  final Map<String, StreamSubscription> subscriptionHandlesAsset = {};
 
-  bool toAllAddresses() {
+  Future<bool> toAllAddresses() async {
     var client = streams.client.client.value;
     if (client == null) {
       return false;
     }
-    var existing = false;
-    for (var address in res.wallets.primaryIndex //res.addresses
+    final addresses = res.wallets.primaryIndex
         .getOne(res.settings.currentWalletId)!
-        .addresses) {
-      onlySubscribeAddress(client, address);
+        .addresses;
+
+    /// better to get them all so when we switch wallets we see totals
+    /// immediately, but that requires that we save balances in unspentBalances
+    /// by walletId... and we wouldn't have to reset connection (in title.dart)
+    //final addresses = res.addresses.data;
+    var existing = false;
+    for (var address in addresses) {
+      onlySubscribeAddressUnspent(client, address);
       existing = true;
     }
+    for (var address in addresses) {
+      onlySubscribeAddressHistory(client, address);
+    }
     if (existing) {
-      services.download.history.allDoneProcess(client);
+      unawaited(services.download.history.allDoneProcess(client));
+      for (var address in addresses) {
+        if (address.wallet is LeaderWallet && address.vouts.isNotEmpty) {
+          services.wallet.leader
+              .updateCounts(address, address.wallet as LeaderWallet);
+        } else {
+          services.wallet.leader
+              .updateCache(address, address.wallet as LeaderWallet);
+        }
+      }
     }
     return true;
   }
@@ -113,7 +169,8 @@ class SubscribeService {
     if (client == null) {
       return false;
     }
-    onlySubscribeAddress(client, address);
+    onlySubscribeAddressUnspent(client, address);
+    onlySubscribeAddressHistory(client, address);
     return true;
   }
 
@@ -126,22 +183,30 @@ class SubscribeService {
     return true;
   }
 
-  void onlySubscribeAddress(RavenElectrumClient client, Address address) {
-    if (!subscriptionHandles.keys.contains(address.id)) {
-      subscriptionHandles[address.id] =
+  void onlySubscribeAddressUnspent(
+      RavenElectrumClient client, Address address) {
+    if (!subscriptionHandlesUnspent.keys.contains(address.id)) {
+      subscriptionHandlesUnspent[address.id] =
           client.subscribeScripthash(address.id).listen((String? status) async {
-        //print('Received call back for subscription to ${address.address}');
         await services.download.unspents.pull(scripthashes: [address.id]);
+      });
+    }
+  }
 
-        //print('Recieved status: $status vs our ${address.status?.status}');
-
-        // null status = no history, but we still want to walk thru the following our first time
-        if ((status == null && address.status == null) ||
-            address.status?.status != status) {
+  void onlySubscribeAddressHistory(
+      RavenElectrumClient client, Address address) {
+    if (!subscriptionHandlesHistory.keys.contains(address.id)) {
+      subscriptionHandlesHistory[address.id] =
+          client.subscribeScripthash(address.id).listen((String? status) async {
+        if (status == null || address.status?.status != status) {
           var allDone =
               await services.download.history.getHistories(address, status);
-
-          if (allDone != null && !allDone && address.wallet is LeaderWallet) {
+          //// why not just do this here?
+          //await res.statuses.save(Status(
+          //    linkId: address.id,
+          //    statusType: StatusType.address,
+          //    status: status));
+          if (allDone == false && address.wallet is LeaderWallet) {
             streams.wallet.deriveAddress.add(DeriveLeaderAddress(
               leader: address.wallet! as LeaderWallet,
               exposure: address.exposure,
@@ -149,14 +214,18 @@ class SubscribeService {
           }
         } else {
           await services.download.history.addAddressToSkipHistory(address);
+          if (address.wallet is LeaderWallet) {
+            services.wallet.leader
+                .updateCounts(address, address.wallet as LeaderWallet);
+          }
         }
       });
     }
   }
 
   void onlySubscribeAsset(RavenElectrumClient client, Asset asset) {
-    if (!subscriptionHandles.keys.contains(asset.symbol)) {
-      subscriptionHandles[asset.symbol] =
+    if (!subscriptionHandlesAsset.keys.contains(asset.symbol)) {
+      subscriptionHandlesAsset[asset.symbol] =
           client.subscribeAsset(asset.symbol).listen((String? status) {
         if (asset.status?.status != status) {
           res.statuses.save(Status(
@@ -171,11 +240,12 @@ class SubscribeService {
   }
 
   void unsubscribeAddress(String addressId) {
-    subscriptionHandles.remove(addressId)?.cancel();
+    subscriptionHandlesUnspent.remove(addressId)?.cancel();
+    subscriptionHandlesHistory.remove(addressId)?.cancel();
   }
 
   void unsubscribeAsset(String asset) {
-    subscriptionHandles.remove(asset)?.cancel();
+    subscriptionHandlesAsset.remove(asset)?.cancel();
   }
 }
 

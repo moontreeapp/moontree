@@ -7,7 +7,10 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/spend.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
+import 'package:raven_front/theme/colors.dart';
+import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
+import 'package:shimmer/shimmer.dart';
 
 final rvn = res.securities.RVN.symbol;
 
@@ -133,6 +136,7 @@ class _HoldingList extends State<HoldingList> {
       _balanceWasEmpty = (widget.holdings ?? Current.holdings).isEmpty;
     }
 
+    // Needs to be unspend because this updates immediately
     holdings = utils.assetHoldings(
         widget.holdings ?? services.download.unspents.unspentBalances);
 
@@ -154,10 +158,13 @@ class _HoldingList extends State<HoldingList> {
               Current.wallet.addresses.length;
     }
 
+    _hideList = Current.wallet is LeaderWallet
+        ? services.client.subscribe.subscriptionHandlesHistory.length <
+            Current.wallet.addresses.length
+        : false;
     /*
-    print(
-        '${services.download.unspents.scripthashesChecked} vs ${Current.wallet.addresses.length}');
-    print('was empty: $_balanceWasEmpty');
+    print(services.wallet.leader
+        .gapSatisfied(Current.wallet as LeaderWallet, NodeExposure.External));
     */
 
     return _hideList
@@ -220,34 +227,37 @@ class _HoldingList extends State<HoldingList> {
       }
     }
     if (rvnHolding.isEmpty) {
-      rvnHolding.add(ListTile(
-        //dense: true,
-        contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-        onTap: () {},
-        leading: Container(
-            height: 50,
-            width: 50,
-            child: components.icons.assetAvatar(res.securities.RVN.symbol)),
-        title: Text(res.securities.RVN.symbol,
-            style: Theme.of(context).textTheme.bodyText1),
-      ));
+      rvnHolding.add(Shimmer.fromColors(
+              baseColor: AppColors.primaries[0],
+              highlightColor: Colors.white,
+              child: components.empty.assetPlaceholder(context, holding: true))
+          //ListTile(
+          ////dense: true,
+          //contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+          //onTap: () {},
+          //leading: Container(
+          //    height: 50,
+          //    width: 50,
+          //    child: components.icons.assetAvatar(res.securities.RVN.symbol)),
+          //title: Text(res.securities.RVN.symbol,
+          //    style: Theme.of(context).textTheme.bodyText1),)
+          );
       rvnHolding.add(Divider(height: 1));
       //rvnHolding.add(ListTile(
       //    onTap: () {},
       //    title: Text('+ Create Asset (not enough RVN)',
       //        style: TextStyle(color: Theme.of(context).disabledColor))));
     }
-    var blankNavArea = [
-      Container(
-        height: 118,
-        color: Colors.white,
-      )
-    ];
+
     return ListView(
         controller: widget.scrollController,
         dragStartBehavior: DragStartBehavior.start,
         physics: ClampingScrollPhysics(),
-        children: <Widget>[...rvnHolding, ...assetHoldings, ...blankNavArea]);
+        children: <Widget>[
+          ...rvnHolding,
+          ...assetHoldings,
+          ...[components.empty.blankNavArea(context)]
+        ]);
   }
 
   void onTap(Wallet? wallet, AssetHolding holding) {
