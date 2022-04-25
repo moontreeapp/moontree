@@ -62,10 +62,6 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
 
   @override
   Widget build(BuildContext context) {
-    print(services.client.connectionStatus);
-    print(matches);
-    print(streams.client.connected.value == ConnectionStatus.connected);
-    print(streams.client.connected);
     return BackdropLayers(
         back: BlankBack(),
         front: FrontCurve(
