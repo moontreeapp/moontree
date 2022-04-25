@@ -145,6 +145,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
           validated = validateDomainPort(value);
         },
         onEditingComplete: () {
+          enableSubmit = true;
           serverAddress.text = serverAddress.text.trim();
           validated = validateDomainPort(serverAddress.text);
           FocusScope.of(context).requestFocus(connectFocus);
