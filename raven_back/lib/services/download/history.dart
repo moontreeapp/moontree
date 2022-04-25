@@ -68,7 +68,9 @@ class HistoryService {
         res.wallets.primaryIndex.getOne(res.settings.currentWalletId)!;
     if (_saveImmediately ||
         (addr_length ==
-                (current is LeaderWallet ? current.addresses.length : 1) &&
+                services.wallet.leader.indexRegistry.values
+                    .map((e) => e.saved)
+                    .sum() /*plus single wallets*2 */ &&
             () {
               if (current is LeaderWallet) {
                 for (var exposure in [
@@ -441,9 +443,9 @@ class HistoryService {
   Future<void> clearDownloadState() async {
     await _downloadQueriedLock.write(() {
       _downloadQueried.clear();
-      _downloaded = 0;
-      _new_length = 0;
     });
+    _downloaded = 0;
+    _new_length = 0;
   }
 
   bool get downloads_complete => _downloaded == _new_length;

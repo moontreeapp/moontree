@@ -5,7 +5,7 @@ import 'package:raven_back/streams/wallet.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/raven_back.dart';
 
-/// client creation, logic, and settings.
+/// client creation, logic, and settings.s
 class ClientService {
   final SubscribeService subscribe = SubscribeService();
   final ApiService api = ApiService();
@@ -122,9 +122,7 @@ class SubscribeService {
     if (client == null) {
       return false;
     }
-    final addresses = res.wallets.primaryIndex
-        .getOne(res.settings.currentWalletId)!
-        .addresses;
+    final addresses = res.addresses.toList();
 
     /// better to get them all so when we switch wallets we see totals
     /// immediately, but that requires that we save balances in unspentBalances

@@ -63,8 +63,10 @@ class BalanceService {
       await res.balances.save(Balance(
           walletId: res.wallets.currentWallet.id,
           security: securities.first,
-          confirmed: await services.download.unspents.totalConfirmed(key),
-          unconfirmed: await services.download.unspents.totalUnconfirmed(key)));
+          confirmed: await services.download.unspents
+              .totalConfirmed(res.wallets.currentWallet.id, key),
+          unconfirmed: await services.download.unspents
+              .totalUnconfirmed(res.wallets.currentWallet.id, key)));
     }
   }
 
@@ -78,17 +80,17 @@ class BalanceService {
   Future recalculateRVNBalance() async => await res.balances.save(Balance(
       walletId: res.wallets.currentWallet.id,
       security: res.securities.RVN,
-      confirmed: await services.download.unspents
-          .totalConfirmed(res.securities.RVN.symbol),
-      unconfirmed: await services.download.unspents
-          .totalUnconfirmed(res.securities.RVN.symbol)));
+      confirmed: await services.download.unspents.totalConfirmed(
+          res.wallets.currentWallet.id, res.securities.RVN.symbol),
+      unconfirmed: await services.download.unspents.totalUnconfirmed(
+          res.wallets.currentWallet.id, res.securities.RVN.symbol)));
 
   /// Transaction Logic ///////////////////////////////////////////////////////
 
   Future<List<Vout>> collectUTXOs(
       {required int amount, Security? security}) async {
-    await services.download.unspents
-        .assertSufficientFunds(amount, security?.symbol);
+    await services.download.unspents.assertSufficientFunds(
+        res.wallets.currentWallet.id, amount, security?.symbol);
     var gathered = 0;
     var unspents =
         (await services.download.unspents.getUnspents(security?.symbol))
