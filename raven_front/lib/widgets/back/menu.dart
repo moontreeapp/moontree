@@ -5,6 +5,7 @@ import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/theme.dart';
+import 'package:raven_front/utils/auth.dart';
 
 //import 'package:raven_front/services/lookup.dart';
 //import 'package:raven_front/utils/zips.dart';
@@ -289,12 +290,4 @@ class _NavMenuState extends State<NavMenu> {
         invert: true,
         onPressed: logout,
       );
-
-  void logout() async {
-    res.ciphers.clear();
-    Navigator.pushReplacementNamed(
-        components.navigator.routeContext!, '/security/login',
-        arguments: {});
-    streams.app.splash.add(false);
-  }
 }

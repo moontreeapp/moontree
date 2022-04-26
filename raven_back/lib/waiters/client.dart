@@ -126,7 +126,6 @@ class RavenClientWaiter extends Waiter {
       (Tuple3 tuple) {
         //RavenElectrumClient? client = tuple.item1;
         /// I think this is getting called when the app becomes active again without a working client
-        print('ping got called');
         services.client.scope(services.client.client!.ping);
         //try {
         //  client!.ping();
