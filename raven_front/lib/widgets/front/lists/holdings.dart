@@ -173,15 +173,21 @@ class _HoldingList extends State<HoldingList> {
     print(services.wallet.leader
         .gapSatisfied(Current.wallet as LeaderWallet, NodeExposure.External));
     */
-
     return _hideList
         ? components.empty.getAssetsPlaceholder(context,
             scrollController: widget.scrollController,
             count: _balanceWasEmpty ? holdingCount : Current.holdings.length,
             holding: true)
-        : //RefreshIndicator( child:
-        _holdingsView(context);
+        : holdings.length == 1 && holdings.first.crypto?.value == 0
+            ? ComingSoonPlaceholder(
+                scrollController: widget.scrollController,
+                header: 'Welcome',
+                message:
+                    'To get started, use Import or Receive to add Ravencoin & Assets to your wallet.',
+                placeholderType: PlaceholderType.wallet)
+            : _holdingsView(context);
 
+    //RefreshIndicator( child:...
     //  onRefresh: () => refresh(),
     //);
   }
@@ -237,7 +243,7 @@ class _HoldingList extends State<HoldingList> {
       rvnHolding.add(Shimmer.fromColors(
               baseColor: AppColors.primaries[0],
               highlightColor: Colors.white,
-              child: components.empty.assetPlaceholder(context, holding: true))
+              child: components.empty.holdingPlaceholder(context))
           //ListTile(
           ////dense: true,
           //contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),

@@ -168,13 +168,14 @@ class AllAssetsHome extends StatelessWidget {
               ? placeholderManage
                   ? ComingSoonPlaceholder(
                       scrollController: scrollController,
-                      message: 'Create & Manage Assets')
+                      message: 'Create & Manage Assets',
+                      placeholderType: PlaceholderType.asset)
                   : AssetList(scrollController: scrollController)
               : placeholderSwap
                   ? ComingSoonPlaceholder(
                       scrollController: scrollController,
                       message: 'Decentralized Asset Swaps',
-                      swap: true)
+                      placeholderType: PlaceholderType.swap)
                   : ListView(
                       controller: scrollController,
                       children: [

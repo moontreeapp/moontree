@@ -3,15 +3,19 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/colors.dart';
 import 'package:raven_front/utils/zips.dart';
 
+enum PlaceholderType { wallet, asset, swap }
+
 class ComingSoonPlaceholder extends StatelessWidget {
+  final String header;
   final String message;
-  final bool swap;
+  final PlaceholderType placeholderType;
   final ScrollController scrollController;
 
   const ComingSoonPlaceholder({
     required this.scrollController,
+    this.header = 'Coming Soon',
     this.message = 'Loading...',
-    this.swap = false, // different background placeholder
+    this.placeholderType = PlaceholderType.wallet,
     Key? key,
   }) : super(key: key);
 
@@ -27,9 +31,11 @@ class ComingSoonPlaceholder extends StatelessWidget {
             Column(
               children: [
                 for (var _ in range(19))
-                  swap
-                      ? components.empty.swapPlaceholder(context)
-                      : components.empty.assetPlaceholder(context)
+                  placeholderType == PlaceholderType.wallet
+                      ? components.empty.holdingPlaceholder(context)
+                      : placeholderType == PlaceholderType.asset
+                          ? components.empty.assetPlaceholder(context)
+                          : components.empty.swapPlaceholder(context)
               ],
             ),
             Column(
@@ -64,7 +70,7 @@ class ComingSoonPlaceholder extends StatelessWidget {
               children: <Widget>[
                 Container(height: (height - 16 - 56) / 2),
                 Center(
-                    child: Text('Coming Soon',
+                    child: Text(header,
                         textAlign: TextAlign.center,
                         style: Theme.of(context)
                             .textTheme

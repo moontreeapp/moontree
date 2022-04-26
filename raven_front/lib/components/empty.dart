@@ -54,6 +54,29 @@ class EmptyComponents {
             //RavenButton.getRVN(context), // hidden for alpha
           ]));
 
+  ListView getZeroHoldingsPlaceholder(
+    BuildContext context, {
+    required ScrollController scrollController,
+    int count = 1,
+    bool holding = false,
+  }) {
+    final thisHolding = Shimmer.fromColors(
+        baseColor: AppColors.primaries[0],
+        highlightColor: Colors.white,
+        child: assetPlaceholder(context, holding: holding));
+    return ListView(
+        controller: scrollController,
+        dragStartBehavior: DragStartBehavior.start,
+        physics: const ClampingScrollPhysics(),
+        children: <Widget>[
+          SizedBox(height: 8),
+          ...[
+            for (var _ in range(count)) ...[thisHolding, Divider()]
+          ],
+          ...[blankNavArea(context)]
+        ]);
+  }
+
   ListView getAssetsPlaceholder(
     BuildContext context, {
     required ScrollController scrollController,
@@ -76,6 +99,11 @@ class EmptyComponents {
           ...[blankNavArea(context)]
         ]);
   }
+
+  Widget holdingPlaceholder(BuildContext context) => assetPlaceholder(
+        context,
+        holding: true,
+      );
 
   Widget assetPlaceholder(
     BuildContext context, {
@@ -204,35 +232,36 @@ class EmptyComponents {
   Widget getTransactionsShimmer(BuildContext context) => Shimmer.fromColors(
       baseColor: AppColors.primaries[0],
       highlightColor: Colors.white,
-      child: Container(
-          height: 64,
-          padding: EdgeInsets.only(top: 8.0, left: 16, right: 16),
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height * (12 / 760),
-                    width: 79,
-                    decoration: BoxDecoration(
-                        color: AppColors.primaries[0],
-                        borderRadius: BorderRadius.circular(
-                            (MediaQuery.of(context).size.height * (12 / 760)) *
-                                .5)),
-                  ),
-                  SizedBox(height: 8),
-                  Container(
-                    height: MediaQuery.of(context).size.height * (12 / 760),
-                    width: 148,
-                    decoration: BoxDecoration(
-                        color: AppColors.primaries[0],
-                        borderRadius: BorderRadius.circular(
-                            (MediaQuery.of(context).size.height * (12 / 760)) *
-                                .5)),
-                  ),
-                ]),
-            components.icons.out(context, color: AppColors.primaries[0])
-          ])));
+      child: transactionPlaceholder(context));
+
+  Widget transactionPlaceholder(BuildContext context) => Container(
+      height: 64,
+      padding: EdgeInsets.only(top: 8.0, left: 16, right: 16),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * (12 / 760),
+                width: 79,
+                decoration: BoxDecoration(
+                    color: AppColors.primaries[0],
+                    borderRadius: BorderRadius.circular(
+                        (MediaQuery.of(context).size.height * (12 / 760)) *
+                            .5)),
+              ),
+              SizedBox(height: 8),
+              Container(
+                height: MediaQuery.of(context).size.height * (12 / 760),
+                width: 148,
+                decoration: BoxDecoration(
+                    color: AppColors.primaries[0],
+                    borderRadius: BorderRadius.circular(
+                        (MediaQuery.of(context).size.height * (12 / 760)) *
+                            .5)),
+              ),
+            ]),
+        components.icons.out(context, color: AppColors.primaries[0])
+      ]));
 }
