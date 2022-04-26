@@ -217,8 +217,11 @@ class UnspentService {
     unspentBalancesByWalletId = tempBalances;
   }
 
-  Future<int> _total(String walletId,
-      [String? symbolMaybeNull, ValueType? totalType]) async {
+  Future<int> _total(
+    String walletId, [
+    String? symbolMaybeNull,
+    ValueType? totalType,
+  ]) async {
     totalType = totalType ?? ValueType.confirmed;
     final totalIndex = totalType == ValueType.confirmed ? 0 : 1;
     final symbol = defaultSymbol(symbolMaybeNull);
@@ -295,8 +298,11 @@ class UnspentService {
   }
 
   Future<void> assertSufficientFunds(
-      String walletId, int amount, String? symbol,
-      {bool allowUnconfirmed = true}) async {
+    String walletId,
+    int amount,
+    String? symbol, {
+    bool allowUnconfirmed = true,
+  }) async {
     var total = await totalConfirmed(walletId, defaultSymbol(symbol));
     if (allowUnconfirmed) {
       total += await totalUnconfirmed(walletId, defaultSymbol(symbol));

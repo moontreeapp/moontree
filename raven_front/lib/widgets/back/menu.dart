@@ -253,15 +253,7 @@ class _NavMenuState extends State<NavMenu> {
               title: Text('call'),
               leading: Icon(Icons.info_outline_rounded),
               onTap: () async {
-                //print(services.client.client);
-                //services.client.client!..close();
-                //print(services.client.client);
-                print(await services.client.scope(() async {
-                  print('running');
-                  return await services.client.client!.getRelayFee();
-                }));
-                //print('await services.client.client!.getRelayFee()');
-                //print(await services.client.client!.getRelayFee());
+
               }),
           */
         ],
