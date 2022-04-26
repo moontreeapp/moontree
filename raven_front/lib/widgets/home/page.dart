@@ -234,7 +234,7 @@ class BottomNavBar extends StatelessWidget {
                             streams.app.triggers.value ==
                                 ThresholdTrigger.backup &&
                             !(Current.wallet as LeaderWallet).backedUp) {
-                          await Future.delayed(Duration(seconds: 1));
+                          await Future.delayed(Duration(milliseconds: 800));
                           streams.app.xlead.add(true);
                           Navigator.of(components.navigator.routeContext!)
                               .pushNamed(
@@ -254,7 +254,7 @@ class BottomNavBar extends StatelessWidget {
                             streams.app.triggers.value ==
                                 ThresholdTrigger.backup &&
                             !(Current.wallet as LeaderWallet).backedUp) {
-                          await Future.delayed(Duration(seconds: 1));
+                          await Future.delayed(Duration(milliseconds: 800));
                           streams.app.xlead.add(true);
                           Navigator.of(components.navigator.routeContext!)
                               .pushNamed(
