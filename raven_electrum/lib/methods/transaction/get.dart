@@ -176,7 +176,7 @@ class TxScriptPubKey with EquatableMixin {
     var x = asm.split(' ');
     var i = 0;
     for (var item in x) {
-      if (item == 'OP_RETURN') return x[i + 1];
+      if (item == 'OP_RETURN') return hex.substring(2);
       i = i + 1;
     }
     return null;

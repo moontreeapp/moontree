@@ -12,6 +12,7 @@ class ImportWaiter extends Waiter {
         var importFrom = ImportFrom(text: importRequest.text);
         if (await importFrom.handleImport()) {
           // send user to see new wallet
+          streams.import.success.add(null);
           streams.app.setting.add(null);
           streams.app.snack.add(Snack(message: 'Sucessful Import'));
         } else {
