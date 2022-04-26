@@ -160,15 +160,6 @@ class _HoldingList extends State<HoldingList> {
               res.addresses.length;
     }
 
-    // We don't want to un-hide the list once we reveal it
-    // reveals too early. resort to above logic.
-    //if (_hideList) {
-    //  _hideList = Current.wallet is LeaderWallet
-    //      ? services.client.subscribe.subscriptionHandlesHistory.length <
-    //          Current.wallet.addresses.length
-    //      : false;
-    //}
-
     /*
     print(services.wallet.leader
         .gapSatisfied(Current.wallet as LeaderWallet, NodeExposure.External));
