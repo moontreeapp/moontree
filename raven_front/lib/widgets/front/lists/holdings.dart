@@ -8,7 +8,6 @@ import 'package:raven_back/streams/spend.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/colors.dart';
-import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -89,6 +88,11 @@ class _HoldingList extends State<HoldingList> {
           balances = interimBalances;
         });
       }
+    }));
+
+    listeners.add(streams.import.success.listen((value) {
+      // Rehide list on successful import
+      _hideList = true;
     }));
   }
 

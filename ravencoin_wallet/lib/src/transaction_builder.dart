@@ -96,6 +96,7 @@ class TransactionBuilder {
       throw ArgumentError(
           'OP_RETURN trivial data cannot be more that 80 bytes');
     }
+
     var script = bscript.compile([
       OPS['OP_RETURN'],
       data,
