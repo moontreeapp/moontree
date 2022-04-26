@@ -84,17 +84,6 @@ class RavenMobileApp extends StatelessWidget {
             appBar: BackdropAppBar(),
             body: child!,
           ),
-          Align(
-            alignment: Alignment.topRight,
-            child: Container(
-              padding: EdgeInsets.only(top: 0, right: 40),
-              child: Banner(
-                message: 'alpha',
-                location: BannerLocation.bottomStart,
-                color: AppColors.success,
-              ),
-            ),
-          ),
         ]));
       },
     );
