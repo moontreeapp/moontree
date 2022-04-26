@@ -16,12 +16,10 @@ final rvn = res.securities.RVN.symbol;
 class HoldingList extends StatefulWidget {
   final Iterable<Balance>? holdings;
   final ScrollController scrollController;
-  final bool importing;
 
   const HoldingList({
     required this.scrollController,
     this.holdings,
-    this.importing = false,
     Key? key,
   }) : super(key: key);
 
@@ -147,9 +145,6 @@ class _HoldingList extends State<HoldingList> {
         services
             .download.unspents.unspentBalancesByWalletId[Current.walletId] ??
         []);
-    if (widget.importing) {
-      _hideList = true;
-    }
     if (_hideList) {
       // If new wallet, let assets pop up as we get them (can't figure out how to hide this until we're done. fix isGapSatisfied?)
       // Otherwise hide until our checked scripthashes are >= our current wallets address count

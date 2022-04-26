@@ -308,7 +308,7 @@ class UnspentService {
         return res[totalIndex];
       }
     });
-    return _cachedByWalletAndSymbol[walletId]![symbol]![totalIndex]!;
+    return _cachedByWalletAndSymbol[walletId]![symbol]![totalIndex];
   }
 
   Future<int> totalConfirmed(String walletId, [String? symbolMaybeNull]) async {

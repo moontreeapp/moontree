@@ -91,6 +91,7 @@ class _TransactionPageState extends State<TransactionPage> {
     print(transaction!.memos);
     print(transaction!.memos.first.substring(2).hexToUTF8);
     print(transaction!.memos.first);
+    print(transaction!.memos.first.hexToAscii);
     print(transaction!.id);
 
     return transaction!.memos.isNotEmpty

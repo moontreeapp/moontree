@@ -16,7 +16,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   late AppContext appContext = AppContext.wallet;
   late List<StreamSubscription> listeners = [];
-  bool importing = false;
 
   @override
   void initState() {
@@ -37,20 +36,6 @@ class _HomeState extends State<Home> {
     }));
     listeners.add(res.settings.changes.listen((Change change) {
       setState(() {});
-    }));
-    //listeners.add(streams.import.attempt.listen((request) {
-    //  if (request != null) {
-    //    setState(() {
-    //      importing = true;
-    //    });
-    //  }
-    //}));
-    listeners.add(streams.app.snack.listen((Snack? snack) {
-      if (snack != null && snack.message == 'Sucessful Import') {
-        setState(() {
-          importing = true;
-        });
-      }
     }));
     listeners.add(
         streams.app.triggers.listen((ThresholdTrigger? thresholdTrigger) async {
@@ -82,9 +67,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     print('addresses ${Current.wallet.addresses.length}');
-    var x =
-        HomePage(appContext: appContext, importing: importing ? true : false);
-    importing = false;
-    return x;
+    return HomePage(appContext: appContext);
   }
 }
