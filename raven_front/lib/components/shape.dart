@@ -6,4 +6,6 @@ class ShapeComponents {
         topLeft: Radius.circular(8.0),
         topRight: Radius.circular(8.0),
       ));
+  RoundedRectangleBorder get rounded => RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(8.0)));
 }

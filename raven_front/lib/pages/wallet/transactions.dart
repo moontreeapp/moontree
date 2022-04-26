@@ -178,11 +178,11 @@ class _TransactionsState extends State<Transactions>
                       color: AppColors.primary)),
               onTap: () => components.message.giveChoices(
                     context,
-                    title: 'Open in External App',
-                    content: 'Open ipfs data in browser?',
+                    title: 'View Data',
+                    content: 'View data in external browser?',
                     behaviors: {
-                      'Cancel': Navigator.of(context).pop,
-                      'Continue': () {
+                      'CANCEL': Navigator.of(context).pop,
+                      'BROWSER': () {
                         Navigator.of(context).pop();
                         launch(
                             'https://ipfs.io/ipfs/${securityAsset.metadata}'); //'https://gateway.ipfs.io/ipfs/'
