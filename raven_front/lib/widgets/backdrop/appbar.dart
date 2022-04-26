@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/theme/colors.dart';
+import 'package:raven_front/utils/auth.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_front/components/components.dart';
 
@@ -23,6 +23,11 @@ class _BackdropAppBarState extends State<BackdropAppBar> {
     super.initState();
     listeners.add(streams.app.splash.listen((bool value) {
       setState(() {});
+    }));
+    listeners.add(streams.app.logout.listen((bool value) {
+      if (value) {
+        logout();
+      }
     }));
   }
 

@@ -12,6 +12,7 @@
 /// need for us pretty easily. anyway its here if we need it. to be used in main
 /// `LockedScreen(child: child!)`
 /// requires AppWaiter to set value of streams.app.locked.value on inactivity.
+/// see #489
 
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
@@ -40,26 +41,25 @@ class _LockedScreen extends State<LockedScreen> {
   @override
   Widget build(BuildContext context) => Stack(children: [
         widget.child,
-        if (streams.app.locked.value && services.password.required)
-
-          /// both of these fixed the issue, but after verification of password
-          /// and reloading of this widget, for some unknown reason it would
-          /// send the user back to the splash screen. I think using these
-          /// messes up the navigator from the MaterialApp somehow, because
-          /// without a password, these never get executed and the build and
-          /// pass through of the child works fine.
-          //Navigator(
-          //  onGenerateRoute: (_) => MaterialPageRoute(
-          //      builder: (ctx) =>
-          //Overlay(initialEntries: [
-          //    OverlayEntry(
-          //        builder: (context) =>
-          //            Material(child:
-          //VerifyPassword(parentState: this)
-          /// therefore I believe in order to solve this issue more concretely
-          /// you'd have to place a screen infront of the actaul widget.child,
-          /// thus I introduced the Stack pattern (above), but then we moved
-          /// away from this design altogether before fully implementing it.
-          VerifyPassword()
+        //if (streams.app.locked.value && services.password.required)
+        /// both of these fixed the issue, but after verification of password
+        /// and reloading of this widget, for some unknown reason it would
+        /// send the user back to the splash screen. I think using these
+        /// messes up the navigator from the MaterialApp somehow, because
+        /// without a password, these never get executed and the build and
+        /// pass through of the child works fine.
+        //Navigator(
+        //  onGenerateRoute: (_) => MaterialPageRoute(
+        //      builder: (ctx) =>
+        //Overlay(initialEntries: [
+        //    OverlayEntry(
+        //        builder: (context) =>
+        //            Material(child:
+        //VerifyPassword(parentState: this)
+        /// therefore I believe in order to solve this issue more concretely
+        /// you'd have to place a screen infront of the actaul widget.child,
+        /// thus I introduced the Stack pattern (above), but then we moved
+        /// away from this design altogether before fully implementing it.
+        VerifyPassword()
       ]);
 }

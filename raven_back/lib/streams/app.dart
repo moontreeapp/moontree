@@ -17,7 +17,8 @@ class AppStreams {
   final triggers = BehaviorSubject<ThresholdTrigger?>.seeded(null);
   final loading = BehaviorSubject<bool>.seeded(false);
   final keyboard = BehaviorSubject<KeyboardStatus?>.seeded(null);
-  final locked = BehaviorSubject<bool>.seeded(false);
+  //final locked = BehaviorSubject<bool>.seeded(false);
+  final logout = BehaviorSubject<bool>.seeded(false);
 
   WalletSideStreams wallet = WalletSideStreams();
   ManageSideStreams manage = ManageSideStreams();

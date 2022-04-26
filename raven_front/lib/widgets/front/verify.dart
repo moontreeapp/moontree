@@ -104,7 +104,6 @@ class _VerifyPasswordState extends State<VerifyPassword> {
         label: 'Submit',
         onPressed: () {
           streams.app.verify.add(true);
-          streams.app.locked.add(false);
           widget.parentState?.setState(() {});
         },
       );

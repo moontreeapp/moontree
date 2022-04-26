@@ -2,14 +2,25 @@ import 'package:raven_back/raven_back.dart';
 import 'waiter.dart';
 
 class AppWaiter extends Waiter {
+  DateTime lastInactiveTime = DateTime.now();
+  int gracePeriod = 60 * 2;
+
   void init({Object? reconnect}) {
-    /// when app becomes inactive lock
+    /// when app has been inactive for 2 minutes logout
     listen(
       'streams.app.active',
       streams.app.active,
-      (bool active) {
+      (bool active) async {
         if (!active && services.password.required) {
-          streams.app.locked.add(true);
+          lastInactiveTime = DateTime.now();
+          await Future.delayed(Duration(seconds: gracePeriod));
+          if (streams.app.active.value &&
+              DateTime.now().difference(lastInactiveTime).inSeconds >=
+                  gracePeriod) {
+            //streams.app.locked.add(true);
+            /// just logout
+            streams.app.logout.add(true);
+          }
         }
       },
     );
