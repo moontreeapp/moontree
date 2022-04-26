@@ -12,8 +12,13 @@ import 'package:raven_front/components/components.dart';
 
 class HomePage extends StatefulWidget {
   final AppContext appContext;
+  final bool importing;
 
-  const HomePage({Key? key, required this.appContext}) : super(key: key);
+  const HomePage({
+    Key? key,
+    required this.appContext,
+    this.importing = false,
+  }) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -88,6 +93,7 @@ class _HomePageState extends State<HomePage>
                         appContext: widget.appContext,
                         placeholderManage: true,
                         placeholderSwap: true,
+                        importing: widget.importing,
                       ),
                     ),
                     /** notifier-alt */
@@ -150,12 +156,14 @@ class AllAssetsHome extends StatelessWidget {
   final AppContext appContext;
   final bool placeholderManage;
   final bool placeholderSwap;
+  final bool importing;
 
   const AllAssetsHome({
     required this.scrollController,
     required this.appContext,
     this.placeholderManage = false,
     this.placeholderSwap = false,
+    this.importing = false,
     Key? key,
   }) : super(key: key);
 
@@ -163,7 +171,10 @@ class AllAssetsHome extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: appContext == AppContext.wallet
-          ? HoldingList(scrollController: scrollController)
+          ? HoldingList(
+              scrollController: scrollController,
+              importing: importing,
+            )
           : appContext == AppContext.manage
               ? placeholderManage
                   ? ComingSoonPlaceholder(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/services/lookup.dart';
+import 'package:raven_front/utils/data.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_front/components/components.dart';
 
@@ -15,6 +16,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   late AppContext appContext = AppContext.wallet;
   late List<StreamSubscription> listeners = [];
+  bool importing = false;
 
   @override
   void initState() {
@@ -36,13 +38,26 @@ class _HomeState extends State<Home> {
     listeners.add(res.settings.changes.listen((Change change) {
       setState(() {});
     }));
+    //listeners.add(streams.import.attempt.listen((request) {
+    //  if (request != null) {
+    //    setState(() {
+    //      importing = true;
+    //    });
+    //  }
+    //}));
+    listeners.add(streams.app.snack.listen((Snack? snack) {
+      if (snack != null && snack.message == 'Sucessful Import') {
+        setState(() {
+          importing = true;
+        });
+      }
+    }));
     listeners.add(
         streams.app.triggers.listen((ThresholdTrigger? thresholdTrigger) async {
       if (Current.wallet is LeaderWallet &&
           thresholdTrigger == ThresholdTrigger.backup &&
           !(Current.wallet as LeaderWallet).backedUp) {
-        //await Future.delayed(Duration(milliseconds: 800));
-        return;
+        await Future.delayed(Duration(milliseconds: 800));
         streams.app.xlead.add(true);
         Navigator.of(components.navigator.routeContext!).pushNamed(
           '/security/backup',
@@ -67,6 +82,9 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     print('addresses ${Current.wallet.addresses.length}');
-    return HomePage(appContext: appContext);
+    var x =
+        HomePage(appContext: appContext, importing: importing ? true : false);
+    importing = false;
+    return x;
   }
 }

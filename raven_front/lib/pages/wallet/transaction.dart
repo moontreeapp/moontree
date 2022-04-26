@@ -87,11 +87,18 @@ class _TransactionPageState extends State<TransactionPage> {
     }
   }
 
-  String? get transactionMemo => transaction!.memos.isNotEmpty
-      ? transaction!.memos.first.hexToAscii
-      : transaction!.assetMemos.isNotEmpty
-          ? transaction!.assetMemos.first /*.hexToAscii ?*/
-          : null;
+  String? get transactionMemo {
+    print(transaction!.memos);
+    print(transaction!.memos.first.substring(2).hexToUTF8);
+    print(transaction!.memos.first);
+    print(transaction!.id);
+
+    return transaction!.memos.isNotEmpty
+        ? transaction!.memos.first.substring(2).hexToUTF8
+        : transaction!.assetMemos.isNotEmpty
+            ? transaction!.assetMemos.first /*.hexToAscii ?*/
+            : null;
+  }
 
   String elementFull(String humanName) {
     switch (humanName) {

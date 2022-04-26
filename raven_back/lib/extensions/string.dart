@@ -47,6 +47,7 @@ extension StringBytesExtension on String {
   Uint8List get hexBytesForScript =>
       Uint8List.fromList([0x54, 0x20] + hex.decode(this));
   List<int> get bytes => utf8.encode(this);
+  String get hexToUTF8 => utf8.decode(hexBytes);
   String get hexToAscii => List.generate(
         length ~/ 2,
         (i) => String.fromCharCode(
