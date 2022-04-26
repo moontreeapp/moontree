@@ -499,6 +499,7 @@ class SelectionItems {
         context: context,
         elevation: 1,
         isScrollControlled: true,
+        barrierColor: AppColors.black38,
         shape: components.shape.topRounded,
         builder: (BuildContext context) {
           DraggableScrollableController draggableScrollController =
@@ -632,6 +633,7 @@ class SimpleSelectionItems {
         context: context,
         elevation: 1,
         isScrollControlled: true,
+        barrierColor: AppColors.black38,
         shape: components.shape.topRounded,
         builder: (BuildContext context) {
           DraggableScrollableController draggableScrollController =
