@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:raven_front/pages/misc/checkout.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/qrcode.dart';
+import 'package:raven_front/utils/transformers.dart';
 
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
@@ -72,26 +73,71 @@ class _SendState extends State<Send> {
     //sendNoteFocusNode.addListener(refresh);
     listeners.add(streams.spend.form.listen((SpendForm? value) {
       if (value != null) {
+        print('');
+        print(spendForm);
+        print(value);
         if (spendForm != value) {
-          setState(() {
-            spendForm = value;
-            var asset = (value.symbol ?? res.securities.RVN.symbol);
-            sendAsset.text =
-                asset == res.securities.RVN.symbol || asset == 'Ravencoin'
-                    ? 'Ravencoin'
-                    : Current.holdingNames.contains(asset)
-                        ? asset
-                        : sendAsset.text == ''
-                            ? 'Ravencoin'
-                            : sendAsset.text;
-            sendFee.text = value.fee ?? 'Standard';
-            sendNote.text = value.note ?? sendNote.text;
-            sendAmount.text = value.amount == 0.0
-                ? ''
-                : value.amount?.toString() ?? sendAmount.text;
-            sendAddress.text = value.address ?? sendAddress.text;
-            addressName = value.addressName ?? addressName;
-          });
+          spendForm = value;
+          var asset = (value.symbol ?? res.securities.RVN.symbol);
+          asset = (asset == res.securities.RVN.symbol || asset == 'Ravencoin')
+              ? 'Ravencoin'
+              : Current.holdingNames.contains(asset)
+                  ? asset
+                  : asset == ''
+                      ? 'Ravencoin'
+                      : asset;
+          var sendFeeText = value.fee ?? 'Standard';
+          var sendNoteText = value.note ?? sendNote.text;
+          var sendAddressText = value.address ?? sendAddress.text;
+          var addressNameText = value.addressName ?? addressName;
+          if (sendAsset.text != asset ||
+              sendFee.text != sendFeeText ||
+              sendNote.text != sendNoteText ||
+              sendAddress.text != sendAddressText ||
+              addressName != addressNameText) {
+            setState(() {
+              sendAsset.text = asset;
+              sendFee.text = sendFeeText;
+              sendNote.text = sendNoteText;
+              sendAddress.text = sendAddressText;
+              addressName = addressNameText;
+              var x = asDouble(sendAmount.text);
+              print('\n$x vs ${value.amount}');
+              if (value.amount == null && x > 0) {
+                print('blanking');
+                sendAmount.text = '';
+                streams.spend.form.add(SpendForm.merge(
+                    form: streams.spend.form.value,
+                    amount: 0.0,
+                    symbol: sendAsset.text,
+                    fee: sendFee.text,
+                    note: sendNote.text,
+                    address: sendAddress.text,
+                    addressName: addressName));
+              } else if (value.amount != null && x != value.amount) {
+                print('setting to ${value.amount}');
+                sendAmount.text =
+                    value.amount == 0.0 ? '' : value.amount.toString();
+                streams.spend.form.add(SpendForm.merge(
+                    form: streams.spend.form.value,
+                    amount: value.amount ?? 0,
+                    symbol: sendAsset.text,
+                    fee: sendFee.text,
+                    note: sendNote.text,
+                    address: sendAddress.text,
+                    addressName: addressName));
+              } else {
+                streams.spend.form.add(SpendForm.merge(
+                    form: streams.spend.form.value,
+                    amount: value.amount ?? 0,
+                    symbol: sendAsset.text,
+                    fee: sendFee.text,
+                    note: sendNote.text,
+                    address: sendAddress.text,
+                    addressName: addressName));
+              }
+            });
+          }
         }
       }
     }));
@@ -301,10 +347,11 @@ class _SendState extends State<Send> {
         ),
         onChanged: (value) {
           _validateAddressColor(value);
+          setState(() {});
         },
         onEditingComplete: () {
-          //setState(() {});
           FocusScope.of(context).requestFocus(sendAmountFocusNode);
+          setState(() {});
         },
       );
 
@@ -312,7 +359,11 @@ class _SendState extends State<Send> {
         focusNode: sendAmountFocusNode,
         controller: sendAmount,
         textInputAction: TextInputAction.done,
-        keyboardType: TextInputType.number,
+        keyboardType:
+            TextInputType.numberWithOptions(decimal: true, signed: false),
+        inputFormatters: <TextInputFormatter>[
+          DecimalTextInputFormatter(decimalRange: divisibility)
+        ],
         decoration: components.styles.decorations.textField(
           context,
           focusNode: sendAmountFocusNode,
@@ -322,18 +373,19 @@ class _SendState extends State<Send> {
               ? null
               : sendAmount.text == '0.0'
                   ? 'must be greater than 0'
-                  : (String x) {
-                      if (x.isNumeric) {
-                        print('is numeric');
-                        var y = x.toNum();
-                        if (y != null && y.isRVNAmount) {
-                          return true;
-                        }
-                      }
-                      return false;
-                    }(sendAmount.text)
-                      ? null
-                      : 'Unrecognized Amount',
+                  : asDouble(sendAmount.text) > holding
+                      ? 'too large'
+                      : (String x) {
+                          if (x.isNumeric) {
+                            var y = x.toNum();
+                            if (y != null && y.isRVNAmount) {
+                              return true;
+                            }
+                          }
+                          return false;
+                        }(sendAmount.text)
+                          ? null
+                          : 'Unrecognized Amount',
           // put ability to put it in as USD here
           /* // functionality has been moved to header
                     suffixText: sendAll ? "don't send all" : 'send all',
@@ -356,11 +408,13 @@ class _SendState extends State<Send> {
                     */
         ),
         onChanged: (value) {
+          if (asDouble(value) > holding) {
+            value = holding.toString();
+            sendAmount.text = holding.toString();
+          }
           visibleAmount = verifyVisibleAmount(value);
-          //streams.spend.form.add(SpendForm.merge(
-          //    form: streams.spend.form.value,
-          //    amount: doubleAmount(visibleAmount)));
-          setState(() {});
+          streams.spend.form.add(SpendForm.merge(
+              form: streams.spend.form.value, amount: asDouble(visibleAmount)));
         },
         onEditingComplete: () {
           //sendAmount.text = cleanDecAmount(
@@ -371,14 +425,13 @@ class _SendState extends State<Send> {
               enforceDivisibility(sendAmount.text, divisibility: divisibility);
           visibleAmount = verifyVisibleAmount(sendAmount.text);
           streams.spend.form.add(SpendForm.merge(
-              form: streams.spend.form.value,
-              amount: doubleAmount(visibleAmount)));
+              form: streams.spend.form.value, amount: asDouble(visibleAmount)));
           FocusScope.of(context).requestFocus(sendFeeFocusNode);
           setState(() {});
         },
       );
 
-  double doubleAmount(String visibleAmount) =>
+  double asDouble(String visibleAmount) =>
       visibleAmount == '' ? 0 : double.parse(visibleAmount);
 
   Widget get sendFeeField => TextField(
@@ -475,7 +528,9 @@ class _SendState extends State<Send> {
                         (await Clipboard.getData('text/plain'))?.text ?? '';
                   },
                 )),
-      onChanged: (value) {},
+      onChanged: (value) {
+        setState(() {});
+      },
       onEditingComplete: () {
         FocusScope.of(context).requestFocus(previewFocusNode);
         setState(() {});
