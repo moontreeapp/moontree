@@ -379,7 +379,7 @@ class _ReceiveState extends State<Receive> {
                       )
                     ],
                   ))),
-          KeyboardHidesWidget(
+          KeyboardHidesWidgetWithDelay(
               child: components.containers
                   .navBar(context, child: Row(children: [shareButton]))),
         ],

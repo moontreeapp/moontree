@@ -36,7 +36,7 @@ class _RemovePasswordState extends State<RemovePassword> {
                 padding: EdgeInsets.only(top: 16, left: 16, right: 16),
                 child: Text('Are you sure?',
                     style: Theme.of(context).textTheme.headline2)),
-            KeyboardHidesWidget(
+            KeyboardHidesWidgetWithDelay(
                 child: components.containers
                     .navBar(context, child: Row(children: [submitButton])))
           ],

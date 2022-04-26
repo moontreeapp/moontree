@@ -79,7 +79,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                     child: x)
             ],
           ),
-          KeyboardHidesWidget(
+          KeyboardHidesWidgetWithDelay(
               child: components.containers
                   .navBar(context, child: Row(children: [submitButton])))
         ],

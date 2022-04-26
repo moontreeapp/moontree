@@ -38,7 +38,7 @@ class PageComponents {
         : Stack(
             children: [
               fields,
-              KeyboardHidesWidget(
+              KeyboardHidesWidgetWithDelay(
                   child: components.buttons.floatingButtons(
                 context,
                 buttons: floatingButtons,

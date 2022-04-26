@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/other/keyboard.dart';
+import 'package:raven_front/widgets/other/keyboard_delayed.dart';
 
 class ContainerComponents {
   Widget navBar(
@@ -8,7 +9,7 @@ class ContainerComponents {
     required Widget child,
     bool tall = false,
   }) =>
-      KeyboardHidesWidget(
+      KeyboardHidesWidgetWithDelay(
           child: Container(
               height: (tall ? 118 : 72).figma(context),
               padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),

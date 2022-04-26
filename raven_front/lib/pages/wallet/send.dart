@@ -292,7 +292,7 @@ class _SendState extends State<Send> {
               SizedBox(height: 8),
             ],
           ),
-          KeyboardHidesWidget(
+          KeyboardHidesWidgetWithDelay(
               child: components.buttons.layeredButtons(
             context,
             buttons: [sendTransactionButton(disabled: !allValidation())],
