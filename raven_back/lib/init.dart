@@ -3,6 +3,7 @@ import 'package:raven_back/raven_back.dart';
 Future initWaiters() async {
   waiters.leader.init();
   waiters.single.init();
+  waiters.app.init();
   waiters.address.init();
   waiters.client.init();
   waiters.setting.init();

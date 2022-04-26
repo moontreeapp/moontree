@@ -32,15 +32,16 @@ class ClientService {
       }
 
       /// making this two layers deep because we got an error here too...
+      /// saw the error gain in catch, so ... we need to either make it recursive, or something.
       try {
         x = await callback();
       } catch (e) {
-        x = await callback();
         // reconnect on any error, not just server disconnected } on StateError {
         streams.client.client.add(null);
         while (streams.client.client.value == null) {
           await Future.delayed(Duration(milliseconds: 100));
         }
+        x = await callback();
       }
     }
     return x;

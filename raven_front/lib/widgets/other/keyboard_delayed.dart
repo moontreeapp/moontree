@@ -6,9 +6,13 @@ import 'package:raven_back/streams/app.dart';
 
 class KeyboardHidesWidgetWithDelay extends StatefulWidget {
   final Widget child;
+  final bool fade;
 
-  const KeyboardHidesWidgetWithDelay({Key? key, required this.child})
-      : super(key: key);
+  const KeyboardHidesWidgetWithDelay({
+    Key? key,
+    required this.child,
+    this.fade = false,
+  }) : super(key: key);
 
   @override
   _KeyboardStateHidesWidget createState() => _KeyboardStateHidesWidget();
@@ -20,7 +24,7 @@ class _KeyboardStateHidesWidget extends State<KeyboardHidesWidgetWithDelay>
   KeyboardStatus? keyboardStatus = KeyboardStatus.down;
   late AnimationController controller;
   final Duration animationDuration = Duration(milliseconds: 150);
-  //late Animation<double> _fadeAnimation;
+  late Animation<double> _fadeAnimation;
   late final Animation<Offset> _offsetAnimation = Tween<Offset>(
     begin: const Offset(0, 1),
     end: Offset.zero,
@@ -33,7 +37,7 @@ class _KeyboardStateHidesWidget extends State<KeyboardHidesWidgetWithDelay>
   void initState() {
     super.initState();
     controller = AnimationController(vsync: this, duration: animationDuration);
-    //_fadeAnimation = Tween(begin: 0.0, end: 1.0).animate(controller);
+    _fadeAnimation = Tween(begin: 0.0, end: 1.0).animate(controller);
     listeners.add(streams.app.keyboard.listen((KeyboardStatus? value) async {
       if (value != keyboardStatus) {
         if (value == KeyboardStatus.down) {
@@ -68,14 +72,15 @@ class _KeyboardStateHidesWidget extends State<KeyboardHidesWidgetWithDelay>
         ? () {
             controller.reset();
             controller.forward();
-            return SlideTransition(
-              position: _offsetAnimation,
-              child: widget.child,
-            );
-            //return FadeTransition(
-            //  opacity: _fadeAnimation,
-            //  child: widget.child,
-            //);
+            return widget.fade
+                ? FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: widget.child,
+                  )
+                : SlideTransition(
+                    position: _offsetAnimation,
+                    child: widget.child,
+                  );
           }()
         : Container();
   }

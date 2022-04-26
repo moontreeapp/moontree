@@ -48,14 +48,15 @@ class _LoginState extends State<Login> {
         SliverFillRemaining(
             hasScrollBody: false,
             child: KeyboardHidesWidgetWithDelay(
+                fade: true,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                  SizedBox(height: 100),
-                  Row(children: [unlockButton]),
-                  SizedBox(height: 40),
-                ]))),
+                      SizedBox(height: 100),
+                      Row(children: [unlockButton]),
+                      SizedBox(height: 40),
+                    ]))),
       ]));
 
   Widget get welcomeMessage =>
@@ -86,7 +87,7 @@ class _LoginState extends State<Login> {
         //  }),
         //),
       ),
-      onChanged: (_) {},
+      onChanged: (_) => setState(() {}),
       onEditingComplete: () {
         FocusScope.of(context).requestFocus(unlockFocus);
         setState(() {});

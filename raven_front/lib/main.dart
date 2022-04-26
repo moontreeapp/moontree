@@ -82,7 +82,7 @@ class RavenMobileApp extends StatelessWidget {
             backgroundColor: Colors.black,
             extendBodyBehindAppBar: false,
             appBar: BackdropAppBar(),
-            body: child!,
+            body: LockedScreen(child: child!),
           ),
         ]));
       },

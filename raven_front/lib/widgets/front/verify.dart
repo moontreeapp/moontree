@@ -37,9 +37,11 @@ class _VerifyPasswordState extends State<VerifyPassword> {
   }
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: BackdropLayers(
+  Widget build(BuildContext context) =>
+      //GestureDetector(
+      //onTap: () => FocusScope.of(context).unfocus(),
+      //child:
+      BackdropLayers(
           back: BlankBack(),
           front: FrontCurve(
             child: components.page.form(
@@ -57,7 +59,9 @@ class _VerifyPasswordState extends State<VerifyPassword> {
               ],
               buttons: [submitButton],
             ),
-          )));
+          )
+          //)
+          );
 
   Widget get existingPasswordField => TextField(
         focusNode: existingFocus,
@@ -100,6 +104,7 @@ class _VerifyPasswordState extends State<VerifyPassword> {
         label: 'Submit',
         onPressed: () {
           streams.app.verify.add(true);
+          streams.app.locked.add(false);
           widget.parentState?.setState(() {});
         },
       );
