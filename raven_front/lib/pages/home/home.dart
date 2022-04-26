@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/raven_back.dart';
@@ -12,7 +14,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late AppContext appContext = AppContext.wallet;
-  late List listeners = [];
+  late List<StreamSubscription> listeners = [];
 
   @override
   void initState() {

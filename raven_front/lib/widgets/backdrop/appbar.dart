@@ -40,13 +40,13 @@ class _BackdropAppBarState extends State<BackdropAppBar> {
         : AppBar(
             /// makes a black area for the clock -- superceeded by SafeArea
             /// and black backgroundColor on Scaffold
-            systemOverlayStyle: SystemUiOverlayStyle(
-              // Status bar color
-              statusBarColor: Colors.black,
-              // Status bar brightness (optional)
-              statusBarIconBrightness: Brightness.light, // For Android
-              statusBarBrightness: Brightness.dark, // For iOS
-            ),
+            //systemOverlayStyle: SystemUiOverlayStyle(
+            //  // Status bar color
+            //  statusBarColor: Colors.red, //Colors.black,
+            //  // Status bar brightness (optional)
+            //  statusBarIconBrightness: Brightness.light, // For Android
+            //  statusBarBrightness: Brightness.dark, // For iOS
+            //),
 
             /// rounded top corners
             shape: components.shape.topRounded,
@@ -63,6 +63,7 @@ class _BackdropAppBarState extends State<BackdropAppBar> {
               QRCodeContainer(),
               SnackBarViewer(),
               SizedBox(width: 6),
+              PeristentKeyboardWatcher(),
             ],
           );
   }

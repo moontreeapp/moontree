@@ -47,7 +47,7 @@ class _LoginState extends State<Login> {
         ),
         SliverFillRemaining(
             hasScrollBody: false,
-            child: KeyboardHidesWidget(
+            child: KeyboardHidesWidgetWithDelay(
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -93,7 +93,7 @@ class _LoginState extends State<Login> {
       });
 
   Widget get unlockButton => components.buttons.actionButton(context,
-      enabled: validate(),
+      enabled: validate() && password.text != '',
       focusNode: unlockFocus,
       label: 'Unlock',
       onPressed: () async => await submit());

@@ -16,6 +16,7 @@ class AppStreams {
   final splash = BehaviorSubject<bool>.seeded(true);
   final triggers = BehaviorSubject<ThresholdTrigger?>.seeded(null);
   final loading = BehaviorSubject<bool>.seeded(false);
+  final keyboard = BehaviorSubject<KeyboardStatus?>.seeded(null);
 
   WalletSideStreams wallet = WalletSideStreams();
   ManageSideStreams manage = ManageSideStreams();
@@ -23,6 +24,7 @@ class AppStreams {
 }
 
 enum ThresholdTrigger { backup }
+enum KeyboardStatus { up, down }
 
 class WalletSideStreams {
   final asset = BehaviorSubject<String?>.seeded(null);
