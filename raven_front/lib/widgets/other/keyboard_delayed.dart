@@ -26,9 +26,11 @@ class _KeyboardStateHidesWidget extends State<KeyboardHidesWidgetWithDelay> {
         if (value == KeyboardStatus.down) {
           await Future.delayed(Duration(milliseconds: 150));
         }
-        setState(() {
-          keyboardStatus = value;
-        });
+        if (mounted) {
+          setState(() {
+            keyboardStatus = value;
+          });
+        }
       }
     }));
   }

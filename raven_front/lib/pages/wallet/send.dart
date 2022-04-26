@@ -346,12 +346,18 @@ class _SendState extends State<Send> {
                   : null,
         ),
         onChanged: (value) {
-          _validateAddressColor(value);
-          setState(() {});
+          if (_validateAddressColor(value)) {
+            streams.spend.form.add(SpendForm.merge(
+                form: streams.spend.form.value, address: value));
+          }
         },
         onEditingComplete: () {
           FocusScope.of(context).requestFocus(sendAmountFocusNode);
           setState(() {});
+          if (_validateAddressColor(sendAddress.text)) {
+            streams.spend.form.add(SpendForm.merge(
+                form: streams.spend.form.value, address: sendAddress.text));
+          }
         },
       );
 

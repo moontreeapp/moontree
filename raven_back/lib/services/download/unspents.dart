@@ -154,13 +154,13 @@ class UnspentService {
               .add(new_utxos.map((x) => x.txHash));
         }
 
+        // New info; clear cache
         await _cachedBySymbolLock.write(() {
           for (final walletId in _cachedByWalletAndSymbol.keys) {
             _cachedByWalletAndSymbol[walletId]!.remove(symbol);
           }
         });
         await _unspentsLock.write(() {
-          // New info; clear cache
           scripthashes_internal
               .forEach((x) => _clearUnspentsForScripthash(x, symbol));
           for (final scripthash_internal in scripthashes_internal) {
@@ -197,28 +197,19 @@ class UnspentService {
       final tempList = <Balance>[];
       for (final symbol in symbols) {
         // TODO: User decides how to sort?
-        final confirmed = await _total(walletId, symbol, ValueType.confirmed);
-        final unconfirmed =
-            await _total(walletId, symbol, ValueType.unconfirmed);
-
-        // TODO: If we eventually want to show assets that a user spent all of,
-        // This will need to change (more likely we will need to incorporate a
-        // history check)
-        if (confirmed + unconfirmed > 0) {
-          binaryInsert(
-              list: tempList,
-              value: Balance(
-                  walletId: res.settings.currentWalletId,
-                  security: symbol == res.securities.RVN.symbol
-                      ? res.securities.RVN
-                      : Security(
-                          symbol: symbol,
-                          securityType: SecurityType.RavenAsset),
-                  confirmed: confirmed,
-                  unconfirmed: unconfirmed),
-              comp: (first, second) =>
-                  first.security.symbol.compareTo(second.security.symbol));
-        }
+        binaryInsert(
+            list: tempList,
+            value: Balance(
+                walletId: res.settings.currentWalletId,
+                security: symbol == res.securities.RVN.symbol
+                    ? res.securities.RVN
+                    : Security(
+                        symbol: symbol, securityType: SecurityType.RavenAsset),
+                confirmed: await _total(walletId, symbol, ValueType.confirmed),
+                unconfirmed:
+                    await _total(walletId, symbol, ValueType.unconfirmed)),
+            comp: (first, second) =>
+                first.security.symbol.compareTo(second.security.symbol));
       }
       tempBalances[walletId] = tempList;
     }
@@ -274,7 +265,7 @@ class UnspentService {
           : null;
     });
 
-    return await _cachedBySymbolLock.write(() {
+    await _cachedBySymbolLock.write(() {
       if (result == null) {
         // We don't have anything on this but we're asking for it?
         // Just cache 0 for a quick return
@@ -290,18 +281,8 @@ class UnspentService {
           _cachedByWalletAndSymbol[walletId]![symbol] = result[walletId]!;
         }
       }
-      // We recalc all relevant outpoints of a symbol, but if a symbol wasn't
-      // a part of the wallet, we don't catch it.
-      // Do another check here
-      final res = _cachedByWalletAndSymbol[walletId]![symbol];
-      if (res == null) {
-        // Cache as 0
-        _cachedByWalletAndSymbol[walletId]![symbol] = [0, 0];
-        return 0;
-      } else {
-        return res[totalIndex]!;
-      }
     });
+    return _cachedByWalletAndSymbol[walletId]![symbol]![totalIndex]!;
   }
 
   Future<int> totalConfirmed(String walletId, [String? symbolMaybeNull]) async {
