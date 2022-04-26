@@ -559,15 +559,12 @@ class _SendState extends State<Send> {
                   sendMemo.text.isIpfs
               ? sendMemo.text
               : null,
+          //TODO: Currently memos are only for non-asset transactions
           memo: sendAsset.text == 'Ravencoin' &&
                   sendMemo.text != '' &&
                   verifyMemo(sendMemo.text)
               ? sendMemo.text
-              : !sendMemo.text.isIpfs &&
-                      sendMemo.text != '' &&
-                      verifyMemo(sendMemo.text)
-                  ? sendMemo.text
-                  : null,
+              : null,
           note: sendNote.text != '' ? sendNote.text : null,
         );
         print('sendRequest $sendRequest');
