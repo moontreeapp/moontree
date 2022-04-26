@@ -16,7 +16,7 @@ class UnspentService {
   final Map<String, Map<String, Set<ScripthashUnspent>>> _unspentsBySymbol = {};
   final _unspentsLock = ReaderWriterLock();
 
-  final Map<String, Map<String, List<int?>>> _cachedByWalletAndSymbol = {};
+  final Map<String, Map<String, List<int>>> _cachedByWalletAndSymbol = {};
   final _cachedBySymbolLock = ReaderWriterLock();
 
   final Set<String> _scripthashesChecked = {};
@@ -69,7 +69,11 @@ class UnspentService {
           _unspentsBySymbol[symbol]![unspent.scripthash] =
               <ScripthashUnspent>{};
         }
-        _unspentsBySymbol[symbol]![unspent.scripthash]!.add(unspent);
+
+        // Don't use empty vins
+        if (unspent.value != 0) {
+          _unspentsBySymbol[symbol]![unspent.scripthash]!.add(unspent);
+        }
       }
     }
   }
@@ -77,6 +81,15 @@ class UnspentService {
   Future<void> pull({Iterable<String>? scripthashes, bool? updateRVN}) async {
     final finalScripthashes = defaultScripthashes(scripthashes);
     final rvn = res.securities.RVN.symbol;
+
+    // Clear all cached unspents & redownload
+    await _unspentsLock.write(() {
+      for (final symbol in _unspentsBySymbol.keys) {
+        finalScripthashes
+            .forEach((x) => _clearUnspentsForScripthash(x, symbol));
+      }
+    });
+
     if (updateRVN ?? true) {
       var utxos = (await services.client.client!.getUnspents(finalScripthashes))
           .expand((i) => i);
@@ -107,7 +120,6 @@ class UnspentService {
         }
       });
       await _unspentsLock.write(() {
-        finalScripthashes.forEach((x) => _clearUnspentsForScripthash(x, rvn));
         _addUnspent(symbol: rvn, unspents: utxos);
       });
     }
@@ -117,6 +129,7 @@ class UnspentService {
               .expand((i) => i);
 
       // Parse it into something more digestable
+      // symbol -> scripthash -> unspents
       final downloaded = <String, Map<String, Set<ScripthashUnspent>>>{};
       for (final utxo in utxos) {
         if (utxo.symbol != null) {
@@ -160,15 +173,10 @@ class UnspentService {
           }
         });
         await _unspentsLock.write(() {
-          // New info; clear cache
-          scripthashes_internal
-              .forEach((x) => _clearUnspentsForScripthash(x, symbol));
-          for (final scripthash_internal in scripthashes_internal) {
-            _addUnspent(
-                symbol: symbol,
-                unspents: downloaded[symbol]![scripthash_internal]!,
-                subscribe: true);
-          }
+          _addUnspent(
+              symbol: symbol,
+              unspents: downloaded[symbol]!.values.expand((element) => element),
+              subscribe: true);
         });
       }
     }
@@ -244,8 +252,8 @@ class UnspentService {
           ? _unspentsBySymbol[symbol]!
               .values // List of iterable of items
               .expand((element) => element) // Flatten the list of iterables
-              .fold(<String, List<int?>>{}, (Map<String, List<int?>> gatherer,
-                  ScripthashUnspent unspent) {
+              .fold(<String, List<int>>{},
+                  (Map<String, List<int>> gatherer, ScripthashUnspent unspent) {
               final address =
                   res.addresses.byScripthash.getOne(unspent.scripthash);
               if (address == null) {
@@ -261,12 +269,10 @@ class UnspentService {
 
               if (unspent.height > 0) {
                 // Confirmed
-                gatherer[walletId]![0] =
-                    gatherer[walletId]![0]! + unspent.value;
+                gatherer[walletId]![0] = gatherer[walletId]![0] + unspent.value;
               } else {
                 // Mempool
-                gatherer[walletId]![1] =
-                    gatherer[walletId]![1]! + unspent.value;
+                gatherer[walletId]![1] = gatherer[walletId]![1] + unspent.value;
               }
 
               return gatherer;
@@ -279,13 +285,13 @@ class UnspentService {
         // We don't have anything on this but we're asking for it?
         // Just cache 0 for a quick return
         if (!_cachedByWalletAndSymbol.containsKey(walletId)) {
-          _cachedByWalletAndSymbol[walletId] = <String, List<int?>>{};
+          _cachedByWalletAndSymbol[walletId] = <String, List<int>>{};
         }
         _cachedByWalletAndSymbol[walletId]![symbol] = [0, 0];
       } else {
         for (final walletId in result.keys) {
           if (!_cachedByWalletAndSymbol.containsKey(walletId)) {
-            _cachedByWalletAndSymbol[walletId] = <String, List<int?>>{};
+            _cachedByWalletAndSymbol[walletId] = <String, List<int>>{};
           }
           _cachedByWalletAndSymbol[walletId]![symbol] = result[walletId]!;
         }
@@ -299,7 +305,7 @@ class UnspentService {
         _cachedByWalletAndSymbol[walletId]![symbol] = [0, 0];
         return 0;
       } else {
-        return res[totalIndex]!;
+        return res[totalIndex];
       }
     });
   }
