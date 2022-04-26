@@ -146,8 +146,6 @@ class UnspentService {
 
       // And then remove and add
       for (final symbol in downloaded.keys) {
-        final scripthashes_internal = downloaded[symbol]!.keys;
-
         // If we have new utxos, get the vouts now.
         final new_utxos = await _unspentsLock.read(() {
           return utxos.toSet().difference(
@@ -296,6 +294,13 @@ class UnspentService {
           _cachedByWalletAndSymbol[walletId]![symbol] = result[walletId]!;
         }
       }
+
+      // Empty wallet = we don't have a map for it from the result...
+      // Set here if non existant
+      if (!_cachedByWalletAndSymbol.containsKey(walletId)) {
+        _cachedByWalletAndSymbol[walletId] = <String, List<int>>{};
+      }
+
       // We recalc all relevant outpoints of a symbol, but if a symbol wasn't
       // a part of the wallet, we don't catch it.
       // Do another check here
