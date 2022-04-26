@@ -88,12 +88,7 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   String? get transactionMemo {
-    print(transaction!.memos);
-    print(transaction!.memos.first.substring(2).hexToUTF8);
-    print(transaction!.memos.first);
-    print(transaction!.memos.first.hexToAscii);
-    print(transaction!.id);
-
+    // should do this logic on the back / in the record
     return transaction!.memos.isNotEmpty
         ? transaction!.memos.first.substring(2).hexToUTF8
         : transaction!.assetMemos.isNotEmpty

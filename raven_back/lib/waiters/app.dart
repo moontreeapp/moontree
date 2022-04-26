@@ -4,7 +4,7 @@ import 'package:raven_back/raven_back.dart';
 import 'waiter.dart';
 
 class AppWaiter extends Waiter {
-  int gracePeriod = 6; //0 * 2;
+  int gracePeriod = 60 * 2;
   Timer? _timer;
 
   void init({Object? reconnect}) {
@@ -12,19 +12,23 @@ class AppWaiter extends Waiter {
     listen(
       'streams.app.active',
       streams.app.active,
-      (bool active) async {
+      (bool active) {
         if (active) {
-          if (_timer != null) {
-            _timer!.cancel();
-          }
-        }
-
-        if (!active && services.password.required) {
-          _timer = Timer(Duration(seconds: gracePeriod), () {
-            if (streams.app.active.value) {
-              streams.app.logout.add(true);
-            }
-          });
+          //print('');
+          //print('why not canceling');
+          //print('');
+          _timer?.cancel();
+          _timer = null;
+        } else if (!active && services.password.required) {
+          _timer = Timer(
+            Duration(seconds: gracePeriod),
+            () {
+              //timer cancel fails so at least don't lock if we're back in it.
+              if (!streams.app.active.value) {
+                streams.app.logout.add(true);
+              }
+            },
+          );
         }
       },
     );
