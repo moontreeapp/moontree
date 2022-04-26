@@ -112,7 +112,9 @@ class _NavMenuState extends State<NavMenu> {
               name: 'Network',
               link: '/settings/network',
               execute: () {
-                streams.app.verify.add(false);
+                if (services.cipher.canAskForPasswordNow) {
+                  streams.app.verify.add(false);
+                }
               }),
         ],
       ),

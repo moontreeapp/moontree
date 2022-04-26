@@ -57,7 +57,9 @@ class _ConnectionLightState extends State<ConnectionLight> {
           onPressed: () {
             if (streams.app.page.value != 'Login') {
               ScaffoldMessenger.of(context).clearSnackBars();
-              streams.app.verify.add(false);
+              if (services.cipher.canAskForPasswordNow) {
+                streams.app.verify.add(false);
+              }
               streams.app.xlead.add(true);
               Navigator.of(components.navigator.routeContext!)
                   .pushNamed('/settings/network');

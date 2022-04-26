@@ -4,7 +4,7 @@ import 'package:raven_back/raven_back.dart';
 import 'waiter.dart';
 
 class AppWaiter extends Waiter {
-  int gracePeriod = 60 * 2;
+  int gracePeriod = 6;
   Timer? _timer;
 
   void init({Object? reconnect}) {

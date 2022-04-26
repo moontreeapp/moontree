@@ -110,6 +110,7 @@ class _LoginState extends State<Login> {
       services.cipher.initCiphers(altPassword: password.text);
       await services.cipher.updateWallets();
       services.cipher.cleanupCiphers();
+      services.cipher.loginTime();
       streams.app.splash.add(false); // trigger to refresh app bar again
     } else {}
   }

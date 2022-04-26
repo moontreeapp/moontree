@@ -9,6 +9,14 @@ class CipherService {
   /// used in decrypting backups - we don't know what cipher it was encrypted with... we could save it...
   List<CipherType> get allCipherTypes => [CipherType.AES, CipherType.None];
 
+  int gracePeriod = 60 * 1;
+  DateTime? lastLoginTime;
+  DateTime loginTime() => lastLoginTime = DateTime.now();
+
+  bool get canAskForPasswordNow => lastLoginTime != null
+      ? DateTime.now().difference(lastLoginTime!).inSeconds >= gracePeriod
+      : true;
+
   CipherType get latestCipherType => services.password.exist
       ? res.passwords.current!.saltedHash == ''
           ? CipherType.None
