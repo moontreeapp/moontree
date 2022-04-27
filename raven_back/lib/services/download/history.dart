@@ -12,7 +12,7 @@ class HistoryService {
   final _downloadQueriedLock = ReaderWriterLock();
   int _downloaded = 0;
   int _new_length = 0;
-  final Set<Address> _addresses = {};
+  final Map<String, Set<Address>> _addressesByWalletId = {};
   final _addressesLock = ReaderWriterLock();
   final Map<Address, String?> _statusesToSave = {};
   final _statusesLock = ReaderWriterLock();
@@ -31,7 +31,10 @@ class HistoryService {
     await _statusesLock.write(() => _statusesToSave[address] = status);
     var histories = await client.getHistory(address.id);
     await _addressesLock.write(() {
-      _addresses.add(address);
+      if (!_addressesByWalletId.keys.contains(address.walletId)) {
+        _addressesByWalletId[address.walletId] = <Address>{};
+      }
+      _addressesByWalletId[address.walletId]!.add(address);
     });
     if (address.wallet is LeaderWallet) {
       if (histories.isNotEmpty) {
@@ -52,11 +55,26 @@ class HistoryService {
         streams.wallet.deriveAddress.add(DeriveLeaderAddress(
             leader: address.wallet as LeaderWallet,
             exposure: address.exposure));
+      } else {
+        // New address derivation unneeded; check if the histories gotten == wallet addresses
+        // we derive last used + 20 =>
+        // implies all addresses checked & and no more derivations needed => all done
+        await _addressesLock.read(() {
+          // We will not get the callback for the final address derivation
+          // if actually deriving => -1
+          if (_addressesByWalletId[address.walletId]!.length >=
+              address.wallet!.addresses.length - 1) {
+            streams.wallet.walletSyncedCallback.add(address.walletId);
+          }
+        });
       }
+    } else {
+      // One address; all good
+      streams.wallet.walletSyncedCallback.add(address.walletId);
     }
     await _remember(address, histories.map((history) => history.txHash));
     final addr_length = await _addressesLock.read(() {
-      return _addresses.length;
+      return _addressesByWalletId.values.expand((element) => element).length;
     });
 
     /*
@@ -425,6 +443,11 @@ class HistoryService {
   }
 
   Future<void> addAddressToSkipHistory(Address address) async {
+    await _addressesLock.write(() {
+      if (!_addressesByWalletId.containsKey(address.walletId)) {
+        _addressesByWalletId[address.walletId] = <Address>{};
+      }
+    });
     if (!_saveImmediately) {
       final wallet = res.wallets.primaryIndex
           .getOne(res.settings.currentWalletId)!
@@ -433,12 +456,13 @@ class HistoryService {
           ? (wallet as LeaderWallet).addresses.length
           : 1;
       await _addressesLock.write(() {
-        _addresses.add(address);
-        if (_addresses.length >= addressesNeeded) _saveImmediately = true;
+        _addressesByWalletId[address.walletId]!.add(address);
+        if (_addressesByWalletId.values.expand((element) => element).length >=
+            addressesNeeded) _saveImmediately = true;
       });
     } else {
       await _addressesLock.write(() {
-        _addresses.add(address);
+        _addressesByWalletId[address.walletId]!.add(address);
       });
     }
   }

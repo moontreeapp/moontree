@@ -29,8 +29,9 @@ class HoldingList extends StatefulWidget {
 
 class _HoldingList extends State<HoldingList> {
   List<StreamSubscription> listeners = [];
-  static bool _hideList = true;
-  static bool _balanceWasEmpty = false;
+  bool _hideList = true;
+  bool _waitingForUnspents = true;
+  bool _balanceWasEmpty = false;
   late List<AssetHolding> holdings;
   int holdingCount = 1;
   bool showUSD = false;
@@ -50,35 +51,20 @@ class _HoldingList extends State<HoldingList> {
         });
       }
     }));
-    //listeners.add(
-    //    res.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
-    //  // if vouts in our account has changed...
-    //  if (batchedChanges
-    //      .where(
-    //          (change) => change.data.address?.wallet?.id == Current.walletId)
-    //      .isNotEmpty) {
-    //    setState(() {});
-    //  }
-    //}));
-    /// don't need to pull rates to this page
-    //listeners.add(res.rates.batchedChanges.listen((batchedChanges) {
-    //  // ignore: todo
-    //  // TODO: should probably include any assets that are in the holding of the main account too...
-    //  var changes = batchedChanges.where((change) =>
-    //      change.data.base == res.securities.RVN &&
-    //      change.data.quote == res.securities.USD);
-    //  if (changes.isNotEmpty)
-    //    setState(() {
-    //      rateUSD = changes.first.data;
-    //    });
-    //}));
-    /// lets try watching balances instead
     listeners.add(streams.wallet.unspentsCallback.listen((value) async {
-      if (services.download.unspents.scripthashesChecked <
-          res.addresses.length) {
-        return;
+      if (!_hideList) {
+        setState(() {});
       }
-      setState(() {});
+    }));
+
+    listeners.add(streams.wallet.walletSyncedCallback.listen((value) {
+      // The holdings will be hidden until we receive this for our current
+      // wallet
+      if (value == Current.wallet.id) {
+        setState(() {
+          _hideList = false;
+        });
+      }
     }));
 
     listeners.add(res.balances.changes.listen((Change<Balance> change) {
@@ -147,41 +133,16 @@ class _HoldingList extends State<HoldingList> {
         services
             .download.unspents.unspentBalancesByWalletId[Current.walletId] ??
         []);
-    print('before _hideList $_hideList');
-    //if (_hideList) {
-    // If new wallet, let assets pop up as we get them (can't figure out how to hide this until we're done. fix isGapSatisfied?)
-    // Otherwise hide until our checked scripthashes are >= our current wallets address count
-    _hideList = _balanceWasEmpty
-        ? (Current.wallet is LeaderWallet
-            ? !services.wallet.leader.gapSatisfied(
-                    Current.wallet as LeaderWallet, NodeExposure.External) ||
-                !services.wallet.leader.gapSatisfied(
-                    Current.wallet as LeaderWallet, NodeExposure.Internal) ||
-                services.download.unspents.scripthashesChecked <
-                    Current.wallet.addresses.length ||
-                Current.wallet.addresses.length <
-                    services.wallet.leader.requiredGap
-            : false)
-        : services.download.unspents.scripthashesChecked < res.addresses.length;
-    //print(
-    //    'services.download.history.downloads_complete ${services.download.history.downloads_complete}');
-    //  print('_balanceWasEmpty $_balanceWasEmpty');
-    //  print(
-    //      'services.download.unspents.scripthashesChecked < res.addresses.length ${services.download.unspents.scripthashesChecked < res.addresses.length}');
-    //  print(
-    //      'gap not satisfied ${!services.wallet.leader.gapSatisfied(Current.wallet as LeaderWallet, NodeExposure.External) || !services.wallet.leader.gapSatisfied(Current.wallet as LeaderWallet, NodeExposure.Internal)}');
-    //  print(
-    //      'length< gap ${Current.wallet.addresses.length < services.wallet.leader.requiredGap}');
-    //}
 
-    /*
-    print(services.wallet.leader
-        .gapSatisfied(Current.wallet as LeaderWallet, NodeExposure.External));
-    */
-    /// weird place to put this... but unless things change radically this works the best
     holdings = holdings.where((holding) => holding.value > 0).toList();
     streams.client.busy.add(_hideList && holdings.isNotEmpty ? true : false);
-    return _hideList
+
+    if (_waitingForUnspents) {
+      _waitingForUnspents =
+          res.addresses.length > services.download.unspents.scripthashesChecked;
+    }
+
+    return _hideList || _waitingForUnspents
         ? components.empty.getAssetsPlaceholder(context,
             scrollController: widget.scrollController,
             count: _balanceWasEmpty ? holdingCount : Current.holdings.length,
