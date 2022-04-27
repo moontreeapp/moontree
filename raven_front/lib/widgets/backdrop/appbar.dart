@@ -46,9 +46,7 @@ class _BackdropAppBarState extends State<BackdropAppBar> {
     final appBar = Platform.isIOS
         ? buildAppBar(
             systemOverlayStyle: SystemUiOverlayStyle(
-              // Status bar color
-              statusBarColor: Colors.black, //Colors.black,
-              // Status bar brightness (optional)
+              statusBarColor: Colors.black,
               statusBarIconBrightness: Brightness.light, // For Android
               statusBarBrightness: Brightness.dark, // For iOS
             ),
@@ -56,7 +54,6 @@ class _BackdropAppBarState extends State<BackdropAppBar> {
             shape: components.shape.topRounded,
           )
         : buildAppBar(
-            shape: components.shape.topRounded,
             backgroundColor: Theme.of(context).backgroundColor,
           );
     final alphaBar = Platform.isIOS
