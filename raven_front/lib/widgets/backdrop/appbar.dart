@@ -55,6 +55,7 @@ class _BackdropAppBarState extends State<BackdropAppBar> {
           )
         : buildAppBar(
             backgroundColor: Theme.of(context).backgroundColor,
+            shape: components.shape.topRounded,
           );
     final alphaBar = Platform.isIOS
         ? Container(
