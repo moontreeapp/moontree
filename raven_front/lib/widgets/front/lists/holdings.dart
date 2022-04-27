@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/spend.dart';
+import 'package:raven_back/streams/client.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/colors.dart';
@@ -31,8 +32,9 @@ class _HoldingList extends State<HoldingList> {
   List<StreamSubscription> listeners = [];
   bool _hideList = true;
   bool _waitingForUnspents = true;
+  bool _freezeHoldings = false;
   bool _balanceWasEmpty = false;
-  late List<AssetHolding> holdings;
+  List<AssetHolding>? holdings = null;
   int holdingCount = 1;
   bool showUSD = false;
   bool showPath = false;
@@ -81,7 +83,20 @@ class _HoldingList extends State<HoldingList> {
       setState(() {
         _hideList = true;
         _waitingForUnspents = true;
+        holdingCount = 0;
       });
+    }));
+
+    listeners.add(streams.client.connected.listen((value) async {
+      if (value == ConnectionStatus.connecting) {
+        // I do this here because we must ensure that the unspents
+        // data is cleared before doing the _waitingForUnspents check
+        await services.download.unspents.clearData();
+        setState(() {
+          _waitingForUnspents = true;
+          _freezeHoldings = true;
+        });
+      }
     }));
   }
 
@@ -128,27 +143,36 @@ class _HoldingList extends State<HoldingList> {
     if (!_balanceWasEmpty) {
       _balanceWasEmpty = (widget.holdings ?? Current.holdings).isEmpty;
     }
-
-    // Needs to be unspend because this updates immediately
-    holdings = utils.assetHoldings(widget.holdings ??
-        services
-            .download.unspents.unspentBalancesByWalletId[Current.walletId] ??
-        []);
-
-    holdings = holdings.where((holding) => holding.value > 0).toList();
-    streams.client.busy.add(_hideList && holdings.isNotEmpty ? true : false);
-
     if (_waitingForUnspents) {
       _waitingForUnspents =
           res.addresses.length > services.download.unspents.scripthashesChecked;
     }
+    if (_freezeHoldings) {
+      _freezeHoldings = _waitingForUnspents;
+    }
 
-    return _hideList || _waitingForUnspents
+    // If we are initializing, set
+    // If we are waiting for unspents; freeze our current unspents until we
+    // have them all again, then update
+    if (holdings == null || !_freezeHoldings)
+      holdings = utils.assetHoldings(widget.holdings ??
+          services
+              .download.unspents.unspentBalancesByWalletId[Current.walletId] ??
+          []);
+
+    holdings = holdings!.where((holding) => holding.value > 0).toList();
+    streams.client.busy.add(_hideList && holdings!.isNotEmpty ? true : false);
+
+    print(
+        'Hiding holdings: $_hideList; Hiding while waiting for unspents: $_waitingForUnspents; Freeze holdings while waiting for unspents: $_freezeHoldings');
+
+    return _hideList || (_waitingForUnspents && !_freezeHoldings)
         ? components.empty.getAssetsPlaceholder(context,
             scrollController: widget.scrollController,
             count: _balanceWasEmpty ? holdingCount : Current.holdings.length,
             holding: true)
-        : holdings.isEmpty
+        // Check if a completely new user, not simply a new wallet
+        : res.transactions.isEmpty
             ? () {
                 streams.app.wallet.isEmpty.add(true);
                 return ComingSoonPlaceholder(
@@ -181,7 +205,7 @@ class _HoldingList extends State<HoldingList> {
   ListView _holdingsView(BuildContext context, {Wallet? wallet}) {
     var rvnHolding = <Widget>[];
     var assetHoldings = <Widget>[];
-    for (var holding in holdings) {
+    for (var holding in holdings ?? []) {
       var thisHolding = ListTile(
         //dense: true,
         contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
