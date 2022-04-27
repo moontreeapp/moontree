@@ -69,6 +69,11 @@ class _ImportState extends State<Import> {
             fuzzyTop: false,
             child: GestureDetector(
               onTap: () => FocusScope.of(context).unfocus(),
+              // for testing
+              onDoubleTap: () => words.text =
+                  'board leisure impose bleak race egg abuse series seat achieve fan column',
+              onLongPress: () => words.text =
+                  'animal twin echo jaguar sibling man common answer dolphin sign nice evolve',
               child: body(),
             )));
   }

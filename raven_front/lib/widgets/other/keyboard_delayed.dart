@@ -32,6 +32,7 @@ class _KeyboardStateHidesWidget extends State<KeyboardHidesWidgetWithDelay>
     parent: controller,
     curve: Curves.decelerate,
   ));
+  bool keyboardWasUp = false;
 
   @override
   void initState() {
@@ -72,16 +73,23 @@ class _KeyboardStateHidesWidget extends State<KeyboardHidesWidgetWithDelay>
         ? () {
             controller.reset();
             controller.forward();
-            return widget.fade
-                ? FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: widget.child,
-                  )
-                : SlideTransition(
-                    position: _offsetAnimation,
-                    child: widget.child,
-                  );
+            var ret = keyboardWasUp
+                ? (widget.fade
+                    ? FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: widget.child,
+                      )
+                    : SlideTransition(
+                        position: _offsetAnimation,
+                        child: widget.child,
+                      ))
+                : widget.child;
+            keyboardWasUp = false;
+            return ret;
           }()
-        : Container();
+        : () {
+            keyboardWasUp = true;
+            return Container();
+          }();
   }
 }

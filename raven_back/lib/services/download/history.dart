@@ -88,6 +88,9 @@ class HistoryService {
       _saveImmediately = true;
       //print('getting Transactions');
       //streams.wallet.scripthashCallback.add(null); // make home listen to balances instead?
+      //if (downloads_complete) {
+      //  streams.client.busy.add(false);
+      //}
       var txsToDownload = await _txsListsByWalletExposureKeysLock.read(() {
         var txsToDownload = <String>[];
         for (var key in _txsListsByWalletExposureKeys.keys) {

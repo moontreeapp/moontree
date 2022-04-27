@@ -92,7 +92,9 @@ class _HoldingList extends State<HoldingList> {
 
     listeners.add(streams.import.success.listen((value) {
       // Rehide list on successful import
-      _hideList = true;
+      setState(() {
+        _hideList = true;
+      });
     }));
   }
 
@@ -145,34 +147,46 @@ class _HoldingList extends State<HoldingList> {
         services
             .download.unspents.unspentBalancesByWalletId[Current.walletId] ??
         []);
-    if (_hideList) {
-      // If new wallet, let assets pop up as we get them (can't figure out how to hide this until we're done. fix isGapSatisfied?)
-      // Otherwise hide until our checked scripthashes are >= our current wallets address count
-      _hideList = _balanceWasEmpty
-          ? (Current.wallet is LeaderWallet
-              ? !services.wallet.leader.gapSatisfied(
-                      Current.wallet as LeaderWallet, NodeExposure.External) ||
-                  !services.wallet.leader.gapSatisfied(
-                      Current.wallet as LeaderWallet, NodeExposure.Internal) ||
-                  services.download.unspents.scripthashesChecked <
-                      Current.wallet.addresses.length ||
-                  Current.wallet.addresses.length <
-                      services.wallet.leader.requiredGap
-              : false)
-          : services.download.unspents.scripthashesChecked <
-              res.addresses.length;
-    }
+    print('before _hideList $_hideList');
+    //if (_hideList) {
+    // If new wallet, let assets pop up as we get them (can't figure out how to hide this until we're done. fix isGapSatisfied?)
+    // Otherwise hide until our checked scripthashes are >= our current wallets address count
+    _hideList = _balanceWasEmpty
+        ? (Current.wallet is LeaderWallet
+            ? !services.wallet.leader.gapSatisfied(
+                    Current.wallet as LeaderWallet, NodeExposure.External) ||
+                !services.wallet.leader.gapSatisfied(
+                    Current.wallet as LeaderWallet, NodeExposure.Internal) ||
+                services.download.unspents.scripthashesChecked <
+                    Current.wallet.addresses.length ||
+                Current.wallet.addresses.length <
+                    services.wallet.leader.requiredGap
+            : false)
+        : services.download.unspents.scripthashesChecked < res.addresses.length;
+    //print(
+    //    'services.download.history.downloads_complete ${services.download.history.downloads_complete}');
+    //  print('_balanceWasEmpty $_balanceWasEmpty');
+    //  print(
+    //      'services.download.unspents.scripthashesChecked < res.addresses.length ${services.download.unspents.scripthashesChecked < res.addresses.length}');
+    //  print(
+    //      'gap not satisfied ${!services.wallet.leader.gapSatisfied(Current.wallet as LeaderWallet, NodeExposure.External) || !services.wallet.leader.gapSatisfied(Current.wallet as LeaderWallet, NodeExposure.Internal)}');
+    //  print(
+    //      'length< gap ${Current.wallet.addresses.length < services.wallet.leader.requiredGap}');
+    //}
 
     /*
     print(services.wallet.leader
         .gapSatisfied(Current.wallet as LeaderWallet, NodeExposure.External));
     */
+    /// weird place to put this... but unless things change radically this works the best
+    holdings = holdings.where((holding) => holding.value > 0).toList();
+    streams.client.busy.add(_hideList && holdings.isNotEmpty ? true : false);
     return _hideList
         ? components.empty.getAssetsPlaceholder(context,
             scrollController: widget.scrollController,
             count: _balanceWasEmpty ? holdingCount : Current.holdings.length,
             holding: true)
-        : holdings.length == 1 && holdings.first.crypto?.value == 0
+        : holdings.isEmpty
             ? ComingSoonPlaceholder(
                 scrollController: widget.scrollController,
                 header: 'Welcome',

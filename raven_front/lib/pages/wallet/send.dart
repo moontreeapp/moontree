@@ -77,6 +77,7 @@ class _SendState extends State<Send> {
         print(spendForm);
         print(value);
         if (spendForm != value) {
+          print('in if');
           spendForm = value;
           var asset = (value.symbol ?? res.securities.RVN.symbol);
           asset = (asset == res.securities.RVN.symbol || asset == 'Ravencoin')
@@ -94,7 +95,9 @@ class _SendState extends State<Send> {
               sendFee.text != sendFeeText ||
               sendNote.text != sendNoteText ||
               sendAddress.text != sendAddressText ||
-              addressName != addressNameText) {
+              addressName != addressNameText ||
+              (asDouble(sendAmount.text) != value.amount)) {
+            print('in if1');
             setState(() {
               sendAsset.text = asset;
               sendFee.text = sendFeeText;
@@ -104,6 +107,7 @@ class _SendState extends State<Send> {
               var x = asDouble(sendAmount.text);
               print('\n$x vs ${value.amount}');
               if (value.amount == null && x > 0) {
+                print('in if2');
                 print('blanking');
                 sendAmount.text = '';
                 streams.spend.form.add(SpendForm.merge(
@@ -115,6 +119,7 @@ class _SendState extends State<Send> {
                     address: sendAddress.text,
                     addressName: addressName));
               } else if (value.amount != null && x != value.amount) {
+                print('in if3');
                 print('setting to ${value.amount}');
                 sendAmount.text =
                     value.amount == 0.0 ? '' : value.amount.toString();
@@ -127,6 +132,7 @@ class _SendState extends State<Send> {
                     address: sendAddress.text,
                     addressName: addressName));
               } else {
+                print('in if4');
                 streams.spend.form.add(SpendForm.merge(
                     form: streams.spend.form.value,
                     amount: value.amount ?? 0,
@@ -217,8 +223,7 @@ class _SendState extends State<Send> {
     divisibility = res.assets.bySymbol.getOne(symbol)?.divisibility ?? 8;
     var possibleHoldings = [
       for (var balance in Current.holdings)
-        if (balance.security.symbol == symbol)
-          utils.satToAmount(balance.confirmed)
+        if (balance.security.symbol == symbol) utils.satToAmount(balance.value)
     ];
     if (possibleHoldings.length > 0) {
       holding = possibleHoldings[0];
@@ -352,12 +357,12 @@ class _SendState extends State<Send> {
           }
         },
         onEditingComplete: () {
-          FocusScope.of(context).requestFocus(sendAmountFocusNode);
-          setState(() {});
           if (_validateAddressColor(sendAddress.text)) {
             streams.spend.form.add(SpendForm.merge(
                 form: streams.spend.form.value, address: sendAddress.text));
           }
+          setState(() {});
+          //FocusScope.of(context).requestFocus(sendAmountFocusNode);
         },
       );
 

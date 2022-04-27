@@ -198,7 +198,7 @@ class UnspentService {
       return _unspentsBySymbol.keys.toSet();
     });
     for (final wallet in res.wallets.data) {
-      print('Recalculating balances for ${wallet.id}');
+      //print('Recalculating balances for ${wallet.id}');
 
       final walletId = wallet.id;
       final tempList = <Balance>[];

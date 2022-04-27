@@ -179,4 +179,19 @@ class AssetHolding {
       qualifierSub ??
       crypto ??
       fiat;
+  int get value => [
+        main,
+        admin,
+        restricted,
+        restrictedAdmin,
+        nft,
+        channel,
+        sub,
+        subAdmin,
+        qualifier,
+        qualifierSub,
+        crypto,
+        fiat,
+      ].where((element) => element != null).fold(
+          0, (previousValue, element) => (element?.value ?? 0) + previousValue);
 }

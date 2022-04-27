@@ -123,8 +123,8 @@ class SubscribeService {
     if (client == null) {
       return false;
     }
+    streams.client.busy.add(true);
     final addresses = res.addresses.toList();
-
     var existing = false;
     for (var address in addresses) {
       onlySubscribeAddressUnspent(client, address);
@@ -164,6 +164,7 @@ class SubscribeService {
     if (client == null) {
       return false;
     }
+    //streams.client.busy.add(true);
     onlySubscribeAddressUnspent(client, address);
     onlySubscribeAddressHistory(client, address);
     return true;

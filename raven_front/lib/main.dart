@@ -76,15 +76,12 @@ class RavenMobileApp extends StatelessWidget {
       navigatorObservers: [components.navigator],
       builder: (context, child) {
         components.navigator.scaffoldContext = context;
-        return SafeArea(
-            child: Stack(children: [
-          Scaffold(
-            backgroundColor: Colors.black,
-            extendBodyBehindAppBar: false,
-            appBar: BackdropAppBar(),
-            body: child!,
-          ),
-        ]));
+        return Scaffold(
+          backgroundColor: Colors.black,
+          extendBodyBehindAppBar: false,
+          appBar: BackdropAppBar(),
+          body: child!,
+        );
       },
     );
   }
