@@ -211,10 +211,6 @@ class BottomNavBar extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  void _produceCreateModal(BuildContext context) {
-    SelectionItems(context, modalSet: SelectionSet.Create).build();
-  }
-
   @override
   Widget build(BuildContext context) {
     return
@@ -228,78 +224,9 @@ class BottomNavBar extends StatelessWidget {
               child:
                   /** notifier-end */
                   NavBar(
-            actionButtons: appContext == AppContext.wallet
-                ? <Widget>[
-                    components.buttons.actionButton(
-                      context,
-                      label: 'send',
-                      onPressed: () async {
-                        Navigator.of(components.navigator.routeContext!)
-                            .pushNamed('/transaction/send');
-                        if (Current.wallet is LeaderWallet &&
-                            streams.app.triggers.value ==
-                                ThresholdTrigger.backup &&
-                            !(Current.wallet as LeaderWallet).backedUp) {
-                          await Future.delayed(Duration(milliseconds: 800));
-                          streams.app.xlead.add(true);
-                          Navigator.of(components.navigator.routeContext!)
-                              .pushNamed(
-                            '/security/backup',
-                            arguments: {'fadeIn': true},
-                          );
-                        }
-                      },
-                    ),
-                    components.buttons.actionButton(
-                      context,
-                      label: 'receive',
-                      onPressed: () async {
-                        Navigator.of(components.navigator.routeContext!)
-                            .pushNamed('/transaction/receive');
-                        if (Current.wallet is LeaderWallet &&
-                            streams.app.triggers.value ==
-                                ThresholdTrigger.backup &&
-                            !(Current.wallet as LeaderWallet).backedUp) {
-                          await Future.delayed(Duration(milliseconds: 800));
-                          streams.app.xlead.add(true);
-                          Navigator.of(components.navigator.routeContext!)
-                              .pushNamed(
-                            '/security/backup',
-                            arguments: {'fadeIn': true},
-                          );
-                        }
-                      },
-                    )
-                  ]
-                : appContext == AppContext.manage
-                    ? <Widget>[
-                        components.buttons.actionButton(
-                          context,
-                          label: 'create',
-                          enabled: !placeholderManage,
-                          onPressed: () {
-                            _produceCreateModal(context);
-                          },
-                        )
-                      ]
-                    : <Widget>[
-                        components.buttons.actionButton(
-                          context,
-                          label: 'buy',
-                          enabled: !placeholderSwap,
-                          onPressed: () {
-                            _produceCreateModal(context);
-                          },
-                        ),
-                        components.buttons.actionButton(
-                          context,
-                          label: 'sell',
-                          enabled: !placeholderSwap,
-                          onPressed: () {
-                            _produceCreateModal(context);
-                          },
-                        )
-                      ],
+            appContext: appContext,
+            placeholderManage: placeholderManage,
+            placeholderSwap: placeholderSwap,
           ) /** notifier-start */),
         );
       },
