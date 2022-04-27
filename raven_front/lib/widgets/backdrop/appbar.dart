@@ -47,27 +47,25 @@ class _BackdropAppBarState extends State<BackdropAppBar> {
         : Stack(
             alignment: Alignment.bottomCenter,
             children: [
-              FrontCurve(
-                height: 56,
-                color: Theme.of(context).backgroundColor,
-                fuzzyTop: false,
-                frontLayerBoxShadow: const [],
-              ),
+              //*/ superceeded by SafeArea and black backgroundColor on Scaffold
+              //*FrontCurve(
+              //*  height: 56,
+              //*  color: Theme.of(context).backgroundColor,
+              //*  fuzzyTop: false,
+              //*  frontLayerBoxShadow: const [],
+              //*),
               AppBar(
-                /// makes a black area for the clock -- superceeded by SafeArea
-                /// and black backgroundColor on Scaffold
-                systemOverlayStyle: SystemUiOverlayStyle(
-                  // Status bar color
-                  statusBarColor: Colors.black, //Colors.black,
-                  // Status bar brightness (optional)
-                  statusBarIconBrightness: Brightness.light, // For Android
-                  statusBarBrightness: Brightness.dark, // For iOS
-                ),
-
-                /// rounded top corners
-                //shape: components.shape.topRounded,
-                backgroundColor: Colors.transparent,
-                //foregroundColor: Theme.of(context).backgroundColor,
+                //*/ makes a black area for the clock --
+                //*systemOverlayStyle: SystemUiOverlayStyle(
+                //*  // Status bar color
+                //*  statusBarColor: Colors.black, //Colors.black,
+                //*  // Status bar brightness (optional)
+                //*  statusBarIconBrightness: Brightness.light, // For Android
+                //*  statusBarBrightness: Brightness.dark, // For iOS
+                //*),
+                //*backgroundColor: Colors.transparent,
+                shape: components.shape.topRounded,
+                backgroundColor: Theme.of(context).backgroundColor,
                 automaticallyImplyLeading: false,
                 elevation: 0,
                 leading: streams.app.page.value == 'Login'
@@ -83,19 +81,20 @@ class _BackdropAppBarState extends State<BackdropAppBar> {
                   PeristentKeyboardWatcher(),
                 ],
               ),
-              Container(
-                height: 56,
-                child: ClipRect(
-                  child: Container(
-                    alignment: Alignment.topRight,
-                    child: Banner(
-                      message: 'alpha',
-                      location: BannerLocation.topEnd,
-                      color: AppColors.success,
-                    ),
+              //*Container(
+              //*  height: 56,
+              //*  child:
+              ClipRect(
+                child: Container(
+                  alignment: Alignment.topRight,
+                  child: Banner(
+                    message: 'alpha',
+                    location: BannerLocation.topEnd,
+                    color: AppColors.success,
                   ),
                 ),
               ),
+              //*),
             ],
           );
   }
