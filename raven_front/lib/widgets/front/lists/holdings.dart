@@ -80,6 +80,7 @@ class _HoldingList extends State<HoldingList> {
       // Rehide list on successful import
       setState(() {
         _hideList = true;
+        _waitingForUnspents = true;
       });
     }));
   }
