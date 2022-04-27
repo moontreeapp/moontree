@@ -110,17 +110,16 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
 
     if (snack!.atBottom) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          elevation: 1,
-          backgroundColor: AppColors.snackBar,
-          shape: components.shape.topRounded,
-          content: msg,
-          action: snack!.positive
-              ? null
-              : SnackBarAction(
-                  label: 'copy',
-                  //onPressed: () =>ScaffoldMessenger.of(context).clearSnackBars() // not on tap though...
-                  onPressed: () =>
-                      Clipboard.setData(ClipboardData(text: snack!.message)))));
+        elevation: 1,
+        dismissDirection: DismissDirection.horizontal,
+        backgroundColor: AppColors.snackBar,
+        shape: components.shape.topRounded,
+        content: msg,
+        //action: SnackBarAction(
+        //    label: 'copy',
+        //    onPressed: () =>
+        //        Clipboard.setData(ClipboardData(text: snack!.message)))
+      ));
     } else /*if (snack!.link == null && snack!.details == null)*/ {
       /// make sure we don't display until we've been sent back home
       var x = 0;
@@ -135,20 +134,20 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       /// this configuration of the snackbar always shows on top of the nav bar
       streams.app.hideNav.add(false);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          elevation: 0,
-          backgroundColor: AppColors.snackBar,
-          shape: components.shape.topRounded,
-          content: msg,
-          behavior: SnackBarBehavior.floating,
-          margin: EdgeInsets.only(
-              bottom: MediaQuery.of(context).size.height * (106 / 760)),
-          padding: EdgeInsets.only(top: 0, bottom: 0),
-          action: snack!.positive
-              ? null
-              : SnackBarAction(
-                  label: 'copy',
-                  onPressed: () =>
-                      Clipboard.setData(ClipboardData(text: snack!.message)))));
+        elevation: 0,
+        dismissDirection: DismissDirection.startToEnd,
+        backgroundColor: AppColors.snackBar,
+        shape: components.shape.topRounded,
+        content: msg,
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height * (106 / 760)),
+        padding: EdgeInsets.only(top: 0, bottom: 0),
+        //action: SnackBarAction(
+        //    label: 'copy',
+        //    onPressed: () =>
+        //        Clipboard.setData(ClipboardData(text: snack!.message)))
+      ));
     }
     /*
     /// These are not used if we want to use them implement them this way:

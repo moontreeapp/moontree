@@ -125,7 +125,7 @@ class _PageTitleState extends State<PageTitle>
   }
 
   Widget body() {
-    if (loading || ['main', ''].contains(pageTitle)) {
+    if (loading || ['main', '', 'Splash'].contains(pageTitle)) {
       return Text('');
     }
     var wrap = (String x) => FittedBox(

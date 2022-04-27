@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/wallet/constants.dart';
+import 'package:raven_front/components/components.dart';
 import 'package:raven_front/listeners/listeners.dart';
+import 'package:raven_front/widgets/backdrop/backdrop.dart';
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
@@ -13,15 +15,45 @@ class Splash extends StatefulWidget {
   _SplashState createState() => _SplashState();
 }
 
-class _SplashState extends State<Splash> {
+class _SplashState extends State<Splash> with TickerProviderStateMixin {
+  BorderRadius? shape;
+
+  final Duration animationDuration = Duration(milliseconds: 1000);
+  late AnimationController _slideController;
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation =
+      Tween(begin: 1.0, end: 0.0).animate(_fadeController);
+  late final Animation<Offset> _slideAnimation = Tween<Offset>(
+    begin: const Offset(0, 0),
+    end: Offset(0, 56 / MediaQuery.of(context).size.height),
+  ).animate(CurvedAnimation(
+    parent: _slideController,
+    curve: Curves.decelerate,
+  ));
+
   @override
   void initState() {
     super.initState();
+    _slideController =
+        AnimationController(vsync: this, duration: animationDuration);
+    _fadeController =
+        AnimationController(vsync: this, duration: animationDuration);
     _init();
   }
 
   Future<void> _init() async {
     await Future.delayed(Duration(milliseconds: 4000));
+    setState(() {
+      print('setting state');
+      shape = BorderRadius.only(
+        topLeft: Radius.circular(8),
+        topRight: Radius.circular(8),
+      );
+    });
+    await Future.delayed(Duration(milliseconds: 1000));
+    _slideController.forward();
+    await Future.delayed(Duration(milliseconds: 1000));
+    _fadeController.forward();
     final loadingHelper = DataLoadingHelper(context);
     await loadingHelper.setupDatabase();
     loadingHelper.redirectToLoginOrHome();
@@ -30,20 +62,40 @@ class _SplashState extends State<Splash> {
 
   @override
   void dispose() {
+    _slideController.dispose();
+    _fadeController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Lottie.asset('assets/splash/moontree_v2_001_recolored.json',
-          animate: true,
-          repeat: false,
-          alignment: Alignment.center,
-          width: double.infinity,
-          height: double.infinity,
-          fit: BoxFit.cover),
-      backgroundColor: Colors.white,
+      body: Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          BackdropAppBarContents(
+            spoof: true,
+          ),
+          SlideTransition(
+              position: _slideAnimation,
+              child: AnimatedContainer(
+                  duration: Duration(seconds: 1),
+                  alignment: Alignment.center,
+                  decoration:
+                      BoxDecoration(borderRadius: shape, color: Colors.white),
+                  child: FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: Lottie.asset(
+                          'assets/splash/moontree_v2_001_recolored.json',
+                          animate: true,
+                          repeat: false,
+                          alignment: Alignment.center,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover))))
+        ],
+      ),
+      backgroundColor: Colors.black,
     );
   }
 }

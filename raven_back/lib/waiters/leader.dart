@@ -61,15 +61,12 @@ class LeaderWaiter extends Waiter {
   }
 
   void handleLeaderChange(Change<Wallet> change) {
-    change.when(
-        loaded: (loaded) async {
-          await handleDeriveAddress(leader: loaded.data as LeaderWallet);
-        },
-        added: (added) async {
-          await handleDeriveAddress(leader: added.data as LeaderWallet);
-        },
-        updated: (updated) async {
-          /*
+    change.when(loaded: (loaded) async {
+      await handleDeriveAddress(leader: loaded.data as LeaderWallet);
+    }, added: (added) async {
+      await handleDeriveAddress(leader: added.data as LeaderWallet);
+    }, updated: (updated) async {
+      /*
           /// app is switched to mainnet to testnet or testnet to mainnet... 
           /// we need to derive all the addresses again.
           /// but this should go on that settings listener,
@@ -82,8 +79,11 @@ class LeaderWaiter extends Waiter {
           // recreate the addresses of that wallet
           handleDeriveAddress(leader: leader as LeaderWallet);
           */
-        },
-        removed: (removed) {});
+    }, removed: (removed) {
+      /// should only happen when replacing the initial blank wallet
+      var wallet = removed.data;
+      res.addresses.removeAll(wallet.addresses.toList());
+    });
   }
 
   Future<void> attemptLeaderWalletAddressDerive(

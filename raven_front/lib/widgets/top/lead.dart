@@ -89,6 +89,9 @@ class _PageLead extends State<PageLead> {
     if (pageTitle == '') {
       return Container();
     }
+    if (pageTitle == 'Splash') {
+      return Container();
+    }
     if (pageTitle == 'Login') {
       return Container();
       //return Container(

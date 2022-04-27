@@ -22,8 +22,8 @@ class _KeyboardStateHidesWidget extends State<KeyboardHidesWidgetWithDelay>
     with SingleTickerProviderStateMixin {
   late List<StreamSubscription> listeners = [];
   KeyboardStatus? keyboardStatus = KeyboardStatus.down;
-  late AnimationController controller;
   final Duration animationDuration = Duration(milliseconds: 150);
+  late AnimationController controller;
   late Animation<double> _fadeAnimation;
   late final Animation<Offset> _offsetAnimation = Tween<Offset>(
     begin: const Offset(0, 1),

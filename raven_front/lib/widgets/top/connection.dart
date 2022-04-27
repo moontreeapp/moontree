@@ -110,3 +110,21 @@ class _ConnectionLightState extends State<ConnectionLight>
           );
   }
 }
+
+class SpoofedConnectionLight extends StatelessWidget {
+  SpoofedConnectionLight({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    Color connectionStatusColor = AppColors.success;
+    var icon = ColorFiltered(
+        colorFilter: ColorFilter.mode(connectionStatusColor, BlendMode.srcATop),
+        child: SvgPicture.asset('assets/status/icon.svg'));
+    return IconButton(
+      splashRadius: 24,
+      padding: EdgeInsets.zero,
+      onPressed: () {},
+      icon: icon,
+    );
+  }
+}
