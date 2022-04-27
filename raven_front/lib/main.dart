@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -76,13 +77,13 @@ class RavenMobileApp extends StatelessWidget {
       navigatorObservers: [components.navigator],
       builder: (context, child) {
         components.navigator.scaffoldContext = context;
-        return SafeArea(
-            child: Scaffold(
+        final scaffold = Scaffold(
           backgroundColor: Colors.black,
           extendBodyBehindAppBar: false,
           appBar: BackdropAppBar(),
           body: child!,
-        ));
+        );
+        return Platform.isIOS ? scaffold : SafeArea(child: scaffold);
       },
     );
   }

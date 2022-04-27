@@ -630,7 +630,8 @@ class SimpleSelectionItems {
 
   Future<void> produceModal(List items) async {
     await showModalBottomSheet<void>(
-        context: context,
+        //context: context,
+        context: components.navigator.scaffoldContext!,
         elevation: 1,
         isScrollControlled: true,
         barrierColor: AppColors.black38,
