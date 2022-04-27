@@ -8,9 +8,18 @@ class ImportWaiter extends Waiter {
   void init() {
     streams.import.attempt.listen((ImportRequest? importRequest) async {
       if (importRequest != null) {
+        var firstWallet = false;
         await Future.delayed(const Duration(milliseconds: 250));
+        if (res.wallets.data.length == 1 && streams.app.wallet.isEmpty.value) {
+          await res.wallets.remove(res.wallets.data.first);
+          firstWallet = true;
+        }
         var importFrom = ImportFrom(text: importRequest.text);
         if (await importFrom.handleImport()) {
+          if (firstWallet) {
+            await res.settings.savePreferredWalletId(res.wallets.data.first.id);
+            firstWallet = false;
+          }
           // send user to see new wallet
           streams.import.success.add(null);
           streams.app.setting.add(null);
