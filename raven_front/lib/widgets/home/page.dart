@@ -25,20 +25,25 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late List listeners = [];
-  static const double minExtentClicked = .065; //.0736842105263158;
-  double minExtent = 1.0;
-  static const double maxExtent = 1.0;
-  static const double initialExtent = maxExtent;
-  late DraggableScrollableController draggableScrollController =
-      DraggableScrollableController();
-  ScrollController? _scrollController;
-  /** notifier-start */
-  ValueNotifier<double> _notifier = ValueNotifier(1);
-  /** notifier-end */
+  bool ignoring = false;
+  static const double minExtent = .065; //.0736842105263158;
+  //minExtent = 1-(MediaQuery.of(context).size.height - 56)  // pix
+  final Duration animationDuration = Duration(milliseconds: 300);
+  late ScrollController _scrollController = ScrollController();
+  late AnimationController _slideController;
+  late final Animation<Offset> _slideAnimation = Tween<Offset>(
+    begin: const Offset(0, 0),
+    end: Offset(0, 1 - minExtent),
+  ).animate(CurvedAnimation(
+    parent: _slideController,
+    curve: Curves.easeInOut,
+  ));
 
   @override
   void initState() {
     super.initState();
+    _slideController =
+        AnimationController(vsync: this, duration: animationDuration);
     listeners.add(streams.app.fling.listen((bool? value) async {
       if (value != null) {
         await fling(value == false ? value : null);
@@ -49,6 +54,7 @@ class _HomePageState extends State<HomePage>
 
   @override
   void dispose() {
+    _slideController.dispose();
     for (var listener in listeners) {
       listener.cancel();
     }
@@ -57,208 +63,89 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    //minExtent = 1-(MediaQuery.of(context).size.height - 56)  // pix
     return BackdropLayers(
       back: NavMenu(),
-      front: DraggableScrollableActuator(
-        child: DraggableScrollableSheet(
-          controller: draggableScrollController,
-          snap: true,
-          initialChildSize: initialExtent,
-          minChildSize: minExtent,
-          maxChildSize: maxExtent,
-          builder: ((context, scrollController) {
-            var ignoring = false;
-            if (draggableScrollController.size == maxExtent) {
-              streams.app.setting.add(null);
-            } else if (minExtent < 1.0) {
-              streams.app.setting.add('/settings');
-              ignoring = true;
-            }
-            /** notifier-start */
-            _notifier.value = draggableScrollController.size;
-            /** notifier-end */
-            _scrollController = scrollController;
-            return FrontCurve(
+      front: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          SlideTransition(
+            position: _slideAnimation,
+            child: FrontCurve(
                 fuzzyTop: true,
-                child: Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    IgnorePointer(
-                      ignoring: ignoring,
-                      child: AllAssetsHome(
-                        scrollController: scrollController,
-                        appContext: widget.appContext,
-                        placeholderManage: true,
-                        placeholderSwap: true,
-                      ),
-                    ),
-                    /** notifier-alt */
-                    //if (draggableScrollController.size == maxExtent)
-                    /** notifier-alt-end */
-                    BottomNavBar(
+                child: IgnorePointer(ignoring: ignoring, child: assetHomeView)),
+          ),
+          AnimatedBuilder(
+              animation: _slideAnimation,
+              builder: (context, _) {
+                return Transform.translate(
+                    offset: Offset(0.0, _slideController.value * 140),
+                    child: Container(
+                        child: NavBar(
                       appContext: widget.appContext,
-                      dragController: draggableScrollController,
-                      /** notifier-start */
-                      notifier: _notifier,
-                      /** notifier-end */
                       placeholderManage: true,
                       placeholderSwap: true,
-                    ),
-                  ],
-                ));
-          }),
-        ),
+                    )));
+              }),
+        ],
       ),
     );
   }
+
+  Widget get assetHomeView => Container(
+        child: widget.appContext == AppContext.wallet
+            ? HoldingList(
+                scrollController: _scrollController,
+              )
+            : widget.appContext == AppContext.manage
+                ? true
+                    ? ComingSoonPlaceholder(
+                        scrollController: _scrollController,
+                        message: 'Create & Manage Assets',
+                        placeholderType: PlaceholderType.asset)
+                    : AssetList(scrollController: _scrollController)
+                : true
+                    ? ComingSoonPlaceholder(
+                        scrollController: _scrollController,
+                        message: 'Decentralized Asset Swaps',
+                        placeholderType: PlaceholderType.swap)
+                    : ListView(
+                        controller: _scrollController,
+                        children: [
+                          Text('swap\n\n\n\n\n\n\n\n\n\n\n\n'),
+                        ],
+                      ),
+      );
 
   Future<void> fling([bool? open]) async {
     if ((open ?? false)) {
       await flingDown();
     } else if (!(open ?? true)) {
       await flingUp();
-    } else if (await draggableScrollController.size >=
-        (maxExtent + minExtent) / 2) {
-      await flingDown();
-    } else {
+    } else if (_slideController.isCompleted) {
       await flingUp();
+    } else {
+      await flingDown();
     }
   }
 
   Future<void> flingDown() async {
+    streams.app.setting.add('/settings');
+    _scrollController.animateTo(
+      0,
+      duration: animationDuration,
+      curve: Curves.easeInOut,
+    );
+    await _slideController.forward();
     setState(() {
-      minExtent = minExtentClicked;
+      ignoring = true;
     });
-    _scrollController!.jumpTo(_scrollController!.position.minScrollExtent);
-    await draggableScrollController.animateTo(minExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.linear //Curves.easeInOutCirc, // too chopy to notice
-        );
   }
 
   Future<void> flingUp() async {
-    await draggableScrollController.animateTo(maxExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.linear //Curves.easeInOutCirc,
-        );
+    streams.app.setting.add(null);
+    await _slideController.reverse();
     setState(() {
-      minExtent = 1.0;
+      ignoring = false;
     });
   }
 }
-
-class AllAssetsHome extends StatelessWidget {
-  final ScrollController scrollController;
-  final AppContext appContext;
-  final bool placeholderManage;
-  final bool placeholderSwap;
-
-  const AllAssetsHome({
-    required this.scrollController,
-    required this.appContext,
-    this.placeholderManage = false,
-    this.placeholderSwap = false,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: appContext == AppContext.wallet
-          ? HoldingList(
-              scrollController: scrollController,
-            )
-          : appContext == AppContext.manage
-              ? placeholderManage
-                  ? ComingSoonPlaceholder(
-                      scrollController: scrollController,
-                      message: 'Create & Manage Assets',
-                      placeholderType: PlaceholderType.asset)
-                  : AssetList(scrollController: scrollController)
-              : placeholderSwap
-                  ? ComingSoonPlaceholder(
-                      scrollController: scrollController,
-                      message: 'Decentralized Asset Swaps',
-                      placeholderType: PlaceholderType.swap)
-                  : ListView(
-                      controller: scrollController,
-                      children: [
-                        Text('swap\n\n\n\n\n\n\n\n\n\n\n\n'),
-                      ],
-                    ),
-    );
-  }
-}
-
-class BottomNavBar extends StatelessWidget {
-  final DraggableScrollableController dragController;
-  final AppContext appContext;
-  /** notifier-start */
-  final ValueNotifier<double> notifier;
-  /** notifier-end */
-  final bool placeholderManage;
-  final bool placeholderSwap;
-
-  const BottomNavBar({
-    required this.appContext,
-    required this.dragController,
-    /** notifier-start */
-    required this.notifier,
-    /** notifier-end */
-    this.placeholderManage = false,
-    this.placeholderSwap = false,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return
-        /** notifier-start */
-        AnimatedBuilder(
-      animation: notifier,
-      builder: (context, _) {
-        return Transform.translate(
-          offset: Offset(0.0, 100 * (1 - dragController.size) * 1.50),
-          child: Container(
-              child:
-                  /** notifier-end */
-                  NavBar(
-            appContext: appContext,
-            placeholderManage: placeholderManage,
-            placeholderSwap: placeholderSwap,
-          ) /** notifier-start */),
-        );
-      },
-    ) /** notifier-end */
-        ;
-  }
-}
-
-/* we want to hide the nav bar if we open the menu, so we can put this on a 
-scaffold to do it, or we can do what is above: push it down w/ the front sheet.
-NotificationListener<UserScrollNotification>(
-                onNotification: visibilityOfSendReceive,
-                child: currentContext == AppContext.wallet
-                    ? HoldingList()
-                    : currentContext == AppContext.manage
-                        ? AssetList()
-                        : Text('swap'))),
-        floatingActionButton:
-            SlideTransition(position: offset, child: NavBar()),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      );
-
-  bool visibilityOfSendReceive(notification) {
-    if (notification.direction == ScrollDirection.forward &&
-        controller.status == AnimationStatus.completed) {
-      controller.reverse();
-    } else if (notification.direction == ScrollDirection.reverse &&
-        controller.status == AnimationStatus.dismissed) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      controller.forward();
-    }
-    return true;
-  }
-*/
-

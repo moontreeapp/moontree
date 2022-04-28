@@ -9,10 +9,10 @@ class ComingSoonPlaceholder extends StatelessWidget {
   final String header;
   final String message;
   final PlaceholderType placeholderType;
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
 
   const ComingSoonPlaceholder({
-    required this.scrollController,
+    this.scrollController,
     this.header = 'Coming Soon',
     this.message = 'Loading...',
     this.placeholderType = PlaceholderType.wallet,

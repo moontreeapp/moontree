@@ -8,8 +8,8 @@ import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class AssetList extends StatefulWidget {
-  final ScrollController scrollController;
-  const AssetList({Key? key, required this.scrollController}) : super(key: key);
+  final ScrollController? scrollController;
+  const AssetList({Key? key, this.scrollController}) : super(key: key);
 
   @override
   State<AssetList> createState() => _AssetList();

@@ -22,28 +22,28 @@ class ClientService {
   ///   }));
   Future<T> scope<T>(Future<T> Function() callback) async {
     var x;
-    try {
-      x = await callback();
-    } catch (e) {
-      // reconnect on any error, not just server disconnected } on StateError {
-      streams.client.client.add(null);
-      while (streams.client.client.value == null) {
-        await Future.delayed(Duration(milliseconds: 100));
-      }
-
-      /// making this two layers deep because we got an error here too...
-      /// saw the error gain in catch, so ... we need to either make it recursive, or something.
+    var repeated = 0;
+    while (repeated < 1000) {
       try {
         x = await callback();
+        repeated = 1001;
+        break;
       } catch (e) {
+        var waited = false;
         // reconnect on any error, not just server disconnected } on StateError {
         streams.client.client.add(null);
         while (streams.client.client.value == null) {
           await Future.delayed(Duration(milliseconds: 100));
+          waited = true;
         }
-        x = await callback();
+        // at least wait a bit so we don't kill the server if we're looping
+        if (!waited) {
+          await Future.delayed(Duration(milliseconds: 1000));
+        }
+        repeated += 1;
       }
     }
+    print('repeated: $repeated');
     return x;
   }
 

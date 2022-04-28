@@ -79,7 +79,7 @@ class EmptyComponents {
 
   ListView getAssetsPlaceholder(
     BuildContext context, {
-    required ScrollController scrollController,
+    ScrollController? scrollController,
     int count = 1,
     bool holding = false,
   }) {

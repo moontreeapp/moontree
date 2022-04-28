@@ -15,10 +15,10 @@ final rvn = res.securities.RVN.symbol;
 
 class HoldingList extends StatefulWidget {
   final Iterable<Balance>? holdings;
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
 
   const HoldingList({
-    required this.scrollController,
+    this.scrollController,
     this.holdings,
     Key? key,
   }) : super(key: key);

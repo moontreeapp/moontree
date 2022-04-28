@@ -5,7 +5,7 @@ import 'waiter.dart';
 
 class AppWaiter extends Waiter {
   DateTime lastActiveTime = DateTime.now();
-  int gracePeriod = 60 * 2;
+  int gracePeriod = 60 * 5;
   Timer? _timer;
 
   void init({Object? reconnect}) {
