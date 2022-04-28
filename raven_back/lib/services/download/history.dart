@@ -36,6 +36,9 @@ class HistoryService {
       }
       _addressesByWalletId[address.walletId]!.add(address);
     });
+
+    var complete = false;
+
     if (address.wallet is LeaderWallet) {
       if (histories.isNotEmpty) {
         services.wallet.leader
@@ -64,6 +67,7 @@ class HistoryService {
           // if actually deriving => -1
           if (_addressesByWalletId[address.walletId]!.length >=
               address.wallet!.addresses.length - 1) {
+            complete = true;
             streams.wallet.walletSyncedCallback.add(address.walletId);
           }
         });
@@ -71,8 +75,15 @@ class HistoryService {
     } else {
       // One address; all good
       streams.wallet.walletSyncedCallback.add(address.walletId);
+      complete = true;
     }
-    await _remember(address, histories.map((history) => history.txHash));
+
+    // Only remember stuff we haven't already downloaded
+    await _remember(
+        address,
+        histories
+            .map((history) => history.txHash)
+            .where((txid) => !res.transactions.contains(txid)));
     final addr_length = await _addressesLock.read(() {
       return _addressesByWalletId.values.expand((element) => element).length;
     });
@@ -109,15 +120,12 @@ class HistoryService {
       //if (downloads_complete) {
       //  streams.client.busy.add(false);
       //}
-      var txsToDownload = await _txsListsByWalletExposureKeysLock.read(() {
-        var txsToDownload = <String>[];
-        for (var key in _txsListsByWalletExposureKeys.keys) {
-          for (var txsList in _txsListsByWalletExposureKeys[key]!) {
-            txsToDownload.addAll(txsList);
-          }
-        }
-        return txsToDownload;
-      });
+      var txsToDownload = (await _txsListsByWalletExposureKeysLock.read(() {
+        return _txsListsByWalletExposureKeys.values
+            .expand((element) => element)
+            .expand((element) => element);
+      }))
+          .toList();
 
       // Get unspents first
       // Unspents we don't have implies history we dont have implies this gets called
@@ -151,7 +159,15 @@ class HistoryService {
 
       // don't clear because if we get updates we want to pull tx
       //addresses.clear();
-      return await _produceAddressOrBalance();
+      final retVal = await _produceAddressOrBalance();
+      if (complete) {
+        // Ensure we get dangling ONLY once we've downloaded all normal transactions
+        // (i.e. wallet completely synced)
+        // Removes weird edge cases when we send to ourselves with regards to saving vins
+        await allDoneProcess(client);
+        print('TRANSACTIONS DOWNLOADED');
+      }
+      return retVal;
     }
     return null;
   }
@@ -182,10 +198,7 @@ class HistoryService {
         }
       }
     }
-    if (allDone) {
-      await allDoneProcess(client);
-      print('TRANSACTIONS DOWNLOADED');
-    }
+
     return allDone;
   }
 
@@ -221,9 +234,12 @@ class HistoryService {
   }) async {
     var futures = [
       for (var tx in txs)
-        saveTransaction(tx, client, saveVin: saveVin, justReturn: true)
+        saveTransaction(tx, client, saveVin: saveVin, justReturn: false)
     ];
-    var threes = await Future.wait<List<Set>>(futures);
+    await Future.wait<List<Set>>(futures);
+    // Saving is done in the method??
+
+    /*
     for (var three in threes) {
       if (three.isNotEmpty) {
         if (three[2].isNotEmpty) {
@@ -237,6 +253,7 @@ class HistoryService {
         }
       }
     }
+    */
   }
 
   /// don't need this for creating UTXO set anymore but...
@@ -385,6 +402,7 @@ class HistoryService {
     var newVins = <Vin>{};
     var newVouts = <Vout>{};
     var newTxs = <Transaction>{};
+
     if (saveVin) {
       for (var vin in tx.vin) {
         if (vin.txid != null && vin.vout != null) {

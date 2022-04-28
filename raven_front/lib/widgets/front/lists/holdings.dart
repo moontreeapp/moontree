@@ -163,10 +163,19 @@ class _HoldingList extends State<HoldingList> {
     streams.client.busy.add(_hideList && holdings!.isNotEmpty ? true : false);
     print(
         'Hiding holdings: $_hideList; Hiding while waiting for unspents: $_waitingForUnspents; Freeze holdings while waiting for unspents: $_freezeHoldings');
+    print(
+        'Balance was empty: $_balanceWasEmpty holdings: $holdingCount Current: ${Current.holdings.length}');
+
+    // TODO: This amount of shimmer spacings isn't working anymore; always one in ui, but correct value here why?
+    final hideListCount =
+        _balanceWasEmpty ? holdingCount : Current.holdings.length;
+
+    print('Shimmer spaces: $hideListCount');
+
     return _hideList || (_waitingForUnspents && !_freezeHoldings)
         ? components.empty.getAssetsPlaceholder(context,
             scrollController: widget.scrollController,
-            count: _balanceWasEmpty ? holdingCount : Current.holdings.length,
+            count: hideListCount,
             holding: true)
         // Check if a completely new user, not simply a new wallet
         : res.transactions.isEmpty
