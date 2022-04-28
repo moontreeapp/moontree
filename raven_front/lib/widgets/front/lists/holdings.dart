@@ -30,7 +30,7 @@ class HoldingList extends StatefulWidget {
 
 class _HoldingList extends State<HoldingList> {
   List<StreamSubscription> listeners = [];
-  bool _hideList = true;
+  bool _hideList = false;
   bool _waitingForUnspents = true;
   bool _freezeHoldings = false;
   bool _balanceWasEmpty = false;
@@ -53,7 +53,7 @@ class _HoldingList extends State<HoldingList> {
         });
       }
     }));
-    listeners.add(streams.wallet.unspentsCallback.listen((value) async {
+    listeners.add(streams.wallet.unspentsCallback.listen((value) {
       if (!_hideList) {
         setState(() {});
       }
@@ -159,13 +159,10 @@ class _HoldingList extends State<HoldingList> {
           services
               .download.unspents.unspentBalancesByWalletId[Current.walletId] ??
           []);
-
     holdings = holdings!.where((holding) => holding.value > 0).toList();
     streams.client.busy.add(_hideList && holdings!.isNotEmpty ? true : false);
-
     print(
         'Hiding holdings: $_hideList; Hiding while waiting for unspents: $_waitingForUnspents; Freeze holdings while waiting for unspents: $_freezeHoldings');
-
     return _hideList || (_waitingForUnspents && !_freezeHoldings)
         ? components.empty.getAssetsPlaceholder(context,
             scrollController: widget.scrollController,
