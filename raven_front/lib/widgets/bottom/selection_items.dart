@@ -630,7 +630,7 @@ class SimpleSelectionItems {
   SimpleSelectionItems(this.context, {required this.items});
 
   Future<void> produceModal(List items) async {
-    return await showModalBottomSheet<void>(
+    await showModalBottomSheet<void>(
         context: context,
         elevation: 1,
         isScrollControlled: true,

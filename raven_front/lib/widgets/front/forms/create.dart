@@ -373,12 +373,16 @@ class _CreateAssetState extends State<CreateAsset> {
             IconButton(
               onPressed: () => showDialog(
                 context: context,
-                builder: (BuildContext context) => AlertDialog(
-                  content: Text('Reissuable asset can increase in quantity and '
-                      'decimal in the future.\n\nNon-reissuable '
-                      'assets cannot be modified in anyway.'),
-                ),
-              ),
+                builder: (BuildContext context) {
+                  streams.app.scrim.add(true);
+                  return AlertDialog(
+                    content:
+                        Text('Reissuable asset can increase in quantity and '
+                            'decimal in the future.\n\nNon-reissuable '
+                            'assets cannot be modified in anyway.'),
+                  );
+                },
+              ).then((value) => streams.app.scrim.add(false)),
               icon: const Icon(
                 Icons.help_rounded,
                 color: Colors.black,

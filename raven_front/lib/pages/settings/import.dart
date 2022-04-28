@@ -198,6 +198,7 @@ class _ImportState extends State<Import> {
   Future requestPassword() async => showDialog(
       context: context,
       builder: (BuildContext context) {
+        streams.app.scrim.add(true);
         return AlertDialog(
           title: Column(
             children: <Widget>[
@@ -221,7 +222,7 @@ class _ImportState extends State<Import> {
             ],
           ),
         );
-      });
+      }).then((value) => streams.app.scrim.add(false));
 
   Future attemptImport([String? importData]) async {
     FocusScope.of(context).unfocus();
@@ -254,10 +255,13 @@ class _ImportState extends State<Import> {
         if (resp == null) {
           showDialog(
               context: context,
-              builder: (BuildContext context) => AlertDialog(
-                  title: Text('Password Not Recognized'),
-                  content: Text(
-                      'Password does not match the password used at the time of encryption.')));
+              builder: (BuildContext context) {
+                streams.app.scrim.add(true);
+                return AlertDialog(
+                    title: Text('Password Not Recognized'),
+                    content: Text(
+                        'Password does not match the password used at the time of encryption.'));
+              }).then((value) => streams.app.scrim.add(false));
           return;
         }
       }
