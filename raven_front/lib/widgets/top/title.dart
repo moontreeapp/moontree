@@ -39,8 +39,7 @@ class PageTitle extends StatefulWidget {
   };
 }
 
-class _PageTitleState extends State<PageTitle>
-    with SingleTickerProviderStateMixin {
+class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   List listeners = [];
   bool loading = false;
   bool fullname = false;
@@ -51,13 +50,18 @@ class _PageTitleState extends State<PageTitle>
   final changeName = TextEditingController();
   late AnimationController controller;
   late Animation<double> animation;
+  late AnimationController slowController;
+  late Animation<double> slowAnimation;
   final Duration animationDuration = Duration(milliseconds: 160);
 
   @override
   void initState() {
     super.initState();
     controller = AnimationController(vsync: this, duration: animationDuration);
+    slowController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 4000));
     animation = Tween(begin: 0.0, end: 1.0).animate(controller);
+    slowAnimation = Tween(begin: 0.0, end: 1.0).animate(slowController);
     listeners.add(streams.app.loading.listen((bool value) {
       if (value != loading) {
         setState(() {
@@ -112,6 +116,7 @@ class _PageTitleState extends State<PageTitle>
   @override
   void dispose() {
     controller.dispose();
+    slowController.dispose();
     for (var listener in listeners) {
       listener.cancel();
     }
@@ -120,12 +125,16 @@ class _PageTitleState extends State<PageTitle>
 
   @override
   Widget build(BuildContext context) {
-    controller.forward();
     return body();
   }
 
   Widget body() {
-    if (loading || ['main', '', 'Splash'].contains(pageTitle)) {
+    print(pageTitle);
+    if (pageTitle == 'Splash') {
+      slowController.forward(from: 0.0);
+      return FadeTransition(opacity: slowAnimation, child: Text('Welcome'));
+    }
+    if (loading || ['main', ''].contains(pageTitle)) {
       return Text('');
     }
     var wrap = (String x) => FittedBox(
@@ -136,6 +145,7 @@ class _PageTitleState extends State<PageTitle>
                   fontWeight:
                       x.length >= 25 ? FontWeights.bold : FontWeights.semiBold,
                 )));
+    controller.forward();
     var assetWrap = (String x) => FittedBox(
         fit: BoxFit.fitWidth,
         child: GestureDetector(

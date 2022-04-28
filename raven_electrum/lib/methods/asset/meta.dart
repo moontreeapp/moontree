@@ -83,11 +83,13 @@ extension GetAssetMetaMethod on RavenElectrumClient {
   /// returns histories in the same order as txHashes passed in
   Future<List<AssetMeta?>> getMetas(List<String> symbols) async {
     var futures = <Future<AssetMeta?>>[];
-    peer.withBatch(() {
-      for (var symbol in symbols) {
-        futures.add(getMeta(symbol));
-      }
-    });
+    if (symbols.isNotEmpty) {
+      peer.withBatch(() {
+        for (var symbol in symbols) {
+          futures.add(getMeta(symbol));
+        }
+      });
+    }
     List<AssetMeta?> results = await Future.wait<AssetMeta?>(futures);
     return results;
   }

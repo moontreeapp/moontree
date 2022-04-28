@@ -93,10 +93,11 @@ class BackdropAppBarContents extends StatelessWidget
         leading: streams.app.page.value == 'Login'
             ? null
             : PageLead(mainContext: context),
-        title: /*FittedBox(fit: BoxFit.fitWidth, child: */ PageTitle() /*)*/,
+        centerTitle: spoof,
+        title: PageTitle(),
         actions: <Widget>[
           if (!spoof) components.status,
-          spoof ? SpoofedConnectionLight() : ConnectionLight(),
+          if (!spoof) spoof ? SpoofedConnectionLight() : ConnectionLight(),
           if (!spoof) QRCodeContainer(),
           if (!spoof) SnackBarViewer(),
           if (!spoof) SizedBox(width: 6),

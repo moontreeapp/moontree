@@ -49,7 +49,10 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
 
   Future<void> show() async {
     var msg = GestureDetector(
-        onTap: ScaffoldMessenger.of(context).clearSnackBars,
+        onTap: () {
+          print('clearing snackbar?');
+          ScaffoldMessenger.of(context).clearSnackBars();
+        },
         child: snack!.atBottom
             ? Padding(
                 padding: EdgeInsets.only(left: 16, right: 16),
@@ -135,7 +138,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       streams.app.hideNav.add(false);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         elevation: 0,
-        dismissDirection: DismissDirection.startToEnd,
+        dismissDirection: DismissDirection.up,
         backgroundColor: AppColors.snackBar,
         shape: components.shape.topRounded,
         content: msg,

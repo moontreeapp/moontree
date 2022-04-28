@@ -53,11 +53,13 @@ extension GetUnspentMethod on RavenElectrumClient {
     Iterable<String> scripthashes,
   ) async {
     var futures = <Future<List<ScripthashUnspent>>>[];
-    peer.withBatch(() {
-      for (var scripthash in scripthashes) {
-        futures.add(getUnspent(scripthash));
-      }
-    });
+    if (scripthashes.isNotEmpty) {
+      peer.withBatch(() {
+        for (var scripthash in scripthashes) {
+          futures.add(getUnspent(scripthash));
+        }
+      });
+    }
     List<List<ScripthashUnspent>> results =
         await Future.wait<List<ScripthashUnspent>>(futures);
     return results;
@@ -81,11 +83,13 @@ extension GetUnspentMethod on RavenElectrumClient {
     Iterable<String> scripthashes,
   ) async {
     var futures = <Future<List<ScripthashUnspent>>>[];
-    peer.withBatch(() {
-      for (var scripthash in scripthashes) {
-        futures.add(getAssetUnspent(scripthash));
-      }
-    });
+    if (scripthashes.isNotEmpty) {
+      peer.withBatch(() {
+        for (var scripthash in scripthashes) {
+          futures.add(getAssetUnspent(scripthash));
+        }
+      });
+    }
     List<List<ScripthashUnspent>> results =
         await Future.wait<List<ScripthashUnspent>>(futures);
     return results;

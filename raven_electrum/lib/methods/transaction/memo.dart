@@ -39,11 +39,13 @@ extension GetMemoMethod on RavenElectrumClient {
   /// returns memos in the same order as txHashes passed in
   Future<List<String>> getMemos(List<String> txids) async {
     var futures = <Future<String>>[];
-    peer.withBatch(() {
-      for (var txid in txids) {
-        futures.add(getMemo(txid));
-      }
-    });
+    if (txids.isNotEmpty) {
+      peer.withBatch(() {
+        for (var txid in txids) {
+          futures.add(getMemo(txid));
+        }
+      });
+    }
     List<String> results = await Future.wait<String>(futures);
     return results;
   }

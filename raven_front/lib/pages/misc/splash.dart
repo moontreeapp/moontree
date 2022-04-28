@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,7 @@ import 'package:raven_back/services/wallet/constants.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/listeners/listeners.dart';
 import 'package:raven_front/widgets/backdrop/backdrop.dart';
+import 'package:raven_front/pages/pages.dart';
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
@@ -17,6 +20,7 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> with TickerProviderStateMixin {
   BorderRadius? shape;
+  bool showAppBar = true;
 
   final Duration animationDuration = Duration(milliseconds: 1000);
   late AnimationController _slideController;
@@ -52,12 +56,21 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     });
     await Future.delayed(Duration(milliseconds: 1000));
     _slideController.forward();
+    // hack to trigger animate Welcome
+    streams.app.loading.add(false);
+    streams.app.loading.add(true);
+    streams.app.loading.add(false);
     await Future.delayed(Duration(milliseconds: 1000));
     _fadeController.forward();
+    await Future.delayed(Duration(milliseconds: 1000));
     final loadingHelper = DataLoadingHelper(context);
+    setState(() {
+      showAppBar = false;
+    });
     await loadingHelper.setupDatabase();
-    loadingHelper.redirectToLoginOrHome();
     streams.app.splash.add(false);
+    loadingHelper.redirectToLoginOrHome();
+    //await Future.delayed(Duration(milliseconds: 1));
   }
 
   @override
@@ -73,9 +86,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
       body: Stack(
         alignment: Alignment.topCenter,
         children: [
-          BackdropAppBarContents(
-            spoof: true,
-          ),
+          if (showAppBar) BackdropAppBarContents(spoof: true),
           SlideTransition(
               position: _slideAnimation,
               child: AnimatedContainer(
@@ -108,6 +119,7 @@ class DataLoadingHelper {
         HiveInitializer(init: (dbDir) => Hive.initFlutter(), beforeLoad: () {});
     await hiveInit.setUp();
     await initWaiters();
+    unawaited(waiters.app.logoutThread());
     initListeners();
     //await res.settings.save(
     //    Setting(name: SettingName.Local_Path, value: await Storage().localPath));
@@ -173,11 +185,32 @@ class DataLoadingHelper {
         Future.microtask(() => Navigator.pushReplacementNamed(
             context, '/security/login',
             arguments: {}));
+
+        /// testing out instant/custom page transitions
+        //    Navigator.of(components.navigator.routeContext!)
+        //        .push(PageRouteBuilder(
+        //  pageBuilder: (_, __, ___) => pages.routes(
+        //          components.navigator.routeContext!)['/security/login']!(
+        //      components.navigator.routeContext!),
+        //  transitionsBuilder: (_, a, __, c) => c,
+        //  transitionDuration: Duration(milliseconds: 0),
+        //)));
       }
     } else {
       //Future.delayed(Duration(seconds: 60));
       Future.microtask(() =>
           Navigator.pushReplacementNamed(context, '/home', arguments: {}));
+
+      /// testing out instant/custom page transitions
+      //Navigator.of(components.navigator.routeContext!)
+      //    .push(PageRouteBuilder(
+      //  pageBuilder: (_, __, ___) =>
+      //      pages.routes(components.navigator.routeContext!)['/home']!(
+      //          components.navigator.routeContext!),
+      //  transitionsBuilder: (_, a, __, c) =>
+      //      FadeTransition(opacity: a, child: c),
+      //  transitionDuration: Duration(milliseconds: 2000),
+      //)));
     }
   }
 }

@@ -349,21 +349,25 @@ extension GetTransactionMethod on RavenElectrumClient {
   /// returns histories in the same order as txHashes passed in
   Future<List<Tx>> getTransactions(Iterable<String> txHashes) async {
     var futures = <Future<Tx>>[];
-    peer.withBatch(() {
-      for (var txHash in txHashes) {
-        futures.add(getTransaction(txHash));
-      }
-    });
+    if (txHashes.isNotEmpty) {
+      peer.withBatch(() {
+        for (var txHash in txHashes) {
+          futures.add(getTransaction(txHash));
+        }
+      });
+    }
     return await Future.wait<Tx>(futures);
   }
 
   List<Future<Tx>> getTransactionsFutures(Iterable<String> txHashes) {
     var futures = <Future<Tx>>[];
-    peer.withBatch(() {
-      for (var txHash in txHashes) {
-        futures.add(getTransaction(txHash));
-      }
-    });
+    if (txHashes.isNotEmpty) {
+      peer.withBatch(() {
+        for (var txHash in txHashes) {
+          futures.add(getTransaction(txHash));
+        }
+      });
+    }
     return futures;
   }
 }

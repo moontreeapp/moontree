@@ -32,11 +32,13 @@ extension GetHistoryMethod on RavenElectrumClient {
     List<String> scripthashes,
   ) async {
     var futures = <Future<List<ScripthashHistory>>>[];
-    peer.withBatch(() {
-      for (var scripthash in scripthashes) {
-        futures.add(getHistory(scripthash));
-      }
-    });
+    if (scripthashes.isNotEmpty) {
+      peer.withBatch(() {
+        for (var scripthash in scripthashes) {
+          futures.add(getHistory(scripthash));
+        }
+      });
+    }
     List<List<ScripthashHistory>> results =
         await Future.wait<List<ScripthashHistory>>(futures);
     return results;

@@ -55,11 +55,13 @@ extension GetBalanceMethod on RavenElectrumClient {
   /// returns balances in the same order as scripthashes passed in
   Future<List<ScripthashBalance>> getBalances(List<String> scripthashes) async {
     var futures = <Future<ScripthashBalance>>[];
-    peer.withBatch(() {
-      for (var scripthash in scripthashes) {
-        futures.add(getBalance(scripthash));
-      }
-    });
+    if (scripthashes.isNotEmpty) {
+      peer.withBatch(() {
+        for (var scripthash in scripthashes) {
+          futures.add(getBalance(scripthash));
+        }
+      });
+    }
     List<ScripthashBalance> results =
         await Future.wait<ScripthashBalance>(futures);
     return results;
@@ -77,11 +79,13 @@ extension GetBalanceMethod on RavenElectrumClient {
     List<String> scripthashes,
   ) async {
     var futures = <Future<ScripthashAssetBalances>>[];
-    peer.withBatch(() {
-      for (var scripthash in scripthashes) {
-        futures.add(getAssetBalance(scripthash));
-      }
-    });
+    if (scripthashes.isNotEmpty) {
+      peer.withBatch(() {
+        for (var scripthash in scripthashes) {
+          futures.add(getAssetBalance(scripthash));
+        }
+      });
+    }
     List<ScripthashAssetBalances> results =
         await Future.wait<ScripthashAssetBalances>(futures);
     return results;

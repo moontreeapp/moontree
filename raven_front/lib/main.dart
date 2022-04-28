@@ -13,6 +13,7 @@ import 'package:raven_front/pages/pages.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/widgets.dart';
+import 'package:raven_back/streams/streams.dart';
 
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 //   await Firebase.initializeApp();
@@ -83,8 +84,57 @@ class RavenMobileApp extends StatelessWidget {
           appBar: BackdropAppBar(),
           body: child!,
         );
-        return Platform.isIOS ? scaffold : SafeArea(child: scaffold);
+        return GestureDetector(
+            onTap: () => streams.app.tap.add(null),
+            behavior: HitTestBehavior.translucent,
+            child: Platform.isIOS ? scaffold : SafeArea(child: scaffold));
       },
     );
   }
 }
+
+class MyCustomRoute<T> extends MaterialPageRoute<T> {
+  MyCustomRoute(
+      {required WidgetBuilder builder, required RouteSettings settings})
+      : super(builder: builder, settings: settings);
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    return child;
+    // Fades between routes. (If you don't want any animation,
+    // just return child.)
+    //return new FadeTransition(opacity: animation, child: child);
+  }
+
+  /*
+  onGenerateRoute: (RouteSettings settings) {
+        switch (settings.name) {
+          case '/': return new MyCustomRoute(
+            builder: (_) => new MyHomePage(),
+            settings: settings,
+          );
+          case '/somewhere': return new MyCustomRoute(
+            builder: (_) => new Somewhere(),
+            settings: settings,
+          );
+        }
+        assert(false);
+      }
+  */
+}
+
+
+/*
+Route _createRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => Page2(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return child;
+    },
+  );
+}
+And if you want to transition instantly, you can do this:
+
+transitionDuration: Duration(seconds: 0)
+*/
