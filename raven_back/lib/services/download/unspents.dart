@@ -48,9 +48,9 @@ class UnspentService {
         streams.app.triggers.add(ThresholdTrigger.backup);
       }
 
-      if (!_unspentsBySymbol.keys.contains(symbol)) {
+      if (!_unspentsBySymbol.containsKey(symbol)) {
         _unspentsBySymbol[symbol] = <String, Set<ScripthashUnspent>>{};
-        if (subscribe) {
+        if (subscribe && symbol != res.securities.RVN.symbol) {
           // Subscribe to a dummy asset of this type
           // This method checks if we're already subscribed and
           // handles downloads if we are not

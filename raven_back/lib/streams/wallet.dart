@@ -9,6 +9,8 @@ class WalletStreams {
   final transactions =
       BehaviorSubject<WalletExposureTransactions?>.seeded(null);
   final unspentsCallback = BehaviorSubject<Null>.seeded(null);
+  // Push the wallet id of a leader wallet that is fully synced
+  final walletSyncedCallback = BehaviorSubject<String?>.seeded(null);
 }
 
 final Stream<Wallet> replayWallet$ = ReplaySubject<Wallet>()

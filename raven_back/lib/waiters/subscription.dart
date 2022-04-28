@@ -31,7 +31,8 @@ class SubscriptionWaiter extends Waiter {
     services.client.subscribe.subscriptionHandlesUnspent.clear();
     services.client.subscribe.subscriptionHandlesHistory.clear();
     services.client.subscribe.subscriptionHandlesAsset.clear();
-    services.download.history.clearDownloadState();
-    services.download.unspents.clearData();
+
+    //services.download.history.clearDownloadState();
+    //services.download.unspents.clearData();
   }
 }
