@@ -111,7 +111,6 @@ class _ConnectionLightState extends State<ConnectionLight>
                 //      position: _offsetAnimationV,
                 //      child: icon,
                 //    ))
-                // needs a transparent background
                 Container(
                     width: 36,
                     alignment: Alignment.centerLeft,

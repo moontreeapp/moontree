@@ -115,7 +115,7 @@ class _NavBarState extends State<NavBar> {
                         if (Current.wallet is LeaderWallet &&
                             streams.app.triggers.value ==
                                 ThresholdTrigger.backup &&
-                            !(Current.wallet as LeaderWallet).backedUp) {
+                            !Current.wallet.backedUp) {
                           await Future.delayed(Duration(milliseconds: 800));
                           streams.app.xlead.add(true);
                           Navigator.of(components.navigator.routeContext!)
@@ -134,7 +134,7 @@ class _NavBarState extends State<NavBar> {
                       .pushNamed('/transaction/receive');
                   if (Current.wallet is LeaderWallet &&
                       streams.app.triggers.value == ThresholdTrigger.backup &&
-                      !(Current.wallet as LeaderWallet).backedUp) {
+                      !Current.wallet.backedUp) {
                     await Future.delayed(Duration(milliseconds: 800));
                     streams.app.xlead.add(true);
                     Navigator.of(components.navigator.routeContext!).pushNamed(

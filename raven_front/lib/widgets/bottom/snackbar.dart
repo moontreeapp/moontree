@@ -57,6 +57,8 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
             ? Padding(
                 padding: EdgeInsets.only(left: 16, right: 16),
                 child: Text(snack!.message,
+                    maxLines: 1,
+                    overflow: TextOverflow.fade,
                     style: Theme.of(context)
                         .textTheme
                         .bodyText2!
@@ -72,6 +74,8 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                     Padding(
                         padding: EdgeInsets.only(left: 16, right: 16),
                         child: Text(snack!.message,
+                            maxLines: 1,
+                            overflow: TextOverflow.fade,
                             style: snack!.positive
                                 ? Theme.of(context)
                                     .textTheme
@@ -119,10 +123,6 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         backgroundColor: AppColors.snackBar,
         shape: components.shape.topRounded,
         content: msg,
-        //action: SnackBarAction(
-        //    label: 'copy',
-        //    onPressed: () =>
-        //        Clipboard.setData(ClipboardData(text: snack!.message)))
       ));
     } else /*if (snack!.link == null && snack!.details == null)*/ {
       /// make sure we don't display until we've been sent back home
@@ -148,9 +148,9 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
             bottom: MediaQuery.of(context).size.height * (106 / 760)),
         padding: EdgeInsets.only(top: 0, bottom: 0),
         //action: SnackBarAction(
-        //    label: 'copy',
+        //    label: ' ',
         //    onPressed: () =>
-        //        Clipboard.setData(ClipboardData(text: snack!.message)))
+        //        Clipboard.setData(ClipboardData(text: snack!.message))),
       ));
     }
     /*

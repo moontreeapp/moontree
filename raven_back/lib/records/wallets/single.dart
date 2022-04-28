@@ -23,6 +23,7 @@ class SingleWallet extends Wallet {
           id: id,
           cipherUpdate: cipherUpdate,
           name: name,
+          backedUp: true,
         );
 
   @override

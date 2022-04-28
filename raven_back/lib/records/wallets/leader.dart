@@ -20,13 +20,10 @@ class LeaderWallet extends Wallet {
   @HiveField(7)
   final String encryptedEntropy;
 
-  @HiveField(8)
-  final bool backedUp;
-
   LeaderWallet({
     required String id,
     required this.encryptedEntropy,
-    this.backedUp = false,
+    bool backedUp = false,
     CipherUpdate cipherUpdate = defaultCipherUpdate,
     String? name,
     List<int>? unusedInternalIndices,
@@ -36,6 +33,7 @@ class LeaderWallet extends Wallet {
           id: id,
           cipherUpdate: cipherUpdate,
           name: name,
+          backedUp: backedUp,
         ) {
     this.unusedInternalIndices = unusedInternalIndices ?? [];
     this.unusedExternalIndices = unusedExternalIndices ?? [];
@@ -73,7 +71,7 @@ class LeaderWallet extends Wallet {
       );
 
   @override
-  List<Object?> get props => [id, cipherUpdate, encryptedEntropy, backedUp];
+  List<Object?> get props => [id, cipherUpdate, encryptedEntropy];
 
   @override
   String toString() =>
