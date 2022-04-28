@@ -502,6 +502,7 @@ class SelectionItems {
         barrierColor: AppColors.black38,
         shape: components.shape.topRounded,
         builder: (BuildContext context) {
+          streams.app.scrim.add(true);
           DraggableScrollableController draggableScrollController =
               DraggableScrollableController();
           var minExtent =
@@ -530,7 +531,7 @@ class SelectionItems {
                   ));
             }),
           );
-        });
+        }).then((value) => streams.app.scrim.add(false));
   }
 
   Future<void> build({
@@ -629,13 +630,14 @@ class SimpleSelectionItems {
   SimpleSelectionItems(this.context, {required this.items});
 
   Future<void> produceModal(List items) async {
-    await showModalBottomSheet<void>(
+    return await showModalBottomSheet<void>(
         context: context,
         elevation: 1,
         isScrollControlled: true,
         barrierColor: AppColors.black38,
         shape: components.shape.topRounded,
         builder: (BuildContext context) {
+          streams.app.scrim.add(true);
           DraggableScrollableController draggableScrollController =
               DraggableScrollableController();
           var minExtent =
@@ -664,7 +666,7 @@ class SimpleSelectionItems {
                   ));
             }),
           );
-        });
+        }).then((value) => streams.app.scrim.add(false));
   }
 
   Future<void> build() async {

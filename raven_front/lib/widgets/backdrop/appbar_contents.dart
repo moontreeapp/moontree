@@ -71,11 +71,15 @@ class BackdropAppBarContents extends StatelessWidget
             frontLayerBoxShadow: const [],
           ),
         GestureDetector(
-          onTap: () =>
-              streams.app.snack.add(Snack(message: 'Sucessful Import')),
+          onTap: () {
+            print('click');
+            streams.app.snack.add(Snack(message: 'Sucessful Import'));
+            streams.app.scrim.add(!streams.app.scrim.value);
+          },
           child: appBar,
         ),
         alphaBar,
+        AppBarScrim(),
       ],
     );
   }
