@@ -350,6 +350,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
               onPressed: () => showDialog(
                 context: context,
                 builder: (BuildContext context) {
+                  streams.app.scrim.add(true);
                   return AlertDialog(
                     content:
                         Text('Reissuable asset can increase in quantity and '
