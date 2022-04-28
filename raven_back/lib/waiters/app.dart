@@ -13,18 +13,14 @@ class AppWaiter extends Waiter {
     listen(
       'streams.app.active',
       streams.app.active,
-      (bool active) {
+      (bool active) async {
         if (active) {
-          //print('');
-          //print('why not canceling');
-          //print('');
           _timer?.cancel();
           _timer = null;
         } else if (!active && services.password.required) {
           _timer = Timer(
             Duration(seconds: gracePeriod),
             () {
-              //timer cancel fails so at least don't lock if we're back in it.
               if (!streams.app.active.value) {
                 streams.app.logout.add(true);
               }
@@ -35,55 +31,15 @@ class AppWaiter extends Waiter {
     );
 
     /// when app isn't used for 2 minutes lock
-    // we don't have a listener for user behavior yet...
-    /// I was hoping we could use a GuestureBinding or something
-    /// (see status.dart) but I'm seeing people suggest wraping the entire app
-    /// in a transparent GuestureDetector... maybe...
-    /// https://stackoverflow.com/questions/58956814/how-to-execute-a-function-after-a-period-of-inactivity-in-flutter
-    /// most of this is superceded by logoutThread which gets called on init and never ends.
-    /// I discovered more about why this is a bad solution, though suprisingly the popular one:
-    /// you only get notifications about the tap, you know know the user was active,
-    /// if the user clicks on something that doesn't capture the gesture. if you click on a
-    /// button or something, then the button gets the gesture, not this, so you have no
-    /// way of knowing if it's really been active.
-    /// One thing we could do is track navigation events, everytime you move pages - we
-    /// could use that as a proxy for activity perhaps. maybe a combination of both...
-    /// I'll leave this all in here for now.
+    /// we know the user is active by navigation events and gestures that aren't
+    /// captured by a button or anything
     listen(
       'streams.app.tap',
       streams.app.tap,
       (bool? value) async {
         lastActiveTime = DateTime.now();
-        //if (services.password.required) {
-        //  print('starting');
-        //  await Future.delayed(Duration(seconds: gracePeriod));
-        //  print('streams.app.logout.value${streams.app.logout.value}');
-        //  if (!streams.app.logout.value &&
-        //      DateTime.now().difference(lastActiveTime).inSeconds >=
-        //          gracePeriod) {
-        //    streams.app.logout.add(true);
-        //  }
-        //}
       },
     );
-    //
-    //listen(
-    //  'streams.app.logout',
-    //  streams.app.logout,
-    //  (bool? value) async {
-    //    if (value != null && !value) {
-    //      lastLoginTime = DateTime.now();
-    //      Timer(Duration(seconds: gracePeriod), () {
-    //        //timer cancel fails so at least don't lock if we're back in it.
-    //        if (!streams.app.logout.value &&
-    //            DateTime.now().difference(lastActiveTime).inSeconds >=
-    //                gracePeriod) {
-    //          streams.app.logout.add(true);
-    //        }
-    //      });
-    //    }
-    //  },
-    //);
   }
 
   Future<void> logoutThread() async {
