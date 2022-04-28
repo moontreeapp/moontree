@@ -63,6 +63,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                         .copyWith(color: AppColors.white)))
             : Container(
                 height: 64,
+                color: AppColors.black87,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -138,7 +139,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       streams.app.hideNav.add(false);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         elevation: 0,
-        dismissDirection: DismissDirection.up,
+        dismissDirection: DismissDirection.none,
         backgroundColor: AppColors.snackBar,
         shape: components.shape.topRounded,
         content: msg,

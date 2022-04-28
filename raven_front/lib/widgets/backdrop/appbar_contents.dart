@@ -10,8 +10,10 @@ import 'package:raven_back/streams/app.dart';
 class BackdropAppBarContents extends StatelessWidget
     implements PreferredSizeWidget {
   final bool spoof;
+  final bool animate;
 
-  const BackdropAppBarContents({Key? key, this.spoof = false})
+  const BackdropAppBarContents(
+      {Key? key, this.spoof = false, this.animate = true})
       : super(key: key);
 
   @override
@@ -94,7 +96,7 @@ class BackdropAppBarContents extends StatelessWidget
             ? null
             : PageLead(mainContext: context),
         centerTitle: spoof,
-        title: PageTitle(),
+        title: PageTitle(animate: animate),
         actions: <Widget>[
           if (!spoof) components.status,
           if (!spoof) spoof ? SpoofedConnectionLight() : ConnectionLight(),

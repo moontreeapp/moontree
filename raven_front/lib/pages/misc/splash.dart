@@ -20,7 +20,7 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> with TickerProviderStateMixin {
   BorderRadius? shape;
-  bool showAppBar = true;
+  bool showAppBar = false;
 
   final Duration animationDuration = Duration(milliseconds: 1000);
   late AnimationController _slideController;
@@ -32,7 +32,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     end: Offset(0, 56 / MediaQuery.of(context).size.height),
   ).animate(CurvedAnimation(
     parent: _slideController,
-    curve: Curves.decelerate,
+    curve: Curves.easeInOut,
   ));
 
   @override
@@ -47,6 +47,8 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
   Future<void> _init() async {
     await Future.delayed(Duration(milliseconds: 4000));
+    final loadingHelper = DataLoadingHelper(context);
+    await loadingHelper.setupDatabase();
     setState(() {
       print('setting state');
       shape = BorderRadius.only(
@@ -55,22 +57,21 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
       );
     });
     await Future.delayed(Duration(milliseconds: 1000));
-    _slideController.forward();
-    // hack to trigger animate Welcome
-    streams.app.loading.add(false);
-    streams.app.loading.add(true);
-    streams.app.loading.add(false);
-    await Future.delayed(Duration(milliseconds: 1000));
+    //_slideController.forward();
+    //// hack to trigger animate Welcome
+    //streams.app.loading.add(false);
+    //streams.app.loading.add(true);
+    //streams.app.loading.add(false);
+    //await Future.delayed(Duration(milliseconds: 1000));
     _fadeController.forward();
     await Future.delayed(Duration(milliseconds: 1000));
-    final loadingHelper = DataLoadingHelper(context);
-    setState(() {
-      showAppBar = false;
-    });
-    await loadingHelper.setupDatabase();
-    streams.app.splash.add(false);
+    //setState(() {
+    //  _slideController.reset();
+    //  showAppBar = true;
+    //});
+    //await Future.delayed(Duration(milliseconds: 100));
     loadingHelper.redirectToLoginOrHome();
-    //await Future.delayed(Duration(milliseconds: 1));
+    streams.app.splash.add(false);
   }
 
   @override
@@ -83,10 +84,17 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
+      backgroundColor: Colors.black,
+      //backgroundColor: Colors.white,
+      appBar: showAppBar
+          ? BackdropAppBarContents(spoof: true, animate: false)
+          : null,
+      body:
+          /**/
+          Stack(
         alignment: Alignment.topCenter,
         children: [
-          if (showAppBar) BackdropAppBarContents(spoof: true),
+          if (!showAppBar) BackdropAppBarContents(spoof: true),
           SlideTransition(
               position: _slideAnimation,
               child: AnimatedContainer(
@@ -96,17 +104,21 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                       BoxDecoration(borderRadius: shape, color: Colors.white),
                   child: FadeTransition(
                       opacity: _fadeAnimation,
-                      child: Lottie.asset(
-                          'assets/splash/moontree_v2_001_recolored.json',
-                          animate: true,
-                          repeat: false,
-                          alignment: Alignment.center,
-                          width: double.infinity,
-                          height: double.infinity,
-                          fit: BoxFit.cover))))
+                      child:
+                          /**/
+                          Lottie.asset(
+                              'assets/splash/moontree_v2_001_recolored.json',
+                              animate: true,
+                              repeat: false,
+                              alignment: Alignment.center,
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover
+                              /**/
+                              ))))
         ],
+        /**/
       ),
-      backgroundColor: Colors.black,
     );
   }
 }
@@ -187,6 +199,7 @@ class DataLoadingHelper {
             arguments: {}));
 
         /// testing out instant/custom page transitions
+        /// https://stackoverflow.com/questions/52698340/animation-for-named-routes
         //    Navigator.of(components.navigator.routeContext!)
         //        .push(PageRouteBuilder(
         //  pageBuilder: (_, __, ___) => pages.routes(

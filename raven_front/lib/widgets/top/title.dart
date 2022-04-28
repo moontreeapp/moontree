@@ -7,7 +7,8 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/widgets/bottom/selection_items.dart';
 
 class PageTitle extends StatefulWidget {
-  PageTitle({Key? key}) : super(key: key);
+  final bool animate;
+  PageTitle({Key? key, this.animate = true}) : super(key: key);
 
   @override
   _PageTitleState createState() => _PageTitleState();
@@ -59,7 +60,7 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
     super.initState();
     controller = AnimationController(vsync: this, duration: animationDuration);
     slowController = AnimationController(
-        vsync: this, duration: Duration(milliseconds: 4000));
+        vsync: this, duration: Duration(milliseconds: 1000));
     animation = Tween(begin: 0.0, end: 1.0).animate(controller);
     slowAnimation = Tween(begin: 0.0, end: 1.0).animate(slowController);
     listeners.add(streams.app.loading.listen((bool value) {
@@ -131,8 +132,11 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   Widget body() {
     print(pageTitle);
     if (pageTitle == 'Splash') {
-      slowController.forward(from: 0.0);
-      return FadeTransition(opacity: slowAnimation, child: Text('Welcome'));
+      if (widget.animate) {
+        slowController.forward(from: 0.0);
+        return FadeTransition(opacity: slowAnimation, child: Text('Welcome'));
+      }
+      return Text('Welcome');
     }
     if (loading || ['main', ''].contains(pageTitle)) {
       return Text('');
