@@ -155,18 +155,12 @@ class ImportWalletService {
         await res.settings.setCurrentWalletId(importedChange!.data.id);
         return HandleResult(
             true,
-            res.wallets.primaryIndex
-                .getOne(importedChange.data.id)!
-                .id
-                .cutOutMiddle(length: 3),
+            'Wallet ${res.wallets.primaryIndex.getOne(importedChange.data.id)!.name}',
             LingoKey.walletImportedAs);
       }
       return HandleResult(
           false,
-          res.wallets.primaryIndex
-              .getOne(wallet.id)!
-              .id
-              .cutOutMiddle(length: 3),
+          'Wallet ${res.wallets.primaryIndex.getOne(wallet.id)!.name}',
           LingoKey.walletAlreadyExists);
     }
     return HandleResult(false, '', LingoKey.walletUnableToCreate);

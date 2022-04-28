@@ -18,8 +18,8 @@ class Lingo {
         LingoKey.leaderWalletSecretType: 'Mnemonic',
         LingoKey.singleWalletType: 'Private Key Wallet',
         LingoKey.singleWalletSecretType: 'Wallet Import Format',
-        LingoKey.walletImportedAs: 'Wallet successfully imported: {0}.',
-        LingoKey.walletAlreadyExists: 'Wallet already exists: {0}',
+        LingoKey.walletImportedAs: 'Successfully imported as {0}.',
+        LingoKey.walletAlreadyExists: 'Wallet already exists as {0}',
         LingoKey.walletUnableToCreate:
             'Wallet was unable to be created for an unknown reason...',
       };
