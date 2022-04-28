@@ -142,6 +142,17 @@ class _ReceiveState extends State<Receive> {
                           padding: EdgeInsets.only(
                               top: 0, left: 0, right: 0, bottom: 0),
                           child: GestureDetector(
+                              onTap: () {
+                                Clipboard.setData(new ClipboardData(
+                                    text: rawAddress ? address : uri));
+                                streams.app.snack.add(Snack(
+                                    message: 'Copied to Clipboard',
+                                    atBottom: true));
+                                // not formatted the same...
+                                //ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+                                //  content: new Text("Copied to Clipboard"),
+                                //));
+                              },
                               onLongPress: () {
                                 Clipboard.setData(new ClipboardData(
                                     text: rawAddress ? address : uri));

@@ -20,6 +20,8 @@ class ImportWaiter extends Waiter {
             await res.settings.savePreferredWalletId(res.wallets.data.first.id);
             firstWallet = false;
           }
+          // don't ask for backup
+          // wallet as LeaderWallet.backedUp == true
           // send user to see new wallet
           streams.import.success.add(null);
           streams.app.setting.add(null);

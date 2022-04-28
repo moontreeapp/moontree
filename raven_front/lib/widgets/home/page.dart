@@ -142,6 +142,7 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<void> flingUp() async {
+    /// trigger this when you change wallets streams.client.busy
     streams.app.setting.add(null);
     await _slideController.reverse();
     setState(() {

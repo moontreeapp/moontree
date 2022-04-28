@@ -150,6 +150,7 @@ class ImportWalletService {
       if (existingWalletId == null) {
         var importedChange = await res.wallets.save(wallet);
         // set it as current before returning
+
         await res.settings.setCurrentWalletId(importedChange!.data.id);
         return HandleResult(
             true,

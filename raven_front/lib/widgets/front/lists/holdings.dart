@@ -237,22 +237,25 @@ class _HoldingList extends State<HoldingList> {
       }
     }
     if (rvnHolding.isEmpty) {
-      rvnHolding.add(Shimmer.fromColors(
-              baseColor: AppColors.primaries[0],
-              highlightColor: Colors.white,
-              child: components.empty.holdingPlaceholder(context))
-          //ListTile(
-          ////dense: true,
-          //contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          //onTap: () {},
-          //leading: Container(
-          //    height: 50,
-          //    width: 50,
-          //    child: components.icons.assetAvatar(res.securities.RVN.symbol)),
-          //title: Text(res.securities.RVN.symbol,
-          //    style: Theme.of(context).textTheme.bodyText1),)
-          );
-      rvnHolding.add(Divider(height: 1));
+      /// show nothing.
+      //rvnHolding.add(
+      //    //Shimmer.fromColors(
+      //    //      baseColor: AppColors.primaries[0],
+      //    //      highlightColor: Colors.white,
+      //    //      child: components.empty.holdingPlaceholder(context))
+      //    ListTile(
+      //  //dense: true,
+      //  contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+      //  onTap: () {},
+      //  leading: Container(
+      //      height: 40,
+      //      width: 40,
+      //      child: components.icons.assetAvatar(res.securities.RVN.symbol)),
+      //  title: Text(res.securities.RVN.symbol,
+      //      style: Theme.of(context).textTheme.bodyText1),
+      //)
+      //);
+      //rvnHolding.add(Divider(height: 1));
       //rvnHolding.add(ListTile(
       //    onTap: () {},
       //    title: Text('+ Create Asset (not enough RVN)',

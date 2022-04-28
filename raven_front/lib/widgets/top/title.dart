@@ -239,6 +239,7 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                   Navigator.pop(components.navigator.routeContext!);
                   if (wallet.id != Current.walletId) {
                     res.settings.setCurrentWalletId(wallet.id);
+                    streams.app.fling.add(false);
                     streams.app.setting.add(null);
                   }
                 },

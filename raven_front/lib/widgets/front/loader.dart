@@ -10,12 +10,12 @@ import 'package:raven_front/widgets/widgets.dart';
 
 class Loader extends StatefulWidget {
   final String message;
-  final bool staticImage;
+  final bool staticImage = false; // enforce false, evaluate after release build
   final bool returnHome;
   const Loader({
     this.message = 'Loading...',
     this.returnHome = true,
-    this.staticImage = false,
+    staticImage = false,
   }) : super();
 
   @override

@@ -70,22 +70,24 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-
-        /// testing
-        //GestureDetector(
-        //  onTap: () {
-        //    print('click');
-        //    streams.app.snack.add(Snack(message: 'Sucessful Import'));
-        //    streams.app.scrim.add(!streams.app.scrim.value);
-        //  },
-        //  child:
-        appBar,
-        //),
+        testAppBar(appBar, test: true),
         alphaBar,
         AppBarScrim(),
       ],
     );
   }
+
+  Widget testAppBar(Widget appBar, {bool test = false}) => test
+      ? GestureDetector(
+          onTap: () {
+            print('click');
+            //streams.app.snack.add(Snack(message: 'Sucessful Import'));
+            //streams.app.scrim.add(!streams.app.scrim.value);
+            streams.client.busy.add(!streams.client.busy.value);
+          },
+          child: appBar,
+        )
+      : appBar;
 
   Widget buildAppBar(
     BuildContext context, {
