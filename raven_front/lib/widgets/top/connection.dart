@@ -40,11 +40,15 @@ class _ConnectionLightState extends State<ConnectionLight>
     _controllerH = AnimationController(
       duration: Duration(milliseconds: durationH),
       vsync: this,
-    )..repeat(reverse: true);
+    );
+    _controllerH.value = .5;
+    _controllerH.repeat(reverse: true);
     _controllerV = AnimationController(
       duration: Duration(milliseconds: durationV),
       vsync: this,
-    )..repeat(reverse: true);
+    );
+    _controllerV.value = .5;
+    _controllerV.repeat(reverse: true);
     _offsetAnimationH = Tween<Offset>(
       begin: const Offset(-1, 0),
       end: const Offset(0, 0),
@@ -77,6 +81,54 @@ class _ConnectionLightState extends State<ConnectionLight>
       if (!connectionBusy && value) {
         setState(() => connectionBusy = value);
       } else if (connectionBusy && !value) {
+        final yd = _controllerV.toStringDetails().split(' ').first;
+        final y = _controllerV.value;
+        if (yd == '▶') {
+          if (y <= .5) {
+            await Future.delayed(
+                Duration(milliseconds: ((.5 - y) * 1236).toInt().abs()));
+            _controllerV.stop();
+          } else if (y > .5) {
+            await Future.delayed(
+                Duration(milliseconds: (.5 + (1 - y) * 1236).toInt().abs()));
+            _controllerV.stop();
+          }
+        }
+        if (yd == '◀') {
+          if (y <= .5) {
+            await Future.delayed(
+                Duration(milliseconds: ((.5 + y) * 1236).toInt().abs()));
+            _controllerV.stop();
+          } else if (y > .5) {
+            await Future.delayed(
+                Duration(milliseconds: ((y - .5) * 1236).toInt().abs()));
+            _controllerV.stop();
+          }
+        }
+        final xd = _controllerH.toStringDetails().split(' ').first;
+        final x = _controllerH.value;
+        if (xd == '▶') {
+          if (x <= .5) {
+            await Future.delayed(
+                Duration(milliseconds: ((.5 - x) * 2000).toInt().abs()));
+            _controllerH.stop();
+          } else if (x > .5) {
+            await Future.delayed(
+                Duration(milliseconds: (.5 + (1 - x) * 2000).toInt().abs()));
+            _controllerH.stop();
+          }
+        }
+        if (xd == '◀') {
+          if (x <= .5) {
+            await Future.delayed(
+                Duration(milliseconds: ((.5 + x) * 2000).toInt().abs()));
+            _controllerH.stop();
+          } else if (x > .5) {
+            await Future.delayed(
+                Duration(milliseconds: ((x - .5) * 2000).toInt().abs()));
+            _controllerH.stop();
+          }
+        }
         if (streams.client.busy.value == value) {
           setState(() => connectionBusy = value);
         }
@@ -105,12 +157,18 @@ class _ConnectionLightState extends State<ConnectionLight>
             child:
 
                 /// you might like this
-                //SlideTransition(
-                //    position: _offsetAnimationH,
-                //    child: SlideTransition(
-                //      position: _offsetAnimationV,
-                //      child: icon,
-                //    ))
+                //    () {
+                //  _controllerH.value = .5;
+                //  _controllerV.value = .5;
+                //  _controllerH.repeat(reverse: true);
+                //  _controllerV.repeat(reverse: true);
+                //  return SlideTransition(
+                //      position: _offsetAnimationH,
+                //      child: SlideTransition(
+                //        position: _offsetAnimationV,
+                //        child: icon,
+                //      ));
+                //}()
                 Container(
                     width: 36,
                     alignment: Alignment.centerLeft,
