@@ -15,7 +15,8 @@ class ImportWaiter extends Waiter {
           firstWallet = true;
         }
         var importFrom = ImportFrom(text: importRequest.text);
-        if (await importFrom.handleImport()) {
+        var tuple3 = await importFrom.handleImport(); // success, title, msg
+        if (tuple3.item1) {
           if (firstWallet) {
             await res.settings.savePreferredWalletId(res.wallets.data.first.id);
             firstWallet = false;
@@ -24,9 +25,17 @@ class ImportWaiter extends Waiter {
           streams.import.success.add(null);
           streams.app.setting.add(null);
           streams.app.snack.add(Snack(message: 'Sucessful Import'));
+        } else if (tuple3.item3.isNotEmpty &&
+            tuple3.item3.first != 'Success!') {
+          streams.app.snack.add(Snack(
+              message: tuple3.item3.firstWhere((element) => element != null)
+                  //?.split(': ')
+                  //.first
+                  ??
+                  'Error Importing',
+              //details: importFrom.importedMsg!, // good usecase for details
+              positive: true));
         } else {
-          // todo: recognize if it's an existing wallet already,
-          //       currenlty it just errors in that case.
           streams.app.snack.add(Snack(
               message: 'Error Importing',
               //details: importFrom.importedMsg!, // good usecase for details

@@ -148,15 +148,19 @@ class ImportWalletService {
     if (wallet != null) {
       var existingWalletId = detectExistingWallet(wallet);
       if (existingWalletId == null) {
+        // since we're importing we assume the user has it backed up already
+        wallet.backedUp = true;
         var importedChange = await res.wallets.save(wallet);
         // set it as current before returning
         await res.settings.setCurrentWalletId(importedChange!.data.id);
         return HandleResult(
             true,
-            res.wallets.primaryIndex.getOne(importedChange.data.id)!.id,
+            'Wallet ${res.wallets.primaryIndex.getOne(importedChange.data.id)!.name}',
             LingoKey.walletImportedAs);
       }
-      return HandleResult(false, res.wallets.primaryIndex.getOne(wallet.id)!.id,
+      return HandleResult(
+          false,
+          'Wallet ${res.wallets.primaryIndex.getOne(wallet.id)!.name}',
           LingoKey.walletAlreadyExists);
     }
     return HandleResult(false, '', LingoKey.walletUnableToCreate);
