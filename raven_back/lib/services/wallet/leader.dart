@@ -1,3 +1,5 @@
+// ignore_for_file: omit_local_variable_types
+
 import 'package:equatable/equatable.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' show HDWallet;
 import 'package:bip39/bip39.dart' as bip39;
@@ -5,94 +7,34 @@ import 'package:raven_back/utilities/hex.dart' as hex;
 
 import 'package:raven_back/utilities/seed_wallet.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_electrum/raven_electrum.dart';
 
 // derives addresses for leaderwallets
 // returns any that it can't find a cipher for
 class LeaderWalletService {
+  final HDIndexRegistry registry = HDIndexRegistry();
+
   final int requiredGap = 20;
   Set backlog = <LeaderWallet>{};
-  Map<LeaderExposureKey, LeaderExposureIndex> indexRegistry = {};
-
-  /// caching optimization
-  LeaderExposureIndex getIndexOf(LeaderWallet leader, NodeExposure exposure) {
-    var key = LeaderExposureKey(leader, exposure);
-    if (!indexRegistry.keys.contains(key)) {
-      indexRegistry[key] = LeaderExposureIndex();
-    }
-    return indexRegistry[key]!;
-  }
-
-  LeaderExposureIndex getIndexOfKey(
-      LeaderWallet leader, NodeExposure exposure) {
-    var key = LeaderExposureKey(leader, exposure);
-    if (!indexRegistry.keys.contains(key)) {
-      indexRegistry[key] = LeaderExposureIndex();
-    }
-    return indexRegistry[key]!;
-  }
-
-  void updateIndexOf(
-    LeaderWallet leader,
-    NodeExposure exposure, {
-    int? saved,
-    int? used,
-    int? savedPlus,
-    int? usedPlus,
-  }) {
-    var key = LeaderExposureKey(leader, exposure);
-    if (!indexRegistry.keys.contains(key)) {
-      indexRegistry[key] = LeaderExposureIndex();
-    }
-    if (saved != null) {
-      indexRegistry[key]!.updateSaved(saved);
-    }
-    if (used != null) {
-      indexRegistry[key]!.updateUsed(used);
-    }
-    if (savedPlus != null) {
-      indexRegistry[key]!.updateSavedPlus(savedPlus);
-    }
-    if (usedPlus != null) {
-      indexRegistry[key]!.updateUsedPlus(usedPlus);
-    }
-  }
 
   void updateIndexes() {
     for (var leader in res.wallets.leaders) {
-      updateIndex(leader);
-    }
-  }
-
-  /// this function allows us to avoid creating a 'hdindex' reservoir,
-  /// which is nice. this is why
-  void updateIndex(LeaderWallet leader) {
-    for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
-      var addresses =
-          res.addresses.byWalletExposure.getAll(leader.id, exposure);
-      updateIndexOf(
-        leader,
-        exposure,
-        saved: addresses.map((a) => a.hdIndex).max,
-        used: addresses
-            .where((a) => a.vouts.isNotEmpty)
-            .map((a) => a.hdIndex)
-            .max,
-      );
+      registry.updateIndex(leader);
     }
   }
 
   void updateCounts(Address address, LeaderWallet leader) {
     leader.removeUnused(address.hdIndex, address.exposure);
-    updateIndexOf(leader, address.exposure, used: address.hdIndex);
+    registry.updateIndexOf(leader, address.exposure, used: address.hdIndex);
   }
 
   void updateCache(Address address, LeaderWallet leader) {
     leader.addUnused(address.hdIndex, address.exposure);
-    updateIndexOf(leader, address.exposure, saved: address.hdIndex);
+    registry.updateIndexOf(leader, address.exposure, saved: address.hdIndex);
   }
 
   bool gapSatisfied(LeaderWallet leader, NodeExposure exposure) {
-    final index = getIndexOf(leader, exposure);
+    final index = registry.getIndexOf(leader, exposure);
     //print('${index.currentGap} ${index.used} ${index.saved}');
     return requiredGap - index.currentGap <= 0;
   }
@@ -105,6 +47,62 @@ class LeaderWalletService {
   Future<bool> needsBackup(LeaderWallet leader) async =>
       (await services.download.unspents.getSymbols()).isNotEmpty &&
       !leader.backedUp;
+
+  /// we have a linear process for handling new leaders (those w/o addresses):
+  ///   Derive, get histories by address in batch, derive until done.
+  ///   Get unspents in batch.
+  ///   Build balances.
+  ///   Get transactions in batch by address, or by arbitrary batch number.
+  ///   Get dangling transactions
+  ///   Get status of addresses, save
+  ///   Save addresses - this will trigger the general case, but since we've
+  ///     already saved the most recent status nothing will happen.
+  Future<void> newLeaderProcess(LeaderWallet leader) async {
+    //  newLeaders.add(leader.id); actually just save the addresses at the end
+    print('newLeaderProcess');
+    Set<Address> addresses = {};
+    Set<String> transactionIds = {};
+
+    ///   Derive, get histories by address in batch, derive until done.
+    for (var exposure in NodeExposure.values) {
+      var generate = 20;
+      while (generate > 0) {
+        final target = registry.getIndexOf(leader, exposure).saved + generate;
+        if (generate > 0) {
+          var futures = <Future<Address>>[
+            for (var i = target - generate + 1; i <= target; i++)
+              () async {
+                return deriveAddress(leader, i, exposure: exposure);
+              }()
+          ];
+          var currentAddresses = (await Future.wait(futures)).toSet();
+          addresses.addAll(currentAddresses);
+
+          /// todo: if batch fails (because its too big), get them one at a time...
+          transactionIds.addAll(((await services.client.scope(() async {
+                    try {
+                      return await services.client.client!.getHistories(
+                          currentAddresses.map((Address a) => a.scripthash));
+                    } catch (e) {
+                      var txIds = <List<ScripthashHistory>>[];
+                      for (var scripthash in currentAddresses
+                          .map((Address a) => a.scripthash)) {
+                        txIds.add(await services.client.client!
+                            .getHistory(scripthash));
+                      }
+                    }
+                  })) ??
+                  [[], []])
+              .expand((i) => i)
+              .map((history) => history.txHash));
+        }
+        generate =
+            requiredGap - registry.getIndexOf(leader, exposure).currentGap;
+      }
+    }
+
+    ///
+  }
 
   Address deriveAddress(
     LeaderWallet wallet,
@@ -226,10 +224,11 @@ class LeaderWalletService {
     NodeExposure exposure,
   ) async {
     // get current gap from cache.
-    var generate = requiredGap - getIndexOf(leaderWallet, exposure).currentGap;
+    var generate =
+        requiredGap - registry.getIndexOf(leaderWallet, exposure).currentGap;
     //print('Want to generate $generate for $exposure');
     var target = 0;
-    target = getIndexOf(leaderWallet, exposure).saved + generate;
+    target = registry.getIndexOf(leaderWallet, exposure).saved + generate;
     if (generate > 0) {
       var futures = <Future<Address>>[
         for (var i = target - generate + 1; i <= target; i++)
@@ -264,7 +263,8 @@ class LeaderWalletService {
         exposure,
       );
       newAddresses.addAll(derivedAddresses);
-      updateIndexOf(wallet, exposure, savedPlus: derivedAddresses.length);
+      registry.updateIndexOf(wallet, exposure,
+          savedPlus: derivedAddresses.length);
     }
     await res.addresses.saveAll(newAddresses);
     for (final address in newAddresses) {
@@ -302,4 +302,70 @@ class LeaderExposureIndex {
   void updateUsed(int value) => used = value > used ? value : used;
   void updateSavedPlus(int value) => saved = saved + value;
   void updateUsedPlus(int value) => used = used + value;
+}
+
+class HDIndexRegistry {
+  Map<LeaderExposureKey, LeaderExposureIndex> indexRegistry = {};
+
+  /// caching optimization
+  LeaderExposureIndex getIndexOf(LeaderWallet leader, NodeExposure exposure) {
+    var key = LeaderExposureKey(leader, exposure);
+    if (!indexRegistry.keys.contains(key)) {
+      indexRegistry[key] = LeaderExposureIndex();
+    }
+    return indexRegistry[key]!;
+  }
+
+  LeaderExposureIndex getIndexOfKey(
+      LeaderWallet leader, NodeExposure exposure) {
+    var key = LeaderExposureKey(leader, exposure);
+    if (!indexRegistry.keys.contains(key)) {
+      indexRegistry[key] = LeaderExposureIndex();
+    }
+    return indexRegistry[key]!;
+  }
+
+  void updateIndexOf(
+    LeaderWallet leader,
+    NodeExposure exposure, {
+    int? saved,
+    int? used,
+    int? savedPlus,
+    int? usedPlus,
+  }) {
+    var key = LeaderExposureKey(leader, exposure);
+    if (!indexRegistry.keys.contains(key)) {
+      indexRegistry[key] = LeaderExposureIndex();
+    }
+    if (saved != null) {
+      indexRegistry[key]!.updateSaved(saved);
+    }
+    if (used != null) {
+      indexRegistry[key]!.updateUsed(used);
+    }
+    if (savedPlus != null) {
+      indexRegistry[key]!.updateSavedPlus(savedPlus);
+    }
+    if (usedPlus != null) {
+      indexRegistry[key]!.updateUsedPlus(usedPlus);
+    }
+  }
+
+  /// this function allows us to avoid creating a 'hdindex' reservoir,
+  /// which is nice. this is why
+  void updateIndex(LeaderWallet leader) {
+    for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
+      var addresses =
+          res.addresses.byWalletExposure.getAll(leader.id, exposure);
+      updateIndexOf(
+        leader,
+        exposure,
+        saved: addresses.map((a) => a.hdIndex).max,
+        used: addresses
+            .where((a) => a.vouts.isNotEmpty)
+            .map((a) => a.hdIndex)
+            .max,
+      );
+    }
+  }
 }

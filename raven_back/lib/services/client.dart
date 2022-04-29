@@ -11,7 +11,6 @@ class ClientService {
   final ApiService api = ApiService();
 
   RavenElectrumClient? get client => streams.client.client.value;
-  RavenElectrumClient? get useClient => streams.client.client.value;
 
   /// if we want to talk to electrum safely, this will try to talk,
   /// if communication fails it will reconnect and try again.

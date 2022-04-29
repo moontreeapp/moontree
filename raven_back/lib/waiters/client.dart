@@ -123,10 +123,10 @@ class RavenClientWaiter extends Waiter {
         (RavenElectrumClient? client, bool active, dynamic ping) =>
             Tuple3(client, active, ping),
       ).where((Tuple3 event) => event.item1 != null && event.item2),
-      (Tuple3 tuple) {
+      (Tuple3 tuple) async {
         //RavenElectrumClient? client = tuple.item1;
         /// I think this is getting called when the app becomes active again without a working client
-        services.client.scope(services.client.client!.ping);
+        await services.client.scope(() async => services.client.client!.ping);
         //try {
         //  client!.ping();
         //} on StateError {
