@@ -21,7 +21,7 @@ class BlockWaiter extends Waiter {
   void subscribe(RavenElectrumClient ravenClient) {
     listen(
       'ravenClient.subscribeHeaders',
-      ravenClient.subscribeHeaders(),
+      (await ravenClient.subscribeHeaders()), /// problem 
       (BlockHeader blockHeader) async =>
           await res.blocks.save(Block.fromBlockHeader(blockHeader)),
       autoDeinit: true,

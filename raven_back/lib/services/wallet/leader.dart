@@ -82,26 +82,8 @@ class LeaderWalletService {
           ];
           var currentAddresses = (await Future.wait(futures)).toSet();
           addresses[exposure]!.addAll(currentAddresses);
-          transactionIds[exposure]!.addAll(((await services.client
-                  .scope(() async {
-                try {
-                  var listOfLists = await services.client.client!.getHistories(
-                      currentAddresses.map((Address a) => a.scripthash));
-                  return [
-                    for (var x in listOfLists)
-                      x.map((history) => history.txHash).toList()
-                  ];
-                } catch (e) {
-                  var txIds = <List<ScripthashHistory>>[];
-                  for (var scripthash
-                      in currentAddresses.map((Address a) => a.scripthash)) {
-                    txIds.add(
-                        await services.client.client!.getHistory(scripthash));
-                  }
-                }
-                return null;
-              }))) ??
-              [for (var _ in currentAddresses) []]);
+          transactionIds[exposure]!.addAll(await services.download.history
+              .getHistories(addresses[exposure]!));
         }
         generate = requiredGap -
             transactionIds[exposure]!
@@ -116,18 +98,20 @@ class LeaderWalletService {
       ///         addresses[exposure]
       ///         transactionIds[exposure]
       ///       set this as totals add these to cache:
-      var highestUsed = 0; // right?
-      var highestSaved = addresses.length; // right?
+      //var highestUsed = 0; // right? // not necessary?
+      //var highestSaved = addresses.length; // right? // not necessary?
       var emptyAddresses = []; // should this be emptyHDIndices?
       for (Tuple2<int, List<String>> et
           in transactionIds[exposure]!.enumeratedTuple()) {
+        var addr = addresses[exposure]![et.item1];
         if (et.item2.isEmpty) {
-          emptyAddresses.add(addresses[exposure]![et.item1]);
+          emptyAddresses.add(addr);
+          updateCache(addr, addr.wallet as LeaderWallet);
         } else {
-          highestUsed = et.item1;
+          updateCounts(addr, addr.wallet as LeaderWallet);
+          //highestUsed = et.item1;
         }
       }
-      // save those ^ here.
 
       /// Get unspents in batch.
       /// not sure if anything has to change in unspents.
@@ -136,18 +120,19 @@ class LeaderWalletService {
           .pull(scripthashes: addresses[exposure]!.map((a) => a.scripthash));
     }
 
-    /// Build balances.
+    /// Build balances. - this will update the holdings list UI (home page)
     await services.balance.recalculateAllBalances();
 
-    /// Get transactions in batch by address, or by arbitrary batch number.
+    /// Get transactions in batch by address, or by arbitrary batch number. -
+    ///  must save these
     for (var exposure in NodeExposure.values) {
       var batchSize = 20;
       var txsToDownload = transactionIds[exposure]!.expand((e) => e).toList();
       while (txsToDownload.isNotEmpty) {
         final chunkSize =
             txsToDownload.length < batchSize ? txsToDownload.length : batchSize;
-        await services.download.history
-            .getTransactions(txsToDownload.sublist(0, chunkSize));
+        await services.download.history.getTransactions(// also saves them
+            txsToDownload.sublist(0, chunkSize));
         txsToDownload = txsToDownload.sublist(chunkSize);
       }
     }
@@ -158,6 +143,10 @@ class LeaderWalletService {
 
     /// Get status of addresses, save
     // you'll have to subscribe then unsubscribe. in batch.
+    for (var exposure in NodeExposure.values) {
+      await services.client.subscribe
+          .onlySubscribeForStatuses(addresses[exposure]!);
+    }
 
     /// Save addresses - this will trigger the general case, but since we've
     ///   already saved the most recent status nothing will happen.
