@@ -34,15 +34,25 @@ class HistoryService {
     }));
   }
 
-  Future getAndSaveMempoolTransactions([RavenElectrumClient? client]) async {
-    client = client ?? streams.client.client.value;
-    if (client == null || res.transactions.mempool.isEmpty) return;
+  Future<List<String>> getHistory(Address address) async {
+    return (await services.client.scope(() async {
+      try {
+        return (await services.client.client!.getHistory(address.scripthash))
+            .map((history) => history.txHash)
+            .toList();
+      } catch (e) {
+        return [];
+      }
+    }));
+  }
+
+  Future getAndSaveMempoolTransactions() async {
     await saveTransactions(
       [
         for (var transactionId in res.transactions.mempool.map((t) => t.id))
-          await client.getTransaction(transactionId)
+          await services.client.scope(() async =>
+              await services.client.client!.getTransaction(transactionId))
       ],
-      client,
     );
   }
 
@@ -60,19 +70,15 @@ class HistoryService {
       }
     }
     if (allDone) {
-      await allDoneProcess(client);
+      await allDoneProcess();
       print('TRANSACTIONS DOWNLOADED');
     }
     return allDone;
   }
 
-  Future allDoneProcess([RavenElectrumClient? client]) async {
-    client = client ?? streams.client.client.value;
-    if (client == null) {
-      return false;
-    }
+  Future allDoneProcess() async {
     print('ALL DONE!');
-    await saveDanglingTransactions(client);
+    await saveDanglingTransactions();
     //await services.balance.recalculateAllBalancesFromTransactions();
     //services.download.asset.allAdminsSubs(); // why?
     // remove vouts pointing to addresses we don't own?
@@ -82,7 +88,7 @@ class HistoryService {
   /// still need this for getting correct balances of some transactions...
   /// one more step - get all vins that have no corresponding vout (in the db)
   /// and get the vouts for them
-  Future saveDanglingTransactions(RavenElectrumClient client) async {
+  Future saveDanglingTransactions() async {
     var txs =
         (res.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet());
     await getTransactions(txs, saveVin: false);
@@ -92,7 +98,6 @@ class HistoryService {
   /// get it's metadata and save it in the securities reservoir.
   /// return value and security to be saved in vout.
   Future<Tuple3<int, Security, Asset?>> handleAssetData(
-    RavenElectrumClient client,
     Tx tx,
     TxVout vout,
   ) async {
@@ -139,18 +144,16 @@ class HistoryService {
     return Tuple3(value, security ?? res.securities.RVN, asset);
   }
 
+  Iterable<String> _filterOut(Iterable<String> transactionIds) => transactionIds
+      .where((transactionId) =>
+          !res.transactions.data.map((e) => e.id).contains(transactionId))
+      .toSet();
+
   Future<void>? getTransactions(
     Iterable<String> transactionIds, {
     bool saveVin = true,
   }) async {
-    var client = streams.client.client.value;
-    if (client == null) {
-      return null;
-    }
-    // filter out already downloaded
-    transactionIds = transactionIds
-        .where((transactionId) => !_downloadQueried.contains(transactionId))
-        .toSet();
+    transactionIds = _filterOut(transactionIds);
     await _downloadQueriedLock.write(() {
       _downloadQueried.addAll(transactionIds);
       _new_length = _downloadQueried.length;
@@ -164,17 +167,19 @@ class HistoryService {
         /// (saveVin == false) so in that case go straight to catch clause:
         throw Exception();
       }
-      txs = await client.getTransactions(transactionIds);
+      txs = await services.client.scope(() async =>
+          await services.client.client!.getTransactions(transactionIds));
     } catch (e) {
       var futures = <Future<Tx>>[];
       for (var transactionId in transactionIds) {
-        futures.add(client.getTransaction(transactionId));
+        futures.add(await services.client.scope(
+            () async => services.client.client!.getTransaction(transactionId)));
       }
       txs = await Future.wait<Tx>(futures);
     }
+    _downloaded += transactionIds.length;
     await saveTransactions(
       txs,
-      client,
       saveVin: saveVin,
     );
     _downloaded += transactionIds.length;
@@ -184,21 +189,15 @@ class HistoryService {
     String transactionId, {
     bool saveVin = true,
   }) async {
-    var client = streams.client.client.value;
-    if (client == null) {
-      return;
-    }
-    // not already downloaded?
-    final downloadNewTx = await _downloadQueriedLock.read(() {
-      !_downloadQueried.contains(transactionId);
-    });
-    if (downloadNewTx) {
+    if (_filterOut([transactionId]).isNotEmpty) {
       await _downloadQueriedLock.write(() {
         _downloadQueried.add(transactionId);
         _new_length = _downloadQueried.length;
       });
-      final tx = await client.getTransaction(transactionId);
-      await saveTransaction(tx, client, saveVin: saveVin);
+      await saveTransaction(
+          await services.client.scope(() async =>
+              await services.client.client!.getTransaction(transactionId)),
+          saveVin: saveVin);
       _downloaded += 1;
     } else {
       print('skipping: $transactionId');
@@ -207,13 +206,12 @@ class HistoryService {
 
   /// when an address status change: make our historic tx data match blockchain
   Future saveTransactions(
-    List<Tx> txs,
-    RavenElectrumClient client, {
+    List<Tx> txs, {
     bool saveVin = true,
   }) async {
     var futures = [
       for (var tx in txs)
-        saveTransaction(tx, client, saveVin: saveVin, justReturn: true)
+        saveTransaction(tx, saveVin: saveVin, justReturn: true)
     ];
     var threes = await Future.wait<List<Set>>(futures);
     for (var three in threes) {
@@ -232,8 +230,7 @@ class HistoryService {
   }
 
   Future<List<Set>> saveTransaction(
-    Tx tx,
-    RavenElectrumClient client, {
+    Tx tx, {
     bool saveVin = true,
     bool justReturn = false,
   }) async {
@@ -260,7 +257,7 @@ class HistoryService {
     }
     for (var vout in tx.vout) {
       if (vout.scriptPubKey.type == 'nullassetdata') continue;
-      var vs = await handleAssetData(client, tx, vout);
+      var vs = await handleAssetData(tx, vout);
       newVouts.add(Vout(
         transactionId: tx.txid,
         position: vout.n,

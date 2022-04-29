@@ -108,11 +108,6 @@ class UnspentService {
               .getOne(element.txHash, element.txPos) !=
           null);
 
-      if (new_utxos.isNotEmpty) {
-        services.download.history.unspentsTxsFetchFirst
-            .add(new_utxos.map((x) => x.txHash));
-      }
-
       // New info; clear cache
       await _cachedBySymbolLock.write(() {
         for (final walletId in _cachedByWalletAndSymbol.keys) {
@@ -159,11 +154,6 @@ class UnspentService {
             res.vouts.byTransactionPosition
                 .getOne(element.txHash, element.txPos) !=
             null);
-
-        if (new_utxos.isNotEmpty) {
-          services.download.history.unspentsTxsFetchFirst
-              .add(new_utxos.map((x) => x.txHash));
-        }
 
         // New info; clear cache
         await _cachedBySymbolLock.write(() {

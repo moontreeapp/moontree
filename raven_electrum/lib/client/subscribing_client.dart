@@ -71,4 +71,19 @@ class SubscribingClient extends BaseClient {
 
     return controller.stream;
   }
+
+  Stream<T> subscribeNonBatch<T>(String methodPrefix,
+      [List params = const []]) {
+    var subscribable = _subscribables[methodPrefix];
+    if (subscribable == null) {
+      throw RpcException.methodNotFound(methodPrefix);
+    }
+
+    var controller = makeSubscription<T>(subscribable, params);
+    request(subscribable.methodSubscribe, params).then((result) {
+      controller.sink.add(result);
+    });
+
+    return controller.stream;
+  }
 }
