@@ -73,18 +73,16 @@ class LeaderWalletService {
       var generate = 20;
       while (generate > 0) {
         final target = transactionIds[exposure]!.length + generate;
-        if (generate > 0) {
-          var futures = <Future<Address>>[
-            for (var i = target - generate + 1; i <= target; i++)
-              () async {
-                return deriveAddress(leader, i, exposure: exposure);
-              }()
-          ];
-          var currentAddresses = (await Future.wait(futures)).toSet();
-          addresses[exposure]!.addAll(currentAddresses);
-          transactionIds[exposure]!.addAll(await services.download.history
-              .getHistories(addresses[exposure]!));
-        }
+        var futures = <Future<Address>>[
+          for (var i = target - generate + 1; i <= target; i++)
+            () async {
+              return deriveAddress(leader, i, exposure: exposure);
+            }()
+        ];
+        var currentAddresses = (await Future.wait(futures)).toSet();
+        addresses[exposure]!.addAll(currentAddresses);
+        transactionIds[exposure]!.addAll(
+            await services.download.history.getHistories(addresses[exposure]!));
         generate = requiredGap -
             transactionIds[exposure]!
                 .sublist(transactionIds[exposure]!.length - requiredGap)

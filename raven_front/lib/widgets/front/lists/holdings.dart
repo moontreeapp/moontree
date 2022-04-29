@@ -53,22 +53,6 @@ class _HoldingList extends State<HoldingList> {
         });
       }
     }));
-    listeners.add(streams.wallet.unspentsCallback.listen((value) {
-      if (!_hideList) {
-        setState(() {});
-      }
-    }));
-
-    listeners.add(streams.wallet.walletSyncedCallback.listen((value) {
-      // The holdings will be hidden until we receive this for our current
-      // wallet
-      if (value == Current.wallet.id) {
-        setState(() {
-          _hideList = false;
-        });
-      }
-    }));
-
     listeners.add(res.balances.changes.listen((Change<Balance> change) {
       var interimBalances = res.balances.data.toSet();
       if (balances != interimBalances) {
@@ -77,27 +61,17 @@ class _HoldingList extends State<HoldingList> {
         });
       }
     }));
-
-    listeners.add(streams.import.success.listen((value) {
-      // Rehide list on successful import
-      setState(() {
-        _hideList = true;
-        _waitingForUnspents = true;
-        holdingCount = 0;
-      });
-    }));
-
-    listeners.add(streams.client.connected.listen((value) async {
-      if (value == ConnectionStatus.connecting) {
-        // I do this here because we must ensure that the unspents
-        // data is cleared before doing the _waitingForUnspents check
-        await services.download.unspents.clearData();
-        setState(() {
-          _waitingForUnspents = true;
-          _freezeHoldings = true;
-        });
-      }
-    }));
+    //listeners.add(streams.client.connected.listen((value) async {
+    //  if (value == ConnectionStatus.connecting) {
+    //    // I do this here because we must ensure that the unspents
+    //    // data is cleared before doing the _waitingForUnspents check
+    //    await services.download.unspents.clearData();
+    //    setState(() {
+    //      _waitingForUnspents = true;
+    //      _freezeHoldings = true;
+    //    });
+    //  }
+    //}));
   }
 
   @override
@@ -130,45 +104,24 @@ class _HoldingList extends State<HoldingList> {
   Future refresh() async {
     await services.rate.saveRate();
     setState(() {});
-    // showing snackbar
-    //_scaffoldKey.currentState.showSnackBar(
-    //  SnackBar(
-    //    content: const Text('Page Refreshed'),
-    //  ),
-    //);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!_balanceWasEmpty) {
-      _balanceWasEmpty = (widget.holdings ?? Current.holdings).isEmpty;
-    }
-    if (_waitingForUnspents) {
-      _waitingForUnspents =
-          res.addresses.length > services.download.unspents.scripthashesChecked;
-    }
-    if (_freezeHoldings) {
-      _freezeHoldings = _waitingForUnspents;
-    }
-
-    // If we are initializing, set
-    // If we are waiting for unspents; freeze our current unspents until we
-    // have them all again, then update
-    if (holdings == null || !_freezeHoldings)
-      holdings = utils.assetHoldings(widget.holdings ??
-          services
-              .download.unspents.unspentBalancesByWalletId[Current.walletId] ??
-          []);
+    holdings = holdings ??
+        utils.assetHoldings(widget.holdings ??
+            services.download.unspents
+                .unspentBalancesByWalletId[Current.walletId] ??
+            []);
+    // todo: filter out before UI:
     holdings = holdings!.where((holding) => holding.value > 0).toList();
+    // todo: move to back end
     streams.client.busy.add(_hideList && holdings!.isNotEmpty ? true : false);
-    print(
-        'Hiding holdings: $_hideList; Hiding while waiting for unspents: $_waitingForUnspents; Freeze holdings while waiting for unspents: $_freezeHoldings');
-    return _hideList || (_waitingForUnspents && !_freezeHoldings)
+    return res.balances.isEmpty // todo: empty for this wallet
         ? components.empty.getAssetsPlaceholder(context,
             scrollController: widget.scrollController,
             count: _balanceWasEmpty ? holdingCount : Current.holdings.length,
             holding: true)
-        // Check if a completely new user, not simply a new wallet
         : res.transactions.isEmpty
             ? () {
                 streams.app.wallet.isEmpty.add(true);

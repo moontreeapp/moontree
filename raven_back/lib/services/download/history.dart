@@ -10,6 +10,7 @@ class HistoryService {
   int _downloaded = 0;
   int _new_length = 0;
 
+  /// called during import process, leader registry counts handled separately.
   Future<List<List<String>>> getHistories(List<Address> addresses) async {
     return (await services.client.scope(() async {
       try {
@@ -34,8 +35,11 @@ class HistoryService {
     }));
   }
 
-  Future<List<String>> getHistory(Address address,
-      {bool updateLeader = false}) async {
+  /// called during address subscription
+  Future<List<String>> getHistory(
+    Address address, {
+    bool updateLeader = false,
+  }) async {
     return (await services.client.scope(() async {
       try {
         final t = (await services.client.client!.getHistory(address.scripthash))

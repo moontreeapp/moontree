@@ -8,9 +8,6 @@ class WalletStreams {
   final deriveAddress = BehaviorSubject<DeriveLeaderAddress?>.seeded(null);
   final transactions =
       BehaviorSubject<WalletExposureTransactions?>.seeded(null);
-  final unspentsCallback = PublishSubject<Null>();
-  // Push the wallet id of a leader wallet that is fully synced
-  final walletSyncedCallback = PublishSubject<String?>();
 }
 
 final Stream<Wallet> replayWallet$ = ReplaySubject<Wallet>()
