@@ -8,6 +8,7 @@ import 'package:raven_back/utilities/hex.dart' as hex;
 import 'package:raven_back/utilities/seed_wallet.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_electrum/raven_electrum.dart';
+import 'package:tuple/tuple.dart';
 
 // derives addresses for leaderwallets
 // returns any that it can't find a cipher for
@@ -60,14 +61,18 @@ class LeaderWalletService {
   Future<void> newLeaderProcess(LeaderWallet leader) async {
     //  newLeaders.add(leader.id); actually just save the addresses at the end
     print('newLeaderProcess');
-    Set<Address> addresses = {};
-    Set<String> transactionIds = {};
 
-    ///   Derive, get histories by address in batch, derive until done.
+    // matching orders for lists
+    Map<NodeExposure, List<Address>> addresses = {};
+    Map<NodeExposure, List<List<String>>> transactionIds = {};
+
+    /// Derive, get histories by address in batch, derive until done.
     for (var exposure in NodeExposure.values) {
+      addresses[exposure] = [];
+      transactionIds[exposure] = [];
       var generate = 20;
       while (generate > 0) {
-        final target = registry.getIndexOf(leader, exposure).saved + generate;
+        final target = transactionIds[exposure]!.length + generate;
         if (generate > 0) {
           var futures = <Future<Address>>[
             for (var i = target - generate + 1; i <= target; i++)
@@ -76,32 +81,89 @@ class LeaderWalletService {
               }()
           ];
           var currentAddresses = (await Future.wait(futures)).toSet();
-          addresses.addAll(currentAddresses);
-
-          /// todo: if batch fails (because its too big), get them one at a time...
-          transactionIds.addAll(((await services.client.scope(() async {
-                    try {
-                      return await services.client.client!.getHistories(
-                          currentAddresses.map((Address a) => a.scripthash));
-                    } catch (e) {
-                      var txIds = <List<ScripthashHistory>>[];
-                      for (var scripthash in currentAddresses
-                          .map((Address a) => a.scripthash)) {
-                        txIds.add(await services.client.client!
-                            .getHistory(scripthash));
-                      }
-                    }
-                  })) ??
-                  [[], []])
-              .expand((i) => i)
-              .map((history) => history.txHash));
+          addresses[exposure]!.addAll(currentAddresses);
+          transactionIds[exposure]!.addAll(((await services.client
+                  .scope(() async {
+                try {
+                  var listOfLists = await services.client.client!.getHistories(
+                      currentAddresses.map((Address a) => a.scripthash));
+                  return [
+                    for (var x in listOfLists)
+                      x.map((history) => history.txHash).toList()
+                  ];
+                } catch (e) {
+                  var txIds = <List<ScripthashHistory>>[];
+                  for (var scripthash
+                      in currentAddresses.map((Address a) => a.scripthash)) {
+                    txIds.add(
+                        await services.client.client!.getHistory(scripthash));
+                  }
+                }
+                return null;
+              }))) ??
+              [for (var _ in currentAddresses) []]);
         }
-        generate =
-            requiredGap - registry.getIndexOf(leader, exposure).currentGap;
+        generate = requiredGap -
+            transactionIds[exposure]!
+                .sublist(transactionIds[exposure]!.length - requiredGap)
+                .where((element) => element.isEmpty)
+                .length;
+      }
+
+      /// todo: save hdindex counts and empty address cache for wallet exposure
+      ///       at this point because we have all the information we need having
+      ///       just escaped the while loop, using:
+      ///         addresses[exposure]
+      ///         transactionIds[exposure]
+      ///       set this as totals add these to cache:
+      var highestUsed = 0; // right?
+      var highestSaved = addresses.length; // right?
+      var emptyAddresses = []; // should this be emptyHDIndices?
+      for (Tuple2<int, List<String>> et
+          in transactionIds[exposure]!.enumeratedTuple()) {
+        if (et.item2.isEmpty) {
+          emptyAddresses.add(addresses[exposure]![et.item1]);
+        } else {
+          highestUsed = et.item1;
+        }
+      }
+      // save those ^ here.
+
+      /// Get unspents in batch.
+      /// not sure if anything has to change in unspents.
+      /// I'm hoping this initialization process can simplify it.
+      await services.download.unspents
+          .pull(scripthashes: addresses[exposure]!.map((a) => a.scripthash));
+    }
+
+    /// Build balances.
+    await services.balance.recalculateAllBalances();
+
+    /// Get transactions in batch by address, or by arbitrary batch number.
+    for (var exposure in NodeExposure.values) {
+      var batchSize = 20;
+      var txsToDownload = transactionIds[exposure]!.expand((e) => e).toList();
+      while (txsToDownload.isNotEmpty) {
+        final chunkSize =
+            txsToDownload.length < batchSize ? txsToDownload.length : batchSize;
+        await services.download.history
+            .getTransactions(txsToDownload.sublist(0, chunkSize));
+        txsToDownload = txsToDownload.sublist(chunkSize);
       }
     }
 
-    ///
+    /// Get dangling transactions - by the way we'll still need a way for the
+    ///  transaction screen to know if it's in the middle of downloading txs.
+    await services.download.history.allDoneProcess();
+
+    /// Get status of addresses, save
+    // you'll have to subscribe then unsubscribe. in batch.
+
+    /// Save addresses - this will trigger the general case, but since we've
+    ///   already saved the most recent status nothing will happen.
+    for (var exposure in NodeExposure.values) {
+      await res.addresses.saveAll(addresses[exposure]!);
+    }
   }
 
   Address deriveAddress(

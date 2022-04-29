@@ -187,9 +187,6 @@ class UnspentService {
       return _unspentsBySymbol.length;
     });
     await _updateUnspentsBalances();
-    // Balances are based on unspents now
-    await services.balance.recalculateAllBalances();
-    streams.wallet.unspentsCallback.add(null);
   }
 
   Future<void> _updateUnspentsBalances() async {

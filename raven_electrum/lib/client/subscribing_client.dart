@@ -57,14 +57,15 @@ class SubscribingClient extends BaseClient {
     return newController;
   }
 
-  Stream<T> subscribe<T>(String methodPrefix, [List params = const []]) {
+  Future<Stream<T>> subscribe<T>(String methodPrefix,
+      [List params = const []]) async {
     var subscribable = _subscribables[methodPrefix];
     if (subscribable == null) {
       throw RpcException.methodNotFound(methodPrefix);
     }
 
     var controller = makeSubscription<T>(subscribable, params);
-    request(subscribable.methodSubscribe, params).then((result) {
+    await request(subscribable.methodSubscribe, params).then((result) {
       controller.sink.add(result);
     });
 

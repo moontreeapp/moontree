@@ -177,21 +177,23 @@ class SubscribeService {
     return true;
   }
 
-  void onlySubscribeAddressUnspent(
-      RavenElectrumClient client, Address address) {
+  Future onlySubscribeAddressUnspent(
+      RavenElectrumClient client, Address address) async {
     if (!subscriptionHandlesUnspent.keys.contains(address.id)) {
       subscriptionHandlesUnspent[address.id] =
-          client.subscribeScripthash(address.id).listen((String? status) async {
+          (await client.subscribeScripthash(address.id))
+              .listen((String? status) async {
         await services.download.unspents.pull(scripthashes: [address.id]);
       });
     }
   }
 
-  void onlySubscribeAddressHistory(
-      RavenElectrumClient client, Address address) {
+  Future onlySubscribeAddressHistory(
+      RavenElectrumClient client, Address address) async {
     if (!subscriptionHandlesHistory.keys.contains(address.id)) {
       subscriptionHandlesHistory[address.id] =
-          client.subscribeScripthash(address.id).listen((String? status) async {
+          (await client.subscribeScripthash(address.id))
+              .listen((String? status) async {
         if (status == null || address.status?.status != status) {
           var allDone =
               await services.download.history.getHistories(address, status);
@@ -217,10 +219,44 @@ class SubscribeService {
     }
   }
 
-  void onlySubscribeAsset(RavenElectrumClient client, Asset asset) {
+  Future onlySubscribeForStatus(Address address) async {
+    await services.client.scope(() async {
+      (await services.client.client!.subscribeScripthash(address.scripthash))
+          .listen((String? status) async {
+        await res.statuses.save(Status(
+            linkId: address.id,
+            statusType: StatusType.address,
+            status: status));
+      });
+    });
+    await services.client.scope(() async {
+      await services.client.client!.unsubscribeScripthash(address.scripthash);
+    });
+  }
+
+  Future onlySubscribeForStatuses(List<Address> addresses) async {
+    var scripthashes = addresses.map((a) => a.scripthash);
+    await services.client.scope(() async {
+      var subs =
+          (await services.client.client!.subscribeScripthashes(scripthashes));
+      for (var ixSub in subs.enumeratedTuple()) {
+        ixSub.item2.listen((String? status) async {
+          await res.statuses.save(Status(
+              linkId: addresses[ixSub.item1].id,
+              statusType: StatusType.address,
+              status: status));
+        });
+      }
+    });
+    await services.client.scope(() async {
+      await services.client.client!.unsubscribeScripthashes(scripthashes);
+    });
+  }
+
+  Future onlySubscribeAsset(RavenElectrumClient client, Asset asset) async {
     if (!subscriptionHandlesAsset.keys.contains(asset.symbol)) {
       subscriptionHandlesAsset[asset.symbol] =
-          client.subscribeAsset(asset.symbol).listen((String? status) {
+          (await client.subscribeAsset(asset.symbol)).listen((String? status) {
         if (asset.status?.status != status) {
           res.statuses.save(Status(
               linkId: asset.symbol,

@@ -116,7 +116,7 @@ class _TechnicalViewState extends State<TechnicalView> {
   //    ? [
   //        IconButton(
   //            onPressed: () async {
-  //              // doesn't delete immediately - not working until indicies work right
+  //              // doesn't delete immediately - not working until indices work right
   //              //await services.wallet.remove(account.accountId);
   //            },
   //            icon: Icon(Icons.delete))

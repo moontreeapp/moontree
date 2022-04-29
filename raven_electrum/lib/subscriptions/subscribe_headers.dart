@@ -14,13 +14,13 @@ class BlockHeader extends Equatable {
 }
 
 extension SubscribeHeadersMethod on RavenElectrumClient {
-  Stream<BlockHeader> subscribeHeaders() {
+  Future<Stream<BlockHeader>> subscribeHeaders() async {
     var methodPrefix = 'blockchain.headers';
 
     // If this is the first time, register
     registerSubscribable(methodPrefix, 0);
 
-    return subscribe(methodPrefix)
+    return (await subscribe(methodPrefix))
         .asyncMap((item) => BlockHeader(item['hex'], item['height']));
   }
 }

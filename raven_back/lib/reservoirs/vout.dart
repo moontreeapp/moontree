@@ -20,7 +20,7 @@ class VoutReservoir extends Reservoir<_VoutKey, Vout> {
     byAddress = addIndexMultiple('address', _AddressKey());
   }
 
-  /// makeshiftIndicies ///////////////////////////////////////////////////////
+  /// makeshiftIndices ///////////////////////////////////////////////////////
 
   /// unspent is any vout that doesn't have a corresponding vin
   /// (accroding to vin.voutPosition == vout.position && vin.voutTransactionId = vout.transactionId).
