@@ -128,6 +128,7 @@ class SubscribeService {
       await onlySubscribeAddressUnspent(address);
       existing = true;
     }
+    await services.balance.recalculateAllBalances();
     for (var address in addresses) {
       await onlySubscribeAddressHistory(address);
     }
@@ -158,7 +159,6 @@ class SubscribeService {
   }
 
   bool toAddress(Address address) {
-    //streams.client.busy.add(true);
     onlySubscribeAddressUnspent(address);
     onlySubscribeAddressHistory(address);
     return true;
@@ -182,6 +182,8 @@ class SubscribeService {
                 await services.download.unspents
                     .pull(scripthashes: [address.id]);
               }));
+      // Recalculate balances for affected symbols... or everything
+      await services.balance.recalculateAllBalances();
     }
   }
 
@@ -192,22 +194,27 @@ class SubscribeService {
               (await services.client.client!.subscribeScripthash(address.id))
                   .listen((String? status) async {
                 if (status == null || address.status?.status != status) {
-                  await services.download.history.getTransactions(
-                      await services.download.history.getHistory(address));
+                  /// Get histories, update leader counts and
+                  /// Get transactions in batch.
+                  await services.download.history.getTransactions(await services
+                      .download.history
+                      .getHistory(address, updateLeader: true));
+
+                  /// Get dangling transactions
+                  await services.download.history.allDoneProcess();
+
+                  /// Save status update
                   await res.statuses.save(Status(
                       linkId: address.id,
                       statusType: StatusType.address,
                       status: status));
+
+                  /// Derive more addresses
                   if (address.wallet is LeaderWallet) {
                     streams.wallet.deriveAddress.add(DeriveLeaderAddress(
                       leader: address.wallet! as LeaderWallet,
                       exposure: address.exposure,
                     ));
-                  }
-                } else {
-                  if (address.wallet is LeaderWallet) {
-                    services.wallet.leader
-                        .updateCounts(address, address.wallet as LeaderWallet);
                   }
                 }
               }));

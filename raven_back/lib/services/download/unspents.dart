@@ -91,8 +91,9 @@ class UnspentService {
     });
 
     if (updateRVN ?? true) {
-      var utxos = (await services.client.client!.getUnspents(finalScripthashes))
-          .expand((i) => i);
+      var utxos = await services.client.scope(() async =>
+          (await services.client.client!.getUnspents(finalScripthashes))
+              .expand((i) => i));
 
       // Wipe relevant unspents and re-add
       // If we have new utxos, get the vouts now.
@@ -119,9 +120,9 @@ class UnspentService {
       });
     }
     if (!(updateRVN ?? false)) {
-      var utxos =
+      var utxos = await services.client.scope(() async =>
           (await services.client.client!.getAssetUnspents(finalScripthashes))
-              .expand((i) => i);
+              .expand((i) => i));
 
       // Parse it into something more digestable
       // symbol -> scripthash -> unspents

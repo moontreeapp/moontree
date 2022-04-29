@@ -92,24 +92,14 @@ class LeaderWalletService {
                 .length;
       }
 
-      /// todo: save hdindex counts and empty address cache for wallet exposure
-      ///       at this point because we have all the information we need having
-      ///       just escaped the while loop, using:
-      ///         addresses[exposure]
-      ///         transactionIds[exposure]
-      ///       set this as totals add these to cache:
-      //var highestUsed = 0; // right? // not necessary?
-      //var highestSaved = addresses.length; // right? // not necessary?
-      var emptyAddresses = []; // should this be emptyHDIndices?
+      /// save final cache and counts for this wallet exposure
       for (Tuple2<int, List<String>> et
           in transactionIds[exposure]!.enumeratedTuple()) {
         var addr = addresses[exposure]![et.item1];
         if (et.item2.isEmpty) {
-          emptyAddresses.add(addr);
           updateCache(addr, addr.wallet as LeaderWallet);
         } else {
           updateCounts(addr, addr.wallet as LeaderWallet);
-          //highestUsed = et.item1;
         }
       }
 

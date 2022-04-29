@@ -34,12 +34,23 @@ class HistoryService {
     }));
   }
 
-  Future<List<String>> getHistory(Address address) async {
+  Future<List<String>> getHistory(Address address,
+      {bool updateLeader = false}) async {
     return (await services.client.scope(() async {
       try {
-        return (await services.client.client!.getHistory(address.scripthash))
+        final t = (await services.client.client!.getHistory(address.scripthash))
             .map((history) => history.txHash)
             .toList();
+        if (updateLeader && address.wallet is LeaderWallet) {
+          if (t.isEmpty) {
+            services.wallet.leader
+                .updateCache(address, address.wallet as LeaderWallet);
+          } else {
+            services.wallet.leader
+                .updateCounts(address, address.wallet as LeaderWallet);
+          }
+        }
+        return t;
       } catch (e) {
         return [];
       }
