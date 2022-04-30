@@ -20,6 +20,7 @@ class HistoryService {
           for (var x in listOfLists) x.map((history) => history.txHash).toList()
         ];
       } catch (e) {
+        print('in cache');
         try {
           var txIds = <List<String>>[];
           for (var scripthash in addresses.map((Address a) => a.scripthash)) {

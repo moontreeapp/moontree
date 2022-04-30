@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_front/theme/colors.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_front/components/components.dart';
@@ -80,19 +81,27 @@ class BackdropAppBarContents extends StatelessWidget
 
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
-          onTap: () {
+          onTap: () async {
             print('click');
             //streams.app.snack.add(Snack(message: 'Sucessful Import'));
             //streams.app.scrim.add(!streams.app.scrim.value);
             streams.client.busy.add(!streams.client.busy.value);
-            print(res.wallets.data.length);
+            //print(res.wallets.data.length);
             print(res.addresses.data.length);
-            print(res.wallets.data.first.holdingCount);
-            print(res.wallets.data.first.balances);
+            //print(res.wallets.data.first.holdingCount);
+            //print(res.wallets.data.first.balances);
             //services.wallet.createSave(
             //    walletType: WalletType.leader,
             //    cipherUpdate: defaultCipherUpdate,
             //    secret: null);
+            print(await services.client.client!.getHistories(res.addresses.data
+                    .toList()
+                    .sublist(0, 2)
+                    .map((Address a) => a.scripthash))
+                //return [
+                //  for (var x in listOfLists) x.map((history) => history.txHash).toList()
+                //];
+                );
           },
           child: appBar,
         )

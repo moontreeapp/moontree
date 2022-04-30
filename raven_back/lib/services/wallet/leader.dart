@@ -90,6 +90,14 @@ class LeaderWalletService {
                 .where((element) => element.isEmpty)
                 .length;
       }
+      print(await services.client.client!.getHistories(addresses[exposure]!
+          .toList()
+          .sublist(0, 2)
+          .map((Address a) => a.scripthash)));
+      print(
+          'ADDRESS ${addresses[exposure]!.toList().sublist(0, 2).map((Address a) => a.address)}');
+      print('ADDRESSES ${addresses[exposure]!.length}');
+      print('TRANSACTS ${transactionIds[exposure]!.length}');
 
       /// save final cache and counts for this wallet exposure
       for (Tuple2<int, List<String>> et
@@ -99,6 +107,9 @@ class LeaderWalletService {
               RangeError (RangeError (index): Invalid value: Not in inclusive range 0..95: 96)
             */
         var addr = addresses[exposure]![et.item1];
+        print('');
+        print(addr.address);
+        print(et.item2);
         if (et.item2.isEmpty) {
           updateCache(addr, leader);
         } else {
