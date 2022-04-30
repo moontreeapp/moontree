@@ -144,6 +144,7 @@ class SubscribeService {
         }
       }
     }
+    streams.client.busy.add(false);
     return true;
   }
 

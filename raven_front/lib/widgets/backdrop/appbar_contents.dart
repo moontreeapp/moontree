@@ -6,6 +6,7 @@ import 'package:raven_front/theme/colors.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_back/streams/app.dart';
+import 'package:raven_back/services/wallet/constants.dart';
 
 class BackdropAppBarContents extends StatelessWidget
     implements PreferredSizeWidget {
@@ -70,7 +71,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-        testAppBar(appBar, test: false),
+        testAppBar(appBar, test: true),
         alphaBar,
         AppBarScrim(),
       ],
@@ -84,6 +85,14 @@ class BackdropAppBarContents extends StatelessWidget
             //streams.app.snack.add(Snack(message: 'Sucessful Import'));
             //streams.app.scrim.add(!streams.app.scrim.value);
             streams.client.busy.add(!streams.client.busy.value);
+            print(res.wallets.data.length);
+            print(res.addresses.data.length);
+            print(res.wallets.data.first.holdingCount);
+            print(res.wallets.data.first.balances);
+            //services.wallet.createSave(
+            //    walletType: WalletType.leader,
+            //    cipherUpdate: defaultCipherUpdate,
+            //    secret: null);
           },
           child: appBar,
         )

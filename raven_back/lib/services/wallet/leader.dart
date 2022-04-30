@@ -61,6 +61,7 @@ class LeaderWalletService {
   Future<void> newLeaderProcess(LeaderWallet leader) async {
     //  newLeaders.add(leader.id); actually just save the addresses at the end
     print('newLeaderProcess');
+    streams.client.busy.add(true);
 
     // matching orders for lists
     Map<NodeExposure, List<Address>> addresses = {};
@@ -93,11 +94,15 @@ class LeaderWalletService {
       /// save final cache and counts for this wallet exposure
       for (Tuple2<int, List<String>> et
           in transactionIds[exposure]!.enumeratedTuple()) {
+        /*
+            Exception has occurred.
+              RangeError (RangeError (index): Invalid value: Not in inclusive range 0..95: 96)
+            */
         var addr = addresses[exposure]![et.item1];
         if (et.item2.isEmpty) {
-          updateCache(addr, addr.wallet as LeaderWallet);
+          updateCache(addr, leader);
         } else {
-          updateCounts(addr, addr.wallet as LeaderWallet);
+          updateCounts(addr, leader);
         }
       }
 
@@ -106,6 +111,7 @@ class LeaderWalletService {
       /// I'm hoping this initialization process can simplify it.
       await services.download.unspents
           .pull(scripthashes: addresses[exposure]!.map((a) => a.scripthash));
+      // FIX not getting assets!
     }
 
     /// Build balances. - this will update the holdings list UI (home page)
@@ -141,6 +147,7 @@ class LeaderWalletService {
     for (var exposure in NodeExposure.values) {
       await res.addresses.saveAll(addresses[exposure]!);
     }
+    streams.client.busy.add(false);
   }
 
   Address deriveAddress(

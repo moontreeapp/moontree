@@ -30,12 +30,8 @@ class HoldingList extends StatefulWidget {
 
 class _HoldingList extends State<HoldingList> {
   List<StreamSubscription> listeners = [];
-  bool _hideList = false;
-  bool _waitingForUnspents = true;
-  bool _freezeHoldings = false;
-  bool _balanceWasEmpty = false;
   List<AssetHolding>? holdings = null;
-  int holdingCount = 1;
+  int holdingCount = 0;
   bool showUSD = false;
   bool showPath = false;
   Rate? rateUSD;
@@ -45,8 +41,8 @@ class _HoldingList extends State<HoldingList> {
   void initState() {
     super.initState();
     listeners.add(res.assets.changes.listen((Change<Asset> change) {
-      // if vouts in our account has changed...
-      var count = res.assets.length;
+      var count =
+          (Current.wallet.RVNValue > 0 ? 1 : 0) + Current.wallet.holdingCount;
       if (count > holdingCount) {
         setState(() {
           holdingCount = count;
@@ -54,13 +50,22 @@ class _HoldingList extends State<HoldingList> {
       }
     }));
     listeners.add(res.balances.changes.listen((Change<Balance> change) {
-      var interimBalances = res.balances.data.toSet();
+      var interimBalances = Current.wallet.balances.toSet();
       if (balances != interimBalances) {
         setState(() {
           balances = interimBalances;
         });
       }
     }));
+
+    /// when the app becomes active again refresh the front end
+    /// (otherwise the screen stays black for some reason)
+    listeners.add(streams.app.active.listen((bool active) {
+      if (active) {
+        setState(() {});
+      }
+    }));
+
     //listeners.add(streams.client.connected.listen((value) async {
     //  if (value == ConnectionStatus.connecting) {
     //    // I do this here because we must ensure that the unspents
@@ -116,22 +121,25 @@ class _HoldingList extends State<HoldingList> {
     // todo: filter out before UI:
     holdings = holdings!.where((holding) => holding.value > 0).toList();
     // todo: move to back end
-    streams.client.busy.add(_hideList && holdings!.isNotEmpty ? true : false);
-    return res.balances.isEmpty // todo: empty for this wallet
-        ? components.empty.getAssetsPlaceholder(context,
-            scrollController: widget.scrollController,
-            count: _balanceWasEmpty ? holdingCount : Current.holdings.length,
-            holding: true)
-        : res.transactions.isEmpty
-            ? () {
-                streams.app.wallet.isEmpty.add(true);
-                return ComingSoonPlaceholder(
-                    scrollController: widget.scrollController,
-                    header: 'Welcome',
-                    message:
-                        'To get started, use Import or Receive to add Ravencoin & Assets to your wallet.',
-                    placeholderType: PlaceholderType.wallet);
-              }()
+    //streams.client.busy.add(_hideList && holdings!.isNotEmpty ? true : false);
+    print('res.balances.isEmpty ${res.balances.isEmpty}');
+    print('res.transactions.isEmpty ${res.transactions.isEmpty}');
+    print('res.assets ${res.assets.data.length}'); // FIX 0
+    return holdingCount == 0
+        ? () {
+            streams.app.wallet.isEmpty.add(true);
+            return ComingSoonPlaceholder(
+                scrollController: widget.scrollController,
+                header: 'Welcome',
+                message:
+                    'To get started, use Import or Receive to add Ravencoin & Assets to your wallet.',
+                placeholderType: PlaceholderType.wallet);
+          }()
+        : balances.isEmpty
+            ? components.empty.getAssetsPlaceholder(context,
+                scrollController: widget.scrollController,
+                count: holdingCount,
+                holding: true)
             : () {
                 streams.app.wallet.isEmpty.add(false);
                 return _holdingsView(context);
