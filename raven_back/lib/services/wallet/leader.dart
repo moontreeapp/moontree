@@ -61,6 +61,7 @@ class LeaderWalletService {
   Future<void> newLeaderProcess(LeaderWallet leader) async {
     //  newLeaders.add(leader.id); actually just save the addresses at the end
     print('newLeaderProcess');
+    var s = Stopwatch()..start();
     streams.client.busy.add(true);
 
     // matching orders for lists
@@ -80,24 +81,16 @@ class LeaderWalletService {
               return deriveAddress(leader, i, exposure: exposure);
             }()
         ];
-        var currentAddresses = (await Future.wait(futures)).toSet();
+        var currentAddresses = (await Future.wait(futures)).toList();
         addresses[exposure]!.addAll(currentAddresses);
         transactionIds[exposure]!.addAll(
-            await services.download.history.getHistories(addresses[exposure]!));
+            await services.download.history.getHistories(currentAddresses));
         generate = requiredGap -
             transactionIds[exposure]!
                 .sublist(transactionIds[exposure]!.length - requiredGap)
                 .where((element) => element.isEmpty)
                 .length;
       }
-      print(await services.client.client!.getHistories(addresses[exposure]!
-          .toList()
-          .sublist(0, 2)
-          .map((Address a) => a.scripthash)));
-      print(
-          'ADDRESS ${addresses[exposure]!.toList().sublist(0, 2).map((Address a) => a.address)}');
-      print('ADDRESSES ${addresses[exposure]!.length}');
-      print('TRANSACTS ${transactionIds[exposure]!.length}');
 
       /// save final cache and counts for this wallet exposure
       for (Tuple2<int, List<String>> et
@@ -107,9 +100,6 @@ class LeaderWalletService {
               RangeError (RangeError (index): Invalid value: Not in inclusive range 0..95: 96)
             */
         var addr = addresses[exposure]![et.item1];
-        print('');
-        print(addr.address);
-        print(et.item2);
         if (et.item2.isEmpty) {
           updateCache(addr, leader);
         } else {
@@ -127,6 +117,8 @@ class LeaderWalletService {
 
     /// Build balances. - this will update the holdings list UI (home page)
     await services.balance.recalculateAllBalances();
+    print('deriving: ${s.elapsed}');
+    print('front end should be visible');
 
     /// Get transactions in batch by address, or by arbitrary batch number. -
     ///  must save these
@@ -158,6 +150,7 @@ class LeaderWalletService {
     for (var exposure in NodeExposure.values) {
       await res.addresses.saveAll(addresses[exposure]!);
     }
+    print(res.addresses.data.length);
     streams.client.busy.add(false);
   }
 

@@ -30,7 +30,7 @@ class UnspentService {
 
   String defaultSymbol(String? symbol) => symbol ?? res.securities.RVN.symbol;
 
-  Iterable<String> defaultScripthashes([Iterable<String>? scripthashes]) =>
+  Iterable<String> defaultScripthashes(Iterable<String>? scripthashes) =>
       scripthashes ??
       res.wallets.currentWallet.addresses.map((e) => e.scripthash).toList();
 
@@ -78,10 +78,7 @@ class UnspentService {
     }
   }
 
-  Future<void> pull({
-    Iterable<String>? scripthashes,
-    bool? updateRVN,
-  }) async {
+  Future<void> pull({Iterable<String>? scripthashes, bool? updateRVN}) async {
     final finalScripthashes = defaultScripthashes(scripthashes);
     final rvn = res.securities.RVN.symbol;
 
@@ -240,13 +237,12 @@ class UnspentService {
                   (Map<String, List<int>> gatherer, ScripthashUnspent unspent) {
               final address =
                   res.addresses.byScripthash.getOne(unspent.scripthash);
-              //if (address == null) {
-              //  throw StateError(
-              //      'We are tracking a scripthash that has no associated address');
-              //}
-              /// assume it's the current if address not found
-              /// (newLeaderProcess saves addresses after running unspents.pull)
-              var walletId = address?.walletId ?? res.wallets.currentWallet.id;
+              if (address == null) {
+                throw StateError(
+                    'We are tracking a scripthash that has no associated address');
+              }
+
+              var walletId = address.walletId;
 
               if (!gatherer.containsKey(walletId)) {
                 gatherer[walletId] = [0, 0];

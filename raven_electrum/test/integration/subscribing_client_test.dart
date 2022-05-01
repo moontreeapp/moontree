@@ -29,7 +29,7 @@ void main() {
     test('subscribes to headers', () async {
       registerSubscribable('blockchain.headers', 0);
       var results =
-          await client.subscribe('blockchain.headers').take(2).toList();
+          await (await client.subscribe('blockchain.headers')).take(2).toList();
       expect(results.length, 2);
       expect(results[0].keys, ['hex', 'height']);
       expect(results[1].keys, ['hex', 'height']);

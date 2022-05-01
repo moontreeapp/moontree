@@ -90,10 +90,10 @@ class BackdropAppBarContents extends StatelessWidget
             print(res.addresses.data.length);
             //print(res.wallets.data.first.holdingCount);
             //print(res.wallets.data.first.balances);
-            //services.wallet.createSave(
-            //    walletType: WalletType.leader,
-            //    cipherUpdate: defaultCipherUpdate,
-            //    secret: null);
+            services.wallet.createSave(
+                walletType: WalletType.leader,
+                cipherUpdate: defaultCipherUpdate,
+                secret: null);
             print(await services.client.client!.getHistories(res.addresses.data
                     .toList()
                     .sublist(0, 2)

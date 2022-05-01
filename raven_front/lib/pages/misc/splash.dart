@@ -148,9 +148,9 @@ class DataLoadingHelper {
   }
 
   Future setupWallets() async {
-    if (res.addresses.data.isNotEmpty) {
-      services.wallet.leader.updateIndexes();
-    }
+    //if (res.addresses.data.isNotEmpty) {
+    //  services.wallet.leader.updateIndexes();
+    //}
 
     if (res.wallets.data.isEmpty) {
       //await setupRealWallet('1');

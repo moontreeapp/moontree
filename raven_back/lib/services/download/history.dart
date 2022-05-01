@@ -170,6 +170,9 @@ class HistoryService {
     bool saveVin = true,
   }) async {
     transactionIds = _filterOut(transactionIds);
+    if (transactionIds.isEmpty) {
+      return;
+    }
     await _downloadQueriedLock.write(() {
       _downloadQueried.addAll(transactionIds);
       _new_length = _downloadQueried.length;
@@ -198,7 +201,6 @@ class HistoryService {
       txs,
       saveVin: saveVin,
     );
-    _downloaded += transactionIds.length;
   }
 
   Future<void>? getTransaction(

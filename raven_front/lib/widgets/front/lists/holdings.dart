@@ -41,8 +41,12 @@ class _HoldingList extends State<HoldingList> {
   void initState() {
     super.initState();
     listeners.add(res.assets.changes.listen((Change<Asset> change) {
-      var count =
-          (Current.wallet.RVNValue > 0 ? 1 : 0) + Current.wallet.holdingCount;
+      // need a way to know this wallet's asset list without vouts for newLeaderProcess
+      var x = Current.wallet.holdingCount;
+      if (x == 0) {
+        x = res.assets.length;
+      }
+      var count = (Current.wallet.RVNValue > 0 ? 1 : 0) + x;
       if (count > holdingCount) {
         setState(() {
           holdingCount = count;
@@ -107,42 +111,53 @@ class _HoldingList extends State<HoldingList> {
   }
 
   Future refresh() async {
-    await services.rate.saveRate();
+    //await services.rate.saveRate();
+    await services.balance.recalculateAllBalances();
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    holdings = holdings ??
-        utils.assetHoldings(widget.holdings ??
-            services.download.unspents
-                .unspentBalancesByWalletId[Current.walletId] ??
-            []);
+    holdings = holdings != null && holdings!.isNotEmpty
+        ? holdings
+        : utils.assetHoldings(widget.holdings ??
+            //services.download.unspents
+            //    .unspentBalancesByWalletId[Current.walletId] ??
+            //[]
+            res.balances.byWallet.getAll(Current.walletId));
     // todo: filter out before UI:
     holdings = holdings!.where((holding) => holding.value > 0).toList();
     // todo: move to back end
     //streams.client.busy.add(_hideList && holdings!.isNotEmpty ? true : false);
     print('res.balances.isEmpty ${res.balances.isEmpty}');
     print('res.transactions.isEmpty ${res.transactions.isEmpty}');
-    print('res.assets ${res.assets.data.length}'); // FIX 0
-    return holdingCount == 0
-        ? () {
-            streams.app.wallet.isEmpty.add(true);
-            return ComingSoonPlaceholder(
-                scrollController: widget.scrollController,
-                header: 'Welcome',
-                message:
-                    'To get started, use Import or Receive to add Ravencoin & Assets to your wallet.',
-                placeholderType: PlaceholderType.wallet);
-          }()
+    print('res.assets ${res.assets.data.length}');
+    print('holdingCount $holdingCount');
+    print('holdings $holdings');
+    print(
+        'res.balances.byWallet.getAll(Current.walletId) ${res.balances.byWallet.getAll(Current.walletId)}');
+
+    return holdingCount > 0 && balances.isEmpty
+        ? components.empty.getAssetsPlaceholder(context,
+            scrollController: widget.scrollController,
+            count: holdingCount,
+            holding: true)
         : balances.isEmpty
-            ? components.empty.getAssetsPlaceholder(context,
-                scrollController: widget.scrollController,
-                count: holdingCount,
-                holding: true)
+            ? () {
+                streams.app.wallet.isEmpty.add(true);
+                return ComingSoonPlaceholder(
+                    scrollController: widget.scrollController,
+                    header: 'Welcome',
+                    message:
+                        'To get started, use Import or Receive to add Ravencoin & Assets to your wallet.',
+                    placeholderType: PlaceholderType.wallet);
+              }()
             : () {
                 streams.app.wallet.isEmpty.add(false);
-                return _holdingsView(context);
+                return RefreshIndicator(
+                  child: _holdingsView(context),
+                  onRefresh: () => refresh(),
+                );
               }();
 
     //RefreshIndicator( child:...
@@ -164,6 +179,7 @@ class _HoldingList extends State<HoldingList> {
     var rvnHolding = <Widget>[];
     var assetHoldings = <Widget>[];
     for (var holding in holdings ?? []) {
+      print('holding: $holding');
       var thisHolding = ListTile(
         //dense: true,
         contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
