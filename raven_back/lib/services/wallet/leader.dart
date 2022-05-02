@@ -1,6 +1,7 @@
 // ignore_for_file: omit_local_variable_types
 
 import 'package:equatable/equatable.dart';
+import 'package:raven_back/streams/client.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' show HDWallet;
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:raven_back/utilities/hex.dart' as hex;
@@ -63,6 +64,10 @@ class LeaderWalletService {
     print('newLeaderProcess');
     var s = Stopwatch()..start();
     streams.client.busy.add(true);
+    streams.client.activity.add(ActivityMessage(
+        active: true,
+        title: 'Syncing withs the network',
+        message: 'Downloading your balances...'));
 
     // matching orders for lists
     Map<NodeExposure, List<Address>> addresses = {};
@@ -112,13 +117,17 @@ class LeaderWalletService {
       /// I'm hoping this initialization process can simplify it.
       await services.download.unspents
           .pull(scripthashes: addresses[exposure]!.map((a) => a.scripthash));
-      // FIX not getting assets!
     }
 
     /// Build balances. - this will update the holdings list UI (home page)
     await services.balance.recalculateAllBalances();
     print('deriving: ${s.elapsed}');
     print('front end should be visible');
+
+    streams.client.activity.add(ActivityMessage(
+        active: true,
+        title: 'Syncing with the network',
+        message: 'Downloading your transaction history...'));
 
     /// Get transactions in batch by address, or by arbitrary batch number. -
     ///  must save these
@@ -151,6 +160,7 @@ class LeaderWalletService {
       await res.addresses.saveAll(addresses[exposure]!);
     }
     streams.client.busy.add(false);
+    streams.client.activity.add(ActivityMessage(active: false));
     print('newLeaderProcess Done!');
 
     /// could include a stream here that triggers frontend refresh to tell front

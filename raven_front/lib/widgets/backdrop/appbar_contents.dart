@@ -142,6 +142,7 @@ class BackdropAppBarContents extends StatelessWidget
         title: PageTitle(animate: animate),
         actions: <Widget>[
           if (!spoof) components.status,
+          if (!spoof) ActivityLight(),
           if (!spoof) spoof ? SpoofedConnectionLight() : ConnectionLight(),
           if (!spoof) QRCodeContainer(),
           if (!spoof) SnackBarViewer(),
