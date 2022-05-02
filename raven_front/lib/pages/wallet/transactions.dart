@@ -119,21 +119,10 @@ class _TransactionsState extends State<Transactions>
                 /// if we don't like to move it up, we can put the coinsspectabs
                 /// above the dragglable sheet and say, if you're above the
                 /// minHeight, your padding is 0...?
-                var conHeight = 1.ofMediaHeight(context);
-                print(conHeight);
-
-                return
-                    //Stack(
-                    //  alignment: Alignment.topCenter,
-                    //  children: [
-                    //CoinSpecTabs(),
-                    Stack(
+                return Stack(
                   alignment: Alignment.topCenter,
                   children: [
-                    Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                      CoinSpecTabs(),
-                      Container(height: conHeight),
-                    ]),
+                    CoinSpecTabs(),
                     Padding(
                         padding: EdgeInsets.only(top: 48),
                         child: FrontCurve(
