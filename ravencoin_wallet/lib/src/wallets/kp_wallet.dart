@@ -31,9 +31,8 @@ class KPWallet extends WalletBase {
     return KPWallet(_keyPair, _p2pkh, network);
   }
 
-  factory KPWallet.fromWIF(String wif,
-      {Map<int, NetworkType> networks = networks}) {
-    final _keyPair = ECPair.fromWIF(wif, networks: networks);
+  factory KPWallet.fromWIF(String wif, NetworkType network) {
+    final _keyPair = ECPair.fromWIF(wif, network);
     final _p2pkh = new P2PKH(
         data: new PaymentData(pubkey: _keyPair.publicKey),
         network: _keyPair.network);

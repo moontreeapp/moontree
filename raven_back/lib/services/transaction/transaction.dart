@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:ravencoin_wallet/ravencoin_wallet.dart' as networks;
 
 import 'maker.dart';
 
@@ -35,11 +36,26 @@ class TransactionService {
     //  return <TransactionRecord>[];
     //}
     var givenAddresses =
-        wallet.addresses.map((address) => address.address).toList();
+        wallet.addresses.map((address) => address.address).toSet();
     var transactionRecords = <TransactionRecord>[];
-    var rvn = res.securities.RVN;
+    final rvn = res.securities.RVN;
+
+    final net = res.settings.mainnet ? networks.mainnet : networks.testnet;
+    final specialTag = {net.burnAddresses.addTag: net.burnAmounts.addTag};
+    final specialReissue = {net.burnAddresses.reissue: net.burnAmounts.reissue};
+    final specialCreate = {
+      net.burnAddresses.issueMain: net.burnAmounts.issueMain,
+      net.burnAddresses.issueMessage: net.burnAmounts.issueMessage,
+      net.burnAddresses.issueQualifier: net.burnAmounts.issueQualifier,
+      net.burnAddresses.issueRestricted: net.burnAmounts.issueRestricted,
+      net.burnAddresses.issueSub: net.burnAmounts.issueSub,
+      net.burnAddresses.issueSubQualifier: net.burnAmounts.issueSub,
+      net.burnAddresses.issueSubQualifier: net.burnAmounts.issueSubQualifier,
+      net.burnAddresses.issueUnique: net.burnAmounts.issueUnique
+    };
+
     for (var transaction in res.transactions.chronological) {
-      var securitiesInvolved = ((transaction.vins
+      final securitiesInvolved = ((transaction.vins
                   .where((vin) =>
                       givenAddresses.contains(vin.vout?.toAddress) &&
                       vin.vout?.security != null)
@@ -70,37 +86,107 @@ class TransactionService {
           //   totalin - (total) is fee
           // from other to other:
           //   we don't keep record of that.
-          if (security == rvn) {
-            var selfIn = transaction.vins
-                .where((vin) =>
-                    givenAddresses.contains(vin.vout?.toAddress) &&
-                    vin.vout?.security == security)
-                .map((vin) => vin.vout?.securityValue(security: security))
-                .toList()
-                .sumInt();
-            var othersIn = transaction.vins
-                .where((vin) =>
-                    !givenAddresses.contains(vin.vout?.toAddress) &&
-                    vin.vout?.security == security)
-                .map((vin) => vin.vout?.securityValue(security: security))
-                .toList()
-                .sumInt();
-            var othersOut = transaction.vouts
-                .where((vout) =>
-                    !givenAddresses.contains(vout.toAddress) &&
-                    vout.security == security)
-                .map((vout) => vout.securityValue(security: security))
-                .toList()
-                .sumInt();
-            var selfOut = transaction.vouts
-                .where((vout) =>
-                    givenAddresses.contains(vout.toAddress) &&
-                    vout.security == security)
-                .map((vout) => vout.securityValue(security: security))
-                .toList()
-                .sumInt();
 
-            var toSelf = (selfIn > 0 && othersOut == 0);
+          // This is only used for checking special addresses
+          // This will never contain our own addrs
+          final outgoingAddrs = <String, int>{};
+
+          if (security == rvn) {
+            var selfIn = 0;
+            var othersIn = 0;
+
+            var selfOut = 0;
+            var othersOut = 0;
+
+            // Nothing too special about incoming...
+            for (final vin in transaction.vins) {
+              if ((vin.vout?.security ?? rvn) == rvn) {
+                if (givenAddresses.contains(vin.vout?.toAddress)) {
+                  selfIn += vin.vout?.rvnValue ?? 0;
+                } else {
+                  othersIn += vin.vout?.rvnValue ?? 0;
+                }
+              }
+            }
+
+            for (final vout in transaction.vouts) {
+              if (vout.security == rvn) {
+                if (givenAddresses.contains(vout.toAddress)) {
+                  selfOut += vout.rvnValue;
+                } else {
+                  othersOut += vout.rvnValue;
+                  if (specialCreate.containsKey(vout.toAddress) ||
+                      specialReissue.containsKey(vout.toAddress) ||
+                      specialTag.containsKey(vout.toAddress) ||
+                      vout.toAddress == net.burnAddresses.burn) {
+                    final current = outgoingAddrs[vout.toAddress!] ?? 0;
+                    outgoingAddrs[vout.toAddress!] = current + vout.rvnValue;
+                  }
+                }
+              }
+            }
+
+            var ioType;
+
+            // Known burn addr for tagging
+            // This goes first as tags can also be in creations
+
+            // TODO: Better verification; see if actual valid asset vouts exist
+
+            final tagIntersection = outgoingAddrs.keys
+                .toSet()
+                .intersection(specialTag.keys.toSet());
+            if (tagIntersection.isNotEmpty) {
+              for (final address in tagIntersection) {
+                if (outgoingAddrs[address] == specialTag[address]) {
+                  ioType = TransactionRecordType.TAG;
+                }
+              }
+              // If not a tag, effectively a burn
+              ioType ??= TransactionRecordType.BURN;
+            }
+
+            final reissueIntersection = outgoingAddrs.keys
+                .toSet()
+                .intersection(specialReissue.keys.toSet());
+            if (reissueIntersection.isNotEmpty) {
+              for (final address in reissueIntersection) {
+                if (outgoingAddrs[address] == specialReissue[address]) {
+                  ioType = TransactionRecordType.REISSUE;
+                }
+              }
+              // If not a tag, effectively a burn
+              ioType ??= TransactionRecordType.BURN;
+            }
+
+            final createIntersection = outgoingAddrs.keys
+                .toSet()
+                .intersection(specialCreate.keys.toSet());
+            // Known burn addr for creation
+            if (createIntersection.isNotEmpty) {
+              for (final address in createIntersection) {
+                if (outgoingAddrs[address] == specialCreate[address]) {
+                  ioType = TransactionRecordType.ASSETCREATION;
+                }
+              }
+              // If not a tag, effectively a burns
+              ioType ??= TransactionRecordType.BURN;
+            }
+
+            // Only call it "sent to self" if no RVN is coming from anywhere else
+
+            if (othersIn == 0 && othersOut == 0 && selfIn > 0) {
+              ioType = TransactionRecordType.SELF;
+            }
+            if (selfIn > 0 &&
+                outgoingAddrs.containsKey(net.burnAddresses.burn)) {
+              ioType = TransactionRecordType.BURN;
+            }
+            // Defaults
+            ioType ??= selfIn > selfOut
+                ? TransactionRecordType.OUTGOING
+                : TransactionRecordType.INCOMING;
+
             print('s $selfIn $selfOut o $othersIn $othersOut');
             transactionRecords.add(TransactionRecord(
               transaction: transaction,
@@ -108,69 +194,121 @@ class TransactionService {
               totalIn: selfIn,
               totalOut: selfOut,
               height: transaction.height,
-              toSelf: toSelf || selfIn == selfOut,
+              type: ioType,
               fee: (selfIn + othersIn) - (selfOut + othersOut),
               formattedDatetime: transaction.formattedDatetime,
             ));
           } else {
-            var selfIn = transaction.vins
-                .where((vin) =>
-                    givenAddresses.contains(vin.vout?.toAddress) &&
-                    vin.vout?.security == security)
-                .map((vin) => vin.vout?.securityValue(security: security))
-                .toList()
-                .sumInt();
-            var othersIn = transaction.vins
-                .where((vin) =>
-                    !givenAddresses.contains(vin.vout?.toAddress) &&
-                    vin.vout?.security == security)
-                .map((vin) => vin.vout?.securityValue(security: security))
-                .toList()
-                .sumInt();
-            var othersOut = transaction.vouts
-                .where((vout) =>
-                    !givenAddresses.contains(vout.toAddress) &&
-                    vout.security == security)
-                .map((vout) => vout.securityValue(security: security))
-                .toList()
-                .sumInt();
-            var selfOut = transaction.vouts
-                .where((vout) =>
-                    givenAddresses.contains(vout.toAddress) &&
-                    vout.security == security)
-                .map((vout) => vout.securityValue(security: security))
-                .toList()
-                .sumInt();
-            var selfInRVN = transaction.vins
-                .where((vin) =>
-                    givenAddresses.contains(vin.vout?.toAddress) &&
-                    vin.vout?.security == rvn)
-                .map((vin) => vin.vout?.securityValue(security: rvn))
-                .toList()
-                .sumInt();
-            var othersInRVN = transaction.vins
-                .where((vin) =>
-                    !givenAddresses.contains(vin.vout?.toAddress) &&
-                    vin.vout?.security == rvn)
-                .map((vin) => vin.vout?.securityValue(security: rvn))
-                .toList()
-                .sumInt();
-            var othersOutRVN = transaction.vouts
-                .where((vout) =>
-                    !givenAddresses.contains(vout.toAddress) &&
-                    vout.security == rvn)
-                .map((vout) => vout.securityValue(security: rvn))
-                .toList()
-                .sumInt();
-            var selfOutRVN = transaction.vouts
-                .where((vout) =>
-                    givenAddresses.contains(vout.toAddress) &&
-                    vout.security == rvn)
-                .map((vout) => vout.securityValue(security: rvn))
-                .toList()
-                .sumInt();
+            var selfIn = 0;
+            var selfInRVN = 0;
+            var othersIn = 0;
+            var othersInRVN = 0;
 
-            var toSelf = (selfIn > 0 && othersOut == 0);
+            var selfOut = 0;
+            var selfOutRVN = 0;
+            var othersOut = 0;
+            var othersOutRVN = 0;
+
+            // Nothing too special about incoming...
+            for (final vin in transaction.vins) {
+              if (vin.vout?.security == rvn) {
+                if (givenAddresses.contains(vin.vout?.toAddress)) {
+                  selfInRVN += vin.vout?.rvnValue ?? 0;
+                } else {
+                  othersInRVN += vin.vout?.rvnValue ?? 0;
+                }
+              } else if (vin.vout?.security == security) {
+                if (givenAddresses.contains(vin.vout?.toAddress)) {
+                  selfIn += vin.vout?.assetValue ?? 0;
+                } else {
+                  othersIn += vin.vout?.assetValue ?? 0;
+                }
+              }
+            }
+
+            for (final vout in transaction.vouts) {
+              if (vout.security == rvn) {
+                if (givenAddresses.contains(vout.toAddress)) {
+                  selfOutRVN += vout.rvnValue;
+                } else {
+                  othersOutRVN += vout.rvnValue;
+                  if (specialCreate.containsKey(vout.toAddress) ||
+                      specialReissue.containsKey(vout.toAddress) ||
+                      specialTag.containsKey(vout.toAddress) ||
+                      vout.toAddress == net.burnAddresses.burn) {
+                    final current = outgoingAddrs[vout.toAddress!] ?? 0;
+                    outgoingAddrs[vout.toAddress!] = current + vout.rvnValue;
+                  }
+                }
+              } else if (vout.security == security) {
+                if (givenAddresses.contains(vout.toAddress)) {
+                  selfOut += vout.assetValue ?? 0;
+                } else {
+                  othersOut += vout.assetValue ?? 0;
+                }
+              }
+            }
+
+            var ioType;
+
+            // Known burn addr for tagging
+            // This goes first as tags can also be in creations
+
+            // TODO: Better verification; see if actual valid asset vouts exist
+
+            final tagIntersection = outgoingAddrs.keys
+                .toSet()
+                .intersection(specialTag.keys.toSet());
+            if (tagIntersection.isNotEmpty) {
+              for (final address in tagIntersection) {
+                if (outgoingAddrs[address] == specialTag[address]) {
+                  ioType = TransactionRecordType.TAG;
+                }
+              }
+              // If not a tag, effectively a burn
+              ioType ??= TransactionRecordType.BURN;
+            }
+
+            final reissueIntersection = outgoingAddrs.keys
+                .toSet()
+                .intersection(specialReissue.keys.toSet());
+            if (reissueIntersection.isNotEmpty) {
+              for (final address in reissueIntersection) {
+                if (outgoingAddrs[address] == specialReissue[address]) {
+                  ioType = TransactionRecordType.REISSUE;
+                }
+              }
+              // If not a tag, effectively a burn
+              ioType ??= TransactionRecordType.BURN;
+            }
+
+            final createIntersection = outgoingAddrs.keys
+                .toSet()
+                .intersection(specialCreate.keys.toSet());
+            // Known burn addr for creation
+            if (createIntersection.isNotEmpty) {
+              for (final address in createIntersection) {
+                if (outgoingAddrs[address] == specialCreate[address]) {
+                  ioType = TransactionRecordType.ASSETCREATION;
+                }
+              }
+              // If not a tag, effectively a burns
+              ioType ??= TransactionRecordType.BURN;
+            }
+
+            // Only call it "sent to self" if no RVN is coming from anywhere else
+            if (othersIn == 0 && othersOut == 0 && selfIn > 0) {
+              ioType = TransactionRecordType.SELF;
+            }
+            if (selfIn > 0 &&
+                outgoingAddrs.containsKey(net.burnAddresses.burn)) {
+              ioType = TransactionRecordType.BURN;
+            }
+            // Defaults
+            ioType ??= selfIn > selfOut
+                ? TransactionRecordType.OUTGOING
+                : TransactionRecordType.INCOMING;
+
             print('s $selfIn $selfOut o $othersIn $othersOut');
             transactionRecords.add(TransactionRecord(
               transaction: transaction,
@@ -178,7 +316,7 @@ class TransactionService {
               totalIn: selfIn,
               totalOut: selfOut,
               height: transaction.height,
-              toSelf: toSelf || selfIn == selfOut,
+              type: ioType,
               fee: (selfInRVN + othersInRVN) - (selfOutRVN + othersOutRVN),
               formattedDatetime: transaction.formattedDatetime,
             ));
@@ -200,6 +338,16 @@ class TransactionService {
   }
 }
 
+enum TransactionRecordType {
+  INCOMING,
+  OUTGOING,
+  SELF,
+  ASSETCREATION,
+  TAG,
+  BURN,
+  REISSUE,
+}
+
 class TransactionRecord {
   Transaction transaction;
   Security security;
@@ -207,14 +355,14 @@ class TransactionRecord {
   int totalIn;
   int totalOut;
   int? height;
-  bool toSelf;
+  TransactionRecordType type;
   int fee;
 
   TransactionRecord({
     required this.transaction,
     required this.security,
     required this.formattedDatetime,
-    required this.toSelf,
+    required this.type,
     this.height,
     this.fee = 0,
     this.totalIn = 0,

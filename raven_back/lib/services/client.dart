@@ -136,12 +136,14 @@ class SubscribeService {
     if (existing) {
       unawaited(services.download.history.allDoneProcess());
       for (var address in addresses) {
-        if (address.wallet is LeaderWallet && address.vouts.isNotEmpty) {
-          services.wallet.leader
-              .updateCounts(address, address.wallet as LeaderWallet);
-        } else {
-          services.wallet.leader
-              .updateCache(address, address.wallet as LeaderWallet);
+        if (address.wallet is LeaderWallet) {
+          if (address.vouts.isNotEmpty) {
+            services.wallet.leader
+                .updateCounts(address, address.wallet as LeaderWallet);
+          } else {
+            services.wallet.leader
+                .updateCache(address, address.wallet as LeaderWallet);
+          }
         }
       }
     }

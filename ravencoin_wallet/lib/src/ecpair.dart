@@ -33,15 +33,13 @@ class ECPair {
     return ecc.verify(hash, publicKey!, signature);
   }
 
-  factory ECPair.fromWIF(String w,
-      {Map<int, NetworkType> networks = networks}) {
+  factory ECPair.fromWIF(String w, NetworkType network) {
     wif.WIF decoded = wif.decode(w);
-    if (networks.containsKey(decoded.version)) {
-      NetworkType network = networks[decoded.version]!;
+    if (decoded.version == network.wif) {
       return ECPair.fromPrivateKey(decoded.privateKey,
           compressed: decoded.compressed, network: network);
     } else {
-      throw new ArgumentError('Unknown network version');
+      throw new ArgumentError('Incorrect network version');
     }
   }
   factory ECPair.fromPublicKey(Uint8List publicKey,

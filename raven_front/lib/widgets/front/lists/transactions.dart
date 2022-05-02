@@ -115,23 +115,33 @@ class _TransactionListState extends State<TransactionList> {
                     title: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                              //() {
-                              //  var amountToDisplay = components.text.securityAsReadable(
-                              //      transactionRecord.value,
-                              //      security: transactionRecord.security,
-                              //      asUSD: showUSD);
-                              //  return amountToDisplay == '0'
-                              //      ? 'sent to self'
-                              //      : amountToDisplay;
-                              //}()
-                              transactionRecord.toSelf
-                                  ? 'Sent to Self'
-                                  : components.text.securityAsReadable(
-                                      transactionRecord.value,
-                                      security: transactionRecord.security,
-                                      asUSD: showUSD),
-                              style: Theme.of(context).textTheme.bodyText1),
+                          Text(() {
+                            var suffix;
+                            final value = components.text.securityAsReadable(
+                                transactionRecord.value,
+                                security: transactionRecord.security,
+                                asUSD: showUSD);
+                            switch (transactionRecord.type) {
+                              case TransactionRecordType.ASSETCREATION:
+                                suffix = 'Asset Creation';
+                                break;
+                              case TransactionRecordType.BURN:
+                                suffix = 'Burn';
+                                break;
+                              case TransactionRecordType.REISSUE:
+                                suffix = 'Reissue';
+                                break;
+                              case TransactionRecordType.TAG:
+                                suffix = 'Tag';
+                                break;
+                              case TransactionRecordType.SELF:
+                                return 'Sent to Self';
+                              case TransactionRecordType.INCOMING:
+                              case TransactionRecordType.OUTGOING:
+                                return value;
+                            }
+                            return suffix == null ? value : '$value ($suffix)';
+                          }(), style: Theme.of(context).textTheme.bodyText1),
                           Text(transactionRecord.formattedDatetime,
                               style: Theme.of(context)
                                   .textTheme

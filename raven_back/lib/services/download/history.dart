@@ -241,6 +241,7 @@ class HistoryService {
     var newVins = <Vin>{};
     var newVouts = <Vout>{};
     var newTxs = <Transaction>{};
+
     if (saveVin) {
       for (var vin in tx.vin) {
         if (vin.txid != null && vin.vout != null) {

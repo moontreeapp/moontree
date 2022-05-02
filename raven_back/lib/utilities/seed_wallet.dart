@@ -24,6 +24,6 @@ class SingleSelfWallet {
   SingleSelfWallet(this.wif);
 
   KPWallet get wallet {
-    return KPWallet.fromWIF(wif);
+    return KPWallet.fromWIF(wif, res.settings.network);
   }
 }

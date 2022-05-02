@@ -21,8 +21,7 @@ constructSign(f, TransactionBuilder txb) {
   for (var i = 0; i < inputs.length; i++) {
     if (inputs[i]['signs'] == null) continue;
     (inputs[i]['signs'] as List<dynamic>).forEach((sign) {
-      ECPair keyPair =
-          ECPair.fromWIF(sign['keyPair'], networks: bitcoinNetworks);
+      ECPair keyPair = ECPair.fromWIF(sign['keyPair'], bitcoinMainnet);
       txb.sign(
           vin: i,
           keyPair: keyPair,
@@ -288,8 +287,8 @@ main() {
             for (var i = 0; i < inputs.length; i++) {
               inputs[i]['signs'] as List<dynamic>
                 ..forEach((sign) {
-                  final keyPair2 = ECPair.fromWIF(sign['keyPair'],
-                      networks: bitcoinNetworks);
+                  final keyPair2 =
+                      ECPair.fromWIF(sign['keyPair'], bitcoinMainnet);
                   if (sign['throws'] != null && sign['throws']) {
                     try {
                       expect(
