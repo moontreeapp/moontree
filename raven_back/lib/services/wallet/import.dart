@@ -21,6 +21,7 @@ class ImportWalletService {
         (text.startsWith('{') && text.endsWith('}'))) {
       /// todo must also contain some correct keys
       /// two types of json - ours and outside json formats
+      /// TODO: How to verify?
       return ImportFormat.json;
     }
 
@@ -33,7 +34,8 @@ class ImportWalletService {
       return ImportFormat.privateKey;
     } catch (_) {}
     try {
-      KPWallet.fromWIF(text);
+      //TODO: Tell user that they are in the wrong network mode
+      KPWallet.fromWIF(text, res.settings.network);
       return ImportFormat.WIF;
     } catch (_) {}
 
@@ -43,6 +45,7 @@ class ImportWalletService {
     /// if we were unable to find a import type, we should be able to check
     /// something to get a good idea if this is known invalid, rather than
     /// returning null. this is a placeholder for that.
+    /// TODO: Shouldn't this just be the default?
     if (text.contains('[')) {
       return ImportFormat.invalid;
     }

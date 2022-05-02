@@ -48,7 +48,8 @@ main() {
     });
     test('can import an address via WIF', () {
       final keyPair = ECPair.fromWIF(
-          'Kxr9tQED9H44gCmp6HAdmemAzU3n84H3dGkuWTKvE23JgHMW8gct');
+          'Kxr9tQED9H44gCmp6HAdmemAzU3n84H3dGkuWTKvE23JgHMW8gct',
+          NETWORKS.bitcoinMainnet);
       final address = new P2PKH(
               data: new PaymentData(pubkey: keyPair.publicKey),
               network: NETWORKS.bitcoinMainnet)
@@ -81,7 +82,8 @@ main() {
     });
     test('can generate a SegWit address', () {
       final keyPair = ECPair.fromWIF(
-          'KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU73sVHnoWn');
+          'KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU73sVHnoWn',
+          NETWORKS.bitcoinMainnet);
       final address = new P2WPKH(
               data: new PaymentData(pubkey: keyPair.publicKey),
               network: NETWORKS.bitcoinMainnet)
@@ -92,7 +94,8 @@ main() {
     test('can generate a SegWit testnet address', () {
       final testnet = NETWORKS.testnet;
       final keyPair = ECPair.fromWIF(
-          'cPaJYBMDLjQp5gSUHnBfhX4Rgj95ekBS6oBttwQLw3qfsKKcDfuB');
+          'cPaJYBMDLjQp5gSUHnBfhX4Rgj95ekBS6oBttwQLw3qfsKKcDfuB',
+          NETWORKS.bitcoinTestnet);
       final address = new P2WPKH(
               data: new PaymentData(pubkey: keyPair.publicKey),
               network: testnet)

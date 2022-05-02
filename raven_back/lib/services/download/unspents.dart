@@ -94,8 +94,6 @@ class UnspentService {
       var utxos = (await services.client.client!.getUnspents(finalScripthashes))
           .expand((i) => i);
 
-      print('RVN for $finalScripthashes : $utxos');
-
       // Wipe relevant unspents and re-add
       // If we have new utxos, get the vouts now.
       final new_utxos = await _unspentsLock.read(() {
@@ -202,7 +200,6 @@ class UnspentService {
     for (final wallet in res.wallets.data) {
       //print('Recalculating balances for ${wallet.id}');
       final walletId = wallet.id;
-      print('Generating wallet balance for $walletId');
 
       final tempList = <Balance>[];
       for (final symbol in symbols) {
@@ -270,8 +267,6 @@ class UnspentService {
                 // Mempool
                 gatherer[walletId]![1] = gatherer[walletId]![1] + unspent.value;
               }
-
-              print('$symbol ${unspent.value} from $walletId');
 
               return gatherer;
             })

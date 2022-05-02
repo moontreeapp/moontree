@@ -9,8 +9,7 @@ import '../../lib/src/models/networks.dart';
 main() {
   test('can create a 1-to-1 Transaction', () {
     final alice = ECPair.fromWIF(
-        'L1uyy5qTuGrVXrmrsvHWHgVzW9kKdrp27wBC7Vs6nZDTF2BRUVwy',
-        networks: networks);
+        'L1uyy5qTuGrVXrmrsvHWHgVzW9kKdrp27wBC7Vs6nZDTF2BRUVwy', bitcoinMainnet);
     final txb = new TransactionBuilder(network: mainnet);
     txb.setVersion(1);
     txb.addInput(

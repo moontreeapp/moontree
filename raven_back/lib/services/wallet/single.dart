@@ -16,11 +16,14 @@ class SingleWalletService {
         net: net);
   }
 
-  KPWallet getKPWallet(SingleWallet wallet) =>
-      KPWallet.fromWIF(EncryptedWIF(wallet.encryptedWIF, wallet.cipher!).wif);
+  KPWallet getKPWallet(SingleWallet wallet) => KPWallet.fromWIF(
+      EncryptedWIF(wallet.encryptedWIF, wallet.cipher!).wif,
+      res.settings.network);
 
-  KPWallet getKPWalletFromPrivKey(String privKey) =>
-      KPWallet.fromWIF(ECPair.fromPrivateKey(decode(privKey)).toWIF());
+  KPWallet getKPWalletFromPrivKey(String privKey) => KPWallet.fromWIF(
+      ECPair.fromPrivateKey(decode(privKey), network: res.settings.network)
+          .toWIF(),
+      res.settings.network);
   String privateKeyToWif(String privKey) =>
       ECPair.fromPrivateKey(decode(privKey)).toWIF();
 

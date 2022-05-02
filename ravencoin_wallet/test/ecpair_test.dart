@@ -67,7 +67,7 @@ main() {
       (fixtures['valid'] as List).forEach((f) {
         test('imports ${f['WIF']}', () {
           var network = _getNetwork(f);
-          final keyPair = ECPair.fromWIF(f['WIF'], networks: bitcoinNetworks);
+          final keyPair = ECPair.fromWIF(f['WIF'], bitcoinMainnet);
           expect(HEX.encode(keyPair.privateKey as List<int>), f['d']);
           expect(keyPair.compressed, f['compressed']);
           expect(keyPair.network, network);
@@ -78,8 +78,7 @@ main() {
           //var network =
           _getNetwork(f);
           try {
-            expect(ECPair.fromWIF(f['WIF'], networks: bitcoinNetworks),
-                isArgumentError);
+            expect(ECPair.fromWIF(f['WIF'], bitcoinMainnet), isArgumentError);
           } catch (err) {
             expect((err as ArgumentError).message, f['exception']);
           }
@@ -91,7 +90,7 @@ main() {
         test('export ${f['WIF']}', () {
           //var network =
           _getNetwork(f);
-          final keyPair = ECPair.fromWIF(f['WIF'], networks: bitcoinNetworks);
+          final keyPair = ECPair.fromWIF(f['WIF'], bitcoinMainnet);
           expect(keyPair.toWIF(), f['WIF']);
         });
       });
@@ -132,7 +131,7 @@ main() {
     group('.network', () {
       (fixtures['valid'] as List).forEach((f) {
         test('return ${f['network']} for ${f['WIF']}', () {
-          final keyPair = ECPair.fromWIF(f['WIF'], networks: bitcoinNetworks);
+          final keyPair = ECPair.fromWIF(f['WIF'], bitcoinMainnet);
           NetworkType? network = _getNetwork(f);
           expect(keyPair.network, network);
         });

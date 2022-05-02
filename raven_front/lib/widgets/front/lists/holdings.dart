@@ -178,8 +178,7 @@ class _HoldingList extends State<HoldingList> {
             scrollController: widget.scrollController,
             count: hideListCount,
             holding: true)
-        // Check if a completely new user, not simply a new wallet
-        : res.transactions.isEmpty
+        : Current.wallet.transactions.isEmpty
             ? () {
                 streams.app.wallet.isEmpty.add(true);
                 return ComingSoonPlaceholder(

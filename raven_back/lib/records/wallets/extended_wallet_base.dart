@@ -17,6 +17,6 @@ extension ExtendedWalletBase on WalletBase {
   }
 
   ECPair get keyPair {
-    return ECPair.fromWIF(wif!, networks: rc.networks);
+    return ECPair.fromWIF(wif!, network);
   }
 }

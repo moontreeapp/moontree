@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:crypto/crypto.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' show KPWallet;
 import 'package:bs58check/bs58check.dart' as bs58;
 
@@ -18,8 +19,10 @@ class EncryptedWIF extends EncryptedWalletSecret {
   @override
   String get secret => wif;
 
+  // A public key exposes some data; we may not want to have it as our id.
+  // Instead lets hash our raw WIF
   @override
-  String get walletId => KPWallet.fromWIF(wif).pubKey!;
+  String get walletId => sha256.convert(wif.codeUnits).toString();
 
   String get wif => bs58.encode(cipher.decrypt(hex.decode(encryptedSecret)));
 
