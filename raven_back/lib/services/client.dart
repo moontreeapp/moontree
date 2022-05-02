@@ -128,6 +128,7 @@ class SubscribeService {
       await onlySubscribeAddressUnspent(address);
       existing = true;
     }
+    // recalc balance here?
     await services.balance.recalculateAllBalances();
     for (var address in addresses) {
       await onlySubscribeAddressHistory(address);
@@ -159,9 +160,9 @@ class SubscribeService {
     return true;
   }
 
-  bool toAddress(Address address) {
-    onlySubscribeAddressUnspent(address);
-    onlySubscribeAddressHistory(address);
+  Future<bool> toAddress(Address address) async {
+    await onlySubscribeAddressUnspent(address);
+    await onlySubscribeAddressHistory(address);
     return true;
   }
 
@@ -180,11 +181,18 @@ class SubscribeService {
           () async =>
               (await services.client.client!.subscribeScripthash(address.id))
                   .listen((String? status) async {
-                await services.download.unspents
-                    .pull(scripthashes: [address.id]);
+                /// no guarantee this will run first, so we don't want the other
+                /// one to run first can save the status and keep this one from
+                /// running, so we'll just download unspents everytime.
+                //if (status == null || address.status?.status != status) {
+                print('PULLING UNSPENTS');
+                await services.download.unspents.pull(
+                  scripthashes: [address.id],
+                );
+                //}
+                // Recalculate balances for affected symbols... or everything
+                await services.balance.recalculateAllBalances();
               }));
-      // Recalculate balances for affected symbols... or everything
-      await services.balance.recalculateAllBalances();
     }
   }
 
@@ -195,11 +203,14 @@ class SubscribeService {
               (await services.client.client!.subscribeScripthash(address.id))
                   .listen((String? status) async {
                 if (status == null || address.status?.status != status) {
+                  print('PULLING HISTORY');
+
                   /// Get histories, update leader counts and
                   /// Get transactions in batch.
-                  await services.download.history.getTransactions(await services
-                      .download.history
-                      .getHistory(address, updateLeader: true));
+                  await services.download.history.getTransactions(
+                    await services.download.history
+                        .getHistory(address, updateLeader: true),
+                  );
 
                   /// Get dangling transactions
                   await services.download.history.allDoneProcess();

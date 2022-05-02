@@ -23,9 +23,16 @@ class HistoryService {
         try {
           var txIds = <List<String>>[];
           for (var scripthash in addresses.map((Address a) => a.scripthash)) {
-            txIds.add((await services.client.client!.getHistory(scripthash))
-                .map((history) => history.txHash)
-                .toList());
+            var historiesItem;
+            try {
+              historiesItem =
+                  (await services.client.client!.getHistory(scripthash))
+                      .map((history) => history.txHash)
+                      .toList();
+            } catch (e) {
+              historiesItem = [];
+            }
+            txIds.add(historiesItem);
           }
           return txIds;
         } catch (e) {

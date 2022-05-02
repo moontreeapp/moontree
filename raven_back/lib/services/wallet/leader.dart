@@ -66,7 +66,7 @@ class LeaderWalletService {
     streams.client.busy.add(true);
     streams.client.activity.add(ActivityMessage(
         active: true,
-        title: 'Syncing withs the network',
+        title: 'Syncing with the network',
         message: 'Downloading your balances...'));
 
     // matching orders for lists
@@ -77,7 +77,7 @@ class LeaderWalletService {
     for (var exposure in NodeExposure.values) {
       addresses[exposure] = [];
       transactionIds[exposure] = [];
-      var generate = 20;
+      var generate = requiredGap;
       while (generate > 0) {
         final target = transactionIds[exposure]!.length + generate;
         var futures = <Future<Address>>[
@@ -100,10 +100,6 @@ class LeaderWalletService {
       /// save final cache and counts for this wallet exposure
       for (Tuple2<int, List<String>> et
           in transactionIds[exposure]!.enumeratedTuple()) {
-        /*
-            Exception has occurred.
-              RangeError (RangeError (index): Invalid value: Not in inclusive range 0..95: 96)
-            */
         var addr = addresses[exposure]![et.item1];
         if (et.item2.isEmpty) {
           updateCache(addr, leader);
@@ -129,6 +125,13 @@ class LeaderWalletService {
         title: 'Syncing with the network',
         message: 'Downloading your transaction history...'));
 
+    /// Get status of addresses, save
+    // you'll have to subscribe then unsubscribe. in batch.
+    for (var exposure in NodeExposure.values) {
+      await services.client.subscribe
+          .onlySubscribeForStatuses(addresses[exposure]!);
+    }
+
     /// Get transactions in batch by address, or by arbitrary batch number. -
     ///  must save these
     for (var exposure in NodeExposure.values) {
@@ -147,13 +150,6 @@ class LeaderWalletService {
     ///  transaction screen to know if it's in the middle of downloading txs.
     await services.download.history.allDoneProcess();
 
-    /// Get status of addresses, save
-    // you'll have to subscribe then unsubscribe. in batch.
-    for (var exposure in NodeExposure.values) {
-      await services.client.subscribe
-          .onlySubscribeForStatuses(addresses[exposure]!);
-    }
-
     /// Save addresses - this will trigger the general case, but since we've
     ///   already saved the most recent status nothing will happen.
     for (var exposure in NodeExposure.values) {
@@ -162,9 +158,6 @@ class LeaderWalletService {
     streams.client.busy.add(false);
     streams.client.activity.add(ActivityMessage(active: false));
     print('newLeaderProcess Done!');
-
-    /// could include a stream here that triggers frontend refresh to tell front
-    /// we're done looking so it can display the welcome message if empty.
   }
 
   Address deriveAddress(
