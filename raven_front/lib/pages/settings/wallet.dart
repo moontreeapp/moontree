@@ -205,7 +205,6 @@ class _WalletViewState extends State<WalletView> {
                     duration: const Duration(milliseconds: 400),
                     curve: Curves.fastOutSlowIn);
 
-                //holdings = services.balance.addressesBalances([walletAddress]);
                 transactions = Current.walletCompiledTransactions()
                     //.where((transactionRecord) =>
                     //    transactionRecord.fromAddress ==

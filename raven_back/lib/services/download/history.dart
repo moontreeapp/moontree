@@ -20,7 +20,6 @@ class HistoryService {
           for (var x in listOfLists) x.map((history) => history.txHash).toList()
         ];
       } catch (e) {
-        print('in cache');
         try {
           var txIds = <List<String>>[];
           for (var scripthash in addresses.map((Address a) => a.scripthash)) {
@@ -72,30 +71,10 @@ class HistoryService {
     );
   }
 
-  Future<bool> _produceAddressOrBalance() async {
-    var client = streams.client.client.value;
-    if (client == null) {
-      return false;
-    }
-    var allDone = true;
-    for (var leader in res.wallets.leaders) {
-      for (var exposure in [NodeExposure.Internal, NodeExposure.External]) {
-        if (!services.wallet.leader.gapSatisfied(leader, exposure)) {
-          allDone = false;
-        }
-      }
-    }
-    if (allDone) {
-      await allDoneProcess();
-      print('TRANSACTIONS DOWNLOADED');
-    }
-    return allDone;
-  }
-
   Future allDoneProcess() async {
-    print('ALL DONE!');
+    //print('TRANSACTIONS DOWNLOADED');
     await saveDanglingTransactions();
-    //await services.balance.recalculateAllBalancesFromTransactions();
+    //print('ALL DONE!');
     //services.download.asset.allAdminsSubs(); // why?
     // remove vouts pointing to addresses we don't own?
   }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_electrum/raven_electrum.dart';
+import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/colors.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_front/components/components.dart';
@@ -87,21 +88,36 @@ class BackdropAppBarContents extends StatelessWidget
             //streams.app.scrim.add(!streams.app.scrim.value);
             streams.client.busy.add(!streams.client.busy.value);
             //print(res.wallets.data.length);
-            print(res.addresses.data.length);
+            //print(res.addresses.data.length);
             //print(res.wallets.data.first.holdingCount);
             //print(res.wallets.data.first.balances);
-            services.wallet.createSave(
-                walletType: WalletType.leader,
-                cipherUpdate: defaultCipherUpdate,
-                secret: null);
-            print(await services.client.client!.getHistories(res.addresses.data
-                    .toList()
-                    .sublist(0, 2)
-                    .map((Address a) => a.scripthash))
-                //return [
-                //  for (var x in listOfLists) x.map((history) => history.txHash).toList()
-                //];
-                );
+            //services.wallet.createSave(
+            //    walletType: WalletType.leader,
+            //    cipherUpdate: defaultCipherUpdate,
+            //    secret: null);
+            //print(await services.client.client!.getHistories(res.addresses.data
+            //        .toList()
+            //        .sublist(0, 2)
+            //        .map((Address a) => a.scripthash))
+            //return [
+            //  for (var x in listOfLists) x.map((history) => history.txHash).toList()
+            //];
+            //    );
+            print(
+                'rvn ${await services.download.unspents.totalConfirmed(res.wallets.currentWallet.id, 'RVN')}');
+            print(
+                'rvn ${await services.download.unspents.totalUnconfirmed(res.wallets.currentWallet.id, 'RVN')}');
+            print(() {
+              var symbol = 'RVN';
+              var possibleHoldings = [
+                for (var balance in Current.holdings)
+                  if (balance.security.symbol == symbol)
+                    utils.satToAmount(balance.value)
+              ];
+              return possibleHoldings;
+            }());
+            print(Current.balanceRVN);
+            print(Current.wallet.id);
           },
           child: appBar,
         )

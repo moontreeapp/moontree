@@ -150,8 +150,11 @@ class LeaderWalletService {
     for (var exposure in NodeExposure.values) {
       await res.addresses.saveAll(addresses[exposure]!);
     }
-    print(res.addresses.data.length);
     streams.client.busy.add(false);
+    print('newLeaderProcess Done!');
+
+    /// could include a stream here that triggers frontend refresh to tell front
+    /// we're done looking so it can display the welcome message if empty.
   }
 
   Address deriveAddress(

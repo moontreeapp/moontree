@@ -130,7 +130,6 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   }
 
   Widget body() {
-    print(pageTitle);
     if (pageTitle == 'Splash') {
       if (widget.animate) {
         slowController.forward(from: 0.0);
@@ -235,10 +234,11 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
             for (Wallet wallet in res.wallets.ordered)
               ListTile(
                 visualDensity: VisualDensity.compact,
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(components.navigator.routeContext!);
                   if (wallet.id != Current.walletId) {
-                    res.settings.setCurrentWalletId(wallet.id);
+                    await res.settings.setCurrentWalletId(wallet.id);
+                    await services.balance.recalculateAllBalances();
                     streams.app.fling.add(false);
                     streams.app.setting.add(null);
                   }

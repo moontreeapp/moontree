@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -36,28 +37,49 @@ class _HoldingList extends State<HoldingList> {
   bool showPath = false;
   Rate? rateUSD;
   Set<Balance> balances = {};
+  Set<Address> addresses = {};
+
+  int getCount() {
+    var x = Current.wallet.holdingCount;
+    if (x == 0) {
+      x = res.assets.length;
+    }
+    return (Current.wallet.RVNValue > 0 ? 1 : 0) + x;
+  }
 
   @override
   void initState() {
     super.initState();
-    listeners.add(res.assets.changes.listen((Change<Asset> change) {
+    holdingCount = getCount();
+    balances = Current.wallet.balances.toSet();
+    listeners
+        .add(res.assets.batchedChanges.listen((List<Change<Asset>> changes) {
       // need a way to know this wallet's asset list without vouts for newLeaderProcess
-      var x = Current.wallet.holdingCount;
-      if (x == 0) {
-        x = res.assets.length;
-      }
-      var count = (Current.wallet.RVNValue > 0 ? 1 : 0) + x;
+      var count = getCount();
       if (count > holdingCount) {
+        print('triggered by holdingCount');
         setState(() {
           holdingCount = count;
         });
       }
     }));
-    listeners.add(res.balances.changes.listen((Change<Balance> change) {
+    listeners.add(
+        res.balances.batchedChanges.listen((List<Change<Balance>> changes) {
       var interimBalances = Current.wallet.balances.toSet();
       if (balances != interimBalances) {
+        print('triggered by balances');
         setState(() {
           balances = interimBalances;
+        });
+      }
+    }));
+    listeners.add(
+        res.addresses.batchedChanges.listen((List<Change<Address>> changes) {
+      var interimAddresses = Current.wallet.addresses.toSet();
+      if (addresses != interimAddresses) {
+        print('triggered by addresses');
+        setState(() {
+          addresses = interimAddresses;
         });
       }
     }));
@@ -66,6 +88,7 @@ class _HoldingList extends State<HoldingList> {
     /// (otherwise the screen stays black for some reason)
     listeners.add(streams.app.active.listen((bool active) {
       if (active) {
+        print('triggered by activity');
         setState(() {});
       }
     }));
@@ -118,29 +141,32 @@ class _HoldingList extends State<HoldingList> {
 
   @override
   Widget build(BuildContext context) {
-    holdings = holdings != null && holdings!.isNotEmpty
-        ? holdings
-        : utils.assetHoldings(widget.holdings ??
-            //services.download.unspents
-            //    .unspentBalancesByWalletId[Current.walletId] ??
-            //[]
-            res.balances.byWallet.getAll(Current.walletId));
-    // todo: filter out before UI:
-    holdings = holdings!.where((holding) => holding.value > 0).toList();
+    holdings = (
+            //holdings != null && holdings!.isNotEmpty
+            //    ? holdings
+            //    :
+            utils.assetHoldings(widget.holdings ??
+                //services.download.unspents
+                //    .unspentBalancesByWalletId[Current.walletId] ??
+                //[]
+                res.balances.byWallet.getAll(Current.walletId)))
+        // todo: filter out before UI:
+        .where((holding) => holding.value > 0)
+        .toList();
+    balances = Current.wallet.balances.toSet();
+    addresses = Current.wallet.addresses.toSet();
     // todo: move to back end
     //streams.client.busy.add(_hideList && holdings!.isNotEmpty ? true : false);
-    print('res.balances.isEmpty ${res.balances.isEmpty}');
-    print('res.transactions.isEmpty ${res.transactions.isEmpty}');
-    print('res.assets ${res.assets.data.length}');
-    print('holdingCount $holdingCount');
-    print('holdings $holdings');
-    print(
-        'res.balances.byWallet.getAll(Current.walletId) ${res.balances.byWallet.getAll(Current.walletId)}');
-
-    return holdingCount > 0 && balances.isEmpty
+    //print('res.balances.isEmpty ${res.balances.isEmpty}');
+    //print('balances.isEmpty ${balances.isEmpty}');
+    //print('res.transactions.isEmpty ${res.transactions.isEmpty}');
+    //print('res.assets ${res.assets.data.length}');
+    //print('holdings.length ${holdings?.length}');
+    //print('holdingCount $holdingCount');
+    return balances.isEmpty && addresses.isEmpty
         ? components.empty.getAssetsPlaceholder(context,
             scrollController: widget.scrollController,
-            count: holdingCount,
+            count: max(holdingCount, 1),
             holding: true)
         : balances.isEmpty
             ? () {
@@ -178,8 +204,10 @@ class _HoldingList extends State<HoldingList> {
   ListView _holdingsView(BuildContext context, {Wallet? wallet}) {
     var rvnHolding = <Widget>[];
     var assetHoldings = <Widget>[];
-    for (var holding in holdings ?? []) {
-      print('holding: $holding');
+    for (AssetHolding holding in holdings ?? []) {
+      if (holding.symbol == 'RVN') {
+        var a = 1;
+      }
       var thisHolding = ListTile(
         //dense: true,
         contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
