@@ -44,7 +44,6 @@ dependencies:
   ravencoin_wallet: ^3.0.0
   path_provider: ^2.0.5 # to get the correct path to store our file
   permission_handler: ^8.2.5 # to handle the permissions to read and write files
-  #permission_handler: ^5.0.1+1 # screenshot_callback pinned to this
   share: ^2.0.4 # to share the file that we create // old
   file_picker: ^4.1.5 # to import the file that we saved
   intl: ^0.17.0

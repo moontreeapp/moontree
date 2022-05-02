@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/theme/theme.dart';
@@ -33,33 +35,40 @@ class _CoinSpecTabsState extends State<CoinSpecTabs>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(8),
-            topRight: Radius.circular(8),
-          ),
-        ),
-        child: TabBar(
-            controller: tabController,
-            indicatorColor: Colors.white,
-            indicatorSize: TabBarIndicatorSize.tab,
-            indicator: _TabIndicator(),
-            labelStyle: Theme.of(context).textTheme.bodyText2!.copyWith(
-                fontWeight: FontWeights.medium,
-                letterSpacing: 1.25,
-                color: AppColors.white),
-            unselectedLabelStyle: Theme.of(context)
-                .textTheme
-                .bodyText2!
-                .copyWith(
-                    fontWeight: FontWeights.medium,
-                    letterSpacing: 1.25,
-                    color: AppColors.white60),
-            tabs: [
-              Tab(text: CoinSpecTabs.tabIndex[0]),
-              Tab(text: CoinSpecTabs.tabIndex[1]),
-            ]));
+    return ClipRect(
+        // <-- clips to the 200x200 [Container] below
+        child: Container(
+            height: 56,
+            alignment: Alignment.topCenter,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8),
+                topRight: Radius.circular(8),
+              ),
+            ),
+            child: BackdropFilter(
+                filter: ImageFilter.blur(
+                    sigmaX: 2.0, sigmaY: 2.0, tileMode: TileMode.clamp),
+                child: TabBar(
+                    controller: tabController,
+                    indicatorColor: Colors.white,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    indicator: _TabIndicator(),
+                    labelStyle: Theme.of(context).textTheme.bodyText2!.copyWith(
+                        fontWeight: FontWeights.medium,
+                        letterSpacing: 1.25,
+                        color: AppColors.white),
+                    unselectedLabelStyle: Theme.of(context)
+                        .textTheme
+                        .bodyText2!
+                        .copyWith(
+                            fontWeight: FontWeights.medium,
+                            letterSpacing: 1.25,
+                            color: AppColors.white60),
+                    tabs: [
+                      Tab(text: CoinSpecTabs.tabIndex[0]),
+                      Tab(text: CoinSpecTabs.tabIndex[1]),
+                    ]))));
   }
 }
 

@@ -94,26 +94,54 @@ class _TransactionsState extends State<Transactions>
             40 +
             (!services.download.history.downloads_complete ? 80 : 0))
         .ofMediaHeight(context);
-    var minHeight = 1 - (201 + 25) / MediaQuery.of(context).size.height;
+    //var minHeight = 1 - (201 + 25) / MediaQuery.of(context).size.height;
+    var minHeight = .7245;
+
+    print(minHeight);
     cachedMetadataView = _metadataView();
+    DraggableScrollableController dController = DraggableScrollableController();
     return BackdropLayers(
-      back: CoinSpec(
-        pageTitle: 'Transactions',
-        security: security,
-        bottom: cachedMetadataView != null ? null : Container(),
-      ),
-      front: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
+        back: CoinSpec(
+          pageTitle: 'Transactions',
+          security: security,
+          bottom: cachedMetadataView != null ? null : Container(),
+        ),
+        front: Stack(alignment: Alignment.bottomCenter, children: [
           DraggableScrollableSheet(
               initialChildSize: minHeight,
               minChildSize: minHeight,
               maxChildSize: min(1.0, max(minHeight, maxExtent)),
+              controller: dController,
               //snap: true, // if snap then show amount in app bar
-              builder: ((context, scrollController) {
-                return FrontCurve(
-                  frontLayerBoxShadow: [],
-                  child: content(scrollController),
+              builder: ((context, ScrollController scrollController) {
+                //print(scrollController.position.pixels);
+                // print(dController.size);
+                /// if we don't like to move it up, we can put the coinsspectabs
+                /// above the dragglable sheet and say, if you're above the
+                /// minHeight, your padding is 0...?
+                var conHeight = 1.ofMediaHeight(context);
+                print(conHeight);
+
+                return
+                    //Stack(
+                    //  alignment: Alignment.topCenter,
+                    //  children: [
+                    //CoinSpecTabs(),
+                    Stack(
+                  alignment: Alignment.topCenter,
+                  children: [
+                    Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+                      CoinSpecTabs(),
+                      Container(height: conHeight),
+                    ]),
+                    Padding(
+                        padding: EdgeInsets.only(top: 48),
+                        child: FrontCurve(
+                          frontLayerBoxShadow: [],
+                          child: content(scrollController),
+                        ))
+                    //)
+                  ],
                 );
               })),
           NavBar(
@@ -134,9 +162,7 @@ class _TransactionsState extends State<Transactions>
               )
             ],
           ),
-        ],
-      ),
-    );
+        ]));
   }
 
   Widget content(ScrollController scrollController) => tabChoice ==
