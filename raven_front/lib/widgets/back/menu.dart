@@ -6,6 +6,7 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/auth.dart';
+import 'package:raven_front/utils/extensions.dart';
 
 //import 'package:raven_front/services/lookup.dart';
 //import 'package:raven_front/utils/zips.dart';
@@ -263,7 +264,6 @@ class _NavMenuState extends State<NavMenu> {
       )
     };
     return Container(
-        height: MediaQuery.of(context).size.height - 118 - 10,
         color: Theme.of(context).backgroundColor,
         child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -280,7 +280,7 @@ class _NavMenuState extends State<NavMenu> {
                           child: Row(
                             children: [logoutButton],
                           )),
-                      SizedBox(height: 40)
+                      SizedBox(height: (.065).ofMediaHeight(context) + 16)
                     ])
                   : Container(),
             ]));
