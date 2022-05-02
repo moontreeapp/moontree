@@ -160,6 +160,7 @@ class _HoldingList extends State<HoldingList> {
               .download.unspents.unspentBalancesByWalletId[Current.walletId] ??
           []);
     holdings = holdings!.where((holding) => holding.value > 0).toList();
+    print('holdings: ${holdings!.length}');
     streams.client.busy.add(_hideList && holdings!.isNotEmpty ? true : false);
     print(
         'Hiding holdings: $_hideList; Hiding while waiting for unspents: $_waitingForUnspents; Freeze holdings while waiting for unspents: $_freezeHoldings');

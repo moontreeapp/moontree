@@ -30,6 +30,7 @@ class HistoryService {
     }
     await _statusesLock.write(() => _statusesToSave[address] = status);
     var histories = await client.getHistory(address.id);
+    print('History for $address : $histories');
     await _addressesLock.write(() {
       if (!_addressesByWalletId.keys.contains(address.walletId)) {
         _addressesByWalletId[address.walletId] = <Address>{};

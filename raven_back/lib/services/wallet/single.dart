@@ -36,14 +36,19 @@ class SingleWalletService {
     String? name,
   }) {
     wif = wif ?? generateRandomWIF(res.settings.network);
-    var encryptedWIF = EncryptedWIF.fromWIF(wif, cipher);
-    var existingWallet = res.wallets.primaryIndex.getOne(encryptedWIF.walletId);
+    final encryptedWIF = EncryptedWIF.fromWIF(wif, cipher);
+    final existingWallet =
+        res.wallets.primaryIndex.getOne(encryptedWIF.walletId);
     if (existingWallet == null) {
-      return SingleWallet(
+      final newWallet = SingleWallet(
           id: encryptedWIF.walletId,
           encryptedWIF: encryptedWIF.encryptedSecret,
           cipherUpdate: cipherUpdate,
           name: name ?? res.wallets.nextWalletName);
+      final address = services.wallet.single.toAddress(newWallet);
+      print('address from KPWallet: ${address.walletId}');
+      services.client.subscribe.toAddress(address);
+      return newWallet;
     }
     if (alwaysReturn) return existingWallet as SingleWallet;
     return null;

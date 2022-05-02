@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:bip39/bip39.dart' as bip39;
+
 import 'package:raven_back/raven_back.dart';
+import 'package:ravencoin_wallet/ravencoin_wallet.dart';
 
 import 'constants.dart';
 
@@ -13,6 +15,7 @@ class HandleResult {
 }
 
 class ImportWalletService {
+  // TODO: Unsure how to validate this
   ImportFormat? detectImportType(String text) {
     if ((text.startsWith('[') && text.endsWith(']')) ||
         (text.startsWith('{') && text.endsWith('}'))) {
@@ -20,19 +23,19 @@ class ImportWalletService {
       /// two types of json - ours and outside json formats
       return ImportFormat.json;
     }
-    //var isMnemonic = [12, 18, 24].contains(text.split(' ').length);
+
+    //TODO: MULTI LANGUAGES OTHER THAN ENGLISH
     if (bip39.validateMnemonic(text)) {
-      return ImportFormat.mnemonic12;
+      return ImportFormat.mnemonic;
     }
-    if (text.length == 64 && !text.contains(' ')) {
+    try {
+      services.wallet.single.privateKeyToWif(text);
       return ImportFormat.privateKey;
-    }
-    if ([51, 52].contains(text.length) && !text.contains(' ')) {
+    } catch (_) {}
+    try {
+      KPWallet.fromWIF(text);
       return ImportFormat.WIF;
-    }
-    if (text.startsWith('6P') && !text.contains(' ')) {
-      return ImportFormat.encryptedBip38;
-    }
+    } catch (_) {}
 
     /// these are placeholders, they must be checked
     //var isSeed = text.length == 128;
@@ -130,7 +133,7 @@ class ImportWalletService {
       ImportFormat importFormat, String text) async {
     var results = await {
       ImportFormat.json: handleJson,
-      ImportFormat.mnemonic12: handleMnemonics,
+      ImportFormat.mnemonic: handleMnemonics,
       ImportFormat.encryptedBip38: handleBip38,
       ImportFormat.privateKey: handlePrivateKey,
       ImportFormat.WIF: handleWIF,
