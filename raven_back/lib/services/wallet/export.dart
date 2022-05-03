@@ -14,8 +14,10 @@ class ExportWalletService {
   Map<String, Map<String, dynamic>> structureForExport() =>
       {'wallets': walletsForExport()};
 
-  Map<String, Map<String, dynamic>> walletsForExport() => {
-        for (var wallet in res.wallets) ...{
+  Map<String, Map<String, dynamic>> walletsToExportFormat(
+          Iterable<Wallet> wallets) =>
+      {
+        for (final wallet in wallets) ...{
           if (wallet.cipher != null)
             wallet.id: {
               'secret': wallet.secret(wallet.cipher!),
@@ -24,6 +26,9 @@ class ExportWalletService {
             }
         }
       };
+
+  Map<String, Map<String, dynamic>> walletsForExport() =>
+      walletsToExportFormat(res.wallets);
 
   String typeForExport(Wallet wallet) => wallet is LeaderWallet
       ? exportedLeaderType

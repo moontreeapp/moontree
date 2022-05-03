@@ -10,7 +10,7 @@ enum ImportFormat {
   WIF,
   seed, // unused
   privateKey,
-  masterPrivateKey,
+  masterKey,
   invalid,
 }
 
