@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:intersperse/intersperse.dart';
-import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/theme/theme.dart';

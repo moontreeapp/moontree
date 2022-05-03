@@ -6,10 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/wallet/constants.dart';
-import 'package:raven_front/components/components.dart';
 import 'package:raven_front/listeners/listeners.dart';
 import 'package:raven_front/widgets/backdrop/backdrop.dart';
-import 'package:raven_front/pages/pages.dart';
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);

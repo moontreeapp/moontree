@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:raven_back/services/transaction/maker.dart';

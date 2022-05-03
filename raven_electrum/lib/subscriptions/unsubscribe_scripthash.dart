@@ -1,4 +1,3 @@
-import '../client/subscribing_client.dart';
 import '../raven_electrum.dart';
 
 extension UnsubscribeScripthashMethod on RavenElectrumClient {

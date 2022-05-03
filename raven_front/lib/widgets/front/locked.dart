@@ -15,7 +15,6 @@
 /// see #489
 
 import 'package:flutter/material.dart';
-import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class LockedScreen extends StatefulWidget {

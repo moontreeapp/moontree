@@ -8,7 +8,6 @@ import 'package:raven_back/utilities/hex.dart' as hex;
 
 import 'package:raven_back/utilities/seed_wallet.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_electrum/raven_electrum.dart';
 import 'package:tuple/tuple.dart';
 
 // derives addresses for leaderwallets
@@ -324,7 +323,7 @@ class LeaderWalletService {
     }
     await res.addresses.saveAll(newAddresses);
     for (final address in newAddresses) {
-      services.client.subscribe.toAddress(address);
+      await services.client.subscribe.toAddress(address);
     }
   }
 }

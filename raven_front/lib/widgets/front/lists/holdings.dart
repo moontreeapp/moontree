@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/spend.dart';
-import 'package:raven_back/streams/client.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/colors.dart';
@@ -205,9 +204,6 @@ class _HoldingList extends State<HoldingList> {
     var rvnHolding = <Widget>[];
     var assetHoldings = <Widget>[];
     for (AssetHolding holding in holdings ?? []) {
-      if (holding.symbol == 'RVN') {
-        var a = 1;
-      }
       var thisHolding = ListTile(
         //dense: true,
         contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
