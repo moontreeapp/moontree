@@ -124,13 +124,10 @@ class _LoginState extends State<Login> {
               ? 'There was ${res.settings.loginAttempts} unsuccessful login attempt'
               : 'There has been ${res.settings.loginAttempts} unsuccessful login attempts',
         ));
-        await res.settings
-            .save(Setting(name: SettingName.Login_Attempts, value: 0));
+        await res.settings.resetLoginAttempts();
       }
     } else {
-      await res.settings.save(Setting(
-          name: SettingName.Login_Attempts,
-          value: res.settings.loginAttempts + 1));
+      await res.settings.incrementLoginAttempts();
       lastFailedAttempt = DateTime.now();
     }
     return x;

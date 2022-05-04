@@ -24,6 +24,8 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
   static final int defaultPort = 50002;
 
   static Map<String, Setting> get defaults => {
+        SettingName.Database_Version:
+            Setting(name: SettingName.Database_Version, value: '1.0.0'),
         SettingName.Electrum_Net:
             Setting(name: SettingName.Electrum_Net, value: Net.Test),
         SettingName.Electrum_Domain:
@@ -47,6 +49,9 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
       }.map(
           (settingName, setting) => MapEntry(settingName.enumString, setting));
 
+  int get databaseVersion =>
+      primaryIndex.getOne(SettingName.Database_Version)!.value;
+
   String get preferredWalletId =>
       primaryIndex.getOne(SettingName.Wallet_Preferred)!.value;
 
@@ -68,4 +73,9 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
   String get netName => net.enumString;
   int get loginAttempts =>
       primaryIndex.getOne(SettingName.Login_Attempts)!.value;
+  Future saveLoginAttempts(int attempts) async =>
+      await save(Setting(name: SettingName.Login_Attempts, value: attempts));
+  Future incrementLoginAttempts() async =>
+      await saveLoginAttempts(loginAttempts + 1);
+  Future resetLoginAttempts() async => await saveLoginAttempts(0);
 }
