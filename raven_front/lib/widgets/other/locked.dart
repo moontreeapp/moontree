@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_front/theme/colors.dart';
 
 class LockedOutTime extends StatefulWidget {
-  final int timeout; // milliseconds
+  final int timeout;
   final DateTime lastFailedAttempt;
   final bool showCountdown;
 
@@ -44,23 +44,24 @@ class _LockedOutTimeState extends State<LockedOutTime>
     slowController.forward(from: 0.0);
     slowController.duration =
         Duration(milliseconds: /*min(1000 * 60 * 2,*/ widget.timeout * 2 /*)*/);
-    //print(widget.timeout);
-    print(widget.timeout ~/ 1000);
     return FadeTransition(
-        opacity: slowAnimation,
-        child: Visibility(
-            //visible: widget.showCountdown || widget.timeout ~/ 1000 >= 1,
-            visible: widget.timeout ~/ 1000 >= 1,
-            //visible: true,
-            child: LockedOutTimeContent(
+            opacity: slowAnimation,
+            child:
+                // visibility not necessary since the text just is blank in empty case
+                //Visibility(
+                //    visible: widget.timeout ~/ 1000 >= 0,
+                //    child:
+                LockedOutTimeContent(
               timeout: widget.timeout,
               lastFailedAttempt: widget.lastFailedAttempt,
-            )));
+            ))
+        //)
+        ;
   }
 }
 
 class LockedOutTimeContent extends StatefulWidget {
-  final int timeout; // milliseconds
+  final int timeout;
   final DateTime lastFailedAttempt;
 
   LockedOutTimeContent({
@@ -75,6 +76,7 @@ class LockedOutTimeContent extends StatefulWidget {
 
 class _LockedOutTimeContentState extends State<LockedOutTimeContent> {
   late Timer _timer;
+  int originalMilliseconds = 0;
 
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
@@ -102,22 +104,29 @@ class _LockedOutTimeContentState extends State<LockedOutTimeContent> {
   Widget build(BuildContext context) {
     final loginTime =
         widget.lastFailedAttempt.add(Duration(milliseconds: widget.timeout));
-    final seconds = max(0, loginTime.difference(DateTime.now()).inSeconds);
+    final milliseconds =
+        max(0, loginTime.difference(DateTime.now()).inMilliseconds);
+    originalMilliseconds = milliseconds > originalMilliseconds
+        ? milliseconds
+        : milliseconds <= 0
+            ? 0
+            : originalMilliseconds;
+    final seconds = milliseconds ~/ 1000;
     final min = seconds ~/ 60;
-    var sec = (seconds % 60);
-    sec = [60, 0].contains(sec) ? sec : sec + 1; // show binary numbers
+    final sec = (seconds % 60);
+    final tryAgain = 'Too many failed login attempts\nPlease try Again in ';
     return Text(
         min > 0 && sec > 0
-            ? 'Locked out for ' +
+            ? tryAgain +
                 min.toString() +
                 ' minute${min == 1 ? '' : 's'} and ' +
                 sec.toString() +
                 ' second${sec == 1 ? '' : 's'}'
-            : sec > 0
-                ? 'Locked out for ' +
-                    sec.toString() +
-                    ' second${sec == 1 ? '' : 's'}'
-                : '', //make it it's own widget to countdown
+            : sec > 0 || (milliseconds > 0 && originalMilliseconds >= 1000)
+                ? tryAgain +
+                    (sec == 0 ? 1 : sec).toString() +
+                    ' second${sec <= 1 ? '' : 's'}'
+                : '',
         style: Theme.of(context)
             .textTheme
             .bodyText2!
