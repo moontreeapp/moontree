@@ -22,7 +22,7 @@ class Export extends StatefulWidget {
 
 class _ExportState extends State<Export> {
   final Backup storage = Backup();
-  Wallet? wallet;
+  Iterable<Wallet>? wallets;
   File? file;
   List<Widget> getExisting = [];
   bool encryptExport = true;
@@ -43,10 +43,23 @@ class _ExportState extends State<Export> {
 
   @override
   Widget build(BuildContext context) {
-    wallet =
-        walletController.text != '' && walletController.text != 'All Wallets'
-            ? res.wallets.byName.getOne(walletController.text)
-            : null;
+    print('walletController.text : ${walletController.text}');
+
+    wallets = walletController.text.isEmpty
+        ? null
+        : (walletController.text != 'All Wallets'
+            ? () {
+                final maybeWallet = res.wallets.byName
+                    // raven_front/lib/widgets/bottom/selection_items.dart
+                    // L315
+                    .getOne(walletController.text.replaceFirst('Wallet ', ''));
+                print('wallet by name is ${maybeWallet}');
+                if (maybeWallet != null) {
+                  return {maybeWallet};
+                }
+                return null;
+              }()
+            : res.wallets);
     return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
   }
 
@@ -129,7 +142,7 @@ class _ExportState extends State<Export> {
           enabled: true,
           label: 'Share',
           onPressed: () async {
-            await Share.share(rawExport);
+            await Share.share(rawExport ?? 'Invalid wallet data');
           },
         ),
         SizedBox(width: 16),
@@ -141,14 +154,19 @@ class _ExportState extends State<Export> {
             components.loading.screen(message: 'Exporting');
             file = await export();
             await Future.delayed(Duration(seconds: 1));
-            streams.app.snack.add(Snack(
-              message: 'Successfully Exported ${walletController.text}',
-            ));
+            if (file != null) {
+              streams.app.snack.add(Snack(
+                message: 'Successfully Exported ${walletController.text}',
+              ));
+            } else {
+              streams.app.snack.add(
+                  Snack(message: 'Failed to Export ${walletController.text}'));
+            }
           },
         )
       ]);
 
-  Future<File> export() async => await storage.writeExport(
+  Future<File?> export() async => await storage.writeExport(
         filename: filePrefix + today,
         rawExport: rawExport,
       );
@@ -162,13 +180,15 @@ class _ExportState extends State<Export> {
       '_' +
       DateTime.now().year.toString().substring(2);
 
-  String get rawExport => services.password.required && encryptExport
-      ? hex.encrypt(
-          convert.hex.encode(
-              jsonEncode(services.wallet.export.structureForExport())
+  String? get rawExport => wallets == null
+      ? null
+      : services.password.required && encryptExport
+          ? hex.encrypt(
+              convert.hex.encode(jsonEncode(
+                      services.wallet.export.structureForExport(wallets!))
                   .codeUnits),
-          services.cipher.currentCipher!)
-      : jsonEncode(services.wallet.export.structureForExport());
+              services.cipher.currentCipher!)
+          : jsonEncode(services.wallet.export.structureForExport(wallets!));
 
   void _produceWalletModal() async {
     await SelectionItems(context, modalSet: SelectionSet.Wallets)
