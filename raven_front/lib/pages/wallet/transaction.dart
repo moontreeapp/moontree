@@ -153,8 +153,8 @@ class _TransactionPageState extends State<TransactionPage> {
           title: title,
           content: 'View ${description} in external browser?',
           behaviors: {
-            'Cancel': Navigator.of(context).pop,
-            'Browser': () {
+            'Cancel'.toUpperCase(): Navigator.of(context).pop,
+            'Browser'.toUpperCase(): () {
               Navigator.of(context).pop();
               launch(url + elementFull(text));
             },
