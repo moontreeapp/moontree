@@ -19,13 +19,15 @@ class ExportWalletService {
           Iterable<Wallet> wallets) =>
       {
         for (final wallet in wallets) ...{
-          wallet.name: {
+          wallet.id: {
             'secret': wallet.encrypted, //.secret(wallet.cipher!),
             // For now:
             // Leaderwallets are always mnemonics
             // Singlewallets are always WIFs
             'type': typeForExport(wallet),
             'cipherUpdate': wallet.cipherUpdate.toMap,
+            'name': wallet.name,
+            'backedUp': wallet.backedUp,
           }
         }
       };
