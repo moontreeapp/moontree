@@ -44,17 +44,20 @@ class _LockedOutTimeState extends State<LockedOutTime>
     slowController.forward(from: 0.0);
     slowController.duration =
         Duration(milliseconds: /*min(1000 * 60 * 2,*/ widget.timeout * 2 /*)*/);
-    return FadeTransition(
-            opacity: slowAnimation,
-            child:
-                // visibility not necessary since the text just is blank in empty case
-                //Visibility(
-                //    visible: widget.timeout ~/ 1000 >= 0,
-                //    child:
-                LockedOutTimeContent(
-              timeout: widget.timeout,
-              lastFailedAttempt: widget.lastFailedAttempt,
-            ))
+
+    /// fade removal requested:tel
+    return //FadeTransition(
+        // opacity: slowAnimation,
+        // child:
+        // visibility not necessary since the text just is blank in empty case
+        //Visibility(
+        //    visible: widget.timeout ~/ 1000 >= 0,
+        //    child:
+        LockedOutTimeContent(
+      timeout: widget.timeout,
+      lastFailedAttempt: widget.lastFailedAttempt,
+    )
+        //)
         //)
         ;
   }
@@ -114,7 +117,7 @@ class _LockedOutTimeContentState extends State<LockedOutTimeContent> {
     final seconds = milliseconds ~/ 1000;
     final min = seconds ~/ 60;
     final sec = (seconds % 60);
-    final tryAgain = 'Too many failed login attempts\nPlease try Again in ';
+    final tryAgain = 'Please try Again in ';
     return Text(
         min > 0 && sec > 0
             ? tryAgain +
@@ -124,8 +127,8 @@ class _LockedOutTimeContentState extends State<LockedOutTimeContent> {
                 ' second${sec == 1 ? '' : 's'}'
             : sec > 0 || (milliseconds > 0 && originalMilliseconds >= 1000)
                 ? tryAgain +
-                    (sec == 0 ? 1 : sec).toString() +
-                    ' second${sec <= 1 ? '' : 's'}'
+                    (sec + 1).toString() +
+                    ' second${sec + 1 == 1 ? '' : 's'}'
                 : '',
         style: Theme.of(context)
             .textTheme

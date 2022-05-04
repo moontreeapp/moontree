@@ -18,7 +18,6 @@ class _LoginState extends State<Login> {
   FocusNode loginFocus = FocusNode();
   FocusNode unlockFocus = FocusNode();
   DateTime lastFailedAttempt = DateTime.now();
-  bool showCountdown = false;
 
   @override
   void initState() {
@@ -48,11 +47,11 @@ class _LoginState extends State<Login> {
         ),
         SliverToBoxAdapter(
           child: Container(
-              alignment: Alignment.center, height: 70, child: countdown),
+              alignment: Alignment.center, height: 60, child: countdown),
         ),
         SliverToBoxAdapter(
           child: Container(
-              alignment: Alignment.center, height: 70, child: loginField),
+              alignment: Alignment.center, height: 80, child: loginField),
         ),
         SliverFillRemaining(
             hasScrollBody: false,
@@ -93,6 +92,12 @@ class _LoginState extends State<Login> {
         context,
         focusNode: loginFocus,
         labelText: 'Password',
+        errorText: password.text == '' && res.settings.loginAttempts > 0
+            ? 'Incorrect Password'
+            : null,
+        //hintText:
+        //    password.text == '' && res.settings.loginAttempts > 0 ? null : '',
+        helperText: password.text == '' ? null : '',
         //suffixIcon: IconButton(
         //  icon: Icon(passwordVisible ? Icons.visibility : Icons.visibility_off,
         //      color: AppColors.black60),
@@ -101,6 +106,10 @@ class _LoginState extends State<Login> {
         //  }),
         //),
       ),
+      onChanged: (_) {
+        // might interfere with fade, but thats ok we took fade out.
+        setState(() {});
+      },
       onEditingComplete: () {
         FocusScope.of(context).requestFocus(unlockFocus);
         setState(() {});
@@ -112,7 +121,7 @@ class _LoginState extends State<Login> {
               timeFromAttempts,
       focusNode: unlockFocus,
       label: 'Unlock',
-      disabledOnPressed: () => setState(() => showCountdown = true),
+      disabledOnPressed: () => setState(() {}),
       onPressed: () async => await submit());
 
   Future<bool> validate() async {
