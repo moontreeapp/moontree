@@ -33,6 +33,8 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
         return SettingName.User_Name;
       case 9:
         return SettingName.Send_Immediate;
+      case 10:
+        return SettingName.Lockout_Milliseconds;
       default:
         return SettingName.Electrum_Net;
     }
@@ -70,6 +72,9 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
         break;
       case SettingName.Send_Immediate:
         writer.writeByte(9);
+        break;
+      case SettingName.Lockout_Milliseconds:
+        writer.writeByte(10);
         break;
     }
   }

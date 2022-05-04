@@ -42,6 +42,8 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
             Setting(name: SettingName.User_Name, value: null),
         SettingName.Send_Immediate:
             Setting(name: SettingName.Send_Immediate, value: false),
+        SettingName.Lockout_Milliseconds:
+            Setting(name: SettingName.Lockout_Milliseconds, value: 125),
       }.map(
           (settingName, setting) => MapEntry(settingName.enumString, setting));
 

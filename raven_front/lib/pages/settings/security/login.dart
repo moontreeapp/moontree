@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/theme/colors.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class Login extends StatefulWidget {
@@ -11,9 +14,17 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   var password = TextEditingController();
   var passwordVisible = false;
-  bool buttonEnabled = false;
   FocusNode loginFocus = FocusNode();
   FocusNode unlockFocus = FocusNode();
+  // milliseconds
+  int timeout = max(
+      res.settings.primaryIndex
+              .getOne(SettingName.Lockout_Milliseconds)
+              ?.value ??
+          0,
+      125);
+  DateTime lastFailedAttempt = DateTime.now();
+  bool showCountdown = false;
 
   @override
   void initState() {
@@ -38,8 +49,12 @@ class _LoginState extends State<Login> {
       child: CustomScrollView(slivers: <Widget>[
         SliverToBoxAdapter(
           child: Container(
-              height: MediaQuery.of(context).size.height / 3 + 16 + 16,
+              height: MediaQuery.of(context).size.height / 3 + 16 + 16 - 70,
               child: welcomeMessage),
+        ),
+        SliverToBoxAdapter(
+          child: Container(
+              alignment: Alignment.center, height: 70, child: countdown),
         ),
         SliverToBoxAdapter(
           child: Container(
@@ -60,7 +75,7 @@ class _LoginState extends State<Login> {
       ]));
 
   Widget get welcomeMessage =>
-      Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Column(mainAxisAlignment: MainAxisAlignment.end, children: [
         Image(image: AssetImage('assets/logo/moontree.png')),
         SizedBox(height: 8),
         Text(
@@ -68,6 +83,11 @@ class _LoginState extends State<Login> {
           style: Theme.of(context).textTheme.headline1,
         ),
       ]);
+
+  Widget get countdown => LockedOutTime(
+        lastFailedAttempt: lastFailedAttempt,
+        timeout: timeout,
+      );
 
   Widget get loginField => TextField(
       focusNode: loginFocus,
@@ -94,15 +114,31 @@ class _LoginState extends State<Login> {
       });
 
   Widget get unlockButton => components.buttons.actionButton(context,
-      enabled: validate() && password.text != '',
+      enabled: password.text != '' &&
+          DateTime.now().difference(lastFailedAttempt).inMilliseconds >=
+              timeout,
       focusNode: unlockFocus,
       label: 'Unlock',
+      disabledOnPressed: () => setState(() => showCountdown = true),
       onPressed: () async => await submit());
 
-  bool validate() => services.password.validate.password(password.text);
+  Future<bool> validate() async {
+    var x = services.password.validate.password(password.text);
+    if (x) {
+      timeout = 0;
+      await res.settings.save(
+          Setting(name: SettingName.Lockout_Milliseconds, value: timeout));
+    } else {
+      timeout = min(timeout + timeout, 1000 * 60 * 60);
+      await res.settings.save(
+          Setting(name: SettingName.Lockout_Milliseconds, value: timeout));
+      lastFailedAttempt = DateTime.now();
+    }
+    return x;
+  }
 
   Future submit({bool showFailureMessage = true}) async {
-    if (services.password.validate.password(password.text)) {
+    if (await validate()) {
       await Future.delayed(Duration(milliseconds: 200));
       FocusScope.of(context).unfocus();
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
@@ -113,6 +149,10 @@ class _LoginState extends State<Login> {
       services.cipher.loginTime();
       streams.app.splash.add(false); // trigger to refresh app bar again
       streams.app.logout.add(false);
-    } else {}
+    } else {
+      setState(() {
+        password.text = '';
+      });
+    }
   }
 }

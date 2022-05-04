@@ -37,4 +37,7 @@ enum SettingName {
 
   @HiveField(9)
   Send_Immediate,
+
+  @HiveField(10)
+  Lockout_Milliseconds,
 }
