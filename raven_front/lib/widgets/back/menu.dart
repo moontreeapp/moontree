@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
@@ -7,6 +8,7 @@ import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/auth.dart';
 import 'package:raven_front/utils/extensions.dart';
+import 'package:raven_back/streams/app.dart';
 
 //import 'package:raven_front/services/lookup.dart';
 //import 'package:raven_front/utils/zips.dart';
@@ -52,6 +54,7 @@ class _NavMenuState extends State<NavMenu> {
     bool arrow = false,
     Map<String, dynamic>? arguments,
     Function? execute,
+    Function? executeAfter,
   }) =>
       ListTile(
         onTap: () {
@@ -68,6 +71,9 @@ class _NavMenuState extends State<NavMenu> {
             streams.app.fling.add(false);
           } else {
             streams.app.setting.add(link);
+          }
+          if (executeAfter != null) {
+            executeAfter();
           }
         },
         leading: icon != null ? Icon(icon, color: Colors.white) : image!,
@@ -91,7 +97,19 @@ class _NavMenuState extends State<NavMenu> {
           destination(
               icon: MdiIcons.keyMinus,
               name: 'Export',
-              link: '/settings/export'),
+              link: '/settings/export',
+              executeAfter: () async {
+                if (Current.wallet is LeaderWallet &&
+                    streams.app.triggers.value == ThresholdTrigger.backup &&
+                    Current.wallet.backedUp) {
+                  await Future.delayed(Duration(milliseconds: 800));
+                  streams.app.xlead.add(true);
+                  Navigator.of(components.navigator.routeContext!).pushNamed(
+                    '/security/backup',
+                    arguments: {'fadeIn': true},
+                  );
+                }
+              }),
         ],
       ),
       '/settings/settings': ListView(

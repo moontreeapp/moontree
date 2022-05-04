@@ -48,8 +48,9 @@ class _HomeState extends State<Home> {
           '/security/backup',
           arguments: {'fadeIn': true},
         );
+        setState(() {});
         return;
-        //setState(() {});
+
         /// reset till next time they open app?
         //streams.app.triggers.add(null);
       }
