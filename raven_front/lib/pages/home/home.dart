@@ -41,7 +41,7 @@ class _HomeState extends State<Home> {
       if (Current.wallet is LeaderWallet &&
           thresholdTrigger == ThresholdTrigger.backup &&
           !Current.wallet.backedUp) {
-        await Future.delayed(Duration(milliseconds: 800));
+        await Future.delayed(Duration(milliseconds: 800 * 3));
         streams.app.xlead.add(true);
         Navigator.of(components.navigator.routeContext!).pushNamed(
           '/security/backup',
