@@ -44,11 +44,14 @@ class _LockedOutTimeState extends State<LockedOutTime>
     slowController.forward(from: 0.0);
     slowController.duration =
         Duration(milliseconds: /*min(1000 * 60 * 2,*/ widget.timeout * 2 /*)*/);
+    //print(widget.timeout);
+    print(widget.timeout ~/ 1000);
     return FadeTransition(
         opacity: slowAnimation,
         child: Visibility(
             //visible: widget.showCountdown || widget.timeout ~/ 1000 >= 1,
-            visible: true,
+            visible: widget.timeout ~/ 1000 >= 1,
+            //visible: true,
             child: LockedOutTimeContent(
               timeout: widget.timeout,
               lastFailedAttempt: widget.lastFailedAttempt,
@@ -101,15 +104,20 @@ class _LockedOutTimeContentState extends State<LockedOutTimeContent> {
         widget.lastFailedAttempt.add(Duration(milliseconds: widget.timeout));
     final seconds = max(0, loginTime.difference(DateTime.now()).inSeconds);
     final min = seconds ~/ 60;
-    final sec = seconds % 60;
+    var sec = (seconds % 60);
+    sec = [60, 0].contains(sec) ? sec : sec + 1; // show binary numbers
     return Text(
-        min > 0 || sec > 0
+        min > 0 && sec > 0
             ? 'Locked out for ' +
                 min.toString() +
                 ' minute${min == 1 ? '' : 's'} and ' +
                 sec.toString() +
                 ' second${sec == 1 ? '' : 's'}'
-            : '', //make it it's own widget to countdown
+            : sec > 0
+                ? 'Locked out for ' +
+                    sec.toString() +
+                    ' second${sec == 1 ? '' : 's'}'
+                : '', //make it it's own widget to countdown
         style: Theme.of(context)
             .textTheme
             .bodyText2!

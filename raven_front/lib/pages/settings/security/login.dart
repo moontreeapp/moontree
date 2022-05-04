@@ -5,6 +5,7 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/colors.dart';
 import 'package:raven_front/widgets/widgets.dart';
+import 'package:raven_back/streams/app.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -16,13 +17,6 @@ class _LoginState extends State<Login> {
   var passwordVisible = false;
   FocusNode loginFocus = FocusNode();
   FocusNode unlockFocus = FocusNode();
-  // milliseconds
-  int timeout = max(
-      res.settings.primaryIndex
-              .getOne(SettingName.Lockout_Milliseconds)
-              ?.value ??
-          0,
-      125);
   DateTime lastFailedAttempt = DateTime.now();
   bool showCountdown = false;
 
@@ -86,7 +80,7 @@ class _LoginState extends State<Login> {
 
   Widget get countdown => LockedOutTime(
         lastFailedAttempt: lastFailedAttempt,
-        timeout: timeout,
+        timeout: timeFromAttempts,
       );
 
   Widget get loginField => TextField(
@@ -107,7 +101,6 @@ class _LoginState extends State<Login> {
         //  }),
         //),
       ),
-      onChanged: (_) => setState(() {}),
       onEditingComplete: () {
         FocusScope.of(context).requestFocus(unlockFocus);
         setState(() {});
@@ -116,22 +109,28 @@ class _LoginState extends State<Login> {
   Widget get unlockButton => components.buttons.actionButton(context,
       enabled: password.text != '' &&
           DateTime.now().difference(lastFailedAttempt).inMilliseconds >=
-              timeout,
+              timeFromAttempts,
       focusNode: unlockFocus,
       label: 'Unlock',
       disabledOnPressed: () => setState(() => showCountdown = true),
       onPressed: () async => await submit());
 
   Future<bool> validate() async {
-    var x = services.password.validate.password(password.text);
+    final x = services.password.validate.password(password.text);
     if (x) {
-      timeout = 0;
-      await res.settings.save(
-          Setting(name: SettingName.Lockout_Milliseconds, value: timeout));
+      if (res.settings.loginAttempts > 0) {
+        streams.app.snack.add(Snack(
+          message: res.settings.loginAttempts == 1
+              ? 'There was ${res.settings.loginAttempts} unsuccessful login attempt'
+              : 'There has been ${res.settings.loginAttempts} unsuccessful login attempts',
+        ));
+        await res.settings
+            .save(Setting(name: SettingName.Login_Attempts, value: 0));
+      }
     } else {
-      timeout = min(timeout + timeout, 1000 * 60 * 60);
-      await res.settings.save(
-          Setting(name: SettingName.Lockout_Milliseconds, value: timeout));
+      await res.settings.save(Setting(
+          name: SettingName.Login_Attempts,
+          value: res.settings.loginAttempts + 1));
       lastFailedAttempt = DateTime.now();
     }
     return x;
@@ -155,4 +154,7 @@ class _LoginState extends State<Login> {
       });
     }
   }
+
+  int get timeFromAttempts =>
+      min(pow(2, res.settings.loginAttempts) * 125, 1000 * 60 * 60).toInt();
 }

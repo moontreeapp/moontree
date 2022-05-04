@@ -42,8 +42,8 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
             Setting(name: SettingName.User_Name, value: null),
         SettingName.Send_Immediate:
             Setting(name: SettingName.Send_Immediate, value: false),
-        SettingName.Lockout_Milliseconds:
-            Setting(name: SettingName.Lockout_Milliseconds, value: 125),
+        SettingName.Login_Attempts:
+            Setting(name: SettingName.Login_Attempts, value: 0),
       }.map(
           (settingName, setting) => MapEntry(settingName.enumString, setting));
 
@@ -66,4 +66,6 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
       primaryIndex.getOne(SettingName.Electrum_Net)!.value == Net.Main;
   NetworkType get network => networks[net]!;
   String get netName => net.enumString;
+  int get loginAttempts =>
+      primaryIndex.getOne(SettingName.Login_Attempts)!.value;
 }
