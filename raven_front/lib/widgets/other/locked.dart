@@ -128,7 +128,7 @@ class _LockedOutTimeContentState extends State<LockedOutTimeContent> {
             : sec > 0 || (milliseconds > 0 && originalMilliseconds >= 1000)
                 ? tryAgain +
                     (sec + 1).toString() +
-                    ' second${sec + 1 == 1 ? '' : 's'}'
+                    ' second${sec + 1 == 1 ? '.' : 's.'}'
                 : '',
         style: Theme.of(context)
             .textTheme
