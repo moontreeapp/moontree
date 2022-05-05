@@ -69,16 +69,11 @@ class _LoginState extends State<Login> {
       ]));
 
   Widget get welcomeMessage =>
-<<<<<<< HEAD
       Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Container(
           child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
           height: 110,
         ),
-=======
-      Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-        Image(image: AssetImage('assets/logo/moontree.png')),
->>>>>>> 4085c657b56e43fd3ad9dd5e43ce4768618cdac7
         SizedBox(height: 8),
         Text(
           'Welcome Back',
