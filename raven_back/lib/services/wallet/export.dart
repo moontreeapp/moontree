@@ -2,6 +2,9 @@ import 'package:raven_back/raven_back.dart';
 
 import 'constants.dart';
 
+import 'package:convert/convert.dart' as convert;
+import 'package:raven_back/utilities/hex.dart' as hex;
+
 class ExportWalletService {
   /// entire file is encrypted
   /// export format:
@@ -12,19 +15,27 @@ class ExportWalletService {
   /// values in our system is another map with id as key,
   /// other systems could use list or whatever.
   Map<String, Map<String, dynamic>> structureForExport(
-          Iterable<Wallet> wallets) =>
+    Iterable<Wallet> wallets,
+  ) =>
       {'wallets': walletsToExportFormat(wallets)};
 
   Map<String, Map<String, dynamic>> walletsToExportFormat(
-          Iterable<Wallet> wallets) =>
+    Iterable<Wallet> wallets,
+  ) =>
       {
         for (final wallet in wallets) ...{
           wallet.id: {
             'wallet name': wallet.name,
             'wallet type': typeForExport(wallet),
             'backed up': wallet.backedUp,
-            'secret': wallet.encrypted, //.secret(wallet.cipher!),
-            'secret type': wallet.secretTypeToString,
+            'secret': services.password.required
+                ? hex.encrypt(convert.hex.encode(wallet.encrypted.codeUnits),
+                    services.cipher.currentCipher!)
+                : wallet.encrypted, //.secret(wallet.cipher!),
+            'secret type': services.password.required
+                ? hex.encrypt(convert.hex.encode(wallet.encrypted.codeUnits),
+                    services.cipher.currentCipher!)
+                : wallet.secretTypeToString,
             // For now:
             // Leaderwallets are always mnemonics
             // Singlewallets are always WIFs

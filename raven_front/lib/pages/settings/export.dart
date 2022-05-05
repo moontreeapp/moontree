@@ -3,10 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
-import 'package:convert/convert.dart' as convert;
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
-import 'package:raven_back/utilities/hex.dart' as hex;
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/pages/misc/checkout.dart';
 import 'package:raven_front/services/storage.dart';
@@ -25,7 +23,6 @@ class _ExportState extends State<Export> {
   Iterable<Wallet>? wallets;
   File? file;
   List<Widget> getExisting = [];
-  bool encryptExport = true;
   FocusNode previewFocus = FocusNode();
   TextEditingController walletController = TextEditingController();
 
@@ -183,13 +180,7 @@ class _ExportState extends State<Export> {
 
   String? get rawExport => wallets == null
       ? null
-      : services.password.required && encryptExport
-          ? hex.encrypt(
-              convert.hex.encode(jsonEncode(
-                      services.wallet.export.structureForExport(wallets!))
-                  .codeUnits),
-              services.cipher.currentCipher!)
-          : jsonEncode(services.wallet.export.structureForExport(wallets!));
+      : jsonEncode(services.wallet.export.structureForExport(wallets!));
 
   void _produceWalletModal() async {
     await SelectionItems(context, modalSet: SelectionSet.Wallets)
