@@ -318,9 +318,11 @@ class _CheckoutState extends State<Checkout> {
           enabled: !disabled,
           label: struct.buttonWord,
           onPressed: () async {
-            components.loading.screen(message: struct.loadingMessage);
+            components.loading.screen(
+                message: struct.loadingMessage,
+                playCount: 2,
+                then: struct.buttonAction);
             streams.spend.form.add(null);
-            (struct.buttonAction ?? () {})();
           },
         )
       ]);

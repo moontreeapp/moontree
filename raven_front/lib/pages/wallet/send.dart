@@ -679,9 +679,7 @@ class _SendState extends State<Send> {
             ['Transaction Fee', 'calculating fee...']
           ],
           total: 'calculating total...',
-          buttonAction: () =>
-              // will this execute the values here or there?
-              streams.spend.send.add(streams.spend.made.value),
+          buttonAction: () => streams.spend.send.add(streams.spend.made.value),
           buttonWord: 'Send',
           loadingMessage: 'Sending',
         )

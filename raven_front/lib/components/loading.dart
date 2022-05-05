@@ -6,8 +6,10 @@ class LoadingComponents {
   Future<void> screen({
     BuildContext? context,
     String? message,
-    bool staticImage = false,
+    int? playCount,
     bool returnHome = true,
+    Function? then,
+    bool staticImage = false,
   }) async {
     await showModalBottomSheet<void>(
         context: context ?? components.navigator.routeContext!,
@@ -19,7 +21,9 @@ class LoadingComponents {
         shape: components.shape.topRounded8,
         builder: (BuildContext context) => Loader(
               message: message ?? 'Loading',
+              playCount: playCount,
               returnHome: returnHome,
+              then: then,
               staticImage: staticImage,
             ));
   }

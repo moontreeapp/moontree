@@ -68,6 +68,7 @@ class CipherService {
       encryptedEntropy: encrypted_entropy,
       cipherUpdate: currentCipherUpdate,
       name: wallet.name,
+      backedUp: wallet.backedUp,
       seed: wallet.seed, // necessary?
     );
   }

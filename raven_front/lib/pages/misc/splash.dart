@@ -8,6 +8,7 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/wallet/constants.dart';
 import 'package:raven_front/listeners/listeners.dart';
 import 'package:raven_front/widgets/backdrop/backdrop.dart';
+import 'package:raven_front/components/components.dart';
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
@@ -44,25 +45,25 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   }
 
   Future<void> _init() async {
-    await Future.delayed(Duration(milliseconds: 4000));
+    await Future.delayed(Duration(milliseconds: 3500));
     final loadingHelper = DataLoadingHelper(context);
     await loadingHelper.setupDatabase();
+    await Future.delayed(Duration(milliseconds: 1000));
     setState(() {
       print('setting state');
-      shape = BorderRadius.only(
-        topLeft: Radius.circular(8),
-        topRight: Radius.circular(8),
-      );
+      shape = components.shape.topRoundedBorder8;
     });
+    _fadeController.forward();
     await Future.delayed(Duration(milliseconds: 1000));
+    //await Future.delayed(Duration(milliseconds: 1000));
     //_slideController.forward();
     //// hack to trigger animate Welcome
     //streams.app.loading.add(false);
     //streams.app.loading.add(true);
     //streams.app.loading.add(false);
     //await Future.delayed(Duration(milliseconds: 1000));
-    _fadeController.forward();
-    await Future.delayed(Duration(milliseconds: 1000));
+    //_fadeController.forward();
+    //await Future.delayed(Duration(milliseconds: 1000));
     //setState(() {
     //  _slideController.reset();
     //  showAppBar = true;
@@ -70,6 +71,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     //await Future.delayed(Duration(milliseconds: 100));
     loadingHelper.redirectToLoginOrHome();
     streams.app.splash.add(false);
+    await loadingHelper.setupWaiters();
   }
 
   @override
@@ -96,7 +98,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
           SlideTransition(
               position: _slideAnimation,
               child: AnimatedContainer(
-                  duration: Duration(seconds: 1),
+                  duration: Duration(milliseconds: 1000),
                   alignment: Alignment.center,
                   decoration:
                       BoxDecoration(borderRadius: shape, color: Colors.white),
@@ -128,6 +130,9 @@ class DataLoadingHelper {
     var hiveInit =
         HiveInitializer(init: (dbDir) => Hive.initFlutter(), beforeLoad: () {});
     await hiveInit.setUp();
+  }
+
+  Future setupWaiters() async {
     await initWaiters();
     unawaited(waiters.app.logoutThread());
     initListeners();
@@ -180,52 +185,52 @@ class DataLoadingHelper {
   }
 
   Future redirectToLoginOrHome() async {
-    if (services.password.required) {
-      if (services.password.interruptedPasswordChange()) {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-                    title: Text('Issue detected'),
-                    content: Text(
-                        'Change Password process in progress, please submit your previous password...'),
-                    actions: [
-                      TextButton(
-                          child: Text('ok'),
-                          onPressed: () => Navigator.pushReplacementNamed(
-                              context, '/security/resume',
-                              arguments: {}))
-                    ]));
-      } else {
-        Future.microtask(() => Navigator.pushReplacementNamed(
-            context, '/security/login',
-            arguments: {}));
-
-        /// testing out instant/custom page transitions
-        /// https://stackoverflow.com/questions/52698340/animation-for-named-routes
-        //    Navigator.of(components.navigator.routeContext!)
-        //        .push(PageRouteBuilder(
-        //  pageBuilder: (_, __, ___) => pages.routes(
-        //          components.navigator.routeContext!)['/security/login']!(
-        //      components.navigator.routeContext!),
-        //  transitionsBuilder: (_, a, __, c) => c,
-        //  transitionDuration: Duration(milliseconds: 0),
-        //)));
-      }
+    //if (services.password.required) { // passwords always required now.
+    if (services.password.interruptedPasswordChange()) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                  title: Text('Issue detected'),
+                  content: Text(
+                      'Change Password process in progress, please submit your previous password...'),
+                  actions: [
+                    TextButton(
+                        child: Text('ok'),
+                        onPressed: () => Navigator.pushReplacementNamed(
+                            context, '/security/resume',
+                            arguments: {}))
+                  ]));
     } else {
-      //Future.delayed(Duration(seconds: 60));
-      Future.microtask(() =>
-          Navigator.pushReplacementNamed(context, '/home', arguments: {}));
+      Future.microtask(() => Navigator.pushReplacementNamed(
+          context, '/security/login',
+          arguments: {}));
 
       /// testing out instant/custom page transitions
-      //Navigator.of(components.navigator.routeContext!)
-      //    .push(PageRouteBuilder(
-      //  pageBuilder: (_, __, ___) =>
-      //      pages.routes(components.navigator.routeContext!)['/home']!(
-      //          components.navigator.routeContext!),
-      //  transitionsBuilder: (_, a, __, c) =>
-      //      FadeTransition(opacity: a, child: c),
-      //  transitionDuration: Duration(milliseconds: 2000),
+      /// https://stackoverflow.com/questions/52698340/animation-for-named-routes
+      //    Navigator.of(components.navigator.routeContext!)
+      //        .push(PageRouteBuilder(
+      //  pageBuilder: (_, __, ___) => pages.routes(
+      //          components.navigator.routeContext!)['/security/login']!(
+      //      components.navigator.routeContext!),
+      //  transitionsBuilder: (_, a, __, c) => c,
+      //  transitionDuration: Duration(milliseconds: 0),
       //)));
     }
+    //} else {
+    //Future.delayed(Duration(seconds: 60));
+    //  Future.microtask(() =>
+    //      Navigator.pushReplacementNamed(context, '/home', arguments: {}));
+
+    /// testing out instant/custom page transitions
+    //Navigator.of(components.navigator.routeContext!)
+    //    .push(PageRouteBuilder(
+    //  pageBuilder: (_, __, ___) =>
+    //      pages.routes(components.navigator.routeContext!)['/home']!(
+    //          components.navigator.routeContext!),
+    //  transitionsBuilder: (_, a, __, c) =>
+    //      FadeTransition(opacity: a, child: c),
+    //  transitionDuration: Duration(milliseconds: 2000),
+    //)));
+    //}
   }
 }

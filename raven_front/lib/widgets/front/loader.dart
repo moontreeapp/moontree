@@ -10,12 +10,16 @@ import 'package:raven_front/widgets/widgets.dart';
 
 class Loader extends StatefulWidget {
   final String message;
-  final bool staticImage = false; // enforce false, evaluate after release build
+  final int? playCount; // how long to show before dismissing loading screen
+  final Function? then; // function to call when dismissed
   final bool returnHome;
+  final bool staticImage = false; // enforce false, evaluate after release build
   const Loader({
     this.message = 'Loading...',
+    this.playCount,
+    this.then,
     this.returnHome = true,
-    staticImage = false,
+    staticImage = false, //unused
   }) : super();
 
   @override
@@ -27,6 +31,27 @@ class _LoaderState extends State<Loader> {
   late List<StreamSubscription> listeners = [];
   late DateTime startTime;
 
+  Future<void> _init(int duration) async {
+    await Future.delayed(Duration(milliseconds: duration * widget.playCount!));
+    _goSomewhere();
+    _doSomething();
+  }
+
+  void _goSomewhere() {
+    if (widget.returnHome) {
+      Navigator.popUntil(
+          components.navigator.routeContext!, ModalRoute.withName('/home'));
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
+  void _doSomething() {
+    if (widget.then != null) {
+      widget.then!();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -35,22 +60,22 @@ class _LoaderState extends State<Loader> {
     // intelligently we must know which stream matters and listen to that
     // like streams.spend.success or whatever.
     streams.app.snack.add(null); // clear out first just in case.
-    listeners.add(streams.app.snack.listen((Snack? value) async {
-      if (value != null) {
-        if (!widget.staticImage) {
-          var duration = 1330;
-          var waited = DateTime.now().difference(startTime).inMilliseconds;
-          var wait = (duration - (waited % duration)) % duration;
-          await Future.delayed(Duration(milliseconds: wait));
+    final duration = 1330;
+    if (widget.playCount == null) {
+      listeners.add(streams.app.snack.listen((Snack? value) async {
+        if (value != null) {
+          if (!widget.staticImage) {
+            var waited = DateTime.now().difference(startTime).inMilliseconds;
+            var wait = (duration - (waited % duration)) % duration;
+            await Future.delayed(Duration(milliseconds: wait));
+          }
+          _goSomewhere();
+          _doSomething();
         }
-        if (widget.returnHome) {
-          Navigator.popUntil(
-              components.navigator.routeContext!, ModalRoute.withName('/home'));
-        } else {
-          Navigator.of(context).pop();
-        }
-      }
-    }));
+      }));
+    } else {
+      _init(duration);
+    }
     if (!widget.staticImage) {
       startTime = DateTime.now();
     }
