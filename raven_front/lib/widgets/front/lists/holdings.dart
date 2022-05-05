@@ -154,14 +154,6 @@ class _HoldingList extends State<HoldingList> {
         .toList();
     balances = Current.wallet.balances.toSet();
     addresses = Current.wallet.addresses.toSet();
-    // todo: move to back end
-    //streams.client.busy.add(_hideList && holdings!.isNotEmpty ? true : false);
-    //print('res.balances.isEmpty ${res.balances.isEmpty}');
-    //print('balances.isEmpty ${balances.isEmpty}');
-    //print('res.transactions.isEmpty ${res.transactions.isEmpty}');
-    //print('res.assets ${res.assets.data.length}');
-    //print('holdings.length ${holdings?.length}');
-    //print('holdingCount $holdingCount');
     return balances.isEmpty && addresses.isEmpty
         ? components.empty.getAssetsPlaceholder(context,
             scrollController: widget.scrollController,

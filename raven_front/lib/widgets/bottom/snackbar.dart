@@ -110,7 +110,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         elevation: 1,
         dismissDirection: DismissDirection.horizontal,
         backgroundColor: AppColors.snackBar,
-        shape: components.shape.topRounded16,
+        shape: components.shape.topRounded8,
         content: msg,
       ));
     } else /*if (snack!.link == null && snack!.details == null)*/ {
@@ -130,9 +130,8 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         elevation: 0,
         dismissDirection: DismissDirection.none,
         backgroundColor: AppColors.snackBar,
-        shape: components.shape.topRounded16,
+        shape: components.shape.topRounded8,
         content: msg,
-
         behavior: SnackBarBehavior.floating,
         margin: EdgeInsets.only(bottom: 106.figma(context)),
         padding: EdgeInsets.only(top: 0, bottom: 0, left: 0, right: 0),

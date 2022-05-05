@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:raven_back/streams/client.dart';
 import 'package:raven_back/streams/wallet.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/raven_back.dart';
@@ -122,6 +123,10 @@ class SubscribeService {
       return false;
     }
     streams.client.busy.add(true);
+    streams.client.activity.add(ActivityMessage(
+        active: true,
+        title: 'Syncing with the network',
+        message: 'Downloading your transactions...'));
     final addresses = res.addresses.toList();
     var existing = false;
     for (var address in addresses) {
@@ -148,6 +153,8 @@ class SubscribeService {
       }
     }
     streams.client.busy.add(false);
+    streams.client.activity.add(ActivityMessage(active: false));
+
     return true;
   }
 
