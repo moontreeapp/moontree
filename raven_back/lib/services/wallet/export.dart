@@ -1,3 +1,18 @@
+/*
+export json string example: 
+{
+  "wallets":{
+    "03d992f22d9e178a4de02e99ffffe885bd5135e65d183200da3b566502eca79342":{
+      "wallet name":"1",
+      "wallet type":"Leader",
+      "backed up":false,
+      "secret":"c66dbb68916e32d273f415186507782fc14ade7cd0cb580bbba8d301db428a30a80377b0440c85a612b716395801f8d28dd31b97e603dd642a951c301305af5ea163e5bec7020557960f95e56e6d88e0",
+      "secret type":"8bbd7639ec6288bcf700667f5b3817f1",
+      "cipher encryption":{
+        "CipherType":"AES",
+        "PasswordId":"0"}}}}
+*/
+
 import 'package:raven_back/raven_back.dart';
 
 import 'constants.dart';
@@ -29,16 +44,18 @@ class ExportWalletService {
             'wallet type': typeForExport(wallet),
             'backed up': wallet.backedUp,
             'secret': services.password.required
-                ? hex.encrypt(convert.hex.encode(wallet.encrypted.codeUnits),
+                ? hex.encrypt(
+                    convert.hex.encode(wallet.secret(wallet.cipher!).codeUnits),
                     services.cipher.currentCipher!)
-                : wallet.encrypted, //.secret(wallet.cipher!),
-            'secret type': services.password.required
-                ? hex.encrypt(convert.hex.encode(wallet.encrypted.codeUnits),
-                    services.cipher.currentCipher!)
-                : wallet.secretTypeToString,
+                : wallet.secret(wallet.cipher!), //encrypted,
             // For now:
             // Leaderwallets are always mnemonics
             // Singlewallets are always WIFs
+            'secret type': services.password.required
+                ? hex.encrypt(
+                    convert.hex.encode(wallet.secretTypeToString.codeUnits),
+                    services.cipher.currentCipher!)
+                : wallet.secretTypeToString,
             'cipher encryption': wallet.cipherUpdate.toMap,
           }
         }

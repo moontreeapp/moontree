@@ -41,22 +41,29 @@ class _ExportState extends State<Export> {
   @override
   Widget build(BuildContext context) {
     print('walletController.text : ${walletController.text}');
-
-    wallets = walletController.text.isEmpty
-        ? null
-        : (walletController.text != 'All Wallets'
-            ? () {
-                final maybeWallet = res.wallets.byName
-                    // raven_front/lib/widgets/bottom/selection_items.dart
-                    // L315
-                    .getOne(walletController.text.replaceFirst('Wallet ', ''));
-                print('wallet by name is ${maybeWallet}');
-                if (maybeWallet != null) {
-                  return {maybeWallet};
-                }
-                return null;
-              }()
-            : res.wallets);
+    if (res.wallets.length == 1) {
+      wallets = res.wallets;
+    } else {
+      wallets = walletController.text.isEmpty
+          ? null
+          : (walletController.text != 'All Wallets'
+              ? () {
+                  final maybeWallet = res.wallets.byName
+                      // raven_front/lib/widgets/bottom/selection_items.dart
+                      // L315
+                      .getOne(
+                          walletController.text.replaceFirst('Wallet ', ''));
+                  print('wallet by name is ${maybeWallet}');
+                  if (maybeWallet != null) {
+                    return {maybeWallet};
+                  }
+                  return null;
+                }()
+              : res.wallets);
+    }
+    if (wallets?.length == 1) {
+      walletController.text = 'Wallet ${wallets?.first.name}';
+    }
     return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
   }
 

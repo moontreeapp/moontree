@@ -541,8 +541,10 @@ class SelectionItems {
     int? minDecimal,
   }) async {
     if (modalSet == SelectionSet.Wallets) {
-      await produceModal([walletItemAll(controller!)] +
-          [for (Wallet wallet in res.wallets) walletItem(wallet, controller)]);
+      await produceModal([
+            if (res.wallets.length > 1) walletItemAll(controller!)
+          ] +
+          [for (Wallet wallet in res.wallets) walletItem(wallet, controller!)]);
     } else if (modalSet == SelectionSet.Holdings) {
       produceModal(
           [for (String holding in holdingNames ?? []) holdingItem(holding)]);
