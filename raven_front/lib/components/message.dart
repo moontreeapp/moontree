@@ -19,7 +19,7 @@ class MessageComponents {
           streams.app.scrim.add(true);
           return AlertDialog(
               elevation: 0,
-              shape: components.shape.rounded,
+              shape: components.shape.rounded8,
               title: title == null
                   ? null
                   : Text(title, style: Theme.of(context).textTheme.headline2),

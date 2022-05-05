@@ -500,7 +500,7 @@ class SelectionItems {
         elevation: 1,
         isScrollControlled: true,
         barrierColor: AppColors.black38,
-        shape: components.shape.topRounded,
+        shape: components.shape.topRounded8,
         builder: (BuildContext context) {
           streams.app.scrim.add(true);
           DraggableScrollableController draggableScrollController =
@@ -637,7 +637,7 @@ class SimpleSelectionItems {
         elevation: 1,
         isScrollControlled: true,
         barrierColor: AppColors.black38,
-        shape: components.shape.topRounded,
+        shape: components.shape.topRounded8,
         builder: (BuildContext context) {
           streams.app.scrim.add(true);
           DraggableScrollableController draggableScrollController =

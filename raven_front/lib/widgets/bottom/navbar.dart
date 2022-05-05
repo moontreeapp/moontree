@@ -9,6 +9,7 @@ import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/widgets/bottom/selection_items.dart';
+import 'package:raven_back/streams/client.dart';
 
 class NavBar extends StatefulWidget {
   final AppContext? appContext;
@@ -38,6 +39,7 @@ class NavBar extends StatefulWidget {
 class _NavBarState extends State<NavBar> {
   List<StreamSubscription> listeners = [];
   bool walletIsEmpty = false;
+  ConnectionStatus connectionStatus = ConnectionStatus.disconnected;
 
   @override
   void initState() {
@@ -46,6 +48,13 @@ class _NavBarState extends State<NavBar> {
       if (walletIsEmpty != value) {
         setState(() {
           walletIsEmpty = value;
+        });
+      }
+    }));
+    listeners.add(streams.client.connected.listen((ConnectionStatus value) {
+      if (connectionStatus != value) {
+        setState(() {
+          connectionStatus = value;
         });
       }
     }));
@@ -109,6 +118,13 @@ class _NavBarState extends State<NavBar> {
                   : components.buttons.actionButton(
                       context,
                       label: 'send',
+                      enabled: connectionStatus == ConnectionStatus.connected,
+                      disabledOnPressed: () {
+                        print('disabled');
+                        streams.app.snack.add(Snack(
+                          message: 'Not connected to Network',
+                        ));
+                      },
                       onPressed: () async {
                         Navigator.of(components.navigator.routeContext!)
                             .pushNamed('/transaction/send');

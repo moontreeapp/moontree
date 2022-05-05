@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/other/keyboard_delayed.dart';
+import 'package:raven_front/components/components.dart';
 
 class ContainerComponents {
   Widget navBar(
@@ -16,9 +17,7 @@ class ContainerComponents {
               alignment: Alignment.topCenter,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16)),
+                borderRadius: components.shape.topRoundedBorder16,
                 boxShadow: [
                   BoxShadow(
                       color: const Color(0x33000000),

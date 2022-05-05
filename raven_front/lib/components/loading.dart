@@ -16,7 +16,7 @@ class LoadingComponents {
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
         barrierColor: Colors.transparent,
-        shape: components.shape.topRounded,
+        shape: components.shape.topRounded8,
         builder: (BuildContext context) => Loader(
               message: message ?? 'Loading',
               returnHome: returnHome,

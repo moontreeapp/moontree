@@ -4,6 +4,7 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/streams/streams.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/utils/extensions.dart';
 
 class SnackBarViewer extends StatefulWidget {
   SnackBarViewer({Key? key}) : super(key: key);
@@ -62,15 +63,11 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                         .textTheme
                         .bodyText2!
                         .copyWith(color: AppColors.white)))
-            : Container(
-                height: 64,
-                color: AppColors.black87,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(height: 0, color: Colors.transparent),
-                    Padding(
+            : Stack(alignment: Alignment.bottomCenter, children: [
+                Container(
+                    alignment: Alignment.centerLeft,
+                    height: 64,
+                    child: Padding(
                         padding: EdgeInsets.only(left: 16, right: 16),
                         child: Text(snack!.message,
                             maxLines: 1,
@@ -83,44 +80,37 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                                 : Theme.of(context)
                                     .textTheme
                                     .bodyText2!
-                                    .copyWith(color: AppColors.error))),
-                    Container(
-                      height: 12,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(16),
-                            topRight: Radius.circular(16),
-                          ),
-                          boxShadow: [
-                            // this one is to hide the shadow put on snackbars by default
-                            BoxShadow(
-                                color: const Color(0xFFFFFFFF),
-                                spreadRadius: 1),
-                            BoxShadow(
-                                color: const Color(0x33FFFFFF),
-                                offset: Offset(0, 5),
-                                blurRadius: 5),
-                            BoxShadow(
-                                color: const Color(0x1FFFFFFF),
-                                offset: Offset(0, 3),
-                                blurRadius: 14),
-                            BoxShadow(
-                                color: const Color(0x3DFFFFFF),
-                                offset: Offset(0, 8),
-                                blurRadius: 10)
-                          ]),
-                    )
-                  ],
-                ),
-              ));
+                                    .copyWith(color: AppColors.error)))),
+                Container(
+                    height: 12,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: components.shape.topRoundedBorder16,
+                        boxShadow: [
+                          // this one is to hide the shadow put on snackbars by default
+                          BoxShadow(
+                              color: const Color(0xFFFFFFFF), spreadRadius: 1),
+                          BoxShadow(
+                              color: const Color(0x33FFFFFF),
+                              offset: Offset(0, 5),
+                              blurRadius: 5),
+                          BoxShadow(
+                              color: const Color(0x1FFFFFFF),
+                              offset: Offset(0, 3),
+                              blurRadius: 14),
+                          BoxShadow(
+                              color: const Color(0x3DFFFFFF),
+                              offset: Offset(0, 8),
+                              blurRadius: 10)
+                        ]))
+              ]));
 
     if (snack!.atBottom) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         elevation: 1,
         dismissDirection: DismissDirection.horizontal,
         backgroundColor: AppColors.snackBar,
-        shape: components.shape.topRounded,
+        shape: components.shape.topRounded16,
         content: msg,
       ));
     } else /*if (snack!.link == null && snack!.details == null)*/ {
@@ -140,12 +130,12 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         elevation: 0,
         dismissDirection: DismissDirection.none,
         backgroundColor: AppColors.snackBar,
-        shape: components.shape.topRounded,
+        shape: components.shape.topRounded16,
         content: msg,
+
         behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.only(
-            bottom: MediaQuery.of(context).size.height * (106 / 760)),
-        padding: EdgeInsets.only(top: 0, bottom: 0),
+        margin: EdgeInsets.only(bottom: 106.figma(context)),
+        padding: EdgeInsets.only(top: 0, bottom: 0, left: 0, right: 0),
         //action: SnackBarAction(
         //    label: ' ',
         //    onPressed: () =>
