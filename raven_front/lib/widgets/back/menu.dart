@@ -102,7 +102,7 @@ class _NavMenuState extends State<NavMenu> {
               icon: MdiIcons.keyMinus,
               name: 'Export',
               link: '/settings/export',
-              //disabled: true,
+              disabled: true,
               executeAfter: () async {
                 if (Current.wallet is LeaderWallet &&
                     streams.app.triggers.value == ThresholdTrigger.backup &&
