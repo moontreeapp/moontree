@@ -46,10 +46,12 @@ class _CoinSpecTabsState extends State<CoinSpecTabs>
                 topRight: Radius.circular(8),
               ),
             ),
-            child: BackdropFilter(
-                filter: ImageFilter.blur(
-                    sigmaX: 2.0, sigmaY: 2.0, tileMode: TileMode.clamp),
-                child: TabBar(
+            child:
+                //BackdropFilter(
+                //    filter: ImageFilter.blur(
+                //        sigmaX: 2.0, sigmaY: 2.0, tileMode: TileMode.clamp),
+                //    child:
+                TabBar(
                     controller: tabController,
                     indicatorColor: Colors.white,
                     indicatorSize: TabBarIndicatorSize.tab,
@@ -66,9 +68,11 @@ class _CoinSpecTabsState extends State<CoinSpecTabs>
                             letterSpacing: 1.25,
                             color: AppColors.white60),
                     tabs: [
-                      Tab(text: CoinSpecTabs.tabIndex[0]),
-                      Tab(text: CoinSpecTabs.tabIndex[1]),
-                    ]))));
+                  Tab(text: CoinSpecTabs.tabIndex[0]),
+                  Tab(text: CoinSpecTabs.tabIndex[1]),
+                ]))
+        //)
+        );
   }
 }
 

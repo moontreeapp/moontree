@@ -37,7 +37,7 @@ class _TransactionsState extends State<Transactions>
   late Security security;
   String tabChoice = 'HISTORY';
   Widget? cachedMetadataView;
-
+  ValueNotifier<double> _notifier = ValueNotifier(1);
   @override
   void initState() {
     super.initState();
@@ -101,7 +101,9 @@ class _TransactionsState extends State<Transactions>
     cachedMetadataView = _metadataView();
     DraggableScrollableController dController = DraggableScrollableController();
     return BackdropLayers(
-        back: CoinSpec(
+        back:
+            // fade this out as we drag up:
+            CoinSpec(
           pageTitle: 'Transactions',
           security: security,
           bottom: cachedMetadataView != null ? null : Container(),
@@ -115,10 +117,7 @@ class _TransactionsState extends State<Transactions>
               //snap: true, // if snap then show amount in app bar
               builder: ((context, ScrollController scrollController) {
                 //print(scrollController.position.pixels);
-                // print(dController.size);
-                /// if we don't like to move it up, we can put the coinsspectabs
-                /// above the dragglable sheet and say, if you're above the
-                /// minHeight, your padding is 0...?
+                //print(dController.size);
                 return Stack(
                   alignment: Alignment.topCenter,
                   children: [
