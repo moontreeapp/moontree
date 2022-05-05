@@ -60,11 +60,24 @@ class _TransactionPageState extends State<TransactionPage> {
       case 'Confirmations':
         return getConfirmationsBetweenHelper();
       case 'Type':
-        return transactionRecord!.toSelf
-            ? 'Back to Self'
-            : transactionRecord!.totalIn <= transactionRecord!.totalOut
-                ? 'In'
-                : 'Out';
+        switch (transactionRecord!.type) {
+          case TransactionRecordType.SELF:
+            return 'Back to Self';
+          case TransactionRecordType.ASSETCREATION:
+            return 'Asset Creation';
+          case TransactionRecordType.BURN:
+            return 'Burned';
+          case TransactionRecordType.REISSUE:
+            return 'Reissue';
+          case TransactionRecordType.TAG:
+            return 'Tag';
+          case TransactionRecordType.INCOMING:
+            return 'In';
+          case TransactionRecordType.OUTGOING:
+            //default:
+            return 'Out';
+        }
+
       case 'ID':
         return transaction!.id.cutOutMiddle();
       case 'Memo/IPFS':
@@ -127,6 +140,7 @@ class _TransactionPageState extends State<TransactionPage> {
       );
 
   Widget link({
+    required String title,
     required String text,
     required String url,
     required String description,
@@ -136,11 +150,11 @@ class _TransactionPageState extends State<TransactionPage> {
         title: Text(text, style: Theme.of(context).textTheme.bodyText1),
         onTap: () => components.message.giveChoices(
           context,
-          title: 'Open in External App',
-          content: 'Open ${description} in browser?',
+          title: title,
+          content: 'View ${description} in external browser?',
           behaviors: {
-            'Cancel': Navigator.of(context).pop,
-            'Continue': () {
+            'Cancel'.toUpperCase(): Navigator.of(context).pop,
+            'Browser'.toUpperCase(): () {
               Navigator.of(context).pop();
               launch(url + elementFull(text));
             },
@@ -162,16 +176,18 @@ class _TransactionPageState extends State<TransactionPage> {
             ] +
             [
               link(
+                title: 'Transaction Info',
                 text: 'ID',
                 url: 'https://rvnt.cryptoscope.io/tx/?txid=',
-                description: 'block explorer',
+                description: 'info',
               ),
               if (transactionMemo != null)
                 transactionMemo!.isIpfs
                     ? link(
+                        title: 'IPFS',
                         text: 'Memo/IPFS',
                         url: 'https://gateway.ipfs.io/ipfs/',
-                        description: 'ipfs gateway',
+                        description: 'data',
                       )
                     : plain('Memo/IPFS', element('Memo/IPFS')),
             ] +

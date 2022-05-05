@@ -10,24 +10,29 @@ class RVNtoFiat {
 
   RVNtoFiat([this.fiat = 'usd'])
       : fiatConformed = fiat,
-        serviceName = 'CoinGecko';
+        serviceName = 'Moontree';
 
   Future<double?> get() async {
     try {
-      serviceName = 'CoinGecko';
+      serviceName = 'Moontree';
       return await getRate();
     } catch (e) {
-      //print(e);
       try {
-        serviceName = 'Bittrex';
+        serviceName = 'CoinGecko';
         return await getRate();
       } catch (e) {
+        //print(e);
         try {
-          print(e);
-          serviceName = 'Nomi';
+          serviceName = 'Bittrex';
           return await getRate();
         } catch (e) {
-          return null;
+          try {
+            print(e);
+            serviceName = 'Nomi';
+            return await getRate();
+          } catch (e) {
+            return null;
+          }
         }
       }
     }
@@ -40,6 +45,7 @@ class RVNtoFiat {
 
   void conformFiat() {
     fiatConformed = {
+      'Moontree': fiat.toUpperCase(),
       'CoinGecko': fiat.toLowerCase(),
       'Bittrex': fiat.toUpperCase(),
       'Nomi': fiat.toUpperCase(),
@@ -50,10 +56,11 @@ class RVNtoFiat {
     return await http.get(
         Uri.parse({
           /*
-          We're getting shut out by API
+          We're getting shut out by coingecko API... why?
+          */
+          'Moontree': 'http://143.198.142.78:8000/prices',
           'CoinGecko': 'https://api.coingecko.com/api/v3/simple/price?'
               'ids=ravencoin&vs_currencies=$fiatConformed',
-              */
           'Bittrex':
               'https://api.bittrex.com/v3/markets/RVN-$fiatConformed/ticker',
           'Nomi': 'https://api.nomics.com/v1/currencies/ticker?'
@@ -64,6 +71,28 @@ class RVNtoFiat {
   }
 
   double interpret(http.Response response) {
+    if (serviceName == 'Moontree') {
+      Map jsonBody;
+      try {
+        jsonBody = jsonDecode(response.body);
+      } catch (e) {
+        print(e);
+        throw FetchDataException('unable to get data from interpretMoontree');
+      }
+      var total = 0.0;
+      var cnt = 0;
+      for (final key in jsonBody.keys) {
+        if ((jsonBody[key]! as Map).containsKey(fiatConformed)) {
+          total += jsonBody[key]![fiatConformed]!;
+          cnt += 1;
+        }
+      }
+      if (cnt < 1) {
+        throw FetchDataException('no data for $fiat with interpretMoontree');
+      }
+      // Return avg of our aggregations
+      return total / cnt;
+    }
     if (serviceName == 'CoinGecko') {
       Map jsonBody;
       try {

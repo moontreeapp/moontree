@@ -9,32 +9,38 @@ part 'setting_name.g.dart';
 @HiveType(typeId: TypeId.SettingName)
 enum SettingName {
   @HiveField(0)
-  Electrum_Net,
+  Database_Version,
 
   @HiveField(1)
-  Electrum_Domain,
+  Electrum_Net,
 
   @HiveField(2)
-  Electrum_Port,
+  Electrum_Domain,
 
   @HiveField(3)
-  Electrum_DomainTest,
+  Electrum_Port,
 
   @HiveField(4)
-  Electrum_PortTest,
+  Electrum_DomainTest,
 
   @HiveField(5)
-  Wallet_Current,
+  Electrum_PortTest,
 
   @HiveField(6)
-  Wallet_Preferred,
+  Wallet_Current,
 
   @HiveField(7)
-  Local_Path,
+  Wallet_Preferred,
 
   @HiveField(8)
-  User_Name,
+  Local_Path,
 
   @HiveField(9)
+  User_Name,
+
+  @HiveField(10)
   Send_Immediate,
+
+  @HiveField(11)
+  Login_Attempts,
 }

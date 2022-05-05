@@ -14,17 +14,6 @@ void main() async {
   group('BalanceService', () {
     setUp(fixtures.useFixtureSources1);
 
-    test('sumBalance (not in mempool)', () {
-      expect(services.balance.sumBalance(wallet, res.securities.RVN).confirmed,
-          40000000);
-    });
-
-    test('sumBalance (in mempool)', () {
-      expect(
-          services.balance.sumBalance(wallet, res.securities.RVN).unconfirmed,
-          0);
-    });
-
     test('saveChangedBalances', () async {
       var updatedBalance = Balance(
           walletId: '0',

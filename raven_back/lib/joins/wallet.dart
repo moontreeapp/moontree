@@ -32,6 +32,27 @@ extension WalletHasManyTransactions on Wallet {
         ..remove(null);
 }
 
+// would prefer .assets
+extension WalletHasManyHoldingCount on Wallet {
+  int get holdingCount => vouts
+      .map((Vout vout) => vout.assetSecurityId // null is rvn
+          )
+      .toSet()
+      .length;
+}
+
+extension WalletHasRVNValue on Wallet {
+  int get RVNValue => balances
+      .where((Balance b) => b.security.symbol == 'RVN')
+      .fold(0, (running, Balance b) => b.value + running);
+}
+
+//extension WalletHasAssetValue on Wallet {
+//  int get assetValue(Asset asset) => balances
+//      .where((Balance b) => b.security.symbol == 'RVN')
+//      .fold(0, (running, Balance b) => b.value + running);
+//}
+
 // change addresses
 extension WalletHasManyInternalAddresses on Wallet {
   Iterable<Address> get internalAddresses =>

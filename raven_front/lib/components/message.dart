@@ -7,8 +7,8 @@ class MessageComponents {
   Future<void> giveChoices(
     BuildContext context, {
     required Map<String, VoidCallback> behaviors,
-    String title = 'Open in External App',
-    String content = 'Open discord app or browser?',
+    String? title = 'Open in External App',
+    String? content = 'Open discord app or browser?',
   }) async {
     // add scrim to appbar with stream here?
     await showDialog(
@@ -20,12 +20,16 @@ class MessageComponents {
           return AlertDialog(
               elevation: 0,
               shape: components.shape.rounded,
-              title: Text(title, style: Theme.of(context).textTheme.headline2),
-              content: Text(content,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText2!
-                      .copyWith(color: AppColors.black38)),
+              title: title == null
+                  ? null
+                  : Text(title, style: Theme.of(context).textTheme.headline2),
+              content: content == null
+                  ? null
+                  : Text(content,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText2!
+                          .copyWith(color: AppColors.black38)),
               actions: [
                 for (var key in behaviors.keys)
                   TextButton(

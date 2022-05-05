@@ -27,6 +27,7 @@ export 'methods/transaction/fee.dart';
 export 'subscriptions/subscribe_headers.dart';
 export 'subscriptions/subscribe_asset.dart';
 export 'subscriptions/subscribe_scripthash.dart';
+export 'subscriptions/unsubscribe_scripthash.dart';
 
 export 'connect.dart';
 

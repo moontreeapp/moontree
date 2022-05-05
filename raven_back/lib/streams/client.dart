@@ -7,6 +7,15 @@ class ClientStreams {
   final connected =
       BehaviorSubject<ConnectionStatus>.seeded(ConnectionStatus.disconnected);
   final busy = BehaviorSubject<bool>.seeded(false);
+  final activity = BehaviorSubject<ActivityMessage>.seeded(ActivityMessage());
 }
 
 enum ConnectionStatus { connected, connecting, disconnected }
+
+class ActivityMessage {
+  final bool active;
+  final String? title;
+  final String? message;
+
+  ActivityMessage({this.active = false, this.title, this.message});
+}

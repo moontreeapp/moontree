@@ -3,14 +3,14 @@ const exportedSingleType = 'Single';
 
 enum ImportFormat {
   json,
-  jsonWif,
-  jsonMt,
-  mnemonic12,
-  mnemonic24, // valid for rvn?
-  encryptedBip38, // 58?
+  jsonWif, // unused
+  jsonMt, // unused
+  mnemonic,
+  encryptedBip38, //unused
   WIF,
-  seed,
+  seed, // unused
   privateKey,
+  masterPrivateKey,
   invalid,
 }
 

@@ -11,7 +11,6 @@ class ClientService {
   final ApiService api = ApiService();
 
   RavenElectrumClient? get client => streams.client.client.value;
-  RavenElectrumClient? get useClient => streams.client.client.value;
 
   /// if we want to talk to electrum safely, this will try to talk,
   /// if communication fails it will reconnect and try again.
@@ -126,24 +125,29 @@ class SubscribeService {
     final addresses = res.addresses.toList();
     var existing = false;
     for (var address in addresses) {
-      onlySubscribeAddressUnspent(client, address);
+      await onlySubscribeAddressUnspent(address);
       existing = true;
     }
+    // recalc balance here?
+    await services.balance.recalculateAllBalances();
     for (var address in addresses) {
-      onlySubscribeAddressHistory(client, address);
+      await onlySubscribeAddressHistory(address);
     }
     if (existing) {
-      unawaited(services.download.history.allDoneProcess(client));
+      unawaited(services.download.history.allDoneProcess());
       for (var address in addresses) {
-        if (address.wallet is LeaderWallet && address.vouts.isNotEmpty) {
-          services.wallet.leader
-              .updateCounts(address, address.wallet as LeaderWallet);
-        } else {
-          services.wallet.leader
-              .updateCache(address, address.wallet as LeaderWallet);
+        if (address.wallet is LeaderWallet) {
+          if (address.vouts.isNotEmpty) {
+            services.wallet.leader
+                .updateCounts(address, address.wallet as LeaderWallet);
+          } else {
+            services.wallet.leader
+                .updateCache(address, address.wallet as LeaderWallet);
+          }
         }
       }
     }
+    streams.client.busy.add(false);
     return true;
   }
 
@@ -158,14 +162,9 @@ class SubscribeService {
     return true;
   }
 
-  bool toAddress(Address address) {
-    var client = streams.client.client.value;
-    if (client == null) {
-      return false;
-    }
-    //streams.client.busy.add(true);
-    onlySubscribeAddressUnspent(client, address);
-    onlySubscribeAddressHistory(client, address);
+  Future<bool> toAddress(Address address) async {
+    await onlySubscribeAddressUnspent(address);
+    await onlySubscribeAddressHistory(address);
     return true;
   }
 
@@ -178,50 +177,102 @@ class SubscribeService {
     return true;
   }
 
-  void onlySubscribeAddressUnspent(
-      RavenElectrumClient client, Address address) {
+  Future onlySubscribeAddressUnspent(Address address) async {
     if (!subscriptionHandlesUnspent.keys.contains(address.id)) {
-      subscriptionHandlesUnspent[address.id] =
-          client.subscribeScripthash(address.id).listen((String? status) async {
-        await services.download.unspents.pull(scripthashes: [address.id]);
-      });
+      subscriptionHandlesUnspent[address.id] = await services.client.scope(
+          () async =>
+              (await services.client.client!.subscribeScripthash(address.id))
+                  .listen((String? status) async {
+                /// no guarantee this will run first, so we don't want the other
+                /// one to run first can save the status and keep this one from
+                /// running, so we'll just download unspents everytime.
+                //if (status == null || address.status?.status != status) {
+                print('PULLING UNSPENTS');
+                await services.download.unspents.pull(
+                  scripthashes: [address.id],
+                );
+                //}
+                // Recalculate balances for affected symbols... or everything
+                await services.balance.recalculateAllBalances();
+              }));
     }
   }
 
-  void onlySubscribeAddressHistory(
-      RavenElectrumClient client, Address address) {
+  Future onlySubscribeAddressHistory(Address address) async {
     if (!subscriptionHandlesHistory.keys.contains(address.id)) {
-      subscriptionHandlesHistory[address.id] =
-          client.subscribeScripthash(address.id).listen((String? status) async {
-        if (status == null || address.status?.status != status) {
-          var allDone =
-              await services.download.history.getHistories(address, status);
-          //// why not just do this here?
-          //await res.statuses.save(Status(
-          //    linkId: address.id,
-          //    statusType: StatusType.address,
-          //    status: status));
-          if (allDone == false && address.wallet is LeaderWallet) {
-            streams.wallet.deriveAddress.add(DeriveLeaderAddress(
-              leader: address.wallet! as LeaderWallet,
-              exposure: address.exposure,
-            ));
-          }
-        } else {
-          await services.download.history.addAddressToSkipHistory(address);
-          if (address.wallet is LeaderWallet) {
-            services.wallet.leader
-                .updateCounts(address, address.wallet as LeaderWallet);
-          }
-        }
-      });
+      subscriptionHandlesHistory[address.id] = await services.client.scope(
+          () async =>
+              (await services.client.client!.subscribeScripthash(address.id))
+                  .listen((String? status) async {
+                if (status == null || address.status?.status != status) {
+                  print('PULLING HISTORY');
+
+                  /// Get histories, update leader counts and
+                  /// Get transactions in batch.
+                  await services.download.history.getTransactions(
+                    await services.download.history
+                        .getHistory(address, updateLeader: true),
+                  );
+
+                  /// Get dangling transactions
+                  await services.download.history.allDoneProcess();
+
+                  /// Save status update
+                  await res.statuses.save(Status(
+                      linkId: address.id,
+                      statusType: StatusType.address,
+                      status: status));
+
+                  /// Derive more addresses
+                  if (address.wallet is LeaderWallet) {
+                    streams.wallet.deriveAddress.add(DeriveLeaderAddress(
+                      leader: address.wallet! as LeaderWallet,
+                      exposure: address.exposure,
+                    ));
+                  }
+                }
+              }));
     }
   }
 
-  void onlySubscribeAsset(RavenElectrumClient client, Asset asset) {
+  Future onlySubscribeForStatus(Address address) async {
+    await services.client.scope(() async {
+      (await services.client.client!.subscribeScripthash(address.scripthash))
+          .listen((String? status) async {
+        await res.statuses.save(Status(
+            linkId: address.id,
+            statusType: StatusType.address,
+            status: status));
+      });
+    });
+    await services.client.scope(() async {
+      await services.client.client!.unsubscribeScripthash(address.scripthash);
+    });
+  }
+
+  Future onlySubscribeForStatuses(List<Address> addresses) async {
+    var scripthashes = addresses.map((a) => a.scripthash);
+    await services.client.scope(() async {
+      var subs =
+          (await services.client.client!.subscribeScripthashes(scripthashes));
+      for (var ixSub in subs.enumeratedTuple()) {
+        ixSub.item2.listen((String? status) async {
+          await res.statuses.save(Status(
+              linkId: addresses[ixSub.item1].id,
+              statusType: StatusType.address,
+              status: status));
+        });
+      }
+    });
+    await services.client.scope(() async {
+      await services.client.client!.unsubscribeScripthashes(scripthashes);
+    });
+  }
+
+  Future onlySubscribeAsset(RavenElectrumClient client, Asset asset) async {
     if (!subscriptionHandlesAsset.keys.contains(asset.symbol)) {
       subscriptionHandlesAsset[asset.symbol] =
-          client.subscribeAsset(asset.symbol).listen((String? status) {
+          (await client.subscribeAsset(asset.symbol)).listen((String? status) {
         if (asset.status?.status != status) {
           res.statuses.save(Status(
               linkId: asset.symbol,

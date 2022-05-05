@@ -16,11 +16,14 @@ class SingleWalletService {
         net: net);
   }
 
-  KPWallet getKPWallet(SingleWallet wallet) =>
-      KPWallet.fromWIF(EncryptedWIF(wallet.encryptedWIF, wallet.cipher!).wif);
+  KPWallet getKPWallet(SingleWallet wallet) => KPWallet.fromWIF(
+      EncryptedWIF(wallet.encryptedWIF, wallet.cipher!).wif,
+      res.settings.network);
 
-  KPWallet getKPWalletFromPrivKey(String privKey) =>
-      KPWallet.fromWIF(ECPair.fromPrivateKey(decode(privKey)).toWIF());
+  KPWallet getKPWalletFromPrivKey(String privKey) => KPWallet.fromWIF(
+      ECPair.fromPrivateKey(decode(privKey), network: res.settings.network)
+          .toWIF(),
+      res.settings.network);
   String privateKeyToWif(String privKey) =>
       ECPair.fromPrivateKey(decode(privKey)).toWIF();
 
@@ -36,14 +39,19 @@ class SingleWalletService {
     String? name,
   }) {
     wif = wif ?? generateRandomWIF(res.settings.network);
-    var encryptedWIF = EncryptedWIF.fromWIF(wif, cipher);
-    var existingWallet = res.wallets.primaryIndex.getOne(encryptedWIF.walletId);
+    final encryptedWIF = EncryptedWIF.fromWIF(wif, cipher);
+    final existingWallet =
+        res.wallets.primaryIndex.getOne(encryptedWIF.walletId);
     if (existingWallet == null) {
-      return SingleWallet(
+      final newWallet = SingleWallet(
           id: encryptedWIF.walletId,
           encryptedWIF: encryptedWIF.encryptedSecret,
           cipherUpdate: cipherUpdate,
           name: name ?? res.wallets.nextWalletName);
+      final address = services.wallet.single.toAddress(newWallet);
+      print('address from KPWallet: ${address.walletId}');
+      services.client.subscribe.toAddress(address);
+      return newWallet;
     }
     if (alwaysReturn) return existingWallet as SingleWallet;
     return null;

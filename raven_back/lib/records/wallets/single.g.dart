@@ -21,13 +21,13 @@ class SingleWalletAdapter extends TypeAdapter<SingleWallet> {
       encryptedWIF: fields[7] as String,
       cipherUpdate: fields[1] as CipherUpdate,
       name: fields[2] as String?,
-    );
+    )..backedUp = fields[3] as bool;
   }
 
   @override
   void write(BinaryWriter writer, SingleWallet obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(7)
       ..write(obj.encryptedWIF)
       ..writeByte(0)
@@ -35,7 +35,9 @@ class SingleWalletAdapter extends TypeAdapter<SingleWallet> {
       ..writeByte(1)
       ..write(obj.cipherUpdate)
       ..writeByte(2)
-      ..write(obj.name);
+      ..write(obj.name)
+      ..writeByte(3)
+      ..write(obj.backedUp);
   }
 
   @override

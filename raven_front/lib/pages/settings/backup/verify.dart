@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/components/components.dart';
@@ -38,6 +39,8 @@ class _VerifySeedState extends State<VerifySeed> {
 
   @override
   void initState() {
+    FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+
     secret = Current.wallet.secret(Current.wallet.cipher!).split(' ');
     var shuffledList = [
       for (var s in secret.enumerated()) SecretWord(s[1], s[0])
@@ -49,6 +52,7 @@ class _VerifySeedState extends State<VerifySeed> {
 
   @override
   void dispose() {
+    FlutterWindowManager.clearFlags(FlutterWindowManager.FLAG_SECURE);
     super.dispose();
   }
 

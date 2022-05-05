@@ -37,7 +37,7 @@ class _TransactionsState extends State<Transactions>
   late Security security;
   String tabChoice = 'HISTORY';
   Widget? cachedMetadataView;
-
+  ValueNotifier<double> _notifier = ValueNotifier(1);
   @override
   void initState() {
     super.initState();
@@ -94,26 +94,42 @@ class _TransactionsState extends State<Transactions>
             40 +
             (!services.download.history.downloads_complete ? 80 : 0))
         .ofMediaHeight(context);
-    var minHeight = 1 - (201 + 25) / MediaQuery.of(context).size.height;
+    //var minHeight = 1 - (201 + 25) / MediaQuery.of(context).size.height;
+    var minHeight = .7245;
+
+    print(minHeight);
     cachedMetadataView = _metadataView();
+    DraggableScrollableController dController = DraggableScrollableController();
     return BackdropLayers(
-      back: CoinSpec(
-        pageTitle: 'Transactions',
-        security: security,
-        bottom: cachedMetadataView != null ? null : Container(),
-      ),
-      front: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
+        back:
+            // fade this out as we drag up:
+            CoinSpec(
+          pageTitle: 'Transactions',
+          security: security,
+          bottom: cachedMetadataView != null ? null : Container(),
+        ),
+        front: Stack(alignment: Alignment.bottomCenter, children: [
           DraggableScrollableSheet(
               initialChildSize: minHeight,
               minChildSize: minHeight,
               maxChildSize: min(1.0, max(minHeight, maxExtent)),
+              controller: dController,
               //snap: true, // if snap then show amount in app bar
-              builder: ((context, scrollController) {
-                return FrontCurve(
-                  frontLayerBoxShadow: [],
-                  child: content(scrollController),
+              builder: ((context, ScrollController scrollController) {
+                //print(scrollController.position.pixels);
+                //print(dController.size);
+                return Stack(
+                  alignment: Alignment.topCenter,
+                  children: [
+                    CoinSpecTabs(),
+                    Padding(
+                        padding: EdgeInsets.only(top: 48),
+                        child: FrontCurve(
+                          frontLayerBoxShadow: [],
+                          child: content(scrollController),
+                        ))
+                    //)
+                  ],
                 );
               })),
           NavBar(
@@ -134,9 +150,7 @@ class _TransactionsState extends State<Transactions>
               )
             ],
           ),
-        ],
-      ),
-    );
+        ]));
   }
 
   Widget content(ScrollController scrollController) => tabChoice ==

@@ -29,7 +29,8 @@ void main() {
       var method = 'blockchain.asset.subscribe';
       server.willRespondWith(method, 'status01');
       server.willNotifyWith(method, ['token', 'status02']);
-      var results = await client.subscribeAsset('token').take(2).toList();
+      var results =
+          await (await client.subscribeAsset('token')).take(2).toList();
       expect(results.length, 2);
       expect(results[0], 'status01');
       expect(results[1], 'status02');
@@ -39,7 +40,8 @@ void main() {
       var method = 'blockchain.scripthash.subscribe';
       server.willRespondWith(method, 'status01');
       server.willNotifyWith(method, ['01', 'status02']);
-      var results = await client.subscribeScripthash('01').take(2).toList();
+      var results =
+          await (await client.subscribeScripthash('01')).take(2).toList();
       expect(results.length, 2);
       expect(results[0], 'status01');
       expect(results[1], 'status02');

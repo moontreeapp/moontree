@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -30,74 +31,79 @@ class HoldingList extends StatefulWidget {
 
 class _HoldingList extends State<HoldingList> {
   List<StreamSubscription> listeners = [];
-  bool _hideList = false;
-  bool _waitingForUnspents = true;
-  bool _freezeHoldings = false;
-  bool _balanceWasEmpty = false;
   List<AssetHolding>? holdings = null;
-  int holdingCount = 1;
+  int holdingCount = 0;
   bool showUSD = false;
   bool showPath = false;
   Rate? rateUSD;
   Set<Balance> balances = {};
+  Set<Address> addresses = {};
+
+  int getCount() {
+    var x = Current.wallet.holdingCount;
+    if (x == 0) {
+      x = res.assets.length;
+    }
+    return (Current.wallet.RVNValue > 0 ? 1 : 0) + x;
+  }
 
   @override
   void initState() {
     super.initState();
-    listeners.add(res.assets.changes.listen((Change<Asset> change) {
-      // if vouts in our account has changed...
-      var count = res.assets.length;
+    holdingCount = getCount();
+    balances = Current.wallet.balances.toSet();
+    listeners
+        .add(res.assets.batchedChanges.listen((List<Change<Asset>> changes) {
+      // need a way to know this wallet's asset list without vouts for newLeaderProcess
+      var count = getCount();
       if (count > holdingCount) {
+        print('triggered by holdingCount');
         setState(() {
           holdingCount = count;
         });
       }
     }));
-    listeners.add(streams.wallet.unspentsCallback.listen((value) {
-      if (!_hideList) {
-        setState(() {});
-      }
-    }));
-
-    listeners.add(streams.wallet.walletSyncedCallback.listen((value) {
-      // The holdings will be hidden until we receive this for our current
-      // wallet
-      if (value == Current.wallet.id) {
-        setState(() {
-          _hideList = false;
-        });
-      }
-    }));
-
-    listeners.add(res.balances.changes.listen((Change<Balance> change) {
-      var interimBalances = res.balances.data.toSet();
+    listeners.add(
+        res.balances.batchedChanges.listen((List<Change<Balance>> changes) {
+      var interimBalances = Current.wallet.balances.toSet();
       if (balances != interimBalances) {
+        print('triggered by balances');
         setState(() {
           balances = interimBalances;
         });
       }
     }));
-
-    listeners.add(streams.import.success.listen((value) {
-      // Rehide list on successful import
-      setState(() {
-        _hideList = true;
-        _waitingForUnspents = true;
-        holdingCount = 0;
-      });
-    }));
-
-    listeners.add(streams.client.connected.listen((value) async {
-      if (value == ConnectionStatus.connecting) {
-        // I do this here because we must ensure that the unspents
-        // data is cleared before doing the _waitingForUnspents check
-        await services.download.unspents.clearData();
+    listeners.add(
+        res.addresses.batchedChanges.listen((List<Change<Address>> changes) {
+      var interimAddresses = Current.wallet.addresses.toSet();
+      if (addresses != interimAddresses) {
+        print('triggered by addresses');
         setState(() {
-          _waitingForUnspents = true;
-          _freezeHoldings = true;
+          addresses = interimAddresses;
         });
       }
     }));
+
+    /// when the app becomes active again refresh the front end
+    /// (otherwise the screen stays black for some reason)
+    listeners.add(streams.app.active.listen((bool active) {
+      if (active) {
+        print('triggered by activity');
+        setState(() {});
+      }
+    }));
+
+    //listeners.add(streams.client.connected.listen((value) async {
+    //  if (value == ConnectionStatus.connecting) {
+    //    // I do this here because we must ensure that the unspents
+    //    // data is cleared before doing the _waitingForUnspents check
+    //    await services.download.unspents.clearData();
+    //    setState(() {
+    //      _waitingForUnspents = true;
+    //      _freezeHoldings = true;
+    //    });
+    //  }
+    //}));
   }
 
   @override
@@ -128,48 +134,41 @@ class _HoldingList extends State<HoldingList> {
   }
 
   Future refresh() async {
-    await services.rate.saveRate();
+    //await services.rate.saveRate();
+    await services.balance.recalculateAllBalances();
     setState(() {});
-    // showing snackbar
-    //_scaffoldKey.currentState.showSnackBar(
-    //  SnackBar(
-    //    content: const Text('Page Refreshed'),
-    //  ),
-    //);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!_balanceWasEmpty) {
-      _balanceWasEmpty = (widget.holdings ?? Current.holdings).isEmpty;
-    }
-    if (_waitingForUnspents) {
-      _waitingForUnspents =
-          res.addresses.length > services.download.unspents.scripthashesChecked;
-    }
-    if (_freezeHoldings) {
-      _freezeHoldings = _waitingForUnspents;
-    }
-
-    // If we are initializing, set
-    // If we are waiting for unspents; freeze our current unspents until we
-    // have them all again, then update
-    if (holdings == null || !_freezeHoldings)
-      holdings = utils.assetHoldings(widget.holdings ??
-          services
-              .download.unspents.unspentBalancesByWalletId[Current.walletId] ??
-          []);
-    holdings = holdings!.where((holding) => holding.value > 0).toList();
-    streams.client.busy.add(_hideList && holdings!.isNotEmpty ? true : false);
-    print(
-        'Hiding holdings: $_hideList; Hiding while waiting for unspents: $_waitingForUnspents; Freeze holdings while waiting for unspents: $_freezeHoldings');
-    return _hideList || (_waitingForUnspents && !_freezeHoldings)
+    holdings = (
+            //holdings != null && holdings!.isNotEmpty
+            //    ? holdings
+            //    :
+            utils.assetHoldings(widget.holdings ??
+                //services.download.unspents
+                //    .unspentBalancesByWalletId[Current.walletId] ??
+                //[]
+                res.balances.byWallet.getAll(Current.walletId)))
+        // todo: filter out before UI:
+        .where((holding) => holding.value > 0)
+        .toList();
+    balances = Current.wallet.balances.toSet();
+    addresses = Current.wallet.addresses.toSet();
+    // todo: move to back end
+    //streams.client.busy.add(_hideList && holdings!.isNotEmpty ? true : false);
+    //print('res.balances.isEmpty ${res.balances.isEmpty}');
+    //print('balances.isEmpty ${balances.isEmpty}');
+    //print('res.transactions.isEmpty ${res.transactions.isEmpty}');
+    //print('res.assets ${res.assets.data.length}');
+    //print('holdings.length ${holdings?.length}');
+    //print('holdingCount $holdingCount');
+    return balances.isEmpty && addresses.isEmpty
         ? components.empty.getAssetsPlaceholder(context,
             scrollController: widget.scrollController,
-            count: _balanceWasEmpty ? holdingCount : Current.holdings.length,
+            count: max(holdingCount, 1),
             holding: true)
-        // Check if a completely new user, not simply a new wallet
-        : res.transactions.isEmpty
+        : balances.isEmpty
             ? () {
                 streams.app.wallet.isEmpty.add(true);
                 return ComingSoonPlaceholder(
@@ -181,7 +180,10 @@ class _HoldingList extends State<HoldingList> {
               }()
             : () {
                 streams.app.wallet.isEmpty.add(false);
-                return _holdingsView(context);
+                return RefreshIndicator(
+                  child: _holdingsView(context),
+                  onRefresh: () => refresh(),
+                );
               }();
 
     //RefreshIndicator( child:...
@@ -202,7 +204,10 @@ class _HoldingList extends State<HoldingList> {
   ListView _holdingsView(BuildContext context, {Wallet? wallet}) {
     var rvnHolding = <Widget>[];
     var assetHoldings = <Widget>[];
-    for (var holding in holdings ?? []) {
+    for (AssetHolding holding in holdings ?? []) {
+      if (holding.symbol == 'RVN') {
+        var a = 1;
+      }
       var thisHolding = ListTile(
         //dense: true,
         contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),

@@ -19,9 +19,18 @@ class UnspentService {
   final Map<String, Map<String, List<int>>> _cachedByWalletAndSymbol = {};
   final _cachedBySymbolLock = ReaderWriterLock();
 
+  final Set<String> _scripthashesChecked = {};
+
+  final _scripthashesCheckedLock = ReaderWriterLock();
+  int scripthashesChecked = 0;
+  int uniqueAssets = 0;
+
+  Map<String, Iterable<Balance>> unspentBalancesByWalletId =
+      <String, Iterable<Balance>>{};
+
   String defaultSymbol(String? symbol) => symbol ?? res.securities.RVN.symbol;
 
-  Iterable<String> defaultScripthashes([Iterable<String>? scripthashes]) =>
+  Iterable<String> defaultScripthashes(Iterable<String>? scripthashes) =>
       scripthashes ??
       res.wallets.currentWallet.addresses.map((e) => e.scripthash).toList();
 
@@ -69,10 +78,7 @@ class UnspentService {
     }
   }
 
-  Future<void> pull({
-    Iterable<String>? scripthashes,
-    bool? updateRVN,
-  }) async {
+  Future<void> pull({Iterable<String>? scripthashes, bool? updateRVN}) async {
     final finalScripthashes = defaultScripthashes(scripthashes);
     final rvn = res.securities.RVN.symbol;
 
@@ -164,6 +170,46 @@ class UnspentService {
         });
       }
     }
+    scripthashesChecked = await _scripthashesCheckedLock.write(() {
+      _scripthashesChecked.addAll(finalScripthashes);
+      return _scripthashesChecked.length;
+    });
+    uniqueAssets = await _unspentsLock.read(() {
+      return _unspentsBySymbol.length;
+    });
+    await _updateUnspentsBalances();
+  }
+
+  Future<void> _updateUnspentsBalances() async {
+    final tempBalances = <String, Iterable<Balance>>{};
+    final symbols = await _unspentsLock.read(() {
+      return _unspentsBySymbol.keys.toSet();
+    });
+    for (final wallet in res.wallets.data) {
+      //print('Recalculating balances for ${wallet.id}');
+
+      final walletId = wallet.id;
+      final tempList = <Balance>[];
+      for (final symbol in symbols) {
+        // TODO: User decides how to sort?
+        binaryInsert(
+            list: tempList,
+            value: Balance(
+                walletId: res.settings.currentWalletId,
+                security: symbol == res.securities.RVN.symbol
+                    ? res.securities.RVN
+                    : Security(
+                        symbol: symbol, securityType: SecurityType.RavenAsset),
+                confirmed: await _total(walletId, symbol, ValueType.confirmed),
+                unconfirmed:
+                    await _total(walletId, symbol, ValueType.unconfirmed)),
+            comp: (first, second) =>
+                first.security.symbol.compareTo(second.security.symbol));
+      }
+      tempBalances[walletId] = tempList;
+    }
+    // Update pointer for async ness
+    unspentBalancesByWalletId = tempBalances;
   }
 
   Future<int> _total(
@@ -191,13 +237,12 @@ class UnspentService {
                   (Map<String, List<int>> gatherer, ScripthashUnspent unspent) {
               final address =
                   res.addresses.byScripthash.getOne(unspent.scripthash);
-              //if (address == null) {
-              //  throw StateError(
-              //      'We are tracking a scripthash that has no associated address');
-              //}
-              /// assume it's the current if address not found
-              /// (newLeaderProcess saves addresses after running unspents.pull)
-              var walletId = address?.walletId ?? res.wallets.currentWallet.id;
+              if (address == null) {
+                throw StateError(
+                    'We are tracking a scripthash that has no associated address');
+              }
+
+              var walletId = address.walletId;
 
               if (!gatherer.containsKey(walletId)) {
                 gatherer[walletId] = [0, 0];
@@ -301,6 +346,12 @@ class UnspentService {
     await _cachedBySymbolLock.write(() {
       _cachedByWalletAndSymbol.clear();
     });
+    await _scripthashesCheckedLock.write(() {
+      _scripthashesChecked.clear();
+    });
+    unspentBalancesByWalletId = {};
+    scripthashesChecked = 0;
+    uniqueAssets = 0;
   }
 }
 

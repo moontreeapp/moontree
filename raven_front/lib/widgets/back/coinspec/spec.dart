@@ -6,6 +6,7 @@ import 'package:raven_back/streams/spend.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
+import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class CoinSpec extends StatefulWidget {
@@ -75,7 +76,11 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
     }
     return Container(
       padding: EdgeInsets.only(top: 16),
-      height: widget.pageTitle == 'Send' ? 209 : 201,
+      //height: widget.pageTitle == 'Send' ? 209 : 201,
+      height: widget.pageTitle == 'Send'
+          ? 0.2588963963963964.ofMediaHeight(context)
+          : 0.2489864864864865.ofMediaHeight(context),
+      //height: 201.ofMediaHeight(context),
       color: widget.color,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -123,6 +128,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
                         .copyWith(color: AppColors.error))
           ]));
     }
-    return CoinSpecTabs();
+    //return CoinSpecTabs();
+    return Container();
   }
 }

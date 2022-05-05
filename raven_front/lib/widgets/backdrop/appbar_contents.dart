@@ -2,10 +2,13 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_electrum/raven_electrum.dart';
+import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/colors.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_back/streams/app.dart';
+import 'package:raven_back/services/wallet/constants.dart';
 
 class BackdropAppBarContents extends StatelessWidget
     implements PreferredSizeWidget {
@@ -70,7 +73,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-        testAppBar(appBar, test: false),
+        testAppBar(appBar, test: true),
         alphaBar,
         AppBarScrim(),
       ],
@@ -79,11 +82,12 @@ class BackdropAppBarContents extends StatelessWidget
 
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
-          onTap: () {
+          onTap: () async {
             print('click');
             //streams.app.snack.add(Snack(message: 'Sucessful Import'));
             //streams.app.scrim.add(!streams.app.scrim.value);
-            streams.client.busy.add(!streams.client.busy.value);
+            //streams.client.busy.add(!streams.client.busy.value);
+            print(streams.app.triggers.value);
           },
           child: appBar,
         )
@@ -107,11 +111,12 @@ class BackdropAppBarContents extends StatelessWidget
         centerTitle: spoof,
         title: PageTitle(animate: animate),
         actions: <Widget>[
-          if (!spoof) components.status,
+          if (!spoof) ActivityLight(),
           if (!spoof) spoof ? SpoofedConnectionLight() : ConnectionLight(),
           if (!spoof) QRCodeContainer(),
           if (!spoof) SnackBarViewer(),
           if (!spoof) SizedBox(width: 6),
+          if (!spoof) components.status,
           if (!spoof) PeristentKeyboardWatcher(),
         ],
       );

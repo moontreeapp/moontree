@@ -20,7 +20,13 @@ class _ConnectionLightState extends State<ConnectionLight>
   List<StreamSubscription> listeners = [];
   ConnectionStatus connectionStatus = ConnectionStatus.disconnected;
   Color connectionStatusColor = AppColors.error;
-  bool connectionBusy = false;
+  Map<ConnectionStatus, Color> connectionColor = {
+    ConnectionStatus.connected: AppColors.success,
+    ConnectionStatus.connecting: AppColors.yellow,
+    ConnectionStatus.disconnected: AppColors.error,
+  };
+
+  /*bool connectionBusy = false;
   late DateTime startTime;
   final int durationV = 1236;
   final int durationH = 2000;
@@ -63,12 +69,20 @@ class _ConnectionLightState extends State<ConnectionLight>
       parent: _controllerV,
       curve: Curves.easeInOut,
     ));
-  }
+  }*/
 
   @override
   void initState() {
     super.initState();
-    createAnimations();
+    listeners.add(streams.client.connected.listen((ConnectionStatus value) {
+      if (value != connectionStatus) {
+        setState(() {
+          connectionStatus = value;
+          connectionStatusColor = connectionColor[value]!;
+        });
+      }
+    }));
+    /*createAnimations();
     listeners.add(streams.client.connected.listen((ConnectionStatus value) {
       if (value != connectionStatus) {
         setState(() {
@@ -133,13 +147,13 @@ class _ConnectionLightState extends State<ConnectionLight>
           setState(() => connectionBusy = value);
         }
       }
-    }));
+    }));*/
   }
 
   @override
   void dispose() {
-    _controllerH.dispose();
-    _controllerV.dispose();
+    /*_controllerH.dispose();
+    _controllerV.dispose();*/
     for (var listener in listeners) {
       listener.cancel();
     }
@@ -151,7 +165,9 @@ class _ConnectionLightState extends State<ConnectionLight>
     var icon = ColorFiltered(
         colorFilter: ColorFilter.mode(connectionStatusColor, BlendMode.srcATop),
         child: SvgPicture.asset('assets/status/icon.svg'));
-    return connectionBusy
+    return
+        /*
+    connectionBusy
         ? GestureDetector(
             onTap: () => streams.client.busy.add(false),
             child:
@@ -181,7 +197,8 @@ class _ConnectionLightState extends State<ConnectionLight>
                       alignment: Alignment.centerLeft,
                     )),
           )
-        : Container(
+        : */
+        Container(
             alignment: Alignment.center,
             child: IconButton(
               splashRadius: 24,

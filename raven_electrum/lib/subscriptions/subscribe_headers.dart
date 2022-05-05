@@ -20,7 +20,7 @@ extension SubscribeHeadersMethod on RavenElectrumClient {
     // If this is the first time, register
     registerSubscribable(methodPrefix, 0);
 
-    return subscribe(methodPrefix)
+    return subscribeNonBatch(methodPrefix)
         .asyncMap((item) => BlockHeader(item['hex'], item['height']));
   }
 }

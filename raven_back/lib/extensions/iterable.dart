@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:collection/src/iterable_extensions.dart';
 import 'package:quiver/iterables.dart';
+import 'package:tuple/tuple.dart';
 
 extension SumAList on Iterable {
   num sum() => fold(
@@ -26,4 +27,10 @@ extension MinMaxOfAIteratableDouble on Iterable<double> {
 extension EnumeratedIteratable on Iterable {
   Iterable<List> enumerated() =>
       zip([mapIndexed((index, element) => index).toList(), this]);
+
+  Iterable<Tuple2<int, T>> enumeratedTuple<T>() => [
+        for (var x
+            in zip([mapIndexed((index, element) => index).toList(), this]))
+          Tuple2(x[0] as int, x[1] as T)
+      ];
 }

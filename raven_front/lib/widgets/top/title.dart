@@ -130,7 +130,6 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   }
 
   Widget body() {
-    print(pageTitle);
     if (pageTitle == 'Splash') {
       if (widget.animate) {
         slowController.forward(from: 0.0);
@@ -213,11 +212,29 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
       if (settingTitle != null) {
         return walletDropDown();
       } else if (appContext == AppContext.wallet) {
-        return Text('Wallet ' + res.wallets.currentWalletName + ' ',
-            style: Theme.of(context)
-                .textTheme
-                .headline2!
-                .copyWith(color: AppColors.white));
+        return GestureDetector(
+            onDoubleTap: () async {
+              var next = false;
+              var walletId;
+              for (Wallet wallet in res.wallets.ordered + res.wallets.ordered) {
+                if (next) {
+                  walletId = wallet.id;
+                  break;
+                }
+                if (Current.walletId == wallet.id) {
+                  next = true;
+                }
+              }
+              await res.settings.setCurrentWalletId(walletId);
+              await services.balance.recalculateAllBalances();
+              streams.app.fling.add(false);
+              streams.app.setting.add(null);
+            },
+            child: Text('Wallet ' + res.wallets.currentWalletName + ' ',
+                style: Theme.of(context)
+                    .textTheme
+                    .headline2!
+                    .copyWith(color: AppColors.white)));
       }
     }
 
@@ -235,10 +252,11 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
             for (Wallet wallet in res.wallets.ordered)
               ListTile(
                 visualDensity: VisualDensity.compact,
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(components.navigator.routeContext!);
                   if (wallet.id != Current.walletId) {
-                    res.settings.setCurrentWalletId(wallet.id);
+                    await res.settings.setCurrentWalletId(wallet.id);
+                    await services.balance.recalculateAllBalances();
                     streams.app.fling.add(false);
                     streams.app.setting.add(null);
                   }

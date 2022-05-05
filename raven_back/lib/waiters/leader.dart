@@ -1,11 +1,21 @@
 /// this waiter is entirely concerned with derviving addresses:
 /// each time a new wallet is saved, and
 /// each time a new vout is saved that can be tied to a wallet we own.
+import 'dart:io';
+
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/streams/client.dart';
 import 'package:raven_back/streams/wallet.dart';
+import 'package:raven_back/utilities/lock.dart';
+import 'package:raven_electrum/raven_electrum.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:tuple/tuple.dart';
 import 'waiter.dart';
 
 class LeaderWaiter extends Waiter {
+  Set<Change<Wallet>> backlog = {};
+  final _backlogLock = ReaderWriterLock();
+
   void init() {
     /*
     listen(
@@ -27,25 +37,42 @@ class LeaderWaiter extends Waiter {
       (Cipher cipher) => services.wallet.leader.makeFirstWallet(cipher),
     );
 
-    listen(
-      'ciphers.changes',
-      res.ciphers.changes,
-      (Change<Cipher> change) {
-        change.when(
-          loaded: (loaded) async =>
-              await attemptLeaderWalletAddressDerive(change.data.cipherUpdate),
-          added: (added) async =>
-              await attemptLeaderWalletAddressDerive(change.data.cipherUpdate),
-          updated: (updated) {},
-          removed: (removed) {},
-        );
-      },
-    );
+    /// necessary?
+    //listen(
+    //  'ciphers.changes',
+    //  res.ciphers.changes,
+    //  (Change<Cipher> change) {
+    //    change.when(
+    //      loaded: (loaded) async =>
+    //          await attemptLeaderWalletAddressDerive(change.data.cipherUpdate),
+    //      added: (added) async =>
+    //          await attemptLeaderWalletAddressDerive(change.data.cipherUpdate),
+    //      updated: (updated) {},
+    //      removed: (removed) {},
+    //    );
+    //  },
+    //);
 
     listen(
       'streams.wallet.leaderChanges',
-      streams.wallet.leaderChanges,
-      (Change<Wallet> change) => handleLeaderChange(change),
+      CombineLatestStream.combine2(
+          streams.wallet.leaderChanges,
+          streams.client.connected,
+          (Change<Wallet> change, ConnectionStatus connection) =>
+              Tuple2(change, connection)),
+      (Tuple2<Change<Wallet>, ConnectionStatus> tuple) async {
+        final change = tuple.item1;
+        final status = tuple.item2;
+        await _backlogLock.write(() => backlog.add(change));
+        if (status == ConnectionStatus.connected) {
+          await _backlogLock.read(() {
+            for (var walletChange in backlog) {
+              handleLeaderChange(walletChange);
+            }
+          });
+          await _backlogLock.write(() => backlog.clear());
+        } else {}
+      },
     );
 
     listen(
@@ -62,9 +89,18 @@ class LeaderWaiter extends Waiter {
 
   void handleLeaderChange(Change<Wallet> change) {
     change.when(loaded: (loaded) async {
-      await handleDeriveAddress(leader: loaded.data as LeaderWallet);
+      if (loaded.data is LeaderWallet) {
+        await handleDeriveAddress(leader: loaded.data as LeaderWallet);
+      }
     }, added: (added) async {
-      await handleDeriveAddress(leader: added.data as LeaderWallet);
+      if (added.data is LeaderWallet) {
+        var leader = added.data as LeaderWallet;
+        if (leader.addresses.isEmpty) {
+          await services.wallet.leader.newLeaderProcess(leader);
+        } else {
+          await handleDeriveAddress(leader: leader);
+        }
+      }
     }, updated: (updated) async {
       /*
           /// app is switched to mainnet to testnet or testnet to mainnet... 

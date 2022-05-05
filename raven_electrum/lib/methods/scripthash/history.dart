@@ -29,7 +29,7 @@ extension GetHistoryMethod on RavenElectrumClient {
 
   /// returns histories in the same order as scripthashes passed in
   Future<List<List<ScripthashHistory>>> getHistories(
-    List<String> scripthashes,
+    Iterable<String> scripthashes,
   ) async {
     var futures = <Future<List<ScripthashHistory>>>[];
     if (scripthashes.isNotEmpty) {

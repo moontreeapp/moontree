@@ -20,7 +20,7 @@ void main() {
       ]);
       registerSubscribable('blockchain.headers', 0);
       var results =
-          await client.subscribe('blockchain.headers').take(2).toList();
+          await (await client.subscribe('blockchain.headers')).take(2).toList();
       expect(results.length, 2);
       expect(results[0], {'hex': '01', 'height': 788191});
       expect(results[1], {'hex': '02', 'height': 788192});

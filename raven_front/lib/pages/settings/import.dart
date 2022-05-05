@@ -71,9 +71,9 @@ class _ImportState extends State<Import> {
               onTap: () => FocusScope.of(context).unfocus(),
               // for testing
               onDoubleTap: () => words.text =
+                  //'animal twin echo jaguar sibling man common answer dolphin sign nice evolve',
                   'board leisure impose bleak race egg abuse series seat achieve fan column',
-              onLongPress: () => words.text =
-                  'animal twin echo jaguar sibling man common answer dolphin sign nice evolve',
+              //'bracket chest grace bus siren another treat oppose setup wild insane endless',
               child: body(),
             )));
   }

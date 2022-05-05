@@ -68,7 +68,7 @@ void main() {
     test('subscribes to scripthash', () async {
       var scripthash =
           '93bfc0b3df3f7e2a033ca8d70582d5cf4adf6cc0587e10ef224a78955b636923';
-      var stream = client.subscribeScripthash(scripthash);
+      var stream = await client.subscribeScripthash(scripthash);
       var result = await stream.first;
       expect(result,
           '615dd2dec158d531d2875cee60c37e9e72f264d221a267a9ab512e0741ba4eb4');

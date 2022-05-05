@@ -11,7 +11,7 @@ main() {
     test('can create a 1-to-1 Transaction', () {
       final alice = ECPair.fromWIF(
           'L1uyy5qTuGrVXrmrsvHWHgVzW9kKdrp27wBC7Vs6nZDTF2BRUVwy',
-          networks: bitcoinNetworks);
+          bitcoinMainnet);
       final txb = new TransactionBuilder(network: bitcoinMainnet);
 
       txb.setVersion(1);
@@ -31,10 +31,10 @@ main() {
     test('can create a 2-to-2 Transaction', () {
       final alice = ECPair.fromWIF(
           'L1Knwj9W3qK3qMKdTvmg3VfzUs3ij2LETTFhxza9LfD5dngnoLG1',
-          networks: bitcoinNetworks);
+          bitcoinMainnet);
       final bob = ECPair.fromWIF(
           'KwcN2pT3wnRAurhy7qMczzbkpY5nXMW2ubh696UBc1bcwctTx26z',
-          networks: bitcoinNetworks);
+          bitcoinMainnet);
 
       final txb = new TransactionBuilder(network: bitcoinMainnet);
       txb.setVersion(1);
@@ -66,7 +66,7 @@ main() {
         () {
       final alice = ECPair.fromWIF(
           'cUNfunNKXNNJDvUvsjxz5tznMR6ob1g5K6oa4WGbegoQD3eqf4am',
-          networks: bitcoinNetworks);
+          bitcoinMainnet);
       final p2wpkh = new P2WPKH(
               data: new PaymentData(pubkey: alice.publicKey),
               network: bitcoinTestnet)
