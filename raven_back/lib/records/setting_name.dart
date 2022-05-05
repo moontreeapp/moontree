@@ -12,35 +12,35 @@ enum SettingName {
   Database_Version,
 
   @HiveField(1)
-  Electrum_Net,
+  Login_Attempts,
 
   @HiveField(2)
-  Electrum_Domain,
+  Electrum_Net,
 
   @HiveField(3)
-  Electrum_Port,
+  Electrum_Domain,
 
   @HiveField(4)
-  Electrum_DomainTest,
+  Electrum_Port,
 
   @HiveField(5)
-  Electrum_PortTest,
+  Electrum_DomainTest,
 
   @HiveField(6)
-  Wallet_Current,
+  Electrum_PortTest,
 
   @HiveField(7)
-  Wallet_Preferred,
+  Wallet_Current,
 
   @HiveField(8)
-  Local_Path,
+  Wallet_Preferred,
 
   @HiveField(9)
-  User_Name,
+  Local_Path,
 
   @HiveField(10)
-  Send_Immediate,
+  User_Name,
 
   @HiveField(11)
-  Login_Attempts,
+  Send_Immediate,
 }

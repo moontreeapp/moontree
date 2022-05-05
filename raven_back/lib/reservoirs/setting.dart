@@ -26,6 +26,8 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
   static Map<String, Setting> get defaults => {
         SettingName.Database_Version:
             Setting(name: SettingName.Database_Version, value: '1.0.0'),
+        SettingName.Login_Attempts:
+            Setting(name: SettingName.Login_Attempts, value: []),
         SettingName.Electrum_Net:
             Setting(name: SettingName.Electrum_Net, value: Net.Test),
         SettingName.Electrum_Domain:
@@ -44,8 +46,6 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
             Setting(name: SettingName.User_Name, value: null),
         SettingName.Send_Immediate:
             Setting(name: SettingName.Send_Immediate, value: false),
-        SettingName.Login_Attempts:
-            Setting(name: SettingName.Login_Attempts, value: 0),
       }.map(
           (settingName, setting) => MapEntry(settingName.enumString, setting));
 
@@ -71,11 +71,11 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
       primaryIndex.getOne(SettingName.Electrum_Net)!.value == Net.Main;
   NetworkType get network => networks[net]!;
   String get netName => net.enumString;
-  int get loginAttempts =>
+  List<DateTime> get loginAttempts =>
       primaryIndex.getOne(SettingName.Login_Attempts)!.value;
-  Future saveLoginAttempts(int attempts) async =>
+  Future saveLoginAttempts(List<DateTime> attempts) async =>
       await save(Setting(name: SettingName.Login_Attempts, value: attempts));
   Future incrementLoginAttempts() async =>
-      await saveLoginAttempts(loginAttempts + 1);
-  Future resetLoginAttempts() async => await saveLoginAttempts(0);
+      await saveLoginAttempts(loginAttempts + [DateTime.now()]);
+  Future resetLoginAttempts() async => await saveLoginAttempts(<DateTime>[]);
 }

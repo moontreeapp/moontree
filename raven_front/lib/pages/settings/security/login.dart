@@ -17,7 +17,6 @@ class _LoginState extends State<Login> {
   var passwordVisible = false;
   FocusNode loginFocus = FocusNode();
   FocusNode unlockFocus = FocusNode();
-  DateTime lastFailedAttempt = DateTime.now();
 
   @override
   void initState() {
@@ -92,7 +91,7 @@ class _LoginState extends State<Login> {
         context,
         focusNode: loginFocus,
         labelText: 'Password',
-        errorText: password.text == '' && res.settings.loginAttempts > 0
+        errorText: password.text == '' && res.settings.loginAttempts.length > 0
             ? 'Incorrect Password'
             : null,
         //hintText:
@@ -127,17 +126,16 @@ class _LoginState extends State<Login> {
   Future<bool> validate() async {
     final x = services.password.validate.password(password.text);
     if (x) {
-      if (res.settings.loginAttempts > 0) {
+      if (res.settings.loginAttempts.length > 0) {
         streams.app.snack.add(Snack(
-          message: res.settings.loginAttempts == 1
-              ? 'There was ${res.settings.loginAttempts} unsuccessful login attempt'
-              : 'There has been ${res.settings.loginAttempts} unsuccessful login attempts',
+          message: res.settings.loginAttempts.length == 1
+              ? 'There was ${res.settings.loginAttempts.length} unsuccessful login attempt'
+              : 'There has been ${res.settings.loginAttempts.length} unsuccessful login attempts',
         ));
         await res.settings.resetLoginAttempts();
       }
     } else {
       await res.settings.incrementLoginAttempts();
-      lastFailedAttempt = DateTime.now();
     }
     return x;
   }
@@ -162,5 +160,10 @@ class _LoginState extends State<Login> {
   }
 
   int get timeFromAttempts =>
-      min(pow(2, res.settings.loginAttempts) * 125, 1000 * 60 * 60).toInt();
+      min(pow(2, res.settings.loginAttempts.length) * 125, 1000 * 60 * 60)
+          .toInt();
+
+  DateTime get lastFailedAttempt => res.settings.loginAttempts.length > 0
+      ? res.settings.loginAttempts.last
+      : DateTime(DateTime.now().year - 1);
 }
