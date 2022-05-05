@@ -73,11 +73,7 @@ class _SendState extends State<Send> {
     //sendNoteFocusNode.addListener(refresh);
     listeners.add(streams.spend.form.listen((SpendForm? value) {
       if (value != null) {
-        print('');
-        print(spendForm);
-        print(value);
         if (spendForm != value) {
-          print('in if');
           spendForm = value;
           var asset = (value.symbol ?? res.securities.RVN.symbol);
           asset = (asset == res.securities.RVN.symbol || asset == 'Ravencoin')
@@ -97,7 +93,6 @@ class _SendState extends State<Send> {
               sendAddress.text != sendAddressText ||
               addressName != addressNameText ||
               (asDouble(sendAmount.text) != value.amount)) {
-            print('in if1');
             setState(() {
               sendAsset.text = asset;
               sendFee.text = sendFeeText;
@@ -105,10 +100,7 @@ class _SendState extends State<Send> {
               sendAddress.text = sendAddressText;
               addressName = addressNameText;
               var x = asDouble(sendAmount.text);
-              print('\n$x vs ${value.amount}');
               if (value.amount == null && x > 0) {
-                print('in if2');
-                print('blanking');
                 sendAmount.text = '';
                 streams.spend.form.add(SpendForm.merge(
                     form: streams.spend.form.value,
@@ -119,8 +111,6 @@ class _SendState extends State<Send> {
                     address: sendAddress.text,
                     addressName: addressName));
               } else if (value.amount != null && x != value.amount) {
-                print('in if3');
-                print('setting to ${value.amount}');
                 sendAmount.text =
                     value.amount == 0.0 ? '' : value.amount.toString();
                 streams.spend.form.add(SpendForm.merge(
@@ -132,7 +122,6 @@ class _SendState extends State<Send> {
                     address: sendAddress.text,
                     addressName: addressName));
               } else {
-                print('in if4');
                 streams.spend.form.add(SpendForm.merge(
                     form: streams.spend.form.value,
                     amount: value.amount ?? 0,
@@ -278,8 +267,9 @@ class _SendState extends State<Send> {
       child: Stack(
         children: [
           ListView(
-            padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
+            padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
             children: <Widget>[
+              SizedBox(height: 8),
               Container(height: 201),
               SizedBox(height: 8),
               sendAssetField,
