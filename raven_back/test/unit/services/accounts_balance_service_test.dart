@@ -5,11 +5,11 @@ import 'package:raven_back/raven_back.dart';
 import '../../fixtures/fixtures.dart' as fixtures;
 
 void main() async {
-  late LeaderWallet wallet;
+  //late LeaderWallet wallet;
 
   setUp(() {
     fixtures.useFixtureSources(1);
-    wallet = res.wallets.data.first as LeaderWallet;
+    //wallet = res.wallets.data.first as LeaderWallet;
   });
   group('BalanceService', () {
     setUp(fixtures.useFixtureSources1);

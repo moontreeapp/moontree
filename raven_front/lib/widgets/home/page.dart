@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raven_back/streams/app.dart';
-import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_front/components/components.dart';
 
 /// the notifier seems to slow down the animation so we're going to comment it
 /// out using /** notifier */ and alternative solution with /** notifier-alt */

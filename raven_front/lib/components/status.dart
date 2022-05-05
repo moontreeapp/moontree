@@ -3,7 +3,6 @@
 /// in the raven lib so that certain logic can be executed given each case.
 /// as such, I think this component need to be attached to each page.
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 

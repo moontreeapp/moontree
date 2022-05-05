@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/utilities/lock.dart';
-import 'package:raven_back/utilities/search.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/raven_back.dart';
 

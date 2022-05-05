@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:bip39/bip39.dart' as bip39;
+import 'package:bip32/bip32.dart' as bip32;
+import 'package:raven_back/utilities/hex.dart' as hex;
 
 import 'package:raven_back/raven_back.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart';
@@ -17,11 +19,7 @@ class HandleResult {
 class ImportWalletService {
   // TODO: Unsure how to validate this
   ImportFormat? detectImportType(String text) {
-    if ((text.startsWith('[') && text.endsWith(']')) ||
-        (text.startsWith('{') && text.endsWith('}'))) {
-      /// todo must also contain some correct keys
-      /// two types of json - ours and outside json formats
-      /// TODO: How to verify?
+    if (validateJson(text)) {
       return ImportFormat.json;
     }
 
@@ -38,6 +36,23 @@ class ImportWalletService {
       KPWallet.fromWIF(text, res.settings.network);
       return ImportFormat.WIF;
     } catch (_) {}
+
+    /*
+    TODO:
+    This will require reworks of how we save wallets
+    We cannot go from key -> entropy and therefore cannot
+    use the raw entropy for creating leader wallets
+
+    try {
+      final node = bip32.BIP32.fromBase58(text);
+      if (node.privateKey == null) {
+        throw Exception('This is a watch only');
+      }
+      // TODO: We assume that this is an extended private key
+      // Could be private/public account/extended key
+      return ImportFormat.masterKey;
+    } catch (_) {}
+    */
 
     /// these are placeholders, they must be checked
     //var isSeed = text.length == 128;
@@ -58,6 +73,45 @@ class ImportWalletService {
           : walletType == exportedSingleType
               ? WalletType.single
               : throw ArgumentError('Wallet must be leader or single');
+
+  bool validateJson(String text) {
+    try {
+      final json_obj =
+          json.decode(text) as Map<String, Map<String, Map<String, dynamic>>>;
+      if (!json_obj.containsKey('wallets')) {
+        return false;
+      }
+      for (final wallet_obj in json_obj['wallets']!.values) {
+        final importType = typeForImport(wallet_obj['type']);
+        if (!(wallet_obj['backedUp'] is bool)) {
+          return false;
+        }
+        if (!(wallet_obj['name'] is String)) {
+          return false;
+        }
+        if (!(wallet_obj['secret'] is String)) {
+          return false;
+        }
+        final secret = wallet_obj['secret'] as String;
+        final cipherUpdate = CipherUpdate.fromMap(wallet_obj['cipherUpdate']);
+        final cipher = res.ciphers.byCipherTypePasswordId
+            .getOne(cipherUpdate.cipherType, cipherUpdate.passwordId)!;
+
+        // Ensure we can actually decrypt
+        if (importType == WalletType.leader) {
+          //Encrypted Entropy
+          final entropy = hex.decrypt(secret, cipher.cipher);
+          bip39.entropyToMnemonic(entropy);
+        } else if (importType == WalletType.single) {
+          //Encrypted WIF
+          EncryptedWIF(secret, cipher.cipher).secret;
+        }
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 
   Future<List<HandleResult>> handleJson(String text) async {
     //try {
@@ -96,6 +150,14 @@ class ImportWalletService {
     );
     return attemptWalletSave(wallet);
   }
+
+  /*
+  Future<HandleResult> handleMasterKey(String text) async {
+    final node = bip32.BIP32.fromBase58(text);
+
+    return attemptWalletSave(wallet);
+  }
+  */
 
   Future<HandleResult> handlePrivateKey(String text) async {
     var wallet = services.wallet.create(
@@ -139,6 +201,7 @@ class ImportWalletService {
       ImportFormat.mnemonic: handleMnemonics,
       ImportFormat.encryptedBip38: handleBip38,
       ImportFormat.privateKey: handlePrivateKey,
+      //ImportFormat.masterKey: handleMasterKey,
       ImportFormat.WIF: handleWIF,
     }[importFormat]!(text);
     if (results is List<HandleResult>) {

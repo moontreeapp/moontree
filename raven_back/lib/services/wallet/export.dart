@@ -11,17 +11,24 @@ class ExportWalletService {
   /// simply a json map with wallets as keys.
   /// values in our system is another map with id as key,
   /// other systems could use list or whatever.
-  Map<String, Map<String, dynamic>> structureForExport() =>
-      {'wallets': walletsForExport()};
+  Map<String, Map<String, dynamic>> structureForExport(
+          Iterable<Wallet> wallets) =>
+      {'wallets': walletsToExportFormat(wallets)};
 
-  Map<String, Map<String, dynamic>> walletsForExport() => {
-        for (var wallet in res.wallets) ...{
-          if (wallet.cipher != null)
-            wallet.id: {
-              'secret': wallet.secret(wallet.cipher!),
-              'type': typeForExport(wallet),
-              'cipherUpdate': wallet.cipherUpdate.toMap,
-            }
+  Map<String, Map<String, dynamic>> walletsToExportFormat(
+          Iterable<Wallet> wallets) =>
+      {
+        for (final wallet in wallets) ...{
+          wallet.id: {
+            'secret': wallet.encrypted, //.secret(wallet.cipher!),
+            // For now:
+            // Leaderwallets are always mnemonics
+            // Singlewallets are always WIFs
+            'type': typeForExport(wallet),
+            'cipherUpdate': wallet.cipherUpdate.toMap,
+            'name': wallet.name,
+            'backedUp': wallet.backedUp,
+          }
         }
       };
 

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:lottie/lottie.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/client.dart';
 import 'package:raven_front/components/components.dart';

@@ -4,7 +4,6 @@
 // ignore_for_file: omit_local_variable_types
 import 'dart:math';
 import 'package:collection/collection.dart';
-import 'package:raven_back/services/wallet_security_pair.dart';
 import 'package:raven_back/raven_back.dart';
 
 class BalanceService {

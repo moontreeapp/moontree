@@ -31,7 +31,7 @@ class Storage {
 }
 
 class Backup extends Storage {
-  Future<File> writeExport({
+  Future<File?> writeExport({
     required String filename,
     Map<String, dynamic>? export,
     String? rawExport,
