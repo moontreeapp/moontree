@@ -145,25 +145,26 @@ class _ExportState extends State<Export> {
             await Share.share(rawExport ?? 'Invalid wallet data');
           },
         ),
-        SizedBox(width: 16),
-        components.buttons.actionButton(
-          context,
-          enabled: true,
-          label: 'Export',
-          onPressed: () async {
-            components.loading.screen(message: 'Exporting');
-            file = await export();
-            await Future.delayed(Duration(seconds: 1));
-            if (file != null) {
-              streams.app.snack.add(Snack(
-                message: 'Successfully Exported ${walletController.text}',
-              ));
-            } else {
-              streams.app.snack.add(
-                  Snack(message: 'Failed to Export ${walletController.text}'));
-            }
-          },
-        )
+        if (!Platform.isIOS) SizedBox(width: 16),
+        if (!Platform.isIOS)
+          components.buttons.actionButton(
+            context,
+            enabled: true,
+            label: 'Export',
+            onPressed: () async {
+              components.loading.screen(message: 'Exporting');
+              file = await export();
+              await Future.delayed(Duration(seconds: 1));
+              if (file != null) {
+                streams.app.snack.add(Snack(
+                  message: 'Successfully Exported ${walletController.text}',
+                ));
+              } else {
+                streams.app.snack.add(Snack(
+                    message: 'Failed to Export ${walletController.text}'));
+              }
+            },
+          )
       ]);
 
   Future<File?> export() async => await storage.writeExport(
