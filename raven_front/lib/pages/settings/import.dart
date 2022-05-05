@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/wallet/constants.dart';
@@ -70,10 +70,7 @@ class _ImportState extends State<Import> {
             child: GestureDetector(
               onTap: () => FocusScope.of(context).unfocus(),
               // for testing
-              onDoubleTap: () => words.text =
-                  //'animal twin echo jaguar sibling man common answer dolphin sign nice evolve',
-                  'board leisure impose bleak race egg abuse series seat achieve fan column',
-              //'bracket chest grace bus siren another treat oppose setup wild insane endless',
+              onDoubleTap: () => words.text = '',
               child: body(),
             )));
   }
@@ -88,8 +85,8 @@ class _ImportState extends State<Import> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: file == null
                     ? [
-                        fileButton,
-                        SizedBox(width: 16),
+                        if (!Platform.isIOS) fileButton,
+                        if (!Platform.isIOS) SizedBox(width: 16),
                         submitButton(),
                       ]
                     : [submitButton('Import File')]),

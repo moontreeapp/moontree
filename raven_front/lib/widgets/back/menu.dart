@@ -8,7 +8,7 @@ import 'package:raven_front/utils/auth.dart';
 import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_back/streams/app.dart';
 
-//import 'package:raven_front/services/lookup.dart';
+import 'package:raven_front/services/lookup.dart';
 //import 'package:raven_front/utils/zips.dart';
 //import 'package:raven_front/theme/extensions.dart';
 //import 'package:raven_back/utilities/database.dart' as ravenDatabase;
@@ -53,34 +53,40 @@ class _NavMenuState extends State<NavMenu> {
     Map<String, dynamic>? arguments,
     Function? execute,
     Function? executeAfter,
+    bool disabled = false,
   }) =>
       ListTile(
-        onTap: () {
-          if (execute != null) {
-            execute();
-          }
-          if (!arrow) {
-            ScaffoldMessenger.of(context).clearSnackBars();
-            Navigator.of(components.navigator.routeContext!).pushNamed(
-              link,
-              arguments: arguments,
-            );
-            streams.app.setting.add(null);
-            streams.app.fling.add(false);
-          } else {
-            streams.app.setting.add(link);
-          }
-          if (executeAfter != null) {
-            executeAfter();
-          }
-        },
-        leading: icon != null ? Icon(icon, color: Colors.white) : image!,
+        onTap: disabled
+            ? () {}
+            : () {
+                if (execute != null) {
+                  execute();
+                }
+                if (!arrow) {
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  Navigator.of(components.navigator.routeContext!).pushNamed(
+                    link,
+                    arguments: arguments,
+                  );
+                  streams.app.setting.add(null);
+                  streams.app.fling.add(false);
+                } else {
+                  streams.app.setting.add(link);
+                }
+                if (executeAfter != null) {
+                  executeAfter();
+                }
+              },
+        leading: icon != null
+            ? Icon(icon, color: disabled ? AppColors.white60 : Colors.white)
+            : image!,
         title: Text(name,
-            style: Theme.of(context)
-                .textTheme
-                .bodyText1!
-                .copyWith(color: AppColors.white)),
-        trailing: arrow ? Icon(Icons.chevron_right, color: Colors.white) : null,
+            style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                color: disabled ? AppColors.white60 : AppColors.white)),
+        trailing: arrow
+            ? Icon(Icons.chevron_right,
+                color: disabled ? AppColors.white60 : Colors.white)
+            : null,
       );
 
   @override
@@ -96,6 +102,7 @@ class _NavMenuState extends State<NavMenu> {
               icon: MdiIcons.keyMinus,
               name: 'Export',
               link: '/settings/export',
+              disabled: true,
               executeAfter: () async {
                 if (Current.wallet is LeaderWallet &&
                     streams.app.triggers.value == ThresholdTrigger.backup &&

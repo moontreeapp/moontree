@@ -20,14 +20,15 @@ class ExportWalletService {
       {
         for (final wallet in wallets) ...{
           wallet.id: {
+            'wallet name': wallet.name,
+            'wallet type': typeForExport(wallet),
+            'backed up': wallet.backedUp,
             'secret': wallet.encrypted, //.secret(wallet.cipher!),
+            'secret type': wallet.secretTypeToString,
             // For now:
             // Leaderwallets are always mnemonics
             // Singlewallets are always WIFs
-            'type': typeForExport(wallet),
-            'cipherUpdate': wallet.cipherUpdate.toMap,
-            'name': wallet.name,
-            'backedUp': wallet.backedUp,
+            'cipher encryption': wallet.cipherUpdate.toMap,
           }
         }
       };

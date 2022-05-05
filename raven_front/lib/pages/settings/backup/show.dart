@@ -1,7 +1,7 @@
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
-import 'package:screenshot_callback/screenshot_callback.dart';
+//import 'package:screenshot_callback/screenshot_callback.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
@@ -26,7 +26,7 @@ class _BackupSeedState extends State<BackupSeed>
   TextEditingController existingPassword = TextEditingController();
   FocusNode existingFocus = FocusNode();
   FocusNode showFocus = FocusNode();
-  ScreenshotCallback screenshotCallback = ScreenshotCallback();
+  //ScreenshotCallback screenshotCallback = ScreenshotCallback();
 
   /// from exploring animations - want to return to
   //late AnimationController controller;
@@ -40,11 +40,11 @@ class _BackupSeedState extends State<BackupSeed>
     if (Platform.isAndroid) {
       FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
     } else if (Platform.isIOS) {
-      screenshotCallback.addListener(() {
-        // maybe we can repaint the screen real quick before the screenshot is taken
-        // or display a message telling them to write it down...
-        print('detect screenshot');
-      });
+      //screenshotCallback.addListener(() {
+      //  // maybe we can repaint the screen real quick before the screenshot is taken
+      //  // or display a message telling them to write it down...
+      //  print('detect screenshot');
+      //});
     }
 
     /// from exploring animations - want to return to
@@ -59,7 +59,7 @@ class _BackupSeedState extends State<BackupSeed>
     if (Platform.isAndroid) {
       FlutterWindowManager.clearFlags(FlutterWindowManager.FLAG_SECURE);
     } else if (Platform.isIOS) {
-      screenshotCallback.dispose();
+      //screenshotCallback.dispose();
     }
 
     /// from exploring animations - want to return to
