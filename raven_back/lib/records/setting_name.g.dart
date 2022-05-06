@@ -16,27 +16,27 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
       case 0:
         return SettingName.Database_Version;
       case 1:
-        return SettingName.Electrum_Net;
-      case 2:
-        return SettingName.Electrum_Domain;
-      case 3:
-        return SettingName.Electrum_Port;
-      case 4:
-        return SettingName.Electrum_DomainTest;
-      case 5:
-        return SettingName.Electrum_PortTest;
-      case 6:
-        return SettingName.Wallet_Current;
-      case 7:
-        return SettingName.Wallet_Preferred;
-      case 8:
-        return SettingName.Local_Path;
-      case 9:
-        return SettingName.User_Name;
-      case 10:
-        return SettingName.Send_Immediate;
-      case 11:
         return SettingName.Login_Attempts;
+      case 2:
+        return SettingName.Electrum_Net;
+      case 3:
+        return SettingName.Electrum_Domain;
+      case 4:
+        return SettingName.Electrum_Port;
+      case 5:
+        return SettingName.Electrum_DomainTest;
+      case 6:
+        return SettingName.Electrum_PortTest;
+      case 7:
+        return SettingName.Wallet_Current;
+      case 8:
+        return SettingName.Wallet_Preferred;
+      case 9:
+        return SettingName.Local_Path;
+      case 10:
+        return SettingName.User_Name;
+      case 11:
+        return SettingName.Send_Immediate;
       default:
         return SettingName.Database_Version;
     }
@@ -48,37 +48,37 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
       case SettingName.Database_Version:
         writer.writeByte(0);
         break;
-      case SettingName.Electrum_Net:
+      case SettingName.Login_Attempts:
         writer.writeByte(1);
         break;
-      case SettingName.Electrum_Domain:
+      case SettingName.Electrum_Net:
         writer.writeByte(2);
         break;
-      case SettingName.Electrum_Port:
+      case SettingName.Electrum_Domain:
         writer.writeByte(3);
         break;
-      case SettingName.Electrum_DomainTest:
+      case SettingName.Electrum_Port:
         writer.writeByte(4);
         break;
-      case SettingName.Electrum_PortTest:
+      case SettingName.Electrum_DomainTest:
         writer.writeByte(5);
         break;
-      case SettingName.Wallet_Current:
+      case SettingName.Electrum_PortTest:
         writer.writeByte(6);
         break;
-      case SettingName.Wallet_Preferred:
+      case SettingName.Wallet_Current:
         writer.writeByte(7);
         break;
-      case SettingName.Local_Path:
+      case SettingName.Wallet_Preferred:
         writer.writeByte(8);
         break;
-      case SettingName.User_Name:
+      case SettingName.Local_Path:
         writer.writeByte(9);
         break;
-      case SettingName.Send_Immediate:
+      case SettingName.User_Name:
         writer.writeByte(10);
         break;
-      case SettingName.Login_Attempts:
+      case SettingName.Send_Immediate:
         writer.writeByte(11);
         break;
     }

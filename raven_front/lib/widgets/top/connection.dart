@@ -203,7 +203,8 @@ class _ConnectionLightState extends State<ConnectionLight>
               splashRadius: 24,
               padding: EdgeInsets.zero,
               onPressed: () {
-                if (streams.app.page.value != 'Login') {
+                if (!['Login', 'Createlogin']
+                    .contains(streams.app.page.value)) {
                   ScaffoldMessenger.of(context).clearSnackBars();
                   if (services.cipher.canAskForPasswordNow) {
                     streams.app.verify.add(false);

@@ -27,7 +27,7 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
         SettingName.Database_Version:
             Setting(name: SettingName.Database_Version, value: '1.0.0'),
         SettingName.Login_Attempts:
-            Setting(name: SettingName.Login_Attempts, value: []),
+            Setting(name: SettingName.Login_Attempts, value: <DateTime>[]),
         SettingName.Electrum_Net:
             Setting(name: SettingName.Electrum_Net, value: Net.Test),
         SettingName.Electrum_Domain:

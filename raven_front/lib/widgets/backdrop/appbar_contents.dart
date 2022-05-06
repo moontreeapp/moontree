@@ -71,7 +71,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-        testAppBar(appBar, test: true),
+        testAppBar(appBar, test: false),
         alphaBar,
         AppBarScrim(),
       ],
@@ -106,7 +106,7 @@ class BackdropAppBarContents extends StatelessWidget
         shape: shape,
         automaticallyImplyLeading: false,
         elevation: 0,
-        leading: streams.app.page.value == 'Login'
+        leading: ['Login', 'Createlogin'].contains(streams.app.page.value)
             ? null
             : PageLead(mainContext: context),
         centerTitle: spoof,

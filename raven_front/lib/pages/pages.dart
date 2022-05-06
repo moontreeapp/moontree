@@ -12,17 +12,17 @@ import 'package:raven_front/pages/manage/create/restricted.dart';
 import 'package:raven_front/pages/manage/reissue/restricted.dart';
 import 'package:raven_front/pages/manage/reissue/main.dart';
 import 'package:raven_front/pages/manage/reissue/sub.dart';
-import 'package:raven_front/pages/misc/loading.dart';
 import 'package:raven_front/pages/misc/splash.dart';
 import 'package:raven_front/pages/misc/scan.dart';
-import 'package:raven_front/pages/settings/backup/show.dart';
-import 'package:raven_front/pages/settings/backup/verify.dart';
-import 'package:raven_front/pages/settings/security/login.dart';
-import 'package:raven_front/pages/settings/security/remove.dart';
-import 'package:raven_front/pages/settings/security/resume.dart';
-import 'package:raven_front/pages/settings/security/change.dart';
+import 'package:raven_front/pages/misc/checkout.dart';
+import 'package:raven_front/pages/security/backup/show.dart';
+import 'package:raven_front/pages/security/backup/verify.dart';
+import 'package:raven_front/pages/security/create.dart';
+import 'package:raven_front/pages/security/login.dart';
+import 'package:raven_front/pages/security/resume.dart';
+import 'package:raven_front/pages/security/change.dart';
+import 'package:raven_front/pages/security/remove.dart';
 import 'package:raven_front/pages/settings/about.dart';
-//import 'package:raven_front/pages/settings/currency.dart';
 import 'package:raven_front/pages/settings/export.dart';
 import 'package:raven_front/pages/settings/feedback.dart';
 import 'package:raven_front/pages/settings/import.dart';
@@ -33,12 +33,11 @@ import 'package:raven_front/pages/settings/preferences.dart';
 import 'package:raven_front/pages/settings/security.dart';
 import 'package:raven_front/pages/settings/support.dart';
 import 'package:raven_front/pages/settings/technical.dart';
-import 'package:raven_front/pages/misc/checkout.dart';
+//import 'package:raven_front/pages/settings/currency.dart';
+//import 'package:raven_front/pages/settings/wallet.dart';
 import 'package:raven_front/pages/wallet/receive.dart';
 import 'package:raven_front/pages/wallet/send.dart';
 import 'package:raven_front/pages/wallet/transaction.dart';
-import 'package:raven_front/pages/settings/wallet.dart';
-import 'package:raven_front/widgets/front/loader.dart';
 
 class pages {
   // static Splash splash = Splash();
@@ -84,12 +83,10 @@ class pages {
           BuildContext context) =>
       {
         '/splash': (context) => Splash(),
-        '/loading': (context) => Loading(),
         '/home': (context) => Home(),
         '/manage/asset': (context) => Asset(),
         '/transactions': (context) => Transactions(),
-        '/wallet': (context) => WalletView(),
-        '/loader': (context) => Loader(),
+        //'/wallet': (context) => WalletView(), // technical view
         '/scan': (context) => ScanQR(),
         '/create/nft': (context) => CreateNFTAsset(),
         '/create/main': (context) => CreateMainAsset(),
@@ -107,6 +104,7 @@ class pages {
         '/security/resume': (context) => ChangeResume(),
         '/security/remove': (context) => RemovePassword(),
         '/security/login': (context) => Login(),
+        '/security/createlogin': (context) => CreateLogin(),
         '/transaction/transaction': (context) => TransactionPage(),
         '/transaction/receive': (context) => Receive(),
         '/transaction/send': (context) => Send(),

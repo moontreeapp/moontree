@@ -14,7 +14,6 @@ class SendWaiter extends Waiter {
     streams.spend.make.listen((SendRequest? sendRequest) async {
       if (sendRequest != null) {
         print('SEND REQUEST $sendRequest');
-        await Future.delayed(const Duration(milliseconds: 500));
         Tuple2<ravencoin.Transaction, SendEstimate> tuple;
         try {
           tuple = await services.transaction.make.transactionBy(sendRequest);

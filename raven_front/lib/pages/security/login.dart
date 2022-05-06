@@ -20,13 +20,13 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
-    passwordVisible = false;
     super.initState();
   }
 
   @override
   void dispose() {
     password.dispose();
+    loginFocus.dispose();
     unlockFocus.dispose();
     super.dispose();
   }

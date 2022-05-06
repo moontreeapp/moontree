@@ -8,9 +8,11 @@ class SubscriptionWaiter extends Waiter {
       'streams.client.connected',
       streams.client.connected,
       (ConnectionStatus connected) {
-        connected == ConnectionStatus.connected
-            ? services.client.subscribe.toAllAddresses()
-            : deinitAllSubscriptions();
+        res.addresses.isNotEmpty
+            ? connected == ConnectionStatus.connected
+                ? services.client.subscribe.toAllAddresses()
+                : deinitAllSubscriptions()
+            : () {};
       },
     );
   }
