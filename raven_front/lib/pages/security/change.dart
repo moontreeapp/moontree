@@ -59,7 +59,6 @@ class _ChangePasswordState extends State<ChangePassword> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               for (var x in [
-                //if (!streams.app.verify.value) existingPasswordField,
                 newPasswordField,
                 confirmPasswordField,
               ])
@@ -207,7 +206,6 @@ class _ChangePasswordState extends State<ChangePassword> {
       );
 
   bool enabledCheck() =>
-      //(!streams.app.verify.value ? verify() : true) &&
       validatedComplexity && confirmPassword.text == newPassword.text;
 
   void validateComplexity({String? password}) {

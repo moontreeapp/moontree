@@ -21,7 +21,6 @@ import 'package:raven_front/pages/security/create.dart';
 import 'package:raven_front/pages/security/login.dart';
 import 'package:raven_front/pages/security/resume.dart';
 import 'package:raven_front/pages/security/change.dart';
-import 'package:raven_front/pages/security/remove.dart';
 import 'package:raven_front/pages/settings/about.dart';
 import 'package:raven_front/pages/settings/export.dart';
 import 'package:raven_front/pages/settings/feedback.dart';
@@ -30,7 +29,6 @@ import 'package:raven_front/pages/settings/language.dart';
 import 'package:raven_front/pages/settings/network.dart';
 import 'package:raven_front/pages/settings/advanced.dart';
 import 'package:raven_front/pages/settings/preferences.dart';
-import 'package:raven_front/pages/settings/security.dart';
 import 'package:raven_front/pages/settings/support.dart';
 import 'package:raven_front/pages/settings/technical.dart';
 //import 'package:raven_front/pages/settings/currency.dart';
@@ -102,7 +100,6 @@ class pages {
         '/security/backupConfirm': (context) => VerifySeed(),
         '/security/change': (context) => ChangePassword(),
         '/security/resume': (context) => ChangeResume(),
-        '/security/remove': (context) => RemovePassword(),
         '/security/login': (context) => Login(),
         '/security/createlogin': (context) => CreateLogin(),
         '/transaction/transaction': (context) => TransactionPage(),
@@ -118,7 +115,6 @@ class pages {
         '/settings/import': (context) => Import(),
         '/settings/network': (context) => ElectrumNetwork(),
         '/settings/preferences': (context) => Preferences(),
-        '/settings/security': (context) => Security(),
         '/settings/support': (context) => Support(),
         '/settings/technical': (context) => TechnicalView(),
       };
