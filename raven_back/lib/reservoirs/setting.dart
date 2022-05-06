@@ -71,11 +71,11 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
       primaryIndex.getOne(SettingName.Electrum_Net)!.value == Net.Main;
   NetworkType get network => networks[net]!;
   String get netName => net.enumString;
-  List<DateTime> get loginAttempts =>
+  List get loginAttempts =>
       primaryIndex.getOne(SettingName.Login_Attempts)!.value;
-  Future saveLoginAttempts(List<DateTime> attempts) async =>
+  Future saveLoginAttempts(List attempts) async =>
       await save(Setting(name: SettingName.Login_Attempts, value: attempts));
   Future incrementLoginAttempts() async =>
       await saveLoginAttempts(loginAttempts + [DateTime.now()]);
-  Future resetLoginAttempts() async => await saveLoginAttempts(<DateTime>[]);
+  Future resetLoginAttempts() async => await saveLoginAttempts([]);
 }

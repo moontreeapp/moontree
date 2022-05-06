@@ -13,10 +13,11 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  var password = TextEditingController();
-  var passwordVisible = false;
+  TextEditingController password = TextEditingController();
+  bool passwordVisible = false;
   FocusNode loginFocus = FocusNode();
   FocusNode unlockFocus = FocusNode();
+  bool failedAttempt = false;
 
   @override
   void initState() {
@@ -91,7 +92,9 @@ class _LoginState extends State<Login> {
         context,
         focusNode: loginFocus,
         labelText: 'Password',
-        errorText: password.text == '' && res.settings.loginAttempts.length > 0
+        errorText: password.text == '' &&
+                res.settings.loginAttempts.length > 0 &&
+                failedAttempt
             ? 'Incorrect Password'
             : null,
         //hintText:
@@ -135,6 +138,7 @@ class _LoginState extends State<Login> {
         await res.settings.resetLoginAttempts();
       }
     } else {
+      failedAttempt = true;
       await res.settings.incrementLoginAttempts();
     }
     return x;
