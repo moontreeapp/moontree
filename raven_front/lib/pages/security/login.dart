@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/widgets/widgets.dart';
@@ -65,8 +66,11 @@ class _LoginState extends State<Login> {
       ]));
 
   Widget get welcomeMessage =>
-      Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-        Image(image: AssetImage('assets/logo/moontree.png')),
+      Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Container(
+          child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
+          height: 110,
+        ),
         SizedBox(height: 8),
         Text(
           'Welcome Back',
