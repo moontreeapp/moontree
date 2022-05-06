@@ -122,14 +122,10 @@ class _NavMenuState extends State<NavMenu> {
         padding: EdgeInsets.all(0),
         children: [
           destination(
-              icon: Icons.lock_rounded,
-              name: 'Password',
-              link: '/security/change',
-              execute: () {
-                if (services.cipher.canAskForPasswordNow) {
-                  streams.app.verify.add(false);
-                }
-              }),
+            icon: Icons.lock_rounded,
+            name: 'Password',
+            link: '/security/change',
+          ),
           /*
           destination(
               icon: MdiIcons.accountCog,
@@ -137,15 +133,10 @@ class _NavMenuState extends State<NavMenu> {
               link: '/settings/level'),
           */
           destination(
-              icon: MdiIcons.network,
-              name: 'Network',
-              link: '/settings/network',
-              execute: () {
-                if (services.cipher.canAskForPasswordNow) {
-                  print('setting to false');
-                  streams.app.verify.add(false);
-                }
-              }),
+            icon: MdiIcons.network,
+            name: 'Network',
+            link: '/settings/network',
+          ),
         ],
       ),
       '/settings': ListView(
@@ -162,9 +153,6 @@ class _NavMenuState extends State<NavMenu> {
             icon: MdiIcons.drawPen,
             name: 'Backup',
             link: '/security/backup',
-            //execute: () {
-            //  streams.app.verify.add(false);
-            //}
           ),
           destination(
             icon: Icons.settings,

@@ -27,7 +27,6 @@ class _ChangePasswordState extends State<ChangePassword> {
   @override
   void initState() {
     super.initState();
-    print('streams.app.verify.value ${streams.app.verify.value}');
   }
 
   @override
@@ -41,27 +40,15 @@ class _ChangePasswordState extends State<ChangePassword> {
     super.dispose();
   }
 
-  /// this is removed because instead of using a separate page to handle
-  /// current password validation we've added that functionality directly into
-  /// this page. this is pretty nice though, and shows an example of how to
-  /// rebuild a parent from a child.
-  //@override
-  //Widget build(BuildContext context) => GestureDetector(
-  //      onTap: () => FocusScope.of(context).unfocus(),
-  //      child: streams.app.verify.value
-  //          ? body()
-  //          : VerifyPassword(parentState: this),
-  //    );
-
   @override
   Widget build(BuildContext context) => BackdropLayers(
       back: BlankBack(),
       front: FrontCurve(
           child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: streams.app.verify.value
-            ? body()
-            : VerifyPassword(parentState: this, buttonLabel: 'Change Password'),
+        child: services.password.askCondition
+            ? VerifyPassword(parentState: this, buttonLabel: 'Change Password')
+            : body(),
       )));
 
   Widget body() => Column(
@@ -72,7 +59,7 @@ class _ChangePasswordState extends State<ChangePassword> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               for (var x in [
-                if (!streams.app.verify.value) existingPasswordField,
+                //if (!streams.app.verify.value) existingPasswordField,
                 newPasswordField,
                 confirmPasswordField,
               ])
@@ -220,9 +207,8 @@ class _ChangePasswordState extends State<ChangePassword> {
       );
 
   bool enabledCheck() =>
-      (!streams.app.verify.value ? verify() : true) &&
-      validatedComplexity &&
-      confirmPassword.text == newPassword.text;
+      //(!streams.app.verify.value ? verify() : true) &&
+      validatedComplexity && confirmPassword.text == newPassword.text;
 
   void validateComplexity({String? password}) {
     password = password ?? newPassword.text;

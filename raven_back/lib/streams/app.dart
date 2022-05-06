@@ -5,7 +5,6 @@ class AppStreams {
   final active = appActive$;
   final ping = Stream.periodic(Duration(seconds: 60));
   final tap = BehaviorSubject<bool?>.seeded(null);
-  final verify = BehaviorSubject<bool>.seeded(false);
   final page = BehaviorSubject<String>.seeded('main');
   final setting = BehaviorSubject<String?>.seeded(null);
   final xlead = BehaviorSubject<bool>.seeded(false);

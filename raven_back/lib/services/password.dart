@@ -16,6 +16,8 @@ class PasswordService {
     return false;
   }
 
+  bool get askCondition => required && services.cipher.canAskForPasswordNow;
+
   bool interruptedPasswordChange() => {
         for (var cipherUpdate in services.wallet.getAllCipherUpdates)
           if (cipherUpdate.passwordId != res.passwords.maxPasswordId)

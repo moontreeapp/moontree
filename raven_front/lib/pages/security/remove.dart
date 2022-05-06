@@ -20,8 +20,9 @@ class _RemovePasswordState extends State<RemovePassword> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      streams.app.verify.value ? body() : VerifyPassword(parentState: this);
+  Widget build(BuildContext context) => services.password.askCondition
+      ? VerifyPassword(parentState: this)
+      : body();
 
   Widget body() {
     return BackdropLayers(

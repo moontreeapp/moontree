@@ -207,7 +207,7 @@ class _ConnectionLightState extends State<ConnectionLight>
                     .contains(streams.app.page.value)) {
                   ScaffoldMessenger.of(context).clearSnackBars();
                   if (services.cipher.canAskForPasswordNow) {
-                    streams.app.verify.add(false);
+                    //streams.app.verify.add(false);
                   }
                   streams.app.xlead.add(true);
                   Navigator.of(components.navigator.routeContext!)

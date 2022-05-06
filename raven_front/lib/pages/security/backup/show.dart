@@ -70,9 +70,6 @@ class _BackupSeedState extends State<BackupSeed>
     super.dispose();
   }
 
-  bool get passwordCondition =>
-      services.password.required && services.cipher.canAskForPasswordNow;
-
   @override
   Widget build(BuildContext context) {
     buttonWidth = (MediaQuery.of(context).size.width - (17 + 17 + 16 + 16)) / 3;
@@ -90,7 +87,7 @@ class _BackupSeedState extends State<BackupSeed>
                     intro,
                     safe,
                     SizedBox(height: .2.ofMediaHeight(context)),
-                    if (passwordCondition) login,
+                    if (services.password.askCondition) login,
                   ],
                   buttons: [showButton],
                 )
@@ -164,7 +161,7 @@ class _BackupSeedState extends State<BackupSeed>
   Widget get login => TextField(
         focusNode: existingFocus,
         autocorrect: false,
-        enabled: passwordCondition ? true : false,
+        enabled: services.password.askCondition ? true : false,
         controller: existingPassword,
         obscureText: true,
         textInputAction: TextInputAction.done,
@@ -210,7 +207,7 @@ class _BackupSeedState extends State<BackupSeed>
   bool verify() => services.password.validate.password(existingPassword.text);
 
   Widget get showButton => components.buttons.actionButton(context,
-      enabled: passwordCondition ? verify() : true,
+      enabled: services.password.askCondition ? verify() : true,
       label: 'Show Seed',
       focusNode: showFocus,
       onPressed: () => setState(() {

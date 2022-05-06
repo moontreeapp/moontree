@@ -81,20 +81,20 @@ class _SecurityState extends State<Security> {
               ))));
 
   void behaviorSetPassword() {
-    streams.app.verify.add(true);
+    //streams.app.verify.add(true);
     Navigator.of(context).pushNamed('/security/change');
   }
 
   void behaviorChangePassword() {
     if (services.cipher.canAskForPasswordNow) {
-      streams.app.verify.add(false);
+      //streams.app.verify.add(false);
     }
     Navigator.of(context).pushNamed('/security/change');
   }
 
   void behaviorRemovePassword() {
     if (services.cipher.canAskForPasswordNow) {
-      streams.app.verify.add(false);
+      //streams.app.verify.add(false);
     }
     Navigator.of(context).pushNamed('/security/remove');
   }

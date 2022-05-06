@@ -62,13 +62,12 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
 
   @override
   Widget build(BuildContext context) {
-    print('streams.app.verify.value ${streams.app.verify.value}');
     return BackdropLayers(
         back: BlankBack(),
         front: FrontCurve(
             child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
-          child: services.password.required && !streams.app.verify.value
+          child: services.password.askCondition
               ? VerifyPassword(parentState: this)
               : body(),
         )));

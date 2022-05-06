@@ -105,7 +105,7 @@ class _VerifyPasswordState extends State<VerifyPassword> {
         enabled: verify(),
         label: widget.buttonLabel,
         onPressed: () {
-          streams.app.verify.add(true);
+          //streams.app.verify.add(true);
           widget.parentState?.setState(() {});
         },
       );

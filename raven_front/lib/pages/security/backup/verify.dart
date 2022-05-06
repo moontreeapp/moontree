@@ -62,7 +62,7 @@ class _VerifySeedState extends State<VerifySeed> {
     return BackdropLayers(
         back: BlankBack(),
         front: FrontCurve(
-            child: services.password.required && !streams.app.verify.value
+            child: services.password.askCondition
                 ? VerifyPassword(parentState: this)
                 : body()));
   }
