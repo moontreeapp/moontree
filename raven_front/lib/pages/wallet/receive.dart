@@ -172,9 +172,9 @@ class _ReceiveState extends State<Receive> {
                                       data: rawAddress ? address : uri,
                                       version: QrVersions.auto,
                                       foregroundColor: AppColors.primary,
-                                      embeddedImage: Image.asset(
-                                              'assets/logo/moontree_logo.png')
-                                          .image,
+                                      //embeddedImage: Image.asset(
+                                      //        'assets/logo/moontree_logo.png')
+                                      //    .image,
                                       size: 300.0)))),
                       Padding(
                           padding: EdgeInsets.only(
