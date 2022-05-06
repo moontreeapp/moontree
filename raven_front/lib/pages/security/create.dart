@@ -23,6 +23,7 @@ class _CreateLoginState extends State<CreateLogin> {
   FocusNode unlockFocus = FocusNode();
   bool noPassword = true;
   String? passwordText;
+  final int minimumLength = 1;
 
   Future<void> exitProcess() async {
     await setupWallets();
@@ -130,11 +131,13 @@ class _CreateLoginState extends State<CreateLogin> {
         context,
         focusNode: passwordFocus,
         labelText: 'Password',
-        errorText: password.text != '' && password.text.length < 4
-            ? 'password must be at least 4 characters long'
+        errorText: password.text != '' && password.text.length < minimumLength
+            ? 'password must be at least $minimumLength characters long'
             : null,
         helperText:
-            !(password.text != '' && password.text.length < 4) ? '' : null,
+            !(password.text != '' && password.text.length < minimumLength)
+                ? ''
+                : null,
         suffixIcon: IconButton(
           icon: Icon(passwordVisible ? Icons.visibility : Icons.visibility_off,
               color: AppColors.black60),
@@ -144,7 +147,7 @@ class _CreateLoginState extends State<CreateLogin> {
         ),
       ),
       onEditingComplete: () {
-        if (password.text != '' && password.text.length >= 4) {
+        if (password.text != '' && password.text.length >= minimumLength) {
           FocusScope.of(context).requestFocus(confirmFocus);
         }
         setState(() {});
@@ -189,15 +192,15 @@ class _CreateLoginState extends State<CreateLogin> {
       );
 
   Widget get unlockButton => components.buttons.actionButton(context,
-      enabled: validate(),
+      enabled: validate() && passwordText == null,
       focusNode: unlockFocus,
-      label: 'Set Password',
+      label: passwordText == null ? 'Set Password' : 'Setting Password...',
       disabledOnPressed: () => setState(() {}),
       onPressed: () async => await submit());
 
   bool validate() {
     return password.text != '' &&
-        password.text.length >= 4 &&
+        password.text.length >= minimumLength &&
         confirm.text == password.text;
   }
 
@@ -205,6 +208,7 @@ class _CreateLoginState extends State<CreateLogin> {
     await Future.delayed(Duration(milliseconds: 200));
     if (validate() && passwordText == null) {
       // only run once
+      setState(() {}); // to disable the button visually
       passwordText = password.text;
       streams.password.update.add(password.text);
     } else {
