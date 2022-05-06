@@ -10,15 +10,12 @@ class ChangePassword extends StatefulWidget {
 }
 
 class _ChangePasswordState extends State<ChangePassword> {
-  var existingPassword = TextEditingController();
   var newPassword = TextEditingController();
   var confirmPassword = TextEditingController();
-  FocusNode existingPasswordFocus = FocusNode();
   FocusNode newPasswordFocus = FocusNode();
   FocusNode confirmPasswordFocus = FocusNode();
   FocusNode buttonFocus = FocusNode();
   String? newNotification;
-  bool existingPasswordVisible = false;
   bool newPasswordVisible = false;
   bool confirmPasswordVisible = false;
   bool validatedExisting = false;
@@ -34,8 +31,6 @@ class _ChangePasswordState extends State<ChangePassword> {
   void dispose() {
     newPassword.dispose();
     confirmPassword.dispose();
-    existingPassword.dispose();
-    existingPasswordFocus.dispose();
     newPasswordFocus.dispose();
     confirmPasswordFocus.dispose();
     super.dispose();
@@ -189,7 +184,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   //}
 
   Future submit() async {
-    await Future.delayed(Duration(milliseconds: 200));
+    await Future.delayed(Duration(milliseconds: 200)); // in release mode?
     if (services.password.validate.complexity(newPassword.text)) {
       FocusScope.of(context).unfocus();
       streams.password.update.add(newPassword.text);

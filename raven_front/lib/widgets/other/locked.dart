@@ -3,18 +3,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:raven_front/theme/colors.dart';
+import 'package:raven_back/raven_back.dart';
 
 class LockedOutTime extends StatefulWidget {
-  final int timeout;
-  final DateTime lastFailedAttempt;
-  final bool showCountdown;
-
-  LockedOutTime({
-    required this.lastFailedAttempt,
-    this.timeout = 1,
-    this.showCountdown = false,
-    Key? key,
-  }) : super(key: key);
+  LockedOutTime({Key? key}) : super(key: key);
 
   @override
   _LockedOutTimeState createState() => _LockedOutTimeState();
@@ -42,8 +34,10 @@ class _LockedOutTimeState extends State<LockedOutTime>
   @override
   Widget build(BuildContext context) {
     slowController.forward(from: 0.0);
-    slowController.duration =
-        Duration(milliseconds: /*min(1000 * 60 * 2,*/ widget.timeout * 2 /*)*/);
+    slowController.duration = Duration(
+        milliseconds: /*min(1000 * 60 * 2,*/ services
+                .password.lockout.timeFromAttempts *
+            2 /*)*/);
 
     /// fade removal requested:tel
     return //FadeTransition(
@@ -51,12 +45,9 @@ class _LockedOutTimeState extends State<LockedOutTime>
         // child:
         // visibility not necessary since the text just is blank in empty case
         //Visibility(
-        //    visible: widget.timeout ~/ 1000 >= 0,
+        //    visible: services.password.lockout.timeFromAttempts ~/ 1000 >= 0,
         //    child:
-        LockedOutTimeContent(
-      timeout: widget.timeout,
-      lastFailedAttempt: widget.lastFailedAttempt,
-    )
+        LockedOutTimeContent()
         //)
         //)
         ;
@@ -64,14 +55,7 @@ class _LockedOutTimeState extends State<LockedOutTime>
 }
 
 class LockedOutTimeContent extends StatefulWidget {
-  final int timeout;
-  final DateTime lastFailedAttempt;
-
-  LockedOutTimeContent({
-    required this.lastFailedAttempt,
-    this.timeout = 1,
-    Key? key,
-  }) : super(key: key);
+  LockedOutTimeContent({Key? key}) : super(key: key);
 
   @override
   _LockedOutTimeContentState createState() => _LockedOutTimeContentState();
@@ -105,8 +89,8 @@ class _LockedOutTimeContentState extends State<LockedOutTimeContent> {
 
   @override
   Widget build(BuildContext context) {
-    final loginTime =
-        widget.lastFailedAttempt.add(Duration(milliseconds: widget.timeout));
+    final loginTime = services.password.lockout.lastFailedAttempt.add(
+        Duration(milliseconds: services.password.lockout.timeFromAttempts));
     final milliseconds =
         max(0, loginTime.difference(DateTime.now()).inMilliseconds);
     originalMilliseconds = milliseconds > originalMilliseconds

@@ -196,7 +196,7 @@ class _CreateLoginState extends State<CreateLogin> {
   }
 
   Future submit({bool showFailureMessage = true}) async {
-    await Future.delayed(Duration(milliseconds: 200));
+    await Future.delayed(Duration(milliseconds: 200)); // in release mode?
     if (validate() && passwordText == null) {
       // only run once
       setState(() {}); // to disable the button visually

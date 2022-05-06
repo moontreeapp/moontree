@@ -29,6 +29,7 @@ class _ExportState extends State<Export> {
   @override
   void initState() {
     super.initState();
+    // streams.app.verify.add(false); // doesn't need a password because it's encrypted anyway
   }
 
   @override
@@ -87,9 +88,6 @@ class _ExportState extends State<Export> {
         decoration: components.styles.decorations.textField(
           context,
           labelText: 'Wallet',
-          helperText: walletController.text == ''
-              ? ''
-              : 'A wallet password is recommended.',
           helperStyle: TextStyle(color: AppColors.error),
           suffixIcon: IconButton(
             icon: Padding(

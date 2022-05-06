@@ -23,9 +23,10 @@ class _BackupSeedState extends State<BackupSeed>
   bool warn = true;
   late double buttonWidth;
   late List<String> secret;
-  TextEditingController existingPassword = TextEditingController();
+  TextEditingController password = TextEditingController();
   FocusNode existingFocus = FocusNode();
   FocusNode showFocus = FocusNode();
+  bool failedAttempt = false;
   //ScreenshotCallback screenshotCallback = ScreenshotCallback();
 
   /// from exploring animations - want to return to
@@ -37,7 +38,6 @@ class _BackupSeedState extends State<BackupSeed>
   void initState() {
     super.initState();
     streams.app.verify.add(false);
-
     if (Platform.isAndroid) {
       FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
     } else if (Platform.isIOS) {
@@ -65,7 +65,7 @@ class _BackupSeedState extends State<BackupSeed>
 
     /// from exploring animations - want to return to
     //controller.dispose();
-    existingPassword.dispose();
+    password.dispose();
     existingFocus.dispose();
     showFocus.dispose();
     super.dispose();
@@ -88,6 +88,7 @@ class _BackupSeedState extends State<BackupSeed>
                     intro,
                     safe,
                     SizedBox(height: .2.ofMediaHeight(context)),
+                    if (services.password.askCondition) LockedOutTime(),
                     if (services.password.askCondition) login,
                   ],
                   buttons: [showButton],
@@ -163,21 +164,20 @@ class _BackupSeedState extends State<BackupSeed>
         focusNode: existingFocus,
         autocorrect: false,
         enabled: services.password.askCondition ? true : false,
-        controller: existingPassword,
+        controller: password,
         obscureText: true,
         textInputAction: TextInputAction.done,
         decoration: components.styles.decorations.textField(
           context,
           focusNode: existingFocus,
           labelText: 'Password',
-          errorText:
-              existingPassword.text != '' && !verify() ? 'not match' : null,
+          errorText: password.text == '' &&
+                  res.settings.loginAttempts.length > 0 &&
+                  failedAttempt
+              ? 'Incorrect Password'
+              : null,
         ),
-        onChanged: (String value) {},
         onEditingComplete: () {
-          if (verify()) {
-            setState(() {});
-          }
           setState(() {});
           FocusScope.of(context).requestFocus(showFocus);
         },
@@ -205,18 +205,29 @@ class _BackupSeedState extends State<BackupSeed>
                       ]),
               ])));
 
-  bool verify() => services.password.validate.password(existingPassword.text);
+  bool verify() => services.password.validate.password(password.text);
 
   Widget get showButton => components.buttons.actionButton(context,
-      enabled: services.password.askCondition ? verify() : true,
+      enabled: password.text != '' && services.password.lockout.timePast(),
       label: 'Show Seed',
       focusNode: showFocus,
-      onPressed: () => setState(() {
-            warn = false;
+      onPressed: submitProceedure);
 
-            /// from exploring animations - want to return to
-            //controller.forward();
-          }));
+  Future<void> submitProceedure() async {
+    if (await services.password.lockout.handleVerificationAttempt(verify())) {
+      streams.app.verify.add(true);
+      setState(() {
+        warn = false;
+        // from exploring animations - want to return to
+        //controller.forward();
+      });
+    } else {
+      setState(() {
+        failedAttempt = true;
+        password.text = '';
+      });
+    }
+  }
 
   Widget get submitButton => components.buttons.actionButton(
         context,

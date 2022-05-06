@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/streams/app.dart';
 
 class PasswordService {
   final PasswordValidationService validate = PasswordValidationService();
+  final PasswordLockoutService lockout = PasswordLockoutService();
   final PasswordCreationService create = PasswordCreationService();
 
   bool get exist => res.passwords.isEmpty ? false : true;
@@ -26,6 +29,36 @@ class PasswordService {
           if (cipherUpdate.passwordId != res.passwords.maxPasswordId)
             cipherUpdate.passwordId
       }.isNotEmpty;
+}
+
+class PasswordLockoutService {
+  int get timeFromAttempts =>
+      min(pow(2, res.settings.loginAttempts.length) * 125, 1000 * 60 * 60)
+          .toInt();
+
+  DateTime get lastFailedAttempt => res.settings.loginAttempts.isNotEmpty
+      ? res.settings.loginAttempts.last
+      : DateTime(DateTime.now().year - 1);
+
+  bool timePast() =>
+      DateTime.now().difference(lastFailedAttempt).inMilliseconds >=
+      timeFromAttempts;
+
+  Future<bool> handleVerificationAttempt(bool verification) async {
+    if (verification) {
+      if (res.settings.loginAttempts.isNotEmpty) {
+        streams.app.snack.add(Snack(
+          message: res.settings.loginAttempts.length == 1
+              ? 'There was ${res.settings.loginAttempts.length} unsuccessful login attempt'
+              : 'There has been ${res.settings.loginAttempts.length} unsuccessful login attempts',
+        ));
+        await res.settings.resetLoginAttempts();
+      }
+    } else {
+      await res.settings.incrementLoginAttempts();
+    }
+    return verification;
+  }
 }
 
 class PasswordValidationService {

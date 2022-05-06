@@ -20,10 +20,11 @@ class VerifyPassword extends StatefulWidget {
 }
 
 class _VerifyPasswordState extends State<VerifyPassword> {
-  TextEditingController existingPassword = TextEditingController();
-  bool existingPasswordVisible = false;
+  TextEditingController password = TextEditingController();
+  bool passwordVisible = false;
   FocusNode existingFocus = FocusNode();
   FocusNode submitFocus = FocusNode();
+  bool failedAttempt = false;
 
   @override
   void initState() {
@@ -32,7 +33,7 @@ class _VerifyPasswordState extends State<VerifyPassword> {
 
   @override
   void dispose() {
-    existingPassword.dispose();
+    password.dispose();
     existingFocus.dispose();
     submitFocus.dispose();
     super.dispose();
@@ -57,7 +58,8 @@ class _VerifyPasswordState extends State<VerifyPassword> {
                 //        textAlign: TextAlign.center,
                 //        style: Theme.of(context).textTheme.bodyText1)),
                 //SizedBox(height: 8),
-                existingPasswordField,
+                LockedOutTime(),
+                passwordField,
               ],
               buttons: [submitButton],
             ),
@@ -65,36 +67,35 @@ class _VerifyPasswordState extends State<VerifyPassword> {
           //)
           );
 
-  Widget get existingPasswordField => TextField(
+  Widget get passwordField => TextField(
         focusNode: existingFocus,
         autocorrect: false,
         enabled: services.password.required ? true : false,
-        controller: existingPassword,
-        obscureText: !existingPasswordVisible,
+        controller: password,
+        obscureText: !passwordVisible,
         textInputAction: TextInputAction.done,
         decoration: components.styles.decorations.textField(
           context,
           focusNode: existingFocus,
           labelText: 'Password',
-          errorText: existingPassword.text != '' && !verify() ? used() : null,
+          errorText: password.text == '' &&
+                  res.settings.loginAttempts.length > 0 &&
+                  failedAttempt
+              ? 'Incorrect Password'
+              : null,
           //suffixIcon: IconButton(
           //  icon: Icon(
-          //      existingPasswordVisible
+          //      passwordVisible
           //          ? Icons.visibility
           //          : Icons.visibility_off,
           //      color: AppColors.black60),
           //  onPressed: () => setState(() {
-          //    existingPasswordVisible = !existingPasswordVisible;
+          //    passwordVisible = !passwordVisible;
           //  }),
           //),
         ),
-        onChanged: (String value) {},
         onEditingComplete: () {
-          if (verify()) {
-            setState(() {});
-          }
           setState(() {});
-          //submitFocus.requestFocus();
           FocusScope.of(context).requestFocus(submitFocus);
         },
       );
@@ -102,21 +103,23 @@ class _VerifyPasswordState extends State<VerifyPassword> {
   Widget get submitButton => components.buttons.actionButton(
         context,
         focusNode: submitFocus,
-        enabled: verify(),
+        enabled: password.text != '' && services.password.lockout.timePast(),
         label: widget.buttonLabel,
         onPressed: submitProceedure,
       );
 
-  bool verify() =>
-      services.password.validate.password(existingPassword.text); // &&
-  //services.password.validate.previouslyUsed(existingPassword.text) == 0;
+  bool verify() => services.password.validate.password(password.text); // &&
+  //services.password.validate.previouslyUsed(password.text) == 0;
 
-  void submitProceedure() {
-    if (verify()) {
+  Future<void> submitProceedure() async {
+    if (await services.password.lockout.handleVerificationAttempt(verify())) {
       streams.app.verify.add(true);
       widget.parentState?.setState(() {});
     } else {
-      // add timer stuff
+      setState(() {
+        failedAttempt = true;
+        password.text = '';
+      });
     }
   }
 
@@ -126,7 +129,7 @@ class _VerifyPasswordState extends State<VerifyPassword> {
         //0: 'current password',
         //1: 'prior password',
         //2: 'password before last',
-      }[services.password.validate.previouslyUsed(existingPassword.text)] ??
+      }[services.password.validate.previouslyUsed(password.text)] ??
       //'has been used before';
       'unrecognized';
 }

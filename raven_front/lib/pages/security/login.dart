@@ -1,9 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
-import 'package:raven_front/theme/colors.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/streams/app.dart';
 
@@ -47,7 +44,7 @@ class _LoginState extends State<Login> {
         ),
         SliverToBoxAdapter(
           child: Container(
-              alignment: Alignment.center, height: 60, child: countdown),
+              alignment: Alignment.center, height: 60, child: LockedOutTime()),
         ),
         SliverToBoxAdapter(
           child: Container(
@@ -76,11 +73,6 @@ class _LoginState extends State<Login> {
           style: Theme.of(context).textTheme.headline1,
         ),
       ]);
-
-  Widget get countdown => LockedOutTime(
-        lastFailedAttempt: lastFailedAttempt,
-        timeout: timeFromAttempts,
-      );
 
   Widget get loginField => TextField(
       focusNode: loginFocus,
@@ -118,35 +110,17 @@ class _LoginState extends State<Login> {
       });
 
   Widget get unlockButton => components.buttons.actionButton(context,
-      enabled: password.text != '' &&
-          DateTime.now().difference(lastFailedAttempt).inMilliseconds >=
-              timeFromAttempts,
+      enabled: password.text != '' && services.password.lockout.timePast(),
       focusNode: unlockFocus,
       label: 'Unlock',
       disabledOnPressed: () => setState(() {}),
       onPressed: () async => await submit());
 
-  Future<bool> validate() async {
-    final x = services.password.validate.password(password.text);
-    if (x) {
-      if (res.settings.loginAttempts.length > 0) {
-        streams.app.snack.add(Snack(
-          message: res.settings.loginAttempts.length == 1
-              ? 'There was ${res.settings.loginAttempts.length} unsuccessful login attempt'
-              : 'There has been ${res.settings.loginAttempts.length} unsuccessful login attempts',
-        ));
-        await res.settings.resetLoginAttempts();
-      }
-    } else {
-      failedAttempt = true;
-      await res.settings.incrementLoginAttempts();
-    }
-    return x;
-  }
+  bool validate() => services.password.validate.password(password.text);
 
   Future submit({bool showFailureMessage = true}) async {
-    if (await validate()) {
-      await Future.delayed(Duration(milliseconds: 200));
+    if (await services.password.lockout.handleVerificationAttempt(validate())) {
+      await Future.delayed(Duration(milliseconds: 200)); // in release mode?
       FocusScope.of(context).unfocus();
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
       // create ciphers for wallets we have
@@ -159,16 +133,9 @@ class _LoginState extends State<Login> {
       streams.app.verify.add(true);
     } else {
       setState(() {
+        failedAttempt = true;
         password.text = '';
       });
     }
   }
-
-  int get timeFromAttempts =>
-      min(pow(2, res.settings.loginAttempts.length) * 125, 1000 * 60 * 60)
-          .toInt();
-
-  DateTime get lastFailedAttempt => res.settings.loginAttempts.length > 0
-      ? res.settings.loginAttempts.last
-      : DateTime(DateTime.now().year - 1);
 }
