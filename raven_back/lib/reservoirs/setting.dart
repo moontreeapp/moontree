@@ -76,6 +76,6 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
   Future saveLoginAttempts(List attempts) async =>
       await save(Setting(name: SettingName.Login_Attempts, value: attempts));
   Future incrementLoginAttempts() async =>
-      await saveLoginAttempts(loginAttempts + [DateTime.now()]);
+      await saveLoginAttempts(loginAttempts + <DateTime>[DateTime.now()]);
   Future resetLoginAttempts() async => await saveLoginAttempts([]);
 }

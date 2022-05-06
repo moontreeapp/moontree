@@ -65,10 +65,10 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                         .copyWith(color: AppColors.white)))
             : Stack(alignment: Alignment.bottomCenter, children: [
                 Container(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.topLeft,
                     height: 64,
                     child: Padding(
-                        padding: EdgeInsets.only(left: 16, right: 16),
+                        padding: EdgeInsets.only(left: 16, right: 16, top: 12),
                         child: Text(snack!.message,
                             maxLines: 1,
                             overflow: TextOverflow.fade,
@@ -82,7 +82,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                                     .bodyText2!
                                     .copyWith(color: AppColors.error)))),
                 Container(
-                    height: 12,
+                    height: 16,
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: components.shape.topRoundedBorder16,
@@ -104,7 +104,6 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                               blurRadius: 10)
                         ]))
               ]));
-
     if (snack!.atBottom) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         elevation: 1,
