@@ -164,9 +164,9 @@ class _HoldingList extends State<HoldingList> {
                 streams.app.wallet.isEmpty.add(true);
                 return ComingSoonPlaceholder(
                     scrollController: widget.scrollController,
-                    header: 'Welcome',
+                    header: 'Get Started',
                     message:
-                        'To get started, use Import or Receive to add Ravencoin & Assets to your wallet.',
+                        'Use Import or Receive buttons below to add Ravencoin & assets to your wallet.',
                     placeholderType: PlaceholderType.wallet);
               }()
             : () {
