@@ -4,6 +4,7 @@ import 'package:raven_front/components/components.dart';
 
 Future logout() async {
   res.ciphers.clear();
+  streams.app.setting.add(null);
   Navigator.pushReplacementNamed(
       components.navigator.routeContext!, '/security/login',
       arguments: {});

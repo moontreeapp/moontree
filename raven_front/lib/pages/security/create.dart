@@ -160,8 +160,9 @@ class _CreateLoginState extends State<CreateLogin> {
         context,
         focusNode: confirmFocus,
         labelText: 'Confirm Password',
-        errorText:
-            confirm.text != password.text ? 'does not match password' : null,
+        errorText: confirm.text != '' && confirm.text != password.text
+            ? 'does not match password'
+            : null,
         helperText: confirm.text == password.text ? 'match' : null,
         suffixIcon: IconButton(
           icon: Icon(confirmVisible ? Icons.visibility : Icons.visibility_off,
@@ -201,7 +202,7 @@ class _CreateLoginState extends State<CreateLogin> {
   }
 
   Future submit({bool showFailureMessage = true}) async {
-    FocusScope.of(context).unfocus();
+    await Future.delayed(Duration(milliseconds: 200));
     if (validate() && passwordText == null) {
       // only run once
       passwordText = password.text;

@@ -29,11 +29,11 @@ class LeaderWaiter extends Waiter {
     */
 
     // automatically make first leader wallet if there isn't one already
-    listen(
-      'cipher.latest,',
-      streams.cipher.latest,
-      (Cipher cipher) => services.wallet.leader.makeFirstWallet(cipher),
-    );
+    //listen(
+    //  'cipher.latest,',
+    //  streams.cipher.latest,
+    //  (Cipher cipher) => services.wallet.leader.makeFirstWallet(cipher),
+    //);
 
     /// necessary?
     //listen(
