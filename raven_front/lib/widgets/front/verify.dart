@@ -5,11 +5,13 @@ import 'package:raven_front/widgets/widgets.dart';
 
 class VerifyPassword extends StatefulWidget {
   final State? parentState;
+  final String buttonLabel;
   final String? suffix;
 
   VerifyPassword({
     Key? key,
     this.parentState,
+    this.buttonLabel = 'Submit',
     this.suffix,
   }) : super(key: key);
 
@@ -101,7 +103,7 @@ class _VerifyPasswordState extends State<VerifyPassword> {
         context,
         focusNode: submitFocus,
         enabled: verify(),
-        label: 'Submit',
+        label: widget.buttonLabel,
         onPressed: () {
           streams.app.verify.add(true);
           widget.parentState?.setState(() {});

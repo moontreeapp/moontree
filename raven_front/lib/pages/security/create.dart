@@ -107,7 +107,7 @@ class _CreateLoginState extends State<CreateLogin> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           SizedBox(height: 50),
-                          warning,
+                          components.text.passwordWarning,
                           SizedBox(height: 50),
                           Row(children: [unlockButton]),
                           SizedBox(height: 40),
@@ -182,15 +182,6 @@ class _CreateLoginState extends State<CreateLogin> {
         setState(() {});
       });
 
-  Widget get warning => Text(
-        'Your password cannot be recoverd.\nDo not forget your password.',
-        textAlign: TextAlign.center,
-        style: Theme.of(context)
-            .textTheme
-            .subtitle1!
-            .copyWith(color: AppColors.error),
-      );
-
   Widget get unlockButton => components.buttons.actionButton(context,
       enabled: validate() && passwordText == null,
       focusNode: unlockFocus,
@@ -211,6 +202,7 @@ class _CreateLoginState extends State<CreateLogin> {
       setState(() {}); // to disable the button visually
       passwordText = password.text;
       streams.password.update.add(password.text);
+      streams.app.verify.add(true);
     } else {
       setState(() {
         password.text = '';

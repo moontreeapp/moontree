@@ -62,6 +62,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
 
   @override
   Widget build(BuildContext context) {
+    print('streams.app.verify.value ${streams.app.verify.value}');
     return BackdropLayers(
         back: BlankBack(),
         front: FrontCurve(

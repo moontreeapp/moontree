@@ -123,8 +123,13 @@ class _NavMenuState extends State<NavMenu> {
         children: [
           destination(
               icon: Icons.lock_rounded,
-              name: 'Security',
-              link: '/settings/security'),
+              name: 'Password',
+              link: '/security/change',
+              execute: () {
+                if (services.cipher.canAskForPasswordNow) {
+                  streams.app.verify.add(false);
+                }
+              }),
           /*
           destination(
               icon: MdiIcons.accountCog,
@@ -137,6 +142,7 @@ class _NavMenuState extends State<NavMenu> {
               link: '/settings/network',
               execute: () {
                 if (services.cipher.canAskForPasswordNow) {
+                  print('setting to false');
                   streams.app.verify.add(false);
                 }
               }),

@@ -1,5 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_front/theme/theme.dart';
+import 'package:raven_front/components/components.dart';
 
 class TextComponents {
   TextComponents();
@@ -82,4 +85,13 @@ class TextComponents {
             'security or symbol required to identify record.'))();
     return security?.symbol ?? symbol ?? res.securities.RVN.symbol;
   }
+
+  Widget get passwordWarning => Text(
+        'Your password cannot be recoverd.\nDo not forget your password.',
+        textAlign: TextAlign.center,
+        style: Theme.of(components.navigator.routeContext!)
+            .textTheme
+            .subtitle1!
+            .copyWith(color: AppColors.error),
+      );
 }

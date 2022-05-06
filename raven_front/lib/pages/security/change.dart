@@ -27,6 +27,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   @override
   void initState() {
     super.initState();
+    print('streams.app.verify.value ${streams.app.verify.value}');
   }
 
   @override
@@ -37,7 +38,6 @@ class _ChangePasswordState extends State<ChangePassword> {
     existingPasswordFocus.dispose();
     newPasswordFocus.dispose();
     confirmPasswordFocus.dispose();
-
     super.dispose();
   }
 
@@ -59,7 +59,9 @@ class _ChangePasswordState extends State<ChangePassword> {
       front: FrontCurve(
           child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: body(),
+        child: streams.app.verify.value
+            ? body()
+            : VerifyPassword(parentState: this, buttonLabel: 'Change Password'),
       )));
 
   Widget body() => Column(
@@ -72,7 +74,7 @@ class _ChangePasswordState extends State<ChangePassword> {
               for (var x in [
                 if (!streams.app.verify.value) existingPasswordField,
                 newPasswordField,
-                confirmPasswordField
+                confirmPasswordField,
               ])
                 Padding(
                     padding: EdgeInsets.only(left: 16, right: 16, top: 16),
@@ -80,8 +82,14 @@ class _ChangePasswordState extends State<ChangePassword> {
             ],
           ),
           KeyboardHidesWidgetWithDelay(
-              child: components.containers
-                  .navBar(context, child: Row(children: [submitButton])))
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                Center(child: components.text.passwordWarning),
+                SizedBox(height: 50),
+                components.containers
+                    .navBar(context, child: Row(children: [submitButton]))
+              ]))
         ],
       );
 
@@ -249,6 +257,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   //}
 
   Future submit() async {
+    await Future.delayed(Duration(milliseconds: 200));
     if (services.password.validate.complexity(newPassword.text)) {
       FocusScope.of(context).unfocus();
       streams.password.update.add(newPassword.text);
