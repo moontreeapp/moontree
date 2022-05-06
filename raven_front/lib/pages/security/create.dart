@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/wallet/constants.dart';
 import 'package:raven_front/components/components.dart';
@@ -89,7 +90,7 @@ class _CreateLoginState extends State<CreateLogin> {
             SliverToBoxAdapter(
               child: Container(
                   alignment: Alignment.topCenter,
-                  height: 76 + 16,
+                  height: 76,
                   child: passwordField),
             ),
             SliverToBoxAdapter(
@@ -114,7 +115,10 @@ class _CreateLoginState extends State<CreateLogin> {
                         ]))),
           ])));
 
-  Widget get moontree => Image(image: AssetImage('assets/logo/moontree.png'));
+  Widget get moontree => Container(
+        child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
+        height: 110,
+      );
 
   Widget get welcomeMessage => Text(
         'Create Password',
