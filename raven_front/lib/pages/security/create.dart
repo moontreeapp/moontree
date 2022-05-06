@@ -202,6 +202,7 @@ class _CreateLoginState extends State<CreateLogin> {
       setState(() {}); // to disable the button visually
       passwordText = password.text;
       streams.password.update.add(password.text);
+      streams.app.verify.add(true);
     } else {
       setState(() {
         password.text = '';

@@ -104,14 +104,21 @@ class _VerifyPasswordState extends State<VerifyPassword> {
         focusNode: submitFocus,
         enabled: verify(),
         label: widget.buttonLabel,
-        onPressed: () {
-          widget.parentState?.setState(() {});
-        },
+        onPressed: submitProceedure,
       );
 
   bool verify() =>
       services.password.validate.password(existingPassword.text); // &&
   //services.password.validate.previouslyUsed(existingPassword.text) == 0;
+
+  void submitProceedure() {
+    if (verify()) {
+      streams.app.verify.add(true);
+      widget.parentState?.setState(() {});
+    } else {
+      // add timer stuff
+    }
+  }
 
   String used() =>
       {

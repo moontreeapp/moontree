@@ -59,12 +59,7 @@ class _VerifySeedState extends State<VerifySeed> {
   @override
   Widget build(BuildContext context) {
     buttonWidth = (MediaQuery.of(context).size.width - (17 + 17 + 16 + 16)) / 3;
-    return BackdropLayers(
-        back: BlankBack(),
-        front: FrontCurve(
-            child: services.password.askCondition
-                ? VerifyPassword(parentState: this)
-                : body()));
+    return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
   }
 
   Widget body() => components.page.form(

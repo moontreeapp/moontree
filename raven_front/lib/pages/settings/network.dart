@@ -32,6 +32,8 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
 
   @override
   void initState() {
+    super.initState();
+    streams.app.verify.add(false);
     serverAddress.text =
         '${services.client.currentDomain}:${services.client.currentPort}';
     listeners.add(res.settings.changes
@@ -44,7 +46,6 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
             .add(Snack(message: 'Successfully Connected', atBottom: true));
       }
     }));
-    super.initState();
   }
 
   @override

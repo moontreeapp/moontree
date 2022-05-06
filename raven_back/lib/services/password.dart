@@ -16,7 +16,10 @@ class PasswordService {
     return false;
   }
 
-  bool get askCondition => required && services.cipher.canAskForPasswordNow;
+  bool get askCondition =>
+      required &&
+      services.cipher.canAskForPasswordNow &&
+      !streams.app.verify.value;
 
   bool interruptedPasswordChange() => {
         for (var cipherUpdate in services.wallet.getAllCipherUpdates)

@@ -27,6 +27,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   @override
   void initState() {
     super.initState();
+    streams.app.verify.add(false);
   }
 
   @override
@@ -78,59 +79,6 @@ class _ChangePasswordState extends State<ChangePassword> {
               ]))
         ],
       );
-
-  Widget get existingPasswordField => TextField(
-        focusNode: existingPasswordFocus,
-        autocorrect: false,
-        enabled: services.password.required ? true : false,
-        controller: existingPassword,
-        obscureText: !existingPasswordVisible,
-        textInputAction: TextInputAction.next,
-        decoration: components.styles.decorations.textField(
-          context,
-          labelText: 'Current Password',
-          //helperText:
-          //    existingPassword.text != '' && verify() ? 'Verified' : null,
-          errorText: existingPassword.text != '' && !verify() ? used() : null,
-          suffixIcon: IconButton(
-            icon: Icon(
-                existingPasswordVisible
-                    ? Icons.visibility
-                    : Icons.visibility_off,
-                color: Color(0x99000000)),
-            onPressed: () => setState(() {
-              existingPasswordVisible = !existingPasswordVisible;
-            }),
-          ),
-        ),
-        onChanged: (String value) {
-          //setState(() {
-          //  if (verify()) {
-          //    FocusScope.of(context).requestFocus(newPasswordFocus);
-          //  }
-          //});
-        },
-        onEditingComplete: () {
-          if (verify()) {
-            setState(() {
-              FocusScope.of(context).requestFocus(newPasswordFocus);
-            });
-          }
-        },
-      );
-
-  bool verify() =>
-      services.password.validate.password(existingPassword.text); // &&
-  //services.password.validate.previouslyUsed(existingPassword.text) == 0;
-  String used() =>
-      {
-        null: 'unrecognized',
-        //0: 'current password',
-        //1: 'prior password',
-        //2: 'password before last',
-      }[services.password.validate.previouslyUsed(existingPassword.text)] ??
-      //'has been used before';
-      'unrecognized';
 
   Widget get newPasswordField => TextField(
         focusNode: newPasswordFocus,
@@ -198,11 +146,11 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   Widget get submitButton => components.buttons.actionButton(
         context,
+        enabled: enabledCheck(),
         label: 'Set',
         focusNode: buttonFocus,
         disabledIcon: Icon(Icons.lock_rounded, color: AppColors.black38),
         onPressed: () async => await submit(),
-        enabled: enabledCheck(),
       );
 
   bool enabledCheck() =>

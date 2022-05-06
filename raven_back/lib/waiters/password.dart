@@ -16,7 +16,7 @@ class PasswordWaiter extends Waiter {
         services.cipher.cleanupCiphers();
         if (sendSnack) {
           streams.app.snack
-              .add(Snack(message: 'Successfully Updated Security'));
+              .add(Snack(message: 'Successfully Updated Password'));
         }
         streams.password.update.add(null);
       }
