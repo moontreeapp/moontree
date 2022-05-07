@@ -166,7 +166,7 @@ class _HoldingList extends State<HoldingList> {
                     scrollController: widget.scrollController,
                     header: 'Get Started',
                     message:
-                        'Use Import or Receive buttons add Ravencoin & assets to your wallet.',
+                        'Use the Import or Receive button to add Ravencoin & assets to your wallet.',
                     placeholderType: PlaceholderType.wallet);
               }()
             : () {
