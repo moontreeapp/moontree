@@ -86,7 +86,11 @@ class _CreateLoginState extends State<CreateLogin> {
                   height: 33,
                   child: welcomeMessage),
             ),
-            SliverToBoxAdapter(child: SizedBox(height: 50)),
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: 70.figma(context),
+              ),
+            ),
             SliverToBoxAdapter(
               child: Container(
                   alignment: Alignment.topCenter,
@@ -109,7 +113,7 @@ class _CreateLoginState extends State<CreateLogin> {
                         children: [
                           SizedBox(height: 50),
                           components.text.passwordWarning,
-                          SizedBox(height: 50),
+                          SizedBox(height: 16),
                           Row(children: [unlockButton]),
                           SizedBox(height: 40),
                         ]))),
@@ -117,13 +121,14 @@ class _CreateLoginState extends State<CreateLogin> {
 
   Widget get moontree => Container(
         child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
-        height: 110,
+        height: 110.figma(context),
       );
 
-  Widget get welcomeMessage => Text(
-        'Create Password',
-        style: Theme.of(context).textTheme.headline1,
-      );
+  Widget get welcomeMessage => Text('Create Password',
+      style: Theme.of(context)
+          .textTheme
+          .headline1
+          ?.copyWith(color: AppColors.black60));
 
   Widget get passwordField => TextField(
       focusNode: passwordFocus,

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/theme/colors.dart';
+import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/streams/app.dart';
 
@@ -45,7 +47,9 @@ class _LoginState extends State<Login> {
         ),
         SliverToBoxAdapter(
           child: Container(
-              alignment: Alignment.center, height: 60, child: LockedOutTime()),
+              alignment: Alignment.center,
+              height: 70.figma(context),
+              child: LockedOutTime()),
         ),
         SliverToBoxAdapter(
           child: Container(
@@ -69,12 +73,15 @@ class _LoginState extends State<Login> {
       Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Container(
           child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
-          height: 110,
+          height: 110.figma(context),
         ),
         SizedBox(height: 8),
         Text(
           'Welcome Back',
-          style: Theme.of(context).textTheme.headline1,
+          style: Theme.of(context)
+              .textTheme
+              .headline1
+              ?.copyWith(color: AppColors.black60),
         ),
       ]);
 
