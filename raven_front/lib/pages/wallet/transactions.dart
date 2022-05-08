@@ -27,7 +27,7 @@ class Transactions extends StatefulWidget {
 
 class _TransactionsState extends State<Transactions>
     with TickerProviderStateMixin {
-  late AnimationController controller;
+  //late AnimationController controller;
   late Animation<Offset> offset;
   Map<String, dynamic> data = {};
   List<StreamSubscription> listeners = [];
@@ -37,17 +37,12 @@ class _TransactionsState extends State<Transactions>
   late Security security;
   String tabChoice = 'HISTORY';
   Widget? cachedMetadataView;
+  DraggableScrollableController dController = DraggableScrollableController();
   ValueNotifier<double> _notifier = ValueNotifier(1);
   @override
   void initState() {
     super.initState();
-    controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
-    offset = Tween<Offset>(begin: Offset.zero, end: Offset(0.0, 1.0)).animate(
-        CurvedAnimation(
-            parent: controller,
-            curve: Curves.ease,
-            reverseCurve: Curves.ease.flipped));
+   
 
     listeners.add(res.balances.batchedChanges.listen((batchedChanges) {
       if (batchedChanges.isNotEmpty) setState(() {});
@@ -67,7 +62,6 @@ class _TransactionsState extends State<Transactions>
     for (var listener in listeners) {
       listener.cancel();
     }
-    controller.dispose();
     super.dispose();
   }
 
@@ -99,7 +93,6 @@ class _TransactionsState extends State<Transactions>
 
     print(minHeight);
     cachedMetadataView = _metadataView();
-    DraggableScrollableController dController = DraggableScrollableController();
     return BackdropLayers(
         back:
             // fade this out as we drag up:
@@ -110,28 +103,27 @@ class _TransactionsState extends State<Transactions>
         ),
         front: Stack(alignment: Alignment.bottomCenter, children: [
           DraggableScrollableSheet(
-              initialChildSize: minHeight,
-              minChildSize: minHeight,
-              maxChildSize: min(1.0, max(minHeight, maxExtent)),
-              controller: dController,
-              //snap: true, // if snap then show amount in app bar
-              builder: ((context, ScrollController scrollController) {
-                //print(scrollController.position.pixels);
-                //print(dController.size);
-                return Stack(
-                  alignment: Alignment.topCenter,
-                  children: [
-                    CoinSpecTabs(),
-                    Padding(
-                        padding: EdgeInsets.only(top: 48),
-                        child: FrontCurve(
-                          frontLayerBoxShadow: [],
-                          child: content(scrollController),
-                        ))
-                    //)
-                  ],
-                );
-              })),
+            initialChildSize: minHeight,
+            minChildSize: minHeight,
+            maxChildSize: min(1.0, max(minHeight, maxExtent)),
+            controller: dController,
+            //snap: true, // if snap then show amount in app bar
+            builder: ((context, ScrollController scrollController) {
+              return Stack(
+                alignment: Alignment.topCenter,
+                children: [
+                  CoinSpecTabs(),
+                  Padding(
+                    padding: EdgeInsets.only(top: 48),
+                    child: FrontCurve(
+                      frontLayerBoxShadow: [],
+                      child: content(scrollController),
+                    ),
+                  )
+                ],
+              );
+            }),
+          ),
           NavBar(
             includeSectors: false,
             actionButtons: <Widget>[
