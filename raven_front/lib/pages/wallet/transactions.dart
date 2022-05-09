@@ -33,6 +33,7 @@ class _TransactionsState extends State<Transactions>
   late Security security;
   Widget? cachedMetadataView;
   DraggableScrollableController dController = DraggableScrollableController();
+  ValueNotifier<double> valueNotifier = ValueNotifier<double>(0.9);
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +49,15 @@ class _TransactionsState extends State<Transactions>
           security,
           cachedMetadataView,
           dController,
+          valueNotifier,
         ),
         front: CoinDetailsGlidingSheet(
-            currentTxs, cachedMetadataView, security, dController));
+          currentTxs,
+          cachedMetadataView,
+          security,
+          dController,
+          valueNotifier,
+        ));
   }
 }
 
@@ -59,13 +66,15 @@ class CoinDetailsGlidingSheet extends StatefulWidget {
     this.currentTxs,
     this.cachedMetadataView,
     this.security,
-    this.dController, {
+    this.dController,
+    this.valueNotifier, {
     Key? key,
   }) : super(key: key);
   final List<TransactionRecord> currentTxs;
   final Security security;
   final Widget? cachedMetadataView;
   final DraggableScrollableController dController;
+  final ValueNotifier<double> valueNotifier;
 
   @override
   State<CoinDetailsGlidingSheet> createState() =>
@@ -117,7 +126,7 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
         //snap: true, // if snap then show amount in app bar
         builder: ((context, ScrollController scrollController) {
           //print("Drag offset ${dController.size}");
-          //widget.valueNotifier.value = dController.size;
+          widget.valueNotifier.value = widget.dController.size;
 
           return Stack(
             alignment: Alignment.topCenter,
@@ -166,18 +175,22 @@ class CoinDetailsHeader extends StatelessWidget {
   const CoinDetailsHeader(
     this.security,
     this.cachedMetadataView,
-    this.dController, {
+    this.dController,
+    this.valueNotifier, {
     Key? key,
   }) : super(key: key);
   final Security security;
   final Widget? cachedMetadataView;
   final DraggableScrollableController dController;
+  final ValueNotifier<double> valueNotifier;
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
+        animation: valueNotifier,
         builder: (context, widget) {
           //print("Opacity to change ${dController.size}");
+
           return Opacity(
             opacity: getOpacityFromController(dController.size),
             child: CoinSpec(
