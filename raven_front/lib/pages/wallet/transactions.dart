@@ -200,7 +200,7 @@ class CoinDetailsHeader extends StatelessWidget {
           //print("Opacity to change ${dController.size}");
 
           return Transform.translate(
-            offset: Offset(0, (1 - ((snapshot.data ?? 0.9) as double)) * 80),
+            offset: Offset(0, (0.9 - ((snapshot.data ?? 0.9) as double)) * 200),
             child: Opacity(
               //angle: ((snapshot.data ?? 0.9) as double) * pi * 180,
               opacity: getOpacityFromController(dController.size),
