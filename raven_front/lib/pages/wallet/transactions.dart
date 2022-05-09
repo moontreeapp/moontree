@@ -32,8 +32,8 @@ class _TransactionsState extends State<Transactions>
   late List<Balance> currentHolds;
   late Security security;
   Widget? cachedMetadataView;
-  ValueNotifier<double> _notifier = ValueNotifier(1);
-  @override
+  DraggableScrollableController dController = DraggableScrollableController();
+
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
@@ -44,12 +44,13 @@ class _TransactionsState extends State<Transactions>
 
     cachedMetadataView = _metadataView(security, context);
     return BackdropLayers(
-        back: CoinDetailsHeader(security, cachedMetadataView),
-        front: CoinDetailsGlidingSheet(
-          currentTxs,
-          cachedMetadataView,
+        back: CoinDetailsHeader(
           security,
-        ));
+          cachedMetadataView,
+          dController,
+        ),
+        front: CoinDetailsGlidingSheet(
+            currentTxs, cachedMetadataView, security, dController));
   }
 }
 
@@ -57,12 +58,14 @@ class CoinDetailsGlidingSheet extends StatefulWidget {
   const CoinDetailsGlidingSheet(
     this.currentTxs,
     this.cachedMetadataView,
-    this.security, {
+    this.security,
+    this.dController, {
     Key? key,
   }) : super(key: key);
   final List<TransactionRecord> currentTxs;
   final Security security;
   final Widget? cachedMetadataView;
+  final DraggableScrollableController dController;
 
   @override
   State<CoinDetailsGlidingSheet> createState() =>
@@ -70,7 +73,6 @@ class CoinDetailsGlidingSheet extends StatefulWidget {
 }
 
 class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
-  DraggableScrollableController dController = DraggableScrollableController();
   String tabChoice = 'HISTORY';
   List<StreamSubscription> listeners = [];
 
@@ -111,10 +113,12 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
         initialChildSize: minHeight,
         minChildSize: minHeight,
         maxChildSize: min(1.0, max(minHeight, maxExtent)),
-        controller: dController,
+        controller: widget.dController,
         //snap: true, // if snap then show amount in app bar
         builder: ((context, ScrollController scrollController) {
-          print("Drag offset ${dController.size}");
+          //print("Drag offset ${dController.size}");
+          //widget.valueNotifier.value = dController.size;
+
           return Stack(
             alignment: Alignment.topCenter,
             children: [
@@ -159,21 +163,36 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
 }
 
 class CoinDetailsHeader extends StatelessWidget {
-  const CoinDetailsHeader(this.security, this.cachedMetadataView, {Key? key})
-      : super(key: key);
+  const CoinDetailsHeader(
+    this.security,
+    this.cachedMetadataView,
+    this.dController, {
+    Key? key,
+  }) : super(key: key);
   final Security security;
   final Widget? cachedMetadataView;
+  final DraggableScrollableController dController;
 
   @override
   Widget build(BuildContext context) {
-    return Opacity(
-      opacity: 0.2,
-      child: CoinSpec(
-        pageTitle: 'Transactions',
-        security: security,
-        bottom: cachedMetadataView != null ? null : Container(),
-      ),
-    );
+    return AnimatedBuilder(
+        builder: (context, widget) {
+          //print("Opacity to change ${dController.size}");
+          return Opacity(
+            opacity: getOpacityFromController(dController.size),
+            child: CoinSpec(
+              pageTitle: 'Transactions',
+              security: security,
+              bottom: cachedMetadataView != null ? null : Container(),
+            ),
+          );
+        });
+  }
+
+  double getOpacityFromController(double controllerValue) {
+    if (controllerValue >= 0.9) return 1;
+    if (controllerValue <= 0.72) return 0;
+    return (0.9 - controllerValue) * 5;
   }
 }
 
