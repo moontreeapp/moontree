@@ -57,8 +57,7 @@ dependencies:
   #   git: https://github.com/moontreeapp/raven_back.git
   raven_electrum: ^2.0.0
   reservoir: ^2.0.0
-  rxdart: ^2.0.0
-
+  rxdart: ^0.27.3
 dependency_overrides:
   raven_back:
     path: ../raven_back
