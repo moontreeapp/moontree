@@ -26,8 +26,6 @@ class Transactions extends StatefulWidget {
   _TransactionsState createState() => _TransactionsState();
 }
 
-BehaviorSubject<double> scrollObserver = BehaviorSubject.seeded(0.9);
-
 class _TransactionsState extends State<Transactions>
     with TickerProviderStateMixin {
   Map<String, dynamic> data = {};
@@ -36,7 +34,12 @@ class _TransactionsState extends State<Transactions>
   late Security security;
   Widget? cachedMetadataView;
   DraggableScrollableController dController = DraggableScrollableController();
-  ValueNotifier<double> valueNotifier = ValueNotifier<double>(0.9);
+  BehaviorSubject<double> scrollObserver = BehaviorSubject.seeded(0.9);
+  @override
+  void dispose() {
+    scrollObserver.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,12 +57,7 @@ class _TransactionsState extends State<Transactions>
             (!services.download.history.downloads_complete ? 80 : 0))
         .ofMediaHeight(context);
     return BackdropLayers(
-        back: CoinDetailsHeader(
-          security,
-          cachedMetadataView,
-          dController,
-          valueNotifier,
-        ),
+        back: CoinDetailsHeader(security, cachedMetadataView, scrollObserver),
         front: Stack(
           alignment: Alignment.bottomCenter,
           children: [
@@ -78,7 +76,6 @@ class _TransactionsState extends State<Transactions>
                     security,
                     dController,
                     scrollController,
-                    valueNotifier,
                   );
                 }),
             NavBar(
@@ -162,15 +159,13 @@ class CoinDetailsGlidingSheet extends StatefulWidget {
     this.cachedMetadataView,
     this.security,
     this.dController,
-    this.scrollController,
-    this.valueNotifier, {
+    this.scrollController, {
     Key? key,
   }) : super(key: key);
   final List<TransactionRecord> currentTxs;
   final Security security;
   final Widget? cachedMetadataView;
   final DraggableScrollableController dController;
-  final ValueNotifier<double> valueNotifier;
   final ScrollController scrollController;
 
   @override
@@ -182,14 +177,12 @@ class CoinDetailsHeader extends StatelessWidget {
   const CoinDetailsHeader(
     this.security,
     this.cachedMetadataView,
-    this.dController,
-    this.valueNotifier, {
+    this.scrollObserver, {
     Key? key,
   }) : super(key: key);
   final Security security;
   final Widget? cachedMetadataView;
-  final DraggableScrollableController dController;
-  final ValueNotifier<double> valueNotifier;
+  final Stream<double> scrollObserver;
 
   @override
   Widget build(BuildContext context) {
@@ -203,7 +196,8 @@ class CoinDetailsHeader extends StatelessWidget {
             offset: Offset(0, (0.9 - ((snapshot.data ?? 0.9) as double)) * 200),
             child: Opacity(
               //angle: ((snapshot.data ?? 0.9) as double) * pi * 180,
-              opacity: getOpacityFromController(dController.size),
+              opacity:
+                  getOpacityFromController((snapshot.data ?? 0.9) as double),
               child: CoinSpec(
                 pageTitle: 'Transactions',
                 security: security,
@@ -222,7 +216,6 @@ class CoinDetailsHeader extends StatelessWidget {
       opacity = 1;
     else
       opacity = (0.9 - controllerValue) * 5;
-    print("Controller : ${controllerValue}  Opacity : ${opacity}");
     return opacity;
   }
 }
