@@ -191,8 +191,9 @@ class CoinDetailsHeader extends StatelessWidget {
         builder: (context, widget) {
           //print("Opacity to change ${dController.size}");
 
-          return Opacity(
-            opacity: getOpacityFromController(dController.size),
+          return Transform.rotate(
+            angle: valueNotifier.value * pi * 180,
+            //opacity: getOpacityFromController(dController.size),
             child: CoinSpec(
               pageTitle: 'Transactions',
               security: security,
