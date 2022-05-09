@@ -16,6 +16,7 @@ import 'package:raven_front/utils/data.dart';
 import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Transactions extends StatefulWidget {
@@ -24,6 +25,8 @@ class Transactions extends StatefulWidget {
   @override
   _TransactionsState createState() => _TransactionsState();
 }
+
+BehaviorSubject<double> scrollObserver = BehaviorSubject.seeded(0.9);
 
 class _TransactionsState extends State<Transactions>
     with TickerProviderStateMixin {
@@ -66,7 +69,8 @@ class _TransactionsState extends State<Transactions>
                 maxChildSize: min(1.0, max(minHeight, maxExtent)),
                 controller: dController,
                 builder: (context, scrollController) {
-                  valueNotifier.value = dController.size;
+                  // valueNotifier.value = dController.size;
+                  scrollObserver.add(dController.size);
 
                   return CoinDetailsGlidingSheet(
                     currentTxs,
@@ -189,27 +193,37 @@ class CoinDetailsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-        animation: valueNotifier,
-        builder: (context, widget) {
+    return StreamBuilder(
+        stream: scrollObserver,
+        initialData: 0.9,
+        builder: (context, snapshot) {
           //print("Opacity to change ${dController.size}");
 
-          return Transform.rotate(
-            angle: valueNotifier.value * pi * 180,
-            //opacity: getOpacityFromController(dController.size),
-            child: CoinSpec(
-              pageTitle: 'Transactions',
-              security: security,
-              bottom: cachedMetadataView != null ? null : Container(),
+          return Transform.translate(
+            offset: Offset(0, (1 - ((snapshot.data ?? 0.9) as double)) * 80),
+            child: Opacity(
+              //angle: ((snapshot.data ?? 0.9) as double) * pi * 180,
+              opacity: getOpacityFromController(dController.size),
+              child: CoinSpec(
+                pageTitle: 'Transactions',
+                security: security,
+                bottom: cachedMetadataView != null ? null : Container(),
+              ),
             ),
           );
         });
   }
 
   double getOpacityFromController(double controllerValue) {
-    if (controllerValue >= 0.9) return 1;
-    if (controllerValue <= 0.72) return 0;
-    return (0.9 - controllerValue) * 5;
+    double opacity = 1;
+    if (controllerValue >= 0.9)
+      opacity = 0;
+    else if (controllerValue <= 0.72)
+      opacity = 1;
+    else
+      opacity = (0.9 - controllerValue) * 5;
+    print("Controller : ${controllerValue}  Opacity : ${opacity}");
+    return opacity;
   }
 }
 
