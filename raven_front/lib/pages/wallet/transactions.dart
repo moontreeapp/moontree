@@ -27,23 +27,56 @@ class Transactions extends StatefulWidget {
 
 class _TransactionsState extends State<Transactions>
     with TickerProviderStateMixin {
-  //late AnimationController controller;
-  late Animation<Offset> offset;
   Map<String, dynamic> data = {};
-  List<StreamSubscription> listeners = [];
-  bool showUSD = false;
   late List<TransactionRecord> currentTxs;
   late List<Balance> currentHolds;
   late Security security;
-  String tabChoice = 'HISTORY';
   Widget? cachedMetadataView;
-  DraggableScrollableController dController = DraggableScrollableController();
   ValueNotifier<double> _notifier = ValueNotifier(1);
+  @override
+  @override
+  Widget build(BuildContext context) {
+    data = populateData(context, data);
+    security = data['holding']!.security;
+    currentHolds = Current.holdings;
+    currentTxs = services.transaction
+        .getTransactionRecords(wallet: Current.wallet, securities: {security});
+
+    cachedMetadataView = _metadataView(security, context);
+    return BackdropLayers(
+        back: CoinDetailsHeader(security, cachedMetadataView),
+        front: CoinDetailsGlidingSheet(
+          currentTxs,
+          cachedMetadataView,
+          security,
+        ));
+  }
+}
+
+class CoinDetailsGlidingSheet extends StatefulWidget {
+  const CoinDetailsGlidingSheet(
+    this.currentTxs,
+    this.cachedMetadataView,
+    this.security, {
+    Key? key,
+  }) : super(key: key);
+  final List<TransactionRecord> currentTxs;
+  final Security security;
+  final Widget? cachedMetadataView;
+
+  @override
+  State<CoinDetailsGlidingSheet> createState() =>
+      _CoinDetailsGlidingSheetState();
+}
+
+class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
+  DraggableScrollableController dController = DraggableScrollableController();
+  String tabChoice = 'HISTORY';
+  List<StreamSubscription> listeners = [];
+
   @override
   void initState() {
     super.initState();
-   
-
     listeners.add(res.balances.batchedChanges.listen((batchedChanges) {
       if (batchedChanges.isNotEmpty) setState(() {});
     }));
@@ -65,151 +98,156 @@ class _TransactionsState extends State<Transactions>
     super.dispose();
   }
 
-  //bool visibilityOfSendReceive(notification) {
-  //  if (notification.direction == ScrollDirection.forward &&
-  //      Backdrop.of(components.navigator.routeContext!).isBackLayerConcealed) {
-  //    Backdrop.of(components.navigator.routeContext!).revealBackLayer();
-  //  } else if (notification.direction == ScrollDirection.reverse &&
-  //      Backdrop.of(components.navigator.routeContext!).isBackLayerRevealed) {
-  //    Backdrop.of(components.navigator.routeContext!).concealBackLayer();
-  //  }
-  //  return true;
-  //}
-
   @override
   Widget build(BuildContext context) {
-    data = populateData(context, data);
-    security = data['holding']!.security;
-    currentHolds = Current.holdings;
-    currentTxs = services.transaction
-        .getTransactionRecords(wallet: Current.wallet, securities: {security});
-    var maxExtent = (currentTxs.length * 80 +
+    var minHeight = .7245;
+    var maxExtent = (widget.currentTxs.length * 80 +
             80 +
             40 +
             (!services.download.history.downloads_complete ? 80 : 0))
         .ofMediaHeight(context);
-    //var minHeight = 1 - (201 + 25) / MediaQuery.of(context).size.height;
-    var minHeight = .7245;
-
-    print(minHeight);
-    cachedMetadataView = _metadataView();
-    return BackdropLayers(
-        back:
-            // fade this out as we drag up:
-            CoinSpec(
-          pageTitle: 'Transactions',
-          security: security,
-          bottom: cachedMetadataView != null ? null : Container(),
-        ),
-        front: Stack(alignment: Alignment.bottomCenter, children: [
-          DraggableScrollableSheet(
-            initialChildSize: minHeight,
-            minChildSize: minHeight,
-            maxChildSize: min(1.0, max(minHeight, maxExtent)),
-            controller: dController,
-            //snap: true, // if snap then show amount in app bar
-            builder: ((context, ScrollController scrollController) {
-              return Stack(
-                alignment: Alignment.topCenter,
-                children: [
-                  CoinSpecTabs(),
-                  Padding(
-                    padding: EdgeInsets.only(top: 48),
-                    child: FrontCurve(
-                      frontLayerBoxShadow: [],
-                      child: content(scrollController),
+    return Stack(alignment: Alignment.bottomCenter, children: [
+      DraggableScrollableSheet(
+        initialChildSize: minHeight,
+        minChildSize: minHeight,
+        maxChildSize: min(1.0, max(minHeight, maxExtent)),
+        controller: dController,
+        //snap: true, // if snap then show amount in app bar
+        builder: ((context, ScrollController scrollController) {
+          print("Drag offset ${dController.size}");
+          return Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              CoinSpecTabs(),
+              Padding(
+                  padding: EdgeInsets.only(top: 48),
+                  child: FrontCurve(
+                    frontLayerBoxShadow: [],
+                    child: content(
+                      scrollController,
+                      tabChoice,
+                      widget.currentTxs,
+                      widget.security,
+                      context,
+                      widget.cachedMetadataView,
                     ),
-                  )
-                ],
-              );
-            }),
-          ),
-          NavBar(
-            includeSectors: false,
-            actionButtons: <Widget>[
-              components.buttons.actionButton(
-                context,
-                label: 'send',
-                link: '/transaction/send',
-              ),
-              components.buttons.actionButton(
-                context,
-                label: 'receive',
-                link: '/transaction/receive',
-                arguments: security != res.securities.RVN
-                    ? {'symbol': security.symbol}
-                    : null,
-              )
+                  ))
             ],
+          );
+        }),
+      ),
+      NavBar(
+        includeSectors: false,
+        actionButtons: <Widget>[
+          components.buttons.actionButton(
+            context,
+            label: 'send',
+            link: '/transaction/send',
           ),
-        ]));
-  }
-
-  Widget content(ScrollController scrollController) => tabChoice ==
-          CoinSpecTabs.tabIndex[0]
-      ? TransactionList(
-          scrollController: scrollController,
-          transactions:
-              currentTxs.where((tx) => tx.security.symbol == security.symbol),
-          msg: '\nNo ${security.symbol} transactions.\n')
-      : metadata; //(scrollController: scrollController) //at present we can't scroll metadata
-
-  Widget get metadata =>
-      cachedMetadataView ??
-      components.empty.message(
-        context,
-        icon: Icons.description,
-        msg: '\nNo metadata.\n',
-      );
-
-  Widget? _metadataView() {
-    var securityAsset = security.asset;
-    if (securityAsset == null || securityAsset.hasMetadata == false) {
-      return null;
-    }
-    var chilren = <Widget>[];
-    if (securityAsset.primaryMetadata == null &&
-        securityAsset.hasData &&
-        securityAsset.data!.isIpfs) {
-      return Container(
-          alignment: Alignment.topCenter,
-          height:
-              (MediaQuery.of(context).size.height - (72.figma(context) + 56)) *
-                  0.5,
-          child: InkWell(
-              child: Text('VIEW DATA', //Text('${securityAsset.metadata}',
-                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                      fontWeight: FontWeights.bold,
-                      letterSpacing: 1.25,
-                      color: AppColors.primary)),
-              onTap: () => components.message.giveChoices(
-                    context,
-                    title: 'View Data',
-                    content: 'View data in external browser?',
-                    behaviors: {
-                      'CANCEL': Navigator.of(context).pop,
-                      'BROWSER': () {
-                        Navigator.of(context).pop();
-                        launch(
-                            'https://ipfs.io/ipfs/${securityAsset.metadata}'); //'https://gateway.ipfs.io/ipfs/'
-                      },
-                    },
-                  )));
-    } else if (securityAsset.primaryMetadata == null) {
-      chilren = [SelectableText(securityAsset.metadata)];
-    } else if (securityAsset.primaryMetadata!.kind == MetadataType.ImagePath) {
-      chilren = [
-        Image.file(AssetLogos()
-            .readImageFileNow(securityAsset.primaryMetadata!.data ?? ''))
-      ];
-    } else if (securityAsset.primaryMetadata!.kind == MetadataType.JsonString) {
-      chilren = [SelectableText(securityAsset.primaryMetadata!.data ?? '')];
-    } else if (securityAsset.primaryMetadata!.kind == MetadataType.Unknown) {
-      chilren = [
-        SelectableText(securityAsset.primaryMetadata!.metadata),
-        SelectableText(securityAsset.primaryMetadata!.data ?? '')
-      ];
-    }
-    return ListView(padding: EdgeInsets.all(10.0), children: chilren);
+          components.buttons.actionButton(
+            context,
+            label: 'receive',
+            link: '/transaction/receive',
+            arguments: widget.security != res.securities.RVN
+                ? {'symbol': widget.security.symbol}
+                : null,
+          )
+        ],
+      ),
+    ]);
   }
 }
+
+class CoinDetailsHeader extends StatelessWidget {
+  const CoinDetailsHeader(this.security, this.cachedMetadataView, {Key? key})
+      : super(key: key);
+  final Security security;
+  final Widget? cachedMetadataView;
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: 0.2,
+      child: CoinSpec(
+        pageTitle: 'Transactions',
+        security: security,
+        bottom: cachedMetadataView != null ? null : Container(),
+      ),
+    );
+  }
+}
+
+Widget? _metadataView(Security security, BuildContext context) {
+  var securityAsset = security.asset;
+  if (securityAsset == null || securityAsset.hasMetadata == false) {
+    return null;
+  }
+  var chilren = <Widget>[];
+  if (securityAsset.primaryMetadata == null &&
+      securityAsset.hasData &&
+      securityAsset.data!.isIpfs) {
+    return Container(
+        alignment: Alignment.topCenter,
+        height:
+            (MediaQuery.of(context).size.height - (72.figma(context) + 56)) *
+                0.5,
+        child: InkWell(
+            child: Text('VIEW DATA', //Text('${securityAsset.metadata}',
+                style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                    fontWeight: FontWeights.bold,
+                    letterSpacing: 1.25,
+                    color: AppColors.primary)),
+            onTap: () => components.message.giveChoices(
+                  context,
+                  title: 'View Data',
+                  content: 'View data in external browser?',
+                  behaviors: {
+                    'CANCEL': Navigator.of(context).pop,
+                    'BROWSER': () {
+                      Navigator.of(context).pop();
+                      launch(
+                          'https://ipfs.io/ipfs/${securityAsset.metadata}'); //'https://gateway.ipfs.io/ipfs/'
+                    },
+                  },
+                )));
+  } else if (securityAsset.primaryMetadata == null) {
+    chilren = [SelectableText(securityAsset.metadata)];
+  } else if (securityAsset.primaryMetadata!.kind == MetadataType.ImagePath) {
+    chilren = [
+      Image.file(AssetLogos()
+          .readImageFileNow(securityAsset.primaryMetadata!.data ?? ''))
+    ];
+  } else if (securityAsset.primaryMetadata!.kind == MetadataType.JsonString) {
+    chilren = [SelectableText(securityAsset.primaryMetadata!.data ?? '')];
+  } else if (securityAsset.primaryMetadata!.kind == MetadataType.Unknown) {
+    chilren = [
+      SelectableText(securityAsset.primaryMetadata!.metadata),
+      SelectableText(securityAsset.primaryMetadata!.data ?? '')
+    ];
+  }
+  return ListView(padding: EdgeInsets.all(10.0), children: chilren);
+}
+
+Widget metadata(Widget? chachedView, BuildContext context) =>
+    chachedView ??
+    components.empty.message(
+      context,
+      icon: Icons.description,
+      msg: '\nNo metadata.\n',
+    );
+
+Widget content(
+        ScrollController scrollController,
+        String tabChoice,
+        List<TransactionRecord> currentTxs,
+        Security security,
+        BuildContext context,
+        Widget? cachedMetadataView) =>
+    tabChoice == CoinSpecTabs.tabIndex[0]
+        ? TransactionList(
+            scrollController: scrollController,
+            transactions:
+                currentTxs.where((tx) => tx.security.symbol == security.symbol),
+            msg: '\nNo ${security.symbol} transactions.\n')
+        : metadata(cachedMetadataView,
+            context); //(scrollController: scrollController) //at present we can't scroll metadata
