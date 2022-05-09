@@ -77,12 +77,15 @@ class ComingSoonPlaceholder extends StatelessWidget {
                             .headline1
                             ?.copyWith(color: AppColors.primaries[6]))),
                 Center(
-                    child: Text(message,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1
-                            ?.copyWith(color: AppColors.primaries[4]))),
+                    child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(message,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          ?.copyWith(color: AppColors.primaries[4])),
+                )),
               ],
             ),
           ],

@@ -68,7 +68,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                 Center(child: components.text.passwordWarning),
-                SizedBox(height: 50),
+                SizedBox(height: 16),
                 components.containers
                     .navBar(context, child: Row(children: [submitButton]))
               ]))

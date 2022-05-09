@@ -166,7 +166,7 @@ class _HoldingList extends State<HoldingList> {
                     scrollController: widget.scrollController,
                     header: 'Get Started',
                     message:
-                        'Use Import or Receive buttons add Ravencoin & assets to your wallet.',
+                        'Use the Import or Receive button to add Ravencoin & assets to your wallet.',
                     placeholderType: PlaceholderType.wallet);
               }()
             : () {
@@ -405,7 +405,7 @@ class _HoldingList extends State<HoldingList> {
                 child: Text(holding.symbol == rvn ? 'Ravencoin' : holding.last,
                     style: Theme.of(context).textTheme.bodyText1),
               ))
-          /* //this feature can show the path 
+          /* //this feature can show the path
           if (holding.symbol != holding.last && showPath)
             holding.last.length >= 20
                 ? Text('  (...)', style: Theme.of(context).textTheme.caption)
