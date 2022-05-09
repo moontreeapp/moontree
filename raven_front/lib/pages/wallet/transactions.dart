@@ -1,14 +1,9 @@
-/// this file could be removed with slight modifications to transactions.dart
-/// that should probably happen at some point - when we start using assets more.
-
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction/transaction.dart';
-//import 'package:raven_front/backdrop/backdrop.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/theme/theme.dart';
