@@ -44,6 +44,12 @@ class _TransactionsState extends State<Transactions>
         .getTransactionRecords(wallet: Current.wallet, securities: {security});
 
     cachedMetadataView = _metadataView(security, context);
+    var minHeight = .7245;
+    var maxExtent = (currentTxs.length * 80 +
+            80 +
+            40 +
+            (!services.download.history.downloads_complete ? 80 : 0))
+        .ofMediaHeight(context);
     return BackdropLayers(
         back: CoinDetailsHeader(
           security,
@@ -51,37 +57,73 @@ class _TransactionsState extends State<Transactions>
           dController,
           valueNotifier,
         ),
-        front: CoinDetailsGlidingSheet(
-          currentTxs,
-          cachedMetadataView,
-          security,
-          dController,
-          valueNotifier,
+        front: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            DraggableScrollableSheet(
+                initialChildSize: minHeight,
+                minChildSize: minHeight,
+                maxChildSize: min(1.0, max(minHeight, maxExtent)),
+                controller: dController,
+                builder: (context, scrollController) {
+                  valueNotifier.value = dController.size;
+
+                  return CoinDetailsGlidingSheet(
+                    currentTxs,
+                    cachedMetadataView,
+                    security,
+                    dController,
+                    scrollController,
+                    valueNotifier,
+                  );
+                }),
+            NavBar(
+              includeSectors: false,
+              actionButtons: <Widget>[
+                components.buttons.actionButton(
+                  context,
+                  label: 'send',
+                  link: '/transaction/send',
+                ),
+                components.buttons.actionButton(
+                  context,
+                  label: 'receive',
+                  link: '/transaction/receive',
+                  arguments: security != res.securities.RVN
+                      ? {'symbol': security.symbol}
+                      : null,
+                )
+              ],
+            ),
+          ],
         ));
   }
 }
 
-class CoinDetailsGlidingSheet extends StatefulWidget {
-  const CoinDetailsGlidingSheet(
-    this.currentTxs,
-    this.cachedMetadataView,
-    this.security,
-    this.dController,
-    this.valueNotifier, {
-    Key? key,
-  }) : super(key: key);
-  final List<TransactionRecord> currentTxs;
-  final Security security;
-  final Widget? cachedMetadataView;
-  final DraggableScrollableController dController;
-  final ValueNotifier<double> valueNotifier;
-
-  @override
-  State<CoinDetailsGlidingSheet> createState() =>
-      _CoinDetailsGlidingSheetState();
-}
-
 class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: [
+        CoinSpecTabs(),
+        Padding(
+            padding: EdgeInsets.only(top: 48),
+            child: FrontCurve(
+              frontLayerBoxShadow: [],
+              child: content(
+                widget.scrollController,
+                tabChoice,
+                widget.currentTxs,
+                widget.security,
+                context,
+                widget.cachedMetadataView,
+              ),
+            ))
+      ],
+    );
+  }
+
   String tabChoice = 'HISTORY';
   List<StreamSubscription> listeners = [];
 
@@ -108,67 +150,28 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
     }
     super.dispose();
   }
+}
+
+class CoinDetailsGlidingSheet extends StatefulWidget {
+  const CoinDetailsGlidingSheet(
+    this.currentTxs,
+    this.cachedMetadataView,
+    this.security,
+    this.dController,
+    this.scrollController,
+    this.valueNotifier, {
+    Key? key,
+  }) : super(key: key);
+  final List<TransactionRecord> currentTxs;
+  final Security security;
+  final Widget? cachedMetadataView;
+  final DraggableScrollableController dController;
+  final ValueNotifier<double> valueNotifier;
+  final ScrollController scrollController;
 
   @override
-  Widget build(BuildContext context) {
-    var minHeight = .7245;
-    var maxExtent = (widget.currentTxs.length * 80 +
-            80 +
-            40 +
-            (!services.download.history.downloads_complete ? 80 : 0))
-        .ofMediaHeight(context);
-    return Stack(alignment: Alignment.bottomCenter, children: [
-      DraggableScrollableSheet(
-        initialChildSize: minHeight,
-        minChildSize: minHeight,
-        maxChildSize: min(1.0, max(minHeight, maxExtent)),
-        controller: widget.dController,
-        //snap: true, // if snap then show amount in app bar
-        builder: ((context, ScrollController scrollController) {
-          //print("Drag offset ${dController.size}");
-          widget.valueNotifier.value = widget.dController.size;
-
-          return Stack(
-            alignment: Alignment.topCenter,
-            children: [
-              CoinSpecTabs(),
-              Padding(
-                  padding: EdgeInsets.only(top: 48),
-                  child: FrontCurve(
-                    frontLayerBoxShadow: [],
-                    child: content(
-                      scrollController,
-                      tabChoice,
-                      widget.currentTxs,
-                      widget.security,
-                      context,
-                      widget.cachedMetadataView,
-                    ),
-                  ))
-            ],
-          );
-        }),
-      ),
-      NavBar(
-        includeSectors: false,
-        actionButtons: <Widget>[
-          components.buttons.actionButton(
-            context,
-            label: 'send',
-            link: '/transaction/send',
-          ),
-          components.buttons.actionButton(
-            context,
-            label: 'receive',
-            link: '/transaction/receive',
-            arguments: widget.security != res.securities.RVN
-                ? {'symbol': widget.security.symbol}
-                : null,
-          )
-        ],
-      ),
-    ]);
-  }
+  State<CoinDetailsGlidingSheet> createState() =>
+      _CoinDetailsGlidingSheetState();
 }
 
 class CoinDetailsHeader extends StatelessWidget {
