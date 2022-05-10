@@ -39,16 +39,16 @@ class _ImportState extends State<Import> {
   @override
   void initState() {
     super.initState();
-    //wordsFocus.addListener(_handleFocusChange);
+    wordsFocus.addListener(_handleFocusChange);
   }
 
-  //void _handleFocusChange() {
-  //  setState(() {});
-  //}
+  void _handleFocusChange() {
+    setState(() {});
+  }
 
   @override
   void dispose() {
-    //wordsFocus.removeListener(_handleFocusChange);
+    wordsFocus.removeListener(_handleFocusChange);
     words.dispose();
     wordsFocus.dispose();
     submitFocus.dispose();
@@ -107,7 +107,6 @@ class _ImportState extends State<Import> {
           focusNode: wordsFocus,
           enableInteractiveSelection: true,
           autocorrect: false,
-          autofocus: true,
           controller: words,
           obscureText: !importVisible,
           keyboardType: TextInputType.multiline,
