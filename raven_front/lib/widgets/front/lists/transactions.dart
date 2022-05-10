@@ -109,57 +109,27 @@ class _TransactionListState extends State<TransactionList> {
                     title: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(() {
-                            var suffix = '';
-                            switch (transactionRecord.type) {
-                              case TransactionRecordType.ASSETCREATION:
-                                suffix = 'Asset Creation';
-                                break;
-                              case TransactionRecordType.BURN:
-                                suffix = 'Burn';
-                                break;
-                              case TransactionRecordType.REISSUE:
-                                suffix = 'Reissue';
-                                break;
-                              case TransactionRecordType.TAG:
-                                suffix = 'Tag';
-                                break;
-                              case TransactionRecordType.SELF:
-                                suffix = 'Sent to Self';
-                                break;
-                              case TransactionRecordType.INCOMING:
-                                suffix = 'Received';
-                                break;
-                              case TransactionRecordType.OUTGOING:
-                                suffix = 'Sent';
-                                break;
-                            }
-                            return suffix;
-                          }(), style: Theme.of(context).textTheme.bodyText1),
-                          Text(transactionRecord.formattedDatetime,
+                          Text(
+                              transactionRecord.toSelf
+                                  ? transactionRecord.typeToString
+                                  : components.text.securityAsReadable(
+                                      transactionRecord.value,
+                                      security: transactionRecord.security,
+                                      asUSD: showUSD),
+                              style: Theme.of(context).textTheme.bodyText1),
+                          Text(
+                              transactionRecord.formattedDatetime +
+                                  '${!transactionRecord.isNormal ? ' | ' + transactionRecord.typeToString : ''}',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText2!
                                   .copyWith(color: AppColors.black60)),
                         ]),
-                    trailing: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Padding(
-                              padding: EdgeInsets.only(right: 4),
-                              child: Text(
-                                  components.text.securityAsReadable(
-                                      transactionRecord.value,
-                                      security: transactionRecord.security,
-                                      asUSD: showUSD),
-                                  style:
-                                      Theme.of(context).textTheme.bodyText1)),
-                          transactionRecord.value == 0
-                              ? components.icons.fee(context)
-                              : (transactionRecord.out
-                                  ? components.icons.out(context)
-                                  : components.icons.income(context)),
-                        ]),
+                    trailing: transactionRecord.value == 0
+                        ? components.icons.fee(context)
+                        : (transactionRecord.out
+                            ? components.icons.out(context)
+                            : components.icons.income(context)),
                   ),
                   Divider(indent: 16),
                 ]

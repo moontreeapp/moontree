@@ -34,13 +34,16 @@ class _LoaderState extends State<Loader> {
   Future<void> _init(int duration) async {
     await Future.delayed(Duration(milliseconds: duration * widget.playCount!));
     _goSomewhere();
+    await Future.delayed(Duration(milliseconds: 100));
     _doSomething();
   }
 
   void _goSomewhere() {
     if (widget.returnHome) {
       Navigator.popUntil(
-          components.navigator.routeContext!, ModalRoute.withName('/home'));
+        components.navigator.routeContext!,
+        ModalRoute.withName('/home'),
+      );
     } else {
       Navigator.of(context).pop();
     }
