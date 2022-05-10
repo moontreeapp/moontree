@@ -18,12 +18,18 @@ class RavenClientWaiter extends Waiter {
   //late clientDoneListener =
 
   void init({Object? reconnect}) {
+    /* seeing multiple connections on the server - either due to this or 
+     * services.client.scope calls. attempting to make one or the other work
+     * rather than both at the same time
+    
     if (!listeners.keys.contains('streams.client.client')) {
       streams.client.client.add(null);
     }
 
+    
+    
+
     /// maintains an active connection to electrum server as long app is active
-    ///
     listen(
       'streams.client.client',
       streams.client.client,
@@ -80,35 +86,40 @@ class RavenClientWaiter extends Waiter {
       },
     );
 
+
+
+    /// creation of client should happen in one place, either here or in scope.
+    listen(
+      'streams.client.client',
+      streams.client.client,
+      (RavenElectrumClient? client) async {
+        if (client == null) {
+          streams.client.connected.add(ConnectionStatus.connecting);
+          var newRavenClient = await services.client.createClient();
+          if (newRavenClient != null) {
+            streams.client.connected.add(ConnectionStatus.connected);
+            streams.client.client.add(newRavenClient);
+          }
+        }
+      },
+    );
+    */
+
     /// when we become active and we don't have a connection, reconnect.
     listen(
       'streams.app.active',
-      CombineLatestStream.combine2(
-        streams.client.connected,
-        streams.app.active,
-        (ConnectionStatus connected, bool active) => Tuple2(connected, active),
-      ),
-      (Tuple2 tuple) async {
-        ConnectionStatus connected = tuple.item1;
-        bool active = tuple.item2;
-        /*var msg = 'Establishing Connection...';*/
-        if (active &&
-            (streams.client.client.value == null &&
-                connected == ConnectionStatus.disconnected)) {
-          additionalTimeout = Duration(seconds: 1);
-          streams.client.client.add(null);
-          await Future.delayed(Duration(seconds: 6));
-        } else if (active) {}
+      streams.app.active,
+      (bool active) async {
+        if (active) {
+          print(
+              'CONNECTION STATUS: ${streams.client.connected.value.enumString} ACTIVE $active');
+          print('PINGING ELECTRUM SERVER');
+          await services.client.api.ping();
+          print(
+              'CONNECTION STATUS: ${streams.client.connected.value.enumString}');
+        }
       },
     );
-
-    listen(
-        'settings.changes',
-        res.settings.changes.where((change) =>
-            (change is Added || change is Updated) &&
-            change.data.name == SettingName.Electrum_Net), (_) {
-      streams.client.client.add(null);
-    });
 
     /// this pings the server every 60 seconds if the user is using the app and
     /// we have a connection to the server. it's good enough. what would be
@@ -116,17 +127,20 @@ class RavenClientWaiter extends Waiter {
     /// request to the server, if the clock hits 60 seconds it sends a ping.
     listen(
       'streams.app.ping',
-      CombineLatestStream.combine3(
-        streams.client.client,
+      CombineLatestStream.combine2(
         streams.app.active,
         streams.app.ping,
-        (RavenElectrumClient? client, bool active, dynamic ping) =>
-            Tuple3(client, active, ping),
-      ).where((Tuple3 event) => event.item1 != null && event.item2),
-      (Tuple3 tuple) async {
+        (bool active, dynamic ping) => Tuple2(active, ping),
+      ).where((Tuple2 event) => event.item1),
+      (Tuple2 tuple) async {
         //RavenElectrumClient? client = tuple.item1;
         /// I think this is getting called when the app becomes active again without a working client
-        await services.client.scope(() async => services.client.client!.ping);
+        print(
+            'CONNECTION STATUS: ${streams.client.connected.value.enumString} ACTIVE ${tuple.item1}, ping ${tuple.item2}');
+        print('PINGING ELECTRUM SERVER');
+        await services.client.api.ping();
+        print(
+            'CONNECTION STATUS: ${streams.client.connected.value.enumString}');
         //try {
         //  client!.ping();
         //} on StateError {

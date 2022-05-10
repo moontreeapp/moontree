@@ -48,7 +48,6 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     await loadingHelper.setupDatabase();
     await Future.delayed(Duration(milliseconds: 1000));
     setState(() {
-      print('setting state');
       shape = components.shape.topRoundedBorder8;
     });
     _fadeController.forward();

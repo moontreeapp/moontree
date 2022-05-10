@@ -12,34 +12,30 @@ class HistoryService {
 
   /// called during import process, leader registry counts handled separately.
   Future<List<List<String>>> getHistories(List<Address> addresses) async {
-    return (await services.client.scope(() async {
+    try {
+      var listOfLists = await services.client.api.getHistories(addresses);
+      return [
+        for (var x in listOfLists) x.map((history) => history.txHash).toList()
+      ];
+    } catch (e) {
       try {
-        var listOfLists = await services.client.client!
-            .getHistories(addresses.map((Address a) => a.scripthash));
-        return [
-          for (var x in listOfLists) x.map((history) => history.txHash).toList()
-        ];
-      } catch (e) {
-        try {
-          var txIds = <List<String>>[];
-          for (var scripthash in addresses.map((Address a) => a.scripthash)) {
-            var historiesItem;
-            try {
-              historiesItem =
-                  (await services.client.client!.getHistory(scripthash))
-                      .map((history) => history.txHash)
-                      .toList();
-            } catch (e) {
-              historiesItem = [];
-            }
-            txIds.add(historiesItem);
+        var txIds = <List<String>>[];
+        for (var address in addresses) {
+          var historiesItem;
+          try {
+            historiesItem = (await services.client.api.getHistory(address))
+                .map((history) => history.txHash)
+                .toList();
+          } catch (e) {
+            historiesItem = [];
           }
-          return txIds;
-        } catch (e) {
-          return [for (var _ in addresses) []];
+          txIds.add(historiesItem);
         }
+        return txIds;
+      } catch (e) {
+        return [for (var _ in addresses) []];
       }
-    }));
+    }
   }
 
   /// called during address subscription
@@ -47,33 +43,30 @@ class HistoryService {
     Address address, {
     bool updateLeader = false,
   }) async {
-    return (await services.client.scope(() async {
-      try {
-        final t = (await services.client.client!.getHistory(address.scripthash))
-            .map((history) => history.txHash)
-            .toList();
-        if (updateLeader && address.wallet is LeaderWallet) {
-          if (t.isEmpty) {
-            services.wallet.leader
-                .updateCache(address, address.wallet as LeaderWallet);
-          } else {
-            services.wallet.leader
-                .updateCounts(address, address.wallet as LeaderWallet);
-          }
+    try {
+      final t = (await services.client.api.getHistory(address))
+          .map((history) => history.txHash)
+          .toList();
+      if (updateLeader && address.wallet is LeaderWallet) {
+        if (t.isEmpty) {
+          services.wallet.leader
+              .updateCache(address, address.wallet as LeaderWallet);
+        } else {
+          services.wallet.leader
+              .updateCounts(address, address.wallet as LeaderWallet);
         }
-        return t;
-      } catch (e) {
-        return [];
       }
-    }));
+      return t;
+    } catch (e) {
+      return [];
+    }
   }
 
   Future getAndSaveMempoolTransactions() async {
     await saveTransactions(
       [
         for (var transactionId in res.transactions.mempool.map((t) => t.id))
-          await services.client.scope(() async =>
-              await services.client.client!.getTransaction(transactionId))
+          await services.client.api.getTransaction(transactionId)
       ],
     );
   }
@@ -172,13 +165,11 @@ class HistoryService {
         /// (saveVin == false) so in that case go straight to catch clause:
         throw Exception();
       }
-      txs = await services.client.scope(() async =>
-          await services.client.client!.getTransactions(transactionIds));
+      txs = await services.client.api.getTransactions(transactionIds);
     } catch (e) {
       var futures = <Future<Tx>>[];
       for (var transactionId in transactionIds) {
-        futures.add(await services.client.scope(
-            () async => services.client.client!.getTransaction(transactionId)));
+        futures.add(services.client.api.getTransaction(transactionId));
       }
       txs = await Future.wait<Tx>(futures);
     }
@@ -199,8 +190,7 @@ class HistoryService {
         _new_length = _downloadQueried.length;
       });
       await saveTransaction(
-          await services.client.scope(() async =>
-              await services.client.client!.getTransaction(transactionId)),
+          await services.client.api.getTransaction(transactionId),
           saveVin: saveVin);
       _downloaded += 1;
     } else {

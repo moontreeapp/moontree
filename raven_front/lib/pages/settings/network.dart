@@ -28,7 +28,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
   bool validated = true;
   bool pressed = false;
   bool enableSubmit = false;
-  RavenElectrumClient? client;
+  ConnectionStatus? connectionStatus;
 
   @override
   void initState() {
@@ -38,9 +38,10 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
         '${services.client.currentDomain}:${services.client.currentPort}';
     listeners.add(res.settings.changes
         .listen((Change<Setting> changes) => setState(() {})));
-    listeners
-        .add(streams.client.client.listen((RavenElectrumClient? ravenClient) {
-      if (ravenClient != null && client != ravenClient && pressed) {
+    listeners.add(streams.client.connected.listen((ConnectionStatus value) {
+      if (value == ConnectionStatus.connected &&
+          value != connectionStatus &&
+          pressed) {
         setState(() {});
         streams.app.snack
             .add(Snack(message: 'Successfully Connected', atBottom: true));
@@ -127,8 +128,8 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
           context,
           focusNode: serverFocus,
           labelText: 'Server',
-          hintText: streams.client.client.value != null
-              ? '${streams.client.client.value!.host}:${streams.client.client.value!.port}'
+          hintText: services.client.ravenElectrumClient != null
+              ? '${services.client.ravenElectrumClient!.host}:${services.client.ravenElectrumClient!.port}'
               : '${services.client.currentDomain}:${services.client.currentPort.toString()}',
           helperText: validated
               ? services.client.connectionStatus &&
@@ -190,7 +191,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
       port: int.parse(port),
     );
     // flush out current connection and allow waiter to reestablish one
-    streams.client.client.add(null);
+    services.client.createClient();
     components.loading.screen(message: 'Connecting', returnHome: false);
     pressed = true;
   }
