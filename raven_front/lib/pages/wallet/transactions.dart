@@ -6,7 +6,6 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction/transaction.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';
-import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/data.dart';
 import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
@@ -21,15 +20,14 @@ class Transactions extends StatefulWidget {
   _TransactionsState createState() => _TransactionsState();
 }
 
-class _TransactionsState extends State<Transactions>
-    with TickerProviderStateMixin {
+class _TransactionsState extends State<Transactions> {
   Map<String, dynamic> data = {};
   late List<TransactionRecord> currentTxs;
   late List<Balance> currentHolds;
   late Security security;
   Widget? cachedMetadataView;
   DraggableScrollableController dController = DraggableScrollableController();
-  BehaviorSubject<double> scrollObserver = BehaviorSubject.seeded(0.9);
+  BehaviorSubject<double> scrollObserver = BehaviorSubject.seeded(.7245);
   @override
   void dispose() {
     scrollObserver.close();
@@ -43,7 +41,6 @@ class _TransactionsState extends State<Transactions>
     currentHolds = Current.holdings;
     currentTxs = services.transaction
         .getTransactionRecords(wallet: Current.wallet, securities: {security});
-
     cachedMetadataView = _metadataView(security, context);
     var minHeight = .7245;
     var maxExtent = (currentTxs.length * 80 +
@@ -67,7 +64,7 @@ class _TransactionsState extends State<Transactions>
 
                   return CoinDetailsGlidingSheet(
                     currentTxs,
-                    cachedMetadataView,
+                    _metadataView(security, context),
                     security,
                     dController,
                     scrollController,
@@ -94,6 +91,54 @@ class _TransactionsState extends State<Transactions>
           ],
         ));
   }
+
+  Widget? _metadataView(Security security, BuildContext context) {
+    var securityAsset = security.asset;
+    if (securityAsset == null || securityAsset.hasMetadata == false) {
+      return null;
+    }
+    var chilren = <Widget>[];
+    if (securityAsset.primaryMetadata == null &&
+        securityAsset.hasData &&
+        securityAsset.data!.isIpfs) {
+      return Container(
+          alignment: Alignment.topCenter,
+          height: (scrollObserver.value.ofMediaHeight(context) + 16 + 16) / 2,
+          child: Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: components.buttons.actionButtonInner(
+                context,
+                label: 'View Data',
+                onPressed: () => components.message.giveChoices(
+                  context,
+                  title: 'View Data',
+                  content: 'View data in external browser?',
+                  behaviors: {
+                    'CANCEL': Navigator.of(context).pop,
+                    'BROWSER': () {
+                      Navigator.of(context).pop();
+                      launch('https://ipfs.io/ipfs/${securityAsset.metadata}');
+                    },
+                  },
+                ),
+              )));
+    } else if (securityAsset.primaryMetadata == null) {
+      chilren = [SelectableText(securityAsset.metadata)];
+    } else if (securityAsset.primaryMetadata!.kind == MetadataType.ImagePath) {
+      chilren = [
+        Image.file(AssetLogos()
+            .readImageFileNow(securityAsset.primaryMetadata!.data ?? ''))
+      ];
+    } else if (securityAsset.primaryMetadata!.kind == MetadataType.JsonString) {
+      chilren = [SelectableText(securityAsset.primaryMetadata!.data ?? '')];
+    } else if (securityAsset.primaryMetadata!.kind == MetadataType.Unknown) {
+      chilren = [
+        SelectableText(securityAsset.primaryMetadata!.metadata),
+        SelectableText(securityAsset.primaryMetadata!.data ?? '')
+      ];
+    }
+    return ListView(padding: EdgeInsets.all(10.0), children: chilren);
+  }
 }
 
 class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
@@ -102,9 +147,10 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
     return Stack(
       alignment: Alignment.topCenter,
       children: [
-        CoinSpecTabs(),
+        if (widget.cachedMetadataView != null) CoinSpecTabs(),
         Padding(
-            padding: EdgeInsets.only(top: 48),
+            padding: EdgeInsets.only(
+                top: widget.cachedMetadataView != null ? 48 : 0),
             child: FrontCurve(
               frontLayerBoxShadow: [],
               child: content(
@@ -215,57 +261,6 @@ class CoinDetailsHeader extends StatelessWidget {
   }
 }
 
-Widget? _metadataView(Security security, BuildContext context) {
-  var securityAsset = security.asset;
-  if (securityAsset == null || securityAsset.hasMetadata == false) {
-    return null;
-  }
-  var chilren = <Widget>[];
-  if (securityAsset.primaryMetadata == null &&
-      securityAsset.hasData &&
-      securityAsset.data!.isIpfs) {
-    return Container(
-        alignment: Alignment.topCenter,
-        height:
-            (MediaQuery.of(context).size.height - (72.figma(context) + 56)) *
-                0.5,
-        child: InkWell(
-            child: Text('VIEW DATA', //Text('${securityAsset.metadata}',
-                style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                    fontWeight: FontWeights.bold,
-                    letterSpacing: 1.25,
-                    color: AppColors.primary)),
-            onTap: () => components.message.giveChoices(
-                  context,
-                  title: 'View Data',
-                  content: 'View data in external browser?',
-                  behaviors: {
-                    'CANCEL': Navigator.of(context).pop,
-                    'BROWSER': () {
-                      Navigator.of(context).pop();
-                      launch(
-                          'https://ipfs.io/ipfs/${securityAsset.metadata}'); //'https://gateway.ipfs.io/ipfs/'
-                    },
-                  },
-                )));
-  } else if (securityAsset.primaryMetadata == null) {
-    chilren = [SelectableText(securityAsset.metadata)];
-  } else if (securityAsset.primaryMetadata!.kind == MetadataType.ImagePath) {
-    chilren = [
-      Image.file(AssetLogos()
-          .readImageFileNow(securityAsset.primaryMetadata!.data ?? ''))
-    ];
-  } else if (securityAsset.primaryMetadata!.kind == MetadataType.JsonString) {
-    chilren = [SelectableText(securityAsset.primaryMetadata!.data ?? '')];
-  } else if (securityAsset.primaryMetadata!.kind == MetadataType.Unknown) {
-    chilren = [
-      SelectableText(securityAsset.primaryMetadata!.metadata),
-      SelectableText(securityAsset.primaryMetadata!.data ?? '')
-    ];
-  }
-  return ListView(padding: EdgeInsets.all(10.0), children: chilren);
-}
-
 Widget metadata(Widget? chachedView, BuildContext context) =>
     chachedView ??
     components.empty.message(
@@ -275,12 +270,13 @@ Widget metadata(Widget? chachedView, BuildContext context) =>
     );
 
 Widget content(
-        ScrollController scrollController,
-        String tabChoice,
-        List<TransactionRecord> currentTxs,
-        Security security,
-        BuildContext context,
-        Widget? cachedMetadataView) =>
+  ScrollController scrollController,
+  String tabChoice,
+  List<TransactionRecord> currentTxs,
+  Security security,
+  BuildContext context,
+  Widget? cachedMetadataView,
+) =>
     tabChoice == CoinSpecTabs.tabIndex[0]
         ? TransactionList(
             scrollController: scrollController,

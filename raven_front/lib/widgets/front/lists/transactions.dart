@@ -69,12 +69,6 @@ class _TransactionListState extends State<TransactionList> {
   Future refresh() async {
     await services.rate.saveRate();
     setState(() {});
-    // showing snackbar
-    //_scaffoldKey.currentState.showSnackBar(
-    //  SnackBar(
-    //    content: const Text('Page Refreshed'),
-    //  ),
-    //);
   }
 
   @override

@@ -20,7 +20,32 @@ class ButtonComponents {
     bool invert = false,
   }) =>
       Expanded(
-          child: Container(
+          child: actionButtonInner(
+        context,
+        label: label,
+        disabledIcon: disabledIcon,
+        link: link,
+        arguments: arguments,
+        onPressed: onPressed,
+        disabledOnPressed: disabledOnPressed,
+        focusNode: focusNode,
+        enabled: enabled,
+        invert: invert,
+      ));
+
+  Widget actionButtonInner(
+    BuildContext context, {
+    String? label,
+    Widget? disabledIcon,
+    String? link,
+    Map<String, dynamic>? arguments,
+    VoidCallback? onPressed,
+    VoidCallback? disabledOnPressed,
+    FocusNode? focusNode,
+    bool enabled = true,
+    bool invert = false,
+  }) =>
+      Container(
         height: MediaQuery.of(context).size.height * (40 / 760),
         child: OutlinedButton(
           focusNode: focusNode,
@@ -43,7 +68,7 @@ class ButtonComponents {
                       : null
                   : Theme.of(context).textTheme.disabledButton),
         ),
-      ));
+      );
 
   String _labelDefault(String? label) => (label ?? 'Preview').toUpperCase();
 

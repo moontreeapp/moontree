@@ -18,7 +18,7 @@ dependencies:
   ravencoin_wallet: ^3.0.0
   raven_electrum: ^2.0.0
   reservoir: ^4.0.1
-  rxdart: ^0.27.1
+  rxdart: ^0.27.3
   sorted_list: ^1.0.0
   http: ^0.13.3
   ulid: ^2.0.0

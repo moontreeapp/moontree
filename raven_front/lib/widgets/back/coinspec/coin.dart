@@ -84,7 +84,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
     ];
 
     // make it a fixed size
-    if (front && widget.pageTitle != 'Asset') {
+    if (front && widget.pageTitle != 'Asset' && widget.symbol == 'RVN') {
       ret.addAll([
         // USD amount of balance fix!
         Text(
