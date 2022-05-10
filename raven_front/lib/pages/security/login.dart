@@ -17,6 +17,7 @@ class _LoginState extends State<Login> {
   bool passwordVisible = false;
   FocusNode loginFocus = FocusNode();
   FocusNode unlockFocus = FocusNode();
+  String? passwordText;
   bool failedAttempt = false;
 
   @override
@@ -121,18 +122,20 @@ class _LoginState extends State<Login> {
       });
 
   Widget get unlockButton => components.buttons.actionButton(context,
-      enabled: password.text != '' && services.password.lockout.timePast(),
+      enabled: password.text != '' && services.password.lockout.timePast() && passwordText == null,
       focusNode: unlockFocus,
-      label: 'Unlock',
+      label: passwordText == null ? 'Unlock': 'Unlocking...',
       disabledOnPressed: () => setState(() {}),
       onPressed: () async => await submit());
 
   bool validate() => services.password.validate.password(password.text);
 
   Future submit({bool showFailureMessage = true}) async {
-    if (await services.password.lockout.handleVerificationAttempt(validate())) {
+    if (await services.password.lockout.handleVerificationAttempt(validate()) && passwordText == null) {
+      setState(() {
+        passwordText = password.text;
+      }); // to disable the button visually
       await Future.delayed(Duration(milliseconds: 200)); // in release mode?
-      FocusScope.of(context).unfocus();
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
       // create ciphers for wallets we have
       services.cipher.initCiphers(altPassword: password.text);

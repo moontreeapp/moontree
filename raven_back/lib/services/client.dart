@@ -74,6 +74,7 @@ class ClientService {
   Future<void> createClient() async {
     await _clientLock.writeFuture(() async {
       streams.client.connected.add(ConnectionStatus.connecting);
+      print('CREATING CLIENT');
       var newRavenClient = await _generateClient();
       if (newRavenClient != null) {
         ravenElectrumClient = newRavenClient;

@@ -50,7 +50,7 @@ class PasswordLockoutService {
         streams.app.snack.add(Snack(
           message: res.settings.loginAttempts.length == 1
               ? 'There was ${res.settings.loginAttempts.length} unsuccessful login attempt'
-              : 'There has been ${res.settings.loginAttempts.length} unsuccessful login attempts',
+              : 'There have been ${res.settings.loginAttempts.length} unsuccessful login attempts',
         ));
         await res.settings.resetLoginAttempts();
       }

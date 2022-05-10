@@ -148,7 +148,7 @@ class ImportWalletService {
       secret: text,
       alwaysReturn: true,
     );
-    return attemptWalletSave(wallet);
+    return await attemptWalletSave(wallet);
   }
 
   /*
