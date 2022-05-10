@@ -101,9 +101,6 @@ class _LoginState extends State<Login> {
                 failedAttempt
             ? 'Incorrect Password'
             : null,
-        //hintText:
-        //    password.text == '' && res.settings.loginAttempts > 0 ? null : '',
-        helperText: password.text == '' ? null : '',
         //suffixIcon: IconButton(
         //  icon: Icon(passwordVisible ? Icons.visibility : Icons.visibility_off,
         //      color: AppColors.black60),
@@ -122,16 +119,19 @@ class _LoginState extends State<Login> {
       });
 
   Widget get unlockButton => components.buttons.actionButton(context,
-      enabled: password.text != '' && services.password.lockout.timePast() && passwordText == null,
+      enabled: password.text != '' &&
+          services.password.lockout.timePast() &&
+          passwordText == null,
       focusNode: unlockFocus,
-      label: passwordText == null ? 'Unlock': 'Unlocking...',
+      label: passwordText == null ? 'Unlock' : 'Unlocking...',
       disabledOnPressed: () => setState(() {}),
       onPressed: () async => await submit());
 
   bool validate() => services.password.validate.password(password.text);
 
   Future submit({bool showFailureMessage = true}) async {
-    if (await services.password.lockout.handleVerificationAttempt(validate()) && passwordText == null) {
+    if (await services.password.lockout.handleVerificationAttempt(validate()) &&
+        passwordText == null) {
       setState(() {
         passwordText = password.text;
       }); // to disable the button visually
