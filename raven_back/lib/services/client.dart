@@ -123,11 +123,11 @@ class SubscribeService {
 
   Future<bool> toAllAddresses() async {
     /// this is not a user action - do not show activity
-    //streams.client.busy.add(true);
-    //streams.client.activity.add(ActivityMessage(
-    //    active: true,
-    //    title: 'Syncing with the network',
-    //    message: 'Downloading your transactions...'));
+    streams.client.busy.add(true);
+    streams.client.activity.add(ActivityMessage(
+        active: true,
+        title: 'Syncing with the network',
+        message: 'Downloading your transactions...'));
     final addresses = res.addresses.toList();
     var existing = false;
     for (var address in addresses) {
@@ -153,8 +153,8 @@ class SubscribeService {
         }
       }
     }
-    //streams.client.busy.add(false);
-    //streams.client.activity.add(ActivityMessage(active: false));
+    streams.client.busy.add(false);
+    streams.client.activity.add(ActivityMessage(active: false));
     return true;
   }
 

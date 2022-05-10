@@ -22,6 +22,10 @@ class IconComponents {
         'assets/icons/send/send_red.png',
         color: color,
       );
+  Widget fee(BuildContext context, {Color? color}) => Image.asset(
+        'assets/icons/send/send_black.png',
+        color: AppColors.black38,
+      );
 
   Icon importDisabled(BuildContext context) =>
       Icon(Icons.vpn_key_rounded, color: Theme.of(context).disabledColor);

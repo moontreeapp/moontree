@@ -116,11 +116,7 @@ class _TransactionListState extends State<TransactionList> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(() {
-                            var suffix;
-                            final value = components.text.securityAsReadable(
-                                transactionRecord.value,
-                                security: transactionRecord.security,
-                                asUSD: showUSD);
+                            var suffix = '';
                             switch (transactionRecord.type) {
                               case TransactionRecordType.ASSETCREATION:
                                 suffix = 'Asset Creation';
@@ -135,12 +131,16 @@ class _TransactionListState extends State<TransactionList> {
                                 suffix = 'Tag';
                                 break;
                               case TransactionRecordType.SELF:
-                                return 'Sent to Self';
+                                suffix = 'Sent to Self';
+                                break;
                               case TransactionRecordType.INCOMING:
+                                suffix = 'Received';
+                                break;
                               case TransactionRecordType.OUTGOING:
-                                return value;
+                                suffix = 'Sent';
+                                break;
                             }
-                            return suffix == null ? value : '$value ($suffix)';
+                            return suffix;
                           }(), style: Theme.of(context).textTheme.bodyText1),
                           Text(transactionRecord.formattedDatetime,
                               style: Theme.of(context)
@@ -148,9 +148,24 @@ class _TransactionListState extends State<TransactionList> {
                                   .bodyText2!
                                   .copyWith(color: AppColors.black60)),
                         ]),
-                    trailing: (transactionRecord.out
-                        ? components.icons.out(context)
-                        : components.icons.income(context)),
+                    trailing: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Padding(
+                              padding: EdgeInsets.only(right: 4),
+                              child: Text(
+                                  components.text.securityAsReadable(
+                                      transactionRecord.value,
+                                      security: transactionRecord.security,
+                                      asUSD: showUSD),
+                                  style:
+                                      Theme.of(context).textTheme.bodyText1)),
+                          transactionRecord.value == 0
+                              ? components.icons.fee(context)
+                              : (transactionRecord.out
+                                  ? components.icons.out(context)
+                                  : components.icons.income(context)),
+                        ]),
                   ),
                   Divider(indent: 16),
                 ]

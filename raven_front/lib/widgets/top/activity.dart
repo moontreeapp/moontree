@@ -18,6 +18,7 @@ class _ActivityLightState extends State<ActivityLight>
   List<StreamSubscription> listeners = [];
   bool connectionBusy = false;
   ActivityMessage activityMessage = ActivityMessage();
+  late String pageTitle = '';
 
   @override
   void initState() {
@@ -35,6 +36,13 @@ class _ActivityLightState extends State<ActivityLight>
         setState(() => connectionBusy = value);
       }
     }));
+    listeners.add(streams.app.page.listen((value) {
+      if (value != pageTitle) {
+        setState(() {
+          pageTitle = value;
+        });
+      }
+    }));
   }
 
   @override
@@ -47,30 +55,32 @@ class _ActivityLightState extends State<ActivityLight>
 
   @override
   Widget build(BuildContext context) {
-    return connectionBusy
-        ? GestureDetector(
-            onTap: () => components.message.giveChoices(
-              components.navigator.routeContext!,
-              title: activityMessage.title,
-              content: activityMessage.message,
-              behaviors: {
-                'ok': () {
-                  Navigator.of(components.navigator.routeContext!).pop();
-                },
-              },
-            ),
-            child: Container(
-                width: 36,
-                alignment: Alignment.center,
-                child: Lottie.asset(
-                  'assets/spinner/moontree_spinner_v2_002_1_recolored.json',
-                  animate: true,
-                  repeat: true,
-                  width: 56 / 2,
-                  height: 56 / 2,
-                  alignment: Alignment.center,
-                )),
-          )
-        : Container();
+    return pageTitle == 'Login'
+        ? Container()
+        : connectionBusy
+            ? GestureDetector(
+                onTap: () => components.message.giveChoices(
+                  components.navigator.routeContext!,
+                  title: activityMessage.title,
+                  content: activityMessage.message,
+                  behaviors: {
+                    'ok': () {
+                      Navigator.of(components.navigator.routeContext!).pop();
+                    },
+                  },
+                ),
+                child: Container(
+                    width: 36,
+                    alignment: Alignment.center,
+                    child: Lottie.asset(
+                      'assets/spinner/moontree_spinner_v2_002_1_recolored.json',
+                      animate: true,
+                      repeat: true,
+                      width: 56 / 2,
+                      height: 56 / 2,
+                      alignment: Alignment.center,
+                    )),
+              )
+            : Container();
   }
 }
