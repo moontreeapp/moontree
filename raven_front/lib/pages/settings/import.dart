@@ -10,6 +10,7 @@ import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/data.dart';
 import 'package:raven_back/services/import.dart';
+import 'package:raven_front/utils/transformers.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class Import extends StatefulWidget {
@@ -38,16 +39,16 @@ class _ImportState extends State<Import> {
   @override
   void initState() {
     super.initState();
-    wordsFocus.addListener(_handleFocusChange);
+    //wordsFocus.addListener(_handleFocusChange);
   }
 
-  void _handleFocusChange() {
-    setState(() {});
-  }
+  //void _handleFocusChange() {
+  //  setState(() {});
+  //}
 
   @override
   void dispose() {
-    wordsFocus.removeListener(_handleFocusChange);
+    //wordsFocus.removeListener(_handleFocusChange);
     words.dispose();
     wordsFocus.dispose();
     submitFocus.dispose();
@@ -85,8 +86,9 @@ class _ImportState extends State<Import> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: file == null
                     ? [
-                        if (!Platform.isIOS) fileButton,
-                        if (!Platform.isIOS) SizedBox(width: 16),
+                        if (!Platform.isIOS && words.text == '') fileButton,
+                        if (!Platform.isIOS && words.text == '')
+                          SizedBox(width: 16),
                         submitButton(),
                       ]
                     : [submitButton('Import File')]),
@@ -102,35 +104,39 @@ class _ImportState extends State<Import> {
         right: 16.0,
       ),
       child: TextField(
-        focusNode: wordsFocus,
-        enableInteractiveSelection: true,
-        autocorrect: false,
-        controller: words,
-        obscureText: !importVisible,
-        keyboardType: TextInputType.multiline,
-        maxLines: importVisible ? 12 : 1,
-        textInputAction: TextInputAction.done,
-        decoration: components.styles.decorations.textField(
-          context,
           focusNode: wordsFocus,
-          labelText: wordsFocus.hasFocus ? 'Seed | WIF | Key' : null,
-          hintText: 'Please enter your seed words, WIF, or private key.',
-          helperText:
-              importFormatDetected == 'Unknown' ? null : importFormatDetected,
-          errorText:
-              importFormatDetected == 'Unknown' ? importFormatDetected : null,
-          suffixIcon: IconButton(
-            icon: Icon(importVisible ? Icons.visibility : Icons.visibility_off,
-                color: AppColors.black60),
-            onPressed: () => setState(() {
-              importVisible = !importVisible;
-            }),
+          enableInteractiveSelection: true,
+          autocorrect: false,
+          autofocus: true,
+          controller: words,
+          obscureText: !importVisible,
+          keyboardType: TextInputType.multiline,
+          maxLines: importVisible ? 12 : 1,
+          textInputAction: TextInputAction.done,
+          inputFormatters: [LowerCaseTextFormatter()],
+          decoration: components.styles.decorations.textField(
+            context,
+            focusNode: wordsFocus,
+            labelText: wordsFocus.hasFocus ? 'Seed | WIF | Key' : null,
+            hintText: 'Please enter your seed words, WIF, or private key.',
+            helperText:
+                importFormatDetected == 'Unknown' ? null : importFormatDetected,
+            errorText:
+                importFormatDetected == 'Unknown' ? importFormatDetected : null,
+            suffixIcon: IconButton(
+              icon: Icon(
+                  importVisible ? Icons.visibility : Icons.visibility_off,
+                  color: AppColors.black60),
+              onPressed: () => setState(() {
+                importVisible = !importVisible;
+              }),
+            ),
           ),
-        ),
-        onChanged: (value) => enableImport(),
-        onEditingComplete: () =>
-            FocusScope.of(context).requestFocus(submitFocus),
-      ));
+          onChanged: (value) => enableImport(),
+          onEditingComplete: () {
+            enableImport();
+            FocusScope.of(context).requestFocus(submitFocus);
+          }));
 
   Widget get filePicked => Column(children: [
         Padding(
