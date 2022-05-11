@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
+import 'package:raven_back/raven_back.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class About extends StatelessWidget {
@@ -41,7 +42,7 @@ class About extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    'v1.0.0-alpha+1~1',
+                    'v1.0.0-alpha+1~${res.settings.databaseVersion}',
                     style: Theme.of(context).textTheme.subtitle2!.copyWith(
                         color: AppColors.black60,
                         fontWeight: FontWeights.semiBold),
