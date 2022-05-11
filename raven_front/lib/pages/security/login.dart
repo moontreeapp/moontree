@@ -13,6 +13,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  late List listeners = [];
   TextEditingController password = TextEditingController();
   bool passwordVisible = false;
   FocusNode loginFocus = FocusNode();
@@ -23,10 +24,18 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
+    listeners.add(streams.app.active.listen((bool value) {
+      if (value) {
+        setState(() {});
+      }
+    }));
   }
 
   @override
   void dispose() {
+    for (var listener in listeners) {
+      listener.cancel();
+    }
     password.dispose();
     loginFocus.dispose();
     unlockFocus.dispose();
