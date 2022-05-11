@@ -71,7 +71,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-        testAppBar(appBar, test: false),
+        testAppBar(appBar, test: true),
         alphaBar,
         AppBarScrim(),
       ],
@@ -82,12 +82,8 @@ class BackdropAppBarContents extends StatelessWidget
       ? GestureDetector(
           onTap: () async {
             print('click');
-            //streams.app.snack.add(Snack(message: 'Sucessful Import'));
-            //streams.app.scrim.add(!streams.app.scrim.value);
-            //streams.client.busy.add(!streams.client.busy.value);
-            //print(streams.app.triggers.value);
             streams.app.snack.add(Snack(
-              message: 'Not connected to Network',
+              message: 'message',
             ));
           },
           child: appBar,

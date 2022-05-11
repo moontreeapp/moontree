@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_back/raven_back.dart';
@@ -67,6 +68,9 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                 Container(
                     alignment: Alignment.topLeft,
                     height: 64,
+                    decoration: BoxDecoration(
+                        color: AppColors.snackBar,
+                        borderRadius: components.shape.topRoundedBorder8),
                     child: Padding(
                         padding: EdgeInsets.only(left: 16, right: 16, top: 12),
                         child: Text(snack!.message,
@@ -128,11 +132,11 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         elevation: 0,
         dismissDirection: DismissDirection.none,
-        backgroundColor: AppColors.snackBar,
+        backgroundColor: AppColors.white,
         shape: components.shape.topRounded8,
         content: msg,
         behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.only(bottom: 106.figma(context)),
+        margin: EdgeInsets.only(bottom: (Platform.isIOS ? 76 : 106).figmaH),
         padding: EdgeInsets.only(top: 0, bottom: 0, left: 0, right: 0),
         //action: SnackBarAction(
         //    label: ' ',
