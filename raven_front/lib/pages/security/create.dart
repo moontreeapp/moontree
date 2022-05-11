@@ -75,32 +75,36 @@ class _CreateLoginState extends State<CreateLogin> {
               child: Container(
                   alignment: Alignment.bottomCenter,
                   //color: Colors.red,
-                  height: 180.figma(context),
+                  height: .242.ofMediaHeight(context),
+                  // height: 180.figma(context),
                   child: moontree),
             ),
-            SliverToBoxAdapter(child: SizedBox(height: 8)),
+            SliverToBoxAdapter(
+                child: SizedBox(height: .01.ofMediaHeight(context))),
             SliverToBoxAdapter(
               child: Container(
                   alignment: Alignment.bottomCenter,
                   //color: Colors.green,
-                  height: 33,
+                  height: .0315.ofMediaHeight(context),
                   child: welcomeMessage),
             ),
             SliverToBoxAdapter(
               child: SizedBox(
-                height: 70.figma(context),
+                height: .0789.ofMediaHeight(context),
               ),
             ),
             SliverToBoxAdapter(
               child: Container(
                   alignment: Alignment.topCenter,
-                  height: 76,
+                  // height: 76,
+                  height: .0947.ofMediaHeight(context),
                   child: passwordField),
             ),
             SliverToBoxAdapter(
               child: Container(
                   alignment: Alignment.topCenter,
-                  height: 76 + 16,
+                  // height: 76 + 16,
+                  height: .0947.ofMediaHeight(context),
                   child: confirmField),
             ),
             SliverFillRemaining(
@@ -111,17 +115,24 @@ class _CreateLoginState extends State<CreateLogin> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          SizedBox(height: 50),
+                          SizedBox(
+                            height: .063.ofMediaHeight(context),
+                          ),
                           components.text.passwordWarning,
-                          SizedBox(height: 16),
+                          SizedBox(
+                            height: .021.ofMediaHeight(context),
+                          ),
                           Row(children: [unlockButton]),
-                          SizedBox(height: 40),
+                          SizedBox(
+                            height: .052.ofMediaHeight(context),
+                          ),
                         ]))),
           ])));
 
   Widget get moontree => Container(
         child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
-        height: 110.figma(context),
+        height: .1534.ofMediaHeight(context),
+        // height: 110.figma(context),
       );
 
   Widget get welcomeMessage => Text('Create Password',
