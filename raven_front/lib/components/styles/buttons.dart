@@ -6,18 +6,22 @@ class ButtonStyleComponents {
     BuildContext context, {
     bool disabled = false,
     bool invert = false,
+    bool soft = false,
   }) =>
       ButtonStyle(
         textStyle: MaterialStateProperty.all(
             Theme.of(context).textTheme.enabledButton),
-        foregroundColor: MaterialStateProperty.all(AppColors.offBlack),
+        foregroundColor: MaterialStateProperty.all(
+            soft ? AppColors.black60 : AppColors.offBlack),
         side: MaterialStateProperty.all(BorderSide(
             color: disabled
                 ? AppColors.primaryDisabled
                 : invert
                     ? AppColors.white
-                    : Theme.of(context).backgroundColor,
-            width: 2,
+                    : soft
+                        ? AppColors.primaries[3]
+                        : Theme.of(context).backgroundColor,
+            width: 2, //soft ? 1 : 2,
             style: BorderStyle.solid)),
         shape: MaterialStateProperty.all(RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(

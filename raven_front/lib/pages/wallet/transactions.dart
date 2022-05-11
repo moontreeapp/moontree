@@ -106,7 +106,7 @@ class _TransactionsState extends State<Transactions> {
           height: (scrollObserver.value.ofMediaHeight(context) + 16 + 16) / 2,
           child: Padding(
               padding: EdgeInsets.only(top: 16),
-              child: components.buttons.actionButtonInner(
+              child: components.buttons.actionButtonSoft(
                 context,
                 label: 'View Data',
                 onPressed: () => components.message.giveChoices(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intersperse/src/intersperse_extensions.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
+import 'package:raven_front/utils/extensions.dart';
 
 class ButtonComponents {
   IconButton back(BuildContext context) => IconButton(
@@ -66,6 +67,39 @@ class ButtonComponents {
                   ? invert
                       ? Theme.of(context).textTheme.invertButton
                       : null
+                  : Theme.of(context).textTheme.disabledButton),
+        ),
+      );
+
+  Widget actionButtonSoft(
+    BuildContext context, {
+    String? label,
+    Widget? disabledIcon,
+    String? link,
+    Map<String, dynamic>? arguments,
+    VoidCallback? onPressed,
+    VoidCallback? disabledOnPressed,
+    FocusNode? focusNode,
+    bool enabled = true,
+  }) =>
+      Container(
+        height: 40.figmaH,
+        child: OutlinedButton(
+          focusNode: focusNode,
+          onPressed: enabled
+              ? (link != null
+                  ? () {
+                      onPressed == null ? () {} : onPressed();
+                      Navigator.of(components.navigator.routeContext!)
+                          .pushNamed(link, arguments: arguments);
+                    }
+                  : onPressed ?? () {})
+              : disabledOnPressed ?? () {},
+          style: components.styles.buttons
+              .bottom(context, disabled: !enabled, soft: true),
+          child: Text(_labelDefault(label),
+              style: enabled
+                  ? Theme.of(context).textTheme.softButton
                   : Theme.of(context).textTheme.disabledButton),
         ),
       );
