@@ -15,14 +15,14 @@ class About extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(height: 40),
-            Image.asset(
-              'assets/logo/moontree_logo.png',
-              height: 72.figma(context),
-            ),
             Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
+                  Image.asset(
+                    'assets/logo/moontree_logo.png',
+                    height: 128.figma(context),
+                  ),
                   GestureDetector(
                     onTap: () {
                       launch('https://twitter.com/moontreewallet');
@@ -35,13 +35,24 @@ class About extends StatelessWidget {
                           .copyWith(color: AppColors.primary),
                     ),
                   ),
-                  SizedBox(height: 16),
+                ]),
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'v1.0.0-alpha+1~1',
+                    style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                        color: AppColors.black60,
+                        fontWeight: FontWeights.semiBold),
+                  ),
+                  SizedBox(height: 8),
                   Text(
                     '© 2022 Moontree, LLC',
                     style: Theme.of(context)
                         .textTheme
                         .subtitle1!
-                        .copyWith(color: AppColors.black),
+                        .copyWith(color: AppColors.black60),
                   ),
                   SizedBox(height: 40),
                 ]),
