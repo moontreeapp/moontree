@@ -22,7 +22,7 @@ class Receive extends StatefulWidget {
 
 class _ReceiveState extends State<Receive> {
   Map<String, dynamic> data = {};
-  late String address;
+  String? address;
   final requestMessage = TextEditingController();
   final requestAmount = TextEditingController();
   final requestLabel = TextEditingController();
@@ -41,7 +41,7 @@ class _ReceiveState extends State<Receive> {
 
   void _makeURI({bool refresh = true}) {
     if (rawAddress) {
-      uri = address;
+      uri = address!;
     } else {
       var amount = requestAmount.text == ''
           ? ''
@@ -104,11 +104,13 @@ class _ReceiveState extends State<Receive> {
             : ''
         : requestMessage.text;
     try {
-      address = services.wallet.getEmptyAddress(Current.wallet, random: true);
+      address = address ??
+          services.wallet.getEmptyAddress(Current.wallet, random: true);
     } catch (e) {
-      address = services.wallet.getEmptyWallet(Current.wallet).address!;
+      address =
+          address ?? services.wallet.getEmptyWallet(Current.wallet).address!;
     }
-    uri = uri == '' ? address : uri;
+    uri = uri == '' ? address! : uri;
     //requestMessage.selection =
     //    TextSelection.collapsed(offset: requestMessage.text.length);
     if (requestMessage.text != '') {
@@ -169,7 +171,7 @@ class _ReceiveState extends State<Receive> {
                                   /// long hold copy and maybe on tap?
                                   child: QrImage(
                                       backgroundColor: Colors.white,
-                                      data: rawAddress ? address : uri,
+                                      data: rawAddress ? address! : uri,
                                       version: QrVersions.auto,
                                       foregroundColor: AppColors.primary,
                                       //embeddedImage: Image.asset(
@@ -322,9 +324,11 @@ class _ReceiveState extends State<Receive> {
                                                   data['symbol'] = null;
                                                 })),
                                   ),
+                                  onTap: _makeURI,
                                   onChanged: (value) {
-                                    // /requestMessage.text = cleanLabel(requestMessage.text);
-                                    // /_makeURI();
+                                    //requestMessage.text =
+                                    //    cleanLabel(requestMessage.text);
+                                    //_makeURI();
                                     var oldErrorText = errorText;
                                     errorText =
                                         value.length > 32 ? 'too long' : null;
@@ -335,7 +339,7 @@ class _ReceiveState extends State<Receive> {
                                   onEditingComplete: () {
                                     requestMessage.text =
                                         cleanLabel(requestMessage.text);
-                                    _makeURI();
+                                    _makeURI(refresh: true);
                                     FocusScope.of(context)
                                         .requestFocus(requestAmountFocus);
                                   }),
@@ -350,6 +354,7 @@ class _ReceiveState extends State<Receive> {
                                       .textField(context,
                                           labelText: 'Amount',
                                           hintText: 'Quantity'),
+                                  onTap: _makeURI,
                                   onChanged: (value) {
                                     //requestAmount.text = cleanDecAmount(requestAmount.text);
                                     //_makeURI();
@@ -372,6 +377,7 @@ class _ReceiveState extends State<Receive> {
                                     .textField(context,
                                         labelText: 'Note',
                                         hintText: 'for groceries'),
+                                onTap: _makeURI,
                                 onChanged: (value) {
                                   //requestLabel.text = cleanLabel(requestLabel.text);
                                   //_makeURI();
