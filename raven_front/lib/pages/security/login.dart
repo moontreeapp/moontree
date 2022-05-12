@@ -47,47 +47,49 @@ class _LoginState extends State<Login> {
     return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
   }
 
-  Widget body() => Container(
-      padding: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
-      child: CustomScrollView(slivers: <Widget>[
-        SliverToBoxAdapter(
-          child: SizedBox(height: 76.figmaH),
-        ),
-        SliverToBoxAdapter(
-          child: Container(
-            height: 128.figmaH,
-            child: moontree,
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: Container(
-              alignment: Alignment.bottomCenter,
-              height: (16 + 24).figmaH,
-              child: welcomeMessage),
-        ),
-        SliverToBoxAdapter(
-          child: Container(
-              alignment: Alignment.bottomCenter,
-              height: 40.figma(context),
-              child: LockedOutTime()),
-        ),
-        SliverToBoxAdapter(
-          child: Container(
-              alignment: Alignment.center, height: 120, child: loginField),
-        ),
-        SliverFillRemaining(
-            hasScrollBody: false,
-            child: KeyboardHidesWidgetWithDelay(
-                fade: true,
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      SizedBox(height: 100),
-                      Row(children: [unlockButton]),
-                      SizedBox(height: 40),
-                    ]))),
-      ]));
+  Widget body() => GestureDetector(
+      onTap: FocusScope.of(context).unfocus,
+      child: Container(
+          padding: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
+          child: CustomScrollView(slivers: <Widget>[
+            SliverToBoxAdapter(
+              child: SizedBox(height: 76.figmaH),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                height: 128.figmaH,
+                child: moontree,
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                  alignment: Alignment.bottomCenter,
+                  height: (16 + 24).figmaH,
+                  child: welcomeMessage),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                  alignment: Alignment.bottomCenter,
+                  height: 40.figma(context),
+                  child: LockedOutTime()),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                  alignment: Alignment.center, height: 120, child: loginField),
+            ),
+            SliverFillRemaining(
+                hasScrollBody: false,
+                child: KeyboardHidesWidgetWithDelay(
+                    fade: true,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          SizedBox(height: 100),
+                          Row(children: [unlockButton]),
+                          SizedBox(height: 40),
+                        ]))),
+          ])));
 
   Widget get moontree => Container(
         child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
