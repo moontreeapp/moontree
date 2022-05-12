@@ -202,7 +202,7 @@ class SubscribeService {
           (await services.client.api.subscribeAddress(address))
               .listen((String? status) async {
         if (status == null || address.status?.status != status) {
-          print('PULLING HISTORY');
+          print('PULLING HISTORY $status');
 
           /// Get histories, update leader counts and
           /// Get transactions in batch.

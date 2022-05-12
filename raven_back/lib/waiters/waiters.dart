@@ -1,5 +1,6 @@
 import 'address.dart';
 import 'app.dart';
+import 'asset.dart';
 import 'subscription.dart';
 import 'block.dart';
 import 'client.dart';
@@ -15,6 +16,7 @@ import 'single.dart';
 
 class waiters {
   static AddressWaiter address = AddressWaiter();
+  static AssetWaiter asset = AssetWaiter();
   static AppWaiter app = AppWaiter();
   static SubscriptionWaiter subscription = SubscriptionWaiter();
   static BlockWaiter block = BlockWaiter();

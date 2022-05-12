@@ -14,8 +14,10 @@ import 'package:tuple/tuple.dart';
 // returns any that it can't find a cipher for
 class LeaderWalletService {
   final HDIndexRegistry registry = HDIndexRegistry();
-
   final int requiredGap = 20;
+  bool newLeaderProcessProcessing = false;
+
+  // necessary anymore?
   Set backlog = <LeaderWallet>{};
 
   void updateIndexes() {
@@ -62,6 +64,7 @@ class LeaderWalletService {
     //  newLeaders.add(leader.id); actually just save the addresses at the end
     print('newLeaderProcess');
     var s = Stopwatch()..start();
+    newLeaderProcessProcessing = true;
     streams.client.busy.add(true);
     streams.client.activity.add(ActivityMessage(
         active: true,
@@ -156,6 +159,7 @@ class LeaderWalletService {
     }
     streams.client.busy.add(false);
     streams.client.activity.add(ActivityMessage(active: false));
+    newLeaderProcessProcessing = false;
     print('newLeaderProcess Done!');
   }
 
