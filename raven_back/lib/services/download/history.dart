@@ -86,7 +86,7 @@ class HistoryService {
   Future saveDanglingTransactions() async {
     var txs =
         (res.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet());
-    await getTransactions(txs, saveVin: false, saveVout: true);
+    await getTransactions(txs, saveVin: false, saveVout: false);
   }
 
   /// we capture securities here. if it's one we've never seen,

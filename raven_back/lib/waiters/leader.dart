@@ -61,6 +61,7 @@ class LeaderWaiter extends Waiter {
       (Tuple2<Change<Wallet>, ConnectionStatus> tuple) async {
         final change = tuple.item1;
         final status = tuple.item2;
+        print('status, change $status, $change');
         await _backlogLock.write(() => backlog.add(change));
         if (status == ConnectionStatus.connected) {
           await _backlogLock.read(() {
@@ -88,7 +89,13 @@ class LeaderWaiter extends Waiter {
   void handleLeaderChange(Change<Wallet> change) {
     change.when(loaded: (loaded) async {
       if (loaded.data is LeaderWallet) {
-        await handleDeriveAddress(leader: loaded.data as LeaderWallet);
+        print('LOADED');
+        var leader = loaded.data as LeaderWallet;
+        if (leader.addresses.isEmpty) {
+          await services.wallet.leader.newLeaderProcess(leader);
+        } else {
+          await handleDeriveAddress(leader: leader);
+        }
       }
     }, added: (added) async {
       if (added.data is LeaderWallet) {

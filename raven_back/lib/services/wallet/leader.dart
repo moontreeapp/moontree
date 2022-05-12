@@ -63,7 +63,6 @@ class LeaderWalletService {
   Future<void> newLeaderProcess(LeaderWallet leader) async {
     //  newLeaders.add(leader.id); actually just save the addresses at the end
     print('newLeaderProcess');
-    var s = Stopwatch()..start();
     newLeaderProcessProcessing = true;
     streams.client.busy.add(true);
     streams.client.activity.add(ActivityMessage(
@@ -119,8 +118,6 @@ class LeaderWalletService {
 
     /// Build balances. - this will update the holdings list UI (home page)
     await services.balance.recalculateAllBalances();
-    print('deriving: ${s.elapsed}');
-    print('front end should be visible');
 
     streams.client.activity.add(ActivityMessage(
         active: true,
@@ -148,15 +145,9 @@ class LeaderWalletService {
       }
     }
 
-    /// testing to avoid download of unnecessary vouts
-    print('VOUTS COUNT1: ${res.vouts.length}');
-
     /// Get dangling transactions - by the way we'll still need a way for the
     ///  transaction screen to know if it's in the middle of downloading txs.
     await services.download.history.allDoneProcess();
-
-    /// testing to avoid download of unnecessary vouts
-    print('VOUTS COUNT2: ${res.vouts.length}');
 
     /// Save addresses - this will trigger the general case, but since we've
     ///   already saved the most recent status nothing will happen.
@@ -165,8 +156,7 @@ class LeaderWalletService {
     }
 
     /// remove unnecessary vouts to minimize size of database and load time
-    //await res.vouts.clearUnnecessaryVouts();
-    print('VOUTS COUNT3: ${res.vouts.length}');
+    await res.vouts.clearUnnecessaryVouts();
 
     streams.client.busy.add(false);
     streams.client.activity.add(ActivityMessage(active: false));

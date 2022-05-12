@@ -73,9 +73,7 @@ class _TransactionsState extends State<Transactions> {
                 maxChildSize: min(1.0, max(minHeight, maxExtent)),
                 controller: dController,
                 builder: (context, scrollController) {
-                  // valueNotifier.value = dController.size;
                   scrollObserver.add(dController.size);
-
                   return CoinDetailsGlidingSheet(
                     currentTxs,
                     _metadataView(security, context),
@@ -294,6 +292,7 @@ Widget content(
     tabChoice == CoinSpecTabs.tabIndex[0]
         ? TransactionList(
             scrollController: scrollController,
+            symbol: security.symbol,
             transactions:
                 currentTxs.where((tx) => tx.security.symbol == security.symbol),
             msg: '\nNo ${security.symbol} transactions.\n')

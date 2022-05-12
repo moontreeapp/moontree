@@ -309,7 +309,6 @@ class TransactionService {
                 ? TransactionRecordType.OUTGOING
                 : TransactionRecordType.INCOMING;
 
-            print('s $selfIn $selfOut o $othersIn $othersOut');
             transactionRecords.add(TransactionRecord(
               transaction: transaction,
               security: security!,

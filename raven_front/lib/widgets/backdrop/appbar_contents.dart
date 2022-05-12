@@ -83,28 +83,8 @@ class BackdropAppBarContents extends StatelessWidget
           onTap: () async {
             print('click');
             print(res.vouts.length);
-            print(Current.wallet.vouts.length);
-            print(Current.wallet.vins.length);
-            print(Current.wallet.vins.first.voutId);
-            print(Current.wallet.vouts.first.vin);
-            print(Current.wallet.vouts.last.vin);
-            print(Current.wallet.vouts.where((e) => e.vin == null).length);
-            print(Current.wallet.vins.map((e) => e.vout).length);
-            var x = res.vouts.data.toSet();
-            x.removeAll(
-                res.wallets.map((w) => w.vouts).expand((i) => i).toSet());
-            x.removeAll(res.wallets
-                .map((w) => w.transactions)
-                .expand((i) => i)
-                .map((t) => t.vouts)
-                .expand((e) => e)
-                .toSet());
-            x.removeAll(res.wallets
-                .map((w) => w.vins)
-                .expand((i) => i)
-                .map((v) => v.vout)
-                .toSet());
-            print(x.length);
+            print(res.addresses.length);
+            print(res.wallets.length);
             streams.app.snack.add(Snack(
               message: 'message',
             ));
