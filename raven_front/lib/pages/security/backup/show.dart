@@ -208,13 +208,16 @@ class _BackupSeedState extends State<BackupSeed>
   bool verify() => services.password.validate.password(password.text);
 
   Widget get showButton => components.buttons.actionButton(context,
-      enabled: password.text != '' && services.password.lockout.timePast(),
+      enabled: (services.password.askCondition ? password.text != '' : true) &&
+          services.password.lockout.timePast(),
       label: 'Show Seed',
       focusNode: showFocus,
       onPressed: submitProceedure);
 
   Future<void> submitProceedure() async {
-    if (await services.password.lockout.handleVerificationAttempt(verify())) {
+    if (services.password.askCondition
+        ? await services.password.lockout.handleVerificationAttempt(verify())
+        : true) {
       streams.app.verify.add(true);
       setState(() {
         warn = false;
