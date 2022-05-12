@@ -39,16 +39,16 @@ class _ImportState extends State<Import> {
   @override
   void initState() {
     super.initState();
-    wordsFocus.addListener(_handleFocusChange);
+    //wordsFocus.addListener(_handleFocusChange);
   }
 
-  void _handleFocusChange() {
-    setState(() {});
-  }
+  //void _handleFocusChange() {
+  //  setState(() {});
+  //}
 
   @override
   void dispose() {
-    wordsFocus.removeListener(_handleFocusChange);
+    //wordsFocus.removeListener(_handleFocusChange);
     words.dispose();
     wordsFocus.dispose();
     submitFocus.dispose();
@@ -66,12 +66,15 @@ class _ImportState extends State<Import> {
     }
     return BackdropLayers(
         back: BlankBack(),
-        front: FrontCurve(
-            fuzzyTop: false,
-            child: GestureDetector(
-              onTap: () => FocusScope.of(context).unfocus(),
-              // for testing
-              onDoubleTap: () => words.text = '',
+        front: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+              enableImport();
+            },
+            // for testing
+            onDoubleTap: () => words.text = '',
+            child: FrontCurve(
+              fuzzyTop: false,
               child: body(),
             )));
   }
@@ -112,7 +115,8 @@ class _ImportState extends State<Import> {
           keyboardType: TextInputType.multiline,
           maxLines: importVisible ? 12 : 1,
           textInputAction: TextInputAction.done,
-          inputFormatters: [LowerCaseTextFormatter()],
+          // interferes with voice - one word at a time:
+          //inputFormatters: [LowerCaseTextFormatter()],
           decoration: components.styles.decorations.textField(
             context,
             focusNode: wordsFocus,
@@ -131,7 +135,7 @@ class _ImportState extends State<Import> {
               }),
             ),
           ),
-          onChanged: (value) => enableImport(),
+          onChanged: (value) => enableImport(toLower: false),
           onEditingComplete: () {
             enableImport();
             FocusScope.of(context).requestFocus(submitFocus);
@@ -172,17 +176,19 @@ class _ImportState extends State<Import> {
         label: 'File',
         onPressed: () async {
           file = await storage.readFromFilePickerSize();
-          enableImport(file?.content ?? '');
+          enableImport(given: file?.content ?? '');
           setState(() {});
         },
       );
 
-  void enableImport([String? given]) {
+  void enableImport({String? given, bool toLower = true}) {
     var oldImportFormatDetected = importFormatDetected;
-    var detection =
-        services.wallet.import.detectImportType((given ?? words.text).trim());
+    var detection = services.wallet.import
+        .detectImportType((given ?? words.text).trim().toLowerCase());
     importEnabled = detection != null && detection != ImportFormat.invalid;
-
+    if (toLower) {
+      words.text = words.text.toLowerCase();
+    }
     if (importEnabled) {
       importFormatDetected =
           'format recognized as ' + detection.toString().split('.')[1];

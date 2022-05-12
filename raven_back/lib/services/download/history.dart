@@ -86,7 +86,7 @@ class HistoryService {
   Future saveDanglingTransactions() async {
     var txs =
         (res.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet());
-    await getTransactions(txs, saveVin: false);
+    await getTransactions(txs, saveVin: false, saveVout: true);
   }
 
   /// we capture securities here. if it's one we've never seen,
@@ -147,6 +147,7 @@ class HistoryService {
   Future<void>? getTransactions(
     Iterable<String> transactionIds, {
     bool saveVin = true,
+    bool saveVout = true,
   }) async {
     transactionIds = _filterOut(transactionIds);
     if (transactionIds.isEmpty) {
@@ -177,6 +178,7 @@ class HistoryService {
     await saveTransactions(
       txs,
       saveVin: saveVin,
+      saveVout: saveVout,
     );
   }
 
@@ -202,10 +204,16 @@ class HistoryService {
   Future saveTransactions(
     List<Tx> txs, {
     bool saveVin = true,
+    bool saveVout = true,
   }) async {
     var futures = [
       for (var tx in txs)
-        saveTransaction(tx, saveVin: saveVin, justReturn: true)
+        saveTransaction(
+          tx,
+          saveVin: saveVin,
+          saveVout: saveVout,
+          justReturn: true,
+        )
     ];
     var threes = await Future.wait<List<Set>>(futures);
     for (var three in threes) {
@@ -226,6 +234,7 @@ class HistoryService {
   Future<List<Set>> saveTransaction(
     Tx tx, {
     bool saveVin = true,
+    bool saveVout = true,
     bool justReturn = false,
   }) async {
     var newVins = <Vin>{};
@@ -253,25 +262,27 @@ class HistoryService {
     for (var vout in tx.vout) {
       if (vout.scriptPubKey.type == 'nullassetdata') continue;
       var vs = await handleAssetData(tx, vout);
-      newVouts.add(Vout(
-        transactionId: tx.txid,
-        position: vout.n,
-        type: vout.scriptPubKey.type,
-        lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
-        rvnValue: vs.item3 != null ? 0 : vs.item1,
-        assetValue: vs.item3 == null
-            ? null
-            : utils.amountToSat(vout.scriptPubKey.amount),
-        assetSecurityId: vs.item2.id,
-        memo: vout.memo,
-        assetMemo: vout.assetMemo,
-        toAddress: vout.scriptPubKey.addresses?[0],
-        // multisig - must detect if multisig...
-        additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
-            ? vout.scriptPubKey.addresses!
-                .sublist(1, vout.scriptPubKey.addresses!.length)
-            : null,
-      ));
+      if (saveVout) {
+        newVouts.add(Vout(
+          transactionId: tx.txid,
+          position: vout.n,
+          type: vout.scriptPubKey.type,
+          lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
+          rvnValue: vs.item3 != null ? 0 : vs.item1,
+          assetValue: vs.item3 == null
+              ? null
+              : utils.amountToSat(vout.scriptPubKey.amount),
+          assetSecurityId: vs.item2.id,
+          memo: vout.memo,
+          assetMemo: vout.assetMemo,
+          toAddress: vout.scriptPubKey.addresses?[0],
+          // multisig - must detect if multisig...
+          additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
+              ? vout.scriptPubKey.addresses!
+                  .sublist(1, vout.scriptPubKey.addresses!.length)
+              : null,
+        ));
+      }
       newTxs.add(Transaction(
         id: tx.txid,
         height: tx.height,

@@ -84,7 +84,6 @@ class _HoldingList extends State<HoldingList> {
     }));
 
     /// when the app becomes active again refresh the front end
-    /// (otherwise the screen stays black for some reason)
     listeners.add(streams.app.active.listen((bool active) {
       if (active) {
         print('triggered by activity');

@@ -6,6 +6,7 @@ import 'package:raven_front/theme/colors.dart';
 import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_back/streams/app.dart';
+import 'package:raven_front/services/services.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -21,6 +22,20 @@ class _LoginState extends State<Login> {
   String? passwordText;
   bool failedAttempt = false;
 
+  Future<void> finishLoadingDatabase() async {
+    if (await HIVE_INIT.isPartiallyLoaded()) {
+      HIVE_INIT.setupDatabase2();
+    }
+  }
+
+  Future<void> finishLoadingWaiters() async {
+    if (await HIVE_INIT.isPartiallyLoaded()) {
+      await HIVE_INIT.setupWaiters2();
+    }
+  }
+
+  Future<bool> get finishedLoading async => await HIVE_INIT.isLoaded();
+
   @override
   void initState() {
     super.initState();
@@ -29,6 +44,7 @@ class _LoginState extends State<Login> {
         setState(() {});
       }
     }));
+    finishLoadingDatabase();
   }
 
   @override
@@ -148,6 +164,12 @@ class _LoginState extends State<Login> {
   bool validate() => services.password.validate.password(password.text);
 
   Future submit({bool showFailureMessage = true}) async {
+    if (await HIVE_INIT.isPartiallyLoaded()) {
+      finishLoadingWaiters();
+      while (!(await HIVE_INIT.isLoaded())) {
+        await Future.delayed(Duration(milliseconds: 1));
+      }
+    }
     if (await services.password.lockout.handleVerificationAttempt(validate()) &&
         passwordText == null) {
       setState(() {

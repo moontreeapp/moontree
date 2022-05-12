@@ -148,15 +148,26 @@ class LeaderWalletService {
       }
     }
 
+    /// testing to avoid download of unnecessary vouts
+    print('VOUTS COUNT1: ${res.vouts.length}');
+
     /// Get dangling transactions - by the way we'll still need a way for the
     ///  transaction screen to know if it's in the middle of downloading txs.
     await services.download.history.allDoneProcess();
+
+    /// testing to avoid download of unnecessary vouts
+    print('VOUTS COUNT2: ${res.vouts.length}');
 
     /// Save addresses - this will trigger the general case, but since we've
     ///   already saved the most recent status nothing will happen.
     for (var exposure in NodeExposure.values) {
       await res.addresses.saveAll(addresses[exposure]!);
     }
+
+    /// remove unnecessary vouts to minimize size of database and load time
+    //await res.vouts.clearUnnecessaryVouts();
+    print('VOUTS COUNT3: ${res.vouts.length}');
+
     streams.client.busy.add(false);
     streams.client.activity.add(ActivityMessage(active: false));
     newLeaderProcessProcessing = false;

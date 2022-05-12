@@ -7,7 +7,11 @@ class MainActivity: FlutterActivity() {
 }
 */
 
-/* https://github.com/flutter/flutter/issues/94921 */
+/* https://github.com/flutter/flutter/issues/94921
+this seemed to fix it, if the issue of the black screen comes up again,
+we can return to this issue number and look for the solution that involves
+.VISIBLE and try that one too.
+*/
 package com.moontree.mobile
 
 import io.flutter.embedding.android.FlutterActivity

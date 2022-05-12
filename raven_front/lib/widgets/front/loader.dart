@@ -34,7 +34,7 @@ class _LoaderState extends State<Loader> {
   Future<void> _init(int duration) async {
     await Future.delayed(Duration(milliseconds: duration * widget.playCount!));
     _goSomewhere();
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(Duration(milliseconds: 200));
     _doSomething();
   }
 

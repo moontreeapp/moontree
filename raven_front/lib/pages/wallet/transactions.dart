@@ -21,6 +21,7 @@ class Transactions extends StatefulWidget {
 }
 
 class _TransactionsState extends State<Transactions> {
+  late List<StreamSubscription> listeners = [];
   Map<String, dynamic> data = {};
   late List<TransactionRecord> currentTxs;
   late List<Balance> currentHolds;
@@ -29,7 +30,20 @@ class _TransactionsState extends State<Transactions> {
   DraggableScrollableController dController = DraggableScrollableController();
   BehaviorSubject<double> scrollObserver = BehaviorSubject.seeded(.7245);
   @override
+  void initState() {
+    super.initState();
+    listeners.add(streams.client.busy.listen((bool value) {
+      if (!value) {
+        setState(() {});
+      }
+    }));
+  }
+
+  @override
   void dispose() {
+    for (var listener in listeners) {
+      listener.cancel();
+    }
     scrollObserver.close();
     super.dispose();
   }
