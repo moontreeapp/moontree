@@ -117,26 +117,28 @@ class _TransactionsState extends State<Transactions> {
         securityAsset.hasData &&
         securityAsset.data!.isIpfs) {
       return Container(
-          alignment: Alignment.topCenter,
-          height: (scrollObserver.value.ofMediaHeight(context) + 16 + 16) / 2,
-          child: Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: components.buttons.actionButtonSoft(
-                context,
-                label: 'View Data',
-                onPressed: () => components.message.giveChoices(
-                  context,
-                  title: 'View Data',
-                  content: 'View data in external browser?',
-                  behaviors: {
-                    'CANCEL': Navigator.of(context).pop,
-                    'BROWSER': () {
-                      Navigator.of(context).pop();
-                      launch('https://ipfs.io/ipfs/${securityAsset.metadata}');
-                    },
-                  },
-                ),
-              )));
+        alignment: Alignment.topCenter,
+        height: (scrollObserver.value.ofMediaHeight(context) + 16 + 16) / 2,
+        child: Padding(
+          padding: EdgeInsets.only(top: 16),
+          child: components.buttons.actionButtonSoft(
+            context,
+            label: 'View Data',
+            onPressed: () => components.message.giveChoices(
+              context,
+              title: 'View Data',
+              content: 'View data in external browser?',
+              behaviors: {
+                'CANCEL': Navigator.of(context).pop,
+                'BROWSER': () {
+                  Navigator.of(context).pop();
+                  launch('https://ipfs.io/ipfs/${securityAsset.metadata}');
+                },
+              },
+            ),
+          ),
+        ),
+      );
     } else if (securityAsset.primaryMetadata == null) {
       chilren = [SelectableText(securityAsset.metadata)];
     } else if (securityAsset.primaryMetadata!.kind == MetadataType.ImagePath) {

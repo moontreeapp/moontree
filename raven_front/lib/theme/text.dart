@@ -45,7 +45,7 @@ class AppText {
       fontSize: 14.0,
       height: 1.714,
       fontFamily: 'Nunito',
-      fontWeight: FontWeights.normal,
+      fontWeight: FontWeights.semiBold,
       letterSpacing: 0.25,
       color: AppColors.black);
 
@@ -75,7 +75,7 @@ class AppText {
 
   /// derivations
   static TextStyle get softButton => button.copyWith(
-      fontWeight: FontWeights.semiBold, color: AppColors.black60);
+      fontWeight: FontWeights.semiBold, color: AppColors.primaries[6]);
   static TextStyle get invertButton =>
       button.copyWith(fontWeight: FontWeights.semiBold, color: AppColors.white);
   static TextStyle get disabledButton => button.copyWith(
@@ -85,7 +85,7 @@ class AppText {
   static TextStyle get link => body1.copyWith(
       fontWeight: FontWeights.semiBold, color: AppColors.primary);
   static TextStyle get checkoutFees =>
-      caption.copyWith(height: 1, color: AppColors.offBlack);
+      caption.copyWith(height: 1, color: AppColors.black);
   static TextStyle get checkoutSubAsset =>
       body2.copyWith(fontWeight: FontWeights.bold, color: AppColors.black60);
   static TextStyle get checkoutItem => body2.copyWith(

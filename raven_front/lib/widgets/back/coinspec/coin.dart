@@ -98,7 +98,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
             style: Theme.of(context)
                 .textTheme
                 .bodyText1!
-                .copyWith(color: AppColors.white)),
+                .copyWith(color: AppColors.white87)),
       ]);
     } else if (front && widget.totalSupply != null) {
       ret.addAll([
@@ -133,7 +133,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
       style: Theme.of(context)
           .textTheme
           .headline1!
-          .copyWith(color: AppColors.white),
+          .copyWith(color: AppColors.white87),
     );
     return widget.pageTitle == 'Send'
         ? GestureDetector(
