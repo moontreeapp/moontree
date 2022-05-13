@@ -36,14 +36,23 @@ class LeaderWaiter extends Waiter {
       'connected/cipher',
       CombineLatestStream.combine2(
         streams.client.connected,
-        streams.cipher.latest,
-        (ConnectionStatus connectionStatus, Cipher cipher) =>
-            Tuple2(connectionStatus, cipher),
+        res.ciphers.changes,
+        (ConnectionStatus connectionStatus, Change<Cipher> change) =>
+            Tuple2(connectionStatus, change),
       ),
-      (Tuple2<ConnectionStatus, Cipher> tuple) {
+      (Tuple2<ConnectionStatus, Change<Cipher>> tuple) {
         print('connected/CIPHER ${tuple.item1} ${tuple.item2}');
-        if (tuple.item1 is LeaderWallet) {
-          dispatch(tuple.item1 as LeaderWallet);
+        if (tuple.item2.data.cipherType != CipherType.None) {
+          res.wallets.leaders.forEach((wallet) =>
+                  //wallet.addresses.isEmpty ?
+                  dispatch(wallet)
+              //:
+              /// perhaps here we should run a process that only updates at the end
+              /// like newLeaderProcess, and we should subscribe at the end of it
+              /// instead of automatically subscribing to all addresses on
+              /// connection?
+              //(){}
+              );
         }
       },
     );

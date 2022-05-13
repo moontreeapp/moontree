@@ -83,6 +83,8 @@ class BackdropAppBarContents extends StatelessWidget
             print(res.vouts.length);
             print(res.addresses.length);
             print(res.wallets.length);
+            print(res.wallets.first.cipherUpdate);
+            print(res.ciphers.first);
             streams.app.snack.add(Snack(
               message: 'message',
             ));
