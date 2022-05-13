@@ -71,8 +71,6 @@ class _ImportState extends State<Import> {
               FocusScope.of(context).unfocus();
               enableImport();
             },
-            // for testing
-            onDoubleTap: () => words.text = '',
             child: FrontCurve(
               fuzzyTop: false,
               child: body(),

@@ -39,13 +39,14 @@ class _ChangePasswordState extends State<ChangePassword> {
   @override
   Widget build(BuildContext context) => BackdropLayers(
       back: BlankBack(),
-      front: FrontCurve(
-          child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: services.password.askCondition
-            ? VerifyPassword(parentState: this, buttonLabel: 'Change Password')
-            : body(),
-      )));
+      front: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: FrontCurve(
+            child: services.password.askCondition
+                ? VerifyPassword(
+                    parentState: this, buttonLabel: 'Change Password')
+                : body(),
+          )));
 
   Widget body() => Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

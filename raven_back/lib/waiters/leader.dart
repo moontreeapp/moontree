@@ -19,14 +19,34 @@ class LeaderWaiter extends Waiter {
     listen(
       'wallets/cipher',
       CombineLatestStream.combine2(
-          streams.wallet.replay,
-          streams.cipher.latest,
-          (Wallet wallet, Cipher cipher) => Tuple2(wallet, cipher)),
+        streams.wallet.replay,
+        streams.cipher.latest,
+        (Wallet wallet, Cipher cipher) => Tuple2(wallet, cipher),
+      ),
       (Tuple2<Wallet, Cipher> tuple) {
-        services.wallet.leader.makeFirstWallet(tuple.item2);
+        print('WALLETS/CIPHER ${tuple.item1} ${tuple.item2}');
+        if (tuple.item1 is LeaderWallet) {
+          dispatch(tuple.item1 as LeaderWallet);
+        }
       },
     );
     */
+
+    listen(
+      'connected/cipher',
+      CombineLatestStream.combine2(
+        streams.client.connected,
+        streams.cipher.latest,
+        (ConnectionStatus connectionStatus, Cipher cipher) =>
+            Tuple2(connectionStatus, cipher),
+      ),
+      (Tuple2<ConnectionStatus, Cipher> tuple) {
+        print('connected/CIPHER ${tuple.item1} ${tuple.item2}');
+        if (tuple.item1 is LeaderWallet) {
+          dispatch(tuple.item1 as LeaderWallet);
+        }
+      },
+    );
 
     // automatically make first leader wallet if there isn't one already
     //listen(
@@ -50,7 +70,21 @@ class LeaderWaiter extends Waiter {
     //    );
     //  },
     //);
-
+    /* no cipher...
+    listen('streams.client.connected', streams.client.connected,
+        (ConnectionStatus connected) {
+      res.wallets.leaders.forEach((wallet) =>
+              //wallet.addresses.isEmpty ?
+              dispatch(wallet)
+          //:
+          /// perhaps here we should run a process that only updates at the end
+          /// like newLeaderProcess, and we should subscribe at the end of it
+          /// instead of automatically subscribing to all addresses on
+          /// connection?
+          //(){}
+          );
+    });
+    */
     listen(
       'streams.wallet.leaderChanges',
       CombineLatestStream.combine2(
@@ -86,10 +120,18 @@ class LeaderWaiter extends Waiter {
     );
   }
 
+  Future<void> dispatch(LeaderWallet leader) async {
+    if (leader.addresses.isEmpty) {
+      await services.wallet.leader.newLeaderProcess(leader);
+    } else {
+      await handleDeriveAddress(leader: leader);
+    }
+  }
+
   void handleLeaderChange(Change<Wallet> change) {
     change.when(loaded: (loaded) async {
+      // never gets called because we load before this waiter is listening...
       if (loaded.data is LeaderWallet) {
-        print('LOADED');
         var leader = loaded.data as LeaderWallet;
         if (leader.addresses.isEmpty) {
           await services.wallet.leader.newLeaderProcess(leader);
@@ -99,12 +141,7 @@ class LeaderWaiter extends Waiter {
       }
     }, added: (added) async {
       if (added.data is LeaderWallet) {
-        var leader = added.data as LeaderWallet;
-        if (leader.addresses.isEmpty) {
-          await services.wallet.leader.newLeaderProcess(leader);
-        } else {
-          await handleDeriveAddress(leader: leader);
-        }
+        await dispatch(added.data as LeaderWallet);
       }
     }, updated: (updated) async {
       /*
