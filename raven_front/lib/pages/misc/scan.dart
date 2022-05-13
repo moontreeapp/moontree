@@ -1,9 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/spend.dart';
+import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/data.dart';
@@ -89,7 +89,19 @@ class _ScanQRState extends State<ScanQR> {
         borderWidth: 8,
         cutOutSize: scanArea,
       ),
+      onPermissionSet: _onPermissionSet,
     );
+  }
+
+  void _onPermissionSet(QRViewController qrController, bool permission) async {
+    //print('${DateTime.now().toIso8601String()}_onPermissionSet $p');
+    if (!permission) {
+      //import 'package:permission_handler/permission_handler.dart';
+      //await Permission.camera.request();
+      Navigator.of(context).pop();
+      streams.app.snack
+          .add(Snack(message: 'please give Moontree app camera permissions'));
+    }
   }
 
   void _onQRViewCreated(QRViewController controller) {
@@ -99,9 +111,6 @@ class _ScanQRState extends State<ScanQR> {
       });
     }
     controller.scannedDataStream.listen((scanData) {
-      //setState(() {
-      //  result = scanData;
-      //});
       var qrData = populateFromQR(code: scanData.code ?? '');
       if (data.containsKey('addressOnly') && data['addressOnly']) {
         streams.spend.form.add(SpendForm.merge(

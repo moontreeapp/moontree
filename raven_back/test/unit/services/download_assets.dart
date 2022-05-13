@@ -29,7 +29,7 @@ void main() async {
     //print(meta);
     //await services.download.asset.downloadAsset('MOONTREE', client);
     //expect(?, ?);
-    streams.client.client.add(client);
+    services.client.ravenElectrumClient = client;
     print(await services.client.api.getAssetNames('MOON'));
   });
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intersperse/src/intersperse_extensions.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/theme.dart';
+import 'package:raven_front/utils/extensions.dart';
 
 class ButtonComponents {
   IconButton back(BuildContext context) => IconButton(
@@ -20,7 +21,32 @@ class ButtonComponents {
     bool invert = false,
   }) =>
       Expanded(
-          child: Container(
+          child: actionButtonInner(
+        context,
+        label: label,
+        disabledIcon: disabledIcon,
+        link: link,
+        arguments: arguments,
+        onPressed: onPressed,
+        disabledOnPressed: disabledOnPressed,
+        focusNode: focusNode,
+        enabled: enabled,
+        invert: invert,
+      ));
+
+  Widget actionButtonInner(
+    BuildContext context, {
+    String? label,
+    Widget? disabledIcon,
+    String? link,
+    Map<String, dynamic>? arguments,
+    VoidCallback? onPressed,
+    VoidCallback? disabledOnPressed,
+    FocusNode? focusNode,
+    bool enabled = true,
+    bool invert = false,
+  }) =>
+      Container(
         height: MediaQuery.of(context).size.height * (40 / 760),
         child: OutlinedButton(
           focusNode: focusNode,
@@ -43,7 +69,40 @@ class ButtonComponents {
                       : null
                   : Theme.of(context).textTheme.disabledButton),
         ),
-      ));
+      );
+
+  Widget actionButtonSoft(
+    BuildContext context, {
+    String? label,
+    Widget? disabledIcon,
+    String? link,
+    Map<String, dynamic>? arguments,
+    VoidCallback? onPressed,
+    VoidCallback? disabledOnPressed,
+    FocusNode? focusNode,
+    bool enabled = true,
+  }) =>
+      Container(
+        height: 40.figmaH,
+        child: OutlinedButton(
+          focusNode: focusNode,
+          onPressed: enabled
+              ? (link != null
+                  ? () {
+                      onPressed == null ? () {} : onPressed();
+                      Navigator.of(components.navigator.routeContext!)
+                          .pushNamed(link, arguments: arguments);
+                    }
+                  : onPressed ?? () {})
+              : disabledOnPressed ?? () {},
+          style: components.styles.buttons
+              .bottom(context, disabled: !enabled, soft: true),
+          child: Text(_labelDefault(label),
+              style: enabled
+                  ? Theme.of(context).textTheme.softButton
+                  : Theme.of(context).textTheme.disabledButton),
+        ),
+      );
 
   String _labelDefault(String? label) => (label ?? 'Preview').toUpperCase();
 

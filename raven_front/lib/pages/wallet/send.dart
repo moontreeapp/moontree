@@ -269,7 +269,7 @@ class _SendState extends State<Send> {
           ListView(
             padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
             children: <Widget>[
-              SizedBox(height: 8),
+              SizedBox(height: 16),
               Container(height: 201),
               SizedBox(height: 8),
               sendAssetField,

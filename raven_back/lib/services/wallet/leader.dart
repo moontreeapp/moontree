@@ -1,6 +1,7 @@
 // ignore_for_file: omit_local_variable_types
 
 import 'package:equatable/equatable.dart';
+import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/streams/client.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' show HDWallet;
 import 'package:bip39/bip39.dart' as bip39;
@@ -14,8 +15,10 @@ import 'package:tuple/tuple.dart';
 // returns any that it can't find a cipher for
 class LeaderWalletService {
   final HDIndexRegistry registry = HDIndexRegistry();
-
   final int requiredGap = 20;
+  bool newLeaderProcessProcessing = false;
+
+  // necessary anymore?
   Set backlog = <LeaderWallet>{};
 
   void updateIndexes() {
@@ -61,7 +64,7 @@ class LeaderWalletService {
   Future<void> newLeaderProcess(LeaderWallet leader) async {
     //  newLeaders.add(leader.id); actually just save the addresses at the end
     print('newLeaderProcess');
-    var s = Stopwatch()..start();
+    newLeaderProcessProcessing = true;
     streams.client.busy.add(true);
     streams.client.activity.add(ActivityMessage(
         active: true,
@@ -116,9 +119,11 @@ class LeaderWalletService {
 
     /// Build balances. - this will update the holdings list UI (home page)
     await services.balance.recalculateAllBalances();
-    print('deriving: ${s.elapsed}');
-    print('front end should be visible');
 
+    // Notify user.
+    if (res.balances.isNotEmpty) {
+      streams.app.snack.add(Snack(message: 'Import Sucessful'));
+    }
     streams.client.activity.add(ActivityMessage(
         active: true,
         title: 'Syncing with the network',
@@ -154,8 +159,13 @@ class LeaderWalletService {
     for (var exposure in NodeExposure.values) {
       await res.addresses.saveAll(addresses[exposure]!);
     }
+
+    /// remove unnecessary vouts to minimize size of database and load time
+    await res.vouts.clearUnnecessaryVouts();
+
     streams.client.busy.add(false);
     streams.client.activity.add(ActivityMessage(active: false));
+    newLeaderProcessProcessing = false;
     print('newLeaderProcess Done!');
   }
 

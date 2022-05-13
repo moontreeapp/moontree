@@ -25,11 +25,15 @@ class MessageComponents {
                   : Text(title, style: Theme.of(context).textTheme.headline2),
               content: content == null
                   ? null
-                  : Text(content,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText2!
-                          .copyWith(color: AppColors.black38)),
+                  : Container(
+                      height: 24,
+                      width: MediaQuery.of(context).size.width -
+                          (24 - 24 - 40 - 40),
+                      child: Text(content,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2!
+                              .copyWith(color: AppColors.black38))),
               actions: [
                 for (var key in behaviors.keys)
                   TextButton(

@@ -77,7 +77,6 @@ class _TransactionPageState extends State<TransactionPage> {
             //default:
             return 'Out';
         }
-
       case 'ID':
         return transaction!.id.cutOutMiddle();
       case 'Memo/IPFS':

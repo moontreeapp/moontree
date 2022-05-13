@@ -36,20 +36,15 @@ class AssetService {
 
   Future<AssetRetrieved?> get(
     String symbol, {
-    RavenElectrumClient? client,
     TxVout? vout,
   }) async {
-    client = client ?? streams.client.client.value;
-    if (client == null) {
-      return null;
-    }
-    var meta = await client.getMeta(symbol);
+    var meta = await services.client.api.getMeta(symbol);
     if (meta != null) {
       var value =
           vout == null ? 0 : utils.amountToSat(vout.scriptPubKey.amount);
       var asset = Asset(
         symbol: meta.symbol,
-        metadata: (await client.getTransaction(meta.source.txHash))
+        metadata: (await services.client.api.getTransaction(meta.source.txHash))
                 .vout[meta.source.txPos]
                 .scriptPubKey
                 .ipfsHash ?? // This can also be a TXID

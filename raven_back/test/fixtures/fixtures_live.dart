@@ -8,8 +8,8 @@ Future useLiveSources() async {
   dotenv.load();
   var mnemonic = dotenv.env['TEST_WALLET_01']!;
   var hiveInit = HiveInitializer(init: (dbDir) => Hive.init('database'));
-  await hiveInit.setUp();
-  await initWaiters();
+  await hiveInit.setUp(HiveLoadingStep.All);
+  await initWaiters(HiveLoadingStep.All);
   await services.wallet.createSave(
       walletType: WalletType.leader,
       cipherUpdate: defaultCipherUpdate,

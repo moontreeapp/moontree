@@ -56,4 +56,22 @@ class VoutReservoir extends Reservoir<_VoutKey, Vout> {
       (given ?? res.vouts.data).where((vout) =>
           !(vout.transaction?.confirmed ?? false) &&
           (security != null ? vout.security == security : true));
+
+  // I think instead of clearning we could avoid download in the first place...
+  Future<void> clearUnnecessaryVouts() async {
+    var x = res.vouts.data.toSet();
+    x.removeAll(res.wallets.map((w) => w.vouts).expand((i) => i).toSet());
+    x.removeAll(res.wallets
+        .map((w) => w.transactions)
+        .expand((i) => i)
+        .map((t) => t.vouts)
+        .expand((e) => e)
+        .toSet());
+    x.removeAll(res.wallets
+        .map((w) => w.vins)
+        .expand((i) => i)
+        .map((v) => v.vout)
+        .toSet());
+    await res.vouts.removeAll(x);
+  }
 }

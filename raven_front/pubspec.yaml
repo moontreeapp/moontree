@@ -52,6 +52,7 @@ dependencies:
   lottie: ^1.2.2
   shimmer: ^2.0.0
   flutter_windowmanager: ^0.2.0 # percision disable screenshot android
+  rxdart: ^0.27.3
 
   # raven_back:
   #   git: https://github.com/moontreeapp/raven_back.git

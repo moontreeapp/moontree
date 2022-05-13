@@ -309,7 +309,6 @@ class TransactionService {
                 ? TransactionRecordType.OUTGOING
                 : TransactionRecordType.INCOMING;
 
-            print('s $selfIn $selfOut o $othersIn $othersOut');
             transactionRecords.add(TransactionRecord(
               transaction: transaction,
               security: security!,
@@ -386,6 +385,32 @@ class TransactionRecord {
       'totalOut: $totalOut, '
       'formattedDatetime: $formattedDatetime, '
       'height: $height)';
+
+  String get typeToString {
+    switch (type) {
+      case TransactionRecordType.ASSETCREATION:
+        return 'Asset Creation';
+      case TransactionRecordType.BURN:
+        return 'Burn';
+      case TransactionRecordType.REISSUE:
+        return 'Reissue';
+      case TransactionRecordType.TAG:
+        return 'Tag';
+      case TransactionRecordType.SELF:
+        return 'Sent To Self';
+      case TransactionRecordType.INCOMING:
+        return 'Received';
+      case TransactionRecordType.OUTGOING:
+        return 'Sent';
+    }
+  }
+
+  bool get toSelf => type == TransactionRecordType.SELF;
+  bool get isNormal => [
+        TransactionRecordType.SELF,
+        TransactionRecordType.INCOMING,
+        TransactionRecordType.OUTGOING,
+      ].contains(type);
 }
 
 class SecurityTotal {

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:raven_back/streams/client.dart';
 import 'package:raven_back/streams/wallet.dart';
+import 'package:raven_back/utilities/lock.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/raven_back.dart';
 
@@ -10,9 +11,20 @@ import 'package:raven_back/raven_back.dart';
 class ClientService {
   final SubscribeService subscribe = SubscribeService();
   final ApiService api = ApiService();
+  final _clientLock = ReaderWriterLock();
+  RavenElectrumClient? ravenElectrumClient;
 
-  RavenElectrumClient? get client => streams.client.client.value;
+  Future<RavenElectrumClient> get client async {
+    var x = ravenElectrumClient;
+    if (x == null) {
+      await createClient();
+    }
+    return ravenElectrumClient!;
+  }
 
+  /// move to object - I cannot see an easy way to move this to the client
+  /// actually because we recreate a new client rather that tell the existing
+  /// to reconnect...
   /// if we want to talk to electrum safely, this will try to talk,
   /// if communication fails it will reconnect and try again.
   /// for example:
@@ -22,26 +34,13 @@ class ClientService {
   ///   }));
   Future<T> scope<T>(Future<T> Function() callback) async {
     var x;
-    var repeated = 0;
-    while (repeated < 1000) {
-      try {
-        x = await callback();
-        repeated = 1001;
-        break;
-      } catch (e) {
-        var waited = false;
-        // reconnect on any error, not just server disconnected } on StateError {
-        streams.client.client.add(null);
-        while (streams.client.client.value == null) {
-          await Future.delayed(Duration(milliseconds: 100));
-          waited = true;
-        }
-        // at least wait a bit so we don't kill the server if we're looping
-        if (!waited) {
-          await Future.delayed(Duration(milliseconds: 1000));
-        }
-        repeated += 1;
-      }
+    try {
+      x = await callback();
+    } catch (e) {
+      // reconnect on any error, not just server disconnected } on StateError {
+      await createClient();
+      // if we error this time, fail
+      x = await callback();
     }
     return x;
   }
@@ -68,25 +67,30 @@ class ClientService {
       ? res.settings.primaryIndex.getOne(SettingName.Electrum_Port)!.value
       : res.settings.primaryIndex.getOne(SettingName.Electrum_PortTest)!.value;
 
-  bool get connectionStatus =>
-      streams.client.client.stream.valueOrNull != null ? true : false;
+  bool get connectionStatus => ravenElectrumClient != null ? true : false;
 
-  Future<RavenElectrumClient?> createClient({
+  /// we want exclusive access to the creation of the client so that we
+  /// don't create many connections to the electrum server all at once.
+  Future<void> createClient() async {
+    await _clientLock.writeFuture(() async {
+      streams.client.connected.add(ConnectionStatus.connecting);
+      print('CREATING CLIENT');
+      var newRavenClient = await _generateClient();
+      if (newRavenClient != null) {
+        ravenElectrumClient = newRavenClient;
+        streams.client.connected.add(ConnectionStatus.connected);
+      }
+    });
+  }
+
+  Future<RavenElectrumClient?> _generateClient({
     String projectName = 'MTWallet',
     String buildVersion = '0.1',
   }) async {
     try {
-      if (res.settings.mainnet) {
-        return await RavenElectrumClient.connect(
-          electrumDomain,
-          port: electrumPort,
-          clientName: '$projectName/$buildVersion',
-          connectionTimeout: connectionTimeout,
-        );
-      }
       return await RavenElectrumClient.connect(
-        electrumDomainTest,
-        port: electrumPortTest,
+        res.settings.mainnet ? electrumDomain : electrumDomainTest,
+        port: res.settings.mainnet ? electrumPort : electrumPortTest,
         clientName: '$projectName/$buildVersion',
         connectionTimeout: connectionTimeout,
       );
@@ -118,10 +122,7 @@ class SubscribeService {
   final Map<String, StreamSubscription> subscriptionHandlesAsset = {};
 
   Future<bool> toAllAddresses() async {
-    var client = streams.client.client.value;
-    if (client == null) {
-      return false;
-    }
+    /// this is not a user action - do not show activity
     streams.client.busy.add(true);
     streams.client.activity.add(ActivityMessage(
         active: true,
@@ -154,17 +155,12 @@ class SubscribeService {
     }
     streams.client.busy.add(false);
     streams.client.activity.add(ActivityMessage(active: false));
-
     return true;
   }
 
   bool toAllAssets() {
-    var client = streams.client.client.value;
-    if (client == null) {
-      return false;
-    }
     for (var asset in res.assets) {
-      onlySubscribeAsset(client, asset);
+      onlySubscribeAsset(asset);
     }
     return true;
   }
@@ -176,110 +172,93 @@ class SubscribeService {
   }
 
   bool toAsset(Asset asset) {
-    var client = streams.client.client.value;
-    if (client == null) {
-      return false;
-    }
-    onlySubscribeAsset(client, asset);
+    onlySubscribeAsset(asset);
     return true;
   }
 
   Future onlySubscribeAddressUnspent(Address address) async {
     if (!subscriptionHandlesUnspent.keys.contains(address.id)) {
-      subscriptionHandlesUnspent[address.id] = await services.client.scope(
-          () async =>
-              (await services.client.client!.subscribeScripthash(address.id))
-                  .listen((String? status) async {
-                /// no guarantee this will run first, so we don't want the other
-                /// one to run first can save the status and keep this one from
-                /// running, so we'll just download unspents everytime.
-                //if (status == null || address.status?.status != status) {
-                print('PULLING UNSPENTS');
-                await services.download.unspents.pull(
-                  scripthashes: [address.id],
-                );
-                //}
-                // Recalculate balances for affected symbols... or everything
-                await services.balance.recalculateAllBalances();
-              }));
+      subscriptionHandlesUnspent[address.id] =
+          (await services.client.api.subscribeAddress(address))
+              .listen((String? status) async {
+        /// no guarantee this will run first, so we don't want the other
+        /// one to run first can save the status and keep this one from
+        /// running, so we'll just download unspents everytime.
+        //if (status == null || address.status?.status != status) {
+        print('PULLING UNSPENTS');
+        await services.download.unspents.pull(
+          scripthashes: [address.id],
+        );
+        //}
+        // Recalculate balances for affected symbols... or everything
+        await services.balance.recalculateAllBalances();
+      });
     }
   }
 
   Future onlySubscribeAddressHistory(Address address) async {
     if (!subscriptionHandlesHistory.keys.contains(address.id)) {
-      subscriptionHandlesHistory[address.id] = await services.client.scope(
-          () async =>
-              (await services.client.client!.subscribeScripthash(address.id))
-                  .listen((String? status) async {
-                if (status == null || address.status?.status != status) {
-                  print('PULLING HISTORY');
+      subscriptionHandlesHistory[address.id] =
+          (await services.client.api.subscribeAddress(address))
+              .listen((String? status) async {
+        if (status == null || address.status?.status != status) {
+          print('PULLING HISTORY $status');
 
-                  /// Get histories, update leader counts and
-                  /// Get transactions in batch.
-                  await services.download.history.getTransactions(
-                    await services.download.history
-                        .getHistory(address, updateLeader: true),
-                  );
+          /// Get histories, update leader counts and
+          /// Get transactions in batch.
+          await services.download.history.getTransactions(
+            await services.download.history
+                .getHistory(address, updateLeader: true),
+          );
 
-                  /// Get dangling transactions
-                  await services.download.history.allDoneProcess();
+          /// Get dangling transactions
+          await services.download.history.allDoneProcess();
 
-                  /// Save status update
-                  await res.statuses.save(Status(
-                      linkId: address.id,
-                      statusType: StatusType.address,
-                      status: status));
+          /// Save status update
+          await res.statuses.save(Status(
+              linkId: address.id,
+              statusType: StatusType.address,
+              status: status));
 
-                  /// Derive more addresses
-                  if (address.wallet is LeaderWallet) {
-                    streams.wallet.deriveAddress.add(DeriveLeaderAddress(
-                      leader: address.wallet! as LeaderWallet,
-                      exposure: address.exposure,
-                    ));
-                  }
-                }
-              }));
+          /// Derive more addresses
+          if (address.wallet is LeaderWallet) {
+            streams.wallet.deriveAddress.add(DeriveLeaderAddress(
+              leader: address.wallet! as LeaderWallet,
+              exposure: address.exposure,
+            ));
+          }
+        }
+      });
     }
   }
 
   Future onlySubscribeForStatus(Address address) async {
-    await services.client.scope(() async {
-      (await services.client.client!.subscribeScripthash(address.scripthash))
-          .listen((String? status) async {
-        await res.statuses.save(Status(
-            linkId: address.id,
-            statusType: StatusType.address,
-            status: status));
-      });
+    (await services.client.api.subscribeAddress(address))
+        .listen((String? status) async {
+      await res.statuses.save(Status(
+          linkId: address.id, statusType: StatusType.address, status: status));
     });
-    await services.client.scope(() async {
-      await services.client.client!.unsubscribeScripthash(address.scripthash);
-    });
+    await services.client.api.unsubscribeAddress(address);
   }
 
   Future onlySubscribeForStatuses(List<Address> addresses) async {
-    var scripthashes = addresses.map((a) => a.scripthash);
-    await services.client.scope(() async {
-      var subs =
-          (await services.client.client!.subscribeScripthashes(scripthashes));
-      for (var ixSub in subs.enumeratedTuple()) {
-        ixSub.item2.listen((String? status) async {
-          await res.statuses.save(Status(
-              linkId: addresses[ixSub.item1].id,
-              statusType: StatusType.address,
-              status: status));
-        });
-      }
-    });
-    await services.client.scope(() async {
-      await services.client.client!.unsubscribeScripthashes(scripthashes);
-    });
+    var subs = await services.client.api.subscribeAddresses(addresses);
+    for (var ixSub in subs.enumeratedTuple()) {
+      ixSub.item2.listen((String? status) async {
+        await res.statuses.save(Status(
+            linkId: addresses[ixSub.item1].id,
+            statusType: StatusType.address,
+            status: status));
+      });
+    }
+    await services.client.api.unsubscribeAddresses(addresses);
   }
 
-  Future onlySubscribeAsset(RavenElectrumClient client, Asset asset) async {
+  Future onlySubscribeAsset(Asset asset) async {
     if (!subscriptionHandlesAsset.keys.contains(asset.symbol)) {
       subscriptionHandlesAsset[asset.symbol] =
-          (await client.subscribeAsset(asset.symbol)).listen((String? status) {
+          (await services.client.api.subscribeAsset(asset))
+              .listen((String? status) {
         if (asset.status?.status != status) {
           res.statuses.save(Status(
               linkId: asset.symbol,
@@ -304,27 +283,93 @@ class SubscribeService {
 
 /// calls to the electrum server
 class ApiService {
-  Future<String> getOwner(String symbol) async =>
-      (await streams.client.client.value!
-              .getAddresses(symbol.endsWith('!') ? symbol : symbol + '!'))!
-          .owner;
+  Future<Stream<BlockHeader>> subscribeHeaders() async => await services.client
+      .scope(() async => (await services.client.client).subscribeHeaders());
 
-  Future<String> sendTransaction(String rawTx) async {
-    return await streams.client.client.value!.broadcastTransaction(rawTx);
-  }
+  Future<Stream<String?>> subscribeAsset(Asset asset) async =>
+      await services.client.scope(() async =>
+          (await (await services.client.client).subscribeAsset(asset.symbol)));
+
+  Future<Stream<String?>> subscribeAddress(Address address) async =>
+      await services.client.scope(() async =>
+          (await (await services.client.client)
+              .subscribeScripthash(address.scripthash)));
+
+  Future<bool> unsubscribeAddress(Address address) async =>
+      await services.client.scope(() async =>
+          (await (await services.client.client)
+              .unsubscribeScripthash(address.scripthash)));
+
+  Future<List<Stream<String?>>> subscribeAddresses(
+    List<Address> addresses,
+  ) async =>
+      await services.client.scope(() async =>
+          (await (await services.client.client)
+              .subscribeScripthashes(addresses.map((a) => a.scripthash))));
+
+  Future<void> unsubscribeAddresses(List<Address> addresses) async =>
+      await services.client.scope(() async =>
+          await (await services.client.client)
+              .unsubscribeScripthashes(addresses.map((a) => a.scripthash)));
+
+  Future<List<List<ScripthashUnspent>>> getUnspents(
+    Iterable<String> scripthashes,
+  ) async =>
+      await services.client.scope(() async =>
+          await (await services.client.client).getUnspents(scripthashes));
+
+  Future<List<List<ScripthashUnspent>>> getAssetUnspents(
+    Iterable<String> scripthashes,
+  ) async =>
+      await services.client.scope(() async =>
+          await (await services.client.client).getAssetUnspents(scripthashes));
+
+  Future<List<ScripthashHistory>> getHistory(Address address) async =>
+      await services.client.scope(() async =>
+          await (await services.client.client).getHistory(address.scripthash));
+
+  Future<List<List<ScripthashHistory>>> getHistories(
+    List<Address> addresses,
+  ) async =>
+      await services.client.scope(() async =>
+          await (await services.client.client)
+              .getHistories(addresses.map((Address a) => a.scripthash)));
 
   Future<Tx> getTransaction(String transactionId) async =>
-      await streams.client.client.value!.getTransaction(transactionId);
+      await services.client.scope(() async =>
+          await (await services.client.client).getTransaction(transactionId));
+
+  Future<List<Tx>> getTransactions(Iterable<String> transactionIds) async =>
+      await services.client.scope(() async =>
+          await (await services.client.client).getTransactions(transactionIds));
+
+  Future<String> sendTransaction(String rawTx) async =>
+      await services.client.scope(() async =>
+          await (await services.client.client).broadcastTransaction(rawTx));
+
+  Future<AssetMeta?> getMeta(String symbol) async => await services.client
+      .scope(() async => await (await services.client.client).getMeta(symbol));
+
+  Future<String> getOwner(String symbol) async => await services.client.scope(
+      () async => (await (await services.client.client)
+              .getAddresses(symbol.endsWith('!') ? symbol : symbol + '!'))!
+          .owner);
+
+  Future<dynamic> ping() async => await services.client
+      .scope(() async => await (await services.client.client).ping());
 
   /// we should instead just be able to send an empty string and make one call
   /// this returns too much data to be useful. we don't use this anymore.
   Future<Iterable<dynamic>> getAllAssetNames() async => [
         for (var char in 'abcdefghijklmnopqrstuvwxyz'.toUpperCase().split(''))
-          await streams.client.client.value!.getAssetsByPrefix(char)
+          await services.client.scope(() async =>
+              await (await services.client.client).getAssetsByPrefix(char))
       ].expand((i) => i);
 
-  Future<Iterable<dynamic>> getAssetNames(String prefix) async =>
+  Future<Iterable<dynamic>> getAssetNames(
+          String prefix) async =>
       prefix.length >= 3
-          ? await streams.client.client.value?.getAssetsByPrefix(prefix) ?? []
+          ? await services.client.scope(() async =>
+              await (await services.client.client).getAssetsByPrefix(prefix))
           : [];
 }

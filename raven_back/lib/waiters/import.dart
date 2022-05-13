@@ -23,7 +23,9 @@ class ImportWaiter extends Waiter {
           // send user to see new wallet
           streams.import.success.add(null);
           streams.app.setting.add(null);
-          streams.app.snack.add(Snack(message: 'Sucessful Import'));
+
+          /// wait till balances show to show successful import...
+          //streams.app.snack.add(Snack(message: 'Sucessful Import: downloading transactions'));
         } else if (tuple3.item3.isNotEmpty &&
             tuple3.item3.first != 'Success!') {
           streams.app.snack.add(Snack(

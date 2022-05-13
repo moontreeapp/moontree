@@ -74,9 +74,7 @@ class _CreateLoginState extends State<CreateLogin> {
             SliverToBoxAdapter(
               child: Container(
                   alignment: Alignment.bottomCenter,
-                  //color: Colors.red,
                   height: .242.ofMediaHeight(context),
-                  // height: 180.figma(context),
                   child: moontree),
             ),
             SliverToBoxAdapter(
@@ -84,7 +82,6 @@ class _CreateLoginState extends State<CreateLogin> {
             SliverToBoxAdapter(
               child: Container(
                   alignment: Alignment.bottomCenter,
-                  //color: Colors.green,
                   height: .0315.ofMediaHeight(context),
                   child: welcomeMessage),
             ),

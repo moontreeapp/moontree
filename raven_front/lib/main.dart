@@ -68,6 +68,12 @@ class RavenMobileApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+    var androidSystemBarColor = AppColors.androidSystemBar;
+    if (!Platform.isIOS) {
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarColor: androidSystemBarColor,
+      ));
+    }
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: '/splash',
@@ -80,7 +86,8 @@ class RavenMobileApp extends StatelessWidget {
       builder: (context, child) {
         components.navigator.scaffoldContext = context;
         final scaffold = Scaffold(
-          backgroundColor: Colors.black,
+          backgroundColor:
+              Platform.isIOS ? AppColors.primary : androidSystemBarColor,
           extendBodyBehindAppBar: false,
           appBar: BackdropAppBar(),
           body: child!,

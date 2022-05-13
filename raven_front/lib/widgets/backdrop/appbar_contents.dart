@@ -26,8 +26,6 @@ class BackdropAppBarContents extends StatelessWidget
         ? buildAppBar(
             context,
             systemOverlayStyle: SystemUiOverlayStyle(
-              statusBarColor: Colors.black,
-              statusBarIconBrightness: Brightness.light, // For Android
               statusBarBrightness: Brightness.dark, // For iOS
             ),
             backgroundColor: Colors.transparent,
@@ -35,10 +33,10 @@ class BackdropAppBarContents extends StatelessWidget
           )
         : buildAppBar(
             context,
-            backgroundColor: Theme.of(context).backgroundColor,
+            backgroundColor: AppColors.primary,
             shape: components.shape.topRounded8,
           );
-    final alphaBar = Platform.isIOS
+    /*final alphaBar = Platform.isIOS
         ? Container(
             height: 56,
             child: ClipRect(
@@ -60,7 +58,7 @@ class BackdropAppBarContents extends StatelessWidget
                 color: AppColors.success,
               ),
             ),
-          );
+          );*/
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
@@ -72,7 +70,7 @@ class BackdropAppBarContents extends StatelessWidget
             frontLayerBoxShadow: const [],
           ),
         testAppBar(appBar, test: true),
-        alphaBar,
+        // alphaBar,
         AppBarScrim(),
       ],
     );
@@ -82,12 +80,8 @@ class BackdropAppBarContents extends StatelessWidget
       ? GestureDetector(
           onTap: () async {
             print('click');
-            //streams.app.snack.add(Snack(message: 'Sucessful Import'));
-            //streams.app.scrim.add(!streams.app.scrim.value);
-            //streams.client.busy.add(!streams.client.busy.value);
-            //print(streams.app.triggers.value);
             streams.app.snack.add(Snack(
-              message: 'Not connected to Network',
+              message: 'message',
             ));
           },
           child: appBar,

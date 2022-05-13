@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
@@ -9,11 +10,13 @@ import 'package:raven_front/theme/theme.dart';
 
 class TransactionList extends StatefulWidget {
   final Iterable<TransactionRecord>? transactions;
+  final String? symbol;
   final String? msg;
   final ScrollController? scrollController;
 
   const TransactionList({
     this.transactions,
+    this.symbol,
     this.msg,
     this.scrollController,
     Key? key,
@@ -34,11 +37,19 @@ class _TransactionListState extends State<TransactionList> {
   @override
   void initState() {
     super.initState();
+    transactionCount = widget.symbol == null
+        ? res.vouts.data.map((v) => v.security == null).length
+        : res.vouts.data.map((v) => v.security?.symbol == widget.symbol).length;
     listeners.add(
         res.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
       // if vouts in our account has changed...
-      var items = batchedChanges
-          .where((change) => change.data.address?.walletId == Current.walletId);
+      //var items = batchedChanges
+      //    .where((change) => change.data.address?.walletId == Current.walletId);
+      /// new import process doesn't save addresses till end so we don't yet
+      /// know the wallet of these items, so we have to make simpler heuristic
+      var items = batchedChanges.where((change) =>
+          (change.data.security == null && widget.symbol == null) ||
+          change.data.security?.symbol == widget.symbol);
       if (items.isNotEmpty) {
         setState(() {
           transactionCount = items.length;
@@ -69,12 +80,6 @@ class _TransactionListState extends State<TransactionList> {
   Future refresh() async {
     await services.rate.saveRate();
     setState(() {});
-    // showing snackbar
-    //_scaffoldKey.currentState.showSnackBar(
-    //  SnackBar(
-    //    content: const Text('Page Refreshed'),
-    //  ),
-    //);
   }
 
   @override
@@ -84,7 +89,8 @@ class _TransactionListState extends State<TransactionList> {
     return transactions.isEmpty
         //? components.empty.transactions(context, msg: widget.msg)
         ? components.empty.getTransactionsPlaceholder(context,
-            scrollController: widget.scrollController!, count: transactionCount)
+            scrollController: widget.scrollController!,
+            count: min(10, transactionCount))
         : Container(
             alignment: Alignment.center,
             child: RefreshIndicator(
@@ -97,69 +103,54 @@ class _TransactionListState extends State<TransactionList> {
       controller: widget.scrollController,
       children: <Widget>[
             SizedBox(height: 16),
-            ...[
-              for (var transactionRecord in transactions) ...[
-                ...[
-                  ListTile(
-                    //contentPadding:
-                    //    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 13),
-                    onTap: () => Navigator.pushNamed(
-                        context, '/transaction/transaction',
-                        arguments: {'transactionRecord': transactionRecord}),
-                    //onLongPress: _toggleUSD,
-                    //leading: Container(
-                    //    height: 40,
-                    //    width: 40,
-                    //    child: components.icons
-                    //        .assetAvatar(transactionRecord.security.symbol)),
-                    title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(() {
-                            var suffix;
-                            final value = components.text.securityAsReadable(
-                                transactionRecord.value,
-                                security: transactionRecord.security,
-                                asUSD: showUSD);
-                            switch (transactionRecord.type) {
-                              case TransactionRecordType.ASSETCREATION:
-                                suffix = 'Asset Creation';
-                                break;
-                              case TransactionRecordType.BURN:
-                                suffix = 'Burn';
-                                break;
-                              case TransactionRecordType.REISSUE:
-                                suffix = 'Reissue';
-                                break;
-                              case TransactionRecordType.TAG:
-                                suffix = 'Tag';
-                                break;
-                              case TransactionRecordType.SELF:
-                                return 'Sent to Self';
-                              case TransactionRecordType.INCOMING:
-                              case TransactionRecordType.OUTGOING:
-                                return value;
-                            }
-                            return suffix == null ? value : '$value ($suffix)';
-                          }(), style: Theme.of(context).textTheme.bodyText1),
-                          Text(transactionRecord.formattedDatetime,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2!
-                                  .copyWith(color: AppColors.black38)),
-                        ]),
-                    trailing: (transactionRecord.out
-                        ? components.icons.out(context)
-                        : components.icons.income(context)),
-                  ),
-                  Divider(indent: 16),
-                ]
+            for (var transactionRecord in transactions) ...[
+              ...[
+                ListTile(
+                  //contentPadding:
+                  //    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 13),
+                  onTap: () => Navigator.pushNamed(
+                      context, '/transaction/transaction',
+                      arguments: {'transactionRecord': transactionRecord}),
+                  //onLongPress: _toggleUSD,
+                  //leading: Container(
+                  //    height: 40,
+                  //    width: 40,
+                  //    child: components.icons
+                  //        .assetAvatar(transactionRecord.security.symbol)),
+                  title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                            transactionRecord.toSelf
+                                ? transactionRecord.typeToString
+                                : components.text.securityAsReadable(
+                                    transactionRecord.value,
+                                    security: transactionRecord.security,
+                                    asUSD: showUSD),
+                            style: Theme.of(context).textTheme.bodyText1),
+                        Text(
+                            transactionRecord.formattedDatetime +
+                                '${!transactionRecord.isNormal ? ' | ' + transactionRecord.typeToString : ''}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2!
+                                .copyWith(color: AppColors.black60)),
+                      ]),
+                  trailing: transactionRecord.value == 0
+                      ? components.icons.fee(context)
+                      : (transactionRecord.out
+                          ? components.icons.out(context)
+                          : components.icons.income(context)),
+                ),
+                Divider(indent: 16),
               ]
             ]
           ] +
           [
             if (!services.download.history.downloads_complete)
-              components.empty.getTransactionsShimmer(context)
+              for (var _ in transactions) ...[
+                components.empty.getTransactionsShimmer(context)
+              ]
           ] +
           [
             Container(

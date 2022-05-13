@@ -25,7 +25,7 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
 
   static Map<String, Setting> get defaults => {
         SettingName.Database_Version:
-            Setting(name: SettingName.Database_Version, value: '1.0.0'),
+            Setting(name: SettingName.Database_Version, value: 1),
         SettingName.Login_Attempts:
             Setting(name: SettingName.Login_Attempts, value: <DateTime>[]),
         SettingName.Electrum_Net:
@@ -48,6 +48,10 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
             Setting(name: SettingName.Send_Immediate, value: false),
       }.map(
           (settingName, setting) => MapEntry(settingName.enumString, setting));
+
+  /// should this be in the database or should it be a constant somewhere?
+  //int get appVersion =>
+  //    primaryIndex.getOne(SettingName.App_Version)!.value;
 
   int get databaseVersion =>
       primaryIndex.getOne(SettingName.Database_Version)!.value;

@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_front/listeners/listeners.dart';
+import 'package:raven_front/theme/colors.dart';
 import 'package:raven_front/widgets/backdrop/backdrop.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/services/services.dart';
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
@@ -44,11 +44,16 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
   Future<void> _init() async {
     await Future.delayed(Duration(milliseconds: 3500));
-    final loadingHelper = DataLoadingHelper(context);
-    await loadingHelper.setupDatabase();
-    await Future.delayed(Duration(milliseconds: 1000));
+    await HIVE_INIT.setupDatabaseStart();
+    await HIVE_INIT.setupDatabase1();
+
+    // put here or on login screen. here seems better for now.
+    await HIVE_INIT.setupWaiters1();
+    await HIVE_INIT.setupDatabase2();
+    await HIVE_INIT.setupWaiters2();
+
+    await Future.delayed(Duration(milliseconds: 1));
     setState(() {
-      print('setting state');
       shape = components.shape.topRoundedBorder8;
     });
     _fadeController.forward();
@@ -66,10 +71,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     //  _slideController.reset();
     //  showAppBar = true;
     //});
-    //await Future.delayed(Duration(milliseconds: 100));
-    loadingHelper.redirectToCreateOrLogin();
+    await redirectToCreateOrLogin();
     streams.app.splash.add(false);
-    await loadingHelper.setupWaiters();
+    //await HIVE_INIT.setupWaiters1(); // if you put on login screen
   }
 
   @override
@@ -82,8 +86,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      //backgroundColor: Colors.white,
+      backgroundColor: AppColors.androidSystemBar,
       appBar: showAppBar
           ? BackdropAppBarContents(spoof: true, animate: false)
           : null,
@@ -118,24 +121,6 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
         /**/
       ),
     );
-  }
-}
-
-class DataLoadingHelper {
-  const DataLoadingHelper(this.context);
-  final BuildContext context;
-  Future setupDatabase() async {
-    var hiveInit =
-        HiveInitializer(init: (dbDir) => Hive.initFlutter(), beforeLoad: () {});
-    await hiveInit.setUp();
-  }
-
-  Future setupWaiters() async {
-    await initWaiters();
-    unawaited(waiters.app.logoutThread());
-    initListeners();
-    //await res.settings.save(
-    //    Setting(name: SettingName.Local_Path, value: await Storage().localPath));
   }
 
   Future redirectToCreateOrLogin() async {
