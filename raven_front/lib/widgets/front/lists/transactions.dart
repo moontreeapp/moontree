@@ -146,7 +146,7 @@ class _TransactionListState extends State<TransactionList> {
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText2!
-                                  .copyWith(color: AppColors.black60)),
+                                  .copyWith(color: AppColors.black38)),
                         ]),
                     trailing: (transactionRecord.out
                         ? components.icons.out(context)

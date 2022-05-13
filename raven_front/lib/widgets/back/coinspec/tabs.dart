@@ -59,7 +59,7 @@ class _CoinSpecTabsState extends State<CoinSpecTabs>
                     labelStyle: Theme.of(context).textTheme.bodyText2!.copyWith(
                         fontWeight: FontWeights.medium,
                         letterSpacing: 1.25,
-                        color: AppColors.white),
+                        color: AppColors.white87),
                     unselectedLabelStyle: Theme.of(context)
                         .textTheme
                         .bodyText2!

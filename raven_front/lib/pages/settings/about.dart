@@ -41,7 +41,7 @@ class About extends StatelessWidget {
                     style: Theme.of(context)
                         .textTheme
                         .subtitle1!
-                        .copyWith(color: AppColors.black),
+                        .copyWith(color: AppColors.black60),
                   ),
                   SizedBox(height: 40),
                 ]),
