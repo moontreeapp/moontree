@@ -1,7 +1,7 @@
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:raven_front/utils/size.dart' as size;
 import 'package:raven_front/components/components.dart';
-
 /*
 .figma(context)      // for use in builders
 .figmaH             // entire screen (sizing)
@@ -26,12 +26,12 @@ extension RelativeHeightDoble on num {
   double get figmaSafeHeight => size.relativeHeight(
         components.navigator.routeContext!,
         (this / 680),
-        minus: 24,
+        minus: systemBarHeight,
       );
   double get figmaAppHeight => size.relativeHeight(
         components.navigator.routeContext!,
         (this / 680),
-        minus: (24 + 56),
+        minus: (systemBarHeight + appBarHeight),
       );
   double ofMediaHeight(BuildContext context) =>
       size.relativeHeight(context, this);
@@ -40,14 +40,19 @@ extension RelativeHeightDoble on num {
   double get ofScreenHeight =>
       size.relativeHeight(components.navigator.routeContext!, this);
   double get ofSafeHeight =>
-      size.relativeHeight(components.navigator.routeContext!, this, minus: 24);
+      size.relativeHeight(components.navigator.routeContext!, this,
+          minus: systemBarHeight);
   double get ofAppHeight => size.relativeHeight(
         components.navigator.routeContext!,
         this,
-        minus: (24 + 56),
+        minus: (systemBarHeight + appBarHeight),
       );
   double ofMediaWidth(BuildContext context) =>
       size.relativeWidth(context, this);
   double get ofScreenWidth =>
       size.relativeWidth(components.navigator.routeContext!, this);
+
+  static double get appBarHeight => 56.0;
+  double get systemBarHeight =>
+      MediaQueryData.fromWindow(ui.window).viewPadding.top;
 }
