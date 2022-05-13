@@ -44,4 +44,16 @@ class ButtonStyleComponents {
             borderRadius: BorderRadius.circular(
                 (MediaQuery.of(context).size.height * (32 / 760)) * .5))),
       );
+
+  ButtonStyle wordBottom(BuildContext context) => ButtonStyle(
+        textStyle: MaterialStateProperty.all(
+            Theme.of(context).textTheme.enabledButton),
+        foregroundColor: MaterialStateProperty.all(AppColors.black),
+        backgroundColor: MaterialStateProperty.all(AppColors.primaries[0]),
+        side: MaterialStateProperty.all(
+            BorderSide(width: 0, style: BorderStyle.none)),
+        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+                (MediaQuery.of(context).size.height * 0.05263157895) * .5))),
+      );
 }

@@ -75,7 +75,7 @@ class AppText {
 
   /// derivations
   static TextStyle get softButton => button.copyWith(
-      fontWeight: FontWeights.semiBold, color: AppColors.black60);
+      fontWeight: FontWeights.semiBold, color: AppColors.primaries[6]);
   static TextStyle get invertButton =>
       button.copyWith(fontWeight: FontWeights.semiBold, color: AppColors.white);
   static TextStyle get disabledButton => button.copyWith(

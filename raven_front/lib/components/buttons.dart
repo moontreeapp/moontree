@@ -95,8 +95,9 @@ class ButtonComponents {
                     }
                   : onPressed ?? () {})
               : disabledOnPressed ?? () {},
-          style: components.styles.buttons
-              .bottom(context, disabled: !enabled, soft: true),
+          // style: components.styles.buttons
+          //     .bottom(context, disabled: !enabled, soft: true),
+          style: components.styles.buttons.wordBottom(context),
           child: Text(_labelDefault(label),
               style: enabled
                   ? Theme.of(context).textTheme.softButton
@@ -151,8 +152,8 @@ class ButtonComponents {
             /*height: MediaQuery.of(context).size.height - 100, // example
           instead of this which causes bottom overflow issues we implemented
           a listener on the keyboard to hide the button if the keyboard is
-          visible. Not ideal because you must dismiss the keyboard in order 
-          to see the button, but I think its nearer to the Truth. see 
+          visible. Not ideal because you must dismiss the keyboard in order
+          to see the button, but I think its nearer to the Truth. see
           KeyboardHidesWidget
           */
             ),
@@ -206,8 +207,8 @@ class ButtonComponents {
             /*height: MediaQuery.of(context).size.height - 100, // example
           instead of this which causes bottom overflow issues we implemented
           a listener on the keyboard to hide the button if the keyboard is
-          visible. Not ideal because you must dismiss the keyboard in order 
-          to see the button, but I think its nearer to the Truth. see 
+          visible. Not ideal because you must dismiss the keyboard in order
+          to see the button, but I think its nearer to the Truth. see
           KeyboardHidesWidget
           */
             ),
