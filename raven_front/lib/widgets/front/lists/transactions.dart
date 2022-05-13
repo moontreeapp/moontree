@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
@@ -85,11 +86,11 @@ class _TransactionListState extends State<TransactionList> {
   Widget build(BuildContext context) {
     transactions = widget.transactions ??
         services.transaction.getTransactionRecords(wallet: Current.wallet);
-    print('TRANSACTIONS ${transactions.length} COUNT $transactionCount');
     return transactions.isEmpty
         //? components.empty.transactions(context, msg: widget.msg)
         ? components.empty.getTransactionsPlaceholder(context,
-            scrollController: widget.scrollController!, count: transactionCount)
+            scrollController: widget.scrollController!,
+            count: min(10, transactionCount))
         : Container(
             alignment: Alignment.center,
             child: RefreshIndicator(

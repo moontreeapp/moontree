@@ -1,6 +1,7 @@
 // ignore_for_file: omit_local_variable_types
 
 import 'package:equatable/equatable.dart';
+import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/streams/client.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' show HDWallet;
 import 'package:bip39/bip39.dart' as bip39;
@@ -119,6 +120,10 @@ class LeaderWalletService {
     /// Build balances. - this will update the holdings list UI (home page)
     await services.balance.recalculateAllBalances();
 
+    // Notify user.
+    if (res.balances.isNotEmpty) {
+      streams.app.snack.add(Snack(message: 'Import Sucessful'));
+    }
     streams.client.activity.add(ActivityMessage(
         active: true,
         title: 'Syncing with the network',

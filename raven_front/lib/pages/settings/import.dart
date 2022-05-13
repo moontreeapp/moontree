@@ -234,6 +234,7 @@ class _ImportState extends State<Import> {
     FocusScope.of(context).unfocus();
     var text = (importData ?? words.text).trim();
 
+    /* will fix decryption later
     /// decrypt if you must...
     if (importData != null) {
       var resp;
@@ -273,6 +274,7 @@ class _ImportState extends State<Import> {
       }
       text = resp;
     }
+    */
     components.loading.screen(
       message: 'Importing',
       staticImage: true,
