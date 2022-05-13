@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/streams/spend.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:raven_front/utils/extensions.dart';
 
 class Coin extends StatefulWidget {
   final String symbol;
@@ -64,8 +65,9 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
             /// used to push it down because we hid stuff and want to cetner:
             Column(
           children: [
-            SizedBox(height: 9),
-            components.icons.assetAvatar(widget.symbol, size: 48),
+            SizedBox(height: .015.ofMediaHeight(context)),
+            components.icons
+                .assetAvatar(widget.symbol, size: .0631.ofMediaHeight(context)),
           ],
         ),
       );

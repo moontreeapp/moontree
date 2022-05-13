@@ -13,6 +13,8 @@ import 'package:raven_front/components/components.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+double minHeight = 0.65.figmaAppHeight;
+
 class Transactions extends StatefulWidget {
   const Transactions({Key? key}) : super(key: key);
 
@@ -28,7 +30,7 @@ class _TransactionsState extends State<Transactions> {
   late Security security;
   Widget? cachedMetadataView;
   DraggableScrollableController dController = DraggableScrollableController();
-  BehaviorSubject<double> scrollObserver = BehaviorSubject.seeded(.7245);
+  BehaviorSubject<double> scrollObserver = BehaviorSubject.seeded(.91);
   @override
   void initState() {
     super.initState();
@@ -56,7 +58,8 @@ class _TransactionsState extends State<Transactions> {
     currentTxs = services.transaction
         .getTransactionRecords(wallet: Current.wallet, securities: {security});
     cachedMetadataView = _metadataView(security, context);
-    var minHeight = .7245;
+    minHeight =
+        0.65.figmaAppHeight + (cachedMetadataView != null ? 48.ofAppHeight : 0);
     var maxExtent = (currentTxs.length * 80 +
             80 +
             40 +
@@ -241,16 +244,17 @@ class CoinDetailsHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamBuilder(
         stream: scrollObserver,
-        initialData: 0.9,
         builder: (context, snapshot) {
-          //print("Opacity to change ${dController.size}");
-
           return Transform.translate(
-            offset: Offset(0, (0.9 - ((snapshot.data ?? 0.9) as double)) * 200),
+            offset: Offset(
+                0,
+                0 -
+                    (((snapshot.data ?? minHeight) as double) - minHeight) *
+                        100),
             child: Opacity(
               //angle: ((snapshot.data ?? 0.9) as double) * pi * 180,
               opacity:
-                  getOpacityFromController((snapshot.data ?? 0.9) as double),
+                  getOpacityFromController((snapshot.data ?? .9) as double),
               child: CoinSpec(
                 pageTitle: 'Transactions',
                 security: security,
@@ -265,7 +269,7 @@ class CoinDetailsHeader extends StatelessWidget {
     double opacity = 1;
     if (controllerValue >= 0.9)
       opacity = 0;
-    else if (controllerValue <= 0.72)
+    else if (controllerValue <= minHeight)
       opacity = 1;
     else
       opacity = (0.9 - controllerValue) * 5;

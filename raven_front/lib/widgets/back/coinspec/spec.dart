@@ -75,7 +75,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
       visibleFiatAmount = '';
     }
     return Container(
-      padding: EdgeInsets.only(top: 16),
+      padding: EdgeInsets.only(top: .021.ofMediaHeight(context)),
       //height: widget.pageTitle == 'Send' ? 209 : 201,
       height: widget.pageTitle == 'Send'
           ? 0.2588963963963964.ofMediaHeight(context)
