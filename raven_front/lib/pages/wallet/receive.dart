@@ -6,6 +6,7 @@ import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/theme.dart';
+import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/utils/params.dart';
 import 'package:raven_front/utils/transformers.dart';
 import 'package:raven_front/utils/data.dart';
@@ -94,7 +95,6 @@ class _ReceiveState extends State<Receive> {
 
   @override
   Widget build(BuildContext context) {
-    //var s = Stopwatch()..start();
     username =
         res.settings.primaryIndex.getOne(SettingName.User_Name)?.value ?? '';
     data = populateData(context, data);
@@ -116,8 +116,8 @@ class _ReceiveState extends State<Receive> {
     if (requestMessage.text != '') {
       _makeURI(refresh: false);
     }
-    double height = MediaQuery.of(context).size.height - 56;
-    //print('prebuild: ${s.elapsed}');
+    double height =
+        1.ofAppHeight; //MediaQuery.of(context).size.height - (56 + 24 + 24);
     return BackdropLayers(
         back: BlankBack(),
         front: FrontCurve(

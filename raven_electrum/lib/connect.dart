@@ -10,11 +10,13 @@ import 'client/json_newline_transformer.dart';
 const connectionTimeout = Duration(seconds: 5);
 const aliveTimerDuration = Duration(seconds: 2);
 
-Future<StreamChannel> connect(String host,
-    {int port = 50002,
-    Duration connectionTimeout = connectionTimeout,
-    Duration aliveTimerDuration = aliveTimerDuration,
-    bool acceptUnverified = true}) async {
+Future<StreamChannel> connect(
+  String host, {
+  int port = 50002,
+  Duration connectionTimeout = connectionTimeout,
+  Duration aliveTimerDuration = aliveTimerDuration,
+  bool acceptUnverified = true,
+}) async {
   var socket = await io.SecureSocket.connect(host, port,
       timeout: connectionTimeout,
       onBadCertificate: acceptUnverified ? (_) => true : null);
