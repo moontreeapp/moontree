@@ -5,6 +5,7 @@ import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/theme/colors.dart';
+import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 class SecretWord {
@@ -62,15 +63,17 @@ class _VerifySeedState extends State<VerifySeed> {
     return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
   }
 
-  Widget body() => components.page.form(
-        context,
-        columnWidgets: <Widget>[
-          instructions,
-          warning,
-          words,
-        ],
-        buttons: [submitButton],
-      );
+  Widget body() => Stack(children: [
+        components.page.form(
+          context,
+          columnWidgets: <Widget>[
+            instructions,
+            warning,
+          ],
+          buttons: [submitButton],
+        ),
+        words
+      ]);
 
   Widget get instructions => Container(
       height: 48,
@@ -90,8 +93,8 @@ class _VerifySeedState extends State<VerifySeed> {
       );
 
   Widget get words => Container(
-      height: MediaQuery.of(context).size.height - 444,
-      alignment: Alignment.bottomCenter,
+      height: (1 - 72.ofAppHeight).ofAppHeight,
+      alignment: Alignment.center,
       child: Container(
           height: 272,
           child: Column(
