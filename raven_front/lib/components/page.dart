@@ -66,6 +66,7 @@ class PageComponents {
         child: CustomScrollView(
             //shrinkWrap: true,
             controller: controller,
+            physics: NeverScrollableScrollPhysics(),
             slivers: <Widget>[
               SliverToBoxAdapter(child: SizedBox(height: 6)),
               ...<Widget>[
