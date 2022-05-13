@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_front/theme/colors.dart';
 import 'package:raven_front/widgets/backdrop/backdrop.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/services.dart';
@@ -85,8 +86,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      //backgroundColor: Colors.white,
+      backgroundColor: AppColors.androidSystemBar,
       appBar: showAppBar
           ? BackdropAppBarContents(spoof: true, animate: false)
           : null,

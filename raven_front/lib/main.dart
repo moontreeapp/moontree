@@ -68,8 +68,7 @@ class RavenMobileApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    var androidSystemBarColor =
-        AppColors.primary.withOpacity(.88); //AppColors.primaries[8];
+    var androidSystemBarColor = AppColors.androidSystemBar;
     if (!Platform.isIOS) {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         statusBarColor: androidSystemBarColor,
