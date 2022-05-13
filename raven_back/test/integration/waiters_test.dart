@@ -7,7 +7,7 @@ void main() async {
   var hiveInit = HiveInitializer(destroyOnTeardown: true);
 
   setUp(() async {
-    await hiveInit.setUp();
+    await hiveInit.setUp(HiveLoadingStep.All);
     res.settings.setSource(MapSource({
       '0': Setting(
           name: SettingName.Electrum_Domain, value: 'testnet.rvn.rocks'),
