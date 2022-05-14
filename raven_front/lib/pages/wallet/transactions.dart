@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
@@ -58,8 +59,11 @@ class _TransactionsState extends State<Transactions> {
     currentTxs = services.transaction
         .getTransactionRecords(wallet: Current.wallet, securities: {security});
     cachedMetadataView = _metadataView(security, context);
-    minHeight =
-        0.65.figmaAppHeight + (cachedMetadataView != null ? 48.ofAppHeight : 0);
+    minHeight = !Platform.isIOS
+        ? 0.65.figmaAppHeight +
+            (cachedMetadataView != null ? 48.ofAppHeight : 0)
+        : 0.63.figmaAppHeight +
+            (cachedMetadataView != null ? 48.ofAppHeight : 0);
     var maxExtent = (currentTxs.length * 80 +
             80 +
             40 +
