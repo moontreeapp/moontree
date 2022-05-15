@@ -62,21 +62,29 @@ class _HoldingList extends State<HoldingList> {
         });
       }
     }));
-    listeners.add(
-        res.balances.batchedChanges.listen((List<Change<Balance>> changes) {
+    listeners.add(res.balances.batchedChanges
+        .listen((List<Change<Balance>> changes) async {
       var interimBalances = Current.wallet.balances.toSet();
+      print('triggered by balances ${await services.download.unspents.isDone}');
       if (balances != interimBalances) {
-        print('triggered by balances');
+        print(
+            'triggered by balances ${await services.download.unspents.isDone}');
+        //if (services.wallet.leader.newLeaderProcessProcessing ||
+        //    await services.download.unspents.isDone) {
         setState(() {
           balances = interimBalances;
         });
+        //} else {
+        //  balances = interimBalances;
+        //}
       }
     }));
-    listeners.add(
-        res.addresses.batchedChanges.listen((List<Change<Address>> changes) {
+    listeners.add(res.addresses.batchedChanges
+        .listen((List<Change<Address>> changes) async {
       var interimAddresses = Current.wallet.addresses.toSet();
       if (addresses != interimAddresses) {
-        print('triggered by addresses');
+        print(
+            'triggered by addresses ${await services.download.unspents.isDone}');
         setState(() {
           addresses = interimAddresses;
         });
@@ -84,10 +92,14 @@ class _HoldingList extends State<HoldingList> {
     }));
 
     /// when the app becomes active again refresh the front end
-    listeners.add(streams.app.active.listen((bool active) {
+    listeners.add(streams.app.active.listen((bool active) async {
       if (active) {
-        print('triggered by activity');
+        print(
+            'triggered by activity ${await services.download.unspents.isDone}');
+        //if (services.wallet.leader.newLeaderProcessProcessing ||
+        //    await services.download.unspents.isDone) {
         setState(() {});
+        //}
       }
     }));
 

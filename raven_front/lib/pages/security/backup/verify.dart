@@ -97,6 +97,7 @@ class _VerifySeedState extends State<VerifySeed> {
       alignment: Alignment.center,
       child: Container(
           height: 272,
+          padding: EdgeInsets.only(left: 16, right: 16),
           child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

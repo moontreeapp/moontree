@@ -187,13 +187,12 @@ class _BackupSeedState extends State<BackupSeed>
         },
       );
 
-  Widget get words => Container(
-      height: (1 - (48 + 48 + 16 + 8 + 8 + 72 + 56).ofAppHeight).ofAppHeight,
-      color: Colors.red,
+  Widget get wordsInStack => Container(
+      height: (1 - 72.ofAppHeight).ofAppHeight,
       alignment: Alignment.center,
       child: Container(
           height: 272,
-          color: Colors.green,
+          padding: EdgeInsets.only(left: 16, right: 16),
           child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -211,27 +210,6 @@ class _BackupSeedState extends State<BackupSeed>
                       ]),
               ])));
 
-  Widget get wordsInStack => Container(
-      height: (1 - 72.ofAppHeight).ofAppHeight,
-      alignment: Alignment.center,
-      child: Container(
-          height: 272,
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                for (var x in [0, 3, 6, 9])
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        for (var i in [1, 2, 3])
-                          components.buttons.wordButton(context,
-                              width: buttonWidth,
-                              chosen: false,
-                              label: secret[(i + x) - 1],
-                              onPressed: () {},
-                              number: i + x)
-                      ]),
-              ])));
   bool verify() => services.password.validate.password(password.text);
 
   Widget get showButton => components.buttons.actionButton(context,

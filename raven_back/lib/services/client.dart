@@ -133,8 +133,6 @@ class SubscribeService {
       await onlySubscribeAddressUnspent(address);
       existing = true;
     }
-    // recalc balance here?
-    await services.balance.recalculateAllBalances();
     for (var address in addresses) {
       await onlySubscribeAddressHistory(address);
     }
@@ -186,11 +184,9 @@ class SubscribeService {
         //if (status == null || address.status?.status != status) {
         print('PULLING UNSPENTS');
         await services.download.unspents.pull(
-          scripthashes: [address.id],
+          scripthashes: [address.scripthash],
         );
         //}
-        // Recalculate balances for affected symbols... or everything
-        await services.balance.recalculateAllBalances();
       });
     }
   }

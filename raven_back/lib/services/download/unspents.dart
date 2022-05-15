@@ -12,6 +12,9 @@ enum ValueType { confirmed, unconfirmed }
 class UnspentService {
   // "Security name" -> scripthash -> {unspents}
   // This can be concurrently modified while we iterate over keys, i.e. recalc balances
+  final Set<String> _scripthashesChecked = {};
+  final _scripthashesLock = ReaderWriterLock();
+
   final Map<String, Map<String, Set<ScripthashUnspent>>> _unspentsBySymbol = {};
   final _unspentsLock = ReaderWriterLock();
 
@@ -74,6 +77,9 @@ class UnspentService {
   }) async {
     final finalScripthashes = defaultScripthashes(scripthashes);
     final rvn = res.securities.RVN.symbol;
+
+    await _scripthashesLock
+        .write(() => _scripthashesChecked.addAll(finalScripthashes.toSet()));
 
     // Clear all cached unspents & redownload
     await _unspentsLock.write(() {
@@ -160,7 +166,15 @@ class UnspentService {
         });
       }
     }
+
+    // Recalculate balances for everything if we're in regular startup process.
+    if (!services.wallet.leader.newLeaderProcessProcessing && await isDone) {
+      await services.balance.recalculateAllBalances();
+    }
   }
+
+  Future<bool> get isDone async => await _scripthashesLock
+      .read(() => _scripthashesChecked.length >= res.addresses.length);
 
   Future<int> _total(
     String walletId, [
