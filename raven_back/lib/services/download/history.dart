@@ -308,5 +308,5 @@ class HistoryService {
     _new_length = 0;
   }
 
-  bool get downloads_complete => _downloaded == _new_length;
+  bool get downloadsComplete => _downloaded == _new_length;
 }

@@ -9,6 +9,7 @@ import 'package:raven_back/raven_back.dart';
 class BalanceService {
   /// Listener Logic //////////////////////////////////////////////////////////
 
+  /// recalculates the balance of every symbol owned
   Future recalculateAllBalances() async {
     // wont work when it needs to until we save asset data when we save unspents
     /// erase first see 517
