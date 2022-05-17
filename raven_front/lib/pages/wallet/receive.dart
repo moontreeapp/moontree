@@ -30,6 +30,7 @@ class _ReceiveState extends State<Receive> {
   FocusNode requestAmountFocus = FocusNode();
   FocusNode requestLabelFocus = FocusNode();
   FocusNode requestMessageFocus = FocusNode();
+  FocusNode shareFocus = FocusNode();
   String uri = '';
   String username = '';
   String? errorText;
@@ -80,6 +81,7 @@ class _ReceiveState extends State<Receive> {
     requestMessage.dispose();
     requestAmount.dispose();
     requestLabel.dispose();
+    shareFocus.dispose();
     super.dispose();
   }
 
@@ -294,7 +296,7 @@ class _ReceiveState extends State<Receive> {
                                   focusNode: requestMessageFocus,
                                   controller: requestMessage,
                                   autocorrect: false,
-                                  textInputAction: TextInputAction.done,
+                                  textInputAction: TextInputAction.next,
                                   inputFormatters: [
                                     MainAssetNameTextFormatter(),
                                   ],
@@ -343,7 +345,7 @@ class _ReceiveState extends State<Receive> {
                                   controller: requestAmount,
                                   autocorrect: false,
                                   keyboardType: TextInputType.number,
-                                  textInputAction: TextInputAction.done,
+                                  textInputAction: TextInputAction.next,
                                   decoration: components.styles.decorations
                                       .textField(context,
                                           labelText: 'Amount',
@@ -367,6 +369,7 @@ class _ReceiveState extends State<Receive> {
                                 focusNode: requestLabelFocus,
                                 autocorrect: false,
                                 controller: requestLabel,
+                                textInputAction: TextInputAction.done,
                                 decoration: components.styles.decorations
                                     .textField(context,
                                         labelText: 'Note',
@@ -380,7 +383,9 @@ class _ReceiveState extends State<Receive> {
                                   requestLabel.text =
                                       cleanLabel(requestLabel.text);
                                   _makeURI();
-                                  FocusScope.of(context).unfocus();
+                                  //FocusScope.of(context).unfocus();
+                                  FocusScope.of(context)
+                                      .requestFocus(shareFocus);
                                 },
                               ),
                             ],
@@ -400,6 +405,7 @@ class _ReceiveState extends State<Receive> {
   Widget get shareButton => components.buttons.actionButton(
         context,
         label: 'Share',
+        focusNode: shareFocus,
         onPressed: () => Share.share(uri),
       );
 }

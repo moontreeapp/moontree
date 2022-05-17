@@ -178,7 +178,9 @@ class _ConnectionLightState extends State<ConnectionLight>
   Future<void> rebuildMe() async {
     await Future.delayed(Duration(milliseconds: 600));
     if (connectionBusy) {
-      if (streams.app.page.value != 'Login') {
+      // don't blink when spinner runs... separate into different streams?
+      if (!['Login', 'Createlogin'].contains(streams.app.page.value) &&
+          !services.wallet.leader.newLeaderProcessProcessing) {
         setState(() => busy = !busy);
       }
       rebuildMe();
