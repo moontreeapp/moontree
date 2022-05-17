@@ -78,7 +78,7 @@ class _TransactionListState extends State<TransactionList> {
   }
 
   Future refresh() async {
-    await services.rate.saveRate();
+    //await services.rate.saveRate();
     setState(() {});
   }
 
@@ -93,11 +93,14 @@ class _TransactionListState extends State<TransactionList> {
             count: min(10, transactionCount))
         : Container(
             alignment: Alignment.center,
-            child: _transactionsView(context),
-          );
+            child: RefreshIndicator(
+              child: _transactionsView(context),
+              onRefresh: () => refresh(),
+            ));
   }
 
   ListView _transactionsView(BuildContext context) => ListView(
+      physics: ClampingScrollPhysics(),
       controller: widget.scrollController,
       children: <Widget>[
             SizedBox(height: 16),
