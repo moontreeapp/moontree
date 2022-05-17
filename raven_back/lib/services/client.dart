@@ -119,9 +119,11 @@ class SubscribeService {
   final Map<String, StreamSubscription> subscriptionHandlesUnspent = {};
   final Map<String, StreamSubscription> subscriptionHandlesHistory = {};
   final Map<String, StreamSubscription> subscriptionHandlesAsset = {};
+  bool startupProcessRunning = false;
 
   Future<bool> toAllAddresses() async {
     /// this is not a user action - do not show activity
+    startupProcessRunning = true;
     streams.client.busy.add(true);
     streams.client.activity.add(ActivityMessage(
         active: true,
@@ -152,6 +154,7 @@ class SubscribeService {
     }
     streams.client.busy.add(false);
     streams.client.activity.add(ActivityMessage(active: false));
+    startupProcessRunning = false;
     return true;
   }
 

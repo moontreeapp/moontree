@@ -29,11 +29,13 @@ class _ActivityLightState extends State<ActivityLight>
       }
     }));
     listeners.add(streams.client.busy.listen((bool value) async {
-      if (!connectionBusy && value) {
-        setState(() => connectionBusy = value);
-      } else if (connectionBusy && !value) {
-        // todo wait til a good time to stop
-        setState(() => connectionBusy = value);
+      if (!services.client.subscribe.startupProcessRunning) {
+        if (!connectionBusy && value) {
+          setState(() => connectionBusy = value);
+        } else if (connectionBusy && !value) {
+          // todo wait til a good time to stop
+          setState(() => connectionBusy = value);
+        }
       }
     }));
     listeners.add(streams.app.page.listen((value) {

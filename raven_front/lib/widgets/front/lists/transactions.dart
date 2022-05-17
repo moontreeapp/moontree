@@ -147,7 +147,7 @@ class _TransactionListState extends State<TransactionList> {
             ]
           ] +
           [
-            if (!services.download.history.downloadsComplete)
+            if (!services.download.history.isComplete)
               for (var _ in transactions) ...[
                 components.empty.getTransactionsShimmer(context)
               ]

@@ -14,7 +14,7 @@ class AppColors {
         const Color(0xFF26C6DA),
         const Color(0xFF26A69A),
         success,
-        const Color(0xFF9CCC65),
+        lightGreen,
         lime,
         yellow,
         const Color(0xFFFFCA28),
@@ -24,11 +24,14 @@ class AppColors {
 
   static Color get error => const Color(0xFFEF5350);
   static Color get success => const Color(0xFF66BB6A);
+  static Color get lightGreen => const Color(0xFF9CCC65);
   static Color get primary => const Color(0xFF5C6BC0);
   static Color get lime => const Color(0xFFD4E157);
   static Color get yellow => const Color(0xFFFFEE58);
   static Color get primaryDisabled => const Color(0xFFC1C7E7);
   static Color get snackBar => const Color(0xFF212121);
+  static Color get logoGreen => const Color(0xFF94DF3F);
+  static Color get logoBlue => const Color(0xFF54A3E3);
 
   // .12 Colors.white.withAlpha(12)
   static Color get white12 => const Color(0x1FFFFFFF);
