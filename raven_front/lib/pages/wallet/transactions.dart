@@ -13,6 +13,8 @@ import 'package:raven_front/components/components.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'asset_details/asset_details_bloc.dart';
+
 double minHeight = 0.65.figmaAppHeight;
 
 class Transactions extends StatefulWidget {
@@ -244,6 +246,7 @@ class CoinDetailsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = AssetDetailsBloc.instance();
     return StreamBuilder(
         stream: scrollObserver,
         builder: (context, snapshot) {
@@ -255,8 +258,8 @@ class CoinDetailsHeader extends StatelessWidget {
                         100),
             child: Opacity(
               //angle: ((snapshot.data ?? 0.9) as double) * pi * 180,
-              opacity:
-                  getOpacityFromController((snapshot.data ?? .9) as double),
+              opacity: bloc.getOpacityFromController(
+                  (snapshot.data ?? .9) as double, minHeight),
               child: CoinSpec(
                 pageTitle: 'Transactions',
                 security: security,
@@ -265,17 +268,6 @@ class CoinDetailsHeader extends StatelessWidget {
             ),
           );
         });
-  }
-
-  double getOpacityFromController(double controllerValue) {
-    double opacity = 1;
-    if (controllerValue >= 0.9)
-      opacity = 0;
-    else if (controllerValue <= minHeight)
-      opacity = 1;
-    else
-      opacity = (0.9 - controllerValue) * 5;
-    return opacity;
   }
 }
 
