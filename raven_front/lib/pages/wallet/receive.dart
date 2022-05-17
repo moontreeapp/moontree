@@ -118,21 +118,23 @@ class _ReceiveState extends State<Receive> {
     }
     double height = 1.ofAppHeight;
     return FrontCurve(
+        alignment: Alignment.topCenter,
         child: GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-        _makeURI();
-      },
-      child: body(height),
-    ));
+          onTap: () {
+            FocusScope.of(context).unfocus();
+            _makeURI();
+          },
+          child: body(height),
+        ));
   }
 
   Widget body(double height) => Stack(
-        alignment: Alignment.bottomCenter,
+        alignment: Alignment.topCenter,
         children: [
           SingleChildScrollView(
-              child: SizedBox(
+              child: Container(
                   height: height,
+                  alignment: Alignment.topCenter,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
@@ -386,9 +388,15 @@ class _ReceiveState extends State<Receive> {
                       SizedBox(height: 72.figmaH)
                     ],
                   ))),
-          KeyboardHidesWidgetWithDelay(
-              child: components.containers
-                  .navBar(context, child: Row(children: [shareButton]))),
+          Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              Container(height: height + 48),
+              KeyboardHidesWidgetWithDelay(
+                  child: components.containers
+                      .navBar(context, child: Row(children: [shareButton]))),
+            ],
+          ),
         ],
       );
 
