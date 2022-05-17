@@ -67,7 +67,7 @@ class _TransactionsState extends State<Transactions> {
     var maxExtent = (currentTxs.length * 80 +
             80 +
             40 +
-            (!services.download.history.downloadsComplete ? 80 : 0))
+            (!services.download.history.isComplete ? 80 : 0))
         .ofMediaHeight(context);
     return BackdropLayers(
         back: CoinDetailsHeader(security, cachedMetadataView, scrollObserver),

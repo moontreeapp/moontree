@@ -117,7 +117,8 @@ class WalletService {
     throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
   }
 
-  String getEmptyAddress(Wallet wallet, {bool random = false}) {
+  // new, fast cached way (cache generated and saved during download)
+  String getEmptyAddressFromCache(Wallet wallet, {bool random = false}) {
     if (wallet is LeaderWallet) {
       return leader.getNextEmptyAddress(wallet,
           exposure: NodeExposure.External, random: random);
@@ -128,14 +129,46 @@ class WalletService {
     throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
   }
 
-  WalletBase getEmptyWallet(Wallet wallet) {
+  // old, slow reliable way to get an empty wallet
+  WalletBase getEmptyWalletFromDatabase(Wallet wallet,
+      {exposure = NodeExposure.External}) {
     if (wallet is LeaderWallet) {
-      // here we could use the cache list on wallet.
       return leader.getNextEmptyWallet(wallet, exposure: NodeExposure.External);
     }
     if (wallet is SingleWallet) {
       return single.getKPWallet(wallet);
     }
     throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
+  }
+
+  String getEmptyAddress(
+    Wallet wallet, {
+    bool random = false,
+    bool internal = false,
+    String? address,
+  }) {
+    if (internal) {
+      try {
+        return address ?? services.wallet.getChangeAddress(wallet);
+      } catch (e) {
+        return address ??
+            services.wallet
+                .getEmptyWalletFromDatabase(
+                  wallet,
+                  exposure: NodeExposure.Internal,
+                )
+                .address!;
+      }
+    }
+    try {
+      return address ??
+          services.wallet.getEmptyAddressFromCache(
+            wallet,
+            random: true,
+          );
+    } catch (e) {
+      return address ??
+          services.wallet.getEmptyWalletFromDatabase(wallet).address!;
+    }
   }
 }

@@ -30,6 +30,7 @@ class _ReceiveState extends State<Receive> {
   FocusNode requestAmountFocus = FocusNode();
   FocusNode requestLabelFocus = FocusNode();
   FocusNode requestMessageFocus = FocusNode();
+  FocusNode shareFocus = FocusNode();
   String uri = '';
   String username = '';
   String? errorText;
@@ -80,6 +81,7 @@ class _ReceiveState extends State<Receive> {
     requestMessage.dispose();
     requestAmount.dispose();
     requestLabel.dispose();
+    shareFocus.dispose();
     super.dispose();
   }
 
@@ -103,46 +105,43 @@ class _ReceiveState extends State<Receive> {
             ? data['symbol']
             : ''
         : requestMessage.text;
-    try {
-      address = address ??
-          services.wallet.getEmptyAddress(Current.wallet, random: true);
-    } catch (e) {
-      address =
-          address ?? services.wallet.getEmptyWallet(Current.wallet).address!;
-    }
+    address = services.wallet.getEmptyAddress(
+      Current.wallet,
+      random: true,
+      address: address,
+    );
     uri = uri == '' ? address! : uri;
     //requestMessage.selection =
     //    TextSelection.collapsed(offset: requestMessage.text.length);
     if (requestMessage.text != '') {
       _makeURI(refresh: false);
     }
-    double height =
-        1.ofAppHeight; //MediaQuery.of(context).size.height - (56 + 24 + 24);
-    return BackdropLayers(
-        back: BlankBack(),
-        front: FrontCurve(
-            child: GestureDetector(
+    double height = 1.ofAppHeight;
+    return FrontCurve(
+        alignment: Alignment.topCenter,
+        child: GestureDetector(
           onTap: () {
             FocusScope.of(context).unfocus();
             _makeURI();
           },
           child: body(height),
-        )));
+        ));
   }
 
   Widget body(double height) => Stack(
-        alignment: Alignment.bottomCenter,
+        alignment: Alignment.topCenter,
         children: [
           SingleChildScrollView(
-              child: SizedBox(
+              child: Container(
                   height: height,
+                  alignment: Alignment.topCenter,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      Container(height: 1),
                       SingleChildScrollView(
+                          physics: ClampingScrollPhysics(),
                           padding: EdgeInsets.only(
-                              top: 0, left: 0, right: 0, bottom: 0),
+                              top: 16, left: 0, right: 0, bottom: 0),
                           child: GestureDetector(
                               onTap: () {
                                 Clipboard.setData(new ClipboardData(
@@ -296,34 +295,30 @@ class _ReceiveState extends State<Receive> {
                               //      ),
                               //      SizedBox(height: 15.0),
                               //    ]),
-                              TextField(
+                              TextFieldFormatted(
                                   focusNode: requestMessageFocus,
                                   controller: requestMessage,
                                   autocorrect: false,
-                                  textInputAction: TextInputAction.done,
+                                  textInputAction: TextInputAction.next,
                                   inputFormatters: [
                                     MainAssetNameTextFormatter(),
                                   ],
                                   //maxLength: 32,
                                   //maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                                  decoration:
-                                      components.styles.decorations.textField(
-                                    context,
-                                    labelText: 'Requested Asset',
-                                    hintText: 'MOONTREE',
-                                    errorText: errorText,
-                                    suffixIcon: requestMessage.text == ''
-                                        ? null
-                                        : IconButton(
-                                            alignment: Alignment.centerRight,
-                                            //padding: EdgeInsets.all(0),
-                                            icon: Icon(Icons.close_rounded,
-                                                color: AppColors.black60),
-                                            onPressed: () => setState(() {
-                                                  requestMessage.text = '';
-                                                  data['symbol'] = null;
-                                                })),
-                                  ),
+                                  labelText: 'Requested Asset',
+                                  hintText: 'MOONTREE',
+                                  errorText: errorText,
+                                  suffixIcon: requestMessage.text == ''
+                                      ? null
+                                      : IconButton(
+                                          alignment: Alignment.centerRight,
+                                          //padding: EdgeInsets.all(0),
+                                          icon: Icon(Icons.close_rounded,
+                                              color: AppColors.black60),
+                                          onPressed: () => setState(() {
+                                                requestMessage.text = '';
+                                                data['symbol'] = null;
+                                              })),
                                   onTap: _makeURI,
                                   onChanged: (value) {
                                     //requestMessage.text =
@@ -344,16 +339,14 @@ class _ReceiveState extends State<Receive> {
                                         .requestFocus(requestAmountFocus);
                                   }),
                               SizedBox(height: 16),
-                              TextField(
+                              TextFieldFormatted(
                                   focusNode: requestAmountFocus,
                                   controller: requestAmount,
                                   autocorrect: false,
                                   keyboardType: TextInputType.number,
-                                  textInputAction: TextInputAction.done,
-                                  decoration: components.styles.decorations
-                                      .textField(context,
-                                          labelText: 'Amount',
-                                          hintText: 'Quantity'),
+                                  textInputAction: TextInputAction.next,
+                                  labelText: 'Amount',
+                                  hintText: 'Quantity',
                                   onTap: _makeURI,
                                   onChanged: (value) {
                                     //requestAmount.text = cleanDecAmount(requestAmount.text);
@@ -369,14 +362,13 @@ class _ReceiveState extends State<Receive> {
                                         .requestFocus(requestLabelFocus);
                                   }),
                               SizedBox(height: 16),
-                              TextField(
+                              TextFieldFormatted(
                                 focusNode: requestLabelFocus,
                                 autocorrect: false,
                                 controller: requestLabel,
-                                decoration: components.styles.decorations
-                                    .textField(context,
-                                        labelText: 'Note',
-                                        hintText: 'for groceries'),
+                                textInputAction: TextInputAction.done,
+                                labelText: 'Note',
+                                hintText: 'for groceries',
                                 onTap: _makeURI,
                                 onChanged: (value) {
                                   //requestLabel.text = cleanLabel(requestLabel.text);
@@ -386,19 +378,25 @@ class _ReceiveState extends State<Receive> {
                                   requestLabel.text =
                                       cleanLabel(requestLabel.text);
                                   _makeURI();
-                                  FocusScope.of(context).unfocus();
+                                  //FocusScope.of(context).unfocus();
+                                  FocusScope.of(context)
+                                      .requestFocus(shareFocus);
                                 },
                               ),
                             ],
                           )),
-                      Container(
-                        height: MediaQuery.of(context).size.height * (72 / 760),
-                      )
+                      SizedBox(height: 72.figmaH)
                     ],
                   ))),
-          KeyboardHidesWidgetWithDelay(
-              child: components.containers
-                  .navBar(context, child: Row(children: [shareButton]))),
+          Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              Container(height: height + 48),
+              KeyboardHidesWidgetWithDelay(
+                  child: components.containers
+                      .navBar(context, child: Row(children: [shareButton]))),
+            ],
+          ),
         ],
       );
 
@@ -408,6 +406,7 @@ class _ReceiveState extends State<Receive> {
   Widget get shareButton => components.buttons.actionButton(
         context,
         label: 'Share',
+        focusNode: shareFocus,
         onPressed: () => Share.share(uri),
       );
 }

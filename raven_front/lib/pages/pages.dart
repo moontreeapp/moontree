@@ -86,6 +86,9 @@ class pages {
         '/transactions': (context) => Transactions(),
         //'/wallet': (context) => WalletView(), // technical view
         '/scan': (context) => ScanQR(),
+        // create and reissue would make better sense if it referenced assets,
+        // but actually these should all be improved to match
+        // /wallet or /manage or /swap anyway...
         '/create/nft': (context) => CreateNFTAsset(),
         '/create/main': (context) => CreateMainAsset(),
         '/create/sub': (context) => CreateMainSubAsset(),
@@ -93,9 +96,15 @@ class pages {
         '/create/qualifiersub': (context) => CreateQualifierSubAsset(),
         '/create/channel': (context) => CreateChannelAsset(),
         '/create/restricted': (context) => CreateRestrictedAsset(),
+        '/create/checkout': (context) => Checkout(
+              transactionType: TransactionType.Create,
+            ),
         '/reissue/main': (context) => ReissueMainAsset(),
         '/reissue/sub': (context) => ReissueMainSubAsset(),
         '/reissue/restricted': (context) => ReissueRestrictedAsset(),
+        '/reissue/checkout': (context) => Checkout(
+              transactionType: TransactionType.Reissue,
+            ),
         '/security/backup': (context) => BackupSeed(),
         '/security/backupConfirm': (context) => VerifySeed(),
         '/security/change': (context) => ChangePassword(),
@@ -105,8 +114,11 @@ class pages {
         '/transaction/transaction': (context) => TransactionPage(),
         '/transaction/receive': (context) => Receive(),
         '/transaction/send': (context) => Send(),
-        '/transaction/checkout': (context) => Checkout(),
-        '/settings/export/export': (context) => Checkout(),
+        '/transaction/checkout': (context) => Checkout(
+              transactionType: TransactionType.Spend,
+            ),
+        '/settings/export/export': (context) =>
+            Checkout(transactionType: TransactionType.Export),
         '/settings/about': (context) => About(),
         '/settings/level': (context) => Advanced(),
         '/settings/currency': (context) => Language(),

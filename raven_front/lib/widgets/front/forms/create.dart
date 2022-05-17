@@ -220,23 +220,21 @@ class _CreateAssetState extends State<CreateAsset> {
                     )))
           ]);
 
-  Widget get parentFeild => TextField(
+  Widget get parentFeild => TextFieldFormatted(
         focusNode: parentFocus,
         controller: parentController,
         readOnly: true,
-        decoration: components.styles.decorations.textField(context,
-            labelText: 'Parent ' + (isQualifier ? 'Qualifier' : 'Asset'),
-            hintText: 'Parent ' + (isQualifier ? 'Qualifier' : 'Asset'),
-            errorText: parentValidationErr,
-            suffixIcon: IconButton(
-              icon: Padding(
-                  padding: EdgeInsets.only(right: 14),
-                  child: Icon(Icons.expand_more_rounded,
-                      color: Color(0xDE000000))),
-              onPressed: () => isQualifier
-                  ? _produceQualifierParentModal()
-                  : _produceParentModal(), // main subs, nft, channel
-            )),
+        labelText: 'Parent ' + (isQualifier ? 'Qualifier' : 'Asset'),
+        hintText: 'Parent ' + (isQualifier ? 'Qualifier' : 'Asset'),
+        errorText: parentValidationErr,
+        suffixIcon: IconButton(
+          icon: Padding(
+              padding: EdgeInsets.only(right: 14),
+              child: Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
+          onPressed: () => isQualifier
+              ? _produceQualifierParentModal()
+              : _produceParentModal(), // main subs, nft, channel
+        ),
         onTap: () => isQualifier
             ? _produceQualifierParentModal()
             : _produceParentModal(), // main subs, nft, channel
@@ -245,7 +243,7 @@ class _CreateAssetState extends State<CreateAsset> {
         },
       );
 
-  Widget get nameField => TextField(
+  Widget get nameField => TextFieldFormatted(
       focusNode: nameFocus,
       autocorrect: false,
       controller: nameController,
@@ -277,7 +275,7 @@ class _CreateAssetState extends State<CreateAsset> {
                   }
                 });
 
-  Widget get quantityField => TextField(
+  Widget get quantityField => TextFieldFormatted(
         focusNode: quantityFocus,
         controller: quantityController,
         keyboardType:
@@ -288,15 +286,12 @@ class _CreateAssetState extends State<CreateAsset> {
               decimalRange: int.parse(
                   decimalController.text == '' ? '0' : decimalController.text))
         ],
-        decoration: components.styles.decorations.textField(
-          context,
-          labelText: 'Quantity',
-          hintText: '21,000,000',
-          errorText: quantityController.text != '' &&
-                  !quantityValidation(quantityController.text.toDouble())
-              ? 'must ${quantityController.text.toInt().toCommaString()} be between 1 and 21,000,000,000'
-              : null,
-        ),
+        labelText: 'Quantity',
+        hintText: '21,000,000',
+        errorText: quantityController.text != '' &&
+                !quantityValidation(quantityController.text.toDouble())
+            ? 'must ${quantityController.text.toInt().toCommaString()} be between 1 and 21,000,000,000'
+            : null,
         onChanged: (String value) =>
             validateQuantity(quantity: value == '' ? 0.0 : value.toDouble()),
         onEditingComplete: () {
@@ -307,27 +302,24 @@ class _CreateAssetState extends State<CreateAsset> {
         },
       );
 
-  Widget get decimalField => TextField(
+  Widget get decimalField => TextFieldFormatted(
         focusNode: decimalFocus,
         controller: decimalController,
         readOnly: true,
-        decoration: components.styles.decorations.textField(context,
-            labelText: 'Decimals',
-            hintText: 'Decimals',
-            suffixIcon: IconButton(
-              icon: Padding(
-                  padding: EdgeInsets.only(right: 14),
-                  child: Icon(Icons.expand_more_rounded,
-                      color: Color(0xDE000000))),
-              onPressed: () => _produceDecimalModal(),
-            )),
-        onTap: () => _produceDecimalModal(),
+        labelText: 'Decimals',
+        hintText: 'Decimals',
+        suffixIcon: IconButton(
+          icon: Padding(
+              padding: EdgeInsets.only(right: 14),
+              child: Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
+          onPressed: () => _produceDecimalModal(),
+        ),
         onChanged: (String? newValue) {
           FocusScope.of(context).requestFocus(ipfsFocus);
         },
       );
 
-  Widget get verifierField => TextField(
+  Widget get verifierField => TextFieldFormatted(
       focusNode: verifierFocus,
       autocorrect: false,
       controller: verifierController,
@@ -348,20 +340,17 @@ class _CreateAssetState extends State<CreateAsset> {
         FocusScope.of(context).requestFocus(ipfsFocus);
       });
 
-  Widget get ipfsField => TextField(
+  Widget get ipfsField => TextFieldFormatted(
         focusNode: ipfsFocus,
         autocorrect: false,
         controller: ipfsController,
         textInputAction: TextInputAction.done,
-        decoration: components.styles.decorations.textField(
-          context,
-          labelText: 'IPFS/TXID',
-          hintText: 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr',
-          //helperText: ipfsValidation(ipfsController.text) ? 'match' : null,
-          errorText: ipfsController.text == '' || ipfsValidated
-              ? null
-              : 'invalid IPFS/TXID',
-        ),
+        labelText: 'IPFS/TXID',
+        hintText: 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr',
+        //helperText: ipfsValidation(ipfsController.text) ? 'match' : null,
+        errorText: ipfsController.text == '' || ipfsValidated
+            ? null
+            : 'invalid IPFS/TXID',
         onChanged: (String value) => validateAssetData(data: value),
         onEditingComplete: () => FocusScope.of(context).requestFocus(nextFocus),
       );

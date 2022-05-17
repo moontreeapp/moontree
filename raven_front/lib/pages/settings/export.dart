@@ -82,20 +82,16 @@ class _ExportState extends State<Export> {
 
   Widget get walletChoices => Padding(
       padding: EdgeInsets.only(left: 16.0, top: 16, right: 16, bottom: 40),
-      child: TextField(
+      child: TextFieldFormatted(
         controller: walletController,
         readOnly: true,
-        decoration: components.styles.decorations.textField(
-          context,
-          labelText: 'Wallet',
-          helperStyle: TextStyle(color: AppColors.error),
-          suffixIcon: IconButton(
-            icon: Padding(
-                padding: EdgeInsets.only(right: 14),
-                child:
-                    Icon(Icons.expand_more_rounded, color: AppColors.black87)),
-            onPressed: () => _produceWalletModal(),
-          ),
+        labelText: 'Wallet',
+        helperStyle: TextStyle(color: AppColors.error),
+        suffixIcon: IconButton(
+          icon: Padding(
+              padding: EdgeInsets.only(right: 14),
+              child: Icon(Icons.expand_more_rounded, color: AppColors.black87)),
+          onPressed: () => _produceWalletModal(),
         ),
         onTap: () {
           _produceWalletModal();

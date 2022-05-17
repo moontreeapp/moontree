@@ -104,48 +104,39 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
   Widget get networkTextField => Container(
       height: 81,
       alignment: Alignment.bottomCenter,
-      child: TextField(
+      child: TextFieldFormatted(
         focusNode: networkFocus,
         autocorrect: false,
         controller: network,
         textInputAction: TextInputAction.done,
-        decoration: components.styles.decorations.textField(
-          context,
-          focusNode: networkFocus,
-          labelText: 'Network',
-        ),
+        labelText: 'Network',
         onEditingComplete: () {
           network.text = network.text.trim();
         },
       ));
 
-  Widget get serverTextField => TextField(
+  Widget get serverTextField => TextFieldFormatted(
         focusNode: serverFocus,
         autocorrect: false,
         controller: serverAddress,
         textInputAction: TextInputAction.done,
-        decoration: components.styles.decorations.textField(
-          context,
-          focusNode: serverFocus,
-          labelText: 'Server',
-          hintText: services.client.ravenElectrumClient != null
-              ? '${services.client.ravenElectrumClient!.host}:${services.client.ravenElectrumClient!.port}'
-              : '${services.client.currentDomain}:${services.client.currentPort.toString()}',
-          helperText: validated
-              ? services.client.connectionStatus &&
-                      matches &&
-                      streams.client.connected.value ==
-                          ConnectionStatus.connected
-                  ? 'Connected'
-                  : null
-              : null,
-          errorText: validated ? null : 'Invalid Server',
-          helperStyle: Theme.of(context)
-              .textTheme
-              .caption!
-              .copyWith(height: .8, color: AppColors.success),
-          alwaysShowHelper: true,
-        ),
+        labelText: 'Server',
+        hintText: services.client.ravenElectrumClient != null
+            ? '${services.client.ravenElectrumClient!.host}:${services.client.ravenElectrumClient!.port}'
+            : '${services.client.currentDomain}:${services.client.currentPort.toString()}',
+        helperText: validated
+            ? services.client.connectionStatus &&
+                    matches &&
+                    streams.client.connected.value == ConnectionStatus.connected
+                ? 'Connected'
+                : null
+            : null,
+        errorText: validated ? null : 'Invalid Server',
+        helperStyle: Theme.of(context)
+            .textTheme
+            .caption!
+            .copyWith(height: .8, color: AppColors.success),
+        alwaysShowHelper: true,
         onChanged: (String value) {
           enableSubmit = true;
           validated = validateDomainPort(value);

@@ -16,6 +16,13 @@ class SendWaiter extends Waiter {
         print('SEND REQUEST $sendRequest');
         Tuple2<ravencoin.Transaction, SendEstimate> tuple;
         try {
+          /// must wait on syncing because need everything downloaded before
+          /// attempting to create a transaction. client might be busy doing
+          /// other things, so we ask if download is complete too
+          while (streams.client.busy.value &&
+              services.download.history.isComplete) {
+            await Future.delayed(Duration(seconds: 1));
+          }
           tuple = await services.transaction.make.transactionBy(sendRequest);
           ravencoin.Transaction tx = tuple.item1;
           SendEstimate estimate = tuple.item2;
@@ -31,17 +38,18 @@ class SendWaiter extends Waiter {
               atBottom: true,
               positive: false));
           streams.spend.success.add(false);
-        } catch (e) {
-          print('Send:');
-          print(e);
-          streams.app.snack.add(Snack(
-            message: 'Error Generating Transaction: $e',
-            atBottom: true,
-            positive: false,
-            //details: 'Unable to create transaction: $e',
-          ));
-          streams.spend.success.add(false);
         }
+        // catch (e) {
+        //  print('Send:');
+        //  print(e);
+        //  streams.app.snack.add(Snack(
+        //    message: 'Error Generating Transaction: $e',
+        //    atBottom: true,
+        //    positive: false,
+        //    //details: 'Unable to create transaction: $e',
+        //  ));
+        //  streams.spend.success.add(false);
+        //}
       }
     });
 

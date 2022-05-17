@@ -24,8 +24,12 @@ class _ConnectionLightState extends State<ConnectionLight>
     ConnectionStatus.connecting: AppColors.yellow,
     ConnectionStatus.disconnected: AppColors.error,
   };
+  /* alternative */
+  bool connectionBusy = false;
+  bool busy = false;
 
-  /*bool connectionBusy = false;
+  /* fancy movement animations
+  bool connectionBusy = false;
   late DateTime startTime;
   final int durationV = 1236;
   final int durationH = 2000;
@@ -81,7 +85,8 @@ class _ConnectionLightState extends State<ConnectionLight>
         });
       }
     }));
-    /*createAnimations();
+    /* fancy movement animations
+    createAnimations();
     listeners.add(streams.client.connected.listen((ConnectionStatus value) {
       if (value != connectionStatus) {
         setState(() {
@@ -147,11 +152,22 @@ class _ConnectionLightState extends State<ConnectionLight>
         }
       }
     }));*/
+    /* alternative to fancy movement animations - blinking */
+    listeners.add(streams.client.busy.listen((bool value) async {
+      if (value && !connectionBusy) {
+        setState(() => connectionBusy = value);
+        rebuildMe();
+      }
+      if (!value && connectionBusy) {
+        setState(() => connectionBusy = value);
+      }
+    }));
   }
 
   @override
   void dispose() {
-    /*_controllerH.dispose();
+    /* fancy movement animations
+    _controllerH.dispose();
     _controllerV.dispose();*/
     for (var listener in listeners) {
       listener.cancel();
@@ -159,13 +175,31 @@ class _ConnectionLightState extends State<ConnectionLight>
     super.dispose();
   }
 
+  Future<void> rebuildMe() async {
+    await Future.delayed(Duration(milliseconds: 600));
+    if (connectionBusy) {
+      // don't blink when spinner runs... separate into different streams?
+      if (!['Login', 'Createlogin'].contains(streams.app.page.value) &&
+          !services.wallet.leader.newLeaderProcessProcessing) {
+        setState(() => busy = !busy);
+      }
+      rebuildMe();
+    } else {
+      if (busy) {
+        setState(() => busy = !busy);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    /* fancy movement animations
     var icon = ColorFiltered(
-        colorFilter: ColorFilter.mode(connectionStatusColor, BlendMode.srcATop),
+        colorFilter: ColorFilter.mode(
+          connectionStatusColor,
+          BlendMode.srcATop),
         child: SvgPicture.asset('assets/status/icon.svg'));
     return
-        /*
     connectionBusy
         ? GestureDetector(
             onTap: () => streams.client.busy.add(false),
@@ -197,22 +231,32 @@ class _ConnectionLightState extends State<ConnectionLight>
                     )),
           )
         : */
-        Container(
-            alignment: Alignment.center,
-            child: IconButton(
-              splashRadius: 24,
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                if (!['Login', 'Createlogin']
-                    .contains(streams.app.page.value)) {
-                  ScaffoldMessenger.of(context).clearSnackBars();
-                  streams.app.xlead.add(true);
-                  Navigator.of(components.navigator.routeContext!)
-                      .pushNamed('/settings/network');
-                }
-              },
-              icon: icon,
-            ));
+    /* alternative */
+    return Container(
+        alignment: Alignment.center,
+        child: IconButton(
+          splashRadius: 24,
+          padding: EdgeInsets.zero,
+          icon: AnimatedContainer(
+            duration: Duration(milliseconds: 200),
+            height: 8,
+            width: 8,
+            decoration: BoxDecoration(
+              color: connectionStatus == ConnectionStatus.connected && busy
+                  ? AppColors.logoGreen
+                  : connectionStatusColor,
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+          onPressed: () {
+            if (!['Login', 'Createlogin'].contains(streams.app.page.value)) {
+              ScaffoldMessenger.of(context).clearSnackBars();
+              streams.app.xlead.add(true);
+              Navigator.of(components.navigator.routeContext!)
+                  .pushNamed('/settings/network');
+            }
+          },
+        ));
   }
 }
 

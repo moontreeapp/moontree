@@ -104,7 +104,7 @@ class _ImportState extends State<Import> {
         left: 16.0,
         right: 16.0,
       ),
-      child: TextField(
+      child: TextFieldFormatted(
           focusNode: wordsFocus,
           enableInteractiveSelection: true,
           autocorrect: false,
@@ -115,23 +115,18 @@ class _ImportState extends State<Import> {
           textInputAction: TextInputAction.done,
           // interferes with voice - one word at a time:
           //inputFormatters: [LowerCaseTextFormatter()],
-          decoration: components.styles.decorations.textField(
-            context,
-            focusNode: wordsFocus,
-            labelText: wordsFocus.hasFocus ? 'Seed | WIF | Key' : null,
-            hintText: 'Please enter your seed words, WIF, or private key.',
-            helperText:
-                importFormatDetected == 'Unknown' ? null : importFormatDetected,
-            errorText:
-                importFormatDetected == 'Unknown' ? importFormatDetected : null,
-            suffixIcon: IconButton(
-              icon: Icon(
-                  importVisible ? Icons.visibility : Icons.visibility_off,
-                  color: AppColors.black60),
-              onPressed: () => setState(() {
-                importVisible = !importVisible;
-              }),
-            ),
+          labelText: wordsFocus.hasFocus ? 'Seed | WIF | Key' : null,
+          hintText: 'Please enter your seed words, WIF, or private key.',
+          helperText:
+              importFormatDetected == 'Unknown' ? null : importFormatDetected,
+          errorText:
+              importFormatDetected == 'Unknown' ? importFormatDetected : null,
+          suffixIcon: IconButton(
+            icon: Icon(importVisible ? Icons.visibility : Icons.visibility_off,
+                color: AppColors.black60),
+            onPressed: () => setState(() {
+              importVisible = !importVisible;
+            }),
           ),
           onChanged: (value) => enableImport(toLower: false),
           onEditingComplete: () {

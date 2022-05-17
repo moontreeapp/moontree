@@ -182,10 +182,7 @@ class _HoldingList extends State<HoldingList> {
               }()
             : () {
                 streams.app.wallet.isEmpty.add(false);
-                return RefreshIndicator(
-                  child: _holdingsView(context),
-                  onRefresh: () => refresh(),
-                );
+                return _holdingsView(context);
               }();
 
     //RefreshIndicator( child:...

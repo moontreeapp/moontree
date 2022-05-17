@@ -78,7 +78,7 @@ class _TransactionListState extends State<TransactionList> {
   }
 
   Future refresh() async {
-    await services.rate.saveRate();
+    //await services.rate.saveRate();
     setState(() {});
   }
 
@@ -100,6 +100,7 @@ class _TransactionListState extends State<TransactionList> {
   }
 
   ListView _transactionsView(BuildContext context) => ListView(
+      physics: ClampingScrollPhysics(),
       controller: widget.scrollController,
       children: <Widget>[
             SizedBox(height: 16),
@@ -147,7 +148,7 @@ class _TransactionListState extends State<TransactionList> {
             ]
           ] +
           [
-            if (!services.download.history.downloadsComplete)
+            if (!services.download.history.isComplete)
               for (var _ in transactions) ...[
                 components.empty.getTransactionsShimmer(context)
               ]

@@ -76,60 +76,53 @@ class _ChangePasswordState extends State<ChangePassword> {
         ],
       );
 
-  Widget get newPasswordField => TextField(
+  Widget get newPasswordField => TextFieldFormatted(
         focusNode: newPasswordFocus,
         autocorrect: false,
         controller: newPassword,
         obscureText: !newPasswordVisible,
         textInputAction: TextInputAction.done,
-        decoration: components.styles.decorations.textField(
-          context,
-          labelText: 'New Password',
-          helperText: validatedComplexity ? newNotification : null,
-          errorText: !validatedComplexity && newNotification != ''
-              ? newNotification
-              : null,
-          suffixIcon: IconButton(
-            icon: Icon(
-                newPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                color: Color(0x99000000)),
-            onPressed: () => setState(() {
-              newPasswordVisible = !newPasswordVisible;
-            }),
-          ),
+        labelText: 'New Password',
+        helperText: validatedComplexity ? newNotification : null,
+        errorText: !validatedComplexity && newNotification != ''
+            ? newNotification
+            : null,
+        suffixIcon: IconButton(
+          icon: Icon(
+              newPasswordVisible ? Icons.visibility : Icons.visibility_off,
+              color: Color(0x99000000)),
+          onPressed: () => setState(() {
+            newPasswordVisible = !newPasswordVisible;
+          }),
         ),
         onChanged: (String value) => validateComplexity(password: value),
         onEditingComplete: () =>
             FocusScope.of(context).requestFocus(confirmPasswordFocus),
       );
 
-  Widget get confirmPasswordField => TextField(
+  Widget get confirmPasswordField => TextFieldFormatted(
         focusNode: confirmPasswordFocus,
         autocorrect: false,
         controller: confirmPassword,
         obscureText: !confirmPasswordVisible,
         textInputAction: TextInputAction.done,
-        decoration: components.styles.decorations.textField(
-          context,
-          labelText: 'Confirm New Password',
-          helperText: confirmPassword.text != '' &&
-                  confirmPassword.text == newPassword.text
-              ? 'Match'
-              : null,
-          errorText: confirmPassword.text == '' ||
-                  confirmPassword.text == newPassword.text
-              ? null
-              : 'No Match',
-          suffixIcon: IconButton(
-            icon: Icon(
-                confirmPasswordVisible
-                    ? Icons.visibility
-                    : Icons.visibility_off,
-                color: Color(0x99000000)),
-            onPressed: () => setState(() {
-              confirmPasswordVisible = !confirmPasswordVisible;
-            }),
-          ),
+
+        labelText: 'Confirm New Password',
+        helperText: confirmPassword.text != '' &&
+                confirmPassword.text == newPassword.text
+            ? 'Match'
+            : null,
+        errorText: confirmPassword.text == '' ||
+                confirmPassword.text == newPassword.text
+            ? null
+            : 'No Match',
+        suffixIcon: IconButton(
+          icon: Icon(
+              confirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
+              color: Color(0x99000000)),
+          onPressed: () => setState(() {
+            confirmPasswordVisible = !confirmPasswordVisible;
+          }),
         ),
         onChanged: (String value) => validateComplexity(),
         //onEditingComplete: () async => await submit(),
