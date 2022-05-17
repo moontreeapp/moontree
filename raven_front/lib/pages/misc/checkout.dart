@@ -2,13 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:intersperse/intersperse.dart';
+import 'package:raven_back/services/transaction/maker.dart';
+import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/utilities/transform.dart';
+import 'package:raven_back/streams/app.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/data.dart';
-import 'package:raven_back/services/transaction/maker.dart';
-import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/utilities/transform.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
 enum TransactionType { Spend, Create, Reissue, Export }
@@ -88,6 +89,10 @@ class _CheckoutState extends State<Checkout> {
 
     /// if still in download process of any kind, tell user they must wait till
     /// sync is finished, disable button until done.
+    if (streams.client.busy.value) {
+      streams.app.snack.add(Snack(
+          message: 'Still syncing with network, please wait', atBottom: true));
+    }
     if (widget.transactionType == TransactionType.Spend) {
       listeners.add(streams.spend.estimate.listen((SendEstimate? value) {
         if (value != estimate) {

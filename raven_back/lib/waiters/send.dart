@@ -16,6 +16,9 @@ class SendWaiter extends Waiter {
         print('SEND REQUEST $sendRequest');
         Tuple2<ravencoin.Transaction, SendEstimate> tuple;
         try {
+          while (streams.client.busy.value) {
+            await Future.delayed(Duration(seconds: 1));
+          }
           tuple = await services.transaction.make.transactionBy(sendRequest);
           ravencoin.Transaction tx = tuple.item1;
           SendEstimate estimate = tuple.item2;
