@@ -623,7 +623,6 @@ class _SendState extends State<Send> {
               : null,
           note: sendNote.text != '' ? sendNote.text : null,
         );
-        print('sendRequest $sendRequest');
         confirmSend(sendRequest);
       }
     }

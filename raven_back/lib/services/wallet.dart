@@ -117,6 +117,7 @@ class WalletService {
     throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
   }
 
+  // new, fast cached way (cache generated and saved during download)
   String getEmptyAddress(Wallet wallet, {bool random = false}) {
     if (wallet is LeaderWallet) {
       return leader.getNextEmptyAddress(wallet,
@@ -128,9 +129,9 @@ class WalletService {
     throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
   }
 
-  WalletBase getEmptyWallet(Wallet wallet) {
+  // old, slow reliable way to get an empty wallet
+  WalletBase getEmptyWallet(Wallet wallet, {exposure = NodeExposure.External}) {
     if (wallet is LeaderWallet) {
-      // here we could use the cache list on wallet.
       return leader.getNextEmptyWallet(wallet, exposure: NodeExposure.External);
     }
     if (wallet is SingleWallet) {

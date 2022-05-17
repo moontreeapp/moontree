@@ -142,8 +142,16 @@ class LeaderWallet extends Wallet {
           ? randomUnusedInternalAddress
           : randomUnusedExternalAddress;
 
-  Address? get unusedInternalAddress => res.addresses.byWalletExposureIndex
-      .getOne(id, NodeExposure.Internal, unusedInternalIndices.first);
+  Address? get unusedInternalAddress {
+    print('addresses should exist now: ${res.addresses.length}');
+    print('index: ${unusedInternalIndices.first}');
+    print('id: ${id}');
+    print(
+        'address: ${res.addresses.byWalletExposureIndex.getOne(id, NodeExposure.Internal, unusedInternalIndices.first)}');
+    return res.addresses.byWalletExposureIndex
+        .getOne(id, NodeExposure.Internal, unusedInternalIndices.first);
+  }
+
   Address? get unusedExternalAddress => res.addresses.byWalletExposureIndex
       .getOne(id, NodeExposure.External, unusedExternalIndices.first);
 

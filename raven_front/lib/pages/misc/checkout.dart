@@ -11,6 +11,8 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/utilities/transform.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
+enum TransactionType { Spend, Create, Reissue, Export }
+
 class CheckoutStruct {
   final Widget? icon;
   final String? symbol;
@@ -65,7 +67,9 @@ class CheckoutStruct {
 }
 
 class Checkout extends StatefulWidget {
-  const Checkout({Key? key}) : super(key: key);
+  final TransactionType? transactionType;
+
+  const Checkout({required this.transactionType, Key? key}) : super(key: key);
 
   @override
   _CheckoutState createState() => _CheckoutState();
@@ -81,27 +85,34 @@ class _CheckoutState extends State<Checkout> {
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.spend.estimate.listen((SendEstimate? value) {
-      if (value != estimate) {
-        setState(() {
-          estimate = value;
-        });
-      }
-    }));
-    listeners.add(streams.create.estimate.listen((SendEstimate? value) {
-      if (value != estimate) {
-        setState(() {
-          estimate = value;
-        });
-      }
-    }));
-    listeners.add(streams.reissue.estimate.listen((SendEstimate? value) {
-      if (value != estimate) {
-        setState(() {
-          estimate = value;
-        });
-      }
-    }));
+
+    /// if still in download process of any kind, tell user they must wait till
+    /// sync is finished, disable button until done.
+    if (widget.transactionType == TransactionType.Spend) {
+      listeners.add(streams.spend.estimate.listen((SendEstimate? value) {
+        if (value != estimate) {
+          setState(() {
+            estimate = value;
+          });
+        }
+      }));
+    } else if (widget.transactionType == TransactionType.Create) {
+      listeners.add(streams.create.estimate.listen((SendEstimate? value) {
+        if (value != estimate) {
+          setState(() {
+            estimate = value;
+          });
+        }
+      }));
+    } else if (widget.transactionType == TransactionType.Reissue) {
+      listeners.add(streams.reissue.estimate.listen((SendEstimate? value) {
+        if (value != estimate) {
+          setState(() {
+            estimate = value;
+          });
+        }
+      }));
+    }
   }
 
   @override

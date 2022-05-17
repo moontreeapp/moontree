@@ -80,6 +80,7 @@ class BackdropAppBarContents extends StatelessWidget
       ? GestureDetector(
           onTap: () async {
             print(await services.download.unspents.isDone);
+            print((Current.wallet as LeaderWallet).unusedInternalIndices);
             streams.app.snack.add(Snack(
               message: 'message',
             ));

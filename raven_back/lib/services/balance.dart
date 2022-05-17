@@ -4,6 +4,8 @@
 // ignore_for_file: omit_local_variable_types
 import 'dart:math';
 import 'package:collection/collection.dart';
+import 'package:crypto/crypto.dart';
+import 'package:pointycastle/digests/md5.dart';
 import 'package:raven_back/raven_back.dart';
 
 class BalanceService {
@@ -49,7 +51,9 @@ class BalanceService {
         (await services.download.unspents.getUnspents(security?.symbol))
             .toList();
     var collection = <Vout>[];
-    final _random = Random();
+
+    // initialize Random with a hidden deterministic seed
+    final _random = Random(unspents.map((e) => e.txHash).join().hashCode);
     while (amount - gathered > 0) {
       var randomIndex = _random.nextInt(unspents.length);
       var unspent = unspents[randomIndex];

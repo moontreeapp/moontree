@@ -364,9 +364,6 @@ class TransactionMaker {
     SendRequest sendRequest,
   ) async {
     var tuple;
-    print('sendRequest.assetMemo: ${sendRequest.assetMemo}');
-    print(
-        'sendRequest.assetMemo?.base58Decode: ${sendRequest.assetMemo?.base58Decode}');
     var estimate = SendEstimate(
       sendRequest.sendAmountAsSats,
       security: sendRequest.security,
@@ -1180,7 +1177,17 @@ class TransactionMaker {
     }
     var securityChange =
         estimate.security == null ? 0 : securityIn - estimate.amount;
-    var returnAddress = services.wallet.getChangeAddress(wallet);
+    // must wait for addesses ...?
+    var returnAddress;
+    try {
+      returnAddress = returnAddress ?? services.wallet.getChangeAddress(wallet);
+    } catch (e) {
+      returnAddress = returnAddress ??
+          services.wallet
+              .getEmptyWallet(wallet, exposure: NodeExposure.Internal)
+              .address!;
+    }
+
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
