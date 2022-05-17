@@ -137,26 +137,6 @@ class TextFieldFormatted extends StatefulWidget {
 
 class _TextFieldFormattedState extends State<TextFieldFormatted> {
   @override
-  void initState() {
-    super.initState();
-
-    /// no effect
-    //widget.focusNode?.addListener(() {
-    //  setState(() {});
-    //});
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-
-    /// no effect
-    //widget.focusNode?.removeListener(() {
-    //  setState(() {});
-    //});
-  }
-
-  @override
   Widget build(BuildContext context) => TextField(
       decoration: InputDecoration(
         focusedErrorBorder: OutlineInputBorder(
