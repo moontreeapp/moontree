@@ -48,6 +48,7 @@ class SpendForm with EquatableMixin {
     this.address,
     this.addressName,
   });
+
   @override
   String toString() => 'SpendForm(symbol=$symbol, amount=$amount, fee=$fee, '
       'note=$note, address=$address, addressName=$addressName)';

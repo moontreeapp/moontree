@@ -4,6 +4,7 @@ import 'package:raven_front/theme/theme.dart';
 class DecorationComponents {
   DecorationComponents();
 
+  /// superceded by TextFieldFormatted widget which has this built in.
   InputDecoration textField(
     BuildContext context, {
     String? labelText,
@@ -60,13 +61,14 @@ class DecorationComponents {
                 .copyWith(height: .8, color: AppColors.primary),
       );
 
-  static TextStyle labelColor(FocusNode? focusNode, String? errorText) {
-    return focusNode != null
-        ? focusNode.hasFocus
-            ? TextStyle(
-                color: errorText == null ? AppColors.primary : AppColors.error)
-            : TextStyle(
-                color: errorText == null ? AppColors.black60 : AppColors.error)
+  TextStyle labelColor(FocusNode? focusNode, String? errorText) {
+    /// to fix #594 I think you'd have to do something like add a listener on
+    /// this foucsNode to rebuild this or the parent widget when it gains focus,
+    /// you want the click to redraw the text, otherwise it stays black60...
+    /// I tested that and wasn't able to get it to work...
+    return focusNode?.hasFocus ?? false
+        ? TextStyle(
+            color: errorText == null ? AppColors.error : AppColors.error)
         : TextStyle(
             color: errorText == null ? AppColors.black60 : AppColors.error);
   }

@@ -82,20 +82,18 @@ class _FeedbackState extends State<Feedback> {
         style: Theme.of(context).textTheme.bodyText1,
       );
 
-  Widget get typeField => TextField(
+  Widget get typeField => TextFieldFormatted(
         focusNode: typeFocus,
         controller: typeController,
         readOnly: true,
-        decoration: components.styles.decorations.textField(context,
-            labelText: 'Request Type',
-            hintText: 'Request Type',
-            suffixIcon: IconButton(
-              icon: Padding(
-                  padding: EdgeInsets.only(right: 14),
-                  child: Icon(Icons.expand_more_rounded,
-                      color: Color(0xDE000000))),
-              onPressed: () => _produceFeedbackModal(),
-            )),
+        labelText: 'Request Type',
+        hintText: 'Request Type',
+        suffixIcon: IconButton(
+          icon: Padding(
+              padding: EdgeInsets.only(right: 14),
+              child: Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
+          onPressed: () => _produceFeedbackModal(),
+        ),
         onTap: () => _produceFeedbackModal(),
         onEditingComplete: () =>
             FocusScope.of(context).requestFocus(descriptionFocus),
@@ -103,7 +101,7 @@ class _FeedbackState extends State<Feedback> {
 
   Widget get descriptionField => Container(
       height: 200,
-      child: TextField(
+      child: TextFieldFormatted(
           focusNode: descriptionFocus,
           autocorrect: false,
           controller: descriptionController,
@@ -116,15 +114,12 @@ class _FeedbackState extends State<Feedback> {
                   .subtitle1!
                   .copyWith(color: AppColors.offBlack)
               : Theme.of(context).textTheme.subtitle1,
-          decoration: components.styles.decorations.textField(
-            context,
-            labelText: 'Description',
-            hintText: 'As a user... I want... so that...',
-            helperText: descriptionController.text == ''
-                ? 'As a user... I want... so that...'
-                : null,
-            errorText: null,
-          ),
+          labelText: 'Description',
+          hintText: 'As a user... I want... so that...',
+          helperText: descriptionController.text == ''
+              ? 'As a user... I want... so that...'
+              : null,
+          errorText: null,
           onChanged: (value) => enableSend(),
           onEditingComplete: () {
             print(descriptionFocus.hasFocus);
@@ -132,7 +127,7 @@ class _FeedbackState extends State<Feedback> {
             setState(() {});
           }));
 
-  Widget get emailField => TextField(
+  Widget get emailField => TextFieldFormatted(
         focusNode: emailFocus,
         autocorrect: false,
         controller: emailController,
@@ -144,14 +139,11 @@ class _FeedbackState extends State<Feedback> {
                 .subtitle1!
                 .copyWith(color: AppColors.offBlack)
             : Theme.of(context).textTheme.subtitle1,
-        decoration: components.styles.decorations.textField(
-          context,
-          labelText: 'Email Address',
-          helperText: emailController.text == ''
-              ? "We'll reach out to you if we have any questions"
-              : null,
-          errorText: null,
-        ),
+        labelText: 'Email Address',
+        helperText: emailController.text == ''
+            ? "We'll reach out to you if we have any questions"
+            : null,
+        errorText: null,
         onChanged: (value) => enableSend(),
         onEditingComplete: () async => await attemptSend(),
       );

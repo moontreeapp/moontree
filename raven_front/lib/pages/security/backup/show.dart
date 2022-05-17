@@ -164,23 +164,19 @@ class _BackupSeedState extends State<BackupSeed>
             .copyWith(color: AppColors.error),
       ));
 
-  Widget get login => TextField(
+  Widget get login => TextFieldFormatted(
         focusNode: existingFocus,
         autocorrect: false,
         enabled: services.password.askCondition ? true : false,
         controller: password,
         obscureText: true,
         textInputAction: TextInputAction.done,
-        decoration: components.styles.decorations.textField(
-          context,
-          focusNode: existingFocus,
-          labelText: 'Password',
-          errorText: password.text == '' &&
-                  res.settings.loginAttempts.length > 0 &&
-                  failedAttempt
-              ? 'Incorrect Password'
-              : null,
-        ),
+        labelText: 'Password',
+        errorText: password.text == '' &&
+                res.settings.loginAttempts.length > 0 &&
+                failedAttempt
+            ? 'Incorrect Password'
+            : null,
         onEditingComplete: () {
           setState(() {});
           FocusScope.of(context).requestFocus(showFocus);

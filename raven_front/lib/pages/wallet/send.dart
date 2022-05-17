@@ -6,6 +6,7 @@ import 'package:raven_front/pages/misc/checkout.dart';
 import 'package:raven_front/theme/theme.dart';
 import 'package:raven_front/utils/qrcode.dart';
 import 'package:raven_front/utils/transformers.dart';
+import 'package:raven_front/widgets/other/textfield.dart';
 
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
@@ -267,6 +268,7 @@ class _SendState extends State<Send> {
       child: Stack(
         children: [
           ListView(
+            physics: ClampingScrollPhysics(),
             padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
             children: <Widget>[
               SizedBox(height: 8),
@@ -299,10 +301,11 @@ class _SendState extends State<Send> {
         ],
       ));
 
-  Widget get sendAssetField => TextField(
+  Widget get sendAssetField => TextFieldFormatted(
         focusNode: sendAssetFocusNode,
         controller: sendAsset,
         readOnly: true,
+        textInputAction: TextInputAction.next,
         decoration: components.styles.decorations.textField(context,
             focusNode: sendAssetFocusNode,
             labelText: 'Asset',
@@ -316,6 +319,7 @@ class _SendState extends State<Send> {
             )),
         onTap: () {
           _produceAssetModal();
+          setState(() {});
         },
         onEditingComplete: () async {
           FocusScope.of(context).requestFocus(sendAddressFocusNode);
@@ -325,73 +329,71 @@ class _SendState extends State<Send> {
   Widget get toName =>
       Visibility(visible: addressName != '', child: Text('To: $addressName'));
 
-  Widget get sendAddressField => TextField(
+  Widget get sendAddressField => TextFieldFormatted(
         focusNode: sendAddressFocusNode,
         controller: sendAddress,
-        textInputAction: TextInputAction.done,
+        textInputAction: TextInputAction.next,
         autocorrect: false,
         inputFormatters: [
           FilteringTextInputFormatter(RegExp(r'[a-zA-Z0-9]'), allow: true)
         ],
-        decoration: components.styles.decorations.textField(
-          context,
-          focusNode: sendAddressFocusNode,
-          labelText: 'To',
-          hintText: 'Address',
-          errorText:
-              sendAddress.text != '' && !_validateAddress(sendAddress.text)
-                  ? 'Unrecognized Address'
-                  : null,
-        ),
+        labelText: 'To',
+        hintText: 'Address',
+        errorText: sendAddress.text != '' && !_validateAddress(sendAddress.text)
+            ? 'Unrecognized Address'
+            : null,
         onChanged: (value) {
-          if (_validateAddressColor(value)) {
-            streams.spend.form.add(SpendForm.merge(
-                form: streams.spend.form.value, address: value));
-          }
+          /// just always put it in
+          //if (_validateAddressColor(value)) {
+          streams.spend.form.add(
+              SpendForm.merge(form: streams.spend.form.value, address: value));
+          //}
         },
         onEditingComplete: () {
-          if (_validateAddressColor(sendAddress.text)) {
-            streams.spend.form.add(SpendForm.merge(
-                form: streams.spend.form.value, address: sendAddress.text));
-          }
+          /// just always put it in
+          //if (_validateAddressColor(sendAddress.text)) {
+          streams.spend.form.add(SpendForm.merge(
+              form: streams.spend.form.value, address: sendAddress.text));
+          //}
+          FocusScope.of(context).requestFocus(sendAmountFocusNode);
           setState(() {});
-          //FocusScope.of(context).requestFocus(sendAmountFocusNode);
         },
       );
 
-  Widget get sendAmountField => TextField(
+  Widget get sendAmountField => TextFieldFormatted(
         focusNode: sendAmountFocusNode,
         controller: sendAmount,
-        textInputAction: TextInputAction.done,
+        textInputAction: TextInputAction.next,
         keyboardType:
             TextInputType.numberWithOptions(decimal: true, signed: false),
         inputFormatters: <TextInputFormatter>[
-          DecimalTextInputFormatter(decimalRange: divisibility)
+          //DecimalTextInputFormatter(decimalRange: divisibility)
+          FilteringTextInputFormatter(RegExp(r'[.0-9]'), allow: true)
         ],
-        decoration: components.styles.decorations.textField(
-          context,
-          focusNode: sendAmountFocusNode,
-          labelText: 'Amount',
-          hintText: 'Quantity',
-          errorText: sendAmount.text == ''
-              ? null
-              : sendAmount.text == '0.0'
-                  ? 'must be greater than 0'
-                  : asDouble(sendAmount.text) > holding
-                      ? 'too large'
-                      : (String x) {
-                          if (x.isNumeric) {
-                            var y = x.toNum();
-                            if (y != null && y.isRVNAmount) {
-                              return true;
-                            }
+
+        labelText: 'Amount',
+        hintText: 'Quantity',
+        errorText: sendAmount.text == ''
+            ? null
+            //: sendAmount.text.split('.').length > 1
+            //    ? 'invalid number'
+            : sendAmount.text == '0.0'
+                ? 'must be greater than 0'
+                : asDouble(sendAmount.text) > holding
+                    ? 'too large'
+                    : (String x) {
+                        if (x.isNumeric) {
+                          var y = x.toNum();
+                          if (y != null && y.isRVNAmount) {
+                            return true;
                           }
-                          return false;
-                        }(sendAmount.text)
-                          ? null
-                          : 'Unrecognized Amount',
-          // put ability to put it in as USD here
-          /* // functionality has been moved to header
+                        }
+                        return false;
+                      }(sendAmount.text)
+                        ? null
+                        : 'Unrecognized Amount',
+        // put ability to put it in as USD here
+        /* // functionality has been moved to header
                     suffixText: sendAll ? "don't send all" : 'send all',
                     suffixStyle: Theme.of(context).textTheme.caption,
                     suffixIcon: IconButton(
@@ -410,7 +412,6 @@ class _SendState extends State<Send> {
                       },
                     ),
                     */
-        ),
         onChanged: (value) {
           if (asDouble(value) > holding) {
             value = holding.toString();
@@ -436,25 +437,24 @@ class _SendState extends State<Send> {
       );
 
   double asDouble(String visibleAmount) =>
-      visibleAmount == '' ? 0 : double.parse(visibleAmount);
+      ['', '.'].contains(visibleAmount) ? 0 : double.parse(visibleAmount);
 
-  Widget get sendFeeField => TextField(
+  Widget get sendFeeField => TextFieldFormatted(
         focusNode: sendFeeFocusNode,
         controller: sendFee,
         readOnly: true,
-        decoration: components.styles.decorations.textField(context,
-            labelText: 'Transaction Speed',
-            hintText: 'Standard',
-            focusNode: sendFeeFocusNode,
-            suffixIcon: IconButton(
-              icon: Padding(
-                  padding: EdgeInsets.only(right: 14),
-                  child: Icon(Icons.expand_more_rounded,
-                      color: Color(0xDE000000))),
-              onPressed: () => _produceFeeModal(),
-            )),
+        textInputAction: TextInputAction.next,
+        labelText: 'Transaction Speed',
+        hintText: 'Standard',
+        suffixIcon: IconButton(
+          icon: Padding(
+              padding: EdgeInsets.only(right: 14),
+              child: Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
+          onPressed: () => _produceFeeModal(),
+        ),
         onTap: () {
           _produceFeeModal();
+          setState(() {});
         },
         onChanged: (String? newValue) {
           feeGoal = {
@@ -468,34 +468,31 @@ class _SendState extends State<Send> {
         },
       );
 
-  Widget get sendMemoField => TextField(
+  Widget get sendMemoField => TextFieldFormatted(
       onTap: () async {
         clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
+        setState(() {});
       },
       focusNode: sendMemoFocusNode,
       controller: sendMemo,
-      decoration: components.styles.decorations.textField(
-        context,
-        focusNode: sendMemoFocusNode,
-        labelText: 'Memo',
-        hintText: 'IPFS',
-        helperText: sendMemoFocusNode.hasFocus
-            ? 'will be saved on the blockchain'
-            : null,
-        helperStyle: Theme.of(context)
-            .textTheme
-            .caption!
-            .copyWith(height: .7, color: AppColors.primary),
-        errorText: verifyMemo() ? null : 'too long',
-        suffixIcon: clipboard.isAssetData || clipboard.isIpfs
-            ? IconButton(
-                icon: Icon(Icons.paste_rounded, color: AppColors.black60),
-                onPressed: () async {
-                  sendMemo.text =
-                      (await Clipboard.getData('text/plain'))?.text ?? '';
-                })
-            : null,
-      ),
+      textInputAction: TextInputAction.next,
+      labelText: 'Memo',
+      hintText: 'IPFS',
+      helperText:
+          sendMemoFocusNode.hasFocus ? 'will be saved on the blockchain' : null,
+      helperStyle: Theme.of(context)
+          .textTheme
+          .caption!
+          .copyWith(height: .7, color: AppColors.primary),
+      errorText: verifyMemo() ? null : 'too long',
+      suffixIcon: clipboard.isAssetData || clipboard.isIpfs
+          ? IconButton(
+              icon: Icon(Icons.paste_rounded, color: AppColors.black60),
+              onPressed: () async {
+                sendMemo.text =
+                    (await Clipboard.getData('text/plain'))?.text ?? '';
+              })
+          : null,
       onChanged: (value) {
         setState(() {});
       },
@@ -504,34 +501,34 @@ class _SendState extends State<Send> {
         setState(() {});
       });
 
-  Widget get sendNoteField => TextField(
+  Widget get sendNoteField => TextFieldFormatted(
       onTap: () async {
         clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
+        setState(() {});
       },
       focusNode: sendNoteFocusNode,
       controller: sendNote,
-      decoration: components.styles.decorations.textField(context,
-          focusNode: sendNoteFocusNode,
-          labelText: 'Note',
-          hintText: 'Purchase',
-          helperText:
-              sendNoteFocusNode.hasFocus ? 'will be saved to your phone' : null,
-          helperStyle: Theme.of(context)
-              .textTheme
-              .caption!
-              .copyWith(height: .7, color: AppColors.primary),
-          suffixIcon: clipboard == '' ||
-                  clipboard.isIpfs ||
-                  clipboard.isAddressRVN ||
-                  clipboard.isAddressRVNt
-              ? null
-              : IconButton(
-                  icon: Icon(Icons.paste_rounded, color: AppColors.black60),
-                  onPressed: () async {
-                    sendNote.text =
-                        (await Clipboard.getData('text/plain'))?.text ?? '';
-                  },
-                )),
+      textInputAction: TextInputAction.next,
+      labelText: 'Note',
+      hintText: 'Purchase',
+      helperText:
+          sendNoteFocusNode.hasFocus ? 'will be saved to your phone' : null,
+      helperStyle: Theme.of(context)
+          .textTheme
+          .caption!
+          .copyWith(height: .7, color: AppColors.primary),
+      suffixIcon: clipboard == '' ||
+              clipboard.isIpfs ||
+              clipboard.isAddressRVN ||
+              clipboard.isAddressRVNt
+          ? null
+          : IconButton(
+              icon: Icon(Icons.paste_rounded, color: AppColors.black60),
+              onPressed: () async {
+                sendNote.text =
+                    (await Clipboard.getData('text/plain'))?.text ?? '';
+              },
+            ),
       onChanged: (value) {
         setState(() {});
       },

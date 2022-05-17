@@ -96,18 +96,15 @@ class DecimalTextInputFormatter extends TextInputFormatter {
     TextSelection newSelection = newValue.selection;
     String truncated = newValue.text;
 
-    String value = newValue.text;
+    String value = newValue.text
+        .replaceAll(',', '')
+        .replaceAll('-', '')
+        .replaceAll(' ', '');
 
     if (value.contains('.') &&
         value.substring(value.indexOf('.') + 1).length <= decimalRange) {
       var split = value.split('.');
-      var tail = split
-          .sublist(1)
-          .join()
-          .replaceAll('.', '')
-          .replaceAll(',', '')
-          .replaceAll('-', '')
-          .replaceAll(' ', '');
+      var tail = split.sublist(1).join().replaceAll('.', '');
       truncated = split.first + '.' + tail;
       newSelection = newValue.selection.copyWith(
           baseOffset: truncated.length, extentOffset: truncated.length);

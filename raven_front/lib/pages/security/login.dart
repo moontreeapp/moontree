@@ -120,29 +120,25 @@ class _LoginState extends State<Login> {
             ?.copyWith(color: AppColors.black60),
       );
 
-  Widget get loginField => TextField(
+  Widget get loginField => TextFieldFormatted(
       focusNode: loginFocus,
       autocorrect: false,
       controller: password,
       obscureText: !passwordVisible, // masked controller for immediate?
       textInputAction: TextInputAction.done,
-      decoration: components.styles.decorations.textField(
-        context,
-        focusNode: loginFocus,
-        labelText: 'Password',
-        errorText: password.text == '' &&
-                res.settings.loginAttempts.length > 0 &&
-                failedAttempt
-            ? 'Incorrect Password'
-            : null,
-        //suffixIcon: IconButton(
-        //  icon: Icon(passwordVisible ? Icons.visibility : Icons.visibility_off,
-        //      color: AppColors.black60),
-        //  onPressed: () => setState(() {
-        //    passwordVisible = !passwordVisible;
-        //  }),
-        //),
-      ),
+      labelText: 'Password',
+      errorText: password.text == '' &&
+              res.settings.loginAttempts.length > 0 &&
+              failedAttempt
+          ? 'Incorrect Password'
+          : null,
+      //suffixIcon: IconButton(
+      //  icon: Icon(passwordVisible ? Icons.visibility : Icons.visibility_off,
+      //      color: AppColors.black60),
+      //  onPressed: () => setState(() {
+      //    passwordVisible = !passwordVisible;
+      //  }),
+      //),
       onChanged: (_) {
         // might interfere with fade, but thats ok we took fade out.
         setState(() {});

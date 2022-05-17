@@ -205,28 +205,26 @@ class _ReissueAssetState extends State<ReissueAsset> {
                     )))
           ]);
 
-  Widget get parentFeild => TextField(
+  Widget get parentFeild => TextFieldFormatted(
         focusNode: parentFocus,
         controller: parentController,
         readOnly: true,
-        decoration: components.styles.decorations.textField(context,
-            labelText: 'Parent ' + 'Asset',
-            hintText: 'Parent ' + 'Asset',
-            errorText: parentValidationErr,
-            suffixIcon: IconButton(
-              icon: Padding(
-                  padding: EdgeInsets.only(right: 14),
-                  child: Icon(Icons.expand_more_rounded,
-                      color: Color(0xDE000000))),
-              onPressed: () => _produceParentModal(), // main subs, nft, channel
-            )),
+        labelText: 'Parent ' + 'Asset',
+        hintText: 'Parent ' + 'Asset',
+        errorText: parentValidationErr,
+        suffixIcon: IconButton(
+          icon: Padding(
+              padding: EdgeInsets.only(right: 14),
+              child: Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
+          onPressed: () => _produceParentModal(), // main subs, nft, channel
+        ),
         onTap: () => _produceParentModal(), // main subs, nft, channel
         onChanged: (String? newValue) {
           FocusScope.of(context).requestFocus(ipfsFocus);
         },
       );
 
-  Widget get nameField => TextField(
+  Widget get nameField => TextFieldFormatted(
       focusNode: nameFocus,
       autocorrect: false,
       enabled: false,
@@ -247,7 +245,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
               FocusScope.of(context).requestFocus(quantityFocus);
             });
 
-  Widget get quantityField => TextField(
+  Widget get quantityField => TextFieldFormatted(
         focusNode: quantityFocus,
         controller: quantityController,
         enabled: minQuantity == 21000000000 ? false : true,
@@ -257,15 +255,12 @@ class _ReissueAssetState extends State<ReissueAsset> {
         inputFormatters: <TextInputFormatter>[
           DecimalTextInputFormatter(decimalRange: minDecimal)
         ],
-        decoration: components.styles.decorations.textField(
-          context,
-          labelText: 'Additional Quantity',
-          hintText: '21,000,000',
-          errorText: quantityController.text != '' &&
-                  !quantityValidation(quantityController.text.toDouble())
-              ? 'Additional Quantity cannot exceed ${21000000000 - minQuantity}'
-              : null,
-        ),
+        labelText: 'Additional Quantity',
+        hintText: '21,000,000',
+        errorText: quantityController.text != '' &&
+                !quantityValidation(quantityController.text.toDouble())
+            ? 'Additional Quantity cannot exceed ${21000000000 - minQuantity}'
+            : null,
         onChanged: (String value) =>
             validateQuantity(quantity: value == '' ? 0.0 : value.toDouble()),
         onEditingComplete: () {
@@ -276,27 +271,25 @@ class _ReissueAssetState extends State<ReissueAsset> {
         },
       );
 
-  Widget get decimalField => TextField(
+  Widget get decimalField => TextFieldFormatted(
         focusNode: decimalFocus,
         controller: decimalController, // cannot be lower than minDecimal
         readOnly: true,
-        decoration: components.styles.decorations.textField(context,
-            labelText: 'Decimals',
-            hintText: 'Decimals',
-            suffixIcon: IconButton(
-              icon: Padding(
-                  padding: EdgeInsets.only(right: 14),
-                  child: Icon(Icons.expand_more_rounded,
-                      color: Color(0xDE000000))),
-              onPressed: minDecimal == 8 ? () {} : () => _produceDecimalModal(),
-            )),
+        labelText: 'Decimals',
+        hintText: 'Decimals',
+        suffixIcon: IconButton(
+          icon: Padding(
+              padding: EdgeInsets.only(right: 14),
+              child: Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
+          onPressed: minDecimal == 8 ? () {} : () => _produceDecimalModal(),
+        ),
         onTap: minDecimal == 8 ? () {} : () => _produceDecimalModal(),
         onChanged: (String? newValue) {
           FocusScope.of(context).requestFocus(ipfsFocus);
         },
       );
 
-  Widget get verifierField => TextField(
+  Widget get verifierField => TextFieldFormatted(
       focusNode: verifierFocus,
       autocorrect: false,
       controller: verifierController,
@@ -317,27 +310,24 @@ class _ReissueAssetState extends State<ReissueAsset> {
         FocusScope.of(context).requestFocus(ipfsFocus);
       });
 
-  Widget get ipfsField => TextField(
+  Widget get ipfsField => TextFieldFormatted(
         focusNode: ipfsFocus,
         autocorrect: false,
         controller: ipfsController,
         textInputAction: TextInputAction.done,
-        decoration: components.styles.decorations.textField(
-          context,
-          labelText: 'IPFS/TXID',
-          hintText: minIpfs == ''
-              ? 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr'
-              : minIpfs,
-          //helperText: ipfsValidation(ipfsController.text) ? 'match' : null,
-          //errorText: ipfsController.text == '' || ipfsValidated
-          //    ? null
-          //    : 'Invalid IPFS',
-          errorText: ipfsController.text == ''
-              ? (minIpfs == '' ? null : 'You must input an IPFS/TXID')
-              : ipfsValidated
-                  ? null
-                  : 'Invalid IPFS/TXID',
-        ),
+        labelText: 'IPFS/TXID',
+        hintText: minIpfs == ''
+            ? 'QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr'
+            : minIpfs,
+        //helperText: ipfsValidation(ipfsController.text) ? 'match' : null,
+        //errorText: ipfsController.text == '' || ipfsValidated
+        //    ? null
+        //    : 'Invalid IPFS',
+        errorText: ipfsController.text == ''
+            ? (minIpfs == '' ? null : 'You must input an IPFS/TXID')
+            : ipfsValidated
+                ? null
+                : 'Invalid IPFS/TXID',
         onChanged: (String value) => validateAssetData(data: value),
         onEditingComplete: () => FocusScope.of(context).requestFocus(nextFocus),
       );

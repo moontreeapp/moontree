@@ -137,6 +137,7 @@ class _ReceiveState extends State<Receive> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       SingleChildScrollView(
+                          physics: ClampingScrollPhysics(),
                           padding: EdgeInsets.only(
                               top: 16, left: 0, right: 0, bottom: 0),
                           child: GestureDetector(
@@ -292,7 +293,7 @@ class _ReceiveState extends State<Receive> {
                               //      ),
                               //      SizedBox(height: 15.0),
                               //    ]),
-                              TextField(
+                              TextFieldFormatted(
                                   focusNode: requestMessageFocus,
                                   controller: requestMessage,
                                   autocorrect: false,
@@ -302,24 +303,20 @@ class _ReceiveState extends State<Receive> {
                                   ],
                                   //maxLength: 32,
                                   //maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                                  decoration:
-                                      components.styles.decorations.textField(
-                                    context,
-                                    labelText: 'Requested Asset',
-                                    hintText: 'MOONTREE',
-                                    errorText: errorText,
-                                    suffixIcon: requestMessage.text == ''
-                                        ? null
-                                        : IconButton(
-                                            alignment: Alignment.centerRight,
-                                            //padding: EdgeInsets.all(0),
-                                            icon: Icon(Icons.close_rounded,
-                                                color: AppColors.black60),
-                                            onPressed: () => setState(() {
-                                                  requestMessage.text = '';
-                                                  data['symbol'] = null;
-                                                })),
-                                  ),
+                                  labelText: 'Requested Asset',
+                                  hintText: 'MOONTREE',
+                                  errorText: errorText,
+                                  suffixIcon: requestMessage.text == ''
+                                      ? null
+                                      : IconButton(
+                                          alignment: Alignment.centerRight,
+                                          //padding: EdgeInsets.all(0),
+                                          icon: Icon(Icons.close_rounded,
+                                              color: AppColors.black60),
+                                          onPressed: () => setState(() {
+                                                requestMessage.text = '';
+                                                data['symbol'] = null;
+                                              })),
                                   onTap: _makeURI,
                                   onChanged: (value) {
                                     //requestMessage.text =
@@ -340,16 +337,14 @@ class _ReceiveState extends State<Receive> {
                                         .requestFocus(requestAmountFocus);
                                   }),
                               SizedBox(height: 16),
-                              TextField(
+                              TextFieldFormatted(
                                   focusNode: requestAmountFocus,
                                   controller: requestAmount,
                                   autocorrect: false,
                                   keyboardType: TextInputType.number,
                                   textInputAction: TextInputAction.next,
-                                  decoration: components.styles.decorations
-                                      .textField(context,
-                                          labelText: 'Amount',
-                                          hintText: 'Quantity'),
+                                  labelText: 'Amount',
+                                  hintText: 'Quantity',
                                   onTap: _makeURI,
                                   onChanged: (value) {
                                     //requestAmount.text = cleanDecAmount(requestAmount.text);
@@ -365,15 +360,13 @@ class _ReceiveState extends State<Receive> {
                                         .requestFocus(requestLabelFocus);
                                   }),
                               SizedBox(height: 16),
-                              TextField(
+                              TextFieldFormatted(
                                 focusNode: requestLabelFocus,
                                 autocorrect: false,
                                 controller: requestLabel,
                                 textInputAction: TextInputAction.done,
-                                decoration: components.styles.decorations
-                                    .textField(context,
-                                        labelText: 'Note',
-                                        hintText: 'for groceries'),
+                                labelText: 'Note',
+                                hintText: 'for groceries',
                                 onTap: _makeURI,
                                 onChanged: (value) {
                                   //requestLabel.text = cleanLabel(requestLabel.text);

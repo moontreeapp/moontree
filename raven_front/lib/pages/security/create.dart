@@ -138,30 +138,25 @@ class _CreateLoginState extends State<CreateLogin> {
           .headline1
           ?.copyWith(color: AppColors.black60));
 
-  Widget get passwordField => TextField(
+  Widget get passwordField => TextFieldFormatted(
       focusNode: passwordFocus,
       autocorrect: false,
       controller: password,
       obscureText: !passwordVisible,
       textInputAction: TextInputAction.done,
-      decoration: components.styles.decorations.textField(
-        context,
-        focusNode: passwordFocus,
-        labelText: 'Password',
-        errorText: password.text != '' && password.text.length < minimumLength
-            ? 'password must be at least $minimumLength characters long'
-            : null,
-        helperText:
-            !(password.text != '' && password.text.length < minimumLength)
-                ? ''
-                : null,
-        suffixIcon: IconButton(
-          icon: Icon(passwordVisible ? Icons.visibility : Icons.visibility_off,
-              color: AppColors.black60),
-          onPressed: () => setState(() {
-            passwordVisible = !passwordVisible;
-          }),
-        ),
+      labelText: 'Password',
+      errorText: password.text != '' && password.text.length < minimumLength
+          ? 'password must be at least $minimumLength characters long'
+          : null,
+      helperText: !(password.text != '' && password.text.length < minimumLength)
+          ? ''
+          : null,
+      suffixIcon: IconButton(
+        icon: Icon(passwordVisible ? Icons.visibility : Icons.visibility_off,
+            color: AppColors.black60),
+        onPressed: () => setState(() {
+          passwordVisible = !passwordVisible;
+        }),
       ),
       onEditingComplete: () {
         if (password.text != '' && password.text.length >= minimumLength) {
@@ -170,27 +165,23 @@ class _CreateLoginState extends State<CreateLogin> {
         setState(() {});
       });
 
-  Widget get confirmField => TextField(
+  Widget get confirmField => TextFieldFormatted(
       focusNode: confirmFocus,
       autocorrect: false,
       controller: confirm,
       obscureText: !confirmVisible, // masked controller for immediate?
       textInputAction: TextInputAction.done,
-      decoration: components.styles.decorations.textField(
-        context,
-        focusNode: confirmFocus,
-        labelText: 'Confirm Password',
-        errorText: confirm.text != '' && confirm.text != password.text
-            ? 'does not match password'
-            : null,
-        helperText: confirm.text == password.text ? 'match' : null,
-        suffixIcon: IconButton(
-          icon: Icon(confirmVisible ? Icons.visibility : Icons.visibility_off,
-              color: AppColors.black60),
-          onPressed: () => setState(() {
-            confirmVisible = !confirmVisible;
-          }),
-        ),
+      labelText: 'Confirm Password',
+      errorText: confirm.text != '' && confirm.text != password.text
+          ? 'does not match password'
+          : null,
+      helperText: confirm.text == password.text ? 'match' : null,
+      suffixIcon: IconButton(
+        icon: Icon(confirmVisible ? Icons.visibility : Icons.visibility_off,
+            color: AppColors.black60),
+        onPressed: () => setState(() {
+          confirmVisible = !confirmVisible;
+        }),
       ),
       onEditingComplete: () {
         if (confirm.text == password.text) {
