@@ -1,5 +1,5 @@
+import 'dart:io' show Platform;
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:raven_front/pages/misc/checkout.dart';
@@ -269,7 +269,8 @@ class _SendState extends State<Send> {
           ListView(
             padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
             children: <Widget>[
-              SizedBox(height: 16),
+              SizedBox(height: 8),
+              if (Platform.isIOS) SizedBox(height: 8),
               Container(height: 201),
               SizedBox(height: 8),
               sendAssetField,
@@ -285,6 +286,8 @@ class _SendState extends State<Send> {
               SizedBox(height: 16),
               sendNoteField,
               SizedBox(height: 8),
+              SizedBox(height: 56),
+              SizedBox(height: 16),
             ],
           ),
           KeyboardHidesWidgetWithDelay(
