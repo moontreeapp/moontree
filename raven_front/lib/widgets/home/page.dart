@@ -91,9 +91,7 @@ class _HomePageState extends State<HomePage>
 
   Widget get assetHomeView => Container(
         child: widget.appContext == AppContext.wallet
-            ? HoldingList(
-                scrollController: _scrollController,
-              )
+            ? HoldingList(scrollController: _scrollController)
             : widget.appContext == AppContext.manage
                 ? true
                     ? ComingSoonPlaceholder(
