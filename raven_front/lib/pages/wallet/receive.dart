@@ -114,18 +114,15 @@ class _ReceiveState extends State<Receive> {
     if (requestMessage.text != '') {
       _makeURI(refresh: false);
     }
-    double height =
-        1.ofAppHeight; //MediaQuery.of(context).size.height - (56 + 24 + 24);
-    return BackdropLayers(
-        back: BlankBack(),
-        front: FrontCurve(
-            child: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-            _makeURI();
-          },
-          child: body(height),
-        )));
+    double height = 1.ofAppHeight;
+    return FrontCurve(
+        child: GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+        _makeURI();
+      },
+      child: body(height),
+    ));
   }
 
   Widget body(double height) => Stack(
@@ -135,12 +132,11 @@ class _ReceiveState extends State<Receive> {
               child: SizedBox(
                   height: height,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      Container(height: 1),
                       SingleChildScrollView(
                           padding: EdgeInsets.only(
-                              top: 0, left: 0, right: 0, bottom: 0),
+                              top: 16, left: 0, right: 0, bottom: 0),
                           child: GestureDetector(
                               onTap: () {
                                 Clipboard.setData(new ClipboardData(
@@ -389,9 +385,7 @@ class _ReceiveState extends State<Receive> {
                               ),
                             ],
                           )),
-                      Container(
-                        height: MediaQuery.of(context).size.height * (72 / 760),
-                      )
+                      Container(height: 72.figmaH, color: Colors.red)
                     ],
                   ))),
           KeyboardHidesWidgetWithDelay(
