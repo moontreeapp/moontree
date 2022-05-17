@@ -385,7 +385,7 @@ class _ReceiveState extends State<Receive> {
                               ),
                             ],
                           )),
-                      Container(height: 72.figmaH, color: Colors.red)
+                      SizedBox(height: 72.figmaH)
                     ],
                   ))),
           KeyboardHidesWidgetWithDelay(
