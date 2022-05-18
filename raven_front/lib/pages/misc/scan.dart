@@ -129,6 +129,7 @@ class _ScanQRState extends State<ScanQR> {
           note: qrData.note,
           amount: double.parse(qrData.amount ?? '0.0'),
         ));
+        controller.pauseCamera();
         Navigator.of(components.navigator.routeContext!).pushReplacementNamed(
           '/transaction/send',
           //arguments: {'qrCode': scanData.code}
