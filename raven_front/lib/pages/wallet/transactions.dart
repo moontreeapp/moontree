@@ -11,6 +11,7 @@ import 'package:raven_front/utils/data.dart';
 import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
 import 'package:raven_front/components/components.dart';
+import 'package:ravencoin_wallet/ravencoin_wallet.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -27,16 +28,14 @@ class Transactions extends StatefulWidget {
 
 class _TransactionsState extends State<Transactions> {
   late List<StreamSubscription> listeners = [];
-  Map<String, dynamic> data = {};
-  late List<TransactionRecord> currentTxs;
-  late List<Balance> currentHolds;
-  late Security security;
   Widget? cachedMetadataView;
   DraggableScrollableController dController = DraggableScrollableController();
   BehaviorSubject<double> scrollObserver = BehaviorSubject.seeded(.91);
   @override
   void initState() {
     super.initState();
+    AssetDetailsBloc.reset();
+
     listeners.add(streams.client.busy.listen((bool value) {
       if (!value) {
         setState(() {});
@@ -55,21 +54,23 @@ class _TransactionsState extends State<Transactions> {
 
   @override
   Widget build(BuildContext context) {
-    data = populateData(context, data);
-    security = data['holding']!.security;
-    currentHolds = Current.holdings;
-    currentTxs = services.transaction
-        .getTransactionRecords(wallet: Current.wallet, securities: {security});
-    cachedMetadataView = _metadataView(security, context);
+    final AssetDetailsBloc bloc = AssetDetailsBloc.instance();
+
+    bloc.data = populateData(context, bloc.data);
+    // security = bloc.data['holding']!.security;
+    // currentHolds = Current.holdings;
+    // currentTxs = services.transaction
+    //     .getTransactionRecords(wallet: Current.wallet, securities: {security});
+    cachedMetadataView = _metadataView(bloc.security, context);
     minHeight =
         0.65.figmaAppHeight + (cachedMetadataView != null ? 48.ofAppHeight : 0);
-    var maxExtent = (currentTxs.length * 80 +
+    var maxExtent = (bloc.currentTxs.length * 80 +
             80 +
             40 +
             (!services.download.history.isComplete ? 80 : 0))
         .ofMediaHeight(context);
     return BackdropLayers(
-        back: CoinDetailsHeader(security, cachedMetadataView, scrollObserver),
+        back: CoinDetailsHeader(bloc.security, cachedMetadataView, scrollObserver),
         front: Stack(
           alignment: Alignment.bottomCenter,
           children: [
@@ -81,9 +82,9 @@ class _TransactionsState extends State<Transactions> {
                 builder: (context, scrollController) {
                   scrollObserver.add(dController.size);
                   return CoinDetailsGlidingSheet(
-                    currentTxs,
-                    _metadataView(security, context),
-                    security,
+                    bloc.currentTxs,
+                    _metadataView(bloc.security, context),
+                    bloc.security,
                     dController,
                     scrollController,
                   );
@@ -100,8 +101,8 @@ class _TransactionsState extends State<Transactions> {
                   context,
                   label: 'receive',
                   link: '/transaction/receive',
-                  arguments: security != res.securities.RVN
-                      ? {'symbol': security.symbol}
+                  arguments: bloc.security != res.securities.RVN
+                      ? {'symbol': bloc.security.symbol}
                       : null,
                 )
               ],
@@ -272,8 +273,6 @@ class CoinDetailsHeader extends StatelessWidget {
   }
 }
 
-
-
 Widget content(
   ScrollController scrollController,
   String tabChoice,
@@ -289,4 +288,5 @@ Widget content(
             transactions:
                 currentTxs.where((tx) => tx.security.symbol == security.symbol),
             msg: '\nNo ${security.symbol} transactions.\n')
-        : MetaDataWidget(cachedMetadataView); //(scrollController: scrollController) //at present we can't scroll metadata
+        : MetaDataWidget(
+            cachedMetadataView); //(scrollController: scrollController) //at present we can't scroll metadata
