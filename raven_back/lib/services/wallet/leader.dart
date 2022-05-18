@@ -47,11 +47,6 @@ class LeaderWalletService {
     await res.wallets.save(LeaderWallet.from(leader, backedUp: true));
   }
 
-  /// maybe we don't need the stream:
-  Future<bool> needsBackup(LeaderWallet leader) async =>
-      (await services.download.unspents.getSymbols()).isNotEmpty &&
-      !leader.backedUp;
-
   /// we have a linear process for handling new leaders (those w/o addresses):
   ///   Derive, get histories by address in batch, derive until done.
   ///   Get unspents in batch.
@@ -113,8 +108,10 @@ class LeaderWalletService {
       /// Get unspents in batch.
       /// not sure if anything has to change in unspents.
       /// I'm hoping this initialization process can simplify it.
-      await services.download.unspents
-          .pull(scripthashes: addresses[exposure]!.map((a) => a.scripthash));
+      await services.download.unspents.pull(
+        scripthashes: addresses[exposure]!.map((a) => a.scripthash).toSet(),
+        wallet: leader,
+      );
     }
 
     /// Build balances. - this will update the holdings list UI (home page)

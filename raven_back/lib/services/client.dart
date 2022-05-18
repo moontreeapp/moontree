@@ -187,8 +187,14 @@ class SubscribeService {
         //if (status == null || address.status?.status != status) {
         print('PULLING UNSPENTS');
         await services.download.unspents.pull(
-          scripthashes: [address.scripthash],
+          scripthashes: {address.scripthash},
+          wallet: address.wallet!,
         );
+        // Recalculate balances for everything if we're in regular startup process.
+        if (await res.unspents.isDoneDownloading(address.wallet!)) {
+          await services.balance
+              .recalculateAllBalances(walletIds: {address.wallet!.id});
+        }
         //}
       });
     }

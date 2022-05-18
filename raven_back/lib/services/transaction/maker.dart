@@ -506,6 +506,7 @@ class TransactionMaker {
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee + burn
       utxosRaven = await services.balance.collectUTXOs(
+          walletId: wallet.id,
           amount: feeSats + res.settings.network.burnAmounts.issueQualifier,
           security: null);
       var satsIn = 0;
@@ -559,6 +560,7 @@ class TransactionMaker {
     // 1 parent qualifier asset, may have leftover
     var utxosSecurity = estimate.security != null
         ? await services.balance.collectUTXOs(
+            walletId: wallet.id,
             amount: 100000000,
             security: Security(
                 symbol: parentAsset, securityType: SecurityType.RavenAsset))
@@ -576,6 +578,7 @@ class TransactionMaker {
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee + burn
       utxosRaven = await services.balance.collectUTXOs(
+        walletId: wallet.id,
         amount: feeSats + res.settings.network.burnAmounts.issueSubQualifier,
         security: null,
       );
@@ -636,6 +639,7 @@ class TransactionMaker {
     // 1 virtual ownership asset for the parent
     var utxosSecurity = estimate.security != null
         ? await services.balance.collectUTXOs(
+            walletId: wallet.id,
             amount: 100000000,
             security: Security(
                 symbol: estimate.security!.symbol.substring(1) + '!',
@@ -648,6 +652,7 @@ class TransactionMaker {
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee + burn
       utxosRaven = await services.balance.collectUTXOs(
+        walletId: wallet.id,
         amount: feeSats + res.settings.network.burnAmounts.issueRestricted,
         security: null,
       );
@@ -709,6 +714,7 @@ class TransactionMaker {
     // Grab required assets for transfer amount
     var utxosRaven = <Vout>[];
     var utxosSecurity = await services.balance.collectUTXOs(
+        walletId: wallet.id,
         amount: 100000000, // 1 virtual sat for ownership asset
         security: Security(
             symbol: estimate.security!.symbol.substring(1) + '!',
@@ -720,6 +726,7 @@ class TransactionMaker {
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee + burn amount
       utxosRaven = await services.balance.collectUTXOs(
+        walletId: wallet.id,
         amount: feeSats + res.settings.network.burnAmounts.reissue,
         security: null,
       );
@@ -780,6 +787,7 @@ class TransactionMaker {
     // Grab required assets for transfer amount
     var utxosRaven = <Vout>[];
     var utxosSecurity = await services.balance.collectUTXOs(
+        walletId: wallet.id,
         amount: 100000000, // 1 sat for ownership asset
         security: Security(
             symbol: estimate.security!.symbol[0] == '\$'
@@ -799,6 +807,7 @@ class TransactionMaker {
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee + burn amount
       utxosRaven = await services.balance.collectUTXOs(
+        walletId: wallet.id,
         amount: feeSats + res.settings.network.burnAmounts.addTag,
         security: null,
       );
@@ -857,6 +866,7 @@ class TransactionMaker {
     // Grab required assets for transfer amount
     var utxosRaven = <Vout>[];
     var utxosSecurity = await services.balance.collectUTXOs(
+        walletId: wallet.id,
         amount: 100000000, // 1 virtual sat for ownership asset
         security: Security(
             symbol: estimate.security!.symbol + '!',
@@ -868,6 +878,7 @@ class TransactionMaker {
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee + burn amount
       utxosRaven = await services.balance.collectUTXOs(
+        walletId: wallet.id,
         amount: feeSats + res.settings.network.burnAmounts.reissue,
         security: null,
       );
@@ -931,6 +942,7 @@ class TransactionMaker {
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee + burn
       utxosRaven = await services.balance.collectUTXOs(
+          walletId: wallet.id,
           amount: feeSats + res.settings.network.burnAmounts.issueMain,
           security: null);
       var satsIn = 0;
@@ -985,6 +997,7 @@ class TransactionMaker {
     // 1 virtual ownership asset for the parent
     var utxosSecurity = estimate.security != null
         ? await services.balance.collectUTXOs(
+            walletId: wallet.id,
             amount: 100000000,
             security: Security(
                 symbol: parentAsset + '!',
@@ -997,6 +1010,7 @@ class TransactionMaker {
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee + burn
       utxosRaven = await services.balance.collectUTXOs(
+        walletId: wallet.id,
         amount: feeSats + res.settings.network.burnAmounts.issueSub,
         security: null,
       );
@@ -1051,6 +1065,7 @@ class TransactionMaker {
     // 1 virtual ownership asset for the parent
     var utxosSecurity = estimate.security != null
         ? await services.balance.collectUTXOs(
+            walletId: wallet.id,
             amount: 100000000,
             security: Security(
                 symbol: parentAsset + '!',
@@ -1066,6 +1081,7 @@ class TransactionMaker {
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee plus burn
       utxosRaven = await services.balance.collectUTXOs(
+        walletId: wallet.id,
         amount: feeSats + extraFee,
         security: null,
       );
@@ -1112,8 +1128,8 @@ class TransactionMaker {
     ravencoin.Transaction tx;
     var feeSats = 0;
     var utxosRaven = <Vout>[];
-    var utxosSecurity = await services.balance
-        .collectUTXOs(amount: 100000000, security: estimate.security!);
+    var utxosSecurity = await services.balance.collectUTXOs(
+        walletId: wallet.id, amount: 100000000, security: estimate.security!);
     var returnAddress = services.wallet.getEmptyAddress(wallet, internal: true);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
@@ -1121,6 +1137,7 @@ class TransactionMaker {
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee plus burn
       utxosRaven = await services.balance.collectUTXOs(
+        walletId: wallet.id,
         amount: feeSats,
         security: null,
       );
@@ -1167,6 +1184,7 @@ class TransactionMaker {
     var utxosRaven = <Vout>[];
     var utxosSecurity = estimate.security != null
         ? await services.balance.collectUTXOs(
+            walletId: wallet.id,
             amount: estimate.amount,
             security: estimate.security,
           )
@@ -1185,6 +1203,7 @@ class TransactionMaker {
       txb = ravencoin.TransactionBuilder(network: res.settings.network);
       // Grab required RVN for fee (plus amount, maybe)
       utxosRaven = await services.balance.collectUTXOs(
+          walletId: wallet.id,
           amount: feeSats + (estimate.security == null ? estimate.amount : 0),
           security: null);
       var satsIn = 0;
@@ -1263,6 +1282,7 @@ class TransactionMaker {
 
     print('in sendall');
     var utxos = await services.balance.collectUTXOs(
+      walletId: wallet.id,
       amount: estimate.amount,
       security: null,
     );

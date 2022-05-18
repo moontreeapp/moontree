@@ -65,12 +65,11 @@ class _HoldingList extends State<HoldingList> {
     listeners.add(res.balances.batchedChanges
         .listen((List<Change<Balance>> changes) async {
       var interimBalances = Current.wallet.balances.toSet();
-      print('triggered by balances ${await services.download.unspents.isDone}');
+      print('triggered by balances');
       if (balances != interimBalances) {
-        print(
-            'triggered by balances ${await services.download.unspents.isDone}');
+        print('triggered by balances');
         //if (services.wallet.leader.newLeaderProcessProcessing ||
-        //    await services.download.unspents.isDone) {
+        //    await services.download.unspents.isDone) { // isDone can be replaced by res.unspents.isDoneDownloading(Current.wallet)
         setState(() {
           balances = interimBalances;
         });
@@ -83,8 +82,7 @@ class _HoldingList extends State<HoldingList> {
         .listen((List<Change<Address>> changes) async {
       var interimAddresses = Current.wallet.addresses.toSet();
       if (addresses != interimAddresses) {
-        print(
-            'triggered by addresses ${await services.download.unspents.isDone}');
+        print('triggered by addresses');
         setState(() {
           addresses = interimAddresses;
         });
@@ -94,8 +92,7 @@ class _HoldingList extends State<HoldingList> {
     /// when the app becomes active again refresh the front end
     listeners.add(streams.app.active.listen((bool active) async {
       if (active) {
-        print(
-            'triggered by activity ${await services.download.unspents.isDone}');
+        print('triggered by activity');
         //if (services.wallet.leader.newLeaderProcessProcessing ||
         //    await services.download.unspents.isDone) {
         setState(() {});

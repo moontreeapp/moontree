@@ -17,6 +17,7 @@ class WalletReservoir extends Reservoir<_IdKey, Wallet> {
     byName = addIndexMultiple('name', _NameKey());
   }
 
+  Set<String> get ids => data.map((e) => e.id).toSet();
   List<Wallet> get ordered => data.sorted((a, b) => a.name.compareTo(b.name));
 
   List<LeaderWallet> get leaders => byWalletType

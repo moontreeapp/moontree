@@ -11,32 +11,25 @@ import 'package:raven_back/raven_back.dart';
 class BalanceService {
   /// Listener Logic //////////////////////////////////////////////////////////
 
-  /// recalculates the balance of every symbol owned
-  Future recalculateAllBalances() async {
-    // wont work when it needs to until we save asset data when we save unspents
-    /// erase first see 517
-    //await res.balances.removeAll(res.balances.data);
+  /// recalculates the balance of every symbol in every wallet
+  Future recalculateAllBalances({Set<String>? walletIds}) async {
+    walletIds = walletIds ?? res.wallets.ids;
     Set<Balance> balances = {};
-    var currentWalletId = res.wallets.currentWallet.id;
-    for (var key in await services.download.unspents
-            .getSymbolsByWallet(currentWalletId) ??
-        {}) {
-      var security = res.securities.bySymbol.getAll(key).firstOrNull ??
-          Security(symbol: key, securityType: SecurityType.RavenAsset);
-      //if (securities.isEmpty) {
-      //  // security isn't saved to the database yet
-      //  return;
-      //}
-      var confirmed =
-          await services.download.unspents.totalConfirmed(currentWalletId, key);
-      var unconfirmed = await services.download.unspents
-          .totalUnconfirmed(currentWalletId, key);
-      if (confirmed + unconfirmed > 0) {
-        balances.add(Balance(
-            walletId: currentWalletId,
-            security: security,
-            confirmed: confirmed,
-            unconfirmed: unconfirmed));
+    await res.balances.removeAll(
+        res.balances.data.where((b) => walletIds!.contains(b.walletId)));
+    for (var walletId in walletIds) {
+      for (var symbol in res.unspents.getSymbolsByWallet(walletId)) {
+        var security = res.securities.bySymbol.getAll(symbol).firstOrNull ??
+            Security(symbol: symbol, securityType: SecurityType.RavenAsset);
+        var confirmed = res.unspents.totalConfirmed(walletId, symbol);
+        var unconfirmed = res.unspents.totalUnconfirmed(walletId, symbol);
+        if (confirmed + unconfirmed > 0) {
+          balances.add(Balance(
+              walletId: walletId,
+              security: security,
+              confirmed: confirmed,
+              unconfirmed: unconfirmed));
+        }
       }
     }
     await res.balances.saveAll(balances);
@@ -44,25 +37,28 @@ class BalanceService {
 
   /// Transaction Logic ///////////////////////////////////////////////////////
 
-  Future<List<Vout>> collectUTXOs(
-      {required int amount, Security? security}) async {
-    await services.download.unspents.assertSufficientFunds(
-        res.wallets.currentWallet.id, amount, security?.symbol);
+  Future<List<Vout>> collectUTXOs({
+    required String walletId,
+    required int amount,
+    Security? security,
+  }) async {
+    res.unspents.assertSufficientFunds(res.wallets.currentWallet.id, amount,
+        symbol: security?.symbol);
     var gathered = 0;
     var unspents =
-        (await services.download.unspents.getUnspents(security?.symbol))
+        (res.unspents.byWalletSymbol.getAll(walletId, security?.symbol))
             .toList();
     var collection = <Vout>[];
-
     // initialize Random with a hidden deterministic seed
-    final _random = Random(unspents.map((e) => e.txHash).join().hashCode);
+    final _random =
+        Random(unspents.map((e) => e.transactionId).join().hashCode);
     while (amount - gathered > 0) {
       var randomIndex = _random.nextInt(unspents.length);
       var unspent = unspents[randomIndex];
       unspents.removeAt(randomIndex);
       gathered += unspent.value;
       collection.add(res.vouts.byTransactionPosition
-          .getOne(unspent.txHash, unspent.txPos)!);
+          .getOne(unspent.transactionId, unspent.position)!);
     }
     return collection;
   }

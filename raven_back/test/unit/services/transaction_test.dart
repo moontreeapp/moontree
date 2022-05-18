@@ -60,11 +60,13 @@ void main() async {
 
   group('CollectUTXOs RVN', () {
     test('pick smallest UTXO of sufficient size', () async {
-      var utxos = await services.balance.collectUTXOs(amount: 500);
+      var utxos =
+          await services.balance.collectUTXOs(walletId: wallet.id, amount: 500);
       expect(utxos.map((utxo) => utxo.rvnValue).toList(), [5000000]);
     });
     test('take multiple from the top', () async {
-      var utxos = await services.balance.collectUTXOs(amount: 12000000);
+      var utxos = await services.balance
+          .collectUTXOs(walletId: wallet.id, amount: 12000000);
       expect(utxos.map((utxo) => utxo.rvnValue).toList(), [10000000, 10000000]);
     });
   });
@@ -72,6 +74,7 @@ void main() async {
   group('CollectUTXOs asset', () {
     test('pick smallest UTXO of sufficient size', () async {
       var utxos = await services.balance.collectUTXOs(
+          walletId: wallet.id,
           amount: 5,
           security: res.securities.bySymbolSecurityType
               .getOne('MOONTREE', SecurityType.RavenAsset));
@@ -79,6 +82,7 @@ void main() async {
     });
     test('take multiple from the top', () async {
       var utxos = await services.balance.collectUTXOs(
+          walletId: wallet.id,
           amount: 1200,
           security: res.securities.bySymbolSecurityType
               .getOne('MOONTREE', SecurityType.RavenAsset));

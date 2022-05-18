@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_electrum/methods/scripthash/unspent.dart';
 
 import '_type_id.dart';
 
@@ -9,35 +10,50 @@ part 'unspent.g.dart';
 @HiveType(typeId: TypeId.Unspent)
 class Unspent with EquatableMixin, ToStringMixin {
   @HiveField(0)
-  String addressId;
+  String walletId;
 
   @HiveField(1)
-  String transactionId;
+  String addressId;
 
   @HiveField(2)
-  int position;
+  String transactionId;
 
   @HiveField(3)
-  int height;
+  int position;
 
   @HiveField(4)
-  int value;
+  int height;
 
   @HiveField(5)
-  String? symbol;
+  int value;
 
   @HiveField(6)
-  String? memo;
+  String symbol;
 
   Unspent({
+    required this.walletId,
     required this.addressId,
     required this.transactionId,
     required this.position,
     required this.height,
     required this.value,
-    this.symbol,
-    this.memo,
+    this.symbol = 'RVN',
   });
+
+  factory Unspent.fromScripthashUnspent(
+    String walletId,
+    ScripthashUnspent scripthashUnspent,
+  ) {
+    return Unspent(
+      walletId: walletId,
+      addressId: scripthashUnspent.scripthash,
+      transactionId: scripthashUnspent.txHash,
+      position: scripthashUnspent.txPos,
+      height: scripthashUnspent.height,
+      value: scripthashUnspent.value,
+      symbol: scripthashUnspent.symbol ?? 'RVN',
+    );
+  }
 
   @override
   List<Object?> get props => [
@@ -47,7 +63,6 @@ class Unspent with EquatableMixin, ToStringMixin {
         height,
         value,
         symbol,
-        memo,
       ];
 
   @override
@@ -61,21 +76,35 @@ class Unspent with EquatableMixin, ToStringMixin {
         'height',
         'value',
         'symbol',
-        'memo',
       ];
 
   String get scripthash => addressId;
   String get txHash => transactionId;
   String get id => getUnspentId(transactionId, position);
+  int get confirmed => isConfirmed ? value : 0;
+  int get unconfirmed => isUnconfirmed ? value : 0;
+
+  bool get isConfirmed => height > 0;
+  bool get isUnconfirmed => height <= 0;
+
+  String get walletSymbolId => getWalletSymbolId(walletId, symbol);
+  String get walletConfirmationId =>
+      getWalletConfirmationId(walletId, isConfirmed);
+  String get walletSymbolConfirmationId =>
+      getWalletSymbolConfirmationId(walletId, symbol, isConfirmed);
+
+  static String getWalletSymbolId(String walletId, String symbol) =>
+      walletId + ':' + symbol;
+  static String getWalletConfirmationId(String walletId, bool isConfirmed) =>
+      walletId + ':' + isConfirmed.toString();
+  static String getWalletSymbolConfirmationId(
+          String walletId, String symbol, bool isConfirmed) =>
+      walletId + ':' + symbol + ':' + isConfirmed.toString();
 
   static String getUnspentId(String transactionId, int position) =>
       '$transactionId:$position';
 
-  int securityValue({Security? security}) => security == null ||
-          (security.symbol == res.securities.RVN.symbol &&
-              security.securityType == SecurityType.Crypto)
-      ? value
-      : (security.symbol == symbol)
-          ? value
-          : 0;
+  Security get security => symbol == 'RVN'
+      ? res.securities.RVN
+      : Security(symbol: symbol, securityType: SecurityType.RavenAsset);
 }

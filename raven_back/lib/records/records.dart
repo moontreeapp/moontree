@@ -19,6 +19,7 @@ export 'setting_name.dart';
 export 'status.dart';
 export 'status_type.dart';
 export 'transaction.dart';
+export 'unspent.dart';
 export 'wallets/leader.dart';
 export 'wallets/single.dart';
 export 'wallets/wallet.dart';

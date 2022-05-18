@@ -25,7 +25,8 @@ void main() async {
     });
 
     test('collectUTXOs', () {
-      expect(() => services.balance.collectUTXOs(amount: 16), throwsException);
+      expect(() => services.balance.collectUTXOs(walletId: '0', amount: 16),
+          throwsException);
     });
   });
 }

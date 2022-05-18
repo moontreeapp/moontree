@@ -78,6 +78,7 @@ class HiveInitializer {
     Hive.registerAdapter(StatusTypeAdapter());
     Hive.registerAdapter(SecurityAdapter());
     Hive.registerAdapter(SecurityTypeAdapter());
+    Hive.registerAdapter(UnspentAdapter());
   }
 
   /// address must open before wallets because added in wallets waiter
@@ -112,6 +113,7 @@ class HiveInitializer {
       //   defaults: CipherReservoir.defaults,
       // ));
       res.ciphers.setSource(MapSource(CipherReservoir.defaults));
+      res.unspents.setSource(MapSource(UnspentReservoir.defaults));
       res.rates.setSource(HiveSource('rates'));
       res.passwords.setSource(HiveSource('passwords'));
       res.settings.setSource(HiveSource(

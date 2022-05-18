@@ -7,7 +7,6 @@ import 'package:reservoir/reservoir.dart';
 Future deleteDatabase() async {
   services.wallet.leader.registry.indexRegistry.clear();
   await services.download.history.clearDownloadState();
-  await services.download.unspents.clearData();
   services.client.subscribe.subscriptionHandlesUnspent.clear();
   services.client.subscribe.subscriptionHandlesHistory.clear();
   services.client.subscribe.subscriptionHandlesAsset.clear();
@@ -16,6 +15,7 @@ Future deleteDatabase() async {
     await res.assets.clear();
     await res.balances.clear();
     await res.blocks.clear();
+    await res.ciphers.clear();
     await res.metadatas.clear();
     await res.notes.clear();
     await res.passwords.clear();
@@ -24,6 +24,7 @@ Future deleteDatabase() async {
     await res.settings.clear();
     await res.statuses.clear();
     await res.transactions.clear();
+    await res.unspents.clear();
     await res.vins.clear();
     await res.vouts.clear();
     await res.wallets.clear();
@@ -47,6 +48,7 @@ Future deleteDatabase() async {
     await (res.vouts.source as HiveSource).box.clear();
     await (res.wallets.source as HiveSource).box.clear();
     //await (res.ciphers.source as MapSource).clear();
+    //await (res.unspents.source as MapSource).clear();
   } catch (e) {
     print('box clearing failed');
   }
