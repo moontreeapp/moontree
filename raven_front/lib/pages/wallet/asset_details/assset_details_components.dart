@@ -146,29 +146,13 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
     );
   }
 
-  List<StreamSubscription> listeners = [];
-
   @override
   void initState() {
     super.initState();
-    listeners.add(res.balances.batchedChanges.listen((batchedChanges) {
-      if (batchedChanges.isNotEmpty) setState(() {});
-    }));
-    listeners.add(streams.app.coinspec.listen((String? value) {
-      if (value != null) {
-        setState(() {
-          assetDetailsBloc.tabChoice = value;
-          streams.app.coinspec.add(null);
-        });
-      }
-    }));
   }
 
   @override
   void dispose() {
-    for (var listener in listeners) {
-      listener.cancel();
-    }
     assetDetailsBloc.reset();
     super.dispose();
   }

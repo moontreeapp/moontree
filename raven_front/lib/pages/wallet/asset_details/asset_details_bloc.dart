@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../../../utils/data.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
@@ -15,20 +17,37 @@ import 'package:url_launcher/url_launcher.dart';
 AssetDetailsBloc get assetDetailsBloc => AssetDetailsBloc.instance();
 
 class AssetDetailsBloc {
-  AssetDetailsBloc._() {}
+  AssetDetailsBloc._() {
+    init();
+  }
+
+  void init() {
+    listeners.add(res.balances.batchedChanges.listen((batchedChanges) {}));
+    listeners.add(streams.app.coinspec.listen((String? value) {
+      if (value != null) {
+        assetDetailsBloc.tabChoice = value;
+        streams.app.coinspec.add(null);
+      }
+    }));
+  }
 
   factory AssetDetailsBloc.instance() {
     return _instance ??= AssetDetailsBloc._();
   }
 
-   reset() {
+  reset() {
+    for (var listener in assetDetailsBloc.listeners) {
+      listener.cancel();
+    }
     _instance = null;
     return AssetDetailsBloc.instance();
   }
+
   static AssetDetailsBloc? _instance;
   Map<String, dynamic> data = {};
   BehaviorSubject<double> scrollObserver = BehaviorSubject.seeded(.91);
   String tabChoice = 'HISTORY';
+  List<StreamSubscription> listeners = [];
 
   double getOpacityFromController(
       double controllerValue, double minHeightFactor) {

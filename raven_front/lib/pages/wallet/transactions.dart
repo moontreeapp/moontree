@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
-import 'package:raven_back/services/transaction/transaction.dart';
 import 'package:raven_front/pages/wallet/asset_details/assset_details_components.dart';
 import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/utils/data.dart';
