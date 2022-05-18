@@ -9,6 +9,9 @@ enum ValueType { confirmed, unconfirmed }
 
 /// we use the electrum server directly for determining our UTXO set
 class UnspentService {
+  final Set<String> _scripthashesChecked = {};
+  final _scripthashesLock = ReaderWriterLock();
+
   void _maybeTriggerBackup(Iterable<ScripthashUnspent> unspents) {
     if (unspents.isNotEmpty && res.unspents.isEmpty) {
       streams.app.triggers.add(ThresholdTrigger.backup);
@@ -43,6 +46,9 @@ class UnspentService {
   }) async {
     var utxos = <Unspent>[];
 
+    await _scripthashesLock
+        .write(() => _scripthashesChecked.addAll(scripthashes.toSet()));
+
     // Clear all cached unspents & redownload
     await res.unspents.clearByScripthashes(scripthashes);
 
@@ -72,5 +78,19 @@ class UnspentService {
     _maybeTriggerBackup(assetUtxos);
 
     await res.unspents.saveAll(utxos);
+
+    /* moved to client.subscription service
+    /// recalculate balances once at the end
+    if (await isDone) {
+      print('IsDone Happening');
+      await services.balance.recalculateAllBalances();
+    }
+    */
   }
+
+  /// during the initial start of the app a process is run to check every
+  /// address for updates, once we have checked them all, are done and can
+  /// recalculate balances.
+  Future<bool> get isDone => _scripthashesLock
+      .read(() => _scripthashesChecked.length >= res.addresses.length);
 }

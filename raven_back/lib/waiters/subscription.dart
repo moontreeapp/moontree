@@ -19,19 +19,14 @@ class SubscriptionWaiter extends Waiter {
 
   void deinitAllSubscriptions() {
     for (var listener
-        in services.client.subscribe.subscriptionHandlesUnspent.values) {
-      listener.cancel();
-    }
-    for (var listener
-        in services.client.subscribe.subscriptionHandlesHistory.values) {
+        in services.client.subscribe.subscriptionHandlesAddress.values) {
       listener.cancel();
     }
     for (var listener
         in services.client.subscribe.subscriptionHandlesAsset.values) {
       listener.cancel();
     }
-    services.client.subscribe.subscriptionHandlesUnspent.clear();
-    services.client.subscribe.subscriptionHandlesHistory.clear();
+    services.client.subscribe.subscriptionHandlesAddress.clear();
     services.client.subscribe.subscriptionHandlesAsset.clear();
 
     //services.download.history.clearDownloadState();

@@ -180,7 +180,7 @@ class _ConnectionLightState extends State<ConnectionLight>
     if (connectionBusy) {
       // don't blink when spinner runs... separate into different streams?
       if (!['Login', 'Createlogin'].contains(streams.app.page.value) &&
-          !services.wallet.leader.newLeaderProcessProcessing) {
+          !services.wallet.leader.newLeaderProcessRunning) {
         setState(() => busy = !busy);
       }
       rebuildMe();

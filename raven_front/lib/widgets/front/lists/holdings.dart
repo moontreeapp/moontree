@@ -68,8 +68,8 @@ class _HoldingList extends State<HoldingList> {
       print('triggered by balances');
       if (balances != interimBalances) {
         print('triggered by balances');
-        //if (services.wallet.leader.newLeaderProcessProcessing ||
-        //    await services.download.unspents.isDone) { // isDone can be replaced by res.unspents.isDoneDownloading(Current.wallet)
+        //if (services.wallet.leader.newLeaderProcessRunning ||
+        //    await services.download.unspents.isDone) {
         setState(() {
           balances = interimBalances;
         });
@@ -93,7 +93,7 @@ class _HoldingList extends State<HoldingList> {
     listeners.add(streams.app.active.listen((bool active) async {
       if (active) {
         print('triggered by activity');
-        //if (services.wallet.leader.newLeaderProcessProcessing ||
+        //if (services.wallet.leader.newLeaderProcessRunning ||
         //    await services.download.unspents.isDone) {
         setState(() {});
         //}

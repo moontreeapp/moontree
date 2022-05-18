@@ -41,9 +41,6 @@ class UnspentReservoir extends Reservoir<_UnspentKey, Unspent> {
   Future<void> clearByScripthashes(Set<String> scripthashes) async =>
       res.unspents.removeAll(byScripthashes(scripthashes));
 
-  Future<bool> isDoneDownloading(Wallet wallet) async =>
-      byWallet.getAll(wallet.id).length >= wallet.addresses.length;
-
   int totalConfirmed(String walletId, [String symbol = 'RVN']) =>
       byWalletSymbolConfirmation
           .getAll(walletId, symbol, true)

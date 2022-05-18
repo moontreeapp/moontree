@@ -16,7 +16,7 @@ class AssetWaiter extends Waiter {
         loaded: (loaded) {},
         added: (added) {
           /// only show message during normal run
-          if (!services.wallet.leader.newLeaderProcessProcessing) {
+          if (!services.wallet.leader.newLeaderProcessRunning) {
             streams.app.snack.add(
                 Snack(message: 'New asset detected: ${added.data.symbol}'));
           }

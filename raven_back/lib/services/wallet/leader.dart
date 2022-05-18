@@ -16,7 +16,7 @@ import 'package:tuple/tuple.dart';
 class LeaderWalletService {
   final HDIndexRegistry registry = HDIndexRegistry();
   final int requiredGap = 20;
-  bool newLeaderProcessProcessing = false;
+  bool newLeaderProcessRunning = false;
 
   // necessary anymore?
   Set backlog = <LeaderWallet>{};
@@ -59,7 +59,7 @@ class LeaderWalletService {
   Future<void> newLeaderProcess(LeaderWallet leader) async {
     //  newLeaders.add(leader.id); actually just save the addresses at the end
     print('newLeaderProcess');
-    newLeaderProcessProcessing = true;
+    newLeaderProcessRunning = true;
     streams.client.busy.add(true);
     streams.client.activity.add(ActivityMessage(
         active: true,
@@ -130,7 +130,7 @@ class LeaderWalletService {
     // you'll have to subscribe then unsubscribe. in batch.
     for (var exposure in NodeExposure.values) {
       await services.client.subscribe
-          .onlySubscribeForStatuses(addresses[exposure]!);
+          .subscribeForStatuses(addresses[exposure]!);
     }
 
     /// Get transactions in batch by address, or by arbitrary batch number. -
@@ -162,7 +162,7 @@ class LeaderWalletService {
 
     streams.client.busy.add(false);
     streams.client.activity.add(ActivityMessage(active: false));
-    newLeaderProcessProcessing = false;
+    newLeaderProcessRunning = false;
     print('newLeaderProcess Done!');
   }
 

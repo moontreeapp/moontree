@@ -7,8 +7,7 @@ import 'package:reservoir/reservoir.dart';
 Future deleteDatabase() async {
   services.wallet.leader.registry.indexRegistry.clear();
   await services.download.history.clearDownloadState();
-  services.client.subscribe.subscriptionHandlesUnspent.clear();
-  services.client.subscribe.subscriptionHandlesHistory.clear();
+  services.client.subscribe.subscriptionHandlesAddress.clear();
   services.client.subscribe.subscriptionHandlesAsset.clear();
   try {
     await res.addresses.clear();

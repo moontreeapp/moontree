@@ -116,8 +116,7 @@ class ClientService {
 
 /// managing our address subscriptions
 class SubscribeService {
-  final Map<String, StreamSubscription> subscriptionHandlesUnspent = {};
-  final Map<String, StreamSubscription> subscriptionHandlesHistory = {};
+  final Map<String, StreamSubscription> subscriptionHandlesAddress = {};
   final Map<String, StreamSubscription> subscriptionHandlesAsset = {};
   bool startupProcessRunning = false;
 
@@ -132,14 +131,10 @@ class SubscribeService {
     final addresses = res.addresses.toList();
     var existing = false;
     for (var address in addresses) {
-      await onlySubscribeAddressUnspent(address);
       existing = true;
-    }
-    for (var address in addresses) {
-      await onlySubscribeAddressHistory(address);
+      await subscribeAddress(address);
     }
     if (existing) {
-      unawaited(services.download.history.allDoneProcess());
       for (var address in addresses) {
         if (address.wallet is LeaderWallet) {
           if (address.vouts.isNotEmpty) {
@@ -151,60 +146,51 @@ class SubscribeService {
           }
         }
       }
+      await services.download.history.allDoneProcess();
     }
+    // recalculate balances once at the end, wait just in case
+    while (!await services.download.unspents.isDone) {
+      print('waiting, we almost never have to wait here...');
+      await Future.delayed(Duration(milliseconds: 100));
+    }
+    await services.balance.recalculateAllBalances();
     streams.client.busy.add(false);
     streams.client.activity.add(ActivityMessage(active: false));
     startupProcessRunning = false;
+    print('startupProcessRunning DONE');
     return true;
   }
 
   bool toAllAssets() {
     for (var asset in res.assets) {
-      onlySubscribeAsset(asset);
+      subscribeAsset(asset);
     }
     return true;
   }
 
   Future<bool> toAddress(Address address) async {
-    await onlySubscribeAddressUnspent(address);
-    await onlySubscribeAddressHistory(address);
+    await subscribeAddress(address);
     return true;
   }
 
   bool toAsset(Asset asset) {
-    onlySubscribeAsset(asset);
+    subscribeAsset(asset);
     return true;
   }
 
-  Future onlySubscribeAddressUnspent(Address address) async {
-    if (!subscriptionHandlesUnspent.keys.contains(address.id)) {
-      subscriptionHandlesUnspent[address.id] =
+  Future subscribeAddress(Address address) async {
+    //print('Subscribing to $address'); // Yes we are subscribing to all addresses
+    if (!subscriptionHandlesAddress.keys.contains(address.id)) {
+      subscriptionHandlesAddress[address.id] =
           (await services.client.api.subscribeAddress(address))
               .listen((String? status) async {
-        /// no guarantee this will run first, so we don't want the other
-        /// one to run first can save the status and keep this one from
-        /// running, so we'll just download unspents everytime.
-        //if (status == null || address.status?.status != status) {
-        print('PULLING UNSPENTS');
+        /// pull unspents and save
+        print('UNSPENTS $status $address');
         await services.download.unspents.pull(
           scripthashes: {address.scripthash},
           wallet: address.wallet!,
         );
-        // Recalculate balances for everything in this wallet
-        if (await res.unspents.isDoneDownloading(address.wallet!)) {
-          await services.balance
-              .recalculateAllBalances(walletIds: {address.wallet!.id});
-        }
-        //}
-      });
-    }
-  }
-
-  Future onlySubscribeAddressHistory(Address address) async {
-    if (!subscriptionHandlesHistory.keys.contains(address.id)) {
-      subscriptionHandlesHistory[address.id] =
-          (await services.client.api.subscribeAddress(address))
-              .listen((String? status) async {
+        // why allow null here?
         if (status == null || address.status?.status != status) {
           print('PULLING HISTORY $status');
 
@@ -236,7 +222,7 @@ class SubscribeService {
     }
   }
 
-  Future onlySubscribeForStatus(Address address) async {
+  Future subscribeForStatus(Address address) async {
     (await services.client.api.subscribeAddress(address))
         .listen((String? status) async {
       await res.statuses.save(Status(
@@ -245,7 +231,7 @@ class SubscribeService {
     await services.client.api.unsubscribeAddress(address);
   }
 
-  Future onlySubscribeForStatuses(List<Address> addresses) async {
+  Future subscribeForStatuses(List<Address> addresses) async {
     var subs = await services.client.api.subscribeAddresses(addresses);
     for (var ixSub in subs.enumeratedTuple()) {
       ixSub.item2.listen((String? status) async {
@@ -258,7 +244,7 @@ class SubscribeService {
     await services.client.api.unsubscribeAddresses(addresses);
   }
 
-  Future onlySubscribeAsset(Asset asset) async {
+  Future subscribeAsset(Asset asset) async {
     if (!subscriptionHandlesAsset.keys.contains(asset.symbol)) {
       subscriptionHandlesAsset[asset.symbol] =
           (await services.client.api.subscribeAsset(asset))
@@ -276,8 +262,7 @@ class SubscribeService {
   }
 
   void unsubscribeAddress(String addressId) {
-    subscriptionHandlesUnspent.remove(addressId)?.cancel();
-    subscriptionHandlesHistory.remove(addressId)?.cancel();
+    subscriptionHandlesAddress.remove(addressId)?.cancel();
   }
 
   void unsubscribeAsset(String asset) {
