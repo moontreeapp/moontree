@@ -118,6 +118,7 @@ class _ScanQRState extends State<ScanQR> {
           address: qrData.address,
           addressName: qrData.addressName,
         ));
+        controller.pauseCamera();
         Navigator.of(components.navigator.routeContext!)
             .pushReplacementNamed('/transaction/send');
       } else {
