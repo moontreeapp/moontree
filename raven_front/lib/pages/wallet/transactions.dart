@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/transaction/transaction.dart';
+import 'package:raven_front/pages/wallet/asset_details/assset_details_components.dart';
 import 'package:raven_front/services/lookup.dart';
 import 'package:raven_front/services/storage.dart';
 import 'package:raven_front/utils/data.dart';
@@ -271,13 +272,7 @@ class CoinDetailsHeader extends StatelessWidget {
   }
 }
 
-Widget metadata(Widget? chachedView, BuildContext context) =>
-    chachedView ??
-    components.empty.message(
-      context,
-      icon: Icons.description,
-      msg: '\nNo metadata.\n',
-    );
+
 
 Widget content(
   ScrollController scrollController,
@@ -294,5 +289,4 @@ Widget content(
             transactions:
                 currentTxs.where((tx) => tx.security.symbol == security.symbol),
             msg: '\nNo ${security.symbol} transactions.\n')
-        : metadata(cachedMetadataView,
-            context); //(scrollController: scrollController) //at present we can't scroll metadata
+        : MetaDataWidget(cachedMetadataView); //(scrollController: scrollController) //at present we can't scroll metadata
