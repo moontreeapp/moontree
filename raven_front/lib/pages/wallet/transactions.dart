@@ -152,8 +152,7 @@ class MetadataView extends StatelessWidget {
       return Container(
         alignment: Alignment.topCenter,
         height: (assetDetailsBloc.scrollObserver.value.ofMediaHeight(context) +
-                16 +
-                16) /
+                32) /
             2,
         child: Padding(
           padding: EdgeInsets.only(top: 16),
