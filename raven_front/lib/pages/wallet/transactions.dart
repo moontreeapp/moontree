@@ -49,7 +49,9 @@ class _TransactionsState extends State<Transactions> {
   @override
   Widget build(BuildContext context) {
     bloc.data = populateData(context, bloc.data);
-
+    var securityAsset = assetDetailsBloc.security.asset;
+    final isCacheViewNull =
+        securityAsset == null || securityAsset.hasMetadata == false;
     cachedMetadataView = _metadataView(bloc.security, context);
     minHeight =
         0.65.figmaAppHeight + (cachedMetadataView != null ? 48.ofAppHeight : 0);
@@ -71,7 +73,7 @@ class _TransactionsState extends State<Transactions> {
               builder: (context, scrollController) {
                 bloc.scrollObserver.add(dController.size);
                 return CoinDetailsGlidingSheet(
-                  _metadataView(bloc.security, context),
+                  isCacheViewNull ? null : MetadataView(),
                   dController,
                   scrollController,
                 );
@@ -136,5 +138,58 @@ class _TransactionsState extends State<Transactions> {
   }
 }
 
+class MetadataView extends StatelessWidget {
+  const MetadataView({Key? key}) : super(key: key);
 
+  @override
+  Widget build(BuildContext context) {
+    Asset securityAsset = assetDetailsBloc.security.asset!;
 
+    var chilren = <Widget>[];
+    if (securityAsset.primaryMetadata == null &&
+        securityAsset.hasData &&
+        securityAsset.data!.isIpfs) {
+      return Container(
+        alignment: Alignment.topCenter,
+        height: (assetDetailsBloc.scrollObserver.value.ofMediaHeight(context) +
+                16 +
+                16) /
+            2,
+        child: Padding(
+          padding: EdgeInsets.only(top: 16),
+          child: components.buttons.actionButtonSoft(
+            context,
+            label: 'View Data',
+            onPressed: () => components.message.giveChoices(
+              context,
+              title: 'View Data',
+              content: 'View data in external browser?',
+              behaviors: {
+                'CANCEL': Navigator.of(context).pop,
+                'BROWSER': () {
+                  Navigator.of(context).pop();
+                  launch('https://ipfs.io/ipfs/${securityAsset.metadata}');
+                },
+              },
+            ),
+          ),
+        ),
+      );
+    } else if (securityAsset.primaryMetadata == null) {
+      chilren = [SelectableText(securityAsset.metadata)];
+    } else if (securityAsset.primaryMetadata!.kind == MetadataType.ImagePath) {
+      chilren = [
+        Image.file(AssetLogos()
+            .readImageFileNow(securityAsset.primaryMetadata!.data ?? ''))
+      ];
+    } else if (securityAsset.primaryMetadata!.kind == MetadataType.JsonString) {
+      chilren = [SelectableText(securityAsset.primaryMetadata!.data ?? '')];
+    } else if (securityAsset.primaryMetadata!.kind == MetadataType.Unknown) {
+      chilren = [
+        SelectableText(securityAsset.primaryMetadata!.metadata),
+        SelectableText(securityAsset.primaryMetadata!.data ?? '')
+      ];
+    }
+    return ListView(padding: EdgeInsets.all(10.0), children: chilren);
+  }
+}
