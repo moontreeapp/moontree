@@ -71,10 +71,7 @@ class UnspentService {
     }
   }
 
-  Future<void> pull({
-    Iterable<String>? scripthashes,
-    bool? updateRVN,
-  }) async {
+  Future<void> pull({Iterable<String>? scripthashes, bool? updateRVN}) async {
     final finalScripthashes = defaultScripthashes(scripthashes);
     final rvn = res.securities.RVN.symbol;
 
@@ -298,11 +295,19 @@ class UnspentService {
     });
   }
 
+  /// since we can have multiple wallets this isn't really useful to us, unless
+  /// someday we want to show everything they have in all their wallets in one
+  /// view... so I think we should not call this, maybe not even create it and
+  /// instead always specify the wallet we're querying for.
   Future<Iterable<String>> getSymbols() async {
     return await _unspentsLock.read(() {
       return _unspentsBySymbol.keys.toSet();
     });
   }
+
+  Future<Set<String>?> getSymbolsByWallet(String walletId) async =>
+      await _cachedBySymbolLock
+          .read(() => _cachedByWalletAndSymbol[walletId]?.keys.toSet());
 
   Future<void> clearData() async {
     await _unspentsLock.write(() {

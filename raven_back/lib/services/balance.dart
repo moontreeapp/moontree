@@ -18,7 +18,9 @@ class BalanceService {
     //await res.balances.removeAll(res.balances.data);
     Set<Balance> balances = {};
     var currentWalletId = res.wallets.currentWallet.id;
-    for (var key in await services.download.unspents.getSymbols()) {
+    for (var key in await services.download.unspents
+            .getSymbolsByWallet(currentWalletId) ??
+        {}) {
       var security = res.securities.bySymbol.getAll(key).firstOrNull ??
           Security(symbol: key, securityType: SecurityType.RavenAsset);
       //if (securities.isEmpty) {

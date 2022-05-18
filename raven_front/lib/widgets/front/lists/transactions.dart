@@ -93,10 +93,13 @@ class _TransactionListState extends State<TransactionList> {
             count: min(10, transactionCount))
         : Container(
             alignment: Alignment.center,
-            child: RefreshIndicator(
-              child: _transactionsView(context),
-              onRefresh: () => refresh(),
-            ));
+            child:
+                //RefreshIndicator(
+                //  child:
+                _transactionsView(context),
+            //  onRefresh: () => refresh(),
+            //)
+          );
   }
 
   ListView _transactionsView(BuildContext context) => ListView(

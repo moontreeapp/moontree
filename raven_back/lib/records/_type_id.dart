@@ -8,6 +8,7 @@ class TypeId {
   static const Vin = 6;
   static const Vout = 7;
   static const Status = 8;
+  static const Unspent = 9;
 
   // Wallets
   static const SingleWallet = 10;
