@@ -82,7 +82,7 @@ class _CreateLoginState extends State<CreateLogin> {
             SliverToBoxAdapter(
               child: Container(
                   alignment: Alignment.bottomCenter,
-                  height: .0315.ofMediaHeight(context),
+                  height: .035.ofMediaHeight(context),
                   child: welcomeMessage),
             ),
             SliverToBoxAdapter(
