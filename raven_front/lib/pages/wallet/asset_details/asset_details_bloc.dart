@@ -28,6 +28,7 @@ class AssetDetailsBloc {
   static AssetDetailsBloc? _instance;
   Map<String, dynamic> data = {};
   BehaviorSubject<double> scrollObserver = BehaviorSubject.seeded(.91);
+  String tabChoice = 'HISTORY';
 
   double getOpacityFromController(
       double controllerValue, double minHeightFactor) {
