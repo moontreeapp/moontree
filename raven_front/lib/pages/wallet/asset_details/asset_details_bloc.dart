@@ -12,6 +12,8 @@ import 'package:raven_front/components/components.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+AssetDetailsBloc get assetDetailsBloc => AssetDetailsBloc.instance();
+
 class AssetDetailsBloc {
   AssetDetailsBloc._() {}
 
@@ -19,12 +21,13 @@ class AssetDetailsBloc {
     return _instance ??= AssetDetailsBloc._();
   }
 
-  factory AssetDetailsBloc.reset() {
+   reset() {
     _instance = null;
     return AssetDetailsBloc.instance();
   }
   static AssetDetailsBloc? _instance;
   Map<String, dynamic> data = {};
+  BehaviorSubject<double> scrollObserver = BehaviorSubject.seeded(.91);
 
   double getOpacityFromController(
       double controllerValue, double minHeightFactor) {

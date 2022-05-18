@@ -30,12 +30,10 @@ class _TransactionsState extends State<Transactions> {
   late List<StreamSubscription> listeners = [];
   Widget? cachedMetadataView;
   DraggableScrollableController dController = DraggableScrollableController();
-  BehaviorSubject<double> scrollObserver = BehaviorSubject.seeded(.91);
   @override
   void initState() {
     super.initState();
-    AssetDetailsBloc.reset();
-
+    assetDetailsBloc.reset();
     listeners.add(streams.client.busy.listen((bool value) {
       if (!value) {
         setState(() {});
@@ -48,7 +46,7 @@ class _TransactionsState extends State<Transactions> {
     for (var listener in listeners) {
       listener.cancel();
     }
-    scrollObserver.close();
+    assetDetailsBloc.scrollObserver.close();
     super.dispose();
   }
 
@@ -70,7 +68,7 @@ class _TransactionsState extends State<Transactions> {
             (!services.download.history.isComplete ? 80 : 0))
         .ofMediaHeight(context);
     return BackdropLayers(
-        back: CoinDetailsHeader(bloc.security, cachedMetadataView, scrollObserver),
+        back: CoinDetailsHeader(bloc.security, cachedMetadataView),
         front: Stack(
           alignment: Alignment.bottomCenter,
           children: [
@@ -80,7 +78,7 @@ class _TransactionsState extends State<Transactions> {
                 maxChildSize: min(1.0, max(minHeight, maxExtent)),
                 controller: dController,
                 builder: (context, scrollController) {
-                  scrollObserver.add(dController.size);
+                  bloc.scrollObserver.add(dController.size);
                   return CoinDetailsGlidingSheet(
                     bloc.currentTxs,
                     _metadataView(bloc.security, context),
@@ -122,7 +120,10 @@ class _TransactionsState extends State<Transactions> {
         securityAsset.data!.isIpfs) {
       return Container(
         alignment: Alignment.topCenter,
-        height: (scrollObserver.value.ofMediaHeight(context) + 16 + 16) / 2,
+        height: (assetDetailsBloc.scrollObserver.value.ofMediaHeight(context) +
+                16 +
+                16) /
+            2,
         child: Padding(
           padding: EdgeInsets.only(top: 16),
           child: components.buttons.actionButtonSoft(
@@ -238,19 +239,17 @@ class CoinDetailsGlidingSheet extends StatefulWidget {
 class CoinDetailsHeader extends StatelessWidget {
   const CoinDetailsHeader(
     this.security,
-    this.cachedMetadataView,
-    this.scrollObserver, {
+    this.cachedMetadataView, {
     Key? key,
   }) : super(key: key);
   final Security security;
   final Widget? cachedMetadataView;
-  final Stream<double> scrollObserver;
 
   @override
   Widget build(BuildContext context) {
     final bloc = AssetDetailsBloc.instance();
     return StreamBuilder(
-        stream: scrollObserver,
+        stream: bloc.scrollObserver,
         builder: (context, snapshot) {
           return Transform.translate(
             offset: Offset(
