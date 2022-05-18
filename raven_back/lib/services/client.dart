@@ -190,7 +190,7 @@ class SubscribeService {
           scripthashes: {address.scripthash},
           wallet: address.wallet!,
         );
-        // Recalculate balances for everything if we're in regular startup process.
+        // Recalculate balances for everything in this wallet
         if (await res.unspents.isDoneDownloading(address.wallet!)) {
           await services.balance
               .recalculateAllBalances(walletIds: {address.wallet!.id});

@@ -226,10 +226,7 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                   next = true;
                 }
               }
-              await res.settings.setCurrentWalletId(walletId);
-              await services.balance.recalculateAllBalances();
-              streams.app.fling.add(false);
-              streams.app.setting.add(null);
+              await switchWallet(walletId);
             },
             child: Text('Wallet ' + res.wallets.currentWalletName + ' ',
                 style: Theme.of(context)
@@ -256,10 +253,7 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                 onTap: () async {
                   Navigator.pop(components.navigator.routeContext!);
                   if (wallet.id != Current.walletId) {
-                    await res.settings.setCurrentWalletId(wallet.id);
-                    await services.balance.recalculateAllBalances();
-                    streams.app.fling.add(false);
-                    streams.app.setting.add(null);
+                    await switchWallet(wallet.id);
                   }
                 },
                 leading: Icon(
@@ -283,4 +277,11 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
           Icon(Icons.expand_more_rounded, color: Colors.white),
         ],
       ));
+
+  Future<void> switchWallet(String walletId) async {
+    await res.settings.setCurrentWalletId(walletId);
+    //await services.balance.recalculateAllBalances(); // I don't think this is necessary
+    streams.app.fling.add(false);
+    streams.app.setting.add(null);
+  }
 }

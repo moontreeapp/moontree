@@ -366,6 +366,7 @@ class LeaderExposureIndex {
   void updateUsedPlus(int value) => used = used + value;
 }
 
+/// this is used to allow us to see how many addresses need to be derived.
 class HDIndexRegistry {
   Map<LeaderExposureKey, LeaderExposureIndex> indexRegistry = {};
 
@@ -414,7 +415,7 @@ class HDIndexRegistry {
   }
 
   /// this function allows us to avoid creating a 'hdindex' reservoir,
-  /// which is nice. this is why
+  /// which is nice.
   void updateIndex(LeaderWallet leader) {
     for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
       var addresses =

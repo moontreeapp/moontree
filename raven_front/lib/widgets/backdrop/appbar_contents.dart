@@ -79,12 +79,54 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            print('balances:');
-            res.balances.data.forEach((item) {
-              print(item);
-            });
-            print('unusedInternalIndices:');
-            print((Current.wallet as LeaderWallet).unusedInternalIndices);
+            //print('balances:');
+            //res.balances.data.forEach((item) {
+            //  print(item);
+            //});
+            //print('unusedInternalIndices:');
+            void testWalletsDontShareAddresses() {
+              var w1 = res.wallets.data.first as LeaderWallet;
+              var w2 = res.wallets.data.last as LeaderWallet;
+              var a1 = [
+                    for (var a in w1.unusedInternalIndices)
+                      res.addresses.byWalletExposureIndex
+                          .getOne(w1.id, NodeExposure.Internal, a)!
+                          .address
+                  ] +
+                  [
+                    for (var a in w1.unusedExternalIndices)
+                      res.addresses.byWalletExposureIndex
+                          .getOne(w1.id, NodeExposure.External, a)!
+                          .address
+                  ];
+              var a2 = [
+                    for (var a in w2.unusedInternalIndices)
+                      res.addresses.byWalletExposureIndex
+                          .getOne(w2.id, NodeExposure.Internal, a)!
+                          .address
+                  ] +
+                  [
+                    for (var a in w2.unusedExternalIndices)
+                      res.addresses.byWalletExposureIndex
+                          .getOne(w2.id, NodeExposure.External, a)!
+                          .address
+                  ];
+              for (var a in a1) {
+                print(a);
+                if (a2.contains(a)) {
+                  print('PROBLEM: shared address between wallets $a');
+                }
+              }
+              print('done');
+            }
+
+            testWalletsDontShareAddresses();
+            //(Current.wallet as LeaderWallet).unusedExternalIndices.forEach((e) {
+            //  print(res.addresses.byWalletExposureIndex.getOne(
+            //      (Current.wallet as LeaderWallet).id,
+            //      NodeExposure.External,
+            //      e));
+            //});
             //streams.app.snack.add(Snack(message: 'message'));
           },
           child: appBar,

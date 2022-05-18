@@ -26,8 +26,8 @@ class LeaderWallet extends Wallet {
     bool backedUp = false,
     CipherUpdate cipherUpdate = defaultCipherUpdate,
     String? name,
-    List<int>? unusedInternalIndices,
-    List<int>? unusedExternalIndices,
+    Set<int>? unusedInternalIndices,
+    Set<int>? unusedExternalIndices,
     Uint8List? seed,
   }) : super(
           id: id,
@@ -35,16 +35,16 @@ class LeaderWallet extends Wallet {
           name: name,
           backedUp: backedUp,
         ) {
-    this.unusedInternalIndices = unusedInternalIndices ?? [];
-    this.unusedExternalIndices = unusedExternalIndices ?? [];
+    this.unusedInternalIndices = unusedInternalIndices ?? {};
+    this.unusedExternalIndices = unusedExternalIndices ?? {};
     _seed = seed;
   }
 
   Uint8List? _seed;
 
   /// caching optimization
-  late List<int> unusedInternalIndices;
-  late List<int> unusedExternalIndices;
+  late Set<int> unusedInternalIndices;
+  late Set<int> unusedExternalIndices;
 
   factory LeaderWallet.from(
     LeaderWallet existing, {
@@ -53,8 +53,8 @@ class LeaderWallet extends Wallet {
     bool? backedUp,
     CipherUpdate? cipherUpdate,
     String? name,
-    List<int>? unusedInternalIndices,
-    List<int>? unusedExternalIndices,
+    Set<int>? unusedInternalIndices,
+    Set<int>? unusedExternalIndices,
     Uint8List? seed,
   }) =>
       LeaderWallet(
@@ -117,22 +117,13 @@ class LeaderWallet extends Wallet {
       exposure == NodeExposure.Internal
           ? removeUnusedInternal(hdIndex)
           : removeUnusedExternal(hdIndex);
-  void addUnusedInternal(int hdIndex) => utils.binaryInsert(
-        list: unusedInternalIndices,
-        value: hdIndex,
-      );
-  void addUnusedExternal(int hdIndex) => utils.binaryInsert(
-        list: unusedExternalIndices,
-        value: hdIndex,
-      );
-  void removeUnusedInternal(int hdIndex) => utils.binaryRemove(
-        list: unusedInternalIndices,
-        value: hdIndex,
-      );
-  void removeUnusedExternal(int hdIndex) => utils.binaryRemove(
-        list: unusedExternalIndices,
-        value: hdIndex,
-      );
+
+  void addUnusedInternal(int hdIndex) => unusedInternalIndices.add(hdIndex);
+  void addUnusedExternal(int hdIndex) => unusedExternalIndices.add(hdIndex);
+  void removeUnusedInternal(int hdIndex) =>
+      unusedInternalIndices.remove(hdIndex);
+  void removeUnusedExternal(int hdIndex) =>
+      unusedExternalIndices.remove(hdIndex);
   Address? getUnusedAddress(NodeExposure exposure) =>
       exposure == NodeExposure.Internal
           ? unusedInternalAddress
@@ -143,17 +134,12 @@ class LeaderWallet extends Wallet {
           : randomUnusedExternalAddress;
 
   Address? get unusedInternalAddress {
-    print('addresses should exist now: ${res.addresses.length}');
-    print('index: ${unusedInternalIndices.first}');
-    print('id: ${id}');
-    print(
-        'address: ${res.addresses.byWalletExposureIndex.getOne(id, NodeExposure.Internal, unusedInternalIndices.first)}');
     return res.addresses.byWalletExposureIndex
-        .getOne(id, NodeExposure.Internal, unusedInternalIndices.first);
+        .getOne(id, NodeExposure.Internal, unusedInternalIndices.min);
   }
 
   Address? get unusedExternalAddress => res.addresses.byWalletExposureIndex
-      .getOne(id, NodeExposure.External, unusedExternalIndices.first);
+      .getOne(id, NodeExposure.External, unusedExternalIndices.min);
 
   Address? get randomUnusedInternalAddress => res
       .addresses.byWalletExposureIndex
