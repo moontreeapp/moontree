@@ -73,7 +73,6 @@ class AssetDetailsContent extends StatelessWidget {
   }
 }
 
-
 class CoinDetailsHeader extends StatelessWidget {
   const CoinDetailsHeader(
     this.security,
@@ -109,7 +108,6 @@ class CoinDetailsHeader extends StatelessWidget {
         });
   }
 }
-
 
 class CoinDetailsGlidingSheet extends StatefulWidget {
   const CoinDetailsGlidingSheet(
@@ -171,7 +169,9 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
     for (var listener in listeners) {
       listener.cancel();
     }
+    assetDetailsBloc.reset();
     super.dispose();
   }
 }
+
 double minHeight = 0.65.figmaAppHeight;
