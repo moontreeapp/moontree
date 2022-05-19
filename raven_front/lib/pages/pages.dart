@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:raven_front/pages/home/home.dart';
-import 'package:raven_front/pages/wallet/transactions.dart';
 import 'package:raven_front/pages/manage/assets.dart';
 import 'package:raven_front/pages/manage/create/nft.dart';
 import 'package:raven_front/pages/manage/create/main.dart';
@@ -36,6 +35,8 @@ import 'package:raven_front/pages/settings/technical.dart';
 import 'package:raven_front/pages/wallet/receive.dart';
 import 'package:raven_front/pages/wallet/send.dart';
 import 'package:raven_front/pages/wallet/transaction.dart';
+
+import 'wallet/asset_details/asset_details_widget.dart';
 
 class pages {
   // static Splash splash = Splash();

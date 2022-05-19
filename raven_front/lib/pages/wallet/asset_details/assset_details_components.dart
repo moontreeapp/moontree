@@ -10,6 +10,7 @@ import '../../../widgets/back/coinspec/tabs.dart';
 import '../../../widgets/backdrop/curve.dart';
 import '../../../widgets/bottom/navbar.dart';
 import '../../../widgets/front/lists/transactions.dart';
+import 'package:raven_back/raven_back.dart';
 
 class MetaDataWidget extends StatelessWidget {
   const MetaDataWidget(this.cacheView, {Key? key}) : super(key: key);
@@ -62,14 +63,21 @@ class AssetDetailsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return assetDetailsBloc.tabChoice == CoinSpecTabs.tabIndex[0]
-        ? TransactionList(
-            scrollController: scrollController,
-            symbol: assetDetailsBloc.security.symbol,
-            transactions: assetDetailsBloc.currentTxs.where(
-                (tx) => tx.security.symbol == assetDetailsBloc.security.symbol),
-            msg: '\nNo ${assetDetailsBloc.security.symbol} transactions.\n')
-        : MetaDataWidget(cachedMetadataView);
+    return StreamBuilder<String?>(
+        stream: streams.app.coinspec,
+        builder: (context, snapshot) {
+          final showTransactions =
+              assetDetailsBloc.tabChoice == CoinSpecTabs.tabIndex[0];
+          return showTransactions
+              ? TransactionList(
+                  scrollController: scrollController,
+                  symbol: assetDetailsBloc.security.symbol,
+                  transactions: assetDetailsBloc.currentTxs.where((tx) =>
+                      tx.security.symbol == assetDetailsBloc.security.symbol),
+                  msg:
+                      '\nNo ${assetDetailsBloc.security.symbol} transactions.\n')
+              : MetaDataWidget(cachedMetadataView);
+        });
   }
 }
 
@@ -101,7 +109,7 @@ class CoinDetailsHeader extends StatelessWidget {
               child: CoinSpec(
                 pageTitle: 'Transactions',
                 security: security,
-                bottom: emptyMetaDataCache? null : Container(),
+                bottom: emptyMetaDataCache ? null : Container(),
               ),
             ),
           );
