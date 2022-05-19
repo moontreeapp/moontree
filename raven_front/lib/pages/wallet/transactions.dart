@@ -21,26 +21,15 @@ class Transactions extends StatefulWidget {
 }
 
 class _TransactionsState extends State<Transactions> {
-  late List<StreamSubscription> listeners = [];
-  Widget? cachedMetadataView;
   DraggableScrollableController dController = DraggableScrollableController();
   @override
   void initState() {
     super.initState();
     assetDetailsBloc.reset();
-    listeners.add(streams.client.busy.listen((bool value) {
-      if (!value) {
-        setState(() {});
-      }
-    }));
   }
 
   @override
   void dispose() {
-    for (var listener in listeners) {
-      listener.cancel();
-    }
-    assetDetailsBloc.scrollObserver.close();
     super.dispose();
   }
 
@@ -49,19 +38,15 @@ class _TransactionsState extends State<Transactions> {
   @override
   Widget build(BuildContext context) {
     bloc.data = populateData(context, bloc.data);
-    var securityAsset = assetDetailsBloc.security.asset;
-    final isCacheViewNull =
-        securityAsset == null || securityAsset.hasMetadata == false;
-    cachedMetadataView = _metadataView(bloc.security, context);
-    minHeight =
-        0.65.figmaAppHeight + (cachedMetadataView != null ? 48.ofAppHeight : 0);
+
+    minHeight = 0.65.figmaAppHeight + (bloc.nullCacheView ? 0 : 48.ofAppHeight);
     var maxExtent = (bloc.currentTxs.length * 80 +
             80 +
             40 +
             (!services.download.history.isComplete ? 80 : 0))
         .ofMediaHeight(context);
     return BackdropLayers(
-      back: CoinDetailsHeader(bloc.security, cachedMetadataView),
+      back: CoinDetailsHeader(bloc.security, bloc.nullCacheView),
       front: Stack(
         alignment: Alignment.bottomCenter,
         children: [
@@ -73,7 +58,7 @@ class _TransactionsState extends State<Transactions> {
               builder: (context, scrollController) {
                 bloc.scrollObserver.add(dController.size);
                 return CoinDetailsGlidingSheet(
-                  isCacheViewNull ? null : MetadataView(),
+                  bloc.nullCacheView ? null : MetadataView(),
                   dController,
                   scrollController,
                 );
@@ -82,59 +67,6 @@ class _TransactionsState extends State<Transactions> {
         ],
       ),
     );
-  }
-
-  Widget? _metadataView(Security security, BuildContext context) {
-    var securityAsset = security.asset;
-    if (securityAsset == null || securityAsset.hasMetadata == false) {
-      return null;
-    }
-    var chilren = <Widget>[];
-    if (securityAsset.primaryMetadata == null &&
-        securityAsset.hasData &&
-        securityAsset.data!.isIpfs) {
-      return Container(
-        alignment: Alignment.topCenter,
-        height: (assetDetailsBloc.scrollObserver.value.ofMediaHeight(context) +
-                16 +
-                16) /
-            2,
-        child: Padding(
-          padding: EdgeInsets.only(top: 16),
-          child: components.buttons.actionButtonSoft(
-            context,
-            label: 'View Data',
-            onPressed: () => components.message.giveChoices(
-              context,
-              title: 'View Data',
-              content: 'View data in external browser?',
-              behaviors: {
-                'CANCEL': Navigator.of(context).pop,
-                'BROWSER': () {
-                  Navigator.of(context).pop();
-                  launch('https://ipfs.io/ipfs/${securityAsset.metadata}');
-                },
-              },
-            ),
-          ),
-        ),
-      );
-    } else if (securityAsset.primaryMetadata == null) {
-      chilren = [SelectableText(securityAsset.metadata)];
-    } else if (securityAsset.primaryMetadata!.kind == MetadataType.ImagePath) {
-      chilren = [
-        Image.file(AssetLogos()
-            .readImageFileNow(securityAsset.primaryMetadata!.data ?? ''))
-      ];
-    } else if (securityAsset.primaryMetadata!.kind == MetadataType.JsonString) {
-      chilren = [SelectableText(securityAsset.primaryMetadata!.data ?? '')];
-    } else if (securityAsset.primaryMetadata!.kind == MetadataType.Unknown) {
-      chilren = [
-        SelectableText(securityAsset.primaryMetadata!.metadata),
-        SelectableText(securityAsset.primaryMetadata!.data ?? '')
-      ];
-    }
-    return ListView(padding: EdgeInsets.all(10.0), children: chilren);
   }
 }
 

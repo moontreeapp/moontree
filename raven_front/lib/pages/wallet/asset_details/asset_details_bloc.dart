@@ -29,6 +29,11 @@ class AssetDetailsBloc {
         streams.app.coinspec.add(null);
       }
     }));
+    listeners.add(streams.client.busy.listen((bool value) {
+      if (!value) {
+       // setState(() {});
+      }
+    }));
   }
 
   factory AssetDetailsBloc.instance() {
@@ -39,6 +44,7 @@ class AssetDetailsBloc {
     for (var listener in assetDetailsBloc.listeners) {
       listener.cancel();
     }
+    scrollObserver.close();
     _instance = null;
     return AssetDetailsBloc.instance();
   }
@@ -59,6 +65,11 @@ class AssetDetailsBloc {
     else
       opacity = (0.9 - controllerValue) * 5;
     return opacity;
+  }
+
+  bool get nullCacheView {
+    var securityAsset = security.asset;
+    return securityAsset == null || securityAsset.hasMetadata == false;
   }
 
   Security get security => data['holding']!.security;

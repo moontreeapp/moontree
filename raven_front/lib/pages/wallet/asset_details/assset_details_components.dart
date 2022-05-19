@@ -76,11 +76,11 @@ class AssetDetailsContent extends StatelessWidget {
 class CoinDetailsHeader extends StatelessWidget {
   const CoinDetailsHeader(
     this.security,
-    this.cachedMetadataView, {
+    this.emptyMetaDataCache, {
     Key? key,
   }) : super(key: key);
   final Security security;
-  final Widget? cachedMetadataView;
+  final bool emptyMetaDataCache;
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +101,7 @@ class CoinDetailsHeader extends StatelessWidget {
               child: CoinSpec(
                 pageTitle: 'Transactions',
                 security: security,
-                bottom: cachedMetadataView != null ? null : Container(),
+                bottom: emptyMetaDataCache? null : Container(),
               ),
             ),
           );
