@@ -89,7 +89,7 @@ class BackdropAppBarContents extends StatelessWidget
             //        '03e72076c1d3ab00146746c42950124846013de01d219f8d5ac99ef1a3226a11f2')!
             //    .addresses
             //    .length);
-            //print(res.vouts.length);
+            print(res.vouts.length);
             //streams.app.snack.add(Snack(message: 'hi'));
           },
           child: appBar,

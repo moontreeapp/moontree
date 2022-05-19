@@ -121,7 +121,7 @@ class _NavBarState extends State<NavBar> {
                       enabled: connectionStatus == ConnectionStatus.connected,
                       disabledOnPressed: () {
                         streams.app.snack.add(Snack(
-                          message: 'Not connected to Network',
+                          message: 'Not connected to network',
                         ));
                       },
                       onPressed: () async {

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:raven_back/raven_back.dart';
@@ -47,10 +48,15 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     await HIVE_INIT.setupDatabaseStart();
     await HIVE_INIT.setupDatabase1();
 
+    /// must use a heavier isolate implementation
+    //compute((_) async {
+
     // put here or on login screen. here seems better for now.
     await HIVE_INIT.setupWaiters1();
     await HIVE_INIT.setupDatabase2();
     await HIVE_INIT.setupWaiters2();
+
+    //}, null);
 
     await Future.delayed(Duration(milliseconds: 1));
     setState(() {
