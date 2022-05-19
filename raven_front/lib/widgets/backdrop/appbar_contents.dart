@@ -82,13 +82,14 @@ class BackdropAppBarContents extends StatelessWidget
             //print(services.wallet.leader.newLeaderProcessRunning);
             //print(res.unspents.byWallet.getAll(res.wallets.first.id).length);
             //print(res.wallets.first.addresses.length);
-            print(res.addresses.byAddress
-                .getOne('mjqUCAqLqnREGDpwtWX4daDNAynAJ86wsW'));
-            print(res.wallets.primaryIndex
-                .getOne(
-                    '03e72076c1d3ab00146746c42950124846013de01d219f8d5ac99ef1a3226a11f2')!
-                .addresses
-                .length);
+            //print(res.addresses.byAddress
+            //    .getOne('mjqUCAqLqnREGDpwtWX4daDNAynAJ86wsW'));
+            //print(res.wallets.primaryIndex
+            //    .getOne(
+            //        '03e72076c1d3ab00146746c42950124846013de01d219f8d5ac99ef1a3226a11f2')!
+            //    .addresses
+            //    .length);
+            print(res.vouts.length);
           },
           child: appBar,
         )

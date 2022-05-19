@@ -47,9 +47,8 @@ class _TransactionListState extends State<TransactionList> {
       //    .where((change) => change.data.address?.walletId == Current.walletId);
       /// new import process doesn't save addresses till end so we don't yet
       /// know the wallet of these items, so we have to make simpler heuristic
-      var items = batchedChanges.where((change) =>
-          (change.data.security == null && widget.symbol == null) ||
-          change.data.security?.symbol == widget.symbol);
+      var items = batchedChanges
+          .where((change) => change.data.security?.symbol == widget.symbol);
       if (items.isNotEmpty) {
         setState(() {
           transactionCount = items.length;

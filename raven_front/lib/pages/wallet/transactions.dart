@@ -35,6 +35,9 @@ class _TransactionsState extends State<Transactions> {
   @override
   void initState() {
     super.initState();
+    listeners.add(res.balances.batchedChanges.listen((batchedChanges) {
+      if (batchedChanges.isNotEmpty) setState(() {});
+    }));
     listeners.add(streams.client.busy.listen((bool value) {
       if (!value) {
         setState(() {});
@@ -162,59 +165,6 @@ class _TransactionsState extends State<Transactions> {
   }
 }
 
-class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.topCenter,
-      children: [
-        if (widget.cachedMetadataView != null) CoinSpecTabs(),
-        Padding(
-            padding: EdgeInsets.only(
-                top: widget.cachedMetadataView != null ? 48 : 0),
-            child: FrontCurve(
-              frontLayerBoxShadow: [],
-              child: content(
-                widget.scrollController,
-                tabChoice,
-                widget.currentTxs,
-                widget.security,
-                context,
-                widget.cachedMetadataView,
-              ),
-            ))
-      ],
-    );
-  }
-
-  String tabChoice = 'HISTORY';
-  List<StreamSubscription> listeners = [];
-
-  @override
-  void initState() {
-    super.initState();
-    listeners.add(res.balances.batchedChanges.listen((batchedChanges) {
-      if (batchedChanges.isNotEmpty) setState(() {});
-    }));
-    listeners.add(streams.app.coinspec.listen((String? value) {
-      if (value != null) {
-        setState(() {
-          tabChoice = value;
-          streams.app.coinspec.add(null);
-        });
-      }
-    }));
-  }
-
-  @override
-  void dispose() {
-    for (var listener in listeners) {
-      listener.cancel();
-    }
-    super.dispose();
-  }
-}
-
 class CoinDetailsGlidingSheet extends StatefulWidget {
   const CoinDetailsGlidingSheet(
     this.currentTxs,
@@ -233,6 +183,60 @@ class CoinDetailsGlidingSheet extends StatefulWidget {
   @override
   State<CoinDetailsGlidingSheet> createState() =>
       _CoinDetailsGlidingSheetState();
+}
+
+class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
+  String tabChoice = 'HISTORY';
+  List<StreamSubscription> listeners = [];
+
+  @override
+  void initState() {
+    super.initState();
+    listeners.add(streams.app.coinspec.listen((String? value) {
+      if (value != null) {
+        setState(() {
+          tabChoice = value;
+          streams.app.coinspec.add(null);
+        });
+      }
+    }));
+  }
+
+  @override
+  void dispose() {
+    for (var listener in listeners) {
+      listener.cancel();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: [
+        if (widget.cachedMetadataView != null) CoinSpecTabs(),
+        Padding(
+            padding: EdgeInsets.only(
+                top: widget.cachedMetadataView != null ? 48 : 0),
+            child: FrontCurve(
+                frontLayerBoxShadow: [],
+                child: tabChoice == CoinSpecTabs.tabIndex[0]
+                    ? TransactionList(
+                        scrollController: widget.scrollController,
+                        symbol: widget.security.symbol,
+                        transactions: widget.currentTxs.where((tx) =>
+                            tx.security.symbol == widget.security.symbol),
+                        msg: '\nNo ${widget.security.symbol} transactions.\n')
+                    : widget.cachedMetadataView ??
+                        components.empty.message(
+                          context,
+                          icon: Icons.description,
+                          msg: '\nNo metadata.\n',
+                        )))
+      ],
+    );
+  }
 }
 
 class CoinDetailsHeader extends StatelessWidget {
@@ -282,29 +286,3 @@ class CoinDetailsHeader extends StatelessWidget {
     return opacity;
   }
 }
-
-Widget metadata(Widget? chachedView, BuildContext context) =>
-    chachedView ??
-    components.empty.message(
-      context,
-      icon: Icons.description,
-      msg: '\nNo metadata.\n',
-    );
-
-Widget content(
-  ScrollController scrollController,
-  String tabChoice,
-  List<TransactionRecord> currentTxs,
-  Security security,
-  BuildContext context,
-  Widget? cachedMetadataView,
-) =>
-    tabChoice == CoinSpecTabs.tabIndex[0]
-        ? TransactionList(
-            scrollController: scrollController,
-            symbol: security.symbol,
-            transactions:
-                currentTxs.where((tx) => tx.security.symbol == security.symbol),
-            msg: '\nNo ${security.symbol} transactions.\n')
-        : metadata(cachedMetadataView,
-            context); //(scrollController: scrollController) //at present we can't scroll metadata
