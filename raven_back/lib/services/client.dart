@@ -185,14 +185,15 @@ class SubscribeService {
           (await services.client.api.subscribeAddress(address))
               .listen((String? status) async {
         /// pull unspents and save
-        print('UNSPENTS $status $address');
+        print('UNSPENTS');
         await services.download.unspents.pull(
           scripthashes: {address.scripthash},
           wallet: address.wallet!,
         );
         // why allow null here?
-        if (status == null || address.status?.status != status) {
-          print('PULLING HISTORY $status');
+        //status == null ||
+        if (address.status?.status != status) {
+          print('PULLING HISTORY');
 
           /// Get histories, update leader counts and
           /// Get transactions in batch.

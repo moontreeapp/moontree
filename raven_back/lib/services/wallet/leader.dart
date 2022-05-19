@@ -147,8 +147,7 @@ class LeaderWalletService {
       }
     }
 
-    /// Get dangling transactions - by the way we'll still need a way for the
-    ///  transaction screen to know if it's in the middle of downloading txs.
+    /// Get dangling transactions
     await services.download.history.allDoneProcess();
 
     /// Save addresses - this will trigger the general case, but since we've
