@@ -4,6 +4,7 @@ import 'package:raven_back/streams/app.dart';
 import 'package:raven_back/utilities/lock.dart';
 import 'package:raven_electrum/raven_electrum.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:collection/collection.dart';
 
 enum ValueType { confirmed, unconfirmed }
 
@@ -44,13 +45,10 @@ class UnspentService {
     required Wallet wallet,
     required Set<String> scripthashes,
   }) async {
-    var utxos = <Unspent>[];
+    var utxos = <Unspent>{};
 
     await _scripthashesLock
         .write(() => _scripthashesChecked.addAll(scripthashes.toSet()));
-
-    // Clear all cached unspents & redownload
-    await res.unspents.clearByScripthashes(scripthashes);
 
     /// update RVN call
     var rvnUtxos =
@@ -77,7 +75,13 @@ class UnspentService {
     _maybeTriggerBackup(rvnUtxos);
     _maybeTriggerBackup(assetUtxos);
 
-    await res.unspents.saveAll(utxos);
+    // only save if there's something new, in that case erase all, save all.
+    var existing = res.unspents.byScripthashes(scripthashes).toSet();
+    if (existing.length != utxos.length ||
+        existing.intersection(utxos).length != existing.length) {
+      await res.unspents.clearByScripthashes(scripthashes);
+      await res.unspents.saveAll(utxos);
+    }
 
     /* moved to client.subscription service
     /// recalculate balances once at the end

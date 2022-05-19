@@ -184,7 +184,7 @@ class SubscribeService {
       subscriptionHandlesAddress[address.id] =
           (await services.client.api.subscribeAddress(address))
               .listen((String? status) async {
-        /// pull unspents and save
+        /// pull unspents and save - should we do this all the time?
         print('UNSPENTS');
         await services.download.unspents.pull(
           scripthashes: {address.scripthash},

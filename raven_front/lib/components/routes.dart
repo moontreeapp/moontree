@@ -6,12 +6,15 @@ class RouteStack extends NavigatorObserver {
   BuildContext? routeContext;
   BuildContext? scaffoldContext;
   TabController? tabController;
-  bool isSnackbarActive = false;
 
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     streams.app.tap.add(null); // track user is active
     routeStack.add(route);
     routeContext = route.navigator?.context;
+    // dismiss the snackbar in case there is one.
+    if (previousRoute?.settings.name == '/home') {
+      ScaffoldMessenger.of(routeContext!).clearSnackBars();
+    }
     streams.app.page.add(conformName(route.settings.name));
   }
 
