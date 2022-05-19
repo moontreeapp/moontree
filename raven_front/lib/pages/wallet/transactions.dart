@@ -149,11 +149,12 @@ class MetadataView extends StatelessWidget {
     if (securityAsset.primaryMetadata == null &&
         securityAsset.hasData &&
         securityAsset.data!.isIpfs) {
+      final height =
+          (assetDetailsBloc.scrollObserver.value.ofMediaHeight(context) + 32) /
+              2;
       return Container(
         alignment: Alignment.topCenter,
-        height: (assetDetailsBloc.scrollObserver.value.ofMediaHeight(context) +
-                32) /
-            2,
+        height: height,
         child: Padding(
           padding: EdgeInsets.only(top: 16),
           child: components.buttons.actionButtonSoft(
