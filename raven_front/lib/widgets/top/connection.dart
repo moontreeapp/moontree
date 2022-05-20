@@ -249,7 +249,9 @@ class _ConnectionLightState extends State<ConnectionLight>
             ),
           ),
           onPressed: () {
-            if (!['Login', 'Createlogin'].contains(streams.app.page.value)) {
+            print(streams.app.page.value);
+            if (!['Login', 'Createlogin', 'Network', 'Scan']
+                .contains(streams.app.page.value)) {
               ScaffoldMessenger.of(context).clearSnackBars();
               streams.app.xlead.add(true);
               Navigator.of(components.navigator.routeContext!)
