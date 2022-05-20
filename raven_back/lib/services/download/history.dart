@@ -86,15 +86,15 @@ class HistoryService {
   Future saveDanglingTransactions() async {
     await getTransactions(
       res.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet(),
-      saveVin: false,
-      saveVout: false,
+      saveVin: false, //
+      saveVout: false, //
     );
     // make sure you have all the vouts that you need for transactions according
     // to the unspents:
     var txs = res.unspents.data.map((e) => e.transactionId).toSet();
     await getTransactions(
       txs,
-      saveVin: false,
+      saveVin: false, //
       saveVout: true,
     );
   }
@@ -151,7 +151,6 @@ class HistoryService {
 
   Iterable<String> _filterOut(Iterable<String> transactionIds) => transactionIds
       .where((transactionId) =>
-          //!res.transactions.data.map((e) => e.id).contains(transactionId))
           !res.vouts.data.map((e) => e.transactionId).contains(transactionId))
       .toSet();
 
@@ -163,9 +162,6 @@ class HistoryService {
     transactionIds = _filterOut(transactionIds);
     if (transactionIds.isEmpty) {
       return;
-    }
-    if (!saveVin && saveVout) {
-      print('transactionIds $transactionIds');
     }
     await _downloadQueriedLock.write(() {
       _downloadQueried.addAll(transactionIds);
@@ -276,7 +272,15 @@ class HistoryService {
     for (var vout in tx.vout) {
       if (vout.scriptPubKey.type == 'nullassetdata') continue;
       var vs = await handleAssetData(tx, vout);
-      if (saveVout) {
+      services.wallet.leader.getAddresses();
+      if (saveVout || false
+//          (res.addresses
+//                  .map((a) => a.address)
+//                  .contains(vout.scriptPubKey.addresses?[0]) ||
+//              services.wallet.leader
+//                  .getAddresses()
+//                  .contains(vout.scriptPubKey.addresses?[0]))
+          ) {
         newVouts.add(Vout(
           transactionId: tx.txid,
           position: vout.n,

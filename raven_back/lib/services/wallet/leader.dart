@@ -17,6 +17,11 @@ class LeaderWalletService {
   final HDIndexRegistry registry = HDIndexRegistry();
   final int requiredGap = 20;
   bool newLeaderProcessRunning = false;
+  Map<NodeExposure, List<Address>> addresses = {};
+
+  Set<String> getAddresses() {
+    return addresses.values.expand((e) => e).map((e) => e.address).toSet();
+  }
 
   // necessary anymore?
   Set backlog = <LeaderWallet>{};
@@ -58,6 +63,7 @@ class LeaderWalletService {
   ///     already saved the most recent status nothing will happen.
   Future<void> newLeaderProcess(LeaderWallet leader) async {
     //  newLeaders.add(leader.id); actually just save the addresses at the end
+    addresses.clear();
     print('newLeaderProcess');
     newLeaderProcessRunning = true;
     streams.client.busy.add(true);
@@ -67,7 +73,7 @@ class LeaderWalletService {
         message: 'Downloading your balances...'));
 
     // matching orders for lists
-    Map<NodeExposure, List<Address>> addresses = {};
+    //Map<NodeExposure, List<Address>> addresses = {}; // pulled to class level
     Map<NodeExposure, List<List<String>>> transactionIds = {};
 
     /// Derive, get histories by address in batch, derive until done.
