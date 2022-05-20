@@ -64,8 +64,17 @@ class _SendState extends State<Send> {
   void initState() {
     super.initState();
     //minHeight = 1 - (201 + 16) / MediaQuery.of(context).size.height;
+
+    // #612
+    //sendAsset.text = sendAsset.text == ''
+    //    ? (res.balances.primaryIndex
+    //                .getOne(Current.walletId, res.securities.RVN) !=
+    //            null
+    //        ? 'Ravencoin'
+    //        : res.balances.first.security.symbol)
+    //    : sendAsset.text;
     sendAsset.text = sendAsset.text == '' ? 'Ravencoin' : sendAsset.text;
-    sendFee.text = sendFee.text == '' ? 'Standard' : sendAsset.text;
+    sendFee.text = sendFee.text == '' ? 'Standard' : sendFee.text;
     //sendAssetFocusNode.addListener(refresh);
     //sendAddressFocusNode.addListener(refresh);
     //sendAmountFocusNode.addListener(refresh);
@@ -203,6 +212,8 @@ class _SendState extends State<Send> {
         minHeight ?? 1 - (201 + 16) / MediaQuery.of(context).size.height;
     data = populateData(context, data);
     var symbol = streams.spend.form.value?.symbol ?? res.securities.RVN.symbol;
+    // #612
+    //var symbol = sendAsset.text;
     symbol = symbol == 'Ravencoin' ? res.securities.RVN.symbol : symbol;
     security = res.securities.bySymbol.getAll(symbol).first;
     useWallet = data.containsKey('walletId') && data['walletId'] != null;
@@ -678,10 +689,8 @@ class _SendState extends State<Send> {
 
   void _produceAssetModal() {
     var options = Current.holdingNames.where((item) => item != 'RVN').toList();
-    SelectionItems(context, modalSet: SelectionSet.Holdings).build(
-        holdingNames: options.isNotEmpty
-            ? ['Ravencoin'] + options
-            : ['Ravencoin', 'Amazon']);
+    SelectionItems(context, modalSet: SelectionSet.Holdings)
+        .build(holdingNames: options.isNotEmpty ? options : []);
   }
 
   void _produceFeeModal() {
