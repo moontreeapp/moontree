@@ -44,11 +44,12 @@ class _AppBarScrimState extends State<AppBarScrim> {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () async {
-          Navigator.of(components.navigator.routeContext!).pop();
+          Navigator.of(components.navigator.routeContext!)
+              .popUntil(ModalRoute.withName('/home'));
           streams.app.scrim.add(false);
         },
-        child: AnimatedContainer(
-          duration: waitForSheetDrop,
+        child: Container(
+          //  duration: waitForSheetDrop, // to make it look better, causes #604
           color: applyScrim ? Colors.black38 : Colors.transparent,
           height: applyScrim ? 56 : 0,
         ));

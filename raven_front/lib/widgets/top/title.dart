@@ -243,8 +243,8 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   /// layer is down, that's where anything like a bottom modal popup would be,
   /// but there's not enough room on the front layer for that.
   Widget walletDropDown() => GestureDetector(
-      onTap: () {
-        SimpleSelectionItems(
+      onTap: () async {
+        await SimpleSelectionItems(
           components.navigator.routeContext!,
           items: [
             for (Wallet wallet in res.wallets.ordered)
