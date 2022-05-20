@@ -8,6 +8,10 @@ class ImportWaiter extends Waiter {
   void init() {
     streams.import.attempt.listen((ImportRequest? importRequest) async {
       if (importRequest != null) {
+        /// if import is currently occuring, wait til its finished.
+        while (services.wallet.leader.newLeaderProcessRunning) {
+          await Future.delayed(Duration(seconds: 10));
+        }
         var firstWallet = false;
         if (res.wallets.data.length == 1 && streams.app.wallet.isEmpty.value) {
           await res.wallets.remove(res.wallets.data.first);
