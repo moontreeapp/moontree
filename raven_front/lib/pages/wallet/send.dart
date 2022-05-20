@@ -14,6 +14,7 @@ import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 import 'package:raven_back/streams/spend.dart';
 import 'package:raven_back/services/transaction/maker.dart';
 import 'package:raven_back/raven_back.dart';
+import 'package:raven_back/streams/app.dart';
 
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/services/lookup.dart';
@@ -60,12 +61,21 @@ class _SendState extends State<Send> {
   String clipboard = '';
   final ScrollController scrollController = ScrollController();
 
+  bool rvnValidation() =>
+      res.balances.primaryIndex.getOne(Current.walletId, res.securities.RVN) !=
+      null;
   @override
   void initState() {
     super.initState();
     //minHeight = 1 - (201 + 16) / MediaQuery.of(context).size.height;
+    if (!rvnValidation()) {
+      streams.spend.form.add(SpendForm.merge(
+        form: streams.spend.form.value,
+        symbol: res.balances.first.security.symbol,
+      ));
+    }
 
-    // #612
+    /// #612
     //sendAsset.text = sendAsset.text == ''
     //    ? (res.balances.primaryIndex
     //                .getOne(Current.walletId, res.securities.RVN) !=
@@ -206,14 +216,14 @@ class _SendState extends State<Send> {
     }
   }
 
+  void handleNoRavencoin() {}
+
   @override
   Widget build(BuildContext context) {
     minHeight =
         minHeight ?? 1 - (201 + 16) / MediaQuery.of(context).size.height;
     data = populateData(context, data);
     var symbol = streams.spend.form.value?.symbol ?? res.securities.RVN.symbol;
-    // #612
-    //var symbol = sendAsset.text;
     symbol = symbol == 'Ravencoin' ? res.securities.RVN.symbol : symbol;
     security = res.securities.bySymbol.getAll(symbol).first;
     useWallet = data.containsKey('walletId') && data['walletId'] != null;
@@ -356,15 +366,23 @@ class _SendState extends State<Send> {
         onChanged: (value) {
           /// just always put it in
           //if (_validateAddressColor(value)) {
-          streams.spend.form.add(
-              SpendForm.merge(form: streams.spend.form.value, address: value));
+          streams.spend.form.add(SpendForm.merge(
+            form: streams.spend.form.value,
+            symbol: sendAsset.text,
+            fee: sendFee.text,
+            address: value,
+          ));
           //}
         },
         onEditingComplete: () {
           /// just always put it in
           //if (_validateAddressColor(sendAddress.text)) {
           streams.spend.form.add(SpendForm.merge(
-              form: streams.spend.form.value, address: sendAddress.text));
+            form: streams.spend.form.value,
+            symbol: sendAsset.text,
+            fee: sendFee.text,
+            address: sendAddress.text,
+          ));
           //}
           FocusScope.of(context).requestFocus(sendAmountFocusNode);
           setState(() {});
@@ -430,7 +448,11 @@ class _SendState extends State<Send> {
           }
           visibleAmount = verifyVisibleAmount(value);
           streams.spend.form.add(SpendForm.merge(
-              form: streams.spend.form.value, amount: asDouble(visibleAmount)));
+            form: streams.spend.form.value,
+            symbol: sendAsset.text,
+            fee: sendFee.text,
+            amount: asDouble(visibleAmount),
+          ));
         },
         onEditingComplete: () {
           //sendAmount.text = cleanDecAmount(
@@ -441,7 +463,11 @@ class _SendState extends State<Send> {
               enforceDivisibility(sendAmount.text, divisibility: divisibility);
           visibleAmount = verifyVisibleAmount(sendAmount.text);
           streams.spend.form.add(SpendForm.merge(
-              form: streams.spend.form.value, amount: asDouble(visibleAmount)));
+            form: streams.spend.form.value,
+            symbol: sendAsset.text,
+            fee: sendFee.text,
+            amount: asDouble(visibleAmount),
+          ));
           FocusScope.of(context).requestFocus(sendFeeFocusNode);
           setState(() {});
         },
@@ -597,7 +623,7 @@ class _SendState extends State<Send> {
   }
 
   bool allValidation() {
-    return fieldValidation() && holdingValidation();
+    return rvnValidation() && fieldValidation() && holdingValidation();
   }
 
   void startSend() {
@@ -650,6 +676,15 @@ class _SendState extends State<Send> {
         focusNode: previewFocusNode,
         enabled: !disabled,
         onPressed: () => startSend(),
+        disabledOnPressed: () {
+          if (!rvnValidation()) {
+            streams.app.snack.add(Snack(
+              message: 'No Ravencoin in wallet - fees are paid in Ravencoin',
+              positive: false,
+              atMiddle: true,
+            ));
+          }
+        },
       );
 
   void confirmSend(SendRequest sendRequest) {

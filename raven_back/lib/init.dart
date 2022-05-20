@@ -13,7 +13,7 @@ Future initWaiters(HiveLoadingStep step) async {
     waiters.client.init();
     waiters.address.init();
     waiters.unspent.init();
-    waiters.asset.init();
+    //waiters.asset.init();
     waiters.subscription.init();
     waiters.block.init();
     waiters.send.init();

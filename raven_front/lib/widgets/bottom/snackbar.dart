@@ -48,6 +48,10 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
     return Container(height: 0, width: 0);
   }
 
+  TextStyle style() => snack!.positive
+      ? Theme.of(context).textTheme.bodyText2!.copyWith(color: AppColors.white)
+      : Theme.of(context).textTheme.bodyText2!.copyWith(color: AppColors.error);
+
   Future<void> show() async {
     var msg = GestureDetector(
         onTap: () {
@@ -57,13 +61,12 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         child: snack!.atBottom
             ? Padding(
                 padding: EdgeInsets.only(left: 16, right: 16),
-                child: Text(snack!.message,
-                    maxLines: 1,
-                    overflow: TextOverflow.fade,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText2!
-                        .copyWith(color: AppColors.white)))
+                child: Text(
+                  snack!.message,
+                  maxLines: 1,
+                  overflow: TextOverflow.fade,
+                  style: style(),
+                ))
             : Stack(alignment: Alignment.bottomCenter, children: [
                 Container(
                     alignment: Alignment.topLeft,
@@ -73,18 +76,12 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                         borderRadius: components.shape.topRoundedBorder8),
                     child: Padding(
                         padding: EdgeInsets.only(left: 16, right: 16, top: 12),
-                        child: Text(snack!.message,
-                            maxLines: 1,
-                            overflow: TextOverflow.fade,
-                            style: snack!.positive
-                                ? Theme.of(context)
-                                    .textTheme
-                                    .bodyText2!
-                                    .copyWith(color: AppColors.white)
-                                : Theme.of(context)
-                                    .textTheme
-                                    .bodyText2!
-                                    .copyWith(color: AppColors.error)))),
+                        child: Text(
+                          snack!.message,
+                          maxLines: 1,
+                          overflow: TextOverflow.fade,
+                          style: style(),
+                        ))),
                 Container(
                     height: 16,
                     decoration: BoxDecoration(
@@ -115,6 +112,22 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         backgroundColor: AppColors.snackBar,
         shape: components.shape.topRounded8,
         content: msg,
+      ));
+    } else if (snack!.atMiddle) {
+      streams.app.hideNav.add(false);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        elevation: 0,
+        dismissDirection: DismissDirection.none,
+        backgroundColor: AppColors.white,
+        shape: components.shape.topRounded8,
+        content: msg,
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.only(bottom: (Platform.isIOS ? 51.6 : 60).figmaH),
+        padding: EdgeInsets.only(top: 0, bottom: 0, left: 0, right: 0),
+        //action: SnackBarAction(
+        //    label: ' ',
+        //    onPressed: () =>
+        //        Clipboard.setData(ClipboardData(text: snack!.message))),
       ));
     } else /*if (snack!.link == null && snack!.details == null)*/ {
       /// make sure we don't display until we've been sent back home

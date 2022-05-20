@@ -51,6 +51,7 @@ final appActive$ = BehaviorSubject<bool>.seeded(true)
 class Snack {
   final String message;
   final bool atBottom;
+  final bool atMiddle;
   // not used
   final bool positive;
   final String? details; // if they click on the message, popup details
@@ -65,12 +66,14 @@ class Snack {
       this.link,
       this.arguments,
       this.label,
-      this.atBottom = false});
+      this.atBottom = false,
+      this.atMiddle = false});
 
   @override
   String toString() {
-    return 'Snack(message: $message, atBottom: $atBottom, positive: $positive, '
-        'details: $details, label: $label, link: $link, arguments: $arguments ';
+    return 'Snack(message: $message, atBottom: $atBottom, atMiddle: $atMiddle, '
+        'positive: $positive, details: $details, label: $label, link: $link, '
+        'arguments: $arguments)';
   }
 }
 
