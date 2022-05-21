@@ -79,6 +79,7 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
+            //streams.app.snack.add(Snack(message: 'hi'));
             //print(services.wallet.leader.newLeaderProcessRunning);
             //print(res.unspents.byWallet.getAll(res.wallets.first.id).length);
             //print(res.wallets.first.addresses.length);
@@ -89,9 +90,33 @@ class BackdropAppBarContents extends StatelessWidget
             //        '03e72076c1d3ab00146746c42950124846013de01d219f8d5ac99ef1a3226a11f2')!
             //    .addresses
             //    .length);
-            print(res.vouts.length);
-            print(services.download.history.isComplete);
-            //streams.app.snack.add(Snack(message: 'hi'));
+            print(Current.walletId);
+            //03e72076c1d3ab00146746c42950124846013de01d219f8d5ac99ef1a3226a11f2
+            //print(res.unspents.byWalletSymbol.getAll(
+            //    '03e72076c1d3ab00146746c42950124846013de01d219f8d5ac99ef1a3226a11f2',
+            //    'MOONTREETESTASSET/TESTSUB!'));
+            //res.transactions.chronological.forEach((e) => print(e));
+            var givenAddresses = Current.wallet.addresses
+                .map((address) => address.address)
+                .toSet();
+            for (var transaction in res.transactions.chronological) {
+              var securitiesInvolved = ((transaction.vins
+                          .where((vin) =>
+                              givenAddresses.contains(vin.vout?.toAddress) &&
+                              vin.vout?.security != null)
+                          .map((vin) => vin.vout?.security)
+                          .toList()) +
+                      (transaction.vouts
+                          .where((vout) =>
+                              givenAddresses.contains(vout.toAddress) &&
+                              vout.security != null)
+                          .map((vout) => vout.security)
+                          .toList()))
+                  .toSet();
+
+              print(transaction);
+              print(securitiesInvolved);
+            }
           },
           child: appBar,
         )

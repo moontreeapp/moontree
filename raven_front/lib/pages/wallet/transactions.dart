@@ -69,8 +69,11 @@ class _TransactionsState extends State<Transactions> {
         .getTransactionRecords(wallet: Current.wallet, securities: {security});
     print('security $security');
     print('CURRENTTXS $currentTxs');
-    print(
-        '--- ${services.transaction.getTransactionRecords(wallet: Current.wallet)}');
+    services.transaction
+        .getTransactionRecords(wallet: Current.wallet)
+        .forEach((element) {
+      print('--- $element');
+    });
     cachedMetadataView = _metadataView(security, context);
     minHeight = !Platform.isIOS
         ? 0.65.figmaAppHeight +

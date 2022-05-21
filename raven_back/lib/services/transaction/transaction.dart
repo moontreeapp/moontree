@@ -54,7 +54,7 @@ class TransactionService {
       net.burnAddresses.issueUnique: net.burnAmounts.issueUnique
     };
     for (var transaction in res.transactions.chronological) {
-      print(transaction);
+      //print(transaction);
       final securitiesInvolved = ((transaction.vins
                   .where((vin) =>
                       givenAddresses.contains(vin.vout?.toAddress) &&
@@ -326,7 +326,7 @@ class TransactionService {
     var ret = <TransactionRecord>[];
     var actual = <TransactionRecord>[];
     for (var txRecord in transactionRecords) {
-      if (txRecord.formattedDatetime == 'in mempool') {
+      if (txRecord.formattedDatetime == 'in transit') {
         ret.add(txRecord);
       } else {
         actual.add(txRecord);

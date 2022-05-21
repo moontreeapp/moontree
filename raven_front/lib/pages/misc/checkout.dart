@@ -82,6 +82,7 @@ class _CheckoutState extends State<Checkout> {
   late List<StreamSubscription> listeners = [];
   late SendEstimate? estimate = null;
   late bool disabled = false;
+  late DateTime startTime;
 
   @override
   void initState() {
@@ -132,6 +133,7 @@ class _CheckoutState extends State<Checkout> {
   Widget build(BuildContext context) {
     data = populateData(context, data);
     struct = data['struct'] ?? CheckoutStruct();
+    startTime = DateTime.now();
     return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
   }
 
@@ -336,11 +338,13 @@ class _CheckoutState extends State<Checkout> {
           enabled: !disabled,
           label: struct.buttonWord,
           onPressed: () async {
-            components.loading.screen(
-                message: struct.loadingMessage,
-                playCount: 2,
-                then: struct.buttonAction);
-            streams.spend.form.add(null);
+            if (DateTime.now().difference(startTime).inMilliseconds > 500) {
+              components.loading.screen(
+                  message: struct.loadingMessage,
+                  playCount: 2,
+                  then: struct.buttonAction);
+              streams.spend.form.add(null);
+            }
           },
         )
       ]);
