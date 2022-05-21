@@ -36,10 +36,14 @@ class _TransactionsState extends State<Transactions> {
   void initState() {
     super.initState();
     listeners.add(res.balances.batchedChanges.listen((batchedChanges) {
-      if (batchedChanges.isNotEmpty) setState(() {});
+      if (batchedChanges.isNotEmpty) {
+        print('Refresh - balances');
+        setState(() {});
+      }
     }));
     listeners.add(streams.client.busy.listen((bool value) {
       if (!value) {
+        print('Refresh - busy');
         setState(() {});
       }
     }));

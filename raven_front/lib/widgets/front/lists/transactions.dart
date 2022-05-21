@@ -50,6 +50,7 @@ class _TransactionListState extends State<TransactionList> {
       var items = batchedChanges
           .where((change) => change.data.security?.symbol == widget.symbol);
       if (items.isNotEmpty) {
+        print('refreshing list - vouts');
         setState(() {
           transactionCount = items.length;
         });
@@ -61,10 +62,12 @@ class _TransactionListState extends State<TransactionList> {
       var changes = batchedChanges.where((change) =>
           change.data.base == res.securities.RVN &&
           change.data.quote == res.securities.USD);
-      if (changes.isNotEmpty)
+      if (changes.isNotEmpty) {
+        print('refreshing list - rates');
         setState(() {
           rateUSD = changes.first.data;
         });
+      }
     }));
   }
 
@@ -104,57 +107,58 @@ class _TransactionListState extends State<TransactionList> {
   ListView _transactionsView(BuildContext context) => ListView(
       physics: ClampingScrollPhysics(),
       controller: widget.scrollController,
-      children: <Widget>[
-            SizedBox(height: 16),
-            for (var transactionRecord in transactions) ...[
-              ...[
-                ListTile(
-                  //contentPadding:
-                  //    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 13),
-                  onTap: () => Navigator.pushNamed(
-                      context, '/transaction/transaction',
-                      arguments: {'transactionRecord': transactionRecord}),
-                  //onLongPress: _toggleUSD,
-                  //leading: Container(
-                  //    height: 40,
-                  //    width: 40,
-                  //    child: components.icons
-                  //        .assetAvatar(transactionRecord.security.symbol)),
-                  title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                            transactionRecord.toSelf
-                                ? transactionRecord.typeToString
-                                : components.text.securityAsReadable(
-                                    transactionRecord.value,
-                                    security: transactionRecord.security,
-                                    asUSD: showUSD),
-                            style: Theme.of(context).textTheme.bodyText1),
-                        Text(
-                            transactionRecord.formattedDatetime +
-                                '${!transactionRecord.isNormal ? ' | ' + transactionRecord.typeToString : ''}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText2!
-                                .copyWith(color: AppColors.black60)),
-                      ]),
-                  trailing: transactionRecord.value == 0
-                      ? components.icons.fee(context)
-                      : (transactionRecord.out
-                          ? components.icons.out(context)
-                          : components.icons.income(context)),
-                ),
-                Divider(indent: 16),
-              ]
-            ]
-          ] +
-          [
-            if (!services.download.history.isComplete)
-              for (var _ in transactions) ...[
-                components.empty.getTransactionsShimmer(context)
-              ]
-          ] +
+      children: <Widget>[SizedBox(height: 16)] +
+          (!services.download.history.isComplete
+              ? <Widget>[
+                  for (var _ in transactions) ...[
+                    components.empty.getTransactionsShimmer(context)
+                  ]
+                ]
+              : <Widget>[
+                  for (var transactionRecord in transactions) ...[
+                    ...[
+                      ListTile(
+                        //contentPadding:
+                        //    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 13),
+                        onTap: () => Navigator.pushNamed(
+                            context, '/transaction/transaction', arguments: {
+                          'transactionRecord': transactionRecord
+                        }),
+                        //onLongPress: _toggleUSD,
+                        //leading: Container(
+                        //    height: 40,
+                        //    width: 40,
+                        //    child: components.icons
+                        //        .assetAvatar(transactionRecord.security.symbol)),
+                        title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                  transactionRecord.toSelf
+                                      ? transactionRecord.typeToString
+                                      : components.text.securityAsReadable(
+                                          transactionRecord.value,
+                                          security: transactionRecord.security,
+                                          asUSD: showUSD),
+                                  style: Theme.of(context).textTheme.bodyText1),
+                              Text(
+                                  transactionRecord.formattedDatetime +
+                                      '${!transactionRecord.isNormal ? ' | ' + transactionRecord.typeToString : ''}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .copyWith(color: AppColors.black60)),
+                            ]),
+                        trailing: transactionRecord.value == 0
+                            ? components.icons.fee(context)
+                            : (transactionRecord.out
+                                ? components.icons.out(context)
+                                : components.icons.income(context)),
+                      ),
+                      Divider(indent: 16),
+                    ]
+                  ]
+                ]) +
           [
             Container(
               height: 80,

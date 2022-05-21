@@ -8,7 +8,7 @@ class HistoryService {
   final Set<String> _downloadQueried = {};
   final _downloadQueriedLock = ReaderWriterLock();
   int _downloaded = 0;
-  int _new_length = 0;
+  int _downloadQueriedLength = 0;
 
   /// called during import process, leader registry counts handled separately.
   Future<List<List<String>>> getHistories(List<Address> addresses) async {
@@ -165,7 +165,7 @@ class HistoryService {
     }
     await _downloadQueriedLock.write(() {
       _downloadQueried.addAll(transactionIds);
-      _new_length = _downloadQueried.length;
+      _downloadQueriedLength = _downloadQueried.length;
     });
     var txs = <Tx>[];
     try {
@@ -199,7 +199,7 @@ class HistoryService {
     if (_filterOut([transactionId]).isNotEmpty) {
       await _downloadQueriedLock.write(() {
         _downloadQueried.add(transactionId);
-        _new_length = _downloadQueried.length;
+        _downloadQueriedLength = _downloadQueried.length;
       });
       await saveTransaction(
           await services.client.api.getTransaction(transactionId),
@@ -323,8 +323,8 @@ class HistoryService {
       _downloadQueried.clear();
     });
     _downloaded = 0;
-    _new_length = 0;
+    _downloadQueriedLength = 0;
   }
 
-  bool get isComplete => _downloaded >= _new_length;
+  bool get isComplete => _downloaded >= _downloadQueriedLength;
 }
