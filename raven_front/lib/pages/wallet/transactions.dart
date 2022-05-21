@@ -32,6 +32,7 @@ class _TransactionsState extends State<Transactions> {
   Widget? cachedMetadataView;
   DraggableScrollableController dController = DraggableScrollableController();
   BehaviorSubject<double> scrollObserver = BehaviorSubject.seeded(.91);
+
   @override
   void initState() {
     super.initState();
@@ -43,6 +44,7 @@ class _TransactionsState extends State<Transactions> {
     }));
     listeners.add(streams.client.busy.listen((bool value) {
       if (!value) {
+        // todo: value != v so it doesnt' refresh at first each time.
         print('Refresh - busy');
         setState(() {});
       }
@@ -65,6 +67,10 @@ class _TransactionsState extends State<Transactions> {
     currentHolds = Current.holdings;
     currentTxs = services.transaction
         .getTransactionRecords(wallet: Current.wallet, securities: {security});
+    print('security $security');
+    print('CURRENTTXS $currentTxs');
+    print(
+        '--- ${services.transaction.getTransactionRecords(wallet: Current.wallet)}');
     cachedMetadataView = _metadataView(security, context);
     minHeight = !Platform.isIOS
         ? 0.65.figmaAppHeight +

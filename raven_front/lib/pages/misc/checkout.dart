@@ -165,8 +165,10 @@ class _CheckoutState extends State<Checkout> {
             components.icons.assetAvatar(struct.symbol!.toUpperCase()),
         title: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
           SizedBox(width: 5),
-          Text(struct.displaySymbol,
-              style: Theme.of(context).textTheme.bodyText1)
+          FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Text(struct.displaySymbol,
+                  style: Theme.of(context).textTheme.bodyText1))
         ]),
         //subtitle: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
         //  SizedBox(width: 5),

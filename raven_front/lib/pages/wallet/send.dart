@@ -64,15 +64,27 @@ class _SendState extends State<Send> {
   bool rvnValidation() =>
       res.balances.primaryIndex.getOne(Current.walletId, res.securities.RVN) !=
       null;
+
+  void tellUserNoRVN() => streams.app.snack.add(Snack(
+        message: 'No Ravencoin in wallet - fees are paid in Ravencoin',
+        positive: false,
+        atMiddle: true,
+      ));
+
   @override
   void initState() {
     super.initState();
     //minHeight = 1 - (201 + 16) / MediaQuery.of(context).size.height;
     if (!rvnValidation()) {
-      streams.spend.form.add(SpendForm.merge(
-        form: streams.spend.form.value,
-        symbol: res.balances.first.security.symbol,
-      ));
+      tellUserNoRVN();
+      if (streams.spend.form.value?.symbol == null ||
+          streams.spend.form.value?.symbol == 'RVN' ||
+          streams.spend.form.value?.symbol == 'Ravencoin') {
+        streams.spend.form.add(SpendForm.merge(
+          form: streams.spend.form.value,
+          symbol: res.balances.first.security.symbol,
+        ));
+      }
     }
 
     /// #612
@@ -215,8 +227,6 @@ class _SendState extends State<Send> {
       setState(() {});
     }
   }
-
-  void handleNoRavencoin() {}
 
   @override
   Widget build(BuildContext context) {
@@ -678,11 +688,7 @@ class _SendState extends State<Send> {
         onPressed: () => startSend(),
         disabledOnPressed: () {
           if (!rvnValidation()) {
-            streams.app.snack.add(Snack(
-              message: 'No Ravencoin in wallet - fees are paid in Ravencoin',
-              positive: false,
-              atMiddle: true,
-            ));
+            tellUserNoRVN();
           }
         },
       );

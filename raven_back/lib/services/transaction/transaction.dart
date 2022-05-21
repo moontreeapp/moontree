@@ -53,8 +53,8 @@ class TransactionService {
       net.burnAddresses.issueSubQualifier: net.burnAmounts.issueSubQualifier,
       net.burnAddresses.issueUnique: net.burnAmounts.issueUnique
     };
-
     for (var transaction in res.transactions.chronological) {
+      print(transaction);
       final securitiesInvolved = ((transaction.vins
                   .where((vin) =>
                       givenAddresses.contains(vin.vout?.toAddress) &&
