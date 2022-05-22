@@ -59,5 +59,5 @@ class Transaction with EquatableMixin {
 
   String get formattedDatetime => time != null
       ? formatDate(datetime, [MM, ' ', d, ', ', yyyy])
-      : 'in transit';
+      : 'In Transit';
 }

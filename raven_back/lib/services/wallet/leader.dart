@@ -148,7 +148,8 @@ class LeaderWalletService {
         final chunkSize =
             txsToDownload.length < batchSize ? txsToDownload.length : batchSize;
         await services.download.history.getTransactions(// also saves them
-            txsToDownload.sublist(0, chunkSize));
+            services.download.history.filterOutPreviouslyDownloaded(
+                txsToDownload.sublist(0, chunkSize)));
         txsToDownload = txsToDownload.sublist(chunkSize);
       }
     }

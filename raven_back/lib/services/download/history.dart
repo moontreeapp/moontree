@@ -63,9 +63,14 @@ class HistoryService {
   }
 
   Future getAndSaveMempoolTransactions() async {
+    await getAndSaveTransactions(
+        res.transactions.mempool.map((t) => t.id).toSet());
+  }
+
+  Future getAndSaveTransactions(Set<String> txIds) async {
     await saveTransactions(
       [
-        for (var transactionId in res.transactions.mempool.map((t) => t.id))
+        for (var transactionId in txIds)
           await services.client.api.getTransaction(transactionId)
       ],
     );
@@ -85,15 +90,16 @@ class HistoryService {
   /// and get the vouts for them
   Future saveDanglingTransactions() async {
     await getTransactions(
-      res.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet(),
+      filterOutPreviouslyDownloaded(
+          res.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet()),
       saveVin: false, //
       saveVout: false, //
     );
     // make sure you have all the vouts that you need for transactions according
     // to the unspents:
-    var txs = res.unspents.data.map((e) => e.transactionId).toSet();
     await getTransactions(
-      txs,
+      filterOutPreviouslyDownloaded(
+          res.unspents.data.map((e) => e.transactionId).toSet()),
       saveVin: false, //
       saveVout: true,
     );
@@ -149,17 +155,19 @@ class HistoryService {
     return Tuple3(value, security ?? res.securities.RVN, asset);
   }
 
-  Iterable<String> _filterOut(Iterable<String> transactionIds) => transactionIds
-      .where((transactionId) =>
-          !res.vouts.data.map((e) => e.transactionId).contains(transactionId))
-      .toSet();
+  Iterable<String> filterOutPreviouslyDownloaded(
+          Iterable<String> transactionIds) =>
+      transactionIds
+          .where((transactionId) => !res.vouts.data
+              .map((e) => e.transactionId)
+              .contains(transactionId))
+          .toSet();
 
   Future<void>? getTransactions(
     Iterable<String> transactionIds, {
     bool saveVin = true,
     bool saveVout = true,
   }) async {
-    transactionIds = _filterOut(transactionIds);
     if (transactionIds.isEmpty) {
       return;
     }
@@ -196,18 +204,18 @@ class HistoryService {
     String transactionId, {
     bool saveVin = true,
   }) async {
-    if (_filterOut([transactionId]).isNotEmpty) {
-      await _downloadQueriedLock.write(() {
-        _downloadQueried.add(transactionId);
-        _downloadQueriedLength = _downloadQueried.length;
-      });
-      await saveTransaction(
-          await services.client.api.getTransaction(transactionId),
-          saveVin: saveVin);
-      _downloaded += 1;
-    } else {
-      print('skipping: $transactionId');
-    }
+    //if (filterOutPreviouslyDownloaded([transactionId]).isNotEmpty) {
+    await _downloadQueriedLock.write(() {
+      _downloadQueried.add(transactionId);
+      _downloadQueriedLength = _downloadQueried.length;
+    });
+    await saveTransaction(
+        await services.client.api.getTransaction(transactionId),
+        saveVin: saveVin);
+    _downloaded += 1;
+    //} else {
+    //  print('skipping: $transactionId');
+    //}
   }
 
   /// when an address status change: make our historic tx data match blockchain

@@ -326,7 +326,7 @@ class TransactionService {
     var ret = <TransactionRecord>[];
     var actual = <TransactionRecord>[];
     for (var txRecord in transactionRecords) {
-      if (txRecord.formattedDatetime == 'in transit') {
+      if (txRecord.formattedDatetime == 'In Transit') {
         ret.add(txRecord);
       } else {
         actual.add(txRecord);

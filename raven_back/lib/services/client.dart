@@ -184,6 +184,11 @@ class SubscribeService {
       subscriptionHandlesAddress[address.id] =
           (await services.client.api.subscribeAddress(address))
               .listen((String? status) async {
+        if (address.id ==
+            '24d9aece25bfb453f5e540e1017983c5d1542e02195aecccfe8e66d713e07a52') {
+          print('watching');
+        }
+
         /// pull unspents and save - should we do this all the time?
         print('UNSPENTS');
         await services.download.unspents.pull(

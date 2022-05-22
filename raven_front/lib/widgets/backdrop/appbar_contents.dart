@@ -95,28 +95,49 @@ class BackdropAppBarContents extends StatelessWidget
             //print(res.unspents.byWalletSymbol.getAll(
             //    '03e72076c1d3ab00146746c42950124846013de01d219f8d5ac99ef1a3226a11f2',
             //    'MOONTREETESTASSET/TESTSUB!'));
-            //res.transactions.chronological.forEach((e) => print(e));
-            var givenAddresses = Current.wallet.addresses
-                .map((address) => address.address)
-                .toSet();
-            for (var transaction in res.transactions.chronological) {
-              var securitiesInvolved = ((transaction.vins
-                          .where((vin) =>
-                              givenAddresses.contains(vin.vout?.toAddress) &&
-                              vin.vout?.security != null)
-                          .map((vin) => vin.vout?.security)
-                          .toList()) +
-                      (transaction.vouts
-                          .where((vout) =>
-                              givenAddresses.contains(vout.toAddress) &&
-                              vout.security != null)
-                          .map((vout) => vout.security)
-                          .toList()))
-                  .toSet();
-
-              print(transaction);
-              print(securitiesInvolved);
-            }
+            ////res.transactions.chronological.forEach((e) => print(e));
+            //print(res.transactions.primaryIndex.getOne(
+            //    'c667cae71a6afbf9b7456fe9be33640ba2412e8eed304fc9b98e76e69bc297e7'));
+            //Current.wallet.addresses.forEach((element) {
+            //  print(element.address);
+            //});
+            //'mhDX42MrwMrPGskBP6q7CoyaWFuAgGx8Rm'
+            var givenAddresses = {'mhDX42MrwMrPGskBP6q7CoyaWFuAgGx8Rm'};
+            //    .map((address) => address.address)
+            //    .toSet();
+            //print(res.transactions.primaryIndex.getOne(
+            print(res.vouts.length);
+            //    '72de633692442c9f01c0511a0becd547365fb4302b240bb79be9a09e94a1862c'));
+            // not downloading the tx or vouts
+            ///print(res.addresses.byAddress
+            ///    .getOne('mhDX42MrwMrPGskBP6q7CoyaWFuAgGx8Rm'));
+            ///print(services.client.subscribe.subscriptionHandlesAddress.containsKey(
+            ///    'a2d2e0f63707574434fb64777e870c23d7c66c074930f65812eed092edd542e3'));
+            ///
+            ///print(res.addresses.byAddress
+            ///    .getOne('mxNvrZVPBgU4H2piP5bag2vrjZ6K8pd3Ze'));
+            ///
+            //print(res.transactions.primaryIndex.getOne(
+            print(res.vouts.byTransaction.getAll(
+                'fc7fdbbc3d189f23e1378ada1ba3bebae023b036cc6f5405e593745283d8da37'));
+            //24d9aece25bfb453f5e540e1017983c5d1542e02195aecccfe8e66d713e07a52
+            //for (var transaction in res.transactions.chronological) {
+            //  var securitiesInvolved = ((transaction.vins
+            //              .where((vin) =>
+            //                  givenAddresses.contains(vin.vout?.toAddress) &&
+            //                  vin.vout?.security != null)
+            //              .map((vin) => vin.vout?.security)
+            //              .toList()) +
+            //          (transaction.vouts
+            //              .where((vout) =>
+            //                  givenAddresses.contains(vout.toAddress) &&
+            //                  vout.security != null)
+            //              .map((vout) => vout.security)
+            //              .toList()))
+            //      .toSet();
+            //  print(transaction);
+            //  print(securitiesInvolved);
+            //}
           },
           child: appBar,
         )
