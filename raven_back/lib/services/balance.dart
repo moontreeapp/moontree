@@ -58,9 +58,6 @@ class BalanceService {
       var unspent = unspents[randomIndex];
       unspents.removeAt(randomIndex);
       gathered += unspent.value;
-      print('unspent.transactionId, unspent.position');
-      print(unspent.transactionId);
-      print(unspent.position);
       var vout = res.vouts.byTransactionPosition
           .getOne(unspent.transactionId, unspent.position);
       if (vout == null) {

@@ -184,19 +184,20 @@ class SubscribeService {
       subscriptionHandlesAddress[address.id] =
           (await services.client.api.subscribeAddress(address))
               .listen((String? status) async {
-        if (address.id ==
-            '24d9aece25bfb453f5e540e1017983c5d1542e02195aecccfe8e66d713e07a52') {
-          print('watching');
-        }
-
         /// pull unspents and save - should we do this all the time?
         print('UNSPENTS');
         await services.download.unspents.pull(
           scripthashes: {address.scripthash},
           wallet: address.wallet!,
+          getTransactions: true,
         );
         // why allow null here?
         //status == null ||
+        if (address.address == 'n2RuP7WnxuuPQYu5ME5hMivnvcm7aP3pEW') {
+          print('watching');
+          print(address.status?.status);
+          print(status);
+        }
         if (address.status?.status != status) {
           print('PULLING HISTORY');
 

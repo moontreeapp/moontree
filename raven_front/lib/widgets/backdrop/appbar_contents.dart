@@ -106,7 +106,7 @@ class BackdropAppBarContents extends StatelessWidget
             //    .map((address) => address.address)
             //    .toSet();
             //print(res.transactions.primaryIndex.getOne(
-            print(res.vouts.length);
+            //print(res.vouts.length);
             //    '72de633692442c9f01c0511a0becd547365fb4302b240bb79be9a09e94a1862c'));
             // not downloading the tx or vouts
             ///print(res.addresses.byAddress
@@ -118,8 +118,8 @@ class BackdropAppBarContents extends StatelessWidget
             ///    .getOne('mxNvrZVPBgU4H2piP5bag2vrjZ6K8pd3Ze'));
             ///
             //print(res.transactions.primaryIndex.getOne(
-            print(res.vouts.byTransaction.getAll(
-                'fc7fdbbc3d189f23e1378ada1ba3bebae023b036cc6f5405e593745283d8da37'));
+            //print(res.vouts.byTransaction.getAll(
+            //    'fc7fdbbc3d189f23e1378ada1ba3bebae023b036cc6f5405e593745283d8da37'));
             //24d9aece25bfb453f5e540e1017983c5d1542e02195aecccfe8e66d713e07a52
             //for (var transaction in res.transactions.chronological) {
             //  var securitiesInvolved = ((transaction.vins
@@ -138,6 +138,12 @@ class BackdropAppBarContents extends StatelessWidget
             //  print(transaction);
             //  print(securitiesInvolved);
             //}
+            //services.client.subscribe.subscriptionHandlesAddress
+            //    .forEach((key, value) {
+            //  print(res.addresses.primaryIndex.getOne(key));
+            //});
+            print(services.client.subscribe.subscriptionHandlesAddress[
+                '3ea41766ce551457e99c8a3eb3eb28240368331858f1d5706c880c0af2607072']);
           },
           child: appBar,
         )

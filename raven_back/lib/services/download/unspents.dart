@@ -44,6 +44,7 @@ class UnspentService {
   Future<void> pull({
     required Wallet wallet,
     required Set<String> scripthashes,
+    bool getTransactions = false,
   }) async {
     var utxos = <Unspent>{};
 
@@ -81,6 +82,11 @@ class UnspentService {
         existing.intersection(utxos).length != existing.length) {
       await res.unspents.clearByScripthashes(scripthashes);
       await res.unspents.saveAll(utxos);
+      if (getTransactions) {
+        await services.download.history.getAndSaveTransactions(
+          utxos.map((e) => e.transactionId).toSet(),
+        );
+      }
     }
 
     /* moved to client.subscription service
