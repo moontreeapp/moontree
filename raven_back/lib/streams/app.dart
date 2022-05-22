@@ -13,7 +13,6 @@ class AppStreams {
   final context = BehaviorSubject<AppContext>.seeded(AppContext.wallet);
   final hideNav = BehaviorSubject<bool?>.seeded(null);
   final fling = BehaviorSubject<bool?>.seeded(null);
-  final coinspec = BehaviorSubject<String?>.seeded(null);
   final splash = BehaviorSubject<bool>.seeded(true);
   final triggers = BehaviorSubject<ThresholdTrigger?>.seeded(null);
   final loading = BehaviorSubject<bool>.seeded(false);

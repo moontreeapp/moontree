@@ -379,25 +379,30 @@ class _HoldingList extends State<HoldingList> {
   }
 
   Widget leadingIcon(AssetHolding holding) => Container(
-      height: 40,
-      width: 40,
-      child: components.icons.assetAvatar(holding.admin != null
-          ? holding.adminSymbol!
-          : holding.restricted != null
-              ? holding.restrictedSymbol!
-              : holding.qualifier != null
-                  ? holding.qualifierSymbol!
-                  : holding.channel != null
-                      ? holding.channelSymbol!
-                      : holding.nft != null
-                          ? holding.nftSymbol!
-                          : holding.subAdmin != null
-                              ? holding.subAdminSymbol!
-                              : holding.sub != null
-                                  ? holding.subSymbol!
-                                  : holding.qualifierSub != null
-                                      ? holding.qualifierSubSymbol!
-                                      : holding.symbol));
+          height: 40,
+          width: 40,
+          child: //Hero(
+              //tag: holding.symbol.toLowerCase(),
+              //child:
+              components.icons.assetAvatar(holding.admin != null
+                  ? holding.adminSymbol!
+                  : holding.restricted != null
+                      ? holding.restrictedSymbol!
+                      : holding.qualifier != null
+                          ? holding.qualifierSymbol!
+                          : holding.channel != null
+                              ? holding.channelSymbol!
+                              : holding.nft != null
+                                  ? holding.nftSymbol!
+                                  : holding.subAdmin != null
+                                      ? holding.subAdminSymbol!
+                                      : holding.sub != null
+                                          ? holding.subSymbol!
+                                          : holding.qualifierSub != null
+                                              ? holding.qualifierSubSymbol!
+                                              : holding.symbol))
+      //)
+      ;
 
   Widget title(AssetHolding holding) =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

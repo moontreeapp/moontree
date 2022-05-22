@@ -66,8 +66,11 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
             Column(
           children: [
             SizedBox(height: .015.ofMediaHeight(context)),
-            components.icons
-                .assetAvatar(widget.symbol, size: .0631.ofMediaHeight(context)),
+            Hero(
+              tag: widget.symbol.toLowerCase(),
+              child: components.icons.assetAvatar(widget.symbol,
+                  size: .0631.ofMediaHeight(context)),
+            ),
           ],
         ),
       );
