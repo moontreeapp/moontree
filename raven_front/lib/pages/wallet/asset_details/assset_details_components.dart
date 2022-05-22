@@ -64,11 +64,12 @@ class AssetDetailsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<String?>(
-        stream: streams.app.coinspec,
+    return StreamBuilder<String>(
+        stream: assetDetailsBloc.currentTab,
         builder: (context, snapshot) {
+          final tab = snapshot.data??'HISTORY';
           final showTransactions =
-              assetDetailsBloc.tabChoice == CoinSpecTabs.tabIndex[0];
+              tab == CoinSpecTabs.tabIndex[0];
           return showTransactions
               ? TransactionList(
                   scrollController: scrollController,

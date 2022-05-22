@@ -14,12 +14,12 @@ class AssetDetailsBloc {
 
   void init() {
     listeners.add(res.balances.batchedChanges.listen((batchedChanges) {}));
-    listeners.add(streams.app.coinspec.listen((String? value) {
-      if (value != null) {
-        assetDetailsBloc.tabChoice = value;
-        streams.app.coinspec.add(null);
-      }
-    }));
+    // listeners.add(streams.app.coinspec.listen((String? value) {
+    //   if (value != null) {
+    //     assetDetailsBloc.tabChoice = value;
+    //     streams.app.coinspec.add(null);
+    //   }
+    // }));
     listeners.add(streams.client.busy.listen((bool value) {
       if (!value) {
         // setState(() {});
@@ -43,7 +43,8 @@ class AssetDetailsBloc {
   static AssetDetailsBloc? _instance;
   Map<String, dynamic> data = {};
   BehaviorSubject<double> scrollObserver = BehaviorSubject.seeded(.91);
-  String tabChoice = 'HISTORY';
+  BehaviorSubject<String> currentTab = BehaviorSubject.seeded('HISTORY');
+  //String tabChoice = 'HISTORY';
   List<StreamSubscription> listeners = [];
 
   double getOpacityFromController(
