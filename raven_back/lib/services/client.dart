@@ -193,11 +193,6 @@ class SubscribeService {
         );
         // why allow null here?
         //status == null ||
-        if (address.address == 'n2RuP7WnxuuPQYu5ME5hMivnvcm7aP3pEW') {
-          print('watching');
-          print(address.status?.status);
-          print(status);
-        }
         if (address.status?.status != status) {
           print('PULLING HISTORY');
 

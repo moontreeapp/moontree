@@ -54,7 +54,6 @@ class TransactionService {
       net.burnAddresses.issueUnique: net.burnAmounts.issueUnique
     };
     for (var transaction in res.transactions.chronological) {
-      //print(transaction);
       final securitiesInvolved = ((transaction.vins
                   .where((vin) =>
                       givenAddresses.contains(vin.vout?.toAddress) &&
@@ -187,7 +186,7 @@ class TransactionService {
                 ? TransactionRecordType.OUTGOING
                 : TransactionRecordType.INCOMING;
 
-            print('s $selfIn $selfOut o $othersIn $othersOut');
+            //print('s $selfIn $selfOut o $othersIn $othersOut');
             transactionRecords.add(TransactionRecord(
               transaction: transaction,
               security: security!,

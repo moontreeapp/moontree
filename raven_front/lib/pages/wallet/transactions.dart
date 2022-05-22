@@ -67,13 +67,6 @@ class _TransactionsState extends State<Transactions> {
     currentHolds = Current.holdings;
     currentTxs = services.transaction
         .getTransactionRecords(wallet: Current.wallet, securities: {security});
-    print('security $security');
-    print('CURRENTTXS $currentTxs');
-    services.transaction
-        .getTransactionRecords(wallet: Current.wallet)
-        .forEach((element) {
-      print('--- $element');
-    });
     cachedMetadataView = _metadataView(security, context);
     minHeight = !Platform.isIOS
         ? 0.65.figmaAppHeight +
