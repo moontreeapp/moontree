@@ -144,10 +144,10 @@ class _ReceiveState extends State<Receive> {
                               top: 16, left: 0, right: 0, bottom: 0),
                           child: GestureDetector(
                               onTap: () {
-                                Clipboard.setData(new ClipboardData(
-                                    text: rawAddress ? address : uri));
+                                Clipboard.setData(
+                                    new ClipboardData(text: address));
                                 streams.app.snack.add(Snack(
-                                    message: 'Copied to Clipboard',
+                                    message: 'Address Copied to Clipboard',
                                     atBottom: true));
                                 // not formatted the same...
                                 //ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
@@ -158,7 +158,7 @@ class _ReceiveState extends State<Receive> {
                                 Clipboard.setData(new ClipboardData(
                                     text: rawAddress ? address : uri));
                                 streams.app.snack.add(Snack(
-                                    message: 'Copied to Clipboard',
+                                    message: 'URI Copied to Clipboard',
                                     atBottom: true));
                                 // not formatted the same...
                                 //ScaffoldMessenger.of(context).showSnackBar(new SnackBar(

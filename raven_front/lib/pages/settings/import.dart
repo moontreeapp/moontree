@@ -87,9 +87,10 @@ class _ImportState extends State<Import> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: file == null
                     ? [
-                        if (!Platform.isIOS && words.text == '') fileButton,
-                        if (!Platform.isIOS && words.text == '')
-                          SizedBox(width: 16),
+                        // hide file button
+                        //if (!Platform.isIOS && words.text == '') fileButton,
+                        //if (!Platform.isIOS && words.text == '')
+                        //  SizedBox(width: 16),
                         submitButton(),
                       ]
                     : [submitButton('Import File')]),
