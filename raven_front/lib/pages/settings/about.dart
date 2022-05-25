@@ -42,7 +42,8 @@ class About extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    'v1.0.0-alpha+1~${res.settings.databaseVersion}',
+                    //'v1.0.0-alpha+1~${res.settings.databaseVersion}',
+                    VERSION,
                     style: Theme.of(context).textTheme.subtitle2!.copyWith(
                         color: AppColors.black60,
                         fontWeight: FontWeights.semiBold),
