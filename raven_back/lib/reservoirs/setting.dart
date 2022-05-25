@@ -32,7 +32,7 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
         SettingName.Login_Attempts:
             Setting(name: SettingName.Login_Attempts, value: <DateTime>[]),
         SettingName.Electrum_Net:
-            Setting(name: SettingName.Electrum_Net, value: Net.Main),
+            Setting(name: SettingName.Electrum_Net, value: Net.Test),
         SettingName.Electrum_Domain:
             Setting(name: SettingName.Electrum_Domain, value: defaultUrl),
         SettingName.Electrum_Port:
