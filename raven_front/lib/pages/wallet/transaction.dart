@@ -177,7 +177,8 @@ class _TransactionPageState extends State<TransactionPage> {
               link(
                 title: 'Transaction Info',
                 text: 'ID',
-                url: 'https://rvnt.cryptoscope.io/tx/?txid=',
+                url:
+                    'https://rvn${res.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=',
                 description: 'info',
               ),
               if (transactionMemo != null)

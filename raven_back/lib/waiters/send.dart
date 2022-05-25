@@ -69,7 +69,7 @@ class SendWaiter extends Waiter {
           streams.app.snack.add(Snack(
             message: 'Successfully Sent', //: ${txid.cutOutMiddle(length: 3)}
             //label: 'Transaction ID',
-            //link: 'https://rvnt.cryptoscope.io/tx/?txid=$txid'
+            //link: 'https://rvn${res.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=$txid'
           ));
           streams.spend.success.add(true);
         } else {

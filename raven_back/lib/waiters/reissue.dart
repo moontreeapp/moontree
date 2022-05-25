@@ -56,7 +56,7 @@ class ReissueWaiter extends Waiter {
             message:
                 'Asset Creation Successful: ${txid.cutOutMiddle(length: 2)}',
             //label: 'Transaction ID',
-            //link: 'https://rvnt.cryptoscope.io/tx/?txid=$txid'
+            //link: 'https://rvn${res.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=$txid'
           ));
           streams.reissue.success.add(true);
         } else {

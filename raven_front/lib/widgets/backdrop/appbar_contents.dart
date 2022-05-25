@@ -80,6 +80,7 @@ class BackdropAppBarContents extends StatelessWidget
       ? GestureDetector(
           onTap: () async {
             //streams.app.snack.add(Snack(message: 'hi'));
+            print(Current.wallet.backedUp);
           },
           child: appBar,
         )

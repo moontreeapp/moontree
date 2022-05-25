@@ -71,7 +71,7 @@ class LeaderWallet extends Wallet {
       );
 
   @override
-  List<Object?> get props => [id, cipherUpdate, encryptedEntropy];
+  List<Object?> get props => [id, cipherUpdate, encryptedEntropy, backedUp];
 
   @override
   String toString() =>

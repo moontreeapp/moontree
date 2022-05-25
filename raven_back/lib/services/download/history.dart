@@ -93,7 +93,7 @@ class HistoryService {
       filterOutPreviouslyDownloaded(
           res.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet()),
       saveVin: false, //
-      saveVout: false, //
+      saveVout: true, //
     );
     // make sure you have all the vouts that you need for transactions according
     // to the unspents:

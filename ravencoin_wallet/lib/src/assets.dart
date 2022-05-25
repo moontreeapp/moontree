@@ -1,5 +1,5 @@
 /// example of asset with memo (message):
-/// https://rvnt.cryptoscope.io/tx/?txid=aa093a7ac5e8cd1d47ec6354d6df134e7ebfd61e2f0d402e11e6cf7cb3f827bf
+/// https://rvn${res.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=aa093a7ac5e8cd1d47ec6354d6df134e7ebfd61e2f0d402e11e6cf7cb3f827bf
 
 import 'dart:core';
 import 'dart:typed_data';
