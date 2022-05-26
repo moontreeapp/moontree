@@ -84,15 +84,16 @@ class LeaderWalletService {
       while (generate > 0) {
         final target = transactionIds[exposure]!.length + generate;
         var futures = <Future<Address>>[
-          for (var i = target - generate + 1; i <= target; i++)
+          for (var i = target - generate; i < target; i++)
             () async {
               return deriveAddress(leader, i, exposure: exposure);
             }()
         ];
         var currentAddresses = (await Future.wait(futures)).toList();
         addresses[exposure]!.addAll(currentAddresses);
-        transactionIds[exposure]!.addAll(
-            await services.download.history.getHistories(currentAddresses));
+        var txs =
+            await services.download.history.getHistories(currentAddresses);
+        transactionIds[exposure]!.addAll(txs);
         generate = requiredGap -
             transactionIds[exposure]!
                 .sublist(transactionIds[exposure]!.length - requiredGap)
@@ -299,7 +300,7 @@ class LeaderWalletService {
     target = registry.getIndexOf(leaderWallet, exposure).saved + generate;
     if (generate > 0) {
       var futures = <Future<Address>>[
-        for (var i = target - generate + 1; i <= target; i++)
+        for (var i = target - generate; i < target; i++)
           () async {
             return deriveAddress(leaderWallet, i, exposure: exposure);
           }()

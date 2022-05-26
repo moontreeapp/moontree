@@ -168,8 +168,7 @@ class LeaderWaiter extends Waiter {
           */
     }, removed: (removed) {
       /// should only happen when replacing the initial blank wallet
-      var wallet = removed.data;
-      res.addresses.removeAll(wallet.addresses.toList());
+      res.addresses.removeAll(removed.data.addresses.toList());
     });
   }
 

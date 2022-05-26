@@ -185,7 +185,7 @@ class SubscribeService {
           (await services.client.api.subscribeAddress(address))
               .listen((String? status) async {
         /// pull unspents and save - should we do this all the time?
-        print('UNSPENTS');
+        print('UNSPENTS ${address.address}');
         await services.download.unspents.pull(
           scripthashes: {address.scripthash},
           wallet: address.wallet!,
@@ -194,10 +194,9 @@ class SubscribeService {
         // why allow null here?
         //status == null ||
         if (address.status?.status != status) {
-          print('PULLING HISTORY');
-
           /// Get histories, update leader counts and
           /// Get transactions in batch.
+          print('PULLING HISTORY');
           await services.download.history.getTransactions(
             await services.download.history
                 .getHistory(address, updateLeader: true),
