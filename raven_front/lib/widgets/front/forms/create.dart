@@ -603,7 +603,7 @@ class _CreateAssetState extends State<CreateAsset> {
 
     /// go to confirmation page
     Navigator.of(components.navigator.routeContext!).pushNamed(
-      '/transaction/checkout',
+      '/create/checkout',
       arguments: {
         'struct': CheckoutStruct(
           /// full symbol name

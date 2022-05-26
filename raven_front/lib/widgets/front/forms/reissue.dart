@@ -515,7 +515,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
 
     /// go to confirmation page
     Navigator.of(components.navigator.routeContext!).pushNamed(
-      '/transaction/checkout',
+      '/reissue/checkout',
       arguments: {
         'struct': CheckoutStruct(
           /// full symbol name
