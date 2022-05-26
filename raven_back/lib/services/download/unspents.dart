@@ -80,6 +80,7 @@ class UnspentService {
     var existing = res.unspents.byScripthashes(scripthashes).toSet();
     if (existing.length != utxos.length ||
         existing.intersection(utxos).length != existing.length) {
+      print('a change in unspents discovered');
       await res.unspents.clearByScripthashes(scripthashes);
       await res.unspents.saveAll(utxos);
       if (getTransactions) {

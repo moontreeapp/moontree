@@ -15,6 +15,7 @@ class UnspentWaiter extends Waiter {
     // all balances at the end of their processes
     if (services.wallet.leader.newLeaderProcessRunning ||
         services.client.subscribe.startupProcessRunning) {
+      print('returning!');
       return;
     }
     var walletIds = <String>{};

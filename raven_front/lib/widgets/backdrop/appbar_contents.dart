@@ -69,7 +69,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-        testAppBar(appBar, test: false),
+        testAppBar(appBar, test: true),
         // alphaBar,
         AppBarScrim(),
       ],
@@ -81,7 +81,10 @@ class BackdropAppBarContents extends StatelessWidget
           onTap: () async {
             //streams.app.snack.add(Snack(message: 'hi'));
             //await services.balance.recalculateAllBalances();
-            //print(res.balances.data);
+            print(res.balances.data);
+            print(res.unspents.data);
+            print(services.wallet.leader.newLeaderProcessRunning ||
+                services.client.subscribe.startupProcessRunning);
           },
           child: appBar,
         )
