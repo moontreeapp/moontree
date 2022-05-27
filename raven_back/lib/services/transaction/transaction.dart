@@ -93,17 +93,21 @@ class TransactionService {
           if (security == rvn) {
             var selfIn = 0;
             var othersIn = 0;
-
             var selfOut = 0;
             var othersOut = 0;
 
+            // self out can be broken into two categories based on the address it was sent to
+            var outIntentional = 0;
+            var outChange = 0;
+
             // Nothing too special about incoming...
             for (final vin in transaction.vins) {
-              if ((vin.vout?.security ?? rvn) == rvn) {
-                if (givenAddresses.contains(vin.vout?.toAddress)) {
-                  selfIn += vin.vout?.rvnValue ?? 0;
+              var vinVout = vin.vout;
+              if ((vinVout?.security ?? rvn) == rvn) {
+                if (givenAddresses.contains(vinVout?.toAddress)) {
+                  selfIn += vinVout?.rvnValue ?? 0;
                 } else {
-                  othersIn += vin.vout?.rvnValue ?? 0;
+                  othersIn += vinVout?.rvnValue ?? 0;
                 }
               }
             }
@@ -112,6 +116,13 @@ class TransactionService {
               if (vout.security == rvn) {
                 if (givenAddresses.contains(vout.toAddress)) {
                   selfOut += vout.rvnValue;
+                  if (wallet.internalAddresses
+                      .map((Address a) => a.address)
+                      .contains(vout.toAddress)) {
+                    outChange += vout.rvnValue;
+                  } else {
+                    outIntentional += vout.rvnValue;
+                  }
                 } else {
                   othersOut += vout.rvnValue;
                   if (specialCreate.containsKey(vout.toAddress) ||
@@ -125,6 +136,7 @@ class TransactionService {
               }
             }
 
+            final fee = (selfIn + othersIn) - (selfOut + othersOut);
             var ioType;
 
             // Known burn addr for tagging
@@ -173,9 +185,17 @@ class TransactionService {
             }
 
             // Only call it "sent to self" if no RVN is coming from anywhere else
-
-            if (othersIn == 0 && othersOut == 0 && selfIn > 0) {
-              ioType = TransactionRecordType.SELF;
+            //if (othersIn == 0 && othersOut == 0 && selfIn > 0 && selfOut > 0) {
+            // if no input from others, and everything spend is everything received
+            // then it's sent to self, unless we're looking at ravencoin, in that case
+            // maybe this was just a fee to send an asset, in that case, its just a
+            // regular out transaction...
+            if ((transaction.vouts.map((e) => !e.isAsset).every((e) => e))) {
+              if (othersIn == 0 && othersOut == 0 && selfIn == selfOut + fee) {
+                ioType = TransactionRecordType.SELF;
+              }
+            } else {
+              ioType = TransactionRecordType.FEE;
             }
             if (selfIn > 0 &&
                 outgoingAddrs.containsKey(net.burnAddresses.burn)) {
@@ -192,9 +212,11 @@ class TransactionService {
               security: security!,
               totalIn: selfIn,
               totalOut: selfOut,
+              valueOverride:
+                  ioType == TransactionRecordType.SELF ? outIntentional : null,
               height: transaction.height,
               type: ioType,
-              fee: (selfIn + othersIn) - (selfOut + othersOut),
+              fee: fee,
               formattedDatetime: transaction.formattedDatetime,
             ));
           } else {
@@ -207,20 +229,24 @@ class TransactionService {
             var selfOutRVN = 0;
             var othersOut = 0;
             var othersOutRVN = 0;
+            // self out can be broken into two categories based on the address it was sent to
+            var outIntentional = 0;
+            var outChange = 0;
 
             // Nothing too special about incoming...
             for (final vin in transaction.vins) {
-              if (vin.vout?.security == rvn) {
-                if (givenAddresses.contains(vin.vout?.toAddress)) {
-                  selfInRVN += vin.vout?.rvnValue ?? 0;
+              var vinVout = vin.vout;
+              if (vinVout?.security == rvn) {
+                if (givenAddresses.contains(vinVout?.toAddress)) {
+                  selfInRVN += vinVout?.rvnValue ?? 0;
                 } else {
-                  othersInRVN += vin.vout?.rvnValue ?? 0;
+                  othersInRVN += vinVout?.rvnValue ?? 0;
                 }
-              } else if (vin.vout?.security == security) {
-                if (givenAddresses.contains(vin.vout?.toAddress)) {
-                  selfIn += vin.vout?.assetValue ?? 0;
+              } else if (vinVout?.security == security) {
+                if (givenAddresses.contains(vinVout?.toAddress)) {
+                  selfIn += vinVout?.assetValue ?? 0;
                 } else {
-                  othersIn += vin.vout?.assetValue ?? 0;
+                  othersIn += vinVout?.assetValue ?? 0;
                 }
               }
             }
@@ -242,6 +268,13 @@ class TransactionService {
               } else if (vout.security == security) {
                 if (givenAddresses.contains(vout.toAddress)) {
                   selfOut += vout.assetValue ?? 0;
+                  if (wallet.internalAddresses
+                      .map((Address a) => a.address)
+                      .contains(vout.toAddress)) {
+                    outChange += vout.assetValue ?? 0;
+                  } else {
+                    outIntentional += vout.assetValue ?? 0;
+                  }
                 } else {
                   othersOut += vout.assetValue ?? 0;
                 }
@@ -296,7 +329,7 @@ class TransactionService {
             }
 
             // Only call it "sent to self" if no RVN is coming from anywhere else
-            if (othersIn == 0 && othersOut == 0 && selfIn > 0) {
+            if (othersIn == 0 && othersOut == 0 && selfIn == selfOut) {
               ioType = TransactionRecordType.SELF;
             }
             if (selfIn > 0 &&
@@ -313,6 +346,11 @@ class TransactionService {
               security: security!,
               totalIn: selfIn,
               totalOut: selfOut,
+              valueOverride: [
+                TransactionRecordType.SELF,
+              ].contains(ioType)
+                  ? outIntentional
+                  : null,
               height: transaction.height,
               type: ioType,
               fee: (selfInRVN + othersInRVN) - (selfOutRVN + othersOutRVN),
@@ -339,6 +377,7 @@ class TransactionService {
 enum TransactionRecordType {
   INCOMING,
   OUTGOING,
+  FEE,
   SELF,
   ASSETCREATION,
   TAG,
@@ -355,6 +394,7 @@ class TransactionRecord {
   int? height;
   TransactionRecordType type;
   int fee;
+  int? valueOverride;
 
   TransactionRecord({
     required this.transaction,
@@ -365,9 +405,10 @@ class TransactionRecord {
     this.fee = 0,
     this.totalIn = 0,
     this.totalOut = 0,
+    this.valueOverride,
   });
 
-  int get value => (totalIn - totalOut).abs();
+  int get value => valueOverride ?? (totalIn - totalOut).abs();
   bool get out => (totalIn - totalOut) >= 0;
   String get formattedValue => security.symbol == 'RVN'
       ? NumberFormat('RVN #,##0.00000000', 'en_US').format(value)
@@ -387,6 +428,8 @@ class TransactionRecord {
 
   String get typeToString {
     switch (type) {
+      case TransactionRecordType.FEE:
+        return 'Transaction Fee';
       case TransactionRecordType.ASSETCREATION:
         return 'Asset Creation';
       case TransactionRecordType.BURN:
@@ -396,7 +439,7 @@ class TransactionRecord {
       case TransactionRecordType.TAG:
         return 'Tag';
       case TransactionRecordType.SELF:
-        return 'Sent To Self';
+        return 'Sent to Self';
       case TransactionRecordType.INCOMING:
         return 'Received';
       case TransactionRecordType.OUTGOING:
@@ -406,7 +449,6 @@ class TransactionRecord {
 
   bool get toSelf => type == TransactionRecordType.SELF;
   bool get isNormal => [
-        TransactionRecordType.SELF,
         TransactionRecordType.INCOMING,
         TransactionRecordType.OUTGOING,
       ].contains(type);

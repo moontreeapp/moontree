@@ -81,6 +81,9 @@ class BackdropAppBarContents extends StatelessWidget
           onTap: () async {
             //streams.app.snack.add(Snack(message: 'hi'));
             //await services.balance.recalculateAllBalances();
+            //streams.client.busy.add(true);
+            //await Future.delayed(Duration(seconds: 5));
+            //streams.client.busy.add(false);
           },
           child: appBar,
         )

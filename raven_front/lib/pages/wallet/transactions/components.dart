@@ -69,7 +69,6 @@ class TransactionsContent extends StatelessWidget {
         builder: (context, snapshot) {
           final tab = snapshot.data ?? 'HISTORY';
           final showTransactions = tab == CoinSpecTabs.tabIndex[0];
-          print(showTransactions);
           return showTransactions
               ? TransactionList(
                   scrollController: scrollController,

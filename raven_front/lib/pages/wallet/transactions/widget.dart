@@ -25,6 +25,8 @@ class Transactions extends StatefulWidget {
 class _TransactionsState extends State<Transactions> {
   late List<StreamSubscription> listeners = [];
   DraggableScrollableController dController = DraggableScrollableController();
+  bool busy = false;
+
   @override
   void initState() {
     super.initState();
@@ -34,14 +36,20 @@ class _TransactionsState extends State<Transactions> {
     listeners.add(res.balances.batchedChanges.listen((batchedChanges) {
       if (batchedChanges.isNotEmpty) {
         print('Refresh - balances');
+        transactionsBloc.clearCache();
         setState(() {});
       }
     }));
     listeners.add(streams.client.busy.listen((bool value) {
-      if (!value) {
-        // todo: value != v so it doesnt' refresh at first each time.
-        print('Refresh - busy');
-        setState(() {});
+      print('value $value busy $busy');
+      if (value != busy) {
+        if (!value) {
+          print('Refresh - busy');
+          transactionsBloc.clearCache();
+          setState(() => busy = value);
+        } else {
+          busy = value;
+        }
       }
     }));
   }
