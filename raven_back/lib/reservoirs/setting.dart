@@ -22,9 +22,9 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
 
   static final String defaultUrl = '143.198.142.78';
   //static final int defaultPort = 50001; // mainnet tcp
-  static final int defaultPort = 50002; // mainnet ssl
+  //static final int defaultPort = 50002; // mainnet ssl
   //static final int defaultPort = 50011; // testnet tcp
-  //static final int defaultPort = 50012; // testnet ssl
+  static final int defaultPort = 50012; // testnet ssl
 
   static Map<String, Setting> get defaults => {
         SettingName.Database_Version:
@@ -32,7 +32,7 @@ class SettingReservoir extends Reservoir<_SettingNameKey, Setting> {
         SettingName.Login_Attempts:
             Setting(name: SettingName.Login_Attempts, value: <DateTime>[]),
         SettingName.Electrum_Net:
-            Setting(name: SettingName.Electrum_Net, value: Net.Main),
+            Setting(name: SettingName.Electrum_Net, value: Net.Test),
         SettingName.Electrum_Domain:
             Setting(name: SettingName.Electrum_Domain, value: defaultUrl),
         SettingName.Electrum_Port:
