@@ -33,15 +33,18 @@ class _TransactionsState extends State<Transactions> {
     transactionsBloc.reset();
 
     /// need these until we make it fully reactive so we can reset the page if underlying data changes
-    listeners.add(res.balances.batchedChanges.listen((batchedChanges) {
+    listeners.add(res.vouts.batchedChanges.listen((batchedChanges) {
+      if (services.wallet.leader.newLeaderProcessRunning ||
+          services.client.subscribe.startupProcessRunning) {
+        return;
+      }
       if (batchedChanges.isNotEmpty) {
-        print('Refresh - balances');
+        print('Refresh - vouts');
         transactionsBloc.clearCache();
         setState(() {});
       }
     }));
     listeners.add(streams.client.busy.listen((bool value) {
-      print('value $value busy $busy');
       if (value != busy) {
         if (!value) {
           print('Refresh - busy');
