@@ -128,24 +128,29 @@ class SubscribeService {
         active: true,
         title: 'Syncing with the network',
         message: 'Downloading your transactions...'));
+
+    /// if we kill the import process we can end up having addresses unassociated with a wallet so remove them first.
+    final walletIds = res.wallets.data.map((e) => e.id);
+    await res.addresses.removeAll(
+        res.addresses.data.where((a) => !walletIds.contains(a.walletId)));
+
+    // we have to update these counts incase the user logins before the processes is over
     final addresses = res.addresses.toList();
-    var existing = false;
     for (var address in addresses) {
-      existing = true;
-      await subscribeAddress(address);
-    }
-    if (existing) {
-      for (var address in addresses) {
-        if (address.wallet is LeaderWallet) {
-          if (address.vouts.isNotEmpty) {
-            services.wallet.leader
-                .updateCounts(address, address.wallet as LeaderWallet);
-          } else {
-            services.wallet.leader
-                .updateCache(address, address.wallet as LeaderWallet);
-          }
+      if (address.wallet is LeaderWallet) {
+        if (address.vouts.isNotEmpty) {
+          services.wallet.leader
+              .updateCounts(address, address.wallet as LeaderWallet);
+        } else {
+          services.wallet.leader
+              .updateCache(address, address.wallet as LeaderWallet);
         }
       }
+    }
+    for (var address in addresses) {
+      await subscribeAddress(address);
+    }
+    if (addresses.isNotEmpty) {
       await services.download.history.allDoneProcess();
     }
     // recalculate balances once at the end, wait just in case
@@ -154,6 +159,18 @@ class SubscribeService {
       await Future.delayed(Duration(milliseconds: 100));
     }
     await services.balance.recalculateAllBalances();
+    // update the unused internal and external addresses again just incase we downloaded some history
+    for (var address in res.addresses.data) {
+      if (address.wallet is LeaderWallet) {
+        if (address.vouts.isNotEmpty) {
+          services.wallet.leader
+              .updateCounts(address, address.wallet as LeaderWallet);
+        } else {
+          services.wallet.leader
+              .updateCache(address, address.wallet as LeaderWallet);
+        }
+      }
+    }
     streams.client.busy.add(false);
     streams.client.activity.add(ActivityMessage(active: false));
     startupProcessRunning = false;

@@ -64,7 +64,7 @@ class LeaderWalletService {
   Future<void> newLeaderProcess(LeaderWallet leader) async {
     //  newLeaders.add(leader.id); actually just save the addresses at the end
     addresses.clear();
-    print('newLeaderProcess');
+    print('newLeaderProcess ${leader.id} ${leader.cipherUpdate}');
     newLeaderProcessRunning = true;
     streams.client.busy.add(true);
     streams.client.activity.add(ActivityMessage(
@@ -300,7 +300,7 @@ class LeaderWalletService {
     target = registry.getIndexOf(leaderWallet, exposure).saved + generate;
     if (generate > 0) {
       var futures = <Future<Address>>[
-        for (var i = target - generate; i < target; i++)
+        for (var i = target - generate + 1; i <= target; i++)
           () async {
             return deriveAddress(leaderWallet, i, exposure: exposure);
           }()
