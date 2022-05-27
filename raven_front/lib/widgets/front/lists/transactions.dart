@@ -134,12 +134,10 @@ class _TransactionListState extends State<TransactionList> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                  transactionRecord.toSelf
-                                      ? transactionRecord.typeToString
-                                      : components.text.securityAsReadable(
-                                          transactionRecord.value,
-                                          security: transactionRecord.security,
-                                          asUSD: showUSD),
+                                  components.text.securityAsReadable(
+                                      transactionRecord.value,
+                                      security: transactionRecord.security,
+                                      asUSD: showUSD),
                                   style: Theme.of(context).textTheme.bodyText1),
                               Text(
                                   transactionRecord.formattedDatetime +

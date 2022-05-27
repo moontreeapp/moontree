@@ -69,7 +69,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-        testAppBar(appBar, test: true),
+        testAppBar(appBar, test: false),
         // alphaBar,
         AppBarScrim(),
       ],
@@ -80,7 +80,10 @@ class BackdropAppBarContents extends StatelessWidget
       ? GestureDetector(
           onTap: () async {
             //streams.app.snack.add(Snack(message: 'hi'));
-            print(Current.wallet.backedUp);
+            //await services.balance.recalculateAllBalances();
+            //streams.client.busy.add(true);
+            //await Future.delayed(Duration(seconds: 5));
+            //streams.client.busy.add(false);
           },
           child: appBar,
         )

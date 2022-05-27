@@ -88,14 +88,6 @@ class UnspentService {
         );
       }
     }
-
-    /* moved to client.subscription service
-    /// recalculate balances once at the end
-    if (await isDone) {
-      print('IsDone Happening');
-      await services.balance.recalculateAllBalances();
-    }
-    */
   }
 
   /// during the initial start of the app a process is run to check every

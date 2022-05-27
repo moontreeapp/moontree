@@ -62,7 +62,9 @@ class _TransactionPageState extends State<TransactionPage> {
       case 'Type':
         switch (transactionRecord!.type) {
           case TransactionRecordType.SELF:
-            return 'Back to Self';
+            return 'to Self';
+          case TransactionRecordType.FEE:
+            return 'Asset Transfer Fee';
           case TransactionRecordType.ASSETCREATION:
             return 'Asset Creation';
           case TransactionRecordType.BURN:

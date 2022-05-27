@@ -25,6 +25,7 @@ class TransactionsBloc {
   Map<String, dynamic> data = {};
   BehaviorSubject<double> scrollObserver = BehaviorSubject.seeded(.91);
   BehaviorSubject<String> currentTab = BehaviorSubject.seeded('HISTORY');
+  List<TransactionRecord>? currentTxsCache;
 
   double getOpacityFromController(
       double controllerValue, double minHeightFactor) {
@@ -45,6 +46,13 @@ class TransactionsBloc {
 
   Security get security => data['holding']!.security;
   List<Balance> get currentHolds => Current.holdings;
-  List<TransactionRecord> get currentTxs => services.transaction
-      .getTransactionRecords(wallet: Current.wallet, securities: {security});
+  List<TransactionRecord> get currentTxs {
+    if (currentTxsCache == null) {
+      currentTxsCache = services.transaction.getTransactionRecords(
+          wallet: Current.wallet, securities: {security});
+    }
+    return currentTxsCache!;
+  }
+
+  void clearCache() => currentTxsCache = null;
 }

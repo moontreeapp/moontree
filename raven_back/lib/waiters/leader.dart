@@ -32,6 +32,9 @@ class LeaderWaiter extends Waiter {
     );
     */
 
+    /// this is used for the case of if we closed the app during
+    /// import and never saved the addresses, we want to restart
+    /// the import process for this wallet to derive addresses
     listen(
       'connected/cipher',
       CombineLatestStream.combine2(
@@ -43,57 +46,11 @@ class LeaderWaiter extends Waiter {
       (Tuple2<ConnectionStatus, Change<Cipher>> tuple) {
         print('connected/CIPHER ${tuple.item1} ${tuple.item2}');
         if (tuple.item2.data.cipherType != CipherType.None) {
-          res.wallets.leaders.forEach((wallet) =>
-                  //wallet.addresses.isEmpty ?
-                  dispatch(wallet)
-              //:
-              /// perhaps here we should run a process that only updates at the end
-              /// like newLeaderProcess, and we should subscribe at the end of it
-              /// instead of automatically subscribing to all addresses on
-              /// connection?
-              //(){}
-              );
+          res.wallets.leaders.forEach((wallet) => dispatch(wallet));
         }
       },
     );
 
-    // automatically make first leader wallet if there isn't one already
-    //listen(
-    //  'cipher.latest,',
-    //  streams.cipher.latest,
-    //  (Cipher cipher) => services.wallet.leader.makeFirstWallet(cipher),
-    //);
-
-    /// necessary?
-    //listen(
-    //  'ciphers.changes',
-    //  res.ciphers.changes,
-    //  (Change<Cipher> change) {
-    //    change.when(
-    //      loaded: (loaded) async =>
-    //          await attemptLeaderWalletAddressDerive(change.data.cipherUpdate),
-    //      added: (added) async =>
-    //          await attemptLeaderWalletAddressDerive(change.data.cipherUpdate),
-    //      updated: (updated) {},
-    //      removed: (removed) {},
-    //    );
-    //  },
-    //);
-    /* no cipher...
-    listen('streams.client.connected', streams.client.connected,
-        (ConnectionStatus connected) {
-      res.wallets.leaders.forEach((wallet) =>
-              //wallet.addresses.isEmpty ?
-              dispatch(wallet)
-          //:
-          /// perhaps here we should run a process that only updates at the end
-          /// like newLeaderProcess, and we should subscribe at the end of it
-          /// instead of automatically subscribing to all addresses on
-          /// connection?
-          //(){}
-          );
-    });
-    */
     listen(
       'streams.wallet.leaderChanges',
       CombineLatestStream.combine2(
@@ -104,7 +61,6 @@ class LeaderWaiter extends Waiter {
       (Tuple2<Change<Wallet>, ConnectionStatus> tuple) async {
         final change = tuple.item1;
         final status = tuple.item2;
-        print('status, change $status, $change');
         await _backlogLock.write(() => backlog.add(change));
         if (status == ConnectionStatus.connected) {
           await _backlogLock.read(() {
@@ -131,22 +87,20 @@ class LeaderWaiter extends Waiter {
 
   Future<void> dispatch(LeaderWallet leader) async {
     if (leader.addresses.isEmpty) {
-      await services.wallet.leader.newLeaderProcess(leader);
+      if (!services.wallet.leader.newLeaderProcessRunning) {
+        await services.wallet.leader.newLeaderProcess(leader);
+      }
     } else {
       await handleDeriveAddress(leader: leader);
     }
   }
 
   void handleLeaderChange(Change<Wallet> change) {
-    change.when(loaded: (loaded) async {
+    change.when(
       // never gets called because we load before this waiter is listening...
+      loaded: (loaded) async {
       if (loaded.data is LeaderWallet) {
-        var leader = loaded.data as LeaderWallet;
-        if (leader.addresses.isEmpty) {
-          await services.wallet.leader.newLeaderProcess(leader);
-        } else {
-          await handleDeriveAddress(leader: leader);
-        }
+        await dispatch(loaded.data as LeaderWallet);
       }
     }, added: (added) async {
       if (added.data is LeaderWallet) {
@@ -168,8 +122,7 @@ class LeaderWaiter extends Waiter {
           */
     }, removed: (removed) {
       /// should only happen when replacing the initial blank wallet
-      var wallet = removed.data;
-      res.addresses.removeAll(wallet.addresses.toList());
+      res.addresses.removeAll(removed.data.addresses.toList());
     });
   }
 
@@ -192,7 +145,6 @@ class LeaderWaiter extends Waiter {
     NodeExposure? exposure,
     bool bypassCipher = false,
   }) async {
-    //var s = Stopwatch()..start();
     if (bypassCipher ||
         res.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
       await services.wallet.leader.deriveMoreAddresses(
@@ -202,6 +154,5 @@ class LeaderWaiter extends Waiter {
     } else {
       services.wallet.leader.backlog.add(leader);
     }
-    //print('deriving: ${s.elapsed}');
   }
 }

@@ -39,7 +39,7 @@ class UnspentReservoir extends Reservoir<_UnspentKey, Unspent> {
   Iterable<Unspent> byScripthashes(Set<String> scripthashes) =>
       res.unspents.data.where((e) => scripthashes.contains(e.scripthash));
   Future<void> clearByScripthashes(Set<String> scripthashes) async =>
-      res.unspents.removeAll(byScripthashes(scripthashes));
+      await res.unspents.removeAll(byScripthashes(scripthashes));
 
   int totalConfirmed(String walletId, [String symbol = 'RVN']) =>
       byWalletSymbolConfirmation

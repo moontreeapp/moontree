@@ -25,23 +25,34 @@ class Transactions extends StatefulWidget {
 class _TransactionsState extends State<Transactions> {
   late List<StreamSubscription> listeners = [];
   DraggableScrollableController dController = DraggableScrollableController();
+  bool busy = false;
+
   @override
   void initState() {
     super.initState();
     transactionsBloc.reset();
 
     /// need these until we make it fully reactive so we can reset the page if underlying data changes
-    listeners.add(res.balances.batchedChanges.listen((batchedChanges) {
+    listeners.add(res.vouts.batchedChanges.listen((batchedChanges) {
+      if (services.wallet.leader.newLeaderProcessRunning ||
+          services.client.subscribe.startupProcessRunning) {
+        return;
+      }
       if (batchedChanges.isNotEmpty) {
-        print('Refresh - balances');
+        print('Refresh - vouts');
+        transactionsBloc.clearCache();
         setState(() {});
       }
     }));
     listeners.add(streams.client.busy.listen((bool value) {
-      if (!value) {
-        // todo: value != v so it doesnt' refresh at first each time.
-        print('Refresh - busy');
-        setState(() {});
+      if (value != busy) {
+        if (!value) {
+          print('Refresh - busy');
+          transactionsBloc.clearCache();
+          setState(() => busy = value);
+        } else {
+          busy = value;
+        }
       }
     }));
   }

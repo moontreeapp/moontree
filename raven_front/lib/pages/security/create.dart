@@ -143,7 +143,7 @@ class _CreateLoginState extends State<CreateLogin> {
       autocorrect: false,
       controller: password,
       obscureText: !passwordVisible,
-      textInputAction: TextInputAction.done,
+      textInputAction: TextInputAction.next,
       labelText: 'Password',
       errorText: password.text != '' && password.text.length < minimumLength
           ? 'password must be at least $minimumLength characters long'

@@ -66,7 +66,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    print('addresses ${Current.wallet.addresses.length}');
     return HomePage(appContext: appContext);
   }
 }

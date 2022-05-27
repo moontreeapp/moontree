@@ -15,4 +15,7 @@ export 'lingo/lingo.dart';
 
 export 'package:reservoir/change.dart';
 
-const VERSION = '1.1.2-alpha+6~1';
+const ALPHA_VERSION = '1.1.4-alpha+7~1';
+const BETA_VERSION = '1.0.0-beta+0~1';
+const RELEASE_VERSION = '1.0.0+0~1';
+const VERSION = ALPHA_VERSION;
