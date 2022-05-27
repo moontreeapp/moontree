@@ -15,7 +15,6 @@ class UnspentWaiter extends Waiter {
     // all balances at the end of their processes
     if (services.wallet.leader.newLeaderProcessRunning ||
         services.client.subscribe.startupProcessRunning) {
-      print('returning!');
       return;
     }
     var walletIds = <String>{};
@@ -26,7 +25,6 @@ class UnspentWaiter extends Waiter {
           updated: (updated) => walletIds.add(updated.data.walletId),
           removed: (removed) => walletIds.add(removed.data.walletId));
     }
-    print('Unspent changes DISCOVERED! $changes $walletIds');
     services.balance.recalculateAllBalances(walletIds: walletIds);
   }
 }

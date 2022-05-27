@@ -185,6 +185,12 @@ class SubscribeService {
           (await services.client.api.subscribeAddress(address))
               .listen((String? status) async {
         /// pull unspents and save - should we do this all the time?
+        /** optimization idea
+          one thing we could do here is say if we're in the startup process 
+          do not pull unspents here, but if the status changes do
+          and we could make unspents permanent on disk, as well as balances...
+          not necessary now.
+        */
         print('UNSPENTS ${address.address}');
         await services.download.unspents.pull(
           scripthashes: {address.scripthash},

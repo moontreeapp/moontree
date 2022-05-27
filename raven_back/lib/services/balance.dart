@@ -13,7 +13,6 @@ class BalanceService {
 
   /// recalculates the balance of every symbol in every wallet
   Future recalculateAllBalances({Set<String>? walletIds}) async {
-    print('recalculateAllBalances for $walletIds');
     walletIds = walletIds ?? res.wallets.ids;
     Set<Balance> balances = {};
     await res.balances.removeAll(
