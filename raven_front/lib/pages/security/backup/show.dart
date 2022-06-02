@@ -9,6 +9,9 @@ import 'package:raven_front/theme/colors.dart';
 import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+
 class BackupSeed extends StatefulWidget {
   final dynamic data;
   const BackupSeed({this.data}) : super();
@@ -71,11 +74,13 @@ class _BackupSeedState extends State<BackupSeed>
     super.dispose();
   }
 
+  bool get smallScreen => MediaQuery.of(context).size.height < 680;
+
   @override
   Widget build(BuildContext context) {
     buttonWidth = (MediaQuery.of(context).size.width - (17 + 17 + 16 + 16)) / 3;
     secret = Current.wallet.secret(Current.wallet.cipher!).split(' ');
-    print(1 - (48 + 48 + 16 + 8 + 8 + 72 + 56).ofAppHeight);
+    //print(1 - (48 + 48 + 16 + 8 + 8 + 72 + 56).ofAppHeight);
     return body();
   }
 
@@ -100,11 +105,11 @@ class _BackupSeedState extends State<BackupSeed>
                     columnWidgets: <Widget>[
                       instructions,
                       warning,
-                      //words,
+                      if (smallScreen) words,
                     ],
                     buttons: [submitButton],
                   ),
-                  wordsInStack
+                  if (!smallScreen) wordsInStack
                 ])));
 
   /// from exploring animations - want to return to
@@ -186,25 +191,24 @@ class _BackupSeedState extends State<BackupSeed>
   Widget get wordsInStack => Container(
       height: (1 - 72.ofAppHeight).ofAppHeight,
       alignment: Alignment.center,
-      child: Container(
-          height: 272,
-          padding: EdgeInsets.only(left: 16, right: 16),
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                for (var x in [0, 3, 6, 9])
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        for (var i in [1, 2, 3])
-                          components.buttons.wordButton(context,
-                              width: buttonWidth,
-                              chosen: false,
-                              label: secret[(i + x) - 1],
-                              onPressed: () {},
-                              number: i + x)
-                      ]),
-              ])));
+      child: words);
+
+  Widget get words => Container(
+      height: 272 * (smallScreen ? .8 : 1),
+      padding: (smallScreen ? null : EdgeInsets.only(left: 16, right: 16)),
+      child:
+          Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        for (var x in [0, 3, 6, 9])
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            for (var i in [1, 2, 3])
+              components.buttons.wordButton(context,
+                  width: buttonWidth,
+                  chosen: false,
+                  label: secret[(i + x) - 1],
+                  onPressed: () {},
+                  number: i + x)
+          ]),
+      ]));
 
   bool verify() => services.password.validate.password(password.text);
 
@@ -251,4 +255,41 @@ class _BackupSeedState extends State<BackupSeed>
         //  await Future.delayed(Duration(milliseconds: 2400));
         //},
       );
+}
+
+typedef void OnWidgetSizeChange(Size size);
+
+class MeasureSizeRenderObject extends RenderProxyBox {
+  Size? oldSize;
+  final OnWidgetSizeChange onChange;
+
+  MeasureSizeRenderObject(this.onChange);
+
+  @override
+  void performLayout() {
+    super.performLayout();
+
+    Size newSize = child!.size;
+    if (oldSize == newSize) return;
+
+    oldSize = newSize;
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      onChange(newSize);
+    });
+  }
+}
+
+class MeasureSize extends SingleChildRenderObjectWidget {
+  final OnWidgetSizeChange onChange;
+
+  const MeasureSize({
+    Key? key,
+    required this.onChange,
+    required Widget child,
+  }) : super(key: key, child: child);
+
+  @override
+  RenderObject createRenderObject(BuildContext context) {
+    return MeasureSizeRenderObject(onChange);
+  }
 }
