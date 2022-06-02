@@ -128,7 +128,7 @@ class _ReceiveState extends State<Receive> {
         ));
   }
 
-  bool get smallScreen => MediaQuery.of(context).size.height < 600;
+  bool get smallScreen => MediaQuery.of(context).size.height < 640;
 
   Widget body(double height) => Stack(
         alignment: Alignment.topCenter,
