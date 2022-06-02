@@ -134,10 +134,12 @@ class ButtonComponents {
             style: chosen
                 ? components.styles.buttons.word(context, chosen: true)
                 : components.styles.buttons.word(context, chosen: false),
-            child: Text(
-              label.toLowerCase(),
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
+            child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Text(
+                  label.toLowerCase(),
+                  style: Theme.of(context).textTheme.bodyText1,
+                )),
           ),
         )
       ]);
