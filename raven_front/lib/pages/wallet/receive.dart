@@ -128,6 +128,8 @@ class _ReceiveState extends State<Receive> {
         ));
   }
 
+  bool get smallScreen => MediaQuery.of(context).size.height < 680;
+
   Widget body(double height) => Stack(
         alignment: Alignment.topCenter,
         children: [
@@ -176,7 +178,23 @@ class _ReceiveState extends State<Receive> {
                                       //embeddedImage: Image.asset(
                                       //        'assets/logo/moontree_logo.png')
                                       //    .image,
-                                      size: 300.0)))),
+                                      size: smallScreen ? 150 : 300.0)))),
+                      /*
+                      SelectableText(
+                        address!,
+                        style: Theme.of(context)
+                            .textTheme
+                            .caption!
+                            .copyWith(color: AppColors.black87),
+                        showCursor: true,
+                        toolbarOptions: ToolbarOptions(
+                            copy: true,
+                            selectAll: true,
+                            cut: false,
+                            paste: false),
+                      ),
+                      SizedBox(height: 8),
+                      */
                       Padding(
                           padding: EdgeInsets.only(
                               top: 0, left: 16, right: 16, bottom: 0),
@@ -385,7 +403,7 @@ class _ReceiveState extends State<Receive> {
                               ),
                             ],
                           )),
-                      SizedBox(height: 72.figmaH)
+                      if (!smallScreen) SizedBox(height: 72.figmaH)
                     ],
                   ))),
           Stack(
