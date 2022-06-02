@@ -57,7 +57,7 @@ class _VerifySeedState extends State<VerifySeed> {
     super.dispose();
   }
 
-  bool get smallScreen => MediaQuery.of(context).size.height < 680;
+  bool get smallScreen => MediaQuery.of(context).size.height < 600;
 
   @override
   Widget build(BuildContext context) {
