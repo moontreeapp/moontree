@@ -164,7 +164,7 @@ class WalletService {
       return address ??
           services.wallet.getEmptyAddressFromCache(
             wallet,
-            random: true,
+            random: random,
           );
     } catch (e) {
       return address ??

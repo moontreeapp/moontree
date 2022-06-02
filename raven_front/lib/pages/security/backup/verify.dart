@@ -57,6 +57,8 @@ class _VerifySeedState extends State<VerifySeed> {
     super.dispose();
   }
 
+  bool get smallScreen => MediaQuery.of(context).size.height < 680;
+
   @override
   Widget build(BuildContext context) {
     buttonWidth = (MediaQuery.of(context).size.width - (17 + 17 + 16 + 16)) / 3;
@@ -69,10 +71,11 @@ class _VerifySeedState extends State<VerifySeed> {
           columnWidgets: <Widget>[
             instructions,
             warning,
+            if (smallScreen) words
           ],
           buttons: [submitButton],
         ),
-        words
+        if (!smallScreen) wordsInStack
       ]);
 
   Widget get instructions => Container(
@@ -92,39 +95,37 @@ class _VerifySeedState extends State<VerifySeed> {
         //alignment: Alignment.topCenter,
       );
 
-  Widget get words => Container(
+  Widget get wordsInStack => Container(
       height: (1 - 72.ofAppHeight).ofAppHeight,
       alignment: Alignment.center,
-      child: Container(
-          height: 272,
-          padding: EdgeInsets.only(left: 16, right: 16),
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                for (var x in [0, 3, 6, 9])
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        for (var i in [1, 2, 3])
-                          components.buttons.wordButton(context,
-                              width: buttonWidth,
-                              chosen: shuffled[(i + x) - 1]!.chosen != null,
-                              label: shuffled[(i + x) - 1]!.word,
-                              onPressed: () {
-                            if (click < 13) {
-                              var clicked = (i + x) - 1;
-                              if (shuffled[clicked]!.chosen == click) {
-                                shuffled[clicked]!.chosen = null;
-                                click--;
-                              } else if (shuffled[clicked]!.chosen == null) {
-                                click++;
-                                shuffled[clicked]!.chosen = click;
-                              }
-                            }
-                            setState(() {});
-                          }, number: shuffled[(i + x) - 1]!.chosen)
-                      ]),
-              ])));
+      child: words);
+
+  Widget get words => Container(
+      height: 272 * (smallScreen ? .8 : 1),
+      padding: (smallScreen ? null : EdgeInsets.only(left: 16, right: 16)),
+      child:
+          Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        for (var x in [0, 3, 6, 9])
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            for (var i in [1, 2, 3])
+              components.buttons.wordButton(context,
+                  width: buttonWidth,
+                  chosen: shuffled[(i + x) - 1]!.chosen != null,
+                  label: shuffled[(i + x) - 1]!.word, onPressed: () {
+                if (click < 13) {
+                  var clicked = (i + x) - 1;
+                  if (shuffled[clicked]!.chosen == click) {
+                    shuffled[clicked]!.chosen = null;
+                    click--;
+                  } else if (shuffled[clicked]!.chosen == null) {
+                    click++;
+                    shuffled[clicked]!.chosen = click;
+                  }
+                }
+                setState(() {});
+              }, number: shuffled[(i + x) - 1]!.chosen)
+          ]),
+      ]));
 
   bool checkOrder() {
     for (var secretWord in shuffled.values) {

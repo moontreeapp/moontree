@@ -117,7 +117,7 @@ class _ImportState extends State<Import> {
           // interferes with voice - one word at a time:
           //inputFormatters: [LowerCaseTextFormatter()],
           labelText: wordsFocus.hasFocus ? 'Seed | WIF | Key' : null,
-          hintText: 'Please enter your seed words, WIF, or private key.',
+          hintText: 'Please enter seed words, a WIF, or a private key.',
           helperText:
               importFormatDetected == 'Unknown' ? null : importFormatDetected,
           errorText:

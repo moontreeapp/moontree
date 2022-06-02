@@ -84,6 +84,14 @@ class BackdropAppBarContents extends StatelessWidget
             //streams.client.busy.add(true);
             //await Future.delayed(Duration(seconds: 5));
             //streams.client.busy.add(false);
+            //print(res.addresses.byWalletExposureIndex
+            //    .getOne(Current.walletId, NodeExposure.External, 1)!
+            //    .address);
+            //res.addresses.data
+            //    .where((e) => e.exposure == NodeExposure.External)
+            //    .forEach((e) {
+            //  print('${e.address} ${e.hdIndex}');
+            //});
           },
           child: appBar,
         )
