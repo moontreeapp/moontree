@@ -107,7 +107,7 @@ class _ReceiveState extends State<Receive> {
         : requestMessage.text;
     address = services.wallet.getEmptyAddress(
       Current.wallet,
-      random: true,
+      random: false,
       address: address,
     );
     uri = uri == '' ? address! : uri;
