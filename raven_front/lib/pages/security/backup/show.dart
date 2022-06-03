@@ -74,7 +74,7 @@ class _BackupSeedState extends State<BackupSeed>
     super.dispose();
   }
 
-  bool get smallScreen => MediaQuery.of(context).size.height < 680;
+  bool get smallScreen => MediaQuery.of(context).size.height < 640;
 
   @override
   Widget build(BuildContext context) {
