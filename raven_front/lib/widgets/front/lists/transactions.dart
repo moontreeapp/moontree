@@ -80,7 +80,6 @@ class _TransactionListState extends State<TransactionList> {
   }
 
   Future refresh() async {
-    //await services.rate.saveRate();
     setState(() {});
   }
 

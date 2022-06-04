@@ -1,3 +1,4 @@
+import 'package:raven_back/utilities/rate.dart';
 import 'package:test/test.dart';
 
 import 'package:reservoir/map_source.dart';
@@ -24,7 +25,7 @@ void main() async {
     waiters.send.init();
     waiters.import.init();
     waiters.password.init();
-    await waiters.rate.init();
+    waiters.rate.init(RVNtoFiat());
   });
 
   tearDown(() async {
