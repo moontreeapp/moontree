@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="gR0jCYZBGtHNL1Bc6hay" name="Page-1">
-        <mxGraphModel dx="1315" dy="472" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="1118" dy="393" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -27,8 +27,7 @@
                         <mxPoint x="190" y="140" as="sourcePoint"/>
                         <mxPoint x="810" y="50" as="targetPoint"/>
                         <Array as="points">
-                            <mxPoint x="192" y="130"/>
-                            <mxPoint x="-30" y="170"/>
+                            <mxPoint x="-60" y="139"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
@@ -42,46 +41,46 @@
                     <mxGeometry x="520" y="40" width="280" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="25" value="Electrum Client Infrastructure" style="swimlane;" parent="1" vertex="1">
-                    <mxGeometry x="860" y="700" width="660" height="330" as="geometry"/>
+                    <mxGeometry x="860" y="700" width="820" height="330" as="geometry"/>
                 </mxCell>
                 <mxCell id="33" style="edgeStyle=none;html=1;startArrow=classic;startFill=1;" parent="25" source="31" target="32" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="31" value="Raven Electrum" style="rounded=0;whiteSpace=wrap;html=1;" parent="25" vertex="1">
-                    <mxGeometry x="25" y="280" width="415" height="30" as="geometry"/>
+                    <mxGeometry x="25" y="280" width="555" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="32" value="json RPC 2" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;" parent="25" vertex="1">
-                    <mxGeometry x="505" y="270" width="120" height="50" as="geometry"/>
+                    <mxGeometry x="660" y="270" width="120" height="50" as="geometry"/>
                 </mxCell>
                 <mxCell id="35" value="Subscription layer" style="rounded=0;whiteSpace=wrap;html=1;" parent="25" vertex="1">
-                    <mxGeometry x="305" y="240" width="320" height="30" as="geometry"/>
+                    <mxGeometry x="305" y="240" width="475" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="36" value="Non-Subscription Methods" style="rounded=0;whiteSpace=wrap;html=1;" parent="25" vertex="1">
                     <mxGeometry x="25" y="200" width="270" height="70" as="geometry"/>
                 </mxCell>
                 <mxCell id="37" value="Subscription Methods" style="rounded=0;whiteSpace=wrap;html=1;" parent="25" vertex="1">
-                    <mxGeometry x="305" y="200" width="320" height="30" as="geometry"/>
+                    <mxGeometry x="305" y="200" width="475" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="39" style="edgeStyle=none;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;startArrow=classic;startFill=1;" parent="25" source="38" target="36" edge="1">
+                <mxCell id="39" style="edgeStyle=none;html=1;startArrow=classic;startFill=1;" parent="25" source="38" target="36" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="40" style="edgeStyle=none;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;startArrow=classic;startFill=1;" parent="25" source="38" target="37" edge="1">
+                <mxCell id="40" style="edgeStyle=none;html=1;startArrow=classic;startFill=1;" parent="25" source="38" target="37" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="38" value="Client Service" style="rounded=0;whiteSpace=wrap;html=1;" parent="25" vertex="1">
-                    <mxGeometry x="25" y="120" width="600" height="30" as="geometry"/>
+                    <mxGeometry x="25" y="120" width="755" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="41" value="Client Object" style="rounded=0;whiteSpace=wrap;html=1;" parent="25" vertex="1">
                     <mxGeometry x="25" y="80" width="120" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="42" value="Reconnect Automatically&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;" parent="25" vertex="1">
-                    <mxGeometry x="155" y="80" width="470" height="30" as="geometry"/>
+                    <mxGeometry x="155" y="80" width="625" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="43" value="Electrum Methods" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6d8764;fontColor=#ffffff;strokeColor=#3A5431;" parent="25" vertex="1">
-                    <mxGeometry x="155" y="40" width="470" height="30" as="geometry"/>
+                    <mxGeometry x="155" y="40" width="625" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="26" value="Raven Electrum Server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#a0522d;fontColor=#ffffff;strokeColor=#6D1F00;" parent="1" vertex="1">
-                    <mxGeometry x="890" y="1050" width="610" height="30" as="geometry"/>
+                    <mxGeometry x="890" y="1050" width="750" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="27" value="Device Disk / Ram" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#a0522d;fontColor=#ffffff;strokeColor=#6D1F00;" parent="1" vertex="1">
                     <mxGeometry x="50" y="1050" width="760" height="30" as="geometry"/>
@@ -103,7 +102,7 @@
                         <mxPoint x="1326" y="980" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="44" style="edgeStyle=none;html=1;startArrow=classic;startFill=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;" parent="1" source="43" target="49" edge="1">
+                <mxCell id="44" style="edgeStyle=none;html=1;startArrow=classic;startFill=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="43" target="49" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="1375.5263157894738" y="630" as="targetPoint"/>
                     </mxGeometry>
@@ -114,13 +113,13 @@
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="49" value="Natural Subscription Process" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="1080" y="600" width="210" height="60" as="geometry"/>
+                    <mxGeometry x="1130" y="600" width="270" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="52" value="New Leader Process" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="860" y="600" width="190" height="60" as="geometry"/>
+                    <mxGeometry x="880" y="600" width="240" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="53" value="misc processes" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="1310" y="600" width="210" height="60" as="geometry"/>
+                    <mxGeometry x="1410" y="600" width="230" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="54" style="edgeStyle=none;html=1;startArrow=classic;startFill=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;" parent="1" source="43" target="53" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -132,7 +131,7 @@
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="66" value="Files Infrastructure" style="swimlane;" vertex="1" parent="1">
-                    <mxGeometry x="1560" y="790" width="360" height="240" as="geometry"/>
+                    <mxGeometry x="1720" y="790" width="360" height="240" as="geometry"/>
                 </mxCell>
                 <mxCell id="63" value="methods" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6d8764;fontColor=#ffffff;strokeColor=#3A5431;" vertex="1" parent="66">
                     <mxGeometry x="30" y="50" width="300" height="30" as="geometry"/>
@@ -147,19 +146,19 @@
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="67" value="Device File System" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#a0522d;fontColor=#ffffff;strokeColor=#6D1F00;" vertex="1" parent="1">
-                    <mxGeometry x="1590" y="1050" width="300" height="30" as="geometry"/>
+                    <mxGeometry x="1750" y="1050" width="300" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="68" value="" style="endArrow=classic;startArrow=classic;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="63" target="70">
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
-                        <mxPoint x="2020" y="770" as="sourcePoint"/>
-                        <mxPoint x="1800" y="670" as="targetPoint"/>
+                        <mxPoint x="2180" y="770" as="sourcePoint"/>
+                        <mxPoint x="1960" y="670" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="70" value="Flutter App" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="1560" y="490" width="360" height="60" as="geometry"/>
+                    <mxGeometry x="1720" y="490" width="360" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="74" value="Prices Infrastructure" style="swimlane;" vertex="1" parent="1">
-                    <mxGeometry x="1945" y="790" width="360" height="240" as="geometry"/>
+                    <mxGeometry x="2105" y="790" width="360" height="240" as="geometry"/>
                 </mxCell>
                 <mxCell id="75" value="method(s) (save to reservoir)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6d8764;fontColor=#ffffff;strokeColor=#3A5431;" vertex="1" parent="74">
                     <mxGeometry x="30" y="50" width="300" height="30" as="geometry"/>
@@ -174,16 +173,25 @@
                     <mxGeometry x="30" y="170" width="300" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="77" value="Moontree Server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#a0522d;fontColor=#ffffff;strokeColor=#6D1F00;" vertex="1" parent="1">
-                    <mxGeometry x="1975" y="1050" width="300" height="30" as="geometry"/>
+                    <mxGeometry x="2135" y="1050" width="300" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="71" style="edgeStyle=none;html=1;startArrow=classic;startFill=1;" edge="1" parent="1" source="72" target="77">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="79" value="Startup Process" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="1975" y="600" width="300" height="60" as="geometry"/>
+                    <mxGeometry x="2135" y="600" width="300" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="80" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;startArrow=classic;startFill=1;" edge="1" parent="1" source="75" target="79">
                     <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="83" value="" style="triangle;whiteSpace=wrap;html=1;rotation=-90;" vertex="1" parent="1">
+                    <mxGeometry x="395" y="60" width="60" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="84" value="" style="shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=40;" vertex="1" parent="1">
+                    <mxGeometry x="320" y="170" width="210" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="85" value="" style="shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=40;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+                    <mxGeometry x="260" y="270" width="330" height="60" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
