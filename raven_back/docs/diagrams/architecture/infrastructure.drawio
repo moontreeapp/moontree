@@ -1,13 +1,13 @@
 <mxfile host="65bd71144e">
     <diagram id="gR0jCYZBGtHNL1Bc6hay" name="Page-1">
-        <mxGraphModel dx="1118" dy="393" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="2295" dy="555" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
                 <mxCell id="28" style="edgeStyle=none;html=1;startArrow=classic;startFill=1;" parent="1" source="3" target="27" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="23" value="Long and Short term Memory Infrastructure" style="swimlane;" parent="1" vertex="1">
+                <mxCell id="23" value="Long and Short term Memory (DB) Infrastructure" style="swimlane;" parent="1" vertex="1">
                     <mxGeometry x="10" y="800" width="830" height="230" as="geometry"/>
                 </mxCell>
                 <mxCell id="3" value="Hive Database" style="rounded=0;whiteSpace=wrap;html=1;" parent="23" vertex="1">
@@ -192,6 +192,115 @@
                 </mxCell>
                 <mxCell id="85" value="" style="shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=40;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
                     <mxGeometry x="260" y="270" width="330" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="87" value="Electrum Client Infrastructure" style="swimlane;" vertex="1" parent="1">
+                    <mxGeometry x="860" y="1216" width="820" height="330" as="geometry"/>
+                </mxCell>
+                <mxCell id="109" value="Raven Electrum Package" style="swimlane;" vertex="1" parent="87">
+                    <mxGeometry x="11" y="170.5" width="796" height="155.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="92" value="Non-Subscription Methods" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="109">
+                    <mxGeometry x="21.5" y="35.5" width="270" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="93" value="Subscription Methods" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="109">
+                    <mxGeometry x="301.5" y="35.5" width="475" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="91" value="Subscription layer" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="109">
+                    <mxGeometry x="301.5" y="75.5" width="475" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="90" value="json RPC 2" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;" vertex="1" parent="109">
+                    <mxGeometry x="656.5" y="105.5" width="120" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="110" value="Client Service" style="swimlane;" vertex="1" parent="87">
+                    <mxGeometry x="27" y="35" width="775" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="99" value="Electrum Methods" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6d8764;fontColor=#ffffff;strokeColor=#3A5431;" vertex="1" parent="110">
+                    <mxGeometry x="136" y="28" width="625" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="98" value="Reconnect Automatically&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="110">
+                    <mxGeometry x="136" y="68" width="625" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="97" value="Client Object" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="110">
+                    <mxGeometry x="6" y="68" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="94" style="edgeStyle=none;html=1;startArrow=classic;startFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="87" source="110" target="92">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="-442.2064220183488" y="147" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="100" value="Raven Electrum Server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#a0522d;fontColor=#ffffff;strokeColor=#6D1F00;" vertex="1" parent="1">
+                    <mxGeometry x="890" y="1566" width="750" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="101" style="edgeStyle=none;html=1;startArrow=classic;startFill=1;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="90" target="100">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1326" y="1496" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="102" style="edgeStyle=none;html=1;startArrow=classic;startFill=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="99" target="104">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1375.5263157894738" y="1146" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="103" style="edgeStyle=none;html=1;startArrow=classic;startFill=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="99" target="105">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1093.1578947368425" y="1146" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="104" value="Natural Subscription Process" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="1130" y="1116" width="270" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="105" value="New Leader Process" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="880" y="1116" width="240" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="106" value="misc processes" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="1410" y="1116" width="230" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="107" style="edgeStyle=none;html=1;startArrow=classic;startFill=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="99" target="106">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="95" style="edgeStyle=none;html=1;startArrow=classic;startFill=1;" edge="1" parent="1" target="93">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1284" y="1371" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="112" value="" style="triangle;whiteSpace=wrap;html=1;rotation=-90;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="1245" y="65" width="60" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="113" value="Services, listeners, etc" style="shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=40;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="1170" y="175" width="210" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="114" value="&lt;font color=&quot;#4d4d4d&quot;&gt;Infrastructure&lt;/font&gt;" style="shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=40;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="1110" y="275" width="330" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="115" value="" style="curved=1;endArrow=classic;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.25;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="114" target="114">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1426" y="214" as="sourcePoint"/>
+                        <mxPoint x="1476" y="164" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="1226" y="172"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="116" value="" style="curved=1;endArrow=classic;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.75;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="114" target="112">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1455" y="180" as="sourcePoint"/>
+                        <mxPoint x="1537.5" y="180" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="1378" y="208"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="117" value="Repositories, Domain, Application, etc." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="1413" y="185" width="179" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="118" value="UI" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="1258" y="105" width="35" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="119" value="UI, Application layers" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="1413" y="90" width="179" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="120" value="Repositories,&lt;br&gt;Infrastructure,&lt;br&gt;etc." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="1413" y="290" width="179" height="30" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

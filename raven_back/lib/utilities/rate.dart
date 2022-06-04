@@ -3,11 +3,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:raven_back/utilities/exceptions.dart';
 
-/** interface vs facade
- * ok so I can create an interface this way, and I can implement it.
- * But is that sufficient? things still depend on and import RVNtoFiat... 
- * so whats the next layer of complexity that turns an interface into a facade?
- */
 abstract class RVNRateInterface {
   Future<double?> get();
 }
