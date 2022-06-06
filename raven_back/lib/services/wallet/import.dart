@@ -24,7 +24,7 @@ class ImportWalletService {
     }
 
     //TODO: MULTI LANGUAGES OTHER THAN ENGLISH
-    if (bip39.validateMnemonic(text)) {
+    if (bip39.validateMnemonic(text.toLowerCase())) {
       return ImportFormat.mnemonic;
     }
     try {
