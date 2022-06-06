@@ -15,6 +15,4 @@ part 'rate.keys.dart';
 /// USD -> other fiat (for obscure fiats)
 class ExchangeRateReservoir extends Reservoir<_RateKey, Rate> {
   ExchangeRateReservoir() : super(_RateKey());
-
-  /// logic moved to service...
 }

@@ -106,7 +106,7 @@ class _WalletViewState extends State<WalletView> {
           flexibleSpace: Container(
             alignment: Alignment(0.0, -0.5),
             child: Text(
-              '\n ${Current.balanceUSD?.valueUSD ?? Current.balanceRVN.value}',
+              '\n Current.balanceUSD?.valueUSD ?? Current.balanceRVN.value',
             ),
           ),
           bottom: PreferredSize(

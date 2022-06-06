@@ -25,19 +25,20 @@ abstract class Waiter {
     }
   }
 
-  Future deinit() async {
+  Future<void> deinit() async {
     for (var listener in listeners.values) {
       await listener.cancel();
     }
     listeners.clear();
   }
 
-  Future deinitKeys(List<String> keys) async {
+  Future<void> deinitKeys(List<String> keys) async {
     for (var listener in keys) {
+      print('removing $listener');
       await listeners[listener]?.cancel();
       listeners.remove(listener);
     }
   }
 
-  Future deinitKey(String key) async => await deinitKeys([key]);
+  Future<void> deinitKey(String key) async => await deinitKeys([key]);
 }

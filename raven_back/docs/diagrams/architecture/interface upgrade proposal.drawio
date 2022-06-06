@@ -1,0 +1,220 @@
+<mxfile host="65bd71144e">
+    <diagram id="gR0jCYZBGtHNL1Bc6hay" name="Page-1">
+        <mxGraphModel dx="-492" dy="590" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="74" value="Rate Infrastructure" style="swimlane;" parent="1" vertex="1">
+                    <mxGeometry x="1720" y="780" width="360" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="190" value="" style="edgeStyle=none;html=1;" edge="1" parent="74" source="75" target="184">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="75" value="method(s)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6d8764;fontColor=#ffffff;strokeColor=#3A5431;" parent="74" vertex="1">
+                    <mxGeometry x="30" y="50" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="76" value="services.rate" style="rounded=0;whiteSpace=wrap;html=1;" parent="74" vertex="1">
+                    <mxGeometry x="30" y="90" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="189" style="edgeStyle=none;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="74" source="72" target="76">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="72" value="utilities.rate" style="rounded=0;whiteSpace=wrap;html=1;" parent="74" vertex="1">
+                    <mxGeometry x="30" y="170" width="85" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="186" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="74" source="184" target="76">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="184" value="res.rates" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="74">
+                    <mxGeometry x="137.5" y="170" width="85" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="187" style="edgeStyle=none;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="74" source="185" target="76">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="185" value="res.securities" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="74">
+                    <mxGeometry x="245" y="170" width="85" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="188" style="edgeStyle=none;html=1;" edge="1" parent="1" source="77" target="72">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="77" value="Moontree Server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#a0522d;fontColor=#ffffff;strokeColor=#6D1F00;" parent="1" vertex="1">
+                    <mxGeometry x="1750" y="1040" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="79" value="persistent&lt;br&gt;periodic RateWaiter" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="1750" y="650" width="150" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="80" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;startArrow=classic;startFill=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;endArrow=none;endFill=0;" parent="1" source="75" target="79" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="87" value="&lt;div style=&quot;color: rgb(212 , 212 , 212) ; background-color: rgb(30 , 30 , 30) ; font-family: &amp;#34;consolas&amp;#34; , &amp;#34;courier new&amp;#34; , monospace ; font-size: 14px ; line-height: 19px&quot;&gt;&lt;span style=&quot;color: #dcdcaa&quot;&gt;saveRate&lt;/span&gt;&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="80" vertex="1" connectable="0">
+                    <mxGeometry x="0.2006" y="1" relative="1" as="geometry">
+                        <mxPoint x="1" y="-20" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="81" value="" style="shape=flexArrow;endArrow=classic;html=1;" parent="1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="2125" y="899.5" as="sourcePoint"/>
+                        <mxPoint x="2205" y="899.5" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="99" style="edgeStyle=none;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;exitX=0.75;exitY=0;exitDx=0;exitDy=0;" parent="1" source="82" target="97" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="82" value="raven_front&lt;br&gt;Current lookup module" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="1860" y="550" width="150" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="83" style="edgeStyle=none;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" parent="1" source="75" target="82" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1975" y="610" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="84" value="&lt;div style=&quot;color: rgb(212 , 212 , 212) ; background-color: rgb(30 , 30 , 30) ; font-family: &amp;#34;consolas&amp;#34; , &amp;#34;courier new&amp;#34; , monospace ; font-size: 14px ; line-height: 19px&quot;&gt;&lt;span style=&quot;color: #dcdcaa&quot;&gt;walletBalanceUSD&lt;/span&gt;&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="83" vertex="1" connectable="0">
+                    <mxGeometry x="-0.1469" relative="1" as="geometry">
+                        <mxPoint x="-25" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="88" style="edgeStyle=none;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" parent="1" source="75" target="91" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="2120" y="590" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="90" value="&lt;div style=&quot;color: rgb(212 , 212 , 212) ; background-color: rgb(30 , 30 , 30) ; font-family: &amp;#34;consolas&amp;#34; , &amp;#34;courier new&amp;#34; , monospace ; font-size: 14px ; line-height: 19px&quot;&gt;&lt;span style=&quot;color: rgb(220 , 220 , 170) ; font-family: &amp;#34;consolas&amp;#34; , &amp;#34;courier new&amp;#34; , monospace&quot;&gt;assetToRVN&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(212 , 212 , 212) ; background-color: rgb(30 , 30 , 30) ; font-family: &amp;#34;consolas&amp;#34; , &amp;#34;courier new&amp;#34; , monospace ; font-size: 14px ; line-height: 19px&quot;&gt;&lt;span style=&quot;color: rgb(156 , 220 , 254)&quot;&gt;rvnToUSD&lt;/span&gt;&lt;br&gt;&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="88" vertex="1" connectable="0">
+                    <mxGeometry x="-0.0911" y="3" relative="1" as="geometry">
+                        <mxPoint x="11" y="5" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="98" style="edgeStyle=none;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;exitX=0.25;exitY=0;exitDx=0;exitDy=0;" parent="1" source="91" target="97" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="91" value="raven_front&lt;br&gt;TextComponents" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="2020" y="550" width="150" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="97" value="raven_front&lt;br&gt;Page / Widget" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="1930" y="440" width="170" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="100" value="&lt;h1&gt;Possible Improvements&lt;/h1&gt;&lt;p&gt;First of all, maybe it shouldn't save the price directly?&amp;nbsp;&lt;/p&gt;&lt;p&gt;&lt;span&gt;Secondly, it serves 3 masters: &lt;br&gt;1. get prices from source &lt;br&gt;2. aggregation &lt;br&gt;3. Conversion.&lt;br&gt;Aggregation and conversion should be moved out.&lt;/span&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="1720" y="180" width="390" height="230" as="geometry"/>
+                </mxCell>
+                <mxCell id="101" value="Rate Infrastructure" style="swimlane;" parent="1" vertex="1">
+                    <mxGeometry x="2250" y="870" width="170" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="102" value="get" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6d8764;fontColor=#ffffff;strokeColor=#3A5431;" parent="101" vertex="1">
+                    <mxGeometry x="30" y="50" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="104" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;startArrow=classic;startFill=1;" parent="101" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="180" y="120" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="115" value="utilities.rate" style="rounded=0;whiteSpace=wrap;html=1;" parent="101" vertex="1">
+                    <mxGeometry x="30" y="90" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="106" value="Moontree Server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#a0522d;fontColor=#ffffff;strokeColor=#6D1F00;" parent="1" vertex="1">
+                    <mxGeometry x="2280" y="1040" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="107" style="edgeStyle=none;html=1;startArrow=classic;startFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="115" target="106" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="2400" y="980" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="121" value="persistent periodic RateWaiter" style="swimlane;" parent="1" vertex="1">
+                    <mxGeometry x="2250" y="650" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="123" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;startArrow=classic;startFill=1;" parent="121" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="180" y="120" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="119" value="res.save" style="rounded=0;whiteSpace=wrap;html=1;" parent="121" vertex="1">
+                    <mxGeometry x="180" y="40" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="126" style="edgeStyle=none;html=1;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="121" source="125" target="119" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="125" value="periodically get" style="rounded=0;whiteSpace=wrap;html=1;" parent="121" vertex="1">
+                    <mxGeometry x="30" y="40" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="161" style="edgeStyle=none;html=1;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="145" target="146" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="145" value="raven_front&lt;br&gt;TextComponents" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="2710" y="550" width="460" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="146" value="raven_front&lt;br&gt;Page / Widget" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="2870" y="440" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="147" value="Rate Service  Infrastructure" style="swimlane;" parent="1" vertex="1">
+                    <mxGeometry x="2570" y="870" width="360" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="148" value="rvnToUSD" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6d8764;fontColor=#ffffff;strokeColor=#3A5431;" parent="147" vertex="1">
+                    <mxGeometry x="30" y="50" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="149" value="services.rate" style="rounded=0;whiteSpace=wrap;html=1;" parent="147" vertex="1">
+                    <mxGeometry x="30" y="90" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="159" style="edgeStyle=none;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;exitX=0.75;exitY=0;exitDx=0;exitDy=0;" parent="1" source="148" target="145" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="2907.5" y="610" as="targetPoint"/>
+                        <mxPoint x="2825" y="810" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="164" value="&lt;span&gt;res.securities RVN USD&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="2750" y="1040" width="150" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="162" value="res.rates" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="2610" y="1040" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="165" style="edgeStyle=none;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="164" target="149" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="163" style="edgeStyle=none;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="162" target="149" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="166" value="Rate Interface" style="swimlane;" parent="1" vertex="1">
+                    <mxGeometry x="2250" y="770" width="170" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="167" value="get" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6d8764;fontColor=#ffffff;strokeColor=#3A5431;" parent="166" vertex="1">
+                    <mxGeometry x="30" y="40" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="127" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="167" target="125" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="170" value="Entity Joins" style="swimlane;" parent="1" vertex="1">
+                    <mxGeometry x="2950" y="870" width="360" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="171" value="toRVNRate" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6d8764;fontColor=#ffffff;strokeColor=#3A5431;" parent="170" vertex="1">
+                    <mxGeometry x="30" y="50" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="172" value="Security" style="rounded=0;whiteSpace=wrap;html=1;" parent="170" vertex="1">
+                    <mxGeometry x="30" y="90" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="173" value="res.securities.RVN" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="3140" y="1040" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="174" value="res.rates" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="2990" y="1040" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="175" style="edgeStyle=none;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="173" target="172" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="176" style="edgeStyle=none;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="174" target="172" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="181" style="edgeStyle=none;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;" parent="1" source="171" target="145" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="3055" y="610" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="182" value="&lt;h1&gt;Post Refactor&lt;/h1&gt;&lt;p&gt;&lt;span&gt;Turns out the aggregation wasn't needed at all.&lt;/span&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span&gt;conversions:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;• to rvn security moved to security.toRVNRate join extension&lt;br&gt;•&amp;nbsp;&lt;span&gt;rvn to usd function left in service&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span&gt;get rate:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span&gt;• waiter talks directly to utility&lt;br&gt;• waiter saves to rates reservoir&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span&gt;also:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span&gt;• made and used interface for utilities.rate&lt;/span&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="2280" y="180" width="397" height="285" as="geometry"/>
+                </mxCell>
+                <mxCell id="183" value="" style="shape=flexArrow;endArrow=classic;html=1;" parent="1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="2155" y="289.5" as="sourcePoint"/>
+                        <mxPoint x="2235" y="289.5" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

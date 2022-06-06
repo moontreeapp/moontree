@@ -177,8 +177,8 @@ class _ImportState extends State<Import> {
 
   void enableImport({String? given, bool toLower = true}) {
     var oldImportFormatDetected = importFormatDetected;
-    var detection = services.wallet.import
-        .detectImportType((given ?? words.text).trim().toLowerCase());
+    var detection =
+        services.wallet.import.detectImportType((given ?? words.text).trim());
     importEnabled = detection != null && detection != ImportFormat.invalid;
     if (toLower) {
       words.text = words.text.toLowerCase();

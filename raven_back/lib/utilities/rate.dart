@@ -3,7 +3,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:raven_back/utilities/exceptions.dart';
 
-class RVNtoFiat {
+abstract class RVNRateInterface {
+  Future<double?> get();
+}
+
+class RVNtoFiat implements RVNRateInterface {
   final String fiat;
   late String fiatConformed;
   late String serviceName;
@@ -12,24 +16,25 @@ class RVNtoFiat {
       : fiatConformed = fiat,
         serviceName = 'Moontree';
 
+  @override
   Future<double?> get() async {
     try {
       serviceName = 'Moontree';
-      return await getRate();
+      return await _getRate();
     } catch (e) {
       try {
         serviceName = 'CoinGecko';
-        return await getRate();
+        return await _getRate();
       } catch (e) {
         //print(e);
         try {
           serviceName = 'Bittrex';
-          return await getRate();
+          return await _getRate();
         } catch (e) {
           try {
             print(e);
             serviceName = 'Nomi';
-            return await getRate();
+            return await _getRate();
           } catch (e) {
             return null;
           }
@@ -38,12 +43,12 @@ class RVNtoFiat {
     }
   }
 
-  Future<double> getRate() async {
-    conformFiat();
-    return verifySensible(interpret(await call()));
+  Future<double> _getRate() async {
+    _conformFiat();
+    return _verifySensible(_interpret(await _call()));
   }
 
-  void conformFiat() {
+  void _conformFiat() {
     fiatConformed = {
       'Moontree': fiat.toUpperCase(),
       'CoinGecko': fiat.toLowerCase(),
@@ -52,25 +57,28 @@ class RVNtoFiat {
     }[serviceName]!;
   }
 
-  Future<http.Response> call() async {
-    return await http.get(
-        Uri.parse({
-          /*
-          We're getting shut out by coingecko API... why?
-          */
-          'Moontree': 'http://143.198.142.78:8000/prices',
-          'CoinGecko': 'https://api.coingecko.com/api/v3/simple/price?'
-              'ids=ravencoin&vs_currencies=$fiatConformed',
-          'Bittrex':
-              'https://api.bittrex.com/v3/markets/RVN-$fiatConformed/ticker',
-          'Nomi': 'https://api.nomics.com/v1/currencies/ticker?'
-              'key=1a475af107cf428e9536da16c07b78cef68dfc1d&ids=RVN&'
-              'interval=1d&convert=$fiatConformed&per-page=100&page=1',
-        }[serviceName]!),
-        headers: {'accept': 'application/json'});
-  }
+  Future<http.Response> _call() async => await http.get(
+        Uri.parse(() {
+          switch (serviceName) {
+            case 'Moontree':
+              return 'https://moontree.com/prices';
+            case 'CoinGecko':
+              return 'https://api.coingecko.com/api/v3/simple/price?'
+                  'ids=ravencoin&vs_currencies=$fiatConformed';
+            case 'Bittrex':
+              return 'https://api.bittrex.com/v3/markets/RVN-$fiatConformed/ticker';
+            case 'Nomi':
+              return 'https://api.nomics.com/v1/currencies/ticker?'
+                  'key=1a475af107cf428e9536da16c07b78cef68dfc1d&ids=RVN&'
+                  'interval=1d&convert=$fiatConformed&per-page=100&page=1';
+            default:
+              return 'https://moontree.com/prices';
+          }
+        }()),
+        headers: {'accept': 'application/json'},
+      );
 
-  double interpret(http.Response response) {
+  double _interpret(http.Response response) {
     if (serviceName == 'Moontree') {
       Map jsonBody;
       try {
@@ -152,7 +160,7 @@ class RVNtoFiat {
   }
 
   // placeholder for better verification - avg 2 out of 3 or something...
-  double verifySensible(double rvnPrice) {
+  double _verifySensible(double rvnPrice) {
     if (rvnPrice == 0.0) {
       throw BadResponseException('price is zero');
     }

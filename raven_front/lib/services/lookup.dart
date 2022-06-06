@@ -9,9 +9,6 @@ class Current {
   static Balance get balanceRVN =>
       services.balance.walletBalance(wallet, res.securities.RVN);
 
-  static BalanceUSD? get balanceUSD =>
-      services.rate.walletBalanceUSD(walletId, holdings);
-
   static Set<Transaction> get transactions => wallet.transactions;
 
   static List<Balance> get holdings => services.balance.walletBalances(wallet);

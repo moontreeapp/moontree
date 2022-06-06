@@ -42,7 +42,7 @@ class DataLoadingHelper {
       await _loadedLock.read(() => _loaded == HiveLoaded.True);
 
   Future setupWaiters() async {
-    await initWaiters(HiveLoadingStep.All);
+    initWaiters(HiveLoadingStep.All);
     unawaited(waiters.app.logoutThread());
     //initListeners();
     //await res.settings.save(
@@ -50,12 +50,12 @@ class DataLoadingHelper {
   }
 
   Future setupWaiters1() async {
-    await initWaiters(HiveLoadingStep.Lock);
+    initWaiters(HiveLoadingStep.Lock);
     await _loadedLock.write(() => _loaded = HiveLoaded.Partial);
   }
 
   Future setupWaiters2() async {
-    await initWaiters(HiveLoadingStep.Login);
+    initWaiters(HiveLoadingStep.Login);
     unawaited(waiters.app.logoutThread());
     //initListeners();
     await _loadedLock.write(() => _loaded = HiveLoaded.True);
