@@ -217,9 +217,7 @@ class _TransactionPageState extends State<TransactionPage> {
   //        [MM, ' ', d, ', ', yyyy])
   //    : 'unknown');
 
-  String getConfirmationsBetweenHelper() =>
-      'Confirmations: ' +
-      (getBlocksBetweenHelper() != null
-          ? getBlocksBetweenHelper().toString()
-          : 'unknown');
+  String getConfirmationsBetweenHelper() => (getBlocksBetweenHelper() != null
+      ? getBlocksBetweenHelper().toString()
+      : 'unknown');
 }
