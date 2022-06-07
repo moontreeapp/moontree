@@ -122,7 +122,7 @@ class _BackupSeedState extends State<BackupSeed>
   //    child: FadeTransition(opacity: animation, child: child));
 
   Widget get intro => Container(
-      height: 48,
+      //height: 48,
       alignment: Alignment.topCenter,
       child: Text(
         'Your wallet is valuable.\nPlease create a backup!',
@@ -273,7 +273,7 @@ class MeasureSizeRenderObject extends RenderProxyBox {
     if (oldSize == newSize) return;
 
     oldSize = newSize;
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       onChange(newSize);
     });
   }

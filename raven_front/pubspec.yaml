@@ -37,7 +37,7 @@ dependencies:
   hive: ^2.0.4
   hive_flutter: ^1.1.0
   qr_flutter: ^4.0.0
-  qr_code_scanner: ^0.7.0
+  qr_code_scanner: ^1.0.0
   ulid: ^2.0.0
   url_launcher: ^6.0.10
   ravencoin_wallet: ^3.0.0
