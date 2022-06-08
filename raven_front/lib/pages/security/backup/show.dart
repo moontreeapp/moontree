@@ -134,7 +134,7 @@ class _BackupSeedState extends State<BackupSeed>
       ));
 
   Widget get safe => Container(
-      height: 48,
+      //height: 48,
       alignment: Alignment.topCenter,
       child: Text(
         'You are about to backup your seed words.\nKeep it secret, keep it safe.',
@@ -146,7 +146,7 @@ class _BackupSeedState extends State<BackupSeed>
       ));
 
   Widget get instructions => Container(
-      height: 48,
+      //height: 48,
       alignment: Alignment.topCenter,
       child: Text(
         'Please backup your wallet by writing down these words on a piece of paper.',
@@ -158,7 +158,7 @@ class _BackupSeedState extends State<BackupSeed>
       ));
 
   Widget get warning => Container(
-      height: 48,
+      //height: 48,
       alignment: Alignment.topCenter,
       child: Text(
         'You will need these words for recovery.',
