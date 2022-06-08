@@ -1,4 +1,6 @@
 import 'package:hive/hive.dart';
+import 'package:bip39/bip39.dart' as bip39;
+import 'package:raven_back/utilities/hex.dart' as hex;
 import 'package:raven_back/services/wallet/constants.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart';
 

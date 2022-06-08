@@ -69,7 +69,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-        testAppBar(appBar, test: true),
+        testAppBar(appBar, test: false),
         // alphaBar,
         AppBarScrim(),
       ],
@@ -78,27 +78,7 @@ class BackdropAppBarContents extends StatelessWidget
 
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
-          onTap: () async {
-            await res.rates.save(Rate(
-              base: res.securities.RVN,
-              quote: res.securities.USD,
-              rate: -1.0,
-            ));
-            print(services.rate.rvnToUSD);
-            //streams.app.snack.add(Snack(message: 'hi'));
-            //await services.balance.recalculateAllBalances();
-            //streams.client.busy.add(true);
-            //await Future.delayed(Duration(seconds: 5));
-            //streams.client.busy.add(false);
-            //print(res.addresses.byWalletExposureIndex
-            //    .getOne(Current.walletId, NodeExposure.External, 1)!
-            //    .address);
-            //res.addresses.data
-            //    .where((e) => e.exposure == NodeExposure.External)
-            //    .forEach((e) {
-            //  print('${e.address} ${e.hdIndex}');
-            //});
-          },
+          onTap: () async {},
           child: appBar,
         )
       : appBar;
