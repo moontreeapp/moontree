@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -5,8 +6,10 @@ import 'package:raven_back/raven_back.dart';
 import 'package:raven_back/services/wallet/constants.dart';
 import 'package:raven_front/components/components.dart';
 import 'package:raven_front/theme/colors.dart';
+import 'package:raven_front/theme/extensions.dart';
 import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_front/widgets/widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CreateLogin extends StatefulWidget {
   @override
@@ -104,6 +107,15 @@ class _CreateLoginState extends State<CreateLogin> {
                   height: .0947.ofMediaHeight(context),
                   child: confirmField),
             ),
+            SliverToBoxAdapter(
+              child: SizedBox(height: 16),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                alignment: Alignment.topCenter,
+                child: components.text.passwordWarning,
+              ),
+            ),
             SliverFillRemaining(
                 hasScrollBody: false,
                 child: KeyboardHidesWidgetWithDelay(
@@ -115,7 +127,7 @@ class _CreateLoginState extends State<CreateLogin> {
                           SizedBox(
                             height: .063.ofMediaHeight(context),
                           ),
-                          components.text.passwordWarning,
+                          ulaMessage,
                           SizedBox(
                             height: .021.ofMediaHeight(context),
                           ),
@@ -132,11 +144,30 @@ class _CreateLoginState extends State<CreateLogin> {
         // height: 110.figma(context),
       );
 
-  Widget get welcomeMessage => Text('Create Password',
+  Widget get welcomeMessage => Text('Moontree',
       style: Theme.of(context)
           .textTheme
           .headline1
           ?.copyWith(color: AppColors.black60));
+
+  Widget get ulaMessage => RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          style:
+              Theme.of(components.navigator.routeContext!).textTheme.bodyText2,
+          children: <TextSpan>[
+            TextSpan(text: 'By tapping Create Wallet,\nyou agree to our '),
+            TextSpan(
+                text: 'User Agreement',
+                style:
+                    Theme.of(components.navigator.routeContext!).textTheme.link,
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    launchUrl(Uri.parse('https://moontree.com/ula'));
+                  }),
+          ],
+        ),
+      );
 
   Widget get passwordField => TextFieldFormatted(
       focusNode: passwordFocus,
@@ -193,7 +224,7 @@ class _CreateLoginState extends State<CreateLogin> {
   Widget get unlockButton => components.buttons.actionButton(context,
       enabled: validate() && passwordText == null,
       focusNode: unlockFocus,
-      label: passwordText == null ? 'Set Password' : 'Setting Password...',
+      label: passwordText == null ? 'Create Wallet' : 'Creating Wallet...',
       disabledOnPressed: () => setState(() {}),
       onPressed: () async => await submit());
 

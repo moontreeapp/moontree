@@ -157,7 +157,8 @@ class _TransactionPageState extends State<TransactionPage> {
             'Cancel'.toUpperCase(): Navigator.of(context).pop,
             'Browser'.toUpperCase(): () {
               Navigator.of(context).pop();
-              launch(url + elementFull(text));
+              //launch(url + elementFull(text));
+              launchUrl(Uri.parse(url + elementFull(text)));
             },
           },
         ),
