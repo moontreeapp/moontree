@@ -34,3 +34,16 @@ extension EnumeratedIteratable on Iterable {
           Tuple2(x[0] as int, x[1] as T)
       ];
 }
+
+extension CompareIteratable on Iterable {
+  bool equals(List y) {
+    final x = toList();
+    if (length != y.length) {
+      return false;
+    }
+    for (var i = 0; i < length; i++) {
+      if (x[i] != y[i]) return false;
+    }
+    return true;
+  }
+}
