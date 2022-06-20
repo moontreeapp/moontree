@@ -158,7 +158,7 @@ class _TransactionPageState extends State<TransactionPage> {
             'Browser'.toUpperCase(): () {
               Navigator.of(context).pop();
               //launch(url + elementFull(text));
-              launchUrl(Uri(path: url + elementFull(text)));
+              launchUrl(Uri.parse(url + elementFull(text)));
             },
           },
         ),
