@@ -11,6 +11,7 @@ extension ValueColorExtension on ThemeData {
 
 extension TextThemeStyleExtension on TextTheme {
   TextStyle? get link => AppText.link;
+  TextStyle? get underlinedLink => AppText.underlinedLink;
   TextStyle? get softButton => AppText.softButton;
   TextStyle? get invertButton => AppText.invertButton;
   TextStyle? get disabledButton => AppText.disabledButton;

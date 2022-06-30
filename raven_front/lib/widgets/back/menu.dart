@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:raven_back/raven_back.dart';
@@ -9,6 +10,7 @@ import 'package:raven_front/utils/extensions.dart';
 import 'package:raven_back/streams/app.dart';
 
 import 'package:raven_front/services/lookup.dart';
+import 'package:url_launcher/url_launcher.dart';
 //import 'package:raven_front/utils/zips.dart';
 //import 'package:raven_front/theme/extensions.dart';
 //import 'package:raven_back/utilities/database.dart' as ravenDatabase;
@@ -196,6 +198,48 @@ class _NavMenuState extends State<NavMenu> {
                 
               }),
           */
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: Theme.of(components.navigator.routeContext!)
+                  .textTheme
+                  .bodyText2,
+              children: <TextSpan>[
+                TextSpan(
+                    text: 'User Agreement',
+                    style: Theme.of(components.navigator.routeContext!)
+                        .textTheme
+                        .underlinedLink,
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        launchUrl(
+                            Uri.parse('https://moontree.com/user_agreement'));
+                      }),
+                TextSpan(text: ', '),
+                TextSpan(
+                    text: 'Privacy Policy',
+                    style: Theme.of(components.navigator.routeContext!)
+                        .textTheme
+                        .underlinedLink,
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        launchUrl(
+                            Uri.parse('https://moontree.com/privacy_policy'));
+                      }),
+                TextSpan(text: ', '),
+                TextSpan(
+                    text: 'Risk Disclosure',
+                    style: Theme.of(components.navigator.routeContext!)
+                        .textTheme
+                        .underlinedLink,
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        launchUrl(
+                            Uri.parse('https://moontree.com/risk_disclosures'));
+                      }),
+              ],
+            ),
+          )
         ],
       )
     };
