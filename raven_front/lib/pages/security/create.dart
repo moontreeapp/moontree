@@ -159,11 +159,33 @@ class _CreateLoginState extends State<CreateLogin> {
             TextSpan(text: 'By tapping Create Wallet,\nyou agree to our '),
             TextSpan(
                 text: 'User Agreement',
-                style:
-                    Theme.of(components.navigator.routeContext!).textTheme.link,
+                style: Theme.of(components.navigator.routeContext!)
+                    .textTheme
+                    .underlinedLink,
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
-                    launchUrl(Uri.parse('https://moontree.com/ula'));
+                    launchUrl(Uri.parse('https://moontree.com/user_agreement'));
+                  }),
+            TextSpan(text: ', '),
+            TextSpan(
+                text: 'Privacy Policy',
+                style: Theme.of(components.navigator.routeContext!)
+                    .textTheme
+                    .underlinedLink,
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    launchUrl(Uri.parse('https://moontree.com/privacy_policy'));
+                  }),
+            TextSpan(text: ', '),
+            TextSpan(
+                text: 'Risk Disclosure',
+                style: Theme.of(components.navigator.routeContext!)
+                    .textTheme
+                    .underlinedLink,
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    launchUrl(
+                        Uri.parse('https://moontree.com/risk_disclosures'));
                   }),
           ],
         ),

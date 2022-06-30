@@ -84,6 +84,8 @@ class AppText {
       fontWeight: FontWeights.semiBold, color: AppColors.offBlack);
   static TextStyle get link => body1.copyWith(
       fontWeight: FontWeights.semiBold, color: AppColors.primary);
+  static TextStyle get underlinedLink =>
+      link.copyWith(decoration: TextDecoration.underline);
   static TextStyle get checkoutFees =>
       caption.copyWith(height: 1, color: AppColors.black);
   static TextStyle get checkoutSubAsset =>
