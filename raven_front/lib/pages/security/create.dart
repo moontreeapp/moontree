@@ -156,7 +156,7 @@ class _CreateLoginState extends State<CreateLogin> {
           style:
               Theme.of(components.navigator.routeContext!).textTheme.bodyText2,
           children: <TextSpan>[
-            TextSpan(text: 'By tapping Create Wallet,\nyou agree to our '),
+            TextSpan(text: 'By tapping Create Wallet, you agree to our '),
             TextSpan(
                 text: 'User Agreement',
                 style: Theme.of(components.navigator.routeContext!)
