@@ -5,8 +5,8 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "raven_front",
-      "cwd": "raven_front",
+      "name": "ravencoin_front",
+      "cwd": "ravencoin_front",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart"

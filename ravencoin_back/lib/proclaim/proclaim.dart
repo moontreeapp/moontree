@@ -1,0 +1,55 @@
+import 'address.dart';
+import 'asset.dart';
+import 'balance.dart';
+import 'block.dart';
+import 'cipher.dart';
+import 'password.dart';
+import 'metadata.dart';
+import 'note.dart';
+import 'rate.dart';
+import 'security.dart';
+import 'setting.dart';
+import 'transaction.dart';
+import 'unspent.dart';
+import 'vin.dart';
+import 'vout.dart';
+import 'status.dart';
+import 'wallet.dart';
+
+export 'address.dart';
+export 'asset.dart';
+export 'balance.dart';
+export 'block.dart';
+export 'cipher.dart';
+export 'password.dart';
+export 'metadata.dart';
+export 'note.dart';
+export 'rate.dart';
+export 'security.dart';
+export 'setting.dart';
+export 'status.dart';
+export 'transaction.dart';
+export 'unspent.dart';
+export 'vin.dart';
+export 'vout.dart';
+export 'wallet.dart';
+
+class pros {
+  static final AddressProclaim addresses = AddressProclaim();
+  static final AssetProclaim assets = AssetProclaim();
+  static final BlockProclaim blocks = BlockProclaim();
+  static final BalanceProclaim balances = BalanceProclaim();
+  static final CipherProclaim ciphers = CipherProclaim();
+  static final MetadataProclaim metadatas = MetadataProclaim();
+  static final NoteProclaim notes = NoteProclaim();
+  static final PasswordProclaim passwords = PasswordProclaim();
+  static final ExchangeRateProclaim rates = ExchangeRateProclaim();
+  static final SecurityProclaim securities = SecurityProclaim();
+  static final SettingProclaim settings = SettingProclaim();
+  static final StatusProclaim statuses = StatusProclaim();
+  static final TransactionProclaim transactions = TransactionProclaim();
+  static final UnspentProclaim unspents = UnspentProclaim();
+  static final WalletProclaim wallets = WalletProclaim();
+  static final VinProclaim vins = VinProclaim();
+  static final VoutProclaim vouts = VoutProclaim();
+}
