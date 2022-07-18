@@ -230,30 +230,17 @@ class _LoginState extends State<Login> {
         //checkColor: Colors.white,
         value: isConsented,
         onChanged: (bool? value) async {
-          // consent just once
-          if (value == true && !consented) {
-            await consentToAgreements();
-          }
           setState(() {
             isConsented = value!;
           });
         },
       );
 
-  Future consentToAgreements() async {
-    //uploadNewDocument();
-    final consent = Consent();
-    await consent.given(await getId(), ConsentDocument.user_agreement);
-    await consent.given(await getId(), ConsentDocument.privacy_policy);
-    await consent.given(await getId(), ConsentDocument.risk_disclosures);
-    consented = true;
-  }
-
   Widget get unlockButton => components.buttons.actionButton(context,
       enabled: password.text != '' &&
           services.password.lockout.timePast() &&
           passwordText == null &&
-          ((isConsented && consented) || !needsConsent),
+          ((isConsented) || !needsConsent),
       focusNode: unlockFocus,
       label: passwordText == null ? 'Unlock' : 'Unlocking...',
       disabledOnPressed: () => setState(() {}),
@@ -261,7 +248,20 @@ class _LoginState extends State<Login> {
 
   bool validate() => services.password.validate.password(password.text);
 
+  Future consentToAgreements() async {
+    //uploadNewDocument();
+    // consent just once
+    if (!consented) {
+      final consent = Consent();
+      await consent.given(await getId(), ConsentDocument.user_agreement);
+      await consent.given(await getId(), ConsentDocument.privacy_policy);
+      await consent.given(await getId(), ConsentDocument.risk_disclosures);
+      consented = true;
+    }
+  }
+
   Future submit({bool showFailureMessage = true}) async {
+    // consent just once
     if (await HIVE_INIT.isPartiallyLoaded()) {
       finishLoadingWaiters();
       while (!(await HIVE_INIT.isLoaded())) {
@@ -273,7 +273,8 @@ class _LoginState extends State<Login> {
       setState(() {
         passwordText = password.text;
       }); // to disable the button visually
-      await Future.delayed(Duration(milliseconds: 200)); // in release mode?
+      //await Future.delayed(Duration(milliseconds: 200)); // in release mode?
+      await consentToAgreements();
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
       // create ciphers for wallets we have
       services.cipher.initCiphers(altPassword: password.text);

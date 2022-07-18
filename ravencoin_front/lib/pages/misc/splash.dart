@@ -151,10 +151,11 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                               arguments: {}))
                     ]));
       } else {
-        final needsConsent = await discoverConsent(await getId());
+        final id = await getId();
+        final hasConsented = await discoverConsent(id);
         Future.microtask(() => Navigator.pushReplacementNamed(
             context, '/security/login',
-            arguments: {'needsConsent': needsConsent}));
+            arguments: {'needsConsent': !hasConsented}));
 
         /// testing out instant/custom page transitions
         /// https://stackoverflow.com/questions/52698340/animation-for-named-routes

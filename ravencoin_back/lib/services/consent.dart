@@ -27,18 +27,19 @@ String documentEndpoint(ConsentDocument consentDocument) {
 
 Future<bool> discoverConsent(String deviceId) async {
   final consent = Consent();
-  return await consent.haveIConsented(
-        deviceId,
-        ConsentDocument.user_agreement,
-      ) &&
-      await consent.haveIConsented(
-        deviceId,
-        ConsentDocument.privacy_policy,
-      ) &&
-      await consent.haveIConsented(
-        deviceId,
-        ConsentDocument.risk_disclosures,
-      );
+  final userAgreement = await consent.haveIConsented(
+    deviceId,
+    ConsentDocument.user_agreement,
+  );
+  final privacyPolicy = await consent.haveIConsented(
+    deviceId,
+    ConsentDocument.privacy_policy,
+  );
+  final riskDisclosure = await consent.haveIConsented(
+    deviceId,
+    ConsentDocument.risk_disclosures,
+  );
+  return userAgreement && privacyPolicy && riskDisclosure;
 }
 
 /// only for dev use

@@ -264,47 +264,49 @@ class _CreateLoginState extends State<CreateLogin> {
       });
 
   Widget get unlockButton => components.buttons.actionButton(context,
-      enabled: validate() && passwordText == null && isConsented && consented,
+      enabled: validate(),
       focusNode: unlockFocus,
       label: passwordText == null ? 'Create Wallet' : 'Creating Wallet...',
       disabledOnPressed: () => setState(() {}),
       onPressed: () async => await submit());
 
-  bool validate() {
-    return password.text != '' &&
-        password.text.length >= minimumLength &&
-        confirm.text == password.text;
-  }
-
   Widget get aggrementCheckbox => Checkbox(
         //checkColor: Colors.white,
         value: isConsented,
         onChanged: (bool? value) async {
-          // consent just once
-          if (value == true && !consented) {
-            consentToAgreements();
-          }
           setState(() {
             isConsented = value!;
           });
         },
       );
 
+  bool validate() {
+    return passwordText == null &&
+        password.text.length >= minimumLength &&
+        confirm.text == password.text &&
+        isConsented;
+  }
+
   Future consentToAgreements() async {
-    final consent = Consent();
-    await consent.given(await getId(), ConsentDocument.user_agreement);
-    await consent.given(await getId(), ConsentDocument.privacy_policy);
-    await consent.given(await getId(), ConsentDocument.risk_disclosures);
-    consented = true;
+    // consent just once
+    if (!consented) {
+      final consent = Consent();
+      await consent.given(await getId(), ConsentDocument.user_agreement);
+      await consent.given(await getId(), ConsentDocument.privacy_policy);
+      await consent.given(await getId(), ConsentDocument.risk_disclosures);
+      consented = true;
+    }
   }
 
   Future submit({bool showFailureMessage = true}) async {
     // since the concent calls take some time, maybe this should be removed...?
-    await Future.delayed(Duration(milliseconds: 200)); // in release mode?
-    if (validate() && passwordText == null) {
+    if (validate()) {
       // only run once
-      setState(() {}); // to disable the button visually
-      passwordText = password.text;
+      setState(() {
+        passwordText = password.text;
+      }); // to disable the button visually
+      await consentToAgreements();
+      //await Future.delayed(Duration(milliseconds: 200)); // in release mode?
       streams.password.update.add(password.text);
       streams.app.verify.add(true);
     } else {
