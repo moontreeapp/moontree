@@ -40,7 +40,7 @@ class CipherService {
   /// make sure all wallets are on the latest ciphertype and password
   Future updateWallets({CipherBase? cipher}) async {
     var records = <Wallet>[];
-    for (var wallet in pros.wallets.data) {
+    for (var wallet in pros.wallets.records) {
       if (wallet.cipherUpdate != currentCipherUpdate) {
         if (wallet is LeaderWallet) {
           records.add(reencryptLeaderWallet(wallet, cipher));
@@ -118,10 +118,10 @@ class CipherService {
   /// after wallets are updated or verified to be up to date
   /// remove all ciphers that no wallet uses and that are not the current one
   void cleanupCiphers() {
-    pros.ciphers.removeAll(pros.ciphers.data
+    pros.ciphers.removeAll(pros.ciphers.records
         .where((cipher) => !_cipherUpdates.contains(cipher.cipherUpdate)));
 
-    if (pros.ciphers.data.length > 2) {
+    if (pros.ciphers.records.length > 2) {
       // in theory a wallet is not updated ... error?
       print('more ciphers than default and password - that is weird');
     }

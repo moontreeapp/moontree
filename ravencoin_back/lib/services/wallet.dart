@@ -17,10 +17,10 @@ class WalletService {
 
   // should return all cipherUpdates
   Set<CipherUpdate> get getAllCipherUpdates =>
-      pros.wallets.data.map((wallet) => wallet.cipherUpdate).toSet();
+      pros.wallets.records.map((wallet) => wallet.cipherUpdate).toSet();
 
   // should return cipherUpdates that must be used with current password...
-  Set<CipherUpdate> get getCurrentCipherUpdates => pros.wallets.data
+  Set<CipherUpdate> get getCurrentCipherUpdates => pros.wallets.records
       .map((wallet) => wallet.cipherUpdate)
       .where((cipherUpdate) =>
           cipherUpdate.passwordId == pros.passwords.maxPasswordId)
@@ -30,7 +30,7 @@ class WalletService {
   Set<CipherUpdate> get getPreviousCipherUpdates =>
       pros.passwords.maxPasswordId == null
           ? {}
-          : pros.wallets.data
+          : pros.wallets.records
               .map((wallet) => wallet.cipherUpdate)
               .where((cipherUpdate) =>
                   cipherUpdate.cipherType != CipherType.None &&

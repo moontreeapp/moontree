@@ -13,8 +13,9 @@ class ImportWaiter extends Waiter {
           await Future.delayed(Duration(seconds: 10));
         }
         var firstWallet = false;
-        if (pros.wallets.data.length == 1 && streams.app.wallet.isEmpty.value) {
-          await pros.wallets.remove(pros.wallets.data.first);
+        if (pros.wallets.records.length == 1 &&
+            streams.app.wallet.isEmpty.value) {
+          await pros.wallets.remove(pros.wallets.records.first);
           firstWallet = true;
         }
         var importFrom = ImportFrom(text: importRequest.text);
@@ -22,7 +23,7 @@ class ImportWaiter extends Waiter {
         if (tuple3.item1) {
           if (firstWallet) {
             await pros.settings
-                .savePreferredWalletId(pros.wallets.data.first.id);
+                .savePreferredWalletId(pros.wallets.records.first.id);
             firstWallet = false;
           }
           // send user to see new wallet

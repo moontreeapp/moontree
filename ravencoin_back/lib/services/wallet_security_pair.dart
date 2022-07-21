@@ -14,7 +14,7 @@ class WalletSecurityPair with EquatableMixin {
 
 Set<WalletSecurityPair> securityPairsFromVoutChanges(List<Change> changes) {
   return changes.fold({}, (set, change) {
-    Vout vout = change.data;
+    Vout vout = change.record;
     if (vout.wallet != null) {
       return set
         ..add(WalletSecurityPair(

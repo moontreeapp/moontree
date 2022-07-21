@@ -220,10 +220,10 @@ class ImportWalletService {
         wallet.backedUp = true;
         var importedChange = await pros.wallets.save(wallet);
         // set it as current before returning
-        await pros.settings.setCurrentWalletId(importedChange!.data.id);
+        await pros.settings.setCurrentWalletId(importedChange!.record.id);
         return HandleResult(
             true,
-            'Wallet ${pros.wallets.primaryIndex.getOne(importedChange.data.id)!.name}',
+            'Wallet ${pros.wallets.primaryIndex.getOne(importedChange.record.id)!.name}',
             LingoKey.walletImportedAs);
       }
       return HandleResult(

@@ -38,19 +38,19 @@ class _TransactionListState extends State<TransactionList> {
   void initState() {
     super.initState();
     transactionCount = widget.symbol == null
-        ? pros.vouts.data.map((v) => v.security == null).length
-        : pros.vouts.data
+        ? pros.vouts.records.map((v) => v.security == null).length
+        : pros.vouts.records
             .map((v) => v.security?.symbol == widget.symbol)
             .length;
     listeners.add(
         pros.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
       // if vouts in our account has changed...
       //var items = batchedChanges
-      //    .where((change) => change.data.address?.walletId == Current.walletId);
+      //    .where((change) => change.record.address?.walletId == Current.walletId);
       /// new import process doesn't save addresses till end so we don't yet
       /// know the wallet of these items, so we have to make simpler heuristic
       var items = batchedChanges
-          .where((change) => change.data.security?.symbol == widget.symbol);
+          .where((change) => change.record.security?.symbol == widget.symbol);
       if (items.isNotEmpty) {
         print('refreshing list - vouts');
         setState(() {
@@ -62,12 +62,12 @@ class _TransactionListState extends State<TransactionList> {
       // ignore: todo
       // TODO: should probably include any assets that are in the holding of the main account too...
       var changes = batchedChanges.where((change) =>
-          change.data.base == pros.securities.RVN &&
-          change.data.quote == pros.securities.USD);
+          change.record.base == pros.securities.RVN &&
+          change.record.quote == pros.securities.USD);
       if (changes.isNotEmpty) {
         print('refreshing list - rates');
         setState(() {
-          rateUSD = changes.first.data;
+          rateUSD = changes.first.record;
         });
       }
     }));

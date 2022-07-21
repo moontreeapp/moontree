@@ -14,12 +14,13 @@ class AddressWaiter extends Waiter {
     change.when(
         loaded: (loaded) {},
         added: (added) {
-          var address = added.data;
+          var address = added.record;
           services.client.subscribe.toAddress(address);
         },
-        updated: (updated) => services.client.subscribe.toAddress(updated.data),
+        updated: (updated) =>
+            services.client.subscribe.toAddress(updated.record),
         removed: (removed) {
-          var address = removed.data;
+          var address = removed.record;
           services.client.subscribe.unsubscribeAddress(address.id);
           //removed.id as String);
 

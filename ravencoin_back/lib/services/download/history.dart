@@ -99,7 +99,7 @@ class HistoryService {
     // to the unspents:
     await getTransactions(
       filterOutPreviouslyDownloaded(
-          pros.unspents.data.map((e) => e.transactionId).toSet()),
+          pros.unspents.records.map((e) => e.transactionId).toSet()),
       saveVin: false, //
       saveVout: true,
     );
@@ -158,7 +158,7 @@ class HistoryService {
   Iterable<String> filterOutPreviouslyDownloaded(
           Iterable<String> transactionIds) =>
       transactionIds
-          .where((transactionId) => !pros.vouts.data
+          .where((transactionId) => !pros.vouts.records
               .map((e) => e.transactionId)
               .contains(transactionId))
           .toSet();

@@ -37,7 +37,7 @@ class UnspentProclaim extends Proclaim<_UnspentKey, Unspent> {
   static Map<String, Unspent> get defaults => {};
 
   Iterable<Unspent> byScripthashes(Set<String> scripthashes) =>
-      pros.unspents.data.where((e) => scripthashes.contains(e.scripthash));
+      pros.unspents.records.where((e) => scripthashes.contains(e.scripthash));
   Future<void> clearByScripthashes(Set<String> scripthashes) async =>
       await pros.unspents.removeAll(byScripthashes(scripthashes));
 
@@ -67,7 +67,8 @@ class UnspentProclaim extends Proclaim<_UnspentKey, Unspent> {
     }
   }
 
-  Set<String> get getSymbols => pros.unspents.data.map((e) => e.symbol).toSet();
+  Set<String> get getSymbols =>
+      pros.unspents.records.map((e) => e.symbol).toSet();
 
   Set<String> getSymbolsByWallet(String walletId) =>
       byWallet.getAll(walletId).map((e) => e.symbol).toSet();

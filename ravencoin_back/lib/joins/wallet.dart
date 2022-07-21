@@ -3,7 +3,7 @@ part of 'joins.dart';
 extension WalletBelongsToCipher on Wallet {
   //CipherBase? get cipher => pros.cipherRegistry.ciphers[cipherUpdate];
   CipherBase? get cipher => cipherUpdate.cipherType == CipherType.None
-      ? pros.ciphers.data.firstOrNull?.cipher
+      ? pros.ciphers.records.firstOrNull?.cipher
       : pros.ciphers.primaryIndex.getOne(cipherUpdate)?.cipher;
 }
 
@@ -17,11 +17,12 @@ extension WalletHasManyBalances on Wallet {
 
 extension WalletHasManyVouts on Wallet {
   Iterable<Vout> get vouts =>
-      pros.vouts.data.where((vout) => vout.wallet?.id == id);
+      pros.vouts.records.where((vout) => vout.wallet?.id == id);
 }
 
 extension WalletHasManyVins on Wallet {
-  Iterable<Vin> get vins => pros.vins.data.where((vin) => vin.wallet?.id == id);
+  Iterable<Vin> get vins =>
+      pros.vins.records.where((vin) => vin.wallet?.id == id);
 }
 
 extension WalletHasManyTransactions on Wallet {

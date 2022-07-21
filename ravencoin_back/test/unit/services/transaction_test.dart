@@ -15,7 +15,7 @@ void main() async {
 
   setUp(() {
     fixtures.useFixtureSources(1);
-    wallet = pros.wallets.data.first as LeaderWallet;
+    wallet = pros.wallets.records.first as LeaderWallet;
   });
   group('Collect Unspents', () {
     test('rvn wallet unspents', () {

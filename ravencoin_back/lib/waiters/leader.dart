@@ -45,7 +45,7 @@ class LeaderWaiter extends Waiter {
       ),
       (Tuple2<ConnectionStatus, Change<Cipher>> tuple) {
         print('connected/CIPHER ${tuple.item1} ${tuple.item2}');
-        if (tuple.item2.data.cipherType != CipherType.None) {
+        if (tuple.item2.record.cipherType != CipherType.None) {
           pros.wallets.leaders.forEach((wallet) => dispatch(wallet));
         }
       },
@@ -99,12 +99,12 @@ class LeaderWaiter extends Waiter {
     change.when(
         // never gets called because we load before this waiter is listening...
         loaded: (loaded) async {
-      if (loaded.data is LeaderWallet) {
-        await dispatch(loaded.data as LeaderWallet);
+      if (loaded.record is LeaderWallet) {
+        await dispatch(loaded.record as LeaderWallet);
       }
     }, added: (added) async {
-      if (added.data is LeaderWallet) {
-        await dispatch(added.data as LeaderWallet);
+      if (added.record is LeaderWallet) {
+        await dispatch(added.record as LeaderWallet);
       }
     }, updated: (updated) async {
       /*
@@ -113,7 +113,7 @@ class LeaderWaiter extends Waiter {
           /// but this should go on that settings listener,
           /// but we actually don't give the user the ability to do that.
           // remove addresses of the wallet
-          var leader = updated.data;
+          var leader = updated.record;
           await pros.addresses.removeAll(leader.addresses);
           await pros.balances
               .removeAll(pros.balances.byWallet.getAll(leader.walletId));
@@ -122,7 +122,7 @@ class LeaderWaiter extends Waiter {
           */
     }, removed: (removed) {
       /// should only happen when replacing the initial blank wallet
-      pros.addresses.removeAll(removed.data.addresses.toList());
+      pros.addresses.removeAll(removed.record.addresses.toList());
     });
   }
 

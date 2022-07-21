@@ -14,10 +14,10 @@ class SingleWaiter extends Waiter {
           // if this cipher update is in the list of wallets missing ciphers...
           // initialize the wallet and remove it from the list of wallets missing ciphers
           loaded: (loaded) {
-            attemptSingleWalletAddressDerive(change.data.cipherUpdate);
+            attemptSingleWalletAddressDerive(change.record.cipherUpdate);
           },
           added: (added) {
-            attemptSingleWalletAddressDerive(change.data.cipherUpdate);
+            attemptSingleWalletAddressDerive(change.record.cipherUpdate);
           },
           updated: (updated) {},
           removed: (removed) {},
@@ -32,7 +32,7 @@ class SingleWaiter extends Waiter {
         change.when(
             loaded: (loaded) {},
             added: (added) {
-              var wallet = added.data;
+              var wallet = added.record;
               if (wallet.cipher != null) {
                 print('SAVING ADDRESS FOR SINGLE WALLET IMMEDIATELY');
                 pros.addresses.save(

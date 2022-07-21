@@ -14,7 +14,7 @@ class BalanceService {
     walletIds = walletIds ?? pros.wallets.ids;
     Set<Balance> balances = {};
     await pros.balances.removeAll(
-        pros.balances.data.where((b) => walletIds!.contains(b.walletId)));
+        pros.balances.records.where((b) => walletIds!.contains(b.walletId)));
     for (var walletId in walletIds) {
       for (var symbol in pros.unspents.getSymbolsByWallet(walletId)) {
         var security = pros.securities.bySymbol.getAll(symbol).firstOrNull ??

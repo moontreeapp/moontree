@@ -330,7 +330,7 @@ class _CreateLoginState extends State<CreateLogin> {
     //  services.wallet.leader.updateIndexes();
     //}
 
-    if (pros.wallets.data.isEmpty) {
+    if (pros.wallets.records.isEmpty) {
       //await setupRealWallet('1');
       //await setupRealWallet('2');
       //services.password.create.save('a');

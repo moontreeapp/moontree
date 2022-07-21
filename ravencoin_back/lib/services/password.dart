@@ -86,7 +86,7 @@ class PasswordValidationService {
       return null;
     }
     var ret;
-    for (var pass in pros.passwords.data) {
+    for (var pass in pros.passwords.records) {
       if (getHash(password, pass.salt) == pass.saltedHash) {
         ret = m - pass.id;
       }

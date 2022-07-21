@@ -13,13 +13,13 @@ class WalletStreams {
 final Stream<Wallet> replayWallet$ = ReplaySubject<Wallet>()
   ..addStream(pros.wallets.changes
       .where((change) => change is Loaded || change is Added)
-      .map((added) => added.data));
+      .map((added) => added.record));
 
 final Stream<Change<Wallet>> leaderChanges$ =
-    pros.wallets.changes.where((change) => change.data is LeaderWallet);
+    pros.wallets.changes.where((change) => change.record is LeaderWallet);
 
 final Stream<Change<Wallet>> singleChanges$ =
-    pros.wallets.changes.where((change) => change.data is SingleWallet);
+    pros.wallets.changes.where((change) => change.record is SingleWallet);
 
 class DeriveLeaderAddress {
   final LeaderWallet leader;

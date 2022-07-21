@@ -11,7 +11,7 @@ void main() async {
   var wallet;
   setUp(() {
     fixtures.useFixtureSources(1);
-    wallet = pros.wallets.data.first as LeaderWallet;
+    wallet = pros.wallets.records.first as LeaderWallet;
   });
 
   test('WalletSecurityPair is unique in Set', () {

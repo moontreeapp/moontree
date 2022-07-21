@@ -17,8 +17,9 @@ class WalletProclaim extends Proclaim<_IdKey, Wallet> {
     byName = addIndexMultiple('name', _NameKey());
   }
 
-  Set<String> get ids => data.map((e) => e.id).toSet();
-  List<Wallet> get ordered => data.sorted((a, b) => a.name.compareTo(b.name));
+  Set<String> get ids => records.map((e) => e.id).toSet();
+  List<Wallet> get ordered =>
+      records.sorted((a, b) => a.name.compareTo(b.name));
 
   List<LeaderWallet> get leaders => byWalletType
       .getAll(WalletType.leader)
@@ -37,9 +38,9 @@ class WalletProclaim extends Proclaim<_IdKey, Wallet> {
       primaryIndex.getOne(pros.settings.primaryIndex
           .getOne(SettingName.Wallet_Current)
           ?.value) ??
-      data.firstOrNull;
+      records.firstOrNull;
 
-  String get nextWalletName => (data.length + 1).toString();
+  String get nextWalletName => (records.length + 1).toString();
 
   Wallet get currentWallet => primaryIndex.getOne(
       pros.settings.primaryIndex.getOne(SettingName.Wallet_Current)?.value)!;

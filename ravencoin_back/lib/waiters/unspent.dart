@@ -21,9 +21,9 @@ class UnspentWaiter extends Waiter {
     for (var change in changes) {
       change.when(
           loaded: (loaded) {},
-          added: (added) => walletIds.add(added.data.walletId),
-          updated: (updated) => walletIds.add(updated.data.walletId),
-          removed: (removed) => walletIds.add(removed.data.walletId));
+          added: (added) => walletIds.add(added.record.walletId),
+          updated: (updated) => walletIds.add(updated.record.walletId),
+          removed: (removed) => walletIds.add(removed.record.walletId));
     }
     services.balance.recalculateAllBalances(walletIds: walletIds);
   }

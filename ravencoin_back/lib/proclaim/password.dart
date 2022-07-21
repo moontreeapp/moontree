@@ -8,8 +8,8 @@ part 'password.keys.dart';
 class PasswordProclaim extends Proclaim<_IdKey, Password> {
   PasswordProclaim() : super(_IdKey());
 
-  int? get maxPasswordId => max([for (var password in data) password.id]);
+  int? get maxPasswordId => max([for (var password in records) password.id]);
 
   Password? get current =>
-      data.where((password) => password.id == maxPasswordId).firstOrNull;
+      records.where((password) => password.id == maxPasswordId).firstOrNull;
 }

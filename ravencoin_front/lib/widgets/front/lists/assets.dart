@@ -37,7 +37,7 @@ class _AssetList extends State<AssetList> {
       // if vouts in our account has changed...
       if (batchedChanges
           .where(
-              (change) => change.data.address?.wallet?.id == Current.walletId)
+              (change) => change.record.address?.wallet?.id == Current.walletId)
           .isNotEmpty) {
         setState(() {});
       }
@@ -74,7 +74,7 @@ class _AssetList extends State<AssetList> {
   @override
   Widget build(BuildContext context) {
     assets = filterToAdminAssets(utils.assetHoldings(Current.holdings));
-    return assets.isEmpty && pros.vouts.data.isEmpty // <-- on front tab...
+    return assets.isEmpty && pros.vouts.records.isEmpty // <-- on front tab...
         ? components.empty.getAssetsPlaceholder(context,
             scrollController: widget.scrollController, count: assetCount)
         //Container(

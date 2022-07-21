@@ -19,7 +19,7 @@ class SettingWaiter extends Waiter {
                 // will be initialized with settings set of settings
               },
               updated: (updated) {
-                var setting = updated.data;
+                var setting = updated.record;
                 if ([
                   SettingName.Electrum_Net,
                   SettingName.Electrum_Domain,
@@ -46,7 +46,7 @@ class SettingWaiter extends Waiter {
               SettingName.Electrum_Port,
               SettingName.Electrum_DomainTest,
               SettingName.Electrum_PortTest,
-            ].contains(change.data.name)),
+            ].contains(change.record.name)),
         (_) => services.client.createClient());
   }
 }
