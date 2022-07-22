@@ -130,9 +130,9 @@ class SubscribeService {
         message: 'Downloading your transactions...'));
 
     /// if we kill the import process we can end up having addresses unassociated with a wallet so remove them first.
-    final walletIds = pros.wallets.data.map((e) => e.id);
+    final walletIds = pros.wallets.records.map((e) => e.id);
     await pros.addresses.removeAll(
-        pros.addresses.data.where((a) => !walletIds.contains(a.walletId)));
+        pros.addresses.records.where((a) => !walletIds.contains(a.walletId)));
 
     // we have to update these counts incase the user logins before the processes is over
     final addresses = pros.addresses.toList();
@@ -160,7 +160,7 @@ class SubscribeService {
     }
     await services.balance.recalculateAllBalances();
     // update the unused internal and external addresses again just incase we downloaded some history
-    for (var address in pros.addresses.data) {
+    for (var address in pros.addresses.records) {
       if (address.wallet is LeaderWallet) {
         if (address.vouts.isNotEmpty) {
           services.wallet.leader

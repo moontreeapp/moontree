@@ -14,7 +14,7 @@ class TransactionProclaim extends Proclaim<_TxHashKey, Transaction> {
     byConfirmed = addIndexMultiple('confirmed', _ConfirmedKey());
   }
 
-  List<Transaction> get chronological => pros.transactions.data.toList()
+  List<Transaction> get chronological => pros.transactions.records.toList()
     ..sort((a, b) => (b.height ?? maxInt).compareTo(a.height ?? maxInt));
 
   List<Transaction> get mempool => pros.transactions.byConfirmed.getAll(false);

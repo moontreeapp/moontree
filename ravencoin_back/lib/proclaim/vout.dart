@@ -29,12 +29,12 @@ class VoutProclaim extends Proclaim<_VoutKey, Vout> {
     Security? security,
     bool includeMempool = true,
   }) =>
-      //(given ?? pros.vouts.data).where((Vout vout) =>
+      //(given ?? pros.vouts.records).where((Vout vout) =>
       //    (security != null ? vout.security == security : true) &&
       //    vout.vin == null);
       /*
                   */
-      (given ?? pros.vouts.data).where((Vout vout) =>
+      (given ?? pros.vouts.records).where((Vout vout) =>
           ((includeMempool ? true : (vout.transaction?.confirmed ?? false)) &&
               (security != null ? vout.security == security : true) &&
               (security != null && security != pros.securities.RVN
@@ -53,13 +53,13 @@ class VoutProclaim extends Proclaim<_VoutKey, Vout> {
     Iterable<Vout>? given,
     Security? security,
   }) =>
-      (given ?? pros.vouts.data).where((vout) =>
+      (given ?? pros.vouts.records).where((vout) =>
           !(vout.transaction?.confirmed ?? false) &&
           (security != null ? vout.security == security : true));
 
   // I think instead of clearning we could avoid download in the first place...
   Future<void> clearUnnecessaryVouts() async {
-    var x = pros.vouts.data.toSet();
+    var x = pros.vouts.records.toSet();
     x.removeAll(pros.wallets.map((w) => w.vouts).expand((i) => i).toSet());
     x.removeAll(pros.wallets
         .map((w) => w.transactions)
