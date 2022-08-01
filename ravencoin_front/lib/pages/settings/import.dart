@@ -126,7 +126,7 @@ class _ImportState extends State<Import> {
               importVisible = !importVisible;
             }),
           ),
-          onChanged: (value) => enableImport(toLower: false),
+          onChanged: (value) => enableImport(),
           onEditingComplete: () {
             enableImport();
             FocusScope.of(context).requestFocus(submitFocus);
@@ -172,12 +172,12 @@ class _ImportState extends State<Import> {
         },
       );
 
-  void enableImport({String? given, bool toLower = true}) {
+  void enableImport({String? given}) {
     var oldImportFormatDetected = importFormatDetected;
     var detection =
         services.wallet.import.detectImportType((given ?? words.text).trim());
-    importEnabled = detection != null && detection != ImportFormat.invalid;
-    if (toLower) {
+    importEnabled = detection != ImportFormat.invalid;
+    if (detection == ImportFormat.mnemonic) {
       words.text = words.text.toLowerCase();
     }
     if (importEnabled) {

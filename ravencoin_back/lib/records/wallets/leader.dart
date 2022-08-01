@@ -99,6 +99,9 @@ class LeaderWallet extends Wallet {
   @override
   String get walletTypeToString => walletType.enumString;
 
+  Uint8List? get publicKey =>
+      services.wallet.leader.getSeedWallet(this).wallet.keyPair.publicKey;
+
   Uint8List get seed {
     _seed ??= bip39.mnemonicToSeed(mnemonic);
     return _seed!;

@@ -11,7 +11,7 @@ class ImportFrom {
 
   ImportFrom({required this.text, ImportFormat? importFormat})
       : importFormat =
-            importFormat ?? services.wallet.import.detectImportType(text)!;
+            importFormat ?? services.wallet.import.detectImportType(text);
 
   //Future<bool> handleImport() async {
   Future<Tuple3<bool, List<String?>, List<String?>>> handleImport() async {

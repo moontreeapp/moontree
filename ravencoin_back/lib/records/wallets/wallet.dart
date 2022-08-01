@@ -39,8 +39,6 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
 
   WalletType get walletType => WalletType.none;
 
-  String get publicKey => id;
-
   String get secretTypeToString => secretType.enumString;
   String get walletTypeToString => walletType.enumString;
 }

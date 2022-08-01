@@ -53,4 +53,6 @@ class SingleWallet extends Wallet {
 
   @override
   String get walletTypeToString => walletType.enumString;
+
+  String? get publicKey => services.wallet.single.getKPWallet(this).pubKey;
 }

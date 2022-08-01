@@ -17,7 +17,7 @@ class HandleResult {
 
 class ImportWalletService {
   // TODO: Unsure how to validate this
-  ImportFormat? detectImportType(String text) {
+  ImportFormat detectImportType(String text) {
     if (validateJson(text)) {
       return ImportFormat.json;
     }
@@ -63,7 +63,7 @@ class ImportWalletService {
     if (text.contains('[')) {
       return ImportFormat.invalid;
     }
-    return null;
+    return ImportFormat.invalid;
   }
 
   WalletType typeForImport(String walletType) =>
