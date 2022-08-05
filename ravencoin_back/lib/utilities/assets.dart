@@ -3,6 +3,13 @@
 
 import 'package:ravencoin_back/ravencoin_back.dart';
 
+// unused. see https://github.com/moontreeapp/moontreeV1/issues/648
+Set<Security> securityFromTransactions(Iterable<Transaction> transactions) => [
+      for (var transaction in transactions)
+        [for (var vin in transaction.vins) vin.security!] +
+            [for (var vout in transaction.vouts) vout.security!]
+    ].expand((e) => e).toSet();
+
 List<AssetHolding> assetHoldings(Iterable<Balance> holdings) {
   Map<String, AssetHolding> balancesMain = {};
   Map<String, AssetHolding> balancesSub = {};

@@ -8,6 +8,7 @@ export 'exceptions.dart';
 export 'structures.dart';
 
 class utils {
+  static final securityFromTransactions = assets.securityFromTransactions;
   static final assetHoldings = assets.assetHoldings;
   static final assetHoldingsFromAssets = assets.assetHoldingsFromAssets;
   static final satToAmount = transform.satToAmount;

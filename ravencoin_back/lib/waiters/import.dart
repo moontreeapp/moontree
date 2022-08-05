@@ -31,6 +31,7 @@ class ImportWaiter extends Waiter {
             }
             // send user to see new wallet
             streams.import.success.add(null);
+            streams.import.result.add(importRequest);
             streams.app.setting.add(null);
 
             /// wait till balances show to show successful import...

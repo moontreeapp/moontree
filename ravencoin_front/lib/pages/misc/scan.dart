@@ -42,6 +42,13 @@ class _ScanQRState extends State<ScanQR> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
+
+    /// still getting blank scan on android as of august 2022, attempting this solution
+    //https://github.com/juliuscanute/qr_code_scanner/issues/415#issuecomment-1006918288
+    if (controller != null && mounted) {
+      controller!.pauseCamera();
+      controller!.resumeCamera();
+    }
     return Scaffold(
       body: Container(
         child: Stack(children: [

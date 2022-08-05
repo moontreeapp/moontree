@@ -147,39 +147,66 @@ class _HoldingList extends State<HoldingList> {
 
   @override
   Widget build(BuildContext context) {
-    holdings = (
-            //holdings != null && holdings!.isNotEmpty
-            //    ? holdings
-            //    :
-            utils.assetHoldings(widget.holdings ??
-                //services.download.unspents
-                //    .unspentBalancesByWalletId[Current.walletId] ??
-                //[]
-                pros.balances.byWallet.getAll(Current.walletId)))
-        // todo: filter out before UI:
-        .where((holding) => holding.value > 0)
-        .toList();
     balances = Current.wallet.balances.toSet();
     addresses = Current.wallet.addresses.toSet();
-    //return balances.isEmpty && addresses.isEmpty
-    //    ? components.empty.getAssetsPlaceholder(context,
-    //        scrollController: widget.scrollController,
-    //        count: max(holdingCount, 1),
-    //        holding: true)
-    return balances.isEmpty
-        ? () {
-            streams.app.wallet.isEmpty.add(true);
-            return ComingSoonPlaceholder(
-                scrollController: widget.scrollController,
-                header: 'Get Started',
-                message:
-                    'Use the Import or Receive button to add Ravencoin & assets to your wallet.',
-                placeholderType: PlaceholderType.wallet);
-          }()
-        : () {
-            streams.app.wallet.isEmpty.add(false);
-            return _holdingsView(context);
-          }();
+    final transactions = Current.wallet.transactions.toSet();
+
+    /// if they have removed all assets and rvn from wallet, for each asset we've
+    /// ever held, create empty Balance, and empty AssetHolding.
+    if (addresses.isNotEmpty && balances.isEmpty && !transactions.isEmpty) {
+      ///https://github.com/moontreeapp/moontreeV1/issues/648
+      //for (var security in utils.securityFromTransactions(transactions)) {
+      //  balances.add(Balance(
+      //      walletId: Current.walletId,
+      //      security: security,
+      //      confirmed: 0,
+      //      unconfirmed: 0));
+      //}
+      ///actually just show rvn.
+      balances.add(Balance(
+          walletId: Current.walletId,
+          security: pros.securities.RVN,
+          confirmed: 0,
+          unconfirmed: 0));
+    }
+    holdings = (
+        //holdings != null && holdings!.isNotEmpty
+        //    ? holdings
+        //    :
+        utils.assetHoldings(widget.holdings ??
+            //services.download.unspents
+            //    .unspentBalancesByWalletId[Current.walletId] ??
+            //[]
+            balances));
+
+    /// affects https://github.com/moontreeapp/moontreeV1/issues/648
+    // filter out empties unless all we have is one item (empty RVN)
+    if (holdings != null && holdings!.length > 1) {
+      holdings = holdings!.where((holding) => holding.value > 0).toList();
+    }
+
+    /// removing this, only served a purpose during
+    return balances.isEmpty &&
+            addresses.isEmpty &&
+            streams.import.result.value != null
+        ? components.empty.getAssetsPlaceholder(context,
+            scrollController: widget.scrollController,
+            count: max(holdingCount, 1),
+            holding: true)
+        : balances.isEmpty && transactions.isEmpty
+            ? () {
+                streams.app.wallet.isEmpty.add(true);
+                return ComingSoonPlaceholder(
+                    scrollController: widget.scrollController,
+                    header: 'Get Started',
+                    message:
+                        'Use the Import or Receive button to add Ravencoin & assets to your wallet.',
+                    placeholderType: PlaceholderType.wallet);
+              }()
+            : () {
+                streams.app.wallet.isEmpty.add(false);
+                return _holdingsView(context);
+              }();
 
     //RefreshIndicator( child:...
     //  onRefresh: () => refresh(),

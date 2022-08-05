@@ -248,7 +248,8 @@ class _CreateLoginState extends State<CreateLogin> {
       errorText: confirm.text != '' && confirm.text != password.text
           ? 'does not match password'
           : null,
-      helperText: confirm.text == password.text ? 'match' : null,
+      helperText:
+          confirm.text != '' && confirm.text == password.text ? 'match' : null,
       suffixIcon: IconButton(
         icon: Icon(confirmVisible ? Icons.visibility : Icons.visibility_off,
             color: AppColors.black60),

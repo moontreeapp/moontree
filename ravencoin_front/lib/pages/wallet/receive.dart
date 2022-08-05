@@ -179,22 +179,27 @@ class _ReceiveState extends State<Receive> {
                                       //        'assets/logo/moontree_logo.png')
                                       //    .image,
                                       size: smallScreen ? 150 : 300.0)))),
-                      /*
-                      SelectableText(
-                        address!,
-                        style: Theme.of(context)
-                            .textTheme
-                            .caption!
-                            .copyWith(color: AppColors.black87),
-                        showCursor: true,
-                        toolbarOptions: ToolbarOptions(
-                            copy: true,
-                            selectAll: true,
-                            cut: false,
-                            paste: false),
+                      /* we can remove these two visibles just by commenting it out if we want: */
+                      Visibility(
+                        visible: rawAddress,
+                        child: SelectableText(
+                          address!,
+                          style: Theme.of(context)
+                              .textTheme
+                              .caption!
+                              .copyWith(color: AppColors.black87),
+                          showCursor: true,
+                          toolbarOptions: ToolbarOptions(
+                              copy: true,
+                              selectAll: true,
+                              cut: false,
+                              paste: false),
+                        ),
                       ),
-                      SizedBox(height: 8),
-                      */
+                      Visibility(
+                        visible: rawAddress,
+                        child: SizedBox(height: 8),
+                      ),
                       Padding(
                           padding: EdgeInsets.only(
                               top: 0, left: 16, right: 16, bottom: 0),
