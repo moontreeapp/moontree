@@ -248,8 +248,7 @@ class _CreateLoginState extends State<CreateLogin> {
       errorText: confirm.text != '' && confirm.text != password.text
           ? 'does not match password'
           : null,
-      helperText:
-          confirm.text != '' && confirm.text == password.text ? 'match' : null,
+      helperText: confirm.text == password.text ? 'match' : null,
       suffixIcon: IconButton(
         icon: Icon(confirmVisible ? Icons.visibility : Icons.visibility_off,
             color: AppColors.black60),
@@ -257,6 +256,9 @@ class _CreateLoginState extends State<CreateLogin> {
           confirmVisible = !confirmVisible;
         }),
       ),
+      onChanged: (_) {
+        setState(() {});
+      },
       onEditingComplete: () {
         if (confirm.text == password.text) {
           FocusScope.of(context).requestFocus(unlockFocus);
