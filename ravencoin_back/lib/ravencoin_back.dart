@@ -15,7 +15,7 @@ export 'lingo/lingo.dart';
 
 export 'package:proclaim/change.dart';
 
-const ALPHA_VERSION = '1.3.8-alpha+13~1';
+const ALPHA_VERSION = '1.3.9-alpha+13~1';
 const BETA_VERSION = '1.0.0-beta+0~1';
 const RELEASE_VERSION = '1.0.0+0~1';
 const VERSION = ALPHA_VERSION;
