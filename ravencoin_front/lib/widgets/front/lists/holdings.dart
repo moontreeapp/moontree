@@ -161,25 +161,25 @@ class _HoldingList extends State<HoldingList> {
         .toList();
     balances = Current.wallet.balances.toSet();
     addresses = Current.wallet.addresses.toSet();
-    return balances.isEmpty && addresses.isEmpty
-        ? components.empty.getAssetsPlaceholder(context,
-            scrollController: widget.scrollController,
-            count: max(holdingCount, 1),
-            holding: true)
-        : balances.isEmpty
-            ? () {
-                streams.app.wallet.isEmpty.add(true);
-                return ComingSoonPlaceholder(
-                    scrollController: widget.scrollController,
-                    header: 'Get Started',
-                    message:
-                        'Use the Import or Receive button to add Ravencoin & assets to your wallet.',
-                    placeholderType: PlaceholderType.wallet);
-              }()
-            : () {
-                streams.app.wallet.isEmpty.add(false);
-                return _holdingsView(context);
-              }();
+    //return balances.isEmpty && addresses.isEmpty
+    //    ? components.empty.getAssetsPlaceholder(context,
+    //        scrollController: widget.scrollController,
+    //        count: max(holdingCount, 1),
+    //        holding: true)
+    return balances.isEmpty
+        ? () {
+            streams.app.wallet.isEmpty.add(true);
+            return ComingSoonPlaceholder(
+                scrollController: widget.scrollController,
+                header: 'Get Started',
+                message:
+                    'Use the Import or Receive button to add Ravencoin & assets to your wallet.',
+                placeholderType: PlaceholderType.wallet);
+          }()
+        : () {
+            streams.app.wallet.isEmpty.add(false);
+            return _holdingsView(context);
+          }();
 
     //RefreshIndicator( child:...
     //  onRefresh: () => refresh(),
