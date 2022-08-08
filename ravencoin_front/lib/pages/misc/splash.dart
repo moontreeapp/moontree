@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/utils/device.dart';
 import 'package:ravencoin_front/widgets/backdrop/backdrop.dart';
@@ -152,7 +153,14 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                     ]));
       } else {
         final id = await getId();
-        final hasConsented = await discoverConsent(id);
+        bool hasConsented = false;
+        try {
+          hasConsented = await discoverConsent(id);
+        } catch (e) {
+          streams.app.snack.add(Snack(
+              message: 'Unable to connect! Please check connectivity.',
+              atBottom: true));
+        }
         Future.microtask(() => Navigator.pushReplacementNamed(
             context, '/security/login',
             arguments: {'needsConsent': !hasConsented}));

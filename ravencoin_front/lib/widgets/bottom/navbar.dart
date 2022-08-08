@@ -39,18 +39,12 @@ class NavBar extends StatefulWidget {
 class _NavBarState extends State<NavBar> {
   List<StreamSubscription> listeners = [];
   bool walletIsEmpty = false;
+  bool walletHasTransactions = false;
   ConnectionStatus connectionStatus = ConnectionStatus.disconnected;
 
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.app.wallet.isEmpty.listen((bool value) {
-      if (walletIsEmpty != value) {
-        setState(() {
-          walletIsEmpty = value;
-        });
-      }
-    }));
     listeners.add(streams.client.connected.listen((ConnectionStatus value) {
       if (connectionStatus != value) {
         setState(() {
@@ -70,6 +64,8 @@ class _NavBarState extends State<NavBar> {
 
   @override
   Widget build(BuildContext context) {
+    walletHasTransactions = Current.wallet.transactions.isNotEmpty;
+    walletIsEmpty = Current.wallet.balances.isEmpty;
     return components.containers.navBar(context,
         tall: widget.includeSectors,
         child: SingleChildScrollView(
@@ -106,7 +102,7 @@ class _NavBarState extends State<NavBar> {
       widget.actionButtons ??
       (widget.appContext == AppContext.wallet
           ? <Widget>[
-              walletIsEmpty
+              walletIsEmpty && !walletHasTransactions
                   ? components.buttons.actionButton(
                       context,
                       label: 'import',
@@ -118,11 +114,18 @@ class _NavBarState extends State<NavBar> {
                   : components.buttons.actionButton(
                       context,
                       label: 'send',
-                      enabled: connectionStatus == ConnectionStatus.connected,
+                      enabled: !walletIsEmpty &&
+                          connectionStatus == ConnectionStatus.connected,
                       disabledOnPressed: () {
-                        streams.app.snack.add(Snack(
-                          message: 'Not connected to network',
-                        ));
+                        if (connectionStatus != ConnectionStatus.connected) {
+                          streams.app.snack
+                              .add(Snack(message: 'Not connected to network'));
+                        } else {
+                          // walletIsEmpty
+                          streams.app.snack.add(Snack(
+                              message:
+                                  'This wallet has no Ravencoin, unable to send.'));
+                        }
                       },
                       onPressed: () async {
                         Navigator.of(components.navigator.routeContext!)

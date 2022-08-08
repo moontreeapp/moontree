@@ -60,13 +60,13 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         },
         child: snack!.atBottom
             ? Padding(
-                padding: EdgeInsets.only(left: 16, right: 16),
-                child: Text(
-                  snack!.message,
-                  maxLines: 1,
-                  overflow: TextOverflow.fade,
-                  style: style(),
-                ))
+                padding: EdgeInsets.only(left: 8, right: 8),
+                child: FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text(
+                      snack!.message,
+                      style: style(),
+                    )))
             : Stack(alignment: Alignment.bottomCenter, children: [
                 Container(
                     alignment: Alignment.topLeft,

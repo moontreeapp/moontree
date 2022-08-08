@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:ravencoin_back/streams/app.dart';
+import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/pages/wallet/transactions/bloc.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin_front/services/storage.dart';
@@ -31,6 +34,8 @@ class AssetNavbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool walletIsEmpty = Current.wallet.balances.isEmpty;
+    final ConnectionStatus connectionStatus = streams.client.connected.value;
     return NavBar(
       includeSectors: false,
       actionButtons: <Widget>[
@@ -38,6 +43,13 @@ class AssetNavbar extends StatelessWidget {
           context,
           label: 'send',
           link: '/transaction/send',
+          enabled:
+              !walletIsEmpty && connectionStatus == ConnectionStatus.connected,
+          disabledOnPressed: () {
+            streams.app.snack.add(Snack(
+                message: 'Unable to send, please try again later.',
+                atMiddle: true));
+          },
         ),
         components.buttons.actionButton(
           context,

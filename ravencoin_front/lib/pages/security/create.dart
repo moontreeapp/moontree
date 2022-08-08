@@ -5,6 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_back/services/consent.dart';
+import 'package:ravencoin_back/streams/app.dart';
+import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/theme/extensions.dart';
@@ -266,11 +268,20 @@ class _CreateLoginState extends State<CreateLogin> {
         setState(() {});
       });
 
+  bool isConnected() =>
+      streams.client.connected.value == ConnectionStatus.connected;
+
   Widget get unlockButton => components.buttons.actionButton(context,
       enabled: validate(),
       focusNode: unlockFocus,
       label: passwordText == null ? 'Create Wallet' : 'Creating Wallet...',
-      disabledOnPressed: () => setState(() {}),
+      disabledOnPressed: () => setState(() {
+            if (!isConnected()) {
+              streams.app.snack.add(Snack(
+                  message: 'Unable to connect! Please check connectivity.',
+                  atBottom: true));
+            }
+          }),
       onPressed: () async => await submit());
 
   Widget get aggrementCheckbox => Checkbox(

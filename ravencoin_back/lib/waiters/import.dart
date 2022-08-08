@@ -15,8 +15,7 @@ class ImportWaiter extends Waiter {
           await Future.delayed(Duration(seconds: 10));
         }
         var firstWallet = false;
-        if (pros.wallets.records.length == 1 &&
-            streams.app.wallet.isEmpty.value) {
+        if (pros.wallets.records.length == 1 && pros.balances.records.isEmpty) {
           await pros.wallets.remove(pros.wallets.records.first);
           firstWallet = true;
         }

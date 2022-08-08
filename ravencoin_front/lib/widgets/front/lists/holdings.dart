@@ -195,7 +195,6 @@ class _HoldingList extends State<HoldingList> {
             holding: true)
         : balances.isEmpty && transactions.isEmpty
             ? () {
-                streams.app.wallet.isEmpty.add(true);
                 return ComingSoonPlaceholder(
                     scrollController: widget.scrollController,
                     header: 'Get Started',
@@ -204,7 +203,6 @@ class _HoldingList extends State<HoldingList> {
                     placeholderType: PlaceholderType.wallet);
               }()
             : () {
-                streams.app.wallet.isEmpty.add(false);
                 return _holdingsView(context);
               }();
 
