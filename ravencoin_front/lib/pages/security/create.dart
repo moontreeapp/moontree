@@ -272,7 +272,7 @@ class _CreateLoginState extends State<CreateLogin> {
       streams.client.connected.value == ConnectionStatus.connected;
 
   Widget get unlockButton => components.buttons.actionButton(context,
-      enabled: validate(),
+      enabled: isConnected() && validate(),
       focusNode: unlockFocus,
       label: passwordText == null ? 'Create Wallet' : 'Creating Wallet...',
       disabledOnPressed: () => setState(() {

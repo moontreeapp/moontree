@@ -41,6 +41,7 @@ class _NavBarState extends State<NavBar> {
   bool walletIsEmpty = false;
   bool walletHasTransactions = false;
   ConnectionStatus connectionStatus = ConnectionStatus.disconnected;
+  late Set<Balance> balances = {};
 
   @override
   void initState() {
@@ -49,6 +50,15 @@ class _NavBarState extends State<NavBar> {
       if (connectionStatus != value) {
         setState(() {
           connectionStatus = value;
+        });
+      }
+    }));
+    listeners.add(pros.balances.batchedChanges
+        .listen((List<Change<Balance>> changes) async {
+      var interimBalances = Current.wallet.balances.toSet();
+      if (balances != interimBalances) {
+        setState(() {
+          balances = interimBalances;
         });
       }
     }));
@@ -102,7 +112,10 @@ class _NavBarState extends State<NavBar> {
       widget.actionButtons ??
       (widget.appContext == AppContext.wallet
           ? <Widget>[
-              walletIsEmpty && !walletHasTransactions
+              walletIsEmpty &&
+                      !walletHasTransactions &&
+                      streams.import.result.value ==
+                          null // transactions take a while to show up, so after import make sure to change the button.
                   ? components.buttons.actionButton(
                       context,
                       label: 'import',
