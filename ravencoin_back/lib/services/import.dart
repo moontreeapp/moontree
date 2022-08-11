@@ -43,7 +43,7 @@ class ImportFrom {
   }
 
   // returns null if unable to decrypt, otherwise, the decrypted String
-  static String? maybeDecrypt({
+  static String maybeDecrypt({
     required String text,
     required CipherBase cipher,
   }) {
@@ -51,9 +51,6 @@ class ImportFrom {
         services.password.required && text.contains(RegExp(r'^[a-fA-F0-9]+$'))
             ? hexx.hexToAscii(hexx.decrypt(text, cipher))
             : text;
-    if (services.wallet.import.detectImportType(decrypted) == null) {
-      return null;
-    }
     return decrypted;
   }
 }
