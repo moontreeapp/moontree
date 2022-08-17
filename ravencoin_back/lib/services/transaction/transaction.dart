@@ -101,8 +101,20 @@ class TransactionService {
             // ignore: unused_local_variable
             var outChange = 0; // actually used.
 
+            var totalInRVN = 0;
+            var totalOutRVN = 0;
             // Nothing too special about incoming...
             for (final vin in transaction.vins) {
+              /// #651 I wonder if at this point there isn't a vout associated
+              /// with the vin because vouts are still downloading... maybe
+              /// that's the root cause of the transactions displaying wrong
+              /// fee the first time transactions are viewed immediately after
+              /// importing the wallet on occasion... (not proven replicable
+              /// yet)... but if that's it we might should not allow users to
+              /// click transactions until vouts are fully downloaded... having
+              /// disabled vouts to test this theory we're unable to see
+              /// transactions at all until vouts are downloaded... so that's
+              /// probably not it... we'll wait till the issue surfaces again.
               var vinVout = vin.vout;
               if ((vinVout?.security ?? rvn) == rvn) {
                 if (givenAddresses.contains(vinVout?.toAddress)) {
@@ -110,11 +122,13 @@ class TransactionService {
                 } else {
                   othersIn += vinVout?.rvnValue ?? 0;
                 }
+                totalInRVN += vinVout?.rvnValue ?? 0;
               }
             }
 
             for (final vout in transaction.vouts) {
               if (vout.security == rvn) {
+                totalOutRVN += vout.rvnValue;
                 if (givenAddresses.contains(vout.toAddress)) {
                   selfOut += vout.rvnValue;
                   if (wallet.internalAddresses
@@ -137,7 +151,10 @@ class TransactionService {
               }
             }
 
-            final fee = (selfIn + othersIn) - (selfOut + othersOut);
+            final fee = (selfIn + othersIn) - (selfOut + othersOut) ==
+                    (selfIn + othersIn)
+                ? totalInRVN - totalOutRVN
+                : (selfIn + othersIn) - (selfOut + othersOut);
             var ioType;
 
             // Known burn addr for tagging
