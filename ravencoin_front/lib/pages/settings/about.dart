@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
@@ -43,8 +44,8 @@ class About extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    //'v1.0.0-alpha+1~${pros.settings.databaseVersion}',
-                    VERSION,
+                    'beta: ' +
+                        VERSIONS[Platform.isIOS ? 'ios' : 'android']!['beta']!,
                     style: Theme.of(context).textTheme.subtitle2!.copyWith(
                         color: AppColors.black60,
                         fontWeight: FontWeights.semiBold),
