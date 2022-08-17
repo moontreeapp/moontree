@@ -3,6 +3,7 @@
 /// BY https://stackoverflow.com/questions/52317217/flutter-disable-screenshot-capture-for-app
 /// FOR https://github.com/moontreeapp/moontree/issues/521
 */
+/*
 import UIKit
 import Flutter
 
@@ -30,7 +31,8 @@ func makeSecure() {
   }
 }
 
-/* Original 
+Original 
+*/
 import UIKit
 import Flutter
 
@@ -44,4 +46,3 @@ import Flutter
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }
-*/
