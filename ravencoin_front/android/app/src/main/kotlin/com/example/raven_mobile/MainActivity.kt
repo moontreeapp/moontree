@@ -28,7 +28,7 @@ class MainActivity: FlutterActivity() {
 }
 
 
-/* https://github.com/flutter/flutter/issues/59552 
+/* https://github.com/flutter/flutter/issues/59552
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivityLaunchConfigs
 import io.flutter.embedding.android.FlutterActivityLaunchConfigs.BackgroundMode

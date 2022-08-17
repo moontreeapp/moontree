@@ -31,4 +31,6 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+    <!-- Manually Added Moontree Permissions -->
+    <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>
