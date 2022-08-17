@@ -235,6 +235,7 @@ class _CreateLoginState extends State<CreateLogin> {
       ),
       onEditingComplete: () {
         if (password.text != '' && password.text.length >= minimumLength) {
+          setState(() {});
           FocusScope.of(context).requestFocus(confirmFocus);
         }
         setState(() {});
