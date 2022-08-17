@@ -11,21 +11,15 @@ part 'setting.keys.dart';
 class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
   SettingProclaim() : super(_SettingNameKey());
 
-  /// some other options for testing before we get our own electrum server up:
-  // mainnet electrum3.rvn.rocks
-  // testnet rvn4lyfe.com:50003
-  // 143.198.142.78:50002
-  // mjQSgeVh5ZHfwGzBkiQcpr119Wh6QMyQ3b
-
-  //static final String defaultUrl = 'testnet.rvn.rocks'; // 'rvn4lyfe.com';
-  //static final int defaultPort = 50002; // 50003;
-
-  //static ip = '143.198.245.161';
+  static final Net defaultNet = Net.Test;
   static final String defaultUrl = 'moontree.com';
-  //static final int defaultPort = 50001; // mainnet tcp
-  static final int defaultPort = 50002; // mainnet ssl
-  //static final int defaultPort = 50011; // testnet tcp
-  //static final int defaultPort = 50012; // testnet ssl
+  static final int defaultPort = defaultNet == Net.Test ? 50012 : 50002;
+
+  /// port map
+  //50001 - mainnet tcp
+  //50002 - mainnet ssl
+  //50011 - testnet tcp
+  //50012 - testnet ssl
 
   static Map<String, Setting> get defaults => {
         SettingName.Database_Version:
@@ -33,7 +27,7 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
         SettingName.Login_Attempts:
             Setting(name: SettingName.Login_Attempts, value: <DateTime>[]),
         SettingName.Electrum_Net:
-            Setting(name: SettingName.Electrum_Net, value: Net.Main),
+            Setting(name: SettingName.Electrum_Net, value: defaultNet),
         SettingName.Electrum_Domain:
             Setting(name: SettingName.Electrum_Domain, value: defaultUrl),
         SettingName.Electrum_Port:
