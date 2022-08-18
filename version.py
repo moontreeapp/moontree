@@ -67,7 +67,7 @@ class ravencoin_back():
         self.existingVersions = []
         self.newVersions = []
         self.versionLocation = 'ravencoin_back/lib/ravencoin_back.dart'
-        self.iosLocation = 'ravencoin_front/ios/Flutter/Generate.xcconfig'
+        self.iosLocation = 'ravencoin_front/ios/Flutter/Generated.xcconfig'
         self.androidLocation ='ravencoin_front/android/local.properties'
     
     def __call__(self):
@@ -106,11 +106,11 @@ class ravencoin_back():
             if x.startswith(versionName):
                 self.existingVersion = x.split('=')[1].strip()
                 self.newVersion = self.versions[platformName][version].split('+')[0].split('~')[0]
-                return versionName + self.newVersion
+                return versionName + self.newVersion + '\n'
             elif x.startswith(buildName):
                 self.existingBuild = x.split('=')[1].strip()
                 self.newBuild = self.versions[platformName][version].split('+')[1].split('~')[0]
-                return buildName + self.newBuild
+                return buildName + self.newBuild + '\n'
             else:
                 return x
 
