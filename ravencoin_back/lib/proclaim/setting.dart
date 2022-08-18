@@ -11,7 +11,7 @@ part 'setting.keys.dart';
 class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
   SettingProclaim() : super(_SettingNameKey());
 
-  static final Net defaultNet = Net.Test;
+  static final Net defaultNet = Net.Main;
   static final String defaultUrl = 'moontree.com';
   static final int defaultPort = defaultNet == Net.Test ? 50012 : 50002;
 
