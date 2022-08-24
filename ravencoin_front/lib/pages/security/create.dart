@@ -214,6 +214,7 @@ class _CreateLoginState extends State<CreateLogin> {
       );
 
   Widget get passwordField => TextFieldFormatted(
+      onTap: () => setState(() {}),
       focusNode: passwordFocus,
       autocorrect: false,
       controller: password,
@@ -233,15 +234,16 @@ class _CreateLoginState extends State<CreateLogin> {
           passwordVisible = !passwordVisible;
         }),
       ),
+      onChanged: (_) => setState(() {}),
       onEditingComplete: () {
+        setState(() {});
         if (password.text != '' && password.text.length >= minimumLength) {
-          setState(() {});
           FocusScope.of(context).requestFocus(confirmFocus);
         }
-        setState(() {});
       });
 
   Widget get confirmField => TextFieldFormatted(
+      onTap: () => setState(() {}),
       focusNode: confirmFocus,
       autocorrect: false,
       controller: confirm,
@@ -259,14 +261,12 @@ class _CreateLoginState extends State<CreateLogin> {
           confirmVisible = !confirmVisible;
         }),
       ),
-      onChanged: (_) {
-        setState(() {});
-      },
+      onChanged: (_) => setState(() {}),
       onEditingComplete: () {
+        setState(() {});
         if (confirm.text == password.text) {
           FocusScope.of(context).requestFocus(unlockFocus);
         }
-        setState(() {});
       });
 
   bool isConnected() =>
