@@ -263,10 +263,6 @@ class TransactionService {
             // Nothing too special about incoming...
             for (final vin in transaction.vins) {
               var vinVout = vin.vout;
-              //if (transaction.id ==
-              //    '21f863ff00d34cd43adcc0ee75df137a57bc648ab77c2cc281037c7eb10df9b4') {
-              //  print('here');
-              //}
               if (vinVout == null) {
                 /// unable to await so set flag
                 services.download.history
