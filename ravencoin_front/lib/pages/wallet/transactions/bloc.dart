@@ -26,7 +26,9 @@ class TransactionsBloc {
   List<TransactionRecord>? currentTxsCache;
 
   double getOpacityFromController(
-      double controllerValue, double minHeightFactor) {
+    double controllerValue,
+    double minHeightFactor,
+  ) {
     double opacity = 1;
     if (controllerValue >= 0.9)
       opacity = 0;

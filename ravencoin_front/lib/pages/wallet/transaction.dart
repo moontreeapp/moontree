@@ -95,7 +95,9 @@ class _TransactionPageState extends State<TransactionPage> {
       case 'Note':
         return transaction!.note ?? '';
       case 'Fee':
-        return transactionRecord!.fee.toAmount().toCommaString() + ' RVN';
+        return transactionRecord!.fee == 0
+            ? 'calculating...'
+            : transactionRecord!.fee.toAmount().toCommaString() + ' RVN';
       default:
         return 'unknown';
     }

@@ -36,8 +36,12 @@ class Transaction with EquatableMixin {
   //// 0 if its in the most recent block.
   //// 1 if another block has passed.
 
-  Transaction(
-      {required this.id, required this.confirmed, this.time, this.height});
+  Transaction({
+    required this.id,
+    required this.confirmed,
+    this.time,
+    this.height,
+  });
 
   @override
   List<Object?> get props => [

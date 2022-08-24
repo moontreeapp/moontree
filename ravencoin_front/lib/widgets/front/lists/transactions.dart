@@ -109,7 +109,9 @@ class _TransactionListState extends State<TransactionList> {
       physics: ClampingScrollPhysics(),
       controller: widget.scrollController,
       children: <Widget>[SizedBox(height: 16)] +
-          (!services.download.history.isComplete
+          (!services.download.history.isComplete ||
+                  services.wallet.leader.newLeaderProcessRunning ||
+                  services.client.subscribe.startupProcessRunning
               ? <Widget>[
                   for (var _ in transactions) ...[
                     components.empty.getTransactionsShimmer(context)

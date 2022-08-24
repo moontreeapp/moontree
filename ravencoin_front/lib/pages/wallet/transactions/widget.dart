@@ -31,10 +31,15 @@ class _TransactionsState extends State<Transactions> {
 
     /// need these until we make it fully reactive so we can reset the page if underlying data changes
     listeners.add(pros.vouts.batchedChanges.listen((batchedChanges) {
-      if (services.wallet.leader.newLeaderProcessRunning ||
-          services.client.subscribe.startupProcessRunning) {
+      if (services.wallet.leader.newLeaderProcessRunning) {
+        print('newLeader process running, not refreshing');
         return;
       }
+      if (services.client.subscribe.startupProcessRunning) {
+        print('startup process running, not refreshing');
+        return;
+      }
+
       if (batchedChanges.isNotEmpty) {
         print('Refresh - vouts');
         transactionsBloc.clearCache();

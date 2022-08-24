@@ -100,6 +100,7 @@ class TransactionService {
             var outIntentional = 0;
             // ignore: unused_local_variable
             var outChange = 0; // actually used.
+            var feeFlag = false;
 
             var totalInRVN = 0;
             var totalOutRVN = 0;
@@ -116,6 +117,12 @@ class TransactionService {
               /// transactions at all until vouts are downloaded... so that's
               /// probably not it... we'll wait till the issue surfaces again.
               var vinVout = vin.vout;
+              if (vinVout == null) {
+                /// unable to await so set flag
+                services.download.history
+                    .getAndSaveTransactions({vin.voutTransactionId});
+                feeFlag = true;
+              }
               if ((vinVout?.security ?? rvn) == rvn) {
                 if (givenAddresses.contains(vinVout?.toAddress)) {
                   selfIn += vinVout?.rvnValue ?? 0;
@@ -234,7 +241,7 @@ class TransactionService {
                   ioType == TransactionRecordType.SELF ? outIntentional : null,
               height: transaction.height,
               type: ioType,
-              fee: fee,
+              fee: feeFlag ? 0 : fee,
               formattedDatetime: transaction.formattedDatetime,
             ));
           } else {
@@ -251,10 +258,22 @@ class TransactionService {
             var outIntentional = 0;
             // ignore: unused_local_variable
             var outChange = 0; // used
+            var feeFlag = false;
 
             // Nothing too special about incoming...
             for (final vin in transaction.vins) {
               var vinVout = vin.vout;
+              //if (transaction.id ==
+              //    '21f863ff00d34cd43adcc0ee75df137a57bc648ab77c2cc281037c7eb10df9b4') {
+              //  print('here');
+              //}
+              if (vinVout == null) {
+                /// unable to await so set flag
+                services.download.history
+                    .getAndSaveTransactions({vin.voutTransactionId});
+                feeFlag = true;
+              }
+              vinVout = vin.vout;
               if (vinVout?.security == rvn) {
                 if (givenAddresses.contains(vinVout?.toAddress)) {
                   selfInRVN += vinVout?.rvnValue ?? 0;
@@ -372,7 +391,9 @@ class TransactionService {
                   : null,
               height: transaction.height,
               type: ioType,
-              fee: (selfInRVN + othersInRVN) - (selfOutRVN + othersOutRVN),
+              fee: feeFlag
+                  ? 0
+                  : (selfInRVN + othersInRVN) - (selfOutRVN + othersOutRVN),
               formattedDatetime: transaction.formattedDatetime,
             ));
           }
