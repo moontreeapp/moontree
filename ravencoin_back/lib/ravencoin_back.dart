@@ -19,8 +19,8 @@ export 'package:proclaim/change.dart';
 /// version.py script looks at this map.
 /// so set the versions but don't alter the code structure.
 const VERSIONS = {
-  'ios': {'alpha': '1.3.10+11~1', 'beta': '1.4.1+13~1'},
-  'android': {'alpha': '1.0.1+2~1', 'beta': '1.0.1+2~1'}
+  'ios': {'alpha': '1.3.10+11~1', 'beta': '1.4.2+14~1'},
+  'android': {'alpha': '1.0.1+2~1', 'beta': '1.0.2+3~1'}
 };
 
 //const RELEASE_VERSION = '1.0.0+0~1';
