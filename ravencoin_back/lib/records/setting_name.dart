@@ -43,4 +43,7 @@ enum SettingName {
 
   @HiveField(11)
   Send_Immediate,
+
+  @HiveField(12)
+  No_History,
 }

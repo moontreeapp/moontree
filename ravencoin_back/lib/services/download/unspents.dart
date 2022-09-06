@@ -47,7 +47,7 @@ class UnspentService {
     var utxos = <Unspent>{};
 
     await _scripthashesLock
-        .write(() => _scripthashesChecked.addAll(scripthashes.toSet()));
+        .write(() => _scripthashesChecked.addAll(scripthashes));
 
     /// update RVN call
     var rvnUtxos =

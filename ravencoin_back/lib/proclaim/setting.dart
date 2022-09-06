@@ -44,6 +44,8 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
             Setting(name: SettingName.User_Name, value: null),
         SettingName.Send_Immediate:
             Setting(name: SettingName.Send_Immediate, value: false),
+        SettingName.No_History:
+            Setting(name: SettingName.No_History, value: false),
       }.map(
           (settingName, setting) => MapEntry(settingName.enumString, setting));
 
