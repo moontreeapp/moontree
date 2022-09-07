@@ -9,43 +9,26 @@ import 'package:ravencoin_back/utilities/hex.dart' as hex;
 
 import 'package:ravencoin_back/utilities/seed_wallet.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:tuple/tuple.dart';
 
 // derives addresses for leaderwallets
 // returns any that it can't find a cipher for
 class LeaderWalletService {
-  final HDIndexRegistry registry = HDIndexRegistry();
   final int requiredGap = 20;
-  bool newLeaderProcessRunning = false;
-  Map<NodeExposure, List<Address>> addresses = {};
-
-  Set<String> getAddresses() {
-    return addresses.values.expand((e) => e).map((e) => e.address).toSet();
-  }
-
-  // necessary anymore?
   Set backlog = <LeaderWallet>{};
+  bool newLeaderProcessRunning = false;
 
-  void updateIndexes() {
-    for (var leader in pros.wallets.leaders) {
-      registry.updateIndex(leader);
+  Future<void> handleDeriveAddress({
+    required LeaderWallet leader,
+    NodeExposure? exposure,
+  }) async {
+    if (pros.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
+      await services.wallet.leader.deriveMoreAddresses(
+        leader,
+        exposure == null ? null : [exposure],
+      );
+    } else {
+      services.wallet.leader.backlog.add(leader);
     }
-  }
-
-  void updateCounts(Address address, LeaderWallet leader) {
-    leader.removeUnused(address.hdIndex, address.exposure);
-    registry.updateIndexOf(leader, address.exposure, used: address.hdIndex);
-  }
-
-  void updateCache(Address address, LeaderWallet leader) {
-    leader.addUnused(address.hdIndex, address.exposure);
-    registry.updateIndexOf(leader, address.exposure, saved: address.hdIndex);
-  }
-
-  bool gapSatisfied(LeaderWallet leader, NodeExposure exposure) {
-    final index = registry.getIndexOf(leader, exposure);
-    //print('${index.currentGap} ${index.used} ${index.saved}');
-    return requiredGap - index.currentGap <= 0;
   }
 
   Future<void> backedUp(LeaderWallet leader) async {
@@ -62,123 +45,18 @@ class LeaderWalletService {
   ///   Save addresses - this will trigger the general case, but since we've
   ///     already saved the most recent status nothing will happen.
   Future<void> newLeaderProcess(LeaderWallet leader) async {
-    //  newLeaders.add(leader.id); actually just save the addresses at the end
-    addresses.clear();
-    print('newLeaderProcess ${leader.id} ${leader.cipherUpdate}');
     newLeaderProcessRunning = true;
     streams.client.busy.add(true);
     streams.client.activity.add(ActivityMessage(
         active: true,
         title: 'Syncing with the network',
         message: 'Downloading your balances...'));
-
-    // matching orders for lists
-    //Map<NodeExposure, List<Address>> addresses = {}; // pulled to class level
-    Map<NodeExposure, List<List<String>>> transactionIds = {};
-
-    /// Derive, get histories by address in batch, derive until done.
-    for (var exposure in NodeExposure.values) {
-      addresses[exposure] = [];
-      transactionIds[exposure] = [];
-      var generate = requiredGap;
-      while (generate > 0) {
-        final target = transactionIds[exposure]!.length + generate;
-        var futures = <Future<Address>>[
-          for (var i = target - generate; i < target; i++)
-            () async {
-              return deriveAddress(leader, i, exposure: exposure);
-            }()
-        ];
-        var currentAddresses = (await Future.wait(futures)).toList();
-        addresses[exposure]!.addAll(currentAddresses);
-        var txs =
-            await services.download.history.getHistories(currentAddresses);
-        transactionIds[exposure]!.addAll(txs);
-        generate = requiredGap -
-            transactionIds[exposure]!
-                .sublist(transactionIds[exposure]!.length - requiredGap)
-                .where((element) => element.isEmpty)
-                .length;
-      }
-
-      /// save final cache and counts for this wallet exposure
-      for (Tuple2<int, List<String>> et
-          in transactionIds[exposure]!.enumeratedTuple()) {
-        var addr = addresses[exposure]![et.item1];
-        if (et.item2.isEmpty) {
-          updateCache(addr, leader);
-        } else {
-          updateCounts(addr, leader);
-        }
-      }
-
-      /// Get unspents in batch.
-      /// not sure if anything has to change in unspents.
-      /// I'm hoping this initialization process can simplify it.
-      await services.download.unspents.pull(
-        scripthashes: addresses[exposure]!.map((a) => a.scripthash).toSet(),
-        wallet: leader,
-      );
-    }
-
-    /// Build balances. - this will update the holdings list UI (home page)
-    await services.balance.recalculateAllBalances();
-
-    // Notify user.
-    if (pros.balances.isNotEmpty) {
-      streams.app.snack.add(Snack(message: 'Import Sucessful'));
-    }
-    streams.client.activity.add(ActivityMessage(
-        active: true,
-        title: 'Syncing with the network',
-        message: 'Downloading your transaction history...'));
-
-    /// Get status of addresses, save
-    // you'll have to subscribe then unsubscribe. in batch.
-    for (var exposure in NodeExposure.values) {
-      await services.client.subscribe
-          .subscribeForStatuses(addresses[exposure]!);
-    }
-
-    /// Get transactions in batch by address, or by arbitrary batch number. -
-    ///  must save these
-    for (var exposure in NodeExposure.values) {
-      var batchSize = 20;
-      var txsToDownload = transactionIds[exposure]!.expand((e) => e).toList();
-      while (txsToDownload.isNotEmpty) {
-        final chunkSize =
-            txsToDownload.length < batchSize ? txsToDownload.length : batchSize;
-        await services.download.history.getTransactions(// also saves them
-            services.download.history.filterOutPreviouslyDownloaded(
-                txsToDownload.sublist(0, chunkSize)));
-        txsToDownload = txsToDownload.sublist(chunkSize);
-      }
-    }
-
-    /// Get dangling transactions
-    await services.download.history.allDoneProcess();
-
-    /// Save addresses - this will trigger the general case, but since we've
-    ///   already saved the most recent status nothing will happen.
-    for (var exposure in NodeExposure.values) {
-      await pros.addresses.saveAll(addresses[exposure]!);
-    }
-
-    /// remove unnecessary vouts to minimize size of database and load time
-    await pros.vouts.clearUnnecessaryVouts();
-
-    streams.client.busy.add(false);
-    streams.client.activity.add(ActivityMessage(active: false));
-    newLeaderProcessRunning = false;
-    print('newLeaderProcess Done!');
+    await deriveMoreAddresses(leader);
   }
 
-  Address deriveAddress(
-    LeaderWallet wallet,
-    int hdIndex, {
-    exposure = NodeExposure.External,
-  }) {
-    var subwallet = getSubWallet(wallet, hdIndex, exposure);
+  Address deriveNextAddress(LeaderWallet wallet, NodeExposure exposure) {
+    final hdIndex = wallet.highestIndexOf(exposure);
+    final subwallet = getSubWallet(wallet, hdIndex, exposure);
     return Address(
         id: subwallet.scripthash,
         address: subwallet.address!,
@@ -285,33 +163,6 @@ class LeaderWalletService {
     }
   }
 
-  /// this function is used to determine if we need to derive new addresses
-  /// based upon the idea that we want to retain a gap of empty histories
-  Future<Set<Address>> deriveNextAddresses(
-    LeaderWallet leaderWallet,
-    CipherBase cipher,
-    NodeExposure exposure,
-  ) async {
-    // get current gap from cache.
-    var generate =
-        requiredGap - registry.getIndexOf(leaderWallet, exposure).currentGap;
-    //print('Want to generate $generate for $exposure');
-    var target = 0;
-    target = registry.getIndexOf(leaderWallet, exposure).saved + generate;
-    if (generate > 0) {
-      var futures = <Future<Address>>[
-        for (var i = target - generate + 1; i <= target; i++)
-          () async {
-            return deriveAddress(leaderWallet, i, exposure: exposure);
-          }()
-      ];
-      var ret = (await Future.wait(futures)).toSet();
-      //print(ret);
-      return ret;
-    }
-    return {};
-  }
-
   HDWallet getChangeWallet(LeaderWallet wallet) => getNextEmptyWallet(wallet);
 
   /// deriveMoreAddresses also updates the cache we keep of highest saved
@@ -320,22 +171,19 @@ class LeaderWalletService {
   /// be higher than the number of addresses actually saved, we'll enter an
   /// infinite loop.
   Future<void> deriveMoreAddresses(
-    LeaderWallet wallet, {
+    LeaderWallet wallet, [
     List<NodeExposure>? exposures,
-  }) async {
+  ]) async {
     exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];
     var newAddresses = <Address>{};
     for (var exposure in exposures) {
-      var derivedAddresses = await deriveNextAddresses(
+      newAddresses.add(deriveNextAddress(
         wallet,
-        pros.ciphers.primaryIndex.getOne(wallet.cipherUpdate)!.cipher,
         exposure,
-      );
-      newAddresses.addAll(derivedAddresses);
-      registry.updateIndexOf(wallet, exposure,
-          savedPlus: derivedAddresses.length);
+      ));
     }
     await pros.addresses.saveAll(newAddresses);
+    // todo move to waiter
     for (final address in newAddresses) {
       await services.client.subscribe.toAddress(address);
     }
@@ -371,71 +219,4 @@ class LeaderExposureIndex {
   void updateUsed(int value) => used = value > used ? value : used;
   void updateSavedPlus(int value) => saved = saved + value;
   void updateUsedPlus(int value) => used = used + value;
-}
-
-/// this is used to allow us to see how many addresses need to be derived.
-class HDIndexRegistry {
-  Map<LeaderExposureKey, LeaderExposureIndex> indexRegistry = {};
-
-  /// caching optimization
-  LeaderExposureIndex getIndexOf(LeaderWallet leader, NodeExposure exposure) {
-    var key = LeaderExposureKey(leader, exposure);
-    if (!indexRegistry.keys.contains(key)) {
-      indexRegistry[key] = LeaderExposureIndex();
-    }
-    return indexRegistry[key]!;
-  }
-
-  LeaderExposureIndex getIndexOfKey(
-      LeaderWallet leader, NodeExposure exposure) {
-    var key = LeaderExposureKey(leader, exposure);
-    if (!indexRegistry.keys.contains(key)) {
-      indexRegistry[key] = LeaderExposureIndex();
-    }
-    return indexRegistry[key]!;
-  }
-
-  void updateIndexOf(
-    LeaderWallet leader,
-    NodeExposure exposure, {
-    int? saved,
-    int? used,
-    int? savedPlus,
-    int? usedPlus,
-  }) {
-    var key = LeaderExposureKey(leader, exposure);
-    if (!indexRegistry.keys.contains(key)) {
-      indexRegistry[key] = LeaderExposureIndex();
-    }
-    if (saved != null) {
-      indexRegistry[key]!.updateSaved(saved);
-    }
-    if (used != null) {
-      indexRegistry[key]!.updateUsed(used);
-    }
-    if (savedPlus != null) {
-      indexRegistry[key]!.updateSavedPlus(savedPlus);
-    }
-    if (usedPlus != null) {
-      indexRegistry[key]!.updateUsedPlus(usedPlus);
-    }
-  }
-
-  /// this function allows us to avoid creating a 'hdindex' proclaim,
-  /// which is nice.
-  void updateIndex(LeaderWallet leader) {
-    for (var exposure in [NodeExposure.External, NodeExposure.Internal]) {
-      var addresses =
-          pros.addresses.byWalletExposure.getAll(leader.id, exposure);
-      updateIndexOf(
-        leader,
-        exposure,
-        saved: addresses.map((a) => a.hdIndex).max,
-        used: addresses
-            .where((a) => a.vouts.isNotEmpty)
-            .map((a) => a.hdIndex)
-            .max,
-      );
-    }
-  }
 }

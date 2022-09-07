@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_back/streams/wallet.dart';
 import 'package:ravencoin_back/utilities/lock.dart';
@@ -195,52 +196,90 @@ class SubscribeService {
     return true;
   }
 
+  Future maybeDerive(Address address) async {
+    final wallet = address.wallet;
+    if (wallet is LeaderWallet) {
+      if (wallet.emptyAddresses(address.exposure).length < 20) {
+        //streams.wallet.deriveAddress.add(DeriveLeaderAddress(
+        //  leader: address.wallet! as LeaderWallet,
+        //  exposure: address.exposure,
+        //));
+        await waiters.leader.haawait ndleDeriveAddress(
+          leader: address.wallet! as LeaderWallet,
+          exposure: address.exposure,
+        );
+      }
+    }
+  }
+
+  Future pullUnspents(Address address) async =>
+      await services.download.unspents.pull(
+        scripthashes: {address.scripthash},
+        wallet: address.wallet!,
+        getTransactions: true,
+      );
+
+  Future queueHistoryDownload(Address address) async {
+    // send this to stream which is staggered.
+    await services.download.history.getTransactions(
+      await services.download.history.getHistory(address, updateLeader: true),
+    );
+    // Get dangling transactions
+    await services.download.history.allDoneProcess();
+  }
+
+  Future saveStatusUpdate(Address address, String? status) async =>
+      await pros.statuses.save(Status(
+        linkId: address.id,
+        statusType: StatusType.address,
+        status: status,
+      ));
+
   Future subscribeAddress(Address address) async {
     //print('Subscribing to $address'); // Yes we are subscribing to all addresses
     if (!subscriptionHandlesAddress.keys.contains(address.id)) {
       subscriptionHandlesAddress[address.id] =
           (await services.client.api.subscribeAddress(address))
               .listen((String? status) async {
-        /// pull unspents and save - should we do this all the time?
-        /** optimization idea
-          one thing we could do here is say if we're in the startup process 
-          do not pull unspents here, but if the status changes do
-          and we could make unspents permanent on disk, as well as balances...
-          not necessary now.
-        */
         print('UNSPENTS ${address.address}');
-        await services.download.unspents.pull(
-          scripthashes: {address.scripthash},
-          wallet: address.wallet!,
-          getTransactions: true,
-        );
-        // why allow null here?
-        //status == null ||
-        if (address.status?.status != status) {
-          /// Get histories, update leader counts and
-          /// Get transactions in batch.
-          print('PULLING HISTORY');
-          await services.download.history.getTransactions(
-            await services.download.history
-                .getHistory(address, updateLeader: true),
-          );
-
-          /// Get dangling transactions
-          await services.download.history.allDoneProcess();
-
-          /// Save status update
-          await pros.statuses.save(Status(
-              linkId: address.id,
-              statusType: StatusType.address,
-              status: status));
-
-          /// Derive more addresses
-          if (address.wallet is LeaderWallet) {
-            streams.wallet.deriveAddress.add(DeriveLeaderAddress(
-              leader: address.wallet! as LeaderWallet,
-              exposure: address.exposure,
-            ));
+        await saveStatusUpdate(address, status);
+        if (address.status == null) {
+          await maybeDerive(address);
+          await pullUnspents(address);
+          await queueHistoryDownload(address);
+        } else if (address.status?.status == null && status != null) {
+          await maybeDerive(address);
+          await pullUnspents(address);
+          await queueHistoryDownload(address);
+        } else if (address.status?.status != status) {
+          await pullUnspents(address);
+          await queueHistoryDownload(address);
+        } // else == do nothing.
+        if (
+          // derive queue is empty
+          //services.wallet.leader.backlog.isEmpty && 
+          subscriptionHandlesAddress.keys.length == address.wallet!.addresses.length
+          ) {
+          // should just use unspents
+          await services.balance.recalculateAllBalances();
+        }
+        if (services.wallet.leader.newLeaderProcessRunning &&) {
+          // Notify user.
+          if (pros.balances.isNotEmpty) {
+            streams.app.snack.add(Snack(message: 'Import Sucessful'));
           }
+          streams.client.activity.add(ActivityMessage(
+              active: true,
+              title: 'Syncing with the network',
+              message: 'Downloading your transaction history...'));
+              
+          /// remove unnecessary vouts to minimize size of database and load time
+          await pros.vouts.clearUnnecessaryVouts();
+
+          streams.client.busy.add(false);
+          streams.client.activity.add(ActivityMessage(active: false));
+          services.wallet.leader.newLeaderProcessRunning = false;
+          print('newLeaderProcess Done!');
         }
       });
     }

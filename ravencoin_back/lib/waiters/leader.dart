@@ -46,7 +46,8 @@ class LeaderWaiter extends Waiter {
       (Tuple2<ConnectionStatus, Change<Cipher>> tuple) {
         print('connected/CIPHER ${tuple.item1} ${tuple.item2}');
         if (tuple.item2.record.cipherType != CipherType.None) {
-          pros.wallets.leaders.forEach((wallet) => dispatch(wallet));
+          pros.wallets.leaders.forEach((wallet) =>
+              services.wallet.leader.handleDeriveAddress(leader: wallet));
         }
       },
     );
@@ -79,35 +80,26 @@ class LeaderWaiter extends Waiter {
       (DeriveLeaderAddress? deriveDetails) async {
         deriveDetails == null
             ? () {/* do nothing */}
-            : await handleDeriveAddress(
-                leader: deriveDetails.leader, exposure: deriveDetails.exposure);
+            : await services.wallet.leader.handleDeriveAddress(
+                leader: deriveDetails.leader,
+                exposure: deriveDetails.exposure,
+              );
       },
     );
-  }
-
-  Future<void> dispatch(LeaderWallet leader) async {
-    if (leader.addresses.isEmpty) {
-      if (!services.wallet.leader.newLeaderProcessRunning) {
-        await services.wallet.leader.newLeaderProcess(leader);
-      }
-    } else {
-      await handleDeriveAddress(leader: leader);
-    }
   }
 
   void handleLeaderChange(Change<Wallet> change) {
     change.when(
         // never gets called because we load before this waiter is listening...
-        loaded: (loaded) async {
-      if (loaded.record is LeaderWallet) {
-        await dispatch(loaded.record as LeaderWallet);
-      }
-    }, added: (added) async {
-      if (added.record is LeaderWallet) {
-        await dispatch(added.record as LeaderWallet);
-      }
-    }, updated: (updated) async {
-      /*
+        loaded: (loaded) async {},
+        added: (added) async {
+          if (added.record is LeaderWallet) {
+            await services.wallet.leader
+                .handleDeriveAddress(leader: added.record as LeaderWallet);
+          }
+        },
+        updated: (updated) async {
+          /*
           /// app is switched to mainnet to testnet or testnet to mainnet... 
           /// we need to derive all the addresses again.
           /// but this should go on that settings listener,
@@ -120,39 +112,10 @@ class LeaderWaiter extends Waiter {
           // recreate the addresses of that wallet
           handleDeriveAddress(leader: leader as LeaderWallet);
           */
-    }, removed: (removed) {
-      /// should only happen when replacing the initial blank wallet
-      pros.addresses.removeAll(removed.record.addresses.toList());
-    });
-  }
-
-  Future<void> attemptLeaderWalletAddressDerive(
-      CipherUpdate cipherUpdate) async {
-    var remove = <LeaderWallet>{};
-    for (var wallet in services.wallet.leader.backlog) {
-      if (wallet.cipherUpdate == cipherUpdate) {
-        await handleDeriveAddress(leader: wallet, bypassCipher: true);
-        remove.add(wallet);
-      }
-    }
-    for (var wallet in remove) {
-      services.wallet.leader.backlog.remove(wallet);
-    }
-  }
-
-  Future<void> handleDeriveAddress({
-    required LeaderWallet leader,
-    NodeExposure? exposure,
-    bool bypassCipher = false,
-  }) async {
-    if (bypassCipher ||
-        pros.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
-      await services.wallet.leader.deriveMoreAddresses(
-        leader,
-        exposures: exposure == null ? null : [exposure],
-      );
-    } else {
-      services.wallet.leader.backlog.add(leader);
-    }
+        },
+        removed: (removed) {
+          /// should only happen when replacing the initial blank wallet
+          pros.addresses.removeAll(removed.record.addresses.toList());
+        });
   }
 }
