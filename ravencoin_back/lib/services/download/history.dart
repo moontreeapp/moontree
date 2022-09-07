@@ -47,15 +47,6 @@ class HistoryService {
       final t = (await services.client.api.getHistory(address))
           .map((history) => history.txHash)
           .toList();
-      if (updateLeader && address.wallet is LeaderWallet) {
-        if (t.isEmpty) {
-          services.wallet.leader
-              .updateCache(address, address.wallet as LeaderWallet);
-        } else {
-          services.wallet.leader
-              .updateCounts(address, address.wallet as LeaderWallet);
-        }
-      }
       return t;
     } catch (e) {
       return [];
@@ -280,7 +271,6 @@ class HistoryService {
     for (var vout in tx.vout) {
       if (vout.scriptPubKey.type == 'nullassetdata') continue;
       var vs = await handleAssetData(tx, vout);
-      services.wallet.leader.getAddresses();
       if (saveVout || false
 //          (pros.addresses
 //                  .map((a) => a.address)

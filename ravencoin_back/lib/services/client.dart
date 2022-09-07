@@ -136,19 +136,17 @@ class SubscribeService {
         pros.addresses.records.where((a) => !walletIds.contains(a.walletId)));
 
     // we have to update these counts incase the user logins before the processes is over
-    final addresses = pros.addresses.toList();
-    for (var address in addresses) {
-      if (address.wallet is LeaderWallet) {
-        if (address.vouts.isNotEmpty) {
-          services.wallet.leader
-              .updateCounts(address, address.wallet as LeaderWallet);
-        } else {
-          services.wallet.leader
-              .updateCache(address, address.wallet as LeaderWallet);
-        }
-      }
+    final addresses = pros.addresses.toSet();
+    final currentAddresses = (pros.wallets.primaryIndex
+                .getOne(pros.settings.currentWalletId)
+                ?.addresses ??
+            [])
+        .toSet();
+    final otherAddresses = addresses.difference(currentAddresses);
+    for (var address in currentAddresses) {
+      await subscribeAddress(address);
     }
-    for (var address in addresses) {
+    for (var address in otherAddresses) {
       await subscribeAddress(address);
     }
     if (addresses.isNotEmpty) {
@@ -160,18 +158,6 @@ class SubscribeService {
       await Future.delayed(Duration(milliseconds: 100));
     }
     await services.balance.recalculateAllBalances();
-    // update the unused internal and external addresses again just incase we downloaded some history
-    for (var address in pros.addresses.records) {
-      if (address.wallet is LeaderWallet) {
-        if (address.vouts.isNotEmpty) {
-          services.wallet.leader
-              .updateCounts(address, address.wallet as LeaderWallet);
-        } else {
-          services.wallet.leader
-              .updateCache(address, address.wallet as LeaderWallet);
-        }
-      }
-    }
     streams.client.busy.add(false);
     streams.client.activity.add(ActivityMessage(active: false));
     startupProcessRunning = false;
@@ -199,12 +185,12 @@ class SubscribeService {
   Future maybeDerive(Address address) async {
     final wallet = address.wallet;
     if (wallet is LeaderWallet) {
-      if (wallet.emptyAddresses(address.exposure).length < 20) {
+      if (!services.wallet.leader.gapSatisfied(wallet, address.exposure)) {
         //streams.wallet.deriveAddress.add(DeriveLeaderAddress(
         //  leader: address.wallet! as LeaderWallet,
         //  exposure: address.exposure,
         //));
-        await waiters.leader.haawait ndleDeriveAddress(
+        await services.wallet.leader.handleDeriveAddress(
           leader: address.wallet! as LeaderWallet,
           exposure: address.exposure,
         );
@@ -219,14 +205,7 @@ class SubscribeService {
         getTransactions: true,
       );
 
-  Future queueHistoryDownload(Address address) async {
-    // send this to stream which is staggered.
-    await services.download.history.getTransactions(
-      await services.download.history.getHistory(address, updateLeader: true),
-    );
-    // Get dangling transactions
-    await services.download.history.allDoneProcess();
-  }
+  Future queueHistoryDownload(Address address) async {}
 
   Future saveStatusUpdate(Address address, String? status) async =>
       await pros.statuses.save(Status(
@@ -256,15 +235,17 @@ class SubscribeService {
           await queueHistoryDownload(address);
         } // else == do nothing.
         if (
-          // derive queue is empty
-          //services.wallet.leader.backlog.isEmpty && 
-          subscriptionHandlesAddress.keys.length == address.wallet!.addresses.length
-          ) {
+            // derive queue is empty
+            //services.wallet.leader.backlog.isEmpty &&
+            subscriptionHandlesAddress.keys.length ==
+                address.wallet!.addresses.length) {
           // should just use unspents
           await services.balance.recalculateAllBalances();
         }
-        if (services.wallet.leader.newLeaderProcessRunning &&) {
-          // Notify user.
+        if (address.wallet is LeaderWallet &&
+            services.wallet.leader.newLeaderProcessRunning &&
+            services.wallet.leader.gapSatisfied(
+                address.wallet! as LeaderWallet, address.exposure)) {
           if (pros.balances.isNotEmpty) {
             streams.app.snack.add(Snack(message: 'Import Sucessful'));
           }
@@ -272,7 +253,7 @@ class SubscribeService {
               active: true,
               title: 'Syncing with the network',
               message: 'Downloading your transaction history...'));
-              
+
           /// remove unnecessary vouts to minimize size of database and load time
           await pros.vouts.clearUnnecessaryVouts();
 

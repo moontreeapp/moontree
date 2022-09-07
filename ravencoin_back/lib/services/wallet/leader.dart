@@ -17,6 +17,9 @@ class LeaderWalletService {
   Set backlog = <LeaderWallet>{};
   bool newLeaderProcessRunning = false;
 
+  bool gapSatisfied(LeaderWallet leader, NodeExposure exposure) =>
+      leader.emptyAddresses(exposure).length >= requiredGap;
+
   Future<void> handleDeriveAddress({
     required LeaderWallet leader,
     NodeExposure? exposure,
