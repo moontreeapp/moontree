@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:ravencoin_back/streams/app.dart';
-import 'package:ravencoin_back/utilities/lock.dart';
 import 'package:ravencoin_electrum/ravencoin_electrum.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
@@ -39,7 +38,7 @@ class UnspentService {
   Future<void> pull({
     required Wallet wallet,
     required Set<String> scripthashes,
-    bool getTransactions = false,
+    bool getTransactions = true,
   }) async {
     var utxos = <Unspent>{};
 
@@ -70,15 +69,12 @@ class UnspentService {
 
     // only save if there's something new, in that case erase all, save all.
     var existing = pros.unspents.byScripthashes(scripthashes).toSet();
-    if (existing.length != utxos.length ||
-        existing.intersection(utxos).length != existing.length) {
-      await pros.unspents.clearByScripthashes(scripthashes);
-      await pros.unspents.saveAll(utxos);
-      if (getTransactions) {
-        await services.download.history.getAndSaveTransactions(
-          utxos.map((e) => e.transactionId).toSet(),
-        );
-      }
+    await pros.unspents.removeAll(existing.difference(utxos));
+    await pros.unspents.saveAll(utxos.difference(existing));
+    if (getTransactions && utxos.isNotEmpty) {
+      await services.download.history.getAndSaveTransactions(
+        utxos.map((e) => e.transactionId).toSet(),
+      );
     }
   }
 }

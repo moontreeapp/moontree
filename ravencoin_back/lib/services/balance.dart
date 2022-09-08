@@ -13,8 +13,7 @@ class BalanceService {
   Future recalculateAllBalances({Set<String>? walletIds}) async {
     walletIds = walletIds ?? pros.wallets.ids;
     Set<Balance> balances = {};
-    await pros.balances.removeAll(
-        pros.balances.records.where((b) => walletIds!.contains(b.walletId)));
+    await pros.balances.removeAllByIds(walletIds);
     for (var walletId in walletIds) {
       for (var symbol in pros.unspents.getSymbolsByWallet(walletId)) {
         var security = pros.securities.bySymbol.getAll(symbol).firstOrNull ??

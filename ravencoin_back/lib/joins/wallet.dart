@@ -17,13 +17,10 @@ extension WalletHasManyAddressesByExposure on Wallet {
 }
 
 extension WalletHasOneHighestIndexByExposure on Wallet {
-  int highestIndexOf(NodeExposure exposure) {
-    var i = 0;
-    for (var address in addressesBy(exposure)) {
-      if (address.hdIndex > i) i = address.hdIndex;
-    }
-    return i;
-  }
+  int highestIndexOf(NodeExposure exposure) => addressesBy(exposure).fold(
+      0,
+      (previousValue, element) =>
+          element.hdIndex > previousValue ? element.hdIndex : previousValue);
 }
 
 extension WalletHasManyBalances on Wallet {
@@ -81,10 +78,33 @@ extension WalletHasManyExternalAddresses on Wallet {
       addresses.where((address) => address.exposure == NodeExposure.External);
 }
 
-extension WalletHasManyEmptyAddresses on Wallet {
+extension WalletHasManyGapAddresses on Wallet {
+  Iterable<Address> usedAddresses(NodeExposure exposure) =>
+      addresses.where((address) =>
+          address.exposure == exposure && address.status?.status != null);
+
   Iterable<Address> emptyAddresses(NodeExposure exposure) =>
       addresses.where((address) =>
-          address.exposure == exposure && address.status?.status == null);
+          address.exposure == exposure &&
+          address.status != null &&
+          address.status!.status == null);
+
+  Iterable<Address> emptyAddressesAfterIndex(
+    NodeExposure exposure,
+    int index,
+  ) =>
+      addresses.where((address) =>
+          address.hdIndex > index &&
+          address.exposure == exposure &&
+          address.status?.status == null);
+
+  int highestUsedIndex(NodeExposure exposure) => usedAddresses(exposure).fold(
+      -1,
+      (int previousValue, Address element) =>
+          element.hdIndex > previousValue ? element.hdIndex : previousValue);
+
+  Iterable<Address> gapAddresses(NodeExposure exposure) =>
+      emptyAddressesAfterIndex(exposure, highestUsedIndex(exposure));
 }
 
 extension WalletHasManyEmptyInternalAddresses on Wallet {
@@ -113,4 +133,8 @@ extension WalletHasManyUsedExternalAddresses on Wallet {
       address.exposure == NodeExposure.External &&
       address.status?.status != null);
   //externalAddresses.where((address) => address.vouts.isNotEmpty);
+}
+
+extension WalletHasManyUnspents on Wallet {
+  List<Unspent> get unspents => pros.unspents.byWallet.getAll(id);
 }

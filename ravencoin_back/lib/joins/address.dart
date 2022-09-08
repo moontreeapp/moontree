@@ -11,3 +11,7 @@ extension AddressBelongsToWallet on Address {
 extension AddressHasManyVouts on Address {
   List<Vout> get vouts => pros.vouts.byAddress.getAll(address);
 }
+
+extension AddressHasManyUnspents on Address {
+  List<Unspent> get unspents => pros.unspents.byAddress.getAll(address);
+}

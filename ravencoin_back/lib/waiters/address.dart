@@ -19,7 +19,7 @@ class AddressWaiter extends Waiter {
             await services.client.subscribe.toAddress(updated.record),
         removed: (removed) async {
           var address = removed.record;
-          services.client.subscribe.unsubscribeAddress(address.id);
+          services.client.subscribe.unsubscribeAddress(address);
           //removed.id as String);
 
           /// could be moved to waiter on transactions...

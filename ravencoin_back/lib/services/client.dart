@@ -116,7 +116,9 @@ class ClientService {
 
 /// managing our address subscriptions
 class SubscribeService {
-  final Map<String, StreamSubscription> subscriptionHandlesAddress = {};
+  // {wallet: {address: subscription}}
+  final Map<String, Map<String, StreamSubscription>>
+      subscriptionHandlesAddress = {};
   final Map<String, StreamSubscription> subscriptionHandlesAsset = {};
   bool startupProcessRunning = false;
 
@@ -201,8 +203,12 @@ class SubscribeService {
       ));
 
   Future subscribeAddress(Address address) async {
-    if (!subscriptionHandlesAddress.keys.contains(address.id)) {
-      subscriptionHandlesAddress[address.id] =
+    final wallet = address.wallet!;
+    if (!subscriptionHandlesAddress.keys.contains(wallet.id)) {
+      subscriptionHandlesAddress[wallet.id] = {};
+    }
+    if (!subscriptionHandlesAddress[wallet.id]!.keys.contains(address.id)) {
+      subscriptionHandlesAddress[wallet.id]![address.id] =
           (await services.client.api.subscribeAddress(address))
               .listen((String? status) async {
         print('UNSPENTS ${address.address}');
@@ -212,25 +218,24 @@ class SubscribeService {
           // new address
           await maybeDerive(address);
           await pullUnspents(address);
-          await queueHistoryDownload(address);
+          //await queueHistoryDownload(address); // perhaps we can just in time
         } else if (addressStatus.status == null && status != null) {
           // first transaction on address discovered
           await maybeDerive(address);
           await pullUnspents(address);
-          await queueHistoryDownload(address);
+          //await queueHistoryDownload(address); // perhaps we can just in time
         } else if (addressStatus.status != status) {
           // new transaction on address discovered
           await pullUnspents(address);
-          await queueHistoryDownload(address);
+          //await queueHistoryDownload(address); // perhaps we can just in time
         } else if (addressStatus.status == status) {
           // do nothing.
         }
-        if (address.wallet is LeaderWallet &&
-            services.wallet.leader.gapSatisfied(
-                address.wallet! as LeaderWallet, address.exposure) &&
-            subscriptionHandlesAddress.keys.length ==
-                address.wallet!.addresses.length) {
-          await services.balance.recalculateAllBalances();
+        if (wallet is LeaderWallet &&
+            services.wallet.leader.gapSatisfied(wallet) &&
+            subscriptionHandlesAddress[wallet.id]!.keys.length ==
+                wallet.addresses.length) {
+          await services.balance.recalculateAllBalances(walletIds: {wallet.id});
           if (startupProcessRunning) {
             streams.client.busy.add(false);
             streams.client.activity.add(ActivityMessage(active: false));
@@ -257,28 +262,6 @@ class SubscribeService {
     }
   }
 
-  Future subscribeForStatus(Address address) async {
-    (await services.client.api.subscribeAddress(address))
-        .listen((String? status) async {
-      await pros.statuses.save(Status(
-          linkId: address.id, statusType: StatusType.address, status: status));
-    });
-    await services.client.api.unsubscribeAddress(address);
-  }
-
-  Future subscribeForStatuses(List<Address> addresses) async {
-    var subs = await services.client.api.subscribeAddresses(addresses);
-    for (var ixSub in subs.enumeratedTuple()) {
-      ixSub.item2.listen((String? status) async {
-        await pros.statuses.save(Status(
-            linkId: addresses[ixSub.item1].id,
-            statusType: StatusType.address,
-            status: status));
-      });
-    }
-    await services.client.api.unsubscribeAddresses(addresses);
-  }
-
   Future subscribeAsset(Asset asset) async {
     if (!subscriptionHandlesAsset.keys.contains(asset.symbol)) {
       subscriptionHandlesAsset[asset.symbol] =
@@ -296,8 +279,10 @@ class SubscribeService {
     }
   }
 
-  void unsubscribeAddress(String addressId) {
-    subscriptionHandlesAddress.remove(addressId)?.cancel();
+  void unsubscribeAddress(Address address) {
+    (subscriptionHandlesAddress[address.wallet!.id] ?? {})
+        .remove(address.id)
+        ?.cancel();
   }
 
   void unsubscribeAsset(String asset) {

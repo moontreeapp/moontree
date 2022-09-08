@@ -23,4 +23,7 @@ class BalanceProclaim extends Proclaim<_WalletSecurityKey, Balance> {
         confirmed: 0,
         unconfirmed: 0,
       );
+
+  Future removeAllByIds(Set<String> walletIds) async =>
+      await removeAll(records.where((b) => walletIds.contains(b.walletId)));
 }

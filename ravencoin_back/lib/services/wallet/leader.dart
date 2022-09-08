@@ -16,8 +16,11 @@ class LeaderWalletService {
   Set backlog = <LeaderWallet>{};
   bool newLeaderProcessRunning = false;
 
-  bool gapSatisfied(LeaderWallet leader, NodeExposure exposure) =>
-      leader.emptyAddresses(exposure).length >= requiredGap;
+  bool gapSatisfied(LeaderWallet leader, [NodeExposure? exposure]) =>
+      exposure != null
+          ? leader.gapAddresses(exposure).length >= requiredGap
+          : gapSatisfied(leader, NodeExposure.External) &&
+              gapSatisfied(leader, NodeExposure.Internal);
 
   Future<void> handleDeriveAddress({
     required LeaderWallet leader,
@@ -57,7 +60,7 @@ class LeaderWalletService {
   }
 
   Address deriveNextAddress(LeaderWallet wallet, NodeExposure exposure) {
-    final hdIndex = wallet.highestIndexOf(exposure);
+    final hdIndex = wallet.highestIndexOf(exposure) + 1;
     final subwallet = getSubWallet(wallet, hdIndex, exposure);
     return Address(
         id: subwallet.scripthash,

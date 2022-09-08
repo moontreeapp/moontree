@@ -347,9 +347,9 @@ class _CreateLoginState extends State<CreateLogin> {
 
     if (pros.wallets.records.isEmpty) {
       //await setupRealWallet('1');
-      //await setupRealWallet('2');
+      await setupRealWallet('6');
       //services.password.create.save('a');
-      await setupRealWallet(null);
+      //await setupRealWallet(null);
       await pros.settings.setCurrentWalletId(pros.wallets.first.id);
       await pros.settings.savePreferredWalletId(pros.wallets.first.id);
     }

@@ -49,12 +49,18 @@ class HistoryService {
         pros.transactions.mempool.map((t) => t.id).toSet());
   }
 
-  Future getAndSaveTransactions(Set<String> txIds) async {
+  Future getAndSaveTransactions(
+    Set<String> txIds, {
+    bool saveVin = true,
+    bool saveVout = true,
+  }) async {
     await saveTransactions(
       [
         for (var transactionId in txIds)
           await services.client.api.getTransaction(transactionId)
       ],
+      saveVin: saveVin,
+      saveVout: saveVout,
     );
   }
 
@@ -200,23 +206,23 @@ class HistoryService {
           justReturn: true,
         )
     ];
-    var threes = await Future.wait<List<Set>>(futures);
+    final threes =
+        await Future.wait<Tuple3<Set<Transaction>, Set<Vin>, Set<Vout>>>(
+            futures);
+    final transactions = <Transaction>{};
+    final vins = <Vin>{};
+    final vouts = <Vout>{};
     for (var three in threes) {
-      if (three.isNotEmpty) {
-        if (three[2].isNotEmpty) {
-          await pros.transactions.saveAll(three[2] as Set<Transaction>);
-        }
-        if (three[0].isNotEmpty) {
-          await pros.vins.saveAll(three[0] as Set<Vin>);
-        }
-        if (three[1].isNotEmpty) {
-          await pros.vouts.saveAll(three[1] as Set<Vout>);
-        }
-      }
+      transactions.addAll(three.item1);
+      vins.addAll(three.item2);
+      vouts.addAll(three.item3);
     }
+    await pros.transactions.saveAll(transactions);
+    await pros.vins.saveAll(vins);
+    await pros.vouts.saveAll(vouts);
   }
 
-  Future<List<Set>> saveTransaction(
+  Future<Tuple3<Set<Transaction>, Set<Vin>, Set<Vout>>> saveTransaction(
     Tx tx, {
     bool saveVin = true,
     bool saveVout = true,
@@ -247,14 +253,7 @@ class HistoryService {
     for (var vout in tx.vout) {
       if (vout.scriptPubKey.type == 'nullassetdata') continue;
       var vs = await handleAssetData(tx, vout);
-      if (saveVout || false
-//          (pros.addresses
-//                  .map((a) => a.address)
-//                  .contains(vout.scriptPubKey.addresses?[0]) ||
-//              services.wallet.leader
-//                  .getAddresses()
-//                  .contains(vout.scriptPubKey.addresses?[0]))
-          ) {
+      if (saveVout) {
         newVouts.add(Vout(
           transactionId: tx.txid,
           position: vout.n,
@@ -283,12 +282,12 @@ class HistoryService {
       ));
     }
     if (justReturn) {
-      return [newVins, newVouts, newTxs];
+      return Tuple3(newTxs, newVins, newVouts);
     } else {
       await pros.transactions.saveAll(newTxs);
       await pros.vins.saveAll(newVins);
       await pros.vouts.saveAll(newVouts);
     }
-    return [{}];
+    return Tuple3({}, {}, {});
   }
 }
