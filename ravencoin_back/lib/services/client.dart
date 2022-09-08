@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
-import 'package:ravencoin_back/streams/wallet.dart';
 import 'package:ravencoin_back/utilities/lock.dart';
 import 'package:ravencoin_electrum/ravencoin_electrum.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -152,16 +151,6 @@ class SubscribeService {
     if (addresses.isNotEmpty) {
       await services.download.history.allDoneProcess();
     }
-    // recalculate balances once at the end, wait just in case
-    while (!await services.download.unspents.isDone) {
-      print('waiting, we almost never have to wait here...');
-      await Future.delayed(Duration(milliseconds: 100));
-    }
-    await services.balance.recalculateAllBalances();
-    streams.client.busy.add(false);
-    streams.client.activity.add(ActivityMessage(active: false));
-    startupProcessRunning = false;
-    print('startupProcessRunning DONE');
     return true;
   }
 
@@ -186,10 +175,6 @@ class SubscribeService {
     final wallet = address.wallet;
     if (wallet is LeaderWallet) {
       if (!services.wallet.leader.gapSatisfied(wallet, address.exposure)) {
-        //streams.wallet.deriveAddress.add(DeriveLeaderAddress(
-        //  leader: address.wallet! as LeaderWallet,
-        //  exposure: address.exposure,
-        //));
         await services.wallet.leader.handleDeriveAddress(
           leader: address.wallet! as LeaderWallet,
           exposure: address.exposure,
@@ -205,7 +190,8 @@ class SubscribeService {
         getTransactions: true,
       );
 
-  Future queueHistoryDownload(Address address) async {}
+  Future queueHistoryDownload(Address address) async =>
+      streams.download.address.add(address);
 
   Future saveStatusUpdate(Address address, String? status) async =>
       await pros.statuses.save(Status(
@@ -215,52 +201,57 @@ class SubscribeService {
       ));
 
   Future subscribeAddress(Address address) async {
-    //print('Subscribing to $address'); // Yes we are subscribing to all addresses
     if (!subscriptionHandlesAddress.keys.contains(address.id)) {
       subscriptionHandlesAddress[address.id] =
           (await services.client.api.subscribeAddress(address))
               .listen((String? status) async {
         print('UNSPENTS ${address.address}');
+        final addressStatus = address.status;
         await saveStatusUpdate(address, status);
-        if (address.status == null) {
+        if (addressStatus == null) {
+          // new address
           await maybeDerive(address);
           await pullUnspents(address);
           await queueHistoryDownload(address);
-        } else if (address.status?.status == null && status != null) {
+        } else if (addressStatus.status == null && status != null) {
+          // first transaction on address discovered
           await maybeDerive(address);
           await pullUnspents(address);
           await queueHistoryDownload(address);
-        } else if (address.status?.status != status) {
+        } else if (addressStatus.status != status) {
+          // new transaction on address discovered
           await pullUnspents(address);
           await queueHistoryDownload(address);
-        } // else == do nothing.
-        if (
-            // derive queue is empty
-            //services.wallet.leader.backlog.isEmpty &&
-            subscriptionHandlesAddress.keys.length ==
-                address.wallet!.addresses.length) {
-          // should just use unspents
-          await services.balance.recalculateAllBalances();
+        } else if (addressStatus.status == status) {
+          // do nothing.
         }
         if (address.wallet is LeaderWallet &&
-            services.wallet.leader.newLeaderProcessRunning &&
             services.wallet.leader.gapSatisfied(
-                address.wallet! as LeaderWallet, address.exposure)) {
-          if (pros.balances.isNotEmpty) {
-            streams.app.snack.add(Snack(message: 'Import Sucessful'));
+                address.wallet! as LeaderWallet, address.exposure) &&
+            subscriptionHandlesAddress.keys.length ==
+                address.wallet!.addresses.length) {
+          await services.balance.recalculateAllBalances();
+          if (startupProcessRunning) {
+            streams.client.busy.add(false);
+            streams.client.activity.add(ActivityMessage(active: false));
+            startupProcessRunning = false;
           }
-          streams.client.activity.add(ActivityMessage(
-              active: true,
-              title: 'Syncing with the network',
-              message: 'Downloading your transaction history...'));
+          if (services.wallet.leader.newLeaderProcessRunning) {
+            if (pros.balances.isNotEmpty) {
+              streams.app.snack.add(Snack(message: 'Import Sucessful'));
+            }
+            streams.client.activity.add(ActivityMessage(
+                active: true,
+                title: 'Syncing with the network',
+                message: 'Downloading your transaction history...'));
 
-          /// remove unnecessary vouts to minimize size of database and load time
-          await pros.vouts.clearUnnecessaryVouts();
+            /// remove unnecessary vouts to minimize size of database and load time
+            await pros.vouts.clearUnnecessaryVouts();
 
-          streams.client.busy.add(false);
-          streams.client.activity.add(ActivityMessage(active: false));
-          services.wallet.leader.newLeaderProcessRunning = false;
-          print('newLeaderProcess Done!');
+            streams.client.busy.add(false);
+            streams.client.activity.add(ActivityMessage(active: false));
+            services.wallet.leader.newLeaderProcessRunning = false;
+          }
         }
       });
     }

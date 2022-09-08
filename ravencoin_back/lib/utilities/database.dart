@@ -5,7 +5,6 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:proclaim/proclaim.dart';
 
 Future deleteDatabase() async {
-  await services.download.history.clearDownloadState();
   services.client.subscribe.subscriptionHandlesAddress.clear();
   services.client.subscribe.subscriptionHandlesAsset.clear();
   try {

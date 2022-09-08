@@ -10,7 +10,10 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'waiter.dart';
 
 class DownloadWaiter extends Waiter {
-  static const Duration queueTimer = Duration(seconds: 5);
+  static const Duration queueTimer = Duration(seconds: 1);
+
+  Set<Address> addresses = {};
+  Address? address;
 
   void init() {
     listen(
@@ -22,20 +25,29 @@ class DownloadWaiter extends Waiter {
     listen(
       'queueTimer',
       Stream.periodic(queueTimer),
-      (_) async => await processQueue(address),
+      (_) async => await processQueue(),
     );
   }
 
-  Future<void> processQueue(Address address) async {
+  Future<void> processQueue() async {
     // todo: only process if idle.
+    if (address != null || addresses.isEmpty) return;
+    address = addresses.first;
+    addresses.remove(address);
+    await downloadAddress();
+    address = null;
+  }
 
-    // send this to stream which is staggered.
+  Future<void> addToQueue(Address address) async {
+    addresses.add(address);
+  }
+
+  Future<void> downloadAddress() async {
+    // download history
     await services.download.history.getTransactions(
-      await services.download.history.getHistory(address, updateLeader: true),
+      await services.download.history.getHistory(address!),
     );
     // Get dangling transactions
     await services.download.history.allDoneProcess();
   }
-
-  Future<void> addToQueue(Address address) async {}
 }

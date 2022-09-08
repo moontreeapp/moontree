@@ -1,15 +1,9 @@
 import 'dart:async';
-import 'package:ravencoin_back/utilities/lock.dart';
 import 'package:tuple/tuple.dart';
 import 'package:ravencoin_electrum/ravencoin_electrum.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 class HistoryService {
-  final Set<String> _downloadQueried = {};
-  final _downloadQueriedLock = ReaderWriterLock();
-  int _downloaded = 0;
-  int _downloadQueriedLength = 0;
-
   /// called during import process, leader registry counts handled separately.
   Future<List<List<String>>> getHistories(List<Address> addresses) async {
     try {
@@ -39,10 +33,7 @@ class HistoryService {
   }
 
   /// called during address subscription
-  Future<List<String>> getHistory(
-    Address address, {
-    bool updateLeader = false,
-  }) async {
+  Future<List<String>> getHistory(Address address) async {
     try {
       final t = (await services.client.api.getHistory(address))
           .map((history) => history.txHash)
@@ -162,10 +153,6 @@ class HistoryService {
     if (transactionIds.isEmpty) {
       return;
     }
-    await _downloadQueriedLock.write(() {
-      _downloadQueried.addAll(transactionIds);
-      _downloadQueriedLength = _downloadQueried.length;
-    });
     var txs = <Tx>[];
     try {
       /// kinda a hack https://github.com/moontreeapp/moontree/issues/444#issuecomment-1101667621
@@ -183,7 +170,6 @@ class HistoryService {
       }
       txs = await Future.wait<Tx>(futures);
     }
-    _downloaded += transactionIds.length;
     await saveTransactions(
       txs,
       saveVin: saveVin,
@@ -194,20 +180,10 @@ class HistoryService {
   Future<void>? getTransaction(
     String transactionId, {
     bool saveVin = true,
-  }) async {
-    //if (filterOutPreviouslyDownloaded([transactionId]).isNotEmpty) {
-    await _downloadQueriedLock.write(() {
-      _downloadQueried.add(transactionId);
-      _downloadQueriedLength = _downloadQueried.length;
-    });
-    await saveTransaction(
-        await services.client.api.getTransaction(transactionId),
-        saveVin: saveVin);
-    _downloaded += 1;
-    //} else {
-    //  print('skipping: $transactionId');
-    //}
-  }
+  }) async =>
+      await saveTransaction(
+          await services.client.api.getTransaction(transactionId),
+          saveVin: saveVin);
 
   /// when an address status change: make our historic tx data match blockchain
   Future saveTransactions(
@@ -315,14 +291,4 @@ class HistoryService {
     }
     return [{}];
   }
-
-  Future<void> clearDownloadState() async {
-    await _downloadQueriedLock.write(() {
-      _downloadQueried.clear();
-    });
-    _downloaded = 0;
-    _downloadQueriedLength = 0;
-  }
-
-  bool get isComplete => _downloaded >= _downloadQueriedLength;
 }

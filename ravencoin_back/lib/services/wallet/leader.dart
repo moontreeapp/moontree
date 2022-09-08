@@ -1,7 +1,6 @@
 // ignore_for_file: omit_local_variable_types
 
 import 'package:equatable/equatable.dart';
-import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' show HDWallet;
 import 'package:bip39/bip39.dart' as bip39;
@@ -186,10 +185,6 @@ class LeaderWalletService {
       ));
     }
     await pros.addresses.saveAll(newAddresses);
-    // todo move to waiter
-    for (final address in newAddresses) {
-      await services.client.subscribe.toAddress(address);
-    }
   }
 }
 

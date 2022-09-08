@@ -8,9 +8,6 @@ enum ValueType { confirmed, unconfirmed }
 
 /// we use the electrum server directly for determining our UTXO set
 class UnspentService {
-  final Set<String> _scripthashesChecked = {};
-  final _scripthashesLock = ReaderWriterLock();
-
   void _maybeTriggerBackup(Iterable<ScripthashUnspent> unspents) {
     if (unspents.isNotEmpty && pros.unspents.isEmpty) {
       streams.app.triggers.add(ThresholdTrigger.backup);
@@ -45,9 +42,6 @@ class UnspentService {
     bool getTransactions = false,
   }) async {
     var utxos = <Unspent>{};
-
-    await _scripthashesLock
-        .write(() => _scripthashesChecked.addAll(scripthashes));
 
     /// update RVN call
     var rvnUtxos =
@@ -87,10 +81,4 @@ class UnspentService {
       }
     }
   }
-
-  /// during the initial start of the app a process is run to check every
-  /// address for updates, once we have checked them all, are done and can
-  /// recalculate balances.
-  Future<bool> get isDone => _scripthashesLock
-      .read(() => _scripthashesChecked.length >= pros.addresses.length);
 }
