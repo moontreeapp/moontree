@@ -18,7 +18,7 @@ extension WalletHasManyAddressesByExposure on Wallet {
 
 extension WalletHasOneHighestIndexByExposure on Wallet {
   int highestIndexOf(NodeExposure exposure) => addressesBy(exposure).fold(
-      0,
+      -1,
       (previousValue, element) =>
           element.hdIndex > previousValue ? element.hdIndex : previousValue);
 }

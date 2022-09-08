@@ -100,6 +100,7 @@ class HiveInitializer {
       await Hive.openBox<Security>('securities');
       await Hive.openBox<Status>('statuses');
       await Hive.openBox<Transaction>('transactions');
+      await Hive.openBox<Unspent>('unspents');
       await Hive.openBox<Vin>('vins');
       await Hive.openBox<Vout>('vouts');
     }
@@ -113,7 +114,6 @@ class HiveInitializer {
       //   defaults: CipherProclaim.defaults,
       // ));
       pros.ciphers.setSource(MapSource(CipherProclaim.defaults));
-      pros.unspents.setSource(MapSource(UnspentProclaim.defaults));
       pros.rates.setSource(HiveSource('rates'));
       pros.passwords.setSource(HiveSource('passwords'));
       pros.settings.setSource(HiveSource(
@@ -123,6 +123,7 @@ class HiveInitializer {
       pros.wallets.setSource(HiveSource('wallets'));
     }
     if ([HiveLoadingStep.All, HiveLoadingStep.Login].contains(step)) {
+      pros.unspents.setSource(HiveSource('unspents'));
       pros.addresses.setSource(HiveSource('addresses'));
       pros.balances.setSource(HiveSource('balances'));
       pros.blocks.setSource(HiveSource('blocks'));
