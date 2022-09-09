@@ -89,6 +89,17 @@ extension WalletHasManyGapAddresses on Wallet {
           address.status != null &&
           address.status!.status == null);
 
+  Address minimumEmptyAddress(NodeExposure exposure) {
+    final x = emptyAddresses(exposure).toList();
+    // KPWallets have only one address that is probably used
+    if (x.isEmpty) return addresses.first;
+    final y = x.fold(
+        999999999,
+        (int previousValue, Address element) =>
+            element.hdIndex < previousValue ? element.hdIndex : previousValue);
+    return x.where((element) => element.hdIndex == y).first;
+  }
+
   Iterable<Address> emptyAddressesAfterIndex(
     NodeExposure exposure,
     int index,
@@ -105,6 +116,15 @@ extension WalletHasManyGapAddresses on Wallet {
 
   Iterable<Address> gapAddresses(NodeExposure exposure) =>
       emptyAddressesAfterIndex(exposure, highestUsedIndex(exposure));
+
+  Address firstEmptyInGap(NodeExposure exposure) {
+    final gap = gapAddresses(exposure).toList();
+    // KPWallets have only one address that is probably used
+    if (gap.isEmpty) return addresses.first;
+    final lowest = gap.fold(double.maxFinite.toInt(),
+        (int prev, Address addr) => addr.hdIndex < prev ? addr.hdIndex : prev);
+    return gap.where((element) => element.hdIndex == lowest).first;
+  }
 }
 
 extension WalletHasManyEmptyInternalAddresses on Wallet {

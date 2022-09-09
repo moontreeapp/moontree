@@ -86,37 +86,6 @@ class LeaderWalletService {
       getSeedWallet(address.wallet as LeaderWallet)
           .subwallet(address.hdIndex, exposure: address.exposure);
 
-  /// returns the next internal or external node missing a history
-  String getNextEmptyAddress(
-    LeaderWallet leaderWallet, {
-    NodeExposure exposure = NodeExposure.Internal,
-    bool random = false,
-  }) {
-    return random
-        ? leaderWallet.getRandomUnusedAddress(exposure)!.address
-        : leaderWallet.getUnusedAddress(exposure)!.address;
-  }
-
-  /// returns the next change address
-  String getNextChangeAddress(LeaderWallet leaderWallet) {
-    return getNextEmptyAddress(leaderWallet, exposure: NodeExposure.Internal);
-  }
-
-  HDWallet getNextEmptyWallet(
-    LeaderWallet leaderWallet, {
-    NodeExposure exposure = NodeExposure.Internal,
-  }) {
-    var seedWallet = getSeedWallet(leaderWallet);
-    var i = 0;
-    while (true) {
-      var hdWallet = seedWallet.subwallet(i, exposure: exposure);
-      if (pros.vouts.byAddress.getAll(hdWallet.address!).isEmpty) {
-        return hdWallet;
-      }
-      i++;
-    }
-  }
-
   LeaderWallet? makeLeaderWallet(
     CipherBase cipher, {
     required CipherUpdate cipherUpdate,
@@ -167,8 +136,6 @@ class LeaderWalletService {
       await pros.wallets.save(leaderWallet);
     }
   }
-
-  HDWallet getChangeWallet(LeaderWallet wallet) => getNextEmptyWallet(wallet);
 
   /// deriveMoreAddresses also updates the cache we keep of highest saved
   /// addresses for each wallet-exposure. It does so after addresses are

@@ -97,78 +97,12 @@ class WalletService {
     }
   }
 
-  WalletBase getChangeWallet(Wallet wallet) {
-    if (wallet is LeaderWallet) {
-      return leader.getNextEmptyWallet(wallet);
-    }
-    if (wallet is SingleWallet) {
-      return single.getKPWallet(wallet);
-    }
-    throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
-  }
-
-  String getChangeAddress(Wallet wallet) {
-    if (wallet is LeaderWallet) {
-      return leader.getNextChangeAddress(wallet);
-    }
-    if (wallet is SingleWallet) {
-      return wallet.addresses.first.address;
-    }
-    throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
-  }
-
-  // new, fast cached way (cache generated and saved during download)
-  String getEmptyAddressFromCache(Wallet wallet, {bool random = false}) {
-    if (wallet is LeaderWallet) {
-      return leader.getNextEmptyAddress(wallet,
-          exposure: NodeExposure.External, random: random);
-    }
-    if (wallet is SingleWallet) {
-      return wallet.addresses.first.address;
-    }
-    throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
-  }
-
-  // old, slow reliable way to get an empty wallet
-  WalletBase getEmptyWalletFromDatabase(Wallet wallet,
-      {exposure = NodeExposure.External}) {
-    if (wallet is LeaderWallet) {
-      return leader.getNextEmptyWallet(wallet, exposure: NodeExposure.External);
-    }
-    if (wallet is SingleWallet) {
-      return single.getKPWallet(wallet);
-    }
-    throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
-  }
-
+  /// gets the first empty address in the gap
   String getEmptyAddress(
-    Wallet wallet, {
-    bool random = false,
-    bool internal = false,
+    Wallet wallet,
+    NodeExposure exposure, {
     String? address,
-  }) {
-    if (internal) {
-      try {
-        return address ?? services.wallet.getChangeAddress(wallet);
-      } catch (e) {
-        return address ??
-            services.wallet
-                .getEmptyWalletFromDatabase(
-                  wallet,
-                  exposure: NodeExposure.Internal,
-                )
-                .address!;
-      }
-    }
-    try {
-      return address ??
-          services.wallet.getEmptyAddressFromCache(
-            wallet,
-            random: random,
-          );
-    } catch (e) {
-      return address ??
-          services.wallet.getEmptyWalletFromDatabase(wallet).address!;
-    }
-  }
+  }) =>
+      //address ?? wallet.minimumEmptyAddress(exposure).address; // all
+      address ?? wallet.firstEmptyInGap(exposure).address; // gap only
 }

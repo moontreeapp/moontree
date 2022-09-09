@@ -35,16 +35,10 @@ class LeaderWallet extends Wallet {
           name: name,
           backedUp: backedUp,
         ) {
-    this.unusedInternalIndices = unusedInternalIndices ?? {};
-    this.unusedExternalIndices = unusedExternalIndices ?? {};
     _seed = seed;
   }
 
   Uint8List? _seed;
-
-  /// caching optimization
-  late Set<int> unusedInternalIndices;
-  late Set<int> unusedExternalIndices;
 
   factory LeaderWallet.from(
     LeaderWallet existing, {
@@ -63,10 +57,6 @@ class LeaderWallet extends Wallet {
         backedUp: backedUp ?? existing.backedUp,
         cipherUpdate: cipherUpdate ?? existing.cipherUpdate,
         name: name ?? existing.name,
-        unusedInternalIndices:
-            unusedInternalIndices ?? existing.unusedInternalIndices,
-        unusedExternalIndices:
-            unusedExternalIndices ?? existing.unusedExternalIndices,
         seed: seed ?? existing.seed,
       );
 
@@ -110,44 +100,4 @@ class LeaderWallet extends Wallet {
   String get mnemonic => bip39.entropyToMnemonic(entropy);
 
   String get entropy => hex.decrypt(encryptedEntropy, cipher!);
-
-  /// caching optimization ///
-  void addUnused(int hdIndex, NodeExposure exposure) =>
-      exposure == NodeExposure.Internal
-          ? addUnusedInternal(hdIndex)
-          : addUnusedExternal(hdIndex);
-  void removeUnused(int hdIndex, NodeExposure exposure) =>
-      exposure == NodeExposure.Internal
-          ? removeUnusedInternal(hdIndex)
-          : removeUnusedExternal(hdIndex);
-
-  void addUnusedInternal(int hdIndex) => unusedInternalIndices.add(hdIndex);
-  void addUnusedExternal(int hdIndex) => unusedExternalIndices.add(hdIndex);
-  void removeUnusedInternal(int hdIndex) =>
-      unusedInternalIndices.remove(hdIndex);
-  void removeUnusedExternal(int hdIndex) =>
-      unusedExternalIndices.remove(hdIndex);
-  Address? getUnusedAddress(NodeExposure exposure) =>
-      exposure == NodeExposure.Internal
-          ? unusedInternalAddress
-          : unusedExternalAddress;
-  Address? getRandomUnusedAddress(NodeExposure exposure) =>
-      exposure == NodeExposure.Internal
-          ? randomUnusedInternalAddress
-          : randomUnusedExternalAddress;
-
-  Address? get unusedInternalAddress {
-    return pros.addresses.byWalletExposureIndex
-        .getOne(id, NodeExposure.Internal, unusedInternalIndices.min);
-  }
-
-  Address? get unusedExternalAddress => pros.addresses.byWalletExposureIndex
-      .getOne(id, NodeExposure.External, unusedExternalIndices.min);
-
-  Address? get randomUnusedInternalAddress => pros
-      .addresses.byWalletExposureIndex
-      .getOne(id, NodeExposure.Internal, unusedInternalIndices.randomChoice);
-  Address? get randomUnusedExternalAddress => pros
-      .addresses.byWalletExposureIndex
-      .getOne(id, NodeExposure.External, unusedExternalIndices.randomChoice);
 }

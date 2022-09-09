@@ -73,10 +73,8 @@ class _WalletViewState extends State<WalletView> {
     if (wallet.cipher != null) {
       address = address ??
           (wallet is LeaderWallet
-              ? services.wallet.leader
-                  .getNextEmptyWallet(wallet as LeaderWallet,
-                      exposure: NodeExposure.External)
-                  .address
+              ? services.wallet.getEmptyAddress(
+                  wallet as LeaderWallet, NodeExposure.External)
               : services.wallet.single
                   .getKPWallet(wallet as SingleWallet)
                   .address);

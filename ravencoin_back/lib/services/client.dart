@@ -1,3 +1,5 @@
+// ignore_for_file: omit_local_variable_types
+
 import 'dart:async';
 import 'dart:io';
 
@@ -203,12 +205,13 @@ class SubscribeService {
       ));
 
   Future subscribeAddress(Address address) async {
-    final wallet = address.wallet!;
-    if (!subscriptionHandlesAddress.keys.contains(wallet.id)) {
-      subscriptionHandlesAddress[wallet.id] = {};
+    if (!subscriptionHandlesAddress.keys.contains(address.walletId)) {
+      subscriptionHandlesAddress[address.walletId] = {};
     }
-    if (!subscriptionHandlesAddress[wallet.id]!.keys.contains(address.id)) {
-      subscriptionHandlesAddress[wallet.id]![address.id] =
+    if (!subscriptionHandlesAddress[address.walletId]!
+        .keys
+        .contains(address.id)) {
+      subscriptionHandlesAddress[address.walletId]![address.id] =
           (await services.client.api.subscribeAddress(address))
               .listen((String? status) async {
         print('UNSPENTS ${address.address}');
@@ -231,11 +234,13 @@ class SubscribeService {
         } else if (addressStatus.status == status) {
           // do nothing.
         }
+        final wallet = address.wallet!;
         if (wallet is LeaderWallet &&
             services.wallet.leader.gapSatisfied(wallet) &&
-            subscriptionHandlesAddress[wallet.id]!.keys.length ==
+            subscriptionHandlesAddress[address.walletId]!.keys.length ==
                 wallet.addresses.length) {
-          await services.balance.recalculateAllBalances(walletIds: {wallet.id});
+          await services.balance
+              .recalculateAllBalances(walletIds: {address.walletId});
           if (startupProcessRunning) {
             streams.client.busy.add(false);
             streams.client.activity.add(ActivityMessage(active: false));
@@ -280,7 +285,7 @@ class SubscribeService {
   }
 
   void unsubscribeAddress(Address address) {
-    (subscriptionHandlesAddress[address.wallet!.id] ?? {})
+    (subscriptionHandlesAddress[address.walletId] ?? {})
         .remove(address.id)
         ?.cancel();
   }

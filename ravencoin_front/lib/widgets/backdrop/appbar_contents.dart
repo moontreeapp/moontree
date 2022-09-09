@@ -84,7 +84,11 @@ class BackdropAppBarContents extends StatelessWidget
             //        .client.subscribe.subscriptionHandlesAddress.keys.first]!
             //    .length);
             print(pros.addresses.byAddress
-                .getOne('RWfsXbVafJqmo4SYG3ddKjNsyCzaB4qH4Y'));
+                .getOne('msoSS9C1q5qLB7baepeVV2yPHHkmCEB5sB')!
+                .status!
+                .status);
+            //print(pros.rates.primaryIndex
+            //    .getOne(pros.securities.RVN, pros.securities.USD));
             //services.client.subscribe.subscriptionHandlesAddress.clear();
             //print(await services.client.subscribe.toAllAddresses());
             //for (var a in pros.addresses.records) print(a.address);
