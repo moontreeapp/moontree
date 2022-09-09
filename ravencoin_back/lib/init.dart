@@ -13,7 +13,6 @@ void initWaiters(HiveLoadingStep step) {
   if ([HiveLoadingStep.All, HiveLoadingStep.Login].contains(step)) {
     waiters.client.init();
     waiters.address.init();
-    waiters.unspent.init();
     //waiters.asset.init();
     waiters.subscription.init();
     waiters.block.init();

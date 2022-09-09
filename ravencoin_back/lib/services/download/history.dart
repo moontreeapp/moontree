@@ -4,6 +4,11 @@ import 'package:ravencoin_electrum/ravencoin_electrum.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 class HistoryService {
+  //bool isDownloaded(String symbol) {
+  //  return pros..asset.isDownloaded(symbol);
+  //}
+  bool busy = false;
+
   /// called during import process, leader registry counts handled separately.
   Future<List<List<String>>> getHistories(List<Address> addresses) async {
     try {
@@ -54,6 +59,7 @@ class HistoryService {
     bool saveVin = true,
     bool saveVout = true,
   }) async {
+    busy = true;
     await saveTransactions(
       [
         for (var transactionId in txIds)
@@ -62,11 +68,14 @@ class HistoryService {
       saveVin: saveVin,
       saveVout: saveVout,
     );
+    busy = false;
   }
 
   Future allDoneProcess() async {
     //print('TRANSACTIONS DOWNLOADED');
+    busy = true;
     await saveDanglingTransactions();
+    busy = false;
     //print('ALL DONE!');
     //services.download.asset.allAdminsSubs(); // why?
     // remove vouts pointing to addresses we don't own?
@@ -144,7 +153,8 @@ class HistoryService {
   }
 
   Iterable<String> filterOutPreviouslyDownloaded(
-          Iterable<String> transactionIds) =>
+    Iterable<String> transactionIds,
+  ) =>
       transactionIds
           .where((transactionId) => !pros.vouts.records
               .map((e) => e.transactionId)
@@ -159,6 +169,7 @@ class HistoryService {
     if (transactionIds.isEmpty) {
       return;
     }
+    busy = true;
     var txs = <Tx>[];
     try {
       /// kinda a hack https://github.com/moontreeapp/moontree/issues/444#issuecomment-1101667621
@@ -181,6 +192,7 @@ class HistoryService {
       saveVin: saveVin,
       saveVout: saveVout,
     );
+    busy = false;
   }
 
   Future<void>? getTransaction(

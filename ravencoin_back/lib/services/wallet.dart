@@ -97,12 +97,13 @@ class WalletService {
     }
   }
 
-  /// gets the first empty address in the gap
+  /// gets the first empty address
   String getEmptyAddress(
     Wallet wallet,
     NodeExposure exposure, {
     String? address,
   }) =>
-      //address ?? wallet.minimumEmptyAddress(exposure).address; // all
-      address ?? wallet.firstEmptyInGap(exposure).address; // gap only
+      address ?? wallet.minimumEmptyAddress(exposure).address; // all
+  //address ?? wallet.firstEmptyInGap(exposure).address; // gap only
+  /// actaully we should fill all the gaps first according to bip44 spec
 }

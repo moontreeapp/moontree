@@ -29,6 +29,7 @@ class ImportWaiter extends Waiter {
               firstWallet = false;
             }
             // send user to see new wallet
+            services.wallet.leader.newLeaderProcessRunning = true;
             streams.import.success.add(null);
             streams.import.result.add(importRequest);
             streams.app.setting.add(null);

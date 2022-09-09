@@ -14,3 +14,4 @@ part 'transaction.dart';
 part 'vin.dart';
 part 'vout.dart';
 part 'wallet.dart';
+part 'unspent.dart';

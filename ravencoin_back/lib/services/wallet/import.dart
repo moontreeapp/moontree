@@ -140,15 +140,13 @@ class ImportWalletService {
     ];
   }
 
-  Future<HandleResult> handleMnemonics(String text) async {
-    var wallet = services.wallet.create(
-      walletType: WalletType.leader,
-      cipherUpdate: services.cipher.currentCipherUpdate,
-      secret: text,
-      alwaysReturn: true,
-    );
-    return await attemptWalletSave(wallet);
-  }
+  Future<HandleResult> handleMnemonics(String text) async =>
+      await attemptWalletSave(services.wallet.create(
+        walletType: WalletType.leader,
+        cipherUpdate: services.cipher.currentCipherUpdate,
+        secret: text,
+        alwaysReturn: true,
+      ));
 
   /*
   Future<HandleResult> handleMasterKey(String text) async {
@@ -158,25 +156,21 @@ class ImportWalletService {
   }
   */
 
-  Future<HandleResult> handlePrivateKey(String text) async {
-    var wallet = services.wallet.create(
-      walletType: WalletType.single,
-      cipherUpdate: services.cipher.currentCipherUpdate,
-      secret: services.wallet.single.privateKeyToWif(text),
-      alwaysReturn: true,
-    );
-    return attemptWalletSave(wallet);
-  }
+  Future<HandleResult> handlePrivateKey(String text) async =>
+      attemptWalletSave(services.wallet.create(
+        walletType: WalletType.single,
+        cipherUpdate: services.cipher.currentCipherUpdate,
+        secret: services.wallet.single.privateKeyToWif(text),
+        alwaysReturn: true,
+      ));
 
-  Future<HandleResult> handleWIF(String text) async {
-    var wallet = services.wallet.create(
-      walletType: WalletType.single,
-      cipherUpdate: services.cipher.currentCipherUpdate,
-      secret: text,
-      alwaysReturn: true,
-    );
-    return attemptWalletSave(wallet);
-  }
+  Future<HandleResult> handleWIF(String text) async =>
+      attemptWalletSave(services.wallet.create(
+        walletType: WalletType.single,
+        cipherUpdate: services.cipher.currentCipherUpdate,
+        secret: text,
+        alwaysReturn: true,
+      ));
 
   Future<HandleResult> handleBip38(String text) async {
     /// check for bip38 encryption

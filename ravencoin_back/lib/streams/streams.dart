@@ -1,7 +1,6 @@
 import 'asset.dart';
 import 'app.dart';
 import 'create.dart';
-import 'download.dart';
 import 'reissue.dart';
 import 'cipher.dart';
 import 'client.dart';
@@ -17,7 +16,6 @@ class streams {
   static final cipher = CipherStreams();
   static final client = ClientStreams();
   static final create = CreateStreams();
-  static final download = DownloadStreams();
   static final reissue = ReissueStreams();
   static final metadata = MetadataStreams();
   static final password = PasswordStreams();

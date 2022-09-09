@@ -78,16 +78,16 @@ class _HoldingList extends State<HoldingList> {
         //}
       }
     }));
-    listeners.add(pros.addresses.batchedChanges
-        .listen((List<Change<Address>> changes) async {
-      var interimAddresses = Current.wallet.addresses.toSet();
-      if (addresses != interimAddresses) {
-        print('triggered by addresses');
-        setState(() {
-          addresses = interimAddresses;
-        });
-      }
-    }));
+    //listeners.add(pros.addresses.batchedChanges
+    //    .listen((List<Change<Address>> changes) async {
+    //  var interimAddresses = Current.wallet.addresses.toSet();
+    //  if (addresses != interimAddresses) {
+    //    print('triggered by addresses');
+    //    setState(() {
+    //      addresses = interimAddresses;
+    //    });
+    //  }
+    //}));
 
     /// when the app becomes active again refresh the front end
     listeners.add(streams.app.active.listen((bool active) async {
@@ -153,7 +153,10 @@ class _HoldingList extends State<HoldingList> {
 
     /// if they have removed all assets and rvn from wallet, for each asset we've
     /// ever held, create empty Balance, and empty AssetHolding.
-    if (addresses.isNotEmpty && balances.isEmpty && !transactions.isEmpty) {
+    if (!services.wallet.leader.newLeaderProcessRunning &&
+        addresses.isNotEmpty &&
+        balances.isEmpty &&
+        transactions.isNotEmpty) {
       ///https://github.com/moontreeapp/moontreeV1/issues/648
       //for (var security in utils.securityFromTransactions(transactions)) {
       //  balances.add(Balance(
@@ -186,9 +189,7 @@ class _HoldingList extends State<HoldingList> {
     }
 
     /// removing this, only served a purpose during
-    return balances.isEmpty &&
-            addresses.isEmpty &&
-            streams.import.result.value != null
+    return balances.isEmpty && streams.import.result.value != null
         ? components.empty.getAssetsPlaceholder(context,
             scrollController: widget.scrollController,
             count: max(holdingCount, 1),

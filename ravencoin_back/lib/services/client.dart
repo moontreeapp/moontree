@@ -152,9 +152,9 @@ class SubscribeService {
     for (var address in otherAddresses) {
       await subscribeAddress(address);
     }
-    if (addresses.isNotEmpty) {
-      await services.download.history.allDoneProcess();
-    }
+    //if (addresses.isNotEmpty) {
+    //  await services.download.history.allDoneProcess();
+    //}
     return true;
   }
 
@@ -194,8 +194,8 @@ class SubscribeService {
         getTransactions: true,
       );
 
-  Future queueHistoryDownload(Address address) async =>
-      streams.download.address.add(address);
+  void queueHistoryDownload(Address address) =>
+      services.download.queue.update(address);
 
   Future saveStatusUpdate(Address address, String? status) async =>
       await pros.statuses.save(Status(
@@ -219,18 +219,22 @@ class SubscribeService {
         await saveStatusUpdate(address, status);
         if (addressStatus == null) {
           // new address
+          var s = Stopwatch()..start();
           await maybeDerive(address);
+          print('maybeDerive: ${s.elapsed}');
           await pullUnspents(address);
-          //await queueHistoryDownload(address); // perhaps we can just in time
+          print('pullUnspents: ${s.elapsed}');
+          queueHistoryDownload(address);
+          print('queueHistoryDownload: ${s.elapsed}');
         } else if (addressStatus.status == null && status != null) {
           // first transaction on address discovered
           await maybeDerive(address);
           await pullUnspents(address);
-          //await queueHistoryDownload(address); // perhaps we can just in time
+          queueHistoryDownload(address);
         } else if (addressStatus.status != status) {
           // new transaction on address discovered
           await pullUnspents(address);
-          //await queueHistoryDownload(address); // perhaps we can just in time
+          queueHistoryDownload(address);
         } else if (addressStatus.status == status) {
           // do nothing.
         }
@@ -241,11 +245,9 @@ class SubscribeService {
                 wallet.addresses.length) {
           await services.balance
               .recalculateAllBalances(walletIds: {address.walletId});
-          if (startupProcessRunning) {
-            streams.client.busy.add(false);
-            streams.client.activity.add(ActivityMessage(active: false));
-            startupProcessRunning = false;
-          }
+          streams.client.busy.add(false);
+          streams.client.activity.add(ActivityMessage(active: false));
+          startupProcessRunning = false;
           if (services.wallet.leader.newLeaderProcessRunning) {
             if (pros.balances.isNotEmpty) {
               streams.app.snack.add(Snack(message: 'Import Sucessful'));
@@ -256,10 +258,8 @@ class SubscribeService {
                 message: 'Downloading your transaction history...'));
 
             /// remove unnecessary vouts to minimize size of database and load time
-            await pros.vouts.clearUnnecessaryVouts();
+            //await pros.vouts.clearUnnecessaryVouts();
 
-            streams.client.busy.add(false);
-            streams.client.activity.add(ActivityMessage(active: false));
             services.wallet.leader.newLeaderProcessRunning = false;
           }
         }
