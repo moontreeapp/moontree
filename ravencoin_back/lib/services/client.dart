@@ -214,6 +214,9 @@ class SubscribeService {
       subscriptionHandlesAddress[address.walletId]![address.id] =
           (await services.client.api.subscribeAddress(address))
               .listen((String? status) async {
+        if (!streams.client.busy.value) {
+          streams.client.busy.add(true);
+        }
         print('UNSPENTS-${address.address}');
         final addressStatus = address.status;
         await saveStatusUpdate(address, status);
@@ -236,7 +239,7 @@ class SubscribeService {
           await pullUnspents(address);
           queueHistoryDownload(address);
         } else if (addressStatus.status == status) {
-          return;
+          // do nothing
         }
         final wallet = address.wallet!;
         if (wallet is LeaderWallet &&
@@ -245,9 +248,9 @@ class SubscribeService {
                 wallet.addresses.length) {
           await services.balance
               .recalculateAllBalances(walletIds: {address.walletId});
+          startupProcessRunning = false;
           streams.client.busy.add(false);
           streams.client.activity.add(ActivityMessage(active: false));
-          startupProcessRunning = false;
           if (services.wallet.leader.newLeaderProcessRunning) {
             if (pros.balances.isNotEmpty) {
               streams.app.snack.add(Snack(message: 'Import Sucessful'));
@@ -257,6 +260,7 @@ class SubscribeService {
                 print('$record --- ${record.vout}');
               }
             }
+
             streams.client.activity.add(ActivityMessage(
                 active: true,
                 title: 'Syncing with the network',

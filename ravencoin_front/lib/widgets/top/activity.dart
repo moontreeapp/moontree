@@ -29,14 +29,10 @@ class _ActivityLightState extends State<ActivityLight>
       }
     }));
     listeners.add(streams.client.busy.listen((bool value) async {
-      print(value);
-      if (!services.client.subscribe.startupProcessRunning) {
-        if (!connectionBusy && value) {
-          setState(() => connectionBusy = value);
-        } else if (connectionBusy && !value) {
-          // todo wait til a good time to stop
-          setState(() => connectionBusy = value);
-        }
+      if (!connectionBusy && value) {
+        setState(() => connectionBusy = value);
+      } else if (connectionBusy && !value) {
+        setState(() => connectionBusy = value);
       }
     }));
     listeners.add(streams.app.page.listen((value) {
@@ -59,11 +55,7 @@ class _ActivityLightState extends State<ActivityLight>
   @override
   Widget build(BuildContext context) {
     return pageTitle == 'Login'
-        ? Container(
-            height: 32,
-            width: 32,
-            color: Colors.red,
-          )
+        ? Container()
         : connectionBusy
             ? GestureDetector(
                 onTap: () => components.message.giveChoices(
@@ -88,10 +80,6 @@ class _ActivityLightState extends State<ActivityLight>
                       alignment: Alignment.center,
                     )),
               )
-            : Container(
-                height: 32,
-                width: 32,
-                color: Colors.blue,
-              );
+            : Container();
   }
 }

@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
+import 'package:ravencoin_back/streams/client.dart';
 
 class QueueService {
+  bool updated = false;
   Set<Address> addresses = {};
   Address? address;
   List<Set<String>> transactions = [];
@@ -36,6 +38,8 @@ class QueueService {
     periodic = null;
     dangling.clear();
     streams.client.queue.add(false);
+    streams.client.busy.add(false);
+    streams.client.activity.add(ActivityMessage(active: false));
   }
 
   Future<void> update({
@@ -43,6 +47,7 @@ class QueueService {
     Set<String>? txids,
     bool processToo = true,
   }) async {
+    updated = true;
     dangling.add('this item represents dangling transactions on frontend');
     if (address != null) {
       if (transactions.isEmpty && addresses.isEmpty) {
@@ -77,6 +82,9 @@ class QueueService {
         services.download.history.busy) {
       retry();
       return;
+    }
+    if (!streams.client.busy.value) {
+      streams.client.busy.add(true);
     }
     if (transactions.isNotEmpty) {
       streams.client.queue.add(true);
