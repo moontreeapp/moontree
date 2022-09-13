@@ -179,6 +179,7 @@ class HistoryService {
         /// (saveVin == false) so in that case go straight to catch clause:
         throw Exception();
       }
+      print('getting transactionIds $transactionIds');
       txs = await services.client.api.getTransactions(transactionIds);
     } catch (e) {
       var futures = <Future<Tx>>[];

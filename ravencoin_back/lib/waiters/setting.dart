@@ -37,7 +37,7 @@ class SettingWaiter extends Waiter {
     */
 
     listen(
-        'settings.changes',
+        'settings.changes.electrum',
         pros.settings.changes.where((change) =>
             (change is Added || change is Updated) &&
             [
@@ -48,5 +48,16 @@ class SettingWaiter extends Waiter {
               SettingName.Electrum_PortTest,
             ].contains(change.record.name)),
         (_) => services.client.createClient());
+
+    /// to reduce listener bloat, this has been added on the function called to
+    /// set the value in services.downloads.queue
+    //listen(
+    //    'settings.changes.download',
+    //    pros.settings.changes.where((change) =>
+    //        (change is Added || change is Updated) &&
+    //        [
+    //          SettingName.No_History,
+    //        ].contains(change.record.name)),
+    //    (_) => services.download.queue.process());
   }
 }

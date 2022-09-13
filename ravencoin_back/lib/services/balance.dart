@@ -73,14 +73,12 @@ class BalanceService {
       var unspent = unspents[randomIndex];
       unspents.removeAt(randomIndex);
       gathered += unspent.value;
-      var vout = pros.vouts.byTransactionPosition
-          .getOne(unspent.transactionId, unspent.position);
+      var vout = unspent.vout;
       if (vout == null) {
         await services.download.history.getAndSaveTransactions(
           {unspent.transactionId},
         );
-        vout = pros.vouts.byTransactionPosition
-            .getOne(unspent.transactionId, unspent.position)!;
+        vout = unspent.vout!;
       }
       collection.add(vout);
     }

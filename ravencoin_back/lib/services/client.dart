@@ -195,7 +195,7 @@ class SubscribeService {
       );
 
   void queueHistoryDownload(Address address) =>
-      services.download.queue.update(address);
+      services.download.queue.update(address: address);
 
   Future saveStatusUpdate(Address address, String? status) async =>
       await pros.statuses.save(Status(
@@ -214,7 +214,7 @@ class SubscribeService {
       subscriptionHandlesAddress[address.walletId]![address.id] =
           (await services.client.api.subscribeAddress(address))
               .listen((String? status) async {
-        print('UNSPENTS ${address.address}');
+        print('UNSPENTS-${address.address}');
         final addressStatus = address.status;
         await saveStatusUpdate(address, status);
         if (addressStatus == null) {
@@ -236,7 +236,7 @@ class SubscribeService {
           await pullUnspents(address);
           queueHistoryDownload(address);
         } else if (addressStatus.status == status) {
-          // do nothing.
+          return;
         }
         final wallet = address.wallet!;
         if (wallet is LeaderWallet &&
@@ -251,6 +251,11 @@ class SubscribeService {
           if (services.wallet.leader.newLeaderProcessRunning) {
             if (pros.balances.isNotEmpty) {
               streams.app.snack.add(Snack(message: 'Import Sucessful'));
+              print(pros.unspents.records.length);
+              print(pros.vouts.records.length);
+              for (var record in pros.unspents.records) {
+                print('$record --- ${record.vout}');
+              }
             }
             streams.client.activity.add(ActivityMessage(
                 active: true,

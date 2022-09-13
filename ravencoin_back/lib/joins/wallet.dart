@@ -109,10 +109,13 @@ extension WalletHasManyGapAddresses on Wallet {
           address.exposure == exposure &&
           address.status?.status == null);
 
-  int highestUsedIndex(NodeExposure exposure) => usedAddresses(exposure).fold(
-      -1,
-      (int previousValue, Address element) =>
-          element.hdIndex > previousValue ? element.hdIndex : previousValue);
+  int highestUsedIndex(NodeExposure exposure) =>
+      usedAddresses(exposure).toList().fold(
+          -1,
+          (int previousValue, Address element) =>
+              element.hdIndex > previousValue
+                  ? element.hdIndex
+                  : previousValue);
 
   Iterable<Address> gapAddresses(NodeExposure exposure) =>
       emptyAddressesAfterIndex(exposure, highestUsedIndex(exposure));

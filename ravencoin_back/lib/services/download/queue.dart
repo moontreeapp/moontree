@@ -1,13 +1,30 @@
 import 'dart:async';
 
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/streams/app.dart';
 
 class QueueService {
   Set<Address> addresses = {};
   Address? address;
+  List<Set<String>> transactions = [];
+  Set<String>? transactionSet;
+  Set<String> dangling = {};
 
   static const Duration queueTimer = Duration(seconds: 1);
   StreamSubscription? periodic;
+
+  /// this settings controls the behavior of this service
+  Future setNoHistory(bool value) async {
+    await pros.settings
+        .save(Setting(name: SettingName.No_History, value: value));
+
+    /// might belong in waiter but no need to make a new waiter just for this.
+    if (value) {
+      await reset();
+    } else {
+      await process();
+    }
+  }
 
   void retry() => periodic == null
       ? periodic =
@@ -17,41 +34,81 @@ class QueueService {
   Future reset() async {
     await periodic?.cancel();
     periodic = null;
+    dangling.clear();
+    streams.client.queue.add(false);
   }
 
-  Future<void> update(Address address) async {
-    addresses.add(address);
-    await process();
+  Future<void> update({
+    Address? address,
+    Set<String>? txids,
+    bool processToo = true,
+  }) async {
+    if (address != null) {
+      addresses.add(address);
+      streams.client.queue.add(true);
+    }
+    if (txids != null && txids.isNotEmpty) {
+      transactions.add(txids);
+      streams.client.queue.add(true);
+    }
+    if (processToo) {
+      unawaited(process());
+    }
   }
 
   Future<void> process() async {
     // todo: only process if idle.
-    if (addresses.isEmpty) {
+    if ((transactions.isEmpty && addresses.isEmpty) ||
+        pros.settings.noHistory) {
       await reset();
+      return;
     }
-    if (address != null ||
+    if (transactionSet != null ||
+        address != null ||
         services.client.subscribe.startupProcessRunning ||
         services.wallet.leader.newLeaderProcessRunning ||
         services.download.history.busy) {
       retry();
       return;
     }
-    address = addresses.first;
-    addresses.remove(address);
-    await downloadAddress();
+    if (transactions.isNotEmpty) {
+      streams.client.queue.add(true);
+      transactionSet = transactions.first;
+      transactions.remove(transactionSet);
+      await downloadTransactions();
+    } else if (addresses.isNotEmpty) {
+      streams.client.queue.add(true);
+      address = addresses.first;
+      addresses.remove(address);
+      await downloadAddress();
+    }
+  }
+
+  Future<void> downloadTransactions() async {
+    await services.download.history.getAndSaveTransactions(transactionSet!);
+    transactionSet = null;
+    await resetOrProcess();
   }
 
   Future<void> downloadAddress() async {
-    // download history
     await services.download.history.getTransactions(
       await services.download.history.getHistory(address!),
     );
-    if (addresses.isEmpty) {
-      // Get dangling transactions
+    address = null;
+    await resetOrProcess();
+  }
+
+  Future<void> resetOrProcess() async {
+    if (transactions.isEmpty && addresses.isEmpty) {
+      dangling.add('this item represents dangling transactions on frontend');
+      streams.client.queue.add(true);
       await services.download.history.allDoneProcess();
+      if (pros.transactions.records.isNotEmpty) {
+        streams.app.snack
+            .add(Snack(message: 'Transaction history successfully download!'));
+      }
       await reset();
     } else {
-      address = null;
       await process();
     }
   }

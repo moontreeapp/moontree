@@ -47,7 +47,9 @@ class LeaderWaiter extends Waiter {
         print('connected/CIPHER ${tuple.item1} ${tuple.item2}');
         if (tuple.item2.record.cipherType != CipherType.None) {
           pros.wallets.leaders.forEach((wallet) =>
-              services.wallet.leader.handleDeriveAddress(leader: wallet));
+              !services.wallet.leader.gapSatisfied(wallet)
+                  ? services.wallet.leader.handleDeriveAddress(leader: wallet)
+                  : () {});
         }
       },
     );

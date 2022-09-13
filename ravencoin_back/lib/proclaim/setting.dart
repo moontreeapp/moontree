@@ -82,4 +82,6 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
   Future incrementLoginAttempts() async =>
       await saveLoginAttempts(loginAttempts + <DateTime>[DateTime.now()]);
   Future resetLoginAttempts() async => await saveLoginAttempts([]);
+
+  bool get noHistory => primaryIndex.getOne(SettingName.No_History)!.value;
 }

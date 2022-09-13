@@ -43,15 +43,17 @@ class UnspentService {
     var utxos = <Unspent>{};
 
     /// update RVN call
-    var rvnUtxos =
-        (await services.client.api.getUnspents(scripthashes)).expand((i) => i);
+    var rvnUtxos = (await services.client.api.getUnspents(scripthashes))
+        .expand((i) => i)
+        .toList();
     for (var utxo in rvnUtxos) {
       utxos.add(Unspent.fromScripthashUnspent(wallet.id, utxo));
     }
 
     /// update assets call
     var assetUtxos = (await services.client.api.getAssetUnspents(scripthashes))
-        .expand((i) => i);
+        .expand((i) => i)
+        .toList();
     for (final utxo in assetUtxos) {
       // should never be null but can't hurt to be safe. this filters out utxos
       // that are for assets, but have a null symbol which we would interpret as
@@ -72,9 +74,15 @@ class UnspentService {
     await pros.unspents.removeAll(existing.difference(utxos));
     await pros.unspents.saveAll(utxos.difference(existing));
     if (getTransactions && utxos.isNotEmpty) {
-      await services.download.history.getAndSaveTransactions(
-        utxos.map((e) => e.transactionId).toSet(),
-      );
+      /// we don't want to queue these because that makes it hard to know when
+      /// vouts are downloaded for these unspents. If we await the download
+      /// here, instead, we can easily make the send button available when vouts
+      /// for all unspents are downloaded
+      //await services.download.queue.update(
+      //  txids: utxos.map((e) => e.transactionId).toSet(),
+      //);
+      await services.download.history
+          .getAndSaveTransactions(utxos.map((e) => e.transactionId).toSet());
     }
   }
 }
