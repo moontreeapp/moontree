@@ -8,6 +8,7 @@ class HistoryService {
   //  return pros..asset.isDownloaded(symbol);
   //}
   bool busy = false;
+  int calledAllDoneProcess = 0;
 
   /// called during import process, leader registry counts handled separately.
   Future<List<List<String>>> getHistories(List<Address> addresses) async {
@@ -74,6 +75,7 @@ class HistoryService {
   Future allDoneProcess() async {
     //print('TRANSACTIONS DOWNLOADED');
     busy = true;
+    calledAllDoneProcess += 1;
     await saveDanglingTransactions();
     busy = false;
     //print('ALL DONE!');

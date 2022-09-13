@@ -76,7 +76,9 @@ class BackdropAppBarContents extends StatelessWidget
 
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
-          onTap: () async {},
+          onTap: () async {
+            print(services.download.history.calledAllDoneProcess);
+          },
           child: appBar,
         )
       : appBar;

@@ -45,10 +45,16 @@ class QueueService {
   }) async {
     dangling.add('this item represents dangling transactions on frontend');
     if (address != null) {
+      if (transactions.isEmpty && addresses.isEmpty) {
+        services.download.history.calledAllDoneProcess = 0;
+      }
       addresses.add(address);
       streams.client.queue.add(true);
     }
     if (txids != null && txids.isNotEmpty) {
+      if (transactions.isEmpty && addresses.isEmpty) {
+        services.download.history.calledAllDoneProcess = 0;
+      }
       transactions.add(txids);
       streams.client.queue.add(true);
     }
