@@ -26,6 +26,7 @@ import 'package:ravencoin_front/pages/settings/feedback.dart';
 import 'package:ravencoin_front/pages/settings/import.dart';
 import 'package:ravencoin_front/pages/settings/language.dart';
 import 'package:ravencoin_front/pages/settings/network.dart';
+import 'package:ravencoin_front/pages/settings/network_options.dart';
 import 'package:ravencoin_front/pages/settings/advanced.dart';
 import 'package:ravencoin_front/pages/settings/preferences.dart';
 import 'package:ravencoin_front/pages/settings/support.dart';
@@ -127,6 +128,7 @@ class pages {
         '/settings/feedback': (context) => Feedback(),
         '/settings/import': (context) => Import(),
         '/settings/network': (context) => ElectrumNetwork(),
+        '/settings/network/options': (context) => NetworkOptionsPage(),
         '/settings/preferences': (context) => Preferences(),
         '/settings/support': (context) => Support(),
         '/settings/technical': (context) => TechnicalView(),

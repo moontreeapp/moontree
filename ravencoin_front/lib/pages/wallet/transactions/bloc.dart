@@ -47,6 +47,7 @@ class TransactionsBloc {
   Security get security => data['holding']!.security;
   List<Balance> get currentHolds => Current.holdings;
   List<TransactionRecord> get currentTxs {
+    if (pros.settings.noHistory) return [];
     if (currentTxsCache == null) {
       currentTxsCache = services.transaction.getTransactionRecords(
           wallet: Current.wallet, securities: {security});

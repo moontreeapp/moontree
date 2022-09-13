@@ -34,26 +34,24 @@ class _DownloadQueueCount extends State<DownloadQueueCount> {
     final transactions = services.download.queue.transactions.length +
         services.download.queue.dangling.length;
     final both = addresses > 0 && transactions > 0;
-    return Container(
-        alignment: Alignment.center,
-        child: Column(
-          children: [
-            Text(
-              'download queue count: '
-              '${addresses + transactions}',
-              style: Theme.of(context).textTheme.subtitle1,
-            ),
-            if (both)
-              Text(
-                '${transactions} transactions',
-                style: Theme.of(context).textTheme.subtitle1,
-              ),
-            if (both)
-              Text(
-                '${addresses} addresses',
-                style: Theme.of(context).textTheme.subtitle1,
-              ),
-          ],
-        ));
+    return Column(
+      children: [
+        Text(
+          'download queue count: '
+          '${addresses + transactions}',
+          style: Theme.of(context).textTheme.subtitle1,
+        ),
+        if (both)
+          Text(
+            '${transactions} transactions',
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
+        if (both)
+          Text(
+            '${addresses} addresses',
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
+      ],
+    );
   }
 }

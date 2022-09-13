@@ -9,13 +9,6 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
-enum NetworkChoice {
-  ravencoin,
-  evrmore,
-  //travencoin,
-  //tevrmore,
-}
-
 class ElectrumNetwork extends StatefulWidget {
   final dynamic data;
   const ElectrumNetwork({this.data}) : super();
@@ -35,7 +28,6 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
   bool pressed = false;
   bool enableSubmit = false;
   ConnectionStatus? connectionStatus;
-  NetworkChoice? networkChoice = NetworkChoice.ravencoin;
 
   @override
   void initState() {
@@ -94,16 +86,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
                 padding:
                     EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
                 child: serverTextField)),
-        SliverToBoxAdapter(
-            child: Padding(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
-                child: DownloadQueueCount())),
-        SliverToBoxAdapter(
-            child: Padding(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
-                child: networkOptions)),
+
         //SliverToBoxAdapter(
         //    child: Container(height: MediaQuery.of(context).size.height / 2)),
         SliverFillRemaining(
@@ -130,34 +113,6 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
         onEditingComplete: () {
           network.text = network.text.trim();
         },
-      ));
-
-  Widget get networkOptions => Container(
-      height: 200,
-      alignment: Alignment.bottomCenter,
-      child: Column(
-        children: <Widget>[
-          RadioListTile<NetworkChoice>(
-            title: const Text('Ravencoin (mainnet)'),
-            value: NetworkChoice.ravencoin,
-            groupValue: networkChoice,
-            onChanged: (NetworkChoice? value) {
-              setState(() {
-                networkChoice = value;
-              });
-            },
-          ),
-          RadioListTile<NetworkChoice>(
-            title: const Text('Evrmore (mainnet)'),
-            value: NetworkChoice.evrmore,
-            groupValue: networkChoice,
-            onChanged: (NetworkChoice? value) {
-              setState(() {
-                networkChoice = value;
-              });
-            },
-          ),
-        ],
       ));
 
   Widget get serverTextField => TextFieldFormatted(

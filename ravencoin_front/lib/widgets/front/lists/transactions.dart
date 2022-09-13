@@ -89,20 +89,29 @@ class _TransactionListState extends State<TransactionList> {
   Widget build(BuildContext context) {
     transactions = widget.transactions ??
         services.transaction.getTransactionRecords(wallet: Current.wallet);
-    return transactions.isEmpty
-        //? components.empty.transactions(context, msg: widget.msg)
-        ? components.empty.getTransactionsPlaceholder(context,
-            scrollController: widget.scrollController!,
-            count: min(10, transactionCount))
-        : Container(
-            alignment: Alignment.center,
-            child:
-                //RefreshIndicator(
-                //  child:
-                _transactionsView(context),
-            //  onRefresh: () => refresh(),
-            //)
-          );
+    return transactions.isEmpty && pros.settings.noHistory
+        ? Container(
+            alignment: Alignment.topCenter,
+            padding: EdgeInsets.only(top: 32, left: 16, right: 16, bottom: 0),
+            child: Text(
+              'Miner Mode is enabled, so transaction history is not available \n\nTo download your transaction history please disable Miner Mode in Menu / Settings / Options',
+              softWrap: true,
+              maxLines: 10,
+            ))
+        : transactions.isEmpty
+            //? components.empty.transactions(context, msg: widget.msg)
+            ? components.empty.getTransactionsPlaceholder(context,
+                scrollController: widget.scrollController!,
+                count: min(10, transactionCount))
+            : Container(
+                alignment: Alignment.center,
+                child:
+                    //RefreshIndicator(
+                    //  child:
+                    _transactionsView(context),
+                //  onRefresh: () => refresh(),
+                //)
+              );
   }
 
   ListView _transactionsView(BuildContext context) => ListView(

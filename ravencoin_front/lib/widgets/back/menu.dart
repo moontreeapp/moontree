@@ -140,6 +140,11 @@ class _NavMenuState extends State<NavMenu> {
             name: 'Network',
             link: '/settings/network',
           ),
+          destination(
+            icon: MdiIcons.accountCog,
+            name: 'Options',
+            link: '/settings/network/options',
+          ),
         ],
       ),
       '/settings': ListView(
