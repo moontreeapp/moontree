@@ -43,6 +43,7 @@ class QueueService {
     Set<String>? txids,
     bool processToo = true,
   }) async {
+    dangling.add('this item represents dangling transactions on frontend');
     if (address != null) {
       addresses.add(address);
       streams.client.queue.add(true);
@@ -100,8 +101,6 @@ class QueueService {
 
   Future<void> resetOrProcess() async {
     if (transactions.isEmpty && addresses.isEmpty) {
-      dangling.add('this item represents dangling transactions on frontend');
-      streams.client.queue.add(true);
       await services.download.history.allDoneProcess();
       if (pros.transactions.records.isNotEmpty) {
         streams.app.snack

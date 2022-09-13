@@ -29,18 +29,31 @@ class _DownloadQueueCount extends State<DownloadQueueCount> {
   }
 
   @override
-  Widget build(BuildContext context) => Container(
-      alignment: Alignment.center,
-      child: Column(
-        children: [
-          Text(
-            'download queue count: '
-            '${services.download.queue.addresses.length + services.download.queue.transactions.length + services.download.queue.dangling.length}',
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
-          Text('${services.download.queue.transactions.length} transactions'),
-          Text('${services.download.queue.addresses.length} addresses'),
-          Text('${services.download.queue.dangling.length} dangling'),
-        ],
-      ));
+  Widget build(BuildContext context) {
+    final addresses = services.download.queue.addresses.length;
+    final transactions = services.download.queue.transactions.length +
+        services.download.queue.dangling.length;
+    final both = addresses > 0 && transactions > 0;
+    return Container(
+        alignment: Alignment.center,
+        child: Column(
+          children: [
+            Text(
+              'download queue count: '
+              '${addresses + transactions}',
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+            if (both)
+              Text(
+                '${transactions} transactions',
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
+            if (both)
+              Text(
+                '${addresses} addresses',
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
+          ],
+        ));
+  }
 }
