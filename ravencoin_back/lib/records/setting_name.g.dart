@@ -37,6 +37,8 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
         return SettingName.User_Name;
       case 11:
         return SettingName.Send_Immediate;
+      case 12:
+        return SettingName.No_History;
       default:
         return SettingName.Database_Version;
     }
@@ -80,6 +82,9 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
         break;
       case SettingName.Send_Immediate:
         writer.writeByte(11);
+        break;
+      case SettingName.No_History:
+        writer.writeByte(12);
         break;
     }
   }

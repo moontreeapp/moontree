@@ -4,39 +4,36 @@ import 'package:ravencoin_electrum/ravencoin_electrum.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 class HistoryService {
-  //bool isDownloaded(String symbol) {
-  //  return pros..asset.isDownloaded(symbol);
-  //}
   bool busy = false;
-  int calledAllDoneProcess = 0;
+  int calledAllDoneProcess = 0; // used to hide transactions while downloading
 
-  /// called during import process, leader registry counts handled separately.
-  Future<List<List<String>>> getHistories(List<Address> addresses) async {
-    try {
-      var listOfLists = await services.client.api.getHistories(addresses);
-      return [
-        for (var x in listOfLists) x.map((history) => history.txHash).toList()
-      ];
-    } catch (e) {
-      try {
-        var txIds = <List<String>>[];
-        for (var address in addresses) {
-          var historiesItem;
-          try {
-            historiesItem = (await services.client.api.getHistory(address))
-                .map((history) => history.txHash)
-                .toList();
-          } catch (e) {
-            historiesItem = [];
-          }
-          txIds.add(historiesItem);
-        }
-        return txIds;
-      } catch (e) {
-        return [for (var _ in addresses) []];
-      }
-    }
-  }
+  /// never called
+  //Future<List<List<String>>> getHistories(List<Address> addresses) async {
+  //  try {
+  //    var listOfLists = await services.client.api.getHistories(addresses);
+  //    return [
+  //      for (var x in listOfLists) x.map((history) => history.txHash).toList()
+  //    ];
+  //  } catch (e) {
+  //    try {
+  //      var txIds = <List<String>>[];
+  //      for (var address in addresses) {
+  //        var historiesItem;
+  //        try {
+  //          historiesItem = (await services.client.api.getHistory(address))
+  //              .map((history) => history.txHash)
+  //              .toList();
+  //        } catch (e) {
+  //          historiesItem = [];
+  //        }
+  //        txIds.add(historiesItem);
+  //      }
+  //      return txIds;
+  //    } catch (e) {
+  //      return [for (var _ in addresses) []];
+  //    }
+  //  }
+  //}
 
   /// called during address subscription
   Future<List<String>> getHistory(Address address) async {
@@ -73,14 +70,10 @@ class HistoryService {
   }
 
   Future allDoneProcess() async {
-    //print('TRANSACTIONS DOWNLOADED');
     busy = true;
     calledAllDoneProcess += 1;
     await saveDanglingTransactions();
     busy = false;
-    //print('ALL DONE!');
-    //services.download.asset.allAdminsSubs(); // why?
-    // remove vouts pointing to addresses we don't own?
   }
 
   /// don't need this for creating UTXO set anymore but...
@@ -103,6 +96,15 @@ class HistoryService {
       saveVout: true,
     );
   }
+
+  Iterable<String> filterOutPreviouslyDownloaded(
+    Iterable<String> transactionIds,
+  ) =>
+      transactionIds
+          .where((transactionId) => !pros.vouts.records
+              .map((e) => e.transactionId)
+              .contains(transactionId))
+          .toSet();
 
   /// we capture securities here. if it's one we've never seen,
   /// get it's metadata and save it in the securities proclaim.
@@ -154,15 +156,6 @@ class HistoryService {
     return Tuple3(value, security ?? pros.securities.RVN, asset);
   }
 
-  Iterable<String> filterOutPreviouslyDownloaded(
-    Iterable<String> transactionIds,
-  ) =>
-      transactionIds
-          .where((transactionId) => !pros.vouts.records
-              .map((e) => e.transactionId)
-              .contains(transactionId))
-          .toSet();
-
   Future<void>? getTransactions(
     Iterable<String> transactionIds, {
     bool saveVin = true,
@@ -181,7 +174,7 @@ class HistoryService {
         /// (saveVin == false) so in that case go straight to catch clause:
         throw Exception();
       }
-      print('getting transactionIds $transactionIds');
+      //print('getting transactionIds $transactionIds');
       txs = await services.client.api.getTransactions(transactionIds);
     } catch (e) {
       var futures = <Future<Tx>>[];

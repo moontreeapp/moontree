@@ -29,6 +29,7 @@ class _ActivityLightState extends State<ActivityLight>
       }
     }));
     listeners.add(streams.client.busy.listen((bool value) async {
+      print(value);
       if (!services.client.subscribe.startupProcessRunning) {
         if (!connectionBusy && value) {
           setState(() => connectionBusy = value);
@@ -58,7 +59,11 @@ class _ActivityLightState extends State<ActivityLight>
   @override
   Widget build(BuildContext context) {
     return pageTitle == 'Login'
-        ? Container()
+        ? Container(
+            height: 32,
+            width: 32,
+            color: Colors.red,
+          )
         : connectionBusy
             ? GestureDetector(
                 onTap: () => components.message.giveChoices(
@@ -83,6 +88,10 @@ class _ActivityLightState extends State<ActivityLight>
                       alignment: Alignment.center,
                     )),
               )
-            : Container();
+            : Container(
+                height: 32,
+                width: 32,
+                color: Colors.blue,
+              );
   }
 }
