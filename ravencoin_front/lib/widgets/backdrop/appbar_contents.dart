@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:ravencoin_front/components/components.dart';
@@ -79,6 +80,9 @@ class BackdropAppBarContents extends StatelessWidget
           onTap: () async {
             print(streams.client.busy.value);
             print(streams.client.connected.value);
+            print(Current.wallet.transactions.length);
+            print(Current.wallet.addresses.length);
+            print(pros.settings.netName);
           },
           child: appBar,
         )

@@ -45,5 +45,5 @@ enum SettingName {
   Send_Immediate,
 
   @HiveField(12)
-  No_History,
+  Blockchain,
 }

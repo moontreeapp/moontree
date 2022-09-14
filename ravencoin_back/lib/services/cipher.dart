@@ -69,6 +69,7 @@ class CipherService {
       cipherUpdate: currentCipherUpdate,
       name: wallet.name,
       backedUp: wallet.backedUp,
+      skipHistory: wallet.skipHistory,
       seed: wallet.seed, // necessary?
     );
   }
@@ -84,6 +85,7 @@ class CipherService {
       id: reencrypt.walletId,
       encryptedWIF: reencrypt.encryptedSecret,
       cipherUpdate: currentCipherUpdate,
+      skipHistory: wallet.skipHistory,
       name: wallet.name,
     );
   }

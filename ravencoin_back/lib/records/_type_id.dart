@@ -32,4 +32,5 @@ class TypeId {
   static const MetadataType = 105;
   static const AssetType = 106;
   static const StatusType = 107;
+  static const Chain = 108;
 }

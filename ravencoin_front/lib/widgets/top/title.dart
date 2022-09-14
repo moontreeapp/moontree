@@ -248,23 +248,37 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
         await SimpleSelectionItems(
           components.navigator.routeContext!,
           items: [
-            for (Wallet wallet in pros.wallets.ordered)
-              ListTile(
-                visualDensity: VisualDensity.compact,
-                onTap: () async {
-                  Navigator.pop(components.navigator.routeContext!);
-                  if (wallet.id != Current.walletId) {
+                ListTile(
+                  visualDensity: VisualDensity.compact,
+                  onTap: () async {
+                    Navigator.pop(components.navigator.routeContext!);
+                    LeaderWallet wallet =
+                        await services.wallet.leader.generate();
                     await switchWallet(wallet.id);
-                  }
-                },
-                leading: Icon(
-                  Icons.account_balance_wallet_rounded,
-                  color: AppColors.primary,
-                ),
-                title: Text('Wallet ' + wallet.name,
-                    style: Theme.of(context).textTheme.bodyText1),
-              )
-          ],
+                  },
+                  leading: Icon(Icons.add, color: AppColors.primary),
+                  title: Text('Generate New Wallet',
+                      style: Theme.of(context).textTheme.bodyText1),
+                )
+              ] +
+              [
+                for (Wallet wallet in pros.wallets.ordered)
+                  ListTile(
+                    visualDensity: VisualDensity.compact,
+                    onTap: () async {
+                      Navigator.pop(components.navigator.routeContext!);
+                      if (wallet.id != Current.walletId) {
+                        await switchWallet(wallet.id);
+                      }
+                    },
+                    leading: Icon(
+                      Icons.account_balance_wallet_rounded,
+                      color: AppColors.primary,
+                    ),
+                    title: Text('Wallet ' + wallet.name,
+                        style: Theme.of(context).textTheme.bodyText1),
+                  )
+              ],
         ).build();
       },
       child: Row(

@@ -44,8 +44,8 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
             Setting(name: SettingName.User_Name, value: null),
         SettingName.Send_Immediate:
             Setting(name: SettingName.Send_Immediate, value: false),
-        SettingName.No_History:
-            Setting(name: SettingName.No_History, value: false),
+        SettingName.Blockchain:
+            Setting(name: SettingName.Blockchain, value: Chain.ravencoin),
       }.map(
           (settingName, setting) => MapEntry(settingName.enumString, setting));
 
@@ -83,5 +83,24 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
       await saveLoginAttempts(loginAttempts + <DateTime>[DateTime.now()]);
   Future resetLoginAttempts() async => await saveLoginAttempts([]);
 
-  bool get noHistory => primaryIndex.getOne(SettingName.No_History)!.value;
+  Future setBlockchain({
+    Chain chain = Chain.ravencoin,
+    Net net = Net.Main,
+  }) async {
+    await saveAll([
+      Setting(name: SettingName.Electrum_Net, value: net),
+      Setting(name: SettingName.Blockchain, value: chain),
+    ]);
+
+    /// triggers should be set to change the domain:port by chain:net
+    /// for now we'll put it here:
+    await saveAll([
+      Setting(
+          name: SettingName.Electrum_Port,
+          value: defaultNet == Net.Test ? 50012 : 50002),
+      Setting(
+          name: SettingName.Electrum_Domain,
+          value: defaultUrl /*electrum for evrmore???*/),
+    ]);
+  }
 }

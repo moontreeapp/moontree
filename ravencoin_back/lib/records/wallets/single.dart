@@ -18,19 +18,38 @@ class SingleWallet extends Wallet {
     required String id,
     required this.encryptedWIF,
     CipherUpdate cipherUpdate = defaultCipherUpdate,
+    bool skipHistory = false,
     String? name,
   }) : super(
           id: id,
           cipherUpdate: cipherUpdate,
-          name: name,
           backedUp: true,
+          skipHistory: skipHistory,
+          name: name,
         );
 
-  @override
-  List<Object?> get props => [id, cipherUpdate, encryptedWIF];
+  factory SingleWallet.from(
+    SingleWallet existing, {
+    String? id,
+    String? encryptedWIF,
+    CipherUpdate? cipherUpdate,
+    bool? skipHistory,
+    String? name,
+  }) =>
+      SingleWallet(
+        id: id ?? existing.id,
+        encryptedWIF: encryptedWIF ?? existing.encryptedWIF,
+        cipherUpdate: cipherUpdate ?? existing.cipherUpdate,
+        skipHistory: skipHistory ?? existing.skipHistory,
+        name: name ?? existing.name,
+      );
 
   @override
-  String toString() => 'SingleWallet($id, $encryptedWIF, $cipherUpdate)';
+  List<Object?> get props => [id, cipherUpdate, encryptedWIF, skipHistory];
+
+  @override
+  String toString() =>
+      'SingleWallet($id, $encryptedWIF, $cipherUpdate, $skipHistory)';
 
   @override
   String get encrypted => encryptedWIF;

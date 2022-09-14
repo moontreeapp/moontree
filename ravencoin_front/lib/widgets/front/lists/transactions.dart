@@ -89,7 +89,7 @@ class _TransactionListState extends State<TransactionList> {
   Widget build(BuildContext context) {
     transactions = widget.transactions ??
         services.transaction.getTransactionRecords(wallet: Current.wallet);
-    return transactions.isEmpty && pros.settings.noHistory
+    return transactions.isEmpty && services.wallet.currentWallet.minerMode
         ? Container(
             alignment: Alignment.topCenter,
             padding: EdgeInsets.only(top: 32, left: 16, right: 16, bottom: 0),

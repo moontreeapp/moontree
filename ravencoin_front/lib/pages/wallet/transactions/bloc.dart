@@ -47,7 +47,7 @@ class TransactionsBloc {
   Security get security => data['holding']!.security;
   List<Balance> get currentHolds => Current.holdings;
   List<TransactionRecord> get currentTxs {
-    if (pros.settings.noHistory) return [];
+    if (Current.wallet.minerMode) return [];
     if (services.download.queue.updated &&
         services.download.history.calledAllDoneProcess == 0) return [];
     if (currentTxsCache == null) {

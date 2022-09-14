@@ -16,9 +16,21 @@ class QueueService {
   StreamSubscription? periodic;
 
   /// this settings controls the behavior of this service
-  Future setNoHistory(bool value) async {
-    await pros.settings
-        .save(Setting(name: SettingName.No_History, value: value));
+  Future setMinerMode(bool value) async {
+    final currentWallet = services.wallet.currentWallet;
+    if (currentWallet.skipHistory != value) {
+      if (currentWallet is LeaderWallet) {
+        await pros.wallets.save(LeaderWallet.from(
+          currentWallet,
+          skipHistory: value,
+        ));
+      } else if (currentWallet is SingleWallet) {
+        await pros.wallets.save(SingleWallet.from(
+          currentWallet,
+          skipHistory: value,
+        ));
+      }
+    }
 
     /// might belong in waiter but no need to make a new waiter just for this.
     if (value) {
@@ -71,7 +83,7 @@ class QueueService {
   Future<void> process() async {
     // todo: only process if idle.
     if ((transactions.isEmpty && addresses.isEmpty) ||
-        pros.settings.noHistory) {
+        services.wallet.currentWallet.minerMode) {
       await reset();
       return;
     }

@@ -187,25 +187,66 @@ class _HoldingList extends State<HoldingList> {
     if (holdings != null && holdings!.length > 1) {
       holdings = holdings!.where((holding) => holding.value > 0).toList();
     }
+    /*
+    Only have 1 wallet, no balances, no transactions - Getting Started Screen
+    no balances, no transactions, busy - shimmering.
+    no balances, no transactions, not busy - this wallet is empty, here's the address
+    no balances, transactions - zero balances?
+    balances, no transactions - show balances
+    balances, transactions - show balances
+    */
+    final busy = streams.client.busy.value;
+    if (pros.wallets.length == 1 && balances.isEmpty && transactions.isEmpty) {
+      return ComingSoonPlaceholder(
+          scrollController: widget.scrollController,
+          header: 'Get Started',
+          message:
+              'Use the Import or Receive button to add Ravencoin & assets to your wallet.',
+          placeholderType: PlaceholderType.wallet);
+    } else if (balances.isEmpty && transactions.isEmpty && busy) {
+      return components.empty.getAssetsPlaceholder(context,
+          scrollController: widget.scrollController,
+          count: max(holdingCount, 1),
+          holding: true);
+    } else if (balances.isEmpty && transactions.isEmpty && !busy) {
+      return ComingSoonPlaceholder(
+          scrollController: widget.scrollController,
+          header: 'Empty Wallet',
+          message:
+              'This wallet has never been used before.\nClick "Receive" to get started.',
+          placeholderType: PlaceholderType.wallet);
+    } else if (balances.isEmpty && transactions.isNotEmpty && !busy) {
+      return ComingSoonPlaceholder(
+          scrollController: widget.scrollController,
+          header: 'Empty Wallet',
+          message:
+              'This wallet appears empty but has a transaction history.\nClick "Receive" to get started.',
+          placeholderType: PlaceholderType.wallet);
+    } else if (balances.isEmpty && transactions.isNotEmpty && busy) {
+      return _holdingsView(context);
+    } else if (balances.isNotEmpty) {
+      return _holdingsView(context);
+    } else {
+      return _holdingsView(context);
+    }
 
-    /// removing this, only served a purpose during
-    return balances.isEmpty && streams.import.result.value != null
-        ? components.empty.getAssetsPlaceholder(context,
-            scrollController: widget.scrollController,
-            count: max(holdingCount, 1),
-            holding: true)
-        : balances.isEmpty && transactions.isEmpty
-            ? () {
-                return ComingSoonPlaceholder(
-                    scrollController: widget.scrollController,
-                    header: 'Get Started',
-                    message:
-                        'Use the Import or Receive button to add Ravencoin & assets to your wallet.',
-                    placeholderType: PlaceholderType.wallet);
-              }()
-            : () {
-                return _holdingsView(context);
-              }();
+    //balances.isEmpty && streams.import.result.value != null
+    //    ? components.empty.getAssetsPlaceholder(context,
+    //        scrollController: widget.scrollController,
+    //        count: max(holdingCount, 1),
+    //        holding: true)
+    //    : balances.isEmpty && transactions.isEmpty
+    //        ? () {
+    //            return ComingSoonPlaceholder(
+    //                scrollController: widget.scrollController,
+    //                header: 'Get Started',
+    //                message:
+    //                    'Use the Import or Receive button to add Ravencoin & assets to your wallet.',
+    //                placeholderType: PlaceholderType.wallet);
+    //          }()
+    //        : () {
+    //            return _holdingsView(context);
+    //          }();
 
     //RefreshIndicator( child:...
     //  onRefresh: () => refresh(),

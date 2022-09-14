@@ -15,6 +15,9 @@ class WalletService {
   final ExportWalletService export = ExportWalletService();
   final ImportWalletService import = ImportWalletService();
 
+  Wallet get currentWallet =>
+      pros.wallets.primaryIndex.getOne(pros.settings.currentWalletId)!;
+
   // should return all cipherUpdates
   Set<CipherUpdate> get getAllCipherUpdates =>
       pros.wallets.records.map((wallet) => wallet.cipherUpdate).toSet();
@@ -61,26 +64,41 @@ class WalletService {
     }
   }
 
+  Future generate() async => await services.wallet.createSave(
+      walletType: WalletType.leader,
+      cipherUpdate: services.cipher.currentCipherUpdate,
+      secret: null);
+
   Wallet? create({
     required WalletType walletType,
     required CipherUpdate cipherUpdate,
     required String? secret,
     bool alwaysReturn = false,
-  }) =>
-      {
-        WalletType.leader: () => leader.makeLeaderWallet(
-              pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
-              cipherUpdate: cipherUpdate,
-              entropy: secret != null ? bip39.mnemonicToEntropy(secret) : null,
-              alwaysReturn: alwaysReturn,
-            ),
-        WalletType.single: () => single.makeSingleWallet(
-              pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
-              cipherUpdate: cipherUpdate,
-              wif: secret,
-              alwaysReturn: alwaysReturn,
-            )
-      }[walletType]!();
+  }) {
+    switch (walletType) {
+      case WalletType.leader:
+        return leader.makeLeaderWallet(
+          pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+          cipherUpdate: cipherUpdate,
+          entropy: secret != null ? bip39.mnemonicToEntropy(secret) : null,
+          alwaysReturn: alwaysReturn,
+        );
+      case WalletType.single:
+        return single.makeSingleWallet(
+          pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+          cipherUpdate: cipherUpdate,
+          wif: secret,
+          alwaysReturn: alwaysReturn,
+        );
+      default:
+        return create(
+          walletType: WalletType.leader,
+          cipherUpdate: cipherUpdate,
+          secret: secret,
+          alwaysReturn: alwaysReturn,
+        );
+    }
+  }
 
   ECPair getAddressKeypair(Address address) {
     var wallet = address.wallet;

@@ -16,11 +16,13 @@ class ImportWaiter extends Waiter {
         }
         var firstWallet = false;
         if (pros.wallets.records.length == 1 && pros.balances.records.isEmpty) {
-          await pros.wallets.remove(pros.wallets.records.first);
+          /// don't remove just set it as preferred.
+          //await pros.wallets.remove(pros.wallets.records.first);
           firstWallet = true;
         }
         var importFrom = ImportFrom(text: importRequest.text);
         if (importFrom.importFormat != ImportFormat.invalid) {
+          streams.client.busy.add(true);
           var tuple3 = await importFrom.handleImport(); // success, title, msg
           if (tuple3.item1) {
             if (firstWallet) {

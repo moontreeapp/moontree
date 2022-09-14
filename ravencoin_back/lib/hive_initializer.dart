@@ -56,6 +56,7 @@ class HiveInitializer {
   void registerAdapters() {
     Hive.registerAdapter(BalanceAdapter());
     Hive.registerAdapter(BlockAdapter());
+    Hive.registerAdapter(ChainAdapter());
     Hive.registerAdapter(AssetAdapter());
     Hive.registerAdapter(LeaderWalletAdapter());
     Hive.registerAdapter(SingleWalletAdapter());

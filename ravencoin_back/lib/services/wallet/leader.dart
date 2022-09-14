@@ -86,6 +86,18 @@ class LeaderWalletService {
       getSeedWallet(address.wallet as LeaderWallet)
           .subwallet(address.hdIndex, exposure: address.exposure);
 
+  Future<LeaderWallet> generate() async {
+    final cipherUpdate = services.cipher.currentCipherUpdate;
+    final leaderWallet = makeLeaderWallet(
+        pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+        cipherUpdate: cipherUpdate,
+        entropy: null,
+        name: null,
+        alwaysReturn: true);
+    await pros.wallets.save(leaderWallet!);
+    return leaderWallet;
+  }
+
   LeaderWallet? makeLeaderWallet(
     CipherBase cipher, {
     required CipherUpdate cipherUpdate,

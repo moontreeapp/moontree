@@ -21,7 +21,7 @@ class _MinerModeChoice extends State<MinerModeChoice> {
   @override
   void initState() {
     super.initState();
-    minerChoice = pros.settings.noHistory == true
+    minerChoice = services.wallet.currentWallet.minerMode == true
         ? MinerModeChoices.on
         : MinerModeChoices.off;
   }
@@ -41,6 +41,7 @@ class _MinerModeChoice extends State<MinerModeChoice> {
           'In Miner Mode, full transaction histories are not downloaded. This makes syncing your wallets faster.',
           style: Theme.of(context).textTheme.bodyText2,
         ),
+        SizedBox(height: 16),
         RadioListTile<MinerModeChoices>(
           title: const Text('On'),
           value: MinerModeChoices.on,
@@ -49,9 +50,9 @@ class _MinerModeChoice extends State<MinerModeChoice> {
             if (value != null) {
               minerChoice = value;
               if (value == MinerModeChoices.on) {
-                services.download.queue.setNoHistory(true);
+                services.download.queue.setMinerMode(true);
               } else {
-                services.download.queue.setNoHistory(false);
+                services.download.queue.setMinerMode(false);
               }
             }
           }),
@@ -64,9 +65,9 @@ class _MinerModeChoice extends State<MinerModeChoice> {
             if (value != null) {
               minerChoice = value;
               if (value == MinerModeChoices.on) {
-                services.download.queue.setNoHistory(true);
+                services.download.queue.setMinerMode(true);
               } else {
-                services.download.queue.setNoHistory(false);
+                services.download.queue.setMinerMode(false);
               }
             }
           }),

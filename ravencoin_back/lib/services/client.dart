@@ -114,6 +114,39 @@ class ClientService {
               Setting(name: SettingName.Electrum_DomainTest, value: domain),
               Setting(name: SettingName.Electrum_PortTest, value: port),
             ]);
+
+  Future switchNetworks(Chain? chain, {required Net net}) async {
+    await pros.settings.setBlockchain(
+      chain: chain ?? Chain.ravencoin,
+      net: net,
+    );
+
+    /// notice that we remove all our database here entirely.
+    /// this is the simplest way to handle it.
+    /// it might be ideal to keep the transactions, vout, unspents, vins, addresses, etc.
+    /// but we're not ging to because we'd have to segment all of them by network.
+    /// this is something we could do later if we want.
+    services.client.subscribe.unsubscribeAddressesAll();
+    services.client.subscribe.unsubscribeAssetsAll();
+    services.download.history.calledAllDoneProcess = 0;
+    services.download.queue.addresses.clear();
+    services.download.queue.transactions.clear();
+    services.download.queue.dangling.clear();
+    services.download.queue.updated = false;
+    services.download.queue.address = null;
+    services.download.queue.transactionSet = null;
+    await pros.blocks.removeAll(pros.blocks.records);
+    await pros.statuses.removeAll(pros.statuses.records);
+    await pros.balances.removeAll(pros.balances.records);
+    await pros.addresses.removeAll(pros.addresses.records);
+    await pros.unspents.removeAll(pros.unspents.records);
+    await pros.vouts.removeAll(pros.vouts.records);
+    await pros.vins.removeAll(pros.vins.records);
+    await pros.transactions.removeAll(pros.transactions.records);
+
+    /// make a new client to connect to the new network
+    await services.client.createClient();
+  }
 }
 
 /// managing our address subscriptions
@@ -221,14 +254,15 @@ class SubscribeService {
         final addressStatus = address.status;
         await saveStatusUpdate(address, status);
         if (addressStatus == null) {
+          print('NEW ADDRESS');
           // new address
-          var s = Stopwatch()..start();
+          //var s = Stopwatch()..start();
           await maybeDerive(address);
-          print('maybeDerive: ${s.elapsed}');
+          //print('maybeDerive: ${s.elapsed}');
           await pullUnspents(address);
-          print('pullUnspents: ${s.elapsed}');
+          //print('pullUnspents: ${s.elapsed}');
           queueHistoryDownload(address);
-          print('queueHistoryDownload: ${s.elapsed}');
+          //print('queueHistoryDownload: ${s.elapsed}');
         } else if (addressStatus.status == null && status != null) {
           // first transaction on address discovered
           await maybeDerive(address);
@@ -244,6 +278,7 @@ class SubscribeService {
         final wallet = address.wallet!;
         if (wallet is LeaderWallet &&
             services.wallet.leader.gapSatisfied(wallet) &&
+            subscriptionHandlesAddress.containsKey(address.walletId) &&
             subscriptionHandlesAddress[address.walletId]!.keys.length ==
                 wallet.addresses.length) {
           await services.balance
@@ -293,14 +328,36 @@ class SubscribeService {
     }
   }
 
-  void unsubscribeAddress(Address address) {
-    (subscriptionHandlesAddress[address.walletId] ?? {})
-        .remove(address.id)
-        ?.cancel();
+  void unsubscribeAddress(Address address) =>
+      unsubscribeAddressByIds(address.walletId, address.id);
+
+  void unsubscribeAddressByIds(String wallet, String address) =>
+      (subscriptionHandlesAddress[wallet] ?? {}).remove(address)?.cancel();
+
+  void unsubscribeAddressesAll() {
+    var toRemove = [];
+    for (var wallet in subscriptionHandlesAddress.keys) {
+      for (var address in subscriptionHandlesAddress[wallet]!.keys) {
+        toRemove.add([wallet, address]);
+      }
+    }
+    for (var remove in toRemove) {
+      unsubscribeAddressByIds(remove[0], remove[1]);
+    }
   }
 
-  void unsubscribeAsset(String asset) {
-    subscriptionHandlesAsset.remove(asset)?.cancel();
+  void unsubscribeAsset(String asset) =>
+      subscriptionHandlesAsset.remove(asset)?.cancel();
+
+  void unsubscribeAssetsAll() {
+    var toRemove = [];
+
+    for (var asset in subscriptionHandlesAsset.keys) {
+      toRemove.add(asset);
+    }
+    for (var remove in toRemove) {
+      unsubscribeAsset(remove);
+    }
   }
 }
 

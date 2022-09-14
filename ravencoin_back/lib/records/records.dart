@@ -3,6 +3,7 @@ export 'asset.dart';
 export 'balance.dart';
 export 'block.dart';
 export 'cipher.dart';
+export 'chain.dart';
 export 'cipher_type.dart';
 export 'cipher_update.dart';
 export 'metadata.dart';

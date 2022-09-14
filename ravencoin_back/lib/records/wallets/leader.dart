@@ -24,16 +24,16 @@ class LeaderWallet extends Wallet {
     required String id,
     required this.encryptedEntropy,
     bool backedUp = false,
+    bool skipHistory = false,
     CipherUpdate cipherUpdate = defaultCipherUpdate,
     String? name,
-    Set<int>? unusedInternalIndices,
-    Set<int>? unusedExternalIndices,
     Uint8List? seed,
   }) : super(
           id: id,
           cipherUpdate: cipherUpdate,
           name: name,
           backedUp: backedUp,
+          skipHistory: skipHistory,
         ) {
     _seed = seed;
   }
@@ -45,27 +45,28 @@ class LeaderWallet extends Wallet {
     String? id,
     String? encryptedEntropy,
     bool? backedUp,
+    bool? skipHistory,
     CipherUpdate? cipherUpdate,
     String? name,
-    Set<int>? unusedInternalIndices,
-    Set<int>? unusedExternalIndices,
     Uint8List? seed,
   }) =>
       LeaderWallet(
         id: id ?? existing.id,
         encryptedEntropy: encryptedEntropy ?? existing.encryptedEntropy,
         backedUp: backedUp ?? existing.backedUp,
+        skipHistory: skipHistory ?? existing.skipHistory,
         cipherUpdate: cipherUpdate ?? existing.cipherUpdate,
         name: name ?? existing.name,
         seed: seed ?? existing.seed,
       );
 
   @override
-  List<Object?> get props => [id, cipherUpdate, encryptedEntropy, backedUp];
+  List<Object?> get props =>
+      [id, cipherUpdate, encryptedEntropy, backedUp, skipHistory];
 
   @override
   String toString() =>
-      'LeaderWallet($id, $encryptedEntropy, $cipherUpdate, $backedUp)';
+      'LeaderWallet($id, $encryptedEntropy, $cipherUpdate, $backedUp, $skipHistory)';
 
   @override
   String get encrypted => encryptedEntropy;
