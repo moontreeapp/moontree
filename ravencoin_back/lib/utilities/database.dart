@@ -4,9 +4,35 @@ import 'dart:io';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:proclaim/proclaim.dart';
 
-Future deleteDatabase() async {
+/// erases data concerning transactions and the like, leaves assets alone.
+Future eraseChainData() async {
+  resetInMemoryState();
+  await pros.blocks.removeAll(pros.blocks.records);
+  await pros.statuses.removeAll(pros.statuses.records);
+  await pros.balances.removeAll(pros.balances.records);
+  await pros.addresses.removeAll(pros.addresses.records);
+  await pros.unspents.removeAll(pros.unspents.records);
+  await pros.vouts.removeAll(pros.vouts.records);
+  await pros.vins.removeAll(pros.vins.records);
+  await pros.transactions.removeAll(pros.transactions.records);
+}
+
+void resetInMemoryState() {
+  services.client.subscribe.unsubscribeAddressesAll();
+  services.client.subscribe.unsubscribeAssetsAll();
   services.client.subscribe.subscriptionHandlesAddress.clear();
   services.client.subscribe.subscriptionHandlesAsset.clear();
+  services.download.history.calledAllDoneProcess = 0;
+  services.download.queue.addresses.clear();
+  services.download.queue.transactions.clear();
+  services.download.queue.dangling.clear();
+  services.download.queue.updated = false;
+  services.download.queue.address = null;
+  services.download.queue.transactionSet = null;
+}
+
+Future deleteDatabase() async {
+  resetInMemoryState();
   try {
     await pros.addresses.clear();
     await pros.assets.clear();

@@ -66,7 +66,7 @@ class CommaIntValueTextFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     var text = newValue.text.isInt
-        ? newValue.text.toInt().toCommaString()
+        ? newValue.text.asSatsInt().toCommaString()
         : newValue.text;
     if (newValue.text.length == text.length) {
       return newValue;

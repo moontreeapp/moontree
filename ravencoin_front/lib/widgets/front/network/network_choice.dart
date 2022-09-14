@@ -42,24 +42,26 @@ class _NetworkChoice extends State<NetworkChoice> {
             value: Chain.ravencoin,
             groupValue: networkChoice,
             onChanged: (Chain? value) async {
+              streams.client.busy.add(true);
               setState(() => networkChoice = value);
               services.client.switchNetworks(value, net: Net.Main);
               components.loading.screen(
                   message: 'Syncing with Ravencoin',
                   returnHome: true,
-                  playCount: 3);
+                  playCount: 5);
             }),
         RadioListTile<Chain>(
             title: const Text('Evrmore (mainnet)'),
             value: Chain.evrmore,
             groupValue: networkChoice,
             onChanged: (Chain? value) async {
+              streams.client.busy.add(true);
               setState(() => networkChoice = value);
               services.client.switchNetworks(value, net: Net.Test);
               components.loading.screen(
                   message: 'Syncing with Evrmore',
                   returnHome: true,
-                  playCount: 3);
+                  playCount: 5);
             }),
       ],
     );

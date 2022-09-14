@@ -32,8 +32,10 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
             Setting(name: SettingName.Electrum_Domain, value: defaultUrl),
         SettingName.Electrum_Port:
             Setting(name: SettingName.Electrum_Port, value: defaultPort),
+        // deprecated
         SettingName.Electrum_DomainTest:
             Setting(name: SettingName.Electrum_DomainTest, value: defaultUrl),
+        // deprecated
         SettingName.Electrum_PortTest:
             Setting(name: SettingName.Electrum_PortTest, value: defaultPort),
         SettingName.Wallet_Current:
@@ -97,10 +99,12 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
     await saveAll([
       Setting(
           name: SettingName.Electrum_Port,
-          value: defaultNet == Net.Test ? 50012 : 50002),
+          value: net == Net.Test ? 50012 : 50002),
       Setting(
           name: SettingName.Electrum_Domain,
-          value: defaultUrl /*electrum for evrmore???*/),
+          value: chain == Chain.ravencoin
+              ? defaultUrl
+              : defaultUrl /*electrum for evrmore???*/),
     ]);
   }
 }

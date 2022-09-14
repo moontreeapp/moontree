@@ -6,6 +6,7 @@ import 'search.dart' as search;
 
 export 'exceptions.dart';
 export 'structures.dart';
+export 'visibility.dart';
 
 class utils {
   static final securityFromTransactions = assets.securityFromTransactions;
@@ -13,6 +14,7 @@ class utils {
   static final assetHoldingsFromAssets = assets.assetHoldingsFromAssets;
   static final satToAmount = transform.satToAmount;
   static final amountToSat = transform.amountToSat;
+  static final textAmountToSat = transform.textAmountToSat;
   //static final characters = transform.characters;
   static final removeChars = transform.removeChars;
   static final enumerate = transform.enumerate;

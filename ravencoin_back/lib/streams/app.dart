@@ -32,6 +32,7 @@ enum KeyboardStatus { up, down }
 
 class WalletSideStreams {
   final asset = BehaviorSubject<String?>.seeded(null);
+  final refresh = PublishSubject<bool>();
 }
 
 class ManageSideStreams {

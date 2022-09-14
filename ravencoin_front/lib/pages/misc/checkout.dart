@@ -198,7 +198,9 @@ class _CheckoutState extends State<Checkout> {
   }) {
     var rows = <Widget>[];
     for (var pair in pairs) {
-      var rightSide = fee ? getRightFee(pair.toList()[1]) : pair.toList()[1];
+      var rightSide = fee
+          ? getRightFee(pair.toList()[1])
+          : getRightAmount(pair.toList()[1]);
       if (rightSide.length > 20) {
         rightSide =
             ['To', 'IPFS', 'IPFS/TxId', 'ID', 'TxId'].contains(pair.toList()[0])
@@ -236,6 +238,19 @@ class _CheckoutState extends State<Checkout> {
           ]));
     }
     return rows.intersperse(SizedBox(height: 21));
+  }
+
+  String getRightAmount(String x) {
+    if (x == 'calculating amount...') {
+      disabled = true;
+      if (estimate != null) {
+        disabled = false;
+        return satToAmount(estimate!.amount).toString();
+        //return satToAmount(estimate!.total - estimate!.fees).toString();
+      }
+      return x;
+    }
+    return x;
   }
 
   String getRightFee(String x) {

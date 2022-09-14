@@ -81,8 +81,23 @@ class UnspentService {
       //await services.download.queue.update(
       //  txids: utxos.map((e) => e.transactionId).toSet(),
       //);
-      await services.download.history
-          .getAndSaveTransactions(utxos.map((e) => e.transactionId).toSet());
+
+      /// noticed that during a reorg we can get error about tx not found
+      ///   Exception has occurred.
+      ///     RpcException (JSON-RPC error 2: daemon error: DaemonError({
+      ///       'code': -5,
+      ///       'message': 'No such mempool or blockchain transaction. Use gettransaction for wallet transactions.'}))
+      //await services.download.history
+      //  .getAndSaveTransactions(utxos.map((e) => e.transactionId).toSet());
+      for (var unspentRecord in utxos) {
+        try {
+          await services.download.history
+              .getAndSaveTransactions({unspentRecord.transactionId});
+        } catch (e) {
+          /// so if this transaction is not found, we should remove the unspent
+          await pros.unspents.remove(unspentRecord);
+        }
+      }
     }
   }
 }

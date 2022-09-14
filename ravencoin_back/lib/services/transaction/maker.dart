@@ -1273,7 +1273,9 @@ class TransactionMaker {
     int? assetMemoExpiry,
   }) async {
     ravencoin.TransactionBuilder makeTxBuilder(
-        List<Vout> utxos, SendEstimate estimate) {
+      List<Vout> utxos,
+      SendEstimate estimate,
+    ) {
       var total = 0;
       var txb = ravencoin.TransactionBuilder(network: pros.settings.network);
       for (var utxo in utxos) {

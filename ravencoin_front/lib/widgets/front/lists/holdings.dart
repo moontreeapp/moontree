@@ -56,28 +56,31 @@ class _HoldingList extends State<HoldingList> {
       // need a way to know this wallet's asset list without vouts for newLeaderProcess
       var count = getCount();
       if (count > holdingCount) {
-        print('triggered by holdingCount');
-        setState(() {
-          holdingCount = count;
-        });
+        holdingCount = count;
+        //print('triggered by holdingCount');
+        //setState(() {});
       }
     }));
-    listeners.add(pros.balances.batchedChanges
-        .listen((List<Change<Balance>> changes) async {
-      var interimBalances = Current.wallet.balances.toSet();
-      print('triggered by balances');
-      if (balances != interimBalances) {
-        print('triggered by balances');
-        //if (services.wallet.leader.newLeaderProcessRunning ||
-        //    await services.download.unspents.isDone) {
-        setState(() {
-          balances = interimBalances;
-        });
-        //} else {
-        //  balances = interimBalances;
-        //}
-      }
+    listeners.add(streams.app.wallet.refresh.listen((bool value) {
+      print('told to Refresh');
+      setState(() {});
     }));
+    //listeners.add(pros.balances.batchedChanges
+    //    .listen((List<Change<Balance>> changes) async {
+    //  var interimBalances = Current.wallet.balances.toSet();
+    //  print('triggered by balances');
+    //  if (balances != interimBalances) {
+    //    print('triggered by balances');
+    //    //if (services.wallet.leader.newLeaderProcessRunning ||
+    //    //    await services.download.unspents.isDone) {
+    //    setState(() {
+    //      balances = interimBalances;
+    //    });
+    //    //} else {
+    //    //  balances = interimBalances;
+    //    //}
+    //  }
+    //}));
     //listeners.add(pros.addresses.batchedChanges
     //    .listen((List<Change<Address>> changes) async {
     //  var interimAddresses = Current.wallet.addresses.toSet();
@@ -151,27 +154,6 @@ class _HoldingList extends State<HoldingList> {
     addresses = Current.wallet.addresses.toSet();
     final transactions = Current.wallet.transactions.toSet();
 
-    /// if they have removed all assets and rvn from wallet, for each asset we've
-    /// ever held, create empty Balance, and empty AssetHolding.
-    if (!services.wallet.leader.newLeaderProcessRunning &&
-        addresses.isNotEmpty &&
-        balances.isEmpty &&
-        transactions.isNotEmpty) {
-      ///https://github.com/moontreeapp/moontreeV1/issues/648
-      //for (var security in utils.securityFromTransactions(transactions)) {
-      //  balances.add(Balance(
-      //      walletId: Current.walletId,
-      //      security: security,
-      //      confirmed: 0,
-      //      unconfirmed: 0));
-      //}
-      ///actually just show rvn.
-      balances.add(Balance(
-          walletId: Current.walletId,
-          security: pros.securities.RVN,
-          confirmed: 0,
-          unconfirmed: 0));
-    }
     holdings = (
         //holdings != null && holdings!.isNotEmpty
         //    ? holdings
@@ -195,7 +177,7 @@ class _HoldingList extends State<HoldingList> {
     balances, no transactions - show balances
     balances, transactions - show balances
     */
-    final busy = streams.client.busy.value;
+    final busy = streams.client.busy.value || addresses.length < 40;
     if (pros.wallets.length == 1 && balances.isEmpty && transactions.isEmpty) {
       return ComingSoonPlaceholder(
           scrollController: widget.scrollController,
@@ -216,6 +198,27 @@ class _HoldingList extends State<HoldingList> {
               'This wallet has never been used before.\nClick "Receive" to get started.',
           placeholderType: PlaceholderType.wallet);
     } else if (balances.isEmpty && transactions.isNotEmpty && !busy) {
+      ///// if they have removed all assets and rvn from wallet, for each asset we've
+      ///// ever held, create empty Balance, and empty AssetHolding.
+      //if (!services.wallet.leader.newLeaderProcessRunning &&
+      //    addresses.isNotEmpty &&
+      //    balances.isEmpty &&
+      //    transactions.isNotEmpty) {
+      //  ///https://github.com/moontreeapp/moontreeV1/issues/648
+      //  //for (var security in utils.securityFromTransactions(transactions)) {
+      //  //  balances.add(Balance(
+      //  //      walletId: Current.walletId,
+      //  //      security: security,
+      //  //      confirmed: 0,
+      //  //      unconfirmed: 0));
+      //  //}
+      //  ///actually just show rvn.
+      //  balances.add(Balance(
+      //      walletId: Current.walletId,
+      //      security: pros.securities.RVN,
+      //      confirmed: 0,
+      //      unconfirmed: 0));
+      //} my8ZWfDD8LitTMTQj3Pd7NofVh764HfYoZ
       return ComingSoonPlaceholder(
           scrollController: widget.scrollController,
           header: 'Empty Wallet',

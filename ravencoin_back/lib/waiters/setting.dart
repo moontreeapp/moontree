@@ -36,18 +36,19 @@ class SettingWaiter extends Waiter {
     );
     */
 
-    listen(
-        'settings.changes.electrum',
-        pros.settings.changes.where((change) =>
-            (change is Added || change is Updated) &&
-            [
-              SettingName.Electrum_Net,
-              SettingName.Electrum_Domain,
-              SettingName.Electrum_Port,
-              SettingName.Electrum_DomainTest,
-              SettingName.Electrum_PortTest,
-            ].contains(change.record.name)),
-        (_) => services.client.createClient());
+    /// removed because we want more control over when we reconnect
+    //listen(
+    //    'settings.changes.electrum',
+    //    pros.settings.changes.where((change) =>
+    //        (change is Added || change is Updated) &&
+    //        [
+    //          //SettingName.Electrum_Net,
+    //          SettingName.Electrum_Domain,
+    //          SettingName.Electrum_Port,
+    //          SettingName.Electrum_DomainTest,
+    //          SettingName.Electrum_PortTest,
+    //        ].contains(change.record.name)),
+    //    (_) => services.client.createClient());
 
     /// to reduce listener bloat, this has been added on the function called to
     /// set the value in services.downloads.queue

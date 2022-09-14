@@ -643,7 +643,7 @@ class _SendState extends State<Send> {
     visibleAmount = verifyVisibleAmount(sendAmount.text);
     if (vAddress && vMemo) {
       FocusScope.of(context).unfocus();
-      var sendAmountAsSats = utils.amountToSat(double.parse(sendAmount.text));
+      var sendAmountAsSats = utils.textAmountToSat(sendAmount.text);
       if (holding >= double.parse(sendAmount.text)) {
         var sendRequest = SendRequest(
           sendAll: holding == visibleAmount.toDouble(),
@@ -712,7 +712,10 @@ class _SendState extends State<Send> {
           items: [
             ['To', sendAddress.text],
             if (addressName != '') ['Known As', addressName],
-            ['Amount', visibleAmount],
+            [
+              'Amount',
+              sendRequest.sendAll ? 'calculating amount...' : visibleAmount
+            ],
             if (sendMemo.text != '') ['Memo', sendMemo.text],
             if (sendNote.text != '') ['Note', sendNote.text],
           ],

@@ -78,11 +78,10 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            print(streams.client.busy.value);
-            print(streams.client.connected.value);
-            print(Current.wallet.transactions.length);
-            print(Current.wallet.addresses.length);
-            print(pros.settings.netName);
+            print(Current.wallet.unspents);
+            //services.balance.recalculateAllBalances();
+            print(Current.balanceRVN);
+            //print(pros.unspents.byWalletSymbolConfirmation());
           },
           child: appBar,
         )
