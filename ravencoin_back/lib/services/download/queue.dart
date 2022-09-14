@@ -130,7 +130,7 @@ class QueueService {
       await services.download.history.allDoneProcess();
       if (pros.transactions.records.isNotEmpty) {
         streams.app.snack
-            .add(Snack(message: 'Transaction history successfully download!'));
+            .add(Snack(message: 'Transaction history successfully downloaded'));
       }
       await reset();
     } else {
