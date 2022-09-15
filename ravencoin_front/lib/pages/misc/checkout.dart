@@ -91,8 +91,8 @@ class _CheckoutState extends State<Checkout> {
     /// if still in download process of any kind, tell user they must wait till
     /// sync is finished, disable button until done.
     if (streams.client.busy.value) {
-      streams.app.snack.add(Snack(
-          message: 'Still syncing with network, please wait', atBottom: true));
+      streams.app.snack
+          .add(Snack(message: 'Still syncing with network, please wait'));
     }
     if (widget.transactionType == TransactionType.Spend) {
       listeners.add(streams.spend.estimate.listen((SendEstimate? value) {

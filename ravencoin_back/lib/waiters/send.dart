@@ -34,9 +34,7 @@ class SendWaiter extends Waiter {
           streams.spend.make.add(null);
         } on InsufficientFunds {
           streams.app.snack.add(Snack(
-              message: 'Send Failure: Insufficient Funds',
-              atBottom: true,
-              positive: false));
+              message: 'Send Failure: Insufficient Funds', positive: false));
           streams.spend.success.add(false);
         }
         // catch (e) {

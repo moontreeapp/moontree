@@ -279,8 +279,8 @@ class _CreateLoginState extends State<CreateLogin> {
       disabledOnPressed: () => setState(() {
             if (!isConnected()) {
               streams.app.snack.add(Snack(
-                  message: 'Unable to connect! Please check connectivity.',
-                  atBottom: true));
+                message: 'Unable to connect! Please check connectivity.',
+              ));
             }
           }),
       onPressed: () async => await submit());

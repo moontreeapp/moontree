@@ -42,8 +42,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
           value != connectionStatus &&
           pressed) {
         setState(() {});
-        streams.app.snack
-            .add(Snack(message: 'Successfully Connected', atBottom: true));
+        streams.app.snack.add(Snack(message: 'Successfully Connected'));
       }
     }));
   }

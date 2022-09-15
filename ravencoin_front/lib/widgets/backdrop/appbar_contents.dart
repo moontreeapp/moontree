@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
@@ -82,7 +83,8 @@ class BackdropAppBarContents extends StatelessWidget
             //services.balance.recalculateAllBalances();
             //print(Current.balanceRVN);
             //print(pros.unspents.byWalletSymbolConfirmation());
-            printFullState();
+            //printFullState();
+            streams.app.snack.add(Snack(message: 'Transaction'));
           },
           child: appBar,
         )

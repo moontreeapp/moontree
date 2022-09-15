@@ -42,7 +42,6 @@ class CreateWaiter extends Waiter {
           print(e);
           streams.app.snack.add(Snack(
             message: 'Error Generating Transaction: $e',
-            atBottom: true,
             positive: false,
             //details: 'Unable to create transaction: $e',
           ));

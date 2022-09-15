@@ -97,6 +97,7 @@ class _ReceiveState extends State<Receive> {
 
   @override
   Widget build(BuildContext context) {
+    streams.app.navHeight.add(NavHeight.short);
     username =
         pros.settings.primaryIndex.getOne(SettingName.User_Name)?.value ?? '';
     data = populateData(context, data);
@@ -149,8 +150,7 @@ class _ReceiveState extends State<Receive> {
                                 Clipboard.setData(
                                     new ClipboardData(text: address));
                                 streams.app.snack.add(Snack(
-                                    message: 'Address Copied to Clipboard',
-                                    atBottom: true));
+                                    message: 'Address copied to clipboard'));
                                 // not formatted the same...
                                 //ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
                                 //  content: new Text("Copied to Clipboard"),
@@ -159,9 +159,8 @@ class _ReceiveState extends State<Receive> {
                               onLongPress: () {
                                 Clipboard.setData(new ClipboardData(
                                     text: rawAddress ? address : uri));
-                                streams.app.snack.add(Snack(
-                                    message: 'URI Copied to Clipboard',
-                                    atBottom: true));
+                                streams.app.snack.add(
+                                    Snack(message: 'URI copied to clipboard'));
                                 // not formatted the same...
                                 //ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
                                 //  content: new Text("Copied to Clipboard"),

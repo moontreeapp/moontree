@@ -76,6 +76,8 @@ class _NavBarState extends State<NavBar> {
   Widget build(BuildContext context) {
     walletHasTransactions = Current.wallet.transactions.isNotEmpty;
     walletIsEmpty = Current.wallet.balances.isEmpty;
+    streams.app.navHeight
+        .add(widget.includeSectors ? NavHeight.tall : NavHeight.short);
     return components.containers.navBar(context,
         tall: widget.includeSectors,
         child: SingleChildScrollView(

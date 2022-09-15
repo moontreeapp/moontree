@@ -1,5 +1,7 @@
 import 'package:rxdart/rxdart.dart';
 
+enum NavHeight { tall, short, none }
+
 class AppStreams {
   final status = appStatus$;
   final active = appActive$;
@@ -9,9 +11,9 @@ class AppStreams {
   final page = BehaviorSubject<String>.seeded('main');
   final setting = BehaviorSubject<String?>.seeded(null);
   final xlead = BehaviorSubject<bool>.seeded(false);
-  final snack = BehaviorSubject<Snack?>.seeded(null);
   final context = BehaviorSubject<AppContext>.seeded(AppContext.wallet);
-  final hideNav = BehaviorSubject<bool?>.seeded(null);
+  final snack = BehaviorSubject<Snack?>.seeded(null);
+  final navHeight = BehaviorSubject<NavHeight>.seeded(NavHeight.none);
   final fling = BehaviorSubject<bool?>.seeded(null);
   final splash = BehaviorSubject<bool>.seeded(true);
   final triggers = BehaviorSubject<ThresholdTrigger?>.seeded(null);
@@ -50,8 +52,6 @@ final appActive$ = BehaviorSubject<bool>.seeded(true)
 
 class Snack {
   final String message;
-  final bool atBottom;
-  final bool atMiddle;
   // not used
   final bool positive;
   final String? details; // if they click on the message, popup details
@@ -59,21 +59,19 @@ class Snack {
   final String? link;
   final Map<String, dynamic>? arguments;
 
-  Snack(
-      {required this.message,
-      this.positive = true,
-      this.details,
-      this.link,
-      this.arguments,
-      this.label,
-      this.atBottom = false,
-      this.atMiddle = false});
+  Snack({
+    required this.message,
+    this.positive = true,
+    this.details,
+    this.link,
+    this.arguments,
+    this.label,
+  });
 
   @override
   String toString() {
-    return 'Snack(message: $message, atBottom: $atBottom, atMiddle: $atMiddle, '
-        'positive: $positive, details: $details, label: $label, link: $link, '
-        'arguments: $arguments)';
+    return 'Snack(message: $message, positive: $positive, details: $details, '
+        'label: $label, link: $link, arguments: $arguments)';
   }
 }
 

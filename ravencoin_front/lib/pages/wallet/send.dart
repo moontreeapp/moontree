@@ -67,7 +67,6 @@ class _SendState extends State<Send> {
   void tellUserNoRVN() => streams.app.snack.add(Snack(
         message: 'No Ravencoin in wallet - fees are paid in Ravencoin',
         positive: false,
-        atMiddle: true,
       ));
 
   @override

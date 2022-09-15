@@ -47,8 +47,8 @@ class AssetNavbar extends StatelessWidget {
               !walletIsEmpty && connectionStatus == ConnectionStatus.connected,
           disabledOnPressed: () {
             streams.app.snack.add(Snack(
-                message: 'Unable to send, please try again later.',
-                atMiddle: true));
+              message: 'Unable to send, please try again later',
+            ));
           },
         ),
         components.buttons.actionButton(

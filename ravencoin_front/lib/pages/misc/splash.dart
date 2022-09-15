@@ -158,8 +158,8 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
           hasConsented = await discoverConsent(id);
         } catch (e) {
           streams.app.snack.add(Snack(
-              message: 'Unable to connect! Please check connectivity.',
-              atBottom: true));
+            message: 'Unable to connect! Please check connectivity.',
+          ));
         }
         Future.microtask(() => Navigator.pushReplacementNamed(
             context, '/security/login',

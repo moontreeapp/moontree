@@ -44,6 +44,7 @@ class _TransactionPageState extends State<TransactionPage> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
+    streams.app.navHeight.add(NavHeight.none);
     transactionRecord = data['transactionRecord'];
     transaction = transactionRecord!.transaction;
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
@@ -131,8 +132,7 @@ class _TransactionPageState extends State<TransactionPage> {
         trailing: GestureDetector(
           onLongPress: () {
             Clipboard.setData(ClipboardData(text: value));
-            streams.app.snack
-                .add(Snack(message: 'Copied to Clipboard', atBottom: true));
+            streams.app.snack.add(Snack(message: 'Copied to clipboard'));
           },
           child: Text(
             value,
@@ -166,8 +166,7 @@ class _TransactionPageState extends State<TransactionPage> {
         ),
         onLongPress: () {
           Clipboard.setData(ClipboardData(text: elementFull(text)));
-          streams.app.snack
-              .add(Snack(message: 'Copied to Clipboard', atBottom: true));
+          streams.app.snack.add(Snack(message: 'Copied to clipboard'));
         },
         trailing: Text(element(text), style: Theme.of(context).textTheme.link),
       );
