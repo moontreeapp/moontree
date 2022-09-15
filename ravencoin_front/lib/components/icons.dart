@@ -249,7 +249,9 @@ class IconComponents {
               style: Theme.of(components.navigator.routeContext!)
                   .textTheme
                   .headline1!
-                  .copyWith(color: AppColors.white87))),
+                  .copyWith(
+                      fontSize: (height + width) * .3,
+                      color: AppColors.white87))),
       if (indicator != null) indicator,
     ]);
     if (cacheKey != null) {
