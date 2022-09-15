@@ -136,8 +136,8 @@ class _ConnectionLightState extends State<ConnectionLight>
     );
     final networkIcon = AnimatedContainer(
       duration: Duration(milliseconds: 200),
-      height: 24,
-      width: 24,
+      height: 18,
+      width: 18,
       child: ColorFiltered(
           colorFilter: ColorFilter.mode(
               connectionStatus == ConnectionStatus.connected && busy
@@ -148,7 +148,7 @@ class _ConnectionLightState extends State<ConnectionLight>
           child: Image.asset(
             pros.settings.mainnet
                 ? 'assets/rvn.png'
-                : 'assets/evr_logo_inner_noblue_margin.png',
+                : 'assets/evr_logo_inner_margin.png',
           )),
     );
     return Container(
