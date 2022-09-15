@@ -132,7 +132,7 @@ class _TransactionPageState extends State<TransactionPage> {
         trailing: GestureDetector(
           onLongPress: () {
             Clipboard.setData(ClipboardData(text: value));
-            streams.app.snack.add(Snack(message: 'Copied to clipboard'));
+            streams.app.snack.add(Snack(message: 'copied to clipboard'));
           },
           child: Text(
             value,
@@ -166,7 +166,7 @@ class _TransactionPageState extends State<TransactionPage> {
         ),
         onLongPress: () {
           Clipboard.setData(ClipboardData(text: elementFull(text)));
-          streams.app.snack.add(Snack(message: 'Copied to clipboard'));
+          streams.app.snack.add(Snack(message: 'copied to clipboard'));
         },
         trailing: Text(element(text), style: Theme.of(context).textTheme.link),
       );
