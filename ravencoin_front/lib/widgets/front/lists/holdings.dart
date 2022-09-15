@@ -37,6 +37,7 @@ class _HoldingList extends State<HoldingList> {
   Rate? rateUSD;
   Set<Balance> balances = {};
   Set<Address> addresses = {};
+  TextEditingController searchController = TextEditingController();
 
   int getCount() {
     var x = Current.wallet.holdingCount;
@@ -144,6 +145,7 @@ class _HoldingList extends State<HoldingList> {
   }
 
   Future refresh() async {
+    print('sup');
     await services.balance.recalculateAllBalances();
     setState(() {});
   }
@@ -229,6 +231,10 @@ class _HoldingList extends State<HoldingList> {
       return _holdingsView(context);
     } else if (balances.isNotEmpty) {
       return _holdingsView(context);
+      //return RefreshIndicator(
+      //  child:
+      //  onRefresh: () => refresh(),
+      //);
     } else {
       return _holdingsView(context);
     }
@@ -271,13 +277,59 @@ class _HoldingList extends State<HoldingList> {
     var assetHoldings = <Widget>[];
     for (AssetHolding holding in holdings ?? []) {
       var thisHolding = ListTile(
-        //dense: true,
-        contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-        onTap: () => onTap(wallet, holding),
-        onLongPress: _togglePath,
-        leading: leadingIcon(holding),
-        title: title(holding), /*trailing: Icon(Icons.chevron_right_rounded)*/
-      );
+          //dense: true,
+          contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+          onTap: () => onTap(wallet, holding),
+          onLongPress: _togglePath,
+          leading: leadingIcon(holding),
+          title: title(holding),
+          /*trailing: Icon(Icons.chevron_right_rounded)*/
+          trailing: holding.symbol == rvn
+              ? GestureDetector(
+                  onTap: () => components.message.giveChoices(
+                        components.navigator.routeContext!,
+                        title: '',
+                        child: TextFieldFormatted(
+                            controller: searchController,
+                            autocorrect: false,
+                            textInputAction: TextInputAction.done,
+                            labelText: 'Search',
+                            suffixIcon: IconButton(
+                              icon: Padding(
+                                  padding: EdgeInsets.only(right: 14),
+                                  child: Icon(Icons.clear_rounded,
+                                      color: AppColors.black38)),
+                              onPressed: () => searchController.text = '',
+                            ),
+                            onEditingComplete: () {
+                              Navigator.of(components.navigator.routeContext!)
+                                  .pop();
+                              setState(() {});
+                            }),
+                        behaviors: {
+                          'ok': () {
+                            Navigator.of(components.navigator.routeContext!)
+                                .pop();
+                            setState(() {});
+                          },
+                        },
+                      ),
+                  child: searchController.text == ''
+                      ? Icon(Icons.search)
+                      : Icon(
+                          Icons.search,
+                          shadows: [
+                            Shadow(
+                                color: AppColors.black12,
+                                offset: Offset(1, 1),
+                                blurRadius: 1),
+                            Shadow(
+                                color: AppColors.black12,
+                                offset: Offset(1, 2),
+                                blurRadius: 2)
+                          ],
+                        ))
+              : null);
       if (holding.symbol == rvn) {
         rvnHolding.add(thisHolding);
         rvnHolding.add(Divider(height: 1));
@@ -299,8 +351,11 @@ class _HoldingList extends State<HoldingList> {
         //          label: Text('Create Asset'))));
         //}
       } else {
-        assetHoldings.add(thisHolding);
-        assetHoldings.add(Divider(height: 1));
+        if (searchController.text == '' ||
+            holding.symbol.contains(searchController.text.toUpperCase())) {
+          assetHoldings.add(thisHolding);
+          assetHoldings.add(Divider(height: 1));
+        }
       }
     }
 
@@ -477,7 +532,9 @@ class _HoldingList extends State<HoldingList> {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(mainAxisAlignment: MainAxisAlignment.start, children: [
           Container(
-              width: MediaQuery.of(context).size.width - (16 + 40 + 16 + 16),
+              width: holding.symbol == rvn
+                  ? MediaQuery.of(context).size.width / 2
+                  : MediaQuery.of(context).size.width - (16 + 40 + 16 + 16),
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,

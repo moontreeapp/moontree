@@ -134,23 +134,25 @@ class _ConnectionLightState extends State<ConnectionLight>
         borderRadius: BorderRadius.circular(20),
       ),
     );
-    final networkIcon = AnimatedContainer(
-      duration: Duration(milliseconds: 200),
-      height: 18,
-      width: 18,
-      child: ColorFiltered(
-          colorFilter: ColorFilter.mode(
-              connectionStatus == ConnectionStatus.connected && busy
-                  ? AppColors.logoGreen
-                  : connectionStatusColor,
-              //pros.settings.mainnet ? BlendMode.srcIn : BlendMode.modulate),
-              BlendMode.srcIn),
-          child: Image.asset(
-            pros.settings.mainnet
-                ? 'assets/rvn.png'
-                : 'assets/evr_logo_inner_margin.png',
-          )),
-    );
+
+    /// option for showing the network as the connection icon
+    //final networkIcon = AnimatedContainer(
+    //  duration: Duration(milliseconds: 200),
+    //  height: 18,
+    //  width: 18,
+    //  child: ColorFiltered(
+    //      colorFilter: ColorFilter.mode(
+    //          connectionStatus == ConnectionStatus.connected && busy
+    //              ? AppColors.logoGreen
+    //              : connectionStatusColor,
+    //          //pros.settings.mainnet ? BlendMode.srcIn : BlendMode.modulate),
+    //          BlendMode.srcIn),
+    //      child: Image.asset(
+    //        pros.settings.mainnet
+    //            ? 'assets/rvn.png'
+    //            : 'assets/evr_logo_inner_margin.png',
+    //      )),
+    //);
     return Container(
         alignment: Alignment.center,
         child: IconButton(
