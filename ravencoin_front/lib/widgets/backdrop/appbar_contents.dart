@@ -107,6 +107,15 @@ class BackdropAppBarContents extends StatelessWidget
         centerTitle: spoof,
         title: PageTitle(animate: animate),
         actions: <Widget>[
+          /// thought it might be nice to have an indicator of which blockchain
+          /// is being used, but I think we can make better use of the real
+          /// estate by moving the options to the network page, and moving the
+          /// validation to during the "connect" process rather than before the
+          /// page is shown, so commenting out here for now. instead of the
+          /// status light we could show the icon of the current blockchain with
+          /// an overlay color of the status. then if the option was on the
+          /// network page that would make sense.
+          //if (!spoof) ChosenBlockchain(),
           if (!spoof) ActivityLight(),
           if (!spoof) spoof ? SpoofedConnectionLight() : ConnectionLight(),
           if (!spoof) QRCodeContainer(),

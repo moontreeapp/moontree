@@ -123,22 +123,40 @@ class _ConnectionLightState extends State<ConnectionLight>
 
   @override
   Widget build(BuildContext context) {
+    final circleIcon = AnimatedContainer(
+      duration: Duration(milliseconds: 200),
+      height: 8,
+      width: 8,
+      decoration: BoxDecoration(
+        color: connectionStatus == ConnectionStatus.connected && busy
+            ? AppColors.logoGreen
+            : connectionStatusColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+    );
+    final networkIcon = AnimatedContainer(
+      duration: Duration(milliseconds: 200),
+      height: 24,
+      width: 24,
+      child: ColorFiltered(
+          colorFilter: ColorFilter.mode(
+              connectionStatus == ConnectionStatus.connected && busy
+                  ? AppColors.logoGreen
+                  : connectionStatusColor,
+              //pros.settings.mainnet ? BlendMode.srcIn : BlendMode.modulate),
+              BlendMode.srcIn),
+          child: Image.asset(
+            pros.settings.mainnet
+                ? 'assets/rvn.png'
+                : 'assets/evr_logo_inner_noblue_margin.png',
+          )),
+    );
     return Container(
         alignment: Alignment.center,
         child: IconButton(
           splashRadius: 24,
           padding: EdgeInsets.zero,
-          icon: AnimatedContainer(
-            duration: Duration(milliseconds: 200),
-            height: 8,
-            width: 8,
-            decoration: BoxDecoration(
-              color: connectionStatus == ConnectionStatus.connected && busy
-                  ? AppColors.logoGreen
-                  : connectionStatusColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-          ),
+          icon: circleIcon,
           onPressed: () {
             if (!['Login', 'Createlogin', 'Network', 'Scan']
                 .contains(streams.app.page.value)) {
