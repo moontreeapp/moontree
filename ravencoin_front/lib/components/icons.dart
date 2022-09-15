@@ -57,6 +57,22 @@ class IconComponents {
       return _assetAvatarRVN(height: height, width: width);
     }
 
+    /// example of custom image:
+    //if (asset.toUpperCase().startsWith('MOONTREE')) {
+    //  imageDetails = imageDetails ??
+    //      getImageDetailsAlphacon(
+    //        asset,
+    //        foreground,
+    //        background,
+    //      );
+    //  var indicator =
+    //      generateIndicator(name: asset, imageDetails: imageDetails);
+    //  return Stack(alignment: Alignment.bottomRight, children: [
+    //    _assetAvatarMoontree(height: height, width: width),
+    //    if (indicator != null) indicator,
+    //  ]);
+    //}
+
     /// works but never returns anything because we have no custom images...
     /// so removing for now to save compute cycles
     //var ret = _assetAvatarSecurity(asset, height: height, width: width);
@@ -69,6 +85,11 @@ class IconComponents {
 
   Widget _assetAvatarRVN({double? height, double? width}) => Image.asset(
         'assets/rvn.png',
+        height: height,
+        width: width,
+      );
+  Widget _assetAvatarMoontree({double? height, double? width}) => Image.asset(
+        'assets/logo/moontree.png',
         height: height,
         width: width,
       );
