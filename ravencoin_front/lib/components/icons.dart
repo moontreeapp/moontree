@@ -1,11 +1,11 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/storage.dart';
 import 'package:ravencoin_front/theme/theme.dart';
-import 'package:ravencoin_front/utils/identicon.dart';
+import 'package:ravencoin_front/utils/alphacon.dart';
+//import 'package:ravencoin_front/utils/identicon.dart';
 import 'package:equatable/equatable.dart';
 
 class IconComponents {
@@ -56,10 +56,14 @@ class IconComponents {
     if (asset.toUpperCase() == pros.securities.RVN.symbol) {
       return _assetAvatarRVN(height: height, width: width);
     }
-    var ret = _assetAvatarSecurity(asset, height: height, width: width);
-    if (ret != null) {
-      return ret;
-    }
+
+    /// works but never returns anything because we have no custom images...
+    /// so removing for now to save compute cycles
+    //var ret = _assetAvatarSecurity(asset, height: height, width: width);
+    //if (ret != null) {
+    //  return ret;
+    //}
+
     return assetFromCacheOrGenerate(asset: asset, height: height, width: width);
   }
 
@@ -105,20 +109,21 @@ class IconComponents {
       width: width ?? 40,
       assetType: assetType,
     );
-    return cache[cacheKey] ??
-        assetAvatarGeneratedIdenticon(
-          asset: asset,
-          assetType: assetType,
-          height: height,
-          width: width,
-          imageDetails: imageDetails,
-          foreground: foreground,
-          background: background,
-          cacheKey: cacheKey,
-        );
+    return //cache[cacheKey] ??
+        assetAvatarGeneratedAlphacon(
+      asset: asset,
+      assetType: assetType,
+      height: height,
+      width: width,
+      imageDetails: imageDetails,
+      foreground: foreground,
+      background: background,
+      cacheKey: cacheKey,
+    );
   }
 
-  ImageDetails getImageDetails([
+  /*
+  ImageDetails getImageDetailsIdenticon([
     String? asset,
     Color? foreground,
     Color? background,
@@ -129,6 +134,7 @@ class IconComponents {
       ).generate(
         asset ?? '',
       );
+
 
   Widget assetAvatarGeneratedIdenticon({
     String? asset,
@@ -143,7 +149,7 @@ class IconComponents {
     height = height ?? 40;
     width = width ?? 40;
     imageDetails = imageDetails ??
-        getImageDetails(
+        getImageDetailsIdenticon(
           asset,
           foreground,
           background,
@@ -185,6 +191,72 @@ class IconComponents {
     }
     return ret;
   }
+*/
+
+  ImageDetails getImageDetailsAlphacon([
+    String? asset,
+    Color? foreground,
+    Color? background,
+  ]) =>
+      Alphacon(
+        background: foreground,
+        foreground: background,
+      ).generate(
+        asset ?? '',
+      );
+
+  Widget assetAvatarGeneratedAlphacon({
+    String? asset,
+    double? height,
+    double? width,
+    ImageDetails? imageDetails,
+    AssetType? assetType,
+    Color? foreground,
+    Color? background,
+    IconCacheKey? cacheKey,
+  }) {
+    height = height ?? 40;
+    width = width ?? 40;
+    imageDetails = imageDetails ??
+        getImageDetailsAlphacon(
+          asset,
+          foreground,
+          background,
+        );
+    var indicator = generateIndicator(name: asset, imageDetails: imageDetails);
+    var ret = Stack(alignment: Alignment.bottomRight, children: [
+      Container(
+          height: height,
+          width: width,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color.fromARGB(
+                255,
+                imageDetails.background[0],
+                imageDetails.background[1],
+                imageDetails.background[2],
+              ),
+              border: Border.all(
+                  width: 2,
+                  color: Color.fromARGB(
+                    255,
+                    imageDetails.foreground[0],
+                    imageDetails.foreground[1],
+                    imageDetails.foreground[2],
+                  ))),
+          child: Text((asset ?? '☾').substring(0, 1).toUpperCase(),
+              style: Theme.of(components.navigator.routeContext!)
+                  .textTheme
+                  .headline1!
+                  .copyWith(color: AppColors.white87))),
+      if (indicator != null) indicator,
+    ]);
+    if (cacheKey != null) {
+      cache[cacheKey] = ret;
+    }
+    return ret;
+  }
 
   Widget? generateIndicator({
     String? name,
@@ -193,12 +265,14 @@ class IconComponents {
     double? width,
     AssetType? assetType,
   }) {
+    height ??= 18;
+    width ??= 18;
     assetType =
         assetType ?? (name != null ? Asset.assetTypeOf(name) : AssetType.Main);
     if (assetType != AssetType.Main) {
       return Container(
-          height: height ?? 24,
-          width: width ?? 24,
+          height: height,
+          width: width,
           decoration: BoxDecoration(
               color: Color.fromARGB(
                 255,
@@ -208,7 +282,7 @@ class IconComponents {
               ),
               shape: BoxShape.circle,
               border: Border.all(
-                  width: 2,
+                  width: 1,
                   color: Color.fromARGB(
                     255,
                     imageDetails.foreground[0],
@@ -220,7 +294,7 @@ class IconComponents {
               child: Center(
                   child: Container(
                       child: Icon(assetTypeIcon(assetType: assetType),
-                          size: 16,
+                          size: (height + width) / 3,
                           color:
                               getIndicatorColor(imageDetails.background))))));
     }

@@ -171,7 +171,7 @@ class SelectionItems {
       name.enumString.toTitleCase(underscoresAsSpace: true);
 
   Widget createLeads(SelectionOption name) {
-    var imageDetails = components.icons.getImageDetails(symbolColors);
+    var imageDetails = components.icons.getImageDetailsAlphacon(symbolColors);
     return components.icons.generateIndicator(
             name: symbolColors,
             imageDetails: imageDetails,

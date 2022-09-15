@@ -84,7 +84,6 @@ class BackdropAppBarContents extends StatelessWidget
             //print(Current.balanceRVN);
             //print(pros.unspents.byWalletSymbolConfirmation());
             //printFullState();
-            streams.app.snack.add(Snack(message: 'Transaction'));
           },
           child: appBar,
         )
