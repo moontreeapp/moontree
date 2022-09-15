@@ -35,6 +35,7 @@ class _DownloadQueueCount extends State<DownloadQueueCount> {
         services.download.queue.dangling.length;
     final both = addresses > 0 && transactions > 0;
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           'download queue count: '

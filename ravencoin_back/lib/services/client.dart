@@ -118,11 +118,14 @@ class ClientService {
     await services.client.createClient();
 
     /// start derivation process
-    //await services.client.subscribe.toAllAddresses();
     final currentWallet = services.wallet.currentWallet;
     if (currentWallet is LeaderWallet) {
       await services.wallet.leader.handleDeriveAddress(leader: currentWallet);
     }
+    await services.client.subscribe.toAllAddresses();
+
+    /// subscribe to blocks on new chain
+    await waiters.block.subscribe();
 
     /// update the UI
     streams.app.wallet.refresh.add(true);
@@ -280,7 +283,9 @@ class SubscribeService {
 
             services.wallet.leader.newLeaderProcessRunning = false;
           }
-          streams.app.wallet.refresh.add(true);
+          if (wallet.id == pros.settings.currentWalletId) {
+            streams.app.wallet.refresh.add(true);
+          }
         }
       });
     }

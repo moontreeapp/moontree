@@ -128,6 +128,7 @@ class QueueService {
   Future<void> resetOrProcess() async {
     if (transactions.isEmpty && addresses.isEmpty) {
       await services.download.history.allDoneProcess();
+      streams.app.wallet.refresh.add(true);
       if (pros.transactions.records.isNotEmpty) {
         streams.app.snack
             .add(Snack(message: 'Transaction history successfully downloaded'));

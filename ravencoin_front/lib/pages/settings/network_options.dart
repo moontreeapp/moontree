@@ -28,12 +28,5 @@ class NetworkOptionsPage extends StatelessWidget {
                     EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
                 child: Container(
                     alignment: Alignment.topLeft, child: MinerModeChoice()))),
-        SliverToBoxAdapter(
-            child: Padding(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
-                child: Container(
-                    alignment: Alignment.topLeft,
-                    child: DownloadQueueCount()))),
       ]);
 }

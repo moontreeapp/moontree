@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/widgets/front/network/download_queue_count.dart';
 
 class ActivityLight extends StatefulWidget {
   ActivityLight({Key? key}) : super(key: key);
@@ -62,6 +63,10 @@ class _ActivityLightState extends State<ActivityLight>
                   components.navigator.routeContext!,
                   title: activityMessage.title,
                   content: activityMessage.message,
+                  child: activityMessage.message == '' ||
+                          activityMessage.message == null
+                      ? DownloadQueueCount()
+                      : null,
                   behaviors: {
                     'ok': () {
                       Navigator.of(components.navigator.routeContext!).pop();

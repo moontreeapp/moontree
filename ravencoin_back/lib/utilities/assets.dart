@@ -14,15 +14,15 @@ List<AssetHolding> assetHoldings(Iterable<Balance> holdings) {
   Map<String, AssetHolding> balancesMain = {};
   Map<String, AssetHolding> balancesSub = {};
   Map<String, AssetHolding> balancesOther = {};
-  if (holdings.isEmpty) {
-    holdings = [
-      Balance(
-          confirmed: 0,
-          unconfirmed: 0,
-          security: pros.securities.RVN,
-          walletId: pros.settings.currentWalletId)
-    ];
-  }
+  //if (holdings.isEmpty) {
+  //  holdings = [
+  //    Balance(
+  //        confirmed: 0,
+  //        unconfirmed: 0,
+  //        security: pros.securities.RVN,
+  //        walletId: pros.settings.currentWalletId)
+  //  ];
+  //}
   for (var balance in holdings) {
     var baseSymbol =
         balance.security.asset?.baseSymbol ?? balance.security.symbol;

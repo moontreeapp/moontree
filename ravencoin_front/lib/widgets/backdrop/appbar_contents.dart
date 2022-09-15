@@ -70,7 +70,7 @@ class BackdropAppBarContents extends StatelessWidget
           ),
         testAppBar(appBar, test: true),
         // alphaBar,
-        AppBarScrim(),
+        //AppBarScrim(),
       ],
     );
   }
@@ -78,10 +78,11 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            print(Current.wallet.unspents);
+            //print(Current.wallet.unspents);
             //services.balance.recalculateAllBalances();
-            print(Current.balanceRVN);
+            //print(Current.balanceRVN);
             //print(pros.unspents.byWalletSymbolConfirmation());
+            printFullState();
           },
           child: appBar,
         )
