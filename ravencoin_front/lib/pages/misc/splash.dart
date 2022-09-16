@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/theme/colors.dart';
+import 'package:ravencoin_front/utils/auth.dart';
 import 'package:ravencoin_front/utils/device.dart';
 import 'package:ravencoin_front/widgets/backdrop/backdrop.dart';
 import 'package:ravencoin_front/components/components.dart';
@@ -134,8 +135,10 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   Future redirectToCreateOrLogin() async {
     // this is false on 1st startup -> create
     if (!services.password.required) {
-      Future.microtask(() =>
-          Navigator.pushReplacementNamed(context, '/security/createlogin'));
+      Future.microtask(() => Navigator.pushReplacementNamed(
+            context,
+            '/security/createlogin',
+          ));
     } else {
       if (services.password.interruptedPasswordChange()) {
         showDialog(
@@ -162,7 +165,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
           ));
         }
         Future.microtask(() => Navigator.pushReplacementNamed(
-            context, '/security/login',
+            context, getMethodPath(),
             arguments: {'needsConsent': !hasConsented}));
 
         /// testing out instant/custom page transitions

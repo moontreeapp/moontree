@@ -45,7 +45,7 @@ dependencies:
   lottie: ^1.2.2
   material_design_icons_flutter: ^5.0.6595
   path_provider: ^2.0.5 # to get the correct path to store our file
-  permission_handler: ^8.2.5 # to handle the permissions to read and write files
+  permission_handler: ^10.0.0 # to handle the permissions to read and write files
   platform_device_id: ^1.0.1
   proclaim: ^2.0.0
   qr_code_scanner: ^1.0.0

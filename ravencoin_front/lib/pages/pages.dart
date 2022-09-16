@@ -17,10 +17,11 @@ import 'package:ravencoin_front/pages/misc/checkout.dart';
 import 'package:ravencoin_front/pages/security/backup/show.dart';
 import 'package:ravencoin_front/pages/security/backup/verify.dart';
 import 'package:ravencoin_front/pages/security/create.dart';
-import 'package:ravencoin_front/pages/security/login.dart';
+import 'package:ravencoin_front/pages/security/login_password.dart';
 import 'package:ravencoin_front/pages/security/login_biometric.dart';
 import 'package:ravencoin_front/pages/security/resume.dart';
-import 'package:ravencoin_front/pages/security/change.dart';
+import 'package:ravencoin_front/pages/security/change_password.dart';
+import 'package:ravencoin_front/pages/security/change_method.dart';
 import 'package:ravencoin_front/pages/settings/about.dart';
 import 'package:ravencoin_front/pages/settings/export.dart';
 import 'package:ravencoin_front/pages/settings/feedback.dart';
@@ -110,10 +111,11 @@ class pages {
             ),
         '/security/backup': (context) => BackupSeed(),
         '/security/backupConfirm': (context) => VerifySeed(),
-        '/security/change': (context) => ChangePassword(),
+        '/security/password/change': (context) => ChangeLoginPassword(),
+        '/security/method/change': (context) => ChangeLoginMethod(),
         '/security/resume': (context) => ChangeResume(),
-        '/security/login': (context) => Login(),
-        '/security/login/biometric': (context) => LoginBiometric(),
+        '/security/password/login': (context) => LoginPassword(),
+        '/security/biometric/login': (context) => LoginBiometric(),
         '/security/createlogin': (context) => CreateLogin(),
         '/transaction/transaction': (context) => TransactionPage(),
         '/transaction/receive': (context) => Receive(),

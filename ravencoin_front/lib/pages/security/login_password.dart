@@ -6,7 +6,6 @@ import 'package:ravencoin_back/services/consent.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
-import 'package:ravencoin_front/services/auth.dart';
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/utils/data.dart';
@@ -16,12 +15,12 @@ import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:ravencoin_front/services/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Login extends StatefulWidget {
+class LoginPassword extends StatefulWidget {
   @override
-  _LoginState createState() => _LoginState();
+  _LoginPasswordState createState() => _LoginPasswordState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginPasswordState extends State<LoginPassword> {
   late List listeners = [];
   TextEditingController password = TextEditingController();
   bool passwordVisible = false;
@@ -127,21 +126,9 @@ class _LoginState extends State<Login> {
                                 ]
                               : [SizedBox(height: 100)]),
                           Row(children: [unlockButton]),
-                          if (/*pros.settings.biometricSetup*/ true)
-                            Container(
-                                padding: EdgeInsets.only(top: 8),
-                                child: bioButton),
                           SizedBox(height: 40),
                         ]))),
           ])));
-
-  Widget get bioButton => components.buttons.actionButton(context,
-          enabled: true, label: 'biometric unlock', onPressed: () async {
-        //Navigator.pushNamed(context, '/security/login/biometric',
-        //    arguments: {});
-        final localAuthApi = LocalAuthApi();
-        print(await localAuthApi.authenticate());
-      });
 
   Widget get moontree => Container(
         child: SvgPicture.asset('assets/logo/moontree_logo.svg'),

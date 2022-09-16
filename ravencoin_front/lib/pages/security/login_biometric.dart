@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/auth.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_front/theme/colors.dart';
+import 'package:ravencoin_front/utils/data.dart';
+import 'package:ravencoin_front/utils/extensions.dart';
+import 'package:ravencoin_front/services/services.dart';
 
 class LoginBiometric extends StatefulWidget {
   @override
@@ -9,17 +15,105 @@ class LoginBiometric extends StatefulWidget {
 }
 
 class _LoginBiometricState extends State<LoginBiometric> {
-  @override
-  Widget build(BuildContext context) {
-    return body();
+  Map<String, dynamic> data = {};
+  late List listeners = [];
+  FocusNode unlockFocus = FocusNode();
+
+  Future<void> finishLoadingDatabase() async {
+    if (await HIVE_INIT.isPartiallyLoaded()) {
+      HIVE_INIT.setupDatabase2();
+    }
   }
 
-  Widget body() =>
-      Container(alignment: Alignment.center, height: 120, child: bioButton);
+  Future<void> finishLoadingWaiters() async {
+    if (await HIVE_INIT.isPartiallyLoaded()) {
+      await HIVE_INIT.setupWaiters2();
+    }
+  }
 
-  Widget get bioButton => components.buttons.actionButton(context,
-          enabled: true, label: 'biometric login', onPressed: () async {
-        final localAuthApi = LocalAuthApi();
-        print(await localAuthApi.authenticate());
-      });
+  Future<bool> get finishedLoading async => await HIVE_INIT.isLoaded();
+
+  @override
+  void initState() {
+    print('loading');
+    super.initState();
+    listeners.add(streams.app.active.listen((bool value) {
+      if (value) {
+        setState(() {});
+      }
+    }));
+    finishLoadingDatabase();
+  }
+
+  @override
+  void dispose() {
+    for (var listener in listeners) {
+      listener.cancel();
+    }
+    unlockFocus.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    data = populateData(context, data);
+    return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
+  }
+
+  Widget body() => GestureDetector(
+      onTap: FocusScope.of(context).unfocus,
+      child: Container(
+          padding: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
+          child: CustomScrollView(slivers: <Widget>[
+            SliverToBoxAdapter(
+              child: SizedBox(height: 76.figmaH),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                height: 128.figmaH,
+                child: moontree,
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                  alignment: Alignment.bottomCenter,
+                  height: (16 + 24).figmaH,
+                  child: welcomeMessage),
+            ),
+            SliverFillRemaining(
+                hasScrollBody: false,
+                child: KeyboardHidesWidgetWithDelay(
+                    fade: true,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          SizedBox(height: 100),
+                          Row(children: [bioButton]),
+                          SizedBox(height: 40),
+                        ]))),
+          ])));
+
+  Widget get moontree => Container(
+        child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
+        height: .1534.ofMediaHeight(context),
+      );
+
+  Widget get welcomeMessage => Text(
+        'Welcome Back',
+        style: Theme.of(context)
+            .textTheme
+            .headline1
+            ?.copyWith(color: AppColors.black60),
+      );
+
+  Widget get bioButton => components.buttons.actionButton(
+        context,
+        enabled: true,
+        label: 'Unlock',
+        onPressed: () async {
+          final localAuthApi = LocalAuthApi();
+          print(await localAuthApi.authenticate());
+        },
+      );
 }

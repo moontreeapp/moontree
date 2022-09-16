@@ -29,7 +29,6 @@ class LocalAuthApi {
 
   Future<bool> authenticate({
     bool stickyAuth = false,
-    bool noPasswordSet = true,
   }) async {
     bool canAuth = await canAuthenticate;
     if (!canAuth) {
@@ -64,7 +63,7 @@ class LocalAuthApi {
         options: AuthenticationOptions(
           useErrorDialogs: true,
           stickyAuth: stickyAuth,
-          biometricOnly: false, //noPasswordSet,
+          biometricOnly: false,
         ),
       )) {
         reason = AuthenticationResult.success;

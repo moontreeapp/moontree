@@ -127,7 +127,12 @@ class _NavMenuState extends State<NavMenu> {
           destination(
             icon: Icons.lock_rounded,
             name: 'Password',
-            link: '/security/change',
+            link: '/security/password/change',
+          ),
+          destination(
+            icon: Icons.fingerprint_rounded,
+            name: 'Biometric',
+            link: '/security/method/change',
           ),
           /*
           destination(

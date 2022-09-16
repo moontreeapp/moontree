@@ -4,12 +4,12 @@ import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
-class ChangePassword extends StatefulWidget {
+class ChangeLoginMethod extends StatefulWidget {
   @override
-  _ChangePasswordState createState() => _ChangePasswordState();
+  _ChangeLoginMethodState createState() => _ChangeLoginMethodState();
 }
 
-class _ChangePasswordState extends State<ChangePassword> {
+class _ChangeLoginMethodState extends State<ChangeLoginMethod> {
   var newPassword = TextEditingController();
   var confirmPassword = TextEditingController();
   FocusNode newPasswordFocus = FocusNode();
