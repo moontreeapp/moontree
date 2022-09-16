@@ -75,28 +75,51 @@ class AppText {
 
   /// derivations
   static TextStyle get softButton => button.copyWith(
-      fontWeight: FontWeights.semiBold, color: AppColors.primaries[6]);
-  static TextStyle get invertButton =>
-      button.copyWith(fontWeight: FontWeights.semiBold, color: AppColors.white);
+        fontWeight: FontWeights.semiBold,
+        color: AppColors.primaries[6],
+      );
+  static TextStyle get invertButton => button.copyWith(
+        fontWeight: FontWeights.semiBold,
+        color: AppColors.white,
+      );
   static TextStyle get disabledButton => button.copyWith(
-      fontWeight: FontWeights.semiBold, color: AppColors.black38);
+        fontWeight: FontWeights.semiBold,
+        color: AppColors.black38,
+      );
   static TextStyle get enabledButton => button.copyWith(
-      fontWeight: FontWeights.semiBold, color: AppColors.offBlack);
+        fontWeight: FontWeights.semiBold,
+        color: AppColors.offBlack,
+      );
   static TextStyle get link => body1.copyWith(
-      fontWeight: FontWeights.semiBold, color: AppColors.primary);
-  static TextStyle get underlinedLink =>
-      link.copyWith(decoration: TextDecoration.underline);
+        fontWeight: FontWeights.semiBold,
+        color: AppColors.primary,
+      );
+  static TextStyle get underlinedLink => link.copyWith(
+        decoration: TextDecoration.underline,
+      );
   static TextStyle get underlinedMenuLink => subtitle2.copyWith(
         decoration: TextDecoration.underline,
         color: Color(0xFFE8EAF6),
         fontWeight: FontWeights.semiBold,
       );
-  static TextStyle get checkoutFees =>
-      caption.copyWith(height: 1, color: AppColors.black);
-  static TextStyle get checkoutSubAsset =>
-      body2.copyWith(fontWeight: FontWeights.bold, color: AppColors.black60);
+  static TextStyle get checkoutFees => caption.copyWith(
+        height: 1,
+        color: AppColors.black,
+      );
+  static TextStyle get checkoutSubAsset => body2.copyWith(
+        fontWeight: FontWeights.bold,
+        color: AppColors.black60,
+      );
   static TextStyle get checkoutItem => body2.copyWith(
-      fontWeight: FontWeights.semiBold, color: AppColors.black60);
+        fontWeight: FontWeights.semiBold,
+        color: AppColors.black60,
+      );
   static TextStyle get checkoutFee => body2.copyWith(
-      fontWeight: FontWeights.semiBold, color: AppColors.black60);
+        fontWeight: FontWeights.semiBold,
+        color: AppColors.black60,
+      );
+  static TextStyle get networkName => body2.copyWith(
+        fontWeight: FontWeights.thick,
+        fontSize: 10.0,
+      );
 }

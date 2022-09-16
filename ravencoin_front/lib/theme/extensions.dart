@@ -21,6 +21,7 @@ extension TextThemeStyleExtension on TextTheme {
   TextStyle? get checkoutItem => AppText.checkoutItem;
   TextStyle? get checkoutFees => AppText.checkoutFees;
   TextStyle? get checkoutFee => AppText.checkoutFee;
+  TextStyle? get networkName => AppText.networkName;
 }
 
 extension TextStyleExtension on ThemeData {}

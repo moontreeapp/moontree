@@ -131,7 +131,9 @@ class _ConnectionLightState extends State<ConnectionLight>
         color: connectionStatus == ConnectionStatus.connected && busy
             ? AppColors.logoGreen
             : connectionStatusColor,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: pros.settings.mainnet
+            ? BorderRadius.circular(20)
+            : BorderRadius.zero,
       ),
     );
 
@@ -153,6 +155,25 @@ class _ConnectionLightState extends State<ConnectionLight>
     //            : 'assets/evr_logo_inner_margin.png',
     //      )),
     //);
+    /// alternative option for showing the network as the connection icon
+    //final networkIcon = AnimatedContainer(
+    //  duration: Duration(milliseconds: 200),
+    //  height: 24,
+    //  width: 24,
+    //  child: Text(pros.settings.mainnet ? 'RVN' : 'EVR',
+    //      style: Theme.of(components.navigator.routeContext!)
+    //          .textTheme
+    //          .body2!
+    //          .copyWith(
+    //            fontWeight: FontWeights.thick,
+    //            fontSize: 10.0,
+    //            color: connectionStatus == ConnectionStatus.connected && busy
+    //                ? AppColors.logoGreen
+    //                : connectionStatusColor,
+    //          )),
+    //);
+    /// ACTUALLY, we don't need the indicator up there because whatever chain
+    /// you are on will show the native currency first.
     return Container(
         alignment: Alignment.center,
         child: IconButton(
