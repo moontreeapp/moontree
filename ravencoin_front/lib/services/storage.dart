@@ -8,6 +8,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Storage {
   Future<Directory> get _localDir async =>
@@ -205,4 +206,22 @@ class FileDetails {
       required this.size,
       this.content,
       this.contentBytes});
+}
+
+class SecureStorage {
+  Future example() async {
+    final key = 'key';
+    // Create storage
+    final storage = new FlutterSecureStorage();
+    // Read value
+    String? value = await storage.read(key: key);
+    // Read all values
+    Map<String, String> allValues = await storage.readAll();
+    // Write value
+    await storage.write(key: key, value: value);
+    // Delete value
+    await storage.delete(key: key);
+    // Delete all
+    await storage.deleteAll();
+  }
 }

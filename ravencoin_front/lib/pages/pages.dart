@@ -18,6 +18,7 @@ import 'package:ravencoin_front/pages/security/backup/show.dart';
 import 'package:ravencoin_front/pages/security/backup/verify.dart';
 import 'package:ravencoin_front/pages/security/create.dart';
 import 'package:ravencoin_front/pages/security/login.dart';
+import 'package:ravencoin_front/pages/security/login_biometric.dart';
 import 'package:ravencoin_front/pages/security/resume.dart';
 import 'package:ravencoin_front/pages/security/change.dart';
 import 'package:ravencoin_front/pages/settings/about.dart';
@@ -112,6 +113,7 @@ class pages {
         '/security/change': (context) => ChangePassword(),
         '/security/resume': (context) => ChangeResume(),
         '/security/login': (context) => Login(),
+        '/security/login/biometric': (context) => LoginBiometric(),
         '/security/createlogin': (context) => CreateLogin(),
         '/transaction/transaction': (context) => TransactionPage(),
         '/transaction/receive': (context) => Receive(),

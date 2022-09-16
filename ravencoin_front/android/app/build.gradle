@@ -51,7 +51,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.moontree.mobile"
-        minSdkVersion 21
+        minSdkVersion 21 // flutter secure storage requires minSdkVersion to >= 18, don't remember what requires 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
