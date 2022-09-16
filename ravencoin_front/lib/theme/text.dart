@@ -118,8 +118,4 @@ class AppText {
         fontWeight: FontWeights.semiBold,
         color: AppColors.black60,
       );
-  static TextStyle get networkName => body2.copyWith(
-        fontWeight: FontWeights.thick,
-        fontSize: 10.0,
-      );
 }
