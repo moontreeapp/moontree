@@ -11,13 +11,14 @@ class AuthenticationMethodChoice extends StatefulWidget {
 }
 
 class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
-  Chain? networkChoice = Chain.ravencoin;
+  AuthMethod? authenticationMethodChoice = AuthMethod.password;
 
   @override
   void initState() {
     super.initState();
-    networkChoice =
-        pros.settings.netName == 'Main' ? Chain.ravencoin : Chain.evrmore;
+    authenticationMethodChoice = pros.settings.authMethodIsBiometric
+        ? AuthMethod.password
+        : AuthMethod.biometric;
   }
 
   @override
@@ -33,35 +34,35 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
         Text('Authentication Method',
             style: Theme.of(context).textTheme.bodyText1),
         Text(
-          'You ',
+          'Setting a strong password is the most secure way to secure your wallets. You also have the choice to use biometric authentication if you prefer. Before you change your authentication method you should backup your wallets by writing down their passphrases on paper. If you change your preference your wallets must be reencrypted: DO NOT close the app until the process has finished.',
           style: Theme.of(context).textTheme.bodyText2,
         ),
         SizedBox(height: 16),
-        RadioListTile<Chain>(
-            title: const Text('Ravencoin (mainnet)'),
-            value: Chain.ravencoin,
-            groupValue: networkChoice,
-            onChanged: (Chain? value) async {
-              streams.client.busy.add(true);
-              setState(() => networkChoice = value);
-              services.client.switchNetworks(value, net: Net.Main);
-              components.loading.screen(
-                  message: 'Syncing with Ravencoin',
-                  returnHome: true,
-                  playCount: 5);
+        RadioListTile<AuthMethod>(
+            title: const Text('Password'),
+            value: AuthMethod.password,
+            groupValue: authenticationMethodChoice,
+            onChanged: (AuthMethod? value) async {
+              //streams.client.busy.add(true);
+              //setState(() => authenticationMethodChoice = value);
+              //services.client.switchNetworks(value, net: Net.Main);
+              //components.loading.screen(
+              //    message: 'Syncing with Ravencoin',
+              //    returnHome: true,
+              //    playCount: 5);
             }),
-        RadioListTile<Chain>(
-            title: const Text('Evrmore (mainnet)'),
-            value: Chain.evrmore,
-            groupValue: networkChoice,
-            onChanged: (Chain? value) async {
-              streams.client.busy.add(true);
-              setState(() => networkChoice = value);
-              services.client.switchNetworks(value, net: Net.Test);
-              components.loading.screen(
-                  message: 'Syncing with Evrmore',
-                  returnHome: true,
-                  playCount: 5);
+        RadioListTile<AuthMethod>(
+            title: const Text('Biometric (less secure)'),
+            value: AuthMethod.biometric,
+            groupValue: authenticationMethodChoice,
+            onChanged: (AuthMethod? value) async {
+              //streams.client.busy.add(true);
+              //setState(() => authenticationMethodChoice = value);
+              //services.client.switchNetworks(value, net: Net.Test);
+              //components.loading.screen(
+              //    message: 'Syncing with Evrmore',
+              //    returnHome: true,
+              //    playCount: 5);
             }),
       ],
     );
