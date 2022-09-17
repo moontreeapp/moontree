@@ -2,8 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 
 import '_type_id.dart';
-import 'node_exposure.dart';
-import 'net.dart';
+import 'types/node_exposure.dart';
+import 'types/net.dart';
 
 part 'address.g.dart';
 

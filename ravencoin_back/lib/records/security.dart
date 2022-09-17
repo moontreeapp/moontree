@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import 'package:ravencoin_back/records/security_type.dart';
+import 'package:ravencoin_back/records/types/security_type.dart';
 import 'package:ravencoin_back/extensions/object.dart';
 
 import '_type_id.dart';

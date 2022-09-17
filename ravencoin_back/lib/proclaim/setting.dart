@@ -32,12 +32,10 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
             Setting(name: SettingName.Electrum_Domain, value: defaultUrl),
         SettingName.Electrum_Port:
             Setting(name: SettingName.Electrum_Port, value: defaultPort),
-        // deprecated
-        SettingName.Electrum_DomainTest:
-            Setting(name: SettingName.Electrum_DomainTest, value: defaultUrl),
-        // deprecated
-        SettingName.Electrum_PortTest:
-            Setting(name: SettingName.Electrum_PortTest, value: defaultPort),
+        SettingName.Blockchain:
+            Setting(name: SettingName.Blockchain, value: Chain.ravencoin),
+        SettingName.Auth_Method:
+            Setting(name: SettingName.Auth_Method, value: AuthMethod.password),
         SettingName.Wallet_Current:
             Setting(name: SettingName.Wallet_Current, value: '0'),
         SettingName.Wallet_Preferred:
@@ -46,8 +44,6 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
             Setting(name: SettingName.User_Name, value: null),
         SettingName.Send_Immediate:
             Setting(name: SettingName.Send_Immediate, value: false),
-        SettingName.Blockchain:
-            Setting(name: SettingName.Blockchain, value: Chain.ravencoin),
       }.map(
           (settingName, setting) => MapEntry(settingName.enumString, setting));
 
@@ -107,4 +103,8 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
               : defaultUrl /*electrum for evrmore???*/),
     ]);
   }
+
+  bool get authMethodIsBiometric =>
+      primaryIndex.getOne(SettingName.Auth_Method)!.value ==
+      AuthMethod.biometric;
 }

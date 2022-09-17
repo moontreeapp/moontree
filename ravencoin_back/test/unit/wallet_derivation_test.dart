@@ -12,7 +12,7 @@ import 'package:bip39/bip39.dart' as bip39;
 
 import 'package:convert/convert.dart';
 
-import 'package:ravencoin_back/records/net.dart' as raven_net;
+import 'package:ravencoin_back/records/types/net.dart' as raven_net;
 
 final mnemonic =
     'smile build brain topple moon scrap area aim budget enjoy polar erosion';

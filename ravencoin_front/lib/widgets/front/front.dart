@@ -6,6 +6,7 @@ export 'forms/reissue.dart';
 export 'network/download_queue_count.dart';
 export 'network/network_choice.dart';
 export 'network/miner_mode_choice.dart';
+export 'security/authentication_choice.dart';
 export 'asset_details.dart';
 export 'coming_soon.dart';
 export 'loader.dart';

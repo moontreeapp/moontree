@@ -1,4 +1,4 @@
-import 'package:ravencoin_back/records/node_exposure.dart';
+import 'package:ravencoin_back/records/types/node_exposure.dart';
 import 'package:test/test.dart';
 import 'package:ravencoin_back/utilities/derivation_path.dart';
 

@@ -24,9 +24,9 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
       case 4:
         return SettingName.Electrum_Port;
       case 5:
-        return SettingName.Electrum_DomainTest;
+        return SettingName.Auth_Method;
       case 6:
-        return SettingName.Electrum_PortTest;
+        return SettingName.Blockchain;
       case 7:
         return SettingName.Wallet_Current;
       case 8:
@@ -37,8 +37,6 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
         return SettingName.User_Name;
       case 11:
         return SettingName.Send_Immediate;
-      case 12:
-        return SettingName.Blockchain;
       default:
         return SettingName.Database_Version;
     }
@@ -62,10 +60,10 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
       case SettingName.Electrum_Port:
         writer.writeByte(4);
         break;
-      case SettingName.Electrum_DomainTest:
+      case SettingName.Auth_Method:
         writer.writeByte(5);
         break;
-      case SettingName.Electrum_PortTest:
+      case SettingName.Blockchain:
         writer.writeByte(6);
         break;
       case SettingName.Wallet_Current:
@@ -82,9 +80,6 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
         break;
       case SettingName.Send_Immediate:
         writer.writeByte(11);
-        break;
-      case SettingName.Blockchain:
-        writer.writeByte(12);
         break;
     }
   }

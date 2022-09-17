@@ -1,5 +1,5 @@
 import 'package:quiver/iterables.dart';
-import 'package:ravencoin_back/records/net.dart';
+import 'package:ravencoin_back/records/types/net.dart';
 
 String whiteSapce = '  ';
 String punctuationProblematic = '`?:;"\'\\\$|/<>';

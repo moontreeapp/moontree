@@ -126,14 +126,14 @@ class _NavMenuState extends State<NavMenu> {
         children: [
           destination(
             icon: Icons.lock_rounded,
-            name: 'Password',
+            name: 'Authentication',
             link: '/security/password/change',
           ),
-          destination(
-            icon: Icons.fingerprint_rounded,
-            name: 'Biometric',
-            link: '/security/method/change',
-          ),
+          //destination(
+          //  icon: Icons.fingerprint_rounded,
+          //  name: 'Biometric',
+          //  link: '/security/method/change',
+          //),
           /*
           destination(
               icon: MdiIcons.accountCog,

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ravencoin_back/records/net.dart';
+import 'package:ravencoin_back/records/types/net.dart';
 import 'package:ravencoin_front/utils/address.dart';
 
 void main() {

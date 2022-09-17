@@ -3,6 +3,7 @@
 ///   only matters when trying to backup wallets right?
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_front/utils/auth.dart';
 
 class ChangeResume extends StatefulWidget {
   @override
@@ -39,7 +40,7 @@ class _ChangeResumeState extends State<ChangeResume> {
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         TextButton.icon(
             onPressed: () => Navigator.pushReplacementNamed(
-                context, '/security/login', arguments: {}),
+                context, getMethodPath(), arguments: {}),
             icon: Icon(Icons.login),
             label: Text('Abort Password Change Process',
                 style: TextStyle(color: Theme.of(context).primaryColor))),
@@ -118,7 +119,7 @@ class _ChangeResumeState extends State<ChangeResume> {
                 TextButton(
                     child: Text('ok'),
                     onPressed: () => Navigator.pushReplacementNamed(
-                        context, '/security/login',
+                        context, getMethodPath(),
                         arguments: {}))
               ]));
 }

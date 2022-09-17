@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 
-import '_type_id.dart';
+import '../_type_id.dart';
 
 part 'security_type.g.dart';
 

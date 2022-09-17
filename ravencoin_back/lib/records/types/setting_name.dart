@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 
-import '_type_id.dart';
+import '../_type_id.dart';
 
 part 'setting_name.g.dart';
 
@@ -24,10 +24,10 @@ enum SettingName {
   Electrum_Port,
 
   @HiveField(5)
-  Electrum_DomainTest,
+  Auth_Method,
 
   @HiveField(6)
-  Electrum_PortTest,
+  Blockchain,
 
   @HiveField(7)
   Wallet_Current,
@@ -43,7 +43,4 @@ enum SettingName {
 
   @HiveField(11)
   Send_Immediate,
-
-  @HiveField(12)
-  Blockchain,
 }

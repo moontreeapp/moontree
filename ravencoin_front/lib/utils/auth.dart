@@ -14,6 +14,6 @@ Future logout() async {
   streams.app.splash.add(false);
 }
 
-String getMethodPath() => /*pros.settings.biometricSetup*/ false
+String getMethodPath() => pros.settings.authMethodIsBiometric
     ? '/security/biometric/login'
     : '/security/password/login';

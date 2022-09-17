@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 
-import '_type_id.dart';
+import '../_type_id.dart';
 
 part 'metadata_type.g.dart';
 

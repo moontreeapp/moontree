@@ -33,4 +33,5 @@ class TypeId {
   static const AssetType = 106;
   static const StatusType = 107;
   static const Chain = 108;
+  static const AuthMethod = 109;
 }
