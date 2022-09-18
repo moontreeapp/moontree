@@ -5,6 +5,7 @@ import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/lookup.dart';
+import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
@@ -209,7 +210,10 @@ class _BackupSeedState extends State<BackupSeed>
           ]),
       ]));
 
-  bool verify() => services.password.validate.password(password.text);
+  Future<bool> verify() async => services.password.validate.password(
+        password.text,
+        await SecureStorage.biometricKey,
+      );
 
   Widget get showButton => components.buttons.actionButton(context,
       enabled: (services.password.askCondition ? password.text != '' : true) &&
@@ -220,7 +224,8 @@ class _BackupSeedState extends State<BackupSeed>
 
   Future<void> submitProceedure() async {
     if (services.password.askCondition
-        ? await services.password.lockout.handleVerificationAttempt(verify())
+        ? await services.password.lockout
+            .handleVerificationAttempt(await verify())
         : true) {
       streams.app.verify.add(true);
       setState(() {

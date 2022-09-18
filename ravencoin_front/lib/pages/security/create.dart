@@ -40,7 +40,10 @@ class _CreateLoginState extends State<CreateLogin> {
   Future<void> exitProcess() async {
     await setupWallets();
     Navigator.pushReplacementNamed(context, '/home', arguments: {});
-    services.cipher.initCiphers(altPassword: passwordText);
+    services.cipher.initCiphers(
+      altPassword: passwordText,
+      altSalt: await SecureStorage.biometricKey,
+    );
     await services.cipher.updateWallets();
     services.cipher.cleanupCiphers();
     services.cipher.loginTime();

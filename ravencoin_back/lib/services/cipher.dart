@@ -74,8 +74,10 @@ class CipherService {
     );
   }
 
-  SingleWallet reencryptSingleWallet(SingleWallet wallet,
-      [CipherBase? cipher]) {
+  SingleWallet reencryptSingleWallet(
+    SingleWallet wallet, [
+    CipherBase? cipher,
+  ]) {
     var reencrypt = EncryptedWIF.fromWIF(
       EncryptedWIF(wallet.encrypted, wallet.cipher!).wif,
       cipher ?? currentCipher!,
@@ -100,23 +102,27 @@ class CipherService {
     password = getPassword(password: password, altPassword: altPassword);
     salt = getSalt(salt: salt, altSalt: altSalt);
     for (var currentCipherUpdate in currentCipherUpdates ?? _cipherUpdates) {
-      pros.ciphers.registerCipher(currentCipherUpdate, password);
+      pros.ciphers.registerCipher(currentCipherUpdate, password, salt);
     }
   }
 
   CipherBase updatePassword({
     Uint8List? password,
     String? altPassword,
+    Uint8List? salt,
+    String? altSalt,
     CipherType? latest,
   }) {
     latest = latest ?? latestCipherType;
     password = getPassword(password: password, altPassword: altPassword);
+    salt = getSalt(salt: salt, altSalt: altSalt);
     return pros.ciphers.registerCipher(
       password == []
           ? CipherUpdate(CipherType.None,
               passwordId: pros.passwords.maxPasswordId)
           : currentCipherUpdate,
       password,
+      salt,
     );
   }
 

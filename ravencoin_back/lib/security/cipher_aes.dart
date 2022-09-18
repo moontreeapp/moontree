@@ -8,8 +8,8 @@ class CipherAES implements CipherBase {
   late Uint8List _key; // 32 bytes
   late Uint8List _iv; // 16 bytes
 
-  CipherAES(Uint8List password, {Uint8List? salt, Function? saltMethod}) {
-    var generator = makeKeyGenerator(48, salt: salt, saltMethod: saltMethod);
+  CipherAES(Uint8List password, {Uint8List? salt}) {
+    var generator = makeKeyGenerator(48, salt: salt);
     var result = generator.process(password);
     assert(result.length == 48);
     _key = result.sublist(0, 32);
@@ -22,14 +22,13 @@ class CipherAES implements CipherBase {
   Argon2BytesGenerator makeKeyGenerator(
     int length, {
     Uint8List? salt,
-    Function? saltMethod,
   }) =>
       Argon2BytesGenerator()
         // Note: we may need to tweak these params to work best on mobile devices
         //       https://www.twelve21.io/how-to-choose-the-right-parameters-for-argon2/
         ..init(Argon2Parameters(
           Argon2Parameters.ARGON2_id,
-          salt ?? (saltMethod ?? () => null)() ?? DEFAULT_SALT,
+          salt ?? DEFAULT_SALT,
           desiredKeyLength: length,
           version: Argon2Parameters.ARGON2_VERSION_13,
           iterations: DEFAULT_ITERATIONS,

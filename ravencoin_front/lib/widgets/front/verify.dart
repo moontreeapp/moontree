@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 class VerifyPassword extends StatefulWidget {
@@ -108,11 +109,15 @@ class _VerifyPasswordState extends State<VerifyPassword> {
         onPressed: submitProceedure,
       );
 
-  bool verify() => services.password.validate.password(password.text); // &&
+  Future<bool> verify() async => services.password.validate.password(
+        password.text,
+        await SecureStorage.biometricKey,
+      ); // &&
   //services.password.validate.previouslyUsed(password.text) == 0;
 
   Future<void> submitProceedure() async {
-    if (await services.password.lockout.handleVerificationAttempt(verify())) {
+    if (await services.password.lockout
+        .handleVerificationAttempt(await verify())) {
       streams.app.verify.add(true);
       widget.parentState?.setState(() {});
     } else {

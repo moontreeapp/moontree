@@ -65,13 +65,17 @@ class PasswordValidationService {
   String getHash(String password, String salt) => services.password.create
       .hashThis(services.password.create.saltPassword(password, salt));
 
-  bool password(String password) =>
-      getHash(password, pros.passwords.primaryIndex.getMostRecent()!.salt) ==
+  bool password(String password, String salt) =>
+      getHash(password,
+          salt /*pros.passwords.primaryIndex.getMostRecent()!.salt*/) ==
       pros.passwords.primaryIndex.getMostRecent()!.saltedHash;
 
   /// unused
-  bool previousPassword(String password) =>
-      getHash(password, pros.passwords.primaryIndex.getPrevious()!.salt) ==
+  bool previousPassword(String password, String salt) =>
+      getHash(
+        password,
+        salt, /*pros.passwords.primaryIndex.getPrevious()!.salt*/
+      ) ==
       pros.passwords.primaryIndex.getPrevious()!.saltedHash;
 
   /// unused

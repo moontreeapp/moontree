@@ -3,6 +3,7 @@
 ///   only matters when trying to backup wallets right?
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/utils/auth.dart';
 
 class ChangeResume extends StatefulWidget {
@@ -45,7 +46,7 @@ class _ChangeResumeState extends State<ChangeResume> {
             label: Text('Abort Password Change Process',
                 style: TextStyle(color: Theme.of(context).primaryColor))),
         TextButton.icon(
-            onPressed: () => submit(),
+            onPressed: () async => await submit(),
             icon: Icon(Icons.login),
             label: Text('Login',
                 style: TextStyle(color: Theme.of(context).primaryColor))),
@@ -80,8 +81,11 @@ class _ChangeResumeState extends State<ChangeResume> {
         ],
       );
 
-  void submit() {
-    if (services.password.validate.previousPassword(password.text)) {
+  Future<void> submit() async {
+    if (services.password.validate.previousPassword(
+      password.text,
+      await SecureStorage.biometricKey,
+    )) {
       FocusScope.of(context).unfocus();
       services.cipher.initCiphers(
         altPassword: password.text,

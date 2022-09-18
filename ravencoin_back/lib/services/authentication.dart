@@ -19,7 +19,8 @@ class AuthenticationService {
     String? message,
   }) async {
     await services.password.create.save(password, salt);
-    var cipher = services.cipher.updatePassword(altPassword: password);
+    var cipher =
+        services.cipher.updatePassword(altPassword: password, altSalt: salt);
     await services.cipher.updateWallets(cipher: cipher);
     services.cipher.cleanupCiphers();
     if (message != null && message != '') {

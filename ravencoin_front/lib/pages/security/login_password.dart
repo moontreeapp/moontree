@@ -259,7 +259,10 @@ class _LoginPasswordState extends State<LoginPassword> {
           }),
       onPressed: () async => await submit());
 
-  bool validate() => services.password.validate.password(password.text);
+  Future<bool> validate() async => services.password.validate.password(
+        password.text,
+        await SecureStorage.biometricKey,
+      );
 
   Future consentToAgreements() async {
     //uploadNewDocument();
@@ -281,7 +284,8 @@ class _LoginPasswordState extends State<LoginPassword> {
         await Future.delayed(Duration(milliseconds: 1));
       }
     }
-    if (await services.password.lockout.handleVerificationAttempt(validate()) &&
+    if (await services.password.lockout
+            .handleVerificationAttempt(await validate()) &&
         passwordText == null) {
       // only run once - disable button
       setState(() => passwordText = password.text);

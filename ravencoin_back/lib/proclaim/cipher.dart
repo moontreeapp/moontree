@@ -33,14 +33,16 @@ class CipherProclaim extends Proclaim<_CipherUpdateKey, Cipher> {
 
   static Map<CipherType, Function> cipherInitializers = {
     CipherType.None: ([Uint8List? password]) => CipherNone(),
-    CipherType.AES: (Uint8List password) => CipherAES(password),
+    CipherType.AES: (Uint8List password, [Uint8List? salt]) =>
+        CipherAES(password, salt: salt),
   };
 
   CipherBase registerCipher(
     CipherUpdate cipherUpdate,
     Uint8List password,
+    Uint8List salt,
   ) {
-    var cipher = cipherInitializers[cipherUpdate.cipherType]!(password);
+    var cipher = cipherInitializers[cipherUpdate.cipherType]!(password, salt);
     save(Cipher(
         cipherType: cipherUpdate.cipherType,
         passwordId: cipherUpdate.passwordId,
