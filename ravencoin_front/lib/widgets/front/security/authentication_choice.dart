@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_front/components/components.dart';
+//import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 
 class AuthenticationMethodChoice extends StatefulWidget {
   final dynamic data;
@@ -43,26 +44,34 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
             value: AuthMethod.password,
             groupValue: authenticationMethodChoice,
             onChanged: (AuthMethod? value) async {
-              //streams.client.busy.add(true);
-              //setState(() => authenticationMethodChoice = value);
-              //services.client.switchNetworks(value, net: Net.Main);
+              setState(() => authenticationMethodChoice = value);
+              await services.authentication.setMethod(
+                method: value!,
+                password: 'ask for password',
+                salt: await SecureStorage.biometricKey,
+              );
               //components.loading.screen(
-              //    message: 'Syncing with Ravencoin',
+              //    message: 'Re-encrypting Wallets',
+              //    staticImage: true,
               //    returnHome: true,
-              //    playCount: 5);
+              //    playCount: 3);
             }),
         RadioListTile<AuthMethod>(
             title: const Text('Biometric (less secure)'),
             value: AuthMethod.biometric,
             groupValue: authenticationMethodChoice,
             onChanged: (AuthMethod? value) async {
-              //streams.client.busy.add(true);
-              //setState(() => authenticationMethodChoice = value);
-              //services.client.switchNetworks(value, net: Net.Test);
+              setState(() => authenticationMethodChoice = value);
+              await services.authentication.setMethod(
+                method: value!,
+                password: await SecureStorage.biometricKey,
+                salt: await SecureStorage.biometricKey,
+              );
               //components.loading.screen(
-              //    message: 'Syncing with Evrmore',
+              //    message: 'Re-encrypting Wallets',
+              //    staticImage: true,
               //    returnHome: true,
-              //    playCount: 5);
+              //    playCount: 3);
             }),
       ],
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/auth.dart';
+import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -113,7 +114,21 @@ class _LoginBiometricState extends State<LoginBiometric> {
         label: 'Unlock',
         onPressed: () async {
           final localAuthApi = LocalAuthApi();
-          print(await localAuthApi.authenticate());
+          final x = await localAuthApi.authenticate();
+          if (x) {
+            Navigator.pushReplacementNamed(context, '/home', arguments: {});
+            // create ciphers for wallets we have
+            services.cipher.initCiphers(
+              altPassword: await SecureStorage.biometricKey,
+              altSalt: await SecureStorage.biometricKey,
+            );
+            await services.cipher.updateWallets();
+            services.cipher.cleanupCiphers();
+            services.cipher.loginTime();
+            streams.app.splash.add(false); // trigger to refresh app bar again
+            streams.app.logout.add(false);
+            streams.app.verify.add(true);
+          }
         },
       );
 }

@@ -7,6 +7,7 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:ravencoin_back/utilities/random.dart';
 import 'package:share/share.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -223,5 +224,17 @@ class SecureStorage {
     await storage.delete(key: key);
     // Delete all
     await storage.deleteAll();
+  }
+
+  static Future<String> get biometricKey async {
+    const key = 'biometricKey';
+    final storage = new FlutterSecureStorage();
+    String? value = await storage.read(key: key);
+    if (value != null) {
+      return value;
+    }
+    final bioKey = randomString();
+    await storage.write(key: key, value: bioKey);
+    return bioKey;
   }
 }

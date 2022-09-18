@@ -122,12 +122,14 @@ class PasswordCreationService {
     return digest.toString();
   }
 
-  Future save(String password) async {
+  Future save(String password, String salt) async {
     await pros.passwords.save(Password(
         id: (pros.passwords.maxPasswordId ?? -1) + 1,
         saltedHash: password == ''
             ? ''
-            : hashThis(saltPassword(password,
-                Password.getSalt((pros.passwords.maxPasswordId ?? -1) + 1)))));
+            : hashThis(saltPassword(
+                password,
+                salt, //Password.getSalt((pros.passwords.maxPasswordId ?? -1) + 1),
+              ))));
   }
 }

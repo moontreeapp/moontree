@@ -6,6 +6,7 @@ import 'package:ravencoin_back/services/consent.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/utils/data.dart';
@@ -282,14 +283,15 @@ class _LoginPasswordState extends State<LoginPassword> {
     }
     if (await services.password.lockout.handleVerificationAttempt(validate()) &&
         passwordText == null) {
-      setState(() {
-        passwordText = password.text;
-      }); // to disable the button visually
-      //await Future.delayed(Duration(milliseconds: 200)); // in release mode?
+      // only run once - disable button
+      setState(() => passwordText = password.text);
       await consentToAgreements();
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
       // create ciphers for wallets we have
-      services.cipher.initCiphers(altPassword: password.text);
+      services.cipher.initCiphers(
+        altPassword: password.text,
+        altSalt: await SecureStorage.biometricKey,
+      );
       await services.cipher.updateWallets();
       services.cipher.cleanupCiphers();
       services.cipher.loginTime();

@@ -1,5 +1,6 @@
 import 'download/download.dart';
 
+import 'authentication.dart';
 import 'balance.dart';
 import 'cipher.dart';
 import 'client.dart';
@@ -16,5 +17,6 @@ class services {
   static RateService rate = RateService();
   static WalletService wallet = WalletService();
   static PasswordService password = PasswordService();
+  static AuthenticationService authentication = AuthenticationService();
   static DownloadService download = DownloadService();
 }

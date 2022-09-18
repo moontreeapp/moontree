@@ -93,9 +93,12 @@ class CipherService {
   void initCiphers({
     Uint8List? password,
     String? altPassword,
+    Uint8List? salt,
+    String? altSalt,
     Set<CipherUpdate>? currentCipherUpdates,
   }) {
     password = getPassword(password: password, altPassword: altPassword);
+    salt = getSalt(salt: salt, altSalt: altSalt);
     for (var currentCipherUpdate in currentCipherUpdates ?? _cipherUpdates) {
       pros.ciphers.registerCipher(currentCipherUpdate, password);
     }
@@ -139,5 +142,13 @@ class CipherService {
         (() => throw OneOfMultipleMissing(
             'password or altPassword required to initialize pros.ciphers.'))();
     return password ?? Uint8List.fromList(altPassword!.codeUnits);
+  }
+
+  Uint8List getSalt({Uint8List? salt, String? altSalt}) {
+    salt ??
+        altSalt ??
+        (() => throw OneOfMultipleMissing(
+            'salt or altSalt required to initialize pros.ciphers.'))();
+    return salt ?? Uint8List.fromList(altSalt!.codeUnits);
   }
 }

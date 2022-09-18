@@ -8,6 +8,7 @@ import 'package:ravencoin_back/services/consent.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/utils/device.dart';
@@ -316,13 +317,15 @@ class _CreateLoginState extends State<CreateLogin> {
   Future submit({bool showFailureMessage = true}) async {
     // since the concent calls take some time, maybe this should be removed...?
     if (validate()) {
-      // only run once
-      setState(() {
-        passwordText = password.text;
-      }); // to disable the button visually
+      // only run once - disable button
+      setState(() => passwordText = password.text);
       await consentToAgreements();
       //await Future.delayed(Duration(milliseconds: 200)); // in release mode?
-      streams.password.update.add(password.text);
+      streams.password.update.add({
+        'password': password.text,
+        'salt': await SecureStorage.biometricKey,
+        'message': ''
+      });
       streams.app.verify.add(true);
     } else {
       setState(() {

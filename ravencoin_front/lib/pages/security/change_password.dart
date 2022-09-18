@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
@@ -181,7 +182,11 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
     await Future.delayed(Duration(milliseconds: 200)); // in release mode?
     if (services.password.validate.complexity(newPassword.text)) {
       FocusScope.of(context).unfocus();
-      streams.password.update.add(newPassword.text);
+      streams.password.update.add({
+        'password': newPassword.text,
+        'salt': await SecureStorage.biometricKey,
+        'message': 'Successfully Updated Password',
+      });
       components.loading.screen(message: 'Setting Password', staticImage: true);
     }
   }
