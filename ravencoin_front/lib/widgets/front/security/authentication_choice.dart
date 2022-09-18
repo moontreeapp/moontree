@@ -45,10 +45,11 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
             groupValue: authenticationMethodChoice,
             onChanged: (AuthMethod? value) async {
               setState(() => authenticationMethodChoice = value);
-              await services.authentication.setMethod(
-                method: value!,
+              await services.authentication.setMethod(method: value!);
+              await services.authentication.setPassword(
                 password: 'ask for password',
                 salt: await SecureStorage.biometricKey,
+                message: 'Successfully Updated Authentication Method',
               );
               //components.loading.screen(
               //    message: 'Re-encrypting Wallets',
@@ -62,10 +63,11 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
             groupValue: authenticationMethodChoice,
             onChanged: (AuthMethod? value) async {
               setState(() => authenticationMethodChoice = value);
-              await services.authentication.setMethod(
-                method: value!,
+              await services.authentication.setMethod(method: value!);
+              await services.authentication.setPassword(
                 password: await SecureStorage.biometricKey,
                 salt: await SecureStorage.biometricKey,
+                message: 'Successfully Updated Authentication Method',
               );
               //components.loading.screen(
               //    message: 'Re-encrypting Wallets',

@@ -38,7 +38,7 @@ class CipherService {
   CipherBase? get currentCipher => currentCipherBase?.cipher;
 
   /// make sure all wallets are on the latest ciphertype and password
-  Future updateWallets({CipherBase? cipher}) async {
+  Future<void> updateWallets({CipherBase? cipher}) async {
     var records = <Wallet>[];
     for (var wallet in pros.wallets.records) {
       if (wallet.cipherUpdate != currentCipherUpdate) {

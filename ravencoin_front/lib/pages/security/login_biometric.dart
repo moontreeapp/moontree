@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/auth.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
@@ -113,6 +115,7 @@ class _LoginBiometricState extends State<LoginBiometric> {
         enabled: true,
         label: 'Unlock',
         onPressed: () async {
+          await setupWallets();
           final localAuthApi = LocalAuthApi();
           final x = await localAuthApi.authenticate();
           if (x) {
@@ -128,7 +131,26 @@ class _LoginBiometricState extends State<LoginBiometric> {
             streams.app.splash.add(false); // trigger to refresh app bar again
             streams.app.logout.add(false);
             streams.app.verify.add(true);
+          } else {
+            print(localAuthApi.reason);
           }
         },
       );
+
+  Future setupRealWallet(String? id) async {
+    await dotenv.load(fileName: '.env');
+    var mnemonic = id == null ? null : dotenv.env['TEST_WALLET_0$id']!;
+    await services.wallet.createSave(
+        walletType: WalletType.leader,
+        cipherUpdate: services.cipher.currentCipherUpdate,
+        secret: mnemonic);
+  }
+
+  Future setupWallets() async {
+    if (pros.wallets.records.isEmpty) {
+      await setupRealWallet(null);
+      await pros.settings.setCurrentWalletId(pros.wallets.first.id);
+      await pros.settings.savePreferredWalletId(pros.wallets.first.id);
+    }
+  }
 }

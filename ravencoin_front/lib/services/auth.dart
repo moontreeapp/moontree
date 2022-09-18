@@ -27,9 +27,7 @@ class LocalAuthApi {
   Future<List<BiometricType>> get availableBiometrics async =>
       await _auth.getAvailableBiometrics();
 
-  Future<bool> authenticate({
-    bool stickyAuth = false,
-  }) async {
+  Future<bool> get readyToAuthenticate async {
     bool canAuth = await canAuthenticate;
     if (!canAuth) {
       reason = AuthenticationResult.noSupport;
@@ -38,6 +36,13 @@ class LocalAuthApi {
     List<BiometricType> biometrics = await availableBiometrics;
     if (biometrics.isEmpty) {
       reason = AuthenticationResult.noBiometrics;
+      return false;
+    }
+    return true;
+  }
+
+  Future<bool> authenticate({bool stickyAuth = false}) async {
+    if (!(await readyToAuthenticate)) {
       return false;
     }
 

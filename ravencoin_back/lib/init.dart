@@ -5,7 +5,6 @@ void initWaiters(HiveLoadingStep step) {
   if ([HiveLoadingStep.All, HiveLoadingStep.Lock].contains(step)) {
     waiters.single.init();
     waiters.leader.init();
-    waiters.password.init();
     waiters.setting.init();
     waiters.app.init();
     waiters.rate.init(RVNtoFiat());

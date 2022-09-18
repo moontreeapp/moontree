@@ -54,6 +54,7 @@ class HiveInitializer {
 
   /// fast so we just do them all at once
   void registerAdapters() {
+    Hive.registerAdapter(AuthMethodAdapter());
     Hive.registerAdapter(BalanceAdapter());
     Hive.registerAdapter(BlockAdapter());
     Hive.registerAdapter(ChainAdapter());

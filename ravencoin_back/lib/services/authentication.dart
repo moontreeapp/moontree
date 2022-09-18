@@ -1,4 +1,5 @@
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/streams/app.dart';
 
 class AuthenticationService {
   bool get methodIsBiometric => pros.settings.authMethodIsBiometric;
@@ -8,18 +9,21 @@ class AuthenticationService {
 
   Future<void> setMethod({
     required AuthMethod method,
+  }) async =>
+      await pros.settings
+          .save(Setting(name: SettingName.Auth_Method, value: method));
+
+  Future<void> setPassword({
     required String password,
     required String salt,
+    String? message,
   }) async {
-    // set
-    await pros.settings
-        .save(Setting(name: SettingName.Auth_Method, value: method));
-
-    // re-encrypt wallets by just saving the key as a password
-    streams.password.update.add({
-      'password': password,
-      'salt': salt,
-      'message': 'Successfully Updated Authentication Method',
-    });
+    await services.password.create.save(password, salt);
+    var cipher = services.cipher.updatePassword(altPassword: password);
+    await services.cipher.updateWallets(cipher: cipher);
+    services.cipher.cleanupCiphers();
+    if (message != null && message != '') {
+      streams.app.snack.add(Snack(message: message));
+    }
   }
 }

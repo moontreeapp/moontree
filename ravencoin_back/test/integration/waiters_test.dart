@@ -24,7 +24,6 @@ void main() async {
     waiters.block.init();
     waiters.send.init();
     waiters.import.init();
-    waiters.password.init();
     waiters.rate.init(RVNtoFiat());
   });
 

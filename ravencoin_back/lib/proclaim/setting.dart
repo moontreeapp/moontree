@@ -35,7 +35,7 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
         SettingName.Blockchain:
             Setting(name: SettingName.Blockchain, value: Chain.ravencoin),
         SettingName.Auth_Method:
-            Setting(name: SettingName.Auth_Method, value: AuthMethod.password),
+            Setting(name: SettingName.Auth_Method, value: AuthMethod.biometric),
         SettingName.Wallet_Current:
             Setting(name: SettingName.Wallet_Current, value: '0'),
         SettingName.Wallet_Preferred:

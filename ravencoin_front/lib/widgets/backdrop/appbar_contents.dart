@@ -7,6 +7,7 @@ import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 
 class BackdropAppBarContents extends StatelessWidget
     implements PreferredSizeWidget {
@@ -79,6 +80,7 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
+            print(await SecureStorage.biometricKey);
             //print(Current.wallet.unspents);
             //services.balance.recalculateAllBalances();
             //print(Current.balanceRVN);

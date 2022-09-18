@@ -4,6 +4,8 @@ import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
+import 'package:ravencoin_front/services/auth.dart' show LocalAuthApi;
+import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/utils/auth.dart';
 import 'package:ravencoin_front/utils/device.dart';
@@ -133,12 +135,34 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   }
 
   Future redirectToCreateOrLogin() async {
-    // this is false on 1st startup -> create
-    if (!services.password.required) {
+    Future passwordFallback() async {
+      services.authentication.setMethod(method: AuthMethod.password);
       Future.microtask(() => Navigator.pushReplacementNamed(
             context,
             '/security/createlogin',
           ));
+    }
+
+    // make a password out of biokey
+
+    // this is false on 1st startup -> create
+    if (!services.password.required) {
+      if (pros.settings.authMethodIsBiometric) {
+        final localAuthApi = LocalAuthApi();
+        if (await localAuthApi.readyToAuthenticate) {
+          await services.authentication.setPassword(
+            password: await SecureStorage.biometricKey,
+            salt: await SecureStorage.biometricKey,
+          );
+          Future.microtask(() => Navigator.pushReplacementNamed(
+              context, getMethodPath(),
+              arguments: {'needsConsent': true}));
+        } else {
+          passwordFallback();
+        }
+      } else {
+        passwordFallback();
+      }
     } else {
       if (services.password.interruptedPasswordChange()) {
         showDialog(
