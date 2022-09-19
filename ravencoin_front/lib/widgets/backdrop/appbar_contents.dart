@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
+import 'package:ravencoin_front/services/auth.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
@@ -80,8 +81,17 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            print(await SecureStorage.biometricKey);
-            //print(Current.wallet.unspents);
+            //print(await SecureStorage.authenticationKey);
+            //print(Current.wallet);
+            //print(Current.wallet.cipherUpdate);
+            //print(Current.wallet.id);
+            //print(Current.wallet.name);
+            //print(Current.wallet.encrypted);
+            //print((Current.wallet as LeaderWallet).encryptedEntropy);
+            print(await LocalAuthApi().canCheckBiometrics);
+            print(await LocalAuthApi().isSetup);
+            print(await LocalAuthApi().availableBiometrics);
+            print(await LocalAuthApi().readyToAuthenticate);
             //services.balance.recalculateAllBalances();
             //print(Current.balanceRVN);
             //print(pros.unspents.byWalletSymbolConfirmation());

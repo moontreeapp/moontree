@@ -14,7 +14,6 @@ class RateWaiter extends Waiter {
       'periodic',
       Stream.periodic(_rateWait),
       (_) async {
-        print('in listen');
         await _save(await _rate(rvnRate));
       },
     );

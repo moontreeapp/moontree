@@ -17,9 +17,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
   @override
   void initState() {
     super.initState();
-    authenticationMethodChoice = pros.settings.authMethodIsBiometric
-        ? AuthMethod.password
-        : AuthMethod.biometric;
+    authenticationMethodChoice = pros.settings.authMethod;
   }
 
   @override
@@ -35,12 +33,12 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
         Text('Authentication Method',
             style: Theme.of(context).textTheme.bodyText1),
         Text(
-          'Setting a strong password is the most secure way to secure your wallets. You also have the choice to use biometric authentication if you prefer. Before you change your authentication method you should backup your wallets by writing down their passphrases on paper. If you change your preference your wallets must be reencrypted: DO NOT close the app until the process has finished.',
+          'Setting a strong password only you know offers the highest level of security for your wallets. You also have the choice to use biometric authentication if you prefer.\n\nBefore you change your authentication method you should backup your wallets by writing down each of their passphrases on paper. \n\nAfter changing your preference your wallets must be reencrypted, so DO NOT close the app until the re-encryption process has finished.',
           style: Theme.of(context).textTheme.bodyText2,
         ),
         SizedBox(height: 16),
         RadioListTile<AuthMethod>(
-            title: const Text('Password'),
+            title: const Text('Password (most secure)'),
             value: AuthMethod.password,
             groupValue: authenticationMethodChoice,
             onChanged: (AuthMethod? value) async {
@@ -48,7 +46,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
               await services.authentication.setMethod(method: value!);
               await services.authentication.setPassword(
                 password: 'ask for password',
-                salt: await SecureStorage.biometricKey,
+                salt: await SecureStorage.authenticationKey,
                 message: 'Successfully Updated Authentication Method',
               );
               //components.loading.screen(
@@ -58,15 +56,15 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
               //    playCount: 3);
             }),
         RadioListTile<AuthMethod>(
-            title: const Text('Biometric (less secure)'),
+            title: const Text('Biometric'),
             value: AuthMethod.biometric,
             groupValue: authenticationMethodChoice,
             onChanged: (AuthMethod? value) async {
               setState(() => authenticationMethodChoice = value);
               await services.authentication.setMethod(method: value!);
               await services.authentication.setPassword(
-                password: await SecureStorage.biometricKey,
-                salt: await SecureStorage.biometricKey,
+                password: await SecureStorage.authenticationKey,
+                salt: await SecureStorage.authenticationKey,
                 message: 'Successfully Updated Authentication Method',
               );
               //components.loading.screen(

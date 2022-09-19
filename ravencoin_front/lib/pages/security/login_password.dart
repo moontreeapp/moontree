@@ -22,6 +22,7 @@ class LoginPassword extends StatefulWidget {
 }
 
 class _LoginPasswordState extends State<LoginPassword> {
+  Map<String, dynamic> data = {};
   late List listeners = [];
   TextEditingController password = TextEditingController();
   bool passwordVisible = false;
@@ -31,7 +32,6 @@ class _LoginPasswordState extends State<LoginPassword> {
   bool failedAttempt = false;
   bool isConsented = false;
   bool consented = false;
-  Map<String, dynamic> data = {};
   late bool needsConsent;
 
   Future<void> finishLoadingDatabase() async {
@@ -261,7 +261,7 @@ class _LoginPasswordState extends State<LoginPassword> {
 
   Future<bool> validate() async => services.password.validate.password(
         password.text,
-        await SecureStorage.biometricKey,
+        await SecureStorage.authenticationKey,
       );
 
   Future consentToAgreements() async {
@@ -281,7 +281,7 @@ class _LoginPasswordState extends State<LoginPassword> {
     if (await HIVE_INIT.isPartiallyLoaded()) {
       finishLoadingWaiters();
       while (!(await HIVE_INIT.isLoaded())) {
-        await Future.delayed(Duration(milliseconds: 1));
+        await Future.delayed(Duration(milliseconds: 50));
       }
     }
     if (await services.password.lockout
@@ -294,7 +294,7 @@ class _LoginPasswordState extends State<LoginPassword> {
       // create ciphers for wallets we have
       services.cipher.initCiphers(
         altPassword: password.text,
-        altSalt: await SecureStorage.biometricKey,
+        altSalt: await SecureStorage.authenticationKey,
       );
       await services.cipher.updateWallets();
       services.cipher.cleanupCiphers();

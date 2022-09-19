@@ -150,10 +150,6 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
       if (pros.settings.authMethodIsBiometric) {
         final localAuthApi = LocalAuthApi();
         if (await localAuthApi.readyToAuthenticate) {
-          await services.authentication.setPassword(
-            password: await SecureStorage.biometricKey,
-            salt: await SecureStorage.biometricKey,
-          );
           Future.microtask(() => Navigator.pushReplacementNamed(
               context, getMethodPath(),
               arguments: {'needsConsent': true}));

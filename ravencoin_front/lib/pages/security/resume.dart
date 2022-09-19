@@ -84,7 +84,7 @@ class _ChangeResumeState extends State<ChangeResume> {
   Future<void> submit() async {
     if (services.password.validate.previousPassword(
       password.text,
-      await SecureStorage.biometricKey,
+      await SecureStorage.authenticationKey,
     )) {
       FocusScope.of(context).unfocus();
       services.cipher.initCiphers(

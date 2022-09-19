@@ -185,7 +185,7 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
       FocusScope.of(context).unfocus();
       services.authentication.setPassword(
         password: newPassword.text,
-        salt: await SecureStorage.biometricKey,
+        salt: await SecureStorage.authenticationKey,
         message: 'Successfully Updated Password',
       );
       components.loading.screen(message: 'Setting Password', staticImage: true);

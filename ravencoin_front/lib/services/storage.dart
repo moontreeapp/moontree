@@ -226,8 +226,8 @@ class SecureStorage {
     await storage.deleteAll();
   }
 
-  static Future<String> get biometricKey async {
-    const key = 'biometricKey';
+  static Future<String> get authenticationKey async {
+    const key = 'authenticationKey';
     final storage = new FlutterSecureStorage();
     String? value = await storage.read(key: key);
     if (value != null) {

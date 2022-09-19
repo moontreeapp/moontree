@@ -5,6 +5,7 @@ enum AuthenticationResult {
   success,
   failure,
   noSupport,
+  notSetup,
   noBiometrics,
   error,
 }
@@ -13,7 +14,7 @@ class LocalAuthApi {
   final _auth = LocalAuthentication();
   AuthenticationResult? reason;
 
-  Future<bool> get canAuthenticateWithBiometrics async {
+  Future<bool> get canCheckBiometrics async {
     try {
       return await _auth.canCheckBiometrics;
     } on PlatformException catch (e) {
@@ -21,23 +22,27 @@ class LocalAuthApi {
     }
   }
 
-  Future<bool> get canAuthenticate async =>
-      await canAuthenticateWithBiometrics && await _auth.isDeviceSupported();
+  /// this name seems misleading "isDeviceSupported"
+  /// Returns false if no biometric is setup, true if it is...
+  Future<bool> get isSetup async => await _auth.isDeviceSupported();
 
   Future<List<BiometricType>> get availableBiometrics async =>
       await _auth.getAvailableBiometrics();
 
   Future<bool> get readyToAuthenticate async {
-    bool canAuth = await canAuthenticate;
-    if (!canAuth) {
+    if (!await canCheckBiometrics) {
       reason = AuthenticationResult.noSupport;
       return false;
     }
-    List<BiometricType> biometrics = await availableBiometrics;
-    if (biometrics.isEmpty) {
-      reason = AuthenticationResult.noBiometrics;
-      return false;
-    }
+    //if (!await isSetup) {
+    //  reason = AuthenticationResult.notSetup;
+    //  return false;
+    //}
+    //List<BiometricType> biometrics = await availableBiometrics;
+    //if (biometrics.isEmpty) {
+    //  reason = AuthenticationResult.noBiometrics;
+    //  return false;
+    //}
     return true;
   }
 
@@ -76,6 +81,15 @@ class LocalAuthApi {
       }
       reason = AuthenticationResult.failure;
     } on PlatformException catch (e) {
+      /*
+      Whether the system will attempt to handle user-fixable issues encountered
+      while authenticating. For instance, if a fingerprint reader exists on the
+      device but there's no fingerprint registered, the plugin might attempt to
+      take the user to settings to add one. Anything that is not user fixable,
+      such as no biometric sensor on device, will still result in a
+      [PlatformException].
+      (Therefore we should fall back on the password posibility.)
+      */
       print(e);
       reason = AuthenticationResult.error;
     }

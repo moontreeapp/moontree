@@ -42,7 +42,7 @@ class _CreateLoginState extends State<CreateLogin> {
     Navigator.pushReplacementNamed(context, '/home', arguments: {});
     services.cipher.initCiphers(
       altPassword: passwordText,
-      altSalt: await SecureStorage.biometricKey,
+      altSalt: await SecureStorage.authenticationKey,
     );
     await services.cipher.updateWallets();
     services.cipher.cleanupCiphers();
@@ -327,7 +327,7 @@ class _CreateLoginState extends State<CreateLogin> {
       //await Future.delayed(Duration(milliseconds: 200)); // in release mode?
       services.authentication.setPassword(
           password: password.text,
-          salt: await SecureStorage.biometricKey,
+          salt: await SecureStorage.authenticationKey,
           message: '');
       streams.app.verify.add(true);
     } else {
