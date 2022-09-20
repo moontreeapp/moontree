@@ -35,6 +35,7 @@ class _HoldingList extends State<HoldingList> {
   bool showUSD = false;
   bool showPath = false;
   bool overrideEmpty = false;
+  bool showSearchBar = false;
   Rate? rateUSD;
   Set<Balance> balances = {};
   Set<Address> addresses = {};
@@ -194,7 +195,7 @@ class _HoldingList extends State<HoldingList> {
       holdings = utils.assetHoldings(balances);
     }
     if (overrideEmptyEcho) {
-      return _holdingsView(context);
+      return _holdingsView(context, isEmpty: true);
     }
 
     /*
@@ -309,9 +310,34 @@ class _HoldingList extends State<HoldingList> {
     );
   }
 
-  ListView _holdingsView(BuildContext context, {Wallet? wallet}) {
+  Widget _holdingsView(BuildContext context,
+      {Wallet? wallet, bool isEmpty = false}) {
     var rvnHolding = <Widget>[];
     var assetHoldings = <Widget>[];
+    final searchBar = Padding(
+        padding: EdgeInsets.only(top: 1, bottom: 16, left: 16, right: 16),
+        child: TextFieldFormatted(
+            controller: searchController,
+            //focusedErrorBorder: InputBorder.none,
+            //errorBorder: InputBorder.none,
+            //focusedBorder: InputBorder.none,
+            //enabledBorder: InputBorder.none,
+            //disabledBorder: InputBorder.none,
+            contentPadding: EdgeInsets.only(left: 16, top: 16, bottom: 16),
+            autocorrect: false,
+            textInputAction: TextInputAction.done,
+            labelText: 'Search',
+            suffixIcon: IconButton(
+              icon: Padding(
+                  padding: EdgeInsets.only(top: 0, right: 14),
+                  child: Icon(Icons.clear_rounded, color: AppColors.black38)),
+              onPressed: () => setState(() {
+                searchController.text = '';
+                showSearchBar = false;
+              }),
+            ),
+            onChanged: (_) => setState(() {}),
+            onEditingComplete: () => setState(() => showSearchBar = false)));
     for (AssetHolding holding in holdings ?? []) {
       var thisHolding = ListTile(
           //dense: true,
@@ -321,36 +347,9 @@ class _HoldingList extends State<HoldingList> {
           leading: leadingIcon(holding),
           title: title(holding),
           /*trailing: Icon(Icons.chevron_right_rounded)*/
-          trailing: holding.symbol == rvn
+          trailing: holding.symbol == rvn && !isEmpty
               ? GestureDetector(
-                  onTap: () => components.message.giveChoices(
-                        components.navigator.routeContext!,
-                        title: '',
-                        child: TextFieldFormatted(
-                            controller: searchController,
-                            autocorrect: false,
-                            textInputAction: TextInputAction.done,
-                            labelText: 'Search',
-                            suffixIcon: IconButton(
-                              icon: Padding(
-                                  padding: EdgeInsets.only(right: 14),
-                                  child: Icon(Icons.clear_rounded,
-                                      color: AppColors.black38)),
-                              onPressed: () => searchController.text = '',
-                            ),
-                            onEditingComplete: () {
-                              Navigator.of(components.navigator.routeContext!)
-                                  .pop();
-                              setState(() {});
-                            }),
-                        behaviors: {
-                          'ok': () {
-                            Navigator.of(components.navigator.routeContext!)
-                                .pop();
-                            setState(() {});
-                          },
-                        },
-                      ),
+                  onTap: () => setState(() => showSearchBar = !showSearchBar),
                   child: searchController.text == ''
                       ? Icon(Icons.search)
                       : Icon(
@@ -368,8 +367,19 @@ class _HoldingList extends State<HoldingList> {
                         ))
               : null);
       if (holding.symbol == rvn) {
-        rvnHolding.add(thisHolding);
-        rvnHolding.add(Divider(height: 1));
+        rvnHolding.add(Container(
+            //duration: Duration(milliseconds: 500),
+            child: Column(
+          children: [
+            thisHolding,
+            if (showSearchBar && !isEmpty) searchBar,
+          ],
+        )));
+        rvnHolding.add(Divider(
+          height: 1,
+          indent: 70,
+          endIndent: 0,
+        ));
 
         /// create asset should allow you to create an asset using a speicific address...
         // hide create asset button - not beta
@@ -421,15 +431,18 @@ class _HoldingList extends State<HoldingList> {
       //        style: TextStyle(color: Theme.of(context).disabledColor))));
     }
 
-    return ListView(
-        controller: widget.scrollController,
-        dragStartBehavior: DragStartBehavior.start,
-        physics: ClampingScrollPhysics(),
-        children: <Widget>[
-          ...rvnHolding,
-          ...assetHoldings,
-          ...[components.empty.blankNavArea(context)]
-        ]);
+    return GestureDetector(
+      onTap: FocusScope.of(context).unfocus,
+      child: ListView(
+          controller: widget.scrollController,
+          dragStartBehavior: DragStartBehavior.start,
+          physics: ClampingScrollPhysics(),
+          children: <Widget>[
+            ...rvnHolding,
+            ...assetHoldings,
+            ...[components.empty.blankNavArea(context)]
+          ]),
+    );
   }
 
   void onTap(Wallet? wallet, AssetHolding holding) {
@@ -575,7 +588,10 @@ class _HoldingList extends State<HoldingList> {
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,
-                child: Text(holding.symbol == rvn ? 'Ravencoin' : holding.last,
+                child: Text(
+                    holding.symbol == rvn
+                        ? 'Ravencoin${pros.settings.mainnet ? '' : ' (testnet)'}'
+                        : holding.last,
                     style: Theme.of(context).textTheme.bodyText1),
               ))
           /* //this feature can show the path

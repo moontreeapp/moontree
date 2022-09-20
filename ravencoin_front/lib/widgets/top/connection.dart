@@ -131,9 +131,7 @@ class _ConnectionLightState extends State<ConnectionLight>
         color: connectionStatus == ConnectionStatus.connected && busy
             ? AppColors.logoGreen
             : connectionStatusColor,
-        borderRadius: pros.settings.mainnet
-            ? BorderRadius.circular(20)
-            : BorderRadius.zero,
+        borderRadius: BorderRadius.circular(20),
       ),
     );
     return Container(
