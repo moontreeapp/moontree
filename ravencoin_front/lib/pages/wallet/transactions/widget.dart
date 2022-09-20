@@ -81,7 +81,12 @@ class _TransactionsState extends State<Transactions> {
               maxChildSize: min(1.0, max(minHeight, getMaxExtent(context))),
               controller: dController,
               builder: (context, scrollController) {
-                bloc.scrollObserver.add(dController.size);
+                //bloc.scrollObserver.add(dController.size);
+                _scrollListener() {
+                  bloc.scrollObserver.add(dController.size);
+                }
+
+                dController.addListener(_scrollListener);
                 return CoinDetailsGlidingSheet(
                   bloc.nullCacheView ? null : MetadataView(),
                   dController,

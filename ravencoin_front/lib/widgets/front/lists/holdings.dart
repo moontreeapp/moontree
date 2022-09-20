@@ -252,15 +252,18 @@ class _HoldingList extends State<HoldingList> {
           header: 'Empty Wallet',
           message: 'This wallet appears empty but has a transaction history.',
           placeholderType: PlaceholderType.wallet,
-          behavior: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            components.buttons.actionButtonSoft(
-              context,
-              label: 'Show History',
-              onPressed: () async {
-                setState(() => overrideEmpty = true);
-              },
-            )
-          ]));
+          behavior: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              components.buttons.actionButtonSoft(
+                context,
+                label: 'Show History',
+                onPressed: () async {
+                  setState(() => overrideEmpty = true);
+                },
+              )
+            ],
+          ));
     } else if (balances.isEmpty && transactions.isNotEmpty && busy) {
       return _holdingsView(context);
     } else if (balances.isNotEmpty) {

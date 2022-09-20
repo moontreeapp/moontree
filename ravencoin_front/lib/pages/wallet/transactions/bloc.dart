@@ -21,7 +21,7 @@ class TransactionsBloc {
 
   static TransactionsBloc? _instance;
   Map<String, dynamic> data = {};
-  BehaviorSubject<double> scrollObserver = BehaviorSubject.seeded(.91);
+  BehaviorSubject<double> scrollObserver = BehaviorSubject.seeded(.7);
   BehaviorSubject<String> currentTab = BehaviorSubject.seeded('HISTORY');
   List<TransactionRecord>? currentTxsCache;
 
@@ -30,12 +30,19 @@ class TransactionsBloc {
     double minHeightFactor,
   ) {
     double opacity = 1;
-    if (controllerValue >= 0.9)
+    if (controllerValue >= 0.9) {
       opacity = 0;
-    else if (controllerValue <= minHeightFactor)
+    } else if (controllerValue <= minHeightFactor) {
       opacity = 1;
-    else
+    } else {
       opacity = (0.9 - controllerValue) * 5;
+    }
+    if (opacity > 1) {
+      return 1;
+    }
+    if (opacity < 0) {
+      return 0;
+    }
     return opacity;
   }
 
