@@ -139,7 +139,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
       services.authentication.setMethod(method: AuthMethod.password);
       Future.microtask(() => Navigator.pushReplacementNamed(
             context,
-            '/security/createlogin',
+            getMethodPathCreate(),
           ));
     }
 
@@ -151,7 +151,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
         final localAuthApi = LocalAuthApi();
         if (await localAuthApi.readyToAuthenticate) {
           Future.microtask(() => Navigator.pushReplacementNamed(
-              context, getMethodPath(),
+              context, getMethodPathCreate(),
               arguments: {'needsConsent': true}));
         } else {
           passwordFallback();
@@ -175,17 +175,16 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                               arguments: {}))
                     ]));
       } else {
-        final id = await getId();
         bool hasConsented = false;
         try {
-          hasConsented = await discoverConsent(id);
+          hasConsented = await discoverConsent(await getId());
         } catch (e) {
           streams.app.snack.add(Snack(
             message: 'Unable to connect! Please check connectivity.',
           ));
         }
         Future.microtask(() => Navigator.pushReplacementNamed(
-            context, getMethodPath(),
+            context, getMethodPathLogin(),
             arguments: {'needsConsent': !hasConsented}));
 
         /// testing out instant/custom page transitions

@@ -17,12 +17,12 @@ import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CreateLogin extends StatefulWidget {
+class CreatePassword extends StatefulWidget {
   @override
-  _CreateLoginState createState() => _CreateLoginState();
+  _CreatePasswordState createState() => _CreatePasswordState();
 }
 
-class _CreateLoginState extends State<CreateLogin> {
+class _CreatePasswordState extends State<CreatePassword> {
   late List listeners = [];
   var password = TextEditingController();
   var confirm = TextEditingController();

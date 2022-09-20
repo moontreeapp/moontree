@@ -6,11 +6,11 @@ import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_back/services/consent.dart'
-    show Consent, ConsentDocument, documentEndpoint;
+    show Consent, ConsentDocument, documentEndpoint, consentToAgreements;
 import 'package:ravencoin_front/services/auth.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/theme/extensions.dart';
-import 'package:ravencoin_front/utils/auth.dart';
+import 'package:ravencoin_front/utils/login.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -55,7 +55,6 @@ class _LoginBiometricState extends State<LoginBiometric> {
 
   @override
   void initState() {
-    print('loading');
     super.initState();
     listeners.add(streams.app.active.listen((bool value) {
       if (value) {
@@ -135,102 +134,6 @@ class _LoginBiometricState extends State<LoginBiometric> {
             ?.copyWith(color: AppColors.black60),
       );
 
-  /// biometric has it's own timeout...
-  bool readyToUnlock() =>
-      //services.password.lockout.timePast() &&
-      enabled && ((isConsented) || !needsConsent);
-
-  Widget get bioButton => components.buttons.actionButton(
-        context,
-        enabled: readyToUnlock(),
-        label: enabled ? 'Unlock' : 'Unlocking...',
-        onPressed: () async {
-          await submit();
-        },
-      );
-
-  Future submit() async {
-    await setupWallets();
-
-    /// just in case
-    if (await HIVE_INIT.isPartiallyLoaded()) {
-      finishLoadingWaiters();
-      while (!(await HIVE_INIT.isLoaded())) {
-        await Future.delayed(Duration(milliseconds: 50));
-      }
-    }
-    setState(() => enabled = false);
-    await consentToAgreements();
-    final localAuthApi = LocalAuthApi();
-    final validate = await localAuthApi.authenticate();
-    if (await services.password.lockout.handleVerificationAttempt(validate)) {
-      //await services.authentication.setPassword(
-      //  password: await SecureStorage.authenticationKey,
-      //  salt: await SecureStorage.authenticationKey,
-      //);
-      Navigator.pushReplacementNamed(context, '/home', arguments: {});
-      //services.cipher.initCiphers(
-      //  altPassword: await SecureStorage.authenticationKey,
-      //  altSalt: await SecureStorage.authenticationKey,
-      //);
-      //await services.cipher.updateWallets();
-      //services.cipher.cleanupCiphers();
-      //services.cipher.loginTime();
-      streams.app.splash.add(false); // trigger to refresh app bar again
-      streams.app.logout.add(false);
-      streams.app.verify.add(true);
-    } else {
-      print(localAuthApi.reason);
-      if (localAuthApi.reason == AuthenticationResult.error) {
-        setState(() {
-          enabled = true;
-        });
-        streams.app.snack.add(Snack(
-          message: 'No pin detected; please set a password.',
-        ));
-        services.authentication.setMethod(method: AuthMethod.password);
-        Future.microtask(() => Navigator.pushReplacementNamed(
-              context,
-              '/security/createlogin',
-            ));
-      } else if (localAuthApi.reason == AuthenticationResult.failure) {
-        setState(() {
-          failedAttempt = true;
-          enabled = true;
-        });
-      }
-    }
-  }
-
-  Future setupRealWallet(String? id) async {
-    await dotenv.load(fileName: '.env');
-    var mnemonic = id == null ? null : dotenv.env['TEST_WALLET_0$id']!;
-    await services.wallet.createSave(
-        walletType: WalletType.leader,
-        cipherUpdate: services.cipher.currentCipherUpdate,
-        secret: mnemonic);
-  }
-
-  Future setupWallets() async {
-    if (pros.wallets.records.isEmpty) {
-      await setupRealWallet('1');
-      await pros.settings.setCurrentWalletId(pros.wallets.first.id);
-      await pros.settings.savePreferredWalletId(pros.wallets.first.id);
-    }
-  }
-
-  Future consentToAgreements() async {
-    //uploadNewDocument();
-    // consent just once
-    if (!consented) {
-      final consent = Consent();
-      await consent.given(await getId(), ConsentDocument.user_agreement);
-      await consent.given(await getId(), ConsentDocument.privacy_policy);
-      await consent.given(await getId(), ConsentDocument.risk_disclosures);
-      consented = true;
-    }
-  }
-
   Widget get ulaMessage => Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -298,6 +201,57 @@ class _LoginBiometricState extends State<LoginBiometric> {
         },
       );
 
+  Widget get bioButton => components.buttons.actionButton(
+        context,
+        focusNode: unlockFocus,
+        enabled: readyToUnlock(),
+        label: enabled ? 'Unlock' : 'Unlocking...',
+        onPressed: () async {
+          await submit();
+        },
+      );
+
+  Future submit() async {
+    setState(() => enabled = false);
+
+    /// just in case
+    if (await HIVE_INIT.isPartiallyLoaded()) {
+      await finishLoadingWaiters();
+
+      /// doesn't await work?
+      //while (!(await HIVE_INIT.isLoaded())) {
+      //  await Future.delayed(Duration(milliseconds: 50));
+      //}
+    }
+    final localAuthApi = LocalAuthApi();
+    final validate = await localAuthApi.authenticate();
+    if (await services.password.lockout.handleVerificationAttempt(validate)) {
+      if (!consented) {
+        consented = await consentToAgreements(await getId());
+      }
+      login(context);
+    } else {
+      if (localAuthApi.reason == AuthenticationResult.error) {
+        setState(() {
+          enabled = true;
+        });
+        streams.app.snack.add(Snack(
+          message: 'Unknown login error: please set a pin on the device.',
+        ));
+      } else if (localAuthApi.reason == AuthenticationResult.failure) {
+        setState(() {
+          failedAttempt = true;
+          enabled = true;
+        });
+      }
+    }
+  }
+
   bool isConnected() =>
       streams.client.connected.value == ConnectionStatus.connected;
+
+  /// biometric has it's own timeout...
+  bool readyToUnlock() =>
+      //services.password.lockout.timePast() &&
+      enabled && ((isConsented) || !needsConsent);
 }

@@ -1,44 +1,48 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/services/consent.dart'
-    show ConsentDocument, documentEndpoint, consentToAgreements;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_back/services/consent.dart'
+    show ConsentDocument, documentEndpoint, consentToAgreements;
+import 'package:ravencoin_front/services/auth.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
-import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/theme/extensions.dart';
-import 'package:ravencoin_front/utils/data.dart';
-import 'package:ravencoin_front/utils/device.dart';
-import 'package:ravencoin_front/utils/extensions.dart';
+import 'package:ravencoin_front/utils/auth.dart';
+import 'package:ravencoin_front/utils/login.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_front/theme/colors.dart';
+import 'package:ravencoin_front/utils/data.dart';
+import 'package:ravencoin_front/utils/device.dart' show getId;
+import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/services/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class LoginPassword extends StatefulWidget {
+class CreateBiometric extends StatefulWidget {
   @override
-  _LoginPasswordState createState() => _LoginPasswordState();
+  _CreateBiometricState createState() => _CreateBiometricState();
 }
 
-class _LoginPasswordState extends State<LoginPassword> {
+class _CreateBiometricState extends State<CreateBiometric> {
   Map<String, dynamic> data = {};
   late List listeners = [];
-  TextEditingController password = TextEditingController();
-  bool passwordVisible = false;
-  FocusNode loginFocus = FocusNode();
   FocusNode unlockFocus = FocusNode();
-  String? passwordText;
+  bool enabled = true;
   bool failedAttempt = false;
   bool isConsented = false;
   bool consented = false;
   late bool needsConsent;
 
   Future<void> finishLoadingDatabase() async {
+    //if (!await finishedLoading) {
     if (await HIVE_INIT.isPartiallyLoaded()) {
-      HIVE_INIT.setupDatabase2();
+      await HIVE_INIT.setupDatabase2();
     }
+    //}
   }
 
   Future<void> finishLoadingWaiters() async {
@@ -57,7 +61,16 @@ class _LoginPasswordState extends State<LoginPassword> {
         setState(() {});
       }
     }));
-    finishLoadingDatabase();
+    () async {
+      await finishLoadingDatabase();
+      if (pros.passwords.records.isEmpty) {
+        await services.authentication.setPassword(
+          password: await SecureStorage.authenticationKey,
+          salt: await SecureStorage.authenticationKey,
+        );
+        await setupWallets();
+      }
+    }();
   }
 
   @override
@@ -65,9 +78,6 @@ class _LoginPasswordState extends State<LoginPassword> {
     for (var listener in listeners) {
       listener.cancel();
     }
-    password.dispose();
-    loginFocus.dispose();
-    unlockFocus.dispose();
     super.dispose();
   }
 
@@ -98,16 +108,6 @@ class _LoginPasswordState extends State<LoginPassword> {
                   height: (16 + 24).figmaH,
                   child: welcomeMessage),
             ),
-            SliverToBoxAdapter(
-              child: Container(
-                  alignment: Alignment.bottomCenter,
-                  height: 40.figma(context),
-                  child: LockedOutTime()),
-            ),
-            SliverToBoxAdapter(
-              child: Container(
-                  alignment: Alignment.center, height: 120, child: loginField),
-            ),
             SliverFillRemaining(
                 hasScrollBody: false,
                 child: KeyboardHidesWidgetWithDelay(
@@ -116,18 +116,9 @@ class _LoginPasswordState extends State<LoginPassword> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          ...(needsConsent
-                              ? [
-                                  SizedBox(
-                                    height: .063.ofMediaHeight(context),
-                                  ),
-                                  ulaMessage,
-                                  SizedBox(
-                                    height: .021.ofMediaHeight(context),
-                                  ),
-                                ]
-                              : [SizedBox(height: 100)]),
-                          Row(children: [unlockButton]),
+                          (needsConsent ? ulaMessage : SizedBox(height: 100)),
+                          SizedBox(height: 40),
+                          Row(children: [bioButton]),
                           SizedBox(height: 40),
                         ]))),
           ])));
@@ -138,40 +129,12 @@ class _LoginPasswordState extends State<LoginPassword> {
       );
 
   Widget get welcomeMessage => Text(
-        'Welcome Back',
+        'Moontree',
         style: Theme.of(context)
             .textTheme
             .headline1
             ?.copyWith(color: AppColors.black60),
       );
-
-  Widget get loginField => TextFieldFormatted(
-      focusNode: loginFocus,
-      autocorrect: false,
-      controller: password,
-      obscureText: !passwordVisible, // masked controller for immediate?
-      textInputAction: TextInputAction.done,
-      labelText: 'Password',
-      errorText: password.text == '' &&
-              pros.settings.loginAttempts.length > 0 &&
-              failedAttempt
-          ? 'Incorrect Password'
-          : null,
-      //suffixIcon: IconButton(
-      //  icon: Icon(passwordVisible ? Icons.visibility : Icons.visibility_off,
-      //      color: AppColors.black60),
-      //  onPressed: () => setState(() {
-      //    passwordVisible = !passwordVisible;
-      //  }),
-      //),
-      onChanged: (_) {
-        // might interfere with fade, but thats ok we took fade out.
-        setState(() {});
-      },
-      onEditingComplete: () {
-        FocusScope.of(context).requestFocus(unlockFocus);
-        setState(() {});
-      });
 
   Widget get ulaMessage => Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -240,74 +203,78 @@ class _LoginPasswordState extends State<LoginPassword> {
         },
       );
 
-  bool isConnected() =>
-      streams.client.connected.value == ConnectionStatus.connected;
-
-  Widget get unlockButton => components.buttons.actionButton(context,
-      enabled: password.text != '' &&
-          services.password.lockout.timePast() &&
-          passwordText == null &&
-          ((isConsented) || !needsConsent),
-      focusNode: unlockFocus,
-      label: passwordText == null ? 'Unlock' : 'Unlocking...',
-      disabledOnPressed: () => setState(() {
-            if (!isConnected()) {
-              streams.app.snack.add(Snack(
-                message: 'Unable to connect! Please check connectivity.',
-              ));
-            }
-          }),
-      onPressed: () async => await submit());
-
-  Future<bool> validate() async => services.password.validate.password(
-        password: password.text,
-        salt: await SecureStorage.authenticationKey,
+  Widget get bioButton => components.buttons.actionButton(
+        context,
+        focusNode: unlockFocus,
+        enabled: readyToUnlock(),
+        label: enabled ? 'Unlock' : 'Unlocking...',
+        onPressed: () async {
+          await submit();
+        },
       );
 
-  Future submit({bool showFailureMessage = true}) async {
-    // consent just once
+  Future submit() async {
+    setState(() => enabled = false);
+
+    /// just in case
     if (await HIVE_INIT.isPartiallyLoaded()) {
-      finishLoadingWaiters();
-      while (!(await HIVE_INIT.isLoaded())) {
-        await Future.delayed(Duration(milliseconds: 50));
-      }
+      await finishLoadingWaiters();
+
+      /// doesn't await work?
+      //while (!(await HIVE_INIT.isLoaded())) {
+      //  await Future.delayed(Duration(milliseconds: 50));
+      //}
     }
-    if (await services.password.lockout
-            .handleVerificationAttempt(await validate()) &&
-        passwordText == null) {
-      // only run once - disable button
-      setState(() => passwordText = password.text);
+    final localAuthApi = LocalAuthApi();
+    final validate = await localAuthApi.authenticate();
+    if (await services.password.lockout.handleVerificationAttempt(validate)) {
       if (!consented) {
         consented = await consentToAgreements(await getId());
       }
-      Navigator.pushReplacementNamed(context, '/home', arguments: {});
-      // create ciphers for wallets we have
-      services.cipher.initCiphers(
-        altPassword: password.text,
-        altSalt: await SecureStorage.authenticationKey,
-      );
-      await services.cipher.updateWallets();
-      services.cipher.cleanupCiphers();
-      services.cipher.loginTime();
-      streams.app.splash.add(false); // trigger to refresh app bar again
-      streams.app.logout.add(false);
-      streams.app.verify.add(true);
+      login(context);
     } else {
-      setState(() {
-        failedAttempt = true;
-        password.text = '';
-      });
+      if (localAuthApi.reason == AuthenticationResult.error) {
+        setState(() {
+          enabled = true;
+        });
+        streams.app.snack.add(Snack(
+          message: 'No pin detected; please set a password.',
+        ));
+        services.authentication.setMethod(method: AuthMethod.password);
+        Future.microtask(() => Navigator.pushReplacementNamed(
+              context,
+              getMethodPathCreate(),
+            ));
+      } else if (localAuthApi.reason == AuthenticationResult.failure) {
+        setState(() {
+          failedAttempt = true;
+          enabled = true;
+        });
+      }
+    }
+  }
+
+  bool isConnected() =>
+      streams.client.connected.value == ConnectionStatus.connected;
+
+  /// biometric has it's own timeout...
+  bool readyToUnlock() =>
+      //services.password.lockout.timePast() &&
+      enabled && ((isConsented) || !needsConsent);
+  Future setupRealWallet(String? id) async {
+    await dotenv.load(fileName: '.env');
+    var mnemonic = id == null ? null : dotenv.env['TEST_WALLET_0$id']!;
+    await services.wallet.createSave(
+        walletType: WalletType.leader,
+        cipherUpdate: services.cipher.currentCipherUpdate,
+        secret: mnemonic);
+  }
+
+  Future setupWallets() async {
+    if (pros.wallets.records.isEmpty) {
+      await setupRealWallet('1');
+      await pros.settings.setCurrentWalletId(pros.wallets.first.id);
+      await pros.settings.savePreferredWalletId(pros.wallets.first.id);
     }
   }
 }
-
-/*
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-  final storage = new FlutterSecureStorage();
-
-  // Read value
-  String value = await storage.read(key: key);
-
-  // Write value
-  await storage.write(key: key, value: value);
-  */

@@ -9,11 +9,15 @@ Future logout() async {
   streams.app.setting.add(null);
   Navigator.pushReplacementNamed(
     components.navigator.routeContext!,
-    getMethodPath(),
+    getMethodPathLogin(),
   );
   streams.app.splash.add(false);
 }
 
-String getMethodPath() => pros.settings.authMethodIsBiometric
+String getMethodPathLogin() => pros.settings.authMethodIsBiometric
     ? '/security/biometric/login'
     : '/security/password/login';
+
+String getMethodPathCreate() => pros.settings.authMethodIsBiometric
+    ? '/security/biometric/createlogin'
+    : '/security/password/createlogin';

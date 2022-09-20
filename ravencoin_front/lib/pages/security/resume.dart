@@ -41,7 +41,7 @@ class _ChangeResumeState extends State<ChangeResume> {
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         TextButton.icon(
             onPressed: () => Navigator.pushReplacementNamed(
-                context, getMethodPath(), arguments: {}),
+                context, getMethodPathLogin(), arguments: {}),
             icon: Icon(Icons.login),
             label: Text('Abort Password Change Process',
                 style: TextStyle(color: Theme.of(context).primaryColor))),
@@ -123,7 +123,7 @@ class _ChangeResumeState extends State<ChangeResume> {
                 TextButton(
                     child: Text('ok'),
                     onPressed: () => Navigator.pushReplacementNamed(
-                        context, getMethodPath(),
+                        context, getMethodPathLogin(),
                         arguments: {}))
               ]));
 }
