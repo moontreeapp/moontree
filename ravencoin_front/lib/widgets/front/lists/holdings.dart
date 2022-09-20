@@ -250,16 +250,13 @@ class _HoldingList extends State<HoldingList> {
       return ComingSoonPlaceholder(
           scrollController: widget.scrollController,
           header: 'Empty Wallet',
-          message:
-              'This wallet appears empty but has a transaction history.\nClick "Receive" to get started.',
+          message: 'This wallet appears empty but has a transaction history.',
           placeholderType: PlaceholderType.wallet,
-          behavior: Row(children: [
-            components.buttons.actionButton(
+          behavior: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            components.buttons.actionButtonSoft(
               context,
               label: 'Show History',
               onPressed: () async {
-                print('clicked');
-                //Navigator.pushReplacementNamed(context, '/home', arguments: {});
                 setState(() => overrideEmpty = true);
               },
             )

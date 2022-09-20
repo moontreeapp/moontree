@@ -90,7 +90,7 @@ class ComingSoonPlaceholder extends StatelessWidget {
               if (behavior != null)
                 Center(
                     child: Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+                  padding: const EdgeInsets.only(left: 16, right: 16, top: 40),
                   child: behavior,
                 )),
             ],
