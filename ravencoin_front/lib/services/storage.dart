@@ -7,6 +7,7 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:ravencoin_back/records/raw/secret.dart';
 import 'package:ravencoin_back/utilities/random.dart';
 import 'package:share/share.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -228,7 +229,7 @@ class SecureStorage {
 
   static Future<String> get authenticationKey async {
     const key = 'authenticationKey';
-    final storage = new FlutterSecureStorage();
+    final storage = FlutterSecureStorage();
     String? value = await storage.read(key: key);
     if (value != null) {
       return value;
@@ -236,5 +237,25 @@ class SecureStorage {
     final bioKey = randomString();
     await storage.write(key: key, value: bioKey);
     return bioKey;
+  }
+
+  static Future writeSecret(Secret? secret) async {
+    if (secret == null) return;
+    final storage = FlutterSecureStorage();
+    await storage.write(
+      key: secret.pubkey ?? secret.scripthash!, value: secret.secret,
+      //iOptions:IOSOptions(),
+      //aOptions: AndroidOptions(),
+    );
+  }
+
+  static Future<String?> readSecret(Secret secret) async {
+    final storage = FlutterSecureStorage();
+    return await storage.read(key: secret.pubkey ?? secret.scripthash!);
+  }
+
+  static Future<String?> read(String key) async {
+    final storage = FlutterSecureStorage();
+    return await storage.read(key: key);
   }
 }

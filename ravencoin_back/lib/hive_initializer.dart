@@ -110,11 +110,8 @@ class HiveInitializer {
 
   void load(HiveLoadingStep step) {
     if ([HiveLoadingStep.All, HiveLoadingStep.Lock].contains(step)) {
+      //pros.secrets.setSource(MapSource(SecretProclaim.defaults));
       /// this needs to be inmemory:
-      // pros.ciphers.setSource(HiveSource(
-      //   'ciphers',
-      //   defaults: CipherProclaim.defaults,
-      // ));
       pros.ciphers.setSource(MapSource(CipherProclaim.defaults));
       pros.rates.setSource(HiveSource('rates'));
       pros.passwords.setSource(HiveSource('passwords'));

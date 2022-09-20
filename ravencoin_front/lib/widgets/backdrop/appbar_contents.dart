@@ -88,10 +88,13 @@ class BackdropAppBarContents extends StatelessWidget
             //print(Current.wallet.name);
             //print(Current.wallet.encrypted);
             //print((Current.wallet as LeaderWallet).encryptedEntropy);
-            print(await LocalAuthApi().canCheckBiometrics);
-            print(await LocalAuthApi().isSetup);
-            print(await LocalAuthApi().availableBiometrics);
-            print(await LocalAuthApi().readyToAuthenticate);
+            //print(await LocalAuthApi().canCheckBiometrics);
+            //print(await LocalAuthApi().isSetup);
+            //print(await LocalAuthApi().availableBiometrics);
+            //print(await LocalAuthApi().readyToAuthenticate);
+            print(await SecureStorage.read(
+                '030156b9a9ca63bc154b2358de11c8b9d12950df46875c324e21bc282369ce5d05'));
+
             //services.balance.recalculateAllBalances();
             //print(Current.balanceRVN);
             //print(pros.unspents.byWalletSymbolConfirmation());

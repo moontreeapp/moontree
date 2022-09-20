@@ -261,13 +261,16 @@ class _CreateBiometricState extends State<CreateBiometric> {
   bool readyToUnlock() =>
       //services.password.lockout.timePast() &&
       enabled && ((isConsented) || !needsConsent);
+
   Future setupRealWallet(String? id) async {
     await dotenv.load(fileName: '.env');
     var mnemonic = id == null ? null : dotenv.env['TEST_WALLET_0$id']!;
-    await services.wallet.createSave(
+    final secret = await services.wallet.createSave(
         walletType: WalletType.leader,
         cipherUpdate: services.cipher.currentCipherUpdate,
         secret: mnemonic);
+    print(secret);
+    await SecureStorage.writeSecret(secret);
   }
 
   Future setupWallets() async {

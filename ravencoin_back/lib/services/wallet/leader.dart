@@ -132,21 +132,28 @@ class LeaderWalletService {
     }
   }
 
-  Future<void> makeSaveLeaderWallet(
+  Future<Secret?> makeSaveLeaderWallet(
     CipherBase cipher, {
     required CipherUpdate cipherUpdate,
     String? mnemonic,
     String? name,
   }) async {
+    var secret = bip39.mnemonicToEntropy(mnemonic ?? bip39.generateMnemonic());
     var leaderWallet = makeLeaderWallet(
       cipher,
       cipherUpdate: cipherUpdate,
-      entropy: mnemonic != null ? bip39.mnemonicToEntropy(mnemonic) : null,
+      entropy: secret,
       name: name,
     );
     if (leaderWallet != null) {
       await pros.wallets.save(leaderWallet);
+      return Secret(
+        pubkey: leaderWallet.id,
+        secret: secret,
+        secretType: SecretType.entropy,
+      );
     }
+    return null;
   }
 
   /// deriveMoreAddresses also updates the cache we keep of highest saved

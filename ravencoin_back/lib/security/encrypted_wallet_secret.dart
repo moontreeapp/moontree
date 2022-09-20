@@ -1,9 +1,17 @@
 import 'cipher_base.dart';
 
 enum SecretType {
-  wif,
+  wif, // SingleWallet
+  entropy, // LeaderWallet
   mnemonic,
   none,
+  //privateKey,
+  //seed,
+  //passphrase,
+  //password,
+  //key,
+  //other,
+  //unknown,
 }
 
 abstract class EncryptedWalletSecret {

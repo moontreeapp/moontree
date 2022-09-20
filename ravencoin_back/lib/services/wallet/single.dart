@@ -57,12 +57,13 @@ class SingleWalletService {
     return null;
   }
 
-  Future<void> makeSaveSingleWallet(
+  Future<Secret?> makeSaveSingleWallet(
     CipherBase cipher, {
     required CipherUpdate cipherUpdate,
     String? wif,
     String? name,
   }) async {
+    wif = wif ?? generateRandomWIF(pros.settings.network);
     var singleWallet = makeSingleWallet(
       cipher,
       cipherUpdate: cipherUpdate,
@@ -71,7 +72,13 @@ class SingleWalletService {
     );
     if (singleWallet != null) {
       await pros.wallets.save(singleWallet);
+      return Secret(
+        scripthash: singleWallet.id,
+        secret: wif,
+        secretType: SecretType.wif,
+      );
     }
+    return null;
   }
 
   KPWallet getChangeWallet(SingleWallet wallet) => getKPWallet(wallet);

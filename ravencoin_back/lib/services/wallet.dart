@@ -2,6 +2,7 @@ import 'package:ravencoin_wallet/ravencoin_wallet.dart' show ECPair, WalletBase;
 import 'package:bip39/bip39.dart' as bip39;
 
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:tuple/tuple.dart';
 
 import 'wallet/leader.dart';
 import 'wallet/single.dart';
@@ -40,14 +41,15 @@ class WalletService {
                   cipherUpdate.passwordId! < pros.passwords.maxPasswordId!)
               .toSet();
 
-  Future createSave({
+  /// returns a pubkey, secret
+  Future<Secret?> createSave({
     required WalletType walletType,
     required CipherUpdate cipherUpdate,
     String? secret,
     String? name,
   }) async {
     if (walletType == WalletType.leader) {
-      await leader.makeSaveLeaderWallet(
+      return await leader.makeSaveLeaderWallet(
         pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
         cipherUpdate: cipherUpdate,
         mnemonic: secret,
@@ -55,7 +57,7 @@ class WalletService {
       );
     } else {
       //WalletType.single
-      await single.makeSaveSingleWallet(
+      return await single.makeSaveSingleWallet(
         pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
         cipherUpdate: cipherUpdate,
         wif: secret,
