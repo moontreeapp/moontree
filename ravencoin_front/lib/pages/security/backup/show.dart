@@ -211,8 +211,8 @@ class _BackupSeedState extends State<BackupSeed>
       ]));
 
   Future<bool> verify() async => services.password.validate.password(
-        password.text,
-        await SecureStorage.authenticationKey,
+        password: password.text,
+        salt: await SecureStorage.authenticationKey,
       );
 
   Widget get showButton => components.buttons.actionButton(context,

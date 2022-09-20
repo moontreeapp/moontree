@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:collection/collection.dart';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/spend.dart';
 import 'package:ravencoin_front/components/components.dart';
@@ -34,6 +34,7 @@ class _HoldingList extends State<HoldingList> {
   int holdingCount = 0;
   bool showUSD = false;
   bool showPath = false;
+  bool overrideEmpty = false;
   Rate? rateUSD;
   Set<Balance> balances = {};
   Set<Address> addresses = {};
@@ -51,7 +52,6 @@ class _HoldingList extends State<HoldingList> {
   void initState() {
     super.initState();
     holdingCount = getCount();
-    balances = Current.wallet.balances.toSet();
     listeners
         .add(pros.assets.batchedChanges.listen((List<Change<Asset>> changes) {
       // need a way to know this wallet's asset list without vouts for newLeaderProcess
@@ -155,7 +155,6 @@ class _HoldingList extends State<HoldingList> {
     balances = Current.wallet.balances.toSet();
     addresses = Current.wallet.addresses.toSet();
     final transactions = Current.wallet.transactions.toSet();
-
     holdings = (
         //holdings != null && holdings!.isNotEmpty
         //    ? holdings
@@ -171,6 +170,33 @@ class _HoldingList extends State<HoldingList> {
     if (holdings != null && holdings!.length > 1) {
       holdings = holdings!.where((holding) => holding.value > 0).toList();
     }
+
+    bool overrideEmptyEcho = false;
+    if (overrideEmpty) {
+      overrideEmpty = false;
+      overrideEmptyEcho = true;
+      final walletId = Current.walletId;
+      balances = {};
+      for (final symbol in pros.wallets.primaryIndex
+          .getOne(walletId)!
+          .addresses
+          .map((a) => a.vouts)
+          .expand((i) => i)
+          .map((v) => v.assetSecurityId?.split(':').first ?? 'RVN')
+          .toSet()) {
+        balances.add(Balance(
+            walletId: walletId,
+            security: pros.securities.bySymbol.getAll(symbol).firstOrNull ??
+                Security(symbol: symbol, securityType: SecurityType.RavenAsset),
+            confirmed: 0,
+            unconfirmed: 0));
+      }
+      holdings = utils.assetHoldings(balances);
+    }
+    if (overrideEmptyEcho) {
+      return _holdingsView(context);
+    }
+
     /*
     Only have 1 wallet, no balances, no transactions - Getting Started Screen
     no balances, no transactions, busy - shimmering.
@@ -226,7 +252,18 @@ class _HoldingList extends State<HoldingList> {
           header: 'Empty Wallet',
           message:
               'This wallet appears empty but has a transaction history.\nClick "Receive" to get started.',
-          placeholderType: PlaceholderType.wallet);
+          placeholderType: PlaceholderType.wallet,
+          behavior: Row(children: [
+            components.buttons.actionButton(
+              context,
+              label: 'Show History',
+              onPressed: () async {
+                print('clicked');
+                //Navigator.pushReplacementNamed(context, '/home', arguments: {});
+                setState(() => overrideEmpty = true);
+              },
+            )
+          ]));
     } else if (balances.isEmpty && transactions.isNotEmpty && busy) {
       return _holdingsView(context);
     } else if (balances.isNotEmpty) {

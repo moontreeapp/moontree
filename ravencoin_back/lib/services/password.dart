@@ -65,7 +65,7 @@ class PasswordValidationService {
   String getHash(String password, String salt) => services.password.create
       .hashThis(services.password.create.saltPassword(password, salt));
 
-  bool password(String password, String salt) =>
+  bool password({required String password, required String salt}) =>
       getHash(password,
           salt /*pros.passwords.primaryIndex.getMostRecent()!.salt*/) ==
       pros.passwords.primaryIndex.getMostRecent()!.saltedHash;

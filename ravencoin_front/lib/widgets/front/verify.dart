@@ -110,8 +110,8 @@ class _VerifyPasswordState extends State<VerifyPassword> {
       );
 
   Future<bool> verify() async => services.password.validate.password(
-        password.text,
-        await SecureStorage.authenticationKey,
+        password: password.text,
+        salt: await SecureStorage.authenticationKey,
       ); // &&
   //services.password.validate.previouslyUsed(password.text) == 0;
 

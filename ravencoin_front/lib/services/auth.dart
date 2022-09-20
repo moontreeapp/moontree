@@ -71,9 +71,10 @@ class LocalAuthApi {
         //  ),
         //],
         options: AuthenticationOptions(
-          useErrorDialogs: true,
           stickyAuth: stickyAuth,
           biometricOnly: false,
+          useErrorDialogs: true,
+          sensitiveTransaction: false,
         ),
       )) {
         reason = AuthenticationResult.success;

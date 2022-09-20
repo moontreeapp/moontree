@@ -32,6 +32,7 @@ class _LoginBiometricState extends State<LoginBiometric> {
   FocusNode unlockFocus = FocusNode();
   bool autoInitiateUnlock = true;
   bool enabled = true;
+  bool failedAttempt = false;
   bool isConsented = false;
   bool consented = false;
   late bool needsConsent;
@@ -134,8 +135,10 @@ class _LoginBiometricState extends State<LoginBiometric> {
             ?.copyWith(color: AppColors.black60),
       );
 
+  /// biometric has it's own timeout...
   bool readyToUnlock() =>
-      isConnected() && enabled && ((isConsented) || !needsConsent);
+      //services.password.lockout.timePast() &&
+      enabled && ((isConsented) || !needsConsent);
 
   Widget get bioButton => components.buttons.actionButton(
         context,
@@ -156,34 +159,32 @@ class _LoginBiometricState extends State<LoginBiometric> {
         await Future.delayed(Duration(milliseconds: 50));
       }
     }
-    //if (await services.password.lockout
-    //        .handleVerificationAttempt(await validate()) &&
-    //    passwordText == null) {
     setState(() => enabled = false);
     await consentToAgreements();
     final localAuthApi = LocalAuthApi();
-    final x = await localAuthApi.authenticate();
-    if (x) {
-      await services.authentication.setPassword(
-        password: await SecureStorage.authenticationKey,
-        salt: await SecureStorage.authenticationKey,
-      );
+    final validate = await localAuthApi.authenticate();
+    if (await services.password.lockout.handleVerificationAttempt(validate)) {
+      //await services.authentication.setPassword(
+      //  password: await SecureStorage.authenticationKey,
+      //  salt: await SecureStorage.authenticationKey,
+      //);
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
-      // create ciphers for wallets we have
-      services.cipher.initCiphers(
-        altPassword: await SecureStorage.authenticationKey,
-        altSalt: await SecureStorage.authenticationKey,
-      );
-      await services.cipher.updateWallets();
-      services.cipher.cleanupCiphers();
-      services.cipher.loginTime();
+      //services.cipher.initCiphers(
+      //  altPassword: await SecureStorage.authenticationKey,
+      //  altSalt: await SecureStorage.authenticationKey,
+      //);
+      //await services.cipher.updateWallets();
+      //services.cipher.cleanupCiphers();
+      //services.cipher.loginTime();
       streams.app.splash.add(false); // trigger to refresh app bar again
       streams.app.logout.add(false);
       streams.app.verify.add(true);
     } else {
-      setState(() => enabled = true);
       print(localAuthApi.reason);
       if (localAuthApi.reason == AuthenticationResult.error) {
+        setState(() {
+          enabled = true;
+        });
         streams.app.snack.add(Snack(
           message: 'No pin detected; please set a password.',
         ));
@@ -192,6 +193,11 @@ class _LoginBiometricState extends State<LoginBiometric> {
               context,
               '/security/createlogin',
             ));
+      } else if (localAuthApi.reason == AuthenticationResult.failure) {
+        setState(() {
+          failedAttempt = true;
+          enabled = true;
+        });
       }
     }
   }
@@ -207,7 +213,7 @@ class _LoginBiometricState extends State<LoginBiometric> {
 
   Future setupWallets() async {
     if (pros.wallets.records.isEmpty) {
-      await setupRealWallet(null);
+      await setupRealWallet('1');
       await pros.settings.setCurrentWalletId(pros.wallets.first.id);
       await pros.settings.savePreferredWalletId(pros.wallets.first.id);
     }

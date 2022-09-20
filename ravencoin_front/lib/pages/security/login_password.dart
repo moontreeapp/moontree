@@ -243,8 +243,7 @@ class _LoginPasswordState extends State<LoginPassword> {
       streams.client.connected.value == ConnectionStatus.connected;
 
   Widget get unlockButton => components.buttons.actionButton(context,
-      enabled: isConnected() &&
-          password.text != '' &&
+      enabled: password.text != '' &&
           services.password.lockout.timePast() &&
           passwordText == null &&
           ((isConsented) || !needsConsent),
@@ -260,8 +259,8 @@ class _LoginPasswordState extends State<LoginPassword> {
       onPressed: () async => await submit());
 
   Future<bool> validate() async => services.password.validate.password(
-        password.text,
-        await SecureStorage.authenticationKey,
+        password: password.text,
+        salt: await SecureStorage.authenticationKey,
       );
 
   Future consentToAgreements() async {
