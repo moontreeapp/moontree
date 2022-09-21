@@ -24,7 +24,7 @@ class CipherService {
       : CipherType.None;
 
   @override
-  String toString() => 'latestCipherType: ${latestCipherType.enumString}';
+  String toString() => 'latestCipherType: ${latestCipherType.name}';
 
   CipherUpdate get currentCipherUpdate =>
       CipherUpdate(latestCipherType, passwordId: pros.passwords.maxPasswordId);
@@ -43,9 +43,11 @@ class CipherService {
     for (var wallet in pros.wallets.records) {
       if (wallet.cipherUpdate != currentCipherUpdate) {
         if (wallet is LeaderWallet) {
-          records.add(reencryptLeaderWallet(wallet, cipher));
+          /// TODO: this needs to be considered once we encrypt what is in SS
+          //records.add(await reencryptLeaderWallet(wallet, cipher));
         } else if (wallet is SingleWallet) {
-          records.add(reencryptSingleWallet(wallet, cipher));
+          /// TODO: this needs to be considered once we encrypt what is in SS
+          //records.add(reencryptSingleWallet(wallet, cipher));
         }
       }
     }
@@ -55,22 +57,22 @@ class CipherService {
     assert(services.wallet.getPreviousCipherUpdates.isEmpty);
   }
 
-  LeaderWallet reencryptLeaderWallet(
+  Future<LeaderWallet> reencryptLeaderWallet(
     LeaderWallet wallet, [
     CipherBase? cipher,
-  ]) {
-    final encrypted_entropy =
-        hex.encrypt(wallet.entropy, cipher ?? currentCipher!);
-    final newId = HDWallet.fromSeed(wallet.seed).pubKey;
+  ]) async {
+    //final encryptedEntropy =
+    //    hex.encrypt(await wallet.entropy, cipher ?? currentCipher!);
+    final newId = HDWallet.fromSeed(await wallet.seed).pubKey;
     assert(wallet.id == newId);
     return LeaderWallet(
       id: newId,
-      encryptedEntropy: encrypted_entropy,
+      encryptedEntropy: '',
       cipherUpdate: currentCipherUpdate,
       name: wallet.name,
       backedUp: wallet.backedUp,
       skipHistory: wallet.skipHistory,
-      seed: wallet.seed, // necessary?
+      seed: await wallet.seed, // necessary?
     );
   }
 

@@ -37,6 +37,7 @@ class SingleWalletService {
     String? wif,
     bool alwaysReturn = false,
     String? name,
+    Future<String> Function(String id)? getEntropy,
   }) {
     wif = wif ?? generateRandomWIF(pros.settings.network);
     final encryptedWIF = EncryptedWIF.fromWIF(wif, cipher);
@@ -44,10 +45,12 @@ class SingleWalletService {
         pros.wallets.primaryIndex.getOne(encryptedWIF.walletId);
     if (existingWallet == null) {
       final newWallet = SingleWallet(
-          id: encryptedWIF.walletId,
-          encryptedWIF: encryptedWIF.encryptedSecret,
-          cipherUpdate: cipherUpdate,
-          name: name ?? pros.wallets.nextWalletName);
+        id: encryptedWIF.walletId,
+        encryptedWIF: encryptedWIF.encryptedSecret,
+        cipherUpdate: cipherUpdate,
+        name: name ?? pros.wallets.nextWalletName,
+        getEntropy: getEntropy,
+      );
       final address = services.wallet.single.toAddress(newWallet);
       print('address from KPWallet: ${address.walletId}');
       services.client.subscribe.toAddress(address);
@@ -62,6 +65,8 @@ class SingleWalletService {
     required CipherUpdate cipherUpdate,
     String? wif,
     String? name,
+    Future<String> Function(String id)? getEntropy,
+    Future<void> Function(Secret secret)? saveSecret,
   }) async {
     wif = wif ?? generateRandomWIF(pros.settings.network);
     var singleWallet = makeSingleWallet(
@@ -69,14 +74,19 @@ class SingleWalletService {
       cipherUpdate: cipherUpdate,
       wif: wif,
       name: name,
+      getEntropy: getEntropy,
     );
     if (singleWallet != null) {
-      await pros.wallets.save(singleWallet);
-      return Secret(
+      final savedSecret = Secret(
         scripthash: singleWallet.id,
         secret: wif,
         secretType: SecretType.wif,
       );
+      if (saveSecret != null) {
+        await saveSecret(savedSecret);
+      }
+      await pros.wallets.save(singleWallet);
+      return savedSecret;
     }
     return null;
   }

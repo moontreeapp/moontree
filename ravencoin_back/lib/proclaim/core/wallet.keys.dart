@@ -20,8 +20,7 @@ class _WalletTypeKey extends Key<Wallet> {
 
 extension ByWalletTypeMethodsForWallet on Index<_WalletTypeKey, Wallet> {
   List<Wallet> getAllByString(String walletType) => getByKeyStr(walletType);
-  List<Wallet> getAll(WalletType walletType) =>
-      getByKeyStr(walletType.enumString);
+  List<Wallet> getAll(WalletType walletType) => getByKeyStr(walletType.name);
 }
 
 /// byWalletType

@@ -4,6 +4,7 @@ import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 //import 'package:screenshot_callback/screenshot_callback.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/pages/security/backup/types.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
@@ -76,12 +77,23 @@ class _BackupSeedState extends State<BackupSeed>
 
   bool get smallScreen => MediaQuery.of(context).size.height < 640;
 
+  Future<List<String>> get getSecret async =>
+      (await Current.wallet.secret(Current.wallet.cipher!)).split(' ');
+
   @override
   Widget build(BuildContext context) {
     buttonWidth = (MediaQuery.of(context).size.width - (17 + 17 + 16 + 16)) / 3;
-    secret = Current.wallet.secret(Current.wallet.cipher!).split(' ');
     //print(1 - (48 + 48 + 16 + 8 + 8 + 72 + 56).ofAppHeight);
-    return body();
+    return FutureBuilder<List<String>>(
+        future: getSecret,
+        builder: (context, AsyncSnapshot<List<String>> snapshot) {
+          if (snapshot.hasData) {
+            secret = snapshot.data!;
+            return body();
+          } else {
+            return CircularProgressIndicator();
+          }
+        });
   }
 
   Widget body() => BackdropLayers(
@@ -246,6 +258,20 @@ class _BackupSeedState extends State<BackupSeed>
         enabled: true,
         label: 'Next',
         link: '/security/backupConfirm',
+        arguments: () {
+          //secret = Current.wallet.secret(Current.wallet.cipher!).split(' ');
+          var shuffledList = [
+            for (var s in secret.enumerated()) SecretWord(s[1], s[0])
+          ];
+          shuffledList.shuffle();
+          Map<int, SecretWord> shuffled = {
+            for (var s in shuffledList.enumerated()) s[0]: s[1]
+          };
+          return {
+            'secret': secret,
+            'shuffled': shuffled,
+          };
+        }(),
 
         /// from exploring animations - want to return to
         //onPressed: () async {

@@ -63,7 +63,7 @@ class _WalletViewState extends State<WalletView> {
     secret = data['secret'] ?? '';
     data['secretName'] = SecretType.mnemonic;
     secretName = (data['secretName'] as SecretType)
-        .enumString
+        .name
         .toTitleCase(underscoresAsSpace: true);
     wallet = data['wallet'] = Current.wallet;
     walletType = wallet is LeaderWallet ? 'LeaderWallet' : 'SingleWallet';
@@ -194,7 +194,7 @@ class _WalletViewState extends State<WalletView> {
           for (var walletAddress
               in wallet.addresses..sort((a, b) => a.compareTo(b)))
             ListTile(
-              onTap: () => setState(() {
+              onTap: () => setState(() async {
                 // Delay to make sure the frames are rendered properly
                 //await Future.delayed(const Duration(milliseconds: 300));
 
@@ -211,8 +211,8 @@ class _WalletViewState extends State<WalletView> {
                     //        walletAddress.address)
                     .toList();
                 address = walletAddress.address;
-                privateKey = services.wallet.leader
-                    .getSubWalletFromAddress(walletAddress)
+                privateKey = (await services.wallet.leader
+                        .getSubWalletFromAddress(walletAddress))
                     .wif; // .wif is the format that raven-Qt-testnet expects
                 //.base58Priv;
                 //.privKey;

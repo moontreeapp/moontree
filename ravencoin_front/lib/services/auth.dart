@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:ravencoin_front/services/storage.dart';
 
 enum AuthenticationResult {
   success,
@@ -19,6 +18,7 @@ class LocalAuthApi {
     try {
       return await _auth.canCheckBiometrics;
     } on PlatformException catch (e) {
+      print(e);
       return false;
     }
   }

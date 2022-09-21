@@ -1,7 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
@@ -9,6 +7,7 @@ import 'package:ravencoin_back/services/consent.dart'
     show ConsentDocument, documentEndpoint, consentToAgreements;
 import 'package:ravencoin_front/services/auth.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
+import 'package:ravencoin_front/services/wallet.dart' show setupWallets;
 import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/utils/auth.dart';
 import 'package:ravencoin_front/utils/login.dart';
@@ -261,23 +260,4 @@ class _CreateBiometricState extends State<CreateBiometric> {
   bool readyToUnlock() =>
       //services.password.lockout.timePast() &&
       enabled && ((isConsented) || !needsConsent);
-
-  Future setupRealWallet(String? id) async {
-    await dotenv.load(fileName: '.env');
-    var mnemonic = id == null ? null : dotenv.env['TEST_WALLET_0$id']!;
-    final secret = await services.wallet.createSave(
-        walletType: WalletType.leader,
-        cipherUpdate: services.cipher.currentCipherUpdate,
-        secret: mnemonic);
-    print(secret);
-    await SecureStorage.writeSecret(secret);
-  }
-
-  Future setupWallets() async {
-    if (pros.wallets.records.isEmpty) {
-      await setupRealWallet('1');
-      await pros.settings.setCurrentWalletId(pros.wallets.first.id);
-      await pros.settings.savePreferredWalletId(pros.wallets.first.id);
-    }
-  }
 }

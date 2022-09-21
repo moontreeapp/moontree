@@ -30,15 +30,13 @@ class CipherUpdate with EquatableMixin {
   String get cipherUpdateId => cipherUpdateKey(cipherType, passwordId);
 
   static String cipherUpdateKey(CipherType cipherType, int? passwordId) =>
-      '${cipherType.enumString}:$passwordId';
+      '${cipherType.name}:$passwordId';
 
-  Map<String, dynamic> get toMap => {
-        'CipherType': cipherType.enumString,
-        'PasswordId': passwordId.toString()
-      };
+  Map<String, dynamic> get toMap =>
+      {'CipherType': cipherType.name, 'PasswordId': passwordId.toString()};
 
   static Map<String, CipherType> get stringToCipherTypeMap =>
-      {for (var value in CipherType.values) value.enumString: value};
+      {for (var value in CipherType.values) value.name: value};
 }
 
 const CipherUpdate defaultCipherUpdate = CipherUpdate(CipherType.None);

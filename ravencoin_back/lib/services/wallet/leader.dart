@@ -59,9 +59,12 @@ class LeaderWalletService {
     await deriveMoreAddresses(leader);
   }
 
-  Address deriveNextAddress(LeaderWallet wallet, NodeExposure exposure) {
+  Future<Address> deriveNextAddress(
+    LeaderWallet wallet,
+    NodeExposure exposure,
+  ) async {
     final hdIndex = wallet.highestIndexOf(exposure) + 1;
-    final subwallet = getSubWallet(wallet, hdIndex, exposure);
+    final subwallet = await getSubWallet(wallet, hdIndex, exposure);
     return Address(
         id: subwallet.scripthash,
         address: subwallet.address!,
@@ -71,19 +74,19 @@ class LeaderWalletService {
         net: pros.settings.net);
   }
 
-  SeedWallet getSeedWallet(LeaderWallet wallet) {
-    return SeedWallet(wallet.seed, pros.settings.net);
+  Future<SeedWallet> getSeedWallet(LeaderWallet wallet) async {
+    return SeedWallet(await wallet.seed, pros.settings.net);
   }
 
-  HDWallet getSubWallet(
+  Future<HDWallet> getSubWallet(
     LeaderWallet wallet,
     int hdIndex,
     NodeExposure exposure,
-  ) =>
-      getSeedWallet(wallet).subwallet(hdIndex, exposure: exposure);
+  ) async =>
+      (await getSeedWallet(wallet)).subwallet(hdIndex, exposure: exposure);
 
-  HDWallet getSubWalletFromAddress(Address address) =>
-      getSeedWallet(address.wallet as LeaderWallet)
+  Future<HDWallet> getSubWalletFromAddress(Address address) async =>
+      (await getSeedWallet(address.wallet as LeaderWallet))
           .subwallet(address.hdIndex, exposure: address.exposure);
 
   Future<LeaderWallet> generate() async {
@@ -104,20 +107,24 @@ class LeaderWalletService {
     String? entropy,
     bool alwaysReturn = false,
     String? name,
+    Future<String> Function(String id)? getEntropy,
   }) {
     entropy = entropy ?? bip39.mnemonicToEntropy(bip39.generateMnemonic());
     final mnemonic = bip39.entropyToMnemonic(entropy);
     final seed = bip39.mnemonicToSeed(mnemonic);
     final newId = HDWallet.fromSeed(seed).pubKey;
-    final encrypted_entropy = hex.encrypt(entropy, cipher);
+    //final encrypted_entropy = hex.encrypt(entropy, cipher); // here's how
 
     var existingWallet = pros.wallets.primaryIndex.getOne(newId);
     if (existingWallet == null) {
       return LeaderWallet(
-          id: newId,
-          encryptedEntropy: encrypted_entropy,
-          cipherUpdate: cipherUpdate,
-          name: name ?? pros.wallets.nextWalletName);
+        id: newId,
+        // deprecated - saved in secure storage now.
+        encryptedEntropy: '',
+        cipherUpdate: cipherUpdate,
+        name: name ?? pros.wallets.nextWalletName,
+        getEntropy: getEntropy,
+      );
     }
     if (alwaysReturn) return existingWallet as LeaderWallet;
     return null;
@@ -137,6 +144,8 @@ class LeaderWalletService {
     required CipherUpdate cipherUpdate,
     String? mnemonic,
     String? name,
+    Future<String> Function(String id)? getEntropy,
+    Future<void> Function(Secret secret)? saveSecret,
   }) async {
     var secret = bip39.mnemonicToEntropy(mnemonic ?? bip39.generateMnemonic());
     var leaderWallet = makeLeaderWallet(
@@ -144,14 +153,19 @@ class LeaderWalletService {
       cipherUpdate: cipherUpdate,
       entropy: secret,
       name: name,
+      getEntropy: getEntropy,
     );
     if (leaderWallet != null) {
-      await pros.wallets.save(leaderWallet);
-      return Secret(
+      final savedSecret = Secret(
         pubkey: leaderWallet.id,
         secret: secret,
         secretType: SecretType.entropy,
       );
+      if (saveSecret != null) {
+        await saveSecret(savedSecret);
+      }
+      await pros.wallets.save(leaderWallet);
+      return savedSecret;
     }
     return null;
   }
@@ -168,7 +182,7 @@ class LeaderWalletService {
     exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];
     var newAddresses = <Address>{};
     for (var exposure in exposures) {
-      newAddresses.add(deriveNextAddress(
+      newAddresses.add(await deriveNextAddress(
         wallet,
         exposure,
       ));
@@ -185,7 +199,7 @@ class LeaderExposureKey with EquatableMixin {
 
   String get key => produceKey(leader.id, exposure);
   static String produceKey(String walletId, NodeExposure exposure) =>
-      walletId + exposure.enumString;
+      walletId + exposure.name;
 
   @override
   List<Object> get props => [leader, exposure];

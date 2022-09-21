@@ -44,6 +44,5 @@ class _CipherTypeKey extends Key<Cipher> {
 }
 
 extension ByCipherTypeMethodsForCipher on Index<_CipherTypeKey, Cipher> {
-  List<Cipher> getAll(CipherType cipherType) =>
-      getByKeyStr(cipherType.enumString);
+  List<Cipher> getAll(CipherType cipherType) => getByKeyStr(cipherType.name);
 }

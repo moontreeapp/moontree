@@ -14,8 +14,16 @@ class ImportFrom {
             importFormat ?? services.wallet.import.detectImportType(text);
 
   //Future<bool> handleImport() async {
-  Future<Tuple3<bool, List<String?>, List<String?>>> handleImport() async {
-    var results = await services.wallet.import.handleImport(importFormat, text);
+  Future<Tuple3<bool, List<String?>, List<String?>>> handleImport(
+    Future<String> Function(String id)? getEntropy,
+    Future<void> Function(Secret secret)? saveSecret,
+  ) async {
+    var results = await services.wallet.import.handleImport(
+      importFormat,
+      text,
+      getEntropy,
+      saveSecret,
+    );
     var importedTitles = <String?>[];
     var importedMsgs = <String?>[];
     for (var result in results) {

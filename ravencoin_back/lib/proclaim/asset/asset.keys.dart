@@ -31,5 +31,5 @@ class _AssetTypeKey extends Key<Asset> {
 }
 
 extension ByAssetTypeMethodsForAsset on Index<_AssetTypeKey, Asset> {
-  List<Asset> getAll(AssetType assetType) => getByKeyStr(assetType.enumString);
+  List<Asset> getAll(AssetType assetType) => getByKeyStr(assetType.name);
 }

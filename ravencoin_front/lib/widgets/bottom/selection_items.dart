@@ -168,7 +168,7 @@ class SelectionItems {
   }
 
   String asString(SelectionOption name) =>
-      name.enumString.toTitleCase(underscoresAsSpace: true);
+      name.name.toTitleCase(underscoresAsSpace: true);
 
   Widget createLeads(SelectionOption name) {
     var imageDetails = components.icons.getImageDetailsAlphacon(symbolColors);

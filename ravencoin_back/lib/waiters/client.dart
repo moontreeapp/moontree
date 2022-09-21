@@ -109,11 +109,10 @@ class RavenClientWaiter extends Waiter {
       (bool active) async {
         if (active) {
           print(
-              'CONNECTION STATUS: ${streams.client.connected.value.enumString} ACTIVE $active');
+              'CONNECTION STATUS: ${streams.client.connected.value.name} ACTIVE $active');
           print('PINGING ELECTRUM SERVER');
           await services.client.api.ping();
-          print(
-              'CONNECTION STATUS: ${streams.client.connected.value.enumString}');
+          print('CONNECTION STATUS: ${streams.client.connected.value.name}');
         }
       },
     );
@@ -133,11 +132,10 @@ class RavenClientWaiter extends Waiter {
         //RavenElectrumClient? client = tuple.item1;
         /// I think this is getting called when the app becomes active again without a working client
         print(
-            'CONNECTION STATUS: ${streams.client.connected.value.enumString} ACTIVE ${tuple.item1}, ping ${tuple.item2}');
+            'CONNECTION STATUS: ${streams.client.connected.value.name} ACTIVE ${tuple.item1}, ping ${tuple.item2}');
         print('PINGING ELECTRUM SERVER');
         await services.client.api.ping();
-        print(
-            'CONNECTION STATUS: ${streams.client.connected.value.enumString}');
+        print('CONNECTION STATUS: ${streams.client.connected.value.name}');
         //try {
         //  client!.ping();
         //} on StateError {

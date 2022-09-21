@@ -13,7 +13,7 @@ Future useLiveSources() async {
   await services.wallet.createSave(
       walletType: WalletType.leader,
       cipherUpdate: defaultCipherUpdate,
-      secret: mnemonic);
+      mnemonic: mnemonic);
   await pros.settings.setCurrentWalletId(pros.wallets.first.id);
   await pros.settings.savePreferredWalletId(pros.wallets.first.id);
 }

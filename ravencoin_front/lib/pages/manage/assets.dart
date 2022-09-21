@@ -80,14 +80,14 @@ class _AssetState extends State<Asset> {
           () {
             Navigator.pushNamed(
               context,
-              '/reissue/' + asset.assetType.enumString.toLowerCase(),
+              '/reissue/' + asset.assetType.name.toLowerCase(),
               arguments: {'symbol': asset.symbol},
             );
           },
           () {
             ///Navigator.pushNamed(
             ///  context,
-            ///  '/issue/dividend' + assetType.enumString.toLowerCase(),
+            ///  '/issue/dividend' + assetType.name.toLowerCase(),
             ///  arguments: {'symbol': symbol},
             ///);
           },

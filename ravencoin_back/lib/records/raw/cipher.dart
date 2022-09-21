@@ -16,7 +16,7 @@ class Cipher with EquatableMixin {
   String toString() => toMap.toString();
 
   Map<String, dynamic> get toMap => {
-        'CipherType': cipherType.enumString,
+        'CipherType': cipherType.name,
         'PasswordId': passwordId.toString(),
         'Cipher': cipher.toString(),
       };
@@ -24,7 +24,7 @@ class Cipher with EquatableMixin {
   CipherUpdate get cipherUpdate =>
       CipherUpdate(cipherType, passwordId: passwordId);
 
-  String get cipherTypeString => cipherType.enumString;
+  String get cipherTypeString => cipherType.name;
 
   String get id => Cipher.cipherKey(cipherType, passwordId);
 

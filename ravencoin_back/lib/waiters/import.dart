@@ -12,7 +12,7 @@ class ImportWaiter extends Waiter {
       if (importRequest != null) {
         /// if import is currently occuring, wait til its finished.
         while (services.wallet.leader.newLeaderProcessRunning) {
-          await Future.delayed(Duration(seconds: 10));
+          await Future.delayed(Duration(seconds: 1));
         }
         var firstWallet = false;
         if (pros.wallets.records.length == 1 && pros.balances.records.isEmpty) {
@@ -23,7 +23,10 @@ class ImportWaiter extends Waiter {
         var importFrom = ImportFrom(text: importRequest.text);
         if (importFrom.importFormat != ImportFormat.invalid) {
           streams.client.busy.add(true);
-          var tuple3 = await importFrom.handleImport(); // success, title, msg
+          var tuple3 = await importFrom.handleImport(
+            importRequest.getEntropy,
+            importRequest.saveSecret,
+          ); // success, title, msg
           if (tuple3.item1) {
             if (firstWallet) {
               await pros.settings
@@ -40,6 +43,9 @@ class ImportWaiter extends Waiter {
             //streams.app.snack.add(Snack(message: 'Sucessful Import: downloading transactions'));
           } else if (tuple3.item3.isNotEmpty &&
               tuple3.item3.first != 'Success!') {
+            if (importRequest.onSuccess != null) {
+              await importRequest.onSuccess!();
+            }
             streams.app.snack.add(Snack(
                 message: tuple3.item3.firstWhere((element) => element != null)
                     //?.split(': ')

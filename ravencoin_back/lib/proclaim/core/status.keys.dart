@@ -15,12 +15,11 @@ extension ByIdMethodsForStatus on Index<_StatusKey, Status> {
 
 class _StatusTypeKey extends Key<Status> {
   @override
-  String getKey(Status status) => status.statusType.enumString;
+  String getKey(Status status) => status.statusType.name;
 }
 
 extension ByStatusTypeMethodsForStatus on Index<_StatusTypeKey, Status> {
-  List<Status> getAll(StatusType statusType) =>
-      getByKeyStr(statusType.enumString);
+  List<Status> getAll(StatusType statusType) => getByKeyStr(statusType.name);
 }
 
 // byAddress

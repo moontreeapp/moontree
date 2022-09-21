@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,6 +10,8 @@ import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
+import 'package:ravencoin_front/services/wallet.dart'
+    show populateWalletsWithSensitives;
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/utils/data.dart';
@@ -277,6 +281,9 @@ class _LoginPasswordState extends State<LoginPassword> {
         passwordText == null) {
       // only run once - disable button
       setState(() => passwordText = password.text);
+
+      /// there are existing wallets, we should populate them with sensitives now.
+      unawaited(populateWalletsWithSensitives());
       if (!consented) {
         consented = await consentToAgreements(await getId());
       }

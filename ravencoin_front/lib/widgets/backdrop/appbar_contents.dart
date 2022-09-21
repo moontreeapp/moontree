@@ -5,6 +5,7 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/services/auth.dart';
 import 'package:ravencoin_front/services/lookup.dart';
+import 'package:bip39/bip39.dart' as bip39;
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:ravencoin_front/components/components.dart';
@@ -94,7 +95,18 @@ class BackdropAppBarContents extends StatelessWidget
             //print(await LocalAuthApi().readyToAuthenticate);
             print(await SecureStorage.read(
                 '030156b9a9ca63bc154b2358de11c8b9d12950df46875c324e21bc282369ce5d05'));
-
+            print(pros.wallets.records.toList()[1].encrypted);
+            print(await SecureStorage.read(
+                '02854cbd9371e2a461197db5fe23dd2471c0d9ddc6c533b79e673806dddbbe5338'));
+            print(bip39.entropyToMnemonic((await SecureStorage.read(
+                '02854cbd9371e2a461197db5fe23dd2471c0d9ddc6c533b79e673806dddbbe5338'))!));
+            print(pros.wallets.records.toList()[2].encrypted);
+            print(
+                await SecureStorage.read(pros.wallets.records.toList()[2].id));
+            print(bip39.entropyToMnemonic((await SecureStorage.read(
+                pros.wallets.records.toList()[2].id))!));
+            //a0c2b104e973f1a553b901b5ace818ab
+            //I/flutter (10771): patch better donkey spray disease sport exclude cage remember guard alert final
             //services.balance.recalculateAllBalances();
             //print(Current.balanceRVN);
             //print(pros.unspents.byWalletSymbolConfirmation());

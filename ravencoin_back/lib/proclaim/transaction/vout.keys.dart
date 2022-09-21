@@ -54,7 +54,7 @@ class _SecurityTypeKey extends Key<Vout> {
 
 extension BySecurityTypeMethodsForVout on Index<_SecurityTypeKey, Vout> {
   List<Vout> getAll(SecurityType securityType) =>
-      getByKeyStr(securityType.enumString);
+      getByKeyStr(securityType.name);
 }
 
 // byAddress - not every vout has an address

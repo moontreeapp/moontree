@@ -35,15 +35,15 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
 
   String get encrypted;
 
-  String secret(CipherBase cipher);
+  Future<String> secret(CipherBase cipher);
 
-  WalletBase seedWallet(CipherBase cipher, {Net net = Net.Main});
+  Future<WalletBase> seedWallet(CipherBase cipher, {Net net = Net.Main});
 
   SecretType get secretType => SecretType.none;
   WalletType get walletType => WalletType.none;
 
-  String get secretTypeToString => secretType.enumString;
-  String get walletTypeToString => walletType.enumString;
+  String get secretTypeToString => secretType.name;
+  String get walletTypeToString => walletType.name;
 
   bool get minerMode => skipHistory;
 }

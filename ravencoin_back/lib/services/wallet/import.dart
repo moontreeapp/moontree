@@ -5,6 +5,7 @@ import 'package:ravencoin_back/utilities/hex.dart' as hex;
 
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart';
+import 'package:tuple/tuple.dart';
 
 import 'constants.dart';
 
@@ -16,6 +17,9 @@ class HandleResult {
 }
 
 class ImportWalletService {
+  Future<String> Function(String id)? _getEntropy;
+  Future<void> Function(Secret secret)? _saveSecret;
+
   // TODO: Unsure how to validate this
   ImportFormat detectImportType(String text) {
     if (validateJson(text)) {
@@ -146,6 +150,7 @@ class ImportWalletService {
         cipherUpdate: services.cipher.currentCipherUpdate,
         secret: text,
         alwaysReturn: true,
+        getEntropy: _getEntropy,
       ));
 
   /*
@@ -188,15 +193,31 @@ class ImportWalletService {
   //        ImportFormat importFormat, String text) =>
   //    {
   Future<List<HandleResult>> handleImport(
-      ImportFormat importFormat, String text) async {
-    var results = await {
-      ImportFormat.json: handleJson,
-      ImportFormat.mnemonic: handleMnemonics,
-      ImportFormat.encryptedBip38: handleBip38,
-      ImportFormat.privateKey: handlePrivateKey,
-      //ImportFormat.masterKey: handleMasterKey,
-      ImportFormat.WIF: handleWIF,
-    }[importFormat]!(text);
+    ImportFormat importFormat,
+    String text,
+    Future<String> Function(String id)? getEntropy,
+    Future<void> Function(Secret secret)? saveSecret,
+  ) async {
+    _getEntropy = getEntropy;
+    _saveSecret = saveSecret;
+    var results = await () {
+      switch (importFormat) {
+        case ImportFormat.json:
+          return handleJson;
+        case ImportFormat.mnemonic:
+          return handleMnemonics;
+        case ImportFormat.encryptedBip38:
+          return handleBip38;
+        case ImportFormat.privateKey:
+          return handlePrivateKey;
+        //case ImportFormat.masterKey:
+        //  return handleMasterKey;
+        case ImportFormat.WIF:
+          return handleWIF;
+        default:
+          return handleMnemonics;
+      }
+    }()(text);
     if (results is List<HandleResult>) {
       return results;
     }
@@ -206,10 +227,17 @@ class ImportWalletService {
   String? detectExistingWallet(Wallet wallet) =>
       pros.wallets.primaryIndex.getOne(wallet.id)?.id;
 
-  Future<HandleResult> attemptWalletSave(Wallet? wallet) async {
-    if (wallet != null) {
+  Future<HandleResult> attemptWalletSave(
+      Tuple2<Wallet, Secret>? walletSecret) async {
+    if (walletSecret != null) {
+      final wallet = walletSecret.item1;
+      final secret = walletSecret.item2;
       var existingWalletId = detectExistingWallet(wallet);
       if (existingWalletId == null) {
+        // save the secret first:
+        if (_saveSecret != null) {
+          await _saveSecret!(secret);
+        }
         // since we're importing we assume the user has it backed up already
         wallet.backedUp = true;
         var importedChange = await pros.wallets.save(wallet);

@@ -18,7 +18,7 @@ part 'leader.g.dart';
 @HiveType(typeId: TypeId.LeaderWallet)
 class LeaderWallet extends Wallet {
   @HiveField(7)
-  final String encryptedEntropy;
+  final String encryptedEntropy; // deprecated
 
   LeaderWallet({
     required String id,
@@ -28,6 +28,7 @@ class LeaderWallet extends Wallet {
     CipherUpdate cipherUpdate = defaultCipherUpdate,
     String? name,
     Uint8List? seed,
+    Future<String> Function(String id)? getEntropy,
   }) : super(
           id: id,
           cipherUpdate: cipherUpdate,
@@ -36,9 +37,11 @@ class LeaderWallet extends Wallet {
           skipHistory: skipHistory,
         ) {
     _seed = seed;
+    _getEntropy = getEntropy;
   }
 
   Uint8List? _seed;
+  Future<String> Function(String id)? _getEntropy;
 
   factory LeaderWallet.from(
     LeaderWallet existing, {
@@ -49,6 +52,7 @@ class LeaderWallet extends Wallet {
     CipherUpdate? cipherUpdate,
     String? name,
     Uint8List? seed,
+    Future<String> Function(String id)? getEntropy,
   }) =>
       LeaderWallet(
         id: id ?? existing.id,
@@ -57,8 +61,12 @@ class LeaderWallet extends Wallet {
         skipHistory: skipHistory ?? existing.skipHistory,
         cipherUpdate: cipherUpdate ?? existing.cipherUpdate,
         name: name ?? existing.name,
-        seed: seed ?? existing.seed,
+        seed: seed,
+        getEntropy: getEntropy,
       );
+
+  void setEntropy(Future<String> Function(String id) getEntropy) =>
+      _getEntropy = getEntropy;
 
   @override
   List<Object?> get props =>
@@ -72,11 +80,12 @@ class LeaderWallet extends Wallet {
   String get encrypted => encryptedEntropy;
 
   @override
-  String secret(CipherBase cipher) => mnemonic;
+  Future<String> secret([CipherBase? cipher]) async => await mnemonic;
 
   @override
-  ravenwallet.HDWallet seedWallet(CipherBase cipher, {Net net = Net.Main}) =>
-      SeedWallet(seed, net).wallet;
+  Future<ravenwallet.HDWallet> seedWallet(CipherBase cipher,
+          {Net net = Net.Main}) async =>
+      SeedWallet(await seed, net).wallet;
 
   @override
   SecretType get secretType => SecretType.mnemonic;
@@ -85,20 +94,26 @@ class LeaderWallet extends Wallet {
   WalletType get walletType => WalletType.leader;
 
   @override
-  String get secretTypeToString => secretType.enumString;
+  String get secretTypeToString => secretType.name;
 
   @override
-  String get walletTypeToString => walletType.enumString;
+  String get walletTypeToString => walletType.name;
 
-  Uint8List? get publicKey =>
-      services.wallet.leader.getSeedWallet(this).wallet.keyPair.publicKey;
+  String get pubkey => id;
 
-  Uint8List get seed {
-    _seed ??= bip39.mnemonicToSeed(mnemonic);
+  Future<Uint8List?> get publicKey async =>
+      (await services.wallet.leader.getSeedWallet(this))
+          .wallet
+          .keyPair
+          .publicKey;
+
+  Future<Uint8List> get seed async {
+    _seed ??= bip39.mnemonicToSeed(await mnemonic);
     return _seed!;
   }
 
-  String get mnemonic => bip39.entropyToMnemonic(entropy);
+  Future<String> get mnemonic async => bip39.entropyToMnemonic(await entropy);
 
-  String get entropy => hex.decrypt(encryptedEntropy, cipher!);
+  Future<String> get entropy async => await (_getEntropy ??
+      (_) async => hex.decrypt(encryptedEntropy, cipher!))(id);
 }

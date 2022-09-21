@@ -43,25 +43,33 @@ class WalletService {
 
   /// returns a pubkey, secret
   Future<Secret?> createSave({
-    required WalletType walletType,
-    required CipherUpdate cipherUpdate,
-    String? secret,
+    WalletType? walletType,
+    CipherUpdate? cipherUpdate,
+    String? mnemonic,
     String? name,
+    Future<String> Function(String id)? getEntropy,
+    Future<void> Function(Secret secret)? saveSecret,
   }) async {
+    cipherUpdate ??= services.cipher.currentCipherUpdate;
+    walletType ??= WalletType.leader;
     if (walletType == WalletType.leader) {
       return await leader.makeSaveLeaderWallet(
         pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
         cipherUpdate: cipherUpdate,
-        mnemonic: secret,
+        mnemonic: mnemonic,
         name: name,
+        getEntropy: getEntropy,
+        saveSecret: saveSecret,
       );
     } else {
       //WalletType.single
       return await single.makeSaveSingleWallet(
         pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
         cipherUpdate: cipherUpdate,
-        wif: secret,
+        wif: mnemonic,
         name: name,
+        getEntropy: getEntropy,
+        saveSecret: saveSecret,
       );
     }
   }
@@ -69,43 +77,62 @@ class WalletService {
   Future generate() async => await services.wallet.createSave(
       walletType: WalletType.leader,
       cipherUpdate: services.cipher.currentCipherUpdate,
-      secret: null);
+      mnemonic: null);
 
-  Wallet? create({
+  Tuple2<Wallet, Secret>? create({
     required WalletType walletType,
     required CipherUpdate cipherUpdate,
     required String? secret,
     bool alwaysReturn = false,
+    Future<String> Function(String id)? getEntropy,
   }) {
+    final entropy = bip39.mnemonicToEntropy(secret ?? bip39.generateMnemonic());
     switch (walletType) {
       case WalletType.leader:
-        return leader.makeLeaderWallet(
+        final wallet = leader.makeLeaderWallet(
           pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
           cipherUpdate: cipherUpdate,
-          entropy: secret != null ? bip39.mnemonicToEntropy(secret) : null,
+          entropy: entropy,
           alwaysReturn: alwaysReturn,
+          getEntropy: getEntropy,
         );
+        return Tuple2(
+            wallet!,
+            Secret(
+              pubkey: wallet.pubkey,
+              secret: entropy,
+              secretType: SecretType.entropy,
+            ));
       case WalletType.single:
-        return single.makeSingleWallet(
+        final wallet = single.makeSingleWallet(
           pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
           cipherUpdate: cipherUpdate,
-          wif: secret,
+          wif: secret!,
           alwaysReturn: alwaysReturn,
+          getEntropy: getEntropy,
         );
+        return Tuple2(
+            wallet!,
+            Secret(
+              pubkey: wallet.id,
+              secret: secret!,
+              secretType: SecretType.wif,
+            ));
       default:
         return create(
           walletType: WalletType.leader,
           cipherUpdate: cipherUpdate,
           secret: secret,
           alwaysReturn: alwaysReturn,
+          getEntropy: getEntropy,
         );
     }
   }
 
-  ECPair getAddressKeypair(Address address) {
+  Future<ECPair> getAddressKeypair(Address address) async {
     var wallet = address.wallet;
     if (wallet is LeaderWallet) {
-      var seedWallet = services.wallet.leader.getSeedWallet(wallet);
+      var seedWallet = await services.wallet.leader.getSeedWallet(wallet);
       var hdWallet =
           seedWallet.subwallet(address.hdIndex, exposure: address.exposure);
       return hdWallet.keyPair;

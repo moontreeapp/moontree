@@ -44,8 +44,7 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
             Setting(name: SettingName.User_Name, value: null),
         SettingName.Send_Immediate:
             Setting(name: SettingName.Send_Immediate, value: false),
-      }.map(
-          (settingName, setting) => MapEntry(settingName.enumString, setting));
+      }.map((settingName, setting) => MapEntry(settingName.name, setting));
 
   /// should this be in the database or should it be a constant somewhere?
   //int get appVersion =>
@@ -72,7 +71,7 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
   bool get mainnet =>
       primaryIndex.getOne(SettingName.Electrum_Net)!.value == Net.Main;
   NetworkType get network => networks[net]!;
-  String get netName => net.enumString;
+  String get netName => net.name;
   List get loginAttempts =>
       primaryIndex.getOne(SettingName.Login_Attempts)!.value;
   Future saveLoginAttempts(List attempts) async =>

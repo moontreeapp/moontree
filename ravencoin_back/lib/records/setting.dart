@@ -27,7 +27,7 @@ class Setting with EquatableMixin {
 
   String get id => Setting.settingKey(name);
 
-  static String settingKey(SettingName name) => name.enumString;
+  static String settingKey(SettingName name) => name.name;
 
   Type? get type => {
         SettingName.Electrum_Net: Net,

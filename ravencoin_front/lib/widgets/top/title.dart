@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/services/lookup.dart';
+import 'package:ravencoin_front/services/wallet.dart'
+    show generateWallet, switchWallet;
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/widgets/bottom/selection_items.dart';
@@ -179,9 +181,7 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                 ? PageTitle.pageMapReissue[pageTitle]
                 : null) ??
             PageTitle.pageMap[pageTitle] ??
-            (pageTitle == 'Home'
-                ? appContext.enumString.toTitleCase()
-                : pageTitle));
+            (pageTitle == 'Home' ? appContext.name.toTitleCase() : pageTitle));
   }
 
   String assetName(String given) {
@@ -209,7 +209,7 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
     if (pageTitle != 'Home') {
       return null;
     }
-    if (pros.wallets.length > 1) {
+    if (pros.wallets.length > 0) {
       if (settingTitle != null) {
         return walletDropDown();
       } else if (appContext == AppContext.wallet) {
@@ -252,9 +252,8 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                   visualDensity: VisualDensity.compact,
                   onTap: () async {
                     Navigator.pop(components.navigator.routeContext!);
-                    LeaderWallet wallet =
-                        await services.wallet.leader.generate();
-                    await switchWallet(wallet.id);
+                    final walletId = await generateWallet();
+                    await switchWallet(walletId);
                   },
                   leading: Icon(Icons.add, color: AppColors.primary),
                   title: Text('Generate New Wallet',
@@ -292,11 +291,4 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
           Icon(Icons.expand_more_rounded, color: Colors.white),
         ],
       ));
-
-  Future<void> switchWallet(String walletId) async {
-    await pros.settings.setCurrentWalletId(walletId);
-    //await services.balance.recalculateAllBalances(); // I don't think this is necessary
-    streams.app.fling.add(false);
-    streams.app.setting.add(null);
-  }
 }

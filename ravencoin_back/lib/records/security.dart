@@ -35,9 +35,9 @@ class Security with EquatableMixin {
   String get id => securityKey(symbol, securityType);
 
   static String securityKey(String symbol, SecurityType securityType) =>
-      '$symbol:${securityType.enumString}';
+      '$symbol:${securityType.name}';
 
-  String get securityTypeName => securityType.enumString;
+  String get securityTypeName => securityType.name;
 
   /// todo identify a ipfs hash correctly...
   // https://ethereum.stackexchange.com/questions/17094/how-to-store-ipfs-hash-using-bytes32/17112#17112

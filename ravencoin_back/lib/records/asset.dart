@@ -183,7 +183,7 @@ class Asset with EquatableMixin {
     return AssetType.Main;
   }
 
-  String get assetTypeName => assetType.enumString;
+  String get assetTypeName => assetType.name;
 
   double get amount => utils.satToAmount(satsInCirculation);
 }

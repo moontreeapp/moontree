@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/services/authentication.dart';
+import 'package:ravencoin_front/services/wallet.dart' show setupWallets;
 import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_back/services/consent.dart';
 import 'package:ravencoin_back/streams/app.dart';
@@ -335,49 +335,5 @@ class _CreatePasswordState extends State<CreatePassword> {
         password.text = '';
       });
     }
-  }
-
-  Future setupRealWallet(String? id) async {
-    await dotenv.load(fileName: '.env');
-    var mnemonic = id == null ? null : dotenv.env['TEST_WALLET_0$id']!;
-    await services.wallet.createSave(
-        walletType: WalletType.leader,
-        cipherUpdate: services.cipher.currentCipherUpdate,
-        secret: mnemonic);
-  }
-
-  Future setupWallets() async {
-    //if (pros.addresses.data.isNotEmpty) {
-    //  services.wallet.leader.updateIndexes();
-    //}
-
-    if (pros.wallets.records.isEmpty) {
-      //await setupRealWallet('1');
-      //await setupRealWallet('6');
-      //services.password.create.save('a');
-      await setupRealWallet(null);
-      await pros.settings.setCurrentWalletId(pros.wallets.first.id);
-      await pros.settings.savePreferredWalletId(pros.wallets.first.id);
-    }
-
-    // for testing
-    //print('-------------------------');
-    //print('addresses: ${pros.addresses.length}');
-    //print('assets: ${pros.assets.length}');
-    //print('balances: ${pros.balances.length}');
-    //print('blocks: ${pros.blocks}');
-    //print('ciphers: ${pros.ciphers}');
-    //print('metadata: ${pros.metadatas.length}');
-    //print('passwords: ${pros.passwords}');
-    //print('rates: ${pros.rates}');
-    //print('securities: ${pros.securities.length}');
-    //print('settings: ${pros.settings.length}');
-    //print('transactions: ${pros.transactions.length}');
-    //print('vins: ${pros.vins.length}');
-    //print('vouts: ${pros.vouts.length}');
-    //print('wallets: ${pros.wallets}');
-    //print('-------------------------');
-    ////print(services.cipher.getPassword(altPassword: ''));
-    //print('-------------------------');
   }
 }

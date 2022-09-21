@@ -50,12 +50,12 @@ extension BySecurityMethodsForUnspent on Index<_SecurityKey, Unspent> {
 
 class _SecurityTypeKey extends Key<Unspent> {
   @override
-  String getKey(Unspent unspent) => unspent.security.securityType.enumString;
+  String getKey(Unspent unspent) => unspent.security.securityType.name;
 }
 
 extension BySecurityTypeMethodsForUnspent on Index<_SecurityTypeKey, Unspent> {
   List<Unspent> getAll(SecurityType securityType) =>
-      getByKeyStr(securityType.enumString);
+      getByKeyStr(securityType.name);
 }
 
 // byAddress - (toAddress)

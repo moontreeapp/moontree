@@ -3,24 +3,12 @@ import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/pages/security/backup/types.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/theme/colors.dart';
+import 'package:ravencoin_front/utils/data.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
-
-class SecretWord {
-  String word;
-  int order;
-  int? chosenOrder;
-  SecretWord(this.word, this.order);
-
-  void set chosen(int? value) => chosenOrder = value;
-  int? get chosen => chosenOrder;
-  bool get correct => order + 1 == chosenOrder;
-
-  @override
-  String toString() => 'SecretWord($word, $order, $chosenOrder)';
-}
 
 class VerifySeed extends StatefulWidget {
   final dynamic data;
@@ -31,6 +19,7 @@ class VerifySeed extends StatefulWidget {
 }
 
 class _VerifySeedState extends State<VerifySeed> {
+  late Map<String, dynamic> data = {};
   bool validated = true;
   late double buttonWidth;
   late List<String> secret;
@@ -41,13 +30,8 @@ class _VerifySeedState extends State<VerifySeed> {
   @override
   void initState() {
     FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
-
-    secret = Current.wallet.secret(Current.wallet.cipher!).split(' ');
-    var shuffledList = [
-      for (var s in secret.enumerated()) SecretWord(s[1], s[0])
-    ];
-    shuffledList.shuffle();
-    shuffled = {for (var s in shuffledList.enumerated()) s[0]: s[1]};
+    // we used to do the shuffling of the words here, but now that it is a
+    // future we moved that to show.dart and pass them in as arguments.
     super.initState();
   }
 
@@ -59,9 +43,16 @@ class _VerifySeedState extends State<VerifySeed> {
 
   bool get smallScreen => MediaQuery.of(context).size.height < 640;
 
+  Future<List<String>> get getSecret async =>
+      (await Current.wallet.secret(Current.wallet.cipher!)).split(' ');
+
   @override
   Widget build(BuildContext context) {
+    data = populateData(context, data);
+    secret = data['secret']!;
+    shuffled = data['shuffled']!;
     buttonWidth = (MediaQuery.of(context).size.width - (17 + 17 + 16 + 16)) / 3;
+    //print(1 - (48 + 48 + 16 + 8 + 8 + 72 + 56).ofAppHeight);
     return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
   }
 

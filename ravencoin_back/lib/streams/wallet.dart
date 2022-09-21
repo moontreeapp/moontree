@@ -42,5 +42,5 @@ class WalletExposureTransactions {
 
   String get key => produceKey(address.walletId, address.exposure);
   static String produceKey(String walletId, NodeExposure exposure) =>
-      walletId + exposure.enumString;
+      walletId + exposure.name;
 }

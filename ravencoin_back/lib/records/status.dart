@@ -39,5 +39,5 @@ class Status with EquatableMixin {
 
   String get id => statusId(linkId, statusType);
   static String statusId(String linkId, StatusType statusType) =>
-      linkId + statusType.enumString;
+      linkId + statusType.name;
 }

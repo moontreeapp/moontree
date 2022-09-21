@@ -1,14 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_back/services/consent.dart'
-    show Consent, ConsentDocument, documentEndpoint, consentToAgreements;
+    show ConsentDocument, documentEndpoint, consentToAgreements;
 import 'package:ravencoin_front/services/auth.dart';
-import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
+import 'package:ravencoin_front/services/wallet.dart'
+    show populateWalletsWithSensitives;
 import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/utils/login.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
@@ -30,7 +31,7 @@ class _LoginBiometricState extends State<LoginBiometric> {
   Map<String, dynamic> data = {};
   late List listeners = [];
   FocusNode unlockFocus = FocusNode();
-  bool autoInitiateUnlock = true;
+  bool? autoInitiateUnlock;
   bool enabled = true;
   bool failedAttempt = false;
   bool isConsented = false;
@@ -77,7 +78,9 @@ class _LoginBiometricState extends State<LoginBiometric> {
   Widget build(BuildContext context) {
     data = populateData(context, data);
     needsConsent = data['needsConsent'] ?? false;
-    if (readyToUnlock() && autoInitiateUnlock) {
+    autoInitiateUnlock =
+        autoInitiateUnlock ?? data['autoInitiateUnlock'] ?? true;
+    if (readyToUnlock() && autoInitiateUnlock!) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await submit();
       });
@@ -223,6 +226,9 @@ class _LoginBiometricState extends State<LoginBiometric> {
       //  await Future.delayed(Duration(milliseconds: 50));
       //}
     }
+
+    /// there are existing wallets, we should populate them with sensitives now.
+    await populateWalletsWithSensitives();
     final localAuthApi = LocalAuthApi();
     final validate = await localAuthApi.authenticate();
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
