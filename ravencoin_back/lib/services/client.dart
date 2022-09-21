@@ -67,11 +67,23 @@ class ClientService {
   Future<void> createClient() async {
     await _clientLock.writeFuture(() async {
       streams.client.connected.add(ConnectionStatus.connecting);
-      var newRavenClient = await _generateClient();
-      if (newRavenClient != null) {
-        ravenElectrumClient = newRavenClient;
-        streams.client.connected.add(ConnectionStatus.connected);
+      Future<void> genClient() async {
+        var newRavenClient = await _generateClient();
+        if (newRavenClient != null) {
+          ravenElectrumClient = newRavenClient;
+          streams.client.connected.add(ConnectionStatus.connected);
+        } else {
+          if (pros.settings.domainPort != pros.settings.defaultDomainPort) {
+            streams.app.snack.add(Snack(
+                message:
+                    'Unable to connect to ${pros.settings.domainPort}, restoring defaults...'));
+            await pros.settings.restoreDomainPort();
+            await genClient();
+          }
+        }
       }
+
+      await genClient();
     });
   }
 

@@ -630,8 +630,9 @@ class SelectionItems {
 class SimpleSelectionItems {
   final BuildContext context;
   late List<Widget> items;
+  late void Function()? then;
 
-  SimpleSelectionItems(this.context, {required this.items});
+  SimpleSelectionItems(this.context, {required this.items, this.then});
 
   Future<void> produceModal(List items) async {
     await showModalBottomSheet<void>(
@@ -670,7 +671,12 @@ class SimpleSelectionItems {
                   ));
             }),
           );
-        }).then((value) => streams.app.scrim.add(false));
+        }).then((value) {
+      streams.app.scrim.add(false);
+      if (then != null) {
+        then!();
+      }
+    });
   }
 
   Future<void> build() async {

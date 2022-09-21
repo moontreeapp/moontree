@@ -61,6 +61,16 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
 
   String? get localPath => primaryIndex.getOne(SettingName.Local_Path)?.value;
 
+  String get domainPort =>
+      '${primaryIndex.getOne(SettingName.Electrum_Domain)?.value}:${primaryIndex.getOne(SettingName.Electrum_Port)?.value}';
+
+  String get defaultDomainPort => '$defaultUrl:$defaultPort';
+
+  Future restoreDomainPort() async => await saveAll([
+        Setting(name: SettingName.Electrum_Domain, value: defaultUrl),
+        Setting(name: SettingName.Electrum_Port, value: defaultPort),
+      ]);
+
   Future savePreferredWalletId(String walletId) async =>
       await save(Setting(name: SettingName.Wallet_Preferred, value: walletId));
 
@@ -68,16 +78,23 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
       name: SettingName.Wallet_Current, value: walletId ?? preferredWalletId));
 
   Net get net => primaryIndex.getOne(SettingName.Electrum_Net)!.value;
+
   bool get mainnet =>
       primaryIndex.getOne(SettingName.Electrum_Net)!.value == Net.Main;
+
   NetworkType get network => networks[net]!;
+
   String get netName => net.name;
+
   List get loginAttempts =>
       primaryIndex.getOne(SettingName.Login_Attempts)!.value;
+
   Future saveLoginAttempts(List attempts) async =>
       await save(Setting(name: SettingName.Login_Attempts, value: attempts));
+
   Future incrementLoginAttempts() async =>
       await saveLoginAttempts(loginAttempts + <DateTime>[DateTime.now()]);
+
   Future resetLoginAttempts() async => await saveLoginAttempts([]);
 
   Future setBlockchain({

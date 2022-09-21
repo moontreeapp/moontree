@@ -57,6 +57,7 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   late AnimationController slowController;
   late Animation<double> slowAnimation;
   final Duration animationDuration = Duration(milliseconds: 160);
+  bool dropDownActive = false;
 
   @override
   void initState() {
@@ -245,40 +246,44 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   /// but there's not enough room on the front layer for that.
   Widget walletDropDown() => GestureDetector(
       onTap: () async {
-        await SimpleSelectionItems(
-          components.navigator.routeContext!,
-          items: [
-                ListTile(
-                  visualDensity: VisualDensity.compact,
-                  onTap: () async {
-                    Navigator.pop(components.navigator.routeContext!);
-                    final walletId = await generateWallet();
-                    await switchWallet(walletId);
-                  },
-                  leading: Icon(Icons.add, color: AppColors.primary),
-                  title: Text('Generate New Wallet',
-                      style: Theme.of(context).textTheme.bodyText1),
-                )
-              ] +
-              [
-                for (Wallet wallet in pros.wallets.ordered)
+        if (!dropDownActive) {
+          dropDownActive = true;
+          await SimpleSelectionItems(
+            components.navigator.routeContext!,
+            then: () => dropDownActive = false,
+            items: [
                   ListTile(
                     visualDensity: VisualDensity.compact,
                     onTap: () async {
                       Navigator.pop(components.navigator.routeContext!);
-                      if (wallet.id != Current.walletId) {
-                        await switchWallet(wallet.id);
-                      }
+                      final walletId = await generateWallet();
+                      await switchWallet(walletId);
                     },
-                    leading: Icon(
-                      Icons.account_balance_wallet_rounded,
-                      color: AppColors.primary,
-                    ),
-                    title: Text('Wallet ' + wallet.name,
+                    leading: Icon(Icons.add, color: AppColors.primary),
+                    title: Text('Generate New Wallet',
                         style: Theme.of(context).textTheme.bodyText1),
                   )
-              ],
-        ).build();
+                ] +
+                [
+                  for (Wallet wallet in pros.wallets.ordered)
+                    ListTile(
+                      visualDensity: VisualDensity.compact,
+                      onTap: () async {
+                        Navigator.pop(components.navigator.routeContext!);
+                        if (wallet.id != Current.walletId) {
+                          await switchWallet(wallet.id);
+                        }
+                      },
+                      leading: Icon(
+                        Icons.account_balance_wallet_rounded,
+                        color: AppColors.primary,
+                      ),
+                      title: Text('Wallet ' + wallet.name,
+                          style: Theme.of(context).textTheme.bodyText1),
+                    )
+                ],
+          ).build();
+        }
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,

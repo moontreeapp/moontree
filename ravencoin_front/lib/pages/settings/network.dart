@@ -172,17 +172,23 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
   bool validateDomainPort(String value) =>
       value.contains(':') && value.split(':').last.isInt;
 
-  void save() {
+  void save() async {
     var port = serverAddress.text.split(':').last;
     var domain = serverAddress.text
         .substring(0, serverAddress.text.lastIndexOf(port) - 1);
-    services.client.saveElectrumAddress(
-      domain: domain,
-      port: int.parse(port),
+    components.loading.screen(
+      message: 'Connecting',
+      playCount: 1,
+      then: () async {
+        await services.client.saveElectrumAddress(
+          domain: domain,
+          port: int.parse(port),
+        );
+        // flush out current connection and allow waiter to reestablish one
+        await services.client.createClient();
+      },
+      returnHome: true,
     );
-    // flush out current connection and allow waiter to reestablish one
-    services.client.createClient();
-    components.loading.screen(message: 'Connecting', returnHome: false);
     pressed = true;
   }
 }

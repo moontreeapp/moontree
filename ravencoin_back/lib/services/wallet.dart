@@ -115,7 +115,7 @@ class WalletService {
             wallet!,
             Secret(
               pubkey: wallet.id,
-              secret: secret!,
+              secret: secret,
               secretType: SecretType.wif,
             ));
       default:
