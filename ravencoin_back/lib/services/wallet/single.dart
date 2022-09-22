@@ -24,6 +24,7 @@ class SingleWalletService {
       ECPair.fromPrivateKey(decode(privKey), network: pros.settings.network)
           .toWIF(),
       pros.settings.network);
+
   String privateKeyToWif(String privKey) =>
       ECPair.fromPrivateKey(decode(privKey)).toWIF();
 
@@ -37,7 +38,7 @@ class SingleWalletService {
     String? wif,
     bool alwaysReturn = false,
     String? name,
-    Future<String> Function(String id)? getEntropy,
+    Future<String> Function(String id)? getWif,
   }) {
     wif = wif ?? generateRandomWIF(pros.settings.network);
     final encryptedWIF = EncryptedWIF.fromWIF(wif, cipher);
@@ -49,7 +50,7 @@ class SingleWalletService {
         encryptedWIF: encryptedWIF.encryptedSecret,
         cipherUpdate: cipherUpdate,
         name: name ?? pros.wallets.nextWalletName,
-        getEntropy: getEntropy,
+        getWif: getWif,
       );
       final address = services.wallet.single.toAddress(newWallet);
       print('address from KPWallet: ${address.walletId}');
@@ -65,7 +66,7 @@ class SingleWalletService {
     required CipherUpdate cipherUpdate,
     String? wif,
     String? name,
-    Future<String> Function(String id)? getEntropy,
+    Future<String> Function(String id)? getWif,
     Future<void> Function(Secret secret)? saveSecret,
   }) async {
     wif = wif ?? generateRandomWIF(pros.settings.network);
@@ -74,7 +75,7 @@ class SingleWalletService {
       cipherUpdate: cipherUpdate,
       wif: wif,
       name: name,
-      getEntropy: getEntropy,
+      getWif: getWif,
     );
     if (singleWallet != null) {
       final savedSecret = Secret(

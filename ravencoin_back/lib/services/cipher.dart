@@ -44,10 +44,10 @@ class CipherService {
       if (wallet.cipherUpdate != currentCipherUpdate) {
         if (wallet is LeaderWallet) {
           /// TODO: this needs to be considered once we encrypt what is in SS
-          //records.add(await reencryptLeaderWallet(wallet, cipher));
+          records.add(await reencryptLeaderWallet(wallet, cipher));
         } else if (wallet is SingleWallet) {
           /// TODO: this needs to be considered once we encrypt what is in SS
-          //records.add(reencryptSingleWallet(wallet, cipher));
+          records.add(reencryptSingleWallet(wallet, cipher));
         }
       }
     }
@@ -61,9 +61,10 @@ class CipherService {
     LeaderWallet wallet, [
     CipherBase? cipher,
   ]) async {
-    //final encryptedEntropy =
-    //    hex.encrypt(await wallet.entropy, cipher ?? currentCipher!);
-    final newId = HDWallet.fromSeed(await wallet.seed).pubKey;
+    final encryptedEntropy =
+        hex.encrypt(await wallet.entropy, cipher ?? currentCipher!);
+    final seed = await wallet.seed;
+    final newId = HDWallet.fromSeed(seed).pubKey;
     assert(wallet.id == newId);
     return LeaderWallet(
       id: newId,
@@ -72,7 +73,8 @@ class CipherService {
       name: wallet.name,
       backedUp: wallet.backedUp,
       skipHistory: wallet.skipHistory,
-      seed: await wallet.seed, // necessary?
+      seed: seed, // necessary?
+      getEntropy: wallet.getEntropy,
     );
   }
 

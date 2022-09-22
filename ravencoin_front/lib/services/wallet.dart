@@ -3,11 +3,11 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 
-Future<Future<String> Function(String id)> get getEntropy async => _getEntropy;
+Future<Future<String> Function(String id)> get getEntropy async => _getSecret;
 Future<Future<void> Function(Secret secret)> get saveSecret async =>
     _saveSecret;
 
-Future<String> _getEntropy(String id) async =>
+Future<String> _getSecret(String id) async =>
     await SecureStorage.read(id) ?? '';
 
 Future<void> _saveSecret(Secret secret) async =>
@@ -20,7 +20,7 @@ Future<String> generateWallet({
   final secret = await services.wallet.createSave(
     walletType: walletType,
     mnemonic: mnemonic,
-    getEntropy: _getEntropy,
+    getSecret: _getSecret,
     saveSecret: _saveSecret,
   );
   return secret!.pubkey!;
@@ -54,12 +54,43 @@ Future<void> switchWallet(String walletId) async {
 Future<void> populateWalletsWithSensitives() async {
   for (var wallet in pros.wallets.records) {
     if (wallet is LeaderWallet) {
-      //await pros.wallets
-      //    .save(LeaderWallet.from(wallet, getEntropy: _getEntropy));
-      wallet.setEntropy(_getEntropy);
+      wallet.setSecret(_getSecret);
     } else if (wallet is SingleWallet) {
-      //await pros.wallets
-      //    .save(SingleWallet.from(wallet, getEntropy: _getEntropy));
+      wallet.setSecret(_getSecret);
     }
   }
+}
+
+/// moves entropy to secure storage
+Future<void> updateWalletsToSecureStorage() async {
+  var records = <Wallet>[];
+  for (var wallet in pros.wallets.records) {
+    if (wallet is LeaderWallet) {
+      if (wallet.encryptedEntropy != '') {
+        final entropy = await wallet.entropy;
+        if (entropy != '') {
+          records.add(LeaderWallet.from(
+            wallet,
+            encryptedEntropy: '',
+            seed: await wallet.seed,
+            getEntropy: wallet.getEntropy,
+          ));
+          await SecureStorage.writeSecret(Secret(
+              secret: entropy,
+              pubkey: wallet.pubkey,
+              secretType: SecretType.entropy));
+        }
+      }
+    } else if (wallet is SingleWallet) {
+      var wif = await wallet.wif;
+      if (wif != '' && wif != null) {
+        records.add(SingleWallet.from(wallet, encryptedWIF: ''));
+        await SecureStorage.writeSecret(Secret(
+            secret: wif,
+            scripthash: wallet.id,
+            secretType: SecretType.entropy));
+      }
+    }
+  }
+  await pros.wallets.saveAll(records);
 }

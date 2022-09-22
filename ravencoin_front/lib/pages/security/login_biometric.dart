@@ -63,6 +63,7 @@ class _LoginBiometricState extends State<LoginBiometric> {
       }
     }));
     finishLoadingDatabase();
+    preLogin();
   }
 
   @override
@@ -215,8 +216,6 @@ class _LoginBiometricState extends State<LoginBiometric> {
       );
 
   Future submit() async {
-    setState(() => enabled = false);
-
     /// just in case
     if (await HIVE_INIT.isPartiallyLoaded()) {
       await finishLoadingWaiters();
@@ -231,6 +230,7 @@ class _LoginBiometricState extends State<LoginBiometric> {
     await populateWalletsWithSensitives();
     final localAuthApi = LocalAuthApi();
     final validate = await localAuthApi.authenticate();
+    setState(() => enabled = false);
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
       if (!consented) {
         consented = await consentToAgreements(await getId());

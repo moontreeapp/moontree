@@ -47,7 +47,7 @@ class WalletService {
     CipherUpdate? cipherUpdate,
     String? mnemonic,
     String? name,
-    Future<String> Function(String id)? getEntropy,
+    Future<String> Function(String id)? getSecret,
     Future<void> Function(Secret secret)? saveSecret,
   }) async {
     cipherUpdate ??= services.cipher.currentCipherUpdate;
@@ -58,7 +58,7 @@ class WalletService {
         cipherUpdate: cipherUpdate,
         mnemonic: mnemonic,
         name: name,
-        getEntropy: getEntropy,
+        getEntropy: getSecret,
         saveSecret: saveSecret,
       );
     } else {
@@ -68,7 +68,7 @@ class WalletService {
         cipherUpdate: cipherUpdate,
         wif: mnemonic,
         name: name,
-        getEntropy: getEntropy,
+        getWif: getSecret,
         saveSecret: saveSecret,
       );
     }
@@ -84,7 +84,7 @@ class WalletService {
     required CipherUpdate cipherUpdate,
     required String? secret,
     bool alwaysReturn = false,
-    Future<String> Function(String id)? getEntropy,
+    Future<String> Function(String id)? getSecret,
   }) {
     final entropy = bip39.mnemonicToEntropy(secret ?? bip39.generateMnemonic());
     switch (walletType) {
@@ -94,7 +94,7 @@ class WalletService {
           cipherUpdate: cipherUpdate,
           entropy: entropy,
           alwaysReturn: alwaysReturn,
-          getEntropy: getEntropy,
+          getEntropy: getSecret,
         );
         return Tuple2(
             wallet!,
@@ -109,7 +109,7 @@ class WalletService {
           cipherUpdate: cipherUpdate,
           wif: secret!,
           alwaysReturn: alwaysReturn,
-          getEntropy: getEntropy,
+          getWif: getSecret,
         );
         return Tuple2(
             wallet!,
@@ -124,7 +124,7 @@ class WalletService {
           cipherUpdate: cipherUpdate,
           secret: secret,
           alwaysReturn: alwaysReturn,
-          getEntropy: getEntropy,
+          getSecret: getSecret,
         );
     }
   }

@@ -69,6 +69,7 @@ class _CreateBiometricState extends State<CreateBiometric> {
         );
         await setupWallets();
       }
+      preLogin();
     }();
   }
 

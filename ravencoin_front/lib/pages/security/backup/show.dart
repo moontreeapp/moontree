@@ -80,8 +80,16 @@ class _BackupSeedState extends State<BackupSeed>
 
   bool get smallScreen => MediaQuery.of(context).size.height < 640;
 
-  Future<List<String>> get getSecret async =>
-      (await Current.wallet.secret(Current.wallet.cipher!)).split(' ');
+  Future<List<String>> get getSecret async {
+    final wallet = Current.wallet;
+    if (wallet is LeaderWallet) {
+      return (await wallet.mnemonic).split(' ');
+    }
+    if (wallet is SingleWallet) {
+      return ((await wallet.kpWallet).privKey ?? '').split(' ');
+    }
+    return (await Current.wallet.secret(Current.wallet.cipher!)).split(' ');
+  }
 
   @override
   Widget build(BuildContext context) {

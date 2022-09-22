@@ -20,7 +20,7 @@ class SingleWallet extends Wallet {
     CipherUpdate cipherUpdate = defaultCipherUpdate,
     bool skipHistory = false,
     String? name,
-    Future<String> Function(String id)? getEntropy,
+    Future<String> Function(String id)? getWif,
   }) : super(
           id: id,
           cipherUpdate: cipherUpdate,
@@ -28,7 +28,7 @@ class SingleWallet extends Wallet {
           skipHistory: skipHistory,
           name: name,
         ) {
-    _getWif = getEntropy;
+    _getWif = getWif;
   }
 
   Future<String> Function(String id)? _getWif;
@@ -40,7 +40,7 @@ class SingleWallet extends Wallet {
     CipherUpdate? cipherUpdate,
     bool? skipHistory,
     String? name,
-    Future<String> Function(String id)? getEntropy,
+    Future<String> Function(String id)? getWif,
   }) =>
       SingleWallet(
         id: id ?? existing.id,
@@ -48,7 +48,7 @@ class SingleWallet extends Wallet {
         cipherUpdate: cipherUpdate ?? existing.cipherUpdate,
         skipHistory: skipHistory ?? existing.skipHistory,
         name: name ?? existing.name,
-        getEntropy: getEntropy,
+        getWif: getWif ?? existing.getWif,
       );
 
   @override
@@ -81,8 +81,17 @@ class SingleWallet extends Wallet {
   @override
   String get walletTypeToString => walletType.name;
 
+  void setSecret(Future<String> Function(String id) getSecret) =>
+      _getWif = getSecret;
+
   String? get publicKey => services.wallet.single.getKPWallet(this).pubKey;
 
-  //Future<String> get wif async =>
-  //    await (_getWif ?? (_) => hex.decrypt(encryptedWIF, cipher!))(id);
+  Future<String> Function(String id)? get getWif => _getWif;
+
+  Future<KPWallet> get kpWallet async =>
+      KPWallet.fromWIF((await wif) ?? '', pros.settings.network);
+
+  Future<String?> get wif async => await (encryptedWIF == ''
+      ? _getWif ?? ((_) async => '')
+      : (_) async => services.wallet.single.getKPWallet(this).wif)(id);
 }

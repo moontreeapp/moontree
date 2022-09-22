@@ -3,6 +3,8 @@ import 'cipher_base.dart';
 enum SecretType {
   wif, // SingleWallet
   entropy, // LeaderWallet
+  encryptedWif, // LeaderWallet
+  encryptedEntropy, // LeaderWallet
   mnemonic,
   none,
   //privateKey,

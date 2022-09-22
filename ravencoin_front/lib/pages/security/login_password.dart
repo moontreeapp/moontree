@@ -11,7 +11,7 @@ import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/services/wallet.dart'
-    show populateWalletsWithSensitives;
+    show populateWalletsWithSensitives, updateWalletsToSecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/utils/data.dart';
@@ -293,6 +293,7 @@ class _LoginPasswordState extends State<LoginPassword> {
         altPassword: password.text,
         altSalt: await SecureStorage.authenticationKey,
       );
+      await updateWalletsToSecureStorage(); // moves entropy to secure storage.
       await services.cipher.updateWallets();
       services.cipher.cleanupCiphers();
       services.cipher.loginTime();

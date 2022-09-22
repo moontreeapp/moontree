@@ -132,6 +132,7 @@ class ImportWalletService {
           cipherUpdate: services.cipher.currentCipherUpdate,
           secret: entry.value['secret'],
           alwaysReturn: true,
+          getSecret: _getEntropy,
         );
         results.add(await attemptWalletSave(wallet));
       }
@@ -150,7 +151,7 @@ class ImportWalletService {
         cipherUpdate: services.cipher.currentCipherUpdate,
         secret: text,
         alwaysReturn: true,
-        getEntropy: _getEntropy,
+        getSecret: _getEntropy,
       ));
 
   /*
@@ -167,6 +168,7 @@ class ImportWalletService {
         cipherUpdate: services.cipher.currentCipherUpdate,
         secret: services.wallet.single.privateKeyToWif(text),
         alwaysReturn: true,
+        getSecret: _getEntropy,
       ));
 
   Future<HandleResult> handleWIF(String text) async =>
@@ -175,6 +177,7 @@ class ImportWalletService {
         cipherUpdate: services.cipher.currentCipherUpdate,
         secret: text,
         alwaysReturn: true,
+        getSecret: _getEntropy,
       ));
 
   Future<HandleResult> handleBip38(String text) async {
@@ -228,7 +231,8 @@ class ImportWalletService {
       pros.wallets.primaryIndex.getOne(wallet.id)?.id;
 
   Future<HandleResult> attemptWalletSave(
-      Tuple2<Wallet, Secret>? walletSecret) async {
+    Tuple2<Wallet, Secret>? walletSecret,
+  ) async {
     if (walletSecret != null) {
       final wallet = walletSecret.item1;
       final secret = walletSecret.item2;
