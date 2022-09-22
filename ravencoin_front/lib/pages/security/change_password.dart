@@ -3,6 +3,7 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/authentication.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
+import 'package:ravencoin_front/services/wallet.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
@@ -187,6 +188,7 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
         password: newPassword.text,
         salt: await SecureStorage.authenticationKey,
         message: 'Successfully Updated Password',
+        saveSecret: saveSecret,
       );
       components.loading.screen(message: 'Setting Password', staticImage: true);
     }

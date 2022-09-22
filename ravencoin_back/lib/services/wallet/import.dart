@@ -127,12 +127,13 @@ class ImportWalletService {
       /// create wallets
       var results = <HandleResult>[];
       for (var entry in decodedJSON['wallets']!.entries) {
-        var wallet = services.wallet.create(
+        var wallet = await services.wallet.create(
           walletType: typeForImport(entry.value['type']),
           cipherUpdate: services.cipher.currentCipherUpdate,
           secret: entry.value['secret'],
           alwaysReturn: true,
           getSecret: _getEntropy,
+          saveSecret: _saveSecret,
         );
         results.add(await attemptWalletSave(wallet));
       }
@@ -146,12 +147,13 @@ class ImportWalletService {
   }
 
   Future<HandleResult> handleMnemonics(String text) async =>
-      await attemptWalletSave(services.wallet.create(
+      await attemptWalletSave(await services.wallet.create(
         walletType: WalletType.leader,
         cipherUpdate: services.cipher.currentCipherUpdate,
         secret: text,
         alwaysReturn: true,
         getSecret: _getEntropy,
+        saveSecret: _saveSecret,
       ));
 
   /*
@@ -163,21 +165,23 @@ class ImportWalletService {
   */
 
   Future<HandleResult> handlePrivateKey(String text) async =>
-      attemptWalletSave(services.wallet.create(
+      attemptWalletSave(await services.wallet.create(
         walletType: WalletType.single,
         cipherUpdate: services.cipher.currentCipherUpdate,
         secret: services.wallet.single.privateKeyToWif(text),
         alwaysReturn: true,
         getSecret: _getEntropy,
+        saveSecret: _saveSecret,
       ));
 
   Future<HandleResult> handleWIF(String text) async =>
-      attemptWalletSave(services.wallet.create(
+      attemptWalletSave(await services.wallet.create(
         walletType: WalletType.single,
         cipherUpdate: services.cipher.currentCipherUpdate,
         secret: text,
         alwaysReturn: true,
         getSecret: _getEntropy,
+        saveSecret: _saveSecret,
       ));
 
   Future<HandleResult> handleBip38(String text) async {
@@ -230,18 +234,10 @@ class ImportWalletService {
   String? detectExistingWallet(Wallet wallet) =>
       pros.wallets.primaryIndex.getOne(wallet.id)?.id;
 
-  Future<HandleResult> attemptWalletSave(
-    Tuple2<Wallet, Secret>? walletSecret,
-  ) async {
-    if (walletSecret != null) {
-      final wallet = walletSecret.item1;
-      final secret = walletSecret.item2;
+  Future<HandleResult> attemptWalletSave(Wallet? wallet) async {
+    if (wallet != null) {
       var existingWalletId = detectExistingWallet(wallet);
       if (existingWalletId == null) {
-        // save the secret first:
-        if (_saveSecret != null) {
-          await _saveSecret!(secret);
-        }
         // since we're importing we assume the user has it backed up already
         wallet.backedUp = true;
         var importedChange = await pros.wallets.save(wallet);

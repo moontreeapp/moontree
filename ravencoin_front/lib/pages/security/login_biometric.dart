@@ -63,7 +63,6 @@ class _LoginBiometricState extends State<LoginBiometric> {
       }
     }));
     finishLoadingDatabase();
-    preLogin();
   }
 
   @override
@@ -77,7 +76,11 @@ class _LoginBiometricState extends State<LoginBiometric> {
 
   @override
   Widget build(BuildContext context) {
-    data = populateData(context, data);
+    try {
+      data = populateData(context, data);
+    } catch (e) {
+      data = {};
+    }
     needsConsent = data['needsConsent'] ?? false;
     autoInitiateUnlock =
         autoInitiateUnlock ?? data['autoInitiateUnlock'] ?? true;

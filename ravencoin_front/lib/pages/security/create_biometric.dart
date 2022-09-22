@@ -7,7 +7,8 @@ import 'package:ravencoin_back/services/consent.dart'
     show ConsentDocument, documentEndpoint, consentToAgreements;
 import 'package:ravencoin_front/services/auth.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
-import 'package:ravencoin_front/services/wallet.dart' show setupWallets;
+import 'package:ravencoin_front/services/wallet.dart'
+    show saveSecret, setupWallets;
 import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/utils/auth.dart';
 import 'package:ravencoin_front/utils/login.dart';
@@ -63,13 +64,15 @@ class _CreateBiometricState extends State<CreateBiometric> {
     () async {
       await finishLoadingDatabase();
       if (pros.passwords.records.isEmpty) {
+        final key = await SecureStorage.authenticationKey;
+        //services.cipher.initCiphers(altPassword: key, altSalt: key);
         await services.authentication.setPassword(
-          password: await SecureStorage.authenticationKey,
-          salt: await SecureStorage.authenticationKey,
+          password: key,
+          salt: key,
+          saveSecret: saveSecret,
         );
         await setupWallets();
       }
-      preLogin();
     }();
   }
 

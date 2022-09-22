@@ -93,10 +93,17 @@ class BackdropAppBarContents extends StatelessWidget
             //print(await LocalAuthApi().isSetup);
             //print(await LocalAuthApi().availableBiometrics);
             //print(await LocalAuthApi().readyToAuthenticate);
-            print(await SecureStorage.read(
-                'p2oG261bnliACpKLoLWzK_vCXIhZHXh0aGAE'));
-            print(pros.wallets.records.toList()[1].encrypted);
-            print(pros.passwords.primaryIndex.getMostRecent());
+            //print(pros.ciphers.records);
+            //print(pros.wallets.records.first.id);
+            //print(await SecureStorage.read(
+            //   '030156b9a9ca63bc154b2358de11c8b9d12950df46875c324e21bc282369ce5d05'));
+            //print(await (pros.wallets.records.first as LeaderWallet)
+            //    .cipherUpdate);
+            print(await SecureStorage
+                .authenticationKey); //rsLKqhBy8NUJVHfMBeLax86fZm6CQBhLlfa6
+            //print(await ((pros.wallets.records.first as LeaderWallet)
+            //    .getEntropy)!(pros.wallets.records.first.id));
+            //print(await (pros.wallets.records.first as LeaderWallet).entropy);
 
             //a0c2b104e973f1a553b901b5ace818ab
             //I/flutter (10771): patch better donkey spray disease sport exclude cage remember guard alert final

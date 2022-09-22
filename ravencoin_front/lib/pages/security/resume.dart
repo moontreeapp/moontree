@@ -82,13 +82,15 @@ class _ChangeResumeState extends State<ChangeResume> {
       );
 
   Future<void> submit() async {
+    final key = await SecureStorage.authenticationKey;
     if (services.password.validate.previousPassword(
       password.text,
-      await SecureStorage.authenticationKey,
+      key,
     )) {
       FocusScope.of(context).unfocus();
       services.cipher.initCiphers(
         altPassword: password.text,
+        altSalt: key,
         currentCipherUpdates: services.wallet.getPreviousCipherUpdates,
       );
       successMessage();

@@ -32,14 +32,15 @@ class SingleWalletService {
   String generateRandomWIF(NetworkType network) =>
       KPWallet.random(network).wif!;
 
-  SingleWallet? makeSingleWallet(
+  Future<SingleWallet?> makeSingleWallet(
     CipherBase cipher, {
     required CipherUpdate cipherUpdate,
     String? wif,
     bool alwaysReturn = false,
     String? name,
     Future<String> Function(String id)? getWif,
-  }) {
+    Future<void> Function(Secret secret)? saveSecret,
+  }) async {
     wif = wif ?? generateRandomWIF(pros.settings.network);
     final encryptedWIF = EncryptedWIF.fromWIF(wif, cipher);
     final existingWallet =
@@ -47,21 +48,29 @@ class SingleWalletService {
     if (existingWallet == null) {
       final newWallet = SingleWallet(
         id: encryptedWIF.walletId,
-        encryptedWIF: encryptedWIF.encryptedSecret,
+        encryptedWIF: '', //encryptedWIF.encryptedSecret,
         cipherUpdate: cipherUpdate,
         name: name ?? pros.wallets.nextWalletName,
         getWif: getWif,
       );
+      if (saveSecret != null) {
+        await saveSecret(Secret(
+          secret: encryptedWIF.encryptedSecret,
+          secretType: SecretType.encryptedWif,
+          scripthash: encryptedWIF.walletId,
+        ));
+      }
       final address = services.wallet.single.toAddress(newWallet);
+      // TODO: shouldn't we save this to the address pros? and it will subscribe for us...?
       print('address from KPWallet: ${address.walletId}');
-      services.client.subscribe.toAddress(address);
+      await services.client.subscribe.toAddress(address);
       return newWallet;
     }
     if (alwaysReturn) return existingWallet as SingleWallet;
     return null;
   }
 
-  Future<Secret?> makeSaveSingleWallet(
+  Future<SingleWallet?> makeSaveSingleWallet(
     CipherBase cipher, {
     required CipherUpdate cipherUpdate,
     String? wif,
@@ -70,24 +79,17 @@ class SingleWalletService {
     Future<void> Function(Secret secret)? saveSecret,
   }) async {
     wif = wif ?? generateRandomWIF(pros.settings.network);
-    var singleWallet = makeSingleWallet(
+    var singleWallet = await makeSingleWallet(
       cipher,
       cipherUpdate: cipherUpdate,
       wif: wif,
       name: name,
       getWif: getWif,
+      saveSecret: saveSecret,
     );
     if (singleWallet != null) {
-      final savedSecret = Secret(
-        scripthash: singleWallet.id,
-        secret: wif,
-        secretType: SecretType.wif,
-      );
-      if (saveSecret != null) {
-        await saveSecret(savedSecret);
-      }
       await pros.wallets.save(singleWallet);
-      return savedSecret;
+      return singleWallet;
     }
     return null;
   }

@@ -91,7 +91,7 @@ class LeaderWalletService {
 
   Future<LeaderWallet> generate() async {
     final cipherUpdate = services.cipher.currentCipherUpdate;
-    final leaderWallet = makeLeaderWallet(
+    final leaderWallet = await makeLeaderWallet(
         pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
         cipherUpdate: cipherUpdate,
         entropy: null,
@@ -101,25 +101,33 @@ class LeaderWalletService {
     return leaderWallet;
   }
 
-  LeaderWallet? makeLeaderWallet(
+  Future<LeaderWallet?> makeLeaderWallet(
     CipherBase cipher, {
     required CipherUpdate cipherUpdate,
     String? entropy,
     bool alwaysReturn = false,
     String? name,
     Future<String> Function(String id)? getEntropy,
-  }) {
+    Future<void> Function(Secret secret)? saveSecret,
+  }) async {
     entropy = entropy ?? bip39.mnemonicToEntropy(bip39.generateMnemonic());
     final mnemonic = bip39.entropyToMnemonic(entropy);
     final seed = bip39.mnemonicToSeed(mnemonic);
     final newId = HDWallet.fromSeed(seed).pubKey;
-    //final encrypted_entropy = hex.encrypt(entropy, cipher); // here's how
+    final encryptedEntropy = hex.encrypt(entropy, cipher); // here's how
 
     var existingWallet = pros.wallets.primaryIndex.getOne(newId);
     if (existingWallet == null) {
+      // save encryptedEntropy here!
+      if (saveSecret != null) {
+        await saveSecret(Secret(
+          pubkey: newId,
+          secret: encryptedEntropy,
+          secretType: SecretType.encryptedEntropy,
+        ));
+      }
       return LeaderWallet(
         id: newId,
-        // deprecated - saved in secure storage now.
         encryptedEntropy: '',
         cipherUpdate: cipherUpdate,
         name: name ?? pros.wallets.nextWalletName,
@@ -139,7 +147,7 @@ class LeaderWalletService {
     }
   }
 
-  Future<Secret?> makeSaveLeaderWallet(
+  Future<LeaderWallet?> makeSaveLeaderWallet(
     CipherBase cipher, {
     required CipherUpdate cipherUpdate,
     String? mnemonic,
@@ -148,24 +156,17 @@ class LeaderWalletService {
     Future<void> Function(Secret secret)? saveSecret,
   }) async {
     var secret = bip39.mnemonicToEntropy(mnemonic ?? bip39.generateMnemonic());
-    var leaderWallet = makeLeaderWallet(
+    var leaderWallet = await makeLeaderWallet(
       cipher,
       cipherUpdate: cipherUpdate,
       entropy: secret,
       name: name,
       getEntropy: getEntropy,
+      saveSecret: saveSecret,
     );
     if (leaderWallet != null) {
-      final savedSecret = Secret(
-        pubkey: leaderWallet.id,
-        secret: secret,
-        secretType: SecretType.entropy,
-      );
-      if (saveSecret != null) {
-        await saveSecret(savedSecret);
-      }
       await pros.wallets.save(leaderWallet);
-      return savedSecret;
+      return leaderWallet;
     }
     return null;
   }

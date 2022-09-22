@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 //import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
+import 'package:ravencoin_front/services/wallet.dart';
 
 class AuthenticationMethodChoice extends StatefulWidget {
   final dynamic data;
@@ -48,6 +49,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                 password: 'ask for password',
                 salt: await SecureStorage.authenticationKey,
                 message: 'Successfully Updated Authentication Method',
+                saveSecret: saveSecret,
               );
               //components.loading.screen(
               //    message: 'Re-encrypting Wallets',
@@ -66,6 +68,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                 password: await SecureStorage.authenticationKey,
                 salt: await SecureStorage.authenticationKey,
                 message: 'Successfully Updated Authentication Method',
+                saveSecret: saveSecret,
               );
               //components.loading.screen(
               //    message: 'Re-encrypting Wallets',

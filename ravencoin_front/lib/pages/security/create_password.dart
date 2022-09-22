@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_front/services/wallet.dart' show setupWallets;
+import 'package:ravencoin_front/services/wallet.dart'
+    show saveSecret, setupWallets;
 import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_back/services/consent.dart';
 import 'package:ravencoin_back/streams/app.dart';
@@ -326,9 +327,11 @@ class _CreatePasswordState extends State<CreatePassword> {
       await consentToAgreements();
       //await Future.delayed(Duration(milliseconds: 200)); // in release mode?
       services.authentication.setPassword(
-          password: password.text,
-          salt: await SecureStorage.authenticationKey,
-          message: '');
+        password: password.text,
+        salt: await SecureStorage.authenticationKey,
+        message: '',
+        saveSecret: saveSecret,
+      );
       streams.app.verify.add(true);
     } else {
       setState(() {

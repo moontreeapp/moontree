@@ -42,7 +42,7 @@ class WalletService {
               .toSet();
 
   /// returns a pubkey, secret
-  Future<Secret?> createSave({
+  Future<Wallet?> createSave({
     WalletType? walletType,
     CipherUpdate? cipherUpdate,
     String? mnemonic,
@@ -79,45 +79,36 @@ class WalletService {
       cipherUpdate: services.cipher.currentCipherUpdate,
       mnemonic: null);
 
-  Tuple2<Wallet, Secret>? create({
+  Future<Wallet?> create({
     required WalletType walletType,
     required CipherUpdate cipherUpdate,
     required String? secret,
     bool alwaysReturn = false,
     Future<String> Function(String id)? getSecret,
-  }) {
+    Future<void> Function(Secret secret)? saveSecret,
+  }) async {
     final entropy = bip39.mnemonicToEntropy(secret ?? bip39.generateMnemonic());
     switch (walletType) {
       case WalletType.leader:
-        final wallet = leader.makeLeaderWallet(
+        final wallet = await leader.makeLeaderWallet(
           pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
           cipherUpdate: cipherUpdate,
           entropy: entropy,
           alwaysReturn: alwaysReturn,
           getEntropy: getSecret,
+          saveSecret: saveSecret,
         );
-        return Tuple2(
-            wallet!,
-            Secret(
-              pubkey: wallet.pubkey,
-              secret: entropy,
-              secretType: SecretType.entropy,
-            ));
+        return wallet;
       case WalletType.single:
-        final wallet = single.makeSingleWallet(
+        final wallet = await single.makeSingleWallet(
           pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
           cipherUpdate: cipherUpdate,
           wif: secret!,
           alwaysReturn: alwaysReturn,
           getWif: getSecret,
+          saveSecret: saveSecret,
         );
-        return Tuple2(
-            wallet!,
-            Secret(
-              pubkey: wallet.id,
-              secret: secret,
-              secretType: SecretType.wif,
-            ));
+        return wallet!;
       default:
         return create(
           walletType: WalletType.leader,

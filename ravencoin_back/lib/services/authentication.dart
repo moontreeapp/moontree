@@ -15,13 +15,16 @@ class AuthenticationService {
   Future<void> setPassword({
     required String password,
     required String salt,
+    required Future<void> Function(Secret secret) saveSecret,
     String? message,
   }) async {
     await services.password.create.save(password, salt);
-    var cipher =
-        services.cipher.updatePassword(altPassword: password, altSalt: salt);
-    await services.cipher.updateWallets(cipher: cipher);
-    services.cipher.cleanupCiphers();
+    var cipher = services.cipher.updatePassword(
+      altPassword: password,
+      altSalt: salt,
+    );
+    await services.cipher.updateWallets(cipher: cipher, saveSecret: saveSecret);
+    await services.cipher.cleanupCiphers();
     if (message != null && message != '') {
       streams.app.snack.add(Snack(message: message));
     }

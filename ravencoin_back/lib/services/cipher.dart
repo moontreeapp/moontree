@@ -38,16 +38,17 @@ class CipherService {
   CipherBase? get currentCipher => currentCipherBase?.cipher;
 
   /// make sure all wallets are on the latest ciphertype and password
-  Future<void> updateWallets({CipherBase? cipher}) async {
+  Future<void> updateWallets({
+    CipherBase? cipher,
+    Future<void> Function(Secret secret)? saveSecret,
+  }) async {
     var records = <Wallet>[];
     for (var wallet in pros.wallets.records) {
       if (wallet.cipherUpdate != currentCipherUpdate) {
         if (wallet is LeaderWallet) {
-          /// TODO: this needs to be considered once we encrypt what is in SS
-          records.add(await reencryptLeaderWallet(wallet, cipher));
+          records.add(await reencryptLeaderWallet(wallet, cipher, saveSecret));
         } else if (wallet is SingleWallet) {
-          /// TODO: this needs to be considered once we encrypt what is in SS
-          records.add(reencryptSingleWallet(wallet, cipher));
+          records.add(await reencryptSingleWallet(wallet, cipher, saveSecret));
         }
       }
     }
@@ -60,12 +61,19 @@ class CipherService {
   Future<LeaderWallet> reencryptLeaderWallet(
     LeaderWallet wallet, [
     CipherBase? cipher,
+    Future<void> Function(Secret secret)? saveSecret,
   ]) async {
     final encryptedEntropy =
         hex.encrypt(await wallet.entropy, cipher ?? currentCipher!);
     final seed = await wallet.seed;
     final newId = HDWallet.fromSeed(seed).pubKey;
     assert(wallet.id == newId);
+    if (saveSecret != null) {
+      await saveSecret(Secret(
+          secret: encryptedEntropy,
+          secretType: SecretType.encryptedEntropy,
+          pubkey: newId));
+    }
     return LeaderWallet(
       id: newId,
       encryptedEntropy: '',
@@ -78,15 +86,22 @@ class CipherService {
     );
   }
 
-  SingleWallet reencryptSingleWallet(
+  Future<SingleWallet> reencryptSingleWallet(
     SingleWallet wallet, [
     CipherBase? cipher,
-  ]) {
+    Future<void> Function(Secret secret)? saveSecret,
+  ]) async {
     var reencrypt = EncryptedWIF.fromWIF(
       EncryptedWIF(wallet.encrypted, wallet.cipher!).wif,
       cipher ?? currentCipher!,
     );
     assert(wallet.id == reencrypt.walletId);
+    if (saveSecret != null) {
+      await saveSecret(Secret(
+          secret: reencrypt.secret,
+          secretType: SecretType.encryptedWif,
+          pubkey: reencrypt.walletId));
+    }
     return SingleWallet(
       id: reencrypt.walletId,
       encryptedWIF: reencrypt.encryptedSecret,
@@ -132,8 +147,8 @@ class CipherService {
 
   /// after wallets are updated or verified to be up to date
   /// remove all ciphers that no wallet uses and that are not the current one
-  void cleanupCiphers() {
-    pros.ciphers.removeAll(pros.ciphers.records
+  Future<void> cleanupCiphers() async {
+    await pros.ciphers.removeAll(pros.ciphers.records
         .where((cipher) => !_cipherUpdates.contains(cipher.cipherUpdate)));
 
     if (pros.ciphers.records.length > 2) {
