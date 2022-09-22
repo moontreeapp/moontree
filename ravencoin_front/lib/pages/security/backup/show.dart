@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 //import 'package:screenshot_callback/screenshot_callback.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/pages/security/backup/types.dart';
+import 'package:ravencoin_front/services/auth.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
@@ -31,6 +33,7 @@ class _BackupSeedState extends State<BackupSeed>
   FocusNode existingFocus = FocusNode();
   FocusNode showFocus = FocusNode();
   bool failedAttempt = false;
+  bool enabled = true;
   //ScreenshotCallback screenshotCallback = ScreenshotCallback();
 
   /// from exploring animations - want to return to
@@ -89,7 +92,14 @@ class _BackupSeedState extends State<BackupSeed>
         builder: (context, AsyncSnapshot<List<String>> snapshot) {
           if (snapshot.hasData) {
             secret = snapshot.data!;
-            return body();
+            return services.password.askCondition
+                ? VerifyAuthentication(
+                    parentState: this,
+                    buttonLabel: 'Show Seed',
+                    intro: intro,
+                    safe: safe,
+                  )
+                : body();
           } else {
             return CircularProgressIndicator();
           }
@@ -99,30 +109,18 @@ class _BackupSeedState extends State<BackupSeed>
   Widget body() => BackdropLayers(
       back: BlankBack(),
       front: FrontCurve(
-          child: warn
-              ? components.page.form(
-                  context,
-                  columnWidgets: <Widget>[
-                    intro,
-                    safe,
-                    SizedBox(height: .2.ofMediaHeight(context)),
-                    if (services.password.askCondition) LockedOutTime(),
-                    if (services.password.askCondition) login,
-                  ],
-                  buttons: [showButton],
-                )
-              : Stack(children: [
-                  components.page.form(
-                    context,
-                    columnWidgets: <Widget>[
-                      instructions,
-                      warning,
-                      if (smallScreen) words,
-                    ],
-                    buttons: [submitButton],
-                  ),
-                  if (!smallScreen) wordsInStack
-                ])));
+          child: Stack(children: [
+        components.page.form(
+          context,
+          columnWidgets: <Widget>[
+            instructions,
+            warning,
+            if (smallScreen) words,
+          ],
+          buttons: [submitButton],
+        ),
+        if (!smallScreen) wordsInStack
+      ])));
 
   /// from exploring animations - want to return to
   /// animate()
@@ -181,25 +179,6 @@ class _BackupSeedState extends State<BackupSeed>
             .copyWith(color: AppColors.error),
       ));
 
-  Widget get login => TextFieldFormatted(
-        focusNode: existingFocus,
-        autocorrect: false,
-        enabled: services.password.askCondition ? true : false,
-        controller: password,
-        obscureText: true,
-        textInputAction: TextInputAction.done,
-        labelText: 'Password',
-        errorText: password.text == '' &&
-                pros.settings.loginAttempts.length > 0 &&
-                failedAttempt
-            ? 'Incorrect Password'
-            : null,
-        onEditingComplete: () {
-          setState(() {});
-          FocusScope.of(context).requestFocus(showFocus);
-        },
-      );
-
   Widget get wordsInStack => Container(
       height: (1 - 72.ofAppHeight).ofAppHeight,
       alignment: Alignment.center,
@@ -221,37 +200,6 @@ class _BackupSeedState extends State<BackupSeed>
                   number: i + x)
           ]),
       ]));
-
-  Future<bool> verify() async => services.password.validate.password(
-        password: password.text,
-        salt: await SecureStorage.authenticationKey,
-      );
-
-  Widget get showButton => components.buttons.actionButton(context,
-      enabled: (services.password.askCondition ? password.text != '' : true) &&
-          services.password.lockout.timePast(),
-      label: 'Show Seed',
-      focusNode: showFocus,
-      onPressed: submitProceedure);
-
-  Future<void> submitProceedure() async {
-    if (services.password.askCondition
-        ? await services.password.lockout
-            .handleVerificationAttempt(await verify())
-        : true) {
-      streams.app.verify.add(true);
-      setState(() {
-        warn = false;
-        // from exploring animations - want to return to
-        //controller.forward();
-      });
-    } else {
-      setState(() {
-        failedAttempt = true;
-        password.text = '';
-      });
-    }
-  }
 
   Widget get submitButton => components.buttons.actionButton(
         context,

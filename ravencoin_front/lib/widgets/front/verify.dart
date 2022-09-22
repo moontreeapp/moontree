@@ -1,31 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/services/auth.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
+import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
-class VerifyPassword extends StatefulWidget {
+class VerifyAuthentication extends StatefulWidget {
   final State? parentState;
   final String buttonLabel;
   final String? suffix;
+  final Widget? intro;
+  final Widget? safe;
 
-  VerifyPassword({
+  VerifyAuthentication({
     Key? key,
     this.parentState,
     this.buttonLabel = 'Submit',
     this.suffix,
+    this.intro,
+    this.safe,
   }) : super(key: key);
 
   @override
-  _VerifyPasswordState createState() => _VerifyPasswordState();
+  _VerifyAuthenticationState createState() => _VerifyAuthenticationState();
 }
 
-class _VerifyPasswordState extends State<VerifyPassword> {
+class _VerifyAuthenticationState extends State<VerifyAuthentication> {
   TextEditingController password = TextEditingController();
   bool passwordVisible = false;
   FocusNode existingFocus = FocusNode();
   FocusNode submitFocus = FocusNode();
   bool failedAttempt = false;
+  bool enabled = true;
 
   @override
   void initState() {
@@ -51,6 +59,8 @@ class _VerifyPasswordState extends State<VerifyPassword> {
             child: components.page.form(
               context,
               columnWidgets: <Widget>[
+                if (widget.intro != null) widget.intro!,
+                if (widget.safe != null) widget.safe!,
                 Container(height: (MediaQuery.of(context).size.height) / 3),
                 //Center(
                 //    child: Text(
@@ -60,9 +70,11 @@ class _VerifyPasswordState extends State<VerifyPassword> {
                 //        style: Theme.of(context).textTheme.bodyText1)),
                 //SizedBox(height: 8),
                 LockedOutTime(),
-                passwordField,
+                pros.settings.authMethodIsBiometric ? bioText : passwordField,
               ],
-              buttons: [submitButton],
+              buttons: [
+                pros.settings.authMethodIsBiometric ? bioButton : submitButton
+              ],
             ),
           )
           //)
@@ -137,4 +149,45 @@ class _VerifyPasswordState extends State<VerifyPassword> {
       }[services.password.validate.previouslyUsed(password.text)] ??
       //'has been used before';
       'unrecognized';
+
+  Widget get bioText => Center(
+      child: Text('Please authenticate before proceeding...',
+          textAlign: TextAlign.center,
+          style: Theme.of(context)
+              .textTheme
+              .bodyText1
+              ?.copyWith(color: AppColors.primary)));
+
+  Widget get bioButton => components.buttons.actionButton(
+        context,
+        enabled: enabled,
+        label: widget.buttonLabel == 'Submit' ? 'Unlock' : widget.buttonLabel,
+        onPressed: () async {
+          await submit();
+        },
+      );
+
+  Future submit() async {
+    setState(() => enabled = false);
+    final localAuthApi = LocalAuthApi();
+    final validate = await localAuthApi.authenticate();
+    if (await services.password.lockout.handleVerificationAttempt(validate)) {
+      streams.app.verify.add(true);
+      widget.parentState?.setState(() {});
+    } else {
+      if (localAuthApi.reason == AuthenticationResult.error) {
+        setState(() {
+          enabled = true;
+        });
+        streams.app.snack.add(Snack(
+          message: 'Unknown login error: please set a pin on the device.',
+        ));
+      } else if (localAuthApi.reason == AuthenticationResult.failure) {
+        setState(() {
+          failedAttempt = true;
+          enabled = true;
+        });
+      }
+    }
+  }
 }

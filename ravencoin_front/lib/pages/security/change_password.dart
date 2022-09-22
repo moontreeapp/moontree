@@ -45,7 +45,7 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
           onTap: () => FocusScope.of(context).unfocus(),
           child: FrontCurve(
             child: services.password.askCondition
-                ? VerifyPassword(
+                ? VerifyAuthentication(
                     parentState: this, buttonLabel: 'Change Password')
                 : body(),
           )));

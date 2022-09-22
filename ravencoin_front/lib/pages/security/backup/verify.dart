@@ -5,6 +5,8 @@ import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/pages/security/backup/types.dart';
 import 'package:ravencoin_front/services/lookup.dart';
+import 'package:ravencoin_front/services/wallet.dart'
+    show populateWalletsWithSensitives;
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/utils/data.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
@@ -135,6 +137,7 @@ class _VerifySeedState extends State<VerifySeed> {
           if (Current.wallet is LeaderWallet) {
             await services.wallet.leader
                 .backedUp(Current.wallet as LeaderWallet);
+            await populateWalletsWithSensitives();
           }
           Navigator.popUntil(context, ModalRoute.withName('/home'));
           streams.app.snack.add(Snack(message: 'Successfully Verified Backup'));

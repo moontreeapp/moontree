@@ -68,7 +68,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
             child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: services.password.askCondition
-              ? VerifyPassword(parentState: this)
+              ? VerifyAuthentication(parentState: this)
               : body(),
         )));
   }
