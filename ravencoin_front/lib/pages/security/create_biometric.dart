@@ -243,7 +243,7 @@ class _CreateBiometricState extends State<CreateBiometric> {
         streams.app.snack.add(Snack(
           message: 'No pin detected; please set a password.',
         ));
-        services.authentication.setMethod(method: AuthMethod.password);
+        await services.authentication.setMethod(method: AuthMethod.password);
         Future.microtask(() => Navigator.pushReplacementNamed(
               context,
               getMethodPathCreate(),

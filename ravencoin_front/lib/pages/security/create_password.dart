@@ -24,7 +24,7 @@ class CreatePassword extends StatefulWidget {
 }
 
 class _CreatePasswordState extends State<CreatePassword> {
-  late List listeners = [];
+  //late List listeners = [];
   var password = TextEditingController();
   var confirm = TextEditingController();
   var passwordVisible = false;
@@ -38,36 +38,22 @@ class _CreatePasswordState extends State<CreatePassword> {
   bool isConsented = false;
   final int minimumLength = 1;
 
-  Future<void> exitProcess() async {
-    await setupWallets();
-    Navigator.pushReplacementNamed(context, '/home', arguments: {});
-    services.cipher.initCiphers(
-      altPassword: passwordText,
-      altSalt: await SecureStorage.authenticationKey,
-    );
-    await services.cipher.updateWallets();
-    services.cipher.cleanupCiphers();
-    services.cipher.loginTime();
-    streams.app.splash.add(false); // trigger to refresh app bar again
-    streams.app.logout.add(false);
-  }
-
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.password.exists.listen((bool value) {
-      if (value && noPassword) {
-        noPassword = false;
-        exitProcess();
-      }
-    }));
+    //listeners.add(streams.password.exists.listen((bool value) {
+    //  if (value && noPassword) {
+    //    noPassword = false;
+    //    //exitProcess();
+    //  }
+    //}));
   }
 
   @override
   void dispose() {
-    for (var listener in listeners) {
-      listener.cancel();
-    }
+    //for (var listener in listeners) {
+    //  listener.cancel();
+    //}
     password.dispose();
     confirm.dispose();
     passwordFocus.dispose();
@@ -326,17 +312,32 @@ class _CreatePasswordState extends State<CreatePassword> {
       setState(() => passwordText = password.text);
       await consentToAgreements();
       //await Future.delayed(Duration(milliseconds: 200)); // in release mode?
-      services.authentication.setPassword(
+      await services.authentication.setPassword(
         password: password.text,
         salt: await SecureStorage.authenticationKey,
         message: '',
         saveSecret: saveSecret,
       );
+      await exitProcess();
       streams.app.verify.add(true);
     } else {
       setState(() {
         password.text = '';
       });
     }
+  }
+
+  Future<void> exitProcess() async {
+    //await setupWallets();
+    Navigator.pushReplacementNamed(context, '/home', arguments: {});
+    services.cipher.initCiphers(
+      altPassword: password.text,
+      altSalt: await SecureStorage.authenticationKey,
+    );
+    await services.cipher.updateWallets();
+    services.cipher.cleanupCiphers();
+    services.cipher.loginTime();
+    streams.app.splash.add(false); // trigger to refresh app bar again
+    streams.app.logout.add(false);
   }
 }

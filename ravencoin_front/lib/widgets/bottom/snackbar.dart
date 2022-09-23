@@ -53,6 +53,10 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       : Theme.of(context).textTheme.bodyText2!.copyWith(color: AppColors.error);
 
   Future<void> show() async {
+    /// don't show snackbars on login screen
+    if (['Createlogin', 'Login'].contains(streams.app.page.value)) {
+      return;
+    }
     //final tall = streams.app.navHeight.value == NavHeight.tall; // default
     final short = streams.app.navHeight.value == NavHeight.short;
     final none = streams.app.navHeight.value == NavHeight.none ||

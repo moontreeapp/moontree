@@ -55,7 +55,7 @@ class _ActivityLightState extends State<ActivityLight>
 
   @override
   Widget build(BuildContext context) {
-    return pageTitle == 'Login'
+    return ['Login', 'Createlogin'].contains(pageTitle)
         ? Container()
         : connectionBusy
             ? GestureDetector(

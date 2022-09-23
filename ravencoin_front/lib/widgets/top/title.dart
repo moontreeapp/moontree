@@ -182,7 +182,9 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                 ? PageTitle.pageMapReissue[pageTitle]
                 : null) ??
             PageTitle.pageMap[pageTitle] ??
-            (pageTitle == 'Home' ? appContext.name.toTitleCase() : pageTitle));
+            (pageTitle == 'Home'
+                ? /*appContext.name.toTitleCase()*/ ' '
+                : pageTitle));
   }
 
   String assetName(String given) {

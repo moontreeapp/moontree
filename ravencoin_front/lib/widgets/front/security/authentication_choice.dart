@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/services/auth.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/services/wallet.dart';
 import 'package:ravencoin_front/widgets/front/security/password.dart';
@@ -97,18 +98,41 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
             groupValue: authenticationMethodChoice,
             onChanged: (AuthMethod? value) async {
               setState(() => authenticationMethodChoice = value);
-              await services.authentication.setMethod(method: value!);
-              await services.authentication.setPassword(
-                password: await SecureStorage.authenticationKey,
-                salt: await SecureStorage.authenticationKey,
-                message: 'Successfully Updated Authentication Method',
-                saveSecret: saveSecret,
-              );
-              //components.loading.screen(
-              //    message: 'Re-encrypting Wallets',
-              //    staticImage: true,
-              //    returnHome: true,
-              //    playCount: 3);
+              final localAuthApi = LocalAuthApi();
+              final validate = await localAuthApi.authenticate();
+              if (validate) {
+                await services.authentication.setMethod(method: value!);
+                await services.authentication.setPassword(
+                  password: await SecureStorage.authenticationKey,
+                  salt: await SecureStorage.authenticationKey,
+                  message: 'Successfully Updated Authentication Method',
+                  saveSecret: saveSecret,
+                );
+                //components.loading.screen(
+                //    message: 'Re-encrypting Wallets',
+                //    staticImage: true,
+                //    returnHome: true,
+                //    playCount: 3);
+              } else {
+                if (localAuthApi.reason == AuthenticationResult.error) {
+                  setState(() {
+                    setState(
+                        () => authenticationMethodChoice = AuthMethod.password);
+                  });
+                  streams.app.snack.add(Snack(
+                    message:
+                        'Failed. To use biometric authentication, set it up a pin in the phone settings.',
+                  ));
+                } else if (localAuthApi.reason ==
+                    AuthenticationResult.failure) {
+                  setState(
+                      () => authenticationMethodChoice = AuthMethod.password);
+                  streams.app.snack.add(Snack(
+                    message:
+                        'Unable to authenticate; setting login method to password.',
+                  ));
+                }
+              }
             }),
       ],
     );
