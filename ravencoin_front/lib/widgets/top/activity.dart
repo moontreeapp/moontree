@@ -61,7 +61,7 @@ class _ActivityLightState extends State<ActivityLight>
             ? GestureDetector(
                 onTap: () => components.message.giveChoices(
                   components.navigator.routeContext!,
-                  title: activityMessage.title,
+                  title: activityMessage.title ?? 'Network Activity',
                   content: activityMessage.message,
                   child: activityMessage.message == '' ||
                           activityMessage.message == null

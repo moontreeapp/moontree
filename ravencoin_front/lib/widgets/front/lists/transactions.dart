@@ -90,14 +90,23 @@ class _TransactionListState extends State<TransactionList> {
     transactions = widget.transactions ??
         services.transaction.getTransactionRecords(wallet: Current.wallet);
     return transactions.isEmpty && services.wallet.currentWallet.minerMode
-        ? Container(
-            alignment: Alignment.topCenter,
-            padding: EdgeInsets.only(top: 32, left: 16, right: 16, bottom: 0),
-            child: Text(
-              'Miner Mode is enabled, so transaction history is not available \n\nTo download your transaction history please disable Miner Mode in Menu / Settings / Options',
-              softWrap: true,
-              maxLines: 10,
-            ))
+        ? Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Container(
+                alignment: Alignment.topCenter,
+                padding:
+                    EdgeInsets.only(top: 32, left: 16, right: 16, bottom: 0),
+                child: Text(
+                  'Miner Mode is enabled, so transaction history is not available. \n\nTo download your transaction history please disable Miner Mode in Settings.',
+                  softWrap: true,
+                  maxLines: 10,
+                )),
+            components.buttons.actionButtonSoft(
+              context,
+              label: 'Go to Settings',
+              link: '/settings/network/options',
+            ),
+            SizedBox(height: 80),
+          ])
         : transactions.isEmpty
             //? components.empty.transactions(context, msg: widget.msg)
             ? components.empty.getTransactionsPlaceholder(context,
