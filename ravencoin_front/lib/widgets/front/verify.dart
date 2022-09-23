@@ -61,7 +61,11 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
               columnWidgets: <Widget>[
                 if (widget.intro != null) widget.intro!,
                 if (widget.safe != null) widget.safe!,
-                Container(height: (MediaQuery.of(context).size.height) / 3),
+                Container(
+                    height: (MediaQuery.of(context).size.height) *
+                        (.3 -
+                            (widget.intro != null ? .07 : 0) -
+                            (widget.safe != null ? .07 : 0))),
                 //Center(
                 //    child: Text(
                 //        'Please verify your password\nto proceed' +

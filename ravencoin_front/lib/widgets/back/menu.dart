@@ -158,11 +158,15 @@ class _NavMenuState extends State<NavMenu> {
         padding: EdgeInsets.all(0),
         children: [
           destination(
-            icon: MdiIcons.shieldKey,
-            name: 'Import / Export',
-            link: '/settings/import_export',
-            arrow: true,
-          ),
+              icon: MdiIcons.shieldKey,
+              name: 'Import',
+              link: '/settings/import'),
+          //destination(
+          //  icon: MdiIcons.shieldKey,
+          //  name: 'Import / Export',
+          //  link: '/settings/import_export',
+          //  arrow: true,
+          //),
           if (Current.wallet is LeaderWallet)
             destination(
               icon: MdiIcons.drawPen,
