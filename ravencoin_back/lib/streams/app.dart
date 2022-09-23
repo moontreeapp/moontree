@@ -58,6 +58,7 @@ class Snack {
   final String? label; // link label
   final String? link;
   final Map<String, dynamic>? arguments;
+  final bool showOnLogin;
 
   Snack({
     required this.message,
@@ -66,12 +67,14 @@ class Snack {
     this.link,
     this.arguments,
     this.label,
+    this.showOnLogin = false,
   });
 
   @override
   String toString() {
     return 'Snack(message: $message, positive: $positive, details: $details, '
-        'label: $label, link: $link, arguments: $arguments)';
+        'label: $label, link: $link, arguments: $arguments, '
+        'showOnLogin: $showOnLogin)';
   }
 }
 

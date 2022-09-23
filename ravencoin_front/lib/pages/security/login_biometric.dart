@@ -11,6 +11,7 @@ import 'package:ravencoin_front/services/auth.dart';
 import 'package:ravencoin_front/services/wallet.dart'
     show populateWalletsWithSensitives;
 import 'package:ravencoin_front/theme/extensions.dart';
+import 'package:ravencoin_front/utils/auth.dart';
 import 'package:ravencoin_front/utils/login.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -36,6 +37,7 @@ class _LoginBiometricState extends State<LoginBiometric> {
   bool failedAttempt = false;
   bool isConsented = false;
   bool consented = false;
+  bool setPassword = false;
   late bool needsConsent;
 
   Future<void> finishLoadingDatabase() async {
@@ -123,7 +125,9 @@ class _LoginBiometricState extends State<LoginBiometric> {
                         children: [
                           (needsConsent ? ulaMessage : SizedBox(height: 100)),
                           SizedBox(height: 40),
-                          Row(children: [bioButton]),
+                          Row(children: [
+                            setPassword ? setPasswordButton : bioButton
+                          ]),
                           SizedBox(height: 40),
                         ]))),
           ])));
@@ -218,6 +222,18 @@ class _LoginBiometricState extends State<LoginBiometric> {
         },
       );
 
+  Widget get setPasswordButton => components.buttons.actionButton(
+        context,
+        enabled: true,
+        label: 'Use Password Instead',
+        onPressed: () async {
+          Navigator.pushReplacementNamed(
+            context,
+            getMethodPathLogin(biometric: false),
+          );
+        },
+      );
+
   Future submit() async {
     /// just in case
     if (await HIVE_INIT.isPartiallyLoaded()) {
@@ -241,12 +257,13 @@ class _LoginBiometricState extends State<LoginBiometric> {
       login(context);
     } else {
       if (localAuthApi.reason == AuthenticationResult.error) {
+        streams.app.snack.add(Snack(
+            message: 'Unknown login error: please set a pin on the device.',
+            showOnLogin: true));
         setState(() {
           enabled = true;
+          setPassword = true;
         });
-        streams.app.snack.add(Snack(
-          message: 'Unknown login error: please set a pin on the device.',
-        ));
       } else if (localAuthApi.reason == AuthenticationResult.failure) {
         setState(() {
           failedAttempt = true;

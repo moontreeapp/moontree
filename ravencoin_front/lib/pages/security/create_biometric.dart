@@ -222,11 +222,18 @@ class _CreateBiometricState extends State<CreateBiometric> {
     final localAuthApi = LocalAuthApi();
     final validate = await localAuthApi.authenticate();
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
+      final key = await SecureStorage.authenticationKey;
+      components.message.giveChoices(context,
+          title: 'Default Password',
+          content:
+              "Moontree has generated a default password for you. If you're ever unable to use your biometric or pin to login you can use this password instead. Please write it down for your records: $key",
+          behaviors: {
+            'ok': () => Navigator.of(context).pop(),
+          });
       if (!consented) {
         consented = await consentToAgreements(await getId());
       }
       if (pros.passwords.records.isEmpty) {
-        final key = await SecureStorage.authenticationKey;
         //services.cipher.initCiphers(altPassword: key, altSalt: key);
         await services.authentication.setPassword(
           password: key,
