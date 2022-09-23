@@ -14,10 +14,12 @@ Future logout() async {
   streams.app.splash.add(false);
 }
 
-String getMethodPathLogin() => pros.settings.authMethodIsBiometric
-    ? '/security/biometric/login'
-    : '/security/password/login';
+String getMethodPathLogin({bool? biometric}) =>
+    biometric ?? pros.settings.authMethodIsBiometric
+        ? '/security/biometric/login'
+        : '/security/password/login';
 
-String getMethodPathCreate() => pros.settings.authMethodIsBiometric
-    ? '/security/biometric/createlogin'
-    : '/security/password/createlogin';
+String getMethodPathCreate({bool? biometric}) =>
+    biometric ?? pros.settings.authMethodIsBiometric
+        ? '/security/biometric/createlogin'
+        : '/security/password/createlogin';

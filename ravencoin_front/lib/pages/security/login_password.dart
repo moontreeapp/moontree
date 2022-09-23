@@ -14,6 +14,7 @@ import 'package:ravencoin_front/services/wallet.dart'
     show populateWalletsWithSensitives, updateWalletsToSecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/theme/extensions.dart';
+import 'package:ravencoin_front/utils/auth.dart';
 import 'package:ravencoin_front/utils/data.dart';
 import 'package:ravencoin_front/utils/device.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
@@ -81,7 +82,11 @@ class _LoginPasswordState extends State<LoginPassword> {
       password: key,
       salt: key,
     )) {
-      login();
+      /// don't just log them in and hope they set a password on their own...
+      //login(key);
+      /// instead push them to the page where they can set a password:
+      Navigator.pushReplacementNamed(context, getMethodPathCreate(),
+          arguments: {'needsConsent': false});
     }
   }
 
@@ -305,7 +310,7 @@ class _LoginPasswordState extends State<LoginPassword> {
     }
   }
 
-  Future<void> login() async {
+  Future<void> login([String? passwordDefault]) async {
     /// there are existing wallets, we should populate them with sensitives now.
     unawaited(populateWalletsWithSensitives());
     if (!consented) {
@@ -314,7 +319,7 @@ class _LoginPasswordState extends State<LoginPassword> {
     Navigator.pushReplacementNamed(context, '/home', arguments: {});
     // create ciphers for wallets we have
     services.cipher.initCiphers(
-      altPassword: password.text,
+      altPassword: password.text == '' ? passwordDefault : password.text,
       altSalt: await SecureStorage.authenticationKey,
     );
     await updateWalletsToSecureStorage(); // moves entropy to secure storage.

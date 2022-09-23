@@ -63,16 +63,6 @@ class _CreateBiometricState extends State<CreateBiometric> {
     }));
     () async {
       await finishLoadingDatabase();
-      if (pros.passwords.records.isEmpty) {
-        final key = await SecureStorage.authenticationKey;
-        //services.cipher.initCiphers(altPassword: key, altSalt: key);
-        await services.authentication.setPassword(
-          password: key,
-          salt: key,
-          saveSecret: saveSecret,
-        );
-        await setupWallets();
-      }
     }();
   }
 
@@ -228,11 +218,22 @@ class _CreateBiometricState extends State<CreateBiometric> {
       //  await Future.delayed(Duration(milliseconds: 50));
       //}
     }
+
     final localAuthApi = LocalAuthApi();
     final validate = await localAuthApi.authenticate();
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
       if (!consented) {
         consented = await consentToAgreements(await getId());
+      }
+      if (pros.passwords.records.isEmpty) {
+        final key = await SecureStorage.authenticationKey;
+        //services.cipher.initCiphers(altPassword: key, altSalt: key);
+        await services.authentication.setPassword(
+          password: key,
+          salt: key,
+          saveSecret: saveSecret,
+        );
+        await setupWallets();
       }
       login(context);
     } else {
@@ -243,10 +244,9 @@ class _CreateBiometricState extends State<CreateBiometric> {
         streams.app.snack.add(Snack(
           message: 'No pin detected; please set a password.',
         ));
-        await services.authentication.setMethod(method: AuthMethod.password);
         Future.microtask(() => Navigator.pushReplacementNamed(
               context,
-              getMethodPathCreate(),
+              getMethodPathCreate(biometric: false),
             ));
       } else if (localAuthApi.reason == AuthenticationResult.failure) {
         setState(() {
