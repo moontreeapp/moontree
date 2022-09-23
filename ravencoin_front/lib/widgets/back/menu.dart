@@ -125,20 +125,16 @@ class _NavMenuState extends State<NavMenu> {
         padding: EdgeInsets.all(0),
         children: [
           destination(
-            icon: Icons.lock_rounded,
-            name: 'Authentication',
+            icon: Icons.security,
+            name: 'Security',
             link: '/security/method/change',
           ),
-          destination(
-            icon: Icons.lock_rounded,
-            name: 'Password',
-            link: '/security/password/change',
-          ),
-          destination(
-            icon: Icons.fingerprint_rounded,
-            name: 'Biometric',
-            link: '/security/method/change',
-          ),
+          if (!pros.settings.authMethodIsBiometric)
+            destination(
+              icon: Icons.lock_rounded,
+              name: 'Password',
+              link: '/security/password/change',
+            ),
           /*
           destination(
               icon: MdiIcons.accountCog,
@@ -214,6 +210,7 @@ class _NavMenuState extends State<NavMenu> {
                 
               }),
           */
+          SizedBox(height: 16),
           RichText(
             textAlign: TextAlign.center,
             text: TextSpan(

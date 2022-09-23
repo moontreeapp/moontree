@@ -41,7 +41,7 @@ class _LoginPasswordState extends State<LoginPassword> {
 
   Future<void> finishLoadingDatabase() async {
     if (await HIVE_INIT.isPartiallyLoaded()) {
-      HIVE_INIT.setupDatabase2();
+      await HIVE_INIT.setupDatabase2();
     }
   }
 
@@ -75,10 +75,25 @@ class _LoginPasswordState extends State<LoginPassword> {
     super.dispose();
   }
 
+  void bypass() async {
+    final key = await SecureStorage.authenticationKey;
+    if (services.password.validate.password(
+      password: key,
+      salt: key,
+    )) {
+      login();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    data = populateData(context, data);
+    try {
+      data = populateData(context, data);
+    } catch (e) {
+      data = {};
+    }
     needsConsent = data['needsConsent'] ?? false;
+    bypass();
     return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
   }
 
@@ -281,31 +296,34 @@ class _LoginPasswordState extends State<LoginPassword> {
         passwordText == null) {
       // only run once - disable button
       setState(() => passwordText = password.text);
-
-      /// there are existing wallets, we should populate them with sensitives now.
-      unawaited(populateWalletsWithSensitives());
-      if (!consented) {
-        consented = await consentToAgreements(await getId());
-      }
-      Navigator.pushReplacementNamed(context, '/home', arguments: {});
-      // create ciphers for wallets we have
-      services.cipher.initCiphers(
-        altPassword: password.text,
-        altSalt: await SecureStorage.authenticationKey,
-      );
-      await updateWalletsToSecureStorage(); // moves entropy to secure storage.
-      await services.cipher.updateWallets();
-      services.cipher.cleanupCiphers();
-      services.cipher.loginTime();
-      streams.app.splash.add(false); // trigger to refresh app bar again
-      streams.app.logout.add(false);
-      streams.app.verify.add(true);
+      login();
     } else {
       setState(() {
         failedAttempt = true;
         password.text = '';
       });
     }
+  }
+
+  Future<void> login() async {
+    /// there are existing wallets, we should populate them with sensitives now.
+    unawaited(populateWalletsWithSensitives());
+    if (!consented) {
+      consented = await consentToAgreements(await getId());
+    }
+    Navigator.pushReplacementNamed(context, '/home', arguments: {});
+    // create ciphers for wallets we have
+    services.cipher.initCiphers(
+      altPassword: password.text,
+      altSalt: await SecureStorage.authenticationKey,
+    );
+    await updateWalletsToSecureStorage(); // moves entropy to secure storage.
+    await services.cipher.updateWallets();
+    services.cipher.cleanupCiphers();
+    services.cipher.loginTime();
+    streams.app.splash.add(false); // trigger to refresh app bar again
+    streams.app.logout.add(false);
+    streams.app.verify.add(true);
   }
 }
 

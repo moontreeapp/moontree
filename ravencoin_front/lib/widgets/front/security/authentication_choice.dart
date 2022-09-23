@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-//import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_back/streams/app.dart';
+import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/services/wallet.dart';
+import 'package:ravencoin_front/widgets/front/security/password.dart';
 
 class AuthenticationMethodChoice extends StatefulWidget {
   final dynamic data;
@@ -14,6 +16,7 @@ class AuthenticationMethodChoice extends StatefulWidget {
 
 class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
   AuthMethod? authenticationMethodChoice = AuthMethod.password;
+  bool canceled = false;
 
   @override
   void initState() {
@@ -44,13 +47,44 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
             groupValue: authenticationMethodChoice,
             onChanged: (AuthMethod? value) async {
               setState(() => authenticationMethodChoice = value);
-              await services.authentication.setMethod(method: value!);
-              await services.authentication.setPassword(
-                password: 'ask for password',
-                salt: await SecureStorage.authenticationKey,
-                message: 'Successfully Updated Authentication Method',
-                saveSecret: saveSecret,
+              await components.message.giveChoices(
+                context,
+                title: 'Set Password',
+                content:
+                    "In order to complete the change you'll need to set a password.\n\nPress ok to continue...",
+                //child: ChangePasswordWidget(),
+                behaviors: {
+                  'cancel': () {
+                    setState(() {
+                      authenticationMethodChoice = AuthMethod.biometric;
+                      canceled = true;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  'ok': () {
+                    Navigator.of(context).pop();
+                  },
+                },
               );
+              if (!canceled) {
+                //await services.authentication.setPassword(
+                //  password: await SecureStorage.authenticationKey,
+                //  salt: await SecureStorage.authenticationKey,
+                //  saveSecret: saveSecret,
+                //);
+                streams.app.verify.add(true);
+                Navigator.of(components.navigator.routeContext!)
+                    .pushNamed('/security/password/change', arguments: {
+                  'then': () async {
+                    await services.authentication.setMethod(method: value!);
+                  },
+                  'then.then': () async {
+                    streams.app.snack.add(Snack(
+                        message: 'Successfully Updated Authentication Method'));
+                  },
+                });
+                canceled = false;
+              }
               //components.loading.screen(
               //    message: 'Re-encrypting Wallets',
               //    staticImage: true,

@@ -29,10 +29,12 @@ class MessageComponents {
                   : content == null
                       ? null
                       : Container(
-                          height: 24,
                           width: MediaQuery.of(context).size.width -
                               (24 - 24 - 40 - 40),
                           child: Text(content,
+                              overflow: TextOverflow.fade,
+                              softWrap: true,
+                              maxLines: 10,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText2!

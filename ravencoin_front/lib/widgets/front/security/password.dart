@@ -3,17 +3,18 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/services/wallet.dart';
-import 'package:ravencoin_front/theme/theme.dart';
-import 'package:ravencoin_front/utils/data.dart';
+import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
-class ChangeLoginPassword extends StatefulWidget {
+class ChangePasswordWidget extends StatefulWidget {
+  final dynamic data;
+  const ChangePasswordWidget({this.data}) : super();
+
   @override
-  _ChangeLoginPasswordState createState() => _ChangeLoginPasswordState();
+  _ChangePasswordWidget createState() => _ChangePasswordWidget();
 }
 
-class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
-  Map<String, dynamic> data = {};
+class _ChangePasswordWidget extends State<ChangePasswordWidget> {
   var newPassword = TextEditingController();
   var confirmPassword = TextEditingController();
   FocusNode newPasswordFocus = FocusNode();
@@ -28,64 +29,44 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
   @override
   void initState() {
     super.initState();
-    streams.app.verify.add(false);
   }
 
   @override
   void dispose() {
-    newPassword.dispose();
-    confirmPassword.dispose();
-    newPasswordFocus.dispose();
-    confirmPasswordFocus.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) {
-    try {
-      data = populateData(context, data);
-    } catch (e) {
-      data = {};
-    }
-    return BackdropLayers(
-        back: BlankBack(),
-        front: GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: FrontCurve(
-              child: services.password.askCondition
-                  ? VerifyAuthentication(
-                      parentState: this, buttonLabel: 'Change Password')
-                  : body(),
-            )));
-  }
-
-  Widget body() => Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              for (var x in [
-                newPasswordField,
-                confirmPasswordField,
-              ])
-                Padding(
-                    padding: EdgeInsets.only(left: 16, right: 16, top: 16),
-                    child: x)
-            ],
-          ),
-          KeyboardHidesWidgetWithDelay(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                Center(child: components.text.passwordWarning),
-                SizedBox(height: 16),
-                components.containers
-                    .navBar(context, child: Row(children: [submitButton]))
-              ]))
-        ],
-      );
+  Widget build(BuildContext context) => CustomScrollView(slivers: <Widget>[
+        SliverToBoxAdapter(
+            child: Padding(
+                padding:
+                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+                child: Container(
+                    alignment: Alignment.topLeft, child: newPasswordField))),
+        SliverToBoxAdapter(
+            child: Padding(
+                padding:
+                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+                child: Container(
+                    alignment: Alignment.topLeft,
+                    child: confirmPasswordField))),
+        SliverToBoxAdapter(
+            child: Padding(
+                padding:
+                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+                child: Container(
+                  alignment: Alignment.topLeft,
+                  child: Center(child: components.text.passwordWarning),
+                ))),
+        SliverToBoxAdapter(
+            child: Padding(
+                padding:
+                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+                child: Container(
+                    alignment: Alignment.topLeft,
+                    child: Row(children: [submitButton])))),
+      ]);
 
   Widget get newPasswordField => TextFieldFormatted(
         focusNode: newPasswordFocus,
@@ -192,22 +173,15 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
     await Future.delayed(Duration(milliseconds: 200)); // in release mode?
     if (services.password.validate.complexity(newPassword.text)) {
       FocusScope.of(context).unfocus();
-      // unawait, but do these in order:
-      () async {
-        await services.authentication.setPassword(
-          password: newPassword.text,
-          salt: await SecureStorage.authenticationKey,
-          message: 'Successfully Updated Password',
-          saveSecret: saveSecret,
-        );
-        if (data.containsKey('then')) {
-          await data['then']();
-        }
-        if (data.containsKey('then.then')) {
-          await data['then.then']();
-        }
-      }();
-      components.loading.screen(message: 'Setting Password', staticImage: true);
+      services.authentication.setPassword(
+        password: newPassword.text,
+        salt: await SecureStorage.authenticationKey,
+        message: 'Successfully Updated Password',
+        saveSecret: saveSecret,
+      );
+      await components.loading.screen(
+          message: 'Setting Password', staticImage: true, returnHome: false);
+      Navigator.of(context).pop();
     }
   }
 }
