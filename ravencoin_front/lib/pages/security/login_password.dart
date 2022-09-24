@@ -78,15 +78,10 @@ class _LoginPasswordState extends State<LoginPassword> {
 
   void bypass() async {
     final key = await SecureStorage.authenticationKey;
-    if (services.password.validate.password(
-      password: key,
-      salt: key,
-    )) {
-      /// don't just log them in and hope they set a password on their own...
-      //login(key);
-      /// instead push them to the page where they can set a password:
-      Navigator.pushReplacementNamed(context, getMethodPathCreate(),
-          arguments: {'needsConsent': false});
+    if (services.password.validate.password(password: key, salt: key)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await login(key);
+      });
     }
   }
 
@@ -312,11 +307,15 @@ class _LoginPasswordState extends State<LoginPassword> {
 
   Future<void> login([String? passwordDefault]) async {
     /// there are existing wallets, we should populate them with sensitives now.
-    unawaited(populateWalletsWithSensitives());
+    await populateWalletsWithSensitives();
     if (!consented) {
       consented = await consentToAgreements(await getId());
     }
-    Navigator.pushReplacementNamed(context, '/home', arguments: {});
+    try {
+      Navigator.pushReplacementNamed(context, '/home', arguments: {});
+    } catch (e) {
+      print(e);
+    }
     // create ciphers for wallets we have
     services.cipher.initCiphers(
       altPassword: password.text == '' ? passwordDefault : password.text,

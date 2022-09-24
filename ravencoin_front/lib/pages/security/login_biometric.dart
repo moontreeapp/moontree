@@ -37,7 +37,6 @@ class _LoginBiometricState extends State<LoginBiometric> {
   bool failedAttempt = false;
   bool isConsented = false;
   bool consented = false;
-  bool setPassword = false;
   late bool needsConsent;
 
   Future<void> finishLoadingDatabase() async {
@@ -125,9 +124,7 @@ class _LoginBiometricState extends State<LoginBiometric> {
                         children: [
                           (needsConsent ? ulaMessage : SizedBox(height: 100)),
                           SizedBox(height: 40),
-                          Row(children: [
-                            setPassword ? setPasswordButton : bioButton
-                          ]),
+                          Row(children: [bioButton]),
                           SizedBox(height: 40),
                         ]))),
           ])));
@@ -222,18 +219,6 @@ class _LoginBiometricState extends State<LoginBiometric> {
         },
       );
 
-  Widget get setPasswordButton => components.buttons.actionButton(
-        context,
-        enabled: true,
-        label: 'Use Password Instead',
-        onPressed: () async {
-          Navigator.pushReplacementNamed(
-            context,
-            getMethodPathLogin(biometric: false),
-          );
-        },
-      );
-
   Future submit() async {
     /// just in case
     if (await HIVE_INIT.isPartiallyLoaded()) {
@@ -256,14 +241,19 @@ class _LoginBiometricState extends State<LoginBiometric> {
       }
       login(context);
     } else {
+      /// this is a pretty wild edge case.
       if (localAuthApi.reason == AuthenticationResult.error) {
         streams.app.snack.add(Snack(
             message: 'Unknown login error: please set a pin on the device.',
             showOnLogin: true));
-        setState(() {
-          enabled = true;
-          setPassword = true;
-        });
+        setState(() => enabled = true);
+        await Navigator.pushReplacementNamed(
+          context,
+          getMethodPathLogin(biometric: false),
+        );
+        streams.app.snack.add(Snack(
+            message: 'Please set a password to secure your wallet.',
+            showOnLogin: true));
       } else if (localAuthApi.reason == AuthenticationResult.failure) {
         setState(() {
           failedAttempt = true;

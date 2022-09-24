@@ -223,13 +223,15 @@ class _CreateBiometricState extends State<CreateBiometric> {
     final validate = await localAuthApi.authenticate();
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
       final key = await SecureStorage.authenticationKey;
-      components.message.giveChoices(context,
-          title: 'Default Password',
-          content:
-              "Moontree has generated a default password for you. If you're ever unable to use your biometric or pin to login you can use this password instead. Please write it down for your records: $key",
-          behaviors: {
-            'ok': () => Navigator.of(context).pop(),
-          });
+
+      /// actually don't show this, not necessary
+      //components.message.giveChoices(context,
+      //    title: 'Default Password',
+      //    content:
+      //        "Moontree has generated a default password for you. If you're ever unable to use your biometric or pin to login you can use this password instead. Please write it down for your records: $key",
+      //    behaviors: {
+      //      'ok': () => Navigator.of(context).pop(),
+      //    });
       if (!consented) {
         consented = await consentToAgreements(await getId());
       }
@@ -242,6 +244,13 @@ class _CreateBiometricState extends State<CreateBiometric> {
         );
         await setupWallets();
       }
+      //await components.message.giveChoices(context,
+      //    title: 'Default Password',
+      //    content:
+      //        "Moontree has generated a default password for you. If you're ever unable to use your biometric or pin to login you can use this password instead. Please write it down for your records: \n\n$key",
+      //    behaviors: {
+      //      'ok': () => Navigator.of(context).pop(),
+      //    });
       login(context);
     } else {
       if (localAuthApi.reason == AuthenticationResult.error) {
