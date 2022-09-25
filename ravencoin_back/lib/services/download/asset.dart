@@ -51,7 +51,7 @@ class AssetService {
             '',
         satsInCirculation: meta.satsInCirculation,
         divisibility: meta.divisions,
-        reissuable: meta.reissuable == 1,
+        reissuable: meta.reissuable,
         transactionId: meta.source.txHash,
         position: meta.source.txPos,
       );

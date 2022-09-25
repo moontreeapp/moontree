@@ -54,15 +54,13 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   String assetTitle = 'Manage';
   String? settingTitle = null;
   AppContext appContext = AppContext.wallet;
-  final changeName = TextEditingController();
+  final TextEditingController changeName = TextEditingController();
   late AnimationController controller;
   late Animation<double> animation;
   late AnimationController slowController;
   late Animation<double> slowAnimation;
   final Duration animationDuration = Duration(milliseconds: 160);
   bool dropDownActive = false;
-  bool verificationNotifier = false;
-  TextEditingController deleteConfirmation = TextEditingController();
 
   @override
   void initState() {
@@ -237,7 +235,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
               }
               await switchWallet(walletId);
             },
-            child: Text(pros.wallets.currentWalletDisplayName,
+            child: Text(pros.wallets.currentWalletName,
                 style: Theme.of(context)
                     .textTheme
                     .headline2!
@@ -274,89 +272,147 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                 [
                   for (Wallet wallet in pros.wallets.ordered)
                     ListTile(
-                      visualDensity: VisualDensity.compact,
-                      onTap: () async {
-                        Navigator.pop(components.navigator.routeContext!);
-                        if (wallet.id != Current.walletId) {
-                          await switchWallet(wallet.id);
-                        }
-                      },
-                      leading: Icon(
-                        Icons.account_balance_wallet_rounded,
-                        color: AppColors.primary,
-                      ),
-                      title: Text(wallet.displayName,
-                          style: Theme.of(context).textTheme.bodyText1),
-                      trailing: pros.wallets.records.length == 1
-                          ? null
-                          : IconButton(
+                        visualDensity: VisualDensity.compact,
+                        onTap: () async {
+                          Navigator.pop(components.navigator.routeContext!);
+                          if (wallet.id != Current.walletId) {
+                            await switchWallet(wallet.id);
+                          }
+                        },
+                        leading: Icon(
+                          Icons.account_balance_wallet_rounded,
+                          color: AppColors.primary,
+                        ),
+                        title: Text(wallet.name,
+                            style: Theme.of(context).textTheme.bodyText1),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            IconButton(
                               icon: Icon(
-                                Icons.delete_forever_rounded,
+                                Icons.edit_rounded,
                                 color: AppColors.primary,
                               ),
                               onPressed: () async {
+                                changeName.text = wallet.name;
                                 await components.message.giveChoices(
                                     components.navigator.routeContext!,
-                                    title: 'DANGER!',
+                                    title: 'Change Name',
                                     content:
-                                        'WARNING: You are about to delete a wallet. This action cannot be undone! Are you sure you want to delete it?',
+                                        'What should this wallet be called?',
+                                    child: Container(
+                                        padding: EdgeInsets.only(
+                                            top: 16, bottom: 16),
+                                        child: TextFieldFormatted(
+                                          controller: changeName,
+                                        )),
                                     behaviors: {
-                                      'CANCEL': () => Navigator.pop(
+                                      'cancel': () => Navigator.pop(
                                           components.navigator.routeContext!),
-                                      'DELETE FOREVER': () async =>
-                                          await components.message.giveChoices(
-                                            components.navigator.routeContext!,
-                                            title: 'CONFIRM DELETE',
-                                            content:
-                                                "To delete ${wallet.displayName} you will need to authenticate.",
-                                            //child:
-                                            behaviors: {
-                                              'CANCEL': () {
-                                                Navigator.pop(components
-                                                    .navigator.routeContext!);
-                                                Navigator.pop(components
-                                                    .navigator.routeContext!);
-                                              },
-                                              'OK': () async {
-                                                Navigator.pop(components
-                                                    .navigator.routeContext!);
-                                                Navigator.pop(components
-                                                    .navigator.routeContext!);
-                                                Navigator.pop(components
-                                                    .navigator.routeContext!);
-                                                Navigator.pushNamed(
-                                                    components.navigator
-                                                        .routeContext!,
-                                                    '/security/verification',
-                                                    arguments: {
-                                                      'buttonLabel':
-                                                          'Delete ${wallet.displayName} Forever',
-                                                      'onSuccess': () async {
-                                                        Navigator.pop(components
-                                                            .navigator
-                                                            .routeContext!);
-                                                        if (wallet.id ==
-                                                            Current.walletId) {
-                                                          await switchWallet(
-                                                              pros.wallets
-                                                                  .records
-                                                                  .where((w) =>
-                                                                      w.id !=
-                                                                      wallet.id)
-                                                                  .first
-                                                                  .id);
-                                                        }
-                                                        await pros.wallets
-                                                            .remove(wallet);
-                                                      }
-                                                    });
-                                              }
-                                            },
-                                          )
+                                      'submit': () async {
+                                        if (changeName.text != '') {
+                                          if (wallet is LeaderWallet) {
+                                            await pros.wallets
+                                                .save(LeaderWallet.from(
+                                              wallet,
+                                              name: changeName.text,
+                                              seed: await wallet.seed,
+                                            ));
+                                          } else if (wallet is SingleWallet) {
+                                            await pros.wallets
+                                                .save(SingleWallet.from(
+                                              wallet,
+                                              name: changeName.text,
+                                              //getWif: await wallet.getWif,
+                                            ));
+                                          }
+                                        }
+
+                                        Navigator.pop(
+                                            components.navigator.routeContext!);
+                                        Navigator.pop(
+                                            components.navigator.routeContext!);
+                                        setState(() {});
+                                      }
                                     });
                               },
                             ),
-                    )
+                            if (pros.wallets.records.length > 1)
+                              IconButton(
+                                icon: Icon(
+                                  Icons.delete_forever_rounded,
+                                  color: AppColors.primary,
+                                ),
+                                onPressed: () async {
+                                  await components.message.giveChoices(
+                                      components.navigator.routeContext!,
+                                      title: 'DANGER!',
+                                      content:
+                                          'WARNING: You are about to delete a wallet. This action cannot be undone! Are you sure you want to delete it?',
+                                      behaviors: {
+                                        'CANCEL': () => Navigator.pop(
+                                            components.navigator.routeContext!),
+                                        'DELETE FOREVER': () async =>
+                                            await components.message
+                                                .giveChoices(
+                                              components
+                                                  .navigator.routeContext!,
+                                              title: 'CONFIRM DELETE',
+                                              content:
+                                                  "To delete ${wallet.name} you will need to authenticate.",
+                                              //child:
+                                              behaviors: {
+                                                'CANCEL': () {
+                                                  Navigator.pop(components
+                                                      .navigator.routeContext!);
+                                                  Navigator.pop(components
+                                                      .navigator.routeContext!);
+                                                },
+                                                'OK': () async {
+                                                  Navigator.pop(components
+                                                      .navigator.routeContext!);
+                                                  Navigator.pop(components
+                                                      .navigator.routeContext!);
+                                                  Navigator.pop(components
+                                                      .navigator.routeContext!);
+                                                  Navigator.pushNamed(
+                                                      components.navigator
+                                                          .routeContext!,
+                                                      '/security/verification',
+                                                      arguments: {
+                                                        'buttonLabel':
+                                                            'Delete ${wallet.name} Forever',
+                                                        'onSuccess': () async {
+                                                          Navigator.pop(components
+                                                              .navigator
+                                                              .routeContext!);
+                                                          if (wallet.id ==
+                                                              Current
+                                                                  .walletId) {
+                                                            await switchWallet(
+                                                                pros.wallets
+                                                                    .records
+                                                                    .where((w) =>
+                                                                        w.id !=
+                                                                        wallet
+                                                                            .id)
+                                                                    .first
+                                                                    .id);
+                                                          }
+                                                          await pros.wallets
+                                                              .remove(wallet);
+                                                        }
+                                                      });
+                                                }
+                                              },
+                                            )
+                                      });
+                                },
+                              ),
+                          ],
+                        ))
                 ],
           ).build();
         }
@@ -364,7 +420,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text(pros.wallets.currentWalletDisplayName,
+          Text(pros.wallets.currentWalletName,
               style: Theme.of(context)
                   .textTheme
                   .headline2!

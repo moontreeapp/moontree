@@ -43,17 +43,18 @@ class WalletProclaim extends Proclaim<_IdKey, Wallet> {
       records.firstOrNull;
 
   String get nextWalletName {
-    final taken =
-        records.where((e) => e.name.isInt).map((e) => int.parse(e.name));
+    final taken = records.where((e) {
+      final x = e.name.split(' ');
+      return x.length == 2 && x.first == 'Wallet' && x.last.isInt;
+    }).map((e) => int.parse(e.name.split(' ').last));
     if (taken.isEmpty) {
-      return '1';
+      return 'Wallet 1';
     }
-    return (taken.reduce(max) + 1).toString();
+    return 'Wallet ${(taken.reduce(max) + 1).toString()}';
   }
 
   Wallet get currentWallet => primaryIndex.getOne(
       pros.settings.primaryIndex.getOne(SettingName.Wallet_Current)?.value)!;
 
   String get currentWalletName => currentWallet.name;
-  String get currentWalletDisplayName => currentWallet.displayName;
 }

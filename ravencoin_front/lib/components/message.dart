@@ -26,6 +26,7 @@ class MessageComponents {
                   : Text(title, style: Theme.of(context).textTheme.headline2),
               content: child != null && content != null
                   ? Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
                             width: MediaQuery.of(context).size.width -

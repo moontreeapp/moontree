@@ -52,11 +52,12 @@ class SingleWallet extends Wallet {
       );
 
   @override
-  List<Object?> get props => [id, cipherUpdate, encryptedWIF, skipHistory];
+  List<Object?> get props =>
+      [id, cipherUpdate, encryptedWIF, skipHistory, name];
 
   @override
   String toString() =>
-      'SingleWallet($id, $encryptedWIF, $cipherUpdate, $skipHistory)';
+      'SingleWallet($id, $encryptedWIF, $cipherUpdate, $skipHistory, $name)';
 
   @override
   String get encrypted => encryptedWIF;
