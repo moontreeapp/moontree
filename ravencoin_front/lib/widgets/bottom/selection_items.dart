@@ -312,14 +312,14 @@ class SelectionItems {
           visualDensity: VisualDensity.compact,
           onTap: () {
             Navigator.pop(context);
-            controller.text = 'Wallet ' + wallet.name;
+            controller.text = wallet.displayName;
           },
           leading: Icon(
             Icons.account_balance_wallet_rounded,
             color: AppColors.primary,
             size: 20,
           ),
-          title: Text('Wallet ' + wallet.name,
+          title: Text(wallet.displayName,
               style: Theme.of(context).textTheme.bodyText1));
 
   Widget walletItemAll(TextEditingController controller) => ListTile(

@@ -41,6 +41,7 @@ import 'package:ravencoin_front/pages/wallet/send.dart';
 import 'package:ravencoin_front/pages/wallet/transaction.dart';
 //import 'package:ravencoin_front/pages/wallet/transactions.dart';
 import 'package:ravencoin_front/pages/wallet/transactions/widget.dart';
+import 'package:ravencoin_front/widgets/front/verify.dart';
 
 class pages {
   // static Splash splash = Splash();
@@ -119,6 +120,7 @@ class pages {
         '/security/biometric/login': (context) => LoginBiometric(),
         '/security/password/createlogin': (context) => CreatePassword(),
         '/security/biometric/createlogin': (context) => CreateBiometric(),
+        '/security/verification': (context) => VerifyAuthentication(),
         '/transaction/transaction': (context) => TransactionPage(),
         '/transaction/receive': (context) => Receive(),
         '/transaction/send': (context) => Send(),

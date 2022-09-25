@@ -46,4 +46,6 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
   String get walletTypeToString => walletType.name;
 
   bool get minerMode => skipHistory;
+
+  String get displayName => name.isInt ? 'Wallet $name' : name;
 }

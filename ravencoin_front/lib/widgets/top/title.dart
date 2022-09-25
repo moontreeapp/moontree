@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
+import 'package:ravencoin_front/components/text.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/services/wallet.dart'
     show generateWallet, switchWallet;
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/widgets/bottom/selection_items.dart';
+import 'package:ravencoin_front/widgets/front/verify.dart';
+import 'package:ravencoin_front/widgets/other/textfield.dart';
 
 class PageTitle extends StatefulWidget {
   final bool animate;
   PageTitle({Key? key, this.animate = true}) : super(key: key);
 
   @override
-  _PageTitleState createState() => _PageTitleState();
+  PageTitleState createState() => PageTitleState();
 
   static Map<String, String> settingsMap = const {
     '/settings/import_export': 'Import / Export',
@@ -43,7 +46,7 @@ class PageTitle extends StatefulWidget {
   };
 }
 
-class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
+class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   List listeners = [];
   bool loading = false;
   bool fullname = false;
@@ -58,6 +61,8 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   late Animation<double> slowAnimation;
   final Duration animationDuration = Duration(milliseconds: 160);
   bool dropDownActive = false;
+  bool verificationNotifier = false;
+  TextEditingController deleteConfirmation = TextEditingController();
 
   @override
   void initState() {
@@ -232,7 +237,7 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
               }
               await switchWallet(walletId);
             },
-            child: Text('Wallet ' + pros.wallets.currentWalletName + ' ',
+            child: Text(pros.wallets.currentWalletDisplayName,
                 style: Theme.of(context)
                     .textTheme
                     .headline2!
@@ -280,8 +285,77 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                         Icons.account_balance_wallet_rounded,
                         color: AppColors.primary,
                       ),
-                      title: Text('Wallet ' + wallet.name,
+                      title: Text(wallet.displayName,
                           style: Theme.of(context).textTheme.bodyText1),
+                      trailing: pros.wallets.records.length == 1
+                          ? null
+                          : IconButton(
+                              icon: Icon(
+                                Icons.delete_forever_rounded,
+                                color: AppColors.primary,
+                              ),
+                              onPressed: () async {
+                                await components.message.giveChoices(
+                                    components.navigator.routeContext!,
+                                    title: 'DANGER!',
+                                    content:
+                                        'WARNING: You are about to delete a wallet. This action cannot be undone! Are you sure you want to delete it?',
+                                    behaviors: {
+                                      'CANCEL': () => Navigator.pop(
+                                          components.navigator.routeContext!),
+                                      'DELETE FOREVER': () async =>
+                                          await components.message.giveChoices(
+                                            components.navigator.routeContext!,
+                                            title: 'CONFIRM DELETE',
+                                            content:
+                                                "To delete ${wallet.displayName} you will need to authenticate.",
+                                            //child:
+                                            behaviors: {
+                                              'CANCEL': () {
+                                                Navigator.pop(components
+                                                    .navigator.routeContext!);
+                                                Navigator.pop(components
+                                                    .navigator.routeContext!);
+                                              },
+                                              'OK': () async {
+                                                Navigator.pop(components
+                                                    .navigator.routeContext!);
+                                                Navigator.pop(components
+                                                    .navigator.routeContext!);
+                                                Navigator.pop(components
+                                                    .navigator.routeContext!);
+                                                Navigator.pushNamed(
+                                                    components.navigator
+                                                        .routeContext!,
+                                                    '/security/verification',
+                                                    arguments: {
+                                                      'buttonLabel':
+                                                          'Delete ${wallet.displayName} Forever',
+                                                      'onSuccess': () async {
+                                                        Navigator.pop(components
+                                                            .navigator
+                                                            .routeContext!);
+                                                        if (wallet.id ==
+                                                            Current.walletId) {
+                                                          await switchWallet(
+                                                              pros.wallets
+                                                                  .records
+                                                                  .where((w) =>
+                                                                      w.id !=
+                                                                      wallet.id)
+                                                                  .first
+                                                                  .id);
+                                                        }
+                                                        await pros.wallets
+                                                            .remove(wallet);
+                                                      }
+                                                    });
+                                              }
+                                            },
+                                          )
+                                    });
+                              },
+                            ),
                     )
                 ],
           ).build();
@@ -290,7 +364,7 @@ class _PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text('Wallet ' + pros.wallets.currentWalletName + ' ',
+          Text(pros.wallets.currentWalletDisplayName,
               style: Theme.of(context)
                   .textTheme
                   .headline2!

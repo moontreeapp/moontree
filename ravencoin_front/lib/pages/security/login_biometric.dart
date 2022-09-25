@@ -241,7 +241,8 @@ class _LoginBiometricState extends State<LoginBiometric> {
       }
       login(context);
     } else {
-      /// this is a pretty wild edge case.
+      /// this is a pretty wild edge case:
+      /// they were able to set biometric up but now its not working anymore
       if (localAuthApi.reason == AuthenticationResult.error) {
         streams.app.snack.add(Snack(
             message: 'Unknown login error: please set a pin on the device.',

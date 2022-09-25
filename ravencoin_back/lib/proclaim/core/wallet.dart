@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:proclaim/proclaim.dart';
 
@@ -40,10 +42,18 @@ class WalletProclaim extends Proclaim<_IdKey, Wallet> {
           ?.value) ??
       records.firstOrNull;
 
-  String get nextWalletName => (records.length + 1).toString();
+  String get nextWalletName {
+    final taken =
+        records.where((e) => e.name.isInt).map((e) => int.parse(e.name));
+    if (taken.isEmpty) {
+      return '1';
+    }
+    return (taken.reduce(max) + 1).toString();
+  }
 
   Wallet get currentWallet => primaryIndex.getOne(
       pros.settings.primaryIndex.getOne(SettingName.Wallet_Current)?.value)!;
 
   String get currentWalletName => currentWallet.name;
+  String get currentWalletDisplayName => currentWallet.displayName;
 }

@@ -24,21 +24,38 @@ class MessageComponents {
               title: title == null
                   ? null
                   : Text(title, style: Theme.of(context).textTheme.headline2),
-              content: child != null
-                  ? child
-                  : content == null
-                      ? null
-                      : Container(
-                          width: MediaQuery.of(context).size.width -
-                              (24 - 24 - 40 - 40),
-                          child: Text(content,
-                              overflow: TextOverflow.fade,
-                              softWrap: true,
-                              maxLines: 10,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2!
-                                  .copyWith(color: AppColors.black38))),
+              content: child != null && content != null
+                  ? Column(
+                      children: [
+                        Container(
+                            width: MediaQuery.of(context).size.width -
+                                (24 - 24 - 40 - 40),
+                            child: Text(content,
+                                overflow: TextOverflow.fade,
+                                softWrap: true,
+                                maxLines: 10,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2!
+                                    .copyWith(color: AppColors.black38))),
+                        child,
+                      ],
+                    )
+                  : child != null
+                      ? child
+                      : content != null
+                          ? Container(
+                              width: MediaQuery.of(context).size.width -
+                                  (24 - 24 - 40 - 40),
+                              child: Text(content,
+                                  overflow: TextOverflow.fade,
+                                  softWrap: true,
+                                  maxLines: 10,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .copyWith(color: AppColors.black38)))
+                          : null,
               actions: [
                 for (var key in behaviors.keys)
                   TextButton(
