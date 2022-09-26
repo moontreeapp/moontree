@@ -11,9 +11,11 @@ class _IdKey extends Key<Password> {
 extension ByIdMethodsForPassword on Index<_IdKey, Password> {
   Password? getOne(int passwordId) =>
       getByKeyStr(Password.passwordKey(passwordId)).firstOrNull;
+
   Password? getMostRecent() => values
       .where((password) => password.id == maxPasswordId(values))
       .firstOrNull;
+
   Password? getPrevious() => values
       .where((password) => password.id == maxPasswordId(values) - 1)
       .firstOrNull;

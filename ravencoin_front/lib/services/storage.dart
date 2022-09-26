@@ -239,11 +239,14 @@ class SecureStorage {
     return bioKey;
   }
 
-  static Future writeSecret(Secret? secret) async {
+  static Future<void> writeSecret(Secret? secret) async {
     if (secret == null) return;
     final storage = FlutterSecureStorage();
     await storage.write(
-      key: secret.pubkey ?? secret.scripthash!, value: secret.secret,
+      key: secret.pubkey ??
+          secret.scripthash ??
+          passwordIdKey(secret.passwordId!),
+      value: secret.secret,
       //iOptions:IOSOptions(),
       //aOptions: AndroidOptions(),
     );
@@ -251,8 +254,13 @@ class SecureStorage {
 
   static Future<String?> readSecret(Secret secret) async {
     final storage = FlutterSecureStorage();
-    return await storage.read(key: secret.pubkey ?? secret.scripthash!);
+    return await storage.read(
+        key: secret.pubkey ??
+            secret.scripthash ??
+            passwordIdKey(secret.passwordId!));
   }
+
+  static String passwordIdKey(int passwordId) => 'passwordId${passwordId}';
 
   static Future<String?> read(String key) async {
     final storage = FlutterSecureStorage();

@@ -94,6 +94,17 @@ class _ChangeResumeState extends State<ChangeResume> {
         currentCipherUpdates: services.wallet.getPreviousCipherUpdates,
       );
       successMessage();
+    } else if (services.password.validate.previousPassword(
+      password.text,
+      pros.passwords.primaryIndex.getPrevious()!.salt,
+    )) {
+      FocusScope.of(context).unfocus();
+      services.cipher.initCiphers(
+        altPassword: password.text,
+        altSalt: pros.passwords.primaryIndex.getPrevious()!.salt,
+        currentCipherUpdates: services.wallet.getPreviousCipherUpdates,
+      );
+      successMessage();
     } else {
       var used = services.password.validate.previouslyUsed(password.text);
       failureMessage(used == null

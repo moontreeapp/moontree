@@ -3,6 +3,7 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/auth.dart';
+import 'package:ravencoin_front/services/password.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/utils/data.dart';
@@ -149,6 +150,7 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
   Future<bool> verify() async => services.password.validate.password(
         password: password.text,
         salt: await SecureStorage.authenticationKey,
+        saltedHashedPassword: await getLatestSaltedHashedPassword(),
       ); // &&
   //services.password.validate.previouslyUsed(password.text) == 0;
 

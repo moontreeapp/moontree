@@ -65,17 +65,20 @@ class PasswordValidationService {
   String getHash(String password, String salt) => services.password.create
       .hashThis(services.password.create.saltPassword(password, salt));
 
-  bool password({required String password, required String salt}) =>
-      getHash(password,
-          salt /*pros.passwords.primaryIndex.getMostRecent()!.salt*/) ==
+  bool password({
+    required String password,
+    required String salt,
+    required String saltedHashedPassword,
+  }) =>
+      getHash(password, salt) == saltedHashedPassword;
+
+  bool ancientPassword({required String password, required String salt}) =>
+      getHash(password, salt) ==
       pros.passwords.primaryIndex.getMostRecent()!.saltedHash;
 
   /// unused
   bool previousPassword(String password, String salt) =>
-      getHash(
-        password,
-        salt, /*pros.passwords.primaryIndex.getPrevious()!.salt*/
-      ) ==
+      getHash(password, salt) ==
       pros.passwords.primaryIndex.getPrevious()!.saltedHash;
 
   /// unused
@@ -126,14 +129,20 @@ class PasswordCreationService {
     return digest.toString();
   }
 
-  Future save(String password, String salt) async {
-    await pros.passwords.save(Password(
-        id: (pros.passwords.maxPasswordId ?? -1) + 1,
-        saltedHash: password == ''
-            ? ''
-            : hashThis(saltPassword(
-                password,
-                salt, //Password.getSalt((pros.passwords.maxPasswordId ?? -1) + 1),
-              ))));
+  Future save(
+    String password,
+    String salt,
+    Future<void> Function(Secret secret) saveSecret,
+  ) async {
+    final id = (pros.passwords.maxPasswordId ?? -1) + 1;
+    final saltedHashedPassword = hashThis(saltPassword(
+      password,
+      salt, //Password.getSalt((pros.passwords.maxPasswordId ?? -1) + 1),
+    ));
+    await pros.passwords.save(Password(id: id, saltedHash: ''));
+    await saveSecret(Secret(
+        secret: saltedHashedPassword,
+        passwordId: id,
+        secretType: SecretType.saltedHashedPassword));
   }
 }

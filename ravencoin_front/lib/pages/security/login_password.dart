@@ -9,9 +9,13 @@ import 'package:ravencoin_back/services/consent.dart'
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/services/password.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/services/wallet.dart'
-    show populateWalletsWithSensitives, updateWalletsToSecureStorage;
+    show
+        populateWalletsWithSensitives,
+        saveSecret,
+        updateWalletsToSecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/utils/auth.dart';
@@ -78,7 +82,10 @@ class _LoginPasswordState extends State<LoginPassword> {
 
   void bypass() async {
     final key = await SecureStorage.authenticationKey;
-    if (services.password.validate.password(password: key, salt: key)) {
+    if (services.password.validate.password(
+        password: key,
+        salt: key,
+        saltedHashedPassword: await getLatestSaltedHashedPassword())) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await login(key);
       });
@@ -279,9 +286,13 @@ class _LoginPasswordState extends State<LoginPassword> {
       onPressed: () async => await submit());
 
   Future<bool> validate() async => services.password.validate.password(
-        password: password.text,
-        salt: await SecureStorage.authenticationKey,
-      );
+      password: password.text,
+      salt: await SecureStorage.authenticationKey,
+      saltedHashedPassword: await getLatestSaltedHashedPassword());
+
+  bool ancientValidate() => services.password.validate.ancientPassword(
+      password: password.text,
+      salt: pros.passwords.primaryIndex.getMostRecent()!.salt);
 
   Future submit({bool showFailureMessage = true}) async {
     // consent just once
@@ -291,12 +302,40 @@ class _LoginPasswordState extends State<LoginPassword> {
         await Future.delayed(Duration(milliseconds: 50));
       }
     }
+
+    if (ancientValidate()) {
+      await populateWalletsWithSensitives();
+      // first of all make a cipher for this
+      services.cipher.initCiphers(
+        altPassword: password.text,
+        altSalt: pros.passwords.primaryIndex.getMostRecent()!.salt,
+      );
+      services.authentication.setPassword(
+          password: password.text,
+          salt: await SecureStorage.authenticationKey,
+          saveSecret: SecureStorage.writeSecret);
+      ///// salt and has this password correctly
+      ///final saltedHashedPassword = services.password.validate
+      ///    .getHash(password.text, await SecureStorage.authenticationKey);
+      ///// put this password hashed with the right salt in the secure storage
+      ///await SecureStorage.writeSecret(Secret(
+      ///  secret: saltedHashedPassword,
+      ///  secretType: SecretType.saltedHashedPassword,
+      ///  passwordId: pros.passwords.primaryIndex.getMostRecent()!.id,
+      ///));
+      ///// make a cipher with the right salt
+
+      /// password change process? updatewallets?
+      // decrypt the wallets with the old cipher
+      // reencrypt the wallets with this new cipher
+
+    }
     if (await services.password.lockout
             .handleVerificationAttempt(await validate()) &&
         passwordText == null) {
       // only run once - disable button
       setState(() => passwordText = password.text);
-      login();
+      login(password.text);
     } else {
       setState(() {
         failedAttempt = true;
@@ -305,7 +344,7 @@ class _LoginPasswordState extends State<LoginPassword> {
     }
   }
 
-  Future<void> login([String? passwordDefault]) async {
+  Future<void> login(String providedPassword) async {
     /// there are existing wallets, we should populate them with sensitives now.
     await populateWalletsWithSensitives();
     if (!consented) {
@@ -318,7 +357,7 @@ class _LoginPasswordState extends State<LoginPassword> {
     }
     // create ciphers for wallets we have
     services.cipher.initCiphers(
-      altPassword: password.text == '' ? passwordDefault : password.text,
+      altPassword: providedPassword,
       altSalt: await SecureStorage.authenticationKey,
     );
     await updateWalletsToSecureStorage(); // moves entropy to secure storage.

@@ -18,7 +18,7 @@ class AuthenticationService {
     required Future<void> Function(Secret secret) saveSecret,
     String? message,
   }) async {
-    await services.password.create.save(password, salt);
+    await services.password.create.save(password, salt, saveSecret);
     var cipher = services.cipher.updatePassword(
       altPassword: password,
       altSalt: salt,

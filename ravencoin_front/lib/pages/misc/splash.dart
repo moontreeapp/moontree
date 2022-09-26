@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/services/auth.dart' show LocalAuthApi;
+import 'package:ravencoin_front/services/password.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/utils/auth.dart';
@@ -160,6 +161,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
         passwordFallback();
       }
     } else {
+      await maybeSwitchToPassword();
       if (services.password.interruptedPasswordChange()) {
         showDialog(
             context: context,

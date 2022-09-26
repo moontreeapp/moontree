@@ -85,26 +85,14 @@ Future<void> updateWalletsToSecureStorage() async {
             secretType: SecretType.encryptedEntropy));
       }
     } else if (wallet is SingleWallet) {
-      records.add(SingleWallet.from(wallet, encryptedWIF: ''));
-      await SecureStorage.writeSecret(Secret(
-          secret: wallet.encryptedWIF,
-          scripthash: wallet.id,
-          secretType: SecretType.encryptedWif));
+      if (wallet.encryptedWIF != '') {
+        records.add(SingleWallet.from(wallet, encryptedWIF: ''));
+        await SecureStorage.writeSecret(Secret(
+            secret: wallet.encryptedWIF,
+            scripthash: wallet.id,
+            secretType: SecretType.encryptedWif));
+      }
     }
   }
   await pros.wallets.saveAll(records);
-}
-
-/// moves hashed passwords to secure storage
-Future<void> updatePasswordsToSecureStorage() async {
-  var records = <Password>[];
-  for (var password in pros.passwords.records) {
-    records.add(Password.from(password, saltedHash: ''));
-    //resalt?
-    await SecureStorage.writeSecret(Secret(
-        passwordId: password.id,
-        secret: password.saltedHash,
-        secretType: SecretType.saltedHashedPassword));
-  }
-  await pros.passwords.saveAll(records);
 }
