@@ -5,12 +5,12 @@ enum SecretType {
   entropy, // LeaderWallet
   encryptedWif, // LeaderWallet
   encryptedEntropy, // LeaderWallet
+  saltedHashedPassword, // Password
   mnemonic,
   none,
   //privateKey,
   //seed,
   //passphrase,
-  //password,
   //key,
   //other,
   //unknown,

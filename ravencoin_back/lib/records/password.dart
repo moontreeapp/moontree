@@ -17,6 +17,12 @@ class Password with EquatableMixin {
     required this.saltedHash,
   });
 
+  factory Password.from(Password password, {int? id, String? saltedHash}) =>
+      Password(
+        id: id ?? password.id,
+        saltedHash: saltedHash ?? password.saltedHash,
+      );
+
   @override
   List<Object> get props => [id, saltedHash];
 
