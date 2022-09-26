@@ -42,10 +42,7 @@ class _ChangeLoginMethodState extends State<ChangeLoginMethod> {
       front: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: FrontCurve(
-            child: services.password.askCondition
-                ? VerifyAuthentication(
-                    parentState: this, buttonLabel: 'Change Method')
-                : body(),
+            child: body(),
           )));
 
   Widget body() => CustomScrollView(slivers: <Widget>[

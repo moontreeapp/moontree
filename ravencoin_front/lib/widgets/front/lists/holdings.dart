@@ -258,7 +258,7 @@ class _HoldingList extends State<HoldingList> {
             children: [
               components.buttons.actionButtonSoft(
                 context,
-                label: 'Show History',
+                label: 'Show Empty Balances',
                 onPressed: () async {
                   setState(() => overrideEmpty = true);
                 },

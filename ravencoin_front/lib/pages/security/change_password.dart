@@ -54,7 +54,9 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
             child: FrontCurve(
               child: services.password.askCondition
                   ? VerifyAuthentication(
-                      parentState: this, buttonLabel: 'Change Password')
+                      parentState: this,
+                      buttonLabel:
+                          data['Verification.ButtonLabel'] ?? 'Change Password')
                   : body(),
             )));
   }

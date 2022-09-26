@@ -58,6 +58,14 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
       data = {};
     }
 
+    if (pros.settings.authMethodIsNativeSecurity &&
+        (data['autoInitiateUnlock'] ?? true)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await submit();
+      });
+      data['autoInitiateUnlock'] = false;
+    }
+
     //GestureDetector(
     //onTap: () => FocusScope.of(context).unfocus(),
     //child:
@@ -134,7 +142,7 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
         context,
         focusNode: submitFocus,
         enabled: password.text != '' && services.password.lockout.timePast(),
-        label: data['buttonLable'] ?? widget.buttonLabel,
+        label: data['buttonLabel'] ?? widget.buttonLabel,
         onPressed: submitProceedure,
       );
 

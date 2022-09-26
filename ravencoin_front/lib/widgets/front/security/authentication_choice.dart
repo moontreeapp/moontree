@@ -43,39 +43,36 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
         //),
         SizedBox(height: 16),
         RadioListTile<AuthMethod>(
-            title: const Text('Moontree Only Password (most secure)'),
+            title: const Text('Moontree Only Password'),
             value: AuthMethod.moontreePassword,
             groupValue: authenticationMethodChoice,
             onChanged: (AuthMethod? value) async {
               setState(() => authenticationMethodChoice = value);
-              await components.message.giveChoices(
-                context,
-                title: 'Set Password',
-                content:
-                    "In order to complete the change you'll need to set a password.\n\nPress ok to continue...",
-                //child: ChangePasswordWidget(),
-                behaviors: {
-                  'cancel': () {
-                    setState(() {
-                      authenticationMethodChoice = AuthMethod.nativeSecurity;
-                      canceled = true;
-                    });
-                    Navigator.of(context).pop();
-                  },
-                  'ok': () {
-                    Navigator.of(context).pop();
-                  },
-                },
-              );
-              if (!canceled) {
-                //await services.authentication.setPassword(
-                //  password: await SecureStorage.authenticationKey,
-                //  salt: await SecureStorage.authenticationKey,
-                //  saveSecret: saveSecret,
-                //);
-                streams.app.verify.add(true);
-                Navigator.of(components.navigator.routeContext!)
-                    .pushNamed('/security/password/change', arguments: {
+              //canceled = false;
+              //await components.message.giveChoices(
+              //  context,
+              //  title: 'Set Password',
+              //  content:
+              //      "In order to complete the change you'll need to set a password.\n\nPress ok to continue...",
+              //  behaviors: {
+              //    'cancel': () {
+              //      setState(() {
+              //        authenticationMethodChoice = AuthMethod.nativeSecurity;
+              //        canceled = true;
+              //      });
+              //      Navigator.of(context).pop();
+              //    },
+              //    'ok': () {
+              //      Navigator.of(context).pop();
+              //    },
+              //  },
+              //);
+              //if (!canceled) {
+              streams.app.verify.add(false); // always require auth
+              Navigator.of(components.navigator.routeContext!).pushNamed(
+                '/security/password/change',
+                arguments: {
+                  'Verification.ButtonLabel': 'Continue',
                   'then': () async {
                     await services.authentication.setMethod(method: value!);
                   },
@@ -83,55 +80,107 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                     streams.app.snack.add(Snack(
                         message: 'Successfully Updated Authentication Method'));
                   },
-                });
-                canceled = false;
-              }
-              //components.loading.screen(
-              //    message: 'Re-encrypting Wallets',
-              //    staticImage: true,
-              //    returnHome: true,
-              //    playCount: 3);
+                },
+              );
+              setState(() {
+                if (pros.settings.authMethodIsNativeSecurity) {
+                  authenticationMethodChoice = AuthMethod.nativeSecurity;
+                }
+              });
+              //}
             }),
         RadioListTile<AuthMethod>(
             title: const Text('Native Device Security'),
             value: AuthMethod.nativeSecurity,
             groupValue: authenticationMethodChoice,
             onChanged: (AuthMethod? value) async {
-              setState(() => authenticationMethodChoice = value);
-              final localAuthApi = LocalAuthApi();
-              final validate = await localAuthApi.authenticate();
-              if (validate) {
-                await services.authentication.setMethod(method: value!);
-                await services.authentication.setPassword(
-                  password: await SecureStorage.authenticationKey,
-                  salt: await SecureStorage.authenticationKey,
-                  message: 'Successfully Updated Authentication Method',
-                  saveSecret: saveSecret,
-                );
-                //components.loading.screen(
-                //    message: 'Re-encrypting Wallets',
-                //    staticImage: true,
-                //    returnHome: true,
-                //    playCount: 3);
-              } else {
-                if (localAuthApi.reason == AuthenticationResult.error) {
+              Future<void> onSuccess() async {
+                Navigator.pop(components.navigator.routeContext!);
+                final localAuthApi = LocalAuthApi();
+                final validate = await localAuthApi.authenticate();
+                if (validate) {
                   setState(() {
+                    authenticationMethodChoice = AuthMethod.nativeSecurity;
+                  });
+                  components.loading.screen(
+                      message: 'Setting Authentication Method',
+                      staticImage: true,
+                      returnHome: false,
+                      playCount: 1);
+                  await services.authentication.setMethod(method: value!);
+                  await services.authentication.setPassword(
+                    password: await SecureStorage.authenticationKey,
+                    salt: await SecureStorage.authenticationKey,
+                    message: 'Successfully Updated Authentication Method',
+                    saveSecret: saveSecret,
+                  );
+                } else {
+                  if (localAuthApi.reason == AuthenticationResult.error) {
+                    setState(() {
+                      setState(() => authenticationMethodChoice =
+                          AuthMethod.moontreePassword);
+                    });
+                    streams.app.snack.add(Snack(
+                      message:
+                          'Failed. To use Native Security authentication, set it up a pin in the phone settings.',
+                    ));
+                  } else if (localAuthApi.reason ==
+                      AuthenticationResult.failure) {
                     setState(() => authenticationMethodChoice =
                         AuthMethod.moontreePassword);
-                  });
-                  streams.app.snack.add(Snack(
-                    message:
-                        'Failed. To use Native Security authentication, set it up a pin in the phone settings.',
-                  ));
-                } else if (localAuthApi.reason ==
-                    AuthenticationResult.failure) {
-                  setState(() =>
-                      authenticationMethodChoice = AuthMethod.moontreePassword);
-                  streams.app.snack.add(Snack(
-                    message:
-                        'Unable to authenticate; setting login method to password.',
-                  ));
+                    streams.app.snack.add(Snack(
+                      message:
+                          'Unable to authenticate; setting login method to password.',
+                    ));
+                  }
                 }
+              }
+
+              setState(() => authenticationMethodChoice = value);
+
+              streams.app.verify.add(false); // always require auth
+              if (services.password.askCondition) {
+                /// you might think we'd ask for their password here, then ask for
+                /// native authentication, decrypting the wallets with their
+                /// password the only reason we don't need to us that we save the
+                /// cipher so we can just use that. however, we need to verify
+                /// they really can access it so, we must ask for existing login
+                //await components.message.giveChoices(
+                //  components.navigator.routeContext!,
+                //  title: 'Authenticate to Change Setting',
+                //  content:
+                //      'To complete the change you must first authenticate with your current authentication method.',
+                //  behaviors: {
+                //    'CANCEL': () {
+                //      Navigator.pop(components.navigator.routeContext!);
+                //      setState(() {
+                //        authenticationMethodChoice =
+                //            AuthMethod.moontreePassword;
+                //        canceled = true;
+                //      });
+                //    },
+                //    'OK': () async {
+                //Navigator.pop(components.navigator.routeContext!);
+                await Navigator.pushNamed(
+                  components.navigator.routeContext!,
+                  '/security/verification',
+                  arguments: {
+                    'buttonLabel': 'Continue',
+                    'onSuccess': () async {
+                      await onSuccess();
+                    }
+                  },
+                );
+                setState(() {
+                  if (!pros.settings.authMethodIsNativeSecurity) {
+                    authenticationMethodChoice = AuthMethod.moontreePassword;
+                  }
+                });
+                //    }
+                //  },
+                //);
+              } else {
+                await onSuccess();
               }
             }),
       ],

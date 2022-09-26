@@ -265,7 +265,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                       await switchWallet(walletId);
                     },
                     leading: Icon(Icons.add, color: AppColors.primary),
-                    title: Text('Generate New Wallet',
+                    title: Text('New Wallet',
                         style: Theme.of(context).textTheme.bodyText1),
                   )
                 ] +
