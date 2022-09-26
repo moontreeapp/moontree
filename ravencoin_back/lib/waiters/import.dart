@@ -36,7 +36,9 @@ class ImportWaiter extends Waiter {
             // send user to see new wallet
             services.wallet.leader.newLeaderProcessRunning = true;
             streams.import.success.add(null);
-            streams.import.result.add(importRequest);
+            // instead of broadcasting original importRequest which has the sensitive text, we'll just broadcast an empty one since all the login on this merely looks at the null status anyway
+            //streams.import.result.add(importRequest);
+            streams.import.result.add(ImportRequest(text: 'sensitive'));
             streams.app.setting.add(null);
 
             /// wait till balances show to show successful import...
