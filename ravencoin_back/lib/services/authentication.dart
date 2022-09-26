@@ -2,8 +2,8 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 
 class AuthenticationService {
-  bool get methodIsBiometric => pros.settings.authMethodIsBiometric;
-  bool get methodIsPassword => !pros.settings.authMethodIsBiometric;
+  bool get methodIsNative => pros.settings.authMethodIsNativeSecurity;
+  bool get methodIsPassword => !pros.settings.authMethodIsNativeSecurity;
   AuthMethod get method => pros.settings.authMethod;
 
   Future<void> setMethod({

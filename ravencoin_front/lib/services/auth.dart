@@ -24,7 +24,7 @@ class LocalAuthApi {
   }
 
   /// this name seems misleading "isDeviceSupported"
-  /// Returns false if no biometric is setup, true if it is...
+  /// Returns false if no nativeSecurity is setup, true if it is...
   Future<bool> get isSetup async => await _auth.isDeviceSupported();
 
   Future<List<BiometricType>> get availableBiometrics async =>
@@ -39,8 +39,8 @@ class LocalAuthApi {
     //  reason = AuthenticationResult.notSetup;
     //  return false;
     //}
-    //List<BiometricType> biometrics = await availableBiometrics;
-    //if (biometrics.isEmpty) {
+    //List<BiometricType> nativeSecuritys = await availableBiometrics;
+    //if (nativeSecuritys.isEmpty) {
     //  reason = AuthenticationResult.noBiometrics;
     //  return false;
     //}
@@ -52,10 +52,10 @@ class LocalAuthApi {
       return false;
     }
 
-    // Some biometrics are enrolled.
-    //if (biometrics.contains(BiometricType.strong) ||
-    //    biometrics.contains(BiometricType.face)) {
-    //  // Specific types of biometrics are available.
+    // Some nativeSecuritys are enrolled.
+    //if (nativeSecuritys.contains(BiometricType.strong) ||
+    //    nativeSecuritys.contains(BiometricType.face)) {
+    //  // Specific types of nativeSecuritys are available.
     //  // Use checks like this with caution!
     //}
     try {
@@ -88,7 +88,7 @@ class LocalAuthApi {
       while authenticating. For instance, if a fingerprint reader exists on the
       device but there's no fingerprint registered, the plugin might attempt to
       take the user to settings to add one. Anything that is not user fixable,
-      such as no biometric sensor on device, will still result in a
+      such as no nativeSecurity sensor on device, will still result in a
       [PlatformException].
       (Therefore we should fall back on the password posibility.)
       */

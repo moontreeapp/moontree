@@ -7,8 +7,8 @@ part 'auth_method.g.dart';
 @HiveType(typeId: TypeId.AuthMethod)
 enum AuthMethod {
   @HiveField(0)
-  password,
+  moontreePassword,
 
   @HiveField(1)
-  biometric,
+  nativeSecurity,
 }

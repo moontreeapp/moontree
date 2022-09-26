@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/streams/app.dart';
@@ -8,8 +6,9 @@ import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_back/services/consent.dart'
     show ConsentDocument, documentEndpoint, consentToAgreements;
 import 'package:ravencoin_front/services/auth.dart';
+import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/services/wallet.dart'
-    show populateWalletsWithSensitives;
+    show saveSecret, setupWallets;
 import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/utils/auth.dart';
 import 'package:ravencoin_front/utils/login.dart';
@@ -23,16 +22,15 @@ import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/services/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class LoginBiometric extends StatefulWidget {
+class CreateNative extends StatefulWidget {
   @override
-  _LoginBiometricState createState() => _LoginBiometricState();
+  _CreateNativeState createState() => _CreateNativeState();
 }
 
-class _LoginBiometricState extends State<LoginBiometric> {
+class _CreateNativeState extends State<CreateNative> {
   Map<String, dynamic> data = {};
   late List listeners = [];
   FocusNode unlockFocus = FocusNode();
-  bool? autoInitiateUnlock;
   bool enabled = true;
   bool failedAttempt = false;
   bool isConsented = false;
@@ -42,7 +40,7 @@ class _LoginBiometricState extends State<LoginBiometric> {
   Future<void> finishLoadingDatabase() async {
     //if (!await finishedLoading) {
     if (await HIVE_INIT.isPartiallyLoaded()) {
-      HIVE_INIT.setupDatabase2();
+      await HIVE_INIT.setupDatabase2();
     }
     //}
   }
@@ -63,7 +61,9 @@ class _LoginBiometricState extends State<LoginBiometric> {
         setState(() {});
       }
     }));
-    finishLoadingDatabase();
+    () async {
+      await finishLoadingDatabase();
+    }();
   }
 
   @override
@@ -71,26 +71,13 @@ class _LoginBiometricState extends State<LoginBiometric> {
     for (var listener in listeners) {
       listener.cancel();
     }
-    unlockFocus.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    try {
-      data = populateData(context, data);
-    } catch (e) {
-      data = {};
-    }
+    data = populateData(context, data);
     needsConsent = data['needsConsent'] ?? false;
-    autoInitiateUnlock =
-        autoInitiateUnlock ?? data['autoInitiateUnlock'] ?? true;
-    if (readyToUnlock() && autoInitiateUnlock!) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await submit();
-      });
-      autoInitiateUnlock = false;
-    }
     return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
   }
 
@@ -135,7 +122,7 @@ class _LoginBiometricState extends State<LoginBiometric> {
       );
 
   Widget get welcomeMessage => Text(
-        'Welcome Back',
+        'Moontree',
         style: Theme.of(context)
             .textTheme
             .headline1
@@ -220,6 +207,8 @@ class _LoginBiometricState extends State<LoginBiometric> {
       );
 
   Future submit() async {
+    setState(() => enabled = false);
+
     /// just in case
     if (await HIVE_INIT.isPartiallyLoaded()) {
       await finishLoadingWaiters();
@@ -230,31 +219,51 @@ class _LoginBiometricState extends State<LoginBiometric> {
       //}
     }
 
-    /// there are existing wallets, we should populate them with sensitives now.
-    await populateWalletsWithSensitives();
     final localAuthApi = LocalAuthApi();
     final validate = await localAuthApi.authenticate();
-    setState(() => enabled = false);
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
+      final key = await SecureStorage.authenticationKey;
+
+      /// actually don't show this, not necessary
+      //components.message.giveChoices(context,
+      //    title: 'Default Password',
+      //    content:
+      //        "Moontree has generated a default password for you. If you're ever unable to use your nativeSecurity or pin to login you can use this password instead. Please write it down for your records: $key",
+      //    behaviors: {
+      //      'ok': () => Navigator.of(context).pop(),
+      //    });
       if (!consented) {
         consented = await consentToAgreements(await getId());
       }
+      if (pros.passwords.records.isEmpty) {
+        //services.cipher.initCiphers(altPassword: key, altSalt: key);
+        await services.authentication.setPassword(
+          password: key,
+          salt: key,
+          saveSecret: saveSecret,
+        );
+        await setupWallets();
+      }
+      //await components.message.giveChoices(context,
+      //    title: 'Default Password',
+      //    content:
+      //        "Moontree has generated a default password for you. If you're ever unable to use your nativeSecurity or pin to login you can use this password instead. Please write it down for your records: \n\n$key",
+      //    behaviors: {
+      //      'ok': () => Navigator.of(context).pop(),
+      //    });
       login(context);
     } else {
-      /// this is a pretty wild edge case:
-      /// they were able to set biometric up but now its not working anymore
       if (localAuthApi.reason == AuthenticationResult.error) {
+        setState(() {
+          enabled = true;
+        });
         streams.app.snack.add(Snack(
-            message: 'Unknown login error: please set a pin on the device.',
-            showOnLogin: true));
-        setState(() => enabled = true);
-        await Navigator.pushReplacementNamed(
-          context,
-          getMethodPathLogin(biometric: false),
-        );
-        streams.app.snack.add(Snack(
-            message: 'Please set a password to secure your wallet.',
-            showOnLogin: true));
+          message: 'No pin detected; please set a password.',
+        ));
+        Future.microtask(() => Navigator.pushReplacementNamed(
+              context,
+              getMethodPathCreate(nativeSecurity: false),
+            ));
       } else if (localAuthApi.reason == AuthenticationResult.failure) {
         setState(() {
           failedAttempt = true;
@@ -267,7 +276,7 @@ class _LoginBiometricState extends State<LoginBiometric> {
   bool isConnected() =>
       streams.client.connected.value == ConnectionStatus.connected;
 
-  /// biometric has it's own timeout...
+  /// nativeSecurity has it's own timeout...
   bool readyToUnlock() =>
       //services.password.lockout.timePast() &&
       enabled && ((isConsented) || !needsConsent);

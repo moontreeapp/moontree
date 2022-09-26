@@ -14,21 +14,21 @@ class AuthMethodAdapter extends TypeAdapter<AuthMethod> {
   AuthMethod read(BinaryReader reader) {
     switch (reader.readByte()) {
       case 0:
-        return AuthMethod.password;
+        return AuthMethod.moontreePassword;
       case 1:
-        return AuthMethod.biometric;
+        return AuthMethod.nativeSecurity;
       default:
-        return AuthMethod.password;
+        return AuthMethod.moontreePassword;
     }
   }
 
   @override
   void write(BinaryWriter writer, AuthMethod obj) {
     switch (obj) {
-      case AuthMethod.password:
+      case AuthMethod.moontreePassword:
         writer.writeByte(0);
         break;
-      case AuthMethod.biometric:
+      case AuthMethod.nativeSecurity:
         writer.writeByte(1);
         break;
     }

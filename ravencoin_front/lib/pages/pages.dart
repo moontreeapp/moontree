@@ -16,10 +16,10 @@ import 'package:ravencoin_front/pages/misc/scan.dart';
 import 'package:ravencoin_front/pages/misc/checkout.dart';
 import 'package:ravencoin_front/pages/security/backup/show.dart';
 import 'package:ravencoin_front/pages/security/backup/verify.dart';
-import 'package:ravencoin_front/pages/security/create_biometric.dart';
+import 'package:ravencoin_front/pages/security/create_native.dart';
 import 'package:ravencoin_front/pages/security/create_password.dart';
 import 'package:ravencoin_front/pages/security/login_password.dart';
-import 'package:ravencoin_front/pages/security/login_biometric.dart';
+import 'package:ravencoin_front/pages/security/login_native.dart';
 import 'package:ravencoin_front/pages/security/resume.dart';
 import 'package:ravencoin_front/pages/security/change_password.dart';
 import 'package:ravencoin_front/pages/security/change_method.dart';
@@ -117,9 +117,9 @@ class pages {
         '/security/method/change': (context) => ChangeLoginMethod(),
         '/security/resume': (context) => ChangeResume(),
         '/security/password/login': (context) => LoginPassword(),
-        '/security/biometric/login': (context) => LoginBiometric(),
+        '/security/native/login': (context) => LoginNative(),
         '/security/password/createlogin': (context) => CreatePassword(),
-        '/security/biometric/createlogin': (context) => CreateBiometric(),
+        '/security/native/createlogin': (context) => CreateNative(),
         '/security/verification': (context) => VerifyAuthentication(),
         '/transaction/transaction': (context) => TransactionPage(),
         '/transaction/receive': (context) => Receive(),

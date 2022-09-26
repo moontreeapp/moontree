@@ -16,7 +16,7 @@ class AuthenticationMethodChoice extends StatefulWidget {
 }
 
 class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
-  AuthMethod? authenticationMethodChoice = AuthMethod.password;
+  AuthMethod? authenticationMethodChoice = AuthMethod.moontreePassword;
   bool canceled = false;
 
   @override
@@ -37,14 +37,14 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
       children: <Widget>[
         Text('Authentication Method',
             style: Theme.of(context).textTheme.bodyText1),
-        Text(
-          'Setting a strong password only you know offers the highest level of security for your wallets. You also have the choice to use biometric authentication if you prefer.\n\nBefore you change your authentication method you should backup your wallets by writing down each of their passphrases on paper. \n\nAfter changing your preference your wallets must be reencrypted, so DO NOT close the app until the re-encryption process has finished.',
-          style: Theme.of(context).textTheme.bodyText2,
-        ),
+        //Text(
+        //  'Setting a strong password only you know offers the highest level of security for your wallets. You also have the choice to use nativeSecurity authentication if you prefer.\n\nBefore you change your authentication method you should backup your wallets by writing down each of their passphrases on paper. \n\nAfter changing your preference your wallets must be reencrypted, so DO NOT close the app until the re-encryption process has finished.',
+        //  style: Theme.of(context).textTheme.bodyText2,
+        //),
         SizedBox(height: 16),
         RadioListTile<AuthMethod>(
-            title: const Text('Password (most secure)'),
-            value: AuthMethod.password,
+            title: const Text('Moontree Only Password (most secure)'),
+            value: AuthMethod.moontreePassword,
             groupValue: authenticationMethodChoice,
             onChanged: (AuthMethod? value) async {
               setState(() => authenticationMethodChoice = value);
@@ -57,7 +57,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                 behaviors: {
                   'cancel': () {
                     setState(() {
-                      authenticationMethodChoice = AuthMethod.biometric;
+                      authenticationMethodChoice = AuthMethod.nativeSecurity;
                       canceled = true;
                     });
                     Navigator.of(context).pop();
@@ -93,8 +93,8 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
               //    playCount: 3);
             }),
         RadioListTile<AuthMethod>(
-            title: const Text('Biometric'),
-            value: AuthMethod.biometric,
+            title: const Text('Native Device Security'),
+            value: AuthMethod.nativeSecurity,
             groupValue: authenticationMethodChoice,
             onChanged: (AuthMethod? value) async {
               setState(() => authenticationMethodChoice = value);
@@ -116,17 +116,17 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
               } else {
                 if (localAuthApi.reason == AuthenticationResult.error) {
                   setState(() {
-                    setState(
-                        () => authenticationMethodChoice = AuthMethod.password);
+                    setState(() => authenticationMethodChoice =
+                        AuthMethod.moontreePassword);
                   });
                   streams.app.snack.add(Snack(
                     message:
-                        'Failed. To use biometric authentication, set it up a pin in the phone settings.',
+                        'Failed. To use Native Security authentication, set it up a pin in the phone settings.',
                   ));
                 } else if (localAuthApi.reason ==
                     AuthenticationResult.failure) {
-                  setState(
-                      () => authenticationMethodChoice = AuthMethod.password);
+                  setState(() =>
+                      authenticationMethodChoice = AuthMethod.moontreePassword);
                   streams.app.snack.add(Snack(
                     message:
                         'Unable to authenticate; setting login method to password.',

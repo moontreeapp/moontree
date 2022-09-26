@@ -82,10 +82,14 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
               //        style: Theme.of(context).textTheme.bodyText1)),
               //SizedBox(height: 8),
               LockedOutTime(),
-              pros.settings.authMethodIsBiometric ? bioText : passwordField,
+              pros.settings.authMethodIsNativeSecurity
+                  ? bioText
+                  : passwordField,
             ],
             buttons: [
-              pros.settings.authMethodIsBiometric ? bioButton : submitButton
+              pros.settings.authMethodIsNativeSecurity
+                  ? bioButton
+                  : submitButton
             ],
           ),
         )

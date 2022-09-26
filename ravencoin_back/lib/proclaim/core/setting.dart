@@ -35,7 +35,7 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
         SettingName.Blockchain:
             Setting(name: SettingName.Blockchain, value: Chain.ravencoin),
         SettingName.Auth_Method:
-            Setting(name: SettingName.Auth_Method, value: AuthMethod.biometric),
+            Setting(name: SettingName.Auth_Method, value: AuthMethod.nativeSecurity),
         SettingName.Wallet_Current:
             Setting(name: SettingName.Wallet_Current, value: '0'),
         SettingName.Wallet_Preferred:
@@ -123,7 +123,7 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
   AuthMethod get authMethod =>
       primaryIndex.getOne(SettingName.Auth_Method)!.value;
 
-  bool get authMethodIsBiometric =>
+  bool get authMethodIsNativeSecurity =>
       primaryIndex.getOne(SettingName.Auth_Method)!.value ==
-      AuthMethod.biometric;
+      AuthMethod.nativeSecurity;
 }

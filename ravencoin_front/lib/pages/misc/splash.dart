@@ -136,7 +136,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
   Future redirectToCreateOrLogin() async {
     Future passwordFallback() async {
-      services.authentication.setMethod(method: AuthMethod.password);
+      services.authentication.setMethod(method: AuthMethod.moontreePassword);
       Future.microtask(() => Navigator.pushReplacementNamed(
             context,
             getMethodPathCreate(),
@@ -147,7 +147,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
     // this is false on 1st startup -> create
     if (!services.password.required) {
-      if (pros.settings.authMethodIsBiometric) {
+      if (pros.settings.authMethodIsNativeSecurity) {
         final localAuthApi = LocalAuthApi();
         if (await localAuthApi.readyToAuthenticate) {
           Future.microtask(() => Navigator.pushReplacementNamed(

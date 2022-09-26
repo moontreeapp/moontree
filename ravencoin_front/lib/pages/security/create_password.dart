@@ -312,7 +312,8 @@ class _CreatePasswordState extends State<CreatePassword> {
     if (validate()) {
       // only run once - disable button
       setState(() => passwordText = password.text);
-      await services.authentication.setMethod(method: AuthMethod.password);
+      await services.authentication
+          .setMethod(method: AuthMethod.moontreePassword);
       await consentToAgreements();
       //await Future.delayed(Duration(milliseconds: 200)); // in release mode?
       await populateWalletsWithSensitives();
