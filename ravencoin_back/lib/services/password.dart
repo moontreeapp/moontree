@@ -139,7 +139,7 @@ class PasswordCreationService {
       password,
       salt, //Password.getSalt((pros.passwords.maxPasswordId ?? -1) + 1),
     ));
-    await pros.passwords.save(Password(id: id, saltedHash: ''));
+    await pros.passwords.save(Password(id: id, saltedHash: 'deprecated'));
     await saveSecret(Secret(
         secret: saltedHashedPassword,
         passwordId: id,

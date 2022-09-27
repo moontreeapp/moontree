@@ -11,7 +11,7 @@ class AppStreams {
   final page = BehaviorSubject<String>.seeded('main');
   final setting = BehaviorSubject<String?>.seeded(null);
   final xlead = BehaviorSubject<bool>.seeded(false);
-  final context = BehaviorSubject<AppContext>.seeded(AppContext.wallet);
+  final context = BehaviorSubject<AppContext>.seeded(AppContext.login);
   final snack = BehaviorSubject<Snack?>.seeded(null);
   final navHeight = BehaviorSubject<NavHeight>.seeded(NavHeight.none);
   final fling = BehaviorSubject<bool?>.seeded(null);
@@ -78,4 +78,4 @@ class Snack {
   }
 }
 
-enum AppContext { wallet, manage, swap }
+enum AppContext { login, wallet, manage, swap }

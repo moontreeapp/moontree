@@ -56,7 +56,7 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
                   ? VerifyAuthentication(
                       parentState: this,
                       buttonLabel:
-                          data['Verification.ButtonLabel'] ?? 'Change Password')
+                          data['verification.ButtonLabel'] ?? 'Change Password')
                   : body(),
             )));
   }
@@ -199,7 +199,7 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
         await services.authentication.setPassword(
           password: newPassword.text,
           salt: await SecureStorage.authenticationKey,
-          message: 'Successfully Updated Password',
+          message: 'Successfully updated password',
           saveSecret: saveSecret,
         );
         if (data.containsKey('then')) {
@@ -209,7 +209,10 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
           await data['then.then']();
         }
       }();
-      components.loading.screen(message: 'Setting Password', staticImage: true);
+      components.loading.screen(
+          message: 'Setting Password',
+          staticImage: true,
+          returnHome: data['onSuccess.returnHome'] ?? true);
     }
   }
 }

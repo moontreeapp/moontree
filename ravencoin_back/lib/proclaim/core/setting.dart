@@ -11,7 +11,7 @@ part 'setting.keys.dart';
 class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
   SettingProclaim() : super(_SettingNameKey());
 
-  static final Net defaultNet = Net.Test;
+  static final Net defaultNet = Net.Main;
   static final String defaultUrl = 'moontree.com';
   static final int defaultPort = defaultNet == Net.Test ? 50012 : 50002;
 
@@ -34,8 +34,8 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
             Setting(name: SettingName.Electrum_Port, value: defaultPort),
         SettingName.Blockchain:
             Setting(name: SettingName.Blockchain, value: Chain.ravencoin),
-        SettingName.Auth_Method:
-            Setting(name: SettingName.Auth_Method, value: AuthMethod.nativeSecurity),
+        SettingName.Auth_Method: Setting(
+            name: SettingName.Auth_Method, value: AuthMethod.nativeSecurity),
         SettingName.Wallet_Current:
             Setting(name: SettingName.Wallet_Current, value: '0'),
         SettingName.Wallet_Preferred:

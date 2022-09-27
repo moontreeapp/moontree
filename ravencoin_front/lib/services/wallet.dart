@@ -72,9 +72,9 @@ Future<void> updateWalletsToSecureStorage() async {
   for (var wallet in pros.wallets.records) {
     if (wallet is LeaderWallet) {
       if (wallet.encryptedEntropy != '') {
-        wallet.encryptedEntropy;
         records.add(LeaderWallet.from(
           wallet,
+          name: wallet.name.isInt ? 'Wallet ${wallet.name}' : wallet.name,
           encryptedEntropy: '',
           seed: await wallet.seed,
           getEntropy: wallet.getEntropy,
@@ -86,11 +86,40 @@ Future<void> updateWalletsToSecureStorage() async {
       }
     } else if (wallet is SingleWallet) {
       if (wallet.encryptedWIF != '') {
-        records.add(SingleWallet.from(wallet, encryptedWIF: ''));
+        records.add(SingleWallet.from(
+          wallet,
+          name: wallet.name.isInt ? 'Wallet ${wallet.name}' : wallet.name,
+          encryptedWIF: '',
+        ));
         await SecureStorage.writeSecret(Secret(
             secret: wallet.encryptedWIF,
             scripthash: wallet.id,
             secretType: SecretType.encryptedWif));
+      }
+    }
+  }
+  await pros.wallets.saveAll(records);
+}
+
+/// '1' -> 'Wallet 1'
+Future<void> updateWalletNames() async {
+  var records = <Wallet>[];
+  for (var wallet in pros.wallets.records) {
+    if (wallet is LeaderWallet) {
+      if (wallet.name.isInt) {
+        records.add(LeaderWallet.from(
+          wallet,
+          name: 'Wallet ${wallet.name}',
+          seed: await wallet.seed,
+          getEntropy: wallet.getEntropy,
+        ));
+      }
+    } else if (wallet is SingleWallet) {
+      if (wallet.name.isInt != '') {
+        records.add(SingleWallet.from(
+          wallet,
+          name: 'Wallet ${wallet.name}',
+        ));
       }
     }
   }

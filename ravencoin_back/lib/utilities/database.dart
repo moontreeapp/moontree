@@ -6,7 +6,6 @@ import 'package:proclaim/proclaim.dart';
 
 /// erases data concerning transactions and the like, leaves assets alone.
 Future eraseChainData() async {
-  resetInMemoryState();
   await pros.blocks.removeAll(pros.blocks.records);
   await pros.statuses.removeAll(pros.statuses.records);
   await pros.balances.removeAll(pros.balances.records);
@@ -22,6 +21,7 @@ void resetInMemoryState() {
   services.client.subscribe.unsubscribeAssetsAll();
   services.client.subscribe.subscriptionHandlesAddress.clear();
   services.client.subscribe.subscriptionHandlesAsset.clear();
+  services.download.overrideGettingStarted = false;
   services.download.history.calledAllDoneProcess = 0;
   services.download.queue.addresses.clear();
   services.download.queue.transactions.clear();

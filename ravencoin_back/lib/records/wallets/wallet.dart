@@ -19,7 +19,7 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
   @HiveField(3)
   bool backedUp;
 
-  @HiveField(4)
+  @HiveField(4, defaultValue: false)
   bool skipHistory;
 
   @override

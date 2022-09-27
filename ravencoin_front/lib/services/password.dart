@@ -12,13 +12,17 @@ import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 Future<void> updatePasswordsToSecureStorage() async {
   var records = <Password>[];
   for (var password in pros.passwords.records) {
-    if (password.saltedHash != '') {
-      records.add(Password.from(password, saltedHash: ''));
-      //resalt?
-      await SecureStorage.writeSecret(Secret(
-          passwordId: password.id,
-          secret: password.saltedHash,
-          secretType: SecretType.saltedHashedPassword));
+    if (password.saltedHash != 'deprecated') {
+      records.add(Password.from(password, saltedHash: 'deprecated'));
+      final read =
+          await SecureStorage.read(SecureStorage.passwordIdKey(password.id));
+      // only update historic passwords here:
+      if (read == null) {
+        await SecureStorage.writeSecret(Secret(
+            passwordId: password.id,
+            secret: password.saltedHash,
+            secretType: SecretType.saltedHashedPassword));
+      }
     }
   }
   await pros.passwords.saveAll(records);
@@ -28,7 +32,8 @@ Future<void> updatePasswordsToSecureStorage() async {
 /// passwords they should be switched back to password auth.
 Future<void> maybeSwitchToPassword() async {
   final currentPasswordRecord = pros.passwords.current;
-  if (currentPasswordRecord != null && currentPasswordRecord.saltedHash != '') {
+  if (currentPasswordRecord != null &&
+      currentPasswordRecord.saltedHash != 'deprecated') {
     await services.authentication
         .setMethod(method: AuthMethod.moontreePassword);
   }

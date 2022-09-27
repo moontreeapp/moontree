@@ -20,7 +20,7 @@ class LeaderWalletAdapter extends TypeAdapter<LeaderWallet> {
       id: fields[0] as String,
       encryptedEntropy: fields[7] as String,
       backedUp: fields[3] as bool,
-      skipHistory: fields[4] as bool,
+      skipHistory: fields[4] == null ? false : fields[4] as bool,
       cipherUpdate: fields[1] as CipherUpdate,
       name: fields[2] as String?,
     );

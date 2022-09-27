@@ -324,6 +324,7 @@ class _CreatePasswordState extends State<CreatePassword> {
         saveSecret: saveSecret,
       );
       await exitProcess();
+      streams.app.context.add(AppContext.wallet);
       streams.app.verify.add(true);
     } else {
       setState(() {

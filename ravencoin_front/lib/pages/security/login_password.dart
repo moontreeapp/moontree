@@ -8,6 +8,8 @@ import 'package:ravencoin_back/services/consent.dart'
     show ConsentDocument, documentEndpoint, consentToAgreements;
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
+import 'package:ravencoin_back/utilities/database.dart'
+    show resetInMemoryState, eraseChainData;
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/password.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
@@ -15,6 +17,7 @@ import 'package:ravencoin_front/services/wallet.dart'
     show
         populateWalletsWithSensitives,
         saveSecret,
+        updateWalletNames,
         updateWalletsToSecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/theme/extensions.dart';
@@ -290,9 +293,15 @@ class _LoginPasswordState extends State<LoginPassword> {
       salt: await SecureStorage.authenticationKey,
       saltedHashedPassword: await getLatestSaltedHashedPassword());
 
-  bool ancientValidate() => services.password.validate.ancientPassword(
-      password: password.text,
-      salt: pros.passwords.primaryIndex.getMostRecent()!.salt);
+  bool ancientValidate() {
+    final salt = pros.passwords.primaryIndex.getMostRecent()!.saltedHash;
+    if (salt == 'deprecated') {
+      return false;
+    }
+    return services.password.validate.ancientPassword(
+        password: password.text,
+        salt: pros.passwords.primaryIndex.getMostRecent()!.salt);
+  }
 
   Future submit({bool showFailureMessage = true}) async {
     // consent just once
@@ -303,17 +312,25 @@ class _LoginPasswordState extends State<LoginPassword> {
       }
     }
 
+    /// bridge
+    ///
     if (ancientValidate()) {
+      streams.app.snack.add(Snack(
+          message: 'Migrating to latest version. Just a sec...',
+          showOnLogin: true));
+      setState(() => passwordText = password.text);
+      await Future.delayed(Duration(milliseconds: 300));
       await populateWalletsWithSensitives();
       // first of all make a cipher for this
       services.cipher.initCiphers(
         altPassword: password.text,
-        altSalt: pros.passwords.primaryIndex.getMostRecent()!.salt,
+        salt: DEFAULT_SALT,
       );
-      services.authentication.setPassword(
-          password: password.text,
-          salt: await SecureStorage.authenticationKey,
-          saveSecret: SecureStorage.writeSecret);
+      await services.authentication.setPassword(
+        password: password.text,
+        salt: await SecureStorage.authenticationKey,
+        saveSecret: SecureStorage.writeSecret,
+      );
       ///// salt and has this password correctly
       ///final saltedHashedPassword = services.password.validate
       ///    .getHash(password.text, await SecureStorage.authenticationKey);
@@ -329,12 +346,26 @@ class _LoginPasswordState extends State<LoginPassword> {
       // decrypt the wallets with the old cipher
       // reencrypt the wallets with this new cipher
 
-    }
-    if (await services.password.lockout
+      /// lets not login this way again:
+      await updatePasswordsToSecureStorage();
+      streams.app.snack
+          .add(Snack(message: 'Almost done migrating...', showOnLogin: true));
+
+      /// erase all history stuff
+      await services.client.resetMemoryAndConnection();
+      services.download.overrideGettingStarted = true;
+
+      /// bridge
+      await updateWalletsToSecureStorage();
+      await updateWalletNames();
+      await login(password.text);
+    } else if (await services.password.lockout
             .handleVerificationAttempt(await validate()) &&
         passwordText == null) {
       // only run once - disable button
-      setState(() => passwordText = password.text);
+      if (passwordText != password.text) {
+        setState(() => passwordText = password.text);
+      }
       login(password.text);
     } else {
       setState(() {
@@ -360,10 +391,10 @@ class _LoginPasswordState extends State<LoginPassword> {
       altPassword: providedPassword,
       altSalt: await SecureStorage.authenticationKey,
     );
-    await updateWalletsToSecureStorage(); // moves entropy to secure storage.
     await services.cipher.updateWallets();
     services.cipher.cleanupCiphers();
     services.cipher.loginTime();
+    streams.app.context.add(AppContext.wallet);
     streams.app.splash.add(false); // trigger to refresh app bar again
     streams.app.logout.add(false);
     streams.app.verify.add(true);

@@ -53,7 +53,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   String pageTitle = 'Home';
   String assetTitle = 'Manage';
   String? settingTitle = null;
-  AppContext appContext = AppContext.wallet;
+  AppContext appContext = AppContext.login;
   final TextEditingController changeName = TextEditingController();
   late AnimationController controller;
   late Animation<double> animation;

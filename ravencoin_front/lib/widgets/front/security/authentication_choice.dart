@@ -72,13 +72,20 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
               Navigator.of(components.navigator.routeContext!).pushNamed(
                 '/security/password/change',
                 arguments: {
-                  'Verification.ButtonLabel': 'Continue',
+                  'verification.ButtonLabel': 'Continue',
+                  'onSuccess.returnHome': false,
                   'then': () async {
+                    setState(() {
+                      if (pros.settings.authMethodIsNativeSecurity) {
+                        authenticationMethodChoice =
+                            AuthMethod.moontreePassword;
+                      }
+                    });
                     await services.authentication.setMethod(method: value!);
                   },
                   'then.then': () async {
                     streams.app.snack.add(Snack(
-                        message: 'Successfully Updated Authentication Method'));
+                        message: 'Successfully updated authentication method'));
                   },
                 },
               );
@@ -95,13 +102,14 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
             groupValue: authenticationMethodChoice,
             onChanged: (AuthMethod? value) async {
               Future<void> onSuccess() async {
-                Navigator.pop(components.navigator.routeContext!);
                 final localAuthApi = LocalAuthApi();
                 final validate = await localAuthApi.authenticate();
                 if (validate) {
-                  setState(() {
-                    authenticationMethodChoice = AuthMethod.nativeSecurity;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      authenticationMethodChoice = AuthMethod.nativeSecurity;
+                    });
+                  }
                   components.loading.screen(
                       message: 'Setting Authentication Method',
                       staticImage: true,
@@ -111,7 +119,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                   await services.authentication.setPassword(
                     password: await SecureStorage.authenticationKey,
                     salt: await SecureStorage.authenticationKey,
-                    message: 'Successfully Updated Authentication Method',
+                    message: 'Successfully updated authentication method',
                     saveSecret: saveSecret,
                   );
                 } else {
@@ -167,15 +175,18 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                   arguments: {
                     'buttonLabel': 'Continue',
                     'onSuccess': () async {
+                      Navigator.pop(components.navigator.routeContext!);
                       await onSuccess();
                     }
                   },
                 );
-                setState(() {
-                  if (!pros.settings.authMethodIsNativeSecurity) {
-                    authenticationMethodChoice = AuthMethod.moontreePassword;
-                  }
-                });
+                if (mounted) {
+                  setState(() {
+                    if (!pros.settings.authMethodIsNativeSecurity) {
+                      authenticationMethodChoice = AuthMethod.moontreePassword;
+                    }
+                  });
+                }
                 //    }
                 //  },
                 //);

@@ -20,7 +20,7 @@ class SingleWalletAdapter extends TypeAdapter<SingleWallet> {
       id: fields[0] as String,
       encryptedWIF: fields[7] as String,
       cipherUpdate: fields[1] as CipherUpdate,
-      skipHistory: fields[4] as bool,
+      skipHistory: fields[4] == null ? false : fields[4] as bool,
       name: fields[2] as String?,
     )..backedUp = fields[3] as bool;
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 class QRCodeContainer extends StatefulWidget {
@@ -21,7 +22,7 @@ class _QRCodeContainerState extends State<QRCodeContainer> {
     'Splash',
     'Createlogin',
   ];
-  late bool loading = false;
+  late bool loading = true;
 
   @override
   void initState() {
@@ -52,16 +53,17 @@ class _QRCodeContainerState extends State<QRCodeContainer> {
   }
 
   @override
-  Widget build(BuildContext context) => loading
-      ? Container(width: 0)
-      : {
-            'Send': Padding(
-                padding: EdgeInsets.only(left: 0),
-                child: QRCodeButton(pageTitle: 'Send-to')),
-          }[pageTitle] ??
-          (blanks.contains(pageTitle)
-              ? Container(width: 0)
-              : Padding(
-                  padding: EdgeInsets.only(left: 0),
-                  child: QRCodeButton(pageTitle: pageTitle)));
+  Widget build(BuildContext context) =>
+      loading //|| streams.app.context.value == AppContext.login
+          ? Container(width: 0)
+          : {
+                'Send': Padding(
+                    padding: EdgeInsets.only(left: 0),
+                    child: QRCodeButton(pageTitle: 'Send-to')),
+              }[pageTitle] ??
+              (blanks.contains(pageTitle)
+                  ? Container(width: 0)
+                  : Padding(
+                      padding: EdgeInsets.only(left: 0),
+                      child: QRCodeButton(pageTitle: pageTitle)));
 }

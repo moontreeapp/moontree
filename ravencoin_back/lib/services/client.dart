@@ -5,7 +5,8 @@ import 'dart:io';
 
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
-import 'package:ravencoin_back/utilities/database.dart' show eraseChainData;
+import 'package:ravencoin_back/utilities/database.dart'
+    show resetInMemoryState, eraseChainData;
 import 'package:ravencoin_back/utilities/lock.dart';
 import 'package:ravencoin_electrum/ravencoin_electrum.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -118,12 +119,16 @@ class ClientService {
       chain: chain ?? Chain.ravencoin,
       net: net,
     );
+    await resetMemoryAndConnection();
+  }
 
+  Future<void> resetMemoryAndConnection() async {
     /// notice that we remove all our database here entirely.
     /// this is the simplest way to handle it.
     /// it might be ideal to keep the transactions, vout, unspents, vins, addresses, etc.
     /// but we're not ging to because we'd have to segment all of them by network.
     /// this is something we could do later if we want.
+    resetInMemoryState();
     await eraseChainData();
 
     /// make a new client to connect to the new network
@@ -283,7 +288,7 @@ class SubscribeService {
           streams.client.activity.add(ActivityMessage(active: false));
           if (services.wallet.leader.newLeaderProcessRunning) {
             if (pros.balances.isNotEmpty) {
-              streams.app.snack.add(Snack(message: 'Import Sucessful'));
+              streams.app.snack.add(Snack(message: 'Import Successful'));
             }
             streams.client.activity.add(ActivityMessage(
                 active: true,
