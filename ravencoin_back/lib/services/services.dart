@@ -8,6 +8,7 @@ import 'transaction/transaction.dart';
 import 'password.dart';
 import 'rate.dart';
 import 'wallet.dart';
+import 'version.dart';
 
 class services {
   static BalanceService balance = BalanceService();
@@ -19,4 +20,5 @@ class services {
   static PasswordService password = PasswordService();
   static AuthenticationService authentication = AuthenticationService();
   static DownloadService download = DownloadService();
+  static VersionService version = VersionService();
 }

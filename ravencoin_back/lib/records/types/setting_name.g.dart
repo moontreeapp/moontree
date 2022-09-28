@@ -14,7 +14,7 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
   SettingName read(BinaryReader reader) {
     switch (reader.readByte()) {
       case 0:
-        return SettingName.Database_Version;
+        return SettingName.Version_Database;
       case 1:
         return SettingName.Login_Attempts;
       case 2:
@@ -37,15 +37,19 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
         return SettingName.User_Name;
       case 11:
         return SettingName.Send_Immediate;
+      case 12:
+        return SettingName.Version_Previous;
+      case 13:
+        return SettingName.Version_Current;
       default:
-        return SettingName.Database_Version;
+        return SettingName.Version_Database;
     }
   }
 
   @override
   void write(BinaryWriter writer, SettingName obj) {
     switch (obj) {
-      case SettingName.Database_Version:
+      case SettingName.Version_Database:
         writer.writeByte(0);
         break;
       case SettingName.Login_Attempts:
@@ -80,6 +84,12 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
         break;
       case SettingName.Send_Immediate:
         writer.writeByte(11);
+        break;
+      case SettingName.Version_Previous:
+        writer.writeByte(12);
+        break;
+      case SettingName.Version_Current:
+        writer.writeByte(13);
         break;
     }
   }

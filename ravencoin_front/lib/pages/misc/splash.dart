@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +54,12 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     await Future.delayed(Duration(milliseconds: 3500));
     await HIVE_INIT.setupDatabaseStart();
     await HIVE_INIT.setupDatabase1();
+
+    /// update version right after we open settings box, capture a snapshot of
+    /// the movement if we need to use it for migration logic: final versions =
+    services.version.rotate(
+      services.version.byPlatform(Platform.isIOS ? 'ios' : 'android'),
+    );
 
     /// must use a heavier isolate implementation
     //compute((_) async {

@@ -3,6 +3,7 @@ import 'package:proclaim/proclaim.dart';
 
 import 'package:ravencoin_back/extensions/object.dart';
 import 'package:ravencoin_back/records/records.dart';
+import 'package:ravencoin_back/version.dart';
 
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' show NetworkType;
 
@@ -22,8 +23,8 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
   //50012 - testnet ssl
 
   static Map<String, Setting> get defaults => {
-        SettingName.Database_Version:
-            Setting(name: SettingName.Database_Version, value: 1),
+        SettingName.Version_Database:
+            Setting(name: SettingName.Version_Database, value: 1),
         SettingName.Login_Attempts:
             Setting(name: SettingName.Login_Attempts, value: <DateTime>[]),
         SettingName.Electrum_Net:
@@ -44,6 +45,10 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
             Setting(name: SettingName.User_Name, value: null),
         SettingName.Send_Immediate:
             Setting(name: SettingName.Send_Immediate, value: false),
+        SettingName.Version_Current:
+            Setting(name: SettingName.Send_Immediate, value: null),
+        SettingName.Version_Previous:
+            Setting(name: SettingName.Send_Immediate, value: null),
       }.map((settingName, setting) => MapEntry(settingName.name, setting));
 
   /// should this be in the database or should it be a constant somewhere?
@@ -51,7 +56,7 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
   //    primaryIndex.getOne(SettingName.App_Version)!.value;
 
   int get databaseVersion =>
-      primaryIndex.getOne(SettingName.Database_Version)!.value;
+      primaryIndex.getOne(SettingName.Version_Database)!.value;
 
   String get preferredWalletId =>
       primaryIndex.getOne(SettingName.Wallet_Preferred)!.value;

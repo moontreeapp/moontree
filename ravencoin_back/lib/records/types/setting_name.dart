@@ -9,7 +9,7 @@ part 'setting_name.g.dart';
 @HiveType(typeId: TypeId.SettingName)
 enum SettingName {
   @HiveField(0)
-  Database_Version,
+  Version_Database, //Database_Version,
 
   @HiveField(1)
   Login_Attempts,
@@ -43,4 +43,10 @@ enum SettingName {
 
   @HiveField(11)
   Send_Immediate,
+
+  @HiveField(12)
+  Version_Previous,
+
+  @HiveField(13)
+  Version_Current,
 }

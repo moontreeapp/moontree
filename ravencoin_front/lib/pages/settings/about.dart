@@ -44,8 +44,9 @@ class About extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    'beta: ' +
-                        VERSIONS[Platform.isIOS ? 'ios' : 'android']!['beta']!,
+                    '$VERSION_TRACK: ' +
+                        services.version
+                            .byPlatform(Platform.isIOS ? 'ios' : 'android'),
                     style: Theme.of(context).textTheme.subtitle2!.copyWith(
                         color: AppColors.black60,
                         fontWeight: FontWeights.semiBold),

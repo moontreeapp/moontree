@@ -66,7 +66,7 @@ class ravencoin_back():
         self.newBuild = ''
         self.existingVersions = []
         self.newVersions = []
-        self.versionLocation = 'ravencoin_back/lib/ravencoin_back.dart'
+        self.versionLocation = 'ravencoin_back/lib/version.dart'
         self.iosLocation = 'ravencoin_front/ios/Flutter/Generated.xcconfig'
         self.androidLocation ='ravencoin_front/android/local.properties'
     
