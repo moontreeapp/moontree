@@ -20,9 +20,9 @@ class VersionService {
   /// preivous becomes current if diff, writes current, returns both in map
   Future<VersionDescription> rotate(String newVersion) async {
     final previous =
-        pros.settings.primaryIndex.getOne(SettingName.Version_Previous)!.value;
+        pros.settings.primaryIndex.getOne(SettingName.Version_Previous)?.value;
     final current =
-        pros.settings.primaryIndex.getOne(SettingName.Version_Current)!.value;
+        pros.settings.primaryIndex.getOne(SettingName.Version_Current)?.value;
     if (newVersion != current) {
       await pros.settings.save(Setting(
         name: SettingName.Version_Previous,
@@ -44,30 +44,30 @@ class VersionService {
     String? previous,
     String? current,
     String? newVersion,
-    String? database,
+    int? database,
   }) =>
       VersionDescription(
         previous: previous ??
-            pros.settings.primaryIndex
-                .getOne(SettingName.Version_Previous)!
-                .value,
+            (pros.settings.primaryIndex
+                .getOne(SettingName.Version_Previous)
+                ?.value),
         current: current ??
-            pros.settings.primaryIndex
-                .getOne(SettingName.Version_Current)!
-                .value,
+            (pros.settings.primaryIndex
+                .getOne(SettingName.Version_Current)
+                ?.value),
         database: database ??
-            pros.settings.primaryIndex
-                .getOne(SettingName.Version_Database)!
-                .value,
+            (pros.settings.primaryIndex
+                .getOne(SettingName.Version_Database)
+                ?.value),
         newVersion: newVersion,
       );
 }
 
-class VersionDescription {
+class VersionDescription with ToStringMixin {
   final String? previous;
   final String? current;
   final String? newVersion;
-  final String? database;
+  final int? database;
 
   VersionDescription({
     this.previous,
@@ -75,4 +75,20 @@ class VersionDescription {
     this.newVersion,
     this.database,
   });
+
+  @override
+  List<Object?> get props => [
+        previous,
+        current,
+        newVersion,
+        database,
+      ];
+
+  @override
+  List<String> get propNames => [
+        'previous',
+        'current',
+        'newVersion',
+        'database',
+      ];
 }

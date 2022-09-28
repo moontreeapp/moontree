@@ -84,17 +84,18 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            print(pros.passwords.records);
-            print(await SecureStorage
-                .authenticationKey); //-jDnNMt8bAEMapFVDOimimMlf89cd1hNW37C
+            print(services.version.all());
+            //print(pros.passwords.records);
+            //print(await SecureStorage
+            //    .authenticationKey); //-jDnNMt8bAEMapFVDOimimMlf89cd1hNW37C
             //await pros.wallets.save(LeaderWallet.from(
             //    pros.wallets.records.first as LeaderWallet,
             //    cipherUpdate: CipherUpdate(CipherType.AES, passwordId: 5)));
             //print(await ((pros.wallets.records.first as LeaderWallet)
             //    .cipherUpdate));
             //await populateWalletsWithSensitives();
-            print(await ((pros.wallets.records.first as LeaderWallet)
-                .getEntropy)!(pros.wallets.records.first.id));
+            //print(await ((pros.wallets.records.first as LeaderWallet)
+            //    .getEntropy)!(pros.wallets.records.first.id));
             //print(pros.passwords.length);
             //print(await (pros.wallets.records.first as LeaderWallet).entropy);
 
