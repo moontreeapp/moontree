@@ -30,6 +30,7 @@ class PageTitle extends StatefulWidget {
     'Remove': 'Security',
     'Verify': 'Security',
     'BackupConfirm': 'Backup',
+    'BackupKeypair': 'Backup',
     'Channel': 'Create',
     'Nft': 'Create',
     'Main': 'Create',
@@ -270,19 +271,20 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                         style: Theme.of(context).textTheme.bodyText1),
                   ),
 
-                  /// for testing - create a SingleWallet
-                  //ListTile(
-                  //  visualDensity: VisualDensity.compact,
-                  //  onTap: () async {
-                  //    Navigator.pop(components.navigator.routeContext!);
-                  //    final walletId =
-                  //        await generateWallet(walletType: WalletType.single);
-                  //    await switchWallet(walletId);
-                  //  },
-                  //  leading: Icon(Icons.add, color: AppColors.primary),
-                  //  title: Text('New Single Wallet',
-                  //      style: Theme.of(context).textTheme.bodyText1),
-                  //)
+                  /** for testing - create a SingleWallet
+                  */
+                  ListTile(
+                    visualDensity: VisualDensity.compact,
+                    onTap: () async {
+                      Navigator.pop(components.navigator.routeContext!);
+                      final walletId =
+                          await generateWallet(walletType: WalletType.single);
+                      await switchWallet(walletId);
+                    },
+                    leading: Icon(Icons.add, color: AppColors.primary),
+                    title: Text('New Single Wallet',
+                        style: Theme.of(context).textTheme.bodyText1),
+                  )
                 ] +
                 [
                   for (Wallet wallet in pros.wallets.ordered)

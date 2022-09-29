@@ -167,12 +167,13 @@ class _NavMenuState extends State<NavMenu> {
           //  link: '/settings/import_export',
           //  arrow: true,
           //),
-          if (Current.wallet is LeaderWallet)
-            destination(
-              icon: MdiIcons.drawPen,
-              name: 'Backup',
-              link: '/security/backup',
-            ),
+          destination(
+            icon: MdiIcons.drawPen,
+            name: 'Backup',
+            link: Current.wallet is LeaderWallet
+                ? '/security/backup'
+                : '/security/backupKeypair',
+          ),
           destination(
             icon: Icons.settings,
             name: 'Settings',

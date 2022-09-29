@@ -14,6 +14,7 @@ import 'package:ravencoin_front/pages/manage/reissue/sub.dart';
 import 'package:ravencoin_front/pages/misc/splash.dart';
 import 'package:ravencoin_front/pages/misc/scan.dart';
 import 'package:ravencoin_front/pages/misc/checkout.dart';
+import 'package:ravencoin_front/pages/security/backup/keypair.dart';
 import 'package:ravencoin_front/pages/security/backup/show.dart';
 import 'package:ravencoin_front/pages/security/backup/verify.dart';
 import 'package:ravencoin_front/pages/security/create_native.dart';
@@ -112,6 +113,7 @@ class pages {
               transactionType: TransactionType.Reissue,
             ),
         '/security/backup': (context) => BackupSeed(),
+        '/security/backupKeypair': (context) => ShowKeypair(),
         '/security/backupConfirm': (context) => VerifySeed(),
         '/security/password/change': (context) => ChangeLoginPassword(),
         '/security/method/change': (context) => ChangeLoginMethod(),
