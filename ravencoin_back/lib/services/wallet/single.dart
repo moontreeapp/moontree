@@ -5,9 +5,9 @@ import 'package:ravencoin_wallet/ravencoin_wallet.dart'
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 class SingleWalletService {
-  Address toAddress(SingleWallet wallet) {
+  Future<Address> toAddress(SingleWallet wallet) async {
     var net = pros.settings.net;
-    var kpWallet = getKPWallet(wallet);
+    var kpWallet = await wallet.kpWallet; //getKPWallet(wallet);
     return Address(
         id: kpWallet.scripthash,
         address: kpWallet.address!,
@@ -60,10 +60,10 @@ class SingleWalletService {
           scripthash: encryptedWIF.walletId,
         ));
       }
-      final address = services.wallet.single.toAddress(newWallet);
       // TODO: shouldn't we save this to the address pros? and it will subscribe for us...?
+      final address = await services.wallet.single.toAddress(newWallet);
       print('address from KPWallet: ${address.walletId}');
-      await services.client.subscribe.toAddress(address);
+      //await services.client.subscribe.toAddress(address);
       return newWallet;
     }
     if (alwaysReturn) return existingWallet as SingleWallet;

@@ -23,7 +23,7 @@ Future<String> generateWallet({
     saveSecret: _saveSecret,
   );
   if (wallet is SingleWallet) {
-    return wallet.publicKey ?? '';
+    return await wallet.publicKey ?? '';
   }
   if (wallet is LeaderWallet) {
     return wallet.pubkey;

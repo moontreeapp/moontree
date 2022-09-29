@@ -211,7 +211,8 @@ class _HoldingList extends State<HoldingList> {
     balances, no transactions - show balances
     balances, transactions - show balances
     */
-    final busy = streams.client.busy.value || addresses.length < 40;
+    final busy = streams.client.busy.value ||
+        (Current.wallet is LeaderWallet && addresses.length < 40);
     if (pros.wallets.length == 1 && balances.isEmpty && transactions.isEmpty) {
       if (overrideGettingStarted) {
         //components.message.giveChoices(

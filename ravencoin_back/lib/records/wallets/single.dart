@@ -85,14 +85,17 @@ class SingleWallet extends Wallet {
   void setSecret(Future<String> Function(String id) getSecret) =>
       _getWif = getSecret;
 
-  String? get publicKey => services.wallet.single.getKPWallet(this).pubKey;
+  Future<String?> get publicKey async => (await kpWallet).pubKey;
 
   Future<String> Function(String id)? get getWif => _getWif;
 
   Future<KPWallet> get kpWallet async =>
       KPWallet.fromWIF((await wif) ?? '', pros.settings.network);
 
-  Future<String?> get wif async => await (encryptedWIF == ''
-      ? _getWif ?? ((_) async => '')
-      : (_) async => services.wallet.single.getKPWallet(this).wif)(id);
+  Future<String?> get wif async => EncryptedWIF(
+        encryptedWIF == ''
+            ? await (_getWif ?? ((_) async => ''))(id)
+            : encryptedWIF,
+        cipher!,
+      ).wif;
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/text.dart';
 import 'package:ravencoin_front/services/lookup.dart';
@@ -267,7 +268,21 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                     leading: Icon(Icons.add, color: AppColors.primary),
                     title: Text('New Wallet',
                         style: Theme.of(context).textTheme.bodyText1),
-                  )
+                  ),
+
+                  /// for testing - create a SingleWallet
+                  //ListTile(
+                  //  visualDensity: VisualDensity.compact,
+                  //  onTap: () async {
+                  //    Navigator.pop(components.navigator.routeContext!);
+                  //    final walletId =
+                  //        await generateWallet(walletType: WalletType.single);
+                  //    await switchWallet(walletId);
+                  //  },
+                  //  leading: Icon(Icons.add, color: AppColors.primary),
+                  //  title: Text('New Single Wallet',
+                  //      style: Theme.of(context).textTheme.bodyText1),
+                  //)
                 ] +
                 [
                   for (Wallet wallet in pros.wallets.ordered)
