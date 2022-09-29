@@ -139,7 +139,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         shape: components.shape.topRounded8,
         content: msg,
         behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.only(bottom: (Platform.isIOS ? 51.6 : 60).figmaH),
+        margin: EdgeInsets.only(bottom: (Platform.isIOS ? 32 : 60).figmaH),
         padding: EdgeInsets.only(top: 0, bottom: 0, left: 0, right: 0),
         //action: SnackBarAction(
         //    label: ' ',
@@ -165,7 +165,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         shape: components.shape.topRounded8,
         content: msg,
         behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.only(bottom: (Platform.isIOS ? 76 : 106).figmaH),
+        margin: EdgeInsets.only(bottom: (Platform.isIOS ? 77 : 106).figmaH),
         padding: EdgeInsets.only(top: 0, bottom: 0, left: 0, right: 0),
         //action: SnackBarAction(
         //    label: ' ',
