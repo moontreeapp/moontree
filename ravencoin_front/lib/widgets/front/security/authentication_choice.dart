@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
@@ -33,71 +35,21 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('Authentication Method',
-            style: Theme.of(context).textTheme.bodyText1),
+        //Text('Authentication Method',
+        //    style: Theme.of(context).textTheme.bodyText1),
         //Text(
         //  'Setting a strong password only you know offers the highest level of security for your wallets. You also have the choice to use nativeSecurity authentication if you prefer.\n\nBefore you change your authentication method you should backup your wallets by writing down each of their passphrases on paper. \n\nAfter changing your preference your wallets must be reencrypted, so DO NOT close the app until the re-encryption process has finished.',
         //  style: Theme.of(context).textTheme.bodyText2,
         //),
-        SizedBox(height: 16),
+        //SizedBox(height: 16),
         RadioListTile<AuthMethod>(
-            title: const Text('Moontree Only Password'),
-            value: AuthMethod.moontreePassword,
-            groupValue: authenticationMethodChoice,
-            onChanged: (AuthMethod? value) async {
-              setState(() => authenticationMethodChoice = value);
-              //canceled = false;
-              //await components.message.giveChoices(
-              //  context,
-              //  title: 'Set Password',
-              //  content:
-              //      "In order to complete the change you'll need to set a password.\n\nPress ok to continue...",
-              //  behaviors: {
-              //    'cancel': () {
-              //      setState(() {
-              //        authenticationMethodChoice = AuthMethod.nativeSecurity;
-              //        canceled = true;
-              //      });
-              //      Navigator.of(context).pop();
-              //    },
-              //    'ok': () {
-              //      Navigator.of(context).pop();
-              //    },
-              //  },
-              //);
-              //if (!canceled) {
-              streams.app.verify.add(false); // always require auth
-              Navigator.of(components.navigator.routeContext!).pushNamed(
-                '/security/password/change',
-                arguments: {
-                  'verification.ButtonLabel': 'Continue',
-                  'onSuccess.returnHome': false,
-                  'then': () async {
-                    setState(() {
-                      if (pros.settings.authMethodIsNativeSecurity) {
-                        authenticationMethodChoice =
-                            AuthMethod.moontreePassword;
-                      }
-                    });
-                    await services.authentication.setMethod(method: value!);
-                  },
-                  'then.then': () async {
-                    streams.app.snack.add(Snack(
-                        message: 'Successfully updated authentication method'));
-                  },
-                },
-              );
-              setState(() {
-                if (pros.settings.authMethodIsNativeSecurity) {
-                  authenticationMethodChoice = AuthMethod.nativeSecurity;
-                }
-              });
-              //}
-            }),
-        RadioListTile<AuthMethod>(
-            title: const Text('Native Device Security'),
+            title: Text(
+              "${Platform.isIOS ? 'iOS' : 'Android'} Phone Security",
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
             value: AuthMethod.nativeSecurity,
             groupValue: authenticationMethodChoice,
             onChanged: (AuthMethod? value) async {
@@ -111,15 +63,15 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                     });
                   }
                   components.loading.screen(
-                      message: 'Setting Authentication Method',
+                      message: 'Setting Security',
                       staticImage: true,
-                      returnHome: false,
+                      returnHome: true,
                       playCount: 1);
                   await services.authentication.setMethod(method: value!);
                   await services.authentication.setPassword(
                     password: await SecureStorage.authenticationKey,
                     salt: await SecureStorage.authenticationKey,
-                    message: 'Successfully updated authentication method',
+                    message: 'Successfully Updated Security',
                     saveSecret: saveSecret,
                   );
                 } else {
@@ -171,9 +123,9 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                 //Navigator.pop(components.navigator.routeContext!);
                 await Navigator.pushNamed(
                   components.navigator.routeContext!,
-                  '/security/verification',
+                  '/security/security',
                   arguments: {
-                    'buttonLabel': 'Continue',
+                    'buttonLabel': 'Submit',
                     'onSuccess': () async {
                       Navigator.pop(components.navigator.routeContext!);
                       await onSuccess();
@@ -193,6 +145,63 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
               } else {
                 await onSuccess();
               }
+            }),
+        RadioListTile<AuthMethod>(
+            title: Text(
+              'Moontree Password',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+            value: AuthMethod.moontreePassword,
+            groupValue: authenticationMethodChoice,
+            onChanged: (AuthMethod? value) async {
+              setState(() => authenticationMethodChoice = value);
+              //canceled = false;
+              //await components.message.giveChoices(
+              //  context,
+              //  title: 'Set Password',
+              //  content:
+              //      "In order to complete the change you'll need to set a password.\n\nPress ok to continue...",
+              //  behaviors: {
+              //    'cancel': () {
+              //      setState(() {
+              //        authenticationMethodChoice = AuthMethod.nativeSecurity;
+              //        canceled = true;
+              //      });
+              //      Navigator.of(context).pop();
+              //    },
+              //    'ok': () {
+              //      Navigator.of(context).pop();
+              //    },
+              //  },
+              //);
+              //if (!canceled) {
+              streams.app.verify.add(false); // always require auth
+              Navigator.of(components.navigator.routeContext!).pushNamed(
+                '/security/password/change',
+                arguments: {
+                  'verification.ButtonLabel': 'Continue',
+                  'onSuccess.returnHome': true,
+                  'then': () async {
+                    setState(() {
+                      if (pros.settings.authMethodIsNativeSecurity) {
+                        authenticationMethodChoice =
+                            AuthMethod.moontreePassword;
+                      }
+                    });
+                    await services.authentication.setMethod(method: value!);
+                  },
+                  //'then.then': () async {
+                  //  streams.app.snack
+                  //      .add(Snack(message: 'Successfully Updated Security'));
+                  //},
+                },
+              );
+              setState(() {
+                if (pros.settings.authMethodIsNativeSecurity) {
+                  authenticationMethodChoice = AuthMethod.nativeSecurity;
+                }
+              });
+              //}
             }),
       ],
     );

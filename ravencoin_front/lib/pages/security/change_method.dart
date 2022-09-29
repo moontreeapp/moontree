@@ -42,16 +42,27 @@ class _ChangeLoginMethodState extends State<ChangeLoginMethod> {
       front: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: FrontCurve(
-            child: body(),
-          )));
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                Padding(
+                    padding: EdgeInsets.only(
+                        left: 0, right: 16, top: 24, bottom: 16),
+                    child: Container(
+                        alignment: Alignment.topLeft,
+                        child: AuthenticationMethodChoice())),
+                if (!pros.settings.authMethodIsNativeSecurity)
+                  components.containers
+                      .navBar(context, child: Row(children: [changeButton]))
+              ]))));
 
-  Widget body() => CustomScrollView(slivers: <Widget>[
-        SliverToBoxAdapter(
-            child: Padding(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 16),
-                child: Container(
-                    alignment: Alignment.topLeft,
-                    child: AuthenticationMethodChoice()))),
-      ]);
+  Widget get changeButton => components.buttons.actionButton(
+        context,
+        enabled: true,
+        label: 'Change Password',
+        focusNode: buttonFocus,
+        disabledIcon: Icon(Icons.lock_rounded, color: AppColors.black38),
+        link: '/security/password/change',
+      );
 }

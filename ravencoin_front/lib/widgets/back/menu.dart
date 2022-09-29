@@ -129,12 +129,14 @@ class _NavMenuState extends State<NavMenu> {
             name: 'Security',
             link: '/security/method/change',
           ),
+          /*
           if (!pros.settings.authMethodIsNativeSecurity)
             destination(
               icon: Icons.lock_rounded,
               name: 'Password',
               link: '/security/password/change',
             ),
+            */
           /*
           destination(
               icon: MdiIcons.accountCog,

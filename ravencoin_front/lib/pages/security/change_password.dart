@@ -199,7 +199,7 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
         await services.authentication.setPassword(
           password: newPassword.text,
           salt: await SecureStorage.authenticationKey,
-          message: 'Successfully updated password',
+          message: 'Successfully Updated Security',
           saveSecret: saveSecret,
         );
         if (data.containsKey('then')) {

@@ -122,7 +122,7 @@ class pages {
         '/security/native/login': (context) => LoginNative(),
         '/security/password/createlogin': (context) => CreatePassword(),
         '/security/native/createlogin': (context) => CreateNative(),
-        '/security/verification': (context) => VerifyAuthentication(),
+        '/security/security': (context) => VerifyAuthentication(),
         '/transaction/transaction': (context) => TransactionPage(),
         '/transaction/receive': (context) => Receive(),
         '/transaction/send': (context) => Send(),
