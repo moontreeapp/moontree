@@ -86,7 +86,6 @@ class CipherService {
     );
   }
 
-//107bf57dae554eb5c87f32d312086a018977cd1af82bc93e72026ac69c96f198
   Future<SingleWallet> reencryptSingleWallet(
     SingleWallet wallet, [
     CipherBase? cipher,

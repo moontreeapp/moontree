@@ -49,6 +49,7 @@ class LocalAuthApi {
 
   Future<bool> authenticate({bool stickyAuth = false}) async {
     if (!(await readyToAuthenticate)) {
+      reason = AuthenticationResult.error;
       return false;
     }
 

@@ -256,6 +256,13 @@ class _LoginNativeState extends State<LoginNative> {
             message: 'Please set a password to secure your wallet.',
             showOnLogin: true));
       } else if (localAuthApi.reason == AuthenticationResult.failure) {
+        /// while testing removal of pin after setting up native auth on ios, it
+        /// seems this is the failure that occures, so the user is stuck on the
+        /// login streen indefinately. works fine on android.
+        /// we'll probably update the design to push them back to the create
+        /// login process, allowing them to set a password... until then ios
+        /// will be stuck because if we can't differentiate between .error and
+        /// .failure we can't allow them to get through.
         setState(() {
           failedAttempt = true;
           enabled = true;
