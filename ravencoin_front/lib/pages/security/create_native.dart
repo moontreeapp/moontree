@@ -200,7 +200,7 @@ class _CreateNativeState extends State<CreateNative> {
         context,
         focusNode: unlockFocus,
         enabled: readyToUnlock(),
-        label: enabled ? 'Login' : 'Unlocking...',
+        label: enabled ? 'Create Wallet' : 'Creating Wallet...',
         onPressed: () async {
           await submit();
         },
