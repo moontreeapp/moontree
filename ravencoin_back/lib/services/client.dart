@@ -89,14 +89,15 @@ class ClientService {
   }
 
   Future<RavenElectrumClient?> _generateClient({
-    String projectName = 'MTWallet',
-    String buildVersion = '0.1',
+    String projectName = 'moontree',
+    String? projectVersion,
   }) async {
     try {
       return await RavenElectrumClient.connect(
         electrumDomain,
         port: electrumPort,
-        clientName: '$projectName/$buildVersion',
+        clientName: projectName,
+        clientVersion: projectVersion ?? (services.version.current ?? 'v1.0'),
         connectionTimeout: connectionTimeout,
       );
     } on SocketException catch (_) {

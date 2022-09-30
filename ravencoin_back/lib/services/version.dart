@@ -61,6 +61,9 @@ class VersionService {
                 ?.value),
         newVersion: newVersion,
       );
+
+  String? get current =>
+      pros.settings.primaryIndex.getOne(SettingName.Version_Current)?.value;
 }
 
 class VersionDescription with ToStringMixin {

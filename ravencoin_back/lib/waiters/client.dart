@@ -134,7 +134,11 @@ class RavenClientWaiter extends Waiter {
         print(
             'CONNECTION STATUS: ${streams.client.connected.value.name} ACTIVE ${tuple.item1}, ping ${tuple.item2}');
         print('PINGING ELECTRUM SERVER');
-        await services.client.api.ping();
+        try {
+          await services.client.api.ping();
+        } catch (e) {
+          print('unable to ping...');
+        }
         print('CONNECTION STATUS: ${streams.client.connected.value.name}');
         //try {
         //  client!.ping();
