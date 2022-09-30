@@ -90,12 +90,14 @@ class SingleWallet extends Wallet {
   Future<String> Function(String id)? get getWif => _getWif;
 
   Future<KPWallet> get kpWallet async =>
-      KPWallet.fromWIF((await wif) ?? '', pros.settings.network);
+      KPWallet.fromWIF((await wif), pros.settings.network);
 
-  Future<String?> get wif async => EncryptedWIF(
+  Future<String> get wif async => (await ewif).wif;
+
+  Future<EncryptedWIF> get ewif async => EncryptedWIF(
         encryptedWIF == ''
             ? await (_getWif ?? ((_) async => ''))(id)
             : encryptedWIF,
         cipher!,
-      ).wif;
+      );
 }

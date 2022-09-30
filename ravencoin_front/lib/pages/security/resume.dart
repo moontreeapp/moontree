@@ -3,6 +3,7 @@
 ///   only matters when trying to backup wallets right?
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_front/services/password.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/utils/auth.dart';
 
@@ -28,14 +29,17 @@ class _ChangeResumeState extends State<ChangeResume> {
   }
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        //appBar: components.headers.simple(context, 'Password Recovery'),
-        body: body(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: submitButton(),
-      ));
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          //appBar: components.headers.simple(context, 'Password Recovery'),
+          body: body(),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: submitButton(),
+        ));
+  }
 
   Row submitButton() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -84,8 +88,21 @@ class _ChangeResumeState extends State<ChangeResume> {
   Future<void> submit() async {
     final key = await SecureStorage.authenticationKey;
     if (services.password.validate.previousPassword(
-      password.text,
-      key,
+      password: key,
+      salt: key,
+      saltedHashedPassword: await getPreviousSaltedHashedPassword(),
+    )) {
+      FocusScope.of(context).unfocus();
+      services.cipher.initCiphers(
+        altPassword: key,
+        altSalt: key,
+        currentCipherUpdates: services.wallet.getPreviousCipherUpdates,
+      );
+      await successMessage();
+    } else if (services.password.validate.previousPassword(
+      password: password.text,
+      salt: key,
+      saltedHashedPassword: await getPreviousSaltedHashedPassword(),
     )) {
       FocusScope.of(context).unfocus();
       services.cipher.initCiphers(
@@ -95,23 +112,40 @@ class _ChangeResumeState extends State<ChangeResume> {
       );
       successMessage();
     } else if (services.password.validate.previousPassword(
-      password.text,
-      pros.passwords.primaryIndex.getPrevious()!.salt,
+      password: password.text,
+      salt: key,
+      saltedHashedPassword: await getPreviousSaltedHashedPassword(),
     )) {
       FocusScope.of(context).unfocus();
       services.cipher.initCiphers(
         altPassword: password.text,
-        altSalt: pros.passwords.primaryIndex.getPrevious()!.salt,
+        altSalt: key,
         currentCipherUpdates: services.wallet.getPreviousCipherUpdates,
       );
       successMessage();
     } else {
-      var used = services.password.validate.previouslyUsed(password.text);
-      failureMessage(used == null
-          ? 'This password was not recognized to match any previously used passwords.'
-          : 'The provided password was used $used passwords ago.');
+      final oldSalt = pros.passwords.primaryIndex.getPrevious()!.salt;
+      if (services.password.validate.previousPassword(
+        password: password.text,
+        salt: oldSalt,
+        saltedHashedPassword:
+            pros.passwords.primaryIndex.getPrevious()!.saltedHash,
+      )) {
+        FocusScope.of(context).unfocus();
+        services.cipher.initCiphers(
+          altPassword: password.text,
+          altSalt: oldSalt,
+          currentCipherUpdates: services.wallet.getPreviousCipherUpdates,
+        );
+        successMessage();
+      } else {
+        var used = services.password.validate.previouslyUsed(password.text);
+        failureMessage(used == null
+            ? 'This password was not recognized to match any previously used passwords.'
+            : 'The provided password was used $used passwords ago.');
+      }
+      setState(() => {});
     }
-    setState(() => {});
   }
 
   Future failureMessage(String msg) => showDialog(

@@ -272,6 +272,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                   ),
 
                   /** for testing - create a SingleWallet
+                  */
                   ListTile(
                     visualDensity: VisualDensity.compact,
                     onTap: () async {
@@ -284,24 +285,24 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                     title: Text('New Single Wallet',
                         style: Theme.of(context).textTheme.bodyText1),
                   )
-                  */
                 ] +
                 [
                   for (Wallet wallet in pros.wallets.ordered)
                     ListTile(
-                        visualDensity: VisualDensity.compact,
-                        onTap: () async {
-                          Navigator.pop(components.navigator.routeContext!);
-                          if (wallet.id != Current.walletId) {
-                            await switchWallet(wallet.id);
-                          }
-                        },
-                        leading: Icon(
-                          Icons.account_balance_wallet_rounded,
-                          color: AppColors.primary,
-                        ),
-                        title: Text(wallet.name,
-                            style: Theme.of(context).textTheme.bodyText1),
+                      visualDensity: VisualDensity.compact,
+                      onTap: () async {
+                        Navigator.pop(components.navigator.routeContext!);
+                        if (wallet.id != Current.walletId) {
+                          await switchWallet(wallet.id);
+                        }
+                      },
+                      leading: Icon(
+                        Icons.account_balance_wallet_rounded,
+                        color: AppColors.primary,
+                      ),
+                      title: Text(wallet.name,
+                          style: Theme.of(context).textTheme.bodyText1),
+                      /* awaiting design..........
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -429,7 +430,9 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                 },
                               ),
                           ],
-                        ))
+                        )
+                        */
+                    )
                 ],
           ).build();
         }

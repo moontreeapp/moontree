@@ -211,8 +211,15 @@ class _HoldingList extends State<HoldingList> {
     balances, no transactions - show balances
     balances, transactions - show balances
     */
-    final busy = streams.client.busy.value ||
-        (Current.wallet is LeaderWallet && addresses.length < 40);
+    final currentIsLeader = Current.wallet is LeaderWallet;
+    final busy = currentIsLeader
+        ? streams.client.busy.value || addresses.length < 40
+        : false;
+    if (!currentIsLeader && services.download.queue.transactions.length == 0) {
+      // single wallets sometimes never stop spinning
+      streams.client.busy.add(false);
+    }
+
     if (pros.wallets.length == 1 && balances.isEmpty && transactions.isEmpty) {
       if (overrideGettingStarted) {
         //components.message.giveChoices(

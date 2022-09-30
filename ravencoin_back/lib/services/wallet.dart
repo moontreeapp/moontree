@@ -87,9 +87,10 @@ class WalletService {
     Future<String> Function(String id)? getSecret,
     Future<void> Function(Secret secret)? saveSecret,
   }) async {
-    final entropy = bip39.mnemonicToEntropy(secret ?? bip39.generateMnemonic());
     switch (walletType) {
       case WalletType.leader:
+        final entropy =
+            bip39.mnemonicToEntropy(secret ?? bip39.generateMnemonic());
         final wallet = await leader.makeLeaderWallet(
           pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
           cipherUpdate: cipherUpdate,

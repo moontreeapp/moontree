@@ -43,3 +43,8 @@ Future<String> getLatestSaltedHashedPassword() async =>
     await SecureStorage.read(
         SecureStorage.passwordIdKey(pros.passwords.maxPasswordId ?? 0)) ??
     '';
+
+Future<String> getPreviousSaltedHashedPassword() async =>
+    await SecureStorage.read(
+        SecureStorage.passwordIdKey((pros.passwords.maxPasswordId ?? 1) - 1)) ??
+    '';

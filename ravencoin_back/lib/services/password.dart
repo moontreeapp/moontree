@@ -77,9 +77,26 @@ class PasswordValidationService {
       pros.passwords.primaryIndex.getMostRecent()!.saltedHash;
 
   /// unused
-  bool previousPassword(String password, String salt) =>
-      getHash(password, salt) ==
-      pros.passwords.primaryIndex.getPrevious()!.saltedHash;
+  bool previousPassword({
+    required String password,
+    required String salt,
+    required String saltedHashedPassword,
+  }) {
+    final hash = getHash(password, salt);
+    //final hash0 = getHash(password, 'moontree0');
+    //final hash1 = getHash(password, 'moontree1');
+    //final hash2 = getHash(password, 'moontree2');
+    //final oldSalt = pros.passwords.primaryIndex.getPrevious()!.saltedHash;
+    //final hash3 = getHash(password, oldSalt);
+    //final hash4 = getHash('l', salt);
+    //final hash5 = getHash('l', 'moontree0');
+    //final hash6 = getHash('l', 'moontree1');
+    //final hash7 = getHash('l', 'moontree2');
+    //final hash8 = getHash('l', oldSalt);
+    return hash == saltedHashedPassword;
+  }
+  //   => getHash(password, salt) == saltedHashedPassword;
+  //pros.passwords.primaryIndex.getPrevious()!.saltedHash;
 
   /// unused
   /// returns the number corresponding to how many passwords ago this was used
