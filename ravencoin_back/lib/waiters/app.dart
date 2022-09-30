@@ -5,7 +5,7 @@ import 'waiter.dart';
 
 class AppWaiter extends Waiter {
   DateTime lastActiveTime = DateTime.now();
-  int gracePeriod = 6 * 5;
+  int gracePeriod = 60 * 5;
 
   /// we used to lock according to this timer
   /// but now we lock whenever we minimize the app.
