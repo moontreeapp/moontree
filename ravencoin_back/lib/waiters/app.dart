@@ -7,33 +7,14 @@ class AppWaiter extends Waiter {
   DateTime lastActiveTime = DateTime.now();
   int gracePeriod = 60 * 5;
 
-  /// we used to lock according to this timer
-  /// but now we lock whenever we minimize the app.
-  //Timer? _inactiveTimer;
-
   void init({Object? reconnect}) {
-    /// when app has been inactive for 5 minutes logout
+    /// logout on minimize
     listen(
       'streams.app.active',
       streams.app.active,
       (bool active) async {
-        print('activity gets inited');
-        if (active) {
-          print('ACTIVE');
-          //_inactiveTimer?.cancel();
-          //_inactiveTimer = null;
-        } else if (!active && services.password.required) {
-          print('INACTIVE');
+        if (!active && services.password.required) {
           streams.app.logout.add(true);
-          //_inactiveTimer = Timer(
-          //  Duration(seconds: gracePeriod),
-          //  () {
-          //    print('LOGGING OUT BECAUSE OF _inactiveTimer');
-          //    if (!streams.app.active.value) {
-          //      streams.app.logout.add(true);
-          //    }
-          //  },
-          //);
         }
       },
     );
@@ -44,13 +25,11 @@ class AppWaiter extends Waiter {
     listen(
       'streams.app.tap',
       streams.app.tap,
-      (bool? value) async {
-        lastActiveTime = DateTime.now();
-      },
+      (bool? value) async => lastActiveTime = DateTime.now(),
     );
   }
 
-  /// used for when the app is active, _inactiveTimer is used when app inactive.
+  /// only active when the app is active
   Future<void> logoutThread() async {
     while (true) {
       var x = DateTime.now().difference(lastActiveTime).inSeconds;
@@ -64,7 +43,6 @@ class AppWaiter extends Waiter {
               // have we had no activity while we've been waiting?
               DateTime.now().difference(lastActiveTime).inSeconds >=
                   gracePeriod) {
-        print('LOGGING OUT BECAUSE OF logoutThread');
         streams.app.logout.add(true);
       }
     }
