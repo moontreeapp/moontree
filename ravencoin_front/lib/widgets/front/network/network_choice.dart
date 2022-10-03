@@ -30,12 +30,16 @@ class _NetworkChoice extends State<NetworkChoice> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('Blockchain Network',
-            style: Theme.of(context).textTheme.bodyText1),
+        //Text('Blockchain Network',
+        //    style: Theme.of(context).textTheme.bodyText1),
         //Text(
         //  'Wallets can hold value on multiple blockchains. Which blockchain would you like to connect to?',
         //  style: Theme.of(context).textTheme.bodyText2,
         //),
+        //await SimpleSelectionItems(
+        //    components.navigator.routeContext!,
+        //    then: () => dropDownActive = false,
+        //    items: []),
         SizedBox(height: 16),
         RadioListTile<Chain>(
             title: const Text('Ravencoin (mainnet)'),
