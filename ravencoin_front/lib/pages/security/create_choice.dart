@@ -134,9 +134,9 @@ class _CreateChoiceState extends State<CreateChoice> {
           style:
               Theme.of(components.navigator.routeContext!).textTheme.bodyText2,
           children: <TextSpan>[
-            //TextSpan(text: "Please set the wallet protection type"),
             TextSpan(
-                text: "How would you like to login?",
+                //text: "How would you like to login?",
+                text: "Please set the wallet protection type",
                 style: Theme.of(context)
                     .textTheme
                     .subtitle1!
